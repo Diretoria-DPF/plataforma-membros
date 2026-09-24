@@ -91,6 +91,14 @@ App.Constants = {
     CONFIRM_EMAIL: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
     RESET_REQUEST: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
     RESET_CONFIRM: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
+    // Limites GLOBAIS (chave fixa, não por e-mail) para as duas únicas rotas
+    // públicas que disparam MailApp.sendEmail. O limite por e-mail acima
+    // impede automação contra UM alvo, mas não impede alguém de rodar o
+    // cadastro/reset contra centenas de e-mails DISTINTOS na mesma hora —
+    // o que esgotaria a cota diária de MailApp da conta e poderia usar a
+    // plataforma como relay de spam contra terceiros. Ver docs/SECURITY.md.
+    REGISTER_GLOBAL: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+    RESET_REQUEST_GLOBAL: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   },
   GENERIC_ERROR_MESSAGE: 'Não foi possível concluir a operação. Tente novamente em instantes.',
   GENERIC_AUTH_FAILURE_MESSAGE: 'E-mail ou senha inválidos, ou conta ainda não confirmada.',

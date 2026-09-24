@@ -75,7 +75,7 @@ function buildSandbox(options) {
   const scriptProperties = makeScriptPropertiesMock(
     Object.assign(
       {
-        DB_JDBC_URL: 'jdbc:postgresql://localhost:5432/test?sslmode=require',
+        DB_JDBC_URL: 'jdbc:postgresql://localhost:5432/test',
         DB_USER: 'test_user',
         DB_PASSWORD: 'test_password',
         SESSION_TOKEN_PEPPER: 'test-pepper-value-not-for-production',

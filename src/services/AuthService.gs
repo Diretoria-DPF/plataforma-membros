@@ -62,6 +62,7 @@ App.AuthService = (function () {
 
   function register(input, correlationId) {
     const data = assertValidRegistration(input);
+    S.enforceRateLimit('REGISTER_GLOBAL', 'global', C.RATE_LIMITS.REGISTER_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER_GLOBAL.WINDOW_SECONDS);
     S.enforceRateLimit('REGISTER', data.email, C.RATE_LIMITS.REGISTER.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER.WINDOW_SECONDS);
 
     const existing = App.Database.query('SELECT id FROM profiles WHERE email = ? LIMIT 1', [data.email]);
@@ -228,6 +229,7 @@ App.AuthService = (function () {
       throw E.ValidationError('Informe um e-mail válido.');
     }
 
+    S.enforceRateLimit('RESET_REQUEST_GLOBAL', 'global', C.RATE_LIMITS.RESET_REQUEST_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST_GLOBAL.WINDOW_SECONDS);
     S.enforceRateLimit('RESET_REQUEST', normalizedEmail, C.RATE_LIMITS.RESET_REQUEST.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST.WINDOW_SECONDS);
 
     const rows = App.Database.query(

@@ -7,7 +7,10 @@
  * carregamento do script inteiro).
  *
  * Propriedades esperadas em Script Properties (nunca versionadas):
- *   DB_JDBC_URL            ex.: jdbc:postgresql://<host>:5432/<db>?sslmode=require
+ *   DB_JDBC_URL            ex.: jdbc:postgresql://<host>:5432/<db>
+ *                          (SEM parâmetros de query — ver docs/DEPLOYMENT.md,
+ *                          seção 2: o driver JDBC nativo do Apps Script rejeita
+ *                          sslmode/ssl/channel_binding com erro fatal)
  *   DB_USER
  *   DB_PASSWORD
  *   SESSION_TOKEN_PEPPER   string aleatória longa, só existe no servidor

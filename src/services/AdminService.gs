@@ -100,11 +100,13 @@ App.AdminService = (function () {
       throw E.ValidationError('Papel inválido.');
     }
 
+    let affected;
     try {
-      App.Database.execute('UPDATE profiles SET role = ?::user_role WHERE id = ?::uuid', [role, id]);
+      affected = App.Database.execute('UPDATE profiles SET role = ?::user_role WHERE id = ?::uuid', [role, id]);
     } catch (err) {
       translateLastAdminError(err);
     }
+    if (!affected) throw E.NotFoundError('Usuário não encontrado.');
 
     App.Logging.logAudit(correlationId, identity.profileId, 'CHANGE_USER_ROLE', 'profile', id, 'success', { newRole: role });
     return { success: true, message: 'Papel atualizado com sucesso.' };
@@ -114,11 +116,13 @@ App.AdminService = (function () {
     assertAdmin(identity);
     const id = S.normalizeText(targetProfileId);
 
+    let affected;
     try {
-      App.Database.execute("UPDATE profiles SET status = 'banned'::account_status WHERE id = ?::uuid", [id]);
+      affected = App.Database.execute("UPDATE profiles SET status = 'banned'::account_status WHERE id = ?::uuid", [id]);
     } catch (err) {
       translateLastAdminError(err);
     }
+    if (!affected) throw E.NotFoundError('Usuário não encontrado.');
 
     S.revokeAllSessionsForProfile(id);
     App.Logging.logAudit(correlationId, identity.profileId, 'BAN_USER', 'profile', id, 'success', null);
@@ -129,7 +133,9 @@ App.AdminService = (function () {
     assertAdmin(identity);
     const id = S.normalizeText(targetProfileId);
 
-    App.Database.execute("UPDATE profiles SET status = 'active'::account_status WHERE id = ?::uuid", [id]);
+    const affected = App.Database.execute("UPDATE profiles SET status = 'active'::account_status WHERE id = ?::uuid", [id]);
+    if (!affected) throw E.NotFoundError('Usuário não encontrado.');
+
     App.Logging.logAudit(correlationId, identity.profileId, 'UNBAN_USER', 'profile', id, 'success', null);
     return { success: true, message: 'Conta reativada.' };
   }
