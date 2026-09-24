@@ -1,5 +1,9 @@
 # Plataforma de Membros
 
+**No ar:** https://script.google.com/macros/s/AKfycbwYCBnyvnAyfa_EGi1AdZZb1ChFOuJtdSoDBYDoLVO_KipSaNUMRs8fcfbkbzpQP9Ki6w/exec
+(falta só cadastrar as credenciais do banco em Script Properties — ver
+`docs/DEPLOYMENT.md`, seção "Status real").
+
 Aplicação de governança comunitária (eventos, propostas com votação,
 tarefas colaborativas e administração de contas) construída como um
 **Google Apps Script Web App** com **Neon PostgreSQL** como banco

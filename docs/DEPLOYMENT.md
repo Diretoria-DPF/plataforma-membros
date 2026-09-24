@@ -183,8 +183,8 @@ git remote add origin https://github.com/Diretoria-DPF/plataforma-membros.git
 git push -u origin main
 ```
 
-Eu não executei `git push` nem criei commits nesta sessão, conforme
-instruído — isso fica para você revisar e rodar.
+(Já feito — repositório publicado em
+https://github.com/Diretoria-DPF/plataforma-membros.)
 
 ## 9. Rollback e recuperação
 
@@ -202,13 +202,48 @@ instruído — isso fica para você revisar e rodar.
 - **Recuperação de credenciais comprometidas:** ver docs/SECURITY.md,
   seção "Rotação de credenciais".
 
-## Verificações que ficaram pendentes (sem acesso a ambiente real)
+## Status real (atualizado após deploy ao vivo)
 
-- Conectividade JDBC real entre Apps Script e Neon (formato de URL,
-  comportamento do driver com colunas ENUM e `timestamptz`, tempo de
-  resposta em cold start do compute do Neon).
-- `clasp status` / `clasp push` contra um projeto Apps Script real.
-- Execução do fluxo completo de e-mail (`MailApp.sendEmail`) em produção.
-- `npm install` / `npm run lint` / `npm test` **foram** executados nesta
-  sessão (ver relatório na resposta final) — o que não foi possível foi
-  testar contra o Postgres real (constraints, triggers, concorrência).
+- **Neon:** projeto `plataforma-membros` (`jolly-snow-39561777`, São Paulo)
+  criado, `001_schema.sql`/`002_functions_and_triggers.sql` aplicados e
+  verificados contra o banco de verdade (14 tabelas, 13 gatilhos), incluindo
+  um teste real do gatilho de proteção do último admin (bloqueou/permitiu
+  corretamente). Banco limpo, sem dados de teste.
+- **GitHub:** publicado em https://github.com/Diretoria-DPF/plataforma-membros
+  (público).
+- **Apps Script:** projeto criado, código publicado via `clasp push`, Web App
+  **implantado e no ar**:
+  `https://script.google.com/macros/s/AKfycbwYCBnyvnAyfa_EGi1AdZZb1ChFOuJtdSoDBYDoLVO_KipSaNUMRs8fcfbkbzpQP9Ki6w/exec`
+  — a tela de login carrega corretamente (verificado ao vivo no navegador).
+  Autorização OAuth já concedida pelo dono (`dpires292@gmail.com`).
+- **Pendente (só você pode fazer):** cadastrar `DB_JDBC_URL`, `DB_USER`,
+  `DB_PASSWORD`, `SESSION_TOKEN_PEPPER` em Script Properties (passo 3 acima)
+  — sem isso, cadastro/login retornam erro genérico porque a conexão ao
+  banco não tem credencial. Depois disso, seguir os passos 6 e 7
+  (validar fluxos com conta de teste, promover o primeiro admin).
+
+Durante o deploy real, dois bugs só reprodutíveis no Apps Script de verdade
+(não em Node/V8 padrão, por isso os testes automatizados não pegaram antes)
+foram encontrados e corrigidos ao vivo:
+1. O Apps Script avalia o código de nível superior de todos os `.gs` em
+   **ordem alfabética pelo nome do arquivo**, não por dependência — o
+   arquivo de entrada precisou ser renomeado de `Code.gs` para `Main.gs`
+   para rodar depois de `Config.gs` (que declara o namespace `App`).
+2. Um comentário explicando o risco de uma "scriptlet vazia" do HtmlService
+   continha, literalmente, a sintaxe vazia dentro de si — o HtmlService varre
+   o arquivo procurando esse padrão como texto bruto, sem entender que
+   estava dentro de um comentário, e isso quebrava a geração do template.
+
+Ambos têm teste de regressão dedicado (`tests/loadOrder.test.js`,
+`tests/htmlTemplateSafety.test.js`) para não voltarem a acontecer.
+
+## Verificações que ainda ficam pendentes
+
+- Envio real de e-mail (`MailApp.sendEmail`) — só é exercitado quando
+  alguém completa o fluxo de cadastro/redefinição de senha com Script
+  Properties configuradas.
+- Comportamento do driver JDBC com colunas ENUM/`timestamptz` do Neon sob
+  carga real de uso (validado apenas via `run_sql`/`run_sql_transaction`
+  do MCP do Neon, não via JDBC do Apps Script em si).
+- Promoção do primeiro administrador (passo 7) — depende de alguém
+  completar o cadastro real primeiro.
