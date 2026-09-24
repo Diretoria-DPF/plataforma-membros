@@ -123,7 +123,7 @@ describe('Visibilidade de eventos filtrada no servidor', function () {
   });
 });
 
-describe('Cliente não consegue forjar identidade (Code.gs sempre resolve sessão no servidor)', function () {
+describe('Cliente não consegue forjar identidade (Main.gs sempre resolve sessão no servidor)', function () {
   test('apiAdminBanUser ignora qualquer papel forjado e usa a identidade resolvida do token de sessão', function () {
     const env = createFullEnvironment();
 

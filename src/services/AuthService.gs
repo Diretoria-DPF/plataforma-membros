@@ -129,12 +129,13 @@ App.AuthService = (function () {
   }
 
   function escapeHtmlForEmail(text) {
-    return String(text || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+    var escaped = String(text || '');
+    escaped = escaped.replace(/&/g, '&amp;');
+    escaped = escaped.replace(/</g, '&lt;');
+    escaped = escaped.replace(/>/g, '&gt;');
+    escaped = escaped.replace(/"/g, '&quot;');
+    escaped = escaped.replace(/'/g, '&#39;');
+    return escaped;
   }
 
   function confirmEmail(rawToken, correlationId) {

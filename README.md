@@ -45,7 +45,7 @@ plataforma-membros/
 │   ├── Security.gs          # validação, tokens, sessão, rate limit
 │   ├── Database.gs          # camada JDBC (PreparedStatement sempre)
 │   ├── Logging.gs           # audit_logs / error_logs minimizados
-│   ├── Code.gs               # doGet + ÚNICAS funções chamáveis pelo cliente
+│   ├── Main.gs               # doGet + ÚNICAS funções chamáveis pelo cliente
 │   ├── services/
 │   │   ├── AuthService.gs
 │   │   ├── ProfileService.gs

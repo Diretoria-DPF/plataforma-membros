@@ -1,5 +1,5 @@
 /**
- * Code.gs
+ * Main.gs
  * Ponto de entrada do Web App e ÚNICA superfície de funções de nível
  * superior chamáveis pelo cliente via google.script.run. Isso é uma
  * restrição técnica do Apps Script (não apenas uma convenção): o
@@ -71,11 +71,11 @@ function doGet(e) {
   tpl.termsVersion = App.Constants.LEGAL_VERSIONS.TERMS;
   tpl.privacyVersion = App.Constants.LEGAL_VERSIONS.PRIVACY;
 
-  return tpl
-    .evaluate()
-    .setTitle('Plataforma de Membros')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  var output = tpl.evaluate();
+  output.setTitle('Plataforma de Membros');
+  output.addMetaTag('viewport', 'width=device-width, initial-scale=1');
+  output.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  return output;
 }
 
 // -----------------------------------------------------------------------------

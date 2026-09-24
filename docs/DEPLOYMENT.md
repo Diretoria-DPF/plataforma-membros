@@ -101,7 +101,7 @@ verificação pendente para você.
 Como o `rootDir` do `.clasp.json` é a raiz do repositório, os arquivos são
 enviados preservando o caminho (ex.: `src/ui/Index.html` vira o arquivo
 `src/ui/Index` no projeto Apps Script — o editor moderno do Apps Script
-exibe nomes com `/` como pastas visuais). Por isso `Code.gs` referencia os
+exibe nomes com `/` como pastas visuais). Por isso `Main.gs` referencia os
 templates HTML como `'src/ui/Index'`, `'src/ui/Styles'` etc., e não apenas
 `'Index'`.
 

@@ -168,7 +168,7 @@ function createDatabaseEnvironment(fakeJdbc) {
 }
 
 /**
- * Como createServiceEnvironment, mas também carrega Code.gs, expondo as
+ * Como createServiceEnvironment, mas também carrega Main.gs, expondo as
  * funções de nível superior chamáveis por google.script.run (apiLogin,
  * apiAdminBanUser, ...) diretamente no contexto retornado.
  */
@@ -178,7 +178,7 @@ function createFullEnvironment(options) {
   const databaseMock = { query: jest.fn(), execute: jest.fn(), withTransaction: jest.fn() };
   built.context.App.Database = databaseMock;
   loadFiles(built.context, SERVICE_FILES);
-  loadFiles(built.context, ['Code.gs']);
+  loadFiles(built.context, ['Main.gs']);
 
   return {
     App: built.context.App,

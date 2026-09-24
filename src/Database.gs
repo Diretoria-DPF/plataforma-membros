@@ -16,7 +16,7 @@
  *   e preferências, consumo de token, voto, alterações administrativas).
  * - Esta camada NÃO decide mensagens de erro para o usuário final — apenas
  *   propaga a exceção. A tradução para mensagem genérica/segura acontece em
- *   Code.gs (ver App.Errors e App.Logging).
+ *   Main.gs (ver App.Errors e App.Logging).
  */
 App.Database = (function () {
   function connect() {

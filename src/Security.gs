@@ -3,7 +3,7 @@
  * Validação de entrada, geração/verificação de tokens opacos (sessão,
  * confirmação de e-mail, redefinição de senha), limitação de tentativas via
  * CacheService e checagens de sessão/papel usadas por TODA função chamável
- * pelo cliente (ver Code.gs).
+ * pelo cliente (ver Main.gs).
  *
  * Sobre CacheService como limitador de tentativas: CacheService.getScriptCache()
  * é um cache compartilhado por todo o projeto, persistido pelo Google entre
@@ -210,10 +210,11 @@ App.Security = (function () {
    * nem abre um comentário HTML "<!--" em texto cru.
    */
   function toSafeInlineJson(value) {
-    return JSON.stringify(value)
-      .replace(/</g, '\\u003c')
-      .replace(/>/g, '\\u003e')
-      .replace(/&/g, '\\u0026');
+    var json = JSON.stringify(value);
+    json = json.replace(/</g, '\\u003c');
+    json = json.replace(/>/g, '\\u003e');
+    json = json.replace(/&/g, '\\u0026');
+    return json;
   }
 
   return {

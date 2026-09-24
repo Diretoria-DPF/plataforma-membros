@@ -6,14 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Plataforma de Membros</title>
   <script>
-    // Ver App.Security.toSafeInlineJson em src/Security.gs: <?= ?> escaparia
-    // para contexto HTML (quebrando a sintaxe JS), e JSON.stringify cru
-    // permitiria que um token malicioso na URL contivesse a tag de
-    // fechamento de script e escapasse deste bloco — por isso a
-    // serialização passa por essa função. (Nota: escrever essa tag por
-    // extenso aqui, mesmo dentro de um comentário, já quebraria este
-    // <script>: o parser HTML procura a sequência de caracteres, não
-    // entende comentário de JS.)
+    // Ver App.Security.toSafeInlineJson em src/Security.gs: a tag de
+    // impressão padrão do HtmlService escaparia para contexto HTML
+    // (quebrando a sintaxe JS), e JSON.stringify cru permitiria que um
+    // token malicioso na URL contivesse a tag de fechamento de script e
+    // escapasse deste bloco — por isso a serialização passa por essa
+    // função. (Nota: o HtmlService varre o arquivo procurando o padrão
+    // de tag de scriptlet como TEXTO BRUTO, sem entender que está dentro
+    // de um comentário JS ou de um bloco <script> — por isso este
+    // comentário evita deliberadamente escrever essa sintaxe por extenso,
+    // mesmo como exemplo.)
     window.APP_DEEP_LINK_MODE = <?!= App.Security.toSafeInlineJson(deepLinkMode || '') ?>;
     window.APP_DEEP_LINK_TOKEN = <?!= App.Security.toSafeInlineJson(deepLinkToken || '') ?>;
   </script>

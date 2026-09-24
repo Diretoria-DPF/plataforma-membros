@@ -128,7 +128,7 @@ function requireRole(profile, roles) {
 }
 
 // ---------------------------------------------------------------------------
-// Handlers — espelham a assinatura de src/Code.gs (mesmos nomes de função)
+// Handlers — espelham a assinatura de src/Main.gs (mesmos nomes de função)
 // ---------------------------------------------------------------------------
 const handlers = {
   apiRegister(input) {

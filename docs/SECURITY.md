@@ -27,7 +27,7 @@ permanece como risco conhecido e não eliminado.
 
 ### Identidade e sessão
 - **Nenhuma função chamável pelo cliente aceita `userId`/`role`/`status`
-  como prova de identidade.** Toda função pública em `Code.gs` resolve a
+  como prova de identidade.** Toda função pública em `Main.gs` resolve a
   identidade a partir de um token de sessão opaco via
   `App.Security.requireSession`, que consulta o banco (join
   `sessions`+`profiles`) **a cada chamada** — nunca reutiliza um resultado
@@ -128,7 +128,7 @@ contexto autorizado. Por isso o investimento foi todo em prevenir XSS
 - Listagens administrativas (`AdminService.listUsers`) devolvem só os
   campos necessários à tarefa de gestão (nome, e-mail, papel, status) —
   não telefone/cidade/escolaridade/hash.
-- Erros inesperados nunca chegam ao cliente com detalhe interno: `Code.gs`
+- Erros inesperados nunca chegam ao cliente com detalhe interno: `Main.gs`
   (`App.Dispatch`) captura qualquer exceção não classificada como
   "esperada" (`App.Errors.*`), grava o detalhe real em `error_logs` com um
   `correlationId`, e devolve ao usuário só uma mensagem genérica + esse

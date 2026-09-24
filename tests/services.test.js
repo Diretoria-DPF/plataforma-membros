@@ -27,7 +27,7 @@ describe('EventService — duplicidade e vagas (tradução de erro do Postgres)'
     }).toThrow(/sem vagas ou indisponível/);
   });
 
-  test('erro inesperado do banco NÃO é convertido em mensagem amigável — é relançado para o Code.gs tratar', function () {
+  test('erro inesperado do banco NÃO é convertido em mensagem amigável — é relançado para o Main.gs tratar', function () {
     const env = createServiceEnvironment();
     env.database.execute.mockImplementation(function () {
       throw new Error('ERROR: relation "event_registrations" does not exist');
