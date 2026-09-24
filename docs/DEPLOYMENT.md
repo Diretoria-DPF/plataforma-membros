@@ -41,14 +41,20 @@ connection string que o Neon mostra no console (`postgresql://user:pass@host/db?
    pooling" ativada / hostname terminado em `-pooler`) — o Apps Script abre
    uma conexão nova a cada execução, então usar o endpoint com pooler evita
    esgotar o limite de conexões diretas do Neon sob uso concorrente.
-2. Monte a URL JDBC manualmente no formato:
+2. Monte a URL JDBC **sem nenhum parâmetro de query**:
    ```
-   jdbc:postgresql://<host-pooler>:5432/<database>?sslmode=require
+   jdbc:postgresql://<host-pooler>:5432/<database>
    ```
-   Não inclua `channel_binding=require` — esse parâmetro é específico do
-   `libpq`/driver Node do Neon; o suporte a ele pelo driver PostgreSQL JDBC
-   embutido no Apps Script não é documentado publicamente, então foi
-   omitido deliberadamente (ver docs/SECURITY.md, "Riscos residuais").
+   **Confirmado em produção (não é suposição):** o driver JDBC nativo do
+   Apps Script rejeita com erro fatal qualquer parâmetro de conexão que não
+   reconheça — `sslmode=require`, `ssl=true`, `channel_binding=require`
+   etc. todos causam `Exception: The following connection properties are
+   unsupported: ...`. Isso já aconteceu neste projeto (ver histórico de
+   commits) e está documentado por terceiros especificamente para Postgres
+   no Neon com Apps Script (projeto "gas-fakes", que lista "PostgreSQL on
+   Neon" entre os bancos validados). A conexão TLS acontece de qualquer
+   forma — o Neon exige TLS no servidor independente do parâmetro no
+   cliente — então a URL "nua" funciona e é a única forma que funciona.
 3. Guarde separadamente: host, usuário, senha, nome do banco.
 
 **Restrições confirmadas na documentação oficial do Apps Script (JDBC

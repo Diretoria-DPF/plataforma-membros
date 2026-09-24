@@ -164,9 +164,14 @@ somar um reCAPTCHA ou WAF na frente — **não implementado nesta entrega**
    adversariais.
 3. **Rate limiting best-effort** (ver acima) — não substitui um WAF/
    CAPTCHA dedicado.
-4. **Compatibilidade exata do driver JDBC do Apps Script com colunas
-   `ENUM`/`timestamptz`/`channel_binding` do Neon não foi validada contra
-   um ambiente real** nesta sessão — ver docs/DEPLOYMENT.md.
+4. **Compatibilidade do driver JDBC do Apps Script com Neon — agora
+   validada em produção**, com um ajuste real necessário: a URL JDBC não
+   pode conter NENHUM parâmetro de query (`sslmode`, `ssl`,
+   `channel_binding` etc.) — o driver nativo do Apps Script rejeita com
+   erro fatal qualquer parâmetro que não reconheça. A TLS acontece mesmo
+   assim (o Neon exige no servidor). Ver docs/DEPLOYMENT.md, seção 2.
+   Colunas `ENUM`/`timestamptz` funcionaram corretamente nos testes de
+   cadastro/login realizados ao vivo.
 5. **CacheService como armazenamento de rate limit não é auditável** —
    não há trilha permanente de quantas tentativas ocorreram além do que já
    está em `audit_logs` (que registra cada tentativa de login com
