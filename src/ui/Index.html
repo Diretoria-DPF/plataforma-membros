@@ -21,11 +21,12 @@
 </head>
 <body>
   <div id="app-shell" class="app-shell">
+    <!-- Folhas decorativas: fixas por trás de TUDO (tela pública e app autenticado),
+         não pertencem a nenhuma das duas telas para não sumirem ao trocar de tela. -->
+    <div class="leaf-field" id="leaf-field" aria-hidden="true"></div>
 
     <!-- ================= PÚBLICO ================= -->
     <main id="public-shell" class="public-shell">
-      <div class="leaf-field" id="leaf-field" aria-hidden="true"></div>
-
       <section id="screen-welcome" class="auth-card" aria-labelledby="welcome-title">
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="welcome-title">Entrar</h1>

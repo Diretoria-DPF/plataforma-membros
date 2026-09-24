@@ -3,6 +3,30 @@
   'use strict';
 
   // ===========================================================================
+  // Desestímulo cosmético a clique-direito / atalhos de DevTools.
+  //
+  // IMPORTANTE: isto NÃO é segurança e não deve ser tratado como tal. Não
+  // existe forma de impedir de verdade a inspeção de uma página no
+  // navegador do próprio usuário (desativar JS, outro navegador, ferramentas
+  // de rede como o próprio "curl" continuam funcionando). Como não há nenhum
+  // segredo no código do cliente — senha, hash, credencial de banco, tudo
+  // fica só no servidor (ver Security.gs/Database.gs) — não há o que
+  // "vazar" mesmo com o DevTools aberto. Isto existe apenas por pedido
+  // explícito, como decoração/atrito leve, e pode ser removido a qualquer
+  // momento sem qualquer impacto de segurança real.
+  // ===========================================================================
+  document.addEventListener('contextmenu', function (evt) { evt.preventDefault(); });
+  document.addEventListener('keydown', function (evt) {
+    var key = (evt.key || '').toUpperCase();
+    var blocked =
+      key === 'F12' ||
+      (evt.ctrlKey && evt.shiftKey && (key === 'I' || key === 'J' || key === 'C')) ||
+      (evt.metaKey && evt.altKey && (key === 'I' || key === 'J' || key === 'C')) ||
+      (evt.ctrlKey && key === 'U');
+    if (blocked) evt.preventDefault();
+  });
+
+  // ===========================================================================
   // Estado do cliente
   //
   // O token de sessão fica SOMENTE em uma variável JavaScript em memória
@@ -302,8 +326,20 @@
     });
   }
 
-  document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
-    btn.addEventListener('click', function () { showPanel(btn.getAttribute('data-panel')); });
+  document.querySelectorAll('#app-nav [data-panel], #admin-sheet [data-panel]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      showPanel(btn.getAttribute('data-panel'));
+      closeAdminSheet();
+    });
+  });
+
+  function openAdminSheet() { document.getElementById('admin-sheet').classList.remove('hidden'); }
+  function closeAdminSheet() { document.getElementById('admin-sheet').classList.add('hidden'); }
+
+  document.getElementById('btn-open-admin-sheet').addEventListener('click', openAdminSheet);
+  document.getElementById('btn-close-admin-sheet').addEventListener('click', closeAdminSheet);
+  document.getElementById('admin-sheet').addEventListener('click', function (evt) {
+    if (evt.target.id === 'admin-sheet') closeAdminSheet();
   });
 
   var PANEL_LOADERS = {
@@ -327,6 +363,11 @@
     document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
     });
+    document.querySelectorAll('#admin-sheet [data-panel]').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
+    });
+    document.getElementById('btn-open-admin-sheet').classList.toggle('active', panelId.indexOf('panel-admin-') === 0);
+    window.scrollTo(0, 0);
     if (PANEL_LOADERS[panelId]) PANEL_LOADERS[panelId]();
   }
 

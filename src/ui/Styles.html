@@ -94,6 +94,19 @@
     white-space: nowrap;
   }
 
+  /* Folhas decorativas: fixas atrás de TODA a plataforma (tela pública e app
+     autenticado), sempre visíveis independente da tela ativa. Ficam atrás do
+     conteúdo por ordem de DOM (primeiro filho de .app-shell) + pelos fundos
+     opacos de .auth-card/.app-header/.card por cima — sem precisar de
+     z-index alto que atrapalharia modais. */
+  .leaf-field {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
   /* ---------- Tela pública / boas-vindas ---------- */
   .public-shell {
     position: relative;
@@ -102,15 +115,6 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    overflow: hidden;
-  }
-
-  .leaf-field {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 0;
   }
 
   .leaf {
@@ -228,16 +232,62 @@
     font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
   }
 
-  .app-nav {
-    display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px;
-    background: var(--surface-alt); border-bottom: 1px solid var(--border);
+  /* Barra de navegação inferior fixa (padrão de app mobile). É a navegação
+     principal em qualquer tamanho de tela — a maioria de quem usa está no
+     celular, então esse é o layout padrão, não uma adaptação. */
+  .bottom-nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    display: flex; justify-content: space-around; align-items: stretch;
+    background: var(--surface); border-top: 1px solid var(--border);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  .app-nav button { background: transparent; color: var(--muted); padding: 8px 14px; font-weight: 600; }
-  .app-nav button.active { background: var(--primary-soft); color: var(--primary-strong); }
-  .app-nav button.admin.active { background: var(--admin-soft); color: var(--admin); }
+  .bottom-nav button {
+    flex: 1 1 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; background: transparent; color: var(--muted);
+    border-radius: 0; padding: 8px 2px 6px; font-size: 11px; font-weight: 600;
+    min-height: 56px;
+  }
+  .bottom-nav button svg { width: 22px; height: 22px; }
+  .bottom-nav button.active { color: var(--primary-strong); }
+  .bottom-nav button#btn-open-admin-sheet.active { color: var(--admin); }
 
-  .app-main { padding: var(--density-pad); max-width: 1200px; margin: 0 auto; display: grid; gap: var(--density-gap); }
+  /* Espaço reservado para a barra inferior nunca cobrir o conteúdo, e para
+     iOS/Android com "notch"/gestos (safe-area-inset). */
+  .app-main {
+    padding: var(--density-pad);
+    padding-bottom: calc(var(--density-pad) + 76px + env(safe-area-inset-bottom, 0px));
+    max-width: 720px; margin: 0 auto; display: grid; gap: var(--density-gap);
+  }
+
+  /* Gaveta (bottom sheet) das telas administrativas */
+  .sheet-overlay {
+    position: fixed; inset: 0; z-index: 30;
+    background: rgba(10, 14, 22, 0.5);
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .sheet-box {
+    width: 100%; max-width: 480px;
+    background: var(--surface); border-radius: 20px 20px 0 0;
+    box-shadow: var(--shadow); padding: 12px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    max-height: 80vh; overflow-y: auto;
+  }
+  .sheet-handle {
+    width: 40px; height: 4px; border-radius: 999px; background: var(--border);
+    margin: 4px auto 14px;
+  }
+  .sheet-grid { display: grid; gap: 8px; margin-bottom: 14px; }
+  .sheet-item {
+    text-align: left; background: var(--surface-alt); color: var(--text);
+    border: 1px solid var(--border); font-weight: 600;
+  }
+  .sheet-item.active { background: var(--admin-soft); color: var(--admin); border-color: transparent; }
+
+  @media (min-width: 720px) {
+    .app-main { max-width: 1200px; }
+  }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--density-gap); }
 
@@ -284,13 +334,24 @@
   table.data-table th, table.data-table td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); }
   table.data-table th { color: var(--muted); font-weight: 600; }
 
-  @media (max-width: 960px) {
-    .grid-2 { grid-template-columns: 1fr; }
+  /* Mobile-first: uma coluna por padrão (é o caso comum, a maioria acessa
+     pelo celular); duas colunas só a partir de telas maiores. */
+  .grid-2 { grid-template-columns: 1fr; }
+  @media (min-width: 720px) {
+    .grid-2 { grid-template-columns: 1fr 1fr; }
   }
 
-  @media (max-width: 640px) {
-    .app-main { padding: 14px; }
-    .app-header { flex-wrap: wrap; }
-    .auth-card { padding: 22px; }
+  @media (max-width: 480px) {
+    .app-main { padding: 14px; padding-bottom: calc(14px + 76px + env(safe-area-inset-bottom, 0px)); }
+    .app-header { flex-wrap: wrap; padding: 12px 14px; }
+    .auth-card { padding: 22px; margin: 12px; }
+    .card { padding: 16px; }
+    .bottom-nav button span { font-size: 10px; }
   }
+
+  /* Alvo de toque mínimo confortável em qualquer botão/campo interativo. */
+  button, input, select, textarea, .list-item .actions-row button {
+    min-height: 44px;
+  }
+  .bottom-nav button { min-height: 56px; }
 </style>

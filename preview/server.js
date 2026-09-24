@@ -500,8 +500,8 @@ function buildHtml() {
   }
   window.google = { script: { run: makeRunner({}) } };
 </script>
-<div style="position:fixed;bottom:0;left:0;right:0;z-index:999;background:#7a4b00;color:#fff;text-align:center;font:600 13px sans-serif;padding:6px;">
-  Pré-visualização local — dados fictícios, sem conexão com Neon/Apps Script real. Login de teste: dpires292@gmail.com / preview123456 (admin) ou membro@exemplo.com / preview123456 (membro).
+<div style="position:fixed;top:0;left:0;right:0;z-index:999;background:#7a4b00;color:#fff;text-align:center;font:600 11px sans-serif;padding:4px;">
+  Pré-visualização local — dados fictícios. Login: dpires292@gmail.com / preview123456 (admin) ou membro@exemplo.com / preview123456 (membro).
 </div>
 `;
 
