@@ -8,8 +8,12 @@
   <script>
     // Ver App.Security.toSafeInlineJson em src/Security.gs: <?= ?> escaparia
     // para contexto HTML (quebrando a sintaxe JS), e JSON.stringify cru
-    // permitiria que um token malicioso na URL contivesse "</script>" e
-    // escapasse deste bloco — por isso a serialização passa por essa função.
+    // permitiria que um token malicioso na URL contivesse a tag de
+    // fechamento de script e escapasse deste bloco — por isso a
+    // serialização passa por essa função. (Nota: escrever essa tag por
+    // extenso aqui, mesmo dentro de um comentário, já quebraria este
+    // <script>: o parser HTML procura a sequência de caracteres, não
+    // entende comentário de JS.)
     window.APP_DEEP_LINK_MODE = <?!= App.Security.toSafeInlineJson(deepLinkMode || '') ?>;
     window.APP_DEEP_LINK_TOKEN = <?!= App.Security.toSafeInlineJson(deepLinkToken || '') ?>;
   </script>
