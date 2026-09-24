@@ -1,0 +1,30 @@
+<!--
+  Modais genéricos. O conteúdo dinâmico (mensagem de confirmação) é sempre
+  definido via textContent pelo Scripts.html — nunca via innerHTML.
+-->
+<div id="modal-confirm" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+  <div class="modal-box">
+    <h3 id="modal-confirm-title">Confirmar ação</h3>
+    <p id="modal-confirm-message"></p>
+    <div class="modal-actions">
+      <button type="button" class="secondary" id="modal-confirm-cancel">Cancelar</button>
+      <button type="button" class="danger" id="modal-confirm-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-vote-complement" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-vote-title">
+  <div class="modal-box">
+    <h3 id="modal-vote-title">Comentário do voto</h3>
+    <p class="muted">Descreva seu complemento (3 a 700 caracteres).</p>
+    <form id="form-vote-complement" novalidate>
+      <label for="vote-complement-text">Complemento
+        <textarea id="vote-complement-text" minlength="3" maxlength="700" required></textarea>
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="modal-vote-cancel">Cancelar</button>
+        <button type="submit">Enviar voto</button>
+      </div>
+    </form>
+  </div>
+</div>

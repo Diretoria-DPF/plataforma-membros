@@ -1,0 +1,26 @@
+{
+  "name": "plataforma-membros",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plataforma de membros (Google Apps Script + Neon PostgreSQL) para Diretoria-DPF.",
+  "scripts": {
+    "lint": "eslint \"src/**/*.gs\" \"src/**/*.html\" \"tests/**/*.js\"",
+    "lint:fix": "eslint \"src/**/*.gs\" \"src/**/*.html\" \"tests/**/*.js\" --fix",
+    "test": "jest --colors",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "clasp:login": "clasp login",
+    "clasp:status": "clasp status",
+    "clasp:push": "clasp push --dry-run"
+  },
+  "devDependencies": {
+    "@google/clasp": "^2.4.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-html": "^8.1.2",
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

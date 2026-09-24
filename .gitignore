@@ -1,0 +1,23 @@
+# Dependências e build
+node_modules/
+coverage/
+
+# Segredos e configuração local do clasp (nunca versionar o scriptId real nem credenciais)
+.clasp.json
+.clasprc.json
+*.env
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+*.log
+
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Configuração local de sessão do Claude Code (não é parte do projeto)
+.claude/

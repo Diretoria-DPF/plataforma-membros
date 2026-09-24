@@ -1,0 +1,27 @@
+# clasp usa sintaxe estilo .gitignore, avaliada a partir de rootDir (".").
+# Estratégia: ignorar tudo e liberar (com "!") apenas o manifesto e o código-fonte GAS.
+# Isso é necessário porque clasp só aceita enviar .gs/.js/.html e um único .json (appsscript.json);
+# qualquer outro arquivo (sql/, tests/, docs/, *.md, package.json) quebraria o push se não fosse excluído.
+**/**
+
+# Manifesto (precisa estar na raiz do rootDir)
+!appsscript.json
+
+# Código-fonte do Apps Script
+!src/**/*.gs
+!src/**/*.html
+
+# Reforça exclusão de tudo que não deve ir para o projeto Apps Script
+node_modules/**
+coverage/**
+sql/**
+docs/**
+tests/**
+.git/**
+*.md
+package.json
+package-lock.json
+.eslintrc.cjs
+.clasp.json.example
+.claspignore
+.gitignore

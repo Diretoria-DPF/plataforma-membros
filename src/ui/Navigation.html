@@ -1,0 +1,21 @@
+<!--
+  Navegação estática (sem dados de banco). A visibilidade por papel é apenas
+  conveniência de interface — a autorização real acontece sempre no servidor
+  (ver Security.gs / cada Service.gs), então mostrar ou esconder um botão
+  aqui nunca é, por si só, controle de acesso.
+-->
+<nav class="app-nav" id="app-nav" aria-label="Navegação principal">
+  <button type="button" data-panel="panel-home" data-scope="all">Início</button>
+  <button type="button" data-panel="panel-events" data-scope="all">Eventos</button>
+  <button type="button" data-panel="panel-proposals" data-scope="all">Propostas</button>
+  <button type="button" data-panel="panel-tasks" data-scope="member">Tarefas</button>
+  <button type="button" data-panel="panel-profile" data-scope="all">Meu perfil</button>
+
+  <button type="button" class="admin" data-panel="panel-admin-dashboard" data-scope="admin">Painel admin</button>
+  <button type="button" class="admin" data-panel="panel-admin-users" data-scope="admin">Usuários</button>
+  <button type="button" class="admin" data-panel="panel-admin-events" data-scope="admin">Gerir eventos</button>
+  <button type="button" class="admin" data-panel="panel-admin-proposals" data-scope="admin">Gerir propostas</button>
+  <button type="button" class="admin" data-panel="panel-admin-tasks" data-scope="admin">Gerir tarefas</button>
+  <button type="button" class="admin" data-panel="panel-admin-feedback" data-scope="admin">Feedback</button>
+  <button type="button" class="admin" data-panel="panel-admin-audit" data-scope="admin">Auditoria</button>
+</nav>

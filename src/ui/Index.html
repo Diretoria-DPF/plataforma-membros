@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plataforma de Membros</title>
+  <script>
+    // Ver App.Security.toSafeInlineJson em src/Security.gs: <?= ?> escaparia
+    // para contexto HTML (quebrando a sintaxe JS), e JSON.stringify cru
+    // permitiria que um token malicioso na URL contivesse "</script>" e
+    // escapasse deste bloco — por isso a serialização passa por essa função.
+    window.APP_DEEP_LINK_MODE = <?!= App.Security.toSafeInlineJson(deepLinkMode || '') ?>;
+    window.APP_DEEP_LINK_TOKEN = <?!= App.Security.toSafeInlineJson(deepLinkToken || '') ?>;
+  </script>
+  <?!= include('src/ui/Styles'); ?>
+</head>
+<body>
+  <div id="app-shell" class="app-shell">
+
+    <!-- ================= PÚBLICO ================= -->
+    <main id="public-shell" class="public-shell">
+      <div class="leaf-field" id="leaf-field" aria-hidden="true"></div>
+
+      <section id="screen-welcome" class="auth-card" aria-labelledby="welcome-title">
+        <span class="brand-pill">Plataforma de Membros</span>
+        <h1 id="welcome-title">Entrar</h1>
+        <p class="muted">Acompanhe eventos, participe de votações e organize tarefas coletivas.</p>
+
+        <form id="form-login" novalidate>
+          <label for="login-email">E-mail
+            <input type="email" id="login-email" autocomplete="email" required>
+          </label>
+          <label for="login-password">Senha
+            <input type="password" id="login-password" autocomplete="current-password" required>
+          </label>
+          <button type="submit">Entrar</button>
+        </form>
+        <div id="msg-login" class="status-msg" role="alert" aria-live="polite"></div>
+
+        <div class="auth-links">
+          <button type="button" class="link-btn" data-nav="screen-register">Criar conta</button>
+          <button type="button" class="link-btn" data-nav="screen-forgot">Esqueci minha senha</button>
+        </div>
+      </section>
+
+      <section id="screen-register" class="auth-card hidden" aria-labelledby="register-title">
+        <span class="brand-pill">Plataforma de Membros</span>
+        <h2 id="register-title">Criar conta</h2>
+        <p class="muted">Sua conta começa como visitante; a confirmação por e-mail é obrigatória para entrar.</p>
+
+        <form id="form-register" novalidate>
+          <label for="reg-name">Nome completo
+            <input type="text" id="reg-name" autocomplete="name" required minlength="3" maxlength="150">
+          </label>
+          <label for="reg-email">E-mail
+            <input type="email" id="reg-email" autocomplete="email" required>
+          </label>
+          <label for="reg-phone">Telefone
+            <input type="tel" id="reg-phone" autocomplete="tel" required minlength="8" maxlength="30">
+          </label>
+          <label for="reg-city">Cidade (opcional)
+            <input type="text" id="reg-city" autocomplete="address-level2" maxlength="120">
+          </label>
+          <label for="reg-education">Escolaridade (opcional)
+            <input type="text" id="reg-education" maxlength="120">
+          </label>
+          <label for="reg-password">Senha (mínimo 12 caracteres)
+            <input type="password" id="reg-password" autocomplete="new-password" required minlength="12">
+          </label>
+          <label for="reg-validation">Validação da conta
+            <select id="reg-validation">
+              <option value="email">E-mail</option>
+              <option value="sms" disabled>SMS (indisponível na V1)</option>
+            </select>
+          </label>
+
+          <label class="checkbox-row" for="reg-terms">
+            <input type="checkbox" id="reg-terms" required>
+            <span>Li e aceito os Termos de Uso (documento fornecido pela organização, versão <?= termsVersion ?>).</span>
+          </label>
+          <label class="checkbox-row" for="reg-privacy">
+            <input type="checkbox" id="reg-privacy" required>
+            <span>Li e aceito a Política de Privacidade (documento fornecido pela organização, versão <?= privacyVersion ?>).</span>
+          </label>
+
+          <button type="submit">Enviar cadastro</button>
+        </form>
+        <div id="msg-register" class="status-msg" role="alert" aria-live="polite"></div>
+
+        <div class="auth-links">
+          <button type="button" class="link-btn" data-nav="screen-welcome">Voltar ao login</button>
+        </div>
+      </section>
+
+      <section id="screen-forgot" class="auth-card hidden" aria-labelledby="forgot-title">
+        <span class="brand-pill">Plataforma de Membros</span>
+        <h2 id="forgot-title">Redefinir senha</h2>
+        <p class="muted">Informe seu e-mail para receber o link de redefinição.</p>
+
+        <form id="form-forgot" novalidate>
+          <label for="forgot-email">E-mail
+            <input type="email" id="forgot-email" autocomplete="email" required>
+          </label>
+          <button type="submit">Enviar link</button>
+        </form>
+        <div id="msg-forgot" class="status-msg" role="alert" aria-live="polite"></div>
+
+        <div class="auth-links">
+          <button type="button" class="link-btn" data-nav="screen-welcome">Voltar ao login</button>
+        </div>
+      </section>
+
+      <section id="screen-reset" class="auth-card hidden" aria-labelledby="reset-title">
+        <span class="brand-pill">Plataforma de Membros</span>
+        <h2 id="reset-title">Criar nova senha</h2>
+        <p class="muted">Defina uma nova senha para voltar a acessar sua conta.</p>
+
+        <form id="form-reset" novalidate>
+          <label for="reset-password">Nova senha (mínimo 12 caracteres)
+            <input type="password" id="reset-password" autocomplete="new-password" required minlength="12">
+          </label>
+          <label for="reset-password-confirm">Confirmar nova senha
+            <input type="password" id="reset-password-confirm" autocomplete="new-password" required minlength="12">
+          </label>
+          <button type="submit">Salvar nova senha</button>
+        </form>
+        <div id="msg-reset" class="status-msg" role="alert" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <!-- ================= AUTENTICADO ================= -->
+    <div id="app-root" class="hidden">
+      <?!= include('src/ui/Header'); ?>
+      <?!= include('src/ui/Navigation'); ?>
+
+      <main class="app-main">
+        <section id="panel-home">
+          <div class="card">
+            <h2>Início</h2>
+            <p class="muted">Bem-vindo(a). Use a navegação acima para acessar eventos, propostas e tarefas.</p>
+          </div>
+        </section>
+
+        <section id="panel-events" class="hidden">
+          <div class="card">
+            <h2>Eventos</h2>
+            <div id="events-status" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="events-list"></div>
+          </div>
+        </section>
+
+        <section id="panel-proposals" class="hidden">
+          <div class="grid-2">
+            <div class="card">
+              <h2>Enviar proposta</h2>
+              <form id="form-proposal" novalidate>
+                <label for="proposal-title">Título
+                  <input type="text" id="proposal-title" required minlength="3" maxlength="150">
+                </label>
+                <label for="proposal-description">Descrição
+                  <textarea id="proposal-description" required minlength="5" maxlength="5000"></textarea>
+                </label>
+                <button type="submit">Enviar</button>
+              </form>
+              <div id="msg-proposal" class="status-msg" role="alert" aria-live="polite"></div>
+            </div>
+            <div class="card">
+              <h3>Minhas propostas</h3>
+              <div id="my-proposals-list"></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Votação aberta</h3>
+            <div id="voting-status" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="voting-list"></div>
+          </div>
+        </section>
+
+        <section id="panel-tasks" class="hidden">
+          <div class="card">
+            <h2>Tarefas</h2>
+            <div id="tasks-status" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="tasks-list"></div>
+          </div>
+        </section>
+
+        <section id="panel-profile" class="hidden">
+          <div class="grid-2">
+            <div class="card">
+              <h2>Meu perfil</h2>
+              <form id="form-profile" novalidate>
+                <label for="profile-name">Nome completo
+                  <input type="text" id="profile-name" required minlength="3" maxlength="150">
+                </label>
+                <label for="profile-phone">Telefone
+                  <input type="tel" id="profile-phone" required minlength="8" maxlength="30">
+                </label>
+                <label for="profile-city">Cidade
+                  <input type="text" id="profile-city" maxlength="120">
+                </label>
+                <label for="profile-education">Escolaridade
+                  <input type="text" id="profile-education" maxlength="120">
+                </label>
+                <button type="submit">Salvar perfil</button>
+              </form>
+              <div id="msg-profile" class="status-msg" role="alert" aria-live="polite"></div>
+            </div>
+            <div class="card">
+              <h3>Preferências</h3>
+              <form id="form-preferences" novalidate>
+                <label for="pref-theme">Tema
+                  <select id="pref-theme">
+                    <option value="system">Automático</option>
+                    <option value="light">Claro</option>
+                    <option value="dark">Escuro</option>
+                  </select>
+                </label>
+                <label for="pref-density">Densidade
+                  <select id="pref-density">
+                    <option value="standard">Padrão</option>
+                    <option value="compact">Compacta</option>
+                  </select>
+                </label>
+                <label class="checkbox-row" for="pref-email-notif">
+                  <input type="checkbox" id="pref-email-notif">
+                  <span>Quero receber notificações por e-mail.</span>
+                </label>
+                <button type="submit">Salvar preferências</button>
+              </form>
+              <div id="msg-preferences" class="status-msg" role="alert" aria-live="polite"></div>
+
+              <h3 style="margin-top:20px;">Feedback</h3>
+              <form id="form-feedback" novalidate>
+                <label for="feedback-message">Sua mensagem
+                  <textarea id="feedback-message" required minlength="3" maxlength="2000"></textarea>
+                </label>
+                <button type="submit">Enviar feedback</button>
+              </form>
+              <div id="msg-feedback" class="status-msg" role="alert" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ ADMIN ============ -->
+        <section id="panel-admin-dashboard" class="hidden">
+          <div class="card">
+            <h2>Visão geral</h2>
+            <div id="admin-dashboard-stats" class="stat-grid"></div>
+          </div>
+        </section>
+
+        <section id="panel-admin-users" class="hidden">
+          <div class="card">
+            <h2>Usuários</h2>
+            <form id="form-user-search" novalidate style="display:flex; gap:10px; margin-top:0;">
+              <input type="search" id="user-search-input" placeholder="Buscar por nome ou e-mail">
+              <button type="submit" style="width:auto;">Buscar</button>
+            </form>
+            <div id="admin-users-list" style="margin-top:14px;"></div>
+            <div id="admin-users-pagination" class="pagination"></div>
+          </div>
+        </section>
+
+        <section id="panel-admin-events" class="hidden">
+          <div class="grid-2">
+            <div class="card">
+              <h2>Novo evento</h2>
+              <form id="form-admin-event" novalidate>
+                <label for="event-title">Título
+                  <input type="text" id="event-title" required minlength="3" maxlength="150">
+                </label>
+                <label for="event-description">Descrição
+                  <textarea id="event-description" required minlength="5" maxlength="5000"></textarea>
+                </label>
+                <label for="event-date">Data do evento
+                  <input type="datetime-local" id="event-date" required>
+                </label>
+                <label for="event-visibility">Visibilidade
+                  <select id="event-visibility">
+                    <option value="public">Pública</option>
+                    <option value="authenticated">Autenticados</option>
+                    <option value="members">Somente membros</option>
+                  </select>
+                </label>
+                <label for="event-capacity">Capacidade (opcional)
+                  <input type="number" id="event-capacity" min="1" step="1">
+                </label>
+                <button type="submit" class="admin-btn">Criar evento</button>
+              </form>
+              <div id="msg-admin-event" class="status-msg" role="alert" aria-live="polite"></div>
+            </div>
+            <div class="card">
+              <h3>Eventos</h3>
+              <div id="admin-events-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-admin-proposals" class="hidden">
+          <div class="card">
+            <h2>Propostas em análise / acompanhamento</h2>
+            <div id="admin-proposals-list"></div>
+          </div>
+        </section>
+
+        <section id="panel-admin-tasks" class="hidden">
+          <div class="grid-2">
+            <div class="card">
+              <h2>Nova tarefa</h2>
+              <form id="form-admin-task" novalidate>
+                <label for="task-title">Título
+                  <input type="text" id="task-title" required minlength="3" maxlength="150">
+                </label>
+                <label for="task-description">Descrição
+                  <textarea id="task-description" required minlength="3" maxlength="5000"></textarea>
+                </label>
+                <label for="task-due">Prazo (opcional)
+                  <input type="datetime-local" id="task-due">
+                </label>
+                <button type="submit" class="admin-btn">Criar tarefa</button>
+              </form>
+              <div id="msg-admin-task" class="status-msg" role="alert" aria-live="polite"></div>
+            </div>
+            <div class="card">
+              <h3>Tarefas</h3>
+              <div id="admin-tasks-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-admin-feedback" class="hidden">
+          <div class="card">
+            <h2>Feedback recebido</h2>
+            <div id="admin-feedback-list"></div>
+          </div>
+        </section>
+
+        <section id="panel-admin-audit" class="hidden">
+          <div class="card">
+            <h2>Auditoria</h2>
+            <div id="admin-audit-list"></div>
+          </div>
+          <div class="card">
+            <h2>Logs técnicos</h2>
+            <div id="admin-error-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <?!= include('src/ui/Modals'); ?>
+
+  <?!= include('src/ui/Scripts'); ?>
+</body>
+</html>
