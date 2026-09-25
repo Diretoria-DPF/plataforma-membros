@@ -553,6 +553,13 @@
       tasksBadge.textContent = String(activeCount);
       tasksBadge.classList.toggle('hidden', activeCount === 0);
     });
+
+    callApi('apiListIncomingConnectionRequests', state.sessionToken).then(function (res) {
+      var connBadge = document.getElementById('nav-badge-connections');
+      if (!res.success || !res.requests) { connBadge.classList.add('hidden'); return; }
+      connBadge.textContent = String(res.requests.length);
+      connBadge.classList.toggle('hidden', res.requests.length === 0);
+    });
   }
 
   function setupNavigationForRole(role) {
@@ -590,6 +597,7 @@
     'panel-events': loadEvents,
     'panel-proposals': loadProposalsAndVoting,
     'panel-tasks': loadTasks,
+    'panel-orgchart': loadOrgChartPanel,
     'panel-profile': loadProfileAndPreferences,
     'panel-admin-dashboard': loadAdminDashboard,
     'panel-admin-users': function () { loadAdminUsers(1); },
@@ -598,6 +606,7 @@
     'panel-admin-tasks': loadAdminTasks,
     'panel-admin-feedback': function () { loadAdminFeedback(1); },
     'panel-admin-audit': function () { loadAdminAudit(1); },
+    'panel-admin-reports': function () { loadAdminReports(1); },
   };
 
   var currentPanelId = 'panel-home';
@@ -954,6 +963,260 @@
   }
 
   // ===========================================================================
+  // Equipe da liga — organograma (cargos/diretorias) e conexões entre membros
+  // ===========================================================================
+  var LEAGUE_POSITION_LABELS = {
+    coordenacao_geral: 'Coordenação Geral',
+    presidente: 'Presidente',
+    vice_presidente: 'Vice-Presidente',
+    coordenador: 'Coordenador(a)',
+    diretor: 'Diretor(a)',
+  };
+  var DIRECTORATE_LABELS = {
+    marketing: 'Marketing',
+    cientifico: 'Científico',
+    administrativo: 'Administrativo',
+    financeiro: 'Financeiro',
+  };
+
+  function loadOrgChartPanel() {
+    loadOrgChart();
+    loadConnectionRequests();
+    loadMyConnections();
+  }
+
+  function renderPersonCard(person) {
+    var avatar = person.avatarUrl
+      ? h('img', { className: 'orgchart-avatar', src: person.avatarUrl, alt: person.fullName })
+      : h('span', { className: 'orgchart-avatar-placeholder' }, [(person.fullName || '?').charAt(0).toUpperCase()]);
+
+    return h('button', {
+      type: 'button', className: 'orgchart-card',
+      onclick: function () { openMemberProfile(person.username); },
+    }, [avatar, text('span', person.fullName, { className: 'orgchart-name' })]);
+  }
+
+  function orgChartLevel(labelText, people) {
+    if (!people || !people.length) return null;
+    var row = h('div', { className: 'orgchart-level' }, [text('span', labelText, { className: 'orgchart-level-label' })]);
+    people.forEach(function (p) { row.appendChild(renderPersonCard(p)); });
+    return row;
+  }
+
+  function loadOrgChart() {
+    setStatus('orgchart-status', 'Carregando organograma...', 'info');
+    callApi('apiGetOrgChart', state.sessionToken).then(function (res) {
+      if (!res.success) { setStatus('orgchart-status', res.message, 'error'); return; }
+      setStatus('orgchart-status', '', null);
+      renderOrgChartTree(res.chart);
+    });
+  }
+
+  function renderOrgChartTree(chart) {
+    var container = document.getElementById('orgchart-tree');
+    clearEl(container);
+
+    var topLevel = orgChartLevel('Coordenação Geral / Presidência', [].concat(chart.coordenacaoGeral, chart.presidente, chart.vicePresidente));
+    if (topLevel) container.appendChild(topLevel);
+
+    var coordLevel = orgChartLevel('Coordenadores', chart.coordenadores);
+    if (coordLevel) container.appendChild(coordLevel);
+
+    var directoratesWrap = h('div', { className: 'orgchart-level' }, [text('span', 'Diretorias', { className: 'orgchart-level-label' })]);
+    var grid = h('div', { className: 'orgchart-directorates' }, []);
+    Object.keys(DIRECTORATE_LABELS).forEach(function (key) {
+      var d = chart.directorates[key] || { diretor: null, members: [] };
+      var box = h('div', { className: 'orgchart-directorate-box' }, [
+        text('div', DIRECTORATE_LABELS[key], { className: 'orgchart-directorate-title' }),
+      ]);
+      box.appendChild(d.diretor ? renderPersonCard(d.diretor) : text('p', 'Sem diretor(a) definido(a).', { className: 'orgchart-empty-hint' }));
+
+      var membersRow = h('div', { className: 'orgchart-directorate-members' }, []);
+      (d.members || []).forEach(function (m) { membersRow.appendChild(renderPersonCard(m)); });
+      if (!d.members || !d.members.length) membersRow.appendChild(text('p', 'Nenhum membro nesta diretoria ainda.', { className: 'orgchart-empty-hint' }));
+      box.appendChild(membersRow);
+      grid.appendChild(box);
+    });
+    directoratesWrap.appendChild(grid);
+    container.appendChild(directoratesWrap);
+
+    var noDirLevel = orgChartLevel('Membros sem diretoria', chart.membersWithoutDirectorate);
+    if (noDirLevel) container.appendChild(noDirLevel);
+
+    if (!container.childNodes.length) {
+      container.appendChild(text('p', 'Ainda não há cargos ou diretorias atribuídos.', { className: 'empty-state' }));
+    }
+  }
+
+  /** Abre o perfil de outro membro (organograma, pedidos, conexões) com info pública + ação de conexão/denúncia. */
+  function openMemberProfile(username) {
+    var overlay = document.getElementById('modal-member-profile');
+    setStatus('msg-member-profile', 'Carregando perfil...', 'info');
+    document.getElementById('modal-member-profile-title').textContent = '';
+    document.getElementById('member-profile-position').textContent = '';
+    clearEl(document.getElementById('member-profile-details'));
+    clearEl(document.getElementById('member-profile-actions'));
+    setAvatarPreview('member-profile-avatar', 'member-profile-avatar-placeholder', null);
+    overlay.classList.remove('hidden');
+
+    callApi('apiGetMemberProfile', state.sessionToken, username).then(function (res) {
+      if (!res.success) { setStatus('msg-member-profile', res.message, 'error'); return; }
+      setStatus('msg-member-profile', '', null);
+      renderMemberProfile(res.profile, res.relationship);
+    });
+  }
+
+  function renderMemberProfile(profile, relationship) {
+    document.getElementById('modal-member-profile-title').textContent = profile.fullName;
+    setAvatarPreview('member-profile-avatar', 'member-profile-avatar-placeholder', profile.avatarUrl || null);
+
+    var positionLabel = '';
+    if (profile.leaguePosition === 'diretor' && profile.directorate) {
+      positionLabel = 'Diretor(a) de ' + (DIRECTORATE_LABELS[profile.directorate] || profile.directorate);
+    } else if (profile.leaguePosition) {
+      positionLabel = LEAGUE_POSITION_LABELS[profile.leaguePosition] || profile.leaguePosition;
+    } else if (profile.directorate) {
+      positionLabel = 'Diretoria de ' + (DIRECTORATE_LABELS[profile.directorate] || profile.directorate);
+    }
+    document.getElementById('member-profile-position').textContent = positionLabel;
+
+    var details = document.getElementById('member-profile-details');
+    clearEl(details);
+    [
+      ['Usuário', profile.username ? '@' + profile.username : ''],
+      ['Escolaridade', profile.education],
+      ['LinkedIn', profile.linkedinUrl],
+      ['Instagram', profile.instagramHandle],
+      ['Interesses', profile.interests],
+    ].forEach(function (pair) {
+      if (!pair[1]) return;
+      details.appendChild(h('p', {}, [h('strong', {}, [pair[0] + ': ']), text('span', pair[1])]));
+    });
+
+    var actions = document.getElementById('member-profile-actions');
+    clearEl(actions);
+    if (relationship.isSelf) {
+      actions.appendChild(text('span', 'Este é o seu perfil.', { className: 'muted' }));
+      return;
+    }
+    if (relationship.isConnection) {
+      actions.appendChild(h('span', { className: 'badge' }, ['Conexão estabelecida']));
+    } else {
+      actions.appendChild(h('button', {
+        onclick: function () {
+          callApi('apiSendConnectionRequest', state.sessionToken, { username: profile.username }).then(function (res) {
+            setStatus('msg-member-profile', res.message, res.success ? 'success' : 'error');
+          });
+        },
+      }, ['Solicitar conexão']));
+    }
+    actions.appendChild(h('button', {
+      className: 'secondary',
+      onclick: function () { openReportForm(actions, profile.id); },
+    }, ['Denunciar']));
+  }
+
+  function openReportForm(container, targetProfileId) {
+    clearEl(container);
+    var categorySelect = h('select', {}, [
+      text('option', 'Assédio', { value: 'harassment' }),
+      text('option', 'Spam', { value: 'spam' }),
+      text('option', 'Falsidade de identidade', { value: 'impersonation' }),
+      text('option', 'Conteúdo inadequado', { value: 'inappropriate_content' }),
+      text('option', 'Outro', { value: 'other' }),
+    ]);
+    var detailsInput = h('textarea', { maxlength: 1000, placeholder: 'Descreva o ocorrido (opcional)' }, []);
+    var submitBtn = h('button', {
+      className: 'danger',
+      onclick: function () {
+        callApi('apiReportProfile', state.sessionToken, {
+          targetProfileId: targetProfileId, category: categorySelect.value, details: detailsInput.value,
+        }).then(function (res) {
+          setStatus('msg-member-profile', res.message, res.success ? 'success' : 'error');
+          if (res.success) clearEl(container);
+        });
+      },
+    }, ['Enviar denúncia']);
+    container.appendChild(h('div', { style: 'width:100%; display:grid; gap:8px; margin-top:6px;' }, [categorySelect, detailsInput, submitBtn]));
+  }
+
+  document.getElementById('modal-member-profile-close').addEventListener('click', function () {
+    document.getElementById('modal-member-profile').classList.add('hidden');
+  });
+  document.getElementById('modal-member-profile').addEventListener('click', function (evt) {
+    if (evt.target.id === 'modal-member-profile') document.getElementById('modal-member-profile').classList.add('hidden');
+  });
+
+  document.getElementById('form-connection-request').addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    var raw = document.getElementById('connection-request-value').value.trim();
+    if (!raw) return;
+    var digitsOnly = raw.replace(/\D/g, '');
+    var looksLikePhone = /^[0-9()+\-.\s]+$/.test(raw) && digitsOnly.length >= 8;
+    var payload = looksLikePhone ? { phone: raw } : { username: raw };
+
+    setStatus('msg-connection-request', 'Enviando pedido...', 'info');
+    callApi('apiSendConnectionRequest', state.sessionToken, payload).then(function (res) {
+      setStatus('msg-connection-request', res.message, res.success ? 'success' : 'error');
+      if (res.success) document.getElementById('form-connection-request').reset();
+    });
+  });
+
+  function loadConnectionRequests() {
+    callApi('apiListIncomingConnectionRequests', state.sessionToken).then(function (res) {
+      if (!res.success) return;
+      renderList('connection-requests-list', res.requests, renderConnectionRequestItem, 'Nenhum pedido de conexão recebido no momento.');
+    });
+  }
+
+  function renderConnectionRequestItem(item) {
+    var feedback = h('span', { className: 'status-msg' }, []);
+    return h('article', { className: 'list-item' }, [
+      renderPersonCard(item),
+      h('div', { className: 'actions-row' }, [
+        h('button', { onclick: function () { respondConnectionRequest(item.connectionId, 'accept', feedback); } }, ['Aceitar']),
+        h('button', { className: 'secondary', onclick: function () { respondConnectionRequest(item.connectionId, 'decline', feedback); } }, ['Recusar']),
+      ]),
+      feedback,
+    ]);
+  }
+
+  function respondConnectionRequest(connectionId, decision, feedbackEl) {
+    callApi('apiRespondConnectionRequest', state.sessionToken, connectionId, decision).then(function (res) {
+      feedbackEl.textContent = res.message;
+      feedbackEl.setAttribute('data-kind', res.success ? 'success' : 'error');
+      if (res.success) { loadConnectionRequests(); loadMyConnections(); refreshNavBadges(); }
+    });
+  }
+
+  function loadMyConnections() {
+    callApi('apiListMyConnections', state.sessionToken).then(function (res) {
+      if (!res.success) return;
+      renderList('my-connections-list', res.connections, renderMyConnectionItem, 'Você ainda não tem conexões.');
+    });
+  }
+
+  function renderMyConnectionItem(item) {
+    var feedback = h('span', { className: 'status-msg' }, []);
+    return h('article', { className: 'list-item' }, [
+      renderPersonCard({ fullName: item.fullName, username: item.username, avatarUrl: item.avatarUrl }),
+      h('div', { className: 'actions-row' }, [
+        h('button', {
+          className: 'secondary',
+          onclick: function () {
+            callApi('apiRemoveConnection', state.sessionToken, item.connectionId).then(function (res) {
+              feedback.textContent = res.message;
+              feedback.setAttribute('data-kind', res.success ? 'success' : 'error');
+              if (res.success) loadMyConnections();
+            });
+          },
+        }, ['Remover conexão']),
+      ]),
+      feedback,
+    ]);
+  }
+
+  // ===========================================================================
   // Perfil e preferências
   // ===========================================================================
   function loadProfileAndPreferences() {
@@ -1190,11 +1453,46 @@
       }, ['Banir conta']));
     }
 
+    var positionOptions = [{ value: '', label: 'Sem cargo de liderança' }].concat(
+      Object.keys(LEAGUE_POSITION_LABELS).map(function (key) { return { value: key, label: LEAGUE_POSITION_LABELS[key] }; })
+    );
+    var positionSelect = h('select', {}, positionOptions.map(function (opt) {
+      var el = text('option', opt.label, { value: opt.value });
+      if (opt.value === (user.leaguePosition || '')) el.setAttribute('selected', 'selected');
+      return el;
+    }));
+    var directorateOptions = [{ value: '', label: 'Sem diretoria' }].concat(
+      Object.keys(DIRECTORATE_LABELS).map(function (key) { return { value: key, label: DIRECTORATE_LABELS[key] }; })
+    );
+    var directorateSelect = h('select', {}, directorateOptions.map(function (opt) {
+      var el = text('option', opt.label, { value: opt.value });
+      if (opt.value === (user.directorate || '')) el.setAttribute('selected', 'selected');
+      return el;
+    }));
+    var cargoFeedback = h('span', { className: 'status-msg' }, []);
+    var cargoRow = h('div', { className: 'actions-row' }, [
+      positionSelect, directorateSelect,
+      h('button', {
+        className: 'admin-btn',
+        onclick: function () {
+          callApi('apiAdminSetLeaguePosition', state.sessionToken, user.id, {
+            leaguePosition: positionSelect.value || null, directorate: directorateSelect.value || null,
+          }).then(function (res) {
+            cargoFeedback.textContent = res.message;
+            cargoFeedback.setAttribute('data-kind', res.success ? 'success' : 'error');
+            if (res.success) loadAdminUsers(adminUsersState.page);
+          });
+        },
+      }, ['Atualizar cargo']),
+    ]);
+
     return h('article', { className: 'list-item' }, [
       text('h4', user.fullName + ' ' + (user.emailConfirmed ? '' : '(e-mail não confirmado)')),
       text('p', user.email),
       h('div', { className: 'meta-row' }, [statusBadge, text('span', 'Cadastro: ' + formatDate(user.createdAt))]),
       h('div', { className: 'actions-row' }, [roleSelect].concat(actions)),
+      cargoRow,
+      cargoFeedback,
     ]);
   }
 
@@ -1552,6 +1850,74 @@
       renderList('admin-error-list', res.logs, renderErrorLogItem, 'Nenhum erro técnico registrado.');
       renderPagination('admin-error-pagination', res.page, res.pageSize, res.total, loadAdminErrorLogs);
     });
+  }
+
+  // ===========================================================================
+  // Administração — denúncias
+  // ===========================================================================
+  var REPORT_STATUS_LABELS = { open: 'Aberta', under_review: 'Em análise', resolved: 'Resolvida', dismissed: 'Arquivada' };
+  var REPORT_CATEGORY_LABELS = {
+    harassment: 'Assédio', spam: 'Spam', impersonation: 'Falsidade de identidade',
+    inappropriate_content: 'Conteúdo inadequado', other: 'Outro',
+  };
+  var REPORT_TRANSITIONS_UI = {
+    open: ['under_review', 'resolved', 'dismissed'],
+    under_review: ['resolved', 'dismissed'],
+    resolved: [], dismissed: [],
+  };
+  var adminReportsState = { status: '' };
+
+  document.getElementById('form-report-filter').addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    adminReportsState.status = document.getElementById('report-filter-status').value;
+    loadAdminReports(1);
+  });
+
+  function loadAdminReports(page) {
+    callApi('apiAdminListReports', state.sessionToken, { status: adminReportsState.status, page: page }).then(function (res) {
+      if (!res.success) return;
+      renderList('admin-reports-list', res.reports, renderAdminReportItem, 'Nenhuma denúncia encontrada.');
+      renderPagination('admin-reports-pagination', res.page, res.pageSize, res.total, loadAdminReports);
+    });
+  }
+
+  function renderAdminReportItem(item) {
+    var options = REPORT_TRANSITIONS_UI[item.status] || [];
+    var actions = [];
+    if (options.length) {
+      var select = h('select', {}, options.map(function (s) { return text('option', REPORT_STATUS_LABELS[s], { value: s }); }));
+      var noteInput = h('input', { type: 'text', placeholder: 'Nota de resolução (opcional)', style: 'flex:1 1 160px;' });
+      actions.push(select, noteInput);
+      actions.push(h('button', {
+        onclick: function () {
+          callApi('apiAdminResolveReport', state.sessionToken, item.id, { status: select.value, resolutionNote: noteInput.value }).then(function (res) {
+            alertInline(res);
+            loadAdminReports(1);
+          });
+        },
+      }, ['Atualizar']));
+    }
+
+    var children = [
+      h('div', { className: 'meta-row' }, [
+        h('span', { className: 'badge' + (item.status === 'open' ? ' banned' : '') }, [REPORT_STATUS_LABELS[item.status] || item.status]),
+        text('span', REPORT_CATEGORY_LABELS[item.category] || item.category),
+        text('span', formatDate(item.createdAt)),
+      ]),
+      text('p', 'Denunciado: ' + (item.reportedName || 'Ex-membro') + (item.reportedUsername ? ' (@' + item.reportedUsername + ')' : '')),
+      text('p', 'Denunciante: ' + (item.reporterName || 'Ex-membro') + (item.reporterUsername ? ' (@' + item.reporterUsername + ')' : '')),
+    ];
+    if (item.details) children.push(text('p', item.details, { className: 'muted' }));
+    if (item.evidenceExcerpt) {
+      children.push(h('div', { className: 'status-msg', 'data-kind': 'info' }, [
+        text('strong', 'Trecho fornecido pelo denunciante (não verificável): '),
+        text('span', item.evidenceExcerpt),
+      ]));
+    }
+    if (item.resolutionNote) children.push(text('p', 'Resolução: ' + item.resolutionNote, { className: 'muted' }));
+    children.push(h('div', { className: 'actions-row' }, actions));
+
+    return h('article', { className: 'list-item' }, children);
   }
 
   // ===========================================================================

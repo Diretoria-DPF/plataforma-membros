@@ -187,6 +187,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>
             <span>Tarefas</span>
           </button>
+          <button type="button" data-panel="panel-orgchart" data-scope="member" style="position:relative;">
+            <span id="nav-badge-connections" class="nav-badge hidden"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4m0 0l-5.5 5m5.5-5l5.5 5"/></svg>
+            <span>Equipe</span>
+          </button>
           <button type="button" data-panel="panel-profile" data-scope="all">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
             <span>Perfil</span>
@@ -224,6 +229,10 @@
           <button type="button" data-panel="panel-admin-audit">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
             <span>Auditoria</span>
+          </button>
+          <button type="button" data-panel="panel-admin-reports">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a1.5 1.5 0 001.3 2.25h17.76a1.5 1.5 0 001.3-2.25L13.7 3.86a1.5 1.5 0 00-2.6 0z"/></svg>
+            <span>Denúncias</span>
           </button>
           <button type="button" id="btn-exit-admin-mode">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
@@ -285,6 +294,34 @@
             <h2>Tarefas</h2>
             <div id="tasks-status" class="status-msg" role="status" aria-live="polite"></div>
             <div id="tasks-list"></div>
+          </div>
+        </section>
+
+        <section id="panel-orgchart" class="hidden">
+          <div class="card">
+            <h2>Equipe da liga</h2>
+            <p class="muted">Clique numa pessoa para ver o perfil e solicitar conexão.</p>
+            <div id="orgchart-status" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="orgchart-tree"></div>
+          </div>
+
+          <div class="card">
+            <h3>Adicionar conexão</h3>
+            <form id="form-connection-request" novalidate style="display:flex; gap:10px; flex-wrap:wrap; margin-top:0;">
+              <input type="text" id="connection-request-value" placeholder="Nome de usuário ou telefone" style="flex:1 1 220px;">
+              <button type="submit" style="width:auto;">Enviar pedido</button>
+            </form>
+            <div id="msg-connection-request" class="status-msg" role="alert" aria-live="polite"></div>
+          </div>
+
+          <div class="card">
+            <h3>Pedidos recebidos</h3>
+            <div id="connection-requests-list"></div>
+          </div>
+
+          <div class="card">
+            <h3>Minhas conexões</h3>
+            <div id="my-connections-list"></div>
           </div>
         </section>
 
@@ -493,6 +530,26 @@
             <div id="admin-error-pagination" class="pagination"></div>
           </div>
         </section>
+
+        <section id="panel-admin-reports" class="hidden">
+          <div class="card">
+            <h2>Denúncias</h2>
+            <form id="form-report-filter" novalidate style="display:flex; gap:10px; margin-top:0;">
+              <label for="report-filter-status" style="flex:1 1 160px;">Status
+                <select id="report-filter-status">
+                  <option value="">Todas</option>
+                  <option value="open">Abertas</option>
+                  <option value="under_review">Em análise</option>
+                  <option value="resolved">Resolvidas</option>
+                  <option value="dismissed">Arquivadas</option>
+                </select>
+              </label>
+              <button type="submit" style="width:auto; align-self:end;">Filtrar</button>
+            </form>
+            <div id="admin-reports-list" style="margin-top:14px;"></div>
+            <div id="admin-reports-pagination" class="pagination"></div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -523,6 +580,28 @@
     <div class="lightbox-box">
       <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Fechar">×</button>
       <img id="lightbox-image" alt="">
+    </div>
+  </div>
+
+  <!--
+    Perfil de outro membro: aberto ao clicar num cartão do organograma
+    (ou de uma lista de conexões/pedidos). Conteúdo sempre montado via
+    JS com h()/text(), nunca innerHTML.
+  -->
+  <div id="modal-member-profile" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-member-profile-title">
+    <div class="modal-box">
+      <div class="avatar-preview-wrap" style="margin: 0 auto 12px;">
+        <img id="member-profile-avatar" class="avatar-preview hidden" alt="">
+        <span id="member-profile-avatar-placeholder" class="avatar-placeholder" aria-hidden="true">＋</span>
+      </div>
+      <h3 id="modal-member-profile-title" style="text-align:center;"></h3>
+      <p id="member-profile-position" class="muted" style="text-align:center; margin-top:-6px;"></p>
+      <div id="member-profile-details"></div>
+      <div id="msg-member-profile" class="status-msg" role="alert" aria-live="polite"></div>
+      <div class="modal-actions" id="member-profile-actions" style="justify-content:center; flex-wrap:wrap;"></div>
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="modal-member-profile-close">Fechar</button>
+      </div>
     </div>
   </div>
 

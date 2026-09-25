@@ -53,7 +53,7 @@ export async function listUsers(sql, identity, input) {
   const offsetParamIndex = params.length + 2;
 
   const rows = await sql(
-    `SELECT id, full_name, email, role, status, email_confirmed_at, created_at
+    `SELECT id, full_name, email, role, status, email_confirmed_at, created_at, league_position, directorate
      FROM profiles ${whereClause}
      ORDER BY ${sortColumn} ${sortDirection}
      LIMIT $${limitParamIndex} OFFSET $${offsetParamIndex}`,
@@ -72,6 +72,8 @@ export async function listUsers(sql, identity, input) {
       status: r.status,
       emailConfirmed: !!r.email_confirmed_at,
       createdAt: r.created_at,
+      leaguePosition: r.league_position,
+      directorate: r.directorate,
     })),
     page,
     pageSize,

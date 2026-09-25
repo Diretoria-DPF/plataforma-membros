@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "frontend/index.html"
+        ],
+        "createdAt": "2026-09-25T13:49:54.055Z",
+        "reason": "Claude: previews de imagem (avatar/lightbox) sao <img> intencionalmente sem src ate o JS definir dinamicamente; os dois de avatar ficam .hidden ate la, padrao necessario pra widget de preview"
+      }
+    ]
+  }
+}
