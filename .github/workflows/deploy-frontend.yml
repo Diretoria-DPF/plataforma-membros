@@ -25,13 +25,17 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Publica só frontend/ (index.html, app.js, styles.css — sem
-          dev-server.js, que é só para pré-visualização local)
-        run: |
-          mkdir -p _site
-          cp frontend/index.html frontend/app.js frontend/styles.css _site/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Instala dependências do build (javascript-obfuscator)
+        working-directory: frontend
+        run: npm install
+      - name: Gera frontend/dist/ (app.js ofuscado; index.html/styles.css copiados)
+        working-directory: frontend
+        run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: frontend/dist
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -1,0 +1,13 @@
+{
+  "name": "plataforma-membros-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build do front-end estático (ofusca app.js antes de publicar no GitHub Pages).",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node dev-server.js"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1"
+  }
+}

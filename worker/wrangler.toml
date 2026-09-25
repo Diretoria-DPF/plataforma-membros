@@ -12,7 +12,7 @@ APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
 # mantido na lista só para permitir testar mudanças de front-end localmente
 # antes de publicar; não concede acesso a nada que o token de sessão já não
 # controle.
-ALLOWED_ORIGINS = "https://diretoria-dpf.github.io,http://localhost:4174"
+ALLOWED_ORIGINS = "https://diretoria-dpf.github.io,http://localhost:4174,http://localhost:4175"
 MAIL_FROM_NAME = "Plataforma de Membros"
 # Precisa ser um remetente CADASTRADO E VERIFICADO no painel da Brevo
 # (Campanhas > Remetentes, ou Configurações > Remetentes) antes de
