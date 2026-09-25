@@ -3,7 +3,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 64 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 66 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -22,7 +22,7 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiReportProfile', 'apiAdminListReports', 'apiAdminResolveReport',
       'apiGetMyMessagingKey', 'apiPublishMessagingKey', 'apiGetPeerMessagingKeys',
       'apiOpenConversation', 'apiListConversations', 'apiListMessages', 'apiSendMessage', 'apiMarkConversationRead', 'apiMessagingSync',
-      'apiClearConversation',
+      'apiClearConversation', 'apiHideMessageForMe', 'apiDeleteMessage',
     ];
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });

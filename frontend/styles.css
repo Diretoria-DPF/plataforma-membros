@@ -523,6 +523,18 @@ button, input, select, textarea, .list-item .actions-row button {
 .chat-row-theirs .chat-bubble { background: var(--surface-alt); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 .chat-bubble-text { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 14px; line-height: 1.4; }
 .chat-bubble-time { display: block; text-align: right; font-size: 11px; color: var(--muted); margin-top: 3px; }
+.chat-bubble { position: relative; }
+.chat-bubble-menu-btn {
+  position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; padding: 0;
+  border-radius: 50%; font-size: 12px; line-height: 1; background: var(--surface-alt);
+  color: var(--muted); border: 1px solid var(--border); opacity: 0; transition: opacity 120ms ease;
+}
+.chat-bubble:hover .chat-bubble-menu-btn, .chat-bubble-menu-btn:focus { opacity: 1; }
+.chat-bubble-actions {
+  display: flex; flex-direction: column; gap: 4px; margin-top: 6px; align-items: flex-start;
+}
+.chat-row-mine .chat-bubble-actions { align-items: flex-end; width: 100%; }
+.chat-bubble-actions button { width: auto; font-size: 11px; padding: 4px 10px; }
 
 .chat-composer {
   display: flex; align-items: flex-end; gap: 8px; padding: 10px 14px; margin: 0;

@@ -60,13 +60,27 @@ describe('MessageService.listMessages', () => {
   test('participante recebe a lista de mensagens (sem texto claro, só ciphertext opaco)', async () => {
     const sql = makeSql();
     sql
-      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }])
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([{ cleared_before_id: 0 }]) // getMyClearedBeforeId
       .mockResolvedValueOnce([
-        { id: 5, sender_id: 'm1', client_message_id: VALID_UUID, crypto_version: 1, sender_key_version: 1, recipient_key_version: 1, iv: VALID_IV, ciphertext: VALID_CIPHERTEXT, created_at: '2026-01-01T00:00:00Z' },
+        { id: 5, sender_id: 'm1', client_message_id: VALID_UUID, crypto_version: 1, sender_key_version: 1, recipient_key_version: 1, iv: VALID_IV, ciphertext: VALID_CIPHERTEXT, deleted_at: null, created_at: '2026-01-01T00:00:00Z' },
       ]);
     const res = await MessageService.listMessages(sql, MEMBER, 'conv-1', {});
     expect(res.messages).toHaveLength(1);
     expect(res.messages[0].ciphertext).toBe(VALID_CIPHERTEXT);
+  });
+
+  test('mensagem apagada (deleted_at) vem como tombstone, sem ciphertext/iv', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }])
+      .mockResolvedValueOnce([{ cleared_before_id: 0 }])
+      .mockResolvedValueOnce([
+        { id: 6, sender_id: 'peer-1', client_message_id: VALID_UUID, crypto_version: 1, sender_key_version: 1, recipient_key_version: 1, iv: null, ciphertext: null, deleted_at: '2026-01-02T00:00:00Z', created_at: '2026-01-01T00:00:00Z' },
+      ]);
+    const res = await MessageService.listMessages(sql, MEMBER, 'conv-1', {});
+    expect(res.messages[0]).toEqual({ id: 6, senderId: 'peer-1', clientMessageId: VALID_UUID, deleted: true, createdAt: '2026-01-01T00:00:00Z' });
+    expect(res.messages[0]).not.toHaveProperty('ciphertext');
   });
 });
 
@@ -184,16 +198,113 @@ describe('MessageService.clearConversation', () => {
     expect(sql).toHaveBeenCalledTimes(1);
   });
 
-  test('participante apaga as mensagens e reseta os marcadores da conversa', async () => {
+  test('participante avança o marcador cleared_before/last_read só do próprio lado, sem apagar nada do banco', async () => {
     const sql = makeSql();
     sql
       .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
-      .mockResolvedValueOnce(undefined) // DELETE messages
-      .mockResolvedValueOnce(undefined) // UPDATE conversations
+      .mockResolvedValueOnce(undefined) // UPDATE conversations (só marcador por participante)
       .mockResolvedValueOnce(undefined); // logAudit
     const res = await MessageService.clearConversation(sql, MEMBER, 'conv-1', 'cid');
     expect(res).toEqual({ success: true, message: 'Conversa limpa.' });
-    expect(sql).toHaveBeenCalledTimes(4);
+    expect(sql).toHaveBeenCalledTimes(3);
+    const updateCall = sql.mock.calls[1][0].join('');
+    expect(updateCall).not.toMatch(/DELETE/i);
+    expect(updateCall).toMatch(/cleared_before_id/);
+  });
+});
+
+describe('MessageService.hideMessageForMe', () => {
+  test('mensagem inválida (não numérica) lança ValidationError sem tocar o banco', async () => {
+    const sql = makeSql();
+    await expect(MessageService.hideMessageForMe(sql, MEMBER, 'conv-1', 'abc', 'cid')).rejects.toMatchObject({ name: 'ValidationError' });
+    expect(sql).not.toHaveBeenCalled();
+  });
+
+  test('quem não participa da conversa lança ForbiddenError', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([{ participant_low: 'outro-1', participant_high: 'outro-2' }]);
+    await expect(MessageService.hideMessageForMe(sql, MEMBER, 'conv-1', 5, 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
+  });
+
+  test('esconde a mensagem de qualquer remetente (não precisa ser a própria) e audita', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([{ message_id: 5 }]) // INSERT message_hides
+      .mockResolvedValueOnce(undefined); // logAudit
+    const res = await MessageService.hideMessageForMe(sql, MEMBER, 'conv-1', 5, 'cid');
+    expect(res).toEqual({ success: true });
+  });
+
+  test('mensagem inexistente na conversa lança NotFoundError', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([]) // INSERT não retornou linha (mensagem não existe nesta conversa)
+      .mockResolvedValueOnce([]); // checagem de existência
+    await expect(MessageService.hideMessageForMe(sql, MEMBER, 'conv-1', 999, 'cid')).rejects.toMatchObject({ name: 'NotFoundError' });
+  });
+
+  test('já oculta antes (ON CONFLICT DO NOTHING) é idempotente, não é erro', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([]) // INSERT sem linha (conflito)
+      .mockResolvedValueOnce([{ exists: 1 }]); // mensagem existe de fato
+    const res = await MessageService.hideMessageForMe(sql, MEMBER, 'conv-1', 5, 'cid');
+    expect(res).toEqual({ success: true });
+  });
+});
+
+describe('MessageService.deleteMessage', () => {
+  test('mensagem inválida lança ValidationError sem tocar o banco', async () => {
+    const sql = makeSql();
+    await expect(MessageService.deleteMessage(sql, MEMBER, 'conv-1', 0, 'cid')).rejects.toMatchObject({ name: 'ValidationError' });
+    expect(sql).not.toHaveBeenCalled();
+  });
+
+  test('quem não participa da conversa lança ForbiddenError', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([{ participant_low: 'outro-1', participant_high: 'outro-2' }]);
+    await expect(MessageService.deleteMessage(sql, MEMBER, 'conv-1', 5, 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
+  });
+
+  test('remetente apaga a própria mensagem (tombstone) e audita', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([{ id: 5 }]) // UPDATE ... WHERE sender_id = eu
+      .mockResolvedValueOnce(undefined); // logAudit
+    const res = await MessageService.deleteMessage(sql, MEMBER, 'conv-1', 5, 'cid');
+    expect(res).toEqual({ success: true });
+  });
+
+  test('tentar apagar mensagem do OUTRO participante lança ForbiddenError — nunca "para todos" de mensagem alheia', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([]) // UPDATE não afetou nada (sender_id != eu)
+      .mockResolvedValueOnce([{ sender_id: 'peer-1', deleted_at: null }]); // é do outro, não apagada
+    await expect(MessageService.deleteMessage(sql, MEMBER, 'conv-1', 5, 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
+  });
+
+  test('mensagem já apagada antes é idempotente, não é erro', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([]) // UPDATE não afetou (deleted_at IS NULL já falso)
+      .mockResolvedValueOnce([{ sender_id: 'm1', deleted_at: '2026-01-01T00:00:00Z' }]);
+    const res = await MessageService.deleteMessage(sql, MEMBER, 'conv-1', 5, 'cid');
+    expect(res).toEqual({ success: true });
+  });
+
+  test('mensagem inexistente na conversa lança NotFoundError', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce([]) // UPDATE não afetou
+      .mockResolvedValueOnce([]); // não existe
+    await expect(MessageService.deleteMessage(sql, MEMBER, 'conv-1', 999, 'cid')).rejects.toMatchObject({ name: 'NotFoundError' });
   });
 });
 

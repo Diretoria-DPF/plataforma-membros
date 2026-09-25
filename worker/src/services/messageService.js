@@ -41,6 +41,12 @@ function formatRetryAfter(seconds) {
 }
 
 function mapMessageRow(r) {
+  if (r.deleted_at) {
+    return {
+      id: Number(r.id), senderId: r.sender_id, clientMessageId: r.client_message_id,
+      deleted: true, createdAt: r.created_at,
+    };
+  }
   return {
     id: Number(r.id),
     senderId: r.sender_id,
@@ -91,11 +97,23 @@ export async function openConversation(sql, identity, peerProfileId, correlation
 
 export async function listConversations(sql, identity) {
   assertMemberOrAdmin(identity);
+  // last_message_at é uma coluna COMPARTILHADA (atualizada pro par inteiro
+  // a cada envio) — depois de "limpar conversa" (sql/011, por participante),
+  // o que eu devo ver como "última mensagem" é a última mensagem AINDA
+  // VISÍVEL pra mim (acima do meu cleared_before_id, e não oculta
+  // individualmente via message_hides), não o timestamp bruto da coluna.
   const rows = await sql`
     SELECT
-      c.id AS conversation_id, c.last_message_at,
+      c.id AS conversation_id,
+      CASE WHEN c.participant_low = ${identity.profileId}::uuid THEN c.low_cleared_before_id ELSE c.high_cleared_before_id END AS my_cleared_before_id,
       CASE WHEN c.participant_low = ${identity.profileId}::uuid THEN c.participant_high ELSE c.participant_low END AS peer_id,
       p.full_name, p.username, p.avatar_url, p.status,
+      (
+        SELECT max(m.created_at) FROM messages m
+        WHERE m.conversation_id = c.id
+          AND m.id > (CASE WHEN c.participant_low = ${identity.profileId}::uuid THEN c.low_cleared_before_id ELSE c.high_cleared_before_id END)
+          AND NOT EXISTS (SELECT 1 FROM message_hides mh WHERE mh.message_id = m.id AND mh.profile_id = ${identity.profileId}::uuid)
+      ) AS last_message_at,
       (
         SELECT count(*) FROM messages m
         WHERE m.conversation_id = c.id
@@ -105,7 +123,7 @@ export async function listConversations(sql, identity) {
     FROM conversations c
     JOIN profiles p ON p.id = (CASE WHEN c.participant_low = ${identity.profileId}::uuid THEN c.participant_high ELSE c.participant_low END)
     WHERE c.participant_low = ${identity.profileId}::uuid OR c.participant_high = ${identity.profileId}::uuid
-    ORDER BY c.last_message_at DESC NULLS LAST
+    ORDER BY last_message_at DESC NULLS LAST
   `;
 
   return {
@@ -129,37 +147,121 @@ async function assertParticipant(sql, identity, conversationId) {
   return conv;
 }
 
+/** Coluna de "limpar conversa" (sql/011) do lado do chamador — participant_low usa low_cleared_before_id, participant_high usa o outro. */
+async function getMyClearedBeforeId(sql, identity, convId) {
+  const rows = await sql`
+    SELECT CASE WHEN participant_low = ${identity.profileId}::uuid THEN low_cleared_before_id ELSE high_cleared_before_id END AS cleared_before_id
+    FROM conversations WHERE id = ${convId}::uuid
+  `;
+  return rows.length ? Number(rows[0].cleared_before_id) : 0;
+}
+
 export async function listMessages(sql, identity, conversationId, input) {
   assertMemberOrAdmin(identity);
   const convId = S.normalizeText(conversationId);
   if (!convId) throw E.ValidationError('Conversa inválida.');
   await assertParticipant(sql, identity, convId);
+  const clearedBeforeId = await getMyClearedBeforeId(sql, identity, convId);
 
   const beforeId = input && input.beforeId != null ? Number(input.beforeId) : null;
   const afterId = input && input.afterId != null ? Number(input.afterId) : null;
 
+  // "Apagar somente para mim" (message_hides) e "Limpar conversa" (o piso
+  // clearedBeforeId) só afetam a MINHA leitura — nunca tocam a linha em si,
+  // por isso são aplicados aqui, na leitura, e não em nenhum DELETE.
   let rows;
   if (Number.isInteger(afterId)) {
     rows = await sql`
-      SELECT id, sender_id, client_message_id, crypto_version, sender_key_version, recipient_key_version, iv, ciphertext, created_at
-      FROM messages WHERE conversation_id = ${convId}::uuid AND id > ${afterId}
-      ORDER BY id ASC LIMIT ${C.LIMITS.MESSAGE_PAGE_SIZE}
+      SELECT m.id, m.sender_id, m.client_message_id, m.crypto_version, m.sender_key_version, m.recipient_key_version, m.iv, m.ciphertext, m.deleted_at, m.created_at
+      FROM messages m
+      WHERE m.conversation_id = ${convId}::uuid AND m.id > ${Math.max(afterId, clearedBeforeId)}
+        AND NOT EXISTS (SELECT 1 FROM message_hides mh WHERE mh.message_id = m.id AND mh.profile_id = ${identity.profileId}::uuid)
+      ORDER BY m.id ASC LIMIT ${C.LIMITS.MESSAGE_PAGE_SIZE}
     `;
   } else if (Number.isInteger(beforeId)) {
     rows = await sql`
-      SELECT id, sender_id, client_message_id, crypto_version, sender_key_version, recipient_key_version, iv, ciphertext, created_at
-      FROM messages WHERE conversation_id = ${convId}::uuid AND id < ${beforeId}
-      ORDER BY id DESC LIMIT ${C.LIMITS.MESSAGE_PAGE_SIZE}
+      SELECT m.id, m.sender_id, m.client_message_id, m.crypto_version, m.sender_key_version, m.recipient_key_version, m.iv, m.ciphertext, m.deleted_at, m.created_at
+      FROM messages m
+      WHERE m.conversation_id = ${convId}::uuid AND m.id < ${beforeId} AND m.id > ${clearedBeforeId}
+        AND NOT EXISTS (SELECT 1 FROM message_hides mh WHERE mh.message_id = m.id AND mh.profile_id = ${identity.profileId}::uuid)
+      ORDER BY m.id DESC LIMIT ${C.LIMITS.MESSAGE_PAGE_SIZE}
     `;
   } else {
     rows = await sql`
-      SELECT id, sender_id, client_message_id, crypto_version, sender_key_version, recipient_key_version, iv, ciphertext, created_at
-      FROM messages WHERE conversation_id = ${convId}::uuid
-      ORDER BY id DESC LIMIT ${C.LIMITS.MESSAGE_PAGE_SIZE}
+      SELECT m.id, m.sender_id, m.client_message_id, m.crypto_version, m.sender_key_version, m.recipient_key_version, m.iv, m.ciphertext, m.deleted_at, m.created_at
+      FROM messages m
+      WHERE m.conversation_id = ${convId}::uuid AND m.id > ${clearedBeforeId}
+        AND NOT EXISTS (SELECT 1 FROM message_hides mh WHERE mh.message_id = m.id AND mh.profile_id = ${identity.profileId}::uuid)
+      ORDER BY m.id DESC LIMIT ${C.LIMITS.MESSAGE_PAGE_SIZE}
     `;
   }
 
   return { success: true, messages: rows.map(mapMessageRow) };
+}
+
+/**
+ * "Apagar somente para mim" (message_hides, sql/011): esconde UMA mensagem
+ * específica — minha ou do outro participante — só da MINHA visão. O outro
+ * lado nunca sabe que eu ocultei nada (não há aviso, não há registro
+ * visível pra ele). Não exige ser o remetente — é sobre a MINHA leitura,
+ * não sobre o conteúdo em si.
+ */
+export async function hideMessageForMe(sql, identity, conversationId, messageId, correlationId) {
+  assertMemberOrAdmin(identity);
+  const convId = S.normalizeText(conversationId);
+  const msgId = Number(messageId);
+  if (!convId) throw E.ValidationError('Conversa inválida.');
+  if (!Number.isInteger(msgId) || msgId <= 0) throw E.ValidationError('Mensagem inválida.');
+  await assertParticipant(sql, identity, convId);
+
+  const rows = await sql`
+    INSERT INTO message_hides (message_id, profile_id)
+    SELECT m.id, ${identity.profileId}::uuid FROM messages m
+    WHERE m.id = ${msgId} AND m.conversation_id = ${convId}::uuid
+    ON CONFLICT (message_id, profile_id) DO NOTHING
+    RETURNING message_id
+  `;
+  if (!rows.length) {
+    // Ou a mensagem não existe/não é desta conversa, ou já estava oculta
+    // pra mim (idempotente — nenhum dos dois é erro do ponto de vista do
+    // usuário, que só queria "não ver mais essa mensagem").
+    const exists = await sql`SELECT 1 FROM messages WHERE id = ${msgId} AND conversation_id = ${convId}::uuid`;
+    if (!exists.length) throw E.NotFoundError('Mensagem não encontrada nesta conversa.');
+  }
+
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'HIDE_MESSAGE_FOR_ME', 'message', String(msgId), 'success', null);
+  return { success: true };
+}
+
+/**
+ * "Apagar para todos" — só o remetente pode apagar a PRÓPRIA mensagem;
+ * remove o conteúdo (ciphertext/iv) para os DOIS lados, mantendo um
+ * tombstone (deleted_at) no lugar. Nunca é possível apagar mensagem do
+ * outro participante "para todos" — a cláusula `sender_id = identity`
+ * abaixo é a autoridade real disso, não uma checagem só de UI.
+ */
+export async function deleteMessage(sql, identity, conversationId, messageId, correlationId) {
+  assertMemberOrAdmin(identity);
+  const convId = S.normalizeText(conversationId);
+  const msgId = Number(messageId);
+  if (!convId) throw E.ValidationError('Conversa inválida.');
+  if (!Number.isInteger(msgId) || msgId <= 0) throw E.ValidationError('Mensagem inválida.');
+  await assertParticipant(sql, identity, convId);
+
+  const rows = await sql`
+    UPDATE messages SET ciphertext = NULL, iv = NULL, deleted_at = now()
+    WHERE id = ${msgId} AND conversation_id = ${convId}::uuid AND sender_id = ${identity.profileId}::uuid AND deleted_at IS NULL
+    RETURNING id
+  `;
+  if (!rows.length) {
+    const exists = await sql`SELECT sender_id, deleted_at FROM messages WHERE id = ${msgId} AND conversation_id = ${convId}::uuid`;
+    if (!exists.length) throw E.NotFoundError('Mensagem não encontrada nesta conversa.');
+    if (exists[0].deleted_at) return { success: true }; // já apagada — idempotente
+    throw E.ForbiddenError('Só é possível apagar para todos uma mensagem que você mesmo enviou.');
+  }
+
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'DELETE_MESSAGE', 'message', String(msgId), 'success', null);
+  return { success: true };
 }
 
 function validateSendPayload(payload) {
@@ -249,13 +351,14 @@ export async function markConversationRead(sql, identity, conversationId, lastRe
 }
 
 /**
- * "Limpar conversa" (pedido direto do dono da plataforma: "não deixar
- * muita informação nas conversas"). Apaga TODO o histórico da conversa
- * para os DOIS participantes — não é um "limpar só para mim" (que exigiria
- * uma coluna nova de "oculto até X" por participante); é a interpretação
- * mais simples e mais alinhada ao resto do desenho de mensageria (nada
- * fica guardado além do necessário). A confirmação no frontend precisa
- * deixar claro que afeta a outra pessoa também.
+ * "Limpar conversa" — corrigido em sql/011 depois de feedback direto do
+ * dono da plataforma: a versão original apagava as mensagens de verdade
+ * (afetando os dois lados). Agora é só um marcador POR PARTICIPANTE
+ * (low/high_cleared_before_id, mesmo padrão de last_read_id) — esconde o
+ * histórico anterior da MINHA visão; nada é apagado do banco, o outro
+ * participante continua vendo tudo normalmente. Também adianta o meu
+ * last_read_id até o mesmo ponto, pra não sobrar "não lida fantasma" de
+ * mensagem que acabei de esconder da própria visão.
  */
 export async function clearConversation(sql, identity, conversationId, correlationId) {
   assertMemberOrAdmin(identity);
@@ -263,9 +366,20 @@ export async function clearConversation(sql, identity, conversationId, correlati
   if (!convId) throw E.ValidationError('Conversa inválida.');
   await assertParticipant(sql, identity, convId);
 
-  await sql`DELETE FROM messages WHERE conversation_id = ${convId}::uuid`;
   await sql`
-    UPDATE conversations SET last_message_at = NULL, low_last_read_id = 0, high_last_read_id = 0
+    UPDATE conversations SET
+      low_cleared_before_id = CASE WHEN participant_low = ${identity.profileId}::uuid
+        THEN GREATEST(low_cleared_before_id, (SELECT COALESCE(max(id), 0) FROM messages WHERE conversation_id = ${convId}::uuid))
+        ELSE low_cleared_before_id END,
+      high_cleared_before_id = CASE WHEN participant_high = ${identity.profileId}::uuid
+        THEN GREATEST(high_cleared_before_id, (SELECT COALESCE(max(id), 0) FROM messages WHERE conversation_id = ${convId}::uuid))
+        ELSE high_cleared_before_id END,
+      low_last_read_id = CASE WHEN participant_low = ${identity.profileId}::uuid
+        THEN GREATEST(low_last_read_id, (SELECT COALESCE(max(id), 0) FROM messages WHERE conversation_id = ${convId}::uuid))
+        ELSE low_last_read_id END,
+      high_last_read_id = CASE WHEN participant_high = ${identity.profileId}::uuid
+        THEN GREATEST(high_last_read_id, (SELECT COALESCE(max(id), 0) FROM messages WHERE conversation_id = ${convId}::uuid))
+        ELSE high_last_read_id END
     WHERE id = ${convId}::uuid
   `;
 

@@ -462,6 +462,55 @@
 
   var lastRenderedSenderId = null; // agrupamento visual de mensagens consecutivas do mesmo remetente
 
+  /**
+   * Três ações de apagar, pedido explícito do dono da plataforma:
+   * - "Apagar para mim": esconde só da MINHA visão (message_hides no
+   *   servidor) — funciona em qualquer mensagem, minha ou do outro lado.
+   * - "Apagar para todos": só disponível na PRÓPRIA mensagem, remove o
+   *   conteúdo para os dois lados (tombstone). Nunca aparece em mensagem
+   *   do outro participante — o backend também recusa, isto aqui é só UX.
+   */
+  function handleHideMessageForMe(msg, row) {
+    var app = App();
+    app.openConfirm('Apagar esta mensagem só para você? A outra pessoa continua vendo normalmente.', function () {
+      app.callApi('apiHideMessageForMe', app.getState().sessionToken, currentConversation.conversationId, msg.id).then(function (res) {
+        if (!res.success) { app.setStatus('messaging-thread-status', res.message, 'error'); return; }
+        row.remove();
+      });
+    });
+  }
+
+  function handleDeleteMessageForEveryone(msg, bodyEl, actionsWrap) {
+    var app = App();
+    app.openConfirm('Apagar esta mensagem para todos? Ela deixa de aparecer também para a outra pessoa. Não pode ser desfeito.', function () {
+      app.callApi('apiDeleteMessage', app.getState().sessionToken, currentConversation.conversationId, msg.id).then(function (res) {
+        if (!res.success) { app.setStatus('messaging-thread-status', res.message, 'error'); return; }
+        app.clearEl(bodyEl);
+        bodyEl.appendChild(app.text('span', '(mensagem apagada)', { className: 'muted', style: 'font-style:italic;' }));
+        if (actionsWrap) actionsWrap.remove();
+      });
+    });
+  }
+
+  function renderMessageActions(msg, isMine, row, bodyEl) {
+    var app = App();
+    var toggleBtn = app.h('button', { className: 'chat-bubble-menu-btn', type: 'button', 'aria-label': 'Opções da mensagem' }, ['⋯']);
+    var actionsWrap = app.h('div', { className: 'chat-bubble-actions hidden' }, []);
+    var hideBtn = app.h('button', {
+      type: 'button', className: 'secondary',
+      onclick: function () { handleHideMessageForMe(msg, row); },
+    }, ['Apagar para mim']);
+    actionsWrap.appendChild(hideBtn);
+    if (isMine) {
+      actionsWrap.appendChild(app.h('button', {
+        type: 'button', className: 'secondary',
+        onclick: function () { handleDeleteMessageForEveryone(msg, bodyEl, actionsWrap); },
+      }, ['Apagar para todos']));
+    }
+    toggleBtn.addEventListener('click', function () { actionsWrap.classList.toggle('hidden'); });
+    return [toggleBtn, actionsWrap];
+  }
+
   async function appendMessageToThread(msg) {
     if (messagesSeen[msg.id] || clientMessageIdsSeen[msg.clientMessageId]) return;
     messagesSeen[msg.id] = true;
@@ -469,24 +518,33 @@
 
     var app = App();
     var isMine = identity && msg.senderId === identity.profileId;
-    var decrypted = await decryptForDisplay(msg);
     var bodyEl;
-    if (decrypted.ok) {
-      bodyEl = app.text('p', decrypted.body, { className: 'chat-bubble-text' });
-    } else if (decrypted.reason === 'old-key') {
-      bodyEl = app.text('p', '(Mensagem cifrada com uma chave anterior — não é possível abrir neste aparelho.)', { className: 'chat-bubble-text muted', style: 'font-style:italic;' });
+    if (msg.deleted) {
+      bodyEl = app.text('p', '(mensagem apagada)', { className: 'chat-bubble-text muted', style: 'font-style:italic;' });
     } else {
-      bodyEl = app.text('p', '(Não foi possível decifrar esta mensagem.)', { className: 'chat-bubble-text muted', style: 'font-style:italic;' });
+      var decrypted = await decryptForDisplay(msg);
+      if (decrypted.ok) {
+        bodyEl = app.text('p', decrypted.body, { className: 'chat-bubble-text' });
+      } else if (decrypted.reason === 'old-key') {
+        bodyEl = app.text('p', '(Mensagem cifrada com uma chave anterior — não é possível abrir neste aparelho.)', { className: 'chat-bubble-text muted', style: 'font-style:italic;' });
+      } else {
+        bodyEl = app.text('p', '(Não foi possível decifrar esta mensagem.)', { className: 'chat-bubble-text muted', style: 'font-style:italic;' });
+      }
     }
 
     var grouped = lastRenderedSenderId === msg.senderId;
     lastRenderedSenderId = msg.senderId;
 
-    var bubble = app.h('div', { className: 'chat-bubble ' + (isMine ? 'chat-bubble-mine' : 'chat-bubble-theirs') }, [
-      bodyEl,
-      app.text('span', app.formatDate(msg.createdAt), { className: 'chat-bubble-time' }),
-    ]);
+    var bubbleChildren = [bodyEl, app.text('span', app.formatDate(msg.createdAt), { className: 'chat-bubble-time' })];
+    var bubble = app.h('div', { className: 'chat-bubble ' + (isMine ? 'chat-bubble-mine' : 'chat-bubble-theirs') }, bubbleChildren);
     var row = app.h('div', { className: 'chat-row ' + (isMine ? 'chat-row-mine' : 'chat-row-theirs') + (grouped ? ' chat-row-grouped' : '') }, [bubble]);
+
+    if (!msg.deleted) {
+      var actionEls = renderMessageActions(msg, isMine, row, bodyEl);
+      bubble.appendChild(actionEls[0]);
+      row.appendChild(actionEls[1]);
+    }
+
     document.getElementById('messaging-thread-list').appendChild(row);
   }
 
@@ -617,14 +675,15 @@
   }
 
   // ===========================================================================
-  // Limpar conversa (pedido direto: "não deixar muita informação nas
-  // conversas") — apaga para os dois lados, com confirmação clara.
+  // Limpar conversa: esconde o histórico só da MINHA visão (sql/011,
+  // low/high_cleared_before_id por participante) — a outra pessoa continua
+  // vendo tudo normalmente do lado dela. Nada é apagado do banco aqui.
   // ===========================================================================
   function handleClearConversation() {
     var app = App();
     if (!currentConversation) return;
     app.openConfirm(
-      'Limpar esta conversa apaga todo o histórico para você E para ' + (currentConversation.peer.fullName || 'a outra pessoa') + '. Esta ação não pode ser desfeita. Quer continuar?',
+      'Limpar esta conversa apaga o histórico só da sua visão — ' + (currentConversation.peer.fullName || 'a outra pessoa') + ' continua vendo normalmente. Esta ação não pode ser desfeita. Quer continuar?',
       function () {
         var convId = currentConversation.conversationId;
         app.callApi('apiClearConversation', app.getState().sessionToken, convId).then(function (res) {
@@ -703,8 +762,29 @@
     stopGlobalSync();
     refreshMessagesBadge();
     globalSyncTimer = setInterval(function () {
-      if (!document.hidden) refreshMessagesBadge();
+      if (document.hidden) return;
+      refreshMessagesBadge();
+      // Se a tela de "Conversas" (lista) está aberta, atualiza ela também —
+      // pedido explícito: "atualização automática... sem precisar alterar
+      // de tela". Não mexe se uma conversa específica estiver aberta (essa
+      // já tem seu próprio polling de 5s em startConversationPolling).
+      var convView = document.getElementById('messaging-conversations-view');
+      if (convView && !convView.classList.contains('hidden')) loadConversations();
     }, GLOBAL_SYNC_INTERVAL_MS);
+  }
+
+  /**
+   * Chamado por app.js logo após o login (enterApp) — pedido explícito:
+   * o contador de mensagens não lidas precisa atualizar sozinho mesmo sem
+   * o usuário nunca ter entrado na aba "Mensagens". Não depende da
+   * identidade de criptografia estar pronta (apiMessagingSync só conta
+   * linhas, não decifra nada) — só do papel (visitante não tem acesso).
+   */
+  function startBackgroundSync() {
+    var app = App();
+    var profile = app.getState().profile;
+    if (!profile || profile.role === 'visitor') return;
+    startGlobalSync();
   }
 
   function refreshMessagesBadge() {
@@ -752,6 +832,7 @@
     loadMessagingPanel: loadMessagingPanel,
     openConversationWithPeer: openConversationWithPeer,
     refreshMessagesBadge: refreshMessagesBadge,
+    startBackgroundSync: startBackgroundSync,
     resetMessagingState: resetMessagingState,
     hasUnlockedIdentity: function () { return !!identity; },
   };

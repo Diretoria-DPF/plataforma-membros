@@ -575,6 +575,10 @@
     showPanel('panel-home');
     loadProfileAndPreferences();
     refreshNavBadges();
+    // Contador de mensagens precisa atualizar sozinho mesmo sem o usuário
+    // nunca ter aberto a aba "Mensagens" (pedido: "sem precisar alterar de
+    // tela") — por isso começa aqui, não só dentro do painel de mensagens.
+    if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
   }
 
   /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */
