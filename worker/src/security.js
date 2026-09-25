@@ -105,13 +105,7 @@ export async function createSession(sql, pepper, profileId, userAgent, ttlMinute
   return rawToken;
 }
 
-/**
- * Resolve uma sessão a partir do token bruto recebido do cliente. SEMPRE
- * consulta o banco (join sessions+profiles) — nunca confia em papel/status
- * enviados pelo cliente. Retorna null se inválida/expirada/revogada, ou se
- * a conta está banida/sem e-mail confirmado.
- */
-export async function resolveSession(sql, pepper, rawToken) {
+async function findSessionRow(sql, pepper, rawToken) {
   const token = normalizeText(rawToken);
   if (!token) return null;
 
@@ -127,9 +121,21 @@ export async function resolveSession(sql, pepper, rawToken) {
     LIMIT 1
   `;
 
-  if (!rows.length) return null;
+  return rows.length ? rows[0] : null;
+}
 
-  const row = rows[0];
+/**
+ * Resolve uma sessão a partir do token bruto recebido do cliente. SEMPRE
+ * consulta o banco (join sessions+profiles) — nunca confia em papel/status
+ * enviados pelo cliente. Retorna null se inválida/expirada/revogada, ou se
+ * a conta está banida/sem e-mail confirmado — usado pelos endpoints onde
+ * identidade é OPCIONAL (ex.: listar eventos públicos): uma conta banida
+ * simplesmente cai para o mesmo tratamento de "anônimo", sem mensagem
+ * especial, porque esses endpoints não exigem sessão válida de qualquer forma.
+ */
+export async function resolveSession(sql, pepper, rawToken) {
+  const row = await findSessionRow(sql, pepper, rawToken);
+  if (!row) return null;
   if (row.status === ACCOUNT_STATUS.BANNED) return null;
   if (!row.email_confirmed_at) return null;
 
@@ -139,16 +145,39 @@ export async function resolveSession(sql, pepper, rawToken) {
     status: row.status,
     fullName: row.full_name,
     email: row.email,
-    sessionToken: token,
+    sessionToken: normalizeText(rawToken),
   };
 }
 
+/**
+ * Usado pelos endpoints que EXIGEM sessão válida. Diferente de
+ * resolveSession, aqui uma conta banida gera uma mensagem específica (em
+ * vez de cair no "sessão inválida" genérico) — quem já teria acesso ao
+ * token de sessão (a própria pessoa logada) merece saber que foi banida,
+ * não ficar achando que é só uma sessão expirada. Isso não abre uma nova
+ * forma de enumeração: só quem já possui o token de sessão da conta (ou
+ * seja, já estava logado nela) recebe essa informação.
+ */
 export async function requireSession(sql, pepper, rawToken) {
-  const identity = await resolveSession(sql, pepper, rawToken);
-  if (!identity) {
+  const row = await findSessionRow(sql, pepper, rawToken);
+  if (!row) {
     throw AuthError('Sessão inválida ou expirada. Faça login novamente.');
   }
-  return identity;
+  if (row.status === ACCOUNT_STATUS.BANNED) {
+    throw AuthError('Sua conta foi banida. Se você acredita que isso é um engano, entre em contato com a administração.');
+  }
+  if (!row.email_confirmed_at) {
+    throw AuthError('Sessão inválida ou expirada. Faça login novamente.');
+  }
+
+  return {
+    profileId: row.profile_id,
+    role: row.role,
+    status: row.status,
+    fullName: row.full_name,
+    email: row.email,
+    sessionToken: normalizeText(rawToken),
+  };
 }
 
 export function requireRole(identity, allowedRoles) {

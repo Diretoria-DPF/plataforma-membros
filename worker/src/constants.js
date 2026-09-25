@@ -54,13 +54,8 @@ export const THEME = {
   SYSTEM: 'system',
 };
 
-export const DENSITY = {
-  STANDARD: 'standard',
-  COMPACT: 'compact',
-};
-
 export const LIMITS = {
-  PASSWORD_MIN_LENGTH: 12,
+  PASSWORD_MIN_LENGTH: 8,
   NAME_MIN: 3,
   NAME_MAX: 150,
   PHONE_MIN: 8,
@@ -87,8 +82,8 @@ export const LIMITS = {
 // docs/POLITICA_DE_PRIVACIDADE.md mudar de forma material — e replique em
 // frontend/index.html (texto fixo, sem template de servidor).
 export const LEGAL_VERSIONS = {
-  TERMS: '2026-09-24',
-  PRIVACY: '2026-09-24',
+  TERMS: '2026-09-25',
+  PRIVACY: '2026-09-25',
 };
 
 export const RATE_LIMITS = {

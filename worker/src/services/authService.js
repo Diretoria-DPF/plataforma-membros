@@ -189,6 +189,18 @@ export async function login(sql, env, email, password, userAgent, correlationId)
   }
 
   const row = rows[0];
+
+  // Mensagem específica de "conta banida" SÓ quando a senha bate — quem não
+  // sabe a senha não aprende nada além do que já aprenderia tentando
+  // qualquer e-mail (mensagem genérica). Quem sabe a senha certa é
+  // presumivelmente o próprio dono da conta, então tem motivo legítimo de
+  // saber que foi banido em vez de ficar recebendo "e-mail ou senha
+  // inválidos" sem entender por quê.
+  if (row.password_ok === true && row.status === C.ACCOUNT_STATUS.BANNED) {
+    await Logging.logAudit(sql, correlationId, row.id, 'LOGIN', 'profile', row.id, 'failure', { reason: 'banned' });
+    throw E.AuthError('Sua conta foi banida. Se você acredita que isso é um engano, entre em contato com a administração.');
+  }
+
   const authorized = row.password_ok === true && row.status === C.ACCOUNT_STATUS.ACTIVE && !!row.email_confirmed_at;
 
   if (!authorized) {

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Política de Privacidade — Plataforma de Membros LAIFT</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .legal-shell { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; position: relative; z-index: 1; }
+    .legal-shell h1 { font-size: 28px; }
+    .legal-shell h2 { margin-top: 32px; font-size: 20px; }
+    .legal-shell p, .legal-shell li { line-height: 1.6; color: var(--text); }
+    .legal-shell ul { padding-left: 20px; }
+    .legal-shell .back-link { display: inline-block; margin-bottom: 18px; }
+    .legal-shell .version { color: var(--muted); font-size: 13px; margin-top: -8px; }
+    .legal-shell table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+    .legal-shell th, .legal-shell td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .legal-shell th { color: var(--muted); font-weight: 600; }
+    .legal-shell .notice { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="leaf-field" id="leaf-field" aria-hidden="true"></div>
+  <div class="legal-shell">
+    <a class="back-link link-btn" href="javascript:history.back()">&larr; Voltar</a>
+    <span class="brand-pill">Plataforma de Membros LAIFT</span>
+    <h1>Política de Privacidade</h1>
+    <p class="version">Versão: 2026-09-25</p>
+
+    <h2>1. Quem é o controlador dos dados</h2>
+    <p>Esta plataforma é operada pela <strong>Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (LAIFT)</strong>, associação estudantil vinculada ao curso de Farmácia. Para qualquer assunto relacionado a esta Política ou ao tratamento dos seus dados pessoais, o canal de contato é: <strong>laiftligauninassau@gmail.com</strong>.</p>
+
+    <h2>2. Dados que coletamos</h2>
+    <p><strong>No cadastro (obrigatórios):</strong> nome de usuário, nome completo, e-mail, telefone e senha — a senha nunca é armazenada em texto puro, apenas como hash criptográfico (bcrypt, calculado inteiramente no banco de dados, nunca no seu navegador ou em nossos servidores de aplicação).</p>
+    <p><strong>No cadastro (opcionais):</strong> foto de perfil (avatar), perfil do LinkedIn, usuário do Instagram, escolaridade e áreas de interesse. Campos opcionais podem ser deixados em branco sem impedir o cadastro.</p>
+    <p><strong>Durante o uso:</strong> preferência de tema da interface, inscrições em eventos, propostas enviadas, votos, adesões a tarefas, comentários e mensagens de feedback enviadas por você.</p>
+    <p><strong>Gerados automaticamente pelo sistema, nunca inseridos por você:</strong> registros de auditoria de ações administrativas e de autenticação, e registros técnicos de erro para diagnóstico.</p>
+
+    <h2>3. Para que usamos cada dado (finalidade e base legal)</h2>
+    <table>
+      <tr><th>Dado</th><th>Finalidade</th><th>Base legal (LGPD, art. 7º)</th></tr>
+      <tr><td>E-mail, senha (hash)</td><td>Autenticar seu acesso e proteger sua conta</td><td>Execução de contrato (inciso V)</td></tr>
+      <tr><td>Nome completo, nome de usuário, telefone</td><td>Identificar você perante a comunidade da liga</td><td>Execução de contrato (inciso V)</td></tr>
+      <tr><td>Avatar, LinkedIn, Instagram, escolaridade, interesses</td><td>Enriquecer seu perfil — sempre opcionais</td><td>Consentimento (inciso I), revogável a qualquer momento</td></tr>
+      <tr><td>Inscrições, votos, adesões, propostas, feedback</td><td>Operar as funcionalidades de governança da liga</td><td>Execução de contrato (inciso V)</td></tr>
+      <tr><td>Registros de auditoria e erro</td><td>Segurança da plataforma e investigação de incidentes</td><td>Legítimo interesse (inciso IX)</td></tr>
+    </table>
+
+    <h2>4. O que NÃO fazemos</h2>
+    <ul>
+      <li>Não vendemos nem compartilhamos seus dados pessoais com terceiros para fins de marketing ou publicidade.</li>
+      <li>Não usamos seus dados para nenhuma finalidade além das listadas na seção 3.</li>
+      <li>Não armazenamos sua senha em texto puro em nenhum momento.</li>
+      <li>Não exibimos telefone, e-mail completo ou hash de senha em nenhuma listagem além do estritamente necessário para você gerir sua própria conta.</li>
+      <li>Não usamos cookies de rastreamento nem ferramentas de analytics de terceiros.</li>
+    </ul>
+
+    <h2>5. Onde os dados ficam e como são protegidos</h2>
+    <p>Os dados são armazenados em um banco de dados PostgreSQL hospedado pelo provedor Neon, acessado por um backend em Cloudflare Workers — ambos com conexão sempre criptografada (TLS). Senhas passam por hash criptográfico antes de qualquer armazenamento. Toda ação sensível exige sessão autenticada validada a cada chamada contra o banco de dados.</p>
+
+    <h2>6. Sessão e armazenamento no seu navegador</h2>
+    <p>Para evitar que você precise fazer login toda vez que abrir a página, o token de sessão (um valor opaco, sem significado fora desta plataforma) fica salvo no armazenamento local do seu navegador por <strong>até 30 minutos</strong>, expirando e sendo apagado automaticamente depois disso. Esse token não é uma senha nem contém dado pessoal legível. Ao fazer logout, esse token é apagado imediatamente.</p>
+
+    <h2>7. Retenção e exclusão dos seus dados</h2>
+    <p>Você pode solicitar a exclusão da sua conta e dos dados pessoais vinculados a ela a qualquer momento, pelo canal de contato da seção 1. <strong>A exclusão é concluída em até 180 (cento e oitenta) dias contados da solicitação</strong>, prazo que permite verificação de identidade, resolução de eventuais pendências e cumprimento de obrigação legal de guarda de registros de auditoria de segurança.</p>
+    <p>Após a exclusão: dados de identificação pessoal são apagados ou anonimizados de forma irreversível. Registros de auditoria e votos podem ser mantidos de forma <strong>anonimizada</strong> como parte do histórico de governança da liga.</p>
+
+    <h2>8. Seus direitos como titular dos dados (LGPD, art. 18)</h2>
+    <p>Você tem direito a, mediante solicitação ao canal de contato da seção 1: confirmação da existência de tratamento; acesso aos dados; correção de dados incompletos ou desatualizados; anonimização, bloqueio ou eliminação de dados desnecessários; portabilidade a outro fornecedor; informação sobre com quem seus dados foram compartilhados; e revogação do consentimento a qualquer momento, para os dados cuja base legal seja o consentimento.</p>
+
+    <h2>9. Violação de política e banimento de conta</h2>
+    <p>O uso da plataforma em desacordo com esta Política, com os <a href="termos.html">Termos de Uso</a> ou com o Código de Conduta pode resultar em <strong>banimento da conta</strong>, a critério da administração da liga. Uma conta banida perde acesso a qualquer recurso autenticado; os dados pessoais associados continuam protegidos por esta Política, inclusive o direito de solicitar exclusão.</p>
+
+    <h2>10. Alterações desta Política</h2>
+    <p>Alterações materiais geram uma nova versão numerada por data. O registro do aceite de versões anteriores é preservado no seu histórico de consentimentos.</p>
+
+    <h2>11. Autoridade Nacional de Proteção de Dados (ANPD)</h2>
+    <p>Caso você entenda que sua solicitação não foi adequadamente atendida pelo canal da seção 1, você tem o direito de peticionar diretamente à Autoridade Nacional de Proteção de Dados (ANPD), nos termos da LGPD.</p>
+
+    <p class="notice">Esta é uma minuta técnica alinhada à LGPD e à forma real de funcionamento da plataforma. Recomenda-se revisão jurídica antes de considerá-la definitiva.</p>
+  </div>
+  <script>
+    (function () {
+      var field = document.getElementById('leaf-field');
+      if (!field || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      var symbols = ['🍃', '🍂', '🌿'];
+      for (var i = 0; i < 10; i++) {
+        var leaf = document.createElement('span');
+        leaf.className = 'leaf';
+        leaf.textContent = symbols[i % symbols.length];
+        leaf.style.left = Math.random() * 100 + '%';
+        leaf.style.animationDuration = 12 + Math.random() * 10 + 's';
+        leaf.style.animationDelay = Math.random() * 10 + 's';
+        leaf.style.fontSize = 16 + Math.random() * 14 + 'px';
+        field.appendChild(leaf);
+      }
+    })();
+  </script>
+</body>
+</html>

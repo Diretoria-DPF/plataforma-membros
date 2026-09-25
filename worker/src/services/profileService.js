@@ -10,7 +10,7 @@ export async function getMyProfile(sql, identity) {
   const rows = await sql`
     SELECT p.full_name AS full_name, p.email AS email, p.phone AS phone, p.city AS city,
            p.education AS education, p.role AS role, p.created_at AS created_at,
-           pr.theme AS theme, pr.density AS density, pr.email_notifications AS email_notifications
+           pr.theme AS theme, pr.email_notifications AS email_notifications
     FROM profiles p LEFT JOIN preferences pr ON pr.profile_id = p.id
     WHERE p.id = ${identity.profileId}::uuid LIMIT 1
   `;
@@ -31,21 +31,20 @@ export async function getMyProfile(sql, identity) {
     },
     preferences: {
       theme: row.theme || C.THEME.SYSTEM,
-      density: row.density || C.DENSITY.STANDARD,
       emailNotifications: row.email_notifications !== false,
     },
   };
 }
 
 export async function updateMyProfile(sql, identity, input, correlationId) {
-  const fullName = S.normalizeText(input.fullName);
+  // Nome completo é imutável após o cadastro por decisão de produto — nunca
+  // é lido de `input` aqui, nem aceito de volta como parâmetro editável,
+  // mesmo que o cliente envie um valor (defesa contra um front-end
+  // adulterado tentando forçar a troca).
   const phone = S.normalizeText(input.phone);
   const city = S.normalizeText(input.city);
   const education = S.normalizeText(input.education);
 
-  if (!S.isLengthValid(fullName, C.LIMITS.NAME_MIN, C.LIMITS.NAME_MAX)) {
-    throw E.ValidationError('Informe um nome completo válido.');
-  }
   if (!S.isLengthValid(phone, C.LIMITS.PHONE_MIN, C.LIMITS.PHONE_MAX)) {
     throw E.ValidationError('Informe um telefone válido.');
   }
@@ -53,7 +52,7 @@ export async function updateMyProfile(sql, identity, input, correlationId) {
   if (education && education.length > C.LIMITS.EDUCATION_MAX) throw E.ValidationError('Escolaridade inválida.');
 
   await sql`
-    UPDATE profiles SET full_name = ${fullName}, phone = ${phone}, city = ${city || null}, education = ${education || null}
+    UPDATE profiles SET phone = ${phone}, city = ${city || null}, education = ${education || null}
     WHERE id = ${identity.profileId}::uuid
   `;
 
@@ -63,14 +62,16 @@ export async function updateMyProfile(sql, identity, input, correlationId) {
 
 export async function updateMyPreferences(sql, identity, input, correlationId) {
   const theme = S.normalizeText(input.theme);
-  const density = S.normalizeText(input.density);
   const emailNotifications = input.emailNotifications === true;
 
   if (Object.values(C.THEME).indexOf(theme) === -1) throw E.ValidationError('Tema inválido.');
-  if (Object.values(C.DENSITY).indexOf(density) === -1) throw E.ValidationError('Densidade inválida.');
 
+  // "Densidade" foi removida da interface (não tinha efeito visual útil).
+  // A coluna preferences.density continua existindo no banco (NOT NULL
+  // DEFAULT 'standard') só para não exigir uma migração de schema — nunca
+  // mais é lida nem exposta a partir daqui.
   await sql`
-    UPDATE preferences SET theme = ${theme}::theme_preference, density = ${density}::density_preference, email_notifications = ${emailNotifications}
+    UPDATE preferences SET theme = ${theme}::theme_preference, email_notifications = ${emailNotifications}
     WHERE profile_id = ${identity.profileId}::uuid
   `;
 

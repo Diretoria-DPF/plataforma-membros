@@ -57,8 +57,8 @@
           <label for="reg-education">Escolaridade (opcional)
             <input type="text" id="reg-education" maxlength="120">
           </label>
-          <label for="reg-password">Senha (mínimo 12 caracteres)
-            <input type="password" id="reg-password" autocomplete="new-password" required minlength="12">
+          <label for="reg-password">Senha (mínimo 8 caracteres)
+            <input type="password" id="reg-password" autocomplete="new-password" required minlength="8">
           </label>
           <label for="reg-validation">Validação da conta
             <select id="reg-validation">
@@ -69,15 +69,15 @@
 
           <!-- Versões dos documentos: mantidas em texto fixo aqui porque este
                é um site estático (sem template do servidor). Precisam ficar em
-               sincronia manual com App.Constants.LEGAL_VERSIONS em
-               src/Constants.gs sempre que os documentos mudarem de forma material. -->
+               sincronia manual com LEGAL_VERSIONS em worker/src/constants.js
+               sempre que os documentos mudarem de forma material. -->
           <label class="checkbox-row" for="reg-terms">
             <input type="checkbox" id="reg-terms" required>
-            <span>Li e aceito os Termos de Uso (documento fornecido pela organização, versão 2026-09-24).</span>
+            <span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso e o Código de Conduta</a> (versão 2026-09-25).</span>
           </label>
           <label class="checkbox-row" for="reg-privacy">
             <input type="checkbox" id="reg-privacy" required>
-            <span>Li e aceito a Política de Privacidade (documento fornecido pela organização, versão 2026-09-24).</span>
+            <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-09-25).</span>
           </label>
 
           <button type="submit">Enviar cadastro</button>
@@ -113,11 +113,11 @@
         <p class="muted">Defina uma nova senha para voltar a acessar sua conta.</p>
 
         <form id="form-reset" novalidate>
-          <label for="reset-password">Nova senha (mínimo 12 caracteres)
-            <input type="password" id="reset-password" autocomplete="new-password" required minlength="12">
+          <label for="reset-password">Nova senha (mínimo 8 caracteres)
+            <input type="password" id="reset-password" autocomplete="new-password" required minlength="8">
           </label>
           <label for="reset-password-confirm">Confirmar nova senha
-            <input type="password" id="reset-password-confirm" autocomplete="new-password" required minlength="12">
+            <input type="password" id="reset-password-confirm" autocomplete="new-password" required minlength="8">
           </label>
           <button type="submit">Salvar nova senha</button>
         </form>
@@ -154,11 +154,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
           <span>Eventos</span>
         </button>
-        <button type="button" data-panel="panel-proposals" data-scope="all">
+        <button type="button" data-panel="panel-proposals" data-scope="all" style="position:relative;">
+          <span id="nav-badge-voting" class="nav-badge nav-badge-alert hidden" aria-label="Há votação aberta">!</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l14-7-4 16-4-6-6-3z"/></svg>
           <span>Propostas</span>
         </button>
-        <button type="button" data-panel="panel-tasks" data-scope="member">
+        <button type="button" data-panel="panel-tasks" data-scope="member" style="position:relative;">
+          <span id="nav-badge-tasks" class="nav-badge hidden"></span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>
           <span>Tarefas</span>
         </button>
@@ -247,8 +249,8 @@
             <div class="card">
               <h2>Meu perfil</h2>
               <form id="form-profile" novalidate>
-                <label for="profile-name">Nome completo
-                  <input type="text" id="profile-name" required minlength="3" maxlength="150">
+                <label for="profile-name">Nome completo <span class="muted">(não pode ser alterado)</span>
+                  <input type="text" id="profile-name" disabled>
                 </label>
                 <label for="profile-phone">Telefone
                   <input type="tel" id="profile-phone" required minlength="8" maxlength="30">
@@ -271,12 +273,6 @@
                     <option value="system">Automático</option>
                     <option value="light">Claro</option>
                     <option value="dark">Escuro</option>
-                  </select>
-                </label>
-                <label for="pref-density">Densidade
-                  <select id="pref-density">
-                    <option value="standard">Padrão</option>
-                    <option value="compact">Compacta</option>
                   </select>
                 </label>
                 <label class="checkbox-row" for="pref-email-notif">

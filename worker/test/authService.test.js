@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
 import * as AuthService from '../src/services/authService.js';
+import { GENERIC_AUTH_FAILURE_MESSAGE } from '../src/constants.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 // mailer.js chama fetch() de verdade (API da Resend) — mockamos fetch
@@ -58,7 +59,7 @@ describe('AuthService.login', () => {
     await expect(AuthService.login(sql, env, 'fulano@x.com', 'senha-errada', '', 'cid-1')).rejects.toMatchObject({ name: 'AuthError' });
   });
 
-  test('conta banida falha mesmo com senha correta', async () => {
+  test('conta banida com senha CORRETA recebe mensagem especifica de banimento', async () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
@@ -66,7 +67,24 @@ describe('AuthService.login', () => {
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'banned', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: true }])
       .mockResolvedValueOnce(undefined);
 
-    await expect(AuthService.login(sql, env, 'fulano@x.com', 'senha-correta', '', 'cid-1')).rejects.toMatchObject({ name: 'AuthError' });
+    await expect(AuthService.login(sql, env, 'fulano@x.com', 'senha-correta', '', 'cid-1')).rejects.toMatchObject({
+      name: 'AuthError',
+      message: expect.stringContaining('banida'),
+    });
+  });
+
+  test('conta banida com senha ERRADA continua recebendo a mensagem generica (nao revela banimento sem saber a senha)', async () => {
+    const sql = makeSql();
+    const env = makeEnv();
+    sql
+      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'banned', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: false }])
+      .mockResolvedValueOnce(undefined);
+
+    await expect(AuthService.login(sql, env, 'fulano@x.com', 'senha-errada', '', 'cid-1')).rejects.toMatchObject({
+      name: 'AuthError',
+      message: GENERIC_AUTH_FAILURE_MESSAGE,
+    });
   });
 
   test('excesso de tentativas propaga RateLimitError antes de qualquer SELECT em profiles', async () => {

@@ -85,10 +85,19 @@ describe('security.js — sessão', () => {
     expect(identity).toMatchObject({ profileId: '1', role: 'admin' });
   });
 
-  test('requireSession lança AuthError quando resolveSession devolve null', async () => {
+  test('requireSession lança AuthError quando não há linha (sessão inexistente)', async () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([]);
     await expect(S.requireSession(sql, PEPPER, 'token-invalido')).rejects.toMatchObject({ name: 'AuthError', expected: true });
+  });
+
+  test('requireSession lança mensagem ESPECÍFICA de banimento quando a sessão é válida mas a conta está banida (diferente de resolveSession, que trata como anônimo)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([{ profile_id: '1', role: 'member', status: 'banned', full_name: 'X', email: 'x@y.com', email_confirmed_at: '2024-01-01' }]);
+    await expect(S.requireSession(sql, PEPPER, 'token-valido-de-conta-banida')).rejects.toMatchObject({
+      name: 'AuthError',
+      message: expect.stringContaining('banida'),
+    });
   });
 });
 

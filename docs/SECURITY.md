@@ -46,19 +46,32 @@ permanece como risco conhecido e não eliminado.
 - Logout revoga a sessão no servidor (`revoked_at`); redefinição de senha
   revoga **todas** as sessões da conta.
 
-### Sessão no cliente (HtmlService) — o que é e o que não é
-O Apps Script serve a página dentro de um `iframe` sandbox; o servidor
-**não tem como emitir um cookie `HttpOnly`** nesse modelo (isso não é uma
-omissão, é uma limitação da plataforma). Qualquer token mantido em
-JavaScript é, por definição, legível por outro script rodando no mesmo
-contexto. Decisão tomada: o token de sessão fica **apenas em uma variável
-JavaScript em memória no cliente** (nunca `localStorage`/`sessionStorage`/
-cookie). Consequência aceita: recarregar a página exige novo login. Ganho:
-um payload de XSS persistente que sobreviva entre recarregamentos não
-encontra um token salvo para reutilizar depois que a página fecha.
-**A defesa real contra esse cenário continua sendo nunca ter XSS em
-primeiro lugar** (próxima seção) — isto é mitigação de profundidade, não
-uma solução para XSS.
+### Sessão no cliente — decisão revisitada em 2026-09-25
+O front-end é um site estático servido pela origem própria (GitHub Pages);
+o backend (Cloudflare Workers) **não tem como emitir um cookie `HttpOnly`**
+nesse modelo de API JSON pura. Qualquer token mantido em JavaScript é, por
+definição, legível por outro script rodando no mesmo contexto.
+
+Até a versão anterior, o token ficava **apenas em memória** (nunca
+`localStorage`), especificamente para que um XSS persistente não
+encontrasse um token salvo para reutilizar após a página fechar. Essa
+proteção foi conscientemente trocada por conveniência de uso: por pedido
+explícito, a sessão agora é espelhada em `localStorage` com sua própria
+expiração de 30 minutos (`frontend/app.js`, `SESSION_CACHE_KEY`), para que
+a pessoa continue logada ao atualizar a página ou voltar depois. Ao
+expirar (ou no logout), o valor é apagado imediatamente — inclusive com um
+temporizador que força o retorno à tela de login no exato instante da
+expiração, mesmo com a aba aberta o tempo todo.
+
+**O que isso muda de verdade:** um XSS persistente agora consegue
+reutilizar a sessão salva enquanto ela não expirar (até 30 min), em vez de
+perder o acesso assim que a aba fechar. **O que não muda:** o servidor
+segue revalidando a sessão contra o banco a cada chamada (nunca confia
+apenas no que está salvo no navegador); a senha em si nunca é persistida
+em lugar nenhum do cliente; e a defesa real contra esse cenário continua
+sendo nunca ter XSS em primeiro lugar (próxima seção) — isto sempre foi
+mitigação de profundidade, não uma solução para XSS, com ou sem
+`localStorage`.
 
 ### CSRF e CORS (atualizado após a separação front/back)
 Até a versão anterior, o front-end era servido pelo próprio `HtmlService`

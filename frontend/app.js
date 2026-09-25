@@ -34,18 +34,70 @@
   });
 
   // ===========================================================================
-  // Estado do cliente
+  // Estado do cliente + cache de sessão
   //
-  // O token de sessão fica SOMENTE em uma variável JavaScript em memória
-  // (nunca em localStorage/sessionStorage/cookie): recarregar a página exige
-  // novo login, mas isso reduz o alcance de um eventual XSS persistente, que
-  // não encontraria um token salvo para reutilizar. Essa regra vale
-  // independente de onde o front-end está hospedado.
+  // Decisão de produto (revisitada em 2026-09-25): o token de sessão agora é
+  // espelhado em localStorage com expiração própria de 30 minutos (mesmo TTL
+  // que o servidor já aplica à sessão), para a pessoa continuar logada ao
+  // atualizar a página ou fechar e voltar ao navegador. Isso troca uma
+  // mitigação de profundidade contra XSS persistente (token só em memória)
+  // por conveniência de uso — decisão consciente, não um descuido: o
+  // servidor CONTINUA revalidando a sessão a cada chamada (nunca confia só
+  // no que está salvo aqui), e o valor salvo nunca é a senha nem nada além
+  // do token opaco + o horário em que expira. Ver docs/SECURITY.md.
   // ===========================================================================
+  var SESSION_CACHE_KEY = 'pm_session';
+  var SESSION_TTL_MS = 30 * 60 * 1000;
+  var sessionExpiryTimer = null;
+
   var state = {
     sessionToken: null,
     profile: null, // { fullName, role }
   };
+
+  function saveSessionCache(token) {
+    try {
+      localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify({ token: token, expiresAt: Date.now() + SESSION_TTL_MS }));
+    } catch (err) {
+      // localStorage indisponível (modo privado, cookies bloqueados etc.) —
+      // a plataforma continua funcionando, só sem persistir entre recargas.
+    }
+  }
+
+  function readSessionCache() {
+    try {
+      var raw = localStorage.getItem(SESSION_CACHE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || !parsed.token || !parsed.expiresAt || parsed.expiresAt <= Date.now()) {
+        localStorage.removeItem(SESSION_CACHE_KEY);
+        return null;
+      }
+      return parsed;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function clearSessionCache() {
+    try { localStorage.removeItem(SESSION_CACHE_KEY); } catch (err) { /* ignora */ }
+    if (sessionExpiryTimer) { clearTimeout(sessionExpiryTimer); sessionExpiryTimer = null; }
+  }
+
+  /** Agenda o retorno automático à tela de login exatamente quando o cache expira, mesmo com a aba aberta o tempo todo. */
+  function scheduleSessionExpiry(expiresAt) {
+    if (sessionExpiryTimer) clearTimeout(sessionExpiryTimer);
+    var msLeft = Math.max(0, expiresAt - Date.now());
+    sessionExpiryTimer = setTimeout(function () {
+      clearSessionCache();
+      state.sessionToken = null;
+      state.profile = null;
+      document.getElementById('app-root').classList.add('hidden');
+      document.getElementById('public-shell').classList.remove('hidden');
+      showPublicScreen('screen-welcome');
+      setStatus('msg-login', 'Sua sessão expirou. Faça login novamente.', 'info');
+    }, msLeft);
+  }
 
   // ===========================================================================
   // Utilitários de DOM seguros (nunca innerHTML com dado dinâmico)
@@ -193,12 +245,11 @@
   })();
 
   // ===========================================================================
-  // Preferências visuais (tema / densidade)
+  // Preferências visuais (tema)
   // ===========================================================================
   function applyPreferences(prefs) {
     var root = document.documentElement;
     if (prefs && prefs.theme) root.setAttribute('data-theme', prefs.theme);
-    if (prefs && prefs.density) root.setAttribute('data-density', prefs.density);
   }
 
   // ===========================================================================
@@ -264,6 +315,8 @@
       if (!res.success) { setStatus('msg-login', res.message, 'error'); return; }
       state.sessionToken = res.sessionToken;
       state.profile = res.profile;
+      saveSessionCache(res.sessionToken);
+      scheduleSessionExpiry(Date.now() + SESSION_TTL_MS);
       setStatus('msg-login', '', null);
       enterApp();
     });
@@ -324,6 +377,7 @@
     var token = state.sessionToken;
     state.sessionToken = null;
     state.profile = null;
+    clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
     document.getElementById('form-login').reset();
@@ -350,6 +404,26 @@
     setupNavigationForRole(state.profile.role);
     showPanel('panel-home');
     loadProfileAndPreferences();
+    refreshNavBadges();
+  }
+
+  /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */
+  function refreshNavBadges() {
+    if (!state.profile || state.profile.role === 'visitor') return;
+
+    callApi('apiListOpenProposalsForVoting', state.sessionToken).then(function (res) {
+      var votingBadge = document.getElementById('nav-badge-voting');
+      var hasOpenVoting = res.success && res.proposals && res.proposals.some(function (p) { return !p.alreadyVoted; });
+      votingBadge.classList.toggle('hidden', !hasOpenVoting);
+    });
+
+    callApi('apiListTasks', state.sessionToken).then(function (res) {
+      var tasksBadge = document.getElementById('nav-badge-tasks');
+      if (!res.success || !res.tasks) { tasksBadge.classList.add('hidden'); return; }
+      var activeCount = res.tasks.filter(function (t) { return !t.alreadySignedUp; }).length;
+      tasksBadge.textContent = String(activeCount);
+      tasksBadge.classList.toggle('hidden', activeCount === 0);
+    });
   }
 
   function setupNavigationForRole(role) {
@@ -538,7 +612,7 @@
     callApi('apiCastVote', state.sessionToken, proposalId, choice, complement).then(function (res) {
       feedbackEl.textContent = res.message;
       feedbackEl.setAttribute('data-kind', res.success ? 'success' : 'error');
-      if (res.success) loadProposalsAndVoting();
+      if (res.success) { loadProposalsAndVoting(); refreshNavBadges(); }
     });
   }
 
@@ -579,6 +653,7 @@
     callApi('apiSignupForTask', state.sessionToken, taskId).then(function (res) {
       setStatus('tasks-status', res.message, res.success ? 'success' : 'error');
       loadTasks();
+      refreshNavBadges();
     });
   }
 
@@ -595,7 +670,6 @@
       document.getElementById('profile-education').value = res.profile.education || '';
 
       document.getElementById('pref-theme').value = res.preferences.theme;
-      document.getElementById('pref-density').value = res.preferences.density;
       document.getElementById('pref-email-notif').checked = !!res.preferences.emailNotifications;
 
       applyPreferences(res.preferences);
@@ -604,16 +678,16 @@
 
   document.getElementById('form-profile').addEventListener('submit', function (evt) {
     evt.preventDefault();
+    // Nome completo não vai no payload: é imutável após o cadastro (o campo
+    // já fica desabilitado na interface) e o servidor ignora esse campo de
+    // qualquer forma mesmo que alguém tente enviar via chamada direta.
     var payload = {
-      fullName: document.getElementById('profile-name').value,
       phone: document.getElementById('profile-phone').value,
       city: document.getElementById('profile-city').value,
       education: document.getElementById('profile-education').value,
     };
     callApi('apiUpdateMyProfile', state.sessionToken, payload).then(function (res) {
       setStatus('msg-profile', res.message, res.success ? 'success' : 'error');
-      if (res.success) state.profile.fullName = payload.fullName;
-      if (res.success) document.getElementById('header-user-name').textContent = payload.fullName;
     });
   });
 
@@ -621,7 +695,6 @@
     evt.preventDefault();
     var payload = {
       theme: document.getElementById('pref-theme').value,
-      density: document.getElementById('pref-density').value,
       emailNotifications: document.getElementById('pref-email-notif').checked,
     };
     callApi('apiUpdateMyPreferences', state.sessionToken, payload).then(function (res) {
@@ -1052,6 +1125,26 @@
         }
       });
       showPublicScreen('screen-reset');
+      return;
+    }
+
+    // Restaura a sessão do cache local (até 30min), se houver uma válida —
+    // o servidor SEMPRE revalida de verdade via apiGetMyProfile antes de
+    // confiar em qualquer coisa salva no navegador.
+    var cached = readSessionCache();
+    if (cached) {
+      state.sessionToken = cached.token;
+      callApi('apiGetMyProfile', cached.token).then(function (res) {
+        if (!res.success) {
+          clearSessionCache();
+          state.sessionToken = null;
+          showPublicScreen('screen-welcome');
+          return;
+        }
+        state.profile = { fullName: res.profile.fullName, role: res.profile.role };
+        scheduleSessionExpiry(cached.expiresAt);
+        enterApp();
+      });
       return;
     }
 
