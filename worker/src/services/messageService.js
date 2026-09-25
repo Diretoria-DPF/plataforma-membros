@@ -248,6 +248,31 @@ export async function markConversationRead(sql, identity, conversationId, lastRe
   return { success: true };
 }
 
+/**
+ * "Limpar conversa" (pedido direto do dono da plataforma: "não deixar
+ * muita informação nas conversas"). Apaga TODO o histórico da conversa
+ * para os DOIS participantes — não é um "limpar só para mim" (que exigiria
+ * uma coluna nova de "oculto até X" por participante); é a interpretação
+ * mais simples e mais alinhada ao resto do desenho de mensageria (nada
+ * fica guardado além do necessário). A confirmação no frontend precisa
+ * deixar claro que afeta a outra pessoa também.
+ */
+export async function clearConversation(sql, identity, conversationId, correlationId) {
+  assertMemberOrAdmin(identity);
+  const convId = S.normalizeText(conversationId);
+  if (!convId) throw E.ValidationError('Conversa inválida.');
+  await assertParticipant(sql, identity, convId);
+
+  await sql`DELETE FROM messages WHERE conversation_id = ${convId}::uuid`;
+  await sql`
+    UPDATE conversations SET last_message_at = NULL, low_last_read_id = 0, high_last_read_id = 0
+    WHERE id = ${convId}::uuid
+  `;
+
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'CLEAR_CONVERSATION', 'conversation', convId, 'success', null);
+  return { success: true, message: 'Conversa limpa.' };
+}
+
 export async function syncMessaging(sql, identity) {
   assertMemberOrAdmin(identity);
   const rows = await sql`

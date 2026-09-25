@@ -104,6 +104,18 @@ describe('MessagingKeyService.publishMessagingKey', () => {
     expect(res.keyVersion).toBe(1);
   });
 
+  test("kdfAlgorithm 'NONE' (chave sem frase-secreta) dispensa iterations/salt e publica com sucesso", async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit
+      .mockResolvedValueOnce([{ key_version: 1 }]) // CTE de supersede+insert
+      .mockResolvedValueOnce(undefined); // logAudit
+    const res = await MessagingKeyService.publishMessagingKey(
+      sql, MEMBER, { algorithm: 'X25519', publicKey: VALID_PUBLIC_KEY, kdfAlgorithm: 'NONE', expectedCurrentVersion: 0 }, 'cid'
+    );
+    expect(res.success).toBe(true);
+  });
+
   test('expectedCurrentVersion desatualizado (rotação concorrente) vira ConflictError', async () => {
     const sql = makeSql();
     sql

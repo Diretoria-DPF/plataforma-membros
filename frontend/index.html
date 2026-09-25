@@ -338,38 +338,37 @@
           é sempre montado via h()/text(), nunca innerHTML.
         -->
         <section id="panel-messages" class="hidden">
-          <div class="card" id="messaging-lock-card">
+          <div class="card" id="messaging-preparing">
             <h2>Mensagens</h2>
-            <div id="messaging-lock-content"></div>
+            <p class="muted">Suas mensagens são cifradas de ponta a ponta — nem a liga consegue ler.</p>
           </div>
 
-          <div class="card hidden" id="messaging-main-card">
-            <div id="messaging-conversations-view">
-              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-                <h2 style="margin:0;">Conversas</h2>
-                <button type="button" class="secondary" id="btn-messaging-lock" style="width:auto;">Bloquear mensagens</button>
-              </div>
-              <p class="muted">Mensagens cifradas de ponta a ponta — só você e a outra pessoa conseguem ler.</p>
+          <div class="card hidden" id="messaging-main-card" style="padding:0; overflow:hidden;">
+            <div id="messaging-conversations-view" style="padding:20px;">
+              <h2 style="margin:0 0 4px;">Conversas</h2>
+              <p class="muted" style="margin:0 0 12px;">Cifradas de ponta a ponta — só você e a outra pessoa conseguem ler.</p>
               <div id="messaging-status" class="status-msg" role="status" aria-live="polite"></div>
               <div id="messaging-conversations-list"></div>
             </div>
 
-            <div class="hidden" id="messaging-thread-view">
-              <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
-                <button type="button" class="secondary" id="btn-messaging-back" style="width:auto;">Voltar</button>
-                <div style="flex:1;">
-                  <h3 id="messaging-thread-peer-name" style="margin:0;"></h3>
-                  <p class="muted" id="messaging-thread-peer-sub" style="margin:0; font-size:13px;"></p>
+            <div class="hidden chat-thread" id="messaging-thread-view">
+              <div class="chat-thread-header">
+                <button type="button" class="secondary chat-back-btn" id="btn-messaging-back" aria-label="Voltar">←</button>
+                <div id="messaging-thread-peer-avatar" class="chat-thread-header-avatar"></div>
+                <div style="flex:1; min-width:0;">
+                  <h3 id="messaging-thread-peer-name" class="chat-thread-header-name"></h3>
+                  <p class="muted" id="messaging-thread-peer-sub" style="margin:0; font-size:12px;"></p>
                 </div>
+                <button type="button" class="secondary" id="btn-messaging-clear" style="width:auto;" title="Limpar conversa">Limpar</button>
               </div>
-              <div id="messaging-tofu-banner"></div>
-              <div id="messaging-thread-list" style="display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto; padding:6px; border:1px solid var(--border, #ddd); border-radius:var(--radius-md, 8px);"></div>
-              <div id="messaging-thread-status" class="status-msg" role="alert" aria-live="polite"></div>
-              <form id="form-messaging-send" novalidate style="display:flex; gap:8px; margin-top:10px; align-items:flex-end;">
-                <textarea id="messaging-send-text" maxlength="2000" placeholder="Escreva uma mensagem..." style="flex:1; min-height:44px; margin:0;"></textarea>
-                <button type="submit" id="btn-messaging-send" style="width:auto;">Enviar</button>
+              <div id="messaging-tofu-banner" style="padding:0 14px;"></div>
+              <div id="messaging-thread-list" class="chat-thread-list"></div>
+              <div id="messaging-thread-status" class="status-msg" role="alert" aria-live="polite" style="margin:0 14px;"></div>
+              <form id="form-messaging-send" novalidate class="chat-composer">
+                <textarea id="messaging-send-text" maxlength="2000" placeholder="Escreva uma mensagem..." rows="1"></textarea>
+                <button type="submit" id="btn-messaging-send" class="chat-send-btn" aria-label="Enviar">➤</button>
               </form>
-              <p class="muted" id="messaging-char-counter" style="text-align:right; font-size:12px; margin:2px 0 0;">0 / 2000</p>
+              <p class="muted" id="messaging-char-counter" style="text-align:right; font-size:11px; margin:0 14px 8px;">0 / 2000</p>
             </div>
           </div>
         </section>

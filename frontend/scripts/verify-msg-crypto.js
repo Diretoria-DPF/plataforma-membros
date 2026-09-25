@@ -45,91 +45,26 @@ async function main() {
   console.log('== msg-crypto.js — verificação em Node (' + process.version + ') ==\n');
 
   // ---------------------------------------------------------------------
-  // 1. Vetor dourado / determinismo: mesma frase + salt + accountId +
-  //    iterações => sempre a mesma chave pública. O valor abaixo foi
-  //    capturado rodando este mesmo script (ver git log) e passa a
-  //    congelar a derivação: qualquer mudança futura em
-  //    deriveIdentityKeyPair que produza um valor diferente aqui é uma
-  //    mudança BREAKING (trancaria contas já existentes do lado de fora)
-  //    e precisa ser tratada como rotação de versão de protocolo, não
-  //    como um ajuste normal.
+  // 1. generateIdentityKeyPair produz chaves de 32 bytes (43 chars
+  //    base64url) e NUNCA repete entre chamadas (aleatório de verdade,
+  //    sem frase-secreta nem determinismo nenhum — ao contrário do fluxo
+  //    antigo, aqui repetir a chamada TEM que dar uma chave diferente).
   // ---------------------------------------------------------------------
-  const GOLDEN_PASSPHRASE = 'correto cavalo bateria grampo laift teste vetor';
-  const GOLDEN_SALT = 'AAAAAAAAAAAAAAAAAAAAAA'; // 16 bytes zerados, base64url sem padding
-  const GOLDEN_ACCOUNT_ID = '11111111-1111-1111-1111-111111111111';
-  const GOLDEN_ITERATIONS = M.MSG_CRYPTO_CONFIG.KDF_MIN_ITERATIONS;
-  const GOLDEN_EXPECTED_PUBLIC_KEY = 'wHyRcMDtNb06LyWoFNrE22GhqCRe2yDdlnFDx0YD5XQ';
-
-  const golden1 = await M.deriveIdentityKeyPair({
-    passphrase: GOLDEN_PASSPHRASE, saltBase64url: GOLDEN_SALT, iterations: GOLDEN_ITERATIONS, accountId: GOLDEN_ACCOUNT_ID,
-  });
-  const golden2 = await M.deriveIdentityKeyPair({
-    passphrase: GOLDEN_PASSPHRASE, saltBase64url: GOLDEN_SALT, iterations: GOLDEN_ITERATIONS, accountId: GOLDEN_ACCOUNT_ID,
-  });
-  assert.strictEqual(golden1.publicKeyBase64url, golden2.publicKeyBase64url, 'derivação não é determinística');
-  assert.strictEqual(golden1.publicKeyBase64url.length, 43, 'chave pública X25519 deve ter 43 chars base64url (32 bytes sem padding)');
-  if (GOLDEN_EXPECTED_PUBLIC_KEY !== '__PENDING__') {
-    assert.strictEqual(golden1.publicKeyBase64url, GOLDEN_EXPECTED_PUBLIC_KEY, 'VETOR DOURADO QUEBROU — mudança na derivação trancaria contas existentes');
-  } else {
-    console.log('  [golden vector capturado nesta execução]: ' + golden1.publicKeyBase64url);
-  }
-  ok('derivação determinística (mesma entrada => mesma chave pública), 32 bytes');
+  const idA1 = await M.generateIdentityKeyPair();
+  const idA2 = await M.generateIdentityKeyPair();
+  assert.strictEqual(idA1.publicKeyBase64url.length, 43, 'chave pública X25519 deve ter 43 chars base64url (32 bytes sem padding)');
+  assert.notStrictEqual(idA1.publicKeyBase64url, idA2.publicKeyBase64url, 'duas gerações produziram a MESMA chave — não está aleatório');
+  ok('generateIdentityKeyPair produz chave de 32 bytes, diferente a cada chamada');
 
   // ---------------------------------------------------------------------
-  // 2. Separação de domínio: accountId diferente => chave diferente,
-  //    mesmo com a mesma frase e o mesmo salt.
-  // ---------------------------------------------------------------------
-  const otherAccount = await M.deriveIdentityKeyPair({
-    passphrase: GOLDEN_PASSPHRASE, saltBase64url: GOLDEN_SALT, iterations: GOLDEN_ITERATIONS, accountId: '22222222-2222-2222-2222-222222222222',
-  });
-  assert.notStrictEqual(golden1.publicKeyBase64url, otherAccount.publicKeyBase64url, 'accountId diferente produziu a MESMA chave — falha de separação de domínio');
-  ok('accountId diferente => chave pública diferente (separação de domínio)');
-
-  // ---------------------------------------------------------------------
-  // 3. Frase diferente => chave diferente.
-  // ---------------------------------------------------------------------
-  const otherPassphrase = await M.deriveIdentityKeyPair({
-    passphrase: 'outra frase completamente diferente aqui', saltBase64url: GOLDEN_SALT, iterations: GOLDEN_ITERATIONS, accountId: GOLDEN_ACCOUNT_ID,
-  });
-  assert.notStrictEqual(golden1.publicKeyBase64url, otherPassphrase.publicKeyBase64url, 'frase diferente produziu a MESMA chave');
-  ok('frase-secreta diferente => chave pública diferente');
-
-  // ---------------------------------------------------------------------
-  // 4. NFKC: formas Unicode equivalentes (composta vs decomposta) do
-  //    mesmo texto produzem a mesma chave.
-  // ---------------------------------------------------------------------
-  const composed = 'café com açúcar e pão dourado teste frase segura';
-  const decomposed = composed.normalize('NFD'); // decompõe acentos em base + combining marks
-  const fromComposed = await M.deriveIdentityKeyPair({ passphrase: composed, saltBase64url: GOLDEN_SALT, iterations: GOLDEN_ITERATIONS, accountId: GOLDEN_ACCOUNT_ID });
-  const fromDecomposed = await M.deriveIdentityKeyPair({ passphrase: decomposed, saltBase64url: GOLDEN_SALT, iterations: GOLDEN_ITERATIONS, accountId: GOLDEN_ACCOUNT_ID });
-  assert.strictEqual(fromComposed.publicKeyBase64url, fromDecomposed.publicKeyBase64url, 'NFKC não igualou formas Unicode equivalentes');
-  ok('NFKC: formas Unicode compostas e decompostas geram a mesma chave');
-
-  // ---------------------------------------------------------------------
-  // 5. Iterações abaixo do piso são recusadas pelo CLIENTE, mesmo que um
-  //    "servidor" malicioso tente entregar um valor baixo.
-  // ---------------------------------------------------------------------
-  let rejectedLowIterations = false;
-  try {
-    await M.deriveIdentityKeyPair({ passphrase: GOLDEN_PASSPHRASE, saltBase64url: GOLDEN_SALT, iterations: 1000, accountId: GOLDEN_ACCOUNT_ID });
-  } catch (err) {
-    rejectedLowIterations = true;
-  }
-  assert.ok(rejectedLowIterations, 'derivação aceitou iterações abaixo do piso mínimo');
-  ok('iterações abaixo do piso mínimo são recusadas pelo cliente');
-
-  // ---------------------------------------------------------------------
-  // 6. Chave de conversa simétrica: A deriva com (privA, pubB) e B deriva
+  // 2. Chave de conversa simétrica: A deriva com (privA, pubB) e B deriva
   //    com (privB, pubA) — devem chegar na MESMA chave AES-GCM (round
   //    trip: A cifra, B decifra).
   // ---------------------------------------------------------------------
-  const saltA = M.generateSaltBase64url();
-  const saltB = M.generateSaltBase64url();
-  const iterations = M.MSG_CRYPTO_CONFIG.KDF_MIN_ITERATIONS;
   const accountA = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
   const accountB = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
-  const identityA = await M.deriveIdentityKeyPair({ passphrase: 'frase da conta A bem longa o suficiente', saltBase64url: saltA, iterations, accountId: accountA });
-  const identityB = await M.deriveIdentityKeyPair({ passphrase: 'frase da conta B tambem bem longa aqui', saltBase64url: saltB, iterations, accountId: accountB });
+  const identityA = await M.generateIdentityKeyPair();
+  const identityB = await M.generateIdentityKeyPair();
 
   const conversationId = 'c0ffee00-c0ff-eec0-ffee-c0ffeec0ffee';
   const keyA = await M.deriveConversationKey({
@@ -157,7 +92,7 @@ async function main() {
   ok('formato do payload (iv 16 chars, ciphertext 24-12000, base64url) compatível com messageService.js');
 
   // ---------------------------------------------------------------------
-  // 7. AAD adulterado, IV trocado ou chave errada => decifragem falha.
+  // 3. AAD adulterado, IV trocado ou chave errada => decifragem falha.
   // ---------------------------------------------------------------------
   let failedTamperedAad = false;
   try {
@@ -179,7 +114,7 @@ async function main() {
   } catch (err) { failedWrongIv = true; }
   assert.ok(failedWrongIv, 'decifragem aceitou um IV diferente do usado para cifrar');
 
-  const identityC = await M.deriveIdentityKeyPair({ passphrase: 'frase de uma terceira conta C bem longa', saltBase64url: M.generateSaltBase64url(), iterations, accountId: 'cccccccc-cccc-cccc-cccc-cccccccccccc' });
+  const identityC = await M.generateIdentityKeyPair();
   const wrongKey = await M.deriveConversationKey({
     privateKey: identityC.privateKey, peerPublicKeyBase64url: identityA.publicKeyBase64url,
     conversationId, selfId: 'cccccccc-cccc-cccc-cccc-cccccccccccc', selfKeyVersion: 1, peerId: accountA, peerKeyVersion: 1,
@@ -192,7 +127,7 @@ async function main() {
   ok('AAD adulterado, IV trocado e chave errada são todos rejeitados na decifragem');
 
   // ---------------------------------------------------------------------
-  // 8. IVs de chamadas sucessivas nunca são iguais (aleatório por
+  // 4. IVs de chamadas sucessivas nunca são iguais (aleatório por
   //    mensagem, nunca reuso).
   // ---------------------------------------------------------------------
   const ivsSeen = new Set();
@@ -204,11 +139,7 @@ async function main() {
   ok('25 cifragens sucessivas produziram 25 IVs distintos (nunca reuso)');
 
   // ---------------------------------------------------------------------
-  // 9. Preenchimento do texto claro é sempre múltiplo de 256 bytes UTF-8
-  //    (mesmo verificando via decodificação do ciphertext — indiretamente,
-  //    checamos que mensagens de tamanhos bem diferentes produzem
-  //    ciphertexts cujo comprimento decodificado é sempre congruente
-  //    entre si módulo o crescimento em múltiplos de 256).
+  // 5. Preenchimento do texto claro é sempre múltiplo de 256 bytes UTF-8.
   // ---------------------------------------------------------------------
   const shortMsg = await M.encryptMessage({ conversationKey: keyA, plaintext: 'oi', aad: Object.assign({}, aad, { clientMessageId: 'pad-1' }) });
   const longerMsg = await M.encryptMessage({ conversationKey: keyA, plaintext: 'oi' + 'x'.repeat(50), aad: Object.assign({}, aad, { clientMessageId: 'pad-2' }) });
@@ -221,7 +152,7 @@ async function main() {
   ok('preenchimento do texto claro sempre arredonda para múltiplo de 256 bytes UTF-8');
 
   // ---------------------------------------------------------------------
-  // 10. Limite de tamanho do texto claro é aplicado ANTES de cifrar.
+  // 6. Limite de tamanho do texto claro é aplicado ANTES de cifrar.
   // ---------------------------------------------------------------------
   let rejectedTooLong = false;
   try {
@@ -231,26 +162,7 @@ async function main() {
   ok('texto claro acima de MESSAGE_MAX_LENGTH (2000) é recusado antes de cifrar');
 
   // ---------------------------------------------------------------------
-  // 11. Política mínima de frase-secreta (DP-10).
-  // ---------------------------------------------------------------------
-  assert.strictEqual(M.checkPassphraseStrength('curta').ok, false, 'aceitou frase curta demais');
-  assert.strictEqual(M.checkPassphraseStrength('aaaaaaaaaaaaaaaa').ok, false, 'aceitou caractere único repetido');
-  assert.strictEqual(M.checkPassphraseStrength('abcdefghijklmnop').ok, false, 'aceitou sequência alfabética óbvia');
-  assert.strictEqual(M.checkPassphraseStrength('correto cavalo bateria grampo').ok, true, 'rejeitou uma frase razoável');
-  ok('política mínima de frase-secreta (DP-10): tamanho, repetição e sequências óbvias');
-
-  // ---------------------------------------------------------------------
-  // 12. Gerador de frase: palavras dentro da lista, entropia coerente.
-  // ---------------------------------------------------------------------
-  const generated = M.generatePassphrase();
-  const words = generated.passphrase.split(' ');
-  assert.strictEqual(words.length, M.MSG_CRYPTO_CONFIG.PASSPHRASE_WORD_COUNT, 'gerador não produziu a quantidade de palavras configurada');
-  assert.ok(generated.entropyBits > 40, 'entropia do gerador ficou baixa demais (' + generated.entropyBits.toFixed(1) + ' bits)');
-  console.log('  [info] lista de ' + M._internal.PASSPHRASE_WORDS_LENGTH + ' palavras, entropia do gerador: ' + generated.entropyBits.toFixed(1) + ' bits');
-  ok('gerador de frase-secreta produz N palavras com entropia > 40 bits');
-
-  // ---------------------------------------------------------------------
-  // 13. Fingerprint e número de segurança: determinísticos e simétricos.
+  // 7. Fingerprint e número de segurança: determinísticos e simétricos.
   // ---------------------------------------------------------------------
   const fp1 = await M.computeFingerprint(identityA.publicKeyBase64url);
   const fp2 = await M.computeFingerprint(identityA.publicKeyBase64url);
@@ -261,12 +173,10 @@ async function main() {
   ok('fingerprint determinístico; número de segurança simétrico (A,B) === (B,A)');
 
   // ---------------------------------------------------------------------
-  // 14. Calibração do KDF nunca fica abaixo do piso mínimo.
+  // 8. isCryptoSupported reflete a disponibilidade real de subtle.
   // ---------------------------------------------------------------------
-  const calibrated = await M.calibrateKdfIterations();
-  assert.ok(calibrated >= M.MSG_CRYPTO_CONFIG.KDF_MIN_ITERATIONS, 'calibração devolveu um valor abaixo do piso mínimo');
-  console.log('  [info] iterações calibradas neste ambiente: ' + calibrated);
-  ok('calibração do PBKDF2 nunca fica abaixo do piso mínimo de 600000');
+  assert.strictEqual(M.isCryptoSupported(), true, 'isCryptoSupported deveria ser true neste Node 20+');
+  ok('isCryptoSupported() reflete a disponibilidade real do Web Crypto');
 
   console.log('\n' + passed + ' verificações passaram. msg-crypto.js OK.\n');
 }

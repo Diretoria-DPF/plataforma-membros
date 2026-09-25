@@ -1,66 +1,63 @@
 /**
  * frontend/messaging.js
- * Estado e UI da mensageria E2EE (Fase 3f de docs/PLANO_FASE3_MENSAGERIA.md).
- * Módulo ES que usa frontend/msg-crypto.js para toda a criptografia e um
- * pequeno namespace compartilhado (`window.App`, exposto por frontend/app.js)
- * para as poucas coisas que precisa de lá: `state.sessionToken`, `callApi`,
- * os builders de DOM `h`/`text` (NUNCA innerHTML — ver nota de segurança
- * abaixo) e alguns utilitários (`setStatus`, `clearEl`, `formatDate`,
- * `openConfirm`, `showPanel`). `app.js` continua um script clássico; só
- * este arquivo e msg-crypto.js são módulos ES (ver frontend/index.html).
+ * Estado e UI da mensageria E2EE (Fase 3f de docs/PLANO_FASE3_MENSAGERIA.md,
+ * simplificada em 2026-09-25: sem frase-secreta — feedback direto do dono
+ * da plataforma de que a fricção de senha estava afastando os membros do
+ * uso real). Módulo ES que usa frontend/msg-crypto.js para toda a
+ * criptografia e um pequeno namespace compartilhado (`window.App`, exposto
+ * por frontend/app.js) para as poucas coisas que precisa de lá:
+ * `state.sessionToken`, `callApi`, os builders de DOM `h`/`text` (NUNCA
+ * innerHTML — ver nota de segurança abaixo) e alguns utilitários
+ * (`setStatus`, `clearEl`, `formatDate`, `openConfirm`, `showPanel`).
+ * `app.js` continua um script clássico; só este arquivo e msg-crypto.js
+ * são módulos ES (ver frontend/index.html).
  *
  * ===========================================================================
  * SEGURANÇA — auditar isto antes de qualquer alteração:
  * ===========================================================================
- * - A chave privada (`identity.privateKey`, um CryptoKey NÃO extraível) e a
- *   frase-secreta digitada só existem em variáveis deste módulo, em
- *   memória. NUNCA são gravadas em localStorage/sessionStorage/cookie,
- *   NUNCA aparecem num payload de `callApi`, NUNCA em console.log.
+ * - A chave privada (`identity.privateKey`, um CryptoKey NÃO extraível) é
+ *   gerada por msg-crypto.js e persistida SÓ neste navegador, via
+ *   IndexedDB (structured clone suporta guardar CryptoKey diretamente,
+ *   sem nunca exportar os bytes). NUNCA vai para localStorage/cookie,
+ *   NUNCA aparece num payload de `callApi`, NUNCA em console.log.
+ * - Trade-off aceito explicitamente (pedido do dono da plataforma, que
+ *   considerou a frase-secreta complicada demais): a identidade de
+ *   mensageria fica ligada a ESTE navegador/aparelho. Limpar os dados do
+ *   navegador ou trocar de aparelho perde o acesso ao histórico anterior
+ *   (mesmo trade-off que já existia com "esqueci a frase", só que agora
+ *   sem nenhuma fricção no dia a dia).
  * - O que ESTE módulo grava em localStorage é só o fingerprint de chaves
  *   já vistas (TOFU, seção 3.7 do plano) — não é segredo, é só um número
  *   de conferência.
  * - Todo texto decifrado (corpo da mensagem, nome do remetente, etc.) é
  *   inserido no DOM só via `text()`/`h()` do bridge — nunca `innerHTML`.
  * - `resetMessagingState()` é chamada no logout e na expiração de sessão
- *   (registrada via `App().onSessionEnd`) e apaga tudo da memória.
+ *   (ver frontend/app.js) e apaga o estado em memória — a chave em
+ *   IndexedDB continua lá (pertence ao navegador, não à sessão de login).
  */
 
 (function () {
   'use strict';
 
-  // Carregado como <script type="module">, então este arquivo roda numa
-  // Promise pendente até o import resolver — mas todo o corpo abaixo só
-  // referencia `MsgCrypto` dentro de funções chamadas depois, nunca no
-  // topo do módulo, então a ordem de carregamento relativa a app.js não
-  // importa (ver comentário equivalente sobre `window.App` mais abaixo).
   var MsgCrypto = null;
   var msgCryptoReady = import('./msg-crypto.js').then(function (mod) { MsgCrypto = mod; });
 
-  // ===========================================================================
-  // Bridge com app.js (script clássico, definido depois deste módulo no
-  // documento, mas SEMPRE antes de qualquer interação do usuário — ver
-  // frontend/index.html). Nunca acessado no topo do módulo, só dentro de
-  // funções chamadas em resposta a eventos.
-  // ===========================================================================
   function App() {
     if (!window.App) throw new Error('window.App ainda não está pronto (bug de ordem de carregamento).');
     return window.App;
   }
 
-  // ===========================================================================
-  // Constantes locais (algumas espelham worker/src/constants.js — ver
-  // comentário em msg-crypto.js sobre por que precisam ser mantidas
-  // manualmente em sincronia)
-  // ===========================================================================
   var TOFU_STORAGE_KEY = 'pm_msg_tofu_v1';
   var CONVERSATION_POLL_FAST_MS = 5000;
   var CONVERSATION_POLL_SLOW_MS = 30000;
   var CONVERSATION_POLL_ESCALATE_AFTER_MS = 2 * 60 * 1000;
   var GLOBAL_SYNC_INTERVAL_MS = 30000;
-  var UNLOCK_ATTEMPT_BASE_DELAY_MS = 800;
+  var IDB_NAME = 'laift-messaging';
+  var IDB_STORE = 'identity-keys';
 
   // ===========================================================================
-  // Estado em memória (tudo apagado por resetMessagingState)
+  // Estado em memória (tudo apagado por resetMessagingState, EXCETO a
+  // chave em IndexedDB, que pertence ao navegador, não à sessão)
   // ===========================================================================
   /** { profileId, privateKey (CryptoKey não extraível), publicKeyBase64url, keyVersion } */
   var identity = null;
@@ -76,10 +73,9 @@
   var conversationPollIntervalMs = CONVERSATION_POLL_FAST_MS;
   var lastNewMessageAt = 0;
   var globalSyncTimer = null;
-  var unlockAttemptCount = 0;
   var sendMuteUntilTs = 0;
   var sendMuteTimer = null;
-  var pendingPeerAfterUnlock = null; // peer que a UI tentou abrir antes de a identidade estar desbloqueada
+  var pendingPeerAfterUnlock = null; // peer que a UI tentou abrir antes de a identidade estar pronta
 
   function resetMessagingState() {
     identity = null;
@@ -92,10 +88,50 @@
     clientMessageIdsSeen = {};
     stopConversationPolling();
     stopGlobalSync();
-    unlockAttemptCount = 0;
     sendMuteUntilTs = 0;
     if (sendMuteTimer) { clearTimeout(sendMuteTimer); sendMuteTimer = null; }
     pendingPeerAfterUnlock = null;
+  }
+
+  // ===========================================================================
+  // IndexedDB — guarda o CryptoKey privado (não extraível) deste navegador,
+  // uma entrada por profileId. structured clone suporta CryptoKey
+  // diretamente: nunca exportamos os bytes para guardar isto.
+  // ===========================================================================
+  function openIdb() {
+    return new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('IndexedDB indisponível neste navegador.')); return; }
+      var req = window.indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = function () {
+        if (!req.result.objectStoreNames.contains(IDB_STORE)) {
+          req.result.createObjectStore(IDB_STORE, { keyPath: 'profileId' });
+        }
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error || new Error('Falha ao abrir IndexedDB.')); };
+    });
+  }
+
+  function idbGet(profileId) {
+    return openIdb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(IDB_STORE, 'readonly');
+        var req = tx.objectStore(IDB_STORE).get(profileId);
+        req.onsuccess = function () { resolve(req.result || null); };
+        req.onerror = function () { reject(req.error || new Error('Falha ao ler chave local.')); };
+      });
+    });
+  }
+
+  function idbPut(record) {
+    return openIdb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(record);
+        tx.oncomplete = function () { resolve(); };
+        tx.onerror = function () { reject(tx.error || new Error('Falha ao gravar chave local.')); };
+      });
+    });
   }
 
   // ===========================================================================
@@ -133,311 +169,82 @@
   }
 
   // ===========================================================================
-  // Tela de bloqueio: configuração (primeira vez) ou desbloqueio
+  // Preparar a identidade de mensageria: sem tela de senha nenhuma. Busca
+  // a chave local (IndexedDB); se não existir, gera uma nova e publica.
+  // Se já existir uma chave publicada no servidor sob outra versão (ex.:
+  // usuário abriu em outro navegador antes), a local prevalece só se a
+  // versão bater — senão, gera e publica uma nova (rotação), porque não há
+  // como recuperar a privada de uma versão publicada de outro aparelho.
   // ===========================================================================
-  function showLockCard(show) {
-    document.getElementById('messaging-lock-card').classList.toggle('hidden', !show);
-    document.getElementById('messaging-main-card').classList.toggle('hidden', show);
+  async function ensureIdentityReady(myKeyRes) {
+    var app = App();
+    var profileId = myKeyRes.profileId;
+
+    var local = null;
+    try { local = await idbGet(profileId); } catch (err) { local = null; }
+
+    if (local && myKeyRes.hasKey && local.keyVersion === myKeyRes.keyVersion && local.publicKeyBase64url === myKeyRes.publicKey) {
+      identity = { profileId: profileId, privateKey: local.privateKey, publicKeyBase64url: local.publicKeyBase64url, keyVersion: local.keyVersion };
+      return;
+    }
+
+    // Sem chave local válida para a versão ativa do servidor: gera uma
+    // nova e publica (primeira vez = expectedCurrentVersion 0; rotação =
+    // versão ativa atual, se houver).
+    var keyPair = await MsgCrypto.generateIdentityKeyPair();
+    var publishRes = await app.callApi('apiPublishMessagingKey', app.getState().sessionToken, {
+      algorithm: MsgCrypto.MSG_CRYPTO_CONFIG.ALGORITHM,
+      publicKey: keyPair.publicKeyBase64url,
+      kdfAlgorithm: MsgCrypto.MSG_CRYPTO_CONFIG.KDF_ALGORITHM,
+      expectedCurrentVersion: myKeyRes.hasKey ? myKeyRes.keyVersion : 0,
+    });
+    if (!publishRes.success) throw new Error(publishRes.message);
+
+    await idbPut({ profileId: profileId, privateKey: keyPair.privateKey, publicKeyBase64url: keyPair.publicKeyBase64url, keyVersion: publishRes.keyVersion });
+    identity = { profileId: profileId, privateKey: keyPair.privateKey, publicKeyBase64url: keyPair.publicKeyBase64url, keyVersion: publishRes.keyVersion };
   }
 
-  function clearLockContent() {
+  function showPreparing(show, message) {
     var app = App();
-    app.clearEl(document.getElementById('messaging-lock-content'));
+    document.getElementById('messaging-preparing').classList.toggle('hidden', !show);
+    document.getElementById('messaging-main-card').classList.toggle('hidden', show);
+    if (show) {
+      var el = document.getElementById('messaging-preparing');
+      app.clearEl(el);
+      el.appendChild(app.text('p', message || 'Preparando suas mensagens seguras...', { className: 'muted' }));
+    }
   }
 
   async function loadMessagingPanel() {
     await msgCryptoReady;
     var app = App();
     if (!MsgCrypto.isCryptoSupported()) {
-      showLockCard(true);
-      clearLockContent();
-      document.getElementById('messaging-lock-content').appendChild(
-        app.text('p', 'Seu navegador não é compatível com mensagens cifradas. Atualize o navegador para usar esta área.', { className: 'status-msg', 'data-kind': 'error' })
-      );
+      showPreparing(true, 'Seu navegador não é compatível com mensagens cifradas. Atualize o navegador para usar esta área.');
       return;
     }
     if (identity) {
-      showLockCard(false);
+      showPreparing(false);
       showConversationsView();
       loadConversations();
+      startGlobalSync();
+      resumePendingPeerIfAny();
       return;
     }
-    showLockCard(true);
-    clearLockContent();
-    document.getElementById('messaging-lock-content').appendChild(app.text('p', 'Carregando...', { className: 'muted' }));
 
-    var res = await app.callApi('apiGetMyMessagingKey', app.getState().sessionToken);
-    if (!res.success) {
-      clearLockContent();
-      document.getElementById('messaging-lock-content').appendChild(app.text('p', res.message, { className: 'status-msg', 'data-kind': 'error' }));
-      return;
-    }
-    if (res.hasKey) renderUnlockScreen(res);
-    else renderSetupScreen(res);
-  }
-
-  function renderExplanationBlock() {
-    var app = App();
-    return app.h('div', { className: 'status-msg', 'data-kind': 'info', style: 'display:block; margin-bottom:14px;' }, [
-      app.h('p', { style: 'margin:0 0 8px;' }, [app.h('strong', {}, ['Suas mensagens são cifradas de ponta a ponta.'])]),
-      app.text('p', 'A liga (nem o servidor) consegue ler o conteúdo. A chave que protege suas mensagens é gerada a partir de uma frase-secreta que só existe no seu aparelho — ela NUNCA é enviada para o servidor.', { style: 'margin:0 0 8px;' }),
-      app.text('p', 'Importante: essa frase NÃO é a sua senha de login. Se você esquecer a frase-secreta, não existe forma de recuperar o histórico de mensagens antigas — nem a liga consegue ajudar.', { style: 'margin:0;' }),
-    ]);
-  }
-
-  function renderSetupScreen(myKeyRes) {
-    var app = App();
-    clearLockContent();
-    var container = document.getElementById('messaging-lock-content');
-
-    var passInput = app.h('input', { type: 'password', id: 'messaging-setup-pass', autocomplete: 'off', placeholder: 'Frase-secreta (mínimo 12 caracteres)' });
-    var confirmInput = app.h('input', { type: 'password', id: 'messaging-setup-confirm', autocomplete: 'off', placeholder: 'Repita a frase-secreta' });
-    var ackCheckbox = app.h('input', { type: 'checkbox', id: 'messaging-setup-ack' });
-    var statusEl = app.h('div', { className: 'status-msg', role: 'alert', 'aria-live': 'polite' }, []);
-
-    var generateBtn = app.h('button', {
-      type: 'button', className: 'secondary',
-      onclick: function () {
-        var gen = MsgCrypto.generatePassphrase();
-        passInput.value = gen.passphrase;
-        confirmInput.value = gen.passphrase;
-        statusEl.textContent = 'Frase gerada (~' + Math.round(gen.entropyBits) + ' bits). Anote-a num lugar seguro antes de continuar.';
-        statusEl.setAttribute('data-kind', 'info');
-      },
-    }, ['Gerar frase para mim']);
-
-    var submitBtn = app.h('button', { type: 'submit' }, ['Ativar mensagens cifradas']);
-
-    var form = app.h('form', {
-      onsubmit: function (evt) {
-        evt.preventDefault();
-        handleSetupSubmit(passInput.value, confirmInput.value, ackCheckbox.checked, myKeyRes.profileId, statusEl, submitBtn);
-      },
-    }, [
-      app.h('label', { for: 'messaging-setup-pass' }, ['Frase-secreta', passInput]),
-      app.h('label', { for: 'messaging-setup-confirm' }, ['Confirmar frase-secreta', confirmInput]),
-      generateBtn,
-      app.h('label', { style: 'display:flex; align-items:center; gap:8px; font-weight:normal; margin-top:10px;' }, [ackCheckbox, app.text('span', 'Entendo que, se eu esquecer esta frase, perco o acesso ao histórico de mensagens para sempre.')]),
-      submitBtn,
-      statusEl,
-    ]);
-
-    container.appendChild(renderExplanationBlock());
-    container.appendChild(form);
-  }
-
-  async function handleSetupSubmit(passphrase, confirmPass, ackChecked, profileId, statusEl, submitBtn) {
-    var app = App();
-    if (!ackChecked) { statusEl.textContent = 'Marque que você entende que não há recuperação.'; statusEl.setAttribute('data-kind', 'error'); return; }
-    if (passphrase !== confirmPass) { statusEl.textContent = 'As duas frases não coincidem.'; statusEl.setAttribute('data-kind', 'error'); return; }
-    var strength = MsgCrypto.checkPassphraseStrength(passphrase);
-    if (!strength.ok) { statusEl.textContent = strength.reason; statusEl.setAttribute('data-kind', 'error'); return; }
-
-    submitBtn.disabled = true;
-    statusEl.textContent = 'Derivando chave (pode levar 1-2 segundos)...';
-    statusEl.setAttribute('data-kind', 'info');
-
+    showPreparing(true, 'Preparando suas mensagens seguras...');
     try {
-      var saltBase64url = MsgCrypto.generateSaltBase64url();
-      var iterations = await MsgCrypto.calibrateKdfIterations();
-      var keyPair = await MsgCrypto.deriveIdentityKeyPair({ passphrase: passphrase, saltBase64url: saltBase64url, iterations: iterations, accountId: profileId });
-
-      var publishRes = await app.callApi('apiPublishMessagingKey', app.getState().sessionToken, {
-        algorithm: MsgCrypto.MSG_CRYPTO_CONFIG.ALGORITHM,
-        publicKey: keyPair.publicKeyBase64url,
-        kdfAlgorithm: MsgCrypto.MSG_CRYPTO_CONFIG.KDF_ALGORITHM,
-        kdfIterations: iterations,
-        kdfSalt: saltBase64url,
-        expectedCurrentVersion: 0,
-      });
-      if (!publishRes.success) {
-        statusEl.textContent = publishRes.message;
-        statusEl.setAttribute('data-kind', 'error');
-        submitBtn.disabled = false;
-        return;
-      }
-
-      identity = { profileId: profileId, privateKey: keyPair.privateKey, publicKeyBase64url: keyPair.publicKeyBase64url, keyVersion: publishRes.keyVersion };
-      showLockCard(false);
+      var res = await app.callApi('apiGetMyMessagingKey', app.getState().sessionToken);
+      if (!res.success) { showPreparing(true, res.message); return; }
+      await ensureIdentityReady(res);
+      showPreparing(false);
       showConversationsView();
       loadConversations();
       startGlobalSync();
       resumePendingPeerIfAny();
     } catch (err) {
-      statusEl.textContent = (err && err.message) || 'Não foi possível ativar as mensagens cifradas.';
-      statusEl.setAttribute('data-kind', 'error');
-      submitBtn.disabled = false;
+      showPreparing(true, (err && err.message) || 'Não foi possível preparar as mensagens seguras. Tente novamente.');
     }
   }
-
-  function renderUnlockScreen(myKeyRes) {
-    var app = App();
-    clearLockContent();
-    var container = document.getElementById('messaging-lock-content');
-
-    var passInput = app.h('input', { type: 'password', id: 'messaging-unlock-pass', autocomplete: 'off', placeholder: 'Sua frase-secreta' });
-    var statusEl = app.h('div', { className: 'status-msg', role: 'alert', 'aria-live': 'polite' }, []);
-    var submitBtn = app.h('button', { type: 'submit' }, ['Desbloquear mensagens']);
-
-    var forgotLink = app.h('button', {
-      type: 'button', className: 'secondary',
-      onclick: function () { confirmForgotPassphrase(myKeyRes); },
-    }, ['Esqueci minha frase-secreta']);
-
-    var form = app.h('form', {
-      onsubmit: function (evt) {
-        evt.preventDefault();
-        handleUnlockSubmit(passInput.value, myKeyRes, statusEl, submitBtn);
-      },
-    }, [
-      app.h('label', { for: 'messaging-unlock-pass' }, ['Frase-secreta', passInput]),
-      submitBtn,
-      statusEl,
-    ]);
-
-    container.appendChild(app.text('p', 'Digite a frase-secreta desta conta para abrir suas conversas neste aparelho.', { className: 'muted' }));
-    container.appendChild(form);
-    container.appendChild(app.h('div', { style: 'margin-top:14px;' }, [forgotLink]));
-  }
-
-  async function handleUnlockSubmit(passphrase, myKeyRes, statusEl, submitBtn) {
-    var app = App();
-    if (unlockAttemptCount > 0) {
-      // Atraso crescente entre tentativas (seção 6 do plano): puramente no
-      // cliente, não é rate limit do servidor.
-      var delay = Math.min(UNLOCK_ATTEMPT_BASE_DELAY_MS * Math.pow(2, unlockAttemptCount - 1), 8000);
-      statusEl.textContent = 'Aguarde um instante...';
-      statusEl.setAttribute('data-kind', 'info');
-      await new Promise(function (resolve) { setTimeout(resolve, delay); });
-    }
-
-    submitBtn.disabled = true;
-    statusEl.textContent = 'Verificando frase-secreta...';
-    statusEl.setAttribute('data-kind', 'info');
-
-    try {
-      var keyPair = await MsgCrypto.deriveIdentityKeyPair({
-        passphrase: passphrase, saltBase64url: myKeyRes.kdf.salt, iterations: myKeyRes.kdf.iterations, accountId: myKeyRes.profileId,
-      });
-      if (keyPair.publicKeyBase64url !== myKeyRes.publicKey) {
-        unlockAttemptCount++;
-        statusEl.textContent = 'Frase-secreta incorreta.';
-        statusEl.setAttribute('data-kind', 'error');
-        submitBtn.disabled = false;
-        return;
-      }
-
-      unlockAttemptCount = 0;
-      identity = { profileId: myKeyRes.profileId, privateKey: keyPair.privateKey, publicKeyBase64url: keyPair.publicKeyBase64url, keyVersion: myKeyRes.keyVersion };
-      showLockCard(false);
-      showConversationsView();
-      loadConversations();
-      startGlobalSync();
-      resumePendingPeerIfAny();
-    } catch (err) {
-      statusEl.textContent = (err && err.message) || 'Não foi possível desbloquear as mensagens.';
-      statusEl.setAttribute('data-kind', 'error');
-      submitBtn.disabled = false;
-    }
-  }
-
-  function confirmForgotPassphrase(myKeyRes) {
-    var app = App();
-    app.openConfirm(
-      'Se você esqueceu mesmo a frase, será preciso criar uma nova. As mensagens antigas cifradas com a frase anterior ficarão ilegíveis para você (o histórico continua acessível para quem já estava na conversa, do lado dele). Quer continuar?',
-      function () {
-        app.openConfirm(
-          'Tem certeza? Esta ação não pode ser desfeita — o histórico antigo não volta a ficar legível para você.',
-          function () { renderRotationScreen(myKeyRes); }
-        );
-      }
-    );
-  }
-
-  function renderRotationScreen(myKeyRes) {
-    var app = App();
-    clearLockContent();
-    var container = document.getElementById('messaging-lock-content');
-
-    var passInput = app.h('input', { type: 'password', id: 'messaging-rotate-pass', autocomplete: 'off', placeholder: 'Nova frase-secreta' });
-    var confirmInput = app.h('input', { type: 'password', id: 'messaging-rotate-confirm', autocomplete: 'off', placeholder: 'Repita a nova frase-secreta' });
-    var statusEl = app.h('div', { className: 'status-msg', role: 'alert', 'aria-live': 'polite' }, []);
-    var submitBtn = app.h('button', { type: 'submit' }, ['Criar nova frase e continuar']);
-
-    var form = app.h('form', {
-      onsubmit: function (evt) {
-        evt.preventDefault();
-        handleRotationSubmit(passInput.value, confirmInput.value, myKeyRes, statusEl, submitBtn);
-      },
-    }, [
-      app.h('label', { for: 'messaging-rotate-pass' }, ['Nova frase-secreta', passInput]),
-      app.h('label', { for: 'messaging-rotate-confirm' }, ['Confirmar nova frase-secreta', confirmInput]),
-      submitBtn,
-      statusEl,
-    ]);
-
-    container.appendChild(app.text('p', 'O histórico cifrado com a frase anterior não poderá mais ser aberto por você neste ou em nenhum outro aparelho.', { className: 'status-msg', 'data-kind': 'error', style: 'display:block; margin-bottom:12px;' }));
-    container.appendChild(form);
-  }
-
-  async function handleRotationSubmit(passphrase, confirmPass, myKeyRes, statusEl, submitBtn) {
-    var app = App();
-    if (passphrase !== confirmPass) { statusEl.textContent = 'As duas frases não coincidem.'; statusEl.setAttribute('data-kind', 'error'); return; }
-    var strength = MsgCrypto.checkPassphraseStrength(passphrase);
-    if (!strength.ok) { statusEl.textContent = strength.reason; statusEl.setAttribute('data-kind', 'error'); return; }
-
-    submitBtn.disabled = true;
-    statusEl.textContent = 'Derivando nova chave...';
-    statusEl.setAttribute('data-kind', 'info');
-
-    try {
-      var saltBase64url = MsgCrypto.generateSaltBase64url();
-      var iterations = await MsgCrypto.calibrateKdfIterations();
-      var keyPair = await MsgCrypto.deriveIdentityKeyPair({ passphrase: passphrase, saltBase64url: saltBase64url, iterations: iterations, accountId: myKeyRes.profileId });
-
-      var publishRes = await app.callApi('apiPublishMessagingKey', app.getState().sessionToken, {
-        algorithm: MsgCrypto.MSG_CRYPTO_CONFIG.ALGORITHM,
-        publicKey: keyPair.publicKeyBase64url,
-        kdfAlgorithm: MsgCrypto.MSG_CRYPTO_CONFIG.KDF_ALGORITHM,
-        kdfIterations: iterations,
-        kdfSalt: saltBase64url,
-        expectedCurrentVersion: myKeyRes.keyVersion,
-      });
-      if (!publishRes.success) {
-        statusEl.textContent = publishRes.message;
-        statusEl.setAttribute('data-kind', 'error');
-        submitBtn.disabled = false;
-        return;
-      }
-
-      identity = { profileId: myKeyRes.profileId, privateKey: keyPair.privateKey, publicKeyBase64url: keyPair.publicKeyBase64url, keyVersion: publishRes.keyVersion };
-      conversationKeyCache = {};
-      showLockCard(false);
-      showConversationsView();
-      loadConversations();
-      startGlobalSync();
-    } catch (err) {
-      statusEl.textContent = (err && err.message) || 'Não foi possível criar a nova frase-secreta.';
-      statusEl.setAttribute('data-kind', 'error');
-      submitBtn.disabled = false;
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var lockBtn = document.getElementById('btn-messaging-lock');
-    if (lockBtn) lockBtn.addEventListener('click', function () {
-      identity = null;
-      conversationKeyCache = {};
-      stopConversationPolling();
-      loadMessagingPanel();
-    });
-    var backBtn = document.getElementById('btn-messaging-back');
-    if (backBtn) backBtn.addEventListener('click', function () { showConversationsView(); });
-    var sendForm = document.getElementById('form-messaging-send');
-    if (sendForm) sendForm.addEventListener('submit', function (evt) { evt.preventDefault(); handleSendSubmit(); });
-    var textArea = document.getElementById('messaging-send-text');
-    if (textArea) textArea.addEventListener('input', function () { updateCharCounter(); });
-  });
 
   // ===========================================================================
   // Conversas
@@ -466,16 +273,16 @@
   function renderConversationItem(item) {
     var app = App();
     var avatar = item.peer.avatarUrl
-      ? app.h('img', { className: 'orgchart-avatar', src: item.peer.avatarUrl, alt: item.peer.fullName })
-      : app.h('span', { className: 'orgchart-avatar-placeholder' }, [(item.peer.fullName || '?').charAt(0).toUpperCase()]);
+      ? app.h('img', { className: 'chat-avatar', src: item.peer.avatarUrl, alt: item.peer.fullName })
+      : app.h('span', { className: 'chat-avatar chat-avatar-placeholder' }, [(item.peer.fullName || '?').charAt(0).toUpperCase()]);
     var unreadBadge = item.unreadCount > 0 ? app.h('span', { className: 'badge', style: 'margin-left:8px;' }, [String(item.unreadCount) + ' nova' + (item.unreadCount > 1 ? 's' : '')]) : null;
 
     return app.h('article', {
-      className: 'list-item', style: 'cursor:pointer;',
+      className: 'list-item chat-list-item', style: 'cursor:pointer;',
       onclick: function () { openConversationWithPeer(item.peer); },
     }, [
       avatar,
-      app.h('div', { style: 'flex:1;' }, [
+      app.h('div', { style: 'flex:1; min-width:0;' }, [
         app.h('p', { style: 'margin:0; display:flex; align-items:center;' }, [app.h('strong', {}, [item.peer.fullName]), unreadBadge]),
         app.text('p', item.peer.username ? '@' + item.peer.username : '', { className: 'muted', style: 'margin:0; font-size:13px;' }),
         app.text('p', item.lastMessageAt ? app.formatDate(item.lastMessageAt) : 'Nenhuma mensagem ainda', { className: 'muted', style: 'margin:0; font-size:12px;' }),
@@ -486,7 +293,8 @@
   // ===========================================================================
   // Abrir conversa — ponto de entrada usado também pelo botão "Enviar
   // mensagem" do modal de perfil de membro (app.js chama
-  // window.LaiftMessaging.openConversationWithPeer via App()).
+  // window.LaiftMessaging.openConversationWithPeer via App()). Abre e já
+  // deixa pronto para digitar — sem nenhuma tela intermediária.
   // ===========================================================================
   async function openConversationWithPeer(peer) {
     await msgCryptoReady;
@@ -500,13 +308,20 @@
     }
 
     app.showPanel('panel-messages');
-    showLockCard(false);
+    showPreparing(false);
     showThreadView();
     app.setStatus('messaging-thread-status', 'Abrindo conversa...', 'info');
     app.clearEl(document.getElementById('messaging-thread-list'));
     app.clearEl(document.getElementById('messaging-tofu-banner'));
     document.getElementById('messaging-thread-peer-name').textContent = peer.fullName || '';
     document.getElementById('messaging-thread-peer-sub').textContent = peer.username ? '@' + peer.username : '';
+    var headerAvatar = document.getElementById('messaging-thread-peer-avatar');
+    app.clearEl(headerAvatar);
+    headerAvatar.appendChild(
+      peer.avatarUrl
+        ? app.h('img', { className: 'chat-avatar', src: peer.avatarUrl, alt: peer.fullName })
+        : app.h('span', { className: 'chat-avatar chat-avatar-placeholder' }, [(peer.fullName || '?').charAt(0).toUpperCase()])
+    );
 
     var openRes = await app.callApi('apiOpenConversation', app.getState().sessionToken, peer.id);
     if (!openRes.success) { app.setStatus('messaging-thread-status', openRes.message, 'error'); return; }
@@ -522,7 +337,7 @@
     clientMessageIdsSeen = {};
 
     if (!activeKey) {
-      app.setStatus('messaging-thread-status', 'Este contato ainda não ativou as mensagens cifradas.', 'info');
+      app.setStatus('messaging-thread-status', 'Este contato ainda não abriu a área de mensagens.', 'info');
       document.getElementById('btn-messaging-send').disabled = true;
       return;
     }
@@ -534,6 +349,12 @@
     app.setStatus('messaging-thread-status', '', null);
     await loadMessages(true);
     startConversationPolling();
+    focusMessageInput();
+  }
+
+  function focusMessageInput() {
+    var el = document.getElementById('messaging-send-text');
+    if (el) el.focus();
   }
 
   async function renderTofuBanner(tofu, peer, activeKey) {
@@ -552,7 +373,7 @@
   }
 
   // ===========================================================================
-  // Mensagens: carregar, decifrar, renderizar
+  // Mensagens: carregar, decifrar, renderizar (bolhas estilo WhatsApp/Telegram)
   // ===========================================================================
   function conversationKeyCacheKey(convId, myVer, peerVer) {
     return convId + '|' + myVer + ':' + peerVer;
@@ -624,6 +445,8 @@
     });
   }
 
+  var lastRenderedSenderId = null; // agrupamento visual de mensagens consecutivas do mesmo remetente
+
   async function appendMessageToThread(msg) {
     if (messagesSeen[msg.id] || clientMessageIdsSeen[msg.clientMessageId]) return;
     messagesSeen[msg.id] = true;
@@ -634,19 +457,21 @@
     var decrypted = await decryptForDisplay(msg);
     var bodyEl;
     if (decrypted.ok) {
-      bodyEl = app.text('p', decrypted.body, { style: 'margin:0; white-space:pre-wrap; word-break:break-word;' });
+      bodyEl = app.text('p', decrypted.body, { className: 'chat-bubble-text' });
     } else if (decrypted.reason === 'old-key') {
-      bodyEl = app.text('p', '(Mensagem cifrada com uma chave anterior — não é possível abrir neste aparelho.)', { className: 'muted', style: 'margin:0; font-style:italic;' });
+      bodyEl = app.text('p', '(Mensagem cifrada com uma chave anterior — não é possível abrir neste aparelho.)', { className: 'chat-bubble-text muted', style: 'font-style:italic;' });
     } else {
-      bodyEl = app.text('p', '(Não foi possível decifrar esta mensagem.)', { className: 'muted', style: 'margin:0; font-style:italic;' });
+      bodyEl = app.text('p', '(Não foi possível decifrar esta mensagem.)', { className: 'chat-bubble-text muted', style: 'font-style:italic;' });
     }
 
-    var row = app.h('div', {
-      style: 'align-self:' + (isMine ? 'flex-end' : 'flex-start') + '; max-width:80%; background:' + (isMine ? 'var(--primary-soft)' : 'var(--surface-alt)') + '; border-radius:12px; padding:8px 12px;',
-    }, [
+    var grouped = lastRenderedSenderId === msg.senderId;
+    lastRenderedSenderId = msg.senderId;
+
+    var bubble = app.h('div', { className: 'chat-bubble ' + (isMine ? 'chat-bubble-mine' : 'chat-bubble-theirs') }, [
       bodyEl,
-      app.text('p', app.formatDate(msg.createdAt), { className: 'muted', style: 'margin:4px 0 0; font-size:11px; text-align:right;' }),
+      app.text('span', app.formatDate(msg.createdAt), { className: 'chat-bubble-time' }),
     ]);
+    var row = app.h('div', { className: 'chat-row ' + (isMine ? 'chat-row-mine' : 'chat-row-theirs') + (grouped ? ' chat-row-grouped' : '') }, [bubble]);
     document.getElementById('messaging-thread-list').appendChild(row);
   }
 
@@ -659,7 +484,6 @@
   // Envio
   // ===========================================================================
   function updateCharCounter() {
-    var app = App();
     var textArea = document.getElementById('messaging-send-text');
     var counterEl = document.getElementById('messaging-char-counter');
     var max = MsgCrypto ? MsgCrypto.MSG_CRYPTO_CONFIG.MESSAGE_MAX_LENGTH : 2000;
@@ -702,7 +526,7 @@
 
     var recipientKeyVersion = findActivePeerKeyVersion(currentConversation.peer.id);
     if (!recipientKeyVersion) {
-      app.setStatus('messaging-thread-status', 'Este contato ainda não ativou as mensagens cifradas.', 'error');
+      app.setStatus('messaging-thread-status', 'Este contato ainda não abriu a área de mensagens.', 'error');
       return;
     }
 
@@ -742,6 +566,7 @@
       });
       lastSeenMessageId = Math.max(lastSeenMessageId, res.messageId);
       scrollThreadToBottom();
+      focusMessageInput();
     } catch (err) {
       app.setStatus('messaging-thread-status', (err && err.message) || 'Não foi possível enviar a mensagem.', 'error');
       sendBtn.disabled = false;
@@ -777,9 +602,33 @@
   }
 
   // ===========================================================================
-  // Polling (seção "Polling" do plano): 5s com a conversa aberta e a aba
-  // visível, recuando para 30s depois de 2min sem mensagem nova; volta a
-  // 5s ao enviar/receber. Sincronização global a cada 30s para o badge.
+  // Limpar conversa (pedido direto: "não deixar muita informação nas
+  // conversas") — apaga para os dois lados, com confirmação clara.
+  // ===========================================================================
+  function handleClearConversation() {
+    var app = App();
+    if (!currentConversation) return;
+    app.openConfirm(
+      'Limpar esta conversa apaga todo o histórico para você E para ' + (currentConversation.peer.fullName || 'a outra pessoa') + '. Esta ação não pode ser desfeita. Quer continuar?',
+      function () {
+        var convId = currentConversation.conversationId;
+        app.callApi('apiClearConversation', app.getState().sessionToken, convId).then(function (res) {
+          if (!res.success) { app.setStatus('messaging-thread-status', res.message, 'error'); return; }
+          app.clearEl(document.getElementById('messaging-thread-list'));
+          messagesSeen = {};
+          clientMessageIdsSeen = {};
+          lastSeenMessageId = 0;
+          lastRenderedSenderId = null;
+          app.setStatus('messaging-thread-status', 'Conversa limpa.', 'success');
+        });
+      }
+    );
+  }
+
+  // ===========================================================================
+  // Polling: 5s com a conversa aberta e a aba visível, recuando para 30s
+  // depois de 2min sem mensagem nova; volta a 5s ao enviar/receber.
+  // Sincronização global a cada 30s para o badge.
   // ===========================================================================
   function stopConversationPolling() {
     if (conversationPollTimer) { clearTimeout(conversationPollTimer); conversationPollTimer = null; }
@@ -863,6 +712,23 @@
       openConversationWithPeer(peer);
     }
   }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var backBtn = document.getElementById('btn-messaging-back');
+    if (backBtn) backBtn.addEventListener('click', function () { showConversationsView(); });
+    var clearBtn = document.getElementById('btn-messaging-clear');
+    if (clearBtn) clearBtn.addEventListener('click', function () { handleClearConversation(); });
+    var sendForm = document.getElementById('form-messaging-send');
+    if (sendForm) sendForm.addEventListener('submit', function (evt) { evt.preventDefault(); handleSendSubmit(); });
+    var textArea = document.getElementById('messaging-send-text');
+    if (textArea) {
+      textArea.addEventListener('input', function () { updateCharCounter(); });
+      // Enter envia, Shift+Enter quebra linha — como WhatsApp/Telegram no desktop.
+      textArea.addEventListener('keydown', function (evt) {
+        if (evt.key === 'Enter' && !evt.shiftKey) { evt.preventDefault(); handleSendSubmit(); }
+      });
+    }
+  });
 
   // ===========================================================================
   // Namespace público (chamado por app.js)

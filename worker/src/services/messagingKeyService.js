@@ -15,7 +15,13 @@ import * as Logging from '../logging.js';
 import { getRelationship } from './connectionService.js';
 
 const ALGORITHMS = ['X25519', 'P-256'];
-const KDF_ALGORITHMS = ['PBKDF2-SHA256'];
+// 'NONE' (sql/010_messaging_simplify.sql): chave gerada aleatoriamente no
+// navegador e guardada em IndexedDB, sem frase-secreta/PBKDF2 — feedback
+// do dono da plataforma de que a frase-secreta tornou a mensageria
+// complicada demais para o uso real entre os membros. 'PBKDF2-SHA256'
+// continua aceito só para não quebrar as contas que já publicaram uma
+// chave sob o fluxo antigo antes desta mudança.
+const KDF_ALGORITHMS = ['PBKDF2-SHA256', 'NONE'];
 
 function assertMemberOrAdmin(identity) {
   S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
@@ -76,23 +82,15 @@ function validatePublishInput(input) {
   const algorithm = S.normalizeText(input && input.algorithm);
   const publicKey = S.normalizeText(input && input.publicKey);
   const kdfAlgorithm = S.normalizeText(input && input.kdfAlgorithm);
-  const kdfIterations = Number(input && input.kdfIterations);
-  const kdfSalt = S.normalizeText(input && input.kdfSalt);
   const expectedCurrentVersion = Number(input && input.expectedCurrentVersion);
 
   if (ALGORITHMS.indexOf(algorithm) === -1) throw E.ValidationError('Algoritmo de chave inválido.');
   if (KDF_ALGORITHMS.indexOf(kdfAlgorithm) === -1) throw E.ValidationError('Algoritmo de derivação de chave inválido.');
-  if (!Number.isInteger(kdfIterations) || kdfIterations < C.LIMITS.KDF_MIN_ITERATIONS) {
-    throw E.ValidationError('Número de iterações do KDF abaixo do mínimo permitido.');
-  }
   if (!Number.isInteger(expectedCurrentVersion) || expectedCurrentVersion < 0) {
     throw E.ValidationError('Versão de chave esperada inválida.');
   }
   if (!S.isLengthValid(publicKey, C.LIMITS.MESSAGING_PUBLIC_KEY_MIN_LEN, C.LIMITS.MESSAGING_PUBLIC_KEY_MAX_LEN)) {
     throw E.ValidationError('Chave pública inválida.');
-  }
-  if (!S.isLengthValid(kdfSalt, C.LIMITS.MESSAGING_SALT_MIN_LEN, C.LIMITS.MESSAGING_SALT_MAX_LEN)) {
-    throw E.ValidationError('Salt do KDF inválido.');
   }
 
   const publicKeyBytes = decodedByteLength(publicKey);
@@ -101,6 +99,21 @@ function validatePublishInput(input) {
     throw E.ValidationError('Chave pública X25519 deve ter 32 bytes.');
   }
 
+  // 'NONE' (chave sem frase-secreta, ver sql/010_messaging_simplify.sql):
+  // kdfIterations/kdfSalt não existem — devolvidos como null, exatamente o
+  // formato que a CHECK messaging_keys_kdf_consistency exige no banco.
+  if (kdfAlgorithm === 'NONE') {
+    return { algorithm, publicKey, kdfAlgorithm, kdfIterations: null, kdfSalt: null, expectedCurrentVersion };
+  }
+
+  const kdfIterations = Number(input && input.kdfIterations);
+  const kdfSalt = S.normalizeText(input && input.kdfSalt);
+  if (!Number.isInteger(kdfIterations) || kdfIterations < C.LIMITS.KDF_MIN_ITERATIONS) {
+    throw E.ValidationError('Número de iterações do KDF abaixo do mínimo permitido.');
+  }
+  if (!S.isLengthValid(kdfSalt, C.LIMITS.MESSAGING_SALT_MIN_LEN, C.LIMITS.MESSAGING_SALT_MAX_LEN)) {
+    throw E.ValidationError('Salt do KDF inválido.');
+  }
   const saltBytes = decodedByteLength(kdfSalt);
   if (saltBytes === -1 || saltBytes < 16) throw E.ValidationError('Salt do KDF inválido (base64url malformado ou curto).');
 

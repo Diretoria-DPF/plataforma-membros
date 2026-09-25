@@ -148,4 +148,5 @@ export const API_REGISTRY = {
   apiSendMessage: (sql, env, [sessionToken, conversationId, payload]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.sendMessage(sql, identity, conversationId, payload || {}, cid)),
   apiMarkConversationRead: (sql, env, [sessionToken, conversationId, lastReadMessageId]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.markConversationRead(sql, identity, conversationId, lastReadMessageId)),
   apiMessagingSync: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.syncMessaging(sql, identity)),
+  apiClearConversation: (sql, env, [sessionToken, conversationId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.clearConversation(sql, identity, conversationId, cid)),
 };

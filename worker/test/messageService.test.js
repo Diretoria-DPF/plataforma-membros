@@ -170,6 +170,33 @@ describe('MessageService.markConversationRead', () => {
   });
 });
 
+describe('MessageService.clearConversation', () => {
+  test('conversa inválida lança ValidationError sem tocar o banco', async () => {
+    const sql = makeSql();
+    await expect(MessageService.clearConversation(sql, MEMBER, '', 'cid')).rejects.toMatchObject({ name: 'ValidationError' });
+    expect(sql).not.toHaveBeenCalled();
+  });
+
+  test('quem não participa da conversa lança ForbiddenError, sem apagar nada', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([{ participant_low: 'outro-1', participant_high: 'outro-2' }]);
+    await expect(MessageService.clearConversation(sql, MEMBER, 'conv-1', 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
+    expect(sql).toHaveBeenCalledTimes(1);
+  });
+
+  test('participante apaga as mensagens e reseta os marcadores da conversa', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
+      .mockResolvedValueOnce(undefined) // DELETE messages
+      .mockResolvedValueOnce(undefined) // UPDATE conversations
+      .mockResolvedValueOnce(undefined); // logAudit
+    const res = await MessageService.clearConversation(sql, MEMBER, 'conv-1', 'cid');
+    expect(res).toEqual({ success: true, message: 'Conversa limpa.' });
+    expect(sql).toHaveBeenCalledTimes(4);
+  });
+});
+
 describe('MessageService.syncMessaging', () => {
   test('devolve contadores de não lidas e pedidos pendentes', async () => {
     const sql = makeSql();
