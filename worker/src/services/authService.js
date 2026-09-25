@@ -19,17 +19,26 @@ const BCRYPT_COST = 10;
 // igualar o tempo de resposta quando o e-mail informado não existe.
 const DUMMY_BCRYPT_HASH = '$2a$10$CwTycUXWue0Thq9StjUM0uJ8vC0Ldx7Fn6TZ2yq6q9Q2q9Q2q9Q2q';
 
+const USERNAME_RE = /^[a-zA-Z0-9_.]{3,30}$/;
+const INSTAGRAM_RE = /^@?[a-zA-Z0-9_.]{1,30}$/;
+
 function assertValidRegistration(input) {
   const fullName = S.normalizeText(input.fullName);
+  const username = S.normalizeText(input.username).toLowerCase();
   const email = S.normalizeText(input.email).toLowerCase();
   const phone = S.normalizeText(input.phone);
-  const city = S.normalizeText(input.city);
   const education = S.normalizeText(input.education);
+  const linkedinUrl = S.normalizeText(input.linkedinUrl);
+  const instagramHandle = S.normalizeText(input.instagramHandle).replace(/^@/, '');
+  const interests = S.normalizeText(input.interests);
   const password = S.normalizeText(input.password);
   const validationPreference = S.normalizeText(input.validationPreference || 'email');
 
   if (!S.isLengthValid(fullName, C.LIMITS.NAME_MIN, C.LIMITS.NAME_MAX)) {
     throw E.ValidationError('Informe um nome completo válido.');
+  }
+  if (!USERNAME_RE.test(username)) {
+    throw E.ValidationError('Nome de usuário deve ter de 3 a 30 caracteres (letras, números, "_" ou ".").');
   }
   if (!S.isValidEmail(email)) {
     throw E.ValidationError('Informe um e-mail válido.');
@@ -37,11 +46,17 @@ function assertValidRegistration(input) {
   if (!S.isLengthValid(phone, C.LIMITS.PHONE_MIN, C.LIMITS.PHONE_MAX)) {
     throw E.ValidationError('Informe um telefone válido.');
   }
-  if (city && city.length > C.LIMITS.CITY_MAX) {
-    throw E.ValidationError('Cidade inválida.');
-  }
   if (education && education.length > C.LIMITS.EDUCATION_MAX) {
     throw E.ValidationError('Escolaridade inválida.');
+  }
+  if (linkedinUrl && linkedinUrl.length > 255) {
+    throw E.ValidationError('Link do LinkedIn inválido.');
+  }
+  if (instagramHandle && !INSTAGRAM_RE.test(instagramHandle)) {
+    throw E.ValidationError('Usuário do Instagram inválido.');
+  }
+  if (interests && interests.length > 500) {
+    throw E.ValidationError('Interesses: máximo de 500 caracteres.');
   }
   if (password.length < C.LIMITS.PASSWORD_MIN_LENGTH) {
     throw E.ValidationError('A senha deve ter pelo menos ' + C.LIMITS.PASSWORD_MIN_LENGTH + ' caracteres.');
@@ -56,7 +71,19 @@ function assertValidRegistration(input) {
     throw E.ValidationError('É necessário aceitar a Política de Privacidade.');
   }
 
-  return { fullName, email, phone, city: city || null, education: education || null, password };
+  return {
+    fullName,
+    username,
+    email,
+    phone,
+    education: education || null,
+    linkedinUrl: linkedinUrl || null,
+    instagramHandle: instagramHandle || null,
+    interests: interests || null,
+    password,
+    avatarBase64: input.avatarBase64 || null,
+    avatarMimeType: input.avatarMimeType || null,
+  };
 }
 
 function escapeHtmlForEmail(text) {
@@ -100,14 +127,18 @@ export async function register(sql, env, input, correlationId) {
   if (existing.length) {
     throw E.ConflictError('Já existe uma conta cadastrada com este e-mail.');
   }
+  const usernameTaken = await sql`SELECT id FROM profiles WHERE username = ${data.username} LIMIT 1`;
+  if (usernameTaken.length) {
+    throw E.ConflictError('Este nome de usuário já está em uso.');
+  }
 
   const rawToken = S.generateRawToken();
   const tokenHash = await S.hashToken(rawToken, env.SESSION_TOKEN_PEPPER);
 
   const rows = await sql`
     WITH new_profile AS (
-      INSERT INTO profiles (full_name, email, password_hash, phone, city, education, role, status)
-      VALUES (${data.fullName}, ${data.email}, crypt(${data.password}, gen_salt('bf', ${BCRYPT_COST})), ${data.phone}, ${data.city}, ${data.education}, ${C.ROLES.VISITOR}::user_role, ${C.ACCOUNT_STATUS.ACTIVE}::account_status)
+      INSERT INTO profiles (full_name, username, email, password_hash, phone, education, linkedin_url, instagram_handle, interests, role, status)
+      VALUES (${data.fullName}, ${data.username}, ${data.email}, crypt(${data.password}, gen_salt('bf', ${BCRYPT_COST})), ${data.phone}, ${data.education}, ${data.linkedinUrl}, ${data.instagramHandle}, ${data.interests}, ${C.ROLES.VISITOR}::user_role, ${C.ACCOUNT_STATUS.ACTIVE}::account_status)
       RETURNING id
     ),
     consent_terms AS (
@@ -128,6 +159,21 @@ export async function register(sql, env, input, correlationId) {
   `;
 
   const profileId = rows[0].profile_id;
+
+  if (data.avatarBase64 && data.avatarMimeType) {
+    try {
+      const { uploadAvatarBytes } = await import('./mediaService.js');
+      const avatarUrl = await uploadAvatarBytes(env, profileId, data.avatarBase64, data.avatarMimeType);
+      await sql`UPDATE profiles SET avatar_url = ${avatarUrl} WHERE id = ${profileId}::uuid`;
+    } catch (avatarErr) {
+      // Avatar é opcional — uma falha no upload não pode impedir o cadastro
+      // de completar. A pessoa pode enviar o avatar depois, pelo perfil.
+      await Logging.logError(sql, correlationId, 'AVATAR_UPLOAD_FAILED', 'Falha ao enviar avatar no cadastro.', {
+        profileId,
+        detail: String((avatarErr && avatarErr.message) || avatarErr),
+      });
+    }
+  }
 
   await sendConfirmationEmail(env, data.email, data.fullName, rawToken, correlationId, profileId, sql);
   await Logging.logAudit(sql, correlationId, profileId, 'REGISTER', 'profile', profileId, 'success', null);

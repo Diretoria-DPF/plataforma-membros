@@ -18,3 +18,13 @@ MAIL_FROM_NAME = "Plataforma de Membros"
 # (Campanhas > Remetentes, ou Configurações > Remetentes) antes de
 # funcionar — a Brevo rejeita envio de um endereço não verificado.
 MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"
+# URL pública do bucket R2 (avatares e imagens de evento) — não é segredo,
+# é só onde os arquivos ficam publicamente acessíveis depois do upload.
+MEDIA_PUBLIC_URL = "https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev"
+
+# Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
+# aqui via binding nativo (sem precisar de credencial de API separada); o
+# acesso de LEITURA pública é pela URL acima.
+[[r2_buckets]]
+bucket_name = "plataforma-membros-media"
+binding = "MEDIA_BUCKET"

@@ -68,3 +68,18 @@ describe('EventService.listEvents — filtro de visibilidade por papel', () => {
     expect(queryText).toContain("'public','authenticated','members'");
   });
 });
+
+describe('EventService.listRecentCompletedEvents — histórico público', () => {
+  test('devolve até 3 eventos concluídos, sem capacidade/inscrição (já encerrados)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([
+      { id: 'e1', title: 'Semana X', description: 'desc', event_date: '2026-01-01', image_url: 'https://x/img.png' },
+    ]);
+
+    const res = await EventService.listRecentCompletedEvents(sql);
+    expect(res.success).toBe(true);
+    expect(res.events).toEqual([
+      { id: 'e1', title: 'Semana X', description: 'desc', eventDate: '2026-01-01', imageUrl: 'https://x/img.png' },
+    ]);
+  });
+});

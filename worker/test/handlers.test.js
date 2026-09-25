@@ -3,16 +3,19 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 35 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 42 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
-      'apiSubmitFeedback', 'apiListEvents', 'apiRegisterForEvent', 'apiSubmitProposal', 'apiListMyProposals',
-      'apiListOpenProposalsForVoting', 'apiCastVote', 'apiGetProposalResults', 'apiListTasks', 'apiSignupForTask',
+      'apiSubmitFeedback', 'apiUpdateMyAvatar', 'apiGetMyMetrics',
+      'apiListEvents', 'apiRegisterForEvent', 'apiListRecentCompletedEvents',
+      'apiSubmitProposal', 'apiListMyProposals',
+      'apiListOpenProposalsForVoting', 'apiCastVote', 'apiGetProposalResults',
+      'apiListTasks', 'apiSignupForTask', 'apiMarkTaskComplete', 'apiListTaskComments', 'apiSubmitTaskComment',
       'apiAdminDashboard', 'apiAdminListUsers', 'apiAdminChangeUserRole', 'apiAdminBanUser', 'apiAdminUnbanUser',
       'apiAdminListFeedback', 'apiAdminCreateEvent', 'apiAdminUpdateEventStatus', 'apiAdminListAllEvents',
       'apiAdminListProposalsForReview', 'apiAdminTransitionProposal', 'apiAdminCreateTask', 'apiAdminUpdateTaskStatus',
-      'apiAdminListAllTasks', 'apiAdminListAuditLogs', 'apiAdminListErrorLogs',
+      'apiAdminListAllTasks', 'apiAdminListAuditLogs', 'apiAdminListErrorLogs', 'apiAdminUploadEventImage',
     ];
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });

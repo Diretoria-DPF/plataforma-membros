@@ -11,7 +11,7 @@ export async function listTasks(sql, identity) {
 
   const rows = await sql`
     SELECT t.id AS id, t.title AS title, t.description AS description, t.due_date AS due_date,
-           (s.id IS NOT NULL) AS already_signed_up,
+           (s.id IS NOT NULL) AS already_signed_up, (s.completed_at IS NOT NULL) AS completed,
            (SELECT count(*) FROM task_signups s2 WHERE s2.task_id = t.id) AS signup_count
     FROM tasks t
     LEFT JOIN task_signups s ON s.task_id = t.id AND s.profile_id = ${identity.profileId}::uuid
@@ -27,9 +27,59 @@ export async function listTasks(sql, identity) {
       description: r.description,
       dueDate: r.due_date,
       alreadySignedUp: r.already_signed_up === true,
+      completed: r.completed === true,
       signupCount: r.signup_count,
     })),
   };
+}
+
+export async function markTaskComplete(sql, identity, taskId, correlationId) {
+  S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
+  const id = S.normalizeText(taskId);
+
+  const rows = await sql`
+    UPDATE task_signups SET completed_at = now()
+    WHERE task_id = ${id}::uuid AND profile_id = ${identity.profileId}::uuid AND completed_at IS NULL
+    RETURNING id
+  `;
+  if (!rows.length) {
+    // Ou já estava concluída, ou a pessoa nunca aderiu a essa tarefa — nos
+    // dois casos a mensagem genérica é suficiente e não vaza qual dos dois.
+    throw E.ConflictError('Não foi possível marcar esta tarefa como concluída.');
+  }
+
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'COMPLETE_TASK', 'task', id, 'success', null);
+  return { success: true, message: 'Tarefa marcada como concluída.' };
+}
+
+export async function listTaskComments(sql, identity, taskId) {
+  S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
+  const id = S.normalizeText(taskId);
+
+  const rows = await sql`
+    SELECT c.id AS id, c.message AS message, c.created_at AS created_at, p.full_name AS author_name
+    FROM task_comments c LEFT JOIN profiles p ON p.id = c.profile_id
+    WHERE c.task_id = ${id}::uuid
+    ORDER BY c.created_at ASC
+  `;
+  return { success: true, comments: rows.map((r) => ({ id: r.id, message: r.message, createdAt: r.created_at, authorName: r.author_name || 'Ex-membro' })) };
+}
+
+export async function submitTaskComment(sql, identity, taskId, message, correlationId) {
+  S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
+  const id = S.normalizeText(taskId);
+  const text = S.normalizeText(message);
+
+  if (!S.isLengthValid(text, 1, 1000)) throw E.ValidationError('Comentário deve ter entre 1 e 1000 caracteres.');
+
+  const signedUp = await sql`SELECT id FROM task_signups WHERE task_id = ${id}::uuid AND profile_id = ${identity.profileId}::uuid LIMIT 1`;
+  if (!signedUp.length && identity.role !== C.ROLES.ADMIN) {
+    throw E.ForbiddenError('Só é possível comentar em tarefas às quais você aderiu.');
+  }
+
+  await sql`INSERT INTO task_comments (task_id, profile_id, message) VALUES (${id}::uuid, ${identity.profileId}::uuid, ${text})`;
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'COMMENT_TASK', 'task', id, 'success', null);
+  return { success: true, message: 'Comentário enviado.' };
 }
 
 export async function signupForTask(sql, identity, taskId, correlationId) {

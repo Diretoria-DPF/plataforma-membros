@@ -24,6 +24,7 @@ import * as ProposalService from './services/proposalService.js';
 import * as TaskService from './services/taskService.js';
 import * as AdminService from './services/adminService.js';
 import * as AuditService from './services/auditService.js';
+import * as MediaService from './services/mediaService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -62,6 +63,8 @@ export const API_REGISTRY = {
   apiUpdateMyProfile: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyProfile(sql, identity, input || {}, cid)),
   apiUpdateMyPreferences: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyPreferences(sql, identity, input || {}, cid)),
   apiSubmitFeedback: (sql, env, [sessionToken, message]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.submitFeedback(sql, identity, message, cid)),
+  apiUpdateMyAvatar: (sql, env, [sessionToken, avatarBase64, avatarMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyAvatarFromBase64(sql, env, identity, avatarBase64, avatarMimeType, cid)),
+  apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
 
   // ---- Eventos ----
   apiListEvents: (sql, env, [sessionToken]) => run(sql, async () => {
@@ -69,6 +72,7 @@ export const API_REGISTRY = {
     return EventService.listEvents(sql, identity);
   }),
   apiRegisterForEvent: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.registerForEvent(sql, identity, eventId, cid)),
+  apiListRecentCompletedEvents: (sql) => run(sql, () => EventService.listRecentCompletedEvents(sql)),
 
   // ---- Propostas e votação ----
   apiSubmitProposal: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProposalService.submitProposal(sql, identity, input || {}, cid)),
@@ -80,6 +84,9 @@ export const API_REGISTRY = {
   // ---- Tarefas ----
   apiListTasks: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => TaskService.listTasks(sql, identity)),
   apiSignupForTask: (sql, env, [sessionToken, taskId]) => runWithSession(sql, env, sessionToken, (identity, cid) => TaskService.signupForTask(sql, identity, taskId, cid)),
+  apiMarkTaskComplete: (sql, env, [sessionToken, taskId]) => runWithSession(sql, env, sessionToken, (identity, cid) => TaskService.markTaskComplete(sql, identity, taskId, cid)),
+  apiListTaskComments: (sql, env, [sessionToken, taskId]) => runWithSession(sql, env, sessionToken, (identity) => TaskService.listTaskComments(sql, identity, taskId)),
+  apiSubmitTaskComment: (sql, env, [sessionToken, taskId, message]) => runWithSession(sql, env, sessionToken, (identity, cid) => TaskService.submitTaskComment(sql, identity, taskId, message, cid)),
 
   // ---- Administração ----
   apiAdminDashboard: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.dashboard(sql, identity)),
@@ -98,4 +105,5 @@ export const API_REGISTRY = {
   apiAdminListAllTasks: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => TaskService.listAllTasksAdmin(sql, identity)),
   apiAdminListAuditLogs: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AuditService.listAuditLogs(sql, identity, input || {})),
   apiAdminListErrorLogs: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AuditService.listErrorLogs(sql, identity, input || {})),
+  apiAdminUploadEventImage: (sql, env, [sessionToken, eventId, imageBase64, imageMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => MediaService.uploadEventImage(sql, env, identity, eventId, imageBase64, imageMimeType, cid)),
 };

@@ -23,10 +23,10 @@ export async function listEvents(sql, identity) {
   // cláusula IN/=).
   const rows = await sql(
     `SELECT e.id AS id, e.title AS title, e.description AS description, e.event_date AS event_date,
-            e.visibility AS visibility, e.capacity AS capacity,
+            e.visibility AS visibility, e.capacity AS capacity, e.status AS status, e.image_url AS image_url,
             (SELECT count(*) FROM event_registrations r WHERE r.event_id = e.id) AS registered_count
      FROM events e
-     WHERE e.status = 'published'::event_status AND ${visibilitySql(identity)}
+     WHERE e.status IN ('published'::event_status, 'in_progress'::event_status) AND ${visibilitySql(identity)}
      ORDER BY e.event_date ASC`,
     []
   );
@@ -48,6 +48,8 @@ export async function listEvents(sql, identity) {
         eventDate: row.event_date,
         visibility: row.visibility,
         capacity: row.capacity,
+        status: row.status,
+        imageUrl: row.image_url,
         registeredCount: row.registered_count,
         spotsLeft,
         isRegistered: !!myRegistrations[row.id],
@@ -125,7 +127,8 @@ export async function createEvent(sql, identity, input, correlationId) {
 
 const EVENT_TRANSITIONS = {
   draft: ['published'],
-  published: ['closed', 'archived'],
+  published: ['in_progress', 'archived'],
+  in_progress: ['closed', 'completed', 'archived'],
   closed: ['completed', 'archived'],
   completed: ['archived'],
   archived: [],
@@ -155,9 +158,28 @@ export async function listAllEventsAdmin(sql, identity) {
   assertAdmin(identity);
   const rows = await sql`
     SELECT e.id AS id, e.title AS title, e.status AS status, e.visibility AS visibility,
-           e.event_date AS event_date, e.capacity AS capacity,
+           e.event_date AS event_date, e.capacity AS capacity, e.image_url AS image_url,
            (SELECT count(*) FROM event_registrations r WHERE r.event_id = e.id) AS registered_count
     FROM events e ORDER BY e.event_date DESC
   `;
   return { success: true, events: rows };
+}
+
+/**
+ * Histórico visível a membros/visitantes: os 3 eventos mais recentemente
+ * concluídos (status='completed'), independente de visibility — uma vez
+ * concluído, o evento vira registro histórico da liga, não mais um recurso
+ * restrito por papel. Só título/data/descrição, sem inscrição/capacidade
+ * (isso já foi encerrado).
+ */
+export async function listRecentCompletedEvents(sql) {
+  const rows = await sql`
+    SELECT id, title, description, event_date, image_url
+    FROM events WHERE status = 'completed'::event_status
+    ORDER BY event_date DESC LIMIT 3
+  `;
+  return {
+    success: true,
+    events: rows.map((r) => ({ id: r.id, title: r.title, description: r.description, eventDate: r.event_date, imageUrl: r.image_url })),
+  };
 }

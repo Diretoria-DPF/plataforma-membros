@@ -139,6 +139,7 @@ describe('AuthService.register', () => {
     await expect(
       AuthService.register(sql, env, {
         fullName: 'Fulano de Tal',
+        username: 'fulano123',
         email: 'fulano@x.com',
         phone: '11999999999',
         password: 'senhagrande12345',
@@ -155,11 +156,13 @@ describe('AuthService.register', () => {
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit global
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por e-mail
       .mockResolvedValueOnce([]) // e-mail não existe ainda
+      .mockResolvedValueOnce([]) // username não existe ainda
       .mockResolvedValueOnce([{ profile_id: 'novo-id' }]) // CTE de INSERT
       .mockResolvedValueOnce(undefined); // logAudit
 
     const res = await AuthService.register(sql, env, {
       fullName: 'Fulano de Tal',
+      username: 'fulano123',
       email: 'fulano@x.com',
       phone: '11999999999',
       password: 'senhagrande12345',
