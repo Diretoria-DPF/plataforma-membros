@@ -121,6 +121,36 @@ export const LIMITS = {
   REPORT_EVIDENCE_MAX: 4000,
   REPORT_LIST_PAGE_SIZE: 25,
   DECLINE_COOLDOWN_DAYS: 30,
+
+  // ---- Mensageria E2EE (Fase 3d/3e — docs/PLANO_FASE3_MENSAGERIA.md,
+  // seção "Requisito novo 1 e 2" acrescentada em 2026-09-25) ----
+  // Texto puro só existe DECIFRADO no navegador — o servidor nunca vê o
+  // corpo da mensagem. MESSAGE_MAX_LENGTH é o limite de caracteres do
+  // texto claro, aplicado só no cliente antes de cifrar (documentado
+  // aqui para existir uma única fonte da verdade do número, igual ao
+  // resto do arquivo). MESSAGE_CIPHERTEXT_MAX é o limite que o SERVIDOR
+  // de fato aplica (bytes base64url do resultado do AES-GCM, incluindo a
+  // tag de 16 bytes) e também é o CHECK de sql/009_messaging.sql.
+  MESSAGE_MAX_LENGTH: 2000,
+  MESSAGE_CIPHERTEXT_MAX: 12000,
+  MESSAGE_PAGE_SIZE: 30,
+  KDF_MIN_ITERATIONS: 600000,
+  MESSAGING_PUBLIC_KEY_MIN_LEN: 40,
+  MESSAGING_PUBLIC_KEY_MAX_LEN: 200,
+  MESSAGING_SALT_MIN_LEN: 16,
+  MESSAGING_SALT_MAX_LEN: 64,
+
+  // Silenciamento progressivo (Requisito novo 2): até MESSAGE_BURST_MAX
+  // mensagens dentro de MESSAGE_BURST_WINDOW_SECONDS são permitidas; ao
+  // ultrapassar, o remetente é silenciado por MESSAGE_MUTE_BASE_MINUTES,
+  // e cada reincidência (voltar a estourar o limite depois de já ter
+  // sido silenciado) multiplica a duração por MESSAGE_MUTE_MULTIPLIER —
+  // ver a função apply_message_penalty em sql/009_messaging.sql, que é a
+  // autoridade real (estado persistido no servidor, nunca no cliente).
+  MESSAGE_BURST_MAX: 10,
+  MESSAGE_BURST_WINDOW_SECONDS: 60,
+  MESSAGE_MUTE_BASE_MINUTES: 30,
+  MESSAGE_MUTE_MULTIPLIER: 3,
 };
 
 // Atualize sempre que docs/TERMOS_DE_USO.md ou
@@ -144,6 +174,10 @@ export const RATE_LIMITS = {
   // Fase 3, achado #4), não para uma rede social genérica.
   CONNECTION_REQUEST: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 604800 },
   REPORT: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 86400 },
+  // Publicação/rotação de chave de mensageria — não é o rate limit de
+  // ENVIO de mensagem (esse é o silenciamento progressivo, ver LIMITS
+  // acima e apply_message_penalty).
+  KEY_PUBLISH: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
 };
 
 export const GENERIC_ERROR_MESSAGE = 'Não foi possível concluir a operação. Tente novamente em instantes.';

@@ -28,6 +28,8 @@ import * as MediaService from './services/mediaService.js';
 import * as ConnectionService from './services/connectionService.js';
 import * as ModerationService from './services/moderationService.js';
 import * as OrgChartService from './services/orgChartService.js';
+import * as MessagingKeyService from './services/messagingKeyService.js';
+import * as MessageService from './services/messageService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -133,4 +135,17 @@ export const API_REGISTRY = {
   apiReportProfile: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.submitReport(sql, identity, input || {}, cid)),
   apiAdminListReports: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ModerationService.listReports(sql, identity, input || {})),
   apiAdminResolveReport: (sql, env, [sessionToken, reportId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.resolveReport(sql, identity, reportId, input || {}, cid)),
+
+  // ---- Mensageria E2EE — chaves (Fase 3d) ----
+  apiGetMyMessagingKey: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessagingKeyService.getMyMessagingKey(sql, identity)),
+  apiPublishMessagingKey: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessagingKeyService.publishMessagingKey(sql, identity, input || {}, cid)),
+  apiGetPeerMessagingKeys: (sql, env, [sessionToken, peerProfileId]) => runWithSession(sql, env, sessionToken, (identity) => MessagingKeyService.getPeerMessagingKeys(sql, identity, peerProfileId)),
+
+  // ---- Mensageria E2EE — conversas e mensagens (Fase 3e) ----
+  apiOpenConversation: (sql, env, [sessionToken, peerProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.openConversation(sql, identity, peerProfileId, cid)),
+  apiListConversations: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.listConversations(sql, identity)),
+  apiListMessages: (sql, env, [sessionToken, conversationId, input]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.listMessages(sql, identity, conversationId, input || {})),
+  apiSendMessage: (sql, env, [sessionToken, conversationId, payload]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.sendMessage(sql, identity, conversationId, payload || {}, cid)),
+  apiMarkConversationRead: (sql, env, [sessionToken, conversationId, lastReadMessageId]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.markConversationRead(sql, identity, conversationId, lastReadMessageId)),
+  apiMessagingSync: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.syncMessaging(sql, identity)),
 };
