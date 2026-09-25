@@ -1,0 +1,27 @@
+import { jest } from '@jest/globals';
+
+export function makeEnv(overrides) {
+  return Object.assign(
+    {
+      DATABASE_URL: 'postgres://user:pass@localhost/test',
+      SESSION_TOKEN_PEPPER: 'test-pepper-value-not-for-production',
+      APP_BASE_URL: 'https://diretoria-dpf.github.io/plataforma-membros/',
+      ALLOWED_ORIGINS: 'https://diretoria-dpf.github.io',
+      MAIL_FROM_NAME: 'Plataforma de Membros (teste)',
+      MAIL_FROM_ADDRESS: 'onboarding@resend.dev',
+      RESEND_API_KEY: 'test-key',
+    },
+    overrides || {}
+  );
+}
+
+/**
+ * jest.fn() serve como mock de `sql` independente de ser chamado como
+ * template tag (sql`SELECT ...`) ou como sql(texto, params) — o Jest só
+ * registra a chamada e devolve o que foi configurado via
+ * mockResolvedValueOnce/mockRejectedValueOnce, na ordem em que o código
+ * real chama `sql`.
+ */
+export function makeSql() {
+  return jest.fn();
+}

@@ -1,0 +1,13 @@
+name = "plataforma-membros-api"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, RESEND_API_KEY) NUNCA
+# ficam aqui — são cadastrados via `wrangler secret put <NOME>`, que os
+# guarda criptografados no lado da Cloudflare, fora do repositório. Ver
+# docs/DEPLOYMENT.md.
+[vars]
+APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
+ALLOWED_ORIGINS = "https://diretoria-dpf.github.io"
+MAIL_FROM_NAME = "Plataforma de Membros"
+MAIL_FROM_ADDRESS = "onboarding@resend.dev"
