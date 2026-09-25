@@ -591,12 +591,13 @@
   // ===========================================================================
   function loadEvents() {
     setStatus('events-status', 'Carregando eventos...', 'info');
-    callApi('apiListEvents', state.sessionToken || '').then(function (res) {
+    var loaded = callApi('apiListEvents', state.sessionToken || '').then(function (res) {
       if (!res.success) { setStatus('events-status', res.message, 'error'); return; }
       setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
     });
     loadEventsHistory();
+    return loaded;
   }
 
   function loadEventsHistory() {
@@ -662,8 +663,9 @@
 
   function registerForEvent(eventId) {
     callApi('apiRegisterForEvent', state.sessionToken, eventId).then(function (res) {
-      setStatus('events-status', res.message, res.success ? 'success' : 'error');
-      loadEvents();
+      loadEvents().then(function () {
+        setStatus('events-status', res.message, res.success ? 'success' : 'error');
+      });
     });
   }
 
@@ -765,10 +767,10 @@
     if (state.profile.role === 'visitor') {
       setStatus('tasks-status', 'Somente membros e administradores podem ver tarefas.', 'info');
       renderList('tasks-list', [], function () {}, '');
-      return;
+      return Promise.resolve();
     }
     setStatus('tasks-status', 'Carregando tarefas...', 'info');
-    callApi('apiListTasks', state.sessionToken).then(function (res) {
+    return callApi('apiListTasks', state.sessionToken).then(function (res) {
       if (!res.success) { setStatus('tasks-status', res.message, 'error'); return; }
       setStatus('tasks-status', '', null);
       renderList('tasks-list', res.tasks, renderTaskItem, 'Não há tarefas publicadas no momento.');
@@ -807,16 +809,18 @@
 
   function signupForTask(taskId) {
     callApi('apiSignupForTask', state.sessionToken, taskId).then(function (res) {
-      setStatus('tasks-status', res.message, res.success ? 'success' : 'error');
-      loadTasks();
+      loadTasks().then(function () {
+        setStatus('tasks-status', res.message, res.success ? 'success' : 'error');
+      });
       refreshNavBadges();
     });
   }
 
   function markTaskComplete(taskId) {
     callApi('apiMarkTaskComplete', state.sessionToken, taskId).then(function (res) {
-      setStatus('tasks-status', res.message, res.success ? 'success' : 'error');
-      loadTasks();
+      loadTasks().then(function () {
+        setStatus('tasks-status', res.message, res.success ? 'success' : 'error');
+      });
     });
   }
 
