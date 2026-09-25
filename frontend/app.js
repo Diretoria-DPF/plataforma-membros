@@ -306,9 +306,8 @@
   function callApi(fnName) {
     var args = Array.prototype.slice.call(arguments, 1);
     return api.apply(null, [fnName].concat(args)).catch(function (err) {
-      var isNetworkUnavailable = true;
       showSystemUnavailable(true);
-      return { success: false, message: (err && err.message) || 'Falha de comunicação com o servidor.', networkUnavailable: isNetworkUnavailable };
+      return { success: false, message: (err && err.message) || 'Falha de comunicação com o servidor.', networkUnavailable: true };
     });
   }
 
