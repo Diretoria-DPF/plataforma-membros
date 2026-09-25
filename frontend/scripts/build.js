@@ -36,7 +36,20 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 
 // Páginas estáticas (HTML/CSS puro, sem lógica a proteger) — copiadas sem
 // alteração. Adicione aqui qualquer nova página estática do site.
-['index.html', 'styles.css', 'termos.html', 'privacidade.html'].forEach((name) => {
+['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html'].forEach((name) => {
+  fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
+});
+
+// Módulos ES da mensageria E2EE (frontend/msg-crypto.js e messaging.js):
+// copiados sem ofuscação, de propósito — ao contrário de app.js, este é
+// código de criptografia genuinamente sensível, e mantê-lo legível em
+// produção (view-source) é uma escolha deliberada de auditabilidade, não
+// um descuido. A segurança do sistema vem da matemática (X25519/AES-GCM/
+// PBKDF2+HKDF), nunca de esconder o código-fonte — e ofuscar um módulo ES
+// com import dinâmico é uma superfície extra de risco de quebra silenciosa
+// sem nenhum ganho de segurança real, o mesmo raciocínio já documentado
+// acima para não ligar opções agressivas do obfuscator.
+['msg-crypto.js', 'messaging.js'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
