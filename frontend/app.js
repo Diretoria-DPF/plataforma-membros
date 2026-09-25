@@ -109,6 +109,25 @@
   }
 
   // ===========================================================================
+  // Correção de bug real: um <input type="datetime-local"> devolve uma string
+  // SEM fuso horário (ex.: "2026-09-25T14:30"). Enviar essa string crua para
+  // o servidor é ambíguo — o motor JS do Worker interpreta "sem fuso" como
+  // UTC, mas a pessoa escolheu esse horário no fuso LOCAL dela no navegador.
+  // Isso fazia `new Date(valorCru)` no servidor gravar um horário até 3h
+  // diferente do pretendido, fazendo votações/eventos/tarefas parecerem
+  // fechados ou abertos na hora errada. `new Date(valorCru)` AQUI, no
+  // navegador, interpreta corretamente como hora local (é o navegador que
+  // sabe o fuso do usuário) — daí convertemos para ISO com fuso explícito
+  // antes de mandar, o que remove a ambiguidade em qualquer lugar que leia.
+  // ===========================================================================
+  function localDateTimeToIso(value) {
+    if (!value) return '';
+    var d = new Date(value);
+    if (isNaN(d.getTime())) return '';
+    return d.toISOString();
+  }
+
+  // ===========================================================================
   // Ponte com o servidor — API HTTP/JSON do Worker (worker/src/index.js).
   //
   // O Worker responde preflight CORS de verdade (diferente do Apps Script
@@ -769,7 +788,7 @@
     var payload = {
       title: document.getElementById('event-title').value,
       description: document.getElementById('event-description').value,
-      eventDate: document.getElementById('event-date').value,
+      eventDate: localDateTimeToIso(document.getElementById('event-date').value),
       visibility: document.getElementById('event-visibility').value,
       capacity: capacityRaw === '' ? null : Number(capacityRaw),
     };
@@ -858,7 +877,10 @@
       actions.push(h('label', {}, ['Fecha em: ', closesInput]));
       actions.push(h('button', {
         onclick: function () {
-          transitionProposal(item.id, 'voting_open', { votingOpensAt: opensInput.value, votingClosesAt: closesInput.value });
+          transitionProposal(item.id, 'voting_open', {
+            votingOpensAt: localDateTimeToIso(opensInput.value),
+            votingClosesAt: localDateTimeToIso(closesInput.value),
+          });
         },
       }, ['Abrir votação']));
     } else if (item.status === 'voting_open') {
@@ -900,7 +922,7 @@
     var payload = {
       title: document.getElementById('task-title').value,
       description: document.getElementById('task-description').value,
-      dueDate: document.getElementById('task-due').value,
+      dueDate: localDateTimeToIso(document.getElementById('task-due').value),
     };
     callApi('apiAdminCreateTask', state.sessionToken, payload).then(function (res) {
       setStatus('msg-admin-task', res.message, res.success ? 'success' : 'error');
