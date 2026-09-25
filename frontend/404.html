@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Página não encontrada - Plataforma de Membros</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app-shell" class="app-shell">
+    <div class="leaf-field" id="leaf-field" aria-hidden="true"></div>
+
+    <main class="public-shell">
+      <section class="auth-card" aria-labelledby="error-title">
+        <span class="brand-pill">Plataforma de Membros</span>
+        <h1 id="error-title">Página não encontrada</h1>
+        <p class="muted">A página que você procura não existe ou foi movida. Tente voltar à página inicial da plataforma.</p>
+
+        <div style="text-align: center; margin-top: 28px; font-size: 48px; line-height: 1;">
+          🚫
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center;">
+          <a href="/" style="display: inline-block;">
+            <button type="button" style="width: auto;">Voltar à página inicial</button>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Mesmo código de folhas decorativas do index.html
+    (function initLeaves() {
+      var field = document.getElementById('leaf-field');
+      if (!field) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      var symbols = ['🍃', '🍂', '🌿'];
+      for (var i = 0; i < 14; i++) {
+        var leaf = document.createElement('span');
+        leaf.className = 'leaf';
+        leaf.textContent = symbols[i % symbols.length];
+        leaf.style.left = Math.random() * 100 + '%';
+        leaf.style.animationDuration = 12 + Math.random() * 10 + 's';
+        leaf.style.animationDelay = Math.random() * 10 + 's';
+        leaf.style.fontSize = 16 + Math.random() * 14 + 'px';
+        field.appendChild(leaf);
+      }
+    })();
+  </script>
+</body>
+</html>

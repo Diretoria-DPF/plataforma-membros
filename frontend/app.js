@@ -269,10 +269,46 @@
     });
   }
 
+  var systemUnavailableState = false;
+
+  function showSystemUnavailable(show) {
+    if (show === systemUnavailableState) return;
+    systemUnavailableState = show;
+
+    if (!state.sessionToken) {
+      // Na tela de login, mostrar a mensagem no area de status normal
+      var msgEl = document.getElementById('msg-login');
+      if (msgEl) {
+        if (show) {
+          setStatus('msg-login', 'Sistema temporariamente indisponível. Por favor, tente novamente em alguns instantes.', 'error');
+        }
+      }
+    } else {
+      // Na app autenticada, mostrar um banner fixo no topo do main
+      var appMain = document.querySelector('.app-main');
+      if (!appMain) return;
+
+      var existingBanner = document.getElementById('api-unavailable-banner');
+      if (show && !existingBanner) {
+        var banner = h('div', { id: 'api-unavailable-banner', style: 'margin-bottom: 16px; padding: 16px; background: var(--danger-soft); border: 1px solid var(--danger); border-radius: var(--radius-md); color: var(--text);' }, [
+          h('div', {}, [
+            text('h3', 'Sistema indisponível', { style: 'margin: 0 0 6px; color: var(--danger);' }),
+            text('p', 'Estamos tendo dificuldades de comunicação com o servidor. Tente novamente em alguns instantes.', { style: 'margin: 0; color: var(--muted); font-size: 14px;' }),
+          ]),
+        ]);
+        appMain.insertBefore(banner, appMain.firstChild);
+      } else if (!show && existingBanner) {
+        existingBanner.remove();
+      }
+    }
+  }
+
   function callApi(fnName) {
     var args = Array.prototype.slice.call(arguments, 1);
     return api.apply(null, [fnName].concat(args)).catch(function (err) {
-      return { success: false, message: (err && err.message) || 'Falha de comunicação com o servidor.' };
+      var isNetworkUnavailable = true;
+      showSystemUnavailable(true);
+      return { success: false, message: (err && err.message) || 'Falha de comunicação com o servidor.', networkUnavailable: isNetworkUnavailable };
     });
   }
 
@@ -400,6 +436,7 @@
 
     callApi('apiLogin', email, password).then(function (res) {
       if (!res.success) { setStatus('msg-login', res.message, 'error'); return; }
+      showSystemUnavailable(false);
       state.sessionToken = res.sessionToken;
       state.profile = res.profile;
       saveSessionCache(res.sessionToken);
