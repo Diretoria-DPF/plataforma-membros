@@ -522,7 +522,7 @@ button, input, select, textarea, .list-item .actions-row button {
 .chat-row-mine .chat-bubble { background: var(--primary-soft); border-bottom-right-radius: 4px; }
 .chat-row-theirs .chat-bubble { background: var(--surface-alt); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 .chat-bubble-text { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 14px; line-height: 1.4; }
-.chat-bubble-time { display: block; text-align: right; font-size: 10px; color: var(--muted); margin-top: 3px; }
+.chat-bubble-time { display: block; text-align: right; font-size: 11px; color: var(--muted); margin-top: 3px; }
 
 .chat-composer {
   display: flex; align-items: flex-end; gap: 8px; padding: 10px 14px; margin: 0;
