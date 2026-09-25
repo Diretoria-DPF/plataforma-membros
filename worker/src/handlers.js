@@ -25,6 +25,9 @@ import * as TaskService from './services/taskService.js';
 import * as AdminService from './services/adminService.js';
 import * as AuditService from './services/auditService.js';
 import * as MediaService from './services/mediaService.js';
+import * as ConnectionService from './services/connectionService.js';
+import * as ModerationService from './services/moderationService.js';
+import * as OrgChartService from './services/orgChartService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -110,4 +113,24 @@ export const API_REGISTRY = {
   apiAdminListAuditLogs: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AuditService.listAuditLogs(sql, identity, input || {})),
   apiAdminListErrorLogs: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AuditService.listErrorLogs(sql, identity, input || {})),
   apiAdminUploadEventImage: (sql, env, [sessionToken, eventId, imageBase64, imageMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => MediaService.uploadEventImage(sql, env, identity, eventId, imageBase64, imageMimeType, cid)),
+
+  // ---- Perfil de outro membro / fluxograma ----
+  apiGetMemberProfile: (sql, env, [sessionToken, username]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMemberProfile(sql, identity, username)),
+  apiGetOrgChart: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => OrgChartService.getOrgChart(sql, identity)),
+  apiAdminSetLeaguePosition: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => OrgChartService.setMemberPosition(sql, identity, targetProfileId, input || {}, cid)),
+
+  // ---- Conexões entre membros ----
+  apiSendConnectionRequest: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.sendConnectionRequest(sql, identity, input || {}, cid)),
+  apiListIncomingConnectionRequests: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ConnectionService.listIncomingRequests(sql, identity)),
+  apiRespondConnectionRequest: (sql, env, [sessionToken, connectionId, decision]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.respondToRequest(sql, identity, connectionId, decision, cid)),
+  apiListMyConnections: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ConnectionService.listMyConnections(sql, identity)),
+  apiRemoveConnection: (sql, env, [sessionToken, connectionId]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.removeConnection(sql, identity, connectionId, cid)),
+  apiBlockProfile: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.blockProfile(sql, identity, targetProfileId, cid)),
+  apiUnblockProfile: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.unblockProfile(sql, identity, targetProfileId, cid)),
+  apiListMyBlocks: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ConnectionService.listMyBlocks(sql, identity)),
+
+  // ---- Denúncias (moderação) ----
+  apiReportProfile: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.submitReport(sql, identity, input || {}, cid)),
+  apiAdminListReports: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ModerationService.listReports(sql, identity, input || {})),
+  apiAdminResolveReport: (sql, env, [sessionToken, reportId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.resolveReport(sql, identity, reportId, input || {}, cid)),
 };

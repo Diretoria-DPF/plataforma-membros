@@ -55,3 +55,37 @@ describe('ProfileService.updateMyAvatarFromBase64', () => {
     expect(res.avatarUrl).toBe('https://x/avatar.png');
   });
 });
+
+describe('ProfileService.getMemberProfile', () => {
+  test('perfil inexistente/username errado lança NotFoundError', async () => {
+    const ProfileService = await import('../src/services/profileService.js');
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([]); // SELECT profiles — não encontrado
+    await expect(ProfileService.getMemberProfile(sql, MEMBER, 'ninguem')).rejects.toMatchObject({ name: 'NotFoundError' });
+  });
+
+  test('conta bloqueada (em qualquer direção) some como se não existisse', async () => {
+    const ProfileService = await import('../src/services/profileService.js');
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ id: 't1', full_name: 'Fulano', username: 'fulano', avatar_url: null, education: null, linkedin_url: null, instagram_handle: null, interests: null, role: 'member', created_at: '2026-01-01', league_position: null, directorate: null }])
+      .mockResolvedValueOnce([{ is_connection: false, is_blocked: true }]); // getRelationship
+
+    await expect(ProfileService.getMemberProfile(sql, MEMBER, 'fulano')).rejects.toMatchObject({ name: 'NotFoundError' });
+  });
+
+  test('devolve o perfil sem e-mail/telefone, mais a relação (conexão/bloqueio)', async () => {
+    const ProfileService = await import('../src/services/profileService.js');
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ id: 't1', full_name: 'Fulano', username: 'fulano', avatar_url: null, education: 'Farmácia', linkedin_url: null, instagram_handle: null, interests: null, role: 'member', created_at: '2026-01-01', league_position: 'diretor', directorate: 'marketing' }])
+      .mockResolvedValueOnce([{ is_connection: true, is_blocked: false }]); // getRelationship
+
+    const res = await ProfileService.getMemberProfile(sql, MEMBER, 'fulano');
+    expect(res.success).toBe(true);
+    expect(res.profile).not.toHaveProperty('email');
+    expect(res.profile).not.toHaveProperty('phone');
+    expect(res.profile).toMatchObject({ username: 'fulano', leaguePosition: 'diretor', directorate: 'marketing' });
+    expect(res.relationship).toEqual({ isSelf: false, isConnection: true, isBlockedEitherWay: false });
+  });
+});

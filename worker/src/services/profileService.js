@@ -5,6 +5,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { getRelationship } from './connectionService.js';
 
 const USERNAME_RE = /^[a-zA-Z0-9_.]{3,30}$/;
 const INSTAGRAM_RE = /^@?[a-zA-Z0-9_.]{1,30}$/;
@@ -42,6 +43,53 @@ export async function getMyProfile(sql, identity) {
       theme: row.theme || C.THEME.SYSTEM,
       emailNotifications: row.email_notifications !== false,
     },
+  };
+}
+
+/**
+ * Visão de outro membro (fluxograma → clicar num cartão → perfil).
+ * Sem visibilidade granular por campo ainda (isso é a Fase 3b do plano
+ * de mensageria, deixada pra depois) — qualquer membro/admin vê o
+ * perfil completo de outro membro/admin ativo, exceto contato direto
+ * (e-mail/telefone), que nunca aparece aqui. Devolve a relação
+ * (conexão/bloqueio) para a interface decidir que botão mostrar.
+ */
+export async function getMemberProfile(sql, identity, targetUsername) {
+  S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
+  const username = S.normalizeText(targetUsername).toLowerCase();
+  if (!username) throw E.ValidationError('Usuário inválido.');
+
+  const rows = await sql`
+    SELECT id, full_name, username, avatar_url, education, linkedin_url, instagram_handle,
+           interests, role, created_at, league_position, directorate
+    FROM profiles
+    WHERE username = ${username} AND status = 'active'::account_status
+      AND role IN ('member'::user_role, 'admin'::user_role)
+    LIMIT 1
+  `;
+  if (!rows.length) throw E.NotFoundError('Perfil não encontrado.');
+  const row = rows[0];
+
+  const relationship = await getRelationship(sql, identity.profileId, row.id);
+  if (relationship.isBlockedEitherWay) throw E.NotFoundError('Perfil não encontrado.');
+
+  return {
+    success: true,
+    profile: {
+      id: row.id,
+      fullName: row.full_name,
+      username: row.username,
+      avatarUrl: row.avatar_url,
+      education: row.education,
+      linkedinUrl: row.linkedin_url,
+      instagramHandle: row.instagram_handle,
+      interests: row.interests,
+      role: row.role,
+      memberSince: row.created_at,
+      leaguePosition: row.league_position,
+      directorate: row.directorate,
+    },
+    relationship,
   };
 }
 

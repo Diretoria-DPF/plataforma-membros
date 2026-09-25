@@ -54,6 +54,45 @@ export const THEME = {
   SYSTEM: 'system',
 };
 
+export const CONNECTION_STATUS = {
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  DECLINED: 'declined',
+};
+
+export const REPORT_CATEGORY = {
+  HARASSMENT: 'harassment',
+  SPAM: 'spam',
+  IMPERSONATION: 'impersonation',
+  INAPPROPRIATE_CONTENT: 'inappropriate_content',
+  OTHER: 'other',
+};
+
+export const REPORT_STATUS = {
+  OPEN: 'open',
+  UNDER_REVIEW: 'under_review',
+  RESOLVED: 'resolved',
+  DISMISSED: 'dismissed',
+};
+
+// Cargo de liderança da liga — independente de ROLES (permissão de
+// plataforma). Só 'diretor' exige uma DIRECTORATE vinculada (ver
+// sql/008_league_org_chart.sql).
+export const LEAGUE_POSITION = {
+  COORDENACAO_GERAL: 'coordenacao_geral',
+  PRESIDENTE: 'presidente',
+  VICE_PRESIDENTE: 'vice_presidente',
+  COORDENADOR: 'coordenador',
+  DIRETOR: 'diretor',
+};
+
+export const DIRECTORATE = {
+  MARKETING: 'marketing',
+  CIENTIFICO: 'cientifico',
+  ADMINISTRATIVO: 'administrativo',
+  FINANCEIRO: 'financeiro',
+};
+
 export const LIMITS = {
   PASSWORD_MIN_LENGTH: 8,
   NAME_MIN: 3,
@@ -78,6 +117,10 @@ export const LIMITS = {
   RESET_TOKEN_TTL_MINUTES: 60,
   ADMIN_LIST_PAGE_SIZE: 25,
   AUDIT_LIST_PAGE_SIZE: 50,
+  REPORT_DETAILS_MAX: 1000,
+  REPORT_EVIDENCE_MAX: 4000,
+  REPORT_LIST_PAGE_SIZE: 25,
+  DECLINE_COOLDOWN_DAYS: 30,
 };
 
 // Atualize sempre que docs/TERMOS_DE_USO.md ou
@@ -96,6 +139,11 @@ export const RATE_LIMITS = {
   RESET_CONFIRM: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
   REGISTER_GLOBAL: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   RESET_REQUEST_GLOBAL: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+  // Uso normal é um punhado de pedidos de conexão no total, não por dia —
+  // limite dimensionado para uma liga pequena (revisão de segurança da
+  // Fase 3, achado #4), não para uma rede social genérica.
+  CONNECTION_REQUEST: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 604800 },
+  REPORT: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 86400 },
 };
 
 export const GENERIC_ERROR_MESSAGE = 'Não foi possível concluir a operação. Tente novamente em instantes.';
