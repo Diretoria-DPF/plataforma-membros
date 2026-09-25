@@ -302,12 +302,12 @@
     if (!MsgCrypto.isCryptoSupported()) { app.showPanel('panel-messages'); return; }
     if (!identity) {
       pendingPeerAfterUnlock = peer;
-      app.showPanel('panel-messages');
+      app.showPanelSection('panel-messages');
       loadMessagingPanel();
       return;
     }
 
-    app.showPanel('panel-messages');
+    app.showPanelSection('panel-messages');
     showPreparing(false);
     showThreadView();
     app.setStatus('messaging-thread-status', 'Abrindo conversa...', 'info');

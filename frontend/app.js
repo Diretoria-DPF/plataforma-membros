@@ -667,7 +667,15 @@
 
   var currentPanelId = 'panel-home';
 
-  function showPanel(panelId) {
+  // Só troca qual <section> está visível/qual botão de nav fica ativo —
+  // NUNCA dispara o PANEL_LOADERS. Existe separado de showPanel() porque
+  // window.LaiftMessaging.openConversationWithPeer() (frontend/messaging.js)
+  // precisa mostrar o painel de mensagens sem re-disparar loadMessagingPanel()
+  // no meio da abertura de uma conversa específica — chamar showPanel() ali
+  // causava uma segunda chamada concorrente ao loader que sobrescrevia a
+  // conversa recém-aberta de volta para a lista (bug relatado: "ao clicar
+  // para enviar, não vai").
+  function showPanelSection(panelId) {
     currentPanelId = panelId;
     document.querySelectorAll('.app-main > section').forEach(function (section) {
       section.classList.toggle('hidden', section.id !== panelId);
@@ -676,6 +684,10 @@
       btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
     });
     window.scrollTo(0, 0);
+  }
+
+  function showPanel(panelId) {
+    showPanelSection(panelId);
     if (PANEL_LOADERS[panelId]) PANEL_LOADERS[panelId]();
     // Reavalia os indicadores ("!" de votação aberta, contagem de tarefas)
     // a cada navegação — não só no login — porque um admin pode ter
@@ -2038,6 +2050,7 @@
     renderList: renderList,
     formatDate: formatDate,
     showPanel: showPanel,
+    showPanelSection: showPanelSection,
     openConfirm: openConfirm,
   };
 
