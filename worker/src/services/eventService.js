@@ -60,12 +60,27 @@ export async function registerForEvent(sql, identity, eventId, correlationId) {
   const id = S.normalizeText(eventId);
   if (!id) throw E.ValidationError('Evento inválido.');
 
+  // Defesa em profundidade: a mesma regra de visibilidade que filtra a
+  // LISTAGEM (visibilitySql acima) também precisa valer no INSERT — sem
+  // isso, alguém que descobrisse o UUID de um evento visibility='members'
+  // por fora da listagem conseguiria se inscrever mesmo sem ser membro. O
+  // gatilho guard_event_registration() no Postgres é a defesa autoritativa
+  // (sql/004_event_visibility_guard.sql); esta checagem aqui só adianta o
+  // erro com uma mensagem clara antes de tocar o banco de escrita.
+  const eventRows = await sql`SELECT visibility FROM events WHERE id = ${id}::uuid`;
+  if (eventRows.length && eventRows[0].visibility === 'members' && identity.role !== C.ROLES.MEMBER && identity.role !== C.ROLES.ADMIN) {
+    throw E.ForbiddenError('Este evento é exclusivo para membros.');
+  }
+
   try {
     await sql`INSERT INTO event_registrations (event_id, profile_id) VALUES (${id}::uuid, ${identity.profileId}::uuid)`;
   } catch (err) {
     const msg = String((err && err.message) || '');
     if (msg.indexOf('event_registrations_unique') !== -1) {
       throw E.ConflictError('Você já está inscrito neste evento.');
+    }
+    if (msg.indexOf('exclusivo para membros') !== -1) {
+      throw E.ForbiddenError('Este evento é exclusivo para membros.');
     }
     if (msg.indexOf('sem vagas') !== -1 || msg.indexOf('não está aberto') !== -1 || msg.indexOf('não autorizada') !== -1) {
       throw E.ConflictError('Não foi possível concluir a inscrição: evento sem vagas ou indisponível.');
