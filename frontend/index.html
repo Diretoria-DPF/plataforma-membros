@@ -300,7 +300,6 @@
                 </span>
                 <span>
                   <button type="button" id="btn-profile-avatar-pick" class="secondary" style="width:auto;">Trocar foto</button>
-                  <span class="muted" style="display:block; font-size:12px; margin-top:4px;">JPEG, PNG, WEBP ou GIF, até 2MB.</span>
                 </span>
                 <input type="file" id="profile-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden">
               </div>
@@ -411,6 +410,9 @@
                     <option value="members">Somente membros</option>
                   </select>
                 </label>
+                <label for="event-location">Local (opcional)
+                  <input type="text" id="event-location" maxlength="255" placeholder="Endereço ou link da sala virtual">
+                </label>
                 <label for="event-capacity">Capacidade (opcional)
                   <input type="number" id="event-capacity" min="1" step="1">
                 </label>
@@ -507,6 +509,20 @@
         <button type="button" class="secondary" id="modal-confirm-cancel">Cancelar</button>
         <button type="button" class="danger" id="modal-confirm-ok">Confirmar</button>
       </div>
+    </div>
+  </div>
+
+  <!--
+    Lightbox de imagem: clicar numa foto de evento (histórico, lista de
+    membros ou lista de admin) abre a imagem por inteiro aqui, sem cortes
+    (object-fit: contain), num tamanho confortável mas que NÃO ocupa a tela
+    inteira — o overlay ainda mostra as bordas por fora, então dá pra
+    fechar clicando fora ou no X.
+  -->
+  <div id="modal-image-lightbox" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Imagem ampliada">
+    <div class="lightbox-box">
+      <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Fechar">×</button>
+      <img id="lightbox-image" alt="">
     </div>
   </div>
 

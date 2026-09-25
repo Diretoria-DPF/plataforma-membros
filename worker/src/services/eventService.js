@@ -5,6 +5,55 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { sendEmail } from '../mailer.js';
+
+function escapeHtmlForEmail(text) {
+  return String(text || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatEventDateForEmail(isoDate) {
+  try {
+    return new Date(isoDate).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'full', timeStyle: 'short' });
+  } catch (err) {
+    return String(isoDate || '');
+  }
+}
+
+async function sendEventRegistrationEmail(env, identity, event, correlationId, sql) {
+  const when = formatEventDateForEmail(event.event_date);
+  const whereLine = event.location ? 'Local: ' + event.location : 'Local: a definir — acompanhe atualizações na plataforma.';
+  try {
+    await sendEmail(env, {
+      to: identity.email,
+      subject: 'Inscrição confirmada — ' + event.title,
+      text:
+        'Olá, ' + identity.fullName + '. Sua inscrição no evento "' + event.title + '" foi confirmada.\n\n' +
+        'Data: ' + when + '\n' + whereLine + '\n\n' + (event.description || ''),
+      html:
+        '<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222">' +
+        '<h2>Inscrição confirmada</h2>' +
+        '<p>Olá, ' + escapeHtmlForEmail(identity.fullName) + '. Sua inscrição no evento <strong>' + escapeHtmlForEmail(event.title) + '</strong> foi confirmada.</p>' +
+        '<p><strong>Data:</strong> ' + escapeHtmlForEmail(when) + '<br>' +
+        '<strong>' + escapeHtmlForEmail(whereLine) + '</strong></p>' +
+        '<p>' + escapeHtmlForEmail(event.description || '') + '</p>' +
+        '</div>',
+    });
+  } catch (mailErr) {
+    // E-mail é uma conveniência pós-inscrição — uma falha no envio nunca
+    // pode desfazer ou reportar erro numa inscrição que já foi confirmada
+    // no banco (mesmo princípio do e-mail de confirmação de cadastro).
+    await Logging.logError(sql, correlationId, 'MAIL_EVENT_CONFIRMATION_FAILED', 'Falha ao enviar e-mail de confirmação de inscrição em evento.', {
+      profileId: identity.profileId,
+      eventId: event.id,
+      detail: String((mailErr && mailErr.message) || mailErr),
+    });
+  }
+}
 
 function visibilitySql(identity) {
   if (!identity) return "visibility = 'public'::event_visibility";
@@ -24,6 +73,7 @@ export async function listEvents(sql, identity) {
   const rows = await sql(
     `SELECT e.id AS id, e.title AS title, e.description AS description, e.event_date AS event_date,
             e.visibility AS visibility, e.capacity AS capacity, e.status AS status, e.image_url AS image_url,
+            e.location AS location,
             (SELECT count(*) FROM event_registrations r WHERE r.event_id = e.id) AS registered_count
      FROM events e
      WHERE e.status IN ('published'::event_status, 'in_progress'::event_status) AND ${visibilitySql(identity)}
@@ -50,6 +100,7 @@ export async function listEvents(sql, identity) {
         capacity: row.capacity,
         status: row.status,
         imageUrl: row.image_url,
+        location: row.location,
         registeredCount: row.registered_count,
         spotsLeft,
         isRegistered: !!myRegistrations[row.id],
@@ -58,7 +109,7 @@ export async function listEvents(sql, identity) {
   };
 }
 
-export async function registerForEvent(sql, identity, eventId, correlationId) {
+export async function registerForEvent(sql, env, identity, eventId, correlationId) {
   const id = S.normalizeText(eventId);
   if (!id) throw E.ValidationError('Evento inválido.');
 
@@ -68,8 +119,9 @@ export async function registerForEvent(sql, identity, eventId, correlationId) {
   // por fora da listagem conseguiria se inscrever mesmo sem ser membro. O
   // gatilho guard_event_registration() no Postgres é a defesa autoritativa
   // (sql/004_event_visibility_guard.sql); esta checagem aqui só adianta o
-  // erro com uma mensagem clara antes de tocar o banco de escrita.
-  const eventRows = await sql`SELECT visibility FROM events WHERE id = ${id}::uuid`;
+  // erro com uma mensagem clara antes de tocar o banco de escrita, e já
+  // traz os dados do evento usados depois no e-mail de confirmação.
+  const eventRows = await sql`SELECT id, title, description, event_date, location, visibility FROM events WHERE id = ${id}::uuid`;
   if (eventRows.length && eventRows[0].visibility === 'members' && identity.role !== C.ROLES.MEMBER && identity.role !== C.ROLES.ADMIN) {
     throw E.ForbiddenError('Este evento é exclusivo para membros.');
   }
@@ -92,6 +144,7 @@ export async function registerForEvent(sql, identity, eventId, correlationId) {
   }
 
   await Logging.logAudit(sql, correlationId, identity.profileId, 'REGISTER_EVENT', 'event', id, 'success', null);
+  if (eventRows.length) await sendEventRegistrationEmail(env, identity, eventRows[0], correlationId, sql);
   return { success: true, message: 'Inscrição confirmada.' };
 }
 
@@ -106,6 +159,7 @@ export async function createEvent(sql, identity, input, correlationId) {
   const description = S.normalizeText(input.description);
   const eventDate = S.normalizeText(input.eventDate);
   const visibility = S.normalizeText(input.visibility);
+  const location = S.normalizeText(input.location);
   const capacity = input.capacity === '' || input.capacity === null || input.capacity === undefined ? null : Number(input.capacity);
 
   if (!S.isLengthValid(title, C.LIMITS.TITLE_MIN, C.LIMITS.TITLE_MAX)) throw E.ValidationError('Título inválido.');
@@ -113,10 +167,11 @@ export async function createEvent(sql, identity, input, correlationId) {
   if (!eventDate || isNaN(new Date(eventDate).getTime())) throw E.ValidationError('Informe uma data válida para o evento.');
   if (['public', 'authenticated', 'members'].indexOf(visibility) === -1) throw E.ValidationError('Visibilidade inválida.');
   if (capacity !== null && (!Number.isInteger(capacity) || capacity <= 0)) throw E.ValidationError('Capacidade inválida.');
+  if (location && location.length > C.LIMITS.LOCATION_MAX) throw E.ValidationError('Local inválido.');
 
   const rows = await sql`
-    INSERT INTO events (title, description, event_date, visibility, capacity, created_by, status)
-    VALUES (${title}, ${description}, ${new Date(eventDate).toISOString()}, ${visibility}::event_visibility, ${capacity}, ${identity.profileId}::uuid, 'draft'::event_status)
+    INSERT INTO events (title, description, event_date, visibility, capacity, location, created_by, status)
+    VALUES (${title}, ${description}, ${new Date(eventDate).toISOString()}, ${visibility}::event_visibility, ${capacity}, ${location || null}, ${identity.profileId}::uuid, 'draft'::event_status)
     RETURNING id
   `;
 
@@ -158,7 +213,7 @@ export async function listAllEventsAdmin(sql, identity) {
   assertAdmin(identity);
   const rows = await sql`
     SELECT e.id AS id, e.title AS title, e.status AS status, e.visibility AS visibility,
-           e.event_date AS event_date, e.capacity AS capacity, e.image_url AS image_url,
+           e.event_date AS event_date, e.capacity AS capacity, e.image_url AS image_url, e.location AS location,
            (SELECT count(*) FROM event_registrations r WHERE r.event_id = e.id) AS registered_count
     FROM events e ORDER BY e.event_date DESC
   `;
@@ -174,12 +229,12 @@ export async function listAllEventsAdmin(sql, identity) {
  */
 export async function listRecentCompletedEvents(sql) {
   const rows = await sql`
-    SELECT id, title, description, event_date, image_url
+    SELECT id, title, description, event_date, image_url, location
     FROM events WHERE status = 'completed'::event_status
     ORDER BY event_date DESC LIMIT 3
   `;
   return {
     success: true,
-    events: rows.map((r) => ({ id: r.id, title: r.title, description: r.description, eventDate: r.event_date, imageUrl: r.image_url })),
+    events: rows.map((r) => ({ id: r.id, title: r.title, description: r.description, eventDate: r.event_date, imageUrl: r.image_url, location: r.location })),
   };
 }

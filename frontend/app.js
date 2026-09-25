@@ -314,6 +314,24 @@
     cancelBtn.addEventListener('click', onCancel);
   }
 
+  function openImageLightbox(src, alt) {
+    var overlay = document.getElementById('modal-image-lightbox');
+    var img = document.getElementById('lightbox-image');
+    img.src = src;
+    img.alt = alt || '';
+    overlay.classList.remove('hidden');
+  }
+
+  function closeImageLightbox() {
+    document.getElementById('modal-image-lightbox').classList.add('hidden');
+    document.getElementById('lightbox-image').removeAttribute('src');
+  }
+
+  document.getElementById('lightbox-close').addEventListener('click', closeImageLightbox);
+  document.getElementById('modal-image-lightbox').addEventListener('click', function (evt) {
+    if (evt.target.id === 'modal-image-lightbox') closeImageLightbox();
+  });
+
   function openVoteComplementModal(onSubmit) {
     var overlay = document.getElementById('modal-vote-complement');
     var form = document.getElementById('form-vote-complement');
@@ -560,6 +578,12 @@
     });
     window.scrollTo(0, 0);
     if (PANEL_LOADERS[panelId]) PANEL_LOADERS[panelId]();
+    // Reavalia os indicadores ("!" de votação aberta, contagem de tarefas)
+    // a cada navegação — não só no login — porque um admin pode ter
+    // publicado uma tarefa ou aberto uma votação depois que a sessão atual
+    // já estava ativa; sem isso o indicador ficava "congelado" no que
+    // existia no momento do login.
+    refreshNavBadges();
   }
 
   // ===========================================================================
@@ -584,10 +608,17 @@
 
   function renderEventHistoryItem(item) {
     var children = [];
-    if (item.imageUrl) children.push(h('img', { className: 'event-image', src: item.imageUrl, alt: item.title }));
+    if (item.imageUrl) {
+      children.push(h('img', {
+        className: 'event-image', src: item.imageUrl, alt: item.title,
+        onclick: function () { openImageLightbox(item.imageUrl, item.title); },
+      }));
+    }
     children.push(text('h4', item.title));
     children.push(text('p', item.description));
-    children.push(h('div', { className: 'meta-row' }, [text('span', 'Realizado em: ' + formatDate(item.eventDate))]));
+    var meta = [text('span', 'Realizado em: ' + formatDate(item.eventDate))];
+    if (item.location) meta.push(text('span', 'Local: ' + item.location));
+    children.push(h('div', { className: 'meta-row' }, meta));
     return h('article', { className: 'list-item' }, children);
   }
 
@@ -596,6 +627,7 @@
       text('span', 'Data: ' + formatDate(item.eventDate)),
       text('span', item.capacity !== null ? 'Vagas: ' + item.spotsLeft + '/' + item.capacity : 'Vagas ilimitadas'),
     ];
+    if (item.location) metaChildren.push(text('span', 'Local: ' + item.location));
     if (item.status === 'in_progress') {
       metaChildren.unshift(h('span', { className: 'badge in-progress' }, ['Em andamento']));
     }
@@ -614,7 +646,12 @@
     }
 
     var children = [];
-    if (item.imageUrl) children.push(h('img', { className: 'event-image', src: item.imageUrl, alt: item.title }));
+    if (item.imageUrl) {
+      children.push(h('img', {
+        className: 'event-image', src: item.imageUrl, alt: item.title,
+        onclick: function () { openImageLightbox(item.imageUrl, item.title); },
+      }));
+    }
     children.push(text('h4', item.title));
     children.push(text('p', item.description));
     children.push(h('div', { className: 'meta-row' }, metaChildren));
@@ -1126,6 +1163,7 @@
       description: document.getElementById('event-description').value,
       eventDate: localDateTimeToIso(document.getElementById('event-date').value),
       visibility: document.getElementById('event-visibility').value,
+      location: document.getElementById('event-location').value,
       capacity: capacityRaw === '' ? null : Number(capacityRaw),
     };
     callApi('apiAdminCreateEvent', state.sessionToken, payload).then(function (res) {
@@ -1165,13 +1203,20 @@
     actions.push(imageInput);
 
     var children = [];
-    if (item.image_url) children.push(h('img', { className: 'event-image', src: item.image_url, alt: item.title }));
+    if (item.image_url) {
+      children.push(h('img', {
+        className: 'event-image', src: item.image_url, alt: item.title,
+        onclick: function () { openImageLightbox(item.image_url, item.title); },
+      }));
+    }
     children.push(text('h4', item.title));
-    children.push(h('div', { className: 'meta-row' }, [
+    var adminMeta = [
       h('span', { className: 'badge' + (item.status === 'in_progress' ? ' in-progress' : '') }, [EVENT_STATUS_LABELS[item.status] || item.status]),
       text('span', 'Data: ' + formatDate(item.event_date)),
       text('span', 'Inscritos: ' + item.registered_count + (item.capacity ? '/' + item.capacity : '')),
-    ]));
+    ];
+    if (item.location) adminMeta.push(text('span', 'Local: ' + item.location));
+    children.push(h('div', { className: 'meta-row' }, adminMeta));
     children.push(h('div', { className: 'actions-row' }, actions));
 
     return h('article', { className: 'list-item' }, children);
