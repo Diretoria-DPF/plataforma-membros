@@ -1097,3 +1097,201 @@ parâmetros ligados). Nenhum achado restante bloqueia o início da 3a.
   no-op silencioso sem erro pra ninguém — falha de forma segura, mas
   faltou como caso de teste explícito na seção 9. **Ação:** adicionar
   esse caso à lista de testes da 3a.
+
+---
+
+## 11. Requisitos novos do dono do produto (acrescentado em 2026-09-25)
+
+Três decisões adicionais, tomadas antes de iniciar a implementação da
+Fase 3d/3e. Documentadas aqui no mesmo estilo do resto do plano —
+decisão, motivo, onde vive no schema/código — e cada uma marcada com o
+status real de implementação nesta entrega.
+
+### 11.1 Requisito novo 1 — Segurança de conteúdo de mensagem (texto puro)
+
+**Decisão:** mensagens são **texto puro apenas**. Nenhuma renderização
+de HTML/markdown do corpo — mesmo sendo E2EE, o texto **decifrado** no
+cliente é entrada hostil como qualquer outra e precisa ser inserido
+via `text()`/`h()` (nunca `innerHTML`), exatamente como o resto do
+front-end já faz (risco residual nº 1 de `docs/SECURITY.md`). Isso vale
+tanto para o corpo da mensagem quanto para qualquer metadado exibido
+perto dela (nome do remetente, timestamp) — tudo por `textContent`.
+
+**Limite de tamanho:**
+- `LIMITS.MESSAGE_MAX_LENGTH = 2000` (`worker/src/constants.js`) é o
+  limite de **caracteres do texto claro**, aplicado **só no cliente**
+  antes de cifrar — o servidor nunca vê o texto, então não há como ele
+  aplicar esse limite diretamente. Este número é a mesma fonte da
+  verdade que `frontend/msg-crypto.js` (Fase 3d, ainda não
+  implementado — ver seção 12) vai usar para truncar/recusar no input.
+- `LIMITS.MESSAGE_CIPHERTEXT_MAX = 12000` é o limite que o **servidor
+  de fato aplica**: bytes base64url do resultado do AES-GCM (texto
+  cifrado + preenchimento de 256 bytes da seção 3.6 + tag de 16 bytes),
+  validado em `messageService.sendMessage` e espelhado no `CHECK
+  messages_ciphertext_len` de `sql/009_messaging.sql`. 12000 caracteres
+  base64url decodificam para ~9KB, folga generosa acima de 2000
+  caracteres UTF-8 cifrados + preenchimento.
+- **Status: implementado e testado** (`worker/src/constants.js`,
+  `worker/src/services/messageService.js`,
+  `worker/test/messageService.test.js`).
+
+**Upload de imagem de perfil/avatar — confirmação pedida pelo dono:**
+verificado `worker/src/services/mediaService.js` antes de qualquer
+mudança. O limite **já é aplicado no servidor**, não só no cliente:
+- allowlist fechada de MIME type (`ALLOWED_MIME_TYPES`: apenas
+  `image/jpeg`, `image/png`, `image/webp`, `image/gif`) — um tipo fora
+  da lista é rejeitado antes de decodificar;
+- limite de tamanho (`MAX_AVATAR_BYTES = 2MB`) checado nos **bytes
+  decodificados** (`decodeImage`), não no tamanho da string base64
+  (que é ~33% maior e mascararia o limite real);
+- a extensão do arquivo salvo no R2 vem do MIME type validado, nunca
+  do nome de arquivo enviado pelo cliente.
+
+Nenhuma mudança foi necessária aqui — **status: confirmado, já estava
+correto**. Nenhum reforço adicional identificado como necessário.
+
+### 11.2 Requisito novo 2 — Rate limit progressivo com silenciamento escalonado
+
+**Decisão:** até `LIMITS.MESSAGE_BURST_MAX = 10` mensagens em sequência
+rápida (dentro de `LIMITS.MESSAGE_BURST_WINDOW_SECONDS = 60`) são
+permitidas. Ao ultrapassar, o remetente é silenciado por
+`LIMITS.MESSAGE_MUTE_BASE_MINUTES = 30` minutos; se voltar a estourar o
+limite **depois** que esse silenciamento já tiver vencido, a duração é
+multiplicada por `LIMITS.MESSAGE_MUTE_MULTIPLIER = 3` a cada
+reincidência (30 → 90 → 270 → 810 min, ...).
+
+**Por que os `RATE_LIMITS` existentes não servem:** `CONNECTION_REQUEST`,
+`REPORT` etc. são janela fixa simples (`{count, windowSeconds}` via
+`security.enforceRateLimit`/`rate_limit_buckets`) — bons para limitar um
+total ao longo de um período, mas sem noção de "penalidade que cresce a
+cada reincidência". Este requisito pede uma **máquina de estados com
+penalidade escalonada**, não uma contagem de janela.
+
+**Desenho (`sql/009_messaging.sql`):**
+- tabela `message_penalties` (`profile_id` PK, `burst_count`,
+  `burst_window_started_at`, `mute_strikes`, `muted_until`,
+  `updated_at`) — estado persistido **inteiramente no servidor**;
+- função `apply_message_penalty(profile_id, burst_max, window_seconds,
+  base_minutes, multiplier)`, chamada por `messageService.sendMessage`
+  **antes** de cada INSERT em `messages`. Ela:
+  1. faz `SELECT ... FOR UPDATE` na linha da conta (serializa envios
+     concorrentes da mesma pessoa — mesmo padrão de lock de
+     `guard_event_registration`);
+  2. se já está silenciada (`muted_until > now()`), **bloqueia sem
+     contar como nova reincidência** — reincidência só conta depois que
+     o silenciamento em vigor vencer e o limite for estourado de novo;
+  3. senão, incrementa `burst_count` dentro da janela (ou reinicia a
+     janela se o último envio foi há mais de
+     `MESSAGE_BURST_WINDOW_SECONDS`); se ultrapassar `burst_max`,
+     incrementa `mute_strikes` e grava `muted_until = now() +
+     base_minutes * multiplier^(mute_strikes-1)` minutos — a
+     multiplicação geométrica é a "tripling" pedida;
+  4. devolve `{is_muted, muted_until, mute_strikes,
+     retry_after_seconds}`, que `messageService.sendMessage` traduz na
+     notificação ao remetente ("Você enviou mensagens rápido demais e
+     está temporariamente silenciado. Tente novamente em N minutos.").
+- **Por que é seguro contra auto-reset:** não existe NENHUMA ação em
+  `API_REGISTRY` que escreva em `message_penalties` — a única forma de
+  tocar a tabela é via `apply_message_penalty`, chamada só no caminho
+  de envio de mensagem, e essa função **nunca reduz** `muted_until` nem
+  zera `mute_strikes`, só avança. Mesmo um admin não tem uma ação
+  dedicada para isso nesta entrega (ver seção 12, pendências).
+- **Validado numa branch temporária do Neon antes de ir para produção**
+  (criada e depois apagada nesta sessão): 10 chamadas permitidas, 11ª
+  silencia por exatos 1800s (30min, strike 1); chamadas durante o
+  silenciamento continuam bloqueadas sem incrementar `mute_strikes`;
+  simulando o silenciamento já vencido, a próxima reincidência silencia
+  por exatos 5400s (90min, strike 2) — confirma a progressão
+  geométrica 30→90. O gatilho `guard_message_insert` também foi testado
+  na mesma branch com dados reais (conexão aceita, bloqueio, versão de
+  chave desatualizada, remetente não-participante — todos rejeitados
+  corretamente) antes de aplicar em produção.
+- **Status: implementado, testado (unitário + integração na branch) e
+  aplicado em produção.**
+
+### 11.3 Requisito novo 3 — Ação explícita "Ver perfil" / "Enviar mensagem"
+
+**Comportamento atual confirmado antes de mexer** (pedido explícito do
+dono): `profileService.getMemberProfile` (`worker/src/services/
+profileService.js`) **já existe e já é chamado** pelo fluxograma de
+membros (clicar num cartão → `apiGetMemberProfile`). Hoje ele:
+- exige sessão de `member`/`admin`;
+- devolve o perfil de qualquer membro/admin **ativo** que não esteja
+  bloqueado em nenhuma direção (`ConnectionService.getRelationship`),
+  incluindo `relationship: {isSelf, isConnection, isBlockedEitherWay}`
+  para a UI decidir o que mostrar;
+- **nunca** devolve e-mail/telefone (só existem em `getMyProfile`, do
+  próprio dono);
+- **diferença importante em relação à descrição do requisito:** a
+  Fase 3b do plano (visibilidade por campo — seção 2.2/DP-5) **não foi
+  implementada ainda**. Hoje não existe filtragem "campo por campo"
+  conforme o dono marcou como público/só-conexões/privado — qualquer
+  membro/admin não bloqueado vê o mesmo conjunto de campos (LinkedIn,
+  Instagram, escolaridade, interesses, cargo na liga), estejam ou não
+  conectados. Ou seja, a distinção "conexão aceita vê tudo que o dono
+  permitiu vs. desconhecido vê só o público" que o requisito descreve
+  **depende da Fase 3b**, que continua no backlog do plano original
+  (seção 7, "Fase 3b — Visibilidade de perfil"), não desta entrega.
+
+**O que este requisito pede como novidade real:** não é lógica de
+backend nova — é a **ação explícita de UI** no clique da foto de
+perfil, com duas opções claras ("Ver perfil" chamando
+`apiGetMemberProfile` já existente; "Enviar mensagem" abrindo o chat
+E2EE). O botão "Enviar mensagem" só pode ser funcional depois que a
+Fase 3f (UI de mensageria — passphrase, chat, polling) existir, porque
+sem `frontend/msg-crypto.js` e a tela de conversa não há para onde
+navegar.
+
+**Status: NÃO implementado nesta entrega.** Ver seção 12 — ficou
+para trás por depender da UI de mensageria completa (Fase 3f), que não
+coube no escopo desta fatia (backend de chaves/mensagens). Registrado
+aqui como próximo passo explícito, junto com a recomendação de que,
+quando a Fase 3f for implementada, valeria também revisitar a Fase 3b
+(visibilidade por campo) para que "Ver perfil" reflita de fato a
+distinção conexão-aceita vs. desconhecido que o dono descreveu — hoje
+esse botão mostraria o mesmo conteúdo para os dois casos.
+
+---
+
+## 12. Estado desta entrega (2026-09-25) — o que ficou pronto vs. pendente
+
+Ver o relatório da sessão para o texto completo; resumo aqui para quem
+ler só o plano:
+
+**Pronto e testado nesta entrega (backend, Fase 3d/3e):**
+- `sql/009_messaging.sql` aplicado em produção (projeto
+  `jolly-snow-39561777`): `messaging_keys`, `conversations`, `messages`
+  (+ gatilho `guard_message_insert`), `message_penalties` (+ função
+  `apply_message_penalty`, Requisito novo 2).
+- `worker/src/services/messagingKeyService.js`: publicar/rotacionar
+  chave (concorrência otimista por `expectedCurrentVersion`), ler a
+  própria chave (com salt), ler chaves de um contato autorizado (sem
+  salt, exige conexão aceita e ausência de bloqueio — achado MEDIUM #3
+  da revisão de segurança incorporado).
+- `worker/src/services/messageService.js`: abrir conversa, listar
+  conversas, listar mensagens (paginação por `beforeId`/`afterId`),
+  enviar mensagem (idempotente por `clientMessageId`, com o
+  silenciamento progressivo do Requisito novo 2), marcar como lida,
+  sincronizar badges. Envio de mensagem **não** audita (DP-7).
+- 9 ações novas em `API_REGISTRY` (63 no total).
+- 33 testes novos, 145 no total, todos verdes.
+- `LIMITS.MESSAGE_MAX_LENGTH`/`MESSAGE_CIPHERTEXT_MAX` e os limites do
+  silenciamento progressivo em `constants.js` (Requisito novo 1 e 2).
+- Confirmado que os limites de avatar (`mediaService.js`) já são
+  aplicados no servidor — nenhuma mudança necessária (Requisito novo 1).
+
+**Pendente (não implementado nesta entrega):**
+- `frontend/msg-crypto.js` (derivação X25519/PBKDF2/HKDF, cifrar/
+  decifrar, fingerprint) — Fase 3d, item 1 e 2 da seção 7.
+- UX de frase-secreta (criação, desbloqueio, "esqueci minha frase") —
+  Fase 3f.
+- UI de chat (conversas, envio, polling, TOFU/número de segurança,
+  badges) — Fase 3f.
+- Botões explícitos "Ver perfil"/"Enviar mensagem" no perfil de membro
+  — Requisito novo 3 (depende da Fase 3f existir para o segundo botão
+  ter para onde navegar).
+- CSP via `<meta http-equiv>` — endurecimento previsto junto da 3f.
+- Fase 3b (visibilidade de perfil por campo) continua no backlog
+  original, sem mudança nesta entrega — impacta o que "Ver perfil" vai
+  mostrar quando a Fase 3f for feita (ver seção 11.3).
+- Spike de compatibilidade X25519 em 4 navegadores (seção 3.1, DP-6).
