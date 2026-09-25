@@ -78,7 +78,7 @@ export const API_REGISTRY = {
   // ---- Eventos ----
   apiListEvents: (sql, env, [sessionToken]) => run(sql, async () => {
     const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
-    return EventService.listEvents(sql, identity);
+    return EventService.listEvents(sql, env, identity);
   }),
   apiRegisterForEvent: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.registerForEvent(sql, env, identity, eventId, cid)),
   apiListRecentCompletedEvents: (sql) => run(sql, () => EventService.listRecentCompletedEvents(sql)),
@@ -104,8 +104,8 @@ export const API_REGISTRY = {
   apiAdminBanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.banUser(sql, identity, targetProfileId, cid)),
   apiAdminUnbanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.unbanUser(sql, identity, targetProfileId, cid)),
   apiAdminListFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.listFeedback(sql, identity, input || {})),
-  apiAdminCreateEvent: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.createEvent(sql, identity, input || {}, cid)),
-  apiAdminUpdateEventStatus: (sql, env, [sessionToken, eventId, newStatus]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.updateEventStatus(sql, identity, eventId, newStatus, cid)),
+  apiAdminCreateEvent: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.createEvent(sql, env, identity, input || {}, cid)),
+  apiAdminUpdateEventStatus: (sql, env, [sessionToken, eventId, newStatus]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.updateEventStatus(sql, env, identity, eventId, newStatus, cid)),
   apiAdminListAllEvents: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => EventService.listAllEventsAdmin(sql, identity)),
   apiAdminListProposalsForReview: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProposalService.listForReview(sql, identity)),
   apiAdminTransitionProposal: (sql, env, [sessionToken, proposalId, newStatus, extra]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProposalService.transitionProposal(sql, identity, proposalId, newStatus, extra || {}, cid)),
@@ -118,8 +118,8 @@ export const API_REGISTRY = {
 
   // ---- Perfil de outro membro / fluxograma ----
   apiGetMemberProfile: (sql, env, [sessionToken, username]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMemberProfile(sql, identity, username)),
-  apiGetOrgChart: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => OrgChartService.getOrgChart(sql, identity)),
-  apiAdminSetLeaguePosition: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => OrgChartService.setMemberPosition(sql, identity, targetProfileId, input || {}, cid)),
+  apiGetOrgChart: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => OrgChartService.getOrgChart(sql, env, identity)),
+  apiAdminSetLeaguePosition: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => OrgChartService.setMemberPosition(sql, env, identity, targetProfileId, input || {}, cid)),
 
   // ---- Conexões entre membros ----
   apiSendConnectionRequest: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.sendConnectionRequest(sql, identity, input || {}, cid)),

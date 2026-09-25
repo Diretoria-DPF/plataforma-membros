@@ -32,6 +32,26 @@ export function isLengthValid(value, min, max) {
   return len >= min && len <= max;
 }
 
+/**
+ * Defesa em profundidade (achado M3 da auditoria de 2026-09-25): o campo
+ * hoje só é renderizado como texto (nunca como href clicável), então não é
+ * explorável agora — mas exigir esquema https:// evita que o campo vire um
+ * vetor de link malicioso/javascript: se algum dia passar a ser clicável.
+ */
+export function isValidLinkedinUrl(value) {
+  const v = normalizeText(value);
+  if (!v) return true;
+  if (v.length > 255) return false;
+  if (!/^https:\/\//i.test(v)) return false;
+  try {
+    // eslint-disable-next-line no-new
+    new URL(v);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 function toHex(buffer) {
   return Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, '0'))

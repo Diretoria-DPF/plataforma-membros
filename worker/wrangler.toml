@@ -28,3 +28,11 @@ MEDIA_PUBLIC_URL = "https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev"
 [[r2_buckets]]
 bucket_name = "plataforma-membros-media"
 binding = "MEDIA_BUCKET"
+
+# Cache de leitura quente (fluxograma, lista pública de eventos) — ver
+# worker/src/cache.js. TTL curto (60s), nunca é a autoridade dos dados;
+# reduz carga no Neon nas telas de maior tráfego (achado B4 da auditoria
+# de 2026-09-25).
+[[kv_namespaces]]
+binding = "HOT_CACHE"
+id = "6ee17e571c044c43bd5b32599b6fbab9"

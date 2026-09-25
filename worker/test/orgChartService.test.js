@@ -1,5 +1,8 @@
+import { jest } from '@jest/globals';
 import * as OrgChartService from '../src/services/orgChartService.js';
-import { makeSql } from './helpers/mockEnv.js';
+import { makeSql, makeEnv } from './helpers/mockEnv.js';
+
+const env = makeEnv();
 
 const MEMBER = { profileId: 'm1', role: 'member' };
 const ADMIN = { profileId: 'a1', role: 'admin' };
@@ -9,21 +12,21 @@ describe('OrgChartService.setMemberPosition', () => {
   test('member não pode atribuir cargo (só admin)', async () => {
     const sql = makeSql();
     await expect(
-      OrgChartService.setMemberPosition(sql, MEMBER, 't1', { leaguePosition: 'presidente' }, 'cid')
+      OrgChartService.setMemberPosition(sql, env, MEMBER, 't1', { leaguePosition: 'presidente' }, 'cid')
     ).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
   test('cargo "diretor" sem diretoria vinculada lança ValidationError', async () => {
     const sql = makeSql();
     await expect(
-      OrgChartService.setMemberPosition(sql, ADMIN, 't1', { leaguePosition: 'diretor' }, 'cid')
+      OrgChartService.setMemberPosition(sql, env, ADMIN,'t1', { leaguePosition: 'diretor' }, 'cid')
     ).rejects.toMatchObject({ name: 'ValidationError' });
   });
 
   test('cargo "presidente" com diretoria vinculada lança ValidationError (não deveria ter diretoria)', async () => {
     const sql = makeSql();
     await expect(
-      OrgChartService.setMemberPosition(sql, ADMIN, 't1', { leaguePosition: 'presidente', directorate: 'marketing' }, 'cid')
+      OrgChartService.setMemberPosition(sql, env, ADMIN,'t1', { leaguePosition: 'presidente', directorate: 'marketing' }, 'cid')
     ).rejects.toMatchObject({ name: 'ValidationError' });
   });
 
@@ -31,7 +34,7 @@ describe('OrgChartService.setMemberPosition', () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([{ role: 'visitor' }]); // SELECT role do alvo
     await expect(
-      OrgChartService.setMemberPosition(sql, ADMIN, 't1', { directorate: 'marketing' }, 'cid')
+      OrgChartService.setMemberPosition(sql, env, ADMIN,'t1', { directorate: 'marketing' }, 'cid')
     ).rejects.toMatchObject({ name: 'ConflictError' });
   });
 
@@ -42,7 +45,7 @@ describe('OrgChartService.setMemberPosition', () => {
       .mockResolvedValueOnce(undefined) // UPDATE
       .mockResolvedValueOnce(undefined); // logAudit
 
-    const res = await OrgChartService.setMemberPosition(sql, ADMIN, 't1', { leaguePosition: 'diretor', directorate: 'marketing' }, 'cid');
+    const res = await OrgChartService.setMemberPosition(sql, env, ADMIN,'t1', { leaguePosition: 'diretor', directorate: 'marketing' }, 'cid');
     expect(res.success).toBe(true);
   });
 
@@ -53,7 +56,7 @@ describe('OrgChartService.setMemberPosition', () => {
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
-    const res = await OrgChartService.setMemberPosition(sql, ADMIN, 't1', { directorate: 'cientifico' }, 'cid');
+    const res = await OrgChartService.setMemberPosition(sql, env, ADMIN,'t1', { directorate: 'cientifico' }, 'cid');
     expect(res.success).toBe(true);
   });
 
@@ -64,7 +67,7 @@ describe('OrgChartService.setMemberPosition', () => {
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
-    const res = await OrgChartService.setMemberPosition(sql, ADMIN, 't1', {}, 'cid');
+    const res = await OrgChartService.setMemberPosition(sql, env, ADMIN,'t1', {}, 'cid');
     expect(res.success).toBe(true);
   });
 });
@@ -72,7 +75,7 @@ describe('OrgChartService.setMemberPosition', () => {
 describe('OrgChartService.getOrgChart', () => {
   test('visitante não pode ver o fluxograma', async () => {
     const sql = makeSql();
-    await expect(OrgChartService.getOrgChart(sql, VISITOR)).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(OrgChartService.getOrgChart(sql, env, VISITOR)).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
   test('agrupa membros por cargo/diretoria corretamente', async () => {
@@ -85,7 +88,7 @@ describe('OrgChartService.getOrgChart', () => {
       { id: 'p5', full_name: 'Ligante', username: 'ligante', avatar_url: null, league_position: null, directorate: null },
     ]);
 
-    const res = await OrgChartService.getOrgChart(sql, MEMBER);
+    const res = await OrgChartService.getOrgChart(sql, env, MEMBER);
     expect(res.success).toBe(true);
     expect(res.chart.coordenacaoGeral).toHaveLength(1);
     expect(res.chart.presidente).toHaveLength(1);
@@ -93,5 +96,15 @@ describe('OrgChartService.getOrgChart', () => {
     expect(res.chart.directorates.marketing.members).toHaveLength(1);
     expect(res.chart.membersWithoutDirectorate).toHaveLength(1);
     expect(res.chart.membersWithoutDirectorate[0]).toMatchObject({ id: 'p5' });
+  });
+
+  test('cache hit (HOT_CACHE.get devolve algo): nem consulta o banco', async () => {
+    const sql = makeSql();
+    const cachedChart = { coordenacaoGeral: [], presidente: [], vicePresidente: [], coordenadores: [], directorates: {}, membersWithoutDirectorate: [] };
+    const cachedEnv = makeEnv({ HOT_CACHE: { get: jest.fn().mockResolvedValue(JSON.stringify(cachedChart)), put: jest.fn(), delete: jest.fn() } });
+
+    const res = await OrgChartService.getOrgChart(sql, cachedEnv, MEMBER);
+    expect(res).toEqual({ success: true, chart: cachedChart });
+    expect(sql).not.toHaveBeenCalled();
   });
 });

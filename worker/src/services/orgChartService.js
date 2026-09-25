@@ -9,6 +9,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { getCached, setCached, invalidateCached, CACHE_KEYS, CACHE_TTL_SECONDS } from '../cache.js';
 
 const LEAGUE_POSITIONS = Object.values(C.LEAGUE_POSITION);
 const DIRECTORATES = Object.values(C.DIRECTORATE);
@@ -17,7 +18,7 @@ function assertAdmin(identity) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
 }
 
-export async function setMemberPosition(sql, identity, targetProfileId, input, correlationId) {
+export async function setMemberPosition(sql, env, identity, targetProfileId, input, correlationId) {
   assertAdmin(identity);
   const targetId = S.normalizeText(targetProfileId);
   const leaguePosition = S.normalizeText(input && input.leaguePosition) || null;
@@ -47,6 +48,7 @@ export async function setMemberPosition(sql, identity, targetProfileId, input, c
     UPDATE profiles SET league_position = ${leaguePosition}::league_position, directorate = ${directorateValue}::directorate
     WHERE id = ${targetId}::uuid
   `;
+  await invalidateCached(env, CACHE_KEYS.ORG_CHART);
 
   await Logging.logAudit(sql, correlationId, identity.profileId, 'SET_LEAGUE_POSITION', 'profile', targetId, 'success', {
     leaguePosition, directorate: directorateValue,
@@ -59,8 +61,15 @@ export async function setMemberPosition(sql, identity, targetProfileId, input, c
  * do pedido: "somente os usuarios que forem membros poderão
  * visualizar esse fluxograma"). Visitantes nunca aparecem nele.
  */
-export async function getOrgChart(sql, identity) {
+export async function getOrgChart(sql, env, identity) {
   S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
+
+  // Seguro cachear em bloco único (não filtrado por identidade): o
+  // conteúdo do fluxograma é idêntico para qualquer membro/admin que
+  // passe na checagem de papel acima — a checagem de papel roda ANTES do
+  // cache, então visitante nunca alcança este ponto.
+  const cached = await getCached(env, CACHE_KEYS.ORG_CHART);
+  if (cached) return { success: true, chart: cached };
 
   const rows = await sql`
     SELECT id, full_name, username, avatar_url, league_position, directorate
@@ -102,5 +111,6 @@ export async function getOrgChart(sql, identity) {
     chart.membersWithoutDirectorate.push(card);
   });
 
+  await setCached(env, CACHE_KEYS.ORG_CHART, chart, CACHE_TTL_SECONDS);
   return { success: true, chart };
 }

@@ -37,6 +37,22 @@ describe('security.js — validação', () => {
     expect(S.isLengthValid('  abc  ', 3, 5)).toBe(true);
     expect(S.isLengthValid('ab', 3, 5)).toBe(false);
   });
+
+  test('isValidLinkedinUrl: vazio é válido (campo opcional)', () => {
+    expect(S.isValidLinkedinUrl('')).toBe(true);
+    expect(S.isValidLinkedinUrl('   ')).toBe(true);
+  });
+
+  test('isValidLinkedinUrl: exige esquema https:// (achado M3 da auditoria)', () => {
+    expect(S.isValidLinkedinUrl('https://linkedin.com/in/fulano')).toBe(true);
+    expect(S.isValidLinkedinUrl('http://linkedin.com/in/fulano')).toBe(false);
+    expect(S.isValidLinkedinUrl('linkedin.com/in/fulano')).toBe(false);
+    expect(S.isValidLinkedinUrl('javascript:alert(1)')).toBe(false);
+  });
+
+  test('isValidLinkedinUrl: rejeita acima de 255 caracteres', () => {
+    expect(S.isValidLinkedinUrl('https://linkedin.com/in/' + 'a'.repeat(250))).toBe(false);
+  });
 });
 
 describe('security.js — enforceRateLimit', () => {

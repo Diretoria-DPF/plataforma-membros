@@ -49,9 +49,25 @@
 
   var TOFU_STORAGE_KEY = 'pm_msg_tofu_v1';
   var CONVERSATION_POLL_FAST_MS = 5000;
-  var CONVERSATION_POLL_SLOW_MS = 30000;
+  var CONVERSATION_POLL_SLOW_MS = 45000;
   var CONVERSATION_POLL_ESCALATE_AFTER_MS = 2 * 60 * 1000;
-  var GLOBAL_SYNC_INTERVAL_MS = 30000;
+  var GLOBAL_SYNC_INTERVAL_MS = 60000;
+  // Preparação de escala (auditoria de 2026-09-25, item B1/B2): o Neon
+  // Free suspende a compute após 5min sem consulta — mas polling nunca
+  // para sozinho, então uma aba aberta e esquecida (visível, porém sem
+  // ninguém usando) mantinha o banco acordado indefinidamente. Depois de
+  // MESSAGING_IDLE_PAUSE_MS sem NENHUMA interação real (clique/tecla/
+  // toque/scroll/movimento do mouse), os dois loops de polling abaixo
+  // param de consultar o servidor — voltam sozinhos na próxima interação,
+  // sem precisar recarregar a página.
+  var MESSAGING_IDLE_PAUSE_MS = 10 * 60 * 1000;
+  var lastUserActivityAt = Date.now();
+  ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(function (evt) {
+    document.addEventListener(evt, function () { lastUserActivityAt = Date.now(); }, { passive: true });
+  });
+  function isUserIdle() {
+    return Date.now() - lastUserActivityAt > MESSAGING_IDLE_PAUSE_MS;
+  }
   var IDB_NAME = 'laift-messaging';
   var IDB_STORE = 'identity-keys';
 
@@ -725,7 +741,7 @@
   }
 
   async function pollConversationOnce() {
-    if (!currentConversation || document.hidden) { scheduleNextPoll(); return; }
+    if (!currentConversation || document.hidden || isUserIdle()) { scheduleNextPoll(); return; }
     var app = App();
     try {
       var res = await app.callApi('apiListMessages', app.getState().sessionToken, currentConversation.conversationId, { afterId: lastSeenMessageId });
@@ -762,7 +778,7 @@
     stopGlobalSync();
     refreshMessagesBadge();
     globalSyncTimer = setInterval(function () {
-      if (document.hidden) return;
+      if (document.hidden || isUserIdle()) return;
       refreshMessagesBadge();
       // Se a tela de "Conversas" (lista) está aberta, atualiza ela também —
       // pedido explícito: "atualização automática... sem precisar alterar

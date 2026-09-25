@@ -112,7 +112,7 @@ export async function updateMyProfile(sql, identity, input, correlationId) {
     throw E.ValidationError('Informe um telefone válido.');
   }
   if (education && education.length > C.LIMITS.EDUCATION_MAX) throw E.ValidationError('Escolaridade inválida.');
-  if (linkedinUrl && linkedinUrl.length > 255) throw E.ValidationError('Link do LinkedIn inválido.');
+  if (linkedinUrl && !S.isValidLinkedinUrl(linkedinUrl)) throw E.ValidationError('Link do LinkedIn inválido — use uma URL começando com https://.');
   if (instagramHandle && !INSTAGRAM_RE.test(instagramHandle)) throw E.ValidationError('Usuário do Instagram inválido.');
   if (interests && interests.length > 500) throw E.ValidationError('Interesses: máximo de 500 caracteres.');
 

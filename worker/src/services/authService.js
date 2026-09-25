@@ -49,8 +49,8 @@ function assertValidRegistration(input) {
   if (education && education.length > C.LIMITS.EDUCATION_MAX) {
     throw E.ValidationError('Escolaridade inválida.');
   }
-  if (linkedinUrl && linkedinUrl.length > 255) {
-    throw E.ValidationError('Link do LinkedIn inválido.');
+  if (linkedinUrl && !S.isValidLinkedinUrl(linkedinUrl)) {
+    throw E.ValidationError('Link do LinkedIn inválido — use uma URL começando com https://.');
   }
   if (instagramHandle && !INSTAGRAM_RE.test(instagramHandle)) {
     throw E.ValidationError('Usuário do Instagram inválido.');
@@ -219,6 +219,12 @@ export async function login(sql, env, email, password, userAgent, correlationId)
     throw E.AuthError(C.GENERIC_AUTH_FAILURE_MESSAGE);
   }
 
+  // Achado M2: teto agregado (LOGIN_GLOBAL) e por IP (LOGIN_IP) além do
+  // já existente por e-mail — env.clientIp vem de index.js (CF-Connecting-IP),
+  // '' quando ausente (mesma chave de bucket pra todo tráfego sem IP visível,
+  // nunca undefined indo pro hash).
+  await S.enforceRateLimit(sql, 'LOGIN_GLOBAL', 'global', C.RATE_LIMITS.LOGIN_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.LOGIN_GLOBAL.WINDOW_SECONDS);
+  await S.enforceRateLimit(sql, 'LOGIN_IP', env.clientIp || 'unknown', C.RATE_LIMITS.LOGIN_IP.MAX_ATTEMPTS, C.RATE_LIMITS.LOGIN_IP.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'LOGIN', normalizedEmail, C.RATE_LIMITS.LOGIN.MAX_ATTEMPTS, C.RATE_LIMITS.LOGIN.WINDOW_SECONDS);
 
   const rows = await sql`

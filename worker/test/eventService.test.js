@@ -70,18 +70,20 @@ describe('EventService.registerForEvent — visibilidade (achado de auditoria)',
 describe('EventService.listEvents — filtro de visibilidade por papel', () => {
   test('anônimo (identity null) só vê eventos public', async () => {
     const sql = makeSql();
+    const env = makeEnv();
     sql.mockResolvedValueOnce([]); // SELECT events
 
-    await EventService.listEvents(sql, null);
+    await EventService.listEvents(sql, env, null);
     const [queryText] = sql.mock.calls[0];
     expect(queryText).toContain("visibility = 'public'");
   });
 
   test('visitor autenticado vê public+authenticated, mas não members', async () => {
     const sql = makeSql();
+    const env = makeEnv();
     sql.mockResolvedValueOnce([]).mockResolvedValueOnce([]); // events + "minhas inscrições"
 
-    await EventService.listEvents(sql, VISITOR);
+    await EventService.listEvents(sql, env, VISITOR);
     const [queryText] = sql.mock.calls[0];
     expect(queryText).toContain("'public','authenticated'");
     expect(queryText).not.toContain('members');
@@ -89,11 +91,49 @@ describe('EventService.listEvents — filtro de visibilidade por papel', () => {
 
   test('member vê os 3 níveis de visibilidade', async () => {
     const sql = makeSql();
+    const env = makeEnv();
     sql.mockResolvedValueOnce([]).mockResolvedValueOnce([]); // events + "minhas inscrições"
 
-    await EventService.listEvents(sql, MEMBER);
+    await EventService.listEvents(sql, env, MEMBER);
     const [queryText] = sql.mock.calls[0];
     expect(queryText).toContain("'public','authenticated','members'");
+  });
+});
+
+describe('EventService.listEvents — cache (achado #4 da auditoria)', () => {
+  test('anônimo com cache hit: devolve do KV, nem consulta o banco', async () => {
+    const sql = makeSql();
+    const cachedEvents = [{ id: 'e1', title: 'Cacheado' }];
+    const env = makeEnv({ HOT_CACHE: { get: jest.fn().mockResolvedValue(JSON.stringify(cachedEvents)), put: jest.fn(), delete: jest.fn() } });
+
+    const res = await EventService.listEvents(sql, env, null);
+    expect(res).toEqual({ success: true, events: cachedEvents });
+    expect(sql).not.toHaveBeenCalled();
+  });
+
+  test('identidade logada nunca usa cache, mesmo com HOT_CACHE populado (evita vazar dado entre usuários)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    const env = makeEnv({ HOT_CACHE: { get: jest.fn().mockResolvedValue(JSON.stringify([{ id: 'nao-deveria-aparecer' }])), put: jest.fn(), delete: jest.fn() } });
+
+    await EventService.listEvents(sql, env, MEMBER);
+    expect(env.HOT_CACHE.get).not.toHaveBeenCalled();
+    expect(sql).toHaveBeenCalled();
+  });
+});
+
+describe('EventService.registerForEvent — invalida cache de eventos públicos', () => {
+  test('inscrição bem-sucedida chama HOT_CACHE.delete (registered_count mudou)', async () => {
+    const sql = makeSql();
+    const env = makeEnv();
+    sql
+      .mockResolvedValueOnce([{ id: 'evento-publico-1', title: 'Evento', description: 'desc', event_date: '2026-01-01', location: 'Auditório', visibility: 'public' }])
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce([{ email_notifications: false }]);
+
+    await EventService.registerForEvent(sql, env, VISITOR, 'evento-publico-1', 'cid');
+    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:events:public:v1');
   });
 });
 

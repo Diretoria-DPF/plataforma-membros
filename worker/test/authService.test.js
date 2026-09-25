@@ -21,7 +21,9 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit
+      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_GLOBAL
+      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_IP
+      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN (por e-mail)
       .mockResolvedValueOnce([]) // SELECT profiles — não encontrado
       .mockResolvedValueOnce([{ ignored: 'x' }]) // SELECT crypt(dummy)
       .mockResolvedValueOnce(undefined); // logAudit
@@ -30,14 +32,16 @@ describe('AuthService.login', () => {
       name: 'AuthError',
       message: expect.stringContaining('inválidos'),
     });
-    expect(sql).toHaveBeenCalledTimes(4);
+    expect(sql).toHaveBeenCalledTimes(6);
   });
 
   test('login bem-sucedido cria sessão e devolve profile', async () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit
+      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_GLOBAL
+      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_IP
+      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN (por e-mail)
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'active', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: true }])
       .mockResolvedValueOnce(undefined) // INSERT sessions (createSession)
       .mockResolvedValueOnce(undefined); // logAudit
@@ -53,6 +57,8 @@ describe('AuthService.login', () => {
     const env = makeEnv();
     sql
       .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }])
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'active', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: false }])
       .mockResolvedValueOnce(undefined);
 
@@ -63,6 +69,8 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
+      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }])
       .mockResolvedValueOnce([{ attempts: 1 }])
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'banned', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: true }])
       .mockResolvedValueOnce(undefined);
@@ -77,6 +85,8 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
+      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }])
       .mockResolvedValueOnce([{ attempts: 1 }])
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'banned', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: false }])
       .mockResolvedValueOnce(undefined);

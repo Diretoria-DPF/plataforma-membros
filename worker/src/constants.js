@@ -163,6 +163,15 @@ export const LEGAL_VERSIONS = {
 
 export const RATE_LIMITS = {
   LOGIN: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 900 },
+  // Achado M2 da auditoria de 2026-09-25: LOGIN acima só limita por e-mail,
+  // sem teto agregado nem por IP — alguém pode rotacionar e-mails contra
+  // uma única origem sem nunca bater o limite por-conta. LOGIN_GLOBAL cobre
+  // toda a plataforma (generoso o bastante pro uso legítimo de uma liga
+  // pequena); LOGIN_IP é por IP de origem (CF-Connecting-IP), mais folgado
+  // que o por-e-mail porque um IP pode ser compartilhado (NAT/wifi de
+  // campus) por vários membros reais.
+  LOGIN_GLOBAL: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 900 },
+  LOGIN_IP: { MAX_ATTEMPTS: 15, WINDOW_SECONDS: 900 },
   REGISTER: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   CONFIRM_EMAIL: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
   RESET_REQUEST: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },

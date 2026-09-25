@@ -74,9 +74,13 @@ export default {
 
     const args = Array.isArray(body.args) ? body.args : [];
     const sql = createDb(env.DATABASE_URL);
+    // env é o objeto local desta invocação de fetch() (não é estado global
+    // compartilhado entre requisições) — seguro acrescentar o IP aqui para
+    // os handlers que precisam dele (hoje só o rate limit de login).
+    const requestEnv = Object.assign({}, env, { clientIp: request.headers.get('CF-Connecting-IP') || '' });
 
     try {
-      const result = await handler(sql, env, args);
+      const result = await handler(sql, requestEnv, args);
       return jsonResponse(result, request, env, 200);
     } catch (err) {
       // Cada handler já captura tudo internamente (run/runWithSession); isto

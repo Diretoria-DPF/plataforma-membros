@@ -6,6 +6,7 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 import { sendEmail } from '../mailer.js';
+import { getCached, setCached, invalidateCached, CACHE_KEYS, CACHE_TTL_SECONDS } from '../cache.js';
 
 function escapeHtmlForEmail(text) {
   return String(text || '')
@@ -63,7 +64,18 @@ function visibilitySql(identity) {
   return "visibility IN ('public','authenticated')";
 }
 
-export async function listEvents(sql, identity) {
+export async function listEvents(sql, env, identity) {
+  // Cache só para visitante anônimo (identity null): é o único caso sem
+  // personalização (visibilitySql vira só 'public', e myRegistrations
+  // abaixo fica vazio sem consultar). Para qualquer identidade logada
+  // (visitor/member/admin) o resultado varia por role e por inscrições
+  // próprias — cachear isso vazaria dado de um usuário pro cache que
+  // outro usuário leria, então NUNCA cacheamos quando identity existe.
+  if (!identity) {
+    const cachedEvents = await getCached(env, CACHE_KEYS.EVENTS_PUBLIC);
+    if (cachedEvents) return { success: true, events: cachedEvents };
+  }
+
   // Cláusula de visibilidade vem de uma lista fechada de 3 strings fixas
   // (visibilitySql), nunca de entrada do usuário — por isso é seguro
   // interpolar no texto da query aqui, usando a forma de chamada
@@ -87,26 +99,26 @@ export async function listEvents(sql, identity) {
     mine.forEach((r) => { myRegistrations[r.event_id] = true; });
   }
 
-  return {
-    success: true,
-    events: rows.map((row) => {
-      const spotsLeft = row.capacity === null ? null : Math.max(row.capacity - row.registered_count, 0);
-      return {
-        id: row.id,
-        title: row.title,
-        description: row.description,
-        eventDate: row.event_date,
-        visibility: row.visibility,
-        capacity: row.capacity,
-        status: row.status,
-        imageUrl: row.image_url,
-        location: row.location,
-        registeredCount: row.registered_count,
-        spotsLeft,
-        isRegistered: !!myRegistrations[row.id],
-      };
-    }),
-  };
+  const events = rows.map((row) => {
+    const spotsLeft = row.capacity === null ? null : Math.max(row.capacity - row.registered_count, 0);
+    return {
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      eventDate: row.event_date,
+      visibility: row.visibility,
+      capacity: row.capacity,
+      status: row.status,
+      imageUrl: row.image_url,
+      location: row.location,
+      registeredCount: row.registered_count,
+      spotsLeft,
+      isRegistered: !!myRegistrations[row.id],
+    };
+  });
+
+  if (!identity) await setCached(env, CACHE_KEYS.EVENTS_PUBLIC, events, CACHE_TTL_SECONDS);
+  return { success: true, events };
 }
 
 export async function registerForEvent(sql, env, identity, eventId, correlationId) {
@@ -143,6 +155,7 @@ export async function registerForEvent(sql, env, identity, eventId, correlationI
     throw err;
   }
 
+  await invalidateCached(env, CACHE_KEYS.EVENTS_PUBLIC);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'REGISTER_EVENT', 'event', id, 'success', null);
 
   // O e-mail de confirmação de inscrição é o que a preferência "Quero
@@ -162,7 +175,7 @@ function assertAdmin(identity) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
 }
 
-export async function createEvent(sql, identity, input, correlationId) {
+export async function createEvent(sql, env, identity, input, correlationId) {
   assertAdmin(identity);
 
   const title = S.normalizeText(input.title);
@@ -186,6 +199,7 @@ export async function createEvent(sql, identity, input, correlationId) {
   `;
 
   const id = rows[0].id;
+  await invalidateCached(env, CACHE_KEYS.EVENTS_PUBLIC);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'CREATE_EVENT', 'event', id, 'success', null);
   return { success: true, message: 'Evento criado como rascunho.', eventId: id };
 }
@@ -199,7 +213,7 @@ const EVENT_TRANSITIONS = {
   archived: [],
 };
 
-export async function updateEventStatus(sql, identity, eventId, newStatus, correlationId) {
+export async function updateEventStatus(sql, env, identity, eventId, newStatus, correlationId) {
   assertAdmin(identity);
   const id = S.normalizeText(eventId);
   const status = S.normalizeText(newStatus);
@@ -215,6 +229,7 @@ export async function updateEventStatus(sql, identity, eventId, newStatus, corre
   }
 
   await sql`UPDATE events SET status = ${status}::event_status WHERE id = ${id}::uuid`;
+  await invalidateCached(env, CACHE_KEYS.EVENTS_PUBLIC);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'UPDATE_EVENT_STATUS', 'event', id, 'success', { newStatus: status });
   return { success: true, message: 'Status do evento atualizado.' };
 }
