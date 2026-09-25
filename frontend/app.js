@@ -538,7 +538,18 @@
 
   /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */
   function refreshNavBadges() {
-    if (!state.profile || state.profile.role === 'visitor') return;
+    if (!state.profile) return;
+    // Visitantes não votam, não têm tarefas nem conexões — garante que os
+    // badges fiquem escondidos ativamente (em vez de só não buscar dados),
+    // porque um badge deixado visível por uma sessão anterior (membro/admin)
+    // nesta mesma aba, antes de um visitante entrar, ficaria "preso" visível
+    // se a função só retornasse sem tocar no DOM.
+    if (state.profile.role === 'visitor') {
+      document.getElementById('nav-badge-voting').classList.add('hidden');
+      document.getElementById('nav-badge-tasks').classList.add('hidden');
+      document.getElementById('nav-badge-connections').classList.add('hidden');
+      return;
+    }
 
     callApi('apiListOpenProposalsForVoting', state.sessionToken).then(function (res) {
       var votingBadge = document.getElementById('nav-badge-voting');
@@ -966,7 +977,7 @@
   // Equipe da liga — organograma (cargos/diretorias) e conexões entre membros
   // ===========================================================================
   var LEAGUE_POSITION_LABELS = {
-    coordenacao_geral: 'Coordenação Geral',
+    coordenacao_geral: 'Coordenador Geral',
     presidente: 'Presidente',
     vice_presidente: 'Vice-Presidente',
     coordenador: 'Coordenador(a)',
@@ -1012,15 +1023,25 @@
     });
   }
 
+  // Ordem de renderização reflete a hierarquia real da liga (não o formato
+  // devolvido pelo backend): Coordenador Geral no topo, depois Coordenadores,
+  // depois Presidente, depois Vice-Presidente, depois as diretorias, e por
+  // fim os membros sem diretoria.
   function renderOrgChartTree(chart) {
     var container = document.getElementById('orgchart-tree');
     clearEl(container);
 
-    var topLevel = orgChartLevel('Coordenação Geral / Presidência', [].concat(chart.coordenacaoGeral, chart.presidente, chart.vicePresidente));
-    if (topLevel) container.appendChild(topLevel);
+    var coordGeralLevel = orgChartLevel('Coordenador Geral', chart.coordenacaoGeral);
+    if (coordGeralLevel) container.appendChild(coordGeralLevel);
 
     var coordLevel = orgChartLevel('Coordenadores', chart.coordenadores);
     if (coordLevel) container.appendChild(coordLevel);
+
+    var presidenteLevel = orgChartLevel('Presidente', chart.presidente);
+    if (presidenteLevel) container.appendChild(presidenteLevel);
+
+    var viceLevel = orgChartLevel('Vice-Presidente', chart.vicePresidente);
+    if (viceLevel) container.appendChild(viceLevel);
 
     var directoratesWrap = h('div', { className: 'orgchart-level' }, [text('span', 'Diretorias', { className: 'orgchart-level-label' })]);
     var grid = h('div', { className: 'orgchart-directorates' }, []);
@@ -1100,7 +1121,7 @@
       return;
     }
     if (relationship.isConnection) {
-      actions.appendChild(h('span', { className: 'badge' }, ['Conexão estabelecida']));
+      actions.appendChild(h('span', { className: 'badge' }, ['Adicionado']));
     } else {
       actions.appendChild(h('button', {
         onclick: function () {
@@ -1108,7 +1129,7 @@
             setStatus('msg-member-profile', res.message, res.success ? 'success' : 'error');
           });
         },
-      }, ['Solicitar conexão']));
+      }, ['Adicionar']));
     }
     actions.appendChild(h('button', {
       className: 'secondary',
@@ -1165,7 +1186,7 @@
   function loadConnectionRequests() {
     callApi('apiListIncomingConnectionRequests', state.sessionToken).then(function (res) {
       if (!res.success) return;
-      renderList('connection-requests-list', res.requests, renderConnectionRequestItem, 'Nenhum pedido de conexão recebido no momento.');
+      renderList('connection-requests-list', res.requests, renderConnectionRequestItem, 'Nenhum pedido de amizade recebido no momento.');
     });
   }
 
@@ -1174,7 +1195,7 @@
     return h('article', { className: 'list-item' }, [
       renderPersonCard(item),
       h('div', { className: 'actions-row' }, [
-        h('button', { onclick: function () { respondConnectionRequest(item.connectionId, 'accept', feedback); } }, ['Aceitar']),
+        h('button', { onclick: function () { respondConnectionRequest(item.connectionId, 'accept', feedback); } }, ['Adicionar de volta']),
         h('button', { className: 'secondary', onclick: function () { respondConnectionRequest(item.connectionId, 'decline', feedback); } }, ['Recusar']),
       ]),
       feedback,
@@ -1192,7 +1213,7 @@
   function loadMyConnections() {
     callApi('apiListMyConnections', state.sessionToken).then(function (res) {
       if (!res.success) return;
-      renderList('my-connections-list', res.connections, renderMyConnectionItem, 'Você ainda não tem conexões.');
+      renderList('my-connections-list', res.connections, renderMyConnectionItem, 'Você ainda não tem ninguém adicionado.');
     });
   }
 
@@ -1210,7 +1231,7 @@
               if (res.success) loadMyConnections();
             });
           },
-        }, ['Remover conexão']),
+        }, ['Remover']),
       ]),
       feedback,
     ]);
@@ -1247,9 +1268,15 @@
         eventsCount: 'Eventos participados', tasksCount: 'Tarefas aderidas', tasksCompletedCount: 'Tarefas concluídas',
         proposalsCount: 'Propostas enviadas', votesCount: 'Votos registrados', feedbackCount: 'Feedbacks enviados',
       };
+      // Visitantes não acessam tarefas nem votação — mostra só os 3 cards
+      // que fazem sentido pro papel (o backend continua calculando tudo;
+      // isso é só um filtro de exibição no cliente).
+      var visibleKeys = (state.profile && state.profile.role === 'visitor')
+        ? ['eventsCount', 'proposalsCount', 'feedbackCount']
+        : Object.keys(labels);
       var container = document.getElementById('profile-metrics');
       clearEl(container);
-      Object.keys(labels).forEach(function (key) {
+      visibleKeys.forEach(function (key) {
         container.appendChild(h('div', { className: 'card stat-card' }, [
           text('span', labels[key]),
           text('strong', res.metrics[key]),
