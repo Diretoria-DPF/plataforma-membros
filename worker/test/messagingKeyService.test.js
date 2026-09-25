@@ -33,7 +33,7 @@ describe('MessagingKeyService.getMyMessagingKey', () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([]);
     const res = await MessagingKeyService.getMyMessagingKey(sql, MEMBER);
-    expect(res).toEqual({ success: true, hasKey: false });
+    expect(res).toEqual({ success: true, hasKey: false, profileId: MEMBER.profileId });
   });
 
   test('com chave ativa devolve os dados do KDF, incluindo o salt', async () => {
@@ -44,6 +44,7 @@ describe('MessagingKeyService.getMyMessagingKey', () => {
     const res = await MessagingKeyService.getMyMessagingKey(sql, MEMBER);
     expect(res.hasKey).toBe(true);
     expect(res.kdf.salt).toBe(VALID_SALT);
+    expect(res.profileId).toBe(MEMBER.profileId);
   });
 });
 

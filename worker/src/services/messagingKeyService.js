@@ -34,11 +34,12 @@ function decodedByteLength(base64url) {
   }
 }
 
-function toResponse(row) {
-  if (!row) return { success: true, hasKey: false };
+function toResponse(row, profileId) {
+  if (!row) return { success: true, hasKey: false, profileId };
   return {
     success: true,
     hasKey: true,
+    profileId,
     keyVersion: row.key_version,
     algorithm: row.algorithm,
     publicKey: row.public_key,
@@ -46,7 +47,21 @@ function toResponse(row) {
   };
 }
 
-/** Só o próprio dono, e só a versão ativa — inclui o salt. */
+/**
+ * Só o próprio dono, e só a versão ativa — inclui o salt.
+ *
+ * `profileId` (adicionado na Fase 3f, frontend/msg-crypto.js): o front-end
+ * não tem, hoje, NENHUMA outra forma de aprender o próprio UUID de perfil
+ * (login e getMyProfile nunca o devolvem — só getMemberProfile devolve,
+ * mas só o de OUTRA conta). O AAD do AES-GCM (seção 3.6 do plano) precisa
+ * embutir o `senderId` exatamente como o servidor vai gravar em
+ * `messages.sender_id`, então o cliente precisa conhecer esse valor ANTES
+ * de cifrar a primeira mensagem — não dá para descobrir depois, por
+ * indução, sem circularidade. Como esta é literalmente a primeira chamada
+ * que o fluxo de desbloqueio/configuração de mensageria já faz (para ler
+ * salt/iterações e a chave pública ativa), é o lugar natural para
+ * devolver também o próprio id, sem endpoint novo.
+ */
 export async function getMyMessagingKey(sql, identity) {
   assertMemberOrAdmin(identity);
   const rows = await sql`
@@ -54,7 +69,7 @@ export async function getMyMessagingKey(sql, identity) {
     FROM messaging_keys WHERE profile_id = ${identity.profileId}::uuid AND superseded_at IS NULL
     LIMIT 1
   `;
-  return toResponse(rows[0]);
+  return toResponse(rows[0], identity.profileId);
 }
 
 function validatePublishInput(input) {

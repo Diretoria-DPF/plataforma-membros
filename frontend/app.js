@@ -92,6 +92,10 @@
       clearSessionCache();
       state.sessionToken = null;
       state.profile = null;
+      // A chave de mensageria (e a frase-secreta derivada dela) só vive em
+      // memória desta aba — nunca deve sobreviver ao fim da sessão. Ver
+      // DP-9 do plano e o cabeçalho de segurança de frontend/messaging.js.
+      if (window.LaiftMessaging) window.LaiftMessaging.resetMessagingState();
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -539,6 +543,7 @@
     var token = state.sessionToken;
     state.sessionToken = null;
     state.profile = null;
+    if (window.LaiftMessaging) window.LaiftMessaging.resetMessagingState();
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
@@ -584,8 +589,11 @@
       document.getElementById('nav-badge-voting').classList.add('hidden');
       document.getElementById('nav-badge-tasks').classList.add('hidden');
       document.getElementById('nav-badge-connections').classList.add('hidden');
+      document.getElementById('nav-badge-messages').classList.add('hidden');
       return;
     }
+
+    if (window.LaiftMessaging) window.LaiftMessaging.refreshMessagesBadge();
 
     callApi('apiListOpenProposalsForVoting', state.sessionToken).then(function (res) {
       var votingBadge = document.getElementById('nav-badge-voting');
@@ -654,6 +662,7 @@
     'panel-admin-feedback': function () { loadAdminFeedback(1); },
     'panel-admin-audit': function () { loadAdminAudit(1); },
     'panel-admin-reports': function () { loadAdminReports(1); },
+    'panel-messages': function () { if (window.LaiftMessaging) window.LaiftMessaging.loadMessagingPanel(); },
   };
 
   var currentPanelId = 'panel-home';
@@ -1158,6 +1167,18 @@
     }
     if (relationship.isConnection) {
       actions.appendChild(h('span', { className: 'badge' }, ['Adicionado']));
+      // Requisito novo 3 (docs/PLANO_FASE3_MENSAGERIA.md, seção 11.3): só
+      // aparece para conexões aceitas — mensagem exige conexão, reforçado
+      // pelo próprio gatilho do banco (guard_message_insert). Delega a
+      // abertura do chat para frontend/messaging.js via window.LaiftMessaging.
+      actions.appendChild(h('button', {
+        onclick: function () {
+          document.getElementById('modal-member-profile').classList.add('hidden');
+          if (window.LaiftMessaging) {
+            window.LaiftMessaging.openConversationWithPeer({ id: profile.id, fullName: profile.fullName, username: profile.username, avatarUrl: profile.avatarUrl });
+          }
+        },
+      }, ['Enviar mensagem']));
     } else {
       actions.appendChild(h('button', {
         onclick: function () {
@@ -1998,6 +2019,27 @@
       token: token,
     };
   }
+
+  // ===========================================================================
+  // Bridge com frontend/messaging.js (módulo ES — ver frontend/index.html e
+  // o cabeçalho de messaging.js). Expõe só o mínimo necessário: nenhum
+  // segredo passa por aqui, é só acesso ao token de sessão OPACO já salvo
+  // em `state`, à função de chamada de API e aos mesmos builders de DOM
+  // seguros (h/text) que o resto do app.js usa — para que a mensageria
+  // nunca precise de innerHTML nem duplique essas funções.
+  // ===========================================================================
+  window.App = {
+    getState: function () { return state; },
+    callApi: callApi,
+    h: h,
+    text: text,
+    clearEl: clearEl,
+    setStatus: setStatus,
+    renderList: renderList,
+    formatDate: formatDate,
+    showPanel: showPanel,
+    openConfirm: openConfirm,
+  };
 
   (function init() {
     var deepLink = readDeepLink();

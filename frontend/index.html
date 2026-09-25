@@ -192,6 +192,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4m0 0l-5.5 5m5.5-5l5.5 5"/></svg>
             <span>Equipe</span>
           </button>
+          <button type="button" data-panel="panel-messages" data-scope="member" style="position:relative;">
+            <span id="nav-badge-messages" class="nav-badge hidden"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <span>Mensagens</span>
+          </button>
           <button type="button" data-panel="panel-profile" data-scope="all">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
             <span>Perfil</span>
@@ -322,6 +327,50 @@
           <div class="card">
             <h3>Meus adicionados</h3>
             <div id="my-connections-list"></div>
+          </div>
+        </section>
+
+        <!--
+          Mensageria E2EE (Fase 3f). Toda a criptografia roda em
+          frontend/msg-crypto.js; o estado e a montagem desta tela vivem em
+          frontend/messaging.js — ambos módulos ES carregados no fim do
+          documento. Conteúdo dinâmico (mensagens decifradas, nomes, etc.)
+          é sempre montado via h()/text(), nunca innerHTML.
+        -->
+        <section id="panel-messages" class="hidden">
+          <div class="card" id="messaging-lock-card">
+            <h2>Mensagens</h2>
+            <div id="messaging-lock-content"></div>
+          </div>
+
+          <div class="card hidden" id="messaging-main-card">
+            <div id="messaging-conversations-view">
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                <h2 style="margin:0;">Conversas</h2>
+                <button type="button" class="secondary" id="btn-messaging-lock" style="width:auto;">Bloquear mensagens</button>
+              </div>
+              <p class="muted">Mensagens cifradas de ponta a ponta — só você e a outra pessoa conseguem ler.</p>
+              <div id="messaging-status" class="status-msg" role="status" aria-live="polite"></div>
+              <div id="messaging-conversations-list"></div>
+            </div>
+
+            <div class="hidden" id="messaging-thread-view">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+                <button type="button" class="secondary" id="btn-messaging-back" style="width:auto;">Voltar</button>
+                <div style="flex:1;">
+                  <h3 id="messaging-thread-peer-name" style="margin:0;"></h3>
+                  <p class="muted" id="messaging-thread-peer-sub" style="margin:0; font-size:13px;"></p>
+                </div>
+              </div>
+              <div id="messaging-tofu-banner"></div>
+              <div id="messaging-thread-list" style="display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto; padding:6px; border:1px solid var(--border, #ddd); border-radius:var(--radius-md, 8px);"></div>
+              <div id="messaging-thread-status" class="status-msg" role="alert" aria-live="polite"></div>
+              <form id="form-messaging-send" novalidate style="display:flex; gap:8px; margin-top:10px; align-items:flex-end;">
+                <textarea id="messaging-send-text" maxlength="2000" placeholder="Escreva uma mensagem..." style="flex:1; min-height:44px; margin:0;"></textarea>
+                <button type="submit" id="btn-messaging-send" style="width:auto;">Enviar</button>
+              </form>
+              <p class="muted" id="messaging-char-counter" style="text-align:right; font-size:12px; margin:2px 0 0;">0 / 2000</p>
+            </div>
           </div>
         </section>
 
@@ -622,6 +671,20 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous" defer></script>
+  <!--
+    Mensageria E2EE (Fase 3f): dois módulos ES, carregados ANTES de
+    app.js (script clássico com defer). Scripts type="module" já são
+    deferred por padrão e executam em ordem de documento junto com os
+    demais scripts deferred — então esta ordem garante que
+    window.LaiftMessaging já existe quando app.js tenta chamá-lo (ex.:
+    no botão "Enviar mensagem" do perfil de membro). msg-crypto.js não
+    toca o DOM nem a rede; messaging.js só acessa window.App (exposto por
+    app.js) de DENTRO de funções chamadas em resposta a eventos, nunca no
+    topo do módulo — por isso a ordem entre os três não é, na prática,
+    frágil, mesmo que a leitura acima sugira uma dependência estrita.
+  -->
+  <script type="module" src="msg-crypto.js"></script>
+  <script type="module" src="messaging.js"></script>
   <script src="app.js" defer></script>
 </body>
 </html>
