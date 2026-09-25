@@ -87,14 +87,15 @@ CREATE INDEX IF NOT EXISTS idx_profiles_phone_discovery
   ON profiles (phone_normalized) WHERE phone_discoverable;
 
 CREATE TABLE IF NOT EXISTS connections (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  requester_id   UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  addressee_id   UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  status         connection_status NOT NULL DEFAULT 'pending',
-  requested_via  VARCHAR(10) NOT NULL,
-  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-  responded_at   TIMESTAMPTZ,
-  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  requester_id    UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  addressee_id    UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  status          connection_status NOT NULL DEFAULT 'pending',
+  requested_via   VARCHAR(10) NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  responded_at    TIMESTAMPTZ,
+  declined_until  TIMESTAMPTZ,  -- ver nota "cooldown de recusa" abaixo
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT connections_not_self CHECK (requester_id <> addressee_id),
   CONSTRAINT connections_requested_via_enum CHECK (requested_via IN ('username', 'phone'))
 );
@@ -157,10 +158,31 @@ Ele exige que:
 - as duas contas estejam `active` e com e-mail confirmado;
 - o papel das duas esteja em (`member`, `admin`), conforme **DP-1**;
 - não exista bloqueio em nenhuma direção;
-- em UPDATE, `accepted`/`declined` só venha de `pending`.
+- em UPDATE, `accepted`/`declined` só venha de `pending`;
+- em UPDATE, `pending` só venha de `declined` **e** só quando
+  `declined_until IS NULL OR now() > declined_until` (ver nota abaixo).
 
 Mensagens em `RAISE EXCEPTION ... USING ERRCODE = 'P0001'` são traduzidas
 pelo service, como `eventService.registerForEvent` já faz.
+
+**Correção pós-revisão de segurança — cooldown de recusa (achado HIGH).**
+O desenho original tinha um problema real: `uq_connections_pair` é um
+índice único **permanente** (sem filtro de status), então a única forma
+de registrar um novo pedido depois de uma recusa seria apagar a linha
+`declined` via `removeConnection` e inserir outra — e nesse ponto não
+sobra nada no banco pra `sendConnectionRequest` checar, então o cooldown
+de recusa (pensado como proteção anti-assédio) seria **contornável
+trivialmente** por quem foi recusado. A correção:
+- `connections.declined_until` (adicionada acima) é preenchida por
+  `respondToRequest` ao recusar: `now() + DECLINE_COOLDOWN_DAYS`;
+- a transição `declined → pending` passa a ser **permitida pelo próprio
+  gatilho**, mas só depois que `declined_until` vence — então
+  `sendConnectionRequest`, depois do cooldown, faz um **UPDATE** na
+  linha existente (não um INSERT novo), preservando o histórico e o
+  controle;
+- `removeConnection` (seção 5) fica restrito a `status = 'accepted'` —
+  pedidos `pending`/`declined` deixam de ser apagáveis por qualquer uma
+  das partes, exatamente para fechar essa brecha de "apagar e reenviar".
 
 **Observações:**
 - A coluna gerada **não é recalculada** se `normalize_phone_br` for
@@ -487,17 +509,24 @@ Todos seguem o padrão existente:
 - `sendConnectionRequest(sql, identity, input, correlationId)`: resolve o
   alvo por username exato, ou por `phone_normalized` com
   `phone_discoverable`, conta ativa e confirmada. Só age se houver
-  **exatamente 1** resultado. Respeita bloqueio e cooldown de recusa.
-  Devolve sempre a mesma mensagem ("Se existir uma conta com esses dados,
-  o pedido foi enviado.").
+  **exatamente 1** resultado. Se já existir uma linha `declined` para o
+  par e o cooldown já tiver vencido, faz **UPDATE** dela para `pending`
+  (nunca um novo INSERT — ver seção 2.1); se o cooldown ainda estiver
+  ativo, ou houver bloqueio, é um no-op silencioso. Devolve sempre a
+  mesma mensagem ("Se existir uma conta com esses dados, o pedido foi
+  enviado.").
 - `listIncomingRequests(sql, identity)`: pedidos pendentes recebidos, com
   cartão básico do solicitante (nome, username, avatar).
 - `respondToRequest(sql, identity, connectionId, decision, correlationId)`:
   aceitar/recusar. O `UPDATE ... WHERE addressee_id = identity` torna a
-  checagem de posse atômica.
+  checagem de posse atômica. Ao recusar, grava `declined_until = now() +
+  DECLINE_COOLDOWN_DAYS` (ver correção pós-revisão na seção 2.1).
 - `listMyConnections(sql, identity)`: conexões aceitas com contas ativas.
 - `removeConnection(sql, identity, connectionId, correlationId)`: `DELETE`
-  condicionado a ser uma das partes.
+  condicionado a ser uma das partes **e** `status = 'accepted'` (achado
+  HIGH da revisão de segurança — pedidos `pending`/`declined` não são
+  apagáveis, exatamente para o cooldown de recusa não virar
+  contornável via "apagar e reenviar").
 - `blockProfile(sql, identity, targetProfileId, correlationId)`: um único
   statement com CTE (INSERT em `profile_blocks ON CONFLICT DO NOTHING` +
   DELETE da conexão do par).
@@ -1002,3 +1031,69 @@ Padrão existente:
   da 3f.
 - Atualizar `docs/SECURITY.md` com uma seção "Mensageria E2EE" contendo
   R1–R6.
+
+---
+
+## 10. Revisão de segurança pré-implementação (achados e veredito)
+
+Este plano passou por revisão do agente `security-reviewer` antes de
+qualquer código ser escrito. Achado HIGH (cooldown de recusa) já foi
+corrigido diretamente nas seções 2.1 e 5 acima. Os demais achados ficam
+registrados aqui, com a seção onde cada um deve ser incorporado quando
+essa sub-fase for implementada.
+
+**Veredito do revisor:** prosseguir com mudanças específicas, sem
+necessidade de redesenho profundo de nenhuma peça. A construção
+criptográfica central (X25519 ECDH estático → HKDF → AES-GCM com AAD
+vinculando conversa/remetente/versões/clientMessageId, chaves derivadas
+não-extraíveis, privada nunca transmitida) é sólida e consistente com o
+padrão de defesa em profundidade já usado no projeto (pré-checagem no
+service + gatilho como autoridade final, filtragem de visibilidade com
+parâmetros ligados). Nenhum achado restante bloqueia o início da 3a.
+
+- **#2 (MEDIUM, Fase 3d) — Iterações do PBKDF2.** 600.000 é o piso mínimo
+  da OWASP, não um alvo — e a seção 3.7 já tolera até ~2s no celular,
+  ou seja, o orçamento de UX permite mais custo do que está sendo usado.
+  **Ação para a 3d:** calibrar no cliente para um tempo-alvo (~0,8–1s) e
+  usar o número de iterações resultante como padrão, mantendo 600.000
+  só como piso mínimo recusado pelo cliente (`kdf_iterations` já é por
+  versão de chave, não exige mudança de schema).
+- **#3 (MEDIUM, Fase 3d) — `apiGetPeerMessagingKeys` sem checagem de
+  bloqueio.** Ao contrário de `openConversation`/`sendMessage`, a tabela
+  da seção 4 não exige "sem bloqueio" para essa ação — como o bloqueio
+  só apaga a linha de `connections` (a conversa fica, para preservar
+  histórico), uma conta bloqueada continuaria conseguindo buscar chaves
+  **novas** rotacionadas da outra parte indefinidamente. **Ação:**
+  adicionar a mesma condição de bloqueio já usada nas outras duas ações.
+- **#4 (MEDIUM, Fase 3a) — Limites de taxa dimensionados para uma
+  plataforma genérica, não para uma liga de poucas dezenas/centenas de
+  membros.** `CONNECTION_REQUEST {20, 86400}` e `PUBLIC_PROFILE_IP {60,
+  600}` permitem varrer a base inteira de membros em poucos dias, mesmo
+  a partir de uma única conta legítima. **Ação:** reduzir
+  `CONNECTION_REQUEST` (ex.: 5/dia, já que o uso normal é um punhado de
+  pedidos no total) e adicionar um teto global (não só por IP) de
+  buscas de perfil público por dia.
+- **#5 (MEDIUM, Fase 3c) — Trecho de denúncia (DP-4) não verificável
+  precisa de aviso explícito na hora da decisão do admin.** O plano já
+  documenta que o `evidence_excerpt` é auto-declarado e não verificável
+  criptograficamente, mas isso precisa aparecer como rótulo visível
+  **no momento em que o admin decide**, não só na documentação — e
+  `resolveReport` deveria considerar o histórico do próprio denunciante
+  (denúncias anteriores arquivadas) antes de uma única denúncia embasar
+  um banimento. **Ação:** UI do painel de denúncias sempre mostra
+  "não verificável, fornecido pelo denunciante" junto ao trecho.
+- **#6 (LOW/MEDIUM, Fase 3f) — TOFU só avisa na troca de chave, não no
+  primeiro contato.** R5 já reconhece que o servidor poderia trocar a
+  chave desde o início; o aviso proposto só dispara quando a versão
+  ativa muda depois, não já na primeira vez que a conversa é aberta —
+  que é exatamente o momento em que uma substituição inicial passaria
+  despercebida. **Ação:** mostrar o número de segurança (não bloqueante)
+  já na primeira abertura de uma conversa com cada contato, não só em
+  rotações futuras.
+- **#7 (LOW, Fase 3a, plano de testes) — `normalize_phone_br` sem
+  unicidade pode mascarar múltiplos matches.** Se dois perfis
+  normalizarem para o mesmo telefone (número compartilhado, caso de
+  borda na normalização), a regra de "exatamente 1 resultado" vira um
+  no-op silencioso sem erro pra ninguém — falha de forma segura, mas
+  faltou como caso de teste explícito na seção 9. **Ação:** adicionar
+  esse caso à lista de testes da 3a.
