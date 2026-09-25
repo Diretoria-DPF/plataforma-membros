@@ -2,16 +2,19 @@ name = "plataforma-membros-api"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 
-# Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, RESEND_API_KEY) NUNCA
+# Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, BREVO_API_KEY) NUNCA
 # ficam aqui — são cadastrados via `wrangler secret put <NOME>`, que os
 # guarda criptografados no lado da Cloudflare, fora do repositório. Ver
 # docs/DEPLOYMENT.md.
 [vars]
 APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
-ALLOWED_ORIGINS = "https://diretoria-dpf.github.io"
+# localhost:4174 é o servidor de pré-visualização local (frontend/dev-server.js) —
+# mantido na lista só para permitir testar mudanças de front-end localmente
+# antes de publicar; não concede acesso a nada que o token de sessão já não
+# controle.
+ALLOWED_ORIGINS = "https://diretoria-dpf.github.io,http://localhost:4174"
 MAIL_FROM_NAME = "Plataforma de Membros"
 # Precisa ser um remetente CADASTRADO E VERIFICADO no painel da Brevo
 # (Campanhas > Remetentes, ou Configurações > Remetentes) antes de
 # funcionar — a Brevo rejeita envio de um endereço não verificado.
-# Atualize este valor para o e-mail que você verificar lá.
-MAIL_FROM_ADDRESS = "dpires292@gmail.com"
+MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"

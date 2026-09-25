@@ -2,11 +2,12 @@
   'use strict';
 
   // ===========================================================================
-  // URL da API (backend Apps Script). Não é segredo — é o mesmo endereço
-  // público já usado no README; nenhuma credencial trafega aqui, só o token
-  // de sessão opaco que o próprio backend emite após login.
+  // URL da API (backend em Cloudflare Workers — ver worker/). Não é segredo —
+  // é o mesmo endereço público documentado no README; nenhuma credencial
+  // trafega aqui, só o token de sessão opaco que o próprio backend emite
+  // após login.
   // ===========================================================================
-  var API_BASE_URL = 'https://script.google.com/macros/s/AKfycbwYCBnyvnAyfa_EGi1AdZZb1ChFOuJtdSoDBYDoLVO_KipSaNUMRs8fcfbkbzpQP9Ki6w/exec';
+  var API_BASE_URL = 'https://plataforma-membros-api.diretoria-dpf.workers.dev';
 
   // ===========================================================================
   // Desestímulo cosmético a clique-direito / atalhos de DevTools.
@@ -108,20 +109,19 @@
   }
 
   // ===========================================================================
-  // Ponte com o servidor — API HTTP/JSON do Apps Script (doPost em Main.gs)
+  // Ponte com o servidor — API HTTP/JSON do Worker (worker/src/index.js).
   //
-  // Content-Type "text/plain;charset=utf-8" é DE PROPÓSITO, não um engano: é
-  // o que faz o navegador tratar a requisição como "simples" (sem preflight
-  // OPTIONS), porque o Apps Script não tem como responder um preflight
-  // customizado. O corpo continua sendo JSON de verdade — o servidor faz
-  // JSON.parse() independente do Content-Type declarado. Ver
-  // docs/DEPLOYMENT.md.
+  // O Worker responde preflight CORS de verdade (diferente do Apps Script
+  // antigo, que não tinha como), então aqui já dá pra usar
+  // "application/json" normalmente — o navegador dispara um OPTIONS antes,
+  // e o Worker responde com os cabeçalhos corretos restritos à origem
+  // permitida (ver ALLOWED_ORIGINS em worker/wrangler.toml).
   // ===========================================================================
   function api(fnName) {
     var args = Array.prototype.slice.call(arguments, 1);
     return fetch(API_BASE_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: fnName, args: args }),
     }).then(function (res) {
       if (!res.ok) throw new Error('Falha de comunicação com o servidor.');
