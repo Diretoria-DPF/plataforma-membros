@@ -14,7 +14,14 @@
  *   DB_USER
  *   DB_PASSWORD
  *   SESSION_TOKEN_PEPPER   string aleatória longa, só existe no servidor
- *   APP_BASE_URL           opcional; fallback quando ScriptApp.getService().getUrl() falhar
+ *   APP_BASE_URL           URL pública do FRONT-END (ex.:
+ *                          https://diretoria-dpf.github.io/plataforma-membros/),
+ *                          usada para montar os links de confirmação de
+ *                          e-mail e redefinição de senha. Desde a separação
+ *                          front/back, isto NÃO é mais a URL do próprio
+ *                          Apps Script — é sempre lida em prioridade sobre
+ *                          ScriptApp.getService().getUrl() por esse motivo.
+ *                          Não é segredo (é só uma URL pública).
  *   MAIL_FROM_NAME         opcional; nome de exibição do remetente dos e-mails
  */
 // Usa `var` (não `const`) deliberadamente: no runtime V8 do Apps Script os
@@ -58,13 +65,18 @@ App.Config = (function () {
       return required('SESSION_TOKEN_PEPPER');
     },
     getAppBaseUrl: function () {
+      // APP_BASE_URL (a URL do front-end estático) tem prioridade: os links
+      // de e-mail devem levar a pessoa para a interface de verdade, não para
+      // a URL "nua" do backend Apps Script (que hoje não serve mais HTML).
+      const explicit = optional('APP_BASE_URL', '');
+      if (explicit) return explicit;
       try {
         const url = ScriptApp.getService().getUrl();
         if (url) return url;
       } catch (err) {
         // ScriptApp.getService() só funciona em contexto de Web App implantado.
       }
-      return optional('APP_BASE_URL', '');
+      return '';
     },
     getMailFromName: function () {
       return optional('MAIL_FROM_NAME', 'Plataforma de Membros');
