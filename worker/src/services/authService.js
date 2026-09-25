@@ -84,7 +84,10 @@ async function sendConfirmationEmail(env, email, fullName, rawToken, correlation
         '</div>',
     });
   } catch (mailErr) {
-    await Logging.logError(sql, correlationId, 'MAIL_CONFIRMATION_FAILED', 'Falha ao enviar e-mail de confirmação.', { profileId });
+    await Logging.logError(sql, correlationId, 'MAIL_CONFIRMATION_FAILED', 'Falha ao enviar e-mail de confirmação.', {
+      profileId,
+      detail: String((mailErr && mailErr.message) || mailErr),
+    });
   }
 }
 
@@ -253,7 +256,10 @@ export async function requestPasswordReset(sql, env, email, correlationId) {
         '</div>',
     });
   } catch (mailErr) {
-    await Logging.logError(sql, correlationId, 'MAIL_RESET_FAILED', 'Falha ao enviar e-mail de redefinição.', { profileId: profile.id });
+    await Logging.logError(sql, correlationId, 'MAIL_RESET_FAILED', 'Falha ao enviar e-mail de redefinição.', {
+      profileId: profile.id,
+      detail: String((mailErr && mailErr.message) || mailErr),
+    });
   }
 
   await Logging.logAudit(sql, correlationId, profile.id, 'REQUEST_PASSWORD_RESET', 'profile', profile.id, 'success', null);

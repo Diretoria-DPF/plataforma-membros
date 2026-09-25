@@ -10,4 +10,8 @@ compatibility_date = "2024-11-01"
 APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
 ALLOWED_ORIGINS = "https://diretoria-dpf.github.io"
 MAIL_FROM_NAME = "Plataforma de Membros"
-MAIL_FROM_ADDRESS = "onboarding@resend.dev"
+# Precisa ser um remetente CADASTRADO E VERIFICADO no painel da Brevo
+# (Campanhas > Remetentes, ou Configurações > Remetentes) antes de
+# funcionar — a Brevo rejeita envio de um endereço não verificado.
+# Atualize este valor para o e-mail que você verificar lá.
+MAIL_FROM_ADDRESS = "dpires292@gmail.com"

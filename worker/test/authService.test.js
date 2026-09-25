@@ -150,6 +150,6 @@ describe('AuthService.register', () => {
     }, 'cid-1');
 
     expect(res.success).toBe(true);
-    expect(global.fetch).toHaveBeenCalledWith('https://api.resend.com/emails', expect.any(Object));
+    expect(global.fetch).toHaveBeenCalledWith('https://api.brevo.com/v3/smtp/email', expect.any(Object));
   });
 });

@@ -8,8 +8,8 @@ export function makeEnv(overrides) {
       APP_BASE_URL: 'https://diretoria-dpf.github.io/plataforma-membros/',
       ALLOWED_ORIGINS: 'https://diretoria-dpf.github.io',
       MAIL_FROM_NAME: 'Plataforma de Membros (teste)',
-      MAIL_FROM_ADDRESS: 'onboarding@resend.dev',
-      RESEND_API_KEY: 'test-key',
+      MAIL_FROM_ADDRESS: 'teste@example.com',
+      BREVO_API_KEY: 'test-key',
     },
     overrides || {}
   );
