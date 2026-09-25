@@ -33,7 +33,11 @@ const result = JavaScriptObfuscator.obfuscate(source, {
 });
 
 fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
-fs.copyFileSync(path.join(ROOT, 'index.html'), path.join(DIST, 'index.html'));
-fs.copyFileSync(path.join(ROOT, 'styles.css'), path.join(DIST, 'styles.css'));
 
-console.log('Build gerado em frontend/dist/ (app.js ofuscado, index.html/styles.css copiados).');
+// Páginas estáticas (HTML/CSS puro, sem lógica a proteger) — copiadas sem
+// alteração. Adicione aqui qualquer nova página estática do site.
+['index.html', 'styles.css', 'termos.html', 'privacidade.html'].forEach((name) => {
+  fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
+});
+
+console.log('Build gerado em frontend/dist/ (app.js ofuscado; demais páginas copiadas).');
