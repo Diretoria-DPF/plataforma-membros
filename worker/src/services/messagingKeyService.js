@@ -127,6 +127,16 @@ function validatePublishInput(input) {
  * encontrada bater com a esperada, e o INSERT da nova versão usa
  * exatamente N+1 — tudo num único statement com CTE, atômico no driver
  * HTTP do Neon.
+ *
+ * Achado de produção (ref dcf9614d, 2026-09-25): `SELECT ... FOR UPDATE`
+ * não trava NADA quando ainda não existe nenhuma linha para o profileId
+ * (primeira publicação) — não há linha para travar. Duas requisições
+ * concorrentes de primeira publicação (ex.: duas abas, ou o painel
+ * carregando duas vezes) viam as duas `current_version = 0`, e as duas
+ * tentavam inserir a versão 1, colidindo com `uq_messaging_keys_active`.
+ * `pg_advisory_xact_lock` serializa por profileId mesmo sem linha
+ * nenhuma existir ainda — é a correção real, o FOR UPDATE continua útil
+ * só para o caso de rotação (linha já existe).
  */
 export async function publishMessagingKey(sql, identity, input, correlationId) {
   assertMemberOrAdmin(identity);
@@ -135,9 +145,12 @@ export async function publishMessagingKey(sql, identity, input, correlationId) {
   const v = validatePublishInput(input);
 
   const rows = await sql`
-    WITH current AS (
-      SELECT key_version FROM messaging_keys
-      WHERE profile_id = ${identity.profileId}::uuid AND superseded_at IS NULL
+    WITH lock AS (
+      SELECT pg_advisory_xact_lock(hashtext(${identity.profileId}::text)) AS _locked
+    ),
+    current AS (
+      SELECT mk.key_version FROM messaging_keys mk, lock
+      WHERE mk.profile_id = ${identity.profileId}::uuid AND mk.superseded_at IS NULL
       FOR UPDATE
     ),
     checked AS (

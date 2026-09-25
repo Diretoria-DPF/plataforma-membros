@@ -215,6 +215,16 @@
     }
   }
 
+  // Promise da preparação de identidade em andamento (geração/publicação de
+  // chave), se houver. Achado de produção (ref dcf9614d, 2026-09-25):
+  // chamadas concorrentes a loadMessagingPanel() (dois cliques rápidos, dois
+  // gatilhos de painel) cada uma via `identity` nulo e tentava gerar+publicar
+  // sua PRÓPRIA chave nova — mesmo com a corrida corrigida no servidor
+  // (pg_advisory_xact_lock em messagingKeyService.js), isso ainda gastava
+  // cota do rate limit diário de publicação à toa. Reaproveitar a mesma
+  // promise resolve na origem, sem depender só da trava do servidor.
+  var identitySetupPromise = null;
+
   async function loadMessagingPanel() {
     await msgCryptoReady;
     var app = App();
@@ -233,9 +243,14 @@
 
     showPreparing(true, 'Preparando suas mensagens seguras...');
     try {
-      var res = await app.callApi('apiGetMyMessagingKey', app.getState().sessionToken);
-      if (!res.success) { showPreparing(true, res.message); return; }
-      await ensureIdentityReady(res);
+      if (!identitySetupPromise) {
+        identitySetupPromise = (async function () {
+          var res = await app.callApi('apiGetMyMessagingKey', app.getState().sessionToken);
+          if (!res.success) throw new Error(res.message);
+          await ensureIdentityReady(res);
+        })().finally(function () { identitySetupPromise = null; });
+      }
+      await identitySetupPromise;
       showPreparing(false);
       showConversationsView();
       loadConversations();
