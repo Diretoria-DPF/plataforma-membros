@@ -180,6 +180,44 @@
   }
 
   // ===========================================================================
+  // Upload de imagem (avatar / capa de evento): lê o arquivo como data URL e
+  // separa o prefixo "data:image/png;base64," do payload puro, que é o que o
+  // backend espera (ver worker/src/services/mediaService.js). O limite de
+  // 2MB/5MB aqui é só conveniência de UX — o servidor sempre revalida o
+  // tamanho real nos bytes decodificados antes de gravar no R2.
+  // ===========================================================================
+  var MAX_AVATAR_FILE_BYTES = 2 * 1024 * 1024;
+  var MAX_EVENT_IMAGE_FILE_BYTES = 5 * 1024 * 1024;
+
+  function readFileAsBase64(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var result = String(reader.result || '');
+        var comma = result.indexOf(',');
+        resolve(comma === -1 ? '' : result.slice(comma + 1));
+      };
+      reader.onerror = function () { reject(new Error('Não foi possível ler o arquivo.')); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function setAvatarPreview(imgId, placeholderId, src) {
+    var img = document.getElementById(imgId);
+    var placeholder = document.getElementById(placeholderId);
+    if (!img) return;
+    if (src) {
+      img.src = src;
+      img.classList.remove('hidden');
+      if (placeholder) placeholder.classList.add('hidden');
+    } else {
+      img.removeAttribute('src');
+      img.classList.add('hidden');
+      if (placeholder) placeholder.classList.remove('hidden');
+    }
+  }
+
+  // ===========================================================================
   // Ponte com o servidor — API HTTP/JSON do Worker (worker/src/index.js).
   //
   // O Worker responde preflight CORS de verdade (diferente do Apps Script
@@ -322,24 +360,63 @@
     });
   });
 
+  var regAvatarPayload = null; // { base64, mimeType } — preenchido ao escolher um arquivo válido
+
+  document.getElementById('reg-avatar-input').addEventListener('change', function (evt) {
+    var file = evt.target.files && evt.target.files[0];
+    regAvatarPayload = null;
+    setAvatarPreview('reg-avatar-preview', 'reg-avatar-placeholder', null);
+    setStatus('msg-reg-avatar', '', null);
+    if (!file) return;
+
+    if (['image/jpeg', 'image/png', 'image/webp', 'image/gif'].indexOf(file.type) === -1) {
+      setStatus('msg-reg-avatar', 'Formato não suportado. Use JPEG, PNG, WEBP ou GIF.', 'error');
+      evt.target.value = '';
+      return;
+    }
+    if (file.size > MAX_AVATAR_FILE_BYTES) {
+      setStatus('msg-reg-avatar', 'Imagem muito grande (máximo 2MB).', 'error');
+      evt.target.value = '';
+      return;
+    }
+
+    readFileAsBase64(file).then(function (base64) {
+      regAvatarPayload = { base64: base64, mimeType: file.type };
+      setAvatarPreview('reg-avatar-preview', 'reg-avatar-placeholder', 'data:' + file.type + ';base64,' + base64);
+    }).catch(function (err) {
+      setStatus('msg-reg-avatar', err.message, 'error');
+    });
+  });
+
   document.getElementById('form-register').addEventListener('submit', function (evt) {
     evt.preventDefault();
     var payload = {
       fullName: document.getElementById('reg-name').value,
+      username: document.getElementById('reg-username').value,
       email: document.getElementById('reg-email').value,
       phone: document.getElementById('reg-phone').value,
-      city: document.getElementById('reg-city').value,
+      linkedinUrl: document.getElementById('reg-linkedin').value,
+      instagramHandle: document.getElementById('reg-instagram').value,
       education: document.getElementById('reg-education').value,
+      interests: document.getElementById('reg-interests').value,
       password: document.getElementById('reg-password').value,
       validationPreference: document.getElementById('reg-validation').value,
       termsAccepted: document.getElementById('reg-terms').checked,
       privacyAccepted: document.getElementById('reg-privacy').checked,
     };
+    if (regAvatarPayload) {
+      payload.avatarBase64 = regAvatarPayload.base64;
+      payload.avatarMimeType = regAvatarPayload.mimeType;
+    }
     setStatus('msg-register', 'Enviando cadastro...', 'info');
 
     callApi('apiRegister', payload).then(function (res) {
       setStatus('msg-register', res.message, res.success ? 'success' : 'error');
-      if (res.success) document.getElementById('form-register').reset();
+      if (res.success) {
+        document.getElementById('form-register').reset();
+        regAvatarPayload = null;
+        setAvatarPreview('reg-avatar-preview', 'reg-avatar-placeholder', null);
+      }
     });
   });
 
@@ -398,10 +475,13 @@
     badge.textContent = roleLabels[state.profile.role] || state.profile.role;
     badge.classList.remove('hidden', 'admin');
     if (state.profile.role === 'admin') badge.classList.add('admin');
-    document.getElementById('header-scope-label').textContent =
-      state.profile.role === 'admin' ? 'Área administrativa' : 'Área do membro';
 
     setupNavigationForRole(state.profile.role);
+    // Sempre entra em modo membro, mesmo que uma sessão anterior nesta mesma
+    // aba (outra pessoa, ou a mesma) tenha ficado em modo admin dedicado.
+    document.getElementById('nav-group-member').classList.remove('hidden');
+    document.getElementById('nav-group-admin').classList.add('hidden');
+    document.getElementById('header-scope-label').textContent = 'Área do membro';
     showPanel('panel-home');
     loadProfileAndPreferences();
     refreshNavBadges();
@@ -434,21 +514,28 @@
     });
   }
 
-  document.querySelectorAll('#app-nav [data-panel], #admin-sheet [data-panel]').forEach(function (btn) {
+  document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       showPanel(btn.getAttribute('data-panel'));
-      closeAdminSheet();
     });
   });
 
-  function openAdminSheet() { document.getElementById('admin-sheet').classList.remove('hidden'); }
-  function closeAdminSheet() { document.getElementById('admin-sheet').classList.add('hidden'); }
+  // ===========================================================================
+  // Modo admin dedicado: a engrenagem troca a barra inferior inteira (e o
+  // rótulo do cabeçalho) para as opções de administração, em vez de abrir
+  // uma gaveta por cima — clicar em "Voltar" (mesma barra) restaura a
+  // navegação de membro comum. É só uma troca de interface: a autorização
+  // real de cada ação continua sempre validada no servidor.
+  // ===========================================================================
+  function setAdminMode(active) {
+    document.getElementById('nav-group-member').classList.toggle('hidden', active);
+    document.getElementById('nav-group-admin').classList.toggle('hidden', !active);
+    document.getElementById('header-scope-label').textContent = active ? 'Área administrativa' : 'Área do membro';
+    showPanel(active ? 'panel-admin-dashboard' : 'panel-home');
+  }
 
-  document.getElementById('btn-open-admin-sheet').addEventListener('click', openAdminSheet);
-  document.getElementById('btn-close-admin-sheet').addEventListener('click', closeAdminSheet);
-  document.getElementById('admin-sheet').addEventListener('click', function (evt) {
-    if (evt.target.id === 'admin-sheet') closeAdminSheet();
-  });
+  document.getElementById('btn-enter-admin-mode').addEventListener('click', function () { setAdminMode(true); });
+  document.getElementById('btn-exit-admin-mode').addEventListener('click', function () { setAdminMode(false); });
 
   var PANEL_LOADERS = {
     'panel-events': loadEvents,
@@ -471,10 +558,6 @@
     document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
     });
-    document.querySelectorAll('#admin-sheet [data-panel]').forEach(function (btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
-    });
-    document.getElementById('btn-open-admin-sheet').classList.toggle('active', panelId.indexOf('panel-admin-') === 0);
     window.scrollTo(0, 0);
     if (PANEL_LOADERS[panelId]) PANEL_LOADERS[panelId]();
   }
@@ -489,6 +572,23 @@
       setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
     });
+    loadEventsHistory();
+  }
+
+  function loadEventsHistory() {
+    callApi('apiListRecentCompletedEvents').then(function (res) {
+      if (!res.success) return;
+      renderList('events-history-list', res.events, renderEventHistoryItem, 'Ainda não há eventos concluídos no histórico.');
+    });
+  }
+
+  function renderEventHistoryItem(item) {
+    var children = [];
+    if (item.imageUrl) children.push(h('img', { className: 'event-image', src: item.imageUrl, alt: item.title }));
+    children.push(text('h4', item.title));
+    children.push(text('p', item.description));
+    children.push(h('div', { className: 'meta-row' }, [text('span', 'Realizado em: ' + formatDate(item.eventDate))]));
+    return h('article', { className: 'list-item' }, children);
   }
 
   function renderEventItem(item) {
@@ -496,6 +596,9 @@
       text('span', 'Data: ' + formatDate(item.eventDate)),
       text('span', item.capacity !== null ? 'Vagas: ' + item.spotsLeft + '/' + item.capacity : 'Vagas ilimitadas'),
     ];
+    if (item.status === 'in_progress') {
+      metaChildren.unshift(h('span', { className: 'badge in-progress' }, ['Em andamento']));
+    }
 
     var actionsChildren = [];
     if (!state.sessionToken) {
@@ -510,12 +613,14 @@
       }, ['Inscrever-se']));
     }
 
-    return h('article', { className: 'list-item' }, [
-      text('h4', item.title),
-      text('p', item.description),
-      h('div', { className: 'meta-row' }, metaChildren),
-      h('div', { className: 'actions-row' }, actionsChildren),
-    ]);
+    var children = [];
+    if (item.imageUrl) children.push(h('img', { className: 'event-image', src: item.imageUrl, alt: item.title }));
+    children.push(text('h4', item.title));
+    children.push(text('p', item.description));
+    children.push(h('div', { className: 'meta-row' }, metaChildren));
+    children.push(h('div', { className: 'actions-row' }, actionsChildren));
+
+    return h('article', { className: 'list-item' }, children);
   }
 
   function registerForEvent(eventId) {
@@ -634,9 +739,22 @@
   }
 
   function renderTaskItem(item) {
-    var actions = item.alreadySignedUp
-      ? [h('span', { className: 'badge' }, ['Você aderiu'])]
-      : [h('button', { onclick: function () { signupForTask(item.id); } }, ['Aderir'])];
+    var actions = [];
+    if (item.alreadySignedUp) {
+      actions.push(h('span', { className: 'badge' }, [item.completed ? 'Concluída' : 'Você aderiu']));
+      if (!item.completed) {
+        actions.push(h('button', { onclick: function () { markTaskComplete(item.id); } }, ['Marcar como concluída']));
+      }
+    } else {
+      actions.push(h('button', { onclick: function () { signupForTask(item.id); } }, ['Aderir']));
+    }
+
+    var commentsBox = h('div', { className: 'task-comments hidden' }, []);
+    var commentsToggle = h('button', {
+      className: 'secondary',
+      onclick: function () { toggleTaskComments(item.id, commentsBox, commentsToggle); },
+    }, ['Comentários']);
+    actions.push(commentsToggle);
 
     return h('article', { className: 'list-item' }, [
       text('h4', item.title),
@@ -646,6 +764,7 @@
         text('span', 'Pessoas aderidas: ' + item.signupCount),
       ]),
       h('div', { className: 'actions-row' }, actions),
+      commentsBox,
     ]);
   }
 
@@ -657,6 +776,53 @@
     });
   }
 
+  function markTaskComplete(taskId) {
+    callApi('apiMarkTaskComplete', state.sessionToken, taskId).then(function (res) {
+      setStatus('tasks-status', res.message, res.success ? 'success' : 'error');
+      loadTasks();
+    });
+  }
+
+  /** Alterna a exibição dos comentários de uma tarefa, carregando-os sob demanda na primeira vez que o painel é aberto. */
+  function toggleTaskComments(taskId, box, toggleBtn) {
+    var isHidden = box.classList.contains('hidden');
+    if (!isHidden) { box.classList.add('hidden'); return; }
+    box.classList.remove('hidden');
+    loadTaskComments(taskId, box);
+  }
+
+  function loadTaskComments(taskId, box) {
+    clearEl(box);
+    box.appendChild(text('p', 'Carregando comentários...', { className: 'muted' }));
+    callApi('apiListTaskComments', state.sessionToken, taskId).then(function (res) {
+      clearEl(box);
+      if (!res.success) { box.appendChild(text('p', res.message, { className: 'muted' })); return; }
+
+      (res.comments || []).forEach(function (c) {
+        box.appendChild(h('div', { className: 'task-comment' }, [
+          text('p', c.message),
+          h('div', { className: 'comment-meta' }, [text('span', c.authorName + ' — ' + formatDate(c.createdAt))]),
+        ]));
+      });
+      if (!res.comments || !res.comments.length) {
+        box.appendChild(text('p', 'Nenhum comentário ainda.', { className: 'empty-state' }));
+      }
+
+      var textarea = h('textarea', { maxlength: 1000, placeholder: 'Escreva um comentário...' }, []);
+      var submitBtn = h('button', {
+        onclick: function () {
+          var msg = textarea.value.trim();
+          if (!msg) return;
+          callApi('apiSubmitTaskComment', state.sessionToken, taskId, msg).then(function (res2) {
+            if (res2.success) loadTaskComments(taskId, box);
+            else setStatus('tasks-status', res2.message, 'error');
+          });
+        },
+      }, ['Enviar']);
+      box.appendChild(h('div', { className: 'task-comment-form' }, [textarea, submitBtn]));
+    });
+  }
+
   // ===========================================================================
   // Perfil e preferências
   // ===========================================================================
@@ -665,16 +831,70 @@
       if (!res.success) { setStatus('msg-profile', res.message, 'error'); return; }
 
       document.getElementById('profile-name').value = res.profile.fullName || '';
+      document.getElementById('profile-username').value = res.profile.username || '';
       document.getElementById('profile-phone').value = res.profile.phone || '';
-      document.getElementById('profile-city').value = res.profile.city || '';
+      document.getElementById('profile-linkedin').value = res.profile.linkedinUrl || '';
+      document.getElementById('profile-instagram').value = res.profile.instagramHandle || '';
       document.getElementById('profile-education').value = res.profile.education || '';
+      document.getElementById('profile-interests').value = res.profile.interests || '';
+      setAvatarPreview('profile-avatar-preview', 'profile-avatar-placeholder', res.profile.avatarUrl || null);
 
       document.getElementById('pref-theme').value = res.preferences.theme;
       document.getElementById('pref-email-notif').checked = !!res.preferences.emailNotifications;
 
       applyPreferences(res.preferences);
     });
+    loadProfileMetrics();
   }
+
+  function loadProfileMetrics() {
+    callApi('apiGetMyMetrics', state.sessionToken).then(function (res) {
+      if (!res.success) return;
+      var labels = {
+        eventsCount: 'Eventos participados', tasksCount: 'Tarefas aderidas', tasksCompletedCount: 'Tarefas concluídas',
+        proposalsCount: 'Propostas enviadas', votesCount: 'Votos registrados', feedbackCount: 'Feedbacks enviados',
+      };
+      var container = document.getElementById('profile-metrics');
+      clearEl(container);
+      Object.keys(labels).forEach(function (key) {
+        container.appendChild(h('div', { className: 'card stat-card' }, [
+          text('span', labels[key]),
+          text('strong', res.metrics[key]),
+        ]));
+      });
+    });
+  }
+
+  document.getElementById('btn-profile-avatar-pick').addEventListener('click', function () {
+    document.getElementById('profile-avatar-input').click();
+  });
+
+  document.getElementById('profile-avatar-input').addEventListener('change', function (evt) {
+    var file = evt.target.files && evt.target.files[0];
+    if (!file) return;
+
+    if (['image/jpeg', 'image/png', 'image/webp', 'image/gif'].indexOf(file.type) === -1) {
+      setStatus('msg-profile-avatar', 'Formato não suportado. Use JPEG, PNG, WEBP ou GIF.', 'error');
+      evt.target.value = '';
+      return;
+    }
+    if (file.size > MAX_AVATAR_FILE_BYTES) {
+      setStatus('msg-profile-avatar', 'Imagem muito grande (máximo 2MB).', 'error');
+      evt.target.value = '';
+      return;
+    }
+
+    setStatus('msg-profile-avatar', 'Enviando foto...', 'info');
+    readFileAsBase64(file).then(function (base64) {
+      return callApi('apiUpdateMyAvatar', state.sessionToken, base64, file.type);
+    }).then(function (res) {
+      setStatus('msg-profile-avatar', res.message, res.success ? 'success' : 'error');
+      if (res.success) setAvatarPreview('profile-avatar-preview', 'profile-avatar-placeholder', res.avatarUrl);
+    }).catch(function (err) {
+      setStatus('msg-profile-avatar', err.message, 'error');
+    });
+    evt.target.value = '';
+  });
 
   document.getElementById('form-profile').addEventListener('submit', function (evt) {
     evt.preventDefault();
@@ -682,9 +902,12 @@
     // já fica desabilitado na interface) e o servidor ignora esse campo de
     // qualquer forma mesmo que alguém tente enviar via chamada direta.
     var payload = {
+      username: document.getElementById('profile-username').value,
       phone: document.getElementById('profile-phone').value,
-      city: document.getElementById('profile-city').value,
+      linkedinUrl: document.getElementById('profile-linkedin').value,
+      instagramHandle: document.getElementById('profile-instagram').value,
       education: document.getElementById('profile-education').value,
+      interests: document.getElementById('profile-interests').value,
     };
     callApi('apiUpdateMyProfile', state.sessionToken, payload).then(function (res) {
       setStatus('msg-profile', res.message, res.success ? 'success' : 'error');
@@ -715,6 +938,8 @@
   // ===========================================================================
   // Administração — dashboard
   // ===========================================================================
+  var adminDashboardChart = null;
+
   function loadAdminDashboard() {
     callApi('apiAdminDashboard', state.sessionToken).then(function (res) {
       if (!res.success) return;
@@ -732,6 +957,37 @@
           text('strong', res.indicators[key]),
         ]));
       });
+      renderAdminDashboardChart(labels, res.indicators);
+    });
+  }
+
+  /** Gráfico de barras dos mesmos indicadores dos cartões — usa Chart.js via CDN (index.html); se o script não carregar (bloqueio de rede etc.), o painel continua funcional só sem o gráfico. */
+  function renderAdminDashboardChart(labels, indicators) {
+    var canvas = document.getElementById('admin-dashboard-chart');
+    if (!canvas || typeof window.Chart === 'undefined') return;
+
+    var dataLabels = Object.keys(labels).map(function (key) { return labels[key]; });
+    var dataValues = Object.keys(labels).map(function (key) { return indicators[key] || 0; });
+
+    if (adminDashboardChart) { adminDashboardChart.destroy(); }
+    adminDashboardChart = new window.Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: dataLabels,
+        datasets: [{
+          label: 'Indicadores',
+          data: dataValues,
+          backgroundColor: 'rgba(15, 111, 98, 0.55)',
+          borderColor: 'rgba(15, 111, 98, 1)',
+          borderWidth: 1,
+          borderRadius: 6,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+      },
     });
   }
 
@@ -852,8 +1108,15 @@
   // ===========================================================================
   // Administração — eventos
   // ===========================================================================
-  var EVENT_TRANSITIONS = { draft: ['published'], published: ['closed', 'archived'], closed: ['completed', 'archived'], completed: ['archived'], archived: [] };
-  var EVENT_STATUS_LABELS = { draft: 'Rascunho', published: 'Publicado', closed: 'Fechado', completed: 'Concluído', archived: 'Arquivado' };
+  var EVENT_TRANSITIONS = {
+    draft: ['published'], published: ['in_progress', 'archived'],
+    in_progress: ['closed', 'completed', 'archived'], closed: ['completed', 'archived'],
+    completed: ['archived'], archived: [],
+  };
+  var EVENT_STATUS_LABELS = {
+    draft: 'Rascunho', published: 'Publicado', in_progress: 'Em andamento',
+    closed: 'Fechado', completed: 'Concluído', archived: 'Arquivado',
+  };
 
   document.getElementById('form-admin-event').addEventListener('submit', function (evt) {
     evt.preventDefault();
@@ -894,15 +1157,48 @@
       }, ['Atualizar status']));
     }
 
-    return h('article', { className: 'list-item' }, [
-      text('h4', item.title),
-      h('div', { className: 'meta-row' }, [
-        h('span', { className: 'badge' }, [EVENT_STATUS_LABELS[item.status] || item.status]),
-        text('span', 'Data: ' + formatDate(item.event_date)),
-        text('span', 'Inscritos: ' + item.registered_count + (item.capacity ? '/' + item.capacity : '')),
-      ]),
-      h('div', { className: 'actions-row' }, actions),
-    ]);
+    var imageInput = h('input', {
+      type: 'file', accept: 'image/jpeg,image/png,image/webp,image/gif', className: 'visually-hidden',
+      onchange: function (evt) { uploadAdminEventImage(item.id, evt); },
+    }, []);
+    actions.push(h('button', { className: 'secondary', onclick: function () { imageInput.click(); } }, [item.image_url ? 'Trocar imagem' : 'Enviar imagem']));
+    actions.push(imageInput);
+
+    var children = [];
+    if (item.image_url) children.push(h('img', { className: 'event-image', src: item.image_url, alt: item.title }));
+    children.push(text('h4', item.title));
+    children.push(h('div', { className: 'meta-row' }, [
+      h('span', { className: 'badge' + (item.status === 'in_progress' ? ' in-progress' : '') }, [EVENT_STATUS_LABELS[item.status] || item.status]),
+      text('span', 'Data: ' + formatDate(item.event_date)),
+      text('span', 'Inscritos: ' + item.registered_count + (item.capacity ? '/' + item.capacity : '')),
+    ]));
+    children.push(h('div', { className: 'actions-row' }, actions));
+
+    return h('article', { className: 'list-item' }, children);
+  }
+
+  function uploadAdminEventImage(eventId, evt) {
+    var file = evt.target.files && evt.target.files[0];
+    if (!file) return;
+
+    if (['image/jpeg', 'image/png', 'image/webp', 'image/gif'].indexOf(file.type) === -1) {
+      setStatus('msg-admin-event', 'Formato não suportado. Use JPEG, PNG, WEBP ou GIF.', 'error');
+      return;
+    }
+    if (file.size > MAX_EVENT_IMAGE_FILE_BYTES) {
+      setStatus('msg-admin-event', 'Imagem muito grande (máximo 5MB).', 'error');
+      return;
+    }
+
+    setStatus('msg-admin-event', 'Enviando imagem...', 'info');
+    readFileAsBase64(file).then(function (base64) {
+      return callApi('apiAdminUploadEventImage', state.sessionToken, eventId, base64, file.type);
+    }).then(function (res) {
+      setStatus('msg-admin-event', res.message, res.success ? 'success' : 'error');
+      if (res.success) loadAdminEvents();
+    }).catch(function (err) {
+      setStatus('msg-admin-event', err.message, 'error');
+    });
   }
 
   // ===========================================================================
@@ -1058,31 +1354,65 @@
   // ===========================================================================
   // Administração — auditoria
   // ===========================================================================
+  var AUDIT_ACTION_LABELS = {
+    REGISTER: 'Cadastro', CONFIRM_EMAIL: 'Confirmação de e-mail', LOGIN: 'Login', LOGOUT: 'Logout',
+    REQUEST_PASSWORD_RESET: 'Solicitação de redefinição de senha', CONFIRM_PASSWORD_RESET: 'Redefinição de senha confirmada',
+    UPDATE_PROFILE: 'Atualização de perfil', UPDATE_AVATAR: 'Atualização de avatar', UPDATE_PREFERENCES: 'Atualização de preferências',
+    SUBMIT_FEEDBACK: 'Envio de feedback', REGISTER_EVENT: 'Inscrição em evento', SUBMIT_PROPOSAL: 'Envio de proposta',
+    CAST_VOTE: 'Voto registrado', TRANSITION_PROPOSAL: 'Mudança de status de proposta', SIGNUP_TASK: 'Adesão a tarefa',
+    COMPLETE_TASK: 'Tarefa concluída', COMMENT_TASK: 'Comentário em tarefa', CREATE_EVENT: 'Criação de evento',
+    UPDATE_EVENT_STATUS: 'Mudança de status de evento', UPDATE_EVENT_IMAGE: 'Imagem de evento atualizada',
+    CREATE_TASK: 'Criação de tarefa', UPDATE_TASK_STATUS: 'Mudança de status de tarefa',
+    CHANGE_USER_ROLE: 'Alteração de papel de usuário', BAN_USER: 'Banimento de conta', UNBAN_USER: 'Reativação de conta',
+  };
+
+  var adminAuditState = { action: '', result: '' };
+
+  (function populateAuditActionFilter() {
+    var select = document.getElementById('audit-filter-action');
+    if (!select) return;
+    Object.keys(AUDIT_ACTION_LABELS).sort().forEach(function (action) {
+      select.appendChild(text('option', AUDIT_ACTION_LABELS[action], { value: action }));
+    });
+  })();
+
+  document.getElementById('form-audit-filter').addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    adminAuditState.action = document.getElementById('audit-filter-action').value;
+    adminAuditState.result = document.getElementById('audit-filter-result').value;
+    loadAdminAudit(1);
+  });
+
   function loadAdminAudit(page) {
-    callApi('apiAdminListAuditLogs', state.sessionToken, { page: page }).then(function (res) {
+    callApi('apiAdminListAuditLogs', state.sessionToken, { page: page, action: adminAuditState.action, result: adminAuditState.result }).then(function (res) {
       if (!res.success) return;
       renderList('admin-audit-list', res.logs, function (log) {
         return h('article', { className: 'list-item' }, [
           h('div', { className: 'meta-row' }, [
-            h('span', { className: 'badge' + (log.result === 'failure' ? ' banned' : '') }, [log.action]),
+            h('span', { className: 'badge' + (log.result === 'failure' ? ' banned' : '') }, [AUDIT_ACTION_LABELS[log.action] || log.action]),
             text('span', 'Ator: ' + (log.actor_name || 'Sistema/Desconhecido')),
             text('span', formatDate(log.created_at)),
           ]),
         ]);
       }, 'Nenhum registro de auditoria.');
+      renderPagination('admin-audit-pagination', res.page, res.pageSize, res.total, loadAdminAudit);
     });
 
+    loadAdminErrorLogs(page);
+  }
+
+  function renderErrorLogItem(log) {
+    return h('article', { className: 'list-item' }, [
+      h('div', { className: 'meta-row' }, [h('span', { className: 'badge banned' }, [log.code]), text('span', formatDate(log.created_at))]),
+      text('p', log.message),
+    ]);
+  }
+
+  function loadAdminErrorLogs(page) {
     callApi('apiAdminListErrorLogs', state.sessionToken, { page: page }).then(function (res) {
       if (!res.success) return;
-      renderList('admin-error-list', res.logs, function (log) {
-        return h('article', { className: 'list-item' }, [
-          h('div', { className: 'meta-row' }, [
-            h('span', { className: 'badge banned' }, [log.code]),
-            text('span', formatDate(log.created_at)),
-          ]),
-          text('p', log.message),
-        ]);
-      }, 'Nenhum erro técnico registrado.');
+      renderList('admin-error-list', res.logs, renderErrorLogItem, 'Nenhum erro técnico registrado.');
+      renderPagination('admin-error-pagination', res.page, res.pageSize, res.total, loadAdminErrorLogs);
     });
   }
 

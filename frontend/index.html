@@ -42,20 +42,42 @@
         <p class="muted">Sua conta começa como visitante; a confirmação por e-mail é obrigatória para entrar.</p>
 
         <form id="form-register" novalidate>
-          <label for="reg-name">Nome completo
+          <label class="avatar-picker-row" for="reg-avatar-input">
+            <span class="avatar-preview-wrap">
+              <img id="reg-avatar-preview" class="avatar-preview hidden" alt="Pré-visualização do avatar">
+              <span id="reg-avatar-placeholder" class="avatar-placeholder" aria-hidden="true">＋</span>
+            </span>
+            <span>
+              <strong>Foto de perfil (opcional)</strong>
+              <span class="muted" style="display:block; font-size:12px;">JPEG, PNG, WEBP ou GIF, até 2MB.</span>
+            </span>
+            <input type="file" id="reg-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden">
+          </label>
+          <div id="msg-reg-avatar" class="status-msg" role="alert" aria-live="polite"></div>
+
+          <label for="reg-name">*Nome completo <span class="muted">(não pode ser alterado depois)</span>
             <input type="text" id="reg-name" autocomplete="name" required minlength="3" maxlength="150">
           </label>
-          <label for="reg-email">E-mail
+          <label for="reg-username">*Nome de usuário
+            <input type="text" id="reg-username" autocomplete="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_.]+">
+          </label>
+          <label for="reg-email">*E-mail
             <input type="email" id="reg-email" autocomplete="email" required>
           </label>
-          <label for="reg-phone">Telefone
+          <label for="reg-phone">*Telefone
             <input type="tel" id="reg-phone" autocomplete="tel" required minlength="8" maxlength="30">
           </label>
-          <label for="reg-city">Cidade (opcional)
-            <input type="text" id="reg-city" autocomplete="address-level2" maxlength="120">
+          <label for="reg-linkedin">Perfil do LinkedIn (opcional)
+            <input type="url" id="reg-linkedin" autocomplete="url" maxlength="255" placeholder="https://linkedin.com/in/...">
+          </label>
+          <label for="reg-instagram">Instagram (opcional)
+            <input type="text" id="reg-instagram" maxlength="31" placeholder="@usuario">
           </label>
           <label for="reg-education">Escolaridade (opcional)
             <input type="text" id="reg-education" maxlength="120">
+          </label>
+          <label for="reg-interests">Assuntos de interesse (opcional)
+            <textarea id="reg-interests" maxlength="500"></textarea>
           </label>
           <label for="reg-password">Senha (mínimo 8 caracteres)
             <input type="password" id="reg-password" autocomplete="new-password" required minlength="8">
@@ -146,52 +168,69 @@
         um botão aqui nunca é, por si só, controle de acesso.
       -->
       <nav class="bottom-nav" id="app-nav" aria-label="Navegação principal">
-        <button type="button" data-panel="panel-home" data-scope="all">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
-          <span>Início</span>
-        </button>
-        <button type="button" data-panel="panel-events" data-scope="all">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
-          <span>Eventos</span>
-        </button>
-        <button type="button" data-panel="panel-proposals" data-scope="all" style="position:relative;">
-          <span id="nav-badge-voting" class="nav-badge nav-badge-alert hidden" aria-label="Há votação aberta">!</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l14-7-4 16-4-6-6-3z"/></svg>
-          <span>Propostas</span>
-        </button>
-        <button type="button" data-panel="panel-tasks" data-scope="member" style="position:relative;">
-          <span id="nav-badge-tasks" class="nav-badge hidden"></span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>
-          <span>Tarefas</span>
-        </button>
-        <button type="button" data-panel="panel-profile" data-scope="all">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
-          <span>Perfil</span>
-        </button>
-        <button type="button" id="btn-open-admin-sheet" data-scope="admin" aria-haspopup="true" aria-controls="admin-sheet">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.55-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.55 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.55 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.55 1z"/></svg>
-          <span>Admin</span>
-        </button>
-      </nav>
-
-      <!-- Gaveta (bottom sheet) com as telas administrativas, para não lotar a
-           barra inferior. Abre/fecha via JS em app.js. -->
-      <div id="admin-sheet" class="sheet-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="admin-sheet-title">
-        <div class="sheet-box">
-          <div class="sheet-handle" aria-hidden="true"></div>
-          <h3 id="admin-sheet-title">Administração</h3>
-          <div class="sheet-grid">
-            <button type="button" class="sheet-item" data-panel="panel-admin-dashboard">Painel admin</button>
-            <button type="button" class="sheet-item" data-panel="panel-admin-users">Usuários</button>
-            <button type="button" class="sheet-item" data-panel="panel-admin-events">Gerir eventos</button>
-            <button type="button" class="sheet-item" data-panel="panel-admin-proposals">Gerir propostas</button>
-            <button type="button" class="sheet-item" data-panel="panel-admin-tasks">Gerir tarefas</button>
-            <button type="button" class="sheet-item" data-panel="panel-admin-feedback">Feedback</button>
-            <button type="button" class="sheet-item" data-panel="panel-admin-audit">Auditoria</button>
-          </div>
-          <button type="button" class="secondary" id="btn-close-admin-sheet">Fechar</button>
+        <div class="nav-group" id="nav-group-member">
+          <button type="button" data-panel="panel-home" data-scope="all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
+            <span>Início</span>
+          </button>
+          <button type="button" data-panel="panel-events" data-scope="all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+            <span>Eventos</span>
+          </button>
+          <button type="button" data-panel="panel-proposals" data-scope="all" style="position:relative;">
+            <span id="nav-badge-voting" class="nav-badge nav-badge-alert hidden" aria-label="Há votação aberta">!</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l14-7-4 16-4-6-6-3z"/></svg>
+            <span>Propostas</span>
+          </button>
+          <button type="button" data-panel="panel-tasks" data-scope="member" style="position:relative;">
+            <span id="nav-badge-tasks" class="nav-badge hidden"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>
+            <span>Tarefas</span>
+          </button>
+          <button type="button" data-panel="panel-profile" data-scope="all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+            <span>Perfil</span>
+          </button>
+          <button type="button" id="btn-enter-admin-mode" data-scope="admin">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.55-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.55 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.55 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.55 1z"/></svg>
+            <span>Admin</span>
+          </button>
         </div>
-      </div>
+        <div class="nav-group nav-group-admin hidden" id="nav-group-admin">
+          <button type="button" data-panel="panel-admin-dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+            <span>Painel</span>
+          </button>
+          <button type="button" data-panel="panel-admin-users">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1.2-3.3 3.7-5 6.5-5s5.3 1.7 6.5 5"/><path d="M16 4.5c1.7.3 3 1.8 3 3.5s-1.3 3.2-3 3.5"/><path d="M18.5 15c2 .4 3.2 1.8 4 4.2"/></svg>
+            <span>Usuários</span>
+          </button>
+          <button type="button" data-panel="panel-admin-events">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+            <span>Eventos</span>
+          </button>
+          <button type="button" data-panel="panel-admin-proposals">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l14-7-4 16-4-6-6-3z"/></svg>
+            <span>Propostas</span>
+          </button>
+          <button type="button" data-panel="panel-admin-tasks">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>
+            <span>Tarefas</span>
+          </button>
+          <button type="button" data-panel="panel-admin-feedback">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 01-8.5 8.5c-1.2 0-2.4-.3-3.4-.8L3 20l1-4.9A8.5 8.5 0 1121 11.5z"/></svg>
+            <span>Feedback</span>
+          </button>
+          <button type="button" data-panel="panel-admin-audit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            <span>Auditoria</span>
+          </button>
+          <button type="button" id="btn-exit-admin-mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            <span>Voltar</span>
+          </button>
+        </div>
+      </nav>
 
       <main class="app-main">
         <section id="panel-home">
@@ -206,6 +245,11 @@
             <h2>Eventos</h2>
             <div id="events-status" class="status-msg" role="status" aria-live="polite"></div>
             <div id="events-list"></div>
+          </div>
+          <div class="card">
+            <h3>Histórico</h3>
+            <p class="muted">Os últimos eventos concluídos pela liga.</p>
+            <div id="events-history-list"></div>
           </div>
         </section>
 
@@ -248,22 +292,49 @@
           <div class="grid-2">
             <div class="card">
               <h2>Meu perfil</h2>
+
+              <div class="avatar-picker-row" style="margin-bottom:16px;">
+                <span class="avatar-preview-wrap">
+                  <img id="profile-avatar-preview" class="avatar-preview hidden" alt="Avatar atual">
+                  <span id="profile-avatar-placeholder" class="avatar-placeholder" aria-hidden="true">＋</span>
+                </span>
+                <span>
+                  <button type="button" id="btn-profile-avatar-pick" class="secondary" style="width:auto;">Trocar foto</button>
+                  <span class="muted" style="display:block; font-size:12px; margin-top:4px;">JPEG, PNG, WEBP ou GIF, até 2MB.</span>
+                </span>
+                <input type="file" id="profile-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden">
+              </div>
+              <div id="msg-profile-avatar" class="status-msg" role="alert" aria-live="polite"></div>
+
               <form id="form-profile" novalidate>
                 <label for="profile-name">Nome completo <span class="muted">(não pode ser alterado)</span>
                   <input type="text" id="profile-name" disabled>
                 </label>
+                <label for="profile-username">Nome de usuário
+                  <input type="text" id="profile-username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_.]+">
+                </label>
                 <label for="profile-phone">Telefone
                   <input type="tel" id="profile-phone" required minlength="8" maxlength="30">
                 </label>
-                <label for="profile-city">Cidade
-                  <input type="text" id="profile-city" maxlength="120">
+                <label for="profile-linkedin">Perfil do LinkedIn (opcional)
+                  <input type="url" id="profile-linkedin" maxlength="255" placeholder="https://linkedin.com/in/...">
+                </label>
+                <label for="profile-instagram">Instagram (opcional)
+                  <input type="text" id="profile-instagram" maxlength="31" placeholder="@usuario">
                 </label>
                 <label for="profile-education">Escolaridade
                   <input type="text" id="profile-education" maxlength="120">
                 </label>
+                <label for="profile-interests">Assuntos de interesse (opcional)
+                  <textarea id="profile-interests" maxlength="500"></textarea>
+                </label>
                 <button type="submit">Salvar perfil</button>
               </form>
               <div id="msg-profile" class="status-msg" role="alert" aria-live="polite"></div>
+            </div>
+            <div class="card">
+              <h3>Minhas métricas</h3>
+              <div id="profile-metrics" class="stat-grid"></div>
             </div>
             <div class="card">
               <h3>Preferências</h3>
@@ -300,6 +371,10 @@
           <div class="card">
             <h2>Visão geral</h2>
             <div id="admin-dashboard-stats" class="stat-grid"></div>
+          </div>
+          <div class="card">
+            <h3>Indicadores em gráfico</h3>
+            <canvas id="admin-dashboard-chart" height="220" role="img" aria-label="Gráfico de indicadores administrativos"></canvas>
           </div>
         </section>
 
@@ -392,11 +467,28 @@
         <section id="panel-admin-audit" class="hidden">
           <div class="card">
             <h2>Auditoria</h2>
-            <div id="admin-audit-list"></div>
+            <form id="form-audit-filter" novalidate style="display:flex; flex-wrap:wrap; gap:10px; margin-top:0;">
+              <label for="audit-filter-action" style="flex:1 1 160px;">Tipo de atividade
+                <select id="audit-filter-action">
+                  <option value="">Todas</option>
+                </select>
+              </label>
+              <label for="audit-filter-result" style="flex:1 1 140px;">Resultado
+                <select id="audit-filter-result">
+                  <option value="">Todos</option>
+                  <option value="success">Sucesso</option>
+                  <option value="failure">Falha</option>
+                </select>
+              </label>
+              <button type="submit" style="width:auto; align-self:end;">Filtrar</button>
+            </form>
+            <div id="admin-audit-list" style="margin-top:14px;"></div>
+            <div id="admin-audit-pagination" class="pagination"></div>
           </div>
           <div class="card">
             <h2>Logs técnicos</h2>
             <div id="admin-error-list"></div>
+            <div id="admin-error-pagination" class="pagination"></div>
           </div>
         </section>
       </main>
@@ -434,6 +526,7 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>

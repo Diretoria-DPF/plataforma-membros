@@ -229,11 +229,28 @@ button.admin-btn { background: var(--admin); color: #2a1200; }
    celular, então esse é o layout padrão, não uma adaptação. */
 .bottom-nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
-  display: flex; justify-content: space-around; align-items: stretch;
   background: var(--surface); border-top: 1px solid var(--border);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+.nav-group {
+  display: flex; align-items: stretch;
+}
+
+/* Modo membro: distribui os botões pela largura toda, como antes. */
+#nav-group-member { justify-content: space-around; }
+
+/* Modo admin dedicado: mais botões do que cabem confortavelmente em telas
+   estreitas — vira uma faixa rolável horizontalmente em vez de espremer
+   tudo, mantendo cada botão com uma largura mínima tocável. */
+.nav-group-admin {
+  justify-content: flex-start;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-group-admin button { flex: 0 0 auto; min-width: 78px; }
+.nav-group-admin #btn-exit-admin-mode { color: var(--admin); }
 
 .bottom-nav button {
   flex: 1 1 0;
@@ -254,7 +271,7 @@ button.admin-btn { background: var(--admin); color: #2a1200; }
 @keyframes badge-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
 @media (prefers-reduced-motion: reduce) { .nav-badge-alert { animation: none; } }
 .bottom-nav button.active { color: var(--primary-strong); }
-.bottom-nav button#btn-open-admin-sheet.active { color: var(--admin); }
+.nav-group-admin button.active { color: var(--admin); }
 
 /* Espaço reservado para a barra inferior nunca cobrir o conteúdo, e para
    iOS/Android com "notch"/gestos (safe-area-inset). */
@@ -263,29 +280,6 @@ button.admin-btn { background: var(--admin); color: #2a1200; }
   padding-bottom: calc(var(--density-pad) + 76px + env(safe-area-inset-bottom, 0px));
   max-width: 720px; margin: 0 auto; display: grid; gap: var(--density-gap);
 }
-
-/* Gaveta (bottom sheet) das telas administrativas */
-.sheet-overlay {
-  position: fixed; inset: 0; z-index: 30;
-  background: rgba(10, 14, 22, 0.5);
-  display: flex; align-items: flex-end; justify-content: center;
-}
-.sheet-box {
-  width: 100%; max-width: 480px;
-  background: var(--surface); border-radius: 20px 20px 0 0;
-  box-shadow: var(--shadow); padding: 12px 20px calc(20px + env(safe-area-inset-bottom, 0px));
-  max-height: 80vh; overflow-y: auto;
-}
-.sheet-handle {
-  width: 40px; height: 4px; border-radius: 999px; background: var(--border);
-  margin: 4px auto 14px;
-}
-.sheet-grid { display: grid; gap: 8px; margin-bottom: 14px; }
-.sheet-item {
-  text-align: left; background: var(--surface-alt); color: var(--text);
-  border: 1px solid var(--border); font-weight: 600;
-}
-.sheet-item.active { background: var(--admin-soft); color: var(--admin); border-color: transparent; }
 
 @media (min-width: 720px) {
   .app-main { max-width: 1200px; }
@@ -352,3 +346,38 @@ button, input, select, textarea, .list-item .actions-row button {
   min-height: 44px;
 }
 .bottom-nav button { min-height: 56px; }
+
+/* ---------- Avatar (cadastro e perfil) ---------- */
+.avatar-picker-row {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer;
+}
+.avatar-preview-wrap {
+  position: relative; width: 64px; height: 64px; flex: 0 0 auto;
+  border-radius: 50%; overflow: hidden;
+  background: var(--surface-alt); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar-preview { width: 100%; height: 100%; object-fit: cover; }
+.avatar-placeholder { font-size: 26px; color: var(--muted); }
+
+/* ---------- Imagem de evento (histórico e admin) ---------- */
+.event-image {
+  width: 100%; max-height: 180px; object-fit: cover;
+  border-radius: var(--radius-md); margin-bottom: 10px; display: block;
+}
+.badge.in-progress { background: var(--admin-soft); color: var(--admin); }
+
+/* ---------- Comentários de tarefa ---------- */
+.task-comments { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+.task-comment { font-size: 13px; margin-bottom: 8px; }
+.task-comment .comment-meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+.task-comment-form { display: flex; gap: 8px; margin-top: 10px; }
+.task-comment-form textarea { min-height: 44px; flex: 1; }
+.task-comment-form button { width: auto; }
+
+/* ---------- Gráfico do dashboard admin ---------- */
+#admin-dashboard-chart { max-width: 100%; }
+
+/* ---------- Métricas de perfil ---------- */
+#profile-metrics .stat-card strong { font-size: 22px; }
