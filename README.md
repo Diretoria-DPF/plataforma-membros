@@ -1,13 +1,22 @@
 # Plataforma de Membros
 
-**No ar:** https://script.google.com/macros/s/AKfycbwYCBnyvnAyfa_EGi1AdZZb1ChFOuJtdSoDBYDoLVO_KipSaNUMRs8fcfbkbzpQP9Ki6w/exec
-(falta só cadastrar as credenciais do banco em Script Properties — ver
-`docs/DEPLOYMENT.md`, seção "Status real").
+**No ar:** https://diretoria-dpf.github.io/plataforma-membros/ — esta é a
+URL que as pessoas usam. O back-end (Apps Script) não serve mais interface
+nenhuma; é só uma API JSON chamada pelo front-end acima. Ver seção
+"Arquitetura" abaixo e `docs/DEPLOYMENT.md`.
 
 Aplicação de governança comunitária (eventos, propostas com votação,
-tarefas colaborativas e administração de contas) construída como um
-**Google Apps Script Web App** com **Neon PostgreSQL** como banco
-relacional, versionada com Git/GitHub e sincronizada via `@google/clasp`.
+tarefas colaborativas e administração de contas), dividida em duas partes
+publicadas separadamente:
+
+- **Front-end**: site estático (HTML/CSS/JS puro, sem framework) publicado
+  no **GitHub Pages**, neste mesmo repositório (pasta `frontend/`).
+- **Back-end**: **Google Apps Script Web App** exposto como API HTTP/JSON
+  (`doPost`), com **Neon PostgreSQL** como banco relacional via JDBC.
+
+Versionada com Git/GitHub e sincronizada via `@google/clasp` (só o
+back-end; o front-end é publicado direto pelo GitHub Actions a partir deste
+repositório).
 
 Não é uma reescrita disfarçada da versão anterior baseada em Planilhas
 Google: o modelo de dados, autenticação, sessão e renderização foram
@@ -16,18 +25,44 @@ protótipo legado (SHA-256 simples de senha, identidade aceita diretamente
 do navegador, `innerHTML` com dado do banco). Ver `docs/SECURITY.md` para o
 detalhamento de cada decisão.
 
+## Arquitetura (front-end e back-end separados)
+
+```
+┌──────────────────────────────┐        POST JSON         ┌───────────────────────────────┐
+│  frontend/ (GitHub Pages)    │  ───────────────────────▶ │  Apps Script (doPost, Main.gs) │
+│  index.html + app.js + css   │  ◀───────────────────────  │  API_REGISTRY (allowlist)      │
+│  site 100% estático           │      {success, ...}       │  App.*Service → Neon Postgres  │
+└──────────────────────────────┘                            └───────────────────────────────┘
+```
+
+- O front-end **nunca** foi feito com `google.script.run` — isso só funciona
+  dentro do iframe que o próprio `HtmlService` renderiza, então um site fora
+  do domínio do Apps Script não consegue usá-lo. O front-end chama
+  `fetch()` contra `doPost` do Apps Script, com `action`+`args` no corpo
+  em JSON (mesmo nome/ordem de argumento que as antigas chamadas
+  `google.script.run.apiXxx(...)`).
+- `doPost` só aceita os nomes de função explicitamente listados em
+  `API_REGISTRY` (`src/Main.gs`) — nunca resolve um nome dinamicamente.
+- Nenhuma credencial de banco, pepper de sessão ou senha jamais chega ao
+  front-end — só o token de sessão opaco que o próprio backend emite após
+  login, e que fica em memória no navegador (nunca `localStorage`).
+- Ver `docs/SECURITY.md` para o detalhamento de cada decisão, incluindo o
+  que muda no modelo de CSRF/CORS em relação à versão anterior (que servia
+  tudo dentro do próprio Apps Script).
+
 ## Stack
 
-- **Backend/servidor de páginas:** Google Apps Script (runtime V8),
-  `HtmlService`, Web App, `google.script.run`.
-- **Frontend:** HTML5 + CSS3 responsivo mobile-first + JavaScript vanilla
-  (sem framework).
+- **Front-end:** HTML5 + CSS3 responsivo mobile-first + JavaScript vanilla
+  (sem framework), publicado como site estático no GitHub Pages.
+- **Back-end/API:** Google Apps Script (runtime V8) exposto como API
+  HTTP/JSON via `doPost` — não serve mais HTML.
 - **Persistência:** Neon PostgreSQL, acessado via `Jdbc.getConnection`
   (JDBC com TLS e `PreparedStatement`).
 - **Senhas:** `pgcrypto` (`crypt()` + `gen_salt('bf')`) — hash sempre
   calculado no Postgres, nunca em JavaScript.
 - **E-mail:** `MailApp` (confirmação de conta, redefinição de senha).
-- **Ferramentas:** Git, GitHub, `@google/clasp`, ESLint, Jest.
+- **Ferramentas:** Git, GitHub, GitHub Actions (deploy do front-end),
+  `@google/clasp` (deploy do back-end), ESLint, Jest.
 
 ## Estrutura
 
@@ -40,33 +75,34 @@ plataforma-membros/
 ├── appsscript.json
 ├── package.json
 ├── README.md
+├── .github/workflows/
+│   └── deploy-frontend.yml # publica frontend/ no GitHub Pages a cada push
+├── frontend/                # site estático — publicado no GitHub Pages
+│   ├── index.html
+│   ├── styles.css
+│   ├── app.js
+│   └── dev-server.js        # só para pré-visualização local, não é publicado
 ├── sql/
 │   ├── 001_schema.sql
 │   └── 002_functions_and_triggers.sql
-├── src/
+├── src/                      # back-end — publicado no Apps Script via clasp
 │   ├── Config.gs            # leitura de Script Properties (segredos)
 │   ├── Constants.gs         # enums e limites compartilhados
 │   ├── Security.gs          # validação, tokens, sessão, rate limit
 │   ├── Database.gs          # camada JDBC (PreparedStatement sempre)
 │   ├── Logging.gs           # audit_logs / error_logs minimizados
-│   ├── Main.gs               # doGet + ÚNICAS funções chamáveis pelo cliente
-│   ├── services/
-│   │   ├── AuthService.gs
-│   │   ├── ProfileService.gs
-│   │   ├── EventService.gs
-│   │   ├── ProposalService.gs
-│   │   ├── TaskService.gs
-│   │   ├── AdminService.gs
-│   │   └── AuditService.gs
-│   └── ui/
-│       ├── Index.html
-│       ├── Styles.html
-│       ├── Header.html
-│       ├── Navigation.html
-│       ├── Modals.html
-│       └── Scripts.html
+│   ├── Main.gs               # doPost (API JSON) + API_REGISTRY (allowlist)
+│   └── services/
+│       ├── AuthService.gs
+│       ├── ProfileService.gs
+│       ├── EventService.gs
+│       ├── ProposalService.gs
+│       ├── TaskService.gs
+│       ├── AdminService.gs
+│       └── AuditService.gs
 ├── tests/
 │   ├── helpers/gasEnvironment.js  # carrega os .gs reais num vm do Node
+│   ├── apiRouter.test.js    # allowlist do doPost
 │   ├── validation.test.js
 │   ├── permissions.test.js
 │   ├── security.test.js

@@ -60,19 +60,46 @@ encontra um token salvo para reutilizar depois que a página fecha.
 primeiro lugar** (próxima seção) — isto é mitigação de profundidade, não
 uma solução para XSS.
 
-### CSRF
-Não implementamos um token CSRF dedicado. Justificativa: `google.script.run`
-não é um endpoint HTTP comum acessível por um `<form>` ou `fetch` de outra
-origem — a chamada depende de código JavaScript executando dentro do
-`iframe` específico daquela implantação, carregado por aquele usuário. Um
-site de terceiros não consegue simplesmente montar uma requisição para
-`google.script.run` do jeito que consegue para um endpoint REST clássico.
-**Risco residual real:** se um atacante conseguir executar JavaScript
-*dentro* da própria página (XSS), ele herda a mesma capacidade de chamar
-`google.script.run` que o usuário legítimo — nesse cenário um token CSRF
-não ajudaria de qualquer forma, porque o script malicioso rodaria no mesmo
-contexto autorizado. Por isso o investimento foi todo em prevenir XSS
-(próxima seção), não em CSRF.
+### CSRF e CORS (atualizado após a separação front/back)
+Até a versão anterior, o front-end era servido pelo próprio `HtmlService`
+dentro do iframe do Apps Script, e a chamada `google.script.run` só
+funcionava de dentro daquele iframe específico — nenhum site de terceiros
+conseguia montá-la, então CSRF nunca foi uma preocupação real.
+
+Isso mudou: o back-end agora é uma API HTTP/JSON pública (`doPost` em
+`Main.gs`), alcançável por `fetch()` de **qualquer origem** — não só do
+front-end oficial no GitHub Pages. Reavaliação:
+
+- **CSRF clássico (cookie ambiente) não se aplica.** Não existe cookie de
+  sessão nenhum — o token de sessão é um valor que o front-end precisa ler
+  do estado JS em memória e **colocar explicitamente** no corpo da
+  requisição. Um site malicioso não tem como ler ou adivinhar esse valor
+  (ele nunca fica em cookie, `localStorage` nem em lugar algum que outra
+  origem consiga acessar), então não consegue montar uma chamada
+  autenticada válida em nome de outra pessoa. Isso continua verdadeiro
+  independente de quem hospeda o front-end.
+- **O que É novo:** qualquer origem pode agora chamar `apiRegister`,
+  `apiLogin`, `apiRequestPasswordReset` etc. diretamente — não só através
+  da nossa própria interface. Os limites de tentativa
+  (`App.Security.enforceRateLimit`, incluindo os buckets GLOBAIS de
+  `REGISTER`/`RESET_REQUEST` adicionados após a auditoria) passam a ser a
+  linha de frente de verdade contra automação, não mais coadjuvante.
+- **Allowlist fechada no roteador (`API_REGISTRY` em `Main.gs`):** `doPost`
+  só invoca os identificadores literalmente listados no objeto — nunca
+  resolve um nome de função a partir do campo `action` de forma dinâmica
+  contra o escopo global. Isso impede qualquer tentativa de chamar algo
+  fora da superfície pública pretendida, e uma guarda `hasOwnProperty`
+  impede que um valor como `"toString"`/`"constructor"` resolva para um
+  método herdado de `Object.prototype`.
+- **CORS:** o front-end envia `Content-Type: text/plain;charset=utf-8`
+  (não `application/json`) de propósito, para que o navegador trate a
+  requisição como "simples" e não dispare um preflight `OPTIONS` — o Apps
+  Script não tem como responder um preflight customizado. Validado em
+  produção: `fetch()` de `https://diretoria-dpf.github.io` para o backend
+  retorna `type: "cors"` com o corpo correto, sem bloqueio do navegador.
+- **XSS continua sendo o risco que mais importa** (próxima seção): se
+  alguém conseguir injetar script na própria página, ele herda o token de
+  sessão em memória e qualquer defesa de transporte deixa de importar.
 
 ### XSS
 - Toda a interface usa `document.createTextNode`/`textContent`/DOM

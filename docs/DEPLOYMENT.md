@@ -79,11 +79,11 @@ de configurar lá (não testado nesta sessão).
 
    | Propriedade | Valor de exemplo | Obrigatória |
    |---|---|---|
-   | `DB_JDBC_URL` | `jdbc:postgresql://SEU-HOST-pooler.neon.tech:5432/SEU_BANCO?sslmode=require` | Sim |
+   | `DB_JDBC_URL` | `jdbc:postgresql://SEU-HOST-pooler.neon.tech:5432/SEU_BANCO` (SEM `?sslmode=...` — ver seção 2) | Sim |
    | `DB_USER` | `SEU_USUARIO_NEON` | Sim |
    | `DB_PASSWORD` | `SUA_SENHA_NEON` | Sim |
    | `SESSION_TOKEN_PEPPER` | uma string aleatória longa (ex.: gerada com `openssl rand -hex 32`) | Sim |
-   | `APP_BASE_URL` | preenchido depois do primeiro deploy (fallback; normalmente desnecessário) | Não |
+   | `APP_BASE_URL` | a URL do **front-end** publicado (ex.: `https://diretoria-dpf.github.io/plataforma-membros/`) — usada para montar os links de confirmação de e-mail/redefinição de senha | **Sim, desde a separação front/back** (não é mais opcional nem um fallback — sem isso os e-mails apontam para a URL "nua" do backend, que não serve mais interface nenhuma) |
    | `MAIL_FROM_NAME` | `Plataforma de Membros` | Não |
 
 ## 4. Vincular o clasp e sincronizar os arquivos
@@ -115,9 +115,14 @@ templates HTML como `'src/ui/Index'`, `'src/ui/Styles'` etc., e não apenas
 npx clasp push
 ```
 
-## 5. Autorizar escopos e publicar o Web App
+## 5. Autorizar escopos e publicar o back-end (Web App = API JSON)
 
-1. No editor do Apps Script, rode a função `doGet` uma vez manualmente (ou
+Desde a separação front/back, este "Web App" **não serve mais interface
+nenhuma** — é só o endpoint `doPost` (API JSON) que o front-end (seção 5.5)
+consome via `fetch()`. Visitar a URL diretamente não mostra mais nada
+utilizável, de propósito.
+
+1. No editor do Apps Script, rode a função `doPost` uma vez manualmente (ou
    abra a implantação de teste) para disparar a tela de autorização OAuth.
    Os escopos são **detectados automaticamente** pelo Apps Script a partir
    do código real (não declaramos `oauthScopes` manualmente no
@@ -133,7 +138,39 @@ npx clasp push
    - Quem pode acessar: **Qualquer pessoa** (a proteção de dados
      pessoais/ações autenticadas é feita pela camada de sessão da
      aplicação, não pelo controle de acesso do Google).
-3. Copie a URL de implantação gerada.
+3. Copie a URL de implantação gerada — é o valor de `API_BASE_URL` em
+   `frontend/app.js` (constante no topo do arquivo).
+4. **Sempre que corrigir/alterar código do back-end:**
+   ```bash
+   npx clasp push --force
+   npx clasp deploy -i <ID_DA_IMPLANTACAO_EXISTENTE> -d "descrição da mudança"
+   ```
+   Redeployar a **mesma implantação** (`-i` com o ID existente) mantém a
+   URL igual — sem isso, `clasp deploy` sem `-i` cria uma implantação NOVA
+   com uma URL diferente, exigindo atualizar `API_BASE_URL` no front-end.
+
+## 5.5. Publicar o front-end (GitHub Pages)
+
+O front-end (`frontend/index.html` + `app.js` + `styles.css`) é um site
+100% estático — sem build, sem dependências — publicado automaticamente
+pelo workflow `.github/workflows/deploy-frontend.yml` a cada `git push`
+para `main` que toque a pasta `frontend/`.
+
+1. Uma única vez: em **Settings → Pages** do repositório no GitHub, a
+   fonte precisa estar como **GitHub Actions** (não "Deploy from a
+   branch"). Se o repositório já tinha Pages configurado a partir da raiz
+   do branch (modo legado), troque para "GitHub Actions" — senão o GitHub
+   publicaria o repositório inteiro (incluindo `sql/`, `docs/`, `tests/`)
+   como site, em vez de só `frontend/`.
+2. `git push origin main` — o workflow builda e publica sozinho. Acompanhe
+   em **Actions** no GitHub, ou `gh run watch`.
+3. URL final: `https://<usuário-ou-organização>.github.io/<repositório>/`
+   (ex.: `https://diretoria-dpf.github.io/plataforma-membros/`).
+4. **Depois do primeiro deploy do front-end**, volte ao Apps Script e
+   defina a Script Property `APP_BASE_URL` com essa URL exata (com a barra
+   final) — é o que faz os links de confirmação de e-mail/redefinição de
+   senha apontarem para a interface certa. Não é segredo, é só uma URL
+   pública.
 
 ## 6. Validar os fluxos com contas de teste
 
@@ -208,25 +245,34 @@ https://github.com/Diretoria-DPF/plataforma-membros.)
 - **Recuperação de credenciais comprometidas:** ver docs/SECURITY.md,
   seção "Rotação de credenciais".
 
-## Status real (atualizado após deploy ao vivo)
+## Status real (atualizado após a separação front-end/back-end)
 
 - **Neon:** projeto `plataforma-membros` (`jolly-snow-39561777`, São Paulo)
   criado, `001_schema.sql`/`002_functions_and_triggers.sql` aplicados e
   verificados contra o banco de verdade (14 tabelas, 13 gatilhos), incluindo
   um teste real do gatilho de proteção do último admin (bloqueou/permitiu
-  corretamente). Banco limpo, sem dados de teste.
+  corretamente).
 - **GitHub:** publicado em https://github.com/Diretoria-DPF/plataforma-membros
   (público).
-- **Apps Script:** projeto criado, código publicado via `clasp push`, Web App
-  **implantado e no ar**:
-  `https://script.google.com/macros/s/AKfycbwYCBnyvnAyfa_EGi1AdZZb1ChFOuJtdSoDBYDoLVO_KipSaNUMRs8fcfbkbzpQP9Ki6w/exec`
-  — a tela de login carrega corretamente (verificado ao vivo no navegador).
-  Autorização OAuth já concedida pelo dono (`dpires292@gmail.com`).
-- **Pendente (só você pode fazer):** cadastrar `DB_JDBC_URL`, `DB_USER`,
-  `DB_PASSWORD`, `SESSION_TOKEN_PEPPER` em Script Properties (passo 3 acima)
-  — sem isso, cadastro/login retornam erro genérico porque a conexão ao
-  banco não tem credencial. Depois disso, seguir os passos 6 e 7
-  (validar fluxos com conta de teste, promover o primeiro admin).
+- **Back-end (Apps Script):** implantado e no ar como API JSON pura
+  (`doPost`), com `DB_JDBC_URL`/`DB_USER`/`DB_PASSWORD`/`SESSION_TOKEN_PEPPER`
+  já configurados. Cadastro real testado ao vivo (conta criada com sucesso,
+  registrada em `profiles`/`audit_logs`). Allowlist `API_REGISTRY` e rate
+  limit global de e-mail (proteção contra abuso de cota do `MailApp`)
+  auditados e corrigidos.
+- **Front-end (GitHub Pages):** publicado em
+  https://diretoria-dpf.github.io/plataforma-membros/ — testado ao vivo
+  contra o back-end real (login, `apiListEvents`) de uma origem diferente
+  (`fetch()` cross-origin confirmado funcionando, sem bloqueio de CORS).
+- **Pendente (só você pode fazer, não é segredo — ver seção 5.5):**
+  cadastrar a Script Property `APP_BASE_URL` com o valor
+  `https://diretoria-dpf.github.io/plataforma-membros/` no Apps Script.
+  Até isso ser feito, os links de confirmação de e-mail/redefinição de
+  senha continuam apontando para a URL antiga do backend em vez do
+  front-end novo — o cadastro/login pelo site em si já funciona
+  normalmente independente disso.
+- Depois disso, seguir os passos 6 e 7 (validar fluxos com conta de teste,
+  promover o primeiro admin).
 
 Durante o deploy real, dois bugs só reprodutíveis no Apps Script de verdade
 (não em Node/V8 padrão, por isso os testes automatizados não pegaram antes)
