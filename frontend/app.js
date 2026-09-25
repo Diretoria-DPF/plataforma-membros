@@ -100,6 +100,36 @@
   }
 
   // ===========================================================================
+  // Expiração por INATIVIDADE (revisitado em 2026-09-25): os 30min deixam de
+  // contar a partir só do login e passam a contar a partir da última
+  // atividade real — clique, tecla ou toque em qualquer lugar da tela.
+  // Quem está de fato usando a plataforma nunca é derrubado no meio do uso;
+  // quem deixa a aba aberta e parada é desconectado 30min depois da última
+  // interação, não 30min depois do login. Sem esses eventos, o timer nunca é
+  // adiado e o comportamento antigo (30min fixos) permanece intacto.
+  //
+  // O throttle evita gravar no localStorage a cada clique — só atualiza o
+  // horário de expiração (e reagenda o timer) no máximo 1x a cada 30s de
+  // atividade contínua, o que já é bem mais frequente do que qualquer
+  // sessão real precisaria.
+  // ===========================================================================
+  var ACTIVITY_RESET_THROTTLE_MS = 30 * 1000;
+  var lastActivityResetAt = 0;
+
+  function resetSessionExpiryOnActivity() {
+    if (!state.sessionToken) return;
+    var now = Date.now();
+    if (now - lastActivityResetAt < ACTIVITY_RESET_THROTTLE_MS) return;
+    lastActivityResetAt = now;
+    saveSessionCache(state.sessionToken);
+    scheduleSessionExpiry(now + SESSION_TTL_MS);
+  }
+
+  ['click', 'keydown', 'touchstart'].forEach(function (evtName) {
+    document.addEventListener(evtName, resetSessionExpiryOnActivity, { passive: true });
+  });
+
+  // ===========================================================================
   // Utilitários de DOM seguros (nunca innerHTML com dado dinâmico)
   // ===========================================================================
   function clearEl(el) {
@@ -569,7 +599,10 @@
     'panel-admin-audit': function () { loadAdminAudit(1); },
   };
 
+  var currentPanelId = 'panel-home';
+
   function showPanel(panelId) {
+    currentPanelId = panelId;
     document.querySelectorAll('.app-main > section').forEach(function (section) {
       section.classList.toggle('hidden', section.id !== panelId);
     });
@@ -585,6 +618,61 @@
     // existia no momento do login.
     refreshNavBadges();
   }
+
+  // ===========================================================================
+  // Navegação por deslizar (swipe) entre painéis — padrão de app mobile.
+  // Só entra em ação num gesto majoritariamente HORIZONTAL e acima de um
+  // limite mínimo de distância, pra nunca competir com a rolagem vertical
+  // normal da página (o CSS `touch-action: pan-y` em .app-main já entrega o
+  // gesto vertical pro navegador de qualquer forma). Ignora toques que
+  // começam dentro de controles de formulário, da barra de navegação
+  // (que tem sua própria rolagem horizontal no modo admin) ou de modais.
+  // ===========================================================================
+  var SWIPE_MIN_DISTANCE_PX = 60;
+  var SWIPE_MAX_OFF_AXIS_PX = 60;
+  var swipeStart = null;
+
+  function isSwipeExcluded(target) {
+    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas'));
+  }
+
+  function getVisiblePanelOrder() {
+    var activeGroupId = document.getElementById('nav-group-admin').classList.contains('hidden') ? 'nav-group-member' : 'nav-group-admin';
+    return Array.prototype.slice
+      .call(document.querySelectorAll('#' + activeGroupId + ' [data-panel]'))
+      .filter(function (btn) { return !btn.classList.contains('hidden'); })
+      .map(function (btn) { return btn.getAttribute('data-panel'); });
+  }
+
+  function handleSwipeNavigation(deltaX) {
+    var order = getVisiblePanelOrder();
+    var currentIndex = order.indexOf(currentPanelId);
+    if (currentIndex === -1) return;
+    var nextIndex = deltaX < 0 ? currentIndex + 1 : currentIndex - 1;
+    if (nextIndex < 0 || nextIndex >= order.length) return;
+    showPanel(order[nextIndex]);
+  }
+
+  (function initSwipeNavigation() {
+    var main = document.querySelector('.app-main');
+    if (!main) return;
+
+    main.addEventListener('touchstart', function (evt) {
+      if (evt.touches.length !== 1 || isSwipeExcluded(evt.target)) { swipeStart = null; return; }
+      swipeStart = { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
+    }, { passive: true });
+
+    main.addEventListener('touchend', function (evt) {
+      if (!swipeStart) return;
+      var touch = evt.changedTouches[0];
+      var deltaX = touch.clientX - swipeStart.x;
+      var deltaY = touch.clientY - swipeStart.y;
+      swipeStart = null;
+      if (Math.abs(deltaY) > SWIPE_MAX_OFF_AXIS_PX) return; // gesto majoritariamente vertical — era rolagem, não navegação
+      if (Math.abs(deltaX) < SWIPE_MIN_DISTANCE_PX) return;
+      handleSwipeNavigation(deltaX);
+    }, { passive: true });
+  })();
 
   // ===========================================================================
   // Eventos

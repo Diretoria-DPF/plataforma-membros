@@ -1,10 +1,3 @@
-> **MINUTA — RECOMENDA-SE REVISÃO JURÍDICA ANTES DE TRATAR COMO DEFINITIVA.**
-> Este texto foi redigido com base na Lei Geral de Proteção de Dados
-> (Lei nº 13.709/2018 — LGPD) e nos dados efetivamente coletados por esta
-> plataforma. Não substitui aconselhamento jurídico profissional — antes de
-> publicar como versão final, um advogado deveria revisar especialmente as
-> cláusulas de retenção, base legal e os canais de atendimento a titulares.
-
 # Política de Privacidade — Plataforma de Membros LAIFT
 
 **Versão: 2026-09-25** (deve corresponder exatamente a

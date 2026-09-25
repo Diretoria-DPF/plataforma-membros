@@ -144,7 +144,17 @@ export async function registerForEvent(sql, env, identity, eventId, correlationI
   }
 
   await Logging.logAudit(sql, correlationId, identity.profileId, 'REGISTER_EVENT', 'event', id, 'success', null);
-  if (eventRows.length) await sendEventRegistrationEmail(env, identity, eventRows[0], correlationId, sql);
+
+  // O e-mail de confirmação de inscrição é o que a preferência "Quero
+  // receber notificações por e-mail" (preferences.email_notifications)
+  // efetivamente controla — diferente dos e-mails de cadastro/redefinição
+  // de senha, que são transacionais/de segurança e continuam sempre
+  // enviados, sem opção de desativar.
+  if (eventRows.length) {
+    const prefRows = await sql`SELECT email_notifications FROM preferences WHERE profile_id = ${identity.profileId}::uuid`;
+    const wantsEmail = !prefRows.length || prefRows[0].email_notifications !== false;
+    if (wantsEmail) await sendEventRegistrationEmail(env, identity, eventRows[0], correlationId, sql);
+  }
   return { success: true, message: 'Inscrição confirmada.' };
 }
 

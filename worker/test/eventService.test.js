@@ -30,11 +30,26 @@ describe('EventService.registerForEvent — visibilidade (achado de auditoria)',
     sql
       .mockResolvedValueOnce([{ id: 'evento-membros-1', title: 'Evento', description: 'desc', event_date: '2026-01-01', location: null, visibility: 'members' }]) // SELECT evento
       .mockResolvedValueOnce(undefined) // INSERT
-      .mockResolvedValueOnce(undefined); // logAudit
+      .mockResolvedValueOnce(undefined) // logAudit
+      .mockResolvedValueOnce([{ email_notifications: true }]); // SELECT preferences
 
     const res = await EventService.registerForEvent(sql, env, MEMBER, 'evento-membros-1', 'cid');
     expect(res.success).toBe(true);
     expect(global.fetch).toHaveBeenCalledWith('https://api.brevo.com/v3/smtp/email', expect.any(Object));
+  });
+
+  test('visitor com notificações por e-mail desativadas NÃO recebe e-mail de confirmação (mas a inscrição vale)', async () => {
+    const sql = makeSql();
+    const env = makeEnv();
+    sql
+      .mockResolvedValueOnce([{ id: 'evento-publico-1', title: 'Evento', description: 'desc', event_date: '2026-01-01', location: 'Auditório', visibility: 'public' }])
+      .mockResolvedValueOnce(undefined) // INSERT
+      .mockResolvedValueOnce(undefined) // logAudit
+      .mockResolvedValueOnce([{ email_notifications: false }]); // SELECT preferences
+
+    const res = await EventService.registerForEvent(sql, env, VISITOR, 'evento-publico-1', 'cid');
+    expect(res.success).toBe(true);
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 
   test('visitor consegue se inscrever num evento visibility=public', async () => {
@@ -43,10 +58,12 @@ describe('EventService.registerForEvent — visibilidade (achado de auditoria)',
     sql
       .mockResolvedValueOnce([{ id: 'evento-publico-1', title: 'Evento', description: 'desc', event_date: '2026-01-01', location: 'Auditório', visibility: 'public' }])
       .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce([]); // SELECT preferences — sem linha ainda (perfil recém-criado) conta como "quer e-mail"
 
     const res = await EventService.registerForEvent(sql, env, VISITOR, 'evento-publico-1', 'cid');
     expect(res.success).toBe(true);
+    expect(global.fetch).toHaveBeenCalled();
   });
 });
 

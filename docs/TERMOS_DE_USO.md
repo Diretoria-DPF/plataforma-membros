@@ -1,8 +1,3 @@
-> **MINUTA — RECOMENDA-SE REVISÃO JURÍDICA ANTES DE TRATAR COMO DEFINITIVA.**
-> Este texto foi redigido como ponto de partida técnico, alinhado à forma
-> real como a plataforma funciona. Não substitui aconselhamento jurídico
-> profissional.
-
 # Termos de Uso — Plataforma de Membros LAIFT
 
 **Versão: 2026-09-25** (deve corresponder exatamente a
