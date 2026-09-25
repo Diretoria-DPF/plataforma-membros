@@ -117,6 +117,19 @@ function buildSandbox(options) {
         throw new Error('Jdbc real não deve ser usado nestes testes; injete um Database mock.');
       },
     },
+    ContentService: {
+      MimeType: { JSON: 'JSON' },
+      createTextOutput: function (text) {
+        return {
+          _text: text,
+          _mimeType: null,
+          setMimeType: function (mimeType) {
+            this._mimeType = mimeType;
+            return this;
+          },
+        };
+      },
+    },
   };
 
   const context = vm.createContext(sandbox);

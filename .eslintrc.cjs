@@ -43,6 +43,7 @@ module.exports = {
         Logger: 'readonly',
         LockService: 'readonly',
         CacheService: 'readonly',
+        ContentService: 'readonly',
         console: 'readonly',
       },
       rules: {

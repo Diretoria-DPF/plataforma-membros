@@ -16,7 +16,7 @@
  *     usuário; exceções inesperadas são logadas com correlationId e
  *     substituídas por mensagem genérica antes de chegar ao cliente.
  */
-/* exported include, doGet, apiRegister, apiConfirmEmail, apiLogin, apiRequestPasswordReset,
+/* exported include, doGet, doPost, apiRegister, apiConfirmEmail, apiLogin, apiRequestPasswordReset,
    apiValidateResetToken, apiConfirmPasswordReset, apiLogout, apiGetMyProfile, apiUpdateMyProfile,
    apiUpdateMyPreferences, apiSubmitFeedback, apiListEvents, apiRegisterForEvent, apiSubmitProposal,
    apiListMyProposals, apiListOpenProposalsForVoting, apiCastVote, apiGetProposalResults, apiListTasks,
@@ -314,4 +314,96 @@ function apiAdminListErrorLogs(sessionToken, input) {
   return App.Dispatch.runWithSession(sessionToken, function (identity) {
     return App.AuditService.listErrorLogs(identity, input || {});
   });
+}
+
+// -----------------------------------------------------------------------------
+// API HTTP/JSON (para o front-end estático hospedado fora do Apps Script)
+//
+// Este roteador é uma allowlist EXPLÍCITA e fechada: só os identificadores
+// literalmente listados aqui podem ser invocados via POST, nunca um nome
+// resolvido dinamicamente a partir do corpo da requisição (isso é o que
+// impede alguém de tentar chamar, por exemplo, "App.Config.getDbPassword"
+// ou qualquer outra coisa fora desta lista — mesmo que soubesse o nome,
+// não está no mapa, então não existe caminho de execução para ela).
+// hasOwnProperty explícito evita que um valor de "action" como "toString"
+// ou "constructor" resolva para um método herdado de Object.prototype.
+// -----------------------------------------------------------------------------
+var API_REGISTRY = {
+  apiRegister: apiRegister,
+  apiConfirmEmail: apiConfirmEmail,
+  apiLogin: apiLogin,
+  apiRequestPasswordReset: apiRequestPasswordReset,
+  apiValidateResetToken: apiValidateResetToken,
+  apiConfirmPasswordReset: apiConfirmPasswordReset,
+  apiLogout: apiLogout,
+  apiGetMyProfile: apiGetMyProfile,
+  apiUpdateMyProfile: apiUpdateMyProfile,
+  apiUpdateMyPreferences: apiUpdateMyPreferences,
+  apiSubmitFeedback: apiSubmitFeedback,
+  apiListEvents: apiListEvents,
+  apiRegisterForEvent: apiRegisterForEvent,
+  apiSubmitProposal: apiSubmitProposal,
+  apiListMyProposals: apiListMyProposals,
+  apiListOpenProposalsForVoting: apiListOpenProposalsForVoting,
+  apiCastVote: apiCastVote,
+  apiGetProposalResults: apiGetProposalResults,
+  apiListTasks: apiListTasks,
+  apiSignupForTask: apiSignupForTask,
+  apiAdminDashboard: apiAdminDashboard,
+  apiAdminListUsers: apiAdminListUsers,
+  apiAdminChangeUserRole: apiAdminChangeUserRole,
+  apiAdminBanUser: apiAdminBanUser,
+  apiAdminUnbanUser: apiAdminUnbanUser,
+  apiAdminListFeedback: apiAdminListFeedback,
+  apiAdminCreateEvent: apiAdminCreateEvent,
+  apiAdminUpdateEventStatus: apiAdminUpdateEventStatus,
+  apiAdminListAllEvents: apiAdminListAllEvents,
+  apiAdminListProposalsForReview: apiAdminListProposalsForReview,
+  apiAdminTransitionProposal: apiAdminTransitionProposal,
+  apiAdminCreateTask: apiAdminCreateTask,
+  apiAdminUpdateTaskStatus: apiAdminUpdateTaskStatus,
+  apiAdminListAllTasks: apiAdminListAllTasks,
+  apiAdminListAuditLogs: apiAdminListAuditLogs,
+  apiAdminListErrorLogs: apiAdminListErrorLogs,
+};
+
+function jsonOutput(payload) {
+  return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Único ponto de entrada HTTP para o front-end externo. Sempre POST, sempre
+ * JSON no corpo: { "action": "apiLogin", "args": ["email", "senha"] }.
+ * O front-end envia com Content-Type "text/plain;charset=utf-8" de propósito
+ * (não "application/json") para que o navegador trate como requisição
+ * simples e NÃO dispare preflight OPTIONS — o Apps Script não tem como
+ * responder um preflight customizado. O corpo continua sendo JSON de
+ * verdade; só o cabeçalho declarado muda. Ver docs/DEPLOYMENT.md.
+ */
+function doPost(e) {
+  const correlationId = App.Security.newCorrelationId();
+  try {
+    const raw = (e && e.postData && e.postData.contents) || '';
+    let body;
+    try {
+      body = JSON.parse(raw);
+    } catch (parseErr) {
+      return jsonOutput({ success: false, message: 'Requisição inválida.' });
+    }
+
+    const action = typeof body.action === 'string' ? body.action : '';
+    const hasAction = Object.prototype.hasOwnProperty.call(API_REGISTRY, action);
+    const fn = hasAction ? API_REGISTRY[action] : null;
+
+    if (!fn || typeof fn !== 'function') {
+      return jsonOutput({ success: false, message: 'Ação desconhecida.' });
+    }
+
+    const args = Array.isArray(body.args) ? body.args : [];
+    const result = fn.apply(null, args);
+    return jsonOutput(result);
+  } catch (err) {
+    App.Logging.logError(correlationId, 'API_ROUTER_ERROR', String((err && err.message) || err), null);
+    return jsonOutput({ success: false, message: App.Constants.GENERIC_ERROR_MESSAGE + ' (ref: ' + correlationId + ')' });
+  }
 }
