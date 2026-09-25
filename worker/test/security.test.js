@@ -101,6 +101,30 @@ describe('security.js — sessão', () => {
   });
 });
 
+describe('security.js — touchSession', () => {
+  test('com token vazio/falsy, retorna sem chamar sql', async () => {
+    const sql = makeSql();
+    await expect(S.touchSession(sql, PEPPER, '')).resolves.toBeUndefined();
+    expect(sql).not.toHaveBeenCalled();
+  });
+
+  test('com token normal, chama sql uma vez (UPDATE) e não lança', async () => {
+    const sql = makeSql();
+    await expect(S.touchSession(sql, PEPPER, 'algum-token')).resolves.toBeUndefined();
+    expect(sql).toHaveBeenCalledTimes(1);
+    const [strings] = sql.mock.calls[0];
+    expect(strings.join('')).toMatch(/UPDATE sessions/);
+    expect(strings.join('')).toMatch(/expires_at/);
+  });
+
+  test('nunca lança mesmo quando o UPDATE mockado se comporta como se 0 linhas fossem afetadas (token inválido/expirado/revogado é no-op silencioso)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(undefined);
+    await expect(S.touchSession(sql, PEPPER, 'token-morto')).resolves.toBeUndefined();
+    expect(sql).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('security.js — requireRole', () => {
   test('lança ForbiddenError se o papel não estiver na lista permitida', () => {
     expect(() => S.requireRole({ role: 'member' }, ['admin'])).toThrow(expect.objectContaining({ name: 'ForbiddenError' }));

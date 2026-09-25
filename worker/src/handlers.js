@@ -57,6 +57,10 @@ export const API_REGISTRY = {
 
   // ---- Sessão ----
   apiLogout: (sql, env, [sessionToken]) => run(sql, (cid) => AuthService.logout(sql, env, sessionToken, cid)),
+  apiTouchSession: (sql, env, [sessionToken]) => run(sql, async () => {
+    await S.touchSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken);
+    return { success: true };
+  }),
 
   // ---- Perfil (requer sessão) ----
   apiGetMyProfile: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyProfile(sql, identity)),

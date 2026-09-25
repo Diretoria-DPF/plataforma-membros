@@ -194,3 +194,25 @@ export async function revokeSession(sql, pepper, rawToken) {
 export async function revokeAllSessionsForProfile(sql, profileId) {
   await sql`UPDATE sessions SET revoked_at = now() WHERE profile_id = ${profileId}::uuid AND revoked_at IS NULL`;
 }
+
+/**
+ * Estende a sessão em atividade real (chamado pelo cliente via
+ * apiTouchSession, no máximo 1x/30s — ver resetSessionExpiryOnActivity em
+ * app.js). Desliza expires_at para +SESSION_TTL_MINUTES a partir de agora,
+ * mas nunca além de SESSION_ABSOLUTE_MAX_HOURS a partir da criação da
+ * sessão — sem o teto absoluto, uma sessão nunca expiraria enquanto a
+ * pessoa continuasse ativa.
+ */
+export async function touchSession(sql, pepper, rawToken) {
+  const token = normalizeText(rawToken);
+  if (!token) return;
+  const tokenHash = await hashToken(token, pepper);
+  await sql`
+    UPDATE sessions
+    SET expires_at = LEAST(
+      now() + (${LIMITS.SESSION_TTL_MINUTES} || ' minutes')::interval,
+      created_at + (${LIMITS.SESSION_ABSOLUTE_MAX_HOURS} || ' hours')::interval
+    )
+    WHERE token_hash = ${tokenHash} AND revoked_at IS NULL AND expires_at > now()
+  `;
+}

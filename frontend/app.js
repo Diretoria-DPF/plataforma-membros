@@ -123,6 +123,7 @@
     lastActivityResetAt = now;
     saveSessionCache(state.sessionToken);
     scheduleSessionExpiry(now + SESSION_TTL_MS);
+    callApi('apiTouchSession', state.sessionToken);
   }
 
   ['click', 'keydown', 'touchstart'].forEach(function (evtName) {
