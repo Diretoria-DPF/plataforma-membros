@@ -8,6 +8,12 @@
  * sempre), o desenho 2D da molécula (SmilesDrawer + PubChem) e a ficha
  * farmacológica (RxNav/ChEBI/PubChem, via quiz-apis.js).
  *
+ * O banco de questions.js não vem com farmacoAlvo/smiles em nenhuma questão,
+ * então obterQuestoesDisponiveis() completa cada questão sem esse campo com
+ * o fármaco detectado no enunciado/alternativa correta/explicação, via
+ * detectarFarmacoAlvo() (farmacos-lexicon.js) — é isso que liga a projeção
+ * molecular e a ficha farmacológica às APIs científicas em uso normal.
+ *
  * As métricas deixaram de ir ao Apps Script legado: o motor envia
  * apiLearnSubmitQuizAttempt pela ponte da plataforma (window.LaiftApi).
  */
@@ -17,15 +23,28 @@
     var h = LaiftDom.h;
     var smilesDrawerInstance = null;
 
+    // Enriquece questões sem farmacoAlvo explícito com o fármaco detectado no
+    // enunciado/alternativa correta/explicação (farmacos-lexicon.js), para que
+    // a projeção molecular e a ficha farmacológica tenham o que consultar
+    // mesmo no banco de questions.js (que não vem com farmacoAlvo/smiles).
+    function comFarmacoDetectado(q) {
+        if (q.farmacoAlvo || typeof detectarFarmacoAlvo !== 'function') return q;
+        var achado = detectarFarmacoAlvo(q);
+        if (!achado) return q;
+        q.farmacoAlvo = achado.farmacoAlvo;
+        q.farmacoConsulta = achado.farmacoConsulta;
+        return q;
+    }
+
     // Normalizador de banco (suporta questions.js e quiz-database.js)
     function obterQuestoesDisponiveis() {
         if (typeof allQuestions !== 'undefined' && Array.isArray(allQuestions) && allQuestions.length > 0) {
-            return allQuestions;
+            return allQuestions.map(comFarmacoDetectado);
         }
         if (typeof QUIZ_FARMACOLOGIA_DB !== 'undefined' && Array.isArray(QUIZ_FARMACOLOGIA_DB) && QUIZ_FARMACOLOGIA_DB.length > 0) {
             return QUIZ_FARMACOLOGIA_DB.map(function (q, idx) {
                 var correta = q.alternativas ? q.alternativas.find(function (a) { return a.correta; }) : null;
-                return {
+                return comFarmacoDetectado({
                     id: q.id || idx + 1,
                     topic: q.modulo || q.topic || 'Farmacologia Clínica',
                     farmacoAlvo: q.farmacoAlvo || null,
@@ -36,7 +55,7 @@
                     correct: typeof q.correct === 'number' ? q.correct : (q.alternativas ? q.alternativas.findIndex(function (a) { return a.correta; }) : 0),
                     explanation: q.explanation || (correta ? correta.feedback : ''),
                     analogiaDidatica: q.analogiaDidatica || ''
-                };
+                });
             });
         }
         return [];
@@ -73,12 +92,13 @@
         if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         var farmacoAlvo = question.farmacoAlvo || question.drug || null;
+        var farmacoConsulta = question.farmacoConsulta || farmacoAlvo;
         var smiles = question.smiles || null;
         if (label) label.textContent = farmacoAlvo || (smiles ? 'Estrutura Química' : '--');
 
         if (!smiles && farmacoAlvo && typeof QuizAPIEngine !== 'undefined') {
             if (label) label.textContent = farmacoAlvo + ' (Buscando...)';
-            var info = await QuizAPIEngine.buscarEstruturaMolecular(farmacoAlvo);
+            var info = await QuizAPIEngine.buscarEstruturaMolecular(farmacoConsulta);
             if (token !== renderToken) return; // a pessoa já mudou de questão
             if (info && info.smiles) {
                 smiles = info.smiles;
@@ -118,7 +138,7 @@
         return h('p', null, [h('strong', { text: rotulo + ' ' }), h('span', { className: className || null, text: valor })]);
     }
 
-    async function abrirDossieClinico(farmacoAlvo) {
+    async function abrirDossieClinico(farmacoAlvo, farmacoConsulta) {
         if (!modalDossie || !dossieContent) return;
         returnFocus = document.activeElement;
         modalDossie.hidden = false;
@@ -136,9 +156,11 @@
             return;
         }
 
-        var dossie = await QuizAPIEngine.gerarDossieFarmaco(farmacoAlvo);
+        // As APIs são consultadas pelo termo em inglês (farmacoConsulta, do
+        // léxico) quando existir, mas a ficha exibe sempre o nome em PT.
+        var dossie = await QuizAPIEngine.gerarDossieFarmaco(farmacoConsulta || farmacoAlvo);
         LaiftDom.clear(dossieContent);
-        dossieContent.appendChild(h('h3', { text: '📋 Ficha Farmacológica: ' + dossie.farmaco }));
+        dossieContent.appendChild(h('h3', { text: '📋 Ficha Farmacológica: ' + farmacoAlvo }));
         dossieContent.appendChild(linha('Classe Terapêutica (ATC):', dossie.classesATC, 'atc'));
         dossieContent.appendChild(linha('Identificador RxCUI:', dossie.rxcui, 'mono'));
         dossieContent.appendChild(linha('Nomenclatura IUPAC:', dossie.iupac, 'mono'));
@@ -165,8 +187,9 @@
         }
         if (btnVerDossie) {
             var farmacoAlvo = question.farmacoAlvo || question.drug || null;
+            var farmacoConsulta = question.farmacoConsulta || farmacoAlvo;
             btnVerDossie.hidden = !farmacoAlvo;
-            btnVerDossie.onclick = farmacoAlvo ? function () { abrirDossieClinico(farmacoAlvo); } : null;
+            btnVerDossie.onclick = farmacoAlvo ? function () { abrirDossieClinico(farmacoAlvo, farmacoConsulta); } : null;
         }
     }
 
