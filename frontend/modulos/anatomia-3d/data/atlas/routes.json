@@ -1,0 +1,564 @@
+[
+  {
+    "id": "epidural",
+    "system": "parenteral",
+    "name_pt": "Via Epidural",
+    "description_pt": "Analgesia do parto, cirurgias abdominais e torácicas, dor crônica. Cateter permite infusão contínua. Menor risco de cefaleia pós-punção que intratecal.",
+    "anchors": [
+      {
+        "sid": "za:espaco-epidural",
+        "label_pt": "Cateter Epidural",
+        "t": 0
+      },
+      {
+        "sid": "za:dura-mater",
+        "label_pt": "Difusão pelo Espaço",
+        "t": 0.5
+      },
+      {
+        "sid": "za:raizes-nervosas",
+        "label_pt": "Bloqueio de Raízes",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "intraarterial",
+    "system": "parenteral",
+    "name_pt": "Via Intra-arterial (IA)",
+    "description_pt": "Uso especializado: quimioembolização hepática, trombolíticos intra-arteriais, vasodilatadores em angiografia. Exige controle rigoroso de pressão.",
+    "anchors": [
+      {
+        "sid": "za:arteria-alvo",
+        "label_pt": "Acesso Intra-arterial",
+        "t": 0
+      },
+      {
+        "sid": "za:capilares-distais",
+        "label_pt": "Artéria Hepática",
+        "t": 0.5
+      },
+      {
+        "sid": "za:veias-de-drenagem",
+        "label_pt": "Território Alvo (Tumor)",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "intracardiaca",
+    "system": "parenteral",
+    "name_pt": "Via Intracardíaca",
+    "description_pt": "Histórica para reanimação (adrenalina); substituída pela via IV/IO. Uso atual em procedimentos guiados por imagem.",
+    "anchors": [
+      {
+        "sid": "za:ventriculo",
+        "label_pt": "Punção Cardíaca",
+        "t": 0
+      },
+      {
+        "sid": "za:circulacao-sistemica",
+        "label_pt": "Distribuição Sistêmica",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "intradermica",
+    "system": "parenteral",
+    "name_pt": "Via Intradérmica (ID)",
+    "description_pt": "Usada para testes alérgicos (PPD), vacinas (BCG), anestesia local superficial. Volumes pequenos (0.1 mL). Resposta imunológica local rápida.",
+    "anchors": [
+      {
+        "sid": "za:derme-papilar",
+        "label_pt": "Injeção Intradérmica",
+        "t": 0
+      },
+      {
+        "sid": "za:capilares-dermicos",
+        "label_pt": "Reação Imune Local",
+        "t": 0.5
+      },
+      {
+        "sid": "za:vasos-linfaticos",
+        "label_pt": "Drenagem Linfática Regional",
+        "t": 1
+      },
+      {
+        "sid": "za:linfonodos-regionais"
+      }
+    ]
+  },
+  {
+    "id": "intragastrica",
+    "system": "enteral",
+    "name_pt": "Via Intragástrica (Sonda)",
+    "description_pt": "Usada em pacientes com sonda nasogástrica ou gastrostomia (SNG/PEG). Não deve ser usada para fármacos de liberação entérica (revestimento gastrorresistente).",
+    "anchors": [
+      {
+        "sid": "za:sonda-gastrica",
+        "label_pt": "Sonda Nasogástrica",
+        "t": 0
+      },
+      {
+        "sid": "fma:7148",
+        "label_pt": "Trajeto Esofágico",
+        "t": 0.25
+      },
+      {
+        "sid": "za:intestino",
+        "label_pt": "Instilação Gástrica",
+        "t": 0.5
+      },
+      {
+        "sid": "fma:7197",
+        "label_pt": "Absorção Duodenal",
+        "t": 0.75
+      },
+      {
+        "sid": "za:circulacao",
+        "label_pt": "Circulação Sistêmica",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "intramuscular",
+    "system": "parenteral",
+    "name_pt": "Via Intramuscular (IM)",
+    "description_pt": "Injeção profunda em músculo altamente vascularizado (deltoide, glúteo, vasto lateral). Permite formulações oleosas de liberação prolongada (depot).",
+    "anchors": [
+      {
+        "sid": "za:tecido-muscular-profundo",
+        "label_pt": "Depósito Intramuscular (Deltoide)",
+        "t": 0
+      },
+      {
+        "sid": "za:leito-capilar-muscular",
+        "label_pt": "Drenagem Capilar Muscular",
+        "t": 0.25
+      },
+      {
+        "sid": "za:veias-subclavias",
+        "label_pt": "Veia Axilar / Subclávia",
+        "t": 0.5
+      },
+      {
+        "sid": "za:vcs",
+        "label_pt": "Coração Direito",
+        "t": 0.75
+      },
+      {
+        "sid": "fma:7088",
+        "label_pt": "Ejeção Arterial Sistêmica",
+        "t": 1
+      },
+      {
+        "sid": "za:aorta"
+      }
+    ]
+  },
+  {
+    "id": "intraossea",
+    "system": "parenteral",
+    "name_pt": "Via Intraóssea (IO)",
+    "description_pt": "Emergências pediátricas e adultos sem acesso IV (PCR, choque). Locais: tíbia proximal, úmero proximal. Mesma farmacocinética que IV.",
+    "anchors": [
+      {
+        "sid": "za:canal-medular-osseo",
+        "label_pt": "Acesso Intraósseo (Tíbia)",
+        "t": 0
+      },
+      {
+        "sid": "za:sinusoides-venosos",
+        "label_pt": "Canal Medular",
+        "t": 0.5
+      },
+      {
+        "sid": "za:circulacao-sistemica",
+        "label_pt": "Circulação Sistêmica",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "intratecal",
+    "system": "parenteral",
+    "name_pt": "Via Intratecal (IT)",
+    "description_pt": "Anestesia raquidiana, quimioterapia intratecal (leucemia/meningite), antibióticos. Acesso por punção lombar (L3-L4).",
+    "anchors": [
+      {
+        "sid": "za:espaco-subaracnoideo",
+        "label_pt": "Punção Lombar",
+        "t": 0
+      },
+      {
+        "sid": "za:lcr",
+        "label_pt": "Difusão no LCR",
+        "t": 0.5
+      },
+      {
+        "sid": "za:encefalomedula",
+        "label_pt": "Distribuição no SNC",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "intravenosa",
+    "system": "parenteral",
+    "name_pt": "Via Intravenosa (Bolus / Infusão)",
+    "description_pt": "Injeção direta no leito vascular. Ideal para emergências e substâncias irritantes. Exige controle rigoroso de velocidade para prevenir concentrações tóxicas.",
+    "anchors": [
+      {
+        "sid": "za:veia-periferica",
+        "label_pt": "Acesso Venoso Periférico",
+        "t": 0
+      },
+      {
+        "sid": "za:veia-cava-superior",
+        "label_pt": "Veia Basílica / Subclávia",
+        "t": 0.16666666666666666
+      },
+      {
+        "sid": "za:atrio-direito",
+        "label_pt": "Veia Cava Superior",
+        "t": 0.3333333333333333
+      },
+      {
+        "sid": "za:ventriculo-direito",
+        "label_pt": "Átrio / Ventrículo Direito",
+        "t": 0.5
+      },
+      {
+        "sid": "za:circulacao-pulmonar",
+        "label_pt": "Pequena Circulação Pulmonar",
+        "t": 0.6666666666666666
+      },
+      {
+        "sid": "za:coracao-esquerdo",
+        "label_pt": "Ventrículo Esquerdo",
+        "t": 0.8333333333333334
+      },
+      {
+        "sid": "za:aorta-sistemica",
+        "label_pt": "Distribuição Sistêmica Aórtica",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "nasal",
+    "system": "mucosa",
+    "name_pt": "Via Nasal (Inalação / Spray)",
+    "description_pt": "Dupla via: (1) drenagem para circulação sistêmica via plexo de Kiesselbach; (2) translocação axonal pelo nervo olfatório ao SNC, contornando BHE (ex.: insulina intranasal, midazolam).",
+    "anchors": [
+      {
+        "sid": "za:conchas-nasais",
+        "label_pt": "Nebulização Nasal",
+        "t": 0
+      },
+      {
+        "sid": "za:mucosa-olfatoria",
+        "label_pt": "Plexo de Kiesselbach",
+        "t": 0.3333333333333333
+      },
+      {
+        "sid": "za:lamina-crivosa-do-etmoide",
+        "label_pt": "Via Direta Nariz-Cérebro",
+        "t": 0.6666666666666666
+      },
+      {
+        "sid": "za:snc-veias-jugulares",
+        "label_pt": "Distribuição no SNC",
+        "t": 1
+      },
+      {
+        "sid": "fma:7088"
+      }
+    ]
+  },
+  {
+    "id": "ocular",
+    "system": "mucosa",
+    "name_pt": "Via Ocular (Colírio / Pomada)",
+    "description_pt": "Ação oftálmica local. < 5% da dose atinge câmara anterior; o excedente é drenado pelo ducto nasolacrimal podendo gerar efeitos sistêmicos.",
+    "anchors": [
+      {
+        "sid": "za:fundo-de-saco-conjuntival",
+        "label_pt": "Instilação no Saco Conjuntival",
+        "t": 0
+      },
+      {
+        "sid": "za:cornea",
+        "label_pt": "Penetração Corneana",
+        "t": 0.3333333333333333
+      },
+      {
+        "sid": "za:camara-anterior",
+        "label_pt": "Drenagem Nasolacrimal",
+        "t": 0.6666666666666666
+      },
+      {
+        "sid": "za:ducto-nasolacrimal",
+        "label_pt": "Absorção Nasal Secundária",
+        "t": 1
+      },
+      {
+        "sid": "za:mucosa-nasal"
+      }
+    ]
+  },
+  {
+    "id": "oral",
+    "system": "enteral",
+    "name_pt": "Via Oral (Enteral)",
+    "description_pt": "Via mais comum, segura e econômica. Absorção predominante no duodeno e jejuno. Fármaco absorvido atinge a veia porta e sofre metabolização hepática antes da circulação sistêmica.",
+    "anchors": [
+      {
+        "sid": "za:boca",
+        "label_pt": "Inserção Oral (Bolo)",
+        "t": 0
+      },
+      {
+        "sid": "za:esofago",
+        "label_pt": "Trânsito Esofágico",
+        "t": 0.16666666666666666
+      },
+      {
+        "sid": "fma:7148",
+        "label_pt": "Dissolução Gástrica",
+        "t": 0.3333333333333333
+      },
+      {
+        "sid": "za:intestino-delgado",
+        "label_pt": "Absorção Duodenal",
+        "t": 0.5
+      },
+      {
+        "sid": "za:veia-porta-hepatica",
+        "label_pt": "Eixo Porta-Hepático",
+        "t": 0.6666666666666666
+      },
+      {
+        "sid": "fma:7197",
+        "label_pt": "Metabolismo de 1ª Passagem (CYP450)",
+        "t": 0.8333333333333334
+      },
+      {
+        "sid": "fma:7088",
+        "label_pt": "Circulação Sistêmica (Coração)",
+        "t": 1
+      },
+      {
+        "sid": "za:aorta-sistemica"
+      }
+    ]
+  },
+  {
+    "id": "otologica",
+    "system": "topica",
+    "name_pt": "Via Otológica (Gotas Auriculares)",
+    "description_pt": "Exclusivamente tópica para otites externas e cerúmen. Membrana timpânica íntegra impede penetração para orelha média.",
+    "anchors": [
+      {
+        "sid": "za:pavilhao-auricular",
+        "label_pt": "Instilação Auricular",
+        "t": 0
+      },
+      {
+        "sid": "za:meato-acustico-externo",
+        "label_pt": "Conduto Auditivo",
+        "t": 0.5
+      },
+      {
+        "sid": "za:membrana-timpanica",
+        "label_pt": "Membrana Timpânica",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "pulmonar-inalatoria",
+    "system": "mucosa",
+    "name_pt": "Via Pulmonar (Inalatória)",
+    "description_pt": "Ação local (asma, DPOC) ou sistêmica (anestésicos voláteis, óxido nítrico). Vantagens: superfície alveolar gigantesca (~100 m²), início rápido, ausência de 1ª passagem.",
+    "anchors": [
+      {
+        "sid": "za:orofaringe",
+        "label_pt": "Inalação Oral",
+        "t": 0
+      },
+      {
+        "sid": "za:traqueia",
+        "label_pt": "Traqueia",
+        "t": 0.25
+      },
+      {
+        "sid": "za:bronquios",
+        "label_pt": "Árvore Brônquica",
+        "t": 0.5
+      },
+      {
+        "sid": "za:alveolos",
+        "label_pt": "Difusão Alveolar",
+        "t": 0.75
+      },
+      {
+        "sid": "za:sangue",
+        "label_pt": "Capilar Pulmonar → Coração",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "retal",
+    "system": "enteral",
+    "name_pt": "Via Retal",
+    "description_pt": "Alternativa em vômitos, crianças, pacientes inconscientes. Absorção via veias hemorroidárias médias → circulação sistêmica (evita 1ª passagem); via veias hemorroidárias superiores → veia porta.",
+    "anchors": [
+      {
+        "sid": "za:ampola-retal",
+        "label_pt": "Aplicação Retal",
+        "t": 0
+      },
+      {
+        "sid": "za:veias-hemorroidarias-medias",
+        "label_pt": "Absorção Transmucosa",
+        "t": 0.25
+      },
+      {
+        "sid": "za:veia-cava-inferior",
+        "label_pt": "Veias Hemorroidárias",
+        "t": 0.5
+      },
+      {
+        "sid": "fma:7088",
+        "label_pt": "Veia Cava Inferior",
+        "t": 0.75
+      }
+    ]
+  },
+  {
+    "id": "subcutanea",
+    "system": "parenteral",
+    "name_pt": "Via Subcutânea (SC)",
+    "description_pt": "Absorção mais lenta que IM (menos vascularização). Ideal para insulina, heparina de baixo peso molecular, alguns biológicos. Locais: abdome, coxa, braço.",
+    "anchors": [
+      {
+        "sid": "za:tecido-subcutaneo",
+        "label_pt": "Depósito Subcutâneo (Abdome)",
+        "t": 0
+      },
+      {
+        "sid": "za:capilares-dermicos",
+        "label_pt": "Absorção Capilar",
+        "t": 0.3333333333333333
+      },
+      {
+        "sid": "za:veias-locais",
+        "label_pt": "Veia Epigástrica",
+        "t": 0.6666666666666666
+      },
+      {
+        "sid": "za:circulacao-sistemica",
+        "label_pt": "Circulação Sistêmica",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "sublingual",
+    "system": "enteral",
+    "name_pt": "Via Sublingual",
+    "description_pt": "Absorção direta via veias sublinguais → veia cava superior, contornando a primeira passagem hepática. Ideal para emergências (nitroglicerina), fármacos lábios aos lípidos e de alta potência.",
+    "anchors": [
+      {
+        "sid": "za:assoalho-bucal",
+        "label_pt": "Aplicação Sublingual",
+        "t": 0
+      },
+      {
+        "sid": "za:veias-sublinguais",
+        "label_pt": "Absorção Epitelial",
+        "t": 0.25
+      },
+      {
+        "sid": "za:veia-jugular-interna",
+        "label_pt": "Veias Sublinguais",
+        "t": 0.5
+      },
+      {
+        "sid": "za:veia-cava-superior",
+        "label_pt": "Veia Jugular Interna",
+        "t": 0.75
+      },
+      {
+        "sid": "fma:7088",
+        "label_pt": "Veia Cava Superior → Coração",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "topica",
+    "system": "topica",
+    "name_pt": "Via Tópica & Transdérmica",
+    "description_pt": "Ação local ou sistêmica (adesivos: nicotina, fentanil, estrogênio). Fármacos lipofílicos < 500 Da penetram de forma sustentada.",
+    "anchors": [
+      {
+        "sid": "za:estrato-corneo",
+        "label_pt": "Aplicação Tópica",
+        "t": 0
+      },
+      {
+        "sid": "za:epiderme",
+        "label_pt": "Partição no Estrato Córneo",
+        "t": 0.25
+      },
+      {
+        "sid": "za:plexo-capilar-dermico",
+        "label_pt": "Capilarização Dérmica",
+        "t": 0.5
+      },
+      {
+        "sid": "za:veias-cutaneas",
+        "label_pt": "Veia Radial / Cefálica",
+        "t": 0.75
+      },
+      {
+        "sid": "za:circulacao-geral",
+        "label_pt": "Entrada Sistêmica",
+        "t": 1
+      }
+    ]
+  },
+  {
+    "id": "vaginal",
+    "system": "mucosa",
+    "name_pt": "Via Vaginal",
+    "description_pt": "Ação local (antifúngicos, anticoncepcionais) ou sistêmica parcial. Absorção pela mucosa vaginal → veias ilíacas internas (evita 1ª passagem parcial).",
+    "anchors": [
+      {
+        "sid": "za:fundo-vaginal",
+        "label_pt": "Aplicação Vaginal",
+        "t": 0
+      },
+      {
+        "sid": "za:mucosa",
+        "label_pt": "Absorção Transmucosa",
+        "t": 0.3333333333333333
+      },
+      {
+        "sid": "za:veias-vaginais",
+        "label_pt": "Veias Ilíacas Internas",
+        "t": 0.6666666666666666
+      },
+      {
+        "sid": "za:plexo-uterovaginal",
+        "label_pt": "Circulação Sistêmica",
+        "t": 1
+      }
+    ]
+  }
+]
