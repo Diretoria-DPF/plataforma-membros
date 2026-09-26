@@ -275,6 +275,21 @@ Não substitui WAF ou CAPTCHA.
      - os módulos rodam em iframe da **mesma origem** (necessário para a
        identidade e o armazenamento local). Um XSS num módulo alcançaria a
        sessão, como no app principal (risco 1);
+     - **a allowlist da ponte (`App.callLearningApi`) não é uma barreira
+       de segurança contra código rodando dentro de um módulo.** Ela
+       impede que o código legítimo dos módulos chame, por engano, ações
+       fora do escopo de aprendizagem. Mas, na mesma origem, um script
+       malicioso num módulo lê o token direto em
+       `localStorage['pm_session']` e alcança `window.top.App`
+       (`getState`, `callApi`). Esconder essas funções não mudaria isso,
+       porque o `localStorage` é compartilhado. As defesas reais contra
+       esse cenário são as do risco 1: zero `innerHTML` com dado, CSP sem
+       script inline em todas as páginas e SRI em toda biblioteca externa.
+       O isolamento de verdade exige servir `frontend/modulos/` de **outra
+       origem** (subdomínio próprio), com a ponte trocando mensagens por
+       `postMessage` em vez de acesso direto. Mudança de arquitetura
+       registrada como próximo passo, apontada na revisão final de
+       2026-09-26;
      - as notas dos simulados são **autodeclaradas** pelo cliente
        (`apiLearnSubmitQuizAttempt`). O servidor valida faixa e formato,
        mas não refaz a correção. Afeta só as próprias estatísticas.
