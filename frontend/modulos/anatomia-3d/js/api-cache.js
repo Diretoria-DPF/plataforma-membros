@@ -264,7 +264,9 @@ const ApiCache = (() => {
         nome: termo.charAt(0).toUpperCase() + termo.slice(1),
         icone: "🔬",
         viaMetabolica: "Metabolismo & Farmacocinética Exógena",
-        mecanismoAcao: `Massa Molecular: ${props.MolecularWeight} g/mol | XLogP: ${props.XLogP || "N/D"}.<br>SMILES: <span style="font-family:monospace; font-size:0.7rem;">${props.CanonicalSMILES}</span>`,
+        // Texto puro: renderBiohackingCards (app.js) mostra este campo via
+        // html``, que escapa marcação — tags aqui apareceriam literalmente.
+        mecanismoAcao: `Massa Molecular: ${props.MolecularWeight} g/mol | XLogP: ${props.XLogP || "N/D"}. SMILES: ${props.CanonicalSMILES}`,
         tags: ["PubChem Backup", "Princípio Ativo"],
         cofatores: [],
         sistema: "digestorio",

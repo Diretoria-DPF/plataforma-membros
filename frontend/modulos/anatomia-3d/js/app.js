@@ -394,9 +394,16 @@ const AppController = (() => {
   // =========================================================================
   // 8. PROTOCOLOS DE BIOHACKING & OTIMIZAÇÃO METABÓLICA
   // =========================================================================
-  function renderBiohackingCards(filtro = "") {
+  // Antes (biohacking.js) a busca sem resultado local caía para
+  // ApiCache.buscarProtocolo (PubChem); a consolidação deste motor aqui
+  // tinha deixado essa consulta sem chamador. `bioSearchToken` descarta a
+  // resposta de uma busca antiga se outra mais nova já foi disparada.
+  let bioSearchToken = 0;
+
+  async function renderBiohackingCards(filtro = "") {
     const container = document.getElementById("biohacking-results-grid");
     if (!container) return;
+    const meuToken = ++bioSearchToken;
 
     if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.protocols)) {
       setHtml(container, html`<div class="atlas-empty-msg">Nenhum protocolo disponível.</div>`);
@@ -404,7 +411,7 @@ const AppController = (() => {
     }
 
     const termo = filtro.toLowerCase().trim();
-    const protocolos = ATLAS_DATABASE.protocols.filter((p) => {
+    let protocolos = ATLAS_DATABASE.protocols.filter((p) => {
       if (!termo) return true;
       return (
         p.nome.toLowerCase().includes(termo) ||
@@ -413,7 +420,17 @@ const AppController = (() => {
       );
     });
 
-    if (protocolos.length === 0) {
+    if (protocolos.length === 0 && termo && typeof ApiCache !== "undefined" && typeof ApiCache.buscarProtocolo === "function") {
+      setHtml(container, html`<div class="atlas-empty-msg">Consultando PubChem para "${filtro}"...</div>`);
+      try {
+        protocolos = await ApiCache.buscarProtocolo(termo);
+      } catch (e) {
+        protocolos = [];
+      }
+      if (meuToken !== bioSearchToken) return; // já há uma busca mais nova em curso
+    }
+
+    if (!protocolos || protocolos.length === 0) {
       // O termo digitado volta escapado (antes: innerHTML com o texto cru).
       setHtml(container, html`<div class="atlas-empty-msg is-boxed">Nenhum protocolo encontrado para "${filtro}".</div>`);
       return;
