@@ -636,7 +636,8 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
   border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-alt);
 }
 .ai-key-card[data-ok="nao"] { border-color: var(--danger); }
-.ai-key-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ai-key-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.ai-key-card-head strong { white-space: nowrap; }
 .ai-key-mask { font-size: 15px; letter-spacing: 0.05em; }
 .ai-table-wrap { max-width: 100%; overflow-x: auto; margin: 8px 0; }
 .ai-case { overflow-wrap: anywhere; }

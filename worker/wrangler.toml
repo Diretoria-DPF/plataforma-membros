@@ -2,10 +2,10 @@ name = "plataforma-membros-api"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 
-# Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, BREVO_API_KEY) NUNCA
-# ficam aqui — são cadastrados via `wrangler secret put <NOME>`, que os
-# guarda criptografados no lado da Cloudflare, fora do repositório. Ver
-# docs/DEPLOYMENT.md.
+# Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, BREVO_API_KEY e, na
+# Fase 3, GROQ_API_KEYS) NUNCA ficam aqui — são cadastrados via `wrangler
+# secret put <NOME>`, que os guarda criptografados no lado da Cloudflare,
+# fora do repositório. Ver docs/DEPLOYMENT.md e docs/FASE_3_IA_CLINICA.md.
 [vars]
 APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
 # localhost:4174 é o servidor de pré-visualização local (frontend/dev-server.js) —
