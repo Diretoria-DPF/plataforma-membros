@@ -97,6 +97,8 @@
       // DP-9 do plano e o cabeçalho de segurança de frontend/messaging.js.
       if (window.LaiftMessaging) window.LaiftMessaging.resetMessagingState();
       if (window.LaiftLearning) window.LaiftLearning.reset();
+      // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
+      if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -546,6 +548,8 @@
     state.profile = null;
     if (window.LaiftMessaging) window.LaiftMessaging.resetMessagingState();
     if (window.LaiftLearning) window.LaiftLearning.reset();
+    // Fase 3 — painel admin de IA
+    if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
@@ -671,6 +675,8 @@
     'panel-messages': function () { if (window.LaiftMessaging) window.LaiftMessaging.loadMessagingPanel(); },
     'panel-learn': function () { if (window.LaiftLearning) window.LaiftLearning.loadPanel(); },
     'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
+    // Fase 3 — painel admin de IA (frontend/admin-ai.js)
+    'panel-admin-ai': function () { if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel(); },
   };
 
   var currentPanelId = 'panel-home';
