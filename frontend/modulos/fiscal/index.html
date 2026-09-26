@@ -2,187 +2,91 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
+  <!-- Identidade, tema e ponte com a Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terminal Fiscal — LAIFT</title>
 
-  <!-- Leitor de QR Code para Credenciamento (versão fixada) -->
+  <!-- Leitor de QR Code para o check-in (versão fixada) -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
+  <!-- Gerador de QR local (crachás em lote) — nenhum dado vai para serviço de terceiros -->
+  <script src="../../vendor/qrcode-generator.js"></script>
 
   <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="fiscal.css">
 </head>
-<body class="theme-default">
+<body class="fiscal-page">
 
-  <!-- Notificações de Status (Toast / Banner) -->
-  <div id="status" class="status-banner hidden" role="alert" aria-live="polite"></div>
+  <!-- Fase 2: sem senha fiscal e sem Apps Script. Toda ação passa por
+       LaiftApi.call → Worker, que exige o papel admin da sessão. -->
+  <div id="status" class="status-banner hidden" role="status" aria-live="polite"></div>
 
-  <main class="app-viewport">
-    <div class="auth-card">
-      <!-- Acesso restrito: só administradores da plataforma veem o terminal. -->
-      <div id="fiscalDenied" class="hidden text-center">
-        <h2>Acesso restrito</h2>
-        <p class="auth-desc">O terminal fiscal é exclusivo da administração.</p>
-      </div>
+  <main class="fiscal-main">
+    <section id="fiscalDenied" class="fiscal-card hidden">
+      <h2>Acesso restrito</h2>
+      <p class="fiscal-note">O terminal fiscal é exclusivo da administração.</p>
+    </section>
 
-      <!-- Terminal bloqueado: aguardando a senha fiscal do Apps Script. -->
-      <div id="fiscalLocked" class="hidden text-center">
-        <div class="auth-header">
-          <h2>Terminal Fiscal & Portaria</h2>
-          <p class="auth-desc">Check-in por QR Code, lista de presença e emissão de crachás.</p>
+    <div id="fiscalArea" class="fiscal-area hidden">
+      <section class="fiscal-card" aria-labelledby="fiscalEventTitle">
+        <h2 id="fiscalEventTitle">Evento</h2>
+        <label for="fiscalEvent" class="fiscal-label">Evento do check-in</label>
+        <div class="fiscal-row">
+          <select id="fiscalEvent" class="fiscal-grow"></select>
+          <button id="fiscalRefreshEvents" class="btn btn-outline btn-sm" type="button">Atualizar</button>
         </div>
-        <button class="btn btn-primary" type="button" onclick="FiscalEngine.abrirModalLogin()">🔓 Desbloquear terminal</button>
-      </div>
+        <p id="fiscalEventInfo" class="fiscal-note" aria-live="polite"></p>
+      </section>
 
-        <section id="fiscalArea" class="hidden">
-          <div style="text-align: center; margin-bottom: 16px;">
-            <span class="badge-admin">Terminal de Validação & Portaria Ativo</span>
-          </div>
+      <section class="fiscal-card" aria-labelledby="fiscalQrTitle">
+        <h2 id="fiscalQrTitle">Check-in por QR Code</h2>
+        <div id="reader" class="fiscal-reader hidden"></div>
+        <div class="fiscal-row">
+          <button id="scannerStart" class="btn btn-primary fiscal-grow" type="button">📷 Ler QR Code</button>
+          <button id="scannerStop" class="btn btn-outline fiscal-grow hidden" type="button">Parar leitor</button>
+        </div>
+        <p class="fiscal-note">Leia a credencial da área “Aprender” da pessoa. A assinatura do QR é conferida no servidor; o leitor continua ligado para o próximo.</p>
+      </section>
 
-          <div class="section-box" style="text-align: left;">
-            <h3>Evento Vigente</h3>
-            <div class="fiscal-event-row" style="display: flex; gap: 8px;">
-              <input id="eventName" type="text" placeholder="Carregando evento..." maxlength="80" style="flex: 1;">
-              <button id="saveEventButton" class="btn btn-primary btn-sm" type="button" onclick="saveActiveEvent()">Salvar Evento</button>
-            </div>
-          </div>
+      <section class="fiscal-card" aria-labelledby="fiscalManualTitle">
+        <h2 id="fiscalManualTitle">Presença manual</h2>
+        <form id="manualForm" class="fiscal-row" novalidate>
+          <label for="manualEmail" class="visually-hidden">E-mail da conta do participante</label>
+          <input id="manualEmail" class="fiscal-grow" type="email" placeholder="E-mail da conta na plataforma" autocomplete="off" maxlength="255">
+          <button id="manualSubmit" class="btn btn-secondary" type="submit">Registrar presença</button>
+        </form>
+        <p class="fiscal-note">Quem não se inscreveu antes também pode entrar: a inscrição é criada no check-in, se houver vaga.</p>
+      </section>
 
-          <div class="section-box">
-            <h3>Check-in por QR Code</h3>
-            <div id="reader" class="hidden" style="width: 100%; max-width: 360px; margin: 0 auto 12px;"></div>
-            <button id="scannerButton" class="btn btn-primary" style="width: 100%;" type="button" onclick="startFiscalScanner()">
-              📷 Acionar Leitor de QR Code
-            </button>
-            <p class="small-note" style="margin-top: 8px; font-size: 0.8rem; color: var(--gray);">
-              O QR Code é validado no servidor e a presença é creditada no evento ativo.
-            </p>
-          </div>
+      <section class="fiscal-card" aria-labelledby="fiscalListTitle">
+        <h2 id="fiscalListTitle">Participantes</h2>
+        <form id="searchForm" class="fiscal-row" role="search" novalidate>
+          <label for="memberSearch" class="visually-hidden">Buscar participante por nome, e-mail ou usuário</label>
+          <input id="memberSearch" class="fiscal-grow" type="search" placeholder="Nome, e-mail ou usuário (mín. 2 letras)" autocomplete="off" maxlength="100">
+          <button id="listRegistered" class="btn btn-outline btn-sm" type="button">Ver inscritos</button>
+        </form>
+        <div class="fiscal-row fiscal-bulk">
+          <label class="fiscal-check"><input type="checkbox" id="selectAll"> Selecionar todos da lista</label>
+          <span id="selectedCount" class="fiscal-note">0 selecionado(s)</span>
+        </div>
+        <ul id="memberList" class="fiscal-list"></ul>
+      </section>
 
-          <div class="section-box">
-            <h3 style="margin-top: 0;">Relatórios & Credenciamento em Lote</h3>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button type="button" class="btn btn-outline btn-sm" style="flex: 1; min-width: 180px;" onclick="FiscalEngine.baixarListaPresencaCsv()">
-                📥 Exportar CSV de Presenças
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm" style="flex: 1; min-width: 180px;" onclick="FiscalEngine.abrirModalLoteCrachas()">
-                🖨️ Gerenciador de Crachás (A4 / CR-80)
-              </button>
-            </div>
-          </div>
-
-          <!-- Modal Lote Crachás -->
-          <div id="modalLoteCrachas" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(3px);">
-            <div style="background: #ffffff; padding: 20px; border-radius: 12px; width: 95%; max-width: 780px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
-                <h3 style="margin: 0; color: #0f172a;">Gerenciador de Crachás em Lote (Padrão CR-80)</h3>
-                <button type="button" class="btn btn-outline btn-sm" onclick="FiscalEngine.fecharModalLoteCrachas()">✕ Fechar</button>
-              </div>
-
-              <div style="display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap;">
-                <input type="text" id="filtroCrachaLote" placeholder="Filtrar por nome ou identificador..." style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;" oninput="FiscalEngine.filtrarTabelaLote()">
-                <button type="button" class="btn btn-outline btn-sm" onclick="FiscalEngine.marcarTodosLote(true)">Marcar Todos</button>
-                <button type="button" class="btn btn-outline btn-sm" onclick="FiscalEngine.marcarTodosLote(false)">Desmarcar</button>
-              </div>
-
-              <div style="flex: 1; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
-                  <thead style="background: #f8fafc; position: sticky; top: 0;">
-                    <tr style="border-bottom: 2px solid #cbd5e1;">
-                      <th style="padding: 8px; width: 40px; text-align: center;">Sel.</th>
-                      <th style="padding: 8px;">Participante</th>
-                      <th style="padding: 8px; width: 140px;">Vínculo</th>
-                      <th style="padding: 8px; width: 160px;">Foto (Opcional)</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tabelaCrachasLoteBody">
-                    <tr>
-                      <td colspan="4" style="text-align: center; padding: 20px; color: #64748b;">
-                        Pesquise participantes na portaria para carregar a lista.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                <span id="contadorCrachasSel" style="font-size: 0.85rem; color: #475569; font-weight: 600;">0 participantes selecionados</span>
-                <button type="button" class="btn btn-primary btn-sm" onclick="FiscalEngine.executarImpressaoLoteA4()">
-                  🖨️ Gerar Folha A4 com Selecionados
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="section-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h3 style="margin: 0;">Rede Neural Groq Cloud (7 Contas)</h3>
-              <button id="btnCheckAiHealth" class="btn btn-outline btn-sm" type="button" onclick="FiscalEngine.verificarSaudeRedeIA()">
-                🔄 Auditar Chaves
-              </button>
-            </div>
-            
-            <div id="aiHealthSummary" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary);" id="aiHealthOverallPct">--%</div>
-              <div style="font-size: 0.85rem; color: var(--gray);">
-                Disponibilidade do cluster Groq (Motores GPT-OSS 20B e 120B).
-              </div>
-            </div>
-
-            <div id="aiNodesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; max-height: 240px; overflow-y: auto;">
-              <div class="small-note" style="grid-column: 1 / -1; text-align: center;">
-                Clique em "Auditar Chaves" para verificar a saúde dos nós.
-              </div>
-            </div>
-          </div>
-
-          <div class="section-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h3 style="margin: 0;">Check-in Manual & Crachás</h3>
-              <button class="btn btn-outline btn-sm" type="button" onclick="window.open('../cracha/index.html', '_blank')">
-                🎨 Abrir Studio
-              </button>
-            </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <input id="manualIdentifier" style="flex: 1; min-width: 170px;" type="text" placeholder="E-mail, matrícula ou CPF" autocomplete="off" maxlength="32">
-              <button id="manualCheckinButton" class="btn btn-secondary btn-sm" type="button" onclick="submitManualCheckin()">
-                Validar Presença
-              </button>
-              <button class="btn btn-outline btn-sm" type="button" onclick="FiscalEngine.gerarCrachaDireto()">
-                🏷️ Emitir Crachá
-              </button>
-            </div>
-          </div>
-
-          <div class="section-box">
-            <h3>Lista Nominal de Participantes</h3>
-            <input id="memberSearch" class="presence-search" type="text" placeholder="Pesquisar por nome, e-mail, matrícula ou CPF..." autocomplete="off" oninput="scheduleMemberSearch()">
-            <div id="memberList" class="member-list" style="max-height: 280px; overflow-y: auto; margin-top: 10px;">
-              <div class="member-list-empty">
-                Digite ao menos dois caracteres para pesquisar participantes.
-              </div>
-            </div>
-          </div>
-
-          <button class="danger-button" style="width: 100%; margin-top: 18px;" type="button" onclick="logoutFiscal()">Encerrar Terminal Fiscal</button>
-        </section>
+      <section class="fiscal-card" aria-labelledby="fiscalReportsTitle">
+        <h2 id="fiscalReportsTitle">Relatórios e crachás</h2>
+        <div class="fiscal-row">
+          <button id="exportCsv" class="btn btn-outline fiscal-grow" type="button">📥 Exportar CSV</button>
+          <button id="printBadges" class="btn btn-secondary fiscal-grow" type="button">🖨️ Imprimir crachás selecionados</button>
+        </div>
+        <p class="fiscal-note">CSV pronto para o Excel. Crachás em folha A4 (8 por folha, padrão CR-80), cada um com o QR assinado da pessoa.</p>
+      </section>
     </div>
   </main>
 
-  <div id="modalFiscalLogin" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
-    <div style="background: #ffffff; padding: 24px; border-radius: 12px; width: 90%; max-width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); text-align: center;">
-      <h3 style="margin-top: 0; color: #0f172a; font-size: 1.25rem;">Acesso Fiscal LAIFT</h3>
-      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">Senha fiscal do backend de presenças (Apps Script) — ainda exigida até a migração para a Plataforma de Membros.</p>
-      
-      <input type="password" id="inputSenhaFiscalModal" placeholder="Senha do Fiscal" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 16px; font-size: 1rem; box-sizing: border-box;" onkeydown="if(event.key==='Enter') FiscalEngine.confirmarLoginModal()"/>
-      
-      <div style="display: flex; gap: 8px; justify-content: flex-end;">
-        <button type="button" class="btn btn-outline btn-sm" onclick="FiscalEngine.fecharModalLogin()">Cancelar</button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="FiscalEngine.confirmarLoginModal()">Acessar</button>
-      </div>
-    </div>
-  </div>
+  <!-- Folha de crachás em lote: montada com DOM seguro por fiscal-engine.js e
+       impressa DESTE documento (sem pop-up nem document.write). -->
+  <div id="printArea" class="print-area" aria-hidden="true"></div>
 
-  <script src="../shared/api-service.js"></script>
   <script src="fiscal-engine.js"></script>
   <script src="fiscal-page.js"></script>
 </body>

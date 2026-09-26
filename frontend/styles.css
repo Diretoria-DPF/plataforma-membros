@@ -623,6 +623,7 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
    "Aprender" (learning.js) e métricas de aprendizagem no perfil (app.js).
    Só classes novas; acabamento visual fino fica com a Equipe 4. */
 .learn-stats { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+.learn-stat span { hyphens: auto; overflow-wrap: anywhere; }
 .learn-progress h3 { margin: 0 0 10px; font-size: 16px; }
 .learn-progress h3 + .learn-badges { margin-top: 0; }
 .learn-by-module { display: grid; gap: 8px; margin-bottom: 18px; }

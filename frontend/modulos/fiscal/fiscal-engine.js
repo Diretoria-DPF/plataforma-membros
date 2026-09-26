@@ -1,1000 +1,526 @@
 /**
- * TERMINAL FISCAL, VALIDAÇÃO DE QR CODE, TELEMETRIA IA E STUDIO DE CRACHÁ
- * Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (LAIFT)
+ * fiscal-engine.js — Terminal Fiscal & Portaria (LAIFT)
+ *
+ * Fase 2 da unificação (docs/PLANO_FASES_2_3_4.md): a presença saiu da
+ * planilha do Google Apps Script e vive nos eventos da plataforma. Tudo aqui
+ * fala com a Worker por `LaiftApi.call` (modulos/shared/laift-identity.js),
+ * que passa pela allowlist da plataforma e leva o token da sessão — o
+ * terminal não guarda credencial nenhuma e não existe mais senha fiscal:
+ * o servidor exige o papel `admin` em cada apiAdminAttendance*.
+ *
+ * Regras de front-end seguidas neste arquivo:
+ *  - DOM montado só com createElement/textContent (nunca innerHTML ou
+ *    document.write com dado) e eventos só por addEventListener;
+ *  - o QR lido é repassado cru ao servidor, que confere a assinatura; o
+ *    formato antigo sem assinatura (LAIFT:ID:<e-mail>) só PREENCHE o campo
+ *    de presença manual, para o admin conferir e confirmar.
  */
+(function () {
+  'use strict';
 
-const FiscalEngine = (() => {
-  let fiscalSession = '';
-  let scannerInstance = null;
-  let scanInProgress = false;
-  let memberSearchTimer = null;
-  let dadosMembrosLote = [];
+  const ROLE_LABELS = { visitor: 'Visitante', member: 'Membro', admin: 'Administrador' };
+  const STATUS_LABELS = {
+    published: 'publicado', in_progress: 'em andamento', closed: 'encerrado', completed: 'concluído',
+  };
+  const SEARCH_DEBOUNCE_MS = 350;
+  const SAME_QR_COOLDOWN_MS = 4000; // a câmera lê o mesmo QR várias vezes por segundo
 
-  const QR_PREFIX = 'LAIFT:v1:';
+  const state = {
+    events: [],
+    eventId: '',
+    participants: [],
+    selected: new Map(), // profileId → fullName (seleção sobrevive a novas buscas)
+    scanner: null,
+    scanBusy: false,
+    lastScan: { text: '', at: 0 },
+    searchTimer: null,
+    searchSeq: 0,
+  };
 
-  /** Escapa texto vindo do backend/planilha antes de interpolar em HTML. */
-  function escapeHtml(valor) {
-    return String(valor == null ? '' : valor).replace(/[&<>"']/g, (c) => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
-  }
+  const $ = (id) => document.getElementById(id);
 
-  function getStatusBanner(msg, type) {
-    if (typeof window.showStatus === 'function') {
-      window.showStatus(msg, type);
-    } else {
-      const el = document.getElementById('status');
-      if (el) {
-        el.textContent = msg;
-        el.className = `status-banner ${type}`;
-        el.classList.remove('hidden');
-      }
-    }
-  }
-
-  function clearStatusBanner() {
-    if (typeof window.hideStatus === 'function') {
-      window.hideStatus();
-    } else {
-      const el = document.getElementById('status');
-      if (el) el.classList.add('hidden');
-    }
-  }
-
-  // =========================================================
-  // 1. AUTENTICAÇÃO E MODAL DE ACESSO DO FISCAL
-  // =========================================================
-
-  function abrirModalLogin() {
-    if (fiscalSession) {
-      const fiscalArea = document.getElementById('fiscalArea');
-      if (fiscalArea) {
-        fiscalArea.classList.remove('hidden');
-        fiscalArea.scrollIntoView({ behavior: 'smooth' });
-      }
-      return;
-    }
-
-    const modal = document.getElementById('modalFiscalLogin');
-    const input = document.getElementById('inputSenhaFiscalModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      if (input) {
-        input.value = '';
-        setTimeout(() => input.focus(), 150);
-      }
-    } else {
-      const password = prompt('Terminal restrito LAIFT.\nDigite a senha fiscal:');
-      if (password) {
-        processarLoginFiscal(password);
-      }
-    }
-  }
-
-  function fecharModalLogin() {
-    const modal = document.getElementById('modalFiscalLogin');
-    if (modal) modal.style.display = 'none';
-  }
-
-  async function confirmarLoginModal() {
-    const input = document.getElementById('inputSenhaFiscalModal');
-    const senha = input ? input.value.trim() : '';
-    if (!senha) return;
-    fecharModalLogin();
-    await processarLoginFiscal(senha);
-  }
-
-  async function processarLoginFiscal(password) {
-    getStatusBanner('Validando acesso fiscal...', 'loading');
-    try {
-      let res;
-      if (typeof ApiService.loginFiscal === 'function') {
-        res = await ApiService.loginFiscal(password);
-      } else if (typeof ApiService.autenticarFiscal === 'function') {
-        res = await ApiService.autenticarFiscal(password);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'loginFiscal',
-          senha: password
-        });
-      } else {
-        throw new Error('Método de autenticação fiscal indisponível no ApiService.');
-      }
-
-      if (!res || !res.sucesso || !res.sessao) {
-        getStatusBanner((res && res.mensagem) || 'Credenciais inválidas.', 'error');
-        return;
-      }
-
-      fiscalSession = res.sessao;
-      clearStatusBanner();
-
-      const locked = document.getElementById('fiscalLocked');
-      if (locked) locked.classList.add('hidden');
-
-      const fiscalArea = document.getElementById('fiscalArea');
-      if (fiscalArea) {
-        fiscalArea.classList.remove('hidden');
-        fiscalArea.scrollIntoView({ behavior: 'smooth' });
-      }
-
-      const eventInput = document.getElementById('eventName');
-      if (eventInput) eventInput.value = res.evento || res.eventoAtivo || '';
-
-      getStatusBanner('Acesso fiscal liberado com sucesso.', 'success');
-    } catch (err) {
-      console.error(err);
-      getStatusBanner('Falha ao autenticar terminal fiscal.', 'error');
-    }
-  }
-
-  async function saveActiveEvent() {
-    const eventInput = document.getElementById('eventName');
-    const eventName = eventInput ? eventInput.value.trim() : '';
-
-    if (!eventName) {
-      getStatusBanner('Digite o nome do evento ativo.', 'error');
-      return;
-    }
-
-    getStatusBanner('Atualizando evento...', 'loading');
-    try {
-      let res;
-      if (typeof ApiService.salvarEvento === 'function') {
-        res = await ApiService.salvarEvento(eventName, fiscalSession);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'salvarEvento',
-          novoNome: eventName,
-          sessao: fiscalSession
-        });
-      }
-
-      if (res && res.sucesso) {
-        if (eventInput) eventInput.value = res.novoEvento || res.eventoAtivo || eventName;
-        getStatusBanner('Evento ativo atualizado com sucesso.', 'success');
-      } else {
-        getStatusBanner((res && res.mensagem) || 'Não foi possível atualizar o evento.', 'error');
-      }
-    } catch (err) {
-      console.error(err);
-      getStatusBanner('Erro ao atualizar evento.', 'error');
-    }
-  }
-
-  // =========================================================
-  // 2. MONITOR DE SAÚDE DO CLUSTER GROQ (TELEMETRIA EM TEMPO REAL)
-  // =========================================================
-
-  async function verificarSaudeRedeIA() {
-    const btn = document.getElementById('btnCheckAiHealth');
-    const grid = document.getElementById('aiNodesGrid');
-    const pctEl = document.getElementById('aiHealthOverallPct');
-
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = '⏳ Diagnosticando Groq LPUs...';
-    }
-
-    try {
-      let res;
-      if (typeof ApiService.obterStatusSaudeIA === 'function') {
-        res = await ApiService.obterStatusSaudeIA(fiscalSession);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'obterStatusSaudeIA',
-          sessao: fiscalSession
-        }, 30000);
-      }
-
-      if (!res || !res.sucesso) {
-        alert((res && res.mensagem) || 'Falha ao auditar saúde das chaves Groq.');
-        return;
-      }
-
-      if (pctEl) {
-        pctEl.textContent = `${res.saudeGeralRede}%`;
-        pctEl.style.color = res.saudeGeralRede >= 75 ? '#16a34a' : (res.saudeGeralRede >= 40 ? '#d97706' : '#dc2626');
-      }
-
-      if (grid && Array.isArray(res.provedores)) {
-        grid.innerHTML = '';
-        res.provedores.forEach(node => {
-          const card = document.createElement('div');
-          card.style.cssText = `
-            padding: 8px 10px; 
-            border-radius: 8px; 
-            border: 1px solid ${node.operante ? '#bbf7d0' : '#fecaca'}; 
-            background: ${node.operante ? '#f0fdf4' : '#fef2f2'}; 
-            font-size: 0.75rem;
-            text-align: left;
-          `;
-          
-          card.innerHTML = `
-            <div style="font-weight: 700; color: #1e293b;">${escapeHtml(node.identificador)}</div>
-            <div style="color: #64748b; font-family: monospace; font-size: 0.7rem;">${escapeHtml(node.chaveMascarada)}</div>
-            <div style="margin-top: 4px; display: flex; justify-content: space-between; font-weight: 600;">
-              <span style="color: ${node.operante ? '#16a34a' : '#dc2626'};">${escapeHtml(node.saude)}%</span>
-              <span style="color: #64748b;">${escapeHtml(node.latenciaMs)}ms</span>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Erro de conexão ao consultar telemetria da IA.');
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = '🔄 Auditar Chaves';
-      }
-    }
-  }
-
-  // =========================================================
-  // 3. EXPORTAÇÃO CSV DE PRESENÇAS CONFIRMADAS
-  // =========================================================
-
-  async function baixarListaPresencaCsv() {
-    try {
-      getStatusBanner('Gerando arquivo CSV formatado...', 'loading');
-      
-      let res;
-      if (typeof ApiService.exportarPresencasCsv === 'function') {
-        res = await ApiService.exportarPresencasCsv(fiscalSession, null);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'exportarPresencasCsv',
-          sessao: fiscalSession
-        });
-      }
-
-      if (!res || !res.sucesso) {
-        getStatusBanner((res && res.mensagem) || 'Falha ao exportar presenças.', 'error');
-        return;
-      }
-
-      const byteCharacters = atob(res.csvBase64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'text/csv;charset=utf-8;' });
-
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', res.nomeArquivo || 'presencas_laift.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      getStatusBanner('CSV baixado com sucesso!', 'success');
-    } catch (e) {
-      console.error(e);
-      getStatusBanner('Erro de conexão ao exportar presenças.', 'error');
-    }
-  }
-
-  // =========================================================
-  // 4. GERENCIADOR DE CRACHÁS EM LOTE (SELEÇÃO, EDIÇÃO E FOTO)
-  // =========================================================
-
-  function abrirModalLoteCrachas() {
-    const modal = document.getElementById('modalLoteCrachas');
-    if (!modal) return;
-
-    const base = window.ultimosMembrosBuscados || [];
-    if (base.length === 0) {
-      alert('Pesquise participantes na "Lista Nominal" antes de abrir o gerenciador de crachás.');
-      const searchInput = document.getElementById('memberSearch');
-      if (searchInput) searchInput.focus();
-      return;
-    }
-
-    dadosMembrosLote = base.map(m => ({
-      identificador: m.identificador,
-      nome: m.nomeExibicao || m.nome || 'Participante',
-      tipo: m.tipo || 'Membro',
-      tokenQr: m.tokenQr || '',
-      fotoUrl: '',
-      selecionado: true
-    }));
-
-    renderizarTabelaLote();
-    modal.style.display = 'flex';
-  }
-
-  function fecharModalLoteCrachas() {
-    const modal = document.getElementById('modalLoteCrachas');
-    if (modal) modal.style.display = 'none';
-  }
-
-  function renderizarTabelaLote() {
-    const tbody = document.getElementById('tabelaCrachasLoteBody');
-    const filtroEl = document.getElementById('filtroCrachaLote');
-    const filtro = (filtroEl ? filtroEl.value : '').toLowerCase();
-    if (!tbody) return;
-
-    tbody.innerHTML = '';
-    let totalSel = 0;
-
-    dadosMembrosLote.forEach((m, idx) => {
-      const match = m.nome.toLowerCase().includes(filtro) || m.identificador.toLowerCase().includes(filtro);
-      if (!match) return;
-
-      if (m.selecionado) totalSel++;
-
-      const tr = document.createElement('tr');
-      tr.style.borderBottom = '1px solid #e2e8f0';
-
-      tr.innerHTML = `
-        <td style="text-align: center; padding: 6px;">
-          <input type="checkbox" ${m.selecionado ? 'checked' : ''} onchange="FiscalEngine.toggleMembroLote(${idx}, this.checked)">
-        </td>
-        <td style="padding: 6px;">
-          <input type="text" value="${escapeHtml(m.nome)}" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 0.8rem; box-sizing: border-box;" onchange="FiscalEngine.atualizarNomeLote(${idx}, this.value)">
-          <small style="color: #64748b; font-family: monospace;">ID: ${escapeHtml(m.identificador)}</small>
-        </td>
-        <td style="padding: 6px;">
-          <select style="width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 0.8rem; box-sizing: border-box;" onchange="FiscalEngine.atualizarTipoLote(${idx}, this.value)">
-            <option value="Membro" ${m.tipo === 'Membro' ? 'selected' : ''}>Membro</option>
-            <option value="Diretoria" ${m.tipo === 'Diretoria' ? 'selected' : ''}>Diretoria</option>
-            <option value="Visitante" ${m.tipo === 'Visitante' ? 'selected' : ''}>Visitante</option>
-            <option value="Palestrante" ${m.tipo === 'Palestrante' ? 'selected' : ''}>Palestrante</option>
-          </select>
-        </td>
-        <td style="padding: 6px;">
-          <input type="file" accept="image/*" style="font-size: 0.75rem; width: 100%;" onchange="FiscalEngine.carregarFotoLote(${idx}, this)">
-        </td>
-      `;
-      tbody.appendChild(tr);
+  /** Construtor de DOM seguro: texto sempre via textContent/TextNode. */
+  function el(tag, attrs, children) {
+    const node = document.createElement(tag);
+    Object.keys(attrs || {}).forEach((key) => {
+      const value = attrs[key];
+      if (value === null || value === undefined || value === false) return;
+      if (key === 'className') node.className = value;
+      else if (key === 'text') node.textContent = String(value);
+      else node.setAttribute(key, value === true ? '' : String(value));
     });
+    (children || []).forEach((child) => {
+      if (child === null || child === undefined) return;
+      node.appendChild(typeof child === 'string' ? document.createTextNode(child) : child);
+    });
+    return node;
+  }
 
-    const contador = document.getElementById('contadorCrachasSel');
-    if (contador) {
-      const folhas = Math.ceil(totalSel / 8);
-      contador.textContent = `${totalSel} selecionado(s) (${folhas} folha(s) A4)`;
+  function clearEl(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function setStatus(message, kind) {
+    const banner = $('status');
+    banner.textContent = message || '';
+    banner.className = 'status-banner' + (kind ? ' ' + kind : '');
+    banner.classList.toggle('hidden', !message);
+  }
+
+  function api(action, input) {
+    if (!window.LaiftApi) return Promise.resolve({ success: false, message: 'Sessão indisponível.' });
+    return window.LaiftApi.call(action, input);
+  }
+
+  function formatDateTime(iso) {
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? '' : d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+  }
+
+  function formatTime(iso) {
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? '' : d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // =========================================================
+  // 1. EVENTOS
+  // =========================================================
+
+  function currentEvent() {
+    return state.events.find((e) => e.id === state.eventId) || null;
+  }
+
+  function renderEventSelect() {
+    const select = $('fiscalEvent');
+    clearEl(select);
+    if (!state.events.length) {
+      select.appendChild(el('option', { value: '', text: 'Nenhum evento publicado ou em andamento' }));
+      select.disabled = true;
+      return;
+    }
+    select.disabled = false;
+    state.events.forEach((ev) => {
+      const label = ev.title + ' — ' + formatDateTime(ev.eventDate) + ' (' + (STATUS_LABELS[ev.status] || ev.status) + ')';
+      select.appendChild(el('option', { value: ev.id, text: label }));
+    });
+    select.value = state.eventId;
+  }
+
+  function updateEventInfo() {
+    const ev = currentEvent();
+    const info = $('fiscalEventInfo');
+    const open = !!(ev && ev.checkInOpen);
+    ['scannerStart', 'manualSubmit'].forEach((id) => { $(id).disabled = !open; });
+    $('exportCsv').disabled = !ev;
+    $('listRegistered').disabled = !ev;
+    if (!ev) { info.textContent = ''; return; }
+    let text = ev.checkedInCount + ' presente(s) de ' + ev.registeredCount + ' inscrito(s)';
+    if (ev.capacity) text += ' · capacidade ' + ev.capacity;
+    if (!open) text += ' · check-in fechado (só exportação)';
+    info.textContent = text;
+    if (!open) stopScanner();
+  }
+
+  async function loadEvents() {
+    setStatus('Carregando eventos...', 'loading');
+    const res = await api('apiAdminAttendanceListEvents');
+    if (!res.success) {
+      setStatus(res.message || 'Não foi possível carregar os eventos.', 'error');
+      return;
+    }
+    state.events = Array.isArray(res.events) ? res.events : [];
+    // Mantém o evento escolhido se ele ainda existir; senão, o primeiro
+    // aberto (a Worker já ordena: em andamento, depois publicados).
+    if (!currentEvent()) {
+      const firstOpen = state.events.find((e) => e.checkInOpen) || state.events[0];
+      state.eventId = firstOpen ? firstOpen.id : '';
+    }
+    renderEventSelect();
+    updateEventInfo();
+    setStatus('', null);
+  }
+
+  function onEventChange() {
+    state.eventId = $('fiscalEvent').value;
+    state.participants = [];
+    renderList('Busque participantes ou veja os inscritos deste evento.');
+    updateEventInfo();
+  }
+
+  // =========================================================
+  // 2. CHECK-IN (comum aos três métodos)
+  // =========================================================
+
+  async function checkIn(input) {
+    const ev = currentEvent();
+    if (!ev) { setStatus('Selecione um evento.', 'error'); return null; }
+    if (!ev.checkInOpen) { setStatus('O check-in deste evento está fechado.', 'error'); return null; }
+
+    setStatus('Registrando presença...', 'loading');
+    const res = await api('apiAdminAttendanceCheckIn', Object.assign({ eventId: ev.id }, input));
+    if (!res.success) {
+      setStatus(res.message || 'Não foi possível registrar a presença.', 'error');
+      return res;
+    }
+    const p = res.participant || {};
+    setStatus(res.message || 'Presença registrada.', p.alreadyCheckedIn ? 'warning' : 'success');
+    if (!p.alreadyCheckedIn) {
+      ev.checkedInCount += 1;
+      if (p.walkIn) ev.registeredCount += 1;
+      updateEventInfo();
+    }
+    const listed = state.participants.find((x) => x.profileId === p.profileId);
+    if (listed) {
+      listed.registered = true;
+      listed.checkedInAt = p.checkedInAt || listed.checkedInAt || new Date().toISOString();
+      renderList();
+    }
+    return res;
+  }
+
+  // =========================================================
+  // 3. LEITOR DE QR CODE
+  // =========================================================
+
+  function parseQr(text) {
+    const value = String(text || '').trim();
+    if (value.indexOf('LAIFT:v2:') === 0) return { kind: 'v2', payload: value };
+    if (value.indexOf('LAIFT:ID:') === 0) return { kind: 'legacy', identifier: value.slice('LAIFT:ID:'.length) };
+    return null;
+  }
+
+  async function onScan(decodedText) {
+    const now = Date.now();
+    if (state.scanBusy) return;
+    if (decodedText === state.lastScan.text && now - state.lastScan.at < SAME_QR_COOLDOWN_MS) return;
+    state.lastScan = { text: decodedText, at: now };
+    state.scanBusy = true;
+    try {
+      const qr = parseQr(decodedText);
+      if (!qr) {
+        setStatus('QR Code não reconhecido como credencial LAIFT.', 'error');
+      } else if (qr.kind === 'legacy') {
+        // Formato antigo: só o e-mail, sem assinatura — qualquer um geraria.
+        // Não registra direto: preenche a presença manual para o admin
+        // conferir a pessoa e confirmar.
+        const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(qr.identifier);
+        if (looksLikeEmail) $('manualEmail').value = qr.identifier;
+        setStatus(looksLikeEmail
+          ? 'Credencial antiga, sem assinatura. Confira a pessoa e confirme em “Presença manual”.'
+          : 'Credencial antiga (sem e-mail). Peça para a pessoa abrir a credencial atualizada na área “Aprender”.', 'warning');
+      } else {
+        await checkIn({ method: 'qr', qrPayload: qr.payload });
+      }
+    } finally {
+      state.scanBusy = false;
     }
   }
 
-  function toggleMembroLote(index, checked) {
-    if (dadosMembrosLote[index]) dadosMembrosLote[index].selecionado = checked;
-    renderizarTabelaLote();
-  }
-
-  function atualizarNomeLote(index, val) {
-    if (dadosMembrosLote[index]) dadosMembrosLote[index].nome = val.trim();
-  }
-
-  function atualizarTipoLote(index, val) {
-    if (dadosMembrosLote[index]) dadosMembrosLote[index].tipo = val;
-  }
-
-  function carregarFotoLote(index, inputEl) {
-    if (inputEl.files && inputEl.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        if (dadosMembrosLote[index]) {
-          dadosMembrosLote[index].fotoUrl = e.target.result;
-          alert(`Foto anexada para ${dadosMembrosLote[index].nome}!`);
-        }
-      };
-      reader.readAsDataURL(inputEl.files[0]);
+  function startScanner() {
+    if (state.scanner) return;
+    if (typeof window.Html5QrcodeScanner !== 'function') {
+      setStatus('Leitor de QR indisponível (a biblioteca não carregou). Use a presença manual ou a lista.', 'error');
+      return;
+    }
+    $('reader').classList.remove('hidden');
+    $('scannerStart').classList.add('hidden');
+    $('scannerStop').classList.remove('hidden');
+    try {
+      state.scanner = new window.Html5QrcodeScanner('reader', { fps: 10, qrbox: { width: 240, height: 240 } }, false);
+      state.scanner.render(onScan, () => {});
+    } catch (err) {
+      state.scanner = null;
+      stopScanner();
+      setStatus('Não foi possível abrir a câmera. Verifique a permissão do navegador.', 'error');
     }
   }
 
-  function marcarTodosLote(marcar) {
-    dadosMembrosLote.forEach(m => m.selecionado = marcar);
-    renderizarTabelaLote();
+  async function stopScanner() {
+    const scanner = state.scanner;
+    state.scanner = null;
+    if (scanner) {
+      try { await scanner.clear(); } catch (err) { /* câmera já liberada */ }
+    }
+    $('reader').classList.add('hidden');
+    $('scannerStart').classList.remove('hidden');
+    $('scannerStop').classList.add('hidden');
   }
 
-  function filtrarTabelaLote() {
-    renderizarTabelaLote();
+  // =========================================================
+  // 4. PRESENÇA MANUAL (E-MAIL)
+  // =========================================================
+
+  async function onManualSubmit(evt) {
+    evt.preventDefault();
+    const input = $('manualEmail');
+    const email = input.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus('Digite o e-mail da conta do participante.', 'error');
+      input.focus();
+      return;
+    }
+    const res = await checkIn({ method: 'manual', email: email });
+    if (res && res.success) input.value = '';
+  }
+
+  // =========================================================
+  // 5. LISTA / BUSCA DE PARTICIPANTES
+  // =========================================================
+
+  function updateSelectedCount() {
+    $('selectedCount').textContent = state.selected.size + ' selecionado(s)';
+    const all = state.participants.length > 0 && state.participants.every((p) => state.selected.has(p.profileId));
+    $('selectAll').checked = all;
+    $('printBadges').disabled = state.selected.size === 0;
+  }
+
+  function renderList(emptyMessage) {
+    const list = $('memberList');
+    clearEl(list);
+    if (!state.participants.length) {
+      list.appendChild(el('li', { className: 'fiscal-empty', text: emptyMessage || 'Nenhum participante encontrado.' }));
+      updateSelectedCount();
+      return;
+    }
+    state.participants.forEach((p) => {
+      const checkboxId = 'sel-' + p.profileId;
+      const checkbox = el('input', { type: 'checkbox', id: checkboxId });
+      checkbox.checked = state.selected.has(p.profileId);
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) state.selected.set(p.profileId, p.fullName);
+        else state.selected.delete(p.profileId);
+        updateSelectedCount();
+      });
+
+      const meta = [ROLE_LABELS[p.role] || p.role, p.email, p.registered ? 'inscrito' : 'não inscrito'];
+      if (p.checkedInAt) meta.push('presente desde ' + formatTime(p.checkedInAt));
+
+      const presenceBtn = el('button', {
+        type: 'button', className: 'btn btn-secondary btn-sm', 'data-action': 'presence',
+        'aria-label': 'Registrar presença de ' + p.fullName,
+      }, [p.checkedInAt ? '✔ Presente' : 'Presença']);
+      presenceBtn.disabled = !!p.checkedInAt || !(currentEvent() && currentEvent().checkInOpen);
+      presenceBtn.addEventListener('click', () => checkIn({ method: 'lista', profileId: p.profileId }));
+
+      const badgeBtn = el('button', {
+        type: 'button', className: 'btn btn-outline btn-sm', 'data-action': 'badge',
+        'aria-label': 'Abrir crachá de ' + p.fullName,
+      }, ['Crachá']);
+      badgeBtn.addEventListener('click', () => openBadge(p));
+
+      list.appendChild(el('li', {
+        className: 'fiscal-item' + (p.checkedInAt ? ' is-present' : ''), 'data-profile-id': p.profileId,
+      }, [
+        checkbox,
+        el('label', { for: checkboxId, className: 'fiscal-item-info' }, [
+          el('strong', { className: 'fiscal-item-name', text: p.fullName }),
+          el('span', { className: 'fiscal-item-meta', text: meta.join(' · ') }),
+        ]),
+        el('span', { className: 'fiscal-item-actions' }, [presenceBtn, badgeBtn]),
+      ]));
+    });
+    updateSelectedCount();
+  }
+
+  async function search(term) {
+    const ev = currentEvent();
+    if (!ev) { setStatus('Selecione um evento.', 'error'); return; }
+    const seq = ++state.searchSeq;
+    const list = $('memberList');
+    clearEl(list);
+    list.appendChild(el('li', { className: 'fiscal-empty', text: term ? 'Buscando...' : 'Carregando inscritos...' }));
+    const res = await api('apiAdminAttendanceSearch', { eventId: ev.id, term: term });
+    if (seq !== state.searchSeq) return; // resposta de uma busca já substituída
+    if (!res.success) {
+      state.participants = [];
+      renderList(res.message || 'Não foi possível consultar a lista.');
+      return;
+    }
+    state.participants = Array.isArray(res.participants) ? res.participants : [];
+    renderList(term ? 'Nenhum participante encontrado.' : 'Ninguém inscrito neste evento ainda.');
+  }
+
+  function onSearchInput() {
+    clearTimeout(state.searchTimer);
+    const term = $('memberSearch').value.trim();
+    if (term.length < 2) {
+      state.searchSeq++;
+      if (!term) return;
+      state.participants = [];
+      renderList('Digite ao menos 2 caracteres.');
+      return;
+    }
+    state.searchTimer = setTimeout(() => search(term), SEARCH_DEBOUNCE_MS);
+  }
+
+  function onSelectAll() {
+    const checked = $('selectAll').checked;
+    state.participants.forEach((p) => {
+      if (checked) state.selected.set(p.profileId, p.fullName);
+      else state.selected.delete(p.profileId);
+    });
+    renderList();
+  }
+
+  // =========================================================
+  // 6. EXPORTAÇÃO CSV
+  // =========================================================
+
+  async function exportCsv() {
+    const ev = currentEvent();
+    if (!ev) { setStatus('Selecione um evento.', 'error'); return; }
+    setStatus('Gerando CSV...', 'loading');
+    // excel: BOM UTF-8 + ";" — abre direto, com acentos, no Excel em pt-BR.
+    const res = await api('apiAdminAttendanceExportCsv', { eventId: ev.id, excel: true });
+    if (!res.success || typeof res.csv !== 'string') {
+      setStatus(res.message || 'Não foi possível exportar as presenças.', 'error');
+      return;
+    }
+    const filename = /^[A-Za-z0-9._-]{1,120}$/.test(res.filename || '') ? res.filename : 'presenca.csv';
+    const url = URL.createObjectURL(new Blob([res.csv], { type: 'text/csv;charset=utf-8' }));
+    const link = el('a', { href: url, download: filename, className: 'hidden' });
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    setStatus('CSV exportado (' + (Number(res.rows) || 0) + ' linha(s)).', 'success');
+  }
+
+  // =========================================================
+  // 7. CRACHÁS (individual e em lote)
+  // =========================================================
+
+  // Código curto impresso no crachá: identifica sem expor e-mail/CPF.
+  function badgeCode(profileId) {
+    return String(profileId || '').slice(0, 8).toUpperCase();
+  }
+
+  function badgeRole(badge) {
+    if (badge.leaguePosition) return 'Diretoria';
+    return badge.role === 'visitor' ? 'Visitante' : 'Membro';
+  }
+
+  async function fetchBadges(profileIds) {
+    const res = await api('apiAdminAttendanceBadges', { profileIds: profileIds });
+    if (!res.success || !Array.isArray(res.badges)) {
+      setStatus(res.message || 'Não foi possível gerar os crachás.', 'error');
+      return null;
+    }
+    return res.badges;
   }
 
   /**
-   * Renderiza a grade A4 contendo exatamente os participantes selecionados
+   * Crachá individual no estúdio (../cracha/index.html) — mesma interface
+   * por parâmetros de sempre (id, nome, cargo, qr), agora com o QR v2. A aba
+   * é aberta ANTES da chamada à Worker, ainda dentro do clique, para o
+   * bloqueador de pop-up não barrar; sem 'noopener' porque o estúdio acha a
+   * plataforma (e a identidade) por window.opener.
    */
-  function executarImpressaoLoteA4() {
-    const selecionados = dadosMembrosLote.filter(m => m.selecionado);
-    if (selecionados.length === 0) {
-      alert('Selecione ao menos um participante na tabela.');
+  async function openBadge(participant) {
+    const win = window.open('about:blank', '_blank');
+    if (!win) { setStatus('Libere a abertura de pop-ups para abrir o crachá.', 'error'); return; }
+    setStatus('Gerando crachá...', 'loading');
+    const badges = await fetchBadges([participant.profileId]);
+    if (!badges || !badges.length) {
+      win.close();
+      if (badges) setStatus('Conta indisponível para crachá.', 'error');
       return;
     }
+    const b = badges[0];
+    const url = '../cracha/index.html' +
+      '?id=' + encodeURIComponent(badgeCode(b.profileId)) +
+      '&nome=' + encodeURIComponent(b.fullName) +
+      '&cargo=' + encodeURIComponent(badgeRole(b).toUpperCase()) +
+      '&qr=' + encodeURIComponent(b.qrPayload);
+    win.location.href = new URL(url, window.location.href).href;
+    setStatus('', null);
+  }
 
-    const janela = window.open('', '_blank');
-    if (!janela) {
-      alert('Libere a abertura de popups no navegador.');
-      return;
-    }
+  function qrDataUrl(payload) {
+    const qrcode = window.qrcode;
+    qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+    const qr = qrcode(0, 'M');
+    qr.addData(payload);
+    qr.make();
+    return qr.createDataURL(4, 2);
+  }
 
-    let cardsHtml = '';
-    selecionados.forEach(m => {
-      const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=svg&data=' + encodeURIComponent('LAIFT:v1:' + (m.tokenQr || m.identificador));
-      
-      const fotoHtml = m.fotoUrl 
-        ? `<img src="${escapeHtml(m.fotoUrl)}" class="foto-perfil" alt="Foto"/>`
-        : `<div class="avatar-placeholder">${escapeHtml(m.nome.charAt(0).toUpperCase())}</div>`;
+  function buildBadgeCard(b) {
+    const initial = (b.fullName || '?').trim().charAt(0).toUpperCase();
+    const role = badgeRole(b);
+    return el('div', { className: 'badge-card', 'data-profile-id': b.profileId }, [
+      el('div', { className: 'badge-header' }, [
+        el('div', { className: 'badge-institution', text: 'UNINASSAU SALVADOR' }),
+        el('div', { className: 'badge-league', text: 'LIGA ACADÊMICA LAIFT' }),
+      ]),
+      el('div', { className: 'badge-body' }, [
+        el('div', { className: 'badge-visual' }, [
+          el('div', { className: 'badge-avatar', text: initial, 'aria-hidden': 'true' }),
+          el('img', { className: 'badge-qr', src: qrDataUrl(b.qrPayload), alt: 'QR Code de presença' }),
+        ]),
+        el('div', { className: 'badge-data' }, [
+          el('div', { className: 'badge-name', text: b.fullName }),
+          el('div', { className: 'badge-role' + (role === 'Diretoria' ? ' is-board' : ''), text: role }),
+          el('div', { className: 'badge-code', text: 'ID ' + badgeCode(b.profileId) }),
+        ]),
+      ]),
+      el('div', { className: 'badge-footer', text: 'Farmacologia Clínica e Toxicologia' }),
+    ]);
+  }
 
-      cardsHtml += `
-        <div class="cracha-card">
-          <div class="header">
-            <div class="instituicao">UNINASSAU SALVADOR</div>
-            <div class="liga">LIGA ACADÊMICA LAIFT</div>
-          </div>
-          <div class="corpo">
-            <div class="col-foto-qr">
-              ${fotoHtml}
-              <img src="${escapeHtml(qrUrl)}" class="qr-img" alt="QR Code"/>
-            </div>
-            <div class="col-dados">
-              <div class="nome-participante">${escapeHtml(m.nome)}</div>
-              <div class="tag-role ${String(m.tipo).toLowerCase() === 'diretoria' ? 'diretoria' : ''}">${escapeHtml(m.tipo)}</div>
-              <div class="meta-id">ID: ${escapeHtml(m.identificador)}</div>
-            </div>
-          </div>
-          <div class="rodape">Farmacologia Clínica e Toxicologia</div>
-        </div>
-      `;
+  async function printSelectedBadges() {
+    const ids = Array.from(state.selected.keys());
+    if (!ids.length) { setStatus('Selecione participantes na lista para imprimir os crachás.', 'error'); return; }
+    if (typeof window.qrcode !== 'function') { setStatus('Gerador de QR indisponível. Recarregue o terminal.', 'error'); return; }
+    setStatus('Gerando ' + ids.length + ' crachá(s)...', 'loading');
+    const badges = await fetchBadges(ids);
+    if (!badges) return;
+    if (!badges.length) { setStatus('Nenhuma das contas selecionadas está disponível para crachá.', 'error'); return; }
+
+    const area = $('printArea');
+    clearEl(area);
+    const sheet = el('div', { className: 'badge-sheet' }, badges.map(buildBadgeCard));
+    area.appendChild(sheet);
+    document.body.classList.add('is-printing');
+    setStatus(badges.length + ' crachá(s) prontos — ' + Math.ceil(badges.length / 8) + ' folha(s) A4.', 'success');
+    const cleanup = () => {
+      document.body.classList.remove('is-printing');
+      clearEl(area);
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+  }
+
+  // =========================================================
+  // 8. INICIALIZAÇÃO
+  // =========================================================
+
+  let initialized = false;
+
+  function init() {
+    if (initialized) return;
+    initialized = true;
+    $('fiscalEvent').addEventListener('change', onEventChange);
+    $('fiscalRefreshEvents').addEventListener('click', loadEvents);
+    $('scannerStart').addEventListener('click', startScanner);
+    $('scannerStop').addEventListener('click', stopScanner);
+    $('manualForm').addEventListener('submit', onManualSubmit);
+    $('searchForm').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      const term = $('memberSearch').value.trim();
+      if (term.length >= 2) search(term);
     });
-
-    janela.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Impressão Oficial de Crachás — LAIFT</title>
-        <style>
-          @page {
-            size: A4 portrait;
-            margin: 10mm 8mm;
-          }
-          * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          }
-          body {
-            margin: 0;
-            padding: 0;
-            background: #fff;
-          }
-          /* Grade 2 colunas x 4 linhas = 8 crachás padrão CR-80 por folha A4 */
-          .grade-a4 {
-            display: grid;
-            grid-template-columns: 85.6mm 85.6mm;
-            grid-auto-rows: 54mm;
-            gap: 5mm 6mm;
-            justify-content: center;
-          }
-          .cracha-card {
-            width: 85.6mm;
-            height: 54mm;
-            border: 1px dashed #94a3b8;
-            border-radius: 4mm;
-            padding: 3.5mm;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            page-break-inside: avoid;
-            background: #ffffff;
-            position: relative;
-          }
-          .header {
-            border-bottom: 1.5px solid #0f172a;
-            padding-bottom: 1.5mm;
-            text-align: center;
-          }
-          .instituicao {
-            font-size: 6.5pt;
-            font-weight: 700;
-            color: #475569;
-            letter-spacing: 0.5px;
-          }
-          .liga {
-            font-size: 8.5pt;
-            font-weight: 800;
-            color: #0f172a;
-          }
-          .corpo {
-            display: flex;
-            align-items: center;
-            gap: 3mm;
-            margin: auto 0;
-          }
-          .col-foto-qr {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5mm;
-            width: 24mm;
-          }
-          .foto-perfil {
-            width: 22mm;
-            height: 22mm;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid #cbd5e1;
-          }
-          .avatar-placeholder {
-            width: 22mm;
-            height: 22mm;
-            border-radius: 50%;
-            background: #e2e8f0;
-            color: #1e293b;
-            font-size: 11pt;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-          .qr-img {
-            width: 14mm;
-            height: 14mm;
-          }
-          .col-dados {
-            flex: 1;
-            overflow: hidden;
-          }
-          .nome-participante {
-            font-size: 9pt;
-            font-weight: 800;
-            color: #0f172a;
-            line-height: 1.2;
-            max-height: 2.4em;
-            overflow: hidden;
-          }
-          .tag-role {
-            display: inline-block;
-            background: #e2e8f0;
-            color: #334155;
-            font-size: 6.5pt;
-            font-weight: 700;
-            padding: 1px 5px;
-            border-radius: 3px;
-            margin: 2mm 0 1.5mm;
-            text-transform: uppercase;
-          }
-          .tag-role.diretoria {
-            background: #dbeafe;
-            color: #1e40af;
-          }
-          .meta-id {
-            font-size: 6.5pt;
-            font-family: monospace;
-            color: #64748b;
-          }
-          .rodape {
-            border-top: 1px solid #e2e8f0;
-            font-size: 5.5pt;
-            color: #64748b;
-            text-align: center;
-            padding-top: 1mm;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="grade-a4">
-          ${cardsHtml}
-        </div>
-        <script>
-          window.onload = function() {
-            window.print();
-          };
-        <\/script>
-      </body>
-      </html>
-    `);
-    janela.document.close();
+    $('memberSearch').addEventListener('input', onSearchInput);
+    $('listRegistered').addEventListener('click', () => { $('memberSearch').value = ''; search(''); });
+    $('selectAll').addEventListener('change', onSelectAll);
+    $('exportCsv').addEventListener('click', exportCsv);
+    $('printBadges').addEventListener('click', printSelectedBadges);
+    window.addEventListener('pagehide', stopScanner); // libera a câmera ao sair
+    renderList('Busque participantes ou veja os inscritos deste evento.');
+    updateEventInfo();
+    loadEvents();
   }
 
-  // =========================================================
-  // 5. STUDIO DE CRACHÁS INDIVIDUAL
-  // =========================================================
-
-  function abrirStudioCracha(membro) {
-    if (!membro || !membro.identificador) {
-      getStatusBanner('Identificador do participante não informado.', 'error');
-      return;
-    }
-
-    const id = encodeURIComponent(membro.identificador);
-    const nome = encodeURIComponent(membro.nome || membro.nomeExibicao || 'Participante LAIFT');
-    const cargo = encodeURIComponent((membro.tipo || 'Membro').toUpperCase());
-    const qr = encodeURIComponent(`LAIFT:ID:${membro.identificador}`);
-
-    const url = `../cracha/index.html?id=${id}&nome=${nome}&cargo=${cargo}&qr=${qr}`;
-    window.open(url, '_blank');
-  }
-
-  function gerarCrachaDireto() {
-    const idInput = document.getElementById('manualIdentifier');
-    const identifier = idInput ? idInput.value.trim() : '';
-
-    if (!identifier) {
-      getStatusBanner('Digite o e-mail, matrícula ou CPF no campo ao lado para emitir o crachá.', 'error');
-      if (idInput) idInput.focus();
-      return;
-    }
-
-    abrirStudioCracha({
-      identificador: identifier,
-      nome: 'Participante Credenciado',
-      tipo: 'Membro Efetivo'
-    });
-  }
-
-  // =========================================================
-  // 6. SCANNER DE QR CODE
-  // =========================================================
-
-  function extractQrCredential(decodedText) {
-    const cred = String(decodedText || '').trim();
-    if (cred.startsWith(QR_PREFIX)) {
-      const token = cred.substring(QR_PREFIX.length);
-      return /^[a-f0-9]{64}$/i.test(token) ? cred : '';
-    }
-    if (cred.startsWith('LAIFT:ID:')) {
-      return cred;
-    }
-    return '';
-  }
-
-  function startFiscalScanner() {
-    if (scanInProgress || scannerInstance) return;
-
-    const readerEl = document.getElementById('reader');
-    const scannerBtn = document.getElementById('scannerButton');
-
-    if (readerEl) readerEl.classList.remove('hidden');
-    if (scannerBtn) scannerBtn.classList.add('hidden');
-    clearStatusBanner();
-
-    scannerInstance = new Html5QrcodeScanner(
-      'reader',
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      false
-    );
-
-    scannerInstance.render(
-      async (decodedText) => {
-        if (scanInProgress) return;
-        scanInProgress = true;
-
-        const validCred = extractQrCredential(decodedText);
-        if (!validCred) {
-          getStatusBanner('QR Code não reconhecido como credencial LAIFT.', 'error');
-          scanInProgress = false;
-          return;
-        }
-
-        getStatusBanner('Credencial lida. Validando presença...', 'loading');
-        await closeScanner();
-
-        try {
-          let res;
-          if (typeof ApiService.carimbarPresenca === 'function') {
-            res = await ApiService.carimbarPresenca(validCred, fiscalSession);
-          } else if (typeof ApiService.callAppsScript === 'function') {
-            res = await ApiService.callAppsScript({
-              acao: 'carimbarPresenca',
-              credencial: validCred,
-              sessao: fiscalSession
-            });
-          }
-
-          if (res && res.sucesso) {
-            getStatusBanner(res.mensagem || 'Presença confirmada.', 'success');
-          } else {
-            getStatusBanner((res && res.mensagem) || 'Não foi possível registrar a presença.', 'error');
-          }
-        } catch (err) {
-          console.error(err);
-          getStatusBanner('Erro ao comunicar com o servidor.', 'error');
-        } finally {
-          scanInProgress = false;
-        }
-      },
-      () => {}
-    );
-  }
-
-  async function closeScanner() {
-    if (!scannerInstance) return;
-    try {
-      await scannerInstance.clear();
-    } catch (e) {
-      console.warn('Aviso ao encerrar scanner:', e);
-    }
-    scannerInstance = null;
-
-    const readerEl = document.getElementById('reader');
-    const scannerBtn = document.getElementById('scannerButton');
-    if (readerEl) readerEl.classList.add('hidden');
-    if (scannerBtn) scannerBtn.classList.remove('hidden');
-  }
-
-  async function submitManualCheckin() {
-    const idInput = document.getElementById('manualIdentifier');
-    const identifier = idInput ? idInput.value.trim() : '';
-
-    if (!identifier) {
-      getStatusBanner('Digite o e-mail, matrícula ou CPF do participante.', 'error');
-      return;
-    }
-
-    getStatusBanner('Registrando presença...', 'loading');
-    try {
-      let res;
-      if (typeof ApiService.carimbarPresencaManual === 'function') {
-        res = await ApiService.carimbarPresencaManual(identifier, fiscalSession);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'carimbarPresencaManual',
-          identificador: identifier,
-          sessao: fiscalSession
-        });
-      }
-
-      if (idInput) idInput.value = '';
-
-      if (res && res.sucesso) {
-        getStatusBanner(res.mensagem || 'Presença confirmada.', 'success');
-      } else {
-        getStatusBanner((res && res.mensagem) || 'Não foi possível registrar a presença.', 'error');
-      }
-    } catch (err) {
-      console.error(err);
-      getStatusBanner('Erro ao registrar presença.', 'error');
-    }
-  }
-
-  // =========================================================
-  // 7. PESQUISA NOMINAL & LISTAGEM DE MEMBROS
-  // =========================================================
-
-  function scheduleMemberSearch() {
-    clearTimeout(memberSearchTimer);
-    memberSearchTimer = setTimeout(searchMembers, 350);
-  }
-
-  async function searchMembers() {
-    const searchInput = document.getElementById('memberSearch');
-    const term = searchInput ? searchInput.value.trim() : '';
-    const list = document.getElementById('memberList');
-    if (!list) return;
-
-    if (term.length < 2) {
-      list.innerHTML = `
-        <div class="member-list-empty">
-          Digite ao menos dois caracteres para pesquisar participantes.
-        </div>
-      `;
-      return;
-    }
-
-    list.innerHTML = `
-      <div class="member-list-empty">
-        Buscando participantes na base da LAIFT...
-      </div>
-    `;
-
-    try {
-      let res;
-      if (typeof ApiService.listarMembros === 'function') {
-        res = await ApiService.listarMembros(term, fiscalSession);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'listarMembros',
-          termo: term,
-          sessao: fiscalSession
-        });
-      } else {
-        throw new Error('Método de listagem não disponível no ApiService.');
-      }
-
-      if (!res || !res.sucesso) {
-        list.innerHTML = `
-          <div class="member-list-empty">
-            ${escapeHtml((res && res.mensagem) || 'Não foi possível consultar a lista.')}
-          </div>
-        `;
-        return;
-      }
-
-      window.ultimosMembrosBuscados = res.membros || [];
-      renderMemberList(window.ultimosMembrosBuscados);
-    } catch (err) {
-      console.error('Falha na consulta de membros:', err);
-      list.innerHTML = `
-        <div class="member-list-empty">
-          Não foi possível consultar a lista no momento.
-        </div>
-      `;
-    }
-  }
-
-  function renderMemberList(members) {
-    const list = document.getElementById('memberList');
-    if (!list) return;
-
-    if (!members || !members.length) {
-      list.innerHTML = `
-        <div class="member-list-empty">
-          Nenhum participante encontrado.
-        </div>
-      `;
-      return;
-    }
-
-    list.innerHTML = '';
-    members.forEach((member) => {
-      const item = document.createElement('div');
-      item.className = 'member-item';
-      item.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line, #e2e8f0); gap: 10px;';
-
-      const info = document.createElement('div');
-      info.className = 'member-info';
-      info.style.cssText = 'flex: 1; text-align: left;';
-
-      const name = document.createElement('div');
-      name.className = 'member-name';
-      name.style.cssText = 'font-weight: 600; color: var(--text-ui, #0f172a);';
-      name.textContent = member.nomeExibicao || member.nome || 'Participante';
-
-      const meta = document.createElement('div');
-      meta.className = 'member-meta';
-      meta.style.cssText = 'font-size: 0.8rem; color: var(--muted, #64748b); margin-top: 2px;';
-      meta.textContent = `${member.tipo || 'Participante'} · ${member.identificador || ''}`;
-
-      info.appendChild(name);
-      info.appendChild(meta);
-
-      const actions = document.createElement('div');
-      actions.className = 'member-actions';
-      actions.style.cssText = 'display: flex; gap: 6px; align-items: center;';
-
-      const btnPresence = document.createElement('button');
-      btnPresence.type = 'button';
-      btnPresence.className = 'btn btn-secondary btn-sm';
-      btnPresence.textContent = '✅ Presença';
-      btnPresence.addEventListener('click', () => {
-        markPresenceFromList(member.identificador);
-      });
-
-      const btnCracha = document.createElement('button');
-      btnCracha.type = 'button';
-      btnCracha.className = 'btn btn-outline btn-sm';
-      btnCracha.textContent = '🏷️ Crachá';
-      btnCracha.addEventListener('click', () => {
-        abrirStudioCracha(member);
-      });
-
-      actions.appendChild(btnPresence);
-      actions.appendChild(btnCracha);
-
-      item.appendChild(info);
-      item.appendChild(actions);
-      list.appendChild(item);
-    });
-  }
-
-  async function markPresenceFromList(identifier) {
-    if (!identifier) return;
-
-    getStatusBanner('Registrando presença pela lista...', 'loading');
-    try {
-      let res;
-      if (typeof ApiService.marcarPresencaLista === 'function') {
-        res = await ApiService.marcarPresencaLista(identifier, fiscalSession);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'marcarPresencaLista',
-          identificador: identifier,
-          sessao: fiscalSession
-        });
-      } else {
-        throw new Error('Método de presença não disponível no ApiService.');
-      }
-
-      if (res && res.sucesso) {
-        getStatusBanner(res.mensagem || 'Presença confirmada.', 'success');
-      } else {
-        getStatusBanner((res && res.mensagem) || 'Não foi possível registrar a presença.', 'error');
-      }
-    } catch (err) {
-      console.error(err);
-      getStatusBanner('Erro ao registrar presença.', 'error');
-    }
-  }
-
-  // =========================================================
-  // 8. ENCERRAMENTO DE SESSÃO FISCAL
-  // =========================================================
-
-  async function logoutFiscal() {
-    try {
-      if (fiscalSession && typeof ApiService.logoutFiscal === 'function') {
-        await ApiService.logoutFiscal(fiscalSession);
-      } else if (fiscalSession && typeof ApiService.callAppsScript === 'function') {
-        await ApiService.callAppsScript({
-          acao: 'logoutFiscal',
-          sessao: fiscalSession
-        });
-      }
-    } catch (e) {
-      console.warn('Aviso de logout fiscal:', e);
-    }
-
-    await closeScanner();
-    fiscalSession = '';
-    scanInProgress = false;
-
-    const fiscalArea = document.getElementById('fiscalArea');
-    if (fiscalArea) fiscalArea.classList.add('hidden');
-
-    const locked = document.getElementById('fiscalLocked');
-    if (locked) locked.classList.remove('hidden');
-
-    const eventName = document.getElementById('eventName');
-    if (eventName) eventName.value = '';
-
-    const manualId = document.getElementById('manualIdentifier');
-    if (manualId) manualId.value = '';
-
-    const searchInput = document.getElementById('memberSearch');
-    if (searchInput) searchInput.value = '';
-
-    const memberList = document.getElementById('memberList');
-    if (memberList) {
-      memberList.innerHTML = `
-        <div class="member-list-empty">
-          Digite ao menos dois caracteres para pesquisar participantes.
-        </div>
-      `;
-    }
-
-    clearStatusBanner();
-  }
-
-  return {
-    abrirModalLogin,
-    fecharModalLogin,
-    confirmarLoginModal,
-    openFiscalLogin: abrirModalLogin,
-    saveActiveEvent,
-    startFiscalScanner,
-    submitManualCheckin,
-    scheduleMemberSearch,
-    markPresenceFromList,
-    logoutFiscal,
-    abrirStudioCracha,
-    gerarCrachaDireto,
-    baixarListaPresencaCsv,
-    verificarSaudeRedeIA,
-    abrirModalLoteCrachas,
-    fecharModalLoteCrachas,
-    toggleMembroLote,
-    atualizarNomeLote,
-    atualizarTipoLote,
-    carregarFotoLote,
-    marcarTodosLote,
-    filtrarTabelaLote,
-    executarImpressaoLoteA4,
-    imprimirCrachasSelecionados: abrirModalLoteCrachas
-  };
+  window.FiscalEngine = { init: init };
 })();
-
-// Declarações globais para suportar chamadas inline no HTML
-window.FiscalEngine = FiscalEngine;
-window.saveActiveEvent = FiscalEngine.saveActiveEvent;
-window.startFiscalScanner = FiscalEngine.startFiscalScanner;
-window.submitManualCheckin = FiscalEngine.submitManualCheckin;
-window.scheduleMemberSearch = FiscalEngine.scheduleMemberSearch;
-window.logoutFiscal = FiscalEngine.logoutFiscal;
-window.gerarCrachaDireto = FiscalEngine.gerarCrachaDireto;
-window.abrirStudioCracha = FiscalEngine.abrirStudioCracha;
-window.verificarSaudeRedeIA = FiscalEngine.verificarSaudeRedeIA;
-window.abrirModalLoteCrachas = FiscalEngine.abrirModalLoteCrachas;
-window.fecharModalLoteCrachas = FiscalEngine.fecharModalLoteCrachas;
