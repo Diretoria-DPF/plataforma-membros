@@ -49,20 +49,40 @@ jobs:
         working-directory: worker
         run: npm test
 
-      - name: Confere se o token da Cloudflare foi cadastrado
+      # Aceita o token colado com quebra de linha, espaços, aspas ou até o
+      # comando de teste "curl ... Bearer <token>" que a Cloudflare mostra
+      # junto: extrai só o token (a 1ª execução falhou com "invalid header
+      # value" por causa de uma quebra de linha no segredo). O valor limpo é
+      # mascarado antes de ir para o ambiente dos passos seguintes.
+      - name: Confere o token da Cloudflare
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          RAW_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+          if [ -z "$RAW_TOKEN" ]; then
             echo "::error::Falta o segredo CLOUDFLARE_API_TOKEN (Settings → Secrets and variables → Actions). Ver docs/DEPLOYMENT.md."
             exit 1
+          fi
+          TOKEN=$(printf '%s' "$RAW_TOKEN" | tr -d "\"'\r" | tr -s '[:space:]' '\n' | grep -E '^[A-Za-z0-9_-]{35,80}$' | head -n1 || true)
+          if [ -z "$TOKEN" ]; then
+            echo "::error::O segredo CLOUDFLARE_API_TOKEN não contém um token válido. Cole só o token (uma linha, ~40 caracteres) copiado da Cloudflare."
+            exit 1
+          fi
+          echo "::add-mask::$TOKEN"
+          STATUS=$(curl -s -o /tmp/verify.json -w '%{http_code}' -H "Authorization: Bearer $TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify || true)
+          if [ "$STATUS" != "200" ] || ! grep -Eq '"status" *: *"active"' /tmp/verify.json; then
+            echo "::error::A Cloudflare recusou o token (HTTP $STATUS). Crie um novo com o modelo \"Edit Cloudflare Workers\" e salve de novo o segredo CLOUDFLARE_API_TOKEN."
+            exit 1
+          fi
+          echo "Token da Cloudflare válido e ativo."
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          ACCOUNT_ID=$(printf '%s' "$RAW_ACCOUNT_ID" | tr -d "\"'[:space:]")
+          if [ -n "$ACCOUNT_ID" ]; then
+            echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
           fi
 
       - name: Publica a Worker (inclui o Cron Trigger da faxina diária)
         working-directory: worker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler deploy
 
       # Lido do segredo do GitHub e enviado por stdin: o valor nunca aparece
@@ -70,12 +90,10 @@ jobs:
       - name: Atualiza o segredo GROQ_API_KEYS da Worker
         working-directory: worker
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GROQ_API_KEYS: ${{ secrets.GROQ_API_KEYS }}
         run: |
           if [ -z "$GROQ_API_KEYS" ]; then
             echo "GROQ_API_KEYS não cadastrado no GitHub — mantendo o segredo que já estiver na Cloudflare."
             exit 0
           fi
-          printf '%s' "$GROQ_API_KEYS" | npx wrangler secret put GROQ_API_KEYS
+          printf '%s' "$GROQ_API_KEYS" | tr -d '\r' | npx wrangler secret put GROQ_API_KEYS
