@@ -956,15 +956,17 @@ console.log(
           return;
         }
 
-        // ─── Tentativa: LOCAL ─────────────────────────────────────────
+        // ─── Tentativa: jsDelivr ──────────────────────────────────────
+        // (a antiga cópia local em vendor/rdkit/ era uma página HTML salva
+        // por engano, não a biblioteca — sempre falhava; foi removida)
         Promise.race([
-          initFn({ locateFile: function (f) { return 'vendor/rdkit/' + f; } }),
+          initFn({ locateFile: function (f) { return 'https://cdn.jsdelivr.net/npm/@rdkit/rdkit/dist/' + f; } }),
           timeoutCurto(15000)
         ])
           .then(function (mod) {
             if (mod && typeof mod.get_mol === 'function') {
               STATE.RDKitModuleInstance = mod;
-              console.log('[RDKit] ✅ Carregado localmente');
+              console.log('[RDKit] ✅ Carregado via jsDelivr');
               mostrarNotificacao('✅ RDKit ativo', 'success', 2000);
               clearTimeout(timeoutGlobal);
               terminar(mod);
@@ -973,7 +975,7 @@ console.log(
             }
           })
           .catch(function (errLocal) {
-            console.warn('[RDKit] Local falhou:', errLocal.message);
+            console.warn('[RDKit] jsDelivr falhou:', errLocal.message);
 
             if (typeof window.initRDKitModule !== 'function') {
               console.warn('[RDKit] ❌ initRDKitModule desapareceu antes do CDN');
@@ -983,7 +985,7 @@ console.log(
               return;
             }
 
-            // ─── Tentativa: CDN ───────────────────────────────────────
+            // ─── Tentativa: unpkg ─────────────────────────────────────
             Promise.race([
               window.initRDKitModule({ locateFile: function (f) { return 'https://unpkg.com/@rdkit/rdkit/dist/' + f; } }),
               timeoutCurto(15000)
