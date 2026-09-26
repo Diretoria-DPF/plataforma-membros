@@ -276,9 +276,18 @@
                 <div class="learn-stat"><strong id="learn-stat-accuracy">—</strong><span>Aproveitamento geral</span></div>
                 <div class="learn-stat"><strong id="learn-stat-answered">—</strong><span>Questões resolvidas</span></div>
                 <div class="learn-stat"><strong id="learn-stat-sims">—</strong><span>Simulados concluídos</span></div>
+                <div class="learn-stat"><strong id="learn-stat-cases">—</strong><span>Casos clínicos</span></div>
+                <div class="learn-stat"><strong id="learn-stat-lab">—</strong><span>Formulações</span></div>
               </div>
               <div id="learn-status" class="status-msg" role="status" aria-live="polite"></div>
               <button type="button" class="secondary" id="btn-learn-credential" style="width:auto;">Minha credencial (QR de presença)</button>
+            </div>
+            <!-- Fase 2 — desempenho por módulo e conquistas (calculados na Worker; montados por learning.js). -->
+            <div class="card learn-progress hidden" id="learn-progress">
+              <h3>Desempenho por módulo</h3>
+              <div id="learn-by-module" class="learn-by-module"></div>
+              <h3>Conquistas</h3>
+              <ul id="learn-badges" class="learn-badges"></ul>
             </div>
             <div class="learn-grid" id="learn-modules"></div>
           </div>
@@ -640,7 +649,7 @@
         <section id="panel-admin-fiscal" class="hidden">
           <div class="card">
             <h2>Terminal fiscal</h2>
-            <p class="muted">Check-in por QR Code, lista de presença e crachás. Ainda usa o backend do Apps Script, que pede a senha fiscal própria até a migração para a plataforma.</p>
+            <p class="muted">Check-in por QR Code, presença manual ou pela lista, exportação em CSV e crachás. Presenças gravadas nos eventos da plataforma; acesso exclusivo de administradores.</p>
           </div>
           <div id="admin-fiscal-frame-wrap" class="learn-viewer"></div>
         </section>
@@ -705,7 +714,7 @@
       <h3 id="modal-learn-credential-title">Sua credencial LAIFT</h3>
       <img id="learn-credential-qr" class="learn-credential-qr" alt="QR Code de presença">
       <p><strong id="learn-credential-name"></strong><br><span id="learn-credential-email" class="muted"></span></p>
-      <p class="muted" style="font-size:13px;">Apresente na portaria para registrar presença em eventos.</p>
+      <p class="muted" style="font-size:13px;" id="learn-credential-note">Apresente na portaria para registrar presença em eventos.</p>
       <div class="modal-actions" style="justify-content:center;">
         <button type="button" class="secondary" id="learn-credential-close">Fechar</button>
       </div>
