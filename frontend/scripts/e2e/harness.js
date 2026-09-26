@@ -79,6 +79,9 @@ function defaultWorkerReply(action, args, ctx) {
         success: true,
         metrics: { eventsCount: 0, tasksCount: 0, tasksCompletedCount: 0, proposalsCount: 0, votesCount: 0, feedbackCount: 0 },
       };
+    case 'apiLearnGetMyAttendanceQr':
+      // Formato v2 (Fase 2) — assinatura fictícia, só precisa ter a forma certa.
+      return { success: true, qrPayload: 'LAIFT:v2:00000000-0000-4000-8000-000000000000.AAAAAAAAAAAAAAAAAAAAAAAA' };
     case 'apiAdminDashboard':
       return {
         success: true,
