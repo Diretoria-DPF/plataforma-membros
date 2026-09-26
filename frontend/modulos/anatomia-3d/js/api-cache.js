@@ -258,13 +258,18 @@ const ApiCache = (() => {
 
       const data = await res.json();
       const props = data.PropertyTable.Properties[0];
+      // CanonicalSMILES segue aceito como alias na requisição, mas desde 2025
+      // o PubChem devolve a propriedade como ConnectivitySMILES (ou SMILES).
+      const smiles = props.CanonicalSMILES || props.ConnectivitySMILES || props.SMILES || props.IsomericSMILES || "N/D";
 
       const novoProtocolo = {
         id: `composto_${Date.now()}`,
         nome: termo.charAt(0).toUpperCase() + termo.slice(1),
         icone: "🔬",
         viaMetabolica: "Metabolismo & Farmacocinética Exógena",
-        mecanismoAcao: `Massa Molecular: ${props.MolecularWeight} g/mol | XLogP: ${props.XLogP || "N/D"}.<br>SMILES: <span style="font-family:monospace; font-size:0.7rem;">${props.CanonicalSMILES}</span>`,
+        // Texto puro: renderBiohackingCards (app.js) mostra este campo via
+        // html``, que escapa marcação — tags aqui apareceriam literalmente.
+        mecanismoAcao: `Massa Molecular: ${props.MolecularWeight} g/mol | XLogP: ${props.XLogP || "N/D"}. SMILES: ${smiles}`,
         tags: ["PubChem Backup", "Princípio Ativo"],
         cofatores: [],
         sistema: "digestorio",

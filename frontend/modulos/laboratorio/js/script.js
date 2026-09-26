@@ -718,13 +718,21 @@
 
   async function consultarDadosPubChem(termo) {
     try {
+      // CanonicalSMILES segue aceito como alias no pedido, mas desde 2025 o
+      // PubChem devolve a propriedade como ConnectivitySMILES (ou SMILES).
       const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(termo.trim())}/property/MolecularWeight,MolecularFormula,CanonicalSMILES,IUPACName/JSON`;
       const resp = await fetch(url);
       if (!resp.ok) return null;
       const data = await resp.json();
       const p = data?.PropertyTable?.Properties?.[0];
       if (p) {
-        return { cid: p.CID, formula: p.MolecularFormula, molarMass: p.MolecularWeight, smiles: p.CanonicalSMILES, iupac: p.IUPACName };
+        return {
+          cid: p.CID,
+          formula: p.MolecularFormula,
+          molarMass: p.MolecularWeight, // pode vir como string; só é exibido, nunca usado em cálculo aqui
+          smiles: p.CanonicalSMILES || p.ConnectivitySMILES || p.SMILES || p.IsomericSMILES || null,
+          iupac: p.IUPACName
+        };
       }
     } catch (e) {
       console.warn('[PubChem] Falha na consulta:', e);

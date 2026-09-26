@@ -73,11 +73,18 @@
   // studio.js já esperava de window.__rdkitReady.
   //
   // O RDKit (build Emscripten/embind) monta funções com `new Function` ao
-  // inicializar, então só roda se a CSP da página permitir 'unsafe-eval'
-  // (além de 'wasm-unsafe-eval' e do jsDelivr em connect-src, para o .wasm).
-  // A CSP do Estúdio NÃO permite (Fase 4, Onda 2 — docs/SECURITY.md): aí o
-  // RDKit nem é baixado e o Estúdio usa as estimativas heurísticas que já
-  // tinha para quando o RDKit falha. Liberar o RDKit é só mudar a CSP.
+  // inicializar — inclusive só para compilar o próprio .wasm — então exige
+  // 'unsafe-eval' na CSP da página. Testado empiricamente (Playwright +
+  // Chromium, espelho local do pacote npm): com só 'wasm-unsafe-eval' a
+  // inicialização quebra ("Refused to evaluate a string as JavaScript");
+  // só 'unsafe-eval' sozinho já basta (cobre a compilação do wasm também) —
+  // é o mínimo que funciona, e é o que a CSP do Estúdio agora libera (Fase
+  // 4, Onda 3 — docs/SECURITY.md), com cdn.jsdelivr.net também em
+  // connect-src para o fetch do .wasm (locateFile abaixo/em studio.js).
+  // Esta função continua checando a CSP em runtime (em vez de assumir que
+  // 'unsafe-eval' está ligado) como cinto-e-suspensório: se algum dia a
+  // política desta página voltar a ficar mais restrita, o RDKit degrada
+  // sozinho para as estimativas heurísticas em vez de estourar em erro.
   function cspPermiteEval() {
     var meta = global.document.querySelector('meta[http-equiv="Content-Security-Policy"]');
     if (!meta) return true;

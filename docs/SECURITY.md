@@ -107,8 +107,8 @@ Por página:
 | `modulos/fiscal` | `'self'` jsDelivr | `'self'` | `'self'` data: blob: | frame `'self'`; worker `'none'`; media `'self'` blob: (câmera) |
 | `modulos/cracha` | `'self'` | `'self'` | `'self'` data: blob: https: (foto por URL) | frame `'self'`; worker `'none'` |
 | `modulos/laboratorio` | `'self'` jsDelivr | `'self'` pubchem cactus.nci.nih.gov query.wikidata.org www.ebi.ac.uk | `'self'` pubchem cactus data: blob: | frame `'self'`; worker `'none'` |
-| `modulos/laboratorio/studio` | `'self'` jsDelivr | como o laboratório | `'self'` data: blob: | frame `'self'`; worker `'self'` blob: (3Dmol) |
-| `modulos/anatomia-3d` | `'self'` jsDelivr | `'self'` blob: files.rcsb.org pubchem apps.humanatlas.io purl.humanatlas.io 3d.nih.gov | `'self'` data: blob: | frame `'self'`; worker `'self'` blob: (3Dmol) |
+| `modulos/laboratorio/studio` | `'self'` jsDelivr `'unsafe-eval'` (só aqui — RDKit, ver "Decisões") | como o laboratório + jsDelivr (fetch do .wasm do RDKit) | `'self'` data: blob: | frame `'self'`; worker `'self'` blob: (3Dmol) |
+| `modulos/anatomia-3d` | `'self'` jsDelivr `'wasm-unsafe-eval'` (só aqui, além do Estúdio — ver "Decisões") | `'self'` blob: files.rcsb.org pubchem apps.humanatlas.io purl.humanatlas.io 3d.nih.gov | `'self'` data: blob: | frame `'self'`; worker `'self'` blob: (DRACOLoader, 3Dmol) |
 
 "jsDelivr" é `https://cdn.jsdelivr.net`. Aparece só nas páginas que
 carregam biblioteca de lá, e toda biblioteca tem `integrity` (SRI) e
@@ -125,8 +125,10 @@ Os módulos chamam a Worker **pela ponte** (`LaiftApi.call` →
 `connect-src` deles não inclui a Worker.
 
 Decisões:
-- **Sem `'unsafe-inline'` e sem `'unsafe-eval'` em `script-src`**, em todas
-  as páginas. Conferido no **build** publicado (`frontend/dist/`),
+- **Sem `'unsafe-inline'` em `script-src`, em todas as páginas.** Sem
+  `'unsafe-eval'`/`'wasm-unsafe-eval'` também, em todas **exceto o Estúdio e
+  o Atlas de Anatomia** (duas exceções únicas e documentadas abaixo).
+  Conferido no **build** publicado (`frontend/dist/`),
   incluindo o `app.js` ofuscado: o javascript-obfuscator não usa `eval` nem
   `new Function` com as opções do `scripts/build.js`.
 - **`style-src 'unsafe-inline'` fica, por justificativa.** Ainda há
@@ -136,11 +138,50 @@ Decisões:
   vazamento por CSS (seletor de atributo), sem alvo útil aqui, porque o
   token não fica em atributo do DOM. A clínica já não tem nenhum `style=`
   (tudo em classes com tokens). Remover o restante é trabalho futuro.
-- **RDKit (WASM) fica desligado.** O embind do RDKit usa `new Function` e
-  exigiria `'unsafe-eval'` e `'wasm-unsafe-eval'` no estúdio. O
-  `studio-loader.js` lê a CSP da página e não carrega o RDKit. O estúdio
-  mostra descritores estimados e avisa que a similaridade exata está
-  desligada pela política de segurança.
+- **RDKit (WASM) religado no Estúdio (Fase 4, Onda 3), com `'unsafe-eval'`
+  como exceção única e confinada a essa página.** O embind do RDKit monta
+  funções com `new Function` ao inicializar — inclusive só para compilar o
+  próprio `.wasm` — e isso foi testado empiricamente (Playwright + Chromium,
+  arquivo real do pacote npm): com só `'wasm-unsafe-eval'` a inicialização
+  quebra ("Refused to evaluate a string as JavaScript"); com `'unsafe-eval'`
+  ela funciona (e já cobre a compilação do wasm, sem precisar somar
+  `'wasm-unsafe-eval'`) — é o mínimo que funciona. `connect-src` do Estúdio
+  também ganhou `cdn.jsdelivr.net`, porque o `.wasm` é buscado por
+  `fetch`/`instantiateStreaming` (`locateFile` em `studio.js`), não por
+  `<script src>`. `studio-loader.js` continua lendo a CSP em runtime
+  (`cspPermiteEval`) e só carrega o RDKit se ela permitir — cinto e
+  suspensório: se a política desta página endurecer de novo, o Estúdio
+  degrada sozinho para as estimativas heurísticas em vez de quebrar.
+  **Trade-off aceito:** `'unsafe-eval'` fica confinado à página do Estúdio,
+  que só fala com APIs públicas de química (PubChem, CACTUS, Wikidata, EBI)
+  e com o próprio jsDelivr — nenhuma outra página da plataforma ganha essa
+  permissão, e o `csp.e2e.js` falha se ela vazar para qualquer outra.
+  `'unsafe-inline'` continua proibido também no Estúdio.
+- **Atlas de Anatomia real (`modulos/anatomia-3d`, corpo humano completo em
+  `models/body.glb`, 826 malhas), com `'wasm-unsafe-eval'` como segunda
+  exceção única, confinada a essa página.** O modelo é exportado do Blender
+  com `KHR_draco_mesh_compression` (extensão obrigatória — sem decodificar,
+  o GLTFLoader recusa o arquivo inteiro); o decodificador Draco
+  (`vendor/draco/`, vendorizado do pacote npm `three@0.128.0`, não do
+  jsDelivr) roda num Worker `blob:` que só faz `WebAssembly.instantiate()`
+  do `.wasm` — sem `new Function`/`eval` (confirmado lendo o código do
+  decodificador). Testado empiricamente (Playwright + Chromium, arquivo real
+  do pacote npm): **sem** nenhuma palavra-chave o navegador recusa compilar
+  o wasm (`CompileError: ... 'unsafe-eval' is not an allowed source`); com
+  **só** `'wasm-unsafe-eval'` (sem `'unsafe-eval'`) o modelo carrega e
+  decodifica as 826 malhas normalmente, com zero violação de CSP — é o
+  mínimo que funciona, mais restrito que a exceção do Estúdio porque o
+  decodificador Draco não precisa de `eval`/`new Function` de verdade,
+  só de compilar wasm. **Trade-off aceito:** igual ao do Estúdio — confinado
+  a essa única página, que já fala com APIs públicas de anatomia/química
+  (RCSB, PubChem, Human Atlas) e o jsDelivr; `csp.e2e.js` falha se essa
+  exceção vazar para qualquer outra página, e falha também se o Atlas usar
+  `'unsafe-eval'` (só `'wasm-unsafe-eval'` é permitido ali). `'unsafe-inline'`
+  continua proibido também no Atlas. Ver `atlas.e2e.js` para o teste
+  funcional do modelo real (contagem de malhas, seleção por sistema/camada,
+  clique mostrando nome+descrição) e o comentário no topo de
+  `three-engine.js` para o que o `body.glb` de fato contém (só esqueleto +
+  músculos + estruturas articulares — sem vísceras/vasos/nervos/pele).
 - `frame-ancestors` **não funciona em `<meta>`**. Proteção contra
   clickjacking exigiria cabeçalho HTTP, que o GitHub Pages não oferece
   (risco aceito abaixo).
@@ -148,7 +189,12 @@ Decisões:
   pop-ups (dossiê e crachá), as páginas estáticas e o painel admin
   (gráficos, fiscal, IA). Ele usa as bibliotecas reais servidas por um
   espelho npm local. **Falha em qualquer `securitypolicyviolation`** em
-  qualquer frame, e confere que o SRI de cada biblioteca foi aceito.
+  qualquer frame, confere que o SRI de cada biblioteca foi aceito, e checa
+  estaticamente que `'unsafe-eval'`/`'wasm-unsafe-eval'` só aparecem nas
+  páginas do Estúdio e do Atlas de Anatomia (em nenhuma outra, e o Atlas só
+  pode ter `'wasm-unsafe-eval'`, nunca `'unsafe-eval'`) e que `'unsafe-inline'` não aparece
+  em nenhuma. O E2E `rdkit.e2e.js` prova a inicialização completa do RDKit
+  sob essa CSP (`get_mol`/`get_descriptors` de verdade, não só o loader).
 
 ### Autorização
 - Toda ação sensível chama `S.requireRole(identity, [...])` **no
@@ -308,8 +354,17 @@ Não substitui WAF ou CAPTCHA.
      resposta daquele termo;
    - **termos do Groq para o rodízio entre várias contas gratuitas:
      pendente de confirmação pelo responsável.**
-9. **RDKit desligado no estúdio** (ver CSP): descritores estimados em vez
-   de calculados, e sem similaridade exata.
+9. **`'unsafe-eval'` no Estúdio** (ver CSP): risco confinado a essa única
+   página, que só fala com APIs públicas de química e o jsDelivr — não com
+   a Worker nem com dados de sessão. Um XSS ali (por exemplo, um SMILES
+   hostil que escapasse do parser) teria mais margem para rodar código
+   arbitrário do que nas demais páginas, que não permitem `eval`.
+10. **`'wasm-unsafe-eval'` no Atlas de Anatomia** (ver CSP): mais restrito
+    que a exceção do Estúdio (não é `'unsafe-eval'`, só a compilação de
+    módulos WebAssembly), confinado à página do Atlas, que só fala com APIs
+    públicas de anatomia/química e o jsDelivr. Um XSS ali ganharia a
+    capacidade de compilar/rodar WebAssembly arbitrário (não `eval`/
+    `new Function` de string), um risco menor que o do Estúdio.
 
 ## Rotação de credenciais
 

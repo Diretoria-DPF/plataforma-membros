@@ -50,14 +50,25 @@
         var controller = new AbortController();
         var timer = setTimeout(function () { controller.abort(); }, OPENFDA_TIMEOUT_MS);
         try {
-            var url = OPENFDA_SEARCH_URL + '?search=openfda.generic_name:"' + encodeURIComponent(queryTerm) + '"&limit=1';
+            // URLSearchParams cuida da codificação (aspas, dois-pontos e espaços) —
+            // o campo é uma frase exata entre aspas, então o termo nunca deve levar
+            // aspas próprias.
+            var params = new URLSearchParams({
+                search: 'openfda.generic_name:"' + String(queryTerm).replace(/"/g, '') + '"',
+                limit: '1'
+            });
+            var url = OPENFDA_SEARCH_URL + '?' + params.toString();
             var res = await fetch(url, { signal: controller.signal });
+            // OpenFDA responde 404 com {error:{code:"NOT_FOUND"}} quando não há
+            // resultado para a busca — trata como "sem dado", não como falha.
             if (!res.ok) return null;
             var data = await res.json();
             if (!data.results || !data.results.length) return null;
             var record = data.results[0];
+            // boxed_warning/warnings/warnings_and_cautions/overdosage vêm sempre
+            // como array de strings (uma por seção da bula, quando existe).
             var pick = function (field) { return Array.isArray(record[field]) && typeof record[field][0] === 'string' ? record[field][0] : null; };
-            return pick('boxed_warning') || pick('overdosage') || pick('warnings') || null;
+            return pick('boxed_warning') || pick('overdosage') || pick('warnings') || pick('warnings_and_cautions') || null;
         } catch (e) {
             return null;
         } finally {

@@ -4,26 +4,88 @@
  */
 const QuizAPIEngine = {
 
+  // Dicionário de normalização (Português -> Inglês) usado só para o RxNav: o
+  // RxNorm indexa nomenclatura em inglês. PubChem e ChEBI já resolvem sinônimos
+  // em português diretamente, então mantêm o nome original (não normalizar aqui
+  // evita perder o nome exibido/consultado nas outras duas bases).
+  TERMOS_INTERNACIONAIS: {
+    'aspirina': 'aspirin',
+    'ácido acetilsalicílico': 'aspirin',
+    'acido acetilsalicilico': 'aspirin',
+    'paracetamol': 'acetaminophen',
+    'acetaminofeno': 'acetaminophen',
+    'dipirona': 'metamizole',
+    'metamizol': 'metamizole',
+    'ibuprofeno': 'ibuprofen',
+    'diclofenaco': 'diclofenac',
+    'omeprazol': 'omeprazole',
+    'losartana': 'losartan',
+    'metformina': 'metformin',
+    'sinvastatina': 'simvastatin',
+    'atorvastatina': 'atorvastatin',
+    'amoxicilina': 'amoxicillin',
+    'varfarina': 'warfarin',
+    'digoxina': 'digoxin',
+    'fenitoína': 'phenytoin',
+    'fenitoina': 'phenytoin',
+    'furosemida': 'furosemide',
+    'hidroclorotiazida': 'hydrochlorothiazide'
+  },
+
+  /** Normaliza o nome do fármaco para o termo em inglês exigido pelo RxNav/RxNorm */
+  normalizarNome(termo) {
+    if (!termo) return '';
+    const chave = termo.trim().toLowerCase();
+    return this.TERMOS_INTERNACIONAIS[chave] || termo.trim();
+  },
+
+  /** fetch com timeout — RxNav/PubChem/EBI às vezes demoram alguns segundos para responder */
+  async fetchComTimeout(url, options = {}, timeoutMs = 6000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
+  },
+
   // 1. RxNav / RxClass: Busca Classe Terapêutica (ATC) e Mecanismo de Ação (MoA)
   async buscarPerfilFarmacologico(nomeFarmaco) {
+    const termoIngles = this.normalizarNome(nomeFarmaco);
     try {
-      // Passo A: Obter o identificador RxCUI
-      const urlRxcui = `https://rxnav.nlm.nih.gov/REST/rxcui.json?name=${encodeURIComponent(nomeFarmaco.trim())}`;
-      const resRxcui = await fetch(urlRxcui);
-      if (!resRxcui.ok) return null;
-      const dataRxcui = await resRxcui.json();
-      const rxcui = dataRxcui?.idGroup?.rxnormId?.[0];
+      // Passo A: Obter o identificador RxCUI (nome exato)
+      const urlRxcui = `https://rxnav.nlm.nih.gov/REST/rxcui.json?name=${encodeURIComponent(termoIngles)}`;
+      const resRxcui = await this.fetchComTimeout(urlRxcui);
+      let rxcui = null;
+      if (resRxcui.ok) {
+        const dataRxcui = await resRxcui.json();
+        rxcui = dataRxcui?.idGroup?.rxnormId?.[0] || null;
+      }
+
+      // Passo A2: Sem correspondência exata — tenta o termo aproximado (grafias/variações)
+      if (!rxcui) {
+        const urlApprox = `https://rxnav.nlm.nih.gov/REST/approximateTerm.json?term=${encodeURIComponent(termoIngles)}&maxEntries=1`;
+        const resApprox = await this.fetchComTimeout(urlApprox);
+        if (resApprox.ok) {
+          const dataApprox = await resApprox.json();
+          rxcui = dataApprox?.approximateGroup?.candidate?.[0]?.rxcui || null;
+        }
+      }
+
       if (!rxcui) return null;
 
       // Passo B: Buscar classes associadas na RxClass (ATC e Mecanismo de Ação)
-      const urlClasses = `https://rxnav.nlm.nih.gov/REST/rxclass/class/byRxcui.json?rxcui=${rxcui}&relaSource=ATC`;
-      const resClasses = await fetch(urlClasses);
+      const urlClasses = `https://rxnav.nlm.nih.gov/REST/rxclass/class/byRxcui.json?rxcui=${encodeURIComponent(rxcui)}&relaSource=ATC`;
+      const resClasses = await this.fetchComTimeout(urlClasses);
       let classesEncontradas = [];
-      
+
       if (resClasses.ok) {
         const dataClasses = await resClasses.json();
         const lista = dataClasses?.rxclassDrugInfoList?.rxclassDrugInfo || [];
-        classesEncontradas = lista.map(item => item.rxclassMinConceptItem.className);
+        classesEncontradas = lista
+          .map(item => item?.rxclassMinConceptItem?.className)
+          .filter(Boolean);
       }
 
       return {
@@ -39,14 +101,17 @@ const QuizAPIEngine = {
   // 2. PubChem: Extração de Estrutura para Projeção Molecular 2D
   async buscarEstruturaMolecular(nomeFarmaco) {
     try {
+      // CanonicalSMILES/IsomericSMILES seguem aceitos como alias na requisição,
+      // mas desde 2025 o PubChem devolve as propriedades como ConnectivitySMILES/SMILES.
+      // PubChem resolve sinônimos em português diretamente — não precisa normalizar.
       const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(nomeFarmaco.trim())}/property/CanonicalSMILES,MolecularWeight,MolecularFormula,IUPACName/JSON`;
-      const res = await fetch(url);
+      const res = await this.fetchComTimeout(url);
       if (!res.ok) return null;
       const data = await res.json();
       const prop = data?.PropertyTable?.Properties?.[0];
 
       return prop ? {
-        smiles: prop.CanonicalSMILES,
+        smiles: prop.CanonicalSMILES || prop.ConnectivitySMILES || prop.SMILES || prop.IsomericSMILES || null,
         pesoMolecular: prop.MolecularWeight,
         formula: prop.MolecularFormula,
         iupac: prop.IUPACName,
@@ -62,15 +127,19 @@ const QuizAPIEngine = {
   async buscarDefinicaoBiologica(nomeFarmaco) {
     try {
       const url = `https://www.ebi.ac.uk/ebisearch/ws/rest/chebi?query=${encodeURIComponent(nomeFarmaco.trim())}&format=json&fields=name,definition`;
-      const res = await fetch(url);
+      const res = await this.fetchComTimeout(url);
       if (!res.ok) return null;
       const data = await res.json();
       const hit = data?.entries?.[0];
+      if (!hit) return null;
 
-      return hit ? {
+      const defBruta = hit.fields?.definition?.[0] || '';
+      const defFormatada = defBruta.replace(/<[^>]*>?/gm, '').trim();
+
+      return {
         chebiId: hit.id,
-        definicao: hit.fields?.definition?.[0] || null
-      } : null;
+        definicao: defFormatada || null
+      };
     } catch (e) {
       console.warn('[Quiz API] ChEBI indisponível:', e);
       return null;

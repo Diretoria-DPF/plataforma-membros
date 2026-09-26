@@ -311,7 +311,15 @@
 
   function callApi(fnName) {
     var args = Array.prototype.slice.call(arguments, 1);
-    return api.apply(null, [fnName].concat(args)).catch(function (err) {
+    return api.apply(null, [fnName].concat(args)).then(function (res) {
+      // Uma chamada que chegou e voltou (mesmo com success:false por regra de
+      // negócio, ex.: validação) prova que a comunicação com o servidor está
+      // OK — sem isto, um único soluço de rede deixava o banner "Sistema
+      // indisponível" preso na tela pelo resto da sessão, mesmo com tudo
+      // voltando a funcionar normalmente logo em seguida.
+      showSystemUnavailable(false);
+      return res;
+    }, function (err) {
       showSystemUnavailable(true);
       return { success: false, message: (err && err.message) || 'Falha de comunicação com o servidor.', networkUnavailable: true };
     });
