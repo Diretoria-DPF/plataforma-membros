@@ -284,9 +284,44 @@ module.exports = async function fase4() {
     check(badge.qr, 'QR do crachá é gerado localmente (sem CDN)');
     await popup.close();
 
+    // ---- Hub: foco vai para "← Módulos" ao abrir e volta ao cartão ao sair ----
+    await app.showPanel('panel-learn');
+    await app.page.focus('.learn-card[data-module="toxico"]');
+    await app.page.keyboard.press('Enter');
+    await app.page.waitForSelector('.learn-frame:not(.hidden)');
+    const focusIn = await app.page.evaluate(() => document.activeElement && document.activeElement.id);
+    await app.page.keyboard.press('Enter');
+    const focusBack = await app.page.evaluate(() => document.activeElement && document.activeElement.getAttribute('data-module'));
+    check(focusIn === 'learn-back' && focusBack === 'toxico', 'hub: foco vai para "← Módulos" ao abrir um módulo e volta ao cartão ao fechar');
+
     const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
     check(realErrors.length === 0, 'sem erros de JavaScript nas páginas' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));
   } finally {
     await app.close();
+  }
+
+  // ---- Terminal fiscal no celular: o fim não fica atrás da barra inferior ----
+  const admin = await startApp({ role: 'admin', viewport: { width: 360, height: 740 } });
+  try {
+    await admin.login();
+    await admin.page.click('#btn-enter-admin-mode');
+    await admin.showPanel('panel-admin-fiscal');
+    const el = await admin.page.waitForSelector('#admin-fiscal-frame-wrap iframe');
+    const frame = await el.contentFrame();
+    await frame.waitForSelector('#printBadges', { state: 'attached' });
+    await admin.page.waitForTimeout(500);
+    await admin.page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await admin.page.waitForTimeout(200);
+    const geo = await admin.page.evaluate(() => {
+      const f = document.querySelector('#admin-fiscal-frame-wrap iframe').getBoundingClientRect();
+      const nav = document.querySelector('.bottom-nav').getBoundingClientRect();
+      return { frameBottom: Math.round(f.bottom), navTop: Math.round(nav.top), sw: document.documentElement.scrollWidth, iw: innerWidth };
+    });
+    const inner = await frame.evaluate(() => ({ sh: document.documentElement.scrollHeight, ih: innerHeight }));
+    check(geo.frameBottom <= geo.navTop && inner.sh <= inner.ih + 1,
+      `fiscal no celular: iframe na altura do conteúdo, fim acima da barra inferior (${geo.frameBottom} ≤ ${geo.navTop})`);
+    check(geo.sw <= geo.iw + 1, 'fiscal no celular sem rolagem horizontal');
+  } finally {
+    await admin.close();
   }
 };

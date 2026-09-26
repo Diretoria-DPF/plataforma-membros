@@ -62,6 +62,7 @@
   // 3D) enquanto a pessoa navega pela plataforma, como no hub antigo.
   var frames = {};
   var activeModuleId = null;
+  var openerCard = null; // cartão que abriu o módulo (o foco volta para ele)
   var hubRendered = false;
   var statsRequestId = 0;
 
@@ -160,9 +161,13 @@
     var A = app();
     if (!A || typeof A.callLearningApi !== 'function') return;
     var requestId = ++statsRequestId;
+    var statsBox = document.querySelector('#learn-hub .learn-stats');
+    // Estado "carregando" visível (os números pulsam) e anunciado.
+    if (statsBox) statsBox.setAttribute('aria-busy', 'true');
     A.setStatus('learn-status', 'Carregando seu desempenho...', 'info');
     A.callLearningApi('apiLearnGetMyStats').then(function (res) {
       if (requestId !== statsRequestId) return;
+      if (statsBox) statsBox.removeAttribute('aria-busy');
       if (!res || !res.success || !res.stats) {
         A.setStatus('learn-status', (res && res.message) || 'Não foi possível carregar seu desempenho agora. Os módulos continuam disponíveis.', 'error');
         return;
@@ -204,12 +209,16 @@
     var mod = findModule(id);
     if (!mod) return;
     activeModuleId = id;
+    openerCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.learn-card') : null;
     if (!frames[id]) frames[id] = createFrame($('learn-frames'), mod.path, mod.title);
     Object.keys(frames).forEach(function (key) { frames[key].classList.toggle('hidden', key !== id); });
     $('learn-viewer-title').textContent = mod.icon + ' ' + mod.title;
     $('learn-hub').classList.add('hidden');
     $('learn-viewer').classList.remove('hidden');
     window.scrollTo(0, 0);
+    // Teclado/leitor de tela: o foco vai para "← Módulos" (antes ficava num
+    // cartão que acabou de sumir, e o próximo Tab ia para a barra inferior).
+    $('learn-back').focus({ preventScroll: true });
   }
 
   /** Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). */
@@ -219,6 +228,8 @@
     $('learn-viewer').classList.add('hidden');
     $('learn-hub').classList.remove('hidden');
     app().showPanelSection('panel-learn');
+    if (openerCard && document.contains(openerCard)) openerCard.focus({ preventScroll: true });
+    openerCard = null;
     loadStats();
   }
 
@@ -308,7 +319,32 @@
 
   function loadFiscalPanel() {
     // camera: leitor de QR Code do check-in (html5-qrcode, getUserMedia).
-    if (!fiscalFrame) fiscalFrame = createFrame($('admin-fiscal-frame-wrap'), FISCAL_PATH, 'Terminal fiscal', 'fullscreen; camera');
+    if (!fiscalFrame) {
+      fiscalFrame = createFrame($('admin-fiscal-frame-wrap'), FISCAL_PATH, 'Terminal fiscal', 'fullscreen; camera');
+      fiscalFrame.classList.add('learn-frame-auto');
+      fiscalFrame.addEventListener('load', function () { fitFrameToContent(fiscalFrame); });
+    }
+  }
+
+  /**
+   * O terminal fiscal é uma página de formulário (não um "app" de tela
+   * cheia como o laboratório): o iframe cresce até a altura do conteúdo e
+   * quem rola é a página. Antes a rolagem era DENTRO do iframe, com altura
+   * fixa, e no celular o fim do terminal ficava escondido atrás da barra
+   * inferior fixa (o padding de .app-main só vale para a rolagem da página).
+   */
+  function fitFrameToContent(frame) {
+    var doc;
+    try { doc = frame.contentDocument; } catch (e) { return; }
+    if (!doc || !doc.body) return;
+    var fit = function () {
+      if (!frame.isConnected) return;
+      // + bordas do iframe (box-sizing: border-box na plataforma).
+      var borders = frame.offsetHeight - frame.clientHeight;
+      frame.style.height = Math.max(320, Math.ceil(doc.body.getBoundingClientRect().height) + borders) + 'px';
+    };
+    fit();
+    if (window.ResizeObserver) new window.ResizeObserver(fit).observe(doc.body);
   }
 
   // ===========================================================================

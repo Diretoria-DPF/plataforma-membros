@@ -725,3 +725,35 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
 .ai-table-wrap { max-width: 100%; overflow-x: auto; margin: 8px 0; }
 .ai-case { overflow-wrap: anywhere; }
 .ai-case .ai-case-line { margin: 6px 0 0; font-size: 14px; }
+
+/* ===========================================================================
+   Fase 4, Onda 2 — passe de UX nos painéis Aprender, Fiscal e IA (Equipe 4).
+   Fica no fim porque ajusta classes que as Equipes 2 e 3 criaram acima.
+=========================================================================== */
+/* Seções com vários cartões: espaço entre eles (no painel de IA os cartões
+   encostavam uns nos outros). */
+#panel-admin-ai:not(.hidden), #panel-admin-fiscal:not(.hidden) { display: grid; gap: var(--density-gap); min-width: 0; }
+
+/* Hub: números em 2 colunas no celular (em 3, "Aproveitamento geral"
+   quebrava no meio da palavra) e estado de carregamento visível. */
+@media (max-width: 480px) {
+  .learn-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .learn-stat span { hyphens: manual; overflow-wrap: normal; }
+}
+.learn-stats[aria-busy="true"] strong { animation: learn-pulse 1.2s ease-in-out infinite; }
+@keyframes learn-pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .learn-stats[aria-busy="true"] strong { animation: none; } }
+button.learn-card:focus-visible { outline-offset: 3px; }
+.learn-card-tags .badge { font-weight: 600; }
+
+/* Terminal fiscal: altura do iframe = altura do conteúdo (learning.js); a
+   página rola e o padding de .app-main mantém o fim acima da barra inferior. */
+.learn-frame.learn-frame-auto { min-height: 320px; height: 320px; }
+
+.ai-admin-head { margin-bottom: 8px; }
+/* Painel de IA no celular: título e botão empilham sem espremer. */
+@media (max-width: 480px) {
+  .ai-admin-head button { width: 100%; }
+  .ai-health-summary strong { font-size: 24px; }
+}
+
