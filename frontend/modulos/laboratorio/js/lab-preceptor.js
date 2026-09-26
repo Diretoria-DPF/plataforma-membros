@@ -3,9 +3,21 @@
  * Perfil: Químico Farmacêutico Sênior & Preceptor de Bancada
  * Arquitetura: Cascata em 3 Camadas com Diálogo Contínuo (Padrão Anamnese Clínica)
  * Escopo: Química, Farmácia, Física, Biologia, Bioquímica, Toxicologia e Bancada.
+ *
+ * Fase 3 (docs/FASE_3_IA_CLINICA.md): sem Apps Script. As camadas ficaram:
+ *  1) acervo curado local (ROTAS_SINTESE + data/sinteses-database.js), 0 ms;
+ *  2+3) apiLearnLabPreceptor na Worker, pela ponte window.LaiftApi
+ *     (laift-identity.js). Pedidos de síntese mandam `synthesisTerm` e o
+ *     SERVIDOR consulta/grava o cache compartilhado — o navegador não grava
+ *     mais em cache global nenhum (o antigo salvarCacheGlobal deixava
+ *     qualquer pessoa envenenar a resposta que as outras iam ler).
+ *
+ * As respostas remotas são devolvidas como TEXTO. Enquanto o chat do
+ * laboratório (js/script.js, Equipe 4) ainda insere a resposta com
+ * innerHTML, os sinais < e > da resposta da IA são neutralizados aqui
+ * (textoSeguro) — assim nenhuma tag chega a ser criada, e o texto continua
+ * legível quando o chat passar a usar textContent.
  */
-
-// window.APPS_SCRIPT_GATEWAY é definido em ../shared/laift-identity.js (carregado antes).
 
 const LabPreceptorEngine = {
   // Histórico de conversação contínuo (memória recente para réplicas e tréplicas)
@@ -311,29 +323,28 @@ const LabPreceptorEngine = {
   },
 
   // =========================================================================
-  // 2. DISPARO REMOTO AO APPS SCRIPT (CAMADA 3 — PADRÃO CLÍNICO GROQ)
+  // 2. PRECEPTOR REMOTO NA WORKER (apiLearnLabPreceptor, via LaiftApi)
   // =========================================================================
-  async consultarGroqRemoto(msgUsuario, sys, calcularpH, agitadorAtivo) {
-    const gateway = window.APPS_SCRIPT_GATEWAY;
-    if (!gateway || gateway.includes('SEU_GATEWAY')) {
-      throw new Error('Endpoint do Apps Script não configurado em window.APPS_SCRIPT_GATEWAY.');
-    }
+  MAX_PERGUNTA: 500,
+  MAX_CONTEXTO: 3500,
 
+  montarContextoBancada(sys, calcularpH, agitadorAtivo) {
     const especiesVaso = (sys && sys.especies)
       ? Array.from(sys.especies.entries())
           .filter(([_, q]) => q > 0.01)
-          .map(([esp, q]) => `${esp.replace(/_s|_g|_l|_aq/g, '')} (${q.toFixed(1)} mmol)`)
+          .slice(0, 25)
+          .map(([esp, q]) => `${String(esp).replace(/_s|_g|_l|_aq/g, '')} (${Number(q).toFixed(1)} mmol)`)
           .join(', ') || 'Vidraria limpa / solvente puro'
       : 'Bancada em repouso';
 
-    const phMedido = typeof calcularpH === 'function' ? calcularpH().toFixed(2) : '7.00';
+    const phMedido = typeof calcularpH === 'function' ? Number(calcularpH()).toFixed(2) : '7.00';
     const tempAtual = sys && typeof sys.temp === 'number' ? sys.temp.toFixed(1) : '25.0';
     const pressaoAtual = sys && typeof sys.pressao === 'number' ? sys.pressao.toFixed(2) : '1.00';
     const volAtual = sys && typeof sys.vol === 'number' ? sys.vol.toFixed(1) : '0.0';
     const maxVol = sys && sys.maxVol ? sys.maxVol : 250;
     const isClosed = sys ? Boolean(sys.isClosed) : false;
 
-    const contextoBancada = `
+    return `
 - Temperatura: ${tempAtual} °C
 - Pressão: ${pressaoAtual} atm
 - pH Atual: ${phMedido}
@@ -341,44 +352,56 @@ const LabPreceptorEngine = {
 - Sistema Físico: ${isClosed ? 'Fechado com rolha' : 'Aberto à atmosfera'}
 - Agitador Magnético: ${agitadorAtivo ? 'Ativo' : 'Desligado'}
 - Espécies presentes no vaso: [${especiesVaso}]
-`.trim();
+`.trim().slice(0, this.MAX_CONTEXTO);
+  },
 
-    // Mantém o histórico recente (janela deslizante de 8 turnos)
-    this.historicoChatLab.push({ autor: 'estudante', texto: msgUsuario });
-    if (this.historicoChatLab.length > 8) this.historicoChatLab.shift();
+  /** Neutraliza < e > (ver cabeçalho): texto da IA nunca vira tag, com innerHTML ou textContent. */
+  textoSeguro(texto) {
+    return String(texto === null || texto === undefined ? '' : texto)
+      .replace(/->/g, '→')
+      .replace(/</g, '‹')
+      .replace(/>/g, '›');
+  },
 
-    const payload = {
-      acao: 'consultarPreceptorIA',
-      duvida: msgUsuario,
-      contexto: contextoBancada,
-      historico: this.historicoChatLab
+  /**
+   * Consulta o preceptor na Worker. Resolve { texto, cached } ou lança um
+   * Error com mensagem PRONTA para exibir (texto fixo ou mensagem do
+   * servidor, como a de cota diária esgotada).
+   */
+  async consultarPreceptorRemoto(msgUsuario, sys, calcularpH, agitadorAtivo, synthesisTerm) {
+    if (!window.LaiftApi || typeof window.LaiftApi.call !== 'function') {
+      throw new Error('O preceptor com IA só funciona com o laboratório aberto dentro da plataforma (área "Aprender").');
+    }
+
+    const history = this.historicoChatLab.slice(-8).map((t) => ({
+      role: t.autor === 'preceptor' ? 'preceptor' : 'student',
+      text: String(t.texto || '').slice(0, 500),
+    }));
+
+    const input = {
+      question: String(msgUsuario).slice(0, this.MAX_PERGUNTA),
+      benchContext: this.montarContextoBancada(sys, calcularpH, agitadorAtivo),
+      history,
     };
+    if (synthesisTerm) input.synthesisTerm = String(synthesisTerm).slice(0, 60);
 
-    const res = await fetch(gateway, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    let res;
+    try {
+      res = await window.LaiftApi.call('apiLearnLabPreceptor', input);
+    } catch (e) {
+      throw new Error('Falha de comunicação com a plataforma. Tente novamente.');
+    }
+    if (!res || !res.success || typeof res.answer !== 'string' || !res.answer.trim()) {
+      throw new Error((res && res.message) || 'O preceptor com IA não respondeu agora.');
     }
 
-    const data = await res.json();
-    if (!data.sucesso && data.erro) {
-      throw new Error(data.erro);
-    }
+    const texto = this.textoSeguro(res.answer.trim());
+    // Janela deslizante de 8 turnos (o servidor também corta em 8).
+    this.historicoChatLab.push({ autor: 'estudante', texto: String(msgUsuario).slice(0, 500) });
+    this.historicoChatLab.push({ autor: 'preceptor', texto: texto.slice(0, 500) });
+    while (this.historicoChatLab.length > 8) this.historicoChatLab.shift();
 
-    const textoResposta = data.resposta || data.conteudo || data.falaPaciente || data.mensagem;
-    if (!textoResposta) {
-      throw new Error('O backend retornou uma resposta sem conteúdo textual legível.');
-    }
-
-    // Registra a fala do preceptor no histórico para contexto imediato da próxima pergunta
-    this.historicoChatLab.push({ autor: 'preceptor', texto: textoResposta });
-    if (this.historicoChatLab.length > 8) this.historicoChatLab.shift();
-
-    return textoResposta;
+    return { texto, cached: !!res.cached };
   },
 
   // =========================================================================
@@ -455,59 +478,28 @@ ${diag.detalhes}
       }
     }
 
-    // --- CAMADA 2: Cache Global Compartilhado na Planilha (0 tokens) ---
-    const gateway = window.APPS_SCRIPT_GATEWAY;
-    if (ehPedidoSintese && gateway && termoComposto.length >= 3) {
-      try {
-        const resGlobal = await fetch(gateway, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ acao: 'consultarCacheGlobal', termo: termoComposto })
-        });
-        if (resGlobal.ok) {
-          const dataGlobal = await resGlobal.json();
-          if (dataGlobal && dataGlobal.sucesso && dataGlobal.sinteseCurada) {
-            const rotaCurada = dataGlobal.sinteseCurada.respostaFormatada || dataGlobal.sinteseCurada;
-            return `${rotaCurada}\n\n*(🌐 Rota recuperada do Acervo Coletivo LAIFT)*`;
-          }
-        }
-      } catch (e) {
-        console.warn('[Preceptor] Cache global não respondeu:', e);
-      }
-    }
-
-    // --- CAMADA 3: Disparo Cognitivo Aberto via Cluster Groq ---
-    // Encaminha livremente dúvidas sobre química, farmácia, física, biologia, bancada, etc.
+    // --- CAMADAS 2 e 3: Preceptor na Worker ---
+    // Pedido de síntese → `synthesisTerm`: o servidor responde do cache
+    // compartilhado (0 tokens) ou gera e guarda ele mesmo. Qualquer outra
+    // dúvida vai com o contexto da bancada e o histórico recente.
+    const termoSintese = (ehPedidoSintese && termoComposto.length >= 3) ? termoComposto : '';
     try {
-      const respostaIA = await this.consultarGroqRemoto(msgUsuario, sys, calcularpH, agitadorAtivo);
-
-      // Persistência em segundo plano para pedidos de síntese
-      if (ehPedidoSintese && termoComposto.length >= 3 && gateway) {
-        fetch(gateway, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            acao: 'salvarCacheGlobal',
-            termo: termoComposto,
-            dados: {
-              nome: termoComposto.toUpperCase(),
-              sintese: { respostaFormatada: respostaIA }
-            }
-          })
-        }).catch(() => {});
-      }
-
-      return `${respostaIA}\n\n*(👨‍🔬 Orientações validadas pelo Químico Farmacêutico)*`;
-
-    } catch (erroGroq) {
-      console.error('[Preceptor IA Error]:', erroGroq);
-
+      const resposta = await this.consultarPreceptorRemoto(msgUsuario, sys, calcularpH, agitadorAtivo, termoSintese);
+      const rodape = resposta.cached
+        ? '(🌐 Rota recuperada do acervo coletivo LAIFT — resposta gerada por IA)'
+        : '(👨‍🔬 Resposta gerada por IA — confira em fontes oficiais antes de aplicar numa bancada real)';
+      return `${resposta.texto}\n\n*${rodape}*`;
+    } catch (erro) {
+      console.warn('[Preceptor] IA indisponível; mostrando parâmetros locais.');
+      const temp = sys && typeof sys.temp === 'number' ? sys.temp.toFixed(1) : '25.0';
+      const vol = sys && typeof sys.vol === 'number' ? sys.vol.toFixed(1) : '0.0';
+      const ph = typeof calcularpH === 'function' ? Number(calcularpH()).toFixed(2) : '7.00';
       return `
-⚠️ **Instabilidade na conexão com o Preceptor Sênior.**
-*Detalhe técnico:* \`${erroGroq.message || erroGroq}\`
+⚠️ **O Preceptor Sênior não está disponível agora.**
+${this.textoSeguro(erro && erro.message ? erro.message : 'Tente novamente em instantes.')}
 
 **Parâmetros Atuais da Bancada:**
-* **Temperatura:** ${sys ? sys.temp.toFixed(1) : '25.0'} °C | **pH:** ${typeof calcularpH === 'function' ? calcularpH().toFixed(2) : '7.00'} | **Volume:** ${sys ? sys.vol.toFixed(1) : '0.0'} mL
+* **Temperatura:** ${temp} °C | **pH:** ${ph} | **Volume:** ${vol} mL
 * **Agitador:** ${agitadorAtivo ? 'Ligado' : 'Desligado'} | **Sistema:** ${sys && sys.isClosed ? 'Fechado com rolha' : 'Aberto'}
 
 *Sugestão:* A base local está disponível para consultas diretas de rotas: **Dipirona**, **Aspirina**, **Paracetamol**, **Ibuprofeno**, **Diclofenaco**, **Captopril**, **Losartana**, **Amoxicilina** ou **Omeprazol**.
@@ -585,17 +577,33 @@ window.limparChatPreceptor = function() {
     window.LabPreceptorEngine.historicoChatLab = [];
   }
 
-  chatBox.innerHTML = `
-    <div class="lab-chat-msg msg-preceptor">
-      Bancada sob supervisão do <strong>Químico Farmacêutico & Preceptor LAIFT</strong>. Como posso auxiliar na sua prática, cálculo estequiométrico, rota de síntese ou fundamentos analíticos hoje?
-      <div class="chip-container">
-        <button class="chat-chip" onclick="enviarDuvidaRapida('Como sintetizar Dipirona?')">💊 Síntese de Dipirona</button>
-        <button class="chat-chip" onclick="enviarDuvidaRapida('Como sintetizar Aspirina?')">🧪 Rota da Aspirina</button>
-        <button class="chat-chip" onclick="enviarDuvidaRapida('Como sintetizar Ibuprofeno?')">🔬 Rota do Ibuprofeno</button>
-        <button class="chat-chip" onclick="enviarDuvidaRapida('O que tem no meu vaso?')">🌡️ Diagnóstico do Vaso</button>
-      </div>
-    </div>
-  `;
+  // Montado com createElement (sem innerHTML nem onclick inline).
+  while (chatBox.firstChild) chatBox.removeChild(chatBox.firstChild);
+  const msg = document.createElement('div');
+  msg.className = 'lab-chat-msg msg-preceptor';
+  msg.appendChild(document.createTextNode('Bancada sob supervisão do '));
+  const destaque = document.createElement('strong');
+  destaque.textContent = 'Químico Farmacêutico & Preceptor LAIFT';
+  msg.appendChild(destaque);
+  msg.appendChild(document.createTextNode('. Como posso auxiliar na sua prática, cálculo estequiométrico, rota de síntese ou fundamentos analíticos hoje?'));
+
+  const chips = document.createElement('div');
+  chips.className = 'chip-container';
+  [
+    ['💊 Síntese de Dipirona', 'Como sintetizar Dipirona?'],
+    ['🧪 Rota da Aspirina', 'Como sintetizar Aspirina?'],
+    ['🔬 Rota do Ibuprofeno', 'Como sintetizar Ibuprofeno?'],
+    ['🌡️ Diagnóstico do Vaso', 'O que tem no meu vaso?'],
+  ].forEach(([rotulo, pergunta]) => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chat-chip';
+    chip.textContent = rotulo;
+    chip.addEventListener('click', () => window.enviarDuvidaRapida(pergunta));
+    chips.appendChild(chip);
+  });
+  msg.appendChild(chips);
+  chatBox.appendChild(msg);
   chatBox.scrollTop = 0;
 };
 

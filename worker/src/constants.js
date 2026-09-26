@@ -233,3 +233,52 @@ export const ATTENDANCE_CHECKIN_METHODS = ['qr', 'manual', 'lista'];
 // Status em que o terminal fiscal aceita check-in (o gatilho do banco
 // aplica a mesma regra à inscrição criada na porta).
 export const ATTENDANCE_OPEN_STATUSES = ['published', 'in_progress'];
+
+// Fase 3 — IA na Worker (Groq) e clínica virtual (docs/PLANO_FASES_2_3_4.md,
+// Contrato 2, e docs/FASE_3_IA_CLINICA.md). Todo número de custo/abuso da IA
+// mora aqui, numa fonte só, para o responsável ajustar sem caçar no código.
+export const AI_FEATURE = {
+  CHAT: 'chat',
+  EVALUATE: 'evaluate',
+  GENERATE_CASE: 'generate_case',
+  LAB_PRECEPTOR: 'lab_preceptor',
+  HEALTH: 'health',
+};
+
+// Cota diária POR PESSOA (janela de 24 h do rate_limit_buckets), por recurso
+// e papel. Visitante tem cota menor (decisão do responsável: IA para todos os
+// logados, com cota diária). Valores iniciais do plano.
+export const AI_QUOTAS = {
+  chat: { visitor: 40, member: 150, admin: 300 },
+  evaluate: { visitor: 5, member: 20, admin: 40 },
+  generate_case: { visitor: 2, member: 8, admin: 20 },
+  lab_preceptor: { visitor: 20, member: 80, admin: 160 },
+};
+export const AI_QUOTA_WINDOW_SECONDS = 86400;
+
+// Disjuntor global de custo: teto de chamadas à IA somando TODA a
+// plataforma em 24 h. Protege o pool de chaves (e a conta) de um abuso
+// distribuído entre muitas contas que ficaria abaixo de cada cota individual.
+export const AI_GLOBAL_DAILY_MAX = 3000;
+
+// Teste de saúde das chaves (painel admin): cada execução faz uma chamada
+// por chave ao Groq, então também tem limite, mesmo sendo só para admin.
+export const AI_HEALTH_RATE_LIMIT = { MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 };
+
+export const AI_LIMITS = {
+  QUESTION_MAX: 500,          // pergunta ao paciente / ao preceptor do laboratório
+  HISTORY_MAX_TURNS: 8,       // turnos de histórico enviados ao modelo
+  HISTORY_TURN_MAX: 500,      // caracteres por turno de histórico (o excesso é cortado)
+  CONTEXT_MAX_BYTES: 4096,    // contexto do caso (paciente) / da bancada (laboratório)
+  ANSWER_KEY_MAX_BYTES: 4096, // gabarito enviado pelo cliente (casos embutidos/gerados)
+  ATTENDANCE_TEXT_MAX: 2000,  // diagnóstico e conduta do estudante
+  ATTENDANCE_LIST_MAX: 30,    // exames solicitados / perguntas feitas
+  TOPIC_MIN: 3,
+  TOPIC_MAX: 200,             // tema pedido para gerar um caso
+  CASE_ID_MAX: 80,
+  SYNTH_TERM_MIN: 3,
+  SYNTH_TERM_MAX: 60,
+  LIBRARY_MAX: 100,           // casos devolvidos pela biblioteca
+  PENDING_MAX: 50,            // casos na fila de moderação
+  REPLY_MAX: 2000,            // fala do paciente / resposta do preceptor (o excesso é cortado)
+};

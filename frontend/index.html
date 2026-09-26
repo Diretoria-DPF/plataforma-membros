@@ -247,6 +247,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 011-1h3"/><path d="M16 4h3a1 1 0 011 1v3"/><path d="M20 16v3a1 1 0 01-1 1h-3"/><path d="M8 20H5a1 1 0 01-1-1v-3"/><path d="M4 12h16"/></svg>
             <span>Fiscal</span>
           </button>
+          <!-- Fase 3 — painel de IA (saúde das chaves, uso, cotas e moderação do acervo) -->
+          <button type="button" data-panel="panel-admin-ai">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><path d="M10 10h4v4h-4z"/></svg>
+            <span>IA</span>
+          </button>
           <button type="button" id="btn-exit-admin-mode">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             <span>Voltar</span>
@@ -653,6 +658,37 @@
           </div>
           <div id="admin-fiscal-frame-wrap" class="learn-viewer"></div>
         </section>
+
+        <!-- Fase 3 — painel admin de IA (frontend/admin-ai.js). Conteúdo dinâmico só via textContent. -->
+        <section id="panel-admin-ai" class="hidden">
+          <div class="card">
+            <div class="ai-admin-head">
+              <h2>IA — saúde das chaves</h2>
+              <button type="button" class="secondary" id="btn-admin-ai-health">Testar chaves agora</button>
+            </div>
+            <p class="muted">Cada chave do pool do Groq é testada com uma chamada leve (sem gerar texto). Só o final da chave aparece aqui; a chave completa nunca sai do servidor.</p>
+            <div id="msg-admin-ai-health" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="admin-ai-health-summary"></div>
+            <div id="admin-ai-keys" class="ai-key-grid"></div>
+          </div>
+          <div class="card">
+            <h2>Uso nas últimas 24 h</h2>
+            <div id="admin-ai-usage"></div>
+          </div>
+          <div class="card">
+            <h2>Cotas diárias por pessoa</h2>
+            <div id="admin-ai-quotas"><p class="empty-state">Aparecem depois do teste das chaves.</p></div>
+          </div>
+          <div class="card">
+            <div class="ai-admin-head">
+              <h2>Acervo da clínica — casos aguardando revisão</h2>
+              <button type="button" class="secondary" id="btn-admin-ai-cases-refresh">Atualizar</button>
+            </div>
+            <p class="muted">Casos gerados com IA só entram na biblioteca da liga depois de aprovados aqui. Confira se o conteúdo é tecnicamente correto e adequado.</p>
+            <div id="msg-admin-ai-cases" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="admin-ai-pending"></div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -754,6 +790,8 @@
   <script type="module" src="messaging.js"></script>
   <!-- Área "Aprender" (módulos LAIFT): só usa window.App dentro de funções. -->
   <script src="learning.js" defer></script>
+  <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
+  <script src="admin-ai.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

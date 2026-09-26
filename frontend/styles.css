@@ -653,3 +653,27 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
 .learn-badge.unlocked .learn-badge-state { color: var(--success); font-weight: 700; }
 .profile-learning-metrics:empty { display: none; }
 .profile-learning-title { margin: 18px 0 10px; font-size: 16px; }
+
+/* Fase 3 — painel admin de IA (frontend/admin-ai.js) */
+.ai-admin-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.ai-admin-head h2 { margin: 0; min-width: 0; }
+.ai-admin-head button { width: auto; }
+.ai-health-summary {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin: 12px 0;
+  padding: 12px 14px; border-radius: var(--radius-md); background: var(--success-soft); color: var(--success);
+}
+.ai-health-summary[data-level="warn"] { background: var(--admin-soft); color: var(--admin); }
+.ai-health-summary[data-level="down"] { background: var(--danger-soft); color: var(--danger); }
+.ai-health-summary strong { font-size: 28px; line-height: 1; }
+.ai-key-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.ai-key-card {
+  display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-alt);
+}
+.ai-key-card[data-ok="nao"] { border-color: var(--danger); }
+.ai-key-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.ai-key-card-head strong { white-space: nowrap; }
+.ai-key-mask { font-size: 15px; letter-spacing: 0.05em; }
+.ai-table-wrap { max-width: 100%; overflow-x: auto; margin: 8px 0; }
+.ai-case { overflow-wrap: anywhere; }
+.ai-case .ai-case-line { margin: 6px 0 0; font-size: 14px; }
