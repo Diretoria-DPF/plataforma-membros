@@ -7,12 +7,17 @@ const FiscalEngine = (() => {
   let fiscalSession = '';
   let scannerInstance = null;
   let scanInProgress = false;
-  let logoPressTimer = null;
   let memberSearchTimer = null;
   let dadosMembrosLote = [];
 
   const QR_PREFIX = 'LAIFT:v1:';
-  const SESSION_STORAGE_KEY = 'laift_student_session';
+
+  /** Escapa texto vindo do backend/planilha antes de interpolar em HTML. */
+  function escapeHtml(valor) {
+    return String(valor == null ? '' : valor).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
 
   function getStatusBanner(msg, type) {
     if (typeof window.showStatus === 'function') {
@@ -104,19 +109,14 @@ const FiscalEngine = (() => {
       fiscalSession = res.sessao;
       clearStatusBanner();
 
-      ['identityForm', 'registrationForm', 'otpForm', 'credentialScreen'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
-      });
+      const locked = document.getElementById('fiscalLocked');
+      if (locked) locked.classList.add('hidden');
 
       const fiscalArea = document.getElementById('fiscalArea');
       if (fiscalArea) {
         fiscalArea.classList.remove('hidden');
         fiscalArea.scrollIntoView({ behavior: 'smooth' });
       }
-
-      const subtitle = document.getElementById('headerSubtitle');
-      if (subtitle) subtitle.textContent = 'Terminal de Validação & Portaria';
 
       const eventInput = document.getElementById('eventName');
       if (eventInput) eventInput.value = res.evento || res.eventoAtivo || '';
@@ -188,7 +188,7 @@ const FiscalEngine = (() => {
       }
 
       if (!res || !res.sucesso) {
-        alert(res.mensagem || 'Falha ao auditar saúde das chaves Groq.');
+        alert((res && res.mensagem) || 'Falha ao auditar saúde das chaves Groq.');
         return;
       }
 
@@ -211,11 +211,11 @@ const FiscalEngine = (() => {
           `;
           
           card.innerHTML = `
-            <div style="font-weight: 700; color: #1e293b;">${node.identificador}</div>
-            <div style="color: #64748b; font-family: monospace; font-size: 0.7rem;">${node.chaveMascarada}</div>
+            <div style="font-weight: 700; color: #1e293b;">${escapeHtml(node.identificador)}</div>
+            <div style="color: #64748b; font-family: monospace; font-size: 0.7rem;">${escapeHtml(node.chaveMascarada)}</div>
             <div style="margin-top: 4px; display: flex; justify-content: space-between; font-weight: 600;">
-              <span style="color: ${node.operante ? '#16a34a' : '#dc2626'};">${node.saude}%</span>
-              <span style="color: #64748b;">${node.latenciaMs}ms</span>
+              <span style="color: ${node.operante ? '#16a34a' : '#dc2626'};">${escapeHtml(node.saude)}%</span>
+              <span style="color: #64748b;">${escapeHtml(node.latenciaMs)}ms</span>
             </div>
           `;
           grid.appendChild(card);
@@ -251,7 +251,7 @@ const FiscalEngine = (() => {
       }
 
       if (!res || !res.sucesso) {
-        getStatusBanner(res.mensagem || 'Falha ao exportar presenças.', 'error');
+        getStatusBanner((res && res.mensagem) || 'Falha ao exportar presenças.', 'error');
         return;
       }
 
@@ -334,8 +334,8 @@ const FiscalEngine = (() => {
           <input type="checkbox" ${m.selecionado ? 'checked' : ''} onchange="FiscalEngine.toggleMembroLote(${idx}, this.checked)">
         </td>
         <td style="padding: 6px;">
-          <input type="text" value="${m.nome}" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 0.8rem; box-sizing: border-box;" onchange="FiscalEngine.atualizarNomeLote(${idx}, this.value)">
-          <small style="color: #64748b; font-family: monospace;">ID: ${m.identificador}</small>
+          <input type="text" value="${escapeHtml(m.nome)}" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 0.8rem; box-sizing: border-box;" onchange="FiscalEngine.atualizarNomeLote(${idx}, this.value)">
+          <small style="color: #64748b; font-family: monospace;">ID: ${escapeHtml(m.identificador)}</small>
         </td>
         <td style="padding: 6px;">
           <select style="width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 0.8rem; box-sizing: border-box;" onchange="FiscalEngine.atualizarTipoLote(${idx}, this.value)">
@@ -415,8 +415,8 @@ const FiscalEngine = (() => {
       const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&format=svg&data=' + encodeURIComponent('LAIFT:v1:' + (m.tokenQr || m.identificador));
       
       const fotoHtml = m.fotoUrl 
-        ? `<img src="${m.fotoUrl}" class="foto-perfil" alt="Foto"/>`
-        : `<div class="avatar-placeholder">${m.nome.charAt(0).toUpperCase()}</div>`;
+        ? `<img src="${escapeHtml(m.fotoUrl)}" class="foto-perfil" alt="Foto"/>`
+        : `<div class="avatar-placeholder">${escapeHtml(m.nome.charAt(0).toUpperCase())}</div>`;
 
       cardsHtml += `
         <div class="cracha-card">
@@ -427,12 +427,12 @@ const FiscalEngine = (() => {
           <div class="corpo">
             <div class="col-foto-qr">
               ${fotoHtml}
-              <img src="${qrUrl}" class="qr-img" alt="QR Code"/>
+              <img src="${escapeHtml(qrUrl)}" class="qr-img" alt="QR Code"/>
             </div>
             <div class="col-dados">
-              <div class="nome-participante">${m.nome}</div>
-              <div class="tag-role ${String(m.tipo).toLowerCase() === 'diretoria' ? 'diretoria' : ''}">${m.tipo}</div>
-              <div class="meta-id">Matrícula: ${m.identificador}</div>
+              <div class="nome-participante">${escapeHtml(m.nome)}</div>
+              <div class="tag-role ${String(m.tipo).toLowerCase() === 'diretoria' ? 'diretoria' : ''}">${escapeHtml(m.tipo)}</div>
+              <div class="meta-id">ID: ${escapeHtml(m.identificador)}</div>
             </div>
           </div>
           <div class="rodape">Farmacologia Clínica e Toxicologia</div>
@@ -604,7 +604,7 @@ const FiscalEngine = (() => {
     const cargo = encodeURIComponent((membro.tipo || 'Membro').toUpperCase());
     const qr = encodeURIComponent(`LAIFT:ID:${membro.identificador}`);
 
-    const url = `cracha/index.html?id=${id}&nome=${nome}&cargo=${cargo}&qr=${qr}`;
+    const url = `../cracha/index.html?id=${id}&nome=${nome}&cargo=${cargo}&qr=${qr}`;
     window.open(url, '_blank');
   }
 
@@ -613,7 +613,7 @@ const FiscalEngine = (() => {
     const identifier = idInput ? idInput.value.trim() : '';
 
     if (!identifier) {
-      getStatusBanner('Digite a matrícula ou CPF no campo ao lado para emitir o crachá.', 'error');
+      getStatusBanner('Digite o e-mail, matrícula ou CPF no campo ao lado para emitir o crachá.', 'error');
       if (idInput) idInput.focus();
       return;
     }
@@ -720,7 +720,7 @@ const FiscalEngine = (() => {
     const identifier = idInput ? idInput.value.trim() : '';
 
     if (!identifier) {
-      getStatusBanner('Digite a matrícula ou CPF do participante.', 'error');
+      getStatusBanner('Digite o e-mail, matrícula ou CPF do participante.', 'error');
       return;
     }
 
@@ -797,7 +797,7 @@ const FiscalEngine = (() => {
       if (!res || !res.sucesso) {
         list.innerHTML = `
           <div class="member-list-empty">
-            ${(res && res.mensagem) || 'Não foi possível consultar a lista.'}
+            ${escapeHtml((res && res.mensagem) || 'Não foi possível consultar a lista.')}
           </div>
         `;
         return;
@@ -909,36 +909,6 @@ const FiscalEngine = (() => {
     }
   }
 
-  async function resendCredentialEmail() {
-    const session = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || '{}');
-    if (!session.sessionToken) {
-      getStatusBanner('Sessão expirada. Autentique-se novamente.', 'error');
-      return;
-    }
-
-    getStatusBanner('Enviando QR Code para seu e-mail...', 'loading');
-    try {
-      let res;
-      if (typeof ApiService.reenviarCredencialEmail === 'function') {
-        res = await ApiService.reenviarCredencialEmail(session.sessionToken);
-      } else if (typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({
-          acao: 'reenviarCredencialEmail',
-          tokenSessao: session.sessionToken
-        });
-      }
-
-      if (res && res.sucesso) {
-        getStatusBanner(res.mensagem || 'QR Code reenviado com sucesso.', 'success');
-      } else {
-        getStatusBanner((res && res.mensagem) || 'Não foi possível reenviar a credencial.', 'error');
-      }
-    } catch (err) {
-      console.error(err);
-      getStatusBanner('Erro de conexão ao reenviar e-mail.', 'error');
-    }
-  }
-
   // =========================================================
   // 8. ENCERRAMENTO DE SESSÃO FISCAL
   // =========================================================
@@ -964,11 +934,8 @@ const FiscalEngine = (() => {
     const fiscalArea = document.getElementById('fiscalArea');
     if (fiscalArea) fiscalArea.classList.add('hidden');
 
-    const identityForm = document.getElementById('identityForm');
-    if (identityForm) identityForm.classList.remove('hidden');
-
-    const subtitle = document.getElementById('headerSubtitle');
-    if (subtitle) subtitle.textContent = 'Autenticação Digital & Simulações Clínicas';
+    const locked = document.getElementById('fiscalLocked');
+    if (locked) locked.classList.remove('hidden');
 
     const eventName = document.getElementById('eventName');
     if (eventName) eventName.value = '';
@@ -989,53 +956,9 @@ const FiscalEngine = (() => {
     }
 
     clearStatusBanner();
-    if (typeof window.restartPublicFlow === 'function') {
-      window.restartPublicFlow();
-    }
-  }
-
-  // =========================================================
-  // 9. INICIALIZAÇÃO DE GATILHOS (DUPLO CLIQUE, TOUCH E ATALHO)
-  // =========================================================
-
-  function initListeners() {
-    const triggerElements = [
-      document.getElementById('fiscalTriggerArea'),
-      document.getElementById('laiftLogo'),
-      document.getElementById('globalHeader')
-    ].filter(Boolean);
-
-    triggerElements.forEach(el => {
-      // Duplo clique Desktop
-      el.addEventListener('dblclick', (e) => {
-        e.preventDefault();
-        abrirModalLogin();
-      });
-
-      // Toque duplo em dispositivos móveis
-      let lastTap = 0;
-      el.addEventListener('touchend', (e) => {
-        const currentTime = Date.now();
-        const tapLength = currentTime - lastTap;
-        if (tapLength < 400 && tapLength > 0) {
-          e.preventDefault();
-          abrirModalLogin();
-        }
-        lastTap = currentTime;
-      });
-    });
-
-    // Atalho de Teclado: Ctrl + Shift + F ou Cmd + Shift + F
-    document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'F' || e.key === 'f')) {
-        e.preventDefault();
-        abrirModalLogin();
-      }
-    });
   }
 
   return {
-    initListeners,
     abrirModalLogin,
     fecharModalLogin,
     confirmarLoginModal,
@@ -1046,7 +969,6 @@ const FiscalEngine = (() => {
     scheduleMemberSearch,
     markPresenceFromList,
     logoutFiscal,
-    resendCredentialEmail,
     abrirStudioCracha,
     gerarCrachaDireto,
     baixarListaPresencaCsv,
@@ -1066,7 +988,6 @@ const FiscalEngine = (() => {
 
 // Declarações globais para suportar chamadas inline no HTML
 window.FiscalEngine = FiscalEngine;
-window.resendCredentialEmail = FiscalEngine.resendCredentialEmail;
 window.saveActiveEvent = FiscalEngine.saveActiveEvent;
 window.startFiscalScanner = FiscalEngine.startFiscalScanner;
 window.submitManualCheckin = FiscalEngine.submitManualCheckin;
@@ -1077,5 +998,3 @@ window.abrirStudioCracha = FiscalEngine.abrirStudioCracha;
 window.verificarSaudeRedeIA = FiscalEngine.verificarSaudeRedeIA;
 window.abrirModalLoteCrachas = FiscalEngine.abrirModalLoteCrachas;
 window.fecharModalLoteCrachas = FiscalEngine.fecharModalLoteCrachas;
-
-window.addEventListener('DOMContentLoaded', FiscalEngine.initListeners);

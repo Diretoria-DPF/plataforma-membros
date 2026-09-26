@@ -5,7 +5,7 @@
  * Escopo: Química, Farmácia, Física, Biologia, Bioquímica, Toxicologia e Bancada.
  */
 
-window.APPS_SCRIPT_GATEWAY = window.APPS_SCRIPT_GATEWAY || 'https://script.google.com/macros/s/AKfycbyXvBYrHBIXNjHYItuq2LXKt1vkmh2m_CME-5aZqkxUJhl7ktJjemuasbvdEweH95k/exec';
+// window.APPS_SCRIPT_GATEWAY é definido em ../shared/laift-identity.js (carregado antes).
 
 const LabPreceptorEngine = {
   // Histórico de conversação contínuo (memória recente para réplicas e tréplicas)

@@ -19,8 +19,16 @@ const ApiCache = (() => {
   const STORE_PAYLOADS = "cached_api_data";  // Armazena JSONs de APIs (HRA, NIH, PubChem)
   const STORE_HISTORY = "academic_history";  // Registros de simulação de horas
 
-  const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbyXvBYrHBIXNjHYItuq2LXKt1vkmh2m_CME-5aZqkxUJhl7ktJjemuasbvdEweH95k/exec";
-  const SESSION_KEY = "laift_student_session";
+  const GAS_ENDPOINT = window.APPS_SCRIPT_GATEWAY; // definido em ../shared/laift-identity.js
+
+  /** Identidade vinda da Plataforma de Membros (ver ../shared/laift-identity.js). */
+  function lerIdentidade() {
+    return (window.LaiftIdentity && window.LaiftIdentity.get()) || {};
+  }
+
+  function escaparHtml(valor) {
+    return String(valor).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
 
   // Endpoints das APIs Biomédicas Abertas
   const API_ENDPOINTS = {
@@ -299,7 +307,7 @@ const ApiCache = (() => {
   function agendarBackupNuvem(fonte, termo, payload) {
     setTimeout(async () => {
       try {
-        const sessao = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+        const sessao = lerIdentidade();
         const body = {
           acao: "salvarBackupApi",
           fonte: fonte,
@@ -402,10 +410,11 @@ const ApiCache = (() => {
       return;
     }
 
-    const sessao = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
-    const nomeAluno = sessao.name || "Acadêmico(a) de Farmácia";
-    const idAluno = sessao.identifier || "---";
-    const vinculo = sessao.type || "Membro Efetivo / Pesquisador";
+    const sessao = lerIdentidade();
+    // Escapados: vão para document.write na janela do dossiê.
+    const nomeAluno = escaparHtml(sessao.name || "Acadêmico(a) de Farmácia");
+    const idAluno = escaparHtml(sessao.identifier || "---");
+    const vinculo = escaparHtml(sessao.type || "Membro Efetivo / Pesquisador");
     const dataEmissao = new Date().toLocaleDateString("pt-BR");
     const horaEmissao = new Date().toLocaleTimeString("pt-BR");
 
@@ -469,7 +478,7 @@ const ApiCache = (() => {
 
         <div class="student-box">
           <div><strong>Estudante / Pesquisador</strong>${nomeAluno}</div>
-          <div><strong>Matrícula / CPF</strong>${idAluno}</div>
+          <div><strong>E-mail</strong>${idAluno}</div>
           <div><strong>Vínculo</strong>${vinculo}</div>
         </div>
 

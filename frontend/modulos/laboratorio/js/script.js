@@ -75,7 +75,7 @@
   // =========================================================================
   // 3. TABELAS FÍSICO-QUÍMICAS E GATEWAYS
   // =========================================================================
-  const APPS_SCRIPT_GATEWAY = window.APPS_SCRIPT_GATEWAY || 'https://script.google.com/macros/s/AKfycbxbIrLKrfWjia_K-05aywbo9sou__8RW3MzIjeD3WoNc6CNJILXutTl93NfiBVwbDSM/exec';
+  const APPS_SCRIPT_GATEWAY = window.APPS_SCRIPT_GATEWAY; // definido em ../shared/laift-identity.js
   window.APPS_SCRIPT_GATEWAY = APPS_SCRIPT_GATEWAY;
 
   const DICIONARIO_MOLECULAR = {
@@ -719,10 +719,8 @@
 
   async function catalogarFormulacaoNoBanco(nomeProduto, reagentesArray, tempAtual, agitacaoLigada, observacaoReacao) {
     let identificador = 'Visitante';
-    try {
-      const sessao = JSON.parse(localStorage.getItem('laift_student_session') || '{}');
-      if (sessao.identifier) identificador = sessao.identifier;
-    } catch (e) {}
+    const sessao = window.LaiftIdentity && LaiftIdentity.get();
+    if (sessao && sessao.identifier) identificador = sessao.identifier;
 
     let dadosQuimicos = null;
     if (typeof ChemicalAPIEngine !== 'undefined' && typeof ChemicalAPIEngine.resolveCompleteCompound === 'function') {

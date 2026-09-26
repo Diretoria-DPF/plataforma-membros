@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
+  <script src="../shared/laift-identity.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clínica Médica Virtual — LAIFT</title>
+  <link rel="stylesheet" href="../shared/style.css">
+</head>
+<body class="theme-clinic">
+
+  <!-- Notificações de Status (Toast / Banner) -->
+  <div id="status" class="status-banner hidden" role="alert" aria-live="polite"></div>
+
+  <main class="app-viewport">
+    <!-- =========================================================
+         7. MÓDULO: CLÍNICA MÉDICA VIRTUAL (OSCE MULTIPACIENTE & ACERVO)
+    ========================================================= -->
+    <section id="clinicSection" class="view-panel active">
+      
+      <!-- Sub-tela A: Fila de Atendimento / Mapa de Leitos e Acervo -->
+      <div id="clinicDashboardView" class="clinic-hub-view">
+        <div class="clinic-hub-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2>🏥 Plantão Clínico & Simulação OSCE</h2>
+            <p class="subtitle" style="color: var(--gray); margin-top: 4px;">Assuma um leito do plantão, explore a biblioteca de casos curados ou sintetize novos desafios com IA.</p>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="btnGenerateAiCase" class="btn btn-primary" type="button" onclick="ClinicEngine.solicitarCasoProcedural()">⚡ Gerar Caso com IA</button>
+            <button class="btn btn-outline btn-sm" type="button" onclick="ClinicEngine.abrirRadarEpidemiologico()">📊 Radar Epidemiológico</button>
+            <button id="infoBtn" class="btn btn-outline btn-sm" type="button" title="Manual e Instruções">📖 Guia</button>
+          </div>
+        </div>
+
+        <!-- Seletor de Modo: Plantão Ativo vs. Acervo Comunitário -->
+        <div style="display: flex; gap: 8px; margin: 16px 0 12px; border-bottom: 2px solid var(--border, #e2e8f0); padding-bottom: 8px;">
+          <button id="btnModoPlantao" class="btn btn-primary btn-sm" type="button" onclick="ClinicEngine.setModoExibicao('plantao')">
+            🏥 Plantão Ativo (Leitos)
+          </button>
+          <button id="btnModoAcervo" class="btn btn-outline btn-sm" type="button" onclick="ClinicEngine.setModoExibicao('acervo')">
+            📚 Acervo da Liga (Biblioteca Coletiva)
+          </button>
+        </div>
+
+        <!-- Barra de Ferramentas e Filtros da Biblioteca de Casos -->
+        <div id="acervoToolbar" class="hidden" style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 14px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <input id="acervoSearchInput" type="text" placeholder="Pesquisar por fármaco, toxíndrome ou queixa (ex: Paracetamol, Colinérgica)..." style="flex: 1; min-width: 220px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" oninput="ClinicEngine.filtrarAcervo()">
+            
+            <select id="acervoToxFilter" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem;" onchange="ClinicEngine.filtrarAcervo()">
+              <option value="">Todas as Toxíndromes</option>
+              <option value="Colinérgica">Colinérgica</option>
+              <option value="Anticolinérgica">Anticolinérgica</option>
+              <option value="Simpatomimética">Simpatomimética</option>
+              <option value="Opioide">Opioide</option>
+              <option value="Sedativa">Sedativo-Hipnótica</option>
+            </select>
+
+            <button class="btn btn-outline btn-sm" type="button" onclick="ClinicEngine.carregarAcervoComunitario()">🔄 Atualizar Acervo</button>
+          </div>
+          <p style="margin: 6px 0 0; font-size: 0.75rem; color: var(--gray);">Casos do acervo são auditados pela diretoria e têm execução imediata com custo zero de tokens.</p>
+        </div>
+
+        <div id="patientBedsGrid" class="beds-grid"></div>
+        <div id="communityBedsGrid" class="beds-grid hidden"></div>
+      </div>
+
+      <!-- Sub-tela B: Leito Ativo de Consulta -->
+      <div id="clinicWorkspaceView" class="clinic-workspace hidden">
+        <div class="patient-monitor">
+          <div class="patient-id-badge">
+            <button class="btn btn-secondary btn-sm" type="button" onclick="ClinicEngine.returnToBeds()" title="Voltar ao mapa de leitos">← Leitos</button>
+            <div class="patient-avatar">👤</div>
+            <div>
+              <h3 id="clinicPatientName">Carregando paciente...</h3>
+              <span id="clinicPatientMeta">Idade | Ocupação | Peso</span>
+            </div>
+          </div>
+
+          <div class="meters-cluster">
+            <div class="meter-item" title="Estabilidade Orgânica do Paciente">
+              <div class="meter-header">
+                <span>❤️ Estabilidade Clínica</span>
+                <strong id="vitalityValue">100%</strong>
+              </div>
+              <div class="meter-bar">
+                <div id="vitalityFill" class="meter-fill status-healthy" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <div class="meter-item" title="Nível de Paciência e Satisfação do Paciente">
+              <div class="meter-header">
+                <span>💬 Paciência / Humor</span>
+                <strong id="patienceValue">100%</strong>
+              </div>
+              <div class="meter-bar">
+                <div id="patienceFill" class="meter-fill status-patient" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <div class="clinic-clock">
+              <span>⏱️ Tempo:</span>
+              <strong id="clinicTimeElapsed">00:00</strong>
+            </div>
+          </div>
+        </div>
+
+        <nav class="clinic-tabs" role="tablist" aria-label="Navegação da Consulta Médica">
+          <button class="clinic-tab-btn active" role="tab" aria-selected="true" aria-controls="prontuarioTab" id="tab-prontuario" data-tab="prontuarioTab">📋 Prontuário & Sinais</button>
+          <button class="clinic-tab-btn" role="tab" aria-selected="false" aria-controls="dialogoTab" id="tab-dialogo" data-tab="dialogoTab">🗣️ Anamnese (Chat)</button>
+          <button class="clinic-tab-btn" role="tab" aria-selected="false" aria-controls="examesTab" id="tab-exames" data-tab="examesTab">🔬 Laboratório & Exames</button>
+          <button class="clinic-tab-btn highlight" role="tab" aria-selected="false" aria-controls="fechamentoTab" id="tab-fechamento" data-tab="fechamentoTab">📝 Diagnóstico & Conduta</button>
+        </nav>
+
+        <div class="clinic-tab-viewport">
+          <div id="prontuarioTab" class="clinic-tab-pane active" role="tabpanel" aria-labelledby="tab-prontuario">
+            <div class="prontuario-grid">
+              <div class="sheet-box">
+                <h4>Queixa Principal & Admissão</h4>
+                <p id="clinicChiefComplaint" class="complaint-quote">"Carregando informações da queixa..."</p>
+                <h4>Histórico Resumido</h4>
+                <div id="clinicPatientHistory" class="data-block">Aguardando início do caso...</div>
+              </div>
+
+              <div class="sheet-box">
+                <h4>Sinais Vitais de Entrada</h4>
+                <div class="vitals-grid">
+                  <div class="vital-entry"><span>Pressão Arterial:</span> <strong id="vitalPA">--/--</strong></div>
+                  <div class="vital-entry"><span>Frequência Cardíaca:</span> <strong id="vitalFC">-- bpm</strong></div>
+                  <div class="vital-entry"><span>Frequência Respiratória:</span> <strong id="vitalFR">-- irpm</strong></div>
+                  <div class="vital-entry"><span>Temperatura:</span> <strong id="vitalTemp">-- °C</strong></div>
+                  <div class="vital-entry"><span>SatO2:</span> <strong id="vitalSpO2">--%</strong></div>
+                  <div class="vital-entry"><span>Escala de Glasgow:</span> <strong id="vitalGlasgow">--</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="dialogoTab" class="clinic-tab-pane" role="tabpanel" aria-labelledby="tab-dialogo">
+            <div class="chat-container">
+              <div id="chatHistory" class="chat-viewport">
+                <div class="chat-bubble patient">
+                  <strong>Paciente:</strong>
+                  <p id="chatInitialGreeting">Olá, doutor(a)... estou me sentindo mal...</p>
+                </div>
+              </div>
+
+              <div class="suggested-questions-row">
+                <span class="suggestion-label">💡 Guia Semiológico:</span>
+                <div id="suggestionsList" class="suggestions-chips"></div>
+              </div>
+
+              <div class="chat-input-row">
+                <input id="patientQuestionInput" type="text" placeholder="Digite sua pergunta ou conduta física (ex: 'vou auscultar seu pulmão')..." maxlength="250">
+                <button id="sendQuestionBtn" class="btn btn-primary" type="button" onclick="submitPatientQuestion()">Perguntar</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="examesTab" class="clinic-tab-pane" role="tabpanel" aria-labelledby="tab-exames">
+            <div class="exams-workspace">
+              <div class="exams-catalog">
+                <h4>Painel de Exames Disponíveis</h4>
+                <p class="exam-disclaimer">Atenção: A solicitação de exames consome minutos virtuais e afeta o paciente se desnecessária.</p>
+                <div id="availableExamsList" class="exams-list"></div>
+              </div>
+
+              <div class="exams-results">
+                <h4>Laudos e Resultados Liberados</h4>
+                <div id="releasedExamsList" class="released-board">
+                  <div class="empty-state-notice">Nenhum exame solicitado até o momento.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="fechamentoTab" class="clinic-tab-pane" role="tabpanel" aria-labelledby="tab-fechamento">
+            <div class="resolution-form">
+              <div class="form-group">
+                <label for="studentDiagnosisInput">Hipótese Diagnóstica Principal:</label>
+                <textarea id="studentDiagnosisInput" rows="3" placeholder="Descreva a afecção principal, síndrome clínica ou intoxicação diagnosticada..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="studentConductInput">Conduta Farmacêutica e/ou Clínica Imediata:</label>
+                <textarea id="studentConductInput" rows="4" placeholder="Descreva as medidas farmacológicas (antídotos, fármacos, suspensão) e suporte geral..."></textarea>
+              </div>
+
+              <div class="resolution-actions">
+                <button id="submitCaseResolutionBtn" class="btn btn-success btn-lg" type="button" onclick="finalizeClinicalCase()">⚖️ Submeter ao Preceptor</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modais Auxiliares -->
+  <div id="modalRadarEpidemio" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(3px);">
+    <div style="background: #ffffff; padding: 24px; border-radius: 12px; width: 95%; max-width: 680px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+        <h3 style="margin: 0; color: #0f172a;">📊 Radar Epidemiológico & Farmacológico</h3>
+        <button type="button" class="btn btn-outline btn-sm" onclick="ClinicEngine.fecharRadarEpidemiologico()">✕ Fechar</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 16px 0;">
+        <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+          <div style="font-size: 0.75rem; color: #64748b;">Taxa de Sobrevida</div>
+          <div id="radarTaxaSobrevivencia" style="font-size: 1.8rem; font-weight: 800; color: #16a34a;">--%</div>
+        </div>
+        <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+          <div style="font-size: 0.75rem; color: #64748b;">Casos Atendidos</div>
+          <div id="radarTotalAtendimentos" style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">0</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h4 style="margin: 0 0 8px; font-size: 0.95rem; color: #1e293b;">Toxíndromes Mais Incidentes:</h4>
+        <div id="radarToxindromesList" style="display: flex; flex-wrap: wrap; gap: 6px;">Carregando dados...</div>
+      </div>
+
+      <div>
+        <h4 style="margin: 0 0 8px; font-size: 0.95rem; color: #1e293b;">Fármacos e Agentes Frequentes:</h4>
+        <div id="radarAgentesList" style="display: flex; flex-wrap: wrap; gap: 6px;">Carregando dados...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="instructionsModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <span class="modal-close" id="closeModal">&times;</span>
+      <h2>📖 Guia da Clínica Virtual</h2>
+      <div class="modal-body">
+        <h4>Clínica Médica Virtual (OSCE):</h4>
+        <ul>
+          <li><strong>Anamnese Interativa:</strong> Converse com o paciente em linguagem natural ou realize exames físicos pelo chat.</li>
+          <li><strong>Biblioteca Comunitária:</strong> Acesse dezenas de casos auditados por colegas e preceptores com custo zero de tokens.</li>
+          <li><strong>Geração com IA:</strong> Sintetize novos casos clínicos inéditos sob demanda.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="preceptorModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-lg">
+      <h2 id="preceptorModalTitle">Resultado da Avaliação Clínica</h2>
+      <div class="evaluation-score-row">
+        <div class="score-circle">
+          <span id="preceptorGrade">--</span>
+          <small>/100</small>
+        </div>
+        <div class="score-status">
+          <h4 id="caseOutcomeTitle">Desfecho do Caso</h4>
+          <p id="caseOutcomeSummary">Analisando dados...</p>
+        </div>
+      </div>
+      <div class="evaluation-body">
+        <h4>Parecer Técnico do Preceptor:</h4>
+        <div id="preceptorFeedbackText" class="feedback-quote">...</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="button" onclick="closePreceptorModal()">Concluir e Voltar aos Leitos</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="patients.js"></script>
+  <script src="../shared/api-service.js"></script>
+  <script src="clinic-engine.js"></script>
+  <script src="clinica-page.js"></script>
+</body>
+</html>

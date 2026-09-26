@@ -1011,7 +1011,7 @@ const ClinicEngine = (() => {
       agente: currentCase.agentePrincipal || currentCase.agente || 'Geral'
     };
 
-    const session = JSON.parse(localStorage.getItem('laift_student_session') || '{}');
+    const session = (window.LaiftIdentity && LaiftIdentity.get()) || {};
     const identifier = session.identifier || 'ANONIMO';
 
     try {
@@ -1136,7 +1136,7 @@ const ClinicEngine = (() => {
     );
     if (!topico || !topico.trim()) return;
 
-    const session = JSON.parse(localStorage.getItem('laift_student_session') || '{}');
+    const session = (window.LaiftIdentity && LaiftIdentity.get()) || {};
     const identifier = session.identifier || 'anonimo';
     const tipoUsuario = session.type || 'Visitante';
 

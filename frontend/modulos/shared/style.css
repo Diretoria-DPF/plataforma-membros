@@ -22,6 +22,7 @@
   --border-focus: #3182ce;
   --text-main: #1a202c;
   --text-muted: #718096;
+  --gray: #64748b; /* usado nos estilos inline da clínica/fiscal; antes indefinido aqui */
   
   --radius-sm: 6px;
   --radius-md: 10px;

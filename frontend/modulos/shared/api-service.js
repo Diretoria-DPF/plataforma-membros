@@ -4,7 +4,8 @@
  */
 
 const ApiService = (() => {
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXvBYrHBIXNjHYItuq2LXKt1vkmh2m_CME-5aZqkxUJhl7ktJjemuasbvdEweH95k/exec';
+  // Definida em shared/laift-identity.js (carregado antes deste arquivo).
+  const APPS_SCRIPT_URL = window.APPS_SCRIPT_GATEWAY;
   const OPENFDA_BASE_URL = 'https://api.fda.gov/drug/label.json';
 
   /**
@@ -17,6 +18,7 @@ const ApiService = (() => {
     try {
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'Content-Type': 'text/plain;charset=utf-8' // Impede bloqueio de CORS preflight no Apps Script
         },
@@ -75,38 +77,8 @@ const ApiService = (() => {
   }
 
   return {
-    // --- AUTENTICAÇÃO E SESSÃO ---
-    solicitarCodigoAcesso: (identificador, email, tipo, nome, consentimento) =>
-      callAppsScript({
-        acao: 'solicitarCodigoAcesso',
-        identificador,
-        email,
-        tipo,
-        nome,
-        consentimento,
-        aceitouPolitica: consentimento
-      }),
-
-    validarCodigoAcesso: (identificador, email, codigo) =>
-      callAppsScript({
-        acao: 'validarCodigoAcesso',
-        identificador,
-        email,
-        codigo
-      }),
-
-    obterCredencial: (sessao) =>
-      callAppsScript({
-        acao: 'obterCredencial',
-        sessao
-      }),
-
-    reenviarCredencialEmail: (sessao) =>
-      callAppsScript({
-        acao: 'reenviarCredencialEmail',
-        tokenSessao: sessao,
-        sessao
-      }),
+    // (Cadastro/login por matrícula + código OTP removidos na unificação:
+    // a identidade vem da Plataforma de Membros — ver laift-identity.js.)
 
     // --- TERMINAL FISCAL / CREDENCIAMENTO ---
     loginFiscal: (senha) =>

@@ -3,7 +3,7 @@
  */
 
 // 1. Definição Segura do Gateway (Evita SyntaxError de redeclaração)
-var APPS_SCRIPT_GATEWAY = window.APPS_SCRIPT_GATEWAY || 'https://script.google.com/macros/s/AKfycbyXvBYrHBIXNjHYItuq2LXKt1vkmh2m_CME-5aZqkxUJhl7ktJjemuasbvdEweH95k/exec';
+var APPS_SCRIPT_GATEWAY = window.APPS_SCRIPT_GATEWAY; // definido em ../shared/laift-identity.js
 
 // 2. Estado Global da Aplicação
 let selectedTopics = new Set();
@@ -538,11 +538,9 @@ function prevQuestion() {
 async function persistirMetricasQuiz(scoreTotal, totalQuestoes, tempoGasto) {
     let alunoIdentificador = "Visitante";
     let alunoNome = "Aluno Virtual";
-    try {
-        const sessao = JSON.parse(localStorage.getItem('laift_student_session') || '{}');
-        if (sessao.identifier) alunoIdentificador = sessao.identifier;
-        if (sessao.name) alunoNome = sessao.name;
-    } catch (e) {}
+    const sessao = window.LaiftIdentity && LaiftIdentity.get();
+    if (sessao && sessao.identifier) alunoIdentificador = sessao.identifier;
+    if (sessao && sessao.name) alunoNome = sessao.name;
 
     const topicosArray = Array.from(selectedTopics);
     const modulo = topicosArray.length > 0 ? topicosArray.slice(0, 3).join(', ') : "Farmacologia";
