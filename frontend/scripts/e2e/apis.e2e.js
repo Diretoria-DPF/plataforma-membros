@@ -375,7 +375,9 @@ module.exports = async function apis() {
     const studioEl = await frame.waitForSelector('#studioIframe');
     const studio = await studioEl.contentFrame();
     await studio.waitForLoadState('load').catch(() => {});
-    await studio.waitForSelector('.compound-item', { timeout: 10000 });
+    // 30s: na primeira suíte de um `npm run e2e` o espelho do CDN ainda está
+    // frio e o Estúdio (3Dmol, SmilesDrawer) demora mais que 10s para montar.
+    await studio.waitForSelector('.compound-item', { timeout: 30000 });
     await studio.click('.compound-item');
     await studio.waitForTimeout(2500); // motor local (OCL) ou, na falha dele, RDKit/PubChem/CACTUS resolvem a estrutura 3D
 
