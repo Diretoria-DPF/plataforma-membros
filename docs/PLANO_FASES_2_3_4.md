@@ -33,7 +33,7 @@ relatório final, na seção "Desvios de contrato".
 |---|---|
 | Provedor de IA | **Só Groq**, mantendo **todas as chaves** atuais num pool com rodízio e failover. A redução para um único modelo fica para depois. |
 | Acesso à IA | **Todos os logados**, com **cota diária por pessoa** (menor para visitantes). |
-| Backend legado | O Apps Script deixa de ser usado pelo front-end ao fim das Fases 2 e 3. O histórico antigo fica na planilha até alguém fornecer o código do Apps Script e a planilha (importação = pendência documentada). |
+| Backend legado | O Apps Script deixa de ser usado pelo front-end ao fim das Fases 2 e 3. **Métricas zeradas** (decisão de 2026-09-26): o histórico da planilha **não** será importado; a plataforma recomeça do zero e apaga, uma vez por navegador, os dados locais do sistema antigo. |
 
 ## Equipes e ondas
 
@@ -309,8 +309,8 @@ O passo a passo completo está em `docs/DEPLOYMENT.md`. Resumo:
 ## Pendências conhecidas
 
 - ⏳ **Revisão jurídica** da Política de Privacidade (versão 2026-09-26, com Groq como operador e a área "Aprender") e dos Termos.
-- ⏳ **Retenção do `ai_usage_log`** (sugestão: 180 dias) e agendamento da limpeza.
-- ⏳ **Casos antigos do acervo** (planilha) e **criação/edição manual de casos** pelo admin.
+- ✅ **Retenção do `ai_usage_log`:** 180 dias, apagado pela faxina diária da Worker (Cron Trigger, `worker/src/maintenance.js`), que também remove sessões, tokens e baldes de rate limit expirados.
+- ⏳ **Criação/edição manual de casos** pelo admin (o acervo recomeça vazio; casos antigos da planilha não serão importados).
 - ⏳ **Chamada real ao Groq** e **teste de ponta a ponta** depois do deploy. Tudo foi validado com `fetch` simulado.
-- **Histórico antigo** (métricas e presenças na planilha do Apps Script): não é importado nesta rodada. Precisa do código do Apps Script e de uma exportação da planilha para mapear matrícula/CPF → e-mail.
+- ✅ **Histórico antigo:** decisão do responsável — **não importar**; métricas recomeçam do zero. `frontend/learning.js` apaga uma única vez por navegador a sessão antiga (`laift_student_session`, com matrícula/CPF) e as métricas locais do o-bala-vip (marcador `laift_reset_v1`).
 - **Rodízio de várias contas gratuitas do Groq:** mantido por decisão do responsável. Vale confirmar nos termos de uso do Groq; a camada de IA já permite reduzir para uma chave e um modelo sem reescrita.

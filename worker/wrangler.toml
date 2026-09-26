@@ -44,3 +44,9 @@ binding = "MEDIA_BUCKET"
 [[kv_namespaces]]
 binding = "HOT_CACHE"
 id = "6ee17e571c044c43bd5b32599b6fbab9"
+
+# Faxina diária (src/maintenance.js): sessões/tokens/rate limit expirados e
+# retenção de 180 dias do log de uso da IA. 06:17 UTC = 03:17 em Brasília,
+# fora do horário de uso; o minuto "quebrado" evita a fila do minuto zero.
+[triggers]
+crons = ["17 6 * * *"]

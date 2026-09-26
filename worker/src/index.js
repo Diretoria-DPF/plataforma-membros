@@ -14,6 +14,8 @@
  */
 import { createDb } from './db.js';
 import { API_REGISTRY } from './handlers.js';
+import { runMaintenance } from './maintenance.js';
+import { newCorrelationId } from './security.js';
 
 function parseAllowedOrigins(env) {
   return (env.ALLOWED_ORIGINS || '')
@@ -93,5 +95,15 @@ export default {
         200
       );
     }
+  },
+
+  // Cron Trigger diário ([triggers] em wrangler.toml): faxina de dados
+  // expirados e retenção do log de uso da IA — ver maintenance.js.
+  // waitUntil deixa a limpeza terminar mesmo depois que o evento retorna.
+  async scheduled(event, env, ctx) {
+    const sql = createDb(env.DATABASE_URL);
+    ctx.waitUntil(runMaintenance(sql, newCorrelationId()).then((deleted) => {
+      console.log('Manutenção diária concluída:', JSON.stringify(deleted));
+    }));
   },
 };

@@ -195,8 +195,13 @@ plataforma (painel admin).
 
 ## 9. Manutenção periódica
 
-- `ai_usage_log` cresce uma linha por tentativa de chamada à IA. Prazo
-  sugerido de retenção: 180 dias —
-  `DELETE FROM ai_usage_log WHERE created_at < now() - interval '180 days';`
-  (agendamento pendente; ver `docs/FASE_3_IA_CLINICA.md`).
+- **Faxina automática diária** (Cron Trigger `17 6 * * *`, 03:17 em
+  Brasília — `[triggers]` em `worker/wrangler.toml`, código em
+  `worker/src/maintenance.js`). É registrada sozinha pelo `npm run deploy`;
+  não há passo manual. Apaga: `ai_usage_log` com mais de 180 dias, sessões
+  expiradas há mais de 1 dia, tokens de conta expirados há mais de 7 dias e
+  baldes de rate limit com mais de 8 dias. Nunca toca `audit_logs` nem
+  `error_logs`. Resultado de cada execução: `wrangler tail` ou painel da
+  Cloudflare → Workers → plataforma-membros-api → Logs; falhas vão para
+  `error_logs` com o código `MAINTENANCE_FAILED`.
 - Revisar a fila de casos gerados por IA (painel **IA** → pendentes).

@@ -14,7 +14,7 @@ pelo contrato de `docs/PLANO_FASES_2_3_4.md`.
 | Fase | Status | Onde está o detalhe |
 |---|---|---|
 | 1 — Integração | **Concluída** | abaixo |
-| 2 — Dados e presença na Worker/Neon | **Concluída**, exceto a importação do histórico da planilha | `docs/FASE_2_DADOS_PRESENCA.md` |
+| 2 — Dados e presença na Worker/Neon | **Concluída** (métricas recomeçam do zero; sem importação da planilha, por decisão do responsável) | `docs/FASE_2_DADOS_PRESENCA.md` |
 | 3 — IA na Worker | **Concluída**; o Apps Script foi aposentado no front-end | `docs/FASE_3_IA_CLINICA.md` |
 | 4 — Qualidade e design unificado | **Concluída** (Ondas 1 e 2), com as pendências listadas no fim | `docs/FASE_4_QUALIDADE.md` |
 
@@ -103,13 +103,13 @@ frontend/
 - ✅ **Presença:** QR v2 assinado (HMAC) e terminal fiscal só com papel admin na Worker, sem senha fiscal. Plano original: usar `events`/`event_registrations`, que já existem. O QR passa a ser um token assinado pela Worker, e o terminal fiscal exige o papel `admin` no servidor, o que elimina a senha fiscal.
 - ✅ **Toxicologia:** envia pelo motor único de quiz (Fase 4). Plano original: passar a enviar as métricas, o que hoje nunca acontece.
 - ✅ **Métricas no perfil:** bloco "Aprendizagem" no perfil. Plano original: somar as de aprendizagem ao `ProfileService.getMyMetrics`, exibidas no perfil.
-- ⏳ **PENDENTE — Importação do histórico:** depende do código do Apps Script e de uma exportação da planilha. Plano original: script único que importa o histórico da planilha, mapeando matrícula/CPF para e-mail quando possível.
+- ✅ **Histórico:** o responsável decidiu **não importar** (métricas zeradas). Os dados locais do sistema antigo são apagados uma vez por navegador (`learning.js`, marcador `laift_reset_v1`).
 
 ## Fase 3 — IA na Worker — concluída
 
 - ✅ Mover para a Worker o paciente virtual, o preceptor, a geração de casos e o preceptor do laboratório. A chave da IA fica como secret (`wrangler secret put`), com rate limit por perfil (`enforceRateLimit`). Feito com pool de chaves (`GROQ_API_KEYS`), cota diária por papel e disjuntor global.
 - ✅ Mover para o Neon o acervo coletivo de casos e o radar epidemiológico, com moderação pelo admin: o conteúdo é enviado por usuários e exibido a outros.
-- ✅ Aposentar o Apps Script: nenhum arquivo do front-end o chama (`api-service.js` removido na Fase 4, Onda 2). ⏳ Os casos antigos do acervo da planilha não foram importados.
+- ✅ Aposentar o Apps Script: nenhum arquivo do front-end o chama (`api-service.js` removido na Fase 4, Onda 2). O acervo recomeça vazio (sem importação, por decisão do responsável).
 
 ## Fase 4 — Qualidade e design unificado — concluída
 

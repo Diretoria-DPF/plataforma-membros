@@ -19,6 +19,29 @@ module.exports = async function smoke() {
     check(await app.page.locator('#form-login').isVisible(), 'a entrada é o login da plataforma');
     check((await app.page.locator('#identityForm, #otpForm, #studentId').count()) === 0, 'não existe o cadastro antigo do o-bala-vip');
 
+    // Recomeço do zero: dados locais do antigo o-bala-vip (mesmo domínio)
+    // somem uma única vez; preferências do estúdio ficam.
+    // Simula um navegador que ainda não viu a versão nova: sem o marcador.
+    await app.page.evaluate(() => {
+      localStorage.removeItem('laift_reset_v1');
+      localStorage.setItem('laift_student_session', JSON.stringify({ identifier: '12345678900', sessionToken: 'antigo' }));
+      localStorage.setItem('laift_resolved_cases', '["caso_tox_01"]');
+      localStorage.setItem('laift_studio_prefs_v4', '{"tema":"x"}');
+    });
+    await app.page.reload();
+    const afterReset = await app.page.evaluate(() => ({
+      session: localStorage.getItem('laift_student_session'),
+      cases: localStorage.getItem('laift_resolved_cases'),
+      prefs: localStorage.getItem('laift_studio_prefs_v4'),
+      marker: localStorage.getItem('laift_reset_v1'),
+    }));
+    check(!afterReset.session && !afterReset.cases && afterReset.prefs && afterReset.marker,
+      'dados locais do sistema antigo (sessão com CPF, métricas) são apagados; preferências ficam');
+    await app.page.evaluate(() => localStorage.setItem('laift_resolved_cases', '["caso_novo"]'));
+    await app.page.reload();
+    check((await app.page.evaluate(() => localStorage.getItem('laift_resolved_cases'))) === '["caso_novo"]',
+      'a limpeza do sistema antigo roda uma vez só (não apaga o progresso novo)');
+
     const direct = await app.context.newPage();
     await direct.goto(app.baseUrl + 'modulos/quiz/index.html');
     await direct.waitForURL(/\/index\.html$/, { timeout: 5000 }).catch(() => {});

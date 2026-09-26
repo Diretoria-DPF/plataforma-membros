@@ -17,6 +17,27 @@
 (function () {
   'use strict';
 
+  // Recomeço do zero (decisão do responsável: métricas zeradas, sem importar
+  // o histórico da planilha do Apps Script). O antigo o-bala-vip rodava neste
+  // mesmo domínio, então navegadores de quem o usou ainda guardam:
+  //  - laift_student_session: matrícula/CPF, e-mail e o token do Apps Script
+  //    desativado — dado pessoal sem uso nenhum, precisa sair;
+  //  - métricas locais antigas (casos concluídos, simulados em andamento,
+  //    histórico de simulações que alimenta o dossiê de horas).
+  // Roda UMA vez por navegador (marcador laift_reset_v1). Preferências,
+  // favoritos e anotações do estúdio são conteúdo da pessoa e ficam.
+  (function resetLegacyLocalData() {
+    var MARKER = 'laift_reset_v1';
+    var LEGACY_KEYS = ['laift_student_session', 'laift_resolved_cases', 'pharmaQuizProgress', 'toxicoQuizProgress', 'laift_atlas_history'];
+    try {
+      if (localStorage.getItem(MARKER)) return;
+      LEGACY_KEYS.forEach(function (key) { localStorage.removeItem(key); });
+      localStorage.setItem(MARKER, String(Date.now()));
+    } catch (err) {
+      // localStorage indisponível (modo privado etc.): nada a limpar.
+    }
+  })();
+
   // Nomes de exibição dos módulos como a Worker os agrega (learning_attempts.module).
   var STATS_MODULE_LABELS = [
     ['farmacologia', 'Farmacologia'],
