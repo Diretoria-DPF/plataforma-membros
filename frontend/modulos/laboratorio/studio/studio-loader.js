@@ -71,10 +71,31 @@
   // ─── RDKit WASM — engine secundária ────────────────────────────────────
   // Resolve com initRDKitModule (ou null, se indisponível) — contrato que
   // studio.js já esperava de window.__rdkitReady.
-  global.__rdkitReady = injetar(RDKIT, function () {
-    return typeof global.initRDKitModule === 'function';
-  }, 'RDKit Loader').then(function () { return global.initRDKitModule; }, function (err) {
-    console.warn('[RDKit Loader] ❌', err.message);
-    return null;
-  });
+  //
+  // O RDKit (build Emscripten/embind) monta funções com `new Function` ao
+  // inicializar, então só roda se a CSP da página permitir 'unsafe-eval'
+  // (além de 'wasm-unsafe-eval' e do jsDelivr em connect-src, para o .wasm).
+  // A CSP do Estúdio NÃO permite (Fase 4, Onda 2 — docs/SECURITY.md): aí o
+  // RDKit nem é baixado e o Estúdio usa as estimativas heurísticas que já
+  // tinha para quando o RDKit falha. Liberar o RDKit é só mudar a CSP.
+  function cspPermiteEval() {
+    var meta = global.document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+    if (!meta) return true;
+    var script = /(?:^|;)\s*script-src([^;]*)/.exec(meta.getAttribute('content') || '');
+    var fonte = script ? script[1] : ((/(?:^|;)\s*default-src([^;]*)/.exec(meta.getAttribute('content') || '') || [])[1] || '');
+    return /'unsafe-eval'/.test(fonte);
+  }
+
+  global.LAIFT_RDKIT_BLOQUEADO_PELA_CSP = !cspPermiteEval();
+  global.__rdkitReady = global.LAIFT_RDKIT_BLOQUEADO_PELA_CSP
+    ? Promise.resolve(null)
+    : injetar(RDKIT, function () {
+      return typeof global.initRDKitModule === 'function';
+    }, 'RDKit Loader').then(function () { return global.initRDKitModule; }, function (err) {
+      console.warn('[RDKit Loader] ❌', err.message);
+      return null;
+    });
+  if (global.LAIFT_RDKIT_BLOQUEADO_PELA_CSP) {
+    console.info('[RDKit Loader] Desativado pela CSP desta página (exige \'unsafe-eval\'); usando estimativas.');
+  }
 })(window);

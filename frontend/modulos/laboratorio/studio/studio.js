@@ -955,10 +955,15 @@ console.log(
         }
 
         if (!initFn) {
-          console.warn('[RDKit] ❌ initRDKitModule indisponível após aguardar');
           STATE.rdkitFalhou = true;
           clearTimeout(timeoutGlobal);
-          mostrarNotificacao('⚠️ RDKit offline — usando heurísticas', 'warning', 4000);
+          if (window.LAIFT_RDKIT_BLOQUEADO_PELA_CSP) {
+            // Esperado: a CSP do Estúdio não permite 'unsafe-eval' (ver studio-loader.js).
+            mostrarNotificacao('ℹ️ Descritores estimados (RDKit desativado pela política de segurança)', 'info', 3500);
+          } else {
+            console.warn('[RDKit] ❌ initRDKitModule indisponível após aguardar');
+            mostrarNotificacao('⚠️ RDKit offline — usando heurísticas', 'warning', 4000);
+          }
           terminar(null);
           return;
         }
@@ -2014,7 +2019,9 @@ console.log(
 
     const rdkit = await carregarRDKitSobDemanda();
     if (!rdkit) {
-      setHtml(body, MSG_VAZIA('RDKit indisponível.', 'error'));
+      setHtml(body, MSG_VAZIA(window.LAIFT_RDKIT_BLOQUEADO_PELA_CSP
+        ? 'Similaridade estrutural indisponível: exige o RDKit, desativado pela política de segurança desta página.'
+        : 'RDKit indisponível.', 'error'));
       return;
     }
 

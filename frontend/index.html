@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Plataforma de Membros</title>
   <link rel="stylesheet" href="styles.css">
@@ -773,7 +775,11 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous" defer></script>
+  <!-- Chart.js 4.5.1 (o mesmo do atlas 3D): arquivo que EXISTE no pacote npm,
+       com SRI calculado dele. O 4.4.4 anterior apontava para um
+       chart.umd.min.js que o pacote não tem — o jsDelivr o gerava na hora, e
+       o hash podia deixar de bater (docs/FASE_4_QUALIDADE.md §5). -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous" defer></script>
   <!--
     Mensageria E2EE (Fase 3f): dois módulos ES, carregados ANTES de
     app.js (script clássico com defer). Scripts type="module" já são

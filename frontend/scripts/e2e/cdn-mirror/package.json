@@ -1,0 +1,15 @@
+{
+  "name": "laift-e2e-cdn-mirror",
+  "private": true,
+  "description": "Espelho local, SÓ PARA TESTE, das bibliotecas que as páginas carregam do jsDelivr (mesmas versões). O csp.e2e.js serve estes bytes no lugar do CDN: confere o SRI de verdade e roda as bibliotecas sob a CSP. Não faz parte do deploy.",
+  "dependencies": {
+    "3dmol": "2.5.5",
+    "@rdkit/rdkit": "2026.3.6",
+    "chart.js": "4.5.1",
+    "html5-qrcode": "2.3.8",
+    "openchemlib": "8.6.0",
+    "smiles-drawer": "2.1.7",
+    "smiles-drawer-2.3.0": "npm:smiles-drawer@2.3.0",
+    "three": "0.128.0"
+  }
+}

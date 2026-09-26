@@ -6,6 +6,7 @@
  *   em porta livre, com os mesmos MIME types de scripts/serve-dist.js.
  * - Simula a Worker: toda chamada a *.workers.dev é respondida por
  *   `workerHandlers[action](args, ctx)` ou por uma resposta padrão segura.
+ * - Com E2E_STACK=1 no ambiente, os erros de página vêm com a pilha.
  * - Registra (e aborta) toda requisição a outro host em `calls.external`
  *   — os testes conferem por aí que nada além da Worker recebe POST nem
  *   o token de sessão.
@@ -143,7 +144,7 @@ async function startApp(opts = {}) {
   });
 
   const page = await context.newPage();
-  const trackErrors = (p, label) => p.on('pageerror', (e) => errors.push(`${label}: ${e.message}`));
+  const trackErrors = (p, label) => p.on('pageerror', (e) => errors.push(`${label}: ${e.message}` + (process.env.E2E_STACK ? ' @ ' + e.stack : '')));
   trackErrors(page, 'pagina');
   context.on('page', (p) => trackErrors(p, 'popup'));
 

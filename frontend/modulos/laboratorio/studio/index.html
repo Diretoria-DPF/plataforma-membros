@@ -5,6 +5,8 @@
        1. METADADOS & VIEWPORT
        ========================================================================== -->
   <meta charset="UTF-8">
+  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov https://query.wikidata.org https://www.ebi.ac.uk; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

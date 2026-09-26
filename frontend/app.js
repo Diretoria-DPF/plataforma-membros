@@ -1187,7 +1187,9 @@
     callApi('apiGetOrgChart', state.sessionToken).then(function (res) {
       if (!res.success) { setStatus('orgchart-status', res.message, 'error'); return; }
       setStatus('orgchart-status', '', null);
-      renderOrgChartTree(res.chart);
+      // Resposta sem `chart` (servidor antigo/erro parcial) vira organograma
+      // vazio, em vez de um TypeError que deixava o painel em branco.
+      renderOrgChartTree(res.chart || {});
     });
   }
 
@@ -1214,7 +1216,7 @@
     var directoratesWrap = h('div', { className: 'orgchart-level' }, [text('span', 'Diretorias', { className: 'orgchart-level-label' })]);
     var grid = h('div', { className: 'orgchart-directorates' }, []);
     Object.keys(DIRECTORATE_LABELS).forEach(function (key) {
-      var d = chart.directorates[key] || { diretor: null, members: [] };
+      var d = (chart.directorates || {})[key] || { diretor: null, members: [] };
       var box = h('div', { className: 'orgchart-directorate-box' }, [
         text('div', DIRECTORATE_LABELS[key], { className: 'orgchart-directorate-title' }),
       ]);
