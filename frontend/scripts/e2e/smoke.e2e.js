@@ -26,16 +26,20 @@ module.exports = async function smoke() {
       localStorage.removeItem('laift_reset_v1');
       localStorage.setItem('laift_student_session', JSON.stringify({ identifier: '12345678900', sessionToken: 'antigo' }));
       localStorage.setItem('laift_resolved_cases', '["caso_tox_01"]');
+      localStorage.setItem('pharmaQuizProgress', '{"q":3}');
+      localStorage.setItem('toxicoQuizProgress', '{"q":5}');
+      localStorage.setItem('laift_atlas_history', '[{"composto":"x"}]');
       localStorage.setItem('laift_studio_prefs_v4', '{"tema":"x"}');
     });
     await app.page.reload();
     const afterReset = await app.page.evaluate(() => ({
       session: localStorage.getItem('laift_student_session'),
       cases: localStorage.getItem('laift_resolved_cases'),
+      others: ['pharmaQuizProgress', 'toxicoQuizProgress', 'laift_atlas_history'].map((k) => localStorage.getItem(k)).filter(Boolean).length,
       prefs: localStorage.getItem('laift_studio_prefs_v4'),
       marker: localStorage.getItem('laift_reset_v1'),
     }));
-    check(!afterReset.session && !afterReset.cases && afterReset.prefs && afterReset.marker,
+    check(!afterReset.session && !afterReset.cases && afterReset.others === 0 && afterReset.prefs && afterReset.marker,
       'dados locais do sistema antigo (sessão com CPF, métricas) são apagados; preferências ficam');
     await app.page.evaluate(() => localStorage.setItem('laift_resolved_cases', '["caso_novo"]'));
     await app.page.reload();

@@ -26,6 +26,10 @@
   //    histórico de simulações que alimenta o dossiê de horas).
   // Roda UMA vez por navegador (marcador laift_reset_v1). Preferências,
   // favoritos e anotações do estúdio são conteúdo da pessoa e ficam.
+  // As chaves de progresso são as MESMAS que os módulos novos usam, e isso
+  // é seguro: a limpeza roda aqui, na página da plataforma, antes de qualquer
+  // módulo abrir neste navegador (é a plataforma que os abre), então o que
+  // houver nelas nesse momento só pode ter vindo do sistema antigo.
   (function resetLegacyLocalData() {
     var MARKER = 'laift_reset_v1';
     var LEGACY_KEYS = ['laift_student_session', 'laift_resolved_cases', 'pharmaQuizProgress', 'toxicoQuizProgress', 'laift_atlas_history'];

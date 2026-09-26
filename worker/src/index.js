@@ -104,6 +104,10 @@ export default {
     const sql = createDb(env.DATABASE_URL);
     ctx.waitUntil(runMaintenance(sql, newCorrelationId()).then((deleted) => {
       console.log('Manutenção diária concluída:', JSON.stringify(deleted));
+    }).catch((err) => {
+      // runMaintenance já isola cada limpeza; isto só impede que algo
+      // inesperado vire rejeição não tratada no runtime.
+      console.error('Manutenção diária falhou:', err);
     }));
   },
 };

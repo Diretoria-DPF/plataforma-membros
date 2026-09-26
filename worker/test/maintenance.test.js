@@ -24,7 +24,14 @@ describe('maintenance.runMaintenance', () => {
     expect(queryText(sql, 0)).toMatch(/DELETE FROM ai_usage_log/);
     expect(sql.mock.calls[0]).toContain(RETENTION.AI_USAGE_LOG_DAYS);
     expect(RETENTION.AI_USAGE_LOG_DAYS).toBe(180);
+    expect(queryText(sql, 1)).toMatch(/DELETE FROM sessions/);
+    expect(sql.mock.calls[1]).toContain(RETENTION.EXPIRED_SESSION_GRACE_DAYS);
+    expect(queryText(sql, 2)).toMatch(/DELETE FROM account_tokens/);
+    expect(sql.mock.calls[2]).toContain(RETENTION.EXPIRED_TOKEN_GRACE_DAYS);
     expect(queryText(sql, 3)).toMatch(/DELETE FROM rate_limit_buckets/);
+    expect(sql.mock.calls[3]).toContain(RETENTION.RATE_LIMIT_BUCKET_MAX_AGE_DAYS);
+    // A folga dos baldes precisa ser maior que a maior janela de rate limit (7 dias).
+    expect(RETENTION.RATE_LIMIT_BUCKET_MAX_AGE_DAYS).toBeGreaterThan(7);
   });
 
   test('nunca toca audit_logs nem error_logs (só registra erro)', async () => {
