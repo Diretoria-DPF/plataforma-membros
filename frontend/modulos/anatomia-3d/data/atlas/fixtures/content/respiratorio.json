@@ -1,0 +1,76 @@
+{
+  "fma:7309": {
+    "ids": {
+      "fma": "7309",
+      "uberon": "UBERON:0002048",
+      "wikidata": "Q7886"
+    },
+    "summary_pt": "O pulmão direito é dividido em três lobos (superior, médio e inferior) e é responsável, junto ao pulmão esquerdo, pelas trocas gasosas entre o ar e o sangue.",
+    "anatomy": {
+      "vascularization": "Recebe sangue venoso pelas aa. pulmonares (circulação funcional) e sangue arterial pelas aa. bronquiais (circulação nutridora)."
+    },
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Pulmão — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Pulm%C3%A3o"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de tórax",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  },
+  "fma:7310": {
+    "ids": {
+      "fma": "7310",
+      "uberon": "UBERON:0002168",
+      "wikidata": "Q7886"
+    },
+    "summary_pt": "O pulmão esquerdo tem apenas dois lobos (superior e inferior), sendo um pouco menor que o direito por acomodar o coração na incisura cardíaca.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Pulmão — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Pulm%C3%A3o"
+      }
+    ]
+  },
+  "za:traqueia": {
+    "ids": {
+      "wikidata": "Q9617"
+    },
+    "summary_pt": "A traqueia é um tubo cartilaginoso que conduz o ar da laringe aos brônquios principais, sustentado por anéis cartilaginosos incompletos em forma de \"C\".",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Traqueia — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Traqueia"
+      }
+    ]
+  }
+}

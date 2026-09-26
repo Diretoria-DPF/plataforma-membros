@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laift.local/atlas/schema/routes.schema.json",
+  "title": "Vias de administração/circulação do Atlas Anatômico",
+  "description": "data/atlas/routes.json. Cada via é uma sequência de âncoras sobre estruturas reais (sid), com um parâmetro t opcional (0–1) para posicionar um ponto ao longo do trecho entre duas âncoras, usado pela animação do modo Fisiologia & Vias.",
+  "type": "array",
+  "items": { "$ref": "#/$defs/route" },
+  "$defs": {
+    "sid": {
+      "type": "string",
+      "pattern": "^(fma:[0-9]+|za:[a-z0-9]+(-[a-z0-9]+)*)$"
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sid"],
+      "properties": {
+        "sid": { "$ref": "#/$defs/sid" },
+        "t": {
+          "type": "number",
+          "description": "Posição relativa (0–1) dentro da estrutura ou do trecho, quando a âncora precisa de mais precisão do que \"a estrutura toda\".",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "label_pt": { "type": "string", "minLength": 1 }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "system", "name_pt", "description_pt", "anchors"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" },
+        "system": { "type": "string" },
+        "name_pt": { "type": "string", "minLength": 1 },
+        "description_pt": { "type": "string", "minLength": 1 },
+        "anchors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/anchor" },
+          "minItems": 2
+        }
+      }
+    }
+  }
+}

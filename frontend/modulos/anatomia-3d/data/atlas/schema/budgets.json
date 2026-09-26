@@ -1,0 +1,18 @@
+{
+  "_comment_pt": "Orçamentos de bytes por asset (plano §3). 'bySystem' vale para os GLBs reais gerados pelo pipeline do CI (models/<sistema>[.lod1].glb). 'fixtures.maxBytesPerAsset' vale quando o diretório validado é o de fixtures (scripts/atlas/make-fixtures.mjs), onde cada GLB deve ficar bem menor. 'total.maxBytes' é o teto do conjunto inteiro de assets do manifesto.",
+  "bySystem": {
+    "esqueletico": { "lod0": 3670016, "lod1": 1258291 },
+    "muscular": { "lod0": 5242880, "lod1": 1887436 },
+    "cardiovascular": { "lod0": 4194304, "lod1": 1572864 },
+    "nervoso": { "lod0": 3145728, "lod1": 1048576 },
+    "digestorio": { "lod0": 2621440, "lod1": 943718 },
+    "default": { "lod0": 1572864, "lod1": 1572864 },
+    "hra": { "lod0": 1572864, "lod1": 1572864 }
+  },
+  "fixtures": {
+    "maxBytesPerAsset": 51200
+  },
+  "total": {
+    "maxBytes": 47185920
+  }
+}

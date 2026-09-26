@@ -1,0 +1,102 @@
+{
+  "fma:9611": {
+    "ids": {
+      "fma": "9611",
+      "wikidata": "Q9628"
+    },
+    "summary_pt": "O fêmur é o osso mais longo e mais resistente do corpo humano, formando o esqueleto da coxa entre o quadril e o joelho.",
+    "anatomy": {
+      "relations": "Articula-se proximalmente com o acetábulo do osso do quadril (articulação coxofemoral) e distalmente com a tíbia e a patela (articulação do joelho).",
+      "vascularization": "Suprido principalmente pela a. nutrícia (ramo da a. femoral profunda) e pelo anel vascular metafisário/epifisário."
+    },
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Fêmur — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/F%C3%A9mur"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. sobre membro inferior",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. sobre membro inferior",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  },
+  "fma:13303": {
+    "ids": {
+      "fma": "13303",
+      "wikidata": "Q9648"
+    },
+    "summary_pt": "O úmero é o osso longo do braço, entre o ombro e o cotovelo, servindo de base para a inserção de vários músculos do ombro e do braço.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Úmero — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/%C3%9Amero"
+      }
+    ]
+  },
+  "za:cranio": {
+    "ids": {
+      "wikidata": "Q34643"
+    },
+    "summary_pt": "O crânio é o conjunto de ossos que forma e protege o encéfalo, além de sustentar as estruturas da face.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Crânio — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Cr%C3%A2nio"
+      }
+    ]
+  },
+  "za:coluna-vertebral": {
+    "ids": {
+      "wikidata": "Q133278"
+    },
+    "summary_pt": "A coluna vertebral sustenta o tronco, protege a medula espinhal e permite os movimentos de flexão, extensão e rotação do corpo.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Coluna vertebral — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Coluna_vertebral"
+      }
+    ]
+  }
+}

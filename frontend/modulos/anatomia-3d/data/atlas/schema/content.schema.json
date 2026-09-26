@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laift.local/atlas/schema/content.schema.json",
+  "title": "Conteúdo por estrutura do Atlas Anatômico",
+  "description": "Cada arquivo content/<sistema>.json é um mapa sid → registro de conteúdo, carregado sob demanda quando o usuário abre a ficha de uma estrutura.",
+  "type": "object",
+  "propertyNames": {
+    "pattern": "^(fma:[0-9]+|za:[a-z0-9]+(-[a-z0-9]+)*)$"
+  },
+  "additionalProperties": { "$ref": "#/$defs/contentRecord" },
+  "$defs": {
+    "sid": {
+      "type": "string",
+      "pattern": "^(fma:[0-9]+|za:[a-z0-9]+(-[a-z0-9]+)*)$"
+    },
+    "source": {
+      "type": "object",
+      "description": "Uma fonte citada para um campo de texto específico deste registro. `field` usa notação de caminho (ex.: \"summary_pt\", \"anatomy.vascularization\", \"histology.epithelium\", \"clinical\").",
+      "additionalProperties": false,
+      "required": ["field", "type", "ref", "license"],
+      "properties": {
+        "field": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["wikidata", "wikipedia", "hra-asctb", "fipat", "textbook", "other"]
+        },
+        "ref": { "type": "string", "minLength": 1, "description": "Referência legível (título, obra, ou id da base de origem)." },
+        "rev": { "type": "string", "description": "Revisão/versão da fonte (ex.: revisão da página, edição do livro)." },
+        "license": { "type": "string", "minLength": 1 },
+        "url": {
+          "type": ["string", "null"],
+          "pattern": "^(https?://.+)$"
+        }
+      }
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cl", "name_pt"],
+      "properties": {
+        "cl": { "type": "string", "description": "Id da Cell Ontology (ex.: CL:0000746).", "pattern": "^CL:[0-9]+$" },
+        "name_pt": { "type": "string", "minLength": 1 },
+        "biomarkers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "ids": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fma": { "type": "string" },
+        "uberon": { "type": "string", "pattern": "^UBERON:[0-9]+$" },
+        "ta2": { "type": "string" },
+        "wikidata": { "type": "string", "pattern": "^Q[0-9]+$" },
+        "mesh": { "type": "string" },
+        "icd10": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "anatomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "relations": { "type": "string" },
+        "vascularization": { "type": "string" },
+        "innervation": { "type": "string" },
+        "lymph": { "type": "string" }
+      }
+    },
+    "histology": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "epithelium": { "type": "string" },
+        "tissues": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "cells": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/cell" }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "description": "Estado de revisão humana do texto. Enquanto não for \"reviewed\" ou \"approved\", a interface mostra o selo \"Rascunho — não revisado\".",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["auto-draft", "legacy-unverified", "reviewed", "approved"]
+        },
+        "by": { "type": "string" },
+        "date": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        }
+      }
+    },
+    "contentRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ids", "summary_pt", "sources", "review"],
+      "properties": {
+        "ids": { "$ref": "#/$defs/ids" },
+        "summary_pt": { "type": "string", "minLength": 1 },
+        "anatomy": { "$ref": "#/$defs/anatomy" },
+        "histology": { "$ref": "#/$defs/histology" },
+        "clinical": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source" },
+          "minItems": 1
+        },
+        "review": { "$ref": "#/$defs/review" }
+      }
+    }
+  }
+}

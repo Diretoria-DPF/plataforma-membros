@@ -1,0 +1,3063 @@
+[
+  {
+    "sid": "za:cranio",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "cabeca",
+    "names": {
+      "pt": "Crânio",
+      "en": "Skull",
+      "la": "Cranium"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "cranio"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.1,
+        1.5799999999999998,
+        -0.1
+      ],
+      "max": [
+        0.1,
+        1.78,
+        0.1
+      ]
+    }
+  },
+  {
+    "sid": "za:coluna-vertebral",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "dorso",
+    "names": {
+      "pt": "Coluna Vertebral",
+      "en": "Vertebral column",
+      "la": "Columna vertebralis"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "coluna-vertebral"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.04,
+        0.825,
+        -0.09
+      ],
+      "max": [
+        0.04,
+        1.4749999999999999,
+        -0.010000000000000002
+      ]
+    }
+  },
+  {
+    "sid": "za:esterno",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Esterno",
+      "en": "Sternum",
+      "la": "Sternum"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "esterno"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.015,
+        1.26,
+        0.08
+      ],
+      "max": [
+        0.015,
+        1.4400000000000002,
+        0.09999999999999999
+      ]
+    }
+  },
+  {
+    "sid": "za:costelas",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Costelas",
+      "en": "Ribs",
+      "la": "Costae"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "costelas"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.14,
+        1.1500000000000001,
+        -0.1
+      ],
+      "max": [
+        0.14,
+        1.45,
+        0.1
+      ]
+    }
+  },
+  {
+    "sid": "za:clavicula-direita",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Clavícula Direita",
+      "en": "Right clavicle",
+      "la": "Clavicula dextra"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "clavicula-direita"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.105,
+        1.395,
+        0.015
+      ],
+      "max": [
+        0.135,
+        1.545,
+        0.045
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:clavicula-esquerda",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Clavícula Esquerda",
+      "en": "Left clavicle",
+      "la": "Clavicula sinistra"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "clavicula-esquerda"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.135,
+        1.395,
+        0.015
+      ],
+      "max": [
+        -0.105,
+        1.545,
+        0.045
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:pelve",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Pelve",
+      "en": "Pelvis",
+      "la": "Pelvis"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "pelve"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.15,
+        0.8300000000000001,
+        -0.1
+      ],
+      "max": [
+        0.15,
+        1.01,
+        0.1
+      ]
+    }
+  },
+  {
+    "sid": "fma:9611",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "membro-inferior-direito",
+    "names": {
+      "pt": "Fêmur Direito",
+      "en": "Right femur",
+      "la": "Femur dextrum"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "femur-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.07500000000000001,
+        0.49,
+        -0.025
+      ],
+      "max": [
+        0.125,
+        0.9099999999999999,
+        0.025
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:femur-esquerdo",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "membro-inferior-esquerdo",
+    "names": {
+      "pt": "Fêmur Esquerdo",
+      "en": "Left femur",
+      "la": "Femur sinistrum"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "femur-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.125,
+        0.49,
+        -0.025
+      ],
+      "max": [
+        -0.07500000000000001,
+        0.9099999999999999,
+        0.025
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "fma:13303",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "membro-superior-direito",
+    "names": {
+      "pt": "Úmero Direito",
+      "en": "Right humerus",
+      "la": "Humerus dextrum"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "umero-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.18200000000000002,
+        1.1,
+        -0.018
+      ],
+      "max": [
+        0.218,
+        1.4,
+        0.018
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:umero-esquerdo",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "membro-superior-esquerdo",
+    "names": {
+      "pt": "Úmero Esquerdo",
+      "en": "Left humerus",
+      "la": "Humerus sinistrum"
+    },
+    "mesh": {
+      "asset": "models/esqueletico.lod0.glb",
+      "nodes": [
+        "umero-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.218,
+        1.1,
+        -0.018
+      ],
+      "max": [
+        -0.18200000000000002,
+        1.4,
+        0.018
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:trapezio",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "dorso",
+    "names": {
+      "pt": "Trapézio",
+      "en": "Trapezius",
+      "la": "Musculus trapezius"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "trapezio"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.15,
+        1.3499999999999999,
+        -0.08499999999999999
+      ],
+      "max": [
+        0.15,
+        1.55,
+        -0.034999999999999996
+      ]
+    }
+  },
+  {
+    "sid": "za:reto-abdominal",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Reto do Abdome",
+      "en": "Rectus abdominis",
+      "la": "Musculus rectus abdominis"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "reto-abdominal"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.06,
+        0.925,
+        0.065
+      ],
+      "max": [
+        0.06,
+        1.175,
+        0.095
+      ]
+    }
+  },
+  {
+    "sid": "za:biceps-braquial-direito",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "membro-superior-direito",
+    "names": {
+      "pt": "Bíceps Braquial Direito",
+      "en": "Right biceps brachii",
+      "la": "Musculus biceps brachii dexter"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "biceps-braquial-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.17,
+        1.18,
+        0
+      ],
+      "max": [
+        0.23,
+        1.3800000000000001,
+        0.06
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:biceps-braquial-esquerdo",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "membro-superior-esquerdo",
+    "names": {
+      "pt": "Bíceps Braquial Esquerdo",
+      "en": "Left biceps brachii",
+      "la": "Musculus biceps brachii sinister"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "biceps-braquial-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.23,
+        1.18,
+        0
+      ],
+      "max": [
+        -0.17,
+        1.3800000000000001,
+        0.06
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:deltoide-direito",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "membro-superior-direito",
+    "names": {
+      "pt": "Deltoide Direito",
+      "en": "Right deltoid",
+      "la": "Musculus deltoideus dexter"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "deltoide-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.15999999999999998,
+        1.39,
+        -0.05
+      ],
+      "max": [
+        0.26,
+        1.49,
+        0.05
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:deltoide-esquerdo",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "membro-superior-esquerdo",
+    "names": {
+      "pt": "Deltoide Esquerdo",
+      "en": "Left deltoid",
+      "la": "Musculus deltoideus sinister"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "deltoide-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.26,
+        1.39,
+        -0.05
+      ],
+      "max": [
+        -0.15999999999999998,
+        1.49,
+        0.05
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:quadriceps-femoral-direito",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "membro-inferior-direito",
+    "names": {
+      "pt": "Quadríceps Femoral Direito",
+      "en": "Right quadriceps femoris",
+      "la": "Musculus quadriceps femoris dexter"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "quadriceps-femoral-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.05500000000000001,
+        0.5050000000000001,
+        -0.015
+      ],
+      "max": [
+        0.14500000000000002,
+        0.855,
+        0.075
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:quadriceps-femoral-esquerdo",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "membro-inferior-esquerdo",
+    "names": {
+      "pt": "Quadríceps Femoral Esquerdo",
+      "en": "Left quadriceps femoris",
+      "la": "Musculus quadriceps femoris sinister"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "quadriceps-femoral-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.14500000000000002,
+        0.5050000000000001,
+        -0.015
+      ],
+      "max": [
+        -0.05500000000000001,
+        0.855,
+        0.075
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:gluteo-maximo-direito",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Glúteo Máximo Direito",
+      "en": "Right gluteus maximus",
+      "la": "Musculus gluteus maximus dexter"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "gluteo-maximo-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.020000000000000004,
+        0.8200000000000001,
+        -0.16
+      ],
+      "max": [
+        0.18,
+        0.98,
+        0
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:gluteo-maximo-esquerdo",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Glúteo Máximo Esquerdo",
+      "en": "Left gluteus maximus",
+      "la": "Musculus gluteus maximus sinister"
+    },
+    "mesh": {
+      "asset": "models/muscular.lod0.glb",
+      "nodes": [
+        "gluteo-maximo-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.18,
+        0.8200000000000001,
+        -0.16
+      ],
+      "max": [
+        -0.020000000000000004,
+        0.98,
+        0
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "fma:7088",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Coração",
+      "en": "Heart",
+      "la": "Cor"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "coracao"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.08,
+        1.26,
+        -0.009999999999999995
+      ],
+      "max": [
+        0.039999999999999994,
+        1.3800000000000001,
+        0.11
+      ]
+    }
+  },
+  {
+    "sid": "za:aorta",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Aorta",
+      "en": "Aorta",
+      "la": "Aorta"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "aorta"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.012,
+        1,
+        -0.012
+      ],
+      "max": [
+        0.012,
+        1.4,
+        0.012
+      ]
+    }
+  },
+  {
+    "sid": "za:veia-cava-superior",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Veia Cava Superior",
+      "en": "Superior vena cava",
+      "la": "Vena cava superior"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "veia-cava-superior"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.01,
+        1.3699999999999999,
+        0.01
+      ],
+      "max": [
+        0.03,
+        1.47,
+        0.03
+      ]
+    }
+  },
+  {
+    "sid": "za:veia-cava-inferior",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Veia Cava Inferior",
+      "en": "Inferior vena cava",
+      "la": "Vena cava inferior"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "veia-cava-inferior"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.01,
+        0.9,
+        -0.03
+      ],
+      "max": [
+        0.03,
+        1.2,
+        -0.01
+      ]
+    }
+  },
+  {
+    "sid": "za:arteria-carotida-comum-direita",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Artéria Carótida Comum Direita",
+      "en": "Right common carotid artery",
+      "la": "Arteria carotis communis dextra"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "arteria-carotida-comum-direita"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.024,
+        1.49,
+        0.014
+      ],
+      "max": [
+        0.036,
+        1.61,
+        0.026000000000000002
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:arteria-carotida-comum-esquerda",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Artéria Carótida Comum Esquerda",
+      "en": "Left common carotid artery",
+      "la": "Arteria carotis communis sinistra"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "arteria-carotida-comum-esquerda"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.036,
+        1.49,
+        0.014
+      ],
+      "max": [
+        -0.024,
+        1.61,
+        0.026000000000000002
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:veia-jugular-interna-direita",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Veia Jugular Interna Direita",
+      "en": "Right internal jugular vein",
+      "la": "Vena jugularis interna dextra"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "veia-jugular-interna-direita"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.034,
+        1.49,
+        -0.016
+      ],
+      "max": [
+        0.046,
+        1.61,
+        -0.004
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:veia-jugular-interna-esquerda",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Veia Jugular Interna Esquerda",
+      "en": "Left internal jugular vein",
+      "la": "Vena jugularis interna sinistra"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "veia-jugular-interna-esquerda"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.046,
+        1.49,
+        -0.016
+      ],
+      "max": [
+        -0.034,
+        1.61,
+        -0.004
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:arteria-femoral-direita",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "membro-inferior-direito",
+    "names": {
+      "pt": "Artéria Femoral Direita",
+      "en": "Right femoral artery",
+      "la": "Arteria femoralis dextra"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "arteria-femoral-direita"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.08299999999999999,
+        0.5499999999999999,
+        0.013000000000000001
+      ],
+      "max": [
+        0.097,
+        0.85,
+        0.027
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:arteria-femoral-esquerda",
+    "system": "cardiovascular",
+    "layer": "vasos",
+    "parent": null,
+    "region": "membro-inferior-esquerdo",
+    "names": {
+      "pt": "Artéria Femoral Esquerda",
+      "en": "Left femoral artery",
+      "la": "Arteria femoralis sinistra"
+    },
+    "mesh": {
+      "asset": "models/cardiovascular.lod0.glb",
+      "nodes": [
+        "arteria-femoral-esquerda"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.097,
+        0.5499999999999999,
+        0.013000000000000001
+      ],
+      "max": [
+        -0.08299999999999999,
+        0.85,
+        0.027
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "fma:50801",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "cabeca",
+    "names": {
+      "pt": "Encéfalo",
+      "en": "Brain",
+      "la": "Encephalon"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "encefalo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.09,
+        1.6099999999999999,
+        -0.09
+      ],
+      "max": [
+        0.09,
+        1.79,
+        0.09
+      ]
+    }
+  },
+  {
+    "sid": "za:cerebelo",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "cabeca",
+    "names": {
+      "pt": "Cerebelo",
+      "en": "Cerebellum",
+      "la": "Cerebellum"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "cerebelo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.04,
+        1.6199999999999999,
+        -0.09
+      ],
+      "max": [
+        0.04,
+        1.7,
+        -0.010000000000000002
+      ]
+    }
+  },
+  {
+    "sid": "za:medula-espinhal",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "dorso",
+    "names": {
+      "pt": "Medula Espinhal",
+      "en": "Spinal cord",
+      "la": "Medulla spinalis"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "medula-espinhal"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.012,
+        0.9249999999999999,
+        -0.052000000000000005
+      ],
+      "max": [
+        0.012,
+        1.475,
+        -0.028
+      ]
+    }
+  },
+  {
+    "sid": "za:nervo-ciatico-direito",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "membro-inferior-direito",
+    "names": {
+      "pt": "Nervo Isquiático Direito",
+      "en": "Right sciatic nerve",
+      "la": "Nervus ischiadicus dexter"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "nervo-ciatico-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.07200000000000001,
+        0.35000000000000003,
+        -0.038
+      ],
+      "max": [
+        0.088,
+        0.75,
+        -0.022
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:nervo-ciatico-esquerdo",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "membro-inferior-esquerdo",
+    "names": {
+      "pt": "Nervo Isquiático Esquerdo",
+      "en": "Left sciatic nerve",
+      "la": "Nervus ischiadicus sinister"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "nervo-ciatico-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.088,
+        0.35000000000000003,
+        -0.038
+      ],
+      "max": [
+        -0.07200000000000001,
+        0.75,
+        -0.022
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:nervo-mediano-direito",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "membro-superior-direito",
+    "names": {
+      "pt": "Nervo Mediano Direito",
+      "en": "Right median nerve",
+      "la": "Nervus medianus dexter"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "nervo-mediano-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.196,
+        0.825,
+        0.016
+      ],
+      "max": [
+        0.20400000000000001,
+        1.075,
+        0.024
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:nervo-mediano-esquerdo",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "membro-superior-esquerdo",
+    "names": {
+      "pt": "Nervo Mediano Esquerdo",
+      "en": "Left median nerve",
+      "la": "Nervus medianus sinister"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "nervo-mediano-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.20400000000000001,
+        0.825,
+        0.016
+      ],
+      "max": [
+        -0.196,
+        1.075,
+        0.024
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:nervo-vago-direito",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Nervo Vago Direito",
+      "en": "Right vagus nerve",
+      "la": "Nervus vagus dexter"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "nervo-vago-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.022000000000000002,
+        1.3,
+        -0.003
+      ],
+      "max": [
+        0.028,
+        1.5999999999999999,
+        0.003
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:nervo-vago-esquerdo",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Nervo Vago Esquerdo",
+      "en": "Left vagus nerve",
+      "la": "Nervus vagus sinister"
+    },
+    "mesh": {
+      "asset": "models/nervoso.lod0.glb",
+      "nodes": [
+        "nervo-vago-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.028,
+        1.3,
+        -0.003
+      ],
+      "max": [
+        -0.022000000000000002,
+        1.5999999999999999,
+        0.003
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "fma:7309",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Pulmão Direito",
+      "en": "Right lung",
+      "la": "Pulmo dexter"
+    },
+    "mesh": {
+      "asset": "models/respiratorio.lod0.glb",
+      "nodes": [
+        "pulmao-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.039999999999999994,
+        1.21,
+        -0.05
+      ],
+      "max": [
+        0.14,
+        1.4300000000000002,
+        0.09000000000000001
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "fma:7310",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Pulmão Esquerdo",
+      "en": "Left lung",
+      "la": "Pulmo sinister"
+    },
+    "mesh": {
+      "asset": "models/respiratorio.lod0.glb",
+      "nodes": [
+        "pulmao-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.14,
+        1.21,
+        -0.05
+      ],
+      "max": [
+        -0.039999999999999994,
+        1.4300000000000002,
+        0.09000000000000001
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:traqueia",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Traqueia",
+      "en": "Trachea",
+      "la": "Trachea"
+    },
+    "mesh": {
+      "asset": "models/respiratorio.lod0.glb",
+      "nodes": [
+        "traqueia"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.012,
+        1.42,
+        0.018
+      ],
+      "max": [
+        0.012,
+        1.54,
+        0.041999999999999996
+      ]
+    }
+  },
+  {
+    "sid": "za:laringe",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Laringe",
+      "en": "Larynx",
+      "la": "Larynx"
+    },
+    "mesh": {
+      "asset": "models/respiratorio.lod0.glb",
+      "nodes": [
+        "laringe"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.025,
+        1.5050000000000001,
+        0.0049999999999999975
+      ],
+      "max": [
+        0.025,
+        1.555,
+        0.055
+      ]
+    }
+  },
+  {
+    "sid": "za:bronquio-principal-direito",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Brônquio Principal Direito",
+      "en": "Right main bronchus",
+      "la": "Bronchus principalis dexter"
+    },
+    "mesh": {
+      "asset": "models/respiratorio.lod0.glb",
+      "nodes": [
+        "bronquio-principal-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.032,
+        1.3499999999999999,
+        0.012
+      ],
+      "max": [
+        0.048,
+        1.41,
+        0.028
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:bronquio-principal-esquerdo",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Brônquio Principal Esquerdo",
+      "en": "Left main bronchus",
+      "la": "Bronchus principalis sinister"
+    },
+    "mesh": {
+      "asset": "models/respiratorio.lod0.glb",
+      "nodes": [
+        "bronquio-principal-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.048,
+        1.3499999999999999,
+        0.012
+      ],
+      "max": [
+        -0.032,
+        1.41,
+        0.028
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:diafragma",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Diafragma",
+      "en": "Diaphragm",
+      "la": "Diaphragma"
+    },
+    "mesh": {
+      "asset": "models/respiratorio.lod0.glb",
+      "nodes": [
+        "diafragma"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.12,
+        1.19,
+        -0.08
+      ],
+      "max": [
+        0.12,
+        1.21,
+        0.08
+      ]
+    }
+  },
+  {
+    "sid": "fma:7197",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Fígado",
+      "en": "Liver",
+      "la": "Hepar"
+    },
+    "mesh": {
+      "asset": "models/digestorio.lod0.glb",
+      "nodes": [
+        "figado"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.009999999999999995,
+        1.05,
+        0
+      ],
+      "max": [
+        0.16999999999999998,
+        1.1500000000000001,
+        0.12
+      ]
+    }
+  },
+  {
+    "sid": "fma:7148",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Estômago",
+      "en": "Stomach",
+      "la": "Gaster"
+    },
+    "mesh": {
+      "asset": "models/digestorio.lod0.glb",
+      "nodes": [
+        "estomago"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.12,
+        1.02,
+        -0.009999999999999995
+      ],
+      "max": [
+        0,
+        1.1400000000000001,
+        0.11
+      ]
+    }
+  },
+  {
+    "sid": "za:esofago",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Esôfago",
+      "en": "Esophagus",
+      "la": "Oesophagus"
+    },
+    "mesh": {
+      "asset": "models/digestorio.lod0.glb",
+      "nodes": [
+        "esofago"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.01,
+        1.1500000000000001,
+        -0.01
+      ],
+      "max": [
+        0.01,
+        1.45,
+        0.01
+      ]
+    }
+  },
+  {
+    "sid": "za:intestino-delgado",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Intestino Delgado",
+      "en": "Small intestine",
+      "la": "Intestinum tenue"
+    },
+    "mesh": {
+      "asset": "models/digestorio.lod0.glb",
+      "nodes": [
+        "intestino-delgado"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.09,
+        0.89,
+        -0.049999999999999996
+      ],
+      "max": [
+        0.09,
+        1.07,
+        0.13
+      ]
+    }
+  },
+  {
+    "sid": "za:intestino-grosso",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Intestino Grosso",
+      "en": "Large intestine",
+      "la": "Intestinum crassum"
+    },
+    "mesh": {
+      "asset": "models/digestorio.lod0.glb",
+      "nodes": [
+        "intestino-grosso"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.12,
+        0.8999999999999999,
+        -0.05
+      ],
+      "max": [
+        0.12,
+        1,
+        0.05
+      ]
+    }
+  },
+  {
+    "sid": "za:pancreas",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Pâncreas",
+      "en": "Pancreas",
+      "la": "Pancreas"
+    },
+    "mesh": {
+      "asset": "models/digestorio.lod0.glb",
+      "nodes": [
+        "pancreas"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.02,
+        1,
+        -0.04
+      ],
+      "max": [
+        0.02,
+        1.12,
+        0
+      ]
+    }
+  },
+  {
+    "sid": "za:vesicula-biliar",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Vesícula Biliar",
+      "en": "Gallbladder",
+      "la": "Vesica biliaris"
+    },
+    "mesh": {
+      "asset": "models/digestorio.lod0.glb",
+      "nodes": [
+        "vesicula-biliar"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.08,
+        1.03,
+        0.05
+      ],
+      "max": [
+        0.12000000000000001,
+        1.07,
+        0.09000000000000001
+      ]
+    }
+  },
+  {
+    "sid": "fma:7204",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Rim Direito",
+      "en": "Right kidney",
+      "la": "Ren dexter"
+    },
+    "mesh": {
+      "asset": "models/urinario.lod0.glb",
+      "nodes": [
+        "rim-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.045,
+        1.0150000000000001,
+        -0.095
+      ],
+      "max": [
+        0.115,
+        1.085,
+        -0.024999999999999994
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "fma:7205",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Rim Esquerdo",
+      "en": "Left kidney",
+      "la": "Ren sinister"
+    },
+    "mesh": {
+      "asset": "models/urinario.lod0.glb",
+      "nodes": [
+        "rim-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.115,
+        1.0150000000000001,
+        -0.095
+      ],
+      "max": [
+        -0.045,
+        1.085,
+        -0.024999999999999994
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:ureter-direito",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Ureter Direito",
+      "en": "Right ureter",
+      "la": "Ureter dexter"
+    },
+    "mesh": {
+      "asset": "models/urinario.lod0.glb",
+      "nodes": [
+        "ureter-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.055999999999999994,
+        0.795,
+        -0.044
+      ],
+      "max": [
+        0.064,
+        1.045,
+        -0.036000000000000004
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:ureter-esquerdo",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Ureter Esquerdo",
+      "en": "Left ureter",
+      "la": "Ureter sinister"
+    },
+    "mesh": {
+      "asset": "models/urinario.lod0.glb",
+      "nodes": [
+        "ureter-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.064,
+        0.795,
+        -0.044
+      ],
+      "max": [
+        -0.055999999999999994,
+        1.045,
+        -0.036000000000000004
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:vesicula-urinaria",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Vesícula Urinária",
+      "en": "Urinary bladder",
+      "la": "Vesica urinaria"
+    },
+    "mesh": {
+      "asset": "models/urinario.lod0.glb",
+      "nodes": [
+        "vesicula-urinaria"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.05,
+        0.7999999999999999,
+        -0.020000000000000004
+      ],
+      "max": [
+        0.05,
+        0.9,
+        0.08
+      ]
+    }
+  },
+  {
+    "sid": "za:uretra",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Uretra",
+      "en": "Urethra",
+      "la": "Urethra"
+    },
+    "mesh": {
+      "asset": "models/urinario.lod0.glb",
+      "nodes": [
+        "uretra"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.005,
+        0.77,
+        0.015
+      ],
+      "max": [
+        0.005,
+        0.8300000000000001,
+        0.025
+      ]
+    }
+  },
+  {
+    "sid": "za:testiculo-direito",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Testículo Direito",
+      "en": "Right testis",
+      "la": "Testis dexter"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-m.lod0.glb",
+      "nodes": [
+        "testiculo-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.009999999999999998,
+        0.7,
+        0.009999999999999998
+      ],
+      "max": [
+        0.05,
+        0.74,
+        0.05
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:testiculo-esquerdo",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Testículo Esquerdo",
+      "en": "Left testis",
+      "la": "Testis sinister"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-m.lod0.glb",
+      "nodes": [
+        "testiculo-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.05,
+        0.7,
+        0.009999999999999998
+      ],
+      "max": [
+        -0.009999999999999998,
+        0.74,
+        0.05
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:ducto-deferente-direito",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Ducto Deferente Direito",
+      "en": "Right ductus deferens",
+      "la": "Ductus deferens dexter"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-m.lod0.glb",
+      "nodes": [
+        "ducto-deferente-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.027999999999999997,
+        0.7250000000000001,
+        0.018000000000000002
+      ],
+      "max": [
+        0.032,
+        0.875,
+        0.022
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:ducto-deferente-esquerdo",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Ducto Deferente Esquerdo",
+      "en": "Left ductus deferens",
+      "la": "Ductus deferens sinister"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-m.lod0.glb",
+      "nodes": [
+        "ducto-deferente-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.032,
+        0.7250000000000001,
+        0.018000000000000002
+      ],
+      "max": [
+        -0.027999999999999997,
+        0.875,
+        0.022
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:prostata",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Próstata",
+      "en": "Prostate",
+      "la": "Prostata"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-m.lod0.glb",
+      "nodes": [
+        "prostata"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.025,
+        0.7949999999999999,
+        -0.005000000000000001
+      ],
+      "max": [
+        0.025,
+        0.845,
+        0.045
+      ]
+    }
+  },
+  {
+    "sid": "za:penis",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Pênis",
+      "en": "Penis",
+      "la": "Penis"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-m.lod0.glb",
+      "nodes": [
+        "penis"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.015,
+        0.73,
+        0.035
+      ],
+      "max": [
+        0.015,
+        0.8300000000000001,
+        0.065
+      ]
+    }
+  },
+  {
+    "sid": "za:ovario-direito",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Ovário Direito",
+      "en": "Right ovary",
+      "la": "Ovarium dextrum"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-f.lod0.glb",
+      "nodes": [
+        "ovario-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.035,
+        0.865,
+        0.005000000000000001
+      ],
+      "max": [
+        0.065,
+        0.895,
+        0.035
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:ovario-esquerdo",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Ovário Esquerdo",
+      "en": "Left ovary",
+      "la": "Ovarium sinistrum"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-f.lod0.glb",
+      "nodes": [
+        "ovario-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.065,
+        0.865,
+        0.005000000000000001
+      ],
+      "max": [
+        -0.035,
+        0.895,
+        0.035
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:tuba-uterina-direita",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Tuba Uterina Direita",
+      "en": "Right uterine tube",
+      "la": "Tuba uterina dextra"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-f.lod0.glb",
+      "nodes": [
+        "tuba-uterina-direita"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.027,
+        0.85,
+        0.017
+      ],
+      "max": [
+        0.033,
+        0.93,
+        0.023
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:tuba-uterina-esquerda",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Tuba Uterina Esquerda",
+      "en": "Left uterine tube",
+      "la": "Tuba uterina sinistra"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-f.lod0.glb",
+      "nodes": [
+        "tuba-uterina-esquerda"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.033,
+        0.85,
+        0.017
+      ],
+      "max": [
+        -0.027,
+        0.93,
+        0.023
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:utero",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Útero",
+      "en": "Uterus",
+      "la": "Uterus"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-f.lod0.glb",
+      "nodes": [
+        "utero"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.04,
+        0.82,
+        -0.010000000000000002
+      ],
+      "max": [
+        0.04,
+        0.9,
+        0.07
+      ]
+    }
+  },
+  {
+    "sid": "za:vagina",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Vagina",
+      "en": "Vagina",
+      "la": "Vagina"
+    },
+    "mesh": {
+      "asset": "models/reprodutor-f.lod0.glb",
+      "nodes": [
+        "vagina"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.015,
+        0.76,
+        0.015
+      ],
+      "max": [
+        0.015,
+        0.8400000000000001,
+        0.045
+      ]
+    }
+  },
+  {
+    "sid": "za:hipofise",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "cabeca",
+    "names": {
+      "pt": "Hipófise",
+      "en": "Pituitary gland",
+      "la": "Hypophysis"
+    },
+    "mesh": {
+      "asset": "models/endocrino.lod0.glb",
+      "nodes": [
+        "hipofise"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.006,
+        1.6239999999999999,
+        0.014
+      ],
+      "max": [
+        0.006,
+        1.636,
+        0.026000000000000002
+      ]
+    }
+  },
+  {
+    "sid": "za:tireoide",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Tireoide",
+      "en": "Thyroid gland",
+      "la": "Glandula thyroidea"
+    },
+    "mesh": {
+      "asset": "models/endocrino.lod0.glb",
+      "nodes": [
+        "tireoide"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.02,
+        1.48,
+        0.009999999999999998
+      ],
+      "max": [
+        0.02,
+        1.52,
+        0.05
+      ]
+    }
+  },
+  {
+    "sid": "za:glandula-adrenal-direita",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Glândula Adrenal Direita",
+      "en": "Right adrenal gland",
+      "la": "Glandula suprarenalis dextra"
+    },
+    "mesh": {
+      "asset": "models/endocrino.lod0.glb",
+      "nodes": [
+        "glandula-adrenal-direita"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.048,
+        1.088,
+        -0.062
+      ],
+      "max": [
+        0.072,
+        1.112,
+        -0.038000000000000006
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:glandula-adrenal-esquerda",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Glândula Adrenal Esquerda",
+      "en": "Left adrenal gland",
+      "la": "Glandula suprarenalis sinistra"
+    },
+    "mesh": {
+      "asset": "models/endocrino.lod0.glb",
+      "nodes": [
+        "glandula-adrenal-esquerda"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.072,
+        1.088,
+        -0.062
+      ],
+      "max": [
+        -0.048,
+        1.112,
+        -0.038000000000000006
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:paratireoide-direita",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Paratireoide Direita",
+      "en": "Right parathyroid gland",
+      "la": "Glandula parathyroidea dextra"
+    },
+    "mesh": {
+      "asset": "models/endocrino.lod0.glb",
+      "nodes": [
+        "paratireoide-direita"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.011,
+        1.501,
+        0.026
+      ],
+      "max": [
+        0.019,
+        1.509,
+        0.034
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:paratireoide-esquerda",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Paratireoide Esquerda",
+      "en": "Left parathyroid gland",
+      "la": "Glandula parathyroidea sinistra"
+    },
+    "mesh": {
+      "asset": "models/endocrino.lod0.glb",
+      "nodes": [
+        "paratireoide-esquerda"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.019,
+        1.501,
+        0.026
+      ],
+      "max": [
+        -0.011,
+        1.509,
+        0.034
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:baco",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Baço",
+      "en": "Spleen",
+      "la": "Splen"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "baco"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.135,
+        1.0650000000000002,
+        -0.07500000000000001
+      ],
+      "max": [
+        -0.065,
+        1.135,
+        -0.0049999999999999975
+      ]
+    }
+  },
+  {
+    "sid": "za:ducto-toracico",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Ducto Torácico",
+      "en": "Thoracic duct",
+      "la": "Ductus thoracicus"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "ducto-toracico"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.006,
+        1.1,
+        -0.034
+      ],
+      "max": [
+        0.014,
+        1.4,
+        -0.026
+      ]
+    }
+  },
+  {
+    "sid": "za:linfonodo-cervical-direito",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Linfonodo Cervical Direito",
+      "en": "Right cervical lymph node",
+      "la": "Nodus lymphoideus cervicalis dexter"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "linfonodo-cervical-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.032,
+        1.492,
+        -0.028
+      ],
+      "max": [
+        0.048,
+        1.508,
+        -0.012
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:linfonodo-cervical-esquerdo",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "pescoco",
+    "names": {
+      "pt": "Linfonodo Cervical Esquerdo",
+      "en": "Left cervical lymph node",
+      "la": "Nodus lymphoideus cervicalis sinister"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "linfonodo-cervical-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.048,
+        1.492,
+        -0.028
+      ],
+      "max": [
+        -0.032,
+        1.508,
+        -0.012
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:linfonodo-axilar-direito",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "membro-superior-direito",
+    "names": {
+      "pt": "Linfonodo Axilar Direito",
+      "en": "Right axillary lymph node",
+      "la": "Nodus lymphoideus axillaris dexter"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "linfonodo-axilar-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.13999999999999999,
+        1.3699999999999999,
+        -0.01
+      ],
+      "max": [
+        0.16,
+        1.39,
+        0.01
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:linfonodo-axilar-esquerdo",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "membro-superior-esquerdo",
+    "names": {
+      "pt": "Linfonodo Axilar Esquerdo",
+      "en": "Left axillary lymph node",
+      "la": "Nodus lymphoideus axillaris sinister"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "linfonodo-axilar-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.16,
+        1.3699999999999999,
+        -0.01
+      ],
+      "max": [
+        -0.13999999999999999,
+        1.39,
+        0.01
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:linfonodo-inguinal-direito",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Linfonodo Inguinal Direito",
+      "en": "Right inguinal lymph node",
+      "la": "Nodus lymphoideus inguinalis dexter"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "linfonodo-inguinal-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.07,
+        0.82,
+        0.019999999999999997
+      ],
+      "max": [
+        0.09,
+        0.84,
+        0.04
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:linfonodo-inguinal-esquerdo",
+    "system": "linfatico",
+    "layer": "linfatico",
+    "parent": null,
+    "region": "pelve",
+    "names": {
+      "pt": "Linfonodo Inguinal Esquerdo",
+      "en": "Left inguinal lymph node",
+      "la": "Nodus lymphoideus inguinalis sinister"
+    },
+    "mesh": {
+      "asset": "models/linfatico.lod0.glb",
+      "nodes": [
+        "linfonodo-inguinal-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.09,
+        0.82,
+        0.019999999999999997
+      ],
+      "max": [
+        -0.07,
+        0.84,
+        0.04
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:pele-cabeca",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "cabeca",
+    "names": {
+      "pt": "Pele da Cabeça",
+      "en": "Head skin",
+      "la": "Cutis capitis"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "pele-cabeca"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.11,
+        1.5699999999999998,
+        -0.11
+      ],
+      "max": [
+        0.11,
+        1.79,
+        0.11
+      ]
+    }
+  },
+  {
+    "sid": "za:pele-tronco",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Pele do Tronco",
+      "en": "Trunk skin",
+      "la": "Cutis trunci"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "pele-tronco"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.16,
+        0.8749999999999999,
+        -0.11
+      ],
+      "max": [
+        0.16,
+        1.4249999999999998,
+        0.11
+      ]
+    }
+  },
+  {
+    "sid": "za:pele-membro-superior-direito",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "membro-superior-direito",
+    "names": {
+      "pt": "Pele do Membro Superior Direito",
+      "en": "Right upper limb skin",
+      "la": "Cutis membri superioris dextri"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "pele-membro-superior-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.15500000000000003,
+        0.8499999999999999,
+        -0.045
+      ],
+      "max": [
+        0.245,
+        1.45,
+        0.045
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:pele-membro-superior-esquerdo",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "membro-superior-esquerdo",
+    "names": {
+      "pt": "Pele do Membro Superior Esquerdo",
+      "en": "Left upper limb skin",
+      "la": "Cutis membri superioris sinistri"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "pele-membro-superior-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.245,
+        0.8499999999999999,
+        -0.045
+      ],
+      "max": [
+        -0.15500000000000003,
+        1.45,
+        0.045
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:pele-membro-inferior-direito",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "membro-inferior-direito",
+    "names": {
+      "pt": "Pele do Membro Inferior Direito",
+      "en": "Right lower limb skin",
+      "la": "Cutis membri inferioris dextri"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "pele-membro-inferior-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.04000000000000001,
+        0.025000000000000022,
+        -0.06
+      ],
+      "max": [
+        0.16,
+        0.875,
+        0.06
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:pele-membro-inferior-esquerdo",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "membro-inferior-esquerdo",
+    "names": {
+      "pt": "Pele do Membro Inferior Esquerdo",
+      "en": "Left lower limb skin",
+      "la": "Cutis membri inferioris sinistri"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "pele-membro-inferior-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.16,
+        0.025000000000000022,
+        -0.06
+      ],
+      "max": [
+        -0.04000000000000001,
+        0.875,
+        0.06
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:unha",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "membro-superior-direito",
+    "names": {
+      "pt": "Unha",
+      "en": "Nail",
+      "la": "Unguis"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "unha"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0.195,
+        0.744,
+        0.028999999999999998
+      ],
+      "max": [
+        0.20500000000000002,
+        0.756,
+        0.031
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:cabelo",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "cabeca",
+    "names": {
+      "pt": "Cabelo",
+      "en": "Hair",
+      "la": "Capillus"
+    },
+    "mesh": {
+      "asset": "models/tegumentar.lod0.glb",
+      "nodes": [
+        "cabelo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.115,
+        1.585,
+        -0.115
+      ],
+      "max": [
+        0.115,
+        1.815,
+        0.115
+      ]
+    }
+  },
+  {
+    "sid": "za:atrio-direito",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": "fma:7088",
+    "region": "torax",
+    "names": {
+      "pt": "Átrio Direito",
+      "en": "Right atrium",
+      "la": "Atrium dextrum"
+    },
+    "mesh": {
+      "asset": "models/hra-heart-m.glb",
+      "nodes": [
+        "atrio-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        0,
+        1.325,
+        0.02
+      ],
+      "max": [
+        0.04,
+        1.365,
+        0.06
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:atrio-esquerdo",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": "fma:7088",
+    "region": "torax",
+    "names": {
+      "pt": "Átrio Esquerdo",
+      "en": "Left atrium",
+      "la": "Atrium sinistrum"
+    },
+    "mesh": {
+      "asset": "models/hra-heart-m.glb",
+      "nodes": [
+        "atrio-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.05,
+        1.325,
+        0.009999999999999998
+      ],
+      "max": [
+        -0.009999999999999998,
+        1.365,
+        0.05
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:ventriculo-direito",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": "fma:7088",
+    "region": "torax",
+    "names": {
+      "pt": "Ventrículo Direito",
+      "en": "Right ventricle",
+      "la": "Ventriculus dexter"
+    },
+    "mesh": {
+      "asset": "models/hra-heart-m.glb",
+      "nodes": [
+        "ventriculo-direito"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.005000000000000001,
+        1.2750000000000001,
+        0.025
+      ],
+      "max": [
+        0.045,
+        1.325,
+        0.07500000000000001
+      ]
+    },
+    "side": "R"
+  },
+  {
+    "sid": "za:ventriculo-esquerdo",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": "fma:7088",
+    "region": "torax",
+    "names": {
+      "pt": "Ventrículo Esquerdo",
+      "en": "Left ventricle",
+      "la": "Ventriculus sinister"
+    },
+    "mesh": {
+      "asset": "models/hra-heart-m.glb",
+      "nodes": [
+        "ventriculo-esquerdo"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.048,
+        1.272,
+        0.032
+      ],
+      "max": [
+        0.008,
+        1.328,
+        0.088
+      ]
+    },
+    "side": "L"
+  },
+  {
+    "sid": "za:valva-mitral",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": "fma:7088",
+    "region": "torax",
+    "names": {
+      "pt": "Valva Mitral",
+      "en": "Mitral valve",
+      "la": "Valva mitralis"
+    },
+    "mesh": {
+      "asset": "models/hra-heart-m.glb",
+      "nodes": [
+        "valva-mitral"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.028,
+        1.307,
+        0.037
+      ],
+      "max": [
+        -0.012,
+        1.323,
+        0.053
+      ]
+    }
+  },
+  {
+    "sid": "za:valva-aortica",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": "fma:7088",
+    "region": "torax",
+    "names": {
+      "pt": "Valva Aórtica",
+      "en": "Aortic valve",
+      "la": "Valva aortae"
+    },
+    "mesh": {
+      "asset": "models/hra-heart-m.glb",
+      "nodes": [
+        "valva-aortica"
+      ]
+    },
+    "bbox": {
+      "min": [
+        -0.008,
+        1.312,
+        0.022
+      ],
+      "max": [
+        0.008,
+        1.328,
+        0.038
+      ]
+    }
+  }
+]

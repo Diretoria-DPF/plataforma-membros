@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laift.local/atlas/schema/glossary.schema.json",
+  "title": "Glossário de termos anatômicos em português",
+  "description": "data/atlas/glossario-pt.json. Termos da Terminologia Anatômica (FIPAT) em português, com os anglicismos e traduções literais que devem ser evitados na interface e nos textos do atlas.",
+  "type": "array",
+  "items": { "$ref": "#/$defs/term" },
+  "$defs": {
+    "term": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "term_pt"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" },
+        "term_pt": { "type": "string", "minLength": 1 },
+        "term_la": { "type": "string", "minLength": 1 },
+        "term_en": { "type": "string", "minLength": 1 },
+        "avoid": {
+          "type": "array",
+          "description": "Anglicismos ou traduções literais a evitar (ex.: \"Spleen\" para Baço).",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "notes_pt": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "id": "quiz-coracao-dor-toracica",
+    "system": "cardiovascular",
+    "prompt_pt": "Paciente de 58 anos chega com dor torácica opressiva irradiada para o braço esquerdo. Toque o órgão cuja irrigação está classicamente comprometida no infarto agudo do miocárdio.",
+    "difficulty": "facil",
+    "correctSid": "fma:7088",
+    "distractorSids": [
+      "fma:7309",
+      "fma:7310",
+      "za:aorta"
+    ],
+    "anchors": [
+      {
+        "sid": "fma:7088"
+      }
+    ]
+  },
+  {
+    "id": "quiz-rim-lombalgia",
+    "system": "urinario",
+    "prompt_pt": "Paciente relata dor lombar direita em cólica, irradiada para a virilha, sugestiva de cálculo urinário. Toque o órgão onde o cálculo provavelmente se formou.",
+    "difficulty": "medio",
+    "correctSid": "fma:7204",
+    "distractorSids": [
+      "fma:7205",
+      "za:vesicula-urinaria",
+      "za:ureter-direito"
+    ],
+    "anchors": [
+      {
+        "sid": "fma:7204"
+      }
+    ]
+  },
+  {
+    "id": "quiz-figado-icterico",
+    "system": "digestorio",
+    "prompt_pt": "Paciente com pele e escleras amareladas (icterícia) e histórico de hepatite crônica. Toque o órgão mais associado a esse quadro.",
+    "difficulty": "facil",
+    "correctSid": "fma:7197",
+    "distractorSids": [
+      "fma:7148",
+      "za:vesicula-biliar",
+      "za:pancreas"
+    ],
+    "anchors": [
+      {
+        "sid": "fma:7197"
+      }
+    ]
+  }
+]

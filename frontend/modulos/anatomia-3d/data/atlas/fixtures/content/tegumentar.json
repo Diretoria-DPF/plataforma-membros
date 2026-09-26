@@ -1,0 +1,69 @@
+{
+  "za:pele-tronco": {
+    "ids": {
+      "wikidata": "Q80831"
+    },
+    "summary_pt": "A pele é o maior órgão do corpo humano, formada por epiderme, derme e hipoderme, com funções de proteção, termorregulação e sensibilidade.",
+    "histology": {
+      "epithelium": "Epiderme: epitélio pavimentoso estratificado queratinizado.",
+      "tissues": [
+        "Epiderme",
+        "Derme",
+        "Hipoderme (tecido adiposo)"
+      ],
+      "cells": [
+        {
+          "cl": "CL:0000312",
+          "name_pt": "Queratinócito",
+          "biomarkers": [
+            "KRT14",
+            "KRT10"
+          ]
+        },
+        {
+          "cl": "CL:0000148",
+          "name_pt": "Melanócito",
+          "biomarkers": [
+            "MLANA",
+            "TYR"
+          ]
+        }
+      ]
+    },
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Pele — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Pele"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Skin",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Skin",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Skin",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      }
+    ]
+  }
+}

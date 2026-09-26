@@ -1,0 +1,55 @@
+[
+  {
+    "id": "circulacao-pulmonar",
+    "system": "cardiovascular",
+    "name_pt": "Circulação Pulmonar",
+    "description_pt": "Caminho do sangue venoso do coração até os pulmões para ser oxigenado e retornar ao átrio esquerdo.",
+    "anchors": [
+      {
+        "sid": "fma:7088",
+        "label_pt": "Ventrículo direito ejeta o sangue"
+      },
+      {
+        "sid": "za:bronquio-principal-direito",
+        "t": 0.2,
+        "label_pt": "Artéria pulmonar acompanha o brônquio"
+      },
+      {
+        "sid": "fma:7309",
+        "t": 0.6,
+        "label_pt": "Troca gasosa nos alvéolos do pulmão direito"
+      },
+      {
+        "sid": "fma:7088",
+        "t": 1,
+        "label_pt": "Sangue oxigenado retorna ao átrio esquerdo"
+      }
+    ]
+  },
+  {
+    "id": "via-piramidal-membro-inferior",
+    "system": "nervoso",
+    "name_pt": "Via Motora ao Membro Inferior",
+    "description_pt": "Trajeto simplificado do impulso motor do encéfalo até o músculo quadríceps, via medula espinhal e nervo isquiático.",
+    "anchors": [
+      {
+        "sid": "fma:50801",
+        "label_pt": "Córtex motor no encéfalo"
+      },
+      {
+        "sid": "za:medula-espinhal",
+        "t": 0.8,
+        "label_pt": "Trato corticospinal desce pela medula"
+      },
+      {
+        "sid": "za:nervo-ciatico-direito",
+        "t": 0.1,
+        "label_pt": "Nervo isquiático leva o impulso à coxa"
+      },
+      {
+        "sid": "za:quadriceps-femoral-direito",
+        "label_pt": "Contração do quadríceps"
+      }
+    ]
+  }
+]

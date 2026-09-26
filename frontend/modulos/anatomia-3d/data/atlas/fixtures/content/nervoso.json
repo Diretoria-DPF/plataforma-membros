@@ -1,0 +1,140 @@
+{
+  "fma:50801": {
+    "ids": {
+      "fma": "50801",
+      "uberon": "UBERON:0000955",
+      "wikidata": "Q1073",
+      "icd10": [
+        "G93.9"
+      ]
+    },
+    "summary_pt": "O encéfalo é a parte do sistema nervoso central contida no crânio, responsável pelo processamento sensorial, pelo controle motor, pela cognição e pelas emoções.",
+    "anatomy": {
+      "relations": "Formado pelo cérebro, cerebelo e tronco encefálico; contínuo caudalmente com a medula espinhal através do forame magno.",
+      "vascularization": "Irrigado pelo círculo arterial do cérebro (polígono de Willis), formado pelas aa. carótidas internas e vertebrais/basilar.",
+      "innervation": "Origina os 12 pares de nervos cranianos, que emergem do tronco encefálico ou diretamente do cérebro (nervo olfatório)."
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000540",
+          "name_pt": "Neurônio",
+          "biomarkers": [
+            "RBFOX3",
+            "MAP2"
+          ]
+        },
+        {
+          "cl": "CL:0000127",
+          "name_pt": "Astrócito",
+          "biomarkers": [
+            "GFAP",
+            "AQP4"
+          ]
+        }
+      ]
+    },
+    "clinical": [
+      "O acidente vascular cerebral (AVC) isquêmico ocorre pela interrupção do fluxo sanguíneo a uma área encefálica, causando morte neuronal."
+    ],
+    "review": {
+      "status": "legacy-unverified",
+      "by": "migracao-bio-database",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Encéfalo — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Enc%C3%A9falo"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de cabeça e pescoço",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de cabeça e pescoço",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de cabeça e pescoço",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Brain",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de cabeça e pescoço",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  },
+  "za:medula-espinhal": {
+    "ids": {
+      "wikidata": "Q189651"
+    },
+    "summary_pt": "A medula espinhal é a porção do sistema nervoso central que se estende do forame magno até aproximadamente a 1ª/2ª vértebra lombar, conduzindo impulsos entre o encéfalo e o corpo.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Medula espinhal — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Medula_espinhal"
+      }
+    ]
+  },
+  "za:nervo-ciatico-direito": {
+    "ids": {
+      "wikidata": "Q940479"
+    },
+    "summary_pt": "O nervo isquiático (ciático) é o maior nervo do corpo humano, formado pelo plexo lombossacral, e inerva a maior parte da pele e dos músculos da perna e do pé.",
+    "clinical": [
+      "A compressão da raiz do nervo isquiático (ex.: hérnia de disco) causa a dor irradiada conhecida como ciatalgia."
+    ],
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Nervo isquiático — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Nervo_isqui%C3%A1tico"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de membro inferior",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  }
+}

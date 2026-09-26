@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laift.local/atlas/schema/index.schema.json",
+  "title": "Índice de estruturas do Atlas Anatômico",
+  "description": "Lista as estruturas anatômicas conhecidas pelo atlas (data/atlas/index.json). Carregado na abertura do módulo; o conteúdo detalhado de cada estrutura fica em content/<sistema>.json, sob demanda.",
+  "type": "array",
+  "items": { "$ref": "#/$defs/indexEntry" },
+  "$defs": {
+    "sid": {
+      "type": "string",
+      "description": "Identificador estável da estrutura. `fma:<n>` quando existe Foundational Model of Anatomy; `za:<slug>` (Z-Anatomy) quando não há FMA confirmado.",
+      "pattern": "^(fma:[0-9]+|za:[a-z0-9]+(-[a-z0-9]+)*)$"
+    },
+    "vec3": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "bbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "$ref": "#/$defs/vec3" },
+        "max": { "$ref": "#/$defs/vec3" }
+      }
+    },
+    "mesh": {
+      "type": "object",
+      "description": "Ligação da estrutura com a malha 3D. `asset` é o caminho `file` do asset no manifest.json (ex.: \"models/cardiovascular.lod0.glb\"); `nodes` são os nomes de nó glTF que representam esta estrutura dentro desse asset.",
+      "additionalProperties": false,
+      "required": ["asset", "nodes"],
+      "properties": {
+        "asset": { "type": "string", "minLength": 1 },
+        "nodes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "names": {
+      "type": "object",
+      "description": "Nomes da estrutura. `pt` é obrigatório (é o que a interface mostra por padrão); `en` e `la` são recomendados quando conhecidos.",
+      "additionalProperties": false,
+      "required": ["pt"],
+      "properties": {
+        "pt": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 },
+        "la": { "type": "string", "minLength": 1 }
+      }
+    },
+    "indexEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sid", "system", "layer", "parent", "region", "names"],
+      "properties": {
+        "sid": { "$ref": "#/$defs/sid" },
+        "system": {
+          "type": "string",
+          "description": "Sistema anatômico (ex.: esqueletico, muscular, cardiovascular, nervoso, respiratorio, digestorio, urinario, reprodutor, endocrino, linfatico, tegumentar).",
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "layer": {
+          "type": "string",
+          "description": "Camada de dissecção para o controle de Camadas da interface.",
+          "enum": ["pele", "musculos", "esqueleto", "visceras", "vasos", "nervos", "linfatico"]
+        },
+        "parent": {
+          "description": "sid da estrutura-mãe na hierarquia (ex.: uma válvula cujo pai é o coração), ou null quando a estrutura não tem uma mãe modelada no atlas.",
+          "oneOf": [{ "$ref": "#/$defs/sid" }, { "type": "null" }]
+        },
+        "region": {
+          "type": "string",
+          "description": "Região corporal livre (ex.: torax, abdome, membro-superior-direito).",
+          "minLength": 1
+        },
+        "names": { "$ref": "#/$defs/names" },
+        "synonyms": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "side": {
+          "type": "string",
+          "description": "Lado anatômico: L (esquerdo), R (direito) ou M (mediano/ímpar). Omitido quando não se aplica.",
+          "enum": ["L", "R", "M"]
+        },
+        "mesh": { "$ref": "#/$defs/mesh" },
+        "bbox": { "$ref": "#/$defs/bbox" }
+      }
+    }
+  }
+}

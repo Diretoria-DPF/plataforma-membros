@@ -1,0 +1,42 @@
+{
+  "za:baco": {
+    "ids": {
+      "wikidata": "Q9152"
+    },
+    "summary_pt": "O baço é o maior órgão linfático do corpo, responsável pela filtração sanguínea, pela remoção de eritrócitos velhos e por parte da resposta imunológica.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Baço — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Ba%C3%A7o"
+      }
+    ]
+  },
+  "za:linfonodo-cervical-direito": {
+    "ids": {
+      "wikidata": "Q1541539"
+    },
+    "summary_pt": "Os linfonodos cervicais filtram a linfa da cabeça e do pescoço e costumam ser palpados na avaliação clínica de infecções e neoplasias dessa região.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Linfonodo — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Linfonodo"
+      }
+    ]
+  }
+}
