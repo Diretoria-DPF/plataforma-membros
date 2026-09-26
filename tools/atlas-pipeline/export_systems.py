@@ -129,39 +129,76 @@ def top_level_collections():
     return list(bpy.context.scene.collection.children)
 
 
+def collection_path(col, root_names, cache={}):
+    """Caminho "Pai / Filho / ... / col.name" a partir de uma coleção de
+    primeiro nível — só para o relatório de --list-collections ficar
+    legível; não é usado pela exportação (ver nota abaixo)."""
+    if col.name in cache:
+        return cache[col.name]
+
+    def find_path(current, trail):
+        if current.name == col.name:
+            return trail + [current.name]
+        for child in current.children:
+            found = find_path(child, trail + [current.name])
+            if found:
+                return found
+        return None
+
+    for root in root_names:
+        root_col = bpy.data.collections.get(root) or next(
+            (c for c in top_level_collections() if c.name == root), None
+        )
+        if root_col is None:
+            continue
+        path = find_path(root_col, [])
+        if path:
+            cache[col.name] = " / ".join(path)
+            return cache[col.name]
+    cache[col.name] = col.name
+    return col.name
+
+
 def list_collections_and_exit():
-    print("=== Coleções de primeiro nível do Startup.blend ===")
-    for col in top_level_collections():
+    """Lista TODAS as coleções do arquivo (bpy.data.collections, achatado —
+    não só as de primeiro nível), com contagem de malhas e o caminho a
+    partir da coleção de primeiro nível. Startup.blend agrupa vários dos
+    nossos "sistemas" (respiratório, digestório, urinário, endócrino,
+    tegumentar, reprodutor) como sub-coleções dentro de uma coleção de
+    primeiro nível só ("Visceral systems") — por isso o mapa de sistemas
+    (--systems-map) referencia essas sub-coleções PELO NOME (não pelo
+    caminho): bpy.data.collections é um registro achatado, então
+    `bpy.data.collections["Respiratory system"].all_objects` funciona
+    direto, independente de profundidade de aninhamento."""
+    roots = [c.name for c in top_level_collections()]
+    print("=== Todas as coleções do Startup.blend (achatado, com caminho) ===")
+    for col in sorted(bpy.data.collections, key=lambda c: c.name.lower()):
         mesh_count = sum(1 for obj in col.all_objects if obj.type == "MESH")
-        print(f"  '{col.name}'  ({mesh_count} malhas)")
+        path = collection_path(col, roots)
+        print(f"  '{col.name}'  ({mesh_count} malhas)  — caminho: {path}")
     print("=== fim da listagem ===")
 
 
-def set_layer_collection_visibility(layer_collection, target_names, visible_names_out):
-    """Percorre a árvore de LayerCollection (não bpy.data.collections) e
-    exclui (view_layer exclude) tudo que não estiver em target_names no
-    nível de topo. Recursivo só para registrar o que ficou visível."""
-    for child in layer_collection.children:
-        should_include = child.name in target_names
-        child.exclude = not should_include
-        if should_include:
-            visible_names_out.append(child.name)
-
-
 def export_system(system_id, collection_names, out_dir, systems_map_layer):
-    view_layer = bpy.context.view_layer
-    visible = []
-    set_layer_collection_visibility(view_layer.layer_collection, set(collection_names), visible)
+    """Exporta um sistema a partir de uma lista de nomes de coleção do
+    Blender. `bpy.data.collections` é um registro achatado (independente
+    de aninhamento), então não precisamos navegar a árvore de
+    LayerCollection nem alterar visibilidade — só validar que cada nome
+    pedido existe e juntar os objetos de malha de todas elas."""
+    found = []
+    for name in collection_names:
+        col = bpy.data.collections.get(name)
+        if col is None:
+            print(f"AVISO: coleção '{name}' (sistema '{system_id}') não existe em bpy.data.collections — pulando essa coleção.")
+            continue
+        found.append(col)
 
-    if not visible:
-        print(f"AVISO: sistema '{system_id}' não bateu com nenhuma coleção de primeiro nível — pulando.")
+    if not found:
+        print(f"AVISO: sistema '{system_id}' não bateu com nenhuma coleção — pulando.")
         return None
 
     layer = systems_map_layer.get(system_id, system_id)
-    for col_name in visible:
-        col = bpy.data.collections.get(col_name)
-        if not col:
-            continue
+    for col in found:
         for obj in col.all_objects:
             if is_exportable_object(obj):
                 annotate_extras(obj, system_id, layer)
@@ -170,7 +207,7 @@ def export_system(system_id, collection_names, out_dir, systems_map_layer):
     os.makedirs(out_dir, exist_ok=True)
 
     bpy.ops.object.select_all(action="DESELECT")
-    exportable = [o for col_name in visible for o in bpy.data.collections[col_name].all_objects if is_exportable_object(o)]
+    exportable = [o for col in found for o in col.all_objects if is_exportable_object(o)]
     for obj in exportable:
         obj.select_set(True)
 
