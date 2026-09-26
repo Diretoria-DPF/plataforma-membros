@@ -1,0 +1,198 @@
+/* =========================================================================
+   tokens-atlas.css — tokens específicos do Atlas Anatômico v2
+   -------------------------------------------------------------------------
+   Carregar DEPOIS de modulos/shared/laift-tokens.css (que este arquivo lê
+   via var(--laift-*) — cores de superfície, texto, bordas, foco). Este
+   arquivo só acrescenta o que é específico do Atlas: medidas do painel
+   arrastável/barra/ferramentas por breakpoint, a escala de z-index, o
+   fundo do canvas 3D e as cores de camada anatômica — tudo em dois temas,
+   já que a Onda 2 removeu `laift-always-dark` (o Atlas agora segue o tema
+   da plataforma como qualquer outro módulo — ver
+   modulos/shared/laift-identity.js `applyTheme`).
+
+   Consumido por: css/atlas.css e css/components.css (WP08/WP09), e por
+   qualquer JS que precise ler uma duração/medida com `getComputedStyle`
+   (ex.: a física de arraste do painel lendo --atlas-sheet-drag-ms).
+
+   Congelado depois da Onda 0: um nome de variável que já existe não muda
+   de significado. Acrescentar uma variável nova é seguro; renomear uma é
+   mudança de contrato com WP08/WP09/WP04/WP06.
+   ========================================================================= */
+
+:root {
+  /* -----------------------------------------------------------------------
+     Barra superior, ferramentas e painel — celular retrato (padrão)
+     Valores exatos em docs/ATLAS_UX_SPEC.md §2 "Layout por tela".
+     ----------------------------------------------------------------------- */
+  --atlas-topbar-h: 48px;
+  --atlas-toolbar-btn: 44px;
+  --atlas-toolbar-gap: 8px;
+
+  --atlas-sheet-peek-h: 96px;
+  --atlas-sheet-half-h: 45dvh;
+  --atlas-sheet-full-h: 90dvh;
+  /* Raio do cartão do painel e altura/largura da alça de arraste. */
+  --atlas-sheet-radius: var(--laift-radius-lg);
+  --atlas-sheet-handle-w: 36px;
+  --atlas-sheet-handle-h: 4px;
+
+  /* Celular paisagem: o painel vira lateral direita. */
+  --atlas-panel-w-landscape: min(40vw, 400px);
+
+  /* Tablet (600–1023px): inspetor à direita + navegador em gaveta. */
+  --atlas-panel-w-tablet: 340px;
+
+  /* Desktop (≥1024px): três colunas. */
+  --atlas-panel-w-desktop-nav: 280px;
+  --atlas-panel-w-desktop-inspector: 380px;
+
+  /* Alvo de toque mínimo (herdado de --laift-touch, repetido aqui para
+     quem só importa tokens-atlas.css num contexto isolado, ex.: dev/). */
+  --atlas-touch-min: 44px;
+
+  /* -----------------------------------------------------------------------
+     Escala de z-index — única para todo o módulo; nenhum outro arquivo
+     deve usar um z-index numérico "cru".
+     ----------------------------------------------------------------------- */
+  --atlas-z-canvas: 0;
+  --atlas-z-labels: 10;
+  --atlas-z-toolbar: 20;
+  --atlas-z-topbar: 30;
+  --atlas-z-sheet: 40;
+  --atlas-z-context-menu: 50;
+  --atlas-z-search: 60;
+  --atlas-z-modal: 70;
+  --atlas-z-toast: 80;
+
+  /* -----------------------------------------------------------------------
+     Fundo do canvas 3D — tema claro. Um cinza-azulado neutro, mais escuro
+     que --laift-surface para o corpo (que tem cores próprias) se destacar
+     sem "brilho de estúdio fotográfico" nem competir com o tema da
+     plataforma.
+     ----------------------------------------------------------------------- */
+  --atlas-canvas-bg: #e4e9f2;
+  --atlas-canvas-bg-radial: #eef1f8;
+
+  /* -----------------------------------------------------------------------
+     Cores de camada anatômica — convenção usada em atlas impressos e nos
+     apps de referência (artéria vermelha, veia azul, nervo amarelo,
+     linfático verde, osso marfim, músculo vermelho-acastanhado, pele em
+     tom neutro). Tema claro: tons médios/escurecidos para AA (≥4,5:1)
+     contra --atlas-canvas-bg (#e4e9f2) e --laift-surface (#ffffff).
+     ----------------------------------------------------------------------- */
+  --atlas-color-pele: #d9b99a;
+  --atlas-color-musculos: #8a3b32;
+  --atlas-color-esqueleto: #ded6bf;
+  --atlas-color-visceras: #b5563f;
+  --atlas-color-vasos-arteria: #b3241c;
+  --atlas-color-vasos-veia: #1d4f9c;
+  --atlas-color-nervos: #b58900;
+  --atlas-color-linfatico: #1e7a4a;
+
+  /* Cor de contorno/realce da estrutura selecionada (independe de camada). */
+  --atlas-color-highlight: var(--laift-primary);
+
+  /* -----------------------------------------------------------------------
+     Movimento — durações e curva únicas para transições de câmera, encaixe
+     do painel e fade de raio-X/fantasma. `--atlas-motion-camera` é mais
+     longa porque acompanha `Engine.viewPreset`/`focusSid` (câmera viaja
+     mais do que um painel desliza).
+     ----------------------------------------------------------------------- */
+  --atlas-easing: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --atlas-motion-fast: 120ms;
+  --atlas-motion-base: 200ms;
+  --atlas-motion-sheet: 280ms;
+  --atlas-motion-camera: 450ms;
+
+  /* Escala de texto/foco fora da TV (1× — a TV sobrescreve abaixo). */
+  --atlas-tv-text-scale: 1;
+  --atlas-tv-focus-width: 2px;
+}
+
+/* ===========================================================================
+   Tema escuro — three seletores espelhando exatamente o padrão de
+   laift-tokens.css: atributo explícito da ponte de identidade, e (sem
+   atributo) a preferência do sistema operacional. Não há mais seletor
+   `.laift-always-dark` — o Atlas segue o tema da plataforma.
+   =========================================================================== */
+html[data-theme='dark'] {
+  --atlas-canvas-bg: #0d1117;
+  --atlas-canvas-bg-radial: #131a24;
+
+  --atlas-color-pele: #caa17d;
+  --atlas-color-musculos: #c1594c;
+  --atlas-color-esqueleto: #e7e0cb;
+  --atlas-color-visceras: #d97a5e;
+  --atlas-color-vasos-arteria: #ff6b5e;
+  --atlas-color-vasos-veia: #5b9bff;
+  --atlas-color-nervos: #e0c341;
+  --atlas-color-linfatico: #4fd18a;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']):not([data-theme='dark']) {
+    --atlas-canvas-bg: #0d1117;
+    --atlas-canvas-bg-radial: #131a24;
+
+    --atlas-color-pele: #caa17d;
+    --atlas-color-musculos: #c1594c;
+    --atlas-color-esqueleto: #e7e0cb;
+    --atlas-color-visceras: #d97a5e;
+    --atlas-color-vasos-arteria: #ff6b5e;
+    --atlas-color-vasos-veia: #5b9bff;
+    --atlas-color-nervos: #e0c341;
+    --atlas-color-linfatico: #4fd18a;
+  }
+}
+
+/* ===========================================================================
+   Breakpoints — só o que muda por tamanho de tela. Regras de layout
+   (grade, flex, mostrar/escoder) ficam em css/atlas.css (WP08); aqui só os
+   VALORES que aquelas regras consomem.
+   =========================================================================== */
+
+/* Celular paisagem (curto e largo) — ver docs/ATLAS_UX_SPEC.md §2. */
+@media (orientation: landscape) and (max-height: 599px) {
+  :root {
+    --atlas-sheet-full-h: 100dvh;
+  }
+}
+
+/* Tablet: 600–1023px. */
+@media (min-width: 600px) {
+  :root {
+    --atlas-topbar-h: 52px;
+  }
+}
+
+/* Desktop: ≥1024px. */
+@media (min-width: 1024px) {
+  :root {
+    --atlas-topbar-h: 56px;
+  }
+}
+
+/* TV: ≥1600px sem hover (controle remoto/apontador grosso, não mouse). */
+@media (min-width: 1600px) and (hover: none) {
+  --atlas-tv-text-scale: 1.5;
+  --atlas-tv-focus-width: 4px;
+  --atlas-toolbar-btn: 56px;
+}
+
+/* ===========================================================================
+   Movimento reduzido — quem pediu isso ao sistema operacional não deve
+   receber a física de arraste do painel nem o tween de câmera "chegando
+   suavemente"; tudo vira instantâneo. laift-tokens.css já zera
+   `animation-duration`/`transition-duration` global — isto aqui zera
+   também os TOKENS de duração, para o JS que lê `--atlas-motion-*` via
+   `getComputedStyle` (ex.: a física do painel, que não usa CSS transition)
+   respeitar a preferência.
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --atlas-motion-fast: 0ms;
+    --atlas-motion-base: 0ms;
+    --atlas-motion-sheet: 0ms;
+    --atlas-motion-camera: 0ms;
+  }
+}
