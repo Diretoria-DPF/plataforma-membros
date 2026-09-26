@@ -1,0 +1,29 @@
+/* =========================================================================
+   Simulador de Toxicologia — identidade do módulo
+   -------------------------------------------------------------------------
+   Layout: ../shared/quiz-engine.css (motor único). Cores: tokens de
+   ../shared/laift-tokens.css. Aqui só o acento verde-azulado (claro/escuro,
+   ambos com contraste AA) e a etiqueta de fonte do OpenFDA.
+   ========================================================================= */
+:root {
+  --module-accent-light: #00695c;
+  --module-accent-dark: #56d6b8;
+  --module-on-accent-dark: #04231c;
+}
+
+/* Faixa inferior do cabeçalho: a marca laranja da toxicologia. */
+header { border-bottom: 4px solid var(--laift-warning); }
+
+.api-tag {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 2px 10px;
+  border-radius: var(--laift-radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--laift-surface-alt);
+  color: var(--laift-muted);
+  border: 1px solid var(--laift-border);
+}
+.api-tag[data-source="fda"] { background: var(--laift-warning-soft); color: var(--laift-warning); border-color: color-mix(in srgb, var(--laift-warning) 45%, transparent); }
+.api-tag[data-source="local"] { background: var(--module-accent-soft); color: var(--module-accent); }

@@ -1,10 +1,17 @@
 # Política de Privacidade — Plataforma de Membros LAIFT
 
-**Versão: 2026-09-25** (deve corresponder exatamente a
+**Versão: 2026-09-26** (deve corresponder exatamente a
 `LEGAL_VERSIONS.PRIVACY` em `worker/src/constants.js` — atualize os dois
 juntos sempre que o texto mudar de forma material; o aceite de uma versão
 anterior fica preservado no histórico de consentimentos, nunca é
 retroativamente alterado).
+
+> **Minuta — revisão jurídica pendente.** A versão 2026-09-26 acrescenta a
+> área "Aprender" (estatísticas de estudo e presença em eventos) e o uso da
+> **Groq, Inc.** como operador nos recursos de inteligência artificial
+> (texto proposto pela Equipe 3 em `docs/FASE_3_IA_CLINICA.md`). Esses
+> trechos, como o restante do documento, ainda precisam de revisão
+> jurídica antes de serem considerados finais.
 
 ## 1. Quem é o controlador dos dados
 
@@ -30,6 +37,11 @@ eventos, propostas enviadas, votos (o voto em si é vinculado à sua conta
 para impedir duplicidade — ver seção 6 sobre como isso é protegido),
 adesões a tarefas, comentários e mensagens de feedback enviadas por você.
 
+**Na área "Aprender":** resultados dos simulados e casos clínicos que você
+conclui (nota, duração, desfecho), formulações do laboratório, presença
+confirmada em eventos (data, hora e forma do check-in) e o texto que você
+escreve nos recursos com inteligência artificial (ver seção 5).
+
 **Gerados automaticamente pelo sistema, nunca inseridos por você:**
 registros de auditoria de ações administrativas e de autenticação
 (associados a um identificador de conta, nunca ao conteúdo de senha ou
@@ -44,6 +56,8 @@ token), e registros técnicos de erro para diagnóstico.
 | Avatar, LinkedIn, Instagram, escolaridade, interesses | Enriquecer seu perfil e facilitar conexão entre membros — sempre opcionais | Consentimento (inciso I), livremente revogável a qualquer momento |
 | Inscrições, votos, adesões, propostas, feedback | Operar as funcionalidades de governança da liga (eventos, votação, tarefas) que você escolheu usar | Execução de contrato (inciso V) |
 | Registros de auditoria e erro | Segurança da plataforma, prevenção a fraude e investigação de incidentes | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
+| Resultados de estudo na área "Aprender" e presença em eventos | Mostrar suas estatísticas e conquistas; registrar a presença em eventos da liga | Execução de contrato (inciso V) |
+| Perguntas e respostas escritas nos simuladores com IA (clínica virtual e laboratório), métricas de uso da IA | Oferecer o paciente virtual, o preceptor e a geração de casos; controlar custo e abuso (cota diária) | Execução de contrato (inciso V); métricas de uso: legítimo interesse (inciso IX) |
 
 ## 4. O que NÃO fazemos
 
@@ -69,6 +83,23 @@ sessão autenticada validada a cada chamada contra o banco de dados — nunca
 apenas contra informação enviada pelo próprio navegador. Detalhes técnicos
 completos, incluindo riscos residuais reconhecidos e como são mitigados,
 estão documentados publicamente em `docs/SECURITY.md` deste repositório.
+
+**Inteligência artificial.** Os recursos de IA da área "Aprender" (paciente
+virtual, preceptor da clínica, geração de casos e preceptor do laboratório)
+usam o serviço da **Groq, Inc.** como operador de dados. Quando você usa
+esses recursos, o texto que você escreve (perguntas, hipótese diagnóstica e
+conduta) e o contexto do caso clínico **fictício** são enviados à Groq para
+gerar a resposta. **Não enviamos seu nome, e-mail ou qualquer identificador
+da sua conta.** Não escreva dados pessoais reais seus ou de terceiros
+nesses campos. Na plataforma, guardamos apenas métricas de uso da IA (qual
+recurso, quando, quantos tokens, se funcionou), sem o conteúdo das
+conversas, e a nota e o desfecho dos casos que você concluir, que aparecem
+nas suas estatísticas. Casos gerados com IA podem ser publicados na
+biblioteca da liga depois de revisados pela diretoria; eles não contêm
+dados seus, apenas o seu vínculo como autor, visível só para
+administradores. O tratamento pela Groq segue os termos e a política de
+privacidade dela, com possível transferência internacional de dados (LGPD,
+art. 33).
 
 ## 6. Sessão e armazenamento no seu navegador
 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
+  <script src="../shared/laift-identity.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio de Crachá LAIFT</title>
+
+  <link rel="stylesheet" href="../shared/laift-tokens.css" />
+  <link rel="stylesheet" href="cracha.css" />
+
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar no-print">
+      <div class="brand">
+        <div class="logo-ui"></div>
+        <div>
+          <h1>Studio de Crachá LAIFT</h1>
+          <p>Padrão CR-80 vertical · 54 × 85,6 mm</p>
+        </div>
+      </div>
+
+      <section class="group">
+        <h2>Identidade</h2>
+
+        <label class="field">Organização
+          <input id="orgInput" type="text" value="Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia" />
+        </label>
+
+        <label class="field">Nome completo
+          <input id="nameInput" type="text" />
+        </label>
+
+        <label class="field">Cargo / Função
+          <input id="roleInput" type="text" />
+        </label>
+
+        <label class="field">ID do crachá
+          <input id="idInput" type="text" />
+        </label>
+      </section>
+
+      <section class="group">
+        <h2>Foto</h2>
+
+        <label class="file-button">
+          Enviar imagem
+          <input id="photoFile" type="file" accept="image/*" />
+        </label>
+
+        <label class="field">Ou URL da imagem
+          <input id="photoUrl" type="url" placeholder="https://..." />
+        </label>
+      </section>
+
+      <section class="group">
+        <h2>Verso e QR Code</h2>
+
+        <label class="field">Matricula / token de validação
+          <input id="qrInput" type="text" value="LAIFT|" />
+        </label>
+
+        <label class="field">Instruções
+          <textarea id="instructionsInput">Apresente o QR Code para validação de presença.</textarea>
+        </label>
+      </section>
+
+      <section class="group">
+        <h2>Cores</h2>
+
+        <div class="color-row">Fundo <input id="bgColor" type="color" value="#f7f4ef" /></div>
+        <div class="color-row">Destaque <input id="accentColor" type="color" value="#1d4ed8" /></div>
+        <div class="color-row">Texto <input id="textColor" type="color" value="#111827" /></div>
+      </section>
+
+      <section class="group">
+        <h2>Exibir / ocultar</h2>
+
+        <label class="switch">Foto <span class="toggle"><input id="showPhoto" type="checkbox" checked /><span class="slider"></span></span></label>
+        <label class="switch">Organização <span class="toggle"><input id="showOrg" type="checkbox" checked /><span class="slider"></span></span></label>
+        <label class="switch">Cargo <span class="toggle"><input id="showRole" type="checkbox" checked /><span class="slider"></span></span></label>
+        <label class="switch">QR Code <span class="toggle"><input id="showQr" type="checkbox" checked /><span class="slider"></span></span></label>
+        <label class="switch">Instruções <span class="toggle"><input id="showInstructions" type="checkbox" checked /><span class="slider"></span></span></label>
+        <label class="switch">ID textual <span class="toggle"><input id="showId" type="checkbox" checked /><span class="slider"></span></span></label>
+      </section>
+
+      <div class="actions">
+        <button class="primary" id="flipBtn">Virar Crachá (Frente / Verso)</button>
+        <button class="secondary" id="printBtn">Imprimir / Exportar</button>
+      </div>
+    </aside>
+
+    <main class="stage">
+      <div class="stage-head no-print">
+        <h2>Pré-visualização 3D</h2>
+        <p>Edite os dados e acompanhe a personalização em tempo real.</p>
+      </div>
+
+      <div class="scene no-print">
+        <div class="card" id="card">
+          <article class="face" id="front">
+            <div class="front-body">
+              <div class="hole-wrap"><div class="hole"></div></div>
+              <div class="organization bind-org"></div>
+
+              <div class="photo bind-photo">
+                <div class="avatar" id="avatar">ID</div>
+                <img id="photoImage" class="hidden" alt="Foto do membro" />
+              </div>
+
+              <div class="person">
+                <h3 class="bind-name"></h3>
+                <div class="role bind-role"></div>
+              </div>
+            </div>
+
+            <div class="stripe">Identificação</div>
+          </article>
+
+          <article class="face back" id="back">
+            <div class="back-content">
+              <div class="back-title">Validação</div>
+              <div class="qr-box bind-qr" id="qrCode"></div>
+              <p class="instructions bind-instructions"></p>
+              <div class="badge-id bind-id"></div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="print-sheet">
+        <p class="print-title">Studio de Crachá LAIFT</p>
+        <div class="print-area" id="printArea"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- QR gerado localmente (mesma biblioteca da credencial da plataforma,
+       vendor/qrcode-generator.js) — antes vinha do cdnjs sem SRI. -->
+  <script src="../../vendor/qrcode-generator.js"></script>
+  <script src="../shared/safe-dom.js"></script>
+  <script src="cracha.js"></script>
+</body>
+</html>

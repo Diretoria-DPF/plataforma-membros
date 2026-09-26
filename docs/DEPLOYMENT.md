@@ -1,199 +1,152 @@
-# Deployment — Plataforma de Membros
+# Deployment — Plataforma de Membros LAIFT
 
-Este guia assume que você tem: uma conta Google, uma conta Neon, Node.js ≥ 18,
-e acesso a um repositório GitHub (`Diretoria-DPF/plataforma-membros` ou o que
-você configurar). Nenhum passo aqui foi executado por mim nesta sessão — não
-tenho credenciais de Neon, Apps Script ou GitHub. Siga na ordem.
+Guia do ambiente atual: **Neon PostgreSQL** (banco), **Cloudflare Workers**
+(API JSON, pasta `worker/`) e **GitHub Pages** (site estático, pasta
+`frontend/`). O backend anterior em Google Apps Script foi desligado; o
+código dele fica só como arquivo histórico em `legacy-appsscript/` e não
+participa de nenhum passo abaixo.
 
-## 1. Criar o projeto/branch Neon e aplicar as migrações
+Pré-requisitos: Node.js ≥ 20, conta Neon, conta Cloudflare (com Workers, KV
+e R2), conta Brevo (e-mail transacional), chaves do Groq (IA da área
+"Aprender") e acesso de escrita ao repositório no GitHub.
 
-1. Crie um projeto no [console do Neon](https://console.neon.tech) (ou uma
-   branch nova dentro de um projeto existente, se preferir isolar o ambiente
-   de desenvolvimento do de produção).
-2. Anote a branch padrão (`main`, geralmente).
-3. Abra o **SQL Editor** do Neon (ou conecte via `psql`) na branch de destino
-   e execute, **nesta ordem exata**:
-   - `sql/001_schema.sql`
-   - `sql/002_functions_and_triggers.sql`
+Faça na ordem. Cada passo diz como conferir antes de seguir.
 
-   Ambos os arquivos são idempotentes (usam `IF NOT EXISTS` / `CREATE OR
-   REPLACE` / blocos de guarda para `CREATE TYPE`), então podem ser
-   reaplicados com segurança se você não tiver certeza do estado atual do
-   banco — mas o fluxo normal é aplicar cada arquivo **uma vez**, na ordem,
-   e tratar mudanças futuras como **novos** arquivos numerados
-   (`003_*.sql`, `004_*.sql`, ...), nunca editando 001/002 depois de
-   aplicados em qualquer ambiente compartilhado.
-4. Confira o resultado:
+## 1. Banco (Neon) e migrações 001–013
+
+1. Crie o projeto no [console do Neon](https://console.neon.tech) (ou uma
+   **branch** nova, para isolar homologação de produção).
+2. Abra o **SQL Editor** na branch de destino (ou `psql` com a connection
+   string) e aplique **nesta ordem exata**, um arquivo por vez:
+
+   | # | Arquivo | O que traz |
+   |---|---|---|
+   | 1 | `sql/001_schema.sql` | extensões (`uuid-ossp`, `pgcrypto`), tipos e tabelas base |
+   | 2 | `sql/002_functions_and_triggers.sql` | funções e gatilhos (`updated_at`, proteção do último admin) |
+   | 3 | `sql/003_rate_limits.sql` | `rate_limit_buckets` (limites e cotas de IA) |
+   | 4 | `sql/004_event_visibility_guard.sql` | guarda de visibilidade de eventos |
+   | 5 | `sql/005_fase2_schema.sql` | perfil estendido, imagens, status "em andamento", conclusão de tarefa |
+   | 6 | `sql/006_event_location.sql` | local do evento |
+   | 7 | `sql/007_connections_moderation.sql` | conexões e denúncias |
+   | 8 | `sql/008_league_org_chart.sql` | organograma da liga |
+   | 9 | `sql/009_messaging.sql` | mensageria E2EE |
+   | 10 | `sql/010_messaging_simplify.sql` | ajuste da mensageria |
+   | 11 | `sql/011_messaging_clear_and_delete.sql` | limpar/apagar mensagens |
+   | 12 | `sql/012_learning.sql` | `learning_attempts` e presença (check-in) — Fase 2 |
+   | 13 | `sql/013_clinical_ai.sql` | `clinical_cases` e `ai_usage_log` — Fase 3 |
+
+   Todas são idempotentes (`IF NOT EXISTS`, `CREATE OR REPLACE`, blocos de
+   guarda). Mesmo assim, o fluxo normal é aplicar cada uma **uma vez**, e
+   toda mudança futura é um arquivo **novo** (`014_*.sql`…), nunca uma
+   edição de migração já aplicada. A 013 depende da 012.
+3. Antes de aplicar em produção, valide localmente as 13 migrações contra um
+   Postgres em memória (PGlite), em banco vazio e reaplicadas:
+   ```bash
+   cd worker && npm ci && npm run validate:sql
+   # esperado: "13 migrações, 27 tabelas no schema public, 0 falha(s)."
+   ```
+4. Conferência no Neon:
    ```sql
    SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';
-   -- Deve haver 14 tabelas: profiles, consents, preferences, events,
-   -- event_registrations, proposals, votes, tasks, task_signups, feedback,
-   -- audit_logs, error_logs, account_tokens, sessions.
+   -- esperado: 27
    ```
+5. Para uma migração arriscada, crie antes uma branch no Neon, aplique e
+   teste nela, e só então aplique na principal.
 
-## 2. Obter a string de conexão JDBC
+## 2. Segredos do Worker
 
-O Apps Script se conecta via `Jdbc.getConnection(url, user, password)`. A
-connection string que o Neon mostra no console (`postgresql://user:pass@host/db?sslmode=require&channel_binding=require`)
-**não** é uma URL JDBC válida — não copie-a diretamente.
-
-1. No Neon, obtenha os dados de conexão **pooled** (opção "Connection
-   pooling" ativada / hostname terminado em `-pooler`) — o Apps Script abre
-   uma conexão nova a cada execução, então usar o endpoint com pooler evita
-   esgotar o limite de conexões diretas do Neon sob uso concorrente.
-2. Monte a URL JDBC **sem nenhum parâmetro de query**:
-   ```
-   jdbc:postgresql://<host-pooler>:5432/<database>
-   ```
-   **Confirmado em produção (não é suposição):** o driver JDBC nativo do
-   Apps Script rejeita com erro fatal qualquer parâmetro de conexão que não
-   reconheça — `sslmode=require`, `ssl=true`, `channel_binding=require`
-   etc. todos causam `Exception: The following connection properties are
-   unsupported: ...`. Isso já aconteceu neste projeto (ver histórico de
-   commits) e está documentado por terceiros especificamente para Postgres
-   no Neon com Apps Script (projeto "gas-fakes", que lista "PostgreSQL on
-   Neon" entre os bancos validados). A conexão TLS acontece de qualquer
-   forma — o Neon exige TLS no servidor independente do parâmetro no
-   cliente — então a URL "nua" funciona e é a única forma que funciona.
-3. Guarde separadamente: host, usuário, senha, nome do banco.
-
-**Restrições confirmadas na documentação oficial do Apps Script (JDBC
-service, consultada nesta sessão):** a conexão só funciona em portas ≥ 1025
-(5432 do Postgres está OK) e exige TLS 1.2+. Também é necessário autorizar,
-no firewall do banco, as faixas de IP de onde o Apps Script se conecta —
-**mas** isso só é relevante se você ativar o recurso **IP Allow** do Neon,
-que é exclusivo do plano pago **Scale** (confirmado na documentação do
-Neon). No plano padrão, o Neon não bloqueia por IP — a segurança da conexão
-depende de TLS + credenciais fortes. Se sua organização ativar IP Allow no
-futuro, valide antes se a lista de faixas de IP do Apps Script é praticável
-de configurar lá (não testado nesta sessão).
-
-## 3. Criar o projeto Apps Script e configurar Script Properties
-
-1. Acesse [script.google.com](https://script.google.com) → **Novo projeto**.
-2. Renomeie para "Plataforma de Membros".
-3. No editor, abra **Configurações do projeto** ⚙️ → copie o **ID do
-   script** (você vai usar no `.clasp.json`).
-4. Ainda em Configurações do projeto, vá em **Script Properties** e
-   cadastre manualmente (nunca via código, nunca versionado):
-
-   | Propriedade | Valor de exemplo | Obrigatória |
-   |---|---|---|
-   | `DB_JDBC_URL` | `jdbc:postgresql://SEU-HOST-pooler.neon.tech:5432/SEU_BANCO` (SEM `?sslmode=...` — ver seção 2) | Sim |
-   | `DB_USER` | `SEU_USUARIO_NEON` | Sim |
-   | `DB_PASSWORD` | `SUA_SENHA_NEON` | Sim |
-   | `SESSION_TOKEN_PEPPER` | uma string aleatória longa (ex.: gerada com `openssl rand -hex 32`) | Sim |
-   | `APP_BASE_URL` | a URL do **front-end** publicado (ex.: `https://diretoria-dpf.github.io/plataforma-membros/`) — usada para montar os links de confirmação de e-mail/redefinição de senha | **Sim, desde a separação front/back** (não é mais opcional nem um fallback — sem isso os e-mails apontam para a URL "nua" do backend, que não serve mais interface nenhuma) |
-   | `MAIL_FROM_NAME` | `Plataforma de Membros` | Não |
-
-## 4. Vincular o clasp e sincronizar os arquivos
+Segredos **nunca** vão para `wrangler.toml`, commit, log ou `docs/`. São
+cadastrados com o Wrangler, que os guarda criptografados na Cloudflare:
 
 ```bash
+cd worker
+npx wrangler login
+npx wrangler secret put DATABASE_URL          # connection string do Neon (postgresql://…?sslmode=require)
+npx wrangler secret put SESSION_TOKEN_PEPPER  # openssl rand -hex 32
+npx wrangler secret put BREVO_API_KEY         # chave da API da Brevo
+npx wrangler secret put GROQ_API_KEYS         # TODAS as chaves do pool, uma por linha ou separadas por vírgula
+```
+
+| Segredo | Uso | Efeito de trocar |
+|---|---|---|
+| `DATABASE_URL` | driver HTTP do Neon (`worker/src/db.js`) | nenhum para as pessoas |
+| `SESSION_TOKEN_PEPPER` | hash de sessões/tokens e **chave do QR de presença v2** (derivada por HMAC, domínio `laift-attendance-qr-v1`) | logout global, links de e-mail pendentes invalidados e **todos os QRs e crachás impressos deixam de valer** (ver `docs/SECURITY.md`) |
+| `BREVO_API_KEY` | e-mails de confirmação e redefinição (`worker/src/mailer.js`) | nenhum |
+| `GROQ_API_KEYS` | pool de chaves da IA (`worker/src/ai/groqClient.js`) | nenhum; chaves repetidas ou vazias são ignoradas |
+
+Conferência: `npx wrangler secret list` mostra os quatro nomes (nunca os
+valores).
+
+## 3. Variáveis públicas e bindings (`worker/wrangler.toml`)
+
+Não são segredo; ficam versionadas.
+
+| Var / binding | Valor atual | Para quê |
+|---|---|---|
+| `APP_BASE_URL` | `https://diretoria-dpf.github.io/plataforma-membros/` | links dos e-mails |
+| `ALLOWED_ORIGINS` | `https://diretoria-dpf.github.io`, `http://localhost:4174`, `http://localhost:4175` | CORS |
+| `MAIL_FROM_NAME`, `MAIL_FROM_ADDRESS` | remetente **verificado** na Brevo | e-mail |
+| `MEDIA_PUBLIC_URL` | URL pública do bucket R2 | avatares e imagens de evento |
+| `GROQ_MODEL_FAST` | `openai/gpt-oss-20b` | paciente virtual (chat) |
+| `GROQ_MODEL_SMART` | `openai/gpt-oss-120b` | preceptor, geração de caso, preceptor do laboratório |
+| `MEDIA_BUCKET` (R2) | `plataforma-membros-media` | upload de mídia |
+| `HOT_CACHE` (KV) | namespace `6ee17e57…` | cache curto de leitura, cooldown das chaves do Groq, cache de síntese do laboratório |
+
+Para usar um modelo só, ponha o mesmo valor nas duas vars `GROQ_MODEL_*`.
+Cotas diárias por papel e o disjuntor global (3.000 chamadas/dia) ficam em
+`worker/src/constants.js` (`AI_QUOTAS`, `AI_GLOBAL_DAILY_MAX`).
+
+## 4. Deploy do Worker
+
+```bash
+cd worker
+npm ci
+npm test                 # 373 testes (Jest)
+npm run validate:sql     # 13 migrações OK
+npm run deploy           # wrangler deploy
+```
+
+URL: `https://plataforma-membros-api.diretoria-dpf.workers.dev` — é o
+`API_BASE_URL` de `frontend/app.js` e aparece no `connect-src` da CSP do
+`frontend/index.html`. **Se a URL mudar, atualize os dois.**
+
+Conferência:
+- `npx wrangler tail` enquanto alguém faz login: nenhuma exceção.
+- No modo admin da plataforma, painel **IA** → "Testar chaves agora": o
+  esperado é 100% e uma linha por chave (só o final mascarado aparece).
+
+## 5. Front-end (GitHub Pages)
+
+O workflow `.github/workflows/deploy-frontend.yml` publica a cada push na
+`main` que toque `frontend/`:
+
+1. `npm install` e `npm run build` em `frontend/` geram `frontend/dist/`
+   (app.js ofuscado; páginas, módulos e `static-page.js` copiados);
+2. só `frontend/dist/` é publicado.
+
+Uma única vez: **Settings → Pages → Source: GitHub Actions** (não "Deploy
+from a branch", que publicaria o repositório inteiro).
+
+Antes do merge, rode localmente:
+
+```bash
+cd frontend
 npm install
-npx clasp login
-cp .clasp.json.example .clasp.json
-# edite .clasp.json e cole o scriptId copiado no passo 3
-npx clasp status
+npm run e2e      # build + cenários csp, fase2, fase3, fase4 e smoke (Playwright)
 ```
 
-`clasp status` deve listar exatamente: `appsscript.json` e todos os arquivos
-sob `src/**/*.gs` e `src/**/*.html` — nada de `sql/`, `tests/`, `docs/`,
-`package.json` etc. (isso é controlado pelo `.claspignore`, que ignora tudo
-por padrão e libera só o necessário). **Confira essa lista antes de
-prosseguir.** Eu não pude rodar `clasp status`/`clasp push` de verdade nesta
-sessão porque não existe um `scriptId` real disponível aqui — isso fica como
-verificação pendente para você.
+O cenário `csp` usa um espelho local dos pacotes npm do jsDelivr
+(`frontend/scripts/e2e/cdn-mirror/`, instalado sozinho na primeira
+execução) para conferir o SRI de cada biblioteca e falhar em qualquer
+violação de CSP. **Ao trocar a versão de uma biblioteca de CDN**, atualize
+juntos: a URL, o `integrity` e o `cdn-mirror/package.json`.
 
-Como o `rootDir` do `.clasp.json` é a raiz do repositório, os arquivos são
-enviados preservando o caminho (ex.: `src/ui/Index.html` vira o arquivo
-`src/ui/Index` no projeto Apps Script — o editor moderno do Apps Script
-exibe nomes com `/` como pastas visuais). Por isso `Main.gs` referencia os
-templates HTML como `'src/ui/Index'`, `'src/ui/Styles'` etc., e não apenas
-`'Index'`.
-
-```bash
-npx clasp push
-```
-
-## 5. Autorizar escopos e publicar o back-end (Web App = API JSON)
-
-Desde a separação front/back, este "Web App" **não serve mais interface
-nenhuma** — é só o endpoint `doPost` (API JSON) que o front-end (seção 5.5)
-consome via `fetch()`. Visitar a URL diretamente não mostra mais nada
-utilizável, de propósito.
-
-1. No editor do Apps Script, rode a função `doPost` uma vez manualmente (ou
-   abra a implantação de teste) para disparar a tela de autorização OAuth.
-   Os escopos são **detectados automaticamente** pelo Apps Script a partir
-   do código real (não declaramos `oauthScopes` manualmente no
-   `appsscript.json` — ver docs/SECURITY.md sobre essa decisão). Confira em
-   **Configurações do projeto → Escopos OAuth do projeto** que a lista
-   inclui apenas o necessário (serviço externo/JDBC e envio de e-mail) antes
-   de publicar para outras pessoas.
-2. **Implantar → Nova implantação → Tipo: App da Web**.
-   - Executar como: **Eu** (proprietário) — necessário para que
-     visitantes sem conta Google consigam usar o app, já que a autorização
-     de acesso é feita pela própria aplicação (sessão própria), não pelo
-     login do Google.
-   - Quem pode acessar: **Qualquer pessoa** (a proteção de dados
-     pessoais/ações autenticadas é feita pela camada de sessão da
-     aplicação, não pelo controle de acesso do Google).
-3. Copie a URL de implantação gerada — é o valor de `API_BASE_URL` em
-   `frontend/app.js` (constante no topo do arquivo).
-4. **Sempre que corrigir/alterar código do back-end:**
-   ```bash
-   npx clasp push --force
-   npx clasp deploy -i <ID_DA_IMPLANTACAO_EXISTENTE> -d "descrição da mudança"
-   ```
-   Redeployar a **mesma implantação** (`-i` com o ID existente) mantém a
-   URL igual — sem isso, `clasp deploy` sem `-i` cria uma implantação NOVA
-   com uma URL diferente, exigindo atualizar `API_BASE_URL` no front-end.
-
-## 5.5. Publicar o front-end (GitHub Pages)
-
-O front-end (`frontend/index.html` + `app.js` + `styles.css`) é um site
-100% estático — sem build, sem dependências — publicado automaticamente
-pelo workflow `.github/workflows/deploy-frontend.yml` a cada `git push`
-para `main` que toque a pasta `frontend/`.
-
-1. Uma única vez: em **Settings → Pages** do repositório no GitHub, a
-   fonte precisa estar como **GitHub Actions** (não "Deploy from a
-   branch"). Se o repositório já tinha Pages configurado a partir da raiz
-   do branch (modo legado), troque para "GitHub Actions" — senão o GitHub
-   publicaria o repositório inteiro (incluindo `sql/`, `docs/`, `tests/`)
-   como site, em vez de só `frontend/`.
-2. `git push origin main` — o workflow builda e publica sozinho. Acompanhe
-   em **Actions** no GitHub, ou `gh run watch`.
-3. URL final: `https://<usuário-ou-organização>.github.io/<repositório>/`
-   (ex.: `https://diretoria-dpf.github.io/plataforma-membros/`).
-4. **Depois do primeiro deploy do front-end**, volte ao Apps Script e
-   defina a Script Property `APP_BASE_URL` com essa URL exata (com a barra
-   final) — é o que faz os links de confirmação de e-mail/redefinição de
-   senha apontarem para a interface certa. Não é segredo, é só uma URL
-   pública.
-
-## 6. Validar os fluxos com contas de teste
-
-Antes de considerar o ambiente utilizável, valide manualmente (eu não
-consegui rodar nada disto sem credenciais reais):
-
-- [ ] Cadastro de uma conta de teste → e-mail de confirmação chega →
-      confirmar → login funciona.
-- [ ] Login com senha errada e com e-mail inexistente → mesma mensagem
-      genérica nos dois casos.
-- [ ] "Esqueci minha senha" → e-mail chega → link redefine a senha →
-      sessões antigas dessa conta param de funcionar.
-- [ ] Um `SELECT` direto em `audit_logs` no Neon mostra as ações acima,
-      sem senha/token/telefone/e-mail completo nos detalhes.
-- [ ] Logout revoga a sessão (tentar reusar o token antigo falha).
-
-## 7. Promover manualmente o primeiro administrador
+## 6. Primeiro administrador
 
 O primeiro administrador é **Daniel Pires Francisco**
-(`dpires292@gmail.com`). Ele deve se cadastrar normalmente pela tela pública
-(nascendo como `visitor`) e confirmar o e-mail. **Só depois disso**, com a
-identidade verificada por um humano da diretoria, promova manualmente via
-SQL no Neon:
+(`dpires292@gmail.com`). Ele se cadastra pela tela pública (nasce
+`visitor`) e confirma o e-mail. **Só depois**, com a identidade verificada
+por uma pessoa da diretoria, promova no SQL Editor do Neon:
 
 ```sql
 BEGIN;
@@ -204,98 +157,51 @@ WHERE email = 'dpires292@gmail.com'
   AND email_confirmed_at IS NOT NULL
 RETURNING id, full_name, email, role, status, email_confirmed_at;
 
--- Confira que a linha retornada é realmente a pessoa certa e que
--- role = 'admin' antes de confirmar.
+-- Confira que a linha é a pessoa certa e que role = 'admin'.
 
 COMMIT;
 ```
 
-Se a consulta não retornar nenhuma linha, **não dê commit** — investigue
-antes (provavelmente o e-mail ainda não foi confirmado, ou está escrito
-diferente do cadastro).
+Nenhuma linha retornada → **não dê commit**: o e-mail não foi confirmado ou
+está escrito diferente. Os demais admins são promovidos pela própria
+plataforma (painel admin).
 
-## 8. Enviar o código ao GitHub (sem segredos)
+## 7. Validação com contas de teste
 
-```bash
-git init
-git add .
-git status   # confirme que .clasp.json (real) NÃO aparece — só .clasp.json.example
-git commit -m "Estrutura inicial da plataforma de membros"
-git branch -M main
-git remote add origin https://github.com/Diretoria-DPF/plataforma-membros.git
-git push -u origin main
-```
+- [ ] Cadastro → e-mail chega → confirmar → login.
+- [ ] Senha errada e e-mail inexistente → mesma mensagem genérica.
+- [ ] "Esqueci minha senha" → link redefine → sessões antigas caem.
+- [ ] Logout revoga a sessão (o token antigo deixa de funcionar).
+- [ ] Área "Aprender": abrir quiz, toxicologia, clínica, laboratório e
+      anatomia; as estatísticas do perfil sobem depois de um simulado.
+- [ ] Credencial QR na área "Aprender" → check-in no terminal fiscal (admin).
+- [ ] Clínica: um caso completo (conversa, exames, avaliação) e o radar.
+- [ ] Painel **IA**: 100% das chaves; gerar um caso → aparece em
+      "pendentes" → aprovar → aparece no acervo.
+- [ ] DevTools → Console em cada página: nenhuma violação de CSP.
+- [ ] `SELECT action, result FROM audit_logs ORDER BY created_at DESC LIMIT 20;`
+      mostra as ações acima, sem senha, token ou e-mail completo.
 
-(Já feito — repositório publicado em
-https://github.com/Diretoria-DPF/plataforma-membros.)
+## 8. Rollback e recuperação
 
-## 9. Rollback e recuperação
+- **Worker:** `npx wrangler rollback` volta à versão anterior (ou
+  `npx wrangler deployments list` e escolha). Não mexe no banco.
+- **Front-end:** reverta o commit na `main` (ou rode de novo o workflow num
+  commit anterior); o Pages republica.
+- **Schema:** não há "undo" automático. Reverter exige uma migração nova
+  (`NNN_rollback_*.sql`) — por isso o teste em branch do Neon antes.
+- **Credenciais comprometidas:** `docs/SECURITY.md`, seção "Rotação de
+  credenciais".
 
-- **Rollback de deploy do Web App:** no editor Apps Script, **Implantar →
-  Gerenciar implantações**, edite a implantação ativa e aponte para uma
-  versão anterior do script (o Apps Script versiona cada `clasp push`
-  seguido de deploy). Isso não afeta o banco.
-- **Rollback de schema:** como as migrações são incrementais e numeradas,
-  reverter uma mudança de schema exige escrever um novo arquivo
-  `NNN_rollback_*.sql` que desfaça explicitamente a alteração (não existe
-  "undo" automático). Para o Neon especificamente, considere criar uma
-  **branch** antes de aplicar uma migração arriscada em produção
-  (`neon branches create`), testar nela, e só então aplicar na branch
-  principal.
-- **Recuperação de credenciais comprometidas:** ver docs/SECURITY.md,
-  seção "Rotação de credenciais".
+## 9. Manutenção periódica
 
-## Status real (atualizado após a separação front-end/back-end)
-
-- **Neon:** projeto `plataforma-membros` (`jolly-snow-39561777`, São Paulo)
-  criado, `001_schema.sql`/`002_functions_and_triggers.sql` aplicados e
-  verificados contra o banco de verdade (14 tabelas, 13 gatilhos), incluindo
-  um teste real do gatilho de proteção do último admin (bloqueou/permitiu
-  corretamente).
-- **GitHub:** publicado em https://github.com/Diretoria-DPF/plataforma-membros
-  (público).
-- **Back-end (Apps Script):** implantado e no ar como API JSON pura
-  (`doPost`), com `DB_JDBC_URL`/`DB_USER`/`DB_PASSWORD`/`SESSION_TOKEN_PEPPER`
-  já configurados. Cadastro real testado ao vivo (conta criada com sucesso,
-  registrada em `profiles`/`audit_logs`). Allowlist `API_REGISTRY` e rate
-  limit global de e-mail (proteção contra abuso de cota do `MailApp`)
-  auditados e corrigidos.
-- **Front-end (GitHub Pages):** publicado em
-  https://diretoria-dpf.github.io/plataforma-membros/ — testado ao vivo
-  contra o back-end real (login, `apiListEvents`) de uma origem diferente
-  (`fetch()` cross-origin confirmado funcionando, sem bloqueio de CORS).
-- **Pendente (só você pode fazer, não é segredo — ver seção 5.5):**
-  cadastrar a Script Property `APP_BASE_URL` com o valor
-  `https://diretoria-dpf.github.io/plataforma-membros/` no Apps Script.
-  Até isso ser feito, os links de confirmação de e-mail/redefinição de
-  senha continuam apontando para a URL antiga do backend em vez do
-  front-end novo — o cadastro/login pelo site em si já funciona
-  normalmente independente disso.
-- Depois disso, seguir os passos 6 e 7 (validar fluxos com conta de teste,
-  promover o primeiro admin).
-
-Durante o deploy real, dois bugs só reprodutíveis no Apps Script de verdade
-(não em Node/V8 padrão, por isso os testes automatizados não pegaram antes)
-foram encontrados e corrigidos ao vivo:
-1. O Apps Script avalia o código de nível superior de todos os `.gs` em
-   **ordem alfabética pelo nome do arquivo**, não por dependência — o
-   arquivo de entrada precisou ser renomeado de `Code.gs` para `Main.gs`
-   para rodar depois de `Config.gs` (que declara o namespace `App`).
-2. Um comentário explicando o risco de uma "scriptlet vazia" do HtmlService
-   continha, literalmente, a sintaxe vazia dentro de si — o HtmlService varre
-   o arquivo procurando esse padrão como texto bruto, sem entender que
-   estava dentro de um comentário, e isso quebrava a geração do template.
-
-Ambos têm teste de regressão dedicado (`tests/loadOrder.test.js`,
-`tests/htmlTemplateSafety.test.js`) para não voltarem a acontecer.
-
-## Verificações que ainda ficam pendentes
-
-- Envio real de e-mail (`MailApp.sendEmail`) — só é exercitado quando
-  alguém completa o fluxo de cadastro/redefinição de senha com Script
-  Properties configuradas.
-- Comportamento do driver JDBC com colunas ENUM/`timestamptz` do Neon sob
-  carga real de uso (validado apenas via `run_sql`/`run_sql_transaction`
-  do MCP do Neon, não via JDBC do Apps Script em si).
-- Promoção do primeiro administrador (passo 7) — depende de alguém
-  completar o cadastro real primeiro.
+- **Faxina automática diária** (Cron Trigger `17 6 * * *`, 03:17 em
+  Brasília — `[triggers]` em `worker/wrangler.toml`, código em
+  `worker/src/maintenance.js`). É registrada sozinha pelo `npm run deploy`;
+  não há passo manual. Apaga: `ai_usage_log` com mais de 180 dias, sessões
+  expiradas há mais de 1 dia, tokens de conta expirados há mais de 7 dias e
+  baldes de rate limit com mais de 8 dias. Nunca toca `audit_logs` nem
+  `error_logs`. Resultado de cada execução: `wrangler tail` ou painel da
+  Cloudflare → Workers → plataforma-membros-api → Logs; falhas vão para
+  `error_logs` com o código `MAINTENANCE_FAILED`.
+- Revisar a fila de casos gerados por IA (painel **IA** → pendentes).

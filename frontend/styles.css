@@ -9,6 +9,10 @@
   --primary: #0f6f62;
   --primary-strong: #0b5349;
   --primary-soft: #e1f4f0;
+  /* Texto sobre --primary/--admin: branco no claro (o antigo #06231e sobre
+     #0f6f62 dava 2,8:1, abaixo do AA). Fase 4. */
+  --on-primary: #ffffff;
+  --on-admin: #ffffff;
   --admin: #8a3b12;
   --admin-soft: #fdece0;
   --danger: #b3261e;
@@ -35,6 +39,8 @@
   --primary: #3fcfb6;
   --primary-strong: #63e0c9;
   --primary-soft: #10352f;
+  --on-primary: #06231e;
+  --on-admin: #2a1200;
   --admin: #ff9a5c;
   --admin-soft: #3a2415;
   --danger: #ff7a70;
@@ -57,6 +63,8 @@
     --primary: #3fcfb6;
     --primary-strong: #63e0c9;
     --primary-soft: #10352f;
+    --on-primary: #06231e;
+    --on-admin: #2a1200;
     --admin: #ff9a5c;
     --admin-soft: #3a2415;
     --danger: #ff7a70;
@@ -190,7 +198,7 @@ button {
   border-radius: var(--radius-md);
   padding: 12px 18px;
   background: var(--primary);
-  color: #06231e;
+  color: var(--on-primary);
   font-weight: 700;
   cursor: pointer;
   transition: filter 120ms ease, transform 120ms ease;
@@ -208,7 +216,7 @@ button.secondary { background: var(--surface-alt); color: var(--text); border: 1
 button.danger { background: var(--danger); color: var(--on-danger); }
 button.link-btn { background: transparent; color: var(--muted); padding: 4px 0; font-weight: 600; }
 button.link-btn:hover { color: var(--text); }
-button.admin-btn { background: var(--admin); color: #2a1200; }
+button.admin-btn { background: var(--admin); color: var(--on-admin); }
 
 .checkbox-row {
   display: flex; gap: 10px; align-items: flex-start;
@@ -545,8 +553,207 @@ button, input, select, textarea, .list-item .actions-row button {
   border-radius: 20px; padding: 9px 16px;
 }
 .chat-send-btn {
-  /* background/color de var(--primary)/#06231e herdados da regra "button"
-     padrão do projeto — mesmo contraste já validado nos outros botões. */
+  /* background/color de var(--primary)/var(--on-primary) herdados da regra
+     "button" padrão do projeto — mesmo contraste AA dos outros botões. */
   width: 40px; height: 40px; border-radius: 50%; padding: 0; flex-shrink: 0; font-size: 16px;
 }
 .chat-send-btn:disabled { opacity: .5; }
+
+/* ===========================================================================
+   Fase 4 — qualidade de interface (Equipe 4): alvos de toque, foco e o
+   visualizador de módulos. Só CSS; o que depende de HTML/JS está nos pedidos
+   de integração de docs/FASE_4_QUALIDADE.md.
+=========================================================================== */
+/* Botões pequenos (fechar do lightbox, voltar/enviar do chat, menu da bolha)
+   ganham 44 px em telas de toque, o mínimo confortável para o dedo. */
+@media (pointer: coarse) {
+  .lightbox-close, .chat-back-btn, .chat-send-btn { width: 44px; height: 44px; min-height: 44px; }
+  .chat-bubble-menu-btn { width: 32px; height: 32px; top: -12px; right: -12px; opacity: 1; }
+  .chat-bubble-actions button { min-height: 44px; }
+}
+
+/* Página 404: ícone e link com cara de botão (antes, estilos inline e um
+   <button> dentro de <a>). */
+.notfound-icon { text-align: center; margin-top: 28px; font-size: 48px; line-height: 1; }
+.notfound-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+a.button-link {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+  padding: 12px 18px; border-radius: var(--radius-md); background: var(--primary);
+  color: var(--on-primary); font-weight: 700; text-decoration: none;
+}
+a.button-link:hover { filter: brightness(1.03); }
+
+/* Cartões da área "Aprender": foco visível do mesmo jeito que o hover. */
+button.learn-card:focus-visible { border-color: var(--primary); }
+button.learn-card:hover .learn-card-title,
+button.learn-card:focus-visible .learn-card-title { color: var(--primary-strong); }
+
+/* Com um módulo aberto no celular, o cabeçalho da plataforma não precisa
+   do rótulo "Área do membro": sobra altura para o iframe. */
+@media (max-width: 480px) {
+  .app-shell:has(#learn-viewer:not(.hidden)) .app-header .scope-label { display: none; }
+  .learn-viewer-bar button { padding-left: 12px; padding-right: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .learn-frame { scroll-behavior: auto; }
+}
+
+/* ---------- Área "Aprender" (módulos LAIFT — learning.js) ---------- */
+/* Com "Aprender" a barra de membro chega a 9 botões: em telas muito
+   estreitas vira faixa rolável (como a do admin) em vez de espremer os
+   rótulos abaixo do alvo de toque mínimo. */
+/* flex-start (não space-around): ao transbordar, space-around centraliza e
+   corta os primeiros botões fora do alcance da rolagem. Visualmente é igual
+   quando cabe, porque os botões já crescem (flex: 1 1 0) e ocupam tudo. */
+#nav-group-member { justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* Cada botão tem no mínimo a largura do próprio rótulo (sem rótulos
+   encavalando uns nos outros) e cresce para ocupar a barra quando sobra
+   espaço. */
+#nav-group-member button { flex: 1 0 auto; min-width: 48px; padding-left: 6px; padding-right: 6px; }
+#nav-group-member button span { white-space: nowrap; }
+
+/* As seções são itens do grid de .app-main: sem min-width: 0, o título
+   (nowrap) da barra do visualizador alarga a coluna além da tela no
+   celular e empurra o iframe e o botão "Tela cheia" para fora. */
+#panel-learn, #panel-admin-fiscal { min-width: 0; }
+
+.learn-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0 4px;
+}
+.learn-stat {
+  background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 2px;
+}
+.learn-stat strong { font-size: 22px; color: var(--primary-strong); }
+.learn-stat span { font-size: 12px; color: var(--muted); }
+
+#learn-hub { display: grid; gap: var(--density-gap); }
+.learn-grid { display: grid; grid-template-columns: 1fr; gap: var(--density-gap); }
+@media (min-width: 640px) { .learn-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .learn-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+/* Cartão clicável: é um <button> (acessível por teclado), mas com a cara
+   de .card — sobrescreve o fundo/cor do botão primário padrão. */
+button.learn-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--density-pad);
+  font-weight: 400;
+}
+button.learn-card:hover { border-color: var(--primary); filter: none; }
+.learn-card-icon { font-size: 28px; line-height: 1; }
+.learn-card-title { font-size: 16px; }
+.learn-card-desc { font-size: 13px; color: var(--muted); }
+.learn-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+
+.learn-viewer-bar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.learn-viewer-bar strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Ocupa a altura útil entre o cabeçalho e a barra inferior. Fundo do tema:
+   os módulos agora seguem claro/escuro (modulos/shared/laift-tokens.css),
+   então um fundo branco fixo piscava ao abrir um módulo no tema escuro. */
+.learn-frame {
+  display: block; width: 100%; height: calc(100dvh - 230px); min-height: 480px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface);
+}
+.learn-credential-qr {
+  display: block; width: 220px; height: 220px; margin: 12px auto; image-rendering: pixelated;
+  background: #ffffff; border-radius: var(--radius-md);
+}
+@media (max-width: 480px) {
+  .learn-stats { gap: 6px; }
+  .learn-stat strong { font-size: 18px; }
+  .learn-frame { height: calc(100dvh - 210px); }
+}
+
+/* Fase 2 — Dados & Presença: desempenho por módulo e conquistas no hub
+   "Aprender" (learning.js) e métricas de aprendizagem no perfil (app.js).
+   Só classes novas; acabamento visual fino fica com a Equipe 4. */
+.learn-stats { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+.learn-stat span { hyphens: auto; overflow-wrap: anywhere; }
+.learn-progress h3 { margin: 0 0 10px; font-size: 16px; }
+.learn-progress h3 + .learn-badges { margin-top: 0; }
+.learn-by-module { display: grid; gap: 8px; margin-bottom: 18px; }
+.learn-module-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name pct" "bar bar" "count count";
+  gap: 4px 10px; align-items: center;
+}
+.learn-module-name { grid-area: name; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.learn-module-pct { grid-area: pct; color: var(--primary-strong); }
+.learn-module-count { grid-area: count; font-size: 12px; color: var(--muted); }
+.learn-module-bar {
+  grid-area: bar; display: block; height: 8px; border-radius: 999px; overflow: hidden;
+  background: var(--surface-alt); border: 1px solid var(--border);
+}
+.learn-module-bar-fill { display: block; height: 100%; background: var(--primary); border-radius: inherit; }
+.learn-badges { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .learn-badges { grid-template-columns: 1fr 1fr; } }
+.learn-badge {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; min-height: 44px;
+  border: 1px dashed var(--border); border-radius: var(--radius-md); color: var(--muted);
+}
+.learn-badge.unlocked { border-style: solid; border-color: var(--primary); background: var(--primary-soft); color: var(--text); }
+.learn-badge-icon { font-size: 20px; line-height: 1.2; }
+.learn-badge-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.learn-badge-desc { font-size: 13px; }
+.learn-badge-state { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.learn-badge.unlocked .learn-badge-state { color: var(--success); font-weight: 700; }
+.profile-learning-metrics:empty { display: none; }
+.profile-learning-title { margin: 18px 0 10px; font-size: 16px; }
+
+/* Fase 3 — painel admin de IA (frontend/admin-ai.js) */
+.ai-admin-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.ai-admin-head h2 { margin: 0; min-width: 0; }
+.ai-admin-head button { width: auto; }
+.ai-health-summary {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin: 12px 0;
+  padding: 12px 14px; border-radius: var(--radius-md); background: var(--success-soft); color: var(--success);
+}
+.ai-health-summary[data-level="warn"] { background: var(--admin-soft); color: var(--admin); }
+.ai-health-summary[data-level="down"] { background: var(--danger-soft); color: var(--danger); }
+.ai-health-summary strong { font-size: 28px; line-height: 1; }
+.ai-key-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.ai-key-card {
+  display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-alt);
+}
+.ai-key-card[data-ok="nao"] { border-color: var(--danger); }
+.ai-key-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.ai-key-card-head strong { white-space: nowrap; }
+.ai-key-mask { font-size: 15px; letter-spacing: 0.05em; }
+.ai-table-wrap { max-width: 100%; overflow-x: auto; margin: 8px 0; }
+.ai-case { overflow-wrap: anywhere; }
+.ai-case .ai-case-line { margin: 6px 0 0; font-size: 14px; }
+
+/* ===========================================================================
+   Fase 4, Onda 2 — passe de UX nos painéis Aprender, Fiscal e IA (Equipe 4).
+   Fica no fim porque ajusta classes que as Equipes 2 e 3 criaram acima.
+=========================================================================== */
+/* Seções com vários cartões: espaço entre eles (no painel de IA os cartões
+   encostavam uns nos outros). */
+#panel-admin-ai:not(.hidden), #panel-admin-fiscal:not(.hidden) { display: grid; gap: var(--density-gap); min-width: 0; }
+
+/* Hub: números em 2 colunas no celular (em 3, "Aproveitamento geral"
+   quebrava no meio da palavra) e estado de carregamento visível. */
+@media (max-width: 480px) {
+  .learn-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .learn-stat span { hyphens: manual; overflow-wrap: normal; }
+}
+.learn-stats[aria-busy="true"] strong { animation: learn-pulse 1.2s ease-in-out infinite; }
+@keyframes learn-pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .learn-stats[aria-busy="true"] strong { animation: none; } }
+button.learn-card:focus-visible { outline-offset: 3px; }
+.learn-card-tags .badge { font-weight: 600; }
+
+/* Terminal fiscal: altura do iframe = altura do conteúdo (learning.js); a
+   página rola e o padding de .app-main mantém o fim acima da barra inferior. */
+.learn-frame.learn-frame-auto { min-height: 320px; height: 320px; }
+
+.ai-admin-head { margin-bottom: 8px; }
+/* Painel de IA no celular: título e botão empilham sem espremer. */
+@media (max-width: 480px) {
+  .ai-admin-head button { width: 100%; }
+  .ai-health-summary strong { font-size: 24px; }
+}
+

@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Plataforma de Membros</title>
   <link rel="stylesheet" href="styles.css">
@@ -99,7 +101,7 @@
           </label>
           <label class="checkbox-row" for="reg-privacy">
             <input type="checkbox" id="reg-privacy" required>
-            <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-09-25).</span>
+            <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-09-26).</span>
           </label>
 
           <button type="submit">Enviar cadastro</button>
@@ -164,7 +166,7 @@
         Navegação estática (sem dados de banco), em formato de barra inferior fixa
         (padrão de app mobile — a maioria das pessoas vai acessar pelo celular).
         A visibilidade por papel é só conveniência de interface — a autorização
-        real acontece sempre no servidor (Apps Script), então mostrar ou esconder
+        real acontece sempre no servidor (Worker), então mostrar ou esconder
         um botão aqui nunca é, por si só, controle de acesso.
       -->
       <nav class="bottom-nav" id="app-nav" aria-label="Navegação principal">
@@ -172,6 +174,10 @@
           <button type="button" data-panel="panel-home" data-scope="all">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
             <span>Início</span>
+          </button>
+          <button type="button" data-panel="panel-learn" data-scope="all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3.3 2.2 8.7 2.2 12 0v-5"/><path d="M22 10v6"/></svg>
+            <span>Aprender</span>
           </button>
           <button type="button" data-panel="panel-events" data-scope="all">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
@@ -239,6 +245,15 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a1.5 1.5 0 001.3 2.25h17.76a1.5 1.5 0 001.3-2.25L13.7 3.86a1.5 1.5 0 00-2.6 0z"/></svg>
             <span>Denúncias</span>
           </button>
+          <button type="button" data-panel="panel-admin-fiscal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 011-1h3"/><path d="M16 4h3a1 1 0 011 1v3"/><path d="M20 16v3a1 1 0 01-1 1h-3"/><path d="M8 20H5a1 1 0 01-1-1v-3"/><path d="M4 12h16"/></svg>
+            <span>Fiscal</span>
+          </button>
+          <!-- Fase 3 — painel de IA (saúde das chaves, uso, cotas e moderação do acervo) -->
+          <button type="button" data-panel="panel-admin-ai">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><path d="M10 10h4v4h-4z"/></svg>
+            <span>IA</span>
+          </button>
           <button type="button" id="btn-exit-admin-mode">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             <span>Voltar</span>
@@ -250,7 +265,46 @@
         <section id="panel-home">
           <div class="card">
             <h2>Início</h2>
-            <p class="muted">Bem-vindo(a). Use a navegação para acessar eventos, propostas e tarefas.</p>
+            <p class="muted">Bem-vindo(a). Use a navegação para acessar eventos, propostas, tarefas e a área de aprendizagem.</p>
+          </div>
+        </section>
+
+        <!--
+          Área de aprendizagem LAIFT (antigo o-bala-vip). Os cartões e os
+          iframes dos módulos são montados por learning.js; os módulos vivem
+          em modulos/ e herdam a identidade desta sessão.
+        -->
+        <section id="panel-learn" class="hidden">
+          <div id="learn-hub">
+            <div class="card">
+              <h2>Aprender</h2>
+              <p class="muted">Ecossistema de aprendizagem LAIFT: simuladores, clínica virtual, laboratório e anatomia 3D.</p>
+              <div class="learn-stats">
+                <div class="learn-stat"><strong id="learn-stat-accuracy">—</strong><span>Aproveitamento geral</span></div>
+                <div class="learn-stat"><strong id="learn-stat-answered">—</strong><span>Questões resolvidas</span></div>
+                <div class="learn-stat"><strong id="learn-stat-sims">—</strong><span>Simulados concluídos</span></div>
+                <div class="learn-stat"><strong id="learn-stat-cases">—</strong><span>Casos clínicos</span></div>
+                <div class="learn-stat"><strong id="learn-stat-lab">—</strong><span>Formulações</span></div>
+              </div>
+              <div id="learn-status" class="status-msg" role="status" aria-live="polite"></div>
+              <button type="button" class="secondary" id="btn-learn-credential" style="width:auto;">Minha credencial (QR de presença)</button>
+            </div>
+            <!-- Fase 2 — desempenho por módulo e conquistas (calculados na Worker; montados por learning.js). -->
+            <div class="card learn-progress hidden" id="learn-progress">
+              <h3>Desempenho por módulo</h3>
+              <div id="learn-by-module" class="learn-by-module"></div>
+              <h3>Conquistas</h3>
+              <ul id="learn-badges" class="learn-badges"></ul>
+            </div>
+            <div class="learn-grid" id="learn-modules"></div>
+          </div>
+          <div id="learn-viewer" class="learn-viewer hidden">
+            <div class="learn-viewer-bar">
+              <button type="button" class="secondary" id="learn-back" style="width:auto;">← Módulos</button>
+              <strong id="learn-viewer-title"></strong>
+              <button type="button" class="secondary" id="learn-fullscreen" style="width:auto;" aria-label="Tela cheia">Tela cheia</button>
+            </div>
+            <div id="learn-frames"></div>
           </div>
         </section>
 
@@ -598,6 +652,45 @@
             <div id="admin-reports-pagination" class="pagination"></div>
           </div>
         </section>
+
+        <section id="panel-admin-fiscal" class="hidden">
+          <div class="card">
+            <h2>Terminal fiscal</h2>
+            <p class="muted">Check-in por QR Code, presença manual ou pela lista, exportação em CSV e crachás. Presenças gravadas nos eventos da plataforma; acesso exclusivo de administradores.</p>
+          </div>
+          <div id="admin-fiscal-frame-wrap" class="learn-viewer"></div>
+        </section>
+
+        <!-- Fase 3 — painel admin de IA (frontend/admin-ai.js). Conteúdo dinâmico só via textContent. -->
+        <section id="panel-admin-ai" class="hidden">
+          <div class="card">
+            <div class="ai-admin-head">
+              <h2>IA — saúde das chaves</h2>
+              <button type="button" class="secondary" id="btn-admin-ai-health">Testar chaves agora</button>
+            </div>
+            <p class="muted">Cada chave do pool do Groq é testada com uma chamada leve (sem gerar texto). Só o final da chave aparece aqui; a chave completa nunca sai do servidor.</p>
+            <div id="msg-admin-ai-health" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="admin-ai-health-summary"></div>
+            <div id="admin-ai-keys" class="ai-key-grid"></div>
+          </div>
+          <div class="card">
+            <h2>Uso nas últimas 24 h</h2>
+            <div id="admin-ai-usage"></div>
+          </div>
+          <div class="card">
+            <h2>Cotas diárias por pessoa</h2>
+            <div id="admin-ai-quotas"><p class="empty-state">Aparecem depois do teste das chaves.</p></div>
+          </div>
+          <div class="card">
+            <div class="ai-admin-head">
+              <h2>Acervo da clínica — casos aguardando revisão</h2>
+              <button type="button" class="secondary" id="btn-admin-ai-cases-refresh">Atualizar</button>
+            </div>
+            <p class="muted">Casos gerados com IA só entram na biblioteca da liga depois de aprovados aqui. Confira se o conteúdo é tecnicamente correto e adequado.</p>
+            <div id="msg-admin-ai-cases" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="admin-ai-pending"></div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -653,6 +746,19 @@
     </div>
   </div>
 
+  <!-- Credencial de presença (QR gerado localmente por learning.js). -->
+  <div id="modal-learn-credential" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-learn-credential-title">
+    <div class="modal-box" style="text-align:center;">
+      <h3 id="modal-learn-credential-title">Sua credencial LAIFT</h3>
+      <img id="learn-credential-qr" class="learn-credential-qr" alt="QR Code de presença">
+      <p><strong id="learn-credential-name"></strong><br><span id="learn-credential-email" class="muted"></span></p>
+      <p class="muted" style="font-size:13px;" id="learn-credential-note">Apresente na portaria para registrar presença em eventos.</p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button type="button" class="secondary" id="learn-credential-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-vote-complement" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-vote-title">
     <div class="modal-box">
       <h3 id="modal-vote-title">Comentário do voto</h3>
@@ -669,7 +775,11 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous" defer></script>
+  <!-- Chart.js 4.5.1 (o mesmo do atlas 3D): arquivo que EXISTE no pacote npm,
+       com SRI calculado dele. O 4.4.4 anterior apontava para um
+       chart.umd.min.js que o pacote não tem — o jsDelivr o gerava na hora, e
+       o hash podia deixar de bater (docs/FASE_4_QUALIDADE.md §5). -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous" defer></script>
   <!--
     Mensageria E2EE (Fase 3f): dois módulos ES, carregados ANTES de
     app.js (script clássico com defer). Scripts type="module" já são
@@ -684,6 +794,10 @@
   -->
   <script type="module" src="msg-crypto.js"></script>
   <script type="module" src="messaging.js"></script>
+  <!-- Área "Aprender" (módulos LAIFT): só usa window.App dentro de funções. -->
+  <script src="learning.js" defer></script>
+  <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
+  <script src="admin-ai.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
+  <script src="../shared/laift-identity.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clínica Médica Virtual — LAIFT</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <!-- Fase 3: estilos só dos elementos novos (aviso no chat, cota de IA,
+       nota do preceptor). O tema/design da clínica é da Equipe 4. -->
+  <style>
+    .chat-bubble.system-notice {
+      align-self: center; max-width: 92%; background: #fff7ed; border: 1px dashed #f59e0b;
+      color: #7c2d12; font-size: 0.82rem; border-radius: 10px;
+    }
+    .clinic-ai-quota { margin: 6px 0 0; font-size: 0.78rem; color: var(--gray, #64748b); }
+    .clinic-ai-quota[data-esgotada="sim"] { color: #b45309; font-weight: 600; }
+    .preceptor-note {
+      margin: 0 0 12px; padding: 8px 10px; border-radius: 8px; background: #fff7ed;
+      border: 1px solid #fed7aa; color: #7c2d12; font-size: 0.85rem;
+    }
+    #clinicDashboardView .btn, #clinicWorkspaceView .btn, .modal-footer .btn { min-height: 44px; }
+  </style>
+</head>
+<body class="theme-clinic">
+
+  <!-- Notificações de Status (Toast / Banner) -->
+  <div id="status" class="status-banner hidden" role="alert" aria-live="polite"></div>
+
+  <main class="app-viewport">
+    <!-- =========================================================
+         7. MÓDULO: CLÍNICA MÉDICA VIRTUAL (OSCE MULTIPACIENTE & ACERVO)
+    ========================================================= -->
+    <section id="clinicSection" class="view-panel active">
+      
+      <!-- Sub-tela A: Fila de Atendimento / Mapa de Leitos e Acervo -->
+      <div id="clinicDashboardView" class="clinic-hub-view">
+        <div class="clinic-hub-header">
+          <div>
+            <h2>🏥 Plantão Clínico & Simulação OSCE</h2>
+            <p class="subtitle clinic-hub-subtitle">Assuma um leito do plantão, explore a biblioteca de casos curados ou sintetize novos desafios com IA.</p>
+            <!-- Cota diária de IA da pessoa (apiLearnGetMyAiQuota), preenchida por clinic-engine.js -->
+            <p id="aiQuotaInfo" class="clinic-ai-quota" aria-live="polite"></p>
+          </div>
+          <div class="clinic-hub-actions">
+            <button id="btnGenerateAiCase" class="btn btn-primary" type="button">⚡ Gerar Caso com IA</button>
+            <button id="btnRadar" class="btn btn-outline btn-sm" type="button">📊 Radar Epidemiológico</button>
+            <button id="infoBtn" class="btn btn-outline btn-sm" type="button" title="Manual e Instruções">📖 Guia</button>
+          </div>
+        </div>
+
+        <!-- Seletor de Modo: Plantão Ativo vs. Acervo Comunitário -->
+        <div class="clinic-mode-switch" role="group" aria-label="Plantão ou acervo">
+          <button id="btnModoPlantao" class="btn btn-primary btn-sm" type="button">
+            🏥 Plantão Ativo (Leitos)
+          </button>
+          <button id="btnModoAcervo" class="btn btn-outline btn-sm" type="button">
+            📚 Acervo da Liga (Biblioteca Coletiva)
+          </button>
+        </div>
+
+        <!-- Barra de Ferramentas e Filtros da Biblioteca de Casos -->
+        <div id="acervoToolbar" class="hidden acervo-toolbar">
+          <div class="acervo-toolbar-row">
+            <input id="acervoSearchInput" type="text" aria-label="Pesquisar no acervo" placeholder="Pesquisar por fármaco, toxíndrome ou queixa (ex: Paracetamol, Colinérgica)...">
+            
+            <!-- Mesma lista fechada do servidor (worker/src/ai/validators.js, TOXINDROMES). -->
+            <select id="acervoToxFilter" aria-label="Filtrar por toxíndrome">
+              <option value="">Todas as Toxíndromes</option>
+              <option value="Colinérgica">Colinérgica</option>
+              <option value="Anticolinérgica">Anticolinérgica</option>
+              <option value="Simpatomimética">Simpatomimética</option>
+              <option value="Opioide">Opioide</option>
+              <option value="Sedativo-hipnótica">Sedativo-hipnótica</option>
+              <option value="Serotoninérgica">Serotoninérgica</option>
+              <option value="Hemorrágica/Coagulopatia">Hemorrágica/Coagulopatia</option>
+              <option value="Hepatotóxica/Metabólica">Hepatotóxica/Metabólica</option>
+              <option value="Outra">Outra</option>
+            </select>
+
+            <button id="btnRefreshAcervo" class="btn btn-outline btn-sm" type="button">🔄 Atualizar Acervo</button>
+          </div>
+          <p class="acervo-note">Casos do acervo são revisados pela diretoria antes de publicados. Abrir um caso não consome sua cota de IA.</p>
+        </div>
+
+        <div id="patientBedsGrid" class="beds-grid"></div>
+        <div id="communityBedsGrid" class="beds-grid hidden"></div>
+      </div>
+
+      <!-- Sub-tela B: Leito Ativo de Consulta -->
+      <div id="clinicWorkspaceView" class="clinic-workspace hidden">
+        <div class="patient-monitor">
+          <div class="patient-id-badge">
+            <button id="btnReturnToBeds" class="btn btn-secondary btn-sm" type="button" title="Voltar ao mapa de leitos">← Leitos</button>
+            <div class="patient-avatar">👤</div>
+            <div>
+              <h3 id="clinicPatientName">Carregando paciente...</h3>
+              <span id="clinicPatientMeta">Idade | Ocupação | Peso</span>
+            </div>
+          </div>
+
+          <div class="meters-cluster">
+            <div class="meter-item" title="Estabilidade Orgânica do Paciente">
+              <div class="meter-header">
+                <span>❤️ Estabilidade Clínica</span>
+                <strong id="vitalityValue">100%</strong>
+              </div>
+              <div class="meter-bar">
+                <div id="vitalityFill" class="meter-fill status-healthy"></div>
+              </div>
+            </div>
+
+            <div class="meter-item" title="Nível de Paciência e Satisfação do Paciente">
+              <div class="meter-header">
+                <span>💬 Paciência / Humor</span>
+                <strong id="patienceValue">100%</strong>
+              </div>
+              <div class="meter-bar">
+                <div id="patienceFill" class="meter-fill status-patient"></div>
+              </div>
+            </div>
+
+            <div class="clinic-clock">
+              <span>⏱️ Tempo:</span>
+              <strong id="clinicTimeElapsed">00:00</strong>
+            </div>
+          </div>
+        </div>
+
+        <nav class="clinic-tabs" role="tablist" aria-label="Navegação da Consulta Médica">
+          <button class="clinic-tab-btn active" role="tab" aria-selected="true" aria-controls="prontuarioTab" id="tab-prontuario" data-tab="prontuarioTab">📋 Prontuário & Sinais</button>
+          <button class="clinic-tab-btn" role="tab" aria-selected="false" aria-controls="dialogoTab" id="tab-dialogo" data-tab="dialogoTab">🗣️ Anamnese (Chat)</button>
+          <button class="clinic-tab-btn" role="tab" aria-selected="false" aria-controls="examesTab" id="tab-exames" data-tab="examesTab">🔬 Laboratório & Exames</button>
+          <button class="clinic-tab-btn highlight" role="tab" aria-selected="false" aria-controls="fechamentoTab" id="tab-fechamento" data-tab="fechamentoTab">📝 Diagnóstico & Conduta</button>
+        </nav>
+
+        <div class="clinic-tab-viewport">
+          <div id="prontuarioTab" class="clinic-tab-pane active" role="tabpanel" aria-labelledby="tab-prontuario">
+            <div class="prontuario-grid">
+              <div class="sheet-box">
+                <h4>Queixa Principal & Admissão</h4>
+                <p id="clinicChiefComplaint" class="complaint-quote">"Carregando informações da queixa..."</p>
+                <h4>Histórico Resumido</h4>
+                <div id="clinicPatientHistory" class="data-block">Aguardando início do caso...</div>
+              </div>
+
+              <div class="sheet-box">
+                <h4>Sinais Vitais de Entrada</h4>
+                <div class="vitals-grid">
+                  <div class="vital-entry"><span>Pressão Arterial:</span> <strong id="vitalPA">--/--</strong></div>
+                  <div class="vital-entry"><span>Frequência Cardíaca:</span> <strong id="vitalFC">-- bpm</strong></div>
+                  <div class="vital-entry"><span>Frequência Respiratória:</span> <strong id="vitalFR">-- irpm</strong></div>
+                  <div class="vital-entry"><span>Temperatura:</span> <strong id="vitalTemp">-- °C</strong></div>
+                  <div class="vital-entry"><span>SatO2:</span> <strong id="vitalSpO2">--%</strong></div>
+                  <div class="vital-entry"><span>Escala de Glasgow:</span> <strong id="vitalGlasgow">--</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="dialogoTab" class="clinic-tab-pane" role="tabpanel" aria-labelledby="tab-dialogo">
+            <div class="chat-container">
+              <div id="chatHistory" class="chat-viewport">
+                <div class="chat-bubble patient">
+                  <strong>Paciente:</strong>
+                  <p id="chatInitialGreeting">Olá, doutor(a)... estou me sentindo mal...</p>
+                </div>
+              </div>
+
+              <div class="suggested-questions-row">
+                <span class="suggestion-label">💡 Guia Semiológico:</span>
+                <div id="suggestionsList" class="suggestions-chips"></div>
+              </div>
+
+              <div class="chat-input-row">
+                <input id="patientQuestionInput" type="text" aria-label="Pergunta ao paciente" placeholder="Digite sua pergunta ou conduta física (ex: 'vou auscultar seu pulmão')..." maxlength="500">
+                <button id="sendQuestionBtn" class="btn btn-primary" type="button">Perguntar</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="examesTab" class="clinic-tab-pane" role="tabpanel" aria-labelledby="tab-exames">
+            <div class="exams-workspace">
+              <div class="exams-catalog">
+                <h4>Painel de Exames Disponíveis</h4>
+                <p class="exam-disclaimer">Atenção: A solicitação de exames consome minutos virtuais e afeta o paciente se desnecessária.</p>
+                <div id="availableExamsList" class="exams-list"></div>
+              </div>
+
+              <div class="exams-results">
+                <h4>Laudos e Resultados Liberados</h4>
+                <div id="releasedExamsList" class="released-board">
+                  <div class="empty-state-notice">Nenhum exame solicitado até o momento.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="fechamentoTab" class="clinic-tab-pane" role="tabpanel" aria-labelledby="tab-fechamento">
+            <div class="resolution-form">
+              <div class="form-group">
+                <label for="studentDiagnosisInput">Hipótese Diagnóstica Principal:</label>
+                <textarea id="studentDiagnosisInput" rows="3" placeholder="Descreva a afecção principal, síndrome clínica ou intoxicação diagnosticada..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="studentConductInput">Conduta Farmacêutica e/ou Clínica Imediata:</label>
+                <textarea id="studentConductInput" rows="4" placeholder="Descreva as medidas farmacológicas (antídotos, fármacos, suspensão) e suporte geral..."></textarea>
+              </div>
+
+              <div class="resolution-actions">
+                <button id="submitCaseResolutionBtn" class="btn btn-success btn-lg" type="button">⚖️ Submeter ao Preceptor</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modais Auxiliares -->
+  <div id="modalRadarEpidemio" class="modal-overlay radar-modal" role="dialog" aria-modal="true" aria-labelledby="radarTitle">
+    <div class="radar-dialog">
+      <div class="radar-header">
+        <h3 id="radarTitle">📊 Radar Epidemiológico & Farmacológico</h3>
+        <button id="btnCloseRadar" type="button" class="btn btn-outline btn-sm">✕ Fechar</button>
+      </div>
+
+      <div class="radar-stats">
+        <div class="radar-stat">
+          <div class="radar-stat-label">Taxa de Sobrevida</div>
+          <div id="radarTaxaSobrevivencia" class="radar-stat-value is-success">--%</div>
+        </div>
+        <div class="radar-stat">
+          <div class="radar-stat-label">Casos Atendidos</div>
+          <div id="radarTotalAtendimentos" class="radar-stat-value">0</div>
+        </div>
+      </div>
+
+      <div class="radar-section">
+        <h4>Toxíndromes Mais Incidentes:</h4>
+        <div id="radarToxindromesList" class="radar-chips" aria-live="polite">Carregando dados...</div>
+      </div>
+
+      <div class="radar-section">
+        <h4>Fármacos e Agentes Frequentes:</h4>
+        <div id="radarAgentesList" class="radar-chips" aria-live="polite">Carregando dados...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="instructionsModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <button type="button" class="modal-close" id="closeModal" aria-label="Fechar o guia">&times;</button>
+      <h2>📖 Guia da Clínica Virtual</h2>
+      <div class="modal-body">
+        <h4>Clínica Médica Virtual (OSCE):</h4>
+        <ul>
+          <li><strong>Anamnese Interativa:</strong> Converse com o paciente em linguagem natural ou realize exames físicos pelo chat.</li>
+          <li><strong>Biblioteca Comunitária:</strong> Casos gerados pela liga e revisados pela diretoria; abrir um caso não consome sua cota de IA.</li>
+          <li><strong>Geração com IA:</strong> Crie novos casos clínicos sob demanda. Cada pessoa tem uma cota diária de uso da IA (conversa, avaliação e geração), mostrada no topo da clínica.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="preceptorModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-lg">
+      <h2 id="preceptorModalTitle">Resultado da Avaliação Clínica</h2>
+      <div class="evaluation-score-row">
+        <div class="score-circle">
+          <span id="preceptorGrade">--</span>
+          <small>/100</small>
+        </div>
+        <div class="score-status">
+          <h4 id="caseOutcomeTitle">Desfecho do Caso</h4>
+          <p id="caseOutcomeSummary">Analisando dados...</p>
+        </div>
+      </div>
+      <div class="evaluation-body">
+        <h4>Parecer Técnico do Preceptor:</h4>
+        <div id="preceptorFeedbackText" class="feedback-quote">...</div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnClosePreceptor" class="btn btn-primary" type="button">Concluir e Voltar aos Leitos</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="patients.js"></script>
+  <!-- A IA e o acervo vêm da Worker pela ponte window.LaiftApi
+       (laift-identity.js). -->
+  <script src="clinic-engine.js"></script>
+  <script src="clinica-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.fda.gov; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
+    <script src="../shared/laift-identity.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 LAIFT — Simulador de Toxicologia Clínica & Forense</title>
+
+    <!-- Design system: tokens (claro/escuro) → layout do motor de quiz → acento do módulo -->
+    <link rel="stylesheet" href="../shared/laift-tokens.css">
+    <link rel="stylesheet" href="../shared/quiz-engine.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 LAIFT Simulador de Toxicologia Clínica & Forense <button type="button" id="infoBtn" class="info-btn" aria-label="Como funciona?" title="Como funciona?" aria-haspopup="dialog">📖</button></h1>
+            <div class="subtitle">240 questões comentadas | 10 Tópicos Especializados | Modo Estudo & Prova</div>
+        </header>
+
+        <div id="mainInterface">
+            <aside class="sidebar" aria-label="Configuração do simulado">
+                <div class="section">
+                    <h3 id="topicsHeading">📚 TÓPICOS DE TOXICOLOGIA</h3>
+                    <div class="topics-grid" id="topicsGrid" role="group" aria-labelledby="topicsHeading"></div>
+                </div>
+                <div class="section">
+                    <h3 id="modeHeading">🎮 MODO DE ESTUDO</h3>
+                    <div class="mode-selector" role="group" aria-labelledby="modeHeading">
+                        <button type="button" class="mode-btn active" data-mode="study" aria-pressed="true">📖 Modo Estudo</button>
+                        <button type="button" class="mode-btn" data-mode="exam" aria-pressed="false">📝 Modo Prova</button>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3>⚙️ CONTROLES</h3>
+                    <div class="control-buttons">
+                        <button type="button" class="control-btn" id="startQuiz">🚀 Iniciar Simulado</button>
+                        <button type="button" class="control-btn secondary" id="selectAll">✅ Selecionar Todos</button>
+                        <button type="button" class="control-btn secondary" id="deselectAll">❌ Limpar Seleção</button>
+                        <button type="button" class="control-btn" id="continueBtn" hidden>↪️ Continuar de Onde Parei</button>
+                        <button type="button" class="control-btn danger" id="resetProgressBtn" hidden>🔄 Reiniciar Progresso</button>
+                        <p class="quiz-status" id="quizStatus" role="status" aria-live="polite"></p>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3>📊 ESTATÍSTICAS DO MÓDULO</h3>
+                    <div id="stats">
+                        <p>Total do Banco: <span id="totalQuestionsStat">240</span></p>
+                        <p>Respondidas: <span id="answeredStat">0</span></p>
+                        <p>Acertos: <span id="correctStat">0</span></p>
+                        <p>Aproveitamento: <span id="progressStat">0%</span></p>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div id="startScreen">
+                    <h2>Bem-vindo ao Simulador de Toxicologia!</h2>
+                    <p class="lead">
+                        Selecione os tópicos desejados no menu lateral e escolha entre a prática comentada com dados oficiais ou o teste cronometrado.
+                    </p>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalTopics">10</div>
+                            <div class="stat-label">Tópicos Disponíveis</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="selectedTopics">0</div>
+                            <div class="stat-label">Tópicos Selecionados</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalQs">240</div>
+                            <div class="stat-label">Questões Filtradas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-container" id="quizContainer" hidden>
+                    <div class="quiz-header">
+                        <div class="current-topic" id="currentTopic">Toxicologia Geral</div>
+                        <div class="timer" id="timer" role="timer">00:00</div>
+                    </div>
+                    <div class="progress-container">
+                        <div>Questão <span id="currentQuestion">1</span> de <span id="totalQuestions">240</span></div>
+                        <div class="progress-bar" role="progressbar" aria-label="Progresso do simulado" aria-valuemin="1" aria-valuenow="1" aria-valuemax="1"><div class="progress" id="progress"></div></div>
+                    </div>
+                    <div class="question-container">
+                        <div class="question-text" id="questionText" tabindex="-1" aria-live="polite"></div>
+                        <div class="options-container" id="optionsContainer" role="group" aria-labelledby="questionText"></div>
+
+                        <div class="explanation" id="explanation" aria-live="polite">
+                            <div id="apiDataSourceTag" class="api-tag" hidden>OpenFDA Live Data</div>
+                            <h4>📖 Parecer e Raciocínio Clínico:</h4>
+                            <p id="explanationText"></p>
+                        </div>
+                    </div>
+                    <div class="navigation">
+                        <button type="button" class="nav-btn" id="prevBtn" disabled>← Anterior</button>
+                        <button type="button" class="nav-btn" id="nextBtn">Próxima →</button>
+                        <button type="button" class="nav-btn" id="finishBtn" hidden>✅ Finalizar</button>
+                    </div>
+                </div>
+
+                <div class="results-container" id="resultsContainer" aria-live="polite" hidden></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Instruções -->
+    <div id="instructionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle" hidden>
+        <div class="modal-content">
+            <button type="button" class="close-btn" id="closeModal" aria-label="Fechar instruções">&times;</button>
+            <h2 id="instructionsTitle">📖 Guia de Treinamento em Toxicologia</h2>
+            <p>O simulador da LAIFT divide-se em dois métodos de capacitação:</p>
+            <ul>
+                <li><strong>Modo Estudo:</strong> Explicação clínica detalhada e mecanismos toxinológicos exibidos imediatamente após a seleção da alternativa, com consultas integradas a bancos toxicológicos e OpenFDA para fármacos e antídotos.</li>
+                <li><strong>Modo Prova:</strong> Simulação com limite de 90 segundos por questão, perguntas com alternativas embaralhadas e feedback global exibido somente após a entrega.</li>
+            </ul>
+            <p><strong>Atalhos de Teclado:</strong> Use as setas (← e →) para transicionar entre questões e as teclas numéricas (1 a 4) para selecionar as alternativas correspondentes.</p>
+        </div>
+    </div>
+
+    <div class="signature" aria-hidden="true">LAIFT • DPF :)</div>
+
+    <!-- DOM seguro e motor único de quiz (compartilhados com a Farmacologia) -->
+    <script src="../shared/safe-dom.js"></script>
+    <script src="../shared/quiz-engine.js"></script>
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

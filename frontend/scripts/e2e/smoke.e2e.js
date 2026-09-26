@@ -1,0 +1,99 @@
+/**
+ * smoke.e2e.js — garantias da Fase 1 (unificação). Cada fase acrescenta
+ * o próprio arquivo *.e2e.js; este aqui não deve regredir.
+ */
+const { startApp, check } = require('./harness');
+
+const MODULES = ['farmaco', 'toxico', 'clinica', 'lab', 'anatomia'];
+
+// Erros esperados do ambiente de teste: bibliotecas de CDN abortadas de
+// propósito. Lista explícita de globais — um "x is not defined" qualquer
+// continua sendo falha.
+const IGNORABLE = /\b(THREE|QRCode|\$3Dmol|SmilesDrawer|Chart|OCL|Html5QrcodeScanner|initRDKitModule)\b/;
+
+module.exports = async function smoke() {
+  // ---- Membro ----
+  const app = await startApp({ role: 'member' });
+  try {
+    await app.page.goto(app.baseUrl);
+    check(await app.page.locator('#form-login').isVisible(), 'a entrada é o login da plataforma');
+    check((await app.page.locator('#identityForm, #otpForm, #studentId').count()) === 0, 'não existe o cadastro antigo do o-bala-vip');
+
+    // Recomeço do zero: dados locais do antigo o-bala-vip (mesmo domínio)
+    // somem uma única vez; preferências do estúdio ficam.
+    // Simula um navegador que ainda não viu a versão nova: sem o marcador.
+    await app.page.evaluate(() => {
+      localStorage.removeItem('laift_reset_v1');
+      localStorage.setItem('laift_student_session', JSON.stringify({ identifier: '12345678900', sessionToken: 'antigo' }));
+      localStorage.setItem('laift_resolved_cases', '["caso_tox_01"]');
+      localStorage.setItem('pharmaQuizProgress', '{"q":3}');
+      localStorage.setItem('toxicoQuizProgress', '{"q":5}');
+      localStorage.setItem('laift_atlas_history', '[{"composto":"x"}]');
+      localStorage.setItem('laift_studio_prefs_v4', '{"tema":"x"}');
+    });
+    await app.page.reload();
+    const afterReset = await app.page.evaluate(() => ({
+      session: localStorage.getItem('laift_student_session'),
+      cases: localStorage.getItem('laift_resolved_cases'),
+      others: ['pharmaQuizProgress', 'toxicoQuizProgress', 'laift_atlas_history'].map((k) => localStorage.getItem(k)).filter(Boolean).length,
+      prefs: localStorage.getItem('laift_studio_prefs_v4'),
+      marker: localStorage.getItem('laift_reset_v1'),
+    }));
+    check(!afterReset.session && !afterReset.cases && afterReset.others === 0 && afterReset.prefs && afterReset.marker,
+      'dados locais do sistema antigo (sessão com CPF, métricas) são apagados; preferências ficam');
+    await app.page.evaluate(() => localStorage.setItem('laift_resolved_cases', '["caso_novo"]'));
+    await app.page.reload();
+    check((await app.page.evaluate(() => localStorage.getItem('laift_resolved_cases'))) === '["caso_novo"]',
+      'a limpeza do sistema antigo roda uma vez só (não apaga o progresso novo)');
+
+    const direct = await app.context.newPage();
+    await direct.goto(app.baseUrl + 'modulos/quiz/index.html');
+    await direct.waitForURL(/\/index\.html$/, { timeout: 5000 }).catch(() => {});
+    check(!direct.url().includes('/modulos/'), 'módulo aberto fora da plataforma redireciona ao login');
+    await direct.close();
+
+    await app.login();
+    await app.showPanel('panel-learn');
+    check((await app.page.locator('.learn-card').count()) === MODULES.length, `hub mostra ${MODULES.length} módulos`);
+
+    for (const id of MODULES) {
+      const frame = await app.openModule(id);
+      const identity = await frame.evaluate(() => window.LaiftIdentity && window.LaiftIdentity.get());
+      check(identity && identity.email === app.ctx.profile.email, `módulo "${id}" herda a identidade da plataforma`);
+      await app.page.click('#learn-back');
+    }
+
+    await app.page.click('#btn-learn-credential');
+    await app.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 5000 }).catch(() => {});
+    check((await app.page.getAttribute('#learn-credential-qr', 'src') || '').startsWith('data:image/'), 'QR da credencial é gerado localmente');
+    await app.page.click('#learn-credential-close');
+
+    await app.page.click('#btn-logout');
+    check((await app.page.locator('iframe.learn-frame').count()) === 0, 'logout descarta os iframes dos módulos');
+
+    const leaked = app.calls.external.some((c) => (c.url + c.body).includes(app.ctx.sessionToken));
+    check(!leaked, 'o token de sessão da plataforma nunca é enviado a outro host além da Worker');
+    const posts = app.calls.external.filter((c) => c.method !== 'GET');
+    check(posts.length === 0, 'nenhum POST para fora da Worker (o backend legado saiu)' + (posts.length ? ': ' + posts.map((c) => c.url).join(', ') : ''));
+
+    const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
+    check(realErrors.length === 0, 'sem erros de JavaScript nas páginas' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));
+  } finally {
+    await app.close();
+  }
+
+  // ---- Admin: terminal fiscal no modo admin ----
+  const admin = await startApp({ role: 'admin' });
+  try {
+    await admin.login();
+    await admin.page.click('#btn-enter-admin-mode');
+    await admin.showPanel('panel-admin-fiscal');
+    const el = await admin.page.waitForSelector('#admin-fiscal-frame-wrap iframe');
+    const frame = await el.contentFrame();
+    await frame.waitForLoadState('load').catch(() => {});
+    await admin.page.waitForTimeout(300);
+    check(!(await frame.locator('#fiscalDenied').isVisible()), 'admin não vê "acesso restrito" no terminal fiscal');
+  } finally {
+    await admin.close();
+  }
+};

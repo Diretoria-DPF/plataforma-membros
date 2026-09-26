@@ -1,0 +1,77 @@
+/* =========================================================================
+   Simulador de Farmacologia — identidade do módulo
+   -------------------------------------------------------------------------
+   O layout é o do motor único (../shared/quiz-engine.css) e as cores vêm
+   dos tokens (../shared/laift-tokens.css). Aqui fica só o que é deste
+   módulo: o acento índigo (claro/escuro, ambos com contraste AA) e o cartão
+   da molécula em foco + a ficha farmacológica (RxNav/ChEBI/PubChem).
+   ========================================================================= */
+:root {
+  --module-accent-light: #283593;
+  --module-accent-dark: #9fa8ff;
+  --module-on-accent-dark: #0b1030;
+}
+
+.question-layout-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 18px;
+  align-items: start;
+}
+.question-container { min-width: 0; }
+
+/* O canvas do SmilesDrawer desenha em cores claras (tema "dark" da
+   biblioteca), por isso o cartão fica escuro nos dois temas. */
+.molecule-preview-card {
+  background: #0b1220;
+  color: #e2e8f0;
+  border: 1px solid #1e3a5f;
+  border-radius: var(--laift-radius-sm);
+  padding: 12px;
+  text-align: center;
+  box-shadow: var(--laift-shadow-sm);
+}
+.molecule-preview-card .mol-kicker {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7dd3fc;
+}
+.molecule-preview-card .mol-canvas-wrap {
+  min-height: 145px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0;
+}
+.molecule-preview-card canvas { max-width: 100%; display: block; }
+.molecule-preview-card .mol-label {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  font-family: var(--laift-font-mono);
+  overflow-wrap: anywhere;
+}
+
+.analogy-box {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--laift-info-soft);
+  border-left: 3px solid var(--laift-info);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.dossier-btn { margin-top: 12px; min-height: var(--laift-touch); font-size: 0.85rem; padding: 8px 14px; }
+
+.dossier-body { font-size: 0.92rem; line-height: 1.55; text-align: left; }
+.dossier-body h3 { color: var(--module-accent); margin: 0 40px 10px 0; font-size: 1.1rem; }
+.dossier-body p { margin-bottom: 6px; overflow-wrap: anywhere; }
+.dossier-body .atc { color: var(--laift-success); }
+.dossier-body .mono { font-family: var(--laift-font-mono); color: var(--laift-muted); }
+.dossier-body .loading { color: var(--laift-muted); }
+
+@media (max-width: 860px) {
+  .question-layout-wrap { grid-template-columns: minmax(0, 1fr); }
+  .molecule-preview-card { order: -1; }
+}

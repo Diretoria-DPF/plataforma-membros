@@ -1,0 +1,2209 @@
+@import url("laift-tokens.css");
+
+/* =========================================================
+   VARIÁVEIS GLOBAIS E TEMAS
+   ---------------------------------------------------------
+   Fase 4: as variáveis desta folha (usada pela Clínica e pelo
+   terminal Fiscal) apontam para os tokens do design system
+   (laift-tokens.css, importado acima) — tema claro e escuro,
+   conforme <html data-theme> aplicado pela ponte. A identidade
+   de cada página fica só no acento (--module-accent-light/-dark,
+   ver body.theme-*). Declarado em :root E em body porque as
+   páginas trocam o acento por classe no <body>.
+========================================================= */
+:root,
+body {
+  --module-accent-light: #2b6cb0;
+  --module-accent-dark: #8fb4ff;
+  --module-on-accent-dark: #0b1a33;
+
+  /* Botões usam --primary-light (o acento); cabeçalho, pílulas e hovers
+     usam --primary (acento escurecido). Texto sobre ambos: --on-primary. */
+  --primary: color-mix(in srgb, var(--module-accent) 82%, #000);
+  --primary-light: var(--module-accent);
+  --primary-dark: color-mix(in srgb, var(--module-accent) 65%, #000);
+  --on-primary: var(--module-on-accent);
+  --secondary: var(--laift-muted);
+  --accent: #c2410c;
+
+  --success: var(--laift-success);
+  --success-bg: var(--laift-success-soft);
+  --warning: var(--laift-warning);
+  --warning-bg: var(--laift-warning-soft);
+  --danger: var(--laift-danger);
+  --danger-bg: var(--laift-danger-soft);
+  --on-danger: var(--laift-on-danger);
+  --on-success: var(--laift-surface);
+
+  --bg-main: var(--laift-bg);
+  --surface: var(--laift-surface);
+  --surface-alt: var(--laift-surface-alt);
+  --border: var(--laift-border);
+  --border-strong: var(--laift-border-strong);
+  --border-focus: var(--laift-info);
+  --text-main: var(--laift-text);
+  --text-muted: var(--laift-muted);
+  --gray: var(--laift-muted); /* usado nos estilos inline da clínica/fiscal */
+
+  --radius-sm: var(--laift-radius-sm);
+  --radius-md: 10px;
+  --radius-lg: var(--laift-radius-md);
+
+  --shadow-sm: var(--laift-shadow-sm);
+  --shadow-md: var(--laift-shadow-sm);
+  --shadow-lg: var(--laift-shadow);
+  --transition: all 0.25s ease-in-out;
+}
+
+/* Modos de Contexto Visual (acentos com contraste AA nos dois temas) */
+body.theme-toxico {
+  --module-accent-light: #00796b;
+  --module-accent-dark: #56d6b8;
+  --module-on-accent-dark: #04231c;
+}
+
+body.theme-clinic {
+  --module-accent-light: #0f766e;
+  --module-accent-dark: #3fcfb6;
+  --module-on-accent-dark: #06231e;
+  --accent: #be123c;
+}
+
+/* =========================================================
+   RESET E BASE
+========================================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--laift-font);
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Prevenção de auto-zoom em inputs em telas sensíveis ao toque (iOS/Android) */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* =========================================================
+   CABEÇALHO GLOBAL
+========================================================= */
+#globalHeader {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--on-primary);
+  padding: 14px 24px;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-group h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-group .subtitle {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--on-primary) 85%, transparent);
+  margin-top: 2px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-chip {
+  background: color-mix(in srgb, var(--on-primary) 12%, transparent);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-role {
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.header-btn {
+  background: color-mix(in srgb, var(--on-primary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-primary) 30%, transparent);
+  color: var(--on-primary);
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.header-btn:hover {
+  background: color-mix(in srgb, var(--on-primary) 28%, transparent);
+}
+
+.header-btn.danger {
+  background: var(--danger);
+  border-color: transparent;
+}
+
+.header-btn.danger:hover {
+  background: color-mix(in srgb, var(--danger) 85%, #000);
+}
+
+.header-btn.icon-only {
+  padding: 7px 10px;
+  font-size: 1rem;
+}
+
+/* =========================================================
+   STATUS BANNER (NOTIFICAÇÕES)
+========================================================= */
+.status-banner {
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-sm);
+  animation: slideDown 0.3s ease-out;
+}
+
+.status-banner.success {
+  background: var(--success-bg);
+  color: var(--success);
+  border-bottom: 2px solid var(--success);
+}
+
+.status-banner.error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-bottom: 2px solid var(--danger);
+}
+
+.status-banner.loading {
+  background: var(--surface-alt);
+  color: var(--secondary);
+  border-bottom: 2px solid var(--primary);
+}
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+========================================================= */
+.app-viewport {
+  flex: 1;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.view-panel {
+  display: block;
+  animation: fadeIn 0.35s ease;
+}
+
+/* =========================================================
+   ESTRUTURA UNIVERSAL DE IFRAMES (QUIZ & LAB)
+========================================================= */
+#quizFrame, #toxicoFrame, #labFrame {
+  width: 100% !important;
+  height: calc(100dvh - 140px) !important;
+  min-height: 480px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  display: block;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================================================
+   BOTÕES E ENTRADAS
+========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--primary-light);
+  color: var(--on-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary);
+}
+
+.btn-secondary {
+  background: var(--surface-alt);
+  color: var(--secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.btn-success {
+  background: var(--success);
+  color: var(--on-success);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--success) 85%, #000);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: var(--on-danger);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary-light);
+  color: var(--primary-light);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--primary-light);
+  color: var(--on-primary);
+}
+
+.btn-subtle {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 6px 12px;
+}
+
+.btn-subtle:hover {
+  color: var(--danger);
+  text-decoration: underline;
+}
+
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.btn-lg {
+  padding: 16px 28px;
+  font-size: 1.1rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-main);
+  transition: var(--transition);
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--border-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+/* =========================================================
+   1. PORTAL DE AUTENTICAÇÃO
+========================================================= */
+#authSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.auth-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 36px 30px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-header h2 {
+  color: var(--primary);
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.auth-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.otp-input {
+  font-size: 2rem !important;
+  font-weight: 800;
+  letter-spacing: 12px;
+  text-align: center;
+  margin: 18px 0;
+}
+
+.policy-box {
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 12px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 10px 0 14px;
+}
+
+.policy-box h4 {
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.consent-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--secondary);
+  cursor: pointer;
+  margin-bottom: 18px;
+}
+
+.consent-checkbox input {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.qr-container img {
+  width: 230px;
+  height: 230px;
+  border: 6px solid #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.credential-caption {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.expiry-notice {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Terminal Fiscal */
+.fiscal-terminal {
+  margin-top: 20px;
+  padding: 16px;
+  border: 2px dashed var(--danger);
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
+}
+
+.terminal-badge {
+  background: var(--danger);
+  color: var(--on-danger);
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.scanner-viewport {
+  width: 100%;
+  margin: 12px 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid var(--secondary);
+}
+
+/* =========================================================
+   2. DASHBOARD DO ALUNO & HUB
+========================================================= */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 28px;
+}
+
+.profile-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  height: fit-content;
+}
+
+.avatar-circle {
+  width: 76px;
+  height: 76px;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  color: var(--on-primary);
+  font-size: 1.8rem;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.profile-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 6px;
+}
+
+.profile-meta {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.card-divider {
+  border: 0;
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+.profile-card h4 {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  margin-bottom: 14px;
+}
+
+.badges-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.badge-item {
+  width: 44px;
+  height: 44px;
+  background: var(--warning-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.badge-item:hover {
+  transform: scale(1.15);
+}
+
+.badge-item.locked {
+  background: var(--surface-alt);
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.section-heading {
+  font-size: 1.25rem;
+  color: var(--primary);
+  margin-bottom: 18px;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.module-card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-pharma:hover { border-color: #1a365d; }
+.card-tox:hover { border-color: #004d40; }
+.card-clinic:hover { border-color: #0f766e; }
+.card-lab:hover { border-color: #7b1fa2; }
+
+.module-icon {
+  font-size: 2.2rem;
+  margin-bottom: 14px;
+}
+
+.module-card h4 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.module-card p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.module-footer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+/* =========================================================
+   3. SIMULADORES DE QUIZ
+========================================================= */
+.quiz-layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 24px;
+}
+
+.quiz-sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  height: fit-content;
+}
+
+.sidebar-block {
+  margin-bottom: 24px;
+}
+
+.sidebar-block h4 {
+  font-size: 0.9rem;
+  color: var(--primary);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--border);
+}
+
+.topics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.topic-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 12px;
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition);
+}
+
+.topic-btn:hover {
+  border-color: var(--primary-light);
+  background: var(--laift-info-soft);
+}
+
+.topic-btn.active {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+}
+
+.topic-count {
+  background: rgba(0, 0, 0, 0.08);
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+
+.topic-btn.active .topic-count {
+  background: color-mix(in srgb, var(--on-primary) 25%, transparent);
+  color: var(--on-primary);
+}
+
+.mode-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.mode-btn.active {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.mode-btn.warning.active {
+  border-color: var(--warning);
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.control-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Área de Perguntas */
+.quiz-stage {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.quiz-welcome {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.quiz-welcome h2 {
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.quiz-desc {
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 0 auto 30px;
+  font-size: 0.95rem;
+}
+
+.stats-counter-row {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.counter-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.counter-box span {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.counter-box small {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.topic-pill {
+  background: var(--primary);
+  color: var(--on-primary);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.exam-timer {
+  background: var(--accent);
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  min-width: 90px;
+  text-align: center;
+}
+
+.quiz-progress-track {
+  margin-bottom: 24px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.progress-bar-bg {
+  height: 8px;
+  background: var(--surface-alt);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--success), #8bc34a);
+  transition: width 0.4s ease;
+}
+
+.question-statement {
+  font-size: 1.2rem;
+  line-height: 1.55;
+  padding: 22px;
+  background: var(--surface-alt);
+  border-left: 5px solid var(--primary);
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+}
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.option {
+  padding: 16px 20px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: var(--transition);
+}
+
+.option:hover {
+  background: var(--laift-info-soft);
+  border-color: var(--laift-info);
+  transform: translateX(4px);
+}
+
+.option.selected {
+  background: var(--laift-info-soft);
+  border-color: var(--laift-info);
+  font-weight: 600;
+}
+
+.option.correct {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.option.incorrect {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.option-letter {
+  width: 32px;
+  height: 32px;
+  background: var(--surface-alt);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.option.selected .option-letter {
+  background: var(--laift-info);
+  color: var(--surface);
+}
+
+.option.correct .option-letter {
+  background: var(--success);
+  color: var(--surface);
+}
+
+.option.incorrect .option-letter {
+  background: var(--danger);
+  color: var(--surface);
+}
+
+.explanation-box {
+  background: var(--success-bg);
+  border-left: 5px solid var(--success);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.explanation-box.show {
+  display: block;
+}
+
+.explanation-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: var(--success);
+  margin-bottom: 8px;
+}
+
+.source-tag {
+  background: var(--success);
+  color: var(--on-success);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.quiz-navigation {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+/* =========================================================
+   4. CLÍNICA MÉDICA VIRTUAL (OSCE COM GROQ / GEMINI)
+========================================================= */
+.clinic-workspace {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.patient-monitor {
+  background: linear-gradient(135deg, #0f2442, #1a365d);
+  color: #ffffff;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.patient-id-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.patient-avatar {
+  font-size: 2.2rem;
+  background: rgba(255, 255, 255, 0.12);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.patient-id-badge h3 {
+  font-size: 1.25rem;
+}
+
+.patient-id-badge span {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.meters-cluster {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.meter-item {
+  width: 170px;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 5px;
+}
+
+.meter-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+.status-healthy { background: var(--success); }
+.status-warning { background: var(--warning); }
+.status-danger { background: var(--danger); }
+.status-patient { background: var(--laift-info); }
+
+.clinic-clock {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.clinic-clock strong {
+  display: block;
+  font-size: 1.15rem;
+  color: #facc15;
+}
+
+/* Abas */
+.clinic-tabs {
+  display: flex;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.clinic-tab-btn {
+  flex: 1;
+  padding: 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.clinic-tab-btn:hover {
+  color: var(--primary);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.clinic-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: var(--surface);
+}
+
+.clinic-tab-btn.highlight {
+  color: var(--accent);
+}
+
+.clinic-tab-btn.highlight.active {
+  border-bottom-color: var(--accent);
+}
+
+.clinic-tab-viewport {
+  padding: 24px;
+}
+
+.clinic-tab-pane {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.clinic-tab-pane.active {
+  display: block;
+}
+
+/* Aba Prontuário */
+.prontuario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.sheet-box {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.sheet-box h4 {
+  color: var(--primary);
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.complaint-quote {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--laift-info);
+  padding: 12px;
+  background: var(--laift-info-soft);
+  border-left: 4px solid var(--laift-info);
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+}
+
+.vitals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.vital-entry {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.vital-entry strong {
+  color: var(--primary);
+}
+
+/* Aba Chat (Anamnese) */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+}
+
+.chat-viewport {
+  flex: 1;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.chat-bubble.patient {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-bottom-left-radius: 2px;
+}
+
+.chat-bubble.student {
+  align-self: flex-end;
+  background: var(--primary-light);
+  color: var(--on-primary);
+  border-bottom-right-radius: 2px;
+}
+
+.chat-bubble strong {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+.suggested-questions-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.suggestion-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--secondary);
+  white-space: nowrap;
+}
+
+.suggestions-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.suggestion-chip {
+  background: var(--surface-alt);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.82rem;
+}
+
+.suggestion-chip:hover {
+  background: var(--border);
+  border-color: var(--text-muted);
+  transform: translateY(-1px);
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-row input {
+  margin: 0;
+}
+
+/* Aba Exames */
+.exams-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.exams-catalog, .exams-results {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.exam-disclaimer {
+  font-size: 0.78rem;
+  color: var(--warning);
+  margin-bottom: 16px;
+}
+
+.exams-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exam-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+}
+
+.released-board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.released-exam-card {
+  background: var(--surface);
+  border-left: 4px solid var(--success);
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+}
+
+.released-exam-card h5 {
+  font-size: 0.9rem;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.released-exam-card p {
+  font-size: 0.85rem;
+  font-family: monospace;
+  color: var(--text-main);
+}
+
+/* Aba Resolução */
+.resolution-form {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.resolution-form textarea {
+  resize: vertical;
+}
+
+.resolution-actions {
+  text-align: center;
+  margin-top: 24px;
+}
+
+/* =========================================================
+   5. LABORATÓRIO VIRTUAL
+========================================================= */
+.lab-workspace {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.lab-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.lab-viewport {
+  background: #1e293b;
+  border-radius: var(--radius-md);
+  min-height: 400px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  color: white;
+  overflow: hidden;
+}
+
+.bench-surface {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.reagent-shelf {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reagent-bottle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: var(--transition);
+}
+
+.reagent-bottle:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.burner-stage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 200px;
+}
+
+.burner-flame {
+  width: 32px;
+  height: 80px;
+  border-radius: 50% 50% 20% 20%;
+  animation: flicker 0.15s infinite alternate;
+}
+
+.flame-idle {
+  background: linear-gradient(to top, #3b82f6, #60a5fa);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+}
+
+.lab-observations {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+/* =========================================================
+   MODAIS
+========================================================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: var(--laift-overlay);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-dialog {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 560px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-dialog.modal-lg {
+  max-width: 760px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-size: 1.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  color: var(--danger);
+}
+
+.evaluation-score-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 20px 0;
+  background: var(--surface-alt);
+  padding: 20px;
+  border-radius: var(--radius-md);
+}
+
+.score-circle {
+  width: 86px;
+  height: 86px;
+  background: var(--primary);
+  color: var(--on-primary);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.score-circle small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.feedback-quote {
+  background: var(--surface-alt);
+  border-left: 4px solid var(--primary);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin-top: 12px;
+}
+
+.modal-footer {
+  margin-top: 24px;
+  text-align: right;
+}
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  max-width: 1280px;
+  width: 100%;
+  margin: auto auto 0;
+}
+
+.signature {
+  font-family: monospace;
+  opacity: 0.5;
+}
+
+/* =========================================================
+   ESTILOS DO TERMINAL FISCAL (PADRÃO LAIFT)
+========================================================= */
+.badge-admin {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: var(--danger);
+  color: var(--on-danger);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.section-box {
+  margin-bottom: 18px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-alt);
+  text-align: center;
+}
+
+.section-box h3 {
+  margin: 0 0 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fiscal-event-row {
+  display: flex;
+  gap: 6px;
+}
+
+.fiscal-event-row input {
+  min-width: 0;
+  margin: 0;
+  padding: 10px;
+  font-size: 13px;
+  width: 100%;
+}
+
+.fiscal-event-row button {
+  width: auto;
+  margin: 0;
+  padding: 0 14px;
+  font-size: 13px;
+  border: 0;
+  background: var(--primary-light, #3182ce);
+  color: var(--on-primary);
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.scanner-button {
+  width: 100%;
+  margin: 9px 0;
+  padding: 17px;
+  border: 0;
+  border-radius: 10px;
+  background: #2d3748;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.scanner-button:hover {
+  background: #1a202c;
+}
+
+.secondary-button {
+  width: 100%;
+  margin: 9px 0;
+  padding: 13px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surface-alt);
+  color: var(--text-main);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: var(--border);
+}
+
+.danger-button {
+  width: 100%;
+  margin: 9px 0;
+  padding: 13px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--danger);
+  color: var(--on-danger);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.danger-button:hover {
+  background: color-mix(in srgb, var(--danger) 85%, #000);
+}
+
+.divider {
+  margin: 16px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.small-note {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.presence-search {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.member-list {
+  max-height: 290px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.member-list-empty {
+  padding: 14px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px;
+  border-bottom: 1px solid var(--border);
+}
+
+.member-item:last-child {
+  border-bottom: 0;
+}
+
+.member-info {
+  min-width: 0;
+}
+
+.member-name {
+  overflow: hidden;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-meta {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.member-item button {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--primary-light, #3182ce);
+  color: var(--on-primary);
+  cursor: pointer;
+}
+
+/* =========================================================
+   PAINEL DE LEITOS E JORNADA CLÍNICA MULTICASOS
+========================================================= */
+.clinic-hub-view {
+  padding: 24px;
+}
+
+.clinic-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.beds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); /* sem vazar em 360 px */
+  gap: 20px;
+}
+
+.bed-card {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bed-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.bed-card.emergency {
+  border-left: 6px solid #e53935;
+}
+
+.bed-card.ambulatory {
+  border-left: 6px solid #00897b;
+}
+
+.bed-card.completed {
+  background: var(--success-bg);
+  border-color: var(--success);
+}
+
+.bed-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.bed-tag {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.bed-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.bed-complaint {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  margin: 10px 0 16px;
+  min-height: 48px;
+}
+
+.bed-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--gray);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-bottom: 16px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ==========================================================================
+   MÓDULO CLÍNICO: ACERVO DA LIGA & RADAR EPIDEMIOLÓGICO
+   ========================================================================== */
+
+#acervoToolbar {
+  transition: all 0.2s ease-in-out;
+}
+
+#acervoToolbar input:focus,
+#acervoToxFilter:focus {
+  outline: none;
+  border-color: var(--laift-info);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--laift-info) 20%, transparent);
+}
+
+
+.semiology-wrapper {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.semiology-nav::-webkit-scrollbar,
+.semiology-chips-area::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+.semiology-nav::-webkit-scrollbar-thumb,
+.semiology-chips-area::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .clinic-hub-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  #acervoToolbar > div {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  #acervoSearchInput,
+  #acervoToxFilter {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   ANIMAÇÕES E RESPONSIVIDADE
+========================================================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes flicker {
+  0% { transform: scaleY(1) scaleX(1); }
+  100% { transform: scaleY(1.06) scaleX(0.96); }
+}
+
+@media (max-width: 960px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .quiz-layout {
+    grid-template-columns: 1fr;
+  }
+  .patient-monitor {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .meters-cluster {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .prontuario-grid,
+  .exams-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .modules-grid,
+  .stats-overview {
+    grid-template-columns: 1fr;
+  }
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .header-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .meters-cluster {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .meter-item {
+    width: 100%;
+  }
+
+  /* Notificação Toast de Conquista */
+  .achievement-toast {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    background: linear-gradient(135deg, #1a365d, #2b6cb0);
+    color: #ffffff;
+    padding: 16px 22px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 9999;
+    border-left: 5px solid #facc15;
+    animation: slideInRight 0.4s ease, fadeOut 0.5s ease 4.5s forwards;
+  }
+
+  .achievement-icon {
+    font-size: 2.2rem;
+  }
+
+  .achievement-text h4 {
+    font-size: 0.95rem;
+    color: #facc15;
+    margin-bottom: 2px;
+  }
+
+  .achievement-text p {
+    font-size: 0.82rem;
+    color: #e2e8f0;
+  }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(110%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(-10px); visibility: hidden; }
+}
+
+
+/* =========================================================
+   FASE 4 (ONDA 2) — CLÍNICA: CLASSES NO LUGAR DOS style=""
+   ---------------------------------------------------------
+   Os estilos que a Clínica montava em linha (index.html e
+   clinic-engine.js) viraram as classes abaixo, com tokens: o
+   tema escuro sai certo sem as antigas regras [style*=...]
+   que remendavam as cores fixas.
+========================================================= */
+.clinic-hub-header { align-items: flex-start; gap: 12px; }
+.clinic-hub-subtitle { color: var(--text-muted); margin-top: 4px; }
+.clinic-hub-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.clinic-mode-switch {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin: 16px 0 12px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+
+.acervo-toolbar {
+  background: var(--surface-alt);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  margin-bottom: 14px;
+}
+.acervo-toolbar-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.acervo-toolbar-row input { flex: 1 1 220px; min-width: 0; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface); color: var(--text-main); }
+.acervo-toolbar-row select { padding: 8px; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.85rem; min-height: 44px; background: var(--surface); color: var(--text-main); }
+.acervo-note { margin: 6px 0 0; font-size: 0.8rem; color: var(--text-muted); }
+
+/* Estados vazio / carregando / erro das grades de leitos e do acervo. */
+.clinic-empty { grid-column: 1 / -1; text-align: center; padding: 36px 16px; color: var(--text-muted); }
+.clinic-empty h3, .clinic-empty h4 { color: var(--text-main); margin-bottom: 6px; }
+.clinic-empty.is-error { color: var(--danger); }
+.clinic-empty.is-loading p { animation: clinic-pulse 1.4s ease-in-out infinite; }
+@keyframes clinic-pulse { 50% { opacity: 0.55; } }
+
+.bed-title { margin: 8px 0 4px; font-size: 1.15rem; color: var(--primary-light); }
+.bed-title.is-acervo { color: var(--laift-info); font-size: 1.1rem; margin-bottom: 2px; }
+.bed-status { font-weight: 700; }
+.bed-status.is-done { color: var(--success); }
+.bed-status.is-open { color: var(--primary-light); }
+.bed-status.is-reviewed { color: var(--laift-info); }
+.bed-tag.is-acervo { background: var(--laift-info-soft); color: var(--laift-info); padding: 2px 8px; border-radius: 999px; text-transform: none; }
+.bed-card.is-acervo { border-top: 4px solid var(--laift-info); }
+.bed-patient { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+.bed-complaint { color: var(--text-muted); margin: 8px 0 12px; min-height: 42px; }
+.bed-meta { gap: 8px; flex-wrap: wrap; }
+.bed-cta { width: 100%; }
+.bed-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.bed-cta-main { flex: 2 1 160px; min-height: 44px; background: var(--laift-info); color: var(--laift-surface); }
+.bed-cta-alt { flex: 1 1 120px; min-height: 44px; }
+
+/* Radar epidemiológico (modal). */
+.radar-modal {
+  display: none;
+  position: fixed; inset: 0; z-index: 10000;
+  align-items: center; justify-content: center;
+  background: var(--laift-overlay);
+  padding: 12px;
+}
+.radar-dialog {
+  background: var(--surface); color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 24px; border-radius: 12px;
+  width: 100%; max-width: 680px; max-height: 85vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.radar-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+.radar-header h3 { margin: 0; color: var(--text-main); }
+.radar-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 16px 0; }
+.radar-stat { background: var(--surface-alt); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+.radar-stat-label { font-size: 0.8rem; color: var(--text-muted); }
+.radar-stat-value { font-size: 1.8rem; font-weight: 800; color: var(--primary-light); }
+.radar-stat-value.is-success { color: var(--success); }
+.radar-section { margin-bottom: 16px; }
+.radar-section h4 { margin: 0 0 8px; font-size: 0.95rem; color: var(--text-main); }
+.radar-chips { display: flex; flex-wrap: wrap; gap: 6px; color: var(--text-muted); }
+.radar-chip { padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 600; }
+.radar-chip.is-toxindrome { background: var(--surface-alt); border: 1px solid var(--border-strong); color: var(--text-main); }
+.radar-chip.is-agent { background: var(--laift-info-soft); border: 1px solid color-mix(in srgb, var(--laift-info) 35%, transparent); color: var(--laift-info); }
+.radar-empty { font-size: 0.85rem; color: var(--text-muted); }
+
+/* Leito: histórico, roteiro semiológico, exames e parecer. */
+.meter-fill { width: 100%; }
+.history-line { margin-bottom: 8px; }
+.history-line.is-muted { font-size: 0.85rem; color: var(--text-muted); }
+.semiology-wrapper { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.semiology-nav { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.semiology-axis { font-size: 0.78rem; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+.semiology-chips-area { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; padding-right: 4px; }
+.semiology-chip { text-align: left; line-height: 1.3; }
+.semiology-empty { font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding: 4px 0; }
+.exam-name { font-weight: 600; font-size: 0.9rem; }
+.exam-cost { color: var(--text-muted); }
+.feedback-paragraph { margin-bottom: 12px; line-height: 1.5; }
+.feedback-list { margin: 8px 0 12px 20px; }
+.feedback-list li { margin-bottom: 4px; }
+
+/* O "×" do guia agora é <button>: sem aparência de botão padrão. */
+button.modal-close { background: transparent; border: 0; line-height: 1; min-width: 44px; min-height: 44px; }
+
+/* =========================================================
+   FASE 4 — ACESSIBILIDADE E CELULAR
+========================================================= */
+/* Foco visível em tudo que é acionável. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
+
+/* Alvos de pelo menos 44 px em telas de toque. */
+@media (pointer: coarse) {
+  .btn,
+  .header-btn,
+  .suggestion-chip,
+  .clinic-tab-btn,
+  .fiscal-event-row button,
+  .member-item button,
+  .scanner-button,
+  .secondary-button,
+  .danger-button,
+  input,
+  select {
+    min-height: 44px;
+  }
+}
+
+/* Celular: cabeçalho quebra em duas linhas em vez de vazar; menos
+   respiro lateral na clínica (o iframe já tem só ~330 px). */
+@media (max-width: 480px) {
+  .clinic-hub-view { padding: 12px; }
+  .header-content { flex-wrap: wrap; }
+  .header-controls { flex-wrap: wrap; }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Identidade, tema e ponte com a Plataforma de Membros (redireciona ao login se aberto fora dela) -->
+  <script src="../shared/laift-identity.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Fiscal — LAIFT</title>
+
+  <!-- Leitor de QR Code para o check-in (versão fixada) -->
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+" crossorigin="anonymous"></script>
+  <!-- Gerador de QR local (crachás em lote) — nenhum dado vai para serviço de terceiros -->
+  <script src="../../vendor/qrcode-generator.js"></script>
+
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="fiscal.css">
+</head>
+<body class="fiscal-page">
+
+  <!-- Fase 2: sem senha fiscal e sem Apps Script. Toda ação passa por
+       LaiftApi.call → Worker, que exige o papel admin da sessão. -->
+  <div id="status" class="status-banner hidden" role="status" aria-live="polite"></div>
+
+  <main class="fiscal-main">
+    <section id="fiscalDenied" class="fiscal-card hidden">
+      <h2>Acesso restrito</h2>
+      <p class="fiscal-note">O terminal fiscal é exclusivo da administração.</p>
+    </section>
+
+    <div id="fiscalArea" class="fiscal-area hidden">
+      <section class="fiscal-card" aria-labelledby="fiscalEventTitle">
+        <h2 id="fiscalEventTitle">Evento</h2>
+        <label for="fiscalEvent" class="fiscal-label">Evento do check-in</label>
+        <div class="fiscal-row">
+          <select id="fiscalEvent" class="fiscal-grow"></select>
+          <button id="fiscalRefreshEvents" class="btn btn-outline btn-sm" type="button">Atualizar</button>
+        </div>
+        <p id="fiscalEventInfo" class="fiscal-note" aria-live="polite"></p>
+      </section>
+
+      <section class="fiscal-card" aria-labelledby="fiscalQrTitle">
+        <h2 id="fiscalQrTitle">Check-in por QR Code</h2>
+        <div id="reader" class="fiscal-reader hidden"></div>
+        <div class="fiscal-row">
+          <button id="scannerStart" class="btn btn-primary fiscal-grow" type="button">📷 Ler QR Code</button>
+          <button id="scannerStop" class="btn btn-outline fiscal-grow hidden" type="button">Parar leitor</button>
+        </div>
+        <p class="fiscal-note">Leia a credencial da área “Aprender” da pessoa. A assinatura do QR é conferida no servidor; o leitor continua ligado para o próximo.</p>
+      </section>
+
+      <section class="fiscal-card" aria-labelledby="fiscalManualTitle">
+        <h2 id="fiscalManualTitle">Presença manual</h2>
+        <form id="manualForm" class="fiscal-row" novalidate>
+          <label for="manualEmail" class="visually-hidden">E-mail da conta do participante</label>
+          <input id="manualEmail" class="fiscal-grow" type="email" placeholder="E-mail da conta na plataforma" autocomplete="off" maxlength="255">
+          <button id="manualSubmit" class="btn btn-secondary" type="submit">Registrar presença</button>
+        </form>
+        <p class="fiscal-note">Quem não se inscreveu antes também pode entrar: a inscrição é criada no check-in, se houver vaga.</p>
+      </section>
+
+      <section class="fiscal-card" aria-labelledby="fiscalListTitle">
+        <h2 id="fiscalListTitle">Participantes</h2>
+        <form id="searchForm" class="fiscal-row" role="search" novalidate>
+          <label for="memberSearch" class="visually-hidden">Buscar participante por nome, e-mail ou usuário</label>
+          <input id="memberSearch" class="fiscal-grow" type="search" placeholder="Nome, e-mail ou usuário (mín. 2 letras)" autocomplete="off" maxlength="100">
+          <button id="listRegistered" class="btn btn-outline btn-sm" type="button">Ver inscritos</button>
+        </form>
+        <div class="fiscal-row fiscal-bulk">
+          <label class="fiscal-check"><input type="checkbox" id="selectAll"> Selecionar todos da lista</label>
+          <span id="selectedCount" class="fiscal-note">0 selecionado(s)</span>
+        </div>
+        <ul id="memberList" class="fiscal-list"></ul>
+      </section>
+
+      <section class="fiscal-card" aria-labelledby="fiscalReportsTitle">
+        <h2 id="fiscalReportsTitle">Relatórios e crachás</h2>
+        <div class="fiscal-row">
+          <button id="exportCsv" class="btn btn-outline fiscal-grow" type="button">📥 Exportar CSV</button>
+          <button id="printBadges" class="btn btn-secondary fiscal-grow" type="button">🖨️ Imprimir crachás selecionados</button>
+        </div>
+        <p class="fiscal-note">CSV pronto para o Excel. Crachás em folha A4 (8 por folha, padrão CR-80), cada um com o QR assinado da pessoa.</p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Folha de crachás em lote: montada com DOM seguro por fiscal-engine.js e
+       impressa DESTE documento (sem pop-up nem document.write). -->
+  <div id="printArea" class="print-area" aria-hidden="true"></div>
+
+  <script src="fiscal-engine.js"></script>
+  <script src="fiscal-page.js"></script>
+</body>
+</html>

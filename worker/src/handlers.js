@@ -30,6 +30,12 @@ import * as ModerationService from './services/moderationService.js';
 import * as OrgChartService from './services/orgChartService.js';
 import * as MessagingKeyService from './services/messagingKeyService.js';
 import * as MessageService from './services/messageService.js';
+// Fase 2 — Dados & Presença (docs/PLANO_FASES_2_3_4.md, Contrato 2)
+import * as LearningService from './services/learningService.js';
+import * as AttendanceService from './services/attendanceService.js';
+// Fase 3 — IA (Groq) e clínica virtual
+import * as AiService from './services/aiService.js';
+import * as ClinicalService from './services/clinicalService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -49,6 +55,13 @@ async function runWithSession(sql, env, sessionToken, callback) {
     const identity = await S.requireSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken);
     return callback(identity, correlationId);
   });
+}
+
+// Fase 2 — entrada dos endpoints dos módulos: só um objeto simples é
+// aceito; null, string, número ou array viram {} e caem na validação do
+// service (nunca um TypeError inesperado ao ler input.campo).
+function asInput(input) {
+  return input && typeof input === 'object' && !Array.isArray(input) ? input : {};
 }
 
 export const API_REGISTRY = {
@@ -151,4 +164,33 @@ export const API_REGISTRY = {
   apiClearConversation: (sql, env, [sessionToken, conversationId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.clearConversation(sql, env, identity, conversationId, cid)),
   apiHideMessageForMe: (sql, env, [sessionToken, conversationId, messageId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.hideMessageForMe(sql, identity, conversationId, messageId, cid)),
   apiDeleteMessage: (sql, env, [sessionToken, conversationId, messageId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.deleteMessage(sql, identity, conversationId, messageId, cid)),
+
+  // Fase 2 — Dados & Presença: aprendizagem e presença (docs/PLANO_FASES_2_3_4.md,
+  // Contrato 2). Usadas pelos módulos via ponte (App.callLearningApi), que só
+  // aceita os prefixos apiLearn*/apiAdminAttendance*; entrada = UM objeto.
+  // input que não seja objeto vira {} (o service então recusa com mensagem clara).
+  apiLearnGetMyStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LearningService.getMyStats(sql, identity)),
+  apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.submitQuizAttempt(sql, identity, asInput(input), cid)),
+  apiLearnRecordLabFormulation: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.recordLabFormulation(sql, identity, asInput(input), cid)),
+  apiLearnGetMyAttendanceQr: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.getMyAttendanceQr(env, identity)),
+  apiAdminAttendanceListEvents: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.listEvents(sql, identity)),
+  apiAdminAttendanceCheckIn: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceService.checkIn(sql, env, identity, asInput(input), cid)),
+  apiAdminAttendanceSearch: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.search(sql, identity, asInput(input))),
+  apiAdminAttendanceExportCsv: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceService.exportCsv(sql, identity, asInput(input), cid)),
+  apiAdminAttendanceBadges: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AttendanceService.badges(sql, env, identity, asInput(input), cid)),
+  // Fase 3 — IA na Worker e clínica virtual (docs/FASE_3_IA_CLINICA.md).
+  // Chamados pelos módulos via ponte LaiftApi (Contrato 3): entrada é UM
+  // objeto, e os prefixos seguem a allowlist da ponte
+  // (/^api(Learn|AdminAttendance|AdminAi|AdminLearn)[A-Z]/). Cota diária
+  // por pessoa e papel em cada chamada que custa tokens (aiService.withQuota).
+  apiLearnClinicalChat: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.chat(sql, env, identity, input || {})),
+  apiLearnClinicalEvaluate: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.evaluate(sql, env, identity, input || {}, cid)),
+  apiLearnClinicalGenerateCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.generateCase(sql, env, identity, input || {}, cid)),
+  apiLearnClinicalLibrary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.library(sql, env, identity, input || {})),
+  apiLearnClinicalEpidemiology: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => ClinicalService.epidemiology(sql, env)),
+  apiLearnLabPreceptor: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.askLabPreceptor(sql, env, identity, input || {})),
+  apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.getMyQuota(sql, env, identity)),
+  apiAdminAiHealth: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminHealth(sql, env, identity)),
+  apiAdminLearnListPendingCases: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.listPendingCases(sql, identity)),
+  apiAdminLearnReviewCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.reviewCase(sql, env, identity, input || {}, cid)),
 };

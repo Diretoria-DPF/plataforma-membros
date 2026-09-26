@@ -2,10 +2,10 @@ name = "plataforma-membros-api"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 
-# Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, BREVO_API_KEY) NUNCA
-# ficam aqui — são cadastrados via `wrangler secret put <NOME>`, que os
-# guarda criptografados no lado da Cloudflare, fora do repositório. Ver
-# docs/DEPLOYMENT.md.
+# Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, BREVO_API_KEY e, na
+# Fase 3, GROQ_API_KEYS) NUNCA ficam aqui — são cadastrados via `wrangler
+# secret put <NOME>`, que os guarda criptografados no lado da Cloudflare,
+# fora do repositório. Ver docs/DEPLOYMENT.md e docs/FASE_3_IA_CLINICA.md.
 [vars]
 APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
 # localhost:4174 é o servidor de pré-visualização local (frontend/dev-server.js) —
@@ -21,6 +21,14 @@ MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"
 # URL pública do bucket R2 (avatares e imagens de evento) — não é segredo,
 # é só onde os arquivos ficam publicamente acessíveis depois do upload.
 MEDIA_PUBLIC_URL = "https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev"
+# Fase 3 — IA (Groq). Modelos por recurso: FAST para a conversa com o
+# paciente virtual, SMART para avaliação, geração de caso e preceptor do
+# laboratório (worker/src/ai/config.js). Para usar um modelo só, ponha o
+# mesmo valor nos dois. As CHAVES não ficam aqui: `wrangler secret put
+# GROQ_API_KEYS` (todas as chaves do pool, uma por linha ou separadas por
+# vírgula) — ver docs/FASE_3_IA_CLINICA.md.
+GROQ_MODEL_FAST = "openai/gpt-oss-20b"
+GROQ_MODEL_SMART = "openai/gpt-oss-120b"
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o
@@ -36,3 +44,9 @@ binding = "MEDIA_BUCKET"
 [[kv_namespaces]]
 binding = "HOT_CACHE"
 id = "6ee17e571c044c43bd5b32599b6fbab9"
+
+# Faxina diária (src/maintenance.js): sessões/tokens/rate limit expirados e
+# retenção de 180 dias do log de uso da IA. 06:17 UTC = 03:17 em Brasília,
+# fora do horário de uso; o minuto "quebrado" evita a fila do minuto zero.
+[triggers]
+crons = ["17 6 * * *"]

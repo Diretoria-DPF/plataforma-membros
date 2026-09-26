@@ -1,0 +1,317 @@
+<!-- ========================================================================= -->
+<!-- ARQUIVO: anatomia-3d/index.html                                           -->
+<!-- VERSÃO:  2.6.0 — COMPLETA: 14 SISTEMAS, 18 VIAS, 24 PDBs & 15 PROCESSOS   -->
+<!-- ========================================================================= -->
+<!DOCTYPE html>
+<html lang="pt-BR" class="laift-always-dark">
+<head>
+  <meta charset="UTF-8">
+  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov https://apps.humanatlas.io https://purl.humanatlas.io https://3d.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
+  <script src="../shared/laift-identity.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#020617">
+  <title>LAIFT — Atlas Anatômico, Farmacocinético & Bio-Twin 3D</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+  <!-- Bibliotecas gráficas: versões fixas no jsDelivr (bytes do pacote npm)
+       com SRI — as mesmas versões de antes (three r128 = three@0.128.0; o
+       Chart.js e o 3Dmol "latest" foram fixados). Ver docs/FASE_4_QUALIDADE.md. -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" integrity="sha384-fljlqkjWlmSFjkESkQvm77heIZpoWmXEOzlCA7kOpGUH+95Zk0yGfQieWM2q136E" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" integrity="sha384-TNRcLasZnnfIJJskDY5XlrfmsKTjBSy98MtyLuX+3rQWRbpSQvtFIdikNpcOh3SN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+
+  <!-- Tokens do design system (o atlas é sempre escuro: .laift-always-dark) + estilos do módulo -->
+  <link rel="stylesheet" href="../shared/laift-tokens.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Funções de interface (tela cheia, zoom, fisiologia): js/atlas-ui.js,
+       sem <script> inline — preparo da CSP. -->
+</head>
+<body>
+
+  <!-- =======================================================================
+       1. CABEÇALHO COMPACTO
+  ======================================================================= -->
+  <header class="atlas-header">
+    <div class="atlas-brand">
+      <h1>🧬 LAIFT <span>Bio-Twin 3D</span></h1>
+    </div>
+    <div class="header-tools">
+      <button id="btnFullscreenToggle" class="btn-pill-tool" type="button" data-action="toggleAtlasFullscreen" title="Alternar Modo Imersivo em Tela Cheia">
+        ⛶ Tela Cheia
+      </button>
+      <button id="btnExportCsv" class="btn-pill-tool" type="button" data-action="ApiCache.exportarDossiePDF" title="Emitir Dossiê Curricular em PDF">
+        📄 Dossiê PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- =======================================================================
+       2. BARRA DE SISTEMAS ANATÔMICOS (14 SISTEMAS DINÂMICOS)
+  ======================================================================= -->
+  <nav class="systems-bar" id="systemsBar" aria-label="Seletor de Sistemas Anatômicos"></nav>
+
+  <!-- =======================================================================
+       3. CONTROLE DE NÍVEIS DE ZOOM BIOLÓGICO (MACRO / MESO / NANO)
+  ======================================================================= -->
+  <div class="zoom-pill-group" role="group" aria-label="Nível de zoom biológico">
+    <button class="zoom-btn active" type="button" data-level="macro" data-action="setBiologicalZoomLevel" data-arg="macro">
+      1. Macro (Órgãos & Sistemas)
+    </button>
+    <button class="zoom-btn" type="button" data-level="meso" data-action="setBiologicalZoomLevel" data-arg="meso">
+      2. Meso (Fisiologia & PK/PD)
+    </button>
+    <button class="zoom-btn" type="button" data-level="nano" data-action="setBiologicalZoomLevel" data-arg="nano">
+      3. Nano (Enzimas & PDB)
+    </button>
+  </div>
+
+  <!-- =======================================================================
+       4. VIEWPORT PRINCIPAL COM NAVEGAÇÃO SPA
+  ======================================================================= -->
+  <main class="viewport" id="main-viewport">
+
+    <!-- -------------------------------------------------------------------
+         ABA 1: ANATOMIA 3D, ÁRVORE, VIAS, CRISE TOXICOLÓGICA & QUIZ
+    ------------------------------------------------------------------- -->
+    <section id="view-anatomy" class="view-panel active">
+      <div class="panel-header">
+        <h2>Simulador Clínico & Dissecção Multiescala</h2>
+        <p>14 Sistemas Anatômicos, 18 Vias de Administração, Curvas PK/PD de Hill e Desafios Espaciais.</p>
+      </div>
+
+      <!-- Palco Gráfico A: WebGL Three.js (Macro / Meso) -->
+      <div id="canvas-3d-container">
+        <div id="loading-3d-overlay">Carregando Atlas Anatômico...</div>
+        <div id="organ-hud" class="hidden" role="status" aria-live="polite">
+          Estrutura: <strong id="organ-name">---</strong>
+        </div>
+      </div>
+
+      <!-- Palco Gráfico B: Visualizador Macromolecular 3Dmol.js (Nano / PDB) -->
+      <div id="mol-viewport-container" class="hidden">
+        <div id="mol-viewport" style="width: 100%; height: 100%;"></div>
+      </div>
+
+      <!-- Informações da Macromolécula em Foco (Nano) -->
+      <div id="molInfoDetails" style="margin-top: 4px; margin-bottom: 12px;"></div>
+
+      <!-- PAINEL DE CONTROLE RÁPIDO DO CORPO HUMANO (5 CAMADAS) -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:12px;">
+        <div style="font-size:0.78rem; font-weight:800; color:#38bdf8; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span>👁️ CONTROLE DINÂMICO DE VISUALIZAÇÃO DO CORPO</span>
+          <button type="button" class="btn-isolate-organ" data-action="ThreeEngine.resetOrganTree">Restaurar Corpo</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[1]">Pele</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[2]">Músculos</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[3]">Esqueleto</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[4]">Vasos</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px; border-color:#38bdf8; color:#38bdf8;" data-action="aplicarCamadaDireta" data-args="[5]">Vísceras</button>
+        </div>
+      </div>
+
+      <!-- PAINEL PARA INSERÇÃO DINÂMICA DE DADOS FARMACOLÓGICOS -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:12px;">
+        <div style="font-size:0.78rem; font-weight:800; color:#34d399; margin-bottom:8px;">
+          ✍️ INSERIR DADOS DE SIMULAÇÃO FARMACOLÓGICA
+        </div>
+        <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr auto; gap:6px; align-items:center;">
+          <input type="text" id="inpCompostoCustom" aria-label="Composto" placeholder="Ex: Propranolol, Cafeína, Atropina..." style="background:#020617; border:1px solid #334155; color:#fff; padding:6px 10px; border-radius:4px; font-size:0.74rem; outline:none;">
+          <select id="selViaCustom" aria-label="Via de administração" style="background:#020617; border:1px solid #334155; color:#38bdf8; padding:6px; border-radius:4px; font-size:0.74rem; outline:none;">
+            <option value="ORAL">Via Oral</option>
+            <option value="INTRAVENOSA">Via Intravenosa (IV)</option>
+            <option value="INTRAMUSCULAR">Via Intramuscular (IM)</option>
+            <option value="SUBLINGUAL">Via Sublingual</option>
+            <option value="NASAL">Via Nasal</option>
+            <option value="TOPICA">Via Tópica</option>
+            <option value="PULMONAR_INALATORIA">Via Inalatória</option>
+            <option value="RETAL">Via Retal</option>
+            <option value="INTRATECAL">Via Intratecal</option>
+          </select>
+          <input type="number" id="inpDoseCustom" aria-label="Dose em mg" value="100" placeholder="Dose (mg)" style="background:#020617; border:1px solid #334155; color:#fff; padding:6px; border-radius:4px; font-size:0.74rem; outline:none;">
+          <button type="button" class="btn-primary" style="padding:6px 14px; font-size:0.74rem; white-space:nowrap;" data-action="submeterInformacaoCustom">▶ Aplicar</button>
+        </div>
+      </div>
+
+      <!-- Painel Dinâmico: Lançador do Quiz 3D Gamificado -->
+      <div id="quizLauncherContainer"></div>
+
+      <!-- Painel Dinâmico: Modo Crise Toxicológica (Organofosforados / Antídotos) -->
+      <div id="crisisPanelContainer"></div>
+
+      <!-- Painel Dinâmico: Gráfico Farmacocinético & Farmacodinâmico (Chart.js) -->
+      <div id="pk-chart-container">
+        <canvas id="pkChartCanvas"></canvas>
+      </div>
+
+      <!-- Painel Dinâmico: Seletor das 18 Vias de Administração Farmacológica -->
+      <div id="routesSelectorContainer" class="routes-selector-container"></div>
+
+      <!-- Painel Dinâmico: Árvore Anatômica Granular com Sliders de Opacidade -->
+      <div class="tree-container">
+        <div class="tree-header">
+          <h3>🌳 Árvore de Estruturas & Opacidade Granular</h3>
+        </div>
+        <div id="organTreeContainer"></div>
+      </div>
+
+      <!-- Timeline Fisiológica Dinâmica (15 Processos Mapeados) -->
+      <div class="timeline-card">
+        <div class="timeline-header">
+          <span class="timeline-step-badge" id="timelineProcessTitle">⚡ Processo: Fisiologia da Deglutição Humana</span>
+          <select id="selProcessoFisiologico" data-action-change="selecionarProcessoFisiologico" aria-label="Processo fisiológico" style="background:#020617; color:#38bdf8; border:1px solid #334155; border-radius:4px; padding:3px 6px; font-size:0.72rem; outline:none; cursor:pointer;">
+            <option value="degluticao_humana">1. Deglutição Humana</option>
+            <option value="ciclo_cardiaco">2. Ciclo Eletromecânico Cardíaco</option>
+            <option value="conducao_impulso_cardiaco">3. Condução do Impulso Cardíaco</option>
+            <option value="peristaltismo_intestinal">4. Motilidade e Peristaltismo Enteral</option>
+            <option value="filtracao_glomerular">5. Filtração Glomerular & Tubular</option>
+            <option value="hematose_alveolar">6. Hematose Alvéolo-Capilar</option>
+            <option value="sinapse_colinergica">7. Transmissão Sináptica Colinérgica</option>
+            <option value="contracao_muscular">8. Contração Muscular Esquelética</option>
+            <option value="espermatogenese">9. Espermatogênese</option>
+            <option value="coagulacao_sanguinea">10. Cascata de Coagulação Sanguínea</option>
+            <option value="resposta_inflamatoria">11. Resposta Inflamatória Aguda</option>
+            <option value="ciclo_menstrual">12. Ciclo Menstrual</option>
+            <option value="eixo_hpa">13. Eixo Hipotálamo-Hipófise-Adrenal</option>
+            <option value="reflexo_miotatico">14. Reflexo Miotático</option>
+            <option value="resposta_imune_adaptativa">15. Resposta Imune Adaptativa</option>
+          </select>
+        </div>
+        <p class="timeline-desc" id="timelineProcessDesc" style="margin: 6px 0;">
+          Sequência neuromuscular reflexa coordenada dividida em estágios oral, faríngeo e esofágico.
+        </p>
+        <div class="timeline-nav-row" id="timelineStepsRow">
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="oral_cavity">1. Fase Oral</button>
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="pharynx_transit">2. Fase Faríngea</button>
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="esophagus_wave">3. Fase Esofágica</button>
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="stomach_entry">4. Relaxamento Gástrico</button>
+        </div>
+      </div>
+
+      <!-- Catálogo Completo dos 24 Alvos Cristalográficos PDB Oficiais -->
+      <div style="margin-top: 14px; margin-bottom: 16px;">
+        <h4 style="font-size: 0.78rem; color: #cbd5e1; text-transform: uppercase; margin-bottom: 8px;">
+          🔬 Catálogo Completo de Alvos Moleculares & Co-Cristais (24 Estruturas PDB):
+        </h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px;">
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["4EY7", "AChE + Donepezila"]'>🧬 AChE (4EY7)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1EQG", "COX-1 + Aspirina"]'>🧬 COX-1 (1EQG)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["3LN1", "COX-2 + Celecoxibe"]'>🧬 COX-2 (3LN1)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1TQN", "CYP3A4 Microssomal"]'>🧬 CYP3A4 (1TQN)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["3B8E", "Bomba Na+/K+-ATPase"]'>🧬 Na+/K+ (3B8E)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1SMD", "Ptialina Salivar"]'>🧬 Ptialina (1SMD)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["4PEP", "Pepsina Gástrica"]'>🧬 Pepsina (4PEP)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1SU4", "SERCA Ca2+-ATPase"]'>🧬 SERCA (1SU4)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1TBF", "PDE5 Vascular"]'>🧬 PDE5 (1TBF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1E9Z", "Urease H. pylori"]'>🦠 H. pylori (1E9Z)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["7VH8", "Mpro SARS-CoV-2"]'>🦠 Mpro Viral (7VH8)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["5LUF", "Complexo I Mitocondrial"]'>⚡ Complexo I (5LUF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1O86", "ECA (Angiotensina)"]'>🩸 ECA / ACE (1O86)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["2REN", "Renina Humana"]'>💧 Renina (2REN)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1HWK", "HMG-CoA Redutase"]'>💊 HMGCR (1HWK)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1BMF", "ATP Sintase (Complexo V)"]'>⚡ ATP Sintase (1BMF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1SOS", "Superóxido Dismutase"]'>🛡️ SOD1 (1SOS)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1DGB", "Catalase Peroxissomal"]'>🛡️ Catalase (1DGB)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1LYZ", "Lisozima Antimicrobiana"]'>🛡️ Lisozima (1LYZ)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1DHF", "Di-hidrofolato Redutase"]'>🧪 DHFR (1DHF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1CA2", "Anidrase Carbônica II"]'>💧 Anidrase II (1CA2)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["3EQM", "Aromatase (CYP19A1)"]'>⚗️ Aromatase (3EQM)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["2AM9", "Receptor Androgênico"]'>🧬 Receptor AR (2AM9)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["2BG9", "Receptor Nicotínico AChR"]'>💪 nAChR (2BG9)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------------------
+         ABA 2: BIOHACKING & OTIMIZAÇÃO METABÓLICA
+    ------------------------------------------------------------------- -->
+    <section id="view-biohacking" class="view-panel hidden">
+      <div class="panel-header">
+        <h2>Protocolos Celulares & Bioenergética</h2>
+        <p>Vias mitocondriais de síntese de ATP, biodisponibilidade mineral, nootrópicos e NAD+.</p>
+      </div>
+
+      <!-- Barra de Pesquisa de Princípios Ativos -->
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="bio-search-input" 
+          aria-label="Buscar composto ou via"
+          placeholder="Buscar composto ou via (ex: Treonato, ATP, CoQ10, NMN, Zinco)..."
+          autocomplete="off"
+        >
+        <button id="btn-bio-search" type="button" aria-label="Buscar protocolo">🔍</button>
+      </div>
+
+      <!-- Grid de Cartões de Protocolo -->
+      <div id="biohacking-results-grid"></div>
+    </section>
+
+    <!-- -------------------------------------------------------------------
+         ABA 3: ACERVO INSTITUCIONAL & DOSSIÊ EM PDF
+    ------------------------------------------------------------------- -->
+    <section id="view-acervo" class="view-panel hidden">
+      <div class="panel-header">
+        <h2>Acervo de Simulações & Cômputo Curricular</h2>
+        <p>Histórico registrado de horas formativas e sessões práticas com emissão de parecer PDF oficial.</p>
+      </div>
+
+      <!-- Botões de Ação -->
+      <div class="actions-row">
+        <button id="btn-export-pdf-acervo" class="btn-primary" type="button" data-action="ApiCache.exportarDossiePDF">
+          📄 Emitir Dossiê PDF Oficial
+        </button>
+        <button id="btn-sync-cloud" class="btn-secondary" type="button" data-action="ApiCache.renderizarHistoricoLocal">
+          🔄 Atualizar Relatório Local
+        </button>
+      </div>
+
+      <!-- Histórico de Sessões Realizadas -->
+      <div id="history-list-container"></div>
+    </section>
+
+  </main>
+
+  <!-- =======================================================================
+       5. BARRA DE NAVEGAÇÃO INFERIOR MOBILE-FIRST (PWA THUMB-FRIENDLY)
+  ======================================================================= -->
+  <nav class="bottom-nav" aria-label="Seções do atlas">
+    <button class="nav-btn active" type="button" data-target="view-anatomy">
+      <span class="nav-icon">🧍</span>
+      <span class="nav-label">Atlas 3D</span>
+    </button>
+    <button class="nav-btn" type="button" data-target="view-biohacking">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-label">Biohacking</span>
+    </button>
+    <button class="nav-btn" type="button" data-target="view-acervo">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Dossiê / Horas</span>
+    </button>
+  </nav>
+
+  <!-- =======================================================================
+       6. SCRIPTS MODULARES (ORDEM RIGOROSA DE DEPENDÊNCIA DO ECOSSISTEMA)
+  ======================================================================= -->
+  <script src="../shared/safe-dom.js"></script>
+  <script src="data/bio-database.js"></script>
+  <script src="js/api-cache.js"></script>
+  <script src="js/three-engine.js"></script>
+  <script src="js/mol-engine.js"></script>
+  <script src="js/pk-engine.js"></script>
+  <script src="js/quiz-engine.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/atlas-ui.js"></script>
+</body>
+</html>
+<!-- ========================================================================= -->
+<!-- FIM DO ARQUIVO: anatomia-3d/index.html                                    -->
+<!-- ========================================================================= -->
