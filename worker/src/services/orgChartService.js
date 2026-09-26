@@ -9,7 +9,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
-import { getCached, setCached, invalidateCached, CACHE_KEYS, CACHE_TTL_SECONDS } from '../cache.js';
+import { getCached, setCached, invalidateCached, CACHE_KEYS, ORG_CHART_TTL_SECONDS } from '../cache.js';
 
 const LEAGUE_POSITIONS = Object.values(C.LEAGUE_POSITION);
 const DIRECTORATES = Object.values(C.DIRECTORATE);
@@ -111,6 +111,6 @@ export async function getOrgChart(sql, env, identity) {
     chart.membersWithoutDirectorate.push(card);
   });
 
-  await setCached(env, CACHE_KEYS.ORG_CHART, chart, CACHE_TTL_SECONDS);
+  await setCached(env, CACHE_KEYS.ORG_CHART, chart, ORG_CHART_TTL_SECONDS);
   return { success: true, chart };
 }

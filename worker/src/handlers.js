@@ -122,9 +122,9 @@ export const API_REGISTRY = {
   apiAdminSetLeaguePosition: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => OrgChartService.setMemberPosition(sql, env, identity, targetProfileId, input || {}, cid)),
 
   // ---- Conexões entre membros ----
-  apiSendConnectionRequest: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.sendConnectionRequest(sql, identity, input || {}, cid)),
+  apiSendConnectionRequest: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.sendConnectionRequest(sql, env, identity, input || {}, cid)),
   apiListIncomingConnectionRequests: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ConnectionService.listIncomingRequests(sql, identity)),
-  apiRespondConnectionRequest: (sql, env, [sessionToken, connectionId, decision]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.respondToRequest(sql, identity, connectionId, decision, cid)),
+  apiRespondConnectionRequest: (sql, env, [sessionToken, connectionId, decision]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.respondToRequest(sql, env, identity, connectionId, decision, cid)),
   apiListMyConnections: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ConnectionService.listMyConnections(sql, identity)),
   apiRemoveConnection: (sql, env, [sessionToken, connectionId]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.removeConnection(sql, identity, connectionId, cid)),
   apiBlockProfile: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => ConnectionService.blockProfile(sql, identity, targetProfileId, cid)),
@@ -145,10 +145,10 @@ export const API_REGISTRY = {
   apiOpenConversation: (sql, env, [sessionToken, peerProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.openConversation(sql, identity, peerProfileId, cid)),
   apiListConversations: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.listConversations(sql, identity)),
   apiListMessages: (sql, env, [sessionToken, conversationId, input]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.listMessages(sql, identity, conversationId, input || {})),
-  apiSendMessage: (sql, env, [sessionToken, conversationId, payload]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.sendMessage(sql, identity, conversationId, payload || {}, cid)),
-  apiMarkConversationRead: (sql, env, [sessionToken, conversationId, lastReadMessageId]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.markConversationRead(sql, identity, conversationId, lastReadMessageId)),
-  apiMessagingSync: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.syncMessaging(sql, identity)),
-  apiClearConversation: (sql, env, [sessionToken, conversationId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.clearConversation(sql, identity, conversationId, cid)),
+  apiSendMessage: (sql, env, [sessionToken, conversationId, payload]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.sendMessage(sql, env, identity, conversationId, payload || {}, cid)),
+  apiMarkConversationRead: (sql, env, [sessionToken, conversationId, lastReadMessageId]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.markConversationRead(sql, env, identity, conversationId, lastReadMessageId)),
+  apiMessagingSync: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessageService.syncMessaging(sql, env, identity)),
+  apiClearConversation: (sql, env, [sessionToken, conversationId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.clearConversation(sql, env, identity, conversationId, cid)),
   apiHideMessageForMe: (sql, env, [sessionToken, conversationId, messageId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.hideMessageForMe(sql, identity, conversationId, messageId, cid)),
   apiDeleteMessage: (sql, env, [sessionToken, conversationId, messageId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.deleteMessage(sql, identity, conversationId, messageId, cid)),
 };

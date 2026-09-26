@@ -24,6 +24,7 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 import { getRelationship } from './connectionService.js';
+import { getCached, setCached, invalidateCached, messageSyncCacheKey, MESSAGE_SYNC_TTL_SECONDS } from '../cache.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const IV_RE = /^[A-Za-z0-9_-]{16}$/; // 12 bytes -> 16 chars base64url sem padding
@@ -282,7 +283,7 @@ function validateSendPayload(payload) {
   return { clientMessageId, senderKeyVersion, recipientKeyVersion, iv, ciphertext };
 }
 
-export async function sendMessage(sql, identity, conversationId, payload, correlationId) {
+export async function sendMessage(sql, env, identity, conversationId, payload, correlationId) {
   assertMemberOrAdmin(identity);
   const convId = S.normalizeText(conversationId);
   if (!convId) throw E.ValidationError('Conversa inválida.');
@@ -320,7 +321,8 @@ export async function sendMessage(sql, identity, conversationId, payload, correl
         low_last_read_id = CASE WHEN participant_low = ${identity.profileId}::uuid THEN (SELECT id FROM ins) ELSE low_last_read_id END,
         high_last_read_id = CASE WHEN participant_high = ${identity.profileId}::uuid THEN (SELECT id FROM ins) ELSE high_last_read_id END
       WHERE id = (SELECT conversation_id FROM ins)
-      RETURNING (SELECT id FROM ins) AS message_id, (SELECT created_at FROM ins) AS created_at
+      RETURNING (SELECT id FROM ins) AS message_id, (SELECT created_at FROM ins) AS created_at,
+                participant_low, participant_high
     `;
   } catch (err) {
     const msg = String((err && err.message) || '');
@@ -329,10 +331,17 @@ export async function sendMessage(sql, identity, conversationId, payload, correl
     throw err;
   }
 
+  // Achado da auditoria de escala de 2026-09-25: invalidar (não recalcular)
+  // o cache do destinatário é o que permite ao poll do badge (apiMessagingSync)
+  // virar leitura pura de KV na maior parte do tempo — o Neon só é tocado
+  // quando alguém de fato manda mensagem, não a cada poll de cada aba aberta.
+  const recipientId = rows[0].participant_low === identity.profileId ? rows[0].participant_high : rows[0].participant_low;
+  await invalidateCached(env, messageSyncCacheKey(recipientId));
+
   return { success: true, messageId: Number(rows[0].message_id), createdAt: rows[0].created_at };
 }
 
-export async function markConversationRead(sql, identity, conversationId, lastReadMessageId) {
+export async function markConversationRead(sql, env, identity, conversationId, lastReadMessageId) {
   assertMemberOrAdmin(identity);
   const convId = S.normalizeText(conversationId);
   const lastReadId = Number(lastReadMessageId);
@@ -347,6 +356,7 @@ export async function markConversationRead(sql, identity, conversationId, lastRe
     RETURNING id
   `;
   if (!rows.length) throw E.NotFoundError('Conversa não encontrada.');
+  await invalidateCached(env, messageSyncCacheKey(identity.profileId));
   return { success: true };
 }
 
@@ -360,7 +370,7 @@ export async function markConversationRead(sql, identity, conversationId, lastRe
  * last_read_id até o mesmo ponto, pra não sobrar "não lida fantasma" de
  * mensagem que acabei de esconder da própria visão.
  */
-export async function clearConversation(sql, identity, conversationId, correlationId) {
+export async function clearConversation(sql, env, identity, conversationId, correlationId) {
   assertMemberOrAdmin(identity);
   const convId = S.normalizeText(conversationId);
   if (!convId) throw E.ValidationError('Conversa inválida.');
@@ -383,12 +393,25 @@ export async function clearConversation(sql, identity, conversationId, correlati
     WHERE id = ${convId}::uuid
   `;
 
+  await invalidateCached(env, messageSyncCacheKey(identity.profileId));
   await Logging.logAudit(sql, correlationId, identity.profileId, 'CLEAR_CONVERSATION', 'conversation', convId, 'success', null);
   return { success: true, message: 'Conversa limpa.' };
 }
 
-export async function syncMessaging(sql, identity) {
+export async function syncMessaging(sql, env, identity) {
   assertMemberOrAdmin(identity);
+
+  // Achado da auditoria de escala de 2026-09-25: este é o endpoint chamado
+  // a cada poll de badge (uma aba a cada ~60s) — com muitos usuários
+  // simultâneos, isso nunca deixava o Neon suspender sozinho. Cache-aside
+  // por usuário com TTL longo (rede de segurança); a correção real vem de
+  // invalidação explícita em sendMessage/markConversationRead/
+  // clearConversation/connectionService — enquanto nada muda pro usuário,
+  // o poll vira leitura pura de KV, sem tocar o Neon.
+  const cacheKey = messageSyncCacheKey(identity.profileId);
+  const cached = await getCached(env, cacheKey);
+  if (cached) return Object.assign({ success: true }, cached);
+
   const rows = await sql`
     SELECT
       COALESCE((
@@ -400,9 +423,10 @@ export async function syncMessaging(sql, identity) {
       ), 0) AS unread_messages,
       COALESCE((SELECT count(*) FROM connections WHERE addressee_id = ${identity.profileId}::uuid AND status = 'pending'::connection_status), 0) AS pending_requests
   `;
-  return {
-    success: true,
+  const result = {
     unreadMessages: Number(rows[0].unread_messages),
     pendingConnectionRequests: Number(rows[0].pending_requests),
   };
+  await setCached(env, cacheKey, result, MESSAGE_SYNC_TTL_SECONDS);
+  return Object.assign({ success: true }, result);
 }

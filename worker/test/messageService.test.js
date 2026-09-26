@@ -1,7 +1,14 @@
+import { jest } from '@jest/globals';
 import * as MessageService from '../src/services/messageService.js';
-import { makeSql } from './helpers/mockEnv.js';
+import { makeSql, makeEnv } from './helpers/mockEnv.js';
 
 const MEMBER = { profileId: 'm1', role: 'member' };
+const env = makeEnv();
+// env é compartilhado entre testes deste arquivo (evita recriar o mock em
+// cada teste) — limpa o histórico de chamadas entre eles pra as asserções
+// de invalidação de cache (toHaveBeenCalledWith/not.toHaveBeenCalledWith)
+// não vazarem de um teste pro outro.
+afterEach(() => { jest.clearAllMocks(); });
 const VALID_UUID = '11111111-1111-4111-8111-111111111111';
 const VALID_IV = 'C'.repeat(16); // 12 bytes em base64url
 const VALID_CIPHERTEXT = 'D'.repeat(32);
@@ -87,7 +94,7 @@ describe('MessageService.listMessages', () => {
 describe('MessageService.sendMessage — validação de forma (nunca toca o banco)', () => {
   test('clientMessageId que não é UUID', async () => {
     const sql = makeSql();
-    await expect(MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload({ clientMessageId: 'nao-uuid' }), 'cid')).rejects.toMatchObject({
+    await expect(MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload({ clientMessageId: 'nao-uuid' }), 'cid')).rejects.toMatchObject({
       name: 'ValidationError',
     });
     expect(sql).not.toHaveBeenCalled();
@@ -95,7 +102,7 @@ describe('MessageService.sendMessage — validação de forma (nunca toca o banc
 
   test('iv com tamanho errado', async () => {
     const sql = makeSql();
-    await expect(MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload({ iv: 'curto' }), 'cid')).rejects.toMatchObject({
+    await expect(MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload({ iv: 'curto' }), 'cid')).rejects.toMatchObject({
       name: 'ValidationError',
     });
   });
@@ -103,13 +110,13 @@ describe('MessageService.sendMessage — validação de forma (nunca toca o banc
   test('ciphertext acima do limite máximo', async () => {
     const sql = makeSql();
     await expect(
-      MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload({ ciphertext: 'D'.repeat(20000) }), 'cid')
+      MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload({ ciphertext: 'D'.repeat(20000) }), 'cid')
     ).rejects.toMatchObject({ name: 'ValidationError' });
   });
 
   test('versão de chave inválida (não inteiro positivo)', async () => {
     const sql = makeSql();
-    await expect(MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload({ senderKeyVersion: 0 }), 'cid')).rejects.toMatchObject({
+    await expect(MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload({ senderKeyVersion: 0 }), 'cid')).rejects.toMatchObject({
       name: 'ValidationError',
     });
   });
@@ -119,7 +126,7 @@ describe('MessageService.sendMessage — idempotência e silenciamento progressi
   test('reenvio com o mesmo clientMessageId devolve a mensagem já gravada (deduped), sem novo INSERT', async () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([{ id: 42, created_at: '2026-01-01T00:00:00Z' }]);
-    const res = await MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload(), 'cid');
+    const res = await MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload(), 'cid');
     expect(res).toEqual({ success: true, messageId: 42, createdAt: '2026-01-01T00:00:00Z', deduped: true });
     expect(sql).toHaveBeenCalledTimes(1);
   });
@@ -129,7 +136,7 @@ describe('MessageService.sendMessage — idempotência e silenciamento progressi
     sql
       .mockResolvedValueOnce([]) // sem duplicata
       .mockResolvedValueOnce([{ is_muted: true, muted_until: '2026-01-01T00:30:00Z', mute_strikes: 1, retry_after_seconds: 1800 }]);
-    await expect(MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload(), 'cid')).rejects.toMatchObject({ name: 'RateLimitError' });
+    await expect(MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload(), 'cid')).rejects.toMatchObject({ name: 'RateLimitError' });
     expect(sql).toHaveBeenCalledTimes(2); // nunca chega no INSERT
   });
 
@@ -138,8 +145,8 @@ describe('MessageService.sendMessage — idempotência e silenciamento progressi
     sql
       .mockResolvedValueOnce([]) // sem duplicata
       .mockResolvedValueOnce([{ is_muted: false, muted_until: null, mute_strikes: 0, retry_after_seconds: 0 }])
-      .mockResolvedValueOnce([{ message_id: 7, created_at: '2026-01-01T00:00:05Z' }]);
-    const res = await MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload(), 'cid');
+      .mockResolvedValueOnce([{ message_id: 7, created_at: '2026-01-01T00:00:05Z', participant_low: 'm1', participant_high: 'peer-1' }]);
+    const res = await MessageService.sendMessage(sql, env, MEMBER, 'conv-1', validPayload(), 'cid');
     expect(res).toEqual({ success: true, messageId: 7, createdAt: '2026-01-01T00:00:05Z' });
   });
 
@@ -149,7 +156,7 @@ describe('MessageService.sendMessage — idempotência e silenciamento progressi
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([{ is_muted: false, muted_until: null, mute_strikes: 0, retry_after_seconds: 0 }])
       .mockRejectedValueOnce(new Error('É preciso ter uma conexão aceita para trocar mensagens.'));
-    await expect(MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload(), 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload(), 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
   test('erro desconhecido do banco é relançado e logado (não vira ForbiddenError silenciosamente)', async () => {
@@ -159,27 +166,27 @@ describe('MessageService.sendMessage — idempotência e silenciamento progressi
       .mockResolvedValueOnce([{ is_muted: false, muted_until: null, mute_strikes: 0, retry_after_seconds: 0 }])
       .mockRejectedValueOnce(new Error('conexão com o banco perdida'))
       .mockResolvedValueOnce(undefined); // logError
-    await expect(MessageService.sendMessage(sql, MEMBER, 'conv-1', validPayload(), 'cid')).rejects.toThrow('conexão com o banco perdida');
+    await expect(MessageService.sendMessage(sql, env, MEMBER,'conv-1', validPayload(), 'cid')).rejects.toThrow('conexão com o banco perdida');
   });
 });
 
 describe('MessageService.markConversationRead', () => {
   test('marcador inválido (negativo) lança ValidationError', async () => {
     const sql = makeSql();
-    await expect(MessageService.markConversationRead(sql, MEMBER, 'conv-1', -1)).rejects.toMatchObject({ name: 'ValidationError' });
+    await expect(MessageService.markConversationRead(sql, env, MEMBER,'conv-1', -1)).rejects.toMatchObject({ name: 'ValidationError' });
     expect(sql).not.toHaveBeenCalled();
   });
 
   test('conversa que não pertence à pessoa lança NotFoundError', async () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([]);
-    await expect(MessageService.markConversationRead(sql, MEMBER, 'conv-1', 10)).rejects.toMatchObject({ name: 'NotFoundError' });
+    await expect(MessageService.markConversationRead(sql, env, MEMBER,'conv-1', 10)).rejects.toMatchObject({ name: 'NotFoundError' });
   });
 
   test('atualiza o marcador do lado correto do par', async () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([{ id: 'conv-1' }]);
-    const res = await MessageService.markConversationRead(sql, MEMBER, 'conv-1', 10);
+    const res = await MessageService.markConversationRead(sql, env, MEMBER,'conv-1', 10);
     expect(res).toEqual({ success: true });
   });
 });
@@ -187,14 +194,14 @@ describe('MessageService.markConversationRead', () => {
 describe('MessageService.clearConversation', () => {
   test('conversa inválida lança ValidationError sem tocar o banco', async () => {
     const sql = makeSql();
-    await expect(MessageService.clearConversation(sql, MEMBER, '', 'cid')).rejects.toMatchObject({ name: 'ValidationError' });
+    await expect(MessageService.clearConversation(sql, env, MEMBER,'', 'cid')).rejects.toMatchObject({ name: 'ValidationError' });
     expect(sql).not.toHaveBeenCalled();
   });
 
   test('quem não participa da conversa lança ForbiddenError, sem apagar nada', async () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([{ participant_low: 'outro-1', participant_high: 'outro-2' }]);
-    await expect(MessageService.clearConversation(sql, MEMBER, 'conv-1', 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(MessageService.clearConversation(sql, env, MEMBER,'conv-1', 'cid')).rejects.toMatchObject({ name: 'ForbiddenError' });
     expect(sql).toHaveBeenCalledTimes(1);
   });
 
@@ -204,7 +211,7 @@ describe('MessageService.clearConversation', () => {
       .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }]) // assertParticipant
       .mockResolvedValueOnce(undefined) // UPDATE conversations (só marcador por participante)
       .mockResolvedValueOnce(undefined); // logAudit
-    const res = await MessageService.clearConversation(sql, MEMBER, 'conv-1', 'cid');
+    const res = await MessageService.clearConversation(sql, env, MEMBER,'conv-1', 'cid');
     expect(res).toEqual({ success: true, message: 'Conversa limpa.' });
     expect(sql).toHaveBeenCalledTimes(3);
     const updateCall = sql.mock.calls[1][0].join('');
@@ -312,7 +319,46 @@ describe('MessageService.syncMessaging', () => {
   test('devolve contadores de não lidas e pedidos pendentes', async () => {
     const sql = makeSql();
     sql.mockResolvedValueOnce([{ unread_messages: '3', pending_requests: '1' }]);
-    const res = await MessageService.syncMessaging(sql, MEMBER);
+    const res = await MessageService.syncMessaging(sql, env, MEMBER);
     expect(res).toEqual({ success: true, unreadMessages: 3, pendingConnectionRequests: 1 });
+  });
+
+  test('cache hit (achado de escala de 2026-09-25): devolve do KV, nem consulta o banco', async () => {
+    const sql = makeSql();
+    const cachedEnv = makeEnv({ HOT_CACHE: { get: jest.fn().mockResolvedValue(JSON.stringify({ unreadMessages: 2, pendingConnectionRequests: 0 })), put: jest.fn(), delete: jest.fn() } });
+    const res = await MessageService.syncMessaging(sql, cachedEnv, MEMBER);
+    expect(res).toEqual({ success: true, unreadMessages: 2, pendingConnectionRequests: 0 });
+    expect(sql).not.toHaveBeenCalled();
+    expect(cachedEnv.HOT_CACHE.get).toHaveBeenCalledWith('cache:sync:m1');
+  });
+});
+
+describe('MessageService — invalidação do cache de badge (achado de escala de 2026-09-25)', () => {
+  test('sendMessage invalida o cache do DESTINATÁRIO (nunca o do próprio remetente)', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([]) // sem duplicata
+      .mockResolvedValueOnce([{ is_muted: false, muted_until: null, mute_strikes: 0, retry_after_seconds: 0 }])
+      .mockResolvedValueOnce([{ message_id: 7, created_at: '2026-01-01T00:00:05Z', participant_low: 'm1', participant_high: 'peer-1' }]);
+    await MessageService.sendMessage(sql, env, MEMBER, 'conv-1', validPayload(), 'cid');
+    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:sync:peer-1');
+    expect(env.HOT_CACHE.delete).not.toHaveBeenCalledWith('cache:sync:m1');
+  });
+
+  test('markConversationRead invalida o cache do PRÓPRIO usuário', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([{ id: 'conv-1' }]);
+    await MessageService.markConversationRead(sql, env, MEMBER, 'conv-1', 10);
+    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:sync:m1');
+  });
+
+  test('clearConversation invalida o cache do PRÓPRIO usuário', async () => {
+    const sql = makeSql();
+    sql
+      .mockResolvedValueOnce([{ participant_low: 'm1', participant_high: 'peer-1' }])
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
+    await MessageService.clearConversation(sql, env, MEMBER, 'conv-1', 'cid');
+    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:sync:m1');
   });
 });

@@ -107,18 +107,30 @@ describe('EventService.listEvents — cache (achado #4 da auditoria)', () => {
     const env = makeEnv({ HOT_CACHE: { get: jest.fn().mockResolvedValue(JSON.stringify(cachedEvents)), put: jest.fn(), delete: jest.fn() } });
 
     const res = await EventService.listEvents(sql, env, null);
-    expect(res).toEqual({ success: true, events: cachedEvents });
+    expect(res).toEqual({ success: true, events: [{ id: 'e1', title: 'Cacheado', isRegistered: false }] });
     expect(sql).not.toHaveBeenCalled();
   });
 
-  test('identidade logada nunca usa cache, mesmo com HOT_CACHE populado (evita vazar dado entre usuários)', async () => {
+  test('member com cache hit na camada "members": usa o catálogo cacheado, mas SEMPRE consulta as próprias inscrições (nunca cacheadas)', async () => {
     const sql = makeSql();
-    sql.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
-    const env = makeEnv({ HOT_CACHE: { get: jest.fn().mockResolvedValue(JSON.stringify([{ id: 'nao-deveria-aparecer' }])), put: jest.fn(), delete: jest.fn() } });
+    sql.mockResolvedValueOnce([{ event_id: 'e1' }]); // "minhas inscrições" — única query esperada
+    const cachedShared = [{ id: 'e1', title: 'Cacheado', capacity: null }];
+    const env = makeEnv({ HOT_CACHE: { get: jest.fn().mockResolvedValue(JSON.stringify(cachedShared)), put: jest.fn(), delete: jest.fn() } });
 
-    await EventService.listEvents(sql, env, MEMBER);
-    expect(env.HOT_CACHE.get).not.toHaveBeenCalled();
-    expect(sql).toHaveBeenCalled();
+    const res = await EventService.listEvents(sql, env, MEMBER);
+    expect(env.HOT_CACHE.get).toHaveBeenCalledWith('cache:events:members:v2');
+    expect(sql).toHaveBeenCalledTimes(1); // só a consulta pessoal, nunca o catálogo
+    expect(res.events).toEqual([{ id: 'e1', title: 'Cacheado', capacity: null, isRegistered: true }]);
+  });
+
+  test('camadas diferentes usam chaves de cache diferentes (visitor não lê o cache de member)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([]).mockResolvedValueOnce([]); // catálogo (cache miss) + "minhas inscrições"
+    const env = makeEnv();
+
+    await EventService.listEvents(sql, env, VISITOR);
+    expect(env.HOT_CACHE.get).toHaveBeenCalledWith('cache:events:authenticated:v2');
+    expect(env.HOT_CACHE.get).not.toHaveBeenCalledWith('cache:events:members:v2');
   });
 });
 
@@ -133,7 +145,9 @@ describe('EventService.registerForEvent — invalida cache de eventos públicos'
       .mockResolvedValueOnce([{ email_notifications: false }]);
 
     await EventService.registerForEvent(sql, env, VISITOR, 'evento-publico-1', 'cid');
-    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:events:public:v1');
+    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:events:public:v2');
+    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:events:authenticated:v2');
+    expect(env.HOT_CACHE.delete).toHaveBeenCalledWith('cache:events:members:v2');
   });
 });
 

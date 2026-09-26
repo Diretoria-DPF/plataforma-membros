@@ -12,6 +12,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { invalidateCached, messageSyncCacheKey } from '../cache.js';
 
 function assertMemberOrAdmin(identity) {
   S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
@@ -19,7 +20,7 @@ function assertMemberOrAdmin(identity) {
 
 const GENERIC_REQUEST_RESULT = { success: true, message: 'Se existir uma conta com esses dados, o pedido foi enviado.' };
 
-export async function sendConnectionRequest(sql, identity, input, correlationId) {
+export async function sendConnectionRequest(sql, env, identity, input, correlationId) {
   assertMemberOrAdmin(identity);
   await S.enforceRateLimit(sql, 'CONNECTION_REQUEST', identity.profileId, C.RATE_LIMITS.CONNECTION_REQUEST.MAX_ATTEMPTS, C.RATE_LIMITS.CONNECTION_REQUEST.WINDOW_SECONDS);
 
@@ -61,12 +62,14 @@ export async function sendConnectionRequest(sql, identity, input, correlationId)
       AND GREATEST(requester_id, addressee_id) = GREATEST(${identity.profileId}::uuid, ${targetId}::uuid)
   `;
 
+  let requestCreatedOrReopened = false;
   try {
     if (!existing.length) {
       await sql`
         INSERT INTO connections (requester_id, addressee_id, status, requested_via)
         VALUES (${identity.profileId}::uuid, ${targetId}::uuid, 'pending'::connection_status, ${requestedVia})
       `;
+      requestCreatedOrReopened = true;
     } else if (
       existing[0].status === 'declined' &&
       (!existing[0].declined_until || new Date(existing[0].declined_until).getTime() <= Date.now())
@@ -80,6 +83,7 @@ export async function sendConnectionRequest(sql, identity, input, correlationId)
           declined_until = NULL, responded_at = NULL
         WHERE id = ${existing[0].id}::uuid
       `;
+      requestCreatedOrReopened = true;
     }
     // Qualquer outro caso (já aceita, já pendente, recusa ainda em
     // cooldown, ou bloqueio) é um no-op silencioso — mesma resposta.
@@ -97,6 +101,7 @@ export async function sendConnectionRequest(sql, identity, input, correlationId)
     throw err;
   }
 
+  if (requestCreatedOrReopened) await invalidateCached(env, messageSyncCacheKey(targetId));
   await Logging.logAudit(sql, correlationId, identity.profileId, 'SEND_CONNECTION_REQUEST', 'profile', targetId, 'success', null);
   return GENERIC_REQUEST_RESULT;
 }
@@ -120,7 +125,7 @@ export async function listIncomingRequests(sql, identity) {
   };
 }
 
-export async function respondToRequest(sql, identity, connectionId, decision, correlationId) {
+export async function respondToRequest(sql, env, identity, connectionId, decision, correlationId) {
   assertMemberOrAdmin(identity);
   const id = S.normalizeText(connectionId);
   const action = S.normalizeText(decision);
@@ -141,6 +146,7 @@ export async function respondToRequest(sql, identity, connectionId, decision, co
 
   if (!rows.length) throw E.ConflictError('Não foi possível processar este pedido de conexão.');
 
+  await invalidateCached(env, messageSyncCacheKey(identity.profileId));
   await Logging.logAudit(sql, correlationId, identity.profileId, action === 'accept' ? 'ACCEPT_CONNECTION' : 'DECLINE_CONNECTION', 'connection', id, 'success', null);
   return { success: true, message: action === 'accept' ? 'Conexão aceita.' : 'Pedido de conexão recusado.' };
 }

@@ -6,7 +6,7 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 import { sendEmail } from '../mailer.js';
-import { getCached, setCached, invalidateCached, CACHE_KEYS, CACHE_TTL_SECONDS } from '../cache.js';
+import { getCached, setCached, invalidateCached, CACHE_KEYS, EVENTS_TTL_SECONDS } from '../cache.js';
 
 function escapeHtmlForEmail(text) {
   return String(text || '')
@@ -56,42 +56,85 @@ async function sendEventRegistrationEmail(env, identity, event, correlationId, s
   }
 }
 
-function visibilitySql(identity) {
-  if (!identity) return "visibility = 'public'::event_visibility";
-  if (identity.role === C.ROLES.MEMBER || identity.role === C.ROLES.ADMIN) {
-    return "visibility IN ('public','authenticated','members')";
-  }
-  return "visibility IN ('public','authenticated')";
+// Fonte única de verdade pra visibilidade — 3 camadas fixas, nunca vindas
+// de entrada do usuário, por isso é seguro interpolar o texto da cláusula
+// direto na query (sql(texto, params) do driver, não o template tag, que
+// trataria qualquer ${} como parâmetro ligado e quebraria a sintaxe do IN).
+const VISIBILITY_TIER_SQL = {
+  public: "visibility = 'public'::event_visibility",
+  authenticated: "visibility IN ('public','authenticated')",
+  members: "visibility IN ('public','authenticated','members')",
+};
+
+function visibilityTier(identity) {
+  if (!identity) return 'public';
+  if (identity.role === C.ROLES.MEMBER || identity.role === C.ROLES.ADMIN) return 'members';
+  return 'authenticated';
+}
+
+function tierCacheKey(tier) {
+  if (tier === 'members') return CACHE_KEYS.EVENTS_MEMBERS;
+  if (tier === 'authenticated') return CACHE_KEYS.EVENTS_AUTHENTICATED;
+  return CACHE_KEYS.EVENTS_PUBLIC;
+}
+
+/**
+ * Uma mudança em um evento pode afetar qualquer camada onde ele é visível
+ * (ex.: publicar um evento 'members' só aparece na camada members, mas
+ * fechar vagas de um evento 'public' afeta as 3) — mais simples e seguro
+ * invalidar as 3 sempre do que calcular exatamente quais.
+ */
+async function invalidateEventsCache(env) {
+  await Promise.all([
+    invalidateCached(env, CACHE_KEYS.EVENTS_PUBLIC),
+    invalidateCached(env, CACHE_KEYS.EVENTS_AUTHENTICATED),
+    invalidateCached(env, CACHE_KEYS.EVENTS_MEMBERS),
+  ]);
 }
 
 export async function listEvents(sql, env, identity) {
-  // Cache só para visitante anônimo (identity null): é o único caso sem
-  // personalização (visibilitySql vira só 'public', e myRegistrations
-  // abaixo fica vazio sem consultar). Para qualquer identidade logada
-  // (visitor/member/admin) o resultado varia por role e por inscrições
-  // próprias — cachear isso vazaria dado de um usuário pro cache que
-  // outro usuário leria, então NUNCA cacheamos quando identity existe.
-  if (!identity) {
-    const cachedEvents = await getCached(env, CACHE_KEYS.EVENTS_PUBLIC);
-    if (cachedEvents) return { success: true, events: cachedEvents };
-  }
+  // O catálogo de eventos (tudo exceto isRegistered) é idêntico pra
+  // qualquer requisitante na mesma camada de visibilidade — cacheável por
+  // camada (achado da auditoria de escala de 2026-09-25: a versão antiga
+  // só cacheava o caso anônimo, que quase nunca acontece na prática,
+  // porque a tela de eventos exige login). isRegistered é pessoal e NUNCA
+  // entra no cache — é sempre calculado a partir de uma consulta própria,
+  // pequena e barata, e mesclado depois.
+  const tier = visibilityTier(identity);
+  const tierKey = tierCacheKey(tier);
 
-  // Cláusula de visibilidade vem de uma lista fechada de 3 strings fixas
-  // (visibilitySql), nunca de entrada do usuário — por isso é seguro
-  // interpolar no texto da query aqui, usando a forma de chamada
-  // sql(texto, params) do driver em vez do template tag (que trataria
-  // qualquer ${} como parâmetro ligado, o que quebraria a sintaxe SQL da
-  // cláusula IN/=).
-  const rows = await sql(
-    `SELECT e.id AS id, e.title AS title, e.description AS description, e.event_date AS event_date,
-            e.visibility AS visibility, e.capacity AS capacity, e.status AS status, e.image_url AS image_url,
-            e.location AS location,
-            (SELECT count(*) FROM event_registrations r WHERE r.event_id = e.id) AS registered_count
-     FROM events e
-     WHERE e.status IN ('published'::event_status, 'in_progress'::event_status) AND ${visibilitySql(identity)}
-     ORDER BY e.event_date ASC`,
-    []
-  );
+  let sharedEvents = await getCached(env, tierKey);
+  if (!sharedEvents) {
+    const rows = await sql(
+      `SELECT e.id AS id, e.title AS title, e.description AS description, e.event_date AS event_date,
+              e.visibility AS visibility, e.capacity AS capacity, e.status AS status, e.image_url AS image_url,
+              e.location AS location,
+              (SELECT count(*) FROM event_registrations r WHERE r.event_id = e.id) AS registered_count
+       FROM events e
+       WHERE e.status IN ('published'::event_status, 'in_progress'::event_status) AND ${VISIBILITY_TIER_SQL[tier]}
+       ORDER BY e.event_date ASC`,
+      []
+    );
+
+    sharedEvents = rows.map((row) => {
+      const spotsLeft = row.capacity === null ? null : Math.max(row.capacity - row.registered_count, 0);
+      return {
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        eventDate: row.event_date,
+        visibility: row.visibility,
+        capacity: row.capacity,
+        status: row.status,
+        imageUrl: row.image_url,
+        location: row.location,
+        registeredCount: row.registered_count,
+        spotsLeft,
+      };
+    });
+
+    await setCached(env, tierKey, sharedEvents, EVENTS_TTL_SECONDS);
+  }
 
   let myRegistrations = {};
   if (identity) {
@@ -99,25 +142,7 @@ export async function listEvents(sql, env, identity) {
     mine.forEach((r) => { myRegistrations[r.event_id] = true; });
   }
 
-  const events = rows.map((row) => {
-    const spotsLeft = row.capacity === null ? null : Math.max(row.capacity - row.registered_count, 0);
-    return {
-      id: row.id,
-      title: row.title,
-      description: row.description,
-      eventDate: row.event_date,
-      visibility: row.visibility,
-      capacity: row.capacity,
-      status: row.status,
-      imageUrl: row.image_url,
-      location: row.location,
-      registeredCount: row.registered_count,
-      spotsLeft,
-      isRegistered: !!myRegistrations[row.id],
-    };
-  });
-
-  if (!identity) await setCached(env, CACHE_KEYS.EVENTS_PUBLIC, events, CACHE_TTL_SECONDS);
+  const events = sharedEvents.map((event) => Object.assign({}, event, { isRegistered: !!myRegistrations[event.id] }));
   return { success: true, events };
 }
 
@@ -155,7 +180,7 @@ export async function registerForEvent(sql, env, identity, eventId, correlationI
     throw err;
   }
 
-  await invalidateCached(env, CACHE_KEYS.EVENTS_PUBLIC);
+  await invalidateEventsCache(env);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'REGISTER_EVENT', 'event', id, 'success', null);
 
   // O e-mail de confirmação de inscrição é o que a preferência "Quero
@@ -199,7 +224,7 @@ export async function createEvent(sql, env, identity, input, correlationId) {
   `;
 
   const id = rows[0].id;
-  await invalidateCached(env, CACHE_KEYS.EVENTS_PUBLIC);
+  await invalidateEventsCache(env);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'CREATE_EVENT', 'event', id, 'success', null);
   return { success: true, message: 'Evento criado como rascunho.', eventId: id };
 }
@@ -229,7 +254,7 @@ export async function updateEventStatus(sql, env, identity, eventId, newStatus, 
   }
 
   await sql`UPDATE events SET status = ${status}::event_status WHERE id = ${id}::uuid`;
-  await invalidateCached(env, CACHE_KEYS.EVENTS_PUBLIC);
+  await invalidateEventsCache(env);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'UPDATE_EVENT_STATUS', 'event', id, 'success', { newStatus: status });
   return { success: true, message: 'Status do evento atualizado.' };
 }
