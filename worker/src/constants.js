@@ -158,7 +158,7 @@ export const LIMITS = {
 // frontend/index.html (texto fixo, sem template de servidor).
 export const LEGAL_VERSIONS = {
   TERMS: '2026-09-25',
-  PRIVACY: '2026-09-25',
+  PRIVACY: '2026-09-26',
 };
 
 export const RATE_LIMITS = {
