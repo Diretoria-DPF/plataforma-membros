@@ -54,8 +54,8 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 });
 
 // Área "Aprender" (unificação com o o-bala-vip — docs/PLANO_UNIFICACAO_LAIFT.md):
-// learning.js não guarda segredo nenhum (a URL do Apps Script é pública por
-// natureza) e é copiado sem ofuscação, como os módulos acima. modulos/ (as
+// learning.js não guarda segredo nenhum e é copiado sem ofuscação, como os
+// módulos acima. modulos/ (as
 // páginas autônomas de cada módulo, com dados, CSS e o modelo 3D) e vendor/
 // (bibliotecas de terceiros versionadas no repositório) vão inteiros —
 // cópia recursiva para nenhum arquivo novo ficar de fora da publicação,

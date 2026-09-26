@@ -17,7 +17,7 @@
   // navegador do próprio usuário (desativar JS, outro navegador, ferramentas
   // de rede como o próprio "curl" continuam funcionando). Como não há nenhum
   // segredo no código do cliente — senha, hash, credencial de banco, tudo
-  // fica só no servidor (Apps Script) — não há o que "vazar" mesmo com o
+  // fica só no servidor (Worker + Neon) — não há o que "vazar" mesmo com o
   // DevTools aberto. Isto existe apenas por pedido explícito, como
   // decoração/atrito leve, e pode ser removido a qualquer momento sem
   // qualquer impacto de segurança real.
@@ -258,8 +258,7 @@
   // ===========================================================================
   // Ponte com o servidor — API HTTP/JSON do Worker (worker/src/index.js).
   //
-  // O Worker responde preflight CORS de verdade (diferente do Apps Script
-  // antigo, que não tinha como), então aqui já dá pra usar
+  // O Worker responde preflight CORS de verdade, então aqui já dá pra usar
   // "application/json" normalmente — o navegador dispara um OPTIONS antes,
   // e o Worker responde com os cabeçalhos corretos restritos à origem
   // permitida (ver ALLOWED_ORIGINS em worker/wrangler.toml).

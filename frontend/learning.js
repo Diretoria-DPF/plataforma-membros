@@ -17,13 +17,6 @@
 (function () {
   'use strict';
 
-  // Backend legado dos módulos (Google Apps Script). Desde a Fase 2 a
-  // plataforma não fala mais com ele (estatísticas, presença e credencial
-  // vêm da Worker); a URL continua exportada SÓ porque módulos de outras
-  // equipes ainda a leem via laift-identity.js (window.APPS_SCRIPT_GATEWAY)
-  // até a Onda 2 (docs/PLANO_FASES_2_3_4.md). ÚNICO lugar com a URL.
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXvBYrHBIXNjHYItuq2LXKt1vkmh2m_CME-5aZqkxUJhl7ktJjemuasbvdEweH95k/exec';
-
   // Nomes de exibição dos módulos como a Worker os agrega (learning_attempts.module).
   var STATS_MODULE_LABELS = [
     ['farmacologia', 'Farmacologia'],
@@ -159,9 +152,9 @@
 
   /**
    * Estatísticas da própria sessão, calculadas pela Worker a partir de
-   * learning_attempts (apiLearnGetMyStats). Sem e-mail, sem Apps Script:
-   * a identidade é a da sessão. O histórico antigo da planilha ainda não
-   * foi importado (pendência em docs/FASE_2_DADOS_PRESENCA.md).
+   * learning_attempts (apiLearnGetMyStats): a identidade é a da sessão.
+   * O histórico do sistema antigo ainda não foi importado (pendência em
+   * docs/FASE_2_DADOS_PRESENCA.md).
    */
   function loadStats() {
     var A = app();
@@ -347,7 +340,6 @@
   }
 
   window.LaiftLearning = {
-    APPS_SCRIPT_URL: APPS_SCRIPT_URL,
     loadPanel: loadPanel,
     loadFiscalPanel: loadFiscalPanel,
     openModule: openModule,

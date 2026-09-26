@@ -320,7 +320,7 @@
   <div id="labChatDrawer" role="dialog" aria-label="Preceptor de bancada">
     <div class="lab-chat-header">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <h4>💬 Preceptor IA (Groq 120B)</h4>
+        <h4>💬 Preceptor IA</h4>
         <span class="chat-status-badge" id="preceptorStatusBadge" role="status" aria-live="polite" data-state="online">Online</span>
       </div>
       <div style="display: flex; align-items: center; gap: 6px;">
@@ -351,9 +351,9 @@
       <h3>📖 Guia Técnico de Bancada & Síntese</h3>
       <p>Simulador farmacotécnico e físico-químico da LAIFT com inteligência artificial integrada.</p>
       <ul>
-        <li><strong>Preceptor 120B:</strong> Pergunte no chat sobre qualquer rota de síntese (Dipirona, Aspirina, Paracetamol, etc.). O preceptor responderá considerando reagentes e mecanismos estequiométricos.</li>
+        <li><strong>Preceptor com IA:</strong> Pergunte no chat sobre qualquer rota de síntese (Dipirona, Aspirina, Paracetamol, etc.). O preceptor responderá considerando reagentes e mecanismos estequiométricos. Há uma cota diária de perguntas por pessoa.</li>
         <li><strong>Visualização Híbrida 2D/3D:</strong> Alterne entre a fórmula estrutural plana e o modelo tridimensional WebGL manipulável diretamente na aba de Molécula.</li>
-        <li><strong>Memória de Aprendizado:</strong> As perguntas e conformações pesquisadas são armazenadas localmente no navegador via IndexedDB para resposta imediata sem consumo de tokens.</li>
+        <li><strong>Memória de Aprendizado:</strong> As conformações 3D pesquisadas ficam guardadas no navegador (IndexedDB) e as rotas de síntese mais pedidas ficam em cache no servidor, para resposta imediata.</li>
       </ul>
       <button class="close-manual" data-action="fecharManual">Fechar Guia</button>
     </div>

@@ -6,7 +6,9 @@
  *   em porta livre, com os mesmos MIME types de scripts/serve-dist.js.
  * - Simula a Worker: toda chamada a *.workers.dev é respondida por
  *   `workerHandlers[action](args, ctx)` ou por uma resposta padrão segura.
- * - Simula o Apps Script legado (enquanto existir) com `appsScriptHandler`.
+ * - Registra (e aborta) toda requisição a outro host em `calls.external`
+ *   — os testes conferem por aí que nada além da Worker recebe POST nem
+ *   o token de sessão.
  * - Aborta qualquer outro host externo (CDNs ficam indisponíveis — o teste
  *   precisa passar mesmo assim, como no ambiente de CI/sandbox).
  * - Registra chamadas e erros de página (de todos os frames).
@@ -99,7 +101,6 @@ function defaultWorkerReply(action, args, ctx) {
  * @param {object} [opts.profile]  sobrescreve { fullName, email, username }
  * @param {'light'|'dark'|'system'} [opts.theme]
  * @param {Object<string, Function>} [opts.workerHandlers]  action → (args, ctx) => resposta (ou Promise)
- * @param {Function} [opts.appsScriptHandler]  (body) => resposta do Apps Script legado
  * @param {object} [opts.viewport]  ex.: { width: 360, height: 740 } para celular
  */
 async function startApp(opts = {}) {
@@ -111,7 +112,7 @@ async function startApp(opts = {}) {
     theme: opts.theme || 'light',
     profile: Object.assign({ fullName: 'Ana Teste', email: 'ana@exemplo.com', username: 'ana', role: opts.role || 'member' }, opts.profile || {}),
   };
-  const calls = { worker: [], appsScript: [] };
+  const calls = { worker: [], external: [] };
   const errors = [];
 
   const browser = await chromium.launch();
@@ -135,13 +136,9 @@ async function startApp(opts = {}) {
       const reply = handler ? await handler(args, ctx) : defaultWorkerReply(body.action, args, ctx);
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(reply) });
     }
-    if (url.includes('script.google.com')) {
-      let body = {};
-      try { body = JSON.parse(req.postData() || '{}'); } catch (e) { /* corpo inválido */ }
-      calls.appsScript.push(body);
-      const reply = opts.appsScriptHandler ? await opts.appsScriptHandler(body) : { sucesso: false, mensagem: 'e2e: Apps Script simulado' };
-      return route.fulfill({ status: 200, contentType: 'text/plain', body: JSON.stringify(reply) });
-    }
+    // Qualquer outro host (CDNs, APIs públicas, backends antigos): registra
+    // e aborta — o teste precisa passar sem rede, como no CI.
+    calls.external.push({ url, method: req.method(), body: req.postData() || '' });
     return route.abort();
   });
 

@@ -173,7 +173,7 @@ module.exports = async function fase3() {
 
     await app.login();
     const clinic = await app.openModule('clinica');
-    check(await clinic.evaluate(() => typeof ApiService === 'undefined'), 'clínica não carrega mais o api-service.js (Apps Script)');
+    check(await clinic.evaluate(() => !document.querySelector('script[src*="api-service"]')), 'clínica não carrega mais o api-service.js (backend legado)');
 
     await waitText(clinic, '#aiQuotaInfo', 'casos');
     check((await clinic.textContent('#aiQuotaInfo')).includes('6 de 8 casos'), 'cota restante de IA aparece perto de "Gerar Caso com IA"');
@@ -293,8 +293,8 @@ module.exports = async function fase3() {
     check((await lab.locator('#labChatMessages img').count()) === 0, 'chat do laboratório não cria <img> a partir da resposta da IA');
 
     // ---- Nada de Apps Script e nenhum XSS executado ----
-    const legacy = app.calls.appsScript.filter((c) => LEGACY_ACTIONS.indexOf(c.acao) !== -1);
-    check(legacy.length === 0, 'nenhuma chamada da clínica/laboratório ao Apps Script' + (legacy.length ? ': ' + legacy.map((c) => c.acao).join(', ') : ''));
+    const legacy = app.calls.external.filter((c) => c.method !== 'GET' || LEGACY_ACTIONS.some((a) => c.body.includes(a)));
+    check(legacy.length === 0, 'nenhuma chamada da clínica/laboratório ao backend legado' + (legacy.length ? ': ' + legacy.map((c) => c.url).join(', ') : ''));
     check((await app.page.evaluate(() => window.__xss)) === undefined, 'nenhum payload de XSS executou');
 
     const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));

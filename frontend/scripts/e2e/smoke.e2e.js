@@ -44,8 +44,10 @@ module.exports = async function smoke() {
     await app.page.click('#btn-logout');
     check((await app.page.locator('iframe.learn-frame').count()) === 0, 'logout descarta os iframes dos módulos');
 
-    const leaked = [...app.calls.appsScript].some((c) => JSON.stringify(c).includes(app.ctx.sessionToken));
-    check(!leaked, 'o token de sessão da plataforma nunca é enviado ao Apps Script');
+    const leaked = app.calls.external.some((c) => (c.url + c.body).includes(app.ctx.sessionToken));
+    check(!leaked, 'o token de sessão da plataforma nunca é enviado a outro host além da Worker');
+    const posts = app.calls.external.filter((c) => c.method !== 'GET');
+    check(posts.length === 0, 'nenhum POST para fora da Worker (o backend legado saiu)' + (posts.length ? ': ' + posts.map((c) => c.url).join(', ') : ''));
 
     const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
     check(realErrors.length === 0, 'sem erros de JavaScript nas páginas' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));

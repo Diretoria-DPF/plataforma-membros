@@ -8,7 +8,8 @@
  * foi descartado na unificação). A fonte da verdade agora é a sessão da
  * plataforma, validada pela Worker; aqui só se lê o que o app principal já
  * expõe em `window.App.getIdentity()` — nome, e-mail e papel. O token de
- * sessão da plataforma NUNCA passa por aqui e nunca é enviado ao Apps Script.
+ * sessão da plataforma NUNCA passa por aqui: as chamadas à Worker vão pela
+ * própria plataforma (LaiftApi, abaixo).
  *
  * Deve ser o PRIMEIRO script de cada módulo: se a página for aberta fora da
  * plataforma (link direto, sem ninguém logado), redireciona para o login.
@@ -47,7 +48,8 @@
   /**
    * Identidade da pessoa logada na plataforma, no formato que os módulos já
    * esperavam da sessão antiga: { identifier, name, type, email, role }.
-   * `identifier` é o e-mail da conta (o Apps Script indexa métricas por ele).
+   * `identifier` é o e-mail da conta (exibição; a Worker identifica a
+   * pessoa pela sessão, nunca por este valor).
    * Retorna null se não houver plataforma/sessão.
    */
   function get() {
@@ -80,13 +82,6 @@
   if (!host) {
     global.location.replace(LOGIN_URL);
   }
-
-  // Backend legado (Google Apps Script) dos módulos — métricas, IA da
-  // clínica/laboratório e terminal fiscal. A URL vive num único lugar, o
-  // frontend/learning.js da plataforma; os módulos que já liam
-  // `window.APPS_SCRIPT_GATEWAY` passam a receber o valor de lá.
-  // Migração para a Worker prevista na Fase 2 (docs/PLANO_UNIFICACAO_LAIFT.md).
-  global.APPS_SCRIPT_GATEWAY = (host && host.LaiftLearning && host.LaiftLearning.APPS_SCRIPT_URL) || '';
 
   // Cliques/teclas/toques dentro de um iframe não chegam ao documento da
   // plataforma, que é quem adia a expiração da sessão por inatividade. Sem

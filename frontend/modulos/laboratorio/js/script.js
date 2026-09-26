@@ -1,7 +1,7 @@
 /**
  * LAIFT — LABORATÓRIO VIRTUAL DE BANCADA & SÍNTESE FARMACÊUTICA
  * Motor Quimiométrico, Cinemática Reacional, Visualizador 2D/3D Híbrido (3Dmol.js),
- * Cache Local IndexedDB com Aprendizado Contínuo e Preceptor Conectado ao Groq 120B.
+ * Cache local em IndexedDB e Preceptor de bancada com IA (via Worker, apiLearnLabPreceptor).
  */
 (function() {
   'use strict';

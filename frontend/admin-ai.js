@@ -1,7 +1,7 @@
 /**
  * frontend/admin-ai.js
  * Painel admin "IA" (Fase 3 — docs/FASE_3_IA_CLINICA.md). Substitui o
- * cartão de saúde da IA que ficava no terminal fiscal (Apps Script) e
+ * antigo cartão de saúde da IA do terminal fiscal e
  * reúne:
  *  - auditoria do pool de chaves do Groq (apiAdminAiHealth): percentual
  *    geral e um cartão por chave, só com o final MASCARADO (…abcd) — a

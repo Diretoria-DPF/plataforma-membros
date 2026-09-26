@@ -94,7 +94,7 @@ async function memberScenario() {
     check(stats.hostileAsText && stats.injectedImg === 0, 'rótulo de conquista é renderizado como texto (sem HTML injetado)');
     const statsCall = app.calls.worker.find((c) => c.action === 'apiLearnGetMyStats');
     check(!!statsCall && statsCall.args[0] === app.ctx.sessionToken, 'apiLearnGetMyStats vai à Worker com o token da sessão');
-    check(app.calls.appsScript.every((c) => c.acao !== 'obterDashboardAluno'), 'o hub não consulta mais o Apps Script');
+    check(app.calls.external.every((c) => c.method === 'GET'), 'o hub não envia nada a outro backend além da Worker');
 
     // ---- Credencial com QR v2 ----
     await app.page.click('#btn-learn-credential');
@@ -336,7 +336,7 @@ async function adminFiscalScenario() {
     const pageOverflow = await app.page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     check(overflow <= 0 && pageOverflow <= 0, 'terminal fiscal cabe em 360 px sem rolagem horizontal (' + overflow + '/' + pageOverflow + ')');
 
-    check(app.calls.appsScript.length === 0, 'o terminal fiscal não fala mais com o Apps Script');
+    check(app.calls.external.every((c) => c.method === 'GET'), 'o terminal fiscal não envia nada a outro backend além da Worker');
     const errs = realErrors(app);
     check(errs.length === 0, 'sem erros de JavaScript (fiscal)' + (errs.length ? ': ' + errs.join(' | ') : ''));
   } finally {

@@ -25,6 +25,10 @@ const NOT_OWNED = [/laboratorio[\\/]js[\\/]lab-preceptor\.js$/];
 // Bancos de dados estáticos (só literais de dados, sem DOM) ficam de fora.
 const DATA_FILES = /[\\/]data[\\/]/;
 
+// Restos do backend legado (Google Apps Script). Montado por partes para o
+// próprio teste não aparecer no `grep` de verificação da remoção.
+const LEGACY_BACKEND = new RegExp(['APPS_' + 'SCRIPT', 'script' + '\\.google', 'Api' + 'Service', 'salvarBackupApi', 'registrarMetricasQuiz', 'registrarFormulacaoLab'].join('|'));
+
 // Mesma lista do smoke: globais das bibliotecas de CDN, abortadas de
 // propósito no ambiente de teste. Qualquer outro erro é falha.
 const IGNORABLE = /\b(THREE|QRCode|\$3Dmol|SmilesDrawer|Chart|OCL|Html5QrcodeScanner|initRDKitModule)\b/;
@@ -78,7 +82,7 @@ function staticChecks() {
       (text.match(/\.innerHTML\s*\+?=|\.outerHTML\s*=|insertAdjacentHTML|document\.write/g) || []).forEach((m) => problems.sink.push(`${rel}: ${m}`));
     }
     (text.match(/postMessage\([^;]*,\s*['"]\*['"]\s*\)/g) || []).forEach((m) => problems.star.push(`${rel}: ${m}`));
-    if (/APPS_SCRIPT_GATEWAY|script\.google\.com|salvarBackupApi|registrarMetricasQuiz|registrarFormulacaoLab/.test(text)) problems.appsScript.push(rel);
+    if (LEGACY_BACKEND.test(text)) problems.appsScript.push(rel);
   }
 
   // Carregamentos dinâmicos (Estúdio): cada biblioteca com versão e integrity.

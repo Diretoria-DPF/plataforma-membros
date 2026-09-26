@@ -7,7 +7,6 @@
  * Ecossistema LAIFT - Módulo Master 3D / Bio-Twin
  * - Fontes Integradas: Human Reference Atlas (HRA), NIH 3D, RCSB PDB e PubChem
  * - Estratégia Write-Through com IndexedDB nativo (Zero consultas duplicadas)
- * - Fila de Backup automático em nuvem via Google Apps Script (Google Sheets)
  * - Emissão de Dossiê / Certificado Acadêmico em PDF de Alta Resolução
  */
 
