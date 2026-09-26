@@ -217,6 +217,27 @@ somar um reCAPTCHA ou WAF na frente — **não implementado nesta entrega**
    está em `audit_logs` (que registra cada tentativa de login com
    `result=failure`, mas não o motivo específico do bloqueio de rate
    limit).
+6. **Módulos de aprendizagem (`frontend/modulos/`, antigo o-bala-vip) —
+   ver `docs/PLANO_UNIFICACAO_LAIFT.md`.**
+   - **Mesma origem.** Eles rodam em iframe da **mesma origem** da
+     plataforma, necessário para herdar a identidade e usar
+     localStorage/IndexedDB. Não passaram pela mesma revisão do resto do
+     front-end: há cerca de 120 usos de `innerHTML`, alguns com dados do
+     Apps Script ou do acervo comunitário de casos clínicos. Um XSS
+     num módulo alcança `localStorage['pm_session']`, como alcançaria no
+     app principal (risco 1).
+   - **Exposição anterior à fusão.** O o-bala-vip já era publicado na mesma
+     origem (`diretoria-dpf.github.io`), então essa exposição não foi criada
+     pela fusão. A correção está priorizada na Fase 4 do plano.
+   - **Identidade não verificável no Apps Script.** O e-mail que os módulos
+     enviam ao Apps Script (métricas, IA, presença) vem do navegador e não
+     tem como ser verificado lá. Alguém pode registrar métricas em nome de
+     outro e-mail. O token da plataforma nunca é enviado ao Apps Script, de
+     propósito: ele não tem como validá-lo. Resolvido quando esses dados
+     migrarem para a Worker, com a identidade vindo da sessão (Fase 2).
+   - **Terminal fiscal.** A checagem de papel `admin` na página do terminal
+     fiscal é só de interface. Quem protege as ações de presença é a senha
+     fiscal do próprio Apps Script.
 
 ## Rotação de credenciais
 

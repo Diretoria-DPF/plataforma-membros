@@ -3,9 +3,14 @@
 **No ar:** https://diretoria-dpf.github.io/plataforma-membros/ — esta é a
 URL que as pessoas usam.
 
-Aplicação de governança comunitária (eventos, propostas com votação,
-tarefas colaborativas e administração de contas) da Liga Acadêmica, dividida
-em duas partes publicadas separadamente:
+Plataforma unificada da LAIFT (Liga Acadêmica Interdisciplinar de
+Farmacologia e Toxicologia): governança comunitária (eventos, propostas com
+votação, tarefas colaborativas, equipe, mensagens e administração de contas)
+**e o ecossistema de aprendizagem** (área "Aprender": simuladores de
+farmacologia e toxicologia, clínica virtual, laboratório e anatomia 3D —
+antigo repositório o-bala-vip, incorporado aqui; ver
+`docs/PLANO_UNIFICACAO_LAIFT.md`). Dividida em duas partes publicadas
+separadamente:
 
 - **Front-end**: site estático (HTML/CSS/JS puro, sem framework) publicado
   no **GitHub Pages** (pasta `frontend/`).
@@ -77,6 +82,10 @@ plataforma-membros/
 │   ├── index.html
 │   ├── styles.css
 │   ├── app.js
+│   ├── messaging.js, msg-crypto.js  # mensageria E2EE
+│   ├── learning.js           # área "Aprender" (hub dos módulos LAIFT)
+│   ├── modulos/              # módulos de aprendizagem (antigo o-bala-vip), em iframe
+│   ├── vendor/               # bibliotecas de terceiros versionadas (QR Code)
 │   └── dev-server.js         # servidor local só para pré-visualização, não é publicado
 │
 ├── worker/                   # backend — publicado no Cloudflare Workers
@@ -93,14 +102,12 @@ plataforma-membros/
 │   │   └── services/         # AuthService, ProfileService, EventService, ...
 │   └── test/                 # Jest (ESM nativo do Node)
 │
-├── sql/
-│   ├── 001_schema.sql
-│   ├── 002_functions_and_triggers.sql
-│   └── 003_rate_limits.sql
+├── sql/                      # migrações numeradas e idempotentes (001 … 011)
 │
 ├── docs/
 │   ├── DEPLOYMENT.md
 │   ├── SECURITY.md
+│   ├── PLANO_UNIFICACAO_LAIFT.md     # fusão com o o-bala-vip e próximas fases
 │   ├── TERMOS_DE_USO.md              # minuta — revisão jurídica pendente
 │   └── POLITICA_DE_PRIVACIDADE.md    # minuta — revisão jurídica pendente
 │
@@ -125,8 +132,14 @@ autenticado independentemente do papel que tinha antes.
 | Votar em propostas abertas | Não | Sim | Sim | Não |
 | Ver e aderir a tarefas | Não | Sim | Sim | Não |
 | Editar próprio perfil e preferências | Sim | Sim | Sim | Não |
+| Usar a área "Aprender" (módulos LAIFT) | Sim | Sim | Sim | Não |
+| Terminal fiscal (check-in/crachás)¹ | Não | Não | Sim | Não |
 | Gerir pessoas e conteúdo | Não | Não | Sim | Não |
 | Consultar auditoria e logs técnicos | Não | Não | Sim | Não |
+
+¹ Até a Fase 2 do `docs/PLANO_UNIFICACAO_LAIFT.md`, o terminal fiscal ainda é
+protegido pela senha fiscal do Apps Script legado; o papel admin aqui só
+controla a exibição do painel.
 
 Toda checagem de papel/status é feita **no servidor**, a cada chamada, a
 partir da sessão resolvida no banco — nunca a partir de dado enviado pelo
