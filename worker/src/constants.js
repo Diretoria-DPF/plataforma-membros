@@ -191,3 +191,45 @@ export const RATE_LIMITS = {
 
 export const GENERIC_ERROR_MESSAGE = 'Não foi possível concluir a operação. Tente novamente em instantes.';
 export const GENERIC_AUTH_FAILURE_MESSAGE = 'E-mail ou senha inválidos, ou conta ainda não confirmada.';
+
+// Fase 2 — Dados & Presença (docs/PLANO_FASES_2_3_4.md, Contratos 1 e 2).
+// Acrescentado por Object.assign num bloco próprio, no fim do arquivo, para
+// não reformatar os objetos acima (arquivo compartilhado com a Equipe 3).
+Object.assign(LIMITS, {
+  // Simulados: 0 ≤ acertos ≤ total ≤ LEARN_QUIZ_MAX_TOTAL (mesmo teto do
+  // CHECK learning_attempts_score_coherence em sql/012_learning.sql).
+  LEARN_QUIZ_MAX_TOTAL: 500,
+  // Duração de uma atividade: 24 h é folga de sobra para um simulado
+  // deixado aberto; acima disso é dado corrompido/forjado (mesmo CHECK no banco).
+  LEARN_DURATION_MAX_SECONDS: 86400,
+  LEARN_LIST_MAX_ITEMS: 20,       // topics / reagents
+  LEARN_LIST_ITEM_MAX: 80,        // caracteres por tópico/reagente
+  LEARN_PRODUCT_MAX: 120,
+  LEARN_OBSERVATION_MAX: 500,
+  LEARN_DETAILS_MAX_BYTES: 8192,  // details serializado (CHECK no banco)
+  ATTENDANCE_SEARCH_MIN: 2,
+  ATTENDANCE_SEARCH_MAX: 100,
+  ATTENDANCE_SEARCH_LIMIT: 50,
+  ATTENDANCE_LIST_LIMIT: 500,     // inscritos de um evento de uma vez (lista/CSV)
+  ATTENDANCE_EVENTS_LIMIT: 50,
+  ATTENDANCE_BADGES_MAX: 200,     // crachás por impressão em lote
+});
+
+Object.assign(RATE_LIMITS, {
+  // Gravações de aprendizagem, por perfil. Um simulado leva minutos; 120/h
+  // cobre quem faz vários seguidos e ainda barra um script inflando o
+  // próprio desempenho ou a tabela.
+  LEARN_SUBMIT: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
+  LEARN_LAB: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
+  // Check-in pelo terminal fiscal, por admin: uma portaria cheia faz um
+  // check-in a cada poucos segundos — 900/h fica bem acima disso e ainda
+  // limita um token de admin vazado usado para varrer assinaturas de QR.
+  ATTENDANCE_CHECKIN: { MAX_ATTEMPTS: 900, WINDOW_SECONDS: 3600 },
+});
+
+export const LEARNING_MODULES = ['farmacologia', 'toxicologia', 'clinica', 'laboratorio', 'anatomia'];
+export const LEARNING_QUIZ_MODULES = ['farmacologia', 'toxicologia', 'anatomia'];
+export const ATTENDANCE_CHECKIN_METHODS = ['qr', 'manual', 'lista'];
+// Status em que o terminal fiscal aceita check-in (o gatilho do banco
+// aplica a mesma regra à inscrição criada na porta).
+export const ATTENDANCE_OPEN_STATUSES = ['published', 'in_progress'];
