@@ -192,4 +192,4 @@ function check(condition, description) {
   }
 }
 
-module.exports = { startApp, check, loadPlaywright };
+module.exports = { startApp, check, loadPlaywright, startStaticServer };

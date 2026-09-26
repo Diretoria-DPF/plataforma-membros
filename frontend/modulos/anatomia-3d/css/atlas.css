@@ -1,0 +1,475 @@
+/* =========================================================================
+   atlas.css — layout responsivo da casca do Atlas v2 (Onda 1, WP08)
+   -------------------------------------------------------------------------
+   Carrega DEPOIS de modulos/shared/laift-tokens.css e css/tokens-atlas.css
+   (WP08 só lê --laift-*/--atlas-*, nunca redefine essas variáveis aqui —
+   quem quiser mudar um número mexe em tokens-atlas.css, não aqui).
+
+   Mobile-first: a regra "sem media query" é o celular retrato (referência
+   390×844, mas fluido). Cada seção abaixo comenta contra qual parágrafo de
+   docs/ATLAS_UX_SPEC.md ela responde.
+
+   Só WP08 edita este arquivo. css/components.css (WP09) cuida do MIOLO dos
+   painéis (busca, navegador, ficha, camadas) — aqui só a CASCA: onde cada
+   região fica, de que tamanho, e como isso muda por breakpoint.
+   ========================================================================= */
+
+/* -----------------------------------------------------------------------
+   Base — nada rola a página (UX spec §0.4); só os painéis internos rolam.
+   ----------------------------------------------------------------------- */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+body {
+  position: relative;
+  min-height: 100%;
+  background: var(--atlas-canvas-bg);
+  color: var(--laift-text);
+  font-family: var(--laift-font);
+  -webkit-tap-highlight-color: transparent;
+}
+* { box-sizing: border-box; }
+
+.hidden { display: none !important; }
+
+/* Botões/menus construídos por shell.js herdam a base de laift-tokens.css
+   (:focus-visible, .laift-sr-only); aqui só o que é específico do Atlas. */
+button { font: inherit; }
+
+/* -----------------------------------------------------------------------
+   Canvas 3D — 100% da viewport, sempre a camada mais baixa (§0.1/§1.1).
+   touch-action: none porque 1 dedo gira, 2 dedos dão zoom/pan (§11) — o
+   motor (WP04/WP06) trata os gestos; o navegador não deve interferir com
+   scroll/zoom nativo por cima do canvas.
+   ----------------------------------------------------------------------- */
+.atlas-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: var(--atlas-z-canvas);
+  background:
+    radial-gradient(circle at 50% 35%, var(--atlas-canvas-bg-radial), var(--atlas-canvas-bg));
+  touch-action: none;
+  outline: none;
+  overflow: hidden;
+}
+.atlas-canvas:focus-visible {
+  outline: var(--atlas-tv-focus-width) solid var(--laift-focus-color);
+  outline-offset: -4px;
+}
+
+/* -----------------------------------------------------------------------
+   Barra superior — 48px + safe-area (§1.1). Três zonas numa linha.
+   ----------------------------------------------------------------------- */
+.atlas-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: var(--atlas-z-topbar);
+  height: calc(var(--atlas-topbar-h) + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  padding-left: max(var(--laift-space-3), env(safe-area-inset-left));
+  padding-right: max(var(--laift-space-3), env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  gap: var(--laift-space-2);
+  background: color-mix(in srgb, var(--laift-surface) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--laift-border);
+}
+
+.atlas-breadcrumb {
+  display: flex; align-items: center; gap: var(--laift-space-2);
+  min-width: 0; flex: 1 1 auto;
+  font-weight: 700; color: var(--laift-text);
+}
+.atlas-breadcrumb-label {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.atlas-icon-btn {
+  width: 36px; height: 36px; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--laift-radius-sm);
+  background: transparent; color: var(--laift-text);
+  border: 1px solid transparent;
+  flex: 0 0 auto;
+}
+.atlas-icon-btn:hover { background: var(--laift-surface-alt); }
+
+.atlas-search-slot { flex: 0 0 auto; }
+
+/* Seletor de modo: gatilho sempre visível; a lista de chips é a MESMA
+   estrutura em qualquer breakpoint — só a apresentação muda (§4). */
+.atlas-mode-switch { position: relative; flex: 0 0 auto; }
+.atlas-mode-trigger {
+  display: flex; align-items: center; gap: 4px;
+  min-height: 36px; padding: 6px 10px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-surface-alt);
+  border: 1px solid var(--laift-border);
+  color: var(--laift-text); font-weight: 700; font-size: 13px;
+  white-space: nowrap;
+}
+.atlas-mode-list {
+  display: none;
+  position: absolute; top: calc(100% + 6px); right: 0;
+  z-index: var(--atlas-z-search);
+  min-width: 220px;
+  background: var(--laift-surface);
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-md);
+  box-shadow: var(--laift-shadow);
+  padding: 6px;
+  flex-direction: column;
+  gap: 2px;
+}
+.atlas-mode-switch[data-open="true"] .atlas-mode-list { display: flex; }
+.atlas-mode-list button {
+  min-height: 44px; text-align: left; padding: 8px 12px;
+  border-radius: var(--laift-radius-sm);
+  background: transparent; color: var(--laift-text); font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.atlas-mode-list button:hover { background: var(--laift-surface-alt); }
+.atlas-mode-list button[aria-selected="true"] {
+  background: var(--laift-primary-soft); color: var(--laift-primary-strong);
+}
+
+/* -----------------------------------------------------------------------
+   Mini barra de ferramentas — coluna de botões de 44px (§1.1/§5).
+   Filha de .atlas-canvas (ver v2.html) — position:absolute ancora à
+   borda do CANVAS, não da viewport, em qualquer breakpoint.
+   ----------------------------------------------------------------------- */
+.atlas-canvas { position: fixed; } /* garantido acima; repetido só para tornar explícito o contexto de posicionamento */
+.atlas-toolbar {
+  position: absolute;
+  top: calc(var(--atlas-topbar-h) + env(safe-area-inset-top) + 12px);
+  right: max(12px, env(safe-area-inset-right));
+  z-index: var(--atlas-z-toolbar);
+  display: flex;
+  flex-direction: column;
+  gap: var(--atlas-toolbar-gap);
+}
+.atlas-toolbar button {
+  width: var(--atlas-toolbar-btn);
+  height: var(--atlas-toolbar-btn);
+  min-width: 44px; min-height: 44px;
+  border-radius: var(--laift-radius-md);
+  background: color-mix(in srgb, var(--laift-surface) 90%, transparent);
+  border: 1px solid var(--laift-border);
+  color: var(--laift-text);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--laift-shadow-sm);
+}
+.atlas-toolbar button[aria-pressed="true"] {
+  border-color: var(--module-accent);
+  color: var(--module-accent);
+}
+.atlas-toolbar button:disabled { opacity: 0.4; }
+
+/* Menus flutuantes (⋯ e Corte) — mesma receita do .atlas-mode-list. */
+.atlas-dropdown {
+  position: fixed;
+  z-index: var(--atlas-z-search);
+  min-width: 200px;
+  background: var(--laift-surface);
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-md);
+  box-shadow: var(--laift-shadow);
+  padding: 6px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.atlas-dropdown button {
+  min-height: 44px; text-align: left; padding: 8px 12px;
+  border-radius: var(--laift-radius-sm);
+  background: transparent; color: var(--laift-text); font-weight: 600;
+}
+.atlas-dropdown button:hover { background: var(--laift-surface-alt); }
+.atlas-dropdown button[aria-checked="true"] { color: var(--laift-primary-strong); }
+
+/* -----------------------------------------------------------------------
+   Painel arrastável (bottom sheet) — retrato (§2). Estados via
+   data-sheet-state, física em js/ui/sheet.js.
+   ----------------------------------------------------------------------- */
+.atlas-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: var(--atlas-z-sheet);
+  display: flex;
+  flex-direction: column;
+  background: var(--laift-surface);
+  border-radius: var(--atlas-sheet-radius) var(--atlas-sheet-radius) 0 0;
+  box-shadow: var(--laift-shadow);
+  padding-bottom: env(safe-area-inset-bottom);
+  overflow: hidden;
+  transition: height var(--atlas-motion-sheet) var(--atlas-easing);
+}
+.atlas-sheet[data-sheet-state="peek"] { height: var(--atlas-sheet-peek-h); }
+.atlas-sheet[data-sheet-state="half"] { height: var(--atlas-sheet-half-h); }
+.atlas-sheet[data-sheet-state="full"] { height: var(--atlas-sheet-full-h); }
+
+.atlas-sheet-handle {
+  position: relative;
+  width: var(--atlas-sheet-handle-w);
+  height: var(--atlas-sheet-handle-h);
+  min-height: 0;
+  margin: 10px auto 6px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-border-strong);
+  cursor: grab;
+  flex: 0 0 auto;
+  touch-action: none;
+}
+/* Área de toque bem maior que a alça visual, sem mudar o layout (44px min). */
+.atlas-sheet-handle::before {
+  content: '';
+  position: absolute;
+  inset: -20px -60px;
+}
+.atlas-sheet-handle:active { cursor: grabbing; }
+
+.atlas-sheet-peek {
+  flex: 0 0 auto;
+  padding: 0 var(--laift-space-4) var(--laift-space-2);
+  touch-action: pan-y;
+  min-height: 0;
+}
+.atlas-sheet-hint { margin: 4px 0; color: var(--laift-muted); font-size: 14px; }
+
+.atlas-sheet-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 0 var(--laift-space-4) var(--laift-space-4);
+}
+/* No estado peek não há abas/corpo visível de sobra (§2.1) — evita que o
+   conteúdo da ficha "espie" fora da altura de 96px. */
+.atlas-sheet[data-sheet-state="peek"] .atlas-sheet-body { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-sheet { transition-duration: 0ms; }
+}
+
+/* -----------------------------------------------------------------------
+   Regiões que só existem em tablet+ (inspetor/navegador) ficam ocultas
+   no celular — o painel arrastável é a única superfície de conteúdo.
+   ----------------------------------------------------------------------- */
+.atlas-left-panel,
+.atlas-inspector {
+  position: fixed;
+  inset: 0 auto 0 auto;
+  display: none;
+}
+
+/* -----------------------------------------------------------------------
+   Celular paisagem — painel vira lateral direita (§1.2).
+   ----------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 599px) {
+  .atlas-sheet {
+    top: calc(var(--atlas-topbar-h) + env(safe-area-inset-top));
+    left: auto;
+    bottom: 0;
+    right: 0;
+    height: auto !important;
+    width: 32px; /* peek: aba estreita (simplificação de WP08 — ver relatório) */
+    border-radius: var(--atlas-sheet-radius) 0 0 var(--atlas-sheet-radius);
+    padding-bottom: 0;
+    padding-right: env(safe-area-inset-right);
+    transition: width var(--atlas-motion-sheet) var(--atlas-easing);
+  }
+  .atlas-sheet[data-sheet-state="peek"] { width: 32px; }
+  .atlas-sheet[data-sheet-state="half"] { width: var(--atlas-panel-w-landscape); }
+  .atlas-sheet[data-sheet-state="full"] { width: 100vw; }
+  .atlas-sheet-handle {
+    margin: 6px auto;
+    width: var(--atlas-sheet-handle-h);
+    height: var(--atlas-sheet-handle-w);
+  }
+  .atlas-sheet-handle::before { inset: -60px -20px; }
+  .atlas-sheet[data-sheet-state="peek"] .atlas-sheet-peek,
+  .atlas-sheet[data-sheet-state="peek"] .atlas-sheet-body { display: none; }
+
+  /* Mini barra de ferramentas migra para a borda inferior, em linha (§1.2). */
+  .atlas-toolbar {
+    top: auto;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: max(12px, env(safe-area-inset-right));
+    flex-direction: row;
+  }
+}
+
+/* -----------------------------------------------------------------------
+   Tablet — 600–1023px (§1.3). Inspetor persistente à direita; navegador
+   em gaveta (temporária) à esquerda. A regra dos 756px vem da §1.6.
+   ----------------------------------------------------------------------- */
+@media (min-width: 600px) {
+  .atlas-sheet { display: none; } /* tablet+ usa o inspetor, não o painel */
+
+  body { display: flex; }
+  .atlas-canvas { position: relative; flex: 1 1 auto; min-width: 0; }
+
+  .atlas-left-panel {
+    display: block;
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+    z-index: var(--atlas-z-sheet);
+    width: 300px;
+    max-width: 85vw;
+    background: var(--laift-surface);
+    border-right: 1px solid var(--laift-border);
+    box-shadow: var(--laift-shadow);
+    transform: translateX(-100%);
+    transition: transform var(--atlas-motion-base) var(--atlas-easing);
+    overflow-y: auto;
+  }
+  .atlas-left-panel[data-open="true"] { transform: translateX(0); }
+
+  .atlas-inspector {
+    display: block;
+    position: relative;
+    inset: auto;
+    flex: 0 0 auto;
+    width: 48px;
+    border-left: 1px solid var(--laift-border);
+    background: var(--laift-surface);
+    overflow: hidden;
+    transition: width var(--atlas-motion-base) var(--atlas-easing);
+  }
+  .atlas-inspector[data-expanded="true"] {
+    position: fixed;
+    top: 0; bottom: 0; right: 0;
+    width: var(--atlas-panel-w-tablet);
+    z-index: var(--atlas-z-sheet);
+    box-shadow: var(--laift-shadow);
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  .atlas-topbar { padding-left: var(--laift-space-4); padding-right: var(--laift-space-4); }
+}
+
+/* ≥756px (dentro da faixa de tablet): inspetor fica persistente com
+   seleção (340px) e colapsa para uma aba de 32px sem seleção — §1.6. */
+@media (min-width: 756px) and (max-width: 1023px) {
+  .atlas-inspector { width: 32px; }
+  .atlas-inspector[data-has-selection="true"] {
+    position: relative; width: var(--atlas-panel-w-tablet);
+    overflow-y: auto;
+  }
+}
+
+/* -----------------------------------------------------------------------
+   Desktop — ≥1024px (§1.4). Três colunas; navegador em rail (56/280px),
+   inspetor fecha/abre com a seleção (0/380px).
+   ----------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .atlas-left-panel {
+    position: relative;
+    inset: auto;
+    display: block;
+    flex: 0 0 auto;
+    width: 56px;
+    transform: none;
+    border-right: 1px solid var(--laift-border);
+    box-shadow: none;
+  }
+  .atlas-left-panel:hover,
+  .atlas-left-panel:focus-within {
+    width: var(--atlas-panel-w-desktop-nav);
+  }
+  .atlas-left-panel:not([data-pinned="true"]):hover,
+  .atlas-left-panel:not([data-pinned="true"]):focus-within {
+    position: absolute; top: 0; bottom: 0; left: 0;
+    z-index: var(--atlas-z-sheet);
+    box-shadow: var(--laift-shadow);
+  }
+  .atlas-left-panel[data-pinned="true"] { width: var(--atlas-panel-w-desktop-nav); }
+
+  .atlas-inspector {
+    width: 0;
+    min-width: 0;
+  }
+  .atlas-inspector[data-has-selection="true"] {
+    width: var(--atlas-panel-w-desktop-inspector);
+  }
+}
+
+/* -----------------------------------------------------------------------
+   TV — ≥1600px sem hover (§1.5). Texto/ícones 1,5×, foco de 4px, rail do
+   navegador sempre visível em 56px (nunca "flutua" ao passar o foco).
+   ----------------------------------------------------------------------- */
+@media (min-width: 1600px) and (hover: none) {
+  body { font-size: calc(1em * var(--atlas-tv-text-scale)); }
+  .atlas-left-panel:hover,
+  .atlas-left-panel:focus-within {
+    width: 56px; /* só expande com OK (AtlasShell.toggleNavigatorPin), nunca por foco de raspão */
+  }
+  :focus-visible {
+    outline-width: var(--atlas-tv-focus-width) !important;
+  }
+}
+
+/* -----------------------------------------------------------------------
+   Menu de contexto, modal, toast — camadas flutuantes comuns a qualquer
+   breakpoint (§1.1, linhas 6–8 da tabela de camadas).
+   ----------------------------------------------------------------------- */
+.atlas-context-menu {
+  position: fixed;
+  z-index: var(--atlas-z-context-menu);
+  min-width: 180px;
+  background: var(--laift-surface);
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-md);
+  box-shadow: var(--laift-shadow);
+  padding: 6px;
+}
+.atlas-context-menu button {
+  display: block; width: 100%; min-height: 44px; text-align: left;
+  padding: 8px 12px; border-radius: var(--laift-radius-sm);
+  background: transparent; color: var(--laift-text); font-weight: 600;
+}
+.atlas-context-menu button:hover { background: var(--laift-surface-alt); }
+
+.atlas-modal {
+  z-index: var(--atlas-z-modal);
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-lg);
+  background: var(--laift-surface);
+  color: var(--laift-text);
+  box-shadow: var(--laift-shadow);
+  padding: var(--laift-space-5);
+  max-width: min(560px, 92vw);
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+.atlas-modal::backdrop { background: var(--laift-overlay); }
+.atlas-modal-body :first-child { margin-top: 0; }
+.atlas-modal-close { margin-top: var(--laift-space-4); }
+
+.atlas-toast {
+  position: fixed;
+  top: calc(var(--atlas-topbar-h) + env(safe-area-inset-top) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--atlas-z-toast);
+  max-width: min(420px, 92vw);
+  background: var(--laift-text);
+  color: var(--laift-bg);
+  border-radius: var(--laift-radius-md);
+  box-shadow: var(--laift-shadow);
+  padding: 10px 16px;
+  font-size: 14px;
+  display: none;
+}
+.atlas-toast[data-open="true"] { display: block; }
+
+/* Reserva de tela cheia sem suporte à Fullscreen API (ex.: iframe sem
+   allow="fullscreen") — ver AtlasShell.toggleFullscreen em js/ui/shell.js.
+   A página já ocupa 100% da viewport do módulo; isto só marca o estado
+   para quem quiser reagir (ex.: esconder algo a mais no futuro). */
+body.atlas-fullscreen-fallback { background: var(--atlas-canvas-bg); }

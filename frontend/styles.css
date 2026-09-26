@@ -667,6 +667,57 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
   .learn-frame { height: calc(100dvh - 210px); }
 }
 
+/* ===========================================================================
+   Onda 1, WP08 — modo imersivo do Atlas de Anatomia (frontend/modulos/
+   anatomia-3d/v2.html, docs/ATLAS_UX_SPEC.md §0 "o corpo 3D é a tela").
+   learning.js aplica .learn-frame-immersive só no iframe do módulo
+   "anatomia" (nunca nos demais) enquanto ele está aberto.
+
+   Não dá para remover o cabeçalho fixo (.app-header) nem a barra inferior
+   fixa (.bottom-nav) — eles continuam por cima de qualquer painel, é como
+   se sai do módulo. O que sobra para devolver ao Atlas, sem tocar nenhum
+   alvo de toque abaixo de 44px, vem de dois lugares (medidas atuais deste
+   arquivo, não valores inventados):
+     - .learn-viewer-bar: os botões já respeitam o mínimo de 44px (não
+       encolhem); a margem abaixo deles (10px) cai para 4px com o módulo
+       imersivo — ganha 6px;
+     - .app-main: o padding-bottom reserva 76px para a barra inferior
+       (56px de botão + ~20px de folga); com o visualizador imersivo
+       aberto (nada mais disputa esse espaço nesse momento — :has() só
+       casa quando o iframe do Atlas está mesmo visível) a folga aperta
+       para 8px — ganha 12px.
+   Total: 18px a mais que o padrão calc(100dvh - 230px) → 212px. No celular
+   (≤480px) o título do módulo também some (o nome já aparece dentro da
+   própria casca do Atlas, em #atlas-breadcrumb — "colapsa a barra de
+   título interna do hub" do enunciado do WP08) e a margem cai a 2px
+   (8px a mais); com os mesmos 12px do padding inferior, o total sobe a
+   20px sobre o padrão de 210px → 190px.
+   =========================================================================== */
+.app-main:has(.learn-frame-immersive) {
+  padding-bottom: calc(var(--density-pad) + 64px + env(safe-area-inset-bottom, 0px));
+}
+.learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar {
+  margin-bottom: 4px;
+}
+.learn-frame.learn-frame-immersive {
+  height: calc(100dvh - 212px);
+  min-height: 480px;
+}
+@media (max-width: 480px) {
+  .app-main:has(.learn-frame-immersive) {
+    padding-bottom: calc(14px + 64px + env(safe-area-inset-bottom, 0px));
+  }
+  .learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar strong {
+    display: none;
+  }
+  .learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar {
+    margin-bottom: 2px;
+  }
+  .learn-frame.learn-frame-immersive {
+    height: calc(100dvh - 190px);
+  }
+}
+
 /* Fase 2 — Dados & Presença: desempenho por módulo e conquistas no hub
    "Aprender" (learning.js) e métricas de aprendizagem no perfil (app.js).
    Só classes novas; acabamento visual fino fica com a Equipe 4. */
