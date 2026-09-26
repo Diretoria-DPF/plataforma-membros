@@ -5,7 +5,8 @@
   "description": "Build do front-end estático (ofusca app.js antes de publicar no GitHub Pages).",
   "scripts": {
     "build": "node scripts/build.js",
-    "dev": "node dev-server.js"
+    "dev": "node dev-server.js",
+    "e2e": "node scripts/build.js && node scripts/e2e/run.js"
   },
   "devDependencies": {
     "javascript-obfuscator": "^4.1.1"

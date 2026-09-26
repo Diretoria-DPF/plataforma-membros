@@ -30,9 +30,12 @@ DO $$ BEGIN
   ALTER TABLE profiles ALTER COLUMN username SET NOT NULL;
 EXCEPTION WHEN others THEN NULL; END $$;
 
+-- UNIQUE cria um índice com o mesmo nome: ao reaplicar, o Postgres acusa
+-- duplicate_table (42P07, "relation already exists"), não duplicate_object —
+-- sem os dois no guard, este arquivo não era de fato reaplicável.
 DO $$ BEGIN
   ALTER TABLE profiles ADD CONSTRAINT profiles_username_unique UNIQUE (username);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
 
 DO $$ BEGIN
   ALTER TABLE profiles ADD CONSTRAINT profiles_username_format
