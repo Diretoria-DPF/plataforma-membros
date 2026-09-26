@@ -1,0 +1,138 @@
+[
+  {
+    "id": "caso-organofosforado",
+    "system": "cardiovascular",
+    "prompt_pt": "Emergência Toxicológica: Síndrome Colinérgica Aguda. Agricultor de 42 anos admitido em coma com miose puntiforme bilateral, sialorreia profusa, broncorreia e bradicardia severa (36 bpm) após pulverização de lavoura.\n\nAponte no modelo 3D o órgão efetor primário onde a Atropina 2 mg IV atuará para reverter o bloqueio vagal e a bradicardia com risco de assistolia.",
+    "difficulty": "medio",
+    "correctSid": "fma:7088",
+    "distractorSids": [
+      "fma:7309",
+      "fma:7310",
+      "za:estomago"
+    ],
+    "anchors": [
+      {
+        "sid": "fma:7088"
+      }
+    ]
+  },
+  {
+    "id": "caso-primeira-passagem",
+    "system": "digestorio",
+    "prompt_pt": "Biofarmacotécnica: Metabolismo Pré-Sistêmico. Paciente em farmacoterapia oral com propranolol requer cálculo de dose para compensar a intensa biotransformação pré-sistêmica antes de atingir a veia cava.\n\nAponte no modelo 3D o órgão parenquimatoso responsável pelo efeito de primeira passagem hepática mediado por isoformas do citocromo P450.",
+    "difficulty": "facil",
+    "correctSid": "fma:7197",
+    "distractorSids": [
+      "fma:7148",
+      "za:vesicula-biliar",
+      "za:pancreas-fracao-exocrina"
+    ],
+    "anchors": [
+      {
+        "sid": "fma:7197"
+      }
+    ]
+  },
+  {
+    "id": "caso-broncoespasmo",
+    "system": "respiratorio",
+    "prompt_pt": "Pneumologia: Crise Asmática Aguda. Jovem de 21 anos chega à UPA com dispneia expiratória intensa, sibilos difusos e saturação periférica de oxigênio de 88% necessitando de broncodilatador de alívio rápido.\n\nAponte no modelo 3D os órgãos da hematose onde o Salbutamol inalatório atuará nos receptores β2-adrenérgicos do músculo liso bronquiolar.",
+    "difficulty": "facil",
+    "correctSid": "za:pulmoes-alveolos",
+    "distractorSids": [
+      "za:traqueia",
+      "za:arvore-bronquica",
+      "za:faringe"
+    ],
+    "anchors": [
+      {
+        "sid": "za:pulmoes-alveolos"
+      }
+    ]
+  },
+  {
+    "id": "caso-filtro-renal",
+    "system": "urinario",
+    "prompt_pt": "Farmacocinética de Eliminação: Depuração Glomerular. Idoso diabético hipertenso faz uso de metformina e aminoglicosídeo; o ajuste posológico exige avaliação da taxa de depuração plasmática da creatinina.\n\nAponte no modelo 3D o órgão retroperitoneal responsável pela ultrafiltração plasmática e excreção hidrossolúvel de xenobióticos.",
+    "difficulty": "medio",
+    "correctSid": "za:rins",
+    "distractorSids": [
+      "za:bexiga-urinaria",
+      "za:ureteres",
+      "za:uretra"
+    ],
+    "anchors": [
+      {
+        "sid": "za:rins"
+      }
+    ]
+  },
+  {
+    "id": "caso-bhe-neurologia",
+    "system": "nervoso",
+    "prompt_pt": "Neurofarmacologia: Barreira Hematoencefálica (BHE). Paciente portador de doença neurodegenerativa necessita de suplementação mineral quelada com ácido L-treônico para otimização sináptica e receptores NMDA.\n\nAponte no modelo 3D o órgão central protegido por junções oclusivas endoteliais contínuas e podócitos de astrócitos.",
+    "difficulty": "dificil",
+    "correctSid": "za:cerebro-telencefalo",
+    "distractorSids": [
+      "za:cerebelo",
+      "za:medula-espinhal",
+      "za:diencefalo-tronco-encefalico"
+    ],
+    "anchors": [
+      {
+        "sid": "za:cerebro-telencefalo"
+      }
+    ]
+  },
+  {
+    "id": "caso-acidez-gastrica",
+    "system": "digestorio",
+    "prompt_pt": "Gastroenterologia: Barreira Mucosa e Úlcera Péptica. Indivíduo com dor epigástrica em queimação e dispepsia crônica recebe prescrição de inibidor da bomba de prótons (Omeprazol) para inibir a enzima H+/K+-ATPase.\n\nAponte no modelo 3D o reservatório digestivo ácido onde as células parietais oxínticas secretam ácido clorídrico.",
+    "difficulty": "facil",
+    "correctSid": "fma:7148",
+    "distractorSids": [
+      "za:esofago",
+      "za:intestino-delgado-duodeno-jejuno-ileo",
+      "za:boca-dentes-lingua-labios-glandulas-salivares"
+    ],
+    "anchors": [
+      {
+        "sid": "fma:7148"
+      }
+    ]
+  },
+  {
+    "id": "caso-neuroeixo-espinhal",
+    "system": "nervoso",
+    "prompt_pt": "Anestesiologia: Bloqueio Subaracnóideo / Peridural. Durante cirurgia ortopédica em membro inferior, administra-se bupivacaína hiperbárica no espaço subaracnóideo entre as vértebras L3-L4.\n\nAponte no modelo 3D a estrutura condutora central do neuroeixo responsável pela transmissão dos impulsos aferentes e arcos reflexos.",
+    "difficulty": "dificil",
+    "correctSid": "za:medula-espinhal",
+    "distractorSids": [
+      "za:raizes-nervosas",
+      "za:nervos-cranianos-espinhais-perifericos",
+      "za:cerebelo"
+    ],
+    "anchors": [
+      {
+        "sid": "za:medula-espinhal"
+      }
+    ]
+  },
+  {
+    "id": "caso-injecao-deltoide",
+    "system": "muscular",
+    "prompt_pt": "Vias Parenterais: Administração Intramuscular. Em cenário de anafilaxia alimentar aguda, o protocolo de emergência preconiza a injeção imediata de Adrenalina 0.5 mg por via intramuscular profunda.\n\nAponte no modelo 3D a camada tecidual de músculo esquelético vascularizada ideal para rápida absorção e fluxo capilar fenestrado.",
+    "difficulty": "medio",
+    "correctSid": "za:musculos-esqueleticos-voluntarios",
+    "distractorSids": [
+      "za:musculo-cardiaco-miocardio",
+      "za:musculo-liso-visceral-vascular",
+      "za:tecido-subcutaneo-hipoderme"
+    ],
+    "anchors": [
+      {
+        "sid": "za:musculos-esqueleticos-voluntarios"
+      }
+    ]
+  }
+]
