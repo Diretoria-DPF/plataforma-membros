@@ -1,0 +1,36 @@
+{
+  "budget": { "totalMB": 45 },
+  "systems": {
+    "esqueletico": {
+      "layer": "esqueleto",
+      "lod0": "esqueletico.glb",
+      "lod1": "esqueletico.lod1.glb",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "Z-Anatomy, CC BY-SA 4.0 (fixture de teste)",
+      "sourceUrl": "https://example.invalid/fixture",
+      "sourceVersion": "fixture-1"
+    },
+    "cardiovascular": {
+      "layer": "vasos",
+      "lod0": "cardiovascular.glb",
+      "lod1": "cardiovascular.lod1.glb",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "Z-Anatomy, CC BY-SA 4.0 (fixture de teste)",
+      "sourceUrl": "https://example.invalid/fixture",
+      "sourceVersion": "fixture-1"
+    }
+  },
+  "organs": {
+    "heart-male": {
+      "organId": "VH_M_Heart",
+      "sex": "male",
+      "system": "cardiovascular",
+      "layer": "visceras",
+      "file": "heart-male.glb",
+      "license": "CC-BY-4.0",
+      "attribution": "HRA/HuBMAP, CC BY 4.0 (fixture de teste)",
+      "sourceUrl": "https://example.invalid/fixture-hra",
+      "sourceVersion": "fixture-1"
+    }
+  }
+}
