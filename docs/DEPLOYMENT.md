@@ -98,10 +98,39 @@ Cotas diárias por papel e o disjuntor global (3.000 chamadas/dia) ficam em
 
 ## 4. Deploy do Worker
 
+### Publicação automática (recomendada, sem terminal)
+
+O workflow `.github/workflows/deploy-worker.yml` publica a Worker sozinho a
+cada push na `main` que mexa em `worker/`, e também pode ser disparado à mão
+em **Actions → "Publicar Worker (API) na Cloudflare" → Run workflow**. Antes
+de publicar, ele roda os testes.
+
+Configuração única, feita no navegador:
+
+1. **Token da Cloudflare:** dash.cloudflare.com → ícone do perfil → **My
+   Profile → API Tokens → Create Token** → modelo **"Edit Cloudflare
+   Workers"** → em *Account Resources* escolha a conta da liga → **Continue
+   to summary → Create Token**. Copie o token (ele aparece uma vez só).
+2. **Segredos no GitHub:** repositório → **Settings → Secrets and variables
+   → Actions → New repository secret**:
+   - `CLOUDFLARE_API_TOKEN`: o token do passo 1 (obrigatório);
+   - `GROQ_API_KEYS`: todas as chaves do Groq, separadas por vírgula
+     (opcional; se existir, é gravado como segredo da Worker a cada
+     publicação);
+   - `CLOUDFLARE_ACCOUNT_ID`: só se o token enxergar mais de uma conta. O
+     ID fica na página inicial de **Workers e Pages**, na coluna da direita.
+3. Rodar o workflow à mão uma vez (Actions → Run workflow) ou fazer merge de
+   algo que mexa em `worker/`.
+
+Se faltar o `CLOUDFLARE_API_TOKEN`, o workflow falha com a mensagem dizendo
+exatamente isso. Nenhum valor de segredo aparece no log.
+
+### Publicação manual (terminal)
+
 ```bash
 cd worker
 npm ci
-npm test                 # 373 testes (Jest)
+npm test                 # 378 testes (Jest)
 npm run validate:sql     # 13 migrações OK
 npm run deploy           # wrangler deploy
 ```

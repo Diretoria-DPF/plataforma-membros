@@ -1,0 +1,81 @@
+name: Publicar Worker (API) na Cloudflare
+
+# Publica worker/ na Cloudflare sem precisar de terminal nem Node na máquina
+# de ninguém: roda a cada push na main que mexa em worker/ e também pode ser
+# disparado à mão (aba Actions → este workflow → "Run workflow").
+#
+# Segredos do repositório (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN  — obrigatório; token "Edit Cloudflare Workers"
+#   CLOUDFLARE_ACCOUNT_ID — opcional se o token só enxerga uma conta
+#   GROQ_API_KEYS         — opcional; se existir, é gravado como segredo da
+#                           Worker a cada publicação (todas as chaves,
+#                           separadas por vírgula ou uma por linha)
+# Ver docs/DEPLOYMENT.md, seção "Publicação automática da Worker".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - '.github/workflows/deploy-worker.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+# Nunca duas publicações ao mesmo tempo; a mais nova espera a anterior.
+concurrency:
+  group: worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Instala dependências
+        working-directory: worker
+        run: npm ci
+
+      # Não publica código que não passa nos testes.
+      - name: Testes da Worker
+        working-directory: worker
+        run: npm test
+
+      - name: Confere se o token da Cloudflare foi cadastrado
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Falta o segredo CLOUDFLARE_API_TOKEN (Settings → Secrets and variables → Actions). Ver docs/DEPLOYMENT.md."
+            exit 1
+          fi
+
+      - name: Publica a Worker (inclui o Cron Trigger da faxina diária)
+        working-directory: worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler deploy
+
+      # Lido do segredo do GitHub e enviado por stdin: o valor nunca aparece
+      # no log (o GitHub também mascara segredos na saída).
+      - name: Atualiza o segredo GROQ_API_KEYS da Worker
+        working-directory: worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GROQ_API_KEYS: ${{ secrets.GROQ_API_KEYS }}
+        run: |
+          if [ -z "$GROQ_API_KEYS" ]; then
+            echo "GROQ_API_KEYS não cadastrado no GitHub — mantendo o segredo que já estiver na Cloudflare."
+            exit 0
+          fi
+          printf '%s' "$GROQ_API_KEYS" | npx wrangler secret put GROQ_API_KEYS
