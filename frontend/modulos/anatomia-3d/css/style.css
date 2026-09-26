@@ -7,34 +7,41 @@
    1. VARIÁVEIS GLOBAIS & TEMA DARK CIENTÍFICO (LAIFT BIO-TWIN)
    ------------------------------------------------------------------------- */
 :root {
-  --bg-main: #0f172a;          /* Slate 900 */
-  --bg-surface: #1e293b;       /* Slate 800 */
-  --bg-surface-alt: #162032;   /* Slate 850 */
-  --bg-darker: #020617;        /* Slate 950 */
-  
-  --primary: #38bdf8;          /* Sky 400 */
+  /* Fase 4: o atlas é escuro por natureza (<html class="laift-always-dark">:
+     cena WebGL, gráficos PK e HUDs com cores de dado sobre fundo escuro) e
+     herda do design system (../../shared/laift-tokens.css) superfícies,
+     texto, bordas, raios e fonte; a identidade fica no acento azul-céu. */
+  --module-accent-dark: #38bdf8;
+  --module-on-accent-dark: #03222f;
+
+  --bg-main: var(--laift-bg);
+  --bg-surface: var(--laift-surface);
+  --bg-surface-alt: var(--laift-surface-alt);
+  --bg-darker: #0b0f16;
+
+  --primary: var(--module-accent);
   --primary-hover: #0ea5e9;    /* Sky 500 */
   --primary-glow: rgba(56, 189, 248, 0.25);
-  
+
   --secondary: #0284c7;        /* Sky 600 */
   --accent: #34d399;           /* Emerald 400 */
   --accent-glow: rgba(52, 211, 153, 0.25);
-  
+
   --warning: #f59e0b;          /* Amber 500 */
   --warning-alt: #f97316;      /* Orange 500 */
   --danger: #ef4444;           /* Red 500 */
   --danger-glow: rgba(239, 68, 68, 0.35);
   --purple: #a855f7;           /* Purple 500 */
-  
-  --text-main: #f8fafc;        /* Slate 50 */
-  --text-muted: #94a3b8;       /* Slate 400 */
-  --text-dim: #64748b;         /* Slate 500 */
-  --border: #334155;           /* Slate 700 */
+
+  --text-main: var(--laift-text);
+  --text-muted: var(--laift-muted);
+  --text-dim: #7c879c;         /* ≥ 4,5:1 sobre as superfícies escuras */
+  --border: var(--laift-border-strong);
   --border-focus: #0284c7;
-  
-  --radius-sm: 6px;
+
+  --radius-sm: var(--laift-radius-sm);
   --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-lg: var(--laift-radius-md);
   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --header-height: 52px;
   --nav-height: calc(64px + env(safe-area-inset-bottom));
@@ -57,7 +64,7 @@ html, body {
   max-height: 100dvh;
   background-color: var(--bg-main);
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--laift-font);
   overflow: hidden;
   overscroll-behavior: none;
   display: flex;
@@ -981,4 +988,73 @@ input, select, textarea, button {
   .crisis-actions-row {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* -------------------------------------------------------------------------
+   FASE 4 — CLASSES DO DOM SEGURO E ACESSIBILIDADE
+   (substituem estilos que vinham embutidos em strings de innerHTML)
+   ------------------------------------------------------------------------- */
+.atlas-empty-msg { font-size: 0.78rem; color: var(--text-muted); padding: 8px; }
+.atlas-empty-msg.is-boxed { padding: 16px; text-align: center; border: 1px dashed var(--border); border-radius: 8px; }
+.tree-system-name { font-size: 0.84rem; display: flex; align-items: center; gap: 6px; }
+.route-chip-icon { font-size: 1.1rem; }
+.route-chip-meta { font-size: 0.68rem; color: var(--text-muted); }
+.route-details-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.route-details-top strong { font-size: 0.84rem; }
+.route-details-tmax { font-size: 0.7rem; color: var(--text-muted); }
+.route-details-desc { margin: 0 0 6px 0; color: #cbd5e1; font-size: 0.75rem; }
+.route-details-barriers { font-size: 0.72rem; color: var(--text-muted); }
+.route-details-barriers strong { color: var(--text-main); }
+.crisis-intro { font-size: 0.74rem; color: var(--text-muted); }
+.antidote-sub { font-size: 0.66rem; color: var(--text-muted); font-weight: normal; }
+.quiz-launch-btn { padding: 8px 16px; font-size: 0.8rem; }
+.bio-protocol-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.bio-protocol-name { color: var(--text-main); font-size: 0.86rem; display: flex; align-items: center; gap: 6px; }
+.bio-protocol-route { font-size: 0.7rem; color: var(--primary); font-family: var(--laift-font-mono); background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px; }
+.bio-protocol-pathway { font-size: 0.76rem; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
+.bio-protocol-mechanism { font-size: 0.74rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 8px; }
+.bio-protocol-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.bio-protocol-cofactors { font-size: 0.7rem; color: var(--text-muted); }
+.bio-protocol-cofactors span { color: #cbd5e1; }
+
+/* Foco visível em tudo que é acionável (cartões e chips agora são
+   focáveis por teclado). */
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+.route-chip-card:focus-visible,
+.bio-protocol-card:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Telas de toque: alvos de pelo menos 44 px. */
+@media (pointer: coarse) {
+  .btn-pill-tool,
+  .zoom-btn,
+  .sys-chip,
+  .btn-step,
+  .btn-isolate-organ,
+  .route-cat-btn,
+  .btn-mol-style,
+  .btn-mol-action,
+  .nav-btn,
+  #btn-bio-search {
+    min-height: 44px;
+  }
+}
+
+/* Celular (iframe de ~330 px): cabeçalho e seletor de zoom compactos, sem
+   quebrar o título em três linhas nem vazar os botões do cabeçalho. */
+@media (max-width: 600px) {
+  .atlas-header { padding: 0 8px; gap: 8px; }
+  .atlas-brand h1 { font-size: 0.95rem; white-space: nowrap; }
+  .atlas-brand h1 span { display: none; }
+  .header-tools { gap: 6px; flex-shrink: 0; }
+  /* No celular a plataforma já oferece "Tela cheia" na barra do módulo;
+     o botão próprio do atlas empurrava o cabeçalho para fora da tela. */
+  #btnFullscreenToggle { display: none; }
+  .btn-pill-tool { font-size: 0.74rem !important; padding: 4px 10px; white-space: nowrap; }
+  .zoom-btn { font-size: 0.74rem !important; line-height: 1.25; padding: 6px 4px; }
 }

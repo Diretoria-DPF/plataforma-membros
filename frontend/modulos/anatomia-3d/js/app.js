@@ -16,6 +16,12 @@
  */
 
 const AppController = (() => {
+  // DOM seguro (../shared/safe-dom.js): html`` escapa toda interpolação e os
+  // botões gerados usam data-action (sem onclick inline). A busca de
+  // protocolos ecoava o texto digitado por innerHTML — XSS refletido.
+  const html = LaiftDom.html;
+  const setHtml = LaiftDom.setHtml;
+
   // -------------------------------------------------------------------------
   // 1. ESTADO DE NAVEGAÇÃO E COCKPIT SPA
   // -------------------------------------------------------------------------
@@ -116,20 +122,10 @@ const AppController = (() => {
     const container = document.getElementById("systemsBar");
     if (!container || typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) return;
 
-    container.innerHTML = ATLAS_DATABASE.sistemas.map((sys) => {
+    setHtml(container, html`${ATLAS_DATABASE.sistemas.map((sys) => {
       const isActive = sys.id === activeSystemId;
-      return `
-        <button 
-          class="sys-chip ${isActive ? "active" : ""}" 
-          type="button" 
-          data-sys="${sys.id}"
-          onclick="AppController.selectSystem('${sys.id}')"
-        >
-          <span>${sys.icone || "🧬"}</span>
-          <span>${sys.nome}</span>
-        </button>
-      `;
-    }).join("");
+      return html`<button class="sys-chip ${isActive ? "active" : ""}" type="button" data-sys="${sys.id}" aria-pressed="${isActive ? "true" : "false"}" data-action="AppController.selectSystem" data-arg="${sys.id}"><span aria-hidden="true">${sys.icone || "🧬"}</span><span>${sys.nome}</span></button>`;
+    })}`);
   }
 
   function selectSystem(systemId) {
@@ -137,6 +133,7 @@ const AppController = (() => {
 
     document.querySelectorAll(".sys-chip").forEach((chip) => {
       chip.classList.toggle("active", chip.dataset.sys === systemId);
+      chip.setAttribute("aria-pressed", chip.dataset.sys === systemId ? "true" : "false");
     });
 
     if (typeof ThreeEngine !== "undefined" && typeof ThreeEngine.selectSystem === "function") {
@@ -154,68 +151,35 @@ const AppController = (() => {
     if (!container) return;
 
     if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) {
-      container.innerHTML = '<div style="font-size:0.75rem; color:#64748b; padding:8px;">Base de dados anatômica indisponível.</div>';
+      setHtml(container, html`<div class="atlas-empty-msg">Base de dados anatômica indisponível.</div>`);
       return;
     }
 
     const sys = ATLAS_DATABASE.sistemas.find((s) => s.id === (systemId || activeSystemId));
     if (!sys) return;
 
-    let html = `
-      <div class="tree-system-card">
-        <div class="tree-system-header">
-          <strong style="color:${sys.cor || "#38bdf8"}; font-size:0.84rem; display:flex; align-items:center; gap:6px;">
-            <span>${sys.icone || "🧬"}</span> ${sys.nome}
-          </strong>
-          <button type="button" class="btn-isolate-organ" onclick="AppController.resetEntireTree()" title="Restaurar visibilidade de todos os órgãos">
-            Restaurar
-          </button>
-        </div>
-        <div class="tree-organ-list">
-    `;
-
-    (sys.orgaos || []).forEach((orgao) => {
+    const linhas = (sys.orgaos || []).map((orgao) => {
       const organKey = orgao.meshKey || orgao.id;
-      html += `
+      return html`
         <div class="tree-organ-row" data-organ="${organKey}">
-          <input 
-            type="checkbox" 
-            checked 
-            id="chk_${orgao.id}" 
-            title="Exibir/Ocultar ${orgao.nome}"
-            onchange="AppController.onOrganVisibilityChange('${organKey}', this.checked)"
-          >
-          <div class="tree-organ-title" title="${orgao.nome}">
-            ${orgao.nome}
-          </div>
-          <input 
-            type="range" 
-            class="tree-organ-slider" 
-            min="0" 
-            max="1" 
-            step="0.05" 
-            value="1" 
-            title="Transparência (0% a 100%)"
-            oninput="AppController.onOrganOpacityChange('${organKey}', this.value)"
-          >
-          <button 
-            type="button" 
-            class="btn-isolate-organ" 
-            title="Focar e isolar estrutura"
-            onclick="AppController.onOrganIsolate('${organKey}')"
-          >
-            Foco
-          </button>
-        </div>
-      `;
+          <input type="checkbox" checked id="chk_${orgao.id}" title="Exibir/Ocultar ${orgao.nome}" aria-label="Exibir ${orgao.nome}"
+            data-action-change="AppController.onOrganVisibilityChange" data-arg="${organKey}">
+          <div class="tree-organ-title" title="${orgao.nome}">${orgao.nome}</div>
+          <input type="range" class="tree-organ-slider" min="0" max="1" step="0.05" value="1" title="Transparência (0% a 100%)" aria-label="Opacidade de ${orgao.nome}"
+            data-action-input="AppController.onOrganOpacityChange" data-arg="${organKey}">
+          <button type="button" class="btn-isolate-organ" title="Focar e isolar estrutura" aria-label="Focar ${orgao.nome}"
+            data-action="AppController.onOrganIsolate" data-arg="${organKey}">Foco</button>
+        </div>`;
     });
 
-    html += `
+    setHtml(container, html`
+      <div class="tree-system-card">
+        <div class="tree-system-header">
+          <strong class="tree-system-name" style="color:${sys.cor || "#38bdf8"};"><span aria-hidden="true">${sys.icone || "🧬"}</span> ${sys.nome}</strong>
+          <button type="button" class="btn-isolate-organ" data-action="AppController.resetEntireTree" title="Restaurar visibilidade de todos os órgãos">Restaurar</button>
         </div>
-      </div>
-    `;
-
-    container.innerHTML = html;
+        <div class="tree-organ-list">${linhas}</div>
+      </div>`);
   }
 
   function onOrganVisibilityChange(organKey, isVisible) {
@@ -266,54 +230,37 @@ const AppController = (() => {
       return (vias[key].categoria || "").toLowerCase() === activeRouteCategory;
     });
 
-    let html = `
-      <div class="tree-header">
-        <h3>💉 Vias de Administração Farmacológica (${allKeys.length} Vias)</h3>
-        <button type="button" class="btn-isolate-organ" onclick="AppController.stopRoute()">
-          Parar Fluxo
-        </button>
-      </div>
+    const categoria = (id, rotulo) => html`<button type="button" class="route-cat-btn ${activeRouteCategory === id ? "active" : ""}" aria-pressed="${activeRouteCategory === id ? "true" : "false"}" data-action="AppController.filterRouteCategory" data-arg="${id}">${rotulo}</button>`;
 
-      <!-- Abas de Filtro de Categoria -->
-      <div class="routes-category-tabs">
-        <button class="route-cat-btn ${activeRouteCategory === "todas" ? "active" : ""}" onclick="AppController.filterRouteCategory('todas')">Todas (${allKeys.length})</button>
-        <button class="route-cat-btn ${activeRouteCategory === "enteral" ? "active" : ""}" onclick="AppController.filterRouteCategory('enteral')">Enterais</button>
-        <button class="route-cat-btn ${activeRouteCategory === "parenteral" ? "active" : ""}" onclick="AppController.filterRouteCategory('parenteral')">Parenterais</button>
-        <button class="route-cat-btn ${activeRouteCategory === "mucosa" ? "active" : ""}" onclick="AppController.filterRouteCategory('mucosa')">Mucosas</button>
-        <button class="route-cat-btn ${activeRouteCategory === "topica" ? "active" : ""}" onclick="AppController.filterRouteCategory('topica')">Tópicas</button>
-      </div>
-
-      <div class="routes-grid">
-    `;
-
-    filteredKeys.forEach((key) => {
+    const cartoes = filteredKeys.map((key) => {
       const rota = vias[key];
       const isActive = rota.id === activeRouteId;
-
-      html += `
-        <div 
-          class="route-chip-card ${isActive ? "active" : ""}" 
-          id="route_card_${rota.id}" 
-          onclick="AppController.selectRoute('${rota.id}')"
-        >
+      return html`
+        <div class="route-chip-card ${isActive ? "active" : ""}" id="route_card_${rota.id}" role="button" tabindex="0"
+          data-action="AppController.selectRoute" data-arg="${rota.id}">
           <div class="route-chip-header">
-            <span style="font-size:1.1rem;">${rota.icone}</span>
-            <span class="route-badge" style="background:${rota.corFluxo}22; color:${rota.corFluxo}; border:1px solid ${rota.corFluxo};">
-              ${rota.id}
-            </span>
+            <span class="route-chip-icon" aria-hidden="true">${rota.icone}</span>
+            <span class="route-badge" style="background:${rota.corFluxo}22; color:${rota.corFluxo}; border:1px solid ${rota.corFluxo};">${rota.id}</span>
           </div>
           <div class="route-chip-title">${rota.nome}</div>
-          <div style="font-size:0.65rem; color:#94a3b8;">Biodisp.: ${rota.biodisponibilidadeMedia}</div>
-        </div>
-      `;
+          <div class="route-chip-meta">Biodisp.: ${rota.biodisponibilidadeMedia}</div>
+        </div>`;
     });
 
-    html += `
+    setHtml(container, html`
+      <div class="tree-header">
+        <h3>💉 Vias de Administração Farmacológica (${allKeys.length} Vias)</h3>
+        <button type="button" class="btn-isolate-organ" data-action="AppController.stopRoute">Parar Fluxo</button>
       </div>
-      <div id="routeDetailsPanel" class="route-details-panel"></div>
-    `;
-
-    container.innerHTML = html;
+      <div class="routes-category-tabs" role="group" aria-label="Filtrar vias por categoria">
+        ${categoria("todas", "Todas (" + allKeys.length + ")")}
+        ${categoria("enteral", "Enterais")}
+        ${categoria("parenteral", "Parenterais")}
+        ${categoria("mucosa", "Mucosas")}
+        ${categoria("topica", "Tópicas")}
+      </div>
+      <div class="routes-grid">${cartoes}</div>
+      <div id="routeDetailsPanel" class="route-details-panel" aria-live="polite"></div>`);
     updateRouteDetailsPanel(activeRouteId);
   }
 
@@ -345,21 +292,19 @@ const AppController = (() => {
     const rota = ATLAS_DATABASE.viasAdministracao[routeId] || ATLAS_DATABASE.viasAdministracao["ORAL"];
     if (!rota) return;
 
-    panel.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
-        <strong style="color:${rota.corFluxo}; font-size:0.84rem;">${rota.nome}</strong>
-        <span style="font-size:0.68rem; color:#94a3b8;">tMax Estimado: <strong>${rota.tMaxMedio}</strong></span>
+    const primeiraPassagem = typeof rota.primeiraPassagemHepatica === "boolean" ? (rota.primeiraPassagemHepatica ? "SIM" : "NÃO") : rota.primeiraPassagemHepatica;
+    setHtml(panel, html`
+      <div class="route-details-top">
+        <strong style="color:${rota.corFluxo};">${rota.nome}</strong>
+        <span class="route-details-tmax">tMax Estimado: <strong>${rota.tMaxMedio}</strong></span>
       </div>
-      <p style="margin:0 0 6px 0; color:#cbd5e1; font-size:0.75rem;">${rota.descricaoClinica}</p>
-      <div style="font-size:0.7rem; color:#94a3b8;">
-        <strong style="color:#f8fafc;">Barreiras de Absorção:</strong> ${rota.barreirasBiologicas}
-      </div>
+      <p class="route-details-desc">${rota.descricaoClinica}</p>
+      <div class="route-details-barriers"><strong>Barreiras de Absorção:</strong> ${rota.barreirasBiologicas}</div>
       <div class="route-details-meta">
-        <span>1ª Passagem Hepática: <strong>${typeof rota.primeiraPassagemHepatica === "boolean" ? (rota.primeiraPassagemHepatica ? "SIM" : "NÃO") : rota.primeiraPassagemHepatica}</strong></span>
-        <span>•</span>
+        <span>1ª Passagem Hepática: <strong>${primeiraPassagem}</strong></span>
+        <span aria-hidden="true">•</span>
         <span>Biodisponibilidade (F): <strong>${rota.biodisponibilidadeMedia}</strong></span>
-      </div>
-    `;
+      </div>`);
   }
 
   function stopRoute() {
@@ -376,51 +321,24 @@ const AppController = (() => {
     const container = document.getElementById("crisisPanelContainer");
     if (!container) return;
 
-    container.innerHTML = `
+    setHtml(container, html`
       <div class="crisis-panel-card">
         <div class="crisis-panel-header">
-          <div class="crisis-title">
-            <span>🚨</span>
-            <span>Simulador de Crise: Intoxicação por Organofosforados</span>
-          </div>
-          <button 
-            type="button" 
-            id="btnToggleCrisis" 
-            class="btn-crisis-toggle" 
-            onclick="AppController.toggleCrisisState()"
-          >
-            Iniciar Crise
-          </button>
+          <div class="crisis-title"><span aria-hidden="true">🚨</span><span>Simulador de Crise: Intoxicação por Organofosforados</span></div>
+          <button type="button" id="btnToggleCrisis" class="btn-crisis-toggle" aria-pressed="false" data-action="AppController.toggleCrisisState">Iniciar Crise</button>
         </div>
-
-        <div id="crisisTelemetryHUD">
-          <div style="font-size:0.72rem; color:#94a3b8;">
-            Simulação de inibição irreversível da AChE, broncorreia e bradicardia severa. Clique em "Iniciar Crise" para monitorar a curva e intervir com antídotos.
-          </div>
+        <div id="crisisTelemetryHUD" aria-live="polite">
+          <div class="crisis-intro">Simulação de inibição irreversível da AChE, broncorreia e bradicardia severa. Clique em "Iniciar Crise" para monitorar a curva e intervir com antídotos.</div>
         </div>
-
         <div class="crisis-actions-row">
-          <button 
-            type="button" 
-            class="btn-antidote atropina" 
-            onclick="AppController.applyAntidoteAction('atropina')"
-            title="Antagonista competitivo muscarínico"
-          >
-            <span>💉 Atropina 2mg IV</span>
-            <span style="font-size:0.62rem; color:#94a3b8; font-weight:normal;">Bloqueio Receptores M2/M3</span>
+          <button type="button" class="btn-antidote atropina" data-action="AppController.applyAntidoteAction" data-arg="atropina" title="Antagonista competitivo muscarínico">
+            <span>💉 Atropina 2mg IV</span><span class="antidote-sub">Bloqueio Receptores M2/M3</span>
           </button>
-          <button 
-            type="button" 
-            class="btn-antidote pralidoxima" 
-            onclick="AppController.applyAntidoteAction('pralidoxima')"
-            title="Reativador da acetilcolinesterase"
-          >
-            <span>💉 Pralidoxima 1g IV</span>
-            <span style="font-size:0.62rem; color:#94a3b8; font-weight:normal;">Reativação Enzimática AChE</span>
+          <button type="button" class="btn-antidote pralidoxima" data-action="AppController.applyAntidoteAction" data-arg="pralidoxima" title="Reativador da acetilcolinesterase">
+            <span>💉 Pralidoxima 1g IV</span><span class="antidote-sub">Reativação Enzimática AChE</span>
           </button>
         </div>
-      </div>
-    `;
+      </div>`);
   }
 
   function toggleCrisisState() {
@@ -432,12 +350,14 @@ const AppController = (() => {
       if (btn) {
         btn.innerText = "Interromper Crise";
         btn.style.background = "#64748b";
+        btn.setAttribute("aria-pressed", "true");
       }
     } else {
       PkEngine.stopCrisisSimulation();
       if (btn) {
         btn.innerText = "Iniciar Crise";
         btn.style.background = "var(--danger)";
+        btn.setAttribute("aria-pressed", "false");
       }
     }
   }
@@ -455,22 +375,14 @@ const AppController = (() => {
     const container = document.getElementById("quizLauncherContainer");
     if (!container) return;
 
-    container.innerHTML = `
+    setHtml(container, html`
       <div class="quiz-launcher-banner">
         <div class="quiz-launcher-info">
           <h4>🎯 Quiz 3D Interativo: Aponte e Diagnostique</h4>
           <p>Casos clínicos toxicológicos, farmacocinética e semiologia espacial.</p>
         </div>
-        <button 
-          type="button" 
-          class="btn-primary" 
-          onclick="AppController.launchQuiz()"
-          style="padding:8px 16px; font-size:0.78rem;"
-        >
-          ▶ Iniciar Quiz 3D
-        </button>
-      </div>
-    `;
+        <button type="button" class="btn-primary quiz-launch-btn" data-action="AppController.launchQuiz">▶ Iniciar Quiz 3D</button>
+      </div>`);
   }
 
   function launchQuiz() {
@@ -487,7 +399,7 @@ const AppController = (() => {
     if (!container) return;
 
     if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.protocols)) {
-      container.innerHTML = '<div style="color:#64748b; font-size:0.8rem;">Nenhum protocolo disponível.</div>';
+      setHtml(container, html`<div class="atlas-empty-msg">Nenhum protocolo disponível.</div>`);
       return;
     }
 
@@ -502,38 +414,22 @@ const AppController = (() => {
     });
 
     if (protocolos.length === 0) {
-      container.innerHTML = `
-        <div style="font-size:0.78rem; color:#64748b; padding:16px; text-align:center; border:1px dashed #334155; border-radius:8px;">
-          Nenhum protocolo encontrado para "${filtro}".
-        </div>
-      `;
+      // O termo digitado volta escapado (antes: innerHTML com o texto cru).
+      setHtml(container, html`<div class="atlas-empty-msg is-boxed">Nenhum protocolo encontrado para "${filtro}".</div>`);
       return;
     }
 
-    container.innerHTML = protocolos.map((p) => `
-      <div class="bio-protocol-card" onclick="AppController.simulateBioProtocol('${p.id}')">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <strong style="color:#f8fafc; font-size:0.86rem; display:flex; align-items:center; gap:6px;">
-            <span>${p.icone || "⚡"}</span> ${p.nome}
-          </strong>
-          <span style="font-size:0.68rem; color:#38bdf8; font-family:monospace; background:rgba(56,189,248,0.1); padding:2px 6px; border-radius:4px;">
-            ${p.pkData ? p.pkData.route : "ORAL"}
-          </span>
+    setHtml(container, html`${protocolos.map((p) => html`
+      <div class="bio-protocol-card" role="button" tabindex="0" data-action="AppController.simulateBioProtocol" data-arg="${p.id}">
+        <div class="bio-protocol-top">
+          <strong class="bio-protocol-name"><span aria-hidden="true">${p.icone || "⚡"}</span> ${p.nome}</strong>
+          <span class="bio-protocol-route">${p.pkData ? p.pkData.route : "ORAL"}</span>
         </div>
-        <div style="font-size:0.74rem; color:#34d399; margin-bottom:6px; font-weight:600;">
-          ${p.viaMetabolica}
-        </div>
-        <p style="font-size:0.72rem; color:#94a3b8; line-height:1.45; margin-bottom:8px;">
-          ${p.mecanismoAcao}
-        </p>
-        <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-          ${(p.tags || []).map((t) => `<span class="tag-bio">${t}</span>`).join("")}
-        </div>
-        <div style="font-size:0.68rem; color:#64748b;">
-          Cofatores sinérgicos: <span style="color:#cbd5e1;">${(p.cofatores || []).join(", ") || "Nenhum"}</span>
-        </div>
-      </div>
-    `).join("");
+        <div class="bio-protocol-pathway">${p.viaMetabolica}</div>
+        <p class="bio-protocol-mechanism">${p.mecanismoAcao}</p>
+        <div class="bio-protocol-tags">${(p.tags || []).map((t) => html`<span class="tag-bio">${t}</span>`)}</div>
+        <div class="bio-protocol-cofactors">Cofatores sinérgicos: <span>${(p.cofatores || []).join(", ") || "Nenhum"}</span></div>
+      </div>`)}`);
   }
 
   function simulateBioProtocol(protocolId) {
@@ -654,6 +550,10 @@ const AppController = (() => {
     resetEntireTree
   };
 })();
+
+// `const` no topo não vira propriedade de window: sem isto, data-action
+// "AppController.x" (e o antigo onclick) não encontrariam o controlador.
+window.AppController = AppController;
 
 // Inicialização segura com o carregamento do DOM
 if (document.readyState === "loading") {

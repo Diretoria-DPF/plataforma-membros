@@ -332,7 +332,7 @@
       renderer.outputEncoding = THREE.sRGBEncoding;
     }
 
-    container.innerHTML = "";
+    container.replaceChildren();
     container.appendChild(renderer.domElement);
 
     // Sistema de iluminação tripla
@@ -924,7 +924,7 @@
           tweenCamera(p.cam, p.look || p.pos);
           highlightOrgan(p.organKey || p.id);
           if (organHud && organNameEl) {
-            organNameEl.innerHTML = `<span style="color:#38bdf8;">📍 ${p.label}</span><div style="font-size:0.68rem; color:#94a3b8; font-weight:normal;">${p.desc || ""}</div>`;
+            LaiftDom.setHtml(organNameEl, LaiftDom.html`<span style="color:#38bdf8;">📍 ${p.label}</span><div style="font-size:0.68rem; color:#94a3b8; font-weight:normal;">${p.desc || ""}</div>`);
             organHud.classList.remove("hidden");
           }
           return;
@@ -971,16 +971,17 @@
     widget.id = "dissectionControlWidget";
     widget.style.cssText = "position:absolute; bottom:12px; left:12px; background:rgba(2,6,23,0.92); border:1px solid #334155; padding:8px 12px; border-radius:8px; display:flex; flex-direction:column; gap:4px; z-index:30; backdrop-filter:blur(6px);";
 
-    widget.innerHTML = `
+    // Marcação constante (sem dado dinâmico).
+    LaiftDom.setHtml(widget, LaiftDom.trusted(`
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
         <span id="dissectionLevelBadge" style="font-size:0.7rem; font-weight:700; color:#38bdf8;">Camada 5/5: Vísceras</span>
-        <button type="button" id="btnTogglePins" style="background:transparent; border:1px solid #334155; color:#94a3b8; font-size:0.65rem; padding:2px 6px; border-radius:4px; cursor:pointer;" title="Alternar Marcadores">📍 Pins</button>
+        <button type="button" id="btnTogglePins" aria-pressed="true" style="background:transparent; border:1px solid #334155; color:#94a3b8; font-size:0.65rem; padding:2px 6px; border-radius:4px; cursor:pointer;" title="Alternar Marcadores">📍 Pins</button>
       </div>
-      <input type="range" id="dissectionSlider" min="1" max="5" value="5" step="1" style="width:160px; accent-color:#0284c7; cursor:pointer; margin:4px 0;">
+      <input type="range" id="dissectionSlider" aria-label="Camada de dissecção" min="1" max="5" value="5" step="1" style="width:160px; accent-color:#0284c7; cursor:pointer; margin:4px 0;">
       <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:#64748b; font-family:monospace;">
         <span>Pele</span><span>Músculo</span><span>Osso</span><span>Vasos</span><span>Vísceras</span>
       </div>
-    `;
+    `));
 
     if (container) {
       container.appendChild(widget);
@@ -992,6 +993,7 @@
         btnPins.addEventListener("click", () => {
           togglePinsVisibility();
           btnPins.style.color = arePinsVisible ? "#38bdf8" : "#64748b";
+          btnPins.setAttribute("aria-pressed", arePinsVisible ? "true" : "false");
         });
       }
     }
