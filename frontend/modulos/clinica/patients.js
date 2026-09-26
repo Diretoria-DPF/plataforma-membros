@@ -1,6 +1,11 @@
 /**
  * BANCO DE DADOS DE CASOS CLÍNICOS E AMBULATORIAIS (OSCE VIRTUAL)
  * Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (LAIFT)
+ *
+ * Casos embutidos (caseSource "builtin"). toxindrome e agentePrincipal
+ * alimentam o radar epidemiológico (learning_attempts.details, Fase 3) e
+ * usam a mesma lista fechada de toxíndromes do servidor
+ * (worker/src/ai/validators.js, TOXINDROMES).
  */
 
 const clinicalJourneys = [
@@ -24,6 +29,9 @@ const clinicalCases = [
   // =========================================================
   {
     id: "caso_tox_01",
+    caseSource: "builtin",
+    toxindrome: "Colinérgica",
+    agentePrincipal: "Organofosforado (metamidofós)",
     jornadaId: "jornada_emergencia_tox",
     ordemTrilha: 1,
     titulo: "Insuficiência Respiratória Aguda na Lavoura",
@@ -128,6 +136,9 @@ const clinicalCases = [
   // =========================================================
   {
     id: "caso_clin_02",
+    caseSource: "builtin",
+    toxindrome: "Outra",
+    agentePrincipal: "Sinvastatina + claritromicina",
     jornadaId: "jornada_farmacia_clinica",
     ordemTrilha: 1,
     titulo: "Fadiga Muscular Incapacitante e Urina Escura",
@@ -232,6 +243,9 @@ const clinicalCases = [
   // =========================================================
   {
     id: "caso_tox_03",
+    caseSource: "builtin",
+    toxindrome: "Hemorrágica/Coagulopatia",
+    agentePrincipal: "Bothrops (jararaca)",
     jornadaId: "jornada_emergencia_tox",
     ordemTrilha: 2,
     titulo: "Acidente Ofídico com Dor Local e Sangramento Gengival",
@@ -327,6 +341,9 @@ const clinicalCases = [
   // =========================================================
   {
     id: "caso_tox_04",
+    caseSource: "builtin",
+    toxindrome: "Hepatotóxica/Metabólica",
+    agentePrincipal: "Paracetamol",
     jornadaId: "jornada_emergencia_tox",
     ordemTrilha: 3,
     titulo: "Ingestão Voluntária Maciça de Analgésicos",

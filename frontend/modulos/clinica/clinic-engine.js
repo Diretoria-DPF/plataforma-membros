@@ -1,6 +1,21 @@
 /**
  * MOTOR DA CLÍNICA MÉDICA VIRTUAL (OSCE MULTIPACIENTE, ACERVO & RADAR EPIDEMIOLÓGICO)
  * Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (LAIFT)
+ *
+ * Fase 3 (docs/FASE_3_IA_CLINICA.md): a IA e o acervo saíram do Apps Script.
+ * Toda chamada ao servidor passa pela ponte `window.LaiftApi.call(action,
+ * input)` (modulos/shared/laift-identity.js, Contrato 3), que usa a sessão
+ * da plataforma — o token nunca chega a este iframe. Endpoints usados:
+ * apiLearnClinicalChat / Evaluate / GenerateCase / Library / Epidemiology e
+ * apiLearnGetMyAiQuota.
+ *
+ * SEGURANÇA: a fala do paciente, o parecer do preceptor, os casos do acervo
+ * e os casos gerados vêm da IA ou de outros usuários. Tudo isso é inserido
+ * no DOM SÓ com textContent/createElement (helper `el`) — nunca innerHTML.
+ * Esta página roda na mesma origem da plataforma: um XSS aqui alcançaria a
+ * sessão de quem está logado. Este arquivo não usa innerHTML em lugar
+ * nenhum, nem para marcação fixa (CSP e o resto do endurecimento da
+ * página: Equipe 4, Onda 2).
  */
 
 const ClinicEngine = (() => {
@@ -9,20 +24,106 @@ const ClinicEngine = (() => {
   let patience = 100;
   let elapsedSeconds = 0;
   let clockInterval = null;
-  let aiCooldownTimer = null;
   let isCaseActive = false;
-  let conversationHistory = [];
+  // Turnos da anamnese no formato do servidor: { role: 'student'|'patient', text }.
+  let chatTurns = [];
   let requestedExams = [];
-  let intentHistory = {};
   let caseOutcome = 'EM_ANDAMENTO';
   let activeSemiologyAxis = 'cronologia';
-  
+  let bridgeNoticeShown = false;
+  let lastQuota = null;
+
   // Controle de Estado do Acervo Comunitário
   let modoExibicaoAtual = 'plantao'; // 'plantao' | 'acervo'
   let casosAcervoCache = [];
 
+  // Limites do servidor (worker/src/constants.js, AI_LIMITS) — conferidos
+  // aqui só para a pessoa não perder o que digitou numa recusa previsível.
+  const HISTORY_TURNS_SENT = 8;
+  const CONTEXT_MAX_BYTES = 4096;
+  const ANSWER_KEY_MAX_BYTES = 4096;
+  const TOPIC_MAX = 200;
+
+  const BRIDGE_MISSING_MSG = 'A clínica precisa estar aberta dentro da plataforma (área "Aprender") para usar a IA e o acervo.';
+
   // Cache centralizado de referências do DOM
   const dom = {};
+
+  // =========================================================
+  // 0. UTILITÁRIOS: PONTE COM A PLATAFORMA E DOM SEGURO
+  // =========================================================
+
+  /**
+   * Chamada defensiva à ponte. Sem ponte (página aberta fora da plataforma,
+   * ou antes da integração da Equipe 2) ou com falha de rede, devolve
+   * { success:false, message } — nunca lança.
+   */
+  async function callLaift(action, input) {
+    if (!window.LaiftApi || typeof window.LaiftApi.call !== 'function') {
+      return { success: false, message: BRIDGE_MISSING_MSG, bridgeMissing: true };
+    }
+    try {
+      const res = await window.LaiftApi.call(action, input || {});
+      return res && typeof res === 'object' ? res : { success: false, message: 'Resposta inválida do servidor.' };
+    } catch (err) {
+      return { success: false, message: 'Falha de comunicação com a plataforma. Tente novamente.' };
+    }
+  }
+
+  /** Cria um elemento; `text` vira textContent, filhos string viram nós de texto. */
+  function el(tag, props, children) {
+    const node = document.createElement(tag);
+    const p = props || {};
+    Object.keys(p).forEach((key) => {
+      const value = p[key];
+      if (value === null || value === undefined) return;
+      if (key === 'text') node.textContent = String(value);
+      else if (key === 'className') node.className = value;
+      else if (key === 'style') node.style.cssText = value;
+      else if (key === 'dataset') Object.keys(value).forEach((d) => { node.dataset[d] = String(value[d]); });
+      else if (key.indexOf('on') === 0 && typeof value === 'function') node.addEventListener(key.slice(2), value);
+      else node.setAttribute(key, String(value));
+    });
+    (children || []).forEach((child) => {
+      if (child === null || child === undefined || child === false) return;
+      node.appendChild(typeof child === 'string' || typeof child === 'number' ? document.createTextNode(String(child)) : child);
+    });
+    return node;
+  }
+
+  function clearNode(node) {
+    if (!node) return;
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function emptyState(container, message, color) {
+    clearNode(container);
+    container.appendChild(el('div', {
+      style: `grid-column: 1 / -1; text-align: center; padding: 30px; color: ${color || 'var(--gray, #64748b)'};`,
+    }, [el('p', { text: message })]));
+  }
+
+  function byteLength(value) {
+    return new TextEncoder().encode(JSON.stringify(value)).length;
+  }
+
+  /** Corta o campo de texto mais longo até o objeto caber em `maxBytes` (o servidor recusaria). */
+  function fitToBytes(obj, maxBytes) {
+    let guard = 0;
+    while (byteLength(obj) > maxBytes && guard++ < 40) {
+      let longestKey = null;
+      Object.keys(obj).forEach((k) => {
+        if (typeof obj[k] === 'string' && (!longestKey || obj[k].length > obj[longestKey].length)) longestKey = k;
+      });
+      if (!longestKey || obj[longestKey].length < 20) break;
+      obj[longestKey] = obj[longestKey].slice(0, Math.floor(obj[longestKey].length * 0.8));
+    }
+    return obj;
+  }
+
+  function caseSourceOf(c) {
+    return c && (c.caseSource === 'acervo' || c.caseSource === 'ia') ? c.caseSource : 'builtin';
+  }
 
   function initDomReferences() {
     dom.patientName = document.getElementById('clinicPatientName');
@@ -39,6 +140,7 @@ const ClinicEngine = (() => {
     dom.bedsGrid = document.getElementById('patientBedsGrid');
     dom.communityBedsGrid = document.getElementById('communityBedsGrid');
     dom.btnGenerateAiCase = document.getElementById('btnGenerateAiCase');
+    dom.aiQuotaInfo = document.getElementById('aiQuotaInfo');
 
     // Controles do Acervo e Modos
     dom.btnModoPlantao = document.getElementById('btnModoPlantao');
@@ -91,7 +193,48 @@ const ClinicEngine = (() => {
   }
 
   // =========================================================
-  // 1. GESTÃO DE LEITOS (PLANTÃO ATIVO VS. ACERVO COLETIVO)
+  // 1. COTA DIÁRIA DE IA (apiLearnGetMyAiQuota)
+  // =========================================================
+
+  function setGenerateButtonIdle() {
+    initDomReferences();
+    const btn = dom.btnGenerateAiCase;
+    if (!btn) return;
+    const esgotada = lastQuota && lastQuota.generateCase && lastQuota.generateCase.remaining <= 0;
+    btn.disabled = !!esgotada;
+    btn.textContent = esgotada ? '⛔ Cota diária de casos esgotada' : '⚡ Gerar Caso com IA';
+  }
+
+  function renderQuota(quotas) {
+    initDomReferences();
+    if (!dom.aiQuotaInfo) return;
+    if (!quotas) {
+      dom.aiQuotaInfo.textContent = '';
+      return;
+    }
+    const g = quotas.generateCase || { remaining: 0, limit: 0 };
+    const e = quotas.evaluate || { remaining: 0, limit: 0 };
+    const c = quotas.chat || { remaining: 0, limit: 0 };
+    dom.aiQuotaInfo.textContent =
+      `IA hoje: ${g.remaining} de ${g.limit} casos · ${e.remaining} de ${e.limit} avaliações · ${c.remaining} de ${c.limit} perguntas`;
+    dom.aiQuotaInfo.dataset.esgotada = g.remaining <= 0 ? 'sim' : 'nao';
+  }
+
+  async function refreshAiQuota() {
+    const res = await callLaift('apiLearnGetMyAiQuota', {});
+    if (res && res.success && res.quotas) {
+      lastQuota = res.quotas;
+      renderQuota(res.quotas);
+    } else {
+      lastQuota = null;
+      renderQuota(null);
+    }
+    setGenerateButtonIdle();
+    return lastQuota;
+  }
+
+  // =========================================================
+  // 2. GESTÃO DE LEITOS (PLANTÃO ATIVO VS. ACERVO COLETIVO)
   // =========================================================
 
   function setModoExibicao(modo) {
@@ -120,178 +263,172 @@ const ClinicEngine = (() => {
     }
   }
 
+  /**
+   * "Concluído" no cartão do leito é uma marca LOCAL deste navegador
+   * (localStorage `laift_resolved_cases`). O registro oficial de cada
+   * atendimento avaliado está em learning_attempts, no servidor (conta nas
+   * estatísticas da área "Aprender"); a marca local existe só para a pessoa
+   * ver no mapa de leitos o que já atendeu. Decisão documentada em
+   * docs/FASE_3_IA_CLINICA.md.
+   */
+  function lerCasosResolvidos() {
+    try {
+      const lista = JSON.parse(localStorage.getItem('laift_resolved_cases') || '[]');
+      return Array.isArray(lista) ? lista.map(String) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function registrarCasoResolvido(caseId) {
+    try {
+      const resolvidos = lerCasosResolvidos();
+      if (!resolvidos.includes(String(caseId))) {
+        resolvidos.push(String(caseId));
+        localStorage.setItem('laift_resolved_cases', JSON.stringify(resolvidos.slice(-200)));
+      }
+    } catch (e) { /* armazenamento indisponível: só perde a marca visual */ }
+  }
+
   function renderBedsGrid() {
     initDomReferences();
     if (!dom.bedsGrid) return;
-
-    dom.bedsGrid.innerHTML = '';
+    clearNode(dom.bedsGrid);
 
     if (typeof clinicalCases === 'undefined' || !Array.isArray(clinicalCases) || clinicalCases.length === 0) {
-      dom.bedsGrid.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray, #64748b);">
-          <h3>Nenhum paciente internado no plantão ativo.</h3>
-          <p>Clique em <strong>⚡ Gerar Caso com IA</strong> ou explore o <strong>Acervo da Liga</strong>.</p>
-        </div>
-      `;
+      dom.bedsGrid.appendChild(el('div', { style: 'grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray, #64748b);' }, [
+        el('h3', { text: 'Nenhum paciente internado no plantão ativo.' }),
+        el('p', { text: 'Clique em "⚡ Gerar Caso com IA" ou explore o "Acervo da Liga".' }),
+      ]));
       return;
     }
 
-    const resolvidos = JSON.parse(localStorage.getItem('laift_resolved_cases') || '[]');
+    const resolvidos = lerCasosResolvidos();
 
     clinicalCases.forEach((c, index) => {
-      const isConcluido = resolvidos.includes(c.id);
-      const card = document.createElement('div');
-      card.className = `bed-card ${c.tipo === 'emergencia' ? 'emergency' : 'ambulatory'} ${isConcluido ? 'completed' : ''}`;
-
-      const idade = c.paciente ? c.paciente.idade : '--';
-      const nome = c.paciente ? c.paciente.nome : 'Paciente';
-      const perfilComportamental = (c.contextoOculto && c.contextoOculto.temperamento) 
-        ? c.contextoOculto.temperamento.split(',')[0] 
+      const isConcluido = resolvidos.includes(String(c.id));
+      const idade = c.paciente && c.paciente.idade !== undefined ? c.paciente.idade : '--';
+      const nome = (c.paciente && c.paciente.nome) || 'Paciente';
+      const perfilComportamental = (c.contextoOculto && c.contextoOculto.temperamento)
+        ? String(c.contextoOculto.temperamento).split(',')[0]
         : (c.dificuldade || 'Intermediário');
+      const queixaTxt = String(c.queixaPrincipal || 'Sem queixa descrita.');
+      const queixa = queixaTxt.length > 85 ? queixaTxt.substring(0, 85) + '...' : queixaTxt;
 
-      const queixa = c.queixaPrincipal 
-        ? (c.queixaPrincipal.length > 85 ? c.queixaPrincipal.substring(0, 85) + '...' : c.queixaPrincipal) 
-        : 'Sem queixa descrita.';
-
-      card.innerHTML = `
-        <div class="bed-header">
-          <span class="bed-tag">${c.tipo === 'emergencia' ? '🚨 Emergência' : '🩺 Ambulatório'}</span>
-          <span class="bed-status" style="font-weight: bold; color: ${isConcluido ? 'var(--success, #16a34a)' : 'var(--primary, #0f766e)'};">
-            ${isConcluido ? '✅ Concluído' : '🟡 Em Aberto'}
-          </span>
-        </div>
-        <h4 style="margin: 8px 0 4px; font-size: 1.15rem; color: var(--primary, #0f766e);">Leito 0${index + 1}: ${nome}</h4>
-        <p class="bed-complaint" style="font-style: italic; color: #475569; margin-bottom: 12px; min-height: 42px;">"${queixa}"</p>
-        <div class="bed-meta" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--gray, #64748b); border-top: 1px solid #e2e8f0; padding-top: 8px; margin-bottom: 14px;">
-          <span>Idade: <strong>${idade} anos</strong></span>
-          <span>Perfil: <strong>${perfilComportamental}</strong></span>
-        </div>
-        <button class="btn btn-primary" style="width: 100%;" type="button" data-id="${c.id}" onclick="ClinicEngine.openBed(this.dataset.id)">
-          ${isConcluido ? '🔄 Reavaliar Caso' : '🩺 Assumir Atendimento'}
-        </button>
-      `;
+      const card = el('div', { className: `bed-card ${c.tipo === 'emergencia' ? 'emergency' : 'ambulatory'} ${isConcluido ? 'completed' : ''}` }, [
+        el('div', { className: 'bed-header' }, [
+          el('span', { className: 'bed-tag', text: c.tipo === 'emergencia' ? '🚨 Emergência' : '🩺 Ambulatório' }),
+          el('span', {
+            className: 'bed-status',
+            style: `font-weight: bold; color: ${isConcluido ? 'var(--success, #16a34a)' : 'var(--primary, #0f766e)'};`,
+            text: isConcluido ? '✅ Concluído' : '🟡 Em Aberto',
+          }),
+        ]),
+        el('h4', { style: 'margin: 8px 0 4px; font-size: 1.15rem; color: var(--primary, #0f766e);', text: `Leito 0${index + 1}: ${nome}` }),
+        el('p', { className: 'bed-complaint', style: 'font-style: italic; color: #475569; margin-bottom: 12px; min-height: 42px;', text: `"${queixa}"` }),
+        el('div', { className: 'bed-meta', style: 'display: flex; justify-content: space-between; gap: 8px; font-size: 0.85rem; color: var(--gray, #64748b); border-top: 1px solid #e2e8f0; padding-top: 8px; margin-bottom: 14px;' }, [
+          el('span', {}, ['Idade: ', el('strong', { text: `${idade} anos` })]),
+          el('span', {}, ['Perfil: ', el('strong', { text: perfilComportamental })]),
+        ]),
+        el('button', {
+          className: 'btn btn-primary', style: 'width: 100%;', type: 'button',
+          text: isConcluido ? '🔄 Reavaliar Caso' : '🩺 Assumir Atendimento',
+          onclick: () => openBed(c),
+        }),
+      ]);
 
       dom.bedsGrid.appendChild(card);
     });
   }
 
   // =========================================================
-  // 2. INTEGRAÇÃO COM O ACERVO COLETIVO (CUSTO ZERO DE TOKENS)
+  // 3. ACERVO COLETIVO (apiLearnClinicalLibrary — só casos aprovados)
   // =========================================================
 
-  async function carregarAcervoComunitario(forceRefresh = false) {
+  async function carregarAcervoComunitario() {
     initDomReferences();
     if (!dom.communityBedsGrid) return;
 
-    dom.communityBedsGrid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: var(--gray);">
-        <p>⏳ Sincronizando biblioteca de casos clínicos da LAIFT...</p>
-      </div>
-    `;
+    emptyState(dom.communityBedsGrid, '⏳ Sincronizando a biblioteca de casos clínicos da LAIFT...');
 
-    try {
-      let res;
-      if (typeof ApiService !== 'undefined' && typeof ApiService.listarCasosAcervo === 'function') {
-        res = await ApiService.listarCasosAcervo();
-      } else if (typeof ApiService !== 'undefined' && typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({ acao: 'listarCasosAcervo' });
-      }
-
-      if (res && res.sucesso && Array.isArray(res.casos) && res.casos.length > 0) {
-        casosAcervoCache = res.casos.map((c, idx) => {
-          let parsed = c;
-          if (typeof c === 'string') {
-            try { parsed = JSON.parse(c); } catch (e) { parsed = null; }
-          }
-          if (parsed && !parsed.id) {
-            parsed.id = 'acervo_caso_' + idx;
-          }
-          return parsed;
-        }).filter(Boolean);
-
-        renderAcervoGrid(casosAcervoCache);
-      } else {
-        dom.communityBedsGrid.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray);">
-            <h4>Nenhum caso cadastrado no acervo até o momento.</h4>
-            <p>Os novos casos sintetizados por IA ou cadastrados na planilha aparecerão aqui automaticamente.</p>
-          </div>
-        `;
-      }
-    } catch (err) {
-      console.warn('Erro ao carregar acervo:', err);
-      dom.communityBedsGrid.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: #dc2626;">
-          <p>Erro de conexão ao carregar casos do acervo da planilha.</p>
-        </div>
-      `;
+    const res = await callLaift('apiLearnClinicalLibrary', {});
+    if (!res.success) {
+      emptyState(dom.communityBedsGrid, res.message || 'Não foi possível carregar o acervo agora.', '#dc2626');
+      return;
     }
+
+    casosAcervoCache = (Array.isArray(res.cases) ? res.cases : [])
+      .filter((c) => c && typeof c === 'object' && c.id)
+      .map((c) => Object.assign({}, c, { caseSource: 'acervo' }));
+
+    if (casosAcervoCache.length === 0) {
+      clearNode(dom.communityBedsGrid);
+      dom.communityBedsGrid.appendChild(el('div', { style: 'grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray);' }, [
+        el('h4', { text: 'Nenhum caso publicado no acervo até o momento.' }),
+        el('p', { text: 'Casos gerados com IA entram aqui depois de revisados pela diretoria.' }),
+      ]));
+      return;
+    }
+    filtrarAcervo();
   }
 
   function renderAcervoGrid(casos) {
     initDomReferences();
     if (!dom.communityBedsGrid) return;
-    dom.communityBedsGrid.innerHTML = '';
+    clearNode(dom.communityBedsGrid);
 
     if (!casos || casos.length === 0) {
-      dom.communityBedsGrid.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: var(--gray);">
-          <p>Nenhum caso encontrado para o filtro aplicado.</p>
-        </div>
-      `;
+      emptyState(dom.communityBedsGrid, 'Nenhum caso encontrado para o filtro aplicado.');
       return;
     }
 
-    casos.forEach((c, index) => {
-      const card = document.createElement('div');
-      card.className = 'bed-card ambulatory';
-      card.style.borderTop = '4px solid #0284c7';
-
-      const casoId = String(c.id || ('acervo_' + index));
+    casos.forEach((c) => {
       const nomePac = (c.paciente && c.paciente.nome) ? c.paciente.nome : 'Paciente';
       const idadePac = (c.paciente && c.paciente.idade) ? `${c.paciente.idade} anos` : '--';
       const tox = c.toxindrome || 'Geral';
       const agente = c.agentePrincipal || c.agente || 'Não informado';
 
-      card.innerHTML = `
-        <div class="bed-header">
-          <span class="bed-tag" style="background: #e0f2fe; color: #0369a1;">📚 ${tox}</span>
-          <span class="bed-status" style="font-weight: bold; color: #0284c7;">⚡ Custo Zero</span>
-        </div>
-        <h4 style="margin: 8px 0 2px; font-size: 1.1rem; color: #0369a1;">${c.titulo || c.topico || 'Caso Clínico'}</h4>
-        <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px;">Paciente: <strong>${nomePac} (${idadePac})</strong></div>
-        <p class="bed-complaint" style="font-style: italic; color: #475569; margin-bottom: 12px; min-height: 40px;">"${c.queixaPrincipal || 'Caso clínico catalogado no acervo.'}"</p>
-        
-        <div class="bed-meta" style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--gray); border-top: 1px solid #e2e8f0; padding-top: 6px; margin-bottom: 12px;">
-          <span>Agente: <strong>${agente}</strong></span>
-          <span>Nível: <strong>${c.dificuldade || 'Intermediário'}</strong></span>
-        </div>
-
-        <div style="display: flex; gap: 6px;">
-          <button class="btn btn-primary btn-sm" style="flex: 2; background: #0284c7;" type="button" data-id="${casoId}" onclick="ClinicEngine.assumirCasoDoAcervo(this.dataset.id)">
-            🩺 Atender Este Caso
-          </button>
-          <button class="btn btn-outline btn-sm" style="flex: 1; padding: 4px 6px;" type="button" title="Sintetizar caso derivado com IA" data-tema="${agente !== 'Não informado' ? agente : (c.topico || 'Toxicologia')}" onclick="ClinicEngine.gerarVariacaoComIa(this.dataset.tema)">
-            ⚡ Variação IA
-          </button>
-        </div>
-      `;
+      const card = el('div', { className: 'bed-card ambulatory', style: 'border-top: 4px solid #0284c7;' }, [
+        el('div', { className: 'bed-header' }, [
+          el('span', { className: 'bed-tag', style: 'background: #e0f2fe; color: #0369a1;', text: `📚 ${tox}` }),
+          el('span', { className: 'bed-status', style: 'font-weight: bold; color: #0284c7;', text: '✔ Revisado' }),
+        ]),
+        el('h4', { style: 'margin: 8px 0 2px; font-size: 1.1rem; color: #0369a1;', text: c.titulo || 'Caso Clínico' }),
+        el('div', { style: 'font-size: 0.8rem; color: #64748b; margin-bottom: 8px;' }, ['Paciente: ', el('strong', { text: `${nomePac} (${idadePac})` })]),
+        el('p', { className: 'bed-complaint', style: 'font-style: italic; color: #475569; margin-bottom: 12px; min-height: 40px;', text: `"${c.queixaPrincipal || 'Caso clínico catalogado no acervo.'}"` }),
+        el('div', { className: 'bed-meta', style: 'display: flex; justify-content: space-between; gap: 8px; font-size: 0.8rem; color: var(--gray); border-top: 1px solid #e2e8f0; padding-top: 6px; margin-bottom: 12px;' }, [
+          el('span', {}, ['Agente: ', el('strong', { text: agente })]),
+          el('span', {}, ['Nível: ', el('strong', { text: c.dificuldade || 'Intermediário' })]),
+        ]),
+        el('div', { style: 'display: flex; gap: 6px; flex-wrap: wrap;' }, [
+          el('button', {
+            className: 'btn btn-primary btn-sm', style: 'flex: 2; background: #0284c7; min-height: 44px;', type: 'button',
+            text: '🩺 Atender Este Caso', onclick: () => assumirCasoDoAcervo(c.id),
+          }),
+          el('button', {
+            className: 'btn btn-outline btn-sm', style: 'flex: 1; padding: 4px 6px; min-height: 44px;', type: 'button',
+            title: 'Gerar com IA um caso derivado deste tema', text: '⚡ Variação IA',
+            onclick: () => gerarVariacaoComIa(agente !== 'Não informado' ? agente : (c.toxindrome || 'Toxicologia')),
+          }),
+        ]),
+      ]);
 
       dom.communityBedsGrid.appendChild(card);
     });
   }
 
   function filtrarAcervo() {
+    initDomReferences();
     const termo = (dom.acervoSearchInput?.value || '').toLowerCase().trim();
     const toxFiltro = (dom.acervoToxFilter?.value || '').toLowerCase().trim();
 
-    const filtrados = casosAcervoCache.filter(c => {
-      const agenteStr = (c.agentePrincipal || c.agente || '').toLowerCase();
-      const tituloStr = (c.titulo || c.topico || '').toLowerCase();
-      const queixaStr = (c.queixaPrincipal || '').toLowerCase();
-      const toxStr = (c.toxindrome || '').toLowerCase();
+    const filtrados = casosAcervoCache.filter((c) => {
+      const agenteStr = String(c.agentePrincipal || c.agente || '').toLowerCase();
+      const tituloStr = String(c.titulo || '').toLowerCase();
+      const queixaStr = String(c.queixaPrincipal || '').toLowerCase();
+      const toxStr = String(c.toxindrome || '').toLowerCase();
 
-      const matchTexto = !termo || 
+      const matchTexto = !termo ||
         tituloStr.includes(termo) ||
         agenteStr.includes(termo) ||
         queixaStr.includes(termo) ||
@@ -306,31 +443,19 @@ const ClinicEngine = (() => {
 
   function assumirCasoDoAcervo(identificador) {
     initDomReferences();
-
-    let caso = casosAcervoCache.find(c => String(c.id).trim() === String(identificador).trim());
-    if (!caso && !isNaN(Number(identificador))) {
-      caso = casosAcervoCache[Number(identificador)];
-    }
-
+    const caso = casosAcervoCache.find((c) => String(c.id) === String(identificador));
     if (!caso) {
       alert('Não foi possível localizar este caso no acervo carregado.');
       return;
     }
 
-    // Mutação segura em clinicalCases sem reatribuição de const
+    // Leva o caso para o plantão (primeiro leito), sem duplicar.
     if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) {
-      const idx = clinicalCases.findIndex(c => String(c.id) === String(caso.id));
-      if (idx !== -1) {
-        clinicalCases.splice(idx, 1);
-      }
+      const idx = clinicalCases.findIndex((c) => String(c.id) === String(caso.id));
+      if (idx !== -1) clinicalCases.splice(idx, 1);
       clinicalCases.unshift(caso);
     }
-
-    // Transiciona diretamente para o leito de consulta
-    if (dom.dashboardView) dom.dashboardView.classList.add('hidden');
-    if (dom.workspaceView) dom.workspaceView.classList.remove('hidden');
-
-    startCase(caso);
+    openBed(caso);
   }
 
   function gerarVariacaoComIa(temaBase) {
@@ -338,78 +463,55 @@ const ClinicEngine = (() => {
   }
 
   // =========================================================
-  // 3. RADAR EPIDEMIOLÓGICO & FARMACOLÓGICO
+  // 4. RADAR EPIDEMIOLÓGICO (apiLearnClinicalEpidemiology)
   // =========================================================
+
+  function renderRadarChips(container, items, emptyMsg, chipStyle, suffix) {
+    clearNode(container);
+    if (!items.length) {
+      container.appendChild(el('span', { style: 'font-size: 0.8rem; color: #64748b;', text: emptyMsg }));
+      return;
+    }
+    items.forEach((item) => {
+      container.appendChild(el('span', { className: 'tag', style: chipStyle, text: `${item.name}: ${item.count}${suffix}` }));
+    });
+  }
 
   async function abrirRadarEpidemiologico() {
     initDomReferences();
     if (!dom.modalRadarEpidemio) return;
 
     dom.modalRadarEpidemio.style.display = 'flex';
-
     if (dom.radarTaxaSobrevivencia) dom.radarTaxaSobrevivencia.textContent = '...';
     if (dom.radarTotalAtendimentos) dom.radarTotalAtendimentos.textContent = '...';
-    if (dom.radarToxindromesList) dom.radarToxindromesList.innerHTML = 'Carregando indicadores...';
-    if (dom.radarAgentesList) dom.radarAgentesList.innerHTML = 'Carregando indicadores...';
+    if (dom.radarToxindromesList) dom.radarToxindromesList.textContent = 'Carregando indicadores...';
+    if (dom.radarAgentesList) dom.radarAgentesList.textContent = 'Carregando indicadores...';
 
-    try {
-      let res;
-      if (typeof ApiService !== 'undefined' && typeof ApiService.obterDashboardEpidemiologico === 'function') {
-        res = await ApiService.obterDashboardEpidemiologico();
-      } else if (typeof ApiService !== 'undefined' && typeof ApiService.callAppsScript === 'function') {
-        res = await ApiService.callAppsScript({ acao: 'obterDashboardEpidemiologico' });
-      }
+    const res = await callLaift('apiLearnClinicalEpidemiology', {});
+    if (!res.success) {
+      if (dom.radarTaxaSobrevivencia) dom.radarTaxaSobrevivencia.textContent = '--';
+      if (dom.radarTotalAtendimentos) dom.radarTotalAtendimentos.textContent = '--';
+      if (dom.radarToxindromesList) dom.radarToxindromesList.textContent = res.message || 'Indicadores indisponíveis no momento.';
+      if (dom.radarAgentesList) dom.radarAgentesList.textContent = '';
+      return;
+    }
 
-      if (res && res.sucesso) {
-        if (dom.radarTaxaSobrevivencia) {
-          dom.radarTaxaSobrevivencia.textContent = res.taxaSobrevivencia || '100%';
-        }
-        if (dom.radarTotalAtendimentos) {
-          dom.radarTotalAtendimentos.textContent = res.totalAtendimentos || '0';
-        }
+    if (dom.radarTaxaSobrevivencia) {
+      dom.radarTaxaSobrevivencia.textContent = typeof res.survivalRatePct === 'number' ? `${res.survivalRatePct}%` : '--';
+    }
+    if (dom.radarTotalAtendimentos) dom.radarTotalAtendimentos.textContent = String(Number(res.totalAttended) || 0);
 
-        // Renderiza Chips de Toxíndromes
-        if (dom.radarToxindromesList) {
-          dom.radarToxindromesList.innerHTML = '';
-          const toxs = res.toxindromes || {};
-          const chaves = Object.keys(toxs);
+    const norm = (list) => (Array.isArray(list) ? list : [])
+      .filter((i) => i && i.name)
+      .map((i) => ({ name: String(i.name), count: Number(i.count) || 0 }));
 
-          if (chaves.length === 0) {
-            dom.radarToxindromesList.innerHTML = '<span style="font-size: 0.8rem; color: #64748b;">Nenhuma toxíndrome agregada ainda.</span>';
-          } else {
-            chaves.forEach(k => {
-              const chip = document.createElement('span');
-              chip.className = 'tag';
-              chip.style.cssText = 'background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 600;';
-              chip.textContent = `${k}: ${toxs[k]} caso(s)`;
-              dom.radarToxindromesList.appendChild(chip);
-            });
-          }
-        }
-
-        // Renderiza Chips de Fármacos e Agentes
-        if (dom.radarAgentesList) {
-          dom.radarAgentesList.innerHTML = '';
-          const ags = res.agentes || {};
-          const chavesAg = Object.keys(ags);
-
-          if (chavesAg.length === 0) {
-            dom.radarAgentesList.innerHTML = '<span style="font-size: 0.8rem; color: #64748b;">Nenhum princípio ativo registrado ainda.</span>';
-          } else {
-            chavesAg.forEach(k => {
-              const chip = document.createElement('span');
-              chip.className = 'tag';
-              chip.style.cssText = 'background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 600;';
-              chip.textContent = `${k}: ${ags[k]}x`;
-              dom.radarAgentesList.appendChild(chip);
-            });
-          }
-        }
-      }
-    } catch (e) {
-      console.warn('Falha ao atualizar Radar Epidemiológico:', e);
-      if (dom.radarTaxaSobrevivencia) dom.radarTaxaSobrevivencia.textContent = '100%';
-      if (dom.radarTotalAtendimentos) dom.radarTotalAtendimentos.textContent = '0';
+    if (dom.radarToxindromesList) {
+      renderRadarChips(dom.radarToxindromesList, norm(res.topToxindromes), 'Nenhuma toxíndrome agregada ainda.',
+        'background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 600;', ' caso(s)');
+    }
+    if (dom.radarAgentesList) {
+      renderRadarChips(dom.radarAgentesList, norm(res.topAgents), 'Nenhum princípio ativo registrado ainda.',
+        'background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 600;', 'x');
     }
   }
 
@@ -419,7 +521,7 @@ const ClinicEngine = (() => {
   }
 
   // =========================================================
-  // 4. ATENDIMENTO CLÍNICO DO LEITO SELECIONADO
+  // 5. ATENDIMENTO CLÍNICO DO LEITO SELECIONADO
   // =========================================================
 
   function showBedsDashboard() {
@@ -427,6 +529,7 @@ const ClinicEngine = (() => {
     if (dom.workspaceView) dom.workspaceView.classList.add('hidden');
     if (dom.dashboardView) dom.dashboardView.classList.remove('hidden');
     setModoExibicao(modoExibicaoAtual);
+    refreshAiQuota();
   }
 
   function openBed(caseIdOrObject) {
@@ -454,12 +557,12 @@ const ClinicEngine = (() => {
     } else {
       const idStr = String(caseIdOrObject).trim();
       selected = (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases))
-        ? (clinicalCases.find(c => String(c.id).trim() === idStr) || clinicalCases[0])
+        ? (clinicalCases.find((c) => String(c.id).trim() === idStr) || clinicalCases[0])
         : null;
     }
 
     if (!selected) {
-      console.error('[ClinicEngine] Caso clínico não encontrado:', caseIdOrObject);
+      console.error('[ClinicEngine] Caso clínico não encontrado.');
       return;
     }
 
@@ -467,9 +570,8 @@ const ClinicEngine = (() => {
     vitality = selected.vitalidadeInicial || 100;
     patience = selected.pacienciaInicial || 100;
     elapsedSeconds = 0;
-    conversationHistory = [];
+    chatTurns = [];
     requestedExams = [];
-    intentHistory = {};
     caseOutcome = 'EM_ANDAMENTO';
     isCaseActive = true;
     activeSemiologyAxis = 'cronologia';
@@ -496,10 +598,15 @@ const ClinicEngine = (() => {
     }
     if (dom.chiefComplaint) dom.chiefComplaint.textContent = `"${currentCase.queixaPrincipal || 'Mal-estar não especificado'}"`;
     if (dom.patientHistory) {
-      dom.patientHistory.innerHTML = `
-        <p style="margin-bottom: 8px;"><strong>Histórico de Admissão:</strong> ${currentCase.historicoAdmissao || 'Admitido para elucidação diagnóstica.'}</p>
-        <p style="font-size: 0.85rem; color: var(--text-muted, #64748b);"><strong>Alergias Conhecidas:</strong> ${pac.alergias || 'Nega alergias relatadas.'}</p>
-      `;
+      clearNode(dom.patientHistory);
+      dom.patientHistory.appendChild(el('p', { style: 'margin-bottom: 8px;' }, [
+        el('strong', { text: 'Histórico de Admissão: ' }),
+        currentCase.historicoAdmissao || 'Admitido para elucidação diagnóstica.',
+      ]));
+      dom.patientHistory.appendChild(el('p', { style: 'font-size: 0.85rem; color: var(--text-muted, #64748b);' }, [
+        el('strong', { text: 'Alergias Conhecidas: ' }),
+        pac.alergias || 'Nega alergias relatadas.',
+      ]));
     }
   }
 
@@ -515,15 +622,15 @@ const ClinicEngine = (() => {
   }
 
   // =========================================================
-  // 5. GUIA SEMIOLÓGICO CLÍNICO-METODOLÓGICO (4 EIXOS)
+  // 6. GUIA SEMIOLÓGICO CLÍNICO-METODOLÓGICO (4 EIXOS)
   // =========================================================
 
   function renderSemiologyGuide() {
     if (!dom.suggestionsList || !currentCase) return;
-    dom.suggestionsList.innerHTML = '';
+    clearNode(dom.suggestionsList);
 
     const guia = currentCase.guiaSemiologico || null;
-    const perguntasLegadas = currentCase.perguntasSugeridas || [];
+    const perguntasLegadas = Array.isArray(currentCase.perguntasSugeridas) ? currentCase.perguntasSugeridas : [];
 
     const eixos = [
       { id: 'cronologia', icone: '⏱️', titulo: 'HMA & Início', desc: 'Evolução, tempo e ritmo dos sintomas' },
@@ -532,135 +639,99 @@ const ClinicEngine = (() => {
       { id: 'sinaisAlarme', icone: '⚠️', titulo: 'Sinais de Alarme', desc: 'Queimação, salivação e gravidade' }
     ];
 
-    const containerGuia = document.createElement('div');
-    containerGuia.className = 'semiology-wrapper';
-    containerGuia.style.cssText = 'width: 100%; display: flex; flex-direction: column; gap: 8px;';
+    const perguntasDoEixo = (id) => {
+      const lista = guia && Array.isArray(guia[id]) ? guia[id] : [];
+      return lista.length > 0 ? lista : perguntasLegadas;
+    };
 
-    const navBar = document.createElement('div');
-    navBar.className = 'semiology-nav';
-    navBar.style.cssText = 'display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;';
-
-    const chipsArea = document.createElement('div');
-    chipsArea.className = 'semiology-chips-area';
-    chipsArea.style.cssText = 'display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px;';
+    const containerGuia = el('div', { className: 'semiology-wrapper', style: 'width: 100%; display: flex; flex-direction: column; gap: 8px;' });
+    const navBar = el('div', { className: 'semiology-nav', style: 'display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;' });
+    const chipsArea = el('div', { className: 'semiology-chips-area', style: 'display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px;' });
 
     eixos.forEach((eixo) => {
-      const btnEixo = document.createElement('button');
-      btnEixo.type = 'button';
-      const isActive = eixo.id === activeSemiologyAxis;
-      btnEixo.className = `btn btn-sm ${isActive ? 'btn-primary' : 'btn-outline'}`;
-      btnEixo.style.cssText = 'font-size: 0.75rem; padding: 4px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;';
-      btnEixo.innerHTML = `${eixo.icone} ${eixo.titulo}`;
-      btnEixo.title = eixo.desc;
-
-      btnEixo.onclick = () => {
+      const btnEixo = el('button', {
+        type: 'button',
+        className: `btn btn-sm ${eixo.id === activeSemiologyAxis ? 'btn-primary' : 'btn-outline'}`,
+        style: 'font-size: 0.75rem; padding: 4px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;',
+        title: eixo.desc,
+        text: `${eixo.icone} ${eixo.titulo}`,
+      });
+      btnEixo.addEventListener('click', () => {
         activeSemiologyAxis = eixo.id;
-        navBar.querySelectorAll('button').forEach(b => {
-          b.className = 'btn btn-sm btn-outline';
-          b.style.background = '';
-        });
+        navBar.querySelectorAll('button').forEach((b) => { b.className = 'btn btn-sm btn-outline'; });
         btnEixo.className = 'btn btn-sm btn-primary';
-
-        const perguntasDoEixo = (guia && guia[eixo.id]) ? guia[eixo.id] : [];
-        carregarPerguntasNoEixo(perguntasDoEixo.length > 0 ? perguntasDoEixo : perguntasLegadas, chipsArea);
-      };
-
+        carregarPerguntasNoEixo(perguntasDoEixo(eixo.id), chipsArea);
+      });
       navBar.appendChild(btnEixo);
     });
 
     containerGuia.appendChild(navBar);
     containerGuia.appendChild(chipsArea);
     dom.suggestionsList.appendChild(containerGuia);
-
-    const perguntasIniciais = (guia && guia[activeSemiologyAxis]) ? guia[activeSemiologyAxis] : perguntasLegadas;
-    carregarPerguntasNoEixo(perguntasIniciais, chipsArea);
+    carregarPerguntasNoEixo(perguntasDoEixo(activeSemiologyAxis), chipsArea);
   }
 
   function carregarPerguntasNoEixo(listaPerguntas, container) {
-    container.innerHTML = '';
+    clearNode(container);
 
     if (!listaPerguntas || listaPerguntas.length === 0) {
-      container.innerHTML = `
-        <div style="font-size: 0.8rem; color: var(--gray, #64748b); font-style: italic; padding: 4px 0;">
-          Explore livremente os sintomas do paciente pelo campo de texto abaixo.
-        </div>
-      `;
+      container.appendChild(el('div', {
+        style: 'font-size: 0.8rem; color: var(--gray, #64748b); font-style: italic; padding: 4px 0;',
+        text: 'Explore livremente os sintomas do paciente pelo campo de texto abaixo.',
+      }));
       return;
     }
 
-    listaPerguntas.forEach(perguntaTexto => {
-      const chip = document.createElement('button');
-      chip.type = 'button';
-      chip.className = 'suggestion-chip';
-      chip.style.cssText = `
-        text-align: left; 
-        line-height: 1.3; 
-        font-size: 0.8rem; 
-        background: #f1f5f9; 
-        border: 1px solid #cbd5e1; 
-        border-radius: 8px; 
-        padding: 6px 10px; 
-        color: #1e293b; 
-        cursor: pointer; 
-        transition: all 0.15s ease;
-      `;
-      chip.innerHTML = `🗣️ "${perguntaTexto}"`;
-
-      chip.onmouseover = () => {
-        chip.style.background = '#e2e8f0';
-        chip.style.borderColor = '#94a3b8';
-      };
-      chip.onmouseout = () => {
-        chip.style.background = '#f1f5f9';
-        chip.style.borderColor = '#cbd5e1';
-      };
-
-      chip.onclick = () => {
+    listaPerguntas.forEach((perguntaTexto) => {
+      const chip = el('button', {
+        type: 'button',
+        className: 'suggestion-chip',
+        style: 'text-align: left; line-height: 1.3; font-size: 0.8rem; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; color: #1e293b; cursor: pointer; transition: all 0.15s ease;',
+        text: `🗣️ "${perguntaTexto}"`,
+      });
+      chip.addEventListener('mouseover', () => { chip.style.background = '#e2e8f0'; chip.style.borderColor = '#94a3b8'; });
+      chip.addEventListener('mouseout', () => { chip.style.background = '#f1f5f9'; chip.style.borderColor = '#cbd5e1'; });
+      chip.addEventListener('click', () => {
         if (dom.questionInput) {
-          dom.questionInput.value = perguntaTexto;
+          dom.questionInput.value = String(perguntaTexto);
           dom.questionInput.focus();
         }
-      };
-
+      });
       container.appendChild(chip);
     });
   }
 
   // =========================================================
-  // 6. EXAMES LABORATORIAIS E COMPLEMENTARES
+  // 7. EXAMES LABORATORIAIS E COMPLEMENTARES
   // =========================================================
 
   function renderExamsCatalog() {
     if (!dom.availableExamsList || !dom.releasedExamsList || !currentCase) return;
-    dom.availableExamsList.innerHTML = '';
-    dom.releasedExamsList.innerHTML = '<div class="empty-state-notice">Nenhum exame solicitado até o momento.</div>';
+    clearNode(dom.availableExamsList);
+    clearNode(dom.releasedExamsList);
+    dom.releasedExamsList.appendChild(el('div', { className: 'empty-state-notice', text: 'Nenhum exame solicitado até o momento.' }));
 
-    (currentCase.examesDisponiveis || []).forEach(exam => {
-      const row = document.createElement('div');
-      row.className = 'exam-item-row';
-      row.id = `exam-row-${exam.id}`;
-      row.innerHTML = `
-        <div>
-          <div style="font-weight: 600; font-size: 0.9rem;">${exam.nome}</div>
-          <small style="color: var(--text-muted, #64748b);">Tempo estimado: +${exam.custoTempoMin} min virtuais</small>
-        </div>
-        <button class="btn btn-secondary btn-sm" type="button" onclick="ClinicEngine.requestExam('${exam.id}')">Solicitar</button>
-      `;
+    (currentCase.examesDisponiveis || []).forEach((exam) => {
+      const btn = el('button', { className: 'btn btn-secondary btn-sm', type: 'button', text: 'Solicitar', dataset: { examId: exam.id } });
+      btn.addEventListener('click', () => requestExam(exam.id));
+      const row = el('div', { className: 'exam-item-row' }, [
+        el('div', {}, [
+          el('div', { style: 'font-weight: 600; font-size: 0.9rem;', text: exam.nome }),
+          el('small', { style: 'color: var(--text-muted, #64748b);', text: `Tempo estimado: +${Number(exam.custoTempoMin) || 0} min virtuais` }),
+        ]),
+        btn,
+      ]);
       dom.availableExamsList.appendChild(row);
     });
   }
 
   function resetChat() {
     if (!dom.chatHistory || !currentCase) return;
-    dom.chatHistory.innerHTML = '';
-    const initialBubble = document.createElement('div');
-    initialBubble.className = 'chat-bubble patient';
-    initialBubble.innerHTML = `
-      <strong>${currentCase.paciente ? currentCase.paciente.nome : 'Paciente'}:</strong>
-      <p>${currentCase.queixaPrincipal || 'Estou passando mal...'}</p>
-    `;
-    dom.chatHistory.appendChild(initialBubble);
-    conversationHistory.push(`Paciente: ${currentCase.queixaPrincipal}`);
+    clearNode(dom.chatHistory);
+    const nome = (currentCase.paciente && currentCase.paciente.nome) || 'Paciente';
+    const queixa = currentCase.queixaPrincipal || 'Estou passando mal...';
+    appendChatBubble('patient', nome, queixa);
+    chatTurns.push({ role: 'patient', text: String(queixa) });
   }
 
   function resetResolutionForm() {
@@ -727,10 +798,37 @@ const ClinicEngine = (() => {
   }
 
   // =========================================================
-  // 7. SUBMISSÃO DE PERGUNTAS (GROQ 20B COM FEW-SHOT)
+  // 8. ANAMNESE COM O PACIENTE VIRTUAL (apiLearnClinicalChat)
   // =========================================================
 
-  // Dentro de submitPatientQuestion() no js/clinic-engine.js:
+  /** Contexto do paciente para casos que vivem no navegador (embutidos/gerados). */
+  function buildPatientContext() {
+    const c = currentCase || {};
+    const pac = c.paciente || {};
+    const oculto = c.contextoOculto || {};
+    const examesNomes = requestedExams.map((id) => {
+      const ex = (c.examesDisponiveis || []).find((e) => e.id === id);
+      return ex ? String(ex.nome) : String(id);
+    });
+    return fitToBytes({
+      nome: pac.nome || '',
+      idade: pac.idade !== undefined ? String(pac.idade) : '',
+      profissao: pac.profissao || oculto.pacienteProfissao || '',
+      genero: pac.genero || '',
+      queixaPrincipal: c.queixaPrincipal || '',
+      exposicaoReal: oculto.exposicaoReal || '',
+      sintomas: oculto.sintomas || '',
+      temperamento: oculto.temperamento || '',
+      comportamento: oculto.comportamento || '',
+      regrasFala: oculto.regrasFala || '',
+      nivelConsciencia: oculto.nivelConsciencia || '',
+      sinaisVitais: c.sinaisVitais || {},
+      vitalidadeAtual: Math.round(vitality),
+      pacienciaAtual: Math.round(patience),
+      examesJaLiberados: examesNomes.slice(0, 15),
+    }, CONTEXT_MAX_BYTES - 200);
+  }
+
   async function submitPatientQuestion() {
     if (!dom.questionInput || !isCaseActive || !currentCase) return;
 
@@ -742,56 +840,55 @@ const ClinicEngine = (() => {
     if (dom.sendQuestionBtn) dom.sendQuestionBtn.disabled = true;
 
     const nomePac = currentCase.paciente ? currentCase.paciente.nome : 'Paciente';
-    
+
     // 1. Reações Gerais e Cotidianas (Paciente Estável)
     const reacoesGerais = [
-      `<em>${nomePac} pensa por um instante com a mão no queixo antes de responder...</em>`,
-      `<em>${nomePac} ajeita-se com calma no leito e tenta organizar as ideias...</em>`,
-      `<em>${nomePac} olha atentamente para você e começa a explicar...</em>`,
-      `<em>${nomePac} engole em seco, buscando lembrar dos detalhes do ocorrido...</em>`,
-      `<em>${nomePac} respira fundo e responde em tom colaborativo...</em>`,
-      `<em>${nomePac} gesticula suavemente enquanto tenta descrever o que sente...</em>`,
-      `<em>${nomePac} faz uma pausa reflexiva e retoma a conversa...</em>`,
-      `<em>${nomePac} assente com a cabeça antes de responder...</em>`,
-      `<em>${nomePac} apoia o braço na cama e detalha a situação...</em>`
+      `${nomePac} pensa por um instante com a mão no queixo antes de responder...`,
+      `${nomePac} ajeita-se com calma no leito e tenta organizar as ideias...`,
+      `${nomePac} olha atentamente para você e começa a explicar...`,
+      `${nomePac} engole em seco, buscando lembrar dos detalhes do ocorrido...`,
+      `${nomePac} respira fundo e responde em tom colaborativo...`,
+      `${nomePac} gesticula suavemente enquanto tenta descrever o que sente...`,
+      `${nomePac} faz uma pausa reflexiva e retoma a conversa...`,
+      `${nomePac} assente com a cabeça antes de responder...`,
+      `${nomePac} apoia o braço na cama e detalha a situação...`
     ];
 
-    // 2. Reações de Dor Intensa, Falta de Ar ou Fraqueza (Vitalidade Baixa < 50%)
+    // 2. Reações de Dor Intensa, Falta de Ar ou Fraqueza (Vitalidade Baixa)
     const reacoesDorOuFraqueza = [
-      `<em>${nomePac} aperta o peito com a mão e tenta falar...</em>`,
-      `<em>${nomePac} puxa o ar com dificuldade entre os lábios trêmulos...</em>`,
-      `<em>${nomePac} faz uma careta nítida de dor e apoia a cabeça na maca...</em>`,
-      `<em>${nomePac} responde em tom baixo e pausado devido ao cansaço...</em>`,
-      `<em>${nomePac} fecha os olhos sentindo uma pontada forte...</em>`,
-      `<em>${nomePac} passa a mão na testa suada, com respiração curta e ofegante...</em>`,
-      `<em>${nomePac} tenta encontrar uma posição menos dolorosa antes de sussurrar...</em>`,
-      `<em>${nomePac} tosse fraco, demonstrando desconforto evidente...</em>`,
-      `<em>${nomePac} aperta a barra lateral da maca enquanto busca forças para responder...</em>`,
-      `<em>${nomePac} hesita com náusea antes de conseguir pronunciar as palavras...</em>`
+      `${nomePac} aperta o peito com a mão e tenta falar...`,
+      `${nomePac} puxa o ar com dificuldade entre os lábios trêmulos...`,
+      `${nomePac} faz uma careta nítida de dor e apoia a cabeça na maca...`,
+      `${nomePac} responde em tom baixo e pausado devido ao cansaço...`,
+      `${nomePac} fecha os olhos sentindo uma pontada forte...`,
+      `${nomePac} passa a mão na testa suada, com respiração curta e ofegante...`,
+      `${nomePac} tenta encontrar uma posição menos dolorosa antes de sussurrar...`,
+      `${nomePac} tosse fraco, demonstrando desconforto evidente...`,
+      `${nomePac} aperta a barra lateral da maca enquanto busca forças para responder...`,
+      `${nomePac} hesita com náusea antes de conseguir pronunciar as palavras...`
     ];
 
     // 3. Reações de Ansiedade, Insegurança ou Medo
     const reacoesAnsiosas = [
-      `<em>${nomePac} esfrega as mãos nervosamente e responde com voz trêmula...</em>`,
-      `<em>${nomePac} olha apreensivo(a) para os aparelhos de monitoramento antes de falar...</em>`,
-      `<em>${nomePac} pergunta com o olhar marejado se o quadro é grave...</em>`,
-      `<em>${nomePac} morde o lábio inferior inquieto(a), demonstrando angústia...</em>`,
-      `<em>${nomePac} gagueja ligeiramente pelo nervosismo antes de completar a frase...</em>`,
-      `<em>${nomePac} olha em direção à porta do leito e fala em tom de preocupação...</em>`
+      `${nomePac} esfrega as mãos nervosamente e responde com voz trêmula...`,
+      `${nomePac} olha apreensivo(a) para os aparelhos de monitoramento antes de falar...`,
+      `${nomePac} pergunta com o olhar marejado se o quadro é grave...`,
+      `${nomePac} morde o lábio inferior inquieto(a), demonstrando angústia...`,
+      `${nomePac} gagueja ligeiramente pelo nervosismo antes de completar a frase...`,
+      `${nomePac} olha em direção à porta do leito e fala em tom de preocupação...`
     ];
 
-    // 4. Reações de Impaciência, Pressa ou Ceticismo ("Dr. Google" / Exigente ou Paciência < 50%)
+    // 4. Reações de Impaciência, Pressa ou Ceticismo
     const reacoesImpacientes = [
-      `<em>${nomePac} cruza os braços impaciente e responde em tom incisivo...</em>`,
-      `<em>${nomePac} gesticula demonstrando pressa para que a conduta seja logo tomada...</em>`,
-      `<em>${nomePac} suspira fundo, como se estivesse cansado(a) de responder perguntas...</em>`,
-      `<em>${nomePac} olha para o relógio na parede antes de retrucar rapidamente...</em>`,
-      `<em>${nomePac} balança a cabeça em desaprovação e insiste no medicamento...</em>`,
-      `<em>${nomePac} bate a mão na maca, demonstrando irritação com a demora...</em>`,
-      `<em>${nomePac} fala em tom ríspido, cobrando exames ou receita direta...</em>`
+      `${nomePac} cruza os braços impaciente e responde em tom incisivo...`,
+      `${nomePac} gesticula demonstrando pressa para que a conduta seja logo tomada...`,
+      `${nomePac} suspira fundo, como se estivesse cansado(a) de responder perguntas...`,
+      `${nomePac} olha para o relógio na parede antes de retrucar rapidamente...`,
+      `${nomePac} balança a cabeça em desaprovação e insiste no medicamento...`,
+      `${nomePac} bate a mão na maca, demonstrando irritação com a demora...`,
+      `${nomePac} fala em tom ríspido, cobrando exames ou receita direta...`
     ];
 
-    // Seleção contextual baseada no estado clínico e psicológico
     let poolReacoes = reacoesGerais;
     const isExigente = currentCase.contextoOculto && String(currentCase.contextoOculto.temperamento).toLowerCase().includes('exigente');
 
@@ -804,94 +901,89 @@ const ClinicEngine = (() => {
     }
 
     const reacaoSorteada = poolReacoes[Math.floor(Math.random() * poolReacoes.length)];
-    const typingBubble = appendChatBubble('patient', nomePac, reacaoSorteada);
+    const typingBubble = appendChatBubble('patient', nomePac, reacaoSorteada, { italic: true });
+
+    const source = caseSourceOf(currentCase);
+    const payload = {
+      caseId: String(currentCase.id || 'caso_local').slice(0, 80),
+      caseSource: source,
+      question: text.slice(0, 500),
+      history: chatTurns.slice(-HISTORY_TURNS_SENT),
+      patientContext: buildPatientContext(),
+    };
+
+    const response = await callLaift('apiLearnClinicalChat', payload);
 
     let falaObtida = '';
-    let apiSucesso = false;
-
-    try {
-      const recentHistory = conversationHistory.slice(-4).join('\n');
-      const contextoCompleto = {
-        casoId: currentCase.id,
-        nome: nomePac,
-        idade: currentCase.paciente ? currentCase.paciente.idade : '45',
-        pacienteProfissao: currentCase.paciente ? currentCase.paciente.profissao : 'Autônomo',
-        exposicaoReal: currentCase.contextoOculto ? currentCase.contextoOculto.exposicaoReal : '',
-        sintomas: currentCase.contextoOculto ? currentCase.contextoOculto.sintomas : '',
-        temperamento: currentCase.contextoOculto ? currentCase.contextoOculto.temperamento : '',
-        nivelConsciencia: currentCase.contextoOculto ? currentCase.contextoOculto.nivelConsciencia : 'Lúcido',
-        toxindrome: currentCase.toxindrome || 'Geral',
-        agente: currentCase.agentePrincipal || currentCase.agente || 'Geral',
-        sinaisVitais: currentCase.sinaisVitais,
-        vitalidadeAtual: Math.round(vitality),
-        pacienciaAtual: Math.round(patience),
-        examesJaLiberados: requestedExams
-      };
-
-      if (typeof ApiService !== 'undefined' && typeof ApiService.conversarComPaciente === 'function') {
-        const response = await ApiService.conversarComPaciente(
-          currentCase.id,
-          text,
-          recentHistory,
-          contextoCompleto
-        );
-
-        if (response && response.sucesso && response.falaPaciente && response.falaPaciente.trim().length > 0) {
-          falaObtida = response.falaPaciente.trim();
-          apiSucesso = true;
-        }
+    if (response.success && typeof response.patientReply === 'string' && response.patientReply.trim()) {
+      falaObtida = response.patientReply.trim();
+    } else {
+      // Sem IA (cota esgotada, ponte ausente ou serviço fora): o caso segue
+      // com respostas simuladas localmente, e a pessoa é avisada uma vez.
+      if (response.quotaExceeded) {
+        appendSystemNotice(`${response.message} Até lá, o paciente responde de forma simulada.`);
+      } else if (!bridgeNoticeShown) {
+        bridgeNoticeShown = true;
+        appendSystemNotice(`${response.message || 'IA indisponível.'} O paciente vai responder de forma simulada.`);
       }
-    } catch (apiError) {
-      console.warn('[ClinicEngine] Fallback local ativado:', apiError);
-    }
-
-    if (!apiSucesso || !falaObtida) {
       falaObtida = gerarRespostaContextualLocal(text);
     }
 
-    typingBubble.remove();
+    if (typingBubble) typingBubble.remove();
     appendChatBubble('patient', nomePac, falaObtida);
-    conversationHistory.push(`Estudante: ${text}`);
-    conversationHistory.push(`Paciente: ${falaObtida}`);
+    chatTurns.push({ role: 'student', text: text.slice(0, 500) });
+    chatTurns.push({ role: 'patient', text: falaObtida.slice(0, 500) });
 
     if (currentCase.tipo === 'emergencia') {
       patience = Math.max(0, patience - 1);
     }
     updateMetersUI();
+    if (response.quotaExceeded) refreshAiQuota();
 
     if (dom.sendQuestionBtn) dom.sendQuestionBtn.disabled = false;
     if (dom.chatHistory) dom.chatHistory.scrollTop = dom.chatHistory.scrollHeight;
   }
 
-  function appendChatBubble(role, author, text) {
+  /**
+   * Balão do chat. `text` é SEMPRE texto (vem da IA, do caso ou do próprio
+   * estudante) — textContent, nunca innerHTML. `opts.italic` marca as
+   * reações de "digitando".
+   */
+  function appendChatBubble(role, author, text, opts) {
     if (!dom.chatHistory) return null;
-    const bubble = document.createElement('div');
-    bubble.className = `chat-bubble ${role}`;
-    bubble.innerHTML = `<strong>${author}:</strong><p>${text}</p>`;
+    const p = el('p', { text: String(text === null || text === undefined ? '' : text) });
+    if (opts && opts.italic) p.style.fontStyle = 'italic';
+    const bubble = el('div', { className: `chat-bubble ${role}` }, [el('strong', { text: `${author}:` }), p]);
     dom.chatHistory.appendChild(bubble);
     dom.chatHistory.scrollTop = dom.chatHistory.scrollHeight;
     return bubble;
+  }
+
+  function appendSystemNotice(message) {
+    if (!dom.chatHistory) return;
+    dom.chatHistory.appendChild(el('div', { className: 'chat-bubble system-notice', role: 'status', text: `ℹ️ ${message}` }));
+    dom.chatHistory.scrollTop = dom.chatHistory.scrollHeight;
   }
 
   function gerarRespostaContextualLocal(pergunta) {
     const p = pergunta.toLowerCase().trim();
     const isExigente = currentCase && (
       (currentCase.contextoOculto && String(currentCase.contextoOculto.temperamento).toLowerCase().includes('exigente')) ||
-      (currentCase.paciente && currentCase.paciente.profissao && currentCase.paciente.profissao.toLowerCase().includes('google'))
+      (currentCase.paciente && currentCase.paciente.profissao && String(currentCase.paciente.profissao).toLowerCase().includes('google'))
     );
 
     let prefixo = '';
     if (vitality < 30) {
-      prefixo = "(gemendo com dor intensa, voz fraca) ...ai... doutor(a)... ";
+      prefixo = '(gemendo com dor intensa, voz fraca) ...ai... doutor(a)... ';
     } else if (vitality < 60) {
-      prefixo = "(respirando curto e cansado) ...espera um instante... ";
+      prefixo = '(respirando curto e cansado) ...espera um instante... ';
     }
 
     if (p.includes('receita') || p.includes('remédio') || p.includes('encaminhamento') || p.includes('antibiótico')) {
       if (isExigente) {
         return `${prefixo}É por isso que estou aqui! Já li tudo na internet e sei que preciso da receita logo. Você vai me examinar direito?`;
       }
-      return `${prefixo}Eu só queria um remédio para parar essa queimação e esse mal-estar no peito, doutor(a)...`;
+      return `${prefixo}Eu só queria um remédio para parar esse mal-estar, doutor(a)...`;
     }
 
     if (p.includes('calma') || p.includes('tranquil') || p.includes('explicar') || p.includes('ajudar')) {
@@ -901,65 +993,57 @@ const ClinicEngine = (() => {
     }
 
     if (p.includes('quando') || p.includes('tempo') || p.includes('horas') || p.includes('começou')) {
-      return `${prefixo}Começou faz umas 3 a 4 horas. No início era só um enjoo, mas depois virou esse aperto forte e uma queimação.`;
+      return `${prefixo}Começou faz umas horas. No início era só um enjoo, mas depois foi piorando.`;
     }
 
     if (p.includes('tomou') || p.includes('medicamento') || p.includes('comprimido') || p.includes('dose')) {
-      return `${prefixo}Tomei uns comprimidos para dor de cabeça hoje cedo sem olhar direito a cartela...`;
+      return `${prefixo}Tomei uns comprimidos hoje sem olhar direito a cartela...`;
     }
 
     if (p.includes('veneno') || p.includes('produto') || p.includes('química') || p.includes('cheiro')) {
-      return `${prefixo}Eu mexi com uns frascos sem luva mais cedo e senti um cheiro bem forte e enjoativo...`;
-    }
-
-    if (p.includes('visão') || p.includes('vista') || p.includes('saliva') || p.includes('suor') || p.includes('pupila')) {
-      return `${prefixo}Minha vista tá esfumaçada sim! E sinto minha boca com muita salivação e suor frio...`;
+      return `${prefixo}Eu mexi com uns produtos mais cedo e senti um cheiro bem forte...`;
     }
 
     if (p.includes('auscultar') || p.includes('estetoscópio') || p.includes('pulmão')) {
-      return `${prefixo}Pode encostar o aparelho... <em>[Ausculta: Presença de ruídos adventícios e estertores crepitantes esparsos.]</em>`;
+      return `${prefixo}Pode encostar o aparelho... [Ausculta: achados compatíveis com o quadro descrito no prontuário.]`;
     }
 
-    return `${prefixo}Estou me sentindo muito mal... me dê alguma coisa para aliviar esse aperto, por favor...`;
+    return `${prefixo}Estou me sentindo muito mal... me dê alguma coisa para aliviar, por favor...`;
   }
 
   // =========================================================
-  // 8. EXAMES E CONDUTAS CRÍTICAS
+  // 9. EXAMES E CONDUTAS CRÍTICAS
   // =========================================================
 
   function requestExam(examId) {
     if (!isCaseActive || !currentCase) return;
 
-    const exam = (currentCase.examesDisponiveis || []).find(e => e.id === examId);
+    const exam = (currentCase.examesDisponiveis || []).find((e) => e.id === examId);
     if (!exam || requestedExams.includes(examId)) return;
 
     requestedExams.push(examId);
 
-    const row = document.getElementById(`exam-row-${examId}`);
-    if (row) {
-      const btn = row.querySelector('button');
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = 'Solicitado';
-      }
+    const btn = dom.availableExamsList
+      ? Array.from(dom.availableExamsList.querySelectorAll('button')).find((b) => b.dataset.examId === String(examId))
+      : null;
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Solicitado';
     }
 
-    elapsedSeconds += (exam.custoTempoMin || 5) * 60;
-    applyDecay(Math.abs(exam.impactoVitalidade || 0), Math.abs(exam.impactoPaciencia || 0));
+    elapsedSeconds += (Number(exam.custoTempoMin) || 5) * 60;
+    applyDecay(Math.abs(Number(exam.impactoVitalidade) || 0), Math.abs(Number(exam.impactoPaciencia) || 0));
 
     const emptyNotice = dom.releasedExamsList?.querySelector('.empty-state-notice');
     if (emptyNotice) emptyNotice.remove();
 
-    const examCard = document.createElement('div');
-    examCard.className = 'released-exam-card';
-    examCard.innerHTML = `
-      <h5>📋 ${exam.nome}</h5>
-      <p>${exam.resultado}</p>
-    `;
-    dom.releasedExamsList?.appendChild(examCard);
+    dom.releasedExamsList?.appendChild(el('div', { className: 'released-exam-card' }, [
+      el('h5', { text: `📋 ${exam.nome}` }),
+      el('p', { text: exam.resultado }),
+    ]));
 
     if (exam.essencial) {
-      appendChatBubble('patient', 'Enfermagem do Leito', `O laudo do exame <strong>${exam.nome}</strong> acabou de chegar da bancada e foi liberado na aba de Exames.`);
+      appendChatBubble('patient', 'Enfermagem do Leito', `O laudo do exame "${exam.nome}" acabou de chegar da bancada e foi liberado na aba de Exames.`);
     }
   }
 
@@ -982,152 +1066,165 @@ const ClinicEngine = (() => {
   }
 
   // =========================================================
-  // 9. FECHAMENTO & AVALIAÇÃO COM GATILHO PADRÃO OURO
+  // 10. FECHAMENTO & AVALIAÇÃO (apiLearnClinicalEvaluate)
   // =========================================================
+
+  const OUTCOME_TO_SERVER = { EM_ANDAMENTO: 'concluido', OBITO: 'obito', ABANDONO: 'abandono' };
+
+  function answerKeyForServer() {
+    const gab = currentCase && currentCase.gabaritoPreceptor;
+    if (!gab) return undefined;
+    return fitToBytes({
+      diagnostico: String(gab.diagnostico || ''),
+      conduta: String(gab.conduta || ''),
+      palavrasChave: Array.isArray(gab.palavrasChave) ? gab.palavrasChave.slice(0, 12).map(String) : [],
+    }, ANSWER_KEY_MAX_BYTES - 100);
+  }
 
   async function finalizeClinicalCase() {
     if (!isCaseActive && caseOutcome === 'EM_ANDAMENTO') return;
+    if (!currentCase) return;
 
     isCaseActive = false;
     clearInterval(clockInterval);
 
     if (dom.submitResolutionBtn) {
       dom.submitResolutionBtn.disabled = true;
-      dom.submitResolutionBtn.textContent = 'Avaliando com o Preceptor (120B)...';
+      dom.submitResolutionBtn.textContent = 'Avaliando com o preceptor (IA)...';
     }
 
-    const diagnosis = dom.studentDiagnosis?.value.trim() || 'Não informado pelo estudante.';
-    const conduct = dom.studentConduct?.value.trim() || 'Não informada pelo estudante.';
+    const diagnosis = (dom.studentDiagnosis?.value || '').trim().slice(0, 2000);
+    const conduct = (dom.studentConduct?.value || '').trim().slice(0, 2000);
+    const outcome = OUTCOME_TO_SERVER[caseOutcome] || 'concluido';
+    const source = caseSourceOf(currentCase);
 
-    const payload = {
-      gabarito: currentCase.gabaritoPreceptor,
-      diagnosticoAluno: diagnosis,
-      condutaAluno: conduct,
-      examesSolicitados: requestedExams,
-      desfecho: (caseOutcome === 'EM_ANDAMENTO') ? 'CONCLUIDO' : caseOutcome,
-      tempoSegundos: elapsedSeconds,
-      historicoConversa: conversationHistory,
-      toxindrome: currentCase.toxindrome || 'Geral',
-      agente: currentCase.agentePrincipal || currentCase.agente || 'Geral'
+    const input = {
+      caseId: String(currentCase.id || 'caso_local').slice(0, 80),
+      caseSource: source,
+      attendance: {
+        diagnosis,
+        conduct,
+        examsRequested: requestedExams.slice(0, 30),
+        questionsAsked: chatTurns.filter((t) => t.role === 'student').map((t) => t.text.slice(0, 300)).slice(-30),
+        elapsedSeconds,
+        vitality: Math.round(vitality),
+        outcome,
+        toxindrome: currentCase.toxindrome || '',
+        agent: currentCase.agentePrincipal || currentCase.agente || '',
+      },
     };
+    // Casos do acervo: o gabarito é SÓ do servidor (o cliente nem o recebe).
+    if (source !== 'acervo') input.answerKey = answerKeyForServer();
 
-    const session = (window.LaiftIdentity && LaiftIdentity.get()) || {};
-    const identifier = session.identifier || 'ANONIMO';
+    const response = await callLaift('apiLearnClinicalEvaluate', input);
 
-    try {
-      if (typeof ApiService !== 'undefined' && typeof ApiService.avaliarCondutaPreceptor === 'function') {
-        const response = await ApiService.avaliarCondutaPreceptor(identifier, currentCase.id, payload);
-        if (response && response.sucesso && response.resultado) {
-          registrarCasoResolvido(currentCase.id);
-          showPreceptorModal(response.resultado, payload.desfecho);
-          return;
-        }
-      }
+    if (dom.submitResolutionBtn) dom.submitResolutionBtn.textContent = '⚖️ Submeter ao Preceptor Avaliador';
+
+    if (response.success && response.result) {
       registrarCasoResolvido(currentCase.id);
-      avaliarCondutaLocalmente(payload);
-    } catch (err) {
-      console.warn('[ClinicEngine] Preceptor online indisponível. Avaliando localmente:', err);
-      registrarCasoResolvido(currentCase.id);
-      avaliarCondutaLocalmente(payload);
-    } finally {
-      if (dom.submitResolutionBtn) {
-        dom.submitResolutionBtn.textContent = '⚖️ Submeter ao Preceptor Avaliador';
-      }
+      showPreceptorModal(response.result, outcome, {
+        note: response.saved === false ? 'A avaliação foi feita, mas não pôde ser registrada nas suas estatísticas agora.' : '',
+      });
+      refreshAiQuota();
+      return;
     }
-  }
 
-  function registrarCasoResolvido(caseId) {
-    const resolvidos = JSON.parse(localStorage.getItem('laift_resolved_cases') || '[]');
-    if (!resolvidos.includes(caseId)) {
-      resolvidos.push(caseId);
-      localStorage.setItem('laift_resolved_cases', JSON.stringify(resolvidos));
+    // Sem avaliação do servidor: nota local por palavras-chave (só quando o
+    // gabarito está no navegador), claramente marcada como não registrada.
+    const aviso = response.quotaExceeded
+      ? response.message
+      : (response.message || 'O preceptor com IA está indisponível agora.');
+    if (source === 'acervo' || !currentCase.gabaritoPreceptor) {
+      showPreceptorModal(null, outcome, { note: `${aviso} Tente submeter este caso do acervo novamente mais tarde.` });
+      return;
     }
-  }
-
-  function avaliarCondutaLocalmente(dados) {
-    const gab = (currentCase && currentCase.gabaritoPreceptor) ? currentCase.gabaritoPreceptor : {};
-    const diagAluno = (dados.diagnosticoAluno || '').toLowerCase();
-    const condAluno = (dados.condutaAluno || '').toLowerCase();
-
-    const palavras = gab.palavrasChave || [];
-    let acertos = 0;
-
-    palavras.forEach(p => {
-      const termo = p.toLowerCase();
-      if (diagAluno.includes(termo) || condAluno.includes(termo)) {
-        acertos++;
-      }
+    registrarCasoResolvido(currentCase.id);
+    showPreceptorModal(avaliarCondutaLocalmente(diagnosis, conduct, outcome), outcome, {
+      note: `${aviso} Esta é uma avaliação simplificada, feita no seu navegador e não registrada.`,
     });
+    if (response.quotaExceeded) refreshAiQuota();
+  }
 
-    const proporcao = (palavras.length > 0) ? (acertos / palavras.length) : 0.5;
+  function avaliarCondutaLocalmente(diagnosis, conduct, outcome) {
+    const gab = (currentCase && currentCase.gabaritoPreceptor) ? currentCase.gabaritoPreceptor : {};
+    const semAcento = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const texto = semAcento(diagnosis + ' ' + conduct);
+    const palavras = Array.isArray(gab.palavrasChave) ? gab.palavrasChave : [];
+    const acertos = palavras.filter((p) => texto.includes(semAcento(p))).length;
+
+    const proporcao = palavras.length > 0 ? (acertos / palavras.length) : 0.5;
     let nota = Math.round(proporcao * 80) + 15;
-
-    if (dados.desfecho === 'OBITO') nota = Math.min(25, nota);
-    if (dados.desfecho === 'ABANDONO') nota = Math.min(40, nota);
-
+    if (outcome === 'obito') nota = Math.min(25, nota);
+    if (outcome === 'abandono') nota = Math.min(40, nota);
     const acertouDiag = proporcao >= 0.40;
 
-    const resultadoLocal = {
-      nota: Math.min(100, Math.max(10, nota)),
-      acertouDiagnostico: acertouDiag,
-      parecer: `Avaliação pedagógica LAIFT. O diagnóstico formulado foi ${acertouDiag ? 'compatível com o quadro clínico real' : 'divergente do gabarito oficial'}. ${dados.desfecho === 'OBITO' ? 'Atenção imediata à administração de antídotos em quadros toxicológicos críticos.' : 'Recomenda-se aprofundar a correlação semiológica e os protocolos de farmacoterapia de suporte.'}`,
-      pontosCriticos: [
-        `Diagnóstico oficial esperado: ${gab.diagnostico || 'Não cadastrado'}`,
-        `Conduta primordial recomendada: ${gab.conduta || 'Não cadastrada'}`
-      ]
+    return {
+      score: Math.min(100, Math.max(10, nota)),
+      verdict: acertouDiag ? 'Hipótese compatível com o gabarito' : 'Hipótese divergente do gabarito',
+      feedback: `O diagnóstico formulado foi ${acertouDiag ? 'compatível com o quadro clínico' : 'divergente do gabarito oficial'}. ${outcome === 'obito' ? 'Atenção imediata à administração de antídotos em quadros toxicológicos críticos.' : 'Aprofunde a correlação semiológica e os protocolos de farmacoterapia de suporte.'}`,
+      strengths: [],
+      improvements: [
+        `Diagnóstico esperado: ${gab.diagnostico || 'não cadastrado'}`,
+        `Conduta recomendada: ${gab.conduta || 'não cadastrada'}`,
+      ],
     };
-
-    showPreceptorModal(resultadoLocal, dados.desfecho);
   }
 
-  function showPreceptorModal(result, desfecho) {
-    if (dom.preceptorGrade) dom.preceptorGrade.textContent = result.nota || '--';
+  function showPreceptorModal(result, outcome, opts) {
+    initDomReferences();
+    const o = opts || {};
+    if (dom.preceptorGrade) dom.preceptorGrade.textContent = result && Number.isFinite(Number(result.score)) ? String(Math.round(Number(result.score))) : '--';
     if (dom.caseOutcomeTitle) {
-      dom.caseOutcomeTitle.textContent = (desfecho === 'CONCLUIDO')
-        ? 'Atendimento Finalizado'
-        : (desfecho === 'OBITO') ? 'Desfecho Crítico: Óbito' : 'Desfecho: Abandono da Consulta';
+      dom.caseOutcomeTitle.textContent = outcome === 'obito'
+        ? 'Desfecho Crítico: Óbito'
+        : outcome === 'abandono' ? 'Desfecho: Abandono da Consulta' : 'Atendimento Finalizado';
     }
-
-    if (dom.caseOutcomeSummary) {
-      dom.caseOutcomeSummary.textContent = result.acertouDiagnostico
-        ? 'Hipótese diagnóstica assertiva e condizente com o gabarito.'
-        : 'Hipótese diagnóstica com divergências técnicas importantes.';
-    }
+    if (dom.caseOutcomeSummary) dom.caseOutcomeSummary.textContent = result ? String(result.verdict || '') : 'Avaliação indisponível.';
 
     if (dom.preceptorFeedbackText) {
-      dom.preceptorFeedbackText.innerHTML = `
-        <p style="margin-bottom: 12px; line-height: 1.5;">${result.parecer}</p>
-        ${(result.pontosCriticos && result.pontosCriticos.length > 0) ? `
-          <strong>Orientações Técnicas do Preceptor:</strong>
-          <ul style="margin-left: 20px; margin-top: 8px;">
-            ${result.pontosCriticos.map(p => `<li style="margin-bottom: 4px;">${p}</li>`).join('')}
-          </ul>
-        ` : ''}
-      `;
+      const box = dom.preceptorFeedbackText;
+      clearNode(box);
+      if (o.note) box.appendChild(el('p', { className: 'preceptor-note', role: 'status', text: o.note }));
+      if (result) {
+        box.appendChild(el('p', { style: 'margin-bottom: 12px; line-height: 1.5;', text: result.feedback || '' }));
+        const addList = (title, items) => {
+          const lista = Array.isArray(items) ? items.filter(Boolean) : [];
+          if (!lista.length) return;
+          box.appendChild(el('strong', { text: title }));
+          box.appendChild(el('ul', { style: 'margin: 8px 0 12px 20px;' }, lista.map((item) => el('li', { style: 'margin-bottom: 4px;', text: item }))));
+        };
+        addList('Pontos fortes:', result.strengths);
+        addList('O que melhorar:', result.improvements);
+      }
     }
 
     dom.preceptorModal?.classList.add('active');
   }
 
   function switchTab(tabId) {
-    dom.tabButtons.forEach(btn => {
+    dom.tabButtons.forEach((btn) => {
       const isActive = btn.dataset.tab === tabId;
       btn.classList.toggle('active', isActive);
       btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
-    dom.tabPanes.forEach(pane => {
+    dom.tabPanes.forEach((pane) => {
       pane.classList.toggle('active', pane.id === tabId);
     });
   }
 
   // =========================================================
-  // 10. GERAÇÃO PROCEDURAL (GROQ 120B COM COOLDOWN & PERSISTÊNCIA)
+  // 11. GERAÇÃO DE CASO COM IA (apiLearnClinicalGenerateCase)
   // =========================================================
 
   async function solicitarCasoProcedural(temaPredefinido = '') {
     initDomReferences();
-    const btn = dom.btnGenerateAiCase || document.getElementById('btnGenerateAiCase');
-    if (btn && btn.disabled) return;
+    const btn = dom.btnGenerateAiCase;
+    if (btn && btn.disabled) {
+      if (lastQuota && lastQuota.generateCase && lastQuota.generateCase.remaining <= 0) {
+        alert(`Você já usou os ${lastQuota.generateCase.limit} casos com IA de hoje; a cota volta amanhã. O plantão e o acervo continuam disponíveis.`);
+      }
+      return;
+    }
 
     const promptPadrao = temaPredefinido ? `Variação clínica de ${temaPredefinido}` : 'Intoxicação por Paracetamol';
     const topico = prompt(
@@ -1135,174 +1232,109 @@ const ClinicEngine = (() => {
       promptPadrao
     );
     if (!topico || !topico.trim()) return;
-
-    const session = (window.LaiftIdentity && LaiftIdentity.get()) || {};
-    const identifier = session.identifier || 'anonimo';
-    const tipoUsuario = session.type || 'Visitante';
+    const tema = topico.trim().slice(0, TOPIC_MAX);
 
     if (btn) {
       btn.disabled = true;
-      btn.textContent = '⏳ Sintetizando caso com Groq 120B...';
+      btn.textContent = '⏳ Gerando caso com IA...';
+    }
+    if (typeof showStatus === 'function') showStatus('Gerando um novo caso e o roteiro semiológico com IA...', 'loading');
+
+    const res = await callLaift('apiLearnClinicalGenerateCase', { topic: tema, difficulty: 'Avançado' });
+    if (typeof hideStatus === 'function') hideStatus();
+
+    if (res.success && res.case && typeof res.case === 'object') {
+      const caso = Object.assign({}, res.case, { caseSource: 'ia' });
+      if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) clinicalCases.unshift(caso);
+      await refreshAiQuota();
+      alert(`✅ Novo paciente admitido no leito: ${(caso.paciente && caso.paciente.nome) || 'Paciente'} (${caso.titulo || 'Caso Clínico'}).\nO caso foi enviado para revisão da diretoria antes de entrar no Acervo da Liga.`);
+      openBed(caso);
+      return;
     }
 
-    if (typeof showStatus === 'function') {
-      showStatus('Sintetizando novo caso e roteiro semiológico com Groq 120B...', 'loading');
+    if (res.quotaExceeded) {
+      await refreshAiQuota();
+      alert(res.message);
+      return;
     }
 
-    try {
-      let res = null;
-      if (typeof ApiService !== 'undefined' && typeof ApiService.gerarCasoProcedural === 'function') {
-        res = await ApiService.gerarCasoProcedural(topico.trim(), 'Avançado', identifier);
-      }
-
-      if (typeof hideStatus === 'function') hideStatus();
-
-      if (res && res.sucesso === false) {
-        alert(res.mensagem || 'Aguarde antes de solicitar outro caso com IA.');
-        const tempoPadrao = (tipoUsuario === 'Visitante') ? 300 : 30;
-        iniciarContagemCooldownIA(tempoPadrao);
-        return;
-      }
-
-      if (res && res.sucesso && res.caso) {
-        if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) {
-          clinicalCases.unshift(res.caso);
-        }
-
-        // Invalida o cache local para carregar o novo caso na aba Acervo
-        casosAcervoCache = [];
-
-        setModoExibicao('plantao');
-        renderBedsGrid();
-        alert(`✅ Novo paciente admitido no leito: ${res.caso.paciente ? res.caso.paciente.nome : 'Paciente'} (${res.caso.titulo || 'Caso Clínico'})!\nO caso foi registrado no Acervo Coletivo para todos os membros.`);
-
-        const cooldownSegundos = (tipoUsuario === 'Visitante') ? 300 : 30;
-        iniciarContagemCooldownIA(cooldownSegundos);
-        openBed(res.caso);
-        return;
-      }
-
-      throw new Error((res && res.mensagem) || 'Falha no retorno da API');
-    } catch (err) {
-      if (typeof hideStatus === 'function') hideStatus();
-      console.warn('[ClinicEngine] Acionando síntese local de contingência:', err);
-
-      const casoBackup = gerarCasoLocalContingencia(topico.trim());
-      if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) {
-        clinicalCases.unshift(casoBackup);
-      }
-      setModoExibicao('plantao');
-      renderBedsGrid();
-      alert(`⚡ Caso gerado pelo simulador local: ${casoBackup.paciente.nome}!`);
-
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = '⚡ Gerar Caso com IA';
-      }
-      openBed(casoBackup);
-    }
-  }
-
-  function iniciarContagemCooldownIA(segundos) {
-    initDomReferences();
-    const btn = dom.btnGenerateAiCase || document.getElementById('btnGenerateAiCase');
-    if (!btn) return;
-
-    clearInterval(aiCooldownTimer);
-    let restante = segundos;
-    btn.disabled = true;
-
-    const atualizarTexto = () => {
-      const min = Math.floor(restante / 60);
-      const seg = restante % 60;
-      btn.textContent = `⏳ Aguarde (${min > 0 ? `${min}m ` : ''}${String(seg).padStart(2, '0')}s)`;
-    };
-
-    atualizarTexto();
-
-    aiCooldownTimer = setInterval(() => {
-      restante--;
-      if (restante <= 0) {
-        clearInterval(aiCooldownTimer);
-        btn.disabled = false;
-        btn.textContent = '⚡ Gerar Caso com IA';
-      } else {
-        atualizarTexto();
-      }
-    }, 1000);
+    // Falha da IA (ou sem ponte): o plantão não fica parado — gera um caso
+    // simulado localmente, avisando que ele não veio da IA.
+    setGenerateButtonIdle();
+    const casoBackup = gerarCasoLocalContingencia(tema);
+    if (typeof clinicalCases !== 'undefined' && Array.isArray(clinicalCases)) clinicalCases.unshift(casoBackup);
+    alert(`${res.message || 'A IA está indisponível agora.'}\n\nUm caso simulado localmente foi admitido no lugar: ${casoBackup.paciente.nome}.`);
+    openBed(casoBackup);
   }
 
   function gerarCasoLocalContingencia(tema) {
-    const idUnico = 'caso_proc_' + Date.now();
+    const idUnico = 'caso_local_' + Date.now();
     const isExigente = tema.toLowerCase().includes('receita') || tema.toLowerCase().includes('antibiótico');
 
     return {
       id: idUnico,
+      caseSource: 'builtin',
       titulo: `Caso Simulado: ${tema}`,
-      tipo: "emergencia",
-      toxindrome: "Geral",
+      tipo: 'emergencia',
+      toxindrome: 'Outra',
       agentePrincipal: tema,
-      dificuldade: "Avançado",
+      dificuldade: 'Avançado',
       vitalidadeInicial: 88,
       pacienciaInicial: isExigente ? 65 : 85,
       taxaDecaimento: { vitalidadePorMinuto: 2, pacienciaPorMinuto: 1.5 },
       paciente: {
-        nome: isExigente ? "Renata Sampaio" : "Valdir Monteiro",
+        nome: isExigente ? 'Renata Sampaio' : 'Valdir Monteiro',
         idade: isExigente ? 36 : 51,
-        peso: isExigente ? "62 kg" : "78 kg",
-        profissao: isExigente ? "Analista de Sistemas (Informed/Dr. Google)" : "Trabalhador Autônomo",
-        alergias: "Nega alergias conhecidas",
-        imagem: isExigente ? "👩‍💻" : "🧑"
+        peso: isExigente ? '62 kg' : '78 kg',
+        profissao: isExigente ? 'Analista de Sistemas' : 'Trabalhador Autônomo',
+        alergias: 'Nega alergias conhecidas'
       },
-      queixaPrincipal: isExigente 
-        ? `Doutor, eu já pesquisei meus sintomas e tenho certeza que preciso de uma receita de antibiótico logo.` 
+      queixaPrincipal: isExigente
+        ? 'Doutor, eu já pesquisei meus sintomas e tenho certeza que preciso de uma receita de antibiótico logo.'
         : `Doutor(a)... passei mal depois de lidar com ${tema}... tô com o peito pesado e tontura.`,
       historicoAdmissao: `Admissão com queixas correlacionadas a ${tema}. Necessidade de esclarecimento clínico imediato.`,
-      sinaisVitais: { pa: "135/85 mmHg", fc: "98 bpm", fr: "20 irpm", temp: "37.1 °C", spo2: "95%", glasgow: "15" },
+      sinaisVitais: { pa: '135/85 mmHg', fc: '98 bpm', fr: '20 irpm', temp: '37.1 °C', spo2: '95%', glasgow: '15' },
       contextoOculto: {
-        nome: isExigente ? "Renata" : "Valdir",
-        idade: isExigente ? 36 : 51,
-        pacienteProfissao: isExigente ? "Analista" : "Autônomo",
         exposicaoReal: `Quadro associado a ${tema}.`,
-        sintomas: "desconforto gástrico, cefaleia e palpitações",
-        temperamento: isExigente ? "Exigente, questionadora" : "Preocupado, humilde",
-        nivelConsciencia: "Lúcido e orientado"
+        sintomas: 'desconforto gástrico, cefaleia e palpitações',
+        temperamento: isExigente ? 'Exigente, questionadora' : 'Preocupado, humilde',
+        nivelConsciencia: 'Lúcido e orientado'
       },
       guiaSemiologico: {
-        cronologia: ["Há quantas horas esses sintomas começaram?", "A dor está piorando ou constante?"],
-        farmacoterapia: ["Quais medicamentos você tomou hoje?", "Quantos comprimidos e qual a dose?"],
-        exposicao: ["Houve contato com defensivos ou químicos?", "Ingeriu alimentos ou bebidas suspeitas?"],
-        sinaisAlarme: ["Está sentindo aperto no peito ou falta de ar?", "Notou visão embaçada ou salivação excessiva?"]
+        cronologia: ['Há quantas horas esses sintomas começaram?', 'A dor está piorando ou constante?'],
+        farmacoterapia: ['Quais medicamentos você tomou hoje?', 'Quantos comprimidos e qual a dose?'],
+        exposicao: ['Houve contato com defensivos ou químicos?', 'Ingeriu alimentos ou bebidas suspeitas?'],
+        sinaisAlarme: ['Está sentindo aperto no peito ou falta de ar?', 'Notou visão embaçada ou salivação excessiva?']
       },
       perguntasSugeridas: [
-        "Há quanto tempo começaram os sintomas?",
-        "Qual remédio você tomou antes de vir aqui?",
-        "Você sente falta de ar ou suor frio?"
+        'Há quanto tempo começaram os sintomas?',
+        'Qual remédio você tomou antes de vir aqui?',
+        'Você sente falta de ar ou suor frio?'
       ],
       examesDisponiveis: [
-        { id: "lab_triagem", nome: "Painel Bioquímico Geral", custoTempoMin: 12, impactoVitalidade: 0, impactoPaciencia: -1, essencial: true, resultado: `Estresse metabólico compatível com ${tema}.` },
-        { id: "ecg_12d", nome: "Eletrocardiograma de 12 Derivações", custoTempoMin: 5, impactoVitalidade: 0, impactoPaciencia: 0, essencial: true, resultado: "Ritmo sinusal, traçado eletrocardiográfico dentro da normalidade." }
+        { id: 'lab_triagem', nome: 'Painel Bioquímico Geral', custoTempoMin: 12, impactoVitalidade: 0, impactoPaciencia: -1, essencial: true, resultado: `Estresse metabólico compatível com ${tema}.` },
+        { id: 'ecg_12d', nome: 'Eletrocardiograma de 12 Derivações', custoTempoMin: 5, impactoVitalidade: 0, impactoPaciencia: 0, essencial: true, resultado: 'Ritmo sinusal, traçado eletrocardiográfico dentro da normalidade.' }
       ],
       gabaritoPreceptor: {
         diagnostico: `Quadro Clínico e/ou Toxicológico Agudo associado a ${tema}`,
-        conduta: "Anamnese dirigida, suporte hidroeletrolítico e orientação farmacêutica.",
-        palavrasChave: ["anamnese", "suporte", tema.toLowerCase()]
+        conduta: 'Anamnese dirigida, suporte hidroeletrolítico e orientação farmacêutica.',
+        palavrasChave: ['anamnese', 'suporte', tema.toLowerCase().slice(0, 40)]
       }
     };
   }
 
   // =========================================================
-  // 11. INICIALIZAÇÃO E OUVINTES DE EVENTOS
+  // 12. INICIALIZAÇÃO E OUVINTES DE EVENTOS
   // =========================================================
 
   function init() {
     initDomReferences();
 
-    dom.tabButtons.forEach(btn => {
+    dom.tabButtons.forEach((btn) => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
 
-    dom.sendQuestionBtn?.addEventListener('click', submitPatientQuestion);
+    // O clique em "Perguntar" é ligado em clinica-page.js; aqui só o Enter.
     dom.questionInput?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') submitPatientQuestion();
     });
@@ -1327,11 +1359,12 @@ const ClinicEngine = (() => {
     switchTab,
     submitPatientQuestion,
     finalizeClinicalCase,
-    renderSemiologyGuide
+    renderSemiologyGuide,
+    refreshAiQuota
   };
 })();
 
-// Declarações globais para chamadas inline no HTML
+// Globais mantidos por compatibilidade (clinica-page.js e testes E2E usam ClinicEngine).
 window.ClinicEngine = ClinicEngine;
 window.submitPatientQuestion = ClinicEngine.submitPatientQuestion;
 window.finalizeClinicalCase = ClinicEngine.finalizeClinicalCase;
