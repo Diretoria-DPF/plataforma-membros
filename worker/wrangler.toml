@@ -21,6 +21,14 @@ MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"
 # URL pública do bucket R2 (avatares e imagens de evento) — não é segredo,
 # é só onde os arquivos ficam publicamente acessíveis depois do upload.
 MEDIA_PUBLIC_URL = "https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev"
+# Fase 3 — IA (Groq). Modelos por recurso: FAST para a conversa com o
+# paciente virtual, SMART para avaliação, geração de caso e preceptor do
+# laboratório (worker/src/ai/config.js). Para usar um modelo só, ponha o
+# mesmo valor nos dois. As CHAVES não ficam aqui: `wrangler secret put
+# GROQ_API_KEYS` (todas as chaves do pool, uma por linha ou separadas por
+# vírgula) — ver docs/FASE_3_IA_CLINICA.md.
+GROQ_MODEL_FAST = "openai/gpt-oss-20b"
+GROQ_MODEL_SMART = "openai/gpt-oss-120b"
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o
