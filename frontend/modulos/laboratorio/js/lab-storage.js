@@ -171,7 +171,7 @@ const LabStorageEngine = {
     const container = document.getElementById(containerId);
     if (!container || !window.$3Dmol) return;
 
-    container.innerHTML = '';
+    container.replaceChildren();
     container.style.display = 'block';
 
     const config = { backgroundColor: '#020617' };

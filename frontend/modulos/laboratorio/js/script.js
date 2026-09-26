@@ -75,8 +75,9 @@
   // =========================================================================
   // 3. TABELAS FÍSICO-QUÍMICAS E GATEWAYS
   // =========================================================================
-  const APPS_SCRIPT_GATEWAY = window.APPS_SCRIPT_GATEWAY; // definido em ../shared/laift-identity.js
-  window.APPS_SCRIPT_GATEWAY = APPS_SCRIPT_GATEWAY;
+  // Registro de formulações: agora pela ponte da plataforma
+  // (window.LaiftApi → apiLearnRecordLabFormulation), não mais pelo Apps Script.
+  const h = LaiftDom.h;
 
   const DICIONARIO_MOLECULAR = {
     'AcidoSalicilico_s': { label: 'Ácido Salicílico', formula: 'C7H6O3', molarMass: 138.12, density: 1.44, bp: 211, fp: 159, smiles: 'O=C(O)C1=CC=CC=C1O', iupac: '2-hydroxybenzoic acid', pubchemQuery: 'Salicylic acid' },
@@ -271,15 +272,20 @@
   function log(msg, cls='') {
     if (!logEl) return;
     const ts = new Date().toTimeString().slice(0, 8);
-    const entry = document.createElement('div');
-    entry.className = 'log-entry';
-    entry.innerHTML = `<span class="log-time">[${ts}]</span><span class="${cls}">${msg}</span>`;
+    // Mensagens podem trazer nomes vindos do Estúdio (moléculas criadas
+    // pelo usuário) ou de APIs: sempre como texto.
+    const entry = h('div', { className: 'log-entry' }, [
+      h('span', { className: 'log-time', text: `[${ts}]` }),
+      h('span', { className: cls || null, text: String(msg) })
+    ]);
     logEl.prepend(entry);
     if (logEl.children.length > 70) logEl.removeChild(logEl.lastChild);
   }
 
   function limparRegistro() {
-    if (logEl) logEl.innerHTML = '<span style="color:#546e7a;">[Sistema] Registro limpo.</span>';
+    if (!logEl) return;
+    LaiftDom.clear(logEl);
+    logEl.appendChild(h('span', { className: 'log-muted', text: '[Sistema] Registro limpo.' }));
   }
 
   function qtd(chave) { return sys.especies.get(chave) || 0; }
@@ -326,7 +332,7 @@
     if (div3D.offsetWidth === 0 || div3D.offsetHeight === 0) return;
 
     try {
-      div3D.innerHTML = '';
+      LaiftDom.clear(div3D);
       if (viewer3D) {
         try { viewer3D.stopAnimate(); } catch(e) {}
       }
@@ -667,10 +673,14 @@
     if (!modal || !container) return;
 
     modal.style.display = 'flex';
-    container.innerHTML = `<div style="text-align: center; padding: 20px;">Consultando bases científicas para <strong>${nome || 'o composto'}</strong>...</div>`;
+    LaiftDom.clear(container);
+    container.appendChild(h('div', { className: 'dossie-loading' }, [
+      'Consultando bases científicas para ', h('strong', { text: nome || 'o composto' }), '...'
+    ]));
 
     if (!nome) {
-      container.innerHTML = '<p>Nenhum produto em foco no momento.</p>';
+      LaiftDom.clear(container);
+      container.appendChild(h('p', { text: 'Nenhum produto em foco no momento.' }));
       return;
     }
 
@@ -681,23 +691,28 @@
       dados = await consultarDadosPubChem(nome);
     }
 
+    // Tudo aqui vem de PubChem/ChEBI/Wikidata (dado externo): só textContent.
+    LaiftDom.clear(container);
     if (dados) {
-      container.innerHTML = `
-        <div style="margin-bottom: 8px;"><strong style="color:#38bdf8; font-size:1.05rem;">${nome}</strong></div>
-        <div style="margin-bottom: 4px;"><strong>Origem dos Dados:</strong> ${dados.origem || 'PubChem PUG-REST'}</div>
-        <div style="margin-bottom: 4px;"><strong>IUPAC Oficial:</strong> <span style="font-family:monospace; color:#94a3b8;">${dados.iupac || '--'}</span></div>
-        <div style="margin-bottom: 4px;"><strong>Fórmula Molecular:</strong> ${dados.formula || '--'}</div>
-        <div style="margin-bottom: 4px;"><strong>Massa Molar:</strong> ${dados.molarMass || dados.pesoMolecular || '--'} g/mol</div>
-        <div style="margin-bottom: 4px;"><strong>SMILES Canônico:</strong> <code style="color:#38bdf8; font-size:0.72rem; word-break:break-all;">${dados.smiles || '--'}</code></div>
-        <div style="margin-bottom: 4px;"><strong>Número CAS:</strong> <code>${dados.cas || '--'}</code></div>
-        <div style="margin-bottom: 4px;"><strong>ChEBI ID:</strong> <code>${dados.chebiId || '--'}</code></div>
-        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #1e3a5f;">
-          <strong>Papel Biológico / Farmacológico:</strong><br>
-          <span style="color: #cbd5e1; line-height: 1.5;">${dados.papelBiologico || dados.definicao || 'Propriedades descritas na Farmacopeia Brasileira e compêndios terapêuticos.'}</span>
-        </div>
-      `;
+      const linha = (rotulo, valor, cls) => h('div', { className: 'dossie-row' }, [
+        h('strong', { text: rotulo + ' ' }), h(cls ? 'code' : 'span', { className: cls || null, text: String(valor) })
+      ]);
+      container.appendChild(h('div', { className: 'dossie-title' }, [h('strong', { text: nome })]));
+      container.appendChild(linha('Origem dos Dados:', dados.origem || 'PubChem PUG-REST'));
+      container.appendChild(linha('IUPAC Oficial:', dados.iupac || '--', 'dossie-mono'));
+      container.appendChild(linha('Fórmula Molecular:', dados.formula || '--'));
+      container.appendChild(linha('Massa Molar:', (dados.molarMass || dados.pesoMolecular || '--') + ' g/mol'));
+      container.appendChild(linha('SMILES Canônico:', dados.smiles || '--', 'dossie-smiles'));
+      container.appendChild(linha('Número CAS:', dados.cas || '--', 'dossie-mono'));
+      container.appendChild(linha('ChEBI ID:', dados.chebiId || '--', 'dossie-mono'));
+      container.appendChild(h('div', { className: 'dossie-bio' }, [
+        h('strong', { text: 'Papel Biológico / Farmacológico:' }), h('br'),
+        h('span', { text: dados.papelBiologico || dados.definicao || 'Propriedades descritas na Farmacopeia Brasileira e compêndios terapêuticos.' })
+      ]));
     } else {
-      container.innerHTML = `<p style="color:#ef4444;">Não foi possível consultar os dados externos de <strong>${nome}</strong>. Os dados locais continuam ativos.</p>`;
+      container.appendChild(h('p', { className: 'dossie-erro' }, [
+        'Não foi possível consultar os dados externos de ', h('strong', { text: nome }), '. Os dados locais continuam ativos.'
+      ]));
     }
   };
 
@@ -717,39 +732,31 @@
     return null;
   }
 
+  /**
+   * Registra a formulação concluída no desempenho da pessoa na plataforma
+   * (Contrato 4: apiLearnRecordLabFormulation pela ponte window.LaiftApi).
+   * A identidade vem da sessão da plataforma, nunca daqui. Antes ia ao Apps
+   * Script com o e-mail no corpo e uma consulta extra ao PubChem só para
+   * anexar fórmula/SMILES — o servidor não precisa disso.
+   */
   async function catalogarFormulacaoNoBanco(nomeProduto, reagentesArray, tempAtual, agitacaoLigada, observacaoReacao) {
-    let identificador = 'Visitante';
-    const sessao = window.LaiftIdentity && LaiftIdentity.get();
-    if (sessao && sessao.identifier) identificador = sessao.identifier;
-
-    let dadosQuimicos = null;
-    if (typeof ChemicalAPIEngine !== 'undefined' && typeof ChemicalAPIEngine.resolveCompleteCompound === 'function') {
-      dadosQuimicos = await ChemicalAPIEngine.resolveCompleteCompound(nomeProduto);
-    } else {
-      dadosQuimicos = await consultarDadosPubChem(nomeProduto);
-    }
-
+    if (!window.LaiftApi || typeof window.LaiftApi.call !== 'function') return null;
+    const temperatura = Number(tempAtual !== undefined ? tempAtual : sys.temp);
     const payload = {
-      acao: 'registrarFormulacaoLab',
-      identificador: identificador,
-      produto: nomeProduto,
-      reagentes: reagentesArray || Array.from(reagentesAdicionados),
-      temperatura: tempAtual !== undefined ? tempAtual : sys.temp,
-      agitacao: agitacaoLigada !== undefined ? agitacaoLigada : agitadorAtivo,
-      sistema: sys.isClosed ? 'Fechado' : 'Aberto',
-      observacoes: observacaoReacao || 'Síntese executada na bancada virtual LAIFT.',
-      dadosPubChem: dadosQuimicos || { formula: 'Indeterminada', pesoMolecular: '--', smiles: '--', iupac: nomeProduto, cid: '--' }
+      product: String(nomeProduto || '').slice(0, 120),
+      reagents: (reagentesArray || Array.from(reagentesAdicionados)).map(String).slice(0, 30),
+      temperature: Number.isFinite(temperatura) ? Math.round(temperatura * 10) / 10 : null,
+      stirring: !!(agitacaoLigada !== undefined ? agitacaoLigada : agitadorAtivo),
+      observation: String(observacaoReacao || 'Síntese executada na bancada virtual LAIFT.').slice(0, 500)
     };
 
     try {
-      await fetch(APPS_SCRIPT_GATEWAY, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
-      log(`🧪 Composto [${nomeProduto}] catalogado na nuvem!`, 'log-info');
+      const res = await window.LaiftApi.call('apiLearnRecordLabFormulation', payload);
+      if (res && res.success) log(`🧪 Composto [${payload.product}] registrado no seu desempenho!`, 'log-info');
+      return res;
     } catch (err) {
-      console.warn('[Laboratório] Falha na persistência remota:', err);
+      console.warn('[Laboratório] Falha ao registrar a formulação:', err);
+      return null;
     }
   }
 
@@ -830,31 +837,35 @@
     }
   };
 
+  // Bolhas do chat: a resposta do preceptor e a pergunta do aluno são texto
+  // puro (Contrato 2: "o cliente renderiza com textContent"); as quebras de
+  // linha aparecem via CSS (white-space: pre-wrap em .lab-chat-msg).
+  function bolhaChat(tipo, conteudo, extraClass) {
+    const chatBox = document.getElementById('labChatMessages');
+    if (!chatBox) return null;
+    const bolha = h('div', { className: `lab-chat-msg ${tipo}${extraClass ? ' ' + extraClass : ''}` }, conteudo);
+    chatBox.appendChild(bolha);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return bolha;
+  }
+
+  function statusPreceptor(texto, estado) {
+    const badge = document.getElementById('preceptorStatusBadge');
+    if (!badge) return;
+    badge.textContent = texto;
+    badge.dataset.state = estado;
+  }
+
   window.enviarDuvidaLab = async function() {
     const input = document.getElementById('labChatInput');
     const msg = input ? input.value.trim() : '';
     if (!msg) return;
 
-    const chatBox = document.getElementById('labChatMessages');
-    const badge = document.getElementById('preceptorStatusBadge');
+    bolhaChat('msg-aluno', [msg]);
+    if (input) input.value = '';
 
-    if (chatBox) {
-      chatBox.innerHTML += `<div class="lab-chat-msg msg-aluno">${msg}</div>`;
-      input.value = '';
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    const idTemp = 'lab_typing_' + Date.now();
-    if (chatBox) {
-      chatBox.innerHTML += `<div class="lab-chat-msg msg-preceptor" id="${idTemp}">Consultando base farmacotécnica e parâmetros da vidraria...</div>`;
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    if (badge) {
-      badge.innerText = 'Processando...';
-      badge.style.borderColor = '#38bdf8';
-      badge.style.color = '#38bdf8';
-    }
+    const digitando = bolhaChat('msg-preceptor', ['Consultando base farmacotécnica e parâmetros da vidraria...'], 'is-typing');
+    statusPreceptor('Processando...', 'busy');
 
     try {
       if (typeof LabPreceptorEngine === 'undefined' || typeof LabPreceptorEngine.processarMensagem !== 'function') {
@@ -862,42 +873,18 @@
       }
 
       const respostaTexto = await LabPreceptorEngine.processarMensagem(msg, sys, calcularpH, agitadorAtivo);
-
-      const elTyping = document.getElementById(idTemp);
-      if (elTyping) elTyping.remove();
-
-      const htmlFormatado = (respostaTexto || "").replace(/\n/g, '<br>');
-      if (chatBox) {
-        chatBox.innerHTML += `<div class="lab-chat-msg msg-preceptor">${htmlFormatado}</div>`;
-      }
-
-      if (badge) {
-        badge.innerText = 'Online';
-        badge.style.borderColor = '#00ff88';
-        badge.style.color = '#4ade80';
-      }
+      if (digitando) digitando.remove();
+      bolhaChat('msg-preceptor', [String(respostaTexto || '')]);
+      statusPreceptor('Online', 'online');
     } catch (e) {
-      const elTyping = document.getElementById(idTemp);
-      if (elTyping) elTyping.remove();
-
+      if (digitando) digitando.remove();
       console.error('[Preceptor Error]:', e);
-      if (chatBox) {
-        chatBox.innerHTML += `
-          <div class="lab-chat-msg msg-preceptor" style="border-left-color: #ef4444;">
-            ⚠️ <strong>Falha na comunicação:</strong><br>
-            <code style="font-size: 0.72rem; color: #f87171;">${e.message || e}</code>
-          </div>
-        `;
-      }
-
-      if (badge) {
-        badge.innerText = 'Erro';
-        badge.style.borderColor = '#ef4444';
-        badge.style.color = '#f87171';
-      }
+      bolhaChat('msg-preceptor', [
+        '⚠️ ', h('strong', { text: 'Falha na comunicação:' }), h('br'),
+        h('code', { className: 'chat-error-detail', text: String((e && e.message) || e) })
+      ], 'is-error');
+      statusPreceptor('Erro', 'error');
     }
-
-    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
   };
 
   let alertaPressaoEmitido = false;
@@ -909,12 +896,11 @@
 
     if (sys.isClosed && sys.pressao > 3.0 && !alertaPressaoEmitido) {
       alertaPressaoEmitido = true;
-      chatBox.innerHTML += `
-        <div class="lab-chat-msg msg-preceptor" style="border-left-color: #ef4444;">
-          ⚠️ <strong>Atenção Imediata:</strong> A pressão interna atingiu <strong>${sys.pressao.toFixed(2)} atm</strong>. Reduza o aquecimento ou remova a rolha para evitar estilhaçamento da vidraria!
-        </div>
-      `;
-      chatBox.scrollTop = chatBox.scrollHeight;
+      bolhaChat('msg-preceptor', [
+        '⚠️ ', h('strong', { text: 'Atenção Imediata:' }), ' A pressão interna atingiu ',
+        h('strong', { text: `${sys.pressao.toFixed(2)} atm` }),
+        '. Reduza o aquecimento ou remova a rolha para evitar estilhaçamento da vidraria!'
+      ], 'is-error');
     } else if (sys.pressao <= 1.5) {
       alertaPressaoEmitido = false;
     }
@@ -923,12 +909,11 @@
     const temAnidrido = (sys.especies.get('AnidridoAcetico_l') || 0) > 0 || (sys.especies.get('C4H6O3_l') || 0) > 0;
     if (temSalicilico && temAnidrido && sys.temp < 50 && !alertaSinteseQuasePronta) {
       alertaSinteseQuasePronta = true;
-      chatBox.innerHTML += `
-        <div class="lab-chat-msg msg-preceptor">
-          💡 <strong>Dica Farmacotécnica:</strong> Você reuniu os precursores da Aspirina no vaso, mas a temperatura (${sys.temp.toFixed(1)}°C) está abaixo da energia de ativação necessária. Ligue o aquecedor para atingir <strong>60°C</strong> e ative o agitador.
-        </div>
-      `;
-      chatBox.scrollTop = chatBox.scrollHeight;
+      bolhaChat('msg-preceptor', [
+        '💡 ', h('strong', { text: 'Dica Farmacotécnica:' }),
+        ` Você reuniu os precursores da Aspirina no vaso, mas a temperatura (${sys.temp.toFixed(1)}°C) está abaixo da energia de ativação necessária. Ligue o aquecedor para atingir `,
+        h('strong', { text: '60°C' }), ' e ative o agitador.'
+      ]);
     }
   }
 
@@ -999,14 +984,25 @@
     window.setModoTermico('ambiente');
     tocarSom('erro');
 
-    const ticketHTML = `<div class="incident-ticket"><h3>🚨 RELATÓRIO DE INCIDENTE</h3><p><strong>FALHA:</strong> ${titulo}</p><p><strong>CAUSA:</strong> ${msg}</p><p><strong>STATUS TÉRMICO:</strong> ${sys.temp.toFixed(1)} °C</p><p><strong>PRESSÃO:</strong> ${sys.pressao.toFixed(2)} atm</p></div>`;
+    const campo = (rotulo, valor) => h('p', null, [h('strong', { text: rotulo + ' ' }), String(valor)]);
+    const ticket = h('div', { className: 'incident-ticket' }, [
+      h('h3', { text: '🚨 RELATÓRIO DE INCIDENTE' }),
+      campo('FALHA:', titulo),
+      campo('CAUSA:', msg),
+      campo('STATUS TÉRMICO:', `${sys.temp.toFixed(1)} °C`),
+      campo('PRESSÃO:', `${sys.pressao.toFixed(2)} atm`)
+    ]);
     const elTitle = document.getElementById('alertTitle');
     const elMsg = document.getElementById('alertMsg');
     const elOverlay = document.getElementById('alertOverlay');
 
     if (elTitle) elTitle.innerText = "Sistema de Segurança Ativado";
-    if (elMsg) elMsg.innerHTML = ticketHTML;
-    if (elOverlay) elOverlay.style.display = 'flex';
+    if (elMsg) { LaiftDom.clear(elMsg); elMsg.appendChild(ticket); }
+    if (elOverlay) {
+      elOverlay.style.display = 'flex';
+      const btnRestaurar = elOverlay.querySelector('button');
+      if (btnRestaurar) btnRestaurar.focus();
+    }
     log(`🚨 INCIDENTE: ${titulo}`, 'log-danger');
   }
 
@@ -1545,7 +1541,9 @@
 
     const speciesTags = document.getElementById('speciesTags');
     if (speciesTags) {
-      let tagsHtml = '';
+      // As chaves podem vir do Estúdio (moléculas criadas pelo usuário):
+      // montadas como texto, nunca como HTML.
+      const tags = [];
       for (const [esp, q] of sys.especies) {
         if (q < 0.05) continue;
         let cls = 'tag-aq';
@@ -1553,9 +1551,11 @@
         else if (esp.endsWith('_g')) cls = 'tag-g';
         else if (esp.endsWith('_l')) cls = 'tag-l';
         const nome = esp.replace(/_s|_g|_l|_aq/g,'').replace(/_2-/g,'²⁻').replace(/3\+/g,'³⁺').replace(/2\+/g,'²⁺').replace(/\+/g,'⁺').replace(/-/g,'⁻');
-        tagsHtml += `<span class="tag ${cls}" title="${q.toFixed(2)} mmol">${nome} ${q.toFixed(1)}</span>`;
+        tags.push(h('span', { className: `tag ${cls}`, title: `${q.toFixed(2)} mmol`, text: `${nome} ${q.toFixed(1)}` }));
       }
-      speciesTags.innerHTML = tagsHtml || '<span style="color:#546e7a;">vazio</span>';
+      LaiftDom.clear(speciesTags);
+      if (tags.length) tags.forEach(t => speciesTags.appendChild(t));
+      else speciesTags.appendChild(h('span', { className: 'log-muted', text: 'vazio' }));
     }
   }
 
@@ -1796,18 +1796,19 @@
       ]]
     ];
 
-    let html = '';
-    grupos.forEach(([titulo, itens], idx) => {
-      html += `<details ${idx === 0 ? 'open' : ''}><summary>${titulo}</summary><div class="reagent-list">`;
-      itens.forEach(([val, label], i) => {
-        html += `<label><input type="radio" name="reagenteSel" value="${val}" ${idx === 0 && i === 0 ? 'checked' : ''}> ${label}</label>`;
-      });
-      html += '</div></details>';
-    });
-
     const catContainer = document.getElementById('catalogContainer');
     if (catContainer) {
-      catContainer.innerHTML = html;
+      LaiftDom.clear(catContainer);
+      grupos.forEach(([titulo, itens], idx) => {
+        const lista = h('div', { className: 'reagent-list', role: 'radiogroup', 'aria-label': titulo });
+        itens.forEach(([val, label], i) => {
+          lista.appendChild(h('label', null, [
+            h('input', { type: 'radio', name: 'reagenteSel', value: val, checked: idx === 0 && i === 0 }),
+            ' ' + label
+          ]));
+        });
+        catContainer.appendChild(h('details', { open: idx === 0 }, [h('summary', { text: titulo }), lista]));
+      });
       catContainer.querySelectorAll('input[name="reagenteSel"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
           atualizarInspecaoMolecular(e.target.value);
@@ -1821,16 +1822,17 @@
   // =========================================================================
   window.proximaMissao = function() { missaoAtual++; resetarLaboratorio(); atualizarUI_Missao(); };
   window.abrirLivroMissoes = function() {
-    let html = '<ul style="list-style:none; padding:0;">';
-    missoes.forEach((m, i) => {
+    const lista = h('ul', { className: 'missions-list' }, missoes.map((m, i) => {
+      const estado = i < missaoAtual ? 'done' : i === missaoAtual ? 'current' : 'locked';
       const status = i < missaoAtual ? "✅ Concluída" : i === missaoAtual ? "▶ Em Progresso" : "🔒 Bloqueada";
-      const color = i < missaoAtual ? "var(--neon-green)" : i === missaoAtual ? "#ff9800" : "#546e7a";
-      html += `<li style="color:${color}; margin-bottom:12px; border-bottom:1px dashed #1e3a5f; padding-bottom:8px;"><strong>${m.titulo}</strong> <span style="font-size:0.6rem;">(${status})</span><br><span style="color:#b0bec5; font-size:0.75rem;">${m.desc}</span></li>`;
-    });
-    html += '</ul>';
+      return h('li', { className: `mission-item mission-${estado}` }, [
+        h('strong', { text: m.titulo }), ' ', h('span', { className: 'mission-status', text: `(${status})` }), h('br'),
+        h('span', { className: 'mission-desc', text: m.desc })
+      ]);
+    }));
     const listEl = document.getElementById('missionsList');
     const modal = document.getElementById('missionsModal');
-    if (listEl) listEl.innerHTML = html;
+    if (listEl) { LaiftDom.clear(listEl); listEl.appendChild(lista); }
     if (modal) modal.style.display = 'flex';
   };
 
@@ -1905,11 +1907,8 @@
       modal.style.display = 'flex';
 
       setTimeout(() => {
-        try {
-          if (iframe.contentWindow) {
-            iframe.contentWindow.postMessage({ acao: 'studioAberto' }, '*');
-          }
-        } catch (e) {}
+        // Origem fixa: o Estúdio é da mesma origem; nunca '*'.
+        try { LaiftDom.postTo(iframe.contentWindow, { acao: 'studioAberto' }); } catch (e) {}
       }, 150);
     } else {
       window.open('studio/index.html', '_blank');
@@ -1927,7 +1926,8 @@
     const chave = dados.chave;
     const nome = dados.nome || chave;
 
-    const radio = document.querySelector(`input[name="reagenteSel"][value="${chave}"]`);
+    const seletorChave = window.CSS && CSS.escape ? CSS.escape(chave) : String(chave).replace(/["\\]/g, '\\$&');
+    const radio = document.querySelector(`input[name="reagenteSel"][value="${seletorChave}"]`);
     if (radio) {
       radio.checked = true;
       const detailsPai = radio.closest('details');
@@ -1936,11 +1936,10 @@
     } else {
       const catContainer = document.querySelector('#catalogContainer .reagent-list');
       if (catContainer) {
-        const novoLabel = document.createElement('label');
-        novoLabel.innerHTML = `<input type="radio" name="reagenteSel" value="${chave}" checked> 🧬 ${nome} (Estúdio 3D)`;
-        novoLabel.querySelector('input').addEventListener('change', () => {
-          atualizarInspecaoMolecular(chave);
-        });
+        // `nome` é o nome dado pelo usuário no Estúdio: só como texto.
+        const radioNovo = h('input', { type: 'radio', name: 'reagenteSel', value: String(chave), checked: true });
+        radioNovo.addEventListener('change', () => atualizarInspecaoMolecular(chave));
+        const novoLabel = h('label', null, [radioNovo, ` 🧬 ${nome} (Estúdio 3D)`]);
         catContainer.prepend(novoLabel);
       }
     }
@@ -1967,6 +1966,8 @@
 
   // 2. Ouvinte postMessage (Modal Iframe)
   window.addEventListener('message', function(event) {
+    // Só o Estúdio (mesma origem) pode carregar compostos na bancada.
+    if (!LaiftDom.isTrustedMessage(event)) return;
     if (event.data) {
       if (event.data.acao === 'carregarCompostoNaBancada') {
         processarCompostoDoStudio(event.data.composto);
@@ -1988,7 +1989,68 @@
   });
 
   // =========================================================================
-  // 19. INICIALIZAÇÃO SEQUENCIAL
+  // 19. LIGAÇÕES DE INTERFACE (sem handlers inline — preparo da CSP)
+  // =========================================================================
+  window.fecharDossieLab = function() {
+    const modal = document.getElementById('dossieLabModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  // Só estas funções podem ser chamadas por data-action/-change/-input
+  // (ver ../shared/safe-dom.js). O chat do preceptor (lab-preceptor.js)
+  // entra com enviarDuvidaRapida/limparChatPreceptor.
+  LaiftDom.delegateActions(document, [
+    'toggleLabFullscreen', 'abrirStudio', 'fecharStudio', 'abrirManual', 'fecharManual',
+    'iniciarAdicao', 'pararAdicao', 'desfazerAcao', 'setModoTermico', 'toggleAgitador',
+    'resetarLaboratorio', 'toggleLabChat', 'toggleFoco', 'switchRightTab', 'setModoVisualizacao',
+    'abrirDossieCompostoAtual', 'fecharDossieLab', 'limparCurvaPH', 'limparRegistro',
+    'abrirLivroMissoes', 'fecharLivroMissoes', 'proximaMissao', 'setMobileView',
+    'limparChatPreceptor', 'enviarDuvidaLab', 'enviarDuvidaRapida', 'trocarVidraria', 'ajustarPotenciaChama'
+  ]);
+
+  // Atalhos do chat: sugestões com data-pergunta (sem onclick) e Enter no campo.
+  const chatMensagens = document.getElementById('labChatMessages');
+  if (chatMensagens) {
+    chatMensagens.addEventListener('click', (evt) => {
+      const chip = evt.target.closest && evt.target.closest('[data-pergunta]');
+      if (chip && typeof window.enviarDuvidaRapida === 'function') window.enviarDuvidaRapida(chip.getAttribute('data-pergunta'));
+    });
+  }
+  const chatInput = document.getElementById('labChatInput');
+  if (chatInput) {
+    chatInput.addEventListener('keydown', (evt) => {
+      if (evt.key === 'Enter') { evt.preventDefault(); window.enviarDuvidaLab(); }
+    });
+  }
+
+  // Abas do painel direito: estado anunciado a leitores de tela.
+  document.querySelectorAll('.rtab-btn').forEach(btn => {
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rtab-btn').forEach(b => b.setAttribute('aria-selected', b === btn ? 'true' : 'false'));
+    });
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('btnLabFullscreen');
+    const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (btn) btn.textContent = isFs ? '⛶ Restaurar' : '⛶ Tela Cheia';
+  });
+
+  // Esc fecha o que estiver aberto por cima da bancada.
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key !== 'Escape') return;
+    ['manualModal', 'missionsModal', 'dossieLabModal', 'studioIframeModal'].forEach(id => {
+      const m = document.getElementById(id);
+      if (m && m.style.display !== 'none') m.style.display = 'none';
+    });
+    const drawer = document.getElementById('labChatDrawer');
+    if (drawer && drawer.style.display === 'flex') drawer.style.display = 'none';
+  });
+
+  // =========================================================================
+  // 20. INICIALIZAÇÃO SEQUENCIAL
   // =========================================================================
   construirCatalogo();
   resetarLaboratorio();

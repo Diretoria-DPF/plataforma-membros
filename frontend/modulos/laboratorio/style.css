@@ -2,19 +2,26 @@
    1. VARIÁVEIS GLOBAIS E RESET DE HARD-LOCK (ZERO SCROLL)
 ========================================================= */
 :root {
-  --bg-deep: #010510;
-  --panel-bg: #0a0f1e;
-  --panel-inner-bg: rgba(2, 6, 23, 0.7);
-  --neon-cyan: #00e5ff;
+  /* Fase 4: a bancada é escura por natureza (<html class="laift-always-dark">)
+     e agora usa as superfícies, textos, bordas e fontes do design system
+     (../shared/laift-tokens.css). A identidade "neon" do laboratório fica no
+     acento (--module-accent = ciano) e nas cores de dado (verde, magenta,
+     vermelho de alerta), que sinalizam estados químicos. */
+  --module-accent-dark: #00e5ff;
+  --module-on-accent-dark: #001a1f;
+  --bg-deep: var(--laift-bg);
+  --panel-bg: var(--laift-surface);
+  --panel-inner-bg: var(--laift-surface-alt);
+  --neon-cyan: var(--module-accent);
   --neon-green: #00ff88;
   --neon-magenta: #ff00aa;
   --alert-red: #ff1744;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-active: #1e3a5f;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --font-mono: 'Fira Code', monospace;
-  --font-ui: 'Urbanist', sans-serif;
+  --border-subtle: var(--laift-border);
+  --border-active: var(--laift-border-strong);
+  --text-primary: var(--laift-text);
+  --text-secondary: var(--laift-muted);
+  --font-mono: var(--laift-font-mono);
+  --font-ui: var(--laift-font);
   --glow-cyan: 0 0 18px rgba(0, 229, 255, 0.35);
   --transition-smooth: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1578,4 +1585,108 @@ canvas {
   height: 100%;
   border: none;
   display: block;
+}
+
+
+/* =========================================================
+   FASE 4 — DESIGN SYSTEM, SEGURANÇA E ACESSIBILIDADE
+   (classes usadas pelo DOM seguro de js/script.js, que
+   substituiu os estilos embutidos em strings de innerHTML)
+========================================================= */
+.log-muted { color: var(--text-secondary); }
+
+/* Respostas do preceptor chegam como texto puro: as quebras de linha
+   vêm daqui, não de <br> montado em HTML. */
+.lab-chat-msg { white-space: pre-wrap; overflow-wrap: anywhere; }
+.lab-chat-msg.is-error { border-left-color: var(--laift-danger); }
+.lab-chat-msg.is-typing { opacity: 0.75; font-style: italic; }
+.chat-error-detail { font-size: 0.72rem; color: var(--laift-danger); }
+.chat-status-badge[data-state="busy"] { border-color: #38bdf8; color: #38bdf8; }
+.chat-status-badge[data-state="online"] { border-color: #00ff88; color: #4ade80; }
+.chat-status-badge[data-state="error"] { border-color: var(--laift-danger); color: var(--laift-danger); }
+
+button.btn-chat-close {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dossie-loading { text-align: center; padding: 20px; }
+.dossie-title { margin-bottom: 8px; color: #38bdf8; font-size: 1.05rem; }
+.dossie-row { margin-bottom: 4px; overflow-wrap: anywhere; }
+.dossie-mono { font-family: var(--font-mono); color: var(--text-secondary); }
+.dossie-smiles { font-family: var(--font-mono); color: #38bdf8; font-size: 0.72rem; word-break: break-all; }
+.dossie-bio { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-active); line-height: 1.5; }
+.dossie-erro { color: var(--laift-danger); }
+
+.missions-list { list-style: none; padding: 0; }
+.mission-item { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-active); }
+.mission-done { color: var(--neon-green); }
+.mission-current { color: #ff9800; }
+.mission-locked { color: var(--text-secondary); }
+.mission-status { font-size: 0.7rem; }
+.mission-desc { color: #b0bec5; font-size: 0.8rem; }
+
+/* Foco visível em todos os controles da bancada (antes só o hover mudava). */
+.lab-header button:focus-visible,
+.panel button:focus-visible,
+.rtab-btn:focus-visible,
+.m-nav-btn:focus-visible,
+.glassware-zone:focus-visible,
+#labChatDrawer button:focus-visible,
+.manual-modal button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--module-accent);
+  outline-offset: 2px;
+}
+
+/* Telas de toque: alvos de pelo menos 44 px (os botões compactos da bancada
+   continuam compactos com mouse, onde a precisão é maior). */
+@media (pointer: coarse) {
+  .lab-header button,
+  .panel .btn,
+  .rtab-btn,
+  .m-nav-btn,
+  #labChatDrawer button,
+  .manual-modal button,
+  .reagent-catalog summary,
+  .reagent-catalog label,
+  select,
+  input[type="number"],
+  input[type="text"] {
+    min-height: 44px;
+  }
+}
+
+/* Celular (iframe de ~330 px): o cabeçalho de 36 px cortava o título em três
+   linhas e espremia os botões abaixo do alvo de toque. */
+@media (max-width: 600px) {
+  .lab-header {
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    padding: 0 6px;
+    gap: 6px;
+  }
+  .header-left { min-width: 0; flex: 1; }
+  .lab-header h1 {
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-right { gap: 4px; flex-shrink: 0; }
+  .manual-btn { padding: 4px 7px; font-size: 0.72rem; }
+  .main-grid {
+    height: calc(100dvh - 48px - 48px);
+    max-height: calc(100dvh - 48px - 48px);
+  }
 }
