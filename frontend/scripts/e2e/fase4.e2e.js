@@ -266,11 +266,20 @@ module.exports = async function fase4() {
     // ---- Crachá (aberto em nova aba pelo terminal fiscal) ----
     const [popup] = await Promise.all([
       app.context.waitForEvent('page'),
-      app.page.evaluate(() => window.open('modulos/cracha/index.html?id=7&nome=Ana', '_blank')),
+      // Como o terminal fiscal monta o link: cada parâmetro codificado UMA vez.
+      app.page.evaluate(() => window.open('modulos/cracha/index.html?id=' + encodeURIComponent('A-7') +
+        '&nome=' + encodeURIComponent('Ana 100% %41 Silva') + '&cargo=' + encodeURIComponent('MEMBRO') +
+        '&qr=' + encodeURIComponent('LAIFT:v2:x.y'), '_blank')),
     ]);
     await popup.waitForLoadState('load');
     await popup.waitForTimeout(300);
-    const badge = await popup.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: innerWidth, qr: !!document.querySelector('#qrCode img[src^="data:image/"]') }));
+    const badge = await popup.evaluate(() => ({
+      sw: document.documentElement.scrollWidth, iw: innerWidth,
+      qr: !!document.querySelector('#qrCode img[src^="data:image/"]'),
+      nome: document.querySelector('.bind-name').textContent,
+      qrText: document.getElementById('qrInput').value,
+    }));
+    check(badge.nome === 'Ana 100% %41 Silva' && badge.qrText === 'LAIFT:v2:x.y', 'crachá decodifica os parâmetros uma vez só (nome com "%" aparece como veio)');
     check(badge.sw <= badge.iw + 1, `crachá sem rolagem horizontal em 360 px (scrollWidth ${badge.sw} ≤ ${badge.iw})`);
     check(badge.qr, 'QR do crachá é gerado localmente (sem CDN)');
     await popup.close();

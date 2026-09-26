@@ -193,12 +193,11 @@ renderQr($("qrCode"));
 
 // O script é carregado no fim do <body>: o DOM já está pronto aqui, mas
 // o listener continua valendo se a ordem de carga mudar.
-// URLSearchParams já decodifica; o decodeURIComponent extra (legado do
-// fiscal, que codificava duas vezes) lançava URIError com um "%" solto.
-function decodificar(valor) {
-  try { return decodeURIComponent(valor); } catch (e) { return valor; }
-}
-
+//
+// Parâmetros (interface usada pelo terminal fiscal): id, nome, cargo, qr —
+// cada um codificado UMA vez com encodeURIComponent. URLSearchParams já
+// devolve o valor decodificado; aplicar decodeURIComponent de novo (como
+// antes) quebrava nomes com "%" (URIError) e alterava nomes com "%41" etc.
 function aplicarParametros() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -206,12 +205,11 @@ function aplicarParametros() {
   const cargo = params.get("cargo");
   const qr = params.get("qr");
 
-  if (nome) elements.name.value = decodificar(nome);
-  if (cargo) elements.role.value = decodificar(cargo);
+  if (nome) elements.name.value = nome;
+  if (cargo) elements.role.value = cargo;
   if (id) {
-    const idLimpo = decodificar(id);
-    elements.id.value = idLimpo;
-    elements.qr.value = qr ? decodificar(qr) : `LAIFT:ID:${idLimpo}`;
+    elements.id.value = id;
+    elements.qr.value = qr || `LAIFT:ID:${id}`;
   }
 
   syncBadge();
