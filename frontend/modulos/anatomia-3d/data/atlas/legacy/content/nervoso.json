@@ -1,0 +1,301 @@
+{
+  "za:cerebelo": {
+    "ids": {
+      "wikidata": "Q130983",
+      "mesh": "D002531",
+      "icd10": [
+        "G11",
+        "G11.9",
+        "D43.1"
+      ],
+      "ta2": "A14.1.07.001"
+    },
+    "summary_pt": "Coordenação motora, refinamento de movimentos voluntários, equilíbrio vestibular e propriocepção. Função: Coordenação e aprendizado motor",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. cerebelares superior, anteroinferior e posteroinferior; Venosa: vv. cerebelares → seios venosos durais"
+    },
+    "clinical": [
+      "Ataxia cerebelar",
+      "Tumor cerebelar"
+    ]
+  },
+  "za:cerebro-telencefalo": {
+    "ids": {
+      "wikidata": "Q75855",
+      "mesh": "D054330",
+      "icd10": [
+        "G40",
+        "I63",
+        "F00-F09",
+        "G30",
+        "G20",
+        "F20"
+      ],
+      "ta2": "A14.1.03.001"
+    },
+    "summary_pt": "Substância cinzenta cortical e branca subcortical, corpo caloso e núcleos da base responsáveis por cognição e motricidade. Função: Cognição, motricidade voluntária, linguagem, memória, emoção",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: a. carótida interna, a. basilar, polígono de Willis; Venosa: seios durais, vv. cerebrais superficiais e profundas; Linfática: linfonodos cervicais profundos (via LCR)"
+    },
+    "histology": {
+      "tissues": [
+        "Hialuronano, tenascina, proteoglicanos"
+      ]
+    },
+    "clinical": [
+      "AVC isquêmico",
+      "Epilepsia",
+      "Alzheimer",
+      "Parkinson",
+      "Esquizofrenia"
+    ]
+  },
+  "za:diencefalo-tronco-encefalico": {
+    "ids": {
+      "wikidata": "Q188424",
+      "mesh": "D004027",
+      "icd10": [
+        "G93.8",
+        "I60-I69",
+        "I63.1",
+        "E51.2",
+        "H51.8"
+      ],
+      "ta2": "A14.1.08.001"
+    },
+    "summary_pt": "Relé sensorial tálamo-hipotalâmico e centros autônomos bulbares de controle respiratório e vasomotor. Função: Relé sensorial, controle autonômico, regulação endócrina",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: a. basilar, aa. cerebrais posteriores, aa. talâmicas; Venosa: vv. cerebrais internas, seio reto"
+    },
+    "clinical": [
+      "AVC de tronco",
+      "Síndrome de Wernicke-Korsakoff",
+      "Síndrome de Parinaud"
+    ]
+  },
+  "za:ganglios-nervosos": {
+    "ids": {
+      "wikidata": "Q189033",
+      "mesh": "D005724",
+      "icd10": [
+        "B02",
+        "G90.0"
+      ]
+    },
+    "summary_pt": "Agrupamentos de corpos neuronais fora do SNC; incluem gânglios das raízes dorsais e cadeias paravertebrais simpáticas. Função: Relé sensitivo e autonômico",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Herpes zoster",
+      "Ganglionopatia autonômica"
+    ]
+  },
+  "za:medula-espinhal": {
+    "ids": {
+      "wikidata": "Q9606",
+      "mesh": "D013116",
+      "icd10": [
+        "G95.0",
+        "S14",
+        "S24",
+        "S34",
+        "G35",
+        "A80"
+      ],
+      "ta2": "A14.1.02.001"
+    },
+    "summary_pt": "Cordão nervoso condutor protegido pelo canal vertebral, integrando substância cinzenta medular em H e tratos axonais. Função: Condução de informação sensitiva e motora + reflexos segmentares",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: a. espinhal anterior, aa. espinhais posteriores, aa. radiculares; Venosa: plexo venoso vertebral interno"
+    },
+    "clinical": [
+      "Lesão medular",
+      "Esclerose múltipla",
+      "Poliomielite"
+    ]
+  },
+  "za:nervos-cranianos-espinhais-perifericos": {
+    "ids": {
+      "wikidata": "Q160116",
+      "mesh": "D010525",
+      "ta2": "A14.2.00.001",
+      "icd10": [
+        "G62.9",
+        "G56.0",
+        "S74.0"
+      ]
+    },
+    "summary_pt": "Feixes axonais mielinizados ou amielínicos conectando o SNC aos tecidos alvos motores e viscerais. Função: Comunicação SNC ↔ periferia",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Neuropatia periférica",
+      "Síndrome do túnel do carpo",
+      "Lesão do nervo ciático"
+    ]
+  },
+  "za:orgaos-dos-sentidos": {
+    "ids": {
+      "wikidata": "Q24925",
+      "mesh": "D012679",
+      "icd10": [
+        "H25",
+        "H40",
+        "H90",
+        "H36.0"
+      ]
+    },
+    "summary_pt": "Transdutores biológicos especializados na conversão de estímulos físicos e químicos em potenciais de ação. Função: Visão, audição, equilíbrio, olfato, gustação, tato",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Catarata",
+      "Glaucoma",
+      "Perda auditiva sensorioneural",
+      "Retinopatia diabética"
+    ]
+  }
+}

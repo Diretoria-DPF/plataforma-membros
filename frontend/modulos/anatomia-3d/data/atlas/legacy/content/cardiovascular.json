@@ -1,0 +1,281 @@
+{
+  "fma:7088": {
+    "ids": {
+      "wikidata": "Q1072",
+      "mesh": "D006321",
+      "icd10": [
+        "I50",
+        "I25",
+        "I44-I49",
+        "I21",
+        "I48",
+        "I35.0",
+        "I40"
+      ],
+      "ta2": "A12.1.00.001"
+    },
+    "summary_pt": "Bomba muscular quadricameral sincicial dotada de automatismo elétrico pelo nó sinoatrial e nó atrioventricular. Função: Bombeamento de sangue para circulação pulmonar e sistêmica",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. coronárias direita e esquerda, ramos interventriculares, ramos circunflexos; Venosa: seio coronário, vv. cardíacas anteriores; Linfática: plexo linfático subepicárdico, linfonodos mediastinais",
+      "innervation": "Simpática: T1-T4 → β1 (aumento FC e contratilidade); Parassimpática: NC X → M2 (redução FC, efeito dromotrópico negativo)"
+    },
+    "histology": {
+      "epithelium": "Endocárdio (endotélio + subendotélio)",
+      "tissues": [
+        "Colágeno I/III, elastina, proteoglicanos"
+      ]
+    },
+    "clinical": [
+      "Insuficiência cardíaca",
+      "Infarto agudo do miocárdio",
+      "Fibrilação atrial",
+      "Estenose aórtica",
+      "Miocardite"
+    ]
+  },
+  "za:arterias-sistemicas": {
+    "ids": {
+      "wikidata": "Q9655",
+      "mesh": "D001158",
+      "icd10": [
+        "I70-I79",
+        "I70",
+        "I71",
+        "I10"
+      ],
+      "ta2": "A12.2.01.001"
+    },
+    "summary_pt": "Vasos de condutância e resistência periférica; túnica média rica em músculo liso sensível a catecolaminas. Função: Distribuição de sangue oxigenado sob alta pressão",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso",
+      "tissues": [
+        "Elastina, colágeno, proteoglicanos"
+      ]
+    },
+    "clinical": [
+      "Aterosclerose",
+      "Aneurisma de aorta",
+      "Hipertensão arterial"
+    ]
+  },
+  "za:leito-capilar": {
+    "ids": {
+      "wikidata": "Q1031",
+      "mesh": "D002196",
+      "ta2": "A12.4.01.001",
+      "icd10": [
+        "R60",
+        "R57"
+      ]
+    },
+    "summary_pt": "Zona de difusão de solutos e equilíbrio de Starling hidrostático-oncótico entre o plasma e o interstício. Função: Troca de gases, nutrientes e metabólitos entre sangue e tecidos",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso com lâmina basal",
+      "tissues": [
+        "Lâmina basal, colágeno IV"
+      ]
+    },
+    "clinical": [
+      "Edema",
+      "Choque circulatório"
+    ]
+  },
+  "za:sangue-plasma-elementos-figurados": {
+    "ids": {
+      "wikidata": "Q7873",
+      "mesh": "D001769",
+      "icd10": [
+        "D64",
+        "C91-C95",
+        "D69.6"
+      ]
+    },
+    "summary_pt": "Tecido conjuntivo líquido carreador de hemácias, leucócitos, plaquetas, albumina e frações livres de fármacos. Função: Transporte, regulação e defesa",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "tissues": [
+        "Plasma (90% água, 8% proteínas, 2% solutos)"
+      ]
+    },
+    "clinical": [
+      "Anemia",
+      "Leucemia",
+      "Trombocitopenia"
+    ]
+  },
+  "za:veias-sistemicas": {
+    "ids": {
+      "wikidata": "Q9609",
+      "mesh": "D014680",
+      "icd10": [
+        "I80-I89",
+        "I80",
+        "I83",
+        "I26"
+      ],
+      "ta2": "A12.3.01.001"
+    },
+    "summary_pt": "Vasos de capacitância contendo ~65% da volemia corporal total, equipados com válvulas antirrefluxo. Função: Retorno venoso ao coração",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso",
+      "tissues": [
+        "Colágeno, elastina"
+      ]
+    },
+    "clinical": [
+      "Trombose venosa profunda",
+      "Varizes",
+      "Embolia pulmonar"
+    ]
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "za:baco": {
+    "ids": {
+      "wikidata": "Q210912",
+      "mesh": "D013154",
+      "icd10": [
+        "D73.0-D73.5",
+        "R16.1",
+        "S36.0",
+        "C85"
+      ],
+      "ta2": "A13.2.01.001"
+    },
+    "summary_pt": "Maior órgão linfoide periférico; filtra o sangue, elimina hemácias senescentes e orquestra respostas imunes humorais. Função: Filtração sanguínea, resposta imune, hematopoese",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: a. esplênica (tronco celíaco); Venosa: v. esplênica → veia porta; Linfática: linfonodos celíacos",
+      "innervation": "Simpática: Plexo celíaco (T6-T10)"
+    },
+    "clinical": [
+      "Esplenomegalia",
+      "Ruptura esplênica",
+      "Linfoma esplênico"
+    ]
+  },
+  "za:linfonodos": {
+    "ids": {
+      "wikidata": "Q170758",
+      "mesh": "D008198",
+      "icd10": [
+        "I88",
+        "C77",
+        "R59",
+        "C81",
+        "C82-C85"
+      ],
+      "ta2": "A13.5.01.001"
+    },
+    "summary_pt": "Estruturas reniformes encapsuladas intercaladas nos vasos linfáticos para retenção e apresentação de antígenos. Função: Filtração linfática e resposta imune",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. regionais específicas; Venosa: vv. regionais; Linfática: aferentes e eferentes",
+      "innervation": "Simpática: Plexos periarteriais"
+    },
+    "clinical": [
+      "Linfadenite",
+      "Linfoma de Hodgkin",
+      "Linfoma não-Hodgkin"
+    ]
+  },
+  "za:medula-ossea-hematopoetica": {
+    "ids": {
+      "wikidata": "Q1037007",
+      "mesh": "D001853",
+      "icd10": [
+        "D50-D53",
+        "C91-C95",
+        "D61",
+        "C90.0"
+      ],
+      "ta2": "A13.4.01.001"
+    },
+    "summary_pt": "Órgão primário hematopoético no interior dos ossos esponjosos, gerador de todas as linhagens de células do sangue. Função: Hematopoese e maturação de linfócitos B",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. nutrícias dos ossos; Venosa: seios venosos medulares; Linfática: linfonodos regionais"
+    },
+    "clinical": [
+      "Leucemia",
+      "Anemia aplástica",
+      "Mieloma múltiplo"
+    ]
+  },
+  "za:tecido-linfoide-associado-ao-intestino-galt": {
+    "ids": {
+      "wikidata": "Q1479809",
+      "mesh": "D010581",
+      "icd10": [
+        "K50",
+        "K90.0"
+      ]
+    },
+    "summary_pt": "Folículos linfoides agregados na lâmina própria e submucosa ileal com células M captadoras de antígenos luminais. Função: Vigilância imunológica intestinal",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Doença de Crohn",
+      "Doença celíaca"
+    ]
+  },
+  "za:timo": {
+    "ids": {
+      "wikidata": "Q163987",
+      "mesh": "D013950",
+      "icd10": [
+        "D15.0",
+        "E31.0",
+        "G70.0"
+      ],
+      "ta2": "A13.1.01.001"
+    },
+    "summary_pt": "Órgão linfoide primário no mediastino anterior responsável pela maturação, diferenciação e seleção positiva/negativa de linfócitos T. Função: Maturação de linfócitos T",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. torácicas internas, aa. tireóideas inferiores; Venosa: vv. tireóideas e torácicas internas",
+      "innervation": "Simpática: Cadeia simpática cervical; Parassimpática: NC X"
+    },
+    "clinical": [
+      "Miastenia gravis",
+      "Timoma"
+    ]
+  },
+  "za:tonsilas-amigdalas": {
+    "ids": {
+      "wikidata": "Q172198",
+      "mesh": "D014066",
+      "icd10": [
+        "J35.0",
+        "J03",
+        "J35.2"
+      ],
+      "ta2": "A13.3.01.001"
+    },
+    "summary_pt": "Agregados linfoides da mucosa faríngea (Anel de Waldeyer) de contato primário com antígenos inalados e ingeridos. Função: Defesa imunológica da orofaringe",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Amigdalite",
+      "Hipertrofia adenoideana"
+    ]
+  },
+  "za:vasos-linfaticos-ducto-toracico": {
+    "ids": {
+      "wikidata": "Q25615",
+      "mesh": "D008205",
+      "icd10": [
+        "I89",
+        "I89.0",
+        "I89.1"
+      ]
+    },
+    "summary_pt": "Rede unidirecional valvulada que drena a linfa e lipídios absorvidos (quilo) de volta à circulação venosa sistêmica. Função: Retorno de linfa ao sangue",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Linfedema",
+      "Linfangite"
+    ]
+  }
+}

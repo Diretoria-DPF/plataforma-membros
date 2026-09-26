@@ -1,0 +1,66 @@
+{
+  "za:esqueleto-apendicular": {
+    "ids": {
+      "wikidata": "Q619790",
+      "mesh": "D012898",
+      "icd10": [
+        "M81",
+        "S72"
+      ]
+    },
+    "summary_pt": "Conjunto de 126 ossos dos membros superiores e inferiores + cinturas escapular e pélvica. Função: Locomoção e manipulação",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Osteoporose",
+      "Fraturas de fêmur"
+    ]
+  },
+  "za:esqueleto-axial": {
+    "ids": {
+      "wikidata": "Q2267350",
+      "mesh": "D012898",
+      "icd10": [
+        "M41",
+        "S22-S32"
+      ]
+    },
+    "summary_pt": "Conjunto de 80 ossos formando o eixo central do corpo (crânio, coluna, caixa torácica). Função: Proteção de órgãos vitais e sustentação central",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Escoliose",
+      "Fraturas vertebrais"
+    ]
+  }
+}

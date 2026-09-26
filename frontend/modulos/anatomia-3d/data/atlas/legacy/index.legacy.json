@@ -1,0 +1,770 @@
+[
+  {
+    "sid": "fma:7088",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Coração",
+      "en": "Heart"
+    }
+  },
+  {
+    "sid": "fma:7148",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Estômago",
+      "en": "Stomach"
+    }
+  },
+  {
+    "sid": "fma:7197",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Fígado",
+      "en": "Liver"
+    }
+  },
+  {
+    "sid": "za:arterias-sistemicas",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Artérias Sistêmicas",
+      "en": "Systemic Arteries"
+    }
+  },
+  {
+    "sid": "za:articulacoes-cartilagineas",
+    "system": "articular",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Articulações Cartilagíneas"
+    }
+  },
+  {
+    "sid": "za:articulacoes-fibrosas",
+    "system": "articular",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Articulações Fibrosas"
+    }
+  },
+  {
+    "sid": "za:articulacoes-sinoviais",
+    "system": "articular",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Articulações Sinoviais"
+    }
+  },
+  {
+    "sid": "za:arvore-bronquica",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Árvore Brônquica",
+      "en": "Bronchial Tree"
+    }
+  },
+  {
+    "sid": "za:baco",
+    "system": "linfatico",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Baço",
+      "en": "Spleen"
+    }
+  },
+  {
+    "sid": "za:bexiga-urinaria",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Bexiga Urinária",
+      "en": "Urinary Bladder"
+    }
+  },
+  {
+    "sid": "za:boca-dentes-lingua-labios-glandulas-salivares",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Boca (Dentes, Língua, Lábios & Glândulas Salivares)",
+      "en": "Mouth"
+    }
+  },
+  {
+    "sid": "za:cabelo-foliculos-pilosos",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Cabelo & Folículos Pilosos"
+    }
+  },
+  {
+    "sid": "za:canal-anal-anus",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Canal Anal & Ânus",
+      "en": "Anal Canal & Anus"
+    }
+  },
+  {
+    "sid": "za:cerebelo",
+    "system": "nervoso",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Cerebelo",
+      "en": "Cerebellum"
+    }
+  },
+  {
+    "sid": "za:cerebro-telencefalo",
+    "system": "nervoso",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Cérebro (Telencéfalo)",
+      "en": "Cerebrum"
+    }
+  },
+  {
+    "sid": "za:diencefalo-tronco-encefalico",
+    "system": "nervoso",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Diencéfalo & Tronco Encefálico",
+      "en": "Diencephalon & Brainstem"
+    }
+  },
+  {
+    "sid": "za:epididimo-m",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Epidídimo (M)"
+    }
+  },
+  {
+    "sid": "za:esofago",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Esôfago",
+      "en": "Esophagus"
+    }
+  },
+  {
+    "sid": "za:esqueleto-apendicular",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Esqueleto Apendicular",
+      "en": "Appendicular Skeleton"
+    }
+  },
+  {
+    "sid": "za:esqueleto-axial",
+    "system": "esqueletico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Esqueleto Axial",
+      "en": "Axial Skeleton"
+    }
+  },
+  {
+    "sid": "za:faringe",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Faringe",
+      "en": "Pharynx"
+    }
+  },
+  {
+    "sid": "za:fascia-profunda",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Fáscia Profunda"
+    }
+  },
+  {
+    "sid": "za:fascia-superficial",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Fáscia Superficial"
+    }
+  },
+  {
+    "sid": "za:fascia-visceral",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Fáscia Visceral"
+    }
+  },
+  {
+    "sid": "za:ganglios-nervosos",
+    "system": "nervoso",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Gânglios Nervosos",
+      "en": "Nerve Ganglia"
+    }
+  },
+  {
+    "sid": "za:glandula-pineal-epifise",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Glândula Pineal (Epífise)",
+      "en": "Pineal Gland"
+    }
+  },
+  {
+    "sid": "za:glandula-tireoide",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Glândula Tireoide",
+      "en": "Thyroid Gland"
+    }
+  },
+  {
+    "sid": "za:glandulas-adrenais-suprarrenais",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Glândulas Adrenais (Suprarrenais)",
+      "en": "Adrenal Glands"
+    }
+  },
+  {
+    "sid": "za:glandulas-mamarias",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Glândulas Mamárias"
+    }
+  },
+  {
+    "sid": "za:glandulas-paratireoides",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Glândulas Paratireoides",
+      "en": "Parathyroid Glands"
+    }
+  },
+  {
+    "sid": "za:hipofise-glandula-pituitaria",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Hipófise (Glândula Pituitária)",
+      "en": "Pituitary Gland"
+    }
+  },
+  {
+    "sid": "za:intestino-delgado-duodeno-jejuno-ileo",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Intestino Delgado (Duodeno, Jejuno & Íleo)",
+      "en": "Small Intestine"
+    }
+  },
+  {
+    "sid": "za:intestino-grosso-ceco-colons-reto",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Intestino Grosso (Ceco, Cólons & Reto)",
+      "en": "Large Intestine"
+    }
+  },
+  {
+    "sid": "za:laringe",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Laringe",
+      "en": "Larynx"
+    }
+  },
+  {
+    "sid": "za:leito-capilar",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Leito Capilar",
+      "en": "Capillary Bed"
+    }
+  },
+  {
+    "sid": "za:linfonodos",
+    "system": "linfatico",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Linfonodos"
+    }
+  },
+  {
+    "sid": "za:medula-espinhal",
+    "system": "nervoso",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Medula Espinhal",
+      "en": "Spinal Cord"
+    }
+  },
+  {
+    "sid": "za:medula-ossea-hematopoetica",
+    "system": "linfatico",
+    "layer": "esqueleto",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Medula Óssea Hematopoética"
+    }
+  },
+  {
+    "sid": "za:mesenterio-peritonio",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Mesentério & Peritônio",
+      "en": "Mesentery & Peritoneum"
+    }
+  },
+  {
+    "sid": "za:musculo-cardiaco-miocardio",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Músculo Cardíaco (Miocárdio)"
+    }
+  },
+  {
+    "sid": "za:musculo-liso-visceral-vascular",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Músculo Liso (Visceral & Vascular)"
+    }
+  },
+  {
+    "sid": "za:musculos-esqueleticos-voluntarios",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Músculos Esqueléticos (Voluntários)"
+    }
+  },
+  {
+    "sid": "za:nariz-cavidade-nasal",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Nariz & Cavidade Nasal",
+      "en": "Nose & Nasal Cavity"
+    },
+    "synonyms": [
+      "Cavum",
+      "Fossa nasal"
+    ]
+  },
+  {
+    "sid": "za:nervos-cranianos-espinhais-perifericos",
+    "system": "nervoso",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Nervos Cranianos, Espinhais & Periféricos",
+      "en": "Peripheral Nerves"
+    }
+  },
+  {
+    "sid": "za:orgaos-dos-sentidos",
+    "system": "nervoso",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Órgãos dos Sentidos",
+      "en": "Sense Organs"
+    }
+  },
+  {
+    "sid": "za:ovarios-f",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Ovários (F)"
+    }
+  },
+  {
+    "sid": "za:pancreas-endocrino-ilhotas-de-langerhans",
+    "system": "endocrino",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Pâncreas Endócrino (Ilhotas de Langerhans)",
+      "en": "Endocrine Pancreas"
+    }
+  },
+  {
+    "sid": "za:pancreas-fracao-exocrina",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Pâncreas (Fração Exócrina)",
+      "en": "Exocrine Pancreas"
+    }
+  },
+  {
+    "sid": "za:pele-epiderme-derme",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Pele (Epiderme & Derme)",
+      "en": "Skin"
+    }
+  },
+  {
+    "sid": "za:penis-corpos-cavernosos-m",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Pênis & Corpos Cavernosos (M)"
+    }
+  },
+  {
+    "sid": "za:placenta-orgao-gestacional-transitorio",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Placenta (Órgão Gestacional Transitório)"
+    }
+  },
+  {
+    "sid": "za:prostata-m",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Próstata (M)"
+    }
+  },
+  {
+    "sid": "za:pulmoes-alveolos",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Pulmões & Alvéolos",
+      "en": "Lungs & Alveoli"
+    }
+  },
+  {
+    "sid": "za:rins",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Rins",
+      "en": "Kidneys"
+    }
+  },
+  {
+    "sid": "za:sangue-plasma-elementos-figurados",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Sangue (Plasma & Elementos Figurados)",
+      "en": "Blood"
+    }
+  },
+  {
+    "sid": "za:tecido-linfoide-associado-ao-intestino-galt",
+    "system": "linfatico",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Tecido Linfoide Associado ao Intestino (GALT)"
+    }
+  },
+  {
+    "sid": "za:tecido-subcutaneo-hipoderme",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Tecido Subcutâneo (Hipoderme)"
+    }
+  },
+  {
+    "sid": "za:tendoes-fascias",
+    "system": "muscular",
+    "layer": "musculos",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Tendões & Fáscias"
+    }
+  },
+  {
+    "sid": "za:testiculos-tubulos-seminiferos-m",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Testículos & Túbulos Seminíferos (M)",
+      "en": "Testes"
+    }
+  },
+  {
+    "sid": "za:timo",
+    "system": "linfatico",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Timo",
+      "en": "Thymus"
+    }
+  },
+  {
+    "sid": "za:tonsilas-amigdalas",
+    "system": "linfatico",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Tonsilas (Amígdalas)"
+    }
+  },
+  {
+    "sid": "za:traqueia",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Traqueia",
+      "en": "Trachea"
+    }
+  },
+  {
+    "sid": "za:tubas-uterinas-f",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Tubas Uterinas (F)"
+    }
+  },
+  {
+    "sid": "za:unhas",
+    "system": "tegumentar",
+    "layer": "pele",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Unhas"
+    }
+  },
+  {
+    "sid": "za:ureteres",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Ureteres",
+      "en": "Ureters"
+    }
+  },
+  {
+    "sid": "za:uretra",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Uretra",
+      "en": "Urethra"
+    }
+  },
+  {
+    "sid": "za:utero-f",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Útero (F)"
+    }
+  },
+  {
+    "sid": "za:vagina-f",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Vagina (F)"
+    }
+  },
+  {
+    "sid": "za:vasos-linfaticos-ducto-toracico",
+    "system": "linfatico",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Vasos Linfáticos & Ducto Torácico"
+    }
+  },
+  {
+    "sid": "za:veias-sistemicas",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Veias Sistêmicas",
+      "en": "Systemic Veins"
+    }
+  },
+  {
+    "sid": "za:vesicula-biliar-vias-biliares",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Vesícula Biliar & Vias Biliares",
+      "en": "Gallbladder & Biliary Tree"
+    }
+  },
+  {
+    "sid": "za:vulva-clitoris-f",
+    "system": "reprodutor",
+    "layer": "visceras",
+    "parent": null,
+    "region": "desconhecido",
+    "names": {
+      "pt": "Vulva & Clitóris (F)"
+    }
+  }
+]
