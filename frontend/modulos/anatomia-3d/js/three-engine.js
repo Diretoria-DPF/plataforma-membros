@@ -97,10 +97,10 @@
     5: { id: "visceras", nome: "Vísceras & Órgãos", keywords: ["*lung*", "*heart*", "*brain*", "*stomach*", "*liver*", "*kidney*", "*intestin*", "*pancrea*", "*spleen*", "*bladder*", "*ovary*", "*testis*", "*thyroid*", "*adrenal*", "*uterus*"] }
   };
 
-  // Coordenadas espaciais tridimensionais das 18 vias de administração[cite: 1]
+  // Coordenadas espaciais tridimensionais das 18 vias de administração
   const DEFAULT_ROUTE_WAYPOINTS = {
-    ORAL: {[cite: 1]
-      cor: "#f59e0b",[cite: 1]
+    ORAL: {
+      cor: "#f59e0b",
       waypoints: [
         { x: 0.0, y: 1.74, z: 0.12 },
         { x: 0.0, y: 1.54, z: 0.06 },
@@ -111,8 +111,8 @@
         { x: 0.04, y: 1.25, z: 0.08 }
       ]
     },
-    SUBLINGUAL: {[cite: 1]
-      cor: "#f59e0b",[cite: 1]
+    SUBLINGUAL: {
+      cor: "#f59e0b",
       waypoints: [
         { x: 0.0, y: 1.68, z: 0.08 },
         { x: 0.03, y: 1.66, z: 0.05 },
@@ -121,8 +121,8 @@
         { x: 0.05, y: 1.30, z: 0.06 }
       ]
     },
-    RETAL: {[cite: 1]
-      cor: "#f59e0b",[cite: 1]
+    RETAL: {
+      cor: "#f59e0b",
       waypoints: [
         { x: 0.0, y: 0.72, z: -0.10 },
         { x: 0.03, y: 0.74, z: -0.07 },
@@ -131,8 +131,8 @@
         { x: 0.04, y: 1.25, z: 0.06 }
       ]
     },
-    INTRAGASTRICA: {[cite: 1]
-      cor: "#f59e0b",[cite: 1]
+    INTRAGASTRICA: {
+      cor: "#f59e0b",
       waypoints: [
         { x: 0.02, y: 1.76, z: 0.14 },
         { x: 0.01, y: 1.52, z: 0.06 },
@@ -141,8 +141,8 @@
         { x: 0.04, y: 1.25, z: 0.08 }
       ]
     },
-    INTRAVENOSA: {[cite: 1]
-      cor: "#ef4444",[cite: 1]
+    INTRAVENOSA: {
+      cor: "#ef4444",
       waypoints: [
         { x: 0.32, y: 1.12, z: 0.05 },
         { x: 0.22, y: 1.22, z: 0.04 },
@@ -153,8 +153,8 @@
         { x: 0.02, y: 1.35, z: 0.05 }
       ]
     },
-    INTRAMUSCULAR: {[cite: 1]
-      cor: "#a855f7",[cite: 1]
+    INTRAMUSCULAR: {
+      cor: "#a855f7",
       waypoints: [
         { x: 0.38, y: 1.35, z: 0.03 },
         { x: 0.28, y: 1.32, z: 0.04 },
@@ -163,8 +163,8 @@
         { x: 0.03, y: 1.32, z: 0.06 }
       ]
     },
-    SUBCUTANEA: {[cite: 1]
-      cor: "#a855f7",[cite: 1]
+    SUBCUTANEA: {
+      cor: "#a855f7",
       waypoints: [
         { x: 0.08, y: 0.95, z: 0.11 },
         { x: 0.07, y: 0.97, z: 0.09 },
@@ -172,32 +172,32 @@
         { x: 0.04, y: 1.25, z: 0.06 }
       ]
     },
-    INTRADERMICA: {[cite: 1]
-      cor: "#a855f7",[cite: 1]
+    INTRADERMICA: {
+      cor: "#a855f7",
       waypoints: [
         { x: 0.30, y: 1.15, z: 0.10 },
         { x: 0.28, y: 1.16, z: 0.08 },
         { x: 0.20, y: 1.22, z: 0.06 }
       ]
     },
-    INTRAARTERIAL: {[cite: 1]
-      cor: "#ef4444",[cite: 1]
+    INTRAARTERIAL: {
+      cor: "#ef4444",
       waypoints: [
         { x: 0.02, y: 1.35, z: 0.05 },
         { x: 0.05, y: 1.10, z: 0.04 },
         { x: 0.09, y: 1.05, z: 0.06 }
       ]
     },
-    INTRACARDIACA: {[cite: 1]
-      cor: "#ef4444",[cite: 1]
+    INTRACARDIACA: {
+      cor: "#ef4444",
       waypoints: [
         { x: 0.04, y: 1.25, z: 0.15 },
         { x: 0.04, y: 1.25, z: 0.09 },
         { x: 0.02, y: 1.35, z: 0.05 }
       ]
     },
-    INTRAOSSEA: {[cite: 1]
-      cor: "#a855f7",[cite: 1]
+    INTRAOSSEA: {
+      cor: "#a855f7",
       waypoints: [
         { x: -0.10, y: 0.60, z: 0.08 },
         { x: -0.08, y: 0.65, z: 0.05 },
@@ -205,8 +205,8 @@
         { x: 0.04, y: 1.25, z: 0.06 }
       ]
     },
-    INTRATECAL: {[cite: 1]
-      cor: "#38bdf8",[cite: 1]
+    INTRATECAL: {
+      cor: "#38bdf8",
       waypoints: [
         { x: 0.0, y: 0.85, z: -0.10 },
         { x: 0.0, y: 1.15, z: -0.06 },
@@ -214,16 +214,16 @@
         { x: 0.0, y: 1.74, z: 0.02 }
       ]
     },
-    EPIDURAL: {[cite: 1]
-      cor: "#38bdf8",[cite: 1]
+    EPIDURAL: {
+      cor: "#38bdf8",
       waypoints: [
         { x: 0.0, y: 0.88, z: -0.11 },
         { x: 0.0, y: 1.10, z: -0.07 },
         { x: 0.0, y: 1.30, z: -0.04 }
       ]
     },
-    TOPICA: {[cite: 1]
-      cor: "#fbbf24",[cite: 1]
+    TOPICA: {
+      cor: "#fbbf24",
       waypoints: [
         { x: 0.35, y: 0.95, z: 0.08 },
         { x: 0.33, y: 0.96, z: 0.05 },
@@ -231,8 +231,8 @@
         { x: 0.05, y: 1.25, z: 0.07 }
       ]
     },
-    NASAL: {[cite: 1]
-      cor: "#06b6d4",[cite: 1]
+    NASAL: {
+      cor: "#06b6d4",
       waypoints: [
         { x: 0.0, y: 1.76, z: 0.15 },
         { x: 0.0, y: 1.75, z: 0.10 },
@@ -241,8 +241,8 @@
         { x: 0.03, y: 1.55, z: 0.04 }
       ]
     },
-    PULMONAR_INALATORIA: {[cite: 1]
-      cor: "#06b6d4",[cite: 1]
+    PULMONAR_INALATORIA: {
+      cor: "#06b6d4",
       waypoints: [
         { x: 0.0, y: 1.72, z: 0.12 },
         { x: 0.01, y: 1.55, z: 0.06 },
@@ -251,8 +251,8 @@
         { x: 0.04, y: 1.25, z: 0.07 }
       ]
     },
-    OCULAR: {[cite: 1]
-      cor: "#38bdf8",[cite: 1]
+    OCULAR: {
+      cor: "#38bdf8",
       waypoints: [
         { x: -0.04, y: 1.78, z: 0.16 },
         { x: -0.035, y: 1.78, z: 0.14 },
@@ -260,16 +260,16 @@
         { x: 0.0, y: 1.70, z: 0.10 }
       ]
     },
-    OTOLOGICA: {[cite: 1]
-      cor: "#e2e8f0",[cite: 1]
+    OTOLOGICA: {
+      cor: "#e2e8f0",
       waypoints: [
         { x: 0.16, y: 1.76, z: 0.02 },
         { x: 0.13, y: 1.75, z: 0.01 },
         { x: 0.10, y: 1.74, z: 0.00 }
       ]
     },
-    VAGINAL: {[cite: 1]
-      cor: "#fd79a8",[cite: 1]
+    VAGINAL: {
+      cor: "#fd79a8",
       waypoints: [
         { x: 0.0, y: 0.72, z: 0.02 },
         { x: 0.0, y: 0.76, z: 0.03 },
@@ -386,7 +386,7 @@
   }
 
   // -------------------------------------------------------------------------
-  // 5. CONSTRUÇÃO DO MANEQUIM PROCEDURAL (14 SISTEMAS)[cite: 1]
+  // 5. CONSTRUÇÃO DO MANEQUIM PROCEDURAL (14 SISTEMAS)
   // -------------------------------------------------------------------------
   function buildComprehensiveMannequin() {
     if (bodyModel) {
@@ -605,16 +605,16 @@
   }
 
   function selectSystem(systemId) {
-    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) return;[cite: 1]
-    const sys = ATLAS_DATABASE.sistemas.find((s) => s.id === systemId);[cite: 1]
+    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) return;
+    const sys = ATLAS_DATABASE.sistemas.find((s) => s.id === systemId);
     if (!sys) return;
 
-    tweenCamera(sys.focoCamera, sys.targetLook);[cite: 1]
+    tweenCamera(sys.focoCamera, sys.targetLook);
 
     if (bodyModel) {
       bodyModel.traverse((child) => {
         if (child.isMesh && child.material) {
-          const match = (sys.meshKeywords || []).some((k) => matchesWildcard(child.name, k));[cite: 1]
+          const match = (sys.meshKeywords || []).some((k) => matchesWildcard(child.name, k));
           child.material.transparent = !match;
           child.material.opacity = match ? 1.0 : 0.08;
         }
@@ -623,7 +623,7 @@
   }
 
   // -------------------------------------------------------------------------
-  // 7. PARTICULAS DAS 18 VIAS DE ADMINISTRAÇÃO[cite: 1]
+  // 7. PARTICULAS DAS 18 VIAS DE ADMINISTRAÇÃO
   // -------------------------------------------------------------------------
   function setupRouteParticleSystem() {
     const geom = new THREE.BufferGeometry();
@@ -652,9 +652,9 @@
     let waypointsData = null;
     let corFluxo = "#38bdf8";
 
-    if (typeof ATLAS_DATABASE !== "undefined" && ATLAS_DATABASE.viasAdministracao && ATLAS_DATABASE.viasAdministracao[rId]) {[cite: 1]
-      waypointsData = ATLAS_DATABASE.viasAdministracao[rId].waypoints3D;[cite: 1]
-      corFluxo = ATLAS_DATABASE.viasAdministracao[rId].corFluxo || corFluxo;[cite: 1]
+    if (typeof ATLAS_DATABASE !== "undefined" && ATLAS_DATABASE.viasAdministracao && ATLAS_DATABASE.viasAdministracao[rId]) {
+      waypointsData = ATLAS_DATABASE.viasAdministracao[rId].waypoints3D;
+      corFluxo = ATLAS_DATABASE.viasAdministracao[rId].corFluxo || corFluxo;
     }
 
     if (!waypointsData && DEFAULT_ROUTE_WAYPOINTS[rId]) {

@@ -114,9 +114,9 @@ const AppController = (() => {
   // =========================================================================
   function renderSystemsBar() {
     const container = document.getElementById("systemsBar");
-    if (!container || typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) return;[cite: 1]
+    if (!container || typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) return;
 
-    container.innerHTML = ATLAS_DATABASE.sistemas.map((sys) => {[cite: 1]
+    container.innerHTML = ATLAS_DATABASE.sistemas.map((sys) => {
       const isActive = sys.id === activeSystemId;
       return `
         <button 
@@ -153,12 +153,12 @@ const AppController = (() => {
     const container = document.getElementById("organTreeContainer");
     if (!container) return;
 
-    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) {[cite: 1]
+    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.sistemas)) {
       container.innerHTML = '<div style="font-size:0.75rem; color:#64748b; padding:8px;">Base de dados anatômica indisponível.</div>';
       return;
     }
 
-    const sys = ATLAS_DATABASE.sistemas.find((s) => s.id === (systemId || activeSystemId));[cite: 1]
+    const sys = ATLAS_DATABASE.sistemas.find((s) => s.id === (systemId || activeSystemId));
     if (!sys) return;
 
     let html = `
@@ -255,10 +255,10 @@ const AppController = (() => {
     const container = document.getElementById("routesSelectorContainer");
     if (!container) return;
 
-    if (typeof ATLAS_DATABASE === "undefined" || !ATLAS_DATABASE.viasAdministracao) return;[cite: 1]
+    if (typeof ATLAS_DATABASE === "undefined" || !ATLAS_DATABASE.viasAdministracao) return;
 
-    const vias = ATLAS_DATABASE.viasAdministracao;[cite: 1]
-    const allKeys = Object.keys(vias);[cite: 1]
+    const vias = ATLAS_DATABASE.viasAdministracao;
+    const allKeys = Object.keys(vias);
 
     // Filtragem por Categoria
     const filteredKeys = allKeys.filter((key) => {
@@ -287,8 +287,8 @@ const AppController = (() => {
     `;
 
     filteredKeys.forEach((key) => {
-      const rota = vias[key];[cite: 1]
-      const isActive = rota.id === activeRouteId;[cite: 1]
+      const rota = vias[key];
+      const isActive = rota.id === activeRouteId;
 
       html += `
         <div 
@@ -340,9 +340,9 @@ const AppController = (() => {
 
   function updateRouteDetailsPanel(routeId) {
     const panel = document.getElementById("routeDetailsPanel");
-    if (!panel || typeof ATLAS_DATABASE === "undefined" || !ATLAS_DATABASE.viasAdministracao) return;[cite: 1]
+    if (!panel || typeof ATLAS_DATABASE === "undefined" || !ATLAS_DATABASE.viasAdministracao) return;
 
-    const rota = ATLAS_DATABASE.viasAdministracao[routeId] || ATLAS_DATABASE.viasAdministracao["ORAL"];[cite: 1]
+    const rota = ATLAS_DATABASE.viasAdministracao[routeId] || ATLAS_DATABASE.viasAdministracao["ORAL"];
     if (!rota) return;
 
     panel.innerHTML = `
@@ -486,13 +486,13 @@ const AppController = (() => {
     const container = document.getElementById("biohacking-results-grid");
     if (!container) return;
 
-    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.protocols)) {[cite: 1]
+    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.protocols)) {
       container.innerHTML = '<div style="color:#64748b; font-size:0.8rem;">Nenhum protocolo disponível.</div>';
       return;
     }
 
     const termo = filtro.toLowerCase().trim();
-    const protocolos = ATLAS_DATABASE.protocols.filter((p) => {[cite: 1]
+    const protocolos = ATLAS_DATABASE.protocols.filter((p) => {
       if (!termo) return true;
       return (
         p.nome.toLowerCase().includes(termo) ||
@@ -537,8 +537,8 @@ const AppController = (() => {
   }
 
   function simulateBioProtocol(protocolId) {
-    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.protocols)) return;[cite: 1]
-    const proto = ATLAS_DATABASE.protocols.find((p) => p.id === protocolId);[cite: 1]
+    if (typeof ATLAS_DATABASE === "undefined" || !Array.isArray(ATLAS_DATABASE.protocols)) return;
+    const proto = ATLAS_DATABASE.protocols.find((p) => p.id === protocolId);
     if (!proto) return;
 
     switchTab("view-anatomy");
