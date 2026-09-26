@@ -90,12 +90,14 @@ function staticChecks() {
 
   // Todo o front-end (fonte), não só os arquivos da Equipe 4.
   const sources = walk(FRONT, (f) => /\.(js|html)$/.test(f) && !/[\\/]data[\\/]/.test(f));
-  const bad = { inline: [], inlineScript: [], sink: [] };
+  const bad = { inline: [], inlineScript: [], sink: [], jsUrl: [] };
   for (const file of sources) {
     const rel = path.relative(FRONT, file);
     const text = stripComments(fs.readFileSync(file, 'utf8'), file);
     (text.match(/\son[a-z]+\s*=\s*["'\\]/g) || []).forEach((m) => bad.inline.push(`${rel}: ${m.trim()}`));
     if (file.endsWith('.html')) (text.match(/<script(?![^>]*\bsrc=)[^>]*>/g) || []).forEach((m) => bad.inlineScript.push(`${rel}: ${m}`));
+    // href/src="javascript:..." também é script inline para a CSP.
+    (text.match(/(?:href|src|action)\s*=\s*["']\s*javascript:/gi) || []).forEach((m) => bad.jsUrl.push(`${rel}: ${m}`));
     if (!file.endsWith(path.join('shared', 'safe-dom.js'))) {
       (text.match(/\.innerHTML\s*\+?=|\.outerHTML\s*=|insertAdjacentHTML|document\.write/g) || []).forEach((m) => bad.sink.push(`${rel}: ${m}`));
     }
@@ -103,6 +105,7 @@ function staticChecks() {
   console.log(`  (estático: ${sources.length} arquivos .js/.html do front-end)`);
   check(bad.inline.length === 0, 'nenhum handler inline (on*="...") em todo o front-end' + (bad.inline.length ? ': ' + bad.inline.slice(0, 5).join(' | ') : ''));
   check(bad.inlineScript.length === 0, 'nenhum <script> inline em todo o front-end' + (bad.inlineScript.length ? ': ' + bad.inlineScript.join(' | ') : ''));
+  check(bad.jsUrl.length === 0, 'nenhuma URL javascript: em href/src/action' + (bad.jsUrl.length ? ': ' + bad.jsUrl.join(' | ') : ''));
   check(bad.sink.length === 0, 'nenhum innerHTML/insertAdjacentHTML/document.write fora de shared/safe-dom.js' + (bad.sink.length ? ': ' + bad.sink.slice(0, 5).join(' | ') : ''));
 }
 
@@ -221,6 +224,16 @@ async function memberTour(pkgs) {
       const pg = await app.context.newPage();
       await pg.goto(app.baseUrl + pageName);
       await pg.waitForTimeout(200);
+      await pg.close();
+    }
+    // "← Voltar" dos termos: volta ao cadastro pelo histórico, sem javascript:.
+    {
+      const pg = await app.context.newPage();
+      await pg.goto(app.baseUrl + 'index.html');
+      await pg.goto(app.baseUrl + 'termos.html');
+      await pg.click('a[data-history-back]');
+      await pg.waitForURL((u) => !/termos\.html/.test(String(u)), { timeout: 5000 }).catch(() => {});
+      check(!/termos\.html/.test(pg.url()), 'termos: "← Voltar" volta pelo histórico sob a CSP');
       await pg.close();
     }
 
