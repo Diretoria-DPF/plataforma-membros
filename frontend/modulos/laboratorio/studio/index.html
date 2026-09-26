@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="laift-always-dark">
 <head>
   <!-- ==========================================================================
        1. METADADOS & VIEWPORT
@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../../shared/laift-identity.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="LAIFT — Estúdio de Projeção e Modelagem Molecular 3D: quimioinformática, CADD, bioisosterismo e tabela periódica interativa.">
   <meta name="author" content="LAIFT">
   <title>LAIFT — Estúdio Molecular 3D v4.6</title>
@@ -15,133 +15,24 @@
   <!-- ==========================================================================
        2. FONTES
        ========================================================================== -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Urbanist:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tipografia: pilha de fontes do sistema do design system (laift-tokens.css),
+       sem download do Google Fonts. -->
 
   <!-- ==========================================================================
        3. MOTORES DE RENDERIZAÇÃO & QUIMIOINFORMÁTICA
        ========================================================================== -->
 
   <!-- SmilesDrawer — renderização 2D vetorial (canvas) -->
-  <script src="https://unpkg.com/smiles-drawer@2.3.0/dist/smiles-drawer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.3.0/dist/smiles-drawer.min.js" integrity="sha384-gvxePxLB8Ajzz7m7uFrbpge/5fM7QBToaa5lpbBqB44P3Erv4iIKXMBbPJDKkdX0" crossorigin="anonymous"></script>
 
   <!-- 3Dmol.js — renderização 3D WebGL -->
-  <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
 
-  <!-- ─── OpenChemLib — LAZY LOADER ───────────────────────────────────────
-       ✅ v4.6 — A biblioteca NÃO é carregada no boot. O studio.js chama
-       window.carregarOCL() quando precisar gerar coordenadas 3D.
-       Economia: ~10 MB de download no carregamento inicial.
-  -->
-  <script>
-    window.__oclPromise = null;
+  <!-- OpenChemLib (sob demanda) e RDKit WASM: versões fixas + SRI em
+       studio-loader.js (antes, <script> inline sem versão nem integridade). -->
+  <script src="studio-loader.js"></script>
 
-    /**
-     * Carrega OpenChemLib sob demanda.
-     * Retorna uma Promise que resolve com window.OCL.
-     * Chamadas subsequentes reutilizam a mesma Promise.
-     */
-    window.carregarOCL = function () {
-      if (window.__oclPromise) return window.__oclPromise;
-
-      window.__oclPromise = new Promise(function (resolve, reject) {
-        var sources = [
-          'https://unpkg.com/openchemlib@8.6.0/dist/openchemlib-full.js',
-          'https://cdn.jsdelivr.net/npm/openchemlib@8.6.0/dist/openchemlib-full.js'
-        ];
-        var idx = 0;
-
-        function tentarProximo() {
-          if (idx >= sources.length) {
-            console.error('[OCL Loader] ❌ Todos os CDNs falharam');
-            reject(new Error('OpenChemLib indisponível'));
-            return;
-          }
-          var url = sources[idx++];
-          var s = document.createElement('script');
-          s.src = url;
-          s.onload = function () {
-            var tentativas = 0;
-            var check = setInterval(function () {
-              tentativas++;
-              if (typeof window.OCL !== 'undefined' && window.OCL.Molecule) {
-                clearInterval(check);
-                console.log('[OCL Loader] ✅ Carregado sob demanda de: ' + url);
-                resolve(window.OCL);
-              } else if (tentativas >= 20) {
-                clearInterval(check);
-                console.warn('[OCL Loader] OCL ausente após ' + url + ', tentando próximo...');
-                tentarProximo();
-              }
-            }, 100);
-          };
-          s.onerror = function () {
-            console.warn('[OCL Loader] Falhou: ' + url);
-            tentarProximo();
-          };
-          document.head.appendChild(s);
-        }
-
-        tentarProximo();
-      });
-
-      return window.__oclPromise;
-    };
-  </script>
-
-  <!-- ─── RDKit WASM — engine secundária ────────────────────────────────── -->
-  <script>
-    window.__rdkitReady = (function () {
-      var sources = [
-        { url: 'https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js', label: 'unpkg' },
-        { url: 'https://cdn.jsdelivr.net/npm/@rdkit/rdkit/dist/RDKit_minimal.js', label: 'jsDelivr' }
-      ];
-      var idx = 0;
-
-      return new Promise(function (resolve) {
-        function tentarProximo() {
-          if (idx >= sources.length) {
-            console.error('[RDKit Loader] ❌ Todos os CDNs falharam');
-            resolve(null);
-            return;
-          }
-          injetarScript(sources[idx++]);
-        }
-
-        function injetarScript(entry) {
-          var s = document.createElement('script');
-          s.src = entry.url;
-
-          s.onload = function () {
-            var tentativas = 0;
-            var check = setInterval(function () {
-              tentativas++;
-              if (typeof window.initRDKitModule === 'function') {
-                clearInterval(check);
-                console.log('[RDKit Loader] ✅ initRDKitModule pronto (via ' + entry.label + ')');
-                resolve(window.initRDKitModule);
-              } else if (tentativas >= 20) {
-                clearInterval(check);
-                console.warn('[RDKit Loader] initRDKitModule ausente, tentando próximo...');
-                tentarProximo();
-              }
-            }, 100);
-          };
-
-          s.onerror = function () {
-            console.warn('[RDKit Loader] Falhou: ' + entry.url);
-            tentarProximo();
-          };
-
-          document.head.appendChild(s);
-        }
-
-        tentarProximo();
-      });
-    })();
-  </script>
-
+  <link rel="stylesheet" href="../../shared/laift-tokens.css">
   <link rel="stylesheet" href="studio.css">
 </head>
 
@@ -161,23 +52,23 @@
     </div>
 
     <div class="header-control-actions">
-      <button class="studio-btn btn-icon-only" onclick="window.irParaAnterior()" id="btnNavBack" title="Composto anterior (Alt+←)" aria-label="Anterior">◀</button>
-      <button class="studio-btn btn-icon-only" onclick="window.irParaProximo()" id="btnNavForward" title="Próximo composto (Alt+→)" aria-label="Próximo">▶</button>
+      <button type="button" class="studio-btn btn-icon-only" data-action="irParaAnterior" id="btnNavBack" title="Composto anterior (Alt+←)" aria-label="Anterior">◀</button>
+      <button type="button" class="studio-btn btn-icon-only" data-action="irParaProximo" id="btnNavForward" title="Próximo composto (Alt+→)" aria-label="Próximo">▶</button>
 
-      <button class="studio-btn btn-icon-only" onclick="window.desfazerEdicao()" id="btnUndo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer" disabled>↶</button>
-      <button class="studio-btn btn-icon-only" onclick="window.refazerEdicao()" id="btnRedo" title="Refazer (Ctrl+Y)" aria-label="Refazer" disabled>↷</button>
+      <button type="button" class="studio-btn btn-icon-only" data-action="desfazerEdicao" id="btnUndo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer" disabled>↶</button>
+      <button type="button" class="studio-btn btn-icon-only" data-action="refazerEdicao" id="btnRedo" title="Refazer (Ctrl+Y)" aria-label="Refazer" disabled>↷</button>
 
-      <button class="studio-btn btn-icon-only btn-favorite" onclick="window.alternarFavoritoAtual()" id="btnFavoriteCurrent" title="Favoritar composto ativo" aria-label="Favoritar" style="display:none;">☆</button>
+      <button type="button" class="studio-btn btn-icon-only btn-favorite" data-action="alternarFavoritoAtual" id="btnFavoriteCurrent" title="Favoritar composto ativo" aria-label="Favoritar" style="display:none;">☆</button>
 
-      <button class="studio-btn btn-icon-only" onclick="window.alternarModoApresentacao()" title="Modo Apresentação (P)" aria-label="Modo Apresentação">🎬</button>
+      <button type="button" class="studio-btn btn-icon-only" data-action="alternarModoApresentacao" title="Modo Apresentação (P)" aria-label="Modo Apresentação">🎬</button>
 
-      <button class="studio-btn btn-icon-only" onclick="toggleNativeFullscreen()" id="btnToggleNativeFullscreen" title="Tela Cheia" aria-label="Tela Cheia">⛶</button>
+      <button type="button" class="studio-btn btn-icon-only" data-action="toggleNativeFullscreen" id="btnToggleNativeFullscreen" title="Tela Cheia" aria-label="Tela Cheia">⛶</button>
 
-      <button class="studio-btn btn-action-transfer" onclick="carregarCompostoDoStudioNaBancada()" id="btnCarregarNaBancada" title="Transferir para bancada" aria-label="Transferir para bancada" style="display:none;">
+      <button type="button" class="studio-btn btn-action-transfer" data-action="carregarCompostoDoStudioNaBancada" id="btnCarregarNaBancada" title="Transferir para bancada" aria-label="Transferir para bancada" style="display:none;">
         🧪 <span class="btn-text">Bancada</span>
       </button>
 
-      <button class="studio-btn btn-action-back" onclick="retornarAoLaboratorio()" title="Retornar à Bancada" aria-label="Voltar">✕</button>
+      <button type="button" class="studio-btn btn-action-back" data-action="retornarAoLaboratorio" title="Retornar à Bancada" aria-label="Voltar">✕</button>
     </div>
   </header>
 
@@ -191,21 +82,21 @@
       <div class="sidebar-search-container">
         <div class="search-input-wrapper">
           <span class="search-icon" aria-hidden="true">🔍</span>
-          <input type="text" id="studioSearchInput" placeholder="Buscar nome, fórmula, SMILES..." oninput="filtrarCompostosStudio(this.value)" autocomplete="off" spellcheck="false" aria-label="Buscar compostos">
+          <input type="text" id="studioSearchInput" placeholder="Buscar nome, fórmula, SMILES..." data-action-input="filtrarCompostosStudio" autocomplete="off" spellcheck="false" aria-label="Buscar compostos">
         </div>
 
         <div class="category-filters-scroll" role="tablist" aria-label="Filtros de categoria">
-          <button class="category-pill active" data-cat="todas" onclick="filtrarCategoriaStudio('todas')" role="tab">Todas</button>
-          <button class="category-pill" data-cat="favoritos" onclick="filtrarCategoriaStudio('favoritos')" role="tab">⭐ Fav</button>
-          <button class="category-pill" data-cat="farmacos" onclick="filtrarCategoriaStudio('farmacos')" role="tab">Fármacos</button>
-          <button class="category-pill" data-cat="custom" onclick="filtrarCategoriaStudio('custom')" role="tab">Projetadas</button>
-          <button class="category-pill" data-cat="reagentes" onclick="filtrarCategoriaStudio('reagentes')" role="tab">Reagentes</button>
-          <button class="category-pill" data-cat="solventes" onclick="filtrarCategoriaStudio('solventes')" role="tab">Solventes</button>
-          <button class="category-pill" data-cat="toxicos" onclick="filtrarCategoriaStudio('toxicos')" role="tab">Toxinas</button>
+          <button type="button" class="category-pill active" data-cat="todas" data-action="filtrarCategoriaStudio" data-arg="todas" role="tab">Todas</button>
+          <button type="button" class="category-pill" data-cat="favoritos" data-action="filtrarCategoriaStudio" data-arg="favoritos" role="tab">⭐ Fav</button>
+          <button type="button" class="category-pill" data-cat="farmacos" data-action="filtrarCategoriaStudio" data-arg="farmacos" role="tab">Fármacos</button>
+          <button type="button" class="category-pill" data-cat="custom" data-action="filtrarCategoriaStudio" data-arg="custom" role="tab">Projetadas</button>
+          <button type="button" class="category-pill" data-cat="reagentes" data-action="filtrarCategoriaStudio" data-arg="reagentes" role="tab">Reagentes</button>
+          <button type="button" class="category-pill" data-cat="solventes" data-action="filtrarCategoriaStudio" data-arg="solventes" role="tab">Solventes</button>
+          <button type="button" class="category-pill" data-cat="toxicos" data-action="filtrarCategoriaStudio" data-arg="toxicos" role="tab">Toxinas</button>
         </div>
       </div>
 
-      <div class="compound-virtual-list" id="studioCompoundList" onscroll="handleStudioScroll()" role="listbox" aria-label="Lista de compostos"></div>
+      <div class="compound-virtual-list" id="studioCompoundList" role="listbox" aria-label="Lista de compostos"></div>
 
       <div class="sidebar-footer-counter">
         <span id="studioFilteredCount" aria-live="polite">0 compostos visíveis</span>
@@ -217,38 +108,38 @@
 
       <nav class="studio-toolbar-ribbon" aria-label="Ferramentas do estúdio">
         <div class="toolbar-cluster">
-          <button class="tool-btn" id="btnStudioView2D" onclick="setStudioModoVisual('2D')" title="Visualização 2D vetorial">2D</button>
-          <button class="tool-btn active" id="btnStudioView3D" onclick="setStudioModoVisual('3D')" title="Visualização 3D WebGL">3D</button>
+          <button aria-label="Visualização 2D vetorial" class="tool-btn" id="btnStudioView2D" data-action="setStudioModoVisual" data-arg="2D" title="Visualização 2D vetorial">2D</button>
+          <button aria-label="Visualização 3D WebGL" class="tool-btn active" id="btnStudioView3D" data-action="setStudioModoVisual" data-arg="3D" title="Visualização 3D WebGL">3D</button>
         </div>
 
         <div class="toolbar-cluster" id="group3DStyles">
-          <button class="tool-btn active" id="btnModoBallStick" onclick="setModelo3D('ballstick')" title="Ball & Stick">⚪</button>
-          <button class="tool-btn" id="btnModoCPK" onclick="setModelo3D('cpk')" title="CPK">●</button>
-          <button class="tool-btn" id="btnModoWire" onclick="setModelo3D('wireframe')" title="Wireframe">▬</button>
-          <button class="tool-btn" id="btnModoSurface" onclick="setModelo3D('surface')" title="Superfície VDW">◯</button>
+          <button aria-label="Ball & Stick" class="tool-btn active" id="btnModoBallStick" data-action="setModelo3D" data-arg="ballstick" title="Ball & Stick">⚪</button>
+          <button aria-label="CPK" class="tool-btn" id="btnModoCPK" data-action="setModelo3D" data-arg="cpk" title="CPK">●</button>
+          <button aria-label="Wireframe" class="tool-btn" id="btnModoWire" data-action="setModelo3D" data-arg="wireframe" title="Wireframe">▬</button>
+          <button aria-label="Superfície VDW" class="tool-btn" id="btnModoSurface" data-action="setModelo3D" data-arg="surface" title="Superfície VDW">◯</button>
         </div>
 
         <div class="toolbar-cluster">
-          <button class="tool-btn btn-ptable-trigger" onclick="window.abrirTabelaPeriodica(null)" title="Tabela Periódica (118 elementos)">⚛️</button>
-          <button class="tool-btn btn-bioisostere-trigger" onclick="window.abrirPainelBioisosterismo()" title="Bioisosterismo">🧬</button>
-          <button class="tool-btn btn-similarity-trigger" onclick="window.abrirSimilaridade()" title="Similaridade Tanimoto">🔎</button>
-          <button class="tool-btn btn-scaffold-trigger" onclick="window.extrairScaffoldAtual()" title="Scaffold de Murcko">🏗️</button>
-          <button class="tool-btn btn-compare-trigger" onclick="window.abrirComparacao()" title="Comparação lado a lado">⚖️</button>
+          <button aria-label="Tabela Periódica (118 elementos)" class="tool-btn btn-ptable-trigger" data-action="abrirTabelaPeriodica" title="Tabela Periódica (118 elementos)">⚛️</button>
+          <button aria-label="Bioisosterismo" class="tool-btn btn-bioisostere-trigger" data-action="abrirPainelBioisosterismo" title="Bioisosterismo">🧬</button>
+          <button aria-label="Similaridade Tanimoto" class="tool-btn btn-similarity-trigger" data-action="abrirSimilaridade" title="Similaridade Tanimoto">🔎</button>
+          <button aria-label="Scaffold de Murcko" class="tool-btn btn-scaffold-trigger" data-action="extrairScaffoldAtual" title="Scaffold de Murcko">🏗️</button>
+          <button aria-label="Comparação lado a lado" class="tool-btn btn-compare-trigger" data-action="abrirComparacao" title="Comparação lado a lado">⚖️</button>
           <!-- ✅ v4.6 — NOVO: ChEMBL -->
-          <button class="tool-btn btn-chembl-trigger" onclick="window.abrirDossieChEMBL()" title="Dossiê de atividades biológicas (ChEMBL)">💊</button>
+          <button aria-label="Dossiê de atividades biológicas (ChEMBL)" class="tool-btn btn-chembl-trigger" data-action="abrirDossieChEMBL" title="Dossiê de atividades biológicas (ChEMBL)">💊</button>
         </div>
 
         <div class="toolbar-cluster">
-          <button class="tool-btn btn-measure-toggle" id="btnToolMeasure" onclick="toggleModoMedicao()" title="Medir">📏</button>
-          <button class="tool-btn" onclick="limparMedicoes3D()" title="Limpar medições">🧹</button>
+          <button aria-label="Medir" class="tool-btn btn-measure-toggle" id="btnToolMeasure" data-action="toggleModoMedicao" title="Medir">📏</button>
+          <button aria-label="Limpar medições" class="tool-btn" data-action="limparMedicoes3D" title="Limpar medições">🧹</button>
         </div>
 
         <div class="toolbar-cluster right-aligned-cluster">
-          <button class="tool-btn" id="btnAutoRotate" onclick="toggleAutoRotacao3D()" title="Rotação automática">🔄</button>
-          <button class="tool-btn" onclick="resetarCamera3D()" title="Centralizar">🎯</button>
-          <button class="tool-btn btn-export-highlight" onclick="exportarImagemPNG()" title="PNG">📷</button>
-          <button class="tool-btn btn-export-highlight" onclick="exportarArquivoSDF()" title="SDF">💾</button>
-          <button class="tool-btn btn-export-highlight" onclick="window.exportarCSVFiltrados()" title="CSV">📊</button>
+          <button aria-label="Rotação automática" class="tool-btn" id="btnAutoRotate" data-action="toggleAutoRotacao3D" title="Rotação automática">🔄</button>
+          <button aria-label="Centralizar" class="tool-btn" data-action="resetarCamera3D" title="Centralizar">🎯</button>
+          <button aria-label="PNG" class="tool-btn btn-export-highlight" data-action="exportarImagemPNG" title="PNG">📷</button>
+          <button aria-label="SDF" class="tool-btn btn-export-highlight" data-action="exportarArquivoSDF" title="SDF">💾</button>
+          <button aria-label="CSV" class="tool-btn btn-export-highlight" data-action="exportarCSVFiltrados" title="CSV">📊</button>
         </div>
       </nav>
 
@@ -274,7 +165,7 @@
               <strong id="hudAtomTitle">Carbono</strong>
               <small id="hudAtomSub">--</small>
             </div>
-            <button class="atom-inspector-close" onclick="window.fecharInspectorAtomo()" aria-label="Fechar">&times;</button>
+            <button class="atom-inspector-close" data-action="fecharInspectorAtomo" aria-label="Fechar">&times;</button>
           </div>
           <div class="atom-inspector-body">
             <div class="atom-inspector-row"><span>Eletroneg.:</span><strong id="hudAtomEletron">--</strong></div>
@@ -282,7 +173,7 @@
             <div class="atom-inspector-row"><span>Vizinhos:</span><strong id="hudAtomNeighbors">--</strong></div>
           </div>
           <div class="atom-inspector-actions">
-            <button class="btn-hud-replace" onclick="window.substituirAtomoClicadoViaTabela()">⚛️ Abrir Tabela Periódica</button>
+            <button type="button" class="btn-hud-replace" data-action="substituirAtomoClicadoViaTabela">⚛️ Abrir Tabela Periódica</button>
           </div>
         </div>
 
@@ -315,7 +206,7 @@
         <div class="hud-item-block cadd-hud-block">
           <div class="cadd-hud-header">
             <span class="hud-title">Drogabilidade (CADD)</span>
-            <button class="btn-open-cadd-modal" onclick="window.abrirModalCADD()" title="Abrir dossiê CADD" aria-label="Abrir dossiê CADD">📊</button>
+            <button type="button" class="btn-open-cadd-modal" data-action="abrirModalCADD" title="Abrir dossiê CADD" aria-label="Abrir dossiê CADD">📊</button>
           </div>
           <div class="lipinski-metrics-row">
             <span class="cadd-badge badge-pending" id="badgeLipinski" title="Lipinski">L: --</span>
@@ -345,23 +236,23 @@
           <h3>⚛️ Tabela Periódica — 118 Elementos</h3>
           <span class="cadd-subtitle" id="ptableSubHeader">Substituição e adição de átomos com validação de valência</span>
         </div>
-        <button class="btn-close-modal" onclick="window.fecharTabelaPeriodica()" aria-label="Fechar">&times;</button>
+        <button type="button" class="btn-close-modal" data-action="fecharTabelaPeriodica" aria-label="Fechar">&times;</button>
       </div>
 
       <div class="ptable-modal-layout">
         <div class="ptable-grid-column">
           <div class="ptable-filters-bar" role="tablist" aria-label="Filtros de família">
-            <button class="ptable-pill active" data-cat="todas" onclick="filtrarElementosPTable('todas')">Todos</button>
-            <button class="ptable-pill" data-cat="nao-metal" onclick="filtrarElementosPTable('nao-metal')">Não-Metais</button>
-            <button class="ptable-pill" data-cat="halogenio" onclick="filtrarElementosPTable('halogenio')">Halogênios</button>
-            <button class="ptable-pill" data-cat="metaloide" onclick="filtrarElementosPTable('metaloide')">Metaloides</button>
-            <button class="ptable-pill" data-cat="alcalino" onclick="filtrarElementosPTable('alcalino')">Alcalinos</button>
-            <button class="ptable-pill" data-cat="alcalino-terroso" onclick="filtrarElementosPTable('alcalino-terroso')">Alc.-Terrosos</button>
-            <button class="ptable-pill" data-cat="metal-transicao" onclick="filtrarElementosPTable('metal-transicao')">Transição</button>
-            <button class="ptable-pill" data-cat="metal-pos-transicao" onclick="filtrarElementosPTable('metal-pos-transicao')">Pós-Trans.</button>
-            <button class="ptable-pill" data-cat="lantanideo" onclick="filtrarElementosPTable('lantanideo')">Lantanídeos</button>
-            <button class="ptable-pill" data-cat="actinideo" onclick="filtrarElementosPTable('actinideo')">Actinídeos</button>
-            <button class="ptable-pill" data-cat="gas-nobre" onclick="filtrarElementosPTable('gas-nobre')">Gases Nobres</button>
+            <button type="button" class="ptable-pill active" data-cat="todas" data-action="filtrarElementosPTable" data-arg="todas">Todos</button>
+            <button type="button" class="ptable-pill" data-cat="nao-metal" data-action="filtrarElementosPTable" data-arg="nao-metal">Não-Metais</button>
+            <button type="button" class="ptable-pill" data-cat="halogenio" data-action="filtrarElementosPTable" data-arg="halogenio">Halogênios</button>
+            <button type="button" class="ptable-pill" data-cat="metaloide" data-action="filtrarElementosPTable" data-arg="metaloide">Metaloides</button>
+            <button type="button" class="ptable-pill" data-cat="alcalino" data-action="filtrarElementosPTable" data-arg="alcalino">Alcalinos</button>
+            <button type="button" class="ptable-pill" data-cat="alcalino-terroso" data-action="filtrarElementosPTable" data-arg="alcalino-terroso">Alc.-Terrosos</button>
+            <button type="button" class="ptable-pill" data-cat="metal-transicao" data-action="filtrarElementosPTable" data-arg="metal-transicao">Transição</button>
+            <button type="button" class="ptable-pill" data-cat="metal-pos-transicao" data-action="filtrarElementosPTable" data-arg="metal-pos-transicao">Pós-Trans.</button>
+            <button type="button" class="ptable-pill" data-cat="lantanideo" data-action="filtrarElementosPTable" data-arg="lantanideo">Lantanídeos</button>
+            <button type="button" class="ptable-pill" data-cat="actinideo" data-action="filtrarElementosPTable" data-arg="actinideo">Actinídeos</button>
+            <button type="button" class="ptable-pill" data-cat="gas-nobre" data-action="filtrarElementosPTable" data-arg="gas-nobre">Gases Nobres</button>
           </div>
 
           <div class="ptable-matrix-scroll">
@@ -386,7 +277,7 @@
           <h3 id="caddModalTitle">📊 Dossiê CADD</h3>
           <span class="cadd-subtitle" id="caddModalSubtitle">--</span>
         </div>
-        <button class="btn-close-modal" onclick="window.fecharModalCADD()" aria-label="Fechar">&times;</button>
+        <button type="button" class="btn-close-modal" data-action="fecharModalCADD" aria-label="Fechar">&times;</button>
       </div>
       <div class="cadd-modal-body" id="caddModalBody"></div>
     </div>
@@ -400,7 +291,7 @@
           <h3 id="chemblModalTitle">💊 Dossiê ChEMBL</h3>
           <span class="cadd-subtitle" id="chemblModalSubtitle">Carregando dados do ChEMBL...</span>
         </div>
-        <button class="btn-close-modal" onclick="window.fecharDossieChEMBL()" aria-label="Fechar">&times;</button>
+        <button type="button" class="btn-close-modal" data-action="fecharDossieChEMBL" aria-label="Fechar">&times;</button>
       </div>
       <div class="cadd-modal-body chembl-body" id="chemblModalBody">
         <div style="text-align:center; padding:40px; color:#64748b;">
@@ -419,7 +310,7 @@
           <h3>🧬 Bioisosterismo</h3>
           <span class="cadd-subtitle">Modificação orientada por estrutura</span>
         </div>
-        <button class="btn-close-modal" onclick="window.fecharPainelBioisosterismo()" aria-label="Fechar">&times;</button>
+        <button type="button" class="btn-close-modal" data-action="fecharPainelBioisosterismo" aria-label="Fechar">&times;</button>
       </div>
       <div class="cadd-modal-body bioisostere-body" id="bioisostereModalBody"></div>
     </div>
@@ -433,7 +324,7 @@
           <h3>🔎 Similaridade Estrutural</h3>
           <span class="cadd-subtitle" id="similaritySubHeader">--</span>
         </div>
-        <button class="btn-close-modal" onclick="window.fecharSimilaridade()" aria-label="Fechar">&times;</button>
+        <button type="button" class="btn-close-modal" data-action="fecharSimilaridade" aria-label="Fechar">&times;</button>
       </div>
       <div class="cadd-modal-body similarity-body" id="similarityModalBody"></div>
     </div>
@@ -447,14 +338,14 @@
           <h3>⚖️ Comparação Molecular</h3>
           <span class="cadd-subtitle">Selecione dois compostos para comparar propriedades</span>
         </div>
-        <button class="btn-close-modal" onclick="window.fecharComparacao()" aria-label="Fechar">&times;</button>
+        <button type="button" class="btn-close-modal" data-action="fecharComparacao" aria-label="Fechar">&times;</button>
       </div>
 
       <div class="comparison-controls">
         <select id="cmpSelectA" class="cmp-select" aria-label="Composto A"></select>
         <span class="cmp-vs" aria-hidden="true">VS</span>
         <select id="cmpSelectB" class="cmp-select" aria-label="Composto B"></select>
-        <button class="studio-btn btn-action-transfer" onclick="window.executarComparacao()" title="Comparar">⚖️ Comparar</button>
+        <button type="button" class="studio-btn btn-action-transfer" data-action="executarComparacao" title="Comparar">⚖️ Comparar</button>
       </div>
 
       <div class="comparison-viewports">
@@ -477,6 +368,7 @@
   <!-- ==========================================================================
        7. BANCOS DE DADOS COMPARTILHADOS
        ========================================================================== -->
+  <script src="../../shared/safe-dom.js"></script>
   <script src="../data/lab-database.js"></script>
   <script src="../data/sinteses-database.js"></script>
   <script src="../js/lab-apis.js"></script>
@@ -488,84 +380,9 @@
   <script src="studio.js"></script>
 
   <!-- ==========================================================================
-       9. CONTROLADORES GLOBAIS
+       9. CONTROLADORES GLOBAIS (sem <script> inline — preparo da CSP)
        ========================================================================== -->
-  <script>
-    function toggleNativeFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(function (err) {
-          console.warn('[Studio Fullscreen] Erro: ' + err.message);
-        });
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-      }
-    }
-
-    function retornarAoLaboratorio() {
-      if (window.opener) {
-        window.close();
-      } else if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ acao: 'fecharModalStudio' }, '*');
-      } else {
-        window.location.href = '../index.html';
-      }
-    }
-
-    document.addEventListener('fullscreenchange', function () {
-      const btn = document.getElementById('btnToggleNativeFullscreen');
-      if (btn) {
-        btn.textContent = document.fullscreenElement ? '⛶' : '⛶';
-        btn.title = document.fullscreenElement ? 'Restaurar' : 'Tela Cheia';
-      }
-      if (typeof window.resetarCamera3D === 'function') {
-        setTimeout(window.resetarCamera3D, 150);
-      }
-    });
-
-    document.addEventListener('keydown', function (e) {
-      const tag = (e.target.tagName || '').toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
-        e.preventDefault();
-        if (typeof window.desfazerEdicao === 'function') window.desfazerEdicao();
-      }
-
-      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
-        e.preventDefault();
-        if (typeof window.refazerEdicao === 'function') window.refazerEdicao();
-      }
-
-      if (e.altKey && e.key === 'ArrowLeft') {
-        e.preventDefault();
-        if (typeof window.irParaAnterior === 'function') window.irParaAnterior();
-      }
-
-      if (e.altKey && e.key === 'ArrowRight') {
-        e.preventDefault();
-        if (typeof window.irParaProximo === 'function') window.irParaProximo();
-      }
-
-      if (e.key === 'Escape') {
-        ['periodicTableModal', 'caddModal', 'chemblModal', 'bioisostereModal', 'similarityModal', 'comparisonModal'].forEach(function (id) {
-          const m = document.getElementById(id);
-          if (m && m.style.display !== 'none') m.style.display = 'none';
-        });
-        if (document.body.classList.contains('presentation-mode')) {
-          if (typeof window.alternarModoApresentacao === 'function') window.alternarModoApresentacao();
-        }
-      }
-
-      if (e.key.toLowerCase() === 'p' && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (typeof window.alternarModoApresentacao === 'function') window.alternarModoApresentacao();
-      }
-    });
-
-    window.addEventListener('load', function () {
-      const input = document.getElementById('studioSearchInput');
-      if (input) input.focus();
-    });
-  </script>
+  <script src="studio-ui.js"></script>
 
 </body>
 </html>

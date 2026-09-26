@@ -1,0 +1,664 @@
+/* =========================================================================
+   Studio de Crachá LAIFT — estilos
+   Antes um <style> inline no index.html. A interface do editor usa os
+   tokens do design system (../shared/laift-tokens.css); as fontes do
+   Google (DM Sans/Fraunces) deram lugar às do sistema, sem requisição a
+   terceiros.
+   ========================================================================= */
+:root {
+  /* Interface do editor: tokens do design system (claro/escuro, conforme
+     o tema da plataforma). O crachá em si (--badge-*) segue as cores
+     escolhidas pela pessoa — é o objeto impresso, não a interface. */
+  --module-accent-light: #1d4ed8;
+  --module-accent-dark: #8fb4ff;
+  --module-on-accent-dark: #081a3d;
+  --ui-bg: var(--laift-bg);
+  --panel: var(--laift-surface);
+  --line: var(--laift-border);
+  --text-ui: var(--laift-text);
+  --muted: var(--laift-muted);
+  --ok: var(--laift-success);
+  --badge-font: var(--laift-font);
+  --badge-serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+
+  --badge-bg: #f7f4ef;
+  --badge-accent: #1d4ed8;
+  --badge-text: #111827;
+
+  --laift-logo: url("laift-marca.png");
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+  font-family: var(--laift-font);
+  background:
+    radial-gradient(900px 600px at 0 0, color-mix(in srgb, var(--module-accent) 14%, transparent), transparent 55%),
+    var(--ui-bg);
+  color: var(--text-ui);
+}
+
+.app {
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 22px 18px 30px;
+  border-right: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.logo-ui {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #60a5fa, #1d4ed8);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+}
+
+.brand h1 {
+  font-size: 1.05rem;
+}
+
+.brand p,
+.hint {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.group {
+  margin-bottom: 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.group h2 {
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+label.field {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--laift-text);
+  font-size: 0.8rem;
+}
+
+input[type="text"],
+input[type="url"],
+textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--laift-surface-alt);
+  color: var(--laift-text);
+  font: inherit;
+  min-height: 44px;
+}
+
+textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--module-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--module-accent) 22%, transparent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
+
+/* O "checkbox" estilizado esconde o input real: o foco aparece no trilho. */
+.toggle input:focus-visible + .slider {
+  outline: 3px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
+
+.color-row,
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.82rem;
+}
+
+.color-row:last-child,
+.switch:last-child {
+  border-bottom: 0;
+}
+
+input[type="color"] {
+  width: 42px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.toggle {
+  position: relative;
+  width: 42px;
+  height: 24px;
+}
+
+.toggle input {
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  background: var(--laift-border-strong);
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  transition: 0.2s;
+}
+
+.toggle input:checked + .slider {
+  background: var(--ok);
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+.file-button {
+  display: block;
+  margin-bottom: 10px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--laift-surface-alt);
+  color: var(--laift-text);
+  text-align: center;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.file-button:focus-within {
+  outline: 3px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
+
+/* Visualmente oculto, mas ainda alcançável por teclado (display:none
+   tirava o seletor de arquivo da ordem de tabulação). */
+.file-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.actions {
+  display: grid;
+  gap: 8px;
+}
+
+button {
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 11px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--module-accent);
+  color: var(--module-on-accent);
+}
+
+.secondary {
+  border: 1px solid var(--line);
+  background: var(--laift-surface-alt);
+  color: var(--laift-text);
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 32px 16px;
+}
+
+.stage-head {
+  text-align: center;
+}
+
+.stage-head h2 {
+  font: 700 1.7rem var(--badge-serif);
+}
+
+.stage-head p {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.scene {
+  width: min(86vw, 340px);
+  height: calc(min(86vw, 340px) * 85.6 / 54);
+  perspective: 1400px;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.48);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+.front-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.hole-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+.hole {
+  width: 34px;
+  height: 10px;
+  border-radius: 999px;
+  background: #0b1220;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+
+.organization {
+  max-height: 3.8em;
+  overflow: hidden;
+  padding: 8px 12px 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.photo {
+  width: 42%;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  overflow: hidden;
+  margin: 10px auto 8px;
+  border: 3px solid var(--badge-accent);
+  border-radius: 16px;
+  background: #dbe3f0;
+}
+
+.photo img,
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(160deg, var(--badge-accent), #0f172a);
+  font: 2rem var(--badge-serif);
+}
+
+.person {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: 0 12px 8px;
+  text-align: center;
+}
+
+.person::before {
+  content: "";
+  position: absolute;
+  inset: 20px 14px 0;
+  z-index: -1;
+  background-image: var(--laift-logo);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(68%, 150px);
+  opacity: 0.13;
+  pointer-events: none;
+}
+
+.person h3 {
+  font: 600 1.15rem/1.15 var(--badge-serif);
+  letter-spacing: -0.03em;
+  word-break: break-word;
+}
+
+.role {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
+  word-break: break-word;
+  opacity: 0.9;
+}
+
+.stripe {
+  display: grid;
+  flex: 0 0 14%;
+  place-items: center;
+  min-height: 42px;
+  padding: 0 8px;
+  background: var(--badge-accent);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.back-content {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 16px 16px;
+  text-align: center;
+}
+
+.back-content::before {
+  content: "";
+  position: absolute;
+  inset: 40px 16px 22px;
+  z-index: -1;
+  background-image: var(--laift-logo);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(85%, 235px);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.back-title {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 10px;
+  color: var(--badge-accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.qr-box {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 46%;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 8px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.qr-box img,
+.qr-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.instructions {
+  position: relative;
+  z-index: 1;
+  margin-top: 14px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.badge-id {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: auto;
+  padding: 8px 10px;
+  border-top: 2px solid var(--badge-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.print-sheet {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    max-height: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stage {
+    order: -1;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 210mm;
+    height: 297mm;
+    background: white !important;
+  }
+
+  .sidebar,
+  .stage-head,
+  .scene,
+  .no-print {
+    display: none !important;
+  }
+
+  .app,
+  .stage {
+    display: block;
+    padding: 0;
+  }
+
+  .print-sheet {
+    display: block;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 14mm 12mm;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-title {
+    margin-bottom: 10mm;
+    color: #111827;
+    font-size: 12pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .print-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12mm;
+  }
+
+  .print-badge {
+    width: 54mm;
+    height: 85.6mm;
+    overflow: hidden;
+    border: 0.2mm solid #d1d5db;
+    border-radius: 3mm;
+  }
+
+  .print-badge .face {
+    position: relative;
+    width: 54mm;
+    height: 85.6mm;
+    border: 0;
+    border-radius: 3mm;
+    box-shadow: none;
+    backface-visibility: visible !important;
+    transform: none !important;
+  }
+
+  .print-badge .organization {
+    padding: 1.6mm 2mm 0;
+    font-size: 6pt;
+  }
+
+  .print-badge .photo {
+    width: 20mm;
+    height: 20mm;
+    margin: 2mm auto 1.6mm;
+    border-width: 0.6mm;
+    border-radius: 2.2mm;
+  }
+
+  .print-badge .person {
+    padding: 0 2.2mm 1.5mm;
+  }
+
+  .print-badge .person::before {
+    inset: 7mm 3mm 0;
+    background-size: 27mm;
+    opacity: 0.09;
+  }
+
+  .print-badge .person h3 {
+    font-size: 10pt;
+  }
+
+  .print-badge .role {
+    margin-top: 1mm;
+    font-size: 7.5pt;
+    opacity: 1;
+  }
+
+  .print-badge .stripe {
+    flex-basis: 11mm;
+    min-height: 11mm;
+    font-size: 6.5pt;
+  }
+
+  .print-badge .back-content {
+    padding: 4mm 3mm 3mm;
+  }
+
+  .print-badge .back-content::before {
+    inset: 39mm 3mm 5mm;
+    background-size: 30mm;
+    opacity: 0.06;
+  }
+
+  .print-badge .qr-box {
+    width: 22mm;
+    height: 22mm;
+    padding: 1.2mm;
+  }
+
+  .print-badge .instructions,
+  .print-badge .badge-id {
+    font-size: 7pt;
+  }
+}

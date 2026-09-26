@@ -1,0 +1,199 @@
+/* =========================================================================
+   laift-tokens.css — tokens de design compartilhados pelos módulos LAIFT
+   -------------------------------------------------------------------------
+   Espelha os tokens da plataforma (frontend/styles.css) para que todo módulo
+   carregado no iframe da área "Aprender" tenha as mesmas cores, superfícies,
+   raios, sombras, espaçamentos e tipografia — nos temas claro e escuro.
+
+   Por que prefixo --laift-*: cada módulo já tem suas próprias variáveis
+   (--primary, --surface, --bg-main...). Com nomes próprios, os tokens não
+   colidem com elas; cada módulo só MAPEIA as suas para estes
+   (ex.: --surface: var(--laift-surface)). Guia completo em
+   docs/FASE_4_QUALIDADE.md.
+
+   Tema: a ponte (modulos/shared/laift-identity.js) aplica
+   <html data-theme="light|dark"> conforme o tema efetivo da plataforma.
+   Sem o atributo (página aberta antes da ponte agir), vale a preferência do
+   sistema operacional. Módulos que são escuros por natureza (visualização
+   3D/WebGL, bancada "neon") usam <html class="laift-always-dark">.
+
+   Identidade do módulo: SÓ em --module-accent. O módulo define
+   --module-accent-light e --module-accent-dark (e, se precisar,
+   --module-on-accent-light/-dark para o texto sobre o acento); o par certo
+   é escolhido aqui conforme o tema. Os valores precisam de contraste AA
+   (≥ 4,5:1) contra --laift-surface do respectivo tema.
+   ========================================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* Superfícies e texto (iguais a frontend/styles.css) */
+  --laift-bg: #f4f6fb;
+  --laift-surface: #ffffff;
+  --laift-surface-alt: #f1f4fa;
+  --laift-border: #dde3ee;
+  --laift-border-strong: #b8c2d6;
+  --laift-text: #1c2333;
+  --laift-muted: #5b6478;
+
+  /* Cor da marca e estados */
+  --laift-primary: #0f6f62;
+  --laift-primary-strong: #0b5349;
+  --laift-primary-soft: #e1f4f0;
+  --laift-on-primary: #ffffff;
+  --laift-danger: #b3261e;
+  --laift-danger-soft: #fbe6e4;
+  --laift-on-danger: #ffffff;
+  --laift-success: #1e6b3c;
+  --laift-success-soft: #e3f6e9;
+  --laift-warning: #8a5a00;
+  --laift-warning-soft: #fff4d6;
+  --laift-info: #1d5fb8;
+  --laift-info-soft: #e5effc;
+  --laift-overlay: rgba(10, 14, 22, 0.55);
+
+  /* Forma, profundidade e ritmo */
+  --laift-shadow: 0 14px 34px rgba(20, 30, 50, 0.08);
+  --laift-shadow-sm: 0 2px 8px rgba(20, 30, 50, 0.08);
+  --laift-radius-sm: 8px;
+  --laift-radius-md: 14px;
+  --laift-radius-lg: 20px;
+  --laift-radius-pill: 999px;
+  --laift-space-1: 4px;
+  --laift-space-2: 8px;
+  --laift-space-3: 12px;
+  --laift-space-4: 16px;
+  --laift-space-5: 24px;
+  --laift-space-6: 32px;
+  --laift-touch: 44px;
+
+  /* Tipografia: a mesma pilha de fontes do sistema da plataforma (sem
+     download de fontes de terceiros). */
+  --laift-font: "Segoe UI", Inter, system-ui, -apple-system, Roboto, sans-serif;
+  --laift-font-mono: ui-monospace, "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
+
+  /* Foco visível, igual ao da plataforma */
+  --laift-focus-ring: 0 0 0 3px color-mix(in srgb, var(--laift-primary) 45%, transparent);
+  --laift-focus-color: color-mix(in srgb, var(--laift-primary) 70%, transparent);
+
+  /* Acento do módulo (ver cabeçalho) */
+  --module-accent: var(--module-accent-light, var(--laift-primary));
+  --module-on-accent: var(--module-on-accent-light, #ffffff);
+  --module-accent-soft: color-mix(in srgb, var(--module-accent) 12%, var(--laift-surface));
+}
+
+/* Paleta escura — a mesma de :root[data-theme="dark"] da plataforma. Três
+   seletores com o mesmo conteúdo: tema escolhido pela ponte, módulos sempre
+   escuros e, sem atributo, a preferência do sistema. */
+html[data-theme="dark"],
+html.laift-always-dark {
+  color-scheme: dark;
+  --laift-bg: #10141c;
+  --laift-surface: #171d29;
+  --laift-surface-alt: #1c2330;
+  --laift-border: #2b3345;
+  --laift-border-strong: #3d4860;
+  --laift-text: #e7ebf3;
+  --laift-muted: #9aa5bb;
+  --laift-primary: #3fcfb6;
+  --laift-primary-strong: #63e0c9;
+  --laift-primary-soft: #10352f;
+  --laift-on-primary: #06231e;
+  --laift-danger: #ff7a70;
+  --laift-danger-soft: #3a1c1c;
+  --laift-on-danger: #3a0805;
+  --laift-success: #7be3a0;
+  --laift-success-soft: #163a26;
+  --laift-warning: #ffc857;
+  --laift-warning-soft: #3a2e12;
+  --laift-info: #7cb4ff;
+  --laift-info-soft: #16294a;
+  --laift-overlay: rgba(0, 0, 0, 0.65);
+  --laift-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+  --laift-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --module-accent: var(--module-accent-dark, var(--laift-primary));
+  --module-on-accent: var(--module-on-accent-dark, #06231e);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+    --laift-bg: #10141c;
+    --laift-surface: #171d29;
+    --laift-surface-alt: #1c2330;
+    --laift-border: #2b3345;
+    --laift-border-strong: #3d4860;
+    --laift-text: #e7ebf3;
+    --laift-muted: #9aa5bb;
+    --laift-primary: #3fcfb6;
+    --laift-primary-strong: #63e0c9;
+    --laift-primary-soft: #10352f;
+    --laift-on-primary: #06231e;
+    --laift-danger: #ff7a70;
+    --laift-danger-soft: #3a1c1c;
+    --laift-on-danger: #3a0805;
+    --laift-success: #7be3a0;
+    --laift-success-soft: #163a26;
+    --laift-warning: #ffc857;
+    --laift-warning-soft: #3a2e12;
+    --laift-info: #7cb4ff;
+    --laift-info-soft: #16294a;
+    --laift-overlay: rgba(0, 0, 0, 0.65);
+    --laift-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+    --laift-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+    --module-accent: var(--module-accent-dark, var(--laift-primary));
+    --module-on-accent: var(--module-on-accent-dark, #06231e);
+  }
+}
+
+/* O acento é resolvido também no <body>: páginas que trocam de acento por
+   classe no body (ex.: body.theme-clinic em shared/style.css) precisam que
+   --module-accent seja recalculado ali, e não só herdado do <html>. */
+body {
+  --module-accent: var(--module-accent-light, var(--laift-primary));
+  --module-on-accent: var(--module-on-accent-light, #ffffff);
+  --module-accent-soft: color-mix(in srgb, var(--module-accent) 12%, var(--laift-surface));
+}
+html[data-theme="dark"] > body,
+html.laift-always-dark > body {
+  --module-accent: var(--module-accent-dark, var(--laift-primary));
+  --module-on-accent: var(--module-on-accent-dark, #06231e);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) > body {
+    --module-accent: var(--module-accent-dark, var(--laift-primary));
+    --module-on-accent: var(--module-on-accent-dark, #06231e);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Utilitários comuns a todos os módulos (acessibilidade)
+   ------------------------------------------------------------------------- */
+
+/* Texto só para leitores de tela (rótulos de botões só-ícone etc.). */
+.laift-sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Foco visível e consistente em tudo que é interativo. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
+
+/* Quem pediu menos movimento ao sistema operacional não recebe animações
+   decorativas nem transições longas em nenhum módulo. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

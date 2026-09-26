@@ -1,52 +1,72 @@
+@import url("laift-tokens.css");
+
 /* =========================================================
    VARIÁVEIS GLOBAIS E TEMAS
+   ---------------------------------------------------------
+   Fase 4: as variáveis desta folha (usada pela Clínica e pelo
+   terminal Fiscal) apontam para os tokens do design system
+   (laift-tokens.css, importado acima) — tema claro e escuro,
+   conforme <html data-theme> aplicado pela ponte. A identidade
+   de cada página fica só no acento (--module-accent-light/-dark,
+   ver body.theme-*). Declarado em :root E em body porque as
+   páginas trocam o acento por classe no <body>.
 ========================================================= */
-:root {
-  --primary: #1a365d;
-  --primary-light: #2b6cb0;
-  --primary-dark: #0f2442;
-  --secondary: #4a5568;
-  --accent: #dd6b20;
-  
-  --success: #2e7d32;
-  --success-bg: #e8f5e9;
-  --warning: #d97706;
-  --warning-bg: #fef3c7;
-  --danger: #c53030;
-  --danger-bg: #fed7d7;
-  
-  --bg-main: #f0f4f8;
-  --surface: #ffffff;
-  --surface-alt: #f8fafc;
-  --border: #e2e8f0;
-  --border-focus: #3182ce;
-  --text-main: #1a202c;
-  --text-muted: #718096;
-  --gray: #64748b; /* usado nos estilos inline da clínica/fiscal; antes indefinido aqui */
-  
-  --radius-sm: 6px;
+:root,
+body {
+  --module-accent-light: #2b6cb0;
+  --module-accent-dark: #8fb4ff;
+  --module-on-accent-dark: #0b1a33;
+
+  /* Botões usam --primary-light (o acento); cabeçalho, pílulas e hovers
+     usam --primary (acento escurecido). Texto sobre ambos: --on-primary. */
+  --primary: color-mix(in srgb, var(--module-accent) 82%, #000);
+  --primary-light: var(--module-accent);
+  --primary-dark: color-mix(in srgb, var(--module-accent) 65%, #000);
+  --on-primary: var(--module-on-accent);
+  --secondary: var(--laift-muted);
+  --accent: #c2410c;
+
+  --success: var(--laift-success);
+  --success-bg: var(--laift-success-soft);
+  --warning: var(--laift-warning);
+  --warning-bg: var(--laift-warning-soft);
+  --danger: var(--laift-danger);
+  --danger-bg: var(--laift-danger-soft);
+  --on-danger: var(--laift-on-danger);
+  --on-success: var(--laift-surface);
+
+  --bg-main: var(--laift-bg);
+  --surface: var(--laift-surface);
+  --surface-alt: var(--laift-surface-alt);
+  --border: var(--laift-border);
+  --border-strong: var(--laift-border-strong);
+  --border-focus: var(--laift-info);
+  --text-main: var(--laift-text);
+  --text-muted: var(--laift-muted);
+  --gray: var(--laift-muted); /* usado nos estilos inline da clínica/fiscal */
+
+  --radius-sm: var(--laift-radius-sm);
   --radius-md: 10px;
-  --radius-lg: 16px;
-  
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+  --radius-lg: var(--laift-radius-md);
+
+  --shadow-sm: var(--laift-shadow-sm);
+  --shadow-md: var(--laift-shadow-sm);
+  --shadow-lg: var(--laift-shadow);
   --transition: all 0.25s ease-in-out;
 }
 
-/* Modos de Contexto Visual */
+/* Modos de Contexto Visual (acentos com contraste AA nos dois temas) */
 body.theme-toxico {
-  --primary: #004d40;
-  --primary-light: #00796b;
-  --primary-dark: #00251a;
-  --accent: #f57c00;
+  --module-accent-light: #00796b;
+  --module-accent-dark: #56d6b8;
+  --module-on-accent-dark: #04231c;
 }
 
 body.theme-clinic {
-  --primary: #0f766e;
-  --primary-light: #14b8a6;
-  --primary-dark: #115e59;
-  --accent: #e11d48;
+  --module-accent-light: #0f766e;
+  --module-accent-dark: #3fcfb6;
+  --module-on-accent-dark: #06231e;
+  --accent: #be123c;
 }
 
 /* =========================================================
@@ -56,7 +76,7 @@ body.theme-clinic {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-family: var(--laift-font);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -93,8 +113,8 @@ input, select, textarea {
    CABEÇALHO GLOBAL
 ========================================================= */
 #globalHeader {
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--on-primary);
   padding: 14px 24px;
   box-shadow: var(--shadow-md);
   position: sticky;
@@ -121,7 +141,7 @@ input, select, textarea {
 
 .brand-group .subtitle {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--on-primary) 85%, transparent);
   margin-top: 2px;
 }
 
@@ -132,7 +152,7 @@ input, select, textarea {
 }
 
 .user-chip {
-  background: rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--on-primary) 12%, transparent);
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -152,9 +172,9 @@ input, select, textarea {
 }
 
 .header-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background: color-mix(in srgb, var(--on-primary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-primary) 30%, transparent);
+  color: var(--on-primary);
   padding: 7px 14px;
   border-radius: var(--radius-sm);
   font-size: 0.85rem;
@@ -164,7 +184,7 @@ input, select, textarea {
 }
 
 .header-btn:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: color-mix(in srgb, var(--on-primary) 28%, transparent);
 }
 
 .header-btn.danger {
@@ -173,7 +193,7 @@ input, select, textarea {
 }
 
 .header-btn.danger:hover {
-  background: #9b2c2c;
+  background: color-mix(in srgb, var(--danger) 85%, #000);
 }
 
 .header-btn.icon-only {
@@ -206,7 +226,7 @@ input, select, textarea {
 }
 
 .status-banner.loading {
-  background: #e2e8f0;
+  background: var(--surface-alt);
   color: var(--secondary);
   border-bottom: 2px solid var(--primary);
 }
@@ -236,7 +256,7 @@ input, select, textarea {
   min-height: 480px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: #ffffff;
+  background: var(--surface);
   display: block;
   -webkit-overflow-scrolling: touch;
 }
@@ -271,7 +291,7 @@ input, select, textarea {
 
 .btn-primary {
   background: var(--primary-light);
-  color: #ffffff;
+  color: var(--on-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -279,27 +299,27 @@ input, select, textarea {
 }
 
 .btn-secondary {
-  background: #edf2f7;
+  background: var(--surface-alt);
   color: var(--secondary);
   border: 1px solid var(--border);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #e2e8f0;
+  background: var(--border);
 }
 
 .btn-success {
   background: var(--success);
-  color: #ffffff;
+  color: var(--on-success);
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #1b5e20;
+  background: color-mix(in srgb, var(--success) 85%, #000);
 }
 
 .btn-danger {
   background: var(--danger);
-  color: #ffffff;
+  color: var(--on-danger);
 }
 
 .btn-outline {
@@ -310,7 +330,7 @@ input, select, textarea {
 
 .btn-outline:hover:not(:disabled) {
   background: var(--primary-light);
-  color: #ffffff;
+  color: var(--on-primary);
 }
 
 .btn-subtle {
@@ -479,12 +499,12 @@ label {
   padding: 16px;
   border: 2px dashed var(--danger);
   border-radius: var(--radius-md);
-  background: #fff5f5;
+  background: var(--danger-bg);
 }
 
 .terminal-badge {
   background: var(--danger);
-  color: white;
+  color: var(--on-danger);
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 700;
@@ -525,7 +545,7 @@ label {
   width: 76px;
   height: 76px;
   background: linear-gradient(135deg, var(--primary-light), var(--primary));
-  color: #ffffff;
+  color: var(--on-primary);
   font-size: 1.8rem;
   font-weight: 800;
   border-radius: 50%;
@@ -570,7 +590,7 @@ label {
 .badge-item {
   width: 44px;
   height: 44px;
-  background: #fef3c7;
+  background: var(--warning-bg);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -585,7 +605,7 @@ label {
 }
 
 .badge-item.locked {
-  background: #edf2f7;
+  background: var(--surface-alt);
   opacity: 0.4;
   filter: grayscale(1);
 }
@@ -750,12 +770,12 @@ label {
 
 .topic-btn:hover {
   border-color: var(--primary-light);
-  background: #f0f7ff;
+  background: var(--laift-info-soft);
 }
 
 .topic-btn.active {
   background: var(--primary);
-  color: #ffffff;
+  color: var(--on-primary);
   border-color: var(--primary);
 }
 
@@ -767,8 +787,8 @@ label {
 }
 
 .topic-btn.active .topic-count {
-  background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background: color-mix(in srgb, var(--on-primary) 25%, transparent);
+  color: var(--on-primary);
 }
 
 .mode-selector {
@@ -863,7 +883,7 @@ label {
 
 .topic-pill {
   background: var(--primary);
-  color: #ffffff;
+  color: var(--on-primary);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.82rem;
@@ -895,7 +915,7 @@ label {
 
 .progress-bar-bg {
   height: 8px;
-  background: #edf2f7;
+  background: var(--surface-alt);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -936,33 +956,33 @@ label {
 }
 
 .option:hover {
-  background: #f0f7ff;
-  border-color: #90caf9;
+  background: var(--laift-info-soft);
+  border-color: var(--laift-info);
   transform: translateX(4px);
 }
 
 .option.selected {
-  background: #e3f2fd;
-  border-color: #2196f3;
+  background: var(--laift-info-soft);
+  border-color: var(--laift-info);
   font-weight: 600;
 }
 
 .option.correct {
   background: var(--success-bg);
   border-color: var(--success);
-  color: #1b5e20;
+  color: var(--success);
 }
 
 .option.incorrect {
   background: var(--danger-bg);
   border-color: var(--danger);
-  color: #b71c1c;
+  color: var(--danger);
 }
 
 .option-letter {
   width: 32px;
   height: 32px;
-  background: #e2e8f0;
+  background: var(--surface-alt);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -972,18 +992,18 @@ label {
 }
 
 .option.selected .option-letter {
-  background: #2196f3;
-  color: white;
+  background: var(--laift-info);
+  color: var(--surface);
 }
 
 .option.correct .option-letter {
   background: var(--success);
-  color: white;
+  color: var(--surface);
 }
 
 .option.incorrect .option-letter {
   background: var(--danger);
-  color: white;
+  color: var(--surface);
 }
 
 .explanation-box {
@@ -1005,13 +1025,13 @@ label {
   justify-content: space-between;
   align-items: center;
   font-weight: 700;
-  color: #1b5e20;
+  color: var(--success);
   margin-bottom: 8px;
 }
 
 .source-tag {
   background: var(--success);
-  color: white;
+  color: var(--on-success);
   padding: 3px 8px;
   border-radius: 12px;
   font-size: 0.7rem;
@@ -1195,10 +1215,10 @@ label {
 .complaint-quote {
   font-style: italic;
   font-size: 1.05rem;
-  color: #1e3a8a;
+  color: var(--laift-info);
   padding: 12px;
-  background: #eff6ff;
-  border-left: 4px solid #3b82f6;
+  background: var(--laift-info-soft);
+  border-left: 4px solid var(--laift-info);
   border-radius: var(--radius-sm);
   margin-bottom: 20px;
 }
@@ -1232,7 +1252,7 @@ label {
 
 .chat-viewport {
   flex: 1;
-  background: #f8fafc;
+  background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 18px;
@@ -1252,16 +1272,16 @@ label {
 
 .chat-bubble.patient {
   align-self: flex-start;
-  background: #ffffff;
+  background: var(--surface);
   border: 1px solid var(--border);
-  color: #1e293b;
+  color: var(--text-main);
   border-bottom-left-radius: 2px;
 }
 
 .chat-bubble.student {
   align-self: flex-end;
   background: var(--primary-light);
-  color: #ffffff;
+  color: var(--on-primary);
   border-bottom-right-radius: 2px;
 }
 
@@ -1298,19 +1318,19 @@ label {
 }
 
 .suggestion-chip {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
+  background: var(--surface-alt);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   padding: 6px 10px;
-  color: #1e293b;
+  color: var(--text-main);
   cursor: pointer;
   transition: all 0.15s ease;
   font-size: 0.82rem;
 }
 
 .suggestion-chip:hover {
-  background: #e2e8f0;
-  border-color: #94a3b8;
+  background: var(--border);
+  border-color: var(--text-muted);
   transform: translateY(-1px);
 }
 
@@ -1385,7 +1405,7 @@ label {
 .released-exam-card p {
   font-size: 0.85rem;
   font-family: monospace;
-  color: #334155;
+  color: var(--text-main);
 }
 
 /* Aba Resolução */
@@ -1490,7 +1510,7 @@ label {
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: var(--laift-overlay);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: none;
@@ -1548,7 +1568,7 @@ label {
   width: 86px;
   height: 86px;
   background: var(--primary);
-  color: #ffffff;
+  color: var(--on-primary);
   border-radius: 50%;
   display: flex;
   flex-direction: column;
@@ -1564,7 +1584,7 @@ label {
 }
 
 .feedback-quote {
-  background: #f8fafc;
+  background: var(--surface-alt);
   border-left: 4px solid var(--primary);
   padding: 16px;
   border-radius: var(--radius-sm);
@@ -1606,8 +1626,8 @@ label {
   margin-bottom: 14px;
   padding: 5px 10px;
   border-radius: 5px;
-  background: #c53030;
-  color: #ffffff;
+  background: var(--danger);
+  color: var(--on-danger);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -1617,15 +1637,15 @@ label {
 .section-box {
   margin-bottom: 18px;
   padding: 15px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   border-radius: 9px;
-  background: #f7fafc;
+  background: var(--surface-alt);
   text-align: center;
 }
 
 .section-box h3 {
   margin: 0 0 10px;
-  color: #718096;
+  color: var(--text-muted);
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1651,7 +1671,7 @@ label {
   font-size: 13px;
   border: 0;
   background: var(--primary-light, #3182ce);
-  color: #ffffff;
+  color: var(--on-primary);
   font-weight: 700;
   border-radius: 8px;
   cursor: pointer;
@@ -1681,15 +1701,16 @@ label {
   padding: 13px;
   border: 0;
   border-radius: 8px;
-  background: #718096;
-  color: #ffffff;
+  background: var(--surface-alt);
+  color: var(--text-main);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
   font-weight: 700;
   font-size: 16px;
   cursor: pointer;
 }
 
 .secondary-button:hover {
-  background: #4a5568;
+  background: var(--border);
 }
 
 .danger-button {
@@ -1698,20 +1719,20 @@ label {
   padding: 13px;
   border: 0;
   border-radius: 8px;
-  background: #c53030;
-  color: #ffffff;
+  background: var(--danger);
+  color: var(--on-danger);
   font-weight: 700;
   font-size: 16px;
   cursor: pointer;
 }
 
 .danger-button:hover {
-  background: #9b2c2c;
+  background: color-mix(in srgb, var(--danger) 85%, #000);
 }
 
 .divider {
   margin: 16px 0;
-  color: #a0aec0;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 700;
   text-align: center;
@@ -1720,7 +1741,7 @@ label {
 
 .small-note {
   margin: 8px 0 0;
-  color: #718096;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 1.35;
 }
@@ -1729,7 +1750,7 @@ label {
   width: 100%;
   margin-bottom: 8px;
   padding: 10px;
-  border: 1px solid #cbd5e0;
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   font-size: 14px;
 }
@@ -1737,15 +1758,15 @@ label {
 .member-list {
   max-height: 290px;
   overflow-y: auto;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--surface);
   text-align: left;
 }
 
 .member-list-empty {
   padding: 14px;
-  color: #718096;
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 1.4;
   text-align: center;
@@ -1757,7 +1778,7 @@ label {
   justify-content: space-between;
   gap: 10px;
   padding: 11px;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid var(--border);
 }
 
 .member-item:last-child {
@@ -1770,7 +1791,7 @@ label {
 
 .member-name {
   overflow: hidden;
-  color: #2d3748;
+  color: var(--text-main);
   font-size: 13px;
   font-weight: 700;
   text-overflow: ellipsis;
@@ -1779,7 +1800,7 @@ label {
 
 .member-meta {
   margin-top: 3px;
-  color: #718096;
+  color: var(--text-muted);
   font-size: 11px;
 }
 
@@ -1793,7 +1814,7 @@ label {
   font-size: 11px;
   font-weight: 700;
   background: var(--primary-light, #3182ce);
-  color: #ffffff;
+  color: var(--on-primary);
   cursor: pointer;
 }
 
@@ -1815,12 +1836,12 @@ label {
 
 .beds-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); /* sem vazar em 360 px */
   gap: 20px;
 }
 
 .bed-card {
-  background: #ffffff;
+  background: var(--surface);
   border-radius: 12px;
   border: 2px solid var(--border);
   padding: 20px;
@@ -1845,8 +1866,8 @@ label {
 }
 
 .bed-card.completed {
-  background: #f1f8e9;
-  border-color: #aed581;
+  background: var(--success-bg);
+  border-color: var(--success);
 }
 
 .bed-header {
@@ -1871,7 +1892,7 @@ label {
 .bed-complaint {
   font-style: italic;
   font-size: 0.95rem;
-  color: #37474f;
+  color: var(--text-main);
   margin: 10px 0 16px;
   min-height: 48px;
 }
@@ -1881,7 +1902,7 @@ label {
   justify-content: space-between;
   font-size: 0.85rem;
   color: var(--gray);
-  border-top: 1px solid #eceff1;
+  border-top: 1px solid var(--border);
   padding-top: 10px;
   margin-bottom: 16px;
 }
@@ -1901,7 +1922,7 @@ label {
 #acervoToolbar input:focus,
 #acervoToxFilter:focus {
   outline: none;
-  border-color: #0284c7;
+  border-color: var(--laift-info);
   box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
 }
 
@@ -1910,8 +1931,8 @@ label {
 }
 
 .semiology-wrapper {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px;
 }
@@ -1924,7 +1945,7 @@ label {
 
 .semiology-nav::-webkit-scrollbar-thumb,
 .semiology-chips-area::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--border-strong);
   border-radius: 4px;
 }
 
@@ -2047,4 +2068,88 @@ label {
 
 @keyframes fadeOut {
   to { opacity: 0; transform: translateY(-10px); visibility: hidden; }
+}
+
+
+/* =========================================================
+   FASE 4 — TEMA ESCURO × ESTILOS INLINE (TRANSITÓRIO)
+   ---------------------------------------------------------
+   A Clínica e o Fiscal ainda têm style="..." com cores claras
+   fixas (fundo #fff/#f8fafc, texto #0f172a/#1e293b...). No tema
+   escuro isso deixaria texto escuro sobre fundo escuro. Até a
+   Onda 2 (que remove esses estilos inline), estas regras trocam
+   as cores fixas mais usadas pelos tokens. Lista gerada a partir
+   de clinica/ e fiscal/ (HTML e JS).
+========================================================= */
+html[data-theme="dark"] :is([style*="color: #0f172a"], [style*="color:#0f172a"], [style*="color: #1e293b"], [style*="color:#1e293b"], [style*="color: #334155"], [style*="color:#334155"], [style*="color: #475569"], [style*="color:#475569"]) {
+  color: var(--laift-text) !important;
+}
+html[data-theme="dark"] :is([style*="color: #64748b"], [style*="color:#64748b"]) {
+  color: var(--laift-muted) !important;
+}
+html[data-theme="dark"] :is([style*="color: #0369a1"], [style*="color:#0369a1"], [style*="color: #1e40af"], [style*="color:#1e40af"], [style*="color: #0284c7"], [style*="color:#0284c7"]) {
+  color: var(--laift-info) !important;
+}
+html[data-theme="dark"] :is([style*="color: #dc2626"], [style*="color:#dc2626"]) { color: var(--laift-danger) !important; }
+html[data-theme="dark"] :is([style*="color: #16a34a"], [style*="color:#16a34a"]) { color: var(--laift-success) !important; }
+html[data-theme="dark"] :is([style*="background: #ffffff"], [style*="background:#ffffff"], [style*="background: #fff;"], [style*="background:#fff;"], [style*="background: #f8fafc"], [style*="background:#f8fafc"]) {
+  background: var(--laift-surface) !important;
+}
+html[data-theme="dark"] :is([style*="background: #f1f5f9"], [style*="background:#f1f5f9"], [style*="background: #e2e8f0"], [style*="background:#e2e8f0"]) {
+  background: var(--laift-surface-alt) !important;
+}
+html[data-theme="dark"] :is([style*="background: #e0f2fe"], [style*="background:#e0f2fe"], [style*="background: #dbeafe"], [style*="background:#dbeafe"]) {
+  background: var(--laift-info-soft) !important;
+}
+/* Mesmo tratamento quando não há data-theme e o sistema está escuro. */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) :is([style*="color: #0f172a"], [style*="color:#0f172a"], [style*="color: #1e293b"], [style*="color:#1e293b"], [style*="color: #334155"], [style*="color:#334155"], [style*="color: #475569"], [style*="color:#475569"]) {
+    color: var(--laift-text) !important;
+  }
+  html:not([data-theme="light"]):not([data-theme="dark"]) :is([style*="color: #64748b"], [style*="color:#64748b"]) {
+    color: var(--laift-muted) !important;
+  }
+  html:not([data-theme="light"]):not([data-theme="dark"]) :is([style*="background: #ffffff"], [style*="background:#ffffff"], [style*="background: #fff;"], [style*="background:#fff;"], [style*="background: #f8fafc"], [style*="background:#f8fafc"]) {
+    background: var(--laift-surface) !important;
+  }
+  html:not([data-theme="light"]):not([data-theme="dark"]) :is([style*="background: #f1f5f9"], [style*="background:#f1f5f9"], [style*="background: #e2e8f0"], [style*="background:#e2e8f0"]) {
+    background: var(--laift-surface-alt) !important;
+  }
+}
+
+/* =========================================================
+   FASE 4 — ACESSIBILIDADE E CELULAR
+========================================================= */
+/* Foco visível em tudo que é acionável. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
+
+/* Alvos de pelo menos 44 px em telas de toque. */
+@media (pointer: coarse) {
+  .btn,
+  .header-btn,
+  .suggestion-chip,
+  .clinic-tab-btn,
+  .fiscal-event-row button,
+  .member-item button,
+  .scanner-button,
+  .secondary-button,
+  .danger-button,
+  input,
+  select {
+    min-height: 44px;
+  }
+}
+
+/* Celular: cabeçalho quebra em duas linhas em vez de vazar. */
+@media (max-width: 480px) {
+  .header-content { flex-wrap: wrap; }
+  .header-controls { flex-wrap: wrap; }
 }

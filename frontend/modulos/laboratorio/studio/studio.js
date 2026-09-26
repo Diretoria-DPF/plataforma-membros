@@ -48,6 +48,16 @@ console.log(
 (function () {
   'use strict';
 
+  // DOM seguro (../../shared/safe-dom.js). Nomes de moléculas criadas pelo
+  // usuário, dados do ChEMBL/UniChem/PubChem e do IndexedDB entram só por
+  // html`` (escapa toda interpolação) ou textContent — o Estúdio roda na
+  // mesma origem da plataforma. Handlers inline viraram data-action.
+  const html = LaiftDom.html;
+  const setHtml = LaiftDom.setHtml;
+  const MSG_VAZIA = function (texto, tom) {
+    return html`<div class="studio-empty-msg${tom ? ' is-' + tom : ''}">${texto}</div>`;
+  };
+
   // ═══════════════════════════════════════════════════════════════════════════
   // ▓▓▓ L2.0 — ESTADO GLOBAL (STATE MODULE) ▓▓▓
   // ═══════════════════════════════════════════════════════════════════════════
@@ -780,7 +790,7 @@ console.log(
     if (!listContainer) return;
 
     if (reset) {
-      listContainer.innerHTML = '';
+      LaiftDom.clear(listContainer);
       STATE.currentRenderedIndex = 0;
       listContainer.scrollTop = 0;
     }
@@ -791,8 +801,7 @@ console.log(
     );
 
     if (fatia.length === 0 && reset) {
-      listContainer.innerHTML =
-        '<div style="padding:24px; color:#64748b; text-align:center; font-size:0.75rem;">Nenhum composto localizado.</div>';
+      setHtml(listContainer, MSG_VAZIA('Nenhum composto localizado.'));
       return;
     }
 
@@ -808,25 +817,23 @@ console.log(
       itemEl.className = 'compound-item' +
         (isSelected ? ' selected' : '') +
         (isUnstable ? ' unstable' : '');
+      // Item da lista acionável por teclado (Enter/Espaço), como um botão.
+      itemEl.setAttribute('role', 'option');
+      itemEl.setAttribute('tabindex', '0');
+      itemEl.setAttribute('aria-selected', isSelected ? 'true' : 'false');
 
       itemEl.onclick = function () {
         selecionarCompostoStudio(comp, itemEl);
+      };
+      itemEl.onkeydown = function (evt) {
+        if (evt.key === 'Enter' || evt.key === ' ') { evt.preventDefault(); selecionarCompostoStudio(comp, itemEl); }
       };
 
       const massaDisplay = comp.molarMass !== '--' && comp.molarMass
         ? parseFloat(comp.molarMass).toFixed(1)
         : '--';
 
-      itemEl.innerHTML =
-        (isFav ? '<span class="comp-favorite-star">★</span>' : '') +
-        (isUnstable ? '<span class="comp-unstable-flag" title="Estrutura instável">⚠️</span>' : '') +
-        '<div class="comp-info-main">' +
-          '<span class="comp-name" title="' + comp.nome + '">' +
-            (isCustom ? '🧬 ' : '') + comp.nome +
-          '</span>' +
-          '<span class="comp-formula">' + comp.formula + '</span>' +
-        '</div>' +
-        '<span class="comp-badge-mass">' + massaDisplay + '</span>';
+      setHtml(itemEl, html`${isFav ? html`<span class="comp-favorite-star" aria-label="Favorito">★</span>` : ''}${isUnstable ? html`<span class="comp-unstable-flag" title="Estrutura instável">⚠️</span>` : ''}<div class="comp-info-main"><span class="comp-name" title="${comp.nome}">${isCustom ? '🧬 ' : ''}${comp.nome}</span><span class="comp-formula">${comp.formula}</span></div><span class="comp-badge-mass">${massaDisplay}</span>`);
 
       fragment.appendChild(itemEl);
     });
@@ -960,7 +967,9 @@ console.log(
         // (a antiga cópia local em vendor/rdkit/ era uma página HTML salva
         // por engano, não a biblioteca — sempre falhava; foi removida)
         Promise.race([
-          initFn({ locateFile: function (f) { return 'https://cdn.jsdelivr.net/npm/@rdkit/rdkit/dist/' + f; } }),
+          // O .wasm precisa ser da MESMA versão do RDKit_minimal.js (pinado com
+          // SRI em studio-loader.js): mesma base window.LAIFT_RDKIT_DIST.
+          initFn({ locateFile: function (f) { return window.LAIFT_RDKIT_DIST + f; } }),
           timeoutCurto(15000)
         ])
           .then(function (mod) {
@@ -985,9 +994,9 @@ console.log(
               return;
             }
 
-            // ─── Tentativa: unpkg ─────────────────────────────────────
+            // ─── Segunda tentativa (mesma versão pinada) ──────────────
             Promise.race([
-              window.initRDKitModule({ locateFile: function (f) { return 'https://unpkg.com/@rdkit/rdkit/dist/' + f; } }),
+              window.initRDKitModule({ locateFile: function (f) { return window.LAIFT_RDKIT_DIST + f; } }),
               timeoutCurto(15000)
             ])
               .then(function (mod) {
@@ -1413,9 +1422,7 @@ console.log(
     if (sub) {
       if (STATE.atomoAtivoInspecionado) {
         const nLig = STATE.atomoAtivoInspecionado.bonds ? STATE.atomoAtivoInspecionado.bonds.length : 0;
-        sub.innerHTML = 'Âncora: <strong>' + STATE.atomoAtivoInspecionado.elem + '#' +
-          ((STATE.atomoAtivoInspecionado.serial || STATE.atomoAtivoInspecionado.index || 0) + 1) +
-          '</strong> (' + nLig + ' lig.)';
+        setHtml(sub, html`Âncora: <strong>${STATE.atomoAtivoInspecionado.elem}#${(STATE.atomoAtivoInspecionado.serial || STATE.atomoAtivoInspecionado.index || 0) + 1}</strong> (${nLig} lig.)`);
       } else {
         sub.textContent = 'Clique em um elemento para análise.';
       }
@@ -1452,7 +1459,7 @@ console.log(
   function renderizarMatrizTabelaPeriodica(filtroCat) {
     const matrix = document.getElementById('ptableMatrix');
     if (!matrix) return;
-    matrix.innerHTML = '';
+    LaiftDom.clear(matrix);
 
     const nLigAlvo = STATE.atomoAtivoInspecionado && STATE.atomoAtivoInspecionado.bonds
       ? STATE.atomoAtivoInspecionado.bonds.length
@@ -1489,12 +1496,15 @@ console.log(
 
       tile.onclick = function () { selecionarElementoNaTabela(elem, tile); };
       tile.title = elem.nome + ' (Z=' + elem.z + ')';
+      tile.setAttribute('role', 'button');
+      tile.setAttribute('tabindex', '0');
+      tile.setAttribute('aria-label', elem.nome + ', número atômico ' + elem.z);
+      tile.onkeydown = function (evt) {
+        if (evt.key === 'Enter' || evt.key === ' ') { evt.preventDefault(); selecionarElementoNaTabela(elem, tile); }
+      };
 
       const mt = elem.massa < 100 ? elem.massa.toFixed(1) : Math.round(elem.massa);
-      tile.innerHTML =
-        '<span class="ptable-z">' + elem.z + '</span>' +
-        '<span class="ptable-sym">' + elem.sym + '</span>' +
-        '<span class="ptable-mass">' + mt + '</span>';
+      setHtml(tile, html`<span class="ptable-z">${elem.z}</span><span class="ptable-sym">${elem.sym}</span><span class="ptable-mass">${mt}</span>`);
 
       matrix.appendChild(tile);
     });
@@ -1517,51 +1527,27 @@ console.log(
     if (STATE.atomoAtivoInspecionado && nLigAlvo !== null) {
       const valMax = Math.max.apply(null, elem.valencias);
       if (elem.sym === STATE.atomoAtivoInspecionado.elem) {
-        htmlVal = '<div class="ptable-valence-check valence-valid">ℹ️ Já é <strong>' + elem.nome + '</strong>.</div>';
+        htmlVal = html`<div class="ptable-valence-check valence-valid">ℹ️ Já é <strong>${elem.nome}</strong>.</div>`;
       } else if (valMax === 0) {
-        htmlVal = '<div class="ptable-valence-check valence-invalid">⚠️ Gás nobre — sem ligações covalentes estáveis.</div>';
+        htmlVal = html`<div class="ptable-valence-check valence-invalid">⚠️ Gás nobre — sem ligações covalentes estáveis.</div>`;
       } else if (nLigAlvo > valMax) {
-        htmlVal = '<div class="ptable-valence-check valence-invalid">⚠️ <strong>Valência excedida:</strong> ' +
-          nLigAlvo + ' > ' + valMax + '.</div>';
+        htmlVal = html`<div class="ptable-valence-check valence-invalid">⚠️ <strong>Valência excedida:</strong> ${nLigAlvo} &gt; ${valMax}.</div>`;
       } else {
         podeSubst = true;
-        htmlVal = '<div class="ptable-valence-check valence-valid">✅ <strong>Compatível:</strong> comporta ' +
-          nLigAlvo + ' ligações.</div>';
+        htmlVal = html`<div class="ptable-valence-check valence-valid">✅ <strong>Compatível:</strong> comporta ${nLigAlvo} ligações.</div>`;
       }
     } else {
-      htmlVal = '<div class="ptable-valence-check" style="background:rgba(255,255,255,0.04); color:#94a3b8;">Clique em um átomo no 3D para ativar.</div>';
+      htmlVal = html`<div class="ptable-valence-check valence-idle">Clique em um átomo no 3D para ativar.</div>`;
     }
 
     let htmlDiagAdd = '';
     if (STATE.atomoAtivoInspecionado) htmlDiagAdd = renderizarDiagnosticoAdicao(elem);
 
-    sidebar.innerHTML =
-      '<div class="ptable-hero-card">' +
-        '<div class="ptable-hero-badge">' +
-          '<span class="hero-z">' + elem.z + '</span>' +
-          '<span class="hero-sym">' + elem.sym + '</span>' +
-        '</div>' +
-        '<div class="ptable-hero-info">' +
-          '<span class="ptable-hero-name">' + elem.nome + '</span>' +
-          '<span class="ptable-hero-family">' + elem.cat.replace(/-/g, ' ') + ' • G' + elem.grupo + '</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="ptable-params-list">' +
-        '<div class="ptable-param-row"><span>Z:</span><strong>' + elem.z + '</strong></div>' +
-        '<div class="ptable-param-row"><span>Massa:</span><strong>' + elem.massa + ' g/mol</strong></div>' +
-        '<div class="ptable-param-row"><span>Eletroneg.:</span><strong>' + (elem.eletron || 'Inerte') + '</strong></div>' +
-        '<div class="ptable-param-row"><span>Raio:</span><strong>' + (elem.raio ? elem.raio + ' pm' : '--') + '</strong></div>' +
-        '<div class="ptable-param-row"><span>Valências:</span><strong>' + elem.valencias.join(', ') + '</strong></div>' +
-      '</div>' +
-      '<div class="ptable-pharma-box"><strong style="color:var(--neon-cyan); display:block; margin-bottom:3px;">Química Medicinal:</strong>' + elem.pharma + '</div>' +
-      htmlVal +
-      (STATE.atomoAtivoInspecionado
-        ? '<div class="ptable-action-buttons">' +
-            '<button class="btn-execute-atom-swap" ' + (!podeSubst ? 'disabled' : '') +
-              ' onclick="window.executarSubstituicaoElementar(\'' + elem.sym + '\')">⚡ Substituir</button>' +
-            '<button class="btn-execute-atom-add" onclick="window.executarAdicaoAtomo(\'' + elem.sym + '\')">➕ Adicionar</button>' +
-          '</div>' + htmlDiagAdd
-        : '');
+    const acoes = STATE.atomoAtivoInspecionado
+      ? html`<div class="ptable-action-buttons"><button type="button" class="btn-execute-atom-swap" data-action="executarSubstituicaoElementar" data-arg="${elem.sym}"${podeSubst ? '' : html` disabled`}>⚡ Substituir</button><button type="button" class="btn-execute-atom-add" data-action="executarAdicaoAtomo" data-arg="${elem.sym}">➕ Adicionar</button></div>${htmlDiagAdd}`
+      : '';
+
+    setHtml(sidebar, html`<div class="ptable-hero-card"><div class="ptable-hero-badge"><span class="hero-z">${elem.z}</span><span class="hero-sym">${elem.sym}</span></div><div class="ptable-hero-info"><span class="ptable-hero-name">${elem.nome}</span><span class="ptable-hero-family">${elem.cat.replace(/-/g, ' ')} • G${elem.grupo}</span></div></div><div class="ptable-params-list"><div class="ptable-param-row"><span>Z:</span><strong>${elem.z}</strong></div><div class="ptable-param-row"><span>Massa:</span><strong>${elem.massa} g/mol</strong></div><div class="ptable-param-row"><span>Eletroneg.:</span><strong>${elem.eletron || 'Inerte'}</strong></div><div class="ptable-param-row"><span>Raio:</span><strong>${elem.raio ? elem.raio + ' pm' : '--'}</strong></div><div class="ptable-param-row"><span>Valências:</span><strong>${elem.valencias.join(', ')}</strong></div></div><div class="ptable-pharma-box"><strong class="ptable-pharma-title">Química Medicinal:</strong>${elem.pharma}</div>${htmlVal}${acoes}`);
   }
 
   function renderizarDiagnosticoAdicao(elemAlvo) {
@@ -1587,18 +1573,12 @@ console.log(
       return parsed.atoms[idx] && parsed.atoms[idx].elem === 'H';
     });
 
-    let h = '<div class="ptable-add-diagnostic">' +
-      '<div class="diag-row"><span>Conexões livres:</span><strong>' + Math.max(0, disp) + ' de ' + valP + '</strong></div>';
-
-    if (disp > 0) {
-      h += '<div class="diag-status diag-ok">✅ Adição direta possível.</div>';
-    } else if (temH) {
-      h += '<div class="diag-status diag-warning">⚠️ Saturado — H será removido automaticamente.</div>';
-    } else {
-      h += '<div class="diag-status diag-error">⚠️ Saturado sem H — gerará radical livre.</div>';
-    }
-    h += '</div>';
-    return h;
+    const status = disp > 0
+      ? html`<div class="diag-status diag-ok">✅ Adição direta possível.</div>`
+      : temH
+        ? html`<div class="diag-status diag-warning">⚠️ Saturado — H será removido automaticamente.</div>`
+        : html`<div class="diag-status diag-error">⚠️ Saturado sem H — gerará radical livre.</div>`;
+    return html`<div class="ptable-add-diagnostic"><div class="diag-row"><span>Conexões livres:</span><strong>${Math.max(0, disp)} de ${valP}</strong></div>${status}</div>`;
   }
   // ››› FIM: PTABLE UI — matriz + dossiê + ações.
 
@@ -1925,7 +1905,7 @@ console.log(
     if (!modal || !body) return;
 
     if (!STATE.compostoSelecionado || !STATE.compostoSelecionado.smiles || STATE.compostoSelecionado.smiles === '--') {
-      body.innerHTML = '<div style="text-align:center; padding:30px; color:#94a3b8;">Selecione uma molécula.</div>';
+      setHtml(body, MSG_VAZIA('Selecione uma molécula.'));
       modal.style.display = 'flex';
       return;
     }
@@ -1936,35 +1916,22 @@ console.log(
 
     const chips = disp.length > 0
       ? Array.from(new Set(disp.map(function (r) { return r.alvoSmarts; })))
-          .map(function (t) { return '<span class="bio-group-chip">' + t + '</span>'; })
-          .join('')
-      : '<span style="color:#f87171; font-size:0.75rem;">Sem grupos elegíveis.</span>';
+          .map(function (t) { return html`<span class="bio-group-chip">${t}</span>`; })
+      : html`<span class="studio-inline-error">Sem grupos elegíveis.</span>`;
 
-    const cards = disp.length > 0
-      ? disp.map(function (rx) {
-          return '<div class="bio-transform-card">' +
-            '<div class="bio-card-top">' +
-              '<span class="bio-card-name">' + rx.nome + '</span>' +
-              '<span class="bio-card-scheme">' + rx.esquema + '</span>' +
-              '<span class="cadd-badge badge-warning" style="align-self:flex-start; margin-top:2px;">' + rx.tag + '</span>' +
-              '<p class="bio-card-desc">' + rx.descricao + '</p>' +
-            '</div>' +
-            '<button class="btn-apply-transform" onclick="window.executarTransformacaoBioisosterica(\'' + rx.id + '\')">🧪 Sintetizar</button>' +
-          '</div>';
-        }).join('')
-      : '';
+    const cards = disp.map(function (rx) {
+      return html`<div class="bio-transform-card"><div class="bio-card-top"><span class="bio-card-name">${rx.nome}</span><span class="bio-card-scheme">${rx.esquema}</span><span class="cadd-badge badge-warning bio-card-tag">${rx.tag}</span><p class="bio-card-desc">${rx.descricao}</p></div><button type="button" class="btn-apply-transform" data-action="executarTransformacaoBioisosterica" data-arg="${rx.id}">🧪 Sintetizar</button></div>`;
+    });
 
-    body.innerHTML =
-      '<div class="bio-detected-groups-panel">' +
-        '<span class="bio-detected-title">Molécula: <strong style="color:var(--neon-cyan);">' + nome + '</strong></span>' +
-        '<div style="font-family:var(--font-mono); font-size:0.7rem; color:#cbd5e1; word-break:break-all;">' + smiles + '</div>' +
-        '<div class="bio-groups-chips" style="margin-top:6px;">' + chips + '</div>' +
-      '</div>' +
-      '<div id="bioComparisonArea"></div>' +
-      '<h4 style="color:#f8fafc; font-size:0.82rem; margin-top:8px;">Transformações:</h4>' +
-      '<div class="bio-transforms-grid">' + cards + '</div>';
+    setHtml(body, html`<div class="bio-detected-groups-panel"><span class="bio-detected-title">Molécula: <strong class="studio-accent-text">${nome}</strong></span><div class="studio-smiles-line">${smiles}</div><div class="bio-groups-chips">${chips}</div></div><div id="bioComparisonArea"></div><h4 class="studio-section-title">Transformações:</h4><div class="bio-transforms-grid">${cards}</div>`);
 
     modal.style.display = 'flex';
+  };
+
+  window.selecionarSimilarPorId = function (id) {
+    const comp = STATE.compostosIndexados.find(function (c) { return String(c.id) === String(id); });
+    if (comp) window.selecionarCompostoStudio(comp);
+    if (typeof window.fecharSimilaridade === 'function') window.fecharSimilaridade();
   };
 
   window.fecharPainelBioisosterismo = function () {
@@ -1999,30 +1966,13 @@ console.log(
       const dLogP = pD.logp - pA.logp;
       const dTPSA = pD.tpsa - pA.tpsa;
 
-      area.innerHTML =
-        '<div class="bio-comparison-container">' +
-          '<div class="bio-comparison-header">' +
-            '<span class="bio-comparison-title">✨ ' + rx.nome + '</span>' +
-            '<button class="studio-btn btn-action-transfer" onclick="window.adicionarDerivadoAoCatalogo(\'' +
-              rx.nome.replace(/'/g, "\\'") + '\', \'' + nS + '\', ' + pD.mw.toFixed(2) + ')">📥 Injetar</button>' +
-          '</div>' +
-          '<table class="delta-table">' +
-            '<thead><tr><th>Propriedade</th><th>Original</th><th>Derivado</th><th>Δ</th><th>Impacto</th></tr></thead>' +
-            '<tbody>' +
-              '<tr><td><strong>Massa</strong></td><td>' + pA.mw.toFixed(1) + '</td><td>' + pD.mw.toFixed(1) +
-                '</td><td>' + (dMW >= 0 ? '+' : '') + dMW.toFixed(1) + '</td>' +
-                '<td>' + (pD.mw <= 500 ? '✅ Ro5' : '⚠️') + '</td></tr>' +
-              '<tr><td><strong>LogP</strong></td><td>' + pA.logp.toFixed(2) + '</td><td>' + pD.logp.toFixed(2) +
-                '</td><td class="' + (dLogP > 0 ? 'delta-pos' : 'delta-neg') + '">' +
-                (dLogP >= 0 ? '+' : '') + dLogP.toFixed(2) + '</td>' +
-                '<td>' + (dLogP > 0 ? 'Mais lipofílico' : 'Mais hidrofílico') + '</td></tr>' +
-              '<tr><td><strong>TPSA</strong></td><td>' + pA.tpsa.toFixed(1) + '</td><td>' + pD.tpsa.toFixed(1) +
-                '</td><td class="' + (dTPSA < 0 ? 'delta-good' : 'delta-neg') + '">' +
-                (dTPSA >= 0 ? '+' : '') + dTPSA.toFixed(1) + '</td>' +
-                '<td>' + (pD.tpsa <= 140 ? '✅ Oral' : '⚠️') + '</td></tr>' +
-            '</tbody>' +
-          '</table>' +
-        '</div>';
+      // Os argumentos vão como JSON em data-args (antes eram colados num
+      // onclick; um apóstrofo no SMILES/nome quebrava o atributo).
+      const argsInjetar = JSON.stringify([rx.nome, nS, Number(pD.mw.toFixed(2))]);
+      const cabecalho = html`<div class="bio-comparison-container"><div class="bio-comparison-header"><span class="bio-comparison-title">✨ ${rx.nome}</span><button type="button" class="studio-btn btn-action-transfer" data-action="adicionarDerivadoAoCatalogo" data-args="${argsInjetar}">📥 Injetar</button></div>`;
+      const tabela = html`<table class="delta-table"><thead><tr><th>Propriedade</th><th>Original</th><th>Derivado</th><th>Δ</th><th>Impacto</th></tr></thead><tbody><tr><td><strong>Massa</strong></td><td>${pA.mw.toFixed(1)}</td><td>${pD.mw.toFixed(1)}</td><td>${(dMW >= 0 ? '+' : '') + dMW.toFixed(1)}</td><td>${pD.mw <= 500 ? '✅ Ro5' : '⚠️'}</td></tr><tr><td><strong>LogP</strong></td><td>${pA.logp.toFixed(2)}</td><td>${pD.logp.toFixed(2)}</td><td class="${dLogP > 0 ? 'delta-pos' : 'delta-neg'}">${(dLogP >= 0 ? '+' : '') + dLogP.toFixed(2)}</td><td>${dLogP > 0 ? 'Mais lipofílico' : 'Mais hidrofílico'}</td></tr><tr><td><strong>TPSA</strong></td><td>${pA.tpsa.toFixed(1)}</td><td>${pD.tpsa.toFixed(1)}</td><td class="${dTPSA < 0 ? 'delta-good' : 'delta-neg'}">${(dTPSA >= 0 ? '+' : '') + dTPSA.toFixed(1)}</td><td>${pD.tpsa <= 140 ? '✅ Oral' : '⚠️'}</td></tr></tbody></table></div>`;
+      // Os dois pedaços se completam (a <div> abre no primeiro e fecha no segundo).
+      setHtml(area, html`${cabecalho}${tabela}`);
     }
   };
 
@@ -2059,24 +2009,24 @@ console.log(
     }
 
     modal.style.display = 'flex';
-    body.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">Calculando fingerprints...</div>';
+    setHtml(body, MSG_VAZIA('Calculando fingerprints...'));
     if (sub) sub.textContent = 'Alvo: ' + STATE.compostoSelecionado.nome;
 
     const rdkit = await carregarRDKitSobDemanda();
     if (!rdkit) {
-      body.innerHTML = '<div style="padding:20px; color:#f87171;">RDKit indisponível.</div>';
+      setHtml(body, MSG_VAZIA('RDKit indisponível.', 'error'));
       return;
     }
 
     const alvoSmiles = extrairSmilesPrincipal(STATE.compostoSelecionado.smiles);
     if (!alvoSmiles) {
-      body.innerHTML = '<div style="padding:20px; color:#f87171;">SMILES inválido.</div>';
+      setHtml(body, MSG_VAZIA('SMILES inválido.', 'error'));
       return;
     }
 
     const alvoMol = rdkit.get_mol(alvoSmiles);
     if (!alvoMol) {
-      body.innerHTML = '<div style="padding:20px; color:#f87171;">SMILES inválido.</div>';
+      setHtml(body, MSG_VAZIA('SMILES inválido.', 'error'));
       return;
     }
 
@@ -2085,7 +2035,7 @@ console.log(
     alvoMol.delete();
 
     if (!alvoFp) {
-      body.innerHTML = '<div style="padding:20px; color:#f87171;">Fingerprint não calculável.</div>';
+      setHtml(body, MSG_VAZIA('Fingerprint não calculável.', 'error'));
       return;
     }
 
@@ -2109,28 +2059,18 @@ console.log(
     const top = res.slice(0, 20);
 
     if (top.length === 0) {
-      body.innerHTML = '<div style="padding:20px; color:#94a3b8;">Sem compostos similares (Tanimoto > 0.15).</div>';
+      setHtml(body, MSG_VAZIA('Sem compostos similares (Tanimoto > 0.15).'));
       return;
     }
 
-    body.innerHTML =
-      '<div class="similarity-target-box">' +
-        '<div class="similarity-target-name">🎯 ' + STATE.compostoSelecionado.nome + '</div>' +
-        '<div class="similarity-target-smiles">' + STATE.compostoSelecionado.smiles + '</div>' +
-      '</div>' +
-      '<div class="similarity-results-list">' +
-        top.map(function (r) {
-          const sc = r.t > 0.7 ? 'score-high' : r.t > 0.4 ? 'score-mid' : 'score-low';
-          return '<div class="similarity-result-item" onclick=\'window.selecionarCompostoStudio(' +
-            JSON.stringify(r.comp) + '); window.fecharSimilaridade();\'>' +
-            '<div class="similarity-score-badge ' + sc + '">' + (r.t * 100).toFixed(0) + '%</div>' +
-            '<div><div class="similarity-result-name">' + r.comp.nome + '</div>' +
-            '<div class="similarity-result-formula">' + r.comp.formula + '</div></div>' +
-            '<div style="text-align:right; font-family:var(--font-mono); font-size:0.65rem; color:#94a3b8;">' +
-              (r.comp.molarMass !== '--' ? parseFloat(r.comp.molarMass).toFixed(1) + ' Da' : '') + '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>';
+    // Antes: onclick='...(JSON do composto)...' — um apóstrofo no nome de uma
+    // molécula criada no Estúdio fechava o atributo e virava script (XSS).
+    // Agora o item leva só o id e a ação é resolvida por data-action.
+    const itens = top.map(function (r) {
+      const sc = r.t > 0.7 ? 'score-high' : r.t > 0.4 ? 'score-mid' : 'score-low';
+      return html`<div class="similarity-result-item" role="button" tabindex="0" data-action="selecionarSimilarPorId" data-arg="${r.comp.id}"><div class="similarity-score-badge ${sc}">${(r.t * 100).toFixed(0)}%</div><div><div class="similarity-result-name">${r.comp.nome}</div><div class="similarity-result-formula">${r.comp.formula}</div></div><div class="similarity-result-mass">${r.comp.molarMass !== '--' ? parseFloat(r.comp.molarMass).toFixed(1) + ' Da' : ''}</div></div>`;
+    });
+    setHtml(body, html`<div class="similarity-target-box"><div class="similarity-target-name">🎯 ${STATE.compostoSelecionado.nome}</div><div class="similarity-target-smiles">${STATE.compostoSelecionado.smiles}</div></div><div class="similarity-results-list">${itens}</div>`);
   };
 
   window.fecharSimilaridade = function () {
@@ -2221,14 +2161,15 @@ console.log(
     const selB = document.getElementById('cmpSelectB');
     if (!modal || !selA || !selB) return;
 
-    const opcoes = STATE.compostosIndexados
+    const candidatos = STATE.compostosIndexados
       .filter(function (c) { return c.smiles && c.smiles !== '--'; })
-      .slice(0, 500)
-      .map(function (c) { return '<option value="' + c.id + '">' + c.nome + ' — ' + c.formula + '</option>'; })
-      .join('');
-
-    selA.innerHTML = opcoes;
-    selB.innerHTML = opcoes;
+      .slice(0, 500);
+    [selA, selB].forEach(function (sel) {
+      LaiftDom.clear(sel);
+      candidatos.forEach(function (c) {
+        sel.appendChild(LaiftDom.h('option', { value: String(c.id), text: c.nome + ' — ' + c.formula }));
+      });
+    });
 
     if (STATE.compostoSelecionado) selA.value = STATE.compostoSelecionado.id;
     if (STATE.compostosIndexados.length > 1) {
@@ -2239,8 +2180,7 @@ console.log(
     }
 
     modal.style.display = 'flex';
-    document.getElementById('comparisonMetrics').innerHTML =
-      '<div style="text-align:center; padding: 20px; color: #64748b; font-size: 0.78rem;">Clique em Comparar.</div>';
+    setHtml(document.getElementById('comparisonMetrics'), MSG_VAZIA('Clique em Comparar.'));
   };
 
   window.fecharComparacao = function () {
@@ -2266,8 +2206,8 @@ console.log(
 
     const va = document.getElementById('cmpViewerA');
     const vb = document.getElementById('cmpViewerB');
-    if (va) va.innerHTML = '';
-    if (vb) vb.innerHTML = '';
+    LaiftDom.clear(va);
+    LaiftDom.clear(vb);
   };
 
   window.executarComparacao = async function () {
@@ -2288,8 +2228,8 @@ console.log(
     const sdfA = cA.sdfModificado || await resolverCoordenadas3D(cA.smiles, cA.pubchemQuery || cA.nome);
     const sdfB = cB.sdfModificado || await resolverCoordenadas3D(cB.smiles, cB.pubchemQuery || cB.nome);
 
-    document.getElementById('cmpViewerA').innerHTML = '';
-    document.getElementById('cmpViewerB').innerHTML = '';
+    LaiftDom.clear(document.getElementById('cmpViewerA'));
+    LaiftDom.clear(document.getElementById('cmpViewerB'));
 
     if (sdfA && window.$3Dmol) {
       STATE.cmpViewerA = $3Dmol.createViewer('cmpViewerA', { backgroundColor: '#020617' });
@@ -2315,23 +2255,17 @@ console.log(
       const r = function (l, a, b, mm) {
         const d = b - a;
         const ok = mm ? d < 0 : d > 0;
-        return '<tr><td>' + l + '</td><td>' + a.toFixed(2) + '</td><td>' + b.toFixed(2) +
-          '</td><td class="' + (ok ? 'cmp-delta-pos' : 'cmp-delta-neg') + '">' +
-          (d >= 0 ? '+' : '') + d.toFixed(2) + '</td></tr>';
+        return html`<tr><td>${l}</td><td>${a.toFixed(2)}</td><td>${b.toFixed(2)}</td><td class="${ok ? 'cmp-delta-pos' : 'cmp-delta-neg'}">${(d >= 0 ? '+' : '') + d.toFixed(2)}</td></tr>`;
       };
 
-      document.getElementById('comparisonMetrics').innerHTML =
-        '<table class="comparison-table">' +
-          '<thead><tr><th>Propriedade</th><th>' + cA.nome + '</th><th>' + cB.nome + '</th><th>Δ</th></tr></thead>' +
-          '<tbody>' +
-            r('Massa', pA.mw, pB.mw, true) +
-            r('LogP', pA.logp, pB.logp, false) +
-            r('TPSA', pA.tpsa, pB.tpsa, true) +
-            r('HBD', pA.hbd, pB.hbd, true) +
-            r('HBA', pA.hba, pB.hba, true) +
-            r('RotB', pA.rotb, pB.rotb, true) +
-          '</tbody>' +
-        '</table>';
+      setHtml(document.getElementById('comparisonMetrics'), html`<table class="comparison-table"><thead><tr><th>Propriedade</th><th>${cA.nome}</th><th>${cB.nome}</th><th>Δ</th></tr></thead><tbody>${[
+        r('Massa', pA.mw, pB.mw, true),
+        r('LogP', pA.logp, pB.logp, false),
+        r('TPSA', pA.tpsa, pB.tpsa, true),
+        r('HBD', pA.hbd, pB.hbd, true),
+        r('HBA', pA.hba, pB.hba, true),
+        r('RotB', pA.rotb, pB.rotb, true)
+      ]}</tbody></table>`);
     }
   };
 
@@ -2369,7 +2303,7 @@ console.log(
     if (!modal || !body) return;
 
     if (!STATE.ultimoDossieCADD) {
-      body.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:30px;">Selecione um composto.</div>';
+      setHtml(body, MSG_VAZIA('Selecione um composto.'));
       modal.style.display = 'flex';
       return;
     }
@@ -2378,56 +2312,42 @@ console.log(
     if (title) title.textContent = '📊 ' + d.nome;
     if (sub) sub.textContent = 'SMILES: ' + d.smiles + (d._fallback ? ' (estimado)' : '');
 
-    body.innerHTML =
-      '<div class="cadd-cards-grid">' +
-        '<div class="cadd-card">' +
-          '<div class="cadd-card-title-row">' +
-            '<span class="cadd-card-title">💊 Lipinski</span>' +
-            '<span class="cadd-badge ' + (d.falhasLipinski.length === 0 ? 'badge-approved' : d.falhasLipinski.length === 1 ? 'badge-warning' : 'badge-rejected') + '">' +
-              (d.falhasLipinski.length === 0 ? 'Conforme' : d.falhasLipinski.length + ' Viol.') + '</span>' +
-          '</div>' +
-          '<div class="cadd-param-list">' +
-            '<div class="cadd-param-item ' + (d.mw > 500 ? 'violated' : '') + '"><span>MW:</span><strong>' + d.mw.toFixed(2) + '</strong></div>' +
-            '<div class="cadd-param-item ' + (d.logp > 5 ? 'violated' : '') + '"><span>LogP:</span><strong>' + d.logp.toFixed(2) + '</strong></div>' +
-            '<div class="cadd-param-item ' + (d.hbd > 5 ? 'violated' : '') + '"><span>HBD:</span><strong>' + d.hbd + '</strong></div>' +
-            '<div class="cadd-param-item ' + (d.hba > 10 ? 'violated' : '') + '"><span>HBA:</span><strong>' + d.hba + '</strong></div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="cadd-card">' +
-          '<div class="cadd-card-title-row">' +
-            '<span class="cadd-card-title">🔬 Veber</span>' +
-            '<span class="cadd-badge ' + (d.falhasVeber.length === 0 ? 'badge-approved' : 'badge-rejected') + '">' +
-              (d.falhasVeber.length === 0 ? 'OK' : 'Baixa') + '</span>' +
-          '</div>' +
-          '<div class="cadd-param-list">' +
-            '<div class="cadd-param-item ' + (d.rotb > 10 ? 'violated' : '') + '"><span>RotB:</span><strong>' + d.rotb + '</strong></div>' +
-            '<div class="cadd-param-item ' + (d.tpsa > 140 ? 'violated' : '') + '"><span>TPSA:</span><strong>' + d.tpsa.toFixed(1) + '</strong></div>' +
-            '<div class="cadd-param-item"><span>Fsp³:</span><strong>' + d.csp3.toFixed(2) + '</strong></div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="cadd-card">' +
-          '<div class="cadd-card-title-row">' +
-            '<span class="cadd-card-title">📐 Ghose</span>' +
-            '<span class="cadd-badge ' + (d.falhasGhose.length === 0 ? 'badge-approved' : 'badge-rejected') + '">' +
-              (d.falhasGhose.length === 0 ? 'OK' : d.falhasGhose.length + ' Viol.') + '</span>' +
-          '</div>' +
-          '<div class="cadd-param-list">' +
-            '<div class="cadd-param-item"><span>MR:</span><strong>' + d.mr.toFixed(1) + '</strong></div>' +
-            '<div class="cadd-param-item"><span>Átomos:</span><strong>' + d.totalAtoms + '</strong></div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="cadd-card">' +
-          '<div class="cadd-card-title-row">' +
-            '<span class="cadd-card-title">⚠️ PAINS</span>' +
-            '<span class="cadd-badge ' + (d.alertasPAINS.length === 0 ? 'badge-approved' : 'badge-rejected') + '">' +
-              (d.alertasPAINS.length === 0 ? 'Isento' : d.alertasPAINS.length + ' Alerta') + '</span>' +
-          '</div>' +
-          (d.alertasPAINS.length === 0
-            ? '<div class="pains-clean-box">✅ Sem grupos promíscuos.</div>'
-            : '<div class="pains-alert-box"><strong>Reativos:</strong><br>' +
-                d.alertasPAINS.map(function (a) { return '• ' + a.nome; }).join('<br>') + '</div>') +
-        '</div>' +
-      '</div>';
+    const lipBadge = d.falhasLipinski.length === 0 ? 'badge-approved' : d.falhasLipinski.length === 1 ? 'badge-warning' : 'badge-rejected';
+    const viol = function (cond) { return cond ? 'violated' : ''; };
+    const pains = d.alertasPAINS.length === 0
+      ? html`<div class="pains-clean-box">✅ Sem grupos promíscuos.</div>`
+      : html`<div class="pains-alert-box"><strong>Reativos:</strong>${d.alertasPAINS.map(function (a) { return html`<br>• ${a.nome}`; })}</div>`;
+
+    setHtml(body, html`<div class="cadd-cards-grid">
+      <div class="cadd-card">
+        <div class="cadd-card-title-row"><span class="cadd-card-title">💊 Lipinski</span><span class="cadd-badge ${lipBadge}">${d.falhasLipinski.length === 0 ? 'Conforme' : d.falhasLipinski.length + ' Viol.'}</span></div>
+        <div class="cadd-param-list">
+          <div class="cadd-param-item ${viol(d.mw > 500)}"><span>MW:</span><strong>${d.mw.toFixed(2)}</strong></div>
+          <div class="cadd-param-item ${viol(d.logp > 5)}"><span>LogP:</span><strong>${d.logp.toFixed(2)}</strong></div>
+          <div class="cadd-param-item ${viol(d.hbd > 5)}"><span>HBD:</span><strong>${d.hbd}</strong></div>
+          <div class="cadd-param-item ${viol(d.hba > 10)}"><span>HBA:</span><strong>${d.hba}</strong></div>
+        </div>
+      </div>
+      <div class="cadd-card">
+        <div class="cadd-card-title-row"><span class="cadd-card-title">🔬 Veber</span><span class="cadd-badge ${d.falhasVeber.length === 0 ? 'badge-approved' : 'badge-rejected'}">${d.falhasVeber.length === 0 ? 'OK' : 'Baixa'}</span></div>
+        <div class="cadd-param-list">
+          <div class="cadd-param-item ${viol(d.rotb > 10)}"><span>RotB:</span><strong>${d.rotb}</strong></div>
+          <div class="cadd-param-item ${viol(d.tpsa > 140)}"><span>TPSA:</span><strong>${d.tpsa.toFixed(1)}</strong></div>
+          <div class="cadd-param-item"><span>Fsp³:</span><strong>${d.csp3.toFixed(2)}</strong></div>
+        </div>
+      </div>
+      <div class="cadd-card">
+        <div class="cadd-card-title-row"><span class="cadd-card-title">📐 Ghose</span><span class="cadd-badge ${d.falhasGhose.length === 0 ? 'badge-approved' : 'badge-rejected'}">${d.falhasGhose.length === 0 ? 'OK' : d.falhasGhose.length + ' Viol.'}</span></div>
+        <div class="cadd-param-list">
+          <div class="cadd-param-item"><span>MR:</span><strong>${d.mr.toFixed(1)}</strong></div>
+          <div class="cadd-param-item"><span>Átomos:</span><strong>${d.totalAtoms}</strong></div>
+        </div>
+      </div>
+      <div class="cadd-card">
+        <div class="cadd-card-title-row"><span class="cadd-card-title">⚠️ PAINS</span><span class="cadd-badge ${d.alertasPAINS.length === 0 ? 'badge-approved' : 'badge-rejected'}">${d.alertasPAINS.length === 0 ? 'Isento' : d.alertasPAINS.length + ' Alerta'}</span></div>
+        ${pains}
+      </div>
+    </div>`);
 
     modal.style.display = 'flex';
   };
@@ -2632,11 +2552,7 @@ console.log(
       STATE.modeloCarregadoAtivo = false;
       const container = document.getElementById('studioViewer3D');
       if (container) {
-        container.innerHTML =
-          '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#facc15; font-size:0.78rem; text-align:center; max-width:80%; line-height:1.6;">' +
-            '⚠️ <strong>Coordenadas 3D indisponíveis</strong><br>' +
-            '<span style="color:#94a3b8; font-size:0.68rem;">A projeção 2D continua funcional.</span>' +
-          '</div>';
+        setHtml(container, html`<div class="studio-3d-unavailable" role="status">⚠️ <strong>Coordenadas 3D indisponíveis</strong><br><span>A projeção 2D continua funcional.</span></div>`);
       }
       removerBannerInstabilidade();
     }
@@ -2649,12 +2565,8 @@ console.log(
     const banner = document.createElement('div');
     banner.className = 'unstable-banner';
     banner.id = 'unstableBanner';
-    banner.innerHTML =
-      '<div>⚠️ <strong>Estrutura instável</strong> — valência estendida (radical).</div>' +
-      '<div class="unstable-actions">' +
-        '<button onclick="window.desfazerEdicao()">↶ Desfazer</button>' +
-        '<button onclick="document.getElementById(\'unstableBanner\').remove()">OK</button>' +
-      '</div>';
+    banner.setAttribute('role', 'alert');
+    setHtml(banner, html`<div>⚠️ <strong>Estrutura instável</strong> — valência estendida (radical).</div><div class="unstable-actions"><button type="button" data-action="desfazerEdicao">↶ Desfazer</button><button type="button" data-action="removerBannerInstabilidade">OK</button></div>`);
     stage.appendChild(banner);
   }
 
@@ -2662,6 +2574,7 @@ console.log(
     const b = document.getElementById('unstableBanner');
     if (b) b.remove();
   }
+  window.removerBannerInstabilidade = removerBannerInstabilidade;
 
   /**
    * ✅ v4.5 — construirCena3D com skip de SDF idêntico (guard após check de dimensão)
@@ -2730,7 +2643,7 @@ console.log(
       }
 
       STATE._lastSDF = null;
-      container.innerHTML = '';
+      LaiftDom.clear(container);
 
       STATE.studioViewer = $3Dmol.createViewer(container, {
         backgroundColor: '#020617',
@@ -3107,11 +3020,7 @@ console.log(
     }
 
     modal.style.display = 'flex';
-    body.innerHTML =
-      '<div style="text-align:center; padding:40px; color:#64748b;">' +
-        '<span class="spinner-inline" style="margin-right:8px;"></span>' +
-        'Consultando ChEMBL...' +
-      '</div>';
+    setHtml(body, html`<div class="studio-empty-msg"><span class="spinner-inline" aria-hidden="true"></span> Consultando ChEMBL...</div>`);
 
     const nome = STATE.compostoSelecionado.pubchemQuery || STATE.compostoSelecionado.nome;
 
@@ -3128,11 +3037,7 @@ console.log(
       const moleculas = dados.molecules || [];
 
       if (moleculas.length === 0) {
-        body.innerHTML =
-          '<div style="padding:20px; color:#94a3b8;">' +
-            'Composto não encontrado na base ChEMBL.<br>' +
-            '<span style="font-size:0.7rem;">Tente um nome em inglês (ex.: "Aspirin", "Paracetamol").</span>' +
-          '</div>';
+        setHtml(body, html`<div class="studio-empty-msg">Composto não encontrado na base ChEMBL.<br><span class="studio-hint">Tente um nome em inglês (ex.: "Aspirin", "Paracetamol").</span></div>`);
         return;
       }
 
@@ -3146,7 +3051,7 @@ console.log(
       // Etapa 2 — Busca atividades biológicas
       const urlAtiv =
         'https://www.ebi.ac.uk/chembl/api/data/activity.json?' +
-        'molecule_chembl_id=' + chemblId + '&limit=50';
+        'molecule_chembl_id=' + encodeURIComponent(chemblId) + '&limit=50';
 
       const resAtiv = await fetch(urlAtiv);
       const dadosAtiv = await resAtiv.json();
@@ -3155,56 +3060,18 @@ console.log(
       // Etapa 3 — Renderização
       const props = mol.molecule_properties || {};
 
-      let htmlAtividades;
-      if (atividades.length === 0) {
-        htmlAtividades =
-          '<div class="pains-clean-box">✅ Nenhuma atividade biológica registrada para este composto.</div>';
-      } else {
-        htmlAtividades =
-          '<div style="max-height:400px; overflow-y:auto; border:1px solid var(--border-subtle); border-radius:6px;">' +
-            '<table class="chembl-activity-table">' +
-              '<thead><tr>' +
-                '<th>Alvo</th><th>Tipo</th><th>Valor</th><th>Unidade</th>' +
-              '</tr></thead><tbody>' +
-              atividades.slice(0, 40).map(function (a) {
-                return '<tr>' +
-                  '<td>' + (a.target_pref_name || 'N/A') + '</td>' +
-                  '<td>' + (a.standard_type || 'N/A') + '</td>' +
-                  '<td>' + (a.standard_value || 'N/A') + '</td>' +
-                  '<td>' + (a.standard_units || '') + '</td>' +
-                '</tr>';
-              }).join('') +
-              '</tbody>' +
-            '</table>' +
-          '</div>';
-      }
+      // Tudo o que vem do ChEMBL é dado externo: html`` escapa cada campo.
+      const htmlAtividades = atividades.length === 0
+        ? html`<div class="pains-clean-box">✅ Nenhuma atividade biológica registrada para este composto.</div>`
+        : html`<div class="chembl-activity-scroll"><table class="chembl-activity-table"><thead><tr><th>Alvo</th><th>Tipo</th><th>Valor</th><th>Unidade</th></tr></thead><tbody>${atividades.slice(0, 40).map(function (a) {
+            return html`<tr><td>${a.target_pref_name || 'N/A'}</td><td>${a.standard_type || 'N/A'}</td><td>${a.standard_value || 'N/A'}</td><td>${a.standard_units || ''}</td></tr>`;
+          })}</tbody></table></div>`;
 
-      body.innerHTML =
-        '<div class="chembl-summary">' +
-          '<div class="chembl-stat"><span>Fórmula</span><strong>' +
-            (props.full_molformula || '--') +
-          '</strong></div>' +
-          '<div class="chembl-stat"><span>Massa Molar</span><strong>' +
-            (props.full_mwt ? props.full_mwt + ' g/mol' : '--') +
-          '</strong></div>' +
-          '<div class="chembl-stat"><span>Fase Máxima</span><strong>' +
-            (mol.max_phase ? 'Fase ' + mol.max_phase : 'N/A') +
-          '</strong></div>' +
-          '<div class="chembl-stat"><span>Atividades</span><strong>' +
-            atividades.length +
-          '</strong></div>' +
-        '</div>' +
-        '<h4 style="color:#f8fafc; margin:16px 0 8px; font-size:0.82rem;">' +
-          'Atividades Biológicas' +
-        '</h4>' +
-        htmlAtividades;
+      setHtml(body, html`<div class="chembl-summary"><div class="chembl-stat"><span>Fórmula</span><strong>${props.full_molformula || '--'}</strong></div><div class="chembl-stat"><span>Massa Molar</span><strong>${props.full_mwt ? props.full_mwt + ' g/mol' : '--'}</strong></div><div class="chembl-stat"><span>Fase Máxima</span><strong>${mol.max_phase ? 'Fase ' + mol.max_phase : 'N/A'}</strong></div><div class="chembl-stat"><span>Atividades</span><strong>${atividades.length}</strong></div></div><h4 class="studio-section-title">Atividades Biológicas</h4>${htmlAtividades}`);
 
     } catch (e) {
       console.error('[ChEMBL] Erro:', e);
-      body.innerHTML =
-        '<div style="padding:20px; color:#f87171;">' +
-          'Erro ao consultar ChEMBL: ' + e.message +
-        '</div>';
+      setHtml(body, MSG_VAZIA('Erro ao consultar ChEMBL: ' + (e && e.message), 'error'));
     }
   };
   // ››› FIM: abrirDossieChEMBL() — dossiê completo de atividades biológicas.
@@ -3279,18 +3146,9 @@ console.log(
       const bloco = document.createElement('div');
       bloco.className = 'cadd-card';
       bloco.style.marginTop = '12px';
-      bloco.innerHTML =
-        '<div class="cadd-card-title-row">' +
-          '<span class="cadd-card-title">🔗 Identificadores Cruzados (UniChem)</span>' +
-        '</div>' +
-        '<div class="crossref-list">' +
-          Object.keys(ids).map(function (k) {
-            return '<div class="crossref-item">' +
-              '<span>' + k + ':</span>' +
-              '<strong>' + ids[k] + '</strong>' +
-            '</div>';
-          }).join('') +
-        '</div>';
+      setHtml(bloco, html`<div class="cadd-card-title-row"><span class="cadd-card-title">🔗 Identificadores Cruzados (UniChem)</span></div><div class="crossref-list">${Object.keys(ids).map(function (k) {
+        return html`<div class="crossref-item"><span>${k}:</span><strong>${ids[k]}</strong></div>`;
+      })}</div>`);
 
       container.appendChild(bloco);
     });
@@ -3329,7 +3187,7 @@ console.log(
     }
 
     if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ acao: 'carregarCompostoNaBancada', composto: payload }, '*');
+      LaiftDom.postToParent({ acao: 'carregarCompostoNaBancada', composto: payload });
     }
 
     localStorage.setItem('laift_composto_transferido', JSON.stringify(payload));
@@ -3337,7 +3195,7 @@ console.log(
     if (window.opener) {
       window.close();
     } else if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ acao: 'fecharModalStudio' }, '*');
+      LaiftDom.postToParent({ acao: 'fecharModalStudio' });
     } else {
       window.location.href = '../index.html';
     }
@@ -3424,6 +3282,8 @@ console.log(
   });
 
   window.addEventListener('message', function (e) {
+    // Só a bancada (mesma origem) conversa com o Estúdio.
+    if (!LaiftDom.isTrustedMessage(e)) return;
     if (e.data && e.data.acao === 'studioAberto') {
       setTimeout(function () {
         if (STATE.studioViewer && STATE.modeloCarregadoAtivo) {

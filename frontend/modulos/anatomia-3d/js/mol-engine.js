@@ -365,26 +365,27 @@ const MolEngine = (() => {
       pointer-events: none;
     `;
 
-    bar.innerHTML = `
-      <div style="display:flex; gap:4px; pointer-events:auto; background:rgba(2,6,23,0.88); padding:4px 8px; border-radius:6px; border:1px solid #334155; backdrop-filter:blur(6px);">
-        <button type="button" class="btn-mol-style active" data-style="cartoon" onclick="MolEngine.applyStyle('cartoon')">Fita</button>
-        <button type="button" class="btn-mol-style" data-style="stick" onclick="MolEngine.applyStyle('stick')">Bastão</button>
-        <button type="button" class="btn-mol-style" data-style="sphere" onclick="MolEngine.applyStyle('sphere')">Esferas</button>
-        <button type="button" class="btn-mol-style" data-style="surface" onclick="MolEngine.applyStyle('surface')">Superfície</button>
+    // Botões com data-action (sem onclick inline — CSP da Onda 2).
+    LaiftDom.setHtml(bar, LaiftDom.html`
+      <div class="mol-style-group" role="group" aria-label="Estilo de representação" style="display:flex; gap:4px; pointer-events:auto; background:rgba(2,6,23,0.88); padding:4px 8px; border-radius:6px; border:1px solid #334155; backdrop-filter:blur(6px);">
+        <button type="button" class="btn-mol-style active" data-style="cartoon" data-action="MolEngine.applyStyle" data-arg="cartoon">Fita</button>
+        <button type="button" class="btn-mol-style" data-style="stick" data-action="MolEngine.applyStyle" data-arg="stick">Bastão</button>
+        <button type="button" class="btn-mol-style" data-style="sphere" data-action="MolEngine.applyStyle" data-arg="sphere">Esferas</button>
+        <button type="button" class="btn-mol-style" data-style="surface" data-action="MolEngine.applyStyle" data-arg="surface">Superfície</button>
       </div>
 
       <div style="display:flex; gap:4px; pointer-events:auto;">
-        <button type="button" id="btnMolLigand" class="btn-mol-action" onclick="MolEngine.toggleActiveSiteHighlight()" title="Destacar Fármaco no Sítio Ativo">
+        <button type="button" id="btnMolLigand" class="btn-mol-action" data-action="MolEngine.toggleActiveSiteHighlight" title="Destacar Fármaco no Sítio Ativo">
           💊 Sítio Ativo
         </button>
-        <button type="button" id="btnMolSpin" class="btn-mol-action" onclick="MolEngine.toggleSpin()" title="Alternar Rotação Contínua">
+        <button type="button" id="btnMolSpin" class="btn-mol-action" data-action="MolEngine.toggleSpin" title="Alternar Rotação Contínua">
           🔄 Giro
         </button>
-        <button type="button" class="btn-mol-action" onclick="MolEngine.resetView()" title="Centralizar">
+        <button type="button" class="btn-mol-action" data-action="MolEngine.resetView" title="Centralizar" aria-label="Centralizar molécula">
           🎯
         </button>
       </div>
-    `;
+    `);
 
     container.appendChild(bar);
 
@@ -435,7 +436,7 @@ const MolEngine = (() => {
     const hudBox = document.getElementById("molInfoDetails");
     if (!hudBox || !currentPdbMeta) return;
 
-    hudBox.innerHTML = `
+    LaiftDom.setHtml(hudBox, LaiftDom.html`
       <div style="border-left: 3px solid #38bdf8; padding-left: 8px; margin-bottom: 8px;">
         <h4 style="color:#38bdf8; font-size:0.95rem; margin:0;">${currentPdbMeta.nome}</h4>
         <div style="font-size:0.72rem; color:#94a3b8; font-family:monospace; margin-top:2px;">
@@ -451,12 +452,13 @@ const MolEngine = (() => {
           <strong>Co-Cristal / Fármaco:</strong> ${currentPdbMeta.liganteNome} [Resíduo: <span style="font-family:monospace;">${currentPdbMeta.liganteResiduo}</span>]
         </div>
       </div>
-    `;
+    `);
   }
 
   function updateStyleButtonsUI(activeStyle) {
     document.querySelectorAll(".btn-mol-style").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.style === activeStyle);
+      btn.setAttribute("aria-pressed", btn.dataset.style === activeStyle ? "true" : "false");
     });
   }
 
@@ -497,11 +499,11 @@ const MolEngine = (() => {
   function renderErrorState(pdbId) {
     const hudBox = document.getElementById("molInfoDetails");
     if (hudBox) {
-      hudBox.innerHTML = `
-        <div style="color:#f87171; font-size:0.8rem; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:8px; border-radius:6px;">
+      LaiftDom.setHtml(hudBox, LaiftDom.html`
+        <div role="alert" style="color:#f87171; font-size:0.8rem; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:8px; border-radius:6px;">
           ⚠️ Não foi possível carregar a macromolécula <strong>${pdbId}</strong> diretamente do repositório RCSB PDB. Verifique sua conexão.
         </div>
-      `;
+      `);
     }
   }
 
@@ -519,6 +521,10 @@ const MolEngine = (() => {
     clearViewer
   };
 })();
+
+// `const` no topo não vira propriedade de window: sem isto os botões do
+// catálogo PDB (que testavam window.MolEngine) nunca carregavam a estrutura.
+window.MolEngine = MolEngine;
 
 // Inicialização segura com o DOM
 if (document.readyState === "loading") {

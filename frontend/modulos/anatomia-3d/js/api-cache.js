@@ -19,15 +19,14 @@ const ApiCache = (() => {
   const STORE_PAYLOADS = "cached_api_data";  // Armazena JSONs de APIs (HRA, NIH, PubChem)
   const STORE_HISTORY = "academic_history";  // Registros de simulação de horas
 
-  const GAS_ENDPOINT = window.APPS_SCRIPT_GATEWAY; // definido em ../shared/laift-identity.js
+  // Fase 4: o backup em nuvem no Apps Script (salvarBackupApi) foi removido
+  // (Contrato 4). Os dados das APIs continuam no cache local em IndexedDB.
+  const html = LaiftDom.html;
+  const setHtml = LaiftDom.setHtml;
 
   /** Identidade vinda da Plataforma de Membros (ver ../shared/laift-identity.js). */
   function lerIdentidade() {
     return (window.LaiftIdentity && window.LaiftIdentity.get()) || {};
-  }
-
-  function escaparHtml(valor) {
-    return String(valor).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
   // Endpoints das APIs Biomédicas Abertas
@@ -149,7 +148,6 @@ const ApiCache = (() => {
       });
 
       // 4. Envia backup assíncrono para o GAS/Sheets
-      agendarBackupNuvem("HRA", orgaoNome, payload);
 
       return payload;
     } catch (err) {
@@ -184,7 +182,6 @@ const ApiCache = (() => {
         timestamp: Date.now()
       });
 
-      agendarBackupNuvem("NIH_3D", termoBusca, payload);
 
       return payload;
     } catch (err) {
@@ -291,46 +288,12 @@ const ApiCache = (() => {
         timestamp: Date.now()
       });
 
-      // Envia cópia para o Google Sheets via GAS
-      agendarBackupNuvem("PUBCHEM", termo, novoProtocolo);
 
       return [novoProtocolo];
     } catch (e) {
       console.warn("[ApiCache] PubChem sem resultados para:", termo);
       return [];
     }
-  }
-
-  // =========================================================
-  // 3. FILA DE BACKUP ASSÍNCRONO PARA O GOOGLE APPS SCRIPT
-  // =========================================================
-  function agendarBackupNuvem(fonte, termo, payload) {
-    setTimeout(async () => {
-      try {
-        const sessao = lerIdentidade();
-        const body = {
-          acao: "salvarBackupApi",
-          fonte: fonte,
-          termo: termo,
-          identificador: sessao.identifier || "ANONIMO",
-          payload: payload,
-          timestamp: new Date().toISOString()
-        };
-
-        if (typeof ApiService !== "undefined" && typeof ApiService.callAppsScript === "function") {
-          await ApiService.callAppsScript(body, 20000);
-        } else {
-          await fetch(GAS_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(body)
-          });
-        }
-        console.log(`[ApiCache] ☁️ Backup de [${fonte}:${termo}] sincronizado no Google Sheets.`);
-      } catch (err) {
-        console.warn("[ApiCache] Falha no backup em nuvem (dados preservados localmente):", err);
-      }
-    }, 1200);
   }
 
   // =========================================================
@@ -351,8 +314,7 @@ const ApiCache = (() => {
     await saveToStore(STORE_HISTORY, novo);
 
     // Mantém fallback no localStorage para compatibilidade imediata
-    const raw = localStorage.getItem("laift_atlas_history");
-    const historico = raw ? JSON.parse(raw) : [];
+    const historico = lerHistorico();
     historico.unshift(novo);
     localStorage.setItem("laift_atlas_history", JSON.stringify(historico.slice(0, 30)));
 
@@ -364,19 +326,20 @@ const ApiCache = (() => {
                 document.getElementById("history-list-container");
     if (!box) return;
 
-    const raw = localStorage.getItem("laift_atlas_history");
-    const hist = raw ? JSON.parse(raw) : [];
+    const hist = lerHistorico();
 
     if (hist.length === 0) {
-      box.innerHTML = `
+      setHtml(box, html`
         <div style="font-size:0.75rem; color:#64748b; text-align:center; padding:16px; border:1px dashed #334155; border-radius:6px;">
           Nenhuma simulação registrada até o momento.
         </div>
-      `;
+      `);
       return;
     }
 
-    box.innerHTML = hist.slice(0, 8).map((h) => `
+    // O histórico vem do localStorage (e o nome do composto pode ter sido
+    // digitado pelo usuário): tudo escapado pelo html``.
+    setHtml(box, html`${hist.slice(0, 8).map((h) => html`
       <div style="background:#020617; border-left:3px solid #38bdf8; padding:8px 10px; border-radius:4px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
         <div>
           <strong style="color:#f8fafc; font-size:0.8rem;">${h.composto}</strong>
@@ -388,22 +351,30 @@ const ApiCache = (() => {
           +${h.horasAcademicas || 0.5}h
         </span>
       </div>
-    `).join("");
+    `)}`);
+  }
+
+  function lerHistorico() {
+    try {
+      const raw = localStorage.getItem("laift_atlas_history");
+      const hist = raw ? JSON.parse(raw) : [];
+      return Array.isArray(hist) ? hist : [];
+    } catch (e) {
+      return [];
+    }
   }
 
   function configurarBotoesAcervo() {
     const btnExportar = document.getElementById("btn-export-csv") ||
                         document.getElementById("btnExportCsv") ||
                         document.getElementById("btn-export-pdf-acervo");
-    if (btnExportar) {
-      btnExportar.innerText = "📄 Emitir Dossiê PDF";
-      btnExportar.onclick = exportarDossiePDF;
-    }
+    // O clique vem do data-action no HTML (ApiCache.exportarDossiePDF);
+    // atribuir onclick aqui também abriria o dossiê duas vezes.
+    if (btnExportar) btnExportar.innerText = "📄 Emitir Dossiê PDF";
   }
 
   function exportarDossiePDF() {
-    const raw = localStorage.getItem("laift_atlas_history");
-    const historico = raw ? JSON.parse(raw) : [];
+    const historico = lerHistorico();
 
     if (historico.length === 0) {
       alert("Não há registros de simulação para emitir o dossiê.");
@@ -411,17 +382,19 @@ const ApiCache = (() => {
     }
 
     const sessao = lerIdentidade();
-    // Escapados: vão para document.write na janela do dossiê.
-    const nomeAluno = escaparHtml(sessao.name || "Acadêmico(a) de Farmácia");
-    const idAluno = escaparHtml(sessao.identifier || "---");
-    const vinculo = escaparHtml(sessao.type || "Membro Efetivo / Pesquisador");
+    // Tudo entra pelo html`` (escapa cada valor). Antes, nome e e-mail eram
+    // escapados mas composto/via do histórico (localStorage) iam crus para
+    // document.write numa janela da mesma origem.
+    const nomeAluno = sessao.name || "Acadêmico(a) de Farmácia";
+    const idAluno = sessao.identifier || "---";
+    const vinculo = sessao.type || "Membro Efetivo / Pesquisador";
     const dataEmissao = new Date().toLocaleDateString("pt-BR");
     const horaEmissao = new Date().toLocaleTimeString("pt-BR");
 
     const totalHoras = historico.reduce((acc, cur) => acc + (cur.horasAcademicas || 0.5), 0);
     const authCode = `LAIFT-CCF-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
-    const linhasTabela = historico.map((h, i) => `
+    const linhasTabela = historico.map((h, i) => html`
       <tr>
         <td style="text-align:center;">${String(i + 1).padStart(2, "0")}</td>
         <td>${h.data} às ${h.hora || ""}</td>
@@ -430,7 +403,7 @@ const ApiCache = (() => {
         <td style="text-align:center;">Modelo Unicompartimental / Bateman</td>
         <td style="text-align:center; font-weight:bold; color:#0369a1;">+${h.horasAcademicas || 0.5} h</td>
       </tr>
-    `).join("");
+    `);
 
     const win = window.open("", "_blank");
     if (!win) {
@@ -438,35 +411,16 @@ const ApiCache = (() => {
       return;
     }
 
-    win.document.write(`
-      <!DOCTYPE html>
-      <html lang="pt-BR">
-      <head>
-        <meta charset="utf-8">
-        <title>Dossiê de Simulação Farmacocinética — LAIFT</title>
-        <style>
-          @page { size: A4 portrait; margin: 14mm 12mm; }
-          * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; }
-          body { margin: 0; padding: 0; font-size: 10pt; line-height: 1.45; }
-          .header-box { border-bottom: 2px solid #0284c7; padding-bottom: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
-          .institution { font-size: 8pt; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-          .main-title { font-size: 13pt; font-weight: 800; color: #0369a1; margin: 2px 0; }
-          .badge-cert { background: #e0f2fe; border: 1px solid #bae6fd; color: #0284c7; padding: 6px 12px; border-radius: 6px; text-align: right; font-size: 7.5pt; font-weight: bold; }
-          .student-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; font-size: 8.5pt; }
-          .student-box strong { display: block; color: #475569; font-size: 7.5pt; text-transform: uppercase; margin-bottom: 2px; }
-          table { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-bottom: 14px; }
-          th { background: #0f172a; color: #fff; font-weight: 700; text-align: left; padding: 6px 8px; font-size: 7.5pt; text-transform: uppercase; }
-          td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; }
-          tr:nth-child(even) { background: #f8fafc; }
-          .total-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px 14px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-          .total-hours { font-size: 13pt; font-weight: 800; color: #16a34a; }
-          .statement { font-size: 8pt; color: #475569; text-align: justify; margin-bottom: 24px; line-height: 1.5; }
-          .sig-row { display: flex; justify-content: space-between; margin-top: 36px; padding: 0 20px; }
-          .sig-line { width: 42%; border-top: 1px solid #0f172a; text-align: center; padding-top: 6px; font-size: 8pt; color: #334155; }
-          .footer-auth { border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: 20px; display: flex; justify-content: space-between; font-size: 7pt; color: #94a3b8; font-family: monospace; }
-        </style>
-      </head>
-      <body>
+    // Monta o documento pelo DOM (sem document.write nem <script> inline):
+    // estilo constante via textContent, corpo via html`` e a impressão é
+    // disparada daqui.
+    const doc = win.document;
+    doc.documentElement.lang = "pt-BR";
+    doc.title = "Dossiê de Simulação Farmacocinética — LAIFT";
+    const estilo = doc.createElement("style");
+    estilo.textContent = DOSSIE_CSS;
+    doc.head.appendChild(estilo);
+    setHtml(doc.body, html`
         <div class="header-box">
           <div>
             <div class="institution">Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</div>
@@ -518,17 +472,31 @@ const ApiCache = (() => {
           <span>Emitido em: ${dataEmissao} às ${horaEmissao}</span>
           <span>Validação: apps.humanatlas.io • laift.edu</span>
         </div>
-
-        <script>
-          window.onload = function() {
-            setTimeout(function() { window.print(); }, 300);
-          };
-        <\/script>
-      </body>
-      </html>
     `);
-    win.document.close();
+    setTimeout(() => { try { win.focus(); win.print(); } catch (e) { /* janela fechada */ } }, 300);
   }
+
+  const DOSSIE_CSS = `
+          @page { size: A4 portrait; margin: 14mm 12mm; }
+          * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; }
+          body { margin: 0; padding: 0; font-size: 10pt; line-height: 1.45; }
+          .header-box { border-bottom: 2px solid #0284c7; padding-bottom: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+          .institution { font-size: 8pt; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+          .main-title { font-size: 13pt; font-weight: 800; color: #0369a1; margin: 2px 0; }
+          .badge-cert { background: #e0f2fe; border: 1px solid #bae6fd; color: #0284c7; padding: 6px 12px; border-radius: 6px; text-align: right; font-size: 7.5pt; font-weight: bold; }
+          .student-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; font-size: 8.5pt; }
+          .student-box strong { display: block; color: #475569; font-size: 7.5pt; text-transform: uppercase; margin-bottom: 2px; }
+          table { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-bottom: 14px; }
+          th { background: #0f172a; color: #fff; font-weight: 700; text-align: left; padding: 6px 8px; font-size: 7.5pt; text-transform: uppercase; }
+          td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; }
+          tr:nth-child(even) { background: #f8fafc; }
+          .total-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px 14px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+          .total-hours { font-size: 13pt; font-weight: 800; color: #16a34a; }
+          .statement { font-size: 8pt; color: #475569; text-align: justify; margin-bottom: 24px; line-height: 1.5; }
+          .sig-row { display: flex; justify-content: space-between; margin-top: 36px; padding: 0 20px; }
+          .sig-line { width: 42%; border-top: 1px solid #0f172a; text-align: center; padding-top: 6px; font-size: 8pt; color: #334155; }
+          .footer-auth { border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: 20px; display: flex; justify-content: space-between; font-size: 7pt; color: #94a3b8; font-family: monospace; }
+  `;
 
   return {
     init,
@@ -537,9 +505,14 @@ const ApiCache = (() => {
     obterModelo3DBinario,
     buscarProtocolo,
     registrarSimulacao,
+    renderizarHistoricoLocal,
     exportarDossiePDF
   };
 })();
+
+// Exposto em window para data-action ("ApiCache.exportarDossiePDF"): `const`
+// no topo não vira propriedade de window.
+window.ApiCache = ApiCache;
 
 // Inicialização imediata
 if (document.readyState === "loading") {

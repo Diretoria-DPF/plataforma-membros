@@ -434,7 +434,7 @@ const PkEngine = (() => {
     const gravidade = crisisToxicityIndex > 70 ? "CRÍTICA / PARADA IMINENTE" : crisisToxicityIndex > 40 ? "MODERADA / BRONCORREIA" : "ESTÁVEL / CONTROLADA";
     const corGravidade = crisisToxicityIndex > 70 ? "#ef4444" : crisisToxicityIndex > 40 ? "#f59e0b" : "#10b981";
 
-    hud.innerHTML = `
+    LaiftDom.setHtml(hud, LaiftDom.html`
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
         <span style="font-weight:bold; color:${corGravidade}; font-size:0.75rem;">Status: ${gravidade}</span>
         <span style="font-family:monospace; font-size:0.7rem; color:#94a3b8;">Tempo: ${crisisElapsedMin} min</span>
@@ -444,7 +444,7 @@ const PkEngine = (() => {
         <span>Pralidoxima: <strong>${antidoteDosesApplied.pralidoxima * 1} g</strong></span>
         <span>Hiperestimulação ACh: <strong>${crisisToxicityIndex.toFixed(0)}%</strong></span>
       </div>
-    `;
+    `);
   }
 
   // =========================================================================
@@ -462,6 +462,10 @@ const PkEngine = (() => {
     isCrisisActive: () => isCrisisSimulating
   };
 })();
+
+// `const` no topo não vira propriedade de window: sem isto a simulação
+// customizada (que testava window.PkEngine) nunca rodava.
+window.PkEngine = PkEngine;
 
 // Inicialização segura com o DOM
 if (document.readyState === "loading") {

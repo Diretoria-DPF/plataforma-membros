@@ -3,148 +3,34 @@
 <!-- VERSÃO:  2.6.0 — COMPLETA: 14 SISTEMAS, 18 VIAS, 24 PDBs & 15 PROCESSOS   -->
 <!-- ========================================================================= -->
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="laift-always-dark">
 <head>
   <meta charset="UTF-8">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../shared/laift-identity.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#020617">
   <title>LAIFT — Atlas Anatômico, Farmacocinético & Bio-Twin 3D</title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
-  <!-- Bibliotecas Gráficas e Matemáticas Core (CDNs Estáveis) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Bibliotecas gráficas: versões fixas no jsDelivr (bytes do pacote npm)
+       com SRI — as mesmas versões de antes (three r128 = three@0.128.0; o
+       Chart.js e o 3Dmol "latest" foram fixados). Ver docs/FASE_4_QUALIDADE.md. -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" integrity="sha384-fljlqkjWlmSFjkESkQvm77heIZpoWmXEOzlCA7kOpGUH+95Zk0yGfQieWM2q136E" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" integrity="sha384-TNRcLasZnnfIJJskDY5XlrfmsKTjBSy98MtyLuX+3rQWRbpSQvtFIdikNpcOh3SN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
 
-  <!-- Folha de Estilos Unificada -->
+  <!-- Tokens do design system (o atlas é sempre escuro: .laift-always-dark) + estilos do módulo -->
+  <link rel="stylesheet" href="../shared/laift-tokens.css">
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Funções de Interface, Tela Cheia, Zoom e Fisiologia Dinâmica -->
-  <script>
-    window.toggleAtlasFullscreen = function() {
-      const doc = document;
-      const docEl = doc.documentElement;
-
-      const requestFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-      const exitFs = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
-      const isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
-
-      if (!isFs) {
-        if (requestFs) {
-          requestFs.call(docEl).catch(err => console.warn('[LAIFT Fullscreen]', err));
-        }
-      } else {
-        if (exitFs) {
-          exitFs.call(doc).catch(err => console.warn('[LAIFT Fullscreen]', err));
-        }
-      }
-    };
-
-    document.addEventListener('fullscreenchange', () => {
-      const btn = document.getElementById('btnFullscreenToggle');
-      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
-      if (btn) {
-        btn.innerHTML = isFs ? '⛶ Sair' : '⛶ Tela Cheia';
-        btn.classList.toggle('fs-active-icon', !!isFs);
-      }
-    });
-
-    window.setBiologicalZoomLevel = function(level) {
-      document.querySelectorAll('.zoom-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.level === level);
-      });
-
-      const threeBox = document.getElementById('canvas-3d-container');
-      const molBox = document.getElementById('mol-viewport-container');
-
-      if (level === 'nano') {
-        if (threeBox) threeBox.classList.add('hidden');
-        if (molBox) {
-          molBox.classList.remove('hidden');
-          if (typeof MolEngine !== 'undefined') {
-            if (!MolEngine.currentPdbId) {
-              MolEngine.loadPdb('4EY7', 'Acetilcolinesterase (AChE)');
-            }
-            setTimeout(() => MolEngine.render(), 120);
-          }
-        }
-      } else {
-        if (molBox) molBox.classList.add('hidden');
-        if (threeBox) {
-          threeBox.classList.remove('hidden');
-          if (window.ThreeEngine && typeof window.ThreeEngine.onWindowResize === 'function') {
-            window.ThreeEngine.onWindowResize();
-          }
-        }
-      }
-    };
-
-    window.dispararFluxoSeguro = function(tipo) {
-      if (window.ThreeEngine && typeof window.ThreeEngine.triggerParticleFlow === "function") {
-        window.ThreeEngine.triggerParticleFlow(tipo);
-      }
-    };
-
-    window.aplicarCamadaDireta = function(camadaNum) {
-      if (window.ThreeEngine && typeof window.ThreeEngine.setDissectionDepth === "function") {
-        window.ThreeEngine.setDissectionDepth(camadaNum);
-        const slider = document.getElementById("dissectionSlider");
-        if (slider) slider.value = camadaNum;
-      }
-    };
-
-    window.submeterInformacaoCustom = function() {
-      const composto = document.getElementById("inpCompostoCustom").value.trim() || "Fármaco Customizado";
-      const via = document.getElementById("selViaCustom").value;
-      const dose = parseFloat(document.getElementById("inpDoseCustom").value) || 100;
-
-      if (window.PkEngine && typeof window.PkEngine.simulateProtocol === "function") {
-        window.PkEngine.simulateProtocol({
-          nome: composto,
-          pkData: {
-            route: via,
-            dose: dose,
-            vd: 35,
-            halfLife: 4.0,
-            ka: 1.5,
-            targetOrgan: "liver"
-          }
-        });
-      }
-
-      if (window.ThreeEngine && typeof window.ThreeEngine.simulateAdministrationRoute === "function") {
-        window.ThreeEngine.simulateAdministrationRoute(via);
-      }
-    };
-
-    window.selecionarProcessoFisiologico = function(processoId) {
-      if (typeof ATLAS_DATABASE === 'undefined' || !ATLAS_DATABASE.processos) return;
-      const proc = ATLAS_DATABASE.processos[processoId];
-      if (!proc) return;
-
-      const titleEl = document.getElementById('timelineProcessTitle');
-      const descEl = document.getElementById('timelineProcessDesc');
-      const stepsContainer = document.getElementById('timelineStepsRow');
-
-      if (titleEl) titleEl.textContent = `⚡ Processo: ${proc.titulo}`;
-      if (descEl) descEl.textContent = proc.descricao;
-
-      if (stepsContainer && Array.isArray(proc.etapas)) {
-        stepsContainer.innerHTML = proc.etapas.map(etapa => `
-          <button class="btn-step" type="button" onclick="window.dispararFluxoSeguro('${etapa.acaoParticulas || 'oral_cavity'}')">
-            ${etapa.ordem}. ${etapa.fase}
-          </button>
-        `).join('');
-      }
-    };
-  </script>
+  <!-- Funções de interface (tela cheia, zoom, fisiologia): js/atlas-ui.js,
+       sem <script> inline — preparo da CSP. -->
 </head>
 <body>
 
@@ -156,10 +42,10 @@
       <h1>🧬 LAIFT <span>Bio-Twin 3D</span></h1>
     </div>
     <div class="header-tools">
-      <button id="btnFullscreenToggle" class="btn-pill-tool" type="button" onclick="window.toggleAtlasFullscreen()" title="Alternar Modo Imersivo em Tela Cheia">
+      <button id="btnFullscreenToggle" class="btn-pill-tool" type="button" data-action="toggleAtlasFullscreen" title="Alternar Modo Imersivo em Tela Cheia">
         ⛶ Tela Cheia
       </button>
-      <button id="btnExportCsv" class="btn-pill-tool" type="button" onclick="ApiCache.exportarDossiePDF()" title="Emitir Dossiê Curricular em PDF">
+      <button id="btnExportCsv" class="btn-pill-tool" type="button" data-action="ApiCache.exportarDossiePDF" title="Emitir Dossiê Curricular em PDF">
         📄 Dossiê PDF
       </button>
     </div>
@@ -173,14 +59,14 @@
   <!-- =======================================================================
        3. CONTROLE DE NÍVEIS DE ZOOM BIOLÓGICO (MACRO / MESO / NANO)
   ======================================================================= -->
-  <div class="zoom-pill-group">
-    <button class="zoom-btn active" type="button" data-level="macro" onclick="window.setBiologicalZoomLevel('macro')">
+  <div class="zoom-pill-group" role="group" aria-label="Nível de zoom biológico">
+    <button class="zoom-btn active" type="button" data-level="macro" data-action="setBiologicalZoomLevel" data-arg="macro">
       1. Macro (Órgãos & Sistemas)
     </button>
-    <button class="zoom-btn" type="button" data-level="meso" onclick="window.setBiologicalZoomLevel('meso')">
+    <button class="zoom-btn" type="button" data-level="meso" data-action="setBiologicalZoomLevel" data-arg="meso">
       2. Meso (Fisiologia & PK/PD)
     </button>
-    <button class="zoom-btn" type="button" data-level="nano" onclick="window.setBiologicalZoomLevel('nano')">
+    <button class="zoom-btn" type="button" data-level="nano" data-action="setBiologicalZoomLevel" data-arg="nano">
       3. Nano (Enzimas & PDB)
     </button>
   </div>
@@ -202,7 +88,7 @@
       <!-- Palco Gráfico A: WebGL Three.js (Macro / Meso) -->
       <div id="canvas-3d-container">
         <div id="loading-3d-overlay">Carregando Atlas Anatômico...</div>
-        <div id="organ-hud" class="hidden">
+        <div id="organ-hud" class="hidden" role="status" aria-live="polite">
           Estrutura: <strong id="organ-name">---</strong>
         </div>
       </div>
@@ -219,14 +105,14 @@
       <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:12px;">
         <div style="font-size:0.78rem; font-weight:800; color:#38bdf8; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
           <span>👁️ CONTROLE DINÂMICO DE VISUALIZAÇÃO DO CORPO</span>
-          <button type="button" class="btn-isolate-organ" onclick="ThreeEngine.resetOrganTree()">Restaurar Corpo</button>
+          <button type="button" class="btn-isolate-organ" data-action="ThreeEngine.resetOrganTree">Restaurar Corpo</button>
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          <button type="button" class="btn-step" style="flex:1; min-width:65px;" onclick="window.aplicarCamadaDireta(1)">Pele</button>
-          <button type="button" class="btn-step" style="flex:1; min-width:65px;" onclick="window.aplicarCamadaDireta(2)">Músculos</button>
-          <button type="button" class="btn-step" style="flex:1; min-width:65px;" onclick="window.aplicarCamadaDireta(3)">Esqueleto</button>
-          <button type="button" class="btn-step" style="flex:1; min-width:65px;" onclick="window.aplicarCamadaDireta(4)">Vasos</button>
-          <button type="button" class="btn-step" style="flex:1; min-width:65px; border-color:#38bdf8; color:#38bdf8;" onclick="window.aplicarCamadaDireta(5)">Vísceras</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[1]">Pele</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[2]">Músculos</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[3]">Esqueleto</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px;" data-action="aplicarCamadaDireta" data-args="[4]">Vasos</button>
+          <button type="button" class="btn-step" style="flex:1; min-width:65px; border-color:#38bdf8; color:#38bdf8;" data-action="aplicarCamadaDireta" data-args="[5]">Vísceras</button>
         </div>
       </div>
 
@@ -236,8 +122,8 @@
           ✍️ INSERIR DADOS DE SIMULAÇÃO FARMACOLÓGICA
         </div>
         <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr auto; gap:6px; align-items:center;">
-          <input type="text" id="inpCompostoCustom" placeholder="Ex: Propranolol, Cafeína, Atropina..." style="background:#020617; border:1px solid #334155; color:#fff; padding:6px 10px; border-radius:4px; font-size:0.74rem; outline:none;">
-          <select id="selViaCustom" style="background:#020617; border:1px solid #334155; color:#38bdf8; padding:6px; border-radius:4px; font-size:0.74rem; outline:none;">
+          <input type="text" id="inpCompostoCustom" aria-label="Composto" placeholder="Ex: Propranolol, Cafeína, Atropina..." style="background:#020617; border:1px solid #334155; color:#fff; padding:6px 10px; border-radius:4px; font-size:0.74rem; outline:none;">
+          <select id="selViaCustom" aria-label="Via de administração" style="background:#020617; border:1px solid #334155; color:#38bdf8; padding:6px; border-radius:4px; font-size:0.74rem; outline:none;">
             <option value="ORAL">Via Oral</option>
             <option value="INTRAVENOSA">Via Intravenosa (IV)</option>
             <option value="INTRAMUSCULAR">Via Intramuscular (IM)</option>
@@ -248,8 +134,8 @@
             <option value="RETAL">Via Retal</option>
             <option value="INTRATECAL">Via Intratecal</option>
           </select>
-          <input type="number" id="inpDoseCustom" value="100" placeholder="Dose (mg)" style="background:#020617; border:1px solid #334155; color:#fff; padding:6px; border-radius:4px; font-size:0.74rem; outline:none;">
-          <button type="button" class="btn-primary" style="padding:6px 14px; font-size:0.74rem; white-space:nowrap;" onclick="window.submeterInformacaoCustom()">▶ Aplicar</button>
+          <input type="number" id="inpDoseCustom" aria-label="Dose em mg" value="100" placeholder="Dose (mg)" style="background:#020617; border:1px solid #334155; color:#fff; padding:6px; border-radius:4px; font-size:0.74rem; outline:none;">
+          <button type="button" class="btn-primary" style="padding:6px 14px; font-size:0.74rem; white-space:nowrap;" data-action="submeterInformacaoCustom">▶ Aplicar</button>
         </div>
       </div>
 
@@ -279,7 +165,7 @@
       <div class="timeline-card">
         <div class="timeline-header">
           <span class="timeline-step-badge" id="timelineProcessTitle">⚡ Processo: Fisiologia da Deglutição Humana</span>
-          <select id="selProcessoFisiologico" onchange="window.selecionarProcessoFisiologico(this.value)" style="background:#020617; color:#38bdf8; border:1px solid #334155; border-radius:4px; padding:3px 6px; font-size:0.72rem; outline:none; cursor:pointer;">
+          <select id="selProcessoFisiologico" data-action-change="selecionarProcessoFisiologico" aria-label="Processo fisiológico" style="background:#020617; color:#38bdf8; border:1px solid #334155; border-radius:4px; padding:3px 6px; font-size:0.72rem; outline:none; cursor:pointer;">
             <option value="degluticao_humana">1. Deglutição Humana</option>
             <option value="ciclo_cardiaco">2. Ciclo Eletromecânico Cardíaco</option>
             <option value="conducao_impulso_cardiaco">3. Condução do Impulso Cardíaco</option>
@@ -301,10 +187,10 @@
           Sequência neuromuscular reflexa coordenada dividida em estágios oral, faríngeo e esofágico.
         </p>
         <div class="timeline-nav-row" id="timelineStepsRow">
-          <button class="btn-step" type="button" onclick="window.dispararFluxoSeguro('oral_cavity')">1. Fase Oral</button>
-          <button class="btn-step" type="button" onclick="window.dispararFluxoSeguro('pharynx_transit')">2. Fase Faríngea</button>
-          <button class="btn-step" type="button" onclick="window.dispararFluxoSeguro('esophagus_wave')">3. Fase Esofágica</button>
-          <button class="btn-step" type="button" onclick="window.dispararFluxoSeguro('stomach_entry')">4. Relaxamento Gástrico</button>
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="oral_cavity">1. Fase Oral</button>
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="pharynx_transit">2. Fase Faríngea</button>
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="esophagus_wave">3. Fase Esofágica</button>
+          <button class="btn-step" type="button" data-action="dispararFluxoSeguro" data-arg="stomach_entry">4. Relaxamento Gástrico</button>
         </div>
       </div>
 
@@ -314,30 +200,30 @@
           🔬 Catálogo Completo de Alvos Moleculares & Co-Cristais (24 Estruturas PDB):
         </h4>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px;">
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('4EY7', 'AChE + Donepezila');">🧬 AChE (4EY7)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1EQG', 'COX-1 + Aspirina');">🧬 COX-1 (1EQG)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('3LN1', 'COX-2 + Celecoxibe');">🧬 COX-2 (3LN1)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1TQN', 'CYP3A4 Microssomal');">🧬 CYP3A4 (1TQN)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('3B8E', 'Bomba Na+/K+-ATPase');">🧬 Na+/K+ (3B8E)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1SMD', 'Ptialina Salivar');">🧬 Ptialina (1SMD)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('4PEP', 'Pepsina Gástrica');">🧬 Pepsina (4PEP)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1SU4', 'SERCA Ca2+-ATPase');">🧬 SERCA (1SU4)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1TBF', 'PDE5 Vascular');">🧬 PDE5 (1TBF)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1E9Z', 'Urease H. pylori');">🦠 H. pylori (1E9Z)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('7VH8', 'Mpro SARS-CoV-2');">🦠 Mpro Viral (7VH8)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('5LUF', 'Complexo I Mitocondrial');">⚡ Complexo I (5LUF)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1O86', 'ECA (Angiotensina)');">🩸 ECA / ACE (1O86)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('2REN', 'Renina Humana');">💧 Renina (2REN)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1HWK', 'HMG-CoA Redutase');">💊 HMGCR (1HWK)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1BMF', 'ATP Sintase (Complexo V)');">⚡ ATP Sintase (1BMF)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1SOS', 'Superóxido Dismutase');">🛡️ SOD1 (1SOS)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1DGB', 'Catalase Peroxissomal');">🛡️ Catalase (1DGB)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1LYZ', 'Lisozima Antimicrobiana');">🛡️ Lisozima (1LYZ)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1DHF', 'Di-hidrofolato Redutase');">🧪 DHFR (1DHF)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('1CA2', 'Anidrase Carbônica II');">💧 Anidrase II (1CA2)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('3EQM', 'Aromatase (CYP19A1)');">⚗️ Aromatase (3EQM)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('2AM9', 'Receptor Androgênico');">🧬 Receptor AR (2AM9)</button>
-          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" onclick="window.setBiologicalZoomLevel('nano'); if (window.MolEngine) MolEngine.loadPdb('2BG9', 'Receptor Nicotínico AChR');">💪 nAChR (2BG9)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["4EY7", "AChE + Donepezila"]'>🧬 AChE (4EY7)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1EQG", "COX-1 + Aspirina"]'>🧬 COX-1 (1EQG)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["3LN1", "COX-2 + Celecoxibe"]'>🧬 COX-2 (3LN1)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1TQN", "CYP3A4 Microssomal"]'>🧬 CYP3A4 (1TQN)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["3B8E", "Bomba Na+/K+-ATPase"]'>🧬 Na+/K+ (3B8E)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1SMD", "Ptialina Salivar"]'>🧬 Ptialina (1SMD)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["4PEP", "Pepsina Gástrica"]'>🧬 Pepsina (4PEP)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1SU4", "SERCA Ca2+-ATPase"]'>🧬 SERCA (1SU4)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1TBF", "PDE5 Vascular"]'>🧬 PDE5 (1TBF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1E9Z", "Urease H. pylori"]'>🦠 H. pylori (1E9Z)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["7VH8", "Mpro SARS-CoV-2"]'>🦠 Mpro Viral (7VH8)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["5LUF", "Complexo I Mitocondrial"]'>⚡ Complexo I (5LUF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1O86", "ECA (Angiotensina)"]'>🩸 ECA / ACE (1O86)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["2REN", "Renina Humana"]'>💧 Renina (2REN)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1HWK", "HMG-CoA Redutase"]'>💊 HMGCR (1HWK)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1BMF", "ATP Sintase (Complexo V)"]'>⚡ ATP Sintase (1BMF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1SOS", "Superóxido Dismutase"]'>🛡️ SOD1 (1SOS)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1DGB", "Catalase Peroxissomal"]'>🛡️ Catalase (1DGB)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1LYZ", "Lisozima Antimicrobiana"]'>🛡️ Lisozima (1LYZ)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1DHF", "Di-hidrofolato Redutase"]'>🧪 DHFR (1DHF)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["1CA2", "Anidrase Carbônica II"]'>💧 Anidrase II (1CA2)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["3EQM", "Aromatase (CYP19A1)"]'>⚗️ Aromatase (3EQM)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["2AM9", "Receptor Androgênico"]'>🧬 Receptor AR (2AM9)</button>
+          <button type="button" class="btn-step" style="text-align: left; padding: 7px;" data-action="abrirPdb" data-args='["2BG9", "Receptor Nicotínico AChR"]'>💪 nAChR (2BG9)</button>
         </div>
       </div>
     </section>
@@ -356,10 +242,11 @@
         <input 
           type="text" 
           id="bio-search-input" 
+          aria-label="Buscar composto ou via"
           placeholder="Buscar composto ou via (ex: Treonato, ATP, CoQ10, NMN, Zinco)..."
           autocomplete="off"
         >
-        <button id="btn-bio-search" type="button">🔍</button>
+        <button id="btn-bio-search" type="button" aria-label="Buscar protocolo">🔍</button>
       </div>
 
       <!-- Grid de Cartões de Protocolo -->
@@ -377,10 +264,10 @@
 
       <!-- Botões de Ação -->
       <div class="actions-row">
-        <button id="btn-export-pdf-acervo" class="btn-primary" type="button" onclick="ApiCache.exportarDossiePDF()">
+        <button id="btn-export-pdf-acervo" class="btn-primary" type="button" data-action="ApiCache.exportarDossiePDF">
           📄 Emitir Dossiê PDF Oficial
         </button>
-        <button id="btn-sync-cloud" class="btn-secondary" type="button" onclick="ApiCache.renderizarHistoricoLocal()">
+        <button id="btn-sync-cloud" class="btn-secondary" type="button" data-action="ApiCache.renderizarHistoricoLocal">
           🔄 Atualizar Relatório Local
         </button>
       </div>
@@ -394,7 +281,7 @@
   <!-- =======================================================================
        5. BARRA DE NAVEGAÇÃO INFERIOR MOBILE-FIRST (PWA THUMB-FRIENDLY)
   ======================================================================= -->
-  <nav class="bottom-nav">
+  <nav class="bottom-nav" aria-label="Seções do atlas">
     <button class="nav-btn active" type="button" data-target="view-anatomy">
       <span class="nav-icon">🧍</span>
       <span class="nav-label">Atlas 3D</span>
@@ -412,6 +299,7 @@
   <!-- =======================================================================
        6. SCRIPTS MODULARES (ORDEM RIGOROSA DE DEPENDÊNCIA DO ECOSSISTEMA)
   ======================================================================= -->
+  <script src="../shared/safe-dom.js"></script>
   <script src="data/bio-database.js"></script>
   <script src="js/api-cache.js"></script>
   <script src="js/three-engine.js"></script>
@@ -419,6 +307,7 @@
   <script src="js/pk-engine.js"></script>
   <script src="js/quiz-engine.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/atlas-ui.js"></script>
 </body>
 </html>
 <!-- ========================================================================= -->

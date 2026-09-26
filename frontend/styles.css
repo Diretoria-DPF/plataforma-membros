@@ -9,6 +9,10 @@
   --primary: #0f6f62;
   --primary-strong: #0b5349;
   --primary-soft: #e1f4f0;
+  /* Texto sobre --primary/--admin: branco no claro (o antigo #06231e sobre
+     #0f6f62 dava 2,8:1, abaixo do AA). Fase 4. */
+  --on-primary: #ffffff;
+  --on-admin: #ffffff;
   --admin: #8a3b12;
   --admin-soft: #fdece0;
   --danger: #b3261e;
@@ -35,6 +39,8 @@
   --primary: #3fcfb6;
   --primary-strong: #63e0c9;
   --primary-soft: #10352f;
+  --on-primary: #06231e;
+  --on-admin: #2a1200;
   --admin: #ff9a5c;
   --admin-soft: #3a2415;
   --danger: #ff7a70;
@@ -57,6 +63,8 @@
     --primary: #3fcfb6;
     --primary-strong: #63e0c9;
     --primary-soft: #10352f;
+    --on-primary: #06231e;
+    --on-admin: #2a1200;
     --admin: #ff9a5c;
     --admin-soft: #3a2415;
     --danger: #ff7a70;
@@ -190,7 +198,7 @@ button {
   border-radius: var(--radius-md);
   padding: 12px 18px;
   background: var(--primary);
-  color: #06231e;
+  color: var(--on-primary);
   font-weight: 700;
   cursor: pointer;
   transition: filter 120ms ease, transform 120ms ease;
@@ -208,7 +216,7 @@ button.secondary { background: var(--surface-alt); color: var(--text); border: 1
 button.danger { background: var(--danger); color: var(--on-danger); }
 button.link-btn { background: transparent; color: var(--muted); padding: 4px 0; font-weight: 600; }
 button.link-btn:hover { color: var(--text); }
-button.admin-btn { background: var(--admin); color: #2a1200; }
+button.admin-btn { background: var(--admin); color: var(--on-admin); }
 
 .checkbox-row {
   display: flex; gap: 10px; align-items: flex-start;
@@ -545,11 +553,39 @@ button, input, select, textarea, .list-item .actions-row button {
   border-radius: 20px; padding: 9px 16px;
 }
 .chat-send-btn {
-  /* background/color de var(--primary)/#06231e herdados da regra "button"
-     padrão do projeto — mesmo contraste já validado nos outros botões. */
+  /* background/color de var(--primary)/var(--on-primary) herdados da regra
+     "button" padrão do projeto — mesmo contraste AA dos outros botões. */
   width: 40px; height: 40px; border-radius: 50%; padding: 0; flex-shrink: 0; font-size: 16px;
 }
 .chat-send-btn:disabled { opacity: .5; }
+
+/* ===========================================================================
+   Fase 4 — qualidade de interface (Equipe 4): alvos de toque, foco e o
+   visualizador de módulos. Só CSS; o que depende de HTML/JS está nos pedidos
+   de integração de docs/FASE_4_QUALIDADE.md.
+=========================================================================== */
+/* Botões pequenos (fechar do lightbox, voltar/enviar do chat, menu da bolha)
+   ganham 44 px em telas de toque, o mínimo confortável para o dedo. */
+@media (pointer: coarse) {
+  .lightbox-close, .chat-back-btn, .chat-send-btn { width: 44px; height: 44px; min-height: 44px; }
+  .chat-bubble-menu-btn { width: 32px; height: 32px; top: -12px; right: -12px; opacity: 1; }
+  .chat-bubble-actions button { min-height: 44px; }
+}
+
+/* Cartões da área "Aprender": foco visível do mesmo jeito que o hover. */
+button.learn-card:focus-visible { border-color: var(--primary); }
+button.learn-card:hover .learn-card-title,
+button.learn-card:focus-visible .learn-card-title { color: var(--primary-strong); }
+
+/* Com um módulo aberto no celular, o cabeçalho da plataforma não precisa
+   do rótulo "Área do membro": sobra altura para o iframe. */
+@media (max-width: 480px) {
+  .app-shell:has(#learn-viewer:not(.hidden)) .app-header .scope-label { display: none; }
+  .learn-viewer-bar button { padding-left: 12px; padding-right: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .learn-frame { scroll-behavior: auto; }
+}
 
 /* ---------- Área "Aprender" (módulos LAIFT — learning.js) ---------- */
 /* Com "Aprender" a barra de membro chega a 9 botões: em telas muito
@@ -603,11 +639,12 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
   display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
 }
 .learn-viewer-bar strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* Ocupa a altura útil entre o cabeçalho e a barra inferior. Fundo branco
-   fixo: os módulos ainda não têm tema escuro (Fase 4 do plano). */
+/* Ocupa a altura útil entre o cabeçalho e a barra inferior. Fundo do tema:
+   os módulos agora seguem claro/escuro (modulos/shared/laift-tokens.css),
+   então um fundo branco fixo piscava ao abrir um módulo no tema escuro. */
 .learn-frame {
   display: block; width: 100%; height: calc(100dvh - 230px); min-height: 480px;
-  border: 1px solid var(--border); border-radius: var(--radius-md); background: #ffffff;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface);
 }
 .learn-credential-qr {
   display: block; width: 220px; height: 220px; margin: 12px auto; image-rendering: pixelated;

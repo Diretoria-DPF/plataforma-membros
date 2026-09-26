@@ -26,15 +26,22 @@
    1. VARIÁVEIS DE TEMA
    ============================================================================ */
 :root {
+  /* Fase 4: o Estúdio é escuro por natureza (<html class="laift-always-dark">:
+     visualização 3D/WebGL e paleta de dados em neon) e agora herda do design
+     system (../../shared/laift-tokens.css) as superfícies, bordas, texto e
+     fontes; a identidade fica no acento ciano (--module-accent). */
+  --module-accent-dark: #00e5ff;
+  --module-on-accent-dark: #001a1f;
+
   /* ─── Fundos ───────────────────────────────────────────────────────── */
-  --studio-bg-space: #01040a;
-  --studio-bg-surface: #020617;
-  --studio-bg-card: rgba(15, 23, 42, 0.7);
-  --studio-bg-header: rgba(9, 14, 28, 0.95);
-  --studio-bg-ribbon: #080d1a;
+  --studio-bg-space: var(--laift-bg);
+  --studio-bg-surface: var(--laift-surface);
+  --studio-bg-card: color-mix(in srgb, var(--laift-surface-alt) 85%, transparent);
+  --studio-bg-header: var(--laift-surface);
+  --studio-bg-ribbon: var(--laift-surface-alt);
 
   /* ─── Neons e acentos ─────────────────────────────────────────────── */
-  --neon-cyan: #00e5ff;
+  --neon-cyan: var(--module-accent);
   --neon-cyan-glow: rgba(0, 229, 255, 0.35);
   --neon-sky: #38bdf8;
   --neon-green: #00ff88;
@@ -45,13 +52,13 @@
   --neon-purple: #a855f7;
 
   /* ─── Bordas ──────────────────────────────────────────────────────── */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-active: #1e3a5f;
+  --border-subtle: var(--laift-border);
+  --border-active: var(--laift-border-strong);
   --border-focus: #38bdf8;
 
   /* ─── Tipografia ──────────────────────────────────────────────────── */
-  --font-ui: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'Fira Code', 'Courier New', monospace;
+  --font-ui: var(--laift-font);
+  --font-mono: var(--laift-font-mono);
 
   /* ─── Transições ──────────────────────────────────────────────────── */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2406,3 +2413,100 @@ body.presentation-mode .studio-watermark-overlay {
 /* ============================================================================
    FIM DO ARQUIVO studio.css — v4.0
    ============================================================================ */
+
+
+/* ============================================================================
+   15. FASE 4 — CLASSES DO DOM SEGURO E ACESSIBILIDADE
+   (substituem estilos que vinham embutidos em strings de innerHTML)
+   ============================================================================ */
+.studio-empty-msg { text-align: center; padding: 28px 16px; color: var(--laift-muted); font-size: 0.8rem; line-height: 1.5; }
+.studio-empty-msg.is-error,
+.studio-inline-error { color: var(--neon-rose); }
+.studio-inline-error { font-size: 0.75rem; }
+.studio-empty-msg .spinner-inline { margin-right: 8px; }
+.studio-hint { font-size: 0.72rem; }
+.studio-accent-text { color: var(--neon-cyan); }
+.studio-smiles-line { font-family: var(--font-mono); font-size: 0.7rem; color: #cbd5e1; word-break: break-all; }
+.bio-groups-chips { margin-top: 6px; }
+.bio-card-tag { align-self: flex-start; margin-top: 2px; }
+.studio-section-title { color: var(--laift-text); font-size: 0.82rem; margin: 12px 0 8px; }
+.valence-idle { background: rgba(255, 255, 255, 0.04); color: var(--laift-muted); }
+.ptable-pharma-title { color: var(--neon-cyan); display: block; margin-bottom: 3px; }
+.similarity-result-mass { text-align: right; font-family: var(--font-mono); font-size: 0.65rem; color: var(--laift-muted); }
+.chembl-activity-scroll { max-height: 400px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 6px; }
+.studio-3d-unavailable {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  max-width: 80%; text-align: center; line-height: 1.6;
+  color: var(--neon-yellow); font-size: 0.8rem;
+}
+.studio-3d-unavailable span { color: var(--laift-muted); font-size: 0.7rem; }
+
+/* Foco visível em todos os controles (itens de lista e da tabela periódica
+   agora são focáveis por teclado). */
+.studio-btn:focus-visible,
+.tool-btn:focus-visible,
+.category-pill:focus-visible,
+.ptable-pill:focus-visible,
+.ptable-tile:focus-visible,
+.compound-item:focus-visible,
+.similarity-result-item:focus-visible,
+.btn-close-modal:focus-visible,
+.cadd-modal button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* Telas de toque: alvos de pelo menos 44 px. Os itens das faixas roláveis
+   não encolhem (sem isso os rótulos se sobrepunham). */
+@media (pointer: coarse) {
+  .studio-btn,
+  .tool-btn,
+  .category-pill,
+  .ptable-pill,
+  .btn-close-modal,
+  .cadd-modal button,
+  .unstable-actions button {
+    min-height: 44px;
+  }
+  .btn-icon-only,
+  .tool-btn,
+  .btn-close-modal {
+    min-width: 44px;
+  }
+  .category-pill,
+  .ptable-pill,
+  .tool-btn {
+    flex-shrink: 0;
+  }
+}
+
+/* Celular: o cabeçalho de 46 px não comportava marca + 9 botões de 44 px.
+   Vira duas linhas (marca / ações roláveis) e a área de trabalho ocupa o
+   resto da altura. */
+@media (max-width: 600px) {
+  .studio-main-header {
+    height: auto;
+    min-height: 46px;
+    max-height: none;
+    flex-wrap: wrap;
+    padding: 4px 6px;
+    row-gap: 4px;
+  }
+  .header-branding { flex: 1 1 100%; }
+  .header-control-actions {
+    flex: 1 1 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 4px;
+  }
+  .header-control-actions > * { flex-shrink: 0; }
+  .studio-workspace-grid {
+    height: auto;
+    max-height: none;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .studio-toolbar-ribbon { overflow-x: auto; }
+}

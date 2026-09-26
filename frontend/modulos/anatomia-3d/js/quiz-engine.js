@@ -26,7 +26,10 @@ const QuizEngine = (() => {
   let maxStreak = 0;
   let timerInterval = null;
   let timeLeft = 0;
+  let sessionStartedAt = 0;
   const QUESTION_TIME_SECONDS = 30;
+  const html = LaiftDom.html;
+  const setHtml = LaiftDom.setHtml;
 
   // Elementos do DOM
   let hudContainer = null;
@@ -151,7 +154,9 @@ const QuizEngine = (() => {
       gap: 8px;
     `;
 
-    hudContainer.innerHTML = `
+    // Marcação fixa do HUD; o único dado interpolado (nº de casos) é numérico.
+    // "Sair" usa data-action (sem onclick inline).
+    setHtml(hudContainer, html`
       <!-- Placa Superior de Telemetria -->
       <div style="background:rgba(2,6,23,0.92); border:1px solid #334155; border-radius:8px; padding:8px 12px; backdrop-filter:blur(8px); display:flex; justify-content:space-between; align-items:center; pointer-events:auto; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
         <div style="display:flex; align-items:center; gap:8px;">
@@ -164,10 +169,10 @@ const QuizEngine = (() => {
 
         <div style="display:flex; align-items:center; gap:12px;">
           <div style="text-align:right;">
-            <div id="quizTimerText" style="font-size:0.85rem; font-weight:900; color:#facc15; font-family:monospace;">30s</div>
+            <div id="quizTimerText" role="timer" style="font-size:0.85rem; font-weight:900; color:#facc15; font-family:monospace;">30s</div>
             <div id="quizScoreText" style="font-size:0.65rem; color:#34d399; font-weight:bold;">0 pts</div>
           </div>
-          <button type="button" id="btnAbortQuiz" onclick="QuizEngine.stopQuiz()" style="background:transparent; border:1px solid #ef4444; color:#ef4444; font-size:0.68rem; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;" title="Encerrar Sessão">Sair</button>
+          <button type="button" id="btnAbortQuiz" data-action="QuizEngine.stopQuiz" aria-label="Encerrar o quiz" style="background:transparent; border:1px solid #ef4444; color:#ef4444; font-size:0.68rem; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;" title="Encerrar Sessão">Sair</button>
         </div>
       </div>
 
@@ -178,9 +183,10 @@ const QuizEngine = (() => {
         <div id="quizPrompt" style="font-size:0.76rem; font-weight:700; color:#38bdf8; background:rgba(56,189,248,0.1); padding:8px; border-radius:6px; border:1px dashed rgba(56,189,248,0.3);">
           Aponte no modelo 3D...
         </div>
-        <div id="quizFeedbackBox" class="hidden" style="margin-top:8px; font-size:0.72rem; padding:8px; border-radius:6px; line-height:1.4;"></div>
+        <div id="quizFeedbackBox" class="hidden" role="status" aria-live="polite" style="margin-top:8px; font-size:0.72rem; padding:8px; border-radius:6px; line-height:1.4;"></div>
       </div>
-    `;
+      <div id="quizResultCard" class="hidden" role="region" aria-label="Resultado do quiz 3D" style="background:rgba(15,23,42,0.94); border:1px solid #334155; border-left:4px solid #10b981; border-radius:8px; padding:12px; backdrop-filter:blur(8px); pointer-events:auto; box-shadow:0 6px 18px rgba(0,0,0,0.6);"></div>
+    `);
 
     const container3D = document.getElementById("canvas-3d-container");
     if (container3D) {
@@ -204,6 +210,13 @@ const QuizEngine = (() => {
     maxStreak = 0;
 
     hudContainer.classList.remove("hidden");
+    // "Refazer" depois do resultado: o cartão do caso volta a aparecer (antes
+    // o resultado sobrescrevia o cartão e o quiz quebrava ao recomeçar).
+    const questionCard = document.getElementById("quizQuestionCard");
+    const resultCard = document.getElementById("quizResultCard");
+    if (questionCard) questionCard.classList.remove("hidden");
+    if (resultCard) resultCard.classList.add("hidden");
+    sessionStartedAt = Date.now();
 
     // Certifica-se de que a aba da anatomia esteja ativa e pronta
     if (typeof AppController !== "undefined" && typeof AppController.switchTab === "function") {
@@ -236,7 +249,7 @@ const QuizEngine = (() => {
 
     const fbBox = document.getElementById("quizFeedbackBox");
     fbBox.className = "hidden";
-    fbBox.innerHTML = "";
+    LaiftDom.clear(fbBox);
 
     // Inicia Cronômetro Decrescente
     clearInterval(timerInterval);
@@ -315,11 +328,11 @@ const QuizEngine = (() => {
     fbBox.style.background = "rgba(16, 185, 129, 0.15)";
     fbBox.style.border = "1px solid rgba(16, 185, 129, 0.4)";
     fbBox.style.color = "#34d399";
-    fbBox.innerHTML = `
+    setHtml(fbBox, html`
       <div style="font-weight:800; font-size:0.78rem; margin-bottom:2px;">✔ ACERTO CIRÚRGICO! (+${pointsAwarded} pts)</div>
       <div><strong>Estrutura:</strong> ${caso.targetNome}</div>
       <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px;">${caso.explicacao}</div>
-    `;
+    `);
 
     // Resposta tátil em dispositivos móveis compatíveis
     if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
@@ -338,12 +351,13 @@ const QuizEngine = (() => {
     fbBox.style.background = "rgba(239, 68, 68, 0.15)";
     fbBox.style.border = "1px solid rgba(239, 68, 68, 0.4)";
     fbBox.style.color = "#f87171";
-    fbBox.innerHTML = `
+    // O nome da malha vem do modelo 3D (.glb): escapado como qualquer dado.
+    setHtml(fbBox, html`
       <div style="font-weight:800; font-size:0.78rem; margin-bottom:2px;">❌ ESTRUTURA INCORRETA</div>
       <div>Você selecionou: <em>${cleanHit || "Tecido Adjacente"}</em></div>
       <div><strong>Alvo Correto:</strong> ${caso.targetNome}</div>
       <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px;">${caso.explicacao}</div>
-    `;
+    `);
 
     if (navigator.vibrate) navigator.vibrate(140);
 
@@ -361,11 +375,11 @@ const QuizEngine = (() => {
     fbBox.style.background = "rgba(245, 158, 11, 0.15)";
     fbBox.style.border = "1px solid rgba(245, 158, 11, 0.4)";
     fbBox.style.color = "#fbbf24";
-    fbBox.innerHTML = `
+    setHtml(fbBox, html`
       <div style="font-weight:800; font-size:0.78rem; margin-bottom:2px;">⏱️ TEMPO ESGOTADO!</div>
       <div><strong>Estrutura Correta:</strong> ${caso.targetNome}</div>
       <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px;">${caso.explicacao}</div>
-    `;
+    `);
 
     setTimeout(() => {
       presentQuestion(currentQuestionIndex + 1);
@@ -388,11 +402,16 @@ const QuizEngine = (() => {
       ApiCache.registrarSimulacao(`Quiz 3D LAIFT (${accuracy}% Acertos)`, "RAYCASTING");
     }
 
+    submitAttempt(correctHits, totalQuestions);
+
     const card = document.getElementById("quizQuestionCard");
-    card.style.borderLeftColor = "#10b981";
-    card.innerHTML = `
+    const resultCard = document.getElementById("quizResultCard");
+    if (card) card.classList.add("hidden");
+    if (!resultCard) return;
+    resultCard.classList.remove("hidden");
+    setHtml(resultCard, html`
       <div style="text-align:center; padding:10px 0;">
-        <span style="font-size:2rem;">🏆</span>
+        <span style="font-size:2rem;" aria-hidden="true">🏆</span>
         <h3 style="color:#38bdf8; font-size:1.05rem; margin:6px 0 2px 0;">Sessão Concluída com Sucesso!</h3>
         <p style="color:#94a3b8; font-size:0.75rem; margin-bottom:12px;">Avaliação prática de raciocínio espacial e farmacoterapêutica.</p>
 
@@ -410,13 +429,39 @@ const QuizEngine = (() => {
             <div style="color:#38bdf8; font-size:1.1rem; font-weight:bold;">+${academicHoursAwarded}h</div>
           </div>
         </div>
+        <p id="quizSubmitStatus" role="status" aria-live="polite" style="font-size:0.7rem; color:#94a3b8; margin:0 0 10px;"></p>
 
-        <div style="display:flex; gap:8px; justify-content:center;">
-          <button type="button" class="btn-primary" onclick="QuizEngine.startQuiz()" style="padding:8px 16px; font-size:0.76rem;">🔄 Refazer Quiz</button>
-          <button type="button" class="btn-secondary" onclick="QuizEngine.stopQuiz()" style="padding:8px 16px; font-size:0.76rem;">Fechar</button>
+        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+          <button type="button" class="btn-primary" data-action="QuizEngine.startQuiz" style="padding:8px 16px; font-size:0.76rem;">🔄 Refazer Quiz</button>
+          <button type="button" class="btn-secondary" data-action="QuizEngine.stopQuiz" style="padding:8px 16px; font-size:0.76rem;">Fechar</button>
         </div>
       </div>
-    `;
+    `);
+  }
+
+  /**
+   * Registra o resultado no desempenho da pessoa (Contrato 4:
+   * apiLearnSubmitQuizAttempt com module 'anatomia', pela ponte LaiftApi).
+   * O quiz é cronometrado por questão, por isso conta como modo 'prova'.
+   */
+  function submitAttempt(correct, total) {
+    const report = (texto) => {
+      const el = document.getElementById("quizSubmitStatus");
+      if (el) el.textContent = texto;
+    };
+    if (!window.LaiftApi || typeof window.LaiftApi.call !== "function") return;
+    const payload = {
+      module: "anatomia",
+      mode: "prova",
+      correct: correct,
+      total: total,
+      durationSeconds: Math.max(1, Math.round((Date.now() - (sessionStartedAt || Date.now())) / 1000)),
+      topics: ["Quiz 3D — anatomia aplicada"]
+    };
+    Promise.resolve()
+      .then(() => window.LaiftApi.call("apiLearnSubmitQuizAttempt", payload))
+      .then((res) => report(res && res.success ? "✔ Resultado registrado no seu desempenho." : "Não foi possível registrar o resultado agora."))
+      .catch(() => report("Não foi possível registrar o resultado agora."));
   }
 
   function stopQuiz() {
@@ -436,9 +481,15 @@ const QuizEngine = (() => {
     stopQuiz,
     evaluateUserAnswer,
     isQuizActive: () => isQuizRunning,
+    // Usado pelos testes E2E para simular o fim de uma sessão.
+    completeQuiz,
     getCurrentScore: () => score
   };
 })();
+
+// Exposto em window para data-action ("QuizEngine.startQuiz"): `const` no
+// topo não vira propriedade de window.
+window.QuizEngine = QuizEngine;
 
 // Inicialização segura com o carregamento do DOM
 if (document.readyState === "loading") {
