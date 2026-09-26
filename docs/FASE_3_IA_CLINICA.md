@@ -294,7 +294,7 @@ Todos são acréscimos compatíveis ou detalhes que o contrato não fixava:
   - **Riscos residuais novos.** Acrescentar: injeção de prompt (mitigações desta página), gabarito do cliente em casos locais (afeta só a própria nota) e cotas contornáveis com muitas contas (limitadas pelo disjuntor).
   - **Segredos.** Acrescentar `GROQ_API_KEYS` à seção de rotação de credenciais: gerar novas chaves no console do Groq, rodar `wrangler secret put GROQ_API_KEYS` e revogar as antigas.
 - **`README.md`.** Uma linha sobre a IA na Worker e o painel admin **IA**.
-- **`worker/test/handlers.test.js`.** O título do teste da allowlist diz "66 ações", mas a lista já tinha 70 antes desta fase e agora tem 80. Vale ajustar o número ou tirá-lo do título na integração. Não mexi para não conflitar com o acréscimo da Equipe 2.
+- **`worker/test/handlers.test.js`.** ✅ Resolvido na integração: o título do teste da allowlist traz o total real (89 ações depois das Fases 2 e 3).
 - **`docs/POLITICA_DE_PRIVACIDADE.md`.** Texto proposto, com atualização da versão em `LEGAL_VERSIONS.PRIVACY` e no `index.html`.
 
   Nova linha na tabela da seção 3:
