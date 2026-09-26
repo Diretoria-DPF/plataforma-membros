@@ -31,6 +31,36 @@
   // Coleção de sistemas carregados dinamicamente
   const loadedSystems = {};
 
+  // -------------------------------------------------------------------------
+  // MODELO REAL (models/body.glb, Draco) — ver classifyRealMesh() abaixo.
+  // -------------------------------------------------------------------------
+  // `usingRealModel` liga quando o GLB real (826 malhas, nomes anatômicos em
+  // inglês) substitui o manequim procedural. Enquanto falso, todo o código de
+  // camadas/sistemas abaixo usa os `mesh_*` fictícios do manequim (compat.).
+  let usingRealModel = false;
+  // Lista plana das malhas reais + sua classificação, montada uma única vez
+  // no carregamento (evita `bodyModel.traverse` repetido a cada interação e,
+  // principalmente, qualquer travessia por frame de animação).
+  let realMeshEntries = [];
+  let loadingBadge = null;
+
+  // O body.glb (Z-Anatomy, CC BY-SA) traz só esqueleto + músculos + estruturas
+  // articulares (bursas, bainhas sinoviais/fibrosas) — sem vísceras, vasos,
+  // nervos ou pele. `extras.type` do glTF só marca 'bone'/'muscle'; o resto
+  // (bursas e bainhas, sem type) é reconhecido pelo nome. Ver docs/FASE_4_QUALIDADE.md.
+  const REAL_LAYER_BY_SYSTEM = { esqueletico: 3, muscular: 2, articular: 3 };
+  const MAX_REAL_LAYER = 3; // camada mais profunda com malha de verdade neste GLB
+
+  function classifyRealMesh(displayName, extrasType) {
+    const n = (displayName || "").toLowerCase();
+    if (extrasType === "bone") return { systemId: "esqueletico", layer: 3 };
+    if (extrasType === "muscle") return { systemId: "muscular", layer: 2 };
+    if (/bursa|sheath/.test(n)) return { systemId: "articular", layer: 3 };
+    // Não deveria ocorrer no body.glb atual (todas as 826 malhas caem nos
+    // casos acima), mas fica um retorno seguro para um GLB futuro diferente.
+    return { systemId: null, layer: MAX_REAL_LAYER };
+  }
+
   // Pins / Hotspots de referência anatômica
   let pinsGroup = null;
   let pinsPulseTime = 0;
@@ -332,8 +362,15 @@
       renderer.outputEncoding = THREE.sRGBEncoding;
     }
 
-    container.replaceChildren();
-    container.appendChild(renderer.domElement);
+    // `insertBefore` (não `replaceChildren`+`appendChild`): o contêiner já
+    // tem, no HTML, o overlay de carregamento e o HUD da estrutura
+    // selecionada (#loading-3d-overlay, #organ-hud) — substituir todos os
+    // filhos os removeria da árvore (as referências em `loadingOverlay`/
+    // `organHud`/`organNameEl` continuariam válidas, mas apontando para nós
+    // órfãos, nunca visíveis e nunca encontrados por um getElementById
+    // depois). O canvas entra como primeiro filho; overlay/HUD (com
+    // position:absolute) ficam por cima dele.
+    container.insertBefore(renderer.domElement, container.firstChild);
 
     // Sistema de iluminação tripla
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
@@ -364,7 +401,10 @@
     setupPhysioParticleSystem();
     setupPinsGroup();
 
-    // Constrói o corpo anatômico imediatamente
+    // Constrói o corpo anatômico imediatamente: o manequim procedural fica
+    // interativo (quiz, dissecção, seleção) sem esperar o GLB real — que só o
+    // substitui quando (e se) terminar de carregar. Isso é o que permite o
+    // quiz e o layout funcionarem normalmente enquanto o modelo real carrega.
     buildComprehensiveMannequin();
 
     if (loadingOverlay) {
@@ -474,9 +514,102 @@
     setDissectionDepth(currentDissectionLevel);
   }
 
+  /** Indicador não bloqueante: fica visível durante o carregamento do GLB
+   * real, mas nunca cobre o canvas nem intercepta cliques — o manequim
+   * procedural (já na cena) continua clicável e o quiz pode começar. */
+  function showLoadingBadge(texto) {
+    if (!container) return;
+    if (!loadingBadge) {
+      loadingBadge = document.createElement("div");
+      loadingBadge.id = "atlasRealModelBadge";
+      loadingBadge.setAttribute("role", "status");
+      loadingBadge.setAttribute("aria-live", "polite");
+      loadingBadge.style.cssText = "position:absolute; top:10px; right:10px; max-width:46%; z-index:40; background:rgba(2,6,23,0.85); border:1px solid #334155; color:#38bdf8; font-size:0.66rem; font-weight:700; padding:4px 8px; border-radius:6px; pointer-events:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;";
+      container.appendChild(loadingBadge);
+    }
+    loadingBadge.textContent = texto;
+    loadingBadge.classList.remove("hidden");
+  }
+
+  function hideLoadingBadge() {
+    if (loadingBadge) loadingBadge.classList.add("hidden");
+  }
+
+  /**
+   * Classifica e indexa cada malha do GLB real numa única travessia (usada
+   * pelos sistemas/camadas/isolamento depois — nunca refeita por frame).
+   * Também escreve em `child.userData.laift` para consulta O(1) no clique.
+   */
+  function indexRealModel(root) {
+    realMeshEntries = [];
+    root.traverse((child) => {
+      if (!child.isMesh) return;
+      const extras = child.userData || {};
+      const displayName = extras.name || child.name || "Estrutura";
+      const info = classifyRealMesh(displayName, extras.type);
+      child.userData.laift = {
+        systemId: info.systemId,
+        layer: info.layer,
+        displayName: displayName,
+        description: typeof extras.description === "string" ? extras.description.trim() : "",
+        wikiLink: typeof extras.wikiLink === "string" ? extras.wikiLink : "",
+        // Material de origem (glTF), preservado para as variantes de
+        // opacidade compartilhadas — getMaterialVariant() nunca clona a
+        // partir de uma variante já trocada, sempre a partir deste original.
+        baseMaterial: child.material
+      };
+      organStates[child.name] = { visible: true, opacity: 1.0 };
+      realMeshEntries.push(child);
+    });
+  }
+
+  /** Centraliza a câmera e o alvo do OrbitControls na caixa delimitadora do
+   * modelo carregado — o manequim procedural já nasce nessas coordenadas,
+   * mas o GLB real (outra fonte, outra escala/origem) precisa ser enquadrado. */
+  function frameCameraToModel(object3d) {
+    if (!camera) return;
+    const box = new THREE.Box3().setFromObject(object3d);
+    if (box.isEmpty()) return;
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    const fitDistance = (maxDim / 2) / Math.tan((camera.fov * Math.PI) / 360) * 1.35;
+
+    if (controls) controls.target.copy(center);
+    camera.position.set(center.x, center.y, center.z + fitDistance);
+    camera.near = Math.max(0.01, fitDistance / 100);
+    camera.far = fitDistance * 100;
+    camera.updateProjectionMatrix();
+    if (controls) {
+      controls.minDistance = fitDistance / 20;
+      controls.maxDistance = fitDistance * 4;
+      controls.update();
+    }
+  }
+
   function attemptLoadExternalGLB() {
     if (typeof THREE.GLTFLoader !== "function") return;
     const loader = new THREE.GLTFLoader();
+
+    // Draco: o body.glb é exportado com KHR_draco_mesh_compression
+    // (extensionsRequired) — sem o decodificador o GLTFLoader falha a malha
+    // inteira. Decodificador vendorizado (frontend/modulos/anatomia-3d/vendor/
+    // draco/, do pacote npm three@0.128.0) — nada de CDN externo.
+    if (typeof THREE.DRACOLoader === "function") {
+      const dracoLoader = new THREE.DRACOLoader();
+      dracoLoader.setDecoderPath("vendor/draco/");
+      // Padrão da lib é 4 workers, cada um compilando o próprio módulo wasm
+      // (826 malhas comprimidas) — sob CPU disputada (várias sessões de
+      // navegador do E2E ao mesmo tempo) isso já produziu falha intermitente
+      // na compilação. 2 workers é suficiente para decodificar em segundos e
+      // reduz o pico de WebAssembly.instantiate() simultâneos.
+      dracoLoader.setWorkerLimit(2);
+      loader.setDRACOLoader(dracoLoader);
+    } else {
+      console.warn("[ThreeEngine] DRACOLoader ausente — GLB comprimido com Draco não vai carregar.");
+    }
+
+    showLoadingBadge("Carregando atlas anatômico real…");
 
     loader.load(
       "models/body.glb",
@@ -484,24 +617,29 @@
         if (bodyModel) scene.remove(bodyModel);
         bodyModel = gltf.scene;
         bodyModel.position.set(0, 0, 0);
+        usingRealModel = true;
 
-        bodyModel.traverse((child) => {
-          if (child.isMesh && child.material) {
-            child.material = child.material.clone();
-            child.material.transparent = true;
-            child.material.depthWrite = true;
-            organStates[child.name] = { visible: true, opacity: child.material.opacity || 1.0 };
-            if (child.material.color) originalColors.set(child.name, child.material.color.getHex());
-          }
-        });
-
+        indexRealModel(bodyModel);
         scene.add(bodyModel);
+        frameCameraToModel(bodyModel);
         setDissectionDepth(currentDissectionLevel);
-        console.log("[ThreeEngine] Modelo GLB externo carregado e integrado.");
+        hideLoadingBadge();
+
+        window.__atlasModelState = { ready: true, real: true, meshCount: realMeshEntries.length, error: null };
+        window.dispatchEvent(new CustomEvent("laift:atlas-model-ready", { detail: window.__atlasModelState }));
+        console.log(`[ThreeEngine] Modelo GLB real carregado: ${realMeshEntries.length} malhas anatômicas.`);
       },
-      undefined,
+      (progress) => {
+        if (progress && progress.total) {
+          showLoadingBadge(`Carregando atlas anatômico real… ${Math.min(99, Math.round((progress.loaded / progress.total) * 100))}%`);
+        }
+      },
       (err) => {
-        console.log("[ThreeEngine] Operando com manequim procedural:", err.message);
+        hideLoadingBadge();
+        usingRealModel = false;
+        window.__atlasModelState = { ready: true, real: false, meshCount: 0, error: err && err.message };
+        window.dispatchEvent(new CustomEvent("laift:atlas-model-ready", { detail: window.__atlasModelState }));
+        console.log("[ThreeEngine] Operando com manequim procedural (GLB real indisponível):", err && err.message);
       }
     );
   }
@@ -509,8 +647,51 @@
   // -------------------------------------------------------------------------
   // 6. CONTROLES DE VISIBILIDADE, OPACIDADE E DISSECÇÃO
   // -------------------------------------------------------------------------
+  // O GLB real só tem 2 materiais de origem (osso/músculo) para 826 malhas.
+  // Em vez de clonar o material de cada malha (826 clones desnecessários),
+  // as variantes de opacidade abaixo são compartilhadas por (material
+  // original × opacidade) — no máximo umas poucas instâncias no total.
+  const materialVariantCache = new Map();
+  function getMaterialVariant(baseMaterial, opacity) {
+    const key = baseMaterial.uuid + "|" + opacity;
+    let variant = materialVariantCache.get(key);
+    if (!variant) {
+      variant = baseMaterial.clone();
+      variant.transparent = opacity < 1.0;
+      variant.opacity = opacity;
+      variant.depthWrite = opacity > 0.2;
+      materialVariantCache.set(key, variant);
+    }
+    return variant;
+  }
+
+  function applyRealMeshOpacity(child, opacity) {
+    const laift = child.userData.laift;
+    child.material = getMaterialVariant(laift.baseMaterial, opacity);
+    child.visible = opacity > 0.005;
+    organStates[child.name] = { visible: child.visible, opacity: opacity };
+  }
+
+  /** Malhas do manequim procedural continuam usando o matching por
+   * wildcard/nome (`mesh_*`) — o GLB real usa `matchesRealMesh` (nome do nó
+   * OU nome de exibição do glTF), já que os padrões antigos (`*heart*` etc.)
+   * não têm correspondência nos nomes anatômicos reais. */
+  function matchesRealMesh(child, key) {
+    const laift = child.userData.laift;
+    return matchesWildcard(child.name, key) || (laift && matchesWildcard(laift.displayName, key));
+  }
+
   function setOrganVisibility(organKey, isVisible) {
     if (!bodyModel) return;
+    if (usingRealModel) {
+      realMeshEntries.forEach((child) => {
+        if (matchesRealMesh(child, organKey)) {
+          child.visible = isVisible;
+          organStates[child.name] = Object.assign({}, organStates[child.name], { visible: isVisible });
+        }
+      });
+      return;
+    }
     bodyModel.traverse((child) => {
       if (child.isMesh && matchesWildcard(child.name, organKey)) {
         child.visible = isVisible;
@@ -523,6 +704,13 @@
   function setOrganOpacity(organKey, opacityValue) {
     if (!bodyModel) return;
     const alpha = Math.max(0, Math.min(1, parseFloat(opacityValue)));
+
+    if (usingRealModel) {
+      realMeshEntries.forEach((child) => {
+        if (matchesRealMesh(child, organKey)) applyRealMeshOpacity(child, alpha);
+      });
+      return;
+    }
 
     bodyModel.traverse((child) => {
       if (child.isMesh && child.material && matchesWildcard(child.name, organKey)) {
@@ -539,6 +727,22 @@
 
   function isolateOrgan(organKey) {
     if (!bodyModel) return;
+
+    if (usingRealModel) {
+      // Por sistema (esqueletico/muscular/articular) OU por nome — sem malha
+      // correspondente, mantém o corpo inteiro visível em vez de esvaziar o
+      // viewport (o GLB real não tem vísceras/vasos/pele/nervos p/ isolar).
+      const bySystem = realMeshEntries.filter((c) => c.userData.laift.systemId === organKey);
+      const matches = bySystem.length ? bySystem : realMeshEntries.filter((c) => matchesRealMesh(c, organKey));
+      if (!matches.length) {
+        realMeshEntries.forEach((child) => applyRealMeshOpacity(child, 1.0));
+        return;
+      }
+      const matchSet = new Set(matches);
+      realMeshEntries.forEach((child) => applyRealMeshOpacity(child, matchSet.has(child) ? 1.0 : 0.06));
+      return;
+    }
+
     bodyModel.traverse((child) => {
       if (child.isMesh && child.material) {
         if (matchesWildcard(child.name, organKey)) {
@@ -557,6 +761,11 @@
 
   function resetOrganTree() {
     if (!bodyModel) return;
+    if (usingRealModel) {
+      realMeshEntries.forEach((child) => applyRealMeshOpacity(child, 1.0));
+      setDissectionDepth(currentDissectionLevel);
+      return;
+    }
     bodyModel.traverse((child) => {
       if (child.isMesh && child.material) {
         child.visible = true;
@@ -573,30 +782,48 @@
     currentDissectionLevel = Math.max(1, Math.min(5, parseInt(depth, 10)));
     if (!bodyModel) return;
 
-    bodyModel.traverse((child) => {
-      if (child.isMesh && child.material) {
-        let meshLayer = 5;
+    if (usingRealModel) {
+      // O body.glb só tem malha real nas camadas 2 (músculo) e 3 (osso/
+      // articular) — ver REAL_LAYER_BY_SYSTEM. Camadas 4/5 (vasos/vísceras)
+      // são fixadas na camada 3: não há malha real mais profunda para
+      // mostrar, e assim o viewport nunca fica vazio.
+      const effectiveLevel = Math.min(currentDissectionLevel, MAX_REAL_LAYER);
+      realMeshEntries.forEach((child) => {
+        const layer = child.userData.laift.layer;
+        if (layer < effectiveLevel) {
+          child.visible = false;
+        } else if (layer === effectiveLevel) {
+          applyRealMeshOpacity(child, 1.0);
+        } else {
+          applyRealMeshOpacity(child, effectiveLevel >= MAX_REAL_LAYER ? 1.0 : 0.4);
+        }
+      });
+    } else {
+      bodyModel.traverse((child) => {
+        if (child.isMesh && child.material) {
+          let meshLayer = 5;
 
-        for (let l = 1; l <= 5; l++) {
-          if (DISSECTION_LAYERS[l].keywords.some((k) => matchesWildcard(child.name, k))) {
-            meshLayer = l;
-            break;
+          for (let l = 1; l <= 5; l++) {
+            if (DISSECTION_LAYERS[l].keywords.some((k) => matchesWildcard(child.name, k))) {
+              meshLayer = l;
+              break;
+            }
+          }
+
+          if (meshLayer < currentDissectionLevel) {
+            child.visible = false;
+          } else if (meshLayer === currentDissectionLevel) {
+            child.visible = true;
+            child.material.transparent = false;
+            child.material.opacity = 1.0;
+          } else {
+            child.visible = true;
+            child.material.transparent = true;
+            child.material.opacity = currentDissectionLevel === 5 ? 1.0 : 0.4;
           }
         }
-
-        if (meshLayer < currentDissectionLevel) {
-          child.visible = false;
-        } else if (meshLayer === currentDissectionLevel) {
-          child.visible = true;
-          child.material.transparent = false;
-          child.material.opacity = 1.0;
-        } else {
-          child.visible = true;
-          child.material.transparent = true;
-          child.material.opacity = currentDissectionLevel === 5 ? 1.0 : 0.4;
-        }
-      }
-    });
+      });
+    }
 
     const badge = document.getElementById("dissectionLevelBadge");
     if (badge && DISSECTION_LAYERS[currentDissectionLevel]) {
@@ -611,15 +838,29 @@
 
     tweenCamera(sys.focoCamera, sys.targetLook);
 
-    if (bodyModel) {
-      bodyModel.traverse((child) => {
-        if (child.isMesh && child.material) {
-          const match = (sys.meshKeywords || []).some((k) => matchesWildcard(child.name, k));
-          child.material.transparent = !match;
-          child.material.opacity = match ? 1.0 : 0.08;
-        }
+    if (!bodyModel) return;
+
+    if (usingRealModel) {
+      // Só esqueletico/muscular/articular têm malha real (ver comentário no
+      // topo do arquivo); os demais sistemas (cardiovascular, nervoso...)
+      // não têm estrutura visível neste GLB — o corpo fica inteiro visível
+      // em vez de esvaziar o viewport.
+      const hasMatch = realMeshEntries.some((c) => c.userData.laift.systemId === systemId);
+      realMeshEntries.forEach((child) => {
+        const match = !hasMatch || child.userData.laift.systemId === systemId;
+        child.visible = match;
+        if (match) applyRealMeshOpacity(child, 1.0);
       });
+      return;
     }
+
+    bodyModel.traverse((child) => {
+      if (child.isMesh && child.material) {
+        const match = (sys.meshKeywords || []).some((k) => matchesWildcard(child.name, k));
+        child.material.transparent = !match;
+        child.material.opacity = match ? 1.0 : 0.08;
+      }
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -827,7 +1068,11 @@
   }
 
   function updatePhysiopathologyAnimation() {
-    if (!bodyModel) return;
+    // O GLB real (esqueleto + músculos) não tem coração nem pele — percorrer
+    // as 826 malhas a cada frame só para não achar nada seria o "per-frame
+    // traversal" que a Fase 4 pede para evitar. Essa animação (pulso cardíaco
+    // e cianose de pele na crise) fica só para o manequim procedural.
+    if (usingRealModel || !bodyModel) return;
 
     cardiacCycleTime += (heartRateBpm / 60) * 0.08;
     const pulseScale = 1.0 + Math.sin(cardiacCycleTime) * (isCrisisActive ? 0.03 : 0.06);
@@ -868,10 +1113,64 @@
     if (progress >= 1.0) isCameraTweening = false;
   }
 
+  // Destaque no GLB real: como o material é compartilhado (getMaterialVariant),
+  // mudar o emissive dele destacaria TODAS as malhas daquele grupo. Em vez
+  // disso troca-se a referência do material por uma única instância
+  // compartilhada por cor (no máx. 3: seleção/acerto/erro) e restaura-se o
+  // material anterior (o que a malha já tinha) depois do timeout — sem
+  // clonar nada por malha.
+  const highlightMaterialCache = new Map();
+  function getHighlightMaterial(colorHex) {
+    let mat = highlightMaterialCache.get(colorHex);
+    if (!mat) {
+      mat = new THREE.MeshStandardMaterial({ color: colorHex, emissive: colorHex, emissiveIntensity: 0.85, roughness: 0.4, metalness: 0.1 });
+      highlightMaterialCache.set(colorHex, mat);
+    }
+    return mat;
+  }
+  let highlightedRealMesh = null;
+  let highlightRestoreTimer = null;
+  function highlightRealMesh(mesh, colorHex, durationMs) {
+    const laift = mesh.userData.laift;
+    if (!laift) return;
+    if (highlightedRealMesh && highlightedRealMesh !== mesh) restoreRealHighlight();
+    if (highlightedRealMesh !== mesh) {
+      laift.preHighlightMaterial = mesh.material;
+      highlightedRealMesh = mesh;
+    }
+    mesh.material = getHighlightMaterial(colorHex);
+    clearTimeout(highlightRestoreTimer);
+    highlightRestoreTimer = setTimeout(restoreRealHighlight, durationMs);
+  }
+  function restoreRealHighlight() {
+    if (highlightedRealMesh && highlightedRealMesh.userData.laift) {
+      const laift = highlightedRealMesh.userData.laift;
+      highlightedRealMesh.material = laift.preHighlightMaterial || highlightedRealMesh.material;
+      laift.preHighlightMaterial = null;
+    }
+    highlightedRealMesh = null;
+  }
+  /** Primeira malha real cujo nome (ou nome de exibição) bate com `key` —
+   * varredura linear feita só em resposta a um clique/acerto (nunca por
+   * frame), igual ao `bodyModel.traverse` que ela substitui aqui. */
+  function findRealMeshByKey(key) {
+    for (let i = 0; i < realMeshEntries.length; i++) {
+      if (matchesRealMesh(realMeshEntries[i], key)) return realMeshEntries[i];
+    }
+    return null;
+  }
+
   function highlightOrgan(organKey, colorHex = COLOR_HIGHLIGHT, durationMs = 2500) {
     if (!bodyModel) return false;
-    let found = false;
 
+    if (usingRealModel) {
+      const mesh = findRealMeshByKey(organKey);
+      if (!mesh) return false;
+      highlightRealMesh(mesh, colorHex, durationMs);
+      return true;
+    }
+
+    let found = false;
     bodyModel.traverse((child) => {
       if (child.isMesh && matchesWildcard(child.name, organKey)) {
         if (hoveredMesh && hoveredMesh.material && hoveredMesh.material.emissive) {
@@ -896,6 +1195,21 @@
 
   function flashOrganFeedback(organKey, isCorrect) {
     highlightOrgan(organKey, isCorrect ? COLOR_SUCCESS : COLOR_ERROR, 2000);
+  }
+
+  /** Mostra o nome da estrutura clicada e sua descrição (texto puro,
+   * `extras.description` do glTF) no HUD — só via `LaiftDom.html`/`setHtml`
+   * (o único innerHTML permitido pela CSP dos módulos, ver safe-dom.js). */
+  function showRealStructureHud(mesh) {
+    if (!organHud || !organNameEl) return;
+    const laift = mesh.userData.laift || {};
+    const descricao = (laift.description || "").slice(0, 480).trim();
+    const link = LaiftDom.safeUrl(laift.wikiLink || "");
+    LaiftDom.setHtml(
+      organNameEl,
+      LaiftDom.html`${laift.displayName || mesh.name}${descricao ? LaiftDom.html`<div style="font-size:0.68rem; color:#94a3b8; font-weight:normal; margin-top:2px; max-height:5.2em; overflow:auto;">${descricao}${laift.description && laift.description.length > 480 ? "…" : ""}</div>` : ""}${link ? LaiftDom.html`<div style="margin-top:2px;"><a href="${link}" target="_blank" rel="noopener noreferrer" style="color:#38bdf8; font-size:0.65rem;">Wikipédia ↗</a></div>` : ""}`
+    );
+    organHud.classList.remove("hidden");
   }
 
   function processInteraction(clientX, clientY) {
@@ -935,6 +1249,13 @@
     const hits = raycaster.intersectObjects(bodyModel.children, true);
     if (hits.length > 0) {
       const obj = hits[0].object;
+
+      if (usingRealModel && obj.userData && obj.userData.laift) {
+        highlightRealMesh(obj, COLOR_HIGHLIGHT, 2500);
+        showRealStructureHud(obj);
+        return;
+      }
+
       if (hoveredMesh && hoveredMesh !== obj && hoveredMesh.material && hoveredMesh.material.emissive) {
         hoveredMesh.material.emissive.setHex(DEFAULT_EMISSIVE);
       }
@@ -1035,7 +1356,33 @@
     triggerParticleFlow: triggerParticleFlow,
     stopParticles: stopParticles,
     tweenCamera: tweenCamera,
-    onWindowResize: onWindowResize
+    onWindowResize: onWindowResize,
+    // Gancho de teste (fase4.e2e.js / atlas.e2e.js): permite esperar o GLB
+    // real terminar de carregar e inspecionar o que foi indexado, sem expor
+    // o array inteiro de malhas (826 objetos THREE.Mesh).
+    isRealModelActive: () => usingRealModel,
+    getRealMeshCount: () => realMeshEntries.length,
+    // Estatística por sistema (visível/oculto) — só para os testes E2E
+    // conferirem um toggle de sistema/camada sem expor as 826 malhas.
+    getVisibilityStats: () => {
+      const stats = {};
+      realMeshEntries.forEach((child) => {
+        const sid = (child.userData.laift && child.userData.laift.systemId) || "desconhecido";
+        if (!stats[sid]) stats[sid] = { visible: 0, hidden: 0 };
+        stats[sid][child.visible ? "visible" : "hidden"]++;
+      });
+      return stats;
+    },
+    // Seleciona programaticamente a 1ª malha real de um sistema, exatamente
+    // como um clique faria (HUD com nome + descrição) — usado pelos testes
+    // E2E para não depender de acertar a geometria certa por raycast.
+    debugSelectFirstOfSystem: (systemId) => {
+      if (!usingRealModel) return null;
+      const mesh = realMeshEntries.find((c) => c.userData.laift.systemId === systemId);
+      if (!mesh) return null;
+      showRealStructureHud(mesh);
+      return mesh.userData.laift.displayName;
+    }
   };
 
   root.ThreeEngine = ThreeEngineAPI;

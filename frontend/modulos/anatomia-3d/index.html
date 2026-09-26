@@ -6,8 +6,14 @@
 <html lang="pt-BR" class="laift-always-dark">
 <head>
   <meta charset="UTF-8">
-  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov https://apps.humanatlas.io https://purl.humanatlas.io https://3d.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa.
+       'wasm-unsafe-eval' em script-src é a ÚNICA exceção deste módulo (só ele e o Estúdio têm exceção de eval —
+       docs/SECURITY.md): o DRACOLoader (body.glb usa KHR_draco_mesh_compression) roda o decodificador num Worker
+       blob: que faz WebAssembly.instantiate() do wasm vendorizado — sem essa palavra-chave o navegador recusa a
+       compilação do módulo wasm (testado empiricamente com Playwright/Chromium: sem ela, CompileError; com só ela,
+       sem 'unsafe-eval', o modelo real carrega e decodifica as 826 malhas normalmente). 'unsafe-inline' continua
+       proibido, como em todas as páginas. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov https://apps.humanatlas.io https://purl.humanatlas.io https://3d.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -22,6 +28,9 @@
        Chart.js e o 3Dmol "latest" foram fixados). Ver docs/FASE_4_QUALIDADE.md. -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" integrity="sha384-fljlqkjWlmSFjkESkQvm77heIZpoWmXEOzlCA7kOpGUH+95Zk0yGfQieWM2q136E" crossorigin="anonymous"></script>
+  <!-- DRACOLoader (decodifica models/body.glb, KHR_draco_mesh_compression). O decodificador
+       (draco_wasm_wrapper.js/.wasm) fica em vendor/draco/ — vendorizado do pacote npm three@0.128.0,
+       não no jsDelivr, porque o worker que ele cria (blob:) faz a leitura via FileLoader same-origin. -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" integrity="sha384-TNRcLasZnnfIJJskDY5XlrfmsKTjBSy98MtyLuX+3rQWRbpSQvtFIdikNpcOh3SN" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>

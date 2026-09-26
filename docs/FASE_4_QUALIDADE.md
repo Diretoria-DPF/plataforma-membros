@@ -128,6 +128,11 @@ Os hashes foram calculados sobre os arquivos do **tarball do npm** (`npm pack <p
 
 **Observações:**
 - O `.wasm` do RDKit não tem SRI, porque o navegador não verifica integridade em `fetch` de WebAssembly. A versão fixa garante ao menos o par `.js`/`.wasm` coerente.
+- **Decodificador Draco vendorizado (não jsDelivr).** `modulos/anatomia-3d/models/body.glb` é exportado com `KHR_draco_mesh_compression` (extensionsRequired) — sem decodificar, o GLTFLoader recusa o arquivo (826 malhas) inteiro. Antes, o `THREE.GLTFLoader` do módulo não tinha `setDRACOLoader`, então o GLB real nunca carregava e a página ficava sempre no manequim procedural. O DRACOLoader (jsDelivr, tabela acima) precisa de 3 arquivos que ele mesmo busca por `decoderPath` — copiados do **mesmo pacote npm** (`three@0.128.0`, `examples/js/libs/draco/`) para `frontend/modulos/anatomia-3d/vendor/draco/`, servidos como qualquer outro arquivo estático do módulo (não do jsDelivr, porque o Worker `blob:` que os usa lê via `FileLoader` same-origin, não por `<script src>`):
+  - `draco_wasm_wrapper.js` (52,3 KiB) e `draco_decoder.wasm` (274,8 KiB) — o par que o DRACOLoader busca quando `WebAssembly` está disponível (sempre, em Chromium);
+  - `draco_decoder.js` (736,7 KiB) — variante 100% JS, buscada só se `WebAssembly` não existir; vendorizada por completude, não exercida pelos testes.
+
+  `scripts/build.js` já copiava `vendor/` e `modulos/` inteiros para `dist/`, então nenhuma mudança foi necessária ali — só em `frontend/modulos/anatomia-3d/js/three-engine.js` (`setDecoderPath('vendor/draco/')` + `loader.setDRACOLoader(...)`) e no `<meta>` de CSP do módulo (`'wasm-unsafe-eval'` — ver `docs/SECURITY.md`, "Decisões"). `dev-server.js`, `scripts/e2e/harness.js` e `scripts/serve-dist.js` já serviam `.wasm` como `application/wasm` (e `.glb` como `model/gltf-binary`) antes desta tarefa. Ver `scripts/e2e/atlas.e2e.js` para o teste funcional (826 malhas reais, toggle de sistema/camada, clique mostrando nome+descrição, zero violação de CSP).
 - Para atualizar uma biblioteca:
   1. rode `npm pack <pkg>@<nova>`;
   2. extraia o tarball;

@@ -35,15 +35,27 @@ const DIST = path.join(FRONT, 'dist');
 
 const IGNORABLE = /\b(THREE|QRCode|\$3Dmol|SmilesDrawer|Chart|OCL|Html5QrcodeScanner|initRDKitModule)\b/;
 
-// Exceção ÚNICA e documentada a "sem 'unsafe-eval' em nenhuma página" (Fase 4,
-// Onda 3 — docs/SECURITY.md): o Estúdio precisa do RDKit (WASM/embind), que só
-// inicializa com 'unsafe-eval' — testado empiricamente com Playwright/Chromium:
-// só 'wasm-unsafe-eval' não basta (o embind monta chamadas com `new Function`
-// além de compilar o próprio wasm). Nenhuma outra página tem essa exceção, e
-// 'unsafe-inline' continua proibido em TODAS elas, inclusive o Estúdio.
+// Exceções documentadas a "sem 'unsafe-eval'/'wasm-unsafe-eval' em nenhuma
+// página" (Fase 4, Onda 3 — docs/SECURITY.md):
+//  - Estúdio: precisa do RDKit (WASM/embind), que só inicializa com
+//    'unsafe-eval' — testado empiricamente com Playwright/Chromium: só
+//    'wasm-unsafe-eval' não basta (o embind monta chamadas com `new Function`
+//    além de compilar o próprio wasm).
+//  - Atlas de Anatomia (anatomia-3d): o DRACOLoader decodifica o body.glb
+//    (KHR_draco_mesh_compression) num Worker blob: que só faz
+//    WebAssembly.instantiate() do .wasm vendorizado (vendor/draco/) — testado
+//    empiricamente: SEM nenhuma palavra-chave o navegador recusa compilar o
+//    wasm (CompileError), e só 'wasm-unsafe-eval' (sem 'unsafe-eval') já basta
+//    — o decodificador não usa eval/new Function, só WebAssembly.instantiate.
+// Nenhuma outra página tem essa exceção, e 'unsafe-inline' continua proibido
+// em TODAS elas, inclusive Estúdio e Atlas.
 const STUDIO_PAGE = 'modulos/laboratorio/studio/index.html';
+const ATLAS_PAGE = 'modulos/anatomia-3d/index.html';
 function ehPaginaDoEstudio(rel) {
   return rel.split(path.sep).join('/') === STUDIO_PAGE;
+}
+function ehPaginaDoAtlas(rel) {
+  return rel.split(path.sep).join('/') === ATLAS_PAGE;
 }
 
 // ---------------------------------------------------------------------------
@@ -90,10 +102,13 @@ function staticChecks() {
     const p = parsePolicy(meta[1]);
     const script = p['script-src'] || p['default-src'] || [];
     const isStudioPage = ehPaginaDoEstudio(rel);
+    const isAtlasPage = ehPaginaDoAtlas(rel);
     if (script.includes("'unsafe-inline'")) problems.push(`${rel}: script-src com 'unsafe-inline'`);
     const evalKeywords = script.filter((s) => s === "'unsafe-eval'" || s === "'wasm-unsafe-eval'");
-    if (evalKeywords.length && !isStudioPage) problems.push(`${rel}: script-src com ${evalKeywords.join('/')} (só o Estúdio pode ter essa exceção)`);
+    if (evalKeywords.length && !isStudioPage && !isAtlasPage) problems.push(`${rel}: script-src com ${evalKeywords.join('/')} (só Estúdio/Atlas podem ter essa exceção)`);
     if (isStudioPage && !script.includes("'unsafe-eval'")) problems.push(`${rel}: Estúdio sem 'unsafe-eval' — RDKit (embind) não inicializa`);
+    if (isAtlasPage && script.includes("'unsafe-eval'")) problems.push(`${rel}: Atlas só pode ter 'wasm-unsafe-eval' (não precisa de 'unsafe-eval')`);
+    if (isAtlasPage && !script.includes("'wasm-unsafe-eval'")) problems.push(`${rel}: Atlas sem 'wasm-unsafe-eval' — DRACOLoader (WebAssembly) não inicializa`);
     if (script.some((s) => /^https?:\/\//.test(s) && s !== 'https://cdn.jsdelivr.net')) problems.push(`${rel}: script-src com host além do jsDelivr`);
     if (script.includes('*') || script.includes('https:') || script.includes('data:')) problems.push(`${rel}: script-src aberto demais`);
     if ((p['object-src'] || []).join(' ') !== "'none'") problems.push(`${rel}: object-src não é 'none'`);
