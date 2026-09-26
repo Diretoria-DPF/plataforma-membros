@@ -48,8 +48,17 @@
   // articulares (bursas, bainhas sinoviais/fibrosas) — sem vísceras, vasos,
   // nervos ou pele. `extras.type` do glTF só marca 'bone'/'muscle'; o resto
   // (bursas e bainhas, sem type) é reconhecido pelo nome. Ver docs/FASE_4_QUALIDADE.md.
+  // As vísceras/vasos que faltam são cobertos por uma camada procedural
+  // (buildOrganLayer, seção 5-B) posicionada a partir dos marcos ósseos reais
+  // (esterno, caixa torácica, coluna, quadril, crânio) — ver essa seção.
   const REAL_LAYER_BY_SYSTEM = { esqueletico: 3, muscular: 2, articular: 3 };
-  const MAX_REAL_LAYER = 3; // camada mais profunda com malha de verdade neste GLB
+  // Camada mais profunda com malha de verdade neste GLB — usada só como
+  // salvaguarda: se buildOrganLayer() não encontrar os marcos ósseos
+  // necessários (GLB futuro diferente), o slider de dissecção permanece
+  // travado em 3 (esqueleto) em vez de esvaziar o viewport nas camadas 4/5.
+  // Quando a camada de órgãos procedurais é construída com sucesso, ela sobe
+  // para 5 (ver buildOrganLayer).
+  let maxRealLayerAvailable = 3;
 
   function classifyRealMesh(displayName, extrasType) {
     const n = (displayName || "").toLowerCase();
@@ -58,7 +67,7 @@
     if (/bursa|sheath/.test(n)) return { systemId: "articular", layer: 3 };
     // Não deveria ocorrer no body.glb atual (todas as 826 malhas caem nos
     // casos acima), mas fica um retorno seguro para um GLB futuro diferente.
-    return { systemId: null, layer: MAX_REAL_LAYER };
+    return { systemId: null, layer: 3 };
   }
 
   // Pins / Hotspots de referência anatômica
@@ -563,6 +572,322 @@
     });
   }
 
+  // -------------------------------------------------------------------------
+  // 5-B. CAMADA PROCEDURAL DE ÓRGÃOS (vísceras/vasos sobre o esqueleto real)
+  // -------------------------------------------------------------------------
+  // O body.glb (Z-Anatomy) só traz esqueleto + músculos (ver comentário no
+  // topo do arquivo) — sem essa camada, os sistemas cardiovascular,
+  // respiratório, digestório, urinário, nervoso, linfático, endócrino e
+  // reprodutor (e o quiz, que mira órgãos como coração/fígado/pulmões) não
+  // teriam nenhuma malha para mostrar. Em vez de um GLB de vísceras (não há
+  // nenhum liberado e baixável via npm), reaproveitamos as formas
+  // procedurais do antigo manequim completo (mesh_*_organ / mesh_*_vessel —
+  // os mesmos nomes que bio-database.js e o quiz já esperam), mas agora
+  // posicionadas e escaladas a partir dos marcos ósseos REAIS do body.glb
+  // (esterno, caixa torácica, coluna, quadril, crânio), em vez de
+  // coordenadas fixas de um manequim genérico.
+
+  // Nomes de exibição em inglês do body.glb (ver classifyRealMesh) usados
+  // como marcos anatômicos. Cada padrão casa com o nome já "humanizado"
+  // (extras.name do glTF) indexado em child.userData.laift.displayName.
+  const ORGAN_LANDMARK_PATTERNS = {
+    thorax: /^rib cage$/i,
+    sternum: /sternum/i,
+    spineCervical: /^cervical vertebrae$/i,
+    spineThoracic: /^thoracic vertebrae$/i,
+    spineLumbar: /^lumbar vertebrae$/i,
+    pelvis: /^hip bone$/i,
+    sacrum: /^sacrum$/i,
+    // Não há uma malha única "Skull"/"Cranium" no body.glb (são só
+    // contêineres vazios) — o crânio é a união dos ossos cranianos/faciais.
+    skull: /frontal bone|parietal bone|occipital bone|temporal bone|sphenoid bone|ethmoid bone|mandible|maxilla|nasal bone|zygomatic bone|lacrimal bone|vomer|palatine bone|nasal concha/i
+  };
+
+  /** Une, numa única travessia de `realMeshEntries` (só malhas ósseas neste
+   * ponto — os órgãos ainda não existem), a caixa delimitadora de cada
+   * marco anatômico acima. Retorna `null` se os marcos essenciais (tórax e
+   * quadril) não existirem — GLB futuro incompatível — para que
+   * buildOrganLayer() desista sem quebrar nada. */
+  function computeAnatomicalLandmarks() {
+    const boxes = {};
+    realMeshEntries.forEach((mesh) => {
+      const laift = mesh.userData.laift;
+      const name = laift && laift.displayName;
+      if (!name) return;
+      for (const key in ORGAN_LANDMARK_PATTERNS) {
+        if (ORGAN_LANDMARK_PATTERNS[key].test(name)) {
+          if (!boxes[key]) boxes[key] = new THREE.Box3();
+          boxes[key].expandByObject(mesh);
+        }
+      }
+    });
+    if (!boxes.thorax || !boxes.pelvis) return null;
+
+    function summarize(box) {
+      const c = box.getCenter(new THREE.Vector3());
+      const s = box.getSize(new THREE.Vector3());
+      return { minX: box.min.x, maxX: box.max.x, minY: box.min.y, maxY: box.max.y, minZ: box.min.z, maxZ: box.max.z, cx: c.x, cy: c.y, cz: c.z, sx: s.x, sy: s.y, sz: s.z };
+    }
+    const out = {};
+    for (const key in boxes) out[key] = summarize(boxes[key]);
+    return out;
+  }
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // Geometrias unitárias compartilhadas — cada órgão é a mesma
+  // BufferGeometry escalada de forma não uniforme (elipsoide/caixa/cilindro/
+  // toro), em vez de uma geometria nova por malha (Fase 4: nada de alocação
+  // desnecessária de buffers GPU).
+  let organGeometryCache = null;
+  function getOrganGeometries() {
+    if (!organGeometryCache) {
+      organGeometryCache = {
+        sphere: new THREE.SphereGeometry(1, 16, 12),
+        box: new THREE.BoxGeometry(1, 1, 1),
+        // Eixo Y (altura) já é o padrão do THREE.CylinderGeometry — serve
+        // sem rotação para as estruturas verticais (medula, traqueia, aorta).
+        cylinder: new THREE.CylinderGeometry(1, 1, 1, 12),
+        torus: new THREE.TorusGeometry(1, 0.35, 8, 16)
+      };
+    }
+    return organGeometryCache;
+  }
+
+  // Materiais compartilhados por (cor × opacidade × emissive) — várias
+  // malhas (ex.: rim esquerdo/direito) reaproveitam a mesma instância.
+  const organMaterialCache = new Map();
+  function getOrganMaterial(color, opacity, emissive) {
+    const key = color + "|" + opacity + "|" + (emissive || 0);
+    let mat = organMaterialCache.get(key);
+    if (!mat) {
+      mat = new THREE.MeshStandardMaterial({
+        color: color,
+        transparent: opacity < 1.0,
+        opacity: opacity,
+        emissive: emissive || 0x000000,
+        roughness: 0.4,
+        metalness: 0.1,
+        depthWrite: opacity > 0.2
+      });
+      organMaterialCache.set(key, mat);
+    }
+    return mat;
+  }
+
+  // Índice (montado uma única vez) meshKey → dados clínicos do
+  // bio-database.js, para popular a descrição/sistema/camada de cada órgão
+  // procedural exatamente como o GLB real faz via extras.description — é
+  // isso que liga clique→descrição e o quiz aos órgãos procedurais.
+  let bioOrganIndex = null;
+  function getBioOrganIndex() {
+    if (bioOrganIndex) return bioOrganIndex;
+    bioOrganIndex = [];
+    if (typeof ATLAS_DATABASE !== "undefined" && Array.isArray(ATLAS_DATABASE.sistemas)) {
+      ATLAS_DATABASE.sistemas.forEach((sys) => {
+        (sys.orgaos || []).forEach((org) => {
+          if (org.meshKey) {
+            bioOrganIndex.push({ key: org.meshKey.toLowerCase(), nome: org.nome, descricao: org.descricao || "", camada: org.camada || 5, systemId: sys.id });
+          }
+        });
+      });
+    }
+    return bioOrganIndex;
+  }
+  function findBioEntryForMesh(meshName) {
+    const idx = getBioOrganIndex();
+    const lower = meshName.toLowerCase();
+    let best = null;
+    for (let i = 0; i < idx.length; i++) {
+      // meshKey mais específico (mais longo) ganha em caso de ambiguidade.
+      if (lower.includes(idx[i].key) && (!best || idx[i].key.length > best.key.length)) best = idx[i];
+    }
+    return best || { nome: null, descricao: "", camada: 5, systemId: null };
+  }
+
+  /** Cria uma malha de órgão (geometria/material compartilhados), indexa em
+   * `userData.laift` (mesmo formato das malhas reais) e registra em
+   * `realMeshEntries` — a partir daqui ela é indistinguível de uma malha do
+   * GLB real para todo o resto do motor (visibilidade, isolamento, camadas
+   * de dissecção, clique/HUD, highlight do quiz). */
+  function addOrganMesh(group, name, geomKey, scale, color, pos, opt) {
+    opt = opt || {};
+    const geoms = getOrganGeometries();
+    const opacity = opt.opacity !== undefined ? opt.opacity : 0.92;
+    const material = getOrganMaterial(color, opacity, opt.emissive);
+    const mesh = new THREE.Mesh(geoms[geomKey], material);
+    mesh.name = name;
+    mesh.position.set(pos.x, pos.y, pos.z);
+    mesh.scale.set(scale.x, scale.y, scale.z);
+
+    const bio = findBioEntryForMesh(name);
+    mesh.userData.laift = {
+      systemId: bio.systemId,
+      layer: bio.camada,
+      displayName: bio.nome || name.replace(/mesh_/g, "").replace(/_/g, " ").trim(),
+      description: bio.descricao,
+      wikiLink: "",
+      baseMaterial: material
+    };
+    organStates[name] = { visible: true, opacity: opacity };
+    group.add(mesh);
+    realMeshEntries.push(mesh);
+  }
+
+  /**
+   * Constrói vísceras/vasos plausíveis dentro do esqueleto REAL, usando os
+   * marcos ósseos indexados por computeAnatomicalLandmarks() — não
+   * coordenadas fixas de um manequim genérico. Chamada uma única vez, logo
+   * após indexRealModel(), nunca por frame.
+   *
+   * Convenção de lateralidade: o body.glb não rotula os pares ósseos como
+   * "left"/"right" (ex.: dois nós "Hip bone" idênticos) — adota-se aqui
+   * -X = lado esquerdo do paciente e +X = lado direito, de forma
+   * consistente em todos os órgãos (coração à esquerda, fígado à direita
+   * etc.), ainda que arbitrária.
+   */
+  // Guarda os marcos calculados (só leitura, não usados por frame) — expostos
+  // via ThreeEngine.getAnatomicalLandmarks() para o E2E validar as posições
+  // sem reimplementar computeAnatomicalLandmarks() no teste.
+  let lastAnatomicalLandmarks = null;
+
+  function buildOrganLayer() {
+    const L = computeAnatomicalLandmarks();
+    if (!L) return; // GLB sem os marcos esperados — mantém só o esqueleto/músculos.
+    lastAnatomicalLandmarks = L;
+
+    const group = new THREE.Group();
+    group.name = "OrganLayer";
+
+    const thorax = L.thorax;
+    const pelvis = L.pelvis;
+    const sternumZ = L.sternum ? L.sternum.cz : thorax.maxZ;
+    const spineThoracicZ = L.spineThoracic ? L.spineThoracic.cz : thorax.minZ;
+    const spineLumbarZ = L.spineLumbar ? L.spineLumbar.cz : pelvis.minZ;
+    const thoraxHalfW = (thorax.maxX - thorax.minX) / 2;
+    const pelvisHalfW = (pelvis.maxX - pelvis.minX) / 2;
+    const abdomenHalfW = (thoraxHalfW + pelvisHalfW) / 2;
+    // Topo do crânio (ápice) para o cérebro caber com folga.
+    const skull = L.skull;
+
+    // --- Cardiovascular: coração ligeiramente à esquerda, atrás do esterno
+    addOrganMesh(group, "mesh_heart_organ", "sphere",
+      { x: thorax.sx * 0.16, y: thorax.sy * 0.19, z: thorax.sz * 0.30 },
+      0xef4444, { x: -thoraxHalfW * 0.32, y: lerp(thorax.minY, thorax.maxY, 0.35), z: lerp(spineThoracicZ, sternumZ, 0.55) },
+      { emissive: 0x450a0a });
+
+    // --- Respiratório: pulmões (elipsoides pareados preenchendo o tórax) + traqueia
+    ["l", "r"].forEach((side, i) => {
+      const sign = i === 0 ? -1 : 1;
+      addOrganMesh(group, `mesh_lung_organ_${side}`, "sphere",
+        { x: thoraxHalfW * 0.44, y: thorax.sy * 0.46, z: thorax.sz * 0.46 },
+        0x06b6d4, { x: sign * thoraxHalfW * 0.52, y: lerp(thorax.minY, thorax.maxY, 0.52), z: lerp(thorax.minZ, thorax.maxZ, 0.5) },
+        { opacity: 0.55 });
+    });
+    if (L.spineCervical) {
+      const tracheaTopY = L.spineCervical.minY; // base do pescoço (larínge)
+      const tracheaBottomY = lerp(thorax.minY, thorax.maxY, 0.65); // carina
+      addOrganMesh(group, "mesh_trachea_organ", "cylinder",
+        { x: 0.012, y: tracheaTopY - tracheaBottomY, z: 0.012 },
+        0x22d3ee, { x: 0, y: (tracheaTopY + tracheaBottomY) / 2, z: lerp(spineThoracicZ, sternumZ, 0.7) });
+    }
+
+    // --- Digestório: estômago (esq.), fígado (dir.), pâncreas, alças intestinais
+    const abdomenTopY = thorax.minY; // nível do diafragma
+    addOrganMesh(group, "mesh_stomach_organ", "sphere",
+      { x: abdomenHalfW * 0.36, y: thorax.sy * 0.11, z: thorax.sz * 0.30 },
+      0xf97316, { x: -abdomenHalfW * 0.5, y: abdomenTopY - thorax.sy * 0.16, z: lerp(spineThoracicZ, sternumZ, 0.55) },
+      { emissive: 0x431407 });
+    addOrganMesh(group, "mesh_liver_organ", "box",
+      { x: abdomenHalfW * 0.85, y: thorax.sy * 0.20, z: thorax.sz * 0.55 },
+      0x854d0e, { x: abdomenHalfW * 0.5, y: abdomenTopY - thorax.sy * 0.10, z: lerp(spineThoracicZ, sternumZ, 0.6) },
+      { emissive: 0x422006 });
+    addOrganMesh(group, "mesh_pancreas_organ", "box",
+      { x: abdomenHalfW * 0.75, y: thorax.sy * 0.055, z: thorax.sz * 0.16 },
+      0xfbbf24, { x: -abdomenHalfW * 0.05, y: abdomenTopY - thorax.sy * 0.19, z: lerp(spineThoracicZ, sternumZ, 0.35) });
+    addOrganMesh(group, "mesh_intestine_small", "torus",
+      { x: abdomenHalfW * 0.62, y: thorax.sy * 0.32, z: abdomenHalfW * 0.62 },
+      0xd97706, { x: 0, y: lerp(pelvis.maxY, abdomenTopY, 0.32), z: lerp(spineThoracicZ, sternumZ, 0.55) });
+    addOrganMesh(group, "mesh_colon_organ", "torus",
+      { x: abdomenHalfW * 0.9, y: thorax.sy * 0.4, z: abdomenHalfW * 0.9 },
+      0xb45309, { x: 0, y: lerp(pelvis.maxY, abdomenTopY, 0.22), z: lerp(spineThoracicZ, sternumZ, 0.5) },
+      { opacity: 0.55 });
+
+    // --- Urinário: rins (T12-L3, posteriores) + bexiga (pelve)
+    const kidneyY = abdomenTopY - thorax.sy * 0.05;
+    const kidneyZ = lerp(spineThoracicZ, sternumZ, 0.22);
+    ["l", "r"].forEach((side, i) => {
+      const sign = i === 0 ? -1 : 1;
+      addOrganMesh(group, `mesh_kidney_organ_${side}`, "sphere",
+        { x: abdomenHalfW * 0.16, y: thorax.sy * 0.11, z: thorax.sz * 0.24 },
+        0xeab308, { x: sign * abdomenHalfW * 0.55, y: kidneyY, z: kidneyZ },
+        { emissive: 0x422006 });
+      addOrganMesh(group, `mesh_adrenal_organ_${side}`, "sphere",
+        { x: abdomenHalfW * 0.06, y: thorax.sy * 0.04, z: thorax.sz * 0.08 },
+        0xf472b6, { x: sign * abdomenHalfW * 0.38, y: kidneyY + thorax.sy * 0.08, z: kidneyZ });
+    });
+    addOrganMesh(group, "mesh_bladder_organ", "sphere",
+      { x: pelvisHalfW * 0.42, y: pelvis.sy * 0.22, z: pelvis.sz * 0.32 },
+      0xfacc15, { x: 0, y: lerp(pelvis.minY, pelvis.maxY, 0.25), z: lerp(pelvis.minZ, pelvis.maxZ, 0.65) });
+
+    // --- Linfático/imunológico: baço (esq., dorsal ao estômago) + timo (mediastino superior)
+    addOrganMesh(group, "mesh_spleen_organ", "sphere",
+      { x: abdomenHalfW * 0.16, y: thorax.sy * 0.11, z: thorax.sz * 0.16 },
+      0x10b981, { x: -abdomenHalfW * 0.78, y: abdomenTopY - thorax.sy * 0.02, z: lerp(spineThoracicZ, sternumZ, 0.35) },
+      { emissive: 0x064e3b });
+    if (L.sternum) {
+      addOrganMesh(group, "mesh_thymus_organ", "box",
+        { x: thoraxHalfW * 0.22, y: thorax.sy * 0.09, z: thorax.sz * 0.14 },
+        0x34d399, { x: 0, y: L.sternum.maxY, z: lerp(spineThoracicZ, sternumZ, 0.75) });
+    }
+
+    // --- Endócrino: tireoide (base do pescoço)
+    if (L.spineCervical) {
+      addOrganMesh(group, "mesh_thyroid_organ", "box",
+        { x: thoraxHalfW * 0.28, y: thorax.sy * 0.05, z: thorax.sz * 0.06 },
+        0xec4899, { x: 0, y: L.spineCervical.minY, z: L.spineCervical.maxZ + thorax.sz * 0.14 });
+    }
+
+    // --- Nervoso: encéfalo (dentro do crânio) + medula espinhal (canal vertebral)
+    if (skull) {
+      // "mesh_brain_cerebrum" (não "mesh_brain") é o meshKey usado pelo
+      // sistema nervoso em bio-database.js — mantém "brain" no nome para o
+      // targetKey "*brain*" do quiz continuar batendo.
+      addOrganMesh(group, "mesh_brain_cerebrum_organ", "sphere",
+        { x: skull.sx * 0.38, y: skull.sy * 0.30, z: skull.sz * 0.30 },
+        0x38bdf8, { x: skull.cx, y: lerp(skull.minY, skull.maxY, 0.58), z: lerp(skull.minZ, skull.maxZ, 0.42) },
+        { emissive: 0x075985 });
+    }
+    if (L.spineCervical) {
+      const cordTopY = L.spineCervical.maxY;
+      const cordBottomY = L.spineLumbar ? L.spineLumbar.minY : pelvis.maxY;
+      addOrganMesh(group, "mesh_spinal_cord", "cylinder",
+        { x: 0.012, y: cordTopY - cordBottomY, z: 0.012 },
+        0x7dd3fc, { x: 0, y: (cordTopY + cordBottomY) / 2, z: lerp(spineThoracicZ, spineLumbarZ, 0.5) });
+    }
+
+    // --- Reprodutor: próstata (pelve, sob a bexiga)
+    addOrganMesh(group, "mesh_prostate_organ", "sphere",
+      { x: pelvisHalfW * 0.16, y: pelvis.sy * 0.08, z: pelvis.sz * 0.14 },
+      0x6366f1, { x: 0, y: lerp(pelvis.minY, pelvis.maxY, 0.16), z: lerp(pelvis.minZ, pelvis.maxZ, 0.62) });
+
+    // --- Cardiovascular (vasos): aorta e veia cava ao longo da coluna
+    const vesselTopY = thorax.maxY;
+    const vesselBottomY = pelvis.minY;
+    const vesselZ = lerp(spineThoracicZ, spineLumbarZ, 0.5);
+    addOrganMesh(group, "mesh_aorta_vessel", "cylinder",
+      { x: 0.018, y: vesselTopY - vesselBottomY, z: 0.018 },
+      0xdc2626, { x: -thoraxHalfW * 0.06, y: (vesselTopY + vesselBottomY) / 2, z: vesselZ + thorax.sz * 0.06 },
+      { emissive: 0x7f1d1d });
+    addOrganMesh(group, "mesh_vein_cava", "cylinder",
+      { x: 0.018, y: vesselTopY - vesselBottomY, z: 0.018 },
+      0x2563eb, { x: thoraxHalfW * 0.06, y: (vesselTopY + vesselBottomY) / 2, z: vesselZ + thorax.sz * 0.06 },
+      { emissive: 0x1e3a8a });
+
+    bodyModel.add(group);
+    maxRealLayerAvailable = 5;
+  }
+
   /** Centraliza a câmera e o alvo do OrbitControls na caixa delimitadora do
    * modelo carregado — o manequim procedural já nasce nessas coordenadas,
    * mas o GLB real (outra fonte, outra escala/origem) precisa ser enquadrado. */
@@ -620,6 +945,11 @@
         usingRealModel = true;
 
         indexRealModel(bodyModel);
+        // Recalcula as matrizes de mundo da hierarquia inteira (ainda fora
+        // da cena, então nunca atualizada por um render) antes de medir os
+        // marcos ósseos em coordenadas globais — ver computeAnatomicalLandmarks().
+        bodyModel.updateMatrixWorld(true);
+        buildOrganLayer();
         scene.add(bodyModel);
         frameCameraToModel(bodyModel);
         setDissectionDepth(currentDissectionLevel);
@@ -784,10 +1114,13 @@
 
     if (usingRealModel) {
       // O body.glb só tem malha real nas camadas 2 (músculo) e 3 (osso/
-      // articular) — ver REAL_LAYER_BY_SYSTEM. Camadas 4/5 (vasos/vísceras)
-      // são fixadas na camada 3: não há malha real mais profunda para
-      // mostrar, e assim o viewport nunca fica vazio.
-      const effectiveLevel = Math.min(currentDissectionLevel, MAX_REAL_LAYER);
+      // articular) — ver REAL_LAYER_BY_SYSTEM. As camadas 4 (vasos) e 5
+      // (vísceras) são cobertas pela camada procedural de órgãos
+      // (buildOrganLayer); `maxRealLayerAvailable` sobe para 5 quando ela é
+      // construída com sucesso. Se os marcos ósseos necessários não forem
+      // encontrados (GLB futuro diferente), ela permanece em 3 e o slider
+      // fica travado no esqueleto — o viewport nunca fica vazio.
+      const effectiveLevel = Math.min(currentDissectionLevel, maxRealLayerAvailable);
       realMeshEntries.forEach((child) => {
         const layer = child.userData.laift.layer;
         if (layer < effectiveLevel) {
@@ -795,7 +1128,7 @@
         } else if (layer === effectiveLevel) {
           applyRealMeshOpacity(child, 1.0);
         } else {
-          applyRealMeshOpacity(child, effectiveLevel >= MAX_REAL_LAYER ? 1.0 : 0.4);
+          applyRealMeshOpacity(child, effectiveLevel >= maxRealLayerAvailable ? 1.0 : 0.4);
         }
       });
     } else {
@@ -1382,7 +1715,31 @@
       if (!mesh) return null;
       showRealStructureHud(mesh);
       return mesh.userData.laift.displayName;
-    }
+    },
+    // ---- Ganchos de teste da camada de órgãos (buildOrganLayer) ----
+    // Marcos ósseos (esterno, tórax, coluna, quadril, crânio) usados para
+    // posicionar os órgãos — o E2E confere que cada órgão caiu dentro de
+    // limites anatomicamente plausíveis a partir deles, sem reimplementar a
+    // geometria no teste.
+    getAnatomicalLandmarks: () => lastAnatomicalLandmarks,
+    // Caixa delimitadora, em coordenadas de mundo, da 1ª malha (real ou de
+    // órgão) cujo nome bate com `organKey` (mesmo casamento usado por
+    // highlightOrgan/isolateOrgan) — null se nada corresponder.
+    debugGetOrganWorldBox: (organKey) => {
+      const mesh = usingRealModel ? findRealMeshByKey(organKey) : null;
+      if (!mesh) return null;
+      const box = new THREE.Box3().setFromObject(mesh);
+      if (box.isEmpty()) return null;
+      return { min: box.min.toArray(), max: box.max.toArray() };
+    },
+    // Opacidade atual do material da 1ª malha que bate com `organKey` — usada
+    // pelos testes de camada de dissecção (uma estrutura mais profunda que a
+    // camada corrente fica translúcida, não escondida; ver setDissectionDepth).
+    debugGetOrganOpacity: (organKey) => {
+      const mesh = usingRealModel ? findRealMeshByKey(organKey) : null;
+      return mesh && mesh.material ? mesh.material.opacity : null;
+    },
+    hasOrganLayer: () => !!lastAnatomicalLandmarks
   };
 
   root.ThreeEngine = ThreeEngineAPI;

@@ -7,14 +7,18 @@
  * carregava, e a página ficava sempre no manequim procedural (esferas e
  * cilindros com nomes mesh_*_organ). Este cenário roda com o espelho do npm
  * (three@0.128.0 de verdade) e confere que:
- *   1. o GLB real carrega (826 malhas com nomes anatômicos, não mesh_*);
+ *   1. o GLB real carrega (826+ malhas com nomes anatômicos, não mesh_*);
  *   2. um toggle de sistema esconde/mostra as malhas certas (esqueleto ↔
- *      músculos — os únicos dois sistemas com malha de verdade neste GLB,
- *      ver comentário no topo de three-engine.js);
- *   3. clicar/selecionar uma estrutura mostra o nome dela no HUD;
- *   4. o quiz 3D e o layout (sem rolagem horizontal) funcionam mesmo
- *      enquanto o modelo real ainda está carregando/decodificando;
- *   5. zero violação de CSP e zero erro de JavaScript.
+ *      músculos, e agora também um sistema de órgão, ex.: cardiovascular);
+ *   3. clicar/selecionar uma estrutura (óssea ou um órgão) mostra nome +
+ *      descrição no HUD;
+ *   4. a camada procedural de órgãos (buildOrganLayer em three-engine.js)
+ *      posiciona vísceras/vasos plausíveis dentro do esqueleto real (ex.:
+ *      coração entre esterno e coluna, encéfalo dentro do crânio);
+ *   5. o quiz 3D mira órgãos de verdade (não só ossos/músculos) e o layout
+ *      (sem rolagem horizontal) funciona mesmo enquanto o modelo real ainda
+ *      está carregando/decodificando;
+ *   6. zero violação de CSP e zero erro de JavaScript.
  *
  * Sem o espelho do npm (sandbox sem acesso à rede), o cenário avisa e sai —
  * não há como testar o Draco/WASM de verdade sem o three.js de verdade.
@@ -95,10 +99,41 @@ module.exports = async function atlas() {
     check(hud.nome.length > 0 && hud.nome !== '---', `selecionar uma estrutura mostra o nome no HUD ("${hud.nome}")`);
     check(!hud.temImg, 'a descrição da estrutura entra como texto — sem <img> nem outra tag inesperada no HUD');
 
+    // ---- Camada de órgãos: posições plausíveis a partir dos marcos ósseos reais ----
+    // buildOrganLayer() (three-engine.js) não usa coordenadas fixas de um
+    // manequim genérico — ela mede esterno/tórax/coluna/quadril/crânio do
+    // próprio GLB e posiciona os órgãos a partir daí. Confere aqui que o
+    // resultado é anatomicamente plausível, não só "existe".
+    const organAnatomy = await frame.evaluate(() => {
+      const L = window.ThreeEngine.getAnatomicalLandmarks();
+      const heart = window.ThreeEngine.debugGetOrganWorldBox('*heart*');
+      const brain = window.ThreeEngine.debugGetOrganWorldBox('*brain*');
+      const liver = window.ThreeEngine.debugGetOrganWorldBox('*liver*');
+      const stomach = window.ThreeEngine.debugGetOrganWorldBox('*stomach*');
+      return { hasLandmarks: !!L, landmarks: L, heart, brain, liver, stomach };
+    });
+    check(organAnatomy.hasLandmarks, 'buildOrganLayer() encontrou os marcos ósseos (esterno, tórax, coluna, quadril, crânio) no GLB real');
+    if (organAnatomy.hasLandmarks) {
+      const L = organAnatomy.landmarks;
+      const heartCenterZ = organAnatomy.heart && (organAnatomy.heart.min[2] + organAnatomy.heart.max[2]) / 2;
+      check(!!organAnatomy.heart, 'o coração existe como malha 3D dentro do corpo real');
+      check(!!organAnatomy.heart
+        && organAnatomy.heart.min[1] >= L.thorax.minY - 0.01 && organAnatomy.heart.max[1] <= L.thorax.maxY + 0.01
+        && heartCenterZ > L.spineThoracic.minZ && heartCenterZ < L.sternum.maxZ,
+        `o coração está entre o esterno e a coluna, dentro da altura da caixa torácica (z=${heartCenterZ})`);
+      check(!!organAnatomy.brain
+        && organAnatomy.brain.min[0] >= L.skull.minX - 0.005 && organAnatomy.brain.max[0] <= L.skull.maxX + 0.005
+        && organAnatomy.brain.min[1] >= L.skull.minY - 0.005 && organAnatomy.brain.max[1] <= L.skull.maxY + 0.005
+        && organAnatomy.brain.min[2] >= L.skull.minZ - 0.005 && organAnatomy.brain.max[2] <= L.skull.maxZ + 0.005,
+        'o encéfalo está inteiramente dentro dos limites do crânio');
+      check(!!organAnatomy.liver && !!organAnatomy.stomach && organAnatomy.liver.min[0] > organAnatomy.stomach.max[0],
+        'o fígado (direita) e o estômago (esquerda) ficam em lados opostos da linha média');
+    }
+
     // ---- Toggle de sistema: esconde/mostra as malhas certas ----
-    // Só esqueletico/muscular/articular têm malha real neste GLB — os
-    // outros chips do sistema (cardiovascular, nervoso...) não têm o que
-    // esconder/mostrar (ver three-engine.js).
+    // esqueletico/muscular/articular têm malha real neste GLB; os demais
+    // sistemas (cardiovascular, respiratório, digestório...) agora têm a
+    // camada procedural de órgãos (buildOrganLayer) — ver three-engine.js.
     const skeletonOnly = await frame.evaluate(() => {
       window.AppController.selectSystem('esqueletico');
       return window.ThreeEngine.getVisibilityStats();
@@ -113,6 +148,30 @@ module.exports = async function atlas() {
     check((muscularOnly.muscular && muscularOnly.muscular.visible > 0) && (!muscularOnly.esqueletico || muscularOnly.esqueletico.visible === 0),
       'selecionar o sistema "Muscular" mostra os músculos e esconde os ossos' + JSON.stringify(muscularOnly));
 
+    // ---- Toggle de um sistema de órgãos (camada procedural) ----
+    // Fixa a camada em 3 (esqueleto) antes: com a camada corrente em 5, o
+    // esqueleto (camada 3) já fica escondido pela própria dissecção, e o
+    // isolamento por sistema não seria a causa observada.
+    const cardioOnly = await frame.evaluate(() => {
+      window.ThreeEngine.setDissectionDepth(3);
+      window.AppController.selectSystem('cardiovascular');
+      return window.ThreeEngine.getVisibilityStats();
+    });
+    check((cardioOnly.cardiovascular && cardioOnly.cardiovascular.visible > 0) && (!cardioOnly.esqueletico || cardioOnly.esqueletico.visible === 0),
+      'selecionar o sistema "Cardiovascular" mostra o coração/vasos e esconde o esqueleto' + JSON.stringify(cardioOnly));
+    // Some estruturas de volta e confere que reaparecem (o toggle não é destrutivo).
+    const backToAll = await frame.evaluate(() => { window.ThreeEngine.resetOrganTree(); return window.ThreeEngine.getVisibilityStats(); });
+    check(backToAll.cardiovascular && backToAll.cardiovascular.visible > 0 && backToAll.esqueletico && backToAll.esqueletico.visible > 0,
+      'resetOrganTree() volta a mostrar esqueleto e órgãos depois do isolamento por sistema' + JSON.stringify(backToAll));
+
+    // ---- Clique num órgão mostra nome + descrição do bio-database.js ----
+    const organHud = await frame.evaluate(() => {
+      const nome = window.ThreeEngine.debugSelectFirstOfSystem('cardiovascular');
+      return { nome: nome, descricao: (document.querySelector('#organ-hud [style*="max-height"]') || {}).textContent || '' };
+    });
+    check(!!organHud.nome && /cora/i.test(organHud.nome), `selecionar o sistema cardiovascular seleciona o coração ("${organHud.nome}")`);
+    check(organHud.descricao.trim().length > 20, `clicar no coração mostra a descrição clínica do bio-database.js no HUD ("${organHud.descricao.trim().slice(0, 60)}…")`);
+
     // ---- Camadas de dissecção (Pele/Músculos/Esqueleto/Vasos/Vísceras) ----
     const layerSkeleton = await frame.evaluate(() => { window.ThreeEngine.setDissectionDepth(3); return window.ThreeEngine.getVisibilityStats(); });
     check((layerSkeleton.muscular ? layerSkeleton.muscular.visible : 0) === 0 && (layerSkeleton.esqueletico ? layerSkeleton.esqueletico.visible : 0) > 0,
@@ -120,11 +179,38 @@ module.exports = async function atlas() {
     const layerMuscle = await frame.evaluate(() => { window.ThreeEngine.setDissectionDepth(2); return window.ThreeEngine.getVisibilityStats(); });
     check((layerMuscle.muscular ? layerMuscle.muscular.visible : 0) > 0,
       'camada "Músculos" (2/5) volta a mostrar os músculos' + JSON.stringify(layerMuscle));
-    // Camadas "Vasos"/"Vísceras" (4/5): sem malha real mais profunda, o
-    // viewport não pode ficar vazio — fica na camada mais profunda disponível.
+    // Camadas "Vasos" (4/5) e "Vísceras" (5/5): agora com a camada procedural
+    // de órgãos (buildOrganLayer), a 4 deixa a aorta/veia cava (camada 4 no
+    // bio-database.js) opacas e o coração (camada 5, mais profundo) translúcido
+    // — "escondido" nessa camada não é invisível, é visto por transparência,
+    // igual ao esqueleto sob os músculos (ver setDissectionDepth).
+    const layerVasos = await frame.evaluate(() => {
+      window.ThreeEngine.setDissectionDepth(4);
+      return { aorta: window.ThreeEngine.debugGetOrganOpacity('*aorta*'), heart: window.ThreeEngine.debugGetOrganOpacity('*heart*') };
+    });
+    check(layerVasos.aorta === 1, `camada "Vasos" (4/5) deixa a aorta opaca (opacidade ${layerVasos.aorta})`);
+    check(layerVasos.heart !== null && layerVasos.heart < 1, `camada "Vasos" (4/5) deixa o coração translúcido, mais profundo que a camada corrente (opacidade ${layerVasos.heart})`);
+
     const layerViscera = await frame.evaluate(() => { window.ThreeEngine.setDissectionDepth(5); return window.ThreeEngine.getVisibilityStats(); });
     const totalVisivelViscera = Object.values(layerViscera).reduce((acc, s) => acc + s.visible, 0);
-    check(totalVisivelViscera > 0, 'camada "Vísceras" (5/5, sem malha real neste GLB) não deixa o viewport vazio' + JSON.stringify(layerViscera));
+    check(totalVisivelViscera > 0, 'camada "Vísceras" (5/5) mostra o esqueleto e os órgãos procedurais' + JSON.stringify(layerViscera));
+    check((layerViscera.cardiovascular ? layerViscera.cardiovascular.visible : 0) > 0,
+      'camada "Vísceras" (5/5) mostra o coração (não só o esqueleto)' + JSON.stringify(layerViscera));
+    const heartOpacityFull = await frame.evaluate(() => window.ThreeEngine.debugGetOrganOpacity('*heart*'));
+    check(heartOpacityFull === 1, `camada "Vísceras" (5/5) deixa o coração totalmente opaco (opacidade ${heartOpacityFull})`);
+
+    // ---- Quiz 3D mira um órgão de verdade (não só ossos/músculos) ----
+    const quizOrgan = await frame.evaluate(() => {
+      window.ThreeEngine.setDissectionDepth(5);
+      window.QuizEngine.startQuiz();
+      // "caso_organofosforado" (1º caso) mira o coração (targetKey "*heart*").
+      window.QuizEngine.evaluateUserAnswer('mesh_heart_organ');
+      const fb = document.getElementById('quizFeedbackBox');
+      const result = { texto: (fb && fb.textContent) || '', score: window.QuizEngine.getCurrentScore() };
+      window.QuizEngine.stopQuiz();
+      return result;
+    });
+    check(/acerto/i.test(quizOrgan.texto) && quizOrgan.score > 0, `o quiz reconhece um acerto ao apontar o coração real (score ${quizOrgan.score}, "${quizOrgan.texto.slice(0, 40)}…")`);
 
     // ---- CSP e erros de JavaScript ----
     check(violations.length === 0, 'atlas: nenhuma violação de CSP (Draco/WASM roda só com \'wasm-unsafe-eval\')' + (violations.length ? ': ' + violations.map((v) => `${v.directive} ${v.blocked}`).join(' | ') : ''));
