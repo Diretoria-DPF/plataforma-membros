@@ -357,7 +357,7 @@ describe('AttendanceService.exportCsv', () => {
 
   test.each([
     ['=1+1', '"\'=1+1"'], ['+1', '"\'+1"'], ['-1', '"\'-1"'], ['@SUM(A1)', '"\'@SUM(A1)"'],
-    ['\r=x', '"\'\r=x"'], ['normal', '"normal"'], [null, '""'], ['a"b', '"a""b"'], ['1=1', '"1=1"'],
+    ['\r=x', '"\'\r=x"'], ['\n=x', '"\'\n=x"'], ['normal', '"normal"'], [null, '""'], ['a"b', '"a""b"'], ['1=1', '"1=1"'],
   ])('csvCell(%j) → %s', (input, expected) => {
     expect(AttendanceService.csvCell(input)).toBe(expected);
   });
