@@ -146,6 +146,26 @@ html.laift-always-dark {
   }
 }
 
+/* O acento é resolvido também no <body>: páginas que trocam de acento por
+   classe no body (ex.: body.theme-clinic em shared/style.css) precisam que
+   --module-accent seja recalculado ali, e não só herdado do <html>. */
+body {
+  --module-accent: var(--module-accent-light, var(--laift-primary));
+  --module-on-accent: var(--module-on-accent-light, #ffffff);
+  --module-accent-soft: color-mix(in srgb, var(--module-accent) 12%, var(--laift-surface));
+}
+html[data-theme="dark"] > body,
+html.laift-always-dark > body {
+  --module-accent: var(--module-accent-dark, var(--laift-primary));
+  --module-on-accent: var(--module-on-accent-dark, #06231e);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) > body {
+    --module-accent: var(--module-accent-dark, var(--laift-primary));
+    --module-on-accent: var(--module-on-accent-dark, #06231e);
+  }
+}
+
 /* -------------------------------------------------------------------------
    Utilitários comuns a todos os módulos (acessibilidade)
    ------------------------------------------------------------------------- */
