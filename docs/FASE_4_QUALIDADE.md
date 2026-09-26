@@ -250,7 +250,7 @@ itens planejados na Onda 1 para Clínica, Fiscal e preceptor do laboratório
 2. **CSP** por `<meta>` em todas as páginas; tabela por página em `docs/SECURITY.md`.
    - Correções que a CSP exigiu:
      - **Chart.js** da plataforma apontava para um arquivo inexistente no pacote 4.4.4. Agora é `chart.umd.min.js` 4.5.1 com SRI.
-     - **RDKit** fica desligado: o embind usa `new Function`. O `studio-loader.js` lê a CSP e não o carrega, e o estúdio avisa.
+     - **RDKit**: o embind usa `new Function` (inclusive só para compilar o `.wasm`), então exige `'unsafe-eval'`. Ficou desligado na Onda 2 e foi religado na Onda 3, como exceção única de CSP confinada a `modulos/laboratorio/studio/index.html` (testado empiricamente: só `'wasm-unsafe-eval'` não basta) — ver `docs/SECURITY.md`. O `studio-loader.js` continua lendo a CSP em runtime e só carrega o RDKit se ela permitir.
      - **Organograma**: `TypeError` quando a resposta vinha sem `chart`.
    - O cenário novo `csp.e2e.js` faz três coisas:
      - checagem estática: CSP antes de qualquer script, diretivas obrigatórias, varredura do front-end inteiro;
@@ -297,7 +297,7 @@ itens planejados na Onda 1 para Clínica, Fiscal e preceptor do laboratório
 ## 9. Riscos e pendências
 
 - **`style-src 'unsafe-inline'`** continua por causa dos `style=` restantes (laboratório, anatomia, plataforma) e do estilo injetado por bibliotecas. Tirar isso é o próximo passo para uma CSP 100% estrita.
-- **RDKit desligado** no estúdio: descritores estimados e sem similaridade exata. Para religar, seria preciso aceitar `'unsafe-eval'` no estúdio, o que não é recomendado.
+- **RDKit religado no estúdio (Onda 3)**, com `'unsafe-eval'` como exceção única de CSP, confinada a essa página (que só fala com APIs públicas de química e o jsDelivr). Ver `docs/SECURITY.md` ("Decisões" e "Riscos residuais") para o trade-off e o teste que prova a inicialização (`scripts/e2e/rdkit.e2e.js`).
 - **Clickjacking**: `frame-ancestors` não funciona em `<meta>`. Precisa de cabeçalho HTTP, que o GitHub Pages não oferece.
 - **E2E intermitente no fiscal (`fase2.e2e.js`, "lista nominal")**: falhou 2 vezes em cerca de 25 execuções antes do reinício do container, com o clique em "Ver inscritos" sem efeito. Não se repetiu em 18 execuções seguidas depois. Uma suspeita é a mudança de altura do iframe (auto-altura da Onda 2) durante o clique. Se voltar a acontecer, investigar primeiro por aí.
 - **Versões "latest" fixadas.** Chart.js 4.5.1, 3Dmol 2.5.5 e RDKit 2026.3.6 eram as versões mais recentes no npm na data da pinagem. Antes, a página pegava "a última" a cada acesso. O `csp.e2e.js` agora roda o gráfico PK, o 3Dmol e o atlas three.js com os arquivos reais dos pacotes npm (espelho local). Vale ainda uma olhada no jsDelivr de verdade depois do deploy.

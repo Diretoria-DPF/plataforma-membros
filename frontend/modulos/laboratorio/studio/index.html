@@ -5,8 +5,16 @@
        1. METADADOS & VIEWPORT
        ========================================================================== -->
   <meta charset="UTF-8">
-  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov https://query.wikidata.org https://www.ebi.ac.uk; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa.
+       'unsafe-eval' em script-src é EXCEÇÃO SÓ DESTA PÁGINA (religada na Onda 3 —
+       docs/SECURITY.md): o RDKit (Emscripten/embind) monta funções com `new Function`
+       ao inicializar, mesmo só para compilar o .wasm — testado empiricamente: com
+       só 'wasm-unsafe-eval' ele quebra ("Refused to evaluate a string as
+       JavaScript"); só com 'unsafe-eval' ele inicializa e o worker-src/csp.e2e.js
+       não acusa nenhuma violação. cdn.jsdelivr.net em connect-src é para o fetch/
+       instantiateStreaming do RDKit_minimal.wasm (locateFile em studio.js) — sem
+       isso o navegador bloqueia o fetch mesmo com o script já carregado. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov https://query.wikidata.org https://www.ebi.ac.uk https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

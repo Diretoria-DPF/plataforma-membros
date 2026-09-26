@@ -958,7 +958,8 @@ console.log(
           STATE.rdkitFalhou = true;
           clearTimeout(timeoutGlobal);
           if (window.LAIFT_RDKIT_BLOQUEADO_PELA_CSP) {
-            // Esperado: a CSP do Estúdio não permite 'unsafe-eval' (ver studio-loader.js).
+            // A CSP do Estúdio libera 'unsafe-eval' desde a Onda 3 (docs/SECURITY.md);
+            // isto só dispara se essa política mudar de novo (ver studio-loader.js).
             mostrarNotificacao('ℹ️ Descritores estimados (RDKit desativado pela política de segurança)', 'info', 3500);
           } else {
             console.warn('[RDKit] ❌ initRDKitModule indisponível após aguardar');

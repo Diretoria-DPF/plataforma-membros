@@ -1,14 +1,17 @@
 /**
  * csp.e2e.js — Content-Security-Policy da plataforma e dos módulos (Fase 4,
- * Onda 2). Roda sobre o BUILD (frontend/dist/, com o app.js ofuscado).
+ * Onda 2; Onda 3 religou o RDKit do Estúdio). Roda sobre o BUILD
+ * (frontend/dist/, com o app.js ofuscado).
  *
  * 1. Estático (Node): toda página HTML publicada tem <meta http-equiv=
  *    "Content-Security-Policy"> ANTES de qualquer script, sem
- *    'unsafe-inline'/'unsafe-eval' em script-src, com object-src 'none',
- *    base-uri 'self', form-action 'self' e frame-src; todo host de
- *    <script src> externo está em script-src (e só o jsDelivr é aceito);
- *    nenhum arquivo do front-end tem handler inline, <script> inline ou
- *    innerHTML/document.write fora de modulos/shared/safe-dom.js.
+ *    'unsafe-inline' em script-src (em nenhuma página) e sem 'unsafe-eval'/
+ *    'wasm-unsafe-eval' (exceto na ÚNICA exceção documentada abaixo, o
+ *    Estúdio — ver `ehPaginaDoEstudio`), com object-src 'none', base-uri
+ *    'self', form-action 'self' e frame-src; todo host de <script src>
+ *    externo está em script-src (e só o jsDelivr é aceito); nenhum arquivo
+ *    do front-end tem handler inline, <script> inline ou innerHTML/
+ *    document.write fora de modulos/shared/safe-dom.js.
  * 2. Navegador: percorre a plataforma (membro e admin), todos os módulos com
  *    as interações principais, os pop-ups (crachá, dossiê) e as páginas
  *    estáticas, e FALHA em qualquer evento `securitypolicyviolation` em
@@ -18,8 +21,9 @@
  * do npm na primeira execução) as URLs do jsDelivr são servidas com os bytes
  * do pacote — o navegador confere o SRI de verdade e as bibliotecas rodam
  * sob a CSP (3Dmol cria workers blob:, three carrega o .glb, Chart.js,
- * html5-qrcode...). Sem acesso ao npm, o teste segue com as bibliotecas
- * abortadas e avisa.
+ * html5-qrcode, RDKit compila o .wasm com 'unsafe-eval' só no Estúdio...).
+ * Sem acesso ao npm, o teste segue com as bibliotecas abortadas e avisa.
+ * A inicialização completa do RDKit (get_mol de verdade) é o rdkit.e2e.js.
  */
 const fs = require('fs');
 const path = require('path');
@@ -30,6 +34,17 @@ const FRONT = path.join(__dirname, '..', '..');
 const DIST = path.join(FRONT, 'dist');
 
 const IGNORABLE = /\b(THREE|QRCode|\$3Dmol|SmilesDrawer|Chart|OCL|Html5QrcodeScanner|initRDKitModule)\b/;
+
+// Exceção ÚNICA e documentada a "sem 'unsafe-eval' em nenhuma página" (Fase 4,
+// Onda 3 — docs/SECURITY.md): o Estúdio precisa do RDKit (WASM/embind), que só
+// inicializa com 'unsafe-eval' — testado empiricamente com Playwright/Chromium:
+// só 'wasm-unsafe-eval' não basta (o embind monta chamadas com `new Function`
+// além de compilar o próprio wasm). Nenhuma outra página tem essa exceção, e
+// 'unsafe-inline' continua proibido em TODAS elas, inclusive o Estúdio.
+const STUDIO_PAGE = 'modulos/laboratorio/studio/index.html';
+function ehPaginaDoEstudio(rel) {
+  return rel.split(path.sep).join('/') === STUDIO_PAGE;
+}
 
 // ---------------------------------------------------------------------------
 // 1. Verificação estática
@@ -74,7 +89,11 @@ function staticChecks() {
     if (firstScript !== -1 && firstScript < meta.index) problems.push(`${rel}: há <script> antes da CSP`);
     const p = parsePolicy(meta[1]);
     const script = p['script-src'] || p['default-src'] || [];
-    if (script.includes("'unsafe-inline'") || script.includes("'unsafe-eval'")) problems.push(`${rel}: script-src com 'unsafe-inline'/'unsafe-eval'`);
+    const isStudioPage = ehPaginaDoEstudio(rel);
+    if (script.includes("'unsafe-inline'")) problems.push(`${rel}: script-src com 'unsafe-inline'`);
+    const evalKeywords = script.filter((s) => s === "'unsafe-eval'" || s === "'wasm-unsafe-eval'");
+    if (evalKeywords.length && !isStudioPage) problems.push(`${rel}: script-src com ${evalKeywords.join('/')} (só o Estúdio pode ter essa exceção)`);
+    if (isStudioPage && !script.includes("'unsafe-eval'")) problems.push(`${rel}: Estúdio sem 'unsafe-eval' — RDKit (embind) não inicializa`);
     if (script.some((s) => /^https?:\/\//.test(s) && s !== 'https://cdn.jsdelivr.net')) problems.push(`${rel}: script-src com host além do jsDelivr`);
     if (script.includes('*') || script.includes('https:') || script.includes('data:')) problems.push(`${rel}: script-src aberto demais`);
     if ((p['object-src'] || []).join(' ') !== "'none'") problems.push(`${rel}: object-src não é 'none'`);
@@ -86,7 +105,7 @@ function staticChecks() {
     external.forEach((host) => { if (!script.includes(host)) problems.push(`${rel}: ${host} fora de script-src`); });
     if (script.includes('https://cdn.jsdelivr.net') && !external.length && !/studio/.test(rel)) problems.push(`${rel}: jsDelivr em script-src sem biblioteca externa`);
   }
-  check(pages.length >= 12 && problems.length === 0, `CSP em todas as ${pages.length} páginas publicadas, sem 'unsafe-inline'/'unsafe-eval' em script-src` + (problems.length ? ': ' + problems.join(' | ') : ''));
+  check(pages.length >= 12 && problems.length === 0, `CSP em todas as ${pages.length} páginas publicadas, sem 'unsafe-inline' em nenhuma e sem 'unsafe-eval' fora da exceção única do Estúdio` + (problems.length ? ': ' + problems.join(' | ') : ''));
 
   // Todo o front-end (fonte), não só os arquivos da Equipe 4.
   const sources = walk(FRONT, (f) => /\.(js|html)$/.test(f) && !/[\\/]data[\\/]/.test(f));
@@ -191,7 +210,17 @@ async function memberTour(pkgs) {
     await studio.waitForTimeout(1500);
     await studio.click('[data-action="abrirTabelaPeriodica"]');
     await studio.click('#periodicTableModal [data-action="fecharTabelaPeriodica"]');
-    const studioLibs = await studio.evaluate(() => ({ mol: typeof $3Dmol !== 'undefined', rdkitOff: window.LAIFT_RDKIT_BLOQUEADO_PELA_CSP === true }));
+    // Não chama initRDKitModule() aqui (init pesado, ~poucos segundos): só confere
+    // que a CSP libera o loader e que o script chegou via jsDelivr. A inicialização
+    // completa (get_mol de verdade) é o rdkit.e2e.js, dedicado a isso.
+    const studioLibs = await studio.evaluate(async () => {
+      const initFn = await (window.__rdkitReady || Promise.resolve(null)).catch(() => null);
+      return {
+        mol: typeof $3Dmol !== 'undefined',
+        rdkitOff: window.LAIFT_RDKIT_BLOQUEADO_PELA_CSP === true,
+        rdkitInitFnDisponivel: typeof initFn === 'function',
+      };
+    });
     await studio.click('[data-action="retornarAoLaboratorio"]');
     const labLibs = await f.evaluate(() => typeof $3Dmol !== 'undefined' && typeof SmilesDrawer !== 'undefined');
     await app.page.click('#learn-back');
@@ -243,7 +272,10 @@ async function memberTour(pkgs) {
         'bibliotecas de CDN carregam com o SRI conferido pelo navegador (SmilesDrawer, 3Dmol, three + GLTFLoader, Chart.js)');
       check(atlas.canvas, 'atlas 3D monta a cena WebGL sob a CSP');
     }
-    check(studioLibs.rdkitOff, "Estúdio não carrega o RDKit: a CSP sem 'unsafe-eval' o desativa (estimativas no lugar)");
+    check(!studioLibs.rdkitOff, "Estúdio: a CSP libera 'unsafe-eval' — RDKit não é mais desativado pela política de segurança");
+    if (pkgs) {
+      check(studioLibs.rdkitInitFnDisponivel, 'Estúdio: initRDKitModule chega via jsDelivr (espelho) sob a nova CSP');
+    }
     report(violations, 'membro (plataforma, 6 módulos, estúdio, pop-ups e páginas estáticas)');
     const realErrors = app.errors.filter((e) => !IGNORABLE.test(e));
     check(realErrors.length === 0, 'membro: sem erros de JavaScript' + (realErrors.length ? ': ' + realErrors.join(' | ') : ''));
