@@ -30,6 +30,9 @@ import * as ModerationService from './services/moderationService.js';
 import * as OrgChartService from './services/orgChartService.js';
 import * as MessagingKeyService from './services/messagingKeyService.js';
 import * as MessageService from './services/messageService.js';
+// Fase 3 — IA (Groq) e clínica virtual
+import * as AiService from './services/aiService.js';
+import * as ClinicalService from './services/clinicalService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -151,4 +154,20 @@ export const API_REGISTRY = {
   apiClearConversation: (sql, env, [sessionToken, conversationId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.clearConversation(sql, env, identity, conversationId, cid)),
   apiHideMessageForMe: (sql, env, [sessionToken, conversationId, messageId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.hideMessageForMe(sql, identity, conversationId, messageId, cid)),
   apiDeleteMessage: (sql, env, [sessionToken, conversationId, messageId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MessageService.deleteMessage(sql, identity, conversationId, messageId, cid)),
+
+  // Fase 3 — IA na Worker e clínica virtual (docs/FASE_3_IA_CLINICA.md).
+  // Chamados pelos módulos via ponte LaiftApi (Contrato 3): entrada é UM
+  // objeto, e os prefixos seguem a allowlist da ponte
+  // (/^api(Learn|AdminAttendance|AdminAi|AdminLearn)[A-Z]/). Cota diária
+  // por pessoa e papel em cada chamada que custa tokens (aiService.withQuota).
+  apiLearnClinicalChat: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.chat(sql, env, identity, input || {})),
+  apiLearnClinicalEvaluate: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.evaluate(sql, env, identity, input || {}, cid)),
+  apiLearnClinicalGenerateCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.generateCase(sql, env, identity, input || {}, cid)),
+  apiLearnClinicalLibrary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.library(sql, env, identity, input || {})),
+  apiLearnClinicalEpidemiology: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => ClinicalService.epidemiology(sql, env)),
+  apiLearnLabPreceptor: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.askLabPreceptor(sql, env, identity, input || {})),
+  apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.getMyQuota(sql, env, identity)),
+  apiAdminAiHealth: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminHealth(sql, env, identity)),
+  apiAdminLearnListPendingCases: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.listPendingCases(sql, identity)),
+  apiAdminLearnReviewCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.reviewCase(sql, env, identity, input || {}, cid)),
 };
