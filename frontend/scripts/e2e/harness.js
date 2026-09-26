@@ -103,6 +103,8 @@ function defaultWorkerReply(action, args, ctx) {
  * @param {'light'|'dark'|'system'} [opts.theme]
  * @param {Object<string, Function>} [opts.workerHandlers]  action → (args, ctx) => resposta (ou Promise)
  * @param {object} [opts.viewport]  ex.: { width: 360, height: 740 } para celular
+ * @param {string[]} [opts.launchArgs]  flags extras do Chromium (ex.: câmera falsa para o leitor de QR)
+ * @param {string[]} [opts.permissions]  permissões concedidas ao contexto (ex.: ['camera'])
  */
 async function startApp(opts = {}) {
   const { chromium } = loadPlaywright();
@@ -116,12 +118,13 @@ async function startApp(opts = {}) {
   const calls = { worker: [], external: [] };
   const errors = [];
 
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(opts.launchArgs ? { args: opts.launchArgs } : undefined);
   const mobile = opts.viewport && opts.viewport.width < 600;
   const context = await browser.newContext({
     viewport: opts.viewport || { width: 1280, height: 900 },
     hasTouch: !!mobile,
     isMobile: !!mobile,
+    permissions: opts.permissions || undefined,
   });
 
   await context.route('**/*', async (route) => {

@@ -9,6 +9,7 @@
     "e2e": "node scripts/build.js && node scripts/e2e/run.js"
   },
   "devDependencies": {
-    "javascript-obfuscator": "^4.1.1"
+    "javascript-obfuscator": "^4.1.1",
+    "jsqr": "^1.4.0"
   }
 }
