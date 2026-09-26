@@ -31,7 +31,7 @@ const ChemicalAPIEngine = {
   /**
    * Executa requisições fetch protegidas por timeout para evitar travamento de interface
    */
-  async fetchComTimeout(url, options = {}, timeoutMs = 4500) {
+  async fetchComTimeout(url, options = {}, timeoutMs = 6000) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -57,6 +57,9 @@ const ChemicalAPIEngine = {
   async fetchPubChem(name) {
     const termoIngles = this.normalizarNome(name);
     try {
+      // CanonicalSMILES segue aceito como alias na requisição, mas desde 2025 o
+      // PubChem devolve a propriedade como ConnectivitySMILES (ou SMILES) — cai
+      // para essas chaves quando a antiga não vem na resposta.
       const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(termoIngles)}/property/MolecularWeight,MolecularFormula,CanonicalSMILES,IUPACName/JSON`;
       const res = await this.fetchComTimeout(url);
       if (!res.ok) return null;
@@ -65,14 +68,15 @@ const ChemicalAPIEngine = {
       const prop = data?.PropertyTable?.Properties?.[0];
       if (!prop) return null;
 
+      const massa = parseFloat(prop.MolecularWeight); // MolecularWeight agora vem como string
       return {
         origem: 'PubChem PUG-REST',
         cid: prop.CID,
         pubchemCid: prop.CID,
         formula: prop.MolecularFormula,
-        molarMass: parseFloat(prop.MolecularWeight),
-        pesoMolecular: parseFloat(prop.MolecularWeight),
-        smiles: prop.CanonicalSMILES,
+        molarMass: Number.isFinite(massa) ? massa : null,
+        pesoMolecular: Number.isFinite(massa) ? massa : null,
+        smiles: prop.CanonicalSMILES || prop.ConnectivitySMILES || prop.SMILES || prop.IsomericSMILES || null,
         iupac: prop.IUPACName
       };
     } catch (e) {
@@ -86,7 +90,7 @@ const ChemicalAPIEngine = {
     const termoIngles = this.normalizarNome(name);
     try {
       const url = `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(termoIngles)}/${representation}`;
-      const res = await this.fetchComTimeout(url, {}, 3500);
+      const res = await this.fetchComTimeout(url, {}, 5000);
       if (!res.ok) return null;
 
       const text = await res.text();
