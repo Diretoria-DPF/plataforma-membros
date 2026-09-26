@@ -16,13 +16,6 @@
 (function (global) {
   'use strict';
 
-  // Backend legado (Google Apps Script) dos módulos — métricas, IA da
-  // clínica/laboratório e terminal fiscal. Único lugar com a URL: os módulos
-  // que já liam `window.APPS_SCRIPT_GATEWAY` passam a receber este valor.
-  // Migração para a Worker prevista na Fase 2 (docs/PLANO_UNIFICACAO_LAIFT.md).
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXvBYrHBIXNjHYItuq2LXKt1vkmh2m_CME-5aZqkxUJhl7ktJjemuasbvdEweH95k/exec';
-  global.APPS_SCRIPT_GATEWAY = APPS_SCRIPT_URL;
-
   // modulos/shared/laift-identity.js → frontend/index.html
   var scriptSrc = (global.document.currentScript && global.document.currentScript.src) || global.location.href;
   var LOGIN_URL = new URL('../../index.html', scriptSrc).href;
@@ -77,10 +70,31 @@
     }
   }
 
+  var host = findHost();
+
   // Aberto fora da plataforma: não há de quem herdar identidade.
-  if (!findHost()) {
+  if (!host) {
     global.location.replace(LOGIN_URL);
   }
+
+  // Backend legado (Google Apps Script) dos módulos — métricas, IA da
+  // clínica/laboratório e terminal fiscal. A URL vive num único lugar, o
+  // frontend/learning.js da plataforma; os módulos que já liam
+  // `window.APPS_SCRIPT_GATEWAY` passam a receber o valor de lá.
+  // Migração para a Worker prevista na Fase 2 (docs/PLANO_UNIFICACAO_LAIFT.md).
+  global.APPS_SCRIPT_GATEWAY = (host && host.LaiftLearning && host.LaiftLearning.APPS_SCRIPT_URL) || '';
+
+  // Cliques/teclas/toques dentro de um iframe não chegam ao documento da
+  // plataforma, que é quem adia a expiração da sessão por inatividade. Sem
+  // este repasse, quem passasse 30 min num simulado era deslogado no meio.
+  // (A plataforma já limita a no máximo 1 renovação a cada 30 s.)
+  function notifyActivity() {
+    var h = findHost();
+    if (h && typeof h.App.notifyActivity === 'function') h.App.notifyActivity();
+  }
+  ['click', 'keydown', 'touchstart'].forEach(function (evtName) {
+    global.document.addEventListener(evtName, notifyActivity, { passive: true });
+  });
 
   global.LaiftIdentity = { get: get, backToHub: backToHub, loginUrl: LOGIN_URL };
 })(window);

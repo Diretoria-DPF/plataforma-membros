@@ -173,6 +173,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
             <span>Início</span>
           </button>
+          <button type="button" data-panel="panel-learn" data-scope="all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3.3 2.2 8.7 2.2 12 0v-5"/><path d="M22 10v6"/></svg>
+            <span>Aprender</span>
+          </button>
           <button type="button" data-panel="panel-events" data-scope="all">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
             <span>Eventos</span>
@@ -239,6 +243,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a1.5 1.5 0 001.3 2.25h17.76a1.5 1.5 0 001.3-2.25L13.7 3.86a1.5 1.5 0 00-2.6 0z"/></svg>
             <span>Denúncias</span>
           </button>
+          <button type="button" data-panel="panel-admin-fiscal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 011-1h3"/><path d="M16 4h3a1 1 0 011 1v3"/><path d="M20 16v3a1 1 0 01-1 1h-3"/><path d="M8 20H5a1 1 0 01-1-1v-3"/><path d="M4 12h16"/></svg>
+            <span>Fiscal</span>
+          </button>
           <button type="button" id="btn-exit-admin-mode">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             <span>Voltar</span>
@@ -250,7 +258,37 @@
         <section id="panel-home">
           <div class="card">
             <h2>Início</h2>
-            <p class="muted">Bem-vindo(a). Use a navegação para acessar eventos, propostas e tarefas.</p>
+            <p class="muted">Bem-vindo(a). Use a navegação para acessar eventos, propostas, tarefas e a área de aprendizagem.</p>
+          </div>
+        </section>
+
+        <!--
+          Área de aprendizagem LAIFT (antigo o-bala-vip). Os cartões e os
+          iframes dos módulos são montados por learning.js; os módulos vivem
+          em modulos/ e herdam a identidade desta sessão.
+        -->
+        <section id="panel-learn" class="hidden">
+          <div id="learn-hub">
+            <div class="card">
+              <h2>Aprender</h2>
+              <p class="muted">Ecossistema de aprendizagem LAIFT: simuladores, clínica virtual, laboratório e anatomia 3D.</p>
+              <div class="learn-stats">
+                <div class="learn-stat"><strong id="learn-stat-accuracy">—</strong><span>Aproveitamento geral</span></div>
+                <div class="learn-stat"><strong id="learn-stat-answered">—</strong><span>Questões resolvidas</span></div>
+                <div class="learn-stat"><strong id="learn-stat-sims">—</strong><span>Simulados concluídos</span></div>
+              </div>
+              <div id="learn-status" class="status-msg" role="status" aria-live="polite"></div>
+              <button type="button" class="secondary" id="btn-learn-credential" style="width:auto;">Minha credencial (QR de presença)</button>
+            </div>
+            <div class="learn-grid" id="learn-modules"></div>
+          </div>
+          <div id="learn-viewer" class="learn-viewer hidden">
+            <div class="learn-viewer-bar">
+              <button type="button" class="secondary" id="learn-back" style="width:auto;">← Módulos</button>
+              <strong id="learn-viewer-title"></strong>
+              <button type="button" class="secondary" id="learn-fullscreen" style="width:auto;" aria-label="Tela cheia">Tela cheia</button>
+            </div>
+            <div id="learn-frames"></div>
           </div>
         </section>
 
@@ -598,6 +636,14 @@
             <div id="admin-reports-pagination" class="pagination"></div>
           </div>
         </section>
+
+        <section id="panel-admin-fiscal" class="hidden">
+          <div class="card">
+            <h2>Terminal fiscal</h2>
+            <p class="muted">Check-in por QR Code, lista de presença e crachás. Ainda usa o backend do Apps Script, que pede a senha fiscal própria até a migração para a plataforma.</p>
+          </div>
+          <div id="admin-fiscal-frame-wrap" class="learn-viewer"></div>
+        </section>
       </main>
     </div>
   </div>
@@ -653,6 +699,19 @@
     </div>
   </div>
 
+  <!-- Credencial de presença (QR gerado localmente por learning.js). -->
+  <div id="modal-learn-credential" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-learn-credential-title">
+    <div class="modal-box" style="text-align:center;">
+      <h3 id="modal-learn-credential-title">Sua credencial LAIFT</h3>
+      <img id="learn-credential-qr" class="learn-credential-qr" alt="QR Code de presença">
+      <p><strong id="learn-credential-name"></strong><br><span id="learn-credential-email" class="muted"></span></p>
+      <p class="muted" style="font-size:13px;">Apresente na portaria para registrar presença em eventos.</p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button type="button" class="secondary" id="learn-credential-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-vote-complement" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-vote-title">
     <div class="modal-box">
       <h3 id="modal-vote-title">Comentário do voto</h3>
@@ -684,6 +743,8 @@
   -->
   <script type="module" src="msg-crypto.js"></script>
   <script type="module" src="messaging.js"></script>
+  <!-- Área "Aprender" (módulos LAIFT): só usa window.App dentro de funções. -->
+  <script src="learning.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

@@ -53,4 +53,16 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
-console.log('Build gerado em frontend/dist/ (app.js ofuscado; demais páginas copiadas).');
+// Área "Aprender" (unificação com o o-bala-vip — docs/PLANO_UNIFICACAO_LAIFT.md):
+// learning.js não guarda segredo nenhum (a URL do Apps Script é pública por
+// natureza) e é copiado sem ofuscação, como os módulos acima. modulos/ (as
+// páginas autônomas de cada módulo, com dados, CSS e o modelo 3D) e vendor/
+// (bibliotecas de terceiros versionadas no repositório) vão inteiros —
+// cópia recursiva para nenhum arquivo novo ficar de fora da publicação,
+// o mesmo tipo de esquecimento que já derrubou um deploy antes.
+fs.copyFileSync(path.join(ROOT, 'learning.js'), path.join(DIST, 'learning.js'));
+['modulos', 'vendor'].forEach((dir) => {
+  fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true });
+});
+
+console.log('Build gerado em frontend/dist/ (app.js ofuscado; demais páginas, módulos e vendor copiados).');

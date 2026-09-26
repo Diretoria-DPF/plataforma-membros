@@ -96,6 +96,7 @@
       // memória desta aba — nunca deve sobreviver ao fim da sessão. Ver
       // DP-9 do plano e o cabeçalho de segurança de frontend/messaging.js.
       if (window.LaiftMessaging) window.LaiftMessaging.resetMessagingState();
+      if (window.LaiftLearning) window.LaiftLearning.reset();
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -544,6 +545,7 @@
     state.sessionToken = null;
     state.profile = null;
     if (window.LaiftMessaging) window.LaiftMessaging.resetMessagingState();
+    if (window.LaiftLearning) window.LaiftLearning.reset();
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
@@ -667,6 +669,8 @@
     'panel-admin-audit': function () { loadAdminAudit(1); },
     'panel-admin-reports': function () { loadAdminReports(1); },
     'panel-messages': function () { if (window.LaiftMessaging) window.LaiftMessaging.loadMessagingPanel(); },
+    'panel-learn': function () { if (window.LaiftLearning) window.LaiftLearning.loadPanel(); },
+    'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
   };
 
   var currentPanelId = 'panel-home';
@@ -715,7 +719,7 @@
   var swipeStart = null;
 
   function isSwipeExcluded(target) {
-    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas'));
+    return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas, .learn-viewer'));
   }
 
   function getVisiblePanelOrder() {
@@ -1316,6 +1320,14 @@
   function loadProfileAndPreferences() {
     callApi('apiGetMyProfile', state.sessionToken).then(function (res) {
       if (!res.success) { setStatus('msg-profile', res.message, 'error'); return; }
+
+      // O login só devolve nome e papel; o e-mail (identificador enviado aos
+      // módulos de aprendizagem — ver learning.js) chega por aqui.
+      if (state.profile) {
+        state.profile.email = res.profile.email;
+        state.profile.username = res.profile.username;
+        if (window.LaiftLearning) window.LaiftLearning.onProfileReady();
+      }
 
       document.getElementById('profile-name').value = res.profile.fullName || '';
       document.getElementById('profile-username').value = res.profile.username || '';
@@ -2046,6 +2058,22 @@
   // ===========================================================================
   window.App = {
     getState: function () { return state; },
+    // Identidade para os módulos de aprendizagem (frontend/modulos/, via
+    // modulos/shared/laift-identity.js): só dados de exibição, nunca o
+    // token de sessão.
+    getIdentity: function () {
+      if (!state.sessionToken || !state.profile) return null;
+      return {
+        fullName: state.profile.fullName,
+        email: state.profile.email || '',
+        username: state.profile.username || '',
+        role: state.profile.role,
+      };
+    },
+    // Atividade dentro dos iframes dos módulos não chega aos listeners deste
+    // documento; laift-identity.js repassa por aqui para a sessão não expirar
+    // no meio de um simulado (o throttle de 30s continua valendo).
+    notifyActivity: resetSessionExpiryOnActivity,
     callApi: callApi,
     h: h,
     text: text,

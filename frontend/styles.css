@@ -550,3 +550,71 @@ button, input, select, textarea, .list-item .actions-row button {
   width: 40px; height: 40px; border-radius: 50%; padding: 0; flex-shrink: 0; font-size: 16px;
 }
 .chat-send-btn:disabled { opacity: .5; }
+
+/* ---------- Área "Aprender" (módulos LAIFT — learning.js) ---------- */
+/* Com "Aprender" a barra de membro chega a 9 botões: em telas muito
+   estreitas vira faixa rolável (como a do admin) em vez de espremer os
+   rótulos abaixo do alvo de toque mínimo. */
+/* flex-start (não space-around): ao transbordar, space-around centraliza e
+   corta os primeiros botões fora do alcance da rolagem. Visualmente é igual
+   quando cabe, porque os botões já crescem (flex: 1 1 0) e ocupam tudo. */
+#nav-group-member { justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* Cada botão tem no mínimo a largura do próprio rótulo (sem rótulos
+   encavalando uns nos outros) e cresce para ocupar a barra quando sobra
+   espaço. */
+#nav-group-member button { flex: 1 0 auto; min-width: 48px; padding-left: 6px; padding-right: 6px; }
+#nav-group-member button span { white-space: nowrap; }
+
+/* As seções são itens do grid de .app-main: sem min-width: 0, o título
+   (nowrap) da barra do visualizador alarga a coluna além da tela no
+   celular e empurra o iframe e o botão "Tela cheia" para fora. */
+#panel-learn, #panel-admin-fiscal { min-width: 0; }
+
+.learn-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0 4px;
+}
+.learn-stat {
+  background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 2px;
+}
+.learn-stat strong { font-size: 22px; color: var(--primary-strong); }
+.learn-stat span { font-size: 12px; color: var(--muted); }
+
+#learn-hub { display: grid; gap: var(--density-gap); }
+.learn-grid { display: grid; grid-template-columns: 1fr; gap: var(--density-gap); }
+@media (min-width: 640px) { .learn-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .learn-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+/* Cartão clicável: é um <button> (acessível por teclado), mas com a cara
+   de .card — sobrescreve o fundo/cor do botão primário padrão. */
+button.learn-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--density-pad);
+  font-weight: 400;
+}
+button.learn-card:hover { border-color: var(--primary); filter: none; }
+.learn-card-icon { font-size: 28px; line-height: 1; }
+.learn-card-title { font-size: 16px; }
+.learn-card-desc { font-size: 13px; color: var(--muted); }
+.learn-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+
+.learn-viewer-bar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.learn-viewer-bar strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Ocupa a altura útil entre o cabeçalho e a barra inferior. Fundo branco
+   fixo: os módulos ainda não têm tema escuro (Fase 4 do plano). */
+.learn-frame {
+  display: block; width: 100%; height: calc(100dvh - 230px); min-height: 480px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: #ffffff;
+}
+.learn-credential-qr {
+  display: block; width: 220px; height: 220px; margin: 12px auto; image-rendering: pixelated;
+  background: #ffffff; border-radius: var(--radius-md);
+}
+@media (max-width: 480px) {
+  .learn-stats { gap: 6px; }
+  .learn-stat strong { font-size: 18px; }
+  .learn-frame { height: calc(100dvh - 210px); }
+}
