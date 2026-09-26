@@ -96,10 +96,13 @@ const ClinicEngine = (() => {
     while (node.firstChild) node.removeChild(node.firstChild);
   }
 
-  function emptyState(container, message, color) {
+  // Estados vazio/carregando/erro das grades: classes de shared/style.css
+  // (tokens claro/escuro), no lugar de cores fixas em style.
+  function emptyState(container, message, kind) {
     clearNode(container);
     container.appendChild(el('div', {
-      style: `grid-column: 1 / -1; text-align: center; padding: 30px; color: ${color || 'var(--gray, #64748b)'};`,
+      className: `clinic-empty${kind ? ' is-' + kind : ''}`,
+      role: kind === 'error' ? 'alert' : 'status',
     }, [el('p', { text: message })]));
   }
 
@@ -296,7 +299,7 @@ const ClinicEngine = (() => {
     clearNode(dom.bedsGrid);
 
     if (typeof clinicalCases === 'undefined' || !Array.isArray(clinicalCases) || clinicalCases.length === 0) {
-      dom.bedsGrid.appendChild(el('div', { style: 'grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray, #64748b);' }, [
+      dom.bedsGrid.appendChild(el('div', { className: 'clinic-empty' }, [
         el('h3', { text: 'Nenhum paciente internado no plantão ativo.' }),
         el('p', { text: 'Clique em "⚡ Gerar Caso com IA" ou explore o "Acervo da Liga".' }),
       ]));
@@ -319,19 +322,18 @@ const ClinicEngine = (() => {
         el('div', { className: 'bed-header' }, [
           el('span', { className: 'bed-tag', text: c.tipo === 'emergencia' ? '🚨 Emergência' : '🩺 Ambulatório' }),
           el('span', {
-            className: 'bed-status',
-            style: `font-weight: bold; color: ${isConcluido ? 'var(--success, #16a34a)' : 'var(--primary, #0f766e)'};`,
+            className: `bed-status ${isConcluido ? 'is-done' : 'is-open'}`,
             text: isConcluido ? '✅ Concluído' : '🟡 Em Aberto',
           }),
         ]),
-        el('h4', { style: 'margin: 8px 0 4px; font-size: 1.15rem; color: var(--primary, #0f766e);', text: `Leito 0${index + 1}: ${nome}` }),
-        el('p', { className: 'bed-complaint', style: 'font-style: italic; color: #475569; margin-bottom: 12px; min-height: 42px;', text: `"${queixa}"` }),
-        el('div', { className: 'bed-meta', style: 'display: flex; justify-content: space-between; gap: 8px; font-size: 0.85rem; color: var(--gray, #64748b); border-top: 1px solid #e2e8f0; padding-top: 8px; margin-bottom: 14px;' }, [
+        el('h4', { className: 'bed-title', text: `Leito 0${index + 1}: ${nome}` }),
+        el('p', { className: 'bed-complaint', text: `"${queixa}"` }),
+        el('div', { className: 'bed-meta' }, [
           el('span', {}, ['Idade: ', el('strong', { text: `${idade} anos` })]),
           el('span', {}, ['Perfil: ', el('strong', { text: perfilComportamental })]),
         ]),
         el('button', {
-          className: 'btn btn-primary', style: 'width: 100%;', type: 'button',
+          className: 'btn btn-primary bed-cta', type: 'button',
           text: isConcluido ? '🔄 Reavaliar Caso' : '🩺 Assumir Atendimento',
           onclick: () => openBed(c),
         }),
@@ -349,11 +351,11 @@ const ClinicEngine = (() => {
     initDomReferences();
     if (!dom.communityBedsGrid) return;
 
-    emptyState(dom.communityBedsGrid, '⏳ Sincronizando a biblioteca de casos clínicos da LAIFT...');
+    emptyState(dom.communityBedsGrid, '⏳ Sincronizando a biblioteca de casos clínicos da LAIFT...', 'loading');
 
     const res = await callLaift('apiLearnClinicalLibrary', {});
     if (!res.success) {
-      emptyState(dom.communityBedsGrid, res.message || 'Não foi possível carregar o acervo agora.', '#dc2626');
+      emptyState(dom.communityBedsGrid, res.message || 'Não foi possível carregar o acervo agora.', 'error');
       return;
     }
 
@@ -363,7 +365,7 @@ const ClinicEngine = (() => {
 
     if (casosAcervoCache.length === 0) {
       clearNode(dom.communityBedsGrid);
-      dom.communityBedsGrid.appendChild(el('div', { style: 'grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray);' }, [
+      dom.communityBedsGrid.appendChild(el('div', { className: 'clinic-empty' }, [
         el('h4', { text: 'Nenhum caso publicado no acervo até o momento.' }),
         el('p', { text: 'Casos gerados com IA entram aqui depois de revisados pela diretoria.' }),
       ]));
@@ -388,25 +390,25 @@ const ClinicEngine = (() => {
       const tox = c.toxindrome || 'Geral';
       const agente = c.agentePrincipal || c.agente || 'Não informado';
 
-      const card = el('div', { className: 'bed-card ambulatory', style: 'border-top: 4px solid #0284c7;' }, [
+      const card = el('div', { className: 'bed-card ambulatory is-acervo' }, [
         el('div', { className: 'bed-header' }, [
-          el('span', { className: 'bed-tag', style: 'background: #e0f2fe; color: #0369a1;', text: `📚 ${tox}` }),
-          el('span', { className: 'bed-status', style: 'font-weight: bold; color: #0284c7;', text: '✔ Revisado' }),
+          el('span', { className: 'bed-tag is-acervo', text: `📚 ${tox}` }),
+          el('span', { className: 'bed-status is-reviewed', text: '✔ Revisado' }),
         ]),
-        el('h4', { style: 'margin: 8px 0 2px; font-size: 1.1rem; color: #0369a1;', text: c.titulo || 'Caso Clínico' }),
-        el('div', { style: 'font-size: 0.8rem; color: #64748b; margin-bottom: 8px;' }, ['Paciente: ', el('strong', { text: `${nomePac} (${idadePac})` })]),
-        el('p', { className: 'bed-complaint', style: 'font-style: italic; color: #475569; margin-bottom: 12px; min-height: 40px;', text: `"${c.queixaPrincipal || 'Caso clínico catalogado no acervo.'}"` }),
-        el('div', { className: 'bed-meta', style: 'display: flex; justify-content: space-between; gap: 8px; font-size: 0.8rem; color: var(--gray); border-top: 1px solid #e2e8f0; padding-top: 6px; margin-bottom: 12px;' }, [
+        el('h4', { className: 'bed-title is-acervo', text: c.titulo || 'Caso Clínico' }),
+        el('div', { className: 'bed-patient' }, ['Paciente: ', el('strong', { text: `${nomePac} (${idadePac})` })]),
+        el('p', { className: 'bed-complaint', text: `"${c.queixaPrincipal || 'Caso clínico catalogado no acervo.'}"` }),
+        el('div', { className: 'bed-meta' }, [
           el('span', {}, ['Agente: ', el('strong', { text: agente })]),
           el('span', {}, ['Nível: ', el('strong', { text: c.dificuldade || 'Intermediário' })]),
         ]),
-        el('div', { style: 'display: flex; gap: 6px; flex-wrap: wrap;' }, [
+        el('div', { className: 'bed-actions' }, [
           el('button', {
-            className: 'btn btn-primary btn-sm', style: 'flex: 2; background: #0284c7; min-height: 44px;', type: 'button',
+            className: 'btn btn-primary btn-sm bed-cta-main', type: 'button',
             text: '🩺 Atender Este Caso', onclick: () => assumirCasoDoAcervo(c.id),
           }),
           el('button', {
-            className: 'btn btn-outline btn-sm', style: 'flex: 1; padding: 4px 6px; min-height: 44px;', type: 'button',
+            className: 'btn btn-outline btn-sm bed-cta-alt', type: 'button',
             title: 'Gerar com IA um caso derivado deste tema', text: '⚡ Variação IA',
             onclick: () => gerarVariacaoComIa(agente !== 'Não informado' ? agente : (c.toxindrome || 'Toxicologia')),
           }),
@@ -466,14 +468,14 @@ const ClinicEngine = (() => {
   // 4. RADAR EPIDEMIOLÓGICO (apiLearnClinicalEpidemiology)
   // =========================================================
 
-  function renderRadarChips(container, items, emptyMsg, chipStyle, suffix) {
+  function renderRadarChips(container, items, emptyMsg, chipClass, suffix) {
     clearNode(container);
     if (!items.length) {
-      container.appendChild(el('span', { style: 'font-size: 0.8rem; color: #64748b;', text: emptyMsg }));
+      container.appendChild(el('span', { className: 'radar-empty', text: emptyMsg }));
       return;
     }
     items.forEach((item) => {
-      container.appendChild(el('span', { className: 'tag', style: chipStyle, text: `${item.name}: ${item.count}${suffix}` }));
+      container.appendChild(el('span', { className: `tag radar-chip ${chipClass}`, text: `${item.name}: ${item.count}${suffix}` }));
     });
   }
 
@@ -507,11 +509,11 @@ const ClinicEngine = (() => {
 
     if (dom.radarToxindromesList) {
       renderRadarChips(dom.radarToxindromesList, norm(res.topToxindromes), 'Nenhuma toxíndrome agregada ainda.',
-        'background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 600;', ' caso(s)');
+        'is-toxindrome', ' caso(s)');
     }
     if (dom.radarAgentesList) {
       renderRadarChips(dom.radarAgentesList, norm(res.topAgents), 'Nenhum princípio ativo registrado ainda.',
-        'background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 600;', 'x');
+        'is-agent', 'x');
     }
   }
 
@@ -599,11 +601,11 @@ const ClinicEngine = (() => {
     if (dom.chiefComplaint) dom.chiefComplaint.textContent = `"${currentCase.queixaPrincipal || 'Mal-estar não especificado'}"`;
     if (dom.patientHistory) {
       clearNode(dom.patientHistory);
-      dom.patientHistory.appendChild(el('p', { style: 'margin-bottom: 8px;' }, [
+      dom.patientHistory.appendChild(el('p', { className: 'history-line' }, [
         el('strong', { text: 'Histórico de Admissão: ' }),
         currentCase.historicoAdmissao || 'Admitido para elucidação diagnóstica.',
       ]));
-      dom.patientHistory.appendChild(el('p', { style: 'font-size: 0.85rem; color: var(--text-muted, #64748b);' }, [
+      dom.patientHistory.appendChild(el('p', { className: 'history-line is-muted' }, [
         el('strong', { text: 'Alergias Conhecidas: ' }),
         pac.alergias || 'Nega alergias relatadas.',
       ]));
@@ -644,22 +646,26 @@ const ClinicEngine = (() => {
       return lista.length > 0 ? lista : perguntasLegadas;
     };
 
-    const containerGuia = el('div', { className: 'semiology-wrapper', style: 'width: 100%; display: flex; flex-direction: column; gap: 8px;' });
-    const navBar = el('div', { className: 'semiology-nav', style: 'display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;' });
-    const chipsArea = el('div', { className: 'semiology-chips-area', style: 'display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px;' });
+    const containerGuia = el('div', { className: 'semiology-wrapper' });
+    const navBar = el('div', { className: 'semiology-nav', role: 'group', 'aria-label': 'Eixos do roteiro semiológico' });
+    const chipsArea = el('div', { className: 'semiology-chips-area' });
 
     eixos.forEach((eixo) => {
       const btnEixo = el('button', {
         type: 'button',
-        className: `btn btn-sm ${eixo.id === activeSemiologyAxis ? 'btn-primary' : 'btn-outline'}`,
-        style: 'font-size: 0.75rem; padding: 4px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;',
+        className: `btn btn-sm semiology-axis ${eixo.id === activeSemiologyAxis ? 'btn-primary' : 'btn-outline'}`,
+        'aria-pressed': eixo.id === activeSemiologyAxis ? 'true' : 'false',
         title: eixo.desc,
         text: `${eixo.icone} ${eixo.titulo}`,
       });
       btnEixo.addEventListener('click', () => {
         activeSemiologyAxis = eixo.id;
-        navBar.querySelectorAll('button').forEach((b) => { b.className = 'btn btn-sm btn-outline'; });
-        btnEixo.className = 'btn btn-sm btn-primary';
+        navBar.querySelectorAll('button').forEach((b) => {
+          b.className = 'btn btn-sm semiology-axis btn-outline';
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btnEixo.className = 'btn btn-sm semiology-axis btn-primary';
+        btnEixo.setAttribute('aria-pressed', 'true');
         carregarPerguntasNoEixo(perguntasDoEixo(eixo.id), chipsArea);
       });
       navBar.appendChild(btnEixo);
@@ -676,7 +682,7 @@ const ClinicEngine = (() => {
 
     if (!listaPerguntas || listaPerguntas.length === 0) {
       container.appendChild(el('div', {
-        style: 'font-size: 0.8rem; color: var(--gray, #64748b); font-style: italic; padding: 4px 0;',
+        className: 'semiology-empty',
         text: 'Explore livremente os sintomas do paciente pelo campo de texto abaixo.',
       }));
       return;
@@ -685,12 +691,9 @@ const ClinicEngine = (() => {
     listaPerguntas.forEach((perguntaTexto) => {
       const chip = el('button', {
         type: 'button',
-        className: 'suggestion-chip',
-        style: 'text-align: left; line-height: 1.3; font-size: 0.8rem; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; color: #1e293b; cursor: pointer; transition: all 0.15s ease;',
+        className: 'suggestion-chip semiology-chip',
         text: `🗣️ "${perguntaTexto}"`,
       });
-      chip.addEventListener('mouseover', () => { chip.style.background = '#e2e8f0'; chip.style.borderColor = '#94a3b8'; });
-      chip.addEventListener('mouseout', () => { chip.style.background = '#f1f5f9'; chip.style.borderColor = '#cbd5e1'; });
       chip.addEventListener('click', () => {
         if (dom.questionInput) {
           dom.questionInput.value = String(perguntaTexto);
@@ -716,8 +719,8 @@ const ClinicEngine = (() => {
       btn.addEventListener('click', () => requestExam(exam.id));
       const row = el('div', { className: 'exam-item-row' }, [
         el('div', {}, [
-          el('div', { style: 'font-weight: 600; font-size: 0.9rem;', text: exam.nome }),
-          el('small', { style: 'color: var(--text-muted, #64748b);', text: `Tempo estimado: +${Number(exam.custoTempoMin) || 0} min virtuais` }),
+          el('div', { className: 'exam-name', text: exam.nome }),
+          el('small', { className: 'exam-cost', text: `Tempo estimado: +${Number(exam.custoTempoMin) || 0} min virtuais` }),
         ]),
         btn,
       ]);
@@ -1186,12 +1189,12 @@ const ClinicEngine = (() => {
       clearNode(box);
       if (o.note) box.appendChild(el('p', { className: 'preceptor-note', role: 'status', text: o.note }));
       if (result) {
-        box.appendChild(el('p', { style: 'margin-bottom: 12px; line-height: 1.5;', text: result.feedback || '' }));
+        box.appendChild(el('p', { className: 'feedback-paragraph', text: result.feedback || '' }));
         const addList = (title, items) => {
           const lista = Array.isArray(items) ? items.filter(Boolean) : [];
           if (!lista.length) return;
           box.appendChild(el('strong', { text: title }));
-          box.appendChild(el('ul', { style: 'margin: 8px 0 12px 20px;' }, lista.map((item) => el('li', { style: 'margin-bottom: 4px;', text: item }))));
+          box.appendChild(el('ul', { className: 'feedback-list' }, lista.map((item) => el('li', { text: item }))));
         };
         addList('Pontos fortes:', result.strengths);
         addList('O que melhorar:', result.improvements);
