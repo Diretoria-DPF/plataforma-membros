@@ -1,0 +1,186 @@
+/* =========================================================
+   Terminal Fiscal (Fase 2) — layout próprio da página.
+   Base visual (botões, inputs, banner) continua em ../shared/style.css;
+   aqui só o que é do terminal: cartões, lista, leitor, folha de crachás e
+   o tema escuro das classes deste arquivo. Acabamento fino: Equipe 4.
+========================================================= */
+.fiscal-page {
+  --fiscal-card-bg: var(--surface);
+  --fiscal-warning-bg: #fef3c7;
+  --fiscal-warning-fg: #92400e;
+  --fiscal-present-bg: var(--success-bg);
+}
+
+html[data-theme="dark"] .fiscal-page {
+  --bg-main: #10141c;
+  --surface: #171d29;
+  --surface-alt: #1c2330;
+  --border: #2b3345;
+  --text-main: #e7ebf3;
+  --text-muted: #9aa5bb;
+  --gray: #9aa5bb;
+  --primary: #63b3ed;
+  --primary-light: #90cdf4;
+  --success: #7be3a0;
+  --success-bg: #163a26;
+  --danger: #ff7a70;
+  --danger-bg: #3a1c1c;
+  --fiscal-warning-bg: #3a2e12;
+  --fiscal-warning-fg: #fcd34d;
+}
+html[data-theme="dark"] .fiscal-page input,
+html[data-theme="dark"] .fiscal-page select {
+  background: var(--surface-alt);
+  color: var(--text-main);
+  border-color: var(--border);
+}
+html[data-theme="dark"] .fiscal-page .btn-secondary {
+  background: var(--surface-alt);
+  color: var(--text-main);
+  border-color: var(--border);
+}
+/* Primário claro no escuro pede texto escuro (contraste AA). */
+html[data-theme="dark"] .fiscal-page .btn-primary { color: #0b1a2b; }
+html[data-theme="dark"] .fiscal-page .btn-outline:hover:not(:disabled) { color: #0b1a2b; }
+html[data-theme="dark"] .fiscal-page .status-banner.loading {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}
+
+.fiscal-main {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 12px;
+}
+.fiscal-area { display: grid; gap: 12px; }
+
+.fiscal-card {
+  background: var(--fiscal-card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  min-width: 0;
+}
+.fiscal-card h2 { font-size: 1.05rem; margin: 0 0 10px; color: var(--text-main); }
+
+.fiscal-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.fiscal-grow { flex: 1 1 180px; min-width: 0; }
+.fiscal-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+.fiscal-note { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+
+/* Alvos de toque ≥ 44 px e foco sempre visível (teclado/leitor de tela). */
+.fiscal-page .btn,
+.fiscal-page input[type="email"],
+.fiscal-page input[type="search"],
+.fiscal-page select { min-height: 44px; }
+.fiscal-page input[type="search"] {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-main);
+}
+.fiscal-page select { max-width: 100%; }
+.fiscal-page :focus-visible { outline: 3px solid var(--primary-light); outline-offset: 2px; }
+
+.status-banner.warning {
+  background: var(--fiscal-warning-bg);
+  color: var(--fiscal-warning-fg);
+  border-bottom: 2px solid var(--fiscal-warning-fg);
+}
+.status-banner { position: sticky; top: 0; z-index: 5; }
+
+.fiscal-reader { width: 100%; max-width: 360px; margin: 0 auto 10px; }
+
+.fiscal-bulk { justify-content: space-between; margin: 10px 0 6px; }
+.fiscal-check { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.fiscal-check input, .fiscal-item input[type="checkbox"] { width: 20px; height: 20px; flex: none; }
+
+.fiscal-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.fiscal-empty { padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+.fiscal-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "check info" "actions actions";
+  gap: 6px 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.fiscal-item:last-child { border-bottom: none; }
+.fiscal-item.is-present { background: var(--fiscal-present-bg); }
+.fiscal-item > input[type="checkbox"] { grid-area: check; }
+.fiscal-item-info { grid-area: info; display: flex; flex-direction: column; min-width: 0; cursor: pointer; }
+.fiscal-item-name { color: var(--text-main); overflow-wrap: anywhere; }
+.fiscal-item-meta { font-size: 0.8rem; color: var(--text-muted); overflow-wrap: anywhere; }
+.fiscal-item-actions { grid-area: actions; display: flex; gap: 6px; justify-content: flex-end; }
+@media (min-width: 560px) {
+  .fiscal-item { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "check info actions"; }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================================================
+   Folha de crachás em lote — só existe na impressão.
+   2 colunas × 4 linhas = 8 crachás CR-80 (85,6 × 54 mm) por A4.
+========================================================= */
+.print-area { display: none; }
+
+@media print {
+  @page { size: A4 portrait; margin: 10mm 8mm; }
+  body.is-printing { background: #ffffff !important; }
+  body.is-printing > *:not(.print-area) { display: none !important; }
+  body.is-printing .print-area { display: block; }
+
+  .badge-sheet {
+    display: grid;
+    grid-template-columns: 85.6mm 85.6mm;
+    grid-auto-rows: 54mm;
+    gap: 5mm 6mm;
+    justify-content: center;
+  }
+  .badge-card {
+    width: 85.6mm; height: 54mm;
+    border: 1px dashed #94a3b8; border-radius: 4mm; padding: 3.5mm;
+    display: flex; flex-direction: column; justify-content: space-between;
+    break-inside: avoid; page-break-inside: avoid;
+    background: #ffffff; color: #0f172a;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .badge-header { border-bottom: 1.5px solid #0f172a; padding-bottom: 1.5mm; text-align: center; }
+  .badge-institution { font-size: 6.5pt; font-weight: 700; color: #475569; letter-spacing: 0.5px; }
+  .badge-league { font-size: 8.5pt; font-weight: 800; }
+  .badge-body { display: flex; align-items: center; gap: 3mm; margin: auto 0; }
+  .badge-visual { display: flex; flex-direction: column; align-items: center; gap: 1.5mm; width: 24mm; }
+  .badge-avatar {
+    width: 12mm; height: 12mm; border-radius: 50%; background: #e2e8f0; color: #1e293b;
+    font-size: 11pt; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  .badge-qr { width: 20mm; height: 20mm; image-rendering: pixelated; }
+  .badge-data { flex: 1; overflow: hidden; }
+  .badge-name { font-size: 9pt; font-weight: 800; line-height: 1.2; max-height: 2.4em; overflow: hidden; }
+  .badge-role {
+    display: inline-block; background: #e2e8f0; color: #334155; font-size: 6.5pt; font-weight: 700;
+    padding: 1px 5px; border-radius: 3px; margin: 2mm 0 1.5mm; text-transform: uppercase;
+  }
+  .badge-role.is-board { background: #dbeafe; color: #1e40af; }
+  .badge-code { font-size: 6.5pt; font-family: monospace; color: #64748b; }
+  .badge-footer { border-top: 1px solid #e2e8f0; font-size: 5.5pt; color: #64748b; text-align: center; padding-top: 1mm; }
+}

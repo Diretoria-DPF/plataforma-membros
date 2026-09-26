@@ -618,3 +618,38 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
   .learn-stat strong { font-size: 18px; }
   .learn-frame { height: calc(100dvh - 210px); }
 }
+
+/* Fase 2 — Dados & Presença: desempenho por módulo e conquistas no hub
+   "Aprender" (learning.js) e métricas de aprendizagem no perfil (app.js).
+   Só classes novas; acabamento visual fino fica com a Equipe 4. */
+.learn-stats { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+.learn-stat span { hyphens: auto; overflow-wrap: anywhere; }
+.learn-progress h3 { margin: 0 0 10px; font-size: 16px; }
+.learn-progress h3 + .learn-badges { margin-top: 0; }
+.learn-by-module { display: grid; gap: 8px; margin-bottom: 18px; }
+.learn-module-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name pct" "bar bar" "count count";
+  gap: 4px 10px; align-items: center;
+}
+.learn-module-name { grid-area: name; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.learn-module-pct { grid-area: pct; color: var(--primary-strong); }
+.learn-module-count { grid-area: count; font-size: 12px; color: var(--muted); }
+.learn-module-bar {
+  grid-area: bar; display: block; height: 8px; border-radius: 999px; overflow: hidden;
+  background: var(--surface-alt); border: 1px solid var(--border);
+}
+.learn-module-bar-fill { display: block; height: 100%; background: var(--primary); border-radius: inherit; }
+.learn-badges { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .learn-badges { grid-template-columns: 1fr 1fr; } }
+.learn-badge {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; min-height: 44px;
+  border: 1px dashed var(--border); border-radius: var(--radius-md); color: var(--muted);
+}
+.learn-badge.unlocked { border-style: solid; border-color: var(--primary); background: var(--primary-soft); color: var(--text); }
+.learn-badge-icon { font-size: 20px; line-height: 1.2; }
+.learn-badge-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.learn-badge-desc { font-size: 13px; }
+.learn-badge-state { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.learn-badge.unlocked .learn-badge-state { color: var(--success); font-weight: 700; }
+.profile-learning-metrics:empty { display: none; }
+.profile-learning-title { margin: 18px 0 10px; font-size: 16px; }

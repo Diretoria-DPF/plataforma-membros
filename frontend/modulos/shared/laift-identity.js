@@ -12,6 +12,10 @@
  *
  * Deve ser o PRIMEIRO script de cada módulo: se a página for aberta fora da
  * plataforma (link direto, sem ninguém logado), redireciona para o login.
+ *
+ * Fase 2 (docs/PLANO_FASES_2_3_4.md, Contrato 3): também é a ponte para a
+ * Worker (window.LaiftApi.call) e para o tema da plataforma
+ * (LaiftIdentity.getTheme/applyTheme e <html data-theme>).
  */
 (function (global) {
   'use strict';
@@ -96,5 +100,91 @@
     global.document.addEventListener(evtName, notifyActivity, { passive: true });
   });
 
-  global.LaiftIdentity = { get: get, backToHub: backToHub, loginUrl: LOGIN_URL };
+  // ===========================================================================
+  // Fase 2 — tema (docs/PLANO_FASES_2_3_4.md, Contrato 3)
+  // O módulo segue o tema da plataforma: <html data-theme="light|dark"> é
+  // aplicado aqui já no carregamento (este é o primeiro script da página,
+  // então não há "piscada" de tema errado) e atualizado quando a plataforma
+  // chama applyTheme() ao mudar a preferência. "Sistema" é resolvido pelo
+  // matchMedia da JANELA DA PLATAFORMA — é ela que a pessoa está vendo.
+  // Quem precisar reagir (ex.: redesenhar um gráfico) escuta o evento
+  // `laift:themechange` em window (detail.theme).
+  // ===========================================================================
+  function resolveTheme(pref, win) {
+    if (pref === 'light' || pref === 'dark') return pref;
+    try {
+      return win && win.matchMedia && win.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch (e) {
+      return 'light';
+    }
+  }
+
+  function getTheme() {
+    var h = findHost();
+    var pref = 'system';
+    try {
+      if (h && typeof h.App.getThemePreference === 'function') pref = h.App.getThemePreference();
+    } catch (e) { /* plataforma indisponível */ }
+    return resolveTheme(pref, h || global);
+  }
+
+  function applyTheme(theme) {
+    var t = theme === 'dark' ? 'dark' : 'light';
+    var root = global.document.documentElement;
+    var changed = root.getAttribute('data-theme') !== t;
+    root.setAttribute('data-theme', t);
+    // Módulos dentro de módulos (ex.: o estúdio 3D dentro do laboratório).
+    var frames = global.document.getElementsByTagName('iframe');
+    for (var i = 0; i < frames.length; i++) {
+      try {
+        var w = frames[i].contentWindow;
+        if (w && w.LaiftIdentity && typeof w.LaiftIdentity.applyTheme === 'function') w.LaiftIdentity.applyTheme(t);
+      } catch (e) { /* outra origem */ }
+    }
+    if (changed) {
+      try {
+        global.dispatchEvent(new CustomEvent('laift:themechange', { detail: { theme: t } }));
+      } catch (e) { /* navegador sem CustomEvent — o atributo já foi aplicado */ }
+    }
+    return t;
+  }
+
+  if (host) applyTheme(getTheme());
+
+  // ===========================================================================
+  // Fase 2 — chamadas à Worker a partir do módulo (Contrato 3)
+  // Tudo passa pela plataforma (App.callLearningApi), que confere a
+  // allowlist de ações e acrescenta o token de sessão — o módulo nunca vê o
+  // token e nunca fala direto com a Worker. A resposta é copiada para este
+  // "realm" (JSON) para o módulo não receber objetos/arrays de outra janela
+  // (Array.isArray funciona, mas instanceof Array não) nem referências vivas
+  // à plataforma. Nunca rejeita: falha vira { success:false, message }.
+  // ===========================================================================
+  var UNAVAILABLE = 'Sessão indisponível.';
+
+  function call(action, input) {
+    var h = findHost();
+    if (!h || typeof h.App.callLearningApi !== 'function') {
+      return Promise.resolve({ success: false, message: UNAVAILABLE });
+    }
+    var pending;
+    try {
+      pending = h.App.callLearningApi(action, input);
+    } catch (e) {
+      return Promise.resolve({ success: false, message: UNAVAILABLE });
+    }
+    return Promise.resolve(pending).then(function (res) {
+      try {
+        var copy = JSON.parse(JSON.stringify(res));
+        return copy && typeof copy === 'object' ? copy : { success: false, message: 'Resposta inválida do servidor.' };
+      } catch (e) {
+        return { success: false, message: 'Resposta inválida do servidor.' };
+      }
+    }, function () {
+      return { success: false, message: 'Falha de comunicação com o servidor.' };
+    });
+  }
+
+  global.LaiftApi = { call: call };
+  global.LaiftIdentity = { get: get, backToHub: backToHub, loginUrl: LOGIN_URL, getTheme: getTheme, applyTheme: applyTheme };
 })(window);

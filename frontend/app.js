@@ -317,6 +317,63 @@
   }
 
   // ===========================================================================
+  // Fase 2 — ponte dos módulos de aprendizagem com a Worker
+  // (docs/PLANO_FASES_2_3_4.md, Contrato 3). Os módulos chamam
+  // window.LaiftApi.call(action, input) (modulos/shared/laift-identity.js),
+  // que encaminha para cá. Regras:
+  //  - allowlist FECHADA por prefixo: um módulo só alcança endpoints de
+  //    aprendizagem/presença/IA — nunca apiAdminBanUser, apiSendMessage etc.
+  //    A autorização real continua no servidor (papel checado na Worker);
+  //    isto só reduz o que um módulo comprometido consegue sequer tentar;
+  //  - o token de sessão é prefixado AQUI e nunca é devolvido ao módulo;
+  //  - timeout de 60 s (a IA da Equipe 3 pode demorar) e qualquer falha vira
+  //    { success:false, message } — o módulo nunca recebe exceção.
+  // Não usa callApi() de propósito: uma falha num módulo não deve acender o
+  // banner "Sistema indisponível" da plataforma inteira.
+  // ===========================================================================
+  var LEARNING_API_ALLOWLIST = /^api(Learn|AdminAttendance|AdminAi|AdminLearn)[A-Z][A-Za-z]*$/;
+  var LEARNING_API_TIMEOUT_MS = 60000;
+
+  function callLearningApi(action, input) {
+    if (typeof action !== 'string' || !LEARNING_API_ALLOWLIST.test(action)) {
+      return Promise.resolve({ success: false, message: 'Ação não permitida para os módulos.' });
+    }
+    if (!state.sessionToken) {
+      return Promise.resolve({ success: false, message: 'Sessão indisponível. Faça login novamente.' });
+    }
+    var body;
+    try {
+      // Serializa já aqui: o input vem de outro "realm" (o iframe do módulo)
+      // e qualquer coisa não serializável falha cedo, com mensagem clara.
+      body = JSON.stringify({ action: action, args: [state.sessionToken, input === undefined ? {} : input] });
+    } catch (err) {
+      return Promise.resolve({ success: false, message: 'Dados inválidos para envio.' });
+    }
+    var controller = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (controller) controller.abort(); }, LEARNING_API_TIMEOUT_MS);
+    return fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body,
+      signal: controller ? controller.signal : undefined,
+    }).then(function (res) {
+      if (!res.ok) throw new Error('http');
+      return res.json();
+    }).then(function (data) {
+      clearTimeout(timer);
+      if (!data || typeof data !== 'object' || Array.isArray(data)) return { success: false, message: 'Resposta inválida do servidor.' };
+      return data;
+    }, function (err) {
+      clearTimeout(timer);
+      var timedOut = err && err.name === 'AbortError';
+      return {
+        success: false,
+        message: timedOut ? 'O servidor demorou demais para responder. Tente novamente.' : 'Falha de comunicação com o servidor.',
+      };
+    });
+  }
+
+  // ===========================================================================
   // Navegação entre telas públicas
   // ===========================================================================
   function showPublicScreen(id) {
@@ -359,6 +416,47 @@
   function applyPreferences(prefs) {
     var root = document.documentElement;
     if (prefs && prefs.theme) root.setAttribute('data-theme', prefs.theme);
+    // Fase 2 — os módulos (iframes da mesma origem) acompanham o tema.
+    if (prefs && prefs.theme) {
+      themePreference = prefs.theme;
+      broadcastThemeToModules();
+    }
+  }
+
+  // ===========================================================================
+  // Fase 2 — tema para os módulos de aprendizagem (docs/PLANO_FASES_2_3_4.md,
+  // Contrato 3). A plataforma guarda a PREFERÊNCIA ('light'|'dark'|'system');
+  // os módulos precisam do tema EFETIVO, com "sistema" já resolvido, porque
+  // cada um tem o próprio CSS e só entende <html data-theme="light|dark">.
+  // A aplicação no módulo é feita por modulos/shared/laift-identity.js
+  // (LaiftIdentity.applyTheme); aqui só avisamos todos os iframes abertos.
+  // ===========================================================================
+  var themePreference = 'system';
+  var systemDarkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  function getEffectiveTheme() {
+    if (themePreference === 'light' || themePreference === 'dark') return themePreference;
+    return systemDarkQuery && systemDarkQuery.matches ? 'dark' : 'light';
+  }
+
+  function broadcastThemeToModules() {
+    var theme = getEffectiveTheme();
+    document.querySelectorAll('iframe').forEach(function (frame) {
+      try {
+        var w = frame.contentWindow;
+        if (w && w.LaiftIdentity && typeof w.LaiftIdentity.applyTheme === 'function') w.LaiftIdentity.applyTheme(theme);
+      } catch (err) {
+        // iframe de outra origem (não é módulo LAIFT) — ignora.
+      }
+    });
+  }
+
+  // Preferência "sistema": acompanha a troca de tema do sistema operacional
+  // sem recarregar nada (os módulos abertos também).
+  if (systemDarkQuery) {
+    var onSystemThemeChange = function () { if (themePreference === 'system') broadcastThemeToModules(); };
+    if (systemDarkQuery.addEventListener) systemDarkQuery.addEventListener('change', onSystemThemeChange);
+    else if (systemDarkQuery.addListener) systemDarkQuery.addListener(onSystemThemeChange);
   }
 
   // ===========================================================================
@@ -1368,6 +1466,40 @@
         ]));
       });
     });
+    loadProfileLearningMetrics();
+  }
+
+  // Fase 2 — métricas de aprendizagem no perfil, vindas do mesmo agregado
+  // do hub "Aprender" (apiLearnGetMyStats — calculado na Worker a partir de
+  // learning_attempts). Contêiner próprio, criado aqui ao lado de
+  // #profile-metrics: as duas chamadas são independentes e a que chegar
+  // por último não pode apagar os cartões da outra.
+  function loadProfileLearningMetrics() {
+    var anchor = document.getElementById('profile-metrics');
+    if (!anchor || !anchor.parentNode) return;
+    var box = document.getElementById('profile-learning-metrics');
+    if (!box) {
+      box = h('div', { id: 'profile-learning-metrics', className: 'profile-learning-metrics' }, []);
+      anchor.parentNode.insertBefore(box, anchor.nextSibling);
+    }
+    callLearningApi('apiLearnGetMyStats').then(function (res) {
+      clearEl(box);
+      if (!res.success || !res.stats) return;
+      var s = res.stats;
+      var unlocked = (s.badges || []).filter(function (b) { return b.unlocked; }).length;
+      var cards = [
+        ['Questões resolvidas', s.questionsAnswered],
+        ['Aproveitamento nos simulados', s.accuracyPct === null || s.accuracyPct === undefined ? '—' : s.accuracyPct + '%'],
+        ['Casos clínicos concluídos', s.clinicalCasesCompleted],
+        ['Conquistas', unlocked + ' de ' + (s.badges || []).length],
+      ];
+      box.appendChild(text('h3', 'Aprendizagem', { className: 'profile-learning-title' }));
+      var grid = h('div', { className: 'stat-grid' }, []);
+      cards.forEach(function (c) {
+        grid.appendChild(h('div', { className: 'card stat-card' }, [text('span', c[0]), text('strong', c[1])]));
+      });
+      box.appendChild(grid);
+    });
   }
 
   document.getElementById('btn-profile-avatar-pick').addEventListener('click', function () {
@@ -2074,6 +2206,10 @@
     // documento; laift-identity.js repassa por aqui para a sessão não expirar
     // no meio de um simulado (o throttle de 30s continua valendo).
     notifyActivity: resetSessionExpiryOnActivity,
+    // Fase 2 — ponte dos módulos (allowlist + token só daqui) e tema efetivo.
+    callLearningApi: callLearningApi,
+    getTheme: getEffectiveTheme,
+    getThemePreference: function () { return themePreference; },
     callApi: callApi,
     h: h,
     text: text,

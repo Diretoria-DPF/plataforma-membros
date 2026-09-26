@@ -17,11 +17,22 @@
 (function () {
   'use strict';
 
-  // Backend legado dos módulos (Google Apps Script): métricas, IA da
-  // clínica/laboratório e terminal fiscal. ÚNICO lugar com a URL — os módulos
-  // a recebem daqui via laift-identity.js. Migração para a Worker na Fase 2.
+  // Backend legado dos módulos (Google Apps Script). Desde a Fase 2 a
+  // plataforma não fala mais com ele (estatísticas, presença e credencial
+  // vêm da Worker); a URL continua exportada SÓ porque módulos de outras
+  // equipes ainda a leem via laift-identity.js (window.APPS_SCRIPT_GATEWAY)
+  // até a Onda 2 (docs/PLANO_FASES_2_3_4.md). ÚNICO lugar com a URL.
   var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXvBYrHBIXNjHYItuq2LXKt1vkmh2m_CME-5aZqkxUJhl7ktJjemuasbvdEweH95k/exec';
-  var STATS_TIMEOUT_MS = 20000;
+
+  // Nomes de exibição dos módulos como a Worker os agrega (learning_attempts.module).
+  var STATS_MODULE_LABELS = [
+    ['farmacologia', 'Farmacologia'],
+    ['toxicologia', 'Toxicologia'],
+    ['clinica', 'Clínica (casos)'],
+    ['laboratorio', 'Laboratório'],
+    ['anatomia', 'Anatomia & PK'],
+  ];
+  var STAT_IDS = ['learn-stat-accuracy', 'learn-stat-answered', 'learn-stat-sims', 'learn-stat-cases', 'learn-stat-lab'];
 
   var MODULES = [
     {
@@ -99,43 +110,81 @@
     $(id).textContent = value === null || value === undefined ? '—' : String(value);
   }
 
+  function formatPct(value) {
+    return value === null || value === undefined ? '—' : value + '%';
+  }
+
+  /** Desempenho por módulo: tentativas + barra de aproveitamento (DOM seguro). */
+  function renderByModule(byModule) {
+    var A = app();
+    var box = $('learn-by-module');
+    A.clearEl(box);
+    STATS_MODULE_LABELS.forEach(function (pair) {
+      var data = (byModule && byModule[pair[0]]) || { attempts: 0, accuracyPct: null };
+      var attempts = Number(data.attempts) || 0;
+      var pct = data.accuracyPct === null || data.accuracyPct === undefined ? null : Math.max(0, Math.min(100, Number(data.accuracyPct) || 0));
+      var fill = A.h('span', { className: 'learn-module-bar-fill' }, []);
+      fill.style.width = (pct === null ? 0 : pct) + '%';
+      box.appendChild(A.h('div', { className: 'learn-module-row', 'data-module-stat': pair[0] }, [
+        A.text('span', pair[1], { className: 'learn-module-name' }),
+        A.text('span', attempts === 1 ? '1 atividade' : attempts + ' atividades', { className: 'learn-module-count' }),
+        A.h('span', {
+          className: 'learn-module-bar', role: 'img',
+          'aria-label': pct === null ? 'Sem nota registrada' : 'Aproveitamento de ' + pct + '%',
+        }, [fill]),
+        A.text('strong', formatPct(pct), { className: 'learn-module-pct' }),
+      ]));
+    });
+  }
+
+  /** Conquistas calculadas na Worker; aqui só se exibe o estado. */
+  function renderBadges(badges) {
+    var A = app();
+    var list = $('learn-badges');
+    A.clearEl(list);
+    (badges || []).forEach(function (b) {
+      var unlocked = !!b.unlocked;
+      list.appendChild(A.h('li', {
+        className: 'learn-badge' + (unlocked ? ' unlocked' : ''), 'data-badge': String(b.id || ''),
+      }, [
+        A.text('span', unlocked ? '🏅' : '🔒', { className: 'learn-badge-icon', 'aria-hidden': 'true' }),
+        A.h('span', { className: 'learn-badge-body' }, [
+          A.text('strong', b.label || ''),
+          A.text('span', b.description || '', { className: 'learn-badge-desc' }),
+          A.text('span', unlocked ? 'Desbloqueada' : 'Bloqueada', { className: 'learn-badge-state' }),
+        ]),
+      ]));
+    });
+  }
+
   /**
-   * Estatísticas do aluno no Apps Script (obterDashboardAluno), indexadas
-   * pelo e-mail da conta. Até a Fase 2, quem tinha histórico com matrícula/
-   * CPF no sistema antigo pode ver zeros aqui se o Apps Script não resolver
-   * o e-mail — ver docs/PLANO_UNIFICACAO_LAIFT.md.
+   * Estatísticas da própria sessão, calculadas pela Worker a partir de
+   * learning_attempts (apiLearnGetMyStats). Sem e-mail, sem Apps Script:
+   * a identidade é a da sessão. O histórico antigo da planilha ainda não
+   * foi importado (pendência em docs/FASE_2_DADOS_PRESENCA.md).
    */
   function loadStats() {
-    var identity = app().getIdentity();
-    if (!identity || !identity.email) {
-      // O e-mail chega com o apiGetMyProfile do login; onProfileReady() chama de novo.
-      return;
-    }
+    var A = app();
+    if (!A || typeof A.callLearningApi !== 'function') return;
     var requestId = ++statsRequestId;
-    var controller = new AbortController();
-    var timer = setTimeout(function () { controller.abort(); }, STATS_TIMEOUT_MS);
-    app().setStatus('learn-status', 'Carregando seu desempenho...', 'info');
-
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      // text/plain evita o preflight CORS, que o Apps Script não responde.
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ acao: 'obterDashboardAluno', identificador: identity.email }),
-      signal: controller.signal,
-    }).then(function (res) { return res.json(); }).then(function (data) {
+    A.setStatus('learn-status', 'Carregando seu desempenho...', 'info');
+    A.callLearningApi('apiLearnGetMyStats').then(function (res) {
       if (requestId !== statsRequestId) return;
-      if (!data || !data.sucesso || !data.aluno) {
-        app().setStatus('learn-status', '', null);
+      if (!res || !res.success || !res.stats) {
+        A.setStatus('learn-status', (res && res.message) || 'Não foi possível carregar seu desempenho agora. Os módulos continuam disponíveis.', 'error');
         return;
       }
-      setStat('learn-stat-accuracy', (Number(data.aluno.taxaAcertoGeral) || 0) + '%');
-      setStat('learn-stat-answered', Number(data.aluno.totalQuestoes) || 0);
-      setStat('learn-stat-sims', Number(data.aluno.simuladosConcluidos) || 0);
-      app().setStatus('learn-status', '', null);
-    }).catch(function () {
-      if (requestId !== statsRequestId) return;
-      app().setStatus('learn-status', 'Não foi possível carregar seu desempenho agora. Os módulos continuam disponíveis.', 'error');
-    }).then(function () { clearTimeout(timer); });
+      var st = res.stats;
+      setStat('learn-stat-accuracy', formatPct(st.accuracyPct));
+      setStat('learn-stat-answered', Number(st.questionsAnswered) || 0);
+      setStat('learn-stat-sims', Number(st.quizzesCompleted) || 0);
+      setStat('learn-stat-cases', Number(st.clinicalCasesCompleted) || 0);
+      setStat('learn-stat-lab', Number(st.labFormulations) || 0);
+      renderByModule(st.byModule);
+      renderBadges(st.badges);
+      $('learn-progress').classList.remove('hidden');
+      A.setStatus('learn-status', '', null);
+    });
   }
 
   function loadPanel() {
@@ -190,13 +239,19 @@
   // ===========================================================================
   // Credencial (QR de presença)
   //
-  // O QR antigo carregava o token OTP do Apps Script (LAIFT:v1:<token>), que
-  // deixou de existir com o fim do cadastro próprio; agora é LAIFT:ID:<e-mail>,
-  // formato que o check-in do terminal fiscal já aceitava. Gerado localmente
-  // (vendor/qrcode-generator.js) — antes a imagem vinha de api.qrserver.com,
-  // o que mandaria o e-mail da pessoa para um serviço de terceiros.
+  // Fase 2: o QR carrega a credencial ASSINADA pela Worker
+  // (apiLearnGetMyAttendanceQr → LAIFT:v2:<profileId>.<assinatura>), a única
+  // que o terminal fiscal aceita por leitura. É gerado localmente
+  // (vendor/qrcode-generator.js) — nada vai para serviço de terceiros.
+  // Se a Worker não responder, cai para o formato antigo LAIFT:ID:<e-mail>,
+  // sem assinatura, avisando: o fiscal então só PREENCHE o e-mail para a
+  // presença manual, que o admin confirma — nunca registra direto.
   // ===========================================================================
   var qrLibPromise = null;
+  var credentialRequestId = 0;
+  var QR_V2_RE = /^LAIFT:v2:[0-9a-f-]{36}\.[A-Za-z0-9_-]{24}$/;
+  var CREDENTIAL_NOTE = 'Apresente na portaria para registrar presença em eventos.';
+  var CREDENTIAL_NOTE_LEGACY = 'Credencial provisória: não foi possível obter a credencial assinada agora. Na portaria, a presença será confirmada pelo seu e-mail. Tente abrir de novo mais tarde.';
 
   function loadQrLib() {
     if (window.qrcode) return Promise.resolve(window.qrcode);
@@ -213,21 +268,38 @@
   }
 
   function openCredential() {
-    var identity = app().getIdentity();
-    if (!identity || !identity.email) return;
+    var A = app();
+    var identity = A.getIdentity();
+    if (!identity) return;
+    var requestId = ++credentialRequestId;
     var img = $('learn-credential-qr');
     img.removeAttribute('src');
+    img.removeAttribute('data-qr-kind');
     $('learn-credential-name').textContent = identity.fullName || '';
-    $('learn-credential-email').textContent = identity.email;
+    $('learn-credential-email').textContent = identity.email || '';
+    $('learn-credential-note').textContent = 'Gerando sua credencial...';
     $('modal-learn-credential').classList.remove('hidden');
-    loadQrLib().then(function (qrcode) {
+
+    Promise.all([A.callLearningApi('apiLearnGetMyAttendanceQr'), loadQrLib()]).then(function (results) {
+      if (requestId !== credentialRequestId) return;
+      var res = results[0];
+      var qrcode = results[1];
+      var payload = res && res.success && typeof res.qrPayload === 'string' && QR_V2_RE.test(res.qrPayload) ? res.qrPayload : null;
+      var kind = payload ? 'v2' : 'legacy';
+      if (!payload) {
+        if (!identity.email) throw new Error('sem-email');
+        payload = 'LAIFT:ID:' + identity.email;
+      }
       qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
       var qr = qrcode(0, 'M');
-      qr.addData('LAIFT:ID:' + identity.email);
+      qr.addData(payload);
       qr.make();
       img.src = qr.createDataURL(8, 4);
+      img.setAttribute('data-qr-kind', kind);
+      $('learn-credential-note').textContent = kind === 'v2' ? CREDENTIAL_NOTE : CREDENTIAL_NOTE_LEGACY;
     }).catch(function () {
-      app().setStatus('learn-status', 'Não foi possível gerar o QR Code agora.', 'error');
+      if (requestId !== credentialRequestId) return;
+      A.setStatus('learn-status', 'Não foi possível gerar o QR Code agora.', 'error');
       closeCredential();
     });
   }
@@ -249,7 +321,7 @@
   // ===========================================================================
   // Ciclo de vida
   // ===========================================================================
-  /** Chamado pelo app.js quando o perfil completo (com e-mail) chega. */
+  /** Chamado pelo app.js quando o perfil completo chega (recarrega se o hub estiver à vista). */
   function onProfileReady() {
     if (!activeModuleId && !$('panel-learn').classList.contains('hidden')) loadStats();
   }
@@ -265,7 +337,11 @@
     if ($('learn-viewer')) {
       $('learn-viewer').classList.add('hidden');
       $('learn-hub').classList.remove('hidden');
-      ['learn-stat-accuracy', 'learn-stat-answered', 'learn-stat-sims'].forEach(function (id) { setStat(id, null); });
+      STAT_IDS.forEach(function (id) { setStat(id, null); });
+      app().clearEl($('learn-by-module'));
+      app().clearEl($('learn-badges'));
+      $('learn-progress').classList.add('hidden');
+      credentialRequestId++;
       closeCredential();
     }
   }
