@@ -1,4 +1,4 @@
-# Fase 4 — Qualidade, Design & Segurança dos módulos (Onda 1)
+# Fase 4 — Qualidade, Design & Segurança dos módulos (Ondas 1 e 2)
 
 Equipe 4 · branch local `equipe/fase4-qualidade` · base `6608523`.
 Contrato: `docs/PLANO_FASES_2_3_4.md`. Este documento registra:
@@ -217,41 +217,90 @@ Bugs funcionais encontrados no caminho e corrigidos:
 - `README.md`: apontar `docs/FASE_4_QUALIDADE.md §2` como o guia do design system para novos módulos.
 - `harness.js`/`smoke.e2e.js`: nada a mudar. A lista `IGNORABLE` do smoke já cobre as bibliotecas abortadas, e o `fase4.e2e.js` usa a mesma.
 
-## 8. Onda 2 (depois da integração)
+## 8. Onda 2 (depois da integração) — resultado
 
-1. **Clínica** (`clinica/`):
-   - trocar os 29 `innerHTML` de `clinic-engine.js` por DOM seguro ou `html\`\`` — acervo e bolhas do chat primeiro;
-   - remover os 4 handlers inline do JS e os 12 do `index.html`;
-   - trocar as cores em `style=""` por classes.
-2. **Fiscal** (`fiscal/`):
-   - trocar os 12 `innerHTML` de `fiscal-engine.js`, remover os 4 handlers inline do JS e os 19 do `index.html`;
-   - no `<script>` embutido no template de impressão de crachás, aplicar a mesma técnica do dossiê da anatomia: montar pelo DOM e chamar `print()` pelo opener;
-   - aplicar o SRI do `html5-qrcode`, caso a integração ainda não o tenha feito.
-3. **Laboratório — preceptor** (`lab-preceptor.js`): 1 `innerHTML` + 4 `onclick` (§7).
-4. **Remover as regras transitórias** `[style*=...]` de `shared/style.css` (tema escuro × estilos inline) quando os itens 1 e 2 estiverem feitos.
-5. **CSP**:
-   - GitHub Pages não envia cabeçalhos, então vai por `<meta http-equiv>`, que não aceita `frame-ancestors`;
-   - proposta inicial para os módulos:
-     ```
-     default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval';
-     style-src 'self' 'unsafe-inline';
-     img-src 'self' data: blob: https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov;
-     connect-src 'self' https://*.workers.dev https://cdn.jsdelivr.net https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov https://rxnav.nlm.nih.gov https://www.ebi.ac.uk https://api.fda.gov https://files.rcsb.org https://query.wikidata.org https://apps.humanatlas.io https://purl.humanatlas.io https://3d.nih.gov;
-     worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'
-     ```
-   - `'wasm-unsafe-eval'` é para o RDKit; o `'unsafe-inline'` de estilo cobre os `style=""` que restarem;
-   - validar módulo a módulo com o E2E; não há `eval`, `new Function` nem timers com string nos módulos da Equipe 4.
-6. **Remover o legado do Apps Script**: apagar `shared/api-service.js`, `window.APPS_SCRIPT_GATEWAY` (em `laift-identity.js`) e `LaiftLearning.APPS_SCRIPT_URL`/`APPS_SCRIPT_URL` (em `learning.js`). Estender a checagem estática do `fase4.e2e.js` a `frontend/`.
-7. **Passe de UX**:
-   - `learning.js` (hub): tema propagado aos iframes, estados de carregamento das estatísticas e foco ao abrir/fechar módulo;
-   - fiscal e painel admin de IA;
-   - cabeçalho da plataforma mais compacto com módulo aberto no celular. Já existe um início só em CSS (`:has`); o resto precisa de JS.
-8. **Revisão de segurança final e E2E completo**: estender o `fase4.e2e.js` a Clínica, Fiscal e admin de IA.
+A Onda 2 partiu do código integrado (`9679670`, Fases 2, 3 e 4 juntas). Os
+itens planejados na Onda 1 para Clínica, Fiscal e preceptor do laboratório
+(`innerHTML`, handlers inline) já tinham chegado a zero na integração.
+
+### Números (front-end inteiro, fonte)
+
+| Medida | Antes (`9679670`) | Depois |
+|---|---|---|
+| Referências a Apps Script (`script.google`, `APPS_SCRIPT`, `ApiService`) | várias, incluindo `api-service.js` | **0** (`api-service.js` removido) |
+| `innerHTML`, `insertAdjacentHTML` ou `document.write` fora de `safe-dom.js` | 0 | 0 |
+| Handlers inline (`on*=`) | 0 | 0 |
+| `<script>` inline | 3 (404, termos, privacidade) | **0** (`static-page.js`) |
+| URLs `javascript:` | 2 ("Voltar" dos termos e da privacidade) | **0** |
+| Páginas com CSP | 0 de 12 | **12 de 12** |
+| Atributos `style=` | 258 (clínica: 27) | 227 (clínica: **0**; restam laboratório 56, anatomia 126 e plataforma 45) |
+| Regras transitórias `[style*=…]` em `shared/style.css` | presentes | **removidas** |
+
+### O que foi feito
+
+1. **Fim do Apps Script.**
+   - Saíram:
+     - `modulos/shared/api-service.js`;
+     - `window.APPS_SCRIPT_GATEWAY`;
+     - `LaiftLearning.APPS_SCRIPT_URL`;
+     - comentários e textos obsoletos ("Groq 120B" no laboratório).
+   - O harness E2E aborta e registra qualquer requisição fora da Worker. O smoke, a fase2 e a fase3 exigem:
+     - nenhum POST fora da Worker;
+     - token nunca enviado a outro host.
+2. **CSP** por `<meta>` em todas as páginas; tabela por página em `docs/SECURITY.md`.
+   - Correções que a CSP exigiu:
+     - **Chart.js** da plataforma apontava para um arquivo inexistente no pacote 4.4.4. Agora é `chart.umd.min.js` 4.5.1 com SRI.
+     - **RDKit** fica desligado: o embind usa `new Function`. O `studio-loader.js` lê a CSP e não o carrega, e o estúdio avisa.
+     - **Organograma**: `TypeError` quando a resposta vinha sem `chart`.
+   - O cenário novo `csp.e2e.js` faz três coisas:
+     - checagem estática: CSP antes de qualquer script, diretivas obrigatórias, varredura do front-end inteiro;
+     - percurso de membro e de admin com as bibliotecas reais, servidas por um espelho npm local (`scripts/e2e/cdn-mirror/`) com SRI conferido;
+     - **falha em qualquer `securitypolicyviolation` em qualquer frame**.
+3. **Clínica sem estilo inline.**
+   - Leitos, acervo, radar, semiologia, exames e parecer usam classes com tokens.
+   - O modal do radar virou `role=dialog`.
+   - As regras `[style*=…]` saíram de `shared/style.css`.
+4. **Passe de UX.**
+   - **Hub "Aprender":**
+     - o foco vai para "Voltar" ao abrir um módulo e volta ao cartão ao fechar;
+     - `aria-busy` nas estatísticas.
+   - **Fiscal:**
+     - o iframe mede a altura do conteúdo (`ResizeObserver`), então a barra fixa do celular não cobre mais o fim do terminal;
+     - as cores vêm dos tokens nos dois temas.
+   - **Painel IA:** grade, 2 colunas a 360 px, botão em largura total.
+   - Tudo conferido por captura em 360 px e 1280 px, nos temas claro e escuro.
+5. **Crachá.** Os parâmetros eram decodificados duas vezes, e um nome com `%` quebrava. Agora são decodificados uma vez. A interface id/nome/cargo/qr é a mesma. Há teste com `Ana 100% %41 Silva`.
+6. **Revisão de segurança** do diff `83c4640..HEAD` (Worker das Fases 2 e 3, ponte, fiscal, admin de IA, clínica):
+   - **Corrigido: radar epidemiológico.** O nome do agente, texto livre do cliente nos casos locais, entrava no radar visto por toda a liga. Uma pessoa sozinha conseguia publicar um texto qualquer ali. Agora o agente só aparece se veio do acervo ou se 2+ pessoas diferentes o registraram. Teste em `worker/test/clinicalService.test.js`.
+   - **Corrigido:** o link "Voltar" com `javascript:` era bloqueado em silêncio pela CSP.
+   - **Conferido sem achado:**
+     - papel checado no servidor em todo `apiAdmin*`;
+     - identidade só da sessão;
+     - SQL só por tagged template, com `ILIKE` escapado;
+     - chaves do Groq fora de resposta, log e erro (erros com texto fixo, `ai_usage_log` só com o índice);
+     - rate limits (aprendizagem, check-in, saúde da IA) e cotas de IA com disjuntor;
+     - validação de entrada com lista fechada de campos e tetos de tamanho;
+     - injeção de fórmula no CSV;
+     - `postMessage` com origem fixa e conferida;
+     - allowlist da ponte;
+     - cache de síntese (só o servidor grava; prompt só com o termo normalizado);
+     - acervo (só `approved` na biblioteca, sem gabarito; revisão só admin);
+     - QR v2 (HMAC com chave derivada, comparação em tempo constante).
+   - **Riscos aceitos:** `docs/SECURITY.md`, "Riscos residuais".
+7. **Documentação integrada:**
+   - `README.md`;
+   - `docs/DEPLOYMENT.md`, reescrito para Neon, Worker e Pages;
+   - `docs/SECURITY.md`, reescrito com CSP, QR v2, IA e rotação;
+   - `docs/POLITICA_DE_PRIVACIDADE.md` e `privacidade.html`: versão 2026-09-26, com Groq como operador e a área "Aprender", **pendente de revisão jurídica**;
+   - status nos dois planos.
 
 ## 9. Riscos e pendências
 
-- **Tema dos módulos até a integração.** Sem a ponte da Equipe 2 neste worktree, os módulos seguem `prefers-color-scheme`. O E2E simula a ponte aplicando `data-theme`.
-- **Versões "latest" fixadas.** Chart.js 4.5.1, 3Dmol 2.5.5 e RDKit 2026.3.6 eram as versões mais recentes no npm na data da pinagem. Antes, a página pegava "a última" a cada acesso. Vale uma olhada visual no gráfico PK e no 3D quando o CDN estiver acessível (aqui, os CDNs respondem 403 e o E2E roda com as bibliotecas abortadas).
+- **`style-src 'unsafe-inline'`** continua por causa dos `style=` restantes (laboratório, anatomia, plataforma) e do estilo injetado por bibliotecas. Tirar isso é o próximo passo para uma CSP 100% estrita.
+- **RDKit desligado** no estúdio: descritores estimados e sem similaridade exata. Para religar, seria preciso aceitar `'unsafe-eval'` no estúdio, o que não é recomendado.
+- **Clickjacking**: `frame-ancestors` não funciona em `<meta>`. Precisa de cabeçalho HTTP, que o GitHub Pages não oferece.
+- **E2E intermitente no fiscal (`fase2.e2e.js`, "lista nominal")**: falhou 2 vezes em cerca de 25 execuções antes do reinício do container, com o clique em "Ver inscritos" sem efeito. Não se repetiu em 18 execuções seguidas depois. Uma suspeita é a mudança de altura do iframe (auto-altura da Onda 2) durante o clique. Se voltar a acontecer, investigar primeiro por aí.
+- **Versões "latest" fixadas.** Chart.js 4.5.1, 3Dmol 2.5.5 e RDKit 2026.3.6 eram as versões mais recentes no npm na data da pinagem. Antes, a página pegava "a última" a cada acesso. O `csp.e2e.js` agora roda o gráfico PK, o 3Dmol e o atlas three.js com os arquivos reais dos pacotes npm (espelho local). Vale ainda uma olhada no jsDelivr de verdade depois do deploy.
 - **SRI e cache.** Se o jsDelivr servir outro conteúdo, o navegador recusa o script e o módulo degrada: sem 3D, sem 2D, sem gráfico. É o comportamento desejado, mas fica visível ao usuário.
 - **Tipografia.** Sem Google Fonts, o crachá impresso usa Georgia no lugar de Fraunces e a fonte do sistema no lugar de DM Sans. O laboratório e o Estúdio usam a fonte do sistema e `ui-monospace`.
 - **Farmacologia**: a tela de resultado ganhou desempenho por tópico, "Revisar erradas" e "Refazer" (antes só a Toxicologia tinha). É uma mudança deliberada do motor único.

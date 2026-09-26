@@ -12,6 +12,21 @@ Se algo aqui estiver errado ou for insuficiente, a equipe **não improvisa um
 contrato diferente**: segue o mais próximo possível e registra o desvio no
 relatório final, na seção "Desvios de contrato".
 
+## Status (2026-09-26)
+
+| Etapa | Status |
+|---|---|
+| Onda 1: Equipe 2 (Dados & Presença) | ✅ concluída; ver `docs/FASE_2_DADOS_PRESENCA.md` |
+| Onda 1: Equipe 3 (IA & Clínica) | ✅ concluída; ver `docs/FASE_3_IA_CLINICA.md` |
+| Onda 1: Equipe 4 (Qualidade, Design & Segurança) | ✅ concluída; ver `docs/FASE_4_QUALIDADE.md` |
+| Integração 2 → 3 → 4 | ✅ feita (commit `9679670`) |
+| Onda 2: CSP na plataforma e nos módulos | ✅ 12 páginas, sem `'unsafe-inline'`/`'unsafe-eval'` em `script-src`; E2E falha em qualquer violação |
+| Onda 2: handlers inline e `innerHTML` restantes | ✅ 0 e 0; a clínica também sem `style=` |
+| Onda 2: remoção do `api-service.js` e da URL do Apps Script | ✅ `grep` vazio no front-end |
+| Onda 2: passe de UX (Aprender, fiscal, IA, clínica) | ✅ |
+| Onda 2: revisão de segurança final e E2E completo | ✅ achados e riscos em `docs/SECURITY.md` e `docs/FASE_4_QUALIDADE.md` |
+| Deploy (responsável) | ⏳ pendente: seguir `docs/DEPLOYMENT.md` |
+
 ## Decisões do responsável pelo projeto
 
 | Tema | Decisão |
@@ -282,7 +297,9 @@ forma defensiva (`if (window.LaiftApi) …`); a integração junta as partes.
    - "Pedidos de integração";
    - pendências.
 
-## Deploy (feito pelo responsável, não pelas equipes)
+## Deploy (feito pelo responsável, não pelas equipes) — ⏳ pendente
+
+O passo a passo completo está em `docs/DEPLOYMENT.md`. Resumo:
 
 1. Aplicar `sql/012_learning.sql` e depois `sql/013_clinical_ai.sql` no Neon.
 2. `cd worker && wrangler secret put GROQ_API_KEYS` (todas as chaves, uma por linha ou separadas por vírgula).
@@ -291,5 +308,9 @@ forma defensiva (`if (window.LaiftApi) …`); a integração junta as partes.
 
 ## Pendências conhecidas
 
+- ⏳ **Revisão jurídica** da Política de Privacidade (versão 2026-09-26, com Groq como operador e a área "Aprender") e dos Termos.
+- ⏳ **Retenção do `ai_usage_log`** (sugestão: 180 dias) e agendamento da limpeza.
+- ⏳ **Casos antigos do acervo** (planilha) e **criação/edição manual de casos** pelo admin.
+- ⏳ **Chamada real ao Groq** e **teste de ponta a ponta** depois do deploy. Tudo foi validado com `fetch` simulado.
 - **Histórico antigo** (métricas e presenças na planilha do Apps Script): não é importado nesta rodada. Precisa do código do Apps Script e de uma exportação da planilha para mapear matrícula/CPF → e-mail.
 - **Rodízio de várias contas gratuitas do Groq:** mantido por decisão do responsável. Vale confirmar nos termos de uso do Groq; a camada de IA já permite reduzir para uma chave e um modelo sem reescrita.
