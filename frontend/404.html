@@ -2,13 +2,15 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Página não encontrada - Plataforma de Membros</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="app-shell" class="app-shell">
-    <div class="leaf-field" id="leaf-field" aria-hidden="true"></div>
+    <div class="leaf-field" id="leaf-field" data-leaves="14" aria-hidden="true"></div>
 
     <main class="public-shell">
       <section class="auth-card" aria-labelledby="error-title">
@@ -16,38 +18,18 @@
         <h1 id="error-title">Página não encontrada</h1>
         <p class="muted">A página que você procura não existe ou foi movida. Tente voltar à página inicial da plataforma.</p>
 
-        <div style="text-align: center; margin-top: 28px; font-size: 48px; line-height: 1;">
-          🚫
-        </div>
+        <div class="notfound-icon" aria-hidden="true">🚫</div>
 
-        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center;">
-          <a href="/" style="display: inline-block;">
-            <button type="button" style="width: auto;">Voltar à página inicial</button>
-          </a>
+        <!-- "./" (e não "/"): a plataforma é publicada num subcaminho do
+             GitHub Pages; "/" levava à raiz da organização. Link com cara de
+             botão, em vez de um <button> dentro de <a> (HTML inválido). -->
+        <div class="notfound-actions">
+          <a class="button-link" href="./">Voltar à página inicial</a>
         </div>
       </section>
     </main>
   </div>
 
-  <script>
-    // Mesmo código de folhas decorativas do index.html
-    (function initLeaves() {
-      var field = document.getElementById('leaf-field');
-      if (!field) return;
-      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      var symbols = ['🍃', '🍂', '🌿'];
-      for (var i = 0; i < 14; i++) {
-        var leaf = document.createElement('span');
-        leaf.className = 'leaf';
-        leaf.textContent = symbols[i % symbols.length];
-        leaf.style.left = Math.random() * 100 + '%';
-        leaf.style.animationDuration = 12 + Math.random() * 10 + 's';
-        leaf.style.animationDelay = Math.random() * 10 + 's';
-        leaf.style.fontSize = 16 + Math.random() * 14 + 'px';
-        field.appendChild(leaf);
-      }
-    })();
-  </script>
+  <script src="static-page.js" defer></script>
 </body>
 </html>

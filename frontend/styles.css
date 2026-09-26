@@ -572,6 +572,17 @@ button, input, select, textarea, .list-item .actions-row button {
   .chat-bubble-actions button { min-height: 44px; }
 }
 
+/* Página 404: ícone e link com cara de botão (antes, estilos inline e um
+   <button> dentro de <a>). */
+.notfound-icon { text-align: center; margin-top: 28px; font-size: 48px; line-height: 1; }
+.notfound-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+a.button-link {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+  padding: 12px 18px; border-radius: var(--radius-md); background: var(--primary);
+  color: var(--on-primary); font-weight: 700; text-decoration: none;
+}
+a.button-link:hover { filter: brightness(1.03); }
+
 /* Cartões da área "Aprender": foco visível do mesmo jeito que o hover. */
 button.learn-card:focus-visible { border-color: var(--primary); }
 button.learn-card:hover .learn-card-title,

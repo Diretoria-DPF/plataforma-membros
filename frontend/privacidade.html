@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Política de Privacidade — Plataforma de Membros LAIFT</title>
   <link rel="stylesheet" href="styles.css">
@@ -77,22 +79,6 @@
     <h2>11. Autoridade Nacional de Proteção de Dados (ANPD)</h2>
     <p>Caso você entenda que sua solicitação não foi adequadamente atendida pelo canal da seção 1, você tem o direito de peticionar diretamente à Autoridade Nacional de Proteção de Dados (ANPD), nos termos da LGPD.</p>
   </div>
-  <script>
-    (function () {
-      var field = document.getElementById('leaf-field');
-      if (!field || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-      var symbols = ['🍃', '🍂', '🌿'];
-      for (var i = 0; i < 10; i++) {
-        var leaf = document.createElement('span');
-        leaf.className = 'leaf';
-        leaf.textContent = symbols[i % symbols.length];
-        leaf.style.left = Math.random() * 100 + '%';
-        leaf.style.animationDuration = 12 + Math.random() * 10 + 's';
-        leaf.style.animationDelay = Math.random() * 10 + 's';
-        leaf.style.fontSize = 16 + Math.random() * 14 + 'px';
-        field.appendChild(leaf);
-      }
-    })();
-  </script>
+  <script src="static-page.js" defer></script>
 </body>
 </html>

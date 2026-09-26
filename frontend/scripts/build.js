@@ -61,6 +61,9 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 // cópia recursiva para nenhum arquivo novo ficar de fora da publicação,
 // o mesmo tipo de esquecimento que já derrubou um deploy antes.
 fs.copyFileSync(path.join(ROOT, 'learning.js'), path.join(DIST, 'learning.js'));
+// Decoração das páginas estáticas (404/termos/privacidade): script externo
+// em vez de inline, para a CSP delas não precisar de 'unsafe-inline'.
+fs.copyFileSync(path.join(ROOT, 'static-page.js'), path.join(DIST, 'static-page.js'));
 // Fase 3 — painel admin de IA: sem segredo (só chama a Worker com o token da
 // sessão, como o resto), copiado sem ofuscação, como learning.js.
 fs.copyFileSync(path.join(ROOT, 'admin-ai.js'), path.join(DIST, 'admin-ai.js'));
