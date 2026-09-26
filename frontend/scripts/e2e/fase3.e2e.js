@@ -264,13 +264,26 @@ module.exports = async function fase3() {
     const labInput = (lastCall(app, 'apiLearnLabPreceptor') || { args: [] }).args[1];
     check(labInput && labInput.question.includes('pKa') && !labInput.synthesisTerm && typeof labInput.benchContext === 'string',
       'dúvida do laboratório vai para apiLearnLabPreceptor com o contexto da bancada');
-    check(answer.includes('pKa ≠ pH') && !answer.includes('<img'), 'resposta do preceptor chega como texto, com < e > neutralizados');
+    check(answer.includes('pKa ≠ pH'), 'resposta do preceptor chega como texto puro (sem trocar < e >)');
+    // Integração com a Fase 4: o chat do laboratório monta as bolhas só com
+    // nós de texto, então a mesma resposta hostil aparece literal na tela e
+    // não cria elemento nenhum.
+    // O campo fica num painel recolhido; preenche direto (o que se testa é a renderização).
+    await lab.evaluate(() => {
+      document.getElementById('labChatInput').value = 'Qual a diferença entre pKa e pH?';
+      return window.enviarDuvidaLab();
+    });
+    await lab.waitForFunction(() => (document.getElementById('labChatMessages').textContent || '').includes('pKa ≠ pH'), null, { timeout: 8000 }).catch(() => {});
+    check((await lab.textContent('#labChatMessages')).includes('<img') && (await lab.locator('#labChatMessages img').count()) === 0,
+      'no chat do laboratório, HTML vindo da IA aparece como texto literal (nenhum elemento criado)');
     const synth = await lab.evaluate(() => window.LabPreceptorEngine.processarMensagem('Como sintetizar cafeína?', null, null, false));
     const synthInput = (lastCall(app, 'apiLearnLabPreceptor') || { args: [] }).args[1];
     check(synthInput && synthInput.synthesisTerm === 'cafeina', 'pedido de síntese manda o termo; o cache é do servidor');
     check(synth.includes('acervo coletivo'), 'resposta do cache do servidor é identificada como tal');
+    const labCalls = () => app.calls.worker.filter((c) => c.action === 'apiLearnLabPreceptor').length;
+    const callsBeforeLocal = labCalls();
     const local = await lab.evaluate(() => window.LabPreceptorEngine.processarMensagem('Como sintetizar aspirina?', null, null, false));
-    check(local.includes('Ácido Acetilsalicílico') && app.calls.worker.filter((c) => c.action === 'apiLearnLabPreceptor').length === 2,
+    check(local.includes('Ácido Acetilsalicílico') && labCalls() === callsBeforeLocal,
       'acervo local do laboratório continua respondendo sem chamar o servidor');
     await lab.evaluate(() => {
       const input = document.getElementById('labChatInput');

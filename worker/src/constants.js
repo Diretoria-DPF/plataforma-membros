@@ -202,7 +202,10 @@ Object.assign(LIMITS, {
   // Duração de uma atividade: 24 h é folga de sobra para um simulado
   // deixado aberto; acima disso é dado corrompido/forjado (mesmo CHECK no banco).
   LEARN_DURATION_MAX_SECONDS: 86400,
-  LEARN_LIST_MAX_ITEMS: 20,       // topics / reagents
+  LEARN_LIST_MAX_ITEMS: 20,       // topics
+  // Reagentes: a bancada do laboratório envia até 30 espécies por formulação
+  // (chaves internas como AcidoSalicilico_s) — integração Fase 2 × Fase 4.
+  LEARN_REAGENTS_MAX_ITEMS: 30,
   LEARN_LIST_ITEM_MAX: 80,        // caracteres por tópico/reagente
   LEARN_PRODUCT_MAX: 120,
   LEARN_OBSERVATION_MAX: 500,

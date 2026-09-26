@@ -57,11 +57,12 @@ function isInt(value) {
   return typeof value === 'number' && Number.isInteger(value);
 }
 
-function validateTextList(value, fieldLabel) {
+function validateTextList(value, fieldLabel, maxItems) {
+  const limit = maxItems || C.LIMITS.LEARN_LIST_MAX_ITEMS;
   if (value === undefined || value === null) return [];
   if (!Array.isArray(value)) throw E.ValidationError(fieldLabel + ' inválidos.');
-  if (value.length > C.LIMITS.LEARN_LIST_MAX_ITEMS) {
-    throw E.ValidationError('No máximo ' + C.LIMITS.LEARN_LIST_MAX_ITEMS + ' ' + fieldLabel.toLowerCase() + '.');
+  if (value.length > limit) {
+    throw E.ValidationError('No máximo ' + limit + ' ' + fieldLabel.toLowerCase() + '.');
   }
   const seen = new Set();
   const out = [];
@@ -145,7 +146,7 @@ export async function recordLabFormulation(sql, identity, input, correlationId) 
   const product = cleanText(input.product);
   if (!product || product.length > C.LIMITS.LEARN_PRODUCT_MAX) throw E.ValidationError('Produto da formulação inválido.');
 
-  const reagents = validateTextList(input.reagents, 'Reagentes');
+  const reagents = validateTextList(input.reagents, 'Reagentes', C.LIMITS.LEARN_REAGENTS_MAX_ITEMS);
 
   let temperature = null;
   if (input.temperature !== undefined && input.temperature !== null) {

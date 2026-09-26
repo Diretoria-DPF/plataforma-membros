@@ -106,8 +106,17 @@ describe('LearningService.recordLabFormulation', () => {
     expect(JSON.parse(boundValues(sql, 1)[6])).toEqual({ product: 'Soro fisiológico', reagents: [], temperature: null, stirring: false, observation: '' });
   });
 
+  test('aceita até 30 reagentes (a bancada envia até 30 espécies por formulação)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce(RATE_OK).mockResolvedValueOnce([{ id: 'lab-3' }]).mockResolvedValueOnce(undefined);
+    const reagents = Array.from({ length: 30 }, (_, i) => 'Especie_' + i + '_aq');
+    await LearningService.recordLabFormulation(sql, MEMBER, Object.assign({}, valid, { reagents }), 'cid');
+    expect(JSON.parse(boundValues(sql, 1)[6]).reagents).toHaveLength(30);
+  });
+
   const invalid = [
     ['produto ausente', { product: undefined }, 'Informe o produto da formulação.'],
+    ['mais de 30 reagentes', { reagents: Array.from({ length: 31 }, (_, i) => 'R' + i) }, 'No máximo 30 reagentes.'],
     ['produto vazio', { product: '   ' }, 'Produto da formulação inválido.'],
     ['produto longo demais', { product: 'x'.repeat(121) }, 'Produto da formulação inválido.'],
     ['reagentes que não são lista', { reagents: 'água' }, 'Reagentes inválidos.'],

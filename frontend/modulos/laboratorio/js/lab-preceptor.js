@@ -12,11 +12,11 @@
  *     mais em cache global nenhum (o antigo salvarCacheGlobal deixava
  *     qualquer pessoa envenenar a resposta que as outras iam ler).
  *
- * As respostas remotas são devolvidas como TEXTO. Enquanto o chat do
- * laboratório (js/script.js, Equipe 4) ainda insere a resposta com
- * innerHTML, os sinais < e > da resposta da IA são neutralizados aqui
- * (textoSeguro) — assim nenhuma tag chega a ser criada, e o texto continua
- * legível quando o chat passar a usar textContent.
+ * As respostas remotas são devolvidas como TEXTO PURO: o chat do
+ * laboratório (js/script.js) monta as bolhas só com nós de texto, então
+ * nenhuma tag chega a ser criada — e sinais como "pH < 7" aparecem como
+ * foram escritos (antes eram trocados por ‹ ›, enquanto o chat usava
+ * innerHTML).
  */
 
 const LabPreceptorEngine = {
@@ -355,12 +355,9 @@ const LabPreceptorEngine = {
 `.trim().slice(0, this.MAX_CONTEXTO);
   },
 
-  /** Neutraliza < e > (ver cabeçalho): texto da IA nunca vira tag, com innerHTML ou textContent. */
+  /** Normaliza para string (ver cabeçalho: o chat renderiza como texto, nunca HTML). */
   textoSeguro(texto) {
-    return String(texto === null || texto === undefined ? '' : texto)
-      .replace(/->/g, '→')
-      .replace(/</g, '‹')
-      .replace(/>/g, '›');
+    return String(texto === null || texto === undefined ? '' : texto).replace(/->/g, '→');
   },
 
   /**
