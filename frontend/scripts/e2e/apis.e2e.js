@@ -113,13 +113,25 @@ function installApiMocks(context) {
 
   context.route('https://pubchem.ncbi.nlm.nih.gov/**', async (route) => {
     const req = route.request(); const url = req.url();
-    calls.pubchem.push({ url, method: req.method() });
+    calls.pubchem.push({ url, method: req.method(), body: req.postData() || '' });
     if (await preflight(route)) return;
     if (shouldFail('pubchem', url)) {
       return route.fulfill({ status: 404, headers: CORS, contentType: 'text/plain', body: 'Status: 404\nError: PUGREST.NotFound (mock E2E)' });
     }
     if (/\/PNG(\?|$)/.test(url)) return route.fulfill({ status: 200, headers: CORS, contentType: 'image/png', body: TINY_PNG });
     if (/\/SDF(\?|$)/.test(url)) return route.fulfill({ status: 200, headers: CORS, contentType: 'chemical/x-mdl-sdfile', body: MOCK_SDF });
+    if (/\/property\/InChIKey\b/.test(url)) {
+      // Estúdio: resolverInChIKeyComposto() — GET por nome (Aspirin) resolve de cara;
+      // o POST por SMILES só é usado quando a busca por nome falha (2º cenário abaixo)
+      // e devolve o formato PÓS-2025 do PubChem (ConnectivitySMILES no lugar de
+      // CanonicalSMILES), provando que o parser aceita as duas formas de chave.
+      const props = req.method() === 'POST'
+        ? { CID: 3672, InChIKey: 'HEFNNWSXXWATRW-UHFFFAOYSA-N', ConnectivitySMILES: 'CC(C)CC1=CC=C(C=C1)C(C)C(=O)O' }
+        : { CID: 2244, InChIKey: 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' };
+      return route.fulfill({ status: 200, headers: CORS, contentType: 'application/json', body: JSON.stringify({
+        PropertyTable: { Properties: [props] },
+      }) });
+    }
     if (/\/property\/[^/]*XLogP/.test(url)) {
       return route.fulfill({ status: 200, headers: CORS, contentType: 'application/json', body: JSON.stringify({
         PropertyTable: { Properties: [{ MolecularWeight: '180.16', XLogP: 1.2, CanonicalSMILES: 'CC(=O)OC1=CC=CC=C1C(=O)O' }] },
@@ -157,7 +169,7 @@ function installApiMocks(context) {
 
   context.route('https://www.ebi.ac.uk/**', async (route) => {
     const req = route.request(); const url = req.url();
-    calls.ebi.push({ url, method: req.method() });
+    calls.ebi.push({ url, method: req.method(), body: req.postData() || '' });
     if (await preflight(route)) return;
     if (url.includes('/ebisearch/ws/rest/chebi')) {
       return route.fulfill({ status: 200, headers: CORS, contentType: 'application/json', body: JSON.stringify({
@@ -175,8 +187,14 @@ function installApiMocks(context) {
       }) });
     }
     if (url.includes('/unichem/api/v1/compounds')) {
+      // Formato real do v1: compounds[].sources[] (shortName/compoundId/url) + uci/inchikey
+      // no próprio composto — o parser (resolverIdentificadoresUniChem) só usa sources[].
       return route.fulfill({ status: 200, headers: CORS, contentType: 'application/json', body: JSON.stringify({
-        compounds: [{ sources: [{ shortName: 'drugbank', compoundId: 'DB00945-E2E' }] }],
+        compounds: [{
+          uci: '12345-E2E',
+          inchikey: 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N',
+          sources: [{ shortName: 'drugbank', compoundId: 'DB00945-E2E', url: 'https://go.drugbank.com/drugs/DB00945-E2E' }],
+        }],
       }) });
     }
     return route.fulfill({ status: 404, headers: CORS, contentType: 'text/plain', body: 'not mocked' });
@@ -209,11 +227,27 @@ async function instrumentCsp(app, pkgs) {
   });
   await app.context.route('https://cdn.jsdelivr.net/**', (route) => {
     const url = route.request().url();
+    // RDKit fica de fora de propósito: seu WASM demora "poucos segundos" pra
+    // inicializar (ver csp.e2e.js) — deixá-lo carregar tornaria a ordem de
+    // fontes do InChIKey (RDKit → PubChem nome → PubChem SMILES) uma corrida
+    // dependente de timing. Sem RDKit aqui, o Estúdio sempre cai no PubChem
+    // (testado abaixo) — o caminho RDKit é coberto por rdkit.e2e.js.
+    if (/@rdkit\/rdkit/.test(url)) return route.abort();
     const file = pkgs && mirror.resolveCdnUrl(pkgs, url);
     if (!file) return route.abort();
     return route.fulfill({ status: 200, contentType: file.contentType, body: file.body, headers: { 'Access-Control-Allow-Origin': '*' } });
   });
   return violations;
+}
+
+/** Espera (polling) até `cond()` ser verdadeiro ou o timeout vencer — usado para aguardar chamadas assíncronas registradas em `calls` (fora da página, não dá pra usar waitForFunction). */
+async function esperarAte(cond, timeout, intervalo) {
+  const limite = Date.now() + (timeout || 4000);
+  while (Date.now() < limite) {
+    if (cond()) return true;
+    await new Promise((resolve) => setTimeout(resolve, intervalo || 100));
+  }
+  return cond();
 }
 
 function reportCsp(violations, label) {
@@ -357,32 +391,38 @@ module.exports = async function apis() {
     check(calls.ebi.some((c) => c.url.includes('/chembl/api/data/activity.json')), 'estúdio: ChEMBL (atividades biológicas) chamado');
     await studio.click('[data-action="fecharDossieChEMBL"]');
 
-    // UniChem: a chamada em si (mesma URL/corpo/cabeçalho de resolverIdentificadoresUniChem) funciona sob a
-    // CSP do módulo, com o preflight OPTIONS liberado — mas hoje NENHUM botão da UI a alcança, porque
-    // STATE.compostoSelecionado.inchiKey nunca é atribuído em studio.js (confirmado também em o-bala-vip:
-    // pré-existente, não é uma quebra desta tarefa — provavelmente fica pronto quando o RDKit calcular o
-    // InChIKey do composto ativo). Chamamos a mesma requisição diretamente para provar que CSP/CORS já
-    // funcionam, e deixamos a ligação de UI para quem estiver reativando o RDKit.
-    const unichem = await studio.evaluate(async () => {
-      try {
-        const res = await fetch('https://www.ebi.ac.uk/unichem/api/v1/compounds', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'inchikey', compound: 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' }),
-        });
-        return res.ok ? res.json() : null;
-      } catch (e) { return null; }
-    });
-    // Nota: um POST com Content-Type: application/json dispara preflight OPTIONS num navegador de
-    // verdade, mas a interceptação de rede do Playwright (CDP Fetch) resolve o fetch a partir da
-    // resposta mocada sem expor o OPTIONS como uma requisição própria (confirmado à parte, fora deste
-    // módulo: nenhum host — nem sequer um servidor HTTP local de verdade — recebe o OPTIONS quando a
-    // rota está interceptada). Por isso `preflight()` acima cobre o caso caso o Chromium algum dia
-    // exponha esse OPTIONS, mas a asserção aqui foca no que este harness consegue mesmo verificar: a
-    // resposta chega e é lida sob a CSP do módulo — o que já teria falhado com CORS se a API real não
-    // respondesse ao preflight (como no EBI, cujo próprio site usa esta API do navegador).
-    check(!!unichem && unichem.compounds && unichem.compounds[0].sources[0].compoundId === 'DB00945-E2E', 'estúdio: POST ao UniChem funciona sob a CSP do módulo (resposta lida)');
-    check(calls.ebi.some((c) => c.url.includes('/unichem/api/v1/compounds') && c.method === 'POST'), 'estúdio: chamada POST ao UniChem registrada');
+    // UniChem via UI de verdade (resolverInChIKeyComposto + anexarCrossReferencesCADD):
+    // o composto ativo (1º da lista) resolve o InChIKey pelo PubChem (por nome — a mesma
+    // rota GET usada pelo resto do dossiê) e, ao abrir o dossiê CADD, dispara o POST ao
+    // UniChem com essa chave e anexa os identificadores cruzados ao próprio modal.
+    await esperarAte(() => calls.pubchem.some((c) => /\/property\/InChIKey\b/.test(c.url) && c.method === 'GET'));
+    await studio.click('[data-action="abrirModalCADD"]');
+    await studio.waitForSelector('#caddModalBody .crossref-item', { timeout: 5000 });
+    const crossrefPorNome = await studio.evaluate(() => document.getElementById('caddModalBody').textContent || '');
+    check(/drugbank/.test(crossrefPorNome) && /DB00945-E2E/.test(crossrefPorNome), 'estúdio: dossiê CADD mostra os identificadores cruzados do UniChem (mock) após resolver o InChIKey pela UI');
+    const unichemCallNome = calls.ebi.find((c) => c.url.includes('/unichem/api/v1/compounds') && c.method === 'POST');
+    check(!!unichemCallNome && /BSYNRYMUTXBXSQ-UHFFFAOYSA-N/.test(unichemCallNome.body), 'estúdio: POST ao UniChem enviado com o InChIKey resolvido pelo PubChem (por nome)');
+    await studio.click('[data-action="fecharModalCADD"]');
+
+    // Fallback por SMILES + formato PÓS-2025 do PubChem: força a busca por nome do
+    // Ibuprofeno a falhar, obrigando resolverInChIKeyComposto() a cair para o POST por
+    // SMILES — cujo mock devolve ConnectivitySMILES no lugar de CanonicalSMILES (item 3).
+    fail.pubchem.push('name/Ibuprofen/property/InChIKey');
+    // O acervo tem bem mais de 40 compostos (lista virtualizada, 1º lote só) — busca
+    // pelo nome pra garantir que o Ibuprofeno esteja renderizado antes de clicar.
+    await studio.fill('#studioSearchInput', 'Ibuprofeno');
+    await studio.waitForSelector('.compound-item:has-text("Ibuprofeno")', { timeout: 3000 });
+    await studio.click('.compound-item:has-text("Ibuprofeno")');
+    await esperarAte(() => calls.pubchem.some((c) => /\/compound\/smiles\/property\/InChIKey\b/.test(c.url) && c.method === 'POST'));
+    fail.pubchem.length = 0;
+    const smilesCall = calls.pubchem.find((c) => /\/compound\/smiles\/property\/InChIKey\b/.test(c.url) && c.method === 'POST');
+    check(!!smilesCall && smilesCall.body === 'smiles=' + encodeURIComponent('CC(C)CC1=CC=C(C=C1)C(C)C(=O)O'), 'estúdio: fallback por SMILES via POST (corpo smiles=...) quando a busca por nome falha');
+    await studio.waitForTimeout(400); // garante que o debounce de 300ms do CADD já preencheu STATE.ultimoDossieCADD
+    await studio.click('[data-action="abrirModalCADD"]');
+    await studio.waitForSelector('#caddModalBody .crossref-item', { timeout: 5000 });
+    const unichemCallSmiles = calls.ebi.filter((c) => c.url.includes('/unichem/api/v1/compounds') && c.method === 'POST').pop();
+    check(!!unichemCallSmiles && /HEFNNWSXXWATRW-UHFFFAOYSA-N/.test(unichemCallSmiles.body), 'estúdio: POST ao UniChem enviado com o InChIKey resolvido via fallback SMILES (chave nova do PubChem pós-2025)');
+    await studio.click('[data-action="fecharModalCADD"]');
 
     await studio.click('[data-action="retornarAoLaboratorio"]');
     await frame.waitForFunction(() => document.getElementById('studioIframeModal').style.display === 'none', null, { timeout: 3000 }).catch(() => {});

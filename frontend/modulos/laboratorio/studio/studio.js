@@ -1447,7 +1447,6 @@ console.log(
     }
 
     modal.style.display = 'flex';
-      anexarCrossReferencesCADD();
   };
 
   window.fecharTabelaPeriodica = function () {
@@ -2358,6 +2357,7 @@ console.log(
     </div>`);
 
     modal.style.display = 'flex';
+    anexarCrossReferencesCADD();
   };
 
   window.fecharModalCADD = function () {
@@ -2547,6 +2547,10 @@ console.log(
     _caddTimer = setTimeout(function () {
       avaliarQuimiometriaCompleta(comp.smiles, parseFloat(comp.molarMass), comp.nome);
     }, 300);
+
+    // ✅ v4.6 — InChIKey em segundo plano (não bloqueia a UI): alimenta o
+    // cross-reference do UniChem quando o dossiê CADD for aberto.
+    resolverInChIKeyComposto(comp);
 
     const sdf = await resolverCoordenadas3D(comp.smiles, comp.pubchemQuery || comp.nome);
     STATE.sdfCacheLocal = sdf;
@@ -3094,6 +3098,98 @@ console.log(
   // ▓▓▓ L3.11 — UNCHEM (Interoperabilidade de Identificadores) ▓▓▓
   // ═══════════════════════════════════════════════════════════════════════════
 
+  const INCHIKEY_REGEX = /^[A-Z]{14}-[A-Z]{10}-[A-Z]$/;
+
+  /**
+   * ✅ v4.6 — Resolve o InChIKey do composto ativo em segundo plano, sem
+   * bloquear a UI, para alimentar o cross-reference do UniChem.
+   *
+   * Ordem de fontes: RDKit (só se JÁ estiver carregado — nunca força o
+   * carregamento sob demanda só para isto) → PubChem por nome → PubChem por
+   * SMILES (POST com corpo `smiles=...`, mais seguro para caracteres
+   * especiais que a URL, e ainda assim uma requisição CORS "simples").
+   *
+   * Guarda de corrida: como é assíncrona, checa se `comp` continua sendo o
+   * STATE.compostoSelecionado antes de gravar — evita que uma resposta
+   * atrasada de um composto antigo "vaze" para o composto trocado depois.
+   */
+  async function resolverInChIKeyComposto(comp) {
+    if (!comp || !comp.smiles || comp.smiles === '--') return;
+    if (comp.inchiKey && INCHIKEY_REGEX.test(comp.inchiKey)) return;
+
+    const aindaAtivo = function () { return STATE.compostoSelecionado === comp; };
+    const sL = extrairSmilesPrincipal(comp.smiles);
+
+    // 1) RDKit — só se já estiver carregado (não dispara carregarRDKitSobDemanda()).
+    if (STATE.RDKitModuleInstance && sL && sL.charAt(0) !== '[') {
+      try {
+        const mol = STATE.RDKitModuleInstance.get_mol(sL);
+        if (mol) {
+          const inchi = mol.get_inchi();
+          mol.delete();
+          const chave = inchi && typeof STATE.RDKitModuleInstance.get_inchikey_for_inchi === 'function'
+            ? STATE.RDKitModuleInstance.get_inchikey_for_inchi(inchi)
+            : null;
+          if (chave && INCHIKEY_REGEX.test(chave)) {
+            if (aindaAtivo()) comp.inchiKey = chave;
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('[InChIKey] RDKit falhou:', e.message);
+      }
+    }
+
+    // 2) PubChem por nome (pubchemQuery, em inglês, é o que a API entende melhor).
+    const nome = comp.pubchemQuery || comp.nome;
+    if (nome && nome !== '--') {
+      try {
+        const res = await fetch(
+          'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/' +
+          encodeURIComponent(nome) + '/property/InChIKey/JSON'
+        );
+        if (res.ok) {
+          const dados = await res.json();
+          const props = (dados.PropertyTable && dados.PropertyTable.Properties) || [];
+          const chave = props[0] && props[0].InChIKey;
+          if (chave && INCHIKEY_REGEX.test(chave)) {
+            if (aindaAtivo()) comp.inchiKey = chave;
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('[InChIKey] PubChem (nome) falhou:', e.message);
+      }
+    }
+
+    // 3) PubChem por SMILES — POST com corpo `smiles=` (evita estourar limite de
+    // URL ou quebrar em SMILES com caracteres especiais; Content-Type
+    // application/x-www-form-urlencoded é "simples" para CORS, sem preflight).
+    if (sL && sL.charAt(0) !== '[') {
+      try {
+        const res = await fetch(
+          'https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/property/InChIKey/JSON',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'smiles=' + encodeURIComponent(sL)
+          }
+        );
+        if (res.ok) {
+          const dados = await res.json();
+          const props = (dados.PropertyTable && dados.PropertyTable.Properties) || [];
+          const chave = props[0] && props[0].InChIKey;
+          if (chave && INCHIKEY_REGEX.test(chave) && aindaAtivo()) {
+            comp.inchiKey = chave;
+          }
+        }
+      } catch (e) {
+        console.warn('[InChIKey] PubChem (SMILES) falhou:', e.message);
+      }
+    }
+  }
+  // ››› FIM: resolverInChIKeyComposto() — RDKit → PubChem (nome) → PubChem (SMILES).
+
   /**
    * Resolve identificadores cruzados (PubChem CID, ChEMBL ID, DrugBank ID)
    * usando a API pública do UniChem.
@@ -3117,12 +3213,15 @@ console.log(
       const compostos = dados.compounds || [];
       if (compostos.length === 0) return null;
 
+      // v1: cada fonte traz `shortName` — mas respostas mais antigas/variantes
+      // usam `name` no lugar. Aceita os dois em vez de quebrar quando faltar.
       const mapaFontes = {};
       (compostos[0].sources || []).forEach(function (src) {
-        mapaFontes[src.shortName] = src.compoundId;
+        const chave = src && (src.shortName || src.name);
+        if (chave && src.compoundId) mapaFontes[chave] = src.compoundId;
       });
 
-      return mapaFontes;
+      return Object.keys(mapaFontes).length > 0 ? mapaFontes : null;
     } catch (e) {
       console.warn('[UniChem] Erro:', e.message);
       return null;
@@ -3135,10 +3234,10 @@ console.log(
    * Chamada internamente por window.abrirModalCADD.
    */
   function anexarCrossReferencesCADD() {
-    if (!STATE.compostoSelecionado) return;
+    const comp = STATE.compostoSelecionado;
+    if (!comp) return;
 
-    const inchiKey = STATE.compostoSelecionado.inchiKey ||
-                     STATE.compostoSelecionado.inchi_key || null;
+    const inchiKey = comp.inchiKey || comp.inchi_key || null;
 
     if (!inchiKey) {
       console.log('[UniChem] Composto sem InChIKey — pulando cross-reference');
@@ -3146,6 +3245,8 @@ console.log(
     }
 
     resolverIdentificadoresUniChem(inchiKey).then(function (ids) {
+      // Guarda de corrida: se o usuário já trocou de composto, não anexa aqui.
+      if (comp !== STATE.compostoSelecionado) return;
       if (!ids || Object.keys(ids).length === 0) return;
 
       const container = document.getElementById('caddModalBody');
