@@ -1,0 +1,984 @@
+/* ========================================================================= */
+/* ARQUIVO: anatomia-3d/css/style.css                                        */
+/* VERSÃO:  2.3.0 — COMPLETA: 14 SISTEMAS, 18 VIAS, CRISE PK/PD & QUIZ 3D   */
+/* ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. VARIÁVEIS GLOBAIS & TEMA DARK CIENTÍFICO (LAIFT BIO-TWIN)
+   ------------------------------------------------------------------------- */
+:root {
+  --bg-main: #0f172a;          /* Slate 900 */
+  --bg-surface: #1e293b;       /* Slate 800 */
+  --bg-surface-alt: #162032;   /* Slate 850 */
+  --bg-darker: #020617;        /* Slate 950 */
+  
+  --primary: #38bdf8;          /* Sky 400 */
+  --primary-hover: #0ea5e9;    /* Sky 500 */
+  --primary-glow: rgba(56, 189, 248, 0.25);
+  
+  --secondary: #0284c7;        /* Sky 600 */
+  --accent: #34d399;           /* Emerald 400 */
+  --accent-glow: rgba(52, 211, 153, 0.25);
+  
+  --warning: #f59e0b;          /* Amber 500 */
+  --warning-alt: #f97316;      /* Orange 500 */
+  --danger: #ef4444;           /* Red 500 */
+  --danger-glow: rgba(239, 68, 68, 0.35);
+  --purple: #a855f7;           /* Purple 500 */
+  
+  --text-main: #f8fafc;        /* Slate 50 */
+  --text-muted: #94a3b8;       /* Slate 400 */
+  --text-dim: #64748b;         /* Slate 500 */
+  --border: #334155;           /* Slate 700 */
+  --border-focus: #0284c7;
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --header-height: 52px;
+  --nav-height: calc(64px + env(safe-area-inset-bottom));
+}
+
+/* -------------------------------------------------------------------------
+   2. RESET E TRAVA NATIVA DE COCKPIT (ZERO SCROLL INDESEJADO NO MOBILE)
+   ------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100vh;
+  max-height: 100dvh;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none;
+  display: flex;
+  flex-direction: column;
+  -webkit-text-size-adjust: 100%;
+}
+
+input, select, textarea, button {
+  font-family: inherit;
+  font-size: 16px !important; /* Previne auto-zoom no iOS Safari / Android */
+}
+
+/* -------------------------------------------------------------------------
+   3. CABEÇALHO MASTER DO ATLAS
+   ------------------------------------------------------------------------- */
+.atlas-header {
+  height: var(--header-height);
+  background-color: var(--bg-darker);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 14px;
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.atlas-brand h1 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.atlas-brand span {
+  color: var(--text-main);
+  font-weight: 400;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-pill-tool {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.btn-pill-tool:hover {
+  background: var(--border);
+  color: var(--text-main);
+  border-color: var(--primary);
+}
+
+.btn-pill-tool.active, .fs-active-icon {
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+/* -------------------------------------------------------------------------
+   4. BARRA DE SISTEMAS DESLIZÁVEL (HORIZONTAL TOUCH SCROLL COM 14 SISTEMAS)
+   ------------------------------------------------------------------------- */
+.systems-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  background-color: #0b1120;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  flex-shrink: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.systems-bar::-webkit-scrollbar {
+  height: 3px;
+}
+
+.systems-bar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.sys-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.sys-chip:hover {
+  border-color: var(--primary);
+  color: var(--text-main);
+}
+
+.sys-chip.active {
+  background: var(--secondary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* -------------------------------------------------------------------------
+   5. CONTROLE DE NÍVEIS DE ZOOM (MACRO / MESO / NANO)
+   ------------------------------------------------------------------------- */
+.zoom-pill-group {
+  display: flex;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-darker);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.zoom-btn {
+  flex: 1;
+  padding: 6px 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.zoom-btn:hover {
+  border-color: var(--primary);
+  color: var(--text-main);
+}
+
+.zoom-btn.active {
+  background: var(--secondary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* -------------------------------------------------------------------------
+   6. VIEWPORT PRINCIPAL & GRID DE TELAS SPA
+   ------------------------------------------------------------------------- */
+.viewport {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: calc(100% - var(--header-height) - var(--nav-height) - 90px);
+  overflow: hidden;
+  background: var(--bg-main);
+}
+
+.view-panel {
+  display: none;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.view-panel.active {
+  display: block;
+}
+
+.panel-header {
+  margin-bottom: 12px;
+}
+
+.panel-header h2 {
+  font-size: 1.15rem;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.panel-header p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* -------------------------------------------------------------------------
+   7. PALCO 3D WEBGL & VISUALIZADOR MACROMOLECULAR (3DMOL.JS)
+   ------------------------------------------------------------------------- */
+#canvas-3d-container {
+  width: 100%;
+  height: 48vh;
+  min-height: 280px;
+  background: var(--bg-darker);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.75);
+  touch-action: none;
+  margin-bottom: 12px;
+}
+
+#loading-3d-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(2, 6, 23, 0.9);
+  color: var(--primary);
+  font-size: 0.84rem;
+  font-weight: 600;
+  z-index: 20;
+  backdrop-filter: blur(4px);
+}
+
+#organ-hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  backdrop-filter: blur(6px);
+  z-index: 25;
+  pointer-events: none;
+  max-width: 80%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+#organ-hud strong {
+  color: var(--primary);
+  display: block;
+  font-size: 0.86rem;
+  margin-top: 2px;
+}
+
+#mol-viewport-container {
+  width: 100%;
+  height: 48vh;
+  min-height: 280px;
+  background: var(--bg-darker);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+  margin-bottom: 12px;
+}
+
+#mol-viewport {
+  width: 100%;
+  height: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   8. WIDGET DE DISSECÇÃO EM 5 CAMADAS (SLIDER NO CANVAS)
+   ------------------------------------------------------------------------- */
+#dissectionControlWidget {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(2, 6, 23, 0.92);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 30;
+  backdrop-filter: blur(6px);
+}
+
+#dissectionSlider {
+  width: 170px;
+  accent-color: var(--secondary);
+  cursor: pointer;
+  margin: 4px 0;
+}
+
+/* -------------------------------------------------------------------------
+   9. PAINEL DE ÁRVORE ANATÔMICA & CONTROLE GRANULAR DE OPACIDADE
+   ------------------------------------------------------------------------- */
+.tree-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tree-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tree-header h3 {
+  font-size: 0.86rem;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tree-system-card {
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  margin-bottom: 6px;
+}
+
+.tree-system-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tree-organ-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 6px;
+  border-left: 2px solid rgba(56, 189, 248, 0.25);
+}
+
+.tree-organ-row {
+  display: grid;
+  grid-template-columns: auto 1fr 90px auto;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface-alt);
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.tree-organ-title {
+  font-size: 0.76rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-organ-slider {
+  width: 100%;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.btn-isolate-organ {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-isolate-organ:hover {
+  background: var(--border);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* -------------------------------------------------------------------------
+   10. SELETOR E SIMULADOR DAS 18 VIAS DE ADMINISTRAÇÃO
+   ------------------------------------------------------------------------- */
+.routes-selector-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.routes-category-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.route-cat-btn {
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.route-cat-btn.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.routes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.routes-grid::-webkit-scrollbar {
+  width: 3px;
+}
+
+.routes-grid::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.route-chip-card {
+  background: var(--bg-darker);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.route-chip-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.route-chip-card.active {
+  border-color: var(--accent);
+  background: rgba(52, 211, 153, 0.08);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.route-chip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.route-chip-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.route-badge {
+  font-size: 0.62rem;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.route-details-panel {
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  margin-top: 8px;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.route-details-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: var(--primary);
+}
+
+/* -------------------------------------------------------------------------
+   11. MODO CRISE TOXICOLÓGICA (SIMULADOR DE EMERGÊNCIA LAIFT)
+   ------------------------------------------------------------------------- */
+.crisis-panel-card {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1.5px solid var(--danger);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 16px var(--danger-glow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crisis-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crisis-title {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.crisis-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-antidote {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  color: var(--text-main);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: var(--transition);
+}
+
+.btn-antidote:hover {
+  border-color: var(--accent);
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.btn-antidote.atropina:hover {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.btn-crisis-toggle {
+  background: var(--danger);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-crisis-toggle:hover {
+  filter: brightness(1.15);
+}
+
+#crisisTelemetryHUD {
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+}
+
+/* -------------------------------------------------------------------------
+   12. QUIZ 3D GAMIFICADO ("APONTE E DIAGNOSTIQUE")
+   ------------------------------------------------------------------------- */
+#quizMasterContainer {
+  transition: opacity 0.25s ease;
+}
+
+#quizQuestionCard {
+  animation: slideDownFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quiz-launcher-banner {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(16, 185, 129, 0.15));
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.quiz-launcher-info h4 {
+  font-size: 0.88rem;
+  color: var(--primary);
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.quiz-launcher-info p {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* -------------------------------------------------------------------------
+   13. TIMELINE FISIOLÓGICA & COMPONENTES DINÂMICOS
+   ------------------------------------------------------------------------- */
+.timeline-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-step-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--warning-alt);
+}
+
+.btn-play-sm {
+  background: var(--accent);
+  color: var(--bg-darker);
+  border: none;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-play-sm:hover {
+  filter: brightness(1.1);
+}
+
+.timeline-desc {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.timeline-nav-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.btn-step {
+  flex: 1;
+  min-width: 80px;
+  background: var(--bg-darker);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.btn-step:hover {
+  background: var(--border);
+  border-color: var(--primary);
+}
+
+/* -------------------------------------------------------------------------
+   14. GRÁFICO FARMACOCINÉTICO & FARMACODINÂMICO (CHART.JS DUAL-AXIS)
+   ------------------------------------------------------------------------- */
+#pk-chart-container {
+  width: 100%;
+  height: 200px;
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+  position: relative;
+}
+
+/* -------------------------------------------------------------------------
+   15. PROTOCOLOS DE BIOHACKING & BUSCA
+   ------------------------------------------------------------------------- */
+.search-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+#bio-search-input {
+  flex: 1;
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: var(--transition);
+}
+
+#bio-search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+#btn-bio-search {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  width: 46px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: var(--transition);
+}
+
+#btn-bio-search:hover {
+  background: var(--border);
+}
+
+.bio-protocol-card {
+  background: var(--bg-surface);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  transition: transform var(--transition);
+}
+
+.bio-protocol-card:hover {
+  transform: translateY(-2px);
+}
+
+.tag-bio {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------------
+   16. ACERVO, HISTÓRICO & AÇÕES DE EXPORTAÇÃO
+   ------------------------------------------------------------------------- */
+.actions-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.btn-primary {
+  background: var(--secondary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+}
+
+/* -------------------------------------------------------------------------
+   17. BARRA INFERIOR PWA (BOTTOM NAVIGATION MOBILE-FIRST)
+   ------------------------------------------------------------------------- */
+.bottom-nav {
+  height: var(--nav-height);
+  background-color: var(--bg-darker);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.nav-icon {
+  font-size: 1.3rem;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.nav-btn.active {
+  color: var(--primary);
+}
+
+.nav-btn.active .nav-icon {
+  transform: translateY(-2px) scale(1.12);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* -------------------------------------------------------------------------
+   18. ADAPTAÇÕES RESPONSIVAS (< 900px & SMARTPHONES)
+   ------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  #canvas-3d-container, #mol-viewport-container {
+    height: 42vh;
+    min-height: 250px;
+  }
+
+  .routes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tree-organ-row {
+    grid-template-columns: auto 1fr 75px auto;
+  }
+
+  .crisis-actions-row {
+    grid-template-columns: 1fr;
+  }
+}

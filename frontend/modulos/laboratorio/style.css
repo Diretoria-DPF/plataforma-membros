@@ -1,0 +1,1581 @@
+/* =========================================================
+   1. VARIÁVEIS GLOBAIS E RESET DE HARD-LOCK (ZERO SCROLL)
+========================================================= */
+:root {
+  --bg-deep: #010510;
+  --panel-bg: #0a0f1e;
+  --panel-inner-bg: rgba(2, 6, 23, 0.7);
+  --neon-cyan: #00e5ff;
+  --neon-green: #00ff88;
+  --neon-magenta: #ff00aa;
+  --alert-red: #ff1744;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: #1e3a5f;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --font-mono: 'Fira Code', monospace;
+  --font-ui: 'Urbanist', sans-serif;
+  --glow-cyan: 0 0 18px rgba(0, 229, 255, 0.35);
+  --transition-smooth: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Trava absoluta: impede rolagem da janela, elástico mobile e zoom descontrolado */
+html, body.cockpit-locked {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: none;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(0, 229, 255, 0.07) 0%, transparent 70%),
+                    radial-gradient(ellipse at 80% 100%, rgba(255, 0, 170, 0.05) 0%, transparent 60%);
+}
+
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+/* =========================================================
+   2. CABEÇALHO ULTRA-COMPACTO (38px FIXOS)
+========================================================= */
+.lab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 38px;
+  min-height: 38px;
+  max-height: 38px;
+  width: 100%;
+  padding: 0 14px;
+  background: rgba(10, 15, 30, 0.98);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-left h1 {
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.62rem;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.manual-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--neon-cyan);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.manual-btn:hover {
+  background: rgba(0, 229, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+/* =========================================================
+   3. GRID PRINCIPAL (COCKPIT 100dvh)
+========================================================= */
+.main-grid {
+  flex: 1;
+  height: calc(100dvh - 38px);
+  max-height: calc(100dvh - 38px);
+  display: grid;
+  grid-template-columns: 290px 1fr 320px;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  overflow: hidden !important;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.8rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.panel h3 {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--neon-cyan);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 6px var(--neon-cyan); }
+  50% { box-shadow: 0 0 14px var(--neon-cyan), 0 0 24px rgba(0, 229, 255, 0.5); }
+}
+
+/* =========================================================
+   4. PAINEL ESQUERDO: CONTROLES E REAGENTES
+========================================================= */
+.panel-controls {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header-sticky {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+
+.control-group {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-label {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.panel-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.controls-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  padding-right: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.controls-scroll::-webkit-scrollbar,
+.reagent-catalog::-webkit-scrollbar,
+.log-stream::-webkit-scrollbar,
+.lab-chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.controls-scroll::-webkit-scrollbar-thumb,
+.reagent-catalog::-webkit-scrollbar-thumb,
+.log-stream::-webkit-scrollbar-thumb,
+.lab-chat-messages::-webkit-scrollbar-thumb {
+  background: var(--border-active);
+  border-radius: 4px;
+}
+
+select, input[type="number"] {
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-active);
+  background: #020617;
+  color: #e0e0e0;
+  font-family: var(--font-mono);
+  outline: none;
+  font-size: 0.78rem !important;
+  transition: var(--transition-smooth);
+}
+
+select:focus, input:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.25);
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--neon-cyan);
+  cursor: pointer;
+}
+
+label {
+  font-size: 0.64rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.compact-row {
+  display: flex;
+  gap: 6px;
+}
+
+.panel-divider {
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+  margin: 8px 0;
+}
+
+.btn-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  flex: 1;
+  min-width: 48px;
+  padding: 0.42rem 0.3rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  letter-spacing: 0.6px;
+  transition: var(--transition-smooth);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-play { background: var(--neon-green); color: #000; }
+.btn-stop { background: #ff9800; color: #000; }
+.btn-fire { background: #ff5722; color: #fff; }
+.btn-ice { background: #4fc3f7; color: #000; }
+.btn-lock { background: #7c4dff; color: #fff; }
+.btn-time { background: #37474f; color: #fff; }
+.btn-time.active-btn { background: var(--neon-cyan); color: #000; box-shadow: 0 0 8px var(--neon-cyan); }
+.btn-reset { background: transparent; border: 1px solid var(--alert-red); color: var(--alert-red); }
+.btn-reset:hover { background: var(--alert-red); color: #fff; }
+.btn-clear { background: transparent; border: 1px solid #546e7a; color: #b0bec5; font-size: 0.58rem; padding: 0.2rem 0.4rem; }
+.btn-clear:hover { background: #546e7a; color: #fff; }
+.btn.active-btn { box-shadow: inset 0 0 0 2px #fff, 0 0 10px currentColor; transform: scale(0.97); }
+
+/* Catálogo de Reagentes */
+.reagent-catalog {
+  max-height: 155px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  border: 1px solid var(--border-active);
+  border-radius: 6px;
+  background: #020617;
+  -webkit-overflow-scrolling: touch;
+}
+
+details {
+  border-bottom: 1px solid #1e293b;
+}
+
+details:last-child {
+  border-bottom: none;
+}
+
+summary {
+  padding: 5px 8px;
+  cursor: pointer;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #b0bec5;
+  user-select: none;
+  transition: 0.15s;
+  background: #0f172a;
+}
+
+summary:hover {
+  color: var(--neon-cyan);
+  background: #1a2740;
+}
+
+.reagent-list label {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.64rem;
+  color: #90a4ae;
+  font-weight: 400;
+  border-top: 1px dashed #1e293b;
+  transition: 0.15s;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.reagent-list label:hover {
+  background: rgba(0, 229, 255, 0.08);
+  color: #fff;
+}
+
+.reagent-list input[type="radio"] {
+  margin-right: 6px;
+  accent-color: var(--neon-green);
+  transform: scale(1.05);
+  width: auto;
+}
+
+/* =========================================================
+   5. O PALCO VISUAL (BANCADA E VIDRARIA)
+========================================================= */
+.visual-stage {
+  height: 100%;
+  max-height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, #0c1c38 0%, #010510 100%);
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.8);
+}
+
+/* Bancada e Estrutura Física */
+.bench {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(to bottom, #1e2b48, #0a0f1e);
+  border-top: 4px solid #2d3f66;
+  z-index: 10;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.tripod {
+  position: absolute;
+  bottom: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 28px;
+  border-top: 5px solid #6b7c9e;
+  border-left: 4px solid #4a5a7a;
+  border-right: 4px solid #4a5a7a;
+  z-index: 12;
+  border-radius: 4px 4px 0 0;
+}
+
+/* Zona da Vidraria */
+.glassware-zone {
+  position: absolute;
+  bottom: 86px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.glass-vessel {
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  border-top: none;
+  position: relative;
+  transition: all 0.3s ease;
+  border-radius: 0 0 16px 16px;
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 229, 255, 0.08);
+}
+
+.vessel-beaker {
+  width: 190px;
+  height: 230px;
+  border-radius: 0 0 22px 22px;
+}
+
+.vessel-flask {
+  width: 190px;
+  height: 230px;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  clip-path: polygon(36% 0%, 64% 0%, 64% 28%, 100% 100%, 0% 100%, 36% 28%);
+}
+
+.stopper-cap {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 16px;
+  background: #5d4037;
+  border-radius: 4px;
+  display: none;
+  z-index: 20;
+}
+
+.closed-system .stopper-cap {
+  display: block;
+}
+
+.content-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.liquid-layer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 0%;
+  transition: height 0.3s, background-color 0.6s;
+}
+
+.precipitate-layer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 0%;
+  transition: height 0.4s, background-color 0.4s;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.35) 2px, transparent 2px);
+  background-size: 7px 7px;
+  z-index: 2;
+}
+
+.gas-halo {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s, background 0.6s;
+  z-index: 4;
+}
+
+.bubble-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.5) 2px, transparent 2px);
+  background-size: 16px 24px;
+  animation: bubbleRise 0.35s infinite linear;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 3;
+  pointer-events: none;
+}
+
+@keyframes bubbleRise {
+  0% { background-position: 0 24px; }
+  100% { background-position: 0 0; }
+}
+
+.freeze-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(180, 220, 255, 0.75) 0%, rgba(255, 255, 255, 0.4) 35%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 6;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Efeitos Térmicos */
+.flame-effect {
+  position: absolute;
+  bottom: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 5;
+}
+
+.flame-core {
+  width: 28px;
+  height: 38px;
+  background: radial-gradient(ellipse at bottom, #4fc3f7 8%, #ff9800 65%, transparent 100%);
+  border-radius: 50% 50% 20% 20%;
+  animation: flickerFlame 0.08s infinite alternate;
+  margin-bottom: -3px;
+}
+
+@keyframes flickerFlame {
+  0% { transform: scaleX(0.9) rotate(-2deg); }
+  100% { transform: scaleX(1.1) rotate(3deg); }
+}
+
+.flame-base {
+  width: 18px;
+  height: 10px;
+  background: #5a6a8a;
+  border-radius: 2px;
+}
+
+.ice-aura-effect {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 26px;
+  background: radial-gradient(ellipse, rgba(79, 195, 247, 0.65) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 5;
+  animation: chillPulse 2s infinite alternate;
+}
+
+@keyframes chillPulse {
+  0% { transform: translateX(-50%) scale(1); opacity: 0.75; }
+  100% { transform: translateX(-50%) scale(1.15); opacity: 0.3; }
+}
+
+/* HUD Superior */
+.hud-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 30;
+  pointer-events: none;
+  gap: 6px;
+}
+
+.hud-card {
+  background: rgba(2, 6, 23, 0.88);
+  border: 1px solid var(--border-active);
+  padding: 5px 10px;
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  flex: 1;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.hud-card .hud-val {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.45);
+}
+
+.hud-card .hud-label {
+  font-size: 0.56rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.press-warning {
+  color: #ff9800;
+  font-size: 0.6rem;
+  margin-left: 2px;
+  display: none;
+}
+
+.press-critical {
+  color: #ff1744;
+  font-weight: bold;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+
+.thermo-column {
+  position: absolute;
+  left: 16px;
+  bottom: 120px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.thermo-stick {
+  width: 9px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px 6px 0 0;
+  border: 1px solid var(--border-active);
+  position: relative;
+  overflow: hidden;
+}
+
+.thermo-fill-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  transition: height 0.4s, background-color 0.6s;
+  border-radius: 0 0 6px 6px;
+}
+
+.thermo-bulb-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--border-active);
+  margin-top: -2px;
+  transition: background-color 0.6s;
+}
+
+.signature {
+  position: absolute;
+  bottom: 6px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.22);
+  letter-spacing: 1.5px;
+  z-index: 40;
+  pointer-events: none;
+}
+
+/* =========================================================
+   6. WIDGET DE CHAT (PRECEPTOR DE BANCADA)
+========================================================= */
+#labChatWidgetBtn {
+  position: absolute;
+  bottom: 28px;
+  right: 12px;
+  background: #0284c7;
+  color: #ffffff;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 24px;
+  padding: 6px 14px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 45;
+  transition: var(--transition-smooth);
+}
+
+#labChatWidgetBtn:hover {
+  transform: translateY(-2px);
+  background: #0369a1;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
+}
+
+#labChatDrawer {
+  display: none;
+  position: absolute;
+  bottom: 62px;
+  right: 12px;
+  width: 350px;
+  max-width: calc(100% - 24px);
+  height: 460px;
+  max-height: calc(100% - 74px);
+  background: #0b1329;
+  border: 1px solid var(--border-active);
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85);
+  flex-direction: column;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.lab-chat-header {
+  background: #1e293b;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+}
+
+.lab-chat-header h4 {
+  margin: 0;
+  color: #38bdf8;
+  font-size: 0.82rem;
+}
+
+.lab-chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.76rem;
+}
+
+.lab-chat-msg {
+  padding: 8px 12px;
+  border-radius: 6px;
+  line-height: 1.45;
+  max-width: 90%;
+}
+
+.msg-preceptor {
+  background: #1e293b;
+  color: #e2e8f0;
+  align-self: flex-start;
+  border-left: 3px solid #38bdf8;
+}
+
+.msg-aluno {
+  background: #0284c7;
+  color: #ffffff;
+  align-self: flex-end;
+}
+
+.lab-chat-input {
+  display: flex;
+  padding: 6px;
+  background: #1e293b;
+  border-top: 1px solid #334155;
+  gap: 6px;
+}
+
+.lab-chat-input input {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem !important;
+  outline: none;
+}
+
+.lab-chat-input button {
+  background: #0284c7;
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.btn-chat-action {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid #334155;
+  color: #94a3b8;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-chat-action:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #f87171;
+}
+
+.btn-chat-close {
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+
+.btn-chat-close:hover {
+  color: #fff;
+}
+
+.chat-status-badge {
+  font-size: 0.58rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid #00ff88;
+  color: #4ade80;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.chat-chip {
+  background: rgba(2, 132, 199, 0.15);
+  border: 1px solid #0284c7;
+  color: #38bdf8;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  white-space: normal;
+  text-align: left;
+}
+
+.chat-chip:hover {
+  background: #0284c7;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   7. PAINEL DIREITO: ABAS DE ANÁLISE & PROJEÇÃO 2D
+========================================================= */
+.side-panel-right {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.right-tab-bar {
+  display: flex;
+  gap: 3px;
+  background: #090d16;
+  padding: 3px;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid var(--border-active);
+  border-bottom: none;
+  flex-shrink: 0;
+}
+
+.rtab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 6px 2px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.rtab-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+}
+
+.tab-content-container {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.rtab-pane {
+  display: none;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.rtab-pane.active {
+  display: block;
+}
+
+.mol-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-color: #0284c7;
+}
+
+.mol-visualizer-box {
+  background: #020617;
+  border-radius: 8px;
+  border: 1px solid var(--border-active);
+  flex: 1;
+  min-height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 6px;
+}
+
+.mol-visualizer-box canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.mol-visualizer-box img {
+  max-width: 95%;
+  max-height: 95%;
+  object-fit: contain;
+  display: none;
+  filter: invert(0.92) hue-rotate(180deg) contrast(1.1);
+}
+
+#molPlaceholder {
+  position: absolute;
+  font-size: 0.7rem;
+  color: #64748b;
+  text-align: center;
+  padding: 12px;
+  line-height: 1.5;
+}
+
+.mol-details-card {
+  margin-top: 8px;
+  background: var(--panel-inner-bg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mol-data-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+}
+
+.mol-data-row-duo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.data-key {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.data-val-highlight {
+  font-size: 0.8rem;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.data-val-mono {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: #cbd5e1;
+  word-break: break-all;
+}
+
+.btn-dossie-full {
+  width: 100%;
+  margin-top: 6px;
+  padding: 6px;
+  font-size: 0.68rem;
+  text-align: center;
+}
+
+.log-stream {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: #90a4ae;
+  background: #020617;
+  border-radius: 6px;
+  padding: 6px;
+  border: 1px solid var(--border-active);
+  -webkit-overflow-scrolling: touch;
+}
+
+.log-entry {
+  padding: 2px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  display: flex;
+  gap: 6px;
+}
+
+.log-time { color: #546e7a; white-space: nowrap; }
+.log-warn { color: #ff9800; }
+.log-danger { color: #ff1744; }
+.log-info { color: #4fc3f7; }
+
+.mini-canvas-wrap {
+  background: #020617;
+  border-radius: 6px;
+  border: 1px solid var(--border-active);
+  overflow: hidden;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  margin: 1px;
+  border: 1px solid;
+}
+
+.tag-aq { color: #4fc3f7; border-color: #4fc3f7; }
+.tag-s { color: #ffd54f; border-color: #ffd54f; }
+.tag-g { color: #69f0ae; border-color: #69f0ae; }
+.tag-l { color: #b0bec5; border-color: #b0bec5; }
+
+.mission-box {
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid var(--neon-green);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* =========================================================
+   8. MODAIS, FOCO E TELAS DE SEGURANÇA
+========================================================= */
+.alert-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: rgba(183, 28, 28, 0.94);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  flex-direction: column;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.alert-fullscreen h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+.manual-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 12px;
+}
+
+.manual-content {
+  background: var(--panel-bg);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  box-shadow: 0 0 35px rgba(0, 229, 255, 0.3);
+  -webkit-overflow-scrolling: touch;
+}
+
+.manual-content h3 {
+  color: var(--neon-cyan);
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
+}
+
+.manual-content p, .manual-content li {
+  font-size: 0.8rem;
+  color: #b0bec5;
+  margin-bottom: 0.4rem;
+  line-height: 1.45;
+}
+
+.close-manual {
+  background: var(--alert-red);
+  border: none;
+  color: white;
+  padding: 0.45rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  font-weight: bold;
+  font-size: 0.8rem;
+  transition: var(--transition-smooth);
+}
+
+.close-manual:hover { filter: brightness(1.2); }
+
+/* Modo Foco */
+.visual-stage.focus-active {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 9999 !important;
+  background: rgba(1, 5, 16, 0.98) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0;
+}
+
+.visual-stage.focus-active .hud-overlay,
+.visual-stage.focus-active .thermo-column,
+.visual-stage.focus-active .bench,
+.visual-stage.focus-active .tripod,
+.visual-stage.focus-active .signature,
+.visual-stage.focus-active #labChatWidgetBtn {
+  display: none !important;
+}
+
+.visual-stage.focus-active .glassware-zone {
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: translateX(0) scale(clamp(1.3, 4vw, 2)) !important;
+  cursor: default;
+}
+
+.btn-close-focus {
+  display: none;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--alert-red);
+  color: white;
+  border: 2px solid #b71c1c;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  z-index: 10000;
+  font-size: 0.82rem;
+  transition: 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 23, 68, 0.4);
+}
+
+.btn-close-focus:hover {
+  background: #b71c1c;
+  transform: scale(1.04);
+}
+
+.visual-stage.focus-active .btn-close-focus {
+  display: block;
+}
+
+.agitador {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  width: 26px;
+  height: 6px;
+  background: #fff;
+  border-radius: 8px;
+  transform: translateX(-50%);
+  display: none;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.agitador.ativo {
+  display: block;
+  animation: spinAgitador 0.2s linear infinite;
+}
+
+@keyframes spinAgitador {
+  0% { transform: translateX(-50%) scaleX(1); }
+  50% { transform: translateX(-50%) scaleX(0.2); background: #ccc; }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* =========================================================
+   9. ANIMAÇÕES FÍSICAS DE DESPEJO
+========================================================= */
+.anim-drop {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  width: 10px;
+  height: 16px;
+  background: rgba(0, 229, 255, 0.85);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  transform: translateX(-50%);
+  animation: fallDown 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+  z-index: 25;
+}
+
+.anim-stream {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  width: 6px;
+  height: 230px;
+  background: rgba(0, 229, 255, 0.65);
+  transform: translateX(-50%);
+  animation: flowStream 0.1s infinite alternate;
+  z-index: 25;
+}
+
+.anim-splash {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 45px;
+  height: 14px;
+  background: rgba(0, 229, 255, 0.55);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: splashWater 0.4s ease-out forwards;
+  z-index: 25;
+}
+
+@keyframes fallDown {
+  to { transform: translate(-50%, 220px); opacity: 0; }
+}
+
+@keyframes flowStream {
+  from { opacity: 0.5; width: 6px; }
+  to { opacity: 0.8; width: 8px; }
+}
+
+@keyframes splashWater {
+  to { transform: translateX(-50%) scale(2.2); opacity: 0; }
+}
+
+.mobile-nav-bar {
+  display: none;
+}
+
+/* =========================================================
+   10. ADAPTAÇÃO NATIVA RESPONSIVA (< 1024px)
+========================================================= */
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .lab-header {
+    padding: 0 10px;
+    height: 36px;
+    min-height: 36px;
+    max-height: 36px;
+  }
+
+  .lab-header h1 {
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+  }
+
+  .main-grid {
+    display: block;
+    position: relative;
+    padding: 4px;
+    height: calc(100dvh - 36px - 48px);
+    max-height: calc(100dvh - 36px - 48px);
+    overflow: hidden !important;
+  }
+
+  .main-grid[data-mobile-view="bancada"] #viewReagentes,
+  .main-grid[data-mobile-view="bancada"] #viewAnalise {
+    display: none !important;
+  }
+  .main-grid[data-mobile-view="bancada"] #viewBancada {
+    display: flex !important;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .main-grid[data-mobile-view="reagentes"] #viewBancada,
+  .main-grid[data-mobile-view="reagentes"] #viewAnalise {
+    display: none !important;
+  }
+  .main-grid[data-mobile-view="reagentes"] #viewReagentes {
+    display: flex !important;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .main-grid[data-mobile-view="analise"] #viewBancada,
+  .main-grid[data-mobile-view="analise"] #viewReagentes {
+    display: none !important;
+  }
+  .main-grid[data-mobile-view="analise"] #viewAnalise {
+    display: flex !important;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .mobile-nav-bar {
+    display: flex;
+    height: 48px;
+    min-height: 48px;
+    background: #0a0f1e;
+    border-top: 1px solid var(--border-active);
+    justify-content: space-around;
+    align-items: center;
+    flex-shrink: 0;
+    z-index: 1000;
+  }
+
+  .m-nav-btn {
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .m-nav-btn span {
+    font-size: 0.62rem;
+    font-weight: 700;
+    font-family: var(--font-ui);
+  }
+
+  .m-nav-btn.active {
+    color: var(--neon-cyan);
+  }
+
+  #labChatWidgetBtn {
+    display: none !important;
+  }
+
+  #labChatDrawer {
+    bottom: 54px;
+    right: 6px;
+    left: 6px;
+    width: auto;
+    max-width: none;
+    height: calc(100dvh - 100px);
+  }
+
+  .hud-card {
+    padding: 4px 6px;
+  }
+
+  .hud-card .hud-val {
+    font-size: 0.8rem;
+  }
+
+  .hud-card .hud-label {
+    font-size: 0.52rem;
+  }
+
+  .vessel-beaker, .vessel-flask {
+    width: 155px;
+    height: 195px;
+  }
+
+  .tripod {
+    width: 145px;
+    height: 22px;
+    bottom: 52px;
+  }
+
+  .glassware-zone {
+    bottom: 74px;
+  }
+
+  .thermo-column {
+    left: 8px;
+    bottom: 95px;
+  }
+
+  .thermo-stick {
+    height: 80px;
+  }
+}
+
+/* =========================================================
+   11. TELAS ULTRAWIDE / TV (> 1600px)
+========================================================= */
+@media (min-width: 1600px) {
+  .main-grid {
+    grid-template-columns: 340px 1fr 360px;
+  }
+
+  .vessel-beaker, .vessel-flask {
+    width: 220px;
+    height: 270px;
+  }
+
+  .tripod {
+    width: 210px;
+    height: 32px;
+  }
+}
+
+/* =========================================================
+   12. INTEGRAÇÃO DO ESTÚDIO 3D COM A BANCADA
+========================================================= */
+.btn-studio-launch {
+  background: rgba(0, 229, 255, 0.12) !important;
+  border-color: var(--neon-cyan) !important;
+  color: var(--neon-cyan) !important;
+  font-weight: 700;
+  transition: var(--transition-smooth);
+}
+
+.btn-studio-launch:hover {
+  background: var(--neon-cyan) !important;
+  color: #000 !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.5) !important;
+}
+
+.studio-iframe-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 99999;
+  background: rgba(1, 4, 10, 0.98);
+  backdrop-filter: blur(10px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.studio-iframe-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.studio-iframe-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}

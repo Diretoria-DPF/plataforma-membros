@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LAIFT — Laboratório Virtual de Bancada & Síntese Farmacêutica</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Urbanist:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Visualizadores Moleculares: 2D (SmilesDrawer) & 3D WebGL (3Dmol.js) -->
+  <script src="https://unpkg.com/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
+  <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+
+  <!-- =========================================================================
+       CONTROLADORES GLOBAIS DE INTERFACE (INICIALIZADOS ANTES DO DOM)
+       ========================================================================= -->
+  <script>
+    // 1. Tela Cheia Nativa Cross-Browser
+    window.toggleLabFullscreen = function() {
+      const doc = document;
+      const docEl = doc.documentElement;
+
+      const requestFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      const exitFs = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
+      const isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+
+      if (!isFs) {
+        if (requestFs) {
+          requestFs.call(docEl).catch(err => console.warn('[LAIFT Fullscreen]', err));
+        }
+      } else {
+        if (exitFs) {
+          exitFs.call(doc).catch(err => console.warn('[LAIFT Fullscreen]', err));
+        }
+      }
+    };
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('btnLabFullscreen');
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if (btn) btn.textContent = isFs ? '⛶ Restaurar' : '⛶ Tela Cheia';
+    });
+
+    // 2. Alternância de Abas no Painel Direito
+    window.switchRightTab = function(tabId) {
+      document.querySelectorAll('.rtab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+      document.querySelectorAll('.rtab-pane').forEach(pane => pane.classList.toggle('active', pane.id === tabId));
+      if (tabId === 'tabPH' && typeof window.desenharCurvaPH === 'function') window.desenharCurvaPH();
+      if (tabId === 'tabMol' && typeof window.atualizarInspecaoMolecular === 'function') window.atualizarInspecaoMolecular();
+    };
+
+    // 3. Controle de Visão Mobile
+    window.setMobileView = function(viewName) {
+      const grid = document.getElementById('mainGrid');
+      if (grid) grid.setAttribute('data-mobile-view', viewName);
+      document.querySelectorAll('.m-nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.target === viewName));
+      if (viewName === 'analise') {
+        if (typeof window.atualizarInspecaoMolecular === 'function') setTimeout(window.atualizarInspecaoMolecular, 60);
+        if (typeof window.desenharCurvaPH === 'function') setTimeout(window.desenharCurvaPH, 90);
+      }
+    };
+
+    // 4. Modal do Estúdio 3D (Iframe)
+    window.abrirStudio = function() {
+      const modal = document.getElementById('studioIframeModal');
+      const iframe = document.getElementById('studioIframe');
+
+      if (modal && iframe) {
+        if (!iframe.src || !iframe.src.includes('studio/index.html')) {
+          iframe.src = 'studio/index.html';
+        }
+        modal.style.display = 'flex';
+
+        setTimeout(() => {
+          try {
+            if (iframe.contentWindow) {
+              iframe.contentWindow.postMessage({ acao: 'studioAberto' }, '*');
+            }
+          } catch (e) {}
+        }, 150);
+      } else {
+        window.open('studio/index.html', '_blank');
+      }
+    };
+
+    window.fecharStudio = function() {
+      const modal = document.getElementById('studioIframeModal');
+      if (modal) modal.style.display = 'none';
+    };
+  </script>
+</head>
+<body class="cockpit-locked">
+
+  <!-- ==========================================
+       CABEÇALHO ULTRA-COMPACTO
+  ========================================== -->
+  <header class="lab-header">
+    <div class="header-left">
+      <h1>LABORATÓRIO VIRTUAL DE SÍNTESE & ANÁLISE</h1>
+      <span class="badge desktop-only">LAIFT • FIRST-PRINCIPLES</span>
+    </div>
+
+    <div class="header-right">
+      <button class="manual-btn" id="btnLabFullscreen" onclick="window.toggleLabFullscreen()" title="Alternar Tela Cheia">
+        ⛶ Tela Cheia
+      </button>
+
+      <button class="manual-btn btn-studio-launch" id="btnOpenStudio" onclick="window.abrirStudio()" title="Abrir Estúdio de Modelagem Molecular 3D">
+        🧬 Estúdio 3D
+      </button>
+
+      <button class="manual-btn" id="btnManual" title="Manual e Guia de Bancada" onclick="abrirManual()">
+        📖 Guia
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       GRID PRINCIPAL DA BANCADA (100dvh LOCKED)
+  ========================================== -->
+  <main class="main-grid" id="mainGrid" data-mobile-view="bancada">
+
+    <!-- 1. PAINEL ESQUERDO: CONTROLES E REAGENTES -->
+    <aside class="panel panel-controls" id="viewReagentes">
+      <div class="panel-header-sticky">
+        <h3><span class="icon-dot"></span> Reagentes & Bancada</h3>
+      </div>
+
+      <div class="controls-scroll">
+        <div class="control-group">
+          <label for="vidrariaSelect">Vidraria de Reação:</label>
+          <select id="vidrariaSelect" onchange="trocarVidraria()">
+            <option value="becker_250" selected>Béquer Graduado (250 mL)</option>
+            <option value="erlen_250">Erlenmeyer com Rolha (250 mL - Fechado)</option>
+            <option value="becker_1000">Béquer Industrial (1000 mL)</option>
+            <option value="tubo_20">Tubo de Ensaio (20 mL)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>Catálogo de Precursores & Fármacos:</label>
+          <div id="catalogContainer" class="reagent-catalog">Carregando catálogo...</div>
+        </div>
+
+        <div class="control-group compact-row">
+          <div style="flex: 1;">
+            <label for="qtdInput">Quantidade:</label>
+            <input type="number" id="qtdInput" value="10" min="0.1" step="0.5">
+          </div>
+          <div style="flex: 1.4;">
+            <label for="modoAdd">Modo:</label>
+            <select id="modoAdd">
+              <option value="gota">Gota a Gota</option>
+              <option value="jato">Jato Contínuo</option>
+              <option value="tudo" selected>Carga Total</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-play" id="btnStartAdd" onclick="iniciarAdicao()">▶ Adicionar</button>
+          <button class="btn btn-stop" onclick="pararAdicao()">⏸ Pausar</button>
+          <button class="btn btn-clear" onclick="desfazerAcao()">↩ Desfazer</button>
+        </div>
+
+        <hr class="panel-divider">
+
+        <div class="control-group">
+          <label>Controle Térmico:</label>
+          <div class="btn-row">
+            <button class="btn btn-fire" id="btnHeat" onclick="setModoTermico('aquecendo')">🔥 Aquecer</button>
+            <button class="btn btn-ice" id="btnCool" onclick="setModoTermico('resfriando')">❄️ Banho Gelo</button>
+            <button class="btn btn-lock" id="btnThermostat" onclick="setModoTermico('termostato')">🎯 Alvo</button>
+          </div>
+        </div>
+
+        <div class="control-group compact-row" style="align-items: center;">
+          <input type="number" id="tempAlvo" value="25" style="width: 65px;" title="Temperatura Alvo (°C)">
+          <span class="sub-label">°C Alvo</span>
+          <input type="range" id="heatSlider" min="1" max="10" value="5" oninput="ajustarPotenciaChama(this.value)" title="Intensidade da Chama" style="flex: 1;">
+        </div>
+
+        <div class="btn-row" style="margin-top: 6px;">
+          <button class="btn btn-play" id="btnAgitador" onclick="toggleAgitador()">🌪️ Agitador</button>
+          <button class="btn btn-reset" onclick="resetarLaboratorio()">🔄 Limpar</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. PAINEL CENTRAL: VIDRARIA & PALCO -->
+    <section class="visual-stage" id="viewBancada">
+      
+      <!-- HUD Superior -->
+      <div class="hud-overlay">
+        <div class="hud-card">
+          <div class="hud-label">Temperatura</div>
+          <div class="hud-val" id="hudTemp">25.0 °C</div>
+        </div>
+        <div class="hud-card">
+          <div class="hud-label">Pressão</div>
+          <div class="hud-val" id="hudPress">1.00 atm <span id="pressWarn" class="press-warning"></span></div>
+        </div>
+        <div class="hud-card">
+          <div class="hud-label">pH</div>
+          <div class="hud-val" id="hudPH">7.00</div>
+        </div>
+        <div class="hud-card">
+          <div class="hud-label">Volume</div>
+          <div class="hud-val" id="volDisplay">0.0 / 250 mL</div>
+        </div>
+      </div>
+
+      <!-- Termômetro -->
+      <div class="thermo-column">
+        <div class="thermo-stick">
+          <div class="thermo-fill-bar" id="thermoFill"></div>
+        </div>
+        <div class="thermo-bulb-circle" id="thermoBulb"></div>
+      </div>
+
+      <!-- Vidraria -->
+      <div class="glassware-zone" id="glasswareZone" onclick="toggleFoco()">
+        <div class="glass-vessel vessel-beaker" id="vessel">
+          <div class="stopper-cap" id="stopperCap"></div>
+          <div class="content-fill">
+            <div class="liquid-layer" id="liquidLayer"></div>
+            <div class="precipitate-layer" id="precipLayer"></div>
+            <div class="freeze-overlay" id="freezeOverlay"></div>
+            <div class="bubble-overlay" id="bubbleOverlay"></div>
+            <div class="gas-halo" id="gasHalo"></div>
+            <div class="agitador" id="agitadorFisico"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Efeitos Físicos -->
+      <div class="flame-effect" id="flameFX">
+        <div class="flame-core"></div>
+        <div class="flame-base"></div>
+      </div>
+      <div class="ice-aura-effect" id="iceFX"></div>
+
+      <!-- Estrutura da Bancada -->
+      <div class="tripod"></div>
+      <div class="bench"></div>
+
+      <!-- Botão Preceptor -->
+      <button id="labChatWidgetBtn" onclick="toggleLabChat()" title="Consultar o Preceptor da Bancada">
+        💬 <span>Preceptor de Bancada</span>
+      </button>
+
+      <div class="signature desktop-only">LAIFT • SISTEMA DE SÍNTESE</div>
+
+      <button class="btn-close-focus" id="btnCloseFocus" onclick="toggleFoco()">✕ Sair do Foco</button>
+    </section>
+
+    <!-- 3. PAINEL DIREITO: ABAS DE ANÁLISE -->
+    <aside class="side-panel-right" id="viewAnalise">
+      
+      <div class="right-tab-bar">
+        <button class="rtab-btn active" data-tab="tabMol" onclick="window.switchRightTab('tabMol')">🔬 Molécula</button>
+        <button class="rtab-btn" data-tab="tabPH" onclick="window.switchRightTab('tabPH')">📈 Curva pH</button>
+        <button class="rtab-btn" data-tab="tabLog" onclick="window.switchRightTab('tabLog')">📋 Vaso/Log</button>
+        <button class="rtab-btn" data-tab="tabMissao" onclick="window.switchRightTab('tabMissao')">🎯 Roteiro</button>
+      </div>
+
+      <div class="tab-content-container">
+        
+        <!-- Aba 1: Molécula -->
+        <div class="rtab-pane active" id="tabMol">
+          <div class="panel mol-panel">
+            <div class="panel-section-header">
+              <h3><span class="icon-dot"></span> Projeção Estrutural</h3>
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-clear active-btn" id="btnModo2D" style="padding: 2px 7px; font-size: 0.62rem;" onclick="setModoVisualizacao('2D')">2D</button>
+                <button class="btn btn-clear" id="btnModo3D" style="padding: 2px 7px; font-size: 0.62rem;" onclick="setModoVisualizacao('3D')">3D WebGL</button>
+              </div>
+            </div>
+            
+            <div class="mol-visualizer-box" id="molVisualizerBox">
+              <canvas id="moleculeCanvas" width="280" height="150"></canvas>
+              <img id="moleculeImg" src="" alt="Estrutura 2D da Molécula">
+              <div id="viewer3D" style="width: 100%; height: 100%; min-height: 145px; display: none; position: relative;"></div>
+              <div id="molPlaceholder">Selecione ou sintetize uma molécula para exibir sua estrutura.</div>
+            </div>
+
+            <div class="mol-details-card">
+              <div class="mol-data-row">
+                <span class="data-key">Espécie em Foco:</span>
+                <strong id="molName" class="data-val-highlight">Aguardando seleção</strong>
+              </div>
+              <div class="mol-data-row">
+                <span class="data-key">IUPAC Oficial:</span>
+                <span id="molIupac" class="data-val-mono">--</span>
+              </div>
+              <div class="mol-data-row-duo">
+                <div>
+                  <span class="data-key">Fórmula:</span>
+                  <strong id="molFormula" style="color: #facc15;">--</strong>
+                </div>
+                <div>
+                  <span class="data-key">Massa:</span>
+                  <strong id="molWeight" style="color: #a7f3d0;">-- g/mol</strong>
+                </div>
+              </div>
+              <div class="mol-data-row-duo">
+                <div>
+                  <span class="data-key">Densidade:</span>
+                  <span id="molDensity" style="font-family: var(--font-mono); font-size: 0.7rem; color: #cbd5e1;">--</span>
+                </div>
+                <div>
+                  <span class="data-key">P. Ebulição / Fusão:</span>
+                  <span id="molThermic" style="font-family: var(--font-mono); font-size: 0.7rem; color: #cbd5e1;">--</span>
+                </div>
+              </div>
+              <button class="btn btn-clear btn-dossie-full" id="btnDossieLab" onclick="abrirDossieCompostoAtual()">
+                📋 Abrir Dossiê Farmacêutico Completo
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aba 2: Curva de pH -->
+        <div class="rtab-pane" id="tabPH">
+          <div class="panel" style="height: 100%; display: flex; flex-direction: column;">
+            <div class="panel-section-header">
+              <h3><span class="icon-dot"></span> Dinâmica de pH</h3>
+              <button class="btn btn-clear" onclick="limparCurvaPH()">Limpar</button>
+            </div>
+            <div class="mini-canvas-wrap" style="flex: 1; min-height: 170px;">
+              <canvas id="phCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aba 3: Log -->
+        <div class="rtab-pane" id="tabLog">
+          <div class="panel" style="height: 100%; display: flex; flex-direction: column;">
+            <div class="panel-section-header">
+              <h3><span class="icon-dot"></span> Espécies Ativas</h3>
+              <button class="btn btn-clear" onclick="limparRegistro()">Limpar</button>
+            </div>
+            <div id="speciesTags" style="margin-bottom: 8px; min-height: 26px;"></div>
+            <div class="log-stream" id="logStream" style="flex: 1; overflow-y: auto;"></div>
+          </div>
+        </div>
+
+        <!-- Aba 4: Roteiro -->
+        <div class="rtab-pane" id="tabMissao">
+          <div class="panel mission-box" style="height: 100%; display: flex; flex-direction: column;">
+            <div class="panel-section-header">
+              <h3 style="color: var(--neon-green, #4ade80);"><span class="icon-dot" style="background: var(--neon-green);"></span> Roteiro Ativo</h3>
+              <button class="btn btn-clear" onclick="abrirLivroMissoes()">Livro</button>
+            </div>
+            <h4 id="missionTitle">Carregando roteiro...</h4>
+            <p id="missionDesc"></p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+              <span class="badge" id="missionStatus">Pendente</span>
+              <button class="btn btn-play" id="btnNextMission" onclick="proximaMissao()" style="display: none; padding: 4px 10px; font-size: 0.7rem;">Avançar ➔</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ==========================================
+       BARRA DE NAVEGAÇÃO INFERIOR NATIVA (MOBILE)
+  ========================================== -->
+  <nav class="mobile-nav-bar" id="mobileNavBar">
+    <button class="m-nav-btn active" data-target="bancada" onclick="window.setMobileView('bancada')">
+      🧪 <span>Bancada</span>
+    </button>
+    <button class="m-nav-btn" data-target="reagentes" onclick="window.setMobileView('reagentes')">
+      ⚙️ <span>Reagentes</span>
+    </button>
+    <button class="m-nav-btn" data-target="analise" onclick="window.setMobileView('analise')">
+      📊 <span>Análise</span>
+    </button>
+    <button class="m-nav-btn" data-target="chat" onclick="toggleLabChat()">
+      💬 <span>Preceptor</span>
+    </button>
+  </nav>
+
+  <!-- ==========================================
+       DRAWER DO PRECEPTOR
+  ========================================== -->
+  <div id="labChatDrawer">
+    <div class="lab-chat-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <h4>💬 Preceptor IA (Groq 120B)</h4>
+        <span class="chat-status-badge" id="preceptorStatusBadge">Online</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button class="btn-chat-action" onclick="limparChatPreceptor()" title="Reiniciar conversa">🗑️ Limpar</button>
+        <span class="btn-chat-close" onclick="toggleLabChat()" title="Fechar chat">&times;</span>
+      </div>
+    </div>
+    
+    <div class="lab-chat-messages" id="labChatMessages"></div>
+    
+    <div class="lab-chat-input">
+      <input type="text" id="labChatInput" placeholder="Pergunte sobre síntese (ex: como sintetizar dipirona)..." onkeydown="if(event.key==='Enter') enviarDuvidaLab()">
+      <button onclick="enviarDuvidaLab()">➔</button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAIS DE SEGURANÇA E GUIAS
+  ========================================== -->
+  <div class="alert-fullscreen" id="alertOverlay" style="display: none;">
+    <h2 id="alertTitle">INCIDENTE LABORATORIAL</h2>
+    <div id="alertMsg"></div>
+    <button class="btn btn-reset" style="margin-top: 18px; padding: 10px 24px;" onclick="resetarLaboratorio()">Restaurar Bancada</button>
+  </div>
+
+  <div class="manual-modal" id="manualModal" style="display: none;">
+    <div class="manual-content">
+      <h3>📖 Guia Técnico de Bancada & Síntese</h3>
+      <p>Simulador farmacotécnico e físico-químico da LAIFT com inteligência artificial integrada.</p>
+      <ul>
+        <li><strong>Preceptor 120B:</strong> Pergunte no chat sobre qualquer rota de síntese (Dipirona, Aspirina, Paracetamol, etc.). O preceptor responderá considerando reagentes e mecanismos estequiométricos.</li>
+        <li><strong>Visualização Híbrida 2D/3D:</strong> Alterne entre a fórmula estrutural plana e o modelo tridimensional WebGL manipulável diretamente na aba de Molécula.</li>
+        <li><strong>Memória de Aprendizado:</strong> As perguntas e conformações pesquisadas são armazenadas localmente no navegador via IndexedDB para resposta imediata sem consumo de tokens.</li>
+      </ul>
+      <button class="close-manual" onclick="fecharManual()">Fechar Guia</button>
+    </div>
+  </div>
+
+  <div class="manual-modal" id="missionsModal" style="display: none;">
+    <div class="manual-content">
+      <h3 style="color: var(--neon-green, #4ade80);">📚 Roteiros Experimentais LAIFT</h3>
+      <div id="missionsList"></div>
+      <button class="close-manual" onclick="fecharLivroMissoes()">Fechar Livro</button>
+    </div>
+  </div>
+
+  <div class="manual-modal" id="dossieLabModal" style="display: none;">
+    <div class="manual-content" style="max-width: 520px;">
+      <h3 style="color: #38bdf8; margin-top: 0;">📋 Dossiê Quimioterápico</h3>
+      <div id="dossieLabContent" style="font-size: 0.82rem; line-height: 1.6; color: #cbd5e1;">
+        Carregando dados biomédicos...
+      </div>
+      <button class="close-manual" style="margin-top: 14px;" onclick="document.getElementById('dossieLabModal').style.display='none'">Fechar Dossiê</button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL DO ESTÚDIO 3D (IFRAME)
+  ========================================== -->
+  <div id="studioIframeModal" class="studio-iframe-modal" style="display: none;">
+    <div class="studio-iframe-wrapper">
+      <iframe id="studioIframe" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+
+<!-- Módulos de Execução Científica e Bancos de Dados -->
+  <script src="data/lab-database.js"></script>
+  <script src="data/sinteses-database.js"></script>
+  <script src="js/lab-apis.js"></script>
+  <script src="js/lab-storage.js"></script>
+  <script src="js/lab-preceptor.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
