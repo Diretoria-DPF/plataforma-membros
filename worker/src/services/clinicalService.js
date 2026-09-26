@@ -34,6 +34,7 @@ export const LIBRARY_CACHE_KEY = 'cache:clinical-library:v1';
 export const EPIDEMIOLOGY_CACHE_KEY = 'cache:clinical-epi:v1';
 const LIBRARY_TTL_SECONDS = 300;
 const EPIDEMIOLOGY_TTL_SECONDS = 300;
+export const EPI_AGENT_MIN_PEOPLE = 2;
 
 // Desfecho do simulador → vocabulário de learning_attempts.details
 // (Contrato 1: 'sobreviveu' | 'obito' | 'estavel'). Abandono = o paciente
@@ -274,11 +275,18 @@ export async function epidemiology(sql, env) {
     WHERE module = 'clinica' AND activity = 'caso_clinico' AND coalesce(details->>'toxindrome', '') <> ''
     GROUP BY 1 ORDER BY 2 DESC, 1 ASC LIMIT 6
   `;
+  // O agente é TEXTO LIVRE vindo do cliente nos casos 'builtin' e 'ia' (só
+  // no acervo ele vem do banco), e o radar é visto por todo mundo. Para uma
+  // pessoa sozinha não conseguir publicar um texto qualquer no radar da
+  // liga, um agente só aparece se veio do acervo ou se pelo menos
+  // EPI_AGENT_MIN_PEOPLE pessoas diferentes o registraram.
   const agentRows = await sql`
     SELECT details->>'agent' AS name, count(*)::int AS count
     FROM learning_attempts
     WHERE module = 'clinica' AND activity = 'caso_clinico' AND coalesce(details->>'agent', '') <> ''
-    GROUP BY 1 ORDER BY 2 DESC, 1 ASC LIMIT 6
+    GROUP BY 1
+    HAVING count(DISTINCT profile_id) >= ${EPI_AGENT_MIN_PEOPLE} OR bool_or(details->>'caseSource' = 'acervo')
+    ORDER BY 2 DESC, 1 ASC LIMIT 6
   `;
   const total = Number(totals[0] && totals[0].total) || 0;
   const survived = Number(totals[0] && totals[0].survived) || 0;

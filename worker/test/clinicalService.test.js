@@ -298,6 +298,17 @@ describe('ClinicalService.epidemiology', () => {
     expect(callsMatching(sql, 'AS survived')).toHaveLength(1);
   });
 
+  test('agente em texto livre só entra no radar com 2+ pessoas ou vindo do acervo', async () => {
+    const sql = routedSql([['AS survived', [{ total: 1, survived: 1 }]]]);
+    await Clinical.epidemiology(sql, envWith());
+    const call = callsMatching(sql, "details->>'agent' AS name")[0];
+    const text = call[0].join('?');
+    expect(text).toContain('HAVING count(DISTINCT profile_id) >= ?');
+    expect(text).toContain("bool_or(details->>'caseSource' = 'acervo')");
+    expect(call.slice(1)).toContain(Clinical.EPI_AGENT_MIN_PEOPLE);
+    expect(Clinical.EPI_AGENT_MIN_PEOPLE).toBeGreaterThanOrEqual(2);
+  });
+
   test('sem atendimentos: sobrevida null (o cliente mostra "--")', async () => {
     const res = await Clinical.epidemiology(routedSql([['AS survived', [{ total: 0, survived: 0 }]]]), envWith());
     expect(res).toMatchObject({ totalAttended: 0, survivalRatePct: null, topToxindromes: [], topAgents: [] });
