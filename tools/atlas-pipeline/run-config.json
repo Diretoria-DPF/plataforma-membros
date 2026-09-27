@@ -2,8 +2,8 @@
   "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-assets.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do WP10 e o §3 do plano.",
   "mode": "export",
   "_mode_valores": "'discover' roda só discover.mjs + Blender --list-collections (nenhum export completo, nenhum commit) — usado até confirmarmos os nomes reais das coleções do Startup.blend e a lista de órgãos do HRA. 'export' roda o pipeline completo (fetch+export+optimize+manifest+validate) com os campos abaixo.",
-  "_fase": "Fase B (retomada 27/09, plano §9 Etapa A): Fase A já confirmada (systems-map.json, hra-organs.json). Primeira exportação real — 1 sistema (esqueletico), sem HRA, sem commit — para validar export_systems.py/optimize.mjs/build-manifest.mjs/validate.mjs contra o Startup.blend de verdade antes de rodar todos os sistemas.",
-  "systems": ["esqueletico"],
-  "hra": false,
+  "_fase": "Fase B (retomada 27/09, plano §9 Etapa A). Execução #5 (1 sistema, esqueletico) passou: LOD0 2.51 MB / LOD1 1.15 MB, dentro do orçamento de 3.5/1.2 MB, 266 estruturas, manifesto e validate.mjs OK. Agora: todos os sistemas do systems-map.json + órgãos do HRA, ainda sem commit — para conferir o total (≤45 MB), a contagem de estruturas por sistema e as licenças separadas antes da execução final com commit:true.",
+  "systems": "all",
+  "hra": true,
   "commit": false
 }
