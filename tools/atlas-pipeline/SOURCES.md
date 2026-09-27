@@ -509,6 +509,67 @@ distorção inaceitável), a única saída é propor um ajuste em `budgets.json`
 (WP02, não editado por este WP) com justificativa de fidelidade anatômica
 — nunca aplicar essa mudança neste WP.
 
+## 8g. Retomada 27/09 — guardrail de fidelidade: `error` frouxo demais deforma a malha; a causa real era topologia não soldada
+
+A execução #13 (`https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/36305571526`,
+já com o `error` escalando até 1,0 do §8f) melhorou o total (78,41 → 69,34
+MB) mas ainda falhou o orçamento (20 erros) — e **provou, de forma
+definitiva, que `error` não era mais o problema para várias malhas**:
+`skin-female.glb` continuou EXATAMENTE em 2,59 MB / 266.696 triângulos em
+TODAS as tentativas, mesmo com `error` no valor máximo (1,0) — ou seja,
+soltar o `error` até esse ponto não teve NENHUM efeito nessas malhas
+específicas, só risco de deformar (sem benefício) as que realmente
+respondiam a `error` mais alto.
+
+**Revisão do orquestrador (guardrail de fidelidade — atlas de anatomia,
+não pode ficar visivelmente deformado só para caber no orçamento):**
+
+1. **Teto de `error` reduzido:** de 1,0 (sem limite prático) para **0,05 no
+   LOD0** e **0,15 no LOD1** — o LOD0 é a versão de perto/completa, por
+   isso o teto é mais conservador. `processOneFile` passa esses tetos
+   explicitamente a cada chamada de `writeLodAdaptive`.
+2. **Causa real de `skin-female` (e de outras malhas "congeladas"),
+   diagnosticada pelo orquestrador:** a malha provavelmente não está
+   soldada topologicamente — NORMAL "dura" (uma cópia do vértice por
+   face/ângulo, comum em export do Blender sem "shade smooth" uniforme ou
+   com bordas de UV) faz `weld()` (que por padrão considera TODOS os
+   atributos ao decidir se dois vértices são "iguais") nunca fundir
+   vértices com posição idêntica mas normal diferente — para o
+   simplificador, cada aresta assim parece uma "borda travada" da malha,
+   mesmo com `lockBorder: false` (que só afeta bordas REAIS da malha, não
+   duplicação de atributo).
+
+**Correção em `loadAndClean` (`optimize.mjs`):** antes de soldar, se a
+malha tem `NORMAL`, ela é REMOVIDA (`dropNormals`); `weld()` roda então só
+por posição (e os poucos atributos que sobraram depois de
+`stripUnusedAttributes`); um log `[topologia]` mostra a contagem de
+vértices antes/depois — testado localmente com um cubo sintético de 24
+vértices "por face" (normal dura, como o Z-Anatomy tende a exportar): caiu
+para 8 vértices únicos depois do reweld por posição, como esperado.
+
+`NORMAL` volta DEPOIS de simplificar (em `writeLod`, antes de quantizar),
+via `computeSmoothNormals` — uma função própria (não a `normals()` de
+`@gltf-transform/functions`, que sempre desengloba a malha para normais
+planas por face e destruiria a economia de vértices do reweld) que calcula
+a normal de cada vértice como a média ponderada por área das normais de
+face adjacentes, MANTENDO a indexação (mesma contagem de POSITION) — testado
+com o mesmo cubo sintético: os 8 vértices ficaram com normais suaves e
+corretamente normalizadas (~[±0,58, ±0,58, ±0,58] nos cantos, a diagonal
+esperada de um cubo), sem voltar a inflar a contagem de vértices.
+
+**Auditoria de fidelidade:** o `error` final usado em cada LOD (depois de
+toda tentativa) agora vai para o relatório (`optimize-report.json`, campo
+`lod0.error`/`lod1.error` de cada asset) e para o log "Resumo" no final do
+job — nunca mais só o `ratio`, para dar visibilidade real de quanto de
+tolerância a erro foi gasto por arquivo.
+
+**Pendência:** repetir a execução com o reweld topológico + tetos de
+`error` mais conservadores para medir se isso resolve o resto do
+orçamento sem depender de `error` frouxo. Se `skin-female` (ou qualquer
+outro sistema) ainda ficar acima mesmo depois do reweld, é hora de
+reportar os números por asset e propor (nunca aplicar) um ajuste em
+`budgets.json` (WP02) com justificativa de fidelidade anatômica.
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto

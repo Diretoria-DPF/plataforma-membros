@@ -312,6 +312,101 @@ function measureAttributeBytes(document) {
   return bytes;
 }
 
+const TRIANGLES_MODE = 4; // glTF Primitive.mode — ver Primitive.Mode.TRIANGLES no core do gltf-transform.
+
+function primitivesHaveNormal(document) {
+  for (const mesh of document.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) {
+      if (prim.getAttribute('NORMAL')) return true;
+    }
+  }
+  return false;
+}
+
+function dropNormals(document) {
+  for (const mesh of document.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) prim.setAttribute('NORMAL', null);
+  }
+}
+
+/** Soma a contagem de vértices (POSITION) de todas as primitivas — métrica
+ * simples para o log "antes/depois do weld por posição" (não deduplica
+ * vértices partilhados entre primitivas; serve só para comparar o mesmo
+ * documento em dois momentos, não como contagem absoluta exata). */
+function countVertices(document) {
+  let total = 0;
+  for (const mesh of document.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) {
+      const pos = prim.getAttribute('POSITION');
+      if (pos) total += pos.getCount();
+    }
+  }
+  return total;
+}
+
+/**
+ * Recalcula NORMAL suave (média das normais de face adjacentes de cada
+ * vértice, ponderada pela área — o produto vetorial não normalizado já
+ * carrega essa ponderação) para toda primitiva TRIANGLES sem NORMAL, SEM
+ * duplicar vértice por face.
+ *
+ * Guardrail de fidelidade (retomada 27/09, revisão do orquestrador): a
+ * função `normals()` de `@gltf-transform/functions` também recalcula
+ * normais, mas sempre "desengloba" a malha primeiro (normal plana por
+ * face, um vértice por face) — isso jogaria fora exatamente a economia de
+ * vértices que o reweld por posição (ver `loadAndClean`) conseguiu, e
+ * deixaria a malha com aparência "facetada" em vez de suave, inaceitável
+ * para um atlas de anatomia. Esta versão mantém a indexação (mesma
+ * contagem de vértices de POSITION) e produz sombreamento suave.
+ */
+function computeSmoothNormals(document) {
+  for (const mesh of document.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) {
+      if (prim.getMode() !== TRIANGLES_MODE) continue;
+      const position = prim.getAttribute('POSITION');
+      if (!position || prim.getAttribute('NORMAL')) continue;
+      const indices = prim.getIndices();
+      const vertexCount = position.getCount();
+      const idxCount = indices ? indices.getCount() : vertexCount;
+      const getIndex = (k) => (indices ? indices.getScalar(k) : k);
+
+      const acc = new Float64Array(vertexCount * 3);
+      const a = [0, 0, 0];
+      const b = [0, 0, 0];
+      const c = [0, 0, 0];
+      for (let t = 0; t + 2 < idxCount; t += 3) {
+        const i0 = getIndex(t);
+        const i1 = getIndex(t + 1);
+        const i2 = getIndex(t + 2);
+        position.getElement(i0, a);
+        position.getElement(i1, b);
+        position.getElement(i2, c);
+        const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+        const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+        const nx = uy * vz - uz * vy;
+        const ny = uz * vx - ux * vz;
+        const nz = ux * vy - uy * vx;
+        for (const i of [i0, i1, i2]) {
+          acc[i * 3] += nx;
+          acc[i * 3 + 1] += ny;
+          acc[i * 3 + 2] += nz;
+        }
+      }
+
+      const out = new Float32Array(vertexCount * 3);
+      for (let v = 0; v < vertexCount; v++) {
+        const nx = acc[v * 3], ny = acc[v * 3 + 1], nz = acc[v * 3 + 2];
+        const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+        out[v * 3] = nx / len;
+        out[v * 3 + 1] = ny / len;
+        out[v * 3 + 2] = nz / len;
+      }
+      const normalAccessor = document.createAccessor().setType('VEC3').setArray(out);
+      prim.setAttribute('NORMAL', normalAccessor);
+    }
+  }
+}
+
 async function loadAndClean(filePath) {
   const io = new NodeIO()
     .registerExtensions([EXTMeshoptCompression, KHRMeshQuantization])
@@ -332,11 +427,29 @@ async function loadAndClean(filePath) {
 
   const extrasAfter = measureNodeExtrasBytes(document);
 
-  await document.transform(
-    dedup(),
-    weld({ tolerance: 0.0001 }),
-    prune({ keepAttributes: false, keepLeaves: false })
-  );
+  await document.transform(dedup());
+
+  // Reweld topológico por POSIÇÃO (retomada 27/09, guardrail de fidelidade
+  // do orquestrador — ver SOURCES.md §8g): a execução #13 provou que várias
+  // malhas (skin-female e vários sistemas do Z-Anatomy) NUNCA reduziam o
+  // número de triângulos em writeLodAdaptive, mesmo com `error` no máximo —
+  // sinal de que `simplify()` via cada aresta como "borda travada". A causa
+  // provável: NORMAL "dura" (uma cópia do vértice por face/ângulo) faz
+  // weld() — que por padrão considera TODOS os atributos ao decidir se dois
+  // vértices são "iguais" — nunca fundir vértices com posição idêntica mas
+  // normal diferente. Por isso: tira NORMAL ANTES de soldar (solda só por
+  // posição — e os atributos que sobraram, já que TEXCOORD_0 raramente
+  // existe depois de `stripUnusedAttributes`), solda, e SÓ DEPOIS recalcula
+  // NORMAL (suave, sem duplicar vértice — `computeSmoothNormals`, chamada
+  // em `writeLod` depois de simplificar) a partir da topologia já reduzida.
+  const needsNormals = primitivesHaveNormal(document);
+  if (needsNormals) dropNormals(document);
+
+  const vertsBeforeWeld = countVertices(document);
+  await document.transform(weld({ tolerance: 0.0001 }));
+  const vertsAfterWeld = countVertices(document);
+
+  await document.transform(prune({ keepAttributes: false, keepLeaves: false }));
 
   const attrBytesAfter = measureAttributeBytes(document);
   console.log(
@@ -344,11 +457,15 @@ async function loadAndClean(filePath) {
       ` | atributos de vértice (bruto): ${(attrBytesBefore / 1024 / 1024).toFixed(2)} MB → ${(attrBytesAfter / 1024 / 1024).toFixed(2)} MB` +
       ` (${attrsRemoved} atributo(s) descartado(s) por primitiva)`
   );
+  console.log(
+    `  [topologia] vértices: ${vertsBeforeWeld.toLocaleString('pt-BR')} → ${vertsAfterWeld.toLocaleString('pt-BR')}` +
+      ` depois do weld por posição (NORMAL ${needsNormals ? 'removida p/ soldar; recalculada suave no LOD final' : 'ausente'})`
+  );
 
-  return { document, removedNonMesh: removed };
+  return { document, removedNonMesh: removed, needsNormals };
 }
 
-async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01 } = {}) {
+async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01, regenerateNormals = false } = {}) {
   const io = new NodeIO()
     .registerExtensions([EXTMeshoptCompression, KHRMeshQuantization])
     .registerDependencies({
@@ -368,6 +485,15 @@ async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01
         error: simplifyError,
       })
     );
+  }
+
+  // NORMAL foi removida em loadAndClean (reweld topológico por posição —
+  // ver comentário lá) SEMPRE que a malha original tinha NORMAL, simplificada
+  // ou não. Recalcula agora, suave, a partir da topologia final deste LOD
+  // (já reduzida por simplify(), se foi o caso) — ANTES de quantizar, nunca
+  // depois (quantize também quantiza NORMAL).
+  if (regenerateNormals) {
+    computeSmoothNormals(working);
   }
 
   await working.transform(
@@ -421,18 +547,28 @@ async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01
  * arquivo/triângulos não mudaram NADA — 266.696 triângulos em toda
  * tentativa, prova de que `error` fixo em 0,01 travava a simplificação
  * bem antes do ratio). Por isso, a cada tentativa que não convergiu,
- * `error` também sobe (×5, até `maxError`) — sem isso, baixar só o ratio
- * pode não ter EFEITO NENHUM em malhas assim.
+ * `error` também sobe (×5, até `maxError`).
+ *
+ * GUARDRAIL DE FIDELIDADE (revisão do orquestrador, run #13): `error` do
+ * meshoptimizer é relativo à extensão da malha — soltar até 1,0 (como a
+ * execução #13 fez) pode DEFORMAR a forma visivelmente, inaceitável num
+ * atlas de anatomia usado para estudo. `maxError` agora tem teto de 0,05
+ * para LOD0 e 0,15 para LOD1 (chamado explicitamente por `processOneFile`)
+ * — nunca mais alto. Se mesmo assim `error` no máximo não reduzir mais os
+ * triângulos, a causa provável NÃO é falta de tolerância a erro, e sim
+ * topologia não soldada (ver `loadAndClean`/reweld por posição); se ainda
+ * assim ficar acima do orçamento, é hora de propor (nunca aplicar) um
+ * ajuste em `budgets.json`, não de continuar afrouxando `error`.
  */
-async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 3, maxMillis = 30000, baseError = 0.01, maxError = 1 } = {}) {
+async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 3, maxMillis = 30000, baseError = 0.01, maxError = 0.05, regenerateNormals = false } = {}) {
   const t0 = Date.now();
   let ratio = maxRatio;
   let error = baseError;
-  let result = await writeLod(document, outPath, { simplifyRatio: ratio, simplifyError: error });
+  let result = await writeLod(document, outPath, { simplifyRatio: ratio, simplifyError: error, regenerateNormals });
   console.log(`    tentativa 0 (ratio ${ratio.toFixed(3)}, error ${error.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB, ${result.triangles.toLocaleString('pt-BR')} tri em ${Date.now() - t0}ms`);
 
   if (targetBytes == null || result.bytes <= targetBytes) {
-    return { ...result, ratio, overBudget: targetBytes != null && result.bytes > targetBytes };
+    return { ...result, ratio, error, overBudget: targetBytes != null && result.bytes > targetBytes };
   }
 
   for (let i = 0; i < attempts && ratio > minRatio; i++) {
@@ -445,14 +581,14 @@ async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, 
     ratio = Math.max(minRatio, ratio * scale);
     error = Math.min(maxError, error * 5);
     const tAttempt = Date.now();
-    result = await writeLod(document, outPath, { simplifyRatio: ratio, simplifyError: error });
+    result = await writeLod(document, outPath, { simplifyRatio: ratio, simplifyError: error, regenerateNormals });
     console.log(
       `    tentativa ${i + 1} (ratio ${ratio.toFixed(3)}, error ${error.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB, ${result.triangles.toLocaleString('pt-BR')} tri em ${Date.now() - tAttempt}ms`
     );
     if (result.bytes <= targetBytes) break;
     if (result.triangles === prevTriangles && error >= maxError) {
       console.warn(
-        `    triângulos não mudaram (${result.triangles.toLocaleString('pt-BR')}) mesmo no error máximo (${maxError}) — simplify() não consegue reduzir mais esta malha; parando tentativas.`
+        `    triângulos não mudaram (${result.triangles.toLocaleString('pt-BR')}) mesmo no error máximo (${maxError}) — provavelmente não é mais falta de tolerância a erro (ver topologia em [topologia] acima); parando tentativas.`
       );
       break;
     }
@@ -464,7 +600,7 @@ async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, 
       `  AVISO: ${path.basename(outPath)} ainda acima do orçamento (${(result.bytes / 1024 / 1024).toFixed(2)} MB > ${(targetBytes / 1024 / 1024).toFixed(2)} MB) mesmo no ratio mínimo (${ratio.toFixed(3)})/error máximo (${error.toFixed(3)}) após ${Date.now() - t0}ms — validate.mjs vai reportar.`
     );
   }
-  return { ...result, ratio, overBudget };
+  return { ...result, ratio, error, overBudget };
 }
 
 function countTriangles(document) {
@@ -488,18 +624,24 @@ async function processOneFile(file) {
   const tFile = Date.now();
   console.log(`\n=== ${file} ===`);
 
-  const { document, removedNonMesh } = await loadAndClean(inPath);
+  const { document, removedNonMesh, needsNormals } = await loadAndClean(inPath);
   console.log(`  nós não-malha removidos: ${removedNonMesh}`);
 
   const budget = budgetForFile(baseName);
 
+  // Teto de `error` por LOD (guardrail de fidelidade do orquestrador — ver
+  // writeLodAdaptive): LOD0 é a versão "completa" mostrada de perto, por
+  // isso o teto é mais conservador (0,05) que o LOD1 (0,15), que já é uma
+  // versão simplificada para uso à distância/no celular.
   const lod0Path = path.join(OUT_DIR, `${baseName}.glb`);
   const lod0 = await writeLodAdaptive(document, lod0Path, {
     targetBytes: budget?.lod0 ?? null,
     maxRatio: 1,
+    maxError: 0.05,
+    regenerateNormals: needsNormals,
   });
   console.log(
-    `  LOD0: ${(lod0.bytes / 1024 / 1024).toFixed(2)} MB, ${lod0.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod0.ratio.toFixed(3)})`
+    `  LOD0: ${(lod0.bytes / 1024 / 1024).toFixed(2)} MB, ${lod0.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod0.ratio.toFixed(3)}, error ${lod0.error.toFixed(3)})`
   );
 
   let lod1 = null;
@@ -509,9 +651,11 @@ async function processOneFile(file) {
     lod1 = await writeLodAdaptive(document, lod1Path, {
       targetBytes: budget?.lod1 ?? null,
       maxRatio: LOD1_RATIO,
+      maxError: 0.15,
+      regenerateNormals: needsNormals,
     });
     console.log(
-      `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB, ${lod1.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod1.ratio.toFixed(3)})`
+      `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB, ${lod1.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod1.ratio.toFixed(3)}, error ${lod1.error.toFixed(3)})`
     );
   }
   console.log(`  (${file} levou ${((Date.now() - tFile) / 1000).toFixed(1)}s no total)`);
@@ -606,10 +750,14 @@ async function main() {
     );
   }
 
-  console.log('\nResumo:');
+  console.log('\nResumo (bytes e error final usado — auditoria de fidelidade):');
   for (const r of report) {
-    const lod1Str = r.lod1 ? `${(r.lod1.bytes / 1024 / 1024).toFixed(2)} MB` : '(sem LOD1)';
-    console.log(`  ${r.name}: LOD0 ${(r.lod0.bytes / 1024 / 1024).toFixed(2)} MB / LOD1 ${lod1Str}`);
+    const lod1Str = r.lod1
+      ? `${(r.lod1.bytes / 1024 / 1024).toFixed(2)} MB (error ${r.lod1.error.toFixed(3)})`
+      : '(sem LOD1)';
+    console.log(
+      `  ${r.name}: LOD0 ${(r.lod0.bytes / 1024 / 1024).toFixed(2)} MB (error ${r.lod0.error.toFixed(3)}) / LOD1 ${lod1Str}`
+    );
   }
   if (dropped.length > 0) {
     console.warn(`\nAVISO: ${dropped.length} arquivo(s) abandonado(s) por tempo/erro: ${dropped.join(', ')}`);
