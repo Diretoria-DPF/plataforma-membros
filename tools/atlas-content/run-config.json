@@ -3,5 +3,5 @@
   "mode": "build",
   "_mode_valores": "'discover' só valida as fontes (Wikidata, Wikipédia PT, CSVs ASCT+B da HRA) e roda o pipeline em memória sem gravar nada fora de tools/atlas-content/out — nenhum commit. 'build' roda o pipeline completo (wikidata -> wikipedia-pt -> asctb -> build-content -> validate-content -> lint-pt) e, se 'commit' for true, grava o resultado em frontend/modulos/anatomia-3d/data/atlas/{index.json,content/**,sid-aliases.json,routes.json,processes.json,quiz-cases.json,compounds.json,proteins.json}.",
   "commit": false,
-  "_status_27_09": "URLs ASCT+B reais (34 órgãos) e validador com --legacy-anchors=warn. Execução build sem commit para medir qids/resumos/células antes do commit:true."
+  "_status_27_09": "URLs ASCT+B reais (34 órgãos) e validador com --legacy-anchors=warn. Execução build sem commit para medir qids/resumos/células antes do commit:true. Corrigido quiz-cases.json (fma:7309/7310 inexistentes) que fazia validate-content falhar; re-rodando build sem commit."
 }
