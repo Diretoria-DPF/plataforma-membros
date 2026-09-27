@@ -13,7 +13,13 @@ const logs = [];
 function log(msg) {
   logs.push(msg);
   if (logs.length > 20) logs.shift();
-  logEl.innerHTML = logs.map((l) => `<div class="log-line">${l}</div>`).join('');
+  // Renderizar logs com LaiftDom.h em vez de innerHTML
+  const { clear, h } = window.LaiftDom;
+  clear(logEl);
+  logs.forEach((l) => {
+    const line = h('div', { className: 'log-line', text: l });
+    logEl.appendChild(line);
+  });
   logEl.scrollTop = logEl.scrollHeight;
 }
 
@@ -54,11 +60,11 @@ async function main() {
     return originalFetch.apply(this, args);
   };
 
-  // Criar "bridge" para o módulo importado
+  // Criar navegador com o bus real
   const navigator = createNavigator(
     document.getElementById('navigator-mount'),
     {
-      bus: window.__AtlasBusForDemo,
+      bus,
       getIndex: () => indexData,
       isSystemAvailable: (systemId) => true,
       onSystemOpen: (systemId) => {

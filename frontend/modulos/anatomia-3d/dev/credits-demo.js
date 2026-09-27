@@ -4,16 +4,16 @@
 
 // Importar createCredits
 const script = document.createElement('script');
-script.src = '../modulos/anatomia-3d/js/ui/credits.js';
+script.src = '../js/ui/credits.js';
 script.onload = async function() {
   // Carregar o CSS
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = '../modulos/anatomia-3d/css/credits.css';
+  link.href = '../css/credits.css';
   document.head.appendChild(link);
 
   // Buscar o fixture manifest
-  const manifestResponse = await fetch('../modulos/anatomia-3d/data/atlas/fixtures/manifest.json');
+  const manifestResponse = await fetch('../data/atlas/fixtures/manifest.json');
   if (!manifestResponse.ok) {
     showError(`Falha ao carregar manifest: ${manifestResponse.status}`);
     return;

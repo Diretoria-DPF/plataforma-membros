@@ -214,15 +214,51 @@ function createCredits({ manifest, contentSources = [] }) {
   content.appendChild(scrollContainer);
   dialog.appendChild(content);
 
+  // Obter elementos focáveis dentro da modal
+  function getFocusableElements() {
+    const selector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    return Array.from(dialog.querySelectorAll(selector));
+  }
+
+  // Gerenciar foco dentro da modal (tab trap)
+  function handleTabKey(e) {
+    if (e.key !== 'Tab') return;
+
+    const focusableElements = getFocusableElements();
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+
+    if (e.shiftKey) {
+      // Shift+Tab
+      if (activeElement === firstElement || !dialog.contains(activeElement)) {
+        lastElement.focus();
+        e.preventDefault();
+      }
+    } else {
+      // Tab
+      if (activeElement === lastElement || !dialog.contains(activeElement)) {
+        firstElement.focus();
+        e.preventDefault();
+      }
+    }
+  }
+
   // Funções públicas
   function open() {
     dialog.showModal();
+    // Focar no botão fechar quando abre
+    setTimeout(() => closeBtn.focus(), 0);
     document.addEventListener('keydown', handleEsc);
+    document.addEventListener('keydown', handleTabKey);
   }
 
   function close() {
     dialog.close();
     document.removeEventListener('keydown', handleEsc);
+    document.removeEventListener('keydown', handleTabKey);
   }
 
   function handleEsc(e) {
