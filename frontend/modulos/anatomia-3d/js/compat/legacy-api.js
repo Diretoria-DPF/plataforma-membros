@@ -222,15 +222,60 @@ async function install() {
     bus.emit(bus.EVENTS.QUIZ_ANSWER, { sid });
   };
 
-  // ---- ids de DOM legados (#bio-search-input / #biohacking-results-grid) ----
-  const searchInput = document.querySelector('#atlas-search-slot input');
-  if (searchInput) searchInput.id = 'bio-search-input';
+  // ---- Busca de biohacking (#bio-search-input / #biohacking-results-grid) ----
+  // O v2 não tem mais a aba "view-biohacking" do app.js antigo (nem
+  // ATLAS_DATABASE.protocols) — mas js/api-cache.js (ApiCache.buscarProtocolo)
+  // continua sendo o motor de busca (base local → cache IndexedDB → PubChem
+  // PUG REST) e é lazy-carregado aqui, igual a pk-engine.js/mol-engine.js em
+  // js/modes/pharmacology.js/molecules.js. Sem base local no v2, toda busca
+  // sem cache cai direto no PubChem — é o próprio comportamento de reserva
+  // que o teste cobre (ver GAP no cabeçalho: "religa" o fluxo, não simula).
+  let apiCacheLoadPromise = null;
+  function ensureApiCache() {
+    if (window.ApiCache) return Promise.resolve(window.ApiCache);
+    if (!apiCacheLoadPromise) apiCacheLoadPromise = loadScriptOnce('js/api-cache.js').then(() => window.ApiCache);
+    return apiCacheLoadPromise;
+  }
   if (!document.getElementById('biohacking-results-grid')) {
+    const bioSection = document.createElement('section');
+    bioSection.id = 'view-biohacking';
+    bioSection.hidden = true;
+    bioSection.style.cssText = 'position:absolute; inset:0; overflow:auto; background:#0b1120; z-index:5;';
+    const input = document.createElement('input');
+    input.id = 'bio-search-input';
+    input.type = 'search';
+    input.placeholder = 'Buscar protocolo/composto...';
     const grid = document.createElement('div');
     grid.id = 'biohacking-results-grid';
-    grid.hidden = true;
-    document.body.appendChild(grid);
+    let debounceTimer = null;
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const termo = input.value;
+      debounceTimer = setTimeout(async () => {
+        if (!termo.trim()) { grid.textContent = ''; return; }
+        const cache = await ensureApiCache().catch(() => null);
+        if (!cache) { grid.textContent = ''; return; }
+        const resultados = await cache.buscarProtocolo(termo).catch(() => []);
+        grid.textContent = '';
+        for (const p of resultados) {
+          const card = document.createElement('div');
+          card.className = 'biohacking-card';
+          card.textContent = `${p.icone || ''} ${p.nome}: ${p.mecanismoAcao || ''}`;
+          grid.appendChild(card);
+        }
+      }, 250);
+    });
+    bioSection.appendChild(input);
+    bioSection.appendChild(grid);
+    document.body.appendChild(bioSection);
   }
+  window.AppController = Object.assign(window.AppController || {}, {
+    switchTab(tabId) {
+      const el = document.getElementById(tabId);
+      document.querySelectorAll('[id^="view-"]').forEach((v) => { v.hidden = true; });
+      if (el) el.hidden = false;
+    },
+  });
   // #organ-name / #organ-hud já existem quando o infocard.js renderiza uma
   // seleção (ver js/ui/infocard.js) — nada a fazer aqui além de garantir
   // que existam mesmo sem seleção (para leitura antes do primeiro clique).
@@ -244,6 +289,51 @@ async function install() {
     hud.appendChild(name);
     document.body.appendChild(hud);
   }
+
+  // ---- window.abrirPdb (visualizador PDB/3Dmol do modo Moléculas) ----
+  // O modo novo (js/modes/molecules.js) só monta #mol-viewport-container/
+  // #mol-viewport e lazy-carrega 3Dmol/mol-engine.js quando o usuário
+  // clica numa proteína da lista (sheetContent()); este gancho legado
+  // reproduz o mesmo carregamento sob demanda para quem chama
+  // window.abrirPdb(pdbId, titulo) direto (ex.: scripts/e2e/apis.e2e.js).
+  const THREEDMOL_URL = 'https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js';
+  const THREEDMOL_SRI = 'sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d';
+  function loadScriptOnce(src, integrity) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) return resolve();
+      const script = document.createElement('script');
+      script.src = src;
+      if (integrity) script.integrity = integrity;
+      script.crossOrigin = 'anonymous';
+      const timer = setTimeout(() => { script.remove(); reject(new Error(`Tempo esgotado ao carregar ${src}`)); }, 10000);
+      script.onload = () => { clearTimeout(timer); resolve(); };
+      script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error(`Falha ao carregar ${src}`)); };
+      document.head.appendChild(script);
+    });
+  }
+  window.abrirPdb = async function abrirPdb(pdbId, titulo) {
+    if (!document.getElementById('mol-viewport-container')) {
+      const container = document.createElement('div');
+      container.id = 'mol-viewport-container';
+      container.style.cssText = 'position:absolute; inset:0;';
+      const viewport = document.createElement('div');
+      viewport.id = 'mol-viewport';
+      viewport.style.cssText = 'width:100%; height:100%;';
+      container.appendChild(viewport);
+      document.body.appendChild(container);
+    }
+    try {
+      if (!window.$3Dmol) await loadScriptOnce(THREEDMOL_URL, THREEDMOL_SRI);
+      if (!window.MolEngine) await loadScriptOnce('js/mol-engine.js');
+    } catch (e) {
+      console.warn('[atlas/compat] abrirPdb: 3Dmol/mol-engine indisponível:', e);
+      return;
+    }
+    if (window.MolEngine) {
+      window.MolEngine.init();
+      await window.MolEngine.loadPdb(pdbId, titulo);
+    }
+  };
 
   // #canvas-3d-container: alguns testes antigos procuram
   // `#canvas-3d-container canvas`. Não renomeia #atlas-canvas (várias

@@ -434,6 +434,11 @@ module.exports = async function apis() {
     // 4. ANATOMIA 3D — RCSB PDB + PubChem (fallback de biohacking)
     // =========================================================================
     frame = await app.openModule('anatomia');
+    // js/compat/legacy-api.js instala window.abrirPdb de forma assíncrona
+    // (espera window.__atlasInternals + data/atlas/legacy-id-map.json) —
+    // sem esperar isso aqui, a chamada corre risco de acontecer antes da
+    // instalação terminar (flake observado: "window.abrirPdb is not a function").
+    await frame.waitForFunction(() => typeof window.abrirPdb === 'function', null, { timeout: 10000 });
     await frame.evaluate(() => window.abrirPdb('4EY7', 'AChE (E2E)'));
     await frame.waitForFunction(() => !!document.querySelector('#canvas-3d-container canvas'), null, { timeout: 6000 }).catch(() => {});
     check(calls.rcsb.some((c) => c.url.endsWith('/download/4EY7.pdb')), 'anatomia: PDB baixado do RCSB (files.rcsb.org, mock)');
