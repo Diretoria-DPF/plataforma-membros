@@ -87,6 +87,18 @@ function measureStates() {
 
   sheetEl.setAttribute('data-sheet-state', prevState);
   sheetEl.style[prop] = prevInline;
+
+  // Fallback: se as medições falharam ou retornaram valores iguais (problema com dvh/CSS vars),
+  // use valores calculados baseado no viewport (igual ao fallback em pickSnap)
+  if (sizes.peek === sizes.half && sizes.half === sizes.full) {
+    const containerH = document.documentElement.clientHeight || window.innerHeight;
+    const containerW = document.documentElement.clientWidth || window.innerWidth;
+    const dim = axis === 'y' ? containerH : containerW;
+    sizes.peek = 96;
+    sizes.half = Math.round(dim * 0.45);
+    sizes.full = Math.round(dim * 0.90);
+  }
+
   return sizes;
 }
 
@@ -234,13 +246,17 @@ function onPointerMove(evt) {
   if (Math.abs(delta) > 4) dragMoved = true;
   const size = clampRubberBand(raw, dragSizes);
   sheetEl.style[sizeProp()] = `${size}px`;
+
   dragSamples.push({ t: performance.now(), size });
-  if (dragSamples.length > 24) dragSamples.shift();
+  // Mantém no máximo as últimas 100 amostras para não descartar dados
+  // durante arraste longo (a velocidade é calculada na janela de 120ms do final)
+  if (dragSamples.length > 100) dragSamples.shift();
 }
 
 function onPointerUp(evt) {
   if (!dragging || evt.pointerId !== dragPointerId) return;
   dragging = false;
+  dragMoved = false; // Reseta o flag para que o próximo click possa ciclar o estado
   sheetEl.style.transition = '';
 
   const last = dragSamples[dragSamples.length - 1];
