@@ -172,7 +172,9 @@ function buildIndexEntry(struct, wikidata, legacyIndex, legacyAliases, legacyCon
   };
 
   if (struct.side) {
-    entry.side = struct.side;
+    // structures.json (WP10) usa 'l'/'r' minúsculos; o esquema exige
+    // maiúsculas ("L", "R", "M").
+    entry.side = String(struct.side).toUpperCase();
   }
 
   if (struct.bbox) {
