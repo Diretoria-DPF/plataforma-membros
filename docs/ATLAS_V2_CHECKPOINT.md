@@ -45,12 +45,14 @@ Testes unitários: `node frontend/scripts/atlas/<nome>.test.mjs` (todos saem 0).
 - **Etapa B fechada:** H20 Farmacologia, H21 Moléculas, H22 Meu estudo, H23 busca.
 - **Etapa C (scripts) pronta:** `tools/atlas-content/` (Wikidata, Wikipédia PT,
   ASCT+B, montador + reconciliação de sids), `npm test` verde.
-- **Em andamento:** WP10 no CI (1 Sonnet) — a exportação completa passou de
-  77,8 MB para o orçamento de 45 MB; ajustes em
-  `tools/atlas-pipeline/{optimize,make-config,build-manifest}.mjs`.
-  Retomar pelo `tools/atlas-pipeline/run-config.json`.
-- **Haiku em paralelo:** H28 `data/atlas/glossario-pt.json` +
-  `scripts/atlas/lint-pt.mjs`; H29 `docs/ATLAS_CONTENT_POLICY.md`.
+- **WP10 (modelos 3D no CI):** total caiu de 78,4 → 48,45 MB (run #16) sem
+  passar do teto de fidelidade (error ≤0,05 LOD0 / ≤0,15 LOD1). Falta: não
+  publicar LOD1 quando ele tem ≥80% do LOD0 (o carregador já cai no LOD0) e
+  rebalancear os orçamentos por arquivo em `budgets.json` mantendo o total de
+  45 MiB; depois `commit: true`. Retomar por `tools/atlas-pipeline/run-config.json`
+  e `SOURCES.md` §8e–§8j.
+- **Também pronto:** `docs/ATLAS_CONTENT_POLICY.md`, `data/atlas/glossario-pt.json`
+  + `scripts/atlas/lint-pt.mjs` (0 anglicismos no conteúdo atual).
 
 ## Próximos passos ao retomar (ordem)
 1. WP10: caber em 45 MB → `commit: true` (modelos, manifest, LICENSES,
