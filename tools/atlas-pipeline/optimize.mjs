@@ -771,6 +771,25 @@ async function processOneFile(file) {
       `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB (JSON ${(lod1.jsonBytes / 1024).toFixed(0)} KB / BIN ${(lod1.binBytes / 1024 / 1024).toFixed(2)} MB), ` +
         `${lod1.triangles.toLocaleString('pt-BR')} triângulos, ${nodeCount.toLocaleString('pt-BR')} nós (ratio ${lod1.ratio.toFixed(3)}, error ${lod1.error.toFixed(3)})`
     );
+
+    // Pular LOD1 inútil (decisão do orquestrador, retomada 27/09 — ver
+    // SOURCES.md §8j): vários sistemas do Z-Anatomy são centenas de
+    // estruturas pequenas já no piso do simplificador (ratio mínimo +
+    // error no teto do guardrail de fidelidade) — o LOD1 sai quase do
+    // mesmo tamanho do LOD0 sem ganhar quase nada em troca. Nesses casos
+    // não vale publicar um segundo arquivo quase idêntico só para estourar
+    // o orçamento total: não escrevemos `.lod1.glb` no manifesto (o
+    // carregador do motor 3D já cai para o outro LOD quando um deles não
+    // existe — ver frontend/modulos/anatomia-3d/js/engine/assets.js,
+    // `findAsset(system, lod === 'lod0' ? 'lod1' : 'lod0', sex)`).
+    if (lod1.bytes >= 0.8 * lod0.bytes) {
+      console.log(
+        `  [lod1] ${baseName}: LOD1 ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB ≥ 80% de LOD0 ${(lod0.bytes / 1024 / 1024).toFixed(2)} MB — não publicado, cliente usa LOD0`
+      );
+      if (!DRY_RUN) fs.rmSync(lod1Path, { force: true });
+      lod1 = null;
+      lod1Path = null;
+    }
   }
   console.log(`  (${file} levou ${((Date.now() - tFile) / 1000).toFixed(1)}s no total)`);
 

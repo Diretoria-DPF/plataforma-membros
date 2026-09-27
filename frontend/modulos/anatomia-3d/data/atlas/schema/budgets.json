@@ -1,11 +1,15 @@
 {
-  "_comment_pt": "Orçamentos de bytes por asset (plano §3). 'bySystem' vale para os GLBs reais gerados pelo pipeline do CI (models/<sistema>[.lod1].glb). 'fixtures.maxBytesPerAsset' vale quando o diretório validado é o de fixtures (scripts/atlas/make-fixtures.mjs), onde cada GLB deve ficar bem menor. 'total.maxBytes' é o teto do conjunto inteiro de assets do manifesto.",
+  "_comment_pt": "Orçamentos de bytes por asset (plano §3). 'bySystem' vale para os GLBs reais gerados pelo pipeline do CI (models/<sistema>[.lod1].glb). 'fixtures.maxBytesPerAsset' vale quando o diretório validado é o de fixtures (scripts/atlas/make-fixtures.mjs), onde cada GLB deve ficar bem menor. 'total.maxBytes' é o teto do conjunto inteiro de assets do manifesto. Valores por arquivo rebalanceados no WP10 depois da execução real #16 (Z-Anatomy completo + HRA, ver tools/atlas-pipeline/SOURCES.md §8j): endocrino/linfatico/respiratorio/urinario são sistemas de centenas de estruturas pequenas (malhas médicas segmentadas de CT/MRI) já no piso do simplificador (ratio mínimo, error no teto do guardrail de fidelidade — 0,05 LOD0/0,15 LOD1) — não cabiam nos limites antigos sem violar esse guardrail, então subiram para 2,0 MiB (lod0 e lod1); nervoso.lod1 e digestorio.lod1 também subiram para 2,0 MiB pelo mesmo motivo (o LOD1 desses dois já saía quase do mesmo tamanho do LOD0). O teto do TOTAL continua em 45 MiB (47185920) — o pipeline agora também deixa de publicar um LOD1 que não reduz pelo menos 20% em relação ao LOD0 (ver optimize.mjs), o que evita que esse rebalanceamento por arquivo, por si só, estoure o total.",
   "bySystem": {
     "esqueletico": { "lod0": 3670016, "lod1": 1258291 },
     "muscular": { "lod0": 5242880, "lod1": 1887436 },
     "cardiovascular": { "lod0": 4194304, "lod1": 1572864 },
-    "nervoso": { "lod0": 3145728, "lod1": 1048576 },
-    "digestorio": { "lod0": 2621440, "lod1": 943718 },
+    "nervoso": { "lod0": 3145728, "lod1": 2097152 },
+    "digestorio": { "lod0": 2621440, "lod1": 2097152 },
+    "endocrino": { "lod0": 2097152, "lod1": 2097152 },
+    "linfatico": { "lod0": 2097152, "lod1": 2097152 },
+    "respiratorio": { "lod0": 2097152, "lod1": 2097152 },
+    "urinario": { "lod0": 2097152, "lod1": 2097152 },
     "default": { "lod0": 1572864, "lod1": 1572864 },
     "hra": { "lod0": 1572864, "lod1": 1572864 }
   },
