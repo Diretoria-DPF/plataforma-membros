@@ -184,6 +184,43 @@ step('4c. validate.mjs — sistema acima do orçamento deve falhar', () => {
   }
 });
 
+step('4d. validate.mjs --structures — caso bom deve passar (sentinelas presentes)', () => {
+  const budgetsPath = path.join(ROOT, '../../frontend/modulos/anatomia-3d/data/atlas/schema/budgets.json');
+  run('node', [
+    'validate.mjs',
+    '--manifest',
+    path.relative(ROOT, manifestPath),
+    '--budgets',
+    path.relative(ROOT, budgetsPath),
+    '--structures',
+    path.relative(ROOT, structuresPath),
+  ]);
+});
+
+step('4e. validate.mjs --structures — sistema sem sentinela deve falhar (guarda contra mapa sistema↔coleção errado)', () => {
+  const structures = JSON.parse(fs.readFileSync(structuresPath, 'utf8'));
+  // Simula o bug real (SOURCES.md): "cardiovascular" cheio de estruturas de
+  // outro sistema (aqui, do esqueletico), sem nenhum coração/aorta.
+  const tampered = structures.map((s) =>
+    s.system === 'cardiovascular' ? { ...s, englishName: 'Interosseous membrane of leg', system: 'cardiovascular' } : s
+  );
+  const badPath = path.join(WORK, 'structures-sem-sentinela.json');
+  fs.writeFileSync(badPath, JSON.stringify(tampered, null, 2));
+  const budgetsPath = path.join(ROOT, '../../frontend/modulos/anatomia-3d/data/atlas/schema/budgets.json');
+  const output = runExpectFailure('node', [
+    'validate.mjs',
+    '--manifest',
+    path.relative(ROOT, manifestPath),
+    '--budgets',
+    path.relative(ROOT, budgetsPath),
+    '--structures',
+    path.relative(ROOT, badPath),
+  ]);
+  if (!/sentinela/.test(output)) {
+    throw new Error(`esperava mensagem de erro de sentinela na saída, recebeu:\n${output}`);
+  }
+});
+
 console.log(`\n=================================`);
 if (failures > 0) {
   console.error(`${failures} etapa(s) falharam.`);

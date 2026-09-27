@@ -15,6 +15,14 @@
  *   4. licenças separadas — nenhum asset mistura CC BY (HRA) com CC BY-SA
  *      (Z-Anatomy) e, quando `--licenses-dir` é informado, os dois textos
  *      de licença existem em arquivos separados (nunca um texto só).
+ *   5. sentinelas por sistema (guarda contra mapa sistema↔coleção
+ *      Blender errado ou seleção acumulada entre sistemas — bug real
+ *      encontrado na retomada 27/09: "cardiovascular" saiu cheio de
+ *      ligamentos de tornozelo porque a seleção de export_systems.py não
+ *      era limpa entre sistemas) — quando `--structures` é informado, cada
+ *      sistema com sentinelas conhecidas (ver SENTINELS abaixo) precisa ter
+ *      ao menos uma estrutura cujo `englishName` contenha (sem acento,
+ *      case-insensitive) um dos termos esperados.
  *
  * O manifesto real (WP10) é um objeto `{ version, generatedAt, assets: [] }`
  * — não existe "sistema hra" separado: um asset do HRA é diferenciado de um
@@ -24,6 +32,7 @@
  *
  * Uso: node validate.mjs --manifest <models/manifest.json> [--schema <arquivo>]
  *        [--budgets <budgets.json>] [--licenses-dir <models/LICENSES>]
+ *        [--structures <structures.json>]
  * Saída: código 1 se algo falhar; sempre imprime um resumo em pt-BR.
  */
 
@@ -64,10 +73,35 @@ const BUDGETS_PATH =
   args.budgets ||
   path.join(__dirname, '../../frontend/modulos/anatomia-3d/data/atlas/schema/budgets.json');
 const LICENSES_DIR = args['licenses-dir'] || null;
+const STRUCTURES_PATH = args.structures || null;
+
+/** Estruturas-sentinela por sistema: cada sistema listado aqui precisa ter
+ * pelo menos uma estrutura cujo englishName contenha (substring, sem
+ * acento, case-insensitive) um dos termos — senão o mapa sistema↔coleção
+ * Blender (systems-map.json) ou a seleção de export_systems.py provavelmente
+ * está errada (ex.: um sistema todo composto de estruturas de outro). Não
+ * cobre todo sistema de propósito: só os que têm um "marco" anatômico
+ * inequívoco e fácil de checar por nome em inglês. */
+const SENTINELS = {
+  cardiovascular: ['heart', 'aorta'],
+  esqueletico: ['femur'],
+  nervoso: ['brain', 'spinal cord'],
+  digestorio: ['stomach', 'liver'],
+  respiratorio: ['lung', 'trachea'],
+  urinario: ['kidney', 'bladder'],
+  muscular: ['deltoid', 'biceps', 'quadriceps'],
+  articular: ['joint', 'ligament', 'meniscus'],
+  linfatico: ['lymph', 'spleen', 'thymus'],
+  endocrino: ['thyroid', 'pituitary', 'adrenal'],
+};
+
+function stripDiacritics(s) {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
 
 if (!MANIFEST_PATH) {
   console.error(
-    'Uso: node validate.mjs --manifest <models/manifest.json> [--schema <arquivo>] [--budgets <budgets.json>] [--licenses-dir <dir>]'
+    'Uso: node validate.mjs --manifest <models/manifest.json> [--schema <arquivo>] [--budgets <budgets.json>] [--licenses-dir <dir>] [--structures <arquivo>]'
   );
   process.exit(1);
 }
@@ -179,6 +213,31 @@ function main() {
       if (a.trim() === b.trim()) {
         errors.push(`[licença] ${ccBySaPath} e ${ccByPath} têm o mesmo conteúdo — as licenças não podem estar misturadas.`);
       }
+    }
+  }
+
+  // 5) Sentinelas por sistema — só quando --structures foi informado.
+  if (STRUCTURES_PATH) {
+    if (fs.existsSync(STRUCTURES_PATH)) {
+      const structures = JSON.parse(fs.readFileSync(STRUCTURES_PATH, 'utf8'));
+      const namesBySystem = new Map();
+      for (const s of structures) {
+        const list = namesBySystem.get(s.system) || [];
+        list.push(stripDiacritics(String(s.englishName || '')).toLowerCase());
+        namesBySystem.set(s.system, list);
+      }
+      for (const [system, terms] of Object.entries(SENTINELS)) {
+        if (!namesBySystem.has(system)) continue; // sistema ausente nesta execução (ex.: fixtures de teste) — nada a checar
+        const names = namesBySystem.get(system);
+        const found = names.some((name) => terms.some((term) => name.includes(term)));
+        if (!found) {
+          errors.push(
+            `[sentinela] sistema "${system}" não tem nenhuma estrutura com englishName contendo ${terms.map((t) => `"${t}"`).join(' ou ')} (${names.length} estrutura(s) no sistema) — o mapa sistema↔coleção Blender (systems-map.json) ou a seleção de export_systems.py provavelmente está errado.`
+          );
+        }
+      }
+    } else {
+      warnings.push(`[sentinela] ${STRUCTURES_PATH} não existe — validação de sentinelas por sistema pulada nesta execução.`);
     }
   }
 

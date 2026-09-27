@@ -208,7 +208,8 @@ jobs:
           node validate.mjs --manifest work/models/manifest.json \
             --schema ../../frontend/modulos/anatomia-3d/data/atlas/schema/manifest.schema.json \
             --budgets ../../frontend/modulos/anatomia-3d/data/atlas/schema/budgets.json \
-            --licenses-dir work/models/LICENSES
+            --licenses-dir work/models/LICENSES \
+            --structures out/structures.json
 
       - name: Enviar artefato (manifesto, GLBs, relatórios, log do discover)
         uses: actions/upload-artifact@v4

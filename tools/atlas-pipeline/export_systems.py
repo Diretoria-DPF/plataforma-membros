@@ -206,7 +206,18 @@ def export_system(system_id, collection_names, out_dir, systems_map_layer):
     out_path = os.path.join(out_dir, f"{system_id}.glb")
     os.makedirs(out_dir, exist_ok=True)
 
-    bpy.ops.object.select_all(action="DESELECT")
+    # NUNCA usar bpy.ops.object.select_all() aqui: em modo --background (sem
+    # janela/área de View3D), esse operator pode devolver 'CANCELLED' em
+    # silêncio (poll() falha por falta de contexto de UI) — a seleção do
+    # sistema anterior nunca é limpa, e ela vai se ACUMULANDO a cada
+    # chamada de export_system() (a ordem de acumulação bate exatamente com
+    # a ordem das chaves em systems-map.json: bug real encontrado ao
+    # investigar por que "cardiovascular" saiu com ligamentos de tornozelo
+    # — na verdade era união de TODOS os sistemas processados antes dele).
+    # A API de dados (Object.select_set) não depende de contexto de UI e
+    # sempre funciona headless — usamos ela também para desselecionar.
+    for obj in bpy.data.objects:
+        obj.select_set(False)
     exportable = [o for col in found for o in col.all_objects if is_exportable_object(o)]
     for obj in exportable:
         obj.select_set(True)
