@@ -197,8 +197,10 @@ function testCliEndToEnd() {
   // Verifica conteúdo
   assert(Object.keys(result.bySid).length > 0, 'Deve ter pelo menos um sid mapeado');
 
-  // Verifica que tem entries para sids do coração
-  const expectedSids = ['uberon:0002084', 'uberon:0002080', 'uberon:0000079'];
+  // Verifica que tem entries para sids do coração (sids reais, vindos de
+  // wikidata.asctb.json — mapAsIdToSid resolve o AS ID do ASCT+B para o sid
+  // real da estrutura, não fabrica um "uberon:<num>" sintético)
+  const expectedSids = ['left_ventricle', 'right_ventricle', 'atrium'];
   const actualSids = Object.keys(result.bySid);
 
   for (const expectedSid of expectedSids) {

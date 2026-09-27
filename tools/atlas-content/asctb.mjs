@@ -218,24 +218,70 @@ function loadJson(filePath) {
 }
 
 /**
- * Mapeia um AS ID para sid usando wikidata
- * @param {string} asId - ID de estrutura anatômica (FMA:xxxx ou UBERON:xxxx)
- * @param {object} wikidata - objeto wikidata com mapeamentos fma e uberon
- * @returns {string|null} - sid ou null se não mapeado
+ * Constrói um índice reverso (número FMA/UBERON -> sid real) a partir do
+ * wikidata.json.
+ *
+ * Dois formatos são aceitos:
+ * - "plano" (legado, usado nas fixtures de teste): { fma: { "<num>": sid },
+ *   uberon: { "<num>": sid } } — o valor já é o sid a usar.
+ * - "por sid" (o que wikidata.mjs realmente produz): { "<sid>": { fma:
+ *   "<num>", uberon: "UBERON:<num>", ... }, ... } — precisa ser invertido.
+ *
+ * Sem isso, mapAsIdToSid não tinha como saber a qual sid real (za:*) um AS
+ * ID do ASCT+B corresponde — a versão anterior fabricava um sid sintético
+ * ("fma:<num>"/"uberon:<num>") que nunca bate com nenhum sid real de
+ * structures.json, então build-content.mjs nunca encontrava as células.
+ *
+ * @param {object} wikidataRaw
+ * @returns {{ fma: Map<string,string>, uberon: Map<string,string> }}
  */
-function mapAsIdToSid(asId, wikidata) {
+export function buildReverseWikidataIndex(wikidataRaw) {
+  const fma = new Map();
+  const uberon = new Map();
+
+  if (!wikidataRaw || typeof wikidataRaw !== 'object') {
+    return { fma, uberon };
+  }
+
+  const isFlatLegacyFormat =
+    (wikidataRaw.fma && typeof wikidataRaw.fma === 'object' && !wikidataRaw.fma.qid) ||
+    (wikidataRaw.uberon && typeof wikidataRaw.uberon === 'object' && !wikidataRaw.uberon.qid);
+
+  if (isFlatLegacyFormat) {
+    for (const [num, sid] of Object.entries(wikidataRaw.fma || {})) fma.set(num, sid);
+    for (const [num, sid] of Object.entries(wikidataRaw.uberon || {})) uberon.set(num, sid);
+    return { fma, uberon };
+  }
+
+  for (const [sid, entry] of Object.entries(wikidataRaw)) {
+    if (!entry || typeof entry !== 'object') continue;
+    if (entry.fma) {
+      const num = String(entry.fma).replace(/^FMA:/i, '');
+      if (!fma.has(num)) fma.set(num, sid);
+    }
+    if (entry.uberon) {
+      const num = String(entry.uberon).replace(/^UBERON:/i, '');
+      if (!uberon.has(num)) uberon.set(num, sid);
+    }
+  }
+
+  return { fma, uberon };
+}
+
+/**
+ * Mapeia um AS ID do ASCT+B para o sid real do atlas, usando o índice
+ * reverso construído por buildReverseWikidataIndex.
+ * @param {string} asId - ID de estrutura anatômica (FMA:xxxx ou UBERON:xxxx)
+ * @param {{ fma: Map, uberon: Map }} index
+ * @returns {string|null} - sid real, ou null se não mapeado
+ */
+function mapAsIdToSid(asId, index) {
   if (!asId) return null;
 
   if (asId.startsWith('FMA:')) {
-    const fmaNum = asId.substring(4);
-    if (wikidata.fma && wikidata.fma[fmaNum]) {
-      return `fma:${fmaNum}`;
-    }
+    return index.fma.get(asId.substring(4)) || null;
   } else if (asId.startsWith('UBERON:')) {
-    const uberonNum = asId.substring(7);
-    if (wikidata.uberon && wikidata.uberon[uberonNum]) {
-      return `uberon:${uberonNum}`;
-    }
+    return index.uberon.get(asId.substring(7)) || null;
   }
 
   return null;
@@ -244,11 +290,11 @@ function mapAsIdToSid(asId, wikidata) {
 /**
  * Processa CSV ASCT+B completo
  * @param {string} csvText - conteúdo do CSV
- * @param {object} wikidata - mapeamentos de wikidata
+ * @param {{ fma: Map, uberon: Map }} wdIndex - índice reverso (ver buildReverseWikidataIndex)
  * @param {object} sourceInfo - informações de origem (organ, version, doi, url, license)
  * @returns {object} - { bySid: {...}, unmapped: [...] }
  */
-function processAsctbCsv(csvText, wikidata, sourceInfo = {}) {
+function processAsctbCsv(csvText, wdIndex, sourceInfo = {}) {
   const rows = parseCsv(csvText);
   const headerIndex = findHeader(rows);
 
@@ -263,7 +309,7 @@ function processAsctbCsv(csvText, wikidata, sourceInfo = {}) {
   const unmapped = [];
 
   for (const [asId, data] of Object.entries(aggregated)) {
-    const sid = mapAsIdToSid(asId, wikidata);
+    const sid = mapAsIdToSid(asId, wdIndex);
 
     if (sid) {
       bySid[sid] = {
@@ -314,6 +360,7 @@ async function main() {
   const manifestFile = options.manifest;
 
   const wikidata = loadJson(wikidataFile);
+  const wdIndex = buildReverseWikidataIndex(wikidata);
   const result = {
     bySid: {},
     unmapped: [],
@@ -341,7 +388,7 @@ async function main() {
         license: 'CC-BY-4.0'
       };
 
-      const processed = processAsctbCsv(csvContent, wikidata, sourceInfo);
+      const processed = processAsctbCsv(csvContent, wdIndex, sourceInfo);
 
       // Mescla resultados
       Object.assign(result.bySid, processed.bySid);
