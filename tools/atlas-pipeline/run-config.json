@@ -1,9 +1,9 @@
 {
   "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-assets.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do WP10 e o §3 do plano.",
-  "mode": "export",
+  "mode": "discover",
   "_mode_valores": "'discover' roda só discover.mjs + Blender --list-collections (nenhum export completo, nenhum commit) — usado até confirmarmos os nomes reais das coleções do Startup.blend e a lista de órgãos do HRA. 'export' roda o pipeline completo (fetch+export+optimize+manifest+validate) com os campos abaixo.",
-  "_fase": "Fase B (retomada 27/09, plano §9 Etapa A). Execução #17 (pular LOD1 inútil quando >=80% do LOD0 + budgets.json rebalanceado): passou em todo o pipeline, inclusive 'validate' — 31 assets, 37,85 MB contra o teto de 45 MB, 0 erros. Ver SOURCES.md §8j para a tabela completa por asset. 'commit' passa para true nesta execução para gravar de fato os assets em frontend/modulos/anatomia-3d/models/** e structures.json via github-actions[bot]; depois de confirmado esse commit, volta para false num commit final pequeno.",
+  "_fase": "Fase B concluída (retomada 27/09). Execução #17 (pular LOD1 inútil quando >=80% do LOD0 + budgets.json rebalanceado) passou em todo o pipeline — 31 assets, 37,85 MB contra o teto de 45 MB, 0 erros (ver SOURCES.md §8j). Execução #18 (commit:true) gravou os assets de verdade em frontend/modulos/anatomia-3d/models/** e data/atlas/generated/structures.json via github-actions[bot] (commit 55b49fc) — esse commit toca só esses caminhos, fora dos 'paths' do gatilho de push, então não disparou uma nova execução. 'mode' volta para 'discover' e 'commit' para false para que um push futuro em tools/atlas-pipeline/** (uma correção pontual, por exemplo) não dispare sem querer uma nova exportação completa — mude para 'export'/'commit: true' de novo quando quiser re-exportar.",
   "systems": "all",
   "hra": true,
-  "commit": true
+  "commit": false
 }
