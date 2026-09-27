@@ -1,10 +1,10 @@
 {
   "name": "atlas-content",
   "version": "1.0.0",
-  "description": "Enriquecimento de estruturas anatômicas com dados de Wikidata",
+  "description": "Conteúdo do Atlas: Wikidata, Wikipédia PT, HRA ASCT+B e montagem final (roda no CI)",
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node test/wikidata.test.mjs"
+    "test": "node test/wikidata.test.mjs && node test/wikipedia-pt.test.mjs && node test/asctb.test.mjs && node test/build-content.test.mjs"
   }
 }
