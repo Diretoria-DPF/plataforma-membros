@@ -72,9 +72,9 @@ jobs:
         with:
           node-version: '20'
 
-      - name: npm ci (tools/atlas-content)
+      - name: npm install (tools/atlas-content — sem dependências externas)
         working-directory: tools/atlas-content
-        run: npm ci
+        run: npm install
 
       - name: npm ci (frontend, para validate-content/lint-pt)
         working-directory: frontend
