@@ -104,7 +104,7 @@ jobs:
           {
             echo "### Wikidata"
             node -e "const d=require('./out/wikidata.json'); console.log('- sids com qid:', Object.keys(d).filter(k=>d[k].qid).length); console.log('- sids com label_pt:', Object.keys(d).filter(k=>d[k].label_pt).length); console.log('- total de sids:', Object.keys(d).length);"
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: 2) Wikipédia PT (intro + revision id)
         working-directory: tools/atlas-content
@@ -113,7 +113,7 @@ jobs:
           {
             echo "### Wikipédia PT"
             node -e "const d=require('./out/wikipedia-pt.json'); console.log('- sids com extract_pt:', Object.keys(d).filter(k=>d[k] && d[k].extract_pt).length);"
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: 3) Descobrir/validar URLs dos CSVs ASCT+B da HRA (por órgão)
         working-directory: tools/atlas-content
@@ -123,7 +123,7 @@ jobs:
             echo "### ASCT+B — validação das URLs (asctb-organs.json)"
             echo '| órgão | versão | status | url |'
             echo '|---|---|---|---|'
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
           FAILED=""
           node - <<'NODE' > work/organs.tsv
           const organs = require('./asctb-organs.json');
@@ -161,7 +161,7 @@ jobs:
           {
             echo "### ASCT+B — agregação"
             node -e "const d=require('./out/asctb.json'); console.log('- sids com células:', Object.keys(d.bySid||{}).length); console.log('- não mapeados:', (d.unmapped||[]).length); console.log('- órgãos processados:', (d.processed||[]).join(', '));"
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: 5) build-content (merge final + reconciliação de sids)
         if: steps.params.outputs.mode == 'build'
@@ -191,25 +191,29 @@ jobs:
             echo '```'
             tail -n 200 lint-pt-report.txt
             echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Tamanho do index.json
         if: steps.params.outputs.mode == 'build'
         run: |
           RAW=$(stat -c%s tools/atlas-content/out/content/index.json)
           GZ=$(gzip -c tools/atlas-content/out/content/index.json | wc -c)
-          echo "index.json: ${RAW} bytes brutos, ${GZ} bytes gzip" >> "$GITHUB_STEP_SUMMARY"
+          echo "index.json: ${RAW} bytes brutos, ${GZ} bytes gzip" | tee -a "$GITHUB_STEP_SUMMARY"
           echo "index_raw_bytes=$RAW" >> "$GITHUB_OUTPUT"
           echo "index_gz_bytes=$GZ" >> "$GITHUB_OUTPUT"
         id: index_size
 
       - name: Enviar artefato (conteúdo gerado + relatórios)
-        if: steps.params.outputs.mode == 'build'
+        # Sempre envia (mesmo em modo discover) para poder inspecionar
+        # out/wikidata.json e out/wikipedia-pt.json sem precisar rodar o
+        # pipeline completo.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: atlas-content-${{ github.run_number }}
           path: |
             tools/atlas-content/out/**
+            tools/atlas-content/work/**
             frontend/lint-pt-report.txt
           retention-days: 14
           if-no-files-found: warn
