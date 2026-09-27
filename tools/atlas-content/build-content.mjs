@@ -580,7 +580,16 @@ async function main() {
       aliases
     );
 
-    contentBySystem[system][realSid] = preserveReviewed(system, realSid, record);
+    // Só grava um registro de conteúdo quando há de fato algo para mostrar
+    // (content.schema.json exige summary_pt e sources não-vazios). A grande
+    // maioria das ~12,7 mil estruturas reais (WP10) são partes pequenas
+    // demais para ter um verbete próprio na Wikipédia ou no ASCT+B — ficam
+    // apenas no index.json (nome/posição), sem entrada em content/<sistema>.json,
+    // exatamente como nas fixtures (frontend/.../data/atlas/fixtures/content/).
+    const finalRecord = preserveReviewed(system, realSid, record);
+    if (finalRecord.sources && finalRecord.sources.length > 0) {
+      contentBySystem[system][realSid] = finalRecord;
+    }
   }
 
   // Legacy leftovers
@@ -599,7 +608,10 @@ async function main() {
       aliases
     );
 
-    contentBySystem[system][leftover.sid] = preserveReviewed(system, leftover.sid, record);
+    const finalLeftoverRecord = preserveReviewed(system, leftover.sid, record);
+    if (finalLeftoverRecord.sources && finalLeftoverRecord.sources.length > 0) {
+      contentBySystem[system][leftover.sid] = finalLeftoverRecord;
+    }
   }
 
   // Reescrita de data files

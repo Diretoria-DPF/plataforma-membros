@@ -178,8 +178,15 @@ jobs:
 
       - name: 6) validate-content (esquemas + integridade cruzada)
         if: steps.params.outputs.mode == 'build'
-        working-directory: frontend
-        run: node scripts/atlas/validate-content.mjs ../tools/atlas-content/out/content
+        run: |
+          # validate-content.mjs espera manifest.json e glossario-pt.json
+          # dentro do próprio diretório validado (para checagens cruzadas
+          # com index.json) — build-content.mjs não escreve esses dois (não
+          # são conteúdo textual), então copiamos os reais para dentro do
+          # diretório de saída antes de validar.
+          cp frontend/modulos/anatomia-3d/models/manifest.json tools/atlas-content/out/content/manifest.json
+          cp "${{ env.DATA_DIR }}/glossario-pt.json" tools/atlas-content/out/content/glossario-pt.json
+          cd frontend && node scripts/atlas/validate-content.mjs ../tools/atlas-content/out/content
 
       - name: 7) lint-pt (anglicismos/traduções — só relatório, não falha o job)
         if: steps.params.outputs.mode == 'build'
