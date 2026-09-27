@@ -1,5 +1,16 @@
 # Atlas v2 — cronograma em 10 blocos (5 Claude, 5 manuais)
 
+## Atualização (fim da sessão)
+Já resolvidos (commits `95fa474`, `a7a75f9`):
+- **Bloco 6:** botão "Refazer" do quiz — **feito**.
+- **Bloco 7:** `abrirPdb` + ChEMBL — **feito**; o `apis.e2e.js` está verde.
+- **Bloco 8:** crachá — `qr.e2e.js` está verde e não reproduziu; só re-testar.
+- **Bloco 3:** busca de compostos (biohacking) e `abrirPdb` religados — falta só apagar os arquivos antigos.
+
+Suíte completa: verde, exceto `atlas-perf` (bloco 1) e um tempo esgotado ocasional em `fase4`, que só aparece rodando tudo junto.
+
+**Seus blocos agora:** 9 (URLs ASCT+B) e 10 (revisão e celular real). Opcional: re-testar o 8.
+
 ## Contexto rápido
 
 - Branch: `claude/optimistic-babbage-3pm2em`.
