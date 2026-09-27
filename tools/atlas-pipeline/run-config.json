@@ -1,9 +1,9 @@
 {
   "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-assets.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do WP10 e o §3 do plano.",
-  "mode": "discover",
+  "mode": "export",
   "_mode_valores": "'discover' roda só discover.mjs + Blender --list-collections (nenhum export completo, nenhum commit) — usado até confirmarmos os nomes reais das coleções do Startup.blend e a lista de órgãos do HRA. 'export' roda o pipeline completo (fetch+export+optimize+manifest+validate) com os campos abaixo.",
-  "_fase": "Fase B concluída (retomada 27/09). Execução #17 (pular LOD1 inútil quando >=80% do LOD0 + budgets.json rebalanceado) passou em todo o pipeline — 31 assets, 37,85 MB contra o teto de 45 MB, 0 erros (ver SOURCES.md §8j). Execução #18 (commit:true) gravou os assets de verdade em frontend/modulos/anatomia-3d/models/** e data/atlas/generated/structures.json via github-actions[bot] (commit 55b49fc) — esse commit toca só esses caminhos, fora dos 'paths' do gatilho de push, então não disparou uma nova execução. 'mode' volta para 'discover' e 'commit' para false para que um push futuro em tools/atlas-pipeline/** (uma correção pontual, por exemplo) não dispare sem querer uma nova exportação completa — mude para 'export'/'commit: true' de novo quando quiser re-exportar.",
+  "_fase": "Retomada 27/09 (2ª): achado o bug real do commit 55b49fc/execução #18 — export_systems.py nunca limpava a seleção entre sistemas em Blender --background (bpy.ops.object.select_all(DESELECT) pode ser CANCELLED em silêncio sem contexto de UI), então cada sistema acumulava todos os anteriores na ordem de systems-map.json (cardiovascular saiu com ~1146 estruturas, quase todas ligamentos de tornozelo do sistema articular, sem nenhum coração/vaso — 'Heart' não existia em lugar nenhum do structures.json committado). Corrigido para desselecionar via Object.select_set(False) direto (API de dados, não depende de contexto). validate.mjs ganhou uma checagem de sentinelas por sistema (--structures) para nunca mais regredir em silêncio. 'mode' volta para 'export'/'commit: true' para re-gerar de verdade os assets com a correção — depois de confirmado o commit do bot, volta para 'discover'/'commit: false' de novo.",
   "systems": "all",
   "hra": true,
-  "commit": false
+  "commit": true
 }
