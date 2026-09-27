@@ -1,7 +1,7 @@
 {
   "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-content.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do conteúdo do Atlas.",
-  "mode": "build",
+  "mode": "discover",
   "_mode_valores": "'discover' só valida as fontes (Wikidata, Wikipédia PT, CSVs ASCT+B da HRA) e roda o pipeline em memória sem gravar nada fora de tools/atlas-content/out — nenhum commit. 'build' roda o pipeline completo (wikidata -> wikipedia-pt -> asctb -> build-content -> validate-content -> lint-pt) e, se 'commit' for true, grava o resultado em frontend/modulos/anatomia-3d/data/atlas/{index.json,content/**,sid-aliases.json,routes.json,processes.json,quiz-cases.json,compounds.json,proteins.json}.",
   "commit": false,
-  "_status_27_09": "URLs ASCT+B reais (34 órgãos) e validador com --legacy-anchors=warn. Execução build sem commit para medir qids/resumos/células antes do commit:true. Corrigido quiz-cases.json (fma:7309/7310 inexistentes) que fazia validate-content falhar; re-rodando build sem commit."
+  "_status_27_09": "Run 36350217117 (build, commit:false) verde após corrigir quiz-cases.json, mas zerado nas 3 métricas: sids com qid=0, sids com extract_pt=0, sids com células ASCT+B=0. Wikidata (query.wikidata.org/sparql) respondeu sem erro em todos os 44 lotes (2427 estruturas), só que nenhuma bateu FMA->qid — não é throttling com erro, é 0 sids mapeados mesmo. ASCT+B baixou os 34 CSVs com sucesso (asctb_failed vazio), mas sem qid não casa nenhuma célula (0 mapeados, 3694 não mapeados). Voltado para 'discover' até investigar por que o SPARQL não devolve nenhum qid para os FMA ids reais."
 }
