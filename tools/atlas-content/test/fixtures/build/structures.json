@@ -1,0 +1,80 @@
+[
+  {
+    "sid": "fma:7088",
+    "english": "Heart",
+    "latin": "Cor",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "bbox": {
+      "min": [0, 0, 0],
+      "max": [100, 100, 100]
+    }
+  },
+  {
+    "sid": "fma:7197",
+    "english": "Liver",
+    "latin": "Hepar",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "bbox": {
+      "min": [0, 0, 0],
+      "max": [100, 100, 100]
+    }
+  },
+  {
+    "sid": "za:rins",
+    "english": "Kidneys",
+    "latin": "Renes",
+    "system": "urinario",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "bbox": {
+      "min": [0, 0, 0],
+      "max": [100, 100, 100]
+    }
+  },
+  {
+    "sid": "za:pulmoes",
+    "english": "Lungs",
+    "latin": "Pulmones",
+    "system": "respiratorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "bbox": {
+      "min": [0, 0, 0],
+      "max": [100, 100, 100]
+    }
+  },
+  {
+    "sid": "za:estomago",
+    "english": "Stomach",
+    "latin": "Stomachus",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "bbox": {
+      "min": [0, 0, 0],
+      "max": [100, 100, 100]
+    }
+  },
+  {
+    "sid": "za:encefalo",
+    "english": "Brain",
+    "latin": "Encephalon",
+    "system": "nervoso",
+    "layer": "nervos",
+    "parent": null,
+    "region": "cabeca",
+    "bbox": {
+      "min": [0, 0, 0],
+      "max": [100, 100, 100]
+    }
+  }
+]

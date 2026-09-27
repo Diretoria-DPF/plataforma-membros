@@ -1,0 +1,9 @@
+{
+  "ATP": {
+    "name_pt": "Trifosfato de Adenosina",
+    "name_en": "Adenosine Triphosphate",
+    "description_pt": "Molécula de energia celular",
+    "affected_sids": ["za:coracao", "fma:7197"],
+    "action": "substrato-energetico"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "fma:7088": {
+    "title": "Coração",
+    "extract_pt": "O coração é um órgão muscular que funciona como bomba, impulsionando o sangue através dos vasos sanguíneos pela circulação continuada. Ele fornece oxigênio e nutrientes a todo o corpo enquanto remove produtos residuais do metabolismo.",
+    "url": "https://pt.wikipedia.org/wiki/Coração",
+    "revid": 12345678
+  },
+  "fma:7197": {
+    "title": "Fígado",
+    "extract_pt": "O fígado é a maior glândula do corpo humano, localizado no lado superior direito do abdômen, abaixo do diafragma. Realiza mais de 500 funções biológicas essenciais, incluindo metabolismo de nutrientes, detoxificação e produção de proteínas plasmáticas.",
+    "url": "https://pt.wikipedia.org/wiki/Fígado",
+    "revid": 12345679
+  }
+}

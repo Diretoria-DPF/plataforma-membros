@@ -1,0 +1,20 @@
+[
+  {
+    "id": "rota-circulacao",
+    "system": "cardiovascular",
+    "name_pt": "Circulação Cardíaca",
+    "description_pt": "Fluxo de sangue através do coração",
+    "anchors": [
+      {
+        "sid": "za:coracao",
+        "label_pt": "Entrada",
+        "t": 0
+      },
+      {
+        "sid": "fma:7088",
+        "label_pt": "Bombeamento",
+        "t": 1
+      }
+    ]
+  }
+]

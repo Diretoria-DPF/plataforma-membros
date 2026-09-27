@@ -1,0 +1,27 @@
+{
+  "za:coracao": {
+    "ids": {
+      "wikidata": "Q1072",
+      "mesh": "D006321"
+    },
+    "summary_pt": "Bomba muscular cardíaca",
+    "anatomy": {
+      "vascularization": "Artérias coronárias"
+    },
+    "histology": {
+      "epithelium": "Endocárdio"
+    },
+    "clinical": ["Infarto agudo do miocárdio"],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ]
+  }
+}

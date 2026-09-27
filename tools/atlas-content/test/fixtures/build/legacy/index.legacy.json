@@ -1,0 +1,35 @@
+[
+  {
+    "sid": "za:coracao",
+    "system": "cardiovascular",
+    "layer": "visceras",
+    "parent": null,
+    "region": "torax",
+    "names": {
+      "pt": "Coração",
+      "en": "Heart"
+    }
+  },
+  {
+    "sid": "za:figado",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Fígado",
+      "en": "Liver"
+    }
+  },
+  {
+    "sid": "za:vesicula-biliar",
+    "system": "digestorio",
+    "layer": "visceras",
+    "parent": null,
+    "region": "abdome",
+    "names": {
+      "pt": "Vesícula Biliar",
+      "en": "Gallbladder"
+    }
+  }
+]

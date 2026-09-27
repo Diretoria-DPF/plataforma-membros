@@ -1,0 +1,33 @@
+[
+  {
+    "id": "caso-cardiaco",
+    "system": "cardiovascular",
+    "prompt_pt": "Qual é o órgão responsável pelo bombeamento do sangue?",
+    "difficulty": "facil",
+    "correctSid": "za:coracao",
+    "distractorSids": [
+      "za:figado",
+      "fma:7197"
+    ],
+    "anchors": [
+      {
+        "sid": "za:coracao"
+      }
+    ]
+  },
+  {
+    "id": "caso-hepatico",
+    "system": "digestorio",
+    "prompt_pt": "Qual órgão metaboliza medicamentos através da primeira passagem?",
+    "difficulty": "medio",
+    "correctSid": "fma:7197",
+    "distractorSids": [
+      "za:estomago"
+    ],
+    "anchors": [
+      {
+        "sid": "fma:7197"
+      }
+    ]
+  }
+]

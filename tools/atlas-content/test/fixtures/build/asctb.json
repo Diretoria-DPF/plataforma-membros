@@ -1,0 +1,31 @@
+{
+  "bySid": {
+    "fma:7088": {
+      "cells": [
+        {
+          "cl": "CL:0000746",
+          "name_en": "Cardiac myocyte",
+          "biomarkers": ["TNNT2", "ACTC1"]
+        },
+        {
+          "cl": "CL:0008002",
+          "name_en": "Cardiac endothelial cell",
+          "biomarkers": ["PECAM1", "VE-CADHERIN"]
+        }
+      ],
+      "tissues": ["myocardium", "endocardium"],
+      "source": "HRA-ASCTB"
+    },
+    "za:rins": {
+      "cells": [
+        {
+          "cl": "CL:1000491",
+          "name_en": "Podocyte",
+          "biomarkers": ["NPHS1", "NPHS2"]
+        }
+      ],
+      "tissues": ["glomerulus"],
+      "source": "HRA-ASCTB"
+    }
+  }
+}
