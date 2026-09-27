@@ -63,8 +63,12 @@ export function buildQuery(batch) {
     `);
   }
 
+  // Cada item de whereClauses já é um GroupGraphPattern entre chaves
+  // ("{ ... }") — juntá-los com parênteses extras, "({...})", não é SPARQL
+  // válido (parênteses de agrupamento só valem em expressões, não em
+  // WHERE); UNION exige "{ ... } UNION { ... }" diretamente.
   const whereClause = whereClauses.length > 0
-    ? whereClauses.map(w => `(${w.trim()})`).join('\nUNION\n')
+    ? whereClauses.map(w => w.trim()).join('\nUNION\n')
     : '';
 
   return `
