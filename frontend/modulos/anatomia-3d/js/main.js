@@ -426,6 +426,11 @@ async function boot() {
     bus, store: storeApi, registry, assetLoader, engine,
     selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS,
   };
+  // Gancho de teste, só leitura — expõe as estatísticas do renderer
+  // (draw calls, triângulos, contagem de frames renderizados) para os
+  // cenários de e2e de desempenho (scripts/e2e/atlas-perf.e2e.js). Não
+  // altera nada no motor; `getStats()` já existe em js/engine/renderer.js.
+  window.__atlasPerf = Object.freeze({ getStats: () => rendererApi.getStats() });
   emit('atlas:ready', {});
 }
 
