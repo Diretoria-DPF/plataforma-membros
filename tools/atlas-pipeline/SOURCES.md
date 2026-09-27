@@ -273,6 +273,69 @@ tudo que faltava para sair do modo `discover`:
   job); ficam pendentes de confirmação na primeira execução com `hra: true`
   — `fetch.mjs` já avisa (sem falhar o job) se algum não bater.
 
+## 8d. Retomada 27/09 — 1ª execução com todos os sistemas + HRA (achados e correções)
+
+A execução #6 (`mode: export`, `systems: "all"`, `hra: true`, `commit: false`)
+rodou o pipeline inteiro pela primeira vez e revelou dois problemas reais
+(nenhum dos dois aparecia na execução de 1 sistema só):
+
+**1. Startup.blend é muito mais denso do que o levantamento inicial sugeria.**
+Malhas por coleção (do `--list-collections`) não previam o número de
+triângulos: sistemas com poucas malhas na coleção (`Urinary system`: 6,
+`Respiratory system`: 13, `Endocrine glands`: 8) exportaram 2,4–2,9 milhões
+de triângulos brutos — são poucos objetos, mas de altíssima resolução
+(malhas médicas segmentadas de CT/MRI). Com `optimize.mjs` simplificando só
+o LOD1 (ratio fixo 0,25) e nunca o LOD0, o resultado ficou de 2× a 10× acima
+do orçamento em praticamente todo sistema, e o total saiu em **169,11 MB**
+contra o teto de 45 MB:
+
+| Sistema | LOD0 bruto | Triângulos LOD0 | Orçamento LOD0 |
+|---|---|---|---|
+| articular | 7,99 MB | 1.418.712 | 1,5 MB |
+| cardiovascular | 8,72 MB | 1.598.320 | 4 MB |
+| digestorio | 14,27 MB | 2.782.086 | 2,5 MB |
+| endocrino | 14,25 MB | 2.784.714 | 1,5 MB |
+| esqueletico | 2,51 MB | 429.594 | 3,5 MB (OK) |
+| linfatico | 14,82 MB | 2.882.034 | 1,5 MB |
+| muscular | 6,45 MB | 1.201.108 | 5 MB |
+| nervoso | 12,66 MB | 2.424.986 | 3 MB |
+| respiratorio | 13,32 MB | 2.584.174 | 1,5 MB |
+| urinario | 14,24 MB | 2.776.654 | 1,5 MB |
+
+**Correção:** `optimize.mjs` agora calcula um ratio de simplificação
+ADAPTATIVO por sistema/órgão (função `writeLodAdaptive`), lendo
+`budgets.json` (WP02, só leitura) e tentando até 5 vezes, reduzindo o ratio
+proporcionalmente até caber no orçamento (mínimo 2% dos triângulos). Quando
+o arquivo já cabe com ratio 1 (caso do esqueletico), o comportamento não
+muda nada — só os sistemas realmente acima do orçamento passam a ser
+simplificados de verdade no LOD0, e o LOD1 deixa de usar um ratio fixo de
+0,25 "cego" (que também estourava o orçamento em todo sistema — ex.:
+digestório LOD1 saiu 6,12 MB contra 0,9 MB de limite).
+
+**2. `build-manifest.mjs` não encontrava nó nenhum em 8 dos 9 órgãos do
+HRA** (`nodeToSid: {}`, avisado pelo `validate.mjs`, mas sem falhar — o
+requisito de 100% dos nós mapeados do plano §3.6 estava sendo violado
+silenciosamente). Causa: `inspectGlb()` só olhava
+`scene.listChildren()` (filhos diretos da cena); os GLBs do HRA embrulham a
+malha de verdade num nó de transformação "raiz" sem malha própria, então a
+checagem `node.getMesh()` nunca via a malha real. Só `skin-female.glb`
+escapou por acaso (a malha dele já está direto na raiz da cena).
+**Correção:** `collectMeshNodes()` percorre a árvore de nós inteira
+recursivamente (a mesma lógica que `optimize.mjs` já usava em
+`pruneNonMeshNodes`), então qualquer profundidade de aninhamento é
+encontrada — os GLBs do Z-Anatomy (já sem aninhamento) continuam
+funcionando exatamente igual.
+
+**Pendência a observar na próxima execução:** `skin-female.glb` (e
+possivelmente `brain-female`/`lung-female`) podem ter textura/cor de
+vértice embutida — no log da execução #6, o LOD1 do skin saiu com o MESMO
+tamanho e a MESMA contagem de triângulos que o LOD0 (2,59 MB, 266.696
+triângulos), sinal de que `simplify()` não conseguiu reduzir a geometria
+(mesh não-manifold, ou o tamanho é dominado por outra coisa que não
+geometria pura). Se o ratio adaptativo não for suficiente para os órgãos do
+HRA caberem em 1,5 MB mesmo no piso de 2%, o próximo passo é inspecionar o
+GLB bruto (`gltf-transform inspect`) para achar o que está pesando.
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto

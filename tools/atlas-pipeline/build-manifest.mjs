@@ -160,6 +160,27 @@ function countTriangles(document) {
   return total;
 }
 
+/**
+ * Coleta TODOS os nós com malha de uma cena, em qualquer profundidade —
+ * não só os filhos diretos da cena. Bug encontrado na 1ª execução real com
+ * os órgãos do HRA (retomada 27/09): os GLBs do HRA embrulham a malha num nó
+ * "raiz" (ex.: um nó de transformação sem malha própria, com a malha de
+ * verdade num filho) — olhar só `scene.listChildren()` perdia 100% dos nós
+ * desses assets (8 de 9 órgãos ficavam com `nodeToSid: {}`, violando o
+ * requisito de 100% dos nós mapeados do plano §3.6). Os GLBs do Z-Anatomy
+ * (objetos direto na raiz da cena) continuam funcionando igual, já que a
+ * busca recursiva também encontra nós que já eram filhos diretos.
+ */
+function collectMeshNodes(scene) {
+  const found = [];
+  function visit(node) {
+    if (node.getMesh()) found.push(node);
+    for (const child of node.listChildren()) visit(child);
+  }
+  for (const node of scene.listChildren()) visit(node);
+  return found;
+}
+
 /** Lê um GLB e devolve {bytes, triangles, bbox, nodes: [{name, extras, sid, bbox}]}. */
 async function inspectGlb(io, filePath) {
   const bytes = fs.statSync(filePath).size;
@@ -169,8 +190,7 @@ async function inspectGlb(io, filePath) {
   let fileBbox = null;
   const nodes = [];
   for (const scene of document.getRoot().listScenes()) {
-    for (const node of scene.listChildren()) {
-      if (!node.getMesh()) continue;
+    for (const node of collectMeshNodes(scene)) {
       const extras = node.getExtras() || {};
       const name = node.getName() || '(sem nome)';
       const sid = deriveSid(name, extras);

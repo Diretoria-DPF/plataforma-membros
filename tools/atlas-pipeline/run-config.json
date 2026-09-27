@@ -2,7 +2,7 @@
   "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-assets.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do WP10 e o §3 do plano.",
   "mode": "export",
   "_mode_valores": "'discover' roda só discover.mjs + Blender --list-collections (nenhum export completo, nenhum commit) — usado até confirmarmos os nomes reais das coleções do Startup.blend e a lista de órgãos do HRA. 'export' roda o pipeline completo (fetch+export+optimize+manifest+validate) com os campos abaixo.",
-  "_fase": "Fase B (retomada 27/09, plano §9 Etapa A). Execução #5 (1 sistema, esqueletico) passou: LOD0 2.51 MB / LOD1 1.15 MB, dentro do orçamento de 3.5/1.2 MB, 266 estruturas, manifesto e validate.mjs OK. Agora: todos os sistemas do systems-map.json + órgãos do HRA, ainda sem commit — para conferir o total (≤45 MB), a contagem de estruturas por sistema e as licenças separadas antes da execução final com commit:true.",
+  "_fase": "Fase B (retomada 27/09, plano §9 Etapa A). Execução #6 (todos os sistemas + HRA) revelou Startup.blend muito mais denso que o esperado (2,4-2,9M triângulos brutos em vários sistemas) e um bug no build-manifest.mjs (nós do HRA não eram encontrados, aninhados 1 nível). Corrigido: optimize.mjs agora simplifica LOD0 e LOD1 com ratio ADAPTATIVO por orçamento (budgets.json), e build-manifest.mjs percorre a árvore de nós recursivamente. Repetindo a mesma execução (todos os sistemas + HRA, sem commit) para conferir se agora cabe em 45 MB.",
   "systems": "all",
   "hra": true,
   "commit": false

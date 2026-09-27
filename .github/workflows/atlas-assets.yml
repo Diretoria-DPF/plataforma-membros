@@ -167,7 +167,11 @@ jobs:
 
       - name: Otimizar GLBs do HRA
         if: steps.params.outputs.mode == 'export' && steps.params.outputs.hra == 'true'
-        run: node optimize.mjs --in work/hra-raw --out work/models/hra
+        # --budget-category hra: o nome do arquivo é a chave do órgão (ex.:
+        # "heart-male"), não um id de sistema — todos usam a categoria "hra"
+        # de budgets.json. --no-lod1: build-manifest.mjs só cria um asset
+        # lod0 por órgão do HRA; gerar LOD1 seria byte desperdiçado no repo.
+        run: node optimize.mjs --in work/hra-raw --out work/models/hra --budget-category hra --no-lod1
 
       - name: Gerar manifest.config.json a partir do que foi baixado/exportado
         if: steps.params.outputs.mode == 'export'
