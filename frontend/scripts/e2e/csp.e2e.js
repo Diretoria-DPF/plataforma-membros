@@ -118,7 +118,13 @@ function staticChecks() {
     if (!p['default-src'] || p['default-src'].join(' ') !== "'self'") problems.push(`${rel}: default-src não é 'self'`);
     const external = [...html.matchAll(/<script\b[^>]*\bsrc="(https?:\/\/[^/"]+)[^"]*"/gi)].map((m) => m[1]);
     external.forEach((host) => { if (!script.includes(host)) problems.push(`${rel}: ${host} fora de script-src`); });
-    if (script.includes('https://cdn.jsdelivr.net') && !external.length && !/studio/.test(rel)) problems.push(`${rel}: jsDelivr em script-src sem biblioteca externa`);
+    // Atlas v2 (WP13): Chart.js/3Dmol entram só sob demanda, dentro dos
+    // modos que precisam deles (js/modes/pharmacology.js, molecules.js) —
+    // não há mais um <script src> estático do jsDelivr nesta página (só o
+    // decodificador Draco/meshopt, vendorizado localmente). Mesma exceção
+    // documentada para o Estúdio (RDKit), que também injeta seu <script>
+    // dinamicamente.
+    if (script.includes('https://cdn.jsdelivr.net') && !external.length && !/studio/.test(rel) && !isAtlasPage) problems.push(`${rel}: jsDelivr em script-src sem biblioteca externa`);
   }
   check(pages.length >= 12 && problems.length === 0, `CSP em todas as ${pages.length} páginas publicadas, sem 'unsafe-inline' em nenhuma e sem 'unsafe-eval' fora da exceção única do Estúdio` + (problems.length ? ': ' + problems.join(' | ') : ''));
 
