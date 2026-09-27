@@ -616,6 +616,57 @@ outro que chegue no piso+teto ao mesmo tempo) continuar acima, é hora de
 reportar os números exatos e propor (nunca aplicar) um ajuste em
 `budgets.json` (WP02) com justificativa de fidelidade anatômica.
 
+## 8i. Retomada 27/09 — execução #15 (mais tentativas): quase lá; diagnóstico + otimizações estruturais pedidas pelo orquestrador
+
+A execução #15 (`https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/36307032713`,
+`attempts: 3→6` do commit anterior) reduziu o total para **48,77 MB** (de
+49,56 MB) e tirou `articular` e `digestorio.lod0` da lista de erros — 11
+erros restantes (de 13), todos em sistemas do Z-Anatomy cujo LOD1 sai
+quase do mesmo tamanho do LOD0 (ex.: `digestorio`: 2,52 → apenas 1,75 MB;
+`urinario`: 1,83 → 1,72 MB) — sinal, como o orquestrador apontou, de que
+o peso restante pode ser overhead fixo por nó/primitiva (chunk JSON), não
+triângulos (chunk BIN), já que simplificar mais não muda muito o total.
+
+**Diagnóstico adicionado** (pedido do orquestrador, ainda sem confirmar
+números reais — só implementado, aguardando a próxima execução em CI):
+- `[estrutura]`: número de nós com malha e de primitivas ANTES/DEPOIS de
+  juntar as que compartilham material dentro do mesmo nó.
+- Cada linha `LOD0:`/`LOD1:`/`Resumo` agora separa `bytes` em **JSON**
+  (chunk `JSON` do `.glb`, via `glbChunkSizes` — leitura direta do
+  cabeçalho binário do glTF) e **BIN** (chunk `BIN`, a geometria
+  comprimida) — para saber, por arquivo, qual dos dois domina.
+
+**Otimizações estruturais** (SEM tocar em nó nenhum — cada nó continua
+sendo exatamente uma estrutura selecionável, requisito do plano §3.6/§4;
+`build-manifest.mjs` não muda):
+- `flatten()` (`@gltf-transform/functions`) em `loadAndClean`: achata a
+  hierarquia de nós, gravando o transform acumulado na matriz local de
+  cada nó com malha e removendo os nós de organização do Blender sem
+  malha própria (o "peso" deles no chunk JSON — nome, matriz, lista de
+  filhos — desaparece; a posição/orientação final de cada estrutura não
+  muda, e nome/extras de todo nó com malha são preservados). Não
+  reproduzido localmente com o `Startup.blend` real (rede), mas testado
+  com um cubo sintético dentro de um nó organizador (\"Empty\"): a posição
+  mundial final do cubo não mudou.
+- `joinPrimitivesWithinMeshes` (própria — usa `joinPrimitives` de
+  `@gltf-transform/functions` por grupo de material+modo, DENTRO de cada
+  malha): uma malha de estrutura anatômica que tenha várias primitivas do
+  MESMO material (comum em exports do Blender — cada "material slot"
+  gera sua própria primitiva mesmo repetindo material) vira uma primitiva
+  só, sem tocar nós nem juntar estruturas diferentes. Testado localmente:
+  3 primitivas (2 com o mesmo material "vermelho", 1 com material
+  diferente "azul") num nó só → 2 primitivas depois do join (as vermelhas
+  unidas, a azul intacta); nó, nome e extras continuam idênticos depois
+  de ler o `.glb` de volta.
+
+**Pendência:** repetir a execução para medir se `flatten()` +
+`joinPrimitivesWithinMeshes` fecham o resto do orçamento, e ler os novos
+logs `[estrutura]`/JSON-vs-BIN para confirmar se o peso morto restante
+era mesmo overhead por nó/primitiva (aí essas duas mudanças resolvem) ou
+geometria genuína no piso do orçamento de fidelidade (aí é hora de
+reportar os números e propor, nunca aplicar, um rebalanceamento de
+`budgets.json` por arquivo — mantendo o total em 45 MB, como pedido).
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto

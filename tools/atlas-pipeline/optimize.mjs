@@ -81,6 +81,8 @@ import {
   simplify,
   quantize,
   meshopt,
+  flatten,
+  joinPrimitives,
 } from '@gltf-transform/functions';
 import { EXTMeshoptCompression, KHRMeshQuantization } from '@gltf-transform/extensions';
 import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from 'meshoptimizer';
@@ -407,6 +409,83 @@ function computeSmoothNormals(document) {
   }
 }
 
+/** Junta, DENTRO de cada malha (nunca entre nós — cada nó continua sendo
+ * exatamente uma estrutura, o que `build-manifest.mjs` precisa para o
+ * mapa nó→sid), as primitivas que compartilham material e modo de
+ * desenho. Reduz o número de primitivas (cada uma carrega seu próprio
+ * conjunto de accessors/bufferViews no glTF — overhead fixo que não
+ * aparece na contagem de triângulos) sem mudar nó nenhum, nem remover
+ * nenhuma estrutura selecionável (pedido do orquestrador — ver SOURCES.md
+ * §8i). Primitivas com atributos incompatíveis entre si (achado raro,
+ * mas possível) são deixadas como estavam — `joinPrimitives` lança nesse
+ * caso, e o catch aqui evita que isso derrube o arquivo inteiro. */
+function joinPrimitivesWithinMeshes(document) {
+  let merged = 0;
+  for (const mesh of document.getRoot().listMeshes()) {
+    const groups = new Map(); // material (objeto, já deduplicado por dedup()) -> Map(mode -> Primitive[])
+    for (const prim of mesh.listPrimitives()) {
+      const material = prim.getMaterial();
+      const mode = prim.getMode();
+      let byMode = groups.get(material);
+      if (!byMode) {
+        byMode = new Map();
+        groups.set(material, byMode);
+      }
+      const arr = byMode.get(mode) || [];
+      arr.push(prim);
+      byMode.set(mode, arr);
+    }
+    for (const byMode of groups.values()) {
+      for (const prims of byMode.values()) {
+        if (prims.length < 2) continue;
+        try {
+          const joined = joinPrimitives(prims);
+          mesh.addPrimitive(joined);
+          for (const p of prims) mesh.removePrimitive(p);
+          merged += prims.length - 1;
+        } catch {
+          // Atributos incompatíveis entre essas primitivas — mantém como estavam.
+        }
+      }
+    }
+  }
+  return merged;
+}
+
+/** Conta nós com malha e primitivas — usado só para o diagnóstico de
+ * tamanho pedido pelo orquestrador (SOURCES.md §8i): quantas primitivas
+ * cada arquivo tem, para saber se o peso morto restante é overhead
+ * fixo por primitiva/nó em vez de geometria. */
+function countNodesAndPrimitives(document) {
+  let nodes = 0;
+  let prims = 0;
+  for (const node of document.getRoot().listNodes()) {
+    if (node.getMesh()) nodes++;
+  }
+  for (const mesh of document.getRoot().listMeshes()) {
+    prims += mesh.listPrimitives().length;
+  }
+  return { nodes, prims };
+}
+
+/** Lê os tamanhos dos chunks JSON e BIN de um .glb já escrito (formato
+ * binário do glTF: cabeçalho de 12 bytes, depois chunks
+ * [length(4)][type(4)][data]) — usado só para o diagnóstico de tamanho
+ * pedido pelo orquestrador (SOURCES.md §8i): separa "peso do grafo de
+ * cena/materiais/nós" (JSON) de "peso da geometria comprimida" (BIN). */
+function glbChunkSizes(filePath) {
+  const buf = fs.readFileSync(filePath);
+  const sizes = { JSON: 0, BIN: 0 };
+  let offset = 12; // pula o cabeçalho (magic + version + length totais)
+  while (offset + 8 <= buf.length) {
+    const chunkLength = buf.readUInt32LE(offset);
+    const chunkType = buf.toString('ascii', offset + 4, offset + 8).replace(/\0/g, '');
+    if (chunkType in sizes) sizes[chunkType] = chunkLength;
+    offset += 8 + chunkLength;
+  }
+  return sizes;
+}
+
 async function loadAndClean(filePath) {
   const io = new NodeIO()
     .registerExtensions([EXTMeshoptCompression, KHRMeshQuantization])
@@ -428,6 +507,17 @@ async function loadAndClean(filePath) {
   const extrasAfter = measureNodeExtrasBytes(document);
 
   await document.transform(dedup());
+
+  // Achata a hierarquia de nós (retomada 27/09, pedido do orquestrador —
+  // ver SOURCES.md §8i): reparenta todo nó direto para a cena, gravando o
+  // transform acumulado na matriz local (a posição/orientação FINAL de
+  // cada estrutura não muda — só some a árvore de nós "vazios" que o
+  // Blender usa para agrupar/organizar, sem malha própria, que já não
+  // sobreviveriam a `pruneNonMeshNodes` de qualquer forma, mas cujo peso
+  // no chunk JSON — nome, matriz, lista de filhos — some daqui). Nunca
+  // toca no NOME nem nos extras de nenhum nó, então o mapa nó→sid de
+  // `build-manifest.mjs` continua igual.
+  await document.transform(flatten());
 
   // Reweld topológico por POSIÇÃO (retomada 27/09, guardrail de fidelidade
   // do orquestrador — ver SOURCES.md §8g): a execução #13 provou que várias
@@ -451,6 +541,10 @@ async function loadAndClean(filePath) {
 
   await document.transform(prune({ keepAttributes: false, keepLeaves: false }));
 
+  const { nodes: nodesBeforeJoin, prims: primsBeforeJoin } = countNodesAndPrimitives(document);
+  const primsMerged = joinPrimitivesWithinMeshes(document);
+  const { prims: primsAfterJoin } = countNodesAndPrimitives(document);
+
   const attrBytesAfter = measureAttributeBytes(document);
   console.log(
     `  [tamanho] extras de nó: ${(extrasBefore / 1024).toFixed(1)} KB → ${(extrasAfter / 1024).toFixed(1)} KB` +
@@ -461,8 +555,13 @@ async function loadAndClean(filePath) {
     `  [topologia] vértices: ${vertsBeforeWeld.toLocaleString('pt-BR')} → ${vertsAfterWeld.toLocaleString('pt-BR')}` +
       ` depois do weld por posição (NORMAL ${needsNormals ? 'removida p/ soldar; recalculada suave no LOD final' : 'ausente'})`
   );
+  console.log(
+    `  [estrutura] nós com malha: ${nodesBeforeJoin.toLocaleString('pt-BR')}` +
+      ` | primitivas: ${primsBeforeJoin.toLocaleString('pt-BR')} → ${primsAfterJoin.toLocaleString('pt-BR')}` +
+      ` (${primsMerged} unidas por material/nó — nós não mudam)`
+  );
 
-  return { document, removedNonMesh: removed, needsNormals };
+  return { document, removedNonMesh: removed, needsNormals, nodeCount: nodesBeforeJoin };
 }
 
 async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01, regenerateNormals = false } = {}) {
@@ -513,7 +612,11 @@ async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01
 
   const bytes = DRY_RUN ? 0 : fs.statSync(outPath).size;
   const triangles = countTriangles(working);
-  return { bytes, triangles };
+  // JSON vs BIN (pedido do orquestrador — SOURCES.md §8i): separa o peso do
+  // grafo de cena/materiais/nós (chunk JSON) do peso da geometria comprimida
+  // (chunk BIN), para saber qual dos dois domina em cada arquivo.
+  const chunks = DRY_RUN ? { JSON: 0, BIN: 0 } : glbChunkSizes(outPath);
+  return { bytes, triangles, jsonBytes: chunks.JSON, binBytes: chunks.BIN };
 }
 
 /**
@@ -633,7 +736,7 @@ async function processOneFile(file) {
   const tFile = Date.now();
   console.log(`\n=== ${file} ===`);
 
-  const { document, removedNonMesh, needsNormals } = await loadAndClean(inPath);
+  const { document, removedNonMesh, needsNormals, nodeCount } = await loadAndClean(inPath);
   console.log(`  nós não-malha removidos: ${removedNonMesh}`);
 
   const budget = budgetForFile(baseName);
@@ -650,7 +753,8 @@ async function processOneFile(file) {
     regenerateNormals: needsNormals,
   });
   console.log(
-    `  LOD0: ${(lod0.bytes / 1024 / 1024).toFixed(2)} MB, ${lod0.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod0.ratio.toFixed(3)}, error ${lod0.error.toFixed(3)})`
+    `  LOD0: ${(lod0.bytes / 1024 / 1024).toFixed(2)} MB (JSON ${(lod0.jsonBytes / 1024).toFixed(0)} KB / BIN ${(lod0.binBytes / 1024 / 1024).toFixed(2)} MB), ` +
+      `${lod0.triangles.toLocaleString('pt-BR')} triângulos, ${nodeCount.toLocaleString('pt-BR')} nós (ratio ${lod0.ratio.toFixed(3)}, error ${lod0.error.toFixed(3)})`
   );
 
   let lod1 = null;
@@ -664,13 +768,15 @@ async function processOneFile(file) {
       regenerateNormals: needsNormals,
     });
     console.log(
-      `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB, ${lod1.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod1.ratio.toFixed(3)}, error ${lod1.error.toFixed(3)})`
+      `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB (JSON ${(lod1.jsonBytes / 1024).toFixed(0)} KB / BIN ${(lod1.binBytes / 1024 / 1024).toFixed(2)} MB), ` +
+        `${lod1.triangles.toLocaleString('pt-BR')} triângulos, ${nodeCount.toLocaleString('pt-BR')} nós (ratio ${lod1.ratio.toFixed(3)}, error ${lod1.error.toFixed(3)})`
     );
   }
   console.log(`  (${file} levou ${((Date.now() - tFile) / 1000).toFixed(1)}s no total)`);
 
   return {
     name: baseName,
+    nodeCount,
     lod0: { path: path.relative(OUT_DIR, lod0Path), ...lod0 },
     lod1: lod1 ? { path: path.relative(OUT_DIR, lod1Path), ...lod1 } : undefined,
   };
@@ -759,13 +865,14 @@ async function main() {
     );
   }
 
-  console.log('\nResumo (bytes e error final usado — auditoria de fidelidade):');
+  console.log('\nResumo (bytes, JSON/BIN, error final usado — auditoria de fidelidade e diagnóstico de peso morto):');
   for (const r of report) {
     const lod1Str = r.lod1
-      ? `${(r.lod1.bytes / 1024 / 1024).toFixed(2)} MB (error ${r.lod1.error.toFixed(3)})`
+      ? `${(r.lod1.bytes / 1024 / 1024).toFixed(2)} MB (JSON ${(r.lod1.jsonBytes / 1024).toFixed(0)} KB, error ${r.lod1.error.toFixed(3)})`
       : '(sem LOD1)';
     console.log(
-      `  ${r.name}: LOD0 ${(r.lod0.bytes / 1024 / 1024).toFixed(2)} MB (error ${r.lod0.error.toFixed(3)}) / LOD1 ${lod1Str}`
+      `  ${r.name} (${r.nodeCount.toLocaleString('pt-BR')} nós): ` +
+        `LOD0 ${(r.lod0.bytes / 1024 / 1024).toFixed(2)} MB (JSON ${(r.lod0.jsonBytes / 1024).toFixed(0)} KB, error ${r.lod0.error.toFixed(3)}) / LOD1 ${lod1Str}`
     );
   }
   if (dropped.length > 0) {
