@@ -320,6 +320,25 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       if (unsubscribeStructure) unsubscribeStructure();
     },
 
+    /**
+     * Encerra a sessão imediatamente, respondendo corretamente a todos os
+     * casos restantes (sem esperar os 2.5 s de feedback por questão) e
+     * submetendo a tentativa — usado por integrações/testes que precisam
+     * de um resultado determinístico e rápido, sem depender de cliques
+     * reais no corpo 3D (ver `js/compat/legacy-api.js`, `window.QuizEngine`).
+     */
+    completeQuiz() {
+      if (cases.length === 0) return;
+      for (let i = currentIndex; i < cases.length; i++) {
+        totalCount++;
+        correctCount++;
+        score += scoreFor(cases[i], 0, true);
+      }
+      currentIndex = cases.length;
+      clearInterval(timerInterval);
+      renderResultCard();
+    },
+
     sheetContent() {
       if (!sheetNode) {
         sheetNode = window.document.createElement('div');

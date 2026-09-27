@@ -47,31 +47,62 @@ function waitForInternals() {
 // linha do módulo, sem esperar `waitForInternals()`; `install()` (abaixo)
 // troca cada método pela versão real quando o motor terminar de montar.
 let quizModePromise = null;
+// `startQuiz()` é chamado sem `await` por código legado (dispara e segue —
+// ver atlas.e2e.js/fase4.e2e.js, que chamam `startQuiz(); completeQuiz();`
+// na mesma linha). Todo outro método aguarda esta mesma promessa antes de
+// agir, para nunca ver `window.__quizModeInstance` ainda `null`.
+let quizReadyPromise = Promise.resolve(null);
+function mountQuizSheet(mode) {
+  const sheetBody = document.getElementById('atlas-sheet-body');
+  const node = mode.sheetContent ? mode.sheetContent() : null;
+  if (sheetBody && node) {
+    while (sheetBody.firstChild) sheetBody.removeChild(sheetBody.firstChild);
+    sheetBody.appendChild(node);
+    // #atlas-sheet-body só é visível fora do estado "peek" (ver
+    // js/ui/sheet.js) — o quiz iniciado pela API legada precisa da
+    // superfície aberta, como ficaria depois de o usuário arrastar o
+    // painel pela UI normal.
+    if (window.AtlasSheet && window.AtlasSheet.snapHalf) window.AtlasSheet.snapHalf();
+  }
+}
 window.QuizEngine = {
-  async startQuiz() {
-    if (!quizModePromise) {
-      quizModePromise = Promise.all([
-        import('../modes/quiz.js'),
-        fetch('data/atlas/quiz-cases.json').then((r) => r.json()).catch(() => []),
-      ]).then(([m, cases]) => {
-        const internals = window.__atlasInternals;
-        return m.createQuizMode({
-          bus: (internals && internals.bus) || { on: () => () => {}, off: () => {}, emit: () => {}, EVENTS: {} },
-          store: (internals && internals.store) || { get: () => ({}), set: () => {}, subscribe: () => () => {} },
-          getLabel: (internals && internals.labelFor) || ((sid) => sid),
-          loadCases: () => Promise.resolve(cases),
+  startQuiz() {
+    quizReadyPromise = (async () => {
+      if (!quizModePromise) {
+        quizModePromise = Promise.all([
+          import('../modes/quiz.js'),
+          fetch('data/atlas/quiz-cases.json').then((r) => r.json()).catch(() => []),
+        ]).then(([m, cases]) => {
+          const internals = window.__atlasInternals;
+          return m.createQuizMode({
+            bus: (internals && internals.bus) || { on: () => () => {}, off: () => {}, emit: () => {}, EVENTS: {} },
+            store: (internals && internals.store) || { get: () => ({}), set: () => {}, subscribe: () => () => {} },
+            getLabel: (internals && internals.labelFor) || ((sid) => sid),
+            loadCases: () => Promise.resolve(cases),
+          });
         });
-      });
-    }
-    const mode = await quizModePromise;
-    const internals = window.__atlasInternals;
-    await mode.enter(internals
-      ? { registry: internals.registry, assetLoader: internals.assetLoader, engine: internals.engine, contentStore: internals.contentStore }
-      : {});
-    window.__quizModeInstance = mode;
+      }
+      const mode = await quizModePromise;
+      const internals = window.__atlasInternals;
+      await mode.enter(internals
+        ? { registry: internals.registry, assetLoader: internals.assetLoader, engine: internals.engine, contentStore: internals.contentStore }
+        : {});
+      window.__quizModeInstance = mode;
+      mountQuizSheet(mode);
+      return mode;
+    })();
+    return quizReadyPromise;
   },
-  stopQuiz() { if (window.__quizModeInstance) window.__quizModeInstance.exit(); },
-  evaluateUserAnswer(id) {
+  async stopQuiz() { await quizReadyPromise; if (window.__quizModeInstance) window.__quizModeInstance.exit(); },
+  async completeQuiz() {
+    await quizReadyPromise;
+    if (window.__quizModeInstance) {
+      window.__quizModeInstance.completeQuiz();
+      mountQuizSheet(window.__quizModeInstance);
+    }
+  },
+  async evaluateUserAnswer(id) {
+    await quizReadyPromise;
     const internals = window.__atlasInternals;
     const sid = (internals && internals.legacyResolveSid && internals.legacyResolveSid(id)) || id;
     if (internals) internals.bus.emit(internals.bus.EVENTS.QUIZ_ANSWER, { sid });
@@ -232,6 +263,14 @@ async function install() {
   } catch (e) {
     // Compat de teste antigo, nunca deve travar o boot real do Atlas.
     console.warn('[atlas/compat] não deu para montar #canvas-3d-container:', e);
+  }
+
+  // Delega o botão "Refazer" do card de resultado do quiz
+  // (data-action="QuizEngine.startQuiz", ver LEGACY_COMPAT em contracts.js
+  // e js/modes/quiz.js). Listener aditivo — shell.js já tem o seu próprio
+  // para AtlasShell.*, este cobre só QuizEngine.*.
+  if (window.LaiftDom && typeof window.LaiftDom.delegateActions === 'function') {
+    window.LaiftDom.delegateActions(document, ['QuizEngine.startQuiz']);
   }
 
   window.dispatchEvent(new CustomEvent('atlas:legacy-api-ready'));

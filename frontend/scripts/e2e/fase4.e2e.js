@@ -21,7 +21,10 @@ const MODULOS = path.join(__dirname, '..', '..', 'modulos');
 // Arquivos da Equipe 4 (docs/PLANO_FASES_2_3_4.md, "Donos dos arquivos").
 const OWNED_DIRS = ['quiz', 'toxicologia', 'anatomia-3d', 'cracha', 'laboratorio'];
 const OWNED_SHARED = ['style.css', 'laift-tokens.css', 'quiz-engine.js', 'quiz-engine.css', 'safe-dom.js'];
-const NOT_OWNED = [/laboratorio[\\/]js[\\/]lab-preceptor\.js$/];
+// `dev/` (ex.: anatomia-3d/dev/*.html/js) são harnesses de desenvolvimento,
+// nunca publicados nem carregados pela plataforma — mesma exceção já
+// aplicada em scripts/e2e/csp.e2e.js.
+const NOT_OWNED = [/laboratorio[\\/]js[\\/]lab-preceptor\.js$/, /[\\/]dev[\\/]/];
 // Bancos de dados estáticos (só literais de dados, sem DOM) ficam de fora.
 const DATA_FILES = /[\\/]data[\\/]/;
 
@@ -174,13 +177,15 @@ module.exports = async function fase4() {
     await app.login();
 
     // ---- Sem rolagem horizontal e tema escuro, módulo a módulo ----
-    // lab e anatomia são escuros por natureza (.laift-always-dark): no tema
-    // claro continuam escuros (justificativa em docs/FASE_4_QUALIDADE.md).
+    // lab é escuro por natureza (.laift-always-dark): no tema claro
+    // continua escuro (justificativa em docs/FASE_4_QUALIDADE.md). O Atlas
+    // v2 (anatomia-3d, WP13) passou a seguir o tema da plataforma — não
+    // tem mais `.laift-always-dark` (ver docs/ATLAS_UX_SPEC.md §0).
     const MODULES = [
       { id: 'farmaco', followsLight: true },
       { id: 'toxico', followsLight: true },
       { id: 'lab', followsLight: false },
-      { id: 'anatomia', followsLight: false },
+      { id: 'anatomia', followsLight: true },
       { id: 'clinica', followsLight: true },
     ];
     for (const mod of MODULES) {
