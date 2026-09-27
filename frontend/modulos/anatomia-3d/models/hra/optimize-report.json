@@ -1,0 +1,211 @@
+{
+  "report": [
+    {
+      "name": "brain-female",
+      "nodeCount": 283,
+      "lod0": {
+        "path": "brain-female.glb",
+        "bytes": 1386936,
+        "triangles": 204673,
+        "jsonBytes": 344252,
+        "binBytes": 1042656,
+        "ratio": 0.31218695709028416,
+        "error": 0.05,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "heart-female",
+      "nodeCount": 14,
+      "lod0": {
+        "path": "heart-female.glb",
+        "bytes": 393084,
+        "triangles": 85914,
+        "jsonBytes": 17252,
+        "binBytes": 375804,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "heart-female.lod1.glb",
+        "bytes": 127440,
+        "triangles": 21644,
+        "jsonBytes": 17160,
+        "binBytes": 110252,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "heart-male",
+      "nodeCount": 14,
+      "lod0": {
+        "path": "heart-male.glb",
+        "bytes": 703984,
+        "triangles": 164119,
+        "jsonBytes": 17364,
+        "binBytes": 686592,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "heart-male.lod1.glb",
+        "bytes": 212396,
+        "triangles": 41185,
+        "jsonBytes": 17244,
+        "binBytes": 195124,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "kidney-left-female",
+      "nodeCount": 26,
+      "lod0": {
+        "path": "kidney-left-female.glb",
+        "bytes": 362484,
+        "triangles": 73526,
+        "jsonBytes": 31460,
+        "binBytes": 330996,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "kidney-left-female.lod1.glb",
+        "bytes": 130960,
+        "triangles": 19388,
+        "jsonBytes": 31336,
+        "binBytes": 99596,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "liver-female",
+      "nodeCount": 26,
+      "lod0": {
+        "path": "liver-female.glb",
+        "bytes": 414552,
+        "triangles": 93303,
+        "jsonBytes": 31664,
+        "binBytes": 382860,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "liver-female.lod1.glb",
+        "bytes": 145496,
+        "triangles": 23328,
+        "jsonBytes": 31456,
+        "binBytes": 114012,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "liver-male",
+      "nodeCount": 26,
+      "lod0": {
+        "path": "liver-male.glb",
+        "bytes": 297300,
+        "triangles": 60369,
+        "jsonBytes": 31568,
+        "binBytes": 265704,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "liver-male.lod1.glb",
+        "bytes": 111640,
+        "triangles": 15289,
+        "jsonBytes": 31392,
+        "binBytes": 80220,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "lung-female",
+      "nodeCount": 56,
+      "lod0": {
+        "path": "lung-female.glb",
+        "bytes": 1365252,
+        "triangles": 297097,
+        "jsonBytes": 68348,
+        "binBytes": 1296876,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "lung-female.lod1.glb",
+        "bytes": 435096,
+        "triangles": 76192,
+        "jsonBytes": 67956,
+        "binBytes": 367112,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "pancreas-female",
+      "nodeCount": 5,
+      "lod0": {
+        "path": "pancreas-female.glb",
+        "bytes": 66536,
+        "triangles": 12894,
+        "jsonBytes": 6560,
+        "binBytes": 59948,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "pancreas-female.lod1.glb",
+        "bytes": 24152,
+        "triangles": 3219,
+        "jsonBytes": 6516,
+        "binBytes": 17608,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "skin-female",
+      "nodeCount": 1,
+      "lod0": {
+        "path": "skin-female.glb",
+        "bytes": 937872,
+        "triangles": 266696,
+        "jsonBytes": 1940,
+        "binBytes": 935904,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "skin-female.lod1.glb",
+        "bytes": 266476,
+        "triangles": 66674,
+        "jsonBytes": 1924,
+        "binBytes": 264524,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    }
+  ],
+  "dropped": []
+}
