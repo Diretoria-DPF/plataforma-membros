@@ -86,10 +86,16 @@ async function createContentStore() {
     return contentFilePromises.get(system);
   }
 
+  // Mantém todos os campos de structures.json (system, layer, englishName,
+  // parentCollection, bbox, source...) e ACRESCENTA `names` — search-box.js/
+  // navigator.js exigem entry.names.{pt,en,la} (ver buildSearchIndex), e
+  // main.js/legacy-api.js já liam s.englishName/s.layer direto do índice.
+  // Bug real encontrado ao verificar a busca com dados reais (não fixtures):
+  // getIndex() devolvia `structures` cru (sem `.names`), então
+  // buildSearchIndex(getIndex()) nunca indexava nada — toda busca (inclusive
+  // "heart"/"coração") vinha vazia.
   const entries = structures.map((s) => ({
-    sid: s.sid,
-    system: s.system,
-    side: s.side,
+    ...s,
     names: {
       pt: legacyNameBySid.get(s.sid) || '',
       en: s.englishName || '',
@@ -100,7 +106,7 @@ async function createContentStore() {
 
   return {
     getIndex() {
-      return structures;
+      return entries;
     },
     getEntry(sid) {
       return bySid.get(sid) || null;
