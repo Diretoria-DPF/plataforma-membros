@@ -76,6 +76,7 @@ export function buildQuery(batch) {
       (SUBSTR(STR(?fmaId), 1) AS ?fma)
       ?qid
       ?fmaId
+      ?label
       ?uberon
       ?ta98
       ?ta2
@@ -126,9 +127,17 @@ export function parseBindings(json, batch) {
     }
   });
 
-  // Mapeia bindings por FMA e rótulo
+  // Mapeia bindings por FMA e por rótulo em inglês.
+  //
+  // Importante: para as estruturas casadas por rótulo (o branch `?label` do
+  // buildQuery), a única forma de saber a qual estrutura de origem um
+  // binding pertence é o próprio valor de `?label` retornado pelo SPARQL —
+  // por isso buildQuery agora projeta `?label` no SELECT. A versão anterior
+  // não fazia isso e "adivinhava" (primeiro binding com qid, ou o último
+  // binding do lote inteiro) — na prática atribuía o qid errado (ou nenhum)
+  // para quase todas as ~12,7 mil estruturas reais, que são todas `za:`.
   const byFma = new Map();
-  const byLabel = new Map();
+  const byLabelEn = new Map();
 
   if (json.results && json.results.bindings) {
     json.results.bindings.forEach(binding => {
@@ -138,11 +147,11 @@ export function parseBindings(json, batch) {
         }
         byFma.get(binding.fma.value).push(binding);
       }
-      if (binding.label_pt && binding.label_pt.value) {
-        if (!byLabel.has(binding.label_pt.value)) {
-          byLabel.set(binding.label_pt.value, []);
+      if (binding.label && binding.label.value) {
+        if (!byLabelEn.has(binding.label.value)) {
+          byLabelEn.set(binding.label.value, []);
         }
-        byLabel.get(binding.label_pt.value).push(binding);
+        byLabelEn.get(binding.label.value).push(binding);
       }
     });
   }
@@ -159,31 +168,11 @@ export function parseBindings(json, batch) {
         binding = bindings.find(b => b.fmaId) || bindings[0];
       }
     } else {
-      // Procura por rótulo em português ou inglês
-      const bindings = json.results?.bindings || [];
-      binding = bindings.find(b => {
-        const label = b.label_pt?.value || '';
-        // Busca por estruturas com o rótulo que correspondem
-        return b.qid;
-      });
-
-      // Se não encontrou, procura por FMA quando rótulo não está explícito
-      if (!binding) {
-        const allBindings = json.results?.bindings || [];
-        for (const b of allBindings) {
-          if (b.label_pt?.value === structure.english ||
-              b.alias_pt?.value === structure.english ||
-              (b.qid && !b.fma)) {
-            binding = b;
-            break;
-          }
-        }
-      }
-
-      // Fallback: procura estruturas sem FMA (para os 'za:')
-      if (!binding && json.results?.bindings) {
-        binding = json.results.bindings[json.results.bindings.length - 1];
-      }
+      // Casa pelo rótulo em inglês usado na cláusula VALUES ?label deste
+      // lote — prefere um binding com fmaId (mais específico) quando há
+      // mais de uma correspondência para o mesmo rótulo.
+      const bindings = byLabelEn.get(structure.english) || [];
+      binding = bindings.find(b => b.fmaId) || bindings[0] || null;
     }
 
     if (binding && binding.qid) {
