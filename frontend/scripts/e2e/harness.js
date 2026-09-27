@@ -24,6 +24,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { gzipSync } = require('zlib');
 
 const DIST = path.join(__dirname, '..', '..', 'dist');
 
@@ -39,6 +40,9 @@ const MIME = {
   '.glb': 'model/gltf-binary',
   '.wasm': 'application/wasm',
 };
+
+const TEXT_TYPES = new Set(['.js', '.mjs', '.json', '.css', '.html', '.svg', '.txt', '.csv']);
+const compressionCache = new Map();
 
 function loadPlaywright() {
   const candidates = ['playwright', process.env.PLAYWRIGHT_MODULE, '/opt/node22/lib/node_modules/playwright'].filter(Boolean);
@@ -58,8 +62,25 @@ function startStaticServer() {
     if (!filePath.startsWith(DIST)) { res.writeHead(403); res.end(); return; }
     fs.readFile(filePath, (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
-      res.writeHead(200, { 'Content-Type': MIME[path.extname(filePath)] || 'application/octet-stream' });
-      res.end(data);
+      const ext = path.extname(filePath).toLowerCase();
+      const acceptEncoding = req.headers['accept-encoding'] || '';
+      const shouldGzip = TEXT_TYPES.has(ext) && acceptEncoding.includes('gzip');
+
+      let responseBody = data;
+      const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Vary': 'Accept-Encoding' };
+
+      if (shouldGzip) {
+        const stats = fs.statSync(filePath);
+        const cacheKey = `${filePath}@${stats.mtime.getTime()}`;
+        if (!compressionCache.has(cacheKey)) {
+          compressionCache.set(cacheKey, gzipSync(data));
+        }
+        responseBody = compressionCache.get(cacheKey);
+        headers['Content-Encoding'] = 'gzip';
+      }
+
+      res.writeHead(200, headers);
+      res.end(responseBody);
     });
   });
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));

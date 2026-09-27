@@ -29,16 +29,38 @@ async function measureAtViewport(viewport) {
   const label = `${viewport.width}×${viewport.height}`;
   const app = await startApp({ role: 'member', viewport });
 
-  // O servidor estático local (scripts/e2e/harness.js) responde com
-  // `Transfer-Encoding: chunked` (sem `Content-Length`) — soma o corpo de
-  // cada resposta da própria origem para medir bytes de verdade, não um
-  // cabeçalho ausente.
-  const bytes = { total: 0, done: false, pending: [] };
-  app.page.on('response', (res) => {
+  // Use CDP Network to measure actual transferred bytes (encodedDataLength)
+  const client = await app.context.newCDPSession(app.page);
+  await client.send('Network.enable');
+  const bytes = { total: 0, done: false };
+
+  client.on('Network.loadingFinished', (params) => {
     if (bytes.done) return;
-    const url = res.url();
-    if (!url.startsWith(app.baseUrl)) return; // CDNs já são abortados pelo harness
-    bytes.pending.push(res.body().then((buf) => { bytes.total += buf.length; }).catch(() => {}));
+    const { requestId } = params;
+    client.send('Network.getResponseBody', { requestId }).then((body) => {
+      // The response object from getResponseBody has headers; use the response from Network.responseReceived
+      // to get the full response details including url, status, etc.
+    }).catch(() => {});
+  });
+
+  // Track all network activity to sum encodedDataLength from responses on the origin
+  const responses = {};
+  client.on('Network.responseReceived', (params) => {
+    if (bytes.done) return;
+    const { requestId, response } = params;
+    const url = response.url || '';
+    if (url.startsWith(app.baseUrl)) {
+      responses[requestId] = { url, encodedDataLength: 0 };
+    }
+  });
+
+  client.on('Network.loadingFinished', (params) => {
+    if (bytes.done) return;
+    const { requestId, encodedDataLength } = params;
+    if (responses[requestId]) {
+      bytes.total += encodedDataLength;
+      delete responses[requestId];
+    }
   });
 
   try {
@@ -57,7 +79,7 @@ async function measureAtViewport(viewport) {
     // contagem de bytes "antes de pronto".
     await frame.waitForTimeout(150);
     bytes.done = true;
-    await Promise.all(bytes.pending);
+    await client.send('Network.disable');
 
     check(bytes.total > 0, `${label}: harness mediu algum byte transferido (sanity check, ${bytes.total}b)`);
     check(bytes.total <= BUDGET_BYTES_BEFORE_READY,
@@ -70,9 +92,9 @@ async function measureAtViewport(viewport) {
     check(stats1.triangles <= BUDGET_TRIANGLES, `${label}: triângulos ≤ 1,5 M (medido: ${stats1.triangles})`);
 
     // ---- Heap JS (CDP) ----
-    const client = await app.context.newCDPSession(app.page);
-    await client.send('Performance.enable');
-    const { metrics } = await client.send('Performance.getMetrics');
+    const perfClient = await app.context.newCDPSession(app.page);
+    await perfClient.send('Performance.enable');
+    const { metrics } = await perfClient.send('Performance.getMetrics');
     const heapBytes = (metrics.find((m) => m.name === 'JSHeapUsedSize') || {}).value || 0;
     check(heapBytes > 0, `${label}: CDP mediu algum heap JS (sanity check, ${heapBytes}b)`);
     check(heapBytes <= BUDGET_HEAP_BYTES, `${label}: heap JS ≤ 250 MB (medido: ${(heapBytes / MB).toFixed(2)} MB)`);

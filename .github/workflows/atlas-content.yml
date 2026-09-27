@@ -127,15 +127,29 @@ jobs:
           FAILED=""
           node - <<'NODE' > work/organs.tsv
           const organs = require('./asctb-organs.json');
-          for (const o of organs) console.log([o.organ, o.version, o.url].join('\t'));
+          for (const o of organs) console.log([o.organ, o.version, o.url, o.fallbackUrl || ''].join('\t'));
           NODE
-          while IFS=$'\t' read -r organ version url; do
+          while IFS=$'\t' read -r organ version url fallbackUrl; do
             [ -z "$organ" ] && continue
             code=$(curl -sS -L -m 30 --retry 3 --retry-delay 2 \
               -H "User-Agent: LAIFT-Atlas/1.0 (https://github.com/Diretoria-DPF/plataforma-membros)" \
+              -H "Accept: text/csv" \
               -o "work/raw/asctb-${organ}.csv" -w '%{http_code}' "$url" || echo "000")
-            if [ "$code" = "200" ] && [ -s "work/raw/asctb-${organ}.csv" ]; then
+            if [ "$code" = "200" ] && [ -s "work/raw/asctb-${organ}.csv" ] && grep -q "," "work/raw/asctb-${organ}.csv"; then
               status="ok"
+            elif [ -n "$fallbackUrl" ]; then
+              # Try fallback URL if primary failed or doesn't look like CSV
+              code=$(curl -sS -L -m 30 --retry 3 --retry-delay 2 \
+                -H "User-Agent: LAIFT-Atlas/1.0 (https://github.com/Diretoria-DPF/plataforma-membros)" \
+                -H "Accept: text/csv" \
+                -o "work/raw/asctb-${organ}.csv" -w '%{http_code}' "$fallbackUrl" || echo "000")
+              if [ "$code" = "200" ] && [ -s "work/raw/asctb-${organ}.csv" ] && grep -q "," "work/raw/asctb-${organ}.csv"; then
+                status="ok (fallback)"
+              else
+                status="falhou ($code)"
+                FAILED="$FAILED $organ"
+                rm -f "work/raw/asctb-${organ}.csv"
+              fi
             else
               status="falhou ($code)"
               FAILED="$FAILED $organ"
