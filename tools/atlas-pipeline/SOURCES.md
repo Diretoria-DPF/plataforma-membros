@@ -222,6 +222,57 @@ real; `test/run-tests.mjs` agora valida o manifesto de teste contra o
 esquema e o `budgets.json` reais do WP02 (não mais um esquema "fake" ou
 limites hardcoded).
 
+## 8c. Retomada 27/09 — Fase A confirmada, `hra-organs.json` criado
+
+A execução #3 (`discover` + `--list-collections`, commit `7ddecf9`) confirmou
+tudo que faltava para sair do modo `discover`:
+
+- **12 coleções de primeiro nível** no `Startup.blend` (contagem exata, batendo
+  com o que `systems-map.json` já assumia): `1: Skeletal system` (1244
+  malhas), `2: Muscular insertions` (705), `3: Joints` (480),
+  `4: Muscular system` (789), `5: Cardiovascular system` (60),
+  `6: Lymphoid organs` (220), `7: Nervous system & Sense organs` (460),
+  `8: Visceral systems` (254), `9: Regions of human body` (299),
+  `Bonus collection` (3373 — árvore auxiliar com sub-coleções, entre elas as
+  usadas por `respiratorio`/`digestorio`/`urinario`/`endocrino`/`tegumentar`),
+  `Cross section planes` (3) e `Reference lines, reference planes, movements`
+  (52).
+- Todos os nomes de coleção referenciados por `systems-map.json`
+  (`1: Skeletal system`, `4: Muscular system`, `3: Joints`,
+  `5: Cardiovascular system`, `7: Nervous system & Sense organs`,
+  `Respiratory system`, `Digestive system`, `Urinary system`,
+  `Endocrine glands`, `6: Lymphoid organs`) existem exatamente com esses
+  nomes na listagem achatada real — confirmado, não mais suposição da Fase A.
+- **`reprodutor-m`/`reprodutor-f` removidos do `systems-map.json` nesta
+  retomada**: a coleção-contêiner é `Genital systems'` (com apóstrofo
+  sobrando no próprio nome — erro de digitação no `Startup.blend`, não no
+  nosso mapa) com só **15 malhas no total**, e `Male genital system'`/
+  `Female genital system'` aparecem com **0 malhas cada** (`all_objects`
+  contando toda a árvore de sub-coleções — `Penis'`, `Uterus'`, `Ovary'` etc.
+  todas com 0 objetos). Não há conteúdo real para exportar. Isso já estava
+  prevendo no plano (§3, tabela "Sistemas × órgãos do HRA": "reprodutor-m /
+  reprodutor-f ... — (v2, se houver órgão específico no HRA)") — fica
+  registrado como pulado por falta de malha, não por opção de escopo.
+- **`Skin` confirmada com 0 malhas** (caminho `Bonus collection / Regions of
+  human body / Integument / Skin`) — confirma a decisão já tomada de tirar
+  `tegumentar` do `systems-map.json` e usar o órgão `skin` do HRA.
+- **API do HRA confirmada de verdade** (`GET
+  https://apps.humanatlas.io/api/v1/reference-organs`, 81 entradas): rótulos
+  em minúsculas para a maioria (`heart`, `liver`, `lung`, `brain`,
+  `pancreas`* ver nota), com "Left"/"Right" maiúsculo só nos pares
+  bilaterais (`Left kidney`, `Right kidney`, `Left eye`, `Left fallopian
+  tube`, `Left mammary gland`, `Left knee`...); `sex` vem capitalizado
+  (`"Female"`/`"Male"`) mas `fetch.mjs`/`discover.mjs` já comparam em
+  minúsculas. Criado `tools/atlas-pipeline/hra-organs.json` (cópia ajustada
+  de `hra-organs.example.json`, que continua como referência): 9 órgãos —
+  coração e fígado (M+F), rim esquerdo, pâncreas, cérebro, pulmão e pele
+  (F) — usando `labelMatch: "left kidney"` (em vez de só `"kidney"`) para não
+  depender da ordem em que a API devolve os dois rins do mesmo sexo.
+  *`pancreas` e `skin` não apareceram nas primeiras 40 entradas impressas no
+  log (a lista completa de 81 só existe em `out/discovery.json`, artefato do
+  job); ficam pendentes de confirmação na primeira execução com `hra: true`
+  — `fetch.mjs` já avisa (sem falhar o job) se algum não bater.
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto
