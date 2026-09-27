@@ -35,6 +35,7 @@ import { createSearchBox } from './ui/search-box.js';
 import { createNavigator } from './ui/navigator.js';
 import { createInfoCard } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
+import { linkLegacy } from './ui/legacy-link.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -67,6 +68,9 @@ async function createContentStore() {
   const bySid = new Map();
   for (const s of structures) bySid.set(s.sid, s);
 
+  // Link real structures to legacy content by name matching
+  const realToLegacySid = linkLegacy(structures, legacyIndex);
+
   // Índice de nomes legados PT por sid (quando o mesmo sid existe nos dois
   // lados) — usado pela busca para preferir o nome em português.
   const legacyNameBySid = new Map();
@@ -74,6 +78,14 @@ async function createContentStore() {
   for (const entry of legacyIndex) {
     legacyBySid.set(entry.sid, entry);
     if (entry.names && entry.names.pt) legacyNameBySid.set(entry.sid, entry.names.pt);
+  }
+
+  // Also index legacy PT names by real structure sid (via name linking)
+  for (const [realSid, legacySid] of realToLegacySid) {
+    const legacyEntry = legacyBySid.get(legacySid);
+    if (legacyEntry && legacyEntry.names && legacyEntry.names.pt) {
+      legacyNameBySid.set(realSid, legacyEntry.names.pt);
+    }
   }
 
   const contentCache = new Map();
@@ -117,7 +129,12 @@ async function createContentStore() {
       if (contentCache.has(sid)) return contentCache.get(sid);
       const file = await loadContentFile(entry.system);
       const raw = file[sid] || null;
-      const legacy = legacyBySid.get(sid) || null;
+      // Try to get legacy content: first check if this sid maps to a legacy sid
+      let legacy = legacyBySid.get(sid) || null;
+      if (!legacy && realToLegacySid.has(sid)) {
+        const legacySid = realToLegacySid.get(sid);
+        legacy = legacyBySid.get(legacySid) || null;
+      }
       const content = raw || legacy
         ? { ...raw, draft: true, legacy: legacy || null }
         : null;
