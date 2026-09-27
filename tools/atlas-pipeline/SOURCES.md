@@ -456,6 +456,59 @@ algum sistema ainda ficar acima mesmo depois disso, o próximo passo é
 avaliar se `budgets.json` (WP02, não editado por este WP) precisa de
 ajuste por fidelidade anatômica, propondo a mudança sem aplicá-la aqui.
 
+## 8f. Retomada 27/09 — execução #12 (extras/atributos removidos) ainda falhou o orçamento: `error` do meshoptimizer travava o `ratio`
+
+A execução #12 (`https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/36304789009`,
+já com `stripExtras`/`stripUnusedAttributes` do §8e) mostrou que a remoção
+de extras/atributos ajudou, mas pouco: `articular.glb` foi de 2,52 MB
+(execução #9) para 2,25 MB (extras 328,9 KB → 103,1 KB por nó, atributos
+23,92 → 18,88 MB brutos, 438 atributos descartados por primitiva) — ainda
+muito acima dos 1,50 MB do orçamento. Total: **78,41 MB contra 45 MB**, 21
+erros — pior até que a #9, porque agora o HRA também gera LOD1 (mais
+assets, mesmos arquivos ainda grandes).
+
+**A prova definitiva veio de `skin-female.glb`:** o log de tamanho mostrou
+extras zerados (73,6 KB → 3,4 KB... e depois 0,3 KB → 0,0 KB) e **ZERO**
+atributos descartados (`0 atributo(s) descartado(s)` — o arquivo já só
+tinha `POSITION`/`NORMAL`, então minha suspeita de `COLOR_0`/`TANGENT`
+estava ERRADA para este órgão em particular). Mesmo assim, o arquivo
+final ficou EXATAMENTE em 2,59 MB e **266.696 triângulos** — idênticos —
+em TODAS as tentativas de `writeLodAdaptive`, do ratio 1,000 até o piso de
+0,120 (LOD0) e 0,030 (LOD1). Ou seja: pedir 12% ou 3% dos triângulos
+originais não mudou NADA no resultado. Vários sistemas do Z-Anatomy
+(`endocrino`, `linfatico`, `respiratorio`, `urinario`) mostraram o mesmo
+padrão — LOD0 e LOD1 saindo com o MESMO tamanho/triângulos mesmo com
+`ratio` diferente (LOD1 deveria começar em 0,25, bem mais agressivo que o
+LOD0).
+
+**Causa raiz:** `simplify()` do `@gltf-transform/functions` (que chama
+`MeshoptSimplifier.simplify(indices, positions, 3, targetCount, error,
+lockBorder)`) respeita o `target_error` (nosso `error`, fixo em 0,01)
+ANTES do `ratio` pedido — se o erro relativo já bate no limite antes de
+alcançar o número de triângulos do `targetCount`, o algoritmo PARA e
+devolve mais triângulos do que o pedido, silenciosamente (sem lançar
+erro). `writeLodAdaptive` só reduzia o `ratio` a cada tentativa; com
+`error` fixo em 0,01 (bem apertado — o padrão da própria biblioteca é
+0,0001, ainda mais apertado), várias malhas do Z-Anatomy/HRA batiam nesse
+teto de erro bem antes do ratio mínimo (0,02) ter qualquer efeito.
+
+**Correção em `writeLodAdaptive`:** `error` agora também escala a cada
+tentativa (×5 por tentativa, até `maxError` = 1,0 — bem mais permissivo
+que o padrão da biblioteca) junto com a redução de `ratio`. Sequência
+típica em 3 tentativas: `error` 0,01 → 0,05 → 0,25 → 1,00. Cada tentativa
+loga `ratio` E `error`, e a contagem de triângulos do resultado — se os
+triângulos não mudarem nem no `error` máximo, o loop para e avisa que essa
+malha realmente não simplifica mais (em vez de continuar tentando ratios
+cada vez menores sem qualquer garantia de efeito, como estava acontecendo
+silenciosamente antes desta correção).
+
+**Pendência:** repetir a execução para medir se soltar o `error` resolve
+o resto do orçamento. Se algum sistema ainda ficar acima mesmo com `error`
+no máximo (ou seja, geometria genuinamente densa que não simplifica sem
+distorção inaceitável), a única saída é propor um ajuste em `budgets.json`
+(WP02, não editado por este WP) com justificativa de fidelidade anatômica
+— nunca aplicar essa mudança neste WP.
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto

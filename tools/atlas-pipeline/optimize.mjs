@@ -348,7 +348,7 @@ async function loadAndClean(filePath) {
   return { document, removedNonMesh: removed };
 }
 
-async function writeLod(document, outPath, { simplifyRatio } = {}) {
+async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01 } = {}) {
   const io = new NodeIO()
     .registerExtensions([EXTMeshoptCompression, KHRMeshQuantization])
     .registerDependencies({
@@ -365,7 +365,7 @@ async function writeLod(document, outPath, { simplifyRatio } = {}) {
       simplify({
         simplifier: MeshoptSimplifier,
         ratio: simplifyRatio,
-        error: 0.01,
+        error: simplifyError,
       })
     );
   }
@@ -409,12 +409,27 @@ async function writeLod(document, outPath, { simplifyRatio } = {}) {
  * confere o relógio: se o orçamento de tempo estourar, para com o MELHOR
  * resultado obtido até ali (mesmo que ainda acima do orçamento de bytes —
  * `validate.mjs` vai reportar, o que é MELHOR do que o CI nunca terminar).
+ *
+ * `error` também escala a cada tentativa (retomada 27/09, run #10/12 —
+ * ver SOURCES.md §8f): a execução #9 já tinha mostrado que reduzir o
+ * `ratio` pedido nem sempre reduz o tamanho do arquivo. A causa, confirmada
+ * depois de tirar extras/atributos (execução #12): `simplify()` do
+ * meshoptimizer respeita `target_error` (aqui, `error`) ANTES do `ratio` —
+ * se o erro relativo já bate no limite antes de chegar no número de
+ * triângulos pedido, ele PARA de simplificar e devolve mais triângulos do
+ * que o ratio pedia (`skin-female.glb`: ratio caiu de 1,000 para 0,120 e o
+ * arquivo/triângulos não mudaram NADA — 266.696 triângulos em toda
+ * tentativa, prova de que `error` fixo em 0,01 travava a simplificação
+ * bem antes do ratio). Por isso, a cada tentativa que não convergiu,
+ * `error` também sobe (×5, até `maxError`) — sem isso, baixar só o ratio
+ * pode não ter EFEITO NENHUM em malhas assim.
  */
-async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 3, maxMillis = 30000 } = {}) {
+async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 3, maxMillis = 30000, baseError = 0.01, maxError = 1 } = {}) {
   const t0 = Date.now();
   let ratio = maxRatio;
-  let result = await writeLod(document, outPath, { simplifyRatio: ratio });
-  console.log(`    tentativa 0 (ratio ${ratio.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB em ${Date.now() - t0}ms`);
+  let error = baseError;
+  let result = await writeLod(document, outPath, { simplifyRatio: ratio, simplifyError: error });
+  console.log(`    tentativa 0 (ratio ${ratio.toFixed(3)}, error ${error.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB, ${result.triangles.toLocaleString('pt-BR')} tri em ${Date.now() - t0}ms`);
 
   if (targetBytes == null || result.bytes <= targetBytes) {
     return { ...result, ratio, overBudget: targetBytes != null && result.bytes > targetBytes };
@@ -425,20 +440,28 @@ async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, 
       console.warn(`    tempo limite (${maxMillis}ms) atingido — parando com o melhor resultado obtido até aqui.`);
       break;
     }
+    const prevTriangles = result.triangles;
     const scale = Math.min((targetBytes / result.bytes) * 0.85, 0.8);
     ratio = Math.max(minRatio, ratio * scale);
+    error = Math.min(maxError, error * 5);
     const tAttempt = Date.now();
-    result = await writeLod(document, outPath, { simplifyRatio: ratio });
+    result = await writeLod(document, outPath, { simplifyRatio: ratio, simplifyError: error });
     console.log(
-      `    tentativa ${i + 1} (ratio ${ratio.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB em ${Date.now() - tAttempt}ms`
+      `    tentativa ${i + 1} (ratio ${ratio.toFixed(3)}, error ${error.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB, ${result.triangles.toLocaleString('pt-BR')} tri em ${Date.now() - tAttempt}ms`
     );
     if (result.bytes <= targetBytes) break;
+    if (result.triangles === prevTriangles && error >= maxError) {
+      console.warn(
+        `    triângulos não mudaram (${result.triangles.toLocaleString('pt-BR')}) mesmo no error máximo (${maxError}) — simplify() não consegue reduzir mais esta malha; parando tentativas.`
+      );
+      break;
+    }
   }
 
   const overBudget = result.bytes > targetBytes;
   if (overBudget) {
     console.warn(
-      `  AVISO: ${path.basename(outPath)} ainda acima do orçamento (${(result.bytes / 1024 / 1024).toFixed(2)} MB > ${(targetBytes / 1024 / 1024).toFixed(2)} MB) mesmo no ratio mínimo (${ratio.toFixed(3)}) após ${Date.now() - t0}ms — validate.mjs vai reportar.`
+      `  AVISO: ${path.basename(outPath)} ainda acima do orçamento (${(result.bytes / 1024 / 1024).toFixed(2)} MB > ${(targetBytes / 1024 / 1024).toFixed(2)} MB) mesmo no ratio mínimo (${ratio.toFixed(3)})/error máximo (${error.toFixed(3)}) após ${Date.now() - t0}ms — validate.mjs vai reportar.`
     );
   }
   return { ...result, ratio, overBudget };
