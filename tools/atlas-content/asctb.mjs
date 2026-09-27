@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { normalizeName } from './wikidata.mjs';
 
 /**
  * Parser RFC4180 para CSV com suporte a campos com aspas, vírgulas e quebras de linha
@@ -269,19 +270,58 @@ export function buildReverseWikidataIndex(wikidataRaw) {
 }
 
 /**
- * Mapeia um AS ID do ASCT+B para o sid real do atlas, usando o índice
- * reverso construído por buildReverseWikidataIndex.
+ * Constrói um índice nome normalizado -> sid a partir de structures.json,
+ * usado como fallback quando o AS ID do ASCT+B (FMA/UBERON) não bate com
+ * nada no índice reverso do wikidata.json — o que é o caso comum, já que a
+ * quase totalidade das estruturas reais (sid za:*) só tem qid/uberon quando
+ * wikidata.mjs conseguiu casar por nome (ver wikidata.mjs normalizeName).
+ * @param {object[]} structures
+ * @returns {Map<string,string>}
+ */
+export function buildNameIndex(structures) {
+  const index = new Map();
+  for (const struct of structures || []) {
+    const english = struct.english ?? struct.englishName;
+    if (!english) continue;
+    const key = normalizeName(english);
+    if (key && !index.has(key)) {
+      index.set(key, struct.sid);
+    }
+  }
+  return index;
+}
+
+/**
+ * Mapeia um AS ID do ASCT+B para o sid real do atlas.
+ *
+ * Estratégia, em ordem de preferência:
+ * 1. FMA/UBERON id do ASCT+B batendo com o índice reverso do wikidata.json
+ *    (buildReverseWikidataIndex) — mais confiável, mas só funciona para os
+ *    poucos sids que já têm esse id (via wikidata.mjs).
+ * 2. Nome (AS/N/LABEL) normalizado batendo com o englishName de uma
+ *    estrutura real (buildNameIndex) — fallback usado pela maioria das
+ *    ~3.700 estruturas do ASCT+B, que não têm qid/uberon conhecido.
+ *
  * @param {string} asId - ID de estrutura anatômica (FMA:xxxx ou UBERON:xxxx)
- * @param {{ fma: Map, uberon: Map }} index
+ * @param {string} label - rótulo da estrutura (AS/N/LABEL do ASCT+B)
+ * @param {{ fma: Map, uberon: Map }} wdIndex
+ * @param {Map<string,string>} nameIndex
  * @returns {string|null} - sid real, ou null se não mapeado
  */
-function mapAsIdToSid(asId, index) {
-  if (!asId) return null;
+function mapAsIdToSid(asId, label, wdIndex, nameIndex) {
+  if (asId) {
+    if (asId.startsWith('FMA:')) {
+      const sid = wdIndex.fma.get(asId.substring(4));
+      if (sid) return sid;
+    } else if (asId.startsWith('UBERON:')) {
+      const sid = wdIndex.uberon.get(asId.substring(7));
+      if (sid) return sid;
+    }
+  }
 
-  if (asId.startsWith('FMA:')) {
-    return index.fma.get(asId.substring(4)) || null;
-  } else if (asId.startsWith('UBERON:')) {
-    return index.uberon.get(asId.substring(7)) || null;
+  if (label && nameIndex) {
+    const sid = nameIndex.get(normalizeName(label));
+    if (sid) return sid;
   }
 
   return null;
@@ -294,7 +334,7 @@ function mapAsIdToSid(asId, index) {
  * @param {object} sourceInfo - informações de origem (organ, version, doi, url, license)
  * @returns {object} - { bySid: {...}, unmapped: [...] }
  */
-function processAsctbCsv(csvText, wdIndex, sourceInfo = {}) {
+function processAsctbCsv(csvText, wdIndex, sourceInfo = {}, nameIndex = new Map()) {
   const rows = parseCsv(csvText);
   const headerIndex = findHeader(rows);
 
@@ -309,7 +349,7 @@ function processAsctbCsv(csvText, wdIndex, sourceInfo = {}) {
   const unmapped = [];
 
   for (const [asId, data] of Object.entries(aggregated)) {
-    const sid = mapAsIdToSid(asId, wdIndex);
+    const sid = mapAsIdToSid(asId, data.label, wdIndex, nameIndex);
 
     if (sid) {
       bySid[sid] = {
@@ -349,7 +389,7 @@ async function main() {
   }
 
   if (!options.organs) {
-    console.error('Uso: node asctb.mjs --organs heart,kidney,... --wikidata wikidata.json --out asctb.json [--offline-dir dir] [--manifest organs.json]');
+    console.error('Uso: node asctb.mjs --organs heart,kidney,... --wikidata wikidata.json --out asctb.json [--structures structures.json] [--offline-dir dir] [--manifest organs.json]');
     process.exit(1);
   }
 
@@ -358,9 +398,16 @@ async function main() {
   const outFile = options.out || 'asctb.json';
   const offlineDir = options['offline-dir'];
   const manifestFile = options.manifest;
+  const structuresFile = options.structures;
 
   const wikidata = loadJson(wikidataFile);
   const wdIndex = buildReverseWikidataIndex(wikidata);
+  // Fallback de mapeamento por nome (ver mapAsIdToSid) — usado quando o AS
+  // ID do ASCT+B não bate com nenhum FMA/UBERON já conhecido no
+  // wikidata.json (o caso comum: a maioria das estruturas reais só ganha
+  // qid/uberon quando wikidata.mjs casa por nome).
+  const structures = structuresFile ? loadJson(structuresFile) : null;
+  const nameIndex = buildNameIndex(structures || []);
   const result = {
     bySid: {},
     unmapped: [],
@@ -388,7 +435,7 @@ async function main() {
         license: 'CC-BY-4.0'
       };
 
-      const processed = processAsctbCsv(csvContent, wdIndex, sourceInfo);
+      const processed = processAsctbCsv(csvContent, wdIndex, sourceInfo, nameIndex);
 
       // Mescla resultados
       Object.assign(result.bySid, processed.bySid);

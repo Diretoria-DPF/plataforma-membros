@@ -171,7 +171,7 @@ jobs:
         working-directory: tools/atlas-content
         run: |
           ORGANS=$(node -e "console.log(require('./asctb-organs.json').map(o=>o.organ).join(','))")
-          node asctb.mjs --organs "$ORGANS" --wikidata out/wikidata.json --out out/asctb.json --offline-dir work/raw
+          node asctb.mjs --organs "$ORGANS" --wikidata out/wikidata.json --structures ../../${{ env.STRUCTURES }} --out out/asctb.json --offline-dir work/raw
           {
             echo "### ASCT+B — agregação"
             node -e "const d=require('./out/asctb.json'); console.log('- sids com células:', Object.keys(d.bySid||{}).length); console.log('- não mapeados:', (d.unmapped||[]).length); console.log('- órgãos processados:', (d.processed||[]).join(', '));"
