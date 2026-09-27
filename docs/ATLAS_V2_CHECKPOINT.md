@@ -65,3 +65,12 @@ Testes unitários: `node frontend/scripts/atlas/<nome>.test.mjs` (todos saem 0).
 5. QA revisor final (Sonnet) + auditoria PT (Haiku) + `npm run e2e` completo → PR.
 
 ⚠️ Antes de qualquer merge na `main`: rodar `cd frontend && npm run e2e`.
+
+## Pausa 4 (27/09) — retomar daqui
+- Modelos 3D salvos (37,85 MB, commit do bot `55b49fc`).
+- Workflow `atlas-content.yml` pronto; bloqueios: Wikidata devolvendo vazio
+  (provável limite de uso — rodar 1 vez só, horas depois) e URLs ASCT+B
+  erradas em `tools/atlas-content/asctb-organs.json`. 131 sids antigos em
+  routes/processes/quiz resolvidos em tempo de execução (WP13).
+- WP13 integração em andamento (`js/main.js`, `js/compat/legacy-api.js`,
+  `v2.html` → `index.html`). Depois: `atlas-perf.e2e.js`, `npm run e2e`, PR.
