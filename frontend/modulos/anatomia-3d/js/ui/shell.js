@@ -73,6 +73,12 @@ const ALLOWED_ACTIONS = [
   'AtlasShell.setQuality',
   'AtlasShell.openCredits',
   'AtlasShell.closeModal',
+  // Atalhos sem arraste do painel (§2.5, js/ui/sheet.js) — window.AtlasSheet
+  // só existe depois de initSheet(), mas resolveAction() do LaiftDom lê o
+  // alvo em tempo de clique, não no momento do delegateActions.
+  'AtlasSheet.snapPeek',
+  'AtlasSheet.snapHalf',
+  'AtlasSheet.snapFull',
 ];
 
 /** name → HTMLElement, registrados por WP09 via {@link registerPanel}. */

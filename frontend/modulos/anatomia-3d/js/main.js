@@ -28,7 +28,7 @@ import { createLabels } from './engine/labels.js';
 import { createFallback } from './engine/fallback.js';
 
 import { getSlot, registerPanel, initShell } from './ui/shell.js';
-import { initSheet, setContent as setSheetContent } from './ui/sheet.js';
+import { initSheet, setContent as setSheetContent, snapTo as snapSheetTo, getState as getSheetState } from './ui/sheet.js';
 import { initFocusNav } from './ui/focus-nav.js';
 import { buildSearchIndex, search } from './ui/search-index.js';
 import { createSearchBox } from './ui/search-box.js';
@@ -300,9 +300,61 @@ async function boot() {
     },
   });
 
+  // #atlas-inspector só existe (visualmente) em ≥600px (css/atlas.css) — no
+  // celular o painel arrastável é a única superfície de conteúdo (ver
+  // docs/ATLAS_UX_SPEC.md §1.1/§2). infocard.js sempre renderiza no mesmo
+  // container fixo (#atlas-inspector); abaixo de 600px espelhamos o nó já
+  // montado dentro do painel, senão tocar numa estrutura no celular não
+  // mostrava nada (bug real: `<600px` some com o inspetor e ninguém troca
+  // o conteúdo do painel pela ficha).
+  const isMobileViewport = () => !window.matchMedia('(min-width: 600px)').matches;
+  function buildSheetDefaultPeekNode() {
+    // Mesma marcação do peek inicial em index.html (hint + #organ-hud
+    // escondido) — usado para "voltar ao início" quando a seleção é limpa.
+    const frag = document.createElement('div');
+    const hud = document.createElement('div');
+    hud.id = 'organ-hud';
+    hud.className = 'hidden';
+    const name = document.createElement('strong');
+    name.id = 'organ-name';
+    name.textContent = '---';
+    hud.appendChild(name);
+    frag.appendChild(hud);
+    const hint = document.createElement('p');
+    hint.id = 'atlas-sheet-hint';
+    hint.className = 'atlas-sheet-hint';
+    hint.textContent = 'Toque numa estrutura para começar';
+    frag.appendChild(hint);
+    return frag;
+  }
+  function buildSheetPeekNode(sid) {
+    // Reaproveita os ids legados #organ-hud/#organ-name (LEGACY_COMPAT,
+    // core/contracts.js) — mesmo padrão que js/ui/infocard.js já usa no
+    // cabeçalho da ficha completa.
+    const hud = document.createElement('div');
+    hud.id = 'organ-hud';
+    const name = document.createElement('strong');
+    name.id = 'organ-name';
+    name.textContent = labelFor(sid);
+    hud.appendChild(name);
+    return hud;
+  }
+  function syncInfocardToSheet(sid) {
+    if (currentMode) return; // um modo já é dono do painel (ver enterMode).
+    const el = infocard.getElement();
+    if (isMobileViewport() && el) {
+      setSheetContent(buildSheetPeekNode(sid), el, { label: 'Ficha da estrutura' });
+      if (getSheetState().state === 'peek') snapSheetTo('half');
+    }
+  }
+
   async function renderInfocardFor(sid) {
     if (!sid) {
       infocard.clear();
+      if (!currentMode && isMobileViewport()) {
+        const emptyBody = document.createElement('div');
+        setSheetContent(buildSheetDefaultPeekNode(), emptyBody, { label: 'Painel do Atlas' });
+      }
       return;
     }
     const raw = contentStore.getEntry(sid);
@@ -315,9 +367,11 @@ async function boot() {
       names: { pt: raw.ptName || raw.englishName || raw.latinName || sid, en: raw.englishName || '' },
       system: raw.systemId,
     };
-    infocard.render(entry, null);
+    infocard.render(entry, undefined);
+    syncInfocardToSheet(sid);
     const content = await contentStore.getContent(sid);
     infocard.render(entry, content);
+    syncInfocardToSheet(sid);
   }
 
   on(EVENTS.STRUCTURE_SELECT, ({ sid }) => { renderInfocardFor(sid); });

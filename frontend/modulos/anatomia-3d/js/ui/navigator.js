@@ -9,6 +9,20 @@ import { EVENTS } from '../core/bus.js';
 const { h, clear } = window.LaiftDom;
 
 /**
+ * Nome de exibição de uma entrada: PT quando existe, senão inglês/latim,
+ * senão o próprio sid. `entry.names.pt` só existe quando o sid casa com um
+ * item do conteúdo legado (ver js/ui/legacy-link.js) — a maioria das
+ * estruturas granulares (ossos/músculos por lado) não casa, então usar só
+ * `.pt` deixava a lista cheia de linhas em branco (bug real: só o badge
+ * L/D aparecia, sem nome nenhum) e a ordenação alfabética misturava tudo
+ * sem nome no topo. Mesmo fallback de js/main.js (labelFor).
+ */
+function displayName(entry) {
+  const names = entry.names || {};
+  return names.pt || names.en || names.la || entry.sid || '';
+}
+
+/**
  * @typedef {Object} NavigatorState
  * @property {Array<{id: string, label: string, count?: number}>} breadcrumb
  * @property {string} [currentSystemId]
@@ -189,7 +203,7 @@ export function createNavigator(container, opts) {
     const children = getChildren(entry.sid);
     return {
       sid: entry.sid,
-      name: entry.names.pt,
+      name: displayName(entry),
       side: entry.side,
       hasChildren: children.length > 0,
     };
@@ -230,11 +244,11 @@ export function createNavigator(container, opts) {
     if (entries.length > 0 && entries[0].isRegion) {
       state.items = entries.map((region) =>
         region.entries
-          .sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt'))
+          .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
           .map(entryToItem)
       ).flat();
     } else {
-      state.items = entries.sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt')).map(entryToItem);
+      state.items = entries.sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt')).map(entryToItem);
     }
 
     state.currentSid = null;
@@ -258,9 +272,9 @@ export function createNavigator(container, opts) {
     }
 
     // Tem filhos: drill down
-    state.breadcrumb.push({ id: sid, label: entry.names.pt });
+    state.breadcrumb.push({ id: sid, label: displayName(entry) });
     state.items = children
-      .sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt'))
+      .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
       .map(entryToItem);
     state.currentSid = null;
 
@@ -309,7 +323,7 @@ export function createNavigator(container, opts) {
         if (levelEntry) {
           // It's a structure level; show its children
           state.items = getChildren(level.id)
-            .sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt'))
+            .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
             .map(entryToItem);
         }
       }
@@ -334,7 +348,7 @@ export function createNavigator(container, opts) {
       if (levelEntry) {
         state.currentSystemId = levelEntry.system;
         state.items = getChildren(level.id)
-          .sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt'))
+          .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
           .map(entryToItem);
       }
     }
@@ -389,7 +403,7 @@ export function createNavigator(container, opts) {
     for (let i = 0; i < pathToSid.length - 1; i++) {
       const e = getEntryBySid(pathToSid[i]);
       if (e) {
-        state.breadcrumb.push({ id: e.sid, label: e.names.pt });
+        state.breadcrumb.push({ id: e.sid, label: displayName(e) });
       }
     }
 
@@ -397,7 +411,7 @@ export function createNavigator(container, opts) {
     const parentSid = pathToSid[pathToSid.length - 2];
     if (parentSid) {
       state.items = getChildren(parentSid)
-        .sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt'))
+        .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
         .map(entryToItem);
       state.currentSystemId = current.system;
     } else {
@@ -407,13 +421,13 @@ export function createNavigator(container, opts) {
         state.items = topLevel
           .map((region) =>
             region.entries
-              .sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt'))
+              .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
               .map(entryToItem)
           )
           .flat();
       } else {
         state.items = topLevel
-          .sort((a, b) => a.names.pt.localeCompare(b.names.pt, 'pt'))
+          .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
           .map(entryToItem);
       }
       state.currentSystemId = current.system;

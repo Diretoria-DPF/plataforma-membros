@@ -207,13 +207,20 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
    * Atualiza o conteúdo da aba ativa.
    */
   function updateTabContent() {
-    if (!contentBox.contentArea || !currentContent) {
-      clearEl(contentBox.contentArea);
+    if (!contentBox.contentArea) return;
+    clearEl(contentBox.contentArea);
+
+    // `undefined` = ainda buscando (js/main.js chama render(entry, undefined)
+    // antes do fetch); `null`/objeto = já resolveu (mesmo sem nenhum dado
+    // real — ver contentStore.getContent em js/main.js). Tratar os dois
+    // como "carregando" prendia a ficha em "Carregando ficha…" para sempre
+    // em qualquer estrutura sem conteúdo (a maioria — bug real encontrado
+    // ao selecionar uma estrutura qualquer e nunca ver o resumo/abas).
+    if (currentContent === undefined) {
       contentBox.contentArea.appendChild(h('div', { className: 'atlas-card-loading', text: 'Carregando ficha…' }));
       return;
     }
-
-    clearEl(contentBox.contentArea);
+    if (currentContent === null) currentContent = {};
 
     if (currentTabId === 'resumo') {
       contentBox.contentArea.appendChild(renderResumo());
@@ -458,6 +465,15 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
    */
   return {
     render,
+    /**
+     * Nó raiz já montado (ou `null` antes do primeiro `render`). Usado por
+     * js/main.js para espelhar a ficha no painel arrastável no celular
+     * (<600px, onde #atlas-inspector fica `display:none` — §1.1/§2 da spec
+     * de UX; sem isto, tocar numa estrutura no celular não mostrava nada).
+     */
+    getElement() {
+      return contentBox.root || null;
+    },
     setTab(id) {
       currentTabId = id;
       if (contentBox.root) {
