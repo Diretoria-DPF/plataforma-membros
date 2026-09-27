@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Pharmacology Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #020617;
+      color: #f1f5f9;
+      padding: 0;
+      overflow: hidden;
+    }
+    #app { width: 100%; height: 100%; display: flex; flex-direction: column; }
+    #sheet { flex: 1; overflow-y: auto; padding: 12px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="sheet"></div>
+  </div>
+
+  <!-- safe-dom classic script -->
+  <script src="../../shared/safe-dom.js"></script>
+  <!-- Demo script -->
+  <script src="pharmacology-demo.js"></script>
+</body>
+</html>

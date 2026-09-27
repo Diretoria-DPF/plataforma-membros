@@ -1,0 +1,315 @@
+[
+  {
+    "id": "bio_berberina",
+    "nome": "Berberina (Fitossomal)",
+    "mecanismo": "Ativa AMPK, inibe complexo I mitocondrial hepático; efeito similar à metformina.",
+    "tags": [
+      "Alcaloide",
+      "Metabólico",
+      "Glicemia"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 25,
+      "halfLife": 5,
+      "dose": 500,
+      "ka": 1.1
+    },
+    "targetSid": "za:figado",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_coq10_ubiquinol",
+    "nome": "Coenzima Q10 (Ubiquinol)",
+    "mecanismo": "Transferência de elétrons entre complexos I/II → III; otimiza ATP miocárdico.",
+    "tags": [
+      "Bioenergética",
+      "Anti-aging",
+      "Fosforilação Oxidativa"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 120,
+      "halfLife": 33,
+      "dose": 200,
+      "ka": 0.5
+    },
+    "targetSid": "za:coracao",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_creatina_mono",
+    "nome": "Creatina Monoidratada",
+    "mecanismo": "Fosfocreatina doa radical fosfato para ATP via creatina quinase.",
+    "tags": [
+      "Ergogênico",
+      "Ressíntese de ATP"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 100,
+      "halfLife": 3,
+      "dose": 5000,
+      "ka": 2.5
+    },
+    "targetSid": "za:musculos-esqueleticos-voluntarios",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_curcumina_fito",
+    "nome": "Curcumina Fitossomal",
+    "mecanismo": "Inibe NF-κB e COX-2; fitossoma (lecitina) aumenta biodisponibilidade ~30×.",
+    "tags": [
+      "Polifenol",
+      "Anti-inflamatório",
+      "Fitossomal"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 20,
+      "halfLife": 6,
+      "dose": 500,
+      "ka": 0.7
+    },
+    "targetSid": "za:figado",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_glutationa_iv",
+    "nome": "Glutationa (GSH) Endovenosa",
+    "mecanismo": "Neutraliza EROs e sustenta conjugação Fase II (GST).",
+    "tags": [
+      "Antioxidante Mestre",
+      "Detoxificação Fase II"
+    ],
+    "pk": {
+      "route": "IV",
+      "vd": 15,
+      "halfLife": 0.25,
+      "dose": 1200,
+      "ka": 1.5
+    },
+    "targetSid": "za:figado",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_lions_mane",
+    "nome": "Hericium erinaceus (Lion's Mane)",
+    "mecanismo": "Erinacinas e hericenonas estimulam síntese de NGF e mielinização.",
+    "tags": [
+      "Nootrópico",
+      "Fungo Funcional",
+      "NGF"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 30,
+      "halfLife": 4,
+      "dose": 1000,
+      "ka": 1
+    },
+    "targetSid": "za:cerebro-telencefalo",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_mag_bisglicinato",
+    "nome": "Magnésio Bisglicinato",
+    "mecanismo": "Quelato a 2 glicinas; absorção via PEPT1 sem concorrência com TRPM6.",
+    "tags": [
+      "Quelato Aminoácido",
+      "Recuperação",
+      "Parassimpático"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 40,
+      "halfLife": 4.8,
+      "dose": 400,
+      "ka": 1.5
+    },
+    "targetSid": "za:musculos-esqueleticos-voluntarios",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_mag_treonato",
+    "nome": "Magnésio L-Treonato",
+    "mecanismo": "Sal quelado de Mg²⁺ e ácido L-treônico atravessa BHE via transportadores; otimiza receptores NMDA.",
+    "tags": [
+      "Nootrópico",
+      "Mineral Quelado",
+      "SNC"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 35,
+      "halfLife": 5.5,
+      "dose": 2000,
+      "ka": 1.8
+    },
+    "targetSid": "za:cerebro-telencefalo",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_nmn",
+    "nome": "Nicotinamida Mononucleotídeo (NMN)",
+    "mecanismo": "Precursor de NAD+ que ativa sirtuínas SIRT1/3 e melhora função mitocondrial.",
+    "tags": [
+      "Longevidade",
+      "Sirtuínas",
+      "Anti-aging"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 80,
+      "halfLife": 0.5,
+      "dose": 500,
+      "ka": 0.8
+    },
+    "targetSid": "za:coracao",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_omega3",
+    "nome": "Ômega-3 (EPA/DHA)",
+    "mecanismo": "Precursores de resolvinas, protectinas e maresinas (SPM).",
+    "tags": [
+      "Anti-inflamatório",
+      "Cardioprotetor",
+      "Cognição"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 60,
+      "halfLife": 48,
+      "dose": 2000,
+      "ka": 0.4
+    },
+    "targetSid": "za:coracao",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_pqq",
+    "nome": "PQQ (Pirroloquinolina Quinona)",
+    "mecanismo": "Ativa PGC-1α e CREB, induzindo mitocondriogênese.",
+    "tags": [
+      "Biogênese",
+      "Fator de Transcrição",
+      "Neuroproteção"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 45,
+      "halfLife": 4.2,
+      "dose": 20,
+      "ka": 2.1
+    },
+    "targetSid": "za:figado",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_spermidina",
+    "nome": "Espermidina",
+    "mecanismo": "Induz autofagia via eIF5A hipusinação e inibe acetiltransferases.",
+    "tags": [
+      "Autofagia",
+      "Longevidade",
+      "Poliamina"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 50,
+      "halfLife": 1.5,
+      "dose": 3,
+      "ka": 1.4
+    },
+    "targetSid": "za:intestino-delgado-duodeno-jejuno-ileo",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_tmg",
+    "nome": "Trimetilglicina (TMG / Betaína)",
+    "mecanismo": "Doador de metil (via betaína-homocisteína metiltransferase) que reduz homocisteína.",
+    "tags": [
+      "Metilação",
+      "Cardiovascular",
+      "Fígado"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 30,
+      "halfLife": 3,
+      "dose": 1000,
+      "ka": 2
+    },
+    "targetSid": "za:figado",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_vitamina_d3",
+    "nome": "Vitamina D3 (Colecalciferol)",
+    "mecanismo": "Ligante do receptor VDR; regula >200 genes (imunidade, Ca²⁺, proliferação).",
+    "tags": [
+      "Hormônio Secosteroide",
+      "Imunomodulador",
+      "Osteoprotetor"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 200,
+      "halfLife": 360,
+      "dose": 5000,
+      "ka": 0.6
+    },
+    "targetSid": "za:esqueleto-axial",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  },
+  {
+    "id": "bio_zinco_picolinato",
+    "nome": "Zinco Picolinato",
+    "mecanismo": "Integra dedos de zinco estruturais do DNA; ativa SOD1.",
+    "tags": [
+      "Imunológico",
+      "Síntese Proteica",
+      "Metaloenzima"
+    ],
+    "pk": {
+      "route": "ORAL",
+      "vd": 60,
+      "halfLife": 280,
+      "dose": 30,
+      "ka": 1.2
+    },
+    "targetSid": "za:esqueleto-axial",
+    "review": {
+      "status": "legacy-unverified"
+    }
+  }
+]
