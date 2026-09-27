@@ -1,0 +1,10 @@
+{
+  "name": "atlas-content",
+  "version": "1.0.0",
+  "description": "Enriquecimento de estruturas anatômicas com dados de Wikidata",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node test/wikidata.test.mjs"
+  }
+}

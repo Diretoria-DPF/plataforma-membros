@@ -1,0 +1,74 @@
+[
+  {
+    "sid": "fma:7088",
+    "english": "Heart",
+    "latin": "Cor",
+    "system": "cardiovascular",
+    "layer": 1,
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  },
+  {
+    "sid": "fma:7197",
+    "english": "Liver",
+    "latin": "Hepar",
+    "system": "digestive",
+    "layer": 1,
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  },
+  {
+    "sid": "fma:7310-l",
+    "english": "Left lung",
+    "latin": "Pulmo sinister",
+    "system": "respiratory",
+    "layer": 1,
+    "side": "left",
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  },
+  {
+    "sid": "fma:9611",
+    "english": "Femur",
+    "latin": "Os femoris",
+    "system": "skeletal",
+    "layer": 1,
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  },
+  {
+    "sid": "za:biceps-brachii-muscle",
+    "english": "Biceps brachii muscle",
+    "system": "muscular",
+    "layer": 1,
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  },
+  {
+    "sid": "za:vagus-nerve",
+    "english": "Vagus nerve",
+    "system": "nervous",
+    "layer": 1,
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  },
+  {
+    "sid": "za:aorta",
+    "english": "Aorta",
+    "latin": "Aorta",
+    "system": "cardiovascular",
+    "layer": 1,
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  },
+  {
+    "sid": "fma:7205-l",
+    "english": "Left kidney",
+    "latin": "Ren sinister",
+    "system": "urinary",
+    "layer": 1,
+    "side": "left",
+    "bbox": [0, 0, 100, 100],
+    "source": "3d-pipeline"
+  }
+]

@@ -1,0 +1,95 @@
+{
+  "head": {
+    "vars": ["fma", "qid", "fmaId", "uberon", "ta98", "ta2", "mesh", "icd10", "label_pt", "alias_pt", "ptwiki"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "fma": { "value": "7088" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q1072" },
+        "fmaId": { "value": "7088" },
+        "uberon": { "value": "UBERON:0000948" },
+        "ta98": { "value": "A12.1" },
+        "ta2": { "value": "A12.1.00.001" },
+        "mesh": { "value": "D006321" },
+        "icd10": { "value": "I50" },
+        "label_pt": { "value": "coração" },
+        "alias_pt": { "value": "coração humano" },
+        "ptwiki": { "value": "http://pt.wikipedia.org/wiki/Cora%C3%A7ao" }
+      },
+      {
+        "fma": { "value": "7197" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q9368" },
+        "fmaId": { "value": "7197" },
+        "uberon": { "value": "UBERON:0002107" },
+        "ta98": { "value": "A05.8.01.001" },
+        "ta2": { "value": "A05.8.01.001" },
+        "mesh": { "value": "D008099" },
+        "icd10": { "value": "K76" },
+        "label_pt": { "value": "fígado" },
+        "alias_pt": { "value": "hepatórgão" },
+        "ptwiki": { "value": "http://pt.wikipedia.org/wiki/F%C3%ADgado" }
+      },
+      {
+        "fma": { "value": "7310" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q4132275" },
+        "fmaId": { "value": "7310" },
+        "uberon": { "value": "UBERON:0002172" },
+        "ta98": { "value": "A04.3.01.001" },
+        "ta2": { "value": "A04.3.01.001" },
+        "mesh": { "value": "D008168" },
+        "icd10": { "value": "J84" },
+        "label_pt": { "value": "pulmão esquerdo" },
+        "alias_pt": { "value": "pulmão" },
+        "ptwiki": { "value": "http://pt.wikipedia.org/wiki/Pulm%C3%A3o" }
+      },
+      {
+        "fma": { "value": "9611" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q10670" },
+        "fmaId": { "value": "9611" },
+        "uberon": { "value": "UBERON:0000981" },
+        "ta98": { "value": "A02.4.04.001" },
+        "ta2": { "value": "A02.4.04.001" },
+        "mesh": { "value": "D005269" },
+        "icd10": { "value": "M84.3" },
+        "label_pt": { "value": "fêmur" },
+        "alias_pt": { "value": "osso da coxa" },
+        "ptwiki": { "value": "http://pt.wikipedia.org/wiki/F%C3%AAmur" }
+      },
+      {
+        "label_pt": { "value": "bíceps braquial" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q2338261" },
+        "uberon": { "value": "UBERON:0001536" },
+        "mesh": { "value": "D017404" },
+        "icd10": { "value": "M60.98" }
+      },
+      {
+        "label_pt": { "value": "nervo vago" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q15739" },
+        "uberon": { "value": "UBERON:0002451" },
+        "mesh": { "value": "D014630" },
+        "icd10": { "value": "G52.2" }
+      },
+      {
+        "label_pt": { "value": "aorta" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q8688" },
+        "uberon": { "value": "UBERON:0000947" },
+        "mesh": { "value": "D001011" },
+        "icd10": { "value": "I70.0" }
+      },
+      {
+        "fma": { "value": "7205" },
+        "qid": { "value": "http://www.wikidata.org/entity/Q10982" },
+        "fmaId": { "value": "7205" },
+        "uberon": { "value": "UBERON:0004538" },
+        "ta98": { "value": "A08.1.01.001" },
+        "ta2": { "value": "A08.1.01.001" },
+        "mesh": { "value": "D007668" },
+        "icd10": { "value": "N28" },
+        "label_pt": { "value": "rim esquerdo" },
+        "alias_pt": { "value": "rim" },
+        "ptwiki": { "value": "http://pt.wikipedia.org/wiki/Rim" }
+      }
+    ]
+  }
+}
