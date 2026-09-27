@@ -60,8 +60,13 @@ const DEFAULT_SYSTEMS = Object.freeze(['esqueletico', 'muscular']);
 // 1. Conteúdo (structures.json + legado PT) — ContentStore
 // ============================================================================
 async function createContentStore() {
-  const [structures, legacyIndex] = await Promise.all([
-    fetchJson(`${CONTENT_BASE}generated/structures.json`).catch(() => []),
+  // Try to load boot structures first (70% smaller, contains sid/names/system/layer/side)
+  // Fall back to full structures.json if boot file 404s
+  let structures = await fetchJson(`${CONTENT_BASE}generated/structures.boot.json`).catch(() =>
+    fetchJson(`${CONTENT_BASE}generated/structures.json`)
+  ).catch(() => []);
+
+  const [legacyIndex] = await Promise.all([
     fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []),
   ]);
 
