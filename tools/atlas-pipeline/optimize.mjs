@@ -220,32 +220,52 @@ async function writeLod(document, outPath, { simplifyRatio } = {}) {
 /**
  * Escreve um LOD com ratio de simplificação ADAPTATIVO: começa em `maxRatio`
  * (1 = sem simplificar, o comportamento antigo) e, se o resultado passar de
- * `targetBytes`, reduz o ratio proporcionalmente (com uma margem de 15% e um
- * mínimo forçado de 10% de redução por tentativa, para nunca "empacar" perto
- * do limite) e escreve de novo — sempre a partir do MESMO documento limpo
- * (nunca simplifica em cima de um resultado já simplificado, para não perder
- * qualidade à toa). Sem orçamento (`targetBytes` null/undefined), volta ao
- * comportamento antigo: um único LOD no `maxRatio` pedido.
+ * `targetBytes`, reduz o ratio proporcionalmente (margem de 15%, corte
+ * mínimo de 20% por tentativa, para convergir rápido) e escreve de novo —
+ * sempre a partir do MESMO documento limpo (nunca simplifica em cima de um
+ * resultado já simplificado, para não perder qualidade à toa). Sem
+ * orçamento (`targetBytes` null/undefined), volta ao comportamento antigo:
+ * um único LOD no `maxRatio` pedido.
+ *
+ * `maxMillis` limita o tempo TOTAL deste LOD (retomada 27/09: a execução
+ * #7 mostrou que os GLBs reais do Z-Anatomy — provavelmente por terem
+ * centenas de primitivas/materiais e geometria não-manifold, ao contrário
+ * do benchmark sintético de malha única que rodou em ~2s para 2,8M
+ * triângulos — podem deixar `simplify()` bem mais lento do que o esperado.
+ * Em vez de arriscar um job travado por tempo indefinido, cada tentativa
+ * confere o relógio: se o orçamento de tempo estourar, para com o MELHOR
+ * resultado obtido até ali (mesmo que ainda acima do orçamento de bytes —
+ * `validate.mjs` vai reportar, o que é MELHOR do que o CI nunca terminar).
  */
-async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 5 } = {}) {
+async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 3, maxMillis = 30000 } = {}) {
+  const t0 = Date.now();
   let ratio = maxRatio;
   let result = await writeLod(document, outPath, { simplifyRatio: ratio });
+  console.log(`    tentativa 0 (ratio ${ratio.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB em ${Date.now() - t0}ms`);
 
   if (targetBytes == null || result.bytes <= targetBytes) {
     return { ...result, ratio, overBudget: targetBytes != null && result.bytes > targetBytes };
   }
 
   for (let i = 0; i < attempts && ratio > minRatio; i++) {
-    const scale = Math.min((targetBytes / result.bytes) * 0.85, 0.9);
+    if (Date.now() - t0 > maxMillis) {
+      console.warn(`    tempo limite (${maxMillis}ms) atingido — parando com o melhor resultado obtido até aqui.`);
+      break;
+    }
+    const scale = Math.min((targetBytes / result.bytes) * 0.85, 0.8);
     ratio = Math.max(minRatio, ratio * scale);
+    const tAttempt = Date.now();
     result = await writeLod(document, outPath, { simplifyRatio: ratio });
+    console.log(
+      `    tentativa ${i + 1} (ratio ${ratio.toFixed(3)}): ${(result.bytes / 1024 / 1024).toFixed(2)} MB em ${Date.now() - tAttempt}ms`
+    );
     if (result.bytes <= targetBytes) break;
   }
 
   const overBudget = result.bytes > targetBytes;
   if (overBudget) {
     console.warn(
-      `  AVISO: ${path.basename(outPath)} ainda acima do orçamento (${(result.bytes / 1024 / 1024).toFixed(2)} MB > ${(targetBytes / 1024 / 1024).toFixed(2)} MB) mesmo no ratio mínimo (${ratio.toFixed(3)}) após ${attempts} tentativas — validate.mjs vai reportar.`
+      `  AVISO: ${path.basename(outPath)} ainda acima do orçamento (${(result.bytes / 1024 / 1024).toFixed(2)} MB > ${(targetBytes / 1024 / 1024).toFixed(2)} MB) mesmo no ratio mínimo (${ratio.toFixed(3)}) após ${Date.now() - t0}ms — validate.mjs vai reportar.`
     );
   }
   return { ...result, ratio, overBudget };
@@ -281,6 +301,7 @@ async function main() {
   for (const file of files) {
     const inPath = path.join(IN_DIR, file);
     const baseName = file.replace(/\.(glb|gltf)$/i, '');
+    const tFile = Date.now();
     console.log(`\n=== ${file} ===`);
 
     const { document, removedNonMesh } = await loadAndClean(inPath);
@@ -309,6 +330,7 @@ async function main() {
         `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB, ${lod1.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod1.ratio.toFixed(3)})`
       );
     }
+    console.log(`  (${file} levou ${((Date.now() - tFile) / 1000).toFixed(1)}s no total)`);
 
     report.push({
       name: baseName,

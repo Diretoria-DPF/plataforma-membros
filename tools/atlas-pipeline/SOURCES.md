@@ -326,6 +326,24 @@ recursivamente (a mesma lógica que `optimize.mjs` já usava em
 encontrada — os GLBs do Z-Anatomy (já sem aninhamento) continuam
 funcionando exatamente igual.
 
+**3. A simplificação adaptativa da 1ª versão (execução #7) demorou demais e
+foi cancelada.** `writeLodAdaptive` (até 5 tentativas, sem limite de tempo)
+deixou o passo "Otimizar GLBs do Z-Anatomy" passar de 24 minutos sem
+terminar — muito acima do único passo equivalente na execução #6 (sem
+adaptação), que levou 52 segundos para os 10 sistemas. Um benchmark local
+(malha sintética de 2,8 milhões de triângulos, uma primitiva só) rodou
+`simplify()+quantize()+meshopt()` em ~2 segundos, então o custo real por
+tentativa nos GLBs de verdade do Z-Anatomy parece ser bem maior do que o
+esperado (hipótese: centenas de primitivas por material, geometria
+não-manifold típica de malhas médicas segmentadas — não foi possível
+reproduzir localmente, a sandbox não baixa o `Startup.blend`).
+**Correção:** `writeLodAdaptive` agora tem um limite de tempo por LOD
+(`maxMillis`, 30s por padrão) — se estourar, para com o melhor resultado
+obtido até ali (mesmo acima do orçamento; `validate.mjs` reporta, o que é
+preferível a um CI que nunca termina), reduz `attempts` de 5 para 3 e cada
+tentativa registra o tempo gasto no log (para diagnosticar de verdade na
+próxima execução, em vez de suposição).
+
 **Pendência a observar na próxima execução:** `skin-female.glb` (e
 possivelmente `brain-female`/`lung-female`) podem ter textura/cor de
 vértice embutida — no log da execução #6, o LOD1 do skin saiu com o MESMO
