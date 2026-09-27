@@ -693,20 +693,25 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
    (8px a mais); com os mesmos 12px do padding inferior, o total sobe a
    20px sobre o padrão de 210px → 190px.
    =========================================================================== */
-.app-main:has(.learn-frame-immersive) {
-  padding-bottom: calc(var(--density-pad) + 64px + env(safe-area-inset-bottom, 0px));
-}
+/* Correção (WP13/e2e fase4.e2e.js): a versão original desta regra também
+   encolhia a reserva de baixo (.app-main padding-bottom, de 76px para
+   64px/14px) para "devolver" mais 12/12px ao Atlas — mas essa reserva é o
+   que garante que NADA dentro do iframe fique atrás do #app-nav (fixo, por
+   cima de tudo — ver .bottom-nav). Com o painel do Atlas em "full" (ex.:
+   card de resultado do quiz, botão "Refazer"), o conteúdo vai até o fundo
+   do iframe, e 12px menos de reserva bastava para o iframe terminar DENTRO
+   da faixa do #app-nav — o clique nele então caía no nav (Playwright:
+   "<nav id=app-nav> intercepts pointer events"). Ganha altura só do lado de
+   cima (título/margens da barra do visualizador), nunca encolhendo a
+   reserva da barra inferior. */
 .learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar {
   margin-bottom: 4px;
 }
 .learn-frame.learn-frame-immersive {
-  height: calc(100dvh - 212px);
+  height: calc(100dvh - 224px);
   min-height: 480px;
 }
 @media (max-width: 480px) {
-  .app-main:has(.learn-frame-immersive) {
-    padding-bottom: calc(14px + 64px + env(safe-area-inset-bottom, 0px));
-  }
   .learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar strong {
     display: none;
   }
@@ -714,7 +719,7 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
     margin-bottom: 2px;
   }
   .learn-frame.learn-frame-immersive {
-    height: calc(100dvh - 190px);
+    height: calc(100dvh - 202px);
   }
 }
 
