@@ -246,7 +246,13 @@ def main():
         with open(args["systems_map"], "r", encoding="utf-8") as fh:
             raw = json.load(fh)
         # Formato esperado: { "<id do sistema>": { "collections": [...], "layer": "..." } }
+        # Chaves que começam com "_" são comentários (ex.: "_comentario",
+        # "_fase") — valem só como documentação dentro do JSON, não como
+        # sistema; ignoradas aqui (senão cfg seria uma string e cfg.get()
+        # quebra).
         for system_id, cfg in raw.items():
+            if system_id.startswith("_"):
+                continue
             systems_map[system_id] = cfg.get("collections", [])
             systems_map_layer[system_id] = cfg.get("layer", system_id)
     else:
