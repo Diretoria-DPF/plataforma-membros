@@ -6,8 +6,8 @@
     "difficulty": "medio",
     "correctSid": "fma:7088",
     "distractorSids": [
-      "fma:7309",
-      "fma:7310",
+      "za:pulmoes-alveolos",
+      "za:arvore-bronquica",
       "za:estomago"
     ],
     "anchors": [
