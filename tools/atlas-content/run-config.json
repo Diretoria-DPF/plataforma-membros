@@ -1,0 +1,6 @@
+{
+  "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-content.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do conteúdo do Atlas.",
+  "mode": "discover",
+  "_mode_valores": "'discover' só valida as fontes (Wikidata, Wikipédia PT, CSVs ASCT+B da HRA) e roda o pipeline em memória sem gravar nada fora de tools/atlas-content/out — nenhum commit. 'build' roda o pipeline completo (wikidata -> wikipedia-pt -> asctb -> build-content -> validate-content -> lint-pt) e, se 'commit' for true, grava o resultado em frontend/modulos/anatomia-3d/data/atlas/{index.json,content/**,sid-aliases.json,routes.json,processes.json,quiz-cases.json,compounds.json,proteins.json}.",
+  "commit": false
+}

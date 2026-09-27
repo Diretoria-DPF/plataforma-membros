@@ -1,0 +1,9 @@
+[
+  { "organ": "heart", "version": "1.3", "url": "https://cdn.humanatlas.io/digital-objects/asct-b/heart/v1.3/assets/asct-b-heart.csv" },
+  { "organ": "liver", "version": "1.2", "url": "https://cdn.humanatlas.io/digital-objects/asct-b/liver/v1.2/assets/asct-b-liver.csv" },
+  { "organ": "kidney", "version": "1.3", "url": "https://cdn.humanatlas.io/digital-objects/asct-b/kidney/v1.3/assets/asct-b-kidney.csv" },
+  { "organ": "pancreas", "version": "1.2", "url": "https://cdn.humanatlas.io/digital-objects/asct-b/pancreas/v1.2/assets/asct-b-pancreas.csv" },
+  { "organ": "brain", "version": "1.1", "url": "https://cdn.humanatlas.io/digital-objects/asct-b/brain/v1.1/assets/asct-b-brain.csv" },
+  { "organ": "lung", "version": "1.4", "url": "https://cdn.humanatlas.io/digital-objects/asct-b/lung/v1.4/assets/asct-b-lung.csv" },
+  { "organ": "skin", "version": "1.1", "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skin/v1.1/assets/asct-b-skin.csv" }
+]

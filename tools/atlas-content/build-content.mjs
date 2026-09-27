@@ -514,6 +514,36 @@ async function main() {
     }
   }
 
+  // Content já existente em --out (execuções anteriores) — usado para nunca
+  // sobrescrever entradas já revisadas/aprovadas por humanos.
+  const existingContentBySystem = {};
+  const existingOutContentDir = path.join(args.out, 'content');
+  if (fs.existsSync(existingOutContentDir)) {
+    for (const file of fs.readdirSync(existingOutContentDir)) {
+      if (file.endsWith('.json')) {
+        const system = file.replace(/\.json$/, '');
+        const content = loadJson(path.join(existingOutContentDir, file));
+        if (content) {
+          existingContentBySystem[system] = content;
+        }
+      }
+    }
+  }
+
+  /**
+   * Se já existe uma entrada revisada/aprovada por humanos para este sid,
+   * devolve essa entrada intacta (nunca sobrescrita). Caso contrário,
+   * devolve o registro recém-calculado.
+   */
+  function preserveReviewed(system, sid, freshRecord) {
+    const existing = existingContentBySystem[system] && existingContentBySystem[system][sid];
+    if (existing && existing.review &&
+        (existing.review.status === 'reviewed' || existing.review.status === 'approved')) {
+      return existing;
+    }
+    return freshRecord;
+  }
+
   // Content por sistema
   console.log('Construindo content/<system>.json...');
   const contentBySystem = {};
@@ -544,7 +574,7 @@ async function main() {
       aliases
     );
 
-    contentBySystem[system][realSid] = record;
+    contentBySystem[system][realSid] = preserveReviewed(system, realSid, record);
   }
 
   // Legacy leftovers
@@ -563,7 +593,7 @@ async function main() {
       aliases
     );
 
-    contentBySystem[system][leftover.sid] = record;
+    contentBySystem[system][leftover.sid] = preserveReviewed(system, leftover.sid, record);
   }
 
   // Reescrita de data files
