@@ -294,45 +294,57 @@ async function main() {
     }
   }
 
-  // --- Órgãos de referência do HRA (um asset lod0 por órgão) ------------
+  // --- Órgãos de referência do HRA (lod0 sempre; lod1 quando existir) ---
   for (const [key, entry] of Object.entries(config.organs || {})) {
-    const filePath = path.join(MODELS_DIR, entry.file);
-    if (!fs.existsSync(filePath)) {
-      console.warn(`[manifest] AVISO: ${filePath} não existe — órgão "${key}" ficará ausente do manifesto.`);
-      continue;
-    }
-    const { asset, nodes } = await buildAsset(io, {
-      filePath,
-      relPath: entry.file,
-      system: entry.system,
-      lod: 'lod0',
-      sex: entry.sex,
-      license: entry.license,
-      attribution: entry.attribution,
-      sourceUrl: entry.sourceUrl,
-      sourceVersion: entry.sourceVersion,
-      // Fase 1 (plano §3.4/§3.8): órgãos do HRA nunca alinhados por ICP
-      // ainda — transform/rmsError ficam null até a v2.
-      transform: null,
-      rmsError: null,
-    });
-    assets.push(asset);
-    totalBytes += asset.bytes;
-    perSystemBytes.hra = perSystemBytes.hra || {};
-    perSystemBytes.hra[key] = asset.bytes;
+    const organLodSpecs = [
+      { lod: 'lod0', rel: entry.file },
+      { lod: 'lod1', rel: entry.lod1File },
+    ].filter((s) => s.rel);
 
-    for (const n of nodes) {
-      structures.push({
-        sid: n.sid,
-        englishName: n.extras.englishName || stripSide(n.name),
-        latinName: n.extras.latinName || null,
+    for (const { lod, rel } of organLodSpecs) {
+      const filePath = path.join(MODELS_DIR, rel);
+      if (!fs.existsSync(filePath)) {
+        console.warn(`[manifest] AVISO: ${filePath} não existe — órgão "${key}"/${lod} ficará ausente do manifesto.`);
+        continue;
+      }
+      const { asset, nodes } = await buildAsset(io, {
+        filePath,
+        relPath: rel,
         system: entry.system,
-        layer: entry.layer || 'visceras',
-        parentCollection: entry.organId || key,
-        side: n.extras.side || extractSide(n.name) || null,
-        bbox: n.bbox,
-        source: 'hra',
+        lod,
+        sex: entry.sex,
+        license: entry.license,
+        attribution: entry.attribution,
+        sourceUrl: entry.sourceUrl,
+        sourceVersion: entry.sourceVersion,
+        // Fase 1 (plano §3.4/§3.8): órgãos do HRA nunca alinhados por ICP
+        // ainda — transform/rmsError ficam null até a v2.
+        transform: null,
+        rmsError: null,
       });
+      assets.push(asset);
+      totalBytes += asset.bytes;
+      perSystemBytes.hra = perSystemBytes.hra || {};
+      perSystemBytes.hra[key] = perSystemBytes.hra[key] || {};
+      perSystemBytes.hra[key][lod] = asset.bytes;
+
+      // structures.json só precisa de uma entrada por estrutura (não por
+      // LOD) — mesma regra usada acima para os sistemas do Z-Anatomy.
+      if (lod === 'lod0') {
+        for (const n of nodes) {
+          structures.push({
+            sid: n.sid,
+            englishName: n.extras.englishName || stripSide(n.name),
+            latinName: n.extras.latinName || null,
+            system: entry.system,
+            layer: entry.layer || 'visceras',
+            parentCollection: entry.organId || key,
+            side: n.extras.side || extractSide(n.name) || null,
+            bbox: n.bbox,
+            source: 'hra',
+          });
+        }
+      }
     }
   }
 

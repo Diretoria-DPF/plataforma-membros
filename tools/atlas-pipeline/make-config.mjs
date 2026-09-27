@@ -114,6 +114,8 @@ function buildOrgansConfig() {
   for (const r of resolved || []) {
     const glbName = `${r.key}.glb`;
     if (!fs.existsSync(path.join(HRA_DIR, glbName))) continue;
+    const lod1Name = `${r.key}.lod1.glb`;
+    const hasLod1 = fs.existsSync(path.join(HRA_DIR, lod1Name));
     const want = wantedByKey.get(r.key) || {};
     organs[r.key] = {
       organId: r.organId,
@@ -121,6 +123,10 @@ function buildOrgansConfig() {
       system: want.system || 'tegumentar',
       layer: want.layer || 'visceras',
       file: `hra/${glbName}`,
+      // LOD1 do HRA (retomada 27/09, pedido do orquestrador): antes
+      // optimize.mjs rodava com --no-lod1 para os órgãos; agora gera os
+      // dois níveis, como os sistemas do Z-Anatomy.
+      lod1File: hasLod1 ? `hra/${lod1Name}` : undefined,
       license: HRA_LICENSE,
       attribution: HRA_ATTRIBUTION,
       sourceUrl: r.sourceUrl,

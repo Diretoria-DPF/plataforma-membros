@@ -39,10 +39,23 @@
  *     a categoria "hra"); sem essa flag, a categoria é o próprio nome-base
  *     do arquivo (que já é o id do sistema, ex.: "digestorio.glb"), com
  *     fallback para "default";
- *   - `--no-lod1` pula a geração do LOD1 — usado para os órgãos do HRA, que
- *     entram no manifesto só como `lod: "lod0"` (build-manifest.mjs nunca
- *     cria um asset lod1 de órgão); gerar o LOD1 ali seria bytes desperdiçados
- *     no repositório, sem uso no manifesto.
+ *   - `--no-lod1` pula a geração do LOD1 (mantido para uso pontual/teste; o
+ *     workflow não passa mais essa flag para o HRA — ver §8e do SOURCES.md).
+ *
+ * Peso morto que NÃO é geometria (retomada 27/09, run #9, achado do
+ * orquestrador — ver SOURCES.md §8e): mesmo com o LOD0 simplificado para
+ * 3-6% dos triângulos originais, o tamanho do arquivo quase não caía. A
+ * causa real: `export_extras=True` no exportador do Blender leva TODAS as
+ * custom properties de cada objeto do `Startup.blend` (o Z-Anatomy embute
+ * metadados de referência em inglês por objeto, não só o que
+ * `export_systems.py` grava), e vários GLBs do HRA carregam atributos de
+ * vértice (`COLOR_0`, `TANGENT`, UVs extras) que o motor 3D nunca usa. Por
+ * isso `loadAndClean` agora chama `stripExtras` (mantém só
+ * `NODE_EXTRAS_ALLOWLIST` nos nós; zera extras em todo o resto do
+ * documento) e `stripUnusedAttributes` (só `POSITION`/`NORMAL`, e
+ * `TEXCOORD_0` apenas quando o material tem textura de verdade) ANTES de
+ * simplificar/quantizar — e loga o tamanho antes/depois para conferir o
+ * ganho por arquivo.
  *
  * Isolamento por processo (retomada 27/09, ver SOURCES.md §8d): a execução
  * #7/#8 mostrou que `simplify()` do meshoptimizer pode ficar MUITO mais lento
@@ -178,6 +191,127 @@ function annotateSide(document) {
   }
 }
 
+// Chaves de extras (custom properties do Blender/glTF) que build-manifest.mjs
+// de fato lê (deriveSid + structures.json) — ver grep feito antes de escrever
+// esta lista, para não quebrar nada silenciosamente:
+//   fmaId, side, englishName (deriveSid) e latinName, collection (structures).
+const NODE_EXTRAS_ALLOWLIST = ['system', 'layer', 'englishName', 'side', 'fmaId', 'latinName', 'collection'];
+
+/**
+ * Remove QUALQUER extra (custom property) que não esteja em
+ * `NODE_EXTRAS_ALLOWLIST`, em todo nó (recursivo) — e zera extras em todo o
+ * resto do documento (cenas, malhas, primitivas, materiais, texturas,
+ * buffers, accessors, animações, skins), onde nunca usamos extras.
+ *
+ * Achado da retomada 27/09 (orquestrador, run #9 — todos os sistemas +
+ * HRA, commit:false): mesmo com o LOD0 simplificado para 3-6% dos
+ * triângulos originais, o tamanho do arquivo praticamente não caía (ex.:
+ * articular.glb: 7,90 MB a ratio 1 → só 2,52 MB a ratio 0,031, uma
+ * simplificação de ~97% dos triângulos que só reduziu 68% dos bytes).
+ * Isso só é possível se boa parte do arquivo NÃO for geometria. O
+ * `Startup.blend` do Z-Anatomy é exportado com `export_extras=True`
+ * (necessário para levar nosso `system`/`layer`/`englishName`/`side`), mas
+ * essa opção do exportador do Blender leva TODAS as custom properties de
+ * cada objeto — e o Z-Anatomy embute, por objeto (são ~4500 objetos!),
+ * metadados de referência (texto em inglês, links, códigos de
+ * nomenclatura) que nosso pipeline de conteúdo (WP11) já busca de outra
+ * forma (Wikidata/Wikipedia/TA2) — não precisamos que o GLB os carregue
+ * também. `optimize.mjs` só geometriza; texto vem de `data/atlas/content/`.
+ */
+function stripExtras(document) {
+  const root = document.getRoot();
+
+  function stripNode(node) {
+    const extras = node.getExtras() || {};
+    const kept = {};
+    for (const key of NODE_EXTRAS_ALLOWLIST) {
+      if (extras[key] !== undefined) kept[key] = extras[key];
+    }
+    node.setExtras(kept);
+    for (const child of node.listChildren()) stripNode(child);
+  }
+
+  for (const scene of root.listScenes()) {
+    scene.setExtras?.({});
+    for (const node of scene.listChildren()) stripNode(node);
+  }
+  for (const mesh of root.listMeshes()) {
+    mesh.setExtras?.({});
+    for (const prim of mesh.listPrimitives()) prim.setExtras?.({});
+  }
+  for (const material of root.listMaterials()) material.setExtras?.({});
+  for (const texture of root.listTextures()) texture.setExtras?.({});
+  for (const buffer of root.listBuffers()) buffer.setExtras?.({});
+  for (const accessor of root.listAccessors()) accessor.setExtras?.({});
+  for (const animation of root.listAnimations()) animation.setExtras?.({});
+  for (const skin of root.listSkins()) skin.setExtras?.({});
+  root.setExtras?.({});
+}
+
+// Atributos de vértice que o motor 3D do atlas usa de verdade. TEXCOORD_0
+// só é mantido quando o material da primitiva de fato referencia uma
+// textura (senão é puro peso morto); os demais (COLOR_0, TANGENT,
+// TEXCOORD_1+, JOINTS_*, WEIGHTS_* — nenhuma malhas anatômicas estáticas
+// tem esqueleto/skinning) são descartados. `prune()` (chamado logo depois)
+// remove os accessors/buffers que ficarem sem nenhuma referência.
+const ATTRIBUTES_ALWAYS_KEEP = new Set(['POSITION', 'NORMAL']);
+
+function materialHasTexture(material) {
+  if (!material) return false;
+  return Boolean(
+    material.getBaseColorTexture() ||
+      material.getNormalTexture() ||
+      material.getEmissiveTexture() ||
+      material.getMetallicRoughnessTexture() ||
+      material.getOcclusionTexture()
+  );
+}
+
+function stripUnusedAttributes(document) {
+  let removed = 0;
+  for (const mesh of document.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) {
+      const keepTexcoord0 = materialHasTexture(prim.getMaterial());
+      for (const semantic of prim.listSemantics()) {
+        if (ATTRIBUTES_ALWAYS_KEEP.has(semantic)) continue;
+        if (semantic === 'TEXCOORD_0' && keepTexcoord0) continue;
+        prim.setAttribute(semantic, null);
+        removed++;
+      }
+    }
+  }
+  return removed;
+}
+
+/** Soma, em bytes, o texto de todos os extras de nó (JSON.stringify) — usado
+ * só para o diagnóstico de tamanho (medir antes/depois de `stripExtras`). */
+function measureNodeExtrasBytes(document) {
+  let bytes = 0;
+  function walk(node) {
+    bytes += JSON.stringify(node.getExtras() || {}).length;
+    for (const child of node.listChildren()) walk(child);
+  }
+  for (const scene of document.getRoot().listScenes()) {
+    for (const node of scene.listChildren()) walk(node);
+  }
+  return bytes;
+}
+
+/** Soma, em bytes brutos (sem compressão), os buffers de atributo de vértice
+ * de todas as primitivas — usado só para o diagnóstico de tamanho. */
+function measureAttributeBytes(document) {
+  let bytes = 0;
+  for (const mesh of document.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) {
+      for (const semantic of prim.listSemantics()) {
+        const acc = prim.getAttribute(semantic);
+        if (acc) bytes += acc.getCount() * acc.getElementSize() * acc.getComponentSize();
+      }
+    }
+  }
+  return bytes;
+}
+
 async function loadAndClean(filePath) {
   const io = new NodeIO()
     .registerExtensions([EXTMeshoptCompression, KHRMeshQuantization])
@@ -187,10 +321,28 @@ async function loadAndClean(filePath) {
   const removed = pruneNonMeshNodes(document);
   annotateSide(document);
 
+  // Diagnóstico de tamanho (retomada 27/09, ver stripExtras acima): mede
+  // ANTES de tirar extras/atributos não usados, para confirmar (ou não) a
+  // hipótese do orquestrador de que o peso morto não é geometria.
+  const extrasBefore = measureNodeExtrasBytes(document);
+  const attrBytesBefore = measureAttributeBytes(document);
+
+  stripExtras(document);
+  const attrsRemoved = stripUnusedAttributes(document);
+
+  const extrasAfter = measureNodeExtrasBytes(document);
+
   await document.transform(
     dedup(),
     weld({ tolerance: 0.0001 }),
     prune({ keepAttributes: false, keepLeaves: false })
+  );
+
+  const attrBytesAfter = measureAttributeBytes(document);
+  console.log(
+    `  [tamanho] extras de nó: ${(extrasBefore / 1024).toFixed(1)} KB → ${(extrasAfter / 1024).toFixed(1)} KB` +
+      ` | atributos de vértice (bruto): ${(attrBytesBefore / 1024 / 1024).toFixed(2)} MB → ${(attrBytesAfter / 1024 / 1024).toFixed(2)} MB` +
+      ` (${attrsRemoved} atributo(s) descartado(s) por primitiva)`
   );
 
   return { document, removedNonMesh: removed };
