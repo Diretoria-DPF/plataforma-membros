@@ -388,10 +388,27 @@ async function boot() {
   const modeInstances = new Map();
   const modeLoaders = {
     quiz: () => import('./modes/quiz.js').then((m) => m.createQuizMode({ bus, store: storeApi, getLabel: labelFor, loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`) })),
-    fisiologia: () => import('./modes/physiology.js').then((m) => m.createPhysiologyMode({ bus, registry, engine, loadProcesses: () => fetchJson(`${CONTENT_BASE}processes.json`), loadRoutes: () => fetchJson(`${CONTENT_BASE}routes.json`) })),
+    fisiologia: () => import('./modes/physiology.js').then((m) => m.createPhysiologyMode({
+      bus,
+      registry,
+      engine,
+      THREE,
+      getLabel: labelFor,
+      getBBoxCenter: (sid) => {
+        const bbox = registry.getBBox(sid);
+        if (!bbox) return null;
+        const center = bbox.getCenter(new THREE.Vector3());
+        return [center.x, center.y, center.z];
+      },
+      loadProcesses: () => fetchJson(`${CONTENT_BASE}processes.json`),
+      loadRoutes: () => fetchJson(`${CONTENT_BASE}routes.json`),
+    })),
     farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`) })),
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
-    estudo: () => import('./modes/study.js').then((m) => m.createStudyMode({ bus, getLabel: labelFor })),
+    estudo: () => import('./modes/study.js').then(async (m) => {
+      const { createStudyStore } = await import('./modes/study-store.js');
+      return m.createStudyMode({ bus, store: createStudyStore(), getLabel: labelFor });
+    }),
   };
 
   let currentMode = null;

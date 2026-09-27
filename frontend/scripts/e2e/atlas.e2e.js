@@ -209,16 +209,7 @@ module.exports = async function atlas() {
     // ------------------------------------------------------------------
     // 7) Zero erro de página
     // ------------------------------------------------------------------
-    // GAP conhecido (task_804d3eca, reportado ao orquestrador): entrar nos
-    // modos "fisiologia" (js/modes/physiology.js usa `THREE` sem importar)
-    // e "estudo" (js/modes/study.js usa `studyStore` sem instanciar) lança
-    // um erro de página real — bug do produto, não deste teste. Filtra só
-    // essas duas assinaturas conhecidas para não mascarar nenhum outro erro
-    // novo; remover este filtro quando task_804d3eca for resolvida.
-    const KNOWN_MODE_BUGS = [/MeshBasicMaterial/, /isPersistent/];
-    const unexpectedErrors = app.errors.filter((e) => !KNOWN_MODE_BUGS.some((re) => re.test(e)));
-    check(unexpectedErrors.length === 0, 'atlas: sem erros de JavaScript inesperados' + (unexpectedErrors.length ? ': ' + unexpectedErrors.join(' | ') : '')
-      + (app.errors.length !== unexpectedErrors.length ? ` (${app.errors.length - unexpectedErrors.length} erro(s) conhecido(s) filtrado(s) — ver task_804d3eca)` : ''));
+    check(app.errors.length === 0, 'atlas: sem erros de JavaScript inesperados' + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));
   } finally {
     await app.close();
   }
