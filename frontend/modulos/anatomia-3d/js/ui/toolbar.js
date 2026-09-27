@@ -23,7 +23,7 @@
   /**
    * Cria a toolbar
    */
-  function createToolbar(container, { bus, store, onOpenLayers, onToggleFullscreen, onOpenCredits }) {
+  function createToolbar(container, { bus, store, EVENTS, onOpenLayers, onToggleFullscreen, onOpenCredits }) {
     const storeState = store.get();
 
     // Estado inicial do local
@@ -52,10 +52,10 @@
         const sel = store.get().selectedSid;
         if (!sel) return;
         if (localState.isolation.active === 'isolate' && localState.isolation.sid === sel) {
-          bus.emit('visibility:reset', {});
+          bus.emit(EVENTS.VISIBILITY_RESET, {});
           localState.isolation = { active: 'none', sid: null };
         } else {
-          bus.emit('visibility:isolate', { sid: sel });
+          bus.emit(EVENTS.VISIBILITY_ISOLATE, { sid: sel });
           localState.isolation = { active: 'isolate', sid: sel };
         }
         updateIolarBtnState();
@@ -70,61 +70,30 @@
       'aria-pressed': localState.xray ? 'true' : 'false',
       onClick: () => {
         localState.xray = !localState.xray;
-        bus.emit('xray:set', { enabled: localState.xray });
+        bus.emit(EVENTS.XRAY_SET, { enabled: localState.xray });
         updateXrayBtnState();
       },
     }, '☠');
     toolbarEl.appendChild(xrayBtn);
 
-    // Botão Corte com submenu
+    // Botão Corte — cicla entre planos: null → sagital → coronal → transversal → null
     const corteBtn = h('button', {
       className: 'atlas-toolbar-btn',
       'aria-label': 'Corte',
-      onClick: (e) => {
-        toggleCorteMenu(e.currentTarget);
+      onClick: () => {
+        const planes = [null, 'sagital', 'coronal', 'transversal'];
+        const currentIndex = planes.indexOf(localState.clipPlane);
+        const nextIndex = (currentIndex + 1) % planes.length;
+        localState.clipPlane = planes[nextIndex];
+        localState.clipOffset = 0;
+        bus.emit(EVENTS.CLIP_SET, { plane: localState.clipPlane, offset: 0 });
+        updateClipState();
       },
     }, '✂');
     toolbarEl.appendChild(corteBtn);
 
-    // Container para o painel de corte (offset slider + menu)
+    // Container para o painel de corte (slider de offset)
     const cortePanel = h('div', { className: 'atlas-corte-panel' }, []);
-
-    // Menu de seleção de plano
-    const corteMenu = h('div', { className: 'atlas-corte-menu' }, [
-      h('button', {
-        className: 'atlas-corte-option',
-        onClick: () => {
-          localState.clipPlane = null;
-          bus.emit('clip:set', { plane: null, offset: null });
-          updateClipState();
-          cortePanel.style.display = 'none';
-        },
-      }, 'Nenhum'),
-      h('button', {
-        className: 'atlas-corte-option',
-        onClick: () => {
-          localState.clipPlane = 'sagital';
-          bus.emit('clip:set', { plane: 'sagital', offset: 0 });
-          updateClipState();
-        },
-      }, 'Sagital'),
-      h('button', {
-        className: 'atlas-corte-option',
-        onClick: () => {
-          localState.clipPlane = 'coronal';
-          bus.emit('clip:set', { plane: 'coronal', offset: 0 });
-          updateClipState();
-        },
-      }, 'Coronal'),
-      h('button', {
-        className: 'atlas-corte-option',
-        onClick: () => {
-          localState.clipPlane = 'transversal';
-          bus.emit('clip:set', { plane: 'transversal', offset: 0 });
-          updateClipState();
-        },
-      }, 'Transversal'),
-    ]);
 
     // Slider de offset (mostrado só se houver plano ativo)
     const clipSlider = h('input', {
@@ -137,11 +106,10 @@
       style: { display: 'none' },
       onInput: (e) => {
         localState.clipOffset = parseFloat(e.currentTarget.value);
-        bus.emit('clip:set', { plane: localState.clipPlane, offset: localState.clipOffset });
+        bus.emit(EVENTS.CLIP_SET, { plane: localState.clipPlane, offset: localState.clipOffset });
       },
     });
 
-    cortePanel.appendChild(corteMenu);
     cortePanel.appendChild(clipSlider);
     toolbarEl.appendChild(cortePanel);
 
@@ -150,8 +118,8 @@
       className: 'atlas-toolbar-btn',
       'aria-label': 'Reset',
       onClick: () => {
-        bus.emit('visibility:reset', {});
-        bus.emit('view:reset', {});
+        bus.emit(EVENTS.VISIBILITY_RESET, {});
+        bus.emit(EVENTS.VIEW_RESET, {});
         localState.isolation = { active: 'none', sid: null };
         localState.clipPlane = null;
         localState.clipOffset = 0;
@@ -176,42 +144,42 @@
       h('button', {
         className: 'atlas-more-option',
         onClick: () => {
-          bus.emit('view:preset', { name: 'anterior' });
+          bus.emit(EVENTS.VIEW_PRESET, { name: 'anterior' });
           moreMenu.style.display = 'none';
         },
       }, 'Anterior'),
       h('button', {
         className: 'atlas-more-option',
         onClick: () => {
-          bus.emit('view:preset', { name: 'posterior' });
+          bus.emit(EVENTS.VIEW_PRESET, { name: 'posterior' });
           moreMenu.style.display = 'none';
         },
       }, 'Posterior'),
       h('button', {
         className: 'atlas-more-option',
         onClick: () => {
-          bus.emit('view:preset', { name: 'esquerda' });
+          bus.emit(EVENTS.VIEW_PRESET, { name: 'esquerda' });
           moreMenu.style.display = 'none';
         },
       }, 'Esquerda'),
       h('button', {
         className: 'atlas-more-option',
         onClick: () => {
-          bus.emit('view:preset', { name: 'direita' });
+          bus.emit(EVENTS.VIEW_PRESET, { name: 'direita' });
           moreMenu.style.display = 'none';
         },
       }, 'Direita'),
       h('button', {
         className: 'atlas-more-option',
         onClick: () => {
-          bus.emit('view:preset', { name: 'superior' });
+          bus.emit(EVENTS.VIEW_PRESET, { name: 'superior' });
           moreMenu.style.display = 'none';
         },
       }, 'Superior'),
       h('button', {
         className: 'atlas-more-option',
         onClick: () => {
-          bus.emit('view:preset', { name: 'inferior' });
+          bus.emit(EVENTS.VIEW_PRESET, { name: 'inferior' });
           moreMenu.style.display = 'none';
         },
       }, 'Inferior'),
@@ -219,7 +187,7 @@
         className: 'atlas-more-option',
         onClick: () => {
           const labelsEnabled = store.get().labels !== false;
-          bus.emit('labels:set', { enabled: !labelsEnabled });
+          bus.emit(EVENTS.LABELS_SET, { enabled: !labelsEnabled });
           moreMenu.style.display = 'none';
         },
       }, 'Rótulos'),
@@ -264,31 +232,31 @@
       if (key === 'h') {
         e.preventDefault();
         const sel = store.get().selectedSid;
-        if (sel) bus.emit('visibility:hide', { sid: sel });
+        if (sel) bus.emit(EVENTS.VISIBILITY_HIDE, { sid: sel });
       } else if (key === 'i') {
         e.preventDefault();
         const sel = store.get().selectedSid;
         if (sel) {
           if (localState.isolation.active === 'isolate' && localState.isolation.sid === sel) {
-            bus.emit('visibility:reset', {});
+            bus.emit(EVENTS.VISIBILITY_RESET, {});
           } else {
-            bus.emit('visibility:isolate', { sid: sel });
+            bus.emit(EVENTS.VISIBILITY_ISOLATE, { sid: sel });
           }
         }
       } else if (key === 'x') {
         e.preventDefault();
         localState.xray = !localState.xray;
-        bus.emit('xray:set', { enabled: localState.xray });
+        bus.emit(EVENTS.XRAY_SET, { enabled: localState.xray });
       } else if (key === 'escape') {
         e.preventDefault();
         // Fechar menus primeiro
         cortePanel.style.display = 'none';
         moreMenu.style.display = 'none';
         // Depois limpar seleção
-        bus.emit('structure:select', { sid: null, source: 'api' });
+        bus.emit(EVENTS.STRUCTURE_SELECT, { sid: null, source: 'api' });
       } else if (key === '/') {
         e.preventDefault();
-        bus.emit('search:open', {});
+        bus.emit(EVENTS.SEARCH_OPEN, {});
       }
     }
 
@@ -316,11 +284,6 @@
         clipSlider.style.display = 'none';
         corteBtn.textContent = '✂';
       }
-    }
-
-    function toggleCorteMenu(btn) {
-      const displayed = cortePanel.style.display === 'block';
-      cortePanel.style.display = displayed ? 'none' : 'block';
     }
 
     function toggleMoreMenu(btn) {

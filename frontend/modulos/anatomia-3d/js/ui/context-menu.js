@@ -1,7 +1,7 @@
 /**
  * context-menu.js — menu de contexto flutuante
  *
- * Exporta `createContextMenu({bus, getLabel})` que retorna
+ * Exporta `createContextMenu({bus, EVENTS, getLabel})` que retorna
  * `{open({client:{x,y}, sid}), close(), dispose()}`.
  */
 
@@ -13,7 +13,7 @@
   /**
    * Cria um menu de contexto
    */
-  function createContextMenu({ bus, getLabel }) {
+  function createContextMenu({ bus, EVENTS, getLabel }) {
     let currentSid = null;
     let isOpen = false;
 
@@ -72,7 +72,7 @@
         },
         onClick: () => {
           if (currentSid) {
-            bus.emit('visibility:isolate', { sid: currentSid });
+            bus.emit(EVENTS.VISIBILITY_ISOLATE, { sid: currentSid });
             close();
           }
         },
@@ -103,7 +103,7 @@
         },
         onClick: () => {
           if (currentSid) {
-            bus.emit('visibility:hide', { sid: currentSid });
+            bus.emit(EVENTS.VISIBILITY_HIDE, { sid: currentSid });
             close();
           }
         },
@@ -134,7 +134,7 @@
         },
         onClick: () => {
           if (currentSid) {
-            bus.emit('visibility:ghost', { sid: currentSid });
+            bus.emit(EVENTS.VISIBILITY_GHOST, { sid: currentSid });
             close();
           }
         },
@@ -165,7 +165,7 @@
         },
         onClick: () => {
           if (currentSid) {
-            bus.emit('structure:select', { sid: currentSid, source: 'api' });
+            bus.emit(EVENTS.STRUCTURE_SELECT, { sid: currentSid, source: 'api' });
             close();
           }
         },

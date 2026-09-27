@@ -71,6 +71,7 @@
     const toolbarDispose = window.createToolbar(toolbarContainer, {
       bus,
       store,
+      EVENTS,
       onOpenLayers: () => logEvent('onOpenLayers', {}),
       onToggleFullscreen: () => logEvent('onToggleFullscreen', {}),
       onOpenCredits: () => logEvent('onOpenCredits', {}),
@@ -84,6 +85,7 @@
   contextMenuScript.onload = () => {
     const contextMenu = window.createContextMenu({
       bus,
+      EVENTS,
       getLabel: (sid) => sid === 'fma:7088' ? 'Coração' : sid,
     });
 
