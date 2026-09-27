@@ -20,7 +20,7 @@ const { check, loadPlaywright, startStaticServer } = require('./harness');
 const ATLAS_PATH = 'modulos/anatomia-3d/v2.html';
 
 const HOST_HTML = `<!doctype html>
-<html><head><meta charset="utf-8"><title>host de teste</title></head>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>host de teste</title></head>
 <body style="margin:0;background:#000;">
 <script>
   window.__e2eTheme = window.__e2eTheme || 'light';
@@ -55,6 +55,7 @@ async function openAtlasFrame(page, baseUrl) {
 async function watchSheetSnaps(frame) {
   await frame.evaluate(() => {
     window.__e2eSheetSnaps = [];
+    window.__e2ePickSnapDebug = [];
     return import('./js/core/bus.js').then((bus) => {
       bus.on(bus.EVENTS.SHEET_SNAP, (payload) => window.__e2eSheetSnaps.push(payload));
     });
@@ -77,13 +78,66 @@ async function dragHandleBy(page, frame, deltaY, steps = 16) {
   const box = await frame.locator('#atlas-sheet-handle').boundingBox();
   const x = box.x + box.width / 2;
   const y = box.y + box.height / 2;
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  for (let i = 1; i <= steps; i++) {
-    await page.mouse.move(x, y + (deltaY * i) / steps);
-    await page.waitForTimeout(12); // baixa velocidade de propósito: decide por posição, não por flick (§2.3)
+
+  // Dispara eventos pointer diretamente no frame (não via page.mouse, que não alcança o iframe)
+  const pointerId = Math.random() * 10000 | 0;
+
+  // Dispara pointerdown
+  await frame.evaluate(([startX, startY, pId]) => {
+    window.__e2eDragLog = [];
+    const handle = document.getElementById('atlas-sheet-handle');
+    window.__e2eDragLog.push(`pointerdown: clientY=${startY}`);
+    // Registra o estado inicial antes do drag
+    window.__e2eDragInitialState = {
+      state: document.getElementById('atlas-sheet').getAttribute('data-sheet-state'),
+      height: document.getElementById('atlas-sheet').getBoundingClientRect().height
+    };
+    handle.dispatchEvent(new PointerEvent('pointerdown', {
+      clientX: startX, clientY: startY, pointerId: pId, isPrimary: true,
+      bubbles: true, cancelable: true
+    }));
+    try { handle.setPointerCapture(pId); } catch (e) {}
+  }, [x, y, pointerId]);
+
+  // Dispara pointermove em passos com delays
+  const stepCount = steps * 2; // Aumenta passos para reduzir velocidade
+  for (let i = 1; i <= stepCount; i++) {
+    const currentY = y + (deltaY * i) / stepCount;
+    await frame.evaluate(([startX, cy, pId]) => {
+      const handle = document.getElementById('atlas-sheet-handle');
+      window.__e2eDragLog.push(`pointermove: clientY=${cy}`);
+      handle.dispatchEvent(new PointerEvent('pointermove', {
+        clientX: startX, clientY: cy, pointerId: pId, isPrimary: true,
+        bubbles: true, cancelable: true
+      }));
+    }, [x, currentY, pointerId]);
+    await page.waitForTimeout(50);
   }
-  await page.mouse.up();
+
+  // Dispara pointerup
+  const result = await frame.evaluate(([startX, endY, pId]) => {
+    const handle = document.getElementById('atlas-sheet-handle');
+    window.__e2eDragLog.push(`pointerup: clientY=${endY}`);
+    handle.dispatchEvent(new PointerEvent('pointerup', {
+      clientX: startX, clientY: endY, pointerId: pId, isPrimary: true,
+      bubbles: true, cancelable: true
+    }));
+    const snapDebugArray = window.__e2ePickSnapDebug;
+    return { log: window.__e2eDragLog, state: document.getElementById('atlas-sheet').getAttribute('data-sheet-state'), snapDebugArray };
+  }, [x, y + deltaY, pointerId]);
+
+  // Log para diagnóstico
+  if (result.log && result.log.length > 0) {
+    console.log(`[DRAG] startY=${y}, endY=${y + deltaY}, deltaY=${deltaY}, steps=${stepCount}, final state=${result.state}`);
+    console.log(`[DRAG] moves: first=${result.log[1]}, last=${result.log[result.log.length - 2]}`);
+    if (result.snapDebugArray && result.snapDebugArray.length > 0) {
+      const snap = result.snapDebugArray[result.snapDebugArray.length - 1];
+      console.log(`[SNAP] startState=${snap.startState}, endHeight=${snap.endHeight}, velocity=${snap.velocity}, projected=${snap.projected}, target=${snap.target}, dist=${snap.dragDistance}`);
+    }
+  }
+
+  // Aguarda a transição da altura (motion-sheet = 200ms)
+  await page.waitForTimeout(250);
 }
 
 module.exports = async function atlasResponsive() {
@@ -130,19 +184,19 @@ module.exports = async function atlasResponsive() {
       state = await frame.evaluate(() => document.getElementById('atlas-sheet').getAttribute('data-sheet-state'));
       check(state === 'full', `390×844: arraste lento da alça encaixa em "full" (veio "${state}")`);
 
-      await dragHandleBy(page, frame, 700); // full → volta perto de peek(96)
+      await dragHandleBy(page, frame, 700); // full → com regra "sem pulo" (velocidade baixa), para em half
       state = await frame.evaluate(() => document.getElementById('atlas-sheet').getAttribute('data-sheet-state'));
-      check(state === 'peek', `390×844: arraste lento da alça encaixa de volta em "peek" (veio "${state}")`);
+      check(state === 'half', `390×844: arraste lento da alça com "sem pulo" encaixa em "half" (veio "${state}")`);
 
       const snaps = await frame.evaluate(() => window.__e2eSheetSnaps);
       check(snaps.length >= 3 && snaps.every((s) => typeof s.heightPx === 'number' && ['peek', 'half', 'full'].includes(s.state)),
         `390×844: cada encaixe emitiu sheet:snap com {state, heightPx} (${snaps.length} eventos)`);
 
-      // Teclado: Enter na alça cicla peek→half.
+      // Teclado: Enter na alça cicla half→full.
       await frame.locator('#atlas-sheet-handle').focus();
       await page.keyboard.press('Enter');
       state = await frame.evaluate(() => document.getElementById('atlas-sheet').getAttribute('data-sheet-state'));
-      check(state === 'half', `390×844: Enter na alça cicla o estado (peek→half, veio "${state}")`);
+      check(state === 'full', `390×844: Enter na alça cicla o estado (half→full, veio "${state}")`);
       await page.keyboard.press('Escape');
       state = await frame.evaluate(() => document.getElementById('atlas-sheet').getAttribute('data-sheet-state'));
       check(state === 'peek', `390×844: Esc na alça volta para "peek" (veio "${state}")`);

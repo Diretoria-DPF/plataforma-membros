@@ -43,6 +43,20 @@
  *     entram no manifesto só como `lod: "lod0"` (build-manifest.mjs nunca
  *     cria um asset lod1 de órgão); gerar o LOD1 ali seria bytes desperdiçados
  *     no repositório, sem uso no manifesto.
+ *
+ * Isolamento por processo (retomada 27/09, ver SOURCES.md §8d): a execução
+ * #7/#8 mostrou que `simplify()` do meshoptimizer pode ficar MUITO mais lento
+ * do que um benchmark sintético sugere para certos GLBs reais do Z-Anatomy
+ * (hipótese: geometria não-manifold/muitas primitivas — não reproduzido
+ * localmente). Como é uma chamada WASM síncrona, ela BLOQUEIA o event loop —
+ * um `setTimeout`/`Promise.race` dentro do mesmo processo nunca dispara
+ * enquanto ela roda, então não dá para interromper de dentro. Por isso, cada
+ * arquivo é processado num PROCESSO FILHO separado (`execFileSync` chamando
+ * este mesmo script com `--single-file <arquivo>`), com um timeout de
+ * verdade (`--file-timeout-ms`, padrão 90000): se o filho passar do tempo, o
+ * SO manda SIGTERM nele e o pai continua para o próximo arquivo, registrando
+ * um aviso bem visível — o sistema/órgão fica ausente do manifesto nesta
+ * execução ("indisponível", plano §3.5) em vez de travar o job inteiro.
  */
 
 import { Document, NodeIO } from '@gltf-transform/core';
@@ -57,11 +71,13 @@ import {
 } from '@gltf-transform/functions';
 import { EXTMeshoptCompression, KHRMeshQuantization } from '@gltf-transform/extensions';
 import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from 'meshoptimizer';
+import { execFileSync } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const args = parseArgs(process.argv.slice(2));
 const IN_DIR = args.in;
@@ -73,10 +89,15 @@ const BUDGET_CATEGORY = typeof args['budget-category'] === 'string' ? args['budg
 const BUDGETS_PATH =
   args.budgets ||
   path.join(__dirname, '../../frontend/modulos/anatomia-3d/data/atlas/schema/budgets.json');
+// Arquivo único a processar (uso interno — ver "Isolamento por processo" mais
+// abaixo). Sem essa flag, o script roda no modo normal (todos os .glb/.gltf
+// de --in).
+const SINGLE_FILE = typeof args['single-file'] === 'string' ? args['single-file'] : null;
+const FILE_TIMEOUT_MS = args['file-timeout-ms'] ? Number(args['file-timeout-ms']) : 90000;
 
 if (!IN_DIR || !OUT_DIR) {
   console.error(
-    'Uso: node optimize.mjs --in <dir> --out <dir> [--lod1-ratio 0.25] [--budgets <arquivo>] [--budget-category <chave>] [--no-lod1] [--dry-run]'
+    'Uso: node optimize.mjs --in <dir> --out <dir> [--lod1-ratio 0.25] [--budgets <arquivo>] [--budget-category <chave>] [--no-lod1] [--file-timeout-ms 90000] [--dry-run]'
   );
   process.exit(1);
 }
@@ -283,9 +304,80 @@ function countTriangles(document) {
   return total;
 }
 
+/** Processa UM arquivo (chamado tanto no modo filho quanto, no modo antigo
+ * de teste local sem isolamento, diretamente) e devolve a entrada de
+ * relatório para esse arquivo. */
+async function processOneFile(file) {
+  const inPath = path.join(IN_DIR, file);
+  const baseName = file.replace(/\.(glb|gltf)$/i, '');
+  const tFile = Date.now();
+  console.log(`\n=== ${file} ===`);
+
+  const { document, removedNonMesh } = await loadAndClean(inPath);
+  console.log(`  nós não-malha removidos: ${removedNonMesh}`);
+
+  const budget = budgetForFile(baseName);
+
+  const lod0Path = path.join(OUT_DIR, `${baseName}.glb`);
+  const lod0 = await writeLodAdaptive(document, lod0Path, {
+    targetBytes: budget?.lod0 ?? null,
+    maxRatio: 1,
+  });
+  console.log(
+    `  LOD0: ${(lod0.bytes / 1024 / 1024).toFixed(2)} MB, ${lod0.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod0.ratio.toFixed(3)})`
+  );
+
+  let lod1 = null;
+  let lod1Path = null;
+  if (!NO_LOD1) {
+    lod1Path = path.join(OUT_DIR, `${baseName}.lod1.glb`);
+    lod1 = await writeLodAdaptive(document, lod1Path, {
+      targetBytes: budget?.lod1 ?? null,
+      maxRatio: LOD1_RATIO,
+    });
+    console.log(
+      `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB, ${lod1.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod1.ratio.toFixed(3)})`
+    );
+  }
+  console.log(`  (${file} levou ${((Date.now() - tFile) / 1000).toFixed(1)}s no total)`);
+
+  return {
+    name: baseName,
+    lod0: { path: path.relative(OUT_DIR, lod0Path), ...lod0 },
+    lod1: lod1 ? { path: path.relative(OUT_DIR, lod1Path), ...lod1 } : undefined,
+  };
+}
+
+/** Monta os argumentos para o processo filho de um arquivo (repassa exatamente as flags relevantes desta execução). */
+function childArgsFor(filePath) {
+  const out = [
+    __filename,
+    '--in', IN_DIR,
+    '--out', OUT_DIR,
+    '--single-file', filePath,
+    '--lod1-ratio', String(LOD1_RATIO),
+    '--budgets', BUDGETS_PATH,
+  ];
+  if (BUDGET_CATEGORY) out.push('--budget-category', BUDGET_CATEGORY);
+  if (NO_LOD1) out.push('--no-lod1');
+  if (DRY_RUN) out.push('--dry-run');
+  return out;
+}
+
 async function main() {
   await MeshoptEncoder.ready;
   await MeshoptSimplifier.ready;
+
+  // Modo filho: processa só o arquivo pedido e grava o resultado num JSON
+  // (o pai lê e apaga) — stdout/stderr continuam indo direto pro terminal
+  // (stdio: 'inherit' no pai), então os logs de progresso aparecem em tempo
+  // real no CI como sempre.
+  if (SINGLE_FILE) {
+    fs.mkdirSync(OUT_DIR, { recursive: true });
+    const entry = await processOneFile(path.basename(SINGLE_FILE));
+    fs.writeFileSync(path.join(OUT_DIR, `.result-${entry.name}.json`), JSON.stringify(entry));
+    return;
+  }
 
   const files = fs
     .readdirSync(IN_DIR)
@@ -296,54 +388,46 @@ async function main() {
     return;
   }
 
+  fs.mkdirSync(OUT_DIR, { recursive: true });
   const report = [];
+  const dropped = [];
 
   for (const file of files) {
-    const inPath = path.join(IN_DIR, file);
     const baseName = file.replace(/\.(glb|gltf)$/i, '');
-    const tFile = Date.now();
-    console.log(`\n=== ${file} ===`);
+    const resultPath = path.join(OUT_DIR, `.result-${baseName}.json`);
+    fs.rmSync(resultPath, { force: true }); // resto de uma execução anterior, se houver
 
-    const { document, removedNonMesh } = await loadAndClean(inPath);
-    console.log(`  nós não-malha removidos: ${removedNonMesh}`);
-
-    const budget = budgetForFile(baseName);
-
-    const lod0Path = path.join(OUT_DIR, `${baseName}.glb`);
-    const lod0 = await writeLodAdaptive(document, lod0Path, {
-      targetBytes: budget?.lod0 ?? null,
-      maxRatio: 1,
-    });
-    console.log(
-      `  LOD0: ${(lod0.bytes / 1024 / 1024).toFixed(2)} MB, ${lod0.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod0.ratio.toFixed(3)})`
-    );
-
-    let lod1 = null;
-    let lod1Path = null;
-    if (!NO_LOD1) {
-      lod1Path = path.join(OUT_DIR, `${baseName}.lod1.glb`);
-      lod1 = await writeLodAdaptive(document, lod1Path, {
-        targetBytes: budget?.lod1 ?? null,
-        maxRatio: LOD1_RATIO,
+    try {
+      execFileSync(process.execPath, childArgsFor(path.join(IN_DIR, file)), {
+        stdio: 'inherit',
+        timeout: FILE_TIMEOUT_MS,
+        cwd: process.cwd(),
       });
-      console.log(
-        `  LOD1: ${(lod1.bytes / 1024 / 1024).toFixed(2)} MB, ${lod1.triangles.toLocaleString('pt-BR')} triângulos (ratio ${lod1.ratio.toFixed(3)})`
-      );
+    } catch (err) {
+      if (err.signal || err.killed) {
+        console.warn(
+          `\nAVISO: ${file} passou de ${(FILE_TIMEOUT_MS / 1000).toFixed(0)}s e foi ABANDONADO (processo filho morto com ${err.signal || 'timeout'}) — ` +
+            `esse sistema/órgão fica ausente do manifesto NESTA execução (\"indisponível\", plano §3.5). Rever com mais tempo/CPU depois.`
+        );
+        dropped.push(file);
+        continue;
+      }
+      throw err; // erro real (não timeout) — propaga, não mascara.
     }
-    console.log(`  (${file} levou ${((Date.now() - tFile) / 1000).toFixed(1)}s no total)`);
 
-    report.push({
-      name: baseName,
-      lod0: { path: path.relative(OUT_DIR, lod0Path), ...lod0 },
-      lod1: lod1 ? { path: path.relative(OUT_DIR, lod1Path), ...lod1 } : undefined,
-    });
+    if (!fs.existsSync(resultPath)) {
+      console.warn(`AVISO: ${file} terminou mas não gravou resultado esperado (${resultPath}) — pulando.`);
+      dropped.push(file);
+      continue;
+    }
+    report.push(JSON.parse(fs.readFileSync(resultPath, 'utf8')));
+    fs.rmSync(resultPath, { force: true });
   }
 
   if (!DRY_RUN) {
-    fs.mkdirSync(OUT_DIR, { recursive: true });
     fs.writeFileSync(
       path.join(OUT_DIR, 'optimize-report.json'),
-      JSON.stringify(report, null, 2)
+      JSON.stringify({ report, dropped }, null, 2)
     );
   }
 
@@ -351,6 +435,9 @@ async function main() {
   for (const r of report) {
     const lod1Str = r.lod1 ? `${(r.lod1.bytes / 1024 / 1024).toFixed(2)} MB` : '(sem LOD1)';
     console.log(`  ${r.name}: LOD0 ${(r.lod0.bytes / 1024 / 1024).toFixed(2)} MB / LOD1 ${lod1Str}`);
+  }
+  if (dropped.length > 0) {
+    console.warn(`\nAVISO: ${dropped.length} arquivo(s) abandonado(s) por tempo/erro: ${dropped.join(', ')}`);
   }
 }
 

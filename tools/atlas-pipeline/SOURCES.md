@@ -337,12 +337,31 @@ tentativa nos GLBs de verdade do Z-Anatomy parece ser bem maior do que o
 esperado (hipótese: centenas de primitivas por material, geometria
 não-manifold típica de malhas médicas segmentadas — não foi possível
 reproduzir localmente, a sandbox não baixa o `Startup.blend`).
-**Correção:** `writeLodAdaptive` agora tem um limite de tempo por LOD
-(`maxMillis`, 30s por padrão) — se estourar, para com o melhor resultado
-obtido até ali (mesmo acima do orçamento; `validate.mjs` reporta, o que é
-preferível a um CI que nunca termina), reduz `attempts` de 5 para 3 e cada
-tentativa registra o tempo gasto no log (para diagnosticar de verdade na
-próxima execução, em vez de suposição).
+**Correção (1ª tentativa, execução #8, ainda insuficiente):** `writeLodAdaptive`
+ganhou um limite de tempo por LOD (`maxMillis`, 30s) entre tentativas — mas a
+execução #8 também passou de 20+ minutos sem terminar. Causa raiz: a
+checagem de tempo só roda ANTES de cada tentativa; `simplify()` do
+meshoptimizer é uma chamada WASM SÍNCRONA que bloqueia o event loop
+inteiro — se UMA tentativa já demorar muito, nada dentro do mesmo processo
+consegue interromper ou nem perceber isso a tempo (`setTimeout`/
+`Promise.race` não disparam com o loop bloqueado). Execução #8 também
+cancelada manualmente.
+
+**Correção definitiva (execução #9): isolamento por processo.** Cada
+arquivo agora roda num PROCESSO FILHO separado — `optimize.mjs` chama a si
+mesmo (`execFileSync` com `--single-file <arquivo>`) com um timeout de
+verdade (`--file-timeout-ms`, padrão 90s) garantido pelo sistema
+operacional, não pelo JavaScript: se o filho passar do tempo, o SO manda
+SIGTERM nele (funciona mesmo se o processo estiver preso numa chamada WASM
+síncrona), o pai captura o erro, registra um AVISO bem visível e segue para
+o próximo arquivo — o sistema/órgão fica ausente do manifesto nesta
+execução ("indisponível", plano §3.5) em vez de travar o job inteiro.
+Testado localmente com um timeout propositalmente baixíssimo (5ms): os 3
+arquivos de fixture foram abandonados corretamente, com aviso, e o job
+terminou com código de saída 0. `attempts` continua em 3, e cada tentativa
+registra o tempo gasto no log — a próxima execução real vai finalmente
+mostrar, por arquivo, se algum sistema precisa de mais tempo (ou de uma
+investigação separada do GLB bruto).
 
 **Pendência a observar na próxima execução:** `skin-female.glb` (e
 possivelmente `brain-female`/`lung-female`) podem ter textura/cor de

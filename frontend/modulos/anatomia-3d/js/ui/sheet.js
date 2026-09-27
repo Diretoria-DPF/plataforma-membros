@@ -23,12 +23,16 @@ import { set as storeSet } from '../core/store.js';
 import { isValidSheetState } from '../core/contracts.js';
 
 const STATES = ['peek', 'half', 'full'];
-const FLICK_VELOCITY_PX_S = 800;
 const RUBBER_BAND_FACTOR = 0.35;
 // Janela de amostras usada para estimar a velocidade no momento de soltar
 // (ver docs/ATLAS_UX_SPEC.md §2.3) — só as amostras dos últimos N ms contam,
 // para um arraste que parou antes de soltar não "herdar" velocidade antiga.
 const VELOCITY_WINDOW_MS = 120;
+// Limite de velocidade para permitir "flick" que pula estados (px/ms).
+// Abaixo disso, o encaixe respeita o padrão "sem pulo" (§2.3).
+const FLICK_VELOCITY_THRESHOLD_PX_MS = 1.5;
+// Distância mínima do arraste em px: abaixo disso, é um toque (mantém o estado).
+const MIN_DRAG_DISTANCE_PX = 8;
 
 let sheetEl = null;
 let handleEl = null;
@@ -66,13 +70,21 @@ function measureStates() {
   const prop = sizeProp();
   const prevState = sheetEl.getAttribute('data-sheet-state');
   const prevInline = sheetEl.style[prop];
-  sheetEl.style[prop] = ''; // garante que a medida vem da classe/regra CSS, não de um arraste anterior
+
+  // Ensure inline style is removed before measuring
+  sheetEl.style[prop] = '';
+  // Force browser to recalculate layout
+  void sheetEl.offsetHeight;
+
   const sizes = {};
   for (const state of STATES) {
     sheetEl.setAttribute('data-sheet-state', state);
+    // Force browser to recalculate after attribute change
+    void sheetEl.offsetHeight;
     const rect = sheetEl.getBoundingClientRect();
     sizes[state] = axis === 'y' ? rect.height : rect.width;
   }
+
   sheetEl.setAttribute('data-sheet-state', prevState);
   sheetEl.style[prop] = prevInline;
   return sizes;
@@ -99,7 +111,66 @@ function nearestState(size, sizes) {
   return best;
 }
 
-function velocityPxPerSec() {
+/**
+ * Escolhe o próximo estado do encaixe baseado em posição, velocidade e regra de "sem pulo".
+ * Exportado para uso em testes unitários (sheet-snap.test.mjs).
+ *
+ * @param {Object} params
+ * @param {string} params.startState - estado atual ('peek'|'half'|'full')
+ * @param {number} params.endHeight - altura medida ao soltar (px)
+ * @param {number} params.velocity - velocidade nos últimos ~100ms (px/ms; positivo = abre)
+ * @param {Object} params.heights - { peek, half, full } alturas reais medidas (px)
+ * @returns {string} próximo estado
+ */
+export function pickSnap({ startState, endHeight, velocity, heights }) {
+  // Se alturas medidas parecem inválidas (todas iguais), use fallback com computeHeights
+  let h = heights;
+  let usedFallback = false;
+  if (heights && heights.peek === heights.half && heights.half === heights.full && typeof window !== 'undefined') {
+    usedFallback = true;
+    // Fallback: calcular baseado no viewport e CSS vars conhecidos
+    // Note: documentElement.clientHeight é melhor que innerHeight para iframe
+    const containerH = document.documentElement.clientHeight || window.innerHeight;
+    h = { peek: 96, half: Math.round(containerH * 0.45), full: Math.round(containerH * 0.90) };
+  }
+
+  // Regra 4: Se o arraste foi muito pequeno (< 8px), mantém o estado atual.
+  const dragDistance = Math.abs(endHeight - h[startState]);
+  if (dragDistance < MIN_DRAG_DISTANCE_PX) {
+    return startState;
+  }
+
+  // Regra 1: Projeção com momentum — janela de 120ms.
+  const projected = endHeight + velocity * VELOCITY_WINDOW_MS;
+
+  // Regra 2: Estado cuja altura está mais próxima da projeção.
+  let target = STATES[0];
+  let bestDist = Infinity;
+  for (const state of STATES) {
+    const dist = Math.abs(projected - h[state]);
+    if (dist <= bestDist) { bestDist = dist; target = state; }
+  }
+
+  // Regra 3: Sem pulo — máximo um estado de distância, a menos que |velocidade| > 1.5 px/ms.
+  const startIdx = STATES.indexOf(startState);
+  const targetIdx = STATES.indexOf(target);
+  const isFlick = Math.abs(velocity) > FLICK_VELOCITY_THRESHOLD_PX_MS;
+
+  if (!isFlick && Math.abs(targetIdx - startIdx) > 1) {
+    // Classa para estado adjacente na direção da intenção.
+    if (targetIdx > startIdx) {
+      return STATES[startIdx + 1];
+    } else {
+      return STATES[startIdx - 1];
+    }
+  }
+
+  return target;
+}
+
+function velocityPxPerMs() {
+  // Retorna a velocidade em px/ms (positivo = abre, negativo = fecha).
+  // Usa as amostras dos últimos ~100ms, para não herdar velocidade antiga.
   const now = dragSamples[dragSamples.length - 1];
   if (!now) return 0;
   let ref = dragSamples[0];
@@ -109,15 +180,16 @@ function velocityPxPerSec() {
   }
   const dt = now.t - ref.t;
   if (dt <= 0) return 0;
-  return ((now.size - ref.size) / dt) * 1000;
+  return (now.size - ref.size) / dt;
 }
 
 /** Aplica o estado resolvido: emite o evento, atualiza o store e anima via CSS. */
 function commit(state, { silent } = {}) {
   if (!isValidSheetState(state)) return;
+  // Limpa o height inline ANTES de medir, senão a regra CSS [data-sheet-state] não será aplicada
+  sheetEl.style[sizeProp()] = '';
   const sizes = measureStates();
   currentState = state;
-  sheetEl.style[sizeProp()] = '';
   sheetEl.setAttribute('data-sheet-state', state);
   syncAria(state);
   if (!silent) {
@@ -170,16 +242,20 @@ function onPointerUp(evt) {
   if (!dragging || evt.pointerId !== dragPointerId) return;
   dragging = false;
   sheetEl.style.transition = '';
-  const velocity = velocityPxPerSec();
-  let target;
-  if (Math.abs(velocity) > FLICK_VELOCITY_PX_S) {
-    // "Flick" rápido: vai direto para o estado EXTREMO na direção do gesto
-    // (peek↔full), ignorando a posição — exemplo explícito do §2.3.
-    target = velocity > 0 ? 'full' : 'peek';
-  } else {
-    const last = dragSamples[dragSamples.length - 1];
-    target = nearestState(last ? last.size : dragStartSize, dragSizes);
-  }
+
+  const last = dragSamples[dragSamples.length - 1];
+  const endHeight = last ? last.size : dragStartSize;
+  const velocity = velocityPxPerMs();
+
+  // Usa pickSnap para encontrar o próximo estado respeitando as regras
+  // (momentum, sem pulo, toque = sem movimento).
+  const target = pickSnap({
+    startState: currentState,
+    endHeight: endHeight,
+    velocity: velocity,
+    heights: dragSizes
+  });
+
   commit(target);
   dragSizes = null;
 }

@@ -25,6 +25,7 @@
 
 const ZONE_IDS = ['atlas-topbar', 'atlas-left-panel', 'atlas-canvas', 'atlas-toolbar', 'atlas-inspector', 'atlas-sheet'];
 const ZONE_SELECTOR = ZONE_IDS.map((id) => `#${id}`).join(', ');
+const ROW_BAND_HEIGHT = 48; // px
 
 let keyboardUsed = false;
 
@@ -37,13 +38,154 @@ function isActive() {
 }
 
 function isVisible(el) {
-  if (!el || el.hidden) return false;
+  if (!el) return false;
   const style = window.getComputedStyle(el);
   if (style.display === 'none' || style.visibility === 'hidden') return false;
   // Uma zona colapsada a 0px (ex.: o inspetor sem seleção no desktop, ver
   // css/atlas.css) existe no DOM mas não tem nada para focar de verdade.
+  // Nota: não checamos o atributo HTML 'hidden' porque CSS pode sobrescrevê-lo
+  // (ex.: left-panel tem hidden no HTML mas CSS aplica display:block em viewport ≥1024px).
   const rect = el.getBoundingClientRect();
   return rect.width > 0 && rect.height > 0;
+}
+
+/**
+ * Calcula a próxima zona a receber foco, baseado em navegação por setas.
+ * Ordena as zonas por posição visual: primeiro por linha (row band de 48px),
+ * depois por coluna esquerda. Pulsa zonas ocultas (width ou height === 0).
+ *
+ * @param {Array<string>} zones - array de IDs de zonas visíveis
+ * @param {number} currentIndex - índice da zona atual em `zones`
+ * @param {string} key - 'ArrowLeft' | 'ArrowRight' | 'ArrowUp' | 'ArrowDown'
+ * @returns {number} índice da próxima zona em `zones`
+ */
+export function nextZone(zones, currentIndex, key) {
+  if (zones.length === 0 || currentIndex < 0 || currentIndex >= zones.length) {
+    return 0;
+  }
+
+  // Coleta índices das zonas visíveis e seus rects
+  const visibleEntries = []; // array de { index, rect }
+  for (let i = 0; i < zones.length; i++) {
+    const id = zones[i];
+    const el = document.getElementById(id);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        visibleEntries.push({ index: i, rect });
+      }
+    }
+  }
+
+  if (visibleEntries.length === 0) return currentIndex;
+
+  // Ordena zonas visíveis por posição: linha (top/48), depois coluna (left)
+  visibleEntries.sort((a, b) => {
+    const bandA = Math.floor(a.rect.top / ROW_BAND_HEIGHT);
+    const bandB = Math.floor(b.rect.top / ROW_BAND_HEIGHT);
+    if (bandA !== bandB) return bandA - bandB;
+    return a.rect.left - b.rect.left;
+  });
+
+  // Encontra a zona atual na lista ordenada
+  const currentPos = visibleEntries.findIndex((e) => e.index === currentIndex);
+  if (currentPos === -1) return currentIndex; // Zona atual não está visível
+
+  const current = visibleEntries[currentPos];
+  const currentCenterX = current.rect.left + current.rect.width / 2;
+  const currentRow = Math.floor(current.rect.top / ROW_BAND_HEIGHT);
+
+  let nextIndex = currentIndex;
+
+  if (key === 'ArrowRight') {
+    // Procura próxima zona na mesma linha (à direita)
+    const sameLine = visibleEntries.filter((e) => {
+      const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
+      return row === currentRow && e.rect.left > current.rect.left;
+    });
+
+    if (sameLine.length > 0) {
+      nextIndex = sameLine[0].index;
+    } else {
+      // Nenhuma à direita: vai para primeira da próxima linha
+      const nextLine = visibleEntries.find((e) => {
+        const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
+        return row > currentRow;
+      });
+      if (nextLine) {
+        nextIndex = nextLine.index;
+      } else {
+        // Nenhuma próxima linha: volta para primeira
+        nextIndex = visibleEntries[0].index;
+      }
+    }
+  } else if (key === 'ArrowLeft') {
+    // Procura zona anterior na mesma linha (à esquerda)
+    const sameLine = visibleEntries.filter((e) => {
+      const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
+      return row === currentRow && e.rect.left < current.rect.left;
+    });
+
+    if (sameLine.length > 0) {
+      nextIndex = sameLine[sameLine.length - 1].index;
+    } else {
+      // Nenhuma à esquerda: vai para última da linha anterior
+      const prevLine = [...visibleEntries].reverse().find((e) => {
+        const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
+        return row < currentRow;
+      });
+      if (prevLine) {
+        nextIndex = prevLine.index;
+      } else {
+        // Nenhuma linha anterior: volta para última
+        nextIndex = visibleEntries[visibleEntries.length - 1].index;
+      }
+    }
+  } else if (key === 'ArrowDown') {
+    // Busca zona na linha seguinte mais próxima horizontalmente
+    const nextRowZones = visibleEntries.filter((e) => {
+      const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
+      return row > currentRow;
+    });
+
+    if (nextRowZones.length > 0) {
+      // Encontra a zona mais próxima ao centro horizontal atual
+      let closest = nextRowZones[0];
+      let minDist = Infinity;
+      for (const e of nextRowZones) {
+        const centerX = e.rect.left + e.rect.width / 2;
+        const dist = Math.abs(centerX - currentCenterX);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = e;
+        }
+      }
+      nextIndex = closest.index;
+    }
+  } else if (key === 'ArrowUp') {
+    // Busca zona na linha anterior mais próxima horizontalmente
+    const prevRowZones = visibleEntries.filter((e) => {
+      const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
+      return row < currentRow;
+    });
+
+    if (prevRowZones.length > 0) {
+      // Encontra a zona mais próxima ao centro horizontal atual
+      let closest = prevRowZones[prevRowZones.length - 1];
+      let minDist = Infinity;
+      for (const e of prevRowZones) {
+        const centerX = e.rect.left + e.rect.width / 2;
+        const dist = Math.abs(centerX - currentCenterX);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = e;
+        }
+      }
+      nextIndex = closest.index;
+    }
+  }
+
+  return nextIndex;
 }
 
 function visibleZones() {
@@ -75,27 +217,42 @@ function focusZone(zones, zoneIndex, itemIndex) {
   items[iIdx].focus();
 }
 
-function handleArrow(evt, forward) {
+function handleArrow(evt) {
   const zones = visibleZones();
   const zone = currentZoneEl();
-  const zoneIndex = zone ? zones.indexOf(zone) : -1;
+  const zoneIndex = zones.indexOf(zone);
   if (zoneIndex === -1) return; // foco fora de qualquer zona conhecida — não interfere
 
   evt.preventDefault();
   const items = focusableItems(zone);
   const currentItemIndex = items.indexOf(document.activeElement);
 
-  if (forward) {
-    if (currentItemIndex !== -1 && currentItemIndex < items.length - 1) {
-      focusZone(zones, zoneIndex, currentItemIndex + 1);
-    } else {
-      focusZone(zones, zoneIndex + 1, 0);
+  const key = evt.key;
+  const isHorizontal = key === 'ArrowLeft' || key === 'ArrowRight';
+  const isForward = key === 'ArrowRight' || key === 'ArrowDown';
+
+  // Se há múltiplos itens na zona e o foco não está na borda, navega dentro da zona
+  if (items.length > 1 && currentItemIndex !== -1) {
+    if (isHorizontal) {
+      // Navegação horizontal dentro da zona
+      if (isForward && currentItemIndex < items.length - 1) {
+        focusZone(zones, zoneIndex, currentItemIndex + 1);
+        return;
+      } else if (!isForward && currentItemIndex > 0) {
+        focusZone(zones, zoneIndex, currentItemIndex - 1);
+        return;
+      }
     }
-  } else if (currentItemIndex > 0) {
-    focusZone(zones, zoneIndex, currentItemIndex - 1);
-  } else {
-    focusZone(zones, zoneIndex - 1, -1); // -1 → último item da zona anterior (módulo em focusZone)
   }
+
+  // Se chegou aqui, é uma navegação entre zonas
+  const nextZoneIndex = nextZone(
+    zones.map((z) => z.id),
+    zoneIndex,
+    key
+  );
+
+  focusZone(zones, nextZoneIndex, 0);
 }
 
 function onKeydown(evt) {
@@ -105,11 +262,9 @@ function onKeydown(evt) {
   switch (evt.key) {
     case 'ArrowRight':
     case 'ArrowDown':
-      handleArrow(evt, true);
-      break;
     case 'ArrowLeft':
     case 'ArrowUp':
-      handleArrow(evt, false);
+      handleArrow(evt);
       break;
     case 'Escape': {
       // "Voltar" (§12): sai da zona atual para a anterior. Não interfere se
@@ -132,7 +287,17 @@ export function initFocusNav() {
   // próprios ainda montados (ex.: painéis do WP09 antes de existirem).
   ZONE_IDS.forEach((id) => {
     const zone = document.getElementById(id);
-    if (zone && !zone.hasAttribute('tabindex')) zone.tabIndex = -1;
+    if (!zone) return;
+
+    // Canvas é uma zona focável especial: recebe setas, não itens
+    if (id === 'atlas-canvas') {
+      zone.tabIndex = 0;
+      if (!zone.getAttribute('aria-label')) {
+        zone.setAttribute('aria-label', 'Visualização 3D — use as setas para girar');
+      }
+    } else if (!zone.hasAttribute('tabindex')) {
+      zone.tabIndex = -1;
+    }
   });
 }
 

@@ -21,3 +21,7 @@ Thumbs.db
 
 # Configuração local de sessão do Claude Code (não é parte do projeto)
 .claude/
+
+# temporários dos testes do pipeline de conteúdo
+tools/atlas-content/test/.tmp/
+tools/atlas-content/test/fixtures/.tmp/
