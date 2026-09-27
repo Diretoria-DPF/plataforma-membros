@@ -1,0 +1,71 @@
+{
+  "batchcomplete": true,
+  "query": {
+    "redirects": [
+      {
+        "from": "Fémur",
+        "to": "Fêmur"
+      }
+    ],
+    "normalized": [
+      {
+        "from": "coração",
+        "to": "Coração"
+      }
+    ],
+    "pages": [
+      {
+        "index": 1,
+        "pageid": 12345,
+        "title": "Coração",
+        "extract": "O coração é um órgão muscular que funciona como uma bomba, impulsionando o sangue por todo o corpo através do sistema circulatório (artérias, capilares e veias). Em humanos, o coração está localizado no tórax, entre os pulmões, ligeiramente para o lado esquerdo, e é protegido pela caixa torácica.",
+        "revisions": [
+          {
+            "revid": 111111,
+            "timestamp": "2025-06-15T10:30:45Z"
+          }
+        ],
+        "fullurl": "https://pt.wikipedia.org/wiki/Coração"
+      },
+      {
+        "index": 2,
+        "pageid": 23456,
+        "title": "Fígado",
+        "extract": "O fígado é a glândula mais volumosa do corpo humano. É um órgão fundamental para o metabolismo, síntese de proteínas plasmáticas, destoxificação de produtos do metabolismo e produção de compostos bioquímicos necessários para a digestão. Localiza-se na região superior direita do abdômen.",
+        "revisions": [
+          {
+            "revid": 222222,
+            "timestamp": "2025-07-20T14:15:30Z"
+          }
+        ],
+        "fullurl": "https://pt.wikipedia.org/wiki/F%C3%ADgado"
+      },
+      {
+        "index": 3,
+        "pageid": 34567,
+        "title": "Fêmur",
+        "extract": "O fêmur é o osso mais longo, mais volumoso e mais forte do corpo humano. Localiza-se na região anterior da coxa, entre a bacia e a tíbia. É responsável por suportar o peso corporal durante a marcha, corrida e outras atividades físicas.",
+        "revisions": [
+          {
+            "revid": 333333,
+            "timestamp": "2025-05-10T08:45:20Z"
+          }
+        ],
+        "fullurl": "https://pt.wikipedia.org/wiki/F%C3%AAmur"
+      },
+      {
+        "index": 4,
+        "pageid": 45678,
+        "title": "Nervo vago",
+        "extract": "O nervo vago é o décimo nervo craniano e um dos nerves mais importantes do sistema nervoso periférico. Fornece funções motoras e sensoriais para uma área extensa do corpo, incluindo a garganta, pulmões, coração e sistema digestivo. Recebe esse nome porque se espalha por várias estruturas do corpo.",
+        "revisions": [
+          {
+            "revid": 444444,
+            "timestamp": "2025-08-05T16:20:10Z"
+          }
+        ],
+        "fullurl": "https://pt.wikipedia.org/wiki/Nervo_vago"
+      }
+    ]
+  }
+}
