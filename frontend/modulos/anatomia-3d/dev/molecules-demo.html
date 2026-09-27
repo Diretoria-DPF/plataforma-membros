@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://files.rcsb.org; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020617">
+  <title>Demo — Modo Moléculas</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <script src="https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      background: #020617;
+      color: #cbd5e1;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #020617;
+      padding: 8px;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+
+    p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .sheet {
+      border: 1px solid #334155;
+      border-radius: 6px;
+      background: #020617;
+      overflow: auto;
+      max-height: 80vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Modo Moléculas — Demonstração</h1>
+      <p>Teste de renderização de estruturas PDB com 3Dmol.js (offline — CDN/RCSB bloqueados)</p>
+    </header>
+    <div id="sheet" class="sheet"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../shared/safe-dom.js"></script>
+  <script src="molecules-demo.js" type="module"></script>
+</body>
+</html>
