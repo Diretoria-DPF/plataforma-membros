@@ -570,6 +570,52 @@ outro sistema) ainda ficar acima mesmo depois do reweld, é hora de
 reportar os números por asset e propor (nunca aplicar) um ajuste em
 `budgets.json` (WP02) com justificativa de fidelidade anatômica.
 
+## 8h. Retomada 27/09 — execução #14 (reweld topológico): quase todo o orçamento resolvido; ajuste de `attempts`
+
+A execução #14 (`https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/36306578039`,
+já com o reweld topológico + tetos de `error` do §8g) confirmou a
+hipótese do orquestrador: **total caiu de 69,34 MB para 49,56 MB**, e os 9
+órgãos do HRA passaram TODOS a caber no orçamento (inclusive
+`skin-female`: 2,59 MB → **0,89 MB** LOD0, e `lung-female`: 3,09 MB →
+**1,30 MB** LOD0) — sem precisar de `error` acima de 0,05/0,15. O log
+`[topologia]` confirmou vértices duplicados por normal dura em toda malha
+do Z-Anatomy/HRA (ex.: `skin-female`: 533.392 → 133.350 vértices depois do
+reweld por posição — 75% eram duplicatas por normal).
+
+Restam **13 erros** (todos sistemas do Z-Anatomy + o total), mas agora bem
+mais próximos do orçamento:
+
+| Sistema/LOD | Resultado | Orçamento | Ratio final / error final |
+|---|---|---|---|
+| articular lod0 | 1,55 MB | 1,50 MB | 0,076 / 0,050 (só 0,05 MB acima) |
+| digestorio lod0 | 2,52 MB | 2,50 MB | 0,071 / 0,050 (só 0,02 MB acima) |
+| digestorio lod1 | 1,75 MB | 0,90 MB | 0,020 (piso) / 0,150 (teto) |
+| endocrino lod0/lod1 | 1,92 / 1,77 MB | 1,50 MB | 0,026 / 0,050 e 0,023 / 0,150 |
+| linfatico lod0/lod1 | 2,05 / 1,90 MB | 1,50 MB | 0,023 / 0,050 e 0,020 (piso) / 0,150 |
+| nervoso lod1 | 1,61 MB | 1,00 MB | 0,020 (piso) / 0,150 (teto) — **já no piso E no teto** |
+| respiratorio lod0/lod1 | 1,88 / 1,73 MB | 1,50 MB | 0,029 / 0,050 e 0,025 / 0,150 |
+| urinario lod0/lod1 | 1,91 / 1,77 MB | 1,50 MB | 0,027 / 0,050 e 0,023 / 0,150 |
+| **total** | **49,56 MB** | **45,00 MB** | — |
+
+**Diagnóstico:** olhando o log tentativa a tentativa, a maioria destes
+sistemas ainda estava reduzindo triângulos de verdade a cada tentativa
+(só pelo `ratio`, com `error` já no teto do guardrail) quando as tentativas
+disponíveis (`attempts: 3`, ou seja, 4 chamadas a `writeLod` no total)
+acabaram — não "travaram" pela topologia nem pelo `error`, só ficaram sem
+tentativa. Exceção: `nervoso.lod1.glb`, que já bateu tanto no piso do
+`ratio` (`minRatio: 0.02`) quanto no teto do `error` (0,15) e ainda assim
+ficou 61% acima do orçamento — esse é o único caso, até aqui, que parece
+mesmo um limite geométrico genuíno (dentro do guardrail de fidelidade).
+
+**Correção (sem afrouxar `error` — guardrail do orquestrador mantido):**
+`attempts` sobe de 3 para 6 em `writeLodAdaptive`. Isso só dá mais chances
+para o `ratio` continuar caindo até `minRatio` (0,02) — nunca solta
+`error` além do teto já fixado (0,05 LOD0 / 0,15 LOD1). Repetir a execução
+para medir se isso fecha o resto do orçamento; se `nervoso.lod1` (ou algum
+outro que chegue no piso+teto ao mesmo tempo) continuar acima, é hora de
+reportar os números exatos e propor (nunca aplicar) um ajuste em
+`budgets.json` (WP02) com justificativa de fidelidade anatômica.
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto

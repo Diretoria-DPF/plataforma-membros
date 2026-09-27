@@ -559,8 +559,17 @@ async function writeLod(document, outPath, { simplifyRatio, simplifyError = 0.01
  * topologia não soldada (ver `loadAndClean`/reweld por posição); se ainda
  * assim ficar acima do orçamento, é hora de propor (nunca aplicar) um
  * ajuste em `budgets.json`, não de continuar afrouxando `error`.
+ *
+ * `attempts` subiu de 3 para 6 (retomada 27/09, run #14 — depois do reweld
+ * topológico): o log da execução #14 mostrou vários sistemas ainda
+ * reduzindo triângulos de verdade a cada tentativa (só pelo `ratio`, com
+ * `error` já no teto) quando as 4 tentativas (0 a 3) acabaram — não tinham
+ * "travado", só ficado sem tentativas. Mais tentativas deixam o `ratio`
+ * continuar caindo até `minRatio` (nunca soltam `error` além do teto do
+ * guardrail acima), então não têm o mesmo risco de fidelidade que `error`
+ * mais alto teria.
  */
-async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 3, maxMillis = 30000, baseError = 0.01, maxError = 0.05, regenerateNormals = false } = {}) {
+async function writeLodAdaptive(document, outPath, { targetBytes, maxRatio = 1, minRatio = 0.02, attempts = 6, maxMillis = 30000, baseError = 0.01, maxError = 0.05, regenerateNormals = false } = {}) {
   const t0 = Date.now();
   let ratio = maxRatio;
   let error = baseError;
