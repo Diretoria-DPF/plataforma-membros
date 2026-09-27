@@ -59,6 +59,30 @@ button { font: inherit; }
   outline-offset: -4px;
 }
 
+/* Mira central do canvas — visível apenas em TV quando o canvas tem foco */
+.atlas-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--laift-focus-color);
+  border-radius: 50%;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 100ms ease-in-out;
+}
+
+/* Mostra a mira quando o canvas está focado em TV */
+@media (min-width: 1600px) and (hover: none) {
+  .atlas-canvas:focus-visible .atlas-crosshair {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
 /* -----------------------------------------------------------------------
    Barra superior — 48px + safe-area (§1.1). Três zonas numa linha.
    ----------------------------------------------------------------------- */
@@ -310,7 +334,7 @@ button { font: inherit; }
   .atlas-sheet { display: none; } /* tablet+ usa o inspetor, não o painel */
 
   body { display: flex; height: 100vh; }
-  .atlas-canvas { position: relative; flex: 1 1 auto; min-width: 0; }
+  .atlas-canvas { position: relative; flex: 1 1 auto; min-width: 0; inset: auto; }
 
   .atlas-left-panel {
     display: block;

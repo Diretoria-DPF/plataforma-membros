@@ -46,7 +46,14 @@ function isVisible(el) {
   // Nota: não checamos o atributo HTML 'hidden' porque CSS pode sobrescrevê-lo
   // (ex.: left-panel tem hidden no HTML mas CSS aplica display:block em viewport ≥1024px).
   const rect = el.getBoundingClientRect();
-  return rect.width > 0 && rect.height > 0;
+  return rect.width > 1 && rect.height > 1;
+}
+
+// Compara pelo centro horizontal, não pela borda esquerda: o painel esquerdo
+// expandido (280px) sobrepõe o canvas, cuja borda esquerda fica à esquerda
+// da do painel — pela borda, o canvas "sumia" da navegação para a direita.
+function centerX(rect) {
+  return rect.left + rect.width / 2;
 }
 
 /**
@@ -71,7 +78,7 @@ export function nextZone(zones, currentIndex, key) {
     const el = document.getElementById(id);
     if (el) {
       const rect = el.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
+      if (rect.width > 1 && rect.height > 1) {
         visibleEntries.push({ index: i, rect });
       }
     }
@@ -84,7 +91,7 @@ export function nextZone(zones, currentIndex, key) {
     const bandA = Math.floor(a.rect.top / ROW_BAND_HEIGHT);
     const bandB = Math.floor(b.rect.top / ROW_BAND_HEIGHT);
     if (bandA !== bandB) return bandA - bandB;
-    return a.rect.left - b.rect.left;
+    return centerX(a.rect) - centerX(b.rect);
   });
 
   // Encontra a zona atual na lista ordenada
@@ -92,7 +99,7 @@ export function nextZone(zones, currentIndex, key) {
   if (currentPos === -1) return currentIndex; // Zona atual não está visível
 
   const current = visibleEntries[currentPos];
-  const currentCenterX = current.rect.left + current.rect.width / 2;
+  const currentCenterX = centerX(current.rect);
   const currentRow = Math.floor(current.rect.top / ROW_BAND_HEIGHT);
 
   let nextIndex = currentIndex;
@@ -101,7 +108,7 @@ export function nextZone(zones, currentIndex, key) {
     // Procura próxima zona na mesma linha (à direita)
     const sameLine = visibleEntries.filter((e) => {
       const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
-      return row === currentRow && e.rect.left > current.rect.left;
+      return row === currentRow && centerX(e.rect) > currentCenterX;
     });
 
     if (sameLine.length > 0) {
@@ -123,7 +130,7 @@ export function nextZone(zones, currentIndex, key) {
     // Procura zona anterior na mesma linha (à esquerda)
     const sameLine = visibleEntries.filter((e) => {
       const row = Math.floor(e.rect.top / ROW_BAND_HEIGHT);
-      return row === currentRow && e.rect.left < current.rect.left;
+      return row === currentRow && centerX(e.rect) < currentCenterX;
     });
 
     if (sameLine.length > 0) {
@@ -153,8 +160,7 @@ export function nextZone(zones, currentIndex, key) {
       let closest = nextRowZones[0];
       let minDist = Infinity;
       for (const e of nextRowZones) {
-        const centerX = e.rect.left + e.rect.width / 2;
-        const dist = Math.abs(centerX - currentCenterX);
+        const dist = Math.abs(centerX(e.rect) - currentCenterX);
         if (dist < minDist) {
           minDist = dist;
           closest = e;
@@ -174,8 +180,7 @@ export function nextZone(zones, currentIndex, key) {
       let closest = prevRowZones[prevRowZones.length - 1];
       let minDist = Infinity;
       for (const e of prevRowZones) {
-        const centerX = e.rect.left + e.rect.width / 2;
-        const dist = Math.abs(centerX - currentCenterX);
+        const dist = Math.abs(centerX(e.rect) - currentCenterX);
         if (dist < minDist) {
           minDist = dist;
           closest = e;
@@ -214,7 +219,13 @@ function focusZone(zones, zoneIndex, itemIndex) {
     return;
   }
   const iIdx = ((itemIndex % items.length) + items.length) % items.length;
-  items[iIdx].focus();
+  const item = items[iIdx];
+  item.focus();
+
+  // Mostra a mira central quando a zona do canvas recebe foco em TV
+  if (zone.id === 'atlas-canvas' && isTvMedia()) {
+    showCanvasCrosshair();
+  }
 }
 
 function handleArrow(evt) {
@@ -253,6 +264,33 @@ function handleArrow(evt) {
   );
 
   focusZone(zones, nextZoneIndex, 0);
+}
+
+/**
+ * Cria ou obtém a mira central do canvas e a torna visível.
+ * A mira é um elemento pequeno, posicionado absolutamente no centro do canvas,
+ * sem eventos de mouse (pointer-events: none), visível apenas em TV.
+ */
+function showCanvasCrosshair() {
+  let crosshair = document.getElementById('atlas-crosshair');
+
+  if (!crosshair) {
+    // Cria o elemento da mira se não existir
+    crosshair = document.createElement('div');
+    crosshair.id = 'atlas-crosshair';
+    crosshair.className = 'atlas-crosshair';
+    crosshair.setAttribute('aria-hidden', 'true');
+    const canvas = document.getElementById('atlas-canvas');
+    if (canvas) {
+      canvas.appendChild(crosshair);
+    }
+  }
+
+  // Garante que a mira está visível
+  if (crosshair) {
+    crosshair.style.visibility = 'visible';
+    crosshair.style.opacity = '1';
+  }
 }
 
 function onKeydown(evt) {

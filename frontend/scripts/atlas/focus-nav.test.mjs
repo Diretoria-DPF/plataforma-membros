@@ -355,6 +355,24 @@ test('Zonas ocultas são puladas (rects vazias)', () => {
   }
 });
 
+test('Canvas está incluído na sequência de navegação (TV 1920×1080)', () => {
+  const restore = createMockZones({
+    'atlas-topbar': { top: 0, left: 0, width: 1920, height: 48 },
+    'atlas-left-panel': { top: 48, left: 0, width: 56, height: 1032 },
+    'atlas-canvas': { top: 48, left: 56, width: 1808, height: 1032 },
+    'atlas-toolbar': { top: 48, left: 1864, width: 56, height: 1032 },
+  });
+
+  try {
+    const zones = ['atlas-topbar', 'atlas-left-panel', 'atlas-canvas', 'atlas-toolbar'];
+    // Navega da esquerda (left-panel) para o canvas
+    const next = nextZone(zones, 1, 'ArrowRight');
+    assert.equal(next, 2, `esperado índice 2 (canvas), got ${next}`);
+  } finally {
+    restore();
+  }
+});
+
 console.log('');
 if (failures === 0) {
   console.log('✓ Todos os testes passaram!');
