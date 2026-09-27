@@ -667,6 +667,68 @@ geometria genuína no piso do orçamento de fidelidade (aí é hora de
 reportar os números e propor, nunca aplicar, um rebalanceamento de
 `budgets.json` por arquivo — mantendo o total em 45 MB, como pedido).
 
+## 8j. Retomada 27/09 — execução #17: orçamento fechado (37,85 MB), pronto para `commit: true`
+
+A execução #17 (`https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/36319926730`,
+commit `035aa94` — pular LOD1 inútil quando `bytes(lod1) ≥ 0,80 × bytes(lod0)`
++ `budgets.json` rebalanceado do §8i) **passou em todo o pipeline, inclusive
+`validate.mjs`**: esquema válido, **31 assets, total 37,85 MB** (contra o
+teto de 45 MB) — 0 erros de orçamento, 0 nó sem sid, licenças separadas.
+
+**Confirmação da hipótese do orquestrador:** dos 10 sistemas do Z-Anatomy,
+6 tiveram o LOD1 descartado por ficar ≥80% do tamanho do LOD0 (a prova de
+que já estavam no piso do simplificador dentro do guardrail de fidelidade —
+`error` no teto de 0,15, `ratio` já bem baixo, e mesmo assim o tamanho
+final quase não caía mais); 1 órgão do HRA (`brain-female`) teve o mesmo
+padrão. Os outros 4 sistemas do Z-Anatomy e 8 órgãos do HRA tinham LOD1
+"de verdade" (redução real de tamanho) e o mantiveram no manifesto.
+
+### Sistemas do Z-Anatomy (Startup.blend, ref `38649f4193adbe58e426ccac5670b8c4dde474ec`)
+
+| Sistema | LOD0 (MB / tri / error) | LOD1 publicado? | LOD1 (MB / tri / error) |
+|---|---|---|---|
+| articular | 1,44 / 86.824 / 0,050 | **não** (1,45 MB ≥ 80% de 1,44 MB) | — |
+| cardiovascular | 3,58 / 558.953 / 0,050 | sim | 1,48 / 92.906 / 0,150 |
+| digestorio | 2,33 / 173.392 / 0,050 | **não** (1,94 MB ≥ 80% de 2,33 MB) | — |
+| endocrino | 1,95 / 99.582 / 0,050 | **não** (1,92 MB ≥ 80% de 1,95 MB) | — |
+| esqueletico | 2,33 / 429.594 / 0,010 | sim | 0,96 / 114.676 / 0,010 |
+| linfatico | 1,99 / 77.427 / 0,050 | **não** (1,93 MB ≥ 80% de 1,99 MB) | — |
+| muscular | 4,52 / 883.565 / 0,050 | sim | 1,71 / 218.911 / 0,050 |
+| nervoso | 2,78 / 290.642 / 0,050 | sim | 1,88 / 106.596 / 0,150 |
+| respiratorio | 1,91 / 103.307 / 0,050 | **não** (1,89 MB ≥ 80% de 1,91 MB) | — |
+| urinario | 1,94 / 99.990 / 0,050 | **não** (1,92 MB ≥ 80% de 1,94 MB) | — |
+
+### Órgãos do HRA (um GLB por órgão+sexo)
+
+| Órgão | LOD0 (MB / tri / error) | LOD1 publicado? | LOD1 (MB / tri / error) |
+|---|---|---|---|
+| brain-female | 1,32 / 204.673 / 0,050 | **não** (1,23 MB ≥ 80% de 1,32 MB) | — |
+| heart-female | 0,37 / 85.914 / 0,010 | sim | 0,12 / 21.644 / 0,010 |
+| heart-male | 0,67 / 164.119 / 0,010 | sim | 0,20 / 41.185 / 0,010 |
+| kidney-left-female | 0,35 / 73.526 / 0,010 | sim | 0,12 / 19.388 / 0,010 |
+| liver-female | 0,40 / 93.303 / 0,010 | sim | 0,14 / 23.328 / 0,010 |
+| liver-male | 0,28 / 60.369 / 0,010 | sim | 0,11 / 15.289 / 0,010 |
+| lung-female | 1,30 / 297.097 / 0,010 | sim | 0,41 / 76.192 / 0,010 |
+| pancreas-female | 0,06 / 12.894 / 0,010 | sim | 0,02 / 3.219 / 0,010 |
+| skin-female | 0,89 / 266.696 / 0,010 | sim | 0,25 / 66.674 / 0,010 |
+
+**Total do manifesto: 31 assets, 37,85 MB** (14 assets de 10 sistemas do
+Z-Anatomy — 6 só com LOD0 — + 17 assets de 9 órgãos do HRA — 1 só com
+LOD0 —, contra o teto de `budgets.json.total.maxBytes` = 45 MB). Margem de
+~7,15 MB abaixo do teto, mesmo com o `error` sempre dentro do guardrail de
+fidelidade (nunca acima de 0,05 no LOD0 / 0,15 no LOD1) e nenhum nó
+removido/fundido entre estruturas diferentes.
+
+**Decisão:** `run-config.json` passa para `commit: true` (mesmo `systems:
+"all"`, `hra: true`) para a próxima execução (`#18`) gravar de fato
+`frontend/modulos/anatomia-3d/models/**` e
+`frontend/modulos/anatomia-3d/data/atlas/generated/structures.json` na
+branch, via `github-actions[bot]`. Depois de confirmado esse commit,
+`run-config.json` volta para `commit: false` (`mode: discover` é
+suficiente) num commit final pequeno, para que futuros pushes em
+`tools/atlas-pipeline/**` não disparem uma nova exportação completa por
+engano.
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto

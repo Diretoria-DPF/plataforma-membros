@@ -2,8 +2,8 @@
   "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-assets.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do WP10 e o §3 do plano.",
   "mode": "export",
   "_mode_valores": "'discover' roda só discover.mjs + Blender --list-collections (nenhum export completo, nenhum commit) — usado até confirmarmos os nomes reais das coleções do Startup.blend e a lista de órgãos do HRA. 'export' roda o pipeline completo (fetch+export+optimize+manifest+validate) com os campos abaixo.",
-  "_fase": "Fase B (retomada 27/09, plano §9 Etapa A). Execução #9 (isolamento por processo, sem commit): passou por todo o pipeline (esquema válido, 29 assets, 12.733 estruturas) mas 'validate' falhou o orçamento — 77,78 MB contra 45 MB, com 19 erros. Achado do orquestrador: a simplificação de triângulos quase não reduzia o tamanho do arquivo (ex.: articular a 3% dos triângulos originais ainda com 2,52 MB) — sinal de que o peso morto não é geometria. Causa: export_extras=True leva TODAS as custom properties de cada objeto do Startup.blend (não só as nossas), e vários GLBs têm atributos de vértice não usados (COLOR_0/TANGENT/UVs extra). Corrigido em optimize.mjs (stripExtras + stripUnusedAttributes, antes de simplificar) e HRA passou a gerar LOD1 também. Repetindo todos os sistemas + HRA, sem commit, para conferir o ganho.",
+  "_fase": "Fase B (retomada 27/09, plano §9 Etapa A). Execução #17 (pular LOD1 inútil quando >=80% do LOD0 + budgets.json rebalanceado): passou em todo o pipeline, inclusive 'validate' — 31 assets, 37,85 MB contra o teto de 45 MB, 0 erros. Ver SOURCES.md §8j para a tabela completa por asset. 'commit' passa para true nesta execução para gravar de fato os assets em frontend/modulos/anatomia-3d/models/** e structures.json via github-actions[bot]; depois de confirmado esse commit, volta para false num commit final pequeno.",
   "systems": "all",
   "hra": true,
-  "commit": false
+  "commit": true
 }
