@@ -373,6 +373,89 @@ geometria pura). Se o ratio adaptativo não for suficiente para os órgãos do
 HRA caberem em 1,5 MB mesmo no piso de 2%, o próximo passo é inspecionar o
 GLB bruto (`gltf-transform inspect`) para achar o que está pesando.
 
+## 8e. Retomada 27/09 — execução #9 (isolamento por processo) passou no pipeline, mas falhou o orçamento total: peso morto não era geometria
+
+A execução #9 (`https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/36303675440`)
+foi a primeira a rodar o pipeline inteiro sem travar (isolamento por
+processo + timeout do §8d funcionou: nenhum arquivo foi abandonado) e
+passou por export, otimização, HRA, `manifest.json` (válido contra o
+esquema do WP02, 29 assets, 12.733 estruturas). **`validate.mjs` falhou**,
+porém, com 19 erros de orçamento — total de **77,78 MB contra o teto de
+45 MB** — mesmo com a simplificação adaptativa do §8d rodando de verdade.
+
+**O log revelou a causa real (achado do orquestrador, confirmado no log
+completo da execução #9):** o tamanho do arquivo quase não caía por mais
+que o ratio de simplificação baixasse. Exemplo (`articular.glb`):
+
+| Tentativa | Ratio (fração dos triângulos) | Tamanho |
+|---|---|---|
+| 0 | 1,000 | 7,90 MB |
+| 1 | 0,161 | 3,15 MB |
+| 2 | 0,065 | 2,65 MB |
+| 3 (mínimo) | 0,031 | 2,52 MB |
+
+Simplificar para **3,1% dos triângulos originais só reduziu 68% dos
+bytes** (de 7,90 para 2,52 MB) — se o arquivo fosse dominado por geometria,
+uma redução de triângulos de 97% devia refletir num tamanho muito menor.
+O mesmo padrão apareceu em `lung-female.glb` (3,73 → 3,56 MB, ratio 1,000 →
+0,044 — praticamente NENHUMA redução) e `skin-female.glb` (2,59 MB em
+TODAS as tentativas, ratio 1,000 → 0,120), confirmando a suspeita já
+registrada no §8d sobre esses dois órgãos.
+
+**Causa raiz, com duas fontes de peso morto que não são geometria:**
+
+1. **Extras (custom properties) demais.** `export_systems.py` exporta com
+   `export_extras=True` — necessário para levar `system`/`layer`/
+   `englishName`/`side` (que `build-manifest.mjs` lê). Mas essa opção do
+   exportador do Blender leva **TODAS** as custom properties de cada
+   objeto do `Startup.blend`, não só as nossas — e o Z-Anatomy embute
+   metadados de referência (texto em inglês, e possivelmente links/códigos
+   de nomenclatura) por objeto, em ~4500 objetos. Isso infla o chunk JSON
+   do GLB (que `simplify()`/`quantize()`/`meshopt()` nunca tocam — eles só
+   agem sobre geometria) e não muda com o ratio de simplificação, batendo
+   exatamente com o padrão observado.
+2. **Atributos de vértice não usados.** Alguns GLBs (principalmente do
+   HRA — `lung-female`, `skin-female`) carregam atributos como `COLOR_0`
+   (cor por vértice), `TANGENT` ou UVs extras que o motor 3D do atlas nunca
+   lê. Esses atributos são proporcionais à contagem de VÉRTICES, não de
+   triângulos — `simplify()` reduz triângulos, mas não necessariamente o
+   número de vértices na mesma proporção (e um `COLOR_0`/`TANGENT` em
+   ponto flutuante por vértice pesa tanto quanto a própria posição).
+
+**Correção em `optimize.mjs` (`loadAndClean`):**
+- `stripExtras(document)`: mantém, em cada nó (recursivo), só as chaves que
+  `build-manifest.mjs` de fato lê — `system`, `layer`, `englishName`,
+  `side`, `fmaId`, `latinName`, `collection` (confirmado por grep antes de
+  escrever a lista) — e descarta qualquer outra. Zera extras em cenas,
+  malhas, primitivas, materiais, texturas, buffers, accessors, animações e
+  skins (nenhum desses usa extras neste pipeline).
+- `stripUnusedAttributes(document)`: mantém só `POSITION`/`NORMAL` em toda
+  primitiva, e `TEXCOORD_0` apenas quando o material da primitiva
+  realmente referencia uma textura (base color, normal, emissiva,
+  metalness/roughness ou oclusão) — `COLOR_0`, `TANGENT`, `TEXCOORD_1+`,
+  `JOINTS_*`/`WEIGHTS_*` (nenhuma malha anatômica estática tem esqueleto)
+  são descartados. O `prune()` que já rodava depois remove os
+  accessors/buffers que ficarem sem nenhuma referência.
+- As duas rodam ANTES de `dedup`/`weld`/`prune`/simplificar, e um log
+  `[tamanho]` por arquivo mostra KB de extras e MB de atributos de vértice
+  brutos antes/depois — para confirmar o ganho na próxima execução em vez
+  de suposição.
+
+**LOD1 do HRA (pedido do orquestrador):** antes, `optimize.mjs` rodava com
+`--no-lod1` para os órgãos do HRA (só entravam no manifesto como `lod0`).
+Como `lung-female`/`skin-female` estavam acima do orçamento mesmo no LOD0,
+o workflow não passa mais essa flag — o HRA agora gera LOD1 igual aos
+sistemas do Z-Anatomy. `make-config.mjs` (`buildOrgansConfig`) detecta
+`<key>.lod1.glb` quando existir e grava em `lod1File`; `build-manifest.mjs`
+espelha o loop dos sistemas (um asset por LOD existente, `structures.json`
+só recebe as estruturas uma vez, no laço do `lod0`).
+
+**Pendência:** repetir a execução (sem commit) com essas correções para
+medir o ganho real e ver se todos os sistemas + HRA cabem nos 45 MB — se
+algum sistema ainda ficar acima mesmo depois disso, o próximo passo é
+avaliar se `budgets.json` (WP02, não editado por este WP) precisa de
+ajuste por fidelidade anatômica, propondo a mudança sem aplicá-la aqui.
+
 ## 8. Alinhamento HRA↔corpo (v2, fora do escopo desta fase)
 
 Por ora, `transform` fica `null` tanto para os sistemas do Z-Anatomy quanto
