@@ -449,11 +449,12 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
 
     // Fallback text se Chart.js estiver offline
     if (!chartLoaded && compounds.length > 0) {
-      const fallbackText = LaiftDom.html`<div style="padding: 8px; background: #78350f; border-radius: 4px; color: #fcd34d; font-size: 0.8rem; margin-bottom: 12px;">
+      const fallbackWrap = document.createElement('div');
+      LaiftDom.setHtml(fallbackWrap, LaiftDom.html`<div style="padding: 8px; background: #78350f; border-radius: 4px; color: #fcd34d; font-size: 0.8rem; margin-bottom: 12px;">
         <strong>⚠️ Gráfico indisponível sem conexão</strong>
         <p style="margin: 4px 0 0 0;">Selecione um composto acima para ver detalhes. A simulação PK/PD requer Chart.js.</p>
-      </div>`;
-      compoundsPanel.insertBefore(fallbackText, compoundsPanel.firstChild);
+      </div>`);
+      compoundsPanel.insertBefore(fallbackWrap.firstElementChild, compoundsPanel.firstChild);
     }
 
     container.appendChild(compoundsPanel);

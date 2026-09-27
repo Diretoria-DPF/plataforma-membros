@@ -15,12 +15,11 @@
        rodar em Worker blob: — nenhum eval/new Function, só
        WebAssembly.instantiate() (ver scripts/e2e/csp.e2e.js). jsDelivr: só
        Chart.js (modo Farmacologia) e 3Dmol (modo Moléculas), carregados sob
-       demanda por js/modes/pharmacology.js e js/modes/molecules.js — não há
-       <script src> estático dessas libs nesta página. -->
+       demanda por js/modes/pharmacology.js e js/modes/molecules.js — não
+       há tag de script estática dessas libs nesta página. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://files.rcsb.org; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
-  <!-- Identidade da Plataforma de Membros — PRIMEIRO script, como nas
-       demais páginas de módulo (redireciona ao login se aberto fora dela;
-       aplica <html data-theme> antes de qualquer pintura). -->
+  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto
+       fora dela; aplica <html data-theme> antes de qualquer pintura). -->
   <script src="../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="apple-mobile-web-app-capable" content="yes">

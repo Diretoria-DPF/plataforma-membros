@@ -40,6 +40,47 @@ function waitForInternals() {
   });
 }
 
+// window.QuizEngine.startQuiz()/stopQuiz() precisam responder ANTES do
+// motor terminar de carregar os sistemas padrão (ver atlas.e2e.js — chama
+// isso de propósito enquanto o GLB real ainda está em voo, para pegar o
+// flake relatado). Por isso este stub síncrono existe já na primeira
+// linha do módulo, sem esperar `waitForInternals()`; `install()` (abaixo)
+// troca cada método pela versão real quando o motor terminar de montar.
+let quizModePromise = null;
+window.QuizEngine = {
+  async startQuiz() {
+    if (!quizModePromise) {
+      quizModePromise = Promise.all([
+        import('../modes/quiz.js'),
+        fetch('data/atlas/quiz-cases.json').then((r) => r.json()).catch(() => []),
+      ]).then(([m, cases]) => {
+        const internals = window.__atlasInternals;
+        return m.createQuizMode({
+          bus: (internals && internals.bus) || { on: () => () => {}, off: () => {}, emit: () => {}, EVENTS: {} },
+          store: (internals && internals.store) || { get: () => ({}), set: () => {}, subscribe: () => () => {} },
+          getLabel: (internals && internals.labelFor) || ((sid) => sid),
+          loadCases: () => Promise.resolve(cases),
+        });
+      });
+    }
+    const mode = await quizModePromise;
+    const internals = window.__atlasInternals;
+    await mode.enter(internals
+      ? { registry: internals.registry, assetLoader: internals.assetLoader, engine: internals.engine, contentStore: internals.contentStore }
+      : {});
+    window.__quizModeInstance = mode;
+  },
+  stopQuiz() { if (window.__quizModeInstance) window.__quizModeInstance.exit(); },
+  evaluateUserAnswer(id) {
+    const internals = window.__atlasInternals;
+    const sid = (internals && internals.legacyResolveSid && internals.legacyResolveSid(id)) || id;
+    if (internals) internals.bus.emit(internals.bus.EVENTS.QUIZ_ANSWER, { sid });
+  },
+  getCurrentScore() {
+    return (window.__quizModeInstance && window.__quizModeInstance.getScore && window.__quizModeInstance.getScore()) || 0;
+  },
+};
+
 async function install() {
   let legacyIdMap = {};
   try {
@@ -140,21 +181,14 @@ async function install() {
   window.ThreeEngineAPI = ThreeEngine;
 
   // ---- window.QuizEngine ----
-  let quizMode = null;
-  window.QuizEngine = {
-    async startQuiz() {
-      if (!quizMode) {
-        const { createQuizMode } = await import('../modes/quiz.js');
-        quizMode = createQuizMode({ bus, getLabel: labelFor, loadCases: () => fetchJson('data/atlas/quiz-cases.json') });
-      }
-      await quizMode.enter({ registry, assetLoader, engine, contentStore });
-    },
-    stopQuiz() { if (quizMode) quizMode.exit(); },
-    evaluateUserAnswer(id) {
-      const sid = resolveSid(id) || id;
-      bus.emit(bus.EVENTS.QUIZ_ANSWER, { sid });
-    },
-    getCurrentScore() { return (quizMode && quizMode.getScore && quizMode.getScore()) || 0; },
+  // O stub síncrono no topo do arquivo já cobre startQuiz/stopQuiz/
+  // getCurrentScore (inclusive antes do motor terminar de montar); aqui só
+  // troca `evaluateUserAnswer` pela tradução de sid real via `resolveSid`
+  // (que só existe depois que os internals chegam).
+  internals.legacyResolveSid = resolveSid;
+  window.QuizEngine.evaluateUserAnswer = function evaluateUserAnswer(id) {
+    const sid = resolveSid(id) || id;
+    bus.emit(bus.EVENTS.QUIZ_ANSWER, { sid });
   };
 
   // ---- ids de DOM legados (#bio-search-input / #biohacking-results-grid) ----
@@ -173,7 +207,6 @@ async function install() {
     const hud = document.createElement('div');
     hud.id = 'organ-hud';
     hud.className = 'hidden';
-    hud.innerHTML = '';
     const name = document.createElement('strong');
     name.id = 'organ-name';
     name.textContent = '---';
@@ -186,14 +219,19 @@ async function install() {
   // partes do shell/focus-nav dependem desse id) — em vez disso, envolve o
   // <canvas> já montado num wrapper com o id legado, sem mover nada visível
   // (o wrapper fica no lugar exato do canvas dentro de #atlas-canvas).
-  const canvasHost = document.getElementById('atlas-canvas');
-  const canvasEl = canvasHost && canvasHost.querySelector('canvas');
-  if (canvasEl && !document.getElementById('canvas-3d-container')) {
-    const wrap = document.createElement('div');
-    wrap.id = 'canvas-3d-container';
-    wrap.style.cssText = 'position:absolute; inset:0;';
-    canvasEl.parentNode.insertBefore(wrap, canvasEl);
-    wrap.appendChild(canvasEl);
+  try {
+    const canvasHost = document.getElementById('atlas-canvas');
+    const canvasEl = canvasHost && canvasHost.querySelector('canvas');
+    if (canvasEl && canvasEl.parentNode && !document.getElementById('canvas-3d-container')) {
+      const wrap = document.createElement('div');
+      wrap.id = 'canvas-3d-container';
+      wrap.style.cssText = 'position:absolute; inset:0;';
+      canvasEl.parentNode.replaceChild(wrap, canvasEl);
+      wrap.appendChild(canvasEl);
+    }
+  } catch (e) {
+    // Compat de teste antigo, nunca deve travar o boot real do Atlas.
+    console.warn('[atlas/compat] não deu para montar #canvas-3d-container:', e);
   }
 
   window.dispatchEvent(new CustomEvent('atlas:legacy-api-ready'));

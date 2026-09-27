@@ -276,7 +276,16 @@ export function createRegistry({ engine, bus } = {}) {
     systemRoots.set(system, root);
     const sids = new Set();
     for (const [nodeName, sid] of Object.entries(nodeToSid)) {
-      const node = root.getObjectByName(nodeName);
+      // GAP (relatado ao orquestrador — WP13): `THREE.GLTFLoader` sanitiza
+      // o nome do nó ao carregar (remove "." — reservado para paths de
+      // animação, ver PropertyBinding), então um nó como "Incus.l" chega
+      // à cena como "Incusl" (grupo) com "Incus"/"Incus_1" como filhos
+      // (um por primitiva do mesh) — nunca como "Incus.l" literal. O
+      // manifesto (models/manifest.json) registra o nome ORIGINAL do
+      // arquivo-fonte, então o pareamento exato falha para todo sid cujo
+      // nó tem "." no nome. Tenta a versão sanitizada antes de desistir.
+      const sanitized = nodeName.replace(/\s+/g, '_').replace(/\./g, '');
+      const node = root.getObjectByName(nodeName) || root.getObjectByName(sanitized);
       if (!node) {
         // eslint-disable-next-line no-console
         console.warn(`[atlas/registry] nó "${nodeName}" (sid ${sid}) não encontrado no GLB de "${system}" — nodeToSid do manifest está desalinhado com o arquivo.`);

@@ -63,7 +63,10 @@ function ehPaginaDoAtlas(rel) {
 // ---------------------------------------------------------------------------
 function walk(dir, filter, out = []) {
   for (const name of fs.readdirSync(dir)) {
-    if (['node_modules', 'dist', 'vendor', 'scripts', '.git'].includes(name)) continue;
+    // `dev/` (ex.: modulos/anatomia-3d/dev/) são harnesses de desenvolvimento
+    // isolados — nunca publicados (build.js também os exclui do dist/) e
+    // sem as mesmas regras de CSP/sinks das páginas reais.
+    if (['node_modules', 'dist', 'vendor', 'scripts', '.git', 'dev'].includes(name)) continue;
     const full = path.join(dir, name);
     if (fs.statSync(full).isDirectory()) walk(full, filter, out);
     else if (filter(full)) out.push(full);
@@ -248,17 +251,23 @@ async function memberTour(pkgs) {
 
     f = await app.openModule('anatomia');
     await f.waitForTimeout(pkgs ? 4000 : 800);
+    // Atlas v2 (WP13): three.js é vendorizado como módulo ES (sem THREE
+    // global) e Chart.js/3Dmol só entram sob demanda dentro dos modos
+    // Farmacologia/Moléculas — não há mais `window.THREE`/`window.Chart`
+    // logo ao abrir o módulo (ver js/main.js). O antigo formulário de dose
+    // customizada + visualizador de PDB (submeterInformacaoCustom/
+    // abrirPdb/ApiCache.exportarDossiePDF, js/atlas-ui.js) não existe mais
+    // nesta casca — substituído pelos modos Farmacologia/Moléculas
+    // (js/modes/pharmacology.js, js/modes/molecules.js). Aqui só troca de
+    // modo e confere que a casca reage sem violar a CSP.
     const atlas = await f.evaluate(() => ({
-      three: typeof THREE !== 'undefined' && typeof THREE.GLTFLoader === 'function',
-      chart: typeof Chart !== 'undefined',
       canvas: !!document.querySelector('#canvas-3d-container canvas'),
     }));
-    await f.evaluate(() => { window.submeterInformacaoCustom(); window.abrirPdb('4EY7', 'AChE'); });
-    await f.waitForTimeout(800);
-    await f.evaluate(() => localStorage.setItem('laift_atlas_history', JSON.stringify([{ id: 'e2e', data: '01/01/2026', hora: '10:00', composto: 'Teste', via: 'ORAL', horasAcademicas: 0.5 }])));
-    const [dossie] = await Promise.all([app.context.waitForEvent('page'), f.evaluate(() => window.ApiCache.exportarDossiePDF())]);
-    await dossie.waitForTimeout(500);
-    await dossie.close();
+    await f.evaluate(() => { window.AtlasShell && window.AtlasShell.setMode('farmacologia'); });
+    await f.waitForTimeout(400);
+    await f.evaluate(() => { window.AtlasShell && window.AtlasShell.setMode('moleculas'); });
+    await f.waitForTimeout(400);
+    await f.evaluate(() => { window.AtlasShell && window.AtlasShell.setMode('explorar'); });
     await app.page.click('#learn-back');
 
     const [cracha] = await Promise.all([
@@ -289,8 +298,10 @@ async function memberTour(pkgs) {
 
     if (pkgs) {
       check(served.missing.length === 0, 'toda URL do jsDelivr pedida existe no pacote npm pinado' + (served.missing.length ? ': ' + served.missing.join(', ') : ''));
-      check(quizLib && labLibs && studioLibs.mol && atlas.three && atlas.chart,
-        'bibliotecas de CDN carregam com o SRI conferido pelo navegador (SmilesDrawer, 3Dmol, three + GLTFLoader, Chart.js)');
+      check(quizLib && labLibs && studioLibs.mol,
+        'bibliotecas de CDN carregam com o SRI conferido pelo navegador (SmilesDrawer, 3Dmol, Chart.js)');
+      // Atlas v2: three.js é vendorizado (vendor/three/), sem SRI/CDN — o
+      // que este teste confere aqui é só que a cena WebGL montou.
       check(atlas.canvas, 'atlas 3D monta a cena WebGL sob a CSP');
     }
     check(!studioLibs.rdkitOff, "Estúdio: a CSP libera 'unsafe-eval' — RDKit não é mais desativado pela política de segurança");

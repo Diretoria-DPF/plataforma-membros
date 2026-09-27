@@ -38,8 +38,19 @@ import { createLayersPanel } from './ui/layers-panel.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
-const MODELS_BASE = USE_FIXTURES ? '../data/atlas/fixtures/' : 'models/';
-const CONTENT_BASE = USE_FIXTURES ? '../data/atlas/fixtures/' : '../data/atlas/';
+// Caminhos relativos à URL da página (index.html na raiz do módulo) — não
+// ao arquivo js/main.js. `data/atlas/` já mora dentro deste módulo.
+//
+// `models/manifest.json` real: `asset.file` já vem com o prefixo
+// "models/..." (relativo à raiz do módulo) — então o `baseUrl` do
+// AssetLoader (que é prefixado a `asset.file`) tem que ser '' aqui; só a
+// URL do próprio manifest.json é passada explicitamente a `loadManifest`.
+// `data/atlas/fixtures/manifest.json`: `asset.file` já vem relativo à
+// PRÓPRIA pasta de fixtures ("models/..."), então ali `baseUrl` é o
+// caminho da pasta de fixtures mesmo (join dá "data/atlas/fixtures/models/...").
+const MODELS_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : './';
+const MANIFEST_URL = USE_FIXTURES ? undefined : 'models/manifest.json';
+const CONTENT_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : 'data/atlas/';
 
 // Sistemas carregados no primeiro load (≤5MB combinados) — ver plano §4.
 const DEFAULT_SYSTEMS = Object.freeze(['esqueletico', 'muscular']);
@@ -77,10 +88,13 @@ async function createContentStore() {
 
   const entries = structures.map((s) => ({
     sid: s.sid,
-    ptName: legacyNameBySid.get(s.sid) || null,
-    englishName: s.englishName || '',
-    latinName: s.latinName || '',
-    systemId: s.system,
+    system: s.system,
+    side: s.side,
+    names: {
+      pt: legacyNameBySid.get(s.sid) || '',
+      en: s.englishName || '',
+      la: s.latinName || '',
+    },
   }));
   const searchIndex = buildSearchIndex(entries);
 
@@ -127,6 +141,7 @@ async function boot() {
 
   const canvasHost = document.getElementById('atlas-canvas');
   const bus = { on, off, emit, EVENTS };
+  const storeApi = { get: storeGet, set: storeSet, subscribe: storeSubscribe };
 
   const rendererApi = createRenderer({ container: canvasHost, bus });
   const { THREE: T, renderer, scene, camera, requestRender, addTicker, setViewOffset, getStats } = rendererApi;
@@ -174,7 +189,7 @@ async function boot() {
 
   const assetLoader = createAssetLoader({
     bus,
-    store: { get: storeGet, set: storeSet },
+    store: storeApi,
     baseUrl: MODELS_BASE,
     engine,
     registry,
@@ -190,12 +205,12 @@ async function boot() {
   const selection = createSelection({
     registry,
     bus,
-    store: { get: storeGet, set: storeSet },
+    store: storeApi,
     requestRender,
     focusSid: (sid) => engine.focusSid(sid, { animate: true }),
   });
 
-  const xrayClip = createXrayClip({ bus, store: { get: storeGet, set: storeSet }, renderer, THREE: T, requestRender });
+  const xrayClip = createXrayClip({ bus, store: storeApi, renderer, THREE: T, requestRender });
 
   let labels = null;
   try {
@@ -303,7 +318,7 @@ async function boot() {
   const layersPanelEl = document.createElement('div');
   const layersPanel = createLayersPanel(layersPanelEl, {
     bus,
-    store: { get: storeGet, set: storeSet },
+    store: storeApi,
     unavailable: () => storeGet().unavailableSystems,
   });
   registerPanel('layers', layersPanelEl);
@@ -311,7 +326,7 @@ async function boot() {
   // ---- Créditos ----
   let manifest = null;
   try {
-    manifest = await assetLoader.loadManifest();
+    manifest = await assetLoader.loadManifest(MANIFEST_URL);
   } catch (e) {
     console.warn('[atlas] manifest indisponível:', e);
   }
@@ -356,13 +371,17 @@ async function boot() {
 
   // ---- Fallback (GLB indisponível) ----
   try {
-    createFallback({ registry, engine, bodyGlbUrl: `${MODELS_BASE}zanatomy/esqueletico.glb` });
+    // Sem `bodyGlbUrl`: usa o padrão de createFallback (models/body.glb,
+    // resolvido a partir de js/engine/fallback.js — sempre correto
+    // independente de `?fixtures=1`, já que a reserva é sempre o body.glb
+    // real, nunca a fixture).
+    createFallback({ registry, engine });
   } catch (e) { /* fallback é um extra de robustez, nunca bloqueia o boot */ }
 
   // ---- Modos (carregados sob demanda ao trocar de modo) ----
   const modeInstances = new Map();
   const modeLoaders = {
-    quiz: () => import('./modes/quiz.js').then((m) => m.createQuizMode({ bus, getLabel: labelFor, loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`) })),
+    quiz: () => import('./modes/quiz.js').then((m) => m.createQuizMode({ bus, store: storeApi, getLabel: labelFor, loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`) })),
     fisiologia: () => import('./modes/physiology.js').then((m) => m.createPhysiologyMode({ bus, registry, engine, loadProcesses: () => fetchJson(`${CONTENT_BASE}processes.json`), loadRoutes: () => fetchJson(`${CONTENT_BASE}routes.json`) })),
     farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`) })),
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
@@ -398,7 +417,7 @@ async function boot() {
 
   // ---- Expõe internals para a camada de compatibilidade legada ----
   window.__atlasInternals = {
-    bus, store: { get: storeGet, set: storeSet }, registry, assetLoader, engine,
+    bus, store: storeApi, registry, assetLoader, engine,
     selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS,
   };
   emit('atlas:ready', {});

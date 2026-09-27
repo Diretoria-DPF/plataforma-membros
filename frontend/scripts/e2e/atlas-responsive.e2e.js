@@ -1,23 +1,22 @@
 /**
  * atlas-responsive.e2e.js — casca e layout responsivo do Atlas v2 (WP08)
  * ---------------------------------------------------------------------------
- * Cobre frontend/modulos/anatomia-3d/v2.html (a casca nova, ainda NÃO ligada
- * ao index.html atual — ver docs/ATLAS_UX_SPEC.md e o relatório do WP08).
+ * Cobre frontend/modulos/anatomia-3d/index.html (a casca do Atlas v2 — ver
+ * docs/ATLAS_UX_SPEC.md e o relatório do WP08; o WP13 ligou v2.html como o
+ * index.html definitivo do módulo, removendo o motor antigo).
  * Roda sobre o BUILD (frontend/dist/), como as demais suítes.
  *
- * v2.html é a primeira página de módulo carregada de PROPÓSITO fora do
- * fluxo normal de login (o WP13 ainda não a ligou a learning.js/index.html).
  * modulos/shared/laift-identity.js exige uma "janela host" com
  * `window.App.getIdentity()` (senão redireciona ao login, como faria fora
  * da plataforma de verdade) — em vez de duplicar o servidor estático,
  * reusamos `startStaticServer()` de ./harness e servimos uma página-host
  * mínima por `route.fulfill` (sem escrever nenhum arquivo novo em disco):
- * ela define `window.App` e embute v2.html num <iframe> da MESMA origem,
+ * ela define `window.App` e embute index.html num <iframe> da MESMA origem,
  * exatamente como frontend/index.html + learning.js fazem de verdade.
  */
 const { check, loadPlaywright, startStaticServer } = require('./harness');
 
-const ATLAS_PATH = 'modulos/anatomia-3d/v2.html';
+const ATLAS_PATH = 'modulos/anatomia-3d/index.html';
 
 const HOST_HTML = `<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>host de teste</title></head>
