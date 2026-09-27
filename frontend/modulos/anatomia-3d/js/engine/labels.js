@@ -137,6 +137,11 @@ export function createLabels({
   let fixedSids = []; // Sids fixados via setSids
   let autoPickMode = false; // Se deve auto-picker os maiores
 
+  // Rastreamento de mudanças de câmera e labels para o ticker
+  let lastCameraMatrixWorld = null;
+  let lastCameraProjectionMatrix = null;
+  let labelsChanged = false;
+
   /**
    * Auto-seleciona as estruturas maiores visíveis até completar `max`.
    * @private
@@ -304,10 +309,41 @@ export function createLabels({
 
   /**
    * Registra ticker de render (chamado a cada frame).
+   * Retorna true se a câmera ou labels mudaram, false caso contrário.
    */
   const unsubscribeTicker = addTicker(() => {
-    updateLabels();
-    return false; // Não contínuo; chamado uma vez por render
+    // Verifica se a câmera ou as labels mudaram
+    let cameraChanged = false;
+
+    // Compara matrizes de câmera (matrixWorld e projectionMatrix)
+    if (lastCameraMatrixWorld === null || lastCameraProjectionMatrix === null) {
+      // Primeira vez, precisa renderizar
+      cameraChanged = true;
+      lastCameraMatrixWorld = camera.matrixWorld.clone();
+      lastCameraProjectionMatrix = camera.projectionMatrix.clone();
+    } else {
+      // Verifica se a posição/orientação da câmera mudou
+      if (!lastCameraMatrixWorld.equals(camera.matrixWorld)) {
+        cameraChanged = true;
+        lastCameraMatrixWorld = camera.matrixWorld.clone();
+      }
+      // Verifica se a matriz de projeção mudou (fov, aspect, etc)
+      if (!lastCameraProjectionMatrix.equals(camera.projectionMatrix)) {
+        cameraChanged = true;
+        lastCameraProjectionMatrix = camera.projectionMatrix.clone();
+      }
+    }
+
+    // Marca se as labels devem ser atualizadas e retorna true se algo mudou
+    const labelsNeedUpdate = cameraChanged || labelsChanged;
+    labelsChanged = false; // Reset para o próximo frame
+
+    if (labelsNeedUpdate) {
+      updateLabels();
+      return true; // Ainda precisa renderizar
+    }
+
+    return false; // Nada mudou, não precisa de outro frame
   });
 
   /**
@@ -315,6 +351,7 @@ export function createLabels({
    */
   const offLabelsSet = busOn(EVENTS.LABELS_SET, (p) => {
     enabled = p.enabled;
+    labelsChanged = true; // Marca que as labels mudaram
     // Se ligou com sids vazios ou sem sids, entra em modo auto-pick
     if (enabled && (!fixedSids || fixedSids.length === 0)) {
       autoPickMode = true;
@@ -328,6 +365,7 @@ export function createLabels({
 
   const offStructureSelect = busOn(EVENTS.STRUCTURE_SELECT, (p) => {
     selectedSid = p.sid;
+    labelsChanged = true; // Marca que as labels mudaram
     updateLabels();
     requestRender();
   });
@@ -337,6 +375,7 @@ export function createLabels({
    */
   function setEnabled(bool) {
     enabled = bool;
+    labelsChanged = true; // Marca que as labels mudaram
     if (enabled && fixedSids.length === 0) {
       autoPickMode = true;
       autoPick();
@@ -352,6 +391,7 @@ export function createLabels({
    */
   function setSids(sids) {
     fixedSids = sids || [];
+    labelsChanged = true; // Marca que as labels mudaram
     autoPickMode = fixedSids.length === 0 && enabled;
     if (autoPickMode) {
       autoPick();

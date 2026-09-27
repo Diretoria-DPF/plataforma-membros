@@ -176,8 +176,8 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
     }
     frameCount++;
 
-    // Agenda próximo frame se necessário
-    if (needsAnotherFrame || tickers.length > 0) {
+    // Agenda próximo frame apenas se um ticker o solicitar
+    if (needsAnotherFrame) {
       requestAnimationFrameId = requestAnimationFrame(frame);
     } else {
       requestAnimationFrameId = null;
