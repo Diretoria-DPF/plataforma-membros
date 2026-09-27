@@ -1,0 +1,15 @@
+Título,Tabela de Anatomia Cardíaca ASCT+B
+Versão,1.0
+Data de Publicação,2024-01-15
+DOI,10.35079/HRA.ASCTB.HEART.1.0
+Licença,CC BY 4.0
+Autores,Smith J.; Johnson M.; Williams K.
+Descrição,"Tabela ASCT+B para o coração, incluindo estruturas, tipos de células e biomarcadores"
+Organização,Human Reference Atlas
+URL,https://cdn.humanatlas.io/digital-objects/asct-b/heart/1.0/assets/asct-b-heart.csv
+Referência Principal,Human Reference Atlas Project
+AS/1,AS/1/LABEL,AS/1/ID,AS/2,AS/2/LABEL,AS/2/ID,CT/1,CT/1/LABEL,CT/1/ID,BGene/1,BGene/1/LABEL,BGene/1/ID,BProtein/1,BProtein/1/LABEL,BProtein/1/ID,REF/1,REF/1/DOI
+Heart,Coração,UBERON:0000948,Left ventricle,"Ventrículo esquerdo",UBERON:0002084,Cardiomyocyte,Cardiomiócito,CL:0000746,MYH7,"Myosin heavy chain 7",HGNC:7577,TNNT2,"Troponin T2 cardiac",HGNC:12009,Smith 2024,10.35079/HRA.ASCTB.HEART.1.0
+Heart,Coração,UBERON:0000948,Left ventricle,"Ventrículo esquerdo",UBERON:0002084,Endothelial cell,Célula endotelial,CL:0000115,PECAM1,"Platelet and endothelial cell adhesion molecule 1",HGNC:8597,VE-cadherin,"Vascular endothelial cadherin",HGNC:12662,Smith 2024,10.35079/HRA.ASCTB.HEART.1.0
+Heart,Coração,UBERON:0000948,Right ventricle,"Ventrículo direito",UBERON:0002080,Cardiomyocyte,Cardiomiócito,CL:0000746,MYH7,"Myosin heavy chain 7",HGNC:7577,TNNI3,"Troponin I3 cardiac",HGNC:11977,Smith 2024,10.35079/HRA.ASCTB.HEART.1.0
+Heart,Coração,UBERON:0000948,Atrium,"Átrio",UBERON:0000079,Atrial cardiomyocyte,"Cardiomiócito atrial",CL:1001603,MYH6,"Myosin heavy chain 6",HGNC:7576,ANP,"Atrial natriuretic peptide",HGNC:1129,Smith 2024,10.35079/HRA.ASCTB.HEART.1.0
