@@ -317,7 +317,7 @@ async function boot() {
   }
   if (typeof window.createCredits === 'function') {
     const credits = window.createCredits({ manifest: manifest || {}, contentSources: [] });
-    if (credits && credits.dialog) registerPanel('credits', credits.dialog);
+    if (credits && credits.element) registerPanel('credits', credits.element);
   }
 
   // ---- Carregamento de sistemas ----
