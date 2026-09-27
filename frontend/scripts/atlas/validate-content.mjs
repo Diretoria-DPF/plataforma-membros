@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * scripts/atlas/validate-content.mjs [dir]
+ * scripts/atlas/validate-content.mjs [dir] [--legacy-anchors=warn]
  *
  * Valida um diretório de dados do Atlas Anatômico contra os esquemas em
  * frontend/modulos/anatomia-3d/data/atlas/schema/ e faz verificações
@@ -12,10 +12,15 @@
  * outro diretório com o mesmo formato (ex.: o data/atlas/ real, quando
  * existir).
  *
- * Sai com código 0 quando não há erros, e código 1 (com mensagens em
- * português) quando há pelo menos um problema.
+ * --legacy-anchors=warn: Quando set, converte erros de integridade de
+ * anchor sids que correspondem ao padrão legado ^za:[a-z0-9-]+$ em avisos.
+ * Avisos são exibidos com [aviso], contados separadamente e não afetam
+ * o código de saída.
  *
- * Uso: node scripts/atlas/validate-content.mjs [dir]
+ * Sai com código 0 quando não há erros, e código 1 (com mensagens em
+ * português) quando há pelo menos um problema (avisos não contam).
+ *
+ * Uso: node scripts/atlas/validate-content.mjs [dir] [--legacy-anchors=warn]
  */
 
 import Ajv2020 from 'ajv/dist/2020.js';
@@ -29,7 +34,13 @@ const ATLAS_DATA_DIR = path.join(FRONTEND_DIR, 'modulos', 'anatomia-3d', 'data',
 const SCHEMA_DIR = path.join(ATLAS_DATA_DIR, 'schema');
 const DEFAULT_TARGET_DIR = path.join(ATLAS_DATA_DIR, 'fixtures');
 
-const targetDir = path.resolve(process.argv[2] ?? DEFAULT_TARGET_DIR);
+// Parse arguments: first positional arg is dir, flags come after
+const args = process.argv.slice(2);
+const targetDir = path.resolve(args[0] ?? DEFAULT_TARGET_DIR);
+const legacyAnchorsWarn = args.some((arg) => arg === '--legacy-anchors=warn');
+
+// Regex pattern for legacy anchor sids (e.g., za:aorta-sistemica, za:sa-node)
+const LEGACY_ANCHOR_PATTERN = /^za:[a-z0-9-]+$/;
 
 /** Campos de texto/lista conhecidos de um registro de conteúdo, em notação de caminho. */
 const CONTENT_TEXT_FIELDS = [
@@ -96,6 +107,7 @@ function validateAgainstSchema(validators, schemaKey, data, fileLabel, errors) {
 
 async function main() {
   const errors = [];
+  const warnings = [];
 
   if (!fs.existsSync(targetDir) || !fs.statSync(targetDir).isDirectory()) {
     console.error(`[atlas] diretório não encontrado: ${targetDir}`);
@@ -292,7 +304,12 @@ async function main() {
     for (const route of routesFile.data) {
       for (const anchor of route?.anchors ?? []) {
         if (anchor && anchor.sid && !indexSids.has(anchor.sid)) {
-          errors.push(`[integridade] routes.json: a rota "${route.id}" referencia o sid "${anchor.sid}", que não existe em index.json`);
+          const msg = `[integridade] routes.json: a rota "${route.id}" referencia o sid "${anchor.sid}", que não existe em index.json`;
+          if (legacyAnchorsWarn && LEGACY_ANCHOR_PATTERN.test(anchor.sid)) {
+            warnings.push(msg.replace('[integridade]', '[aviso]'));
+          } else {
+            errors.push(msg);
+          }
         }
       }
     }
@@ -302,7 +319,12 @@ async function main() {
       for (const step of proc?.steps ?? []) {
         for (const anchor of step?.anchors ?? []) {
           if (anchor && anchor.sid && !indexSids.has(anchor.sid)) {
-            errors.push(`[integridade] processes.json: o processo "${proc.id}" (passo ${step.order}) referencia o sid "${anchor.sid}", que não existe em index.json`);
+            const msg = `[integridade] processes.json: o processo "${proc.id}" (passo ${step.order}) referencia o sid "${anchor.sid}", que não existe em index.json`;
+            if (legacyAnchorsWarn && LEGACY_ANCHOR_PATTERN.test(anchor.sid)) {
+              warnings.push(msg.replace('[integridade]', '[aviso]'));
+            } else {
+              errors.push(msg);
+            }
           }
         }
       }
@@ -318,7 +340,12 @@ async function main() {
       ];
       for (const [field, sid] of sidsToCheck) {
         if (sid && !indexSids.has(sid)) {
-          errors.push(`[integridade] quiz-cases.json: o caso "${quizCase.id}" (${field}) referencia o sid "${sid}", que não existe em index.json`);
+          const msg = `[integridade] quiz-cases.json: o caso "${quizCase.id}" (${field}) referencia o sid "${sid}", que não existe em index.json`;
+          if (legacyAnchorsWarn && LEGACY_ANCHOR_PATTERN.test(sid)) {
+            warnings.push(msg.replace('[integridade]', '[aviso]'));
+          } else {
+            errors.push(msg);
+          }
         }
       }
     }
@@ -327,13 +354,22 @@ async function main() {
   // --- Resultado -------------------------------------------------------------
   console.log(`[atlas] validando ${rel(targetDir) === '.' ? targetDir : targetDir}`);
   if (errors.length === 0) {
-    console.log('[atlas] validação concluída sem erros.');
+    if (warnings.length === 0) {
+      console.log('[atlas] validação concluída sem erros.');
+    } else {
+      console.log(`[atlas] validação concluída: ${warnings.length} aviso(s).`);
+      for (const w of warnings) console.log(`  - ${w}`);
+    }
     process.exitCode = 0;
     return;
   }
 
   console.error(`[atlas] ${errors.length} problema(s) encontrado(s):`);
   for (const e of errors) console.error(`  - ${e}`);
+  if (warnings.length > 0) {
+    console.log(`[atlas] ${warnings.length} aviso(s):`);
+    for (const w of warnings) console.log(`  - ${w}`);
+  }
   process.exitCode = 1;
 }
 

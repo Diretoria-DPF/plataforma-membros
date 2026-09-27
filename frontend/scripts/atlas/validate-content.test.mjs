@@ -38,8 +38,8 @@ function check(name, fn) {
   }
 }
 
-function runValidator(dir) {
-  const result = spawnSync(process.execPath, [VALIDATOR, dir], { encoding: 'utf8' });
+function runValidator(dir, args = []) {
+  const result = spawnSync(process.execPath, [VALIDATOR, dir, ...args], { encoding: 'utf8' });
   return { status: result.status, stdout: result.stdout ?? '', stderr: result.stderr ?? '' };
 }
 
@@ -152,6 +152,33 @@ check('as fixtures geradas passam na validação', () => {
     const { status, stderr } = runValidator(dir);
     assert.notEqual(status, 0, 'esperava falha (licenças mistas)');
     assert.match(stderr, /licenças diferentes/);
+  });
+}
+
+// 7) Flag --legacy-anchors=warn: converte erros de anchor legado em avisos.
+{
+  const dir = cloneFixtures('legacy-anchors');
+  tmpDirs.push(dir);
+  const routesPath = path.join(dir, 'routes.json');
+  const routes = readJson(routesPath);
+  // Adiciona uma rota com anchor que usa padrão legado
+  if (Array.isArray(routes) && routes.length > 0) {
+    routes[0].anchors = routes[0].anchors || [];
+    routes[0].anchors.push({ sid: 'za:legacy-structure' });
+  }
+  writeJson(routesPath, routes);
+
+  check('sem flag, legacy anchor gera erro', () => {
+    const { status, stderr } = runValidator(dir);
+    assert.notEqual(status, 0, 'esperava falha (legacy anchor sem flag)');
+    assert.match(stderr, /routes\.json.*za:legacy-structure/);
+  });
+
+  check('com --legacy-anchors=warn, legacy anchor vira aviso', () => {
+    const { status, stdout, stderr } = runValidator(dir, ['--legacy-anchors=warn']);
+    assert.equal(status, 0, `esperava sucesso (exit 0), obteve ${status}. stderr:\n${stderr}`);
+    // Verifica que há avisos (não erros)
+    assert.match(stdout, /aviso/);
   });
 }
 

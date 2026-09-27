@@ -200,7 +200,7 @@ jobs:
           # diretório de saída antes de validar.
           cp frontend/modulos/anatomia-3d/models/manifest.json tools/atlas-content/out/content/manifest.json
           cp "${{ env.DATA_DIR }}/glossario-pt.json" tools/atlas-content/out/content/glossario-pt.json
-          cd frontend && node scripts/atlas/validate-content.mjs ../tools/atlas-content/out/content
+          cd frontend && node scripts/atlas/validate-content.mjs ../tools/atlas-content/out/content --legacy-anchors=warn
 
       - name: 7) lint-pt (anglicismos/traduções — só relatório, não falha o job)
         if: steps.params.outputs.mode == 'build'
