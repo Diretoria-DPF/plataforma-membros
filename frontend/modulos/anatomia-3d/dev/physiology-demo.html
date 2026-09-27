@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fisiologia Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+    }
+    #root {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    #scene {
+      flex: 1;
+      background: #222;
+    }
+    #sheet {
+      background: white;
+      border-top: 1px solid #ddd;
+      max-height: 50%;
+      overflow-y: auto;
+      padding: 12px;
+    }
+    button {
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div id="scene"></div>
+    <div id="sheet"></div>
+  </div>
+
+  <script src="../../shared/safe-dom.js"></script>
+  <script src="physiology-demo.js" type="module"></script>
+</body>
+</html>
