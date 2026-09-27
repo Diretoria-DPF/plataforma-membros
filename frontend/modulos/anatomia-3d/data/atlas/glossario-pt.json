@@ -1,0 +1,781 @@
+[
+  {
+    "id": "coracao",
+    "term_pt": "coração",
+    "term_la": "cor",
+    "term_en": "heart",
+    "avoid": [
+      "Heart"
+    ],
+    "notes_pt": "Órgão muscular oco que bombeia sangue. Principal estrutura do sistema cardiovascular."
+  },
+  {
+    "id": "pulmao",
+    "term_pt": "pulmão",
+    "term_la": "pulmo",
+    "term_en": "lung",
+    "avoid": [
+      "Lung"
+    ],
+    "notes_pt": "Órgão da respiração, responsável pela troca de gases."
+  },
+  {
+    "id": "figado",
+    "term_pt": "fígado",
+    "term_la": "hepar",
+    "term_en": "liver",
+    "avoid": [
+      "Liver"
+    ],
+    "notes_pt": "Maior glândula do corpo, localizado no abdômen superior direito."
+  },
+  {
+    "id": "baco",
+    "term_pt": "baço",
+    "term_la": "lien",
+    "term_en": "spleen",
+    "avoid": [
+      "Spleen"
+    ],
+    "notes_pt": "Órgão do sistema linfático, importante na defesa imunológica."
+  },
+  {
+    "id": "pancreas",
+    "term_pt": "pâncreas",
+    "term_la": "pancreas",
+    "term_en": "pancreas",
+    "avoid": [
+      "Pancreas"
+    ],
+    "notes_pt": "Glândula mista (endócrina e exócrina) localizada atrás do estômago."
+  },
+  {
+    "id": "rim",
+    "term_pt": "rim",
+    "term_la": "ren",
+    "term_en": "kidney",
+    "avoid": [
+      "Kidney"
+    ],
+    "notes_pt": "Órgão que filtra o sangue e produz urina. Par simétrico."
+  },
+  {
+    "id": "estomago",
+    "term_pt": "estômago",
+    "term_la": "gaster",
+    "term_en": "stomach",
+    "avoid": [
+      "Stomach"
+    ],
+    "notes_pt": "Órgão do trato digestório que armazena e processa alimentos."
+  },
+  {
+    "id": "esofago",
+    "term_pt": "esôfago",
+    "term_la": "oesophagus",
+    "term_en": "esophagus",
+    "avoid": [
+      "Esophagus"
+    ],
+    "notes_pt": "Tubo muscular que conecta a faringe ao estômago. Pronuncia-se esô-fago."
+  },
+  {
+    "id": "intestino-delgado",
+    "term_pt": "intestino delgado",
+    "term_la": "intestinum tenue",
+    "term_en": "small intestine",
+    "avoid": [
+      "Small intestine"
+    ],
+    "notes_pt": "Parte do trato digestório especializada em absorção de nutrientes. Composto por duodeno, jejuno e íleo."
+  },
+  {
+    "id": "intestino-grosso",
+    "term_pt": "intestino grosso",
+    "term_la": "intestinum crassum",
+    "term_en": "large intestine",
+    "avoid": [
+      "Large intestine"
+    ],
+    "notes_pt": "Última parte do trato digestório, absorve água e forma fezes. O colo (cólon) é parte do intestino grosso — não é sinônimo dele."
+  },
+  {
+    "id": "vesicula-biliar",
+    "term_pt": "vesícula biliar",
+    "term_la": "vesica fellea",
+    "term_en": "gallbladder",
+    "avoid": [
+      "Gallbladder"
+    ],
+    "notes_pt": "Órgão que armazena bile produzida pelo fígado. Localizada na fossa cística."
+  },
+  {
+    "id": "bexiga-urinaria",
+    "term_pt": "bexiga urinária",
+    "term_la": "vesica urinaria",
+    "term_en": "urinary bladder",
+    "avoid": [
+      "Bladder"
+    ],
+    "notes_pt": "Órgão que armazena urina até a micção."
+  },
+  {
+    "id": "encefalo",
+    "term_pt": "encéfalo",
+    "term_la": "encephalon",
+    "term_en": "brain",
+    "avoid": [
+      "Brain"
+    ],
+    "notes_pt": "Cérebro ≠ encéfalo. O encéfalo inclui cérebro, cerebelo e tronco encefálico."
+  },
+  {
+    "id": "cerebro",
+    "term_pt": "cérebro",
+    "term_la": "cerebrum",
+    "term_en": "cerebrum",
+    "avoid": [
+      "Cerebrum"
+    ],
+    "notes_pt": "Maior estrutura do sistema nervoso central, dividido em hemisférios. Parte do encéfalo."
+  },
+  {
+    "id": "cerebelo",
+    "term_pt": "cerebelo",
+    "term_la": "cerebellum",
+    "term_en": "cerebellum",
+    "avoid": [
+      "Cerebellum"
+    ],
+    "notes_pt": "Estrutura envolvida em coordenação e equilíbrio. Localizado inferiormente ao cérebro."
+  },
+  {
+    "id": "tronco-encefalico",
+    "term_pt": "tronco encefálico",
+    "term_la": "truncus encephali",
+    "term_en": "brainstem",
+    "avoid": [
+      "Brainstem"
+    ],
+    "notes_pt": "Conecta o cérebro à medula espinal. Composto por mesencéfalo, ponte e bulbo."
+  },
+  {
+    "id": "medula-espinal",
+    "term_pt": "medula espinal",
+    "term_la": "medulla spinalis",
+    "term_en": "spinal cord",
+    "avoid": [
+      "Spinal cord",
+      "medula espinhal"
+    ],
+    "notes_pt": "Parte do sistema nervoso central dentro do canal vertebral. Pronuncia-se me-du-la."
+  },
+  {
+    "id": "tireoide",
+    "term_pt": "tireoide",
+    "term_la": "thyroidea",
+    "term_en": "thyroid gland",
+    "avoid": [
+      "Thyroid gland",
+      "tireóide"
+    ],
+    "notes_pt": "Glândula endócrina em forma de borboleta no pescoço."
+  },
+  {
+    "id": "suprarrenal",
+    "term_pt": "suprarrenal",
+    "term_la": "glandula suprarenalis",
+    "term_en": "adrenal gland",
+    "avoid": [
+      "Adrenal gland"
+    ],
+    "notes_pt": "Glândula endócrina sobre o rim. Produz hormônios como adrenalina."
+  },
+  {
+    "id": "hipofise",
+    "term_pt": "hipófise",
+    "term_la": "hypophysis",
+    "term_en": "pituitary gland",
+    "avoid": [
+      "Pituitary gland"
+    ],
+    "notes_pt": "Glândula endócrina no sela túrcica. Conhecida como glândula mestra."
+  },
+  {
+    "id": "aorta",
+    "term_pt": "aorta",
+    "term_la": "aorta",
+    "term_en": "aorta",
+    "notes_pt": "Maior artéria do corpo, sai do ventrículo esquerdo."
+  },
+  {
+    "id": "veia-cava-superior",
+    "term_pt": "veia cava superior",
+    "term_la": "vena cava cranialis",
+    "term_en": "superior vena cava",
+    "avoid": [
+      "Superior vena cava"
+    ],
+    "notes_pt": "Veia que drena sangue da cabeça e braços para o coração."
+  },
+  {
+    "id": "veia-cava-inferior",
+    "term_pt": "veia cava inferior",
+    "term_la": "vena cava caudalis",
+    "term_en": "inferior vena cava",
+    "avoid": [
+      "Inferior vena cava"
+    ],
+    "notes_pt": "Veia que drena sangue dos membros inferiores e abdômen para o coração."
+  },
+  {
+    "id": "arteria-carotida-comum",
+    "term_pt": "artéria carótida comum",
+    "term_la": "arteria carotis communis",
+    "term_en": "common carotid artery",
+    "avoid": [
+      "Common carotid artery"
+    ],
+    "notes_pt": "Artéria no pescoço que irriga a cabeça."
+  },
+  {
+    "id": "arteria-femoral",
+    "term_pt": "artéria femoral",
+    "term_la": "arteria femoralis",
+    "term_en": "femoral artery",
+    "avoid": [
+      "Femoral artery"
+    ],
+    "notes_pt": "Artéria principal da coxa."
+  },
+  {
+    "id": "veia-jugular",
+    "term_pt": "veia jugular",
+    "term_la": "vena jugularis",
+    "term_en": "jugular vein",
+    "avoid": [
+      "Jugular vein"
+    ],
+    "notes_pt": "Veia que drena a cabeça. Veia jugular interna e externa."
+  },
+  {
+    "id": "femur",
+    "term_pt": "fêmur",
+    "term_la": "femur",
+    "term_en": "femur",
+    "avoid": [
+      "Femur"
+    ],
+    "notes_pt": "Osso mais longo do corpo. Localizado na coxa."
+  },
+  {
+    "id": "tibia",
+    "term_pt": "tíbia",
+    "term_la": "tibia",
+    "term_en": "tibia",
+    "avoid": [
+      "Tibia"
+    ],
+    "notes_pt": "Osso medial da perna. O osso de suporte da tíbia."
+  },
+  {
+    "id": "fibula",
+    "term_pt": "fíbula",
+    "term_la": "fibula",
+    "term_en": "fibula",
+    "avoid": [
+      "Fibula",
+      "perônio"
+    ],
+    "notes_pt": "Osso lateral fino da perna. Presente apenas nos membros posteriores dos vertebrados."
+  },
+  {
+    "id": "patela",
+    "term_pt": "patela",
+    "term_la": "patella",
+    "term_en": "patella",
+    "avoid": [
+      "Patella",
+      "rótula"
+    ],
+    "notes_pt": "Osso sesamoide anterior ao joelho. Protege e aumenta a alavanca do quadríceps."
+  },
+  {
+    "id": "umero",
+    "term_pt": "úmero",
+    "term_la": "humerus",
+    "term_en": "humerus",
+    "avoid": [
+      "Humerus"
+    ],
+    "notes_pt": "Osso do braço entre ombro e cotovelo."
+  },
+  {
+    "id": "radio",
+    "term_pt": "rádio",
+    "term_la": "radius",
+    "term_en": "radius",
+    "avoid": [
+      "Radius"
+    ],
+    "notes_pt": "Osso lateral do antebraço. Permite rotação do antebraço."
+  },
+  {
+    "id": "ulna",
+    "term_pt": "ulna",
+    "term_la": "ulna",
+    "term_en": "ulna",
+    "notes_pt": "Osso medial do antebraço. Forma o cotovelo com o úmero."
+  },
+  {
+    "id": "clavicula",
+    "term_pt": "clavícula",
+    "term_la": "clavicula",
+    "term_en": "clavicle",
+    "avoid": [
+      "Clavicle"
+    ],
+    "notes_pt": "Osso em forma de S do ombro. Conecta o esterno ao escápulo."
+  },
+  {
+    "id": "escapula",
+    "term_pt": "escápula",
+    "term_la": "scapula",
+    "term_en": "scapula",
+    "avoid": [
+      "Scapula"
+    ],
+    "notes_pt": "Osso triangular do ombro. Também chamado omoplata."
+  },
+  {
+    "id": "vertebra-cervical",
+    "term_pt": "vértebra cervical",
+    "term_la": "vertebra cervicalis",
+    "term_en": "cervical vertebra",
+    "avoid": [
+      "Cervical vertebra"
+    ],
+    "notes_pt": "Vértebra do pescoço. Existem 7 vértebras cervicais."
+  },
+  {
+    "id": "vertebra-toracica",
+    "term_pt": "vértebra torácica",
+    "term_la": "vertebra thoracica",
+    "term_en": "thoracic vertebra",
+    "avoid": [
+      "Thoracic vertebra"
+    ],
+    "notes_pt": "Vértebra do tórax. Existem 12 vértebras torácicas."
+  },
+  {
+    "id": "vertebra-lombar",
+    "term_pt": "vértebra lombar",
+    "term_la": "vertebra lumbalis",
+    "term_en": "lumbar vertebra",
+    "avoid": [
+      "Lumbar vertebra"
+    ],
+    "notes_pt": "Vértebra da coluna inferior. Existem 5 vértebras lombares."
+  },
+  {
+    "id": "sacro",
+    "term_pt": "sacro",
+    "term_la": "sacrum",
+    "term_en": "sacrum",
+    "avoid": [
+      "Sacrum"
+    ],
+    "notes_pt": "Osso triangular formado pela fusão de 5 vértebras sacrais."
+  },
+  {
+    "id": "coccix",
+    "term_pt": "cóccix",
+    "term_la": "coccyx",
+    "term_en": "coccyx",
+    "avoid": [
+      "Coccyx"
+    ],
+    "notes_pt": "Osso terminal da coluna vertebral. Vestigial em humanos."
+  },
+  {
+    "id": "esterno",
+    "term_pt": "esterno",
+    "term_la": "sternum",
+    "term_en": "sternum",
+    "avoid": [
+      "Sternum"
+    ],
+    "notes_pt": "Osso plano anterior do tórax. Protege coração e pulmões."
+  },
+  {
+    "id": "costela",
+    "term_pt": "costela",
+    "term_la": "costa",
+    "term_en": "rib",
+    "avoid": [
+      "Rib"
+    ],
+    "notes_pt": "Osso arcuado do tórax. Humanos têm 12 pares de costelas."
+  },
+  {
+    "id": "musculo-esternocleidomastoideo",
+    "term_pt": "músculo esternocleidomastóideo",
+    "term_la": "musculus sternocleidomastoideus",
+    "term_en": "sternocleidomastoid muscle",
+    "avoid": [
+      "Sternocleidomastoid muscle"
+    ],
+    "notes_pt": "Músculo do pescoço importante na flexão e rotação da cabeça."
+  },
+  {
+    "id": "musculo-deltoides",
+    "term_pt": "músculo deltoides",
+    "term_la": "musculus deltoideus",
+    "term_en": "deltoid muscle",
+    "avoid": [
+      "Deltoid muscle"
+    ],
+    "notes_pt": "Músculo do ombro em forma de delta."
+  },
+  {
+    "id": "musculo-biceps",
+    "term_pt": "músculo bíceps",
+    "term_la": "musculus biceps brachii",
+    "term_en": "biceps muscle",
+    "avoid": [
+      "Biceps muscle"
+    ],
+    "notes_pt": "Músculo flexor do braço com duas cabeças."
+  },
+  {
+    "id": "musculo-triceps",
+    "term_pt": "músculo tríceps",
+    "term_la": "musculus triceps brachii",
+    "term_en": "triceps muscle",
+    "avoid": [
+      "Triceps muscle"
+    ],
+    "notes_pt": "Músculo extensor do braço com três cabeças."
+  },
+  {
+    "id": "musculo-peitoral-maior",
+    "term_pt": "músculo peitoral maior",
+    "term_la": "musculus pectoralis major",
+    "term_en": "pectoralis major muscle",
+    "avoid": [
+      "Pectoralis major"
+    ],
+    "notes_pt": "Músculo do tórax. Grande músculo peitoral."
+  },
+  {
+    "id": "musculo-reto-abdominal",
+    "term_pt": "músculo reto do abdômen",
+    "term_la": "musculus rectus abdominis",
+    "term_en": "rectus abdominis muscle",
+    "avoid": [
+      "Rectus abdominis"
+    ],
+    "notes_pt": "Músculo frontal do abdômen. Forma os 'abdomens'."
+  },
+  {
+    "id": "musculo-quadriceps",
+    "term_pt": "músculo quadríceps",
+    "term_la": "musculus quadriceps femoris",
+    "term_en": "quadriceps muscle",
+    "avoid": [
+      "Quadriceps muscle"
+    ],
+    "notes_pt": "Grupo de 4 músculos da coxa. Principal extensor do joelho."
+  },
+  {
+    "id": "musculos-isquiotibiais",
+    "term_pt": "músculos isquiotibiais",
+    "term_la": "musculi ischiocruales",
+    "term_en": "hamstring muscles",
+    "avoid": [
+      "Hamstring",
+      "Hamstring muscles"
+    ],
+    "notes_pt": "Grupo de músculos posteriores da coxa. Flexores do joelho."
+  },
+  {
+    "id": "musculo-gastrocnemio",
+    "term_pt": "músculo gastrocnêmio",
+    "term_la": "musculus gastrocnemius",
+    "term_en": "gastrocnemius muscle",
+    "avoid": [
+      "Gastrocnemius"
+    ],
+    "notes_pt": "Músculo posterior da perna. Forma a panturrilha."
+  },
+  {
+    "id": "nervo-trigemeo",
+    "term_pt": "nervo trigêmeo",
+    "term_la": "nervus trigeminus",
+    "term_en": "trigeminal nerve",
+    "avoid": [
+      "Trigeminal nerve"
+    ],
+    "notes_pt": "V par de nervos cranianos. Responsável pela sensação facial."
+  },
+  {
+    "id": "nervo-facial",
+    "term_pt": "nervo facial",
+    "term_la": "nervus facialis",
+    "term_en": "facial nerve",
+    "avoid": [
+      "Facial nerve"
+    ],
+    "notes_pt": "VII par de nervos cranianos. Inerva músculos da expressão."
+  },
+  {
+    "id": "nervo-vago",
+    "term_pt": "nervo vago",
+    "term_la": "nervus vagus",
+    "term_en": "vagus nerve",
+    "avoid": [
+      "Vagus nerve"
+    ],
+    "notes_pt": "X par de nervos cranianos. Maior nervo do sistema parassimpático."
+  },
+  {
+    "id": "nervo-oculomotor",
+    "term_pt": "nervo oculomotor",
+    "term_la": "nervus oculomotorius",
+    "term_en": "oculomotor nerve",
+    "avoid": [
+      "Oculomotor nerve"
+    ],
+    "notes_pt": "III par de nervos cranianos. Inerva músculos do olho."
+  },
+  {
+    "id": "nervo-optico",
+    "term_pt": "nervo óptico",
+    "term_la": "nervus opticus",
+    "term_en": "optic nerve",
+    "avoid": [
+      "Optic nerve"
+    ],
+    "notes_pt": "II par de nervos cranianos. Transmite sinais visuais."
+  },
+  {
+    "id": "tuba-uterina",
+    "term_pt": "tuba uterina",
+    "term_la": "tuba uterina",
+    "term_en": "fallopian tube",
+    "avoid": [
+      "Fallopian tube",
+      "trompa de Falópio"
+    ],
+    "notes_pt": "Tubo que conecta o ovário ao útero. Anatomicamente chamada tuba uterina."
+  },
+  {
+    "id": "tuba-auditiva",
+    "term_pt": "tuba auditiva",
+    "term_la": "tuba auditiva",
+    "term_en": "eustachian tube",
+    "avoid": [
+      "Eustachian tube",
+      "trompa de Eustáquio"
+    ],
+    "notes_pt": "Tubo que conecta a orelha média à nasofaringe. Anatomicamente chamada tuba auditiva."
+  },
+  {
+    "id": "utero",
+    "term_pt": "útero",
+    "term_la": "uterus",
+    "term_en": "uterus",
+    "avoid": [
+      "Uterus"
+    ],
+    "notes_pt": "Órgão reprodutivo feminino. Órgão da gestação."
+  },
+  {
+    "id": "ovario",
+    "term_pt": "ovário",
+    "term_la": "ovarium",
+    "term_en": "ovary",
+    "avoid": [
+      "Ovary"
+    ],
+    "notes_pt": "Glândula reprodutiva feminina. Produz óvulos e hormônios."
+  },
+  {
+    "id": "testiculo",
+    "term_pt": "testículo",
+    "term_la": "testis",
+    "term_en": "testis",
+    "avoid": [
+      "Testis"
+    ],
+    "notes_pt": "Glândula reprodutiva masculina. Produz espermatozoides."
+  },
+  {
+    "id": "prostata",
+    "term_pt": "próstata",
+    "term_la": "prostata",
+    "term_en": "prostate",
+    "avoid": [
+      "Prostate"
+    ],
+    "notes_pt": "Glândula acessória masculina. Produz fluido seminal."
+  },
+  {
+    "id": "pele",
+    "term_pt": "pele",
+    "term_la": "cutis",
+    "term_en": "skin",
+    "avoid": [
+      "Skin"
+    ],
+    "notes_pt": "Maior órgão do corpo. Composta de epiderme, derme e hipoderme."
+  },
+  {
+    "id": "epiderme",
+    "term_pt": "epiderme",
+    "term_la": "epidermis",
+    "term_en": "epidermis",
+    "avoid": [
+      "Epidermis"
+    ],
+    "notes_pt": "Camada externa da pele. Contém queratinócitos."
+  },
+  {
+    "id": "derme",
+    "term_pt": "derme",
+    "term_la": "dermis",
+    "term_en": "dermis",
+    "avoid": [
+      "Dermis"
+    ],
+    "notes_pt": "Camada intermediária da pele. Contém colágeno e elastina."
+  },
+  {
+    "id": "hipoderme",
+    "term_pt": "hipoderme",
+    "term_la": "hypodermis",
+    "term_en": "hypodermis",
+    "avoid": [
+      "Hypodermis",
+      "subcutaneous tissue"
+    ],
+    "notes_pt": "Camada profunda da pele. Principalmente tecido adiposo."
+  },
+  {
+    "id": "glandula-sudorifera",
+    "term_pt": "glândula sudorípara",
+    "term_la": "glandula sudorifera",
+    "term_en": "sweat gland",
+    "avoid": [
+      "Sweat gland"
+    ],
+    "notes_pt": "Glândula que produz suor. Importante na regulação térmica."
+  },
+  {
+    "id": "glandula-sebacea",
+    "term_pt": "glândula sebácea",
+    "term_la": "glandula sebacea",
+    "term_en": "sebaceous gland",
+    "avoid": [
+      "Sebaceous gland"
+    ],
+    "notes_pt": "Glândula que produz sebo. Associada aos folículos pilosos."
+  },
+  {
+    "id": "pelo",
+    "term_pt": "pelo",
+    "term_la": "capillus",
+    "term_en": "hair",
+    "avoid": [
+      "Hair"
+    ],
+    "notes_pt": "Termo anatômico: pelo (pili). \"Cabelo\" designa apenas os pelos do couro cabeludo."
+  },
+  {
+    "id": "unha",
+    "term_pt": "unha",
+    "term_la": "unguis",
+    "term_en": "nail",
+    "avoid": [
+      "Nail"
+    ],
+    "notes_pt": "Estrutura queratinizada nas extremidades dos dedos."
+  },
+  {
+    "id": "olho",
+    "term_pt": "olho",
+    "term_la": "oculus",
+    "term_en": "eye",
+    "avoid": [
+      "Eye"
+    ],
+    "notes_pt": "Órgão da visão."
+  },
+  {
+    "id": "cornea",
+    "term_pt": "córnea",
+    "term_la": "cornea",
+    "term_en": "cornea",
+    "avoid": [
+      "Cornea"
+    ],
+    "notes_pt": "Membrana anterior transparente do olho."
+  },
+  {
+    "id": "iris",
+    "term_pt": "íris",
+    "term_la": "iris",
+    "term_en": "iris",
+    "avoid": [
+      "Iris"
+    ],
+    "notes_pt": "Parte colorida do olho que controla a pupila."
+  },
+  {
+    "id": "retina",
+    "term_pt": "retina",
+    "term_la": "retina",
+    "term_en": "retina",
+    "notes_pt": "Camada sensível à luz na parte posterior do olho."
+  },
+  {
+    "id": "laringe",
+    "term_pt": "laringe",
+    "term_la": "larynx",
+    "term_en": "larynx",
+    "avoid": [
+      "Larynx"
+    ],
+    "notes_pt": "Estrutura cartilaginosa da garganta. Contém as cordas vocais."
+  },
+  {
+    "id": "traqueia",
+    "term_pt": "traqueia",
+    "term_la": "trachea",
+    "term_en": "trachea",
+    "avoid": [
+      "Trachea"
+    ],
+    "notes_pt": "Tubo cartilaginoso que conecta a laringe aos brônquios."
+  },
+  {
+    "id": "bronquio",
+    "term_pt": "brônquio",
+    "term_la": "bronchus",
+    "term_en": "bronchus",
+    "avoid": [
+      "Bronchus"
+    ],
+    "notes_pt": "Tubo que leva ar aos pulmões. Se divide em bronquíolos."
+  },
+  {
+    "id": "alveolo",
+    "term_pt": "alvéolo",
+    "term_la": "alveolus",
+    "term_en": "alveolus",
+    "avoid": [
+      "Alveolus"
+    ],
+    "notes_pt": "Pequeno saco pulmonar onde ocorre a troca gasosa."
+  }
+]
