@@ -47,12 +47,18 @@ export function buildQuery(batch) {
   }
 
   if (labelStructures.length > 0) {
+    // As literais em VALUES precisam da tag de idioma diretamente (não é
+    // possível aplicar @en a uma variável, como em "?label@en" — isso é um
+    // erro de sintaxe SPARQL e faz o endpoint responder HTTP 400). O FMA ID
+    // aqui é OPTIONAL porque estas estruturas (sid za:) são justamente as
+    // que não têm um FMA ID já conhecido — exigi-lo excluiria a maioria dos
+    // resultados válidos.
     whereClauses.push(`
       {
-        VALUES ?label { ${labelStructures.map(s => `"${s.english}"`).join(' ')} }
-        ?qid rdfs:label ?label@en .
-        ?qid wdt:P1402 ?fmaId .
+        VALUES ?label { ${labelStructures.map(s => `"${s.english}"@en`).join(' ')} }
+        ?qid rdfs:label ?label .
         ?qid wdt:P31|wdt:P279 wd:Q4936952 .
+        OPTIONAL { ?qid wdt:P1402 ?fmaId . }
       }
     `);
   }
@@ -234,7 +240,15 @@ async function fetchWithRetry(url, options = {}, attempt = 0) {
  */
 function loadStructures(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(content);
+  const structures = JSON.parse(content);
+  // O structures.json real (gerado pelo WP10) usa englishName/latinName, não
+  // english/latin (que é o que os testes/fixtures deste script usam) —
+  // normaliza aqui para que o resto do script funcione com os dois formatos.
+  return structures.map(s => ({
+    ...s,
+    english: s.english ?? s.englishName,
+    latin: s.latin ?? s.latinName ?? undefined
+  }));
 }
 
 /**

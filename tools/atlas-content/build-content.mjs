@@ -439,7 +439,13 @@ async function main() {
 
   // Leitura de dados
   console.log('Lendo arquivos de entrada...');
-  const structures = loadJson(args.structures) || [];
+  // O structures.json real (WP10) usa englishName/latinName; os testes deste
+  // script usam english/latin — normaliza para os dois formatos funcionarem.
+  const structures = (loadJson(args.structures) || []).map(s => ({
+    ...s,
+    english: s.english ?? s.englishName,
+    latin: s.latin ?? s.latinName ?? undefined
+  }));
   const wikidata = loadJson(args.wikidata) || {};
   const wikipedia = loadJson(args.wikipedia) || {};
   const asctbRaw = loadJson(args.asctb) || {};
