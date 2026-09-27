@@ -2,67 +2,97 @@
   "report": [
     {
       "name": "articular",
-      "nodeCount": 1096,
+      "nodeCount": 413,
       "lod0": {
         "path": "articular.glb",
-        "bytes": 1510600,
-        "triangles": 86964,
-        "jsonBytes": 973916,
-        "binBytes": 536656,
-        "ratio": 0.06113264979191946,
-        "error": 0.05,
+        "bytes": 1317992,
+        "triangles": 217604,
+        "jsonBytes": 340064,
+        "binBytes": 977900,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "articular.lod1.glb",
+        "bytes": 649512,
+        "triangles": 58143,
+        "jsonBytes": 340344,
+        "binBytes": 309140,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     },
     {
       "name": "cardiovascular",
-      "nodeCount": 1118,
+      "nodeCount": 22,
       "lod0": {
         "path": "cardiovascular.glb",
-        "bytes": 3754564,
-        "triangles": 558121,
-        "jsonBytes": 1016844,
-        "binBytes": 2737692,
-        "ratio": 0.3499296392940275,
-        "error": 0.05,
+        "bytes": 781240,
+        "triangles": 179608,
+        "jsonBytes": 28772,
+        "binBytes": 752440,
+        "ratio": 1,
+        "error": 0.01,
         "overBudget": false
       },
       "lod1": {
         "path": "cardiovascular.lod1.glb",
-        "bytes": 1550704,
-        "triangles": 92907,
-        "jsonBytes": 983084,
-        "binBytes": 567592,
-        "ratio": 0.05851313758576236,
-        "error": 0.15,
+        "bytes": 245372,
+        "triangles": 45502,
+        "jsonBytes": 28624,
+        "binBytes": 216720,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     },
     {
       "name": "digestorio",
-      "nodeCount": 1523,
+      "nodeCount": 65,
       "lod0": {
         "path": "digestorio.glb",
-        "bytes": 2442664,
-        "triangles": 173892,
-        "jsonBytes": 1432332,
-        "binBytes": 1010304,
-        "ratio": 0.057718442413674,
-        "error": 0.05,
+        "bytes": 1004544,
+        "triangles": 209554,
+        "jsonBytes": 78980,
+        "binBytes": 925536,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "digestorio.lod1.glb",
+        "bytes": 345132,
+        "triangles": 53737,
+        "jsonBytes": 78484,
+        "binBytes": 266620,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     },
     {
       "name": "endocrino",
-      "nodeCount": 1505,
+      "nodeCount": 6,
       "lod0": {
         "path": "endocrino.glb",
-        "bytes": 2042328,
-        "triangles": 99870,
-        "jsonBytes": 1402048,
-        "binBytes": 640252,
-        "ratio": 0.02997977596878046,
-        "error": 0.05,
+        "bytes": 60508,
+        "triangles": 10796,
+        "jsonBytes": 8252,
+        "binBytes": 52228,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "endocrino.lod1.glb",
+        "bytes": 23380,
+        "triangles": 2796,
+        "jsonBytes": 8216,
+        "binBytes": 15136,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     },
@@ -92,15 +122,25 @@
     },
     {
       "name": "linfatico",
-      "nodeCount": 1668,
+      "nodeCount": 163,
       "lod0": {
         "path": "linfatico.glb",
-        "bytes": 2089880,
-        "triangles": 77253,
-        "jsonBytes": 1550444,
-        "binBytes": 539408,
-        "ratio": 0.02,
-        "error": 0.05,
+        "bytes": 500032,
+        "triangles": 93242,
+        "jsonBytes": 147788,
+        "binBytes": 352216,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "linfatico.lod1.glb",
+        "bytes": 303408,
+        "triangles": 29902,
+        "jsonBytes": 154372,
+        "binBytes": 149008,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     },
@@ -130,53 +170,73 @@
     },
     {
       "name": "nervoso",
-      "nodeCount": 1453,
+      "nodeCount": 335,
       "lod0": {
         "path": "nervoso.glb",
-        "bytes": 2913136,
-        "triangles": 290824,
-        "jsonBytes": 1354808,
-        "binBytes": 1558300,
-        "ratio": 0.11693814633581878,
+        "bytes": 2904972,
+        "triangles": 573911,
+        "jsonBytes": 345104,
+        "binBytes": 2559840,
+        "ratio": 0.70101313690719,
         "error": 0.05,
         "overBudget": false
       },
       "lod1": {
         "path": "nervoso.lod1.glb",
-        "bytes": 1968936,
-        "triangles": 106596,
-        "jsonBytes": 1314040,
-        "binBytes": 654868,
-        "ratio": 0.04055355469157453,
-        "error": 0.15,
+        "bytes": 1472576,
+        "triangles": 231270,
+        "jsonBytes": 344224,
+        "binBytes": 1128324,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     },
     {
       "name": "respiratorio",
-      "nodeCount": 1460,
+      "nodeCount": 7,
       "lod0": {
         "path": "respiratorio.glb",
-        "bytes": 2002480,
-        "triangles": 103621,
-        "jsonBytes": 1349412,
-        "binBytes": 653040,
-        "ratio": 0.034091989767494724,
-        "error": 0.05,
+        "bytes": 677928,
+        "triangles": 159188,
+        "jsonBytes": 9984,
+        "binBytes": 667916,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "respiratorio.lod1.glb",
+        "bytes": 202788,
+        "triangles": 39793,
+        "jsonBytes": 9924,
+        "binBytes": 192836,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     },
     {
       "name": "urinario",
-      "nodeCount": 1499,
+      "nodeCount": 5,
       "lod0": {
         "path": "urinario.glb",
-        "bytes": 2036692,
-        "triangles": 100304,
-        "jsonBytes": 1394448,
-        "binBytes": 642216,
-        "ratio": 0.030306800071767427,
-        "error": 0.05,
+        "bytes": 59088,
+        "triangles": 11052,
+        "jsonBytes": 6876,
+        "binBytes": 52184,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "urinario.lod1.glb",
+        "bytes": 21596,
+        "triangles": 2758,
+        "jsonBytes": 6836,
+        "binBytes": 14732,
+        "ratio": 0.25,
+        "error": 0.01,
         "overBudget": false
       }
     }

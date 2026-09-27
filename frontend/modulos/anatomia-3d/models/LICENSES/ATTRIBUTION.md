@@ -15,21 +15,27 @@ Autor/distribuição de referência: Lluís Vinent
 (<https://lluisv.itch.io/z-anatomy>), repositório
 <https://github.com/Z-Anatomy/Models-of-human-anatomy>.
 
-Assets (14):
+Assets (20):
 - `models/zanatomy/articular.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
+- `models/zanatomy/articular.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/cardiovascular.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/cardiovascular.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/digestorio.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
+- `models/zanatomy/digestorio.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/endocrino.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
+- `models/zanatomy/endocrino.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/esqueletico.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/esqueletico.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/linfatico.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
+- `models/zanatomy/linfatico.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/muscular.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/muscular.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/nervoso.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/nervoso.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/respiratorio.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
+- `models/zanatomy/respiratorio.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 - `models/zanatomy/urinario.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
+- `models/zanatomy/urinario.lod1.glb` — versão `38649f4193adbe58e426ccac5670b8c4dde474ec` — <https://github.com/Z-Anatomy/Models-of-human-anatomy>
 
 ## Human Reference Atlas (HRA) / HuBMAP — CC BY 4.0
 
