@@ -267,6 +267,16 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
     }
   }
 
+  // asctbEntry existe (e entra em bySid, em asctb.mjs) sempre que o AS ID do
+  // ASCT+B resolveu para um sid real, mesmo quando a linha não tinha nenhum
+  // CT/n/ID válido — nesse caso asctbEntry.cells é um array vazio. Sem este
+  // `.length > 0`, o código abaixo gravava histology.cells: [] e uma fonte
+  // hra-asctb para sids sem célula alguma, sem preencher summary_pt para
+  // eles — causando "must NOT have fewer than 1 characters" em ~31 sids
+  // reais. hasCells serve tanto para o fallback de summary_pt quanto para o
+  // bloco de histology, abaixo.
+  const hasCells = Boolean(asctbEntry && Array.isArray(asctbEntry.cells) && asctbEntry.cells.length > 0);
+
   // Summary PT
   let hasAutoDraft = false;
   if (wikipediaEntry && wikipediaEntry.extract_pt) {
@@ -287,7 +297,7 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
       ref: 'bio-database.js (o-bala-vip, curadoria LAIFT)',
       license: 'proprietary-laift'
     });
-  } else if (asctbEntry && asctbEntry.cells && asctbEntry.cells.length > 0) {
+  } else if (hasCells) {
     // Sid mapeado só pelo ASCT+B, sem verbete na Wikipédia nem no legado —
     // content.schema.json exige summary_pt não-vazio (minLength 1) em todo
     // registro, então sem este fallback o sid nem entraria em
@@ -361,7 +371,7 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
   // células do ASCT+B dentro dele) era pulado. Resultado em CI: asctb.mjs
   // relatava "sids com células: 162" mas build-content.mjs relatava "Sids
   // com células: 0" — as 162 nunca chegavam ao record.histology.cells.
-  if ((legacyContentEntry && legacyContentEntry.histology) || asctbEntry) {
+  if ((legacyContentEntry && legacyContentEntry.histology) || hasCells) {
     record.histology = {};
     if (legacyContentEntry && legacyContentEntry.histology && legacyContentEntry.histology.epithelium) {
       record.histology.epithelium = legacyContentEntry.histology.epithelium;
@@ -383,7 +393,7 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
     }
 
     // Cells do ASCT+B
-    if (asctbEntry && asctbEntry.cells) {
+    if (hasCells) {
       record.histology.cells = asctbEntry.cells.map(cell => ({
         cl: cell.cl,
         name_pt: cell.name_en || '', // Aguardando tradução

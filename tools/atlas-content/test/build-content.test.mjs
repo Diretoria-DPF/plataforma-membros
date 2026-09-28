@@ -212,6 +212,20 @@ async function runTests() {
 
   console.log('  ✓ ids.uberon normalizado nos formatos reconhecidos e omitido quando inválido');
 
+  // Step 7d: Regressão dos 31 erros "summary_pt must NOT have fewer than 1
+  // characters" vistos em CI depois da correção do bug #2: asctbEntry entra
+  // em bySid sempre que o AS ID resolveu para um sid, mesmo com
+  // `cells: []` (linha do CSV sem CT/n/ID válido) — za:encefalo simula
+  // exatamente esse caso. Sem o `.length > 0` (hasCells), o build gravava
+  // histology.cells: [] e uma fonte hra-asctb para esse sid sem preencher
+  // summary_pt, reprovando o schema. O comportamento correto é nem incluir
+  // o sid no conteúdo (nada de fato para mostrar).
+  console.log('7d. Verificando que asctbEntry.cells vazio não gera registro/summary_pt vazio (za:encefalo)...');
+  const nervosoContent = loadJson(path.join(contentDir, 'nervoso.json'));
+  assert.ok(!nervosoContent || !nervosoContent['za:encefalo'],
+    'za:encefalo (asctb cells: []) não deve gerar registro de conteúdo');
+  console.log('  ✓ asctbEntry sem células reais não vaza um registro com summary_pt vazio');
+
   // Step 8: Check review status
   console.log('8. Verificando review status...');
   assert.ok(heartContent.review, 'Heart deve ter review');
