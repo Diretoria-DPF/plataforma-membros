@@ -225,6 +225,7 @@
     "ids": {
       "wikidata": "Q369939",
       "fma": "7235",
+      "uberon": "UBERON:0002135",
       "ta2": "A12.1.04.003",
       "mesh": "D008943"
     },
@@ -280,6 +281,7 @@
     "ids": {
       "wikidata": "Q1344255",
       "fma": "7234",
+      "uberon": "UBERON:0002134",
       "ta2": "A12.1.02.003",
       "mesh": "D014261"
     },
@@ -335,6 +337,7 @@
     "ids": {
       "wikidata": "Q616071",
       "fma": "7236",
+      "uberon": "UBERON:0002137",
       "ta2": "A12.1.04.012",
       "mesh": "D001021"
     },
@@ -390,6 +393,7 @@
     "ids": {
       "wikidata": "Q1552748",
       "fma": "7246",
+      "uberon": "UBERON:0002146",
       "ta2": "A12.1.02.010",
       "mesh": "D011664"
     },
@@ -515,6 +519,7 @@
     "ids": {
       "wikidata": "Q2397680",
       "fma": "7133",
+      "uberon": "UBERON:0002094",
       "ta2": "A12.1.00.013",
       "mesh": "D054088"
     },
@@ -532,10 +537,51 @@
       "status": "auto-draft"
     }
   },
+  "za:vh-f-left-ventricle": {
+    "ids": {
+      "wikidata": "Q876089",
+      "fma": "7101",
+      "uberon": "UBERON:0002084",
+      "ta2": "A12.1.04.001"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"blood-vasculature\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-vasculature/v1.10/assets/asct-b-vh-blood-vasculature.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0010008",
+          "name_pt": "cardiac endothelial cell",
+          "biomarkers": [
+            "PECAM1"
+          ]
+        }
+      ]
+    }
+  },
   "za:vh-f-right-ventricle": {
     "ids": {
       "wikidata": "Q876089",
       "fma": "7101",
+      "uberon": "UBERON:0002084",
       "ta2": "A12.1.04.001"
     },
     "summary_pt": "Ventrículo refere-se a uma câmara inferior do coração. O coração humano possui dois ventrículos. O ventrículo direito recebe o sangue através da valva tricúspide, vindo da aurícula direita e o ventrículo esquerdo recebe o sangue através da valva bicúspide, vindo da aurícula esquerdo. Ventrículos são as câmaras do coração cuja função é bombear o sangue para a circulação sistémica, através da artéria aórta, no caso do ventrículo esquerdo, e para a circulação pulmonar, através da artéria pulmonar, no caso do ventrículo direito. Os ventrículos estão ligados às aurículas, que recebem sangue arterial pelas veias pulmonares (aurícula esquerda) e sangue venoso pela veia cava superior e inferior (aurícula direita).",
@@ -556,6 +602,7 @@
     "ids": {
       "wikidata": "Q616071",
       "fma": "7236",
+      "uberon": "UBERON:0002137",
       "ta2": "A12.1.04.012",
       "mesh": "D001021"
     },
@@ -577,6 +624,7 @@
     "ids": {
       "wikidata": "Q1552748",
       "fma": "7246",
+      "uberon": "UBERON:0002146",
       "ta2": "A12.1.02.010",
       "mesh": "D011664"
     },
@@ -598,6 +646,7 @@
     "ids": {
       "wikidata": "Q369939",
       "fma": "7235",
+      "uberon": "UBERON:0002135",
       "ta2": "A12.1.04.003",
       "mesh": "D008943"
     },
@@ -619,6 +668,7 @@
     "ids": {
       "wikidata": "Q1344255",
       "fma": "7234",
+      "uberon": "UBERON:0002134",
       "ta2": "A12.1.02.003",
       "mesh": "D014261"
     },

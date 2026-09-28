@@ -3,6 +3,7 @@
     "ids": {
       "wikidata": "Q275150",
       "fma": "9628",
+      "uberon": "UBERON:0002382",
       "ta2": "A04.5.01.001",
       "mesh": "D017568"
     },
@@ -41,6 +42,7 @@
     "ids": {
       "wikidata": "Q275150",
       "fma": "9628",
+      "uberon": "UBERON:0002382",
       "ta2": "A04.5.01.001",
       "mesh": "D017568"
     },
@@ -755,6 +757,7 @@
     "ids": {
       "wikidata": "Q913958",
       "fma": "46822",
+      "uberon": "UBERON:0008595",
       "ta2": "A04.1.03.034"
     },
     "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
@@ -891,6 +894,7 @@
     "ids": {
       "wikidata": "Q302950",
       "fma": "46841",
+      "uberon": "UBERON:0010933",
       "ta2": "A04.1.03.023"
     },
     "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
@@ -928,6 +932,7 @@
     "ids": {
       "wikidata": "Q302950",
       "fma": "46841",
+      "uberon": "UBERON:0010933",
       "ta2": "A04.1.03.023"
     },
     "summary_pt": "Em anatomia humana, o músculo orbicular da boca é um complexo de músculos nos lábios que envolve a boca. É um esfíncter, ou músculo circular, mas na verdade é composto por quatro quadrantes independentes que se entrelaçam e dão apenas uma aparência de circularidade. É também um dos músculos utilizados na execução de todos os instrumentos de sopro e alguns instrumentos de sopro. Esse músculo fecha a boca e enruga os lábios quando se contrai.",
@@ -1245,6 +1250,7 @@
     "ids": {
       "wikidata": "Q2799932",
       "fma": "22828",
+      "uberon": "UBERON:0001407",
       "ta2": "A04.3.02.207"
     },
     "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",

@@ -65,7 +65,8 @@
   "za:vh-f-kidney-capsule-l": {
     "ids": {
       "wikidata": "Q1752136",
-      "fma": "66610"
+      "fma": "66610",
+      "uberon": "UBERON:0002015"
     },
     "summary_pt": "A cápsula renal é um tecido fibroso que recobre a superfície externa dos rins, dando-lhes um aspecto brilhante.",
     "sources": [
@@ -105,6 +106,7 @@
     "ids": {
       "wikidata": "Q2405172",
       "fma": "15610",
+      "uberon": "UBERON:0008716",
       "ta2": "A08.1.01.004"
     },
     "summary_pt": "O hilo renal é uma fenda localizada no bordo interno de cada rim por onde entram as artérias e os nervos renais e por onde saem a veia renal e os ureteres. O hilo abre-se numa cavidade denominada seio renal que contém gordura e tecido conjuntivo.",
@@ -125,6 +127,7 @@
     "ids": {
       "wikidata": "Q2340707",
       "fma": "17633",
+      "uberon": "UBERON:0001284",
       "ta2": "A08.1.01.019"
     },
     "summary_pt": "Em anatomia renal, coluna de Bertin ou coluna renal, é a porção do córtex renal que fica entre as duas pirâmides renais. Seu reconhecimento é fundamental em radiologia e diagnóstico por imagem, pois sua eventual hipertrofia (uma alteração sem significado clínico ou patológico observado em até 20% da população), pode simular uma lesão tumoral na verdade inexistente. Seu nome é uma homenagem ao anatomista francês Exupère Joseph Bertin, o primeiro a descrever sua anatomia, em 1744.",
