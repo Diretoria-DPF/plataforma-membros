@@ -268,6 +268,15 @@ async function runTests() {
     assert.ok(liverContent.summary_pt, 'Liver deve ter summary_pt');
     assert.ok(liverContent.summary_pt.includes('glândula'),
       'Liver summary deve conter "glândula" da Wikipedia');
+
+    // Regressão: o Wikidata real devolve P1554 (Uberon ID) como número puro
+    // ("0002107", sem prefixo "UBERON" algum — a formatter URL da
+    // propriedade já contém "obo/UBERON_$1"). Sem aceitar esse formato em
+    // normUberon, o campo era descartado (null) em vez de normalizado — os
+    // únicos sids reais que tinham P1554 na run de CI ficavam sem
+    // ids.uberon.
+    assert.strictEqual(liverContent.ids.uberon, 'UBERON:0002107',
+      'ids.uberon do fígado deve normalizar o número puro "0002107" -> "UBERON:0002107"');
   }
 
   // Step 11: Check unmapped entry (za:vesicula-biliar)

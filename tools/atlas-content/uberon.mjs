@@ -15,10 +15,18 @@
  *
  * Formatos aceitos (case-insensitive no prefixo):
  * - "UBERON:123"                                    (canônico)
- * - "UBERON_123"                                     (estilo OBO/purl —
- *   o que o Wikidata realmente devolve para P1554)
+ * - "UBERON_123"                                     (estilo OBO/purl)
  * - "uberon:123"                                      (minúsculo)
  * - "http(s)://purl.obolibrary.org/obo/UBERON_123"    (URI completa do OBO)
+ * - "123"                                              (só o número — o que
+ *   o Wikidata realmente devolve para P1554: o prefixo "UBERON_" já está no
+ *   template da formatter URL da propriedade, "obo/UBERON_$1", não no valor
+ *   gravado na declaração. Sem aceitar este formato, os únicos sids reais
+ *   que tinham P1554 ficavam com um valor que reprovava o schema antes desta
+ *   correção — e, se normUberon só aceitasse os formatos com prefixo, o
+ *   valor seria simplesmente descartado depois, um regressão silenciosa
+ *   pior que o erro original: 0 sids com ids.uberon em vez de 14 com o
+ *   valor no formato errado.)
  *
  * Qualquer outro valor (vazio, sem número, formato desconhecido) devolve
  * `null` — o chamador deve então omitir o campo em vez de gravar um valor
@@ -37,6 +45,9 @@ export function normUberon(v) {
 
   const prefixMatch = s.match(/^UBERON[:_]([0-9]+)$/i);
   if (prefixMatch) return `UBERON:${prefixMatch[1]}`;
+
+  const bareDigitsMatch = s.match(/^([0-9]+)$/);
+  if (bareDigitsMatch) return `UBERON:${bareDigitsMatch[1]}`;
 
   return null;
 }

@@ -38,6 +38,17 @@ function testFullUri() {
   console.log('✓ URI completa do OBO/purl é normalizada');
 }
 
+function testBareDigits() {
+  // O formato real devolvido pelo Wikidata para P1554: só o número, sem
+  // prefixo "UBERON" algum — a formatter URL da propriedade já contém
+  // "obo/UBERON_$1", então o valor gravado na declaração é só "$1". Sem
+  // aceitar isso, os 14 sids reais que tinham P1554 na run de CI ficavam
+  // SEM ids.uberon (dropados), em vez de com o formato corrigido.
+  assert.strictEqual(normUberon('0000948'), 'UBERON:0000948');
+  assert.strictEqual(normUberon('  0000948  '), 'UBERON:0000948');
+  console.log('✓ Número puro (formato real do Wikidata P1554) é normalizado');
+}
+
 function testInvalidReturnsNull() {
   assert.strictEqual(normUberon(undefined), null);
   assert.strictEqual(normUberon(null), null);
@@ -56,6 +67,7 @@ function runAllTests() {
     testUnderscoreFormat();
     testLowercasePrefix();
     testFullUri();
+    testBareDigits();
     testInvalidReturnsNull();
     console.log('\n✓ Todos os testes de uberon.mjs passaram!');
     return 0;

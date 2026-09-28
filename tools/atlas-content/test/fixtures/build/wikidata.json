@@ -16,7 +16,7 @@
     "label_pt": "Fígado",
     "aliases_pt": ["Hígado"],
     "wikidata": "Q9368",
-    "uberon": "UBERON:0002107",
+    "uberon": "0002107",
     "ta2": "A05.8.01.001",
     "mesh": "D008099",
     "icd10": ["K70"]
