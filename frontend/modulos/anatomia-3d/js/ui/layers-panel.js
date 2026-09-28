@@ -1,427 +1,364 @@
 /**
- * layers-panel.js — painel flutuante de camadas anatômicas (WP09)
- * -----------------------------------------------------------------------
- * Um painel ancorado ao botão "Camadas" da toolbar que permite ao usuário:
- * - Ligar/desligar cada camada (7 no total)
- * - Ajustar a opacidade de cada uma (0–100%)
- * - Usar um preset "Superficial ↔ Profundo" para combos coerentes
- * - Restaurar o estado padrão
- *
- * Emite LAYER_SET para cada mudança, sincroniza com alterações externas
- * (ex.: raio-X) sem re-emitir.
+ * @file layers-panel.js
+ * @description Painel completo de dissecção anatômica por camadas e gestão dos 12 sistemas.
+ * Inclui presets rápidos, modo fantasma (opacidade), isolamento e total acessibilidade.
  */
 
-import { LAYERS } from '../core/contracts.js';
+import { AppBus } from '../core/bus.js';
+import { CanonicalSystems, SystemLabelsPt } from '../core/contracts.js';
 
 /**
- * Combinações de camadas para o preset "Superficial ↔ Profundo".
- * Cada posição define quais camadas ficam visíveis e com qual opacidade.
- * @type {ReadonlyArray<Readonly<Record<string, {visible: boolean, opacity: number}>>>}
+ * Definições acadêmicas das 5 camadas de dissecção anatômica
  */
-export const DEPTH_PRESETS = Object.freeze([
-  // Posição 1: Pele (superficial)
-  Object.freeze({
-    pele: { visible: true, opacity: 1 },
-    musculos: { visible: false, opacity: 1 },
-    esqueleto: { visible: false, opacity: 1 },
-    visceras: { visible: false, opacity: 1 },
-    vasos: { visible: false, opacity: 1 },
-    nervos: { visible: false, opacity: 1 },
-    linfatico: { visible: false, opacity: 1 },
-  }),
-  // Posição 2: Pele + Músculos
-  Object.freeze({
-    pele: { visible: true, opacity: 1 },
-    musculos: { visible: true, opacity: 1 },
-    esqueleto: { visible: false, opacity: 1 },
-    visceras: { visible: false, opacity: 1 },
-    vasos: { visible: false, opacity: 1 },
-    nervos: { visible: false, opacity: 1 },
-    linfatico: { visible: false, opacity: 1 },
-  }),
-  // Posição 3: Músculos + Esqueleto
-  Object.freeze({
-    pele: { visible: false, opacity: 1 },
-    musculos: { visible: true, opacity: 1 },
-    esqueleto: { visible: true, opacity: 1 },
-    visceras: { visible: false, opacity: 1 },
-    vasos: { visible: false, opacity: 1 },
-    nervos: { visible: false, opacity: 1 },
-    linfatico: { visible: false, opacity: 1 },
-  }),
-  // Posição 4: Músculos(0.3) + Esqueleto + Vísceras
-  Object.freeze({
-    pele: { visible: false, opacity: 1 },
-    musculos: { visible: true, opacity: 0.3 },
-    esqueleto: { visible: true, opacity: 1 },
-    visceras: { visible: true, opacity: 1 },
-    vasos: { visible: false, opacity: 1 },
-    nervos: { visible: false, opacity: 1 },
-    linfatico: { visible: false, opacity: 1 },
-  }),
-  // Posição 5: Todas as camadas (profundo)
-  // Pele desligada, Músculos em 0.2, resto em opacidade total
-  Object.freeze({
-    pele: { visible: false, opacity: 1 },
-    musculos: { visible: true, opacity: 0.2 },
-    esqueleto: { visible: true, opacity: 1 },
-    visceras: { visible: true, opacity: 1 },
-    vasos: { visible: true, opacity: 1 },
-    nervos: { visible: true, opacity: 1 },
-    linfatico: { visible: true, opacity: 1 },
-  }),
-]);
-
-/**
- * Estado padrão (restaurar): músculos + esqueleto visíveis em opacidade total.
- */
-const DEFAULT_STATE = Object.freeze({
-  pele: { visible: false, opacity: 1 },
-  musculos: { visible: true, opacity: 1 },
-  esqueleto: { visible: true, opacity: 1 },
-  visceras: { visible: false, opacity: 1 },
-  vasos: { visible: false, opacity: 1 },
-  nervos: { visible: false, opacity: 1 },
-  linfatico: { visible: false, opacity: 1 },
+const LAYER_DESCRIPTIONS = Object.freeze({
+  1: { name: 'Camada 1: Superficial / Tegumento', desc: 'Pele, tecido celular subcutâneo e fáscias superficiais.' },
+  2: { name: 'Camada 2: Muscular Superficial', desc: 'Músculos esqueléticos superficiais e vasos cutâneos.' },
+  3: { name: 'Camada 3: Muscular Profunda & Troncos', desc: 'Grandes vasos, plexos nervosos e músculos profundos.' },
+  4: { name: 'Camada 4: Visceral & Esqueleto Apendicular', desc: 'Órgãos torácicos/abdominais e ossos apendiculares.' },
+  5: { name: 'Camada 5: Sistema Completo & Esqueleto Axial', desc: 'Visualização integral, esqueleto axial e neuroeixo central.' }
 });
 
-/**
- * Cria o painel flutuante de camadas.
- * @param {HTMLElement} container - Elemento para montar o painel.
- * @param {Object} opts
- * @param {Object} opts.bus - Barramento de eventos (emite LAYER_SET).
- * @param {Object} opts.store - Store do Atlas (get, set, subscribe).
- * @param {Function} [opts.unavailable] - Retorna array de ids de camadas indisponíveis.
- * @returns {{refresh: () => void, dispose: () => void}}
- */
-export function createLayersPanel(container, { bus, store, unavailable = () => [] }) {
-  // Referências aos elementos da UI
-  const el = {
-    presetSlider: null,
-    toggles: new Map(), // layerId -> input[type=switch]
-    opacitySliders: new Map(), // layerId -> input[type=range]
-    expandBtns: new Map(), // layerId -> button (chevron)
-    opacityRows: new Map(), // layerId -> div (container do slider de opacidade)
-  };
+class LayersPanelUI {
+  // [INÍCIO MÉTODO: constructor]
+  constructor() {
+    /** @type {HTMLElement|null} */
+    this.container = null;
+    /** @type {number} Nível ativo de dissecção (1 a 5) */
+    this.currentLayer = 5;
+    /** @type {Map<string, boolean>} Sistema -> Visibilidade */
+    this.systemVisibility = new Map();
+    /** @type {Map<string, boolean>} Sistema -> Modo fantasma/translúcido (true = 30% opacidade) */
+    this.systemGhostMode = new Map();
+    /** @type {boolean} */
+    this.isExpanded = false;
 
-  // Estado local: qual preset está selecionado (1–5) ou null se em estado customizado
-  let selectedPreset = null;
-
-  // Inscrições para cancelar ao desmontar
-  const subscriptions = [];
-
-  // =========================================================================
-  // Construção da UI
-  // =========================================================================
-
-  const panel = window.LaiftDom.h('div', { className: 'atlas-layers-panel' }, [
-    // Preset slider "Superficial ↔ Profundo"
-    window.LaiftDom.h('div', { className: 'atlas-layers-preset' }, [
-      window.LaiftDom.h('span', { className: 'atlas-layers-preset-label', text: 'Superficial' }),
-      (el.presetSlider = window.LaiftDom.h('input', {
-        className: 'atlas-layers-preset-slider',
-        type: 'range',
-        min: '1',
-        max: '5',
-        value: '3', // Posição padrão: Músculos + Esqueleto
-        role: 'slider',
-        'aria-label': 'Profundidade anatômica: Superficial a Profundo',
-      })),
-      window.LaiftDom.h('span', { className: 'atlas-layers-preset-label', text: 'Profundo' }),
-    ]),
-
-    // Divisória
-    window.LaiftDom.h('hr', { className: 'atlas-layers-divider' }),
-
-    // Container para os 7 rows de camadas
-    (el.layersContainer = window.LaiftDom.h('div', { className: 'atlas-layers-list' })),
-
-    // Divisória
-    window.LaiftDom.h('hr', { className: 'atlas-layers-divider' }),
-
-    // Botão "Restaurar"
-    window.LaiftDom.h('button', {
-      className: 'atlas-layers-restore-btn',
-      text: 'Restaurar',
-      'aria-label': 'Restaurar camadas ao estado padrão',
-    }),
-  ]);
-
-  // Criar os 7 rows (um por camada)
-  const unavailableIds = new Set(unavailable());
-  const layersRows = LAYERS.map((layer) => {
-    const isUnavailable = unavailableIds.has(layer.id);
-
-    // Criar elementos que podem ser reutilizados
-    const toggleBtn = window.LaiftDom.h('button', {
-      className: 'atlas-layers-toggle',
-      type: 'button',
-      role: 'switch',
-      'aria-checked': 'false',
-      'aria-label': `${layer.label}: desligado`,
-      'data-layer-id': layer.id,
+    // Inicializa todos os 12 sistemas como visíveis e opacos
+    CanonicalSystems.forEach(sys => {
+      this.systemVisibility.set(sys, true);
+      this.systemGhostMode.set(sys, false);
     });
+  }
+  // [FIM MÉTODO: constructor]
 
-    const expandBtn = window.LaiftDom.h('button', {
-      className: 'atlas-layers-expand-btn',
-      type: 'button',
-      'aria-label': `Expandir opacidade de ${layer.label}`,
-      'data-layer-id': layer.id,
-    });
-
-    // Guardar nas maps
-    if (!isUnavailable) {
-      el.toggles.set(layer.id, toggleBtn);
-      el.expandBtns.set(layer.id, expandBtn);
+  // [INÍCIO MÉTODO: init]
+  /**
+   * Constrói o painel atrelando-o ao contêiner na interface.
+   * @param {HTMLElement} containerElement
+   */
+  init(containerElement) {
+    if (!containerElement) {
+      console.warn('[LayersPanel] Contêiner não localizado.');
+      return;
     }
 
-    const rowChildren = [
-      // Quadrado de cor (swatch)
-      window.LaiftDom.h('div', {
-        className: 'atlas-layers-swatch',
-        style: { backgroundColor: `var(--atlas-color-${layer.id})` },
-        role: 'presentation',
-      }),
+    this.container = containerElement;
+    this.container.classList.add('atlas-layers-panel');
 
-      // Label da camada
-      window.LaiftDom.h('span', { className: 'atlas-layers-label', text: layer.label }),
+    this.render();
+    this.bindGlobalEvents();
+  }
+  // [FIM MÉTODO: init]
+
+  // [INÍCIO MÉTODO: render]
+  /**
+   * Renderiza todos os blocos do painel: cabeçalho, presets, slider de dissecção e lista de sistemas.
+   */
+  render() {
+    if (!this.container) return;
+
+    while (this.container.firstChild) {
+      this.container.removeChild(this.container.firstChild);
+    }
+
+    // 1. Cabeçalho do Painel com Alternância de Expansão
+    const header = document.createElement('div');
+    header.className = 'atlas-layers-header';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = 'Camadas e Sistemas';
+    header.appendChild(h3);
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.className = 'atlas-layers-toggle-expand-btn';
+    toggleBtn.setAttribute('aria-expanded', this.isExpanded ? 'true' : 'false');
+    toggleBtn.setAttribute('aria-label', 'Recolher ou expandir painel de camadas');
+    toggleBtn.textContent = this.isExpanded ? 'Recolher' : 'Expandir';
+    toggleBtn.addEventListener('click', () => {
+      this.isExpanded = !this.isExpanded;
+      this.container.classList.toggle('is-expanded', this.isExpanded);
+      toggleBtn.setAttribute('aria-expanded', this.isExpanded ? 'true' : 'false');
+      toggleBtn.textContent = this.isExpanded ? 'Recolher' : 'Expandir';
+    });
+    header.appendChild(toggleBtn);
+    this.container.appendChild(header);
+
+    // 2. Barra de Visualizações Rápidas (Presets)
+    const presetsBar = this.createPresetsBar();
+    this.container.appendChild(presetsBar);
+
+    // 3. Controle Deslizante de Profundidade de Dissecção (Camadas 1 a 5)
+    const depthSection = this.createDepthSliderSection();
+    this.container.appendChild(depthSection);
+
+    // 4. Lista dos 12 Sistemas Anatômicos com Controle Fino
+    const systemsList = this.createSystemsList();
+    this.container.appendChild(systemsList);
+
+    // 5. Rodapé com Ações Globais
+    const footer = document.createElement('div');
+    footer.className = 'atlas-layers-footer';
+
+    const showAllBtn = document.createElement('button');
+    showAllBtn.type = 'button';
+    showAllBtn.className = 'atlas-layers-action-btn';
+    showAllBtn.textContent = 'Exibir Tudo (100%)';
+    showAllBtn.addEventListener('click', () => {
+      this.resetAllSystems();
+    });
+    footer.appendChild(showAllBtn);
+
+    this.container.appendChild(footer);
+  }
+  // [FIM MÉTODO: render]
+
+  // [INÍCIO MÉTODO: createPresetsBar]
+  /**
+   * Cria os botões de configuração anatômica rápida.
+   * @returns {HTMLElement}
+   */
+  createPresetsBar() {
+    const bar = document.createElement('div');
+    bar.className = 'atlas-layers-presets-bar';
+
+    const presets = [
+      { id: 'all', label: 'Tudo', systems: CanonicalSystems },
+      { id: 'skeletal', label: 'Esqueleto', systems: ['esqueletico', 'articular'] },
+      { id: 'musculo', label: 'Músculos & Ossos', systems: ['esqueletico', 'articular', 'muscular'] },
+      { id: 'visceral', label: 'Visceral', systems: ['cardiovascular', 'respiratorio', 'digestorio', 'urinario'] },
+      { id: 'neuro', label: 'Neurovascular', systems: ['nervoso', 'cardiovascular'] }
     ];
 
-    if (isUnavailable) {
-      // Se indisponível: mostrar "indisponível" e desabilitar
-      rowChildren.push(
-        window.LaiftDom.h('span', {
-          className: 'atlas-layers-unavailable-text',
-          text: 'indisponível',
-          'aria-label': `${layer.label} indisponível`,
-        })
-      );
-    } else {
-      // Senão: toggle switch + expand chevron
-      rowChildren.push(toggleBtn);
-      rowChildren.push(expandBtn);
-    }
-
-    const row = window.LaiftDom.h('div', { className: 'atlas-layers-row' }, rowChildren);
-
-    // Se não estiver indisponível, adicionar o container de opacidade (escondido por padrão)
-    if (!isUnavailable) {
-      const opacitySlider = window.LaiftDom.h('input', {
-        className: 'atlas-layers-opacity-slider',
-        type: 'range',
-        min: '0',
-        max: '100',
-        value: '100',
-        role: 'slider',
-        'aria-label': `Opacidade de ${layer.label}`,
-        'aria-valuenow': '100',
-        'aria-valuemin': '0',
-        'aria-valuemax': '100',
-        'data-layer-id': layer.id,
+    presets.forEach(p => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'atlas-preset-chip';
+      btn.textContent = p.label;
+      btn.addEventListener('click', () => {
+        this.applySystemPreset(p.systems);
       });
-      const opacityValue = window.LaiftDom.h('span', {
-        className: 'atlas-layers-opacity-value',
-        text: '100%',
-      });
-
-      const opacityRow = window.LaiftDom.h('div', {
-        className: 'atlas-layers-opacity-row',
-        style: { display: 'none' },
-        'data-layer-id': layer.id,
-      }, [
-        window.LaiftDom.h('span', { text: 'Opacidade: ' }),
-        opacitySlider,
-        window.LaiftDom.h('span', { text: ' ' }),
-        opacityValue,
-      ]);
-
-      el.opacityRows.set(layer.id, opacityRow);
-      el.opacitySliders.set(layer.id, { input: opacitySlider, display: opacityValue });
-
-      row.appendChild(opacityRow);
-    }
-
-    return row;
-  });
-
-  window.LaiftDom.clear(el.layersContainer);
-  layersRows.forEach((row) => el.layersContainer.appendChild(row));
-
-  container.appendChild(panel);
-
-  // =========================================================================
-  // Event Listeners
-  // =========================================================================
-
-  // Preset slider
-  el.presetSlider.addEventListener('change', (e) => {
-    const presetIndex = parseInt(e.target.value, 10) - 1;
-    applyPreset(presetIndex);
-  });
-
-  // Toggle switches
-  el.toggles.forEach((toggle, layerId) => {
-    toggle.addEventListener('click', () => {
-      const currentState = store.get().layers;
-      const newVisible = !currentState[layerId].visible;
-
-      // Emitir evento
-      bus.emit(bus.EVENTS.LAYER_SET, { layer: layerId, visible: newVisible, opacity: currentState[layerId].opacity });
-
-      // Atualizar store
-      updateLayer(layerId, newVisible, currentState[layerId].opacity);
+      bar.appendChild(btn);
     });
-  });
 
-  // Expand chevrons
-  el.expandBtns.forEach((btn, layerId) => {
-    btn.addEventListener('click', () => {
-      const opacityRow = el.opacityRows.get(layerId);
-      const isExpanded = opacityRow.style.display !== 'none';
-      opacityRow.style.display = isExpanded ? 'none' : 'flex';
-    });
-  });
-
-  // Opacity sliders
-  el.opacitySliders.forEach(({ input, display }, layerId) => {
-    input.addEventListener('input', (e) => {
-      const opacityPercent = parseInt(e.target.value, 10);
-      const opacityNorm = opacityPercent / 100;
-
-      // Atualizar display
-      display.textContent = `${opacityPercent}%`;
-      input.setAttribute('aria-valuenow', String(opacityPercent));
-
-      // Emitir evento
-      const currentState = store.get().layers;
-      bus.emit(bus.EVENTS.LAYER_SET, { layer: layerId, visible: currentState[layerId].visible, opacity: opacityNorm });
-
-      // Atualizar store
-      updateLayer(layerId, currentState[layerId].visible, opacityNorm);
-    });
-  });
-
-  // Botão "Restaurar"
-  const restoreBtn = panel.querySelector('.atlas-layers-restore-btn');
-  restoreBtn.addEventListener('click', () => {
-    applyState(DEFAULT_STATE);
-  });
-
-  // =========================================================================
-  // Store subscription (sincronizar com alterações externas)
-  // =========================================================================
-
-  const unsubscribeLayers = store.subscribe(
-    (s) => s.layers,
-    (newLayers) => {
-      // Refletir as mudanças na UI sem re-emitir
-      syncUIToState(newLayers);
-    }
-  );
-  subscriptions.push(unsubscribeLayers);
-
-  // =========================================================================
-  // Funções auxiliares
-  // =========================================================================
-
-  /**
-   * Aplica um preset, emite LAYER_SET para cada camada que mudou,
-   * e atualiza o store.
-   */
-  function applyPreset(index) {
-    selectedPreset = index + 1; // 1–5
-    applyState(DEPTH_PRESETS[index]);
+    return bar;
   }
+  // [FIM MÉTODO: createPresetsBar]
 
+  // [INÍCIO MÉTODO: createDepthSliderSection]
   /**
-   * Aplica um estado completo de camadas ao store e emite eventos.
+   * Constrói a seção do controle deslizante da profundidade de dissecção anatômica.
+   * @returns {HTMLElement}
    */
-  function applyState(stateObj) {
-    const currentLayers = store.get().layers;
-    const newLayers = { ...currentLayers };
+  createDepthSliderSection() {
+    const section = document.createElement('div');
+    section.className = 'atlas-layers-depth-section';
 
-    // Emitir evento para cada camada que mudou
-    LAYERS.forEach((layer) => {
-      const newLayerState = stateObj[layer.id];
-      const oldLayerState = currentLayers[layer.id];
+    const labelContainer = document.createElement('div');
+    labelContainer.className = 'atlas-depth-label-container';
 
-      if (newLayerState.visible !== oldLayerState.visible || newLayerState.opacity !== oldLayerState.opacity) {
-        bus.emit(bus.EVENTS.LAYER_SET, {
-          layer: layer.id,
-          visible: newLayerState.visible,
-          opacity: newLayerState.opacity,
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'atlas-depth-title';
+    titleSpan.textContent = LAYER_DESCRIPTIONS[this.currentLayer].name;
+    labelContainer.appendChild(titleSpan);
+
+    const descSpan = document.createElement('span');
+    descSpan.className = 'atlas-depth-desc';
+    descSpan.textContent = LAYER_DESCRIPTIONS[this.currentLayer].desc;
+    labelContainer.appendChild(descSpan);
+
+    section.appendChild(labelContainer);
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '1';
+    slider.max = '5';
+    slider.step = '1';
+    slider.value = String(this.currentLayer);
+    slider.className = 'atlas-depth-slider';
+    slider.setAttribute('aria-label', 'Profundidade da dissecção anatômica');
+    slider.setAttribute('aria-valuemin', '1');
+    slider.setAttribute('aria-valuemax', '5');
+    slider.setAttribute('aria-valuenow', String(this.currentLayer));
+
+    slider.addEventListener('input', () => {
+      this.currentLayer = parseInt(slider.value, 10);
+      slider.setAttribute('aria-valuenow', String(this.currentLayer));
+      titleSpan.textContent = LAYER_DESCRIPTIONS[this.currentLayer].name;
+      descSpan.textContent = LAYER_DESCRIPTIONS[this.currentLayer].desc;
+
+      AppBus.emit('scene:layer-change', { layer: this.currentLayer });
+    });
+
+    section.appendChild(slider);
+    return section;
+  }
+  // [FIM MÉTODO: createDepthSliderSection]
+
+  // [INÍCIO MÉTODO: createSystemsList]
+  /**
+   * Constrói a lista dos sistemas com alternância de visibilidade, opacidade e isolamento.
+   * @returns {HTMLElement}
+   */
+  createSystemsList() {
+    const list = document.createElement('div');
+    list.className = 'atlas-layers-systems-list';
+
+    CanonicalSystems.forEach(sysId => {
+      const isVisible = this.systemVisibility.get(sysId) !== false;
+      const isGhost = this.systemGhostMode.get(sysId) === true;
+      const label = SystemLabelsPt[sysId] || sysId;
+
+      const row = document.createElement('div');
+      row.className = `atlas-system-row ${!isVisible ? 'is-disabled' : ''}`;
+
+      // 1. Interruptor Principal de Visibilidade (Switch)
+      const switchBtn = document.createElement('button');
+      switchBtn.type = 'button';
+      switchBtn.className = `atlas-system-toggle-btn ${isVisible ? 'is-on' : ''}`;
+      switchBtn.setAttribute('role', 'switch');
+      switchBtn.setAttribute('aria-checked', isVisible ? 'true' : 'false');
+      switchBtn.setAttribute('aria-label', `Alternar visibilidade do ${label}`);
+
+      const dot = document.createElement('span');
+      dot.className = `atlas-system-bullet bullet-${sysId}`;
+      dot.setAttribute('aria-hidden', 'true');
+      switchBtn.appendChild(dot);
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'atlas-system-name-text';
+      nameSpan.textContent = label;
+      switchBtn.appendChild(nameSpan);
+
+      switchBtn.addEventListener('click', () => {
+        const next = !this.systemVisibility.get(sysId);
+        this.systemVisibility.set(sysId, next);
+
+        switchBtn.classList.toggle('is-on', next);
+        switchBtn.setAttribute('aria-checked', next ? 'true' : 'false');
+        row.classList.toggle('is-disabled', !next);
+
+        AppBus.emit('scene:system-toggle', { system: sysId, visible: next });
+      });
+      row.appendChild(switchBtn);
+
+      // 2. Controles Adicionais (Fantasma e Isolar)
+      const actionsGroup = document.createElement('div');
+      actionsGroup.className = 'atlas-system-actions-group';
+
+      // Botão Fantasma / Raio-X (Opacidade Translúcida)
+      const ghostBtn = document.createElement('button');
+      ghostBtn.type = 'button';
+      ghostBtn.className = `atlas-system-sub-btn ghost-btn ${isGhost ? 'is-active' : ''}`;
+      ghostBtn.title = 'Modo Fantasma / Semi-transparente';
+      ghostBtn.setAttribute('aria-label', `Modo fantasma translúcido para ${label}`);
+      ghostBtn.textContent = 'Raio-X';
+
+      ghostBtn.addEventListener('click', () => {
+        const nextGhost = !this.systemGhostMode.get(sysId);
+        this.systemGhostMode.set(sysId, nextGhost);
+        ghostBtn.classList.toggle('is-active', nextGhost);
+
+        AppBus.emit('scene:system-opacity', {
+          system: sysId,
+          opacity: nextGhost ? 0.28 : 1.0
         });
-      }
+      });
+      actionsGroup.appendChild(ghostBtn);
 
-      newLayers[layer.id] = { ...newLayerState };
+      // Botão de Isolar Sistema
+      const isolateBtn = document.createElement('button');
+      isolateBtn.type = 'button';
+      isolateBtn.className = 'atlas-system-sub-btn isolate-btn';
+      isolateBtn.title = `Isolar apenas ${label}`;
+      isolateBtn.setAttribute('aria-label', `Isolar apenas o ${label}`);
+      isolateBtn.textContent = 'Só este';
+
+      isolateBtn.addEventListener('click', () => {
+        this.isolateSingleSystem(sysId);
+      });
+      actionsGroup.appendChild(isolateBtn);
+
+      row.appendChild(actionsGroup);
+      list.appendChild(row);
     });
 
-    // Atualizar store
-    store.set({ layers: newLayers });
+    return list;
   }
+  // [FIM MÉTODO: createSystemsList]
 
+  // [INÍCIO MÉTODO: isolateSingleSystem]
   /**
-   * Atualiza uma camada específica no store.
+   * Oculta todos os sistemas exceto o sistema selecionado.
+   * @param {string} targetSystemId
    */
-  function updateLayer(layerId, visible, opacity) {
-    const currentLayers = store.get().layers;
-    const newLayers = {
-      ...currentLayers,
-      [layerId]: { visible, opacity },
-    };
-    store.set({ layers: newLayers });
-
-    // Resetar o preset selecionado (usuário está customizando)
-    selectedPreset = null;
-    el.presetSlider.value = '3'; // volta para a posição "neutra"
-  }
-
-  /**
-   * Sincroniza a UI com o estado do store (causado por mudanças externas).
-   * Não emite eventos — só reflete a mudança visualmente.
-   */
-  function syncUIToState(layersState) {
-    el.toggles.forEach((toggle, layerId) => {
-      const isVisible = layersState[layerId].visible;
-      toggle.setAttribute('aria-checked', String(isVisible));
-      toggle.classList.toggle('atlas-layers-toggle-on', isVisible);
+  isolateSingleSystem(targetSystemId) {
+    CanonicalSystems.forEach(sysId => {
+      const match = sysId === targetSystemId;
+      this.systemVisibility.set(sysId, match);
+      this.systemGhostMode.set(sysId, false);
     });
 
-    el.opacitySliders.forEach(({ input, display }, layerId) => {
-      const opacityPercent = Math.round(layersState[layerId].opacity * 100);
-      input.value = String(opacityPercent);
-      display.textContent = `${opacityPercent}%`;
-      input.setAttribute('aria-valuenow', String(opacityPercent));
+    this.render();
+
+    AppBus.emit('scene:system-isolate', { system: targetSystemId });
+  }
+  // [FIM MÉTODO: isolateSingleSystem]
+
+  // [INÍCIO MÉTODO: applySystemPreset]
+  /**
+   * Aplica um conjunto pré-definido de sistemas anatômicos.
+   * @param {string[]} enabledSystems
+   */
+  applySystemPreset(enabledSystems) {
+    CanonicalSystems.forEach(sysId => {
+      const enabled = enabledSystems.includes(sysId);
+      this.systemVisibility.set(sysId, enabled);
+      this.systemGhostMode.set(sysId, false);
+      AppBus.emit('scene:system-toggle', { system: sysId, visible: enabled });
+    });
+
+    this.render();
+  }
+  // [FIM MÉTODO: applySystemPreset]
+
+  // [INÍCIO MÉTODO: resetAllSystems]
+  /**
+   * Restabelece a visibilidade completa dos 12 sistemas a 100% de opacidade e Camada 5.
+   */
+  resetAllSystems() {
+    this.currentLayer = 5;
+    CanonicalSystems.forEach(sysId => {
+      this.systemVisibility.set(sysId, true);
+      this.systemGhostMode.set(sysId, false);
+    });
+
+    this.render();
+
+    AppBus.emit('scene:systems-reset');
+    AppBus.emit('scene:layer-change', { layer: 5 });
+  }
+  // [FIM MÉTODO: resetAllSystems]
+
+  // [INÍCIO MÉTODO: bindGlobalEvents]
+  /**
+   * Escuta sinais de restauração originados externamente.
+   */
+  bindGlobalEvents() {
+    AppBus.on('view:reset', () => {
+      this.resetAllSystems();
     });
   }
-
-  /**
-   * Sincroniza a UI com o estado inicial do store.
-   */
-  function syncInitial() {
-    syncUIToState(store.get().layers);
-  }
-
-  syncInitial();
-
-  // =========================================================================
-  // Interface pública
-  // =========================================================================
-
-  return {
-    /**
-     * Refresca a UI (útil se o store for alterado externamente).
-     */
-    refresh() {
-      syncUIToState(store.get().layers);
-    },
-
-    /**
-     * Desmonta o painel e cancela todas as assinantes.
-     */
-    dispose() {
-      subscriptions.forEach((fn) => fn());
-      panel.remove();
-    },
-  };
+  // [FIM MÉTODO: bindGlobalEvents]
 }
+
+export const UILayersPanel = new LayersPanelUI();
