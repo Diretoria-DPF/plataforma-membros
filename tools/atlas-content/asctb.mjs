@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { normalizeName } from './wikidata.mjs';
+import { normUberon } from './uberon.mjs';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Parser RFC4180 para CSV com suporte a campos com aspas, vírgulas e quebras de linha
@@ -261,8 +265,14 @@ export function buildReverseWikidataIndex(wikidataRaw) {
       if (!fma.has(num)) fma.set(num, sid);
     }
     if (entry.uberon) {
-      const num = String(entry.uberon).replace(/^UBERON:/i, '');
-      if (!uberon.has(num)) uberon.set(num, sid);
+      // entry.uberon pode vir em qualquer formato aceito por normUberon
+      // (canônico, purl/OBO com underscore, URI completa) — normaliza antes
+      // de extrair o número, em vez de assumir que já está em "UBERON:<n>".
+      const normalized = normUberon(entry.uberon);
+      if (normalized) {
+        const num = normalized.replace(/^UBERON:/i, '');
+        if (!uberon.has(num)) uberon.set(num, sid);
+      }
     }
   }
 
@@ -397,8 +407,21 @@ async function main() {
   const wikidataFile = options.wikidata || 'wikidata.json';
   const outFile = options.out || 'asctb.json';
   const offlineDir = options['offline-dir'];
-  const manifestFile = options.manifest;
+  // Manifesto com a versão/URL real de cada órgão (asctb-organs.json, o
+  // mesmo usado pelo workflow para baixar os CSVs) — sem isso, sourceInfo
+  // abaixo gravava versão "1.0" e DOI do heart para todos os órgãos, o que
+  // vira o `rev` errado em build-content.mjs (content.schema.json exige uma
+  // fonte por campo; `rev` deve ser a versão real da tabela ASCT+B usada).
+  const manifestFile = options.manifest || path.join(__dirname, 'asctb-organs.json');
   const structuresFile = options.structures;
+
+  const organsManifest = loadJson(manifestFile);
+  const organsManifestByName = new Map();
+  if (Array.isArray(organsManifest)) {
+    for (const o of organsManifest) {
+      if (o && o.organ) organsManifestByName.set(o.organ, o);
+    }
+  }
 
   const wikidata = loadJson(wikidataFile);
   const wdIndex = buildReverseWikidataIndex(wikidata);
@@ -427,11 +450,11 @@ async function main() {
         continue;
       }
 
+      const manifestEntry = organsManifestByName.get(organ);
       const sourceInfo = {
         organ,
-        version: '1.0',
-        doi: '10.35079/HRA.ASCTB.HEART.1.0',
-        url: `https://cdn.humanatlas.io/digital-objects/asct-b/${organ}/1.0/assets/asct-b-${organ}.csv`,
+        version: manifestEntry?.version || '1.0',
+        url: manifestEntry?.url || `https://cdn.humanatlas.io/digital-objects/asct-b/${organ}/1.0/assets/asct-b-${organ}.csv`,
         license: 'CC-BY-4.0'
       };
 

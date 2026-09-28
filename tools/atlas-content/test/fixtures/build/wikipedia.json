@@ -10,5 +10,11 @@
     "extract_pt": "O fígado é a maior glândula do corpo humano, localizado no lado superior direito do abdômen, abaixo do diafragma. Realiza mais de 500 funções biológicas essenciais, incluindo metabolismo de nutrientes, detoxificação e produção de proteínas plasmáticas.",
     "url": "https://pt.wikipedia.org/wiki/Fígado",
     "revid": 12345679
+  },
+  "za:pulmoes": {
+    "title": "Pulmão",
+    "extract_pt": "Os pulmões são os órgãos da respiração, responsáveis pelas trocas gasosas entre o ar inspirado e o sangue.",
+    "url": "https://pt.wikipedia.org/wiki/Pulmão",
+    "revid": 12345680
   }
 }

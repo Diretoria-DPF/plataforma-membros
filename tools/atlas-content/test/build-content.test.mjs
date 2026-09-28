@@ -144,6 +144,74 @@ async function runTests() {
   assert.ok(asctbSource, 'Deve haver fonte ASCT+B para cells');
   assert.strictEqual(asctbSource.license, 'CC-BY-4.0', 'License deve ser CC-BY-4.0');
 
+  // Step 7b: Regressão do bug "Sids com células: 0" — za:rins é uma
+  // estrutura real (sid za:*) SEM entrada em legacy/content/*.json, mas COM
+  // dados do ASCT+B (asctb.json). Antes da correção, a condição em
+  // buildContentRecord exigia `legacyContentEntry &&` mesmo para o bloco do
+  // ASCT+B, então o histology.cells nunca era preenchido para nenhum dos
+  // ~2400 sids reais sem legado — este é exatamente esse caso.
+  console.log('7b. Verificando células do ASCT+B em sid sem legacy content (za:rins)...');
+  const urinarioContent = loadJson(path.join(contentDir, 'urinario.json'));
+  assert.ok(urinarioContent, 'content/urinario.json deve existir');
+  assert.ok(urinarioContent['za:rins'], 'za:rins deve estar no conteúdo urinário mesmo sem legacy content');
+
+  const kidneyContent = urinarioContent['za:rins'];
+
+  // za:rins não tem verbete na Wikipédia nem no legado — content.schema.json
+  // exige summary_pt não-vazio (minLength 1) em todo registro, então
+  // buildContentRecord precisa de um resumo de fallback (com sua própria
+  // fonte hra-asctb) quando só há dados do ASCT+B.
+  assert.ok(kidneyContent.summary_pt && kidneyContent.summary_pt.length > 0,
+    'za:rins deve ter summary_pt não-vazio mesmo sem Wikipédia/legado');
+  const kidneySummarySource = kidneyContent.sources.find(s => s.field === 'summary_pt');
+  assert.ok(kidneySummarySource, 'za:rins deve ter fonte para summary_pt');
+  assert.strictEqual(kidneySummarySource.type, 'hra-asctb', 'fonte do summary_pt de fallback deve ser hra-asctb');
+
+  assert.ok(kidneyContent.histology, 'za:rins deve ter histology');
+  assert.ok(kidneyContent.histology.cells, 'za:rins deve ter histology.cells');
+  assert.strictEqual(kidneyContent.histology.cells.length, 1, 'za:rins deve ter 1 tipo de célula (Podocyte)');
+  assert.strictEqual(kidneyContent.histology.cells[0].cl, 'CL:1000491', 'Podocyte deve estar presente');
+
+  const kidneyAsctbSource = kidneyContent.sources.find(s =>
+    s.field === 'histology.cells' && s.type === 'hra-asctb');
+  assert.ok(kidneyAsctbSource, 'za:rins deve ter fonte hra-asctb para histology.cells');
+  assert.strictEqual(kidneyAsctbSource.license, 'CC-BY-4.0', 'License deve ser CC-BY-4.0');
+  // rev = versão do órgão na tabela ASCT+B (asctbEntry.source.version, vindo
+  // de asctb.mjs) — necessário para a regra "todo campo tem fonte".
+  assert.strictEqual(kidneyAsctbSource.rev, 'v1.6', 'rev deve ser a versão do órgão (kidney v1.6)');
+
+  console.log('  ✓ Sid sem legacy content ainda recebe células do ASCT+B, com rev da versão do órgão');
+
+  // Step 7c: Regressão dos 14 erros de schema — ids.uberon deve ser
+  // normalizado para o formato canônico "UBERON:<n>" independente do formato
+  // bruto vindo do wikidata.json (underscore, URI completa, etc.), e um
+  // formato não reconhecido deve ser omitido em vez de reprovar o schema.
+  console.log('7c. Verificando normalização de ids.uberon...');
+
+  // fma:7088 (heart): wikidata.json tem "UBERON_0000948" (formato real do
+  // Wikidata P1554, com underscore) — deve normalizar para "UBERON:0000948".
+  assert.strictEqual(heartContent.ids.uberon, 'UBERON:0000948',
+    'ids.uberon do heart deve normalizar "UBERON_0000948" -> "UBERON:0000948"');
+
+  // za:rins: wikidata.json tem a URI completa do OBO/purl — deve normalizar
+  // para o mesmo formato canônico.
+  assert.strictEqual(kidneyContent.ids.uberon, 'UBERON:0002113',
+    'ids.uberon do za:rins deve normalizar a URI purl/OBO para "UBERON:0002113"');
+
+  // za:pulmoes: wikidata.json tem um valor não reconhecido
+  // ("not-a-real-uberon-id") — deve ser omitido, sem quebrar o build nem os
+  // demais ids (wikidata, mesh) do mesmo registro.
+  const respiratorioContent = loadJson(path.join(contentDir, 'respiratorio.json'));
+  assert.ok(respiratorioContent && respiratorioContent['za:pulmoes'],
+    'za:pulmoes deve estar no conteúdo respiratório (via summary_pt da Wikipédia)');
+  const lungContent = respiratorioContent['za:pulmoes'];
+  assert.ok(!('uberon' in lungContent.ids),
+    'ids.uberon inválido ("not-a-real-uberon-id") deve ser omitido, não gravado como está');
+  assert.strictEqual(lungContent.ids.wikidata, 'Q7391', 'ids.wikidata do za:pulmoes deve ser preservado');
+  assert.strictEqual(lungContent.ids.mesh, 'D008168', 'ids.mesh do za:pulmoes deve ser preservado');
+
+  console.log('  ✓ ids.uberon normalizado nos formatos reconhecidos e omitido quando inválido');
+
   // Step 8: Check review status
   console.log('8. Verificando review status...');
   assert.ok(heartContent.review, 'Heart deve ter review');

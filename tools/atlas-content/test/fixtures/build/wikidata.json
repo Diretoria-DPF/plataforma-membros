@@ -5,7 +5,7 @@
     "label_pt": "Coração",
     "aliases_pt": ["Órgão cardíaco"],
     "wikidata": "Q1072",
-    "uberon": "UBERON:0000948",
+    "uberon": "UBERON_0000948",
     "ta2": "A12.1.00.001",
     "mesh": "D006321",
     "icd10": ["I50"]
@@ -26,14 +26,14 @@
     "label_pt": "Rins",
     "aliases_pt": ["Órgão renal"],
     "wikidata": "Q1027",
-    "uberon": "UBERON:0002113"
+    "uberon": "http://purl.obolibrary.org/obo/UBERON_0002113"
   },
   "za:pulmoes": {
     "qid": "Q7391",
     "label_pt": "Pulmões",
     "aliases_pt": ["Órgão pulmonar"],
     "wikidata": "Q7391",
-    "uberon": "UBERON:0002048",
+    "uberon": "not-a-real-uberon-id",
     "mesh": "D008168"
   },
   "za:estomago": {

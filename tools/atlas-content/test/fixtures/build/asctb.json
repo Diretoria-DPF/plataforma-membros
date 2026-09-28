@@ -25,7 +25,12 @@
         }
       ],
       "tissues": ["glomerulus"],
-      "source": "HRA-ASCTB"
+      "source": {
+        "organ": "kidney",
+        "version": "v1.6",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/kidney/v1.6/assets/asct-b-vh-kidney.csv",
+        "license": "CC-BY-4.0"
+      }
     }
   }
 }

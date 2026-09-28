@@ -9,6 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { normUberon } from './uberon.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -237,7 +238,12 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
   if (wikidataEntry) {
     if (wikidataEntry.qid) record.ids.wikidata = wikidataEntry.qid;
     if (wikidataEntry.fma) record.ids.fma = wikidataEntry.fma;
-    if (wikidataEntry.uberon) record.ids.uberon = wikidataEntry.uberon;
+    // content.schema.json exige ids.uberon no formato canônico "UBERON:<n>"
+    // (^UBERON:[0-9]+$) — normaliza (wikidata.json pode ter sido gerado antes
+    // desta correção, ou vir de uma fixture/legado com outro formato) e omite
+    // o campo em vez de gravar um valor que reprova a validação.
+    const normalizedUberon = normUberon(wikidataEntry.uberon);
+    if (normalizedUberon) record.ids.uberon = normalizedUberon;
     if (wikidataEntry.ta2) record.ids.ta2 = wikidataEntry.ta2;
     if (wikidataEntry.mesh) record.ids.mesh = wikidataEntry.mesh;
     if (wikidataEntry.icd10 && wikidataEntry.icd10.length > 0) {
@@ -248,6 +254,17 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
   // IDs do legacy (se houver)
   if (legacyContentEntry && legacyContentEntry.ids) {
     Object.assign(record.ids, legacyContentEntry.ids);
+    // O legado pode trazer seu próprio ids.uberon, em qualquer formato aceito
+    // por normUberon — normaliza (ou remove, se não reconhecido) do mesmo
+    // jeito que o valor vindo do wikidata, acima.
+    if (record.ids.uberon) {
+      const normalizedLegacyUberon = normUberon(record.ids.uberon);
+      if (normalizedLegacyUberon) {
+        record.ids.uberon = normalizedLegacyUberon;
+      } else {
+        delete record.ids.uberon;
+      }
+    }
   }
 
   // Summary PT
@@ -270,6 +287,29 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
       ref: 'bio-database.js (o-bala-vip, curadoria LAIFT)',
       license: 'proprietary-laift'
     });
+  } else if (asctbEntry && asctbEntry.cells && asctbEntry.cells.length > 0) {
+    // Sid mapeado só pelo ASCT+B, sem verbete na Wikipédia nem no legado —
+    // content.schema.json exige summary_pt não-vazio (minLength 1) em todo
+    // registro, então sem este fallback o sid nem entraria em
+    // contentBySystem (record.sources ficaria vazio) OU entraria com
+    // summary_pt: '' e reprovaria o schema — o que de fato acontecia com os
+    // sids urinário/respiratório etc. depois de corrigir o bug das células
+    // (ver histology abaixo) sem este fallback.
+    const organLabel = (asctbEntry.source && typeof asctbEntry.source === 'object' && asctbEntry.source.organ) || null;
+    record.summary_pt = organLabel
+      ? `Estrutura anatômica com dados de composição celular do órgão "${organLabel}", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.`
+      : 'Estrutura anatômica com dados de composição celular mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.';
+    const summarySource = {
+      field: 'summary_pt',
+      type: 'hra-asctb',
+      ref: 'HRA ASCT+B',
+      license: 'CC-BY-4.0'
+    };
+    if (asctbEntry.source && typeof asctbEntry.source === 'object' && asctbEntry.source.version) {
+      summarySource.rev = asctbEntry.source.version;
+    }
+    record.sources.push(summarySource);
+    hasAutoDraft = true;
   }
 
   // Anatomy
@@ -314,7 +354,14 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
   }
 
   // Histology
-  if (legacyContentEntry && (legacyContentEntry.histology || asctbEntry)) {
+  //
+  // Antes: a condição exigia `legacyContentEntry &&` mesmo quando só havia
+  // dados do ASCT+B (asctbEntry) — como a grande maioria dos ~2400 sids reais
+  // (za:*) não tem entrada em legacy/content/*.json, o bloco inteiro (e as
+  // células do ASCT+B dentro dele) era pulado. Resultado em CI: asctb.mjs
+  // relatava "sids com células: 162" mas build-content.mjs relatava "Sids
+  // com células: 0" — as 162 nunca chegavam ao record.histology.cells.
+  if ((legacyContentEntry && legacyContentEntry.histology) || asctbEntry) {
     record.histology = {};
     if (legacyContentEntry && legacyContentEntry.histology && legacyContentEntry.histology.epithelium) {
       record.histology.epithelium = legacyContentEntry.histology.epithelium;
@@ -342,12 +389,23 @@ function buildContentRecord(sid, wikidataEntry, wikipediaEntry, asctbEntry, lega
         name_pt: cell.name_en || '', // Aguardando tradução
         biomarkers: cell.biomarkers || []
       }));
-      record.sources.push({
+
+      // asctbEntry.source vem de asctb.mjs (processAsctbCsv) como
+      // { organ, version, url, license }, com `version` = versão real da
+      // tabela ASCT+B daquele órgão (asctb-organs.json) — usada aqui como
+      // `rev` da fonte, para que a validação "todo campo tem fonte" saiba de
+      // qual revisão da tabela HRA ASCT+B o dado veio.
+      const asctbSource = {
         field: 'histology.cells',
         type: 'hra-asctb',
-        ref: 'ASCT+B',
+        ref: 'HRA ASCT+B',
         license: 'CC-BY-4.0'
-      });
+      };
+      if (asctbEntry.source && typeof asctbEntry.source === 'object') {
+        if (asctbEntry.source.version) asctbSource.rev = asctbEntry.source.version;
+        if (asctbEntry.source.url) asctbSource.url = asctbEntry.source.url;
+      }
+      record.sources.push(asctbSource);
       hasAutoDraft = true;
     }
   }

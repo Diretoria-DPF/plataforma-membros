@@ -5,6 +5,6 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node test/wikidata.test.mjs && node test/wikipedia-pt.test.mjs && node test/asctb.test.mjs && node test/build-content.test.mjs"
+    "test": "node test/uberon.test.mjs && node test/wikidata.test.mjs && node test/wikipedia-pt.test.mjs && node test/asctb.test.mjs && node test/build-content.test.mjs"
   }
 }

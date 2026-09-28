@@ -6,6 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { normUberon } from './uberon.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -222,7 +223,12 @@ function bindingToEntry(binding) {
   return {
     qid,
     fma: binding.fmaId?.value || undefined,
-    uberon: binding.uberon?.value,
+    // O SPARQL devolve o valor bruto de P1554 ("Uberon ID"), que na prática
+    // vem como "UBERON_<n>" (estilo purl/OBO) — normaliza para o formato
+    // canônico "UBERON:<n>" exigido por content.schema.json (ver uberon.mjs).
+    // Formato não reconhecido -> omite o campo em vez de gravar um valor
+    // que vai falhar na validação.
+    uberon: normUberon(binding.uberon?.value) || undefined,
     ta2: binding.ta2?.value,
     mesh: binding.mesh?.value,
     icd10: binding.icd10?.value ? [binding.icd10.value] : [],
