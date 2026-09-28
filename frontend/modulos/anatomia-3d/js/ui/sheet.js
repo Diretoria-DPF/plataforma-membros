@@ -9,14 +9,11 @@
  * estados. `setContent()` é o único ponto de entrada para outros pacotes
  * colocarem algo dentro dele.
  *
- * Medidas: em vez de reimplementar em JS a conta de `dvh`/`min(40vw,400px)`
- * dos tokens (frágil e duplicaria css/tokens-atlas.css), cada estado é
- * MEDIDO de verdade no DOM: alterna `data-sheet-state` nos três valores e lê
- * `getBoundingClientRect()` de cada um, tudo dentro do mesmo tick de script
- * (sem `await` no meio) — o navegador só pinta depois que o script termina,
- * então não há "flicker" visível. Isso também significa que qualquer ajuste
- * futuro de breakpoint/token em css/atlas.css é respeitado automaticamente,
- * sem precisar tocar este arquivo.
+ * Medidas: as alturas dos três estados (peek, half, full) são calculadas
+ * dinamicamente com base na altura real do container usando computeSnapHeights(H),
+ * que observa redimensionamentos via ResizeObserver e mudanças de orientação.
+ * Isso respeita automaticamente ajustes futuros de breakpoint/token em css/atlas.css,
+ * e funciona corretamente com dvh em navegadores modernos.
  */
 import { on, emit, EVENTS } from '../core/bus.js';
 import { set as storeSet } from '../core/store.js';
@@ -24,6 +21,31 @@ import { isValidSheetState } from '../core/contracts.js';
 
 const STATES = ['peek', 'half', 'full'];
 const RUBBER_BAND_FACTOR = 0.35;
+
+/**
+ * Calcula as três alturas de estado (peek, half, full) com base na altura
+ * real disponível H do container.
+ *
+ * Fórmulas:
+ * - peek = clamp(72px, 12% de H, 112px)
+ * - half = round(0.45 * H)
+ * - full = round(0.9 * H), nunca menor que peek + 48
+ *
+ * @param {number} H - altura real disponível do container (px)
+ * @returns {{ peek: number, half: number, full: number }} alturas dos estados
+ */
+export function computeSnapHeights(H) {
+  // Clamp: min 72, máximo 112, valor central 12% de H
+  const peek = Math.max(72, Math.min(112, Math.round(H * 0.12)));
+
+  // Half: sempre 45% da altura disponível
+  const half = Math.round(H * 0.45);
+
+  // Full: 90% da altura, mas nunca menor que peek + 48
+  const full = Math.max(peek + 48, Math.round(H * 0.9));
+
+  return { peek, half, full };
+}
 // Janela de amostras usada para estimar a velocidade no momento de soltar
 // (ver docs/ATLAS_UX_SPEC.md §2.3) — só as amostras dos últimos N ms contam,
 // para um arraste que parou antes de soltar não "herdar" velocidade antiga.
@@ -38,6 +60,8 @@ let sheetEl = null;
 let handleEl = null;
 let peekEl = null;
 let bodyEl = null;
+let sheetParent = null;
+let sheetResizeObserver = null;
 
 let currentState = 'peek';
 /** Estado antes de a busca/navegador forçarem `peek` (§2.4) — restaurado
@@ -53,8 +77,55 @@ let dragStartPointerPos = 0;
 let dragMoved = false;
 let dragPointerId = null;
 
+/** Alturas computadas (peek, half, full) em px, baseadas na altura real do container */
+let computedHeights = { peek: 96, half: 380, full: 760 };
+
 function isLandscapeSheet() {
   return window.matchMedia('(orientation: landscape) and (max-height: 599px)').matches;
+}
+
+/**
+ * Recomputa as alturas do sheet baseado na altura real do container
+ * (atlas-canvas clientHeight) e re-aplica o estado atual.
+ * Chamado após resize ou orientationchange.
+ *
+ * IMPORTANTE: observa o canvas (atlas-canvas), não o parent do sheet, para
+ * evitar feedback loop quando o sheet muda de tamanho. O canvas é o container
+ * real e não depende da altura do sheet.
+ */
+function recomputeHeights() {
+  if (!sheetParent) return;
+
+  // Observa a altura real disponível: canvas (main#atlas-canvas), não o parent direto
+  // O canvas é o viewport real e não varia com o tamanho do sheet
+  const atlasCanvas = document.getElementById('atlas-canvas');
+  const containerHeight = atlasCanvas ? atlasCanvas.clientHeight : sheetParent.clientHeight;
+
+  if (containerHeight <= 0) return; // Proteção: ignore se canvas não está pronto
+
+  const newHeights = computeSnapHeights(containerHeight);
+
+  // Só atualiza se mudou
+  if (newHeights.peek === computedHeights.peek &&
+      newHeights.half === computedHeights.half &&
+      newHeights.full === computedHeights.full) {
+    return;
+  }
+
+  computedHeights = newHeights;
+
+  // Re-aplica o estado atual com as novas alturas, mas APENAS se não estamos
+  // já na altura certa. Evita re-aplicar altura se ela já é exata.
+  if (!dragging) {
+    const sizes = measureStates();
+    const currentHeight = sheetEl.clientHeight;
+    const targetHeight = sizes[currentState];
+
+    // Só commit se a altura atual é significativamente diferente (>1px) da esperada
+    if (Math.abs(currentHeight - targetHeight) > 1) {
+      commit(currentState, { silent: true });
+    }
+  }
 }
 
 function sizeProp() {
@@ -65,41 +136,12 @@ function pointerPos(evt) {
   return axis === 'y' ? evt.clientY : evt.clientX;
 }
 
-/** Mede as três alturas/larguras reais (px) para o breakpoint/eixo atuais. */
+/**
+ * Retorna as três alturas/larguras (px) baseadas na altura real do container.
+ * As alturas são pré-computadas em computedHeights via computeSnapHeights().
+ */
 function measureStates() {
-  const prop = sizeProp();
-  const prevState = sheetEl.getAttribute('data-sheet-state');
-  const prevInline = sheetEl.style[prop];
-
-  // Ensure inline style is removed before measuring
-  sheetEl.style[prop] = '';
-  // Force browser to recalculate layout
-  void sheetEl.offsetHeight;
-
-  const sizes = {};
-  for (const state of STATES) {
-    sheetEl.setAttribute('data-sheet-state', state);
-    // Force browser to recalculate after attribute change
-    void sheetEl.offsetHeight;
-    const rect = sheetEl.getBoundingClientRect();
-    sizes[state] = axis === 'y' ? rect.height : rect.width;
-  }
-
-  sheetEl.setAttribute('data-sheet-state', prevState);
-  sheetEl.style[prop] = prevInline;
-
-  // Fallback: se as medições falharam ou retornaram valores iguais (problema com dvh/CSS vars),
-  // use valores calculados baseado no viewport (igual ao fallback em pickSnap)
-  if (sizes.peek === sizes.half && sizes.half === sizes.full) {
-    const containerH = document.documentElement.clientHeight || window.innerHeight;
-    const containerW = document.documentElement.clientWidth || window.innerWidth;
-    const dim = axis === 'y' ? containerH : containerW;
-    sizes.peek = 96;
-    sizes.half = Math.round(dim * 0.45);
-    sizes.full = Math.round(dim * 0.90);
-  }
-
-  return sizes;
+  return computedHeights;
 }
 
 function clampRubberBand(raw, sizes) {
@@ -198,11 +240,12 @@ function velocityPxPerMs() {
 /** Aplica o estado resolvido: emite o evento, atualiza o store e anima via CSS. */
 function commit(state, { silent } = {}) {
   if (!isValidSheetState(state)) return;
-  // Limpa o height inline ANTES de medir, senão a regra CSS [data-sheet-state] não será aplicada
-  sheetEl.style[sizeProp()] = '';
   const sizes = measureStates();
   currentState = state;
   sheetEl.setAttribute('data-sheet-state', state);
+  // Define a altura diretamente com a altura computada
+  const prop = sizeProp();
+  sheetEl.style[prop] = `${sizes[state]}px`;
   syncAria(state);
   if (!silent) {
     const heightPx = Math.round(sizes[state]);
@@ -368,10 +411,16 @@ export function initSheet() {
   bodyEl = document.getElementById('atlas-sheet-body');
   if (!sheetEl || !handleEl) return;
 
+  sheetParent = sheetEl.parentElement;
+  if (!sheetParent) return;
+
   currentState = isValidSheetState(sheetEl.getAttribute('data-sheet-state'))
     ? sheetEl.getAttribute('data-sheet-state')
     : 'peek';
   syncAria(currentState);
+
+  // Computa alturas iniciais
+  recomputeHeights();
 
   handleEl.addEventListener('pointerdown', onPointerDown);
   handleEl.addEventListener('pointermove', onPointerMove);
@@ -397,8 +446,26 @@ export function initSheet() {
   window.AtlasSheet.snapHalf = () => commit('half');
   window.AtlasSheet.snapFull = () => commit('full');
 
+  // ResizeObserver para detectar redimensionamento do canvas (stable container)
+  // Observa o canvas, não o parent direto, para evitar feedback loop quando a
+  // altura do sheet muda — o canvas é o viewport real e não depende do sheet.
+  if (typeof ResizeObserver !== 'undefined') {
+    const atlasCanvas = document.getElementById('atlas-canvas');
+    if (atlasCanvas) {
+      sheetResizeObserver = new ResizeObserver(() => {
+        recomputeHeights();
+      });
+      sheetResizeObserver.observe(atlasCanvas);
+    }
+  }
+
+  // Recomputa em orientationchange
+  window.addEventListener('orientationchange', () => {
+    recomputeHeights();
+  });
+
+  // Fallback para navegadores sem ResizeObserver
   window.addEventListener('resize', () => {
-    // Só remedimos/realinhamos se não estiver no meio de um arraste.
-    if (!dragging) commit(currentState, { silent: true });
+    recomputeHeights();
   });
 }

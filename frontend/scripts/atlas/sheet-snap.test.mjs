@@ -18,7 +18,7 @@ import path from 'node:path';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const sheetDir = path.resolve(here, '../../modulos/anatomia-3d/js/ui');
 
-const { pickSnap } = await import(path.join(sheetDir, 'sheet.js'));
+const { pickSnap, computeSnapHeights } = await import(path.join(sheetDir, 'sheet.js'));
 
 let failures = 0;
 
@@ -40,6 +40,45 @@ function test(name, fn) {
 // Altura padrão de layout de telefone (390×844)
 const PHONE_HEIGHTS = { peek: 96, half: 380, full: 760 };
 
+console.log('computeSnapHeights — cálculo dinâmico de alturas baseado em H');
+
+test('H=568 → peek=72, half=256, full=511', () => {
+  const result = computeSnapHeights(568);
+  assert.deepEqual(result, {
+    peek: 72,
+    half: 256,
+    full: 511
+  });
+});
+
+test('H=360 → peek=72, half=162, full=324', () => {
+  const result = computeSnapHeights(360);
+  assert.deepEqual(result, {
+    peek: 72,
+    half: 162,
+    full: 324
+  });
+});
+
+test('H=844 → peek=101, half=380, full=760', () => {
+  const result = computeSnapHeights(844);
+  assert.deepEqual(result, {
+    peek: 101,
+    half: 380,
+    full: 760
+  });
+});
+
+test('H=1440 → peek=112, half=648, full=1296', () => {
+  const result = computeSnapHeights(1440);
+  assert.deepEqual(result, {
+    peek: 112,
+    half: 648,
+    full: 1296
+  });
+});
+
+console.log('');
 console.log('pickSnap — encaixe automático com momentum e regra de "sem pulo"');
 
 test('peek + arraste até 386px, v=0.2 px/ms → half', () => {

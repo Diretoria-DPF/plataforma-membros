@@ -26,6 +26,8 @@
   --gap: 16px;
   --density-pad: 20px;
   --density-gap: 16px;
+  --app-header-h: 60px;
+  --app-nav-h: 56px;
 }
 
 :root[data-theme="dark"] {
@@ -708,6 +710,10 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
   margin-bottom: 4px;
 }
 .learn-frame.learn-frame-immersive {
+  /* Dynamic height formula: 100dvh - header - nav - layout-gaps - safe-area-inset-bottom
+     = 100dvh - 60px (--app-header-h) - 56px (--app-nav-h) - 108px (padding/margins/viewer-bar)
+     - env(safe-area-inset-bottom) ≈ 100dvh - 224px on typical devices (no notches).
+     Respects viewport notches and safe-area insets for modern devices. */
   height: calc(100dvh - 224px);
   min-height: 480px;
 }
@@ -719,6 +725,8 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
     margin-bottom: 2px;
   }
   .learn-frame.learn-frame-immersive {
+    /* Mobile: gaps reduce to 86px (no title, reduced padding 14px vs 20px).
+       Formula: 100dvh - 60 - 56 - 86 - env(safe-area-inset-bottom) ≈ 100dvh - 202px */
     height: calc(100dvh - 202px);
   }
 }
