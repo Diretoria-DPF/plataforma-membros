@@ -1,402 +1,407 @@
 /**
- * contracts.js — contratos congelados do Atlas v2 (Onda 0, WP01)
- * ---------------------------------------------------------------------------
- * Este arquivo NÃO implementa nada: define, em JSDoc, a forma das interfaces
- * que os pacotes de trabalho das Ondas 1–2 precisam respeitar para se
- * encaixar sem conhecer os detalhes uns dos outros, mais um punhado de
- * validadores "leves em runtime" (checam só a forma — presença de métodos —
- * nunca o comportamento) para os testes de integração (WP13/WP14)
- * conferirem rápido "isto parece um Registry?" sem montar o motor inteiro.
- *
- * Congelado depois desta onda: qualquer mudança de forma aqui é uma mudança
- * de contrato entre pacotes e passa pelo orquestrador, nunca por um agente
- * isolado.
- *
- * Não importa nada (nem three.js, nem os outros módulos de core/) — só usa
- * tipos de JavaScript puro, então pode ser importado por qualquer pacote,
- * inclusive os que rodam fora do navegador (scripts de CI/validação).
+ * @file contracts.js
+ * @description Contrato canônico e normalizador de dados do Atlas Anatômico 3D LAIFT.
+ * Define a estrutura universal StructureEntry, esquemas de validação e precedência de conteúdo.
  */
-
-// ============================================================================
-// Camadas (LAYERS) — usadas pelo painel de camadas (WP09) e pelo motor de
-// visibilidade (WP06). A ordem é a mesma do painel: superficial → profundo.
-// ============================================================================
 
 /**
- * @typedef {Object} LayerDef
- * @property {string} id    Chave estável usada em `store.layers` e no evento
- *                           `layer:set` (ver EVENTS em bus.js).
- * @property {string} label Rótulo em PT-BR mostrado no painel de camadas.
+ * Estados permitidos de revisão acadêmica conforme docs/ATLAS_CONTENT_POLICY.md
+ * @readonly
+ * @enum {string}
  */
-
-/** @type {ReadonlyArray<Readonly<LayerDef>>} */
-export const LAYERS = Object.freeze([
-  Object.freeze({ id: 'pele', label: 'Pele' }),
-  Object.freeze({ id: 'musculos', label: 'Músculos' }),
-  Object.freeze({ id: 'esqueleto', label: 'Esqueleto' }),
-  Object.freeze({ id: 'visceras', label: 'Vísceras' }),
-  Object.freeze({ id: 'vasos', label: 'Vasos' }),
-  Object.freeze({ id: 'nervos', label: 'Nervos' }),
-  Object.freeze({ id: 'linfatico', label: 'Linfático' }),
-]);
-
-/** ids de LAYERS, na mesma ordem — útil para `Object.keys`-like iteração. */
-export const LAYER_IDS = Object.freeze(LAYERS.map((l) => l.id));
-
-// ============================================================================
-// Sistemas anatômicos (SYSTEMS) — usados pelo navegador (WP09), pelo
-// carregador de assets (WP05) e pelo pipeline de conteúdo/3D (WP10/WP11).
-// Lista fechada de 12 sistemas com id estável (bate com `models/manifest.json`
-// e `data/atlas/content/<sistema>.json`) e rótulo PT-BR.
-// ============================================================================
-
-/**
- * @typedef {Object} SystemDef
- * @property {string} id    Chave estável (ex.: `cardiovascular`).
- * @property {string} label Rótulo em PT-BR.
- */
-
-/** @type {ReadonlyArray<Readonly<SystemDef>>} */
-export const SYSTEMS = Object.freeze([
-  Object.freeze({ id: 'esqueletico', label: 'Esquelético' }),
-  Object.freeze({ id: 'muscular', label: 'Muscular' }),
-  Object.freeze({ id: 'articular', label: 'Articular' }),
-  Object.freeze({ id: 'cardiovascular', label: 'Cardiovascular' }),
-  Object.freeze({ id: 'nervoso', label: 'Nervoso' }),
-  Object.freeze({ id: 'respiratorio', label: 'Respiratório' }),
-  Object.freeze({ id: 'digestorio', label: 'Digestório' }),
-  Object.freeze({ id: 'urinario', label: 'Urinário' }),
-  Object.freeze({ id: 'reprodutor', label: 'Reprodutor' }),
-  Object.freeze({ id: 'endocrino', label: 'Endócrino' }),
-  Object.freeze({ id: 'linfatico', label: 'Linfático' }),
-  Object.freeze({ id: 'tegumentar', label: 'Tegumentar' }),
-]);
-
-/** ids de SYSTEMS, na mesma ordem. */
-export const SYSTEM_IDS = Object.freeze(SYSTEMS.map((s) => s.id));
-
-// ============================================================================
-// Modos (MODES) — o seletor no topo (WP08) e os pacotes `js/modes/*`
-// (WP07/WP12) implementam um por id. `icon` é só uma chave para o sprite/
-// glifo escolhido pela UI, não um caminho de arquivo.
-// ============================================================================
-
-/**
- * @typedef {Object} ModeDef
- * @property {string} id    Chave estável, usada em `store.mode` e no evento
- *                           `mode:change`.
- * @property {string} label Rótulo em PT-BR mostrado no seletor de modo.
- * @property {string} icon  Chave do glifo (ver `js/ui/toolbar.js`).
- */
-
-/** @type {ReadonlyArray<Readonly<ModeDef>>} */
-export const MODES = Object.freeze([
-  Object.freeze({ id: 'explorar', label: 'Explorar', icon: 'body' }),
-  Object.freeze({ id: 'fisiologia', label: 'Fisiologia & Vias', icon: 'route' }),
-  Object.freeze({ id: 'farmacologia', label: 'Farmacologia', icon: 'pill' }),
-  Object.freeze({ id: 'moleculas', label: 'Moléculas', icon: 'molecule' }),
-  Object.freeze({ id: 'quiz', label: 'Quiz', icon: 'check' }),
-  Object.freeze({ id: 'estudo', label: 'Meu estudo', icon: 'bookmark' }),
-]);
-
-/** ids de MODES, na mesma ordem. */
-export const MODE_IDS = Object.freeze(MODES.map((m) => m.id));
-
-/** Modo inicial ao abrir o Atlas sem estado salvo. */
-export const DEFAULT_MODE = 'explorar';
-
-// ============================================================================
-// Estados do painel inferior/lateral arrastável (ver docs/ATLAS_UX_SPEC.md
-// §2 para as alturas exatas por breakpoint — aqui só os ids e rótulos).
-// ============================================================================
-
-/**
- * @typedef {Object} SheetStateDef
- * @property {string} id    'peek' | 'half' | 'full'.
- * @property {string} label Rótulo em PT-BR (usado em `aria-label`/testes).
- */
-
-/** @type {ReadonlyArray<Readonly<SheetStateDef>>} */
-export const SHEET_STATES = Object.freeze([
-  Object.freeze({ id: 'peek', label: 'Espiar' }),
-  Object.freeze({ id: 'half', label: 'Metade' }),
-  Object.freeze({ id: 'full', label: 'Cheio' }),
-]);
-
-/** ids de SHEET_STATES, na mesma ordem. */
-export const SHEET_STATE_IDS = Object.freeze(SHEET_STATES.map((s) => s.id));
-
-// ============================================================================
-// Superfície de compatibilidade legada — o que `js/compat/legacy-api.js`
-// (WP13) precisa continuar expondo para `atlas.e2e.js` e `csp.e2e.js`
-// passarem sem alteração. Ver plano §"Testes atuais a preservar".
-// Isto é DOCUMENTAÇÃO, não um polyfill: nenhum destes objetos é criado aqui.
-// ============================================================================
-
-/** @typedef {Object} LegacyCompatSurface
- *  @property {string} globalNamespace          `window.ThreeEngine`, forma atual.
- *  @property {ReadonlyArray<string>} threeEngineApiMethods Métodos que
- *    `ThreeEngineAPI` expõe hoje (`js/three-engine.js`) e que a camada de
- *    compatibilidade precisa continuar respondendo (pode traduzir por
- *    dentro para o novo Registry/Engine).
- *  @property {string} modelStateGlobal         `window.__atlasModelState`.
- *  @property {string} modelReadyEvent          Evento `laift:atlas-model-ready`.
- *  @property {string} appControllerSelectSystem `AppController.selectSystem`.
- *  @property {string} quizNamespace            `window.QuizEngine`.
- *  @property {ReadonlyArray<string>} quizEngineMethods Métodos que `QuizEngine`
- *    expõe hoje (`js/quiz-engine.js`).
- *  @property {ReadonlyArray<string>} domIds     ids de DOM lidos pelos testes.
- */
-
-/** @type {Readonly<LegacyCompatSurface>} */
-export const LEGACY_COMPAT = Object.freeze({
-  globalNamespace: 'window.ThreeEngine',
-  threeEngineApiMethods: Object.freeze([
-    'init', 'selectSystem', 'highlightOrgan', 'flashOrganFeedback',
-    'setOrganVisibility', 'setOrganOpacity', 'isolateOrgan', 'resetOrganTree',
-    'simulateAdministrationRoute', 'stopRouteSimulation', 'setCrisisMode',
-    'setDissectionDepth', 'togglePinsVisibility', 'triggerParticleFlow',
-    'stopParticles', 'tweenCamera', 'onWindowResize',
-    'isRealModelActive', 'getRealMeshCount', 'getVisibilityStats',
-    'debugSelectFirstOfSystem', 'getAnatomicalLandmarks',
-    'debugGetOrganWorldBox', 'debugGetOrganOpacity', 'hasOrganLayer',
-  ]),
-  modelStateGlobal: 'window.__atlasModelState',
-  modelReadyEvent: 'laift:atlas-model-ready',
-  appControllerSelectSystem: 'AppController.selectSystem',
-  quizNamespace: 'window.QuizEngine',
-  quizEngineMethods: Object.freeze([
-    'startQuiz', 'stopQuiz', 'evaluateUserAnswer', 'getCurrentScore',
-  ]),
-  domIds: Object.freeze([
-    '#organ-name', '#organ-hud', '#bio-search-input', '#biohacking-results-grid',
-  ]),
-  quizStartAction: '[data-action="QuizEngine.startQuiz"]',
+export const ReviewStatus = Object.freeze({
+  AUTO_DRAFT: 'auto-draft',
+  LEGACY_UNVERIFIED: 'legacy-unverified',
+  REVIEWED: 'reviewed',
+  APPROVED: 'approved'
 });
 
-// ============================================================================
-// Interfaces entre pacotes (JSDoc puro — nada instanciável aqui).
-// ============================================================================
+/**
+ * Tipos padronizados de lateralidade anatômica
+ * @readonly
+ * @enum {string}
+ */
+export const Laterality = Object.freeze({
+  BILATERAL: 'bilateral',
+  LEFT: 'left',
+  RIGHT: 'right',
+  MIDLINE: 'midline',
+  UNPAIRED: 'unpaired'
+});
 
 /**
- * Ponto/mira de tela usado por `Registry.pick` (mesmo espaço de coordenadas
- * de `THREE.Raycaster.setFromCamera`: [-1, 1] em x/y, origem no centro).
- * @typedef {Object} ScreenPoint
- * @property {number} x
- * @property {number} y
+ * Lista canônica dos sistemas anatômicos oficiais
+ * @readonly
  */
+export const CanonicalSystems = Object.freeze([
+  'articular',
+  'cardiovascular',
+  'digestorio',
+  'endocrino',
+  'esqueletico',
+  'linfatico',
+  'muscular',
+  'nervoso',
+  'reprodutor',
+  'respiratorio',
+  'tegumentar',
+  'urinario'
+]);
 
 /**
- * Caixa delimitadora em coordenadas de mundo.
- * @typedef {Object} BBox
- * @property {[number, number, number]} min
- * @property {[number, number, number]} max
+ * Dicionário de rótulos oficiais dos sistemas em língua portuguesa
+ * @readonly
  */
+export const SystemLabelsPt = Object.freeze({
+  articular: 'Sistema Articular',
+  cardiovascular: 'Sistema Cardiovascular',
+  digestorio: 'Sistema Digestório',
+  endocrino: 'Sistema Endócrino',
+  esqueletico: 'Sistema Esquelético',
+  linfatico: 'Sistema Linfático',
+  muscular: 'Sistema Muscular',
+  nervoso: 'Sistema Nervoso',
+  reprodutor: 'Sistema Reprodutor',
+  respiratorio: 'Sistema Respiratório',
+  tegumentar: 'Sistema Tegumentar',
+  urinario: 'Sistema Urinário',
+  geral: 'Estrutura Geral'
+});
 
+// [INÍCIO: sanitizeString]
 /**
- * Índice vivo de estruturas (uma malha/nó do GLB ↔ um `sid`). Construído
- * pelo carregador de assets (WP05) a partir de `models/manifest.json`;
- * consultado pela seleção, pelo navegador, pelas camadas e pelos modos.
- * @typedef {Object} Registry
- * @property {(sid: string) => (Object|null)} getBySid Metadados da estrutura
- *   (sid, sistema, camada, nomes, bbox, nó do GLB) ou `null` se não existir
- *   ou ainda não tiver sido carregada.
- * @property {(systemId: string) => Array<Object>} getBySystem Todas as
- *   estruturas carregadas daquele sistema (`[]` se o sistema não estiver
- *   carregado — ver `AssetLoader.isLoaded`).
- * @property {(point: ScreenPoint) => (string|null)} pick Raycast a partir de
- *   um ponto de tela normalizado; devolve o `sid` mais próximo visível e
- *   selecionável, ou `null`.
- * @property {(sid: string) => (BBox|null)} getBBox
- * @property {(sid: string, visible: boolean) => void} setVisible
- * @property {(sid: string, opacity: number) => void} setOpacity Opacidade
- *   0–1; usada por raio-X, fantasma e pelas camadas.
- * @property {(sid: string, color: (string|null)) => void} setColor `null`
- *   restaura a cor de material original da estrutura.
- * @property {() => Iterable<Object>} iterate Percorre todas as estruturas
- *   já carregadas (qualquer sistema), na ordem de inserção.
+ * Remove espaços excessivos e caracteres de controle indesejados.
+ * @param {any} val
+ * @returns {string}
  */
-
-/**
- * Progresso de carregamento de um sistema.
- * @typedef {Object} LoadProgress
- * @property {string} system
- * @property {number} loadedBytes
- * @property {number} totalBytes
- */
-
-/**
- * Carrega `models/manifest.json` e os GLBs por sistema sob demanda (ver
- * plano §3 e §4 — orçamento de 1ª carga ≤5MB, resto sob demanda).
- * @typedef {Object} AssetLoader
- * @property {() => Promise<Object>} loadManifest Carrega e cacheia o
- *   manifesto (uma vez por sessão); resolve com o JSON de
- *   `models/manifest.json`.
- * @property {(system: string, opts?: {lod?: ('lod0'|'lod1')}) => Promise<void>} loadSystem
- *   Carrega o GLB daquele sistema (padrão `lod1` no celular, `lod0` acima do
- *   limiar de qualidade — ver `store.quality`). Idempotente: chamar de novo
- *   com o sistema já carregado resolve na hora.
- * @property {(system: string) => boolean} isLoaded
- * @property {(fn: (p: LoadProgress) => void) => (() => void)} onProgress
- *   Assina progresso de qualquer carregamento em curso; devolve função de
- *   cancelamento (mesmo padrão de `bus.on`).
- */
-
-/**
- * Fachada do motor 3D (three.js) que o resto do app manipula sem conhecer
- * a versão/API exata do three.js — só WP04 importa `vendor/three/` direto.
- * @typedef {Object} Engine
- * @property {Object} scene    `THREE.Scene` (tipado como `Object` aqui para
- *   este arquivo não depender de three.js).
- * @property {Object} camera   `THREE.PerspectiveCamera`.
- * @property {Object} renderer `THREE.WebGLRenderer`.
- * @property {() => void} requestRender Marca o próximo frame para render
- *   (o motor só renderiza quando algo muda — ver orçamento de desempenho).
- * @property {(rect: ({x: number, y: number, width: number, height: number}|null)) => void} setViewOffset
- *   Espelha `camera.setViewOffset`; `null` remove o deslocamento (a área
- *   cheia do canvas volta a ser "livre"). Rect em pixels de tela, relativo
- *   ao canvas — usado para afastar a câmera da área cobierta pelo painel.
- * @property {(sid: string, opts?: {animate?: boolean}) => void} focusSid
- *   Centraliza a câmera na estrutura, respeitando o `viewOffset` atual.
- * @property {(name: string) => void} viewPreset Uma das vistas nomeadas em
- *   `docs/ATLAS_UX_SPEC.md` §"Câmera" (`anterior`, `posterior`, `esquerda`,
- *   `direita`, `superior`, `inferior`).
- */
-
-/**
- * Resultado de busca (ver `docs/ATLAS_UX_SPEC.md` §"Busca" para o
- * algoritmo de ranking).
- * @typedef {Object} SearchResult
- * @property {string} sid
- * @property {string} label      Nome exibido (PT), já com o trecho casado.
- * @property {string} systemId
- * @property {number} score      Maior = melhor; usado só para ordenar.
- */
-
-/**
- * Acesso ao conteúdo textual/estruturado (`data/atlas/index.json` e
- * `data/atlas/content/<sistema>.json`), gerado pelo pipeline de conteúdo
- * (WP11) e consumido pela ficha da estrutura, pela busca e pelo navegador.
- * @typedef {Object} ContentStore
- * @property {() => Object} getIndex Índice já carregado na abertura
- *   (`data/atlas/index.json`) — síncrono porque é o primeiro fetch da
- *   página, feito antes de qualquer UI que precise dele.
- * @property {(sid: string) => Promise<(Object|null)>} getContent Conteúdo
- *   completo da estrutura (carrega o `content/<sistema>.json` daquele `sid`
- *   sob demanda e cacheia); `null` se o `sid` não existir no índice.
- * @property {(query: string) => Array<SearchResult>} search Síncrono sobre
- *   o índice em memória (PT/EN/latim/sinônimos, tolerante a acento e a erro
- *   de digitação — ver spec de UX).
- */
-
-/**
- * Contexto passado a `Mode.enter` — o que um modo recebe do shell para se
- * ligar ao motor/estado sem importar os módulos concretos.
- * @typedef {Object} ModeContext
- * @property {Registry} registry
- * @property {AssetLoader} assetLoader
- * @property {Engine} engine
- * @property {ContentStore} contentStore
- */
-
-/**
- * Um modo do seletor superior (`js/modes/*.js`). Implementações não podem
- * usar `innerHTML` (ver `modulos/shared/safe-dom.js`) — `sheetContent`
- * devolve um `Node` já construído.
- * @typedef {Object} Mode
- * @property {string} id    Um dos ids de MODES.
- * @property {string} label
- * @property {string} icon
- * @property {(ctx: ModeContext) => (void|Promise<void>)} enter Chamado ao
- *   entrar no modo; liga seus próprios listeners no `bus` e carrega o que
- *   precisar (bibliotecas pesadas, sob demanda — ver plano §1).
- * @property {() => (void|Promise<void>)} exit Desliga listeners, libera
- *   recursos pesados (ex.: descarta a instância do Chart.js).
- * @property {() => (Node|null)} sheetContent Conteúdo a colocar dentro do
- *   painel arrastável/lateral para este modo; `null` = painel usa o
- *   conteúdo padrão do Explorar (ficha da estrutura).
- */
-
-// ============================================================================
-// Validadores leves em runtime — checam só a FORMA (presença de métodos),
-// nunca o comportamento. Servem para os testes de integração (WP13/WP14)
-// falharem com uma mensagem clara ("faltou pick") em vez de um erro
-// genérico no meio de um fluxo E2E.
-// ============================================================================
-
-/**
- * @param {*} obj
- * @param {ReadonlyArray<string>} methodNames
- * @returns {boolean}
- */
-function hasMethods(obj, methodNames) {
-  if (!obj || typeof obj !== 'object') return false;
-  return methodNames.every((name) => typeof obj[name] === 'function');
+export function sanitizeString(val) {
+  if (val === null || val === undefined) {
+    return '';
+  }
+  return String(val).trim();
 }
+// [FIM: sanitizeString]
 
-/** @param {*} obj @returns {boolean} `true` se `obj` implementa {@link Registry}. */
-export function isRegistry(obj) {
-  return hasMethods(obj, ['getBySid', 'getBySystem', 'pick', 'getBBox', 'setVisible', 'setOpacity', 'setColor', 'iterate']);
-}
-
-/** @param {*} obj @returns {boolean} `true` se `obj` implementa {@link AssetLoader}. */
-export function isAssetLoader(obj) {
-  return hasMethods(obj, ['loadManifest', 'loadSystem', 'isLoaded', 'onProgress']);
-}
-
-/** @param {*} obj @returns {boolean} `true` se `obj` implementa {@link Engine}. */
-export function isEngine(obj) {
-  return hasMethods(obj, ['requestRender', 'setViewOffset', 'focusSid', 'viewPreset'])
-    && !!obj && typeof obj === 'object'
-    && 'scene' in obj && 'camera' in obj && 'renderer' in obj;
-}
-
-/** @param {*} obj @returns {boolean} `true` se `obj` implementa {@link ContentStore}. */
-export function isContentStore(obj) {
-  return hasMethods(obj, ['getIndex', 'getContent', 'search']);
-}
-
-/** @param {*} obj @returns {boolean} `true` se `obj` implementa {@link Mode}. */
-export function isMode(obj) {
-  return hasMethods(obj, ['enter', 'exit', 'sheetContent'])
-    && !!obj
-    && typeof obj.id === 'string' && obj.id.length > 0
-    && typeof obj.label === 'string'
-    && typeof obj.icon === 'string';
-}
-
+// [INÍCIO: normalizeCanonicalSystem]
 /**
- * Confere se `id` é um dos ids congelados de `SYSTEM_IDS`.
- * @param {string} id
- * @returns {boolean}
+ * Mapeia aliases legados e variantes ortográficas para o identificador canônico de sistema.
+ * @param {string} rawSystem
+ * @returns {string}
  */
-export function isValidSystemId(id) {
-  return SYSTEM_IDS.includes(id);
+export function normalizeCanonicalSystem(rawSystem) {
+  const clean = sanitizeString(rawSystem).toLowerCase();
+  if (CanonicalSystems.includes(clean)) {
+    return clean;
+  }
+  if (clean === 'circulatorio' || clean === 'circulatório' || clean === 'cardiovascular-system') {
+    return 'cardiovascular';
+  }
+  if (clean === 'osseo' || clean === 'ósseo' || clean === 'esqueleto' || clean === 'skeletal') {
+    return 'esqueletico';
+  }
+  if (clean === 'digestivo' || clean === 'digestive') {
+    return 'digestorio';
+  }
+  if (clean === 'respiratório' || clean === 'respiratory') {
+    return 'respiratorio';
+  }
+  if (clean === 'endócrino' || clean === 'endocrine') {
+    return 'endocrino';
+  }
+  if (clean === 'linfático' || clean === 'lymphatic') {
+    return 'linfatico';
+  }
+  if (clean === 'urinário' || clean === 'urinary') {
+    return 'urinario';
+  }
+  return 'geral';
 }
+// [FIM: normalizeCanonicalSystem]
 
+// [INÍCIO: normalizeLaterality]
 /**
- * Confere se `id` é um dos ids congelados de `LAYER_IDS`.
- * @param {string} id
- * @returns {boolean}
+ * Determina a lateralidade anatômica a partir de declarações brutas ou sufixos de identificador.
+ * @param {string} rawLaterality
+ * @param {string} sid
+ * @returns {string}
  */
-export function isValidLayerId(id) {
-  return LAYER_IDS.includes(id);
-}
+export function normalizeLaterality(rawLaterality, sid) {
+  const cleanLat = sanitizeString(rawLaterality).toLowerCase();
+  const cleanSid = sanitizeString(sid).toLowerCase();
 
-/**
- * Confere se `id` é um dos ids congelados de `MODE_IDS`.
- * @param {string} id
- * @returns {boolean}
- */
-export function isValidModeId(id) {
-  return MODE_IDS.includes(id);
+  if (['left', 'l', 'esquerdo', 'esquerda', 'sinistra'].includes(cleanLat) || cleanSid.endsWith('-l')) {
+    return Laterality.LEFT;
+  }
+  if (['right', 'r', 'direito', 'direita', 'dextra'].includes(cleanLat) || cleanSid.endsWith('-r')) {
+    return Laterality.RIGHT;
+  }
+  if (['bilateral', 'ambos'].includes(cleanLat)) {
+    return Laterality.BILATERAL;
+  }
+  if (['midline', 'medial', 'mediana', 'sagital'].includes(cleanLat)) {
+    return Laterality.MIDLINE;
+  }
+  return Laterality.UNPAIRED;
 }
+// [FIM: normalizeLaterality]
 
+// [INÍCIO: normalizeStructureEntry]
 /**
- * Confere se `id` é um dos ids congelados de `SHEET_STATE_IDS`.
- * @param {string} id
- * @returns {boolean}
+ * Normaliza um registro anatômico bruto, unificando campos legados e novos no contrato StructureEntry.
+ * @param {Object} raw - Registro vindo de structures.json, index.json ou structures.boot.json.
+ * @param {Object} [glossary={}] - Mapeamento de termos oriundo de glossario-pt.json.
+ * @returns {Readonly<Object>}
  */
-export function isValidSheetState(id) {
-  return SHEET_STATE_IDS.includes(id);
+export function normalizeStructureEntry(raw, glossary = {}) {
+  if (!raw || typeof raw !== 'object' || !raw.sid) {
+    throw new TypeError('Estrutura inválida: a propriedade obrigatória "sid" não foi informada.');
+  }
+
+  const sid = sanitizeString(raw.sid);
+  const glossItem = glossary[sid] || {};
+
+  // Resolução de nomes multilíngues
+  const namePt = sanitizeString(raw.names?.pt || raw.ptName || raw.name_pt || glossItem.pt || raw.name || sid);
+  const nameEn = sanitizeString(raw.names?.en || raw.englishName || raw.name_en || glossItem.en || '');
+  const nameLa = sanitizeString(raw.names?.la || raw.latinName || raw.name_la || glossItem.la || '');
+
+  // Resolução de sistema e lateralidade
+  const system = normalizeCanonicalSystem(raw.system || raw.systemId || glossItem.system);
+  const laterality = normalizeLaterality(raw.laterality || glossItem.laterality, sid);
+
+  // Camada anatômica de dissecação (1 a 5)
+  const rawLayer = Number(raw.layer || glossItem.layer || 1);
+  const layer = Number.isFinite(rawLayer) ? Math.max(1, Math.min(5, Math.floor(rawLayer))) : 1;
+
+  // Unificação de sinônimos para busca textual
+  const synonymsSet = new Set();
+  if (Array.isArray(raw.synonyms)) {
+    for (let i = 0; i < raw.synonyms.length; i++) {
+      const syn = sanitizeString(raw.synonyms[i]);
+      if (syn.length > 0) synonymsSet.add(syn);
+    }
+  }
+  if (Array.isArray(glossItem.synonyms)) {
+    for (let i = 0; i < glossItem.synonyms.length; i++) {
+      const syn = sanitizeString(glossItem.synonyms[i]);
+      if (syn.length > 0) synonymsSet.add(syn);
+    }
+  }
+  const popular = sanitizeString(raw.popularName || glossItem.popular);
+  if (popular.length > 0) {
+    synonymsSet.add(popular);
+  }
+
+  // Resolução de modelo tridimensional, licença e proveniência
+  const modelFile = sanitizeString(raw.model?.file || raw.file);
+  const rawLod = raw.model?.lod !== undefined ? raw.model.lod : raw.lod;
+  const modelLod = Number.isFinite(Number(rawLod)) ? Number(rawLod) : 1;
+  const isHra = modelFile.startsWith('hra-') || sanitizeString(raw.model?.source) === 'hra';
+  const modelSource = isHra ? 'hra' : 'z-anatomy';
+  const modelLicense = sanitizeString(raw.model?.license || (isHra ? 'CC BY 4.0' : 'CC BY-SA 4.0'));
+  const meshIndex = Number.isInteger(raw.meshIndex) ? raw.meshIndex : (Number.isInteger(raw.model?.meshIndex) ? raw.model.meshIndex : null);
+
+  // Parâmetros espaciais de enquadramento (Bounding Box)
+  let bounds = null;
+  const rawBounds = raw.bounds || glossItem.bounds;
+  if (rawBounds && Array.isArray(rawBounds.center) && Array.isArray(rawBounds.size)) {
+    bounds = {
+      center: [
+        Number(rawBounds.center[0]) || 0,
+        Number(rawBounds.center[1]) || 0,
+        Number(rawBounds.center[2]) || 0
+      ],
+      size: [
+        Math.abs(Number(rawBounds.size[0])) || 0,
+        Math.abs(Number(rawBounds.size[1])) || 0,
+        Math.abs(Number(rawBounds.size[2])) || 0
+      ]
+    };
+  }
+
+  // Identificadores ontológicos cruzados
+  const ids = {
+    fma: sanitizeString(raw.ids?.fma || glossItem.ids?.fma),
+    uberon: sanitizeString(raw.ids?.uberon || glossItem.ids?.uberon),
+    ta2: sanitizeString(raw.ids?.ta2 || glossItem.ids?.ta2),
+    wikidata: sanitizeString(raw.ids?.wikidata || glossItem.ids?.wikidata)
+  };
+
+  return Object.freeze({
+    sid,
+    names: Object.freeze({
+      pt: namePt,
+      en: nameEn,
+      la: nameLa
+    }),
+    synonyms: Object.freeze(Array.from(synonymsSet)),
+    system,
+    systemLabel: SystemLabelsPt[system] || SystemLabelsPt.geral,
+    layer,
+    laterality,
+    ids: Object.freeze(ids),
+    model: Object.freeze({
+      file: modelFile,
+      lod: modelLod,
+      source: modelSource,
+      license: modelLicense,
+      meshIndex
+    }),
+    bounds: bounds ? Object.freeze(bounds) : null
+  });
 }
+// [FIM: normalizeStructureEntry]
+
+// [INÍCIO: validateContentEntry]
+/**
+ * Valida a conformidade científica de um registro de conteúdo conforme ATLAS_CONTENT_POLICY.md.
+ * Rejeita textos sem fontes associadas e status de revisão sem auditoria documentada.
+ * @param {Object} content
+ * @returns {{ valid: boolean, errors: string[] }}
+ */
+export function validateContentEntry(content) {
+  const errors = [];
+
+  if (!content || typeof content !== 'object') {
+    return { valid: false, errors: ['O registro de conteúdo deve ser um objeto válido.'] };
+  }
+
+  const sid = sanitizeString(content.sid);
+  if (!sid) {
+    errors.push('Identificador "sid" ausente no registro de conteúdo.');
+  }
+
+  const summary = sanitizeString(content.summary_pt);
+  if (summary.length === 0) {
+    errors.push(`Campo "summary_pt" obrigatório está ausente ou vazio para SID "${sid}".`);
+  }
+
+  const status = content.review?.status;
+  if (!status || !Object.values(ReviewStatus).includes(status)) {
+    errors.push(`Status de revisão inválido ("${status}") para SID "${sid}". Valores permitidos: ${Object.values(ReviewStatus).join(', ')}.`);
+  }
+
+  // Regra de Integridade: Aprovação humana exige dados completos do auditor
+  if (status === ReviewStatus.REVIEWED || status === ReviewStatus.APPROVED) {
+    const reviewer = sanitizeString(content.review.reviewer);
+    const date = sanitizeString(content.review.date);
+    const institution = sanitizeString(content.review.institution);
+
+    if (reviewer.length === 0) {
+      errors.push(`Conteúdo marcado como "${status}" exige o preenchimento do campo "review.reviewer".`);
+    }
+    if (date.length === 0) {
+      errors.push(`Conteúdo marcado como "${status}" exige o preenchimento da data em "review.date".`);
+    }
+    if (institution.length === 0) {
+      errors.push(`Conteúdo marcado como "${status}" exige a instituição responsável em "review.institution".`);
+    }
+  }
+
+  // Regra de Fontes: Nenhum conteúdo educacional existe sem citação de fontes
+  if (!Array.isArray(content.sources) || content.sources.length === 0) {
+    errors.push(`O registro de conteúdo para SID "${sid}" não possui fontes citadas ("sources").`);
+  } else {
+    for (let i = 0; i < content.sources.length; i++) {
+      const src = content.sources[i];
+      if (!src || typeof src !== 'object') {
+        errors.push(`Fonte no índice ${i} é inválida para SID "${sid}".`);
+        continue;
+      }
+      if (!sanitizeString(src.field)) {
+        errors.push(`Fonte [${i}] sem campo de associação ("field") para SID "${sid}".`);
+      }
+      if (!sanitizeString(src.type)) {
+        errors.push(`Fonte [${i}] sem tipagem ("type") para SID "${sid}".`);
+      }
+      if (!sanitizeString(src.ref)) {
+        errors.push(`Fonte [${i}] sem referência/link ("ref") para SID "${sid}".`);
+      }
+      if (!sanitizeString(src.license)) {
+        errors.push(`Fonte [${i}] sem licença patrimonial declarada ("license") para SID "${sid}".`);
+      }
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+// [FIM: validateContentEntry]
+
+// [INÍCIO: resolveContentWithPrecedence]
+/**
+ * Aplica a precedência determinística em 4 níveis para entrega de conteúdo:
+ * 1. Base moderna por SID real com status 'reviewed' ou 'approved'.
+ * 2. Base moderna por SID real com status 'auto-draft'.
+ * 3. Base legada associada via legacy-id-map.json com status 'legacy-unverified'.
+ * 4. Retorno nulo tipado (sem conteúdo disponível).
+ *
+ * @param {string} sid
+ * @param {Object} modernContentSystem - Tabela data/atlas/content/<sistema>.json
+ * @param {Object} legacyContentSystem - Tabela data/atlas/legacy/content/<sistema>.json
+ * @param {Object} legacyIdMap - Tabela data/atlas/legacy-id-map.json
+ * @returns {Object|null}
+ */
+export function resolveContentWithPrecedence(sid, modernContentSystem = {}, legacyContentSystem = {}, legacyIdMap = {}) {
+  const cleanSid = sanitizeString(sid);
+  if (!cleanSid) {
+    return null;
+  }
+
+  // Nível 1 e 2: Base moderna catalogada por SID real
+  const modernData = modernContentSystem[cleanSid];
+  if (modernData) {
+    const validation = validateContentEntry(modernData);
+    if (validation.valid) {
+      const isReviewed = modernData.review?.status === ReviewStatus.REVIEWED ||
+                         modernData.review?.status === ReviewStatus.APPROVED;
+      return {
+        ...modernData,
+        resolvedFrom: 'modern',
+        isReviewed,
+        isLegacy: false
+      };
+    }
+  }
+
+  // Nível 3: Mapeamento verificado para conteúdo do acervo legado
+  const legacySid = legacyIdMap.realToLegacySid?.[cleanSid];
+  if (legacySid && legacyContentSystem[legacySid]) {
+    const rawLegacy = legacyContentSystem[legacySid];
+    const summary = sanitizeString(rawLegacy.description_pt || rawLegacy.summary_pt || rawLegacy.resumo);
+
+    return {
+      sid: cleanSid,
+      legacySid,
+      ids: rawLegacy.ids || {},
+      summary_pt: summary.length > 0 ? summary : 'Registro anatômico em catalogação histórica.',
+      anatomy: rawLegacy.anatomy || null,
+      histology: rawLegacy.histology || null,
+      clinical: Array.isArray(rawLegacy.clinical) ? rawLegacy.clinical : [],
+      sources: Array.isArray(rawLegacy.sources) && rawLegacy.sources.length > 0
+        ? rawLegacy.sources
+        : [{
+            field: 'summary_pt',
+            type: 'internal-archive',
+            ref: 'Acervo Histórico LAIFT (v1)',
+            license: 'legacy-unverified'
+          }],
+      review: {
+        status: ReviewStatus.LEGACY_UNVERIFIED,
+        reviewer: null,
+        date: null,
+        institution: 'LAIFT',
+        note: 'Ficha importada do sistema legado v1; necessita de nova verificação acadêmica.'
+      },
+      resolvedFrom: 'legacy',
+      isReviewed: false,
+      isLegacy: true
+    };
+  }
+
+  // Nível 4: Ausência comprovada de conteúdo descritivo
+  return null;
+}
+// [FIM: resolveContentWithPrecedence]
