@@ -1,273 +1,276 @@
 /**
- * search-index.js — índice de busca para o Atlas
- * Busca tolerante a acentos e erros de digitação sobre a estrutura anatômica.
+ * @file search-index.js
+ * @description Índice de busca textual do Atlas Anatômico 3D LAIFT.
+ * Suporta normalização PT-BR sem acento, busca por tokens, autocompletar e tolerância fonética.
  */
 
+// [INÍCIO: normalizeSearchString]
 /**
- * Normaliza uma string para comparação: minúsculas, sem acentos,
- * espaços entre palavras, sem caracteres especiais.
- * @param {string} s
+ * Normaliza uma sequência de caracteres removendo marcas de acentuação gráfica e caixa.
+ * Converte "Coração", "CORAÇÃO", "coração" e "coracao" na forma canônica "coracao".
+ * @param {any} str
  * @returns {string}
  */
-export function normalize(s) {
-  // Converter para minúsculas e decompor acentos (NFD = decomposição)
-  // Remover marcas diacríticas (combining marks)
-  return s
-    .toLowerCase()
+export function normalizeSearchString(str) {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  return String(str)
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '') // remove combining marks
-    .replace(/[^\p{L}\p{N}]/gu, ' ') // tudo que não é letra ou dígito vira espaço
-    .trim()
-    .replace(/\s+/g, ' '); // colapsar espaços múltiplos
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
 }
+// [FIM: normalizeSearchString]
 
+// [INÍCIO: tokenizeText]
 /**
- * Calcula a distância de Levenshtein entre duas strings.
- * Retorna 3 se a distância exceder 2.
+ * Divide uma string em tokens semânticos alfanuméricos isolados.
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function tokenizeText(text) {
+  const normalized = normalizeSearchString(text);
+  if (normalized.length === 0) {
+    return [];
+  }
+  return normalized
+    .split(/[^a-z0-9]+/g)
+    .filter(token => token.length >= 2);
+}
+// [FIM: tokenizeText]
+
+// [INÍCIO: levenshteinDistance]
+/**
+ * Calcula a distância de Levenshtein entre duas palavras para buscas aproximadas.
  * @param {string} a
  * @param {string} b
  * @returns {number}
  */
-export function levenshtein(a, b) {
-  const m = a.length;
-  const n = b.length;
-  const dp = Array(n + 1).fill(0).map(() => Array(m + 1).fill(0));
+export function levenshteinDistance(a, b) {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
 
-  // Inicializar primeira linha e coluna
-  for (let i = 0; i <= m; i++) dp[0][i] = i;
-  for (let j = 0; j <= n; j++) dp[j][0] = j;
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
 
-  // Preencher tabela de DP
-  for (let j = 1; j <= n; j++) {
-    let minInRow = Infinity;
-    for (let i = 1; i <= m; i++) {
-      if (b[j - 1] === a[i - 1]) {
-        dp[j][i] = dp[j - 1][i - 1];
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
       } else {
-        dp[j][i] = 1 + Math.min(dp[j - 1][i], dp[j][i - 1], dp[j - 1][i - 1]);
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // Substituição
+          matrix[i][j - 1] + 1,     // Inserção
+          matrix[i - 1][j] + 1      // Remoção
+        );
       }
-      minInRow = Math.min(minInRow, dp[j][i]);
     }
-    // Early exit: se o mínimo nesta linha > 2, o resultado final será > 2
-    if (minInRow > 2) return 3;
   }
-
-  return Math.min(3, dp[n][m]);
+  return matrix[b.length][a.length];
 }
+// [FIM: levenshteinDistance]
 
-/**
- * Constrói um índice de busca a partir de uma lista de entradas.
- * Cada entrada tem: sid, names {pt, en, la}, synonyms, side, system.
- * @param {Array<Object>} entries
- * @returns {Object} índice opaco
- */
-export function buildSearchIndex(entries) {
-  // Mapear termo normalizado → lista de {sid, weight, originalTerm}
-  const terms = new Map();
+export class SearchIndex {
+  // [INÍCIO MÉTODO: constructor]
+  constructor() {
+    /** @type {Map<string, Object>} SID -> StructureEntry normalizado */
+    this.entriesBySid = new Map();
+    /** @type {Map<string, Set<string>>} Token -> SIDs correspondentes */
+    this.invertedIndex = new Map();
+    /** @type {string[]} Lista de tokens únicos catalogados */
+    this.allTokens = [];
+  }
+  // [FIM MÉTODO: constructor]
 
-  for (const entry of entries) {
-    const sid = entry.sid;
-    const system = entry.system;
+  // [INÍCIO MÉTODO: clear]
+  /**
+   * Reseta e esvazia todos os índices em memória.
+   */
+  clear() {
+    this.entriesBySid.clear();
+    this.invertedIndex.clear();
+    this.allTokens = [];
+  }
+  // [FIM MÉTODO: clear]
 
-    // Processar nomes PT (peso 100) - indexar como termo completo
-    if (entry.names?.pt) {
-      const term = normalize(entry.names.pt);
-      if (term) addTerm(terms, term, sid, 100, system, entry.names.pt);
+  // [INÍCIO MÉTODO: build]
+  /**
+   * Constrói o índice a partir da coleção completa de estruturas normalizadas.
+   * @param {Object[]} structures - Lista de registros StructureEntry.
+   */
+  build(structures) {
+    this.clear();
+    if (!Array.isArray(structures)) {
+      return;
     }
 
-    // Processar sinônimos PT (peso 80)
-    const ptSynonyms = entry.synonyms?.pt || (Array.isArray(entry.synonyms) && entry.synonyms) || [];
-    if (Array.isArray(ptSynonyms)) {
-      for (const syn of ptSynonyms) {
-        if (syn) {
-          const term = normalize(syn);
-          if (term) addTerm(terms, term, sid, 80, system, syn);
+    for (let i = 0; i < structures.length; i++) {
+      const item = structures[i];
+      if (!item || !item.sid) {
+        continue;
+      }
+      this.addEntry(item);
+    }
+
+    this.allTokens = Array.from(this.invertedIndex.keys());
+  }
+  // [FIM MÉTODO: build]
+
+  // [INÍCIO MÉTODO: addEntry]
+  /**
+   * Insere ou atualiza individualmente uma estrutura no índice.
+   * @param {Object} item - Estrutura normalizada sob o contrato canônico.
+   */
+  addEntry(item) {
+    if (!item || !item.sid) return;
+
+    this.entriesBySid.set(item.sid, item);
+
+    // Termos que alimentam a busca
+    const terms = [
+      item.names?.pt,
+      item.names?.en,
+      item.names?.la,
+      item.sid,
+      item.system,
+      item.systemLabel,
+      ...(item.synonyms || [])
+    ];
+
+    for (let t = 0; t < terms.length; t++) {
+      const rawTerm = terms[t];
+      if (!rawTerm) continue;
+
+      const tokens = tokenizeText(rawTerm);
+      for (let k = 0; k < tokens.length; k++) {
+        const token = tokens[k];
+        if (!this.invertedIndex.has(token)) {
+          this.invertedIndex.set(token, new Set());
         }
-      }
-    }
+        this.invertedIndex.get(token).add(item.sid);
 
-    // Processar nome LA (peso 70)
-    if (entry.names?.la) {
-      const term = normalize(entry.names.la);
-      if (term) addTerm(terms, term, sid, 70, system, entry.names.la);
-    }
-
-    // Processar nome EN (peso 60)
-    if (entry.names?.en) {
-      const term = normalize(entry.names.en);
-      if (term) addTerm(terms, term, sid, 60, system, entry.names.en);
-    }
-
-    // Processar sinônimos EN (peso 50)
-    const enSynonyms = entry.synonyms?.en || [];
-    if (Array.isArray(enSynonyms)) {
-      for (const syn of enSynonyms) {
-        if (syn) {
-          const term = normalize(syn);
-          if (term) addTerm(terms, term, sid, 50, system, syn);
-        }
-      }
-    }
-  }
-
-  // Converter o mapa em objeto para retornar
-  // Armazenar também a lista original de entradas para referência posterior
-  return {
-    terms,
-    entries,
-  };
-}
-
-/**
- * Adiciona um termo ao índice.
- * @private
- */
-function addTerm(termsMap, term, sid, weight, system, originalTerm) {
-  if (!termsMap.has(term)) {
-    termsMap.set(term, []);
-  }
-  termsMap.get(term).push({
-    sid,
-    weight,
-    system,
-    originalTerm,
-  });
-}
-
-/**
- * Realiza busca no índice com ranking sofisticado.
- * @param {Object} index - índice retornado por buildSearchIndex
- * @param {string} query
- * @param {{limit?: number}} options
- * @returns {Array<Object>} SearchResult[]
- */
-export function search(index, query, { limit = 12 } = {}) {
-  const normalizedQuery = normalize(query);
-
-  if (!normalizedQuery) {
-    return [];
-  }
-
-  const queryWords = normalizedQuery.split(' ');
-  const sidScores = new Map(); // sid → {score, matchedTerm}
-
-  // Iterar sobre cada termo indexado
-  for (const [term, entries] of index.terms) {
-    for (const entry of entries) {
-      const { sid, weight } = entry;
-      let score = 0;
-      let matched = term;
-      const termWords = term.split(' ');
-
-      // Verificar se o termo corresponde ao query de várias formas
-      if (term === normalizedQuery) {
-        // Exact match: weight + 50
-        score = weight + 50;
-      } else if (term.startsWith(normalizedQuery)) {
-        // Term starts with query: weight + 30
-        score = weight + 30;
-      } else if (queryWords.length === 1) {
-        // Single-word query
-        const queryStr = queryWords[0];
-
-        // Verificar se uma palavra no termo começa com o query
-        let wordStartsWithQuery = false;
-        for (const tw of termWords) {
-          if (tw.startsWith(queryStr)) {
-            wordStartsWithQuery = true;
-            break;
+        // Gera prefixos para permitir correspondência durante a digitação
+        for (let len = 2; len < token.length; len++) {
+          const prefix = token.slice(0, len);
+          if (!this.invertedIndex.has(prefix)) {
+            this.invertedIndex.set(prefix, new Set());
           }
+          this.invertedIndex.get(prefix).add(item.sid);
         }
+      }
+    }
+  }
+  // [FIM MÉTODO: addEntry]
 
-        if (wordStartsWithQuery) {
-          // Word in term starts with query: weight + 20
-          score = weight + 20;
-        } else if (normalizedQuery.length >= 3 && term.includes(normalizedQuery)) {
-          // Substring match (3+ chars): weight + 5
-          score = weight + 5;
-        } else if (normalizedQuery.length >= 4) {
-          // Fuzzy match: testar Levenshtein em cada palavra do termo
-          for (const tw of termWords) {
-            // Apenas comparar palavras de tamanho similar
-            const lenDiff = Math.abs(tw.length - normalizedQuery.length);
-            if (lenDiff <= 2) {
-              const dist = levenshtein(normalizedQuery, tw);
-              // Aceitar se distância é 1, ou se query tem 7+ chars e distância é 2
-              if ((dist === 1) || (normalizedQuery.length >= 7 && dist === 2)) {
-                score = weight - 10 * dist;
-                break;
-              }
-            }
-          }
-        }
-      } else {
-        // Multi-word query
-        // Verificar se todas as palavras da query são prefixos de palavras do termo
-        let allWordsArePrefixes = true;
-        for (const qw of queryWords) {
-          let foundPrefix = false;
-          for (const tw of termWords) {
-            if (tw.startsWith(qw)) {
-              foundPrefix = true;
+  // [INÍCIO MÉTODO: search]
+  /**
+   * Executa busca ponderada com pontuação semântica de relevância.
+   * @param {string} query - Termo digitado pelo usuário.
+   * @param {number} [limit=15] - Quantidade máxima de resultados.
+   * @returns {Object[]} Lista de StructureEntry ordenada por pontuação.
+   */
+  search(query, limit = 15) {
+    const normalizedQuery = normalizeSearchString(query);
+    if (!normalizedQuery || normalizedQuery.length < 2) {
+      return [];
+    }
+
+    const queryTokens = tokenizeText(normalizedQuery);
+    if (queryTokens.length === 0) {
+      return [];
+    }
+
+    /** @type {Map<string, number>} SID -> Pontuação */
+    const scoreMap = new Map();
+
+    for (let i = 0; i < queryTokens.length; i++) {
+      const qToken = queryTokens[i];
+      let matchedSids = this.invertedIndex.get(qToken);
+
+      // Se não encontrou correspondência exata de prefixo ou token, tenta aproximação fonética (Levenshtein)
+      if (!matchedSids && qToken.length >= 4) {
+        for (let j = 0; j < this.allTokens.length; j++) {
+          const indexedToken = this.allTokens[j];
+          if (Math.abs(indexedToken.length - qToken.length) <= 1) {
+            const dist = levenshteinDistance(qToken, indexedToken);
+            if (dist <= 1) {
+              matchedSids = this.invertedIndex.get(indexedToken);
               break;
             }
           }
-          if (!foundPrefix) {
-            allWordsArePrefixes = false;
-            break;
+        }
+      }
+
+      if (matchedSids) {
+        matchedSids.forEach(sid => {
+          const entry = this.entriesBySid.get(sid);
+          if (!entry) return;
+
+          let score = scoreMap.get(sid) || 0;
+          const namePtNorm = normalizeSearchString(entry.names.pt);
+          const nameEnNorm = normalizeSearchString(entry.names.en);
+
+          // Ponderação de relevância:
+          // 1. Igualdade exata no nome vernacular em português
+          if (namePtNorm === normalizedQuery) {
+            score += 150;
           }
-        }
+          // 2. Início do nome vernacular coincide com a busca
+          else if (namePtNorm.startsWith(normalizedQuery)) {
+            score += 80;
+          }
+          // 3. Contém a busca dentro do nome em português
+          else if (namePtNorm.includes(normalizedQuery)) {
+            score += 40;
+          }
+          // 4. Correspondência no nome em inglês ou latim
+          else if (nameEnNorm.includes(normalizedQuery)) {
+            score += 20;
+          }
+          // 5. Correspondência por token isolado
+          else {
+            score += 10;
+          }
 
-        if (allWordsArePrefixes) {
-          // Multi-word query where every query word is a prefix of some term word: weight + 15
-          score = weight + 15;
-        }
+          scoreMap.set(sid, score);
+        });
       }
-
-      // Registrar o melhor score para este sid
-      if (score > 0) {
-        if (!sidScores.has(sid)) {
-          sidScores.set(sid, { score: 0, matched: '' });
-        }
-        const current = sidScores.get(sid);
-        if (score > current.score) {
-          current.score = score;
-          current.matched = matched;
-        }
-      }
     }
+
+    // Ordenação decrescente por relevância e extração de objetos
+    return Array.from(scoreMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([sid]) => this.entriesBySid.get(sid))
+      .filter(Boolean);
   }
+  // [FIM MÉTODO: search]
 
-  // Converter map para array e ordenar
-  const results = [];
-  for (const [sid, { score, matched }] of sidScores) {
-    // Encontrar a entrada correspondente para obter nomes, sistema e side
-    const entry = index.entries.find(e => e.sid === sid);
-    if (entry) {
-      const label = entry.names?.pt || entry.names?.en || sid;
-      results.push({
-        sid,
-        label,
-        systemId: entry.system,
-        score,
-        side: entry.side || null,
-        matched,
-      });
-    }
+  // [INÍCIO MÉTODO: getBySid]
+  /**
+   * Recupera a estrutura canônica pelo identificador único.
+   * @param {string} sid
+   * @returns {Object|null}
+   */
+  getBySid(sid) {
+    if (!sid) return null;
+    return this.entriesBySid.get(sanitizeString(sid)) || null;
   }
+  // [FIM MÉTODO: getBySid]
 
-  // Ordenar por score (descending), depois por comprimento da label (ascending),
-  // depois por label com localeCompare
-  results.sort((a, b) => {
-    if (a.score !== b.score) {
-      return b.score - a.score; // score descending
-    }
-    if (a.label.length !== b.label.length) {
-      return a.label.length - b.label.length; // length ascending
-    }
-    return a.label.localeCompare(b.label, 'pt-BR'); // localeCompare PT
-  });
-
-  // Aplicar limite e retornar
-  return results.slice(0, limit);
+  // [INÍCIO MÉTODO: size]
+  /**
+   * Retorna o total de estruturas catalogadas no índice.
+   * @returns {number}
+   */
+  size() {
+    return this.entriesBySid.size;
+  }
+  // [FIM MÉTODO: size]
 }
