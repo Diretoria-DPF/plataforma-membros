@@ -1,0 +1,241 @@
+{
+  "za:bexiga-urinaria": {
+    "ids": {
+      "wikidata": "Q9382",
+      "mesh": "D001746",
+      "icd10": [
+        "N30-N32",
+        "C67",
+        "N30",
+        "N31",
+        "N32.81"
+      ],
+      "ta2": "A08.3.01.001"
+    },
+    "summary_pt": "Reservatório muscular distensível revestido por urotélio com acomodação volêmica intermediada pelo músculo detrusor. Função: Armazenamento de urina",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. vesicais superiores (umbilical), aa. vesicais inferiores (ilíaca interna); Venosa: plexo venoso vesical → vv. ilíacas internas; Linfática: linfonodos ilíacos internos e externos",
+      "innervation": "Simpática: T11-L2 → relaxamento do detrusor; Parassimpática: S2-S4 → contração do detrusor"
+    },
+    "histology": {
+      "epithelium": "Urotélio (transicional)"
+    },
+    "clinical": [
+      "Cistite",
+      "Bexiga neurogênica",
+      "Câncer de bexiga",
+      "Bexiga hiperativa"
+    ]
+  },
+  "za:rins": {
+    "ids": {
+      "wikidata": "Q9377",
+      "mesh": "D007668",
+      "icd10": [
+        "N00-N29",
+        "C64",
+        "N18",
+        "N17",
+        "N20",
+        "N05"
+      ],
+      "ta2": "A08.1.01.001"
+    },
+    "summary_pt": "Filtração de 180 L/dia de plasma com ultrafiltração glomerular, reabsorção tubular seletiva e secreção ativa. Função: Filtração, reabsorção, secreção, regulação hormonal",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. renais (ramos da aorta abdominal); Venosa: vv. renais → veia cava inferior; Linfática: linfonodos para-aórticos lombares",
+      "innervation": "Simpática: T10-L1 (vasoconstrição, liberação de renina); Parassimpática: NC X (modulação)"
+    },
+    "histology": {
+      "epithelium": "Simples cuboide / escamoso (túbulos)",
+      "tissues": [
+        "Membrana basal glomerular (colágeno IV)"
+      ]
+    },
+    "clinical": [
+      "Doença renal crônica",
+      "Insuficiência renal aguda",
+      "Nefrolitíase",
+      "Glomerulonefrite",
+      "Câncer renal"
+    ]
+  },
+  "za:ureteres": {
+    "ids": {
+      "wikidata": "Q173022",
+      "mesh": "D014513",
+      "icd10": [
+        "N20-N23",
+        "N20.1",
+        "N13.5"
+      ],
+      "ta2": "A08.2.01.001"
+    },
+    "summary_pt": "Condutos musculares pares com ondas peristálticas ativas que conduzem a urina da pelve renal à bexiga. Função: Condução de urina",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. renais, gonadais, ilíacas; Venosa: vv. correspondentes; Linfática: linfonodos lombares e ilíacos",
+      "innervation": "Simpática: T10-L2; Parassimpática: S2-S4 (peristaltismo)"
+    },
+    "histology": {
+      "epithelium": "Urotélio (transicional)"
+    },
+    "clinical": [
+      "Cálculo ureteral",
+      "Estenose ureteral"
+    ]
+  },
+  "za:uretra": {
+    "ids": {
+      "wikidata": "Q9385",
+      "mesh": "D014521",
+      "icd10": [
+        "N34-N36",
+        "N34",
+        "N35"
+      ],
+      "ta2": "A08.4.01.001"
+    },
+    "summary_pt": "Canal excretor terminal com dimorfismo anatômico entre os sexos, contendo esfíncteres uretral interno e externo. Função: Condução de urina para o exterior",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "epithelium": "Urotélio → escamoso estratificado distal"
+    },
+    "clinical": [
+      "Uretrite",
+      "Estenose uretral"
+    ]
+  }
+}

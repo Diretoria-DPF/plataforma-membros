@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <!-- Página só de desenvolvimento/E2E (WP05): não faz parte do fluxo do
+       módulo, não é linkada de v2.html/index.html. Serve para exercitar
+       js/engine/{assets,registry,fallback}.js num navegador de verdade —
+       carregando as fixtures de data/atlas/fixtures/ (WP02) — sem esperar
+       a casca completa do WP08/main.js do WP13.
+       CSP igual à pretendida para v2.html (ver docs/ATLAS_UX_SPEC.md e o
+       comentário em v2.html): 'wasm-unsafe-eval' para o WASM do Draco;
+       worker-src blob: porque DRACOLoader/MeshoptDecoder criam um Worker
+       a partir de um Blob (ver vendor/three/loaders/DRACOLoader.js). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Atlas — checagem do carregador de assets</title>
+  <style>
+    :root { color-scheme: light dark; }
+    html, body { margin: 0; height: 100%; background: #10141c; color: #e7ebf3; }
+    body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      font: 14px/1.5 -apple-system, "Segoe UI", Inter, system-ui, sans-serif;
+    }
+    #viewport { position: relative; background: #1b2230; }
+    #canvas-holder { position: absolute; inset: 0; }
+    #canvas-holder canvas { display: block; width: 100%; height: 100%; }
+    #panel { padding: 16px; overflow: auto; border-left: 1px solid #262d3d; }
+    h1 { font-size: 15px; margin: 0 0 4px; }
+    p.lead { color: #9aa5bb; margin: 0 0 14px; font-size: 12px; }
+    fieldset { border: 1px solid #262d3d; border-radius: 8px; margin: 0 0 12px; padding: 10px; }
+    legend { color: #9aa5bb; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; padding: 0 4px; }
+    button {
+      font: inherit; background: #1e2636; color: #e7ebf3; border: 1px solid #333d54;
+      border-radius: 6px; padding: 6px 10px; margin: 2px; cursor: pointer;
+    }
+    button:hover { background: #262f44; }
+    button[aria-pressed="true"] { border-color: #4c8bf5; color: #9dbdff; }
+    ul#log { list-style: none; margin: 0; padding: 0; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+    ul#log li { padding: 3px 0; border-bottom: 1px solid #1e2636; }
+    ul#log li.err { color: #ff9b90; }
+    ul#log li.ok { color: #7be3a0; }
+    #stats { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div id="viewport">
+    <div id="canvas-holder"></div>
+  </div>
+  <div id="panel">
+    <h1>Atlas — carregador de assets (WP05)</h1>
+    <p class="lead">data/atlas/fixtures/manifest.json · js/engine/{assets,registry,fallback}.js</p>
+
+    <fieldset>
+      <legend>Sexo</legend>
+      <button type="button" data-action="sex" data-value="M" id="btn-sex-m" aria-pressed="true">M</button>
+      <button type="button" data-action="sex" data-value="F" id="btn-sex-f" aria-pressed="false">F</button>
+    </fieldset>
+
+    <fieldset id="systems-fieldset">
+      <legend>Sistemas (data/atlas/fixtures)</legend>
+      <!-- Preenchido por assets-harness.js — um botão por SYSTEM_IDS. -->
+    </fieldset>
+
+    <fieldset>
+      <legend>Outros</legend>
+      <button type="button" data-action="load-articular">Carregar "articular" (404 esperado)</button>
+      <button type="button" data-action="load-organ-detail">Detalhe do órgão (coração HRA)</button>
+      <button type="button" data-action="fallback">Ativar reserva (body.glb)</button>
+      <button type="button" data-action="stats">Atualizar stats()</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>stats()</legend>
+      <div id="stats">—</div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Log</legend>
+      <ul id="log"></ul>
+    </fieldset>
+  </div>
+  <script type="module" src="./assets-harness.js"></script>
+</body>
+</html>

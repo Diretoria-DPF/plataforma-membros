@@ -1,0 +1,13 @@
+{
+  "_comentario": "Mapa coleção(ões) do Blender → sistema da plataforma, confirmado a partir da listagem real de bpy.data.collections do Startup.blend (CI, execução #2/#3, ver out/collections.txt do artefato 'atlas-assets-2'/'atlas-assets-3'). bpy.data.collections é achatado — 'collections' aceita nomes de qualquer profundidade de aninhamento, sem precisar do caminho completo. 'tegumentar' fica de fora de propósito: a coleção 'Skin' do Z-Anatomy não tem malha própria (0 objetos) — a pele vem do órgão 'skin' do HRA (ver hra-organs.json / SOURCES.md). 'reprodutor-m'/'reprodutor-f' também ficam de fora nesta fase: 'Male genital system'/'Female genital system' (na verdade nomeadas com um apóstrofo sobrando, 'Male genital system'' etc. — erro de digitação no próprio Startup.blend) somam só 15 malhas no total, quase todas em sub-coleções com 0 objetos — sem conteúdo real para exportar. O plano (SOURCES.md §6) já previa isso como 'v2, se houver órgão específico no HRA'.",
+  "esqueletico": { "collections": ["1: Skeletal system"], "layer": "esqueleto" },
+  "muscular": { "collections": ["4: Muscular system"], "layer": "musculos" },
+  "articular": { "collections": ["3: Joints"], "layer": "esqueleto" },
+  "cardiovascular": { "collections": ["5: Cardiovascular system"], "layer": "vasos" },
+  "nervoso": { "collections": ["7: Nervous system & Sense organs"], "layer": "nervos" },
+  "respiratorio": { "collections": ["Respiratory system"], "layer": "visceras" },
+  "digestorio": { "collections": ["Digestive system"], "layer": "visceras" },
+  "urinario": { "collections": ["Urinary system"], "layer": "visceras" },
+  "endocrino": { "collections": ["Endocrine glands"], "layer": "visceras" },
+  "linfatico": { "collections": ["6: Lymphoid organs"], "layer": "linfatico" }
+}

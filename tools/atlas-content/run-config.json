@@ -1,0 +1,7 @@
+{
+  "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-content.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do conteúdo do Atlas.",
+  "mode": "discover",
+  "_mode_valores": "'discover' só valida as fontes (Wikidata, Wikipédia PT, CSVs ASCT+B da HRA) e roda o pipeline em memória sem gravar nada fora de tools/atlas-content/out — nenhum commit. 'build' roda o pipeline completo (wikidata -> wikipedia-pt -> asctb -> build-content -> validate-content -> lint-pt) e, se 'commit' for true, grava o resultado em frontend/modulos/anatomia-3d/data/atlas/{index.json,content/**,sid-aliases.json,routes.json,processes.json,quiz-cases.json,compounds.json,proteins.json}.",
+  "commit": false,
+  "_status_28_09": "Runs 36360997114/36361190317/36361599569 (build) ficaram verdes e o bot commitou (30add8f, depois 35aa337 com a correção de normUberon): 135 sids com qid, 18 com extract_pt da Wikipédia, 125 sids com células reais do ASCT+B, e agora ids.uberon presente e no formato canônico (UBERON:n) nos ~20 sids reais que têm P1554 no Wikidata (o valor real é o número puro, sem prefixo — ver uberon.mjs). validate-content sem erros (só avisos pré-existentes de sids legados em routes/processes.json). Volta a 'discover'/commit:false até a próxima rodada de conteúdo."
+}

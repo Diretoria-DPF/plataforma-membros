@@ -26,6 +26,8 @@
   --gap: 16px;
   --density-pad: 20px;
   --density-gap: 16px;
+  --app-header-h: 60px;
+  --app-nav-h: 56px;
 }
 
 :root[data-theme="dark"] {
@@ -665,6 +667,68 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
   .learn-stats { gap: 6px; }
   .learn-stat strong { font-size: 18px; }
   .learn-frame { height: calc(100dvh - 210px); }
+}
+
+/* ===========================================================================
+   Onda 1, WP08 — modo imersivo do Atlas de Anatomia (frontend/modulos/
+   anatomia-3d/v2.html, docs/ATLAS_UX_SPEC.md §0 "o corpo 3D é a tela").
+   learning.js aplica .learn-frame-immersive só no iframe do módulo
+   "anatomia" (nunca nos demais) enquanto ele está aberto.
+
+   Não dá para remover o cabeçalho fixo (.app-header) nem a barra inferior
+   fixa (.bottom-nav) — eles continuam por cima de qualquer painel, é como
+   se sai do módulo. O que sobra para devolver ao Atlas, sem tocar nenhum
+   alvo de toque abaixo de 44px, vem de dois lugares (medidas atuais deste
+   arquivo, não valores inventados):
+     - .learn-viewer-bar: os botões já respeitam o mínimo de 44px (não
+       encolhem); a margem abaixo deles (10px) cai para 4px com o módulo
+       imersivo — ganha 6px;
+     - .app-main: o padding-bottom reserva 76px para a barra inferior
+       (56px de botão + ~20px de folga); com o visualizador imersivo
+       aberto (nada mais disputa esse espaço nesse momento — :has() só
+       casa quando o iframe do Atlas está mesmo visível) a folga aperta
+       para 8px — ganha 12px.
+   Total: 18px a mais que o padrão calc(100dvh - 230px) → 212px. No celular
+   (≤480px) o título do módulo também some (o nome já aparece dentro da
+   própria casca do Atlas, em #atlas-breadcrumb — "colapsa a barra de
+   título interna do hub" do enunciado do WP08) e a margem cai a 2px
+   (8px a mais); com os mesmos 12px do padding inferior, o total sobe a
+   20px sobre o padrão de 210px → 190px.
+   =========================================================================== */
+/* Correção (WP13/e2e fase4.e2e.js): a versão original desta regra também
+   encolhia a reserva de baixo (.app-main padding-bottom, de 76px para
+   64px/14px) para "devolver" mais 12/12px ao Atlas — mas essa reserva é o
+   que garante que NADA dentro do iframe fique atrás do #app-nav (fixo, por
+   cima de tudo — ver .bottom-nav). Com o painel do Atlas em "full" (ex.:
+   card de resultado do quiz, botão "Refazer"), o conteúdo vai até o fundo
+   do iframe, e 12px menos de reserva bastava para o iframe terminar DENTRO
+   da faixa do #app-nav — o clique nele então caía no nav (Playwright:
+   "<nav id=app-nav> intercepts pointer events"). Ganha altura só do lado de
+   cima (título/margens da barra do visualizador), nunca encolhendo a
+   reserva da barra inferior. */
+.learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar {
+  margin-bottom: 4px;
+}
+.learn-frame.learn-frame-immersive {
+  /* Dynamic height formula: 100dvh - header - nav - layout-gaps - safe-area-inset-bottom
+     = 100dvh - 60px (--app-header-h) - 56px (--app-nav-h) - 108px (padding/margins/viewer-bar)
+     - env(safe-area-inset-bottom) ≈ 100dvh - 224px on typical devices (no notches).
+     Respects viewport notches and safe-area insets for modern devices. */
+  height: calc(100dvh - 224px);
+  min-height: 480px;
+}
+@media (max-width: 480px) {
+  .learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar strong {
+    display: none;
+  }
+  .learn-viewer:has(.learn-frame-immersive) .learn-viewer-bar {
+    margin-bottom: 2px;
+  }
+  .learn-frame.learn-frame-immersive {
+    /* Mobile: gaps reduce to 86px (no title, reduced padding 14px vs 20px).
+       Formula: 100dvh - 60 - 56 - 86 - env(safe-area-inset-bottom) ≈ 100dvh - 202px */
+    height: calc(100dvh - 202px);
+  }
 }
 
 /* Fase 2 — Dados & Presença: desempenho por módulo e conquistas no hub

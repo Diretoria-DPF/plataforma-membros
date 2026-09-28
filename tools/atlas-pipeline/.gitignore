@@ -1,0 +1,16 @@
+# Dependências instaladas por `npm install`/`npm ci` — não versionadas.
+node_modules/
+
+# Saídas geradas pelas execuções (discover/fetch/optimize/manifest) — nunca
+# versionadas: refazem-se a cada rodada do workflow, e out/ inclui coisas
+# como discovery.json e structures.json (que a CI copia para o repo em
+# outro lugar quando `commit: true`, não daqui).
+out/
+
+# Área de trabalho intermediária do pipeline (zips baixados, .blend
+# extraído, GLBs crus antes da otimização) — pode passar de 300 MB, nunca
+# entra no git.
+work/
+
+# Fixtures/execuções geradas pelo test/run-tests.mjs.
+test/.run/

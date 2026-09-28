@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <!-- Página só de desenvolvimento (WP01): não faz parte do fluxo do módulo,
+       não é linkada de index.html e não é servida pela plataforma. Serve
+       para checar js/core/{bus,store,contracts}.js no navegador com um
+       simples duplo-clique/estático — o equivalente que roda em CI é
+       frontend/scripts/atlas/core.test.mjs (Node, sem navegador). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Atlas — checagem dos contratos do core</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font: 15px/1.5 -apple-system, "Segoe UI", Inter, system-ui, sans-serif;
+      background: #10141c;
+      color: #e7ebf3;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p.lead { color: #9aa5bb; margin: 0 0 20px; }
+    #summary {
+      display: inline-block;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    #summary.pass { background: #163a26; color: #7be3a0; }
+    #summary.fail { background: #3a1c1c; color: #ff7a70; }
+    ul#results { list-style: none; margin: 0; padding: 0; }
+    li {
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      background: #171d29;
+    }
+    li.pass strong { color: #7be3a0; }
+    li.fail strong { color: #ff7a70; }
+    li .detail { color: #9aa5bb; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Atlas — checagem dos contratos do core</h1>
+  <p class="lead">bus.js · store.js · contracts.js — resultado ao vivo, sem framework de teste.</p>
+  <div id="summary">executando…</div>
+  <ul id="results"></ul>
+  <script type="module" src="./contracts-harness.js"></script>
+</body>
+</html>

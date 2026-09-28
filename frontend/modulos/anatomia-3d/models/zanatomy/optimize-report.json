@@ -1,0 +1,245 @@
+{
+  "report": [
+    {
+      "name": "articular",
+      "nodeCount": 413,
+      "lod0": {
+        "path": "articular.glb",
+        "bytes": 1317992,
+        "triangles": 217604,
+        "jsonBytes": 340064,
+        "binBytes": 977900,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "articular.lod1.glb",
+        "bytes": 649512,
+        "triangles": 58143,
+        "jsonBytes": 340344,
+        "binBytes": 309140,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "cardiovascular",
+      "nodeCount": 22,
+      "lod0": {
+        "path": "cardiovascular.glb",
+        "bytes": 781240,
+        "triangles": 179608,
+        "jsonBytes": 28772,
+        "binBytes": 752440,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "cardiovascular.lod1.glb",
+        "bytes": 245372,
+        "triangles": 45502,
+        "jsonBytes": 28624,
+        "binBytes": 216720,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "digestorio",
+      "nodeCount": 65,
+      "lod0": {
+        "path": "digestorio.glb",
+        "bytes": 1004544,
+        "triangles": 209554,
+        "jsonBytes": 78980,
+        "binBytes": 925536,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "digestorio.lod1.glb",
+        "bytes": 345132,
+        "triangles": 53737,
+        "jsonBytes": 78484,
+        "binBytes": 266620,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "endocrino",
+      "nodeCount": 6,
+      "lod0": {
+        "path": "endocrino.glb",
+        "bytes": 60508,
+        "triangles": 10796,
+        "jsonBytes": 8252,
+        "binBytes": 52228,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "endocrino.lod1.glb",
+        "bytes": 23380,
+        "triangles": 2796,
+        "jsonBytes": 8216,
+        "binBytes": 15136,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "esqueletico",
+      "nodeCount": 277,
+      "lod0": {
+        "path": "esqueletico.glb",
+        "bytes": 2440648,
+        "triangles": 429594,
+        "jsonBytes": 357648,
+        "binBytes": 2082972,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "esqueletico.lod1.glb",
+        "bytes": 1010860,
+        "triangles": 114676,
+        "jsonBytes": 355676,
+        "binBytes": 655156,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "linfatico",
+      "nodeCount": 163,
+      "lod0": {
+        "path": "linfatico.glb",
+        "bytes": 500032,
+        "triangles": 93242,
+        "jsonBytes": 147788,
+        "binBytes": 352216,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "linfatico.lod1.glb",
+        "bytes": 303408,
+        "triangles": 29902,
+        "jsonBytes": 154372,
+        "binBytes": 149008,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "muscular",
+      "nodeCount": 683,
+      "lod0": {
+        "path": "muscular.glb",
+        "bytes": 4741440,
+        "triangles": 883565,
+        "jsonBytes": 655220,
+        "binBytes": 4086192,
+        "ratio": 0.7365537904576289,
+        "error": 0.05,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "muscular.lod1.glb",
+        "bytes": 1797636,
+        "triangles": 218911,
+        "jsonBytes": 651808,
+        "binBytes": 1145800,
+        "ratio": 0.1828097253570686,
+        "error": 0.05,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "nervoso",
+      "nodeCount": 335,
+      "lod0": {
+        "path": "nervoso.glb",
+        "bytes": 2904972,
+        "triangles": 573911,
+        "jsonBytes": 345104,
+        "binBytes": 2559840,
+        "ratio": 0.70101313690719,
+        "error": 0.05,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "nervoso.lod1.glb",
+        "bytes": 1472576,
+        "triangles": 231270,
+        "jsonBytes": 344224,
+        "binBytes": 1128324,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "respiratorio",
+      "nodeCount": 7,
+      "lod0": {
+        "path": "respiratorio.glb",
+        "bytes": 677928,
+        "triangles": 159188,
+        "jsonBytes": 9984,
+        "binBytes": 667916,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "respiratorio.lod1.glb",
+        "bytes": 202788,
+        "triangles": 39793,
+        "jsonBytes": 9924,
+        "binBytes": 192836,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    },
+    {
+      "name": "urinario",
+      "nodeCount": 5,
+      "lod0": {
+        "path": "urinario.glb",
+        "bytes": 59088,
+        "triangles": 11052,
+        "jsonBytes": 6876,
+        "binBytes": 52184,
+        "ratio": 1,
+        "error": 0.01,
+        "overBudget": false
+      },
+      "lod1": {
+        "path": "urinario.lod1.glb",
+        "bytes": 21596,
+        "triangles": 2758,
+        "jsonBytes": 6836,
+        "binBytes": 14732,
+        "ratio": 0.25,
+        "error": 0.01,
+        "overBudget": false
+      }
+    }
+  ],
+  "dropped": []
+}

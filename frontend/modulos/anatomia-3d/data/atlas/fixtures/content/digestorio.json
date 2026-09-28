@@ -1,0 +1,135 @@
+{
+  "fma:7197": {
+    "ids": {
+      "fma": "7197",
+      "uberon": "UBERON:0002107",
+      "wikidata": "Q9368",
+      "icd10": [
+        "K76.9"
+      ]
+    },
+    "summary_pt": "O fígado é a maior glândula do corpo, responsável pelo metabolismo de nutrientes, pela produção de bile, pela desintoxicação de substâncias e pela síntese de proteínas plasmáticas.",
+    "anatomy": {
+      "relations": "Localizado no hipocôndrio direito e epigástrio, sob a cúpula diafragmática direita; dividido em lobos direito, esquerdo, caudado e quadrado.",
+      "vascularization": "Recebe duplo suprimento: a. hepática (sangue oxigenado) e v. porta hepática (sangue rico em nutrientes do trato digestório); a drenagem venosa é feita pelas vv. hepáticas para a v. cava inferior."
+    },
+    "histology": {
+      "epithelium": "Parênquima organizado em lóbulos hepáticos, com hepatócitos dispostos em cordões radiais em torno da veia central.",
+      "cells": [
+        {
+          "cl": "CL:0000182",
+          "name_pt": "Hepatócito",
+          "biomarkers": [
+            "ALB",
+            "HNF4A"
+          ]
+        },
+        {
+          "cl": "CL:0000091",
+          "name_pt": "Célula de Kupffer",
+          "biomarkers": [
+            "CD68",
+            "CLEC4F"
+          ]
+        }
+      ]
+    },
+    "clinical": [
+      "A cirrose hepática é a substituição progressiva do parênquima por tecido fibroso, geralmente causada por hepatite viral crônica ou uso excessivo de álcool."
+    ],
+    "review": {
+      "status": "legacy-unverified",
+      "by": "migracao-bio-database",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Fígado — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/F%C3%ADgado"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de abdome",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de abdome",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Liver",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Liver",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de abdome",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  },
+  "fma:7148": {
+    "ids": {
+      "fma": "7148",
+      "uberon": "UBERON:0000945",
+      "wikidata": "Q80729",
+      "icd10": [
+        "K25.9"
+      ]
+    },
+    "summary_pt": "O estômago é um órgão muscular oco entre o esôfago e o duodeno, responsável pela digestão química inicial dos alimentos por ácido clorídrico e enzimas.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Estômago — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Est%C3%B4mago"
+      }
+    ]
+  },
+  "za:intestino-delgado": {
+    "ids": {
+      "wikidata": "Q9662"
+    },
+    "summary_pt": "O intestino delgado é dividido em duodeno, jejuno e íleo, sendo o principal local de digestão química e absorção de nutrientes.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Intestino delgado — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Intestino_delgado"
+      }
+    ]
+  }
+}

@@ -1,0 +1,680 @@
+{
+  "za:palatine-tonsil-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"palatine-tonsil\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.2"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.2",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/palatine-tonsil/v1.2/assets/asct-b-vh-palatine-tonsil.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000236",
+          "name_pt": "B cell",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:4033068",
+          "name_pt": "cycling B cell",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:0000624",
+          "name_pt": "CD4-positive alpha-beta T cells",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:0000815",
+          "name_pt": "regulatory T cell",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:0000786",
+          "name_pt": "Plasma Cell",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:0000084",
+          "name_pt": "T Cell",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:0000235",
+          "name_pt": "Macrophage",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:0000844",
+          "name_pt": "germinal center B cell",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        },
+        {
+          "cl": "CL:0009112",
+          "name_pt": "centroblast",
+          "biomarkers": [
+            "E2F transcription factor 8",
+            "cell division cycle associated 2",
+            "nuclear GTPase, germinal center associated",
+            "claspin",
+            "anillin, actin binding protein",
+            "MYB proto-oncogene like 1",
+            "FAM111 trypsin like peptidase B",
+            "kinesin family member 4A",
+            "NUF2 component of NDC80 kinetochore complex",
+            "G2 and S-phase expressed 1",
+            "CD19",
+            "MS4A1",
+            "MKI67",
+            "CD3E",
+            "CD4",
+            "forkhead box P3",
+            "IGHD",
+            "IGHM",
+            "HLA-DRA",
+            "SDC1",
+            "CD27",
+            "PECAM1",
+            "CD79A",
+            "CKAP4",
+            "CD14",
+            "PDCD1",
+            "HLA-A",
+            "HLA-B",
+            "HLA-C",
+            "PDPN",
+            "CR2",
+            "FOXP3",
+            "CD8A"
+          ]
+        }
+      ]
+    }
+  },
+  "za:spleen": {
+    "ids": {
+      "wikidata": "Q210912",
+      "mesh": "D013154",
+      "icd10": [
+        "D73.0-D73.5",
+        "R16.1",
+        "S36.0",
+        "C85"
+      ],
+      "ta2": "A13.2.01.001"
+    },
+    "summary_pt": "Maior órgão linfoide periférico; filtra o sangue, elimina hemácias senescentes e orquestra respostas imunes humorais. Função: Filtração sanguínea, resposta imune, hematopoese",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. esplênica (tronco celíaco); Venosa: v. esplênica → veia porta; Linfática: linfonodos celíacos",
+      "innervation": "Simpática: Plexo celíaco (T6-T10)"
+    },
+    "clinical": [
+      "Esplenomegalia",
+      "Ruptura esplênica",
+      "Linfoma esplênico"
+    ]
+  },
+  "za:linfonodos": {
+    "ids": {
+      "wikidata": "Q170758",
+      "mesh": "D008198",
+      "icd10": [
+        "I88",
+        "C77",
+        "R59",
+        "C81",
+        "C82-C85"
+      ],
+      "ta2": "A13.5.01.001"
+    },
+    "summary_pt": "Estruturas reniformes encapsuladas intercaladas nos vasos linfáticos para retenção e apresentação de antígenos. Função: Filtração linfática e resposta imune",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. regionais específicas; Venosa: vv. regionais; Linfática: aferentes e eferentes",
+      "innervation": "Simpática: Plexos periarteriais"
+    },
+    "clinical": [
+      "Linfadenite",
+      "Linfoma de Hodgkin",
+      "Linfoma não-Hodgkin"
+    ]
+  },
+  "za:medula-ossea-hematopoetica": {
+    "ids": {
+      "wikidata": "Q1037007",
+      "mesh": "D001853",
+      "icd10": [
+        "D50-D53",
+        "C91-C95",
+        "D61",
+        "C90.0"
+      ],
+      "ta2": "A13.4.01.001"
+    },
+    "summary_pt": "Órgão primário hematopoético no interior dos ossos esponjosos, gerador de todas as linhagens de células do sangue. Função: Hematopoese e maturação de linfócitos B",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. nutrícias dos ossos; Venosa: seios venosos medulares; Linfática: linfonodos regionais"
+    },
+    "clinical": [
+      "Leucemia",
+      "Anemia aplástica",
+      "Mieloma múltiplo"
+    ]
+  },
+  "za:tecido-linfoide-associado-ao-intestino-galt": {
+    "ids": {
+      "wikidata": "Q1479809",
+      "mesh": "D010581",
+      "icd10": [
+        "K50",
+        "K90.0"
+      ]
+    },
+    "summary_pt": "Folículos linfoides agregados na lâmina própria e submucosa ileal com células M captadoras de antígenos luminais. Função: Vigilância imunológica intestinal",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Doença de Crohn",
+      "Doença celíaca"
+    ]
+  },
+  "za:timo": {
+    "ids": {
+      "wikidata": "Q163987",
+      "mesh": "D013950",
+      "icd10": [
+        "D15.0",
+        "E31.0",
+        "G70.0"
+      ],
+      "ta2": "A13.1.01.001"
+    },
+    "summary_pt": "Órgão linfoide primário no mediastino anterior responsável pela maturação, diferenciação e seleção positiva/negativa de linfócitos T. Função: Maturação de linfócitos T",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. torácicas internas, aa. tireóideas inferiores; Venosa: vv. tireóideas e torácicas internas",
+      "innervation": "Simpática: Cadeia simpática cervical; Parassimpática: NC X"
+    },
+    "clinical": [
+      "Miastenia gravis",
+      "Timoma"
+    ]
+  },
+  "za:tonsilas-amigdalas": {
+    "ids": {
+      "wikidata": "Q172198",
+      "mesh": "D014066",
+      "icd10": [
+        "J35.0",
+        "J03",
+        "J35.2"
+      ],
+      "ta2": "A13.3.01.001"
+    },
+    "summary_pt": "Agregados linfoides da mucosa faríngea (Anel de Waldeyer) de contato primário com antígenos inalados e ingeridos. Função: Defesa imunológica da orofaringe",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Amigdalite",
+      "Hipertrofia adenoideana"
+    ]
+  },
+  "za:vasos-linfaticos-ducto-toracico": {
+    "ids": {
+      "wikidata": "Q25615",
+      "mesh": "D008205",
+      "icd10": [
+        "I89",
+        "I89.0",
+        "I89.1"
+      ]
+    },
+    "summary_pt": "Rede unidirecional valvulada que drena a linfa e lipídios absorvidos (quilo) de volta à circulação venosa sistêmica. Função: Retorno de linfa ao sangue",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Linfedema",
+      "Linfangite"
+    ]
+  }
+}

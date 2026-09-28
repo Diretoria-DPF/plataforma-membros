@@ -1,0 +1,11 @@
+{
+  "fma": {
+    "7088": "heart"
+  },
+  "uberon": {
+    "0000948": "heart",
+    "0002084": "left_ventricle",
+    "0002080": "right_ventricle",
+    "0000079": "atrium"
+  }
+}

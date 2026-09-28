@@ -1,0 +1,251 @@
+/**
+ * navigator.css — estilos do navegador em níveis
+ * Mobile-first, tokens-based, light & dark themes
+ */
+
+.atlas-nav-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--laift-surface);
+  color: var(--laift-text);
+}
+
+.atlas-nav-breadcrumb {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--laift-border);
+  background: var(--laift-surface);
+}
+
+.atlas-nav-breadcrumb-inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(2px, 1vw, 6px);
+  padding: clamp(8px, 1.5vw, 14px) clamp(6px, 1.5vw, 12px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+}
+
+.atlas-nav-back-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+  font-size: clamp(18px, 3vw, 24px);
+  color: var(--laift-text);
+}
+
+.atlas-nav-back-btn::before {
+  content: '←';
+  display: block;
+}
+
+.atlas-nav-back-btn:hover:not(:disabled) {
+  background: var(--laift-hover);
+}
+
+.atlas-nav-back-btn:focus-visible {
+  outline: 2px solid var(--laift-focus);
+  outline-offset: 2px;
+}
+
+.atlas-nav-back-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.atlas-nav-breadcrumb-sep {
+  flex-shrink: 0;
+  color: var(--laift-muted);
+  font-size: clamp(12px, 2.5vw, 16px);
+  line-height: 1;
+}
+
+.atlas-nav-breadcrumb-btn {
+  flex-shrink: 0;
+  padding: clamp(6px, 1.5vw, 10px) clamp(8px, 1.5vw, 14px);
+  border: none;
+  background: transparent;
+  color: var(--laift-text);
+  cursor: pointer;
+  font-size: clamp(12px, 2.5vw, 15px);
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: clamp(120px, 25vw, 200px);
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.atlas-nav-breadcrumb-btn:hover {
+  background: var(--laift-hover);
+}
+
+.atlas-nav-breadcrumb-btn:focus-visible {
+  outline: 2px solid var(--laift-focus);
+  outline-offset: 2px;
+}
+
+.atlas-nav-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.atlas-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.atlas-nav-row {
+  padding: 0 clamp(8px, 2vw, 14px);
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid var(--laift-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  color: var(--laift-text);
+  font-size: clamp(12px, 2.5vw, 15px);
+  font-family: inherit;
+  transition: background-color 0.15s ease;
+  text-align: left;
+  min-width: 0;
+}
+
+.atlas-nav-row:hover {
+  background: var(--laift-hover);
+}
+
+.atlas-nav-row:focus-visible {
+  outline: 2px solid var(--laift-focus);
+  outline-offset: -2px;
+  background: var(--laift-hover);
+}
+
+.atlas-nav-row[aria-selected='true'] {
+  background: var(--laift-hover);
+  font-weight: 500;
+}
+
+.atlas-nav-row-name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atlas-nav-side-chip {
+  flex-shrink: 0;
+  padding: clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px);
+  background: var(--laift-border);
+  color: var(--laift-text);
+  font-size: clamp(9px, 2vw, 12px);
+  font-weight: 600;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.atlas-nav-row-arrow {
+  flex-shrink: 0;
+  color: var(--laift-muted);
+  font-size: 16px;
+  line-height: 1;
+  margin-left: auto;
+}
+
+.atlas-nav-row-count {
+  flex-shrink: 0;
+  padding: clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px);
+  background: var(--laift-border);
+  color: var(--laift-muted);
+  font-size: clamp(10px, 2vw, 13px);
+  border-radius: 3px;
+  margin-left: auto;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* Hide count badges when navigator is collapsed to 56px (desktop collapsed state) */
+@media (min-width: 1024px) {
+  .atlas-nav-row-count {
+    display: none;
+  }
+  #atlas-left-panel[data-pinned="true"] .atlas-nav-row-count,
+  #atlas-left-panel:hover .atlas-nav-row-count {
+    display: flex;
+  }
+}
+
+/* Light theme */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .atlas-nav-root {
+    --laift-surface: #ffffff;
+    --laift-text: #1a1a1a;
+    --laift-muted: #666666;
+    --laift-border: #e0e0e0;
+    --laift-hover: #f5f5f5;
+    --laift-focus: #0066cc;
+  }
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .atlas-nav-root {
+    --laift-surface: #1a1a1a;
+    --laift-text: #ffffff;
+    --laift-muted: #999999;
+    --laift-border: #333333;
+    --laift-hover: #2a2a2a;
+    --laift-focus: #66b3ff;
+  }
+}
+
+/* Explicit theme overrides */
+:root[data-theme='light'] .atlas-nav-root {
+  --laift-surface: #ffffff;
+  --laift-text: #1a1a1a;
+  --laift-muted: #666666;
+  --laift-border: #e0e0e0;
+  --laift-hover: #f5f5f5;
+  --laift-focus: #0066cc;
+}
+
+:root[data-theme='dark'] .atlas-nav-root {
+  --laift-surface: #1a1a1a;
+  --laift-text: #ffffff;
+  --laift-muted: #999999;
+  --laift-border: #333333;
+  --laift-hover: #2a2a2a;
+  --laift-focus: #66b3ff;
+}

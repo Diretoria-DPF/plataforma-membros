@@ -1,0 +1,9 @@
+{
+  "_comentario": "Controla o que a execução por 'push' de .github/workflows/atlas-assets.yml faz (o workflow_dispatch, com seus próprios inputs, só funciona depois que o arquivo do workflow está na branch padrão — até lá, iteramos mudando este arquivo e empurrando um push). Ver TASKS do WP10 e o §3 do plano.",
+  "mode": "discover",
+  "_mode_valores": "'discover' roda só discover.mjs + Blender --list-collections (nenhum export completo, nenhum commit) — usado até confirmarmos os nomes reais das coleções do Startup.blend e a lista de órgãos do HRA. 'export' roda o pipeline completo (fetch+export+optimize+manifest+validate) com os campos abaixo.",
+  "_fase": "Retomada 27/09 (2ª) concluída: o bug real do commit 55b49fc/execução #18 era export_systems.py nunca limpar a seleção entre sistemas em Blender --background (bpy.ops.object.select_all(DESELECT) pode ser CANCELLED em silêncio sem contexto de UI) — cada sistema acumulava todos os anteriores na ordem de systems-map.json (cardiovascular saiu com ~1146 estruturas, quase todas ligamentos de tornozelo do sistema articular, sem nenhum coração/vaso). Corrigido para desselecionar via Object.select_set(False) direto (API de dados). validate.mjs ganhou uma checagem de sentinelas por sistema (--structures). Execução (commit 642f655) confirmou o fix: structures.json caiu de 12706 para 2427 estruturas, cardiovascular agora tem Heart/Aorta/etc. (50 estruturas, sem nenhum ligamento de perna) e as 10 sentinelas por sistema passam; manifest.json com 37 assets, 26,65 MB (contra o teto de 45 MB). 'mode' volta para 'discover' e 'commit' para false para que um push futuro em tools/atlas-pipeline/** não dispare sem querer uma nova exportação completa — mude para 'export'/'commit: true' de novo quando quiser re-exportar.",
+  "systems": "all",
+  "hra": true,
+  "commit": false
+}

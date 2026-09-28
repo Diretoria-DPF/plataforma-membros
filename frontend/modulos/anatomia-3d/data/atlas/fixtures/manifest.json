@@ -1,0 +1,924 @@
+{
+  "version": "fixture-1",
+  "assets": [
+    {
+      "file": "models/esqueletico.lod0.glb",
+      "system": "esqueletico",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 14404,
+      "triangles": 356,
+      "bbox": {
+        "min": [
+          -0.218,
+          0.49,
+          -0.1
+        ],
+        "max": [
+          0.218,
+          1.78,
+          0.1
+        ]
+      },
+      "nodeToSid": {
+        "cranio": "za:cranio",
+        "coluna-vertebral": "za:coluna-vertebral",
+        "esterno": "za:esterno",
+        "costelas": "za:costelas",
+        "clavicula-direita": "za:clavicula-direita",
+        "clavicula-esquerda": "za:clavicula-esquerda",
+        "pelve": "za:pelve",
+        "femur-direito": "fma:9611",
+        "femur-esquerdo": "za:femur-esquerdo",
+        "umero-direito": "fma:13303",
+        "umero-esquerdo": "za:umero-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/esqueletico.lod1.glb",
+      "system": "esqueletico",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 10916,
+      "triangles": 172,
+      "bbox": {
+        "min": [
+          -0.218,
+          0.49,
+          -0.1
+        ],
+        "max": [
+          0.218,
+          1.78,
+          0.1
+        ]
+      },
+      "nodeToSid": {
+        "cranio": "za:cranio",
+        "coluna-vertebral": "za:coluna-vertebral",
+        "esterno": "za:esterno",
+        "costelas": "za:costelas",
+        "clavicula-direita": "za:clavicula-direita",
+        "clavicula-esquerda": "za:clavicula-esquerda",
+        "pelve": "za:pelve",
+        "femur-direito": "fma:9611",
+        "femur-esquerdo": "za:femur-esquerdo",
+        "umero-direito": "fma:13303",
+        "umero-esquerdo": "za:umero-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/muscular.lod0.glb",
+      "system": "muscular",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 18052,
+      "triangles": 536,
+      "bbox": {
+        "min": [
+          -0.26,
+          0.5050000000000001,
+          -0.16
+        ],
+        "max": [
+          0.26,
+          1.55,
+          0.095
+        ]
+      },
+      "nodeToSid": {
+        "trapezio": "za:trapezio",
+        "reto-abdominal": "za:reto-abdominal",
+        "biceps-braquial-direito": "za:biceps-braquial-direito",
+        "biceps-braquial-esquerdo": "za:biceps-braquial-esquerdo",
+        "deltoide-direito": "za:deltoide-direito",
+        "deltoide-esquerdo": "za:deltoide-esquerdo",
+        "quadriceps-femoral-direito": "za:quadriceps-femoral-direito",
+        "quadriceps-femoral-esquerdo": "za:quadriceps-femoral-esquerdo",
+        "gluteo-maximo-direito": "za:gluteo-maximo-direito",
+        "gluteo-maximo-esquerdo": "za:gluteo-maximo-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/muscular.lod1.glb",
+      "system": "muscular",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 11032,
+      "triangles": 184,
+      "bbox": {
+        "min": [
+          -0.26,
+          0.5050000000000001,
+          -0.16
+        ],
+        "max": [
+          0.26,
+          1.55,
+          0.095
+        ]
+      },
+      "nodeToSid": {
+        "trapezio": "za:trapezio",
+        "reto-abdominal": "za:reto-abdominal",
+        "biceps-braquial-direito": "za:biceps-braquial-direito",
+        "biceps-braquial-esquerdo": "za:biceps-braquial-esquerdo",
+        "deltoide-direito": "za:deltoide-direito",
+        "deltoide-esquerdo": "za:deltoide-esquerdo",
+        "quadriceps-femoral-direito": "za:quadriceps-femoral-direito",
+        "quadriceps-femoral-esquerdo": "za:quadriceps-femoral-esquerdo",
+        "gluteo-maximo-direito": "za:gluteo-maximo-direito",
+        "gluteo-maximo-esquerdo": "za:gluteo-maximo-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/cardiovascular.lod0.glb",
+      "system": "cardiovascular",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 14476,
+      "triangles": 384,
+      "bbox": {
+        "min": [
+          -0.097,
+          0.5499999999999999,
+          -0.03
+        ],
+        "max": [
+          0.097,
+          1.61,
+          0.11
+        ]
+      },
+      "nodeToSid": {
+        "coracao": "fma:7088",
+        "aorta": "za:aorta",
+        "veia-cava-superior": "za:veia-cava-superior",
+        "veia-cava-inferior": "za:veia-cava-inferior",
+        "arteria-carotida-comum-direita": "za:arteria-carotida-comum-direita",
+        "arteria-carotida-comum-esquerda": "za:arteria-carotida-comum-esquerda",
+        "veia-jugular-interna-direita": "za:veia-jugular-interna-direita",
+        "veia-jugular-interna-esquerda": "za:veia-jugular-interna-esquerda",
+        "arteria-femoral-direita": "za:arteria-femoral-direita",
+        "arteria-femoral-esquerda": "za:arteria-femoral-esquerda"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/cardiovascular.lod1.glb",
+      "system": "cardiovascular",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 10412,
+      "triangles": 168,
+      "bbox": {
+        "min": [
+          -0.097,
+          0.5499999999999999,
+          -0.03
+        ],
+        "max": [
+          0.097,
+          1.61,
+          0.11
+        ]
+      },
+      "nodeToSid": {
+        "coracao": "fma:7088",
+        "aorta": "za:aorta",
+        "veia-cava-superior": "za:veia-cava-superior",
+        "veia-cava-inferior": "za:veia-cava-inferior",
+        "arteria-carotida-comum-direita": "za:arteria-carotida-comum-direita",
+        "arteria-carotida-comum-esquerda": "za:arteria-carotida-comum-esquerda",
+        "veia-jugular-interna-direita": "za:veia-jugular-interna-direita",
+        "veia-jugular-interna-esquerda": "za:veia-jugular-interna-esquerda",
+        "arteria-femoral-direita": "za:arteria-femoral-direita",
+        "arteria-femoral-esquerda": "za:arteria-femoral-esquerda"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/nervoso.lod0.glb",
+      "system": "nervoso",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 14512,
+      "triangles": 416,
+      "bbox": {
+        "min": [
+          -0.20400000000000001,
+          0.35000000000000003,
+          -0.09
+        ],
+        "max": [
+          0.20400000000000001,
+          1.79,
+          0.09
+        ]
+      },
+      "nodeToSid": {
+        "encefalo": "fma:50801",
+        "cerebelo": "za:cerebelo",
+        "medula-espinhal": "za:medula-espinhal",
+        "nervo-ciatico-direito": "za:nervo-ciatico-direito",
+        "nervo-ciatico-esquerdo": "za:nervo-ciatico-esquerdo",
+        "nervo-mediano-direito": "za:nervo-mediano-direito",
+        "nervo-mediano-esquerdo": "za:nervo-mediano-esquerdo",
+        "nervo-vago-direito": "za:nervo-vago-direito",
+        "nervo-vago-esquerdo": "za:nervo-vago-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/nervoso.lod1.glb",
+      "system": "nervoso",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 9552,
+      "triangles": 160,
+      "bbox": {
+        "min": [
+          -0.20400000000000001,
+          0.35000000000000003,
+          -0.09
+        ],
+        "max": [
+          0.20400000000000001,
+          1.79,
+          0.09
+        ]
+      },
+      "nodeToSid": {
+        "encefalo": "fma:50801",
+        "cerebelo": "za:cerebelo",
+        "medula-espinhal": "za:medula-espinhal",
+        "nervo-ciatico-direito": "za:nervo-ciatico-direito",
+        "nervo-ciatico-esquerdo": "za:nervo-ciatico-esquerdo",
+        "nervo-mediano-direito": "za:nervo-mediano-direito",
+        "nervo-mediano-esquerdo": "za:nervo-mediano-esquerdo",
+        "nervo-vago-direito": "za:nervo-vago-direito",
+        "nervo-vago-esquerdo": "za:nervo-vago-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/respiratorio.lod0.glb",
+      "system": "respiratorio",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 9452,
+      "triangles": 228,
+      "bbox": {
+        "min": [
+          -0.14,
+          1.19,
+          -0.08
+        ],
+        "max": [
+          0.14,
+          1.555,
+          0.09000000000000001
+        ]
+      },
+      "nodeToSid": {
+        "pulmao-direito": "fma:7309",
+        "pulmao-esquerdo": "fma:7310",
+        "traqueia": "za:traqueia",
+        "laringe": "za:laringe",
+        "bronquio-principal-direito": "za:bronquio-principal-direito",
+        "bronquio-principal-esquerdo": "za:bronquio-principal-esquerdo",
+        "diafragma": "za:diafragma"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/respiratorio.lod1.glb",
+      "system": "respiratorio",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 7120,
+      "triangles": 108,
+      "bbox": {
+        "min": [
+          -0.14,
+          1.19,
+          -0.08
+        ],
+        "max": [
+          0.14,
+          1.555,
+          0.09000000000000001
+        ]
+      },
+      "nodeToSid": {
+        "pulmao-direito": "fma:7309",
+        "pulmao-esquerdo": "fma:7310",
+        "traqueia": "za:traqueia",
+        "laringe": "za:laringe",
+        "bronquio-principal-direito": "za:bronquio-principal-direito",
+        "bronquio-principal-esquerdo": "za:bronquio-principal-esquerdo",
+        "diafragma": "za:diafragma"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/digestorio.lod0.glb",
+      "system": "digestorio",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 12684,
+      "triangles": 376,
+      "bbox": {
+        "min": [
+          -0.12,
+          0.89,
+          -0.05
+        ],
+        "max": [
+          0.16999999999999998,
+          1.45,
+          0.13
+        ]
+      },
+      "nodeToSid": {
+        "figado": "fma:7197",
+        "estomago": "fma:7148",
+        "esofago": "za:esofago",
+        "intestino-delgado": "za:intestino-delgado",
+        "intestino-grosso": "za:intestino-grosso",
+        "pancreas": "za:pancreas",
+        "vesicula-biliar": "za:vesicula-biliar"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/digestorio.lod1.glb",
+      "system": "digestorio",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 7704,
+      "triangles": 128,
+      "bbox": {
+        "min": [
+          -0.12,
+          0.89,
+          -0.05
+        ],
+        "max": [
+          0.16999999999999998,
+          1.45,
+          0.13
+        ]
+      },
+      "nodeToSid": {
+        "figado": "fma:7197",
+        "estomago": "fma:7148",
+        "esofago": "za:esofago",
+        "intestino-delgado": "za:intestino-delgado",
+        "intestino-grosso": "za:intestino-grosso",
+        "pancreas": "za:pancreas",
+        "vesicula-biliar": "za:vesicula-biliar"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/urinario.lod0.glb",
+      "system": "urinario",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 12144,
+      "triangles": 384,
+      "bbox": {
+        "min": [
+          -0.115,
+          0.77,
+          -0.095
+        ],
+        "max": [
+          0.115,
+          1.085,
+          0.08
+        ]
+      },
+      "nodeToSid": {
+        "rim-direito": "fma:7204",
+        "rim-esquerdo": "fma:7205",
+        "ureter-direito": "za:ureter-direito",
+        "ureter-esquerdo": "za:ureter-esquerdo",
+        "vesicula-urinaria": "za:vesicula-urinaria",
+        "uretra": "za:uretra"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/urinario.lod1.glb",
+      "system": "urinario",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 6884,
+      "triangles": 120,
+      "bbox": {
+        "min": [
+          -0.115,
+          0.77,
+          -0.095
+        ],
+        "max": [
+          0.115,
+          1.085,
+          0.08
+        ]
+      },
+      "nodeToSid": {
+        "rim-direito": "fma:7204",
+        "rim-esquerdo": "fma:7205",
+        "ureter-direito": "za:ureter-direito",
+        "ureter-esquerdo": "za:ureter-esquerdo",
+        "vesicula-urinaria": "za:vesicula-urinaria",
+        "uretra": "za:uretra"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/reprodutor-m.lod0.glb",
+      "system": "reprodutor",
+      "lod": "lod0",
+      "sex": "M",
+      "bytes": 12252,
+      "triangles": 384,
+      "bbox": {
+        "min": [
+          -0.05,
+          0.7,
+          -0.005000000000000001
+        ],
+        "max": [
+          0.05,
+          0.875,
+          0.065
+        ]
+      },
+      "nodeToSid": {
+        "testiculo-direito": "za:testiculo-direito",
+        "testiculo-esquerdo": "za:testiculo-esquerdo",
+        "ducto-deferente-direito": "za:ducto-deferente-direito",
+        "ducto-deferente-esquerdo": "za:ducto-deferente-esquerdo",
+        "prostata": "za:prostata",
+        "penis": "za:penis"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/reprodutor-m.lod1.glb",
+      "system": "reprodutor",
+      "lod": "lod1",
+      "sex": "M",
+      "bytes": 6988,
+      "triangles": 120,
+      "bbox": {
+        "min": [
+          -0.05,
+          0.7,
+          -0.005000000000000001
+        ],
+        "max": [
+          0.05,
+          0.875,
+          0.065
+        ]
+      },
+      "nodeToSid": {
+        "testiculo-direito": "za:testiculo-direito",
+        "testiculo-esquerdo": "za:testiculo-esquerdo",
+        "ducto-deferente-direito": "za:ducto-deferente-direito",
+        "ducto-deferente-esquerdo": "za:ducto-deferente-esquerdo",
+        "prostata": "za:prostata",
+        "penis": "za:penis"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/reprodutor-f.lod0.glb",
+      "system": "reprodutor",
+      "lod": "lod0",
+      "sex": "F",
+      "bytes": 12216,
+      "triangles": 384,
+      "bbox": {
+        "min": [
+          -0.065,
+          0.76,
+          -0.010000000000000002
+        ],
+        "max": [
+          0.065,
+          0.93,
+          0.07
+        ]
+      },
+      "nodeToSid": {
+        "ovario-direito": "za:ovario-direito",
+        "ovario-esquerdo": "za:ovario-esquerdo",
+        "tuba-uterina-direita": "za:tuba-uterina-direita",
+        "tuba-uterina-esquerda": "za:tuba-uterina-esquerda",
+        "utero": "za:utero",
+        "vagina": "za:vagina"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/reprodutor-f.lod1.glb",
+      "system": "reprodutor",
+      "lod": "lod1",
+      "sex": "F",
+      "bytes": 6948,
+      "triangles": 120,
+      "bbox": {
+        "min": [
+          -0.065,
+          0.76,
+          -0.010000000000000002
+        ],
+        "max": [
+          0.065,
+          0.93,
+          0.07
+        ]
+      },
+      "nodeToSid": {
+        "ovario-direito": "za:ovario-direito",
+        "ovario-esquerdo": "za:ovario-esquerdo",
+        "tuba-uterina-direita": "za:tuba-uterina-direita",
+        "tuba-uterina-esquerda": "za:tuba-uterina-esquerda",
+        "utero": "za:utero",
+        "vagina": "za:vagina"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/endocrino.lod0.glb",
+      "system": "endocrino",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 16684,
+      "triangles": 576,
+      "bbox": {
+        "min": [
+          -0.072,
+          1.088,
+          -0.062
+        ],
+        "max": [
+          0.072,
+          1.636,
+          0.05
+        ]
+      },
+      "nodeToSid": {
+        "hipofise": "za:hipofise",
+        "tireoide": "za:tireoide",
+        "glandula-adrenal-direita": "za:glandula-adrenal-direita",
+        "glandula-adrenal-esquerda": "za:glandula-adrenal-esquerda",
+        "paratireoide-direita": "za:paratireoide-direita",
+        "paratireoide-esquerda": "za:paratireoide-esquerda"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/endocrino.lod1.glb",
+      "system": "endocrino",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 7880,
+      "triangles": 144,
+      "bbox": {
+        "min": [
+          -0.072,
+          1.088,
+          -0.062
+        ],
+        "max": [
+          0.072,
+          1.636,
+          0.05
+        ]
+      },
+      "nodeToSid": {
+        "hipofise": "za:hipofise",
+        "tireoide": "za:tireoide",
+        "glandula-adrenal-direita": "za:glandula-adrenal-direita",
+        "glandula-adrenal-esquerda": "za:glandula-adrenal-esquerda",
+        "paratireoide-direita": "za:paratireoide-direita",
+        "paratireoide-esquerda": "za:paratireoide-esquerda"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/linfatico.lod0.glb",
+      "system": "linfatico",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 20732,
+      "triangles": 704,
+      "bbox": {
+        "min": [
+          -0.16,
+          0.82,
+          -0.07500000000000001
+        ],
+        "max": [
+          0.16,
+          1.508,
+          0.04
+        ]
+      },
+      "nodeToSid": {
+        "baco": "za:baco",
+        "ducto-toracico": "za:ducto-toracico",
+        "linfonodo-cervical-direito": "za:linfonodo-cervical-direito",
+        "linfonodo-cervical-esquerdo": "za:linfonodo-cervical-esquerdo",
+        "linfonodo-axilar-direito": "za:linfonodo-axilar-direito",
+        "linfonodo-axilar-esquerdo": "za:linfonodo-axilar-esquerdo",
+        "linfonodo-inguinal-direito": "za:linfonodo-inguinal-direito",
+        "linfonodo-inguinal-esquerdo": "za:linfonodo-inguinal-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/linfatico.lod1.glb",
+      "system": "linfatico",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 10184,
+      "triangles": 184,
+      "bbox": {
+        "min": [
+          -0.16,
+          0.82,
+          -0.07500000000000001
+        ],
+        "max": [
+          0.16,
+          1.508,
+          0.04
+        ]
+      },
+      "nodeToSid": {
+        "baco": "za:baco",
+        "ducto-toracico": "za:ducto-toracico",
+        "linfonodo-cervical-direito": "za:linfonodo-cervical-direito",
+        "linfonodo-cervical-esquerdo": "za:linfonodo-cervical-esquerdo",
+        "linfonodo-axilar-direito": "za:linfonodo-axilar-direito",
+        "linfonodo-axilar-esquerdo": "za:linfonodo-axilar-esquerdo",
+        "linfonodo-inguinal-direito": "za:linfonodo-inguinal-direito",
+        "linfonodo-inguinal-esquerdo": "za:linfonodo-inguinal-esquerdo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/tegumentar.lod0.glb",
+      "system": "tegumentar",
+      "lod": "lod0",
+      "sex": "U",
+      "bytes": 12560,
+      "triangles": 344,
+      "bbox": {
+        "min": [
+          -0.245,
+          0.025000000000000022,
+          -0.115
+        ],
+        "max": [
+          0.245,
+          1.815,
+          0.115
+        ]
+      },
+      "nodeToSid": {
+        "pele-cabeca": "za:pele-cabeca",
+        "pele-tronco": "za:pele-tronco",
+        "pele-membro-superior-direito": "za:pele-membro-superior-direito",
+        "pele-membro-superior-esquerdo": "za:pele-membro-superior-esquerdo",
+        "pele-membro-inferior-direito": "za:pele-membro-inferior-direito",
+        "pele-membro-inferior-esquerdo": "za:pele-membro-inferior-esquerdo",
+        "unha": "za:unha",
+        "cabelo": "za:cabelo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/tegumentar.lod1.glb",
+      "system": "tegumentar",
+      "lod": "lod1",
+      "sex": "U",
+      "bytes": 8468,
+      "triangles": 136,
+      "bbox": {
+        "min": [
+          -0.245,
+          0.025000000000000022,
+          -0.115
+        ],
+        "max": [
+          0.245,
+          1.815,
+          0.115
+        ]
+      },
+      "nodeToSid": {
+        "pele-cabeca": "za:pele-cabeca",
+        "pele-tronco": "za:pele-tronco",
+        "pele-membro-superior-direito": "za:pele-membro-superior-direito",
+        "pele-membro-superior-esquerdo": "za:pele-membro-superior-esquerdo",
+        "pele-membro-inferior-direito": "za:pele-membro-inferior-direito",
+        "pele-membro-inferior-esquerdo": "za:pele-membro-inferior-esquerdo",
+        "unha": "za:unha",
+        "cabelo": "za:cabelo"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo Z-Anatomy — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": null,
+      "rmsError": null
+    },
+    {
+      "file": "models/hra-heart-m.glb",
+      "system": "cardiovascular",
+      "lod": "lod0",
+      "sex": "M",
+      "bytes": 16628,
+      "triangles": 576,
+      "bbox": {
+        "min": [
+          -0.05,
+          1.272,
+          0.009999999999999998
+        ],
+        "max": [
+          0.045,
+          1.365,
+          0.088
+        ]
+      },
+      "nodeToSid": {
+        "atrio-direito": "za:atrio-direito",
+        "atrio-esquerdo": "za:atrio-esquerdo",
+        "ventriculo-direito": "za:ventriculo-direito",
+        "ventriculo-esquerdo": "za:ventriculo-esquerdo",
+        "valva-mitral": "za:valva-mitral",
+        "valva-aortica": "za:valva-aortica"
+      },
+      "license": "CC0-1.0",
+      "attribution": "Fixture de teste no estilo \"detalhe de órgão\" do Human Reference Atlas (HRA) — formas geométricas simples, sem base em modelo externo.",
+      "sourceUrl": null,
+      "sourceVersion": "fixture-v1",
+      "transform": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "rmsError": 2.3
+    }
+  ]
+}

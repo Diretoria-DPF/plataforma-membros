@@ -1,0 +1,287 @@
+{
+  "za:fascia-profunda": {
+    "ids": {
+      "wikidata": "Q5454304",
+      "mesh": "D005121",
+      "icd10": [
+        "M72.2",
+        "G57.0",
+        "T79.A0"
+      ]
+    },
+    "summary_pt": "Camada densa e organizada que envolve músculos, vasos e nervos, formando bainhas e septos. Função: Contenção muscular e transmissão de força",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "tissues": [
+        "Colágeno I densamente empacotado"
+      ]
+    },
+    "clinical": [
+      "Fascite plantar",
+      "Síndrome do piriforme",
+      "Síndrome compartimental"
+    ]
+  },
+  "za:fascia-superficial": {
+    "ids": {
+      "wikidata": "Q5454302",
+      "mesh": "D005121",
+      "icd10": [
+        "M79.7",
+        "E88.1"
+      ]
+    },
+    "summary_pt": "Camada adiposa subcutânea contínua em toda a superfície corporal. Função: Isolamento, deslizamento e reserva energética",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "tissues": [
+        "Colágeno frouxo, elastina, ácido hialurônico"
+      ]
+    },
+    "clinical": [
+      "Fibromialgia",
+      "Lipodistrofia"
+    ]
+  },
+  "za:fascia-visceral": {
+    "ids": {
+      "wikidata": "Q5454306",
+      "mesh": "D005121",
+      "icd10": [
+        "K65",
+        "K66.0"
+      ]
+    },
+    "summary_pt": "Camada que envolve órgãos internos, formando ligamentos e mesos que os suspendem. Função: Suspensão visceral e deslizamento",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Peritonite",
+      "Adesões pós-cirúrgicas"
+    ]
+  },
+  "za:musculo-cardiaco-miocardio": {
+    "ids": {
+      "wikidata": "Q46366",
+      "mesh": "D009206",
+      "icd10": [
+        "I42.0",
+        "I42.1",
+        "I21"
+      ]
+    },
+    "summary_pt": "Músculo estriado involuntário com discos intercalares e junções comunicantes (gap junctions) para condução iônica sincicial. Função: Bombeamento cardíaco",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Miocardiopatia dilatada",
+      "Miocardiopatia hipertrófica",
+      "Infarto do miocárdio"
+    ]
+  },
+  "za:musculo-liso-visceral-vascular": {
+    "ids": {
+      "wikidata": "Q1128595",
+      "mesh": "D009130",
+      "icd10": [
+        "I10",
+        "O72.0",
+        "K56.0"
+      ]
+    },
+    "summary_pt": "Miócitos fusiformes involuntários não estriados nas paredes dos vasos, TGI, brônquios e útero. Função: Motilidade visceral e vascular",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Hipertensão arterial",
+      "Atonia uterina",
+      "Íleo paralítico"
+    ]
+  },
+  "za:musculos-esqueleticos-voluntarios": {
+    "ids": {
+      "wikidata": "Q7365",
+      "mesh": "D018482",
+      "icd10": [
+        "G71.0",
+        "G70.0",
+        "M62.8",
+        "M62.84"
+      ]
+    },
+    "summary_pt": "Mais de 600 músculos estriados inervados pelo sistema nervoso somático operando via pontes cruzadas de actina-miosina. Função: Movimento voluntário e postura",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "anatomy": {
+      "vascularization": "Arterial: aa. musculares específicas por região; Venosa: vv. musculares correspondentes; Linfática: linfonodos regionais",
+      "innervation": "Sensitiva: Fusos musculares e órgãos de Golgi; Motora: Motoneurônios alfa do corno anterior medular"
+    },
+    "clinical": [
+      "Distrofia muscular de Duchenne",
+      "Miastenia gravis",
+      "Rabdomiólise",
+      "Sarcopenia"
+    ]
+  },
+  "za:tendoes-fascias": {
+    "ids": {
+      "wikidata": "Q184755",
+      "mesh": "D013710",
+      "icd10": [
+        "M76.6",
+        "M72.2",
+        "M79.7"
+      ]
+    },
+    "summary_pt": "Estruturas de ancoragem colagênica inextensível que transmitem a tensão do ventre muscular às alavancas ósseas. Função: Transmissão de força e cobertura muscular",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "histology": {
+      "tissues": [
+        "Colágeno tipo I altamente organizado"
+      ]
+    },
+    "clinical": [
+      "Tendinopatia do Aquiles",
+      "Fascite plantar",
+      "Fibromialgia"
+    ]
+  }
+}

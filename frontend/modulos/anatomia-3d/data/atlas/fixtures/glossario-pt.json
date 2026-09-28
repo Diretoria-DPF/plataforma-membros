@@ -1,0 +1,97 @@
+[
+  {
+    "id": "baco",
+    "term_pt": "Baço",
+    "term_la": "Splen",
+    "term_en": "Spleen",
+    "avoid": [
+      "Spleen"
+    ],
+    "notes_pt": "Não usar o termo em inglês; \"baço\" é a forma consagrada em português."
+  },
+  {
+    "id": "rim",
+    "term_pt": "Rim",
+    "term_la": "Ren",
+    "term_en": "Kidney",
+    "avoid": [
+      "Kidney"
+    ]
+  },
+  {
+    "id": "figado",
+    "term_pt": "Fígado",
+    "term_la": "Hepar",
+    "term_en": "Liver",
+    "avoid": [
+      "Liver"
+    ]
+  },
+  {
+    "id": "encefalo",
+    "term_pt": "Encéfalo",
+    "term_la": "Encephalon",
+    "term_en": "Brain",
+    "avoid": [
+      "Brain",
+      "Cérebro (quando se refere ao encéfalo todo)"
+    ],
+    "notes_pt": "\"Cérebro\" designa só uma parte do encéfalo; evitar usá-lo como sinônimo do órgão inteiro."
+  },
+  {
+    "id": "nervo-vago",
+    "term_pt": "Nervo Vago",
+    "term_la": "Nervus vagus",
+    "term_en": "Vagus nerve",
+    "avoid": [
+      "Nervo Vagus"
+    ],
+    "notes_pt": "Em português, o adjetivo é \"vago\", não o genitivo latino \"vagus\"."
+  },
+  {
+    "id": "derivacao",
+    "term_pt": "Derivação",
+    "term_en": "Shunt",
+    "avoid": [
+      "Shunt"
+    ],
+    "notes_pt": "Preferir \"derivação\" a \"shunt\" em textos voltados ao público brasileiro."
+  },
+  {
+    "id": "triagem",
+    "term_pt": "Triagem",
+    "term_en": "Screening",
+    "avoid": [
+      "Screening"
+    ]
+  },
+  {
+    "id": "bexiga",
+    "term_pt": "Bexiga",
+    "term_la": "Vesica urinaria",
+    "term_en": "Bladder",
+    "avoid": [
+      "Bladder"
+    ],
+    "notes_pt": "Também aceito \"vesícula urinária\"; evitar o anglicismo direto."
+  },
+  {
+    "id": "utero",
+    "term_pt": "Útero",
+    "term_la": "Uterus",
+    "term_en": "Uterus",
+    "avoid": [
+      "Uterus (sem acentuação em textos em português)"
+    ]
+  },
+  {
+    "id": "isquiatico",
+    "term_pt": "Nervo Isquiático",
+    "term_la": "Nervus ischiadicus",
+    "term_en": "Sciatic nerve",
+    "avoid": [
+      "Nervo Sciático"
+    ],
+    "notes_pt": "A forma tradicional em português é \"isquiático\"; \"sciático\" é um aportuguesamento a evitar."
+  }
+]

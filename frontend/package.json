@@ -6,9 +6,15 @@
   "scripts": {
     "build": "node scripts/build.js",
     "dev": "node dev-server.js",
-    "e2e": "node scripts/build.js && node scripts/e2e/run.js"
+    "e2e": "node scripts/build.js && node scripts/e2e/run.js",
+    "atlas:vendor-three": "node scripts/atlas/vendor-three.js",
+    "atlas:fixtures": "node scripts/atlas/make-fixtures.mjs",
+    "atlas:validate": "node scripts/atlas/validate-content.mjs",
+    "atlas:test": "node scripts/atlas/validate-content.test.mjs"
   },
   "devDependencies": {
+    "@gltf-transform/core": "^4.5.0",
+    "ajv": "^8.20.0",
     "javascript-obfuscator": "^4.1.1",
     "jsqr": "^1.4.0"
   }

@@ -1,0 +1,194 @@
+/* =========================================================================
+   search-box.css — caixa de busca do Atlas v2
+   ========================================================================= */
+
+.atlas-search-root {
+  position: relative;
+}
+
+/* Botão toggle (collapsed) */
+.atlas-search-toggle {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--laift-text);
+  font-size: clamp(18px, 3vw, 24px);
+}
+
+.atlas-search-toggle:hover {
+  background: var(--laift-bg);
+}
+
+.atlas-search-toggle:focus-visible {
+  outline: var(--laift-focus-width) solid var(--laift-primary);
+  outline-offset: -2px;
+}
+
+/* Overlay (expanded) */
+.atlas-search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--atlas-z-search);
+  display: flex;
+  flex-direction: column;
+}
+
+.atlas-search-overlay[hidden] {
+  display: none;
+}
+
+/* Interior do overlay */
+.atlas-search-overlay-inner {
+  display: flex;
+  flex-direction: column;
+  background: var(--laift-surface);
+  width: 100%;
+  max-height: min(90dvh, calc(100dvh - 32px));
+  border-radius: var(--laift-radius-lg);
+  margin: auto;
+  box-shadow: var(--laift-shadow);
+  overflow: hidden;
+}
+
+/* Mobile: overlay toma mais espaço */
+@media (max-width: 600px) {
+  .atlas-search-overlay-inner {
+    margin: 0;
+    border-radius: 0;
+    max-height: 100dvh;
+  }
+}
+
+/* Desktop: dropdown mais compacto */
+@media (min-width: 600px) {
+  .atlas-search-overlay-inner {
+    margin: 56px auto 0;
+    width: 90%;
+    max-width: min(640px, 100% - 32px);
+    max-height: min(60dvh, 480px);
+    border-radius: var(--laift-radius-lg);
+  }
+}
+
+/* Header (input) */
+.atlas-search-header {
+  flex-shrink: 0;
+  padding: clamp(10px, 2vw, 16px);
+  border-bottom: 1px solid var(--laift-border);
+}
+
+/* Input */
+.atlas-search-input {
+  width: 100%;
+  padding: clamp(6px, 1.5vw, 10px) 0;
+  border: none;
+  background: transparent;
+  font-size: clamp(14px, 2.5vw, 18px);
+  color: var(--laift-text);
+  font-family: inherit;
+}
+
+.atlas-search-input::placeholder {
+  color: var(--laift-muted);
+}
+
+.atlas-search-input:focus {
+  outline: none;
+}
+
+/* Listbox */
+.atlas-search-listbox {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  max-height: min(60dvh, 480px);
+  overscroll-behavior: contain;
+}
+
+/* Opção individual */
+.atlas-search-option {
+  padding: clamp(10px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  color: var(--laift-text);
+  font-size: clamp(12px, 2.5vw, 15px);
+  min-height: 44px;
+  min-width: 44px;
+  line-height: 1.4;
+}
+
+.atlas-search-option:hover,
+.atlas-search-option.active {
+  background: var(--laift-bg);
+}
+
+.atlas-search-option:focus-visible {
+  outline: var(--laift-focus-width) solid var(--laift-primary);
+  outline-offset: -2px;
+}
+
+/* Label com <mark> */
+.atlas-search-option-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.atlas-search-option-label mark {
+  font-weight: 600;
+  background: transparent;
+  color: var(--laift-primary);
+}
+
+/* Chips (sistema, lado) */
+.atlas-search-chip {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: clamp(2px, 0.5vw, 4px) clamp(6px, 1.5vw, 10px);
+  background: var(--laift-bg);
+  border-radius: 4px;
+  font-size: clamp(10px, 2vw, 13px);
+  color: var(--laift-muted);
+  white-space: nowrap;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.atlas-search-chip-system {
+  font-weight: 500;
+}
+
+.atlas-search-chip-side {
+  font-weight: 600;
+  color: var(--laift-text);
+}
+
+/* Mensagem vazia */
+.atlas-search-empty {
+  padding: clamp(18px, 3vw, 28px) clamp(12px, 2.5vw, 18px);
+  text-align: center;
+  color: var(--laift-muted);
+  font-size: clamp(11px, 2.5vw, 14px);
+  line-height: 1.5;
+}

@@ -1,0 +1,102 @@
+{
+  "za:articulacoes-cartilagineas": {
+    "ids": {
+      "wikidata": "Q9270328",
+      "mesh": "D013580",
+      "icd10": [
+        "M51",
+        "M51.3"
+      ]
+    },
+    "summary_pt": "Junções semimóveis com cartilagem hialina (sincondrose) ou fibrocartilagem (sínfise). Função: Estabilidade com leve mobilidade",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Hérnia de disco",
+      "Discopatia degenerativa"
+    ]
+  },
+  "za:articulacoes-fibrosas": {
+    "ids": {
+      "wikidata": "Q1430266",
+      "mesh": "D013580",
+      "icd10": [
+        "Q75.0",
+        "S93.4"
+      ]
+    },
+    "summary_pt": "Junções quase imóveis com tecido fibroso (suturas cranianas, sindesmoses, gonfoses). Função: Estabilidade rígida",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Craniossinostose",
+      "Entorse de tornozelo"
+    ]
+  },
+  "za:articulacoes-sinoviais": {
+    "ids": {
+      "wikidata": "Q512942",
+      "mesh": "D013580",
+      "icd10": [
+        "M15-M19",
+        "M05-M06",
+        "S83.2",
+        "S43.0"
+      ]
+    },
+    "summary_pt": "Junções móveis com cavidade articular, cápsula e líquido sinovial (ombro, quadril, joelho, cotovelo). Função: Movimento amplo",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "clinical": [
+      "Osteoartrite",
+      "Artrite reumatoide",
+      "Lesão de menisco",
+      "Luxação de ombro"
+    ]
+  }
+}

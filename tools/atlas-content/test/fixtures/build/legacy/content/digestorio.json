@@ -1,0 +1,45 @@
+{
+  "za:figado": {
+    "ids": {
+      "wikidata": "Q9368",
+      "mesh": "D008099"
+    },
+    "summary_pt": "Glândula hepática parenquimatosa",
+    "anatomy": {
+      "vascularization": "Artéria hepática e veia porta"
+    },
+    "histology": {
+      "epithelium": "Epitélio hepático"
+    },
+    "clinical": ["Hepatite"],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ]
+  },
+  "za:vesicula-biliar": {
+    "ids": {
+      "wikidata": "Q10278",
+      "mesh": "D005368"
+    },
+    "summary_pt": "Órgão de armazenamento de bile",
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ]
+  }
+}

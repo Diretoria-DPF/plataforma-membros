@@ -1,0 +1,832 @@
+{
+  "za:medulla-oblongata-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"allen-brain\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/allen-brain/v1.9/assets/asct-b-allen-brain.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000540",
+          "name_pt": "neuron",
+          "biomarkers": [
+            "homeobox D3",
+            "follicle stimulating hormone receptor",
+            "castor zinc finger 1",
+            "EBF transcription factor 2",
+            "homeobox B3",
+            "integrin subunit alpha 11",
+            "LIM homeobox transcription factor 1 beta",
+            "paired box 2",
+            "EBF transcription factor 3",
+            "spalt like transcription factor 3",
+            "tetraspanin 18",
+            "solute carrier family 6 member 5",
+            "transthyretin",
+            "ADAMTS like 1",
+            "5-hydroxytryptamine receptor 2C",
+            "tachykinin receptor 3",
+            "nuclear receptor subfamily 4 group A member 2",
+            "transcription factor AP-2 beta",
+            "ring finger protein 220",
+            "Meis homeobox 2"
+          ]
+        }
+      ]
+    }
+  },
+  "za:midbrain-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"allen-brain\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/allen-brain/v1.9/assets/asct-b-allen-brain.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000540",
+          "name_pt": "neuron",
+          "biomarkers": [
+            "retinol binding protein 3",
+            "family with sequence similarity 83 member B",
+            "one cut homeobox 1",
+            "long intergenic non-protein coding RNA 1210",
+            "LIM homeobox 1",
+            "EBF transcription factor 3",
+            "GATA binding protein 3",
+            "empty spiracles homeobox 2",
+            "transcription factor AP-2 beta",
+            "lymphoid enhancer binding factor 1",
+            "glutamate ionotropic receptor kainate type subunit 1",
+            "zinc finger homeobox 3",
+            "TAFA chemokine like family member 1",
+            "OTX2 antisense RNA 1 (head to head)",
+            "orthodenticle homeobox 2",
+            "N-deacetylase and N-sulfotransferase 4",
+            "transcription factor AP-2 delta",
+            "tachykinin precursor 1",
+            "prolactin receptor",
+            "transcription factor 7 like 2",
+            "LIM homeobox 9",
+            "EBF transcription factor 2",
+            "leucine rich repeat containing G protein-coupled receptor 5",
+            "carboxypeptidase A6",
+            "neuropeptide S receptor 1",
+            "basonuclin 2",
+            "solute carrier family 6 member 3"
+          ]
+        }
+      ]
+    }
+  },
+  "za:pons-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"allen-brain\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/allen-brain/v1.9/assets/asct-b-allen-brain.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:4023057",
+          "name_pt": "cerebellar inhibitory GABAergic interneuron",
+          "biomarkers": [
+            "solute carrier family 6 member 5",
+            "scinderin",
+            "ras responsive element binding protein 1",
+            "terminal nucleotidyltransferase 5A",
+            "membrane metalloendopeptidase",
+            "SPARC related modular calcium binding 1",
+            "bone morphogenetic protein 5",
+            "long intergenic non-protein coding RNA 836",
+            "cortexin 3",
+            "long intergenic non-protein coding RNA 355",
+            "family with sequence similarity 114 member A1",
+            "tubulointerstitial nephritis antigen",
+            "synaptotagmin 10",
+            "thrombospondin type 1 domain containing 7B",
+            "adhesion G protein-coupled receptor L4",
+            "ventricular zone expressed PH domain containing 1",
+            "long intergenic non-protein coding RNA 1798",
+            "Meis homeobox 1",
+            "long intergenic non-protein coding RNA 1036",
+            "EBF transcription factor 2",
+            "EBF transcription factor 3",
+            "orthopedia homeobox",
+            "laminin subunit alpha 1",
+            "neuropeptide FF receptor 2",
+            "LIM homeobox 9",
+            "nephronectin"
+          ]
+        },
+        {
+          "cl": "CL:0000540",
+          "name_pt": "neuron",
+          "biomarkers": [
+            "solute carrier family 6 member 5",
+            "scinderin",
+            "ras responsive element binding protein 1",
+            "terminal nucleotidyltransferase 5A",
+            "membrane metalloendopeptidase",
+            "SPARC related modular calcium binding 1",
+            "bone morphogenetic protein 5",
+            "long intergenic non-protein coding RNA 836",
+            "cortexin 3",
+            "long intergenic non-protein coding RNA 355",
+            "family with sequence similarity 114 member A1",
+            "tubulointerstitial nephritis antigen",
+            "synaptotagmin 10",
+            "thrombospondin type 1 domain containing 7B",
+            "adhesion G protein-coupled receptor L4",
+            "ventricular zone expressed PH domain containing 1",
+            "long intergenic non-protein coding RNA 1798",
+            "Meis homeobox 1",
+            "long intergenic non-protein coding RNA 1036",
+            "EBF transcription factor 2",
+            "EBF transcription factor 3",
+            "orthopedia homeobox",
+            "laminin subunit alpha 1",
+            "neuropeptide FF receptor 2",
+            "LIM homeobox 9",
+            "nephronectin"
+          ]
+        }
+      ]
+    }
+  },
+  "za:hypothalamus": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"allen-brain\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/allen-brain/v1.9/assets/asct-b-allen-brain.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000128",
+          "name_pt": "oligodendrocyte",
+          "biomarkers": [
+            "papillary thyroid carcinoma susceptibility candidate 3",
+            "solute carrier family 5 member 11",
+            "tachykinin precursor 1",
+            "long intergenic non-protein coding RNA 410",
+            "RBMS3 antisense RNA 2",
+            "follicle stimulating hormone receptor",
+            "SIM bHLH transcription factor 1",
+            "paired like homeodomain 2",
+            "corticotropin releasing hormone binding protein",
+            "TAFA chemokine like family member 4",
+            "cilia and flagella associated protein 299",
+            "long intergenic non-protein coding RNA 2196",
+            "prolactin receptor",
+            "F-box and leucine rich repeat protein 7",
+            "netrin G1",
+            "semaphorin 3C",
+            "FERM and PDZ domain containing 2",
+            "one cut homeobox 2",
+            "myosin IB",
+            "CD36 molecule",
+            "latent transforming growth factor beta binding protein 1",
+            "androgen receptor",
+            "LIM homeobox transcription factor 1 alpha",
+            "platelet derived growth factor D",
+            "ST18 C2H2C-type zinc finger transcription factor",
+            "cadherin 12",
+            "protein phosphatase 1 regulatory subunit 17",
+            "RAR related orphan receptor B",
+            "phosphodiesterase 3A",
+            "ISL LIM homeobox 1",
+            "lymphoid enhancer binding factor 1",
+            "orthopedia homeobox",
+            "delta like non-canonical Notch ligand 1",
+            "FEZ family zinc finger 1",
+            "progesterone receptor",
+            "T-box transcription factor 3"
+          ]
+        },
+        {
+          "cl": "CL:0000127",
+          "name_pt": "astrocyte",
+          "biomarkers": [
+            "papillary thyroid carcinoma susceptibility candidate 3",
+            "solute carrier family 5 member 11",
+            "tachykinin precursor 1",
+            "long intergenic non-protein coding RNA 410",
+            "RBMS3 antisense RNA 2",
+            "follicle stimulating hormone receptor",
+            "SIM bHLH transcription factor 1",
+            "paired like homeodomain 2",
+            "corticotropin releasing hormone binding protein",
+            "TAFA chemokine like family member 4",
+            "cilia and flagella associated protein 299",
+            "long intergenic non-protein coding RNA 2196",
+            "prolactin receptor",
+            "F-box and leucine rich repeat protein 7",
+            "netrin G1",
+            "semaphorin 3C",
+            "FERM and PDZ domain containing 2",
+            "one cut homeobox 2",
+            "myosin IB",
+            "CD36 molecule",
+            "latent transforming growth factor beta binding protein 1",
+            "androgen receptor",
+            "LIM homeobox transcription factor 1 alpha",
+            "platelet derived growth factor D",
+            "ST18 C2H2C-type zinc finger transcription factor",
+            "cadherin 12",
+            "protein phosphatase 1 regulatory subunit 17",
+            "RAR related orphan receptor B",
+            "phosphodiesterase 3A",
+            "ISL LIM homeobox 1",
+            "lymphoid enhancer binding factor 1",
+            "orthopedia homeobox",
+            "delta like non-canonical Notch ligand 1",
+            "FEZ family zinc finger 1",
+            "progesterone receptor",
+            "T-box transcription factor 3"
+          ]
+        },
+        {
+          "cl": "CL:4023074",
+          "name_pt": "mammillary body neuron",
+          "biomarkers": [
+            "papillary thyroid carcinoma susceptibility candidate 3",
+            "solute carrier family 5 member 11",
+            "tachykinin precursor 1",
+            "long intergenic non-protein coding RNA 410",
+            "RBMS3 antisense RNA 2",
+            "follicle stimulating hormone receptor",
+            "SIM bHLH transcription factor 1",
+            "paired like homeodomain 2",
+            "corticotropin releasing hormone binding protein",
+            "TAFA chemokine like family member 4",
+            "cilia and flagella associated protein 299",
+            "long intergenic non-protein coding RNA 2196",
+            "prolactin receptor",
+            "F-box and leucine rich repeat protein 7",
+            "netrin G1",
+            "semaphorin 3C",
+            "FERM and PDZ domain containing 2",
+            "one cut homeobox 2",
+            "myosin IB",
+            "CD36 molecule",
+            "latent transforming growth factor beta binding protein 1",
+            "androgen receptor",
+            "LIM homeobox transcription factor 1 alpha",
+            "platelet derived growth factor D",
+            "ST18 C2H2C-type zinc finger transcription factor",
+            "cadherin 12",
+            "protein phosphatase 1 regulatory subunit 17",
+            "RAR related orphan receptor B",
+            "phosphodiesterase 3A",
+            "ISL LIM homeobox 1",
+            "lymphoid enhancer binding factor 1",
+            "orthopedia homeobox",
+            "delta like non-canonical Notch ligand 1",
+            "FEZ family zinc finger 1",
+            "progesterone receptor",
+            "T-box transcription factor 3"
+          ]
+        },
+        {
+          "cl": "CL:0000540",
+          "name_pt": "neuron",
+          "biomarkers": [
+            "papillary thyroid carcinoma susceptibility candidate 3",
+            "solute carrier family 5 member 11",
+            "tachykinin precursor 1",
+            "long intergenic non-protein coding RNA 410",
+            "RBMS3 antisense RNA 2",
+            "follicle stimulating hormone receptor",
+            "SIM bHLH transcription factor 1",
+            "paired like homeodomain 2",
+            "corticotropin releasing hormone binding protein",
+            "TAFA chemokine like family member 4",
+            "cilia and flagella associated protein 299",
+            "long intergenic non-protein coding RNA 2196",
+            "prolactin receptor",
+            "F-box and leucine rich repeat protein 7",
+            "netrin G1",
+            "semaphorin 3C",
+            "FERM and PDZ domain containing 2",
+            "one cut homeobox 2",
+            "myosin IB",
+            "CD36 molecule",
+            "latent transforming growth factor beta binding protein 1",
+            "androgen receptor",
+            "LIM homeobox transcription factor 1 alpha",
+            "platelet derived growth factor D",
+            "ST18 C2H2C-type zinc finger transcription factor",
+            "cadherin 12",
+            "protein phosphatase 1 regulatory subunit 17",
+            "RAR related orphan receptor B",
+            "phosphodiesterase 3A",
+            "ISL LIM homeobox 1",
+            "lymphoid enhancer binding factor 1",
+            "orthopedia homeobox",
+            "delta like non-canonical Notch ligand 1",
+            "FEZ family zinc finger 1",
+            "progesterone receptor",
+            "T-box transcription factor 3"
+          ]
+        }
+      ]
+    }
+  },
+  "za:middle-temporal-gyrus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"allen-brain\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.9",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/allen-brain/v1.9/assets/asct-b-allen-brain.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:4023063",
+          "name_pt": "medial ganglionic eminence derived interneuron",
+          "biomarkers": [
+            "carbohydrate sulfotransferase 9",
+            "platelet derived growth factor D"
+          ]
+        },
+        {
+          "cl": "CL:4042013",
+          "name_pt": "Lamp5_Lhx6_1",
+          "biomarkers": [
+            "carbohydrate sulfotransferase 9",
+            "platelet derived growth factor D"
+          ]
+        }
+      ]
+    }
+  },
+  "za:anterior-spinothalamic-tract": {
+    "ids": {
+      "wikidata": "Q4771397",
+      "fma": "75684",
+      "ta2": "A14.1.02.214"
+    },
+    "summary_pt": "O trato espinotalâmico anterior (ou ventral) faz parte do trato espinotalâmico e transmite a sensação do toque grosseiro.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Trato_espinotal%C3%A2mico_anterior"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:retina-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"eye\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.5"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.5",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/eye/v1.5/assets/asct-b-vh-eye.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000540",
+          "name_pt": "neuron",
+          "biomarkers": [
+            "allograft inflammatory factor 1"
+          ]
+        },
+        {
+          "cl": "CL:0000129",
+          "name_pt": "microglial cell",
+          "biomarkers": [
+            "allograft inflammatory factor 1"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-f-optic-chiasm": {
+    "ids": {
+      "wikidata": "Q1071710",
+      "fma": "62045",
+      "uberon": "UBERON:0000959",
+      "ta2": "A14.1.08.403",
+      "mesh": "D009897"
+    },
+    "summary_pt": "O quiasma óptico é uma estrutura em formato de X formada pelo encontro de dois nervos ópticos. Localiza-se na parte anterior do assoalho do III ventrículo. Recebe as fibras dos nervos ópticos, que ai cruzam em parte e continuam nesse trato que se dirigem aos corpos geniculados laterais. Como resultado temos que cada hemisfério cerebral recebe informações sobre o campo visual contralateral de ambos os olhos. Ver olho. Doença relacionada com o quiasma óptico: cegueira",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Quiasma_%C3%B3ptico"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:cerebelo": {
+    "ids": {
+      "wikidata": "Q130983",
+      "mesh": "D002531",
+      "icd10": [
+        "G11",
+        "G11.9",
+        "D43.1"
+      ],
+      "ta2": "A14.1.07.001"
+    },
+    "summary_pt": "Coordenação motora, refinamento de movimentos voluntários, equilíbrio vestibular e propriocepção. Função: Coordenação e aprendizado motor",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. cerebelares superior, anteroinferior e posteroinferior; Venosa: vv. cerebelares → seios venosos durais"
+    },
+    "clinical": [
+      "Ataxia cerebelar",
+      "Tumor cerebelar"
+    ]
+  },
+  "za:cerebro-telencefalo": {
+    "ids": {
+      "wikidata": "Q75855",
+      "mesh": "D054330",
+      "icd10": [
+        "G40",
+        "I63",
+        "F00-F09",
+        "G30",
+        "G20",
+        "F20"
+      ],
+      "ta2": "A14.1.03.001"
+    },
+    "summary_pt": "Substância cinzenta cortical e branca subcortical, corpo caloso e núcleos da base responsáveis por cognição e motricidade. Função: Cognição, motricidade voluntária, linguagem, memória, emoção",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. carótida interna, a. basilar, polígono de Willis; Venosa: seios durais, vv. cerebrais superficiais e profundas; Linfática: linfonodos cervicais profundos (via LCR)"
+    },
+    "histology": {
+      "tissues": [
+        "Hialuronano, tenascina, proteoglicanos"
+      ]
+    },
+    "clinical": [
+      "AVC isquêmico",
+      "Epilepsia",
+      "Alzheimer",
+      "Parkinson",
+      "Esquizofrenia"
+    ]
+  },
+  "za:diencefalo-tronco-encefalico": {
+    "ids": {
+      "wikidata": "Q188424",
+      "mesh": "D004027",
+      "icd10": [
+        "G93.8",
+        "I60-I69",
+        "I63.1",
+        "E51.2",
+        "H51.8"
+      ],
+      "ta2": "A14.1.08.001"
+    },
+    "summary_pt": "Relé sensorial tálamo-hipotalâmico e centros autônomos bulbares de controle respiratório e vasomotor. Função: Relé sensorial, controle autonômico, regulação endócrina",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. basilar, aa. cerebrais posteriores, aa. talâmicas; Venosa: vv. cerebrais internas, seio reto"
+    },
+    "clinical": [
+      "AVC de tronco",
+      "Síndrome de Wernicke-Korsakoff",
+      "Síndrome de Parinaud"
+    ]
+  },
+  "za:ganglios-nervosos": {
+    "ids": {
+      "wikidata": "Q189033",
+      "mesh": "D005724",
+      "icd10": [
+        "B02",
+        "G90.0"
+      ]
+    },
+    "summary_pt": "Agrupamentos de corpos neuronais fora do SNC; incluem gânglios das raízes dorsais e cadeias paravertebrais simpáticas. Função: Relé sensitivo e autonômico",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Herpes zoster",
+      "Ganglionopatia autonômica"
+    ]
+  },
+  "za:medula-espinhal": {
+    "ids": {
+      "wikidata": "Q9606",
+      "mesh": "D013116",
+      "icd10": [
+        "G95.0",
+        "S14",
+        "S24",
+        "S34",
+        "G35",
+        "A80"
+      ],
+      "ta2": "A14.1.02.001"
+    },
+    "summary_pt": "Cordão nervoso condutor protegido pelo canal vertebral, integrando substância cinzenta medular em H e tratos axonais. Função: Condução de informação sensitiva e motora + reflexos segmentares",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. espinhal anterior, aa. espinhais posteriores, aa. radiculares; Venosa: plexo venoso vertebral interno"
+    },
+    "clinical": [
+      "Lesão medular",
+      "Esclerose múltipla",
+      "Poliomielite"
+    ]
+  },
+  "za:nervos-cranianos-espinhais-perifericos": {
+    "ids": {
+      "wikidata": "Q160116",
+      "mesh": "D010525",
+      "ta2": "A14.2.00.001",
+      "icd10": [
+        "G62.9",
+        "G56.0",
+        "S74.0"
+      ]
+    },
+    "summary_pt": "Feixes axonais mielinizados ou amielínicos conectando o SNC aos tecidos alvos motores e viscerais. Função: Comunicação SNC ↔ periferia",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Neuropatia periférica",
+      "Síndrome do túnel do carpo",
+      "Lesão do nervo ciático"
+    ]
+  },
+  "za:orgaos-dos-sentidos": {
+    "ids": {
+      "wikidata": "Q24925",
+      "mesh": "D012679",
+      "icd10": [
+        "H25",
+        "H40",
+        "H90",
+        "H36.0"
+      ]
+    },
+    "summary_pt": "Transdutores biológicos especializados na conversão de estímulos físicos e químicos em potenciais de ação. Função: Visão, audição, equilíbrio, olfato, gustação, tato",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Catarata",
+      "Glaucoma",
+      "Perda auditiva sensorioneural",
+      "Retinopatia diabética"
+    ]
+  }
+}

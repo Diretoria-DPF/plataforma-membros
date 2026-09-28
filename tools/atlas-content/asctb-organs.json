@@ -1,0 +1,178 @@
+[
+  {
+    "organ": "allen-brain",
+    "version": "v1.9",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/allen-brain/v1.9/assets/asct-b-allen-brain.csv"
+  },
+  {
+    "organ": "anatomical-systems",
+    "version": "v1.2",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/anatomical-systems/v1.2/assets/asct-b-vh-anatomical-systems.csv"
+  },
+  {
+    "organ": "blood-pelvis",
+    "version": "v1.4",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-pelvis/v1.4/assets/asct-b-vh-blood-pelvis.csv"
+  },
+  {
+    "organ": "blood-vasculature",
+    "version": "v1.10",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-vasculature/v1.10/assets/asct-b-vh-blood-vasculature.csv"
+  },
+  {
+    "organ": "bone-marrow",
+    "version": "v1.6",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/bone-marrow/v1.6/assets/asct-b-vh-bone-marrow.csv"
+  },
+  {
+    "organ": "eye",
+    "version": "v1.5",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/eye/v1.5/assets/asct-b-vh-eye.csv"
+  },
+  {
+    "organ": "fallopian-tube",
+    "version": "v1.5",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/fallopian-tube/v1.5/assets/asct-b-fallopian-tube.csv"
+  },
+  {
+    "organ": "heart",
+    "version": "v1.7",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/heart/v1.7/assets/asct-b-vh-heart.csv"
+  },
+  {
+    "organ": "kidney",
+    "version": "v1.8",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/kidney/v1.8/assets/asct-b-vh-kidney.csv"
+  },
+  {
+    "organ": "knee",
+    "version": "v1.4",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/knee/v1.4/assets/asct-b-vh-knee.csv"
+  },
+  {
+    "organ": "large-intestine",
+    "version": "v1.5",
+    "url": "https://purl.humanatlas.io/asct-b/large-intestine/v1.5",
+    "fallbackUrl": "https://cdn.humanatlas.io/digital-objects/asct-b/large-intestine/v1.5/assets/asct-b-vh-large-intestine.csv"
+  },
+  {
+    "organ": "liver",
+    "version": "v1.5",
+    "url": "https://purl.humanatlas.io/asct-b/liver/v1.5",
+    "fallbackUrl": "https://cdn.humanatlas.io/digital-objects/asct-b/liver/v1.5/assets/asct-b-vh-liver.csv"
+  },
+  {
+    "organ": "lung",
+    "version": "v1.6",
+    "url": "https://purl.humanatlas.io/asct-b/lung/v1.6",
+    "fallbackUrl": "https://cdn.humanatlas.io/digital-objects/asct-b/lung/v1.6/assets/asct-b-vh-lung.csv"
+  },
+  {
+    "organ": "lymph-node",
+    "version": "v1.4",
+    "url": "https://purl.humanatlas.io/asct-b/lymph-node/v1.4",
+    "fallbackUrl": "https://cdn.humanatlas.io/digital-objects/asct-b/lymph-node/v1.4/assets/asct-b-vh-lymph-node.csv"
+  },
+  {
+    "organ": "lymph-vasculature",
+    "version": "v1.5",
+    "url": "https://purl.humanatlas.io/asct-b/lymph-vasculature/v1.5",
+    "fallbackUrl": "https://cdn.humanatlas.io/digital-objects/asct-b/lymph-vasculature/v1.5/assets/asct-b-vh-lymph-vasculature.csv"
+  },
+  {
+    "organ": "main-bronchus",
+    "version": "v1.4",
+    "url": "https://purl.humanatlas.io/asct-b/main-bronchus/v1.4",
+    "fallbackUrl": "https://cdn.humanatlas.io/digital-objects/asct-b/main-bronchus/v1.4/assets/asct-b-vh-main-bronchus.csv"
+  },
+  {
+    "organ": "mouth",
+    "version": "v1.2",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/mouth/v1.2/assets/asct-b-vh-mouth.csv"
+  },
+  {
+    "organ": "muscular-system",
+    "version": "v1.4",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+  },
+  {
+    "organ": "ovary",
+    "version": "v1.4",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/ovary/v1.4/assets/asct-b-vh-ovary.csv"
+  },
+  {
+    "organ": "palatine-tonsil",
+    "version": "v1.2",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/palatine-tonsil/v1.2/assets/asct-b-vh-palatine-tonsil.csv"
+  },
+  {
+    "organ": "pancreas",
+    "version": "v1.4",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/pancreas/v1.4/assets/asct-b-vh-pancreas.csv"
+  },
+  {
+    "organ": "peripheral-nervous-system",
+    "version": "v1.3",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/peripheral-nervous-system/v1.3/assets/asct-b-vh-peripheral-nervous-system.csv"
+  },
+  {
+    "organ": "placenta",
+    "version": "v1.3",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/placenta/v1.3/assets/asct-b-vh-placenta.csv"
+  },
+  {
+    "organ": "prostate",
+    "version": "v1.1",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/prostate/v1.1/assets/asct-b-vh-prostate.csv"
+  },
+  {
+    "organ": "skeleton",
+    "version": "v1.3",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+  },
+  {
+    "organ": "skin",
+    "version": "v1.7",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skin/v1.7/assets/asct-b-vh-skin.csv"
+  },
+  {
+    "organ": "small-intestine",
+    "version": "v1.4",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/small-intestine/v1.4/assets/asct-b-vh-small-intestine.csv"
+  },
+  {
+    "organ": "spinal-cord",
+    "version": "v1.1",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/spinal-cord/v1.1/assets/asct-b-vh-spinal-cord.csv"
+  },
+  {
+    "organ": "spleen",
+    "version": "v1.6",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/spleen/v1.6/assets/asct-b-vh-spleen.csv"
+  },
+  {
+    "organ": "thymus",
+    "version": "v1.5",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/thymus/v1.5/assets/asct-b-vh-thymus.csv"
+  },
+  {
+    "organ": "trachea",
+    "version": "v1.1",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/trachea/v1.1/assets/asct-b-vh-trachea.csv"
+  },
+  {
+    "organ": "ureter",
+    "version": "v1.0",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/ureter/v1.0/assets/ASCT-B_VH_Ureter.csv"
+  },
+  {
+    "organ": "urinary-bladder",
+    "version": "v1.0",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/urinary-bladder/v1.0/assets/ASCT-B_VH_Urinary_Bladder.csv"
+  },
+  {
+    "organ": "uterus",
+    "version": "v1.3",
+    "url": "https://cdn.humanatlas.io/digital-objects/asct-b/uterus/v1.3/assets/ASCT-B_VH_Uterus.csv"
+  }
+]

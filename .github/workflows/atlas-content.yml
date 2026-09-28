@@ -1,0 +1,267 @@
+# Conteúdo em português do Atlas Anatômico (Wikidata + Wikipédia PT + HRA
+# ASCT+B + legado) — roda no GitHub Actions (internet livre) porque a
+# sandbox de desenvolvimento só alcança o registro do npm.
+#
+# Os scripts (tools/atlas-content/{wikidata,wikipedia-pt,asctb,build-content}.mjs)
+# já são testados offline com `npm test` em tools/atlas-content — este
+# workflow só os encadeia contra as fontes reais.
+#
+# Dois jeitos de disparar, no mesmo padrão do WP10 (atlas-assets.yml):
+#   - workflow_dispatch: só funciona depois que este arquivo estiver na
+#     branch padrão do repositório (limitação do GitHub). Até lá, a
+#     iteração é por `push` — mudando tools/atlas-content/run-config.json
+#     (o que rodar) e empurrando um commit.
+#   - push, quando o commit toca tools/atlas-content/** ou este próprio
+#     arquivo: lê run-config.json para saber o que fazer. Por padrão,
+#     run-config.json fica em "mode": "discover" (só valida as fontes —
+#     Wikidata, Wikipédia PT, CSVs ASCT+B da HRA — sem gerar nem commitar
+#     nada) até os resultados serem confirmados.
+#
+# O commit automático (quando `commit: true`) só toca
+# frontend/modulos/anatomia-3d/data/atlas/{index.json,content/**,
+# sid-aliases.json,routes.json,processes.json,quiz-cases.json,
+# compounds.json,proteins.json} — fora dos `paths` do gatilho de push
+# abaixo, então não dispara o workflow de novo.
+
+name: Atlas Content Pipeline (PT-BR)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'discover (só valida fontes) ou build (pipeline completo)'
+        required: false
+        default: 'build'
+        type: choice
+        options:
+          - discover
+          - build
+      commit:
+        description: 'Commitar o conteúdo gerado na branch, como github-actions[bot]'
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches:
+      - claude/optimistic-babbage-3pm2em
+    paths:
+      - 'tools/atlas-content/**'
+      - '.github/workflows/atlas-content.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas-content-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  STRUCTURES: frontend/modulos/anatomia-3d/data/atlas/generated/structures.json
+  LEGACY_DIR: frontend/modulos/anatomia-3d/data/atlas/legacy
+  DATA_DIR: frontend/modulos/anatomia-3d/data/atlas
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: npm install (tools/atlas-content — sem dependências externas)
+        working-directory: tools/atlas-content
+        run: npm install
+
+      - name: npm ci (frontend, para validate-content/lint-pt)
+        working-directory: frontend
+        run: npm ci
+
+      - name: Testes offline dos scripts (não devem quebrar antes de tocar em rede real)
+        working-directory: tools/atlas-content
+        run: npm test
+
+      - name: Determinar parâmetros da execução
+        id: params
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=${{ github.event.inputs.mode }}" >> "$GITHUB_OUTPUT"
+            echo "commit=${{ github.event.inputs.commit }}" >> "$GITHUB_OUTPUT"
+          else
+            (cd tools/atlas-content && node read-run-config.mjs) >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Preparar diretório de trabalho
+        run: mkdir -p tools/atlas-content/work/raw tools/atlas-content/out
+
+      - name: 1) Wikidata (FMA -> Uberon/TA2/MeSH/ICD10, rótulos PT)
+        working-directory: tools/atlas-content
+        run: |
+          node wikidata.mjs --in ../../${{ env.STRUCTURES }} --out out/wikidata.json
+          {
+            echo "### Wikidata"
+            node -e "const d=require('./out/wikidata.json'); console.log('- sids com qid:', Object.keys(d).filter(k=>d[k].qid).length); console.log('- sids com label_pt:', Object.keys(d).filter(k=>d[k].label_pt).length); console.log('- total de sids:', Object.keys(d).length);"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 2) Wikipédia PT (intro + revision id)
+        working-directory: tools/atlas-content
+        run: |
+          node wikipedia-pt.mjs --in out/wikidata.json --out out/wikipedia-pt.json
+          {
+            echo "### Wikipédia PT"
+            node -e "const d=require('./out/wikipedia-pt.json'); console.log('- sids com extract_pt:', Object.keys(d).filter(k=>d[k] && d[k].extract_pt).length);"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 3) Descobrir/validar URLs dos CSVs ASCT+B da HRA (por órgão)
+        working-directory: tools/atlas-content
+        run: |
+          mkdir -p work/raw
+          {
+            echo "### ASCT+B — validação das URLs (asctb-organs.json)"
+            echo '| órgão | versão | status | url |'
+            echo '|---|---|---|---|'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          FAILED=""
+          node - <<'NODE' > work/organs.tsv
+          const organs = require('./asctb-organs.json');
+          for (const o of organs) console.log([o.organ, o.version, o.url, o.fallbackUrl || ''].join('\t'));
+          NODE
+          while IFS=$'\t' read -r organ version url fallbackUrl; do
+            [ -z "$organ" ] && continue
+            code=$(curl -sS -L -m 30 --retry 3 --retry-delay 2 \
+              -H "User-Agent: LAIFT-Atlas/1.0 (https://github.com/Diretoria-DPF/plataforma-membros)" \
+              -H "Accept: text/csv" \
+              -o "work/raw/asctb-${organ}.csv" -w '%{http_code}' "$url" || echo "000")
+            if [ "$code" = "200" ] && [ -s "work/raw/asctb-${organ}.csv" ] && grep -q "," "work/raw/asctb-${organ}.csv"; then
+              status="ok"
+            elif [ -n "$fallbackUrl" ]; then
+              # Try fallback URL if primary failed or doesn't look like CSV
+              code=$(curl -sS -L -m 30 --retry 3 --retry-delay 2 \
+                -H "User-Agent: LAIFT-Atlas/1.0 (https://github.com/Diretoria-DPF/plataforma-membros)" \
+                -H "Accept: text/csv" \
+                -o "work/raw/asctb-${organ}.csv" -w '%{http_code}' "$fallbackUrl" || echo "000")
+              if [ "$code" = "200" ] && [ -s "work/raw/asctb-${organ}.csv" ] && grep -q "," "work/raw/asctb-${organ}.csv"; then
+                status="ok (fallback)"
+              else
+                status="falhou ($code)"
+                FAILED="$FAILED $organ"
+                rm -f "work/raw/asctb-${organ}.csv"
+              fi
+            else
+              status="falhou ($code)"
+              FAILED="$FAILED $organ"
+              rm -f "work/raw/asctb-${organ}.csv"
+            fi
+            echo "| $organ | $version | $status | $url |" >> "$GITHUB_STEP_SUMMARY"
+          done < work/organs.tsv
+          if [ -n "$FAILED" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "⚠️ Órgãos sem CSV válido (URL/versão precisa ser corrigida em \`tools/atlas-content/asctb-organs.json\`):$FAILED" >> "$GITHUB_STEP_SUMMARY"
+            echo "asctb_failed=$FAILED" >> "$GITHUB_OUTPUT"
+          else
+            echo "asctb_failed=" >> "$GITHUB_OUTPUT"
+          fi
+        id: asctb_urls
+
+      - name: 4) ASCT+B (agrega células/biomarcadores por sid, a partir dos CSVs baixados)
+        if: steps.params.outputs.mode == 'build'
+        working-directory: tools/atlas-content
+        run: |
+          ORGANS=$(node -e "console.log(require('./asctb-organs.json').map(o=>o.organ).join(','))")
+          node asctb.mjs --organs "$ORGANS" --wikidata out/wikidata.json --structures ../../${{ env.STRUCTURES }} --out out/asctb.json --offline-dir work/raw
+          {
+            echo "### ASCT+B — agregação"
+            node -e "const d=require('./out/asctb.json'); console.log('- sids com células:', Object.keys(d.bySid||{}).length); console.log('- não mapeados:', (d.unmapped||[]).length); console.log('- órgãos processados:', (d.processed||[]).join(', '));"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 5) build-content (merge final + reconciliação de sids)
+        if: steps.params.outputs.mode == 'build'
+        working-directory: tools/atlas-content
+        run: |
+          node build-content.mjs \
+            --structures ../../${{ env.STRUCTURES }} \
+            --wikidata out/wikidata.json \
+            --wikipedia out/wikipedia-pt.json \
+            --asctb out/asctb.json \
+            --legacy-dir ../../${{ env.LEGACY_DIR }} \
+            --data-dir ../../${{ env.DATA_DIR }} \
+            --out out/content
+
+      - name: 6) validate-content (esquemas + integridade cruzada)
+        if: steps.params.outputs.mode == 'build'
+        run: |
+          # validate-content.mjs espera manifest.json e glossario-pt.json
+          # dentro do próprio diretório validado (para checagens cruzadas
+          # com index.json) — build-content.mjs não escreve esses dois (não
+          # são conteúdo textual), então copiamos os reais para dentro do
+          # diretório de saída antes de validar.
+          cp frontend/modulos/anatomia-3d/models/manifest.json tools/atlas-content/out/content/manifest.json
+          cp "${{ env.DATA_DIR }}/glossario-pt.json" tools/atlas-content/out/content/glossario-pt.json
+          cd frontend && node scripts/atlas/validate-content.mjs ../tools/atlas-content/out/content --legacy-anchors=warn
+
+      - name: 7) lint-pt (anglicismos/traduções — só relatório, não falha o job)
+        if: steps.params.outputs.mode == 'build'
+        working-directory: frontend
+        run: |
+          node scripts/atlas/lint-pt.mjs ../tools/atlas-content/out/content/content/*.json > lint-pt-report.txt 2>&1 || true
+          {
+            echo "### lint-pt (relatório, não bloqueante)"
+            echo '```'
+            tail -n 200 lint-pt-report.txt
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Tamanho do index.json
+        if: steps.params.outputs.mode == 'build'
+        run: |
+          RAW=$(stat -c%s tools/atlas-content/out/content/index.json)
+          GZ=$(gzip -c tools/atlas-content/out/content/index.json | wc -c)
+          echo "index.json: ${RAW} bytes brutos, ${GZ} bytes gzip" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "index_raw_bytes=$RAW" >> "$GITHUB_OUTPUT"
+          echo "index_gz_bytes=$GZ" >> "$GITHUB_OUTPUT"
+        id: index_size
+
+      - name: Enviar artefato (conteúdo gerado + relatórios)
+        # Sempre envia (mesmo em modo discover) para poder inspecionar
+        # out/wikidata.json e out/wikipedia-pt.json sem precisar rodar o
+        # pipeline completo.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-content-${{ github.run_number }}
+          path: |
+            tools/atlas-content/out/**
+            tools/atlas-content/work/**
+            frontend/lint-pt-report.txt
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Commitar conteúdo na branch (github-actions[bot])
+        if: steps.params.outputs.mode == 'build' && steps.params.outputs.commit == 'true'
+        run: |
+          set -e
+          mkdir -p "${{ env.DATA_DIR }}/content"
+          cp tools/atlas-content/out/content/index.json "${{ env.DATA_DIR }}/index.json"
+          cp tools/atlas-content/out/content/sid-aliases.json "${{ env.DATA_DIR }}/sid-aliases.json"
+          rm -rf "${{ env.DATA_DIR }}/content"
+          mkdir -p "${{ env.DATA_DIR }}/content"
+          cp tools/atlas-content/out/content/content/*.json "${{ env.DATA_DIR }}/content/"
+          for f in routes processes quiz-cases compounds proteins; do
+            if [ -f "tools/atlas-content/out/content/$f.json" ]; then
+              cp "tools/atlas-content/out/content/$f.json" "${{ env.DATA_DIR }}/$f.json"
+            fi
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${{ env.DATA_DIR }}/index.json" "${{ env.DATA_DIR }}/sid-aliases.json" "${{ env.DATA_DIR }}/content" \
+            "${{ env.DATA_DIR }}/routes.json" "${{ env.DATA_DIR }}/processes.json" "${{ env.DATA_DIR }}/quiz-cases.json" \
+            "${{ env.DATA_DIR }}/compounds.json" "${{ env.DATA_DIR }}/proteins.json" 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Nada para commitar (conteúdo idêntico ao que já estava na branch)."
+          else
+            git commit -m "chore(atlas): atualiza conteúdo PT-BR (Wikidata + Wikipédia + ASCT+B + legado)"
+            git push origin HEAD:${{ github.ref_name }}
+          fi

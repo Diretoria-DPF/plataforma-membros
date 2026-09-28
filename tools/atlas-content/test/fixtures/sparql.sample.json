@@ -1,0 +1,108 @@
+{
+  "head": {
+    "vars": [
+      "qid",
+      "fmaId",
+      "matchType",
+      "matchedLabel",
+      "uberon",
+      "ta2",
+      "mesh",
+      "icd10",
+      "label_pt",
+      "alias_pt",
+      "ptwiki"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q1072" },
+        "fmaId": { "type": "literal", "value": "7088" },
+        "matchType": { "type": "literal", "value": "fma" },
+        "uberon": { "type": "literal", "value": "UBERON:0000948" },
+        "ta2": { "type": "literal", "value": "A12.1.00.001" },
+        "mesh": { "type": "literal", "value": "D006321" },
+        "icd10": { "type": "literal", "value": "I50" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "coração" },
+        "alias_pt": { "type": "literal", "xml:lang": "pt", "value": "coração humano" },
+        "ptwiki": { "type": "uri", "value": "http://pt.wikipedia.org/wiki/Cora%C3%A7ao" }
+      },
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q9368" },
+        "fmaId": { "type": "literal", "value": "7197" },
+        "matchType": { "type": "literal", "value": "fma" },
+        "uberon": { "type": "literal", "value": "UBERON:0002107" },
+        "ta2": { "type": "literal", "value": "A05.8.01.001" },
+        "mesh": { "type": "literal", "value": "D008099" },
+        "icd10": { "type": "literal", "value": "K76" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "fígado" },
+        "alias_pt": { "type": "literal", "xml:lang": "pt", "value": "hepatórgão" },
+        "ptwiki": { "type": "uri", "value": "http://pt.wikipedia.org/wiki/F%C3%ADgado" }
+      },
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q4132275" },
+        "fmaId": { "type": "literal", "value": "7310" },
+        "matchType": { "type": "literal", "value": "fma" },
+        "uberon": { "type": "literal", "value": "UBERON:0002172" },
+        "ta2": { "type": "literal", "value": "A04.3.01.001" },
+        "mesh": { "type": "literal", "value": "D008168" },
+        "icd10": { "type": "literal", "value": "J84" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "pulmão esquerdo" },
+        "alias_pt": { "type": "literal", "xml:lang": "pt", "value": "pulmão" },
+        "ptwiki": { "type": "uri", "value": "http://pt.wikipedia.org/wiki/Pulm%C3%A3o" }
+      },
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q10670" },
+        "fmaId": { "type": "literal", "value": "9611" },
+        "matchType": { "type": "literal", "value": "fma" },
+        "uberon": { "type": "literal", "value": "UBERON:0000981" },
+        "ta2": { "type": "literal", "value": "A02.4.04.001" },
+        "mesh": { "type": "literal", "value": "D005269" },
+        "icd10": { "type": "literal", "value": "M84.3" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "fêmur" },
+        "alias_pt": { "type": "literal", "xml:lang": "pt", "value": "osso da coxa" },
+        "ptwiki": { "type": "uri", "value": "http://pt.wikipedia.org/wiki/F%C3%AAmur" }
+      },
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q10982" },
+        "fmaId": { "type": "literal", "value": "7205" },
+        "matchType": { "type": "literal", "value": "fma" },
+        "uberon": { "type": "literal", "value": "UBERON:0004538" },
+        "ta2": { "type": "literal", "value": "A08.1.01.001" },
+        "mesh": { "type": "literal", "value": "D007668" },
+        "icd10": { "type": "literal", "value": "N28" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "rim esquerdo" },
+        "alias_pt": { "type": "literal", "xml:lang": "pt", "value": "rim" },
+        "ptwiki": { "type": "uri", "value": "http://pt.wikipedia.org/wiki/Rim" }
+      },
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q2338261" },
+        "matchType": { "type": "literal", "value": "label" },
+        "matchedLabel": { "type": "literal", "xml:lang": "en", "value": "Biceps brachii muscle" },
+        "uberon": { "type": "literal", "value": "UBERON:0001536" },
+        "mesh": { "type": "literal", "value": "D017404" },
+        "icd10": { "type": "literal", "value": "M60.98" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "bíceps braquial" }
+      },
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q15739" },
+        "matchType": { "type": "literal", "value": "label" },
+        "matchedLabel": { "type": "literal", "xml:lang": "en", "value": "Vagus nerve" },
+        "uberon": { "type": "literal", "value": "UBERON:0002451" },
+        "mesh": { "type": "literal", "value": "D014630" },
+        "icd10": { "type": "literal", "value": "G52.2" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "nervo vago" }
+      },
+      {
+        "qid": { "type": "uri", "value": "http://www.wikidata.org/entity/Q8688" },
+        "matchType": { "type": "literal", "value": "label" },
+        "matchedLabel": { "type": "literal", "xml:lang": "en", "value": "Aorta" },
+        "uberon": { "type": "literal", "value": "UBERON:0000947" },
+        "mesh": { "type": "literal", "value": "D001011" },
+        "icd10": { "type": "literal", "value": "I70.0" },
+        "label_pt": { "type": "literal", "xml:lang": "pt", "value": "aorta" }
+      }
+    ]
+  }
+}

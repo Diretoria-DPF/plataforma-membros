@@ -199,7 +199,20 @@ async function singleBadgeScenario() {
       tap(frame, '[data-profile-id="22222222-2222-4222-8222-222222222222"] [data-action="badge"]'),
     ]);
     await popup.waitForLoadState('load');
-    await popup.waitForFunction(() => (document.querySelector('#qrCode img') || {}).src, null, { timeout: 5000 }).catch(() => {});
+    // Espera pelo ATRIBUTO `src` (não a propriedade `.src`, que o browser
+    // resolve para a própria URL da página antes do atributo existir —
+    // isso fazia o waitForFunction "passar" cedo demais, antes do script
+    // do crachá terminar de ler window.opener e preencher nome/cargo/QR;
+    // sob carga (suíte inteira) a leitura seguinte via popup.evaluate()
+    // corria à frente disso e o teste falhava de forma intermitente).
+    await popup.waitForFunction(() => {
+      const img = document.querySelector('#qrCode img');
+      return !!img && /^data:image\//.test(img.getAttribute('src') || '');
+    }, null, { timeout: 10000 });
+    await popup.waitForFunction(() => {
+      const nameEl = document.querySelector('.bind-name');
+      return !!nameEl && nameEl.textContent.trim().length > 0;
+    }, null, { timeout: 10000 });
 
     const badgesCall = app.calls.worker.find((c) => c.action === 'apiAdminAttendanceBadges');
     check(!!badgesCall && badgesCall.args[1].profileIds[0] === '22222222-2222-4222-8222-222222222222', 'abrir o crachá individual pede só o perfil clicado');

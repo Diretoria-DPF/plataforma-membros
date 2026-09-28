@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laift.local/atlas/schema/manifest.schema.json",
+  "title": "Manifesto de assets 3D do Atlas Anatômico",
+  "description": "data/atlas/{fixtures/,}manifest.json. Descreve cada GLB gerado pelo pipeline (ou pelas fixtures de teste): tamanho, licença, proveniência e o mapa nó→sid usado para ligar a malha às estruturas do index.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assets"],
+  "properties": {
+    "version": { "type": "string" },
+    "generatedAt": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "assets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/asset" }
+    }
+  },
+  "$defs": {
+    "vec3": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "sid": {
+      "type": "string",
+      "pattern": "^(fma:[0-9]+|za:[a-z0-9]+(-[a-z0-9]+)*)$"
+    },
+    "mat4": {
+      "type": "array",
+      "description": "Matriz 4x4 (linha a linha) que alinha o asset ao referencial do corpo, quando o asset não nasceu já alinhado (ex.: órgão do HRA calculado por ICP).",
+      "items": {
+        "type": "array",
+        "items": { "type": "number" },
+        "minItems": 4,
+        "maxItems": 4
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file", "system", "lod", "sex", "bytes", "triangles", "bbox",
+        "nodeToSid", "license", "attribution", "sourceUrl", "sourceVersion",
+        "transform", "rmsError"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Caminho relativo ao diretório de dados (ex.: \"models/cardiovascular.lod0.glb\"). É o valor usado em index.json em mesh.asset.",
+          "pattern": "^models/.+\\.glb$"
+        },
+        "system": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "lod": {
+          "type": "string",
+          "enum": ["lod0", "lod1"]
+        },
+        "sex": {
+          "type": "string",
+          "description": "M ou F quando o asset é específico de sexo (ex.: sistema reprodutor, órgãos do HRA); U quando é comum aos dois.",
+          "enum": ["M", "F", "U"]
+        },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "triangles": { "type": "integer", "minimum": 0 },
+        "bbox": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min", "max"],
+          "properties": {
+            "min": { "$ref": "#/$defs/vec3" },
+            "max": { "$ref": "#/$defs/vec3" }
+          }
+        },
+        "nodeToSid": {
+          "type": "object",
+          "description": "Mapa nome-do-nó-glTF → sid da estrutura correspondente.",
+          "propertyNames": { "minLength": 1 },
+          "additionalProperties": { "$ref": "#/$defs/sid" }
+        },
+        "license": {
+          "type": "string",
+          "description": "Licença do conteúdo visual deste asset. As reais vêm de Z-Anatomy (CC-BY-SA-4.0) ou HRA (CC-BY-4.0); fixtures de teste (formas geométricas simples, sem base em modelo externo) usam CC0-1.0.",
+          "enum": ["CC-BY-4.0", "CC-BY-SA-4.0", "CC0-1.0"]
+        },
+        "attribution": { "type": "string", "minLength": 1 },
+        "sourceUrl": {
+          "type": ["string", "null"],
+          "pattern": "^(https?://.+)$"
+        },
+        "sourceVersion": { "type": "string" },
+        "transform": {
+          "oneOf": [{ "$ref": "#/$defs/mat4" }, { "type": "null" }]
+        },
+        "rmsError": {
+          "description": "Erro RMS (mm) do alinhamento por ICP, quando `transform` não é null. null quando não se aplica.",
+          "oneOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
+        }
+      }
+    }
+  }
+}

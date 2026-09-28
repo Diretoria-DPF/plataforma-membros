@@ -1,0 +1,45 @@
+{
+  "za:tireoide": {
+    "ids": {
+      "wikidata": "Q9444",
+      "icd10": [
+        "E03.9"
+      ]
+    },
+    "summary_pt": "A tireoide é uma glândula endócrina em forma de borboleta situada na face anterior do pescoço, que produz os hormônios T3 e T4, reguladores do metabolismo.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Tireoide — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Tireoide"
+      }
+    ]
+  },
+  "za:hipofise": {
+    "ids": {
+      "wikidata": "Q170645"
+    },
+    "summary_pt": "A hipófise (pituitária) é uma pequena glândula endócrina ligada ao hipotálamo que regula outras glândulas do corpo por meio de hormônios tróficos.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Hipófise — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Hip%C3%B3fise"
+      }
+    ]
+  }
+}

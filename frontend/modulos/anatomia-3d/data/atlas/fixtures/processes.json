@@ -1,0 +1,82 @@
+[
+  {
+    "id": "ciclo-cardiaco",
+    "system": "cardiovascular",
+    "name_pt": "Ciclo Cardíaco",
+    "description_pt": "Sequência de sístole e diástole que bombeia o sangue pelo coração em cada batimento.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Diástole: os átrios e ventrículos se enchem de sangue com as valvas atrioventriculares abertas.",
+        "anchors": [
+          {
+            "sid": "fma:7088"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Sístole atrial: os átrios se contraem, completando o enchimento ventricular.",
+        "anchors": [
+          {
+            "sid": "fma:7088",
+            "t": 0.2
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Sístole ventricular: os ventrículos se contraem, ejetando o sangue para a aorta e para as artérias pulmonares.",
+        "anchors": [
+          {
+            "sid": "fma:7088",
+            "t": 0.6
+          },
+          {
+            "sid": "za:aorta",
+            "t": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "filtracao-glomerular",
+    "system": "urinario",
+    "name_pt": "Filtração Glomerular",
+    "description_pt": "Processo pelo qual os rins filtram o plasma sanguíneo para formar o filtrado inicial da urina.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "O sangue chega ao rim pela artéria renal e alcança os capilares glomerulares.",
+        "anchors": [
+          {
+            "sid": "fma:7204"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "A pressão hidrostática empurra água, íons e pequenas moléculas para a cápsula de Bowman, formando o filtrado.",
+        "anchors": [
+          {
+            "sid": "fma:7204",
+            "t": 0.5
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "O filtrado segue pelos túbulos renais até o ureter, em direção à vesícula urinária.",
+        "anchors": [
+          {
+            "sid": "za:ureter-direito"
+          },
+          {
+            "sid": "za:vesicula-urinaria"
+          }
+        ]
+      }
+    ]
+  }
+]

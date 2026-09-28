@@ -1,0 +1,11 @@
+[
+  { "key": "heart-male", "labelMatch": "heart", "sex": "male", "system": "cardiovascular", "layer": "visceras" },
+  { "key": "heart-female", "labelMatch": "heart", "sex": "female", "system": "cardiovascular", "layer": "visceras" },
+  { "key": "liver-male", "labelMatch": "liver", "sex": "male", "system": "digestorio", "layer": "visceras" },
+  { "key": "liver-female", "labelMatch": "liver", "sex": "female", "system": "digestorio", "layer": "visceras" },
+  { "key": "kidney-left-female", "labelMatch": "kidney", "sex": "female", "system": "urinario", "layer": "visceras" },
+  { "key": "pancreas-female", "labelMatch": "pancreas", "sex": "female", "system": "digestorio", "layer": "visceras" },
+  { "key": "brain-female", "labelMatch": "brain", "sex": "female", "system": "nervoso", "layer": "nervos" },
+  { "key": "lung-female", "labelMatch": "lung", "sex": "female", "system": "respiratorio", "layer": "visceras" },
+  { "key": "skin-female", "labelMatch": "skin", "sex": "female", "system": "tegumentar", "layer": "pele" }
+]

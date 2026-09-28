@@ -1,0 +1,162 @@
+{
+  "za:medial-meniscus-r": {
+    "ids": {
+      "wikidata": "Q6806071",
+      "fma": "44620",
+      "ta2": "A03.6.08.005"
+    },
+    "summary_pt": "O menisco medial é o menisco da porção mais interna do joelho. Insere-se de forma firme à cápsula articular, bem como ao Ligamento colateral medial, ligamentos cruzados anterior e posterior e ao músculo semimembranáceo.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Menisco_medial"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:oblique-popliteal-ligament-r": {
+    "ids": {
+      "wikidata": "Q7075178",
+      "fma": "44582",
+      "ta2": "A03.6.08.013"
+    },
+    "summary_pt": "O ligamento poplíteo oblíquo (LPO) é um ligamento no joelho, que se aprenta como uma das cinco inserções do músculo semimembranoso e é responsável por evitar, em grande parte, a hiperextensão dos joelhos.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Ligamento_popl%C3%ADteo_obl%C3%ADquo"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:sphenomandibular-ligament-r": {
+    "ids": {
+      "wikidata": "Q7576652",
+      "fma": "57077",
+      "ta2": "A03.1.07.007"
+    },
+    "summary_pt": "Ligamento esfenomandibular (ligamento lateral interno) é um dos três ligamentos da articulação temporomandibular. Ele está localizado medialmente e, em geral, separado da cápsula articular da articulação. Em sua extremidade superior, conecta-se à espinha do osso esfenoide [en]; na extremidade inferior, fixa-se à língula da mandíbula. O ligamento esfenomandibular atua limitando o movimento inferior da mandíbula.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Ligamento_esfenomandibular"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:articulacoes-cartilagineas": {
+    "ids": {
+      "wikidata": "Q9270328",
+      "mesh": "D013580",
+      "icd10": [
+        "M51",
+        "M51.3"
+      ]
+    },
+    "summary_pt": "Junções semimóveis com cartilagem hialina (sincondrose) ou fibrocartilagem (sínfise). Função: Estabilidade com leve mobilidade",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Hérnia de disco",
+      "Discopatia degenerativa"
+    ]
+  },
+  "za:articulacoes-fibrosas": {
+    "ids": {
+      "wikidata": "Q1430266",
+      "mesh": "D013580",
+      "icd10": [
+        "Q75.0",
+        "S93.4"
+      ]
+    },
+    "summary_pt": "Junções quase imóveis com tecido fibroso (suturas cranianas, sindesmoses, gonfoses). Função: Estabilidade rígida",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Craniossinostose",
+      "Entorse de tornozelo"
+    ]
+  },
+  "za:articulacoes-sinoviais": {
+    "ids": {
+      "wikidata": "Q512942",
+      "mesh": "D013580",
+      "icd10": [
+        "M15-M19",
+        "M05-M06",
+        "S83.2",
+        "S43.0"
+      ]
+    },
+    "summary_pt": "Junções móveis com cavidade articular, cápsula e líquido sinovial (ombro, quadril, joelho, cotovelo). Função: Movimento amplo",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Osteoartrite",
+      "Artrite reumatoide",
+      "Lesão de menisco",
+      "Luxação de ombro"
+    ]
+  }
+}

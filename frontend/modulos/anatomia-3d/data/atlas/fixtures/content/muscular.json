@@ -1,0 +1,62 @@
+{
+  "za:biceps-braquial-direito": {
+    "ids": {
+      "wikidata": "Q473153"
+    },
+    "summary_pt": "O bíceps braquial é o músculo flexor do cotovelo e supinador do antebraço, com duas cabeças (curta e longa) que se originam na escápula.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Bíceps braquial — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/B%C3%ADceps_braquial"
+      }
+    ]
+  },
+  "za:quadriceps-femoral-direito": {
+    "ids": {
+      "wikidata": "Q1130447"
+    },
+    "summary_pt": "O quadríceps femoral é o principal extensor do joelho, formado por quatro ventres musculares (reto femoral e vastos medial, lateral e intermédio).",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Quadríceps femoral — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Quadr%C3%ADceps_femoral"
+      }
+    ]
+  },
+  "za:trapezio": {
+    "ids": {
+      "wikidata": "Q1130422"
+    },
+    "summary_pt": "O trapézio é um músculo largo e plano do dorso que eleva, retrai e roda a escápula, além de estender a cabeça e o pescoço.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Trapézio (músculo) — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Trap%C3%A9zio_(m%C3%BAsculo)"
+      }
+    ]
+  }
+}

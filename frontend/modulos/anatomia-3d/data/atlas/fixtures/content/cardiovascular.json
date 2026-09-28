@@ -1,0 +1,160 @@
+{
+  "fma:7088": {
+    "ids": {
+      "fma": "7088",
+      "uberon": "UBERON:0000948",
+      "wikidata": "Q1073",
+      "icd10": [
+        "I51.9"
+      ]
+    },
+    "summary_pt": "O coração é um órgão muscular oco que bombeia o sangue por todo o corpo através de contrações rítmicas, dividido em quatro câmaras: dois átrios e dois ventrículos.",
+    "anatomy": {
+      "relations": "Fica no mediastino médio, entre os dois pulmões, envolto pelo pericárdio; sua base volta-se posterossuperiormente e o ápice, ínfero-esquerdamente.",
+      "vascularization": "Irrigado pelas aa. coronárias direita e esquerda, ramos da aorta ascendente; drenado principalmente pelo seio coronário para o átrio direito.",
+      "innervation": "Inervado pelo plexo cardíaco (fibras simpáticas de T1-T4 e parassimpáticas do nervo vago), que regula a frequência e a força de contração.",
+      "lymph": "A drenagem linfática segue os vasos coronários até os linfonodos traqueobronquiais e mediastinais."
+    },
+    "histology": {
+      "epithelium": "Endocárdio: endotélio simples pavimentoso sobre tecido conjuntivo subendotelial.",
+      "tissues": [
+        "Miocárdio (músculo cardíaco estriado)",
+        "Endocárdio",
+        "Pericárdio seroso"
+      ],
+      "cells": [
+        {
+          "cl": "CL:0000746",
+          "name_pt": "Cardiomiócito",
+          "biomarkers": [
+            "TNNT2",
+            "MYH6",
+            "ACTN2"
+          ]
+        },
+        {
+          "cl": "CL:1000355",
+          "name_pt": "Célula do nó sinoatrial",
+          "biomarkers": [
+            "HCN4",
+            "SHOX2"
+          ]
+        }
+      ]
+    },
+    "clinical": [
+      "O infarto agudo do miocárdio resulta da oclusão de uma artéria coronária, levando à necrose do tecido muscular irrigado por ela.",
+      "A insuficiência cardíaca ocorre quando o coração perde a capacidade de bombear sangue suficiente para as necessidades do corpo."
+    ],
+    "review": {
+      "status": "legacy-unverified",
+      "by": "migracao-bio-database",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Coração — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Cora%C3%A7%C3%A3o"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de tórax",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "wikidata",
+        "ref": "Q1073 (Wikidata)",
+        "license": "CC0-1.0",
+        "url": "https://www.wikidata.org/wiki/Q1073"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de tórax",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de tórax",
+        "license": "proprietary",
+        "url": null
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Heart",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Heart",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B — Heart",
+        "license": "CC-BY-4.0",
+        "url": "https://humanatlas.io/asctb-reporter"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de tórax",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  },
+  "za:aorta": {
+    "ids": {
+      "wikidata": "Q80993"
+    },
+    "summary_pt": "A aorta é a maior artéria do corpo, que leva sangue oxigenado do ventrículo esquerdo para todo o corpo através de seus ramos.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Aorta — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Aorta"
+      }
+    ]
+  },
+  "za:arteria-carotida-comum-direita": {
+    "ids": {
+      "wikidata": "Q1066880"
+    },
+    "summary_pt": "A artéria carótida comum leva sangue à cabeça e ao pescoço, dividindo-se nas carótidas interna e externa próximo à cartilagem tireóidea.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Artéria carótida comum — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Art%C3%A9ria_car%C3%B3tida_comum"
+      }
+    ]
+  }
+}

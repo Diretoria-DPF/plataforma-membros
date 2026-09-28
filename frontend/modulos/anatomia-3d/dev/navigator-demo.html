@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Navigator Demo</title>
+  <link rel="stylesheet" href="../../shared/laift-tokens.css">
+  <link rel="stylesheet" href="../css/tokens-atlas.css">
+  <link rel="stylesheet" href="../css/navigator.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--laift-bg);
+      color: var(--laift-text);
+      overflow: hidden;
+    }
+
+    #demo-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #demo-header {
+      flex-shrink: 0;
+      padding: 12px 16px;
+      background: var(--laift-surface);
+      border-bottom: 1px solid var(--laift-border);
+      font-size: 13px;
+      color: var(--laift-muted);
+    }
+
+    #navigator-mount {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    #demo-log {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #0f0;
+      font-family: monospace;
+      font-size: 11px;
+      overflow-y: auto;
+      padding: 8px;
+      z-index: 9999;
+    }
+
+    .log-line {
+      margin: 0;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div id="demo-container">
+    <div id="demo-header">
+      Navigator Demo (390×844) — Carregando...
+    </div>
+    <div id="navigator-mount"></div>
+  </div>
+  <div id="demo-log"></div>
+
+  <script src="../../shared/safe-dom.js"></script>
+  <script type="module" src="navigator-demo.js"></script>
+</body>
+</html>

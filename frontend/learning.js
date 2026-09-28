@@ -236,7 +236,15 @@
     activeModuleId = id;
     openerCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.learn-card') : null;
     if (!frames[id]) frames[id] = createFrame($('learn-frames'), mod.path, mod.title);
-    Object.keys(frames).forEach(function (key) { frames[key].classList.toggle('hidden', key !== id); });
+    Object.keys(frames).forEach(function (key) {
+      frames[key].classList.toggle('hidden', key !== id);
+      // Modo imersivo (Onda 1, WP08 — docs/ATLAS_UX_SPEC.md §0/§1): só o
+      // Atlas de Anatomia usa quase toda a altura útil (frontend/styles.css
+      // .learn-frame-immersive); os demais módulos continuam com a altura
+      // padrão calc(100dvh - ...px). Nunca fica em mais de um iframe por
+      // vez, e sai de qualquer outro ao trocar de módulo.
+      frames[key].classList.toggle('learn-frame-immersive', key === 'anatomia' && key === id);
+    });
     $('learn-viewer-title').textContent = mod.icon + ' ' + mod.title;
     $('learn-hub').classList.add('hidden');
     $('learn-viewer').classList.remove('hidden');
@@ -249,6 +257,7 @@
   /** Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). */
   function closeModule() {
     if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
+    if (activeModuleId && frames[activeModuleId]) frames[activeModuleId].classList.remove('learn-frame-immersive');
     activeModuleId = null;
     $('learn-viewer').classList.add('hidden');
     $('learn-hub').classList.remove('hidden');

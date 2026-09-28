@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laift.local/atlas/schema/quiz-cases.schema.json",
+  "title": "Casos clínicos de quiz do Atlas Anatômico",
+  "description": "data/atlas/quiz-cases.json. Cada caso pede que o usuário toque a estrutura certa no corpo 3D (correctSid); distractorSids são estruturas erradas plausíveis, e anchors são âncoras opcionais sobre o corpo (com t opcional) para destacar a região do caso. Consumido pelo modo Quiz (mesmo payload de apiLearnSubmitQuizAttempt).",
+  "type": "array",
+  "items": { "$ref": "#/$defs/quizCase" },
+  "$defs": {
+    "sid": {
+      "type": "string",
+      "pattern": "^(fma:[0-9]+|za:[a-z0-9]+(-[a-z0-9]+)*)$"
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sid"],
+      "properties": {
+        "sid": { "$ref": "#/$defs/sid" },
+        "t": { "type": "number", "minimum": 0, "maximum": 1 },
+        "label_pt": { "type": "string", "minLength": 1 }
+      }
+    },
+    "quizCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "system", "prompt_pt", "correctSid"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" },
+        "system": { "type": "string" },
+        "prompt_pt": { "type": "string", "minLength": 1 },
+        "difficulty": { "type": "string", "enum": ["facil", "medio", "dificil"] },
+        "correctSid": { "$ref": "#/$defs/sid" },
+        "distractorSids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sid" },
+          "uniqueItems": true
+        },
+        "anchors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/anchor" }
+        }
+      }
+    }
+  }
+}

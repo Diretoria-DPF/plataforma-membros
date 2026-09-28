@@ -1,0 +1,599 @@
+[
+  {
+    "id": "ciclo-cardiaco",
+    "system": "cardiovascular",
+    "name_pt": "Ciclo Eletromecânico Cardíaco",
+    "description_pt": "Sequência periódica de despolarização elétrica e sístole/diástole ventricular.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Despolarização nodal sinoatrial (onda P do ECG) gerando contração atrial final.",
+        "anchors": [
+          {
+            "sid": "za:atria-to-ventricle"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Despolarização via feixe de His e Purkinje (complexo QRS). Fechamento das valvas AV (B1).",
+        "anchors": [
+          {
+            "sid": "za:ventricle-pressurize"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Abertura das valvas aórtica e pulmonar com ejeção rápida do volume sistólico (~70 mL).",
+        "anchors": [
+          {
+            "sid": "za:aorta-flow"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ciclo-menstrual",
+    "system": "reprodutor",
+    "name_pt": "Ciclo Menstrual (28 dias típico)",
+    "description_pt": "Ciclo ovariano + endometrial regulado por FSH, LH, estrogênio e progesterona.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Descamação do endométrio funcional por queda de progesterona.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "FSH estimula folículos; estrogênio crescente prolifera o endométrio.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Pico de LH induz ruptura folicular e liberação do oócito.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Corpo lúteo secreta progesterona; endométrio torna-se secretor.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "coagulacao-sanguinea",
+    "system": "cardiovascular",
+    "name_pt": "Cascata de Coagulação Sanguínea",
+    "description_pt": "Conversão de fibrinogênio em fibrina estável para hemostasia.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Vasoconstrição reflexa e adesão plaquetária ao colágeno subendotelial (via vWF).",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Fator tecidual exposto ativa VII → VIIa → X → Xa.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Contato com superfície ativa XII → XI → IX → X.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Xa converte protrombina em trombina; trombina converte fibrinogênio em fibrina.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Plasminogênio → plasmina → degrada fibrina (produtos D-dímero).",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "conducao-impulso-cardiaco",
+    "system": "cardiovascular",
+    "name_pt": "Condução do Impulso Cardíaco",
+    "description_pt": "Propagação ordenada do potencial de ação pelo sistema de condução cardíaco.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Marcapasso primário (60-100 bpm). Gera impulso espontaneamente (automatismo).",
+        "anchors": [
+          {
+            "sid": "za:sa-node"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Difusão pelos átrios via feixes internodais.",
+        "anchors": [
+          {
+            "sid": "za:atrial-spread"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Retardo fisiológico (~100 ms) para permitir enchimento ventricular.",
+        "anchors": [
+          {
+            "sid": "za:av-node"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Condução rápida pelo septo interventricular.",
+        "anchors": [
+          {
+            "sid": "za:his-bundle"
+          }
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Condução para o miocárdio ventricular (despolarização de baixo para cima).",
+        "anchors": [
+          {
+            "sid": "za:purkinje"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "contracao-muscular",
+    "system": "muscular",
+    "name_pt": "Contração Muscular Esquelética",
+    "description_pt": "Ciclo de pontes cruzadas actina-miosina dependente de ATP e Ca²⁺.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "PA no túbulo T ativa receptor DHPR, abrindo rianodina (RyR1) e liberando Ca²⁺ citosólico.",
+        "anchors": [
+          {
+            "sid": "za:calcium-release"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Ca²⁺ liga-se à troponina C, deslocando tropomiosina e expondo sítios de ligação.",
+        "anchors": [
+          {
+            "sid": "za:troponin-binding"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Miosina hidrolisa ATP, liga-se à actina, sofre power stroke e desliza.",
+        "anchors": [
+          {
+            "sid": "za:crossbridge-cycle"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "SERCA bombeia Ca²⁺ de volta ao RS, com consequente relaxamento.",
+        "anchors": [
+          {
+            "sid": "za:serca-uptake"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "degluticao-humana",
+    "system": "digestorio",
+    "name_pt": "Fisiologia da Deglutição Humana",
+    "description_pt": "Sequência neuromuscular reflexa coordenada dividida em estágios oral, faríngeo e esofágico.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Mastigação coordenada, insalivação rica em ptialina e compactação do bolo. A língua eleva-se contra o palato duro, projetando o bolo para o istmo das fauces.",
+        "anchors": [
+          {
+            "sid": "za:oral-cavity"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Oclusão de segurança das vias aéreas: palato mole veda nasofaringe; laringe eleva-se e epiglote fecha a fenda glótica. Apneia reflexa bulbar.",
+        "anchors": [
+          {
+            "sid": "za:pharynx-transit"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Relaxamento do Esfíncter Esofágico Superior. Plexo mioentérico de Auerbach propaga ondas peristálticas primárias a 3-4 cm/s.",
+        "anchors": [
+          {
+            "sid": "za:esophagus-wave"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Liberação de NO e VIP, relaxando o EEI e permitindo a entrada gástrica do quimo.",
+        "anchors": [
+          {
+            "sid": "za:stomach-entry"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "eixo-hpa",
+    "system": "endocrino",
+    "name_pt": "Eixo Hipotálamo-Hipófise-Adrenal",
+    "description_pt": "Eixo neuroendócrino de resposta ao estresse.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Estresse → hipotálamo secreta CRH no sistema porta hipofisário.",
+        "anchors": [
+          {
+            "sid": "za:eixo-hpa"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "CRH estimula corticotrofos → secreção de ACTH.",
+        "anchors": [
+          {
+            "sid": "za:eixo-hpa"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "ACTH estimula zona fasciculada → cortisol (gliconeogênese, anti-inflamação).",
+        "anchors": [
+          {
+            "sid": "za:eixo-hpa"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Cortisol inibe CRH e ACTH (feedback negativo).",
+        "anchors": [
+          {
+            "sid": "za:eixo-hpa"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "espermatogenese",
+    "system": "reprodutor",
+    "name_pt": "Espermatogênese",
+    "description_pt": "Produção contínua de espermatozoides nos túbulos seminíferos (74 dias).",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Espermatogônias tipo A (renovação) e tipo B (diferenciação) proliferam por mitose.",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Divisão reducional: 1 espermatócito primário (2n) → 2 secundários (n).",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Divisão equacional: 2 secundários → 4 espermátides (n).",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Diferenciação final: formação do acrossomo, flagelo e condensação nuclear.",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "filtracao-glomerular",
+    "system": "urinario",
+    "name_pt": "Filtração Glomerular & Dinâmica Tubular",
+    "description_pt": "Ultrafiltração por pressão hidrostática através da barreira capilar-podocitária renal.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Plasma atravessa endotélio fenestrado e fendas de filtração sob pressão líquida efetiva.",
+        "anchors": [
+          {
+            "sid": "za:glomerular-filter"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Recuperação ativa de Na, água e glicose total (via SGLT2).",
+        "anchors": [
+          {
+            "sid": "za:tubular-reabsorption"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hematose-alveolar",
+    "system": "respiratorio",
+    "name_pt": "Hematose Alvéolo-Capilar",
+    "description_pt": "Troca gasosa O₂/CO₂ através da membrana alvéolo-capilar.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Renovação do ar alveolar (~350 mL/ciclo) mantendo PO₂ 104 mmHg / PCO₂ 40 mmHg.",
+        "anchors": [
+          {
+            "sid": "za:ventilation"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Gradiente alvéolo(104)→capilar(40)→arterial(100). Equilíbrio em 0.25s.",
+        "anchors": [
+          {
+            "sid": "za:o2-diffusion"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Gradiente capilar(45)→alvéolo(40). CO₂ difunde 20× mais rápido que O₂.",
+        "anchors": [
+          {
+            "sid": "za:co2-diffusion"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "peristaltismo-intestinal",
+    "system": "digestorio",
+    "name_pt": "Motilidade e Peristaltismo Enteral",
+    "description_pt": "Propulsão e mistura do quimo coordenadas pelos plexos mioentéricos entéricos.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Estiramento ativa interneurônios colinérgicos com liberação de ACh antes do bolo.",
+        "anchors": [
+          {
+            "sid": "za:quimo-propulsion"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Liberação inibitória de NO adiante do bolo, relaxando o lúmen.",
+        "anchors": [
+          {
+            "sid": "za:quimo-advance"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "reflexo-miotatico",
+    "system": "nervoso",
+    "name_pt": "Reflexo Miotático (De Estiramento)",
+    "description_pt": "Arco reflexo monossináptico de ajuste postural.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Alongamento ativa mecanorreceptores do fuso (fibras Ia).",
+        "anchors": [
+          {
+            "sid": "za:reflexo-miotatico"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Aferência entra no corno posterior e ativa motoneurônio alfa.",
+        "anchors": [
+          {
+            "sid": "za:reflexo-miotatico"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Contração do músculo estirado via placa motora; inibição recíproca do antagonista.",
+        "anchors": [
+          {
+            "sid": "za:reflexo-miotatico"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resposta-imune-adaptativa",
+    "system": "imunologico",
+    "name_pt": "Resposta Imune Adaptativa Humoral",
+    "description_pt": "Ativação de linfócitos B e produção de anticorpos específicos.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Células dendríticas apresentam antígeno via MHC-II a linfócitos T CD4+.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "T CD4+ ativa-se e secreta citocinas (IL-2, IL-4, IL-21).",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Célula B capta antígeno, processa e recebe ajuda do T helper.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Diferenciação em plasmócitos → secreção de IgM → IgG (troca de classe).",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resposta-inflamatoria",
+    "system": "imunologico",
+    "name_pt": "Resposta Inflamatória Aguda",
+    "description_pt": "Sequência vascular e celular desencadeada por lesão ou infecção.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Histamina e NO causam vasodilatação; edema por aumento de permeabilidade.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Selectinas medeiam rolamento; integrinas medeiam adesão firme.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Neutrófilos atravessam o endotélio por junções e chegam ao tecido.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Neutrófilos e macrófagos fagocitam patógenos via ROS e enzimas lisossomais.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sinapse-colinergica",
+    "system": "nervoso",
+    "name_pt": "Transmissão Sináptica Colinérgica",
+    "description_pt": "Neurotransmissão química na fenda sináptica e hidrólise de ACh por AChE.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "PA pré-sináptico abre canais Cav2.1 com exocitose de vesículas de ACh.",
+        "anchors": [
+          {
+            "sid": "za:synapse-calcium"
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Ativação de receptores nicotínicos/muscarínicos e clivagem rápida de ACh por AChE.",
+        "anchors": [
+          {
+            "sid": "za:synapse-ache-cleave"
+          }
+        ]
+      }
+    ]
+  }
+]

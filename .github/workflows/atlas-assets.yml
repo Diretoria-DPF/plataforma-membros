@@ -1,0 +1,244 @@
+# WP10 — Pipeline de assets 3D do Atlas Anatômico.
+#
+# Roda no GitHub Actions (internet livre) porque a sandbox de
+# desenvolvimento só alcança o registro do npm — ver
+# tools/atlas-pipeline/SOURCES.md para como cada fonte foi confirmada.
+#
+# Dois jeitos de disparar:
+#   - workflow_dispatch: só funciona depois que este arquivo estiver na
+#     branch padrão do repositório (limitação do GitHub). Até lá, a
+#     iteração é por `push` — mudando tools/atlas-pipeline/run-config.json
+#     (o que rodar) e empurrando um commit.
+#   - push, quando o commit toca tools/atlas-pipeline/** ou este próprio
+#     arquivo: lê run-config.json para saber o que fazer. Por padrão,
+#     run-config.json fica em "mode": "discover" (só confere as fontes e
+#     lista as coleções do Startup.blend — nenhuma exportação completa,
+#     nenhum commit) até a Fase A (nomes reais das coleções) ser
+#     confirmada e o arquivo, atualizado.
+#
+# O commit automático (quando `commit: true`) só toca
+# frontend/modulos/anatomia-3d/models/** e
+# frontend/modulos/anatomia-3d/data/atlas/generated/structures.json — fora
+# dos `paths` do gatilho de push abaixo, então não dispara o workflow de
+# novo.
+
+name: Atlas 3D Assets Pipeline (WP10)
+
+on:
+  workflow_dispatch:
+    inputs:
+      systems:
+        description: 'Sistemas a exportar (lista separada por vírgula, ou "all")'
+        required: false
+        default: 'all'
+        type: string
+      hra:
+        description: 'Também baixar os órgãos de referência do HRA'
+        required: false
+        default: true
+        type: boolean
+      commit:
+        description: 'Commitar os assets gerados na branch, como github-actions[bot]'
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches:
+      - claude/optimistic-babbage-3pm2em
+    paths:
+      - 'tools/atlas-pipeline/**'
+      - '.github/workflows/atlas-assets.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas-assets-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/atlas-pipeline
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: npm ci
+        run: npm ci
+
+      - name: Determinar parâmetros da execução
+        id: params
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=export" >> "$GITHUB_OUTPUT"
+            echo "systems=${{ github.event.inputs.systems }}" >> "$GITHUB_OUTPUT"
+            echo "hra=${{ github.event.inputs.hra }}" >> "$GITHUB_OUTPUT"
+            echo "commit=${{ github.event.inputs.commit }}" >> "$GITHUB_OUTPUT"
+          else
+            node read-run-config.mjs >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Discover (metadados das fontes — Z-Anatomy, HRA, Blender)
+        run: node discover.mjs --out out/discovery.json
+
+      - name: Ler valores do discovery (sha do Z-Anatomy, versão do Blender)
+        id: discovery
+        run: node read-discovery.mjs --in out/discovery.json >> "$GITHUB_OUTPUT"
+
+      - name: Resumo desta execução
+        run: |
+          {
+            echo "### WP10 — parâmetros desta execução"
+            echo "- modo: \`${{ steps.params.outputs.mode }}\`"
+            echo "- sistemas: \`${{ steps.params.outputs.systems }}\`"
+            echo "- hra: \`${{ steps.params.outputs.hra }}\`"
+            echo "- commit: \`${{ steps.params.outputs.commit }}\`"
+            echo "- Z-Anatomy ref: \`${{ steps.discovery.outputs.zanatomy_ref }}\`"
+            echo "- Blender: \`${{ steps.discovery.outputs.blender_version }}\` / \`${{ steps.discovery.outputs.blender_tarball }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Dependências do Blender headless (libs X11/GL do runner)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxrender1 libxxf86vm1 libxfixes3 libgl1 libxkbcommon0
+
+      - name: Cache do Blender
+        id: cache-blender
+        uses: actions/cache@v4
+        with:
+          path: tools/atlas-pipeline/work/blender
+          key: blender-${{ steps.discovery.outputs.blender_version }}-${{ steps.discovery.outputs.blender_tarball }}
+
+      - name: Baixar e extrair o Blender
+        if: steps.cache-blender.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p work/blender
+          curl -sSL "${{ steps.discovery.outputs.blender_url }}" -o work/blender.tar.xz
+          tar -xJf work/blender.tar.xz -C work/blender --strip-components=1
+          rm work/blender.tar.xz
+
+      - name: Cache do Z-Anatomy.zip
+        id: cache-zanatomy
+        uses: actions/cache@v4
+        with:
+          path: tools/atlas-pipeline/work/raw/Z-Anatomy.zip
+          key: zanatomy-${{ steps.discovery.outputs.zanatomy_ref }}
+
+      - name: Baixar Z-Anatomy e extrair Startup.blend
+        run: |
+          mkdir -p work/raw
+          node fetch.mjs zanatomy --ref "${{ steps.discovery.outputs.zanatomy_ref }}" --out work/raw
+
+      - name: Listar coleções de primeiro nível do Startup.blend (Fase A)
+        run: |
+          mkdir -p out
+          work/blender/blender -b work/raw/Z-Anatomy/Startup.blend --python export_systems.py -- --list-collections \
+            | tee out/collections.txt
+          {
+            echo "### Coleções de primeiro nível (Startup.blend)"
+            echo '```'
+            cat out/collections.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Exportar sistemas do Z-Anatomy (Blender headless)
+        if: steps.params.outputs.mode == 'export'
+        run: |
+          MAP_ARGS=""
+          if [ -f systems-map.json ]; then MAP_ARGS="--systems-map systems-map.json"; fi
+          SYS_ARGS=""
+          if [ "${{ steps.params.outputs.systems }}" != "all" ]; then SYS_ARGS="--systems ${{ steps.params.outputs.systems }}"; fi
+          work/blender/blender -b work/raw/Z-Anatomy/Startup.blend --python export_systems.py -- \
+            --out-dir work/raw/export $MAP_ARGS $SYS_ARGS
+
+      - name: Otimizar GLBs do Z-Anatomy (LOD0/LOD1, meshopt)
+        if: steps.params.outputs.mode == 'export'
+        run: node optimize.mjs --in work/raw/export --out work/models/zanatomy
+
+      - name: Baixar órgãos do HRA
+        if: steps.params.outputs.mode == 'export' && steps.params.outputs.hra == 'true'
+        run: node fetch.mjs hra --list hra-organs.json --out work/hra-raw
+
+      - name: Otimizar GLBs do HRA
+        if: steps.params.outputs.mode == 'export' && steps.params.outputs.hra == 'true'
+        # --budget-category hra: o nome do arquivo é a chave do órgão (ex.:
+        # "heart-male"), não um id de sistema — todos usam a categoria "hra"
+        # de budgets.json. Retomada 27/09 (pedido do orquestrador): o HRA
+        # agora também gera LOD1 (antes só lod0, com --no-lod1) — lung-female
+        # e skin-female estavam acima do orçamento mesmo no LOD0, então
+        # passam a ter uma versão mais leve para uso à distância/no celular,
+        # como os sistemas do Z-Anatomy. build-manifest.mjs/make-config.mjs
+        # já sabem incluir o lod1 do órgão quando o arquivo existir.
+        run: node optimize.mjs --in work/hra-raw --out work/models/hra --budget-category hra
+
+      - name: Gerar manifest.config.json a partir do que foi baixado/exportado
+        if: steps.params.outputs.mode == 'export'
+        run: |
+          MAP_ARGS=""
+          if [ -f systems-map.json ]; then MAP_ARGS="--systems-map systems-map.json"; fi
+          HRA_ARGS=""
+          if [ "${{ steps.params.outputs.hra }}" = "true" ]; then
+            HRA_ARGS="--hra-dir work/models/hra --hra-resolved work/hra-raw/hra-resolved.json --hra-wanted hra-organs.json"
+          fi
+          node make-config.mjs --zanatomy-dir work/models/zanatomy --zanatomy-ref "${{ steps.discovery.outputs.zanatomy_ref }}" \
+            $MAP_ARGS $HRA_ARGS --out work/manifest.config.generated.json
+
+      - name: Construir manifest.json e structures.json
+        if: steps.params.outputs.mode == 'export'
+        run: |
+          node build-manifest.mjs --config work/manifest.config.generated.json --models-dir work/models \
+            --out-structures out/structures.json --out-report out/manifest-report.json \
+            --version "${{ steps.discovery.outputs.zanatomy_ref }}"
+
+      - name: Escrever licenças e atribuição
+        if: steps.params.outputs.mode == 'export'
+        run: |
+          node write-licenses.mjs --manifest work/models/manifest.json \
+            --zanatomy-license-file work/raw/License.txt --out-dir work/models/LICENSES
+
+      - name: Validar (esquema do WP02 + orçamento + nós + licenças)
+        if: steps.params.outputs.mode == 'export'
+        run: |
+          node validate.mjs --manifest work/models/manifest.json \
+            --schema ../../frontend/modulos/anatomia-3d/data/atlas/schema/manifest.schema.json \
+            --budgets ../../frontend/modulos/anatomia-3d/data/atlas/schema/budgets.json \
+            --licenses-dir work/models/LICENSES \
+            --structures out/structures.json
+
+      - name: Enviar artefato (manifesto, GLBs, relatórios, log do discover)
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-assets-${{ github.run_number }}
+          path: |
+            tools/atlas-pipeline/out/**
+            tools/atlas-pipeline/work/models/**
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Commitar assets na branch (github-actions[bot])
+        if: steps.params.outputs.mode == 'export' && steps.params.outputs.commit == 'true'
+        working-directory: .
+        run: |
+          set -e
+          mkdir -p frontend/modulos/anatomia-3d/models frontend/modulos/anatomia-3d/data/atlas/generated
+          rm -rf frontend/modulos/anatomia-3d/models/zanatomy frontend/modulos/anatomia-3d/models/hra frontend/modulos/anatomia-3d/models/LICENSES
+          [ -d tools/atlas-pipeline/work/models/zanatomy ] && cp -r tools/atlas-pipeline/work/models/zanatomy frontend/modulos/anatomia-3d/models/zanatomy
+          [ -d tools/atlas-pipeline/work/models/hra ] && cp -r tools/atlas-pipeline/work/models/hra frontend/modulos/anatomia-3d/models/hra
+          cp -r tools/atlas-pipeline/work/models/LICENSES frontend/modulos/anatomia-3d/models/LICENSES
+          cp tools/atlas-pipeline/work/models/manifest.json frontend/modulos/anatomia-3d/models/manifest.json
+          cp tools/atlas-pipeline/out/structures.json frontend/modulos/anatomia-3d/data/atlas/generated/structures.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/modulos/anatomia-3d/models frontend/modulos/anatomia-3d/data/atlas/generated/structures.json
+          if git diff --cached --quiet; then
+            echo "Nada para commitar (assets idênticos ao que já estava na branch)."
+          else
+            git commit -m "chore(atlas): atualiza assets 3D (WP10) — sistemas: ${{ steps.params.outputs.systems }}"
+            git push origin HEAD:${{ github.ref_name }}
+          fi

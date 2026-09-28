@@ -1,0 +1,37 @@
+{
+  "_comentario": "Modelo de manifest.config.json usado por build-manifest.mjs. O workflow gera a versão real em tempo de execução (fetch.mjs escreve as URLs/versões descobertas em discover.sh). Este arquivo serve de referência e de fixture de teste.",
+  "budget": { "totalMB": 45 },
+  "systems": {
+    "esqueletico": {
+      "layer": "esqueleto",
+      "lod0": "zanatomy/esqueletico.glb",
+      "lod1": "zanatomy/esqueletico.lod1.glb",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "Z-Anatomy (https://github.com/Z-Anatomy), CC BY-SA 4.0",
+      "sourceUrl": "https://github.com/Z-Anatomy/The-blend",
+      "sourceVersion": "TODO: preencher com a tag/commit usado (ver SOURCES.md)"
+    },
+    "cardiovascular": {
+      "layer": "vasos",
+      "lod0": "zanatomy/cardiovascular.glb",
+      "lod1": "zanatomy/cardiovascular.lod1.glb",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "Z-Anatomy (https://github.com/Z-Anatomy), CC BY-SA 4.0",
+      "sourceUrl": "https://github.com/Z-Anatomy/The-blend",
+      "sourceVersion": "TODO: preencher com a tag/commit usado (ver SOURCES.md)"
+    }
+  },
+  "organs": {
+    "heart-male": {
+      "organId": "VH_M_Heart",
+      "sex": "male",
+      "system": "cardiovascular",
+      "layer": "visceras",
+      "file": "hra/heart-male.glb",
+      "license": "CC-BY-4.0",
+      "attribution": "Human Reference Atlas / HuBMAP (humanatlas.io), CC BY 4.0",
+      "sourceUrl": "https://cdn.humanatlas.io/digital-objects/ref-organ/heart-male/",
+      "sourceVersion": "TODO: preencher com a versão do digital object usado"
+    }
+  }
+}

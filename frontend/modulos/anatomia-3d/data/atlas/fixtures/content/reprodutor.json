@@ -1,0 +1,95 @@
+{
+  "za:testiculo-direito": {
+    "ids": {
+      "wikidata": "Q43649"
+    },
+    "summary_pt": "O testículo é a gônada masculina, responsável pela produção de espermatozoides e de testosterona.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Testículo — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Test%C3%ADculo"
+      }
+    ]
+  },
+  "za:prostata": {
+    "ids": {
+      "wikidata": "Q59606",
+      "icd10": [
+        "N40"
+      ]
+    },
+    "summary_pt": "A próstata é uma glândula exócrina masculina que envolve a uretra logo abaixo da vesícula urinária e produz parte do plasma seminal.",
+    "clinical": [
+      "A hiperplasia prostática benigna é o aumento não canceroso da próstata, comum em homens acima de 50 anos, que pode obstruir o fluxo urinário."
+    ],
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Próstata — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Pr%C3%B3stata"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de pelve",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  },
+  "za:ovario-direito": {
+    "ids": {
+      "wikidata": "Q43105"
+    },
+    "summary_pt": "O ovário é a gônada feminina, responsável pela produção de oócitos e pela síntese de estrogênio e progesterona.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Ovário — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Ov%C3%A1rio"
+      }
+    ]
+  },
+  "za:utero": {
+    "ids": {
+      "wikidata": "Q9048"
+    },
+    "summary_pt": "O útero é o órgão muscular oco em que ocorre a implantação e o desenvolvimento do embrião/feto durante a gestação.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Útero — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/%C3%9Atero"
+      }
+    ]
+  }
+}

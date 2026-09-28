@@ -1,0 +1,82 @@
+{
+  "fma:7204": {
+    "ids": {
+      "fma": "7204",
+      "uberon": "UBERON:0004539",
+      "wikidata": "Q9377",
+      "icd10": [
+        "N28.9"
+      ]
+    },
+    "summary_pt": "O rim direito é um dos dois órgãos retroperitoneais responsáveis pela filtração do sangue, formação da urina e regulação do equilíbrio hidroeletrolítico e ácido-básico.",
+    "anatomy": {
+      "vascularization": "Irrigado pela a. renal direita, ramo direto da aorta abdominal; drenado pela v. renal direita para a v. cava inferior."
+    },
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Rim — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Rim"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., cap. de abdome",
+        "license": "proprietary",
+        "url": null
+      }
+    ]
+  },
+  "fma:7205": {
+    "ids": {
+      "fma": "7205",
+      "uberon": "UBERON:0004538",
+      "wikidata": "Q9377",
+      "icd10": [
+        "N28.9"
+      ]
+    },
+    "summary_pt": "O rim esquerdo situa-se ligeiramente mais alto que o direito (por causa do fígado) e desempenha a mesma função de filtração sanguínea e formação de urina.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Rim — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Rim"
+      }
+    ]
+  },
+  "za:vesicula-urinaria": {
+    "ids": {
+      "wikidata": "Q7891"
+    },
+    "summary_pt": "A vesícula (bexiga) urinária é um órgão muscular oco que armazena a urina produzida pelos rins até a micção.",
+    "review": {
+      "status": "auto-draft",
+      "by": "make-fixtures.mjs",
+      "date": "2026-09-26"
+    },
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Bexiga urinária — Wikipédia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Bexiga_urin%C3%A1ria"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "atlas-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pipeline de assets 3D do Atlas Anatômico (WP10) — roda só no GitHub Actions, que tem internet livre. Baixa Z-Anatomy (CC BY-SA 4.0) e os órgãos de referência do HRA/HuBMAP (CC BY 4.0), otimiza com gltf-transform/meshoptimizer e gera o manifesto consumido pelo motor 3D.",
+  "type": "module",
+  "scripts": {
+    "discover": "node discover.mjs",
+    "fetch": "node fetch.mjs",
+    "optimize": "node optimize.mjs",
+    "manifest": "node build-manifest.mjs",
+    "make-config": "node make-config.mjs",
+    "validate": "node validate.mjs",
+    "test": "node test/run-tests.mjs"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "ajv": "^8.20.0",
+    "draco3dgltf": "^1.5.7",
+    "meshoptimizer": "^1.3.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "s1": {
+    "qid": "Q1296",
+    "ptwiki": "Coração",
+    "label_pt": "Coração",
+    "label_en": "Heart"
+  },
+  "s2": {
+    "qid": "Q9368",
+    "ptwiki": "Fígado",
+    "label_pt": "Fígado",
+    "label_en": "Liver"
+  },
+  "s3": {
+    "qid": "Q10470",
+    "ptwiki": "Fêmur",
+    "label_pt": "Fêmur",
+    "label_en": "Femur"
+  },
+  "s4": {
+    "qid": "Q132411",
+    "ptwiki": "Nervo vago",
+    "label_pt": "Nervo vago",
+    "label_en": "Vagus nerve"
+  }
+}

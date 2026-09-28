@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Toolbar Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --laift-text: #1a1a1a;
+      --laift-text-secondary: #666;
+      --laift-surface: #ffffff;
+      --laift-border: #e0e0e0;
+      --laift-primary: #0066cc;
+      --laift-radius: 8px;
+      --laift-radius-lg: 20px;
+      --laift-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --laift-text: #ffffff;
+        --laift-text-secondary: #aaa;
+        --laift-surface: #1e1e1e;
+        --laift-border: #333;
+        --laift-primary: #4da6ff;
+        --laift-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px;
+      color: var(--laift-text);
+    }
+
+    body {
+      background: var(--laift-surface);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 390px;
+      height: 844px;
+      background: var(--atlas-canvas-bg, #e4e9f2);
+      border: 1px solid var(--laift-border);
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .topbar {
+      height: 48px;
+      background: var(--laift-surface);
+      border-bottom: 1px solid var(--laift-border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-weight: 600;
+    }
+
+    #toolbar-mount {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    #events-log {
+      position: fixed;
+      right: 420px;
+      top: 20px;
+      width: 400px;
+      max-height: 600px;
+      background: var(--laift-surface);
+      border: 1px solid var(--laift-border);
+      border-radius: var(--laift-radius);
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+      font-family: monospace;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .log-entry {
+      padding: 4px 0;
+      border-bottom: 1px solid var(--laift-border);
+      color: var(--laift-text-secondary);
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-entry strong {
+      color: var(--laift-primary);
+      font-weight: 600;
+    }
+  </style>
+  <link rel="stylesheet" href="../../css/tokens-atlas.css">
+  <link rel="stylesheet" href="../css/toolbar.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">Anatomia 3D — Demo</div>
+    <div id="toolbar-mount"></div>
+  </div>
+
+  <div id="events-log"></div>
+
+  <script src="../../shared/safe-dom.js"></script>
+  <script src="../js/core/bus.js" type="module"></script>
+  <script src="toolbar-demo.js"></script>
+</body>
+</html>

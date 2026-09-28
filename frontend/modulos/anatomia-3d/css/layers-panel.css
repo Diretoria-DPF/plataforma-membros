@@ -1,0 +1,404 @@
+/* =========================================================================
+   layers-panel.css — estilos do painel flutuante de camadas
+   -----------------------------------------------------------------------
+   Mobile-first. Painel flutuante ancorado ao botão "Camadas" da toolbar.
+   Alvo de toque mínimo: 44px em todos os controles interativos.
+   ========================================================================= */
+
+:root {
+  /* Dimensões do painel de camadas (flutuante, em topo). */
+  --atlas-layers-panel-min-w: clamp(200px, 40vw, 320px);
+  --atlas-layers-panel-max-w: clamp(280px, 45vw, 400px);
+  --atlas-layers-row-h: auto; /* Alvo de toque: 44px mínimo */
+
+  /* Cores (herdadas de tokens-atlas.css). */
+  --atlas-layers-divider-color: var(--laift-border);
+}
+
+/* ===========================================================================
+   Painel principal
+   =========================================================================== */
+.atlas-layers-panel {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.5vw, 10px);
+  padding: clamp(12px, 2.5vw, 20px);
+  background: var(--laift-surface);
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-md);
+  box-shadow: var(--laift-shadow);
+  min-width: var(--atlas-layers-panel-min-w);
+  max-width: var(--atlas-layers-panel-max-w);
+  max-height: min(80dvh, calc(100dvh - 32px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(12px, 2.5vw, 15px);
+  color: var(--laift-text);
+}
+
+/* ===========================================================================
+   Preset slider (Superficial ↔ Profundo)
+   =========================================================================== */
+.atlas-layers-preset {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  padding: clamp(10px, 2vw, 16px) 0;
+}
+
+.atlas-layers-preset-label {
+  font-size: clamp(10px, 2vw, 13px);
+  font-weight: 500;
+  color: var(--laift-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.atlas-layers-preset-slider {
+  flex: 1;
+  min-width: 100px;
+  height: 24px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Track do range slider */
+.atlas-layers-preset-slider::-webkit-slider-track {
+  background: var(--laift-border);
+  height: 4px;
+  border-radius: 2px;
+  border: none;
+}
+
+.atlas-layers-preset-slider::-moz-range-track {
+  background: var(--laift-border);
+  height: 4px;
+  border-radius: 2px;
+  border: none;
+}
+
+/* Thumb do range slider */
+.atlas-layers-preset-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--laift-primary);
+  border: 2px solid var(--laift-surface);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 120ms var(--atlas-easing);
+}
+
+.atlas-layers-preset-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--laift-primary);
+  border: 2px solid var(--laift-surface);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 120ms var(--atlas-easing);
+}
+
+.atlas-layers-preset-slider:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
+/* ===========================================================================
+   Lista de camadas
+   =========================================================================== */
+.atlas-layers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ===========================================================================
+   Linha de camada
+   =========================================================================== */
+.atlas-layers-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  padding: clamp(6px, 1.5vw, 10px) clamp(3px, 1vw, 6px);
+  min-height: 44px;
+  flex-wrap: wrap;
+}
+
+/* Quadrado de cor (swatch) */
+.atlas-layers-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--laift-border);
+  flex-shrink: 0;
+}
+
+/* Label da camada */
+.atlas-layers-label {
+  min-width: 0;
+  font-weight: 500;
+  flex-grow: 1;
+  overflow-wrap: anywhere;
+}
+
+/* Texto de indisponível */
+.atlas-layers-unavailable-text {
+  font-size: clamp(10px, 2vw, 13px);
+  color: var(--laift-text-secondary);
+  font-style: italic;
+}
+
+/* ===========================================================================
+   Toggle switch (liga/desliga)
+   =========================================================================== */
+.atlas-layers-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 52px;
+  height: 44px;
+  background: var(--laift-border);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  transition: background-color 120ms var(--atlas-easing);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.atlas-layers-toggle::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 50%;
+  transition: left 120ms var(--atlas-easing);
+}
+
+.atlas-layers-toggle:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
+.atlas-layers-toggle-on {
+  background: var(--laift-primary);
+}
+
+.atlas-layers-toggle-on::before {
+  left: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .atlas-layers-toggle::before {
+    background: var(--laift-surface);
+  }
+}
+
+html[data-theme='dark'] .atlas-layers-toggle::before {
+  background: var(--laift-surface);
+}
+
+/* ===========================================================================
+   Botão expand (chevron)
+   =========================================================================== */
+.atlas-layers-expand-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--laift-text-secondary);
+  transition: color 120ms var(--atlas-easing);
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.atlas-layers-expand-btn::before {
+  content: '▼';
+  display: block;
+}
+
+.atlas-layers-expand-btn:hover {
+  color: var(--laift-text);
+}
+
+.atlas-layers-expand-btn:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* ===========================================================================
+   Linha de opacidade (expandível)
+   =========================================================================== */
+.atlas-layers-opacity-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  padding: clamp(6px, 1.5vw, 10px);
+  grid-column: 1 / -1; /* Ocupar toda a largura */
+  background: var(--laift-bg);
+  border-radius: 4px;
+  font-size: clamp(10px, 2vw, 13px);
+  color: var(--laift-text-secondary);
+}
+
+.atlas-layers-opacity-slider {
+  flex: 1;
+  min-width: 80px;
+  height: 20px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Track do range slider de opacidade */
+.atlas-layers-opacity-slider::-webkit-slider-track {
+  background: var(--laift-border);
+  height: 4px;
+  border-radius: 2px;
+  border: none;
+}
+
+.atlas-layers-opacity-slider::-moz-range-track {
+  background: var(--laift-border);
+  height: 4px;
+  border-radius: 2px;
+  border: none;
+}
+
+/* Thumb do range slider de opacidade */
+.atlas-layers-opacity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--laift-primary);
+  border: 2px solid var(--laift-surface);
+  cursor: pointer;
+  transition: box-shadow 120ms var(--atlas-easing);
+}
+
+.atlas-layers-opacity-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--laift-primary);
+  border: 2px solid var(--laift-surface);
+  cursor: pointer;
+  transition: box-shadow 120ms var(--atlas-easing);
+}
+
+.atlas-layers-opacity-slider:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
+.atlas-layers-opacity-value {
+  font-weight: 500;
+  color: var(--laift-text);
+  min-width: clamp(28px, 5vw, 40px);
+  text-align: right;
+}
+
+/* ===========================================================================
+   Divisória
+   =========================================================================== */
+.atlas-layers-divider {
+  border: none;
+  border-top: 1px solid var(--atlas-layers-divider-color);
+  margin: 0;
+  opacity: 0.3;
+}
+
+/* ===========================================================================
+   Botão "Restaurar"
+   =========================================================================== */
+.atlas-layers-restore-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2.5vw, 20px);
+  background: var(--laift-primary);
+  color: white;
+  border: none;
+  border-radius: var(--laift-radius-sm);
+  font-size: clamp(12px, 2.5vw, 15px);
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  transition: opacity 120ms var(--atlas-easing), box-shadow 120ms var(--atlas-easing);
+}
+
+.atlas-layers-restore-btn:hover {
+  opacity: 0.9;
+}
+
+.atlas-layers-restore-btn:active {
+  opacity: 0.8;
+}
+
+.atlas-layers-restore-btn:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
+/* ===========================================================================
+   Dark mode
+   =========================================================================== */
+@media (prefers-color-scheme: dark) {
+  .atlas-layers-opacity-slider::-moz-range-track {
+    background: var(--laift-border);
+  }
+
+  .atlas-layers-opacity-slider::-moz-range-thumb {
+    background: var(--laift-primary);
+  }
+}
+
+html[data-theme='dark'] .atlas-layers-opacity-slider::-moz-range-track {
+  background: var(--laift-border);
+}
+
+html[data-theme='dark'] .atlas-layers-opacity-slider::-moz-range-thumb {
+  background: var(--laift-primary);
+}
+
+/* ===========================================================================
+   Modo reduced-motion
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .atlas-layers-preset-slider::-webkit-slider-thumb,
+  .atlas-layers-preset-slider::-moz-range-thumb,
+  .atlas-layers-toggle,
+  .atlas-layers-opacity-slider::-webkit-slider-thumb,
+  .atlas-layers-opacity-slider::-moz-range-thumb,
+  .atlas-layers-restore-btn {
+    transition: none;
+  }
+}
