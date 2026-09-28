@@ -1,534 +1,394 @@
 /**
- * js/main.js — orquestrador do Atlas v2 (Onda 2, WP13)
- * ---------------------------------------------------------------------------
- * Único ponto que conhece TODOS os pacotes (core, engine, ui, modes) e os
- * liga na casca estática de index.html (ex-v2.html — ver WP13). Nenhum
- * pacote individual importa outro fora do que os próprios contratos
- * (js/core/contracts.js) preveem; a fiação entre eles mora só aqui.
- *
- * `?fixtures=1` troca `models/manifest.json`/`data/atlas/generated/
- * structures.json` pelas fixtures pequenas em `data/atlas/fixtures/` (usado
- * pelos cenários de e2e que não precisam do corpo real).
+ * @file main.js
+ * @description Ponto de entrada e orquestrador principal do Atlas Anatômico 3D LAIFT.
+ * Gerencia a inicialização, carregamento de catálogos, ciclo de seleção e barramentos de evento.
  */
-import * as THREE from '../vendor/three/three.module.js';
-import { OrbitControls } from '../vendor/three/controls/OrbitControls.js';
-import { on, off, emit, EVENTS } from './core/bus.js';
-import { get as storeGet, set as storeSet, subscribe as storeSubscribe } from './core/store.js';
-import { LAYERS, SYSTEMS, MODES, DEFAULT_MODE } from './core/contracts.js';
 
-import { createRenderer } from './engine/renderer.js';
-import { createCameraRig } from './engine/camera-rig.js';
-import { createControls, toNdc } from './engine/controls.js';
-import { createAssetLoader } from './engine/assets.js';
-import { createRegistry } from './engine/registry.js';
-import { createVisibility } from './engine/visibility.js';
-import { createSelection } from './engine/selection.js';
-import { createXrayClip } from './engine/xray-clip.js';
-import { createLabels } from './engine/labels.js';
-import { createFallback } from './engine/fallback.js';
+import { AppBus } from './core/bus.js';
+import {
+  normalizeStructureEntry,
+  resolveContentWithPrecedence,
+  ReviewStatus
+} from './core/contracts.js';
+import { SearchIndex } from './ui/search-index.js';
+import { EngineSelection } from './engine/selection.js';
+import { EngineRenderer } from './engine/renderer.js';
+import { EngineCameraRig } from './engine/camera-rig.js';
+import { UIInfocard } from './ui/infocard.js';
+import { UISearchBox } from './ui/search-box.js';
+import { UILayersPanel } from './ui/layers-panel.js';
+import { UIFocusNav } from './ui/focus-nav.js';
 
-import { getSlot, registerPanel, initShell } from './ui/shell.js';
-import { initSheet, setContent as setSheetContent, snapTo as snapSheetTo, getState as getSheetState } from './ui/sheet.js';
-import { initFocusNav } from './ui/focus-nav.js';
-import { buildSearchIndex, search } from './ui/search-index.js';
-import { createSearchBox } from './ui/search-box.js';
-import { createNavigator } from './ui/navigator.js';
-import { createInfoCard } from './ui/infocard.js';
-import { createLayersPanel } from './ui/layers-panel.js';
-import { linkLegacy } from './ui/legacy-link.js';
-
-const params = new URLSearchParams(location.search);
-const USE_FIXTURES = params.get('fixtures') === '1';
-// Caminhos relativos à URL da página (index.html na raiz do módulo) — não
-// ao arquivo js/main.js. `data/atlas/` já mora dentro deste módulo.
-//
-// `models/manifest.json` real: `asset.file` já vem com o prefixo
-// "models/..." (relativo à raiz do módulo) — então o `baseUrl` do
-// AssetLoader (que é prefixado a `asset.file`) tem que ser '' aqui; só a
-// URL do próprio manifest.json é passada explicitamente a `loadManifest`.
-// `data/atlas/fixtures/manifest.json`: `asset.file` já vem relativo à
-// PRÓPRIA pasta de fixtures ("models/..."), então ali `baseUrl` é o
-// caminho da pasta de fixtures mesmo (join dá "data/atlas/fixtures/models/...").
-const MODELS_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : './';
-const MANIFEST_URL = USE_FIXTURES ? undefined : 'models/manifest.json';
-const CONTENT_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : 'data/atlas/';
-
-// Sistemas carregados no primeiro load (≤5MB combinados) — ver plano §4.
-const DEFAULT_SYSTEMS = Object.freeze(['esqueletico', 'muscular']);
-
-// ============================================================================
-// 1. Conteúdo (structures.json + legado PT) — ContentStore
-// ============================================================================
-async function createContentStore() {
-  // Try to load boot structures first (70% smaller, contains sid/names/system/layer/side)
-  // Fall back to full structures.json if boot file 404s
-  let structures = await fetchJson(`${CONTENT_BASE}generated/structures.boot.json`).catch(() =>
-    fetchJson(`${CONTENT_BASE}generated/structures.json`)
-  ).catch(() => []);
-
-  const [legacyIndex] = await Promise.all([
-    fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []),
-  ]);
-
-  const bySid = new Map();
-  for (const s of structures) bySid.set(s.sid, s);
-
-  // Link real structures to legacy content by name matching
-  const realToLegacySid = linkLegacy(structures, legacyIndex);
-
-  // Índice de nomes legados PT por sid (quando o mesmo sid existe nos dois
-  // lados) — usado pela busca para preferir o nome em português.
-  const legacyNameBySid = new Map();
-  const legacyBySid = new Map();
-  for (const entry of legacyIndex) {
-    legacyBySid.set(entry.sid, entry);
-    if (entry.names && entry.names.pt) legacyNameBySid.set(entry.sid, entry.names.pt);
+class AtlasApp {
+  // [INÍCIO MÉTODO: constructor]
+  constructor() {
+    /** @type {boolean} Sinalizador de inicialização concluída */
+    this.initialized = false;
+    /** @type {SearchIndex} Instância do índice invertido de busca */
+    this.searchIndex = new SearchIndex();
+    /** @type {Map<string, Object>} SID -> StructureEntry normalizado */
+    this.structuresMap = new Map();
+    /** @type {Object|null} Mapeamento de identificadores legados */
+    this.legacyIdMap = null;
+    /** @type {Object|null} Glossário terminológico oficial */
+    this.glossary = null;
+    /** @type {Map<string, Object>} Cache de conteúdo moderno por sistema */
+    this.systemContentCache = new Map();
+    /** @type {Map<string, Object>} Cache de conteúdo legado por sistema */
+    this.legacyContentCache = new Map();
   }
+  // [FIM MÉTODO: constructor]
 
-  // Also index legacy PT names by real structure sid (via name linking)
-  for (const [realSid, legacySid] of realToLegacySid) {
-    const legacyEntry = legacyBySid.get(legacySid);
-    if (legacyEntry && legacyEntry.names && legacyEntry.names.pt) {
-      legacyNameBySid.set(realSid, legacyEntry.names.pt);
-    }
-  }
-
-  const contentCache = new Map();
-  const contentFilePromises = new Map();
-
-  function loadContentFile(system) {
-    if (!contentFilePromises.has(system)) {
-      contentFilePromises.set(system, fetchJson(`${CONTENT_BASE}legacy/content/${system}.json`).catch(() => ({})));
-    }
-    return contentFilePromises.get(system);
-  }
-
-  // Mantém todos os campos de structures.json (system, layer, englishName,
-  // parentCollection, bbox, source...) e ACRESCENTA `names` — search-box.js/
-  // navigator.js exigem entry.names.{pt,en,la} (ver buildSearchIndex), e
-  // main.js/legacy-api.js já liam s.englishName/s.layer direto do índice.
-  // Bug real encontrado ao verificar a busca com dados reais (não fixtures):
-  // getIndex() devolvia `structures` cru (sem `.names`), então
-  // buildSearchIndex(getIndex()) nunca indexava nada — toda busca (inclusive
-  // "heart"/"coração") vinha vazia.
-  const entries = structures.map((s) => ({
-    ...s,
-    names: {
-      pt: legacyNameBySid.get(s.sid) || '',
-      en: s.englishName || '',
-      la: s.latinName || '',
-    },
-  }));
-  const searchIndex = buildSearchIndex(entries);
-
-  return {
-    getIndex() {
-      return entries;
-    },
-    getEntry(sid) {
-      return bySid.get(sid) || null;
-    },
-    async getContent(sid) {
-      const entry = bySid.get(sid);
-      if (!entry) return null;
-      if (contentCache.has(sid)) return contentCache.get(sid);
-      const file = await loadContentFile(entry.system);
-      const raw = file[sid] || null;
-      // Try to get legacy content: first check if this sid maps to a legacy sid
-      let legacy = legacyBySid.get(sid) || null;
-      if (!legacy && realToLegacySid.has(sid)) {
-        const legacySid = realToLegacySid.get(sid);
-        legacy = legacyBySid.get(legacySid) || null;
-      }
-      const content = raw || legacy
-        ? { ...raw, draft: true, legacy: legacy || null }
-        : null;
-      contentCache.set(sid, content);
-      return content;
-    },
-    search(query) {
-      return search(searchIndex, query);
-    },
-  };
-}
-
-function fetchJson(url) {
-  return fetch(url).then((r) => {
-    if (!r.ok) throw new Error(`${url}: ${r.status}`);
-    return r.json();
-  });
-}
-
-// ============================================================================
-// 2. Boot
-// ============================================================================
-async function boot() {
-  initShell();
-  initSheet();
-  initFocusNav();
-
-  const canvasHost = document.getElementById('atlas-canvas');
-  const bus = { on, off, emit, EVENTS };
-  const storeApi = { get: storeGet, set: storeSet, subscribe: storeSubscribe };
-
-  const rendererApi = createRenderer({ container: canvasHost, bus });
-  const { THREE: T, renderer, scene, camera, requestRender, addTicker, setViewOffset, getStats } = rendererApi;
-
-  scene.add(new T.AmbientLight(0xffffff, 0.7));
-  const dirLight = new T.DirectionalLight(0xffffff, 0.9);
-  dirLight.position.set(2, 4, 3);
-  scene.add(dirLight);
-
-  const controlsApi = createControls({
-    camera,
-    domElement: renderer.domElement,
-    bus,
-    requestRender,
-    OrbitControls,
-    THREE: T,
-  });
-
-  const cameraRig = createCameraRig({
-    camera,
-    controls: controlsApi.controls,
-    addTicker,
-    requestRender,
-    setViewOffset,
-    getViewport: () => ({ width: canvasHost.clientWidth, height: canvasHost.clientHeight }),
-    bus,
-  });
-
-  const engine = {
-    scene,
-    camera,
-    renderer,
-    requestRender,
-    setViewOffset,
-    focusSid: (sid, opts) => {
-      const bbox = registry.getBBox(sid);
-      if (bbox && cameraRig.focusBox) cameraRig.focusBox(bbox, opts);
-    },
-    viewPreset: (name) => {
-      if (cameraRig.viewPreset) cameraRig.viewPreset(name);
-    },
-  };
-
-  const registry = createRegistry({ engine, bus });
-
-  const assetLoader = createAssetLoader({
-    bus,
-    store: storeApi,
-    baseUrl: MODELS_BASE,
-    engine,
-    registry,
-  });
-
-  const visibility = createVisibility({
-    registry,
-    bus,
-    engine,
-    getLayers: () => storeGet().layers,
-  });
-
-  const selection = createSelection({
-    registry,
-    bus,
-    store: storeApi,
-    requestRender,
-    focusSid: (sid) => engine.focusSid(sid, { animate: true }),
-  });
-
-  const xrayClip = createXrayClip({ bus, store: storeApi, renderer, THREE: T, requestRender });
-
-  let labels = null;
-  try {
-    labels = createLabels({
-      container: canvasHost,
-      camera,
-      bus,
-      registry,
-      addTicker,
-      requestRender,
-      THREE: T,
-      getLabel: (sid) => labelFor(sid),
-    });
-  } catch (e) {
-    // js/engine/labels.js ainda pode exigir opções que este orquestrador
-    // não previu — rótulos são um extra, nunca bloqueiam o boot do Atlas.
-    console.warn('[atlas] labels indisponível:', e);
-  }
-
-  // ---- Picking (clique/tap) ----
-  controlsApi.setPickHandler(({ ndc, kind }) => {
-    const sid = registry.pick(ndc);
-    if (sid) {
-      selection.select(sid, 'pick');
-      if (kind === 'focus') engine.focusSid(sid, { animate: true });
-    } else if (kind === 'tap') {
-      selection.select(null, 'pick');
-    }
-  });
-
-  const contentStore = await createContentStore();
-
-  // ---- Menu de contexto ----
-  let contextMenu = null;
-  if (typeof window.createContextMenu === 'function') {
-    contextMenu = window.createContextMenu({
-      bus,
-      EVENTS,
-      getLabel: (sid) => labelFor(sid),
-    });
-    controlsApi.setContextMenuHandler(({ client, ndc }) => {
-      const sid = registry.pick(ndc);
-      if (sid) contextMenu.open({ client, sid });
-    });
-  }
-
-  function labelFor(sid) {
-    const entry = contentStore.getEntry(sid);
-    if (!entry) return sid;
-    return entry.ptName || entry.englishName || entry.latinName || sid;
-  }
-  // ---- Ficha (infocard) — inspetor (tablet/desktop) e painel (celular) ----
-  const infocard = createInfoCard(getSlot('inspector') || document.getElementById('atlas-inspector'), {
-    onAction: ({ action, sid }) => {
-      if (action === 'isolate') emit(EVENTS.VISIBILITY_ISOLATE, { sid });
-      if (action === 'hide') emit(EVENTS.VISIBILITY_HIDE, { sid });
-      if (action === 'ghost') emit(EVENTS.VISIBILITY_GHOST, { sid });
-      if (action === 'focus') engine.focusSid(sid, { animate: true });
-    },
-  });
-
-  // #atlas-inspector só existe (visualmente) em ≥600px (css/atlas.css) — no
-  // celular o painel arrastável é a única superfície de conteúdo (ver
-  // docs/ATLAS_UX_SPEC.md §1.1/§2). infocard.js sempre renderiza no mesmo
-  // container fixo (#atlas-inspector); abaixo de 600px espelhamos o nó já
-  // montado dentro do painel, senão tocar numa estrutura no celular não
-  // mostrava nada (bug real: `<600px` some com o inspetor e ninguém troca
-  // o conteúdo do painel pela ficha).
-  const isMobileViewport = () => !window.matchMedia('(min-width: 600px)').matches;
-  function buildSheetDefaultPeekNode() {
-    // Mesma marcação do peek inicial em index.html (hint + #organ-hud
-    // escondido) — usado para "voltar ao início" quando a seleção é limpa.
-    const frag = document.createElement('div');
-    const hud = document.createElement('div');
-    hud.id = 'organ-hud';
-    hud.className = 'hidden';
-    const name = document.createElement('strong');
-    name.id = 'organ-name';
-    name.textContent = '---';
-    hud.appendChild(name);
-    frag.appendChild(hud);
-    const hint = document.createElement('p');
-    hint.id = 'atlas-sheet-hint';
-    hint.className = 'atlas-sheet-hint';
-    hint.textContent = 'Toque numa estrutura para começar';
-    frag.appendChild(hint);
-    return frag;
-  }
-  function buildSheetPeekNode(sid) {
-    // Reaproveita os ids legados #organ-hud/#organ-name (LEGACY_COMPAT,
-    // core/contracts.js) — mesmo padrão que js/ui/infocard.js já usa no
-    // cabeçalho da ficha completa.
-    const hud = document.createElement('div');
-    hud.id = 'organ-hud';
-    const name = document.createElement('strong');
-    name.id = 'organ-name';
-    name.textContent = labelFor(sid);
-    hud.appendChild(name);
-    return hud;
-  }
-  function syncInfocardToSheet(sid) {
-    if (currentMode) return; // um modo já é dono do painel (ver enterMode).
-    const el = infocard.getElement();
-    if (isMobileViewport() && el) {
-      setSheetContent(buildSheetPeekNode(sid), el, { label: 'Ficha da estrutura' });
-      if (getSheetState().state === 'peek') snapSheetTo('half');
-    }
-  }
-
-  async function renderInfocardFor(sid) {
-    if (!sid) {
-      infocard.clear();
-      if (!currentMode && isMobileViewport()) {
-        const emptyBody = document.createElement('div');
-        setSheetContent(buildSheetDefaultPeekNode(), emptyBody, { label: 'Painel do Atlas' });
-      }
+  // [INÍCIO MÉTODO: init]
+  /**
+   * Inicializa todo o ecossistema do módulo anatômico.
+   * @returns {Promise<void>}
+   */
+  async init() {
+    if (this.initialized) {
       return;
     }
-    const raw = contentStore.getEntry(sid);
-    if (!raw) {
-      infocard.clear();
-      return;
-    }
-    const entry = {
-      sid,
-      names: { pt: raw.ptName || raw.englishName || raw.latinName || sid, en: raw.englishName || '' },
-      system: raw.systemId,
-    };
-    infocard.render(entry, undefined);
-    syncInfocardToSheet(sid);
-    const content = await contentStore.getContent(sid);
-    infocard.render(entry, content);
-    syncInfocardToSheet(sid);
-  }
 
-  on(EVENTS.STRUCTURE_SELECT, ({ sid }) => { renderInfocardFor(sid); });
+    this.showGlobalLoading('Inicializando o Atlas Anatômico 3D...');
 
-  // ---- Busca ----
-  const searchBox = createSearchBox(getSlot('search') || document.getElementById('atlas-search-slot'), {
-    bus,
-    getIndex: () => contentStore.getIndex(),
-    onOpenSystem: () => {},
-  });
-  // Compat legado: js/compat/legacy-api.js dá o id #bio-search-input ao
-  // campo real desta caixa (ver LEGACY_COMPAT em core/contracts.js).
-
-  // ---- Navegador ----
-  const navContainer = document.getElementById('atlas-left-panel');
-  if (navContainer) {
-    createNavigator(navContainer, {
-      bus,
-      getIndex: () => contentStore.getIndex(),
-      isSystemAvailable: (systemId) => assetLoader.isLoaded(systemId),
-      onSystemOpen: (systemId) => { loadSystem(systemId); },
-    });
-  }
-
-  // ---- Painel de camadas ----
-  const layersPanelEl = document.createElement('div');
-  const layersPanel = createLayersPanel(layersPanelEl, {
-    bus,
-    store: storeApi,
-    unavailable: () => storeGet().unavailableSystems,
-  });
-  registerPanel('layers', layersPanelEl);
-
-  // ---- Créditos ----
-  let manifest = null;
-  try {
-    manifest = await assetLoader.loadManifest(MANIFEST_URL);
-  } catch (e) {
-    console.warn('[atlas] manifest indisponível:', e);
-  }
-  if (typeof window.createCredits === 'function') {
-    const credits = window.createCredits({ manifest: manifest || {}, contentSources: [] });
-    if (credits && credits.element) registerPanel('credits', credits.element);
-  }
-
-  // ---- Carregamento de sistemas ----
-  const loading = new Set();
-  async function loadSystem(systemId) {
-    if (assetLoader.isLoaded(systemId) || loading.has(systemId)) return;
-    loading.add(systemId);
     try {
-      await assetLoader.loadSystem(systemId);
-      storeSet({ loadedSystems: [...storeGet().loadedSystems, systemId] });
-    } catch (e) {
-      storeSet({ unavailableSystems: [...storeGet().unavailableSystems, systemId] });
-    } finally {
-      loading.delete(systemId);
-      requestRender();
+      // 1. Carregamento concorrente dos dados estruturais mínimos essenciais
+      const [bootData, idMapData, glossData] = await Promise.all([
+        this.fetchJson('data/atlas/generated/structures.boot.json'),
+        this.fetchJson('data/atlas/legacy-id-map.json').catch(err => {
+          console.warn('[Atlas] Falha ao carregar legacy-id-map.json; operando sem legado.', err);
+          return { realToLegacySid: {} };
+        }),
+        this.fetchJson('data/atlas/glossario-pt.json').catch(err => {
+          console.warn('[Atlas] Falha ao carregar glossario-pt.json; operando sem termos extras.', err);
+          return {};
+        })
+      ]);
+
+      this.legacyIdMap = idMapData;
+      this.glossary = glossData;
+
+      // 2. Normalização das estruturas do lote de inicialização rápida
+      const rawEntries = Array.isArray(bootData) ? bootData : (bootData.structures || []);
+      const canonicalEntries = [];
+
+      for (let i = 0; i < rawEntries.length; i++) {
+        const raw = rawEntries[i];
+        if (!raw || !raw.sid) continue;
+        const entry = normalizeStructureEntry(raw, this.glossary);
+        this.structuresMap.set(entry.sid, entry);
+        canonicalEntries.push(entry);
+      }
+
+      // 3. Construção do motor de busca em memória
+      this.searchIndex.build(canonicalEntries);
+
+      // 4. Inicialização do motor gráfico WebGL
+      const canvasContainer = document.getElementById('atlas-canvas-container');
+      if (canvasContainer) {
+        await EngineRenderer.init(canvasContainer);
+        EngineCameraRig.init(EngineRenderer.getCamera(), EngineRenderer.getControls());
+      } else {
+        console.warn('[Atlas] Contêiner "atlas-canvas-container" não encontrado no DOM.');
+      }
+
+      // 5. Instanciação e ligação dos componentes de interface
+      this.initUIComponents();
+      this.bindGlobalEvents();
+
+      // 6. Finalização do estado de carga inicial
+      this.hideGlobalLoading();
+      this.initialized = true;
+
+      // Notifica a prontidão do módulo para a plataforma LAIFT
+      AppBus.emit('atlas:ready', {
+        totalStructures: this.structuresMap.size
+      });
+
+      // 7. Carga assíncrona do catálogo exaustivo em segundo plano
+      this.loadFullCatalogInBackground();
+    } catch (error) {
+      console.error('[Atlas] Falha crítica durante a inicialização do módulo:', error);
+      this.showGlobalError('Não foi possível carregar o Atlas Anatômico. Por favor, verifique a sua conexão e recarregue a página.');
     }
   }
+  // [FIM MÉTODO: init]
 
-  await Promise.all(DEFAULT_SYSTEMS.map(loadSystem));
-  requestRender();
-
-  // Demais sistemas: sob demanda. Uma camada ligada pode precisar de
-  // sistemas ainda não carregados — `structures.json` já traz `layer` por
-  // estrutura, então basta achar quais sistemas têm alguma estrutura
-  // daquela camada e carregá-los.
-  const systemsByLayer = new Map();
-  for (const s of contentStore.getIndex()) {
-    if (!systemsByLayer.has(s.layer)) systemsByLayer.set(s.layer, new Set());
-    systemsByLayer.get(s.layer).add(s.system);
-  }
-  on(EVENTS.LAYER_SET, ({ layer, visible }) => {
-    if (!visible) return;
-    const systems = systemsByLayer.get(layer);
-    if (systems) systems.forEach(loadSystem);
-  });
-
-  // ---- Fallback (GLB indisponível) ----
-  try {
-    // Sem `bodyGlbUrl`: usa o padrão de createFallback (models/body.glb,
-    // resolvido a partir de js/engine/fallback.js — sempre correto
-    // independente de `?fixtures=1`, já que a reserva é sempre o body.glb
-    // real, nunca a fixture).
-    createFallback({ registry, engine });
-  } catch (e) { /* fallback é um extra de robustez, nunca bloqueia o boot */ }
-
-  // ---- Modos (carregados sob demanda ao trocar de modo) ----
-  const modeInstances = new Map();
-  const modeLoaders = {
-    quiz: () => import('./modes/quiz.js').then((m) => m.createQuizMode({ bus, store: storeApi, getLabel: labelFor, loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`) })),
-    fisiologia: () => import('./modes/physiology.js').then((m) => m.createPhysiologyMode({
-      bus,
-      registry,
-      engine,
-      THREE,
-      getLabel: labelFor,
-      getBBoxCenter: (sid) => {
-        const bbox = registry.getBBox(sid);
-        if (!bbox) return null;
-        const center = bbox.getCenter(new THREE.Vector3());
-        return [center.x, center.y, center.z];
-      },
-      loadProcesses: () => fetchJson(`${CONTENT_BASE}processes.json`),
-      loadRoutes: () => fetchJson(`${CONTENT_BASE}routes.json`),
-    })),
-    farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`) })),
-    moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
-    estudo: () => import('./modes/study.js').then(async (m) => {
-      const { createStudyStore } = await import('./modes/study-store.js');
-      return m.createStudyMode({ bus, store: createStudyStore(), getLabel: labelFor });
-    }),
-  };
-
-  let currentMode = null;
-  async function enterMode(modeId) {
-    if (currentMode && currentMode.exit) await currentMode.exit();
-    currentMode = null;
-    if (modeId === 'explorar') {
-      setSheetContent(null, null, { label: 'Painel do Atlas' });
-      return;
+  // [INÍCIO MÉTODO: initUIComponents]
+  /**
+   * Conecta os contêineres do DOM aos respectivos controladores de interface.
+   */
+  initUIComponents() {
+    const infocardEl = document.getElementById('atlas-infocard');
+    if (infocardEl) {
+      UIInfocard.init(infocardEl);
     }
-    let mode = modeInstances.get(modeId);
-    if (!mode && modeLoaders[modeId]) {
-      try {
-        mode = await modeLoaders[modeId]();
-        modeInstances.set(modeId, mode);
-      } catch (e) {
-        console.warn(`[atlas] modo "${modeId}" indisponível:`, e);
-        return;
+
+    const searchBoxEl = document.getElementById('atlas-search-box');
+    if (searchBoxEl) {
+      UISearchBox.init(searchBoxEl, this.searchIndex);
+    }
+
+    const layersPanelEl = document.getElementById('atlas-layers-panel');
+    if (layersPanelEl) {
+      UILayersPanel.init(layersPanelEl);
+    }
+
+    const focusNavEl = document.getElementById('atlas-focus-nav');
+    if (focusNavEl) {
+      UIFocusNav.init(focusNavEl);
+    }
+  }
+  // [FIM MÉTODO: initUIComponents]
+
+  // [INÍCIO MÉTODO: bindGlobalEvents]
+  /**
+   * Inscreve os manipuladores de evento no barramento global da aplicação.
+   */
+  bindGlobalEvents() {
+    // Evento de solicitação de seleção anatômica
+    AppBus.on('structure:select', async eventData => {
+      if (!eventData || !eventData.sid) return;
+      await this.handleStructureSelection(eventData.sid, eventData.options || {});
+    });
+
+    // Evento de desmarcação / limpeza de seleção
+    AppBus.on('structure:clear', () => {
+      EngineSelection.clearSelection();
+      EngineRenderer.resetHighlight();
+      UIInfocard.hide();
+      this.announceToScreenReader('Seleção anatômica desfeita.');
+    });
+
+    // Evento de restauração de vista padrão
+    AppBus.on('view:reset', () => {
+      EngineCameraRig.resetToDefaultView();
+      EngineSelection.clearSelection();
+      EngineRenderer.resetHighlight();
+      UIInfocard.hide();
+      EngineRenderer.requestRender();
+      this.announceToScreenReader('Visualização do modelo anatômico restaurada.');
+    });
+
+    // Evento de redimensionamento da janela ou iframe da plataforma
+    window.addEventListener('resize', () => {
+      EngineRenderer.onWindowResize();
+    });
+
+    // Evento de orientação em dispositivos móveis
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        EngineRenderer.onWindowResize();
+      }, 100);
+    });
+  }
+  // [FIM MÉTODO: bindGlobalEvents]
+
+  // [INÍCIO MÉTODO: handleStructureSelection]
+  /**
+   * Conduz o fluxo completo de seleção protegendo contra corridas assíncronas.
+   * @param {string} sid - Identificador canônico da estrutura.
+   * @param {Object} [options={}] - Parâmetros adicionais da seleção.
+   * @returns {Promise<void>}
+   */
+  async handleStructureSelection(sid, options = {}) {
+    const selectionContext = EngineSelection.beginSelection(sid, options);
+    if (!selectionContext) {
+      return; // Seleção bloqueada ou nula
+    }
+
+    const { sequence, signal } = selectionContext;
+
+    // Recupera a estrutura ou gera uma entrada canônica a partir do SID
+    let entry = this.structuresMap.get(sid);
+    if (!entry) {
+      entry = normalizeStructureEntry({ sid }, this.glossary);
+    }
+
+    // Atualização visual imediata na cena 3D e na ficha
+    EngineRenderer.highlightStructure(sid);
+    UIInfocard.showLoading(entry);
+    this.announceToScreenReader(`Selecionado: ${entry.names.pt}, sistema ${entry.system}.`);
+
+    // Enquadramento de câmera tridimensional
+    if (entry.bounds && options.focusCamera !== false) {
+      EngineCameraRig.focusOnBounds(entry.bounds);
+    }
+
+    try {
+      // Busca assíncrona do conteúdo educacional do sistema
+      const content = await this.fetchStructureContent(entry, signal);
+
+      // Barreira de concorrência: verifica se a requisição ainda é a mais recente
+      if (!EngineSelection.isValidSequence(sequence)) {
+        return; // Requisição descartada silenciosamente
+      }
+
+      EngineSelection.commitSelection(entry, content, sequence);
+      UIInfocard.render({ entry, content });
+      EngineRenderer.requestRender();
+    } catch (error) {
+      if (error && error.name === 'AbortError') {
+        return; // Cancelamento intencional por clique subsequente
+      }
+
+      console.error(`[Atlas] Falha ao recuperar ficha de ${sid}:`, error);
+      if (EngineSelection.isValidSequence(sequence)) {
+        EngineSelection.failSelection(sid, error, sequence);
+        UIInfocard.renderError(entry, 'Não foi possível carregar as informações clínicas e anatômicas desta estrutura.');
       }
     }
-    if (!mode) return;
-    currentMode = mode;
-    await mode.enter({ registry, assetLoader, engine, contentStore });
-    const node = mode.sheetContent ? mode.sheetContent() : null;
-    if (node) setSheetContent(null, node, { label: mode.label || 'Modo do Atlas' });
   }
+  // [FIM MÉTODO: handleStructureSelection]
 
-  on(EVENTS.MODE_CHANGE, ({ mode }) => { enterMode(mode); });
+  // [INÍCIO MÉTODO: fetchStructureContent]
+  /**
+   * Recupera o arquivo de conteúdo temático aplicando o resolvedor de precedência.
+   * @param {Object} entry - StructureEntry canônico.
+   * @param {AbortSignal} signal - Sinal para cancelamento imediato.
+   * @returns {Promise<Object|null>}
+   */
+  async fetchStructureContent(entry, signal) {
+    const { system, sid } = entry;
 
-  // ---- Expõe internals para a camada de compatibilidade legada ----
-  window.__atlasInternals = {
-    bus, store: storeApi, registry, assetLoader, engine,
-    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS,
-  };
-  // Gancho de teste, só leitura — expõe as estatísticas do renderer
-  // (draw calls, triângulos, contagem de frames renderizados) para os
-  // cenários de e2e de desempenho (scripts/e2e/atlas-perf.e2e.js). Não
-  // altera nada no motor; `getStats()` já existe em js/engine/renderer.js.
-  window.__atlasPerf = Object.freeze({ getStats: () => rendererApi.getStats() });
-  emit('atlas:ready', {});
+    // 1. Carga sob demanda da base moderna de conteúdo
+    if (!this.systemContentCache.has(system)) {
+      try {
+        const modernData = await this.fetchJson(`data/atlas/content/${system}.json`, { signal });
+        this.systemContentCache.set(system, modernData);
+      } catch (err) {
+        if (err.name === 'AbortError') throw err;
+        this.systemContentCache.set(system, {});
+      }
+    }
+
+    // 2. Carga sob demanda da base legada de conteúdo
+    if (!this.legacyContentCache.has(system)) {
+      try {
+        const legData = await this.fetchJson(`data/atlas/legacy/content/${system}.json`, { signal });
+        this.legacyContentCache.set(system, legData);
+      } catch (err) {
+        if (err.name === 'AbortError') throw err;
+        this.legacyContentCache.set(system, {});
+      }
+    }
+
+    const modernSystem = this.systemContentCache.get(system) || {};
+    const legacySystem = this.legacyContentCache.get(system) || {};
+
+    return resolveContentWithPrecedence(sid, modernSystem, legacySystem, this.legacyIdMap);
+  }
+  // [FIM MÉTODO: fetchStructureContent]
+
+  // [INÍCIO MÉTODO: loadFullCatalogInBackground]
+  /**
+   * Carrega o arquivo structures.json exaustivo em segundo plano sem travar a interface.
+   * @returns {Promise<void>}
+   */
+  async loadFullCatalogInBackground() {
+    try {
+      const fullData = await this.fetchJson('data/atlas/generated/structures.json');
+      const rawFull = Array.isArray(fullData) ? fullData : (fullData.structures || []);
+
+      for (let i = 0; i < rawFull.length; i++) {
+        const raw = rawFull[i];
+        if (!raw || !raw.sid) continue;
+
+        // Atualiza ou insere registros enriquecidos
+        const entry = normalizeStructureEntry(raw, this.glossary);
+        this.structuresMap.set(entry.sid, entry);
+      }
+
+      // Reconstrói o índice de busca para incluir a totalidade das estruturas catalogadas
+      this.searchIndex.build(Array.from(this.structuresMap.values()));
+      console.log(`[Atlas] Catálogo completo indexado com êxito: ${this.structuresMap.size} estruturas ativas.`);
+    } catch (err) {
+      console.warn('[Atlas] Catálogo estendido indisponível; mantendo catálogo de boot.', err);
+    }
+  }
+  // [FIM MÉTODO: loadFullCatalogInBackground]
+
+  // [INÍCIO MÉTODO: fetchJson]
+  /**
+   * Executa requisição HTTP segura com verificação de status e tipagem de erro.
+   * @param {string} url
+   * @param {Object} [options={}]
+   * @returns {Promise<any>}
+   */
+  async fetchJson(url, options = {}) {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`Falha de requisição [HTTP ${response.status}] ao consultar "${url}"`);
+    }
+    return response.json();
+  }
+  // [FIM MÉTODO: fetchJson]
+
+  // [INÍCIO MÉTODO: announceToScreenReader]
+  /**
+   * Atualiza a região aria-live polite para acessibilidade com leitores de tela.
+   * @param {string} message
+   */
+  announceToScreenReader(message) {
+    const el = document.getElementById('atlas-live-announcer');
+    if (el) {
+      el.textContent = message;
+    }
+  }
+  // [FIM MÉTODO: announceToScreenReader]
+
+  // [INÍCIO MÉTODO: showGlobalLoading]
+  /**
+   * Exibe o indicador de carregamento da aplicação.
+   * @param {string} message
+   */
+  showGlobalLoading(message) {
+    const overlay = document.getElementById('atlas-loading-overlay');
+    const textEl = document.getElementById('atlas-loading-text');
+    if (overlay) {
+      overlay.classList.remove('hidden');
+      overlay.classList.remove('has-error');
+    }
+    if (textEl) {
+      textEl.textContent = message;
+    }
+  }
+  // [FIM MÉTODO: showGlobalLoading]
+
+  // [INÍCIO MÉTODO: hideGlobalLoading]
+  /**
+   * Oculta o indicador de carregamento da aplicação.
+   */
+  hideGlobalLoading() {
+    const overlay = document.getElementById('atlas-loading-overlay');
+    if (overlay) {
+      overlay.classList.add('hidden');
+    }
+  }
+  // [FIM MÉTODO: hideGlobalLoading]
+
+  // [INÍCIO MÉTODO: showGlobalError]
+  /**
+   * Apresenta estado visual de erro não recuperável da aplicação.
+   * @param {string} message
+   */
+  showGlobalError(message) {
+    const overlay = document.getElementById('atlas-loading-overlay');
+    const textEl = document.getElementById('atlas-loading-text');
+    if (overlay) {
+      overlay.classList.remove('hidden');
+      overlay.classList.add('has-error');
+    }
+    if (textEl) {
+      textEl.textContent = message;
+    }
+  }
+  // [FIM MÉTODO: showGlobalError]
 }
 
-// `type="module"` já executa depois do parsing do DOM (como `defer`), então
-// não precisa esperar DOMContentLoaded.
-boot().catch((e) => {
-  console.error('[atlas] falha ao inicializar', e);
+// [INÍCIO: Execução Principal]
+document.addEventListener('DOMContentLoaded', () => {
+  const app = new AtlasApp();
+  app.init();
 });
+// [FIM: Execução Principal]
