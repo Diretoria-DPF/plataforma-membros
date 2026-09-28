@@ -1,0 +1,665 @@
+{
+  "za:external-anal-sphincter-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:stomach": {
+    "ids": {
+      "wikidata": "Q1029907",
+      "mesh": "D013270",
+      "icd10": [
+        "K25-K31",
+        "C16",
+        "K27",
+        "K29",
+        "B96.81"
+      ],
+      "ta2": "A05.5.01.001"
+    },
+    "summary_pt": "Reservatório ácido (pH 1.5 a 2.0) com secreção cloridropéptica, fator intrínseco e motilidade de mistura. Função: Digestão química de proteínas e armazenamento",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. gástrica esquerda, a. gástrica direita, aa. gastroepiploicas; Venosa: vv. gástricas → veia porta; Linfática: linfonodos celíacos e gástricos",
+      "innervation": "Simpática: T6-T9 (modulação); Parassimpática: NC X (secreção ácida e motilidade)"
+    },
+    "histology": {
+      "epithelium": "Colunar simples glandular",
+      "tissues": [
+        "Lâmina própria com capilares fenestrados"
+      ]
+    },
+    "clinical": [
+      "Úlcera péptica",
+      "Gastrite",
+      "Câncer gástrico",
+      "H. pylori"
+    ]
+  },
+  "za:liver": {
+    "ids": {
+      "wikidata": "Q9368",
+      "mesh": "D008099",
+      "icd10": [
+        "K70-K77",
+        "C22",
+        "K74",
+        "B16",
+        "B17.1",
+        "C22.0",
+        "K76.0"
+      ],
+      "ta2": "A05.8.01.001"
+    },
+    "summary_pt": "Órgão metabólico mestre; síntese de albumina, ácidos biliares e biotransformação de Fase I e II de xenobióticos. Função: Metabolismo, detoxificação, síntese proteica, produção de bile",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. hepática própria (ramo do tronco celíaco); Venosa: veia porta (75% do fluxo), vv. hepáticas → VCI; Linfática: linfonodos hepáticos e celíacos",
+      "innervation": "Simpática: T7-T10 (glicogenólise); Parassimpática: NC X (função)"
+    },
+    "histology": {
+      "epithelium": "Hepatócitos em cordões",
+      "tissues": [
+        "Colágeno I/III, fibronectina (espaço de Disse)"
+      ]
+    },
+    "clinical": [
+      "Cirrose hepática",
+      "Hepatite B",
+      "Hepatite C",
+      "Carcinoma hepatocelular",
+      "Esteatose hepática"
+    ]
+  },
+  "za:boca-dentes-lingua-labios-glandulas-salivares": {
+    "ids": {
+      "wikidata": "Q9633",
+      "mesh": "D009055",
+      "icd10": [
+        "K12",
+        "K14",
+        "K02",
+        "K05.3",
+        "C00-C06",
+        "K11.7"
+      ],
+      "ta2": "A05.1.00.001"
+    },
+    "summary_pt": "Início da digestão mecânica e hidrólise enzimática; absorção transmucosa sublingual rápida. Função: Mastigação, insalivação, formação do bolo alimentar",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "epithelium": "Escamoso estratificado não queratinizado",
+      "tissues": [
+        "Lâmina própria com colágeno"
+      ]
+    },
+    "clinical": [
+      "Cárie dentária",
+      "Periodontite",
+      "Câncer oral",
+      "Xerostomia"
+    ]
+  },
+  "za:canal-anal-anus": {
+    "ids": {
+      "wikidata": "Q4970",
+      "mesh": "D000863",
+      "icd10": [
+        "K60-K62",
+        "C21",
+        "K64",
+        "K60.2",
+        "R15"
+      ]
+    },
+    "summary_pt": "Porção terminal de continência fecal controlada por esfíncter anal interno (liso) e externo (estriado). Função: Continência e eliminação fecal",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "epithelium": "Escamoso estratificado (distal) + transição (linha pectínea)"
+    },
+    "clinical": [
+      "Hemorroidas",
+      "Fissura anal",
+      "Incontinência fecal"
+    ]
+  },
+  "za:esofago": {
+    "ids": {
+      "wikidata": "Q173710",
+      "mesh": "D004947",
+      "icd10": [
+        "K20-K23",
+        "C15",
+        "K21",
+        "K22.0",
+        "I85"
+      ],
+      "ta2": "A05.4.01.001"
+    },
+    "summary_pt": "Tubo muscular de 25 cm com peristaltismo propulsivo descendente e controle esfincteriano cranial e caudal. Função: Condução do bolo alimentar",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. esofágicas (ramos da tireoidiana inferior, aorta e gástrica esquerda); Venosa: plexo esofágico → vv. gástricas e ázigo; Linfática: linfonodos cervicais, mediastinais e gástricos",
+      "innervation": "Simpática: T1-T6 (modulação); Parassimpática: NC X (peristaltismo)"
+    },
+    "histology": {
+      "epithelium": "Escamoso estratificado não queratinizado",
+      "tissues": [
+        "Músculo estriado (1/3 sup) → músculo liso (2/3 inf)"
+      ]
+    },
+    "clinical": [
+      "DRGE",
+      "Acalásia",
+      "Câncer de esôfago",
+      "Varizes esofágicas"
+    ]
+  },
+  "za:intestino-delgado-duodeno-jejuno-ileo": {
+    "ids": {
+      "wikidata": "Q11090",
+      "mesh": "D007421",
+      "icd10": [
+        "K50-K52",
+        "C17",
+        "K90.0",
+        "K50",
+        "K56.6"
+      ],
+      "ta2": "A05.6.01.001"
+    },
+    "summary_pt": "Principal sítio de absorção enteral (~30 m²) provido de vilosidades, microvilosidades e enzimas de borda em escova. Função: Digestão final e absorção de nutrientes",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. mesentérica superior; Venosa: vv. mesentéricas → veia porta; Linfática: vasos quilíferos → cisterna do quilo → ducto torácico",
+      "innervation": "Simpática: T9-T11 (modulação); Parassimpática: NC X (motilidade e secreção)"
+    },
+    "histology": {
+      "epithelium": "Colunar simples com vilosidades e microvilosidades",
+      "tissues": [
+        "Lâmina própria com capilares e linfáticos"
+      ]
+    },
+    "clinical": [
+      "Doença celíaca",
+      "Doença de Crohn",
+      "Obstrução intestinal"
+    ]
+  },
+  "za:intestino-grosso-ceco-colons-reto": {
+    "ids": {
+      "wikidata": "Q11190",
+      "mesh": "D007420",
+      "icd10": [
+        "K57-K63",
+        "C18-C20",
+        "K51",
+        "K58",
+        "K57"
+      ],
+      "ta2": "A05.7.01.001"
+    },
+    "summary_pt": "Recuperação de água e eletrólitos, fermentação microbiótica e formação de massa fecal. Função: Absorção de água e formação de fezes",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. mesentérica superior (colon direito), a. mesentérica inferior (colon esquerdo); Venosa: vv. mesentéricas → veia porta; Linfática: linfonodos mesentéricos e para-aórticos",
+      "innervation": "Simpática: T10-L2 (modulação); Parassimpática: NC X (colon proximal) + nn. pélvicos (colon distal)"
+    },
+    "histology": {
+      "epithelium": "Colunar simples com criptas de Lieberkühn"
+    },
+    "clinical": [
+      "Retocolite ulcerativa",
+      "Câncer colorretal",
+      "SII",
+      "Diverticulite"
+    ]
+  },
+  "za:mesenterio-peritonio": {
+    "ids": {
+      "wikidata": "Q193107",
+      "mesh": "D008643",
+      "icd10": [
+        "K65",
+        "R18",
+        "C78.6"
+      ]
+    },
+    "summary_pt": "Dobra peritoneal contínua que ancora as alças intestinais, veiculando vasos mesentéricos e linfáticos. Função: Sustentação e vascularização visceral",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "epithelium": "Mesotélio simples pavimentoso",
+      "tissues": [
+        "Tecido conjuntivo frouxo com adipócitos"
+      ]
+    },
+    "clinical": [
+      "Peritonite",
+      "Ascite",
+      "Carcinomatose peritoneal"
+    ]
+  },
+  "za:pancreas-fracao-exocrina": {
+    "ids": {
+      "wikidata": "Q9612",
+      "mesh": "D010179",
+      "icd10": [
+        "K85-K86",
+        "C25",
+        "K85",
+        "K86.0-K86.1"
+      ],
+      "ta2": "A05.9.01.001"
+    },
+    "summary_pt": "Secreção acinar de zimogênios digestivos (tripsinogênio, lipase, amilase) e tampão de bicarbonato para o duodeno. Função: Secreção de enzimas digestivas e bicarbonato",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. pancreatoduodenal superior (gastroduodenal), a. pancreatoduodenal inferior (mesentérica superior), a. esplênica; Venosa: vv. pancreáticas → veia porta / esplênica; Linfática: linfonodos pancreáticos e celíacos",
+      "innervation": "Simpática: T6-T10 (inibição); Parassimpática: NC X (secreção)"
+    },
+    "histology": {
+      "epithelium": "Acinos serosos"
+    },
+    "clinical": [
+      "Pancreatite aguda",
+      "Pancreatite crônica",
+      "Câncer de pâncreas"
+    ]
+  },
+  "za:vesicula-biliar-vias-biliares": {
+    "ids": {
+      "wikidata": "Q64386",
+      "mesh": "D005704",
+      "icd10": [
+        "K80-K83",
+        "C23-C24",
+        "K80",
+        "K81",
+        "K83.0"
+      ],
+      "ta2": "A05.8.02.001"
+    },
+    "summary_pt": "Concentração, armazenamento e ejeção de bile emulsificante de lipídios ativada por CCK. Função: Armazenamento e concentração de bile",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. cística (ramo da hepática direita); Venosa: vv. císticas → veia porta; Linfática: linfonodos císticos e hepáticos",
+      "innervation": "Simpática: T7-T10 (relaxamento); Parassimpática: NC X (contração)"
+    },
+    "histology": {
+      "epithelium": "Colunar simples com microvilosidades"
+    },
+    "clinical": [
+      "Colelitíase",
+      "Colecistite",
+      "Colangite"
+    ]
+  }
+}

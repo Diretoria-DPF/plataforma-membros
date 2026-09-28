@@ -1,0 +1,416 @@
+{
+  "za:trachea": {
+    "ids": {
+      "wikidata": "Q173466",
+      "mesh": "D014132",
+      "icd10": [
+        "J39.8",
+        "C33",
+        "J04.1"
+      ],
+      "ta2": "A06.3.01.001"
+    },
+    "summary_pt": "Tubo fibrocartilaginoso com 16 a 20 anéis em C mantendo a patência da luz contra pressões pleurais negativas. Função: Condução do ar",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. traqueais (ramos das tireocervicais); Venosa: plexo venoso traqueal → vv. braquiocefálicas; Linfática: linfonodos paratraqueais e traqueobronquiais",
+      "innervation": "Sensitiva: NC X - laríngeo recorrente; Parassimpática: NC X (secreção e broncoconstrição)"
+    },
+    "histology": {
+      "epithelium": "Pseudoestratificado ciliado",
+      "tissues": [
+        "Cartilagem hialina (anéis), músculo liso (traqueal)"
+      ]
+    },
+    "clinical": [
+      "Traqueíte",
+      "Estenose traqueal"
+    ]
+  },
+  "za:vh-f-hilum-r": {
+    "ids": {
+      "wikidata": "Q4131640",
+      "fma": "62842",
+      "ta2": "A11.5.00.009"
+    },
+    "summary_pt": "Hilo é uma fissura ou depressão numa víscera, especialmente no baço, pulmão, rim ou ovário, pela qual entram e saem os elementos vasculares, nervosos e linfáticos. A mesma designação, por vezes como «hilo cárpico» é utilizada em botânica para designar a cicatriz deixada na semente no ponto de inserção do funículo no óvulo.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Hilo"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:arvore-bronquica": {
+    "ids": {
+      "wikidata": "Q193107",
+      "mesh": "D001982",
+      "icd10": [
+        "J40",
+        "J47",
+        "J45",
+        "J44"
+      ],
+      "ta2": "A06.4.01.001"
+    },
+    "summary_pt": "Ramificações condutoras até bronquíolos terminais e respiratórios suscetíveis a broncoconstrição colinérgica. Função: Condução e condicionamento do ar",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. brônquicas (ramos da aorta torácica); Venosa: vv. brônquicas; Linfática: linfonodos hilares",
+      "innervation": "Simpática: T2-T5 → β2 (broncodilatação); Parassimpática: NC X → M3 (broncoconstrição e secreção)"
+    },
+    "histology": {
+      "epithelium": "Pseudoestratificado ciliado (brônquios) → cuboide simples (bronquíolos)"
+    },
+    "clinical": [
+      "Asma",
+      "DPOC",
+      "Bronquiectasia"
+    ]
+  },
+  "za:faringe": {
+    "ids": {
+      "wikidata": "Q174778",
+      "mesh": "D010614",
+      "icd10": [
+        "J39.2",
+        "J02.0",
+        "C11"
+      ],
+      "ta2": "A05.3.01.001"
+    },
+    "summary_pt": "Zona de transição aerodigestiva com anel linfático de Waldeyer protegendo contra patógenos inalados. Função: Passagem aerodigestiva",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. faríngea ascendente, aa. palatinas; Venosa: plexo faríngeo; Linfática: linfonodos cervicais profundos",
+      "innervation": "Sensitiva: NC IX, NC X; Motora: NC IX, NC X, NC XI"
+    },
+    "histology": {
+      "epithelium": "Pseudoestratificado ciliado (nasofaringe) → escamoso estratificado (orofaringe)"
+    },
+    "clinical": [
+      "Faringite estreptocócica",
+      "Câncer de nasofaringe"
+    ]
+  },
+  "za:laringe": {
+    "ids": {
+      "wikidata": "Q16364",
+      "mesh": "D007830",
+      "icd10": [
+        "J38.0",
+        "J38.6",
+        "J04.0",
+        "C32"
+      ],
+      "ta2": "A06.2.01.001"
+    },
+    "summary_pt": "Órgão fonador com proteção de vias aéreas inferiores via reflexo de fechamento glótico pela epiglote. Função: Fonação e proteção da via aérea",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. laríngea superior (ramo da tiroideana superior), a. laríngea inferior (ramo da tiroideana inferior); Venosa: vv. laríngeas superior e inferior → v. jugular interna; Linfática: linfonodos cervicais profundos",
+      "innervation": "Sensitiva: NC X - ramo interno do laríngeo superior (supraglote), NC X - laríngeo recorrente (infraglote); Motora: NC X - laríngeo recorrente, NC X - laríngeo externo (cricotireóideo)"
+    },
+    "histology": {
+      "epithelium": "Escamoso estratificado (cordas vocais) + pseudoestratificado ciliado (restante)"
+    },
+    "clinical": [
+      "Laringite aguda",
+      "Câncer de laringe",
+      "Paralisia de corda vocal"
+    ]
+  },
+  "za:nariz-cavidade-nasal": {
+    "ids": {
+      "wikidata": "Q7363",
+      "mesh": "D009299",
+      "icd10": [
+        "J34.0",
+        "J34.2",
+        "J30",
+        "J32",
+        "R04.0"
+      ],
+      "ta2": "A06.1.00.001"
+    },
+    "summary_pt": "Filtração por vibrissas, termorregulação do fluxo aéreo e absorção rápida de fármacos via plexo de Kiesselbach. Função: Condicionamento do ar e olfação",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. etmoidais anteriores e posteriores, aa. esfenopalatinas; Venosa: plexo de Kiesselbach, vv. faciais; Linfática: linfonodos submandibulares, linfonodos retrofaríngeos",
+      "innervation": "Sensitiva: NC I (olfatório), NC V1 e V2 (trigêmeo); Simpática: T1-T2 (vasoconstrição); Parassimpática: NC VII (secreção glandular)"
+    },
+    "histology": {
+      "epithelium": "Pseudoestratificado ciliado (região respiratória)",
+      "tissues": [
+        "Lâmina própria com colágeno I e III"
+      ]
+    },
+    "clinical": [
+      "Rinite alérgica",
+      "Sinusite crônica",
+      "Epistaxe"
+    ]
+  },
+  "za:pulmoes-alveolos": {
+    "ids": {
+      "wikidata": "Q7886",
+      "mesh": "D008168",
+      "icd10": [
+        "J98.4",
+        "C34",
+        "J18",
+        "J43",
+        "U07.1",
+        "J80"
+      ],
+      "ta2": "A06.5.01.001"
+    },
+    "summary_pt": "Área alveolar de ~100 m² revestida por pneumócitos tipo I (troca gasosa) e pneumócitos tipo II (surfactante pulmonar). Função: Hematose (troca gasosa O₂/CO₂)",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. pulmonares, aa. brônquicas; Venosa: vv. pulmonares (4), vv. brônquicas; Linfática: plexo linfático subpleural, linfonodos hilares",
+      "innervation": "Simpática: T1-T5 (broncodilatação, vasodilatação); Parassimpática: NC X (broncoconstrição, secreção)"
+    },
+    "histology": {
+      "epithelium": "Pavimentoso simples (alvéolos)",
+      "tissues": [
+        "Elastina, colágeno I/III (interstício)"
+      ]
+    },
+    "clinical": [
+      "Pneumonia",
+      "Enfisema pulmonar",
+      "COVID-19",
+      "Câncer de pulmão",
+      "SDRA"
+    ]
+  }
+}

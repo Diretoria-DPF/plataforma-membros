@@ -1,0 +1,3249 @@
+{
+  "za:rectus-abdominis-muscle-l": {
+    "ids": {
+      "wikidata": "Q275150",
+      "fma": "9628",
+      "ta2": "A04.5.01.001",
+      "mesh": "D017568"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:rectus-abdominis-muscle-r": {
+    "ids": {
+      "wikidata": "Q275150",
+      "fma": "9628",
+      "ta2": "A04.5.01.001",
+      "mesh": "D017568"
+    },
+    "summary_pt": "O músculo reto do abdome ou reto abdominal é um músculo que corre verticalmente em cada lado da parede anterior do abdome humano (e em alguns outros animais). Eles são dois músculos paralelos, separados por uma faixa de tecido conjuntivo chamada de linha alba (linha branca). Ele se estende da sínfise púbica inferiormente e ao processo xifoide e cartilagens costais inferiores superiormente. Ele está contido na bainha do reto [en].",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/M%C3%BAsculo_reto_do_abdome"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:transversus-abdominis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:omohyoid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:sternohyoid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:sternothyroid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:thyrohyoid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:longus-capitis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:inferior-pharyngeal-constrictor-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:middle-pharyngeal-constrictor-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:superior-pharyngeal-constrictor-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:platysma-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:geniohyoid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:mylohyoid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:stylohyoid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:levator-palpebrae-superioris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:medial-pterygoid-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:temporalis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:genioglossus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:hyoglossus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:corrugator-supercilii-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:depressor-labii-inferioris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:depressor-septi-nasi-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:levator-anguli-oris-l": {
+    "ids": {
+      "wikidata": "Q913958",
+      "fma": "46822",
+      "ta2": "A04.1.03.034"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:levator-labii-superioris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:mentalis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:nasalis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:orbicularis-oris-muscle-l": {
+    "ids": {
+      "wikidata": "Q302950",
+      "fma": "46841",
+      "ta2": "A04.1.03.023"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:orbicularis-oris-muscle-r": {
+    "ids": {
+      "wikidata": "Q302950",
+      "fma": "46841",
+      "ta2": "A04.1.03.023"
+    },
+    "summary_pt": "Em anatomia humana, o músculo orbicular da boca é um complexo de músculos nos lábios que envolve a boca. É um esfíncter, ou músculo circular, mas na verdade é composto por quatro quadrantes independentes que se entrelaçam e dão apenas uma aparência de circularidade. É também um dos músculos utilizados na execução de todos os instrumentos de sopro e alguns instrumentos de sopro. Esse músculo fecha a boca e enruga os lábios quando se contrai.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/M%C3%BAsculo_orbicular_da_boca"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:risorius-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:orbital-part-of-orbicularis-oculi-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:palpebral-part-of-orbicularis-oculi-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:zygomaticus-major-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:zygomaticus-minor-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:iliocostalis-thoracis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:longissimus-thoracis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:spinalis-capitis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:spinalis-thoracis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:semispinalis-thoracis-muscle-r": {
+    "ids": {
+      "wikidata": "Q2799932",
+      "fma": "22828",
+      "ta2": "A04.3.02.207"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:extensor-digitorum-longus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:extensor-hallucis-longus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:sartorius-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:inferior-gemellus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:obturator-internus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:piriformis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:superior-gemellus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:iliacus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:adductor-brevis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:adductor-longus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:adductor-magnus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:obturator-externus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:pectineus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:flexor-digitorum-longus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:flexor-hallucis-longus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:popliteus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:soleus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:long-head-of-biceps-femoris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:semimembranosus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:short-head-of-biceps-femoris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:long-head-of-biceps-brachii-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:short-head-of-biceps-brachii-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:brachialis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:coracobrachialis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:flexor-digitorum-profundus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:pronator-quadratus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:humeral-head-of-flexor-carpi-ulnaris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:humero-ulnar-head-of-flexor-digitorum-superficialis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:palmaris-longus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:radial-head-of-flexor-digitorum-superficialis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:ulnar-head-of-flexor-carpi-ulnaris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:abductor-digiti-minimi-of-hand-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:deep-head-of-flexor-pollicis-brevis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:oblique-head-of-adductor-pollicis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:superficial-head-of-flexor-pollicis-brevis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:transverse-head-of-adductor-pollicis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:lateral-head-of-triceps-brachii-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:long-head-of-triceps-brachii-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:medial-head-of-triceps-brachii-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:abductor-pollicis-longus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:extensor-indicis-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:anconeus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:extensor-digitorum-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:humeral-head-of-extensor-carpi-ulnaris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:ulnar-head-of-extensor-carpi-ulnaris-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:infraspinatus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:subscapularis-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:supraspinatus-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:teres-minor-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:teres-major-muscle-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:external-anal-sphincter-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"muscular-system\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.4",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/muscular-system/v1.4/assets/asct-b-vh-muscular-system.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000188",
+          "name_pt": "cell of skeletal muscle",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:fascia-profunda": {
+    "ids": {
+      "wikidata": "Q5454304",
+      "mesh": "D005121",
+      "icd10": [
+        "M72.2",
+        "G57.0",
+        "T79.A0"
+      ]
+    },
+    "summary_pt": "Camada densa e organizada que envolve músculos, vasos e nervos, formando bainhas e septos. Função: Contenção muscular e transmissão de força",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "tissues": [
+        "Colágeno I densamente empacotado"
+      ]
+    },
+    "clinical": [
+      "Fascite plantar",
+      "Síndrome do piriforme",
+      "Síndrome compartimental"
+    ]
+  },
+  "za:fascia-superficial": {
+    "ids": {
+      "wikidata": "Q5454302",
+      "mesh": "D005121",
+      "icd10": [
+        "M79.7",
+        "E88.1"
+      ]
+    },
+    "summary_pt": "Camada adiposa subcutânea contínua em toda a superfície corporal. Função: Isolamento, deslizamento e reserva energética",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "tissues": [
+        "Colágeno frouxo, elastina, ácido hialurônico"
+      ]
+    },
+    "clinical": [
+      "Fibromialgia",
+      "Lipodistrofia"
+    ]
+  },
+  "za:fascia-visceral": {
+    "ids": {
+      "wikidata": "Q5454306",
+      "mesh": "D005121",
+      "icd10": [
+        "K65",
+        "K66.0"
+      ]
+    },
+    "summary_pt": "Camada que envolve órgãos internos, formando ligamentos e mesos que os suspendem. Função: Suspensão visceral e deslizamento",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Peritonite",
+      "Adesões pós-cirúrgicas"
+    ]
+  },
+  "za:musculo-cardiaco-miocardio": {
+    "ids": {
+      "wikidata": "Q46366",
+      "mesh": "D009206",
+      "icd10": [
+        "I42.0",
+        "I42.1",
+        "I21"
+      ]
+    },
+    "summary_pt": "Músculo estriado involuntário com discos intercalares e junções comunicantes (gap junctions) para condução iônica sincicial. Função: Bombeamento cardíaco",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Miocardiopatia dilatada",
+      "Miocardiopatia hipertrófica",
+      "Infarto do miocárdio"
+    ]
+  },
+  "za:musculo-liso-visceral-vascular": {
+    "ids": {
+      "wikidata": "Q1128595",
+      "mesh": "D009130",
+      "icd10": [
+        "I10",
+        "O72.0",
+        "K56.0"
+      ]
+    },
+    "summary_pt": "Miócitos fusiformes involuntários não estriados nas paredes dos vasos, TGI, brônquios e útero. Função: Motilidade visceral e vascular",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Hipertensão arterial",
+      "Atonia uterina",
+      "Íleo paralítico"
+    ]
+  },
+  "za:musculos-esqueleticos-voluntarios": {
+    "ids": {
+      "wikidata": "Q7365",
+      "mesh": "D018482",
+      "icd10": [
+        "G71.0",
+        "G70.0",
+        "M62.8",
+        "M62.84"
+      ]
+    },
+    "summary_pt": "Mais de 600 músculos estriados inervados pelo sistema nervoso somático operando via pontes cruzadas de actina-miosina. Função: Movimento voluntário e postura",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. musculares específicas por região; Venosa: vv. musculares correspondentes; Linfática: linfonodos regionais",
+      "innervation": "Sensitiva: Fusos musculares e órgãos de Golgi; Motora: Motoneurônios alfa do corno anterior medular"
+    },
+    "clinical": [
+      "Distrofia muscular de Duchenne",
+      "Miastenia gravis",
+      "Rabdomiólise",
+      "Sarcopenia"
+    ]
+  },
+  "za:tendoes-fascias": {
+    "ids": {
+      "wikidata": "Q184755",
+      "mesh": "D013710",
+      "icd10": [
+        "M76.6",
+        "M72.2",
+        "M79.7"
+      ]
+    },
+    "summary_pt": "Estruturas de ancoragem colagênica inextensível que transmitem a tensão do ventre muscular às alavancas ósseas. Função: Transmissão de força e cobertura muscular",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "tissues": [
+        "Colágeno tipo I altamente organizado"
+      ]
+    },
+    "clinical": [
+      "Tendinopatia do Aquiles",
+      "Fascite plantar",
+      "Fibromialgia"
+    ]
+  }
+}

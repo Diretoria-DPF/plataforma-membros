@@ -101,7 +101,7 @@
         "t": 0
       },
       {
-        "sid": "fma:7148",
+        "sid": "za:stomach",
         "label_pt": "Trajeto Esofágico",
         "t": 0.25
       },
@@ -111,7 +111,7 @@
         "t": 0.5
       },
       {
-        "sid": "fma:7197",
+        "sid": "za:liver",
         "label_pt": "Absorção Duodenal",
         "t": 0.75
       },
@@ -326,7 +326,7 @@
         "t": 0.16666666666666666
       },
       {
-        "sid": "fma:7148",
+        "sid": "za:stomach",
         "label_pt": "Dissolução Gástrica",
         "t": 0.3333333333333333
       },
@@ -341,7 +341,7 @@
         "t": 0.6666666666666666
       },
       {
-        "sid": "fma:7197",
+        "sid": "za:liver",
         "label_pt": "Metabolismo de 1ª Passagem (CYP450)",
         "t": 0.8333333333333334
       },
@@ -390,7 +390,7 @@
         "t": 0
       },
       {
-        "sid": "za:traqueia",
+        "sid": "za:trachea",
         "label_pt": "Traqueia",
         "t": 0.25
       },

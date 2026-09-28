@@ -1,0 +1,436 @@
+{
+  "za:epididimo-m": {
+    "ids": {
+      "wikidata": "Q173253",
+      "mesh": "D004822",
+      "icd10": [
+        "N45"
+      ]
+    },
+    "summary_pt": "Estrutura tubular convoluta apostada ao testículo onde os espermatozoides adquirem motilidade e maturação funcional. Função: Maturação e armazenamento de espermatozoides",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Epididimite"
+    ]
+  },
+  "za:ovarios-f": {
+    "ids": {
+      "wikidata": "Q172290",
+      "mesh": "D010053",
+      "icd10": [
+        "N83",
+        "C56",
+        "E28",
+        "E28.2",
+        "N83.2"
+      ],
+      "ta2": "A09.1.01.001"
+    },
+    "summary_pt": "Gônadas femininas pares onde ocorrem a oogênese folicular mensal e a ovulação cíclica; produzem estrogênio e progesterona. Função: Oogênese e produção hormonal",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. ovariana (aorta) + a. uterina; Venosa: plexo uterovarianas → v. ovariana direita → VCI; v. ovariana esquerda → v. renal; Linfática: linfonodos para-aórticos",
+      "innervation": "Simpática: T10-T11 (dolorosa); Parassimpática: NC X"
+    },
+    "clinical": [
+      "SOP",
+      "Câncer de ovário",
+      "Cisto ovariano"
+    ]
+  },
+  "za:penis-corpos-cavernosos-m": {
+    "ids": {
+      "wikidata": "Q7873",
+      "mesh": "D010413",
+      "icd10": [
+        "N48",
+        "F52",
+        "F52.2",
+        "N48.3",
+        "N47"
+      ]
+    },
+    "summary_pt": "Órgão copulador masculino dotado de tecido erétil vascular dependente de liberação de óxido nítrico e GMPc. Função: Cópula e condução de urina",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. dorsal do pênis, a. profunda do pênis, a. bulbar; Venosa: v. dorsal profunda do pênis; Linfática: linfonodos inguinais superficiais e profundos"
+    },
+    "clinical": [
+      "Disfunção erétil",
+      "Priapismo",
+      "Fimose"
+    ]
+  },
+  "za:placenta-orgao-gestacional-transitorio": {
+    "ids": {
+      "wikidata": "Q170205",
+      "mesh": "D010920",
+      "icd10": [
+        "O43-O46",
+        "P02.2",
+        "O14",
+        "O44",
+        "O45"
+      ]
+    },
+    "summary_pt": "Órgão fetomaterno temporário que assegura trocas gasosas, nutrição, descarte de excretas e secreção de hCG. Função: Trocas metabólicas e endócrinas fetomaternas",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. espiraladas (uterinas maternais); Venosa: veias uterinas maternas; Linfática: ausente"
+    },
+    "clinical": [
+      "Pré-eclâmpsia",
+      "Placenta prévia",
+      "Descolamento prematuro"
+    ]
+  },
+  "za:prostata-m": {
+    "ids": {
+      "wikidata": "Q9620",
+      "mesh": "D011467",
+      "icd10": [
+        "N40",
+        "C61",
+        "N41"
+      ]
+    },
+    "summary_pt": "Glândula fibro-muscular subvesical que secreta líquido prostático alcalino contendo PSA e zinco. Função: Secreção de líquido seminal",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. vesical inferior, a. retal média; Venosa: plexo prostático → vv. ilíacas internas; Linfática: linfonodos ilíacos internos",
+      "innervation": "Simpática: T11-L2 (ejaculação); Parassimpática: S2-S4 (secreção)"
+    },
+    "clinical": [
+      "Hiperplasia prostática benigna",
+      "Câncer de próstata",
+      "Prostatite"
+    ]
+  },
+  "za:testiculos-tubulos-seminiferos-m": {
+    "ids": {
+      "wikidata": "Q9384",
+      "mesh": "D013737",
+      "icd10": [
+        "N43-N45",
+        "C62",
+        "E29",
+        "I86.1"
+      ],
+      "ta2": "A09.3.01.001"
+    },
+    "summary_pt": "Gônadas masculinas contendo túbulos seminíferos onde ocorre a espermatogênese contínua sob ação do FSH; células de Leydig produzem testosterona sob LH. Função: Espermatogênese e produção de testosterona",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. testicular (aorta abdominal); Venosa: plexo pampiniforme → v. testicular; Linfática: linfonodos para-aórticos lombares",
+      "innervation": "Simpática: T10-T11"
+    },
+    "clinical": [
+      "Câncer de testículo",
+      "Hipogonadismo",
+      "Varicocele"
+    ]
+  },
+  "za:tubas-uterinas-f": {
+    "ids": {
+      "wikidata": "Q216931",
+      "mesh": "D005187",
+      "icd10": [
+        "N70-N73",
+        "N83.5",
+        "O00",
+        "N70"
+      ]
+    },
+    "summary_pt": "Condutos pares dotados de epitélio ciliado que captam o oócito secundário e servem de sítio à fertilização. Função: Transporte do oócito e fertilização",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Gravidez ectópica",
+      "Salpingite"
+    ]
+  },
+  "za:utero-f": {
+    "ids": {
+      "wikidata": "Q9612",
+      "mesh": "D014599",
+      "icd10": [
+        "N80-N98",
+        "C53-C55",
+        "D25",
+        "N80",
+        "C54.1",
+        "N80.0"
+      ],
+      "ta2": "A09.1.03.001"
+    },
+    "summary_pt": "Órgão muscular oco piriforme revestido por endométrio dinâmico onde se processa a nidação e o parto. Função: Nidação, gestação e parto",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. uterina (ilíaca interna) + a. ovariana; Venosa: plexo uterino → vv. ilíacas internas; Linfática: linfonodos ilíacos internos, para-aórticos e inguinais superficiais",
+      "innervation": "Simpática: T10-L1 (contração); Parassimpática: S2-S4"
+    },
+    "clinical": [
+      "Mioma uterino",
+      "Endometriose",
+      "Câncer de endométrio",
+      "Adenomiose"
+    ]
+  },
+  "za:vagina-f": {
+    "ids": {
+      "wikidata": "Q165199",
+      "mesh": "D014621",
+      "icd10": [
+        "N76-N77",
+        "C52",
+        "N76.0",
+        "B37.3"
+      ],
+      "ta2": "A09.1.04.001"
+    },
+    "summary_pt": "Tubo musculomembranoso distensível de cópula e canal de parto com ecossistema ácido mantido por lactobacilos. Função: Cópula, canal de parto, fluxo menstrual",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Vaginose bacteriana",
+      "Candidíase vaginal",
+      "Câncer de vagina"
+    ]
+  },
+  "za:vulva-clitoris-f": {
+    "ids": {
+      "wikidata": "Q178395",
+      "mesh": "D014845",
+      "icd10": [
+        "N76",
+        "N90-N94",
+        "N76.0-N76.1",
+        "C51"
+      ]
+    },
+    "summary_pt": "Conjunto genital externo feminino ricamente inervado contendo corpos eréteis e orifícios uretral e vaginal. Função: Proteção, prazer sexual, micção",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Vulvovaginite",
+      "Câncer de vulva"
+    ]
+  }
+}

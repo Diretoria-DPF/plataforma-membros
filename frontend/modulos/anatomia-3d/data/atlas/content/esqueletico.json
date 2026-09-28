@@ -1,0 +1,693 @@
+{
+  "za:calcaneus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:cuboid-bone-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:talus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:scapula-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:ethmoid-bone": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:lacrimal-bone-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:maxilla-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:nasal-bone-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:occipital-bone": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:palatine-bone-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:sphenoid-bone": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:temporal-bone-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:vomer": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:hyoid-bone": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:mandible": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:body-of-sternum": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:manubrium-of-sternum": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:xiphoid-process": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:coccyx": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"skeleton\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.3",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/skeleton/v1.3/assets/asct-b-vh-skeleton.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0001035",
+          "name_pt": "bone cell",
+          "biomarkers": []
+        }
+      ]
+    }
+  },
+  "za:esqueleto-apendicular": {
+    "ids": {
+      "wikidata": "Q619790",
+      "mesh": "D012898",
+      "icd10": [
+        "M81",
+        "S72"
+      ]
+    },
+    "summary_pt": "Conjunto de 126 ossos dos membros superiores e inferiores + cinturas escapular e pélvica. Função: Locomoção e manipulação",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Osteoporose",
+      "Fraturas de fêmur"
+    ]
+  },
+  "za:esqueleto-axial": {
+    "ids": {
+      "wikidata": "Q2267350",
+      "mesh": "D012898",
+      "icd10": [
+        "M41",
+        "S22-S32"
+      ]
+    },
+    "summary_pt": "Conjunto de 80 ossos formando o eixo central do corpo (crânio, coluna, caixa torácica). Função: Proteção de órgãos vitais e sustentação central",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Escoliose",
+      "Fraturas vertebrais"
+    ]
+  }
+}

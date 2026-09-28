@@ -21,15 +21,15 @@
     "system": "digestorio",
     "prompt_pt": "Biofarmacotécnica: Metabolismo Pré-Sistêmico. Paciente em farmacoterapia oral com propranolol requer cálculo de dose para compensar a intensa biotransformação pré-sistêmica antes de atingir a veia cava.\n\nAponte no modelo 3D o órgão parenquimatoso responsável pelo efeito de primeira passagem hepática mediado por isoformas do citocromo P450.",
     "difficulty": "facil",
-    "correctSid": "fma:7197",
+    "correctSid": "za:liver",
     "distractorSids": [
-      "fma:7148",
+      "za:stomach",
       "za:vesicula-biliar",
       "za:pancreas-fracao-exocrina"
     ],
     "anchors": [
       {
-        "sid": "fma:7197"
+        "sid": "za:liver"
       }
     ]
   },
@@ -40,7 +40,7 @@
     "difficulty": "facil",
     "correctSid": "za:pulmoes-alveolos",
     "distractorSids": [
-      "za:traqueia",
+      "za:trachea",
       "za:arvore-bronquica",
       "za:faringe"
     ],
@@ -57,7 +57,7 @@
     "difficulty": "medio",
     "correctSid": "za:rins",
     "distractorSids": [
-      "za:bexiga-urinaria",
+      "za:urinary-bladder",
       "za:ureteres",
       "za:uretra"
     ],
@@ -89,7 +89,7 @@
     "system": "digestorio",
     "prompt_pt": "Gastroenterologia: Barreira Mucosa e Úlcera Péptica. Indivíduo com dor epigástrica em queimação e dispepsia crônica recebe prescrição de inibidor da bomba de prótons (Omeprazol) para inibir a enzima H+/K+-ATPase.\n\nAponte no modelo 3D o reservatório digestivo ácido onde as células parietais oxínticas secretam ácido clorídrico.",
     "difficulty": "facil",
-    "correctSid": "fma:7148",
+    "correctSid": "za:stomach",
     "distractorSids": [
       "za:esofago",
       "za:intestino-delgado-duodeno-jejuno-ileo",
@@ -97,7 +97,7 @@
     ],
     "anchors": [
       {
-        "sid": "fma:7148"
+        "sid": "za:stomach"
       }
     ]
   },

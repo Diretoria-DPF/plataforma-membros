@@ -1,0 +1,320 @@
+{
+  "za:urinary-bladder": {
+    "ids": {
+      "wikidata": "Q9382",
+      "mesh": "D001746",
+      "icd10": [
+        "N30-N32",
+        "C67",
+        "N30",
+        "N31",
+        "N32.81"
+      ],
+      "ta2": "A08.3.01.001"
+    },
+    "summary_pt": "Reservatório muscular distensível revestido por urotélio com acomodação volêmica intermediada pelo músculo detrusor. Função: Armazenamento de urina",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. vesicais superiores (umbilical), aa. vesicais inferiores (ilíaca interna); Venosa: plexo venoso vesical → vv. ilíacas internas; Linfática: linfonodos ilíacos internos e externos",
+      "innervation": "Simpática: T11-L2 → relaxamento do detrusor; Parassimpática: S2-S4 → contração do detrusor"
+    },
+    "histology": {
+      "epithelium": "Urotélio (transicional)"
+    },
+    "clinical": [
+      "Cistite",
+      "Bexiga neurogênica",
+      "Câncer de bexiga",
+      "Bexiga hiperativa"
+    ]
+  },
+  "za:vh-f-kidney-capsule-l": {
+    "ids": {
+      "wikidata": "Q1752136",
+      "fma": "66610"
+    },
+    "summary_pt": "A cápsula renal é um tecido fibroso que recobre a superfície externa dos rins, dando-lhes um aspecto brilhante.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/C%C3%A1psula_renal"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.8",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/kidney/v1.8/assets/asct-b-vh-kidney.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000499",
+          "name_pt": "stromal cell",
+          "biomarkers": [
+            "forkhead box D1",
+            "visual system homeobox 2"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-f-hilum-of-kidney-l": {
+    "ids": {
+      "wikidata": "Q2405172",
+      "fma": "15610",
+      "ta2": "A08.1.01.004"
+    },
+    "summary_pt": "O hilo renal é uma fenda localizada no bordo interno de cada rim por onde entram as artérias e os nervos renais e por onde saem a veia renal e os ureteres. O hilo abre-se numa cavidade denominada seio renal que contém gordura e tecido conjuntivo.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Hilo_renal"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:vh-f-renal-column-l": {
+    "ids": {
+      "wikidata": "Q2340707",
+      "fma": "17633",
+      "ta2": "A08.1.01.019"
+    },
+    "summary_pt": "Em anatomia renal, coluna de Bertin ou coluna renal, é a porção do córtex renal que fica entre as duas pirâmides renais. Seu reconhecimento é fundamental em radiologia e diagnóstico por imagem, pois sua eventual hipertrofia (uma alteração sem significado clínico ou patológico observado em até 20% da população), pode simular uma lesão tumoral na verdade inexistente. Seu nome é uma homenagem ao anatomista francês Exupère Joseph Bertin, o primeiro a descrever sua anatomia, em 1744.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Coluna_de_Bertin"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:rins": {
+    "ids": {
+      "wikidata": "Q9377",
+      "mesh": "D007668",
+      "icd10": [
+        "N00-N29",
+        "C64",
+        "N18",
+        "N17",
+        "N20",
+        "N05"
+      ],
+      "ta2": "A08.1.01.001"
+    },
+    "summary_pt": "Filtração de 180 L/dia de plasma com ultrafiltração glomerular, reabsorção tubular seletiva e secreção ativa. Função: Filtração, reabsorção, secreção, regulação hormonal",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. renais (ramos da aorta abdominal); Venosa: vv. renais → veia cava inferior; Linfática: linfonodos para-aórticos lombares",
+      "innervation": "Simpática: T10-L1 (vasoconstrição, liberação de renina); Parassimpática: NC X (modulação)"
+    },
+    "histology": {
+      "epithelium": "Simples cuboide / escamoso (túbulos)",
+      "tissues": [
+        "Membrana basal glomerular (colágeno IV)"
+      ]
+    },
+    "clinical": [
+      "Doença renal crônica",
+      "Insuficiência renal aguda",
+      "Nefrolitíase",
+      "Glomerulonefrite",
+      "Câncer renal"
+    ]
+  },
+  "za:ureteres": {
+    "ids": {
+      "wikidata": "Q173022",
+      "mesh": "D014513",
+      "icd10": [
+        "N20-N23",
+        "N20.1",
+        "N13.5"
+      ],
+      "ta2": "A08.2.01.001"
+    },
+    "summary_pt": "Condutos musculares pares com ondas peristálticas ativas que conduzem a urina da pelve renal à bexiga. Função: Condução de urina",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. renais, gonadais, ilíacas; Venosa: vv. correspondentes; Linfática: linfonodos lombares e ilíacos",
+      "innervation": "Simpática: T10-L2; Parassimpática: S2-S4 (peristaltismo)"
+    },
+    "histology": {
+      "epithelium": "Urotélio (transicional)"
+    },
+    "clinical": [
+      "Cálculo ureteral",
+      "Estenose ureteral"
+    ]
+  },
+  "za:uretra": {
+    "ids": {
+      "wikidata": "Q9385",
+      "mesh": "D014521",
+      "icd10": [
+        "N34-N36",
+        "N34",
+        "N35"
+      ],
+      "ta2": "A08.4.01.001"
+    },
+    "summary_pt": "Canal excretor terminal com dimorfismo anatômico entre os sexos, contendo esfíncteres uretral interno e externo. Função: Condução de urina para o exterior",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "epithelium": "Urotélio → escamoso estratificado distal"
+    },
+    "clinical": [
+      "Uretrite",
+      "Estenose uretral"
+    ]
+  }
+}

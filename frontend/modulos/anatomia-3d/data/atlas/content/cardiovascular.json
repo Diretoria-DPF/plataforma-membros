@@ -1,0 +1,918 @@
+{
+  "za:pulmonary-trunk": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"blood-vasculature\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-vasculature/v1.10/assets/asct-b-vh-blood-vasculature.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000071",
+          "name_pt": "blood vessel endothelial cell",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        },
+        {
+          "cl": "CL:1000413",
+          "name_pt": "endothelial cell of artery",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        },
+        {
+          "cl": "CL:0000057",
+          "name_pt": "fibroblast",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        },
+        {
+          "cl": "CL:0000359",
+          "name_pt": "vascular associated smooth muscle cell",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        }
+      ]
+    }
+  },
+  "za:anterior-communicating-artery": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"blood-vasculature\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-vasculature/v1.10/assets/asct-b-vh-blood-vasculature.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000071",
+          "name_pt": "blood vessel endothelial cell",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        },
+        {
+          "cl": "CL:1000413",
+          "name_pt": "endothelial cell of artery",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        },
+        {
+          "cl": "CL:0000057",
+          "name_pt": "fibroblast",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        },
+        {
+          "cl": "CL:0000359",
+          "name_pt": "vascular associated smooth muscle cell",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1",
+            "AIFM2",
+            "DDR2",
+            "ACTA2",
+            "CNN1",
+            "MYOCD",
+            "TAGLN"
+          ]
+        }
+      ]
+    }
+  },
+  "za:cavernous-sinus-l": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"blood-vasculature\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-vasculature/v1.10/assets/asct-b-vh-blood-vasculature.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0000071",
+          "name_pt": "blood vessel endothelial cell",
+          "biomarkers": [
+            "CDH5",
+            "PECAM1",
+            "TEK",
+            "TIE1"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-m-mitral-valve": {
+    "ids": {
+      "wikidata": "Q369939",
+      "fma": "7235",
+      "ta2": "A12.1.04.003",
+      "mesh": "D008943"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"heart\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/heart/v1.7/assets/asct-b-vh-heart.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:4030032",
+          "name_pt": "valve interstitial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        },
+        {
+          "cl": "CL:0002350",
+          "name_pt": "endocardial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-m-tricuspid-valve": {
+    "ids": {
+      "wikidata": "Q1344255",
+      "fma": "7234",
+      "ta2": "A12.1.02.003",
+      "mesh": "D014261"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"heart\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/heart/v1.7/assets/asct-b-vh-heart.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:4030032",
+          "name_pt": "valve interstitial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        },
+        {
+          "cl": "CL:0002350",
+          "name_pt": "endocardial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-m-aortic-valve": {
+    "ids": {
+      "wikidata": "Q616071",
+      "fma": "7236",
+      "ta2": "A12.1.04.012",
+      "mesh": "D001021"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"heart\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/heart/v1.7/assets/asct-b-vh-heart.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:4030032",
+          "name_pt": "valve interstitial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        },
+        {
+          "cl": "CL:0000071",
+          "name_pt": "blood vessel endothelial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-m-pulmonary-valve": {
+    "ids": {
+      "wikidata": "Q1552748",
+      "fma": "7246",
+      "ta2": "A12.1.02.010",
+      "mesh": "D011664"
+    },
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"heart\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.7",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/heart/v1.7/assets/asct-b-vh-heart.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:4030032",
+          "name_pt": "valve interstitial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        },
+        {
+          "cl": "CL:0002350",
+          "name_pt": "endocardial cell",
+          "biomarkers": [
+            "platelet derived growth factor receptor alpha",
+            "gelsolin",
+            "platelet and endothelial cell adhesion molecule 1",
+            "von Willebrand factor",
+            "cadherin 5"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-m-left-cardiac-atrium": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"blood-vasculature\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-vasculature/v1.10/assets/asct-b-vh-blood-vasculature.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0010008",
+          "name_pt": "cardiac endothelial cell",
+          "biomarkers": [
+            "PECAM1"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-m-heart-right-ventricle": {
+    "ids": {},
+    "summary_pt": "Estrutura anatômica com dados de composição celular do órgão \"blood-vasculature\", mapeados pela tabela ASCT+B (Human Reference Atlas). Resumo ainda não redigido — aguardando revisão humana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10"
+      },
+      {
+        "field": "histology.cells",
+        "type": "hra-asctb",
+        "ref": "HRA ASCT+B",
+        "license": "CC-BY-4.0",
+        "rev": "v1.10",
+        "url": "https://cdn.humanatlas.io/digital-objects/asct-b/blood-vasculature/v1.10/assets/asct-b-vh-blood-vasculature.csv"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    },
+    "histology": {
+      "cells": [
+        {
+          "cl": "CL:0010008",
+          "name_pt": "cardiac endothelial cell",
+          "biomarkers": [
+            "PECAM1"
+          ]
+        }
+      ]
+    }
+  },
+  "za:vh-f-interventricular-septum": {
+    "ids": {
+      "wikidata": "Q2397680",
+      "fma": "7133",
+      "ta2": "A12.1.00.013",
+      "mesh": "D054088"
+    },
+    "summary_pt": "Septo interventricular corresponde à parede muscular ou septo localizado na porção inferior do coração. Tem a função de separar o ventrículo esquerdo do direito, para que não haja mistura de sangue venoso (pobre em oxigênio) com o arterial (rico em oxigênio). Ausente em peixes e anfíbios, parcialmente presente nos répteis não crocodilianos e presente em répteis crocodilianos, aves e mamíferos. A comunicação interventricular é uma cardiopatia caracterizada por uma abertura no septo interventricular.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Septo_interventricular"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:vh-f-right-ventricle": {
+    "ids": {
+      "wikidata": "Q876089",
+      "fma": "7101",
+      "ta2": "A12.1.04.001"
+    },
+    "summary_pt": "Ventrículo refere-se a uma câmara inferior do coração. O coração humano possui dois ventrículos. O ventrículo direito recebe o sangue através da valva tricúspide, vindo da aurícula direita e o ventrículo esquerdo recebe o sangue através da valva bicúspide, vindo da aurícula esquerdo. Ventrículos são as câmaras do coração cuja função é bombear o sangue para a circulação sistémica, através da artéria aórta, no caso do ventrículo esquerdo, e para a circulação pulmonar, através da artéria pulmonar, no caso do ventrículo direito. Os ventrículos estão ligados às aurículas, que recebem sangue arterial pelas veias pulmonares (aurícula esquerda) e sangue venoso pela veia cava superior e inferior (aurícula direita).",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Ventr%C3%ADculo"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:vh-f-aortic-valve": {
+    "ids": {
+      "wikidata": "Q616071",
+      "fma": "7236",
+      "ta2": "A12.1.04.012",
+      "mesh": "D001021"
+    },
+    "summary_pt": "Válvula aórtica ou valva aórtica é uma das quatro válvulas cardíacas, separando o ventrículo esquerdo cardíaco da artéria aorta. Se encontra aberta na sístole cardíaca, permitindo a passagem do sangue do ventrículo para a circulação sistêmica. Quando ocorre o relaxamento do ventrículo, na diástole cardíaca, esta valva se fecha, impedindo o refluxo do sangue. É composta de um anel de sustentação, que fixa três componentes ou cúspides. De duas cúpides saem as arterias coronárias direita e esquerda. Desta maneira existem três cúspides, ou seja, cúspide coronariana direita, cúspide coronariana esquerda e cúspide não coronariana.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/V%C3%A1lvula_a%C3%B3rtica"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:vh-f-pulmonary-valve": {
+    "ids": {
+      "wikidata": "Q1552748",
+      "fma": "7246",
+      "ta2": "A12.1.02.010",
+      "mesh": "D011664"
+    },
+    "summary_pt": "Válvula pulmonar é a válvula que separa o ventrículo direito cardíaco do tronco da artéria pulmonar. Se encontra aberta na sístole cardíaca, permitindo a passagem do sangue do ventrículo para a circulação pulmonar. Quando ocorre o relaxamento do ventrículo, na diástole cardíaca, esta válvula se fecha, impedindo o refluxo do sangue. É composta de uma anel de sustentação, que fixa três componentes ou cúspides.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/V%C3%A1lvula_pulmonar"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:vh-f-mitral-valve": {
+    "ids": {
+      "wikidata": "Q369939",
+      "fma": "7235",
+      "ta2": "A12.1.04.003",
+      "mesh": "D008943"
+    },
+    "summary_pt": "Válvula mitral, valva mitral, válvula bicúspide ou valva atrioventricular esquerda é a valva cardíaca que separa o átrio esquerdo (aurícula esquerda) do ventrículo esquerdo, impedindo que o sangue recue para a aurícula após ser bombeado desta para o ventrículo.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/V%C3%A1lvula_mitral"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:vh-f-tricuspid-valve": {
+    "ids": {
+      "wikidata": "Q1344255",
+      "fma": "7234",
+      "ta2": "A12.1.02.003",
+      "mesh": "D014261"
+    },
+    "summary_pt": "A válvula tricúspide, ou valva tricúspide, ou valva atrioventricular direita, encontra-se no lado dorsal direito do coração dos mamíferos, entre o átrio direito(pt-BR) ou aurícula direita(pt-PT?) e o ventrículo direito. A função da válvula é impedir o refluxo do sangue do ventrículo direito para o átrio direito.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/V%C3%A1lvula_tric%C3%BAspide"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "fma:7088": {
+    "ids": {
+      "wikidata": "Q1072",
+      "mesh": "D006321",
+      "icd10": [
+        "I50",
+        "I25",
+        "I44-I49",
+        "I21",
+        "I48",
+        "I35.0",
+        "I40"
+      ],
+      "ta2": "A12.1.00.001"
+    },
+    "summary_pt": "Bomba muscular quadricameral sincicial dotada de automatismo elétrico pelo nó sinoatrial e nó atrioventricular. Função: Bombeamento de sangue para circulação pulmonar e sistêmica",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. coronárias direita e esquerda, ramos interventriculares, ramos circunflexos; Venosa: seio coronário, vv. cardíacas anteriores; Linfática: plexo linfático subepicárdico, linfonodos mediastinais",
+      "innervation": "Simpática: T1-T4 → β1 (aumento FC e contratilidade); Parassimpática: NC X → M2 (redução FC, efeito dromotrópico negativo)"
+    },
+    "histology": {
+      "epithelium": "Endocárdio (endotélio + subendotélio)",
+      "tissues": [
+        "Colágeno I/III, elastina, proteoglicanos"
+      ]
+    },
+    "clinical": [
+      "Insuficiência cardíaca",
+      "Infarto agudo do miocárdio",
+      "Fibrilação atrial",
+      "Estenose aórtica",
+      "Miocardite"
+    ]
+  },
+  "za:arterias-sistemicas": {
+    "ids": {
+      "wikidata": "Q9655",
+      "mesh": "D001158",
+      "icd10": [
+        "I70-I79",
+        "I70",
+        "I71",
+        "I10"
+      ],
+      "ta2": "A12.2.01.001"
+    },
+    "summary_pt": "Vasos de condutância e resistência periférica; túnica média rica em músculo liso sensível a catecolaminas. Função: Distribuição de sangue oxigenado sob alta pressão",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso",
+      "tissues": [
+        "Elastina, colágeno, proteoglicanos"
+      ]
+    },
+    "clinical": [
+      "Aterosclerose",
+      "Aneurisma de aorta",
+      "Hipertensão arterial"
+    ]
+  },
+  "za:leito-capilar": {
+    "ids": {
+      "wikidata": "Q1031",
+      "mesh": "D002196",
+      "ta2": "A12.4.01.001",
+      "icd10": [
+        "R60",
+        "R57"
+      ]
+    },
+    "summary_pt": "Zona de difusão de solutos e equilíbrio de Starling hidrostático-oncótico entre o plasma e o interstício. Função: Troca de gases, nutrientes e metabólitos entre sangue e tecidos",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso com lâmina basal",
+      "tissues": [
+        "Lâmina basal, colágeno IV"
+      ]
+    },
+    "clinical": [
+      "Edema",
+      "Choque circulatório"
+    ]
+  },
+  "za:sangue-plasma-elementos-figurados": {
+    "ids": {
+      "wikidata": "Q7873",
+      "mesh": "D001769",
+      "icd10": [
+        "D64",
+        "C91-C95",
+        "D69.6"
+      ]
+    },
+    "summary_pt": "Tecido conjuntivo líquido carreador de hemácias, leucócitos, plaquetas, albumina e frações livres de fármacos. Função: Transporte, regulação e defesa",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "tissues": [
+        "Plasma (90% água, 8% proteínas, 2% solutos)"
+      ]
+    },
+    "clinical": [
+      "Anemia",
+      "Leucemia",
+      "Trombocitopenia"
+    ]
+  },
+  "za:veias-sistemicas": {
+    "ids": {
+      "wikidata": "Q9609",
+      "mesh": "D014680",
+      "icd10": [
+        "I80-I89",
+        "I80",
+        "I83",
+        "I26"
+      ],
+      "ta2": "A12.3.01.001"
+    },
+    "summary_pt": "Vasos de capacitância contendo ~65% da volemia corporal total, equipados com válvulas antirrefluxo. Função: Retorno venoso ao coração",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso",
+      "tissues": [
+        "Colágeno, elastina"
+      ]
+    },
+    "clinical": [
+      "Trombose venosa profunda",
+      "Varizes",
+      "Embolia pulmonar"
+    ]
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "za:vh-f-skin": {
+    "ids": {
+      "wikidata": "Q1074",
+      "mesh": "D012867"
+    },
+    "summary_pt": "A pele é a camada de tecido externo geralmente macio e flexível que cobre o corpo de um animal vertebrado, com três funções principais: proteção, regulação e sensação. Outras coberturas animais, como o exoesqueleto dos artrópodes, têm origem, estrutura e composição química de desenvolvimento diferentes. O adjetivo cutâneo significa \"da pele\" (do latim cutis; \"pele\"). Nos mamíferos, a pele é um órgão do sistema tegumentar composto de várias camadas de tecido ectodérmico e protege os músculos, ossos, ligamentos e órgãos internos subjacentes. A pele de natureza diferente existe em anfíbios, répteis e aves. A pele (incluindo tecidos cutâneos e subcutâneos) desempenha papéis cruciais na formação, estrutura e função de aparelhos extraesqueléticos, como chifres de bovídeos (por exemplo, gado) e rinocerontes, chifres de cervídeos, ossículos de girafas, osteoderma de tatus e os pênis/os clitóris.",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "wikipedia",
+        "ref": "Wikipedia",
+        "license": "CC-BY-SA-4.0",
+        "url": "https://pt.wikipedia.org/wiki/Pele"
+      }
+    ],
+    "review": {
+      "status": "auto-draft"
+    }
+  },
+  "za:cabelo-foliculos-pilosos": {
+    "ids": {
+      "wikidata": "Q14076",
+      "mesh": "D006197",
+      "icd10": [
+        "L65-L67",
+        "L73",
+        "L64",
+        "L63",
+        "L73.9"
+      ]
+    },
+    "summary_pt": "Filamentos queratinizados produzidos por folículos epidérmicos invaginados com inervação tátil sensível. Função: Proteção, termorregulação, sensação tátil",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Alopecia androgenética",
+      "Alopecia areata",
+      "Foliculite"
+    ]
+  },
+  "za:glandulas-mamarias": {
+    "ids": {
+      "wikidata": "Q7156",
+      "mesh": "D042241",
+      "icd10": [
+        "N60-N64",
+        "C50",
+        "N61",
+        "D24"
+      ]
+    },
+    "summary_pt": "Glândulas sudoríparas apócrinas modificadas na região peitoral responsáveis pela síntese e ejeção de leite materno. Função: Lactação",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. torácica interna, a. torácica lateral; Venosa: vv. torácicas → axilar; Linfática: linfonodos axilares (75%), linfonodos paraesternais",
+      "innervation": "Simpática: T4-T6 (ejeção de leite - ocitocina)"
+    },
+    "clinical": [
+      "Câncer de mama",
+      "Mastite",
+      "Fibroadenoma"
+    ]
+  },
+  "za:pele-epiderme-derme": {
+    "ids": {
+      "wikidata": "Q1074",
+      "mesh": "D012867",
+      "icd10": [
+        "L00-L99",
+        "C43-C44",
+        "L20",
+        "L40",
+        "C43",
+        "C44"
+      ],
+      "ta2": "A16.1.01.001"
+    },
+    "summary_pt": "Maior órgão do corpo humano; barreira hidrofóbica com estrato córneo limitante da permeabilidade tópica. Função: Barreira, termorregulação, sensação",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: plexos dérmicos (superficial e profundo); Venosa: vv. cutâneas → vv. perfurantes; Linfática: plexo linfático dérmico",
+      "innervation": "Sensitiva: Terminações nervosas livres (dor), Corpúsculos de Meissner (tato), Corpúsculos de Pacini (vibração), Discos de Merkel (tato fino); Simpática: Sudomotor e vasomotor"
+    },
+    "histology": {
+      "epithelium": "Escamoso estratificado queratinizado",
+      "tissues": [
+        "Colágeno I e III, elastina, ácido hialurônico"
+      ]
+    },
+    "clinical": [
+      "Dermatite atópica",
+      "Psoríase",
+      "Melanoma",
+      "Carcinoma basocelular"
+    ]
+  },
+  "za:tecido-subcutaneo-hipoderme": {
+    "ids": {
+      "wikidata": "Q1130193",
+      "mesh": "D040521",
+      "icd10": [
+        "E65",
+        "L98.8",
+        "E66",
+        "E88.1"
+      ]
+    },
+    "summary_pt": "Camada adiposa vascularizada de isolamento térmico, absorção de choque mecânico e depósito de injeções subcutâneas. Função: Isolamento, reserva energética, absorção de impacto",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "histology": {
+      "tissues": [
+        "Colágeno frouxo + capilares"
+      ]
+    },
+    "clinical": [
+      "Obesidade",
+      "Celulite",
+      "Lipodistrofia"
+    ]
+  },
+  "za:unhas": {
+    "ids": {
+      "wikidata": "Q165328",
+      "mesh": "D009264",
+      "icd10": [
+        "L60",
+        "L62",
+        "B35.1",
+        "L40.8"
+      ]
+    },
+    "summary_pt": "Placas rígidas de queratina densa na face dorsal dos dígitos que auxiliam na preensão e proteção das falanges distais. Função: Proteção das extremidades digitais",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "clinical": [
+      "Onicomicose",
+      "Psoríase ungueal"
+    ]
+  }
+}

@@ -1,0 +1,310 @@
+{
+  "za:pineal-gland": {
+    "ids": {
+      "wikidata": "Q189292",
+      "mesh": "D010870",
+      "icd10": [
+        "D35.4",
+        "G93.8",
+        "G47.2"
+      ],
+      "ta2": "A11.2.01.001"
+    },
+    "summary_pt": "Glândula neuroendócrina central responsável pela síntese de melatonina em resposta ao ciclo de luz-escuridão. Função: Ritmo circadiano, síntese de melatonina",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. coroideias posteriores; Venosa: vv. cerebrais internas",
+      "innervation": "Simpática: Via gânglio cervical superior (noradrenalina)"
+    },
+    "clinical": [
+      "Tumor pineal",
+      "Distúrbios circadianos"
+    ]
+  },
+  "za:thyroid-gland": {
+    "ids": {
+      "wikidata": "Q16399",
+      "mesh": "D013961",
+      "icd10": [
+        "E00-E07",
+        "C73",
+        "E03",
+        "E05",
+        "E06.3"
+      ],
+      "ta2": "A11.3.01.001"
+    },
+    "summary_pt": "Regulação do metabolismo basal e consumo celular de oxigênio através dos hormônios tiroxina (T4) e tri-iodotironina (T3). Função: Metabolismo basal, crescimento, termogênese",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. tireóidea superior (carótida externa), a. tireóidea inferior (subclávia); Venosa: vv. tireóideas superiores, médias e inferiores → jugular interna / braquiocefálica; Linfática: linfonodos cervicais profundos",
+      "innervation": "Simpática: Gânglios cervicais (vasoconstrição); Parassimpática: NC X (modulação)"
+    },
+    "clinical": [
+      "Hipotireoidismo",
+      "Hipertireoidismo",
+      "Tireoidite de Hashimoto",
+      "Câncer de tireoide"
+    ]
+  },
+  "za:glandulas-adrenais-suprarrenais": {
+    "ids": {
+      "wikidata": "Q185004",
+      "mesh": "D000311",
+      "icd10": [
+        "E24-E27",
+        "C74",
+        "E27.1",
+        "E24",
+        "D35.0",
+        "E26"
+      ],
+      "ta2": "A11.5.01.001"
+    },
+    "summary_pt": "Glândulas pares sobre os polos renais divididas em córtex esteroidogênico e medula secretora de catecolaminas. Função: Resposta ao estresse, homeostase hidroeletrolítica",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. suprarrenais superior, média e inferior; Venosa: v. suprarrenal direita → VCI; v. suprarrenal esquerda → v. renal esquerda; Linfática: linfonodos lombares",
+      "innervation": "Simpática: Fibras pré-ganglionares (medula adrenal atua como gânglio simpático modificado); Parassimpática: NC X (cortical modulação)"
+    },
+    "clinical": [
+      "Doença de Addison",
+      "Síndrome de Cushing",
+      "Feocromocitoma",
+      "Hiperaldosteronismo"
+    ]
+  },
+  "za:glandulas-paratireoides": {
+    "ids": {
+      "wikidata": "Q237450",
+      "mesh": "D010280",
+      "icd10": [
+        "E20-E21",
+        "D35.1",
+        "E21",
+        "E20"
+      ],
+      "ta2": "A11.4.01.001"
+    },
+    "summary_pt": "Quatro pequenas glândulas posteriores à tireoide secretoras de paratormônio (PTH), regulador mestre da calcemia. Função: Regulação da calcemia",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: a. tireóidea inferior; Venosa: vv. tireóideas"
+    },
+    "clinical": [
+      "Hiperparatireoidismo",
+      "Hipoparatireoidismo"
+    ]
+  },
+  "za:hipofise-glandula-pituitaria": {
+    "ids": {
+      "wikidata": "Q170554",
+      "mesh": "D010900",
+      "icd10": [
+        "E22-E23",
+        "D35.2",
+        "E23.0",
+        "E22.0",
+        "E23.2"
+      ],
+      "ta2": "A11.1.01.001"
+    },
+    "summary_pt": "Glândula mestra alojada na sela túrcica conectada ao hipotálamo, secretando hormônios tróficos sistêmicos. Função: Secreção de hormônios tróficos e efetores",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. hipofisárias superiores e inferiores (ramos da carótida interna); Venosa: seio intercavernoso → seio petroso inferior",
+      "innervation": "Simpática: T1-T4 (modulação); Parassimpática: NC X (modulação)"
+    },
+    "clinical": [
+      "Hipopituitarismo",
+      "Acromegalia",
+      "Diabetes insipidus",
+      "Adenoma hipofisário"
+    ]
+  },
+  "za:pancreas-endocrino-ilhotas-de-langerhans": {
+    "ids": {
+      "wikidata": "Q188919",
+      "mesh": "D007515",
+      "icd10": [
+        "E10-E14",
+        "D13.7",
+        "E10",
+        "E11"
+      ]
+    },
+    "summary_pt": "Ilhotas de Langerhans dispersas no parênquima pancreático que controlam a homeostase glicêmica. Função: Regulação da glicemia",
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      },
+      {
+        "field": "clinical",
+        "type": "other",
+        "ref": "bio-database.js (o-bala-vip, curadoria LAIFT)",
+        "license": "proprietary-laift"
+      }
+    ],
+    "review": {
+      "status": "legacy-unverified"
+    },
+    "anatomy": {
+      "vascularization": "Arterial: aa. pancreáticas (ramos da esplênica e mesentérica superior); Venosa: vv. pancreáticas → veia porta",
+      "innervation": "Simpática: T6-T10; Parassimpática: NC X"
+    },
+    "clinical": [
+      "Diabetes tipo 1",
+      "Diabetes tipo 2",
+      "Insulinoma"
+    ]
+  }
+}
