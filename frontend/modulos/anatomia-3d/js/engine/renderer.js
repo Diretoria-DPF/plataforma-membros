@@ -1,311 +1,308 @@
 /**
- * renderer.js — Renderizador 3D adaptativo com render-on-demand
- *
- * Exporta createRenderer({container, bus, env, store}) que retorna um objeto
- * com métodos para controle de câmera, renderização, qualidade adaptativa e
- * estatísticas de desempenho.
+ * @file renderer.js
+ * @description Motor de renderização WebGL sob demanda Three.js do Atlas Anatômico 3D.
+ * Elimina laço incondicional de animação, recupera perda de contexto e limita pixelRatio.
  */
 
-import * as THREE from '../../vendor/three/three.module.js';
-import { TIERS, detectTier, pixelRatioFor, createFrameMonitor, nextLowerTier } from './quality.js';
-import { on, emit, EVENTS } from '../core/bus.js';
+import { AppBus } from '../core/bus.js';
 
-/**
- * Cria um renderizador WebGL adaptativo com render-on-demand.
- *
- * @param {Object} opts - opções de configuração
- * @param {HTMLElement} opts.container - elemento pai do canvas
- * @param {Object} opts.bus - barramento de eventos (emit/on)
- * @param {Object} [opts.env] - ambiente do dispositivo {dpr, cores, memoryGB, isTouch}
- * @param {Object} [opts.store] - store para persistência de qualidade
- * @returns {Object} API do renderizador
- */
-export function createRenderer({ container, bus, env = {}, store } = {}) {
-  // Lê características do dispositivo, com fallbacks para navigator/window
-  const dpr = env.dpr ?? window.devicePixelRatio ?? 1;
-  const cores = env.cores ?? (navigator.hardwareConcurrency ?? 4);
-  const memoryGB = env.memoryGB ?? (navigator.deviceMemory ?? 8);
-  const isTouch = env.isTouch ?? matchMedia('(pointer:coarse)').matches;
-  const width = container?.clientWidth ?? window.innerWidth;
-  const height = container?.clientHeight ?? window.innerHeight;
-
-  // Detecta tier inicial
-  const initialTier = detectTier({ dpr, cores, memoryGB, width, height, isTouch });
-
-  // Estado do renderizador
-  let currentTier = initialTier;
-  let requestAnimationFrameId = null;
-  let tickers = [];
-  let lastViewOffsetArgs = null;
-  let frameCount = 0;
-
-  // Cria o renderer WebGL
-  const renderer = new THREE.WebGLRenderer({
-    antialias: TIERS[currentTier].antialias,
-    alpha: false,
-    powerPreference: 'high-performance',
-  });
-
-  // Configura propriedades do renderer
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
-  renderer.localClippingEnabled = true;
-
-  // Define pixel ratio
-  const pixelRatio = pixelRatioFor(currentTier, dpr, isTouch);
-  renderer.setPixelRatio(pixelRatio);
-
-  // Configura tamanho e posiciona no container
-  renderer.setSize(width, height);
-  renderer.domElement.style.display = 'block';
-  renderer.domElement.style.width = '100%';
-  renderer.domElement.style.height = '100%';
-  renderer.domElement.style.touchAction = 'none';
-  container.appendChild(renderer.domElement);
-
-  // Cria cena e câmera
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(40, width / height, 0.01, 50);
-  camera.position.set(0, 1.0, 3.2);
-
-  // Rig de iluminação (soft, sem sombras, adequado para anatomia)
-  const hemispherLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
-  scene.add(hemispherLight);
-
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.6);
-  keyLight.position.set(2, 4, 3);
-  scene.add(keyLight);
-
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.6);
-  fillLight.position.set(-3, 2, 1);
-  scene.add(fillLight);
-
-  const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  rimLight.position.set(0, 3, -4);
-  scene.add(rimLight);
-
-  // Define cor de fundo a partir de CSS custom property
-  function updateBackgroundColor() {
-    const cssValue = getComputedStyle(document.documentElement).getPropertyValue('--atlas-canvas-bg');
-    const colorValue = cssValue?.trim() || '#0f1720';
-    scene.background = new THREE.Color(colorValue);
+class EngineRendererManager {
+  // [INÍCIO MÉTODO: constructor]
+  constructor() {
+    /** @type {HTMLElement|null} */
+    this.container = null;
+    /** @type {THREE.WebGLRenderer|null} */
+    this.renderer = null;
+    /** @type {THREE.Scene|null} */
+    this.scene = null;
+    /** @type {THREE.PerspectiveCamera|null} */
+    this.camera = null;
+    /** @type {any|null} OrbitControls */
+    this.controls = null;
+    /** @type {boolean} Flag de agendamento de quadro único */
+    this.frameScheduled = false;
+    /** @type {boolean} Sinalizador de perda ativa de contexto de GPU */
+    this.contextLost = false;
+    /** @type {THREE.Mesh|null} */
+    this.highlightMesh = null;
+    /** @type {Map<string, THREE.Object3D>} sid -> Objeto tridimensional */
+    this.structureMeshMap = new Map();
   }
-  updateBackgroundColor();
+  // [FIM MÉTODO: constructor]
 
-  // Escuta mudanças de tema
-  const offThemeChange = on(EVENTS.THEME_CHANGE, () => {
-    updateBackgroundColor();
-    requestRender();
-  });
-
-  // Monitor de frame para qualidade adaptativa
-  const frameMonitor = createFrameMonitor({
-    onDowngrade: () => {
-      currentTier = nextLowerTier(currentTier);
-      const newPixelRatio = pixelRatioFor(currentTier, dpr, isTouch);
-      renderer.setPixelRatio(newPixelRatio);
-
-      // Emite evento de mudança de qualidade
-      emit(EVENTS.QUALITY_CHANGE, { tier: currentTier });
-
-      // Persiste qualidade se store foi passado
-      if (store) {
-        store.quality = currentTier;
-      }
-
-      requestRender();
-    },
-  });
-
-  // Estatísticas de renderização
-  const stats = {
-    renders: 0,
-  };
-
+  // [INÍCIO MÉTODO: init]
   /**
-   * Agenda um single requestAnimationFrame. Múltiplas chamadas no mesmo
-   * frame coalescem em uma só.
+   * Constrói e inicializa a cena Three.js dentro do contêiner designado.
+   * @param {HTMLElement} container
+   * @returns {Promise<void>}
    */
-  function requestRender() {
-    if (requestAnimationFrameId === null) {
-      requestAnimationFrameId = requestAnimationFrame(frame);
+  async init(container) {
+    if (!container) {
+      throw new Error('Contêiner para o renderizador WebGL não informado.');
     }
-  }
+    this.container = container;
 
-  /**
-   * Registra uma função que precisa rodar a cada frame.
-   * fn deve retornar true se precisa de outro frame (tweens, damping),
-   * false para parar a renderização.
-   * Retorna uma função que remove fn da lista.
-   */
-  function addTicker(fn) {
-    tickers.push(fn);
-    return () => {
-      tickers = tickers.filter((t) => t !== fn);
-    };
-  }
+    // 1. Criação da Cena
+    this.scene = new window.THREE.Scene();
+    this.scene.background = new window.THREE.Color(0x0f172a); // Superfície escura da identidade LAIFT
 
-  /**
-   * Loop principal de renderização.
-   */
-  function frame(timeMs) {
-    const frameStartTime = performance.now();
+    // 2. Configuração da Câmera Perspectiva
+    const width = this.container.clientWidth || window.innerWidth;
+    const height = this.container.clientHeight || window.innerHeight;
+    this.camera = new window.THREE.PerspectiveCamera(45, width / Math.max(height, 1), 0.1, 1000);
+    this.camera.position.set(0, 1.2, 2.5);
 
-    // Roda tickers e coleta se alguém quer continuar renderizando
-    let needsAnotherFrame = false;
-    for (const ticker of tickers) {
-      try {
-        if (ticker(timeMs)) {
-          needsAnotherFrame = true;
-        }
-      } catch (err) {
-        console.error('[renderer] ticker error:', err);
-      }
+    // 3. Configuração do Renderizador WebGL com orçamento móvel estrito
+    const maxPixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.renderer = new window.THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: 'high-performance',
+      alpha: false
+    });
+    this.renderer.setSize(width, height);
+    this.renderer.setPixelRatio(maxPixelRatio);
+    this.renderer.outputEncoding = window.THREE.sRGBEncoding;
+
+    // Vincula o elemento canvas ao documento
+    this.container.appendChild(this.renderer.domElement);
+
+    // 4. Configuração dos Controladores de Câmera (OrbitControls)
+    if (window.THREE.OrbitControls) {
+      this.controls = new window.THREE.OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.enableDamping = true;
+      this.controls.dampingFactor = 0.05;
+      this.controls.target.set(0, 1.0, 0);
+
+      // Ouvinte para renderizar apenas quando houver rotação/zoom do usuário
+      this.controls.addEventListener('change', () => {
+        this.requestRender();
+      });
     }
 
-    // Renderiza
-    renderer.render(scene, camera);
-    stats.renders++;
+    // 5. Iluminação anatômica tridimensional balanceada
+    this.setupLighting();
 
-    // Alimenta frame monitor APENAS durante renderização contínua
-    // (pelo menos 2 frames consecutivos)
-    if (frameCount >= 1) {
-      const frameTime = performance.now() - frameStartTime;
-      frameMonitor.sample(frameTime);
-    }
-    frameCount++;
+    // 6. Monitoramento de contexto gráfico WebGL
+    this.bindContextEvents();
 
-    // Agenda próximo frame apenas se um ticker o solicitar
-    if (needsAnotherFrame) {
-      requestAnimationFrameId = requestAnimationFrame(frame);
-    } else {
-      requestAnimationFrameId = null;
-      frameCount = 0; // Reset counter ao parar
-    }
+    // Primeiro disparo de renderização do quadro estático
+    this.requestRender();
   }
+  // [FIM MÉTODO: init]
 
+  // [INÍCIO MÉTODO: setupLighting]
   /**
-   * Configura ou limpa view offset para renderizar só uma porção do canvas.
-   * args deve ser null ou {fullWidth, fullHeight, x, y, width, height}.
+   * Instancia as luzes da cena para visualização médica volumétrica.
    */
-  function setViewOffset(args) {
-    lastViewOffsetArgs = args;
-    if (args === null) {
-      camera.clearViewOffset();
-    } else {
-      camera.setViewOffset(args.fullWidth, args.fullHeight, args.x, args.y, args.width, args.height);
-    }
-    requestRender();
+  setupLighting() {
+    if (!this.scene) return;
+
+    // Luz hemisférica para iluminação global suave
+    const hemiLight = new window.THREE.HemisphereLight(0xffffff, 0x334155, 0.75);
+    hemiLight.position.set(0, 20, 0);
+    this.scene.add(hemiLight);
+
+    // Luz direcional principal
+    const dirLight1 = new window.THREE.DirectionalLight(0xffffff, 0.65);
+    dirLight1.position.set(5, 10, 7.5);
+    this.scene.add(dirLight1);
+
+    // Luz de preenchimento posterior
+    const dirLight2 = new window.THREE.DirectionalLight(0x94a3b8, 0.4);
+    dirLight2.position.set(-5, -5, -5);
+    this.scene.add(dirLight2);
   }
+  // [FIM MÉTODO: setupLighting]
 
+  // [INÍCIO MÉTODO: bindContextEvents]
   /**
-   * Muda o tier de qualidade manualmente.
+   * Captura eventos de perda e recuperação do contexto gráfico da GPU.
    */
-  function setTier(tier) {
-    if (!TIERS[tier]) {
-      console.warn(`[renderer] tier inválido: ${tier}`);
+  bindContextEvents() {
+    if (!this.renderer?.domElement) return;
+
+    this.renderer.domElement.addEventListener('webglcontextlost', event => {
+      event.preventDefault();
+      this.contextLost = true;
+      console.warn('[Atlas WebGL] Contexto gráfico WebGL perdido. Congelando ciclo de render.');
+      AppBus.emit('engine:context-lost');
+    }, false);
+
+    this.renderer.domElement.addEventListener('webglcontextrestored', () => {
+      this.contextLost = false;
+      console.log('[Atlas WebGL] Contexto gráfico WebGL restaurado com sucesso.');
+      this.requestRender();
+      AppBus.emit('engine:context-restored');
+    }, false);
+  }
+  // [FIM MÉTODO: bindContextEvents]
+
+  // [INÍCIO MÉTODO: requestRender]
+  /**
+   * Ponto de entrada unificado para solicitar um novo quadro de desenho (On-Demand).
+   * Consolida chamadas múltiplas dentro de um único requestAnimationFrame.
+   */
+  requestRender() {
+    if (this.contextLost || this.frameScheduled) {
       return;
     }
-    currentTier = tier;
-    const newPixelRatio = pixelRatioFor(currentTier, dpr, isTouch);
-    renderer.setPixelRatio(newPixelRatio);
-    emit(EVENTS.QUALITY_CHANGE, { tier: currentTier });
-    if (store) {
-      store.quality = currentTier;
-    }
-    requestRender();
+
+    this.frameScheduled = true;
+    requestAnimationFrame(() => {
+      this.renderPass();
+    });
   }
+  // [FIM MÉTODO: requestRender]
 
+  // [INÍCIO MÉTODO: renderPass]
   /**
-   * Retorna o tier atual.
+   * Executa a passagem de renderização gráfica na GPU.
    */
-  function getTier() {
-    return currentTier;
-  }
+  renderPass() {
+    this.frameScheduled = false;
 
-  /**
-   * Retorna estatísticas de renderização.
-   */
-  function getStats() {
-    return {
-      tier: currentTier,
-      renders: stats.renders,
-      drawCalls: renderer.info.render.calls,
-      triangles: renderer.info.render.triangles,
-      pixelRatio: renderer.getPixelRatio(),
-    };
-  }
-
-  /**
-   * Lógica de redimensionamento: atualiza tamanho do renderer e câmera
-   * a partir das dimensões do container (não da janela).
-   */
-  function handleResize() {
-    const newWidth = container.clientWidth;
-    const newHeight = container.clientHeight;
-
-    renderer.setSize(newWidth, newHeight);
-    camera.aspect = newWidth / newHeight;
-    camera.updateProjectionMatrix();
-
-    // Reaplica view offset se havia
-    if (lastViewOffsetArgs !== null) {
-      setViewOffset(lastViewOffsetArgs);
+    if (this.contextLost || !this.renderer || !this.scene || !this.camera) {
+      return;
     }
 
-    requestRender();
-  }
+    // Atualiza amortecimento dos controladores se ativos
+    if (this.controls && this.controls.enableDamping) {
+      this.controls.update();
+    }
 
-  // ResizeObserver para adaptar a câmera e renderer ao redimensionamento do container
-  let resizeObserver = null;
-  if (typeof ResizeObserver !== 'undefined') {
-    resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(container);
-  } else {
-    // Fallback para navegadores sem ResizeObserver: usa window resize
-    window.addEventListener('resize', handleResize);
+    // Efetua o desenho do quadro
+    this.renderer.render(this.scene, this.camera);
   }
+  // [FIM MÉTODO: renderPass]
 
+  // [INÍCIO MÉTODO: onWindowResize]
   /**
-   * Limpa todos os recursos do renderizador.
+   * Trata o redimensionamento do contêiner gráfico recalculando a razão de aspecto.
    */
-  function dispose() {
-    if (resizeObserver) {
-      resizeObserver.disconnect();
-    } else {
-      // Se não havia ResizeObserver, remove o listener de window resize
-      window.removeEventListener('resize', handleResize);
-    }
-    offThemeChange();
-
-    // Remove listeners e tickers
-    tickers = [];
-
-    // Cancela frame agendado
-    if (requestAnimationFrameId !== null) {
-      cancelAnimationFrame(requestAnimationFrameId);
-      requestAnimationFrameId = null;
+  onWindowResize() {
+    if (!this.container || !this.renderer || !this.camera) {
+      return;
     }
 
-    // Limpa THREE resources
-    renderer.dispose();
+    const width = this.container.clientWidth || window.innerWidth;
+    const height = this.container.clientHeight || window.innerHeight;
 
-    // Remove canvas
-    renderer.domElement.remove();
+    this.camera.aspect = width / Math.max(height, 1);
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(width, height);
+    this.requestRender();
   }
+  // [FIM MÉTODO: onWindowResize]
 
-  return {
-    THREE,
-    renderer,
-    scene,
-    camera,
-    requestRender,
-    addTicker,
-    setViewOffset,
-    getStats,
-    setTier,
-    getTier,
-    dispose,
-  };
+  // [INÍCIO MÉTODO: highlightStructure]
+  /**
+   * Destaca visualmente a estrutura anatômica selecionada na cena.
+   * @param {string} sid
+   */
+  highlightStructure(sid) {
+    if (!sid) {
+      this.resetHighlight();
+      return;
+    }
+
+    // Localiza a malha associada ao SID no mapa de objetos
+    const targetMesh = this.structureMeshMap.get(sid);
+    if (!targetMesh) {
+      this.requestRender();
+      return;
+    }
+
+    // Aplica pulso visual ou realce de emissão no material
+    if (targetMesh.material && targetMesh.material.emissive) {
+      targetMesh.material.emissive.setHex(0x38bdf8); // Tom de destaque ciano LAIFT
+    }
+
+    this.requestRender();
+  }
+  // [FIM MÉTODO: highlightStructure]
+
+  // [INÍCIO MÉTODO: resetHighlight]
+  /**
+   * Restaura o material original das malhas desmarcando o realce ativo.
+   */
+  resetHighlight() {
+    this.structureMeshMap.forEach(mesh => {
+      if (mesh.material && mesh.material.emissive) {
+        mesh.material.emissive.setHex(0x000000);
+      }
+    });
+    this.requestRender();
+  }
+  // [FIM MÉTODO: resetHighlight]
+
+  // [INÍCIO MÉTODO: registerMesh]
+  /**
+   * Registra uma malha tridimensional associando-a ao seu SID canônico.
+   * @param {string} sid
+   * @param {THREE.Object3D} mesh
+   */
+  registerMesh(sid, mesh) {
+    if (sid && mesh) {
+      this.structureMeshMap.set(sid, mesh);
+    }
+  }
+  // [FIM MÉTODO: registerMesh]
+
+  // [INÍCIO MÉTODO: getCamera]
+  /**
+   * Retorna a câmera ativa da cena.
+   * @returns {THREE.PerspectiveCamera|null}
+   */
+  getCamera() {
+    return this.camera;
+  }
+  // [FIM MÉTODO: getCamera]
+
+  // [INÍCIO MÉTODO: getScene]
+  /**
+   * Retorna a cena tridimensional ativa.
+   * @returns {THREE.Scene|null}
+   */
+  getScene() {
+    return this.scene;
+  }
+  // [FIM MÉTODO: getScene]
+
+  // [INÍCIO MÉTODO: getRenderer]
+  /**
+   * Retorna a instância do WebGLRenderer.
+   * @returns {THREE.WebGLRenderer|null}
+   */
+  getRenderer() {
+    return this.renderer;
+  }
+  // [FIM MÉTODO: getRenderer]
+
+  // [INÍCIO MÉTODO: getControls]
+  /**
+   * Retorna a instância de controles orbitais.
+   * @returns {any|null}
+   */
+  getControls() {
+    return this.controls;
+  }
+  // [FIM MÉTODO: getControls]
+
+  // [INÍCIO MÉTODO: dispose]
+  /**
+   * Libera buffers de memória da GPU e descarta recursos na desmontagem.
+   */
+  dispose() {
+    if (this.renderer) {
+      this.renderer.dispose();
+      if (this.renderer.domElement && this.renderer.domElement.parentNode) {
+        this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+      }
+    }
+    this.structureMeshMap.clear();
+  }
+  // [FIM MÉTODO: dispose]
 }
+
+export const EngineRenderer = new EngineRendererManager();
