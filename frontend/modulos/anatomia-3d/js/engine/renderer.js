@@ -237,8 +237,11 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
     };
   }
 
-  // ResizeObserver para adaptar a câmera e renderer ao redimensionamento
-  const resizeObserver = new ResizeObserver(() => {
+  /**
+   * Lógica de redimensionamento: atualiza tamanho do renderer e câmera
+   * a partir das dimensões do container (não da janela).
+   */
+  function handleResize() {
     const newWidth = container.clientWidth;
     const newHeight = container.clientHeight;
 
@@ -252,14 +255,28 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
     }
 
     requestRender();
-  });
-  resizeObserver.observe(container);
+  }
+
+  // ResizeObserver para adaptar a câmera e renderer ao redimensionamento do container
+  let resizeObserver = null;
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(container);
+  } else {
+    // Fallback para navegadores sem ResizeObserver: usa window resize
+    window.addEventListener('resize', handleResize);
+  }
 
   /**
    * Limpa todos os recursos do renderizador.
    */
   function dispose() {
-    resizeObserver.disconnect();
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+    } else {
+      // Se não havia ResizeObserver, remove o listener de window resize
+      window.removeEventListener('resize', handleResize);
+    }
     offThemeChange();
 
     // Remove listeners e tickers

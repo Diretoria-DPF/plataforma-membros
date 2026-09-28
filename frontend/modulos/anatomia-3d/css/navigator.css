@@ -21,16 +21,19 @@
 .atlas-nav-breadcrumb-inner {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 12px 8px;
+  gap: clamp(2px, 1vw, 6px);
+  padding: clamp(8px, 1.5vw, 14px) clamp(6px, 1.5vw, 12px);
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior: contain;
 }
 
 .atlas-nav-back-btn {
   flex-shrink: 0;
   width: 44px;
   height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   margin: 0;
   border: none;
@@ -41,7 +44,7 @@
   justify-content: center;
   border-radius: 4px;
   transition: background-color 0.15s ease;
-  font-size: 20px;
+  font-size: clamp(18px, 3vw, 24px);
   color: var(--laift-text);
 }
 
@@ -67,24 +70,28 @@
 .atlas-nav-breadcrumb-sep {
   flex-shrink: 0;
   color: var(--laift-muted);
-  font-size: 14px;
+  font-size: clamp(12px, 2.5vw, 16px);
   line-height: 1;
 }
 
 .atlas-nav-breadcrumb-btn {
   flex-shrink: 0;
-  padding: 8px 12px;
+  padding: clamp(6px, 1.5vw, 10px) clamp(8px, 1.5vw, 14px);
   border: none;
   background: transparent;
   color: var(--laift-text);
   cursor: pointer;
-  font-size: 14px;
+  font-size: clamp(12px, 2.5vw, 15px);
   border-radius: 4px;
   transition: background-color 0.15s ease;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 150px;
+  max-width: clamp(120px, 25vw, 200px);
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .atlas-nav-breadcrumb-btn:hover {
@@ -100,6 +107,7 @@
   flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 .atlas-nav-list {
@@ -111,17 +119,17 @@
 }
 
 .atlas-nav-row {
-  padding: 0 12px;
-  height: 44px;
+  padding: 0 clamp(8px, 2vw, 14px);
+  min-height: 44px;
   border: none;
   background: transparent;
   border-bottom: 1px solid var(--laift-border);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: clamp(6px, 1.5vw, 10px);
   color: var(--laift-text);
-  font-size: 14px;
+  font-size: clamp(12px, 2.5vw, 15px);
   font-family: inherit;
   transition: background-color 0.15s ease;
   text-align: left;
@@ -152,14 +160,18 @@
 
 .atlas-nav-side-chip {
   flex-shrink: 0;
-  padding: 2px 6px;
+  padding: clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px);
   background: var(--laift-border);
   color: var(--laift-text);
-  font-size: 11px;
+  font-size: clamp(9px, 2vw, 12px);
   font-weight: 600;
   border-radius: 3px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .atlas-nav-row-arrow {
@@ -172,12 +184,27 @@
 
 .atlas-nav-row-count {
   flex-shrink: 0;
-  padding: 2px 6px;
+  padding: clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px);
   background: var(--laift-border);
   color: var(--laift-muted);
-  font-size: 12px;
+  font-size: clamp(10px, 2vw, 13px);
   border-radius: 3px;
   margin-left: auto;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* Hide count badges when navigator is collapsed to 56px (desktop collapsed state) */
+@media (min-width: 1024px) {
+  .atlas-nav-row-count {
+    display: none;
+  }
+  #atlas-left-panel[data-pinned="true"] .atlas-nav-row-count,
+  #atlas-left-panel:hover .atlas-nav-row-count {
+    display: flex;
+  }
 }
 
 /* Light theme */

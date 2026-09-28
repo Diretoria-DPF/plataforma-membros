@@ -36,15 +36,19 @@
   --atlas-sheet-handle-w: 36px;
   --atlas-sheet-handle-h: 4px;
 
-  /* Celular paisagem: o painel vira lateral direita. */
-  --atlas-panel-w-landscape: min(40vw, 400px);
+  /* Celular paisagem: o painel vira lateral direita. Fluido (§ viewports
+     extremos 740×360/844×390): nunca abaixo de 240px (conteúdo ilegível)
+     nem acima de 400px (canvas precisa sobrar). */
+  --atlas-panel-w-landscape: clamp(240px, 40vw, 400px);
 
-  /* Tablet (600–1023px): inspetor à direita + navegador em gaveta. */
-  --atlas-panel-w-tablet: 340px;
+  /* Tablet (600–1023px): inspetor à direita + navegador em gaveta. Fluido
+     entre os dois extremos da faixa (≈340px no meio, como antes). */
+  --atlas-panel-w-tablet: clamp(280px, 34vw, 380px);
 
-  /* Desktop (≥1024px): três colunas. */
-  --atlas-panel-w-desktop-nav: 280px;
-  --atlas-panel-w-desktop-inspector: 380px;
+  /* Desktop (≥1024px): três colunas. Fluidos com vw para acompanhar telas
+     grandes (2560/3440) sem virar corredores estreitos em 1024px. */
+  --atlas-panel-w-desktop-nav: clamp(240px, 22vw, 320px);
+  --atlas-panel-w-desktop-inspector: clamp(300px, 28vw, 420px);
 
   /* Alvo de toque mínimo (herdado de --laift-touch, repetido aqui para
      quem só importa tokens-atlas.css num contexto isolado, ex.: dev/). */
@@ -107,6 +111,11 @@
   /* Escala de texto/foco fora da TV (1× — a TV sobrescreve abaixo). */
   --atlas-tv-text-scale: 1;
   --atlas-tv-focus-width: 2px;
+
+  /* Escala de texto para monitores grandes COM mouse (≥1600px, hover:hover
+     — ex.: 2560×1440/3440×1440), separada de --atlas-tv-text-scale (que é
+     só para hover:none/TV e não muda). 1× fora dessa faixa. */
+  --atlas-text-scale-lg: 1;
 }
 
 /* ===========================================================================
@@ -158,6 +167,18 @@ html[data-theme='dark'] {
   }
 }
 
+/* Paisagem BAIXA (740×360, 844×390, …) — casca mais compacta ainda: barra
+   superior mais baixa para sobrar altura de canvas (layout lateral/toolbar
+   compacta correspondentes ficam em css/atlas.css). */
+@media (max-height: 480px) {
+  :root {
+    /* 44px, não menos: é o piso dos controles de 44px que moram na barra
+       (--laift-touch) — abaixo disso eles vazariam da própria barra. */
+    --atlas-topbar-h: 44px;
+    --atlas-toolbar-gap: 6px;
+  }
+}
+
 /* Tablet: 600–1023px. */
 @media (min-width: 600px) {
   :root {
@@ -172,7 +193,16 @@ html[data-theme='dark'] {
   }
 }
 
-/* TV: ≥1600px sem hover (controle remoto/apontador grosso, não mouse). */
+/* Telas grandes COM mouse (≥1600px, hover:hover — monitores 2560/3440). */
+@media (min-width: 1600px) {
+  :root {
+    --atlas-text-scale-lg: 1.15;
+  }
+}
+
+/* TV: ≥1600px sem hover (controle remoto/apontador grosso, não mouse).
+   Vem DEPOIS do bloco genérico acima de propósito: numa TV as duas regras
+   batem, e esta precisa ganhar por ordem de fonte (mesma especificidade). */
 @media (min-width: 1600px) and (hover: none) {
   --atlas-tv-text-scale: 1.5;
   --atlas-tv-focus-width: 4px;

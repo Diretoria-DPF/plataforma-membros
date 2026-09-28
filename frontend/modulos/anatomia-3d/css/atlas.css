@@ -29,6 +29,9 @@ body {
   color: var(--laift-text);
   font-family: var(--laift-font);
   -webkit-tap-highlight-color: transparent;
+  /* Base tipográfica fluida (320px→1440px); TV/monitor grande multiplicam
+     isto por --atlas-tv-text-scale/--atlas-text-scale-lg mais abaixo. */
+  font-size: clamp(14px, 12px + 0.7vw, 16px);
 }
 * { box-sizing: border-box; }
 
@@ -53,6 +56,12 @@ button { font: inherit; }
   touch-action: none;
   outline: none;
   overflow: hidden;
+  /* O canvas é o "container" da mini toolbar (§5): a largura DISPONÍVEL
+     do canvas (não a da viewport) é o que decide a densidade da toolbar —
+     em tablet/desktop ela encolhe quando o navegador/inspetor abrem, sem
+     precisar de outra media query. */
+  container-type: inline-size;
+  container-name: atlas-canvas-shell;
 }
 .atlas-canvas:focus-visible {
   outline: var(--atlas-tv-focus-width) solid var(--laift-focus-color);
@@ -100,6 +109,11 @@ button { font: inherit; }
   background: color-mix(in srgb, var(--laift-surface) 92%, transparent);
   backdrop-filter: blur(6px);
   border-bottom: 1px solid var(--laift-border);
+  /* Container para a densidade das próprias zonas (breadcrumb/busca/modo) —
+     reage à largura real da barra, que é sempre a da viewport, mas expressa
+     isso como @container em vez de duplicar breakpoints (§1.1). */
+  container-type: inline-size;
+  container-name: atlas-topbar;
 }
 
 .atlas-breadcrumb {
@@ -111,7 +125,9 @@ button { font: inherit; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .atlas-icon-btn {
-  width: 36px; height: 36px; min-height: 0;
+  /* 44px = alvo de toque mínimo (--laift-touch); a barra (48px+ em toda
+     faixa) sempre tem espaço vertical de sobra para centralizar isto. */
+  width: var(--laift-touch); height: var(--laift-touch); min-height: 0;
   display: flex; align-items: center; justify-content: center;
   border-radius: var(--laift-radius-sm);
   background: transparent; color: var(--laift-text);
@@ -127,7 +143,7 @@ button { font: inherit; }
 .atlas-mode-switch { position: relative; flex: 0 0 auto; }
 .atlas-mode-trigger {
   display: flex; align-items: center; gap: 4px;
-  min-height: 36px; padding: 6px 10px;
+  min-height: var(--laift-touch); padding: 6px 10px;
   border-radius: var(--laift-radius-pill);
   background: var(--laift-surface-alt);
   border: 1px solid var(--laift-border);
@@ -157,6 +173,15 @@ button { font: inherit; }
 .atlas-mode-list button:hover { background: var(--laift-surface-alt); }
 .atlas-mode-list button[aria-selected="true"] {
   background: var(--laift-primary-soft); color: var(--laift-primary-strong);
+}
+
+/* Densidade da topbar por largura do CONTAINER (não da viewport) — evita
+   clipping/overlap em telas bem estreitas (320px) mantendo os mesmos
+   ids/classes (§0.4 "nenhum controle cortado/sobreposto"). */
+@container atlas-topbar (max-width: 380px) {
+  .atlas-topbar { gap: var(--laift-space-1); }
+  .atlas-mode-trigger { padding: 6px 8px; font-size: 12px; gap: 2px; }
+  .atlas-breadcrumb-label { max-width: 22vw; }
 }
 
 /* -----------------------------------------------------------------------
@@ -191,6 +216,15 @@ button { font: inherit; }
   color: var(--module-accent);
 }
 .atlas-toolbar button:disabled { opacity: 0.4; }
+
+/* Densidade da mini toolbar pela largura DISPONÍVEL DO CANVAS (não da
+   viewport) — em tablet/desktop o canvas encolhe quando navegador/inspetor
+   abrem; o botão nunca fica abaixo de 44px (alvo de toque), só o
+   espaçamento/ícone reduz. */
+@container atlas-canvas-shell (max-width: 480px) {
+  .atlas-toolbar { gap: 6px; }
+  .atlas-toolbar button { font-size: 16px; }
+}
 
 /* Menus flutuantes (⋯ e Corte) — mesma receita do .atlas-mode-list. */
 .atlas-dropdown {
@@ -230,8 +264,10 @@ button { font: inherit; }
   transition: height var(--atlas-motion-sheet) var(--atlas-easing);
 }
 .atlas-sheet[data-sheet-state="peek"] { height: var(--atlas-sheet-peek-h); }
-.atlas-sheet[data-sheet-state="half"] { height: var(--atlas-sheet-half-h); }
-.atlas-sheet[data-sheet-state="full"] { height: var(--atlas-sheet-full-h); }
+/* vh como piso antes do valor real em dvh (teclado virtual/barra do
+   navegador não recalculam vh — dvh cobre isso em quem suporta). */
+.atlas-sheet[data-sheet-state="half"] { height: 45vh; height: var(--atlas-sheet-half-h); }
+.atlas-sheet[data-sheet-state="full"] { height: 90vh; height: var(--atlas-sheet-full-h); }
 
 .atlas-sheet-handle {
   position: relative;
@@ -319,11 +355,24 @@ button { font: inherit; }
 
   /* Mini barra de ferramentas migra para a borda inferior, em linha (§1.2). */
   .atlas-toolbar {
-    top: auto;
+    position: fixed;
     bottom: max(12px, env(safe-area-inset-bottom));
     right: max(12px, env(safe-area-inset-right));
     flex-direction: row;
+    top: auto;
   }
+}
+
+/* -----------------------------------------------------------------------
+   Paisagem BAIXA (740×360, 844×390, …) — dentro da regra acima (painel
+   lateral já se aplica), mas com ainda menos altura sobrando: topbar mais
+   enxuta (valor vem de tokens-atlas.css) e menos respiro nas zonas.
+   ----------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 480px) {
+  .atlas-topbar { gap: var(--laift-space-1); }
+  .atlas-breadcrumb-label { max-width: 28vw; }
+  .atlas-mode-trigger { padding: 4px 8px; font-size: 12px; }
+  .atlas-sheet { top: calc(var(--atlas-topbar-h) + env(safe-area-inset-top)); }
 }
 
 /* -----------------------------------------------------------------------
@@ -333,7 +382,9 @@ button { font: inherit; }
 @media (min-width: 600px) and (min-height: 600px) {
   .atlas-sheet { display: none; } /* tablet+ usa o inspetor, não o painel */
 
-  body { display: flex; height: 100vh; }
+  /* 100vh primeiro (piso), 100dvh por cima em quem suporta — mesma técnica
+     do painel, aqui para a casca inteira (§0.4). */
+  body { display: flex; height: 100vh; height: 100dvh; }
   .atlas-canvas { position: relative; flex: 1 1 auto; min-width: 0; inset: auto; }
 
   .atlas-left-panel {
@@ -346,6 +397,7 @@ button { font: inherit; }
     background: var(--laift-surface);
     border-right: 1px solid var(--laift-border);
     box-shadow: var(--laift-shadow);
+    padding-left: env(safe-area-inset-left);
     transform: translateX(-100%);
     transition: transform var(--atlas-motion-base) var(--atlas-easing);
     overflow-y: auto;
@@ -369,6 +421,7 @@ button { font: inherit; }
     width: var(--atlas-panel-w-tablet);
     z-index: var(--atlas-z-sheet);
     box-shadow: var(--laift-shadow);
+    padding-right: env(safe-area-inset-right);
     overflow-y: auto;
   }
 }
@@ -383,6 +436,7 @@ button { font: inherit; }
   .atlas-inspector { width: 32px; }
   .atlas-inspector[data-has-selection="true"] {
     position: relative; width: var(--atlas-panel-w-tablet);
+    padding-right: env(safe-area-inset-right);
     overflow-y: auto;
   }
 }
@@ -422,12 +476,29 @@ button { font: inherit; }
   }
   .atlas-inspector[data-has-selection="true"] {
     width: var(--atlas-panel-w-desktop-inspector);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* -----------------------------------------------------------------------
+   Monitores grandes COM mouse — ≥1600px, hover:hover (2560×1440,
+   3440×1440). Escala de texto mais discreta que a da TV (que segue
+   intocada abaixo) + teto de leitura de ~70ch nos painéis de texto
+   (inspetor/ficha), via --atlas-text-scale-lg (tokens-atlas.css).
+   ----------------------------------------------------------------------- */
+@media (min-width: 1600px) {
+  body { font-size: calc(1em * var(--atlas-text-scale-lg)); }
+  .atlas-inspector,
+  .atlas-sheet-body {
+    max-width: 70ch;
   }
 }
 
 /* -----------------------------------------------------------------------
    TV — ≥1600px sem hover (§1.5). Texto/ícones 1,5×, foco de 4px, rail do
    navegador sempre visível em 56px (nunca "flutua" ao passar o foco).
+   Vem DEPOIS do bloco genérico acima: em TV as duas regras de font-size
+   batem e esta precisa ganhar por ordem de fonte (mesma especificidade).
    ----------------------------------------------------------------------- */
 @media (min-width: 1600px) and (hover: none) {
   body { font-size: calc(1em * var(--atlas-tv-text-scale)); }

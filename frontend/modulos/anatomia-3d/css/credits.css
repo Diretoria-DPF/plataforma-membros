@@ -31,13 +31,13 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 560px;
+  max-width: min(640px, 100% - 32px);
   height: 100%;
   background: var(--laift-surface);
   color: var(--laift-on-surface);
   border-radius: 0;
   box-shadow: var(--laift-shadow);
-  max-height: 100dvh;
+  max-height: calc(100dvh - 32px);
   overflow: hidden;
 }
 
@@ -49,9 +49,9 @@
 
   .credits-content {
     width: auto;
-    max-width: 560px;
+    max-width: min(640px, 100% - 32px);
     height: auto;
-    max-height: 90dvh;
+    max-height: calc(100dvh - 32px);
     border-radius: var(--laift-radius-lg, 20px);
   }
 }
@@ -61,23 +61,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: clamp(12px, 2vw, 18px);
   flex-shrink: 0;
   border-bottom: 1px solid var(--laift-outline);
 }
 
 .credits-title {
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 4vw, 1.5rem);
   font-weight: 600;
   margin: 0;
   flex: 1;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .credits-close {
   appearance: none;
   background: transparent;
   border: none;
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
   width: 44px;
   height: 44px;
   display: flex;
@@ -87,6 +89,7 @@
   color: var(--laift-on-surface);
   min-width: 44px;
   min-height: 44px;
+  flex-shrink: 0;
 }
 
 .credits-close:hover {
@@ -103,12 +106,13 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 16px;
+  padding: clamp(12px, 2vw, 18px);
+  overscroll-behavior: contain;
 }
 
 /* Seções */
 .credits-section {
-  margin-bottom: 24px;
+  margin-bottom: clamp(18px, 3vw, 28px);
 }
 
 .credits-section:last-child {
@@ -116,25 +120,27 @@
 }
 
 .credits-section h2 {
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
   font-weight: 600;
-  margin: 0 0 12px 0;
+  margin: 0 0 clamp(10px, 1.5vw, 14px) 0;
   color: var(--laift-on-surface);
 }
 
 /* Grupos de creditos */
 .credits-group {
-  margin-bottom: 16px;
-  padding: 12px;
+  margin-bottom: clamp(12px, 2vw, 18px);
+  padding: clamp(10px, 1.5vw, 16px);
   background: var(--laift-surface-bright);
   border-radius: var(--laift-radius-md, 12px);
   border: 1px solid var(--laift-outline);
 }
 
 .credits-group p {
-  margin: 0 0 8px 0;
-  font-size: 0.875rem;
+  margin: 0 0 clamp(6px, 1.5vw, 10px) 0;
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
   line-height: 1.4;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .credits-group p:last-child {
@@ -156,19 +162,21 @@
 .credits-systems,
 .credits-type,
 .credits-ref {
-  font-size: 0.8125rem;
+  font-size: clamp(0.75rem, 1.8vw, 0.9rem);
   color: var(--laift-on-surface-variant);
 }
 
 .credits-note {
-  font-size: 0.875rem;
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
   line-height: 1.5;
   color: var(--laift-on-surface-variant);
-  margin-bottom: 12px;
-  padding: 8px 12px;
+  margin-bottom: clamp(10px, 1.5vw, 14px);
+  padding: clamp(6px, 1.5vw, 10px) clamp(10px, 1.5vw, 14px);
   background: var(--laift-surface-bright);
   border-radius: var(--laift-radius-sm, 8px);
   border-left: 3px solid var(--laift-accent);
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .credits-note:last-child {

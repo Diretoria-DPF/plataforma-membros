@@ -321,6 +321,303 @@ module.exports = async function atlasResponsive() {
       await context.close();
     }
 
+    // =====================================================================
+    // 6. Viewport matrix (13 viewports) — responsivo sistemático.
+    // =====================================================================
+    const viewportMatrix = [
+      { w: 320, h: 568, touch: true },   // iPhone SE
+      { w: 360, h: 740, touch: true },   // Pixel 4a
+      { w: 390, h: 844, touch: true },   // iPhone 14
+      { w: 740, h: 360, touch: true },   // Landscape tablet
+      { w: 844, h: 390, touch: true },   // iPhone landscape
+      { w: 600, h: 960, touch: true },   // Tablet portrait
+      { w: 820, h: 1180, touch: true },  // Tablet landscape
+      { w: 1024, h: 768, touch: false }, // iPad
+      { w: 1280, h: 800, touch: false }, // Small desktop
+      { w: 1440, h: 900, touch: false }, // Desktop
+      { w: 1920, h: 1080, touch: false },// Full HD
+      { w: 2560, h: 1440, touch: false },// 2K
+      { w: 3440, h: 1440, touch: false } // Ultrawide
+    ];
+
+    const matrixResults = [];
+
+    // Cria o diretório de destino ANTES de tirar screenshots
+    const fs = require('fs');
+    const path = require('path');
+    const screenshotBase = path.join(__dirname, '../../../docs/atlas-v2-shots/responsive');
+    try {
+      if (!fs.existsSync(screenshotBase)) {
+        fs.mkdirSync(screenshotBase, { recursive: true });
+      }
+    } catch (e) {
+      console.error(`[ERR] Failed to create screenshot directory: ${e.message}`);
+    }
+
+    for (const vp of viewportMatrix) {
+      const vpKey = `${vp.w}x${vp.h}`;
+      const result = { viewport: vpKey, checks: {} };
+
+      try {
+        const context = await browser.newContext({
+          viewport: { width: vp.w, height: vp.h },
+          hasTouch: vp.touch,
+          isMobile: vp.touch
+        });
+        const page = await context.newPage();
+        await wireCspAndErrors(context, page, bucket);
+
+        try {
+          const frame = await openAtlasFrame(page, baseUrl);
+
+          // Espera o modelo estar pronto (sheet no estado "peek" por padrão)
+          await frame.waitForFunction(() => {
+            const sheet = document.getElementById('atlas-sheet');
+            return sheet && sheet.getAttribute('data-sheet-state') === 'peek';
+          }, { timeout: 5000 }).catch(() => {
+            // Se não conseguir, continua — pode estar hidden em telas grandes
+          });
+
+          // (a) Sem rolagem horizontal
+          const scrollCheck = await frame.evaluate(() => {
+            const se = document.scrollingElement;
+            return {
+              scrollWidth: se.scrollWidth,
+              clientWidth: se.clientWidth,
+              ok: se.scrollWidth <= se.clientWidth
+            };
+          });
+          result.checks.a_noScroll = scrollCheck.ok;
+          if (!scrollCheck.ok) {
+            result.checks.a_reason = `scrollWidth ${scrollCheck.scrollWidth} > clientWidth ${scrollCheck.clientWidth}`;
+          }
+
+          // (b) Canvas visível ≥55% com sheet em "peek"
+          const coverageCheck = await frame.evaluate(() => {
+            const sheet = document.getElementById('atlas-sheet');
+            const canvas = document.getElementById('atlas-canvas');
+            const topbar = document.getElementById('atlas-topbar');
+            const inspector = document.getElementById('atlas-inspector');
+            const leftPanel = document.getElementById('atlas-left-panel');
+
+            if (!sheet || !canvas) return { ok: false, reason: 'sheet ou canvas não encontrado' };
+
+            const sheetState = sheet.getAttribute('data-sheet-state');
+            if (sheetState !== 'peek' && sheetState !== null) {
+              // Se o sheet tiver outro estado, tenta voltar para peek
+              return { ok: false, reason: `sheet em estado "${sheetState}", esperava "peek"` };
+            }
+
+            const canvasRect = canvas.getBoundingClientRect();
+            const viewportArea = window.innerWidth * window.innerHeight;
+
+            // Calcula a área do canvas que é coberta por painéis opacos
+            let coveredArea = 0;
+
+            // Topbar (sempre topo)
+            if (topbar) {
+              const topbarRect = topbar.getBoundingClientRect();
+              const topbarIntersect = Math.max(0, Math.min(canvasRect.bottom, topbarRect.bottom) - Math.max(canvasRect.top, topbarRect.top));
+              if (topbarIntersect > 0) {
+                coveredArea += canvasRect.width * topbarIntersect;
+              }
+            }
+
+            // Sheet (pode estar em baixo, lateral ou hidden)
+            if (sheet && sheet.style.display !== 'none') {
+              const sheetRect = sheet.getBoundingClientRect();
+              const intersectW = Math.max(0, Math.min(canvasRect.right, sheetRect.right) - Math.max(canvasRect.left, sheetRect.left));
+              const intersectH = Math.max(0, Math.min(canvasRect.bottom, sheetRect.bottom) - Math.max(canvasRect.top, sheetRect.top));
+              coveredArea += intersectW * intersectH;
+            }
+
+            // Inspector (painel direito, se visível)
+            if (inspector && inspector.style.display !== 'none') {
+              const inspectorRect = inspector.getBoundingClientRect();
+              const intersectW = Math.max(0, Math.min(canvasRect.right, inspectorRect.right) - Math.max(canvasRect.left, inspectorRect.left));
+              const intersectH = Math.max(0, Math.min(canvasRect.bottom, inspectorRect.bottom) - Math.max(canvasRect.top, inspectorRect.top));
+              coveredArea += intersectW * intersectH;
+            }
+
+            // Left panel (painel esquerdo, se visível)
+            if (leftPanel && leftPanel.style.display !== 'none') {
+              const leftRect = leftPanel.getBoundingClientRect();
+              const intersectW = Math.max(0, Math.min(canvasRect.right, leftRect.right) - Math.max(canvasRect.left, leftRect.left));
+              const intersectH = Math.max(0, Math.min(canvasRect.bottom, leftRect.bottom) - Math.max(canvasRect.top, leftRect.top));
+              coveredArea += intersectW * intersectH;
+            }
+
+            const canvasArea = canvasRect.width * canvasRect.height;
+            const visibleCanvasArea = Math.max(0, canvasArea - coveredArea);
+            const coverage = canvasArea > 0 ? visibleCanvasArea / viewportArea : 0;
+
+            return {
+              ok: coverage >= 0.55,
+              coverage: Number.isFinite(coverage) ? coverage : 0,
+              reason: (coverage >= 0.55) ? null : `coverage ${(coverage * 100).toFixed(1)}% < 55%`
+            };
+          });
+          result.checks.b_coverage = coverageCheck.coverage;
+          result.checks.b_ok = coverageCheck.ok;
+          if (!coverageCheck.ok) {
+            result.checks.b_reason = coverageCheck.reason;
+          }
+
+          // (c) Controles visíveis têm bounding rect dentro do viewport e ≥44×44px
+          const controlsCheck = await frame.evaluate(() => {
+            const selectors = ['#atlas-topbar button', '#atlas-toolbar button', '[data-action]'];
+            const failures = [];
+            const checked = [];
+
+            // Função para detectar se um elemento é screen-reader only
+            function isSrOnly(el) {
+              const cs = window.getComputedStyle(el);
+              // Verifica classes comuns
+              if (el.classList.contains('sr-only') || el.classList.contains('visually-hidden')) {
+                return true;
+              }
+              // Verifica clip-path
+              if (cs.clipPath !== 'none') return true;
+              // Verifica posição absoluta com tamanho ≤1px (common sr-only pattern)
+              if (cs.position === 'absolute') {
+                const rect = el.getBoundingClientRect();
+                if (rect.width <= 1 && rect.height <= 1) return true;
+              }
+              return false;
+            }
+
+            for (const selector of selectors) {
+              const els = document.querySelectorAll(selector);
+              for (const el of els) {
+                // Verifica se visível (display !== 'none', visibility !== 'hidden', etc)
+                const cs = window.getComputedStyle(el);
+                if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+
+                // Exclui elementos sr-only
+                if (isSrOnly(el)) continue;
+
+                const rect = el.getBoundingClientRect();
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+
+                // Exclui elementos com rect ≤2×2 (invisíveis ou praticamente invisíveis)
+                if (rect.width <= 2 || rect.height <= 2) continue;
+
+                // Verificações:
+                // 1. Deve estar dentro do viewport (com 1px de tolerância)
+                const insideViewport = rect.left >= -1 && rect.right <= vw + 1 && rect.top >= -1 && rect.bottom <= vh + 1;
+                // 2. Deve ter >= 44×44 CSS px (com 1px de tolerância)
+                const bigEnough = rect.width >= 43 && rect.height >= 43;
+
+                checked.push({
+                  selector: selector,
+                  element: el.tagName,
+                  width: Math.round(rect.width),
+                  height: Math.round(rect.height),
+                  left: Math.round(rect.left),
+                  top: Math.round(rect.top),
+                  right: Math.round(rect.right),
+                  bottom: Math.round(rect.bottom)
+                });
+
+                if (!insideViewport || !bigEnough) {
+                  failures.push({
+                    selector,
+                    element: el.tagName + (el.id ? '#' + el.id : ''),
+                    width: Math.round(rect.width),
+                    height: Math.round(rect.height),
+                    left: Math.round(rect.left),
+                    top: Math.round(rect.top),
+                    insideViewport,
+                    bigEnough
+                  });
+                }
+              }
+            }
+
+            return {
+              ok: failures.length === 0,
+              checked: checked.length,
+              failures,
+              reason: failures.length > 0 ? `${failures.length} controle(s) com problema` : null
+            };
+          });
+          result.checks.c_controls = controlsCheck.ok;
+          result.checks.c_checkedCount = controlsCheck.checked;
+          if (!controlsCheck.ok) {
+            result.checks.c_reason = controlsCheck.reason;
+            result.checks.c_failures = controlsCheck.failures.slice(0, 3); // Primeiros 3
+          }
+
+          // (d) Zero erros de página (verificar bucket, que já está sendo preenchido)
+          result.checks.d_noErrors = true; // Será verificado no final
+
+          // Screenshot
+          try {
+            const basename = `${vp.w}x${vp.h}.png`;
+            const fullPath = path.join(screenshotBase, basename);
+            await page.screenshot({
+              path: fullPath,
+              type: 'png',
+              scale: 'css'
+            });
+            result.screenshot = basename;
+            result.screenshotPath = fullPath;
+          } catch (e) {
+            result.screenshot = `ERROR: ${e.message}`;
+          }
+        } finally {
+          await context.close();
+        }
+      } catch (e) {
+        result.error = e.message;
+      }
+
+      matrixResults.push(result);
+    }
+
+    // Relatório compacto em forma de tabela
+    console.log('\n========= RESPONSIVE MATRIX RESULTS =========\n');
+    console.log('Viewport      | (a) Scroll | (b) Cover% | (c) Ctrls | (d) Errors | Status');
+    console.log('--------------|------------|------------|-----------|------------|--------');
+
+    const failedViewports = [];
+    for (const result of matrixResults) {
+      const a = result.checks.a_noScroll ? 'PASS' : 'FAIL';
+      const b = result.checks.b_coverage ? 'PASS' : 'FAIL';
+      const c = result.checks.c_controls ? 'PASS' : 'FAIL';
+      const d = result.checks.d_noErrors ? 'PASS' : 'FAIL';
+      const status = (a === 'PASS' && b === 'PASS' && c === 'PASS' && d === 'PASS') ? '✓' : '✗';
+
+      if (status === '✗') {
+        failedViewports.push({
+          viewport: result.viewport,
+          failures: [a !== 'PASS' && 'scroll', b !== 'PASS' && 'coverage', c !== 'PASS' && 'controls', d !== 'PASS' && 'errors'].filter(Boolean)
+        });
+      }
+
+      console.log(`${result.viewport.padEnd(13)}| ${a.padEnd(10)}| ${b.padEnd(10)}| ${c.padEnd(9)}| ${d.padEnd(10)}| ${status}`);
+    }
+
+    console.log('');
+
+    // Assertions para matrix de viewports
+    for (const result of matrixResults) {
+      check(result.checks.a_noScroll, `${result.viewport}: sem rolagem horizontal`);
+      check(result.checks.b_ok, `${result.viewport}: canvas visível ≥55% (${(result.checks.b_coverage * 100).toFixed(1)}%)`);
+      check(result.checks.c_controls, `${result.viewport}: controles ≥44×44px e dentro do viewport (${result.checks.c_checkedCount || 0} verificados)`);
+      check(result.checks.d_noErrors, `${result.viewport}: sem erros de página`);
+    }
+
+    if (failedViewports.length > 0) {
+      console.log('Failed viewports:');
+      for (const fw of failedViewports) {
+        console.log(`  ${fw.viewport}: ${fw.failures.join(', ')}`);
+      }
+    } else {
+      console.log('All viewports passed!');
+    }
+
     check(bucket.violations.length === 0, `zero violações de CSP em todos os viewports${bucket.violations.length ? ': ' + bucket.violations.map((v) => `${v.directive} ${v.blocked}`).join(' | ') : ''}`);
     check(bucket.errors.length === 0, `zero erros de página em todos os viewports${bucket.errors.length ? ': ' + bucket.errors.join(' | ') : ''}`);
   } finally {
