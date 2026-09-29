@@ -133,19 +133,21 @@ export const SHEET_STATE_IDS = Object.freeze(SHEET_STATES.map((s) => s.id));
 // Isto é DOCUMENTAÇÃO, não um polyfill: nenhum destes objetos é criado aqui.
 // ============================================================================
 
-/** @typedef {Object} LegacyCompatSurface
- *  @property {string} globalNamespace          `window.ThreeEngine`, forma atual.
- *  @property {ReadonlyArray<string>} threeEngineApiMethods Métodos que
- *    `ThreeEngineAPI` expõe hoje (`js/three-engine.js`) e que a camada de
- *    compatibilidade precisa continuar respondendo (pode traduzir por
- *    dentro para o novo Registry/Engine).
- *  @property {string} modelStateGlobal         `window.__atlasModelState`.
- *  @property {string} modelReadyEvent          Evento `laift:atlas-model-ready`.
- *  @property {string} appControllerSelectSystem `AppController.selectSystem`.
- *  @property {string} quizNamespace            `window.QuizEngine`.
- *  @property {ReadonlyArray<string>} quizEngineMethods Métodos que `QuizEngine`
- *    expõe hoje (`js/quiz-engine.js`).
- *  @property {ReadonlyArray<string>} domIds     ids de DOM lidos pelos testes.
+/**
+ * @typedef {Object} LegacyCompatSurface
+ * @property {string} globalNamespace          `window.ThreeEngine`, forma atual.
+ * @property {ReadonlyArray<string>} threeEngineApiMethods Métodos que
+ *   `ThreeEngineAPI` expõe hoje (`js/three-engine.js`) e que a camada de
+ *   compatibilidade precisa continuar respondendo (pode traduzir por
+ *   dentro para o novo Registry/Engine).
+ * @property {string} modelStateGlobal         `window.__atlasModelState`.
+ * @property {string} modelReadyEvent          Evento `laift:atlas-model-ready`.
+ * @property {string} appControllerSelectSystem `AppController.selectSystem`.
+ * @property {string} quizNamespace            `window.QuizEngine`.
+ * @property {ReadonlyArray<string>} quizEngineMethods Métodos que `QuizEngine`
+ *   expõe hoje (`js/quiz-engine.js`).
+ * @property {ReadonlyArray<string>} domIds     ids de DOM lidos pelos testes.
+ * @property {string} quizStartAction          Seletor de ação de início do quiz.
  */
 
 /** @type {Readonly<LegacyCompatSurface>} */
@@ -180,7 +182,7 @@ export const LEGACY_COMPAT = Object.freeze({
 
 /**
  * Ponto/mira de tela usado por `Registry.pick` (mesmo espaço de coordenadas
- * de `THREE.Raycaster.setFromCamera`: [-1, 1] em x/y, origem no centro).
+ * de `THREE.Raycaster.setFromCamera`: em x/y, origem no centro).
  * @typedef {Object} ScreenPoint
  * @property {number} x
  * @property {number} y
@@ -204,7 +206,7 @@ export const LEGACY_COMPAT = Object.freeze({
  * @property {(systemId: string) => Array<Object>} getBySystem Todas as
  *   estruturas carregadas daquele sistema (`[]` se o sistema não estiver
  *   carregado — ver `AssetLoader.isLoaded`).
- * @property {(point: ScreenPoint) => (string|null)} pick Raycast a partir de
+ * @property {(point: ScreenPoint, camera?: Object) => (string|null)} pick Raycast a partir de
  *   um ponto de tela normalizado; devolve o `sid` mais próximo visível e
  *   selecionável, ou `null`.
  * @property {(sid: string) => (BBox|null)} getBBox
@@ -229,9 +231,9 @@ export const LEGACY_COMPAT = Object.freeze({
  * Carrega `models/manifest.json` e os GLBs por sistema sob demanda (ver
  * plano §3 e §4 — orçamento de 1ª carga ≤5MB, resto sob demanda).
  * @typedef {Object} AssetLoader
- * @property {() => Promise<Object>} loadManifest Carrega e cacheia o
+ * @property {(url?: string) => Promise<Object>} loadManifest Carrega e cacheia o
  *   manifesto (uma vez por sessão); resolve com o JSON de
- *   `models/manifest.json`.
+ *   `models/manifest.json` ou da URL informada.
  * @property {(system: string, opts?: {lod?: ('lod0'|'lod1')}) => Promise<void>} loadSystem
  *   Carrega o GLB daquele sistema (padrão `lod1` no celular, `lod0` acima do
  *   limiar de qualidade — ver `store.quality`). Idempotente: chamar de novo
@@ -255,7 +257,7 @@ export const LEGACY_COMPAT = Object.freeze({
  * @property {(rect: ({x: number, y: number, width: number, height: number}|null)) => void} setViewOffset
  *   Espelha `camera.setViewOffset`; `null` remove o deslocamento (a área
  *   cheia do canvas volta a ser "livre"). Rect em pixels de tela, relativo
- *   ao canvas — usado para afastar a câmera da área cobierta pelo painel.
+ *   ao canvas — usado para afastar a câmera da área coberta pelo painel.
  * @property {(sid: string, opts?: {animate?: boolean}) => void} focusSid
  *   Centraliza a câmera na estrutura, respeitando o `viewOffset` atual.
  * @property {(name: string) => void} viewPreset Uma das vistas nomeadas em
@@ -330,7 +332,7 @@ export const LEGACY_COMPAT = Object.freeze({
  * @returns {boolean}
  */
 function hasMethods(obj, methodNames) {
-  if (!obj || typeof obj !== 'object') return false;
+  if (!obj || (typeof obj !== 'object' && typeof obj !== 'function')) return false;
   return methodNames.every((name) => typeof obj[name] === 'function');
 }
 
@@ -347,7 +349,6 @@ export function isAssetLoader(obj) {
 /** @param {*} obj @returns {boolean} `true` se `obj` implementa {@link Engine}. */
 export function isEngine(obj) {
   return hasMethods(obj, ['requestRender', 'setViewOffset', 'focusSid', 'viewPreset'])
-    && !!obj && typeof obj === 'object'
     && 'scene' in obj && 'camera' in obj && 'renderer' in obj;
 }
 
@@ -359,7 +360,6 @@ export function isContentStore(obj) {
 /** @param {*} obj @returns {boolean} `true` se `obj` implementa {@link Mode}. */
 export function isMode(obj) {
   return hasMethods(obj, ['enter', 'exit', 'sheetContent'])
-    && !!obj
     && typeof obj.id === 'string' && obj.id.length > 0
     && typeof obj.label === 'string'
     && typeof obj.icon === 'string';
@@ -371,7 +371,7 @@ export function isMode(obj) {
  * @returns {boolean}
  */
 export function isValidSystemId(id) {
-  return SYSTEM_IDS.includes(id);
+  return typeof id === 'string' && SYSTEM_IDS.includes(id);
 }
 
 /**
@@ -380,7 +380,7 @@ export function isValidSystemId(id) {
  * @returns {boolean}
  */
 export function isValidLayerId(id) {
-  return LAYER_IDS.includes(id);
+  return typeof id === 'string' && LAYER_IDS.includes(id);
 }
 
 /**
@@ -389,7 +389,7 @@ export function isValidLayerId(id) {
  * @returns {boolean}
  */
 export function isValidModeId(id) {
-  return MODE_IDS.includes(id);
+  return typeof id === 'string' && MODE_IDS.includes(id);
 }
 
 /**
@@ -398,5 +398,5 @@ export function isValidModeId(id) {
  * @returns {boolean}
  */
 export function isValidSheetState(id) {
-  return SHEET_STATE_IDS.includes(id);
+  return typeof id === 'string' && SHEET_STATE_IDS.includes(id);
 }
