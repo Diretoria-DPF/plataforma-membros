@@ -14,7 +14,7 @@
  *   selection.dispose();
  */
 
-import { EVENTS, on, off, emit } from '../core/bus.js';
+import { EVENTS as DEFAULT_EVENTS, on as defaultOn, off as defaultOff, emit as defaultEmit } from '../core/bus.js';
 
 /**
  * Cria um gerenciador de seleção de estruturas.
@@ -32,6 +32,11 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
   let currentHighlightColor = highlightColor;
   let isSelecting = false; // Flag para guardar contra re-entrância
 
+  // Injeção de dependência do barramento com fallback aos módulos importados
+  const onFn = (bus && typeof bus.on === 'function') ? bus.on.bind(bus) : defaultOn;
+  const emitFn = (bus && typeof bus.emit === 'function') ? bus.emit.bind(bus) : defaultEmit;
+  const events = (bus && bus.EVENTS) || DEFAULT_EVENTS;
+
   // --- Utilitários ---
 
   /**
@@ -42,38 +47,38 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
   function select(sid, source = 'api') {
     const prev = store.get().selectedSid;
 
-    // Evita re-entrância: se já estamos no meio de um select para o mesmo sid,
-    // ignora (a não ser que seja 'focus', que sempre processa)
+    // Evita re-entrância: se já estamos com o mesmo sid selecionado,
+    // ignora (a não ser que seja 'focus', que sempre reprocessa o enquadramento)
     if (source !== 'focus' && sid === prev) {
       return;
     }
 
-    // Guard contra re-entrância: se algo reagindo ao evento chamar select
-    // novamente para o mesmo sid, não reentra.
     if (isSelecting) {
       return;
     }
 
     isSelecting = true;
     try {
-      // Restaura a cor anterior
-      if (prev !== null) {
+      // Restaura a cor anterior se era outra estrutura
+      if (prev !== null && prev !== sid && registry?.setColor) {
         registry.setColor(prev, null);
       }
 
-      // Aplica a cor nova
-      if (sid !== null) {
+      // Aplica a nova cor de realce
+      if (sid !== null && registry?.setColor) {
         registry.setColor(sid, currentHighlightColor);
       }
 
-      // Atualiza o store
+      // Atualiza o store canônico
       store.set({ selectedSid: sid });
 
-      // Emite o evento
-      emit(EVENTS.STRUCTURE_SELECT, { sid, source });
+      // Emite o evento para os demais módulos
+      emitFn(events.STRUCTURE_SELECT, { sid, source });
 
-      // Marca para render
-      requestRender();
+      // Solicita novo frame de renderização
+      if (typeof requestRender === 'function') {
+        requestRender();
+      }
     } finally {
       isSelecting = false;
     }
@@ -86,30 +91,34 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
    * @param {string} evt.kind - 'tap' ou 'focus'
    */
   function handlePick({ ndc, kind }) {
-    const sid = registry.pick(ndc);
+    const sid = registry?.pick ? registry.pick(ndc) : null;
 
     if (kind === 'tap') {
-      // Tap seleciona (ou limpa se vazio)
+      // Tap seleciona (ou desseleciona se clicou no vazio)
       select(sid, 'pick');
     } else if (kind === 'focus') {
-      // Focus seleciona e chama focusSid
+      // Focus seleciona e centraliza a câmera na estrutura
       if (sid) {
         select(sid, 'focus');
-        focusSid(sid);
+        if (typeof focusSid === 'function') {
+          focusSid(sid);
+        }
       }
     }
   }
 
   /**
    * Muda a cor de destaque e a reaplica à seleção atual.
-   * @param {string} color - Cor em qualquer formato que setColor aceite
+   * @param {string} color - Cor em formato aceito por setColor
    */
   function setHighlightColor(color) {
     currentHighlightColor = color;
     const sid = store.get().selectedSid;
-    if (sid) {
+    if (sid && registry?.setColor) {
       registry.setColor(sid, color);
-      requestRender();
+      if (typeof requestRender === 'function') {
+        requestRender();
+      }
     }
   }
 
@@ -125,30 +134,49 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
    * Cancela todas as assinaturas e limpa recursos.
    */
   function dispose() {
-    offExternalSelect();
+    if (typeof offExternalSelect === 'function') {
+      offExternalSelect();
+    }
   }
 
   // --- Listener para eventos de outras fontes (busca, navegador, quiz) ---
 
-  let offExternalSelect = () => {};
-
-  // Assina eventos de seleção de outras fontes, mas sem re-emitir
-  offExternalSelect = on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
-    // Ignora eventos que viemos de nós mesmos (source 'pick' ou 'api' aqui)
-    // Responde apenas a eventos de outras fontes: 'search', 'navigator', 'quiz'
-    if (source === 'pick' || source === 'api') {
+  // Assina eventos de seleção de outras fontes e sincroniza o estado sem re-emitir
+  const offExternalSelect = onFn(events.STRUCTURE_SELECT, ({ sid, source }) => {
+    // Evita loops se o evento partiu do próprio select interno
+    if (isSelecting) {
       return;
     }
 
-    // Aplica o destaque sem re-emitir
+    // Ignora eventos que já foram tratados na origem direta
+    if (source === 'pick' || source === 'api' || source === 'focus') {
+      return;
+    }
+
     const prev = store.get().selectedSid;
-    if (prev !== null) {
-      registry.setColor(prev, null);
+    if (sid === prev) {
+      return;
     }
-    if (sid !== null) {
-      registry.setColor(sid, currentHighlightColor);
+
+    isSelecting = true;
+    try {
+      // Atualiza cores no Registry 3D
+      if (prev !== null && prev !== sid && registry?.setColor) {
+        registry.setColor(prev, null);
+      }
+      if (sid !== null && registry?.setColor) {
+        registry.setColor(sid, currentHighlightColor);
+      }
+
+      // Sincroniza o Store para notificar observadores (toolbar, breadcrumbs, etc.)
+      store.set({ selectedSid: sid });
+
+      if (typeof requestRender === 'function') {
+        requestRender();
+      }
+    } finally {
+      isSelecting = false;
     }
-    requestRender();
   });
 
   return {
@@ -163,12 +191,15 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
 /**
  * Helper puro: gera string de anúncio para aria-live.
  * @param {(string|null)} label - Nome exibido da estrutura, ou null se limpa
- * @param {string} systemLabel - Nome do sistema anatômico
+ * @param {string} [systemLabel] - Nome do sistema anatômico
  * @returns {string} String em PT-BR adequado para aria-live
  */
 export function announce(label, systemLabel) {
   if (label === null) {
     return 'Seleção limpa';
+  }
+  if (!systemLabel) {
+    return `Selecionado: ${label}`;
   }
   return `Selecionado: ${label} — ${systemLabel}`;
 }
