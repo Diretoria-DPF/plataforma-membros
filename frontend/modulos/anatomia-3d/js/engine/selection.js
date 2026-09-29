@@ -39,52 +39,56 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
    * @param {(string|null)} sid
    * @param {string} [source='api']
    */
+  /**
+   * Aplica a seleção no 3D e no estado (cor de destaque + store.selectedSid).
+   * Único caminho de escrita — usado tanto por select() quanto por seleções
+   * vindas de fora (busca, navegador, menu de contexto, compat legado), que
+   * só emitem STRUCTURE_SELECT. Antes, essas seleções externas pintavam a
+   * estrutura mas não gravavam store.selectedSid: o destaque anterior nunca
+   * era apagado (várias estruturas acesas ao mesmo tempo) e o inspetor/
+   * "Isolar" (que leem o store) não reagiam.
+   */
+  function apply(sid) {
+    const prev = store.get().selectedSid;
+    if (prev !== null && prev !== undefined && prev !== sid) {
+      registry.setColor(prev, null);
+    }
+    if (sid !== null && sid !== undefined) {
+      registry.setColor(sid, currentHighlightColor);
+    }
+    if (prev !== sid) store.set({ selectedSid: sid ?? null });
+    requestRender();
+  }
+
   function select(sid, source = 'api') {
     const prev = store.get().selectedSid;
 
-    // Evita re-entrância: se já estamos no meio de um select para o mesmo sid,
-    // ignora (a não ser que seja 'focus', que sempre processa)
     if (source !== 'focus' && sid === prev) {
       return;
     }
 
-    // Guard contra re-entrância: se algo reagindo ao evento chamar select
-    // novamente para o mesmo sid, não reentra.
     if (isSelecting) {
       return;
     }
 
     isSelecting = true;
     try {
-      // Restaura a cor anterior
-      if (prev !== null) {
-        registry.setColor(prev, null);
-      }
-
-      // Aplica a cor nova
-      if (sid !== null) {
-        registry.setColor(sid, currentHighlightColor);
-      }
-
-      // Atualiza o store
-      store.set({ selectedSid: sid });
-
-      // Emite o evento
+      apply(sid);
       emit(EVENTS.STRUCTURE_SELECT, { sid, source });
-
-      // Marca para render
-      requestRender();
     } finally {
       isSelecting = false;
     }
   }
 
-  /**
-   * Manipulador de eventos do controle/câmera (pick).
-   * @param {Object} evt
-   * @param {Object} evt.ndc - Ponto normalizado de tela {x, y}
-   * @param {string} evt.kind - 'tap' ou 'focus'
-   */
+  /** Reaplica o destaque (ex.: o sistema da estrutura acabou de carregar). */
+  function refresh() {
+    const sid = store.get().selectedSid;
+    if (sid) {
+      registry.setColor(sid, currentHighlightColor);
+      requestRender();
+    }
+  }
+
   function handlePick({ ndc, kind }) {
     const sid = registry.pick(ndc);
 
@@ -133,26 +137,15 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
   let offExternalSelect = () => {};
 
   // Assina eventos de seleção de outras fontes, mas sem re-emitir
-  offExternalSelect = on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
-    // Ignora eventos que viemos de nós mesmos (source 'pick' ou 'api' aqui)
-    // Responde apenas a eventos de outras fontes: 'search', 'navigator', 'quiz'
-    if (source === 'pick' || source === 'api') {
-      return;
-    }
-
-    // Aplica o destaque sem re-emitir
-    const prev = store.get().selectedSid;
-    if (prev !== null) {
-      registry.setColor(prev, null);
-    }
-    if (sid !== null) {
-      registry.setColor(sid, currentHighlightColor);
-    }
-    requestRender();
+  offExternalSelect = on(EVENTS.STRUCTURE_SELECT, ({ sid }) => {
+    // Eventos emitidos pelo próprio select() já foram aplicados.
+    if (isSelecting) return;
+    apply(sid);
   });
 
   return {
     select,
+    refresh,
     handlePick,
     setHighlightColor,
     getSelected,

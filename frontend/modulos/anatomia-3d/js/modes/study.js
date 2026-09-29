@@ -25,7 +25,7 @@ const DOSSIE_CSS = `
   li { margin: 0.25rem 0; }
   .header {
     text-align: center;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 2px solid var(--laift-border);
     padding-bottom: 1rem;
     margin-bottom: 2rem;
   }
@@ -38,7 +38,7 @@ const DOSSIE_CSS = `
     text-align: center;
     font-size: 0.9rem;
     color: #666;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--laift-border);
     padding-top: 1rem;
   }
   @media print {
@@ -117,11 +117,11 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
       const root = h('div', { className: 'study-sheet' }, []);
 
       // Aba de navegação
-      const tabBar = h('div', { className: 'study-tabs', style: { display: 'flex', borderBottom: '1px solid #ddd' } }, [
+      const tabBar = h('div', { className: 'study-tabs', style: { display: 'flex', borderBottom: '1px solid var(--laift-border)' } }, [
         h('button', {
           className: 'study-tab-btn',
           text: 'Histórico',
-          style: { flex: 1, padding: '0.75rem', border: 'none', background: currentTab === 'history' ? '#e8f0fe' : 'transparent', cursor: 'pointer' },
+          style: { flex: 1, padding: '0.75rem', border: 'none', background: currentTab === 'history' ? 'var(--laift-primary-soft)' : 'transparent', cursor: 'pointer' },
           onClick: () => {
             currentTab = 'history';
             updateContent();
@@ -130,7 +130,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
         h('button', {
           className: 'study-tab-btn',
           text: 'Fixados',
-          style: { flex: 1, padding: '0.75rem', border: 'none', background: currentTab === 'pins' ? '#e8f0fe' : 'transparent', cursor: 'pointer' },
+          style: { flex: 1, padding: '0.75rem', border: 'none', background: currentTab === 'pins' ? 'var(--laift-primary-soft)' : 'transparent', cursor: 'pointer' },
           onClick: () => {
             currentTab = 'pins';
             updateContent();
@@ -139,7 +139,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
         h('button', {
           className: 'study-tab-btn',
           text: 'Anotações',
-          style: { flex: 1, padding: '0.75rem', border: 'none', background: currentTab === 'notes' ? '#e8f0fe' : 'transparent', cursor: 'pointer' },
+          style: { flex: 1, padding: '0.75rem', border: 'none', background: currentTab === 'notes' ? 'var(--laift-primary-soft)' : 'transparent', cursor: 'pointer' },
           onClick: () => {
             currentTab = 'notes';
             updateContent();
@@ -187,14 +187,14 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
         // Atualiza background das abas
         Array.from(tabBar.querySelectorAll('button')).forEach((btn, i) => {
           const tabs = ['history', 'pins', 'notes'];
-          btn.style.background = tabs[i] === currentTab ? '#e8f0fe' : 'transparent';
+          btn.style.background = tabs[i] === currentTab ? 'var(--laift-primary-soft)' : 'transparent';
         });
       }
 
       async function renderHistorico(container) {
         const entries = await studyStore.listHistory({ limit: 100 });
         if (entries.length === 0) {
-          container.appendChild(h('p', { style: { padding: '1rem', color: '#999' }, text: 'Nenhum item no histórico.' }));
+          container.appendChild(h('p', { style: { padding: '1rem', color: 'var(--laift-muted)' }, text: 'Nenhum item no histórico.' }));
           return;
         }
 
@@ -224,7 +224,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
         groups.forEach(group => {
           if (!grouped[group]) return;
 
-          const groupTitle = h('h3', { style: { marginTop: '1rem', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#666' }, text: group });
+          const groupTitle = h('h3', { style: { marginTop: '1rem', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--laift-muted)' }, text: group });
           container.appendChild(groupTitle);
 
           grouped[group].forEach(entry => {
@@ -238,7 +238,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
               },
             }, [
               h('div', { style: { fontWeight: '500' }, text: escapeHtml(entry.label) }),
-              h('div', { style: { fontSize: '0.75rem', color: '#999' }, text: new Date(entry.at).toLocaleTimeString('pt-BR') }),
+              h('div', { style: { fontSize: '0.75rem', color: 'var(--laift-muted)' }, text: new Date(entry.at).toLocaleTimeString('pt-BR') }),
             ]);
             container.appendChild(item);
           });
@@ -248,7 +248,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
       async function renderPins(container) {
         const pins = await studyStore.listPins();
         if (pins.length === 0) {
-          container.appendChild(h('p', { style: { padding: '1rem', color: '#999' }, text: 'Nenhuma estrutura fixada.' }));
+          container.appendChild(h('p', { style: { padding: '1rem', color: 'var(--laift-muted)' }, text: 'Nenhuma estrutura fixada.' }));
           return;
         }
 
@@ -258,7 +258,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
           }, [
             h('div', [
               h('div', { style: { fontWeight: '500' }, text: escapeHtml(pin.label) }),
-              h('div', { style: { fontSize: '0.75rem', color: '#999' }, text: pin.sid }),
+              h('div', { style: { fontSize: '0.75rem', color: 'var(--laift-muted)' }, text: pin.sid }),
             ]),
             h('button', {
               text: '✕',
@@ -276,7 +276,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
       async function renderNotas(container) {
         const pins = await studyStore.listPins();
         if (pins.length === 0) {
-          container.appendChild(h('p', { style: { padding: '1rem', color: '#999' }, text: 'Nenhuma estrutura fixada com anotações.' }));
+          container.appendChild(h('p', { style: { padding: '1rem', color: 'var(--laift-muted)' }, text: 'Nenhuma estrutura fixada com anotações.' }));
           return;
         }
 
@@ -286,7 +286,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
             h('div', { style: { fontWeight: '500', marginBottom: '0.5rem' }, text: escapeHtml(pin.label) }),
             h('textarea', {
               value: noteText || '',
-              style: { width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.875rem' },
+              style: { width: '100%', padding: '0.5rem', border: '1px solid var(--laift-border)', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.875rem' },
               onBlur: async (evt) => {
                 const newText = evt.target.value;
                 await studyStore.setNote(pin.sid, newText);

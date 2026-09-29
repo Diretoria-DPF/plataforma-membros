@@ -147,6 +147,10 @@ async function install() {
   bus.on(bus.EVENTS.SYSTEM_LOAD_DONE, publishModelState);
   bus.on(bus.EVENTS.SYSTEM_LOAD_ERROR, publishModelState);
   window.__atlasModelState = { ready: false, real: false, meshCount: 0, error: null };
+  // main.js só expõe __atlasInternals depois de baixar os sistemas iniciais —
+  // os SYSTEM_LOAD_DONE já passaram quando chegamos aqui; sem isto o estado
+  // ficava "ready: false" para sempre.
+  if (store.get().loadedSystems.length > 0) publishModelState();
 
   // ---- window.AppController.selectSystem ----
   window.AppController = Object.assign(window.AppController || {}, {

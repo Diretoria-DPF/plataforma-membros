@@ -242,17 +242,20 @@ function handleArrow(evt) {
   const isHorizontal = key === 'ArrowLeft' || key === 'ArrowRight';
   const isForward = key === 'ArrowRight' || key === 'ArrowDown';
 
-  // Se há múltiplos itens na zona e o foco não está na borda, navega dentro da zona
-  if (items.length > 1 && currentItemIndex !== -1) {
-    if (isHorizontal) {
-      // Navegação horizontal dentro da zona
-      if (isForward && currentItemIndex < items.length - 1) {
-        focusZone(zones, zoneIndex, currentItemIndex + 1);
-        return;
-      } else if (!isForward && currentItemIndex > 0) {
-        focusZone(zones, zoneIndex, currentItemIndex - 1);
-        return;
-      }
+  // Dentro da zona, as setas seguem a orientação dela: a barra superior é
+  // uma linha (←/→ andam entre os itens), as demais são colunas — navegador,
+  // ferramentas, ficha, painel — (↑/↓ andam entre os itens; ←/→ trocam de
+  // zona). Antes →/← sempre percorriam os itens, e com o navegador aberto
+  // (12+ sistemas) o controle remoto nunca saía da lista.
+  const zoneIsRow = zone.id === 'atlas-topbar';
+  const alongZone = zoneIsRow ? isHorizontal : !isHorizontal;
+  if (items.length > 1 && currentItemIndex !== -1 && alongZone) {
+    if (isForward && currentItemIndex < items.length - 1) {
+      focusZone(zones, zoneIndex, currentItemIndex + 1);
+      return;
+    } else if (!isForward && currentItemIndex > 0) {
+      focusZone(zones, zoneIndex, currentItemIndex - 1);
+      return;
     }
   }
 

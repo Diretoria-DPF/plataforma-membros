@@ -245,6 +245,10 @@
       // vez, e sai de qualquer outro ao trocar de módulo.
       frames[key].classList.toggle('learn-frame-immersive', key === 'anatomia' && key === id);
     });
+    // O Atlas ocupa toda a área entre o topo da tela e a barra inferior
+    // (styles.css .learn-viewer-immersive) — o cabeçalho da plataforma e as
+    // folhas decorativas não disputam espaço com o corpo 3D.
+    $('learn-viewer').classList.toggle('learn-viewer-immersive', id === 'anatomia');
     $('learn-viewer-title').textContent = mod.icon + ' ' + mod.title;
     $('learn-hub').classList.add('hidden');
     $('learn-viewer').classList.remove('hidden');
@@ -259,6 +263,7 @@
     if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
     if (activeModuleId && frames[activeModuleId]) frames[activeModuleId].classList.remove('learn-frame-immersive');
     activeModuleId = null;
+    $('learn-viewer').classList.remove('learn-viewer-immersive');
     $('learn-viewer').classList.add('hidden');
     $('learn-hub').classList.remove('hidden');
     app().showPanelSection('panel-learn');
@@ -398,6 +403,7 @@
     activeModuleId = null;
     statsRequestId++;
     if ($('learn-viewer')) {
+      $('learn-viewer').classList.remove('learn-viewer-immersive');
       $('learn-viewer').classList.add('hidden');
       $('learn-hub').classList.remove('hidden');
       STAT_IDS.forEach(function (id) { setStat(id, null); });

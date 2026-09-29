@@ -397,6 +397,30 @@ test('após dispose(), eventos externos são ignorados', () => {
   );
 });
 
+test('seleções externas gravam store.selectedSid e apagam o destaque anterior', () => {
+  set({ selectedSid: null });
+  const registry = createMockRegistry();
+  const mocks = createMocks();
+  const selection = createSelection({
+    registry,
+    bus: { on, off, emit, EVENTS },
+    store: { get, set },
+    requestRender: mocks.requestRender,
+    focusSid: mocks.focusSid,
+  });
+  emit(EVENTS.STRUCTURE_SELECT, { sid: 'fma:1', source: 'search' });
+  assert.equal(get().selectedSid, 'fma:1', 'busca grava a seleção no store');
+  emit(EVENTS.STRUCTURE_SELECT, { sid: 'fma:2', source: 'navigator' });
+  assert.equal(get().selectedSid, 'fma:2', 'navegador grava a seleção no store');
+  assert.ok(
+    registry.getSetColorCalls().some((c) => c.sid === 'fma:1' && c.color === null),
+    'o destaque da seleção anterior é apagado'
+  );
+  emit(EVENTS.STRUCTURE_SELECT, { sid: null, source: 'api' });
+  assert.equal(get().selectedSid, null, 'limpar pela API zera a seleção');
+  selection.dispose();
+});
+
 console.log('');
 if (failures > 0) {
   console.error(`${failures} verificação(ões) falharam.`);

@@ -56,8 +56,10 @@ export function createXrayClip({ bus, store, renderer, THREE, requestRender }) {
 
       // Reduz opacidade para efeito de raio-X
       const newLayers = { ...currentState.layers };
-      newLayers.pele = { ...newLayers.pele, opacity: 0.15 };
-      newLayers.musculos = { ...newLayers.musculos, opacity: 0.25 };
+      // Várias camadas de músculo se sobrepõem: 0,25 ainda escondia os
+      // órgãos atrás do tórax; 0,12 deixa ver o coração/fígado.
+      newLayers.pele = { ...newLayers.pele, opacity: 0.08 };
+      newLayers.musculos = { ...newLayers.musculos, opacity: 0.12 };
 
       store.set({ layers: newLayers, xray: enabled });
 

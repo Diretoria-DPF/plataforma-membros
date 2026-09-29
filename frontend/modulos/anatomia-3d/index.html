@@ -48,6 +48,14 @@
        Barra superior (header) — trilha/voltar, busca, seletor de modo.
   ======================================================================= -->
   <header id="atlas-topbar" class="atlas-topbar">
+    <!-- Navegador de estruturas (sistemas → estruturas): coluna fixa em
+         telas largas, gaveta nas demais (js/ui/shell.js wireNavigator). -->
+    <button type="button" id="atlas-nav-toggle" class="atlas-icon-btn atlas-nav-toggle"
+            data-action="AtlasShell.toggleNavigator" aria-controls="atlas-left-panel"
+            aria-expanded="false" title="Estruturas por sistema">
+      <span aria-hidden="true">☰</span>
+      <span class="atlas-nav-toggle-label">Estruturas</span>
+    </button>
     <div id="atlas-breadcrumb" class="atlas-breadcrumb">
       <button type="button" id="atlas-breadcrumb-back" class="atlas-icon-btn"
               data-action="AtlasShell.navigateBack" hidden aria-label="Voltar">

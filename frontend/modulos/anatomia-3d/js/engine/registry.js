@@ -161,6 +161,34 @@ function classifyStructure(system, nodeName) {
  * @param {THREE.Object3D} node
  * @returns {THREE.Mesh[]}
  */
+/**
+ * Órgãos do HRA (sids "za:vh-*", nós "VH_M_*"/"VH_F_*") chegam no
+ * referencial do corpo de referência do HRA, deslocado 0,81 m para baixo em
+ * relação ao Z-Anatomy — o coração aparecia na altura do joelho e o fígado
+ * na canela. Medido com as próprias malhas (mesma escala, mesmo eixo):
+ *   - topo da face diafragmática do fígado (HRA): y = 0,43 → cúpula direita
+ *     do diafragma (Z-Anatomy): y ≈ 1,24;
+ *   - coração (HRA) y 0,42–0,52 → 1,23–1,33: apoiado no diafragma, abaixo
+ *     do manúbrio (1,35), face anterior logo atrás do corpo do esterno.
+ * TODO(pipeline): aplicar esta translação em tools/atlas-pipeline ao gerar
+ * os GLBs e remover daqui.
+ */
+const HRA_SID_RE = /^za:vh-/;
+const HRA_TO_ZANATOMY_OFFSET = Object.freeze([0, 0.81, 0]);
+
+function alignHraNode(node) {
+  if (node.userData.hraAligned) return;
+  const delta = new THREE.Vector3(...HRA_TO_ZANATOMY_OFFSET);
+  if (node.parent) {
+    // Deslocamento em coordenadas de mundo → espaço local do pai.
+    const parentInv = new THREE.Matrix4().copy(node.parent.matrixWorld).invert();
+    delta.applyMatrix3(new THREE.Matrix3().setFromMatrix4(parentInv));
+  }
+  node.position.add(delta);
+  node.updateMatrixWorld(true);
+  node.userData.hraAligned = true;
+}
+
 function collectMeshes(node) {
   const meshes = [];
   node.traverse((child) => {
@@ -476,6 +504,7 @@ export function createRegistry({ engine, bus } = {}) {
         console.warn(`[atlas/registry] nó "${nodeName}" (sid ${sid}) não encontrado no GLB de "${system}" — nodeToSid do manifest está desalinhado com o arquivo.`);
         continue;
       }
+      if (HRA_SID_RE.test(sid)) alignHraNode(node);
       const meshes = collectMeshes(node);
       if (!meshes.length) {
         // eslint-disable-next-line no-console
@@ -700,6 +729,22 @@ export function createRegistry({ engine, bus } = {}) {
     if (engine.requestRender) engine.requestRender();
   }
 
+  // Batches de camada com alguma estrutura translúcida (Raio-X, fantasma,
+  // opacidade da camada) param de escrever profundidade e desenham por
+  // último — senão os músculos "transparentes" gravavam o z-buffer e
+  // escondiam por completo o coração/fígado atrás deles.
+  const translucentByBatch = new Map(); // BatchedMesh → Set<sid>
+  function syncBatchTranslucency(rec, translucent) {
+    for (const { batch } of rec.instances) {
+      let set = translucentByBatch.get(batch);
+      if (!set) { set = new Set(); translucentByBatch.set(batch, set); }
+      if (translucent) set.add(rec.sid); else set.delete(rec.sid);
+      const baseOrder = LAYER_ORDER[materialKeyToLayerGuess(batch.material.userData.materialKey)] || 0;
+      batch.material.depthWrite = set.size === 0;
+      batch.renderOrder = set.size === 0 ? baseOrder : 100 + baseOrder;
+    }
+  }
+
   /** @type {import('../core/contracts.js').Registry['setOpacity']} */
   function setOpacity(sid, opacity) {
     const rec = structures.get(sid);
@@ -708,6 +753,7 @@ export function createRegistry({ engine, bus } = {}) {
     rec.opacity = value;
     if (rec.instances) {
       writeInstanceColor(rec);
+      syncBatchTranslucency(rec, value < 1);
     } else if (rec.meshes) {
       const mat = ensureOwnMaterial(rec);
       mat.opacity = value;

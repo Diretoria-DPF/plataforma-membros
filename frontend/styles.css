@@ -731,6 +731,31 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
   }
 }
 
+/* Atlas em tela útil inteira: com o módulo de Anatomia aberto, o
+   visualizador vira uma camada fixa do topo da tela até a barra inferior
+   (#app-nav continua por cima e clicável — z-index 20 > 15). Cobre o
+   cabeçalho da plataforma (que no celular quebra em duas linhas e comia
+   ~115px) e as folhas decorativas (.leaf-field), que antes apareciam por
+   cima do corpo 3D. O iframe estica com flex até o fim — nunca termina
+   atrás do #app-nav, então o botão "Refazer" do quiz segue clicável. */
+.learn-viewer.learn-viewer-immersive:not(.hidden) {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  bottom: calc(var(--app-nav-h) + env(safe-area-inset-bottom, 0px));
+  z-index: 15;
+  display: flex; flex-direction: column;
+  padding: max(6px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) 6px max(8px, env(safe-area-inset-left, 0px));
+  background: var(--bg);
+}
+.learn-viewer.learn-viewer-immersive .learn-viewer-bar { flex: 0 0 auto; margin-bottom: 6px; }
+.learn-viewer.learn-viewer-immersive #learn-frames { flex: 1 1 auto; min-height: 0; display: flex; }
+.learn-viewer.learn-viewer-immersive .learn-frame.learn-frame-immersive {
+  flex: 1 1 auto; height: auto; min-height: 0;
+}
+@media (max-width: 480px) {
+  .learn-viewer.learn-viewer-immersive .learn-viewer-bar { margin-bottom: 4px; }
+}
+
 /* Fase 2 — Dados & Presença: desempenho por módulo e conquistas no hub
    "Aprender" (learning.js) e métricas de aprendizagem no perfil (app.js).
    Só classes novas; acabamento visual fino fica com a Equipe 4. */

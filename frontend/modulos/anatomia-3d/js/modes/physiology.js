@@ -48,7 +48,7 @@ export function createPhysiologyMode({
     const container = DOM.h('div', { className: 'physiology-container', style: { padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' } });
 
     // Segmented control: Vias | Processos
-    const segmentedControl = DOM.h('div', { className: 'physiology-tabs', style: { display: 'flex', gap: '8px', borderBottom: '2px solid #ccc' } },
+    const segmentedControl = DOM.h('div', { className: 'physiology-tabs', style: { display: 'flex', gap: '8px', borderBottom: '2px solid var(--laift-border)' } },
       [
         DOM.h('button', {
           className: 'physiology-tab',
@@ -60,8 +60,8 @@ export function createPhysiologyMode({
             cursor: 'pointer',
             fontSize: '14px',
             fontWeight: currentMode === 'vias' ? 'bold' : 'normal',
-            borderBottom: currentMode === 'vias' ? '3px solid #0066cc' : 'none',
-            color: currentMode === 'vias' ? '#0066cc' : '#666',
+            borderBottom: currentMode === 'vias' ? '3px solid var(--laift-primary)' : 'none',
+            color: currentMode === 'vias' ? 'var(--laift-primary)' : 'var(--laift-muted)',
           },
           onClick: () => switchMode('vias'),
           text: 'Vias',
@@ -76,8 +76,8 @@ export function createPhysiologyMode({
             cursor: 'pointer',
             fontSize: '14px',
             fontWeight: currentMode === 'processos' ? 'bold' : 'normal',
-            borderBottom: currentMode === 'processos' ? '3px solid #0066cc' : 'none',
-            color: currentMode === 'processos' ? '#0066cc' : '#666',
+            borderBottom: currentMode === 'processos' ? '3px solid var(--laift-primary)' : 'none',
+            color: currentMode === 'processos' ? 'var(--laift-primary)' : 'var(--laift-muted)',
           },
           onClick: () => switchMode('processos'),
           text: 'Processos',
@@ -98,7 +98,7 @@ export function createPhysiologyMode({
             className: 'physiology-card',
             style: {
               padding: '12px',
-              border: '1px solid #ddd',
+              border: '1px solid var(--laift-border)',
               borderRadius: '4px',
               cursor: 'pointer',
               background: selectedItem?.id === item.id ? '#f0f0f0' : 'white',
@@ -106,12 +106,12 @@ export function createPhysiologyMode({
             onClick: () => selectItem(item),
           }, [
             DOM.h('div', { style: { fontWeight: 'bold', marginBottom: '4px' }, text: item.name_pt }),
-            DOM.h('div', { style: { fontSize: '12px', color: '#666', marginBottom: '4px' }, text: item.system }),
-            DOM.h('div', { style: { fontSize: '12px', color: '#999', lineHeight: '1.4' }, text: item.description_pt }),
+            DOM.h('div', { style: { fontSize: '12px', color: 'var(--laift-muted)', marginBottom: '4px' }, text: item.system }),
+            DOM.h('div', { style: { fontSize: '12px', color: 'var(--laift-muted)', lineHeight: '1.4' }, text: item.description_pt }),
           ])
         )
       );
-      DOM.appendHtml(contentArea, cardsList);
+      contentArea.appendChild(cardsList);
     }
 
     function switchMode(mode) {
@@ -134,7 +134,7 @@ export function createPhysiologyMode({
       DOM.clear(container);
 
       // Re-renderiza aba
-      const segmentedControl = DOM.h('div', { className: 'physiology-tabs', style: { display: 'flex', gap: '8px', borderBottom: '2px solid #ccc' } },
+      const segmentedControl = DOM.h('div', { className: 'physiology-tabs', style: { display: 'flex', gap: '8px', borderBottom: '2px solid var(--laift-border)' } },
         [
           DOM.h('button', {
             className: 'physiology-tab',
@@ -146,8 +146,8 @@ export function createPhysiologyMode({
               cursor: 'pointer',
               fontSize: '14px',
               fontWeight: currentMode === 'vias' ? 'bold' : 'normal',
-              borderBottom: currentMode === 'vias' ? '3px solid #0066cc' : 'none',
-              color: currentMode === 'vias' ? '#0066cc' : '#666',
+              borderBottom: currentMode === 'vias' ? '3px solid var(--laift-primary)' : 'none',
+              color: currentMode === 'vias' ? 'var(--laift-primary)' : 'var(--laift-muted)',
             },
             onClick: () => switchMode('vias'),
             text: 'Vias',
@@ -162,24 +162,24 @@ export function createPhysiologyMode({
               cursor: 'pointer',
               fontSize: '14px',
               fontWeight: currentMode === 'processos' ? 'bold' : 'normal',
-              borderBottom: currentMode === 'processos' ? '3px solid #0066cc' : 'none',
-              color: currentMode === 'processos' ? '#0066cc' : '#666',
+              borderBottom: currentMode === 'processos' ? '3px solid var(--laift-primary)' : 'none',
+              color: currentMode === 'processos' ? 'var(--laift-primary)' : 'var(--laift-muted)',
             },
             onClick: () => switchMode('processos'),
             text: 'Processos',
           }),
         ]
       );
-      DOM.appendHtml(container, segmentedControl);
+      container.appendChild(segmentedControl);
 
       if (selectedItem) {
         // Renderiza detalhes
         const detailsEl = renderDetails();
-        DOM.appendHtml(container, detailsEl);
+        container.appendChild(detailsEl);
       } else {
         // Renderiza lista
         renderList();
-        DOM.appendHtml(container, contentArea);
+        container.appendChild(contentArea);
       }
     }
 
@@ -192,18 +192,18 @@ export function createPhysiologyMode({
       // Título e descrição
       const titleEl = DOM.h('div', { style: { marginBottom: '12px' } }, [
         DOM.h('h3', { style: { margin: '0 0 8px 0', fontSize: '16px' }, text: selectedItem.name_pt }),
-        DOM.h('p', { style: { margin: '0', fontSize: '12px', color: '#666', lineHeight: '1.5' }, text: selectedItem.description_pt }),
+        DOM.h('p', { style: { margin: '0', fontSize: '12px', color: 'var(--laift-muted)', lineHeight: '1.5' }, text: selectedItem.description_pt }),
       ]);
-      DOM.appendHtml(detailsContainer, titleEl);
+      detailsContainer.appendChild(titleEl);
 
       // Para vias, mostra informações extras
       if (isRoute) {
-        const extraInfo = DOM.h('div', { style: { padding: '8px', background: '#f5f5f5', borderRadius: '4px', fontSize: '12px' } }, [
+        const extraInfo = DOM.h('div', { style: { padding: '8px', background: 'var(--laift-surface-alt)', borderRadius: '4px', fontSize: '12px' } }, [
           DOM.h('div', { text: `Biodisponibilidade: ${selectedItem.bioavailability || 'N/A'}` }),
           DOM.h('div', { text: `Tmax: ${selectedItem.tmax || 'N/A'}` }),
           DOM.h('div', { text: `Efeito pré-sistêmico: ${selectedItem.first_pass_effect || 'Não'}` }),
         ]);
-        DOM.appendHtml(detailsContainer, extraInfo);
+        detailsContainer.appendChild(extraInfo);
       }
 
       // Lista de passos
@@ -215,19 +215,19 @@ export function createPhysiologyMode({
           return DOM.h('div', {
             style: {
               padding: '8px',
-              border: isActive ? '2px solid #0066cc' : '1px solid #ddd',
+              border: isActive ? '2px solid var(--laift-primary)' : '1px solid var(--laift-border)',
               borderRadius: '4px',
-              background: isActive ? '#e6f2ff' : 'white',
+              background: isActive ? 'var(--laift-primary-soft)' : 'white',
               cursor: 'pointer',
             },
             onClick: () => selectStep(idx),
           }, [
             DOM.h('div', { style: { fontWeight: 'bold', fontSize: '12px', marginBottom: '4px' }, text: `${stepNum}. ${isRoute ? 'Ponto' : 'Passo'}` }),
-            DOM.h('div', { style: { fontSize: '12px', color: '#666' }, text: description }),
+            DOM.h('div', { style: { fontSize: '12px', color: 'var(--laift-muted)' }, text: description }),
           ]);
         })
       );
-      DOM.appendHtml(detailsContainer, stepsEl);
+      detailsContainer.appendChild(stepsEl);
 
       // Botões de controle
       const controlsEl = DOM.h('div', { style: { display: 'flex', gap: '8px', justifyContent: 'space-between' } }, [
@@ -272,14 +272,14 @@ export function createPhysiologyMode({
           text: '▶',
         }),
       ]);
-      DOM.appendHtml(detailsContainer, controlsEl);
+      detailsContainer.appendChild(controlsEl);
 
       // Botão voltar
       const backBtn = DOM.h('button', {
         style: {
           width: '100%',
           padding: '8px',
-          background: '#ccc',
+          background: 'var(--laift-border)',
           border: 'none',
           borderRadius: '4px',
           cursor: 'pointer',
@@ -295,7 +295,7 @@ export function createPhysiologyMode({
         },
         text: 'Voltar',
       });
-      DOM.appendHtml(detailsContainer, backBtn);
+      detailsContainer.appendChild(backBtn);
 
       return detailsContainer;
     }

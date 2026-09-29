@@ -265,11 +265,11 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
       const currentState = store.get().layers;
       const newVisible = !currentState[layerId].visible;
 
-      // Emitir evento
-      bus.emit(bus.EVENTS.LAYER_SET, { layer: layerId, visible: newVisible, opacity: currentState[layerId].opacity });
-
-      // Atualizar store
+      // Store ANTES do evento: visibility.js relê store.layers ao ouvir
+      // LAYER_SET — na ordem inversa o 3D aplicava o estado anterior e a
+      // camada só mudava no clique seguinte.
       updateLayer(layerId, newVisible, currentState[layerId].opacity);
+      bus.emit(bus.EVENTS.LAYER_SET, { layer: layerId, visible: newVisible, opacity: currentState[layerId].opacity });
     });
   });
 
@@ -292,12 +292,10 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
       display.textContent = `${opacityPercent}%`;
       input.setAttribute('aria-valuenow', String(opacityPercent));
 
-      // Emitir evento
+      // Store antes do evento (ver o toggle acima).
       const currentState = store.get().layers;
-      bus.emit(bus.EVENTS.LAYER_SET, { layer: layerId, visible: currentState[layerId].visible, opacity: opacityNorm });
-
-      // Atualizar store
       updateLayer(layerId, currentState[layerId].visible, opacityNorm);
+      bus.emit(bus.EVENTS.LAYER_SET, { layer: layerId, visible: currentState[layerId].visible, opacity: opacityNorm });
     });
   });
 
@@ -340,24 +338,19 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
     const currentLayers = store.get().layers;
     const newLayers = { ...currentLayers };
 
-    // Emitir evento para cada camada que mudou
+    // Store primeiro, eventos depois (visibility.js relê o store no evento).
+    const changed = [];
     LAYERS.forEach((layer) => {
       const newLayerState = stateObj[layer.id];
       const oldLayerState = currentLayers[layer.id];
-
       if (newLayerState.visible !== oldLayerState.visible || newLayerState.opacity !== oldLayerState.opacity) {
-        bus.emit(bus.EVENTS.LAYER_SET, {
-          layer: layer.id,
-          visible: newLayerState.visible,
-          opacity: newLayerState.opacity,
-        });
+        changed.push({ layer: layer.id, visible: newLayerState.visible, opacity: newLayerState.opacity });
       }
-
       newLayers[layer.id] = { ...newLayerState };
     });
 
-    // Atualizar store
     store.set({ layers: newLayers });
+    changed.forEach((payload) => bus.emit(bus.EVENTS.LAYER_SET, payload));
   }
 
   /**

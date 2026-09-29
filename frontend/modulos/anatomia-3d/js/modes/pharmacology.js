@@ -136,7 +136,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         marginBottom: '12px',
         borderRadius: '6px',
         overflow: 'hidden',
-        border: '1px solid var(--border)'
+        border: '1px solid var(--laift-border)'
       }
     });
 
@@ -147,14 +147,14 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         flex: 1,
         padding: '8px',
         border: 'none',
-        borderRight: '1px solid var(--border)',
-        background: 'var(--bg-surface)',
-        color: 'var(--text)',
+        borderRight: '1px solid var(--laift-border)',
+        background: 'var(--laift-surface-alt)',
+        color: 'var(--laift-text)',
         cursor: 'pointer',
         fontSize: '0.85rem',
         fontWeight: '500'
       },
-      textContent: 'Compostos'
+      text: 'Compostos'
     });
 
     const btnCrise = LaiftDom.h('button', {
@@ -164,13 +164,13 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         flex: 1,
         padding: '8px',
         border: 'none',
-        background: 'var(--bg-surface)',
-        color: 'var(--text)',
+        background: 'var(--laift-surface-alt)',
+        color: 'var(--laift-text)',
         cursor: 'pointer',
         fontSize: '0.85rem',
         fontWeight: '500'
       },
-      textContent: 'Crise Toxicológica'
+      text: 'Crise Toxicológica'
     });
 
     container.appendChild(btnCompostos);
@@ -187,7 +187,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
     const panel = LaiftDom.h('div', { dataset: { tab: 'compostos', hidden: false } });
 
     if (compounds.length === 0) {
-      LaiftDom.setHtml(panel, LaiftDom.html`<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhum composto disponível.</p>`);
+      LaiftDom.setHtml(panel, LaiftDom.html`<p style="color: var(--laift-muted); font-size: 0.85rem;">Nenhum composto disponível.</p>`);
       return panel;
     }
 
@@ -200,16 +200,16 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         style: {
           padding: '10px',
           borderRadius: '4px',
-          border: '1px solid var(--border)',
-          background: 'var(--bg-surface)',
+          border: '1px solid var(--laift-border)',
+          background: 'var(--laift-surface-alt)',
           cursor: 'pointer',
           transition: 'all 0.2s',
           fontSize: '0.8rem'
         }
       });
 
-      const title = LaiftDom.html`<div style="font-weight: 600; color: var(--text); margin-bottom: 4px;">${compound.nome}</div>`;
-      const mech = LaiftDom.html`<div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;">${compound.mecanismo}</div>`;
+      const title = LaiftDom.html`<div style="font-weight: 600; color: var(--laift-text); margin-bottom: 4px;">${compound.nome}</div>`;
+      const mech = LaiftDom.html`<div style="font-size: 0.75rem; color: var(--laift-muted); margin-bottom: 6px;">${compound.mecanismo}</div>`;
 
       let badge = null;
       if (compound.review && compound.review.status === 'legacy-unverified') {
@@ -242,7 +242,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
   function createCrisisPanel() {
     const panel = LaiftDom.h('div', { dataset: { tab: 'crise', hidden: true }, style: { display: 'none' } });
 
-    const title = LaiftDom.html`<h3 style="color: var(--text); margin-bottom: 10px; font-size: 0.9rem;">Simulação de Crise Colinérgica</h3>`;
+    const title = LaiftDom.html`<h3 style="color: var(--laift-text); margin-bottom: 10px; font-size: 0.9rem;">Simulação de Crise Colinérgica</h3>`;
     LaiftDom.appendHtml(panel, title);
 
     const controls = LaiftDom.h('div', { style: { display: 'flex', gap: '6px', marginBottom: '12px' } });
@@ -259,7 +259,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         cursor: 'pointer',
         fontWeight: '600'
       },
-      textContent: '🚨 Iniciar Crise'
+      text: '🚨 Iniciar Crise'
     });
 
     const btnStop = LaiftDom.h('button', {
@@ -274,7 +274,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         cursor: 'pointer',
         fontWeight: '600'
       },
-      textContent: '🛑 Parar'
+      text: '🛑 Parar'
     });
 
     controls.appendChild(btnStart);
@@ -293,7 +293,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         fontSize: '0.8rem',
         cursor: 'pointer'
       },
-      textContent: '💉 Atropina 2mg'
+      text: '💉 Atropina 2mg'
     });
 
     const btnPralidoxima = LaiftDom.h('button', {
@@ -307,7 +307,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         fontSize: '0.8rem',
         cursor: 'pointer'
       },
-      textContent: '💉 Pralidoxima 1g'
+      text: '💉 Pralidoxima 1g'
     });
 
     antidotes.appendChild(btnAtropina);
@@ -317,16 +317,16 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
       id: 'crisisTelemetryHUD',
       style: {
         padding: '8px',
-        background: '#020617',
-        border: '1px solid #334155',
+        background: 'var(--laift-surface-alt)',
+        border: '1px solid var(--laift-border)',
         borderRadius: '4px',
         fontSize: '0.75rem',
-        color: '#94a3b8',
+        color: 'var(--laift-muted)',
         fontFamily: 'monospace'
       }
     });
 
-    LaiftDom.setHtml(hud, LaiftDom.html`<span style="color: #94a3b8;">Aguardando iniciar...</span>`);
+    LaiftDom.setHtml(hud, LaiftDom.html`<span style="color: var(--laift-muted);">Aguardando iniciar...</span>`);
 
     btnStart.addEventListener('click', () => {
       if (typeof window.PkEngine !== 'undefined') {
@@ -367,8 +367,8 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
 
     // Visual feedback
     document.querySelectorAll('.compound-card').forEach(el => {
-      el.style.background = 'var(--bg-surface)';
-      el.style.borderColor = 'var(--border)';
+      el.style.background = 'var(--laift-surface-alt)';
+      el.style.borderColor = 'var(--laift-border)';
     });
     element.style.background = 'rgba(56, 189, 248, 0.1)';
     element.style.borderColor = '#38bdf8';
@@ -384,9 +384,9 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
             marginTop: '12px',
             marginBottom: '12px',
             borderRadius: '4px',
-            border: '1px solid var(--border)',
+            border: '1px solid var(--laift-border)',
             padding: '10px',
-            background: 'var(--bg-surface)'
+            background: 'var(--laift-surface-alt)'
           }
         });
         canvas = LaiftDom.h('canvas', { id: 'pkChartCanvas' });
@@ -438,7 +438,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
   function sheetContent() {
     const container = LaiftDom.h('div', { style: { padding: '12px', overflowY: 'auto' } });
 
-    const title = LaiftDom.html`<h2 style="color: var(--text); margin-bottom: 12px; font-size: 1rem;">Farmacologia & Farmacocinética</h2>`;
+    const title = LaiftDom.html`<h2 style="color: var(--laift-text); margin-bottom: 12px; font-size: 1rem;">Farmacologia & Farmacocinética</h2>`;
     LaiftDom.appendHtml(container, title);
 
     const segmented = createSegmentedControl();
@@ -450,7 +450,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
     // Fallback text se Chart.js estiver offline
     if (!chartLoaded && compounds.length > 0) {
       const fallbackWrap = document.createElement('div');
-      LaiftDom.setHtml(fallbackWrap, LaiftDom.html`<div style="padding: 8px; background: #78350f; border-radius: 4px; color: #fcd34d; font-size: 0.8rem; margin-bottom: 12px;">
+      LaiftDom.setHtml(fallbackWrap, LaiftDom.html`<div style="padding: 8px; background: var(--laift-warning-soft); border: 1px solid var(--laift-warning); border-radius: 4px; color: var(--laift-text); font-size: 0.8rem; margin-bottom: 12px;">
         <strong>⚠️ Gráfico indisponível sem conexão</strong>
         <p style="margin: 4px 0 0 0;">Selecione um composto acima para ver detalhes. A simulação PK/PD requer Chart.js.</p>
       </div>`);
@@ -468,7 +468,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
       const tabName = btn.dataset.tab;
       segmented.querySelectorAll('.tab-button').forEach(b => {
         b.classList.remove('active');
-        b.style.background = 'var(--bg-surface)';
+        b.style.background = 'var(--laift-surface-alt)';
       });
       btn.classList.add('active');
       btn.style.background = 'rgba(56, 189, 248, 0.1)';

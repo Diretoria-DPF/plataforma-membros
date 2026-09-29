@@ -138,22 +138,22 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
       const searchInput = document.createElement('input');
       searchInput.type = 'text';
       searchInput.placeholder = 'Buscar por nome ou ID PDB...';
-      searchInput.style.cssText = 'flex:1; padding:6px 8px; border:1px solid #334155; border-radius:4px; background:#020617; color:#fff; font-size:0.8rem;';
+      searchInput.style.cssText = 'flex:1; padding:6px 8px; border:1px solid var(--laift-border); border-radius:4px; background:var(--laift-surface-alt); color:#fff; font-size:0.8rem;';
 
       const searchBtn = document.createElement('button');
       searchBtn.textContent = '🔍';
-      searchBtn.style.cssText = 'padding:6px 10px; border:1px solid #334155; border-radius:4px; background:#020617; cursor:pointer; color:#38bdf8;';
+      searchBtn.style.cssText = 'padding:6px 10px; border:1px solid var(--laift-border); border-radius:4px; background:var(--laift-surface-alt); cursor:pointer; color:#38bdf8;';
 
       searchContainer.appendChild(searchInput);
       searchContainer.appendChild(searchBtn);
 
       // Lista de proteínas
       const listContainer = document.createElement('div');
-      listContainer.style.cssText = 'flex:0 1 auto; overflow-y:auto; border:1px solid #334155; border-radius:4px; padding:4px;';
+      listContainer.style.cssText = 'flex:0 1 auto; overflow-y:auto; border:1px solid var(--laift-border); border-radius:4px; padding:4px;';
 
       // Detalhes (vazio até seleção)
       const detailContainer = document.createElement('div');
-      detailContainer.style.cssText = 'flex:1; display:none; border:1px solid #334155; border-radius:4px; overflow:hidden; background:#020617;';
+      detailContainer.style.cssText = 'flex:1; display:none; border:1px solid var(--laift-border); border-radius:4px; overflow:hidden; background:var(--laift-surface-alt);';
 
       // Função para renderizar lista
       const renderList = (query = '') => {
@@ -163,25 +163,25 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
         if (filtered.length === 0) {
           const empty = document.createElement('div');
           empty.textContent = 'Nenhuma proteína encontrada';
-          empty.style.cssText = 'padding:8px; color:#94a3b8; font-size:0.75rem; text-align:center;';
+          empty.style.cssText = 'padding:8px; color:var(--laift-muted); font-size:0.75rem; text-align:center;';
           listContainer.appendChild(empty);
           return;
         }
 
         filtered.forEach((protein) => {
           const item = document.createElement('div');
-          item.style.cssText = 'padding:6px 8px; border-bottom:1px solid #1e293b; cursor:pointer; transition:all 0.15s; background:#020617;';
+          item.style.cssText = 'padding:6px 8px; border-bottom:1px solid var(--laift-surface-alt); cursor:pointer; transition:all 0.15s; background:var(--laift-surface-alt);';
           // Atributo estável para seleção em testes
           item.setAttribute('data-pdb', protein.pdb);
-          item.onmouseenter = () => item.style.background = '#0f172a';
-          item.onmouseleave = () => item.style.background = '#020617';
+          item.onmouseenter = () => item.style.background = 'var(--laift-surface-alt)';
+          item.onmouseleave = () => item.style.background = 'var(--laift-surface-alt)';
 
           const title = document.createElement('div');
           title.style.cssText = 'font-size:0.8rem; color:#38bdf8; font-weight:600;';
           title.textContent = `${protein.pdb}: ${protein.nome_pt}`;
 
           const subtitle = document.createElement('div');
-          subtitle.style.cssText = 'font-size:0.65rem; color:#94a3b8; margin-top:2px;';
+          subtitle.style.cssText = 'font-size:0.65rem; color:var(--laift-muted); margin-top:2px;';
           subtitle.textContent = protein.alvo;
 
           item.appendChild(title);
@@ -204,14 +204,14 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
 
         // Header
         const header = document.createElement('div');
-        header.style.cssText = 'padding:8px; border-bottom:1px solid #334155; background:#0f172a;';
+        header.style.cssText = 'padding:8px; border-bottom:1px solid var(--laift-border); background:var(--laift-surface-alt);';
 
         const title = document.createElement('div');
         title.style.cssText = 'font-size:0.85rem; color:#38bdf8; font-weight:700;';
         title.textContent = `${protein.pdb} — ${protein.nome_pt}`;
 
         const subtitle = document.createElement('div');
-        title.style.cssText = 'font-size:0.7rem; color:#94a3b8; margin-top:2px;';
+        title.style.cssText = 'font-size:0.7rem; color:var(--laift-muted); margin-top:2px;';
         subtitle.textContent = protein.alvo;
 
         header.appendChild(title);
@@ -220,7 +220,7 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
 
         // Viewer container
         const viewerWrapper = document.createElement('div');
-        viewerWrapper.style.cssText = 'flex:1; position:relative; min-height:260px; background:#020617;';
+        viewerWrapper.style.cssText = 'flex:1; position:relative; min-height:260px; background:var(--laift-surface-alt);';
 
         const viewport = document.createElement('div');
         viewport.id = 'mol-viewport';
@@ -236,46 +236,46 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
 
         // Controls
         const controls = document.createElement('div');
-        controls.style.cssText = 'padding:8px; border-top:1px solid #334155; display:flex; flex-wrap:wrap; gap:4px;';
+        controls.style.cssText = 'padding:8px; border-top:1px solid var(--laift-border); display:flex; flex-wrap:wrap; gap:4px;';
 
         const btnCartoon = document.createElement('button');
         btnCartoon.textContent = 'Cartoon';
-        btnCartoon.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid #334155; border-radius:3px; background:#020617; color:#94a3b8; cursor:pointer;';
+        btnCartoon.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid var(--laift-border); border-radius:3px; background:var(--laift-surface-alt); color:var(--laift-muted); cursor:pointer;';
         btnCartoon.onclick = () => {
           if (window.MolEngine) window.MolEngine.applyStyle('cartoon');
         };
 
         const btnStick = document.createElement('button');
         btnStick.textContent = 'Bastões';
-        btnStick.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid #334155; border-radius:3px; background:#020617; color:#94a3b8; cursor:pointer;';
+        btnStick.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid var(--laift-border); border-radius:3px; background:var(--laift-surface-alt); color:var(--laift-muted); cursor:pointer;';
         btnStick.onclick = () => {
           if (window.MolEngine) window.MolEngine.applyStyle('stick');
         };
 
         const btnSphere = document.createElement('button');
         btnSphere.textContent = 'Esferas';
-        btnSphere.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid #334155; border-radius:3px; background:#020617; color:#94a3b8; cursor:pointer;';
+        btnSphere.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid var(--laift-border); border-radius:3px; background:var(--laift-surface-alt); color:var(--laift-muted); cursor:pointer;';
         btnSphere.onclick = () => {
           if (window.MolEngine) window.MolEngine.applyStyle('sphere');
         };
 
         const btnSurface = document.createElement('button');
         btnSurface.textContent = 'Superfície';
-        btnSurface.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid #334155; border-radius:3px; background:#020617; color:#94a3b8; cursor:pointer;';
+        btnSurface.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid var(--laift-border); border-radius:3px; background:var(--laift-surface-alt); color:var(--laift-muted); cursor:pointer;';
         btnSurface.onclick = () => {
           if (window.MolEngine) window.MolEngine.applyStyle('surface');
         };
 
         const btnSpin = document.createElement('button');
         btnSpin.textContent = 'Girar';
-        btnSpin.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid #334155; border-radius:3px; background:#020617; color:#94a3b8; cursor:pointer;';
+        btnSpin.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid var(--laift-border); border-radius:3px; background:var(--laift-surface-alt); color:var(--laift-muted); cursor:pointer;';
         btnSpin.onclick = () => {
           if (window.MolEngine) window.MolEngine.toggleSpin();
         };
 
         const btnReset = document.createElement('button');
         btnReset.textContent = 'Resetar';
-        btnReset.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid #334155; border-radius:3px; background:#020617; color:#94a3b8; cursor:pointer;';
+        btnReset.style.cssText = 'padding:4px 8px; font-size:0.7rem; border:1px solid var(--laift-border); border-radius:3px; background:var(--laift-surface-alt); color:var(--laift-muted); cursor:pointer;';
         btnReset.onclick = () => {
           if (window.MolEngine) window.MolEngine.resetView();
         };
@@ -292,7 +292,7 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
         // Info
         const infoDiv = document.createElement('div');
         infoDiv.id = 'molInfoDetails';
-        infoDiv.style.cssText = 'padding:8px; border-top:1px solid #334155; font-size:0.7rem; color:#cbd5e1;';
+        infoDiv.style.cssText = 'padding:8px; border-top:1px solid var(--laift-border); font-size:0.7rem; color:var(--laift-text);';
         detailContainer.appendChild(infoDiv);
 
         // O órgão onde a proteína atua acende no corpo mesmo sem o visualizador
