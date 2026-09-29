@@ -16,8 +16,10 @@
        WebAssembly.instantiate() (ver scripts/e2e/csp.e2e.js). jsDelivr: só
        Chart.js (modo Farmacologia) e 3Dmol (modo Moléculas), carregados sob
        demanda por js/modes/pharmacology.js e js/modes/molecules.js — não
-       há tag de script estática dessas libs nesta página. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+       há tag de script estática dessas libs nesta página.
+       connect-src inclui https://cdn.jsdelivr.net para permitir resolução de
+       source maps (chart.umd.js.map) sem violação de política. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://cdn.jsdelivr.net https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto
        fora dela; aplica <html data-theme> antes de qualquer pintura). -->
   <script src="../shared/laift-identity.js"></script>
