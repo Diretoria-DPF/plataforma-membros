@@ -213,7 +213,7 @@ export function createXrayClip({ bus, store, renderer, THREE, requestRender }) {
   }
 
   /**
-   * Desinscreve dos eventos do bus.
+   * Desinscreve dos eventos do bus e limpa estado.
    */
   function dispose() {
     _pendingClip = null;
