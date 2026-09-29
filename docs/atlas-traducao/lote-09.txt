@@ -1,0 +1,142 @@
+Teres minor muscle
+Thalamus
+Third metacarpal bone
+Third metatarsal bone
+Third rib
+Third ventricle
+Thyro-epiglottic part of thyro-arytenoid muscle
+Thyrohyoid muscle
+Thyroid cartilage
+Thyroid gland
+Thyroid nodes
+Tibia
+Tibialis anterior muscle
+Tibialis posterior muscle
+Tibiocalcaneal ligament
+Tibionavicular ligament
+Tongue
+Tonsil of cerebellum
+Trachea
+Transversalis fascia
+Transverse acetabular ligament
+Transverse arytenoid muscle
+Transverse colon
+Transverse frontopolar gyrus and sulcus*
+Transverse head of adductor hallucis
+Transverse head of adductor pollicis
+Transverse humeral ligament
+Transverse intermuscular septum of leg
+Transverse ligament of knee
+Transverse occipital sulcus
+Transverse part of iliofemoral ligament
+Transverse part of trapezius muscle
+Transverse temporal gyri
+Transverse tibiofibular ligament
+Transversus abdominis muscle
+Transversus thoracis muscle
+Trapeziotrapezoidal interosseous ligament
+Trapezium bone
+Trapezoid bone
+Trapezoid ligament
+Trapezoideocapitate interosseous ligament
+Triangular part of inferior frontal gyrus
+Triquetrocapitate ligament
+Triquetrohamate ligament
+Triquetrum bone
+Triradiate cartilage
+Trochanteric bursa of gluteus maximus muscle
+Trochanteric bursa of gluteus medius muscle
+Trochanteric bursa of gluteus minimus muscle
+Trochlea of superior oblique muscle
+Tuber of vermis
+Twelfth rib
+Tympanic membrane
+Ulna
+Ulnar collateral ligament
+Ulnar collateral ligament of wrist joint
+Ulnar head of extensor carpi ulnaris
+Ulnar head of flexor carpi ulnaris
+Ulnocapitate ligament
+Ulnolunate ligament
+Ulnopisiform ligament
+Ulnotriquetral ligament
+Upper canine
+Upper first molar tooth
+Upper first premolar
+Upper lateral incisor
+Upper medial incisor
+Upper second molar tooth
+Upper second premolar
+Urinary bladder
+Uvula of palate
+Uvula of vermis
+Vastus intermedius muscle
+Vastus lateralis muscle
+Vastus medialis muscle
+Ventral parts of lateral intertransversarii lumborum muscles
+Vermiform appendix
+Vertebra C3
+Vertebra C4
+Vertebra C5
+Vertebra C6
+Vertebra C7
+Vertebra L1
+Vertebra L2
+Vertebra L3
+Vertebra L4
+Vertebra L5
+Vertebra T1
+Vertebra T10
+Vertebra T11
+Vertebra T12
+Vertebra T2
+Vertebra T3
+Vertebra T4
+Vertebra T5
+Vertebra T6
+Vertebra T7
+Vertebra T8
+Vertebra T9
+Vestibular nuclei
+Vestibule
+VH_F_aortic_valve
+VH_F_bare_area_of_liver
+VH_F_body_of_pancreas
+VH_F_capsule_of_the_liver
+VH_F_cartilage_of_lobar_bronchus
+VH_F_cartilage_of_tertiary_bronchus
+VH_F_caudate_lobe
+VH_F_colic_impression_of_liver
+VH_F_coronary_ligament_of_liver
+VH_F_diaphragmatic_surface_of_liver
+VH_F_duodenal_impression_of_liver
+VH_F_esophageal_impression_of_liver
+VH_F_falciform_ligament
+VH_F_gastric_impression_of_liver
+VH_F_head_of_pancreas
+VH_F_hepataduodenal_ligament
+VH_F_hilum
+VH_F_hilum_lower
+VH_F_hilum_middle
+VH_F_hilum_of_kidney
+VH_F_hilum_upper
+VH_F_interventricular_septum
+VH_F_kidney_capsule
+VH_F_left_anterior_basal_bronchopulmonary_segment
+VH_F_left_anterior_basal_bronchus
+VH_F_left_anterior_bronchopulmonary_segment
+VH_F_left_anterior_bronchus
+VH_F_left_anterolateral_segment
+VH_F_left_apical_bronchopulmonary_segment
+VH_F_left_apical_bronchus
+VH_F_left_cardiac_atrium
+VH_F_left_inferior_lobar_bronchus
+VH_F_left_inferomedial_segment
+VH_F_left_lateral_basal_bronchopulmonary_segment
+VH_F_left_lateral_basal_bronchus
+VH_F_left_lingula_inferior_bronchi
+VH_F_left_lingula_superior_bronchus
+VH_F_left_medial_basal_bronchopulmonary_segment
+VH_F_left_medial_basal_bronchus
+VH_F_left_posterior_basal_bronchopulmonary_segment
+VH_F_left_posterior_basal_bronchus

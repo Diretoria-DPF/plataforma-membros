@@ -1,690 +1,379 @@
 /**
- * @file search-box.js
- * @description Componente de busca avançada do Atlas Anatômico 3D LAIFT.
- * Implementa WAI-ARIA 1.2 Combobox, realce de termos com DOM seguro, histórico e acessibilidade TV.
+ * search-box.js — caixa de busca do Atlas v2
+ * Onda 1, WP09. Campo com autocomplete, navegação por teclado e histórico.
  */
 
-import { AppBus } from '../core/bus.js';
-import { CanonicalSystems, SystemLabelsPt } from '../core/contracts.js';
-import { normalizeSearchString } from './search-index.js';
+import { normalize, buildSearchIndex, search } from './search-index.js';
+import { EVENTS } from '../core/bus.js';
+import { SYSTEMS } from '../core/contracts.js';
 
-const STORAGE_KEY_RECENT = 'laift_atlas_recent_searches';
-const MAX_RECENT_SEARCHES = 5;
+const { h, clear } = window.LaiftDom;
+const STORAGE_KEY = 'atlas.recentSearches';
+const MAX_RECENT = 5;
 
-export class SearchBoxUI {
-  // [INÍCIO MÉTODO: constructor]
-  constructor() {
-    /** @type {HTMLElement|null} */
-    this.container = null;
-    /** @type {import('./search-index.js').SearchIndex|null} */
-    this.searchIndex = null;
-    /** @type {HTMLInputElement|null} */
-    this.inputElement = null;
-    /** @type {HTMLButtonElement|null} */
-    this.clearButton = null;
-    /** @type {HTMLUListElement|null} */
-    this.resultsListElement = null;
-    /** @type {HTMLElement|null} */
-    this.filterBarElement = null;
-    /** @type {number|null} */
-    this.debounceTimer = null;
-    /** @type {Object[]} */
-    this.currentResults = [];
-    /** @type {number} */
-    this.focusedIndex = -1;
-    /** @type {boolean} */
-    this.isOpen = false;
-    /** @type {string|null} */
-    this.activeSystemFilter = null;
-    /** @type {string[]} */
-    this.recentSearches = [];
-  }
-  // [FIM MÉTODO: constructor]
+/**
+ * @typedef {Object} SearchResult
+ * @property {string} sid
+ * @property {string} label
+ * @property {string} systemId
+ * @property {string} [side]
+ */
 
-  // [INÍCIO MÉTODO: init]
+/**
+ * @param {HTMLElement} container
+ * @param {{bus: Object, getIndex: Function, onOpenSystem?: Function}} opts
+ * @returns {{open(query?: string): void, close(): void, dispose(): void}}
+ */
+export function createSearchBox(container, opts) {
+  const { bus, getIndex, onOpenSystem = () => {} } = opts;
+
+  // Estado
+  let isOpen = false;
+  let index = null;
+  let debounceTimer = null;
+  let activeIndex = -1;
+  let results = [];
+  let inputEl = null;
+  let listboxEl = null;
+
+  // Root elements
+  const root = h('div', { className: 'atlas-search-root' });
+  container.appendChild(root);
+
+  // Botão collapsed
+  const toggleBtn = h('button', {
+    className: 'atlas-search-toggle',
+    'aria-label': 'Buscar estrutura',
+    onClick: () => open(),
+  });
+
+  // Overlay container (hidden by default)
+  const overlayEl = h('div', { className: 'atlas-search-overlay', hidden: true });
+
+  // Overlay interior (para responsividade mobile/desktop)
+  const overlayInner = h('div', { className: 'atlas-search-overlay-inner' });
+
+  // Cabeçalho do overlay
+  const headerEl = h('div', { className: 'atlas-search-header' });
+
+  // Input
+  inputEl = h('input', {
+    className: 'atlas-search-input',
+    type: 'text',
+    role: 'combobox',
+    'aria-expanded': 'false',
+    'aria-controls': 'atlas-search-listbox',
+    placeholder: 'Buscar: coração, fêmur, nervo vago…',
+    autocomplete: 'off',
+    inputmode: 'search',
+    onInput: handleInput,
+    onKeyDown: handleKeyDown,
+  });
+
+  // Listbox
+  listboxEl = h('div', {
+    id: 'atlas-search-listbox',
+    className: 'atlas-search-listbox',
+    role: 'listbox',
+  });
+
+  headerEl.appendChild(inputEl);
+  overlayInner.appendChild(headerEl);
+  overlayInner.appendChild(listboxEl);
+  overlayEl.appendChild(overlayInner);
+
+  root.appendChild(toggleBtn);
+  root.appendChild(overlayEl);
+
+  // Listeners
+  let unsubscribeSearchOpen = null;
+
   /**
-   * Inicializa o componente atrelando-o ao contêiner no DOM.
-   * @param {HTMLElement} containerElement
-   * @param {import('./search-index.js').SearchIndex} searchIndexInstance
+   * Debounced search
    */
-  init(containerElement, searchIndexInstance) {
-    if (!containerElement || !searchIndexInstance) {
-      console.warn('[SearchBox] Inicialização cancelada: parâmetros inválidos.');
+  function handleInput(evt) {
+    clearTimeout(debounceTimer);
+    const query = evt.target.value;
+
+    debounceTimer = setTimeout(() => {
+      activeIndex = -1;
+      performSearch(query);
+      renderListbox();
+    }, 80);
+  }
+
+  /**
+   * Teclado: ArrowUp/Down, Enter, Esc
+   */
+  function handleKeyDown(evt) {
+    if (evt.key === 'Escape') {
+      close();
       return;
     }
 
-    this.container = containerElement;
-    this.searchIndex = searchIndexInstance;
-    this.loadRecentSearches();
-
-    this.buildDOM();
-    this.bindEvents();
-    this.bindBusEvents();
-  }
-  // [FIM MÉTODO: init]
-
-  // [INÍCIO MÉTODO: loadRecentSearches]
-  /**
-   * Carrega buscas recentes salvas no navegador com validação defensiva.
-   */
-  loadRecentSearches() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY_RECENT);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          this.recentSearches = parsed.slice(0, MAX_RECENT_SEARCHES);
-        }
+    if (evt.key === 'ArrowDown') {
+      evt.preventDefault();
+      if (results.length > 0) {
+        activeIndex = Math.min(activeIndex + 1, results.length - 1);
+        updateActiveDescendant();
+        renderListbox();
       }
-    } catch (e) {
-      this.recentSearches = [];
-    }
-  }
-  // [FIM MÉTODO: loadRecentSearches]
-
-  // [INÍCIO MÉTODO: saveRecentSearch]
-  /**
-   * Salva um termo selecionado no histórico recente do usuário.
-   * @param {string} term
-   */
-  saveRecentSearch(term) {
-    if (!term || typeof term !== 'string') return;
-    const clean = term.trim();
-    if (clean.length < 2) return;
-
-    this.recentSearches = [clean, ...this.recentSearches.filter(t => t.toLowerCase() !== clean.toLowerCase())]
-      .slice(0, MAX_RECENT_SEARCHES);
-
-    try {
-      localStorage.setItem(STORAGE_KEY_RECENT, JSON.stringify(this.recentSearches));
-    } catch (e) {
-      // Ignora falhas de gravação em storage restrito/privado
-    }
-  }
-  // [FIM MÉTODO: saveRecentSearch]
-
-  // [INÍCIO MÉTODO: buildDOM]
-  /**
-   * Monta a árvore completa de elementos DOM com estrita segurança contra injeção.
-   */
-  buildDOM() {
-    if (!this.container) return;
-
-    while (this.container.firstChild) {
-      this.container.removeChild(this.container.firstChild);
+      return;
     }
 
-    this.container.classList.add('atlas-search-container');
+    if (evt.key === 'ArrowUp') {
+      evt.preventDefault();
+      if (results.length > 0) {
+        activeIndex = Math.max(activeIndex - 1, -1);
+        updateActiveDescendant();
+        renderListbox();
+      }
+      return;
+    }
 
-    // 1. Invólucro do campo de entrada (Combobox Pattern)
-    const combobox = document.createElement('div');
-    combobox.className = 'atlas-search-input-wrapper';
-    combobox.setAttribute('role', 'combobox');
-    combobox.setAttribute('aria-expanded', 'false');
-    combobox.setAttribute('aria-haspopup', 'listbox');
-    combobox.setAttribute('aria-owns', 'atlas-search-results-list');
-
-    // Ícone de Lupa em SVG
-    const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    iconSvg.setAttribute('viewBox', '0 0 24 24');
-    iconSvg.setAttribute('fill', 'none');
-    iconSvg.setAttribute('stroke', 'currentColor');
-    iconSvg.setAttribute('stroke-width', '2');
-    iconSvg.setAttribute('stroke-linecap', 'round');
-    iconSvg.setAttribute('stroke-linejoin', 'round');
-    iconSvg.setAttribute('aria-hidden', 'true');
-    iconSvg.classList.add('atlas-search-icon');
-
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', '11');
-    circle.setAttribute('cy', '11');
-    circle.setAttribute('r', '8');
-    iconSvg.appendChild(circle);
-
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', '21');
-    line.setAttribute('y1', '21');
-    line.setAttribute('x2', '16.65');
-    line.setAttribute('y2', '16.65');
-    iconSvg.appendChild(line);
-
-    combobox.appendChild(iconSvg);
-
-    // Campo de texto
-    this.inputElement = document.createElement('input');
-    this.inputElement.type = 'search';
-    this.inputElement.className = 'atlas-search-input';
-    this.inputElement.placeholder = 'Buscar estrutura anatômica (ex: coração)...';
-    this.inputElement.setAttribute('aria-label', 'Pesquisar estrutura anatômica em português, inglês ou latim');
-    this.inputElement.setAttribute('autocomplete', 'off');
-    this.inputElement.setAttribute('autocorrect', 'off');
-    this.inputElement.setAttribute('autocapitalize', 'off');
-    this.inputElement.setAttribute('spellcheck', 'false');
-    this.inputElement.setAttribute('aria-autocomplete', 'list');
-    this.inputElement.setAttribute('aria-controls', 'atlas-search-results-list');
-    combobox.appendChild(this.inputElement);
-
-    // Botão de limpeza
-    this.clearButton = document.createElement('button');
-    this.clearButton.type = 'button';
-    this.clearButton.className = 'atlas-search-clear-btn is-hidden';
-    this.clearButton.setAttribute('aria-label', 'Limpar pesquisa');
-
-    const clearSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    clearSvg.setAttribute('viewBox', '0 0 24 24');
-    clearSvg.setAttribute('fill', 'none');
-    clearSvg.setAttribute('stroke', 'currentColor');
-    clearSvg.setAttribute('stroke-width', '2');
-    clearSvg.setAttribute('stroke-linecap', 'round');
-    clearSvg.setAttribute('stroke-linejoin', 'round');
-    clearSvg.setAttribute('aria-hidden', 'true');
-
-    const l1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    l1.setAttribute('x1', '18');
-    l1.setAttribute('y1', '6');
-    l1.setAttribute('x2', '6');
-    l1.setAttribute('y2', '18');
-    clearSvg.appendChild(l1);
-
-    const l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    l2.setAttribute('x1', '6');
-    l2.setAttribute('y1', '6');
-    l2.setAttribute('x2', '18');
-    l2.setAttribute('y2', '18');
-    clearSvg.appendChild(l2);
-
-    this.clearButton.appendChild(clearSvg);
-    combobox.appendChild(this.clearButton);
-
-    this.container.appendChild(combobox);
-
-    // 2. Barra de Chips de Filtro Rápido de Sistema
-    this.filterBarElement = document.createElement('div');
-    this.filterBarElement.className = 'atlas-search-filter-bar';
-    this.filterBarElement.setAttribute('role', 'toolbar');
-    this.filterBarElement.setAttribute('aria-label', 'Filtrar busca por sistema anatômico');
-
-    const allChip = this.createFilterChip('Todos', null, true);
-    this.filterBarElement.appendChild(allChip);
-
-    CanonicalSystems.slice(0, 6).forEach(sys => {
-      const chip = this.createFilterChip(SystemLabelsPt[sys] || sys, sys, false);
-      this.filterBarElement.appendChild(chip);
-    });
-
-    this.container.appendChild(this.filterBarElement);
-
-    // 3. Lista Suspensa de Resultados
-    this.resultsListElement = document.createElement('ul');
-    this.resultsListElement.id = 'atlas-search-results-list';
-    this.resultsListElement.className = 'atlas-search-results is-hidden';
-    this.resultsListElement.setAttribute('role', 'listbox');
-    this.resultsListElement.setAttribute('aria-label', 'Resultados da busca');
-    this.container.appendChild(this.resultsListElement);
+    if (evt.key === 'Enter' && activeIndex >= 0 && activeIndex < results.length) {
+      evt.preventDefault();
+      selectResult(results[activeIndex]);
+    }
   }
-  // [FIM MÉTODO: buildDOM]
 
-  // [INÍCIO MÉTODO: createFilterChip]
   /**
-   * Constrói um chip interativo de filtro de sistema anatômico.
-   * @param {string} label
-   * @param {string|null} systemId
-   * @param {boolean} isDefault
-   * @returns {HTMLElement}
+   * Atualiza aria-activedescendant
    */
-  createFilterChip(label, systemId, isDefault) {
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = `atlas-filter-chip ${isDefault ? 'is-active' : ''}`;
-    chip.textContent = label;
-    chip.setAttribute('aria-pressed', isDefault ? 'true' : 'false');
+  function updateActiveDescendant() {
+    if (activeIndex >= 0) {
+      inputEl.setAttribute('aria-activedescendant', `atlas-search-option-${activeIndex}`);
+    } else {
+      inputEl.removeAttribute('aria-activedescendant');
+    }
+  }
 
-    chip.addEventListener('click', () => {
-      const parent = chip.parentElement;
-      if (parent) {
-        parent.querySelectorAll('.atlas-filter-chip').forEach(c => {
-          c.classList.remove('is-active');
-          c.setAttribute('aria-pressed', 'false');
+  /**
+   * Busca
+   */
+  function performSearch(query) {
+    if (!index) return;
+
+    if (!query.trim()) {
+      // Mostrar histórico recente
+      results = getRecentSearches().slice(0, 5);
+      return;
+    }
+
+    // Buscar no índice
+    results = search(index, query, { limit: 12 });
+  }
+
+  /**
+   * Renderiza a listbox
+   */
+  function renderListbox() {
+    clear(listboxEl);
+
+    if (results.length === 0) {
+      const query = inputEl.value.trim();
+      if (!query) {
+        // Campo vazio - mostrar histórico recente
+        const recentSearches = getRecentSearches().slice(0, 5);
+        if (recentSearches.length === 0) {
+          const msg = h('div', { className: 'atlas-search-empty', text: 'Nenhuma busca recente.' });
+          listboxEl.appendChild(msg);
+        } else {
+          recentSearches.forEach((result, idx) => {
+            const option = renderOption(result, idx, true);
+            listboxEl.appendChild(option);
+          });
+        }
+      } else {
+        // Sem resultados
+        const msg = h('div', {
+          className: 'atlas-search-empty',
+          text: `Nada encontrado para "${query}". Tente o nome em latim ou em inglês.`,
         });
-      }
-      chip.classList.add('is-active');
-      chip.setAttribute('aria-pressed', 'true');
-
-      this.activeSystemFilter = systemId;
-      if (this.inputElement && this.inputElement.value.trim().length >= 2) {
-        this.executeSearch(this.inputElement.value);
-      }
-    });
-
-    return chip;
-  }
-  // [FIM MÉTODO: createFilterChip]
-
-  // [INÍCIO MÉTODO: bindEvents]
-  /**
-   * Registra os eventos de controle de usuário na interface.
-   */
-  bindEvents() {
-    if (!this.inputElement || !this.clearButton) return;
-
-    // Digitação contínua com debounce
-    this.inputElement.addEventListener('input', () => {
-      const query = this.inputElement.value;
-      if (query.trim().length > 0) {
-        this.clearButton.classList.remove('is-hidden');
-      } else {
-        this.clearButton.classList.add('is-hidden');
-      }
-
-      if (this.debounceTimer !== null) {
-        clearTimeout(this.debounceTimer);
-      }
-
-      this.debounceTimer = window.setTimeout(() => {
-        this.executeSearch(query);
-      }, 160);
-    });
-
-    // Foco no campo: se vazio, mostra histórico recente; se preenchido, reabre busca
-    this.inputElement.addEventListener('focus', () => {
-      const query = this.inputElement.value.trim();
-      if (query.length < 2 && this.recentSearches.length > 0) {
-        this.renderRecentSearches();
-        this.openResults();
-      } else if (query.length >= 2 && this.currentResults.length > 0) {
-        this.openResults();
-      }
-    });
-
-    // Teclado físico e controle remoto de TV (D-pad)
-    this.inputElement.addEventListener('keydown', event => {
-      this.handleKeyDown(event);
-    });
-
-    // Botão Limpar
-    this.clearButton.addEventListener('click', () => {
-      this.clearSearch();
-      this.inputElement.focus();
-    });
-
-    // Fechamento ao clicar fora do componente
-    document.addEventListener('pointerdown', event => {
-      if (this.container && !this.container.contains(event.target)) {
-        this.closeResults();
-      }
-    });
-  }
-  // [FIM MÉTODO: bindEvents]
-
-  // [INÍCIO MÉTODO: bindBusEvents]
-  /**
-   * Conecta ouvintes com o barramento de eventos do Atlas.
-   */
-  bindBusEvents() {
-    AppBus.on('structure:select', event => {
-      if (event && event.options && event.options.origin !== 'search') {
-        // Se a seleção partiu do clique no 3D, limpa o texto para não confundir o usuário
-        if (this.inputElement && this.isOpen) {
-          this.closeResults();
-        }
-      }
-    });
-  }
-  // [FIM MÉTODO: bindBusEvents]
-
-  // [INÍCIO MÉTODO: executeSearch]
-  /**
-   * Executa a busca ponderada e aplica filtragem por sistema se selecionada.
-   * @param {string} query
-   */
-  executeSearch(query) {
-    const cleanQuery = query ? query.trim() : '';
-    if (cleanQuery.length < 2) {
-      if (this.recentSearches.length > 0) {
-        this.renderRecentSearches();
-        this.openResults();
-      } else {
-        this.currentResults = [];
-        this.renderResults('');
-        this.closeResults();
+        listboxEl.appendChild(msg);
       }
       return;
     }
 
-    if (!this.searchIndex) return;
+    // Renderizar resultados (até 12)
+    results.slice(0, 12).forEach((result, idx) => {
+      const option = renderOption(result, idx, false);
+      listboxEl.appendChild(option);
+    });
+  }
 
-    let results = this.searchIndex.search(cleanQuery, 20);
+  /**
+   * Renderiza uma opção
+   */
+  function renderOption(result, idx, isRecent) {
+    const option = h('div', {
+      id: `atlas-search-option-${idx}`,
+      className: `atlas-search-option ${activeIndex === idx ? 'active' : ''}`,
+      role: 'option',
+      'aria-selected': activeIndex === idx,
+      onClick: () => selectResult(result),
+    });
 
-    // Aplica filtro de sistema anatômico se houver chip ativo
-    if (this.activeSystemFilter) {
-      results = results.filter(entry => entry.system === this.activeSystemFilter);
-    }
+    // Label com match destacado
+    const labelEl = h('div', { className: 'atlas-search-option-label' });
 
-    this.currentResults = results.slice(0, 12);
-    this.focusedIndex = -1;
+    // Construir o texto com <mark> para a parte encontrada
+    const fullLabel = result.label;
+    const query = inputEl.value.trim();
+    const normalizedQuery = normalize(query);
+    const normalizedLabel = normalize(fullLabel);
 
-    if (this.currentResults.length > 0) {
-      this.renderResults(cleanQuery);
-      this.openResults();
+    if (query && normalizedLabel.includes(normalizedQuery)) {
+      // Encontrar a posição do match
+      const idx = normalizedLabel.indexOf(normalizedQuery);
+      const before = fullLabel.substring(0, idx);
+      const matched = fullLabel.substring(idx, idx + normalizedQuery.length);
+      const after = fullLabel.substring(idx + normalizedQuery.length);
+
+      if (before) labelEl.appendChild(document.createTextNode(before));
+      const mark = h('mark', { text: matched });
+      labelEl.appendChild(mark);
+      if (after) labelEl.appendChild(document.createTextNode(after));
     } else {
-      this.renderEmptyState(cleanQuery);
-      this.openResults();
+      labelEl.appendChild(document.createTextNode(fullLabel));
     }
+
+    option.appendChild(labelEl);
+
+    // Sistema chip
+    const systemLabel = findSystemLabel(result.systemId);
+    if (systemLabel) {
+      const systemChip = h('span', { className: 'atlas-search-chip atlas-search-chip-system', text: systemLabel });
+      option.appendChild(systemChip);
+    }
+
+    // Side chip (E ou D)
+    if (result.side) {
+      const sideChip = h('span', { className: 'atlas-search-chip atlas-search-chip-side', text: result.side });
+      option.appendChild(sideChip);
+    }
+
+    return option;
   }
-  // [FIM MÉTODO: executeSearch]
 
-  // [INÍCIO MÉTODO: renderResults]
   /**
-   * Constrói a lista de resultados com realce seguro de termos.
-   * @param {string} query
+   * Encontra o label do sistema
    */
-  renderResults(query) {
-    if (!this.resultsListElement) return;
-
-    while (this.resultsListElement.firstChild) {
-      this.resultsListElement.removeChild(this.resultsListElement.firstChild);
-    }
-
-    const queryNorm = normalizeSearchString(query);
-
-    for (let i = 0; i < this.currentResults.length; i++) {
-      const entry = this.currentResults[i];
-      const li = document.createElement('li');
-      li.className = 'atlas-search-item';
-      li.id = `atlas-opt-${i}`;
-      li.setAttribute('role', 'option');
-      li.setAttribute('aria-selected', 'false');
-
-      // Título com realce dinâmico sem innerHTML
-      const titleEl = document.createElement('div');
-      titleEl.className = 'atlas-search-item-title';
-      this.appendHighlightedText(titleEl, entry.names.pt, queryNorm);
-      li.appendChild(titleEl);
-
-      // Metadados anatômicos (Sistema, Lateralidade e Camada)
-      const metaEl = document.createElement('div');
-      metaEl.className = 'atlas-search-item-meta';
-
-      const sysDot = document.createElement('span');
-      sysDot.className = `atlas-system-bullet bullet-${entry.system}`;
-      sysDot.setAttribute('aria-hidden', 'true');
-      metaEl.appendChild(sysDot);
-
-      const sysLabel = document.createElement('span');
-      sysLabel.textContent = entry.systemLabel || entry.system;
-      metaEl.appendChild(sysLabel);
-
-      if (entry.laterality && entry.laterality !== 'unpaired') {
-        const latSpan = document.createElement('span');
-        let txt = '';
-        if (entry.laterality === 'left') txt = '· Esquerdo';
-        else if (entry.laterality === 'right') txt = '· Direito';
-        else if (entry.laterality === 'bilateral') txt = '· Bilateral';
-        else if (entry.laterality === 'midline') txt = '· Mediano';
-        latSpan.textContent = txt;
-        metaEl.appendChild(latSpan);
-      }
-
-      li.appendChild(metaEl);
-
-      // Evento de seleção tátil ou clique
-      li.addEventListener('pointerdown', event => {
-        event.preventDefault(); // Evita perda precoce de foco no input
-        this.selectEntry(entry);
-      });
-
-      this.resultsListElement.appendChild(li);
-    }
+  function findSystemLabel(systemId) {
+    const sys = SYSTEMS.find((s) => s.id === systemId);
+    return sys ? sys.label : null;
   }
-  // [FIM MÉTODO: renderResults]
 
-  // [INÍCIO MÉTODO: appendHighlightedText]
   /**
-   * Constrói nós de texto alternando entre texto plano e nós <mark> para o trecho coincidente.
-   * Não utiliza innerHTML em nenhuma circunstância.
-   * @param {HTMLElement} parent
-   * @param {string} fullText
-   * @param {string} queryNorm
+   * Seleciona um resultado
    */
-  appendHighlightedText(parent, fullText, queryNorm) {
-    if (!queryNorm || queryNorm.length < 2) {
-      parent.appendChild(document.createTextNode(fullText));
-      return;
-    }
+  function selectResult(result) {
+    // Chamar callback
+    onOpenSystem(result.systemId);
 
-    const textNorm = normalizeSearchString(fullText);
-    const matchIndex = textNorm.indexOf(queryNorm);
-
-    if (matchIndex === -1) {
-      parent.appendChild(document.createTextNode(fullText));
-      return;
-    }
-
-    const before = fullText.slice(0, matchIndex);
-    const match = fullText.slice(matchIndex, matchIndex + queryNorm.length);
-    const after = fullText.slice(matchIndex + queryNorm.length);
-
-    if (before) parent.appendChild(document.createTextNode(before));
-
-    const mark = document.createElement('mark');
-    mark.className = 'atlas-search-match';
-    mark.textContent = match;
-    parent.appendChild(mark);
-
-    if (after) {
-      // Chamada recursiva para marcar ocorrências adicionais
-      this.appendHighlightedText(parent, after, queryNorm);
-    }
-  }
-  // [FIM MÉTODO: appendHighlightedText]
-
-  // [INÍCIO MÉTODO: renderRecentSearches]
-  /**
-   * Renderiza a lista de buscas recentes quando o campo de pesquisa é aberto vazio.
-   */
-  renderRecentSearches() {
-    if (!this.resultsListElement) return;
-
-    while (this.resultsListElement.firstChild) {
-      this.resultsListElement.removeChild(this.resultsListElement.firstChild);
-    }
-
-    const header = document.createElement('li');
-    header.className = 'atlas-search-section-header';
-    header.textContent = 'Buscas Recentes';
-    header.setAttribute('role', 'presentation');
-    this.resultsListElement.appendChild(header);
-
-    for (let i = 0; i < this.recentSearches.length; i++) {
-      const term = this.recentSearches[i];
-      const li = document.createElement('li');
-      li.className = 'atlas-search-item recent-item';
-      li.setAttribute('role', 'option');
-
-      const span = document.createElement('span');
-      span.textContent = term;
-      li.appendChild(span);
-
-      li.addEventListener('pointerdown', event => {
-        event.preventDefault();
-        if (this.inputElement) {
-          this.inputElement.value = term;
-          this.executeSearch(term);
-        }
-      });
-
-      this.resultsListElement.appendChild(li);
-    }
-  }
-  // [FIM MÉTODO: renderRecentSearches]
-
-  // [INÍCIO MÉTODO: renderEmptyState]
-  /**
-   * Renderiza mensagem acessível quando nenhuma estrutura foi localizada.
-   * @param {string} query
-   */
-  renderEmptyState(query) {
-    if (!this.resultsListElement) return;
-
-    while (this.resultsListElement.firstChild) {
-      this.resultsListElement.removeChild(this.resultsListElement.firstChild);
-    }
-
-    const li = document.createElement('li');
-    li.className = 'atlas-search-empty-state';
-    li.setAttribute('role', 'presentation');
-
-    const p = document.createElement('p');
-    p.textContent = `Nenhum resultado anatômico para "${query}". Tente buscar por sinônimos, termos em latim ou selecione outro sistema.`;
-    li.appendChild(p);
-
-    this.resultsListElement.appendChild(li);
-  }
-  // [FIM MÉTODO: renderEmptyState]
-
-  // [INÍCIO MÉTODO: handleKeyDown]
-  /**
-   * Gerencia navegação pelo teclado físico e controles de TV (D-pad).
-   * @param {KeyboardEvent} event
-   */
-  handleKeyDown(event) {
-    // Códigos de TV: D-Pad Up (38), Down (40), Enter (13), Back/Esc (27/10009/461)
-    const key = event.key;
-    const keyCode = event.keyCode;
-
-    const isDown = key === 'ArrowDown' || keyCode === 40;
-    const isUp = key === 'ArrowUp' || keyCode === 38;
-    const isEnter = key === 'Enter' || keyCode === 13;
-    const isEsc = key === 'Escape' || keyCode === 27 || keyCode === 10009 || keyCode === 461;
-
-    if (!this.isOpen && (isDown || isUp)) {
-      if (this.currentResults.length > 0 || this.recentSearches.length > 0) {
-        this.openResults();
-      }
-      return;
-    }
-
-    if (!this.isOpen) return;
-
-    if (isDown) {
-      event.preventDefault();
-      this.navigateResults(1);
-    } else if (isUp) {
-      event.preventDefault();
-      this.navigateResults(-1);
-    } else if (isEnter) {
-      event.preventDefault();
-      if (this.focusedIndex >= 0 && this.focusedIndex < this.currentResults.length) {
-        this.selectEntry(this.currentResults[this.focusedIndex]);
-      } else if (this.currentResults.length > 0) {
-        this.selectEntry(this.currentResults[0]);
-      }
-    } else if (isEsc) {
-      event.preventDefault();
-      this.closeResults();
-    }
-  }
-  // [FIM MÉTODO: handleKeyDown]
-
-  // [INÍCIO MÉTODO: navigateResults]
-  /**
-   * Modifica a linha em foco na lista suspensa através do teclado.
-   * @param {number} delta - (+1 ou -1)
-   */
-  navigateResults(delta) {
-    if (this.currentResults.length === 0 || !this.resultsListElement) return;
-
-    const items = this.resultsListElement.querySelectorAll('.atlas-search-item');
-    if (items.length === 0) return;
-
-    this.focusedIndex = (this.focusedIndex + delta + items.length) % items.length;
-
-    items.forEach((item, idx) => {
-      if (idx === this.focusedIndex) {
-        item.classList.add('is-focused');
-        item.setAttribute('aria-selected', 'true');
-        item.scrollIntoView({ block: 'nearest' });
-        if (this.inputElement) {
-          this.inputElement.setAttribute('aria-activedescendant', item.id);
-        }
-      } else {
-        item.classList.remove('is-focused');
-        item.setAttribute('aria-selected', 'false');
-      }
+    // Emitir evento
+    bus.emit(EVENTS.STRUCTURE_SELECT, {
+      sid: result.sid,
+      source: 'search',
     });
+
+    // Salvar no histórico
+    saveRecentSearch(result);
+
+    // Fechar
+    close();
   }
-  // [FIM MÉTODO: navigateResults]
 
-  // [INÍCIO MÉTODO: selectEntry]
   /**
-   * Conclui a seleção de uma estrutura, salva no histórico e despacha para o motor.
-   * @param {Object} entry
+   * Salva no histórico
    */
-  selectEntry(entry) {
-    if (!entry || !entry.sid) return;
+  function saveRecentSearch(result) {
+    try {
+      let recent = getRecentSearches();
+      // Remover se já existe
+      recent = recent.filter((r) => r.sid !== result.sid);
+      // Adicionar no início
+      recent.unshift(result);
+      // Manter apenas os últimos 5
+      recent = recent.slice(0, MAX_RECENT);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(recent));
+    } catch (err) {
+      // Ignorar erros de localStorage
+    }
+  }
 
-    if (this.inputElement) {
-      this.inputElement.value = entry.names.pt;
+  /**
+   * Carrega o histórico
+   */
+  function getRecentSearches() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  /**
+   * Abre a caixa de busca
+   */
+  function open(query) {
+    if (isOpen) return;
+
+    // Construir índice se necessário
+    if (!index) {
+      const entries = getIndex();
+      index = buildSearchIndex(entries);
     }
 
-    this.saveRecentSearch(entry.names.pt);
-    this.closeResults();
+    isOpen = true;
+    overlayEl.hidden = false;
+    inputEl.setAttribute('aria-expanded', 'true');
 
-    AppBus.emit('structure:select', {
-      sid: entry.sid,
-      options: { focusCamera: true, origin: 'search' }
-    });
-  }
-  // [FIM MÉTODO: selectEntry]
+    // Focus no input
+    setTimeout(() => inputEl.focus(), 0);
 
-  // [INÍCIO MÉTODO: openResults]
-  /**
-   * Abre a exibição dos resultados.
-   */
-  openResults() {
-    if (!this.resultsListElement) return;
-    this.resultsListElement.classList.remove('is-hidden');
-    this.isOpen = true;
-    const combobox = this.container?.querySelector('.atlas-search-input-wrapper');
-    if (combobox) combobox.setAttribute('aria-expanded', 'true');
-  }
-  // [FIM MÉTODO: openResults]
-
-  // [INÍCIO MÉTODO: closeResults]
-  /**
-   * Oculta os resultados da busca.
-   */
-  closeResults() {
-    if (!this.resultsListElement) return;
-    this.resultsListElement.classList.add('is-hidden');
-    this.isOpen = false;
-    this.focusedIndex = -1;
-    const combobox = this.container?.querySelector('.atlas-search-input-wrapper');
-    if (combobox) combobox.setAttribute('aria-expanded', 'false');
-    if (this.inputElement) this.inputElement.removeAttribute('aria-activedescendant');
-  }
-  // [FIM MÉTODO: closeResults]
-
-  // [INÍCIO MÉTODO: clearSearch]
-  /**
-   * Esvazia o campo de pesquisa e reabre o histórico se disponível.
-   */
-  clearSearch() {
-    if (this.inputElement) {
-      this.inputElement.value = '';
-    }
-    if (this.clearButton) {
-      this.clearButton.classList.add('is-hidden');
-    }
-    this.currentResults = [];
-    if (this.recentSearches.length > 0) {
-      this.renderRecentSearches();
-      this.openResults();
+    // Se houver uma query inicial, colocá-la e buscar
+    if (query !== undefined) {
+      inputEl.value = query;
+      performSearch(query);
     } else {
-      this.closeResults();
+      // Campo vazio - mostrar histórico
+      performSearch('');
     }
+
+    renderListbox();
   }
-  // [FIM MÉTODO: clearSearch]
+
+  /**
+   * Fecha a caixa de busca
+   */
+  function close() {
+    if (!isOpen) return;
+
+    isOpen = false;
+    overlayEl.hidden = true;
+    inputEl.setAttribute('aria-expanded', 'false');
+    inputEl.removeAttribute('aria-activedescendant');
+    inputEl.value = '';
+    activeIndex = -1;
+    results = [];
+    clear(listboxEl);
+  }
+
+  /**
+   * Limpa listeners e recursos
+   */
+  function dispose() {
+    close();
+    if (unsubscribeSearchOpen) unsubscribeSearchOpen();
+    clearTimeout(debounceTimer);
+  }
+
+  // Escutar SEARCH_OPEN
+  unsubscribeSearchOpen = bus.on(EVENTS.SEARCH_OPEN, (payload) => {
+    open(payload?.query);
+  });
+
+  return { open, close, dispose };
 }
-
-export const UISearchBox = new SearchBoxUI();

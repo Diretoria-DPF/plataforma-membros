@@ -1,199 +1,174 @@
 /**
- * @file selection.js
- * @description Módulo de controle do ciclo de seleção anatômica do Atlas 3D LAIFT.
- * Elimina condições de corrida em seleções rápidas por sequenciamento de requisição e AbortController.
+ * selection.js — gerenciador de seleção de estruturas do Atlas v2 (Onda 1, WP02)
+ * ---------------------------------------------------------------------------
+ * Coordena a seleção de estruturas anatômicas: muda cor de destaque, emite
+ * eventos, mantém sincronizado o estado do store, e reage a seleções de
+ * outras fontes (busca, navegador, quiz) sem loops infinitos.
+ *
+ * @example
+ *   import { on, emit, EVENTS } from '../core/bus.js';
+ *   import { createSelection } from './selection.js';
+ *   const selection = createSelection({ registry, bus, store, requestRender, focusSid });
+ *   selection.select('fma:7088', 'pick');
+ *   console.log(selection.getSelected()); // 'fma:7088'
+ *   selection.dispose();
  */
 
-import { AppBus } from '../core/bus.js';
+import { EVENTS, on, off, emit } from '../core/bus.js';
 
-class SelectionManager {
-  // [INÍCIO MÉTODO: constructor]
-  constructor() {
-    /** @type {string|null} SID da estrutura atualmente ativa */
-    this.currentSid = null;
-    /** @type {string|null} SID da estrutura selecionada anteriormente */
-    this.previousSid = null;
-    /** @type {number} Contador incremental de sequência de requisição */
-    this.sequenceCounter = 0;
-    /** @type {AbortController|null} Controlador de aborto da requisição ativa */
-    this.activeAbortController = null;
-    /** @type {boolean} Trava de interação durante transições cinematográficas */
-    this.locked = false;
-  }
-  // [FIM MÉTODO: constructor]
+/**
+ * Cria um gerenciador de seleção de estruturas.
+ * @param {Object} ctx
+ * @param {Object} ctx.registry - Registry do Atlas (pick, setBBox, setColor)
+ * @param {Object} ctx.bus - Barramento de eventos (on, emit)
+ * @param {Object} ctx.store - Store do estado global (get, set)
+ * @param {() => void} ctx.requestRender - Função para marcar próximo render
+ * @param {(sid: string) => void} ctx.focusSid - Função para focar câmera em estrutura
+ * @param {string} [ctx.highlightColor='#ffb020'] - Cor do destaque
+ * @returns {Object} API de seleção
+ */
+export function createSelection({ registry, bus, store, requestRender, focusSid, highlightColor = '#ffb020' }) {
+  // --- Estado interno ---
+  let currentHighlightColor = highlightColor;
+  let isSelecting = false; // Flag para guardar contra re-entrância
 
-  // [INÍCIO MÉTODO: setLocked]
+  // --- Utilitários ---
+
   /**
-   * Ativa ou desativa a trava de seleção.
-   * @param {boolean} isLocked
+   * Seleciona uma estrutura ou limpa a seleção.
+   * @param {(string|null)} sid
+   * @param {string} [source='api']
    */
-  setLocked(isLocked) {
-    this.locked = Boolean(isLocked);
-  }
-  // [FIM MÉTODO: setLocked]
+  function select(sid, source = 'api') {
+    const prev = store.get().selectedSid;
 
-  // [INÍCIO MÉTODO: isLocked]
-  /**
-   * Informa se o motor de seleção está bloqueado temporariamente.
-   * @returns {boolean}
-   */
-  isLocked() {
-    return this.locked;
-  }
-  // [FIM MÉTODO: isLocked]
-
-  // [INÍCIO MÉTODO: beginSelection]
-  /**
-   * Inicia um novo ciclo de seleção, cancelando ativamente qualquer requisição anterior.
-   * @param {string} sid - Identificador canônico da estrutura.
-   * @param {Object} [options={}] - Parâmetros opcionais (ex: focusCamera, silent).
-   * @returns {{ sequence: number, signal: AbortSignal } | null}
-   */
-  beginSelection(sid, options = {}) {
-    if (this.locked) {
-      return null;
-    }
-
-    const cleanSid = sid ? String(sid).trim() : null;
-    if (!cleanSid) {
-      this.clearSelection();
-      return null;
-    }
-
-    // Cancela imediatamente a requisição assíncrona anterior que esteja pendente
-    if (this.activeAbortController) {
-      this.activeAbortController.abort();
-      this.activeAbortController = null;
-    }
-
-    // Cria novo controlador para a seleção atual
-    this.activeAbortController = new AbortController();
-    this.sequenceCounter++;
-    const currentSequence = this.sequenceCounter;
-
-    this.previousSid = this.currentSid;
-    this.currentSid = cleanSid;
-
-    // Emite notificação de início de seleção no barramento global
-    AppBus.emit('selection:starting', {
-      sid: cleanSid,
-      previousSid: this.previousSid,
-      sequence: currentSequence,
-      options
-    });
-
-    return {
-      sequence: currentSequence,
-      signal: this.activeAbortController.signal
-    };
-  }
-  // [FIM MÉTODO: beginSelection]
-
-  // [INÍCIO MÉTODO: isValidSequence]
-  /**
-   * Avalia se uma resposta assíncrona que acabou de chegar ainda é válida.
-   * Descarta requisições obsoletas que foram ultrapassadas por uma seleção posterior.
-   * @param {number} sequence - Número sequencial recebido no beginSelection.
-   * @returns {boolean}
-   */
-  isValidSequence(sequence) {
-    if (this.sequenceCounter !== sequence) {
-      return false;
-    }
-    if (this.activeAbortController && this.activeAbortController.signal.aborted) {
-      return false;
-    }
-    return true;
-  }
-  // [FIM MÉTODO: isValidSequence]
-
-  // [INÍCIO MÉTODO: commitSelection]
-  /**
-   * Consolida a seleção com a estrutura normalizada e o conteúdo educacional resolvido.
-   * @param {Object} entry - StructureEntry canônico.
-   * @param {Object|null} content - Ficha de conteúdo resolvida.
-   * @param {number} sequence - Número da sequência em processamento.
-   */
-  commitSelection(entry, content, sequence) {
-    if (!this.isValidSequence(sequence)) {
-      // Ignora desfecho de promessas defasadas
+    // Evita re-entrância: se já estamos no meio de um select para o mesmo sid,
+    // ignora (a não ser que seja 'focus', que sempre processa)
+    if (source !== 'focus' && sid === prev) {
       return;
     }
 
-    AppBus.emit('selection:resolved', {
-      sid: entry.sid,
-      entry,
-      content,
-      sequence
-    });
-  }
-  // [FIM MÉTODO: commitSelection]
-
-  // [INÍCIO MÉTODO: failSelection]
-  /**
-   * Registra a falha de recuperação dos dados de uma seleção ativa.
-   * @param {string} sid
-   * @param {Error} error
-   * @param {number} sequence
-   */
-  failSelection(sid, error, sequence) {
-    if (!this.isValidSequence(sequence)) {
+    // Guard contra re-entrância: se algo reagindo ao evento chamar select
+    // novamente para o mesmo sid, não reentra.
+    if (isSelecting) {
       return;
     }
 
-    if (error && error.name === 'AbortError') {
-      // Cancelamento planejado por nova seleção; não emite erro de UI
+    isSelecting = true;
+    try {
+      // Restaura a cor anterior
+      if (prev !== null) {
+        registry.setColor(prev, null);
+      }
+
+      // Aplica a cor nova
+      if (sid !== null) {
+        registry.setColor(sid, currentHighlightColor);
+      }
+
+      // Atualiza o store
+      store.set({ selectedSid: sid });
+
+      // Emite o evento
+      emit(EVENTS.STRUCTURE_SELECT, { sid, source });
+
+      // Marca para render
+      requestRender();
+    } finally {
+      isSelecting = false;
+    }
+  }
+
+  /**
+   * Manipulador de eventos do controle/câmera (pick).
+   * @param {Object} evt
+   * @param {Object} evt.ndc - Ponto normalizado de tela {x, y}
+   * @param {string} evt.kind - 'tap' ou 'focus'
+   */
+  function handlePick({ ndc, kind }) {
+    const sid = registry.pick(ndc);
+
+    if (kind === 'tap') {
+      // Tap seleciona (ou limpa se vazio)
+      select(sid, 'pick');
+    } else if (kind === 'focus') {
+      // Focus seleciona e chama focusSid
+      if (sid) {
+        select(sid, 'focus');
+        focusSid(sid);
+      }
+    }
+  }
+
+  /**
+   * Muda a cor de destaque e a reaplica à seleção atual.
+   * @param {string} color - Cor em qualquer formato que setColor aceite
+   */
+  function setHighlightColor(color) {
+    currentHighlightColor = color;
+    const sid = store.get().selectedSid;
+    if (sid) {
+      registry.setColor(sid, color);
+      requestRender();
+    }
+  }
+
+  /**
+   * Retorna o sid atualmente selecionado.
+   * @returns {(string|null)}
+   */
+  function getSelected() {
+    return store.get().selectedSid;
+  }
+
+  /**
+   * Cancela todas as assinaturas e limpa recursos.
+   */
+  function dispose() {
+    offExternalSelect();
+  }
+
+  // --- Listener para eventos de outras fontes (busca, navegador, quiz) ---
+
+  let offExternalSelect = () => {};
+
+  // Assina eventos de seleção de outras fontes, mas sem re-emitir
+  offExternalSelect = on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
+    // Ignora eventos que viemos de nós mesmos (source 'pick' ou 'api' aqui)
+    // Responde apenas a eventos de outras fontes: 'search', 'navigator', 'quiz'
+    if (source === 'pick' || source === 'api') {
       return;
     }
 
-    AppBus.emit('selection:failed', {
-      sid,
-      error,
-      sequence
-    });
-  }
-  // [FIM MÉTODO: failSelection]
-
-  // [INÍCIO MÉTODO: clearSelection]
-  /**
-   * Limpa integralmente a seleção corrente, aborta requisições e avisa o barramento.
-   */
-  clearSelection() {
-    if (this.activeAbortController) {
-      this.activeAbortController.abort();
-      this.activeAbortController = null;
+    // Aplica o destaque sem re-emitir
+    const prev = store.get().selectedSid;
+    if (prev !== null) {
+      registry.setColor(prev, null);
     }
+    if (sid !== null) {
+      registry.setColor(sid, currentHighlightColor);
+    }
+    requestRender();
+  });
 
-    this.sequenceCounter++;
-    this.previousSid = this.currentSid;
-    this.currentSid = null;
-
-    AppBus.emit('selection:cleared', {
-      previousSid: this.previousSid,
-      sequence: this.sequenceCounter
-    });
-  }
-  // [FIM MÉTODO: clearSelection]
-
-  // [INÍCIO MÉTODO: getSelectedSid]
-  /**
-   * Retorna o SID da estrutura anatômica selecionada no momento.
-   * @returns {string|null}
-   */
-  getSelectedSid() {
-    return this.currentSid;
-  }
-  // [FIM MÉTODO: getSelectedSid]
-
-  // [INÍCIO MÉTODO: getPreviousSid]
-  /**
-   * Retorna o SID da estrutura anatômica selecionada antes da atual.
-   * @returns {string|null}
-   */
-  getPreviousSid() {
-    return this.previousSid;
-  }
-  // [FIM MÉTODO: getPreviousSid]
+  return {
+    select,
+    handlePick,
+    setHighlightColor,
+    getSelected,
+    dispose,
+  };
 }
 
-export const EngineSelection = new SelectionManager();
+/**
+ * Helper puro: gera string de anúncio para aria-live.
+ * @param {(string|null)} label - Nome exibido da estrutura, ou null se limpa
+ * @param {string} systemLabel - Nome do sistema anatômico
+ * @returns {string} String em PT-BR adequado para aria-live
+ */
+export function announce(label, systemLabel) {
+  if (label === null) {
+    return 'Seleção limpa';
+  }
+  return `Selecionado: ${label} — ${systemLabel}`;
+}

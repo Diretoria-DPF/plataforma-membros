@@ -1,0 +1,20 @@
+name: Testes do Atlas
+on:
+  # Sem filtro de paths: se o check for obrigatório na main, PRs só de docs
+  # (ex.: lotes de tradução) ficariam presos esperando um check que não roda.
+  pull_request:
+  workflow_dispatch: {}
+jobs:
+  atlas-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci || npm install
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/build.js
+      - run: node scripts/e2e/run.js atlas atlas-responsive smoke csp

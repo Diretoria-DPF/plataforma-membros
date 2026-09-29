@@ -1,0 +1,142 @@
+Allen_short_insular_gyri
+Allen_subcallosal_gyrus_parolfactory_gyrus
+Allen_substantia_nigra
+Allen_subthalamic_nucleus
+Allen_superior_cerebellar_peduncle_brachium_conjunctivum
+Allen_superior_colliculus
+Allen_superior_frontal_gyrus
+Allen_superior_occipital_gyrus
+Allen_superior_temporal_gyrus
+Allen_supramarginal_gyrus
+Allen_supraoptic_region_of_HTH
+Allen_supraparietal_lobule
+Allen_tail_of_caudate
+Allen_tail_of_hippocampus
+Allen_tegmentum_of_medulla_oblongata
+Allen_temporal_agranular_insular_cortex_area_Tl
+Allen_temporal_pole
+Allen_thalamus
+Allen_third_ventricle
+Allen_transverse_temporal_gyrus_Heschls_gyrus
+Allen_tuberal_region_of_HTH
+Allen_ventral_anterior_nucleus_of_thalamus
+Allen_ventral_lateral_nucleus_of_thalamus
+Allen_ventral_posterior_lateral_nucleus
+Allen_ventral_posterior_medial_nucleus
+Allen_white_matter_of_forebrain
+Allen_white_matter_of_hindbrain
+Allen_zona_incerta
+Ampulla of lacrimal canaliculus
+Amygdaloid body
+Anconeus muscle
+Angular gyrus
+Annular ligament of radius
+Anserine bursa
+Antebrachial fascia
+Anterior axillary nodes
+Anterior belly of digastric muscle
+Anterior cells of ethmoid bone
+Anterior chamber of eyeball
+Anterior cochlear nucleus
+Anterior commissure
+Anterior communicating artery
+Anterior corticospinal tract
+Anterior cruciate ligament
+Anterior fasciculus proprius
+Anterior horn of spinal cord
+Anterior inferior jugular nodes
+Anterior intermuscular septum of leg
+Anterior lateral segment of liver (VI)
+Anterior layer of thoracolumbar fascia
+Anterior ligament of fibular head
+Anterior longitudinal ligament
+Anterior medial segment of liver (V)
+Anterior meniscotibial ligament (Lateral meniscus)
+Anterior meniscotibial ligament (Medial meniscus)
+Anterior occipital sulcus*
+Anterior papillary muscle of right ventricle
+Anterior quadrangular lobule
+Anterior sacro-iliac ligament
+Anterior segment of eyeball
+Anterior semilunar leaflet of pulmonary valve
+Anterior spinocerebellar tract
+Anterior spinothalamic tract
+Anterior sternoclavicular ligament
+Anterior talocalcaneal ligament
+Anterior talofibular ligament
+Anterior tibiofibular ligament
+Apical axillary nodes
+Appendicular nodes
+Aqueduct of midbrain
+Arcuate popliteal ligament
+Articular capsule of acromioclavicular joint
+Articular capsule of elbow joint
+Articular capsule of glenohumeral joint
+Articular capsule of hip joint
+Articular capsule of interphalangeal joint of great toe
+Articular capsule of knee joint
+Articular capsule of radiocarpal joint
+Articular capsule of sternoclavicular joint
+Articular capsule of superior tibiofibular joint
+Articular capsule of temporomandibular joint
+Articular capsules of distal interphalangeal joints
+Articular capsules of distal interphalangeal joints of foot
+Articular capsules of metacarpophalangeal joints
+Articular capsules of metatarsophalangeal joints
+Articular capsules of proximal interphalangeal joints
+Articular capsules of proximal interphalangeal joints of foot
+Articular disc of acromioclavicular joint
+Articular disc of distal radio-ulnar joint
+Articular disc of sternoclavicular joint
+Articular disc of temporomandibular joint
+Ary-epiglottic part of oblique arytenoid muscle
+Arytenoid cartilage
+Ascending colon
+Ascending part of trapezius muscle
+Atlas (C1)
+Auditory tube
+Axis (C2)
+Base of peduncle
+Basilar venous plexus
+Bicipitoradial bursa
+Biventral lobule
+Body of sternum
+Brachial fascia
+Brachial nodes
+Brachialis muscle
+Brachiocephalic nodes
+Brachioradialis muscle
+Bucinator
+Bucinator node
+Bursa of piriformis muscle
+Calcaneal tendon
+Calcaneocuboid ligament
+Calcaneofibular ligament
+Calcaneonavicular ligament
+Calcaneus
+Calcarine sulcus
+Capitate bone
+Capitohamate interosseous ligament
+Caudate nucleus
+Cavernous sinus
+Central axillary nodes
+Central canal
+Central lobule
+Central sulcus
+Central superior mesenteric nodes
+Choroid plexus
+Cingulate gyrus (Posteroventral part*)
+Cingulate gyrus and sulcus (Middle anterior part)
+Cingulate gyrus and sulcus (Middle posterior part)
+Cingulate gyrus and sulcus (Posterior dorsal part)
+Cingulate sulcus (Marginal part*)
+Circular sulcus of insula
+Clavicle
+Clavicular head of pectoralis major muscle
+Clavicular part of deltoid muscle
+Clavipectoral fascia
+Coccygeus muscle
+Coccyx
+Cochlea
+Cochlear nerve
+Coeliac nodes
