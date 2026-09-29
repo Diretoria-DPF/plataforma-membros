@@ -20,7 +20,6 @@
  *   setClip: Function,
  *   setModelBox: Function,
  *   getClipPlane: Function,
- *   getPendingClip: Function,
  *   dispose: Function
  * }}
  */
@@ -34,9 +33,6 @@ export function createXrayClip({ bus, store, renderer, THREE, requestRender }) {
 
   // Caixa delimitadora do modelo
   let modelBox = null;
-
-  // Corte pendente agendado antes do carregamento da geometria
-  let _pendingClip = null;
 
   // Plano de corte atual
   let currentClipPlane = null;
@@ -106,52 +102,43 @@ export function createXrayClip({ bus, store, renderer, THREE, requestRender }) {
 
   /**
    * Define a caixa delimitadora do modelo (para cálculos de plano de corte).
-   * Se houver um corte agendado antes da geometria carregar (_pendingClip), aplica-o imediatamente.
-   * @param {{ min: [number, number, number], max: [number, number, number] } | null} box
+   * @param {{ min: [number, number, number], max: [number, number, number] }} box
    */
   function setModelBox(box) {
     modelBox = box;
-    if (modelBox && _pendingClip) {
-      const pending = _pendingClip;
-      _pendingClip = null;
-      setClip(pending.plane, pending.offset);
-    }
   }
 
   /**
    * Define/limpa o plano de corte global.
    * @param {('sagital'|'coronal'|'transversal'|null)} plane
-   * @param {number} offset Deslocamento normalizado
+   * @param {number} offset Deslocamento normalizado [-1, 1]
    */
   function setClip(plane, offset = 0) {
     if (!plane) {
-      // Limpa o plano de corte e qualquer corte pendente
+      // Limpa o plano de corte
       currentClipPlane = null;
-      _pendingClip = null;
       renderer.clippingPlanes = [];
       store.set({ clip: { plane: null, offset: null } });
       requestRender();
       return;
     }
 
-    // Se o modelo ainda não carregou a geometria, guarda como pendente
     if (!modelBox) {
-      _pendingClip = { plane, offset };
-      store.set({ clip: { plane, offset } });
+      console.warn('[xray-clip] setClip chamado sem setModelBox antes');
       return;
     }
 
     const { min, max } = modelBox;
     const center = new THREE.Vector3(
       (min[0] + max[0]) / 2,
-      (min + max) / 2,
-      (min + max) / 2
+      (min[1] + max[1]) / 2,
+      (min[2] + max[2]) / 2
     );
 
     const halfExtent = new THREE.Vector3(
       (max[0] - min[0]) / 2,
-      (max - min) / 2,
-      (max - min) / 2
+      (max[1] - min[1]) / 2,
+      (max[2] - min[2]) / 2
     );
 
     // Define normal e posição do plano conforme o eixo
@@ -205,18 +192,9 @@ export function createXrayClip({ bus, store, renderer, THREE, requestRender }) {
   }
 
   /**
-   * Retorna o corte pendente ou null.
-   * @returns {{ plane: string, offset: number }|null}
-   */
-  function getPendingClip() {
-    return _pendingClip;
-  }
-
-  /**
-   * Desinscreve dos eventos do bus e limpa estado.
+   * Desinscreve dos eventos do bus.
    */
   function dispose() {
-    _pendingClip = null;
     offXray();
     offClip();
   }
@@ -238,7 +216,6 @@ export function createXrayClip({ bus, store, renderer, THREE, requestRender }) {
     setClip,
     setModelBox,
     getClipPlane,
-    getPendingClip,
     dispose,
   };
 }

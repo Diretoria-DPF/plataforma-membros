@@ -223,21 +223,10 @@
     return null;
   }
 
-  function createFrame(container, url, title, allow) {
-    if (typeof container === 'string') {
-      allow = url;
-      url = container;
-      container = null;
-      title = 'Módulo';
-    }
-    var frame = document.createElement('iframe');
-    frame.src = url;
-    if (title) frame.title = title;
-    // Mantém exclusivamente a diretiva moderna unificada via atributo allow:
-    frame.allow = allow || 'fullscreen';
-    if (container && container.appendChild) {
-      container.appendChild(frame);
-    }
+  function createFrame(container, path, title, allow) {
+    var frame = app().h('iframe', { className: 'learn-frame', src: path, title: title, allow: allow || 'fullscreen' }, []);
+    frame.allowFullscreen = true;
+    container.appendChild(frame);
     return frame;
   }
 
@@ -332,7 +321,7 @@
     Promise.all([A.callLearningApi('apiLearnGetMyAttendanceQr'), loadQrLib()]).then(function (results) {
       if (requestId !== credentialRequestId) return;
       var res = results[0];
-      var qrcode = results;
+      var qrcode = results[1];
       var payload = res && res.success && typeof res.qrPayload === 'string' && QR_V2_RE.test(res.qrPayload) ? res.qrPayload : null;
       var kind = payload ? 'v2' : 'legacy';
       if (!payload) {
