@@ -30,6 +30,7 @@ const listeners = new Map();
  * @returns {() => void} Função que cancela esta assinatura.
  */
 export function on(evt, fn) {
+  if (!evt || typeof fn !== 'function') return () => {};
   let set = listeners.get(evt);
   if (!set) {
     set = new Set();
@@ -47,9 +48,18 @@ export function on(evt, fn) {
  * @returns {void}
  */
 export function off(evt, fn) {
+  if (!evt || !fn) return;
   const set = listeners.get(evt);
   if (!set) return;
+
+  // Remoção direta ou de função encapsulada por once
   set.delete(fn);
+  for (const item of set) {
+    if (item._wrapped === fn) {
+      set.delete(item);
+    }
+  }
+
   if (set.size === 0) listeners.delete(evt);
 }
 
@@ -62,10 +72,12 @@ export function off(evt, fn) {
  * @returns {() => void} Função que cancela esta assinatura antes de disparar.
  */
 export function once(evt, fn) {
+  if (!evt || typeof fn !== 'function') return () => {};
   const wrapped = (payload) => {
     off(evt, wrapped);
     fn(payload);
   };
+  wrapped._wrapped = fn;
   return on(evt, wrapped);
 }
 
@@ -79,8 +91,10 @@ export function once(evt, fn) {
  * @returns {void}
  */
 export function emit(evt, payload) {
+  if (!evt) return;
   const set = listeners.get(evt);
   if (!set || set.size === 0) return;
+
   // Copia antes de iterar: uma assinatura pode chamar `off` (a sua própria
   // ou de outra) durante o disparo, e isso não deve pular nem duplicar
   // chamadas nesta rodada.
