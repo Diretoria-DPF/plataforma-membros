@@ -271,6 +271,13 @@ test('evento externo de seleção (search) aplica destaque e não re-emite', () 
   // Simula evento de search (source !== 'pick' e !== 'api')
   emit(EVENTS.STRUCTURE_SELECT, { sid: 'fma:9999', source: 'search' });
 
+  // Estado e destaque devem representar a mesma seleção.
+  assert.strictEqual(
+    selection.getSelected(),
+    'fma:9999',
+    'deve sincronizar selectedSid sem re-emitir o evento'
+  );
+
   // Deve ter aplicado o destaque
   const setColorCalls = registry.getSetColorCalls();
   assert.ok(
@@ -311,6 +318,7 @@ test('sem loop infinito ao reagir a eventos externos', () => {
 
   // Se houvesse loop, teríamos muitos eventos. Aqui devemos ter apenas 3.
   assert.strictEqual(emittedEvents.length, 3);
+  assert.strictEqual(selection.getSelected(), 'fma:3');
 
   unsubscribe();
   selection.dispose();

@@ -148,6 +148,11 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
     if (sid !== null) {
       registry.setColor(sid, currentHighlightColor);
     }
+
+    // O emissor externo já publicou STRUCTURE_SELECT. Atualize apenas o
+    // estado compartilhado para manter ficha, modos e destaque coerentes,
+    // sem reemitir o evento e criar um ciclo.
+    store.set({ selectedSid: sid });
     requestRender();
   });
 
