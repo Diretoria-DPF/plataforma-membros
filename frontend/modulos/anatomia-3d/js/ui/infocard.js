@@ -1,504 +1,498 @@
 /**
- * @file infocard.js
- * @description Painel de detalhes e ficha clínica-anatômica (bottom-sheet) do Atlas 3D.
- * Implementação segura sem innerHTML (em total conformidade com a política CSP e Fase 4).
+ * infocard.js — Ficha de estrutura do Atlas Anatômico 3D.
+ *
+ * Exporta `createInfoCard(container, {onAction})` que retorna
+ * `{render(entry, content), setTab(id), clear(), getTab()}`.
  */
 
-import { AppBus } from '../core/bus.js';
-import { ReviewStatus } from '../core/contracts.js';
+import { SYSTEMS } from '../core/contracts.js';
 
-class InfocardUI {
-  // [INÍCIO MÉTODO: constructor]
-  constructor() {
-    /** @type {HTMLElement|null} */
-    this.container = null;
-    /** @type {Object|null} */
-    this.currentEntry = null;
-    /** @type {Object|null} */
-    this.currentContent = null;
-    /** @type {'summary'|'anatomy'|'histology'|'clinical'|'sources'} */
-    this.activeTab = 'summary';
-    /** @type {'peek'|'half'|'full'} */
-    this.currentSnap = 'half';
-    /** @type {boolean} */
-    this.isVisible = false;
-  }
-  // [FIM MÉTODO: constructor]
+/**
+ * Cria um objeto com os métodos da ficha.
+ * @param {HTMLElement} container - Elemento pai onde a ficha será renderizada
+ * @param {Object} options - Configurações
+ * @param {Function} options.onAction - Callback chamado com {action, sid}
+ * @returns {Object} Interface da ficha: {render, setTab, clear, getTab}
+ */
+export function createInfoCard(container, { onAction = () => {} } = {}) {
+  const { h, setHtml, clear: clearEl, safeUrl } = window.LaiftDom;
 
-  // [INÍCIO MÉTODO: init]
+  let currentEntry = null;
+  let currentContent = null;
+  let currentTabId = 'resumo';
+  const contentBox = {};
+
+  // Mapeamento de system id → label PT
+  const systemMap = Object.fromEntries(SYSTEMS.map((s) => [s.id, s.label]));
+
   /**
-   * Inicializa o componente atrelando-o ao contêiner existente no DOM.
-   * @param {HTMLElement} containerElement
+   * Renderiza a ficha com entrada e conteúdo (ou null enquanto carrega).
    */
-  init(containerElement) {
-    if (!containerElement) {
-      return;
-    }
-    this.container = containerElement;
-    this.container.classList.add('atlas-infocard');
-    this.setSnap('half');
-    this.hide();
-  }
-  // [FIM MÉTODO: init]
+  function render(entry, content) {
+    currentEntry = entry;
+    currentContent = content;
+    currentTabId = 'resumo';
 
-  // [INÍCIO MÉTODO: setSnap]
-  /**
-   * Altera o ponto de acoplamento vertical da folha inferior.
-   * @param {'peek'|'half'|'full'} snap
-   */
-  setSnap(snap) {
-    if (!['peek', 'half', 'full'].includes(snap)) {
-      return;
-    }
-    this.currentSnap = snap;
-    if (this.container) {
-      this.container.setAttribute('data-snap', snap);
-    }
-  }
-  // [FIM MÉTODO: setSnap]
-
-  // [INÍCIO MÉTODO: showLoading]
-  /**
-   * Exibe estado visual de carregamento para a estrutura em foco.
-   * @param {Object} entry - StructureEntry selecionado.
-   */
-  showLoading(entry) {
-    if (!this.container) return;
-
-    this.currentEntry = entry;
-    this.currentContent = null;
-    this.clearContainer();
-
-    // Monta barra de arraste
-    const handle = this.createHandleElement();
-    this.container.appendChild(handle);
-
-    // Cabeçalho básico com nome da estrutura
-    const titleZone = this.createTitleZone(entry, null, true);
-    this.container.appendChild(titleZone);
-
-    // Corpo de espera visual
-    const body = document.createElement('div');
-    body.className = 'atlas-card-content';
-
-    const loadingText = document.createElement('p');
-    loadingText.className = 'atlas-card-loading-msg';
-    loadingText.textContent = 'Carregando dados anatômicos e correlações clínicas...';
-    body.appendChild(loadingText);
-
-    this.container.appendChild(body);
-    this.show();
-  }
-  // [FIM MÉTODO: showLoading]
-
-  // [INÍCIO MÉTODO: render]
-  /**
-   * Renderiza a ficha completa com abas dinâmicas e fontes bibliográficas.
-   * @param {{ entry: Object, content: Object|null }} payload
-   */
-  render(payload) {
-    if (!this.container || !payload || !payload.entry) {
-      return;
+    // Cria/limpa o container principal se for a primeira vez
+    if (!contentBox.root) {
+      contentBox.root = h('div', { id: 'organ-hud', className: 'atlas-card-wrapper' });
+      container.appendChild(contentBox.root);
+    } else {
+      clearEl(contentBox.root);
     }
 
-    const { entry, content } = payload;
-    this.currentEntry = entry;
-    this.currentContent = content;
-    this.clearContainer();
+    // Cabeçalho
+    const header = renderHeader(entry, content);
+    contentBox.root.appendChild(header);
 
-    // 1. Alça de arraste (handle)
-    const handle = this.createHandleElement();
-    this.container.appendChild(handle);
+    // Abas
+    const tabBar = renderTabBar();
+    contentBox.root.appendChild(tabBar);
 
-    // 2. Zona de cabeçalho e títulos
-    const titleZone = this.createTitleZone(entry, content, false);
-    this.container.appendChild(titleZone);
+    // Caixa de conteúdo (rola separadamente)
+    contentBox.contentArea = h('div', { className: 'atlas-card-content' });
+    contentBox.root.appendChild(contentBox.contentArea);
 
-    // 3. Barra de abas informativas
-    const tabbar = this.createTabBar(content);
-    this.container.appendChild(tabbar);
+    // Ações rápidas (sempre visíveis)
+    const actions = renderActions(entry);
+    contentBox.root.appendChild(actions);
 
-    // 4. Painel de conteúdo da aba ativa
-    const body = document.createElement('div');
-    body.className = 'atlas-card-content';
-    this.renderActiveTabContent(body, entry, content);
-    this.container.appendChild(body);
-
-    // 5. Barra inferior de botões de ação
-    const actions = this.createActionButtons(entry);
-    this.container.appendChild(actions);
-
-    this.show();
+    // Renderiza o conteúdo da aba ativa
+    updateTabContent();
   }
-  // [FIM MÉTODO: render]
 
-  // [INÍCIO MÉTODO: renderError]
   /**
-   * Apresenta estado de erro recuperável na ficha.
-   * @param {Object} entry
-   * @param {string} errorMessage
+   * Renderiza o cabeçalho com nome, subtítulo e badges.
    */
-  renderError(entry, errorMessage) {
-    if (!this.container) return;
+  function renderHeader(entry, content) {
+    const { h } = window.LaiftDom;
 
-    this.clearContainer();
+    const header = h('div', { className: 'atlas-card-header' });
 
-    const handle = this.createHandleElement();
-    this.container.appendChild(handle);
+    // Alça de arraste
+    const handle = h('div', { className: 'atlas-card-handle' });
+    header.appendChild(handle);
 
-    const titleZone = this.createTitleZone(entry, null, false);
-    this.container.appendChild(titleZone);
+    // Zona do nome e badges
+    const titleZone = h('div', { className: 'atlas-card-title-zone' });
 
-    const body = document.createElement('div');
-    body.className = 'atlas-card-content';
+    const nameContainer = h('div', { className: 'atlas-card-name-container' });
+    const name = h('h2', { id: 'organ-name', className: 'atlas-card-name', text: entry.names.pt });
+    nameContainer.appendChild(name);
 
-    const errBox = document.createElement('div');
-    errBox.className = 'atlas-card-error-box';
-
-    const p = document.createElement('p');
-    p.textContent = errorMessage;
-    errBox.appendChild(p);
-
-    const retryBtn = document.createElement('button');
-    retryBtn.type = 'button';
-    retryBtn.className = 'atlas-card-action-btn primary';
-    retryBtn.textContent = 'Tentar Novamente';
-    retryBtn.addEventListener('click', () => {
-      AppBus.emit('structure:select', { sid: entry.sid });
-    });
-    errBox.appendChild(retryBtn);
-
-    body.appendChild(errBox);
-    this.container.appendChild(body);
-    this.show();
-  }
-  // [FIM MÉTODO: renderError]
-
-  // [INÍCIO MÉTODO: show]
-  /**
-   * Torna o painel visível na interface.
-   */
-  show() {
-    if (!this.container) return;
-    this.container.classList.remove('is-hidden');
-    this.isVisible = true;
-  }
-  // [FIM MÉTODO: show]
-
-  // [INÍCIO MÉTODO: hide]
-  /**
-   * Oculta o painel da interface.
-   */
-  hide() {
-    if (!this.container) return;
-    this.container.classList.add('is-hidden');
-    this.isVisible = false;
-  }
-  // [FIM MÉTODO: hide]
-
-  // [INÍCIO MÉTODO: clearContainer]
-  /**
-   * Esvazia o conteúdo filho do contêiner de forma segura.
-   */
-  clearContainer() {
-    if (!this.container) return;
-    while (this.container.firstChild) {
-      this.container.removeChild(this.container.firstChild);
-    }
-  }
-  // [FIM MÉTODO: clearContainer]
-
-  // [INÍCIO MÉTODO: createHandleElement]
-  /**
-   * Constrói a alça de arraste superior da folha deslizante.
-   * @returns {HTMLElement}
-   */
-  createHandleElement() {
-    const handle = document.createElement('button');
-    handle.type = 'button';
-    handle.className = 'atlas-card-handle';
-    handle.setAttribute('aria-label', 'Alternar tamanho da ficha de informações');
-    handle.addEventListener('click', () => {
-      if (this.currentSnap === 'peek') this.setSnap('half');
-      else if (this.currentSnap === 'half') this.setSnap('full');
-      else this.setSnap('peek');
-    });
-    return handle;
-  }
-  // [FIM MÉTODO: createHandleElement]
-
-  // [INÍCIO MÉTODO: createTitleZone]
-  /**
-   * Monta o bloco de títulos, lateralidade e selo acadêmico.
-   * @param {Object} entry
-   * @param {Object|null} content
-   * @param {boolean} isLoading
-   * @returns {HTMLElement}
-   */
-  createTitleZone(entry, content, isLoading) {
-    const zone = document.createElement('div');
-    zone.className = 'atlas-card-title-zone';
-
-    const nameContainer = document.createElement('div');
-    nameContainer.className = 'atlas-card-name-container';
-
-    // Título vernacular em português
-    const h2 = document.createElement('h2');
-    h2.textContent = entry.names?.pt || entry.sid;
-    nameContainer.appendChild(h2);
-
-    // Subtítulo descritivo com sistema e lateralidade
-    const subtitle = document.createElement('div');
-    subtitle.className = 'atlas-card-subtitle';
-
-    const sysSpan = document.createElement('span');
-    sysSpan.textContent = entry.systemLabel || entry.system;
-    subtitle.appendChild(sysSpan);
-
-    if (entry.laterality && entry.laterality !== 'unpaired') {
-      const latSpan = document.createElement('span');
-      let latText = '';
-      if (entry.laterality === 'left') latText = '· Esquerdo';
-      else if (entry.laterality === 'right') latText = '· Direito';
-      else if (entry.laterality === 'bilateral') latText = '· Bilateral';
-      else if (entry.laterality === 'midline') latText = '· Mediano';
-      latSpan.textContent = latText;
-      subtitle.appendChild(latSpan);
+    // Badge de rascunho se necessário
+    if (content && content.review && content.review.status !== 'reviewed' && content.review.status !== 'approved') {
+      const badge = h('div', { className: 'atlas-card-draft-badge', role: 'status', title: 'Texto gerado automaticamente; ainda não revisado por profissional da área.' });
+      badge.appendChild(h('span', { className: 'atlas-card-draft-icon', text: '⚠' }));
+      badge.appendChild(h('span', { className: 'atlas-card-draft-text', text: 'Rascunho — não revisado' }));
+      nameContainer.appendChild(badge);
     }
 
-    nameContainer.appendChild(subtitle);
-    zone.appendChild(nameContainer);
+    titleZone.appendChild(nameContainer);
 
-    // Selo de revisão acadêmica conforme ATLAS_CONTENT_POLICY.md
-    if (!isLoading && content) {
-      const badge = document.createElement('div');
-      badge.className = 'atlas-card-draft-badge';
+    // Subtítulo: sistema · tipo · lado
+    const subtitle = h('div', { className: 'atlas-card-subtitle' });
+    const sysLabel = systemMap[entry.system] || entry.system;
+    const typeLabel = 'Órgão'; // tipo fixo para demo; pode vir de content se houver
+    const sideLabel = entry.side ? (entry.side === 'L' ? 'Esquerdo' : entry.side === 'R' ? 'Direito' : '—') : '—';
 
-      const status = content.review?.status || ReviewStatus.AUTO_DRAFT;
-      if (status === ReviewStatus.REVIEWED || status === ReviewStatus.APPROVED) {
-        badge.classList.add('is-reviewed');
-        badge.textContent = 'Conteúdo Revisado';
-      } else if (status === ReviewStatus.LEGACY_UNVERIFIED) {
-        badge.textContent = 'Acervo Histórico';
-      } else {
-        badge.textContent = 'Rascunho não revisado';
-      }
+    subtitle.appendChild(h('span', { className: 'atlas-card-system', text: sysLabel }));
+    subtitle.appendChild(h('span', { text: ' · ' }));
+    subtitle.appendChild(h('span', { className: 'atlas-card-type', text: typeLabel }));
+    subtitle.appendChild(h('span', { text: ' · ' }));
+    subtitle.appendChild(h('span', { className: 'atlas-card-side', text: sideLabel }));
 
-      zone.appendChild(badge);
-    }
+    titleZone.appendChild(subtitle);
+    header.appendChild(titleZone);
 
-    return zone;
+    return header;
   }
-  // [FIM MÉTODO: createTitleZone]
 
-  // [INÍCIO MÉTODO: createTabBar]
   /**
-   * Constrói a barra de abas dinâmicas conforme a disponibilidade de dados.
-   * @param {Object|null} content
-   * @returns {HTMLElement}
+   * Renderiza a barra de abas com navegação por teclado.
    */
-  createTabBar(content) {
-    const tabbar = document.createElement('div');
-    tabbar.className = 'atlas-card-tabbar';
-    tabbar.setAttribute('role', 'tablist');
+  function renderTabBar() {
+    const { h } = window.LaiftDom;
 
-    const availableTabs = [
-      { id: 'summary', label: 'Resumo', available: true },
-      { id: 'anatomy', label: 'Anatomia', available: Boolean(content?.anatomy) },
-      { id: 'histology', label: 'Histologia', available: Boolean(content?.histology) },
-      { id: 'clinical', label: 'Clínica', available: Boolean(Array.isArray(content?.clinical) && content.clinical.length > 0) },
-      { id: 'sources', label: 'Fontes', available: Boolean(Array.isArray(content?.sources) && content.sources.length > 0) }
+    const tabBar = h('div', { className: 'atlas-card-tabbar', role: 'tablist' });
+
+    const tabs = [
+      { id: 'resumo', label: 'Resumo' },
+      { id: 'anatomia', label: 'Anatomia' },
+      { id: 'histologia', label: 'Histologia & Células' },
+      { id: 'clinica', label: 'Clínica' },
+      { id: 'referencias', label: 'Referências' },
     ];
 
-    // Se a aba selecionada anteriormente não estiver disponível nesta estrutura, retorna para resumo
-    const currentTabObj = availableTabs.find(t => t.id === this.activeTab);
-    if (!currentTabObj || !currentTabObj.available) {
-      this.activeTab = 'summary';
-    }
+    const hasData = {
+      resumo: true, // sempre mostra
+      anatomia: currentContent && currentContent.anatomy,
+      histologia: currentContent && currentContent.histology,
+      clinica: currentContent && currentContent.clinical && currentContent.clinical.length > 0,
+      referencias: true, // sempre mostra
+    };
 
-    for (let i = 0; i < availableTabs.length; i++) {
-      const tabDef = availableTabs[i];
-      if (!tabDef.available) continue;
+    tabs.forEach(({ id, label }) => {
+      if (!hasData[id]) return; // pula abas vazias
 
-      const tabBtn = document.createElement('button');
-      tabBtn.type = 'button';
-      tabBtn.className = 'atlas-card-tab';
-      tabBtn.setAttribute('role', 'tab');
-      tabBtn.setAttribute('aria-selected', this.activeTab === tabDef.id ? 'true' : 'false');
-      tabBtn.textContent = tabDef.label;
+      const button = h('button', {
+        className: 'atlas-card-tab',
+        'data-tab-id': id,
+        'aria-selected': id === currentTabId ? 'true' : 'false',
+        role: 'tab',
+        onClick: () => {
+          currentTabId = id;
+          updateTabContent();
+          // Atualiza aria-selected em todos os botões
+          Array.from(tabBar.querySelectorAll('[role="tab"]')).forEach((btn) => {
+            btn.setAttribute('aria-selected', btn.getAttribute('data-tab-id') === id ? 'true' : 'false');
+          });
+        },
+        onKeyDown: (evt) => {
+          const allButtons = Array.from(tabBar.querySelectorAll('[role="tab"]'));
+          const currentIdx = allButtons.indexOf(evt.target);
 
-      if (this.activeTab === tabDef.id) {
-        tabBtn.classList.add('is-active');
-      }
-
-      tabBtn.addEventListener('click', () => {
-        this.activeTab = tabDef.id;
-        if (this.currentEntry) {
-          this.render({ entry: this.currentEntry, content: this.currentContent });
-        }
+          if (evt.key === 'ArrowRight') {
+            evt.preventDefault();
+            const nextBtn = allButtons[currentIdx + 1];
+            if (nextBtn) nextBtn.click();
+          } else if (evt.key === 'ArrowLeft') {
+            evt.preventDefault();
+            const prevBtn = allButtons[currentIdx - 1];
+            if (prevBtn) prevBtn.click();
+          }
+        },
+        text: label,
       });
+      tabBar.appendChild(button);
+    });
 
-      tabbar.appendChild(tabBtn);
-    }
-
-    return tabbar;
+    return tabBar;
   }
-  // [FIM MÉTODO: createTabBar]
 
-  // [INÍCIO MÉTODO: renderActiveTabContent]
   /**
-   * Preenche a área de leitura com base na aba ativa selecionada.
-   * @param {HTMLElement} container
-   * @param {Object} entry
-   * @param {Object|null} content
+   * Renderiza a linha de ações rápidas (Isolar, Ocultar, Fantasma, Focar).
    */
-  renderActiveTabContent(container, entry, content) {
-    if (!content) {
-      const p = document.createElement('p');
-      p.className = 'atlas-card-empty-msg';
-      p.textContent = 'Não há ficha descritiva catalogada para esta estrutura no momento.';
-      container.appendChild(p);
+  function renderActions(entry) {
+    const { h } = window.LaiftDom;
+
+    const actionBar = h('div', { className: 'atlas-card-actions' });
+
+    const actions = [
+      { id: 'isolate', label: 'Isolar', icon: '◎' },
+      { id: 'hide', label: 'Ocultar', icon: '◌' },
+      { id: 'ghost', label: 'Fantasma', icon: '👻' },
+      { id: 'focus', label: 'Focar', icon: '🎯' },
+    ];
+
+    actions.forEach(({ id, label, icon }) => {
+      const btn = h('button', {
+        className: 'atlas-card-action-btn',
+        'aria-label': label,
+        title: label,
+        onClick: () => {
+          onAction({ action: id, sid: entry.sid });
+        },
+      }, [
+        h('span', { className: 'atlas-card-action-icon', 'aria-hidden': 'true', text: icon }),
+        h('span', { className: 'atlas-card-action-label', text: label }),
+      ]);
+      actionBar.appendChild(btn);
+    });
+
+    return actionBar;
+  }
+
+  /**
+   * Atualiza o conteúdo da aba ativa.
+   */
+  function updateTabContent() {
+    if (!contentBox.contentArea) return;
+    clearEl(contentBox.contentArea);
+
+    // `undefined` = ainda buscando (js/main.js chama render(entry, undefined)
+    // antes do fetch); `null`/objeto = já resolveu (mesmo sem nenhum dado
+    // real — ver contentStore.getContent em js/main.js). Tratar os dois
+    // como "carregando" prendia a ficha em "Carregando ficha…" para sempre
+    // em qualquer estrutura sem conteúdo (a maioria — bug real encontrado
+    // ao selecionar uma estrutura qualquer e nunca ver o resumo/abas).
+    if (currentContent === undefined) {
+      contentBox.contentArea.appendChild(h('div', { className: 'atlas-card-loading', text: 'Carregando ficha…' }));
       return;
     }
+    if (currentContent === null) currentContent = {};
 
-    if (this.activeTab === 'summary') {
-      const p = document.createElement('p');
-      p.textContent = content.summary_pt || 'Sem resumo cadastrado.';
-      container.appendChild(p);
-
-      // Nomes científicos adicionais
-      if (entry.names?.la || entry.names?.en) {
-        const sciBox = document.createElement('div');
-        sciBox.className = 'atlas-card-sci-box';
-
-        if (entry.names.la) {
-          const laP = document.createElement('p');
-          const strong = document.createElement('strong');
-          strong.textContent = 'Terminologia Anatômica (TA2): ';
-          laP.appendChild(strong);
-          laP.appendChild(document.createTextNode(entry.names.la));
-          sciBox.appendChild(laP);
-        }
-
-        if (entry.names.en) {
-          const enP = document.createElement('p');
-          const strongEn = document.createElement('strong');
-          strongEn.textContent = 'Nome em Inglês: ';
-          enP.appendChild(strongEn);
-          enP.appendChild(document.createTextNode(entry.names.en));
-          sciBox.appendChild(enP);
-        }
-
-        container.appendChild(sciBox);
-      }
-    } else if (this.activeTab === 'anatomy') {
-      const anat = content.anatomy || {};
-      this.appendPropertySection(container, 'Vascularização:', anat.vascularization);
-      this.appendPropertySection(container, 'Inervação:', anat.innervation);
-      this.appendPropertySection(container, 'Drenagem Linfática:', anat.lymph);
-      this.appendPropertySection(container, 'Relações Anatômicas:', anat.relations);
-    } else if (this.activeTab === 'histology') {
-      const histo = content.histology || {};
-      this.appendPropertySection(container, 'Epitélio:', histo.epithelium);
-      this.appendPropertySection(container, 'Tecidos:', histo.tissues);
-      this.appendPropertySection(container, 'Células Principais:', histo.cells);
-    } else if (this.activeTab === 'clinical') {
-      const list = Array.isArray(content.clinical) ? content.clinical : [];
-      const ul = document.createElement('ul');
-      ul.className = 'atlas-card-clinical-list';
-      for (let i = 0; i < list.length; i++) {
-        const li = document.createElement('li');
-        li.textContent = list[i];
-        ul.appendChild(li);
-      }
-      container.appendChild(ul);
-    } else if (this.activeTab === 'sources') {
-      const sources = Array.isArray(content.sources) ? content.sources : [];
-      const ul = document.createElement('ul');
-      ul.className = 'atlas-card-sources-list';
-
-      for (let i = 0; i < sources.length; i++) {
-        const src = sources[i];
-        const li = document.createElement('li');
-
-        const label = document.createElement('strong');
-        label.textContent = `${src.field}: `;
-        li.appendChild(label);
-
-        const refText = document.createTextNode(`${src.ref} (${src.license || 'Uso restrito'})`);
-        li.appendChild(refText);
-
-        ul.appendChild(li);
-      }
-      container.appendChild(ul);
+    if (currentTabId === 'resumo') {
+      contentBox.contentArea.appendChild(renderResumo());
+    } else if (currentTabId === 'anatomia') {
+      contentBox.contentArea.appendChild(renderAnatomia());
+    } else if (currentTabId === 'histologia') {
+      contentBox.contentArea.appendChild(renderHistologia());
+    } else if (currentTabId === 'clinica') {
+      contentBox.contentArea.appendChild(renderClinica());
+    } else if (currentTabId === 'referencias') {
+      contentBox.contentArea.appendChild(renderReferencias());
     }
   }
-  // [FIM MÉTODO: renderActiveTabContent]
 
-  // [INÍCIO MÉTODO: appendPropertySection]
-  /**
-   * Constrói e anexa uma seção de texto formatada com rótulo e valor.
-   * @param {HTMLElement} parent
-   * @param {string} label
-   * @param {string|null} value
-   */
-  appendPropertySection(parent, label, value) {
-    if (!value || String(value).trim().length === 0) return;
-    const p = document.createElement('p');
-    const strong = document.createElement('strong');
-    strong.textContent = `${label} `;
-    p.appendChild(strong);
-    p.appendChild(document.createTextNode(String(value)));
-    parent.appendChild(p);
+  function renderResumo() {
+    const { h } = window.LaiftDom;
+
+    const section = h('div', { className: 'atlas-card-tab-content' });
+
+    if (!currentContent.summary_pt) {
+      section.appendChild(h('p', { className: 'atlas-card-empty', text: 'Sem descrição ainda.' }));
+    } else {
+      const text = currentContent.summary_pt;
+      section.appendChild(h('p', { text }));
+    }
+
+    return section;
   }
-  // [FIM MÉTODO: appendPropertySection]
 
-  // [INÍCIO MÉTODO: createActionButtons]
-  /**
-   * Constrói os botões ergonômicos de ação no rodapé da ficha.
-   * @param {Object} entry
-   * @returns {HTMLElement}
-   */
-  createActionButtons(entry) {
-    const actions = document.createElement('div');
-    actions.className = 'atlas-card-actions';
+  function renderAnatomia() {
+    const { h } = window.LaiftDom;
 
-    // Botão Isolar Estrutura
-    const isolateBtn = document.createElement('button');
-    isolateBtn.type = 'button';
-    isolateBtn.className = 'atlas-card-action-btn';
-    isolateBtn.textContent = 'Isolar';
-    isolateBtn.addEventListener('click', () => {
-      AppBus.emit('scene:isolate', { sid: entry.sid });
+    const section = h('div', { className: 'atlas-card-tab-content' });
+
+    const anat = currentContent.anatomy || {};
+    const fields = [
+      { key: 'relations', label: 'Relações' },
+      { key: 'vascularization', label: 'Vascularização' },
+      { key: 'innervation', label: 'Inervação' },
+      { key: 'lymph', label: 'Drenagem Linfática' },
+    ];
+
+    fields.forEach(({ key, label }) => {
+      if (!anat[key]) return;
+
+      const group = h('div', { className: 'atlas-card-field-group' });
+      group.appendChild(h('h4', { className: 'atlas-card-field-label', text: label }));
+      group.appendChild(h('p', { text: anat[key] }));
+      section.appendChild(group);
     });
-    actions.appendChild(isolateBtn);
 
-    // Botão Ocultar Estrutura
-    const hideBtn = document.createElement('button');
-    hideBtn.type = 'button';
-    hideBtn.className = 'atlas-card-action-btn';
-    hideBtn.textContent = 'Ocultar';
-    hideBtn.addEventListener('click', () => {
-      AppBus.emit('scene:hide-structure', { sid: entry.sid });
-      AppBus.emit('structure:clear');
+    return section;
+  }
+
+  function renderHistologia() {
+    const { h } = window.LaiftDom;
+
+    const section = h('div', { className: 'atlas-card-tab-content' });
+
+    const hist = currentContent.histology || {};
+
+    // Epitélio
+    if (hist.epithelium) {
+      const group = h('div', { className: 'atlas-card-field-group' });
+      group.appendChild(h('h4', { className: 'atlas-card-field-label', text: 'Epitélio' }));
+      group.appendChild(h('p', { text: hist.epithelium }));
+      section.appendChild(group);
+    }
+
+    // Tecidos
+    if (hist.tissues && hist.tissues.length > 0) {
+      const group = h('div', { className: 'atlas-card-field-group' });
+      group.appendChild(h('h4', { className: 'atlas-card-field-label', text: 'Tecidos' }));
+      const ul = h('ul', { className: 'atlas-card-list' });
+      hist.tissues.forEach((tissue) => {
+        ul.appendChild(h('li', { text: tissue }));
+      });
+      group.appendChild(ul);
+      section.appendChild(group);
+    }
+
+    // Células
+    if (hist.cells && hist.cells.length > 0) {
+      const group = h('div', { className: 'atlas-card-field-group' });
+      group.appendChild(h('h4', { className: 'atlas-card-field-label', text: 'Células' }));
+      const cellList = h('ul', { className: 'atlas-card-list' });
+      hist.cells.forEach((cell) => {
+        const li = h('li', { className: 'atlas-card-cell-item' });
+        const clId = cell.cl; // ex: CL:0000746
+        const ebiUrl = `https://www.ebi.ac.uk/ols4/ontologies/cl/classes?obo_id=${clId}`;
+        const link = h('a', {
+          href: ebiUrl,
+          className: 'atlas-card-link',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+          text: `${cell.name_pt} (${clId})`,
+        });
+        li.appendChild(link);
+
+        if (cell.biomarkers && cell.biomarkers.length > 0) {
+          const bioText = document.createTextNode(` — ${cell.biomarkers.join(', ')}`);
+          li.appendChild(bioText);
+        }
+
+        cellList.appendChild(li);
+      });
+      group.appendChild(cellList);
+      section.appendChild(group);
+    }
+
+    return section;
+  }
+
+  function renderClinica() {
+    const { h } = window.LaiftDom;
+
+    const section = h('div', { className: 'atlas-card-tab-content' });
+
+    if (!currentContent.clinical || currentContent.clinical.length === 0) {
+      section.appendChild(h('p', { className: 'atlas-card-empty', text: 'Sem informações clínicas.' }));
+      return section;
+    }
+
+    const list = h('ul', { className: 'atlas-card-list' });
+    currentContent.clinical.forEach((item) => {
+      list.appendChild(h('li', { text: item }));
     });
-    actions.appendChild(hideBtn);
+    section.appendChild(list);
 
-    // Botão Focar Câmera
-    const focusBtn = document.createElement('button');
-    focusBtn.type = 'button';
-    focusBtn.className = 'atlas-card-action-btn primary';
-    focusBtn.textContent = 'Focar';
-    focusBtn.addEventListener('click', () => {
-      if (entry.bounds) {
-        AppBus.emit('camera:focus', { bounds: entry.bounds });
+    return section;
+  }
+
+  function renderReferencias() {
+    const { h, safeUrl } = window.LaiftDom;
+
+    const section = h('div', { className: 'atlas-card-tab-content' });
+
+    // Identificadores
+    if (currentContent.ids && Object.keys(currentContent.ids).length > 0) {
+      const idsGroup = h('div', { className: 'atlas-card-field-group' });
+      idsGroup.appendChild(h('h4', { className: 'atlas-card-field-label', text: 'Identificadores' }));
+
+      const idsList = h('dl', { className: 'atlas-card-ids-list' });
+
+      const idFields = [
+        { key: 'fma', label: 'FMA' },
+        { key: 'uberon', label: 'Uberon' },
+        { key: 'ta2', label: 'TA2' },
+        { key: 'wikidata', label: 'Wikidata' },
+        { key: 'mesh', label: 'MeSH' },
+      ];
+
+      idFields.forEach(({ key, label }) => {
+        if (!currentContent.ids[key]) return;
+
+        const dt = h('dt', { text: label });
+        const dd = h('dd', { text: currentContent.ids[key] });
+        idsList.appendChild(dt);
+        idsList.appendChild(dd);
+      });
+
+      // ICD-10 pode ter múltiplos valores
+      if (currentContent.ids.icd10 && Array.isArray(currentContent.ids.icd10)) {
+        const dt = h('dt', { text: 'ICD-10' });
+        const dd = h('dd', { text: currentContent.ids.icd10.join(', ') });
+        idsList.appendChild(dt);
+        idsList.appendChild(dd);
       }
-    });
-    actions.appendChild(focusBtn);
 
-    return actions;
+      idsGroup.appendChild(idsList);
+      section.appendChild(idsGroup);
+    }
+
+    // Fontes
+    if (currentContent.sources && currentContent.sources.length > 0) {
+      const sourcesGroup = h('div', { className: 'atlas-card-field-group' });
+      sourcesGroup.appendChild(h('h4', { className: 'atlas-card-field-label', text: 'Fontes' }));
+
+      const sourcesList = h('ul', { className: 'atlas-card-list' });
+      currentContent.sources.forEach((source) => {
+        const li = h('li', { className: 'atlas-card-source-item' });
+
+        const refText = `${source.ref || source.type} (${source.license || 'sem licença'})`;
+
+        if (source.url && safeUrl(source.url)) {
+          const link = h('a', {
+            href: safeUrl(source.url),
+            className: 'atlas-card-link',
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            text: refText,
+          });
+          li.appendChild(link);
+        } else {
+          li.appendChild(h('span', { text: refText }));
+        }
+
+        sourcesList.appendChild(li);
+      });
+
+      sourcesGroup.appendChild(sourcesList);
+      section.appendChild(sourcesGroup);
+    }
+
+    // Status de revisão
+    if (currentContent.review) {
+      const reviewGroup = h('div', { className: 'atlas-card-field-group atlas-card-review-info' });
+      reviewGroup.appendChild(h('h4', { className: 'atlas-card-field-label', text: 'Status de Revisão' }));
+
+      const dl = h('dl', { className: 'atlas-card-review-list' });
+
+      if (currentContent.review.status) {
+        const dt1 = h('dt', { text: 'Status' });
+        const dd1 = h('dd', { text: currentContent.review.status });
+        dl.appendChild(dt1);
+        dl.appendChild(dd1);
+      }
+
+      if (currentContent.review.by) {
+        const dt2 = h('dt', { text: 'Revisor' });
+        const dd2 = h('dd', { text: currentContent.review.by });
+        dl.appendChild(dt2);
+        dl.appendChild(dd2);
+      }
+
+      if (currentContent.review.date) {
+        const dt3 = h('dt', { text: 'Data' });
+        const dd3 = h('dd', { text: currentContent.review.date });
+        dl.appendChild(dt3);
+        dl.appendChild(dd3);
+      }
+
+      reviewGroup.appendChild(dl);
+      section.appendChild(reviewGroup);
+    }
+
+    return section;
   }
-  // [FIM MÉTODO: createActionButtons]
-}
 
-export const UIInfocard = new InfocardUI();
+  /**
+   * Interface pública.
+   */
+  return {
+    render,
+    /**
+     * Nó raiz já montado (ou `null` antes do primeiro `render`). Usado por
+     * js/main.js para espelhar a ficha no painel arrastável no celular
+     * (<600px, onde #atlas-inspector fica `display:none` — §1.1/§2 da spec
+     * de UX; sem isto, tocar numa estrutura no celular não mostrava nada).
+     */
+    getElement() {
+      return contentBox.root || null;
+    },
+    setTab(id) {
+      currentTabId = id;
+      if (contentBox.root) {
+        updateTabContent();
+        const button = contentBox.root.querySelector(`[data-tab-id="${id}"]`);
+        if (button) {
+          Array.from(contentBox.root.querySelectorAll('[role="tab"]')).forEach((btn) => {
+            btn.setAttribute('aria-selected', btn === button ? 'true' : 'false');
+          });
+        }
+      }
+    },
+    getTab() {
+      return currentTabId;
+    },
+    clear() {
+      if (contentBox.root) clearEl(contentBox.root);
+      currentEntry = null;
+      currentContent = null;
+    },
+  };
+}
