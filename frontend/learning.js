@@ -223,14 +223,23 @@
     return null;
   }
 
-  function createFrame(url, allow) {
-  const frame = document.createElement('iframe');
-  frame.src = url;
-  // Mantém a diretiva moderna unificada via atributo allow
-  frame.allow = allow || 'fullscreen';
-  // REMOVIDO: frame.allowFullscreen = true; (duplicação conflitante)
-  return frame;
-}
+  function createFrame(container, url, title, allow) {
+    if (typeof container === 'string') {
+      allow = url;
+      url = container;
+      container = null;
+      title = 'Módulo';
+    }
+    var frame = document.createElement('iframe');
+    frame.src = url;
+    if (title) frame.title = title;
+    // Mantém exclusivamente a diretiva moderna unificada via atributo allow:
+    frame.allow = allow || 'fullscreen';
+    if (container && container.appendChild) {
+      container.appendChild(frame);
+    }
+    return frame;
+  }
 
   function openModule(id) {
     var mod = findModule(id);
@@ -323,7 +332,7 @@
     Promise.all([A.callLearningApi('apiLearnGetMyAttendanceQr'), loadQrLib()]).then(function (results) {
       if (requestId !== credentialRequestId) return;
       var res = results[0];
-      var qrcode = results[1];
+      var qrcode = results;
       var payload = res && res.success && typeof res.qrPayload === 'string' && QR_V2_RE.test(res.qrPayload) ? res.qrPayload : null;
       var kind = payload ? 'v2' : 'legacy';
       if (!payload) {
