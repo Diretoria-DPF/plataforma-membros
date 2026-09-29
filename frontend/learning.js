@@ -223,12 +223,14 @@
     return null;
   }
 
-  function createFrame(container, path, title, allow) {
-    var frame = app().h('iframe', { className: 'learn-frame', src: path, title: title, allow: allow || 'fullscreen' }, []);
-    frame.allowFullscreen = true;
-    container.appendChild(frame);
-    return frame;
-  }
+  function createFrame(url, allow) {
+  const frame = document.createElement('iframe');
+  frame.src = url;
+  // Mantém a diretiva moderna unificada via atributo allow
+  frame.allow = allow || 'fullscreen';
+  // REMOVIDO: frame.allowFullscreen = true; (duplicação conflitante)
+  return frame;
+}
 
   function openModule(id) {
     var mod = findModule(id);
