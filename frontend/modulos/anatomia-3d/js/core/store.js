@@ -81,10 +81,10 @@ import { LAYER_IDS, DEFAULT_MODE } from './contracts.js';
  */
 
 /**
- * Estado inicial. Pele visível por padrão (vista "superficial"); as demais
- * camadas começam desligadas — o usuário as liga pelo painel de camadas ou
- * pelo preset "Superficial ↔ Profundo" (ver docs/ATLAS_UX_SPEC.md).
- * @type {AtlasState}
+ * Camadas visíveis na abertura: músculos + esqueleto (trazidos no primeiro download
+ * de ≤5 MB). As demais camadas (pele, vísceras, vasos, nervos, linfático) entram
+ * sob demanda via painel de camadas ou preset "Superficial ↔ Profundo".
+ * @type {ReadonlyArray<string>}
  */
 const DEFAULT_VISIBLE_LAYERS = Object.freeze(['musculos', 'esqueleto']);
 
@@ -93,8 +93,6 @@ const initialState = Object.freeze({
   selectedSid: null,
   layers: Object.freeze(
     LAYER_IDS.reduce((acc, id) => {
-      // Abertura: músculos + esqueleto (o que o primeiro download já traz e o que
-      // o estudante espera ver); pele e camadas profundas entram sob demanda.
       acc[id] = Object.freeze({ visible: DEFAULT_VISIBLE_LAYERS.includes(id), opacity: 1 });
       return acc;
     }, {})
@@ -142,11 +140,39 @@ export function get() {
  * @returns {void}
  */
 export function set(partial) {
-  const patch = typeof partial === 'function' ? partial(state) : partial;
+  let patch;
+  try {
+    patch = typeof partial === 'function' ? partial(state) : partial;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[atlas/store] função de modificação lançou um erro:', err);
+    return;
+  }
+
   if (!patch || typeof patch !== 'object') return;
+
+  // Evita re-renderizações e novas referências quando nenhuma chave mudou
+  let hasChanges = false;
+  for (const key of Object.keys(patch)) {
+    if (!Object.is(state[key], patch[key])) {
+      hasChanges = true;
+      break;
+    }
+  }
+  if (!hasChanges) return;
+
   state = { ...state, ...patch };
+
   for (const sub of Array.from(subscriptions)) {
-    const value = sub.selector(state);
+    let value;
+    try {
+      value = sub.selector(state);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('[atlas/store] seletor de assinante lançou um erro:', err);
+      continue;
+    }
+
     if (!Object.is(value, sub.last)) {
       const prev = sub.last;
       sub.last = value;
@@ -171,8 +197,16 @@ export function set(partial) {
  * @returns {() => void} Cancela a assinatura.
  */
 export function subscribe(selector, fn) {
+  let last;
+  try {
+    last = selector(state);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[atlas/store] seletor lançou erro durante a assinatura inicial:', err);
+  }
+
   /** @type {Subscription} */
-  const sub = { selector, fn, last: selector(state) };
+  const sub = { selector, fn, last };
   subscriptions.add(sub);
   return () => subscriptions.delete(sub);
 }
