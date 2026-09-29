@@ -57,7 +57,6 @@ Para **cada um dos 8 arquivos** abaixo, todos em `frontend/modulos/anatomia-3d/j
 name: Testes do Atlas
 on:
   pull_request:
-    paths: ['frontend/**', '.github/workflows/atlas-e2e.yml']
   workflow_dispatch: {}
 jobs:
   atlas-e2e:
