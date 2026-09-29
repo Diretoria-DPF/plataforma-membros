@@ -152,7 +152,8 @@ export function createCameraRig({
    * Reseta para o preset 'default'.
    */
   function reset() {
-    viewPreset('default');
+    // Mesma vista da abertura (main.js): corpo inteiro, de frente.
+    viewPreset('anterior');
   }
 
   /**
@@ -178,9 +179,10 @@ export function createCameraRig({
     const boxRadius = boxDiagonal / 2;
 
     // Calcula distância necessária
-    let distance = fitDistance(boxRadius, camera.fov, camera.aspect);
-    // Clamp à distância mínima relativa ao modelo
-    distance = Math.max(distance, modelRadius * 0.2);
+    // Folga de contexto: enquadrar só a caixa colava a câmera na estrutura
+    // (dentro do tórax, atrás do esterno) e o usuário perdia a referência.
+    let distance = fitDistance(boxRadius, camera.fov, camera.aspect) * 1.8;
+    distance = Math.max(distance, modelRadius * 0.6);
 
     // Mantém a direção atual (do alvo para câmera)
     const currentDx = camera.position.x - controls.target.x;

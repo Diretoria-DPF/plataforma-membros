@@ -6,30 +6,45 @@
   position: relative;
 }
 
-/* Botão toggle (collapsed) */
+/* Campo de busca (fechado): pílula visível com lupa + texto. */
+.atlas-search-root { width: 100%; display: flex; justify-content: center; }
 .atlas-search-toggle {
-  width: 44px;
-  height: 44px;
+  width: 100%;
+  max-width: 440px;
   min-width: 44px;
+  height: 44px;
   min-height: 44px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
+  padding: 0 14px;
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-surface-alt);
+  cursor: text;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--laift-text);
-  font-size: clamp(18px, 3vw, 24px);
+  justify-content: flex-start;
+  gap: 8px;
+  color: var(--laift-muted);
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
 }
+.atlas-search-icon { flex: 0 0 auto; color: var(--laift-text); }
+.atlas-search-toggle-text { overflow: hidden; text-overflow: ellipsis; }
 
 .atlas-search-toggle:hover {
+  border-color: var(--laift-border-strong);
   background: var(--laift-bg);
 }
 
 .atlas-search-toggle:focus-visible {
   outline: var(--laift-focus-width) solid var(--laift-primary);
-  outline-offset: -2px;
+  outline-offset: 2px;
+}
+
+/* Barra bem estreita: só a lupa (continua com 44px de alvo). */
+@container atlas-topbar (max-width: 420px) {
+  .atlas-search-toggle { width: 44px; padding: 0; justify-content: center; }
+  .atlas-search-toggle-text { display: none; }
 }
 
 /* Overlay (expanded) */

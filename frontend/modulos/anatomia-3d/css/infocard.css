@@ -383,7 +383,9 @@
 .atlas-card-actions {
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* 4 por linha quando cabe; em colunas estreitas quebra em 2×2 em vez de
+     cortar os nomes ("Fantasm…"). */
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
   gap: var(--atlas-card-gap);
   padding: var(--atlas-card-padding);
   border-top: 1px solid var(--laift-border);
@@ -396,6 +398,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
   padding: clamp(6px, 1.5vw, 10px);
   background: var(--laift-surface-alt);
   border: 1px solid var(--laift-border);

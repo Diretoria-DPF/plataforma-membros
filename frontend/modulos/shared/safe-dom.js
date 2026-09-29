@@ -7,7 +7,7 @@
  * vale tanto quanto um XSS na plataforma. Por isso:
  *
  *   - `escapeHtml` é o ÚNICO escape de HTML dos módulos;
- *   - `html`...`` é um template que escapa TODA interpolação e devolve um
+ *   - `html\`...\`` é um template que escapa TODA interpolação e devolve um
  *     objeto marcado (SafeHtml); `setHtml`/`appendHtml` só aceitam esse
  *     objeto — string crua vira texto, nunca marcação. Assim o único
  *     `innerHTML` dos módulos fica aqui, auditável;
@@ -147,30 +147,6 @@
     return [];
   }
 
-  // Tabela de delegadores por nó raiz (WeakMap quando suportado, fallback no elemento)
-  var DELEGATORS = typeof WeakMap === 'function' ? new WeakMap() : null;
-
-  function getDelegator(root) {
-    if (DELEGATORS) return DELEGATORS.get(root);
-    return root.__laiftActionDelegator || null;
-  }
-
-  function setDelegator(root, delegator) {
-    if (DELEGATORS) {
-      DELEGATORS.set(root, delegator);
-    } else {
-      root.__laiftActionDelegator = delegator;
-    }
-  }
-
-  function removeDelegator(root) {
-    if (DELEGATORS) {
-      DELEGATORS.delete(root);
-    } else {
-      delete root.__laiftActionDelegator;
-    }
-  }
-
   /**
    * Delegação de eventos para substituir handlers inline:
    *   <button data-action="MolEngine.applyStyle" data-arg="stick">
@@ -181,127 +157,57 @@
    * alguém consiga injetar um data-action, ele só chama o que está na lista.
    * `data-args` aceita JSON (lista de argumentos). Com `data-then`, uma
    * segunda ação é chamada em seguida (ex.: mudar o zoom e abrir o PDB).
-   *
-   * Idempotente por `root`: chamadas sucessivas sobre o mesmo alvo mesclam
-   * suas allowlists sem criar múltiplos ouvintes concorrentes no DOM.
-   * Retorna uma função `off()` para desmontagem limpa durante reinicializações.
    */
   function delegateActions(root, allowList) {
     root = root || global.document;
-    var delegator = getDelegator(root);
+    var allowed = allowList ? new Set(allowList) : null;
 
-    if (!delegator) {
-      delegator = {
-        registrations: [],
-        allowedActions: new Set(),
-        hasUnrestricted: false,
-        handlers: {},
-        updateAllowed: function () {
-          delegator.allowedActions.clear();
-          delegator.hasUnrestricted = false;
-          for (var i = 0; i < delegator.registrations.length; i++) {
-            var reg = delegator.registrations[i];
-            if (!reg.allowList) {
-              delegator.hasUnrestricted = true;
-            } else {
-              for (var j = 0; j < reg.allowList.length; j++) {
-                delegator.allowedActions.add(reg.allowList[j]);
-              }
-            }
-          }
+    function run(el, attr, evt, extraArgs) {
+      var names = [el.getAttribute(attr)];
+      if (attr === 'data-action' && el.hasAttribute('data-then')) names.push(el.getAttribute('data-then'));
+      names.forEach(function (name, idx) {
+        if (!name) return;
+        if (allowed && !allowed.has(name)) {
+          console.warn('[LaiftDom] ação não permitida:', name);
+          return;
         }
-      };
-
-      function run(el, attr, evt, extraArgs) {
-        var names = [el.getAttribute(attr)];
-        if (attr === 'data-action' && el.hasAttribute('data-then')) names.push(el.getAttribute('data-then'));
-        names.forEach(function (name, idx) {
-          if (!name) return;
-          if (!delegator.hasUnrestricted && delegator.registrations.length > 0 && !delegator.allowedActions.has(name)) {
-            console.warn('[LaiftDom] ação não permitida:', name);
-            return;
-          }
-          var target = resolveAction(name);
-          if (!target) {
-            console.warn('[LaiftDom] ação indisponível:', name);
-            return;
-          }
-          var args = idx === 0 ? (extraArgs || parseArgs(el)) : parseJsonArgs(el.getAttribute('data-then-args'));
-          target.fn.apply(target.owner, args);
-        });
-      }
-
-      delegator.handlers.click = function (evt) {
-        var el = evt.target && evt.target.closest ? evt.target.closest('[data-action]') : null;
-        if (!el || !root.contains(el) || el.disabled) return;
-        if (el.tagName === 'A') evt.preventDefault();
-        run(el, 'data-action', evt);
-      };
-
-      delegator.handlers.change = function (evt) {
-        var el = evt.target;
-        if (!el || !el.hasAttribute || !el.hasAttribute('data-action-change')) return;
-        var value = el.type === 'checkbox' ? el.checked : el.value;
-        run(el, 'data-action-change', evt, parseArgs(el).concat([value]));
-      };
-
-      delegator.handlers.input = function (evt) {
-        var el = evt.target;
-        if (!el || !el.hasAttribute || !el.hasAttribute('data-action-input')) return;
-        run(el, 'data-action-input', evt, parseArgs(el).concat([el.value]));
-      };
-
-      // Elementos não-botão com data-action (cartões, itens de lista) ficam
-      // acionáveis pelo teclado: Enter/Espaço disparam o mesmo clique.
-      delegator.handlers.keydown = function (evt) {
-        if (evt.key !== 'Enter' && evt.key !== ' ') return;
-        var el = evt.target;
-        if (!el || !el.hasAttribute || !el.hasAttribute('data-action')) return;
-        if (/^(BUTTON|A|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(el.tagName)) return;
-        evt.preventDefault();
-        el.click();
-      };
-
-      root.addEventListener('click', delegator.handlers.click);
-      root.addEventListener('change', delegator.handlers.change);
-      root.addEventListener('input', delegator.handlers.input);
-      root.addEventListener('keydown', delegator.handlers.keydown);
-
-      setDelegator(root, delegator);
+        var target = resolveAction(name);
+        if (!target) {
+          console.warn('[LaiftDom] ação indisponível:', name);
+          return;
+        }
+        var args = idx === 0 ? (extraArgs || parseArgs(el)) : parseJsonArgs(el.getAttribute('data-then-args'));
+        target.fn.apply(target.owner, args);
+      });
     }
 
-    var registration = {
-      allowList: allowList ? Array.from(allowList) : null
-    };
-    delegator.registrations.push(registration);
-    delegator.updateAllowed();
-
-    return function off() {
-      var idx = delegator.registrations.indexOf(registration);
-      if (idx !== -1) {
-        delegator.registrations.splice(idx, 1);
-        delegator.updateAllowed();
-      }
-      if (delegator.registrations.length === 0) {
-        root.removeEventListener('click', delegator.handlers.click);
-        root.removeEventListener('change', delegator.handlers.change);
-        root.removeEventListener('input', delegator.handlers.input);
-        root.removeEventListener('keydown', delegator.handlers.keydown);
-        removeDelegator(root);
-      }
-    };
-  }
-
-  /** Remove todos os delegadores ativos em `root`. */
-  function undelegateActions(root) {
-    root = root || global.document;
-    var delegator = getDelegator(root);
-    if (!delegator) return;
-    root.removeEventListener('click', delegator.handlers.click);
-    root.removeEventListener('change', delegator.handlers.change);
-    root.removeEventListener('input', delegator.handlers.input);
-    root.removeEventListener('keydown', delegator.handlers.keydown);
-    removeDelegator(root);
+    root.addEventListener('click', function (evt) {
+      var el = evt.target && evt.target.closest ? evt.target.closest('[data-action]') : null;
+      if (!el || !root.contains(el) || el.disabled) return;
+      if (el.tagName === 'A') evt.preventDefault();
+      run(el, 'data-action', evt);
+    });
+    root.addEventListener('change', function (evt) {
+      var el = evt.target;
+      if (!el || !el.hasAttribute || !el.hasAttribute('data-action-change')) return;
+      var value = el.type === 'checkbox' ? el.checked : el.value;
+      run(el, 'data-action-change', evt, parseArgs(el).concat([value]));
+    });
+    root.addEventListener('input', function (evt) {
+      var el = evt.target;
+      if (!el || !el.hasAttribute || !el.hasAttribute('data-action-input')) return;
+      run(el, 'data-action-input', evt, parseArgs(el).concat([el.value]));
+    });
+    // Elementos não-botão com data-action (cartões, itens de lista) ficam
+    // acionáveis pelo teclado: Enter/Espaço disparam o mesmo clique.
+    root.addEventListener('keydown', function (evt) {
+      if (evt.key !== 'Enter' && evt.key !== ' ') return;
+      var el = evt.target;
+      if (!el || !el.hasAttribute || !el.hasAttribute('data-action')) return;
+      if (/^(BUTTON|A|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(el.tagName)) return;
+      evt.preventDefault();
+      el.click();
+    });
   }
 
   /** postMessage para a janela pai, sempre com a origem fixa (nunca '*'). */
@@ -344,7 +250,6 @@
     clear: clear,
     h: h,
     delegateActions: delegateActions,
-    undelegateActions: undelegateActions,
     postToParent: postToParent,
     postTo: postTo,
     isTrustedMessage: isTrustedMessage,

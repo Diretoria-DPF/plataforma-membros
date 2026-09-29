@@ -24,6 +24,29 @@ const MAX_RECENT = 5;
  * @param {{bus: Object, getIndex: Function, onOpenSystem?: Function}} opts
  * @returns {{open(query?: string): void, close(): void, dispose(): void}}
  */
+/** Lupa em SVG (createElementNS — sem innerHTML). */
+function searchIcon() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '18');
+  svg.setAttribute('height', '18');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('class', 'atlas-search-icon');
+  const circle = document.createElementNS(NS, 'circle');
+  circle.setAttribute('cx', '11'); circle.setAttribute('cy', '11'); circle.setAttribute('r', '7');
+  const line = document.createElementNS(NS, 'path');
+  line.setAttribute('d', 'M16.5 16.5 L21 21');
+  [circle, line].forEach((n) => {
+    n.setAttribute('fill', 'none');
+    n.setAttribute('stroke', 'currentColor');
+    n.setAttribute('stroke-width', '2.2');
+    n.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(n);
+  });
+  return svg;
+}
+
 export function createSearchBox(container, opts) {
   const { bus, getIndex, onOpenSystem = () => {} } = opts;
 
@@ -41,11 +64,17 @@ export function createSearchBox(container, opts) {
   container.appendChild(root);
 
   // Botão collapsed
+  // Campo de busca sempre visível na barra superior (antes era um botão
+  // vazio de 44px, sem ícone nem texto — ninguém achava a busca).
   const toggleBtn = h('button', {
+    type: 'button',
     className: 'atlas-search-toggle',
     'aria-label': 'Buscar estrutura',
+    title: 'Buscar estrutura ( / )',
     onClick: () => open(),
   });
+  toggleBtn.appendChild(searchIcon());
+  toggleBtn.appendChild(h('span', { className: 'atlas-search-toggle-text', text: 'Buscar estrutura…' }));
 
   // Overlay container (hidden by default)
   const overlayEl = h('div', { className: 'atlas-search-overlay', hidden: true });
@@ -83,7 +112,11 @@ export function createSearchBox(container, opts) {
   overlayEl.appendChild(overlayInner);
 
   root.appendChild(toggleBtn);
-  root.appendChild(overlayEl);
+  // O overlay vai direto no <body>: a barra superior usa backdrop-filter,
+  // que vira "containing block" de position:fixed — dentro dela o overlay
+  // ficava preso à altura da barra e a lista de resultados não aparecia.
+  document.body.appendChild(overlayEl);
+  overlayEl.addEventListener('click', (evt) => { if (evt.target === overlayEl) close(); });
 
   // Listeners
   let unsubscribeSearchOpen = null;
@@ -249,7 +282,12 @@ export function createSearchBox(container, opts) {
 
     // Side chip (E ou D)
     if (result.side) {
-      const sideChip = h('span', { className: 'atlas-search-chip atlas-search-chip-side', text: result.side });
+      const sideText = { l: 'E', r: 'D' }[result.side] || result.side;
+      const sideChip = h('span', {
+        className: 'atlas-search-chip atlas-search-chip-side',
+        text: sideText,
+        title: sideText === 'E' ? 'Lado esquerdo' : sideText === 'D' ? 'Lado direito' : '',
+      });
       option.appendChild(sideChip);
     }
 
@@ -366,9 +404,20 @@ export function createSearchBox(container, opts) {
    */
   function dispose() {
     close();
+    document.removeEventListener('keydown', onGlobalKey);
     if (unsubscribeSearchOpen) unsubscribeSearchOpen();
     clearTimeout(debounceTimer);
   }
+
+  // Atalho "/" (fora de campos de texto) abre a busca.
+  function onGlobalKey(evt) {
+    if (evt.key !== '/' || isOpen || evt.ctrlKey || evt.metaKey || evt.altKey) return;
+    const t = evt.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    evt.preventDefault();
+    open();
+  }
+  document.addEventListener('keydown', onGlobalKey);
 
   // Escutar SEARCH_OPEN
   unsubscribeSearchOpen = bus.on(EVENTS.SEARCH_OPEN, (payload) => {

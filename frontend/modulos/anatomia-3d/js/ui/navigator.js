@@ -121,7 +121,7 @@ export function createNavigator(container, opts) {
       if (item.side) {
         const sideChip = h('span', {
           className: 'atlas-nav-side-chip',
-          text: item.side === 'R' ? 'D' : item.side === 'L' ? 'E' : item.side,
+          text: { R: 'D', r: 'D', L: 'E', l: 'E' }[item.side] || item.side,
         });
         row.appendChild(sideChip);
       }

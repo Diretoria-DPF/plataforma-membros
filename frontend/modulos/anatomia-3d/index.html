@@ -1,15 +1,25 @@
 <!-- =========================================================================
      index.html — Atlas Anatômico 3D v2 (Onda 2, WP13)
      -------------------------------------------------------------------------
-     Casca definitiva do módulo responsivo (Mobile & Desktop).
+     Casca definitiva do módulo (ex-v2.html, ver WP08). js/main.js liga o
+     motor 3D (WP04/WP05/WP06), os painéis de conteúdo (WP09) e os modos
+     (WP07/WP12) por cima desta estrutura estática; js/compat/legacy-api.js
+     reexpõe os ganchos que os testes antigos (atlas.e2e.js, csp.e2e.js)
+     ainda leem.
      ========================================================================= -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://cdn.jsdelivr.net https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
-  
-  <!-- Identidade da Plataforma de Membros -->
+  <!-- 'wasm-unsafe-eval': só para o decodificador Draco/meshopt (three.js)
+       rodar em Worker blob: — nenhum eval/new Function, só
+       WebAssembly.instantiate() (ver scripts/e2e/csp.e2e.js). jsDelivr: só
+       Chart.js (modo Farmacologia) e 3Dmol (modo Moléculas), carregados sob
+       demanda por js/modes/pharmacology.js e js/modes/molecules.js — não
+       há tag de script estática dessas libs nesta página. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto
+       fora dela; aplica <html data-theme> antes de qualquer pintura). -->
   <script src="../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,6 +27,9 @@
   <title>LAIFT — Atlas Anatômico 3D</title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
+  <!-- Sem classe laift-always-dark: o Atlas v2 segue o tema da plataforma
+       (docs/ATLAS_UX_SPEC.md §0); o modo imersivo é escolha do host
+       (frontend/learning.js), não desta página. -->
   <script src="../shared/safe-dom.js"></script>
   <link rel="stylesheet" href="../shared/laift-tokens.css">
   <link rel="stylesheet" href="css/tokens-atlas.css">
@@ -28,74 +41,6 @@
   <link rel="stylesheet" href="css/search-box.css">
   <link rel="stylesheet" href="css/toolbar.css">
   <link rel="stylesheet" href="css/credits.css">
-
-  <style>
-    /* =====================================================================
-       Correção de Layout Desktop (>= 600px):
-       Garante que o painel de interação (modos/estudo/ficha) permaneça
-       ativo e visível no desktop como uma coluna lateral direita.
-       ===================================================================== */
-    @media (min-width: 600px) {
-      body {
-        display: flex;
-        flex-direction: row;
-        height: 100vh;
-        height: 100dvh;
-        overflow: hidden;
-      }
-
-      /* Painel de interação (modos e ficha): lateral direito acoplado */
-      .atlas-sheet {
-        display: flex !important;
-        position: fixed;
-        top: calc(var(--atlas-topbar-h, 56px) + env(safe-area-inset-top, 0px));
-        bottom: 0;
-        right: 0;
-        left: auto;
-        width: clamp(340px, 32vw, 460px);
-        height: auto !important;
-        max-height: none !important;
-        border-radius: var(--laift-radius-lg, 16px) 0 0 0;
-        border-left: 1px solid var(--laift-border);
-        box-shadow: var(--laift-shadow, -4px 0 16px rgba(0, 0, 0, 0.15));
-        z-index: var(--atlas-z-sheet, 40);
-        background: var(--laift-surface);
-      }
-
-      .atlas-sheet-handle {
-        display: none !important;
-      }
-
-      .atlas-sheet-peek {
-        padding: var(--laift-space-3, 12px) var(--laift-space-4, 16px);
-        border-bottom: 1px solid var(--laift-border);
-        flex-shrink: 0;
-      }
-
-      .atlas-sheet-body {
-        display: block !important;
-        flex: 1 1 auto;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: var(--laift-space-4, 16px);
-      }
-
-      /* O canvas 3D ocupa todo o espaço disponível restante */
-      .atlas-canvas {
-        position: relative;
-        flex: 1 1 auto;
-        min-width: 0;
-        height: 100%;
-        inset: auto;
-      }
-
-      /* Afasta a toolbar vertical para não colidir com o painel lateral */
-      .atlas-toolbar {
-        right: calc(clamp(340px, 32vw, 460px) + 16px) !important;
-        transition: right 0.2s ease;
-      }
-    }
-  </style>
 </head>
 <body>
 
@@ -103,6 +48,14 @@
        Barra superior (header) — trilha/voltar, busca, seletor de modo.
   ======================================================================= -->
   <header id="atlas-topbar" class="atlas-topbar">
+    <!-- Navegador de estruturas (sistemas → estruturas): coluna fixa em
+         telas largas, gaveta nas demais (js/ui/shell.js wireNavigator). -->
+    <button type="button" id="atlas-nav-toggle" class="atlas-icon-btn atlas-nav-toggle"
+            data-action="AtlasShell.toggleNavigator" aria-controls="atlas-left-panel"
+            aria-expanded="false" title="Estruturas por sistema">
+      <span aria-hidden="true">☰</span>
+      <span class="atlas-nav-toggle-label">Estruturas</span>
+    </button>
     <div id="atlas-breadcrumb" class="atlas-breadcrumb">
       <button type="button" id="atlas-breadcrumb-back" class="atlas-icon-btn"
               data-action="AtlasShell.navigateBack" hidden aria-label="Voltar">
@@ -111,7 +64,8 @@
       <span id="atlas-breadcrumb-label" class="atlas-breadcrumb-label">Atlas</span>
     </div>
 
-    <!-- Campo de busca -->
+    <!-- Campo de busca (js/ui/search-box.js) — o compat #bio-search-input
+         entra no campo real quando montado (js/compat/legacy-api.js). -->
     <div id="atlas-search-slot" class="atlas-search-slot"></div>
 
     <nav id="atlas-mode-switch" class="atlas-mode-switch" aria-label="Modo do Atlas">
@@ -125,27 +79,32 @@
   </header>
 
   <!-- =======================================================================
-       Corpo 3D (main) — Canvas 3D e Toolbar flutuante
+       Corpo 3D (main) — js/main.js monta o <canvas> aqui dentro.
+       #atlas-toolbar é FILHO deste container de propósito (ver
+       docs/ATLAS_UX_SPEC.md §5 e tokens-atlas.css --atlas-z-*).
   ======================================================================= -->
   <main id="atlas-canvas" class="atlas-canvas" tabindex="0"
         aria-label="Corpo humano em 3D — use as setas para girar, Enter para selecionar">
+
     <div id="atlas-toolbar" class="atlas-toolbar" role="toolbar" aria-label="Ferramentas do Atlas" aria-orientation="vertical"></div>
   </main>
 
-  <!-- Navegador em gaveta (tablet/desktop) -->
-  <aside id="atlas-left-panel" class="atlas-left-panel" aria-label="Navegador de estruturas"></aside>
+  <!-- Navegador em gaveta (tablet/desktop) — js/ui/navigator.js monta a
+       árvore sistema→região→órgão aqui. Fechado por padrão. -->
+  <aside id="atlas-left-panel" class="atlas-left-panel" aria-label="Navegador de estruturas" hidden></aside>
 
-  <!-- Inspetor persistente (tablet/desktop) -->
-  <aside id="atlas-inspector" class="atlas-inspector" aria-label="Ficha da estrutura"></aside>
+  <!-- Inspetor persistente (tablet/desktop) — js/ui/infocard.js monta a
+       ficha da estrutura aqui. Fechado por padrão (sem seleção). -->
+  <aside id="atlas-inspector" class="atlas-inspector" aria-label="Ficha da estrutura" hidden></aside>
 
   <!-- =======================================================================
-       Painel de Interação e Conteúdo dos Modos:
-       - No celular (<600px): Bottom sheet deslizável (peek / half / full)
-       - No desktop (>=600px): Coluna lateral direita acoplada
+       Painel arrastável (bottom sheet no retrato / lateral na paisagem).
+       Só é a superfície ativa em telas de celular (<600px) — em
+       tablet/desktop o inspetor acima assume (docs/ATLAS_UX_SPEC.md §2).
   ======================================================================= -->
-  <section id="atlas-sheet" class="atlas-sheet" data-sheet-state="half"
+  <section id="atlas-sheet" class="atlas-sheet" data-sheet-state="peek"
            role="region" aria-label="Painel do Atlas">
-    <!-- Atalhos de teclado -->
+    <!-- Atalhos de teclado sem arraste (§2.5) — ocultos visualmente. -->
     <button type="button" class="laift-sr-only" data-action="AtlasSheet.snapPeek">Recolher</button>
     <button type="button" class="laift-sr-only" data-action="AtlasSheet.snapHalf">Meio</button>
     <button type="button" class="laift-sr-only" data-action="AtlasSheet.snapFull">Expandir</button>
@@ -153,27 +112,35 @@
     <button type="button" id="atlas-sheet-handle" class="atlas-sheet-handle" aria-label="Arrastar painel (Enter alterna, Esc recolhe)"></button>
 
     <div id="atlas-sheet-peek" class="atlas-sheet-peek">
+      <!-- Compat: #organ-hud/#organ-name (LEGACY_COMPAT, core/contracts.js) —
+           js/ui/infocard.js reusa os mesmos ids ao renderizar uma seleção. -->
       <div id="organ-hud" class="hidden" role="status">
         <strong id="organ-name">---</strong>
       </div>
-      <p id="atlas-sheet-hint" class="atlas-sheet-hint">Toque numa estrutura ou selecione um modo acima</p>
+      <p id="atlas-sheet-hint" class="atlas-sheet-hint">Toque numa estrutura para começar</p>
     </div>
 
     <div id="atlas-sheet-body" class="atlas-sheet-body"></div>
   </section>
 
-  <!-- Menus e Diálogos Flutuantes -->
+  <!-- Menu de contexto (toque longo / clique direito numa estrutura). -->
   <div id="atlas-context-menu" class="atlas-context-menu" role="menu" aria-label="Ações da estrutura" hidden></div>
 
+  <!-- Modal genérico (créditos, confirmações — --atlas-z-modal). -->
   <dialog id="atlas-modal" class="atlas-modal" aria-label="Diálogo do Atlas">
     <div id="atlas-modal-body" class="atlas-modal-body"></div>
     <button type="button" class="atlas-modal-close" data-action="AtlasShell.closeModal">Fechar</button>
   </dialog>
 
+  <!-- Toast de erro de carregamento etc. -->
   <div id="atlas-toast" class="atlas-toast" role="status" aria-live="polite"></div>
+
+  <!-- Único nó de aria-live do módulo (§16/§17 da spec de UX). -->
   <div id="atlas-live" class="laift-sr-only" aria-live="polite"></div>
 
-  <!-- Scripts -->
+  <!-- js/ui/toolbar.js (a mini toolbar é montada pelo próprio shell.js) e
+       js/ui/context-menu.js/js/ui/credits.js (globais old-style, sem
+       "export") entram como scripts clássicos antes do orquestrador. -->
   <script src="js/ui/context-menu.js"></script>
   <script src="js/ui/credits.js"></script>
   <script type="module" src="js/main.js"></script>

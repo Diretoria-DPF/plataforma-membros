@@ -94,13 +94,44 @@ async function createContentStore() {
   }
 
   const contentCache = new Map();
-  const contentFilePromises = new Map();
+  const fileCache = new Map();
 
-  function loadContentFile(system) {
-    if (!contentFilePromises.has(system)) {
-      contentFilePromises.set(system, fetchJson(`${CONTENT_BASE}legacy/content/${system}.json`).catch(() => ({})));
+  function loadContentFile(dir, system) {
+    const key = `${dir}/${system}`;
+    if (!fileCache.has(key)) {
+      fileCache.set(key, fetchJson(`${CONTENT_BASE}${dir}/${system}.json`).catch(() => ({})));
     }
-    return contentFilePromises.get(system);
+    return fileCache.get(key);
+  }
+
+  // Ficha = conteúdo gerado (content/<sistema>.json: Wikidata, Wikipédia PT,
+  // células ASCT+B — chaveado pelo sid real) + ficha legada em PT
+  // (legacy/content/<sistema>.json — chaveada pelo sid LEGADO, ligado pelo
+  // nome em legacy-link.js). Antes só o legado era lido, e com o sid real:
+  // nunca batia, e toda ficha mostrava "Sem descrição ainda".
+  function legacyEntryFor(sid) {
+    if (legacyBySid.has(sid)) return legacyBySid.get(sid);
+    const legacySid = realToLegacySid.get(sid);
+    return legacySid ? legacyBySid.get(legacySid) || null : null;
+  }
+
+  function mergeContent(gen, leg) {
+    const merged = { ...(gen || {}), ...(leg || {}) }; // texto PT curado vence
+    if (gen && leg) {
+      merged.ids = { ...(gen.ids || {}), ...(leg.ids || {}) };
+      const genCells = gen.histology && gen.histology.cells && gen.histology.cells.length;
+      const legCells = leg.histology && leg.histology.cells && leg.histology.cells.length;
+      if (genCells && !legCells) merged.histology = { ...(leg.histology || {}), ...gen.histology };
+      if (!leg.summary_pt && gen.summary_pt) merged.summary_pt = gen.summary_pt;
+      const seen = new Set();
+      merged.sources = [...(leg.sources || []), ...(gen.sources || [])].filter((src) => {
+        const k = JSON.stringify(src);
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+    }
+    return merged;
   }
 
   // Mantém todos os campos de structures.json (system, layer, englishName,
@@ -115,10 +146,11 @@ async function createContentStore() {
     ...s,
     names: {
       pt: legacyNameBySid.get(s.sid) || '',
-      en: s.englishName || '',
+      en: prettifyName(s.englishName),
       la: s.latinName || '',
     },
   }));
+  const entryBySid = new Map(entries.map((e) => [e.sid, e]));
   const searchIndex = buildSearchIndex(entries);
 
   return {
@@ -126,23 +158,18 @@ async function createContentStore() {
       return entries;
     },
     getEntry(sid) {
-      return bySid.get(sid) || null;
+      return entryBySid.get(sid) || null;
     },
     async getContent(sid) {
-      const entry = bySid.get(sid);
-      if (!entry) return null;
       if (contentCache.has(sid)) return contentCache.get(sid);
-      const file = await loadContentFile(entry.system);
-      const raw = file[sid] || null;
-      // Try to get legacy content: first check if this sid maps to a legacy sid
-      let legacy = legacyBySid.get(sid) || null;
-      if (!legacy && realToLegacySid.has(sid)) {
-        const legacySid = realToLegacySid.get(sid);
-        legacy = legacyBySid.get(legacySid) || null;
-      }
-      const content = raw || legacy
-        ? { ...raw, draft: true, legacy: legacy || null }
-        : null;
+      const entry = bySid.get(sid) || null;
+      const legacy = legacyEntryFor(sid);
+      if (!entry && !legacy) return null;
+      const [gen, leg] = await Promise.all([
+        entry && entry.system ? loadContentFile('content', entry.system).then((f) => f[sid] || null) : null,
+        legacy && legacy.system ? loadContentFile('legacy/content', legacy.system).then((f) => f[legacy.sid] || null) : null,
+      ]);
+      const content = gen || leg ? { ...mergeContent(gen, leg), draft: true, legacy } : null;
       contentCache.set(sid, content);
       return content;
     },
@@ -151,6 +178,16 @@ async function createContentStore() {
     },
   };
 }
+
+// Nomes crus do HRA vêm como "VH_M_papillary_muscle_of_heart_anterior":
+// sem o prefixo do doador e com espaços, a busca e os rótulos ficam legíveis.
+function prettifyName(raw) {
+  const name = String(raw || '').replace(/^VH_[MF]_/, '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+  return name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
+}
+
+const SIDE_PT = Object.freeze({ l: 'esquerdo', r: 'direito' });
+const DEEP_LAYERS = new Set(['visceras', 'vasos', 'nervos', 'linfatico']);
 
 function fetchJson(url) {
   return fetch(url).then((r) => {
@@ -288,7 +325,9 @@ async function boot() {
   function labelFor(sid) {
     const entry = contentStore.getEntry(sid);
     if (!entry) return sid;
-    return entry.ptName || entry.englishName || entry.latinName || sid;
+    const base = entry.names.pt || entry.names.en || entry.names.la || sid;
+    const side = SIDE_PT[entry.side];
+    return side && !/(esquerd|direit)/i.test(base) ? `${base} (${side})` : base;
   }
   // ---- Ficha (infocard) — inspetor (tablet/desktop) e painel (celular) ----
   const infocard = createInfoCard(getSlot('inspector') || document.getElementById('atlas-inspector'), {
@@ -364,8 +403,8 @@ async function boot() {
     }
     const entry = {
       sid,
-      names: { pt: raw.ptName || raw.englishName || raw.latinName || sid, en: raw.englishName || '' },
-      system: raw.systemId,
+      names: { pt: labelFor(sid), en: raw.names.en || '', la: raw.names.la || '' },
+      system: raw.system,
     };
     infocard.render(entry, undefined);
     syncInfocardToSheet(sid);
@@ -374,7 +413,11 @@ async function boot() {
     syncInfocardToSheet(sid);
   }
 
-  on(EVENTS.STRUCTURE_SELECT, ({ sid }) => { renderInfocardFor(sid); });
+  on(EVENTS.STRUCTURE_SELECT, ({ sid }) => {
+    renderInfocardFor(sid);
+    const live = document.getElementById('atlas-live');
+    if (live) live.textContent = sid ? `Selecionado: ${labelFor(sid)}` : 'Seleção removida.';
+  });
 
   // ---- Busca ----
   const searchBox = createSearchBox(getSlot('search') || document.getElementById('atlas-search-slot'), {
@@ -423,8 +466,8 @@ async function boot() {
     if (assetLoader.isLoaded(systemId) || loading.has(systemId)) return;
     loading.add(systemId);
     try {
+      // assets.js já acrescenta o sistema a store.loadedSystems (sem repetir).
       await assetLoader.loadSystem(systemId);
-      storeSet({ loadedSystems: [...storeGet().loadedSystems, systemId] });
     } catch (e) {
       storeSet({ unavailableSystems: [...storeGet().unavailableSystems, systemId] });
     } finally {
@@ -434,7 +477,89 @@ async function boot() {
   }
 
   await Promise.all(DEFAULT_SYSTEMS.map(loadSystem));
+  fitWholeBody();
   requestRender();
+
+  // ---- Enquadramento: corpo inteiro centralizado ----
+  // Sem isto a câmera-rig ficava com o centro padrão (0,0,0) — a altura dos
+  // pés — e raio 1: o corpo aparecia cortado no alto da tela, e "Reset"/
+  // vistas giravam em torno do chão.
+  function fitWholeBody() {
+    const min = [Infinity, Infinity, Infinity];
+    const max = [-Infinity, -Infinity, -Infinity];
+    let count = 0;
+    for (const rec of registry.iterate()) {
+      const b = registry.getBBox(rec.sid);
+      if (!b || b.min.some((v) => !Number.isFinite(v)) || b.max.some((v) => !Number.isFinite(v))) continue;
+      for (let i = 0; i < 3; i++) {
+        min[i] = Math.min(min[i], b.min[i]);
+        max[i] = Math.max(max[i], b.max[i]);
+      }
+      count++;
+    }
+    if (!count) return;
+    cameraRig.setModelBounds({ min, max });
+    // O plano de corte (Corte) se posiciona pela caixa do corpo — sem isto
+    // xray-clip.js recusava todo corte ("setClip chamado sem setModelBox").
+    if (xrayClip.setModelBox) xrayClip.setModelBox({ min, max });
+    cameraRig.viewPreset('anterior', { animate: false });
+  }
+
+  // ---- Seleção vinda da busca/navegador/ficha: mostra e enquadra ----
+  // A estrutura pode estar num sistema ainda não baixado (ex.: coração,
+  // cardiovascular) ou numa camada desligada (Vísceras/Vasos): liga a
+  // camada, carrega o sistema, reaplica o destaque e leva a câmera até ela.
+  function showLayer(layer) {
+    const layers = storeGet().layers;
+    const layerState = layer && layers[layer];
+    if (!layerState || layerState.visible) return;
+    storeSet({ layers: { ...layers, [layer]: { ...layerState, visible: true } } });
+    emit(EVENTS.LAYER_SET, { layer, visible: true, opacity: layerState.opacity });
+  }
+  async function revealAndFocus(sid) {
+    const entry = contentStore.getEntry(sid);
+    if (entry && entry.system && !assetLoader.isLoaded(entry.system)) await loadSystem(entry.system);
+    if (storeGet().selectedSid !== sid) return; // o usuário já escolheu outra
+    // A camada que vale é a do registro 3D (classificação por nó); a do
+    // índice é só o palpite antes de o sistema carregar.
+    const rec = registry.getBySid(sid);
+    showLayer((rec && rec.layer) || (entry && entry.layer));
+    if (rec && rec.visible === false) {
+      registry.setVisible(sid, true);
+    }
+    // Estrutura profunda (órgão, vaso, nervo) atrás dos músculos: liga o
+    // Raio-X para ela aparecer — o botão fica marcado e desliga com um toque.
+    const st = storeGet();
+    if (rec && DEEP_LAYERS.has(rec.layer) && !st.xray
+        && ((st.layers.musculos && st.layers.musculos.visible) || (st.layers.pele && st.layers.pele.visible))) {
+      emit(EVENTS.XRAY_SET, { enabled: true });
+    }
+    selection.refresh();
+    engine.focusSid(sid, { animate: true });
+  }
+  on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
+    if (sid && source !== 'pick' && source !== 'focus') revealAndFocus(sid);
+  });
+
+  // ---- Teclado: + / − aproximam e afastam ----
+  document.addEventListener('keydown', (evt) => {
+    const t = evt.target;
+    if (evt.ctrlKey || evt.metaKey || evt.altKey) return;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    if (evt.key === '+' || evt.key === '=') emit('view:zoom', { factor: 0.8 });
+    else if (evt.key === '-' || evt.key === '_') emit('view:zoom', { factor: 1.25 });
+  });
+
+  // ---- Zoom pelos botões (+/−) e pelo teclado ----
+  on('view:zoom', ({ factor }) => {
+    const target = controlsApi.controls.target;
+    const offset = camera.position.clone().sub(target);
+    const dist = offset.length();
+    const next = Math.min(Math.max(dist * factor, 0.15), 12);
+    camera.position.copy(target).add(offset.multiplyScalar(next / dist));
+    controlsApi.controls.update();
+    requestRender();
+  });
 
   // Demais sistemas: sob demanda. Uma camada ligada pode precisar de
   // sistemas ainda não carregados — `structures.json` já traz `layer` por
@@ -493,6 +618,10 @@ async function boot() {
     currentMode = null;
     if (modeId === 'explorar') {
       setSheetContent(null, null, { label: 'Painel do Atlas' });
+      if (isMobileViewport()) snapSheetTo('peek');
+      // Volta a mostrar a ficha da estrutura que já estava selecionada.
+      const sid = storeGet().selectedSid;
+      if (sid) renderInfocardFor(sid);
       return;
     }
     let mode = modeInstances.get(modeId);
@@ -509,7 +638,15 @@ async function boot() {
     currentMode = mode;
     await mode.enter({ registry, assetLoader, engine, contentStore });
     const node = mode.sheetContent ? mode.sheetContent() : null;
-    if (node) setSheetContent(null, node, { label: mode.label || 'Modo do Atlas' });
+    if (node) {
+      const def = MODES.find((m) => m.id === modeId);
+      const title = document.createElement('strong');
+      title.className = 'atlas-sheet-title';
+      title.textContent = (def && def.label) || mode.label || 'Modo do Atlas';
+      setSheetContent(title, node, { label: mode.label || 'Modo do Atlas' });
+      // No celular o conteúdo do modo precisa aparecer sem arrastar o painel.
+      if (isMobileViewport() && getSheetState().state === 'peek') snapSheetTo('half');
+    }
   }
 
   on(EVENTS.MODE_CHANGE, ({ mode }) => { enterMode(mode); });

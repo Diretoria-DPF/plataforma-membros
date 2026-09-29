@@ -2,7 +2,7 @@
    atlas.css — layout responsivo da casca do Atlas v2 (Onda 1, WP08)
    -------------------------------------------------------------------------
    Carrega DEPOIS de modulos/shared/laift-tokens.css e css/tokens-atlas.css
-   (WP08 só lê --laift-*/--atlas-*, nunca redefine essas variáveis aqui —
+   (WP08 só lê as variáveis --laift- e --atlas-, nunca redefine essas variáveis aqui —
    quem quiser mudar um número mexe em tokens-atlas.css, não aqui).
 
    Mobile-first: a regra "sem media query" é o celular retrato (referência
@@ -118,7 +118,7 @@ button { font: inherit; }
 
 .atlas-breadcrumb {
   display: flex; align-items: center; gap: var(--laift-space-2);
-  min-width: 0; flex: 1 1 auto;
+  min-width: 0; flex: 0 1 auto; max-width: 30%;
   font-weight: 700; color: var(--laift-text);
 }
 .atlas-breadcrumb-label {
@@ -135,8 +135,9 @@ button { font: inherit; }
   flex: 0 0 auto;
 }
 .atlas-icon-btn:hover { background: var(--laift-surface-alt); }
+.atlas-icon-btn[hidden] { display: none; }
 
-.atlas-search-slot { flex: 0 0 auto; }
+.atlas-search-slot { flex: 1 1 auto; min-width: 44px; display: flex; justify-content: center; }
 
 /* Seletor de modo: gatilho sempre visível; a lista de chips é a MESMA
    estrutura em qualquer breakpoint — só a apresentação muda (§4). */
@@ -298,6 +299,7 @@ button { font: inherit; }
   min-height: 0;
 }
 .atlas-sheet-hint { margin: 4px 0; color: var(--laift-muted); font-size: 14px; }
+.atlas-sheet-title { display: block; margin: 4px 0; font-size: 16px; color: var(--laift-text); }
 
 .atlas-sheet-body {
   flex: 1 1 auto;
@@ -315,14 +317,40 @@ button { font: inherit; }
 }
 
 /* -----------------------------------------------------------------------
-   Regiões que só existem em tablet+ (inspetor/navegador) ficam ocultas
-   no celular — o painel arrastável é a única superfície de conteúdo.
+   Navegador de estruturas (☰) — gaveta por cima do 3D em qualquer tela;
+   em telas ≥1280px vira coluna fixa (bloco "Telas largas" abaixo).
+   js/ui/shell.js controla data-open (gaveta) / data-collapsed (coluna).
    ----------------------------------------------------------------------- */
-.atlas-left-panel,
-.atlas-inspector {
+.atlas-left-panel {
   position: fixed;
-  inset: 0 auto 0 auto;
-  display: none;
+  top: calc(var(--atlas-topbar-h) + env(safe-area-inset-top));
+  bottom: 0; left: 0;
+  z-index: calc(var(--atlas-z-sheet) + 5);
+  width: min(320px, 86vw);
+  padding-left: env(safe-area-inset-left);
+  background: var(--laift-surface);
+  border-right: 1px solid var(--laift-border);
+  box-shadow: var(--laift-shadow);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(-105%);
+  visibility: hidden;
+  transition: transform var(--atlas-motion-base) var(--atlas-easing), visibility 0s linear var(--atlas-motion-base);
+}
+.atlas-left-panel[data-open="true"] {
+  transform: none;
+  visibility: visible;
+  transition: transform var(--atlas-motion-base) var(--atlas-easing);
+}
+
+/* Inspetor (ficha) só existe em telas largas — no celular a ficha vai
+   para o painel arrastável. */
+.atlas-inspector { display: none; }
+
+.atlas-nav-toggle { width: auto; min-width: var(--laift-touch); padding: 0 10px; gap: 6px; font-weight: 700; }
+.atlas-nav-toggle-label { display: none; }
+@container atlas-topbar (min-width: 720px) {
+  .atlas-nav-toggle-label { display: inline; }
 }
 
 /* -----------------------------------------------------------------------
@@ -376,107 +404,110 @@ button { font: inherit; }
 }
 
 /* -----------------------------------------------------------------------
-   Tablet — 600–1023px (§1.3). Inspetor persistente à direita; navegador
-   em gaveta (temporária) à esquerda. A regra dos 756px vem da §1.6.
+   Telas largas — ≥600×600 (tablet, desktop, TV). Grade de três colunas:
+     topo:  barra superior (busca, modos)
+     meio:  [navegador] [corpo 3D] [coluna lateral]
+   A coluna lateral mostra a ficha (modo Explorar, com estrutura
+   selecionada) OU o conteúdo do modo ativo (Fisiologia, Quiz, …) — antes
+   o conteúdo dos modos ia só para o painel do celular e sumia no desktop.
+   O 3D nunca fica por baixo de nada: a câmera enquadra dentro da coluna
+   do meio (o renderer acompanha o tamanho real via ResizeObserver).
    ----------------------------------------------------------------------- */
 @media (min-width: 600px) and (min-height: 600px) {
-  .atlas-sheet { display: none; } /* tablet+ usa o inspetor, não o painel */
-
-  /* 100vh primeiro (piso), 100dvh por cima em quem suporta — mesma técnica
-     do painel, aqui para a casca inteira (§0.4). */
-  body { display: flex; height: 100vh; height: 100dvh; }
-  .atlas-canvas { position: relative; flex: 1 1 auto; min-width: 0; inset: auto; }
-
-  .atlas-left-panel {
-    display: block;
-    position: fixed;
-    top: 0; bottom: 0; left: 0;
-    z-index: var(--atlas-z-sheet);
-    width: 300px;
-    max-width: 85vw;
-    background: var(--laift-surface);
-    border-right: 1px solid var(--laift-border);
-    box-shadow: var(--laift-shadow);
-    padding-left: env(safe-area-inset-left);
-    transform: translateX(-100%);
-    transition: transform var(--atlas-motion-base) var(--atlas-easing);
-    overflow-y: auto;
+  body {
+    display: grid;
+    grid-template-rows: calc(var(--atlas-topbar-h) + env(safe-area-inset-top)) minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "top top top" "nav canvas side";
+    height: 100vh; height: 100dvh;
   }
-  .atlas-left-panel[data-open="true"] { transform: translateX(0); }
+  .atlas-topbar { position: relative; grid-area: top; }
+  .atlas-canvas { position: relative; inset: auto; grid-area: canvas; min-width: 0; min-height: 0; }
+  .atlas-toolbar { top: 12px; }
 
-  .atlas-inspector {
-    display: block;
-    position: relative;
-    inset: auto;
-    flex: 0 0 auto;
-    width: 48px;
+  .atlas-inspector,
+  .atlas-sheet {
+    grid-area: side;
+    /* Colunas da grade, não camadas flutuantes: sem z-index próprio, os
+       menus da barra superior (modos, ⋯) abrem por cima delas. */
+    z-index: auto;
+    width: var(--atlas-panel-w-desktop-inspector);
+    max-width: 48vw;
     border-left: 1px solid var(--laift-border);
     background: var(--laift-surface);
-    overflow: hidden;
-    transition: width var(--atlas-motion-base) var(--atlas-easing);
-  }
-  .atlas-inspector[data-expanded="true"] {
-    position: fixed;
-    top: 0; bottom: 0; right: 0;
-    width: var(--atlas-panel-w-tablet);
-    z-index: var(--atlas-z-sheet);
-    box-shadow: var(--laift-shadow);
     padding-right: env(safe-area-inset-right);
-    overflow-y: auto;
   }
+  .atlas-inspector {
+    position: relative;
+    inset: auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  body[data-atlas-mode="explorar"][data-has-selection="true"] .atlas-inspector { display: block; }
+
+  .atlas-sheet { display: none; }
+  body:not([data-atlas-mode="explorar"]) .atlas-sheet {
+    display: flex;
+    position: relative;
+    inset: auto;
+    height: auto !important;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    transition: none;
+  }
+  body:not([data-atlas-mode="explorar"]) .atlas-sheet-handle { display: none; }
+  body:not([data-atlas-mode="explorar"]) .atlas-sheet .atlas-sheet-body { display: block; padding-top: var(--laift-space-3); }
+  body:not([data-atlas-mode="explorar"]) .atlas-sheet-peek { padding-top: var(--laift-space-3); border-bottom: 1px solid var(--laift-border); }
 }
 
 @media (min-width: 600px) and (max-width: 1023px) {
   .atlas-topbar { padding-left: var(--laift-space-4); padding-right: var(--laift-space-4); }
+  .atlas-inspector,
+  .atlas-sheet { width: var(--atlas-panel-w-tablet); }
 }
 
-/* ≥756px (dentro da faixa de tablet): inspetor fica persistente com
-   seleção (340px) e colapsa para uma aba de 32px sem seleção — §1.6. */
-@media (min-width: 756px) and (max-width: 1023px) {
-  .atlas-inspector { width: 32px; }
-  .atlas-inspector[data-has-selection="true"] {
-    position: relative; width: var(--atlas-panel-w-tablet);
-    padding-right: env(safe-area-inset-right);
-    overflow-y: auto;
-  }
-}
-
-/* -----------------------------------------------------------------------
-   Desktop — ≥1024px (§1.4). Três colunas; navegador em rail (56/280px),
-   inspetor fecha/abre com a seleção (0/380px).
-   ----------------------------------------------------------------------- */
-@media (min-width: 1024px) {
+/* ≥1280px: navegador vira coluna fixa, aberta por padrão e recolhível. */
+@media (min-width: 1280px) and (min-height: 600px) {
   .atlas-left-panel {
-    order: -1;
+    grid-area: nav;
     position: relative;
-    inset: auto;
-    display: block;
-    flex: 0 0 auto;
-    width: 56px;
-    transform: none;
-    border-right: 1px solid var(--laift-border);
-    box-shadow: none;
-  }
-  .atlas-canvas { order: 0; }
-  .atlas-left-panel:hover,
-  .atlas-left-panel:focus-within {
+    top: auto; bottom: auto; left: auto;
+    z-index: auto;
     width: var(--atlas-panel-w-desktop-nav);
+    box-shadow: none;
+    transform: none;
+    visibility: visible;
+    transition: none;
   }
-  .atlas-left-panel:not([data-pinned="true"]):hover,
-  .atlas-left-panel:not([data-pinned="true"]):focus-within {
-    position: absolute; top: 0; bottom: 0; left: 0;
-    z-index: var(--atlas-z-sheet);
-    box-shadow: var(--laift-shadow);
-  }
-  .atlas-left-panel[data-pinned="true"] { width: var(--atlas-panel-w-desktop-nav); }
+  .atlas-left-panel[data-collapsed="true"] { display: none; }
+}
 
-  .atlas-inspector {
-    width: 0;
-    min-width: 0;
+/* Barra de ferramentas com texto ao lado do ícone quando há espaço — só
+   ícones soltos deixavam as opções confusas. Telas baixas escondem os
+   extras (zoom, vistas, rótulos, tela cheia), que seguem no menu ⋯. */
+.atlas-tool-label {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+.atlas-tool-glyph { line-height: 1; }
+@media (max-height: 759px) {
+  .atlas-toolbar .atlas-tool-secondary { display: none; }
+}
+@media (min-width: 1024px) and (min-height: 700px) {
+  .atlas-toolbar button {
+    width: auto;
+    min-width: 132px;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 600;
   }
-  .atlas-inspector[data-has-selection="true"] {
-    width: var(--atlas-panel-w-desktop-inspector);
-    padding-right: env(safe-area-inset-right);
+  .atlas-toolbar .atlas-tool-glyph { width: 20px; text-align: center; font-size: 17px; }
+  .atlas-toolbar .atlas-tool-label {
+    position: static; width: auto; height: auto; overflow: visible;
+    clip: auto; clip-path: none;
   }
 }
 
@@ -502,10 +533,6 @@ button { font: inherit; }
    ----------------------------------------------------------------------- */
 @media (min-width: 1600px) and (hover: none) {
   body { font-size: calc(1em * var(--atlas-tv-text-scale)); }
-  .atlas-left-panel:hover,
-  .atlas-left-panel:focus-within {
-    width: 56px; /* só expande com OK (AtlasShell.toggleNavigatorPin), nunca por foco de raspão */
-  }
   :focus-visible {
     outline-width: var(--atlas-tv-focus-width) !important;
   }

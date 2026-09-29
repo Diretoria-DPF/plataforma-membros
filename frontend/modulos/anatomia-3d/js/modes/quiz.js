@@ -79,8 +79,18 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     return shuffled;
   }
 
+  // main.js chama enter() ANTES de sheetContent(): sem criar o nó aqui, a
+  // primeira pergunta era desenhada em lugar nenhum e o Quiz abria vazio.
+  function ensureSheetNode() {
+    if (!sheetNode) {
+      sheetNode = window.document.createElement('div');
+      sheetNode.id = 'quizQuestionCard';
+    }
+    return sheetNode;
+  }
+
   function renderQuizCard() {
-    if (!sheetNode) return;
+    ensureSheetNode();
 
     const { html, setHtml } = window.LaiftDom;
     const caso = cases[currentIndex];
@@ -94,13 +104,13 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
 
     const cardContent = html`
       <div style="padding: 12px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">
+        <div style="font-size: 0.75rem; color: var(--laift-muted); font-weight: 600;">
           Caso ${currentIndex + 1} de ${totalCount}
         </div>
-        <div style="font-size: 0.85rem; font-weight: 700; color: #f8fafc;">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--laift-text);">
           ${caso.prompt_pt.substring(0, 80)}...
         </div>
-        <div style="font-size: 0.72rem; color: #cbd5e1; line-height: 1.4;">
+        <div style="font-size: 0.72rem; color: var(--laift-text); line-height: 1.4;">
           ${caso.prompt_pt}
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
@@ -232,7 +242,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
   }
 
   function renderResultCard() {
-    if (!sheetNode) return;
+    ensureSheetNode();
 
     const { html, setHtml } = window.LaiftDom;
     const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
@@ -241,13 +251,13 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       <div style="padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 10px;">
         <div style="font-size: 1.8rem;">🏆</div>
         <div style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">Sessão Concluída!</div>
-        <div style="background: rgba(2, 6, 23, 0.6); border: 1px solid #334155; border-radius: 6px; padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+        <div style="background: rgba(2, 6, 23, 0.6); border: 1px solid var(--laift-border); border-radius: 6px; padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
           <div>
-            <div style="color: #94a3b8; font-weight: 600;">PONTUAÇÃO</div>
+            <div style="color: var(--laift-muted); font-weight: 600;">PONTUAÇÃO</div>
             <div style="color: #facc15; font-size: 1rem; font-weight: 700;">${score}</div>
           </div>
           <div>
-            <div style="color: #94a3b8; font-weight: 600;">PRECISÃO</div>
+            <div style="color: var(--laift-muted); font-weight: 600;">PRECISÃO</div>
             <div style="color: #34d399; font-size: 1rem; font-weight: 700;">${accuracy}%</div>
           </div>
         </div>
@@ -340,11 +350,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     },
 
     sheetContent() {
-      if (!sheetNode) {
-        sheetNode = window.document.createElement('div');
-        sheetNode.id = 'quizQuestionCard';
-      }
-      return sheetNode;
+      return ensureSheetNode();
     }
   };
 }

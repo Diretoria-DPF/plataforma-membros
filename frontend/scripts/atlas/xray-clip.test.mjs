@@ -79,20 +79,20 @@ test('X-ray reduz opacidade de pele e musculos e emite LAYER_SET', () => {
 
   const state = get();
   assert.equal(state.xray, true);
-  assert.equal(state.layers.pele.opacity, 0.15);
-  assert.equal(state.layers.musculos.opacity, 0.25);
+  assert.equal(state.layers.pele.opacity, 0.08);
+  assert.equal(state.layers.musculos.opacity, 0.12);
 
   // Confere que emitiu LAYER_SET para ambas as camadas
   assert.equal(emittedEvents.length, 2);
   assert.deepEqual(emittedEvents[0], {
     layer: 'pele',
     visible: state.layers.pele.visible,
-    opacity: 0.15,
+    opacity: 0.08,
   });
   assert.deepEqual(emittedEvents[1], {
     layer: 'musculos',
     visible: state.layers.musculos.visible,
-    opacity: 0.25,
+    opacity: 0.12,
   });
 
   offListener();

@@ -22,11 +22,17 @@ import { MODES, isValidModeId } from '../core/contracts.js';
 // Glifos do wireframe da própria spec de UX (docs/ATLAS_UX_SPEC.md §18.1) —
 // só decoração (aria-hidden); o rótulo acessível vem do texto/aria-label.
 const TOOLBAR_BUTTONS = [
+  // `secondary`: some em telas baixas (css/atlas.css) — tudo continua no ⋯.
+  { id: 'zoomin', glyph: '+', label: 'Aproximar', action: 'AtlasShell.zoomIn', secondary: true },
+  { id: 'zoomout', glyph: '−', label: 'Afastar', action: 'AtlasShell.zoomOut', secondary: true },
   { id: 'layers', glyph: '▤', label: 'Camadas', action: 'AtlasShell.toggleLayers' },
+  { id: 'views', glyph: '◐', label: 'Vistas', action: 'AtlasShell.openViewPresetMenu', secondary: true },
   { id: 'isolate', glyph: '◎', label: 'Isolar', action: 'AtlasShell.isolateSelected' },
   { id: 'xray', glyph: '☠', label: 'Raio-X', action: 'AtlasShell.toggleXray' },
   { id: 'clip', glyph: '✂', label: 'Corte', action: 'AtlasShell.openClipMenu' },
-  { id: 'reset', glyph: '⟲', label: 'Reset', action: 'AtlasShell.reset' },
+  { id: 'labels', glyph: 'Aa', label: 'Rótulos', action: 'AtlasShell.toggleLabels', secondary: true },
+  { id: 'reset', glyph: '⟲', label: 'Centralizar', action: 'AtlasShell.reset' },
+  { id: 'fullscreen', glyph: '⛶', label: 'Tela cheia', action: 'AtlasShell.toggleFullscreen', secondary: true },
   { id: 'more', glyph: '⋯', label: 'Mais', action: 'AtlasShell.openMoreMenu' },
 ];
 
@@ -55,6 +61,9 @@ const QUALITY_TIERS = [
 
 const ALLOWED_ACTIONS = [
   'AtlasShell.navigateBack',
+  'AtlasShell.toggleNavigator',
+  'AtlasShell.zoomIn',
+  'AtlasShell.zoomOut',
   'AtlasShell.toggleModeMenu',
   'AtlasShell.setMode',
   'AtlasShell.toggleLayers',
@@ -73,28 +82,18 @@ const ALLOWED_ACTIONS = [
   'AtlasShell.setQuality',
   'AtlasShell.openCredits',
   'AtlasShell.closeModal',
-  'AtlasShell.toggleNavigatorPin',
   // Atalhos sem arraste do painel (§2.5, js/ui/sheet.js) — window.AtlasSheet
   // só existe depois de initSheet(), mas resolveAction() do LaiftDom lê o
   // alvo em tempo de clique, não no momento do delegateActions.
   'AtlasSheet.snapPeek',
   'AtlasSheet.snapHalf',
   'AtlasSheet.snapFull',
-  'QuizEngine.startQuiz',
-  'ApiCache.exportarDossiePDF',
-  'MolEngine.applyStyle',
-  'MolEngine.toggleActiveSiteHighlight',
-  'MolEngine.toggleSpin',
-  'MolEngine.resetView',
 ];
 
 /** name → HTMLElement, registrados por WP09 via {@link registerPanel}. */
 const panels = new Map();
 
 let labelsEnabled = false;
-let offDelegate = null;
-let modeMenuBound = false;
-let fullscreenBound = false;
 
 function el(tag, attrs, children) {
   return window.LaiftDom.h(tag, attrs, children);
@@ -106,12 +105,18 @@ function el(tag, attrs, children) {
 function buildToolbar() {
   const root = document.getElementById('atlas-toolbar');
   if (!root) return;
-  window.LaiftDom.clear(root);
   TOOLBAR_BUTTONS.forEach((btn) => {
+    // Ícone + texto: o texto aparece ao lado do ícone em telas largas
+    // (css/atlas.css .atlas-tool-label) — só ícones soltos deixavam as
+    // opções confusas; no celular ele fica só para leitores de tela.
     root.appendChild(el('button', {
       type: 'button', id: `atlas-toolbar-${btn.id}`, dataset: { action: btn.action },
-      'aria-label': btn.label, title: btn.label,
-    }, [el('span', { 'aria-hidden': 'true' }, [btn.glyph])]));
+      className: btn.secondary ? 'atlas-tool-secondary' : '',
+      title: btn.label,
+    }, [
+      el('span', { className: 'atlas-tool-glyph', 'aria-hidden': 'true' }, [btn.glyph]),
+      el('span', { className: 'atlas-tool-label' }, [btn.label]),
+    ]));
   });
   syncIsolateDisabled(storeGet().selectedSid);
   subscribe((s) => s.selectedSid, syncIsolateDisabled);
@@ -123,9 +128,66 @@ function buildToolbar() {
     const b = document.getElementById('atlas-toolbar-clip');
     if (b) b.setAttribute('aria-pressed', String(!!(clip && clip.plane)));
   });
-  subscribe((s) => s.isolation, (iso) => {
-    const b = document.getElementById('atlas-toolbar-isolate');
-    if (b) b.setAttribute('aria-pressed', String(!!(iso && iso.active === 'isolate')));
+}
+
+/**
+ * Estado da casca em atributos do <body> (css/atlas.css decide o layout):
+ *   data-atlas-mode   — modo atual (fora de "explorar" o conteúdo do modo
+ *                       ocupa a coluna lateral em telas largas);
+ *   data-has-selection — há estrutura selecionada (ficha aberta).
+ */
+function wireBodyState() {
+  const body = document.body;
+  const syncMode = (mode) => { body.dataset.atlasMode = mode || 'explorar'; };
+  const syncSel = (sid) => { body.dataset.hasSelection = String(!!sid); };
+  syncMode(storeGet().mode);
+  syncSel(storeGet().selectedSid);
+  subscribe((s) => s.mode, syncMode);
+  subscribe((s) => s.selectedSid, syncSel);
+}
+
+// ---------------------------------------------------------------------------
+// Navegador de estruturas (☰): coluna fixa em telas ≥1280px (recolhível),
+// gaveta por cima do 3D nas demais.
+// ---------------------------------------------------------------------------
+const DOCKED_NAV_QUERY = '(min-width: 1280px) and (min-height: 600px)';
+
+function isNavDocked() {
+  return window.matchMedia(DOCKED_NAV_QUERY).matches;
+}
+
+function setNavigatorOpen(open) {
+  const panel = document.getElementById('atlas-left-panel');
+  const btn = document.getElementById('atlas-nav-toggle');
+  if (!panel) return;
+  if (isNavDocked()) {
+    panel.dataset.collapsed = String(!open);
+    panel.dataset.open = 'false';
+  } else {
+    panel.dataset.open = String(open);
+  }
+  panel.hidden = false;
+  if (btn) btn.setAttribute('aria-expanded', String(open));
+}
+
+function isNavigatorOpen() {
+  const panel = document.getElementById('atlas-left-panel');
+  if (!panel) return false;
+  return isNavDocked() ? panel.dataset.collapsed !== 'true' : panel.dataset.open === 'true';
+}
+
+function wireNavigator() {
+  const panel = document.getElementById('atlas-left-panel');
+  if (!panel) return;
+  panel.hidden = false;
+  setNavigatorOpen(isNavDocked());
+  window.matchMedia(DOCKED_NAV_QUERY).addEventListener('change', (e) => setNavigatorOpen(e.matches));
+  // Na gaveta, escolher uma estrutura fecha o navegador para mostrar o 3D.
+  on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
+    if (sid && source === 'navigator' && !isNavDocked()) setNavigatorOpen(false);
+  });
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape' && !isNavDocked() && isNavigatorOpen()) setNavigatorOpen(false);
   });
 }
 
@@ -143,7 +205,6 @@ function buildModeSwitch() {
   const trigger = document.getElementById('atlas-mode-trigger');
   const triggerLabel = document.getElementById('atlas-mode-trigger-label');
   if (!list || !trigger) return;
-  window.LaiftDom.clear(list);
   MODES.forEach((mode) => {
     list.appendChild(el('button', {
       type: 'button', role: 'option', dataset: { action: 'AtlasShell.setMode', arg: mode.id },
@@ -153,18 +214,15 @@ function buildModeSwitch() {
   syncModeSwitch(storeGet().mode);
   subscribe((s) => s.mode, syncModeSwitch);
 
-  if (!modeMenuBound) {
-    document.addEventListener('click', (evt) => {
-      const switchEl = document.getElementById('atlas-mode-switch');
-      if (switchEl && switchEl.getAttribute('data-open') === 'true' && !switchEl.contains(evt.target)) {
-        closeModeMenu();
-      }
-    });
-    document.addEventListener('keydown', (evt) => {
-      if (evt.key === 'Escape') closeModeMenu();
-    });
-    modeMenuBound = true;
-  }
+  document.addEventListener('click', (evt) => {
+    const switchEl = document.getElementById('atlas-mode-switch');
+    if (switchEl && switchEl.getAttribute('data-open') === 'true' && !switchEl.contains(evt.target)) {
+      closeModeMenu();
+    }
+  });
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') closeModeMenu();
+  });
 
   function syncModeSwitch(modeId) {
     const def = MODES.find((m) => m.id === modeId) || MODES[0];
@@ -210,18 +268,10 @@ function wireInspectorState() {
 }
 
 // ---------------------------------------------------------------------------
-// aria-live único do módulo (§16) — anuncia seleção/limpeza.
+// aria-live único do módulo (§16) — main.js anuncia a seleção pelo nome de
+// exibição (o shell não tem acesso ao conteúdo).
 // ---------------------------------------------------------------------------
-function wireLiveRegion() {
-  const live = document.getElementById('atlas-live');
-  if (!live) return;
-  on(EVENTS.STRUCTURE_SELECT, ({ sid }) => {
-    // TODO(WP13/WP09): trocar `sid` pelo nome de exibição via ContentStore
-    // quando main.js injetar esse serviço — o shell não tem acesso a
-    // conteúdo (só ao bus/estado), então por ora anuncia o identificador.
-    live.textContent = sid ? `Selecionado: ${sid}` : 'Seleção removida.';
-  });
-}
+function wireLiveRegion() {}
 
 // ---------------------------------------------------------------------------
 // Tema (segue a plataforma — sem laift-always-dark, ver plano §"Decisões").
@@ -322,6 +372,10 @@ function toggleFullscreen() {
 // ---------------------------------------------------------------------------
 function installActions() {
   window.AtlasShell = {
+    toggleNavigator() { setNavigatorOpen(!isNavigatorOpen()); },
+    zoomIn() { emit('view:zoom', { factor: 0.8 }); },
+    zoomOut() { emit('view:zoom', { factor: 1.25 }); },
+
     navigateBack() {
       // WP08 só controla o que já sabe: sem navegador/trilha própria ainda,
       // "voltar" limpa a seleção atual. WP09 (navigator.js) pode substituir
@@ -352,31 +406,28 @@ function installActions() {
     },
 
     toggleXray() {
-      const enabled = !storeGet().xray;
-      storeSet({ xray: enabled });
-      emit(EVENTS.XRAY_SET, { enabled });
+      // Só o evento: engine/xray-clip.js grava store.xray junto com as
+      // opacidades. Gravar antes fazia o motor achar que já estava no
+      // estado pedido (idempotente) e o Raio-X nunca ligava.
+      emit(EVENTS.XRAY_SET, { enabled: !storeGet().xray });
     },
 
     openClipMenu() {
       const anchor = document.getElementById('atlas-toolbar-clip');
-      const currentClip = storeGet().clip;
       openDropdownMenu(anchor, CLIP_PLANES.map((p) => ({
         label: p.label,
-        checked: (currentClip && currentClip.plane) === p.value,
+        checked: storeGet().clip.plane === p.value,
         onSelect: () => window.AtlasShell.setClipPlane(p.value),
       })));
     },
     setClipPlane(plane) {
-      storeSet({ clip: { plane, offset: plane ? 0 : null } });
+      // xray-clip.js grava store.clip ao aplicar o plano.
       emit(EVENTS.CLIP_SET, { plane, offset: plane ? 0 : null });
     },
 
     reset() {
-      storeSet({
-        isolation: { active: 'none', sid: null },
-        xray: false,
-        clip: { plane: null, offset: null },
-      });
+      // xray/clip: o motor grava o store ao desligar (ver toggleXray).
+      storeSet({ isolation: { active: 'none', sid: null } });
       emit(EVENTS.VISIBILITY_RESET, {});
       emit(EVENTS.XRAY_SET, { enabled: false });
       emit(EVENTS.CLIP_SET, { plane: null, offset: null });
@@ -386,6 +437,8 @@ function installActions() {
     openMoreMenu() {
       const anchor = document.getElementById('atlas-toolbar-more');
       openDropdownMenu(anchor, [
+        { label: 'Aproximar (+)', onSelect: () => window.AtlasShell.zoomIn() },
+        { label: 'Afastar (−)', onSelect: () => window.AtlasShell.zoomOut() },
         { label: labelsEnabled ? 'Rótulos: ligados' : 'Rótulos: desligados', checked: labelsEnabled, onSelect: () => window.AtlasShell.toggleLabels() },
         { label: 'Vistas…', onSelect: () => window.AtlasShell.openViewPresetMenu(anchor) },
         { label: 'Tela cheia', onSelect: () => window.AtlasShell.toggleFullscreen() },
@@ -398,10 +451,17 @@ function installActions() {
     toggleLabels() {
       labelsEnabled = !labelsEnabled;
       emit(EVENTS.LABELS_SET, { enabled: labelsEnabled });
+      const b = document.getElementById('atlas-toolbar-labels');
+      if (b) b.setAttribute('aria-pressed', String(labelsEnabled));
     },
 
     openViewPresetMenu(anchor) {
-      openDropdownMenu(anchor || document.getElementById('atlas-toolbar-more'), VIEW_PRESETS.map((v) => ({
+      // Pela toolbar, delegateActions passa o evento/elemento — só um
+      // Element serve de âncora; senão ancora no botão "Vistas" visível.
+      const fallback = document.getElementById('atlas-toolbar-views');
+      const anchorEl = anchor instanceof Element ? anchor
+        : (fallback && fallback.offsetParent ? fallback : document.getElementById('atlas-toolbar-more'));
+      openDropdownMenu(anchorEl, VIEW_PRESETS.map((v) => ({
         label: v.label, onSelect: () => window.AtlasShell.setViewPreset(v.value),
       })));
     },
@@ -426,10 +486,6 @@ function installActions() {
       emit(EVENTS.QUALITY_CHANGE, { tier });
     },
 
-    openquality, tier } });
-      emit(EVENTS.QUALITY_CHANGE, { tier });
-    },
-
     openCredits() {
       togglePanel('credits');
       const modal = document.getElementById('atlas-modal');
@@ -439,20 +495,7 @@ function installActions() {
       const modal = document.getElementById('atlas-modal');
       if (modal && modal.open) modal.close();
     },
-
-    toggleNavigatorPin() {
-      const panel = document.getElementById('atlas-left-panel');
-      if (panel) {
-        const isPinned = panel.getAttribute('data-pinned') === 'true';
-        panel.setAttribute('data-pinned', String(!isPinned));
-      }
-    },
   };
-
-  // Mantém labelsEnabled sincronizado caso outro ponto emita LABELS_SET
-  on(EVENTS.LABELS_SET, ({ enabled }) => {
-    labelsEnabled = !!enabled;
-  });
 }
 
 // ---------------------------------------------------------------------------
@@ -502,18 +545,16 @@ export function registerPanel(name, element) {
 /** Liga toda a casca interativa sobre a estrutura estática de v2.html. */
 export function initShell() {
   installActions();
-  if (offDelegate) offDelegate();
-  offDelegate = window.LaiftDom.delegateActions(document, ALLOWED_ACTIONS);
+  window.LaiftDom.delegateActions(document, ALLOWED_ACTIONS);
   buildToolbar();
   buildModeSwitch();
   wireBreadcrumb();
   wireInspectorState();
+  wireBodyState();
+  wireNavigator();
   wireLiveRegion();
   wireTheme();
-  if (!fullscreenBound) {
-    document.addEventListener('fullscreenchange', () => {
-      document.body.classList.toggle('atlas-fullscreen-fallback', false);
-    });
-    fullscreenBound = true;
-  }
+  document.addEventListener('fullscreenchange', () => {
+    document.body.classList.toggle('atlas-fullscreen-fallback', false);
+  });
 }

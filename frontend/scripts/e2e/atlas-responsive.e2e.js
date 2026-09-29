@@ -239,10 +239,24 @@ module.exports = async function atlasResponsive() {
 
       const layout = await frame.evaluate(() => ({
         sheetHidden: window.getComputedStyle(document.getElementById('atlas-sheet')).display === 'none',
-        inspectorVisible: window.getComputedStyle(document.getElementById('atlas-inspector')).display !== 'none',
       }));
       check(layout.sheetHidden, '820×1180: painel arrastável não é a superfície ativa (tablet usa o inspetor)');
-      check(layout.inspectorVisible, '820×1180: inspetor existe como região visível');
+
+      // A ficha (inspetor) abre como coluna ao selecionar uma estrutura.
+      await frame.waitForFunction(() => window.__atlasModelState && window.__atlasModelState.ready, null, { timeout: 60000 });
+      await frame.evaluate(() => {
+        const I = window.__atlasInternals;
+        const sid = [...I.registry.iterate()][0].sid;
+        I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid, source: 'search' });
+      });
+      await frame.waitForFunction(() => window.getComputedStyle(document.getElementById('atlas-inspector')).display !== 'none', null, { timeout: 5000 }).catch(() => {});
+      const withSel = await frame.evaluate(() => {
+        const ins = document.getElementById('atlas-inspector').getBoundingClientRect();
+        const cv = document.getElementById('atlas-canvas').getBoundingClientRect();
+        return { insW: ins.width, overlap: cv.right > ins.left + 1 };
+      });
+      check(withSel.insW > 200, `820×1180: com seleção, a ficha abre como coluna (${Math.round(withSel.insW)}px)`);
+      check(!withSel.overlap, '820×1180: a ficha não cobre o 3D (canvas termina onde ela começa)');
 
       await context.close();
     }
@@ -264,9 +278,17 @@ module.exports = async function atlasResponsive() {
         const canvas = document.getElementById('atlas-canvas').getBoundingClientRect();
         return { bodyDisplay: window.getComputedStyle(document.body).display, leftW: left.width, canvasX: canvas.x, leftRight: left.right };
       });
-      check(cols.bodyDisplay === 'flex', '1440×900: casca vira layout de colunas (display: flex no <body>)');
-      check(cols.leftW > 0 && cols.leftW < 100, `1440×900: rail do navegador começa recolhido (~56px), veio ${cols.leftW}`);
-      check(cols.canvasX >= cols.leftRight - 1, '1440×900: canvas começa depois do rail do navegador (três colunas)');
+      check(cols.bodyDisplay === 'grid', '1440×900: casca vira grade de colunas (display: grid no <body>)');
+      check(cols.leftW >= 200 && cols.leftW <= 340, `1440×900: navegador de estruturas aberto como coluna legível, veio ${Math.round(cols.leftW)}px`);
+      check(cols.canvasX >= cols.leftRight - 1, '1440×900: canvas começa depois do navegador (três colunas)');
+
+      // ☰ recolhe o navegador e o 3D ocupa a largura liberada.
+      await frame.click('#atlas-nav-toggle');
+      const collapsed = await frame.evaluate(() => ({
+        leftDisplay: window.getComputedStyle(document.getElementById('atlas-left-panel')).display,
+        canvasX: document.getElementById('atlas-canvas').getBoundingClientRect().x,
+      }));
+      check(collapsed.leftDisplay === 'none' && collapsed.canvasX < 20, `1440×900: ☰ recolhe o navegador e o 3D ocupa a largura toda (${JSON.stringify(collapsed)})`);
 
       await context.close();
     }
@@ -297,8 +319,8 @@ module.exports = async function atlasResponsive() {
         const z = await zoneOf();
         if (z) zonesSeen.add(z);
       }
-      // Sem seleção nem conteúdo do WP09 montado, as zonas visíveis em
-      // 1920×1080 são: topbar, rail do navegador, canvas e mini toolbar
+      // Sem seleção nem modo aberto, as zonas visíveis em 1920×1080 são:
+      // topbar, navegador (coluna), canvas e mini toolbar
       // (o inspetor está colapsado a 0px e o painel arrastável não existe
       // em telas ≥600px — ver css/atlas.css).
       check(zonesSeen.has('atlas-topbar'), 'TV: seta direita alcança a zona da barra superior');
