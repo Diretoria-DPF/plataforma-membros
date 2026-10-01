@@ -46,21 +46,25 @@ Ordem sugerida: 1, 2, 3 e 6–9 em paralelo; depois 4; depois 5 e 10.
 
 ## Blocos do Claude
 
-### 1. Desempenho do 3D
-Medido em `scripts/e2e/atlas-perf.e2e.js`:
+### 1. Desempenho do 3D — ✅ concluído
+Medido em `scripts/e2e/atlas-perf.e2e.js` (01/10, `main` em `754ee97`, celular 390×844 e desktop 1440×900):
 
-| Medida | Hoje | Meta |
-|---|---|---|
-| Primeira carga | 7,21 MB | ≤ 5 MB |
-| Chamadas de desenho | 903 | ≤ 150 |
-| Triângulos | — | ok |
-| Memória | — | ok |
+| Medida | Antes | Hoje | Meta |
+|---|---|---|---|
+| Primeira carga (bytes transferidos, gzip) | 7,21 MB | **3,47 MB** | ≤ 5 MB |
+| Chamadas de desenho | 903 | **2** | ≤ 150 |
+| Triângulos | — | 612 mil | ≤ 1,5 M |
+| Heap JS | — | 19–26 MB | ≤ 250 MB |
+| Redesenho parado (2 s ocioso) | contínuo | 0 frames | 0 |
 
-Tarefas:
-- **Redesenho contínuo:** `js/engine/renderer.js` + o ticker de `js/engine/labels.js` fazem o 3D redesenhar mesmo parado. Parar quando nada muda.
-- **Chamadas de desenho:** `THREE.BatchedMesh` por sistema/material, mantendo a seleção por estrutura.
-- **Primeira carga:** medir o tamanho comprimido (gzip) e carregar `structures.json` mais leve.
-- **Modos quebrados:** `physiology.js` (falta import do THREE) e `study.js` (falta `studyStore`). Depois, tirar do `atlas.e2e.js` os filtros que escondem esses erros.
+Como foi resolvido:
+- **Redesenho contínuo:** `js/engine/renderer.js` só agenda outro frame se algum ticker pedir; o ticker de `js/engine/labels.js` só pede enquanto a câmera ou os rótulos mudam.
+- **Chamadas de desenho:** `js/engine/registry.js` usa um `THREE.BatchedMesh` por material de camada, mantendo seleção, visibilidade, raio-X e corte por estrutura.
+- **Primeira carga:**
+  - `structures.boot.json` enxuto (`scripts/atlas/make-boot-structures.mjs`), com o completo só como reserva;
+  - LOD1 só quando reduz o tamanho;
+  - o harness de E2E serve gzip, como o Pages.
+- **Modos quebrados:** `physiology.js` (import do THREE) e `study.js` (`studyStore`) foram corrigidos, e o `atlas.e2e.js` não filtra mais esses erros.
 
 ### 2. Nomes em PT
 - **Problema:** as fichas de `data/atlas/legacy/` (72 órgãos) não compartilham nenhum sid com `structures.json`, então buscar "coração" não acha o coração.
