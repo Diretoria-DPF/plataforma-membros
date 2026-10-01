@@ -644,6 +644,50 @@ test('dispose para de escutar eventos', () => {
   assert.equal(listenerCount, 0, 'dispose deveria ter removido listeners');
 });
 
+test('tween terminado sai da lista de tickers (não puxa a câmera de volta depois)', () => {
+  const tickers = new Set();
+  const addTicker = (fn) => { tickers.add(fn); return () => tickers.delete(fn); };
+  let pos = [0, 0, 5];
+  const camera = { fov: 40, aspect: 1, position: { get x() { return pos[0]; }, get y() { return pos[1]; }, get z() { return pos[2]; }, set(x, y, z) { pos = [x, y, z]; } } };
+  const target = { x: 0, y: 0, z: 0, set(x, y, z) { this.x = x; this.y = y; this.z = z; } };
+  const rig = createCameraRig({
+    camera, controls: { target, update() {} }, addTicker,
+    requestRender: () => {}, setViewOffset: () => {},
+    getViewport: () => ({ width: 800, height: 800 }),
+    bus: { on: () => () => {}, EVENTS: {} }, reducedMotion: () => false, durationMs: 300,
+  });
+  rig.setModelBounds({ min: [-1, -1, -1], max: [1, 1, 1] });
+  rig.viewPreset('anterior');
+  assert.equal(tickers.size, 1, 'tween registrado');
+  // Quadros de 16 ms até terminar (o renderer passa o intervalo, não o horário).
+  for (let i = 0; i < 100 && tickers.size; i++) [...tickers].forEach((fn) => fn(16));
+  assert.equal(tickers.size, 0, 'tween terminado removeu o próprio ticker');
+  assert.equal(rig.isAnimating(), false);
+  // O usuário gira a câmera: nada pode trazê-la de volta à pose do tween.
+  pos = [3, 0, 0];
+  [...tickers].forEach((fn) => fn(16));
+  assert.deepEqual(pos, [3, 0, 0]);
+});
+
+test('tween anima por vários quadros (não salta para o fim no 1º quadro)', () => {
+  const tickers = new Set();
+  const addTicker = (fn) => { tickers.add(fn); return () => tickers.delete(fn); };
+  let pos = [0, 0, 5];
+  const camera = { fov: 40, aspect: 1, position: { get x() { return pos[0]; }, get y() { return pos[1]; }, get z() { return pos[2]; }, set(x, y, z) { pos = [x, y, z]; } } };
+  const target = { x: 0, y: 0, z: 0, set(x, y, z) { this.x = x; this.y = y; this.z = z; } };
+  const rig = createCameraRig({
+    camera, controls: { target, update() {} }, addTicker,
+    requestRender: () => {}, setViewOffset: () => {},
+    getViewport: () => ({ width: 800, height: 800 }),
+    bus: { on: () => () => {}, EVENTS: {} }, reducedMotion: () => false, durationMs: 650,
+  });
+  rig.setModelBounds({ min: [-1, -1, -1], max: [1, 1, 1] });
+  rig.viewPreset('posterior');
+  let frames = 0;
+  while (tickers.size && frames < 200) { [...tickers].forEach((fn) => fn(16)); frames++; }
+  assert.ok(frames >= 30, `tween de 650 ms deveria levar ~40 quadros de 16 ms, levou ${frames}`);
+});
+
 console.log('');
 if (failures > 0) {
   console.error(`${failures} verificação(ões) falharam.`);

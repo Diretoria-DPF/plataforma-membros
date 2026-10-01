@@ -1,0 +1,159 @@
+{
+ "_doc": "Âncoras de Fisiologia & Vias → corpo 3D. Gere generated/anchor-map.json com: node frontend/scripts/atlas/build-anchor-map.mjs. 'name' = englishName de generated/structures.json (side l/r opcional; sem side = ímpar ou direito). 'offset' em metros aproxima estruturas que o modelo não tem a partir de uma vizinha: +x = lado ESQUERDO do paciente, +y = cima, +z = anterior. Sem offset, a âncora É a estrutura e a Fisiologia a destaca.",
+ "anchors": {
+  "za:espaco-epidural": { "name": "Intervertebral disc L3-L4", "offset": [0, 0, -0.045], "note": "espaço epidural lombar, posterior ao disco L3-L4" },
+  "za:dura-mater": { "name": "Intervertebral disc L2-L3", "offset": [0, 0, -0.04], "note": "dura-máter lombar" },
+  "za:raizes-nervosas": { "name": "Intervertebral disc L4-L5", "offset": [-0.02, 0, -0.035], "note": "raízes da cauda equina" },
+
+  "za:arteria-alvo": { "name": "Ligament of head of femur", "offset": [0, -0.03, 0.07], "note": "artéria femoral na virilha (acesso)" },
+  "za:capilares-distais": { "name": "porta hepatis", "note": "artéria hepática no hilo do fígado" },
+  "za:veias-de-drenagem": { "name": "Liver", "note": "território-alvo hepático" },
+
+  "za:ventriculo": { "name": "Left ventricle" },
+  "za:circulacao-sistemica": { "name": "Vertebra T8", "offset": [0.025, 0, 0.035], "note": "aorta descendente torácica, à esquerda e à frente de T8" },
+
+  "za:derme-papilar": { "name": "Radius", "offset": [0, 0.03, 0.025], "note": "derme da face anterior do antebraço" },
+  "za:capilares-dermicos": { "name": "Radius", "offset": [0, 0.06, 0.022] },
+  "za:vasos-linfaticos": { "name": "Humerus", "offset": [0.025, 0, 0.02], "note": "linfáticos da face medial do braço" },
+  "za:linfonodos-regionais": { "name": "Central axillary nodes" },
+
+  "za:sonda-gastrica": { "name": "Inferior nasal concha bone" },
+  "za:intestino": { "name": "Duodenum" },
+  "za:circulacao": { "name": "Right atrium" },
+
+  "za:tecido-muscular-profundo": { "name": "Acromial part of deltoid muscle" },
+  "za:leito-capilar-muscular": { "name": "Acromial part of deltoid muscle", "offset": [0.01, -0.03, 0] },
+  "za:veias-subclavias": { "name": "Clavicle", "offset": [0, -0.012, -0.01], "note": "veia subclávia sob a clavícula" },
+  "za:vcs": { "name": "Right atrium", "offset": [-0.005, 0.07, -0.01], "note": "veia cava superior" },
+  "fma:7088": { "name": "interventricular septum", "note": "coração (centro)" },
+  "za:aorta": { "name": "Pulmonary trunk", "offset": [-0.015, 0.035, -0.03], "note": "arco da aorta" },
+
+  "za:canal-medular-osseo": { "name": "Tibia", "offset": [0, 0.15, 0], "note": "canal medular da tíbia proximal (acesso intraósseo)" },
+  "za:sinusoides-venosos": { "name": "Tibia", "offset": [0, 0.12, -0.005] },
+
+  "za:espaco-subaracnoideo": { "name": "Intervertebral disc L3-L4", "offset": [0, 0, -0.05], "note": "punção lombar L3-L4" },
+  "za:lcr": { "name": "Spinal dura" },
+  "za:encefalomedula": { "name": "Lateral ventricle" },
+
+  "za:veia-periferica": { "name": "Cubital nodes", "offset": [0.01, -0.01, 0.01], "note": "fossa cubital (veia basílica/mediana)" },
+  "za:veia-cava-superior": { "name": "Right atrium", "offset": [-0.005, 0.07, -0.01] },
+  "za:atrio-direito": { "name": "Right atrium" },
+  "za:ventriculo-direito": { "name": "Right ventricle" },
+  "za:circulacao-pulmonar": { "name": "Pulmonary trunk" },
+  "za:coracao-esquerdo": { "name": "Left ventricle" },
+  "za:aorta-sistemica": { "name": "Vertebra L1", "offset": [0.015, 0, 0.035], "note": "aorta abdominal" },
+
+  "za:conchas-nasais": { "name": "Inferior nasal concha bone" },
+  "za:mucosa-olfatoria": { "name": "Ethmoid bone" },
+  "za:lamina-crivosa-do-etmoide": { "name": "Allen olfactory bulb" },
+  "za:snc-veias-jugulares": { "name": "Thalamus" },
+
+  "za:fundo-de-saco-conjuntival": { "name": "Cornea", "offset": [0, -0.012, -0.004], "note": "fundo de saco conjuntival inferior" },
+  "za:cornea": { "name": "Cornea" },
+  "za:camara-anterior": { "name": "Anterior chamber of eyeball" },
+  "za:ducto-nasolacrimal": { "name": "Nasolacrimal duct" },
+  "za:mucosa-nasal": { "name": "Inferior nasal concha bone", "offset": [0.005, 0, 0] },
+
+  "za:boca": { "name": "Tongue" },
+  "za:esofago": { "name": "Juxta-oesophageal nodes", "note": "esôfago torácico" },
+  "za:intestino-delgado": { "name": "Duodenum" },
+  "za:veia-porta-hepatica": { "name": "porta hepatis" },
+
+  "za:pavilhao-auricular": { "name": "Tympanic membrane", "offset": [-0.035, 0, 0], "note": "pavilhão auricular direito" },
+  "za:meato-acustico-externo": { "name": "Tympanic membrane", "offset": [-0.018, 0, 0] },
+  "za:membrana-timpanica": { "name": "Tympanic membrane" },
+
+  "za:orofaringe": { "name": "Uvula of palate", "offset": [0, -0.015, -0.01] },
+  "za:bronquios": { "name": "Trachea", "offset": [0, -0.07, -0.005], "note": "carina e brônquios principais" },
+  "za:alveolos": { "name": "Inferior lobe of right lung" },
+  "za:sangue": { "name": "Left atrium" },
+
+  "za:ampola-retal": { "name": "External anal sphincter", "offset": [0.008, 0.05, 0.005], "note": "ampola retal" },
+  "za:veias-hemorroidarias-medias": { "name": "External anal sphincter", "offset": [0.03, 0.07, 0.01] },
+  "za:veia-cava-inferior": { "name": "Vertebra L3", "offset": [-0.025, 0, 0.04], "note": "veia cava inferior, à direita da aorta" },
+
+  "za:tecido-subcutaneo": { "name": "Rectus abdominis muscle", "offset": [-0.01, -0.03, 0.012], "note": "subcutâneo periumbilical" },
+  "za:veias-locais": { "name": "Rectus abdominis muscle", "offset": [-0.02, 0.02, 0.006], "note": "veias epigástricas" },
+  "za:circulacao-geral": { "name": "Right atrium" },
+
+  "za:assoalho-bucal": { "name": "Sublingual gland" },
+  "za:veias-sublinguais": { "name": "Sublingual gland", "offset": [0.005, -0.008, -0.005] },
+  "za:veia-jugular-interna": { "name": "Thyroid gland", "offset": [-0.035, 0.015, -0.01], "note": "veia jugular interna direita" },
+
+  "za:estrato-corneo": { "name": "Humerus", "offset": [-0.045, 0.05, 0], "note": "pele da face lateral do braço" },
+  "za:epiderme": { "name": "Humerus", "offset": [-0.042, 0.04, 0] },
+  "za:plexo-capilar-dermico": { "name": "Humerus", "offset": [-0.039, 0.03, 0] },
+  "za:veias-cutaneas": { "name": "Humerus", "offset": [-0.025, -0.05, 0.02], "note": "veia cefálica" },
+
+  "za:fundo-vaginal": { "name": "Urinary bladder", "offset": [0, -0.015, -0.055], "note": "fórnice vaginal (o modelo não tem órgãos reprodutores)" },
+  "za:mucosa": { "name": "Urinary bladder", "offset": [0, -0.035, -0.05] },
+  "za:veias-vaginais": { "name": "Urinary bladder", "offset": [0.035, -0.01, -0.06], "note": "veias ilíacas internas" },
+  "za:plexo-uterovaginal": { "name": "Urinary bladder", "offset": [0, 0.03, -0.06] },
+
+  "za:atria-to-ventricle": { "name": "Right atrium" },
+  "za:ventricle-pressurize": { "name": "Left ventricle" },
+  "za:aorta-flow": { "name": "Pulmonary trunk", "offset": [-0.015, 0.035, -0.03], "note": "arco da aorta" },
+
+  "za:sa-node": { "name": "Right atrium", "offset": [-0.008, 0.03, 0], "note": "nó sinoatrial, junção da VCS" },
+  "za:atrial-spread": { "name": "Left atrium" },
+  "za:av-node": { "name": "interventricular septum", "offset": [0, 0.03, 0], "note": "nó AV, topo do septo" },
+  "za:his-bundle": { "name": "interventricular septum" },
+  "za:purkinje": { "name": "Left ventricle", "offset": [0.01, -0.035, 0.01], "note": "ápice ventricular" },
+
+  "za:calcium-release": { "name": "Short head of biceps brachii" },
+  "za:troponin-binding": { "name": "Short head of biceps brachii" },
+  "za:crossbridge-cycle": { "name": "Short head of biceps brachii" },
+  "za:serca-uptake": { "name": "Short head of biceps brachii" },
+
+  "za:oral-cavity": { "name": "Tongue" },
+  "za:pharynx-transit": { "name": "Inferior pharyngeal constrictor" },
+  "za:esophagus-wave": { "name": "Juxta-oesophageal nodes" },
+  "za:stomach-entry": { "name": "Stomach" },
+
+  "za:glomerular-filter": { "name": "Kidney" },
+  "za:tubular-reabsorption": { "name": "Renal pelvis" },
+
+  "za:ventilation": { "name": "Trachea" },
+  "za:o2-diffusion": { "name": "Inferior lobe of right lung" },
+  "za:co2-diffusion": { "name": "Left atrium" },
+
+  "za:quimo-propulsion": { "name": "Duodenum" },
+  "za:quimo-advance": { "name": "Transverse colon" },
+
+  "za:synapse-calcium": { "name": "Short head of biceps brachii", "note": "junção neuromuscular" },
+  "za:synapse-ache-cleave": { "name": "Short head of biceps brachii" },
+
+  "za:coagulacao-sanguinea": { "name": "Cubital nodes", "offset": [0.01, -0.01, 0.01], "note": "vaso lesado no antebraço" },
+  "za:resposta-inflamatoria": { "name": "Radius", "offset": [0, 0.03, 0.025], "note": "tecido do antebraço" },
+  "za:resposta-imune-adaptativa": { "name": "Central axillary nodes" },
+  "za:reflexo-miotatico": { "name": "Rectus femoris muscle" },
+  "za:ciclo-menstrual": { "name": "Urinary bladder", "offset": [0, 0.035, -0.05], "note": "útero (o modelo não tem órgãos reprodutores)" },
+  "za:espermatogenese": { "name": "Pubic symphysis", "offset": [0, -0.08, 0.03], "note": "testículos (o modelo não tem órgãos reprodutores)" },
+  "za:eixo-hpa": { "name": "Hypothalamus" }
+ },
+ "steps": {
+  "ciclo-menstrual:1": { "name": "Urinary bladder", "offset": [0, 0.035, -0.05], "note": "endométrio (útero)" },
+  "ciclo-menstrual:2": { "name": "Adenohypophysis", "note": "FSH" },
+  "ciclo-menstrual:3": { "name": "Urinary bladder", "offset": [0.06, 0.045, -0.045], "note": "ovário esquerdo — ovulação" },
+  "ciclo-menstrual:4": { "name": "Urinary bladder", "offset": [0, 0.035, -0.05], "note": "endométrio secretor" },
+
+  "eixo-hpa:1": { "name": "Hypothalamus" },
+  "eixo-hpa:2": { "name": "Adenohypophysis" },
+  "eixo-hpa:3": { "name": "Suprarenal gland" },
+  "eixo-hpa:4": { "name": "Hypothalamus", "note": "feedback negativo" },
+
+  "reflexo-miotatico:1": { "name": "Rectus femoris muscle", "note": "fuso muscular (fibras Ia)" },
+  "reflexo-miotatico:2": { "name": "Intervertebral disc L3-L4", "offset": [0, 0, -0.035], "note": "corno posterior da medula, L3-L4" },
+  "reflexo-miotatico:3": { "name": "Rectus femoris muscle", "note": "contração do quadríceps" },
+
+  "resposta-imune-adaptativa:1": { "name": "Radius", "offset": [0, 0.03, 0.025], "note": "célula dendrítica capta o antígeno no tecido" },
+  "resposta-imune-adaptativa:2": { "name": "Central axillary nodes", "note": "linfonodo regional — T CD4+" },
+  "resposta-imune-adaptativa:3": { "name": "Central axillary nodes", "offset": [0, 0.01, 0] },
+  "resposta-imune-adaptativa:4": { "name": "Central axillary nodes", "offset": [0, -0.01, 0], "note": "plasmócitos" },
+
+  "resposta-inflamatoria:1": { "name": "Radius", "offset": [0, 0.03, 0.025] },
+  "resposta-inflamatoria:2": { "name": "Radius", "offset": [0, 0.035, 0.022], "note": "endotélio da vênula" },
+  "resposta-inflamatoria:3": { "name": "Radius", "offset": [0, 0.04, 0.026] },
+  "resposta-inflamatoria:4": { "name": "Radius", "offset": [0, 0.045, 0.028] }
+ }
+}

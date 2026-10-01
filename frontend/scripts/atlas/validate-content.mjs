@@ -14,6 +14,8 @@
  *
  * --legacy-anchors=warn: Quando set, converte erros de integridade de
  * anchor sids que correspondem ao padrão legado ^za:[a-z0-9-]+$ em avisos.
+ * Exceção: com generated/anchor-map.json (ou anchor-map.json) no diretório,
+ * as âncoras de routes/processes resolvem por ele e a falta de uma é ERRO.
  * Avisos são exibidos com [aviso], contados separadamente e não afetam
  * o código de saída.
  *
@@ -152,6 +154,20 @@ async function main() {
   const routesFile = readJson(path.join(targetDir, 'routes.json'), 'routes.json');
   const processesFile = readJson(path.join(targetDir, 'processes.json'), 'processes.json');
   const quizFile = readJson(path.join(targetDir, 'quiz-cases.json'), 'quiz-cases.json');
+  // Mapa de âncoras de Fisiologia (scripts/atlas/build-anchor-map.mjs): liga
+  // as âncoras legadas de routes/processes a estruturas/pontos reais. Com o
+  // mapa presente, âncora sem resolução é ERRO (mesmo com
+  // --legacy-anchors=warn) — sem ele a via não toca no atlas.
+  const anchorMapPath = ['generated/anchor-map.json', 'anchor-map.json']
+    .map((p) => path.join(targetDir, p))
+    .find((p) => fs.existsSync(p));
+  const anchorMapFile = anchorMapPath ? readJson(anchorMapPath, path.basename(anchorMapPath)) : null;
+  if (anchorMapFile && anchorMapFile.error) errors.push(`[leitura] ${anchorMapFile.error}`);
+  const anchorMap = anchorMapFile && anchorMapFile.data && anchorMapFile.data.anchors ? anchorMapFile.data.anchors : null;
+  const anchorResolved = (sid, stepKey) => indexSids.has(sid)
+    || (anchorMap && (Object.prototype.hasOwnProperty.call(anchorMap, sid)
+      || (stepKey && Object.prototype.hasOwnProperty.call(anchorMap, stepKey))));
+  const physiologyAnchorIsWarning = (sid) => !anchorMap && legacyAnchorsWarn && LEGACY_ANCHOR_PATTERN.test(sid);
 
   for (const [label, file] of [
     ['index.json', indexFile], ['manifest.json', manifestFile], ['glossario-pt.json', glossaryFile],
@@ -303,9 +319,9 @@ async function main() {
   if (Array.isArray(routesFile.data)) {
     for (const route of routesFile.data) {
       for (const anchor of route?.anchors ?? []) {
-        if (anchor && anchor.sid && !indexSids.has(anchor.sid)) {
-          const msg = `[integridade] routes.json: a rota "${route.id}" referencia o sid "${anchor.sid}", que não existe em index.json`;
-          if (legacyAnchorsWarn && LEGACY_ANCHOR_PATTERN.test(anchor.sid)) {
+        if (anchor && anchor.sid && !anchorResolved(anchor.sid)) {
+          const msg = `[integridade] routes.json: a rota "${route.id}" referencia o sid "${anchor.sid}", que não existe em index.json${anchorMap ? ' nem em anchor-map.json (rode scripts/atlas/build-anchor-map.mjs)' : ''}`;
+          if (physiologyAnchorIsWarning(anchor.sid)) {
             warnings.push(msg.replace('[integridade]', '[aviso]'));
           } else {
             errors.push(msg);
@@ -318,9 +334,9 @@ async function main() {
     for (const proc of processesFile.data) {
       for (const step of proc?.steps ?? []) {
         for (const anchor of step?.anchors ?? []) {
-          if (anchor && anchor.sid && !indexSids.has(anchor.sid)) {
-            const msg = `[integridade] processes.json: o processo "${proc.id}" (passo ${step.order}) referencia o sid "${anchor.sid}", que não existe em index.json`;
-            if (legacyAnchorsWarn && LEGACY_ANCHOR_PATTERN.test(anchor.sid)) {
+          if (anchor && anchor.sid && !anchorResolved(anchor.sid, `${proc.id}:${step.order}`)) {
+            const msg = `[integridade] processes.json: o processo "${proc.id}" (passo ${step.order}) referencia o sid "${anchor.sid}", que não existe em index.json${anchorMap ? ' nem em anchor-map.json (rode scripts/atlas/build-anchor-map.mjs)' : ''}`;
+            if (physiologyAnchorIsWarning(anchor.sid)) {
               warnings.push(msg.replace('[integridade]', '[aviso]'));
             } else {
               errors.push(msg);

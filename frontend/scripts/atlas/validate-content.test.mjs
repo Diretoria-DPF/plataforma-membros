@@ -182,6 +182,32 @@ check('as fixtures geradas passam na validação', () => {
   });
 }
 
+// 8) anchor-map.json presente: âncoras legadas resolvem por ele; a que
+// faltar no mapa é ERRO mesmo com --legacy-anchors=warn.
+{
+  const dir = cloneFixtures('anchor-map');
+  tmpDirs.push(dir);
+  const routesPath = path.join(dir, 'routes.json');
+  const routes = readJson(routesPath);
+  routes[0].anchors = (routes[0].anchors || []).concat([{ sid: 'za:espaco-epidural' }, { sid: 'za:sem-mapa' }]);
+  writeJson(routesPath, routes);
+  fs.mkdirSync(path.join(dir, 'generated'), { recursive: true });
+  writeJson(path.join(dir, 'generated', 'anchor-map.json'), {
+    anchors: { 'za:espaco-epidural': { sid: null, point: [0, 1, -0.05] } },
+  });
+
+  check('com anchor-map, âncora mapeada não gera erro nem aviso', () => {
+    const { stdout, stderr } = runValidator(dir, ['--legacy-anchors=warn']);
+    assert.doesNotMatch(stdout + stderr, /za:espaco-epidural/);
+  });
+
+  check('com anchor-map, âncora fora do mapa é erro mesmo com --legacy-anchors=warn', () => {
+    const { status, stderr } = runValidator(dir, ['--legacy-anchors=warn']);
+    assert.notEqual(status, 0, 'esperava falha');
+    assert.match(stderr, /routes\.json.*za:sem-mapa.*anchor-map\.json/);
+  });
+}
+
 cleanup(tmpDirs);
 
 console.log(`[teste] ${passCount} passaram, ${failCount} falharam.`);

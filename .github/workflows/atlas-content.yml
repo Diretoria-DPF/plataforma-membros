@@ -200,6 +200,11 @@ jobs:
           # diretório de saída antes de validar.
           cp frontend/modulos/anatomia-3d/models/manifest.json tools/atlas-content/out/content/manifest.json
           cp "${{ env.DATA_DIR }}/glossario-pt.json" tools/atlas-content/out/content/glossario-pt.json
+          # Âncoras de Fisiologia (routes/processes) resolvem pelo mapa gerado
+          # por scripts/atlas/build-anchor-map.mjs — com ele, âncora sem
+          # resolução vira erro.
+          mkdir -p tools/atlas-content/out/content/generated
+          cp "${{ env.DATA_DIR }}/generated/anchor-map.json" tools/atlas-content/out/content/generated/anchor-map.json
           cd frontend && node scripts/atlas/validate-content.mjs ../tools/atlas-content/out/content --legacy-anchors=warn
 
       - name: 7) lint-pt (anglicismos/traduções — só relatório, não falha o job)

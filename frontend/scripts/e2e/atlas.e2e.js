@@ -207,6 +207,40 @@ module.exports = async function atlas() {
     check(submitted, `QuizEngine.startQuiz()+completeQuiz() submete uma tentativa via apiLearnSubmitQuizAttempt (chamadas: ${JSON.stringify(app.calls.worker.map((c) => c.action))})`);
 
     // ------------------------------------------------------------------
+    // 6b) Fisiologia & Vias: via e processo tocam sobre o corpo
+    // (âncoras legadas resolvidas por data/atlas/generated/anchor-map.json)
+    // ------------------------------------------------------------------
+    await frame.evaluate(() => window.AtlasShell.setMode('fisiologia'));
+    await frame.waitForSelector('.physiology-card', { timeout: 15000 });
+    const renders = () => frame.evaluate(() => window.__atlasPerf.getStats().renders);
+    const playAndMeasure = async () => {
+      await frame.locator('button', { hasText: 'Reproduzir' }).first().click();
+      await frame.waitForSelector('button:has-text("Parar")', { timeout: 5000 }).catch(() => {});
+      const playing = (await frame.locator('button', { hasText: 'Parar' }).count()) > 0;
+      await app.page.waitForTimeout(1000);
+      const a = await renders();
+      await app.page.waitForTimeout(1500);
+      const b = await renders();
+      return { playing, animating: b > a, a, b };
+    };
+    await frame.locator('.physiology-card').first().click();
+    const route = await playAndMeasure();
+    check(route.playing && route.animating, `Fisiologia: a 1ª via toca e anima sobre o corpo (renders ${route.a}→${route.b})`);
+    await frame.locator('button', { hasText: 'Parar' }).first().click();
+    await app.page.waitForTimeout(1500);
+    const stopA = await renders();
+    await app.page.waitForTimeout(1500);
+    check((await renders()) === stopA, 'Fisiologia: "Parar" encerra a animação (o 3D volta a ficar parado)');
+
+    await frame.locator('button', { hasText: 'Voltar' }).first().click();
+    await frame.locator('.physiology-tab', { hasText: 'Processos' }).click();
+    await frame.locator('.physiology-card', { hasText: 'Hipotálamo-Hipófise-Adrenal' }).click();
+    const hpa = await playAndMeasure();
+    check(hpa.playing && hpa.animating, `Fisiologia: o eixo HPA anima hipotálamo → hipófise → adrenal (renders ${hpa.a}→${hpa.b})`);
+    await frame.locator('button', { hasText: 'Parar' }).first().click().catch(() => {});
+    await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
+
+    // ------------------------------------------------------------------
     // 7) Zero erro de página
     // ------------------------------------------------------------------
     check(app.errors.length === 0, 'atlas: sem erros de JavaScript inesperados' + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));

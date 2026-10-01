@@ -134,10 +134,15 @@ function catmullRomInterpolate(p1, p2, v1, v2, t) {
  * }}
  */
 export function createPathAnimator({ scene, THREE, addTicker, requestRender, color = 0x00ffff }) {
-  const NUM_SPHERES = 24;
-  const TUBE_RADIUS = 0.05;
-  const TUBE_SEGMENTS = 32;
-  const SPHERE_RADIUS = 0.15;
+  // Corpo em metros (~1,71 m de altura): esferas de 15 cm e tubo de 5 cm
+  // (valores do atlas antigo) cobriam o tronco inteiro.
+  const NUM_SPHERES = 16;
+  const TUBE_RADIUS = 0.0035;
+  const TUBE_SEGMENTS = 12;
+  const SPHERE_RADIUS = 0.009;
+  // A via passa POR DENTRO do corpo (órgãos, vasos): desenhada por cima de
+  // tudo, senão músculos e ossos a escondiam.
+  const OVERLAY_ORDER = 999;
 
   let spheres = [];
   let tubeGroup = null;
@@ -159,15 +164,20 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
   const sphereMaterial = new THREE.MeshBasicMaterial({
     color,
     transparent: true,
-    blending: THREE.AdditiveBlending,
+    depthTest: false,
+    depthWrite: false,
   });
 
   // Cria geometria de esfera compartilhada
-  const sphereGeometry = new THREE.SphereGeometry(SPHERE_RADIUS, 8, 8);
+  const sphereGeometry = new THREE.SphereGeometry(SPHERE_RADIUS, 10, 10);
 
   function createTube(points) {
     if (tubeGroup) {
       scene.remove(tubeGroup);
+      tubeGroup.traverse((o) => {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) o.material.dispose();
+      });
     }
 
     tubeGroup = new THREE.Group();
@@ -180,9 +190,12 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
     const tubeMaterial = new THREE.MeshBasicMaterial({
       color,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.45,
+      depthTest: false,
+      depthWrite: false,
     });
     const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+    tube.renderOrder = OVERLAY_ORDER;
     tubeGroup.add(tube);
     scene.add(tubeGroup);
   }
@@ -197,6 +210,7 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
     // Cria novas esferas
     for (let i = 0; i < NUM_SPHERES; i++) {
       const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere.renderOrder = OVERLAY_ORDER + 1;
       scene.add(sphere);
       spheres.push(sphere);
     }
@@ -215,15 +229,20 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
 
   function cleanup() {
     // Remove esferas
+    // A geometria das esferas é compartilhada e reaproveitada no próximo
+    // play() — não descarta aqui.
     for (const sphere of spheres) {
       scene.remove(sphere);
-      sphere.geometry.dispose();
     }
     spheres = [];
 
-    // Remove tubo
+    // Remove tubo (geometria/material próprios de cada via)
     if (tubeGroup) {
       scene.remove(tubeGroup);
+      tubeGroup.traverse((o) => {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) o.material.dispose();
+      });
       tubeGroup = null;
     }
 
@@ -235,8 +254,10 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
     requestRender();
   }
 
+  // Devolve se ainda precisa de quadros (contrato de addTicker) — antes não
+  // devolvia nada e o renderer parava após o 1º quadro: a via ficava parada.
   function tick() {
-    if (!isPlaying_ || isPaused_ || currentPath.length < 2) return;
+    if (!isPlaying_ || isPaused_ || currentPath.length < 2) return false;
 
     const now = Date.now();
     const elapsed = now - startTime;
@@ -250,9 +271,10 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
     if (prefersReducedMotion()) {
       // Modo reduzido: mostra caminho estático
       updateSpherePositions(0);
-    } else {
-      updateSpherePositions(t);
+      return false;
     }
+    updateSpherePositions(t);
+    return isPlaying_;
   }
 
   return {
@@ -283,6 +305,9 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
       if (prefersReducedMotion()) {
         updateSpherePositions(0);
       }
+      // O renderer só roda tickers quando há um quadro pedido: sem isto a
+      // via ficava parada até alguém mexer na câmera.
+      requestRender();
     },
 
     /**
@@ -302,6 +327,7 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
       if (isPlaying_ && isPaused_) {
         isPaused_ = false;
         startTime += Date.now() - pauseTime;
+        requestRender();
       }
     },
 

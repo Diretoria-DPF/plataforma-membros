@@ -312,6 +312,10 @@ export function createLabels({
    * Retorna true se a câmera ou labels mudaram, false caso contrário.
    */
   const unsubscribeTicker = addTicker(() => {
+    // Matriz da câmera atualizada ANTES de comparar: o ticker roda antes do
+    // render, e a matriz do quadro anterior deixava os rótulos um quadro
+    // atrasados — o que obrigava a pedir outro quadro a cada mudança.
+    camera.updateMatrixWorld();
     // Verifica se a câmera ou as labels mudaram
     let cameraChanged = false;
 
@@ -338,12 +342,14 @@ export function createLabels({
     const labelsNeedUpdate = cameraChanged || labelsChanged;
     labelsChanged = false; // Reset para o próximo frame
 
-    if (labelsNeedUpdate) {
+    if (labelsNeedUpdate && (enabled || selectedSid)) {
       updateLabels();
-      return true; // Ainda precisa renderizar
     }
 
-    return false; // Nada mudou, não precisa de outro frame
+    // Rótulos só ACOMPANHAM a câmera: quem a move (tween, inércia, gesto)
+    // já pede os próprios quadros. Devolver true aqui a cada mudança de
+    // câmera fazia qualquer movimento residual virar redesenho sem fim.
+    return false;
   });
 
   /**
