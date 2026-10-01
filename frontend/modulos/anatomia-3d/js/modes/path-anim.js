@@ -235,8 +235,10 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
     requestRender();
   }
 
+  // Devolve se ainda precisa de quadros (contrato de addTicker) — antes não
+  // devolvia nada e o renderer parava após o 1º quadro: a via ficava parada.
   function tick() {
-    if (!isPlaying_ || isPaused_ || currentPath.length < 2) return;
+    if (!isPlaying_ || isPaused_ || currentPath.length < 2) return false;
 
     const now = Date.now();
     const elapsed = now - startTime;
@@ -250,9 +252,10 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
     if (prefersReducedMotion()) {
       // Modo reduzido: mostra caminho estático
       updateSpherePositions(0);
-    } else {
-      updateSpherePositions(t);
+      return false;
     }
+    updateSpherePositions(t);
+    return isPlaying_;
   }
 
   return {
@@ -302,6 +305,7 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
       if (isPlaying_ && isPaused_) {
         isPaused_ = false;
         startTime += Date.now() - pauseTime;
+        requestRender();
       }
     },
 

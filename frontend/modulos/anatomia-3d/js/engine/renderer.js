@@ -38,6 +38,7 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
   let tickers = [];
   let lastViewOffsetArgs = null;
   let frameCount = 0;
+  let lastFrameTime = null;
 
   // Cria o renderer WebGL
   const renderer = new THREE.WebGLRenderer({
@@ -152,11 +153,19 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
   function frame(timeMs) {
     const frameStartTime = performance.now();
 
+    // Tickers recebem o INTERVALO desde o quadro anterior (ms), como diz o
+    // contrato de addTicker — antes recebiam o horário absoluto do rAF, e
+    // toda animação (tween de câmera) terminava no 1º quadro. No primeiro
+    // quadro de uma rajada, assume ~1 quadro (16 ms); limita a 100 ms para
+    // não "pular" a animação depois de a aba voltar do segundo plano.
+    const dtMs = lastFrameTime === null ? 16 : Math.min(Math.max(timeMs - lastFrameTime, 0), 100);
+    lastFrameTime = timeMs;
+
     // Roda tickers e coleta se alguém quer continuar renderizando
     let needsAnotherFrame = false;
-    for (const ticker of tickers) {
+    for (const ticker of [...tickers]) {
       try {
-        if (ticker(timeMs)) {
+        if (ticker(dtMs)) {
           needsAnotherFrame = true;
         }
       } catch (err) {
@@ -182,6 +191,7 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
     } else {
       requestAnimationFrameId = null;
       frameCount = 0; // Reset counter ao parar
+      lastFrameTime = null;
     }
   }
 

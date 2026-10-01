@@ -59,8 +59,10 @@ export function createCameraRig({
     }
 
     let elapsed = 0;
+    let unsubscribe = null;
+    let finished = false;
 
-    const unsubscribe = addTicker((dtMs) => {
+    unsubscribe = addTicker((dtMs) => {
       elapsed += dtMs;
       const t = elapsed / durationMs;
 
@@ -70,7 +72,13 @@ export function createCameraRig({
         controls.target.set(endPose.target[0], endPose.target[1], endPose.target[2]);
         controls.update();
         requestRender();
-        currentTween = null;
+        // Sai da lista de tickers: antes o tween terminado ficava
+        // registrado e, a cada quadro, puxava a câmera de volta para a pose
+        // final — brigava com o giro do usuário e nunca deixava o 3D parar
+        // de redesenhar.
+        finished = true;
+        if (unsubscribe) unsubscribe();
+        if (currentTween === unsubscribe) currentTween = null;
         return false; // Não precisa mais de frames
       }
 
@@ -86,6 +94,12 @@ export function createCameraRig({
       return true; // Precisa de mais frames
     });
 
+    // addTicker pode rodar o ticker na hora (ex.: reduced motion/testes) —
+    // se já terminou, sai da lista agora.
+    if (finished) {
+      unsubscribe();
+      return;
+    }
     currentTween = unsubscribe;
   }
 

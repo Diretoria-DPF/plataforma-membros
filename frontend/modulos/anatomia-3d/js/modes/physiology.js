@@ -363,11 +363,10 @@ export function createPhysiologyMode({
       animator = createPathAnimator({
         scene: engine.scene,
         THREE,
-        addTicker: (callback) => {
-          // Mock: será substituído pelo engine real
-          const id = setInterval(callback, 16); // ~60 FPS
-          return () => clearInterval(id);
-        },
+        // Ticker do próprio renderer (render sob demanda): roda a cada quadro
+        // só enquanto a via toca. O antigo setInterval mexia as esferas sem
+        // pedir quadro (a tela não mudava) e seguia rodando para sempre.
+        addTicker: engine.addTicker,
         requestRender: () => engine.requestRender(),
         color: 0x00ff88,
       });

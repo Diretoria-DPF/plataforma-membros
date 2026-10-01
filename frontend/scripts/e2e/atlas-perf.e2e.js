@@ -107,6 +107,41 @@ async function measureAtViewport(viewport) {
     check(rendersAfter === rendersBefore,
       `${label}: render-on-demand — a contagem de frames não cresce em 2s de ociosidade (antes: ${rendersBefore}, depois: ${rendersAfter})`);
 
+    // ---- Render-on-demand DEPOIS de interagir ----
+    // Foco por busca (tween de câmera + Raio-X), giro com o mouse (inércia),
+    // rótulos ligados e troca de modos: quando tudo assenta, o 3D tem de
+    // parar de redesenhar. Antes, o tween terminado ficava registrado e
+    // puxava a câmera a cada quadro, e o ticker dos rótulos reagendava
+    // quadros sem fim depois de qualquer giro.
+    const settleIdle = async () => {
+      // Espera assentar (inércia ≤ 1,2 s; navegador de teste é lento).
+      for (let i = 0; i < 20; i++) {
+        const a = (await frame.evaluate(() => window.__atlasPerf.getStats())).renders;
+        await app.page.waitForTimeout(1500);
+        const b = (await frame.evaluate(() => window.__atlasPerf.getStats())).renders;
+        if (a === b) return { settled: true, renders: b };
+      }
+      return { settled: false, renders: (await frame.evaluate(() => window.__atlasPerf.getStats())).renders };
+    };
+    await frame.evaluate(() => {
+      const I = window.__atlasInternals;
+      const sid = I.contentStore.getIndex().find((s) => /heart/i.test(s.englishName || '')).sid;
+      I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid, source: 'search' });
+      window.AtlasShell.toggleLabels();
+    });
+    const box = await frame.locator('#atlas-canvas canvas').boundingBox();
+    await app.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await app.page.mouse.down();
+    await app.page.mouse.move(box.x + box.width / 2 + 120, box.y + box.height / 2, { steps: 10 });
+    await app.page.mouse.up();
+    await frame.evaluate(() => { window.AtlasShell.setMode('fisiologia'); window.AtlasShell.setMode('estudo'); });
+    const idle = await settleIdle();
+    check(idle.settled, `${label}: depois de focar, girar, ligar rótulos e trocar de modo, o 3D para de redesenhar (renders: ${idle.renders})`);
+    const camBefore = await frame.evaluate(() => window.__atlasInternals.engine.camera.position.toArray());
+    await app.page.waitForTimeout(1000);
+    const camAfter = await frame.evaluate(() => window.__atlasInternals.engine.camera.position.toArray());
+    check(camBefore.every((v, i) => v === camAfter[i]), `${label}: parada, a câmera fica onde o usuário deixou (não volta para o último foco)`);
+
     console.log(`  · ${label}: ${(bytes.total / MB).toFixed(2)} MB até pronto · ${stats1.drawCalls} draw calls · ${stats1.triangles} triângulos · ${(heapBytes / MB).toFixed(1)} MB heap · renders ${rendersBefore}→${rendersAfter}`);
 
     check(app.errors.length === 0, `${label}: sem erros de JavaScript` + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));

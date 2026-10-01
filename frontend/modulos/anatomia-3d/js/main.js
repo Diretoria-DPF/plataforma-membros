@@ -225,6 +225,31 @@ async function boot() {
     THREE: T,
   });
 
+  // Inércia do giro (enableDamping): OrbitControls só desacelera se
+  // update() rodar a cada quadro. O decaimento é geométrico (nunca chega a
+  // zero): para quando o deslocamento do quadro fica imperceptível
+  // (< 0,02% da distância ao alvo), e o renderer volta a ficar parado.
+  // Só roda entre um gesto ('start') e o fim da inércia — fora disso o
+  // ticker não mexe na câmera (nada fica pedindo quadros com o 3D parado).
+  const lastCamPos = camera.position.clone();
+  // Teto de 1,2 s depois de soltar: em aparelho lento (poucos quadros por
+  // segundo) o decaimento por quadro levaria dezenas de segundos.
+  const INERTIA_MAX_MS = 1200;
+  let inertiaActive = false;
+  let gestureEndedAt = null;
+  controlsApi.controls.addEventListener('start', () => { inertiaActive = true; gestureEndedAt = null; });
+  controlsApi.controls.addEventListener('end', () => { gestureEndedAt = performance.now(); });
+  addTicker(() => {
+    if (!inertiaActive) return false;
+    const changed = controlsApi.controls.update();
+    const moved = camera.position.distanceTo(lastCamPos);
+    lastCamPos.copy(camera.position);
+    const timedOut = gestureEndedAt !== null && performance.now() - gestureEndedAt > INERTIA_MAX_MS;
+    const stillMoving = !timedOut && changed && moved > camera.position.distanceTo(controlsApi.controls.target) * 2e-4;
+    if (!stillMoving && gestureEndedAt !== null) inertiaActive = false;
+    return stillMoving;
+  });
+
   const cameraRig = createCameraRig({
     camera,
     controls: controlsApi.controls,
@@ -240,6 +265,7 @@ async function boot() {
     camera,
     renderer,
     requestRender,
+    addTicker,
     setViewOffset,
     focusSid: (sid, opts) => {
       const bbox = registry.getBBox(sid);
@@ -613,17 +639,54 @@ async function boot() {
   };
 
   let currentMode = null;
-  async function enterMode(modeId) {
-    if (currentMode && currentMode.exit) await currentMode.exit();
+  // Trocas de modo em sequência, e só a última vale: antes, trocar rápido
+  // (ou um modo que demora a entrar, como Fisiologia) fazia duas entradas
+  // correrem juntas e o painel mostrava o conteúdo do modo ANTERIOR.
+  let modeQueue = Promise.resolve();
+  let modeRequest = 0;
+  function enterMode(modeId) {
+    const req = ++modeRequest;
+    modeQueue = modeQueue
+      .then(() => doEnterMode(modeId, req))
+      .catch((e) => console.warn(`[atlas] falha ao trocar para o modo "${modeId}":`, e));
+    return modeQueue;
+  }
+
+  function modeTitleNode(modeId, mode) {
+    const def = MODES.find((m) => m.id === modeId);
+    const title = document.createElement('strong');
+    title.className = 'atlas-sheet-title';
+    title.textContent = (def && def.label) || (mode && mode.label) || 'Modo do Atlas';
+    return title;
+  }
+
+  function modeMessageNode(text) {
+    const p = document.createElement('p');
+    p.className = 'atlas-sheet-hint';
+    p.textContent = text;
+    return p;
+  }
+
+  async function doEnterMode(modeId, req) {
+    if (req !== modeRequest) return; // já há um pedido mais novo na fila
+    if (currentMode && currentMode.exit) {
+      try { await currentMode.exit(); } catch (e) { console.warn('[atlas] erro ao sair do modo:', e); }
+    }
     currentMode = null;
     if (modeId === 'explorar') {
-      setSheetContent(null, null, { label: 'Painel do Atlas' });
+      // Limpa o conteúdo do modo anterior (setSheetContent ignora null).
+      setSheetContent(buildSheetDefaultPeekNode(), document.createElement('div'), { label: 'Painel do Atlas' });
       if (isMobileViewport()) snapSheetTo('peek');
       // Volta a mostrar a ficha da estrutura que já estava selecionada.
       const sid = storeGet().selectedSid;
       if (sid) renderInfocardFor(sid);
       return;
     }
+    // Resposta imediata enquanto o modo carrega (antes o painel ficava com o
+    // conteúdo do modo anterior ou vazio).
+    setSheetContent(modeTitleNode(modeId), modeMessageNode('Carregando…'), { label: 'Modo do Atlas' });
+    if (isMobileViewport() && getSheetState().state === 'peek') snapSheetTo('half');
+
     let mode = modeInstances.get(modeId);
     if (!mode && modeLoaders[modeId]) {
       try {
@@ -631,19 +694,23 @@ async function boot() {
         modeInstances.set(modeId, mode);
       } catch (e) {
         console.warn(`[atlas] modo "${modeId}" indisponível:`, e);
+        if (req === modeRequest) setSheetContent(modeTitleNode(modeId), modeMessageNode('Este modo não pôde ser aberto. Tente de novo.'), { label: 'Modo do Atlas' });
         return;
       }
     }
-    if (!mode) return;
+    if (!mode || req !== modeRequest) return;
     currentMode = mode;
-    await mode.enter({ registry, assetLoader, engine, contentStore });
+    try {
+      await mode.enter({ registry, assetLoader, engine, contentStore });
+    } catch (e) {
+      console.warn(`[atlas] erro ao entrar no modo "${modeId}":`, e);
+      setSheetContent(modeTitleNode(modeId, mode), modeMessageNode('Este modo não pôde ser aberto. Tente de novo.'), { label: 'Modo do Atlas' });
+      return;
+    }
+    if (req !== modeRequest) return; // o próximo pedido da fila faz o exit()
     const node = mode.sheetContent ? mode.sheetContent() : null;
     if (node) {
-      const def = MODES.find((m) => m.id === modeId);
-      const title = document.createElement('strong');
-      title.className = 'atlas-sheet-title';
-      title.textContent = (def && def.label) || mode.label || 'Modo do Atlas';
-      setSheetContent(title, node, { label: mode.label || 'Modo do Atlas' });
+      setSheetContent(modeTitleNode(modeId, mode), node, { label: mode.label || 'Modo do Atlas' });
       // No celular o conteúdo do modo precisa aparecer sem arrastar o painel.
       if (isMobileViewport() && getSheetState().state === 'peek') snapSheetTo('half');
     }
