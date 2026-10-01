@@ -615,21 +615,61 @@ async function boot() {
   const modeInstances = new Map();
   const modeLoaders = {
     quiz: () => import('./modes/quiz.js').then((m) => m.createQuizMode({ bus, store: storeApi, getLabel: labelFor, loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`) })),
-    fisiologia: () => import('./modes/physiology.js').then((m) => m.createPhysiologyMode({
-      bus,
-      registry,
-      engine,
-      THREE,
-      getLabel: labelFor,
-      getBBoxCenter: (sid) => {
-        const bbox = registry.getBBox(sid);
+    fisiologia: () => Promise.all([
+      import('./modes/physiology.js'),
+      // Âncoras legadas de routes/processes → estrutura real ou ponto 3D
+      // (gerado por scripts/atlas/build-anchor-map.mjs a partir de
+      // data/atlas/anchor-spec.json).
+      fetchJson(`${CONTENT_BASE}generated/anchor-map.json`).catch(() => ({ anchors: {} })),
+    ]).then(([m, anchorMap]) => {
+      const anchors = (anchorMap && anchorMap.anchors) || {};
+      const liveCenter = (sid) => {
+        const bbox = sid ? registry.getBBox(sid) : null;
         if (!bbox) return null;
-        const center = bbox.getCenter(new THREE.Vector3());
-        return [center.x, center.y, center.z];
-      },
-      loadProcesses: () => fetchJson(`${CONTENT_BASE}processes.json`),
-      loadRoutes: () => fetchJson(`${CONTENT_BASE}routes.json`),
-    })),
+        return [0, 1, 2].map((i) => (bbox.min[i] + bbox.max[i]) / 2);
+      };
+      // sid real que a âncora representa (para selecionar/destacar), ou null.
+      const resolveAnchorSid = (key) => {
+        const entry = anchors[key];
+        if (entry) return entry.sid || null;
+        return contentStore.getEntry(key) ? key : null;
+      };
+      // Ponto 3D da âncora: a estrutura carregada (bbox ao vivo) ou o ponto
+      // pré-calculado — que não depende de o sistema estar baixado.
+      const getAnchorPoint = (key) => {
+        const entry = anchors[key];
+        return liveCenter(entry ? entry.sid : key) || (entry ? entry.point : null);
+      };
+      return m.createPhysiologyMode({
+        bus,
+        registry,
+        engine,
+        THREE,
+        getLabel: labelFor,
+        getBBoxCenter: getAnchorPoint,
+        resolveAnchorSid,
+        // Enquadra um ou mais pontos (trajeto inteiro ou o ponto do passo).
+        focusPoints: (points) => {
+          if (!points || !points.length) return;
+          const pad = 0.06;
+          const min = [0, 1, 2].map((i) => Math.min(...points.map((p) => p[i])) - pad);
+          const max = [0, 1, 2].map((i) => Math.max(...points.map((p) => p[i])) + pad);
+          // Trajeto atrás do plano do corpo (coluna, raízes): olha por trás.
+          const meanZ = points.reduce((acc, p) => acc + p[2], 0) / points.length;
+          cameraRig.focusBox({ min, max }, meanZ < -0.025 ? { direction: [0, 0.15, -1] } : {});
+        },
+        loadProcesses: () => fetchJson(`${CONTENT_BASE}processes.json`).then((list) => (list || []).map((p) => ({
+          ...p,
+          // Passos com âncora própria no mapa ("<processo>:<ordem>"): vários
+          // processos repetiam a MESMA âncora em todos os passos.
+          steps: (p.steps || []).map((st) => {
+            const key = `${p.id}:${st.order}`;
+            return anchors[key] ? { ...st, anchors: [{ ...((st.anchors || [])[0] || {}), sid: key }] } : st;
+          }),
+        }))),
+        loadRoutes: () => fetchJson(`${CONTENT_BASE}routes.json`),
+      });
+    }),
     farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`) })),
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
     estudo: () => import('./modes/study.js').then(async (m) => {

@@ -174,7 +174,7 @@ export function createCameraRig({
    * Foca em uma caixa especificada, mantendo a direção de visualização.
    * @param {Object} bbox - {min: [x,y,z], max: [x,y,z]}
    */
-  function focusBox(bbox) {
+  function focusBox(bbox, opts = {}) {
     const min = bbox.min;
     const max = bbox.max;
 
@@ -213,6 +213,11 @@ export function createCameraRig({
       dirX = 0;
       dirY = 0;
       dirZ = 1;
+    }
+    // Direção pedida (ex.: por trás, para uma via na coluna lombar).
+    if (Array.isArray(opts.direction)) {
+      const len = Math.hypot(...opts.direction) || 1;
+      [dirX, dirY, dirZ] = opts.direction.map((v) => v / len);
     }
 
     const endPose = {

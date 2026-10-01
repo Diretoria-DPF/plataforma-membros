@@ -31,6 +31,8 @@ export function createPhysiologyMode({
   loadRoutes,
   loadProcesses,
   getBBoxCenter,
+  resolveAnchorSid = (sid) => sid,
+  focusPoints = () => {},
   engine,
   THREE,
   getLabel,
@@ -101,7 +103,7 @@ export function createPhysiologyMode({
               border: '1px solid var(--laift-border)',
               borderRadius: '4px',
               cursor: 'pointer',
-              background: selectedItem?.id === item.id ? '#f0f0f0' : 'white',
+              background: selectedItem?.id === item.id ? 'var(--laift-primary-soft)' : 'var(--laift-surface)',
             },
             onClick: () => selectItem(item),
           }, [
@@ -217,7 +219,7 @@ export function createPhysiologyMode({
               padding: '8px',
               border: isActive ? '2px solid var(--laift-primary)' : '1px solid var(--laift-border)',
               borderRadius: '4px',
-              background: isActive ? 'var(--laift-primary-soft)' : 'white',
+              background: isActive ? 'var(--laift-primary-soft)' : 'var(--laift-surface)',
               cursor: 'pointer',
             },
             onClick: () => selectStep(idx),
@@ -302,10 +304,17 @@ export function createPhysiologyMode({
 
     async function selectStep(stepIdx) {
       currentStepIndex = stepIdx;
-      emit(EVENTS.STRUCTURE_SELECT, {
-        sid: (currentMode === 'vias' ? selectedItem.anchors[stepIdx]?.sid : selectedItem.steps[stepIdx]?.anchors[0]?.sid) || null,
-        source: 'api',
-      });
+      const key = (currentMode === 'vias' ? selectedItem.anchors[stepIdx]?.sid : selectedItem.steps[stepIdx]?.anchors[0]?.sid) || null;
+      // A âncora é uma estrutura real → seleciona (destaque + câmera + ficha).
+      // Senão (ponto aproximado: aorta, útero…), só leva a câmera até o ponto.
+      const realSid = key ? resolveAnchorSid(key) : null;
+      if (realSid) {
+        emit(EVENTS.STRUCTURE_SELECT, { sid: realSid, source: 'api' });
+      } else {
+        emit(EVENTS.STRUCTURE_SELECT, { sid: null, source: 'api' });
+        const point = key ? getBBoxCenter(key) : null;
+        if (point) focusPoints([point]);
+      }
       renderSheet();
       await playAnimation();
     }
@@ -314,7 +323,7 @@ export function createPhysiologyMode({
       if (animator && animator.isPlaying()) {
         animator.pause();
       } else {
-        await playAnimation();
+        await playAnimation({ frame: true });
       }
       renderSheet();
     }
@@ -332,17 +341,35 @@ export function createPhysiologyMode({
       }
     }
 
-    async function playAnimation() {
+    // Trajeto: numa via, os pontos dela; num processo, um ponto por passo
+    // (cada passo tem uma âncora — o trajeto atravessa os passos em ordem).
+    function pathPoints() {
+      const anchors = currentMode === 'vias'
+        ? selectedItem.anchors || []
+        : (selectedItem.steps || []).map((st) => (st.anchors || [])[0]).filter(Boolean);
+      const points = [];
+      for (const { point } of resolvePath(anchors, getBBoxCenter)) {
+        const last = points[points.length - 1];
+        // Passos seguidos no mesmo lugar viram um ponto só.
+        if (last && last.every((v, i) => Math.abs(v - point[i]) < 1e-4)) continue;
+        points.push(point);
+      }
+      return points;
+    }
+
+    async function playAnimation({ frame = false } = {}) {
       if (!selectedItem || !animator) return;
 
-      const isRoute = currentMode === 'vias';
-      const anchors = isRoute ? selectedItem.anchors : selectedItem.steps[currentStepIndex]?.anchors || [];
-
-      const resolved = resolvePath(anchors, getBBoxCenter);
-      if (resolved.length < 2) return;
-
-      const points = resolved.map((r) => r.point);
-      animator.play(points, { durationMs: 2000, loop: true });
+      const points = pathPoints();
+      if (points.length < 2) {
+        // Processo que acontece num lugar só (ex.: espermatogênese): sem
+        // trajeto para animar — a câmera mostra o local.
+        if (frame && points.length === 1) focusPoints(points);
+        return;
+      }
+      // Duração proporcional ao número de pontos (≈0,9 s por trecho).
+      animator.play(points, { durationMs: Math.max(2000, (points.length - 1) * 900), loop: true });
+      if (frame) focusPoints(points);
       renderSheet();
     }
 
