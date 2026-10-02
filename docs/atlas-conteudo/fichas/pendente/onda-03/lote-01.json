@@ -1,7 +1,7 @@
 {
   "za:trachea": {
     "ids": {},
-    "summary_pt": "A traqueia é um tubo fibrocartilagíneo e flexível, de cerca de 10 a 12 cm de comprimento e 2 cm de diâmetro, que conduz o ar da laringe aos brônquios principais. Inicia-se ao nível da margem inferior da cartilagem cricóidea, aproximadamente C6, e termina no plano do ângulo do esterno, em torno de T4–T5, onde se bifurca na carina em brônquios principais direito e esquerdo. Sua parede é sustentada por 16 a 20 cartilagens traqueais em forma de C, abertas posteriormente, que mantêm a luz sempre pérvia; a parede posterior membranácea contém o músculo traqueal, que ajusta o calibre da luz durante a tosse. A traqueia tem uma parte cervical e uma parte torácica. No pescoço, o istmo da glândula tireoide cobre os anéis superiores; no tórax, relaciona-se com o arco da aorta, o tronco braquiocefálico e o esôfago, que passa posteriormente a ela. A mucosa respiratória, ciliada e rica em células caliciformes, impulsiona o muco com partículas inaladas em direção à laringe, mecanismo conhecido como escada rolante mucociliar. A carina é rica em terminações sensíveis e desencadeia o reflexo da tosse.",
+    "summary_pt": "A traqueia é um tubo fibrocartilagíneo e flexível, de cerca de 10 a 12 cm de comprimento e 2 cm de diâmetro, que conduz o ar da laringe aos brônquios principais. Inicia-se ao nível da margem inferior da cartilagem cricóidea, aproximadamente C6, e termina no plano do ângulo do esterno, em torno de T4–T5, onde se bifurca na carina em brônquios principais direito e esquerdo. Sua parede é sustentada por 16 a 20 cartilagens traqueais em forma de C, abertas posteriormente, que mantêm a luz sempre pérvia; a parede posterior membranácea contém o músculo traqueal, que ajusta o calibre da luz durante a tosse. A traqueia tem uma parte cervical e uma parte torácica. No pescoço, o istmo da glândula tireoide cobre os anéis superiores; no tórax, relaciona-se com o arco da aorta, o tronco braquiocefálico e o esôfago, que passa posteriormente a ela. A mucosa respiratória, ciliada e rica em células caliciformes, impulsiona o muco com partículas inaladas em direção à laringe, mecanismo conhecido como transporte (ou depuração) mucociliar. A carina é rica em terminações sensíveis e desencadeia o reflexo da tosse.",
     "anatomy": {
       "relations": "A parte cervical segue anterior ao esôfago e posterior ao istmo da glândula tireoide, que cobre aproximadamente do 2º ao 4º anel traqueal, lateralmente aos lobos da tireoide, às artérias carótidas comuns e ao feixe vasculonervoso do pescoço. A parte torácica relaciona-se, no mediastino superior, com a veia braquiocefálica esquerda, o tronco braquiocefálico e o arco da aorta, anteriormente e à esquerda, e com o arco da veia ázigo, à direita. Posteriormente repousa sobre o esôfago, com o nervo laríngeo recorrente esquerdo no sulco traqueoesofágico.",
       "vascularization": "Na parte cervical, ramos das artérias tireóideas inferiores; na parte torácica, ramos das artérias bronquiais. A drenagem venosa segue por veias tireóideas inferiores, para as veias braquiocefálicas, e por veias bronquiais.",
@@ -22,7 +22,7 @@
       "Intubação orotraqueal e traqueostomia: a traqueostomia é feita em geral entre o 2º e o 4º anéis traqueais, o que exige conhecer a posição do istmo da tireoide e das veias tireóideas.",
       "Estenose traqueal: cicatrização após intubação prolongada ou traqueostomia, com estreitamento da luz, estridor e dispneia.",
       "Aspiração de corpo estranho: o corpo estranho que passa pela glote pode alojar-se na traqueia ou, com maior frequência, no brônquio principal direito, mais curto e vertical.",
-      "Alargamento da carina: indica linfonodomegalia subcarinal, por exemplo em neoplasias ou infecções, e é visto na broncoscopia como carina romba."
+      "Alargamento da carina: sugere linfonodomegalia subcarinal, por exemplo em neoplasias ou infecções, e é visto na broncoscopia como carina romba."
     ],
     "sources": [
       {
@@ -119,13 +119,6 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a traqueia",
-        "obraId": "robbins",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico traqueia",
         "obraId": "moore",
         "license": "citação"
@@ -139,7 +132,7 @@
   },
   "za:inferior-lobe-of-right-lung": {
     "ids": {},
-    "summary_pt": "O lobo inferior do pulmão direito é a maior subdivisão desse pulmão e fica abaixo da fissura oblíqua. Ocupa a parte posterior e inferior do órgão e sua base repousa sobre a cúpula direita do diafragma. É ventilado pelo brônquio lobar inferior direito, ramo do brônquio intermédio, que se divide em cinco brônquios segmentares: superior, basal medial, basal anterior, basal lateral e basal posterior. Estes correspondem aos cinco segmentos broncopulmonares do lobo. O ramo lobar inferior da artéria pulmonar direita acompanha o brônquio e supre o lobo, enquanto a veia pulmonar inferior direita drena o sangue oxigenado até o átrio esquerdo. Por sua posição posterior e declive, o lobo é o local mais frequente de aspiração e de acúmulo de secreções no paciente acamado. A face mediastinal relaciona-se com o esôfago, a veia ázigo, a veia cava inferior e o ligamento pulmonar, que a prende ao mediastino. A face costal, extensa, é o principal território auscultado nas regiões posteriores do tórax. Compreender seus segmentos é fundamental na broncoscopia e no planejamento cirúrgico.",
+    "summary_pt": "O lobo inferior do pulmão direito é a maior subdivisão desse pulmão e fica abaixo da fissura oblíqua. Ocupa a parte posterior e inferior do órgão e sua base repousa sobre a cúpula direita do diafragma. É ventilado pelo brônquio lobar inferior direito, ramo do brônquio intermédio, que se divide em cinco brônquios segmentares: superior, basal medial, basal anterior, basal lateral e basal posterior. Estes correspondem aos cinco segmentos broncopulmonares do lobo. O ramo lobar inferior da artéria pulmonar direita acompanha o brônquio e supre o lobo, enquanto a veia pulmonar inferior direita drena o sangue oxigenado até o átrio esquerdo. Por sua posição posterior e declive, o lobo, em especial o segmento superior em decúbito dorsal e os basais posteriores com o tronco elevado, é sítio frequente de aspiração e de acúmulo de secreções no paciente acamado. A face mediastinal relaciona-se com o esôfago, a veia ázigo, a veia cava inferior e o ligamento pulmonar, que a prende ao mediastino. A face costal, extensa, é o principal território auscultado nas regiões posteriores do tórax. Compreender seus segmentos é fundamental na broncoscopia e no planejamento cirúrgico.",
     "anatomy": {
       "relations": "Ocupa a parte posteroinferior do pulmão direito, abaixo da fissura oblíqua. A face costal relaciona-se com a parede torácica posterior e lateral; a face diafragmática, com a cúpula do diafragma e, por meio dela, com o fígado; a face mediastinal, com o esôfago, a veia ázigo e a veia cava inferior. O ligamento pulmonar prende a margem inferior da raiz ao mediastino.",
       "vascularization": "Ramos lobares e segmentares das artérias pulmonares, que levam sangue venoso à troca gasosa, e tributárias das veias pulmonares, que drenam o sangue oxigenado para o átrio esquerdo; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica, o tecido de sustentação e a pleura visceral.",
@@ -255,13 +248,6 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a pulmões: lobos e fissuras",
-        "obraId": "robbins",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: lobos e fissuras",
         "obraId": "moore",
         "license": "citação"
@@ -275,7 +261,7 @@
   },
   "za:vh-f-hilum-r": {
     "ids": {},
-    "summary_pt": "O hilo do pulmão é a depressão na face mediastinal por onde entram e saem os elementos da raiz do pulmão: brônquio principal, artéria pulmonar, duas veias pulmonares, vasos bronquiais, vasos linfáticos, nervos do plexo pulmonar e linfonodos broncopulmonares. Esses elementos estão envoltos por uma bainha de pleura, que se reflete do mediastino sobre a raiz e se continua com a pleura visceral. A pleura forma, abaixo da raiz, uma prega, o ligamento pulmonar, que se estende até o diafragma. A disposição dos elementos é constante: as veias pulmonares ocupam a posição mais anterior e inferior, a artéria pulmonar ocupa posição intermediária, e o brônquio ocupa a posição mais posterior. Do alto para baixo, no pulmão direito, a ordem é brônquio lobar superior (epiarterial), artéria e veias; no esquerdo, é artéria, brônquio e veias. O arco da veia ázigo curva-se sobre a raiz direita, e o arco da aorta, sobre a raiz esquerda. O nervo frênico passa anteriormente à raiz, e o nervo vago, posteriormente. Os linfonodos hilares são ponto de convergência da drenagem pulmonar e sede frequente de aumento em doenças inflamatórias e neoplásicas.",
+    "summary_pt": "O hilo do pulmão é a depressão na face mediastinal por onde entram e saem os elementos da raiz do pulmão: brônquio principal, artéria pulmonar, duas veias pulmonares, vasos bronquiais, vasos linfáticos, nervos do plexo pulmonar e linfonodos broncopulmonares. Esses elementos estão envoltos por uma bainha de pleura, que se reflete do mediastino sobre a raiz e se continua com a pleura visceral. A pleura forma, abaixo da raiz, uma prega, o ligamento pulmonar, que se estende até o diafragma. A disposição dos elementos é constante: as veias pulmonares ocupam a posição mais anterior e inferior, a artéria pulmonar ocupa posição intermediária, e o brônquio ocupa a posição mais posterior. Do alto para baixo, no pulmão direito, a ordem é brônquio lobar superior (epiarterial), artéria, brônquio intermédio e veias; no esquerdo, é artéria, brônquio e veias. O arco da veia ázigo curva-se sobre a raiz direita, e o arco da aorta, sobre a raiz esquerda. O nervo frênico passa anteriormente à raiz, e o nervo vago, posteriormente. Os linfonodos hilares são ponto de convergência da drenagem pulmonar e sede frequente de aumento em doenças inflamatórias e neoplásicas.",
     "anatomy": {
       "relations": "O hilo situa-se na face mediastinal do pulmão, aproximadamente ao nível de T5–T7. Anteriormente à raiz passam o nervo frênico e os vasos pericardicofrênicos; posteriormente, o nervo vago e o plexo pulmonar. O arco da veia ázigo arqueia sobre a raiz direita, e o arco da aorta sobre a raiz esquerda. Inferiormente, a pleura forma o ligamento pulmonar.",
       "vascularization": "A artéria pulmonar leva sangue venoso ao pulmão e as veias pulmonares levam sangue oxigenado ao átrio esquerdo; as artérias bronquiais, ramos da parte torácica da aorta, penetram pelo hilo e nutrem brônquios e parênquima. As veias bronquiais drenam para as veias pulmonares e, em parte, para as veias ázigo e hemiázigo.",
@@ -393,13 +379,6 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a hilo e raiz do pulmão",
-        "obraId": "robbins",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico hilo e raiz do pulmão",
         "obraId": "moore",
         "license": "citação"
@@ -430,10 +409,10 @@
       ]
     },
     "clinical": [
-      "Pneumotórax: a entrada de ar na cavidade pleural abole a pressão subatmosférica e o pulmão colapsa; pode ser espontâneo, traumático ou hipertensivo.",
+      "Pneumotórax: a entrada de ar na cavidade pleural abole a pressão subatmosférica e o pulmão colapsa; pode ser espontâneo ou traumático, e evoluir para pneumotórax hipertensivo.",
       "Derrame pleural: acúmulo de líquido na cavidade pleural, de transudato (insuficiência cardíaca) ou exsudato (infecção, neoplasia), que se localiza inicialmente no recesso costodiafragmático.",
-      "Toracocentese: a agulha deve passar rente à margem superior da costela, para evitar o feixe vasculonervoso intercostal.",
-      "Pleurite: a inflamação da pleura causa dor pleurítica ventilatório-dependente e atrito pleural à ausculta; o mesotelioma maligno está associado à exposição ao asbesto."
+      "Toracocentese: o feixe vasculonervoso intercostal percorre o sulco da costela junto à sua margem inferior; por isso o acesso é feito rente à margem superior da costela subjacente.",
+      "Pleurite: a inflamação da pleura causa dor pleurítica ventilatório-dependente e atrito pleural à ausculta; o mesotelioma maligno está associado à exposição ao amianto."
     ],
     "sources": [
       {
@@ -530,7 +509,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a pleuras e cavidades pleurais",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças da pleura",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -666,13 +645,6 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a pulmões: lobos e fissuras",
-        "obraId": "robbins",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: lobos e fissuras",
         "obraId": "moore",
         "license": "citação"
@@ -691,7 +663,7 @@
       "relations": "Ocupa a parte posteroinferior do pulmão esquerdo, abaixo da fissura oblíqua. A face costal relaciona-se com a parede torácica posterior e lateral; a face diafragmática, com a cúpula esquerda do diafragma e, por meio dela, com o estômago e o baço; a face mediastinal, com a parte descendente da aorta e o esôfago, e anteriormente com o pericárdio sobre o ventrículo esquerdo.",
       "vascularization": "Ramos lobares e segmentares das artérias pulmonares, que levam sangue venoso à troca gasosa, e tributárias das veias pulmonares, que drenam o sangue oxigenado para o átrio esquerdo; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica, o tecido de sustentação e a pleura visceral.",
       "innervation": "Plexo pulmonar, com fibras parassimpáticas do nervo vago (broncoconstrição, vasodilatação e secreção) e fibras simpáticas do tronco simpático torácico (broncodilatação). O parênquima não é sensível à dor; a pleura visceral é insensível, e a dor decorre do comprometimento da pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico, que drenam para os linfonodos pulmonares, broncopulmonares (hilares), traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico, que drenam para os linfonodos pulmonares, broncopulmonares (hilares), traqueobronquiais e, por fim, para os troncos broncomediastinais; parte da drenagem do lobo inferior esquerdo pode cruzar para os linfonodos traqueobronquiais direitos."
     },
     "histology": {
       "epithelium": "Árvore brônquica revestida por epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -802,13 +774,6 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a pulmões: lobos e fissuras",
-        "obraId": "robbins",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: lobos e fissuras",
         "obraId": "moore",
         "license": "citação"
@@ -840,7 +805,7 @@
     },
     "clinical": [
       "Tuberculose pós-primária: a reativação localiza-se classicamente nos segmentos apical e posterior dos lobos superiores, com cavitação.",
-      "Tumor de Pancoast: carcinoma do sulco superior, que invade o plexo braquial, o gânglio estrelado e a artéria subclávia, com dor no ombro e síndrome de Horner.",
+      "Tumor de Pancoast: carcinoma do sulco superior, que pode invadir o plexo braquial (raízes C8–T1), a cadeia simpática cervical inferior (gânglio estrelado) e, menos comumente, os vasos subclávios, com dor no ombro e síndrome de Horner.",
       "Lobectomia superior direita: ressecção do lobo em neoplasias localizadas, com ligadura da artéria e da veia lobares e do brônquio lobar superior."
     ],
     "sources": [
@@ -938,7 +903,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a pulmões: lobos e fissuras",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópicos tuberculose e tumores pulmonares",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1074,13 +1039,6 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a pulmões: lobos e fissuras",
-        "obraId": "robbins",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: lobos e fissuras",
         "obraId": "moore",
         "license": "citação"
@@ -1094,12 +1052,12 @@
   },
   "za:vh-f-right-anterior-bronchopulmonary-segm": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar anterior do pulmão direito (S3) é o terceiro segmento do lobo superior e ocupa sua face anterior, voltada para a parede torácica anterior e para o mediastino. Seu brônquio segmentar é ramo do brônquio lobar superior direito e segue anteriormente, acompanhado pelo ramo segmentar anterior da artéria pulmonar. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Essa independência de ventilação e perfusão permite ressecá-lo isoladamente. Na broncoscopia, o óstio segmentar anterior é identificado ao lado dos segmentos apical e posterior, na divisão do brônquio lobar superior direito. A projeção na parede torácica anterior torna-o acessível à ausculta na região infraclavicular direita, e é nessa região que se avaliam sinais de consolidação do lobo superior. Seu limite inferior é a fissura horizontal, que o separa do lobo médio. Essa relação explica por que lesões dele aparecem acima da fissura horizontal na radiografia frontal.",
+    "summary_pt": "O segmento broncopulmonar anterior do pulmão direito (S3) é o terceiro segmento do lobo superior e ocupa sua face anterior, voltada para a parede torácica anterior e para o mediastino. Seu brônquio segmentar é ramo do brônquio lobar superior direito e segue anteriormente, acompanhado pelo ramo segmentar anterior da artéria pulmonar. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Por ter brônquio e artéria segmentares próprios, o segmento pode ser ressecado isoladamente, embora haja ventilação colateral entre segmentos. Na broncoscopia, o óstio segmentar anterior é identificado ao lado dos segmentos apical e posterior, na divisão do brônquio lobar superior direito. A projeção na parede torácica anterior torna-o acessível à ausculta na região infraclavicular direita, e é nessa região que se avaliam sinais de consolidação do lobo superior. Seu limite inferior é a fissura horizontal, que o separa do lobo médio. Essa relação explica por que lesões dele aparecem acima da fissura horizontal na radiografia frontal.",
     "anatomy": {
       "relations": "Ocupa a parte anterior do lobo superior direito, junto às costelas e cartilagens costais superiores. Inferiormente é limitado pela fissura horizontal, que o separa do lobo médio; posteriormente continua com o segmento posterior e, superiormente, com o apical. Sua face medial relaciona-se com a veia cava superior, por meio da pleura mediastinal.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -1107,7 +1065,7 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
@@ -1210,12 +1168,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -1233,9 +1198,9 @@
     "summary_pt": "O segmento broncopulmonar anterior do pulmão esquerdo (S3) pertence ao lobo superior e ocupa sua parte anterior e superior, acima da língula. Seu brônquio segmentar origina-se do brônquio lobar superior esquerdo e dirige-se anteriormente, com o ramo segmentar correspondente da artéria pulmonar. Os segmentos broncopulmonares formam subdivisões do lobo pulmonar, delimitadas por septos de tecido conjuntivo e supridas por um brônquio segmentar e por uma artéria segmentar que caminham juntos, enquanto as veias seguem entre os segmentos. Por isso a doença segmentar pode ser tratada por ressecção localizada. Na broncoscopia, seu óstio é identificado na divisão superior do brônquio lobar superior esquerdo, junto ao segmento apicoposterior, enquanto a divisão lingular se destaca inferiormente. A projeção anterior permite a ausculta na região infraclavicular esquerda, em continuidade com a área precordial. No pulmão esquerdo, o lobo superior reúne a parte equivalente ao lobo superior e ao lobo médio do pulmão direito, de modo que o segmento anterior se continua inferiormente com os segmentos da língula.",
     "anatomy": {
       "relations": "Localiza-se na parte anterior do lobo superior esquerdo, junto às cartilagens costais superiores. Posteriormente continua com o segmento apicoposterior; inferiormente continua com a língula, sem fissura intermediária. Medialmente, a face mediastinal relaciona-se com o arco da aorta e com o tronco pulmonar, por meio da pleura.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -1243,7 +1208,7 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
@@ -1346,12 +1311,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -1366,12 +1338,12 @@
   },
   "za:vh-f-right-anterior-basal-bronchopulmonary-segment": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar basal anterior do pulmão direito (S8) é um dos quatro segmentos basais do lobo inferior e ocupa sua parte anterior, em contato com a face diafragmática. O brônquio segmentar basal anterior origina-se do brônquio lobar inferior direito, após a saída do brônquio segmentar superior, e desce anteriormente, com o ramo correspondente da artéria pulmonar. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Essa independência de ventilação e perfusão permite ressecá-lo isoladamente. Na broncoscopia, seu óstio é visto no tronco basal do brônquio lobar inferior, junto aos ramos medial, lateral e posterior, após a saída do brônquio segmentar superior. A ausculta é feita na região lateral e anterior da base do hemitórax direito, acima do rebordo costal. Esse segmento participa da base do pulmão, em relação direta com a cúpula do diafragma e com o seio costodiafragmático.",
+    "summary_pt": "O segmento broncopulmonar basal anterior do pulmão direito (S8) é um dos quatro segmentos basais do lobo inferior e ocupa sua parte anterior, em contato com a face diafragmática. O brônquio segmentar basal anterior origina-se do brônquio lobar inferior direito, após a saída do brônquio segmentar superior, e desce anteriormente, com o ramo correspondente da artéria pulmonar. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Por ter brônquio e artéria segmentares próprios, o segmento pode ser ressecado isoladamente, embora haja ventilação colateral entre segmentos. Na broncoscopia, seu óstio é visto no tronco basal do brônquio lobar inferior, junto aos ramos medial, lateral e posterior, após a saída do brônquio segmentar superior. A ausculta é feita na região lateral e anterior da base do hemitórax direito, acima do rebordo costal. Esse segmento participa da base do pulmão, em relação direta com a cúpula do diafragma e com o recesso costodiafragmático.",
     "anatomy": {
       "relations": "Situa-se na porção anterior da base do lobo inferior direito, apoiado sobre o diafragma e, por meio dele, sobre o fígado. Lateralmente relaciona-se com a parede torácica; posteriormente continua com os segmentos basais lateral e posterior; medialmente, com o segmento basal medial, junto ao ligamento pulmonar.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -1379,12 +1351,12 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
       "Pneumonia de lobo inferior: a consolidação basal apaga a cúpula diafragmática ipsilateral na radiografia frontal.",
-      "Derrame pleural: o líquido acumula-se no seio costodiafragmático e comprime os segmentos basais, que podem desenvolver atelectasia compressiva.",
+      "Derrame pleural: o líquido acumula-se no recesso costodiafragmático e comprime os segmentos basais, que podem desenvolver atelectasia compressiva.",
       "Atelectasia pós-operatória: os segmentos basais são os mais acometidos após cirurgias torácicas e abdominais altas, por hipoventilação."
     ],
     "sources": [
@@ -1482,12 +1454,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -1505,9 +1484,9 @@
     "summary_pt": "O segmento broncopulmonar lingular superior (S4) pertence ao lobo superior do pulmão esquerdo e forma a parte superior da língula do pulmão esquerdo, que corresponde, em posição, ao lobo médio do pulmão direito. Seu brônquio segmentar origina-se do brônquio lingular, ramo do brônquio lobar superior esquerdo, e dirige-se anteriormente. Os segmentos broncopulmonares formam subdivisões do lobo pulmonar, delimitadas por septos de tecido conjuntivo e supridas por um brônquio segmentar e por uma artéria segmentar que caminham juntos, enquanto as veias seguem entre os segmentos. Por isso a doença segmentar pode ser tratada por ressecção localizada. Na broncoscopia, o brônquio lingular é visto como ramo inferior do brônquio lobar superior esquerdo, que se divide em brônquios lingulares superior e inferior. A ausculta da língula é feita na região anterior do hemitórax esquerdo, próxima à ponta do coração. A língula projeta-se sobre o pericárdio e, inferiormente, delimita a incisura cardíaca. Por isso, a consolidação lingular apaga a borda do coração à esquerda.",
     "anatomy": {
       "relations": "Situa-se na parte anterior e inferior do lobo superior esquerdo, logo acima do segmento lingular inferior. Anteriormente relaciona-se com a parede torácica, e medialmente com o pericárdio e a ponta do coração, delimitando a incisura cardíaca do pulmão esquerdo. Posteriormente continua com o segmento anterior do mesmo lobo.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -1515,7 +1494,7 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
@@ -1618,12 +1597,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -1638,12 +1624,12 @@
   },
   "za:vh-f-left-medial-basal-bronchopulmonary-segment": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar basal medial do pulmão esquerdo (S7) é o segmento basal mais próximo do mediastino no lobo inferior. A Terminologia Anatômica o individualiza, mas muitos textos o descrevem fundido ao segmento basal anterior, formando o segmento anteromedial basal, pois ambos são supridos por um brônquio segmentar comum que se origina do brônquio lobar inferior esquerdo. Os segmentos broncopulmonares formam subdivisões do lobo pulmonar, delimitadas por septos de tecido conjuntivo e supridas por um brônquio segmentar e por uma artéria segmentar que caminham juntos, enquanto as veias seguem entre os segmentos. Por isso a doença segmentar pode ser tratada por ressecção localizada. Na broncoscopia, o brônquio basal medial costuma originar-se em tronco comum com o anterior, o brônquio basal anteromedial. A ausculta é feita na região inferior e anterior do hemitórax esquerdo, e a topografia retrocardíaca dificulta a avaliação do segmento nas radiografias. Sua posição medial o relaciona com o pericárdio e o ligamento pulmonar.",
+    "summary_pt": "O segmento broncopulmonar basal medial do pulmão esquerdo (S7) é o segmento basal mais próximo do mediastino no lobo inferior. A Terminologia Anatômica o individualiza, mas muitos textos o descrevem fundido ao segmento basal anterior, formando o segmento anteromedial basal, pois ambos são supridos frequentemente por um tronco comum (brônquio basal anteromedial) que se origina do tronco basal do brônquio lobar inferior esquerdo. Os segmentos broncopulmonares formam subdivisões do lobo pulmonar, delimitadas por septos de tecido conjuntivo e supridas por um brônquio segmentar e por uma artéria segmentar que caminham juntos, enquanto as veias seguem entre os segmentos. Por isso a doença segmentar pode ser tratada por ressecção localizada. Na broncoscopia, o brônquio basal medial costuma originar-se em tronco comum com o anterior, o brônquio basal anteromedial. Por ocupar a face mediastinal da base, o segmento tem pouca projeção na parede torácica e é mal avaliado pela ausculta, feita sobretudo nas bases posteriores do hemitórax esquerdo; a topografia retrocardíaca dificulta sua avaliação nas radiografias frontais. Sua posição medial o relaciona com o pericárdio e o ligamento pulmonar.",
     "anatomy": {
       "relations": "Localiza-se medialmente na base do lobo inferior esquerdo, junto à face mediastinal. Relaciona-se, por meio da pleura, com o pericárdio sobre o ventrículo esquerdo e com a parte inferior do ligamento pulmonar; inferiormente, repousa sobre o diafragma. Lateralmente continua com o segmento basal anterior.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -1651,7 +1637,7 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
@@ -1754,12 +1740,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -1774,12 +1767,12 @@
   },
   "za:vh-f-left-posterior-basal-bronchopulmonary-segment": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar basal posterior do pulmão esquerdo (S10) é o maior dos segmentos basais do lobo inferior esquerdo e o mais posterior e declive do pulmão esquerdo. Seu brônquio segmentar origina-se do tronco basal do brônquio lobar inferior esquerdo e segue posteriormente, acompanhado pelo ramo segmentar da artéria pulmonar. O segmento broncopulmonar é a unidade anatômica e cirúrgica do pulmão: recebe um brônquio segmentar e um ramo segmentar da artéria pulmonar, que seguem juntos no centro do segmento, enquanto as veias pulmonares correm nos septos de tecido conjuntivo entre segmentos vizinhos. Na broncoscopia, seu óstio é o ramo posterior do tronco basal do brônquio lobar inferior esquerdo. A ausculta é feita no dorso, na base do hemitórax esquerdo, onde a redução do murmúrio vesicular e os estertores indicam derrame, atelectasia ou consolidação. Por ocupar a região mais posterior do tórax, é o segmento mais dependente com o paciente em decúbito dorsal e o primeiro a acumular secreções e líquido.",
+    "summary_pt": "O segmento broncopulmonar basal posterior do pulmão esquerdo (S10) é o maior dos segmentos basais do lobo inferior esquerdo e o mais posterior e declive do pulmão esquerdo. Seu brônquio segmentar origina-se do tronco basal do brônquio lobar inferior esquerdo e segue posteriormente, acompanhado pelo ramo segmentar da artéria pulmonar. O segmento broncopulmonar é a unidade anatômica e cirúrgica do pulmão: recebe um brônquio segmentar e um ramo segmentar da artéria pulmonar, que seguem juntos no centro do segmento, enquanto as veias pulmonares correm nos septos de tecido conjuntivo entre segmentos vizinhos. Na broncoscopia, seu óstio é o ramo posterior do tronco basal do brônquio lobar inferior esquerdo. A ausculta é feita no dorso, na base do hemitórax esquerdo, onde a redução do murmúrio vesicular sugere derrame pleural ou atelectasia, e estertores crepitantes ou sopro tubário sugerem consolidação ou congestão. Por ocupar a região mais posterior do tórax, é um dos segmentos mais dependentes com o paciente em decúbito dorsal e é sede frequente de acúmulo de secreções e líquido.",
     "anatomy": {
-      "relations": "Ocupa a porção posteroinferior do lobo inferior esquerdo, junto à parede torácica posterior, ao seio costodiafragmático e à face diafragmática do pulmão. Anteriormente continua com o segmento basal lateral; superiormente, com o segmento superior; medialmente, a parte descendente da aorta e o esôfago relacionam-se com a face mediastinal do lobo.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "relations": "Ocupa a porção posteroinferior do lobo inferior esquerdo, junto à parede torácica posterior, ao recesso costodiafragmático e à face diafragmática do pulmão. Anteriormente continua com o segmento basal lateral; superiormente, com o segmento superior; medialmente, a parte descendente da aorta e o esôfago relacionam-se com a face mediastinal do lobo.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -1787,11 +1780,11 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
-      "Pneumonia por aspiração: acomete os segmentos basais posteriores de pacientes acamados, com maior frequência à direita.",
+      "Pneumonia por aspiração: acomete segmentos dependentes — em decúbito dorsal, o superior do lobo inferior e o posterior do lobo superior; com o tronco ereto ou semissentado, os basais posteriores —, com maior frequência à direita.",
       "Congestão pulmonar: na insuficiência cardíaca esquerda, o edema acumula-se nas bases posteriores.",
       "Atelectasia: hipoventilação por dor, imobilidade ou derrame pleural compromete preferencialmente os segmentos basais posteriores."
     ],
@@ -1890,12 +1883,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -1913,9 +1913,9 @@
     "summary_pt": "O segmento broncopulmonar superior do lobo inferior direito (S6) ocupa a parte superior e posterior do lobo inferior, logo abaixo da fissura oblíqua. Seu brônquio segmentar é o primeiro ramo do brônquio lobar inferior direito e dirige-se posteriormente, com o ramo segmentar correspondente da artéria pulmonar. O segmento broncopulmonar é a unidade anatômica e cirúrgica do pulmão: recebe um brônquio segmentar e um ramo segmentar da artéria pulmonar, que seguem juntos no centro do segmento, enquanto as veias pulmonares correm nos septos de tecido conjuntivo entre segmentos vizinhos. Na broncoscopia, seu óstio é visto na parede posterior do brônquio lobar inferior, logo abaixo da origem do lobo médio, e é o primeiro ramo desse lobo. A ausculta do segmento é feita no dorso, na altura da região interescapular, e esse é um local clássico de abscessos pulmonares. Por se projetar para trás e ficar em posição dependente no paciente em decúbito dorsal, é local frequente de depósito de material aspirado.",
     "anatomy": {
       "relations": "Localiza-se na parte superior do lobo inferior direito, junto à parede torácica posterior. Superiormente é limitado pela fissura oblíqua, que o separa do lobo superior e do lobo médio; inferiormente repousa sobre os segmentos basais. Medialmente relaciona-se, por meio da pleura, com a coluna vertebral e o esôfago.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -1923,7 +1923,7 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
@@ -2026,12 +2026,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -2046,12 +2053,12 @@
   },
   "za:vh-f-left-anterior-basal-bronchopulmonary-segment": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar basal anterior do pulmão esquerdo (S8) integra a base do lobo inferior esquerdo. Em muitos textos, ele se une ao segmento basal medial em um segmento anteromedial basal, pois ambos compartilham um mesmo brônquio segmentar, ramo do brônquio lobar inferior esquerdo; a Terminologia Anatômica os descreve separadamente. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Essa independência de ventilação e perfusão permite ressecá-lo isoladamente. Na broncoscopia, seu óstio é visto no tronco basal do brônquio lobar inferior esquerdo, com frequência como um tronco comum com o segmento basal medial. A ausculta é feita na região lateral e anterior da base do hemitórax esquerdo, acima do rebordo costal. Ocupa a parte anterior da base e repousa sobre o diafragma, ligando-se anteriormente à parede torácica e ao pericárdio.",
+    "summary_pt": "O segmento broncopulmonar basal anterior do pulmão esquerdo (S8) integra a base do lobo inferior esquerdo. Em muitos textos, ele se une ao segmento basal medial em um segmento anteromedial basal, pois frequentemente compartilham um tronco comum (brônquio basal anteromedial), ramo do tronco basal do brônquio lobar inferior esquerdo; a Terminologia Anatômica os descreve separadamente. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Por ter brônquio e artéria segmentares próprios, o segmento pode ser ressecado isoladamente, embora haja ventilação colateral entre segmentos. Na broncoscopia, seu óstio é visto no tronco basal do brônquio lobar inferior esquerdo, com frequência como um tronco comum com o segmento basal medial. A ausculta é feita na região lateral e anterior da base do hemitórax esquerdo, acima do rebordo costal. Ocupa a parte anterior da base e repousa sobre o diafragma, ligando-se anteriormente à parede torácica e ao pericárdio.",
     "anatomy": {
       "relations": "Ocupa a parte anterior da base do lobo inferior esquerdo, sobre o diafragma e, por meio dele, sobre o estômago e o baço. Lateralmente continua com o segmento basal lateral; posteriormente, com o basal posterior; medialmente, com o segmento basal medial, junto ao ligamento pulmonar e ao pericárdio sobre o ventrículo esquerdo.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -2059,13 +2066,13 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
-      "Pneumonia do lobo inferior esquerdo: a consolidação basal pode aparecer como opacidade retrocardíaca, mascarada pela silhueta do coração, o que exige radiografia em perfil.",
+      "Pneumonia do lobo inferior esquerdo: a consolidação basal pode ser parcialmente mascarada pela silhueta cardíaca (opacidade retrocardíaca, mais típica do segmento basal medial), o que exige radiografia em perfil.",
       "Atelectasia pós-operatória: a hipoventilação das bases após cirurgias torácicas e abdominais compromete os segmentos basais.",
-      "Derrame pleural: líquido no seio costodiafragmático comprime os segmentos basais e pode causar atelectasia compressiva."
+      "Derrame pleural: líquido no recesso costodiafragmático comprime os segmentos basais e pode causar atelectasia compressiva."
     ],
     "sources": [
       {
@@ -2162,12 +2169,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -2185,9 +2199,9 @@
     "summary_pt": "O segmento broncopulmonar lateral do lobo médio direito (S4) forma, com o segmento medial, a totalidade do lobo médio. Seu brônquio segmentar origina-se do brônquio lobar médio, que se destaca do brônquio intermédio, e dirige-se lateral e anteriormente, acompanhado pelo ramo segmentar da artéria pulmonar. O segmento broncopulmonar é a unidade anatômica e cirúrgica do pulmão: recebe um brônquio segmentar e um ramo segmentar da artéria pulmonar, que seguem juntos no centro do segmento, enquanto as veias pulmonares correm nos septos de tecido conjuntivo entre segmentos vizinhos. Na broncoscopia, o óstio do brônquio lobar médio é identificado em posição anterior, em frente ao óstio do brônquio segmentar superior do lobo inferior, e se divide em dois ramos. A ausculta do segmento é feita na região axilar e anterior do hemitórax direito. O lobo médio tem formato de cunha, com óstio brônquico estreito e cercado por linfonodos, o que o torna propenso a atelectasia por compressão extrínseca.",
     "anatomy": {
       "relations": "Ocupa a parte lateral do lobo médio, entre as fissuras horizontal (superior) e oblíqua (inferior). Sua superfície costal relaciona-se com a parede torácica lateral e anterior. Medialmente continua com o segmento medial; posteriormente é limitado pela fissura oblíqua, que o separa do lobo inferior.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -2195,7 +2209,7 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
@@ -2298,12 +2312,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -2318,12 +2339,12 @@
   },
   "za:vh-f-right-posterior-bronchopulmonary-segment": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar posterior do pulmão direito é o segundo segmento do lobo superior (S2) e ocupa a porção posterior desse lobo, voltada para as costelas dorsais, acima da fissura oblíqua. Seu brônquio segmentar origina-se do brônquio lobar superior direito e segue em direção posterior e lateral, junto ao ramo segmentar da artéria pulmonar. O segmento broncopulmonar é a unidade anatômica e cirúrgica do pulmão: recebe um brônquio segmentar e um ramo segmentar da artéria pulmonar, que seguem juntos no centro do segmento, enquanto as veias pulmonares correm nos septos de tecido conjuntivo entre segmentos vizinhos. Na broncoscopia, seu óstio é identificado entre os dos segmentos apical e anterior, na divisão do brônquio lobar superior direito. A posição posterior, voltada para a pleura costal, torna-o acessível à ausculta no dorso, na região escapular superior, e explica a projeção de suas lesões na radiografia em perfil. Na radiografia em perfil, localiza-se acima da fissura oblíqua e atrás do segmento anterior, o que ajuda a localizar processos pulmonares. Em termos práticos, é um dos segmentos mais dependentes quando o paciente permanece em decúbito dorsal.",
+    "summary_pt": "O segmento broncopulmonar posterior do pulmão direito é o segundo segmento do lobo superior (S2) e ocupa a porção posterior desse lobo, voltada para as costelas dorsais, acima da fissura oblíqua. Seu brônquio segmentar origina-se do brônquio lobar superior direito e segue em direção posterior e lateral, junto ao ramo segmentar da artéria pulmonar. O segmento broncopulmonar é a unidade anatômica e cirúrgica do pulmão: recebe um brônquio segmentar e um ramo segmentar da artéria pulmonar, que seguem juntos no centro do segmento, enquanto as veias pulmonares correm nos septos de tecido conjuntivo entre segmentos vizinhos. Na broncoscopia, seu óstio é identificado entre os óstios dos segmentos apical e anterior, na divisão do brônquio lobar superior direito. A posição posterior, voltada para a pleura costal, torna-o acessível à ausculta no dorso, na região escapular superior, e explica a projeção de suas lesões na radiografia em perfil. Na radiografia em perfil, localiza-se acima da fissura oblíqua e atrás do segmento anterior, o que ajuda a localizar processos pulmonares. Em termos práticos, é um dos segmentos mais dependentes quando o paciente permanece em decúbito dorsal.",
     "anatomy": {
       "relations": "Situa-se na parte posterior do lobo superior direito, em contato com a parede torácica posterolateral. Superiormente continua com o segmento apical; anteriormente faz limite com o segmento anterior; inferiormente é separado do lobo inferior pela fissura oblíqua. Medialmente, a face mediastinal relaciona-se com a traqueia e o esôfago, por meio da pleura.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -2331,12 +2352,12 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
       "Pneumonia por aspiração: em decúbito dorsal, secreções e conteúdo gástrico aspirados tendem a alcançar o segmento posterior do lobo superior e o segmento superior do lobo inferior.",
-      "Tuberculose pós-primária (de reativação): costuma localizar-se nos segmentos apical e posterior dos lobos superiores, onde a tensão de oxigênio é alta.",
+      "Tuberculose pós-primária (de reativação): costuma localizar-se nos segmentos apical e posterior dos lobos superiores, onde a elevada tensão de oxigênio é classicamente invocada como fator predisponente.",
       "Ressecção segmentar (segmentectomia): permite tratar lesões localizadas poupando o restante do lobo, com os septos intersegmentares como plano de dissecção."
     ],
     "sources": [
@@ -2434,12 +2455,26 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico tuberculose",
         "obraId": "robbins",
         "license": "citação"
       },
       {
         "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -2454,12 +2489,12 @@
   },
   "za:vh-f-right-medial-bronchopulmonary-segment": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar medial do lobo médio direito (S5) é o segmento mais próximo do mediastino e do coração. Seu brônquio segmentar origina-se do brônquio lobar médio e dirige-se anterior e inferiormente, acompanhado pelo ramo segmentar da artéria pulmonar. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Essa independência de ventilação e perfusão permite ressecá-lo isoladamente. Na broncoscopia, seu óstio é o ramo medial da bifurcação do brônquio lobar médio, de onde sai o brônquio lateral. A ausculta do segmento é feita na região paraesternal e infraclavicular direita, e sua aeração influencia a nitidez da borda cardíaca à direita na radiografia. Por ocupar a face medial do lobo, ele se projeta junto ao átrio direito, razão pela qual sua consolidação apaga a borda cardíaca direita na radiografia frontal, o chamado sinal da silhueta.",
+    "summary_pt": "O segmento broncopulmonar medial do lobo médio direito (S5) é o segmento mais próximo do mediastino e do coração. Seu brônquio segmentar origina-se do brônquio lobar médio e dirige-se anterior e inferiormente, acompanhado pelo ramo segmentar da artéria pulmonar. Cada segmento broncopulmonar tem forma piramidal, com o ápice voltado ao hilo, e é ventilado por um brônquio segmentar próprio; a artéria segmentar o acompanha, e as veias ocupam os septos intersegmentares. Por ter brônquio e artéria segmentares próprios, o segmento pode ser ressecado isoladamente, embora haja ventilação colateral entre segmentos. Na broncoscopia, seu óstio é o ramo medial da bifurcação do brônquio lobar médio, de onde sai o brônquio lateral. A ausculta do segmento é feita na região paraesternal e anterolateral inferior do hemitórax direito, aproximadamente entre a 4ª e a 6ª costela, e sua aeração influencia a nitidez da borda cardíaca à direita na radiografia. Por ocupar a face medial do lobo, ele se projeta junto ao átrio direito, razão pela qual sua consolidação apaga a borda cardíaca direita na radiografia frontal, o chamado sinal da silhueta.",
     "anatomy": {
       "relations": "Localiza-se na parte medial e anteroinferior do lobo médio, junto à face mediastinal, em contato por meio da pleura com o pericárdio e com o átrio direito. Lateralmente continua com o segmento lateral; inferiormente repousa sobre o diafragma e a face diafragmática do pulmão.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -2467,7 +2502,7 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
@@ -2570,12 +2605,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
@@ -2590,12 +2632,12 @@
   },
   "za:vh-f-right-posterior-basal-bronchopulmonary-segment": {
     "ids": {},
-    "summary_pt": "O segmento broncopulmonar basal posterior do pulmão direito (S10) é o maior e mais posterior dos segmentos basais do lobo inferior. Seu brônquio segmentar origina-se do tronco basal do brônquio lobar inferior direito e dirige-se posteriormente, acompanhado pelo ramo segmentar da artéria pulmonar. Os segmentos broncopulmonares formam subdivisões do lobo pulmonar, delimitadas por septos de tecido conjuntivo e supridas por um brônquio segmentar e por uma artéria segmentar que caminham juntos, enquanto as veias seguem entre os segmentos. Por isso a doença segmentar pode ser tratada por ressecção localizada. Na broncoscopia, seu óstio é o ramo mais posterior e inferior do tronco basal do brônquio lobar inferior. A ausculta do segmento é feita no dorso, na base do hemitórax direito, onde estertores e redução do murmúrio vesicular indicam consolidação, atelectasia ou derrame. Por ocupar a região mais posterior e declive do tórax, é o segmento mais dependente em decúbito dorsal e no paciente acamado, e por isso o mais exposto a aspiração e a congestão.",
+    "summary_pt": "O segmento broncopulmonar basal posterior do pulmão direito (S10) é o maior e mais posterior dos segmentos basais do lobo inferior. Seu brônquio segmentar origina-se do tronco basal do brônquio lobar inferior direito e dirige-se posteriormente, acompanhado pelo ramo segmentar da artéria pulmonar. Os segmentos broncopulmonares formam subdivisões do lobo pulmonar, delimitadas por septos de tecido conjuntivo e supridas por um brônquio segmentar e por uma artéria segmentar que caminham juntos, enquanto as veias seguem entre os segmentos. Por isso a doença segmentar pode ser tratada por ressecção localizada. Na broncoscopia, seu óstio é o ramo mais posterior e inferior do tronco basal do brônquio lobar inferior. A ausculta do segmento é feita no dorso, na base do hemitórax direito, onde a redução do murmúrio vesicular sugere derrame ou atelectasia, e estertores crepitantes ou sopro tubário sugerem consolidação ou congestão. Por ocupar a região mais posterior e declive do tórax, é um dos segmentos mais dependentes no paciente acamado e, por isso, frequentemente afetado por aspiração e congestão.",
     "anatomy": {
       "relations": "Ocupa a porção posteroinferior do lobo inferior direito, em contato com a parede torácica posterior, o recesso costodiafragmático e a face diafragmática do pulmão. Anteriormente continua com os segmentos basais lateral e anterior; superiormente, com o segmento superior; medialmente relaciona-se com a coluna vertebral e o esôfago.",
-      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares nos septos intersegmentares.",
+      "vascularization": "Ramo segmentar da artéria pulmonar, que acompanha o brônquio segmentar e leva sangue venoso à troca gasosa; as artérias bronquiais, ramos da parte torácica da aorta, nutrem a parede brônquica e o tecido de sustentação. A drenagem venosa faz-se por tributárias das veias pulmonares, que correm sobretudo nos septos intersegmentares e drenam partes de segmentos vizinhos.",
       "innervation": "Plexo pulmonar, formado por fibras parassimpáticas do nervo vago (broncoconstrição e secreção) e por fibras simpáticas do tronco simpático (broncodilatação). O parênquima não tem sensibilidade dolorosa própria; a dor surge quando o processo atinge a pleura parietal.",
-      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
+      "lymph": "Plexo linfático superficial subpleural e plexo profundo peribrônquico drenam para os linfonodos pulmonares e broncopulmonares (hilares), depois para os traqueobronquiais e, por fim, para os troncos broncomediastinais."
     },
     "histology": {
       "epithelium": "Brônquio segmentar com epitélio pseudoestratificado colunar ciliado com células caliciformes, que se torna simples colunar ou cúbico nos bronquíolos e pavimentoso simples (pneumócitos tipo I) nos alvéolos.",
@@ -2603,11 +2645,11 @@
         "Brônquios: placas de cartilagem hialina, músculo liso, glândulas seromucosas e lâmina própria",
         "Bronquíolos: sem cartilagem nem glândulas, com músculo liso e células club",
         "Alvéolos: pneumócitos tipo I e tipo II, macrófagos alveolares e rica rede capilar",
-        "Septos de tecido conjuntivo com fibras elásticas e colágenas entre segmentos vizinhos"
+        "Septos de tecido conjuntivo, incompletos, com fibras elásticas e colágenas entre segmentos vizinhos"
       ]
     },
     "clinical": [
-      "Pneumonia e abscesso por aspiração: constituem localizações frequentes no segmento basal posterior em pacientes acamados ou com rebaixamento do nível de consciência.",
+      "Pneumonia e abscesso por aspiração: ocorrem com frequência no segmento basal posterior em pacientes com tronco ereto ou semissentado ou com rebaixamento do nível de consciência; em decúbito dorsal predominam os segmentos superior do lobo inferior e posterior do lobo superior.",
       "Congestão pulmonar: na insuficiência cardíaca, o edema acumula-se predominantemente nos segmentos basais posteriores por ação da gravidade.",
       "Ausculta: estertores crepitantes nas bases posteriores são achado comum nesses quadros."
     ],
@@ -2706,12 +2748,19 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico doenças correlatas a segmentos broncopulmonares",
-        "obraId": "robbins",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
+        "obraId": "moore",
         "license": "citação"
       },
       {
-        "field": "clinical",
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico anatomia de superfície e ausculta dos pulmões",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico segmentos broncopulmonares",
         "obraId": "moore",
