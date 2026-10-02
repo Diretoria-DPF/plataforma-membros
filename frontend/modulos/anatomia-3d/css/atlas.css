@@ -822,3 +822,6 @@ body.atlas-fullscreen-fallback { background: var(--atlas-canvas-bg); }
 }
 .atlas-slow-btn--primary { background: var(--module-accent); color: var(--laift-bg); }
 .atlas-slow-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+/* Chip "Novo: N fichas revisadas" (PR 3.2, M4) */
+.atlas-new-reviewed { min-height: 36px; margin-left: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--laift-success, #15803d); background: var(--laift-surface); color: var(--laift-success-text, #166534); font-size: 0.78rem; font-weight: 600; cursor: pointer; white-space: nowrap; }

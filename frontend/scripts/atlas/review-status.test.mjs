@@ -41,3 +41,14 @@ test('review-status.json gravado está em dia com curated/, content/ e legado', 
   const next = `${JSON.stringify(buildReviewStatus())}\n`;
   assert.equal(fs.readFileSync(OUT, 'utf8'), next, 'rode: node scripts/atlas/build-review-status.mjs');
 });
+
+test('M4: chip "Novo" só com revisadas novas; progresso conta estruturas revisadas abertas', async () => {
+  const { shouldShowNewChip, reviewedProgress } = await import('../../modulos/anatomia-3d/js/ui/discovery.js');
+  assert.equal(shouldShowNewChip(0, 0), false);
+  assert.equal(shouldShowNewChip(31, 0), true);
+  assert.equal(shouldShowNewChip(31, 31), false);
+  assert.equal(shouldShowNewChip(84, 31), true);
+  const rs = createReviewStatus({ r: ['za:heart', 'za:kidney-l', 'za:kidney-r'] });
+  const hist = [{ type: 'select', sid: 'za:kidney-l' }, { type: 'select', sid: 'za:kidney-r' }, { type: 'select', sid: 'za:liver' }, { type: 'route', sid: 'za:heart' }];
+  assert.deepEqual(reviewedProgress(hist, rs.statusOf, 3), { visited: 1, total: 3 });
+});

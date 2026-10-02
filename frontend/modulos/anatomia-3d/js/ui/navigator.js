@@ -519,6 +519,8 @@ export function createNavigator(container, opts) {
     goHome,
     getPath: () => state.breadcrumb.map((b) => b.label),
     refresh: () => renderContent(),
+    /** Filtro de revisão ('all' | 'r' | 'e') — usado pelo chip "Novo" (M4). */
+    setFilter: (f) => { state.filter = ['all', 'r', 'e'].includes(f) ? f : 'all'; renderContent(); },
     dispose,
   };
 }

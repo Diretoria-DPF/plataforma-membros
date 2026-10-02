@@ -102,7 +102,7 @@ export function attachRecorder(bus, studyStore) {
 /**
  * Cria o modo "Meu estudo" (estudo).
  */
-export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHistory = true } = {}) {
+export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHistory = true, getReviewed = null } = {}) {
   let unsubscribeRecorder = null;
 
   // Estado local
@@ -131,6 +131,22 @@ export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHis
     sheetContent() {
       const { h, html, setHtml, clear, appendHtml, escapeHtml } = window.LaiftDom;
       const root = h('div', { className: 'study-sheet' }, []);
+
+      // M4 (PR 3.2): progresso nas fichas revisadas pelo conselho.
+      if (typeof getReviewed === 'function') {
+        Promise.resolve(getReviewed()).then((p) => {
+          if (!p || !(p.total > 0)) return;
+          const pct = Math.round((100 * p.visited) / p.total);
+          const card = h('section', { className: 'study-reviewed', 'aria-label': 'Fichas revisadas', style: { padding: '0.75rem', border: '1px solid var(--laift-border)', borderRadius: '6px', margin: '0 0 0.75rem' } }, [
+            h('div', { style: { fontWeight: '600', marginBottom: '0.25rem' }, text: 'Explore as fichas revisadas' }),
+            h('div', { className: 'study-reviewed-count', style: { fontSize: '0.85rem', color: 'var(--laift-muted)', marginBottom: '0.4rem' }, text: `${p.visited} de ${p.total} fichas revisadas pelo conselho já exploradas` }),
+            h('div', { role: 'progressbar', 'aria-label': 'Fichas revisadas exploradas', 'aria-valuemin': '0', 'aria-valuemax': String(p.total), 'aria-valuenow': String(p.visited), style: { height: '6px', background: 'var(--laift-border)', borderRadius: '3px', overflow: 'hidden' } }, [
+              h('span', { style: { display: 'block', height: '100%', width: `${pct}%`, background: 'var(--laift-primary)' } }),
+            ]),
+          ]);
+          root.insertBefore(card, root.firstChild);
+        }).catch(() => {});
+      }
 
       // Aba de navegação
       const tabBar = h('div', { className: 'study-tabs', style: { display: 'flex', borderBottom: '1px solid var(--laift-border)' } }, [

@@ -45,6 +45,7 @@ import { createOnboarding, shouldShowOnboarding, isDeepLink, wasDismissedThisTab
 import { createHints } from './ui/hints.js';
 import { createSlowDeviceWatcher, classifyDevice } from './ui/slow-device.js';
 import { createReviewStatus, SEARCH_BOOST } from './ui/review-status.js';
+import { mountNewReviewedChip, reviewedProgress } from './ui/discovery.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -452,7 +453,7 @@ async function boot() {
   });
 
   // Selo/filtro/peso de revisão: em paralelo, sem segurar o boot (falha → sem selo).
-  fetchJson(`${CONTENT_BASE}generated/review-status.json`).then((d) => { reviewStatus = createReviewStatus(d); }).catch(() => {});
+  const reviewStatusReady = fetchJson(`${CONTENT_BASE}generated/review-status.json`).then((d) => { reviewStatus = createReviewStatus(d); }).catch(() => {});
   const contentStore = await createContentStore();
 
   // ---- Menu de contexto ----
@@ -673,6 +674,15 @@ async function boot() {
       getStatus: (sids) => reviewStatus.groupStatus(sids),
     });
   }
+  // M4: chip "Novo: N fichas revisadas" → navegador filtrado em "Revisadas".
+  reviewStatusReady.then(() => mountNewReviewedChip({
+    host: document.getElementById('atlas-toolbar'),
+    count: reviewStatus.counts.r,
+    onOpen: () => {
+      if (window.AtlasShell && window.AtlasShell.toggleNavigator) window.AtlasShell.toggleNavigator();
+      if (navigatorApi && navigatorApi.setFilter) navigatorApi.setFilter('r');
+    },
+  }));
 
   // ---- Painel de camadas ----
   // Janela própria (C7, Onda 3): antes o painel entrava solto no <body>,
@@ -1019,7 +1029,10 @@ async function boot() {
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
     estudo: () => import('./modes/study.js').then(async (m) => {
       const studyStore = (await studyStorePromise) || (await import('./modes/study-store.js')).createStudyStore();
-      return m.createStudyMode({ bus, store: studyStore, getLabel: labelFor, recordOwnHistory: false });
+      return m.createStudyMode({
+        bus, store: studyStore, getLabel: labelFor, recordOwnHistory: false,
+        getReviewed: async () => reviewedProgress(await studyStore.listHistory({ limit: 500 }), reviewStatus.statusOf, reviewStatus.counts.r),
+      });
     }),
   };
 
