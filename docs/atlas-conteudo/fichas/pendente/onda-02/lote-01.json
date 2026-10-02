@@ -79,7 +79,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro temporal médio",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -112,8 +112,8 @@
       ]
     },
     "clinical": [
-      "Síndrome medular lateral (de Wallenberg): infarto no território da artéria cerebelar inferior posterior ou da artéria vertebral, com síndrome de Horner, perda de dor e temperatura na face ipsilateral e no corpo contralateral, disfagia, disfonia, ataxia e vertigem.",
-      "Síndrome medular medial (de Déjerine): oclusão de ramos da artéria espinal anterior, com hemiparesia contralateral, perda contralateral de tato fino e propriocepção e desvio da língua para o lado da lesão.",
+      "Síndrome bulbar lateral (de Wallenberg): infarto no território da artéria cerebelar inferior posterior ou da artéria vertebral, com síndrome de Horner, perda de dor e temperatura na face ipsilateral e no corpo contralateral, disfagia, disfonia, ataxia e vertigem.",
+      "Síndrome bulbar medial (de Déjerine): oclusão de ramos da artéria espinal anterior, com hemiparesia contralateral, perda contralateral de tato fino e propriocepção e desvio da língua para o lado da lesão.",
       "Herniação tonsilar: a descida das tonsilas do cerebelo pelo forame magno comprime o bulbo e pode causar insuficiência respiratória e colapso cardiovascular."
     ],
     "sources": [
@@ -176,7 +176,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a medula oblonga",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -274,7 +274,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a hipotálamo",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -371,7 +371,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a substância branca",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -391,7 +391,7 @@
   },
   "za:spinal-dura": {
     "ids": {},
-    "summary_pt": "A dura-máter espinal é a meninge mais externa da medula espinal, de tecido conjuntivo denso e resistente, que forma o saco dural. Diferentemente da dura craniana, constitui uma única lâmina, correspondente à camada meníngea, e não adere ao periósteo das vértebras: entre ela e o canal vertebral há o espaço epidural (extradural), com tecido adiposo e o plexo venoso vertebral interno. Fixa-se ao redor do forame magno e termina, em geral, ao nível da segunda vértebra sacral, formando o fundo de saco dural. Distalmente, continua como filamento terminal externo (ligamento coccígeo), que se prende ao cóccix. Prolonga-se lateralmente em bainhas durais que envolvem as raízes e os nervos espinais e se continuam com o epineuro. Internamente, a dura-máter espinal é separada da aracnoide-máter por um espaço subdural virtual, e a aracnoide delimita o espaço subaracnóideo, com líquido cerebrospinal. Como a medula termina por volta de L1-L2, o saco dural abaixo desse nível contém apenas as raízes da cauda equina, o que permite a punção lombar com segurança. A dura-máter é uma estrutura ímpar, sem lados.",
+    "summary_pt": "A dura-máter espinal é a meninge mais externa da medula espinal, de tecido conjuntivo denso e resistente, que forma o saco dural. Diferentemente da dura craniana, constitui uma única lâmina, correspondente à camada meníngea, e não adere ao periósteo das vértebras: entre ela e o canal vertebral há o espaço epidural (extradural), com tecido adiposo e o plexo venoso vertebral interno. Fixa-se ao redor do forame magno e termina, em geral, ao nível da segunda vértebra sacral, formando o fundo de saco dural. Distalmente, continua como filamento terminal externo (ligamento coccígeo), que se prende ao cóccix. Prolonga-se lateralmente em bainhas durais que envolvem as raízes e os nervos espinais e se continuam com o epineuro. Internamente, a dura-máter espinal é separada da aracnoide-máter por um espaço subdural virtual, e a aracnoide delimita o espaço subaracnóideo, com líquido cerebrospinal. Como a medula termina por volta de L1-L2, o saco dural abaixo desse nível contém apenas as raízes da cauda equina, o que torna possível a punção lombar abaixo do cone medular. A dura-máter é uma estrutura ímpar, sem lados.",
     "anatomy": {
       "relations": "Reveste a medula espinal, a aracnoide-máter e as raízes nervosas, abaixo do forame magno até S2. O espaço epidural, entre a dura e as paredes do canal vertebral, contém gordura e plexo venoso vertebral interno. Posteriormente ao saco dural encontram-se o ligamento amarelo e os arcos vertebrais.",
       "vascularization": "Ramos espinais das artérias segmentares: artérias vertebrais, cervicais ascendente e profunda, intercostais posteriores, lombares e sacrais laterais. A drenagem venosa ocorre para o plexo venoso vertebral interno.",
@@ -408,7 +408,7 @@
       "Punção lombar: a agulha, introduzida em geral entre L3-L4 ou L4-L5, abaixo do cone medular, atravessa a dura-máter e a aracnoide para colher líquido cerebrospinal.",
       "Cefaleia pós-punção dural: o extravasamento de líquido cerebrospinal por orifício na dura-máter reduz a pressão intracraniana e causa cefaleia ortostática.",
       "Anestesia epidural e raquianestesia: a primeira injeta o anestésico no espaço epidural, fora da dura-máter; a segunda, no espaço subaracnóideo, após perfurá-la.",
-      "Hematoma ou abscesso epidural espinal: coleção no espaço epidural comprime a medula espinal e as raízes, exigindo descompressão urgente."
+      "Hematoma ou abscesso epidural espinal: coleção no espaço epidural comprime a medula espinal e as raízes e constitui emergência neurológica."
     ],
     "sources": [
       {
@@ -484,7 +484,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a dura-máter espinal",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -504,7 +504,7 @@
   },
   "za:white-matter-of-spinal-cord": {
     "ids": {},
-    "summary_pt": "A substância branca da medula espinal envolve a substância cinzenta e é composta por axônios, em sua maioria mielinizados, dispostos em funículos: anterior, lateral e posterior. Reúne vias ascendentes sensitivas e descendentes motoras. No funículo posterior ascendem o fascículo grácil e o fascículo cuneiforme, que conduzem tato discriminativo, propriocepção consciente e vibração, sem cruzamento até o bulbo. O trato espinotalâmico, nos funículos anterior e lateral, leva dor, temperatura e tato grosseiro; seus axônios cruzam na comissura branca anterior, um ou dois segmentos acima do nível de entrada. Os tratos espinocerebelares, lateral e posterior, transmitem propriocepção inconsciente ao cerebelo. Entre as vias descendentes, o trato corticoespinal lateral, cruzado na decussação das pirâmides, comanda a motricidade voluntária dos músculos distais; o corticoespinal anterior, a dos axiais; além dos tratos rubroespinal, vestibuloespinal, reticuloespinal e tetoespinal, que modulam a postura e o tônus. A proporção entre as substâncias branca e cinzenta aumenta em direção cranial, porque cada nível recebe mais fibras ascendentes e dá passagem a mais descendentes. Por ser um segmento contínuo e ímpar, a ficha não distingue lados.",
+    "summary_pt": "A substância branca da medula espinal envolve a substância cinzenta e é composta por axônios, em sua maioria mielinizados, dispostos em funículos: anterior, lateral e posterior. Reúne vias ascendentes sensitivas e descendentes motoras. No funículo posterior ascendem o fascículo grácil e o fascículo cuneiforme, que conduzem tato discriminativo, propriocepção consciente e vibração, sem cruzamento até o bulbo. O trato espinotalâmico, nos funículos anterior e lateral, leva dor, temperatura e tato grosseiro; seus axônios cruzam na comissura branca anterior, um ou dois segmentos acima do nível de entrada. Os tratos espinocerebelares, anterior e posterior, transmitem propriocepção inconsciente ao cerebelo. Entre as vias descendentes, o trato corticoespinal lateral, cruzado na decussação das pirâmides, comanda a motricidade voluntária dos músculos distais; o corticoespinal anterior, a dos axiais; além dos tratos rubroespinal, vestibuloespinal, reticuloespinal e tetoespinal, que modulam a postura e o tônus. A proporção entre as substâncias branca e cinzenta aumenta em direção cranial, porque cada nível recebe mais fibras ascendentes e dá passagem a mais descendentes. Por ser um segmento contínuo e ímpar, a ficha não distingue lados.",
     "anatomy": {
       "relations": "Dispõe-se em torno da substância cinzenta, delimitada pelos sulcos mediano posterior, intermédio posterior, lateral posterior, lateral anterior e pela fissura mediana anterior. As duas metades anteriores são unidas pela comissura branca anterior, na qual cruzam as fibras do trato espinotalâmico. A medula é envolvida por pia-máter, aracnoide-máter e dura-máter.",
       "vascularization": "Artéria espinal anterior, que supre os dois terços anteriores da medula (incluindo os funículos anterior e parte do lateral), e duas artérias espinais posteriores, que suprem o terço posterior. Reforçam-nas as artérias radiculares, entre elas a artéria radicular magna (de Adamkiewicz), importante na região toracolombar."
@@ -581,7 +581,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a substância branca",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -601,7 +601,7 @@
   },
   "za:allen-primary-motor-cortex-r": {
     "ids": {},
-    "summary_pt": "O córtex motor primário corresponde à área 4 de Brodmann e ocupa o giro pré-central, estendendo-se à parte anterior do lóbulo paracentral, na face medial do hemisfério. É a principal origem das vias motoras voluntárias e comanda os músculos do lado oposto do corpo. Sua organização é somatotópica: o pé e a perna representam-se na face medial, o tronco e o membro superior na convexidade, e a mão e a face na parte inferior e lateral do giro; a área cortical de cada parte do corpo é proporcional à precisão do movimento, e não ao tamanho, o que dá origem ao homúnculo motor. Do ponto de vista citoarquitetônico, é um córtex agranular: a camada granular interna é muito reduzida e a camada piramidal interna contém as células piramidais gigantes de Betz, cujos axônios contribuem para os tratos corticoespinal e corticonuclear. Estes descem pela coroa radiada e pelo ramo posterior da cápsula interna até o tronco encefálico e a medula espinal. O córtex motor recebe aferências da área pré-motora, da área motora suplementar, do córtex somatossensorial e, via tálamo, dos núcleos da base e do cerebelo. A ficha vale para os dois hemisférios.",
+    "summary_pt": "Este rótulo provém do atlas Allen e não é termo da Terminologia Anatômica; corresponde de forma aproximada ao giro pré-central e à parte anterior do lóbulo paracentral. O córtex motor primário corresponde à área 4 de Brodmann e ocupa o giro pré-central, estendendo-se à parte anterior do lóbulo paracentral, na face medial do hemisfério. É a principal origem das vias motoras voluntárias e comanda os músculos do lado oposto do corpo. Sua organização é somatotópica: o pé e a perna representam-se na face medial, o tronco e o membro superior na convexidade, e a mão e a face na parte inferior e lateral do giro; a área cortical de cada parte do corpo é proporcional à precisão do movimento, e não ao tamanho, o que dá origem ao homúnculo motor. Do ponto de vista citoarquitetônico, é um córtex agranular: a camada granular interna é muito reduzida e a camada piramidal interna contém as células piramidais gigantes de Betz, cujos axônios contribuem para os tratos corticoespinal e corticonuclear. Os axônios corticoespinais descem pela coroa radiada e pelo ramo posterior da cápsula interna, e os corticonucleares, pelo joelho, até o tronco encefálico e a medula espinal. O córtex motor recebe aferências da área pré-motora, da área motora suplementar, do córtex somatossensorial e, via tálamo, dos núcleos da base e do cerebelo. A ficha vale para os dois hemisférios.",
     "anatomy": {
       "relations": "Ocupa o giro pré-central, anteriormente ao sulco central e posteriormente ao sulco pré-central, estendendo-se ao lóbulo paracentral. Anteriormente faz limite com as áreas pré-motora e motora suplementar (área 6) e, posteriormente, com o córtex somatossensorial primário, do outro lado do sulco central.",
       "vascularization": "Face lateral (representação da face, do membro superior e do tronco): artéria cerebral média. Face medial (representação do membro inferior): artéria cerebral anterior, por ramos paracentrais da artéria calosomarginal."
@@ -679,7 +679,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a córtex motor primário",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -777,7 +777,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro pós-central",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -875,7 +875,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro frontal médio",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -973,7 +973,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro frontal superior",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1071,7 +1071,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a corno anterior",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1168,7 +1168,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a corno posterior",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1204,7 +1204,7 @@
     "clinical": [
       "Hidrocefalia: obstrutiva, por exemplo, por estenose do aqueduto do mesencéfalo ou tumores, ou comunicante, por déficit de reabsorção nas granulações aracnóideas; dilata os ventrículos laterais e aumenta a pressão intracraniana.",
       "Hemorragia intraventricular: comum em prematuros, a partir da matriz germinativa subependimária, e pode causar hidrocefalia pós-hemorrágica.",
-      "Hidrocefalia de pressão normal: ventriculomegalia com a tríade de distúrbio da marcha, demência e incontinência urinária, potencialmente reversível com derivação."
+      "Hidrocefalia de pressão normal: ventriculomegalia com a tríade de distúrbio da marcha, demência e incontinência urinária."
     ],
     "sources": [
       {
@@ -1273,7 +1273,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a ventrículo lateral",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1370,7 +1370,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a sulco temporal superior",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1404,7 +1404,7 @@
     },
     "clinical": [
       "Agenesia do corpo caloso: malformação de gravidade variável, desde achado incidental até deficiência intelectual e epilepsia, com compensação por outras comissuras.",
-      "Calosotomia: secção do corpo caloso, usada em epilepsia refratária com crises atônicas (drop attacks), para impedir a propagação interhemisférica das descargas; pode causar síndrome de desconexão.",
+      "Calosotomia: secção do corpo caloso, usada em epilepsia refratária com crises atônicas (quedas súbitas), para impedir a propagação interhemisférica das descargas; pode causar síndrome de desconexão.",
       "Glioblastoma em borboleta: glioma de alto grau que se estende pelo joelho ou pelo esplênio e invade os dois hemisférios.",
       "Esclerose múltipla: placas desmielinizantes perpendiculares ao corpo caloso, com disposição periventricular, são comuns."
     ],
@@ -1468,7 +1468,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a corpo caloso",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1488,7 +1488,7 @@
   },
   "za:precentral-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro pré-central é o giro do lobo frontal que forma a parede anterior do sulco central, limitado anteriormente pelo sulco pré-central. Estende-se da fissura longitudinal do cérebro, na face medial, onde continua com o lóbulo paracentral, até o sulco lateral. É uma das principais referências da face lateral do hemisfério e contém o córtex motor primário (área 4 de Brodmann), origem de grande parte dos tratos corticoespinal e corticonuclear. O giro tem espessura cortical maior do que o giro pós-central, e o seu padrão em imagens de ressonância magnética inclui a chamada saliência da mão, uma dobra em forma de ômega invertido, que serve como referência da representação da mão. A organização é somatotópica, com o membro inferior na face medial, o tronco e o membro superior na convexidade, e a face, os lábios e a língua na parte inferior. O giro é par e a descrição vale para os dois hemisférios. Em direção anterior, a área pré-motora (área 6) planeja e seleciona os movimentos antes da execução pelo córtex motor primário. A lesão do giro causa déficits motores contralaterais.",
+    "summary_pt": "O giro pré-central é o giro do lobo frontal que forma a parede anterior do sulco central, limitado anteriormente pelo sulco pré-central. Estende-se da fissura longitudinal do cérebro, na face medial, onde continua com o lóbulo paracentral, até o sulco lateral. É uma das principais referências da face lateral do hemisfério e contém o córtex motor primário (área 4 de Brodmann), origem de parte dos tratos corticoespinal e corticonuclear. O giro tem espessura cortical maior do que o giro pós-central, e o seu padrão em imagens de ressonância magnética inclui a chamada saliência da mão, uma dobra em forma de ômega invertido, que serve como referência da representação da mão. A organização é somatotópica, com o membro inferior na face medial, o tronco e o membro superior na convexidade, e a face, os lábios e a língua na parte inferior. O giro é par e a descrição vale para os dois hemisférios. Em direção anterior, a área pré-motora (área 6) planeja e seleciona os movimentos antes da execução pelo córtex motor primário. A lesão do giro causa déficits motores contralaterais.",
     "anatomy": {
       "relations": "Limitado posteriormente pelo sulco central (que o separa do giro pós-central) e anteriormente pelo sulco pré-central (que o separa do giro frontal superior e do giro frontal médio na parte superior e do giro frontal inferior na parte inferior). Inferiormente chega ao sulco lateral, junto ao opérculo frontal.",
       "vascularization": "Face lateral: ramos da artéria cerebral média, entre eles os ramos do sulco pré-central e do sulco central. Face medial e margem superior: artéria cerebral anterior, por ramos paracentrais. A drenagem é feita por veias cerebrais superiores, para o seio sagital superior."
@@ -1566,7 +1566,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro pré-central",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1586,7 +1586,7 @@
   },
   "za:central-sulcus-r": {
     "ids": {},
-    "summary_pt": "O sulco central (de Rolando) é o sulco da face lateral do hemisfério que separa o lobo frontal do lobo parietal. Origina-se na face medial, próximo ao ponto médio da margem superior do hemisfério, e desce obliquamente para a frente e para baixo, em geral sem alcançar o sulco lateral, do qual costuma ser separado por uma pequena ponte cortical, o giro subcentral. Sua parede anterior é o giro pré-central, com o córtex motor primário, e a posterior é o giro pós-central, com o córtex somatossensorial primário; por isso é uma referência anatômica fundamental para localizar as áreas sensitivomotoras em exames de imagem e em cirurgias. É um sulco profundo e contínuo, de trajeto sinuoso, e na ressonância magnética pode ser identificado por características como a saliência da mão e a relação com o sulco pré-central e o ramo marginal do sulco do cíngulo. O sulco é par, sua forma pode variar discretamente entre indivíduos e entre os hemisférios, e a ficha vale para os dois lados. Por se tratar de um sulco, não tem patologia própria; sua importância clínica deriva das estruturas funcionais que o margeiam.",
+    "summary_pt": "O sulco central (de Rolando) é o sulco da face lateral do hemisfério que separa o lobo frontal do lobo parietal. Origina-se junto ao ponto médio da margem superior do hemisfério, que em geral recorta discretamente, e desce obliquamente para a frente e para baixo, em geral sem alcançar o sulco lateral, do qual costuma ser separado por uma pequena ponte cortical, o giro subcentral. Sua parede anterior é o giro pré-central, com o córtex motor primário, e a posterior é o giro pós-central, com o córtex somatossensorial primário; por isso é uma referência anatômica fundamental para localizar as áreas sensitivomotoras em exames de imagem e em cirurgias. É um sulco profundo e contínuo, de trajeto sinuoso, e na ressonância magnética pode ser identificado por características como a saliência da mão e a relação com o sulco pré-central e o ramo marginal do sulco do cíngulo. O sulco é par, sua forma pode variar discretamente entre indivíduos e entre os hemisférios, e a ficha vale para os dois lados. Por se tratar de um sulco, não tem patologia própria; sua importância clínica deriva das estruturas funcionais que o margeiam.",
     "anatomy": {
       "relations": "Separa o giro pré-central (anterior, lobo frontal) do giro pós-central (posterior, lobo parietal). Superiormente alcança a margem do hemisfério e, em geral, continua na face medial junto ao lóbulo paracentral. Inferiormente aproxima-se do sulco lateral, do qual é separado pelo giro subcentral.",
       "vascularization": "Percorrido por ramos da artéria cerebral média, entre eles as artérias do sulco pré-central e do sulco central, que irrigam as paredes do sulco. A drenagem venosa dá-se por veias cerebrais superiores, tributárias do seio sagital superior."
@@ -1663,7 +1663,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a sulco central",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1683,7 +1683,7 @@
   },
   "za:angular-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro angular é parte do lóbulo parietal inferior e corresponde, em grande parte, à área 39 de Brodmann. Arqueia a extremidade posterior do sulco temporal superior e situa-se posteriormente ao giro supramarginal, na junção dos lobos parietal, temporal e occipital. É área de associação multimodal que integra informações visuais, auditivas e somatossensoriais. No hemisfério dominante, em geral o esquerdo, participa da leitura e da escrita, da linguagem e do cálculo, ligando a representação visual das letras e dos números aos seus significados e sons. Conecta-se às regiões da linguagem, frontal e temporal, pelo fascículo arqueado e pelo fascículo longitudinal superior. No hemisfério não dominante, tem papel em atenção espacial e na integração da imagem corporal. É também parte de uma rede de modo padrão, associada à recuperação de memórias e à cognição social. Por ser uma estrutura par, a ficha vale para os dois lados, com especialização funcional distinta de acordo com a dominância hemisférica. A lesão do giro angular dominante produz um conjunto característico de déficits, descrito como síndrome de Gerstmann, e por isso é uma das áreas corticais mais cobradas em neuroanatomia clínica.",
+    "summary_pt": "O giro angular é parte do lóbulo parietal inferior e corresponde, em grande parte, à área 39 de Brodmann. Arqueia a extremidade posterior do sulco temporal superior e situa-se posteriormente ao giro supramarginal, na junção dos lobos parietal, temporal e occipital. É área de associação multimodal que integra informações visuais, auditivas e somatossensoriais. No hemisfério dominante, em geral o esquerdo, participa da leitura e da escrita, da linguagem e do cálculo, ligando a representação visual das letras e dos números aos seus significados e sons. Conecta-se às regiões da linguagem, frontal e temporal, pelo fascículo arqueado e pelo fascículo longitudinal superior. No hemisfério não dominante, tem papel em atenção espacial e na integração da imagem corporal. É também parte de uma rede de modo padrão, associada à recuperação de memórias e à cognição social. Por ser uma estrutura par, a ficha vale para os dois lados, com especialização funcional distinta de acordo com a dominância hemisférica. A lesão do giro angular dominante produz um conjunto característico de déficits, descrito como síndrome de Gerstmann.",
     "anatomy": {
       "relations": "Parte posterior do lóbulo parietal inferior, em torno da extremidade ascendente do sulco temporal superior, posterior ao giro supramarginal e anterior ao lobo occipital. Inferiormente relaciona-se com o giro temporal médio. Em profundidade, ao longo do corno occipital e do átrio do ventrículo lateral, passam a radiação óptica e fibras de associação.",
       "vascularization": "Artéria do giro angular, ramo terminal da artéria cerebral média (divisão inferior). Pode haver contribuição de ramos parietais posteriores da artéria cerebral posterior no limite com o lobo occipital. A drenagem venosa é feita por veias cerebrais superficiais, para os seios sagital superior e transverso."
@@ -1761,7 +1761,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro angular",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1783,7 +1783,7 @@
     "ids": {},
     "summary_pt": "O giro temporal superior forma a face superior e parte da face lateral do lobo temporal. Situa-se abaixo do sulco lateral e acima do sulco temporal superior. Em sua face superior, oculta no sulco lateral, localizam-se o plano polar, os giros temporais transversos (de Heschl), que contêm o córtex auditivo primário (áreas 41 e 42 de Brodmann), e o plano temporal. A área 22, posterior e lateral, corresponde ao córtex auditivo de associação e, no hemisfério dominante, à área de Wernicke, essencial para a compreensão da linguagem. O córtex auditivo primário recebe informações do corpo geniculado medial do tálamo pela radiação auditiva, com organização tonotópica: os sons agudos e graves são representados em porções diferentes do giro de Heschl. Como cada cóclea projeta-se bilateralmente, a lesão unilateral do córtex auditivo primário não causa surdez, mas dificulta a localização sonora. No hemisfério não dominante, a região participa da percepção de entonação e de música. A ficha vale para os dois hemisférios, com assimetria funcional da área 22 na linguagem.",
     "anatomy": {
-      "relations": "Limita-se superiormente pelo sulco lateral e inferiormente pelo sulco temporal superior, que o separa do giro temporal médio. Anteriormente continua com o polo temporal e, posteriormente, com o giro supramarginal e o giro angular. Na face superior (no assoalho do sulco lateral), os giros temporais transversos fazem limite com a ínsula.",
+      "relations": "Limita-se superiormente pelo sulco lateral e inferiormente pelo sulco temporal superior, que o separa do giro temporal médio. Anteriormente continua com o polo temporal e, posteriormente, com o giro supramarginal. Na face superior (no assoalho do sulco lateral), os giros temporais transversos fazem limite com a ínsula.",
       "vascularization": "Ramos temporais da artéria cerebral média (ramo inferior). A drenagem venosa é feita por veias cerebrais superficiais médias e inferiores, para o seio cavernoso e para o seio transverso."
     },
     "histology": {
@@ -1859,7 +1859,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro temporal superior",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1957,7 +1957,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro temporal inferior",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       },

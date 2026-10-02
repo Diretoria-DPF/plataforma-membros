@@ -108,7 +108,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Tratado de Fisiologia Médica, 14ª ed., capítulo Córtex cerebral e funções intelectuais; neurofisiologia central da visão, conforme a área",
+        "ref": "Tratado de Fisiologia Médica, 14ª ed., capítulo O sentido da audição",
         "obraId": "guyton",
         "license": "citação"
       }
@@ -228,7 +228,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -241,24 +241,24 @@
   },
   "za:precuneus-r": {
     "ids": {},
-    "summary_pt": "O pré-cúneo é a região da face medial do lobo parietal, de forma aproximadamente quadrilátera, situada entre o lobo paracentral, anteriormente, e o cúneo, posteriormente. É limitado pela parte marginal do sulco do cíngulo, anteriormente, pelo sulco parieto-occipital, posteriormente, e pelo sulco subparietal, inferiormente, que o separa do giro do cíngulo. Seu limite superior é a margem superomedial do hemisfério, onde se continua com o lobo parietal superior da face lateral. Corresponde em grande parte à área 7 de Brodmann medial, uma área de associação multimodal. Está envolvido na integração visuoespacial, na orientação do movimento no espaço, na imagética mental e na recuperação da memória episódica, além de integrar, com o giro do cíngulo posterior, a rede de modo padrão, ativa em repouso vigilante. Mantém conexões com o lobo parietal inferior, o córtex pré-frontal, o tálamo e o giro do cíngulo. A irrigação deriva principalmente da artéria cerebral anterior, com contribuição da artéria cerebral posterior, e a drenagem venosa ocorre para o seio sagital superior. O pré-cúneo é um dos primeiros sítios de alteração funcional na doença de Alzheimer.",
+    "summary_pt": "O pré-cúneo é a região da face medial do lobo parietal, de forma aproximadamente quadrilátera, situada entre o lóbulo paracentral, anteriormente, e o cúneo, posteriormente. É limitado pela parte marginal do sulco do cíngulo, anteriormente, pelo sulco parieto-occipital, posteriormente, e pelo sulco subparietal, inferiormente, que o separa do giro do cíngulo. Seu limite superior é a margem superomedial do hemisfério, onde se continua com o lóbulo parietal superior da face lateral. Corresponde em grande parte à área 7 de Brodmann medial, uma área de associação multimodal. Está envolvido na integração visuoespacial, na orientação do movimento no espaço, na imagética mental e na recuperação da memória episódica, além de integrar, com o giro do cíngulo posterior, a rede de modo padrão, ativa em repouso vigilante. Mantém conexões com o lóbulo parietal inferior, o córtex pré-frontal, o tálamo e o giro do cíngulo. A irrigação deriva principalmente da artéria cerebral anterior, com contribuição da artéria cerebral posterior, e a drenagem venosa ocorre para o seio sagital superior. Na doença de Alzheimer, a região parietal medial posterior, incluindo o pré-cúneo, mostra alterações funcionais em exames de imagem.",
     "anatomy": {
-      "relations": "Face medial do hemisfério, entre o lobo paracentral (anterior) e o cúneo (posterior). Seus limites são a parte marginal do sulco do cíngulo, o sulco subparietal (que o separa do giro do cíngulo) e o sulco parieto-occipital. Lateral à foice do cérebro e acima do esplênio do corpo caloso, relaciona-se com a cisterna pericalosa por meio das meninges.",
-      "vascularization": "Ramo pré-cuneal da artéria cerebral anterior (artéria pericalosa) e ramos parietais da artéria cerebral posterior, na transição com o território do cúneo. A drenagem venosa dá-se por veias cerebrais mediais superiores, que desembocam no seio sagital superior.",
-      "innervation": "Conexões principais: associação com o lobo parietal superior e inferior, o córtex pré-frontal e o giro do cíngulo posterior; projeções para o tálamo e o estriado; conexões com áreas visuais e motoras que sustentam a integração visuoespacial."
+      "relations": "Face medial do hemisfério, entre o lóbulo paracentral (anterior) e o cúneo (posterior). Seus limites são a parte marginal do sulco do cíngulo, o sulco subparietal (que o separa do giro do cíngulo) e o sulco parieto-occipital. Lateral à foice do cérebro e acima do esplênio do corpo caloso, relaciona-se com a cisterna pericalosa por meio das meninges.",
+      "vascularization": "Ramo pré-cuneal da artéria cerebral anterior (artéria pericalosa) e ramo parieto-occipital da artéria cerebral posterior, na transição com o território do cúneo. A drenagem venosa dá-se por veias cerebrais mediais superiores, que desembocam no seio sagital superior.",
+      "innervation": "Conexões principais: associação com o lóbulo parietal superior e inferior, o córtex pré-frontal e o giro do cíngulo posterior; projeções para o tálamo e o estriado; conexões com áreas visuais e motoras que sustentam a integração visuoespacial."
     },
     "histology": {
       "tissues": [
-        "Córtex de associação parietal, tipo neocortical (isocórtex heterotípico), com camada IV evidente e abundantes neurônios piramidais nas camadas III e V",
+        "Córtex de associação parietal, tipo neocortical (isocórtex homotípico), com camada IV evidente e abundantes neurônios piramidais nas camadas III e V",
         "Neuróglia: astrócitos, oligodendrócitos, micróglia, além de vasos capilares com barreira hematoencefálica",
         "Substância branca subjacente: fibras mielinizadas de associação, comissurais e de projeção, envoltas por oligodendrócitos",
         "Leptomeninges (pia-máter e aracnoide) recobrem a superfície, com a pia-máter aderida ao córtex"
       ]
     },
     "clinical": [
-      "Doença de Alzheimer: a região medial parietal posterior, incluindo o pré-cúneo, mostra hipometabolismo precoce em exames funcionais, associado ao comprometimento da memória episódica.",
+      "Doença de Alzheimer: a região parietal medial posterior, incluindo o pré-cúneo, é acometida no curso da doença, com repercussão sobre a memória episódica.",
       "Lesões parietais posteriores: podem causar ataxia óptica e déficits de orientação visuoespacial, com dificuldade de alcançar objetos sob controle visual.",
-      "Acidente vascular cerebral no território da artéria cerebral anterior: pode comprometer o pré-cúneo e o lobo paracentral, associando déficits visuoespaciais e fraqueza do membro inferior contralateral."
+      "Acidente vascular cerebral no território da artéria cerebral anterior: pode comprometer o pré-cúneo e o lóbulo paracentral, associando déficits visuoespaciais e fraqueza do membro inferior contralateral."
     ],
     "sources": [
       {
@@ -348,7 +348,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -361,11 +361,11 @@
   },
   "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro lingual, apresentado neste atlas também como parte do giro occipitotemporal medial, ocupa a face medial e inferior do lobo occipital. Situa-se entre o sulco calcarino, acima, e o sulco colateral, abaixo, e se estende do polo occipital até a região do istmo, onde se continua anteriormente com o giro parahipocampal, formando uma faixa contínua na face medial e ventral do hemisfério. Funcionalmente pertence ao sistema visual: sua porção posterior contém córtex visual primário, na margem inferior do sulco calcarino, e a porção anterior contém áreas de associação visual da via ventral, relacionadas ao reconhecimento de formas, cores e à leitura de palavras. Por sua posição, recebe informações dos quadrantes superiores do campo visual contralateral. A irrigação é feita sobretudo por ramos da artéria cerebral posterior, em especial pela artéria calcarina e pelos ramos temporais posteriores. Lesões do giro lingual associam-se a defeitos do campo visual e a distúrbios do reconhecimento visual, e sua relação com o giro parahipocampal o torna um marco para o limite entre as regiões occipital e temporal ventral nos exames de imagem.",
+    "summary_pt": "O giro lingual ocupa a face medial e inferior do lobo occipital. O rótulo do atlas Allen reúne giro lingual e giro occipitotemporal medial; na Terminologia Anatômica são giros distintos (o giro occipitotemporal medial corresponde ao giro para-hipocampal), e esta ficha descreve o giro lingual. Situa-se entre o sulco calcarino, acima, e o sulco colateral, abaixo, e se estende do polo occipital até a região do istmo, onde se continua anteriormente com o giro para-hipocampal, formando uma faixa contínua na face medial e ventral do hemisfério. Funcionalmente pertence ao sistema visual: sua porção posterior contém córtex visual primário, na margem inferior do sulco calcarino, e a porção anterior contém áreas de associação visual da via ventral, relacionadas ao reconhecimento de formas, cores e à leitura de palavras. Por sua posição, recebe informações dos quadrantes superiores do campo visual contralateral. A irrigação é feita sobretudo por ramos da artéria cerebral posterior, em especial pela artéria calcarina e pelos ramos temporais posteriores. Lesões do giro lingual associam-se a defeitos do campo visual e a distúrbios do reconhecimento visual, e sua relação com o giro para-hipocampal o torna um marco para o limite entre as regiões occipital e temporal ventral nos exames de imagem.",
     "anatomy": {
-      "relations": "Face medial e inferior do lobo occipital, entre o sulco calcarino (superior) e o sulco colateral (inferior). Anteriormente continua-se com o giro parahipocampal; posteriormente alcança o polo occipital. Apoia-se sobre a tenda do cerebelo, que o separa do cerebelo, e relaciona-se medialmente com a foice do cérebro.",
+      "relations": "Face medial e inferior do lobo occipital, entre o sulco calcarino (superior) e o sulco colateral (inferior). Anteriormente continua-se com o giro para-hipocampal; posteriormente alcança o polo occipital. Apoia-se sobre a tenda do cerebelo, que o separa do cerebelo, e relaciona-se medialmente com a foice do cérebro.",
       "vascularization": "Artéria cerebral posterior, por meio da artéria calcarina e das artérias temporais inferiores posteriores (occipitotemporais). A drenagem venosa ocorre por veias occipitais internas e pela veia basal, que desembocam na veia cerebral magna e nos seios da dura-máter.",
-      "innervation": "Conexões principais: recebe, na porção posterior, as radiações ópticas oriundas do corpo geniculado lateral; a porção anterior troca fibras com o giro fusiforme e o giro parahipocampal, conectando a via visual ventral à memória visual."
+      "innervation": "Conexões principais: recebe, na porção posterior, as radiações ópticas oriundas do corpo geniculado lateral; a porção anterior troca fibras com o giro fusiforme e o giro para-hipocampal, conectando a via visual ventral à memória visual."
     },
     "histology": {
       "tissues": [
@@ -468,7 +468,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -481,15 +481,15 @@
   },
   "za:postcentral-sulcus-r": {
     "ids": {},
-    "summary_pt": "O sulco pós-central é o sulco da face lateral do hemisfério cerebral que delimita posteriormente o giro pós-central, sede do córtex somestésico primário (áreas 3, 1 e 2 de Brodmann). Dispõe-se aproximadamente paralelo ao sulco central, com direção oblíqua de cima para baixo e para frente, e geralmente se une, em sua parte posterior, ao sulco intraparietal, que separa o lobo parietal superior do lobo parietal inferior. Muitas vezes é interrompido em segmentos superior e inferior. Como limite posterior do giro pós-central, serve de referência para identificar o sulco central nos exames de imagem e durante cirurgias, em que a contagem de sulcos e giros auxilia na localização da área sensitiva primária. Os sulcos aumentam a superfície do córtex, e cerca de dois terços da superfície cortical situam-se em suas paredes. A irrigação do sulco e das paredes vizinhas provém de ramos parietais da artéria cerebral média, que também nutrem o giro pós-central na convexidade, e a drenagem venosa ocorre por veias cerebrais superiores. A lesão do córtex ao redor do sulco produz déficits sensitivos contralaterais, que variam com a região somatotópica afetada.",
+    "summary_pt": "O sulco pós-central é o sulco da face lateral do hemisfério cerebral que delimita posteriormente o giro pós-central, sede do córtex somestésico primário (áreas 3, 1 e 2 de Brodmann). Dispõe-se aproximadamente paralelo ao sulco central, com direção oblíqua de cima para baixo e para frente, e geralmente se une, em sua parte posterior, ao sulco intraparietal, que separa o lóbulo parietal superior do lóbulo parietal inferior. Muitas vezes é interrompido em segmentos superior e inferior. Como limite posterior do giro pós-central, serve de referência para identificar o sulco central nos exames de imagem e durante cirurgias, em que a contagem de sulcos e giros auxilia na localização da área sensitiva primária. Os sulcos aumentam a superfície do córtex, e cerca de dois terços da superfície cortical situam-se em suas paredes. A irrigação do sulco e das paredes vizinhas provém de ramos parietais da artéria cerebral média, que também nutrem o giro pós-central na convexidade, e a drenagem venosa ocorre por veias cerebrais superiores. A lesão do córtex ao redor do sulco produz déficits sensitivos contralaterais, que variam com a região somatotópica afetada.",
     "anatomy": {
-      "relations": "Na face dorsolateral do hemisfério, posterior ao giro pós-central, que o separa do giro pré-central pelo sulco central. Posteriormente limita o lobo parietal superior e o lobo parietal inferior, com o sulco intraparietal em continuidade. Em profundidade relaciona-se com a substância branca da coroa radiada; externamente, com o osso parietal, por meio das meninges.",
+      "relations": "Na face dorsolateral do hemisfério, posterior ao giro pós-central, que o separa do giro pré-central pelo sulco central. Posteriormente limita o lóbulo parietal superior e o lóbulo parietal inferior, com o sulco intraparietal em continuidade. Em profundidade relaciona-se com a substância branca da coroa radiada; externamente, com o osso parietal, por meio das meninges.",
       "vascularization": "Ramos parietais da artéria cerebral média, que percorrem os sulcos central, pós-central e intraparietal. A drenagem venosa ocorre pelas veias cerebrais superiores, para o seio sagital superior.",
       "innervation": "Conexões principais: as paredes anteriores do sulco pertencem ao córtex somestésico primário, que recebe fibras do núcleo ventral posterior do tálamo; as paredes posteriores integram áreas parietais de associação sensitiva."
     },
     "histology": {
       "tissues": [
-        "Neocórtex de seis camadas; a parede anterior, no giro pós-central, é córtex granular (koniocórtex) com camada IV muito espessa, enquanto a parede posterior tem transição para isocórtex de associação",
+        "Neocórtex de seis camadas; o giro pós-central é granular (koniocórtex, área 3) na parede posterior do sulco central, e a parede anterior do sulco pós-central (áreas 1 e 2) tem camada IV menos espessa, em transição para o isocórtex de associação parietal",
         "Neuróglia: astrócitos, oligodendrócitos, micróglia, além de vasos capilares com barreira hematoencefálica",
         "Substância branca subjacente: fibras mielinizadas de associação, comissurais e de projeção, envoltas por oligodendrócitos",
         "Leptomeninges (pia-máter e aracnoide) recobrem a superfície, com a pia-máter aderida ao córtex"
@@ -588,7 +588,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Tratado de Fisiologia Médica, 14ª ed., capítulo Córtex cerebral e funções intelectuais; neurofisiologia central da visão, conforme a área",
+        "ref": "Tratado de Fisiologia Médica, 14ª ed., capítulo Sensações somáticas: organização geral, sentidos tátil e de posição",
         "obraId": "guyton",
         "license": "citação"
       }
@@ -601,7 +601,7 @@
   },
   "za:medial-occipitotemporal-gyrus-parahippocampal-r": {
     "ids": {},
-    "summary_pt": "O giro parahipocampal, também denominado giro occipitotemporal medial, ocupa a face medial e inferior do lobo temporal. Situa-se entre o sulco do hipocampo, medialmente, e o sulco colateral, lateralmente. Anteriormente, sua extremidade se curva sobre si mesma e forma o unco, dilatação que se projeta em direção à incisura da tenda do cerebelo. Posteriormente, continua-se com o giro lingual e, por uma estreita ponte chamada istmo, com o giro do cíngulo. A porção anterior contém o córtex entorrinal (área 28 de Brodmann), principal via de entrada e saída de informações do hipocampo, que une o neocórtex à formação do hipocampo pelo circuito do hipocampo, e o giro integra o sistema límbico. Participa da codificação de memórias espaciais e episódicas, e a região posterior, o córtex parahipocampal, é importante para o reconhecimento de cenas e de contextos espaciais. A irrigação provém de ramos da artéria cerebral posterior e, no unco, também da artéria corióidea anterior. Por sua proximidade com o tronco encefálico e a incisura da tenda, o unco tem grande importância clínica nas herniações transtentoriais.",
+    "summary_pt": "O giro para-hipocampal, também denominado giro occipitotemporal medial, ocupa a face medial e inferior do lobo temporal. Situa-se entre o sulco do hipocampo, medialmente, e o sulco colateral, lateralmente. Anteriormente, sua extremidade se curva sobre si mesma e forma o unco, dilatação que se projeta em direção à incisura da tenda do cerebelo. Posteriormente, continua-se com o giro lingual e, por uma estreita ponte chamada istmo, com o giro do cíngulo. A porção anterior contém o córtex entorrinal (área 28 de Brodmann), principal via de entrada e saída de informações do hipocampo, que une o neocórtex à formação do hipocampo pelo circuito do hipocampo, e o giro integra o sistema límbico. Participa da codificação de memórias espaciais e episódicas, e a região posterior, o córtex para-hipocampal, é importante para o reconhecimento de cenas e de contextos espaciais. A irrigação provém de ramos da artéria cerebral posterior e, no unco, também da artéria corióidea anterior. Por sua proximidade com o tronco encefálico e a incisura da tenda, o unco tem grande importância clínica nas herniações transtentoriais.",
     "anatomy": {
       "relations": "Face medial e inferior do lobo temporal, entre o sulco do hipocampo (medial) e o sulco colateral (lateral). Anteriormente forma o unco; posteriormente continua-se com o giro lingual e, pelo istmo, com o giro do cíngulo. Medialmente relaciona-se com o mesencéfalo e com a cisterna ambiente, e inferiormente com a tenda do cerebelo. Em profundidade, o subículo e o hipocampo repousam sobre ele, junto ao corno temporal do ventrículo lateral.",
       "vascularization": "Artéria cerebral posterior, por seus ramos temporais inferiores e hipocampais; o unco recebe também ramos da artéria corióidea anterior. A drenagem venosa é feita pela veia basal (de Rosenthal), tributária da veia cerebral magna.",
@@ -617,8 +617,8 @@
     },
     "clinical": [
       "Herniação uncal (transtentorial): o unco desloca-se pela incisura da tenda, comprime o nervo oculomotor, com midríase ipsilateral, e o mesencéfalo, com rebaixamento do nível de consciência.",
-      "Doença de Alzheimer: as alterações neurofibrilares iniciam-se no córtex entorrinal e no giro parahipocampal, o que explica a perda precoce de memória episódica.",
-      "Epilepsia do lobo temporal mesial: atrofia e esclerose da formação do hipocampo e do giro parahipocampal associam-se a crises focais com aura epigástrica e automatismos."
+      "Doença de Alzheimer: as alterações neurofibrilares iniciam-se no córtex entorrinal e no giro para-hipocampal, o que explica a perda precoce de memória episódica.",
+      "Epilepsia do lobo temporal mesial: atrofia e esclerose da formação do hipocampo e do giro para-hipocampal associam-se a crises focais com aura epigástrica e automatismos."
     ],
     "sources": [
       {
@@ -708,7 +708,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -721,22 +721,22 @@
   },
   "za:allen-cingulate-gyrus-caudal-posterior-part-r": {
     "ids": {},
-    "summary_pt": "A parte caudal posterior do giro do cíngulo corresponde ao córtex cingulado posterior e à região retroesplenial, situadas na face medial do hemisfério cerebral. O giro do cíngulo arqueia-se acima do corpo caloso, do qual o separa o sulco do corpo caloso, e é separado do giro frontal superior e do lobo paracentral pelo sulco do cíngulo. Em sua parte posterior, contorna o esplênio do corpo caloso e, pelo istmo, continua-se com o giro parahipocampal, formando o limite entre as porções límbicas do lobo frontal e do lobo temporal. Corresponde em grande parte às áreas 23 e 31 de Brodmann. Integra o sistema límbico e, com o pré-cúneo, constitui um núcleo da rede de modo padrão, relacionada à memória autobiográfica, à autorreferência e à orientação espacial. Recebe aferências do núcleo anterior do tálamo e do córtex parahipocampal e do hipocampo, e se conecta ao córtex pré-frontal medial. A irrigação provém de ramos da artéria pericalosa, da artéria cerebral anterior, e de ramos esplenais da artéria cerebral posterior. A drenagem venosa ocorre para os seios sagitais e para a veia cerebral magna.",
+    "summary_pt": "Este rótulo provém do atlas Allen e não é termo da Terminologia Anatômica; corresponde de forma aproximada à parte posterior do giro do cíngulo. A parte caudal posterior do giro do cíngulo corresponde ao córtex cingulado posterior e à região retroesplenial, situadas na face medial do hemisfério cerebral. O giro do cíngulo arqueia-se acima do corpo caloso, do qual o separa o sulco do corpo caloso, e é separado do giro frontal superior e do lóbulo paracentral pelo sulco do cíngulo. Em sua parte posterior, contorna o esplênio do corpo caloso e, pelo istmo, continua-se com o giro para-hipocampal, formando o limite entre as porções límbicas do lobo frontal e do lobo temporal. Corresponde em grande parte às áreas 23 e 31 de Brodmann. Integra o sistema límbico e, com o pré-cúneo, constitui um núcleo da rede de modo padrão, relacionada à memória autobiográfica, à autorreferência e à orientação espacial. Recebe aferências do núcleo anterior do tálamo e do córtex para-hipocampal e do hipocampo, e se conecta ao córtex pré-frontal medial. A irrigação provém de ramos da artéria pericalosa, da artéria cerebral anterior, e de ramos esplenais da artéria cerebral posterior. A drenagem venosa ocorre para os seios sagitais e para a veia cerebral magna.",
     "anatomy": {
-      "relations": "Face medial do hemisfério, acima do tronco e do esplênio do corpo caloso, de que se separa pelo sulco do corpo caloso. Superiormente o sulco do cíngulo o separa do pré-cúneo e do lobo paracentral. Posteriormente continua-se com o istmo do giro do cíngulo e o giro parahipocampal. Relaciona-se com a foice do cérebro e com a cisterna pericalosa.",
+      "relations": "Face medial do hemisfério, acima do tronco e do esplênio do corpo caloso, de que se separa pelo sulco do corpo caloso. Superiormente o sulco do cíngulo o separa do pré-cúneo e do lóbulo paracentral. Posteriormente continua-se com o istmo do giro do cíngulo e o giro para-hipocampal. Relaciona-se com a foice do cérebro e com a cisterna pericalosa.",
       "vascularization": "Ramos da artéria pericalosa (artéria cerebral anterior), com contribuição de ramos esplenais da artéria cerebral posterior. A drenagem venosa ocorre por veias cerebrais mediais, para o seio sagital inferior e o seio sagital superior, e por veias que alcançam a veia cerebral magna.",
-      "innervation": "Conexões principais: aferências do núcleo anterior do tálamo, do hipocampo (via parahipocampal) e de áreas de associação parietais; projeções para o córtex pré-frontal medial e o giro parahipocampal, constituindo parte do circuito de Papez."
+      "innervation": "Conexões principais: aferências do núcleo anterior do tálamo, do hipocampo (via para-hipocampal) e de áreas de associação parietais; projeções para o córtex pré-frontal medial e o giro para-hipocampal, constituindo parte do circuito de Papez."
     },
     "histology": {
       "tissues": [
-        "Córtex límbico de transição (mesocórtex) com camada IV presente porém delgada na região retroesplenial e no cíngulo posterior, e abundância de neurônios piramidais nas camadas III e V",
+        "Córtex límbico de transição (mesocórtex), com camada IV presente, porém delgada, no cíngulo posterior (áreas 23 e 31); a região retroesplenial (áreas 29 e 30) tem córtex granular a disgranular; abundância de neurônios piramidais nas camadas III e V",
         "Neuróglia: astrócitos, oligodendrócitos, micróglia, além de vasos capilares com barreira hematoencefálica",
         "Substância branca subjacente: fibras mielinizadas de associação, comissurais e de projeção, envoltas por oligodendrócitos",
         "Leptomeninges (pia-máter e aracnoide) recobrem a superfície, com a pia-máter aderida ao córtex"
       ]
     },
     "clinical": [
-      "Doença de Alzheimer: o córtex cingulado posterior e o pré-cúneo apresentam hipometabolismo precoce em exames funcionais, antes de alterações estruturais evidentes.",
+      "Doença de Alzheimer: o córtex cingulado posterior e o pré-cúneo são acometidos no curso da doença, com repercussão sobre a memória episódica.",
       "Amnésia retroesplenial: lesões da região retroesplenial, por infarto ou tumor, podem causar amnésia anterógrada e desorientação espacial.",
       "Acidente vascular cerebral no território da artéria cerebral anterior ou posterior: o território cingulado posterior é vulnerável nas oclusões de ramos pericalosos."
     ],
@@ -828,7 +828,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -841,11 +841,11 @@
   },
   "za:collateral-sulcus-r": {
     "ids": {},
-    "summary_pt": "O sulco colateral é um sulco longo e profundo da face inferior (tentorial) do hemisfério cerebral, que se estende do polo occipital em direção ao polo temporal, na transição entre os lobos occipital e temporal. Separa, medialmente, o giro lingual e o giro parahipocampal do giro occipitotemporal lateral (giro fusiforme), lateralmente. Em sua parte anterior pode continuar-se com o sulco rinal, que limita o córtex entorrinal. Sua profundidade é tal que produz, na parede ventricular, uma saliência chamada eminência colateral, no assoalho do corno temporal do ventrículo lateral, e o trígono colateral, no átrio. Por isso, o sulco colateral e o hipocampo servem de referência para reconhecer o corno temporal em cortes de ressonância magnética. As paredes do sulco são córtex de associação visual e de associação temporal ventral, com neurônios dispostos em seis camadas. A irrigação provém de ramos temporais inferiores e occipitais da artéria cerebral posterior, e a drenagem venosa ocorre pela veia basal e por veias occipitais, para os seios da dura-máter. Como todo sulco, amplia a área do córtex acomodada no crânio e orienta a delimitação de giros vizinhos nos exames de imagem.",
+    "summary_pt": "O sulco colateral é um sulco longo e profundo da face inferior (tentorial) do hemisfério cerebral, que se estende do polo occipital em direção ao polo temporal, na transição entre os lobos occipital e temporal. Separa, medialmente, o giro lingual e o giro para-hipocampal do giro occipitotemporal lateral (giro fusiforme), lateralmente. Em sua parte anterior pode continuar-se com o sulco rinal, que limita o córtex entorrinal. Sua profundidade é tal que produz, na parede ventricular, uma saliência chamada eminência colateral, no assoalho do corno temporal do ventrículo lateral, e o trígono colateral, no átrio. Por isso, o sulco colateral e o hipocampo servem de referência para reconhecer o corno temporal em cortes de ressonância magnética. As paredes do sulco são córtex de associação visual e de associação temporal ventral, com neurônios dispostos em seis camadas. A irrigação provém de ramos temporais inferiores e occipitais da artéria cerebral posterior, e a drenagem venosa ocorre pela veia basal e por veias occipitais, para os seios da dura-máter. Como todo sulco, amplia a área do córtex acomodada no crânio e orienta a delimitação de giros vizinhos nos exames de imagem.",
     "anatomy": {
-      "relations": "Face inferior dos lobos temporal e occipital, entre o giro parahipocampal e o giro lingual, medialmente, e o giro occipitotemporal lateral, lateralmente. Em profundidade forma a eminência colateral no assoalho do corno temporal do ventrículo lateral. Inferiormente repousa sobre a tenda do cerebelo, separado dela pelas meninges.",
+      "relations": "Face inferior dos lobos temporal e occipital, entre o giro para-hipocampal e o giro lingual, medialmente, e o giro occipitotemporal lateral, lateralmente. Em profundidade forma a eminência colateral no assoalho do corno temporal do ventrículo lateral. Inferiormente repousa sobre a tenda do cerebelo, separado dela pelas meninges.",
       "vascularization": "Ramos temporais inferiores e occipitais da artéria cerebral posterior, que percorrem o sulco. A drenagem venosa é feita por veias temporais inferiores e occipitais, que alcançam a veia basal e os seios da dura-máter, como o seio transverso.",
-      "innervation": "Conexões principais: as paredes participam das vias visuais ventrais e das conexões do giro parahipocampal; fibras de associação curtas em U ligam os giros adjacentes, e fibras longas, como o fascículo longitudinal inferior, percorrem a substância branca vizinha."
+      "innervation": "Conexões principais: as paredes participam das vias visuais ventrais e das conexões do giro para-hipocampal; fibras de associação curtas em U ligam os giros adjacentes, e fibras longas, como o fascículo longitudinal inferior, percorrem a substância branca vizinha."
     },
     "histology": {
       "tissues": [
@@ -857,7 +857,7 @@
     },
     "clinical": [
       "Marco de neuroimagem: a eminência colateral e o sulco colateral ajudam a identificar o corno temporal e o hipocampo nas ressonâncias magnéticas de pacientes com epilepsia temporal.",
-      "Esclerose mesial temporal: a atrofia da formação do hipocampo e do giro parahipocampal adjacente é causa frequente de epilepsia do lobo temporal resistente a fármacos.",
+      "Esclerose mesial temporal: a atrofia da formação do hipocampo e do giro para-hipocampal adjacente é causa frequente de epilepsia do lobo temporal resistente a fármacos.",
       "Infarto da artéria cerebral posterior: pode comprometer o córtex da região do sulco colateral, com defeitos de campo visual e distúrbios de reconhecimento visual."
     ],
     "sources": [
@@ -948,7 +948,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -961,10 +961,10 @@
   },
   "za:allen-inferior-occipital-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro occipital inferior ocupa a parte inferior da face lateral do lobo occipital, junto ao limite com a face inferior do hemisfério. Limita-se superiormente por um sulco occipital, que o separa do giro occipital lateral, e inferiormente continua-se com a face tentorial, adjacente ao giro occipitotemporal lateral. Pertence ao córtex visual de associação, correspondendo em grande parte às áreas 18 e 19 de Brodmann, que recebem informações da área visual primária e as processam em vias especializadas. Contribui para a via ventral do reconhecimento visual, relacionada à identificação de formas, objetos e faces, com áreas como a área occipital das faces. Recebe a representação de porções do campo visual contralateral. A irrigação provém principalmente de ramos occipitais e temporais posteriores da artéria cerebral posterior, com contribuição de ramos terminais da artéria cerebral média nas margens, o que torna a região uma zona de transição entre territórios arteriais. A drenagem venosa ocorre por veias occipitais para o seio transverso. Lesões bilaterais extensas do córtex occipital causam cegueira cortical, e lesões unilaterais produzem defeitos de campo visual e distúrbios do reconhecimento visual.",
+    "summary_pt": "Este rótulo provém do atlas Allen e não é termo da Terminologia Anatômica; corresponde de forma aproximada à porção inferior da face lateral do lobo occipital. O giro occipital inferior ocupa a parte inferior da face lateral do lobo occipital, junto ao limite com a face inferior do hemisfério. Limita-se superiormente por um sulco occipital, que o separa do giro occipital lateral, e inferiormente continua-se com a face tentorial, adjacente ao giro occipitotemporal lateral. Pertence ao córtex visual de associação, correspondendo em grande parte às áreas 18 e 19 de Brodmann, que recebem informações da área visual primária e as processam em vias especializadas. Contribui para a via ventral do reconhecimento visual, relacionada à identificação de formas, objetos e faces, com áreas como a área occipital das faces. Recebe a representação de porções do campo visual contralateral. A irrigação provém principalmente de ramos occipitais e temporais posteriores da artéria cerebral posterior, com contribuição de ramos terminais da artéria cerebral média nas margens, o que torna a região uma zona de transição entre territórios arteriais. A drenagem venosa ocorre por veias occipitais para o seio transverso. Lesões bilaterais extensas do córtex occipital causam cegueira cortical, e lesões unilaterais produzem defeitos de campo visual e distúrbios do reconhecimento visual. A Terminologia Anatômica descreve giros occipitais laterais na face lateral do lobo occipital, separados pelos sulcos occipitais laterais; o atlas Allen distingue três giros (superior, lateral ou médio e inferior).",
     "anatomy": {
       "relations": "Face lateral inferior do lobo occipital, limitada por um sulco occipital, superiormente, e contínua com a face inferior, junto ao giro occipitotemporal lateral. Anteriormente é limitada pela incisura pré-occipital. Externamente relaciona-se com o osso occipital, por meio das meninges, e inferiormente com o seio transverso e a tenda do cerebelo.",
-      "vascularization": "Ramos occipitais e temporais posteriores da artéria cerebral posterior, com contribuição de ramos terminais da artéria cerebral média nas margens do território. A drenagem venosa ocorre por veias occipitais externas e inferiores, tributárias do seio transverso.",
+      "vascularization": "Ramos temporais (inferiores) e occipitais da artéria cerebral posterior (calcarino e parieto-occipital, nas áreas adjacentes), com contribuição de ramos terminais da artéria cerebral média nas margens do território. A drenagem venosa ocorre por veias occipitais externas e inferiores, tributárias do seio transverso.",
       "innervation": "Conexões principais: recebe fibras do córtex visual primário (área 17) e das áreas 18 e 19; projeta-se para o giro fusiforme e o lobo temporal inferior, pela via ventral, e para o lobo parietal, pela via dorsal."
     },
     "histology": {
@@ -1068,7 +1068,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -1081,9 +1081,9 @@
   },
   "za:allen-superior-occipital-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro occipital superior ocupa a parte superior da face lateral do lobo occipital, ao longo da margem superomedial do hemisfério. Dispõe-se acima do giro occipital lateral, de que o separa um sulco occipital da face lateral, e, anteriormente, aproxima-se do lobo parietal superior, sem limite nítido, pois o sulco parieto-occipital marca a divisão na face medial. Corresponde em grande parte às áreas 18 e 19 de Brodmann, de associação visual, e integra a via visual dorsal, que conduz as informações ao lobo parietal posterior e atende às funções de localização espacial, de percepção de movimento e de guia visual das ações motoras. Recebe a representação das partes inferior e periférica do campo visual contralateral. A irrigação provém de ramos da artéria cerebral posterior e, em sua margem anterior e lateral, de ramos da artéria cerebral média, e a região do polo occipital é uma zona de transição entre esses territórios. A drenagem venosa dirige-se ao seio sagital superior e ao seio transverso. Lesões bilaterais das regiões occipitoparietais produzem a síndrome de Balint, com déficits de atenção visual, de coordenação visuomotora e de movimentos oculares dirigidos.",
+    "summary_pt": "Este rótulo provém do atlas Allen e não é termo da Terminologia Anatômica; corresponde de forma aproximada à porção superior da face lateral do lobo occipital. O giro occipital superior ocupa a parte superior da face lateral do lobo occipital, ao longo da margem superomedial do hemisfério. Dispõe-se acima do giro occipital lateral, de que o separa um sulco occipital da face lateral, e, anteriormente, aproxima-se do lóbulo parietal superior, sem limite nítido, pois o sulco parieto-occipital marca a divisão na face medial. Corresponde em grande parte às áreas 18 e 19 de Brodmann, de associação visual, e integra a via visual dorsal, que conduz as informações ao lobo parietal posterior e atende às funções de localização espacial, de percepção de movimento e de guia visual das ações motoras. Recebe a representação das partes inferior e periférica do campo visual contralateral. A irrigação provém de ramos da artéria cerebral posterior e, em sua margem anterior e lateral, de ramos da artéria cerebral média, e a região do polo occipital é uma zona de transição entre esses territórios. A drenagem venosa dirige-se ao seio sagital superior e ao seio transverso. Lesões bilaterais das regiões occipitoparietais produzem a síndrome de Balint, com déficits de atenção visual, de coordenação visuomotora e de movimentos oculares dirigidos. A Terminologia Anatômica descreve giros occipitais laterais na face lateral do lobo occipital, separados pelos sulcos occipitais laterais; o atlas Allen distingue três giros (superior, lateral ou médio e inferior).",
     "anatomy": {
-      "relations": "Parte superior da face lateral do lobo occipital, acima do giro occipital lateral e contígua à margem superomedial do hemisfério. Anteriormente passa, sem limite nítido, ao lobo parietal superior e ao lobo parietal inferior; medialmente continua-se com o cúneo. Externamente, repousa sob o osso occipital e o parietal, separado deles pelas meninges.",
+      "relations": "Parte superior da face lateral do lobo occipital, acima do giro occipital lateral e contígua à margem superomedial do hemisfério. Anteriormente passa, sem limite nítido, ao lóbulo parietal superior e ao lóbulo parietal inferior; medialmente continua-se com o cúneo. Externamente, repousa sob o osso occipital e o parietal, separado deles pelas meninges.",
       "vascularization": "Ramos occipitais e parieto-occipitais da artéria cerebral posterior, com contribuição de ramos da artéria cerebral média nas margens anterior e lateral. A drenagem venosa é feita por veias cerebrais superiores e occipitais, tributárias do seio sagital superior e do seio transverso.",
       "innervation": "Conexões principais: recebe fibras das áreas visuais 17 e 18 e projeta-se ao lobo parietal posterior pela via visual dorsal; conecta-se com o campo ocular parietal e com áreas motoras e pré-motoras, que guiam o olhar e a mão."
     },
@@ -1188,7 +1188,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -1201,9 +1201,9 @@
   },
   "za:lingual-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro lingual é um giro da face medial e inferior do lobo occipital, de forma alongada, que se dispõe abaixo do sulco calcarino e acima do sulco colateral. Estende-se do polo occipital até a região do istmo, onde se continua com o giro parahipocampal. Forma, com o cúneo, que se situa acima do sulco calcarino, o conjunto que circunda o sulco calcarino, onde se localiza o córtex visual primário (área 17 de Brodmann). A organização retinotópica faz com que o giro lingual receba as informações do campo visual superior contralateral, enquanto o cúneo recebe as do campo visual inferior. A parte anterior participa da percepção de cores e formas, da leitura e da memória visual. A irrigação é feita pela artéria cerebral posterior, principalmente pelo ramo calcarino e pelos ramos temporais posteriores, e a drenagem venosa dirige-se à veia basal, à veia cerebral magna e ao seio transverso. Sua posição entre o sulco calcarino e o sulco colateral permite identificá-lo com facilidade nos cortes sagitais de ressonância magnética. Lesões do giro lingual alteram a percepção de cores e produzem defeitos característicos do campo visual.",
+    "summary_pt": "O giro lingual é um giro da face medial e inferior do lobo occipital, de forma alongada, que se dispõe abaixo do sulco calcarino e acima do sulco colateral. Estende-se do polo occipital até a região do istmo, onde se continua com o giro para-hipocampal. Forma, com o cúneo, que se situa acima do sulco calcarino, o conjunto que circunda o sulco calcarino, onde se localiza o córtex visual primário (área 17 de Brodmann). A organização retinotópica faz com que o giro lingual receba as informações do campo visual superior contralateral, enquanto o cúneo recebe as do campo visual inferior. A parte anterior participa da percepção de cores e formas, da leitura e da memória visual. A irrigação é feita pela artéria cerebral posterior, principalmente pelo ramo calcarino e pelos ramos temporais posteriores, e a drenagem venosa dirige-se à veia basal, à veia cerebral magna e ao seio transverso. Sua posição entre o sulco calcarino e o sulco colateral permite identificá-lo com facilidade nos cortes sagitais de ressonância magnética. Lesões do giro lingual alteram a percepção de cores e produzem defeitos característicos do campo visual.",
     "anatomy": {
-      "relations": "Face medial e inferior do lobo occipital, entre o sulco calcarino (acima) e o sulco colateral (abaixo). Na parte posterior chega ao polo occipital; anteriormente continua-se com o giro parahipocampal pelo istmo. Relaciona-se com a foice do cérebro, medialmente, e com a tenda do cerebelo, inferiormente.",
+      "relations": "Face medial e inferior do lobo occipital, entre o sulco calcarino (acima) e o sulco colateral (abaixo). Na parte posterior chega ao polo occipital; anteriormente continua-se com o giro para-hipocampal pelo istmo. Relaciona-se com a foice do cérebro, medialmente, e com a tenda do cerebelo, inferiormente.",
       "vascularization": "Artéria cerebral posterior, por meio dos ramos calcarino e temporais posteriores (occipitotemporais). A drenagem venosa ocorre pelas veias occipitais internas e inferiores, tributárias da veia basal, da veia cerebral magna e do seio transverso.",
       "innervation": "Conexões principais: recebe a radiação óptica do corpo geniculado lateral, referente ao campo visual superior contralateral; projeta-se para áreas de associação visual ventrais, o giro fusiforme e o lobo temporal inferior."
     },
@@ -1308,7 +1308,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -1329,7 +1329,7 @@
     },
     "histology": {
       "tissues": [
-        "Neocórtex granular (heterotípico) pré-frontal, com camada IV evidente e neurônios piramidais nas camadas III e V; na transição com o sulco pré-central, o córtex torna-se agranular",
+        "Neocórtex pré-frontal homotípico (granular), com camada IV evidente e neurônios piramidais nas camadas III e V; na transição com o sulco pré-central, o córtex torna-se agranular",
         "Neuróglia: astrócitos, oligodendrócitos, micróglia, além de vasos capilares com barreira hematoencefálica",
         "Substância branca subjacente: fibras mielinizadas de associação, comissurais e de projeção, envoltas por oligodendrócitos",
         "Leptomeninges (pia-máter e aracnoide) recobrem a superfície, com a pia-máter aderida ao córtex"
@@ -1428,7 +1428,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Tratado de Fisiologia Médica, 14ª ed., capítulo Córtex cerebral e funções intelectuais; neurofisiologia central da visão, conforme a área",
+        "ref": "Tratado de Fisiologia Médica, 14ª ed., capítulo Controle cortical e do tronco encefálico da função motora",
         "obraId": "guyton",
         "license": "citação"
       }
@@ -1441,9 +1441,9 @@
   },
   "za:supramarginal-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro supramarginal é um giro da face lateral do lobo parietal inferior que se arqueia em torno da extremidade posterior do ramo posterior do sulco lateral, e corresponde à área 40 de Brodmann. Sua parte anterior é delimitada pelo sulco pós-central e sua parte superior, pelo sulco intraparietal, enquanto posteriormente continua-se com o giro angular, que contorna a extremidade do sulco temporal superior. No hemisfério dominante para a linguagem, participa do processamento fonológico e da repetição, e fibras do fascículo arqueado, que ligam as áreas de Wernicke e de Broca, passam em sua profundidade. No hemisfério não dominante, contribui para a atenção espacial e a percepção do esquema corporal. Integra, ainda, informações somestésicas e visuais necessárias para ações motoras complexas e para o uso de objetos. A irrigação provém de ramos parietais posteriores da divisão inferior da artéria cerebral média, e a drenagem venosa dá-se por veias cerebrais superiores e pela veia anastomótica superior, para o seio sagital superior. Lesões do giro supramarginal dominante levam a afasia de condução e a apraxias, e as do giro não dominante, a heminegligência.",
+    "summary_pt": "O giro supramarginal é um giro da face lateral do lóbulo parietal inferior que se arqueia em torno da extremidade posterior do ramo posterior do sulco lateral, e corresponde à área 40 de Brodmann. Sua parte anterior é delimitada pelo sulco pós-central e sua parte superior, pelo sulco intraparietal, enquanto posteriormente continua-se com o giro angular, que contorna a extremidade do sulco temporal superior. No hemisfério dominante para a linguagem, participa do processamento fonológico e da repetição, e fibras do fascículo arqueado, que ligam as áreas de Wernicke e de Broca, passam em sua profundidade. No hemisfério não dominante, contribui para a atenção espacial e a percepção do esquema corporal. Integra, ainda, informações somestésicas e visuais necessárias para ações motoras complexas e para o uso de objetos. A irrigação provém de ramos parietais posteriores da divisão inferior da artéria cerebral média, e a drenagem venosa dá-se por veias cerebrais superiores e pela veia anastomótica superior, para o seio sagital superior. Lesões do giro supramarginal dominante levam a afasia de condução e a apraxias, e as do giro não dominante, a heminegligência.",
     "anatomy": {
-      "relations": "Lobo parietal inferior, arqueado sobre a extremidade posterior do sulco lateral. Anteriormente limita-se com o sulco pós-central; superiormente, com o sulco intraparietal e o lobo parietal superior; inferiormente, com o giro temporal superior; posteriormente continua-se com o giro angular. Relaciona-se externamente com o osso parietal e, em profundidade, com o fascículo arqueado.",
+      "relations": "Lobo parietal inferior, arqueado sobre a extremidade posterior do sulco lateral. Anteriormente limita-se com o sulco pós-central; superiormente, com o sulco intraparietal e o lóbulo parietal superior; inferiormente, com o giro temporal superior; posteriormente continua-se com o giro angular. Relaciona-se externamente com o osso parietal e, em profundidade, com o fascículo arqueado.",
       "vascularization": "Ramos parietais posteriores da divisão inferior da artéria cerebral média. A drenagem venosa é feita por veias cerebrais superiores e pela veia anastomótica superior (de Trolard), para o seio sagital superior.",
       "innervation": "Conexões principais: recebe aferências somestésicas e visuais e se conecta aos giros pós-central e angular, ao giro temporal superior e ao lobo frontal, em especial à área de Broca, por meio do fascículo arqueado."
     },
@@ -1457,8 +1457,8 @@
     },
     "clinical": [
       "Afasia de condução: lesão do giro supramarginal ou do fascículo arqueado no hemisfério dominante causa fala fluente com compreensão preservada, mas com grave déficit de repetição.",
-      "Apraxia ideomotora: lesões do lobo parietal inferior dominante prejudicam a execução de gestos aprendidos, com força e sensibilidade preservadas.",
-      "Heminegligência: lesões do lobo parietal inferior do hemisfério não dominante levam o paciente a ignorar o hemicorpo e o espaço contralaterais."
+      "Apraxia ideomotora: lesões do lóbulo parietal inferior dominante prejudicam a execução de gestos aprendidos, com força e sensibilidade preservadas.",
+      "Heminegligência: lesões do lóbulo parietal inferior do hemisfério não dominante levam o paciente a ignorar o hemicorpo e o espaço contralaterais."
     ],
     "sources": [
       {
@@ -1548,7 +1548,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -1569,7 +1569,7 @@
     },
     "histology": {
       "tissues": [
-        "Córtex pré-frontal granular (heterotípico), com camada IV bem desenvolvida, e neurônios piramidais nas camadas III e V; grande densidade de espinhas dendríticas e de conexões de associação",
+        "Córtex pré-frontal homotípico (granular), com camada IV bem desenvolvida e neurônios piramidais nas camadas III e V; grande densidade de espinhas dendríticas e de conexões de associação",
         "Neuróglia: astrócitos, oligodendrócitos, micróglia, além de vasos capilares com barreira hematoencefálica",
         "Substância branca subjacente: fibras mielinizadas de associação, comissurais e de projeção, envoltas por oligodendrócitos",
         "Leptomeninges (pia-máter e aracnoide) recobrem a superfície, com a pia-máter aderida ao córtex"
@@ -1668,7 +1668,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -1681,9 +1681,9 @@
   },
   "za:allen-cuneus-r": {
     "ids": {},
-    "summary_pt": "O cúneo é um giro de forma triangular, em cunha, situado na face medial do lobo occipital. Seus limites são o sulco parieto-occipital, anteriormente, que o separa do pré-cúneo, e o sulco calcarino, inferiormente, que o separa do giro lingual; superiormente alcança a margem superomedial do hemisfério, e seu vértice dirige-se ao ponto de encontro dos dois sulcos. Reúne a margem superior do sulco calcarino, que contém o córtex visual primário (área 17 de Brodmann, ou córtex estriado), e áreas de associação visual adjacentes (área 18). Pela organização retinotópica, recebe a projeção do campo visual inferior contralateral, por meio das radiações ópticas que partem do corpo geniculado lateral, e o giro lingual recebe a do campo visual superior. A irrigação provém da artéria cerebral posterior, pelos ramos calcarino e parieto-occipital, e a drenagem venosa dá-se por veias occipitais internas, que desembocam na veia cerebral magna e nos seios da dura-máter. A lesão do cúneo produz defeito do campo visual inferior contralateral, e o acometimento bilateral causa grave perda da visão. O cúneo é facilmente reconhecido nos cortes sagitais, na região de encontro dos sulcos calcarino e parieto-occipital.",
+    "summary_pt": "O cúneo é um giro de forma triangular, em cúneo, situado na face medial do lobo occipital. Seus limites são o sulco parieto-occipital, anteriormente, que o separa do pré-cúneo, e o sulco calcarino, inferiormente, que o separa do giro lingual; superiormente alcança a margem superomedial do hemisfério, e seu vértice dirige-se ao ponto de encontro dos dois sulcos. Reúne a margem superior do sulco calcarino, que contém o córtex visual primário (área 17 de Brodmann, ou córtex estriado), e áreas de associação visual adjacentes (área 18). Pela organização retinotópica, recebe a projeção do campo visual inferior contralateral, por meio das radiações ópticas que partem do corpo geniculado lateral, e o giro lingual recebe a do campo visual superior. A irrigação provém da artéria cerebral posterior, pelos ramos calcarino e parieto-occipital, e a drenagem venosa dá-se por veias occipitais internas, que desembocam na veia cerebral magna e nos seios da dura-máter. A lesão do cúneo produz defeito do campo visual inferior contralateral, e o acometimento bilateral causa grave perda da visão. O cúneo é facilmente reconhecido nos cortes sagitais, na região de encontro dos sulcos calcarino e parieto-occipital.",
     "anatomy": {
-      "relations": "Face medial do lobo occipital, em forma de cunha, entre o sulco parieto-occipital (anterior) e o sulco calcarino (inferior). Superiormente alcança a margem do hemisfério e, por ela, continua-se com a face lateral. Relaciona-se medialmente com a foice do cérebro e, anteriormente, com o pré-cúneo.",
+      "relations": "Face medial do lobo occipital, em forma de cúneo, entre o sulco parieto-occipital (anterior) e o sulco calcarino (inferior). Superiormente alcança a margem do hemisfério e, por ela, continua-se com a face lateral. Relaciona-se medialmente com a foice do cérebro e, anteriormente, com o pré-cúneo.",
       "vascularization": "Ramos calcarino e parieto-occipital da artéria cerebral posterior. A drenagem venosa ocorre por veias occipitais internas, tributárias da veia cerebral magna, e por veias que desembocam no seio sagital superior.",
       "innervation": "Conexões principais: recebe as radiações ópticas do corpo geniculado lateral, referentes ao campo visual inferior contralateral; projeta-se às áreas visuais 18 e 19 e, pela via dorsal, ao lobo parietal."
     },
@@ -1788,7 +1788,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -1801,7 +1801,7 @@
   },
   "za:allen-cingulate-gyrus-rostral-anterior-part-r": {
     "ids": {},
-    "summary_pt": "A parte rostral anterior do giro do cíngulo corresponde ao córtex cingulado anterior, situado na face medial do hemisfério cerebral, em torno do joelho do corpo caloso. O giro do cíngulo é separado do corpo caloso pelo sulco do corpo caloso e do giro frontal superior pelo sulco do cíngulo. Nessa porção, inclui as áreas 24, 32 e 33 de Brodmann e se estende da região subcalosa, abaixo do joelho (área subgenual), até a parte supracalosa. Integra o sistema límbico e participa da regulação das emoções, da motivação, da atenção, da detecção de conflitos e do componente afetivo da dor, além de modular funções autonômicas. Recebe aferências dos núcleos anteriores do tálamo, da amígdala e do córtex pré-frontal e se projeta para o hipotálamo, o estriado e o tronco encefálico. A irrigação provém sobretudo da artéria pericalosa e da artéria calosomarginal, ramos da artéria cerebral anterior. A drenagem venosa ocorre por veias cerebrais mediais, para os seios sagitais superior e inferior. Por seu papel emocional, a região é alvo de intervenções neurocirúrgicas, como a cingulotomia, e sofre alterações em transtornos do humor e em lesões bilaterais da artéria cerebral anterior.",
+    "summary_pt": "Este rótulo provém do atlas Allen e não é termo da Terminologia Anatômica; corresponde de forma aproximada à parte anterior do giro do cíngulo. A parte rostral anterior do giro do cíngulo corresponde ao córtex cingulado anterior, situado na face medial do hemisfério cerebral, em torno do joelho do corpo caloso. O giro do cíngulo é separado do corpo caloso pelo sulco do corpo caloso e do giro frontal superior pelo sulco do cíngulo. Nessa porção, inclui as áreas 24, 32 e 33 de Brodmann e se estende da região subcalosa, abaixo do joelho (área subgenual), até a parte supracalosa. Integra o sistema límbico e participa da regulação das emoções, da motivação, da atenção, da detecção de conflitos e do componente afetivo da dor, além de modular funções autonômicas. Recebe aferências dos núcleos anteriores do tálamo, da amígdala e do córtex pré-frontal e se projeta para o hipotálamo, o estriado e o tronco encefálico. A irrigação provém sobretudo da artéria pericalosa e da artéria calosomarginal, ramos da artéria cerebral anterior. A drenagem venosa ocorre por veias cerebrais mediais, para os seios sagitais superior e inferior. Por seu papel emocional, a região é alvo de intervenções neurocirúrgicas, como a cingulotomia, e sofre alterações em transtornos do humor e em lesões bilaterais da artéria cerebral anterior.",
     "anatomy": {
       "relations": "Face medial do hemisfério, ao redor do joelho e do rostro do corpo caloso, entre o sulco do corpo caloso e o sulco do cíngulo. Anteriormente continua-se com a região pré-frontal medial e, inferiormente, com a área subcalosa; posteriormente passa à parte posterior do giro do cíngulo. Relaciona-se com a foice do cérebro e com as artérias pericalosa e calosomarginal.",
       "vascularization": "Artérias pericalosa e calosomarginal, ramos da artéria cerebral anterior, que cursam o sulco do cíngulo e o do corpo caloso. A drenagem venosa ocorre por veias cerebrais mediais, tributárias dos seios sagitais superior e inferior.",
@@ -1816,9 +1816,9 @@
       ]
     },
     "clinical": [
-      "Cingulotomia anterior: é uma intervenção neurocirúrgica de lesão estereotáxica, reservada a casos selecionados de dor refratária e transtorno obsessivo-compulsivo grave.",
+      "Cingulotomia anterior: intervenção neurocirúrgica por lesão estereotáxica, descrita historicamente em dor refratária e em transtorno obsessivo-compulsivo grave.",
       "Mutismo acinético e abulia: o infarto bilateral no território da artéria cerebral anterior, que lesa o cíngulo anterior e áreas mediais frontais, causa perda de iniciativa, apatia e redução da fala espontânea.",
-      "Transtornos do humor: alterações de atividade e de volume do córtex cingulado anterior subgenual são descritas na depressão maior, e a região é alvo de estimulação cerebral profunda em estudos clínicos."
+      "Transtornos do humor: alterações de atividade e de volume do córtex cingulado anterior subgenual são descritas na depressão maior."
     ],
     "sources": [
       {
@@ -1908,7 +1908,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -2028,7 +2028,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -2148,7 +2148,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -2164,7 +2164,7 @@
     "summary_pt": "O giro occipital lateral, também denominado giro occipital médio, é um dos giros da face lateral do lobo occipital, situado entre o giro occipital superior e o giro occipital inferior. Em atlas que dividem a face lateral em três giros, ele ocupa a posição intermediária; na Terminologia Anatômica, a face é dividida pelo sulco occipital lateral nos giros occipitais laterais superior e inferior, e os limites anteriores com os lobos parietal e temporal são pouco nítidos. Corresponde a áreas de associação visual (áreas 18 e 19 de Brodmann) e inclui o complexo occipital lateral, região importante para o reconhecimento da forma de objetos. Perto de sua transição com o lobo temporal, localiza-se a área visual de movimento (V5 ou MT), que processa a percepção de movimento. Integra as vias visuais dorsal e ventral, relacionadas, respectivamente, à localização espacial e ao reconhecimento de objetos. A irrigação provém de ramos occipitais e temporais posteriores da artéria cerebral posterior e de ramos terminais da artéria cerebral média, e a região faz parte da zona de transição entre esses territórios. Lesões dessa área causam agnosias visuais e distúrbios da percepção de movimento.",
     "anatomy": {
       "relations": "Face lateral do lobo occipital, na posição intermediária entre os giros occipitais superior e inferior, com o sulco occipital lateral como principal referência. Anteriormente passa, sem limite nítido, aos lobos parietal e temporal; externamente relaciona-se com o osso occipital e, inferiormente, com o seio transverso, por meio das meninges.",
-      "vascularization": "Ramos occipitais e temporais posteriores da artéria cerebral posterior, com contribuição de ramos terminais da artéria cerebral média. A drenagem venosa ocorre por veias occipitais, tributárias do seio transverso e do seio sagital superior.",
+      "vascularization": "Ramos temporais (inferiores) e occipitais da artéria cerebral posterior (calcarino e parieto-occipital, nas áreas adjacentes), com contribuição de ramos terminais da artéria cerebral média. A drenagem venosa ocorre por veias occipitais, tributárias do seio transverso e do seio sagital superior.",
       "innervation": "Conexões principais: recebe aferências das áreas visuais 17 e 18 e do pulvinar do tálamo; projeta-se ao giro fusiforme e ao lobo temporal inferior (via ventral) e ao lobo parietal posterior (via dorsal)."
     },
     "histology": {
@@ -2268,7 +2268,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }
@@ -2281,11 +2281,11 @@
   },
   "za:lateral-occipitotemporal-gyrus-r": {
     "ids": {},
-    "summary_pt": "O giro occipitotemporal lateral, também chamado giro fusiforme, ocupa a face inferior dos lobos temporal e occipital. É limitado medialmente pelo sulco colateral, que o separa do giro parahipocampal e do giro lingual, e lateralmente pelo sulco occipitotemporal, que o separa do giro temporal inferior. Estende-se do polo occipital em direção ao polo temporal, com forma alongada e fusiforme. Pertence à via visual ventral e contém regiões especializadas, como a área fusiforme das faces, mais evidente à direita, e a área da forma visual das palavras, à esquerda, além de regiões relacionadas ao reconhecimento de cores e de objetos. A irrigação provém principalmente de ramos temporais inferiores e occipitotemporais da artéria cerebral posterior, com contribuição de ramos temporais inferiores da artéria cerebral média na margem lateral. A drenagem venosa ocorre por veias inferiores, para o seio transverso e o seio petroso superior, e por tributárias da veia basal. Lesões bilaterais, ou do hemisfério direito, produzem prosopagnosia, e lesões da região esquerda, alexia pura. Por sua posição basal, o giro é vulnerável a processos epilépticos temporais e a infartos da artéria cerebral posterior, e é bem identificado em cortes coronais.",
+    "summary_pt": "O giro occipitotemporal lateral, também chamado giro fusiforme, ocupa a face inferior dos lobos temporal e occipital. É limitado medialmente pelo sulco colateral, que o separa do giro para-hipocampal e do giro lingual, e lateralmente pelo sulco occipitotemporal, que o separa do giro temporal inferior. Estende-se do polo occipital em direção ao polo temporal, com forma alongada e fusiforme. Pertence à via visual ventral e contém regiões especializadas, como a área fusiforme das faces, mais evidente à direita, e a área da forma visual das palavras, à esquerda, além de regiões relacionadas ao reconhecimento de cores e de objetos. A irrigação provém principalmente de ramos temporais inferiores e occipitotemporais da artéria cerebral posterior, com contribuição de ramos temporais inferiores da artéria cerebral média na margem lateral. A drenagem venosa ocorre por veias inferiores, para o seio transverso e o seio petroso superior, e por tributárias da veia basal. Lesões bilaterais, ou do hemisfério direito, produzem prosopagnosia, e lesões da região esquerda, alexia pura. Por sua posição basal, o giro é vulnerável a processos epilépticos temporais e a infartos da artéria cerebral posterior, e é bem identificado em cortes coronais.",
     "anatomy": {
-      "relations": "Face inferior dos lobos temporal e occipital, entre o sulco colateral (medial) e o sulco occipitotemporal (lateral). Medialmente relaciona-se com o giro parahipocampal e o giro lingual; lateralmente, com o giro temporal inferior. Inferiormente repousa sobre a tenda do cerebelo e a parte petrosa do osso temporal, por meio das meninges.",
+      "relations": "Face inferior dos lobos temporal e occipital, entre o sulco colateral (medial) e o sulco occipitotemporal (lateral). Medialmente relaciona-se com o giro para-hipocampal e o giro lingual; lateralmente, com o giro temporal inferior. Inferiormente repousa sobre a tenda do cerebelo e a parte petrosa do osso temporal, por meio das meninges.",
       "vascularization": "Ramos temporais inferiores e occipitotemporais da artéria cerebral posterior, com contribuição de ramos temporais inferiores da artéria cerebral média na margem lateral. A drenagem venosa ocorre por veias temporais inferiores, para o seio transverso e o seio petroso superior, e pela veia basal.",
-      "innervation": "Conexões principais: recebe aferências de áreas visuais de associação (18, 19), conecta-se ao giro parahipocampal, à amígdala e ao lobo temporal anterior e projeta-se ao córtex pré-frontal; integra a via visual ventral."
+      "innervation": "Conexões principais: recebe aferências de áreas visuais de associação (18, 19), conecta-se ao giro para-hipocampal, à amígdala e ao lobo temporal anterior e projeta-se ao córtex pré-frontal; integra a via visual ventral."
     },
     "histology": {
       "tissues": [
@@ -2388,7 +2388,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso, tópicos doença cerebrovascular e doenças neurodegenerativas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
         "obraId": "robbins",
         "license": "citação"
       }

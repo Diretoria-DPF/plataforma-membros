@@ -12,3 +12,4 @@ Itens retirados do escopo da Onda 3 para concluí-la em 4 semanas. Cada item vol
 | Calendário com 4 escalações | Substituído por lembrete em 3 dias, escalação em 1 semana e teto de 6 semanas | Prioridade clara para o conselho |
 | Post-mortem por onda | Substituído por 1 post-mortem no fim | Menos cerimônia |
 | Testes canônicos de PK com referência externa detalhada | Já existem para os 30 compostos (Tmax a até 25%) | Mantidos, porque custam zero |
+| Rótulo "Conexões principais" no lugar de "Inervação" para estruturas do SNC | Não feito | Revisão técnica da onda 02: nas fichas corticais, `anatomy.innervation` descreve conexões |
