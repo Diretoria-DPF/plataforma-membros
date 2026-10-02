@@ -55,6 +55,7 @@
   <link rel="stylesheet" href="css/search-box.css">
   <link rel="stylesheet" href="css/toolbar.css">
   <link rel="stylesheet" href="css/credits.css">
+  <link rel="stylesheet" href="css/progress-bar.css">
 </head>
 <body>
 
@@ -131,7 +132,19 @@
       <div id="organ-hud" class="hidden" role="status">
         <strong id="organ-name">---</strong>
       </div>
-      <p id="atlas-sheet-hint" class="atlas-sheet-hint">Toque numa estrutura para começar</p>
+      <!-- Estado vazio (antes de qualquer seleção) — js/main.js clona este
+           bloco para "voltar ao início" quando a seleção é limpa. -->
+      <div class="atlas-empty" aria-hidden="false">
+        <svg class="atlas-empty-figure" viewBox="0 0 24 40" width="24" height="40" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="5" r="4"/>
+          <path d="M5 11h14l-2 13h-2l-1 15h-4l-1-15H7z"/>
+        </svg>
+        <div class="atlas-empty-text">
+          <p id="atlas-sheet-hint" class="atlas-sheet-hint">Toque numa estrutura</p>
+          <p class="atlas-sheet-hint-sub">Toque em qualquer parte do corpo para ver o nome, o que faz e onde fica.</p>
+        </div>
+        <span class="atlas-empty-arrow" aria-hidden="true">↑</span>
+      </div>
     </div>
 
     <div id="atlas-sheet-body" class="atlas-sheet-body"></div>

@@ -133,6 +133,17 @@ module.exports = async function atlas() {
     const linfaticoToggle = frame.locator('.atlas-layers-toggle[data-layer-id="linfatico"]');
     await linfaticoToggle.waitFor({ state: 'visible', timeout: 5000 });
     glbRequests.length = 0;
+    // Barra de carregamento: registra o que ela mostra enquanto o GLB baixa.
+    await frame.evaluate(() => {
+      const bar = document.querySelector('.atlas-progress');
+      window.__e2eBar = { seen: [], visibleWhileLoading: false };
+      if (!bar) return;
+      new MutationObserver(() => {
+        const v = Number(bar.getAttribute('aria-valuenow'));
+        window.__e2eBar.seen.push(v);
+        if (!bar.hidden && bar.dataset.state === 'loading') window.__e2eBar.visibleWhileLoading = true;
+      }).observe(bar, { attributes: true });
+    });
     await linfaticoToggle.click();
     await frame.waitForFunction(() => {
       const st = window.__atlasInternals && window.__atlasInternals.store.get();
@@ -141,6 +152,11 @@ module.exports = async function atlas() {
     const linfaticoGlbs = glbRequests.filter((u) => /\.glb($|\?)/.test(u));
     check(linfaticoGlbs.length > 0, `ligar a camada "Linfático" baixa pelo menos um GLB (${JSON.stringify(linfaticoGlbs)})`);
     check(linfaticoGlbs.every((u) => u.includes('linfatico')), `ligar a camada "Linfático" só baixa GLB(s) do sistema linfático (baixados: ${JSON.stringify(linfaticoGlbs)})`);
+    await app.page.waitForTimeout(700);
+    const barInfo = await frame.evaluate(() => ({ ...window.__e2eBar, hiddenAfter: document.querySelector('.atlas-progress').hidden }));
+    const monotonic = barInfo.seen.every((v, i, a) => i === 0 || v >= a[i - 1]);
+    check(barInfo.visibleWhileLoading && barInfo.hiddenAfter && monotonic && barInfo.seen.includes(100),
+      `barra de carregamento aparece, só avança e some ao terminar (valores: ${barInfo.seen.join(',')}; some: ${barInfo.hiddenAfter})`);
     await frame.evaluate(() => window.AtlasShell.toggleLayers()); // fecha o painel de novo
 
     const modelState = await frame.evaluate(() => ({ state: window.__atlasModelState, events: window.__e2eModelReadyEvents.length }));

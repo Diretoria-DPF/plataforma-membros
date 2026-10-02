@@ -218,9 +218,18 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
     // em qualquer estrutura sem conteúdo (a maioria — bug real encontrado
     // ao selecionar uma estrutura qualquer e nunca ver o resumo/abas).
     if (currentContent === undefined) {
-      contentBox.contentArea.appendChild(h('div', { className: 'atlas-card-loading', text: 'Carregando ficha…' }));
+      // Skeleton (3 linhas pulsantes) no lugar do texto solto; o texto fica
+      // para leitores de tela.
+      contentBox.contentArea.setAttribute('aria-busy', 'true');
+      contentBox.contentArea.appendChild(h('div', { className: 'atlas-card-loading atlas-skeleton' }, [
+        h('span', { className: 'laift-sr-only', text: 'Carregando ficha…' }),
+        h('span', { className: 'atlas-skeleton-line', style: { width: '60%' }, 'aria-hidden': 'true' }),
+        h('span', { className: 'atlas-skeleton-line', style: { width: '40%' }, 'aria-hidden': 'true' }),
+        h('span', { className: 'atlas-skeleton-line', style: { width: '90%' }, 'aria-hidden': 'true' }),
+      ]));
       return;
     }
+    contentBox.contentArea.removeAttribute('aria-busy');
     if (currentContent === null) currentContent = {};
 
     if (currentTabId === 'resumo') {

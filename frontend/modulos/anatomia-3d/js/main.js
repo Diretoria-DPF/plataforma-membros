@@ -37,6 +37,8 @@ import { createNavigator } from './ui/navigator.js';
 import { createInfoCard } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
 import { linkLegacy } from './ui/legacy-link.js';
+import { ATLAS_FLAGS } from './core/flags.js';
+import { createProgressBar } from './ui/progress-bar.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -263,7 +265,12 @@ function fetchJson(url) {
 // ============================================================================
 // 2. Boot
 // ============================================================================
+let EMPTY_PEEK_TEMPLATE = null;
+
 async function boot() {
+  // Estado vazio do peek, antes de qualquer conteúdo entrar nele.
+  const peekEl = document.getElementById('atlas-sheet-peek');
+  EMPTY_PEEK_TEMPLATE = peekEl ? peekEl.cloneNode(true) : document.createElement('div');
   initShell();
   initSheet();
   initFocusNav();
@@ -357,6 +364,10 @@ async function boot() {
     registry,
   });
 
+  // ---- Barra de carregamento (antes do 1º sistema, para pegar o START) ----
+  const systemLabel = (id) => (SYSTEMS.find((x) => x.id === id) || { label: id }).label;
+  if (ATLAS_FLAGS.progressBar) createProgressBar({ bus, assetLoader, systemLabel });
+
   const visibility = createVisibility({
     registry,
     bus,
@@ -445,22 +456,11 @@ async function boot() {
   // o conteúdo do painel pela ficha).
   const isMobileViewport = () => !window.matchMedia('(min-width: 600px)').matches;
   function buildSheetDefaultPeekNode() {
-    // Mesma marcação do peek inicial em index.html (hint + #organ-hud
-    // escondido) — usado para "voltar ao início" quando a seleção é limpa.
+    // Mesma marcação do peek inicial em index.html (estado vazio + #organ-hud
+    // escondido), clonada no boot — usado para "voltar ao início" quando a
+    // seleção é limpa.
     const frag = document.createElement('div');
-    const hud = document.createElement('div');
-    hud.id = 'organ-hud';
-    hud.className = 'hidden';
-    const name = document.createElement('strong');
-    name.id = 'organ-name';
-    name.textContent = '---';
-    hud.appendChild(name);
-    frag.appendChild(hud);
-    const hint = document.createElement('p');
-    hint.id = 'atlas-sheet-hint';
-    hint.className = 'atlas-sheet-hint';
-    hint.textContent = 'Toque numa estrutura para começar';
-    frag.appendChild(hint);
+    for (const child of EMPTY_PEEK_TEMPLATE.childNodes) frag.appendChild(child.cloneNode(true));
     return frag;
   }
   function buildSheetPeekNode(sid) {
@@ -709,7 +709,7 @@ async function boot() {
     if (integrity.missing / integrity.total > 0.05) {
       console.error(`[atlas] ${integrity.missing} de ${integrity.total} estruturas de "${system}" não estão no arquivo 3D (manifest desatualizado)`);
       emit('atlas:integrity-warning', { system, missing: integrity.missing, total: integrity.total });
-      showNotice(`Parte do sistema ${(SYSTEMS.find((x) => x.id === system) || { label: system }).label} não carregou (${integrity.missing} de ${integrity.total} estruturas).`);
+      showNotice(`Parte do sistema ${systemLabel(system)} não carregou (${integrity.missing} de ${integrity.total} estruturas).`);
     }
   });
 
@@ -988,7 +988,7 @@ async function boot() {
   // ---- Expõe internals para a camada de compatibilidade legada ----
   window.__atlasInternals = {
     bus, store: storeApi, registry, assetLoader, engine,
-    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS,
+    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS, flags: ATLAS_FLAGS,
   };
   // Gancho de teste, só leitura — expõe as estatísticas do renderer
   // (draw calls, triângulos, contagem de frames renderizados) para os

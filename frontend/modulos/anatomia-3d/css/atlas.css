@@ -714,3 +714,31 @@ body.atlas-fullscreen-fallback { background: var(--atlas-canvas-bg); }
   color: var(--laift-text); font-weight: 600;
   z-index: 5;
 }
+
+/* Estado vazio do peek (index.html .atlas-empty) e skeleton da ficha
+   (js/ui/infocard.js). */
+.atlas-empty { display: flex; align-items: center; gap: 12px; padding: 2px 0; }
+.atlas-empty-figure { flex: 0 0 auto; fill: var(--module-accent); opacity: 0.8; }
+.atlas-empty-text { flex: 1 1 auto; min-width: 0; }
+.atlas-empty .atlas-sheet-hint { margin: 0; font-size: 16px; font-weight: 700; color: var(--laift-text); }
+.atlas-sheet-hint-sub { margin: 2px 0 0; font-size: 13px; color: var(--laift-muted); }
+.atlas-empty-arrow {
+  flex: 0 0 auto;
+  font-size: 20px; font-weight: 700;
+  color: var(--module-accent);
+  animation: atlas-empty-bob 1.6s ease-in-out infinite;
+}
+@keyframes atlas-empty-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+.atlas-skeleton { display: flex; flex-direction: column; gap: 10px; padding: 12px 0; }
+.atlas-skeleton-line {
+  display: block; height: 12px;
+  border-radius: 6px;
+  background: var(--laift-border);
+  animation: atlas-skeleton-pulse 1.2s ease-in-out infinite;
+}
+@keyframes atlas-skeleton-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-empty-arrow, .atlas-skeleton-line { animation: none; }
+}
