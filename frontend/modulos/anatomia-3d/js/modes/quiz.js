@@ -142,10 +142,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
           ${caso.prompt_pt}
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
-          <div style="font-size: 0.8rem; color: #38bdf8; font-weight: 600;">
+          <div style="font-size: 0.8rem; color: var(--laift-text); font-weight: 600;">
             <span id="quizTimer">60s</span> | <span id="quizScore">${score}</span> pts
           </div>
-          <button type="button" id="quizHintBtn" style="padding: 4px 10px; font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 4px; color: #3b82f6; cursor: pointer; font-weight: 600;">
+          <button type="button" id="quizHintBtn" style="min-height: 44px; padding: 4px 12px; font-size: 0.8rem; background: transparent; border: 1px solid var(--module-accent); border-radius: 6px; color: var(--laift-text); cursor: pointer; font-weight: 600;">
             💡 Dica
           </button>
         </div>
@@ -185,7 +185,9 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       const timerEl = sheetNode?.querySelector('#quizTimer');
       if (timerEl) {
         timerEl.textContent = `${seconds}s`;
-        timerEl.style.color = seconds <= 8 ? '#ef4444' : seconds <= 15 ? '#f59e0b' : '#38bdf8';
+        // Urgência pelo peso da fonte, não só pela cor (contraste em
+        // qualquer tema — WCAG 1.4.1/1.4.3).
+        timerEl.style.fontWeight = seconds <= 15 ? '800' : '600';
       }
 
       if (remaining <= 0) {
@@ -220,26 +222,24 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     if (!feedbackEl) return;
 
     const { html, setHtml } = window.LaiftDom;
-    let content, bgColor, borderColor, textColor;
+    let content, bgColor, borderColor;
 
     if (correct) {
       content = html`✔ Acerto! ${getLabel(sid)}${caso.explanation_pt ? ` — ${caso.explanation_pt}` : ''}`;
       bgColor = 'rgba(16, 185, 129, 0.15)';
       borderColor = '#10b981';
-      textColor = '#34d399';
     } else {
       const correctLabel = getLabel(mainSid(caso));
       content = html`❌ Incorreto. Correto: ${correctLabel}${caso.explanation_pt ? ` — ${caso.explanation_pt}` : ''}`;
       bgColor = 'rgba(239, 68, 68, 0.15)';
       borderColor = '#ef4444';
-      textColor = '#f87171';
     }
 
     setHtml(feedbackEl, content);
     feedbackEl.style.display = 'block';
     feedbackEl.style.background = bgColor;
     feedbackEl.style.borderLeft = `3px solid ${borderColor}`;
-    feedbackEl.style.color = textColor;
+    feedbackEl.style.color = 'var(--laift-text)';
 
     const scoreEl = sheetNode?.querySelector('#quizScore');
     if (scoreEl) scoreEl.textContent = score;
@@ -261,7 +261,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     feedbackEl.style.display = 'block';
     feedbackEl.style.background = 'rgba(245, 158, 11, 0.15)';
     feedbackEl.style.borderLeft = '3px solid #f59e0b';
-    feedbackEl.style.color = '#fbbf24';
+    feedbackEl.style.color = 'var(--laift-text)';
 
     setTimeout(() => {
       currentIndex++;

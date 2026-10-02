@@ -311,6 +311,44 @@ module.exports = async function atlas() {
       `WebGL perdido mostra "Recarregando o 3D…" e volta a desenhar (${JSON.stringify(lost)})`);
 
     // ------------------------------------------------------------------
+    // 6d) Link direto (#sid=…) seleciona a estrutura; ao reabrir, o atlas
+    // oferece "Continuar de onde parou" e repõe a seleção
+    // ------------------------------------------------------------------
+    const linked = await frame.evaluate(async () => {
+      window.location.hash = '#sid=za:liver&view=anterior';
+      const t0 = Date.now();
+      while (Date.now() - t0 < 15000 && window.__atlasInternals.store.get().selectedSid !== 'za:liver') {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return window.__atlasInternals.store.get().selectedSid;
+    });
+    check(linked === 'za:liver', `link #sid=za:liver seleciona o fígado (veio ${linked})`);
+    await app.page.waitForTimeout(1000); // gravação da sessão tem 500 ms de atraso
+    // Simula uma nova visita (o "Continuar" é oferecido uma vez por aba).
+    await frame.evaluate(() => {
+      try { sessionStorage.removeItem('atlas.resumeOffered'); } catch (e) { /* */ }
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      window.location.reload();
+    });
+    await frame.waitForFunction(() => !!window.__atlasInternals, null, { timeout: 30000 });
+    const offer = await frame.waitForFunction(() => {
+      const t = document.getElementById('atlas-toast');
+      return t && t.dataset.open === 'true' && /Continuar/.test(t.textContent) ? t.textContent : false;
+    }, null, { timeout: 10000 }).then((h) => h.jsonValue()).catch(() => null);
+    check(!!offer, `ao reabrir, oferece "Continuar de onde parou" (${offer})`);
+    const resumed = await frame.evaluate(async () => {
+      const btn = document.querySelector('#atlas-toast [data-action="AtlasShell.undo"]');
+      if (btn) btn.click();
+      const t0 = Date.now();
+      while (Date.now() - t0 < 15000 && window.__atlasInternals.store.get().selectedSid !== 'za:liver') {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return window.__atlasInternals.store.get().selectedSid;
+    });
+    check(resumed === 'za:liver', `"Continuar" repõe a seleção salva (veio ${resumed})`);
+    await frame.evaluate(() => { try { localStorage.removeItem('atlas.session.v1'); } catch (e) { /* */ } });
+
+    // ------------------------------------------------------------------
     // 7) Zero erro de página
     // ------------------------------------------------------------------
     check(app.errors.length === 0, 'atlas: sem erros de JavaScript inesperados' + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));

@@ -233,6 +233,18 @@ check('as fixtures geradas passam na validação', () => {
     assert.doesNotMatch(stderr, /não é uma estrutura do corpo 3D|correctSystem/);
   });
 
+  check('distrator que também é resposta certa é erro', () => {
+    quiz[0].correctSids = [quiz[0].correctSid, 'za:left-ventricle'];
+    quiz[0].correctSystem = undefined;
+    const saved = quiz[0].distractorSids;
+    quiz[0].distractorSids = ['za:left-ventricle'];
+    writeJson(quizPath, quiz);
+    const { status, stderr } = runValidator(dir);
+    quiz[0].distractorSids = saved;
+    assert.notEqual(status, 0, 'esperava falha');
+    assert.match(stderr, /distrator "za:left-ventricle" que também conta como acerto/);
+  });
+
   check('quiz com sid fora de generated/structures.json é erro', () => {
     quiz[0].correctSids = ['za:rins'];
     quiz[0].correctSystem = 'inexistente';

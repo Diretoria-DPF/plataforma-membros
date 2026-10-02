@@ -17,4 +17,6 @@ jobs:
       - run: npm install --no-save playwright
       - run: npx playwright install --with-deps chromium
       - run: node scripts/build.js
-      - run: node scripts/e2e/run.js atlas atlas-responsive smoke csp
+      # "atlas" casa por prefixo: roda atlas, atlas-a11y (axe), atlas-assets,
+      # atlas-perf (inclui 3G rápido) e atlas-responsive.
+      - run: node scripts/e2e/run.js atlas smoke csp

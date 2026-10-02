@@ -27,7 +27,8 @@ import { createXrayClip } from './engine/xray-clip.js';
 import { createLabels } from './engine/labels.js';
 import { createFallback } from './engine/fallback.js';
 
-import { getSlot, registerPanel, initShell, showNotice } from './ui/shell.js';
+import { getSlot, registerPanel, initShell, showNotice, offerAction } from './ui/shell.js';
+import { parseAtlasHash, readSession, writeSession, snapshotSession, dropUnknownSid, resumeAlreadyOffered, markResumeOffered } from './ui/session.js';
 import { initSheet, setContent as setSheetContent, snapTo as snapSheetTo, getState as getSheetState } from './ui/sheet.js';
 import { initFocusNav } from './ui/focus-nav.js';
 import { buildSearchIndex, search } from './ui/search-index.js';
@@ -622,7 +623,7 @@ async function boot() {
     storeSet({ layers: { ...layers, [layer]: { ...layerState, visible: true } } });
     emit(EVENTS.LAYER_SET, { layer, visible: true, opacity: layerState.opacity });
   }
-  async function revealAndFocus(sid) {
+  async function revealAndFocus(sid, { focus = true } = {}) {
     const entry = contentStore.getEntry(sid);
     if (entry && entry.system && !assetLoader.isLoaded(entry.system)) await loadSystem(entry.system);
     if (storeGet().selectedSid !== sid) return; // o usuário já escolheu outra
@@ -641,10 +642,12 @@ async function boot() {
       emit(EVENTS.XRAY_SET, { enabled: true });
     }
     selection.refresh();
-    engine.focusSid(sid, { animate: true });
+    if (focus) engine.focusSid(sid, { animate: true });
   }
   on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
-    if (sid && source !== 'pick' && source !== 'focus') revealAndFocus(sid);
+    // 'resume': a retomada de sessão revela sem mover a câmera (ela volta
+    // para onde estava — ver resumeSession).
+    if (sid && source !== 'pick' && source !== 'focus' && source !== 'resume') revealAndFocus(sid);
   });
 
   // ---- Quiz: a resposta precisa estar no corpo para ser tocada ----
@@ -696,6 +699,7 @@ async function boot() {
     if (!integrity || !integrity.total) return;
     if (integrity.missing / integrity.total > 0.05) {
       console.error(`[atlas] ${integrity.missing} de ${integrity.total} estruturas de "${system}" não estão no arquivo 3D (manifest desatualizado)`);
+      emit('atlas:integrity-warning', { system, missing: integrity.missing, total: integrity.total });
       showNotice(`Parte do sistema ${(SYSTEMS.find((x) => x.id === system) || { label: system }).label} não carregou (${integrity.missing} de ${integrity.total} estruturas).`);
     }
   });
@@ -910,6 +914,59 @@ async function boot() {
   }
 
   on(EVENTS.MODE_CHANGE, ({ mode }) => { enterMode(mode); });
+
+  // ---- Retomar de onde parou + link direto (#sid=…&view=…) ----
+  // A sessão (seleção, camadas, modo, câmera) é gravada com atraso a cada
+  // mudança; ao abrir sem link, oferece "Continuar" por 10 s.
+  const sessionStorageApi = (() => { try { return window.localStorage; } catch (e) { return null; } })();
+  const tabStorageApi = (() => { try { return window.sessionStorage; } catch (e) { return null; } })();
+  const savedSession = dropUnknownSid(readSession(sessionStorageApi), (sid) => !!contentStore.getEntry(sid));
+  let sessionSaveTimer = null;
+  const scheduleSessionSave = () => {
+    clearTimeout(sessionSaveTimer);
+    sessionSaveTimer = setTimeout(() => {
+      const view = {};
+      emit('view:capture', view);
+      writeSession(sessionStorageApi, snapshotSession(storeGet(), view.camera));
+    }, 500);
+  };
+  storeSubscribe((st) => st.selectedSid, scheduleSessionSave);
+  storeSubscribe((st) => st.layers, scheduleSessionSave);
+  storeSubscribe((st) => st.mode, scheduleSessionSave);
+  controlsApi.controls.addEventListener('end', scheduleSessionSave);
+
+  async function resumeSession(saved) {
+    const layers = storeGet().layers;
+    const next = { ...layers };
+    for (const [id, visible] of Object.entries(saved.layers || {})) {
+      if (next[id] && next[id].visible !== visible) next[id] = { ...next[id], visible };
+    }
+    storeSet({ layers: next });
+    for (const id of Object.keys(next)) {
+      if (next[id] !== layers[id]) emit(EVENTS.LAYER_SET, { layer: id, visible: next[id].visible, opacity: next[id].opacity });
+    }
+    if (saved.mode && saved.mode !== storeGet().mode) window.AtlasShell.setMode(saved.mode);
+    if (saved.selectedSid && contentStore.getEntry(saved.selectedSid)) {
+      emit(EVENTS.STRUCTURE_SELECT, { sid: saved.selectedSid, source: 'resume' });
+      await revealAndFocus(saved.selectedSid, { focus: !saved.camera });
+    }
+    if (saved.camera) emit('view:restore', { camera: saved.camera });
+  }
+
+  function openFromHash() {
+    const link = parseAtlasHash(window.location.hash);
+    if (!link.sid || !contentStore.getEntry(link.sid)) return false;
+    if (link.view) emit(EVENTS.VIEW_PRESET, { name: link.view });
+    emit(EVENTS.STRUCTURE_SELECT, { sid: link.sid, source: 'link' });
+    return true;
+  }
+  window.addEventListener('hashchange', openFromHash);
+  if (!openFromHash() && savedSession && !resumeAlreadyOffered(tabStorageApi)) {
+    markResumeOffered(tabStorageApi);
+    const name = savedSession.selectedSid ? labelFor(savedSession.selectedSid) : null;
+    offerAction(name ? `Continuar de onde parou? (${name})` : 'Continuar de onde parou?', 'Continuar',
+      () => { resumeSession(savedSession); }, 10000);
+  }
 
   // ---- Expõe internals para a camada de compatibilidade legada ----
   window.__atlasInternals = {

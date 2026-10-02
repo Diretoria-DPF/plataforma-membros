@@ -35,11 +35,15 @@ const TOOLBAR_BUTTONS = [
   { id: 'labels', glyph: 'Aa', label: 'Rótulos', action: 'AtlasShell.toggleLabels', secondary: true },
   { id: 'reset', glyph: '⟲', label: 'Centralizar', action: 'AtlasShell.reset' },
   { id: 'fullscreen', glyph: '⛶', label: 'Tela cheia', action: 'AtlasShell.toggleFullscreen', secondary: true },
-  { id: 'more', glyph: '⋯', label: 'Mais', action: 'AtlasShell.openMoreMenu' },
+  { id: 'more', glyph: '⚙', label: 'Mais opções', action: 'AtlasShell.openMoreMenu' },
 ];
 
-/** Botão que abre o painel "Ferramentas" — só aparece no celular (CSS). */
-const TOOLS_BUTTON = { id: 'tools', glyph: '⚙', label: 'Ferramentas', action: 'AtlasShell.toggleTools' };
+/**
+ * Botão que abre o painel "Ferramentas" — só aparece no celular (CSS). Em
+ * retrato o painel é uma folha inferior com botões grandes (polegar), não um
+ * menu radial.
+ */
+const TOOLS_BUTTON = { id: 'tools', glyph: '⋯', label: 'Ferramentas', action: 'AtlasShell.toggleTools' };
 
 /** Quanto tempo o aviso "Desfazer" fica na tela. */
 const UNDO_MS = 5000;
@@ -130,7 +134,12 @@ function buildToolbar() {
   ]);
   const panel = el('div', {
     id: 'atlas-tools-panel', className: 'atlas-tools-panel', role: 'group', 'aria-label': 'Ferramentas',
-  }, []);
+  }, [el('span', { className: 'atlas-tools-title', 'aria-hidden': 'true' }, ['Ferramentas'])]);
+  // Fundo da folha inferior: escurece o 3D e fecha ao tocar — sem deixar o
+  // toque "vazar" para o corpo (selecionaria uma estrutura sem querer).
+  const backdrop = el('div', { className: 'atlas-tools-backdrop', 'aria-hidden': 'true' }, []);
+  backdrop.addEventListener('click', () => setToolsOpen(false));
+  root.appendChild(backdrop);
   TOOLBAR_BUTTONS.forEach((btn, i) => {
     (btn.primary ? root : panel).appendChild(toolButton(btn, i));
   });
@@ -171,6 +180,9 @@ function setToolsOpen(open) {
   const root = document.getElementById('atlas-toolbar');
   if (!root) return;
   root.dataset.toolsOpen = String(!!open);
+  // A barra mora dentro do canvas (camada abaixo do painel da ficha); com
+  // a folha de Ferramentas aberta, o canvas sobe para ela ficar por cima.
+  document.body.dataset.toolsOpen = String(!!open);
   const b = document.getElementById('atlas-toolbar-tools');
   if (b) b.setAttribute('aria-expanded', String(!!open));
 }
@@ -187,17 +199,29 @@ function hideUndo() {
   if (toast) { toast.dataset.open = 'false'; window.LaiftDom.clear(toast); }
 }
 function offerUndo(message, restore) {
+  offerAction(message, 'Desfazer', restore, UNDO_MS);
+}
+
+/**
+ * Aviso com um botão de ação (ex.: "Desfazer", "Continuar"). O botão usa a
+ * ação AtlasShell.undo, que roda a função guardada.
+ * @param {string} message
+ * @param {string} label texto do botão
+ * @param {Function} fn
+ * @param {number} [ms]
+ */
+export function offerAction(message, label, fn, ms = UNDO_MS) {
   const toast = document.getElementById('atlas-toast');
   if (!toast) return;
   clearTimeout(undoTimer);
-  undoAction = restore;
+  undoAction = fn;
   window.LaiftDom.clear(toast);
   toast.appendChild(el('span', { className: 'atlas-toast-text' }, [message]));
   toast.appendChild(el('button', {
     type: 'button', className: 'atlas-toast-action', dataset: { action: 'AtlasShell.undo' },
-  }, ['Desfazer']));
+  }, [label]));
   toast.dataset.open = 'true';
-  undoTimer = setTimeout(hideUndo, UNDO_MS);
+  undoTimer = setTimeout(hideUndo, ms);
 }
 
 /**

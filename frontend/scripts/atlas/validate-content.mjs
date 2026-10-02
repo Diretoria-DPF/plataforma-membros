@@ -371,6 +371,15 @@ async function main() {
           errors.push(`[integridade] quiz-cases.json: o caso "${quizCase.id}" (${field}) usa "${sid}", que não é uma estrutura do corpo 3D (generated/structures.json) — não dá para tocá-la`);
         }
       }
+      // Distrator que também conta como acerto deixa o caso ambíguo
+      // (docs/atlas-conteudo/quiz-regras.md).
+      const accepted = new Set([].concat(quizCase.correctSid || [], quizCase.correctSids || []));
+      const bySidSystem = (sid) => (structureList.find((st) => st.sid === sid) || {}).system;
+      for (const sid of quizCase.distractorSids ?? []) {
+        if (accepted.has(sid) || (quizCase.correctSystem && bySidSystem(sid) === quizCase.correctSystem)) {
+          errors.push(`[integridade] quiz-cases.json: o caso "${quizCase.id}" tem o distrator "${sid}" que também conta como acerto`);
+        }
+      }
       if (quizCase.correctSystem && !meshSystems.has(quizCase.correctSystem)) {
         errors.push(`[integridade] quiz-cases.json: o caso "${quizCase.id}" (correctSystem) usa o sistema "${quizCase.correctSystem}", que não existe em generated/structures.json`);
       }

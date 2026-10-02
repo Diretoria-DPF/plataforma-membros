@@ -25,6 +25,9 @@ Leia só os trechos alterados e, quando preciso, o arredor imediato. Nunca leia 
 10. `localStorage`/`sessionStorage`/`IndexedDB`: toda leitura e escrita em `try/catch`.
 11. Nenhuma chave, token, segredo ou dado pessoal no diff.
 12. Nenhum identificador de modelo de IA em código, comentários ou docs.
+13. Estado salvo (`localStorage`) tem versão (`schemaVersion`) e o código descarta registro de outra versão ou com sid inexistente.
+14. Nenhuma chamada direta a `files.rcsb.org` / `pubchem.ncbi.nlm.nih.gov` fora do proxy (vale depois da Onda 4).
+15. Nenhum texto em inglês visível ao usuário (rótulos, botões, avisos, mensagens de erro).
 
 ## Saída (obrigatória, ≤ 20 linhas)
 - Se tudo certo: `OK — <n> arquivos revisados`.
