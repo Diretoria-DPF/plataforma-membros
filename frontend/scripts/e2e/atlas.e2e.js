@@ -207,6 +207,39 @@ module.exports = async function atlas() {
     check(submitted, `QuizEngine.startQuiz()+completeQuiz() submete uma tentativa via apiLearnSubmitQuizAttempt (chamadas: ${JSON.stringify(app.calls.worker.map((c) => c.action))})`);
 
     // ------------------------------------------------------------------
+    // 6a) Quiz vencível: o caso carrega o sistema da resposta, a malha
+    // certa fica visível no corpo e tocá-la conta como acerto (antes 6 de 8
+    // casos apontavam para sids legados que nenhum toque devolve).
+    // ------------------------------------------------------------------
+    await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
+    await frame.evaluate(() => window.AtlasShell.setMode('quiz'));
+    await frame.waitForSelector('#quizQuestionCard #quizFeedback', { state: 'attached', timeout: 15000 });
+    const quizPick = await frame.evaluate(async () => {
+      const { registry, bus, store } = window.__atlasInternals;
+      const cases = await (await fetch('data/atlas/quiz-cases.json')).json();
+      const label = document.querySelector('#quizQuestionCard')?.textContent || '';
+      const caso = cases.find((c) => label.includes(c.prompt_pt.slice(0, 60))) || null;
+      if (!caso) return { error: 'caso atual não encontrado no cartão' };
+      const wanted = caso.correctSids || [caso.correctSid];
+      const t0 = Date.now();
+      let rec = null;
+      while (Date.now() - t0 < 20000) {
+        rec = wanted.map((sid) => registry.getBySid(sid)).find((r) => r && r.visible !== false);
+        if (rec) break;
+        await new Promise((r) => setTimeout(r, 200));
+      }
+      if (!rec) return { error: `nenhuma malha da resposta de ${caso.id} ficou visível` };
+      const layer = store.get().layers[rec.layer];
+      bus.emit(bus.EVENTS.STRUCTURE_SELECT, { sid: rec.sid, source: 'pick' });
+      await new Promise((r) => setTimeout(r, 100));
+      const fb = document.querySelector('#quizFeedback');
+      return { id: caso.id, sid: rec.sid, layerVisible: !!(layer && layer.visible), feedback: fb ? fb.textContent : '' };
+    });
+    check(!quizPick.error && quizPick.layerVisible, `quiz: a malha da resposta está carregada e com a camada ligada (${JSON.stringify(quizPick)})`);
+    check(/Acerto/.test(quizPick.feedback || ''), `quiz: tocar ${quizPick.sid} no caso ${quizPick.id} dá "Acerto" (feedback: ${quizPick.feedback})`);
+    await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
+
+    // ------------------------------------------------------------------
     // 6b) Fisiologia & Vias: via e processo tocam sobre o corpo
     // (âncoras legadas resolvidas por data/atlas/generated/anchor-map.json)
     // ------------------------------------------------------------------

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://laift.local/atlas/schema/quiz-cases.schema.json",
   "title": "Casos clínicos de quiz do Atlas Anatômico",
-  "description": "data/atlas/quiz-cases.json. Cada caso pede que o usuário toque a estrutura certa no corpo 3D (correctSid); distractorSids são estruturas erradas plausíveis, e anchors são âncoras opcionais sobre o corpo (com t opcional) para destacar a região do caso. Consumido pelo modo Quiz (mesmo payload de apiLearnSubmitQuizAttempt).",
+  "description": "data/atlas/quiz-cases.json. Cada caso pede que o usuário toque a estrutura certa no corpo 3D (correctSid, ou qualquer uma de correctSids ou do sistema correctSystem); distractorSids são estruturas erradas plausíveis, e anchors são âncoras opcionais sobre o corpo (com t opcional) para destacar a região do caso. Consumido pelo modo Quiz (mesmo payload de apiLearnSubmitQuizAttempt).",
   "type": "array",
   "items": { "$ref": "#/$defs/quizCase" },
   "$defs": {
@@ -30,6 +30,19 @@
         "prompt_pt": { "type": "string", "minLength": 1 },
         "difficulty": { "type": "string", "enum": ["facil", "medio", "dificil"] },
         "correctSid": { "$ref": "#/$defs/sid" },
+        "correctSids": {
+          "description": "Todas as malhas que contam como acerto (ex.: todas as partes do coração). correctSid é a principal: nomeia a resposta e foca a câmera.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/sid" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "correctSystem": {
+          "description": "Qualquer estrutura deste sistema conta como acerto (ex.: 'muscular' para 'aponte um músculo esquelético').",
+          "type": "string"
+        },
+        "explanation_pt": { "type": "string", "minLength": 1 },
+        "dica": { "type": "string", "minLength": 1 },
         "distractorSids": {
           "type": "array",
           "items": { "$ref": "#/$defs/sid" },

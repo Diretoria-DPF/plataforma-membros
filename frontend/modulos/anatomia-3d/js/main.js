@@ -567,6 +567,38 @@ async function boot() {
     if (sid && source !== 'pick' && source !== 'focus') revealAndFocus(sid);
   });
 
+  // ---- Quiz: a resposta precisa estar no corpo para ser tocada ----
+  // Carrega os sistemas das malhas que contam como acerto e liga as camadas
+  // delas (com Raio-X se forem profundas), sem selecionar nem mover a câmera
+  // — isso entregaria a resposta.
+  async function prepareQuizCase(caso) {
+    const sids = [
+      ...(Array.isArray(caso.correctSids) ? caso.correctSids : []),
+      ...(Array.isArray(caso.correctSid) ? caso.correctSid : [caso.correctSid]),
+    ].filter(Boolean);
+    const systems = new Set(caso.correctSystem ? [caso.correctSystem] : []);
+    for (const sid of sids) {
+      const entry = contentStore.getEntry(sid);
+      if (entry && entry.system) systems.add(entry.system);
+    }
+    await Promise.all([...systems].filter((sys) => !assetLoader.isLoaded(sys)).map(loadSystem));
+    const layers = new Set();
+    for (const sid of sids) {
+      const rec = registry.getBySid(sid);
+      const entry = contentStore.getEntry(sid);
+      const layer = (rec && rec.layer) || (entry && entry.layer);
+      if (layer) layers.add(layer);
+    }
+    if (caso.correctSystem === 'muscular') layers.add('musculos');
+    layers.forEach(showLayer);
+    const st = storeGet();
+    if ([...layers].some((l) => DEEP_LAYERS.has(l)) && !st.xray
+        && ((st.layers.musculos && st.layers.musculos.visible) || (st.layers.pele && st.layers.pele.visible))) {
+      emit(EVENTS.XRAY_SET, { enabled: true });
+    }
+    requestRender();
+  }
+
   // ---- Teclado: + / − aproximam e afastam ----
   document.addEventListener('keydown', (evt) => {
     const t = evt.target;
@@ -614,7 +646,20 @@ async function boot() {
   // ---- Modos (carregados sob demanda ao trocar de modo) ----
   const modeInstances = new Map();
   const modeLoaders = {
-    quiz: () => import('./modes/quiz.js').then((m) => m.createQuizMode({ bus, store: storeApi, getLabel: labelFor, loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`) })),
+    quiz: () => Promise.all([
+      import('./modes/quiz.js'),
+      fetchJson(`${CONTENT_BASE}sid-aliases.json`).catch(() => ({})),
+    ]).then(([m, aliases]) => m.createQuizMode({
+      bus, store: storeApi, getLabel: labelFor,
+      loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`),
+      resolveSid: (sid) => (aliases && aliases[sid]) || sid,
+      systemOf: (sid) => {
+        const rec = registry.getBySid(sid);
+        const entry = contentStore.getEntry(sid);
+        return (entry && entry.system) || (rec && rec.system) || null;
+      },
+      prepareCase: prepareQuizCase,
+    })),
     fisiologia: () => Promise.all([
       import('./modes/physiology.js'),
       // Âncoras legadas de routes/processes → estrutura real ou ponto 3D

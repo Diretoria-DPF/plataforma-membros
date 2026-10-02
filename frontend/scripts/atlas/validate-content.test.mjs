@@ -208,6 +208,42 @@ check('as fixtures geradas passam na validação', () => {
   });
 }
 
+// 9) generated/structures.json presente: os sids do quiz precisam ser malhas
+// reais do corpo 3D (o toque nunca devolve um sid legado).
+{
+  const dir = cloneFixtures('quiz-malhas');
+  tmpDirs.push(dir);
+  const quizPath = path.join(dir, 'quiz-cases.json');
+  const quiz = readJson(quizPath);
+  const meshes = new Set();
+  for (const c of quiz) {
+    [].concat(c.correctSid || [], c.distractorSids || []).forEach((s) => meshes.add(s));
+  }
+  meshes.add('za:left-ventricle');
+  fs.mkdirSync(path.join(dir, 'generated'), { recursive: true });
+  const writeMeshes = () => writeJson(path.join(dir, 'generated', 'structures.json'),
+    [...meshes].map((sid) => ({ sid, system: 'cardiovascular' })));
+  writeMeshes();
+
+  check('quiz com sids que são malhas reais passa', () => {
+    quiz[0].correctSids = [quiz[0].correctSid, 'za:left-ventricle'];
+    quiz[0].correctSystem = 'cardiovascular';
+    writeJson(quizPath, quiz);
+    const { stderr } = runValidator(dir);
+    assert.doesNotMatch(stderr, /não é uma estrutura do corpo 3D|correctSystem/);
+  });
+
+  check('quiz com sid fora de generated/structures.json é erro', () => {
+    quiz[0].correctSids = ['za:rins'];
+    quiz[0].correctSystem = 'inexistente';
+    writeJson(quizPath, quiz);
+    const { status, stderr } = runValidator(dir);
+    assert.notEqual(status, 0, 'esperava falha');
+    assert.match(stderr, /correctSids.*za:rins.*não é uma estrutura do corpo 3D/);
+    assert.match(stderr, /correctSystem.*inexistente/);
+  });
+}
+
 cleanup(tmpDirs);
 
 console.log(`[teste] ${passCount} passaram, ${failCount} falharam.`);

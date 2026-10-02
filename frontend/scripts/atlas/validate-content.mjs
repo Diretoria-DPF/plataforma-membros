@@ -346,6 +346,36 @@ async function main() {
       }
     }
   }
+  // Quiz: a resposta é TOCADA no corpo 3D — todo sid precisa ser uma malha
+  // real de generated/structures.json (sids legados como "fma:7088" ou
+  // "za:rins" existem no índice antigo, mas nunca vêm de um toque, e o caso
+  // ficava impossível de acertar).
+  const structuresPath = path.join(targetDir, 'generated/structures.json');
+  const structuresData = fs.existsSync(structuresPath) ? readJson(structuresPath, 'generated/structures.json').data : null;
+  const structureList = Array.isArray(structuresData) ? structuresData : (structuresData && structuresData.structures) || null;
+  if (structureList && Array.isArray(quizFile.data)) {
+    const meshSids = new Set(structureList.map((st) => st.sid));
+    const meshSystems = new Set(structureList.map((st) => st.system));
+    const seenIds = new Set();
+    for (const quizCase of quizFile.data) {
+      if (!quizCase) continue;
+      if (seenIds.has(quizCase.id)) errors.push(`[integridade] quiz-cases.json: id repetido "${quizCase.id}"`);
+      seenIds.add(quizCase.id);
+      const meshFields = [
+        ...[].concat(quizCase.correctSid || []).map((s) => ['correctSid', s]),
+        ...(quizCase.correctSids ?? []).map((s) => ['correctSids', s]),
+        ...(quizCase.distractorSids ?? []).map((s) => ['distractorSids', s]),
+      ];
+      for (const [field, sid] of meshFields) {
+        if (!meshSids.has(sid)) {
+          errors.push(`[integridade] quiz-cases.json: o caso "${quizCase.id}" (${field}) usa "${sid}", que não é uma estrutura do corpo 3D (generated/structures.json) — não dá para tocá-la`);
+        }
+      }
+      if (quizCase.correctSystem && !meshSystems.has(quizCase.correctSystem)) {
+        errors.push(`[integridade] quiz-cases.json: o caso "${quizCase.id}" (correctSystem) usa o sistema "${quizCase.correctSystem}", que não existe em generated/structures.json`);
+      }
+    }
+  }
   if (Array.isArray(quizFile.data)) {
     for (const quizCase of quizFile.data) {
       if (!quizCase) continue;
