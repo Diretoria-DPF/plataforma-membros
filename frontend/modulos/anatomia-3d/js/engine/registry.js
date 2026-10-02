@@ -481,9 +481,13 @@ export function createRegistry({ engine, bus } = {}) {
    * @param {string} system
    * @param {{ root: THREE.Object3D, nodeToSid: Record<string,string>, sex: string, lod: string, asset?: Object, esquematico?: boolean }} data
    */
-  function registerSystem(system, { root, nodeToSid, sex, lod, esquematico } = {}) {
+  function registerSystem(system, { root, nodeToSid, sex, lod, esquematico, key } = {}) {
     if (!root || !nodeToSid) return;
-    unregisterSystem(system); // idempotente: troca por uma versão nova do mesmo sistema
+    // `key`: o mesmo sistema pode ter mais de um arquivo (corpo Z-Anatomy +
+    // órgão HRA, "cardiovascular#hra") — cada um registrado sob a própria
+    // chave, sem apagar o outro.
+    const regKey = key || system;
+    unregisterSystem(regKey); // idempotente: troca por uma versão nova do mesmo arquivo
     root.updateMatrixWorld(true);
 
     // 1ª passada: resolve nó→malhas e classifica camada/material por sid.
@@ -584,7 +588,7 @@ export function createRegistry({ engine, bus } = {}) {
       }
     }
 
-    bySystem.set(system, sids);
+    bySystem.set(regKey, sids);
     rebuildPickables();
     if (engine.requestRender) engine.requestRender();
     return integrity;
@@ -703,12 +707,13 @@ export function createRegistry({ engine, bus } = {}) {
 
   /** @type {import('../core/contracts.js').Registry['getBySystem']} */
   function getBySystem(systemId) {
-    const sids = bySystem.get(systemId);
-    if (!sids) return [];
     const out = [];
-    for (const sid of sids) {
-      const rec = structures.get(sid);
-      if (rec) out.push(toPublic(rec));
+    for (const [key, sids] of bySystem) {
+      if (key !== systemId && !key.startsWith(`${systemId}#`)) continue;
+      for (const sid of sids) {
+        const rec = structures.get(sid);
+        if (rec) out.push(toPublic(rec));
+      }
     }
     return out;
   }
@@ -859,7 +864,10 @@ export function createRegistry({ engine, bus } = {}) {
    * acertos do lado "cortado" do plano.
    * @type {import('../core/contracts.js').Registry['pick']}
    */
-  function pick(point, camera) {
+  // `camera` padrão = a câmera do motor: os chamadores (main.js, selection.js)
+  // passam só o ponto — sem este padrão o pick devolvia null para TODO toque
+  // e nenhuma estrutura abria pelo corpo 3D (bug do WP13 até o hotfix C2).
+  function pick(point, camera = engine && engine.camera) {
     if (!camera || !pickables.length) return null;
     raycaster.setFromCamera(point, camera);
     const hits = raycaster.intersectObjects(pickables, false);

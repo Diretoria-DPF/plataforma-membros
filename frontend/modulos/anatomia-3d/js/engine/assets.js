@@ -80,6 +80,8 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
   const inflight = new Map();
   /** @type {Map<string, Object>} sistema → asset do manifesto atualmente carregado/registrado. */
   const loadedSystems = new Map();
+  /** Órgãos HRA carregados à parte (`${system}#hra` → asset). */
+  const loadedVariants = new Map();
   /** @type {Set<string>} chaves marcadas para descarte cooperativo (cancelLoad). */
   const cancelled = new Set();
   /** @type {Set<(p: import('../core/contracts.js').LoadProgress) => void>} */
@@ -133,11 +135,21 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
    * @param {string} sex
    * @returns {Object|null}
    */
-  function findAsset(system, lod, sex) {
+  // `variant`: 'base' = o arquivo do corpo inteiro (Z-Anatomy, sexo "U") —
+  // é o que "carregar o sistema" significa; 'hra' = o órgão detalhado do HRA
+  // do sexo atual (coração, fígado, rim…), carregado à parte só quando uma
+  // estrutura dele (sid "za:vh-*") é pedida. Antes o arquivo HRA do sexo
+  // vencia o Z-Anatomy e o substituía: ventrículos, aorta, estômago,
+  // intestinos etc. nunca entravam no corpo.
+  function findAsset(system, lod, sex, variant = 'base') {
     if (!manifest) return null;
     const candidates = manifest.assets.filter((a) => a.system === system && a.lod === lod);
     if (!candidates.length) return null;
-    return candidates.find((a) => a.sex === sex) || candidates.find((a) => a.sex === 'U') || candidates[0];
+    if (variant === 'hra') {
+      const hra = candidates.filter((a) => a.sex !== 'U');
+      return hra.find((a) => a.sex === sex) || hra[0] || null;
+    }
+    return candidates.find((a) => a.sex === 'U') || candidates.find((a) => a.sex === sex) || candidates[0];
   }
 
   /**
@@ -198,7 +210,9 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
   function loadSystem(system, opts = {}) {
     const sex = opts.sex || (store && store.get ? store.get().sex : 'M');
     const lod = resolveLod(opts.lod === undefined ? 'auto' : opts.lod);
-    const key = `${system}|${lod}|${sex}`;
+    const variant = opts.variant === 'hra' ? 'hra' : 'base';
+    const regKey = variant === 'hra' ? `${system}#hra` : system;
+    const key = `${system}|${lod}|${sex}|${variant}`;
     const existing = inflight.get(key);
     if (existing) return existing; // dedupe: chamada concorrente ganha a mesma promessa
 
@@ -210,15 +224,16 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
         markUnavailable(system, err && err.message);
         return null;
       }
-      let asset = findAsset(system, lod, sex);
+      let asset = findAsset(system, lod, sex, variant);
       // Sistema existe mas só no outro LOD (ex.: manifesto de teste sem
       // um dos dois): melhor mostrar algo do que marcar indisponível.
-      if (!asset) asset = findAsset(system, lod === 'lod0' ? 'lod1' : 'lod0', sex);
+      if (!asset) asset = findAsset(system, lod === 'lod0' ? 'lod1' : 'lod0', sex, variant);
       if (!asset) {
+        if (variant === 'hra') return null; // sistema sem órgão HRA: nada a carregar
         markUnavailable(system, `sistema "${system}" (sexo ${sex}) não existe no manifesto`);
         return null;
       }
-      bus.emit(EVENTS.SYSTEM_LOAD_START, { system });
+      bus.emit(EVENTS.SYSTEM_LOAD_START, { system, variant });
       const url = base + asset.file;
       try {
         const gltf = await gltfLoader.loadAsync(url, (evt) => {
@@ -229,18 +244,20 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
           return null; // descartado por cancelLoad() — nunca registra nem emite "done"
         }
         const root = gltf.scene;
-        root.name = `system:${system}`;
+        root.name = `system:${regKey}`;
         totalTriangles += asset.triangles || 0;
         checkTriangleBudget();
-        const integrity = registry ? registry.registerSystem(system, { root, nodeToSid: asset.nodeToSid, sex, lod, asset }) : undefined;
-        markLoaded(system, asset);
-        bus.emit(EVENTS.SYSTEM_LOAD_DONE, { system, sex, lod, root, nodeToSid: asset.nodeToSid, asset, integrity });
+        const integrity = registry ? registry.registerSystem(system, { root, nodeToSid: asset.nodeToSid, sex, lod, asset, key: regKey }) : undefined;
+        if (variant === 'hra') loadedVariants.set(regKey, asset);
+        else markLoaded(system, asset);
+        bus.emit(EVENTS.SYSTEM_LOAD_DONE, { system, variant, sex, lod, root, nodeToSid: asset.nodeToSid, asset, integrity });
         if (engine && engine.requestRender) engine.requestRender();
         return { root, asset };
       } catch (err) {
         // 404, parse inválido, Draco/Meshopt corrompido etc. — nunca deixa
         // a exceção subir: o sistema só fica "indisponível" (ver
         // js/engine/fallback.js para o que aparece no lugar).
+        if (variant === 'hra') { bus.emit(EVENTS.SYSTEM_LOAD_ERROR, { system, variant, error: err && err.message }); return null; }
         markUnavailable(system, err && err.message);
         return null;
       }
@@ -255,7 +272,7 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
   function cancelLoad(system, opts = {}) {
     const sex = opts.sex || (store && store.get ? store.get().sex : 'M');
     const lod = resolveLod(opts.lod === undefined ? 'auto' : opts.lod);
-    cancelled.add(`${system}|${lod}|${sex}`);
+    cancelled.add(`${system}|${lod}|${sex}|${opts.variant === 'hra' ? 'hra' : 'base'}`);
   }
 
   /**
@@ -274,9 +291,9 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
     if (engine && engine.requestRender) engine.requestRender();
   }
 
-  /** @param {string} system @returns {boolean} */
-  function isLoaded(system) {
-    return loadedSystems.has(system);
+  /** @param {string} system @param {{variant?: 'base'|'hra'}} [opts] @returns {boolean} */
+  function isLoaded(system, opts = {}) {
+    return opts.variant === 'hra' ? loadedVariants.has(`${system}#hra`) : loadedSystems.has(system);
   }
 
   /**

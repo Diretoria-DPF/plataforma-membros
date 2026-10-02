@@ -610,16 +610,19 @@ async function boot() {
 
   // ---- Carregamento de sistemas ----
   const loading = new Set();
-  async function loadSystem(systemId) {
-    if (assetLoader.isLoaded(systemId) || loading.has(systemId)) return;
-    loading.add(systemId);
+  // opts.variant 'hra': o órgão detalhado do HRA do sistema (ver
+  // js/engine/assets.js findAsset) — só quando uma estrutura "za:vh-*" é pedida.
+  async function loadSystem(systemId, opts = {}) {
+    const key = opts.variant === 'hra' ? `${systemId}#hra` : systemId;
+    if (assetLoader.isLoaded(systemId, opts) || loading.has(key)) return;
+    loading.add(key);
     try {
       // assets.js já acrescenta o sistema a store.loadedSystems (sem repetir).
-      await assetLoader.loadSystem(systemId);
+      await assetLoader.loadSystem(systemId, opts);
     } catch (e) {
-      storeSet({ unavailableSystems: [...storeGet().unavailableSystems, systemId] });
+      if (!opts.variant) storeSet({ unavailableSystems: [...storeGet().unavailableSystems, systemId] });
     } finally {
-      loading.delete(systemId);
+      loading.delete(key);
       requestRender();
     }
   }
@@ -701,6 +704,10 @@ async function boot() {
   async function revealAndFocus(sid, { focus = true } = {}) {
     const entry = contentStore.getEntry(sid);
     if (entry && entry.system && !assetLoader.isLoaded(entry.system)) await loadSystem(entry.system);
+    // Estrutura do órgão detalhado do HRA ("za:vh-*"): carrega esse arquivo também.
+    if (entry && entry.system && /^za:vh-/.test(sid) && !assetLoader.isLoaded(entry.system, { variant: 'hra' })) {
+      await loadSystem(entry.system, { variant: 'hra' });
+    }
     if (storeGet().selectedSid !== sid) return; // o usuário já escolheu outra
     // A camada que vale é a do registro 3D (classificação por nó); a do
     // índice é só o palpite antes de o sistema carregar.
