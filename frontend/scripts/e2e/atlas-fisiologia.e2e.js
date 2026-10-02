@@ -10,7 +10,8 @@ const { startApp, check } = require('./harness');
 
 async function runAt(viewport) {
   const label = `${viewport.width}×${viewport.height}`;
-  const app = await startApp({ role: 'member', viewport });
+  // A visão sistêmica está atrás da flag `systemic` (desligada no padrão).
+  const app = await startApp({ role: 'member', viewport, atlasFlags: { onboarding: false, hints: false, systemic: true } });
   try {
     await app.login();
     const frame = await app.openModule('anatomia');

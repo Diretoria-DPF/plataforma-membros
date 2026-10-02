@@ -52,6 +52,10 @@ async function runAt(viewport) {
     const badge = await frame.evaluate((c) => { const b = document.querySelector(`${c} .atlas-card-status`); return b ? b.textContent.replace(/\s+/g, ' ').trim() : ''; }, card);
     check(/^○\s*Gerado automaticamente/.test(badge), `${label}: ficha gerada com selo cinza (${badge.slice(0, 60)})`);
     check(contentReqs.some((u) => /content\/cardiovascular\.json/.test(u)), `${label}: abrir a ficha baixa só o arquivo do sistema dela`);
+    // M3: visão sistêmica desligada no padrão (flag systemic, até o teste de papel).
+    await frame.evaluate(() => window.AtlasShell.setMode('fisiologia'));
+    await frame.waitForSelector('.physiology-tab', { timeout: 15000 });
+    check(await frame.evaluate(() => !document.querySelector('.physiology-tab[data-tab="sistemica"]')), `${label}: visão sistêmica fora do padrão (flag systemic desligada)`);
     check(app.errors.length === 0, `${label}: sem erros de JavaScript${app.errors.length ? ': ' + app.errors.join(' | ') : ''}`);
   } finally {
     await app.close();

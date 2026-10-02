@@ -14,7 +14,7 @@ const path = require('path');
 const { check, loadPlaywright, startStaticServer } = require('./harness');
 
 const AXE_SOURCE = fs.readFileSync(path.join(__dirname, '../../node_modules/axe-core/axe.min.js'), 'utf8');
-const ATLAS_PATH = 'modulos/anatomia-3d/index.html';
+const ATLAS_PATH = 'modulos/anatomia-3d/index.html?flags=systemic'; // visão sistêmica (flag) também é varrida
 const HOST_HTML = `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>host de teste</title></head>
 <body style="margin:0;background:#000;">

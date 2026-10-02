@@ -11,6 +11,7 @@
 
 import { resolvePath, createPathAnimator, buildTimeline } from './path-anim.js';
 import { emit, EVENTS } from '../core/bus.js';
+import { ATLAS_FLAGS } from '../core/flags.js';
 
 /**
  * Cria o modo Fisiologia & Vias.
@@ -216,7 +217,7 @@ export function createPhysiologyMode({
         text: label,
       });
       const segmentedControl = DOM.h('div', { className: 'physiology-tabs', style: { display: 'flex', gap: '8px', borderBottom: '2px solid var(--laift-border)' } },
-        [tab('vias', 'Vias'), tab('processos', 'Processos'), tab('sistemica', 'Visão sistêmica')]);
+        [tab('vias', 'Vias'), tab('processos', 'Processos'), ATLAS_FLAGS.systemic ? tab('sistemica', 'Visão sistêmica') : null].filter(Boolean));
       container.appendChild(segmentedControl);
 
       if (currentMode === 'sistemica') {
