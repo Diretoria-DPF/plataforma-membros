@@ -1,0 +1,1319 @@
+{
+  "za:vh-m-aortic-valve": {
+    "ids": {},
+    "summary_pt": "A valva da aorta guarda o óstio da aorta, entre o ventrículo esquerdo e a parte ascendente da aorta, e impede o refluxo de sangue para o ventrículo durante a diástole. É formada por três válvulas semilunares, denominadas direita, esquerda e posterior na Terminologia Anatômica (ou cúspides coronária direita, coronária esquerda e não coronária), inseridas em um anel fibroso que integra o esqueleto fibroso do coração. Acima de cada cúspide, a parede da aorta se dilata e forma um seio da aorta. Das dilatações direita e esquerda nascem as artérias coronárias, enquanto a posterior não origina ramo algum. A margem livre de cada cúspide apresenta um espessamento central, o nódulo, ladeado por zonas finas, as lúnulas, que se justapõem no fechamento. Na sístole ventricular, a pressão do sangue empurra as cúspides contra a parede dos seios e a valva se abre. Na diástole, o sangue que reflui enche os seios e aproxima as cúspides, fechando o óstio de modo passivo, sem gasto de energia pela valva. A valva projeta-se posteriormente ao lado esquerdo do esterno, ao nível do terceiro espaço intercostal, e seu fechamento origina o componente aórtico da segunda bulha cardíaca.",
+    "anatomy": {
+      "relations": "Situa-se no centro do coração, no óstio da aorta, na saída do ventrículo esquerdo (via de saída). Está posterior e à direita da valva do tronco pulmonar e do cone arterial, e anterior ao septo interatrial. A cúspide posterior (não coronária) relaciona-se com os átrios, e a cúspide esquerda e a posterior mantêm continuidade fibrosa com a cúspide anterior da valva atrioventricular esquerda. Projeta-se posterior ao lado esquerdo do esterno, ao nível do terceiro espaço intercostal; seu foco de ausculta é o segundo espaço intercostal direito, junto ao esterno.",
+      "vascularization": "As cúspides são delgadas e recebem nutrição sobretudo por difusão a partir do sangue que as banha. Logo acima delas, os óstios das artérias coronária direita e esquerda abrem-se nos seios da aorta direito e esquerdo, e o enchimento coronário ocorre principalmente na diástole.",
+      "innervation": "O movimento da valva é passivo, conforme o gradiente de pressão entre o ventrículo esquerdo e a aorta; há apenas fibras nervosas esparsas na base das válvulas. O coração como um todo é inervado pelo plexo cardíaco (fibras simpáticas e parassimpáticas).",
+      "lymph": "A drenagem linfática do coração acompanha os vasos coronários e segue para os linfonodos traqueobronquiais inferiores e braquiocefálicos."
+    },
+    "histology": {
+      "tissues": [
+        "Endocárdio: endotélio que reveste as duas faces das cúspides",
+        "Tecido conjuntivo denso (camada fibrosa), rico em colágeno, voltado para a aorta",
+        "Camada esponjosa central, de tecido conjuntivo frouxo",
+        "Camada com fibras elásticas voltada para o ventrículo",
+        "Células intersticiais valvares (fibroblastos modificados)",
+        "Anel fibroso de tecido conjuntivo denso, parte do esqueleto fibroso do coração"
+      ]
+    },
+    "clinical": [
+      "Estenose aórtica: calcificação degenerativa ou valva bicúspide congênita reduzem a abertura, causando sopro sistólico ejetivo e sintomas de angina, síncope e insuficiência cardíaca.",
+      "Insuficiência aórtica: o refluxo diastólico decorre de lesão das cúspides ou de dilatação da raiz da aorta, com sopro diastólico e pulso de grande amplitude.",
+      "Endocardite infecciosa: pode destruir ou perfurar cúspides e formar abscessos no anel valvar.",
+      "Febre reumática crônica e degeneração mixomatosa também comprometem a valva e a levam à disfunção."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Dangelo JG, Fattini CA. Anatomia Humana Sistêmica e Segmentar, 3ª ed. — Angiologia: coração",
+        "obraId": "dangelo",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-pulmonary-valve": {
+    "ids": {},
+    "summary_pt": "A valva do tronco pulmonar localiza-se no óstio do tronco pulmonar, na saída do ventrículo direito, e impede o retorno do sangue para esse ventrículo durante a diástole. É constituída por três válvulas semilunares, chamadas anterior, direita e esquerda, de aspecto semelhante às da valva da aorta, porém mais delgadas, o que reflete o regime de pressão mais baixo da circulação pulmonar. Acima de cada válvula, a parede do tronco pulmonar forma uma pequena dilatação, o seio do tronco pulmonar. A valva está inserida no limite entre a parte muscular do cone arterial, a porção superior do ventrículo direito, e a parede arterial. Na sístole do ventrículo direito, as válvulas são afastadas pelo fluxo e o sangue segue para os pulmões. Na diástole, o refluxo enche os seios, e as margens livres se encostam e fecham o óstio. Como as demais valvas, abre e fecha de modo passivo, em resposta às diferenças de pressão. Projeta-se ao nível da terceira cartilagem costal esquerda, e o seu fechamento produz o componente pulmonar da segunda bulha cardíaca, mais audível no segundo espaço intercostal esquerdo.",
+    "anatomy": {
+      "relations": "Situa-se no ápice do cone arterial do ventrículo direito, na origem do tronco pulmonar, que se dirige para cima e para trás. É a valva mais anterior e superior do coração: fica à frente e à esquerda do óstio da aorta e projeta-se atrás da extremidade esternal da terceira cartilagem costal esquerda. O foco de ausculta é o segundo espaço intercostal esquerdo, junto ao esterno.",
+      "vascularization": "As válvulas, finas, são nutridas principalmente por difusão a partir do sangue; os ramos vasculares restringem-se à base. A irrigação do cone arterial e da região adjacente provém de ramos das artérias coronárias, em especial da artéria coronária direita.",
+      "innervation": "O movimento das válvulas é passivo, em resposta ao gradiente de pressão entre o ventrículo direito e o tronco pulmonar; há apenas fibras nervosas esparsas na base da valva. O coração é inervado pelo plexo cardíaco.",
+      "lymph": "A drenagem linfática do coração acompanha os vasos coronários e segue para os linfonodos traqueobronquiais inferiores e braquiocefálicos."
+    },
+    "histology": {
+      "tissues": [
+        "Endocárdio: endotélio que reveste as válvulas",
+        "Núcleo de tecido conjuntivo denso, com camadas fibrosa, esponjosa e com fibras elásticas",
+        "Células intersticiais valvares (fibroblastos modificados)",
+        "Anel fibroso de tecido conjuntivo denso na base das válvulas"
+      ]
+    },
+    "clinical": [
+      "Estenose valvar pulmonar: em geral congênita, com válvulas espessadas e fusão das comissuras, sobrecarrega o ventrículo direito e produz sopro sistólico ejetivo.",
+      "Tetralogia de Fallot: associa estenose da via de saída do ventrículo direito, comunicação interventricular, dextroposição da aorta e hipertrofia ventricular direita; a valva pulmonar pode ser estenótica ou hipoplásica.",
+      "Insuficiência pulmonar: surge com a dilatação do anel na hipertensão pulmonar ou após correção cirúrgica da estenose, com sopro diastólico.",
+      "Cardiopatia carcinoide: pode comprometer as valvas do coração direito, entre elas a valva do tronco pulmonar."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Dangelo JG, Fattini CA. Anatomia Humana Sistêmica e Segmentar, 3ª ed. — Angiologia: coração",
+        "obraId": "dangelo",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:right-coronary-leaflet": {
+    "ids": {},
+    "summary_pt": "A válvula semilunar direita da valva da aorta (Terminologia Anatômica), também chamada cúspide coronária direita, é uma das três válvulas semilunares que fecham o óstio da aorta. Ocupa a posição anterior e à direita da raiz da aorta e fica voltada para o seio da aorta direito, de onde nasce a artéria coronária direita. Tem forma de bolso de concavidade voltada para a aorta: a margem fixa insere-se no anel fibroso, e a margem livre, com nódulo e lúnulas, une-se às margens das válvulas vizinhas. Os pontos de contato entre as válvulas formam as comissuras. Na sístole ventricular esquerda, a válvula é empurrada contra o seio e o sangue segue para a aorta. Na diástole, o sangue refluído enche o bolso, e a margem livre se justapõe às das válvulas esquerda e posterior, impedindo o retorno ao ventrículo. A presença do óstio coronário no seio correspondente é a característica que distingue esta válvula, assim como a esquerda, da válvula não coronária. Como a valva inteira, sua função depende da integridade conjunta das três válvulas, do anel e da raiz da aorta.",
+    "anatomy": {
+      "relations": "Situa-se na parte anterior e direita da raiz da aorta, voltada para o seio da aorta direito. Nesse seio abre-se o óstio da artéria coronária direita. Anteriormente, relaciona-se com o cone arterial do ventrículo direito e, mais abaixo, com o septo interventricular. Faz comissura com a cúspide esquerda, à frente, e com a cúspide posterior, à direita.",
+      "vascularization": "A cúspide, delgada, é nutrida sobretudo por difusão a partir do sangue. O seio correspondente dá origem à artéria coronária direita, que fornece a irrigação do coração adjacente."
+    },
+    "histology": {
+      "tissues": [
+        "Endotélio (endocárdio) revestindo as duas faces",
+        "Camada fibrosa de colágeno voltada para a aorta",
+        "Camada esponjosa central de tecido conjuntivo frouxo",
+        "Camada com fibras elásticas voltada para o ventrículo",
+        "Células intersticiais valvares"
+      ]
+    },
+    "clinical": [
+      "Estenose aórtica calcífica: a calcificação degenerativa das cúspides, entre elas a coronária direita, restringe a abertura da valva.",
+      "Valva aórtica bicúspide: a fusão das cúspides coronárias direita e esquerda é o fenótipo mais frequente em séries clínicas, seguido da fusão entre a direita e a não coronária; a valva bicúspide predispõe à estenose e à insuficiência.",
+      "Endocardite infecciosa: vegetações e perfuração da cúspide causam insuficiência aórtica aguda.",
+      "Prolapso de cúspide: o excesso de tecido ou a perda de sustentação permite que a cúspide ultrapasse o plano do anel e cause refluxo."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:left-coronary-leaflet": {
+    "ids": {},
+    "summary_pt": "A válvula semilunar esquerda da valva da aorta (Terminologia Anatômica), também chamada cúspide coronária esquerda, é uma das três válvulas semilunares do óstio da aorta. Situa-se na parte esquerda e posterior da raiz e é voltada para o seio da aorta esquerdo, onde se abre o óstio da artéria coronária esquerda. Como as demais, tem forma de bolso: a margem fixa insere-se no anel fibroso e a margem livre, com nódulo e lúnulas, une-se às válvulas vizinhas nas comissuras. Na sístole, é afastada do eixo de fluxo e o sangue sai do ventrículo esquerdo. Na diástole, o sangue enche o bolso, e a margem livre se justapõe às das válvulas direita e posterior, evitando o refluxo. A região da base desta válvula mantém continuidade fibrosa com a cúspide anterior da valva atrioventricular esquerda, o que une as duas valvas do lado esquerdo do coração. Essa vizinhança explica por que processos que comprometem uma valva podem se estender à outra. A válvula distingue-se da não coronária pela presença do óstio coronário no seio correspondente, e sua função depende da integridade conjunta das três válvulas.",
+    "anatomy": {
+      "relations": "Situa-se na parte esquerda da raiz da aorta, voltada para o seio da aorta esquerdo, no qual se abre o óstio da artéria coronária esquerda. Anteriormente, relaciona-se com o tronco pulmonar e com a aurícula esquerda. Sua base tem continuidade fibrosa com a cúspide anterior da valva atrioventricular esquerda. Faz comissura com a cúspide direita, à frente, e com a posterior, atrás.",
+      "vascularization": "Delgada, é nutrida sobretudo por difusão a partir do sangue. O seio correspondente dá origem à artéria coronária esquerda, que se divide em ramos interventricular anterior e circunflexo."
+    },
+    "histology": {
+      "tissues": [
+        "Endotélio (endocárdio) revestindo as duas faces",
+        "Camada fibrosa de colágeno voltada para a aorta",
+        "Camada esponjosa central de tecido conjuntivo frouxo",
+        "Camada com fibras elásticas voltada para o ventrículo",
+        "Células intersticiais valvares"
+      ]
+    },
+    "clinical": [
+      "Estenose aórtica calcífica: a calcificação das cúspides, entre elas a esquerda, reduz a abertura valvar e sobrecarrega o ventrículo esquerdo.",
+      "Endocardite infecciosa: a continuidade fibrosa com a cúspide anterior da valva atrioventricular esquerda permite que a infecção se estenda de uma valva à outra.",
+      "Valva aórtica bicúspide: a fusão das cúspides coronárias esquerda e direita é o fenótipo mais frequente em séries clínicas, seguido da fusão entre a direita e a não coronária.",
+      "Insuficiência aórtica: a retração ou a perfuração da cúspide impede a coaptação e provoca refluxo diastólico."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:non-coronary-leaflet": {
+    "ids": {},
+    "summary_pt": "A válvula semilunar posterior da valva da aorta (Terminologia Anatômica), também chamada cúspide não coronária, é uma das três válvulas semilunares do óstio da aorta e, normalmente, a única cujo seio não dá origem a artéria coronária. Por esse motivo é chamada não coronária, e o seio correspondente, seio da aorta posterior. Tem a forma de bolso de concavidade voltada para a aorta: a margem fixa insere-se no anel fibroso e a margem livre, com nódulo e lúnulas, une-se às das válvulas direita e esquerda por comissuras. Na sístole ventricular esquerda, é afastada do fluxo; na diástole, o sangue refluído enche o bolso e a justapõe às válvulas vizinhas, fechando o óstio. É a válvula mais relacionada com os átrios, em especial com o septo interatrial. A base mantém continuidade fibrosa com a cúspide anterior da valva atrioventricular esquerda, junto com a válvula esquerda. Essa vizinhança com o septo e com as estruturas do esqueleto fibroso do coração é importante clinicamente: infecções e cirurgias da raiz da aorta nessa região podem comprometer a condução atrioventricular. A função da válvula depende da integridade conjunta das três válvulas e do anel.",
+    "anatomy": {
+      "relations": "Situa-se na parte posterior da raiz da aorta, voltada para o seio da aorta posterior, sem óstio coronário. Relaciona-se posteriormente com o septo interatrial e com os átrios, e sua base tem continuidade fibrosa com a cúspide anterior da valva atrioventricular esquerda. Faz comissura com a cúspide direita, à direita, e com a esquerda, à esquerda. Próximo à comissura com a cúspide direita encontra-se a parte membranácea do septo interventricular, e o feixe atrioventricular passa nas proximidades.",
+      "vascularization": "Delgada, é nutrida sobretudo por difusão a partir do sangue. O seio posterior não possui óstio coronário; as artérias coronárias originam-se nos seios direito e esquerdo."
+    },
+    "histology": {
+      "tissues": [
+        "Endotélio (endocárdio) revestindo as duas faces",
+        "Camada fibrosa de colágeno voltada para a aorta",
+        "Camada esponjosa central de tecido conjuntivo frouxo",
+        "Camada com fibras elásticas voltada para o ventrículo",
+        "Células intersticiais valvares"
+      ]
+    },
+    "clinical": [
+      "Estenose aórtica calcífica: a calcificação degenerativa envolve as três cúspides, e a não coronária é frequentemente afetada.",
+      "Endocardite infecciosa: abscesso do anel junto a esta cúspide pode atingir o septo e o sistema de condução, com bloqueio atrioventricular.",
+      "Ausência de óstio coronário: este seio não irriga o miocárdio, o que serve de referência na identificação das cúspides em exames de imagem e em cirurgia.",
+      "Dilatação da raiz da aorta: o alargamento do seio impede a coaptação das cúspides e provoca insuficiência aórtica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:anterior-semilunar-leaflet-of-pulmonary-valve": {
+    "ids": {},
+    "summary_pt": "A válvula semilunar anterior da valva do tronco pulmonar é uma das três válvulas semilunares que fecham o óstio do tronco pulmonar, junto com as válvulas direita e esquerda. Ocupa a posição anterior, voltada para a parede anterior do cone arterial do ventrículo direito, e a convexidade do bolso valvar volta-se para a cavidade ventricular. Cada válvula é um bolso de concavidade voltada para o tronco pulmonar: a margem fixa insere-se no anel fibroso, e a margem livre, com nódulo e lúnulas, une-se às das válvulas vizinhas por comissuras. Acima dela, a parede do tronco pulmonar forma o seio do tronco pulmonar anterior. Na sístole do ventrículo direito, a válvula é afastada pelo fluxo e o sangue segue para os pulmões. Na diástole, o sangue refluído enche o bolso, e as margens livres das três válvulas se justapõem, impedindo o retorno ao ventrículo. Diferentemente do que ocorre na valva da aorta, nenhum dos seios do tronco pulmonar dá origem a artérias coronárias. As válvulas são mais delgadas do que as aórticas, em correspondência com a menor pressão da circulação pulmonar, e a função depende da integridade conjunta das três.",
+    "anatomy": {
+      "relations": "Situa-se na parte anterior do óstio do tronco pulmonar, voltada para a parede anterior do cone arterial do ventrículo direito e, mais além, para a face esternocostal do coração. Faz comissura com as válvulas direita e esquerda, que ocupam a parte posterior do óstio, voltada para a raiz da aorta.",
+      "vascularization": "Delgada, é nutrida sobretudo por difusão a partir do sangue. O seio do tronco pulmonar correspondente não dá origem a artéria; a irrigação da região adjacente provém de ramos coronários, em especial da artéria coronária direita."
+    },
+    "histology": {
+      "tissues": [
+        "Endotélio (endocárdio) revestindo as duas faces",
+        "Núcleo de tecido conjuntivo denso, com camadas fibrosa, esponjosa e com fibras elásticas",
+        "Células intersticiais valvares"
+      ]
+    },
+    "clinical": [
+      "Estenose valvar pulmonar: em geral congênita, com fusão de comissuras entre as válvulas e abertura em cúpula, sobrecarrega o ventrículo direito.",
+      "Insuficiência pulmonar: a dilatação do anel na hipertensão pulmonar impede a coaptação das válvulas e causa refluxo diastólico.",
+      "Tetralogia de Fallot: a estenose da via de saída do ventrículo direito pode incluir a valva e suas válvulas.",
+      "Cardiopatia carcinoide: as válvulas da valva do tronco pulmonar podem ser espessadas e retraídas nessa doença."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:right-semilunar-leaflet-of-pulmonary-valve": {
+    "ids": {},
+    "summary_pt": "A válvula semilunar direita da valva do tronco pulmonar é uma das três válvulas semilunares que fecham o óstio do tronco pulmonar, junto com as válvulas anterior e esquerda. Situa-se na parte posterior e direita do óstio, voltada para a raiz da aorta. Cada válvula é um bolso de concavidade voltada para o tronco pulmonar: a margem fixa insere-se no anel fibroso, e a margem livre, com nódulo e lúnulas, une-se às das válvulas vizinhas por comissuras. Acima dela, a parede do tronco pulmonar forma o seio do tronco pulmonar correspondente. Na sístole do ventrículo direito, a válvula é empurrada contra o seio, e o sangue segue para os pulmões. Na diástole, o sangue refluído enche o bolso, e as margens livres das três válvulas se aproximam e fecham o óstio, sem gasto ativo de energia, pois o movimento é passivo e depende do gradiente de pressão. Os seios do tronco pulmonar não dão origem a artérias, ao contrário dos seios da aorta. A válvula é mais delgada do que as válvulas da aorta, de acordo com o regime de baixa pressão da circulação pulmonar. A função da valva depende da integridade conjunta das três válvulas e do anel.",
+    "anatomy": {
+      "relations": "Situa-se na parte posterior e direita do óstio do tronco pulmonar, no limite entre o cone arterial do ventrículo direito e o tronco pulmonar. Volta-se para a raiz da aorta. Faz comissura com a válvula anterior, à frente, e com a esquerda, do lado oposto.",
+      "vascularization": "Delgada, é nutrida sobretudo por difusão a partir do sangue. O seio correspondente não dá origem a artéria; a irrigação da região adjacente provém de ramos coronários."
+    },
+    "histology": {
+      "tissues": [
+        "Endotélio (endocárdio) revestindo as duas faces",
+        "Núcleo de tecido conjuntivo denso, com camadas fibrosa, esponjosa e com fibras elásticas",
+        "Células intersticiais valvares"
+      ]
+    },
+    "clinical": [
+      "Estenose valvar pulmonar: a fusão das comissuras entre as válvulas, em geral congênita, reduz a abertura e sobrecarrega o ventrículo direito.",
+      "Insuficiência pulmonar: a dilatação do anel ou a lesão das válvulas impede o fechamento completo e causa refluxo diastólico.",
+      "Cardiopatia carcinoide: as válvulas podem espessar-se e retrair-se, com estenose e insuficiência."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:left-semilunar-leaflet-of-pulmonary-valve": {
+    "ids": {},
+    "summary_pt": "A válvula semilunar esquerda da valva do tronco pulmonar é uma das três válvulas semilunares que fecham o óstio do tronco pulmonar, junto com as válvulas anterior e direita. Situa-se na parte posterior e esquerda do óstio e volta-se para a raiz da aorta. Cada válvula é um bolso de concavidade voltada para o tronco pulmonar: a margem fixa insere-se no anel fibroso, e a margem livre, com nódulo e lúnulas, une-se às das válvulas vizinhas por comissuras. Acima dela, a parede do tronco pulmonar forma o seio do tronco pulmonar correspondente. Na sístole do ventrículo direito, a válvula é empurrada contra o seio, e o sangue segue para os pulmões. Na diástole, o sangue refluído enche o bolso, e as margens livres das três válvulas se justapõem e fecham o óstio. Esse movimento é passivo e depende do gradiente de pressão entre o ventrículo direito e o tronco pulmonar. Os seios do tronco pulmonar não originam artérias coronárias. A válvula é mais delgada do que as da valva da aorta, de acordo com o regime de baixa pressão da circulação pulmonar. A função da valva depende da integridade conjunta das três válvulas e do anel.",
+    "anatomy": {
+      "relations": "Situa-se na parte posterior e esquerda do óstio do tronco pulmonar, no limite entre o cone arterial do ventrículo direito e o tronco pulmonar. Volta-se para a raiz da aorta e fica à esquerda do plano mediano. Faz comissura com a válvula anterior, à frente, e com a direita, do lado oposto.",
+      "vascularization": "Delgada, é nutrida sobretudo por difusão a partir do sangue. O seio correspondente não dá origem a artéria; a irrigação da região adjacente provém de ramos coronários."
+    },
+    "histology": {
+      "tissues": [
+        "Endotélio (endocárdio) revestindo as duas faces",
+        "Núcleo de tecido conjuntivo denso, com camadas fibrosa, esponjosa e com fibras elásticas",
+        "Células intersticiais valvares"
+      ]
+    },
+    "clinical": [
+      "Estenose valvar pulmonar: a fusão das comissuras entre as válvulas, em geral congênita, reduz a abertura e sobrecarrega o ventrículo direito.",
+      "Insuficiência pulmonar: a dilatação do anel ou a lesão das válvulas impede o fechamento completo e causa refluxo diastólico.",
+      "Ausculta: o fechamento das válvulas produz o componente pulmonar da segunda bulha, mais audível no segundo espaço intercostal esquerdo.",
+      "Cardiopatia carcinoide: as válvulas podem espessar-se e retrair-se, com estenose e insuficiência."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Cardiovascular: valvas do coração",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração: valvas cardíacas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Tórax: coração e valvas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Coração",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: coração",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: valvas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Coração: doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Tórax: coração",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:cavernous-sinus-r": {
+    "ids": {},
+    "summary_pt": "O seio cavernoso é um seio venoso da dura-máter par, situado de cada lado do corpo do osso esfenoide e da sela turca, lateral à hipófise. Estende-se da fissura orbital superior, anteriormente, até o ápice da parte petrosa do osso temporal, posteriormente. Não é uma cavidade única, mas um espaço venoso atravessado por trabéculas de tecido conjuntivo, o que lhe dá aspecto cavernoso. Recebe sangue das veias oftálmicas superior e inferior, de veias cerebrais e do seio esfenoparietal, e drena principalmente pelos seios petrosos superior e inferior para o seio sigmoide e a veia jugular interna. Os dois seios comunicam-se pelos seios intercavernosos anterior e posterior, que circundam a hipófise. Por ele passa a artéria carótida interna, envolta pelo plexo carotídeo, com o nervo abducente, e em sua parede lateral correm os nervos oculomotor, troclear, oftálmico e maxilar. A comunicação com as veias da face, pela veia oftálmica, e com o plexo venoso pterigóideo, por veias emissárias, torna o seio uma via de propagação de infecções da face para o interior do crânio.",
+    "anatomy": {
+      "relations": "Situa-se lateralmente ao corpo do esfenoide e ao seio esfenoidal e à hipófise, que lhe são mediais. Superiormente, relaciona-se com o quiasma óptico e com a face medial do lobo temporal (úncus); lateralmente, com a dura-máter da fossa média do crânio. Atravessam-no a parte cavernosa da artéria carótida interna e o nervo abducente. Na parede lateral, de cima para baixo, estão os nervos oculomotor, troclear, oftálmico e maxilar.",
+      "vascularization": "É um canal de drenagem venosa. Recebe as veias oftálmicas superior e inferior, as veias cerebrais médias superficiais e o seio esfenoparietal. Drena pelos seios petrosos superior e inferior para o seio sigmoide e a veia jugular interna, e comunica-se com o plexo venoso pterigóideo por veias emissárias. Os seios intercavernosos ligam o seio direito ao esquerdo.",
+      "innervation": "A dura-máter que forma as paredes do seio recebe ramos meníngeos do nervo trigêmeo. Os nervos que o percorrem (oculomotor, troclear, oftálmico, maxilar e abducente) e o plexo simpático da artéria carótida interna apenas o atravessam, sem inervá-lo."
+    },
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso (tipo vascular), sem camada muscular e sem valvas, contido entre os folhetos da dura-máter.",
+      "tissues": [
+        "Dura-máter: tecido conjuntivo denso que forma as paredes",
+        "Trabéculas de tecido conjuntivo que atravessam o lúmen",
+        "Endotélio contínuo revestindo o lúmen venoso"
+      ]
+    },
+    "clinical": [
+      "Trombose do seio cavernoso: complicação de infecções da face e dos seios paranasais, cursa com febre, cefaleia, edema periorbitário e oftalmoplegia; é uma emergência pela comunicação venosa sem valvas com a face.",
+      "Síndrome do seio cavernoso: o comprometimento dos nervos oculomotor, troclear e abducente causa paralisia ocular, e o das divisões oftálmica e maxilar do trigêmeo, perda de sensibilidade na face.",
+      "Fístula carótido-cavernosa: comunicação anormal entre a artéria carótida interna e o seio causa proptose pulsátil e quemose.",
+      "Aneurismas da parte cavernosa da artéria carótida interna e tumores da hipófise podem comprimir as estruturas vizinhas do seio."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Seios venosos da dura-máter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Sistema nervoso e cardiovascular: seios da dura-máter",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Cabeça e Pescoço: seios da dura-máter",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Machado A, Haertel LM. Neuroanatomia Funcional, 3ª ed. — capítulo Meninges e seios venosos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Drenagem venosa do encéfalo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Machado A, Haertel LM. Neuroanatomia Funcional, 3ª ed. — capítulo Meninges e seios venosos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: vasos sanguíneos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Seios venosos da dura-máter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Seios venosos da dura-máter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça (boxe clínico): trombose do seio cavernoso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Sistema nervoso: doenças vasculares e infecções",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:anterior-communicating-artery": {
+    "ids": {},
+    "summary_pt": "A artéria comunicante anterior é um vaso curto que une as duas artérias cerebrais anteriores, logo à frente do quiasma óptico, e fecha anteriormente o círculo arterial do cérebro, também conhecido como polígono de Willis. Cada artéria cerebral anterior nasce da artéria carótida interna e dirige-se anteriormente e medialmente; a comunicante anterior liga a parte inicial dessas artérias, antes de elas se acompanharem na fissura longitudinal do cérebro. Mede poucos milímetros e apresenta variações frequentes de calibre, duplicação ou fenestração. Sua função é permitir a redistribuição do sangue entre os hemisférios cerebrais direito e esquerdo: quando uma carótida interna se obstrui, o fluxo da carótida contralateral pode atingir o território da artéria cerebral anterior do lado afetado. Do vaso e da parte inicial das artérias cerebrais anteriores partem pequenos ramos perfurantes que penetram na base do encéfalo, destinados ao hipotálamo anterior, ao quiasma óptico, à lâmina terminal, à comissura anterior e à área septal. Por sua posição junto ao quiasma óptico e por ser o local mais frequente de aneurisma sacular do círculo arterial, é uma estrutura de grande interesse clínico, neurocirúrgico e radiológico.",
+    "anatomy": {
+      "relations": "Situa-se na cisterna da base do encéfalo, acima do quiasma óptico e do nervo óptico, entre os lobos frontais e junto à lâmina terminal. Une as artérias cerebrais anteriores, no ponto em que elas se aproximam da linha mediana. Faz parte do círculo arterial do cérebro, formado por ela, pelas partes proximais das artérias cerebrais anteriores, pelas partes terminais das artérias carótidas internas, pelas artérias comunicantes posteriores e pelas partes proximais das artérias cerebrais posteriores.",
+      "vascularization": "Pertence à circulação anterior: suas origens são as artérias cerebrais anteriores, ramos da artéria carótida interna. Emite pequenos ramos perfurantes para o hipotálamo anterior, o quiasma óptico, a lâmina terminal, a comissura anterior e a área septal.",
+      "innervation": "Como as demais artérias cerebrais, apresenta inervação perivascular: fibras simpáticas do gânglio cervical superior, fibras parassimpáticas dos gânglios pterigopalatino e ótico e fibras sensitivas do nervo trigêmeo (divisão oftálmica). Na circulação posterior, aferentes cervicais também contribuem."
+    },
+    "histology": {
+      "tissues": [
+        "Túnica íntima com endotélio e lâmina elástica interna proeminente",
+        "Túnica média delgada, com poucas camadas de células musculares lisas",
+        "Adventícia fina, sem lâmina elástica externa, circundada pelo espaço subaracnóideo"
+      ]
+    },
+    "clinical": [
+      "Aneurisma sacular: a artéria comunicante anterior, com a junção das artérias cerebrais anteriores, é o local mais frequente de aneurisma sacular do círculo arterial, e sua ruptura causa hemorragia subaracnóidea.",
+      "Compressão do quiasma óptico: aneurismas da região podem causar defeitos do campo visual.",
+      "Variações e hipoplasia: a artéria pode ser ausente, duplicada ou muito delgada, o que reduz a capacidade de circulação colateral entre os hemisférios.",
+      "Circulação colateral: na oclusão da artéria carótida interna, a artéria permite a passagem do sangue de um hemisfério para o outro."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: vascularização do encéfalo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Suprimento sanguíneo do encéfalo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Machado A, Haertel LM. Neuroanatomia Funcional, 3ª ed. — capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: vascularização do encéfalo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Cabeça e Pescoço: artérias do encéfalo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Machado A, Haertel LM. Neuroanatomia Funcional, 3ª ed. — capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Machado A, Haertel LM. Neuroanatomia Funcional, 3ª ed. — capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Suprimento sanguíneo do encéfalo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Suprimento sanguíneo do encéfalo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Machado A, Haertel LM. Neuroanatomia Funcional, 3ª ed. — capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: artérias",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Suprimento sanguíneo do encéfalo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Sistema nervoso: doenças vasculares e aneurismas saculares",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: vascularização do encéfalo",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:basilar-venous-plexus": {
+    "ids": {},
+    "summary_pt": "O plexo venoso basilar é uma rede de canais venosos situada entre os folhetos da dura-máter sobre o clivo, a superfície da parte basilar do osso occipital e do dorso da sela, na fossa posterior do crânio. Seus canais interconectados, sem valvas, ligam estruturas venosas da base do crânio: unem os seios petrosos inferiores direito e esquerdo e comunicam-se com o plexo venoso vertebral interno através do forame magno. Pode ser considerado uma conexão entre os seios da dura-máter e o sistema venoso vertebral, e por ele o sangue pode seguir nos dois sentidos, conforme os gradientes de pressão, em direção às veias jugulares internas ou ao plexo vertebral. Situa-se anteriormente à ponte e ao bulbo, dos quais é separado pela dura-máter e pela cisterna pré-pontina, no espaço subaracnóideo, onde correm as artérias vertebrais e a artéria basilar. Como todos os seios venosos da dura-máter, tem paredes finas formadas por endotélio apoiado em tecido conjuntivo da dura-máter e não possui músculo liso. Seu interesse clínico está na região do clivo, sujeita a fraturas da base do crânio e a tumores, e na comunicação venosa entre o crânio e a coluna vertebral.",
+    "anatomy": {
+      "relations": "Estende-se sobre o clivo, entre os folhetos da dura-máter, posteriormente ao dorso da sela e anteriormente ao tronco encefálico (ponte e bulbo), de que a separam a dura-máter e a cisterna pré-pontina, onde correm as artérias vertebrais e a basilar. Liga entre si os seios petrosos inferiores e continua, pelo forame magno, com o plexo venoso vertebral interno.",
+      "vascularization": "É um canal de drenagem venosa sem valvas. Recebe sangue de veias da base do crânio e dos seios adjacentes e drena para os seios petrosos inferiores, que desembocam nas veias jugulares internas, e para o plexo venoso vertebral interno."
+    },
+    "histology": {
+      "epithelium": "Endotélio simples pavimentoso, sem camada muscular e sem valvas, entre os folhetos da dura-máter.",
+      "tissues": [
+        "Dura-máter: tecido conjuntivo denso que forma as paredes dos canais",
+        "Endotélio contínuo revestindo o lúmen venoso"
+      ]
+    },
+    "clinical": [
+      "Disseminação por via venosa: como as veias do plexo carecem de valvas, o fluxo pode inverter-se e permitir a propagação de infecções e de células tumorais entre o crânio e a coluna vertebral.",
+      "Fraturas do clivo: lesões da base do crânio podem lacerar o plexo e causar hemorragia na região.",
+      "Cordoma: tumor originado de remanescentes da notocorda que acomete o clivo e pode comprimir o tronco encefálico e nervos cranianos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Seios venosos da dura-máter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "FIPAT; SBA. Terminologia Anatômica, 2ª ed. — Sistema cardiovascular: veias da cabeça",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Seios venosos da dura-máter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Netter FH. Atlas de Anatomia Humana, 7ª ed. — seção Cabeça e Pescoço: seios da dura-máter",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Machado A, Haertel LM. Neuroanatomia Funcional, 3ª ed. — capítulo Meninges e seios venosos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Junqueira LC, Carneiro J. Histologia Básica, 13ª ed. — capítulo Sistema circulatório: vasos sanguíneos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Seios venosos da dura-máter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Standring S (org.). Gray's Anatomy, 42ª ed. — capítulo Seios venosos da dura-máter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça: seios venosos da dura-máter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Kumar V, Abbas AK, Aster JC. Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed. — capítulo Sistema nervoso: tumores e infecções",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Moore KL, Dalley AF, Agur AMR. Anatomia Orientada para a Clínica, 8ª ed. — capítulo Cabeça (boxe clínico): base do crânio",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+}
