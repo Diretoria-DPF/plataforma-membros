@@ -105,6 +105,7 @@ export function createPhysiologyMode({
   let selectedItem = null;
   let animator = null;
   let currentStepIndex = 0;
+  const savedStudies = new Set(); // estudos já salvos no Meu Estudo nesta sessão
 
   function createSheetContent() {
     const container = DOM.h('div', { className: 'physiology-container', style: { padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' } });
@@ -190,6 +191,8 @@ export function createPhysiologyMode({
       selectedItem = item;
       currentStepIndex = 0;
       renderSheet();
+      // Celular: estudo com o painel em meia altura — 3D em cima, passo embaixo (M2).
+      if (typeof window !== 'undefined' && window.innerWidth < 600 && window.AtlasSheet && window.AtlasSheet.snapHalf) window.AtlasSheet.snapHalf();
     }
 
     function renderSheet() {
@@ -303,13 +306,39 @@ export function createPhysiologyMode({
       const title = isRoute ? (step.label_pt || 'Ponto da via') : `Passo ${currentStepIndex + 1}`;
       const body = isRoute ? '' : (step.description_pt || '');
       const clinica = isRoute ? (last ? selectedItem.clinicalNotes || '' : '') : (step.clinica_pt || '');
+      // Fonte do passo (processos: refs → obra citada em sources).
+      const refIds = isRoute ? [] : (step.refs || []);
+      const srcs = (selectedItem.sources || []).filter((x) => x && refIds.includes(x.obraId));
+      const fonte = srcs.length ? srcs.map((x) => x.ref).filter((v, i, a) => a.indexOf(v) === i).slice(0, 2).join('; ') : '';
+      const pct = Math.round(((currentStepIndex + 1) / n) * 100);
+      const saveKey = `${currentMode}:${selectedItem.id}`;
       const box = DOM.h('section', { className: 'physiology-study', 'aria-live': 'polite', style: { padding: '10px', border: '1px solid var(--laift-primary)', borderRadius: '6px', background: 'var(--laift-primary-soft)', fontSize: '13px' } });
       DOM.appendHtml(box, DOM.html`
         <div class="physiology-study-count" style="font-size:11px; color:var(--laift-muted); margin-bottom:4px;">${isRoute ? 'Ponto' : 'Passo'} ${currentStepIndex + 1} de ${n}</div>
+        <div class="physiology-progress" role="progressbar" aria-label="Progresso do estudo" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${currentStepIndex + 1}" style="height:6px; background:var(--laift-border); border-radius:3px; overflow:hidden; margin-bottom:8px;"><span style="display:block; height:100%; width:${pct}%; background:var(--laift-primary);"></span></div>
         <div style="font-weight:600; margin-bottom:4px;">${title}</div>
         ${body ? DOM.html`<p style="margin:0 0 6px; line-height:1.5;">${body}</p>` : ''}
-        ${clinica ? DOM.html`<p class="physiology-study-clinica" style="margin:0; line-height:1.5;"><strong>Na clínica:</strong> ${clinica}</p>` : ''}
+        ${clinica ? DOM.html`<p class="physiology-study-clinica" style="margin:0 0 6px; line-height:1.5;"><strong>Na clínica:</strong> ${clinica}</p>` : ''}
+        ${fonte ? DOM.html`<p class="physiology-study-fonte" style="margin:0; font-size:11px; color:var(--laift-muted);">Fonte: ${fonte}</p>` : ''}
       `);
+      // M2: no último passo, "Salvar no Meu Estudo" (registro explícito, uma vez).
+      if (last) {
+        if (savedStudies.has(saveKey)) {
+          box.appendChild(DOM.h('p', { className: 'physiology-saved', style: { margin: '8px 0 0', fontWeight: '600' }, text: '✓ Salvo no Meu Estudo' }));
+        } else {
+          box.appendChild(DOM.h('button', {
+            type: 'button', className: 'physiology-save',
+            style: { marginTop: '8px', minHeight: '44px', padding: '8px 14px', borderRadius: '6px', border: 'none', background: '#1565c0', color: '#fff', cursor: 'pointer', fontSize: '13px' },
+            text: 'Salvar no Meu Estudo',
+            onClick: () => {
+              const first = isRoute ? (steps[0] || {}).sid : ((steps[0] || {}).anchors || [])[0]?.sid;
+              emit(EVENTS.STUDY_PATH, { kind: isRoute ? 'route' : 'process', id: selectedItem.id, label: selectedItem.name_pt, sid: first ? resolveAnchorSid(first) : null });
+              savedStudies.add(saveKey);
+              renderSheet();
+            },
+          }));
+        }
+      }
       return box;
     }
 
@@ -487,11 +516,6 @@ export function createPhysiologyMode({
       const steps = currentMode === 'vias' ? selectedItem.anchors : selectedItem.steps;
       if (currentStepIndex < steps.length - 1) {
         selectStep(currentStepIndex + 1);
-        // Chegou ao fim do estudo: entra no histórico de "Meu estudo".
-        if (currentStepIndex + 1 === steps.length - 1) {
-          const first = currentMode === 'vias' ? (steps[0] || {}).sid : ((steps[0] || {}).anchors || [])[0]?.sid;
-          emit(EVENTS.STUDY_PATH, { kind: currentMode === 'vias' ? 'route' : 'process', id: selectedItem.id, label: selectedItem.name_pt, sid: first ? resolveAnchorSid(first) : null });
-        }
       }
     }
 

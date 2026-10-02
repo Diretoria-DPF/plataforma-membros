@@ -39,9 +39,16 @@ async function runAt(viewport) {
       await frame.locator('.physiology-next').click({ timeout: 5000 });
       await frame.waitForTimeout(120);
     }
-    const end = await frame.evaluate(() => ({ count: document.querySelector('.physiology-study-count').textContent.trim(), study: window.__studyPath.slice() }));
-    check(end.count === `Ponto ${total} de ${total}`, `${label}: "▶" chega ao último ponto (${end.count})`);
-    check(end.study.length === 1 && end.study[0].kind === 'route', `${label}: estudo concluído registrado no histórico (${JSON.stringify(end.study)})`);
+    const end = await frame.evaluate(() => ({
+      count: document.querySelector('.physiology-study-count').textContent.trim(),
+      bar: document.querySelector('.physiology-progress').getAttribute('aria-valuenow'),
+      study: window.__studyPath.slice(),
+    }));
+    check(end.count === `Ponto ${total} de ${total}` && end.bar === String(total), `${label}: "▶" chega ao último ponto, com a barra cheia (${end.count})`);
+    check(end.study.length === 0, `${label}: nada é salvo sem pedir`);
+    await frame.locator('.physiology-save').click({ timeout: 5000 });
+    const saved = await frame.evaluate(() => ({ study: window.__studyPath.slice(), done: !!document.querySelector('.physiology-saved'), btn: !!document.querySelector('.physiology-save') }));
+    check(saved.study.length === 1 && saved.study[0].kind === 'route' && saved.done && !saved.btn, `${label}: "Salvar no Meu Estudo" registra uma vez (${JSON.stringify(saved.study)})`);
     await frame.locator('.physiology-prev').click();
     check(await frame.evaluate((t) => document.querySelector('.physiology-study-count').textContent.trim() === `Ponto ${t - 1} de ${t}`, total), `${label}: "◀" volta um ponto`);
 
@@ -52,6 +59,7 @@ async function runAt(viewport) {
     await frame.waitForSelector('.physiology-study');
     const proc = await frame.evaluate(() => document.querySelector('.physiology-study').textContent.replace(/\s+/g, ' ').trim());
     check(/^Passo 1 de \d+/.test(proc) && proc.length > 40, `${label}: processo mostra o passo com explicação (${proc.slice(0, 80)}…)`);
+    check(await frame.evaluate(() => /^Fonte: /.test((document.querySelector('.physiology-study-fonte') || {}).textContent || '')), `${label}: passo do processo mostra a fonte`);
 
     // ---- Visão sistêmica ----
     await frame.locator('.physiology-tab[data-tab="sistemica"]').click();
