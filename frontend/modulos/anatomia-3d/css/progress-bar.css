@@ -1,0 +1,34 @@
+/* Barra de carregamento dos modelos 3D (js/ui/progress-bar.js).
+   Linha fina sob a topbar; no celular o rótulo ocupa o lugar do breadcrumb
+   enquanto carrega (body[data-loading="true"]). */
+.atlas-progress {
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.atlas-progress[hidden] { display: none; }
+.atlas-progress-fill {
+  height: 100%;
+  background: var(--module-accent);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 200ms linear;
+}
+.atlas-progress[data-state="done"] { opacity: 0; transition: opacity 200ms ease-out; }
+.atlas-progress-label { display: none; }
+
+@media (max-width: 599px) {
+  body[data-loading="true"] .atlas-breadcrumb { display: none; }
+  body[data-loading="true"] .atlas-progress-label {
+    display: block;
+    flex: 1 1 auto; min-width: 0;
+    font-size: 13px; font-weight: 600;
+    color: var(--laift-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atlas-progress-fill, .atlas-progress[data-state="done"] { transition: none; }
+}

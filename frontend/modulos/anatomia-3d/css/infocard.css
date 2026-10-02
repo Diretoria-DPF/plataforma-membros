@@ -71,43 +71,73 @@
   min-width: 0;
 }
 
-.atlas-card-draft-badge {
+.atlas-card-status {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 6px;
-  background: var(--laift-warning-soft);
-  color: var(--laift-warning);
-  border-radius: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--laift-border);
+  color: var(--laift-muted);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   flex-shrink: 0;
 }
-
-.atlas-card-draft-icon {
-  font-weight: bold;
+.atlas-card-status-text { white-space: nowrap; }
+.atlas-card-status--editorial-late { border-color: var(--laift-warning); color: var(--laift-warning); background: var(--laift-warning-soft); }
+.atlas-card-status--reviewed { border-color: var(--module-accent); color: var(--laift-text); }
+.atlas-card-new {
   display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--module-accent);
+  color: var(--laift-bg);
+  font-size: 12px; font-weight: 700;
+  animation: atlas-card-new 3s forwards;
 }
-
-.atlas-card-draft-text {
-  white-space: nowrap;
-}
+@keyframes atlas-card-new { 0%, 85% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 
 .atlas-card-subtitle {
   display: flex;
   align-items: center;
-  gap: 0;
-  font-size: clamp(11px, 2.5vw, 14px);
+  gap: 6px;
+  font-size: clamp(12px, 2.5vw, 14px);
   color: var(--laift-muted);
   line-height: 1.4;
   flex-wrap: wrap;
   min-width: 0;
+  margin-top: 4px;
 }
-
-.atlas-card-system,
-.atlas-card-type,
-.atlas-card-side {
-  display: inline;
+.atlas-card-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--laift-border);
+  color: var(--laift-text);
+  font-weight: 600;
+}
+.atlas-card-system::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--chip-color, var(--module-accent));
+}
+.atlas-card-more {
+  display: none;
+  margin-left: auto;
+  min-height: 44px; padding: 0 14px;
+  border-radius: var(--laift-radius-md);
+  border: 1px solid var(--module-accent);
+  background: transparent; color: var(--laift-text);
+  font-size: 14px; font-weight: 600;
+}
+/* "Ver mais" só faz sentido no painel do celular (no desktop a ficha já
+   está inteira na coluna lateral). */
+@media (max-width: 599px), (orientation: landscape) and (max-height: 599px) {
+  .atlas-card-more { display: inline-flex; align-items: center; }
+}
+body[data-peek-v2="false"] .atlas-card-more,
+body[data-peek-v2="false"] .atlas-card-new { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .atlas-card-new { animation: none; }
 }
 
 /* ========================================================================

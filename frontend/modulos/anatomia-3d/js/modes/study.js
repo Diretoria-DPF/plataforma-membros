@@ -87,7 +87,7 @@ export function attachRecorder(bus, studyStore) {
 /**
  * Cria o modo "Meu estudo" (estudo).
  */
-export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
+export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHistory = true } = {}) {
   let unsubscribeRecorder = null;
 
   // Estado local
@@ -99,8 +99,9 @@ export function createStudyMode({ bus, store: studyStore, getLabel } = {}) {
     icon: 'bookmark',
 
     async enter(ctx) {
-      // Anexa o gravador de eventos
-      if (bus && studyStore) {
+      // Anexa o gravador de eventos (js/main.js já grava o tempo todo e
+      // passa recordOwnHistory: false — gravar aqui também duplicaria).
+      if (bus && studyStore && recordOwnHistory) {
         unsubscribeRecorder = attachRecorder(bus, studyStore);
       }
     },

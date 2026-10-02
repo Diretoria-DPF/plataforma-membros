@@ -16,4 +16,16 @@ Uma rodada por onda, alternando **iPhone (Safari)** e **Android (Chrome)**. Anot
 | 10 | Ajustes → Acessibilidade → Reduzir movimento ligado | Sem animações de câmera longas | — |
 | 11 | VoiceOver/TalkBack: navegar pela barra e pela ficha | Cada botão é lido com nome em português | — |
 
-Vibração ao tocar (Onda 2) não existe no iOS — é esperado.
+## Itens da Onda 2
+| # | Passo | Esperado | Observação iOS |
+|---|---|---|---|
+| 12 | Abrir o atlas "zerado" (janela privada) | Apresentação de 3 telas em tela cheia, sem texto cortado; "Pular" visível em todas | Conferir com a barra de endereço visível e escondida |
+| 13 | Abrir de novo | A apresentação não volta | Safari pode apagar o armazenamento após 7 dias sem uso (ITP) — aí ela volta, aceitável |
+| 14 | Ligar uma camada nova (ex.: Linfático) | Linha de progresso sob a barra do topo; no celular, "Carregando linfático…" no lugar do título; some ao terminar | — |
+| 15 | Tocar numa estrutura | Destaque pisca rapidinho; vibração curta (Android); dica "Deslize a ficha…" na 1ª vez | iOS não vibra — esperado |
+| 16 | Ficha no painel: selos e "Ver mais" | Nome, sistema, lado, selo de revisão; "Ver mais" abre a ficha | — |
+| 17 | Quiz: errar de propósito | Cartão treme, resposta certa + explicação, botão "Próximo caso" | — |
+| 18 | Android: botão Voltar com a ficha aberta | Fecha o painel/limpa a seleção; só depois sai do atlas | iOS: gesto de voltar do Safari sai da página (sem equivalente) |
+| 19 | Celular deitado: tocar numa estrutura | A ficha aparece no painel lateral | — |
+| 20 | Ajustes → Acessibilidade → Reduzir movimento | Sem pulso, sem confete, seta do painel parada | — |
+

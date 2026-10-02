@@ -28,6 +28,8 @@ Leia só os trechos alterados e, quando preciso, o arredor imediato. Nunca leia 
 13. Estado salvo (`localStorage`) tem versão (`schemaVersion`) e o código descarta registro de outra versão ou com sid inexistente.
 14. Nenhuma chamada direta a `files.rcsb.org` / `pubchem.ncbi.nlm.nih.gov` fora do proxy (vale depois da Onda 4).
 15. Nenhum texto em inglês visível ao usuário (rótulos, botões, avisos, mensagens de erro).
+16. Escopo da onda: na Onda 2 o diff NÃO pode conter XP real, telemetria agregada, PWA/service worker, tradução de nomes, casos novos de quiz, proxy RCSB/PubChem ou mudança de schema além do status "editorial". Na dúvida, aponte.
+17. Novidade de interface nova tem chave em `js/core/flags.js` (rollback sem reverter tudo).
 
 ## Saída (obrigatória, ≤ 20 linhas)
 - Se tudo certo: `OK — <n> arquivos revisados`.

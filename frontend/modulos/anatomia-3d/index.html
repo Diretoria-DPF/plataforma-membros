@@ -18,6 +18,20 @@
        demanda por js/modes/pharmacology.js e js/modes/molecules.js — não
        há tag de script estática dessas libs nesta página. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <!-- Abertura em rede lenta: sem isto o GLB do esqueleto (≈1 MB, o item
+       mais longo) só começava a baixar depois de toda a cadeia de módulos
+       JS + three.js + JSONs (~11 s em "Fast 3G"). Os preloads disparam
+       junto com o HTML e os pedidos reais (fetch / GLTFLoader, mesmo modo
+       cors + credenciais same-origin) reaproveitam a resposta. Se o nível
+       de detalhe padrão mudar (js/engine/assets.js resolveLod), atualize o
+       GLB aqui. -->
+  <link rel="preload" href="models/zanatomy/esqueletico.lod1.glb" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="models/manifest.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="data/atlas/generated/structures.boot.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="data/atlas/legacy/index.legacy.json" as="fetch" crossorigin="anonymous">
+  <link rel="modulepreload" href="js/main.js">
+  <link rel="modulepreload" href="vendor/three/three.module.js">
+  <link rel="modulepreload" href="vendor/three/three.core.js">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto
        fora dela; aplica <html data-theme> antes de qualquer pintura). -->
   <script src="../shared/laift-identity.js"></script>
@@ -41,6 +55,9 @@
   <link rel="stylesheet" href="css/search-box.css">
   <link rel="stylesheet" href="css/toolbar.css">
   <link rel="stylesheet" href="css/credits.css">
+  <link rel="stylesheet" href="css/progress-bar.css">
+  <link rel="stylesheet" href="css/onboarding.css">
+  <link rel="stylesheet" href="css/hints.css">
 </head>
 <body>
 
@@ -117,7 +134,19 @@
       <div id="organ-hud" class="hidden" role="status">
         <strong id="organ-name">---</strong>
       </div>
-      <p id="atlas-sheet-hint" class="atlas-sheet-hint">Toque numa estrutura para começar</p>
+      <!-- Estado vazio (antes de qualquer seleção) — js/main.js clona este
+           bloco para "voltar ao início" quando a seleção é limpa. -->
+      <div class="atlas-empty" aria-hidden="false">
+        <svg class="atlas-empty-figure" viewBox="0 0 24 40" width="24" height="40" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="5" r="4"/>
+          <path d="M5 11h14l-2 13h-2l-1 15h-4l-1-15H7z"/>
+        </svg>
+        <div class="atlas-empty-text">
+          <p id="atlas-sheet-hint" class="atlas-sheet-hint">Toque numa estrutura</p>
+          <p class="atlas-sheet-hint-sub">Toque em qualquer parte do corpo para ver o nome, o que faz e onde fica.</p>
+        </div>
+        <span class="atlas-empty-arrow" aria-hidden="true">↑</span>
+      </div>
     </div>
 
     <div id="atlas-sheet-body" class="atlas-sheet-body"></div>

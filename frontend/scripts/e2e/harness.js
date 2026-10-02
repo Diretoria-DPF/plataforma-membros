@@ -124,6 +124,7 @@ function defaultWorkerReply(action, args, ctx) {
  * @param {'light'|'dark'|'system'} [opts.theme]
  * @param {Object<string, Function>} [opts.workerHandlers]  action → (args, ctx) => resposta (ou Promise)
  * @param {object} [opts.viewport]  ex.: { width: 360, height: 740 } para celular
+ * @param {object} [opts.atlasFlags] chaves do Atlas (js/core/flags.js); padrão desliga apresentação e dicas
  * @param {string[]} [opts.launchArgs]  flags extras do Chromium (ex.: câmera falsa para o leitor de QR)
  * @param {string[]} [opts.permissions]  permissões concedidas ao contexto (ex.: ['camera'])
  */
@@ -147,6 +148,13 @@ async function startApp(opts = {}) {
     isMobile: !!mobile,
     permissions: opts.permissions || undefined,
   });
+
+  // Novidades do Atlas que se sobrepõem à tela (apresentação modal, dicas):
+  // desligadas por padrão nos cenários e2e para não interceptarem cliques;
+  // as suítes que testam essas telas passam `atlasFlags: {}` (padrão real)
+  // ou as chaves que quiserem (js/core/flags.js lê window.__atlasFlags).
+  const atlasFlags = opts.atlasFlags !== undefined ? opts.atlasFlags : { onboarding: false, hints: false };
+  await context.addInitScript((flags) => { window.__atlasFlags = flags; }, atlasFlags);
 
   await context.route('**/*', async (route) => {
     const req = route.request();

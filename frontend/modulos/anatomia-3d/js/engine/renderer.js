@@ -20,6 +20,23 @@ import { on, emit, EVENTS } from '../core/bus.js';
  * @param {Object} [opts.store] - store para persistência de qualidade
  * @returns {Object} API do renderizador
  */
+/**
+ * O three.js r186 só desenha com WebGL 2 (o suporte a WebGL 1 saiu na r163).
+ * Aparelhos antigos (ex.: iOS < 15, Android com GPU antiga) não têm — sem a
+ * checagem, o atlas caía na mensagem genérica de falha.
+ * @param {Document} [doc]
+ * @returns {boolean}
+ */
+export function hasWebGL2(doc = (typeof document !== 'undefined' ? document : null)) {
+  if (!doc) return true; // fora do navegador (testes) não há o que checar
+  try {
+    const canvas = doc.createElement('canvas');
+    return !!(canvas.getContext && canvas.getContext('webgl2'));
+  } catch (e) {
+    return false;
+  }
+}
+
 export function createRenderer({ container, bus, env = {}, store } = {}) {
   // Lê características do dispositivo, com fallbacks para navigator/window
   const dpr = env.dpr ?? window.devicePixelRatio ?? 1;

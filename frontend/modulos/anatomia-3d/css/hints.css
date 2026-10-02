@@ -1,0 +1,29 @@
+/* Dicas contextuais (js/ui/hints.js) — pílula acima do painel, nunca sobre
+   a barra de ferramentas. */
+.atlas-hint {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--atlas-sheet-peek-h, 96px) + 16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: calc(var(--atlas-z-toast) - 1);
+  display: flex; align-items: center; gap: 8px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 6px 6px 6px 16px;
+  border-radius: 999px;
+  background: var(--laift-surface);
+  color: var(--laift-text);
+  border: 1px solid var(--laift-border);
+  box-shadow: var(--laift-shadow);
+  font-size: 14px; line-height: 1.3;
+}
+.atlas-hint[hidden] { display: none; }
+.atlas-hint-close {
+  flex: 0 0 auto;
+  min-width: 44px; min-height: 44px;
+  border: 0; border-radius: 50%;
+  background: transparent; color: var(--laift-text);
+  font-size: 20px; line-height: 1;
+}
+@media (min-width: 600px) and (min-height: 600px) {
+  .atlas-hint { bottom: 24px; }
+}

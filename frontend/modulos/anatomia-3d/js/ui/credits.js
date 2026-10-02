@@ -200,7 +200,7 @@ function createCredits({ manifest, contentSources = [] }) {
   notesSection.appendChild(shareAlikeNote);
 
   const draftNote = h('p', { className: 'credits-note' });
-  draftNote.textContent = 'Textos marcados como "Rascunho — não revisado" ainda aguardam revisão por profissionais de saúde.';
+  draftNote.textContent = 'Fichas com o selo "Em revisão editorial" estão publicadas e aguardam a revisão do conselho editorial da LAIFT; os demais selos indicam a origem do texto (conteúdo antigo ou gerado automaticamente). Encontrou um erro? Avise o conselho.';
   notesSection.appendChild(draftNote);
 
   const libNote = h('p', { className: 'credits-note' });

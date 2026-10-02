@@ -103,11 +103,16 @@ export function createNavigator(container, opts) {
     clear(contentEl);
 
     const list = h('div', { className: 'atlas-nav-list', role: 'listbox', 'aria-label': 'Estruturas' });
+    // "Roving tabindex": a lista é UMA parada de Tab (a linha ativa); as
+    // setas andam entre as linhas. Com centenas de linhas, cada uma sendo
+    // parada de Tab prendia quem navega só pelo teclado (WCAG 2.1.1).
+    const activeIdx = Math.max(0, state.items.findIndex((it) => it.sid === state.currentSid));
 
     state.items.forEach((item, idx) => {
       const row = h('button', {
         className: 'atlas-nav-row',
         role: 'option',
+        tabindex: idx === activeIdx ? '0' : '-1',
         'aria-selected': item.sid === state.currentSid ? 'true' : 'false',
         onKeyDown: (evt) => handleKeyDown(evt, idx),
         onClick: () => selectOrDrill(item),
@@ -133,11 +138,6 @@ export function createNavigator(container, opts) {
       } else if (item.count !== undefined) {
         const count = h('span', { className: 'atlas-nav-row-count', text: `${item.count}` });
         row.appendChild(count);
-      }
-
-      // Selecionar o primeiro item por padrão na renderização
-      if (idx === 0) {
-        row.focus();
       }
 
       list.appendChild(row);
@@ -362,19 +362,16 @@ export function createNavigator(container, opts) {
    * Navegação por teclado (arrow keys)
    */
   function handleKeyDown(evt, idx) {
-    if (evt.key === 'ArrowUp') {
-      evt.preventDefault();
-      if (idx > 0) {
-        const rows = contentEl.querySelectorAll('.atlas-nav-row');
-        rows[idx - 1].focus();
-      }
-    } else if (evt.key === 'ArrowDown') {
-      evt.preventDefault();
-      const rows = contentEl.querySelectorAll('.atlas-nav-row');
-      if (idx < rows.length - 1) {
-        rows[idx + 1].focus();
-      }
-    }
+    const rows = contentEl.querySelectorAll('.atlas-nav-row');
+    let next = null;
+    if (evt.key === 'ArrowUp') next = Math.max(0, idx - 1);
+    else if (evt.key === 'ArrowDown') next = Math.min(rows.length - 1, idx + 1);
+    else if (evt.key === 'Home') next = 0;
+    else if (evt.key === 'End') next = rows.length - 1;
+    if (next === null) return;
+    evt.preventDefault();
+    rows.forEach((r, i) => r.setAttribute('tabindex', i === next ? '0' : '-1'));
+    rows[next].focus();
   }
 
   /**

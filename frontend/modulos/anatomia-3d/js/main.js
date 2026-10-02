@@ -16,7 +16,7 @@ import { on, off, emit, EVENTS } from './core/bus.js';
 import { get as storeGet, set as storeSet, subscribe as storeSubscribe } from './core/store.js';
 import { LAYERS, SYSTEMS, MODES, DEFAULT_MODE } from './core/contracts.js';
 
-import { createRenderer } from './engine/renderer.js';
+import { createRenderer, hasWebGL2 } from './engine/renderer.js';
 import { createCameraRig } from './engine/camera-rig.js';
 import { createControls, toNdc } from './engine/controls.js';
 import { createAssetLoader } from './engine/assets.js';
@@ -37,6 +37,11 @@ import { createNavigator } from './ui/navigator.js';
 import { createInfoCard } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
 import { linkLegacy } from './ui/legacy-link.js';
+import { ATLAS_FLAGS } from './core/flags.js';
+import { createProgressBar } from './ui/progress-bar.js';
+import { createOnboarding, shouldShowOnboarding, isDeepLink, wasDismissedThisTab } from './ui/onboarding.js';
+import { createHints } from './ui/hints.js';
+import { createSlowDeviceWatcher, classifyDevice } from './ui/slow-device.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -92,9 +97,10 @@ export function checkStructures(list, { required = true } = {}) {
 
 /** Erro de inicialização com mensagem para o usuário (tela "Recarregar"). */
 class AtlasBootError extends Error {
-  constructor(userMessage, detail) {
+  constructor(userMessage, detail, hint) {
     super(`${userMessage} (${detail})`);
     this.userMessage = userMessage;
+    this.hint = hint;
   }
 }
 
@@ -102,7 +108,7 @@ class AtlasBootError extends Error {
  * Tela de falha do atlas: mensagem clara + "Recarregar" no lugar de uma
  * tela vazia. Também usada quando o WebGL não volta (renderer.js).
  */
-function showFatal(message) {
+function showFatal(message, hint = 'Verifique a conexão e tente de novo.') {
   const { h } = window.LaiftDom;
   const prev = document.getElementById('atlas-fatal');
   if (prev) prev.remove();
@@ -110,7 +116,7 @@ function showFatal(message) {
   reload.addEventListener('click', () => window.location.reload());
   const box = h('div', { id: 'atlas-fatal', className: 'atlas-fatal', role: 'alert' }, [
     h('p', { className: 'atlas-fatal-title' }, [message]),
-    h('p', { className: 'atlas-fatal-hint' }, ['Verifique a conexão e tente de novo.']),
+    h('p', { className: 'atlas-fatal-hint' }, [hint]),
     reload,
   ]);
   document.body.appendChild(box);
@@ -120,6 +126,9 @@ function showFatal(message) {
 async function createContentStore() {
   // Try to load boot structures first (70% smaller, contains sid/names/system/layer/side)
   // Fall back to full structures.json if boot file 404s
+  // Os dois índices em paralelo (antes o legado só pedia depois do boot —
+  // uma ida e volta a mais em rede lenta).
+  const legacyIndexPromise = fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []);
   let structures = await fetchJson(`${CONTENT_BASE}generated/structures.boot.json`).catch(() =>
     fetchJson(`${CONTENT_BASE}generated/structures.json`)
   ).catch(() => []);
@@ -128,9 +137,7 @@ async function createContentStore() {
   // (?fixtures=1) não têm generated/ e seguem sem a base.
   structures = checkStructures(structures, { required: !USE_FIXTURES });
 
-  const [legacyIndex] = await Promise.all([
-    fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []),
-  ]);
+  const legacyIndex = await legacyIndexPromise;
 
   const bySid = new Map();
   for (const s of structures) bySid.set(s.sid, s);
@@ -261,7 +268,14 @@ function fetchJson(url) {
 // ============================================================================
 // 2. Boot
 // ============================================================================
+let EMPTY_PEEK_TEMPLATE = null;
+const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 async function boot() {
+  // Estado vazio do peek, antes de qualquer conteúdo entrar nele.
+  const peekEl = document.getElementById('atlas-sheet-peek');
+  EMPTY_PEEK_TEMPLATE = peekEl ? peekEl.cloneNode(true) : document.createElement('div');
+  document.body.dataset.peekV2 = String(ATLAS_FLAGS.peek);
   initShell();
   initSheet();
   initFocusNav();
@@ -270,6 +284,13 @@ async function boot() {
   const bus = { on, off, emit, EVENTS };
   const storeApi = { get: storeGet, set: storeSet, subscribe: storeSubscribe };
 
+  if (!hasWebGL2()) {
+    throw new AtlasBootError(
+      'Este aparelho ou navegador não tem WebGL 2, necessário para o 3D.',
+      'WEBGL2_UNAVAILABLE',
+      'Atualize o navegador (iOS 15+, Chrome/Firefox recentes) ou use outro aparelho.',
+    );
+  }
   const rendererApi = createRenderer({ container: canvasHost, bus });
   const { THREE: T, renderer, scene, camera, requestRender, addTicker, setViewOffset, getStats } = rendererApi;
 
@@ -348,6 +369,10 @@ async function boot() {
     registry,
   });
 
+  // ---- Barra de carregamento (antes do 1º sistema, para pegar o START) ----
+  const systemLabel = (id) => (SYSTEMS.find((x) => x.id === id) || { label: id }).label;
+  if (ATLAS_FLAGS.progressBar) createProgressBar({ bus, assetLoader, systemLabel });
+
   const visibility = createVisibility({
     registry,
     bus,
@@ -361,6 +386,9 @@ async function boot() {
     store: storeApi,
     requestRender,
     focusSid: (sid) => engine.focusSid(sid, { animate: true }),
+    addTicker,
+    pulse: ATLAS_FLAGS.pulse,
+    reducedMotion: prefersReducedMotion,
   });
 
   const xrayClip = createXrayClip({ bus, store: storeApi, renderer, THREE: T, requestRender });
@@ -387,6 +415,10 @@ async function boot() {
   controlsApi.setPickHandler(({ ndc, kind }) => {
     const sid = registry.pick(ndc);
     if (sid) {
+      // Confirmação tátil curta (Android; o iOS não tem vibração — aceito).
+      if (kind === 'tap' && typeof navigator.vibrate === 'function') {
+        try { navigator.vibrate(10); } catch (e) { /* bloqueado pelo navegador */ }
+      }
       selection.select(sid, 'pick');
       if (kind === 'focus') engine.focusSid(sid, { animate: true });
     } else if (kind === 'tap') {
@@ -424,8 +456,32 @@ async function boot() {
       if (action === 'hide') emit(EVENTS.VISIBILITY_HIDE, { sid });
       if (action === 'ghost') emit(EVENTS.VISIBILITY_GHOST, { sid });
       if (action === 'focus') engine.focusSid(sid, { animate: true });
+      if (action === 'more') snapSheetTo('half');
     },
   });
+
+  // ---- Histórico de estudo (Meu Estudo) e chip "Novo" ----
+  // Antes o histórico só era gravado com o modo Meu Estudo aberto (quase
+  // sempre vazio). Agora um único gravador registra cada ficha aberta; o
+  // modo usa o mesmo armazenamento sem gravar de novo.
+  const seenSids = new Set();
+  let lastSelectSource = null;
+  const newSids = new Set();
+  on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
+    lastSelectSource = source;
+    if (!sid) return;
+    if (!seenSids.has(sid)) newSids.add(sid); else newSids.delete(sid);
+    seenSids.add(sid);
+  });
+  const studyStorePromise = import('./modes/study-store.js').then(async ({ createStudyStore }) => {
+    const studyStore = createStudyStore();
+    const { attachRecorder } = await import('./modes/study.js');
+    attachRecorder(bus, studyStore);
+    try {
+      for (const h of await studyStore.listHistory()) if (h && h.type === 'select' && h.sid) seenSids.add(h.sid);
+    } catch (e) { /* armazenamento indisponível: tudo conta como novo */ }
+    return studyStore;
+  }).catch(() => null);
 
   // #atlas-inspector só existe (visualmente) em ≥600px (css/atlas.css) — no
   // celular o painel arrastável é a única superfície de conteúdo (ver
@@ -434,24 +490,16 @@ async function boot() {
   // montado dentro do painel, senão tocar numa estrutura no celular não
   // mostrava nada (bug real: `<600px` some com o inspetor e ninguém troca
   // o conteúdo do painel pela ficha).
-  const isMobileViewport = () => !window.matchMedia('(min-width: 600px)').matches;
+  // Mesma condição do CSS que mostra o inspetor (grade ≥600×600): celular
+  // deitado (ex.: 844×390) também usa o painel — antes a ficha não aparecia
+  // em lugar nenhum nessa posição.
+  const isMobileViewport = () => !window.matchMedia('(min-width: 600px) and (min-height: 600px)').matches;
   function buildSheetDefaultPeekNode() {
-    // Mesma marcação do peek inicial em index.html (hint + #organ-hud
-    // escondido) — usado para "voltar ao início" quando a seleção é limpa.
+    // Mesma marcação do peek inicial em index.html (estado vazio + #organ-hud
+    // escondido), clonada no boot — usado para "voltar ao início" quando a
+    // seleção é limpa.
     const frag = document.createElement('div');
-    const hud = document.createElement('div');
-    hud.id = 'organ-hud';
-    hud.className = 'hidden';
-    const name = document.createElement('strong');
-    name.id = 'organ-name';
-    name.textContent = '---';
-    hud.appendChild(name);
-    frag.appendChild(hud);
-    const hint = document.createElement('p');
-    hint.id = 'atlas-sheet-hint';
-    hint.className = 'atlas-sheet-hint';
-    hint.textContent = 'Toque numa estrutura para começar';
-    frag.appendChild(hint);
+    for (const child of EMPTY_PEEK_TEMPLATE.childNodes) frag.appendChild(child.cloneNode(true));
     return frag;
   }
   function buildSheetPeekNode(sid) {
@@ -489,16 +537,28 @@ async function boot() {
       infocard.clear();
       return;
     }
+    const rec = registry.getBySid(sid);
     const entry = {
       sid,
       names: { pt: labelFor(sid), en: raw.names.en || '', la: raw.names.la || '' },
       system: raw.system,
+      layer: (rec && rec.layer) || raw.layer,
+      side: raw.side,
+      isNew: ATLAS_FLAGS.peek && newSids.has(sid),
     };
+    newSids.delete(sid); // "Novo" só na primeira abertura
     infocard.render(entry, undefined);
     syncInfocardToSheet(sid);
     const content = await contentStore.getContent(sid);
+    if (storeGet().selectedSid !== sid) return;
     infocard.render(entry, content);
     syncInfocardToSheet(sid);
+    // Seleção pelo teclado (busca, navegador, link) no celular: o foco vai
+    // para "Ver mais", que abre a ficha completa.
+    if (isMobileViewport() && lastSelectSource && !['pick', 'focus', 'resume'].includes(lastSelectSource)) {
+      const more = document.querySelector('#atlas-sheet .atlas-card-more');
+      if (more) more.focus({ preventScroll: true });
+    }
   }
 
   on(EVENTS.STRUCTURE_SELECT, ({ sid }) => {
@@ -564,7 +624,22 @@ async function boot() {
     }
   }
 
+  // Aparelho fraco (CPU/memória): começa no nível gráfico baixo.
+  if (classifyDevice() === 'weak-cpu' && rendererApi.setTier) {
+    try { rendererApi.setTier('low'); } catch (e) { /* mantém o detectado */ }
+  }
+  // Avisos de demora/offline até o esqueleto chegar.
+  const defaultsReady = () => DEFAULT_SYSTEMS.every((sys) => assetLoader.isLoaded(sys));
+  const slowWatcher = ATLAS_FLAGS.slowDevice ? createSlowDeviceWatcher({
+    isReady: defaultsReady,
+    retry: () => DEFAULT_SYSTEMS.filter((sys) => !assetLoader.isLoaded(sys)).forEach((sys) => {
+      storeSet({ unavailableSystems: storeGet().unavailableSystems.filter((x) => x !== sys) });
+      loadSystem(sys).then(() => { if (defaultsReady()) { fitWholeBody(); requestRender(); slowWatcher.done(); } });
+    }),
+  }) : null;
+
   await Promise.all(DEFAULT_SYSTEMS.map(loadSystem));
+  if (slowWatcher && defaultsReady()) slowWatcher.done();
   fitWholeBody();
   requestRender();
 
@@ -700,7 +775,7 @@ async function boot() {
     if (integrity.missing / integrity.total > 0.05) {
       console.error(`[atlas] ${integrity.missing} de ${integrity.total} estruturas de "${system}" não estão no arquivo 3D (manifest desatualizado)`);
       emit('atlas:integrity-warning', { system, missing: integrity.missing, total: integrity.total });
-      showNotice(`Parte do sistema ${(SYSTEMS.find((x) => x.id === system) || { label: system }).label} não carregou (${integrity.missing} de ${integrity.total} estruturas).`);
+      showNotice(`Parte do sistema ${systemLabel(system)} não carregou (${integrity.missing} de ${integrity.total} estruturas).`);
     }
   });
 
@@ -771,6 +846,13 @@ async function boot() {
         return (entry && entry.system) || (rec && rec.system) || null;
       },
       prepareCase: prepareQuizCase,
+      // Confetes: 20 em aparelho bom, 5 no nível gráfico baixo, nenhum com
+      // "reduzir movimento" ou com a chave desligada.
+      confettiCount: () => {
+        if (!ATLAS_FLAGS.confetti || prefersReducedMotion()) return 0;
+        return rendererApi.getTier && rendererApi.getTier() === 'low' ? 5 : 20;
+      },
+      reducedMotion: prefersReducedMotion,
     })),
     fisiologia: () => Promise.all([
       import('./modes/physiology.js'),
@@ -830,8 +912,8 @@ async function boot() {
     farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`) })),
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
     estudo: () => import('./modes/study.js').then(async (m) => {
-      const { createStudyStore } = await import('./modes/study-store.js');
-      return m.createStudyMode({ bus, store: createStudyStore(), getLabel: labelFor });
+      const studyStore = (await studyStorePromise) || (await import('./modes/study-store.js')).createStudyStore();
+      return m.createStudyMode({ bus, store: studyStore, getLabel: labelFor, recordOwnHistory: false });
     }),
   };
 
@@ -864,6 +946,8 @@ async function boot() {
     return p;
   }
 
+  // Progresso do quiz a retomar no próximo enter() do Quiz (resumeSession).
+  let pendingQuizResume = null;
   async function doEnterMode(modeId, req) {
     if (req !== modeRequest) return; // já há um pedido mais novo na fila
     if (currentMode && currentMode.exit) {
@@ -897,8 +981,10 @@ async function boot() {
     }
     if (!mode || req !== modeRequest) return;
     currentMode = mode;
+    const resumeFrom = modeId === 'quiz' ? pendingQuizResume : null;
+    if (modeId === 'quiz') pendingQuizResume = null;
     try {
-      await mode.enter({ registry, assetLoader, engine, contentStore });
+      await mode.enter({ registry, assetLoader, engine, contentStore, resumeFrom });
     } catch (e) {
       console.warn(`[atlas] erro ao entrar no modo "${modeId}":`, e);
       setSheetContent(modeTitleNode(modeId, mode), modeMessageNode('Este modo não pôde ser aberto. Tente de novo.'), { label: 'Modo do Atlas' });
@@ -927,13 +1013,16 @@ async function boot() {
     sessionSaveTimer = setTimeout(() => {
       const view = {};
       emit('view:capture', view);
-      writeSession(sessionStorageApi, snapshotSession(storeGet(), view.camera));
+      const quizMode = storeGet().mode === 'quiz' ? modeInstances.get('quiz') : null;
+      const quiz = quizMode && quizMode.getProgress ? quizMode.getProgress() : null;
+      writeSession(sessionStorageApi, snapshotSession(storeGet(), view.camera, Date.now(), quiz));
     }, 500);
   };
   storeSubscribe((st) => st.selectedSid, scheduleSessionSave);
   storeSubscribe((st) => st.layers, scheduleSessionSave);
   storeSubscribe((st) => st.mode, scheduleSessionSave);
   controlsApi.controls.addEventListener('end', scheduleSessionSave);
+  on(EVENTS.QUIZ_ANSWER, scheduleSessionSave);
 
   async function resumeSession(saved) {
     const layers = storeGet().layers;
@@ -945,6 +1034,7 @@ async function boot() {
     for (const id of Object.keys(next)) {
       if (next[id] !== layers[id]) emit(EVENTS.LAYER_SET, { layer: id, visible: next[id].visible, opacity: next[id].opacity });
     }
+    if (saved.mode === 'quiz' && saved.quiz) pendingQuizResume = saved.quiz;
     if (saved.mode && saved.mode !== storeGet().mode) window.AtlasShell.setMode(saved.mode);
     if (saved.selectedSid && contentStore.getEntry(saved.selectedSid)) {
       emit(EVENTS.STRUCTURE_SELECT, { sid: saved.selectedSid, source: 'resume' });
@@ -968,10 +1058,58 @@ async function boot() {
       () => { resumeSession(savedSession); }, 10000);
   }
 
+  // ---- Botão Voltar do celular (Android) ----
+  // Cada "abertura" (ficha selecionada, painel em tela cheia) ganha uma
+  // entrada no histórico marcada { atlas: true }; Voltar fecha o que estiver
+  // aberto, do mais aberto para o menos: cheio → metade → espiar → limpa a
+  // seleção. Se não houver nada a fechar numa entrada nossa, segue voltando
+  // (nunca prende o aluno). O iframe divide o histórico com a aba, então o
+  // Voltar da página da plataforma passa por aqui primeiro.
+  let backDepth = 0;
+  const pushBack = (kind) => {
+    if (!isMobileViewport() || backDepth >= 3) return;
+    try { history.pushState({ atlas: true, kind }, ''); backDepth += 1; } catch (e) { /* sandbox */ }
+  };
+  on(EVENTS.STRUCTURE_SELECT, ({ sid }) => { if (sid && backDepth === 0) pushBack('select'); });
+  on(EVENTS.SHEET_SNAP, ({ state }) => { if (state === 'full' && backDepth < 2 && storeGet().selectedSid) pushBack('full'); });
+  window.addEventListener('popstate', () => {
+    if (backDepth > 0) backDepth -= 1;
+    if (!isMobileViewport()) return;
+    const sheetState = getSheetState().state;
+    if (sheetState === 'full') { snapSheetTo('half'); return; }
+    if (storeGet().selectedSid) {
+      if (sheetState === 'half') snapSheetTo('peek');
+      emit(EVENTS.STRUCTURE_SELECT, { sid: null, source: 'back' });
+      return;
+    }
+    if (history.state && history.state.atlas) history.back();
+  });
+
+  // ---- Apresentação (3 telas) e dicas contextuais ----
+  let hints = null;
+  const onboarding = createOnboarding({
+    storage: sessionStorageApi,
+    session: tabStorageApi,
+    onQuiz: () => window.AtlasShell.setMode('quiz'),
+    onClose: () => { if (hints) hints.flush(); },
+  });
+  window.AtlasShell.openOnboarding = () => onboarding.open({ replay: true });
+  if (ATLAS_FLAGS.hints) {
+    hints = createHints({ bus, store: storeApi, storage: sessionStorageApi, isOnboardingOpen: () => onboarding.isOpen() });
+  }
+  if (ATLAS_FLAGS.onboarding && shouldShowOnboarding(sessionStorageApi)
+      && !isDeepLink(window.location.hash) && !wasDismissedThisTab(tabStorageApi)) {
+    // 1,5 s depois do primeiro quadro: o aluno vê o corpo antes da apresentação.
+    setTimeout(() => {
+      if (!document.getElementById('atlas-fatal') && !isDeepLink(window.location.hash)) onboarding.open();
+    }, 1500);
+  }
+
   // ---- Expõe internals para a camada de compatibilidade legada ----
   window.__atlasInternals = {
     bus, store: storeApi, registry, assetLoader, engine,
-    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS,
+    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS, flags: ATLAS_FLAGS,
+    onboarding, getHints: () => hints,
   };
   // Gancho de teste, só leitura — expõe as estatísticas do renderer
   // (draw calls, triângulos, contagem de frames renderizados) para os
@@ -985,5 +1123,5 @@ async function boot() {
 // não precisa esperar DOMContentLoaded.
 boot().catch((e) => {
   console.error('[atlas] falha ao inicializar', e);
-  showFatal((e && e.userMessage) || 'O Atlas não conseguiu iniciar.');
+  showFatal((e && e.userMessage) || 'O Atlas não conseguiu iniciar.', (e && e.hint) || undefined);
 });

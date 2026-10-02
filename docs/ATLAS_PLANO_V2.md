@@ -1,5 +1,7 @@
 # Plano v2 — Atlas 3D: agentes + 4 ondas (com a auditoria do plano incorporada)
 
+> **Atualização (Onda 2, 02/10/2026):** decisões do usuário — (1) o gate humano é **pós-merge** (risco aceito: o merge publica direto em produção; rollback em `docs/atlas-rollback.md` e chaves por novidade em `js/core/flags.js`); (2) meta de abertura **< 2 MB** transferidos (era < 1,5 MB); (3) selos de revisão em 4 estados (editorial, conteúdo antigo, gerado automaticamente, revisado) — nunca "Rascunho". O plano detalhado da Onda 2 é o "Plano Onda 2 v4"; medições de rede em `docs/atlas-qa/rede.md`.
+
 ## Contexto
 Duas auditorias do atlas foram feitas: "Prova de Fogo" (nota 4,5) e "Análise Completa" (nota 8,5). Depois veio uma terceira, sobre este próprio plano. Ela apontou 5 furos (F1–F5) e 5 lacunas globais (G1–G5), todos incorporados abaixo.
 

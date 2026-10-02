@@ -1,0 +1,46 @@
+name: Atlas — conferência de produção
+# Mede o atlas PUBLICADO (GitHub Pages): tempo até o esqueleto (sem throttle
+# e em Fast 3G), bytes por arquivo e content-encoding. Rodar à mão em
+# Actions → "Atlas — conferência de produção" → Run workflow, depois de cada
+# deploy de onda. Resultado no resumo da execução (docs/atlas-qa/rede.md).
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL base publicada (com / no fim)'
+        required: true
+        default: 'https://diretoria-dpf.github.io/plataforma-membros/'
+jobs:
+  prod-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci || npm install
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - name: Cabeçalhos dos arquivos da abertura (content-encoding)
+        env:
+          BASE: ${{ github.event.inputs.url }}
+        run: |
+          {
+            echo "## Cabeçalhos (curl, Accept-Encoding: gzip, br)"
+            echo ""
+            echo "| arquivo | status | content-encoding | content-length |"
+            echo "|---|---|---|---|"
+            for f in index.html models/zanatomy/esqueletico.lod1.glb models/manifest.json vendor/three/three.core.js vendor/three/three.module.js js/main.js data/atlas/generated/structures.boot.json; do
+              h=$(curl -sSI -H "Accept-Encoding: gzip, br" "${BASE}modulos/anatomia-3d/$f")
+              st=$(echo "$h" | head -1 | awk '{print $2}')
+              enc=$(echo "$h" | grep -i '^content-encoding:' | awk '{print $2}' | tr -d '\r')
+              len=$(echo "$h" | grep -i '^content-length:' | awk '{print $2}' | tr -d '\r')
+              echo "| $f | $st | ${enc:--} | ${len:--} |"
+            done
+            echo ""
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Medição no navegador (sem throttle e Fast 3G)
+        env:
+          ATLAS_BASE_URL: ${{ github.event.inputs.url }}
+        run: node scripts/e2e/atlas-prod-check.js
