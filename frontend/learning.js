@@ -224,8 +224,11 @@
   }
 
   function createFrame(container, path, title, allow) {
-    var frame = app().h('iframe', { className: 'learn-frame', src: path, title: title, allow: allow || 'fullscreen' }, []);
-    frame.allowFullscreen = true;
+    // Tela cheia só pelo atributo allow: com allowfullscreen junto, o
+    // navegador avisa "Allow attribute will take precedence" (C9, Onda 3).
+    var policy = allow || 'fullscreen';
+    if (!/(^|;)\s*fullscreen\b/.test(policy)) policy += '; fullscreen';
+    var frame = app().h('iframe', { className: 'learn-frame', src: path, title: title, allow: policy }, []);
     container.appendChild(frame);
     return frame;
   }

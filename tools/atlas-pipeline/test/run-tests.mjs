@@ -221,6 +221,19 @@ step('4e. validate.mjs --structures — sistema sem sentinela deve falhar (guard
   }
 });
 
+const { normalizeNodeName } = await import('../node-name.mjs');
+step('normalizeNodeName colapsa espaços múltiplos (A.9)', () => {
+  const cases = [
+    ['Orbital part of  inferior frontal gyrus', 'Orbital part of inferior frontal gyrus'],
+    ['  Femur.L ', 'Femur.L'],
+    ['a\t\tb\n c', 'a b c'],
+  ];
+  for (const [input, want] of cases) {
+    const got = normalizeNodeName(input);
+    if (got !== want) throw new Error(`normalizeNodeName(${JSON.stringify(input)}) = ${JSON.stringify(got)}, esperava ${JSON.stringify(want)}`);
+  }
+});
+
 console.log(`\n=================================`);
 if (failures > 0) {
   console.error(`${failures} etapa(s) falharam.`);

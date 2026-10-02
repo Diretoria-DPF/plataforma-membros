@@ -16,8 +16,11 @@
        WebAssembly.instantiate() (ver scripts/e2e/csp.e2e.js). jsDelivr: só
        Chart.js (modo Farmacologia) e 3Dmol (modo Moléculas), carregados sob
        demanda por js/modes/pharmacology.js e js/modes/molecules.js — não
-       há tag de script estática dessas libs nesta página. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+       há tag de script estática dessas libs nesta página. connect-src
+       também libera o jsDelivr: o chart.umd.min.js aponta para o próprio
+       .map, e com o DevTools aberto a busca do mapa virava violação de CSP
+       (crime C10 da Onda 3). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob: https://files.rcsb.org https://pubchem.ncbi.nlm.nih.gov https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Abertura em rede lenta: sem isto o GLB do esqueleto (≈1 MB, o item
        mais longo) só começava a baixar depois de toda a cadeia de módulos
        JS + three.js + JSONs (~11 s em "Fast 3G"). Os preloads disparam

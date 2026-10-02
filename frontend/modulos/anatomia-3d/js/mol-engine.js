@@ -102,8 +102,14 @@ const MolEngine = (() => {
   // 1. INICIALIZAÇÃO DO VISUALIZADOR 3DMOL
   // =========================================================================
   function init() {
+    // Idempotente (C11, Onda 3): os modos Moléculas/Farmacologia e o compat
+    // legado chamam init() a cada abertura — antes o viewer era recriado e
+    // os controles e o log duplicavam. Só recria se o #mol-viewport mudou.
+    const currentViewport = document.getElementById("mol-viewport");
+    if (viewer && viewportEl && viewportEl === currentViewport && viewportEl.isConnected) return;
+
     container = document.getElementById("mol-viewport-container");
-    viewportEl = document.getElementById("mol-viewport");
+    viewportEl = currentViewport;
 
     if (!viewportEl) {
       console.warn("[MolEngine] Elemento #mol-viewport não localizado no DOM.");
