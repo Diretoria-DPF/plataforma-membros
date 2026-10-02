@@ -191,7 +191,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
         fontSize: '0.85rem',
         fontWeight: '500'
       },
-      text: 'Clínica'
+      text: 'Cenários'
     });
 
     container.appendChild(btnCompostos);

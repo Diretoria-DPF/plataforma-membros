@@ -58,11 +58,30 @@ async function runAt(viewport, pkgs) {
     check(ui.legacy === ref.legacy, `${label}: aviso de rascunho ${ref.legacy ? 'presente' : 'ausente'} conforme o status do composto`);
     if (pkgs) check(ui.chart && ui.cp && ui.eff, `${label}: gráficos Cp(t) e E(t) desenhados`);
     else check(!ui.cp, `${label}: sem Chart.js, só o resumo em texto`);
-    // ---- Aba Clínica: cenário da crise colinérgica ----
+    // ---- M1: abas do composto [PK/PD] [Clínica] [Interações] ----
+    const tabs = await frame.evaluate(async () => {
+      const q = (s) => document.querySelector(s);
+      const names = [...document.querySelectorAll('#pk-panel [role="tab"]')].map((t) => t.textContent.trim());
+      q('#pk-tab-clinica').click();
+      await new Promise((r) => setTimeout(r, 30));
+      const clin = { visible: !q('#pk-tabpanel-clinica').hidden, pkHidden: q('#pk-tabpanel-pkpd').hidden, uses: document.querySelectorAll('#pk-tabpanel-clinica .pk-uses li').length, groups: document.querySelectorAll('#pk-tabpanel-clinica .pk-ae-group').length };
+      q('#pk-tab-interacoes').click();
+      await new Promise((r) => setTimeout(r, 30));
+      const all = document.querySelectorAll('#pk-tabpanel-interacoes tbody tr').length;
+      q('#pk-tabpanel-interacoes .pk-int-btn[data-sev="grave"]').click();
+      const graves = [...document.querySelectorAll('#pk-tabpanel-interacoes tbody tr')].map((r) => r.dataset.sev);
+      q('#pk-tab-pkpd').click();
+      return { names, clin, all, graves };
+    });
+    check(tabs.names.join('|') === 'PK/PD|Clínica|Interações', `${label}: abas do composto (${tabs.names.join(' · ')})`);
+    check(tabs.clin.visible && tabs.clin.pkHidden && tabs.clin.uses > 0 && tabs.clin.groups > 0, `${label}: aba Clínica com indicações e efeitos agrupados (${JSON.stringify(tabs.clin)})`);
+    check(tabs.all > 0 && tabs.graves.every((x) => x === 'grave') && tabs.graves.length <= tabs.all, `${label}: Interações filtra por severidade (${tabs.graves.length} graves de ${tabs.all})`);
+
+    // ---- Aba Cenários: cenário da crise colinérgica ----
     await frame.evaluate(() => document.querySelector('.tab-button[data-tab="crise"]').click());
     await frame.waitForSelector('[data-tab="crise"] .scenario-panel, [data-tab="crise"] .scenario-unavailable', { timeout: 5000 });
     const hasScenario = await frame.evaluate(() => !!document.querySelector('.scenario-panel'));
-    check(hasScenario, `${label}: aba Clínica mostra o cenário da crise colinérgica`);
+    check(hasScenario, `${label}: aba Cenários mostra a crise colinérgica`);
     if (hasScenario) {
       const phases = await frame.evaluate(() => document.querySelectorAll('.scenario-phase-btn').length);
       check(phases === 6, `${label}: 6 fases na linha do tempo (${phases})`);

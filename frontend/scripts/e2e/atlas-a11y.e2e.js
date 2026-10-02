@@ -92,6 +92,10 @@ async function runAt(browser, baseUrl, viewport, mobile) {
     await frame.waitForSelector('#pk-panel', { timeout: 15000 }).catch(() => {});
     await frame.waitForTimeout(300);
     await scan(frame, `${label} Farmacologia (composto)`);
+    await frame.evaluate(() => { const t = document.querySelector('#pk-tab-interacoes'); if (t) t.click(); });
+    await scan(frame, `${label} Farmacologia (interações)`);
+    await frame.evaluate(() => { const t = document.querySelector('#pk-tab-clinica'); if (t) t.click(); });
+    await scan(frame, `${label} Farmacologia (clínica do composto)`);
     await frame.evaluate(() => document.querySelector('.tab-button[data-tab="crise"]').click());
     await frame.waitForSelector('.scenario-panel', { timeout: 5000 }).catch(() => {});
     await frame.evaluate(() => { const b = document.querySelectorAll('.scenario-phase-btn')[2]; if (b) b.click(); const c = document.querySelector('.scenario-antidote'); if (c) c.click(); });
