@@ -3,7 +3,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 89 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 91 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -27,6 +27,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiLearnClinicalChat', 'apiLearnClinicalEvaluate', 'apiLearnClinicalGenerateCase', 'apiLearnClinicalLibrary',
       'apiLearnClinicalEpidemiology', 'apiLearnLabPreceptor', 'apiLearnGetMyAiQuota', 'apiAdminAiHealth',
       'apiAdminLearnListPendingCases', 'apiAdminLearnReviewCase',
+      // PR 3.2 (Onda 3) — proxy de moléculas do Atlas 3D
+      'apiLearnAtlasPdb', 'apiLearnAtlasPubchem',
     ];
     // Fase 2 — Dados & Presença (aprendizagem e presença)
     expected.push(

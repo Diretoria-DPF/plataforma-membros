@@ -5,6 +5,9 @@
  * farmacológicos e crises toxicológicas com antídotos.
  */
 
+import { simulate } from '../core/pk-model.js';
+import { renderPkPanel, disposePkPanel } from '../ui/pk-panel.js';
+
 /**
  * Carrega um script clássico (<script src>) uma única vez e retorna Promise.
  * @param {string} src URL absoluta ou relativa
@@ -143,6 +146,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
       }
     }
 
+    disposePkPanel();
     if (offStructureSelect) offStructureSelect();
     if (offModeChange) offModeChange();
 
@@ -353,8 +357,8 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
 
     LaiftDom.setHtml(hud, LaiftDom.html`<span style="color: var(--laift-muted);">Aguardando iniciar...</span>`);
 
-    btnStart.addEventListener('click', () => {
-      if (typeof window.PkEngine !== 'undefined') {
+    btnStart.addEventListener('click', async () => {
+      if (await ensureCrisisEngine(panel)) {
         window.PkEngine.startCrisisSimulation('organofosforado');
       }
     });
@@ -384,6 +388,36 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
     return panel;
   }
 
+  async function ensureChartJs() {
+    if (chartLoaded) return true;
+    try {
+      await loadScript(CHART_JS_URL, { integrity: CHART_JS_SRI });
+      chartLoaded = typeof window.Chart !== 'undefined';
+    } catch (err) {
+      console.warn('[pharmacology] Chart.js não disponível (offline?):', err.message);
+    }
+    return chartLoaded;
+  }
+
+  /** pk-engine.js (legado) e o canvas dele, só para a aba Crise. */
+  async function ensureCrisisEngine(panel) {
+    if (!document.getElementById('pkChartCanvas') && panel) {
+      const wrap = LaiftDom.h('div', { style: { height: '200px', margin: '12px 0', borderRadius: '4px', border: '1px solid var(--laift-border)', padding: '10px', background: 'var(--laift-surface-alt)' } });
+      wrap.appendChild(LaiftDom.h('canvas', { id: 'pkChartCanvas' }));
+      panel.appendChild(wrap);
+    }
+    await ensureChartJs();
+    if (!pkEngineLoaded) {
+      try {
+        await loadScript('js/pk-engine.js');
+        pkEngineLoaded = true;
+      } catch (err) {
+        console.error('[pharmacology] pk-engine.js não carregado:', err);
+      }
+    }
+    return pkEngineLoaded && typeof window.PkEngine !== 'undefined';
+  }
+
   /**
    * Seleciona um composto e simula seu perfil PK/PD
    */
@@ -398,53 +432,16 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
     element.style.background = 'rgba(56, 189, 248, 0.1)';
     element.style.borderColor = '#38bdf8';
 
-    // Cria canvas para o gráfico se não existir
-    let canvas = document.getElementById('pkChartCanvas');
-    if (!canvas) {
-      const container = document.querySelector('[data-tab="compostos"]');
-      if (container) {
-        const canvasContainer = LaiftDom.h('div', {
-          style: {
-            height: '200px',
-            marginTop: '12px',
-            marginBottom: '12px',
-            borderRadius: '4px',
-            border: '1px solid var(--laift-border)',
-            padding: '10px',
-            background: 'var(--laift-surface-alt)'
-          }
-        });
-        canvas = LaiftDom.h('canvas', { id: 'pkChartCanvas' });
-        canvasContainer.appendChild(canvas);
-        container.appendChild(canvasContainer);
-      }
+    // PR 3.2 (Bloco C): Cp(t) e E(t) pelo modelo puro (js/core/pk-model.js),
+    // com F, ka e PD do próprio composto. O PkEngine legado trocava F pela
+    // via e usava um PD fixo para todos; ele segue só na aba Crise.
+    const container = document.querySelector('[data-tab="compostos"]');
+    if (container) {
+      await ensureChartJs();
+      renderPkPanel(container, compound, simulate(compound), { chart: chartLoaded ? window.Chart : null });
     }
-
-    // Carrega Chart.js e pk-engine se necessário
-    if (!chartLoaded) {
-      try {
-        await loadScript(CHART_JS_URL, { integrity: CHART_JS_SRI });
-        chartLoaded = true;
-      } catch (err) {
-        console.warn('[pharmacology] Chart.js não disponível (offline?):', err.message);
-        // Continua sem Chart.js
-      }
-    }
-
-    if (!pkEngineLoaded) {
-      try {
-        await loadScript('js/pk-engine.js');
-        pkEngineLoaded = true;
-      } catch (err) {
-        console.error('[pharmacology] pk-engine.js não carregado:', err);
-        return;
-      }
-    }
-
-    // Simula o protocolo
-    if (typeof window.PkEngine !== 'undefined') {
-      const protocol = toPkProtocol(compound);
-      window.PkEngine.simulateProtocol(protocol);
+    if (typeof window.ApiCache !== 'undefined' && typeof window.ApiCache.registrarSimulacao === 'function') {
+      try { window.ApiCache.registrarSimulacao(compound.nome || compound.id, (compound.pk && compound.pk.route) || 'ORAL'); } catch (e) { /* histórico é opcional */ }
     }
 
     // Emite evento para o 3D: destaca o órgão alvo

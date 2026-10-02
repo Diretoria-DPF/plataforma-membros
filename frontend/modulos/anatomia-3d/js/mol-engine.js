@@ -6,7 +6,7 @@
  * MOTOR DE VISUALIZAÇÃO NANOMOLECULAR & CRISTALOGRAFIA PDB (NÍVEL 4: NANO)
  * Ecossistema LAIFT - Módulo Master 3D
  * - Integração com a biblioteca 3Dmol.js para renderização WebGL macromolecular
- * - Conexão direta com RCSB Protein Data Bank (PDB API) para download dinâmico
+ * - Estruturas do RCSB Protein Data Bank pelo proxy da Worker (apiLearnAtlasPdb, PR 3.2)
  * - Modos de Projeção Biofísica: Cartoon, Stick, Sphere (VDW) e Superfície Solvente
  * - Destaque automatizado de sítio catalítico e ligantes co-cristalizados (fármacos)
  * - Controles dinâmicos de inspeção: rotação contínua, zoom e polaridade eletrostática
@@ -163,14 +163,15 @@ const MolEngine = (() => {
       // Limpa modelos, superfícies e estados prévios
       clearViewer();
 
-      const url = `https://files.rcsb.org/download/${idLimpo}.pdb`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Servidor RCSB PDB retornou código ${response.status}`);
+      // PR 3.2 (Bloco E): o .pdb vem pelo proxy da Worker (apiLearnAtlasPdb);
+      // o navegador não fala mais com o RCSB e a CSP não libera o host.
+      const res = await fetchPdbViaProxy(idLimpo);
+      if (!res.ok) {
+        showLoading(false);
+        renderErrorState(idLimpo, res);
+        return;
       }
-
-      const pdbData = await response.text();
+      const pdbData = res.pdb;
 
       // Adiciona o modelo cristalográfico ao viewer
       currentModel = viewer.addModel(pdbData, "pdb");
@@ -502,15 +503,51 @@ const MolEngine = (() => {
     }
   }
 
-  function renderErrorState(pdbId) {
-    const hudBox = document.getElementById("molInfoDetails");
-    if (hudBox) {
-      LaiftDom.setHtml(hudBox, LaiftDom.html`
-        <div role="alert" style="color:#f87171; font-size:0.8rem; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:8px; border-radius:6px;">
-          ⚠️ Não foi possível carregar a macromolécula <strong>${pdbId}</strong> diretamente do repositório RCSB PDB. Verifique sua conexão.
-        </div>
-      `);
+  /**
+   * Pede o .pdb à Worker pela ponte da plataforma (LaiftApi → App.callLearningApi).
+   * Qualquer resposta que não seja sucesso, "não encontrada" ou "grande
+   * demais" conta como serviço indisponível — inclusive ação desconhecida,
+   * caso o front publique antes da Worker (docs/atlas-rollback.md).
+   * @returns {Promise<{ok: true, pdb: string} | {ok: false, kind: 'notFound'|'tooLarge'|'unavailable'}>}
+   */
+  async function fetchPdbViaProxy(pdbId) {
+    const api = window.LaiftApi;
+    if (!api || typeof api.call !== "function") return { ok: false, kind: "unavailable" };
+    let res;
+    try {
+      res = await api.call("apiLearnAtlasPdb", { id: pdbId });
+    } catch (e) {
+      return { ok: false, kind: "unavailable" };
     }
+    if (res && res.success === true && typeof res.pdb === "string" && res.pdb.length > 0) return { ok: true, pdb: res.pdb };
+    if (res && res.notFound) return { ok: false, kind: "notFound" };
+    if (res && res.tooLarge) return { ok: false, kind: "tooLarge" };
+    return { ok: false, kind: "unavailable" };
+  }
+
+  /** "Tentar de novo" do aviso de serviço indisponível. */
+  function retry() {
+    if (currentPdbId) return loadPdb(currentPdbId, currentPdbMeta && currentPdbMeta.nome);
+    return undefined;
+  }
+
+  function renderErrorState(pdbId, res) {
+    const hudBox = document.getElementById("molInfoDetails");
+    if (!hudBox) return;
+    const kind = (res && res.kind) || "unavailable";
+    const msg = kind === "notFound"
+      ? LaiftDom.html`A estrutura <strong>${pdbId}</strong> não foi encontrada no Protein Data Bank.`
+      : kind === "tooLarge"
+        ? LaiftDom.html`A estrutura <strong>${pdbId}</strong> é grande demais para o atlas (limite de 5 MB).`
+        : LaiftDom.html`Serviço de moléculas indisponível. Não foi possível carregar <strong>${pdbId}</strong> agora.`;
+    LaiftDom.setHtml(hudBox, LaiftDom.html`
+      <div role="alert" class="mol-error" data-mol-error="${kind}" style="color:#fecaca; font-size:0.8rem; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); padding:8px; border-radius:6px;">
+        ⚠️ ${msg}
+        ${kind === "unavailable" ? LaiftDom.html`<div style="margin-top:6px;"><button type="button" class="btn-mol-action mol-retry" data-action="MolEngine.retry">Tentar de novo</button></div>` : ""}
+      </div>
+    `);
+    // O aviso fica abaixo do visualizador: traz para a vista em telas baixas.
+    try { hudBox.scrollIntoView({ block: "nearest" }); } catch (e) { /* navegador antigo */ }
   }
 
   // =========================================================================
@@ -519,6 +556,7 @@ const MolEngine = (() => {
   return {
     init,
     loadPdb,
+    retry,
     applyStyle,
     toggleActiveSiteHighlight,
     toggleSpin,

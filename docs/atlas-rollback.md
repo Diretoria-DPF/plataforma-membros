@@ -37,3 +37,16 @@ Quando existir `sw.js`: aumentar a versão do cache no build faz os aparelhos tr
 
 ## 4. Migração no Neon (Onda 4)
 Toda migração nova vem com o script de volta (`down`) e é aplicada primeiro num branch temporário do Neon. Para desfazer em produção: restaurar o branch a partir do ponto anterior à migração (Neon → Branches → Restore) — sempre com confirmação do responsável.
+
+## 5. Proxy de moléculas (PR 3.2, Bloco E)
+No modo Moléculas, o atlas busca o `.pdb` (RCSB) e as propriedades (PubChem) pela Worker, com as ações `apiLearnAtlasPdb` e `apiLearnAtlasPubchem`. O `connect-src` do atlas não libera mais `files.rcsb.org` nem `pubchem.ncbi.nlm.nih.gov`.
+
+- **Ordem do deploy:** o Pages e a Worker publicam juntos no merge, sem ordem garantida.
+  - Se o front chegar antes, a Worker antiga responde "Ação desconhecida.", e a tela mostra "Serviço de moléculas indisponível" com "Tentar de novo". Não há erro de JavaScript.
+  - Quando a Worker nova sobe, "Tentar de novo" carrega a estrutura.
+- **Se o proxy falhar em produção** (RCSB ou PubChem fora do ar, Cache API com problema):
+  1. O resto do atlas não é afetado; só o modo Moléculas mostra o aviso.
+  2. Conferir em `wrangler tail`: as falhas do serviço externo voltam como `unavailable: true`, sem log de erro, e os erros inesperados aparecem com `correlationId`.
+  3. Para reverter, use o `git revert` do merge (seção 1). Ele devolve as chamadas diretas **e** a CSP antiga juntas.
+     - Não basta reabrir o `connect-src` à mão: o front novo não chama mais o RCSB direto.
+- **Cache:** respostas boas ficam 7 dias na Cache API da Worker, por data center. Uma estrutura corrigida no RCSB aparece no atlas em até 7 dias. Não há purga manual.

@@ -105,6 +105,7 @@ const ALLOWED_ACTIONS = [
   'MolEngine.toggleActiveSiteHighlight',
   'MolEngine.toggleSpin',
   'MolEngine.resetView',
+  'MolEngine.retry',                 // "Tentar de novo" do proxy de moléculas (PR 3.2)
   // Atalhos sem arraste do painel (§2.5, js/ui/sheet.js) — window.AtlasSheet
   // só existe depois de initSheet(), mas resolveAction() do LaiftDom lê o
   // alvo em tempo de clique, não no momento do delegateActions.
