@@ -89,16 +89,26 @@
     },
     "review": {
       "type": "object",
-      "description": "Estado de revisão humana do texto. Enquanto não for \"reviewed\" ou \"approved\", a interface mostra o selo \"Rascunho — não revisado\".",
+      "description": "Estado de revisão humana do texto. A interface mostra um selo por estado (js/ui/infocard.js getStatusLabel): editorial = \"Em revisão editorial\" (publicado, aguardando o conselho da LAIFT); legacy-unverified = \"Conteúdo antigo · sem revisão\"; auto-draft = \"Gerado automaticamente · não revisado\"; reviewed/approved = \"Revisado por <by> em <date>\". Só o conselho editorial humano muda para reviewed/approved.",
       "additionalProperties": false,
       "required": ["status"],
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["auto-draft", "legacy-unverified", "reviewed", "approved"]
+          "enum": ["auto-draft", "legacy-unverified", "editorial", "reviewed", "approved"]
         },
         "by": { "type": "string" },
         "date": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "published_by": {
+          "description": "Quem publicou a ficha com status editorial (ex.: \"atlas-curador (LAIFT)\").",
+          "type": "string",
+          "minLength": 1
+        },
+        "review_requested_at": {
+          "description": "Data (AAAA-MM-DD) em que a revisão do conselho foi pedida — base do SLA e do aviso de atraso de 30 dias.",
           "type": "string",
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
         }
@@ -121,6 +131,11 @@
           "type": "array",
           "items": { "$ref": "#/$defs/source" },
           "minItems": 1
+        },
+        "mnemonic_pt": {
+          "description": "Mnemônico consagrado e citável (opcional). Nunca inventado.",
+          "type": "string",
+          "minLength": 1
         },
         "review": { "$ref": "#/$defs/review" }
       }

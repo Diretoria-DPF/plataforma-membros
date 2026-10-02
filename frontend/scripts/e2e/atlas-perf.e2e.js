@@ -18,16 +18,49 @@
  *
  * Roda contra o BUILD (frontend/dist/), como as demais suítes.
  */
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
 const { startApp, check } = require('./harness');
+
+const DIST = path.join(__dirname, '../../dist');
 
 const MB = 1024 * 1024;
 const BUDGET_BYTES_BEFORE_READY = 2 * MB;
-// "3G rápido" do DevTools: 1,6 Mbit/s, 150 ms de latência.
-const FAST_3G = { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 };
+// Presets de rede EXATAMENTE como os do Chrome DevTools (front_end/core/sdk/
+// NetworkManager.ts): "Fast 3G" = 1,6 Mbit/s × 0,9 de descida, 750 kbit/s ×
+// 0,9 de subida, 150 ms × 3,75 = 562,5 ms de latência; "Slow 3G" = 500
+// kbit/s × 0,8 nos dois sentidos, 400 ms × 5 = 2000 ms. Ver docs/atlas-qa/rede.md.
+const FAST_3G = { offline: false, latency: 562.5, downloadThroughput: (1.6 * 1000 * 1000 / 8) * 0.9, uploadThroughput: (750 * 1000 / 8) * 0.9 };
+const SLOW_3G = { offline: false, latency: 2000, downloadThroughput: (500 * 1000 / 8) * 0.8, uploadThroughput: (500 * 1000 / 8) * 0.8 };
 const BUDGET_3G_INTERACTIVE_MS = 15000;
 const BUDGET_DRAW_CALLS = 150;
 const BUDGET_TRIANGLES = 1_500_000;
 const BUDGET_HEAP_BYTES = 250 * MB;
+
+/**
+ * Lista os arquivos da abertura: bytes transferidos aqui (servidor local,
+ * sem compressão), content-encoding recebido e o tamanho em gzip — estimativa
+ * do que um servidor que comprime entregaria. O número de PRODUÇÃO sai de
+ * scripts/e2e/atlas-prod-check.js (workflow atlas-prod-check.yml).
+ */
+function reportFiles(files, baseUrl) {
+  const rows = files
+    .filter((f) => f.url.includes('/modulos/anatomia-3d/'))
+    .map((f) => {
+      const rel = f.url.slice(baseUrl.length).split('?')[0];
+      let gzip = null;
+      try { gzip = zlib.gzipSync(fs.readFileSync(path.join(DIST, decodeURIComponent(rel)))).length; } catch (e) { /* fora do dist */ }
+      return { rel: rel.replace('modulos/anatomia-3d/', ''), transfer: f.transfer, gzip, encoding: f.encoding || '-' };
+    })
+    .sort((a, b) => b.transfer - a.transfer);
+  const sum = (k) => rows.reduce((acc, r) => acc + (r[k] || 0), 0);
+  console.log('  · arquivos da abertura (transferido | se fosse gzip | content-encoding):');
+  for (const r of rows.slice(0, 12)) {
+    console.log(`      ${(r.transfer / 1024).toFixed(0).padStart(6)} KB | ${r.gzip === null ? '   ?' : (r.gzip / 1024).toFixed(0).padStart(4)} KB | ${r.encoding} | ${r.rel}`);
+  }
+  console.log(`  · total do módulo: ${(sum('transfer') / MB).toFixed(2)} MB transferidos (o servidor local já comprime JS/JSON; o GLB vai sem); ${(sum('gzip') / MB).toFixed(2)} MB se o GLB também fosse comprimido`);
+}
 
 async function measureAtViewport(viewport) {
   const label = `${viewport.width}×${viewport.height}`;
@@ -49,12 +82,14 @@ async function measureAtViewport(viewport) {
 
   // Track all network activity to sum encodedDataLength from responses on the origin
   const responses = {};
+  const files = [];
   client.on('Network.responseReceived', (params) => {
     if (bytes.done) return;
     const { requestId, response } = params;
     const url = response.url || '';
     if (url.startsWith(app.baseUrl)) {
-      responses[requestId] = { url, encodedDataLength: 0 };
+      const enc = Object.entries(response.headers || {}).find(([k]) => k.toLowerCase() === 'content-encoding');
+      responses[requestId] = { url, encoding: enc ? enc[1] : '' };
     }
   });
 
@@ -63,6 +98,7 @@ async function measureAtViewport(viewport) {
     const { requestId, encodedDataLength } = params;
     if (responses[requestId]) {
       bytes.total += encodedDataLength;
+      files.push({ ...responses[requestId], transfer: encodedDataLength });
       delete responses[requestId];
     }
   });
@@ -85,6 +121,7 @@ async function measureAtViewport(viewport) {
     bytes.done = true;
     await client.send('Network.disable');
 
+    if (viewport.width < 600) reportFiles(files, app.baseUrl);
     check(bytes.total > 0, `${label}: harness mediu algum byte transferido (sanity check, ${bytes.total}b)`);
     check(bytes.total <= BUDGET_BYTES_BEFORE_READY,
       `${label}: bytes transferidos até o modelo ficar pronto ≤ 2 MB (medido: ${(bytes.total / MB).toFixed(2)} MB)`);
@@ -161,18 +198,19 @@ async function measureAtViewport(viewport) {
 }
 
 /**
- * Celular em "3G rápido": do toque em Anatomia até o esqueleto estar no
- * corpo (tocável) em < 15 s; e, com a conexão lenta, os músculos NÃO baixam
- * sozinhos (só quando a camada for ligada).
+ * Celular com rede limitada (presets do DevTools): do toque em Anatomia até
+ * o esqueleto estar no corpo (tocável) — "Fast 3G" < 15 s (meta), "Slow 3G"
+ * só relatório; e, com conexão lenta, os músculos NÃO baixam sozinhos (só
+ * quando a camada for ligada).
  */
-async function measureFast3g() {
-  const label = '390×844 em 3G rápido';
+async function measureThrottled({ preset, name, budgetMs }) {
+  const label = `390×844 em ${name}`;
   const app = await startApp({ role: 'member', viewport: { width: 390, height: 844 } });
   try {
     await app.login();
     const client = await app.context.newCDPSession(app.page);
     await client.send('Network.enable');
-    await client.send('Network.emulateNetworkConditions', { ...FAST_3G, connectionType: 'cellular3g' });
+    await client.send('Network.emulateNetworkConditions', { ...preset, connectionType: 'cellular3g' });
     // O throttle do CDP não muda navigator.connection.effectiveType; simula
     // o que um celular em 3G informa, para exercitar o caminho "sob demanda".
     await app.context.addInitScript(() => {
@@ -183,9 +221,11 @@ async function measureFast3g() {
     await frame.waitForFunction(() => {
       const I = window.__atlasInternals;
       return !!I && I.DEFAULT_SYSTEMS.every((s) => I.store.get().loadedSystems.includes(s));
-    }, null, { timeout: 60000, polling: 200 });
+    }, null, { timeout: 120000, polling: 200 });
     const elapsed = Date.now() - t0;
-    check(elapsed < BUDGET_3G_INTERACTIVE_MS, `${label}: esqueleto tocável em < 15 s (medido: ${(elapsed / 1000).toFixed(1)} s)`);
+    if (budgetMs) {
+      check(elapsed < budgetMs, `${label} (preset do DevTools): esqueleto tocável em < ${budgetMs / 1000} s (medido: ${(elapsed / 1000).toFixed(1)} s)`);
+    }
     const constrained = await frame.evaluate(() => /^(slow-2g|2g|3g)$/.test((navigator.connection || {}).effectiveType || ''));
     if (constrained) {
       await frame.waitForTimeout(3000);
@@ -195,14 +235,15 @@ async function measureFast3g() {
       });
       check(!st.muscular && !st.musculos, `${label}: conexão lenta não baixa os músculos sozinha e a camada fica desligada (${JSON.stringify(st)})`);
     }
-    console.log(`  · ${label}: esqueleto em ${(elapsed / 1000).toFixed(1)} s (effectiveType 3g: ${constrained})`);
+    console.log(`  · ${label}: esqueleto em ${(elapsed / 1000).toFixed(1)} s${budgetMs ? '' : ' (só relatório, sem meta)'} (effectiveType 3g: ${constrained})`);
   } finally {
     await app.close();
   }
 }
 
 module.exports = async function atlasPerf() {
-  await measureFast3g();
+  await measureThrottled({ preset: FAST_3G, name: 'Fast 3G', budgetMs: BUDGET_3G_INTERACTIVE_MS });
+  await measureThrottled({ preset: SLOW_3G, name: 'Slow 3G', budgetMs: null });
   await measureAtViewport({ width: 390, height: 844 });
   await measureAtViewport({ width: 1440, height: 900 });
 };

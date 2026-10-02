@@ -63,7 +63,7 @@ if (typeof window === 'undefined') {
 // Importa os módulos
 const { on, emit, EVENTS } = await import(path.join(coreDir, 'bus.js'));
 const { get: storeGet, set: storeSet } = await import(path.join(coreDir, 'store.js'));
-const { scoreFor, isCorrect, mainSid, createQuizMode } = await import(path.join(modesDir, 'quiz.js'));
+const { scoreFor, isCorrect, mainSid, resolveResume, QUIZ_SEED, createQuizMode } = await import(path.join(modesDir, 'quiz.js'));
 
 let failures = 0;
 
@@ -147,6 +147,33 @@ test('mainSid() devolve a resposta principal', () => {
 
 test('scoreFor() sem `pontos` usa 100 como base (nunca NaN)', () => {
   assert.equal(scoreFor({}, 60000, true), 100);
+});
+
+const CASES = [{ id: 'caso-a' }, { id: 'caso-b' }, { id: 'caso-c' }];
+
+test('resolveResume() retoma pelo ID do caso, com placar', () => {
+  const r = resolveResume(CASES, { caseId: 'caso-c', sessionSeed: QUIZ_SEED, score: 250, correct: 2, answered: 2 });
+  assert.equal(r.index, 2);
+  assert.equal(r.score, 250);
+  assert.equal(r.correct, 2);
+  assert.match(r.notice, /Continuando/);
+});
+
+test('resolveResume() com caso removido recomeça do zero e avisa', () => {
+  const r = resolveResume(CASES, { caseId: 'caso-apagado', sessionSeed: QUIZ_SEED, score: 100 });
+  assert.equal(r.index, 0);
+  assert.equal(r.score, 0);
+  assert.match(r.notice, /não está mais disponível/);
+});
+
+test('resolveResume() com semente diferente retoma o caso e avisa da ordem', () => {
+  const r = resolveResume(CASES, { caseId: 'caso-b', sessionSeed: 7 });
+  assert.equal(r.index, 1);
+  assert.match(r.notice, /ordem dos casos mudou/);
+});
+
+test('resolveResume() sem progresso começa do zero sem aviso', () => {
+  assert.deepEqual(resolveResume(CASES, null), { index: 0, score: 0, correct: 0, answered: 0, notice: null });
 });
 
 // =============================================================================

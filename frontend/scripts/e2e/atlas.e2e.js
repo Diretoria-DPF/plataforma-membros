@@ -290,25 +290,7 @@ module.exports = async function atlas() {
     await frame.locator('button', { hasText: 'Parar' }).first().click().catch(() => {});
     await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
 
-    // ------------------------------------------------------------------
-    // 6c) WebGL perdido: aviso na tela e o 3D volta a desenhar
-    // ------------------------------------------------------------------
-    const lost = await frame.evaluate(async () => {
-      const canvas = document.querySelector('#atlas-canvas canvas');
-      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-      const ext = gl && gl.getExtension('WEBGL_lose_context');
-      if (!ext) return { skipped: true };
-      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-      ext.loseContext();
-      await wait(300);
-      const shown = !!document.querySelector('.atlas-webgl-lost');
-      const before = window.__atlasPerf.getStats().renders;
-      ext.restoreContext();
-      await wait(800);
-      return { shown, gone: !document.querySelector('.atlas-webgl-lost'), before, after: window.__atlasPerf.getStats().renders };
-    });
-    check(lost.skipped || (lost.shown && lost.gone && lost.after > lost.before),
-      `WebGL perdido mostra "Recarregando o 3D…" e volta a desenhar (${JSON.stringify(lost)})`);
+    // 6c) WebGL perdido/ausente: ver scripts/e2e/atlas-webgl.e2e.js
 
     // ------------------------------------------------------------------
     // 6d) Link direto (#sid=…) seleciona a estrutura; ao reabrir, o atlas
@@ -347,6 +329,45 @@ module.exports = async function atlas() {
     });
     check(resumed === 'za:liver', `"Continuar" repõe a seleção salva (veio ${resumed})`);
     await frame.evaluate(() => { try { localStorage.removeItem('atlas.session.v1'); } catch (e) { /* */ } });
+
+    // 6e) Quiz retomado pelo ID do caso: responde o 1º, reabre, "Continuar"
+    // leva ao 2º caso com o placar mantido.
+    await frame.evaluate(() => window.AtlasShell.setMode('quiz'));
+    await frame.waitForSelector('#quizQuestionCard #quizFeedback', { state: 'attached', timeout: 15000 });
+    const firstAnswer = await frame.evaluate(async () => {
+      const { registry, bus } = window.__atlasInternals;
+      const cases = await (await fetch('data/atlas/quiz-cases.json')).json();
+      const text = document.querySelector('#quizQuestionCard').textContent;
+      const caso = cases.find((c) => text.includes(c.prompt_pt.slice(0, 60)));
+      const wanted = caso.correctSids || [caso.correctSid];
+      const t0 = Date.now();
+      let rec = null;
+      while (!rec && Date.now() - t0 < 20000) {
+        rec = wanted.map((sid) => registry.getBySid(sid)).find(Boolean);
+        if (!rec) await new Promise((r) => setTimeout(r, 200));
+      }
+      bus.emit(bus.EVENTS.STRUCTURE_SELECT, { sid: rec.sid, source: 'pick' });
+      return /Caso 1 de/.test(text);
+    });
+    await app.page.waitForTimeout(1000);
+    await frame.evaluate(() => {
+      try { sessionStorage.removeItem('atlas.resumeOffered'); } catch (e) { /* */ }
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      window.location.reload();
+    });
+    await frame.waitForFunction(() => !!window.__atlasInternals, null, { timeout: 30000 });
+    await frame.waitForFunction(() => {
+      const t = document.getElementById('atlas-toast');
+      return t && t.dataset.open === 'true' && /Continuar/.test(t.textContent);
+    }, null, { timeout: 10000 });
+    await frame.evaluate(() => document.querySelector('#atlas-toast [data-action="AtlasShell.undo"]').click());
+    const resumedQuiz = await frame.waitForFunction(() => {
+      const card = document.querySelector('#quizQuestionCard');
+      return card && /Caso 2 de/.test(card.textContent) ? card.textContent : false;
+    }, null, { timeout: 15000 }).then((h) => h.jsonValue()).catch(() => null);
+    check(firstAnswer && !!resumedQuiz && /Continuando o quiz/.test(resumedQuiz) && Number((/(\d+)\s*pts/.exec(resumedQuiz) || [])[1]) > 0,
+      `quiz retomado no 2º caso com aviso e placar (${(resumedQuiz || '').slice(0, 90)})`);
+    await frame.evaluate(() => { window.AtlasShell.setMode('explorar'); try { localStorage.removeItem('atlas.session.v1'); } catch (e) { /* */ } });
 
     // ------------------------------------------------------------------
     // 7) Zero erro de página

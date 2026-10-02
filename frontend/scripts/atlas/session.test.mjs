@@ -96,5 +96,16 @@ test('"Continuar" é oferecido uma vez por aba', () => {
   assert.equal(S.resumeAlreadyOffered({ getItem() { throw new Error('x'); } }), false);
 });
 
+test('progresso do quiz é salvo e volta só no modo Quiz', () => {
+  const quiz = { caseId: 'caso-b', sessionSeed: 42, score: 175, correct: 1, answered: 1 };
+  const st = memory();
+  S.writeSession(st, S.snapshotSession({ selectedSid: null, mode: 'quiz', layers: {} }, null, NOW, quiz));
+  assert.deepEqual(S.readSession(st, NOW).quiz, quiz);
+  const bad = S.snapshotSession({ selectedSid: null, mode: 'quiz', layers: {} }, null, NOW, { caseId: '<x>' });
+  assert.equal(bad.quiz, undefined, 'caseId fora do formato é descartado');
+  S.writeSession(st, S.snapshotSession(state, camera, NOW, quiz));
+  assert.equal(S.readSession(st, NOW).quiz, null, 'fora do modo Quiz não retoma quiz');
+});
+
 console.log('');
 if (failures > 0) { console.error(`${failures} verificação(ões) falharam.`); process.exitCode = 1; } else console.log('Todas as verificações passaram.');

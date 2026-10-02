@@ -87,6 +87,84 @@ async function runAt(browser, baseUrl, viewport, mobile) {
   }
 }
 
+async function openHost(browser, baseUrl, viewport, opts = {}) {
+  const context = await browser.newContext({ viewport, bypassCSP: true, ...opts });
+  const page = await context.newPage();
+  await context.route(`${baseUrl}e2e-a11y-host.html`, (route) =>
+    route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: HOST_HTML }));
+  await page.goto(`${baseUrl}e2e-a11y-host.html`);
+  const frame = await (await page.waitForSelector('#atlas-frame')).contentFrame();
+  await frame.waitForFunction(() => !!window.__atlasInternals, null, { timeout: 30000 });
+  await frame.waitForTimeout(500);
+  return { context, page, frame };
+}
+
+/** Só teclado: Tab alcança busca, barra e ficha; Enter ativa; Esc fecha. */
+async function keyboardOnly(browser, baseUrl) {
+  const { context, page, frame } = await openHost(browser, baseUrl, { width: 1280, height: 800 });
+  try {
+    await frame.evaluate(() => {
+      window.AtlasShell.closeOnboarding && window.AtlasShell.closeOnboarding();
+      const I = window.__atlasInternals;
+      I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid: 'za:liver', source: 'search' });
+      document.activeElement && document.activeElement.blur();
+    });
+    await frame.waitForTimeout(800);
+    const seen = new Set();
+    for (let i = 0; i < 80; i++) {
+      await page.keyboard.press('Tab');
+      const where = await frame.evaluate(() => {
+        const a = document.activeElement;
+        if (!a || a === document.body) return '';
+        if (a.closest('#atlas-search-slot, .atlas-search-box, .atlas-search')) return 'busca';
+        if (a.closest('#atlas-toolbar')) return 'barra';
+        if (a.closest('#atlas-inspector, #atlas-sheet')) return 'ficha';
+        return a.id || a.className || a.tagName;
+      });
+      if (where) seen.add(where);
+    }
+    check(seen.has('busca') && seen.has('barra') && seen.has('ficha'),
+      `só teclado: Tab alcança busca, barra e ficha (${[...seen].slice(0, 12).join(', ')})`);
+    // Enter ativa (Camadas abre o painel) e Esc fecha o menu ⋯.
+    await frame.focus('#atlas-toolbar-layers');
+    await page.keyboard.press('Enter');
+    const layersOpen = await frame.evaluate(() => document.getElementById('atlas-toolbar-layers').getAttribute('aria-pressed'));
+    check(layersOpen === 'true', `só teclado: Enter em Camadas abre o painel (aria-pressed=${layersOpen})`);
+    await frame.focus('#atlas-toolbar-more');
+    await page.keyboard.press('Enter');
+    const menuOpen = await frame.evaluate(() => !!document.querySelector('.atlas-dropdown'));
+    await page.keyboard.press('Escape');
+    const menuClosed = await frame.evaluate(() => !document.querySelector('.atlas-dropdown'));
+    check(menuOpen && menuClosed, `só teclado: Enter abre o menu ⋯ e Esc fecha (${menuOpen}/${menuClosed})`);
+  } finally {
+    await context.close();
+  }
+}
+
+/** Celular com "reduzir movimento": Esc fecha Ferramentas e nada anima. */
+async function reducedMotion(browser, baseUrl) {
+  const { context, page, frame } = await openHost(browser, baseUrl, { width: 390, height: 844 },
+    { isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  try {
+    await frame.evaluate(() => { window.AtlasShell.closeOnboarding && window.AtlasShell.closeOnboarding(); });
+    await frame.click('#atlas-toolbar-tools');
+    await page.keyboard.press('Escape');
+    const closed = await frame.evaluate(() => document.getElementById('atlas-toolbar').dataset.toolsOpen);
+    check(closed === 'false', `celular: Esc fecha a folha de Ferramentas (toolsOpen=${closed})`);
+    await frame.evaluate(() => {
+      const I = window.__atlasInternals;
+      I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid: 'za:liver', source: 'pick' });
+    });
+    await frame.waitForTimeout(150);
+    const running = await frame.evaluate(() => document.getAnimations()
+      .filter((a) => a.playState === 'running' && a.effect && a.effect.getTiming().duration > 50)
+      .map((a) => (a.effect.target && (a.effect.target.id || a.effect.target.className)) || '?'));
+    check(running.length === 0, `com "reduzir movimento" nenhuma animação CSS longa roda (${running.join(', ') || 'nenhuma'})`);
+  } finally {
+    await context.close();
+  }
+}
+
 module.exports = async function atlasA11y() {
   const { chromium } = loadPlaywright();
   const server = await startStaticServer();
@@ -95,6 +173,8 @@ module.exports = async function atlasA11y() {
   try {
     await runAt(browser, baseUrl, { width: 390, height: 844 }, true);
     await runAt(browser, baseUrl, { width: 1280, height: 800 }, false);
+    await keyboardOnly(browser, baseUrl);
+    await reducedMotion(browser, baseUrl);
   } finally {
     await browser.close();
     server.close();

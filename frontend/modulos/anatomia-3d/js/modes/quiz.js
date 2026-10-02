@@ -48,6 +48,33 @@ export function isCorrect(quizCase, sid, opts = {}) {
   return false;
 }
 
+/** Semente fixa do embaralhamento: a ordem dos casos é a mesma a cada sessão. */
+export const QUIZ_SEED = 42;
+
+/**
+ * Onde retomar um quiz salvo (js/ui/session.js). Retoma pelo ID do caso, não
+ * pelo índice — se a lista de casos mudar (Onda 3), o índice apontaria para
+ * outro caso.
+ * @param {Array<{id:string}>} cases casos já embaralhados
+ * @param {{caseId?:string, sessionSeed?:number, score?:number, correct?:number, answered?:number}|null} progress
+ * @param {number} [seed]
+ * @returns {{ index:number, score:number, correct:number, answered:number, notice:(string|null) }}
+ */
+export function resolveResume(cases, progress, seed = QUIZ_SEED) {
+  const fresh = { index: 0, score: 0, correct: 0, answered: 0, notice: null };
+  if (!progress || !progress.caseId || !Array.isArray(cases)) return fresh;
+  const index = cases.findIndex((c) => c && c.id === progress.caseId);
+  if (index < 0) return { ...fresh, notice: 'O caso em que você parou não está mais disponível. Começando de novo.' };
+  const num = (v) => (Number.isFinite(v) && v >= 0 ? v : 0);
+  return {
+    index,
+    score: num(progress.score),
+    correct: num(progress.correct),
+    answered: num(progress.answered),
+    notice: progress.sessionSeed !== seed ? 'A ordem dos casos mudou desde a última vez.' : 'Continuando o quiz de onde você parou.',
+  };
+}
+
 /** Sid principal da resposta (nome no feedback, foco da câmera). */
 export function mainSid(quizCase) {
   if (!quizCase) return null;
@@ -84,6 +111,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
   let unsubscribeStructure = null;
   let sheetNode = null;
   let sessionStartedAt = null;
+  // O caso atual já foi respondido (feedback na tela): evita pontuar duas
+  // vezes com um segundo toque e faz a retomada começar pelo PRÓXIMO caso.
+  let answeredCurrent = false;
+  let resumeNotice = null;
 
   const QUESTION_TIME_MS = 60000; // 60 segundos
 
@@ -116,6 +147,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
 
   function renderQuizCard() {
     ensureSheetNode();
+    answeredCurrent = false;
 
     const { html, setHtml } = window.LaiftDom;
     const caso = cases[currentIndex];
@@ -154,6 +186,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     `;
 
     setHtml(sheetNode, cardContent);
+    if (resumeNotice) {
+      sheetNode.prepend(window.LaiftDom.h('p', { className: 'quiz-resume-notice', role: 'status', text: resumeNotice }));
+      resumeNotice = null;
+    }
 
     // Delegação de ações
     const hintBtn = sheetNode.querySelector('#quizHintBtn');
@@ -198,11 +234,12 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
   }
 
   function handleStructureSelect(payload) {
-    if (!isRunning || !cases[currentIndex]) return;
+    if (!isRunning || !cases[currentIndex] || answeredCurrent) return;
     const { sid, source } = payload;
     if (source !== 'pick' || !sid) return;
 
     clearInterval(timerInterval);
+    answeredCurrent = true;
     const caso = cases[currentIndex];
     const elapsed = Date.now() - timerStart;
     const correct = isCorrect(caso, sid, { resolve: resolveSid, systemOf });
@@ -245,12 +282,14 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     if (scoreEl) scoreEl.textContent = score;
 
     setTimeout(() => {
+      if (!isRunning) return;
       currentIndex++;
       renderQuizCard();
     }, 2500);
   }
 
   function handleTimeout() {
+    answeredCurrent = true;
     const caso = cases[currentIndex];
     const feedbackEl = sheetNode?.querySelector('#quizFeedback');
     if (!feedbackEl) return;
@@ -264,6 +303,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     feedbackEl.style.color = 'var(--laift-text)';
 
     setTimeout(() => {
+      if (!isRunning) return;
       currentIndex++;
       renderQuizCard();
     }, 2500);
@@ -339,10 +379,20 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       // Carrega casos
       try {
         const loaded = await loadCases();
-        cases = shuffleWithSeed(loaded, 42);
+        cases = shuffleWithSeed(loaded, QUIZ_SEED);
       } catch (err) {
         console.error('[QuizMode] Erro ao carregar casos:', err);
         cases = [];
+      }
+
+      // Retomada (js/main.js passa o progresso salvo na sessão).
+      resumeNotice = null;
+      if (ctx && ctx.resumeFrom) {
+        const r = resolveResume(cases, ctx.resumeFrom, QUIZ_SEED);
+        currentIndex = r.index;
+        score = r.score;
+        correctCount = r.correct;
+        resumeNotice = r.notice;
       }
 
       // Assina STRUCTURE_SELECT
@@ -350,6 +400,18 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
 
       // Renderiza o primeiro caso
       renderQuizCard();
+    },
+
+    /**
+     * Progresso para salvar na sessão — o caso que o aluno vai responder a
+     * seguir (se o atual já foi respondido, o próximo). null fora do quiz ou
+     * com a rodada concluída.
+     */
+    getProgress() {
+      if (!isRunning) return null;
+      const next = currentIndex + (answeredCurrent ? 1 : 0);
+      if (!cases[next]) return null;
+      return { caseId: cases[next].id, sessionSeed: QUIZ_SEED, score, correct: correctCount, answered: next };
     },
 
     exit() {

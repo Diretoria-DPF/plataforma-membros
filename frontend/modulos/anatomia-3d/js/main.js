@@ -16,7 +16,7 @@ import { on, off, emit, EVENTS } from './core/bus.js';
 import { get as storeGet, set as storeSet, subscribe as storeSubscribe } from './core/store.js';
 import { LAYERS, SYSTEMS, MODES, DEFAULT_MODE } from './core/contracts.js';
 
-import { createRenderer } from './engine/renderer.js';
+import { createRenderer, hasWebGL2 } from './engine/renderer.js';
 import { createCameraRig } from './engine/camera-rig.js';
 import { createControls, toNdc } from './engine/controls.js';
 import { createAssetLoader } from './engine/assets.js';
@@ -92,9 +92,10 @@ export function checkStructures(list, { required = true } = {}) {
 
 /** Erro de inicialização com mensagem para o usuário (tela "Recarregar"). */
 class AtlasBootError extends Error {
-  constructor(userMessage, detail) {
+  constructor(userMessage, detail, hint) {
     super(`${userMessage} (${detail})`);
     this.userMessage = userMessage;
+    this.hint = hint;
   }
 }
 
@@ -102,7 +103,7 @@ class AtlasBootError extends Error {
  * Tela de falha do atlas: mensagem clara + "Recarregar" no lugar de uma
  * tela vazia. Também usada quando o WebGL não volta (renderer.js).
  */
-function showFatal(message) {
+function showFatal(message, hint = 'Verifique a conexão e tente de novo.') {
   const { h } = window.LaiftDom;
   const prev = document.getElementById('atlas-fatal');
   if (prev) prev.remove();
@@ -110,7 +111,7 @@ function showFatal(message) {
   reload.addEventListener('click', () => window.location.reload());
   const box = h('div', { id: 'atlas-fatal', className: 'atlas-fatal', role: 'alert' }, [
     h('p', { className: 'atlas-fatal-title' }, [message]),
-    h('p', { className: 'atlas-fatal-hint' }, ['Verifique a conexão e tente de novo.']),
+    h('p', { className: 'atlas-fatal-hint' }, [hint]),
     reload,
   ]);
   document.body.appendChild(box);
@@ -120,6 +121,9 @@ function showFatal(message) {
 async function createContentStore() {
   // Try to load boot structures first (70% smaller, contains sid/names/system/layer/side)
   // Fall back to full structures.json if boot file 404s
+  // Os dois índices em paralelo (antes o legado só pedia depois do boot —
+  // uma ida e volta a mais em rede lenta).
+  const legacyIndexPromise = fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []);
   let structures = await fetchJson(`${CONTENT_BASE}generated/structures.boot.json`).catch(() =>
     fetchJson(`${CONTENT_BASE}generated/structures.json`)
   ).catch(() => []);
@@ -128,9 +132,7 @@ async function createContentStore() {
   // (?fixtures=1) não têm generated/ e seguem sem a base.
   structures = checkStructures(structures, { required: !USE_FIXTURES });
 
-  const [legacyIndex] = await Promise.all([
-    fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []),
-  ]);
+  const legacyIndex = await legacyIndexPromise;
 
   const bySid = new Map();
   for (const s of structures) bySid.set(s.sid, s);
@@ -270,6 +272,13 @@ async function boot() {
   const bus = { on, off, emit, EVENTS };
   const storeApi = { get: storeGet, set: storeSet, subscribe: storeSubscribe };
 
+  if (!hasWebGL2()) {
+    throw new AtlasBootError(
+      'Este aparelho ou navegador não tem WebGL 2, necessário para o 3D.',
+      'WEBGL2_UNAVAILABLE',
+      'Atualize o navegador (iOS 15+, Chrome/Firefox recentes) ou use outro aparelho.',
+    );
+  }
   const rendererApi = createRenderer({ container: canvasHost, bus });
   const { THREE: T, renderer, scene, camera, requestRender, addTicker, setViewOffset, getStats } = rendererApi;
 
@@ -864,6 +873,8 @@ async function boot() {
     return p;
   }
 
+  // Progresso do quiz a retomar no próximo enter() do Quiz (resumeSession).
+  let pendingQuizResume = null;
   async function doEnterMode(modeId, req) {
     if (req !== modeRequest) return; // já há um pedido mais novo na fila
     if (currentMode && currentMode.exit) {
@@ -897,8 +908,10 @@ async function boot() {
     }
     if (!mode || req !== modeRequest) return;
     currentMode = mode;
+    const resumeFrom = modeId === 'quiz' ? pendingQuizResume : null;
+    if (modeId === 'quiz') pendingQuizResume = null;
     try {
-      await mode.enter({ registry, assetLoader, engine, contentStore });
+      await mode.enter({ registry, assetLoader, engine, contentStore, resumeFrom });
     } catch (e) {
       console.warn(`[atlas] erro ao entrar no modo "${modeId}":`, e);
       setSheetContent(modeTitleNode(modeId, mode), modeMessageNode('Este modo não pôde ser aberto. Tente de novo.'), { label: 'Modo do Atlas' });
@@ -927,13 +940,16 @@ async function boot() {
     sessionSaveTimer = setTimeout(() => {
       const view = {};
       emit('view:capture', view);
-      writeSession(sessionStorageApi, snapshotSession(storeGet(), view.camera));
+      const quizMode = storeGet().mode === 'quiz' ? modeInstances.get('quiz') : null;
+      const quiz = quizMode && quizMode.getProgress ? quizMode.getProgress() : null;
+      writeSession(sessionStorageApi, snapshotSession(storeGet(), view.camera, Date.now(), quiz));
     }, 500);
   };
   storeSubscribe((st) => st.selectedSid, scheduleSessionSave);
   storeSubscribe((st) => st.layers, scheduleSessionSave);
   storeSubscribe((st) => st.mode, scheduleSessionSave);
   controlsApi.controls.addEventListener('end', scheduleSessionSave);
+  on(EVENTS.QUIZ_ANSWER, scheduleSessionSave);
 
   async function resumeSession(saved) {
     const layers = storeGet().layers;
@@ -945,6 +961,7 @@ async function boot() {
     for (const id of Object.keys(next)) {
       if (next[id] !== layers[id]) emit(EVENTS.LAYER_SET, { layer: id, visible: next[id].visible, opacity: next[id].opacity });
     }
+    if (saved.mode === 'quiz' && saved.quiz) pendingQuizResume = saved.quiz;
     if (saved.mode && saved.mode !== storeGet().mode) window.AtlasShell.setMode(saved.mode);
     if (saved.selectedSid && contentStore.getEntry(saved.selectedSid)) {
       emit(EVENTS.STRUCTURE_SELECT, { sid: saved.selectedSid, source: 'resume' });
@@ -985,5 +1002,5 @@ async function boot() {
 // não precisa esperar DOMContentLoaded.
 boot().catch((e) => {
   console.error('[atlas] falha ao inicializar', e);
-  showFatal((e && e.userMessage) || 'O Atlas não conseguiu iniciar.');
+  showFatal((e && e.userMessage) || 'O Atlas não conseguiu iniciar.', (e && e.hint) || undefined);
 });

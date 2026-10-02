@@ -7,7 +7,8 @@
  * Sessão salva em localStorage (`atlas.session.v1`):
  *   { schemaVersion: 1, savedAt, selectedSid, mode,
  *     layers: { <camada>: boolean },
- *     camera: { position: [x,y,z], target: [x,y,z] } }
+ *     camera: { position: [x,y,z], target: [x,y,z] },
+ *     quiz?: { caseId, sessionSeed, score, correct, answered } }
  * Registro de outra versão é descartado (apagado) na leitura; um sid salvo
  * que não existe mais no corpo 3D é zerado junto com a câmera (ver
  * `dropUnknownSid`) — senão a câmera voltaria apontando para o vazio.
@@ -58,14 +59,23 @@ export function buildAtlasHash({ sid, view } = {}) {
  * @param {{ position: number[], target: number[] }} [camera]
  * @param {number} [now]
  */
-export function snapshotSession(state, camera, now = Date.now()) {
+export function snapshotSession(state, camera, now = Date.now(), quiz = null) {
   const layers = {};
   for (const [id, l] of Object.entries((state && state.layers) || {})) layers[id] = !!(l && l.visible);
   const snap = { schemaVersion: SESSION_SCHEMA_VERSION, savedAt: now, selectedSid: (state && state.selectedSid) || null, mode: (state && state.mode) || 'explorar', layers };
   if (camera && isVec3(camera.position) && isVec3(camera.target)) {
     snap.camera = { position: camera.position.slice(), target: camera.target.slice() };
   }
+  const q = validQuiz(quiz);
+  if (q) snap.quiz = q;
   return snap;
+}
+
+/** Progresso do quiz salvo: retoma pelo ID do caso (js/modes/quiz.js resolveResume). */
+function validQuiz(q) {
+  if (!q || typeof q !== 'object' || typeof q.caseId !== 'string' || !/^[a-z][a-z0-9-]*$/.test(q.caseId)) return null;
+  const n = (v) => (Number.isFinite(v) && v >= 0 ? v : 0);
+  return { caseId: q.caseId, sessionSeed: Number.isFinite(q.sessionSeed) ? q.sessionSeed : null, score: n(q.score), correct: n(q.correct), answered: n(q.answered) };
 }
 
 /**
@@ -84,7 +94,8 @@ export function validateSession(raw, now = Date.now()) {
   }
   const camera = raw.camera && isVec3(raw.camera.position) && isVec3(raw.camera.target)
     ? { position: raw.camera.position.slice(), target: raw.camera.target.slice() } : null;
-  return { schemaVersion: SESSION_SCHEMA_VERSION, savedAt: raw.savedAt, selectedSid, mode, layers, camera };
+  const quiz = mode === 'quiz' ? validQuiz(raw.quiz) : null;
+  return { schemaVersion: SESSION_SCHEMA_VERSION, savedAt: raw.savedAt, selectedSid, mode, layers, camera, quiz };
 }
 
 /**
