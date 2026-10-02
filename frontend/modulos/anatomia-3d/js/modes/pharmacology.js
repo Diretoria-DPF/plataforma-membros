@@ -1,12 +1,13 @@
 /**
  * modes/pharmacology.js — Modo Farmacologia do Atlas v2
  *
- * Integra Chart.js (PK/PD) e o motor pk-engine.js para simulação de protocolos
- * farmacológicos e crises toxicológicas com antídotos.
+ * Compostos: Cp(t)/E(t) pelo modelo puro (core/pk-model.js) com Chart.js.
+ * Clínica: cenários com fonte (ui/scenario-panel.js), ex.: crise colinérgica.
  */
 
 import { simulate } from '../core/pk-model.js';
 import { renderPkPanel, disposePkPanel } from '../ui/pk-panel.js';
+import { renderScenarioPanel } from '../ui/scenario-panel.js';
 
 /**
  * Carrega um script clássico (<script src>) uma única vez e retorna Promise.
@@ -89,11 +90,11 @@ export function toPkProtocol(compound) {
  * @param {Object} opts { bus, loadCompounds(), loadScript() }
  * @returns {Mode} implementação de Mode { id, label, icon, enter(), exit(), sheetContent() }
  */
-export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaultLoadScript }) {
+export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null, loadScript = defaultLoadScript }) {
   let compounds = [];
+  let scenario = null;
   let currentCompound = null;
   let chartLoaded = false;
-  let pkEngineLoaded = false;
   let offStructureSelect = null;
   let offModeChange = null;
 
@@ -119,6 +120,11 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
       compounds = [];
     }
 
+    // Cenário da aba Clínica (falha → aviso de indisponível na aba).
+    if (typeof loadScenario === 'function') {
+      try { scenario = await loadScenario(); } catch (err) { console.warn('[pharmacology] cenário indisponível:', err && err.message); scenario = null; }
+    }
+
     // Listener: quando sair do modo, limpa
     offModeChange = bus.on('mode:change', ({ mode }) => {
       if (mode !== 'farmacologia') {
@@ -132,20 +138,6 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
    * Para simulações e libera recursos
    */
   function exit() {
-    if (pkEngineLoaded && typeof window.PkEngine !== 'undefined') {
-      if (window.PkEngine.isCrisisActive && window.PkEngine.isCrisisActive()) {
-        window.PkEngine.stopCrisisSimulation();
-      }
-      // Limpa Chart.js se existir
-      const canvas = document.getElementById('pkChartCanvas');
-      if (canvas && typeof window.Chart !== 'undefined') {
-        const instance = window.PkEngine.getChartInstance ? window.PkEngine.getChartInstance() : null;
-        if (instance && typeof instance.destroy === 'function') {
-          instance.destroy();
-        }
-      }
-    }
-
     disposePkPanel();
     if (offStructureSelect) offStructureSelect();
     if (offModeChange) offModeChange();
@@ -199,7 +191,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
         fontSize: '0.85rem',
         fontWeight: '500'
       },
-      text: 'Crise Toxicológica'
+      text: 'Clínica'
     });
 
     container.appendChild(btnCompostos);
@@ -265,126 +257,20 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
   }
 
   /**
-   * Cria panel de Crise Toxicológica
+   * Aba "Clínica" (PR 3.2, Bloco C.3): cenário com fonte
+   * (data/atlas/scenarios/crise-colinergica.json) em ui/scenario-panel.js.
+   * Substitui a "crise" do pk-engine.js legado (curvas sem fonte em "ppm").
    * @returns {Node}
    */
   function createCrisisPanel() {
     const panel = LaiftDom.h('div', { dataset: { tab: 'crise', hidden: true }, style: { display: 'none' } });
-
-    const title = LaiftDom.html`<h3 style="color: var(--laift-text); margin-bottom: 10px; font-size: 0.9rem;">Simulação de Crise Colinérgica</h3>`;
-    LaiftDom.appendHtml(panel, title);
-
-    const controls = LaiftDom.h('div', { style: { display: 'flex', gap: '6px', marginBottom: '12px' } });
-
-    const btnStart = LaiftDom.h('button', {
-      style: {
-        flex: 1,
-        padding: '8px',
-        background: '#ef4444',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        fontSize: '0.8rem',
-        cursor: 'pointer',
-        fontWeight: '600'
-      },
-      text: '🚨 Iniciar Crise'
-    });
-
-    const btnStop = LaiftDom.h('button', {
-      style: {
-        flex: 1,
-        padding: '8px',
-        background: '#10b981',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        fontSize: '0.8rem',
-        cursor: 'pointer',
-        fontWeight: '600'
-      },
-      text: '🛑 Parar'
-    });
-
-    controls.appendChild(btnStart);
-    controls.appendChild(btnStop);
-
-    const antidotes = LaiftDom.h('div', { style: { display: 'flex', gap: '6px', marginBottom: '12px' } });
-
-    const btnAtropina = LaiftDom.h('button', {
-      style: {
-        flex: 1,
-        padding: '8px',
-        background: '#38bdf8',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        fontSize: '0.8rem',
-        cursor: 'pointer'
-      },
-      text: '💉 Atropina 2mg'
-    });
-
-    const btnPralidoxima = LaiftDom.h('button', {
-      style: {
-        flex: 1,
-        padding: '8px',
-        background: '#8b5cf6',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        fontSize: '0.8rem',
-        cursor: 'pointer'
-      },
-      text: '💉 Pralidoxima 1g'
-    });
-
-    antidotes.appendChild(btnAtropina);
-    antidotes.appendChild(btnPralidoxima);
-
-    const hud = LaiftDom.h('div', {
-      id: 'crisisTelemetryHUD',
-      style: {
-        padding: '8px',
-        background: 'var(--laift-surface-alt)',
-        border: '1px solid var(--laift-border)',
-        borderRadius: '4px',
-        fontSize: '0.75rem',
-        color: 'var(--laift-muted)',
-        fontFamily: 'monospace'
-      }
-    });
-
-    LaiftDom.setHtml(hud, LaiftDom.html`<span style="color: var(--laift-muted);">Aguardando iniciar...</span>`);
-
-    btnStart.addEventListener('click', async () => {
-      if (await ensureCrisisEngine(panel)) {
-        window.PkEngine.startCrisisSimulation('organofosforado');
-      }
-    });
-
-    btnStop.addEventListener('click', () => {
-      if (typeof window.PkEngine !== 'undefined') {
-        window.PkEngine.stopCrisisSimulation();
-      }
-    });
-
-    btnAtropina.addEventListener('click', () => {
-      if (typeof window.PkEngine !== 'undefined') {
-        window.PkEngine.applyAntidote('atropina');
-      }
-    });
-
-    btnPralidoxima.addEventListener('click', () => {
-      if (typeof window.PkEngine !== 'undefined') {
-        window.PkEngine.applyAntidote('pralidoxima');
-      }
-    });
-
-    panel.appendChild(controls);
-    panel.appendChild(antidotes);
-    panel.appendChild(hud);
-
+    if (scenario) {
+      renderScenarioPanel(panel, scenario, {
+        onSelectSid: (sid) => { try { bus.emit('structure:select', { sid, source: 'api' }); } catch (e) { /* bus indisponível */ } },
+      });
+    } else {
+      LaiftDom.setHtml(panel, LaiftDom.html`<p class="scenario-unavailable" style="color: var(--laift-muted); font-size: 0.85rem;">Cenário clínico indisponível no momento.</p>`);
+    }
     return panel;
   }
 
@@ -397,25 +283,6 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
       console.warn('[pharmacology] Chart.js não disponível (offline?):', err.message);
     }
     return chartLoaded;
-  }
-
-  /** pk-engine.js (legado) e o canvas dele, só para a aba Crise. */
-  async function ensureCrisisEngine(panel) {
-    if (!document.getElementById('pkChartCanvas') && panel) {
-      const wrap = LaiftDom.h('div', { style: { height: '200px', margin: '12px 0', borderRadius: '4px', border: '1px solid var(--laift-border)', padding: '10px', background: 'var(--laift-surface-alt)' } });
-      wrap.appendChild(LaiftDom.h('canvas', { id: 'pkChartCanvas' }));
-      panel.appendChild(wrap);
-    }
-    await ensureChartJs();
-    if (!pkEngineLoaded) {
-      try {
-        await loadScript('js/pk-engine.js');
-        pkEngineLoaded = true;
-      } catch (err) {
-        console.error('[pharmacology] pk-engine.js não carregado:', err);
-      }
-    }
-    return pkEngineLoaded && typeof window.PkEngine !== 'undefined';
   }
 
   /**

@@ -1008,7 +1008,7 @@ async function boot() {
         loadRoutes: () => fetchJson(`${CONTENT_BASE}routes.json`),
       });
     }),
-    farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`) })),
+    farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`), loadScenario: () => fetchJson(`${CONTENT_BASE}scenarios/crise-colinergica.json`) })),
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
     estudo: () => import('./modes/study.js').then(async (m) => {
       const studyStore = (await studyStorePromise) || (await import('./modes/study-store.js')).createStudyStore();

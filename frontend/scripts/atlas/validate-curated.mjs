@@ -79,10 +79,14 @@ export function validateCurated(dataDir = DEFAULT_DIR, { files = null } = {}) {
     }
   }
   const scenDir = path.join(dataDir, 'scenarios');
+  let vScenario = null; // compila uma vez só (o $id não pode ser registrado duas vezes no ajv)
   if (fs.existsSync(scenDir)) {
     for (const f of fs.readdirSync(scenDir).filter((x) => x.endsWith('.json'))) {
       counts.scenarios += 1;
       const rec = readJson(path.join(scenDir, f));
+      if (!vScenario) vScenario = compile('scenario.schema.json');
+      const vs = vScenario;
+      if (!vs(rec)) errors.push(...fmt(`scenarios/${f}`, vs));
       errors.push(...checkRecord(rec, fontes, `scenarios/${f}`));
       if (!Array.isArray(rec.sources) || rec.sources.length < 1) errors.push(`[fonte] scenarios/${f}: sem sources[]`);
     }

@@ -1,0 +1,258 @@
+{
+  "id": "crise-colinergica",
+  "nome": "Crise colinérgica por inibidor de colinesterase (organofosforado)",
+  "descricao": "Intoxicação aguda por organofosforado: a acetilcolinesterase (AChE) é inibida, a acetilcolina se acumula na fenda sináptica e estimula, sem controle, receptores muscarínicos, nicotínicos e centrais. A cronologia depende da via de exposição (inalatória: segundos a minutos; digestiva: minutos a poucas horas; cutânea: horas) e da dose, e as fases se sobrepõem. As janelas em minutos são faixas típicas de livro-texto, não valores exatos. Os agentes nervosos militares pertencem à mesma classe de inibidores.",
+  "agente": {
+    "nome": "Organofosforados (inibidores irreversíveis da acetilcolinesterase)",
+    "exemplos": [
+      "Inseticidas agrícolas e domésticos (classe dos organofosforados, como paration e malation)",
+      "Agentes nervosos militares (sarin, VX), da mesma classe química"
+    ],
+    "mecanismo": "O organofosforado fosforila o resíduo de serina do sítio esterásico da AChE, formando um complexo fosforilado muito estável: a enzima deixa de hidrolisar a acetilcolina, que se acumula nas sinapses colinérgicas. Com o passar do tempo, o complexo sofre perda de um grupo alquila (envelhecimento, ou aging) e se torna praticamente irreversível, sem possibilidade de reativação por oximas; a recuperação passa a depender da síntese de nova enzima. A velocidade do envelhecimento varia conforme o composto. Alguns inseticidas são pró-fármacos que precisam de ativação metabólica hepática (por exemplo, a conversão de tiofosfatos em oxons), o que atrasa o início do quadro.",
+    "vias": [
+      "Cutânea (absorção através da pele íntegra, comum na exposição ocupacional)",
+      "Inalatória (aerossóis e vapores; início mais rápido)",
+      "Digestiva (ingestão acidental ou autoprovocada)",
+      "Mucosa ocular"
+    ]
+  },
+  "fases": [
+    {
+      "id": "exposicao-absorcao",
+      "titulo": "Exposição e absorção",
+      "inicioMin": 0,
+      "fimMin": 5,
+      "fisiopatologia": "O composto é absorvido pela via de exposição e se distribui; a inibição da AChE começa nos tecidos de maior perfusão e nas junções colinérgicas periféricas. Na via inalatória esta fase dura segundos a poucos minutos; por via cutânea ela pode se estender por horas, e os pró-fármacos (tiofosfatos) exigem biotransformação para o oxon ativo antes de inibir a enzima. O paciente pode estar assintomático ou com queixas vagas.",
+      "sinais": [
+        {
+          "nome": "Inibição da AChE sem sinais evidentes",
+          "receptor": "muscarinico",
+          "descricao": "A acetilcolina começa a se acumular, mas os sintomas ainda são discretos ou ausentes."
+        }
+      ],
+      "conduta": "Interromper a exposição: remover a pessoa do ambiente, retirar a roupa contaminada e lavar pele e cabelo com água e sabão. A equipe deve usar equipamento de proteção, pois há risco de contaminação secundária."
+    },
+    {
+      "id": "muscarinicos-iniciais",
+      "titulo": "Sinais muscarínicos iniciais",
+      "inicioMin": 5,
+      "fimMin": 30,
+      "fisiopatologia": "A acetilcolina em excesso estimula receptores M3 de glândulas exócrinas e do músculo liso do olho (esfíncter da pupila e músculo ciliar), com efeito parassimpático predominante nos órgãos expostos primeiro. Na exposição ocular ou por vapores a miose pode ser o primeiro sinal, e em alguns casos fica localizada ao olho exposto.",
+      "sinais": [
+        {
+          "nome": "Miose",
+          "receptor": "muscarinico",
+          "sid": "za:iris-l",
+          "descricao": "Contração do esfíncter da pupila; pupilas puntiformes. Costuma ser bilateral, mas a ausência de miose não exclui a intoxicação."
+        },
+        {
+          "nome": "Sialorreia",
+          "receptor": "muscarinico",
+          "sid": "za:parotid-gland-l",
+          "descricao": "Aumento da secreção das glândulas salivares."
+        },
+        {
+          "nome": "Lacrimejamento",
+          "receptor": "muscarinico",
+          "sid": "za:lacrimal-gland-l",
+          "descricao": "Hipersecreção da glândula lacrimal."
+        },
+        {
+          "nome": "Rinorreia",
+          "receptor": "muscarinico",
+          "descricao": "Hipersecreção das glândulas da mucosa nasal."
+        }
+      ],
+      "conduta": "Reconhecer o quadro precocemente e iniciar o suporte. A atropina é indicada quando houver sinais de excesso de secreção brônquica ou outros sinais muscarínicos relevantes; a descontaminação continua."
+    },
+    {
+      "id": "muscarinica-plena",
+      "titulo": "Síndrome muscarínica plena",
+      "inicioMin": 30,
+      "fimMin": 120,
+      "fisiopatologia": "A hiperestimulação muscarínica se generaliza: secreção brônquica abundante e broncoconstrição reduzem a troca gasosa, o excesso de tônus vagal causa bradicardia, e a hipermotilidade do trato digestivo e a contração do detrusor produzem os sinais viscerais. O mnemônico SLUDGE (salivação, lacrimejamento, urinação, defecação, distúrbio gastrointestinal, êmese) ou DUMBELS (diarreia, urinação, miose, broncorreia/broncoespasmo/bradicardia, êmese, lacrimejamento, salivação) organiza esses achados. A broncorreia é o que mais ameaça a vida nesta fase.",
+      "sinais": [
+        {
+          "nome": "Broncorreia",
+          "receptor": "muscarinico",
+          "sid": "za:vh-f-right-inferior-lobar-bronchus",
+          "descricao": "Secreção brônquica abundante, com estertores e dispneia; causa de hipóxia e de afogamento nas próprias secreções."
+        },
+        {
+          "nome": "Broncoespasmo",
+          "receptor": "muscarinico",
+          "sid": "za:vh-f-left-inferior-lobar-bronchus",
+          "descricao": "Contração do músculo liso brônquico, com sibilos e aumento do esforço respiratório."
+        },
+        {
+          "nome": "Edema e congestão pulmonar por secreção",
+          "receptor": "muscarinico",
+          "sid": "za:inferior-lobe-of-right-lung",
+          "descricao": "O acúmulo de secreção nos alvéolos e nas vias aéreas distais prejudica a oxigenação."
+        },
+        {
+          "nome": "Bradicardia",
+          "receptor": "muscarinico",
+          "sid": "za:vh-m-heart-left-ventricle",
+          "descricao": "Estímulo vagal sobre o nó sinusal e o nó AV, podendo haver bloqueios de condução. O atlas não tem uma estrutura própria para os nós, por isso o destaque é do coração."
+        },
+        {
+          "nome": "Náuseas e vômitos",
+          "receptor": "muscarinico",
+          "sid": "za:stomach",
+          "descricao": "Aumento da motilidade e da secreção gástrica."
+        },
+        {
+          "nome": "Cólicas e diarreia",
+          "receptor": "muscarinico",
+          "sid": "za:duodenum",
+          "descricao": "Hipermotilidade intestinal, com cólicas abdominais e evacuações líquidas."
+        },
+        {
+          "nome": "Incontinência urinária",
+          "receptor": "muscarinico",
+          "sid": "za:urinary-bladder",
+          "descricao": "Contração do detrusor com relaxamento do esfíncter interno."
+        },
+        {
+          "nome": "Sudorese profusa",
+          "receptor": "muscarinico",
+          "descricao": "Estímulo das glândulas sudoríparas, que têm inervação simpática colinérgica e receptores muscarínicos."
+        }
+      ],
+      "conduta": "Fase em que a atropina tem o maior impacto. Garantir via aérea pérvia e oxigenação, aspirar secreções e titular a atropina até a secagem das secreções brônquicas, que é o parâmetro de resposta."
+    },
+    {
+      "id": "nicotinicos",
+      "titulo": "Sinais nicotínicos",
+      "inicioMin": 90,
+      "fimMin": 240,
+      "fisiopatologia": "Nas junções neuromusculares, o excesso de acetilcolina provoca despolarização persistente da placa motora: primeiro há fasciculações e depois fraqueza e paralisia flácida, por bloqueio despolarizante. Nos gânglios autonômicos, o estímulo nicotínico pode se sobrepor ao efeito muscarínico e causar taquicardia e hipertensão apesar do excesso muscarínico, de modo que a frequência cardíaca nem sempre é bradicárdica. Os sinais nicotínicos podem aparecer junto com os muscarínicos; nas formas graves da exposição são precoces.",
+      "sinais": [
+        {
+          "nome": "Fasciculações",
+          "receptor": "nicotinico-muscular",
+          "sid": "za:external-intercostal-muscles-l",
+          "descricao": "Contrações finas e espontâneas de unidades motoras, visíveis em músculos como os da parede torácica e da face."
+        },
+        {
+          "nome": "Fraqueza e paralisia flácida da musculatura respiratória",
+          "receptor": "nicotinico-muscular",
+          "sid": "za:diaphragm",
+          "descricao": "A paralisia do diafragma e dos músculos intercostais compromete a ventilação."
+        },
+        {
+          "nome": "Taquicardia e hipertensão",
+          "receptor": "nicotinico-ganglionar",
+          "sid": "za:vh-m-heart-left-ventricle",
+          "descricao": "Estímulo dos gânglios simpáticos e liberação de catecolaminas, que podem mascarar a bradicardia muscarínica."
+        }
+      ],
+      "conduta": "A atropina não reverte esses sinais, pois bloqueia só receptores muscarínicos. O suporte ventilatório é a base do cuidado, e a oxima (pralidoxima) pode atuar sobre o componente nicotínico muscular se for dada antes do envelhecimento da enzima."
+    },
+    {
+      "id": "snc",
+      "titulo": "Manifestações no sistema nervoso central",
+      "inicioMin": 120,
+      "fimMin": 360,
+      "fisiopatologia": "Compostos lipossolúveis atravessam a barreira hematoencefálica e inibem a AChE central. O excesso de acetilcolina em vias muscarínicas e nicotínicas do encéfalo causa agitação, confusão, ataxia, convulsões e, nos casos graves, coma. A depressão dos centros respiratórios do bulbo e da ponte soma-se à fraqueza muscular e ao excesso de secreções. O início pode ser rápido nos agentes mais lipossolúveis e na exposição inalatória.",
+      "sinais": [
+        {
+          "nome": "Agitação, ansiedade e confusão",
+          "receptor": "snc",
+          "descricao": "Alteração do nível de consciência e do comportamento, com cefaleia e tontura."
+        },
+        {
+          "nome": "Convulsões",
+          "receptor": "snc",
+          "descricao": "Crises epilépticas generalizadas por hiperestimulação colinérgica central; elas podem agravar a hipóxia."
+        },
+        {
+          "nome": "Depressão respiratória central",
+          "receptor": "snc",
+          "sid": "za:medulla-oblongata-l",
+          "descricao": "Falha do drive respiratório bulbar. A estrutura é bilateral no atlas; o destaque usa o lado esquerdo."
+        },
+        {
+          "nome": "Coma",
+          "receptor": "snc",
+          "descricao": "Nas intoxicações graves."
+        }
+      ],
+      "conduta": "Controlar as convulsões com benzodiazepínico, que também tem papel na proteção do SNC. A atropina, ao atravessar a barreira hematoencefálica, reverte parte dos efeitos centrais."
+    },
+    {
+      "id": "insuficiencia-respiratoria",
+      "titulo": "Insuficiência respiratória",
+      "inicioMin": 180,
+      "fimMin": 1440,
+      "fisiopatologia": "A insuficiência respiratória é a principal causa de morte na crise colinérgica aguda e tem três componentes somados: obstrução por broncorreia e broncoespasmo (muscarínico), paralisia do diafragma e dos intercostais (nicotínico muscular) e depressão do centro respiratório (SNC). Em exposições graves ela pode surgir em minutos. Após a fase aguda (cerca de 24 a 96 horas), uma parcela dos pacientes desenvolve a síndrome intermediária, uma complicação tardia distinta, com fraqueza proximal de membros, flexores do pescoço e músculos respiratórios, atribuída à disfunção prolongada da placa motora; ela não responde bem à atropina e exige vigilância ventilatória, mas não faz parte do quadro agudo descrito aqui.",
+      "sinais": [
+        {
+          "nome": "Hipoventilação e hipoxemia",
+          "receptor": "nicotinico-muscular",
+          "sid": "za:diaphragm",
+          "descricao": "Falha da bomba ventilatória por paralisia do diafragma."
+        },
+        {
+          "nome": "Obstrução de via aérea por secreções",
+          "receptor": "muscarinico",
+          "sid": "za:trachea",
+          "descricao": "Broncorreia e broncoespasmo persistentes bloqueiam a passagem do ar."
+        },
+        {
+          "nome": "Apneia central",
+          "receptor": "snc",
+          "sid": "za:medulla-oblongata-r",
+          "descricao": "Parada do estímulo respiratório central nas formas graves."
+        }
+      ],
+      "conduta": "Intubação e ventilação mecânica quando houver falência respiratória, com aspiração das secreções. Manter a vigilância após a fase aguda, porque a fraqueza da síndrome intermediária pode reaparecer na janela de 24 a 96 horas."
+    }
+  ],
+  "antidotos": [
+    {
+      "id": "atropina",
+      "nome": "Atropina",
+      "compoundId": "atropina",
+      "mecanismo": "Antagonista competitivo dos receptores muscarínicos: bloqueia a ação da acetilcolina acumulada nos órgãos efetores. Por atravessar a barreira hematoencefálica, reverte em parte os efeitos centrais. Não age sobre receptores nicotínicos e não reativa a enzima, portanto não corrige a fraqueza muscular nem a paralisia.",
+      "reverte": ["muscarinico", "snc"],
+      "naoReverte": ["nicotinico-muscular", "nicotinico-ganglionar"],
+      "janela": "Quanto antes possível, ao surgirem os sinais muscarínicos; a dose é titulada pela resposta, sem dose fixa.",
+      "alvoTerapeutico": "Secagem das secreções brônquicas (fim da broncorreia e melhora da ausculta). A midríase e a frequência cardíaca isolada não são bons alvos: a pupila pode demorar a responder e a taquicardia pode refletir estímulo ganglionar ou hipóxia."
+    },
+    {
+      "id": "pralidoxima",
+      "nome": "Pralidoxima (oxima)",
+      "mecanismo": "Nucleófilo que reativa a AChE fosforilada, removendo o grupo fosforil do sítio esterásico e restaurando a hidrólise da acetilcolina. Só atua antes do envelhecimento do complexo; depois disso a ligação é praticamente irreversível. Seu efeito é mais evidente na junção neuromuscular (nicotínico muscular), e ela atravessa mal a barreira hematoencefálica. A eficácia clínica é discutida na literatura, com resultados variáveis conforme o composto, o tempo de início e o esquema; o papel exato continua em debate.",
+      "reverte": ["nicotinico-muscular"],
+      "naoReverte": ["snc"],
+      "janela": "Antes do envelhecimento da enzima, cuja velocidade depende do composto (de minutos a muitas horas); por isso, quanto mais cedo, maior a chance de benefício.",
+      "alvoTerapeutico": "Recuperação da força muscular e redução das fasciculações, sempre associada à atropina e ao suporte ventilatório."
+    },
+    {
+      "id": "diazepam",
+      "nome": "Benzodiazepínico (diazepam)",
+      "compoundId": "diazepam",
+      "mecanismo": "Modulador alostérico positivo do receptor GABA-A, que aumenta a inibição neuronal e interrompe as convulsões causadas pela hiperestimulação colinérgica central. Trata o efeito sobre o SNC, não corrige o acúmulo de acetilcolina nem a inibição da AChE.",
+      "reverte": ["snc"],
+      "naoReverte": ["muscarinico", "nicotinico-muscular", "nicotinico-ganglionar"],
+      "janela": "Ao início das convulsões; pode ser considerado também nas intoxicações graves com agitação intensa.",
+      "alvoTerapeutico": "Cessação das convulsões e proteção do SNC, com monitorização da respiração, pois o fármaco pode agravar a depressão respiratória."
+    }
+  ],
+  "sources": [
+    { "field": "agente.mecanismo", "ref": "Agentes anticolinesterásicos: inibição da AChE, fosforilação e envelhecimento", "obraId": "goodman" },
+    { "field": "agente.mecanismo", "ref": "Anticolinesterásicos e inseticidas organofosforados", "obraId": "rang" },
+    { "field": "fases", "ref": "Farmacologia colinérgica indireta: sinais muscarínicos, nicotínicos e centrais da intoxicação", "obraId": "katzung" },
+    { "field": "fases", "ref": "Transmissão colinérgica e efeitos dos anticolinesterásicos", "obraId": "rang" },
+    { "field": "antidotos", "ref": "Tratamento da intoxicação por anticolinesterásicos: atropina e oximas", "obraId": "goodman" },
+    { "field": "antidotos", "ref": "Antagonistas muscarínicos e reativadores da colinesterase", "obraId": "katzung" },
+    { "field": "descricao", "ref": "Intoxicação por organofosforados: quadro clínico e vias de exposição", "obraId": "katzung" }
+  ],
+  "review": {
+    "status": "editorial",
+    "published_by": "atlas-curador-tox",
+    "review_requested_at": "2026-10-02"
+  }
+}
