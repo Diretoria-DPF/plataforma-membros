@@ -205,7 +205,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
    * @returns {Node}
    */
   function createCompoundsPanel() {
-    const panel = LaiftDom.h('div', { dataset: { tab: 'compostos', hidden: false } });
+    const panel = LaiftDom.h('div', { className: 'pharma-panel', dataset: { tab: 'compostos', hidden: false } });
 
     if (compounds.length === 0) {
       LaiftDom.setHtml(panel, LaiftDom.html`<p style="color: var(--laift-muted); font-size: 0.85rem;">Nenhum composto disponível.</p>`);
@@ -263,7 +263,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
    * @returns {Node}
    */
   function createCrisisPanel() {
-    const panel = LaiftDom.h('div', { dataset: { tab: 'crise', hidden: true }, style: { display: 'none' } });
+    const panel = LaiftDom.h('div', { className: 'pharma-panel', dataset: { tab: 'crise', hidden: true }, style: { display: 'none' } });
     if (scenario) {
       renderScenarioPanel(panel, scenario, {
         onSelectSid: (sid) => { try { bus.emit('structure:select', { sid, source: 'api' }); } catch (e) { /* bus indisponível */ } },
@@ -302,7 +302,7 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
     // PR 3.2 (Bloco C): Cp(t) e E(t) pelo modelo puro (js/core/pk-model.js),
     // com F, ka e PD do próprio composto. O PkEngine legado trocava F pela
     // via e usava um PD fixo para todos; ele segue só na aba Crise.
-    const container = document.querySelector('[data-tab="compostos"]');
+    const container = document.querySelector('.pharma-panel[data-tab="compostos"]'); // o botão da aba também tem data-tab
     if (container) {
       await ensureChartJs();
       renderPkPanel(container, compound, simulate(compound), { chart: chartLoaded ? window.Chart : null });

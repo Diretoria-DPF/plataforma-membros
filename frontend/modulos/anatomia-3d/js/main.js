@@ -44,6 +44,7 @@ import { createProgressBar } from './ui/progress-bar.js';
 import { createOnboarding, shouldShowOnboarding, isDeepLink, wasDismissedThisTab } from './ui/onboarding.js';
 import { createHints } from './ui/hints.js';
 import { createSlowDeviceWatcher, classifyDevice } from './ui/slow-device.js';
+import { createReviewStatus, SEARCH_BOOST } from './ui/review-status.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -60,6 +61,8 @@ const USE_FIXTURES = params.get('fixtures') === '1';
 const MODELS_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : './';
 const MANIFEST_URL = USE_FIXTURES ? undefined : 'models/manifest.json';
 const CONTENT_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : 'data/atlas/';
+// Status de revisão por estrutura (PR 3.2, C2): arquivo leve, sem as fichas.
+let reviewStatus = createReviewStatus(null);
 
 // Sistemas do primeiro carregamento (só o esqueleto ≈ 1 MB) — docs/ATLAS_V2_TAREFAS.md.
 const DEFAULT_SYSTEMS = Object.freeze(['esqueletico']);
@@ -448,6 +451,8 @@ async function boot() {
     }
   });
 
+  // Selo/filtro/peso de revisão: em paralelo, sem segurar o boot (falha → sem selo).
+  fetchJson(`${CONTENT_BASE}generated/review-status.json`).then((d) => { reviewStatus = createReviewStatus(d); }).catch(() => {});
   const contentStore = await createContentStore();
 
   // ---- Menu de contexto ----
@@ -650,6 +655,7 @@ async function boot() {
     getIndex: () => contentStore.getIndex(),
     onOpenSystem: () => {},
     getSex: () => storeGet().sex,
+    getStatusBoost: (sid) => SEARCH_BOOST[reviewStatus.statusOf(sid)] || 0,
   });
   // Compat legado: js/compat/legacy-api.js dá o id #bio-search-input ao
   // campo real desta caixa (ver LEGACY_COMPAT em core/contracts.js).
@@ -664,6 +670,7 @@ async function boot() {
       isSystemAvailable: (systemId) => assetLoader.isLoaded(systemId),
       onSystemOpen: (systemId) => { loadSystem(systemId); },
       getSex: () => storeGet().sex,
+      getStatus: (sids) => reviewStatus.groupStatus(sids),
     });
   }
 

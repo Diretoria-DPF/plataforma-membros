@@ -49,7 +49,7 @@ function searchIcon() {
 }
 
 export function createSearchBox(container, opts) {
-  const { bus, getIndex, onOpenSystem = () => {}, getSex = () => 'M' } = opts;
+  const { bus, getIndex, onOpenSystem = () => {}, getSex = () => 'M', getStatusBoost = null } = opts;
 
   // Estado
   let isOpen = false;
@@ -198,7 +198,7 @@ export function createSearchBox(container, opts) {
     // Buscar no índice
     // Um resultado por estrutura (C3): lados e versões M/F do órgão HRA
     // viram um resultado só, com selo "E/D".
-    results = collapseResults(search(index, query, { limit: 60 }), entryBySid, { sex: getSex() }).slice(0, 12);
+    results = collapseResults(search(index, query, { limit: 60, boostOf: getStatusBoost }), entryBySid, { sex: getSex() }).slice(0, 12);
   }
 
   /**

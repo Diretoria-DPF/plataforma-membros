@@ -249,3 +249,12 @@
   --laift-hover: #2a2a2a;
   --laift-focus: #66b3ff;
 }
+
+/* Filtro e selo de revisão (PR 3.2, C2) */
+.atlas-nav-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 8px; }
+.atlas-nav-filter-chip { min-height: 36px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--laift-border); background: var(--laift-surface); color: var(--laift-text); font-size: 0.78rem; cursor: pointer; }
+.atlas-nav-filter-chip[aria-pressed="true"] { border-color: var(--laift-primary); background: var(--laift-primary-soft); font-weight: 600; }
+.atlas-nav-empty { padding: 8px 12px; font-size: 0.8rem; color: var(--laift-muted); }
+.atlas-nav-status { margin-left: 6px; font-size: 0.8rem; }
+.atlas-nav-status--r { color: var(--laift-success, #15803d); }
+.atlas-nav-status--e { color: var(--laift-warning-text, #92400e); }

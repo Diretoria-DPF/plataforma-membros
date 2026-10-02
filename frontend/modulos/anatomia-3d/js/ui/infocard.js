@@ -158,7 +158,7 @@ export function createInfoCard(container, { onAction = () => {}, tts = false } =
       const badge = h('div', {
         className: `atlas-card-status atlas-card-status--${status.kind}`, title: status.tooltip,
       }, [
-        h('span', { className: 'atlas-card-status-icon', 'aria-hidden': 'true', text: status.kind === 'reviewed' ? '✓' : status.kind === 'editorial-late' ? '⏳' : '🛡' }),
+        h('span', { className: 'atlas-card-status-icon', 'aria-hidden': 'true', text: status.kind === 'reviewed' ? '✓' : status.kind === 'editorial' || status.kind === 'editorial-late' ? '⏳' : '○' }),
         h('span', { className: 'atlas-card-status-text', text: status.label }),
         h('span', { className: 'laift-sr-only', text: `. ${status.tooltip}` }),
       ]);

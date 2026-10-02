@@ -138,10 +138,11 @@ function addTerm(termsMap, term, sid, weight, system, originalTerm) {
  * Realiza busca no índice com ranking sofisticado.
  * @param {Object} index - índice retornado por buildSearchIndex
  * @param {string} query
- * @param {{limit?: number}} options
+ * @param {{limit?: number, boostOf?: (sid: string) => number}} options
+ *   boostOf: peso extra por estrutura (PR 3.2, C2 — ficha revisada > em revisão).
  * @returns {Array<Object>} SearchResult[]
  */
-export function search(index, query, { limit = 12 } = {}) {
+export function search(index, query, { limit = 12, boostOf = null } = {}) {
   const normalizedQuery = normalize(query);
 
   if (!normalizedQuery) {
@@ -249,7 +250,7 @@ export function search(index, query, { limit = 12 } = {}) {
         sid,
         label,
         systemId: entry.system,
-        score,
+        score: score + (boostOf ? Number(boostOf(sid)) || 0 : 0),
         side: entry.side || null,
         matched,
       });

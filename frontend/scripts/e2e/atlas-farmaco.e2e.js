@@ -53,6 +53,7 @@ async function runAt(viewport, pkgs) {
       const tmaxUi = num(/Tmax ≈ ([\d.,]+)/);
       check(Math.abs(tmaxUi - ref.tmax) < 0.06, `${label}: Tmax na tela (${tmaxUi} h) = modelo puro (${ref.tmax.toFixed(2)} h)`);
     }
+    check(await frame.evaluate(() => !document.querySelector('.tab-button #pk-panel') && !!document.querySelector('.pharma-panel #pk-panel')), `${label}: painel PK/PD fica no painel da aba, não dentro do botão`);
     check(/F [\d,]+/.test(ui.params) && /Vd/.test(ui.params), `${label}: parâmetros usados visíveis (${ui.params})`);
     check(ui.legacy === ref.legacy, `${label}: aviso de rascunho ${ref.legacy ? 'presente' : 'ausente'} conforme o status do composto`);
     if (pkgs) check(ui.chart && ui.cp && ui.eff, `${label}: gráficos Cp(t) e E(t) desenhados`);
