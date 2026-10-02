@@ -82,6 +82,32 @@ async function runAt(browser, baseUrl, viewport, mobile) {
     await frame.waitForSelector('#quizQuestionCard', { state: 'attached', timeout: 15000 }).catch(() => {});
     await frame.waitForTimeout(500);
     await scan(frame, `${label} Quiz`);
+
+    // PR 3.2: Farmacologia (painel PK/PD e aba Clínica) e Fisiologia
+    // (estudo de via e visão sistêmica).
+    await frame.evaluate(() => window.AtlasShell.setMode('farmacologia'));
+    await frame.waitForSelector('.compound-card', { timeout: 15000 });
+    if (mobile) await frame.evaluate(() => window.AtlasSheet && window.AtlasSheet.snapFull());
+    await frame.evaluate(() => document.querySelector('.compound-card').click());
+    await frame.waitForSelector('#pk-panel', { timeout: 15000 }).catch(() => {});
+    await frame.waitForTimeout(300);
+    await scan(frame, `${label} Farmacologia (composto)`);
+    await frame.evaluate(() => document.querySelector('.tab-button[data-tab="crise"]').click());
+    await frame.waitForSelector('.scenario-panel', { timeout: 5000 }).catch(() => {});
+    await frame.evaluate(() => { const b = document.querySelectorAll('.scenario-phase-btn')[2]; if (b) b.click(); const c = document.querySelector('.scenario-antidote'); if (c) c.click(); });
+    await frame.waitForTimeout(200);
+    await scan(frame, `${label} Farmacologia (Clínica)`);
+
+    await frame.evaluate(() => window.AtlasShell.setMode('fisiologia'));
+    await frame.waitForSelector('.physiology-card', { timeout: 15000 });
+    if (mobile) await frame.evaluate(() => window.AtlasSheet && window.AtlasSheet.snapFull());
+    await frame.evaluate(() => document.querySelector('.physiology-card').click());
+    await frame.waitForSelector('.physiology-study', { timeout: 5000 }).catch(() => {});
+    await frame.waitForTimeout(200);
+    await scan(frame, `${label} Fisiologia (estudo de via)`);
+    await frame.evaluate(() => document.querySelector('.physiology-tab[data-tab="sistemica"]').click());
+    await frame.waitForSelector('.physiology-systemic', { timeout: 5000 }).catch(() => {});
+    await scan(frame, `${label} Fisiologia (visão sistêmica)`);
   } finally {
     await context.close();
   }

@@ -381,7 +381,7 @@ export function createPhysiologyMode({
           style: {
             flex: 1,
             padding: '8px',
-            background: animator && animator.isPlaying() ? '#ff6666' : '#66bb6a',
+            background: animator && animator.isPlaying() ? '#c62828' : '#2e7d32', // contraste AA com texto branco
             color: 'white',
             border: 'none',
             borderRadius: '4px',
@@ -395,7 +395,7 @@ export function createPhysiologyMode({
           style: {
             flex: 0.5,
             padding: '8px',
-            background: '#2196f3',
+            background: '#1565c0',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
@@ -410,7 +410,7 @@ export function createPhysiologyMode({
           style: {
             flex: 0.5,
             padding: '8px',
-            background: '#2196f3',
+            background: '#1565c0',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
