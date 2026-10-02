@@ -1,0 +1,59 @@
+# Atlas 3D — Onda 3: histórico (append-only)
+
+Registro de decisões, situações e respostas às revisões. O plano em vigor fica em [ATLAS_ONDA_3_PLANO.md](ATLAS_ONDA_3_PLANO.md). Não se apaga nada daqui: só se acrescenta.
+
+## 02/10/2026 — PR 3.0 (correções críticas)
+- Os 10 "crimes" da Prova de Fogo foram reproduzidos. Os principais:
+  - C2: toque não abria estrutura, porque `registry.pick` era chamado sem câmera;
+  - C1/C6: duas listas de ações;
+  - C3: nomes repetidos;
+  - C5: rótulos empilhados;
+  - C7: painel de camadas atrás do canvas.
+- PR #10 (hotfix C2, C1, C6) e PR #11 (restante) mesclados. O post-mortem está em `docs/atlas-qa/post-mortem-pr-3-0.md`.
+
+## 02/10/2026 — PR 3.1 (nomes, lista e UX base)
+- Os 1.382 nomes foram traduzidos para PT em 20 lotes (prompt v3, revisão cruzada, 94 correções).
+- `prioridades.json` com 300 estruturas, Voltar/Anterior/Próxima e "Ouvir".
+- `.glb.gz` reduziu o boot para 9,2–9,4 s em HTTP/2.
+- PR #12 mesclado. O post-mortem está em `docs/atlas-qa/post-mortem-pr-3-1.md`.
+
+## 02/10/2026 — PR 3.2: decisões
+- **Formato do PR:** PR único com commits por bloco ("Um PR só", decisão do usuário). O plano v2.0 do usuário foi adotado.
+- **CSP:** sem RCSB e PubChem e sem chamada direta. Se a Worker falhar, a tela mostra "Serviço de moléculas indisponível" e "Tentar de novo" (decisão do usuário).
+- **Gates 0.2 e 0.3:** o usuário informou que o conselho já concordou. A declaração formal segue pendente de assinatura em `ata-revisao-3-2.md`.
+- **Cotas:** o modelo tem só 31 estruturas cardiovasculares distintas, então cardiovascular passou de 36 para 31 e nervoso de 48 para 53. Está registrado em `cotas.md` ("Alterações pós-aprovação"), pendente de assinatura.
+- **Respostas à revisão do usuário (C1–C3, O1–O3):**
+  - C1, determinismo: confirmado, SHA-256 `7c9645db…6676`.
+  - C2: o post-mortem 3.1 existe.
+  - C3: a declaração do conselho foi escrita para assinatura. Não foi presumida.
+  - O1: tabela "Alterações pós-aprovação" em `cotas.md`.
+  - O2: `check-curated-signed` no build + teste de isolamento de `pendente/`.
+  - O3: precedência ZA × HRA com `sourceOfName`.
+
+## 02/10/2026 — PR 3.2: execução
+- Bloco A (`6c35ea2`) e B1 (`d21674d`).
+- Onda 01: 31 fichas pelo `atlas-curador`; revisão técnica prévia com 25 correções (1 de gravidade alta), todas aplicadas (`47a74b7`).
+- Bloco E, proxy (`71ffd5d`). O auditor apontou 2 "críticos", que eram falsos positivos (`LaiftDom` global).
+- Bloco C:
+  - motor PK/PD (`71ffd5d`);
+  - aba Clínica com a crise colinérgica (`06ee4c9`).
+- Bloco D: timeline, estudo de via e visão sistêmica (`5b8e71f`).
+  - De passagem, corrigido: no celular, avançar no estudo recolhia o painel.
+  - A11y: contraste dos controles (`6f2aeaf`).
+- Agentes de aplicação interrompidos por limite de uso (429) duas vezes. Relançados sem perda, porque os arquivos só são gravados no fim.
+- Revisões técnicas prévias:
+  - compostos: 2 de gravidade alta (atropina/neostigmina; flip-flop do AAS);
+  - processos e vias: 1 de gravidade alta (CID D72.0 → D71).
+  - Tudo aplicado (`295e03a`) e integrado (`bb22708`).
+
+## 02/10/2026 — Revisão final do usuário (plano v3.0)
+- Adotada, com ajustes por fatos do código:
+  - M2 e M3 já existiam;
+  - selos da ficha já existiam;
+  - o gate da ficha não assinada foi mantido;
+  - a ferramenta não publica fichas pendentes;
+  - as fichas já ficavam fora do boot.
+- C1, ferramenta de revisão (`295e03a`). C2:
+  - selos, filtro e busca (`47da519`);
+  - de passagem, corrigido o painel PK/PD, que ficava dentro do botão da aba.
+- C3, C4 e M3: guia e flag `systemic` (`d9c5ad6`). C5: este documento e o plano v3.0.
