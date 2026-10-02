@@ -96,6 +96,15 @@ const ALLOWED_ACTIONS = [
   'AtlasShell.closeModal',
   'AtlasShell.toggleTools',
   'AtlasShell.undo',
+  // Ações de outros pacotes que vivem na mesma página. Lista ÚNICA: um
+  // segundo delegateActions(document, …) com outra lista fazia cada clique
+  // passar pelos dois — um executava e o outro avisava "ação não permitida"
+  // (e os botões do modo Moléculas não estavam em lista nenhuma: mortos).
+  'QuizEngine.startQuiz',            // "Refazer" do quiz (compat/legacy-api.js)
+  'MolEngine.applyStyle',            // js/mol-engine.js (modo Moléculas)
+  'MolEngine.toggleActiveSiteHighlight',
+  'MolEngine.toggleSpin',
+  'MolEngine.resetView',
   // Atalhos sem arraste do painel (§2.5, js/ui/sheet.js) — window.AtlasSheet
   // só existe depois de initSheet(), mas resolveAction() do LaiftDom lê o
   // alvo em tempo de clique, não no momento do delegateActions.

@@ -359,11 +359,11 @@ async function install() {
     console.warn('[atlas/compat] não deu para montar #canvas-3d-container:', e);
   }
 
-  // Delega o botão "Refazer" do card de resultado do quiz
-  // (data-action="QuizEngine.startQuiz", ver LEGACY_COMPAT em contracts.js
-  // e js/modes/quiz.js). Listener aditivo — shell.js já tem o seu próprio
-  // para AtlasShell.*, este cobre só QuizEngine.*.
-  if (window.LaiftDom && typeof window.LaiftDom.delegateActions === 'function') {
+  // O botão "Refazer" do quiz (data-action="QuizEngine.startQuiz") entra na
+  // lista ÚNICA de ações de js/ui/shell.js. Um segundo delegateActions aqui
+  // fazia cada clique da barra avisar "ação não permitida". Só registra o
+  // próprio se a casca não existir (página sem shell.js).
+  if (!window.AtlasShell && window.LaiftDom && typeof window.LaiftDom.delegateActions === 'function') {
     window.LaiftDom.delegateActions(document, ['QuizEngine.startQuiz']);
   }
 
