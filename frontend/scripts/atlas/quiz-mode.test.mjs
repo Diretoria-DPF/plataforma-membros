@@ -38,10 +38,27 @@ if (typeof window === 'undefined') {
         querySelector: () => null,
         querySelectorAll: () => [],
         appendChild: () => {},
-        removeChild: () => {}
+        removeChild: () => {},
+        prepend: () => {},
+        dataset: {},
+        classList: { add() {}, remove() {} },
       })
     },
     LaiftDom: {
+      h: (tag, attrs = {}, children = []) => {
+        const node = {
+          nodeType: 1, tagName: String(tag).toUpperCase(), children: [], dataset: {}, style: {},
+          classList: { add() {}, remove() {} },
+          appendChild(c) { this.children.push(c); return c; },
+          prepend(c) { this.children.unshift(c); },
+          addEventListener() {}, remove() {},
+          querySelector: () => null,
+        };
+        Object.assign(node, attrs);
+        [].concat(children).filter((c) => c != null).forEach((c) => node.children.push(c));
+        return node;
+      },
+      clear: (el) => { if (el && el.children) el.children.length = 0; },
       html: (strings, ...args) => {
         // Simple template implementation for testing
         let result = strings[0];

@@ -172,6 +172,14 @@ module.exports = async function atlasResponsive() {
   const server = await startStaticServer();
   const baseUrl = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch();
+  // Apresentação modal e dicas desligadas por padrão (como em harness.js
+  // startApp); um contexto que queira testá-las define window.__atlasFlags.
+  const newContext = browser.newContext.bind(browser);
+  browser.newContext = async (o) => {
+    const c = await newContext(o);
+    await c.addInitScript(() => { if (!window.__atlasFlags) window.__atlasFlags = { onboarding: false, hints: false }; });
+    return c;
+  };
   const bucket = { violations: [], errors: [] };
 
   try {

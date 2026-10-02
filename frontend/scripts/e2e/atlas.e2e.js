@@ -152,7 +152,9 @@ module.exports = async function atlas() {
     const linfaticoGlbs = glbRequests.filter((u) => /\.glb($|\?)/.test(u));
     check(linfaticoGlbs.length > 0, `ligar a camada "Linfático" baixa pelo menos um GLB (${JSON.stringify(linfaticoGlbs)})`);
     check(linfaticoGlbs.every((u) => u.includes('linfatico')), `ligar a camada "Linfático" só baixa GLB(s) do sistema linfático (baixados: ${JSON.stringify(linfaticoGlbs)})`);
-    await app.page.waitForTimeout(700);
+    // Outro sistema do mesmo lote (ex.: o cardiovascular do "coração"
+    // buscado antes) pode ainda estar baixando: espera o lote acabar.
+    await frame.waitForFunction(() => document.querySelector('.atlas-progress').hidden, null, { timeout: 15000 }).catch(() => {});
     const barInfo = await frame.evaluate(() => ({ ...window.__e2eBar, hiddenAfter: document.querySelector('.atlas-progress').hidden }));
     const monotonic = barInfo.seen.every((v, i, a) => i === 0 || v >= a[i - 1]);
     check(barInfo.visibleWhileLoading && barInfo.hiddenAfter && monotonic && barInfo.seen.includes(100),

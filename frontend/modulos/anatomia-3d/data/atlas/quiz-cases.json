@@ -45,7 +45,8 @@
       {
         "sid": "za:left-ventricle"
       }
-    ]
+    ],
+    "explanation_pt": "A atropina bloqueia os receptores muscarínicos M2 dos nós sinoatrial e atrioventricular do coração, revertendo a bradicardia causada pelo excesso de acetilcolina na intoxicação por organofosforado."
   },
   {
     "id": "caso-primeira-passagem",
@@ -92,7 +93,8 @@
       {
         "sid": "za:liver"
       }
-    ]
+    ],
+    "explanation_pt": "Fármacos absorvidos no intestino chegam ao fígado pela veia porta antes da circulação sistêmica; as enzimas do citocromo P450 dos hepatócitos metabolizam parte da dose — é o efeito de primeira passagem."
   },
   {
     "id": "caso-broncoespasmo",
@@ -168,7 +170,8 @@
       {
         "sid": "za:superior-lobe-of-right-lung"
       }
-    ]
+    ],
+    "explanation_pt": "O salbutamol inalado age nos receptores β2-adrenérgicos do músculo liso dos bronquíolos, nos pulmões, e causa broncodilatação rápida."
   },
   {
     "id": "caso-filtro-renal",
@@ -217,7 +220,8 @@
       {
         "sid": "za:kidney-r"
       }
-    ]
+    ],
+    "explanation_pt": "Os rins, órgãos retroperitoneais, filtram o plasma nos glomérulos e excretam fármacos hidrossolúveis; a depuração de creatinina estima a taxa de filtração glomerular."
   },
   {
     "id": "caso-bhe-neurologia",
@@ -445,7 +449,8 @@
       {
         "sid": "za:white-matter-of-telencephalon-r"
       }
-    ]
+    ],
+    "explanation_pt": "A barreira hematoencefálica protege o encéfalo: o endotélio dos capilares cerebrais tem junções oclusivas contínuas e é envolvido pelos pés dos astrócitos."
   },
   {
     "id": "caso-acidez-gastrica",
@@ -466,7 +471,8 @@
       {
         "sid": "za:stomach"
       }
-    ]
+    ],
+    "explanation_pt": "As células parietais das glândulas do estômago secretam ácido clorídrico pela bomba H+/K+-ATPase, que o omeprazol inibe de forma irreversível."
   },
   {
     "id": "caso-neuroeixo-espinhal",
@@ -488,7 +494,8 @@
       {
         "sid": "za:white-matter-of-spinal-cord"
       }
-    ]
+    ],
+    "explanation_pt": "A medula espinal conduz os impulsos aferentes e eferentes e integra os arcos reflexos; na raquianestesia em L3–L4, abaixo do cone medular, o anestésico no espaço subaracnóideo bloqueia as raízes que chegam a ela."
   },
   {
     "id": "caso-injecao-deltoide",
@@ -506,6 +513,7 @@
       {
         "sid": "za:acromial-part-of-deltoid-muscle-r"
       }
-    ]
+    ],
+    "explanation_pt": "O músculo esquelético é muito vascularizado, por isso a adrenalina intramuscular é absorvida rapidamente. Na anafilaxia, o local recomendado é a face anterolateral da coxa (vasto lateral)."
   }
 ]

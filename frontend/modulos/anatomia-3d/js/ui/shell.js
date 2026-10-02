@@ -183,6 +183,7 @@ function setToolsOpen(open) {
   // A barra mora dentro do canvas (camada abaixo do painel da ficha); com
   // a folha de Ferramentas aberta, o canvas sobe para ela ficar por cima.
   document.body.dataset.toolsOpen = String(!!open);
+  if (open) emit('tools:open', {}); // js/ui/hints.js (dica "ferramentas")
   const b = document.getElementById('atlas-toolbar-tools');
   if (b) b.setAttribute('aria-expanded', String(!!open));
 }
@@ -563,6 +564,7 @@ function installActions() {
     openMoreMenu() {
       const anchor = document.getElementById('atlas-toolbar-more');
       openDropdownMenu(anchor, [
+        { label: 'Como usar', onSelect: () => window.AtlasShell.openOnboarding && window.AtlasShell.openOnboarding() },
         { label: 'Aproximar (+)', onSelect: () => window.AtlasShell.zoomIn() },
         { label: 'Afastar (−)', onSelect: () => window.AtlasShell.zoomOut() },
         { label: labelsEnabled ? 'Rótulos: ligados' : 'Rótulos: desligados', checked: labelsEnabled, onSelect: () => window.AtlasShell.toggleLabels() },

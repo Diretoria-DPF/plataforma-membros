@@ -27,10 +27,69 @@ import { EVENTS, on, off, emit } from '../core/bus.js';
  * @param {string} [ctx.highlightColor='#ffb020'] - Cor do destaque
  * @returns {Object} API de seleção
  */
-export function createSelection({ registry, bus, store, requestRender, focusSid, highlightColor = '#ffb020' }) {
+/** Duração total do pulso (2 ciclos). */
+export const PULSE_MS = 400;
+
+/**
+ * Cor do pulso no instante `elapsedMs`: o destaque misturado com branco, 2
+ * ciclos (0 → clareia → volta) em PULSE_MS.
+ * @param {string} baseHex '#rrggbb'
+ * @param {number} elapsedMs
+ * @returns {string} '#rrggbb'
+ */
+export function pulseColor(baseHex, elapsedMs) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(baseHex || ''));
+  if (!m) return baseHex;
+  const cycle = PULSE_MS / 2;
+  const phase = (Math.max(0, elapsedMs) % cycle) / cycle;
+  const k = 0.6 * Math.sin(phase * Math.PI);
+  const n = parseInt(m[1], 16);
+  const ch = (shift) => {
+    const c = (n >> shift) & 255;
+    return Math.round(c + (255 - c) * k).toString(16).padStart(2, '0');
+  };
+  return `#${ch(16)}${ch(8)}${ch(0)}`;
+}
+
+export function createSelection({ registry, bus, store, requestRender, focusSid, highlightColor = '#ffb020', addTicker = null, pulse = false, reducedMotion = () => false }) {
   // --- Estado interno ---
   let currentHighlightColor = highlightColor;
   let isSelecting = false; // Flag para guardar contra re-entrância
+  let stopPulse = null;
+
+  /**
+   * Pulso de confirmação ao selecionar (Onda 2): a cor do destaque clareia e
+   * volta 2 vezes em 400 ms. Usa o ticker do renderer, que devolve false ao
+   * terminar — o 3D volta a ficar parado. Sem pulso com "reduzir movimento".
+   * Só usa registry.setColor (contrato existente, nada novo no Registry).
+   */
+  function startPulse(sid) {
+    if (stopPulse) stopPulse();
+    if (!pulse || !addTicker || reducedMotion()) return;
+    let elapsed = 0;
+    let finished = false;
+    let unsubscribe = null;
+    const stop = () => {
+      finished = true;
+      if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+      if (stopPulse === stop) stopPulse = null;
+    };
+    stopPulse = stop;
+    unsubscribe = addTicker((dtMs) => {
+      if (finished) return false;
+      elapsed += dtMs || 16;
+      if (store.get().selectedSid !== sid || elapsed >= PULSE_MS) {
+        if (store.get().selectedSid === sid) registry.setColor(sid, currentHighlightColor);
+        stop();
+        requestRender();
+        return false;
+      }
+      registry.setColor(sid, pulseColor(currentHighlightColor, elapsed));
+      return true;
+    });
+    if (finished && unsubscribe) { unsubscribe(); unsubscribe = null; }
+    requestRender();
+  }
 
   // --- Utilitários ---
 
@@ -57,6 +116,7 @@ export function createSelection({ registry, bus, store, requestRender, focusSid,
       registry.setColor(sid, currentHighlightColor);
     }
     if (prev !== sid) store.set({ selectedSid: sid ?? null });
+    if (sid !== null && sid !== undefined && prev !== sid) startPulse(sid);
     requestRender();
   }
 

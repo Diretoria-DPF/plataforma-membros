@@ -92,11 +92,13 @@ export function mainSid(quizCase) {
  * @param {Function} opts.loadCases - () => Promise<Array> carrega quiz-cases.json
  * @param {Function} [opts.resolveSid] - (sid) => sid canônico (aliases antigos)
  * @param {Function} [opts.systemOf] - (sid) => id do sistema, para `correctSystem`
+ * @param {Function} [opts.confettiCount] - () => quantos confetes no acerto (0 = nenhum)
+ * @param {Function} [opts.reducedMotion] - () => true se "reduzir movimento" (sem tremida)
  * @param {Function} [opts.prepareCase] - (caso) => void; carrega e mostra os
  *   sistemas da resposta, para a estrutura certa estar no corpo e poder ser tocada
  * @returns {Object} Implementação do contrato Mode
  */
-export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases, resolveSid, systemOf, prepareCase }) {
+export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases, resolveSid, systemOf, prepareCase, confettiCount = () => 0, reducedMotion = () => false }) {
   const { on, emit, EVENTS } = bus;
   const { get: storeGet, set: storeSet } = store;
 
@@ -115,6 +117,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
   // vezes com um segundo toque e faz a retomada começar pelo PRÓXIMO caso.
   let answeredCurrent = false;
   let resumeNotice = null;
+  let advanceTimer = null;
 
   const QUESTION_TIME_MS = 60000; // 60 segundos
 
@@ -145,11 +148,12 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     return sheetNode;
   }
 
+  function el(tag, attrs, children) { return window.LaiftDom.h(tag, attrs, children); }
+
   function renderQuizCard() {
     ensureSheetNode();
     answeredCurrent = false;
-
-    const { html, setHtml } = window.LaiftDom;
+    clearTimeout(advanceTimer);
     const caso = cases[currentIndex];
 
     if (!caso) {
@@ -162,47 +166,35 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       try { prepareCase(caso); } catch (err) { console.error('[QuizMode] prepareCase:', err); }
     }
 
-    const cardContent = html`
-      <div style="padding: 12px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="font-size: 0.75rem; color: var(--laift-muted); font-weight: 600;">
-          Caso ${currentIndex + 1} de ${totalCount}
-        </div>
-        <div style="font-size: 0.85rem; font-weight: 700; color: var(--laift-text);">
-          ${caso.prompt_pt.substring(0, 80)}...
-        </div>
-        <div style="font-size: 0.72rem; color: var(--laift-text); line-height: 1.4;">
-          ${caso.prompt_pt}
-        </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
-          <div style="font-size: 0.8rem; color: var(--laift-text); font-weight: 600;">
-            <span id="quizTimer">60s</span> | <span id="quizScore">${score}</span> pts
-          </div>
-          <button type="button" id="quizHintBtn" style="min-height: 44px; padding: 4px 12px; font-size: 0.8rem; background: transparent; border: 1px solid var(--module-accent); border-radius: 6px; color: var(--laift-text); cursor: pointer; font-weight: 600;">
-            💡 Dica
-          </button>
-        </div>
-        <div id="quizFeedback" style="display: none; margin-top: 8px; padding: 8px; border-radius: 4px; font-size: 0.72rem; line-height: 1.4;"></div>
-      </div>
-    `;
-
-    setHtml(sheetNode, cardContent);
+    const hintBtn = caso.dica
+      ? el('button', { type: 'button', id: 'quizHintBtn', className: 'quiz-btn' }, ['💡 Dica'])
+      : null;
+    const card = el('div', { className: 'quiz-card' }, [
+      el('div', { className: 'quiz-step' }, [`Caso ${currentIndex + 1} de ${totalCount}`]),
+      el('p', { className: 'quiz-prompt' }, [caso.prompt_pt]),
+      el('div', { className: 'quiz-bar' }, [
+        el('div', { className: 'quiz-meta' }, [
+          el('span', { id: 'quizTimer' }, ['60s']), ' | ',
+          el('span', { id: 'quizScore' }, [String(score)]), ' pts',
+        ]),
+        hintBtn,
+      ]),
+      el('div', { id: 'quizFeedback', className: 'quiz-feedback', role: 'status', hidden: true }, []),
+    ]);
+    window.LaiftDom.clear(sheetNode);
+    sheetNode.appendChild(card);
     if (resumeNotice) {
-      sheetNode.prepend(window.LaiftDom.h('p', { className: 'quiz-resume-notice', role: 'status', text: resumeNotice }));
+      sheetNode.prepend(el('p', { className: 'quiz-resume-notice', role: 'status', text: resumeNotice }));
       resumeNotice = null;
     }
-
-    // Delegação de ações
-    const hintBtn = sheetNode.querySelector('#quizHintBtn');
     if (hintBtn) {
       hintBtn.addEventListener('click', () => {
-        const feedbackEl = sheetNode.querySelector('#quizFeedback');
-        if (feedbackEl) {
-          const { html: html2, setHtml: setHtml2 } = window.LaiftDom;
-          setHtml2(feedbackEl, html2`💡 ${caso.dica}`);
-          feedbackEl.style.display = 'block';
-          feedbackEl.style.background = 'rgba(251, 191, 36, 0.15)';
-          feedbackEl.style.borderLeft = '3px solid #fbbf24';
-        }
+        const fb = sheetNode.querySelector('#quizFeedback');
+        if (!fb) return;
+        window.LaiftDom.clear(fb);
+        fb.appendChild(el('span', {}, [`💡 ${caso.dica}`]));
+        fb.dataset.kind = 'dica';
+        fb.hidden = false;
       });
     }
 
@@ -244,48 +236,86 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     const elapsed = Date.now() - timerStart;
     const correct = isCorrect(caso, sid, { resolve: resolveSid, systemOf });
 
+    let points = 0;
     if (correct) {
       correctCount++;
-      const points = scoreFor(caso, elapsed, true);
+      points = scoreFor(caso, elapsed, true);
       score += points;
     }
 
     emit(EVENTS.QUIZ_ANSWER, { caseId: caso.id, sid, correct });
-    showFeedback(caso, sid, correct);
+    showFeedback(caso, sid, correct, points);
   }
 
-  function showFeedback(caso, sid, correct) {
-    const feedbackEl = sheetNode?.querySelector('#quizFeedback');
-    if (!feedbackEl) return;
-
-    const { html, setHtml } = window.LaiftDom;
-    let content, bgColor, borderColor;
-
-    if (correct) {
-      content = html`✔ Acerto! ${getLabel(sid)}${caso.explanation_pt ? ` — ${caso.explanation_pt}` : ''}`;
-      bgColor = 'rgba(16, 185, 129, 0.15)';
-      borderColor = '#10b981';
-    } else {
-      const correctLabel = getLabel(mainSid(caso));
-      content = html`❌ Incorreto. Correto: ${correctLabel}${caso.explanation_pt ? ` — ${caso.explanation_pt}` : ''}`;
-      bgColor = 'rgba(239, 68, 68, 0.15)';
-      borderColor = '#ef4444';
-    }
-
-    setHtml(feedbackEl, content);
-    feedbackEl.style.display = 'block';
-    feedbackEl.style.background = bgColor;
-    feedbackEl.style.borderLeft = `3px solid ${borderColor}`;
-    feedbackEl.style.color = 'var(--laift-text)';
-
-    const scoreEl = sheetNode?.querySelector('#quizScore');
-    if (scoreEl) scoreEl.textContent = score;
-
-    setTimeout(() => {
+  /** Avança para o próximo caso: sozinho (mais tempo se houver explicação) ou pelo botão. */
+  function scheduleAdvance(withExplanation) {
+    clearTimeout(advanceTimer);
+    advanceTimer = setTimeout(() => {
       if (!isRunning) return;
       currentIndex++;
       renderQuizCard();
-    }, 2500);
+    }, withExplanation ? 9000 : 2500);
+  }
+  function nextButton() {
+    const b = el('button', { type: 'button', className: 'quiz-btn quiz-next' }, ['Próximo caso']);
+    b.addEventListener('click', () => {
+      clearTimeout(advanceTimer);
+      if (!isRunning) return;
+      currentIndex++;
+      renderQuizCard();
+    });
+    return b;
+  }
+  function vibrate(pattern) {
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      try { navigator.vibrate(pattern); } catch (e) { /* bloqueado */ }
+    }
+  }
+  /** Confetes CSS (spans) — a quantidade vem de js/main.js (tier e "reduzir movimento"). */
+  function burstConfetti(host) {
+    const n = Math.max(0, Math.min(40, Number(confettiCount()) || 0));
+    if (!n || !host) return;
+    const box = el('span', { className: 'quiz-confetti', 'aria-hidden': 'true' }, []);
+    for (let i = 0; i < n; i++) {
+      box.appendChild(el('span', { style: { '--i': String(i), '--n': String(n) } }, []));
+    }
+    host.appendChild(box);
+    setTimeout(() => box.remove(), 900);
+  }
+
+  function showFeedback(caso, sid, correct, points = 0) {
+    const feedbackEl = sheetNode?.querySelector('#quizFeedback');
+    if (!feedbackEl) return;
+    window.LaiftDom.clear(feedbackEl);
+    const card = sheetNode.querySelector('.quiz-card');
+    const explanation = caso.explanation_pt ? el('p', { className: 'quiz-explanation' }, [caso.explanation_pt]) : null;
+
+    if (correct) {
+      feedbackEl.dataset.kind = 'acerto';
+      feedbackEl.appendChild(el('p', { className: 'quiz-result' }, [
+        el('span', { className: 'quiz-check', 'aria-hidden': 'true' }, ['✔']),
+        ` Acerto! ${getLabel(sid)} `,
+        el('strong', { className: 'quiz-points' }, [`+${points} pontos`]),
+      ]));
+      burstConfetti(card);
+      vibrate([10, 40, 10]);
+    } else {
+      feedbackEl.dataset.kind = 'erro';
+      feedbackEl.appendChild(el('p', { className: 'quiz-result' }, [`❌ Resposta correta: ${getLabel(mainSid(caso))}`]));
+      if (card && !reducedMotion()) {
+        card.classList.remove('quiz-card--shake');
+        void card.offsetWidth; // reinicia a animação
+        card.classList.add('quiz-card--shake');
+      }
+      vibrate(200);
+    }
+    if (explanation) feedbackEl.appendChild(explanation);
+    feedbackEl.appendChild(nextButton());
+    feedbackEl.hidden = false;
+
+    const scoreEl = sheetNode?.querySelector('#quizScore');
+    if (scoreEl) scoreEl.textContent = score;
+    scheduleAdvance(!!explanation);
   }
 
   function handleTimeout() {
@@ -293,51 +323,28 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     const caso = cases[currentIndex];
     const feedbackEl = sheetNode?.querySelector('#quizFeedback');
     if (!feedbackEl) return;
-
-    const { html, setHtml } = window.LaiftDom;
-    const correctLabel = getLabel(mainSid(caso));
-    setHtml(feedbackEl, html`⏱️ Tempo esgotado. Correto: ${correctLabel}`);
-    feedbackEl.style.display = 'block';
-    feedbackEl.style.background = 'rgba(245, 158, 11, 0.15)';
-    feedbackEl.style.borderLeft = '3px solid #f59e0b';
-    feedbackEl.style.color = 'var(--laift-text)';
-
-    setTimeout(() => {
-      if (!isRunning) return;
-      currentIndex++;
-      renderQuizCard();
-    }, 2500);
+    window.LaiftDom.clear(feedbackEl);
+    feedbackEl.dataset.kind = 'tempo';
+    feedbackEl.appendChild(el('p', { className: 'quiz-result' }, [`⏱️ Tempo esgotado. Resposta correta: ${getLabel(mainSid(caso))}`]));
+    if (caso.explanation_pt) feedbackEl.appendChild(el('p', { className: 'quiz-explanation' }, [caso.explanation_pt]));
+    feedbackEl.appendChild(nextButton());
+    feedbackEl.hidden = false;
+    scheduleAdvance(!!caso.explanation_pt);
   }
 
   function renderResultCard() {
     ensureSheetNode();
-
-    const { html, setHtml } = window.LaiftDom;
     const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
-
-    const resultContent = html`
-      <div style="padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 10px;">
-        <div style="font-size: 1.8rem;">🏆</div>
-        <div style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">Sessão Concluída!</div>
-        <div style="background: rgba(2, 6, 23, 0.6); border: 1px solid var(--laift-border); border-radius: 6px; padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
-          <div>
-            <div style="color: var(--laift-muted); font-weight: 600;">PONTUAÇÃO</div>
-            <div style="color: #facc15; font-size: 1rem; font-weight: 700;">${score}</div>
-          </div>
-          <div>
-            <div style="color: var(--laift-muted); font-weight: 600;">PRECISÃO</div>
-            <div style="color: #34d399; font-size: 1rem; font-weight: 700;">${accuracy}%</div>
-          </div>
-        </div>
-        <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
-          <button type="button" data-action="QuizEngine.startQuiz" id="quizRefazerBtn" style="padding: 6px 12px; font-size: 0.75rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 4px; color: #3b82f6; cursor: pointer; font-weight: 600;">
-            🔄 Refazer
-          </button>
-        </div>
-      </div>
-    `;
-
-    setHtml(sheetNode, resultContent);
+    window.LaiftDom.clear(sheetNode);
+    sheetNode.appendChild(el('div', { className: 'quiz-card quiz-summary' }, [
+      el('div', { className: 'quiz-trophy', 'aria-hidden': 'true' }, ['🏆']),
+      el('h3', { className: 'quiz-summary-title' }, ['Sessão concluída!']),
+      el('dl', { className: 'quiz-summary-grid' }, [
+        el('div', {}, [el('dt', {}, ['Pontuação']), el('dd', {}, [String(score)])]),
+        el('div', {}, [el('dt', {}, ['Precisão']), el('dd', {}, [`${accuracy}%`])]),
+      ]),
+      el('button', { type: 'button', id: 'quizRefazerBtn', className: 'quiz-btn', dataset: { action: 'QuizEngine.startQuiz' } }, ['🔄 Refazer']),
+    ]));
 
     // Submete a tentativa
     submitQuizAttempt();
@@ -417,6 +424,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     exit() {
       isRunning = false;
       clearInterval(timerInterval);
+      clearTimeout(advanceTimer);
       if (unsubscribeStructure) unsubscribeStructure();
     },
 

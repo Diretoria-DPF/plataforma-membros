@@ -17,7 +17,7 @@ const engineDir = path.resolve(here, '../../modulos/anatomia-3d/js/engine');
 const coreDir = path.resolve(here, '../../modulos/anatomia-3d/js/core');
 
 // Importa o módulo a testar
-const { createSelection, announce } = await import(
+const { createSelection, announce, pulseColor, PULSE_MS } = await import(
   path.join(engineDir, 'selection.js')
 );
 
@@ -419,6 +419,60 @@ test('seleções externas gravam store.selectedSid e apagam o destaque anterior'
   emit(EVENTS.STRUCTURE_SELECT, { sid: null, source: 'api' });
   assert.equal(get().selectedSid, null, 'limpar pela API zera a seleção');
   selection.dispose();
+});
+
+console.log('selection — pulso (Onda 2)');
+
+test('pulseColor: começa e termina cada ciclo na cor base, clareia no meio', () => {
+  assert.equal(pulseColor('#ffb020', 0), '#ffb020');
+  assert.equal(pulseColor('#ffb020', PULSE_MS / 2), '#ffb020');
+  const mid = pulseColor('#ffb020', PULSE_MS / 4);
+  assert.notEqual(mid, '#ffb020');
+  assert.ok(parseInt(mid.slice(5, 7), 16) > 0x20, 'o azul sobe em direção ao branco');
+  assert.equal(pulseColor('rgb(1,2,3)', 50), 'rgb(1,2,3)', 'cor que não é #hex fica como está');
+});
+
+function fakeTicker() {
+  const tickers = new Set();
+  return {
+    addTicker(fn) { tickers.add(fn); return () => tickers.delete(fn); },
+    run(dt) { let again = false; for (const fn of [...tickers]) again = fn(dt) || again; return again; },
+    get size() { return tickers.size; },
+  };
+}
+
+test('pulso: anima ~400 ms, volta à cor do destaque e o ticker sai (render para)', () => {
+  set({ selectedSid: null });
+  const registry = createMockRegistry();
+  const ticker = fakeTicker();
+  const selection = createSelection({
+    registry, bus: { on, off, emit, EVENTS }, store: { get, set },
+    requestRender: () => {}, focusSid: () => {}, highlightColor: '#ffb020',
+    addTicker: ticker.addTicker, pulse: true,
+  });
+  selection.handlePick({ ndc: { x: 1, y: 0 }, kind: 'tap' });
+  assert.equal(ticker.size, 1, 'pulso registrado');
+  let frames = 0;
+  while (ticker.run(16) && frames < 100) frames += 1;
+  assert.ok(frames >= 20 && frames <= 30, `≈ 25 quadros de 16 ms (veio ${frames})`);
+  assert.equal(ticker.size, 0, 'ticker removido ao terminar');
+  const last = registry.getSetColorCalls().at(-1);
+  assert.deepEqual(last, { sid: 'fma:7088', color: '#ffb020' }, 'termina na cor do destaque');
+  selection.dispose();
+});
+
+test('pulso: desligado com "reduzir movimento" ou pela chave', () => {
+  for (const opts of [{ pulse: true, reducedMotion: () => true }, { pulse: false }]) {
+    set({ selectedSid: null });
+    const ticker = fakeTicker();
+    const selection = createSelection({
+      registry: createMockRegistry(), bus: { on, off, emit, EVENTS }, store: { get, set },
+      requestRender: () => {}, focusSid: () => {}, addTicker: ticker.addTicker, ...opts,
+    });
+    selection.handlePick({ ndc: { x: 1, y: 0 }, kind: 'tap' });
+    assert.equal(ticker.size, 0, JSON.stringify(Object.keys(opts)));
+    selection.dispose();
+  }
 });
 
 console.log('');

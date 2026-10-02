@@ -39,6 +39,8 @@ import { createLayersPanel } from './ui/layers-panel.js';
 import { linkLegacy } from './ui/legacy-link.js';
 import { ATLAS_FLAGS } from './core/flags.js';
 import { createProgressBar } from './ui/progress-bar.js';
+import { createOnboarding, shouldShowOnboarding, isDeepLink, wasDismissedThisTab } from './ui/onboarding.js';
+import { createHints } from './ui/hints.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -266,6 +268,7 @@ function fetchJson(url) {
 // 2. Boot
 // ============================================================================
 let EMPTY_PEEK_TEMPLATE = null;
+const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 async function boot() {
   // Estado vazio do peek, antes de qualquer conteúdo entrar nele.
@@ -381,6 +384,9 @@ async function boot() {
     store: storeApi,
     requestRender,
     focusSid: (sid) => engine.focusSid(sid, { animate: true }),
+    addTicker,
+    pulse: ATLAS_FLAGS.pulse,
+    reducedMotion: prefersReducedMotion,
   });
 
   const xrayClip = createXrayClip({ bus, store: storeApi, renderer, THREE: T, requestRender });
@@ -407,6 +413,10 @@ async function boot() {
   controlsApi.setPickHandler(({ ndc, kind }) => {
     const sid = registry.pick(ndc);
     if (sid) {
+      // Confirmação tátil curta (Android; o iOS não tem vibração — aceito).
+      if (kind === 'tap' && typeof navigator.vibrate === 'function') {
+        try { navigator.vibrate(10); } catch (e) { /* bloqueado pelo navegador */ }
+      }
       selection.select(sid, 'pick');
       if (kind === 'focus') engine.focusSid(sid, { animate: true });
     } else if (kind === 'tap') {
@@ -780,6 +790,13 @@ async function boot() {
         return (entry && entry.system) || (rec && rec.system) || null;
       },
       prepareCase: prepareQuizCase,
+      // Confetes: 20 em aparelho bom, 5 no nível gráfico baixo, nenhum com
+      // "reduzir movimento" ou com a chave desligada.
+      confettiCount: () => {
+        if (!ATLAS_FLAGS.confetti || prefersReducedMotion()) return 0;
+        return rendererApi.getTier && rendererApi.getTier() === 'low' ? 5 : 20;
+      },
+      reducedMotion: prefersReducedMotion,
     })),
     fisiologia: () => Promise.all([
       import('./modes/physiology.js'),
@@ -985,10 +1002,31 @@ async function boot() {
       () => { resumeSession(savedSession); }, 10000);
   }
 
+  // ---- Apresentação (3 telas) e dicas contextuais ----
+  let hints = null;
+  const onboarding = createOnboarding({
+    storage: sessionStorageApi,
+    session: tabStorageApi,
+    onQuiz: () => window.AtlasShell.setMode('quiz'),
+    onClose: () => { if (hints) hints.flush(); },
+  });
+  window.AtlasShell.openOnboarding = () => onboarding.open({ replay: true });
+  if (ATLAS_FLAGS.hints) {
+    hints = createHints({ bus, store: storeApi, storage: sessionStorageApi, isOnboardingOpen: () => onboarding.isOpen() });
+  }
+  if (ATLAS_FLAGS.onboarding && shouldShowOnboarding(sessionStorageApi)
+      && !isDeepLink(window.location.hash) && !wasDismissedThisTab(tabStorageApi)) {
+    // 1,5 s depois do primeiro quadro: o aluno vê o corpo antes da apresentação.
+    setTimeout(() => {
+      if (!document.getElementById('atlas-fatal') && !isDeepLink(window.location.hash)) onboarding.open();
+    }, 1500);
+  }
+
   // ---- Expõe internals para a camada de compatibilidade legada ----
   window.__atlasInternals = {
     bus, store: storeApi, registry, assetLoader, engine,
     selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS, flags: ATLAS_FLAGS,
+    onboarding, getHints: () => hints,
   };
   // Gancho de teste, só leitura — expõe as estatísticas do renderer
   // (draw calls, triângulos, contagem de frames renderizados) para os

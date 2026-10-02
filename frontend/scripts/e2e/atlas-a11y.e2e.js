@@ -165,15 +165,53 @@ async function reducedMotion(browser, baseUrl) {
   }
 }
 
+/** Apresentação aberta e dica na tela (flags reais ligadas). */
+async function onboardingAndHint(browser, baseUrl) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, bypassCSP: true, isMobile: true, hasTouch: true });
+  await context.addInitScript(() => { window.__atlasFlags = {}; }); // padrão real: tudo ligado
+  try {
+    const page = await context.newPage();
+    await context.route(`${baseUrl}e2e-a11y-host.html`, (route) =>
+      route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: HOST_HTML }));
+    await page.goto(`${baseUrl}e2e-a11y-host.html`);
+    const frame = await (await page.waitForSelector('#atlas-frame')).contentFrame();
+    await frame.waitForFunction(() => {
+      const d = document.getElementById('atlas-onboarding');
+      return d && d.open;
+    }, null, { timeout: 30000 });
+    await scan(frame, '390×844 apresentação (tela 1)');
+    await frame.locator('#atlas-onboarding .atlas-onb-primary').click();
+    await scan(frame, '390×844 apresentação (tela 2)');
+    await frame.locator('#atlas-onboarding .atlas-onb-skip').click();
+    await frame.evaluate(() => {
+      const I = window.__atlasInternals;
+      I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid: 'za:liver', source: 'pick' });
+    });
+    await frame.waitForSelector('.atlas-hint:not([hidden])', { timeout: 5000 });
+    await scan(frame, '390×844 dica na tela');
+  } finally {
+    await context.close();
+  }
+}
+
 module.exports = async function atlasA11y() {
   const { chromium } = loadPlaywright();
   const server = await startStaticServer();
   const baseUrl = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch();
+  // Apresentação modal e dicas desligadas por padrão (como em harness.js
+  // startApp); um contexto que queira testá-las define window.__atlasFlags.
+  const newContext = browser.newContext.bind(browser);
+  browser.newContext = async (o) => {
+    const c = await newContext(o);
+    await c.addInitScript(() => { if (!window.__atlasFlags) window.__atlasFlags = { onboarding: false, hints: false }; });
+    return c;
+  };
   try {
     await runAt(browser, baseUrl, { width: 390, height: 844 }, true);
     await runAt(browser, baseUrl, { width: 1280, height: 800 }, false);
     await keyboardOnly(browser, baseUrl);
+    await onboardingAndHint(browser, baseUrl);
     await reducedMotion(browser, baseUrl);
   } finally {
     await browser.close();
