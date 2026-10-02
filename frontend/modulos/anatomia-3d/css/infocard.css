@@ -93,9 +93,11 @@
   background: var(--module-accent);
   color: var(--laift-bg);
   font-size: 12px; font-weight: 700;
-  animation: atlas-card-new 3s forwards;
+  /* Some de uma vez aos 3 s (steps): um fade deixava o chip com contraste
+     baixo durante a transição (axe color-contrast intermitente). */
+  animation: atlas-card-new 3s steps(1, end) forwards;
 }
-@keyframes atlas-card-new { 0%, 85% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes atlas-card-new { 0% { visibility: visible; } 100% { visibility: hidden; } }
 
 .atlas-card-subtitle {
   display: flex;
@@ -409,6 +411,84 @@ body[data-peek-v2="false"] .atlas-card-new { display: none; }
 /* ========================================================================
    Barra de ações (Isolar, Ocultar, Fantasma, Focar)
    ======================================================================== */
+
+/* Navegação entre estruturas (PR 3.1.8/3.1.9): voltar, anterior, próxima. */
+.atlas-card-nav {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px var(--atlas-card-padding);
+  border-top: 1px solid var(--laift-border);
+  background: var(--laift-surface);
+}
+
+.atlas-card-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-sm, 6px);
+  background: var(--laift-surface);
+  color: var(--laift-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.atlas-card-nav-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.atlas-card-nav-btn:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
+.atlas-card-nav-next { margin-left: auto; }
+.atlas-card-nav-pos {
+  margin-left: auto;
+  font-size: 0.85em;
+  color: var(--laift-text-secondary);
+}
+.atlas-card-nav-pos + .atlas-card-nav-next { margin-left: 0; }
+
+@media (max-width: 380px) {
+  .atlas-card-nav-label { display: none; }
+}
+
+/* Selo de nome traduzido com ajuda de IA, ainda sem revisão (PR 3.1.5). */
+.atlas-card-assisted {
+  border-style: dashed;
+}
+
+/* "Ouvir" o resumo (PR 3.1.10). */
+.atlas-card-listen {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--laift-border);
+  border-radius: 999px;
+  background: var(--laift-surface);
+  color: var(--laift-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.atlas-card-listen[aria-pressed="true"] {
+  border-color: var(--laift-primary);
+  color: var(--laift-primary);
+}
+
+.atlas-card-listen:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
 
 .atlas-card-actions {
   flex-shrink: 0;

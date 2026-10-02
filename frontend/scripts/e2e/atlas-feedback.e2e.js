@@ -72,7 +72,14 @@ module.exports = async function atlasFeedback() {
         if (name && sheet.querySelector('.atlas-card-status, .atlas-card-tabbar')) break;
         await new Promise((r) => setTimeout(r, 100));
       }
-      await new Promise((r) => setTimeout(r, 400)); // 2ª renderização (com o conteúdo) e foco
+      // 2ª renderização (com o conteúdo) e foco: espera o foco chegar (ou 3 s)
+      // em vez de um tempo fixo, que corria contra a carga da ficha.
+      const t1 = Date.now();
+      while (Date.now() - t1 < 3000) {
+        const more = document.querySelector('#atlas-sheet .atlas-card-more');
+        if (more && document.activeElement === more) break;
+        await new Promise((r) => setTimeout(r, 100));
+      }
       const sheet = document.getElementById('atlas-sheet');
       const q = (sel) => sheet.querySelector(sel);
       return {

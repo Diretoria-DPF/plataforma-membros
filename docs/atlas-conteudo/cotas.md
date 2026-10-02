@@ -1,19 +1,23 @@
 # Cotas da lista das 300 estruturas prioritárias
 
-Usadas por `tools/atlas-content/prioridades.mjs` (Onda 3) para gerar `docs/atlas-conteudo/prioridades.json`. O conselho editorial valida e ajusta a lista **antes** de as fichas serem escritas.
+Usadas por `tools/atlas-content/prioridades.mjs` (Onda 3) para gerar `docs/atlas-conteudo/prioridades.json` (`node tools/atlas-content/prioridades.mjs`). O conselho editorial valida e ajusta a lista **antes** de as fichas serem escritas.
 
 | Sistema | Cota | Por quê |
 |---|---|---|
-| Esquelético | 80 | Base de todos os outros sistemas (inserções, relações, referências de superfície); é o sistema mais extenso do modelo e o primeiro do currículo de anatomia. |
-| Muscular | 40 | Os grupos mais cobrados (manguito rotador, músculos da mastigação, períneo, membros); 40 nomes únicos cobrem os dois lados. |
+| Esquelético | 80 | Base de todos os outros sistemas (inserções, relações, referências de superfície); primeiro do currículo. |
+| Nervoso | 48 | Nervos cranianos, plexos e divisões do encéfalo usadas nos casos clínicos; 335 nomes únicos no modelo. |
+| Muscular | 40 | Os grupos mais cobrados (manguito rotador, mastigação, períneo, membros); lados contam uma vez. |
 | Digestório | 40 | Alta cobrança em anatomia e clínica; inclui segmentos do fígado e peritônio. |
-| Nervoso | 40 | Inclui nervos cranianos, plexos e as divisões do encéfalo usadas nos casos clínicos. |
-| Cardiovascular | 30 | Alta cobrança e alto risco clínico (coração, grandes vasos). |
+| Cardiovascular | 36 | Alto risco clínico (coração, grandes vasos); 49 nomes únicos no modelo. |
 | Respiratório | 20 | Árvore traqueobrônquica, lobos e segmentos. |
-| Urinário | 15 | Rim, vias urinárias. |
-| Reprodutor | 15 | Órgãos pélvicos e glândulas anexas. |
-| Endócrino | 10 | Glândulas principais. |
+| Urinário | 15 | Rim e vias urinárias (29 nomes únicos). |
 | Linfático | 10 | Órgãos linfoides e cadeias de linfonodos mais citadas. |
+| Articular | 6 | Articulações e ligamentos de maior cobrança (joelho, ombro, tornozelo). |
+| Endócrino | 5 | Só 5 nomes únicos com malha no modelo. |
+| Reprodutor | 0 | **Sem malhas** em `structures.json` — ficha sem estrutura tocável não entra. |
+| **Total** | **300** | |
+
+Cotas da Onda 3 v1.0 (PR 3.1.6). As anteriores (Reprodutor 15, Endócrino 10, sem Articular) foram redistribuídas: o modelo não tem malhas do reprodutor e tem só 5 do endócrino.
 
 ## Critérios de seleção (em ordem)
 1. **Existe no corpo 3D** (`data/atlas/generated/structures.json`) — ficha sem malha não é tocável.

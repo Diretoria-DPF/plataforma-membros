@@ -1,142 +1,70 @@
-(Abdominal part of pectoralis major muscle)
-(Accessory parotid gland)
-(Adductor minimus)
-(Anterior tibial node)
-(Fibular node)
-(Iliopectineal bursa)
-(Intermediate deep inguinal node)
-(Intermediate lacunar node)
-(Lateral lacunar node)
-(Medial lacunar node)
-(Opponens digiti minimi muscle of foot)
-(Posterior tibial node)
-(Proximal deep inguinal node)
-(Retropyloric nodes)
-(Subpyloric nodes)
-(Suprapyloric node)
-Abductor digiti minimi of foot
-Abductor digiti minimi of hand
-Abductor hallucis
-Abductor pollicis brevis
-Abductor pollicis longus
-Accessory nucleus of oculomotor nerve
-Acetabular labrum
-Acromial part of deltoid muscle
-Acromioclavicular ligament
-Adductor brevis
-Adductor longus
-Adductor magnus
-Adenohypophysis
-Allen_amygdalohippocampal_area
-Allen_amygdaloid_complex
-Allen_angular_gyrus
-Allen_anterior_amygdaloid_area
-Allen_anterior_commissure
-Allen_anterior_cortical_nucleus
-Allen_anterior_horn_of_lateral_ventricle
-Allen_anterior_intermediate_orbital_gyrus
-Allen_anterior_nuclear_complex_of_thalamus
-Allen_anterior_olfactory_nucleus
-Allen_anterior_parahippocampal_gyrus
-Allen_atrium_of_lateral_ventricle
-Allen_basal_forebrain
-Allen_basilar_part_of_pons
-Allen_basolateral_nucleus_basal_nucleus
-Allen_basomedial_nucleus_accessory_basal_nucleus
-Allen_bed_nucleus_of_stria_terminalis
-Allen_body_of_caudate
-Allen_body_of_hippocampus
-Allen_body_of_lateral_ventricle
-Allen_central_canal_of_medulla_oblongata
-Allen_central_nuclear_group
-Allen_centromedian_nucleus_of_thalamus
-Allen_cerebellar_deep_nuclei
-Allen_cerebellar_vermis
-Allen_cerebral_aqueduct
-Allen_cerebral_peduncle_crus_cerebri
-Allen_cingulate_gyrus_caudal_posterior_part
-Allen_cingulate_gyrus_rostral_anterior_part
-Allen_claustrum
-Allen_corpus_callosum
-Allen_cuneus
-Allen_dorsal_lateral_geniculate_nucleus
-Allen_external_segment_of_globus_pallidus
-Allen_fornix
-Allen_fourth_ventricle
-Allen_frontal_agranular_insular_cortex_area_Fl
-Allen_frontal_operculum
-Allen_frontal_pole
-Allen_frontomarginal_gyrus
-Allen_gyrus_ambiens
-Allen_gyrus_rectus_straight_gyrus
-Allen_habenular_nuclei
-Allen_head_of_caudate
-Allen_head_of_hippocampus
-Allen_hypothalamus
-Allen_inferior_cerebellar_peduncle
-Allen_inferior_colliculus
-Allen_inferior_frontal_gyrus_opercular_part
-Allen_inferior_frontal_gyrus_triangular_part
-Allen_inferior_horn_of_lateral_ventricle
-Allen_inferior_occipital_gyrus
-Allen_inferior_olive
-Allen_inferior_temporal_gyrus
-Allen_ingulo_parahippocampal_isthmus
-Allen_internal_segment_of_globus_pallidus
-Allen_lateral_dorsal_nucleus_of_thalamus
-Allen_lateral_hemisphere_of_cerebellum
-Allen_lateral_nucleus
-Allen_lateral_occipitotemporal_fusiform_gyrus_occipital_part
-Allen_lateral_olfactory_gyrus
-Allen_lateral_orbital_gyrus
-Allen_lateral_posterior_nucleus_of_thalamus
-Allen_limen_insula
-Allen_lingual_gyrus_medial_occipitotemporal_gyrus
-Allen_long_insular_gyri
-Allen_mammillary_region_of_HTH
-Allen_mammillothalamic_tract
-Allen_medial_geniculate_nuclei
-Allen_medial_nucleus
-Allen_medial_orbital_gyrus
-Allen_mediodorsal_nucleus_of_thalamus
-Allen_midbrain_tegmentum
-Allen_middle_cerebellar_peduncle
-Allen_middle_frontal_gyrus
-Allen_middle_temporal_gyrus
-Allen_midline_nuclear_complex
-Allen_nucleus_accumbens
-Allen_occipital_pole
-Allen_occipitotemporal_fusiform_gyrus_temporal_part
-Allen_olfactory_bulb
-Allen_olfactory_tract
-Allen_optic_radiation
-Allen_optic_tract
-Allen_paracentral_lobule_caudal_part
-Allen_paracentral_lobule_rostral_part
-Allen_paracingulate_gyrus
-Allen_parafascicular_nucleus_of_thalamus
-Allen_paravermis_of_cerebellum
-Allen_parietal_operculum
-Allen_perirhinal_gyrus_rostral_part_of_FuGt
-Allen_pineal_body
-Allen_piriform_region
-Allen_planum_polare
-Allen_planum_temporale
-Allen_pontine_tegmentum
-Allen_postcentral_gyrus
-Allen_posterior_cortical_nucleus
-Allen_posterior_horn_of_lateral_ventricle
-Allen_posterior_intermediate_orbital_gyrus
-Allen_posterior_parahippocampal_gyrus
-Allen_posteroventral_putamen
-Allen_precuneus
-Allen_preoptic_region_of_HTH
-Allen_pretectal_region
-Allen_primary_motor_cortex
-Allen_pulvinar_of_thalamus
-Allen_putamen
-Allen_pyramidal_part_of_medulla_oblongata
-Allen_red_nucleus
-Allen_reuniens_nucleus_medioventral_nucleus_of_thalamus
-Allen_rostral_gyrus
-Allen_septal_nuclei
+Anterior cells of ethmoid bone
+Arytenoid cartilage
+Atlas (C1)
+Axis (C2)
+Body of sternum
+Calcaneus
+Capitate bone
+Clavicle
+Coccyx
+Corniculate cartilage
+Costal cartilage of eighth rib
+Costal cartilage of fifth rib
+Costal cartilage of first rib
+Costal cartilage of fourth rib
+Costal cartilage of ninth rib
+Costal cartilage of second rib
+Costal cartilage of seventh rib
+Costal cartilage of sixth rib
+Costal cartilage of tenth rib
+Costal cartilage of third rib
+Cricoid cartilage
+Cuboid bone
+Distal phalanx of fifth finger of foot
+Distal phalanx of fifth finger of hand
+Distal phalanx of first finger of foot
+Distal phalanx of first finger of hand
+Distal phalanx of fourth finger of foot
+Distal phalanx of fourth finger of hand
+Distal phalanx of second finger of foot
+Distal phalanx of second finger of hand
+Distal phalanx of third finger of foot
+Distal phalanx of third finger of hand
+Eighth rib
+Eleventh rib
+Ethmoid bone
+Femur
+Fibula
+Fifth metacarpal bone
+Fifth metatarsal bone
+Fifth rib
+First metacarpal bone
+First metatarsal bone
+First rib
+Fourth metacarpal bone
+Fourth metatarsal bone
+Fourth rib
+Frontal bone
+Hamate bone
+Hip bone
+Humerus
+Hyoid bone
+Incus
+Inferior nasal concha bone
+Intermediate cuneiform bone
+Lacrimal bone
+Lateral cuneiform bone
+Lateral process of nasal septal cartilage
+Lunate bone
+Major alar cartilage
+Malleus
+Mandible
+Manubrium of sternum
+Maxilla
+Medial cuneiform bone
+Middle cells of ethmoid bone
+Middle phalanx of fifth finger of foot
+Middle phalanx of fifth finger of hand
+Middle phalanx of fourth finger of foot
+Middle phalanx of fourth finger of hand
+Middle phalanx of second finger of foot

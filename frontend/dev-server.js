@@ -34,6 +34,13 @@ http
       res.end('Forbidden');
       return;
     }
+    // Modelos .glb.gz: o build gera (scripts/build.js); aqui, sem build,
+    // comprime o .glb na hora para o atlas não cair no 404.
+    if (filePath.endsWith('.glb.gz') && !fs.existsSync(filePath) && fs.existsSync(filePath.slice(0, -3))) {
+      res.writeHead(200, { 'Content-Type': 'application/gzip' });
+      res.end(require('zlib').gzipSync(fs.readFileSync(filePath.slice(0, -3))));
+      return;
+    }
     fs.readFile(filePath, (err, data) => {
       if (err) {
         res.writeHead(404);

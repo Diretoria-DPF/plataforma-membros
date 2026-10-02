@@ -16,6 +16,7 @@ export const FLAG_DEFAULTS = Object.freeze({
   pulse: true,        // pulso no destaque ao selecionar (js/engine/selection.js)
   confetti: true,     // confetes no acerto do quiz (js/modes/quiz.js)
   peek: true,         // peek com selos e "Ver mais" (js/ui/infocard.js)
+  tts: true,          // "Ouvir" a ficha com speechSynthesis pt-BR (js/ui/infocard.js)
 });
 
 /**

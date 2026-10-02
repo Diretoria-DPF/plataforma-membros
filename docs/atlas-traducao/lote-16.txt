@@ -1,0 +1,69 @@
+Temporal plane
+Temporal pole
+Tentorium cerebelli
+Thalamus
+Third ventricle
+Tonsil of cerebellum
+Transverse frontopolar gyrus and sulcus*
+Transverse occipital sulcus
+Transverse temporal gyri
+Triangular part of inferior frontal gyrus
+Tuber of vermis
+Tympanic membrane
+Uvula of vermis
+Vestibular nuclei
+Vestibule
+Vitreous body
+White matter of spinal cord
+White matter of telencephalon
+Wing of central lobule
+Zonular fibres
+Anterior communicating artery
+Anterior papillary muscle of right ventricle
+Anterior semilunar leaflet of pulmonary valve
+Basilar venous plexus
+Cavernous sinus
+Inferior leaflet of right atrioventricular valve
+Inferior papillary muscle of left ventricle
+Inferior papillary muscle of right ventricle
+Left atrium
+Left coronary leaflet
+Left semilunar leaflet of pulmonary valve
+Left ventricle
+Non-coronary leaflet
+Posterior leaflet of left atrioventricular valve
+Pulmonary trunk
+Right atrium
+Right coronary leaflet
+Right semilunar leaflet of pulmonary valve
+Right ventricle
+Septal leaflet of right atrioventricular valve
+Septal papillary muscle of right ventricle
+Aortic valve
+Heart left ventricle
+Heart right ventricle
+Interventricular septum
+Left cardiac atrium
+Mitral valve
+Papillary muscle of heart ant
+Papillary muscle of heart anterior
+Papillary muscle of heart anterolateral
+Papillary muscle of heart antlat
+Papillary muscle of heart med
+Papillary muscle of heart medial
+Papillary muscle of heart pos
+Papillary muscle of heart posmed
+Papillary muscle of heart posterior
+Papillary muscle of heart posteromedial
+Pulmonary valve
+Right cardiac atrium
+Tricuspid valve
+(Anterior tibial node)
+(Fibular node)
+(Intermediate deep inguinal node)
+(Intermediate lacunar node)
+(Lateral lacunar node)
+(Medial lacunar node)
+(Posterior tibial node)
+(Proximal deep inguinal node)
+(Retropyloric nodes)

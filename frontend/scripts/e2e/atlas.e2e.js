@@ -32,7 +32,7 @@ module.exports = async function atlas() {
   const glbRequests = [];
   app.page.on('request', (req) => {
     const url = req.url();
-    if (/\.glb($|\?)/.test(url)) glbRequests.push(url);
+    if (/\.glb(\.gz)?($|\?)/.test(url)) glbRequests.push(url.replace(/\.gz(?=$|\?)/, '')); // .glb.gz conta como o .glb (PR 3.1)
   });
   // C8 (Onda 3): nenhum recurso do Atlas pode responder >= 400.
   const atlasHttpErrors = [];
@@ -305,7 +305,8 @@ module.exports = async function atlas() {
     await app.page.waitForTimeout(1500);
     check((await renders()) === stopA, 'Fisiologia: "Parar" encerra a animação (o 3D volta a ficar parado)');
 
-    await frame.locator('button', { hasText: 'Voltar' }).first().click();
+    // "Voltar" do modo Fisiologia (a ficha também tem um "Voltar", PR 3.1.8).
+    await frame.locator('button:not(.atlas-card-nav-btn)', { hasText: 'Voltar' }).first().click();
     await frame.locator('.physiology-tab', { hasText: 'Processos' }).click();
     await frame.locator('.physiology-card', { hasText: 'Hipotálamo-Hipófise-Adrenal' }).click();
     const hpa = await playAndMeasure();

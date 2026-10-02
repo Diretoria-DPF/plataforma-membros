@@ -1,0 +1,69 @@
+Right anterior bronchus
+Right apical bronchopulmonary segment
+Right apical bronchus
+Right inferior lobar bronchus
+Right lateral basal bronchopulmonary segment
+Right lateral basal bronchus
+Right lateral bronchopulmonary segmennt
+Right lateral bronchus
+Right medial basal bronchopulmonary segment
+Right medial basal bronchus
+Right medial bronchopulmonary segment
+Right medial bronchus
+Right middle lobar bronchus
+Right posterior basal bronchopulmonary segment
+Right posterior basal bronchus
+Right posterior bronchopulmonary segment
+Right posterior bronchus
+Right superior bronchopulmonary segment
+Right superior bronchus
+Right superior lobar bronchus
+(Accessory parotid gland)
+Anterior lateral segment of liver (VI)
+Anterior medial segment of liver (V)
+Ascending colon
+Descending colon
+Duodenum
+Epiglottis
+External anal sphincter
+Free taenia
+Gallbladder
+Gingiva
+Left anterior lateral segment of liver (III)
+Left medial segment of liver (IV)
+Left posterior lateral segment of liver (II)
+Liver
+Lower canine
+Lower first molar tooth
+Lower first premolar
+Lower lateral incisor
+Lower medial incisor
+Lower second molar tooth
+Lower second premolar
+Mesocolic taenia
+Mucosa of stomach
+Omental taenia
+Pancreas
+Parotid gland
+Posterior lateral segment of liver (VII)
+Posterior medial segment of liver (VIII)
+Posterior segment of liver (I)
+Sigmoid colon
+Stomach
+Sublingual gland
+Submandibular gland
+Thyroid cartilage
+Tongue
+Transverse colon
+Upper canine
+Upper first molar tooth
+Upper first premolar
+Upper lateral incisor
+Upper medial incisor
+Upper second molar tooth
+Upper second premolar
+Uvula of palate
+Vermiform appendix
+Bare area of liver
+Body of pancreas
+Capsule of the liver

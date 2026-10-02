@@ -222,14 +222,20 @@ async function createContentStore() {
     // Nome com lado ("… esquerdo") não serve para o outro lado.
     if (pt && !/esquerd|direit/i.test(pt) && !ptByEnglish.has(key)) ptByEnglish.set(key, pt);
   }
-  const entries = structures.map((s) => ({
-    ...s,
-    names: {
-      pt: legacyNameBySid.get(s.sid) || ptByEnglish.get(`${s.system}|${prettifyName(s.englishName)}`) || '',
-      en: prettifyName(s.englishName),
-      la: s.latinName || '',
-    },
-  }));
+  // Prioridade do nome PT (PR 3.1.5): nome curado do legado > tradução
+  // assistida (namePt, tools/atlas-content/names-pt.mjs) > inglês.
+  const entries = structures.map((s) => {
+    const curated = legacyNameBySid.get(s.sid) || ptByEnglish.get(`${s.system}|${prettifyName(s.englishName)}`) || '';
+    return {
+      ...s,
+      nameSource: curated ? 'curado' : s.namePt ? 'assistida' : 'en',
+      names: {
+        pt: curated || s.namePt || '',
+        en: prettifyName(s.englishName),
+        la: s.latinName || '',
+      },
+    };
+  });
   const entryBySid = new Map(entries.map((e) => [e.sid, e]));
   const searchIndex = buildSearchIndex(entries);
   // Visão sem duplicatas (C3): uma entrada por estrutura, com todos os sids
@@ -505,8 +511,45 @@ async function boot() {
       if (action === 'ghost') emit(EVENTS.VISIBILITY_GHOST, { sid });
       if (action === 'focus') engine.focusSid(sid, { animate: true });
       if (action === 'more') snapSheetTo('half');
+      if (action === 'back') goBackInHistory();
+      if (action === 'prev' || action === 'next') stepInSystem(sid, action === 'next' ? 1 : -1);
     },
+    tts: ATLAS_FLAGS.tts,
   });
+
+  // ---- Navegação na ficha (PR 3.1.8/3.1.9) ----
+  // Histórico local das estruturas abertas ("Voltar") e sequência dentro do
+  // sistema na mesma ordem do navegador (uma entrada por estrutura).
+  const selectHistory = [];
+  on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
+    if (!sid || source === 'history') return;
+    if (selectHistory[selectHistory.length - 1] !== sid) selectHistory.push(sid);
+    if (selectHistory.length > 50) selectHistory.shift();
+  });
+  function goBackInHistory() {
+    if (selectHistory.length < 2) return;
+    selectHistory.pop();
+    emit(EVENTS.STRUCTURE_SELECT, { sid: selectHistory[selectHistory.length - 1], source: 'history' });
+  }
+  function systemSequence(sid) {
+    const group = contentStore.getGroup(sid);
+    if (!group) return { list: [], index: -1 };
+    const list = contentStore.getGroups()
+      .filter((g) => g.entry.system === group.entry.system)
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+    return { list, index: list.indexOf(group) };
+  }
+  function stepInSystem(sid, delta) {
+    const { list, index } = systemSequence(sid);
+    if (index < 0 || !list.length) return;
+    const next = list[(index + delta + list.length) % list.length];
+    emit(EVENTS.STRUCTURE_SELECT, { sid: next.sid, source: 'sequence' });
+  }
+  function navInfoFor(sid) {
+    const { list, index } = systemSequence(sid);
+    const at = (d) => (index >= 0 && list.length > 1 ? list[(index + d + list.length) % list.length].name : '');
+    return { canBack: selectHistory.length > 1, prevName: at(-1), nextName: at(1), position: index >= 0 ? `${index + 1} de ${list.length}` : '' };
+  }
 
   // ---- Histórico de estudo (Meu Estudo) e chip "Novo" ----
   // Antes o histórico só era gravado com o modo Meu Estudo aberto (quase
@@ -589,10 +632,12 @@ async function boot() {
     const entry = {
       sid,
       names: { pt: labelFor(sid), en: raw.names.en || '', la: raw.names.la || '' },
+      nameAssisted: raw.nameSource === 'assistida',
       system: raw.system,
       layer: (rec && rec.layer) || raw.layer,
       side: raw.side,
       isNew: ATLAS_FLAGS.peek && newSids.has(sid),
+      nav: navInfoFor(sid),
     };
     newSids.delete(sid); // "Novo" só na primeira abertura
     infocard.render(entry, undefined);

@@ -1,0 +1,69 @@
+Allen frontal operculum
+Allen frontal pole
+Allen frontomarginal gyrus
+Allen gyrus ambiens
+Allen gyrus rectus straight gyrus
+Allen habenular nuclei
+Allen head of caudate
+Allen head of hippocampus
+Allen hypothalamus
+Allen inferior cerebellar peduncle
+Allen inferior colliculus
+Allen inferior frontal gyrus opercular part
+Allen inferior frontal gyrus triangular part
+Allen inferior horn of lateral ventricle
+Allen inferior occipital gyrus
+Allen inferior olive
+Allen inferior temporal gyrus
+Allen ingulo parahippocampal isthmus
+Allen internal segment of globus pallidus
+Allen lateral dorsal nucleus of thalamus
+Allen lateral hemisphere of cerebellum
+Allen lateral nucleus
+Allen lateral occipitotemporal fusiform gyrus occipital part
+Allen lateral olfactory gyrus
+Allen lateral orbital gyrus
+Allen lateral posterior nucleus of thalamus
+Allen limen insula
+Allen lingual gyrus medial occipitotemporal gyrus
+Allen long insular gyri
+Allen mammillary region of HTH
+Allen mammillothalamic tract
+Allen medial geniculate nuclei
+Allen medial nucleus
+Allen medial orbital gyrus
+Allen mediodorsal nucleus of thalamus
+Allen midbrain tegmentum
+Allen middle cerebellar peduncle
+Allen middle frontal gyrus
+Allen middle temporal gyrus
+Allen midline nuclear complex
+Allen nucleus accumbens
+Allen occipital pole
+Allen occipitotemporal fusiform gyrus temporal part
+Allen olfactory bulb
+Allen olfactory tract
+Allen optic radiation
+Allen optic tract
+Allen paracentral lobule caudal part
+Allen paracentral lobule rostral part
+Allen paracingulate gyrus
+Allen parafascicular nucleus of thalamus
+Allen paravermis of cerebellum
+Allen parietal operculum
+Allen perirhinal gyrus rostral part of FuGt
+Allen pineal body
+Allen piriform region
+Allen planum polare
+Allen planum temporale
+Allen pontine tegmentum
+Allen postcentral gyrus
+Allen posterior cortical nucleus
+Allen posterior horn of lateral ventricle
+Allen posterior intermediate orbital gyrus
+Allen posterior parahippocampal gyrus
+Allen posteroventral putamen
+Allen precuneus
+Allen preoptic region of HTH
+Allen pretectal region
+Allen primary motor cortex
