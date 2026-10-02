@@ -1,0 +1,97 @@
+# Correções manuais da tradução (aplicadas por tools/atlas-content/names-pt.mjs DEPOIS dos lotes).
+# Formato: nome em inglês<TAB>nome em português<TAB>motivo. Linhas com # são comentários.
+# Origem: conferência do Claude (padrões) e revisão cruzada do atlas-revisor-editorial (PR 3.1.4).
+First metacarpal bone	Osso metacarpal I	TA: algarismo romano (regra 11)
+Second metacarpal bone	Osso metacarpal II	TA: algarismo romano (regra 11; lote 02 saiu com o prompt v1)
+Third metacarpal bone	Osso metacarpal III	TA: algarismo romano (regra 11)
+Fourth metacarpal bone	Osso metacarpal IV	TA: algarismo romano (regra 11)
+Fifth metacarpal bone	Osso metacarpal V	TA: algarismo romano (regra 11)
+First metatarsal bone	Osso metatarsal I	TA: algarismo romano (regra 11)
+Second metatarsal bone	Osso metatarsal II	TA: algarismo romano (regra 11)
+Third metatarsal bone	Osso metatarsal III	TA: algarismo romano (regra 11)
+Fourth metatarsal bone	Osso metatarsal IV	TA: algarismo romano (regra 11)
+Fifth metatarsal bone	Osso metatarsal V	TA: algarismo romano (regra 11)
+Hamate bone	Osso hamato	TA: hamato
+Capitohamate interosseous ligament	Ligamento interósseo capito-hamato	TA: capitato + hamato
+Thyrohyoid muscle	Músculo tíreo-hióideo	TA: tíreo-hióideo
+Interspinous ligaments	Ligamentos interespinais	TA: interespinal
+Pterygospinous ligament	Ligamento pterigospinal	TA: pterigospinal
+Sacrospinous ligament	Ligamento sacroespinal	TA: sacroespinal
+Supraspinous ligament	Ligamento supraespinal	TA: supraespinal
+Infraspinatus muscle	Músculo infraespinal	TA: infraespinal
+Subtendinous bursa of infraspinatus muscle	Bolsa subtendínea do músculo infraespinal	TA: infraespinal; subtendínea
+Supraspinatus muscle	Músculo supraespinal	TA: supraespinal
+Dorsal tarsometatarsal ligaments	Ligamentos tarsometatarsais dorsais	Consistência com os demais (metatarsal/metatarsais)
+Interosseous metacarpal ligaments	Ligamentos metacarpais interósseos	Consistência (metacarpais)
+Metatarsal interosseous ligaments	Ligamentos metatarsais interósseos	Consistência (metatarsais)
+Pararectal nodes	Linfonodos pararretais	Grafia: pararretais
+Allen superior cerebellar peduncle brachium conjunctivum	Pedúnculo cerebelar superior (braço conjuntivo)	latim cru "braquium" (revisão cruzada (atlas-revisor-editorial))
+Right apical bronchopulmonary segment	Segmento broncopulmonar apical	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Right lateral basal bronchopulmonary segment	Segmento broncopulmonar basal lateral	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Right lateral bronchopulmonary segmennt	Segmento broncopulmonar lateral	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Right medial basal bronchopulmonary segment	Segmento broncopulmonar basal medial	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Right medial bronchopulmonary segment	Segmento broncopulmonar medial	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Right posterior basal bronchopulmonary segment	Segmento broncopulmonar basal posterior	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Right posterior bronchopulmonary segment	Segmento broncopulmonar posterior	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Right superior bronchopulmonary segment	Segmento broncopulmonar superior	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Ascending colon	Colo ascendente	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Descending colon	Colo descendente	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Free taenia	Tênia livre	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Mesocolic taenia	Tênia mesocólica	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Omental taenia	Tênia omental	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Sigmoid colon	Colo sigmoide	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Transverse colon	Colo transverso	TA: grafia oficial (broncopulmonar, tênia, colo sigmoide)
+Cricoid cartilage	Cartilagem cricoide	regra v3 (revisão cruzada): grafia/termo TA
+Cuboid bone	Osso cuboide	regra v3 (revisão cruzada): grafia/termo TA
+Xiphoid process	Processo xifoide	regra v3 (revisão cruzada): grafia/termo TA
+Conoid ligament	Ligamento conoide	regra v3 (revisão cruzada): grafia/termo TA
+Median cricothyroid ligament	Ligamento cricotireoide mediano	regra v3 (revisão cruzada): grafia/termo TA
+Orbital part of orbicularis oculi	Parte orbital do músculo orbicular do olho	regra v3 (revisão cruzada): grafia/termo TA
+Sternothyroid muscle	Músculo esternotiroide	regra v3 (revisão cruzada): grafia/termo TA
+Straight part of cricothyroid muscle	Parte reta do músculo cricoitroide	regra v3 (revisão cruzada): grafia/termo TA
+Allen frontal pole	polo frontal	regra v3 (revisão cruzada): grafia/termo TA
+Allen occipital pole	polo occipital	regra v3 (revisão cruzada): grafia/termo TA
+Allen short insular gyri	Giros curtos da ínsula	TA: gyri breves insulae (revisão cruzada (atlas-revisor-editorial))
+Allen subcallosal gyrus parolfactory gyrus	Giro subcaloso (giro paraolfatório)	grafia paraolfatório (revisão cruzada (atlas-revisor-editorial))
+Amygdaloid body	Corpo amigdaloide	regra v3 (revisão cruzada): grafia/termo TA
+Anterior chamber of eyeball	Câmara anterior do bulbo do olho	regra v3 (revisão cruzada): grafia/termo TA
+Anterior segment of eyeball	Segmento anterior do bulbo do olho	regra v3 (revisão cruzada): grafia/termo TA
+Biventral lobule	Lóbulo biventre	TA: lobulus biventer (revisão cruzada (atlas-revisor-editorial))
+Inferior occipital gyrus and sulcus*	Giro occipital inferior e sulco	regra v3 (revisão cruzada): grafia/termo TA
+Insula (Subcentral gyrus and ant. and post. sulci*)	Ínsula (giro subcental e sulcos ant. e post.)	regra v3 (revisão cruzada): grafia/termo TA
+Lateral occipital gyrus (Middle occipital gyrus*)	Giro occipital lateral (giro occipital médio)	regra v3 (revisão cruzada): grafia/termo TA
+Medial occipitotemporal gyrus (Parahippocampal*)	Giro occipitotemporal medial (giro parahipocampal)	regra v3 (revisão cruzada): grafia/termo TA
+Occipital pole	Polo occipital	regra v3 (revisão cruzada): grafia/termo TA
+Orbital gyri	Giros orbitais	regra v3 (revisão cruzada): grafia/termo TA
+Orbital gyri (Frontomarginal gyrus and sulcus*)	Giros orbitais (giro e sulco frontomarginais)	orbital; ordem (revisão cruzada (atlas-revisor-editorial))
+Orbital part of inferior frontal gyrus	Parte orbital do giro frontal inferior	regra v3 (revisão cruzada): grafia/termo TA
+Orbital sulci (H-shaped orbital sulci*)	Sulcos orbitais (Sulcos orbitais em H)	regra v3 (revisão cruzada): grafia/termo TA
+Orbital sulci (Lateral Orbital sulcus*)	Sulcos orbitais (Sulco orbital lateral)	regra v3 (revisão cruzada): grafia/termo TA
+Parieto-occipital sulcus	Sulco parieto-occipital	regra v3 (revisão cruzada): grafia/termo TA
+Posterior segment of eyeball	Segmento posterior do bulbo do olho	regra v3 (revisão cruzada): grafia/termo TA
+Septum pellucidum	Septo pelúcido	TA (revisão cruzada (atlas-revisor-editorial))
+Spinotectal tract	Trato espinotectal	digitação (revisão cruzada (atlas-revisor-editorial))
+Straight gyrus (Gyrus rectus)	Giro reto (gyrus rectus)	regra 7: parênteses (revisão cruzada (atlas-revisor-editorial))
+Sulcus interm prim-Jensen	Sulco intermédio primário de Jensen ??	abreviação expandida; ainda para revisão humana (revisão cruzada (atlas-revisor-editorial))
+Suspensory ligament of eyeball	Ligamento suspensor do bulbo do olho	regra v3 (revisão cruzada): grafia/termo TA
+Tectospinal tract	Trato tectoespinal	regra v3 (revisão cruzada): grafia/termo TA
+Temporal pole	Polo temporal	regra v3 (revisão cruzada): grafia/termo TA
+Tentorium cerebelli	Tentório do cerebelo	TA-PT (revisão cruzada (atlas-revisor-editorial))
+Transverse frontopolar gyrus and sulcus*	Giro e sulco frontopolares transversos	asterisco; concordância (revisão cruzada (atlas-revisor-editorial))
+Anterior semilunar leaflet of pulmonary valve	Válvula semilunar anterior da valva do tronco pulmonar	regra v3 (revisão cruzada): grafia/termo TA
+Inferior leaflet of right atrioventricular valve	Cúspide inferior da valva atrioventricular direita	regra v3 (revisão cruzada): grafia/termo TA
+Left semilunar leaflet of pulmonary valve	Válvula semilunar esquerda da valva do tronco pulmonar	regra v3 (revisão cruzada): grafia/termo TA
+Posterior leaflet of left atrioventricular valve	Cúspide posterior da valva atrioventricular esquerda	regra v3 (revisão cruzada): grafia/termo TA
+Right semilunar leaflet of pulmonary valve	Válvula semilunar direita da valva do tronco pulmonar	regra v3 (revisão cruzada): grafia/termo TA
+Septal leaflet of right atrioventricular valve	Cúspide septal da valva atrioventricular direita	regra v3 (revisão cruzada): grafia/termo TA
+Aortic valve	Valva da aorta	TA: valva aortae (revisão cruzada (atlas-revisor-editorial))
+Mitral valve	Valva mitral	TA: valva (revisão cruzada (atlas-revisor-editorial))
+Pulmonary valve	Valva do tronco pulmonar	TA (revisão cruzada (atlas-revisor-editorial))
+Tricuspid valve	Valva tricúspide	TA: valva (revisão cruzada (atlas-revisor-editorial))
+Sigmoid nodes	Linfonodos sigmóideos	TA-PT (revisão cruzada (atlas-revisor-editorial))
+Superolateral superficial inguinal nodes	Linfonodos inguinais superficiais superolaterais	regra v3 (revisão cruzada): grafia/termo TA
+Supratrochlear nodes	Linfonodos supratrocleares	tróclea (revisão cruzada (atlas-revisor-editorial))
+Left lingula inferior bronchi	Brônquios lingulares inferiores esquerdos	regra v3 (revisão cruzada): grafia/termo TA
+Left lingula superior bronchus	Brônquio lingular superior esquerdo	regra v3 (revisão cruzada): grafia/termo TA
+Lingula inferior bronchopulmonary segment	Segmento broncopulmonar lingular inferior	regra v3 (revisão cruzada): grafia/termo TA
+Lingula superior bronchopulmonary segment	Segmento broncopulmonar lingular superior	regra v3 (revisão cruzada): grafia/termo TA

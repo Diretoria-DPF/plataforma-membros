@@ -1,0 +1,3950 @@
+{
+  "descricao": "Lista das 300 estruturas prioritárias (Onda 3). Gerada por tools/atlas-content/prioridades.mjs; o conselho editorial valida antes das fichas.",
+  "cotas": {
+    "esqueletico": 80,
+    "nervoso": 48,
+    "muscular": 40,
+    "digestorio": 40,
+    "cardiovascular": 36,
+    "respiratorio": 20,
+    "urinario": 15,
+    "linfatico": 10,
+    "articular": 6,
+    "endocrino": 5,
+    "reprodutor": 0
+  },
+  "total": 300,
+  "itens": [
+    {
+      "rank": 1,
+      "system": "esqueletico",
+      "name": "Ethmoid bone",
+      "sid": "za:ethmoid-bone",
+      "sids": [
+        "za:ethmoid-bone"
+      ],
+      "score": 157.3,
+      "reasons": [
+        "usada em fisiologia",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 2,
+      "system": "esqueletico",
+      "name": "Inferior nasal concha bone",
+      "sid": "za:inferior-nasal-concha-bone-r",
+      "sids": [
+        "za:inferior-nasal-concha-bone-l",
+        "za:inferior-nasal-concha-bone-r"
+      ],
+      "score": 103.8,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 3,
+      "system": "esqueletico",
+      "name": "Scapula",
+      "sid": "za:scapula-r",
+      "sids": [
+        "za:scapula-l",
+        "za:scapula-r"
+      ],
+      "score": 63.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 4,
+      "system": "esqueletico",
+      "name": "Occipital bone",
+      "sid": "za:occipital-bone",
+      "sids": [
+        "za:occipital-bone"
+      ],
+      "score": 62.6,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 5,
+      "system": "esqueletico",
+      "name": "Mandible",
+      "sid": "za:mandible",
+      "sids": [
+        "za:mandible"
+      ],
+      "score": 61.4,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 6,
+      "system": "esqueletico",
+      "name": "Temporal bone",
+      "sid": "za:temporal-bone-r",
+      "sids": [
+        "za:temporal-bone-l",
+        "za:temporal-bone-r"
+      ],
+      "score": 60.6,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 7,
+      "system": "esqueletico",
+      "name": "Sphenoid bone",
+      "sid": "za:sphenoid-bone",
+      "sids": [
+        "za:sphenoid-bone"
+      ],
+      "score": 60.4,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 8,
+      "system": "esqueletico",
+      "name": "Body of sternum",
+      "sid": "za:body-of-sternum",
+      "sids": [
+        "za:body-of-sternum"
+      ],
+      "score": 59.6,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 9,
+      "system": "esqueletico",
+      "name": "Calcaneus",
+      "sid": "za:calcaneus-r",
+      "sids": [
+        "za:calcaneus-l",
+        "za:calcaneus-r"
+      ],
+      "score": 59.1,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 10,
+      "system": "esqueletico",
+      "name": "Maxilla",
+      "sid": "za:maxilla-r",
+      "sids": [
+        "za:maxilla-l",
+        "za:maxilla-r"
+      ],
+      "score": 58.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 11,
+      "system": "esqueletico",
+      "name": "Manubrium of sternum",
+      "sid": "za:manubrium-of-sternum",
+      "sids": [
+        "za:manubrium-of-sternum"
+      ],
+      "score": 58.8,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 12,
+      "system": "esqueletico",
+      "name": "Talus",
+      "sid": "za:talus-r",
+      "sids": [
+        "za:talus-l",
+        "za:talus-r"
+      ],
+      "score": 57.8,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 13,
+      "system": "esqueletico",
+      "name": "Palatine bone",
+      "sid": "za:palatine-bone-r",
+      "sids": [
+        "za:palatine-bone-l",
+        "za:palatine-bone-r"
+      ],
+      "score": 56.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 14,
+      "system": "esqueletico",
+      "name": "Cuboid bone",
+      "sid": "za:cuboid-bone-r",
+      "sids": [
+        "za:cuboid-bone-l",
+        "za:cuboid-bone-r"
+      ],
+      "score": 56.2,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 15,
+      "system": "esqueletico",
+      "name": "Hyoid bone",
+      "sid": "za:hyoid-bone",
+      "sids": [
+        "za:hyoid-bone"
+      ],
+      "score": 56.1,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 16,
+      "system": "esqueletico",
+      "name": "Coccyx",
+      "sid": "za:coccyx",
+      "sids": [
+        "za:coccyx"
+      ],
+      "score": 55.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 17,
+      "system": "esqueletico",
+      "name": "Vomer",
+      "sid": "za:vomer",
+      "sids": [
+        "za:vomer"
+      ],
+      "score": 54.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 18,
+      "system": "esqueletico",
+      "name": "Xiphoid process",
+      "sid": "za:xiphoid-process",
+      "sids": [
+        "za:xiphoid-process"
+      ],
+      "score": 53.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 19,
+      "system": "esqueletico",
+      "name": "Nasal bone",
+      "sid": "za:nasal-bone-r",
+      "sids": [
+        "za:nasal-bone-l",
+        "za:nasal-bone-r"
+      ],
+      "score": 53.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 20,
+      "system": "esqueletico",
+      "name": "Lacrimal bone",
+      "sid": "za:lacrimal-bone-r",
+      "sids": [
+        "za:lacrimal-bone-l",
+        "za:lacrimal-bone-r"
+      ],
+      "score": 52.8,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 21,
+      "system": "esqueletico",
+      "name": "Femur",
+      "sid": "za:femur-r",
+      "sids": [
+        "za:femur-l",
+        "za:femur-r"
+      ],
+      "score": 14.5,
+      "reasons": []
+    },
+    {
+      "rank": 22,
+      "system": "esqueletico",
+      "name": "Hip bone",
+      "sid": "za:hip-bone-r",
+      "sids": [
+        "za:hip-bone-l",
+        "za:hip-bone-r"
+      ],
+      "score": 14.4,
+      "reasons": []
+    },
+    {
+      "rank": 23,
+      "system": "esqueletico",
+      "name": "Seventh rib",
+      "sid": "za:seventh-rib-r",
+      "sids": [
+        "za:seventh-rib-l",
+        "za:seventh-rib-r"
+      ],
+      "score": 14.1,
+      "reasons": []
+    },
+    {
+      "rank": 24,
+      "system": "esqueletico",
+      "name": "Sixth rib",
+      "sid": "za:sixth-rib-r",
+      "sids": [
+        "za:sixth-rib-l",
+        "za:sixth-rib-r"
+      ],
+      "score": 14.1,
+      "reasons": []
+    },
+    {
+      "rank": 25,
+      "system": "esqueletico",
+      "name": "Eighth rib",
+      "sid": "za:eighth-rib-r",
+      "sids": [
+        "za:eighth-rib-l",
+        "za:eighth-rib-r"
+      ],
+      "score": 13.9,
+      "reasons": []
+    },
+    {
+      "rank": 26,
+      "system": "esqueletico",
+      "name": "Fifth rib",
+      "sid": "za:fifth-rib-r",
+      "sids": [
+        "za:fifth-rib-l",
+        "za:fifth-rib-r"
+      ],
+      "score": 13.8,
+      "reasons": []
+    },
+    {
+      "rank": 27,
+      "system": "esqueletico",
+      "name": "Ninth rib",
+      "sid": "za:ninth-rib-r",
+      "sids": [
+        "za:ninth-rib-l",
+        "za:ninth-rib-r"
+      ],
+      "score": 13.5,
+      "reasons": []
+    },
+    {
+      "rank": 28,
+      "system": "esqueletico",
+      "name": "Fourth rib",
+      "sid": "za:fourth-rib-r",
+      "sids": [
+        "za:fourth-rib-l",
+        "za:fourth-rib-r"
+      ],
+      "score": 13.4,
+      "reasons": []
+    },
+    {
+      "rank": 29,
+      "system": "esqueletico",
+      "name": "Tenth rib",
+      "sid": "za:tenth-rib-r",
+      "sids": [
+        "za:tenth-rib-l",
+        "za:tenth-rib-r"
+      ],
+      "score": 13.1,
+      "reasons": []
+    },
+    {
+      "rank": 30,
+      "system": "esqueletico",
+      "name": "Tibia",
+      "sid": "za:tibia-r",
+      "sids": [
+        "za:tibia-l",
+        "za:tibia-r"
+      ],
+      "score": 13.1,
+      "reasons": []
+    },
+    {
+      "rank": 31,
+      "system": "esqueletico",
+      "name": "Humerus",
+      "sid": "za:humerus-r",
+      "sids": [
+        "za:humerus-l",
+        "za:humerus-r"
+      ],
+      "score": 13,
+      "reasons": []
+    },
+    {
+      "rank": 32,
+      "system": "esqueletico",
+      "name": "Third rib",
+      "sid": "za:third-rib-r",
+      "sids": [
+        "za:third-rib-l",
+        "za:third-rib-r"
+      ],
+      "score": 12.6,
+      "reasons": []
+    },
+    {
+      "rank": 33,
+      "system": "esqueletico",
+      "name": "Parietal bone",
+      "sid": "za:parietal-bone-r",
+      "sids": [
+        "za:parietal-bone-l",
+        "za:parietal-bone-r"
+      ],
+      "score": 12.5,
+      "reasons": []
+    },
+    {
+      "rank": 34,
+      "system": "esqueletico",
+      "name": "Sacrum",
+      "sid": "za:sacrum",
+      "sids": [
+        "za:sacrum"
+      ],
+      "score": 12.4,
+      "reasons": []
+    },
+    {
+      "rank": 35,
+      "system": "esqueletico",
+      "name": "Ulna",
+      "sid": "za:ulna-r",
+      "sids": [
+        "za:ulna-l",
+        "za:ulna-r"
+      ],
+      "score": 12.2,
+      "reasons": []
+    },
+    {
+      "rank": 36,
+      "system": "esqueletico",
+      "name": "Eleventh rib",
+      "sid": "za:eleventh-rib-r",
+      "sids": [
+        "za:eleventh-rib-l",
+        "za:eleventh-rib-r"
+      ],
+      "score": 12.1,
+      "reasons": []
+    },
+    {
+      "rank": 37,
+      "system": "esqueletico",
+      "name": "Radius",
+      "sid": "za:radius-r",
+      "sids": [
+        "za:radius-l",
+        "za:radius-r"
+      ],
+      "score": 12,
+      "reasons": []
+    },
+    {
+      "rank": 38,
+      "system": "esqueletico",
+      "name": "Frontal bone",
+      "sid": "za:frontal-bone",
+      "sids": [
+        "za:frontal-bone"
+      ],
+      "score": 11.8,
+      "reasons": []
+    },
+    {
+      "rank": 39,
+      "system": "esqueletico",
+      "name": "Second rib",
+      "sid": "za:second-rib-r",
+      "sids": [
+        "za:second-rib-l",
+        "za:second-rib-r"
+      ],
+      "score": 11.7,
+      "reasons": []
+    },
+    {
+      "rank": 40,
+      "system": "esqueletico",
+      "name": "Clavicle",
+      "sid": "za:clavicle-r",
+      "sids": [
+        "za:clavicle-l",
+        "za:clavicle-r"
+      ],
+      "score": 10.9,
+      "reasons": []
+    },
+    {
+      "rank": 41,
+      "system": "esqueletico",
+      "name": "Vertebra L5",
+      "sid": "za:vertebra-l5",
+      "sids": [
+        "za:vertebra-l5"
+      ],
+      "score": 10.6,
+      "reasons": []
+    },
+    {
+      "rank": 42,
+      "system": "esqueletico",
+      "name": "Fibula",
+      "sid": "za:fibula-r",
+      "sids": [
+        "za:fibula-l",
+        "za:fibula-r"
+      ],
+      "score": 10.5,
+      "reasons": []
+    },
+    {
+      "rank": 43,
+      "system": "esqueletico",
+      "name": "Vertebra L1",
+      "sid": "za:vertebra-l1",
+      "sids": [
+        "za:vertebra-l1"
+      ],
+      "score": 10.3,
+      "reasons": []
+    },
+    {
+      "rank": 44,
+      "system": "esqueletico",
+      "name": "Vertebra L2",
+      "sid": "za:vertebra-l2",
+      "sids": [
+        "za:vertebra-l2"
+      ],
+      "score": 10.2,
+      "reasons": []
+    },
+    {
+      "rank": 45,
+      "system": "esqueletico",
+      "name": "Vertebra T10",
+      "sid": "za:vertebra-t10",
+      "sids": [
+        "za:vertebra-t10"
+      ],
+      "score": 10.2,
+      "reasons": []
+    },
+    {
+      "rank": 46,
+      "system": "esqueletico",
+      "name": "Vertebra L3",
+      "sid": "za:vertebra-l3",
+      "sids": [
+        "za:vertebra-l3"
+      ],
+      "score": 10,
+      "reasons": []
+    },
+    {
+      "rank": 47,
+      "system": "esqueletico",
+      "name": "Vertebra L4",
+      "sid": "za:vertebra-l4",
+      "sids": [
+        "za:vertebra-l4"
+      ],
+      "score": 10,
+      "reasons": []
+    },
+    {
+      "rank": 48,
+      "system": "esqueletico",
+      "name": "Vertebra T6",
+      "sid": "za:vertebra-t6",
+      "sids": [
+        "za:vertebra-t6"
+      ],
+      "score": 10,
+      "reasons": []
+    },
+    {
+      "rank": 49,
+      "system": "esqueletico",
+      "name": "Vertebra T7",
+      "sid": "za:vertebra-t7",
+      "sids": [
+        "za:vertebra-t7"
+      ],
+      "score": 10,
+      "reasons": []
+    },
+    {
+      "rank": 50,
+      "system": "esqueletico",
+      "name": "Vertebra T8",
+      "sid": "za:vertebra-t8",
+      "sids": [
+        "za:vertebra-t8"
+      ],
+      "score": 10,
+      "reasons": []
+    },
+    {
+      "rank": 51,
+      "system": "esqueletico",
+      "name": "Vertebra T9",
+      "sid": "za:vertebra-t9",
+      "sids": [
+        "za:vertebra-t9"
+      ],
+      "score": 10,
+      "reasons": []
+    },
+    {
+      "rank": 52,
+      "system": "esqueletico",
+      "name": "Costal cartilage of seventh rib",
+      "sid": "za:costal-cartilage-of-seventh-rib-r",
+      "sids": [
+        "za:costal-cartilage-of-seventh-rib-l",
+        "za:costal-cartilage-of-seventh-rib-r"
+      ],
+      "score": 9.9,
+      "reasons": []
+    },
+    {
+      "rank": 53,
+      "system": "esqueletico",
+      "name": "Twelfth rib",
+      "sid": "za:twelfth-rib-r",
+      "sids": [
+        "za:twelfth-rib-l",
+        "za:twelfth-rib-r"
+      ],
+      "score": 9.8,
+      "reasons": []
+    },
+    {
+      "rank": 54,
+      "system": "esqueletico",
+      "name": "Vertebra T5",
+      "sid": "za:vertebra-t5",
+      "sids": [
+        "za:vertebra-t5"
+      ],
+      "score": 9.7,
+      "reasons": []
+    },
+    {
+      "rank": 55,
+      "system": "esqueletico",
+      "name": "Costal cartilage of eighth rib",
+      "sid": "za:costal-cartilage-of-eighth-rib-r",
+      "sids": [
+        "za:costal-cartilage-of-eighth-rib-l",
+        "za:costal-cartilage-of-eighth-rib-r"
+      ],
+      "score": 9.6,
+      "reasons": []
+    },
+    {
+      "rank": 56,
+      "system": "esqueletico",
+      "name": "Vertebra T11",
+      "sid": "za:vertebra-t11",
+      "sids": [
+        "za:vertebra-t11"
+      ],
+      "score": 9.6,
+      "reasons": []
+    },
+    {
+      "rank": 57,
+      "system": "esqueletico",
+      "name": "First rib",
+      "sid": "za:first-rib-r",
+      "sids": [
+        "za:first-rib-l",
+        "za:first-rib-r"
+      ],
+      "score": 9.5,
+      "reasons": []
+    },
+    {
+      "rank": 58,
+      "system": "esqueletico",
+      "name": "Vertebra T3",
+      "sid": "za:vertebra-t3",
+      "sids": [
+        "za:vertebra-t3"
+      ],
+      "score": 9.4,
+      "reasons": []
+    },
+    {
+      "rank": 59,
+      "system": "esqueletico",
+      "name": "Vertebra T4",
+      "sid": "za:vertebra-t4",
+      "sids": [
+        "za:vertebra-t4"
+      ],
+      "score": 9.4,
+      "reasons": []
+    },
+    {
+      "rank": 60,
+      "system": "esqueletico",
+      "name": "Vertebra T12",
+      "sid": "za:vertebra-t12",
+      "sids": [
+        "za:vertebra-t12"
+      ],
+      "score": 9.2,
+      "reasons": []
+    },
+    {
+      "rank": 61,
+      "system": "esqueletico",
+      "name": "Vertebra T2",
+      "sid": "za:vertebra-t2",
+      "sids": [
+        "za:vertebra-t2"
+      ],
+      "score": 9.1,
+      "reasons": []
+    },
+    {
+      "rank": 62,
+      "system": "esqueletico",
+      "name": "Vertebra T1",
+      "sid": "za:vertebra-t1",
+      "sids": [
+        "za:vertebra-t1"
+      ],
+      "score": 9,
+      "reasons": []
+    },
+    {
+      "rank": 63,
+      "system": "esqueletico",
+      "name": "Costal cartilage of ninth rib",
+      "sid": "za:costal-cartilage-of-ninth-rib-r",
+      "sids": [
+        "za:costal-cartilage-of-ninth-rib-l",
+        "za:costal-cartilage-of-ninth-rib-r"
+      ],
+      "score": 8.9,
+      "reasons": []
+    },
+    {
+      "rank": 64,
+      "system": "esqueletico",
+      "name": "Vertebra C7",
+      "sid": "za:vertebra-c7",
+      "sids": [
+        "za:vertebra-c7"
+      ],
+      "score": 8.5,
+      "reasons": []
+    },
+    {
+      "rank": 65,
+      "system": "esqueletico",
+      "name": "Axis (C2)",
+      "sid": "za:axis-c2",
+      "sids": [
+        "za:axis-c2"
+      ],
+      "score": 8.3,
+      "reasons": []
+    },
+    {
+      "rank": 66,
+      "system": "esqueletico",
+      "name": "Costal cartilage of tenth rib",
+      "sid": "za:costal-cartilage-of-tenth-rib-r",
+      "sids": [
+        "za:costal-cartilage-of-tenth-rib-l",
+        "za:costal-cartilage-of-tenth-rib-r"
+      ],
+      "score": 8.2,
+      "reasons": []
+    },
+    {
+      "rank": 67,
+      "system": "esqueletico",
+      "name": "Costal cartilage of sixth rib",
+      "sid": "za:costal-cartilage-of-sixth-rib-r",
+      "sids": [
+        "za:costal-cartilage-of-sixth-rib-l",
+        "za:costal-cartilage-of-sixth-rib-r"
+      ],
+      "score": 8.1,
+      "reasons": []
+    },
+    {
+      "rank": 68,
+      "system": "esqueletico",
+      "name": "Vertebra C6",
+      "sid": "za:vertebra-c6",
+      "sids": [
+        "za:vertebra-c6"
+      ],
+      "score": 7.9,
+      "reasons": []
+    },
+    {
+      "rank": 69,
+      "system": "esqueletico",
+      "name": "Atlas (C1)",
+      "sid": "za:atlas-c1",
+      "sids": [
+        "za:atlas-c1"
+      ],
+      "score": 7.7,
+      "reasons": []
+    },
+    {
+      "rank": 70,
+      "system": "esqueletico",
+      "name": "Fifth metatarsal bone",
+      "sid": "za:fifth-metatarsal-bone-r",
+      "sids": [
+        "za:fifth-metatarsal-bone-l",
+        "za:fifth-metatarsal-bone-r"
+      ],
+      "score": 7.7,
+      "reasons": []
+    },
+    {
+      "rank": 71,
+      "system": "esqueletico",
+      "name": "Vertebra C3",
+      "sid": "za:vertebra-c3",
+      "sids": [
+        "za:vertebra-c3"
+      ],
+      "score": 7.7,
+      "reasons": []
+    },
+    {
+      "rank": 72,
+      "system": "esqueletico",
+      "name": "Vertebra C5",
+      "sid": "za:vertebra-c5",
+      "sids": [
+        "za:vertebra-c5"
+      ],
+      "score": 7.6,
+      "reasons": []
+    },
+    {
+      "rank": 73,
+      "system": "esqueletico",
+      "name": "Fourth metatarsal bone",
+      "sid": "za:fourth-metatarsal-bone-r",
+      "sids": [
+        "za:fourth-metatarsal-bone-l",
+        "za:fourth-metatarsal-bone-r"
+      ],
+      "score": 7.5,
+      "reasons": []
+    },
+    {
+      "rank": 74,
+      "system": "esqueletico",
+      "name": "Vertebra C4",
+      "sid": "za:vertebra-c4",
+      "sids": [
+        "za:vertebra-c4"
+      ],
+      "score": 7.5,
+      "reasons": []
+    },
+    {
+      "rank": 75,
+      "system": "esqueletico",
+      "name": "Third metatarsal bone",
+      "sid": "za:third-metatarsal-bone-r",
+      "sids": [
+        "za:third-metatarsal-bone-l",
+        "za:third-metatarsal-bone-r"
+      ],
+      "score": 7.4,
+      "reasons": []
+    },
+    {
+      "rank": 76,
+      "system": "esqueletico",
+      "name": "Zygomatic bone",
+      "sid": "za:zygomatic-bone-r",
+      "sids": [
+        "za:zygomatic-bone-l",
+        "za:zygomatic-bone-r"
+      ],
+      "score": 7.3,
+      "reasons": []
+    },
+    {
+      "rank": 77,
+      "system": "esqueletico",
+      "name": "First metatarsal bone",
+      "sid": "za:first-metatarsal-bone-r",
+      "sids": [
+        "za:first-metatarsal-bone-l",
+        "za:first-metatarsal-bone-r"
+      ],
+      "score": 7.2,
+      "reasons": []
+    },
+    {
+      "rank": 78,
+      "system": "esqueletico",
+      "name": "Second metacarpal bone",
+      "sid": "za:second-metacarpal-bone-r",
+      "sids": [
+        "za:second-metacarpal-bone-l",
+        "za:second-metacarpal-bone-r"
+      ],
+      "score": 7.2,
+      "reasons": []
+    },
+    {
+      "rank": 79,
+      "system": "esqueletico",
+      "name": "Second metatarsal bone",
+      "sid": "za:second-metatarsal-bone-r",
+      "sids": [
+        "za:second-metatarsal-bone-l",
+        "za:second-metatarsal-bone-r"
+      ],
+      "score": 7.2,
+      "reasons": []
+    },
+    {
+      "rank": 80,
+      "system": "esqueletico",
+      "name": "Thyroid cartilage",
+      "sid": "za:thyroid-cartilage",
+      "sids": [
+        "za:thyroid-cartilage"
+      ],
+      "score": 6.8,
+      "reasons": []
+    },
+    {
+      "rank": 81,
+      "system": "nervoso",
+      "name": "Middle temporal gyrus",
+      "sid": "za:middle-temporal-gyrus-r",
+      "sids": [
+        "za:middle-temporal-gyrus-l",
+        "za:middle-temporal-gyrus-r"
+      ],
+      "score": 158.4,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 82,
+      "system": "nervoso",
+      "name": "Medulla oblongata",
+      "sid": "za:medulla-oblongata-r",
+      "sids": [
+        "za:medulla-oblongata-l",
+        "za:medulla-oblongata-r"
+      ],
+      "score": 155,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 83,
+      "system": "nervoso",
+      "name": "Hypothalamus",
+      "sid": "za:hypothalamus",
+      "sids": [
+        "za:hypothalamus"
+      ],
+      "score": 153.5,
+      "reasons": [
+        "usada em fisiologia",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 84,
+      "system": "nervoso",
+      "name": "White matter of telencephalon",
+      "sid": "za:white-matter-of-telencephalon-r",
+      "sids": [
+        "za:white-matter-of-telencephalon-l",
+        "za:white-matter-of-telencephalon-r"
+      ],
+      "score": 112.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 85,
+      "system": "nervoso",
+      "name": "Spinal dura",
+      "sid": "za:spinal-dura",
+      "sids": [
+        "za:spinal-dura"
+      ],
+      "score": 112.2,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 86,
+      "system": "nervoso",
+      "name": "White matter of spinal cord",
+      "sid": "za:white-matter-of-spinal-cord",
+      "sids": [
+        "za:white-matter-of-spinal-cord"
+      ],
+      "score": 110.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 87,
+      "system": "nervoso",
+      "name": "Allen primary motor cortex",
+      "sid": "za:allen-primary-motor-cortex-r",
+      "sids": [
+        "za:allen-primary-motor-cortex-l",
+        "za:allen-primary-motor-cortex-r"
+      ],
+      "score": 109.6,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 88,
+      "system": "nervoso",
+      "name": "Allen postcentral gyrus",
+      "sid": "za:allen-postcentral-gyrus-r",
+      "sids": [
+        "za:allen-postcentral-gyrus-l",
+        "za:allen-postcentral-gyrus-r"
+      ],
+      "score": 109.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 89,
+      "system": "nervoso",
+      "name": "Middle frontal gyrus",
+      "sid": "za:middle-frontal-gyrus-r",
+      "sids": [
+        "za:middle-frontal-gyrus-l",
+        "za:middle-frontal-gyrus-r"
+      ],
+      "score": 109.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 90,
+      "system": "nervoso",
+      "name": "Superior frontal gyrus",
+      "sid": "za:superior-frontal-gyrus-r",
+      "sids": [
+        "za:superior-frontal-gyrus-l",
+        "za:superior-frontal-gyrus-r"
+      ],
+      "score": 109.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 91,
+      "system": "nervoso",
+      "name": "Anterior horn of spinal cord",
+      "sid": "za:anterior-horn-of-spinal-cord",
+      "sids": [
+        "za:anterior-horn-of-spinal-cord"
+      ],
+      "score": 109.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 92,
+      "system": "nervoso",
+      "name": "Posterior horn of spinal cord",
+      "sid": "za:posterior-horn-of-spinal-cord",
+      "sids": [
+        "za:posterior-horn-of-spinal-cord"
+      ],
+      "score": 109.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 93,
+      "system": "nervoso",
+      "name": "Allen superior frontal gyrus",
+      "sid": "za:allen-superior-frontal-gyrus-r",
+      "sids": [
+        "za:allen-superior-frontal-gyrus-l",
+        "za:allen-superior-frontal-gyrus-r"
+      ],
+      "score": 109.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 94,
+      "system": "nervoso",
+      "name": "Lateral ventricle",
+      "sid": "za:lateral-ventricle-r",
+      "sids": [
+        "za:lateral-ventricle-l",
+        "za:lateral-ventricle-r"
+      ],
+      "score": 109.1,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 95,
+      "system": "nervoso",
+      "name": "Superior temporal sulcus",
+      "sid": "za:superior-temporal-sulcus-r",
+      "sids": [
+        "za:superior-temporal-sulcus-l",
+        "za:superior-temporal-sulcus-r"
+      ],
+      "score": 109,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 96,
+      "system": "nervoso",
+      "name": "Allen middle temporal gyrus",
+      "sid": "za:allen-middle-temporal-gyrus-r",
+      "sids": [
+        "za:allen-middle-temporal-gyrus-l",
+        "za:allen-middle-temporal-gyrus-r"
+      ],
+      "score": 108.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 97,
+      "system": "nervoso",
+      "name": "Corpus callosum",
+      "sid": "za:corpus-callosum",
+      "sids": [
+        "za:corpus-callosum"
+      ],
+      "score": 108.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 98,
+      "system": "nervoso",
+      "name": "Precentral gyrus",
+      "sid": "za:precentral-gyrus-r",
+      "sids": [
+        "za:precentral-gyrus-l",
+        "za:precentral-gyrus-r"
+      ],
+      "score": 108.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 99,
+      "system": "nervoso",
+      "name": "Allen middle frontal gyrus",
+      "sid": "za:allen-middle-frontal-gyrus-r",
+      "sids": [
+        "za:allen-middle-frontal-gyrus-l",
+        "za:allen-middle-frontal-gyrus-r"
+      ],
+      "score": 108.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 100,
+      "system": "nervoso",
+      "name": "Postcentral gyrus",
+      "sid": "za:postcentral-gyrus-r",
+      "sids": [
+        "za:postcentral-gyrus-l",
+        "za:postcentral-gyrus-r"
+      ],
+      "score": 108.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 101,
+      "system": "nervoso",
+      "name": "Central sulcus",
+      "sid": "za:central-sulcus-r",
+      "sids": [
+        "za:central-sulcus-l",
+        "za:central-sulcus-r"
+      ],
+      "score": 108.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 102,
+      "system": "nervoso",
+      "name": "Angular gyrus",
+      "sid": "za:angular-gyrus-r",
+      "sids": [
+        "za:angular-gyrus-l",
+        "za:angular-gyrus-r"
+      ],
+      "score": 108.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 103,
+      "system": "nervoso",
+      "name": "Allen superior temporal gyrus",
+      "sid": "za:allen-superior-temporal-gyrus-r",
+      "sids": [
+        "za:allen-superior-temporal-gyrus-l",
+        "za:allen-superior-temporal-gyrus-r"
+      ],
+      "score": 108,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 104,
+      "system": "nervoso",
+      "name": "Inferior temporal gyrus",
+      "sid": "za:inferior-temporal-gyrus-r",
+      "sids": [
+        "za:inferior-temporal-gyrus-l",
+        "za:inferior-temporal-gyrus-r"
+      ],
+      "score": 108,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 105,
+      "system": "nervoso",
+      "name": "Superior temporal gyrus (Lateral part)",
+      "sid": "za:superior-temporal-gyrus-lateral-part-r",
+      "sids": [
+        "za:superior-temporal-gyrus-lateral-part-l",
+        "za:superior-temporal-gyrus-lateral-part-r"
+      ],
+      "score": 107.8,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 106,
+      "system": "nervoso",
+      "name": "Allen precuneus",
+      "sid": "za:allen-precuneus-r",
+      "sids": [
+        "za:allen-precuneus-l",
+        "za:allen-precuneus-r"
+      ],
+      "score": 107.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 107,
+      "system": "nervoso",
+      "name": "Orbital gyri",
+      "sid": "za:orbital-gyri-r",
+      "sids": [
+        "za:orbital-gyri-l",
+        "za:orbital-gyri-r"
+      ],
+      "score": 107.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 108,
+      "system": "nervoso",
+      "name": "Allen lingual gyrus medial occipitotemporal gyrus",
+      "sid": "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-r",
+      "sids": [
+        "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-l",
+        "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-r"
+      ],
+      "score": 107.6,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 109,
+      "system": "nervoso",
+      "name": "Postcentral sulcus",
+      "sid": "za:postcentral-sulcus-r",
+      "sids": [
+        "za:postcentral-sulcus-l",
+        "za:postcentral-sulcus-r"
+      ],
+      "score": 107.6,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 110,
+      "system": "nervoso",
+      "name": "Allen inferior temporal gyrus",
+      "sid": "za:allen-inferior-temporal-gyrus-r",
+      "sids": [
+        "za:allen-inferior-temporal-gyrus-l",
+        "za:allen-inferior-temporal-gyrus-r"
+      ],
+      "score": 107.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 111,
+      "system": "nervoso",
+      "name": "Medial occipitotemporal gyrus (Parahippocampal*)",
+      "sid": "za:medial-occipitotemporal-gyrus-parahippocampal-r",
+      "sids": [
+        "za:medial-occipitotemporal-gyrus-parahippocampal-l",
+        "za:medial-occipitotemporal-gyrus-parahippocampal-r"
+      ],
+      "score": 107.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 112,
+      "system": "nervoso",
+      "name": "Allen cingulate gyrus caudal posterior part",
+      "sid": "za:allen-cingulate-gyrus-caudal-posterior-part-r",
+      "sids": [
+        "za:allen-cingulate-gyrus-caudal-posterior-part-l",
+        "za:allen-cingulate-gyrus-caudal-posterior-part-r"
+      ],
+      "score": 107.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 113,
+      "system": "nervoso",
+      "name": "Collateral sulcus",
+      "sid": "za:collateral-sulcus-r",
+      "sids": [
+        "za:collateral-sulcus-l",
+        "za:collateral-sulcus-r"
+      ],
+      "score": 107.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 114,
+      "system": "nervoso",
+      "name": "Allen angular gyrus",
+      "sid": "za:allen-angular-gyrus-r",
+      "sids": [
+        "za:allen-angular-gyrus-l",
+        "za:allen-angular-gyrus-r"
+      ],
+      "score": 107.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 115,
+      "system": "nervoso",
+      "name": "Allen inferior occipital gyrus",
+      "sid": "za:allen-inferior-occipital-gyrus-r",
+      "sids": [
+        "za:allen-inferior-occipital-gyrus-l",
+        "za:allen-inferior-occipital-gyrus-r"
+      ],
+      "score": 107.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 116,
+      "system": "nervoso",
+      "name": "Allen superior occipital gyrus",
+      "sid": "za:allen-superior-occipital-gyrus-r",
+      "sids": [
+        "za:allen-superior-occipital-gyrus-l",
+        "za:allen-superior-occipital-gyrus-r"
+      ],
+      "score": 107.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 117,
+      "system": "nervoso",
+      "name": "Lingual gyrus",
+      "sid": "za:lingual-gyrus-r",
+      "sids": [
+        "za:lingual-gyrus-l",
+        "za:lingual-gyrus-r"
+      ],
+      "score": 107.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 118,
+      "system": "nervoso",
+      "name": "Superior frontal sulcus",
+      "sid": "za:superior-frontal-sulcus-r",
+      "sids": [
+        "za:superior-frontal-sulcus-l",
+        "za:superior-frontal-sulcus-r"
+      ],
+      "score": 107.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 119,
+      "system": "nervoso",
+      "name": "Supramarginal gyrus",
+      "sid": "za:supramarginal-gyrus-r",
+      "sids": [
+        "za:supramarginal-gyrus-l",
+        "za:supramarginal-gyrus-r"
+      ],
+      "score": 107.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 120,
+      "system": "nervoso",
+      "name": "Allen supramarginal gyrus",
+      "sid": "za:allen-supramarginal-gyrus-r",
+      "sids": [
+        "za:allen-supramarginal-gyrus-l",
+        "za:allen-supramarginal-gyrus-r"
+      ],
+      "score": 107.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 121,
+      "system": "nervoso",
+      "name": "Precuneus",
+      "sid": "za:precuneus-r",
+      "sids": [
+        "za:precuneus-l",
+        "za:precuneus-r"
+      ],
+      "score": 107.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 122,
+      "system": "nervoso",
+      "name": "Allen frontal pole",
+      "sid": "za:allen-frontal-pole-r",
+      "sids": [
+        "za:allen-frontal-pole-l",
+        "za:allen-frontal-pole-r"
+      ],
+      "score": 106.8,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 123,
+      "system": "nervoso",
+      "name": "Allen cuneus",
+      "sid": "za:allen-cuneus-r",
+      "sids": [
+        "za:allen-cuneus-l",
+        "za:allen-cuneus-r"
+      ],
+      "score": 106.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 124,
+      "system": "nervoso",
+      "name": "Allen cingulate gyrus rostral anterior part",
+      "sid": "za:allen-cingulate-gyrus-rostral-anterior-part-r",
+      "sids": [
+        "za:allen-cingulate-gyrus-rostral-anterior-part-l",
+        "za:allen-cingulate-gyrus-rostral-anterior-part-r"
+      ],
+      "score": 106.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 125,
+      "system": "nervoso",
+      "name": "Inferior frontal sulcus",
+      "sid": "za:inferior-frontal-sulcus-r",
+      "sids": [
+        "za:inferior-frontal-sulcus-l",
+        "za:inferior-frontal-sulcus-r"
+      ],
+      "score": 106.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 126,
+      "system": "nervoso",
+      "name": "Calcarine sulcus",
+      "sid": "za:calcarine-sulcus-r",
+      "sids": [
+        "za:calcarine-sulcus-l",
+        "za:calcarine-sulcus-r"
+      ],
+      "score": 106.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 127,
+      "system": "nervoso",
+      "name": "Lateral occipital gyrus (Middle occipital gyrus*)",
+      "sid": "za:lateral-occipital-gyrus-middle-occipital-gyrus-r",
+      "sids": [
+        "za:lateral-occipital-gyrus-middle-occipital-gyrus-l",
+        "za:lateral-occipital-gyrus-middle-occipital-gyrus-r"
+      ],
+      "score": 106.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 128,
+      "system": "nervoso",
+      "name": "Lateral occipitotemporal gyrus",
+      "sid": "za:lateral-occipitotemporal-gyrus-r",
+      "sids": [
+        "za:lateral-occipitotemporal-gyrus-l",
+        "za:lateral-occipitotemporal-gyrus-r"
+      ],
+      "score": 106.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 129,
+      "system": "muscular",
+      "name": "Acromial part of deltoid muscle",
+      "sid": "za:acromial-part-of-deltoid-muscle-r",
+      "sids": [
+        "za:acromial-part-of-deltoid-muscle-l",
+        "za:acromial-part-of-deltoid-muscle-r"
+      ],
+      "score": 211.4,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 130,
+      "system": "muscular",
+      "name": "Short head of biceps brachii",
+      "sid": "za:short-head-of-biceps-brachii-r",
+      "sids": [
+        "za:short-head-of-biceps-brachii-l",
+        "za:short-head-of-biceps-brachii-r"
+      ],
+      "score": 161.5,
+      "reasons": [
+        "usada em fisiologia",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 131,
+      "system": "muscular",
+      "name": "Inferior pharyngeal constrictor",
+      "sid": "za:inferior-pharyngeal-constrictor-r",
+      "sids": [
+        "za:inferior-pharyngeal-constrictor-l",
+        "za:inferior-pharyngeal-constrictor-r"
+      ],
+      "score": 155.3,
+      "reasons": [
+        "usada em fisiologia",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 132,
+      "system": "muscular",
+      "name": "Rectus femoris muscle",
+      "sid": "za:rectus-femoris-muscle-r",
+      "sids": [
+        "za:rectus-femoris-muscle-l",
+        "za:rectus-femoris-muscle-r"
+      ],
+      "score": 113.9,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 133,
+      "system": "muscular",
+      "name": "Transversus abdominis muscle",
+      "sid": "za:transversus-abdominis-muscle-r",
+      "sids": [
+        "za:transversus-abdominis-muscle-l",
+        "za:transversus-abdominis-muscle-r"
+      ],
+      "score": 65.8,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 134,
+      "system": "muscular",
+      "name": "Flexor digitorum longus",
+      "sid": "za:flexor-digitorum-longus-r",
+      "sids": [
+        "za:flexor-digitorum-longus-l",
+        "za:flexor-digitorum-longus-r"
+      ],
+      "score": 65.2,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 135,
+      "system": "muscular",
+      "name": "Sartorius muscle",
+      "sid": "za:sartorius-muscle-r",
+      "sids": [
+        "za:sartorius-muscle-l",
+        "za:sartorius-muscle-r"
+      ],
+      "score": 65,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 136,
+      "system": "muscular",
+      "name": "Humero-ulnar head of flexor digitorum superficialis",
+      "sid": "za:humero-ulnar-head-of-flexor-digitorum-superficialis-r",
+      "sids": [
+        "za:humero-ulnar-head-of-flexor-digitorum-superficialis-l",
+        "za:humero-ulnar-head-of-flexor-digitorum-superficialis-r"
+      ],
+      "score": 64.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 137,
+      "system": "muscular",
+      "name": "Flexor digitorum profundus",
+      "sid": "za:flexor-digitorum-profundus-r",
+      "sids": [
+        "za:flexor-digitorum-profundus-l",
+        "za:flexor-digitorum-profundus-r"
+      ],
+      "score": 64.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 138,
+      "system": "muscular",
+      "name": "Extensor digitorum",
+      "sid": "za:extensor-digitorum-r",
+      "sids": [
+        "za:extensor-digitorum-l",
+        "za:extensor-digitorum-r"
+      ],
+      "score": 64.4,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 139,
+      "system": "muscular",
+      "name": "Flexor hallucis longus",
+      "sid": "za:flexor-hallucis-longus-r",
+      "sids": [
+        "za:flexor-hallucis-longus-l",
+        "za:flexor-hallucis-longus-r"
+      ],
+      "score": 64.1,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 140,
+      "system": "muscular",
+      "name": "Palmaris longus muscle",
+      "sid": "za:palmaris-longus-muscle-r",
+      "sids": [
+        "za:palmaris-longus-muscle-l",
+        "za:palmaris-longus-muscle-r"
+      ],
+      "score": 64,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 141,
+      "system": "muscular",
+      "name": "Longissimus thoracis muscle",
+      "sid": "za:longissimus-thoracis-muscle-r",
+      "sids": [
+        "za:longissimus-thoracis-muscle-l",
+        "za:longissimus-thoracis-muscle-r"
+      ],
+      "score": 63.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 142,
+      "system": "muscular",
+      "name": "Platysma",
+      "sid": "za:platysma-r",
+      "sids": [
+        "za:platysma-l",
+        "za:platysma-r"
+      ],
+      "score": 63.6,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 143,
+      "system": "muscular",
+      "name": "Rectus abdominis muscle",
+      "sid": "za:rectus-abdominis-muscle-r",
+      "sids": [
+        "za:rectus-abdominis-muscle-l",
+        "za:rectus-abdominis-muscle-r"
+      ],
+      "score": 63.5,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 144,
+      "system": "muscular",
+      "name": "Long head of biceps femoris",
+      "sid": "za:long-head-of-biceps-femoris-r",
+      "sids": [
+        "za:long-head-of-biceps-femoris-l",
+        "za:long-head-of-biceps-femoris-r"
+      ],
+      "score": 63.1,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 145,
+      "system": "muscular",
+      "name": "Adductor magnus",
+      "sid": "za:adductor-magnus-r",
+      "sids": [
+        "za:adductor-magnus-l",
+        "za:adductor-magnus-r"
+      ],
+      "score": 63,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 146,
+      "system": "muscular",
+      "name": "Extensor hallucis longus",
+      "sid": "za:extensor-hallucis-longus-r",
+      "sids": [
+        "za:extensor-hallucis-longus-l",
+        "za:extensor-hallucis-longus-r"
+      ],
+      "score": 62.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 147,
+      "system": "muscular",
+      "name": "Long head of biceps brachii",
+      "sid": "za:long-head-of-biceps-brachii-r",
+      "sids": [
+        "za:long-head-of-biceps-brachii-l",
+        "za:long-head-of-biceps-brachii-r"
+      ],
+      "score": 62.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 148,
+      "system": "muscular",
+      "name": "Humeral head of flexor carpi ulnaris",
+      "sid": "za:humeral-head-of-flexor-carpi-ulnaris-r",
+      "sids": [
+        "za:humeral-head-of-flexor-carpi-ulnaris-l",
+        "za:humeral-head-of-flexor-carpi-ulnaris-r"
+      ],
+      "score": 62.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 149,
+      "system": "muscular",
+      "name": "Semimembranosus muscle",
+      "sid": "za:semimembranosus-muscle-r",
+      "sids": [
+        "za:semimembranosus-muscle-l",
+        "za:semimembranosus-muscle-r"
+      ],
+      "score": 62.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 150,
+      "system": "muscular",
+      "name": "Iliocostalis thoracis muscle",
+      "sid": "za:iliocostalis-thoracis-muscle-r",
+      "sids": [
+        "za:iliocostalis-thoracis-muscle-l",
+        "za:iliocostalis-thoracis-muscle-r"
+      ],
+      "score": 62.6,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 151,
+      "system": "muscular",
+      "name": "Infraspinatus muscle",
+      "sid": "za:infraspinatus-muscle-r",
+      "sids": [
+        "za:infraspinatus-muscle-l",
+        "za:infraspinatus-muscle-r"
+      ],
+      "score": 62.6,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 152,
+      "system": "muscular",
+      "name": "Adductor longus",
+      "sid": "za:adductor-longus-r",
+      "sids": [
+        "za:adductor-longus-l",
+        "za:adductor-longus-r"
+      ],
+      "score": 62.5,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 153,
+      "system": "muscular",
+      "name": "Extensor indicis",
+      "sid": "za:extensor-indicis-r",
+      "sids": [
+        "za:extensor-indicis-l",
+        "za:extensor-indicis-r"
+      ],
+      "score": 62.5,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 154,
+      "system": "muscular",
+      "name": "Soleus muscle",
+      "sid": "za:soleus-muscle-r",
+      "sids": [
+        "za:soleus-muscle-l",
+        "za:soleus-muscle-r"
+      ],
+      "score": 62.5,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 155,
+      "system": "muscular",
+      "name": "Subscapularis muscle",
+      "sid": "za:subscapularis-muscle-r",
+      "sids": [
+        "za:subscapularis-muscle-l",
+        "za:subscapularis-muscle-r"
+      ],
+      "score": 62.4,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 156,
+      "system": "muscular",
+      "name": "Long head of triceps brachii",
+      "sid": "za:long-head-of-triceps-brachii-r",
+      "sids": [
+        "za:long-head-of-triceps-brachii-l",
+        "za:long-head-of-triceps-brachii-r"
+      ],
+      "score": 62.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 157,
+      "system": "muscular",
+      "name": "Iliacus muscle",
+      "sid": "za:iliacus-muscle-r",
+      "sids": [
+        "za:iliacus-muscle-l",
+        "za:iliacus-muscle-r"
+      ],
+      "score": 62.2,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 158,
+      "system": "muscular",
+      "name": "Omohyoid muscle",
+      "sid": "za:omohyoid-muscle-r",
+      "sids": [
+        "za:omohyoid-muscle-l",
+        "za:omohyoid-muscle-r"
+      ],
+      "score": 61.8,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 159,
+      "system": "muscular",
+      "name": "Abductor pollicis longus",
+      "sid": "za:abductor-pollicis-longus-r",
+      "sids": [
+        "za:abductor-pollicis-longus-l",
+        "za:abductor-pollicis-longus-r"
+      ],
+      "score": 61.5,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 160,
+      "system": "muscular",
+      "name": "Lateral head of triceps brachii",
+      "sid": "za:lateral-head-of-triceps-brachii-r",
+      "sids": [
+        "za:lateral-head-of-triceps-brachii-l",
+        "za:lateral-head-of-triceps-brachii-r"
+      ],
+      "score": 61.5,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 161,
+      "system": "muscular",
+      "name": "Adductor brevis",
+      "sid": "za:adductor-brevis-r",
+      "sids": [
+        "za:adductor-brevis-l",
+        "za:adductor-brevis-r"
+      ],
+      "score": 61.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 162,
+      "system": "muscular",
+      "name": "Pectineus muscle",
+      "sid": "za:pectineus-muscle-r",
+      "sids": [
+        "za:pectineus-muscle-l",
+        "za:pectineus-muscle-r"
+      ],
+      "score": 61.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 163,
+      "system": "muscular",
+      "name": "Teres minor muscle",
+      "sid": "za:teres-minor-muscle-r",
+      "sids": [
+        "za:teres-minor-muscle-l",
+        "za:teres-minor-muscle-r"
+      ],
+      "score": 61.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 164,
+      "system": "muscular",
+      "name": "Ulnar head of flexor carpi ulnaris",
+      "sid": "za:ulnar-head-of-flexor-carpi-ulnaris-r",
+      "sids": [
+        "za:ulnar-head-of-flexor-carpi-ulnaris-l",
+        "za:ulnar-head-of-flexor-carpi-ulnaris-r"
+      ],
+      "score": 61.2,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 165,
+      "system": "muscular",
+      "name": "Teres major muscle",
+      "sid": "za:teres-major-muscle-r",
+      "sids": [
+        "za:teres-major-muscle-l",
+        "za:teres-major-muscle-r"
+      ],
+      "score": 61.1,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 166,
+      "system": "muscular",
+      "name": "Temporalis muscle",
+      "sid": "za:temporalis-muscle-r",
+      "sids": [
+        "za:temporalis-muscle-l",
+        "za:temporalis-muscle-r"
+      ],
+      "score": 60.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 167,
+      "system": "muscular",
+      "name": "Obturator internus",
+      "sid": "za:obturator-internus-r",
+      "sids": [
+        "za:obturator-internus-l",
+        "za:obturator-internus-r"
+      ],
+      "score": 60.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 168,
+      "system": "muscular",
+      "name": "Short head of biceps femoris",
+      "sid": "za:short-head-of-biceps-femoris-r",
+      "sids": [
+        "za:short-head-of-biceps-femoris-l",
+        "za:short-head-of-biceps-femoris-r"
+      ],
+      "score": 60.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 169,
+      "system": "digestorio",
+      "name": "Liver",
+      "sid": "za:liver",
+      "sids": [
+        "za:liver"
+      ],
+      "score": 364.9,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz",
+        "usada em vias",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 170,
+      "system": "digestorio",
+      "name": "Stomach",
+      "sid": "za:stomach",
+      "sids": [
+        "za:stomach"
+      ],
+      "score": 363,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz",
+        "usada em vias",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 171,
+      "system": "digestorio",
+      "name": "Duodenum",
+      "sid": "za:duodenum",
+      "sids": [
+        "za:duodenum"
+      ],
+      "score": 210.8,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 172,
+      "system": "digestorio",
+      "name": "Capsule of the liver",
+      "sid": "za:vh-f-capsule-of-the-liver",
+      "sids": [
+        "za:vh-f-capsule-of-the-liver"
+      ],
+      "score": 115.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 173,
+      "system": "digestorio",
+      "name": "Liver capsule",
+      "sid": "za:vh-m-liver-capsule",
+      "sids": [
+        "za:vh-m-liver-capsule"
+      ],
+      "score": 115.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 174,
+      "system": "digestorio",
+      "name": "Diaphragmatic surface of liver",
+      "sid": "za:vh-f-diaphragmatic-surface-of-liver",
+      "sids": [
+        "za:vh-f-diaphragmatic-surface-of-liver"
+      ],
+      "score": 114.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 175,
+      "system": "digestorio",
+      "name": "Bare area of liver",
+      "sid": "za:vh-m-bare-area-of-liver",
+      "sids": [
+        "za:vh-f-bare-area-of-liver",
+        "za:vh-m-bare-area-of-liver"
+      ],
+      "score": 113,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 176,
+      "system": "digestorio",
+      "name": "Mucosa of stomach",
+      "sid": "za:mucosa-of-stomach",
+      "sids": [
+        "za:mucosa-of-stomach"
+      ],
+      "score": 112.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 177,
+      "system": "digestorio",
+      "name": "Anterior lateral segment of liver (VI)",
+      "sid": "za:anterior-lateral-segment-of-liver-vi",
+      "sids": [
+        "za:anterior-lateral-segment-of-liver-vi"
+      ],
+      "score": 111.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 178,
+      "system": "digestorio",
+      "name": "Transverse colon",
+      "sid": "za:transverse-colon",
+      "sids": [
+        "za:transverse-colon"
+      ],
+      "score": 111.9,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 179,
+      "system": "digestorio",
+      "name": "Posterior lateral segment of liver (VII)",
+      "sid": "za:posterior-lateral-segment-of-liver-vii",
+      "sids": [
+        "za:posterior-lateral-segment-of-liver-vii"
+      ],
+      "score": 111.8,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 180,
+      "system": "digestorio",
+      "name": "Gastric impression of liver",
+      "sid": "za:vh-m-gastric-impression-of-liver",
+      "sids": [
+        "za:vh-f-gastric-impression-of-liver",
+        "za:vh-m-gastric-impression-of-liver"
+      ],
+      "score": 111.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 181,
+      "system": "digestorio",
+      "name": "Posterior medial segment of liver (VIII)",
+      "sid": "za:posterior-medial-segment-of-liver-viii",
+      "sids": [
+        "za:posterior-medial-segment-of-liver-viii"
+      ],
+      "score": 111.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 182,
+      "system": "digestorio",
+      "name": "Left medial segment of liver (IV)",
+      "sid": "za:left-medial-segment-of-liver-iv",
+      "sids": [
+        "za:left-medial-segment-of-liver-iv"
+      ],
+      "score": 110.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 183,
+      "system": "digestorio",
+      "name": "Left posterior lateral segment of liver (II)",
+      "sid": "za:left-posterior-lateral-segment-of-liver-ii",
+      "sids": [
+        "za:left-posterior-lateral-segment-of-liver-ii"
+      ],
+      "score": 110.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 184,
+      "system": "digestorio",
+      "name": "Anterior medial segment of liver (V)",
+      "sid": "za:anterior-medial-segment-of-liver-v",
+      "sids": [
+        "za:anterior-medial-segment-of-liver-v"
+      ],
+      "score": 110.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 185,
+      "system": "digestorio",
+      "name": "Pancreas",
+      "sid": "za:pancreas",
+      "sids": [
+        "za:pancreas"
+      ],
+      "score": 110.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 186,
+      "system": "digestorio",
+      "name": "Caudate lobe of liver",
+      "sid": "za:vh-m-caudate-lobe-of-liver",
+      "sids": [
+        "za:vh-m-caudate-lobe-of-liver"
+      ],
+      "score": 110.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 187,
+      "system": "digestorio",
+      "name": "Left anterior lateral segment of liver (III)",
+      "sid": "za:left-anterior-lateral-segment-of-liver-iii",
+      "sids": [
+        "za:left-anterior-lateral-segment-of-liver-iii"
+      ],
+      "score": 110.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 188,
+      "system": "digestorio",
+      "name": "Quadrate lobe of liver",
+      "sid": "za:vh-m-quadrate-lobe-of-liver",
+      "sids": [
+        "za:vh-m-quadrate-lobe-of-liver"
+      ],
+      "score": 109.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 189,
+      "system": "digestorio",
+      "name": "Colic impression of liver",
+      "sid": "za:vh-m-colic-impression-of-liver",
+      "sids": [
+        "za:vh-f-colic-impression-of-liver",
+        "za:vh-m-colic-impression-of-liver"
+      ],
+      "score": 109.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 190,
+      "system": "digestorio",
+      "name": "Posterior segment of liver (I)",
+      "sid": "za:posterior-segment-of-liver-i",
+      "sids": [
+        "za:posterior-segment-of-liver-i"
+      ],
+      "score": 108.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 191,
+      "system": "digestorio",
+      "name": "Renal impression of liver",
+      "sid": "za:vh-m-renal-impression-of-liver",
+      "sids": [
+        "za:vh-f-renal-impression-of-liver",
+        "za:vh-m-renal-impression-of-liver"
+      ],
+      "score": 108.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 192,
+      "system": "digestorio",
+      "name": "Porta hepatis",
+      "sid": "za:vh-m-porta-hepatis",
+      "sids": [
+        "za:vh-f-porta-hepatis",
+        "za:vh-m-porta-hepatis"
+      ],
+      "score": 107.8,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 193,
+      "system": "digestorio",
+      "name": "Tongue",
+      "sid": "za:tongue",
+      "sids": [
+        "za:tongue"
+      ],
+      "score": 107.7,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 194,
+      "system": "digestorio",
+      "name": "Gallbladder",
+      "sid": "za:gallbladder",
+      "sids": [
+        "za:gallbladder"
+      ],
+      "score": 107.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 195,
+      "system": "digestorio",
+      "name": "Esophageal impression of liver",
+      "sid": "za:vh-m-esophageal-impression-of-liver",
+      "sids": [
+        "za:vh-f-esophageal-impression-of-liver",
+        "za:vh-m-esophageal-impression-of-liver"
+      ],
+      "score": 107,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 196,
+      "system": "digestorio",
+      "name": "Suprarenal impression of liver",
+      "sid": "za:vh-m-suprarenal-impression-of-liver",
+      "sids": [
+        "za:vh-f-suprarenal-impression-of-liver",
+        "za:vh-m-suprarenal-impression-of-liver"
+      ],
+      "score": 105.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 197,
+      "system": "digestorio",
+      "name": "Duodenal impression of liver",
+      "sid": "za:vh-m-duodenal-impression-of-liver",
+      "sids": [
+        "za:vh-f-duodenal-impression-of-liver",
+        "za:vh-m-duodenal-impression-of-liver"
+      ],
+      "score": 104.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 198,
+      "system": "digestorio",
+      "name": "Sublingual gland",
+      "sid": "za:sublingual-gland-r",
+      "sids": [
+        "za:sublingual-gland-l",
+        "za:sublingual-gland-r"
+      ],
+      "score": 102.9,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 199,
+      "system": "digestorio",
+      "name": "External anal sphincter",
+      "sid": "za:external-anal-sphincter-r",
+      "sids": [
+        "za:external-anal-sphincter-l",
+        "za:external-anal-sphincter-r"
+      ],
+      "score": 53.4,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 200,
+      "system": "digestorio",
+      "name": "Mesocolic taenia",
+      "sid": "za:mesocolic-taenia",
+      "sids": [
+        "za:mesocolic-taenia"
+      ],
+      "score": 15.5,
+      "reasons": []
+    },
+    {
+      "rank": 201,
+      "system": "digestorio",
+      "name": "Diaphragmatic surface",
+      "sid": "za:vh-m-diaphragmatic-surface",
+      "sids": [
+        "za:vh-m-diaphragmatic-surface"
+      ],
+      "score": 14.7,
+      "reasons": []
+    },
+    {
+      "rank": 202,
+      "system": "digestorio",
+      "name": "Descending colon",
+      "sid": "za:descending-colon",
+      "sids": [
+        "za:descending-colon"
+      ],
+      "score": 14.1,
+      "reasons": []
+    },
+    {
+      "rank": 203,
+      "system": "digestorio",
+      "name": "Omental taenia",
+      "sid": "za:omental-taenia",
+      "sids": [
+        "za:omental-taenia"
+      ],
+      "score": 13.9,
+      "reasons": []
+    },
+    {
+      "rank": 204,
+      "system": "digestorio",
+      "name": "Free taenia",
+      "sid": "za:free-taenia",
+      "sids": [
+        "za:free-taenia"
+      ],
+      "score": 13.8,
+      "reasons": []
+    },
+    {
+      "rank": 205,
+      "system": "digestorio",
+      "name": "Coronary ligament of liver",
+      "sid": "za:vh-m-coronary-ligament-of-liver",
+      "sids": [
+        "za:vh-f-coronary-ligament-of-liver",
+        "za:vh-m-coronary-ligament-of-liver"
+      ],
+      "score": 13.1,
+      "reasons": []
+    },
+    {
+      "rank": 206,
+      "system": "digestorio",
+      "name": "Right anteroinferior segment",
+      "sid": "za:vh-m-right-anteroinferior-segment",
+      "sids": [
+        "za:vh-f-right-anteroinferior-segment",
+        "za:vh-m-right-anteroinferior-segment"
+      ],
+      "score": 12.1,
+      "reasons": []
+    },
+    {
+      "rank": 207,
+      "system": "digestorio",
+      "name": "Right anterosuperior segment",
+      "sid": "za:vh-m-right-anterosuperior-segment",
+      "sids": [
+        "za:vh-f-right-anterosuperior-segment",
+        "za:vh-m-right-anterosuperior-segment"
+      ],
+      "score": 11.8,
+      "reasons": []
+    },
+    {
+      "rank": 208,
+      "system": "digestorio",
+      "name": "Left superomedial segment",
+      "sid": "za:vh-f-left-superomedial-segment",
+      "sids": [
+        "za:vh-f-left-superomedial-segment"
+      ],
+      "score": 11.7,
+      "reasons": []
+    },
+    {
+      "rank": 209,
+      "system": "cardiovascular",
+      "name": "Left ventricle",
+      "sid": "za:left-ventricle",
+      "sids": [
+        "za:left-ventricle",
+        "za:vh-f-left-ventricle"
+      ],
+      "score": 261.4,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 210,
+      "system": "cardiovascular",
+      "name": "Right ventricle",
+      "sid": "za:right-ventricle",
+      "sids": [
+        "za:right-ventricle",
+        "za:vh-f-right-ventricle"
+      ],
+      "score": 261.1,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 211,
+      "system": "cardiovascular",
+      "name": "Left atrium",
+      "sid": "za:left-atrium",
+      "sids": [
+        "za:left-atrium"
+      ],
+      "score": 211.1,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 212,
+      "system": "cardiovascular",
+      "name": "Right atrium",
+      "sid": "za:right-atrium",
+      "sids": [
+        "za:right-atrium"
+      ],
+      "score": 210.1,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 213,
+      "system": "cardiovascular",
+      "name": "Heart right ventricle",
+      "sid": "za:vh-m-heart-right-ventricle",
+      "sids": [
+        "za:vh-m-heart-right-ventricle"
+      ],
+      "score": 160.9,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 214,
+      "system": "cardiovascular",
+      "name": "Interventricular septum",
+      "sid": "za:vh-m-interventricular-septum",
+      "sids": [
+        "za:vh-f-interventricular-septum",
+        "za:vh-m-interventricular-septum"
+      ],
+      "score": 159.7,
+      "reasons": [
+        "usada em fisiologia",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 215,
+      "system": "cardiovascular",
+      "name": "Left cardiac atrium",
+      "sid": "za:vh-m-left-cardiac-atrium",
+      "sids": [
+        "za:vh-f-left-cardiac-atrium",
+        "za:vh-m-left-cardiac-atrium"
+      ],
+      "score": 159.7,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 216,
+      "system": "cardiovascular",
+      "name": "Pulmonary trunk",
+      "sid": "za:pulmonary-trunk",
+      "sids": [
+        "za:pulmonary-trunk"
+      ],
+      "score": 156.4,
+      "reasons": [
+        "usada em fisiologia",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 217,
+      "system": "cardiovascular",
+      "name": "Heart left ventricle",
+      "sid": "za:vh-m-heart-left-ventricle",
+      "sids": [
+        "za:vh-m-heart-left-ventricle"
+      ],
+      "score": 110.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 218,
+      "system": "cardiovascular",
+      "name": "Right cardiac atrium",
+      "sid": "za:vh-m-right-cardiac-atrium",
+      "sids": [
+        "za:vh-f-right-cardiac-atrium",
+        "za:vh-m-right-cardiac-atrium"
+      ],
+      "score": 110.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 219,
+      "system": "cardiovascular",
+      "name": "Posterior leaflet of left atrioventricular valve",
+      "sid": "za:posterior-leaflet-of-left-atrioventricular-valve",
+      "sids": [
+        "za:posterior-leaflet-of-left-atrioventricular-valve"
+      ],
+      "score": 107.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 220,
+      "system": "cardiovascular",
+      "name": "Inferior papillary muscle of left ventricle",
+      "sid": "za:inferior-papillary-muscle-of-left-ventricle",
+      "sids": [
+        "za:inferior-papillary-muscle-of-left-ventricle"
+      ],
+      "score": 106.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 221,
+      "system": "cardiovascular",
+      "name": "Inferior leaflet of right atrioventricular valve",
+      "sid": "za:inferior-leaflet-of-right-atrioventricular-valve",
+      "sids": [
+        "za:inferior-leaflet-of-right-atrioventricular-valve"
+      ],
+      "score": 106.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 222,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart anterolateral",
+      "sid": "za:vh-m-papillary-muscle-of-heart-anterolateral",
+      "sids": [
+        "za:vh-m-papillary-muscle-of-heart-anterolateral"
+      ],
+      "score": 106,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 223,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart antlat",
+      "sid": "za:vh-f-papillary-muscle-of-heart-antlat",
+      "sids": [
+        "za:vh-f-papillary-muscle-of-heart-antlat"
+      ],
+      "score": 106,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 224,
+      "system": "cardiovascular",
+      "name": "Anterior papillary muscle of right ventricle",
+      "sid": "za:anterior-papillary-muscle-of-right-ventricle",
+      "sids": [
+        "za:anterior-papillary-muscle-of-right-ventricle"
+      ],
+      "score": 105.6,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 225,
+      "system": "cardiovascular",
+      "name": "Septal leaflet of right atrioventricular valve",
+      "sid": "za:septal-leaflet-of-right-atrioventricular-valve",
+      "sids": [
+        "za:septal-leaflet-of-right-atrioventricular-valve"
+      ],
+      "score": 105.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 226,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart posmed",
+      "sid": "za:vh-f-papillary-muscle-of-heart-posmed",
+      "sids": [
+        "za:vh-f-papillary-muscle-of-heart-posmed"
+      ],
+      "score": 105.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 227,
+      "system": "cardiovascular",
+      "name": "Inferior papillary muscle of right ventricle",
+      "sid": "za:inferior-papillary-muscle-of-right-ventricle",
+      "sids": [
+        "za:inferior-papillary-muscle-of-right-ventricle"
+      ],
+      "score": 104.6,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 228,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart posteromedial",
+      "sid": "za:vh-m-papillary-muscle-of-heart-posteromedial",
+      "sids": [
+        "za:vh-m-papillary-muscle-of-heart-posteromedial"
+      ],
+      "score": 104.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 229,
+      "system": "cardiovascular",
+      "name": "Septal papillary muscle of right ventricle",
+      "sid": "za:septal-papillary-muscle-of-right-ventricle",
+      "sids": [
+        "za:septal-papillary-muscle-of-right-ventricle"
+      ],
+      "score": 104,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 230,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart anterior",
+      "sid": "za:vh-m-papillary-muscle-of-heart-anterior",
+      "sids": [
+        "za:vh-m-papillary-muscle-of-heart-anterior"
+      ],
+      "score": 103.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 231,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart ant",
+      "sid": "za:vh-f-papillary-muscle-of-heart-ant",
+      "sids": [
+        "za:vh-f-papillary-muscle-of-heart-ant"
+      ],
+      "score": 103.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 232,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart med",
+      "sid": "za:vh-f-papillary-muscle-of-heart-med",
+      "sids": [
+        "za:vh-f-papillary-muscle-of-heart-med"
+      ],
+      "score": 100.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 233,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart medial",
+      "sid": "za:vh-m-papillary-muscle-of-heart-medial",
+      "sids": [
+        "za:vh-m-papillary-muscle-of-heart-medial"
+      ],
+      "score": 100.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 234,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart posterior",
+      "sid": "za:vh-m-papillary-muscle-of-heart-posterior",
+      "sids": [
+        "za:vh-m-papillary-muscle-of-heart-posterior"
+      ],
+      "score": 100.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 235,
+      "system": "cardiovascular",
+      "name": "Papillary muscle of heart pos",
+      "sid": "za:vh-f-papillary-muscle-of-heart-pos",
+      "sids": [
+        "za:vh-f-papillary-muscle-of-heart-pos"
+      ],
+      "score": 100.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 236,
+      "system": "cardiovascular",
+      "name": "Tricuspid valve",
+      "sid": "za:vh-m-tricuspid-valve",
+      "sids": [
+        "za:vh-f-tricuspid-valve",
+        "za:vh-m-tricuspid-valve"
+      ],
+      "score": 57.3,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 237,
+      "system": "cardiovascular",
+      "name": "Mitral valve",
+      "sid": "za:vh-m-mitral-valve",
+      "sids": [
+        "za:vh-f-mitral-valve",
+        "za:vh-m-mitral-valve"
+      ],
+      "score": 56.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 238,
+      "system": "cardiovascular",
+      "name": "Aortic valve",
+      "sid": "za:vh-m-aortic-valve",
+      "sids": [
+        "za:vh-f-aortic-valve",
+        "za:vh-m-aortic-valve"
+      ],
+      "score": 55.2,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 239,
+      "system": "cardiovascular",
+      "name": "Pulmonary valve",
+      "sid": "za:vh-m-pulmonary-valve",
+      "sids": [
+        "za:vh-f-pulmonary-valve",
+        "za:vh-m-pulmonary-valve"
+      ],
+      "score": 54.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 240,
+      "system": "cardiovascular",
+      "name": "Cavernous sinus",
+      "sid": "za:cavernous-sinus-r",
+      "sids": [
+        "za:cavernous-sinus-l",
+        "za:cavernous-sinus-r"
+      ],
+      "score": 52.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 241,
+      "system": "cardiovascular",
+      "name": "Anterior communicating artery",
+      "sid": "za:anterior-communicating-artery",
+      "sids": [
+        "za:anterior-communicating-artery"
+      ],
+      "score": 50,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 242,
+      "system": "cardiovascular",
+      "name": "Right semilunar leaflet of pulmonary valve",
+      "sid": "za:right-semilunar-leaflet-of-pulmonary-valve",
+      "sids": [
+        "za:right-semilunar-leaflet-of-pulmonary-valve"
+      ],
+      "score": 3.9,
+      "reasons": []
+    },
+    {
+      "rank": 243,
+      "system": "cardiovascular",
+      "name": "Anterior semilunar leaflet of pulmonary valve",
+      "sid": "za:anterior-semilunar-leaflet-of-pulmonary-valve",
+      "sids": [
+        "za:anterior-semilunar-leaflet-of-pulmonary-valve"
+      ],
+      "score": 3.5,
+      "reasons": []
+    },
+    {
+      "rank": 244,
+      "system": "cardiovascular",
+      "name": "Non-coronary leaflet",
+      "sid": "za:non-coronary-leaflet",
+      "sids": [
+        "za:non-coronary-leaflet"
+      ],
+      "score": 3.2,
+      "reasons": []
+    },
+    {
+      "rank": 245,
+      "system": "respiratorio",
+      "name": "Trachea",
+      "sid": "za:trachea",
+      "sids": [
+        "za:trachea"
+      ],
+      "score": 358.2,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz",
+        "usada em vias",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 246,
+      "system": "respiratorio",
+      "name": "Inferior lobe of right lung",
+      "sid": "za:inferior-lobe-of-right-lung",
+      "sids": [
+        "za:inferior-lobe-of-right-lung"
+      ],
+      "score": 214.4,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 247,
+      "system": "respiratorio",
+      "name": "Hilum",
+      "sid": "za:vh-f-hilum-r",
+      "sids": [
+        "za:vh-f-hilum-l",
+        "za:vh-f-hilum-r"
+      ],
+      "score": 160,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 248,
+      "system": "respiratorio",
+      "name": "Pleura",
+      "sid": "za:pleura",
+      "sids": [
+        "za:pleura"
+      ],
+      "score": 116.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 249,
+      "system": "respiratorio",
+      "name": "Superior lobe of left lung",
+      "sid": "za:superior-lobe-of-left-lung",
+      "sids": [
+        "za:superior-lobe-of-left-lung"
+      ],
+      "score": 114.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 250,
+      "system": "respiratorio",
+      "name": "Inferior lobe of left lung",
+      "sid": "za:inferior-lobe-of-left-lung",
+      "sids": [
+        "za:inferior-lobe-of-left-lung"
+      ],
+      "score": 114.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 251,
+      "system": "respiratorio",
+      "name": "Superior lobe of right lung",
+      "sid": "za:superior-lobe-of-right-lung",
+      "sids": [
+        "za:superior-lobe-of-right-lung"
+      ],
+      "score": 113.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 252,
+      "system": "respiratorio",
+      "name": "Middle lobe of right lung",
+      "sid": "za:middle-lobe-of-right-lung",
+      "sids": [
+        "za:middle-lobe-of-right-lung"
+      ],
+      "score": 113.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 253,
+      "system": "respiratorio",
+      "name": "Right anterior bronchopulmonary segm",
+      "sid": "za:vh-f-right-anterior-bronchopulmonary-segm",
+      "sids": [
+        "za:vh-f-right-anterior-bronchopulmonary-segm"
+      ],
+      "score": 112.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 254,
+      "system": "respiratorio",
+      "name": "Left anterior bronchopulmonary segment",
+      "sid": "za:vh-f-left-anterior-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-left-anterior-bronchopulmonary-segment"
+      ],
+      "score": 112,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 255,
+      "system": "respiratorio",
+      "name": "Right anterior basal bronchopulmonary segment",
+      "sid": "za:vh-f-right-anterior-basal-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-right-anterior-basal-bronchopulmonary-segment"
+      ],
+      "score": 111.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 256,
+      "system": "respiratorio",
+      "name": "Lingula superior bronchopulmonary segment",
+      "sid": "za:vh-f-lingula-superior-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-lingula-superior-bronchopulmonary-segment"
+      ],
+      "score": 111.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 257,
+      "system": "respiratorio",
+      "name": "Left medial basal bronchopulmonary segment",
+      "sid": "za:vh-f-left-medial-basal-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-left-medial-basal-bronchopulmonary-segment"
+      ],
+      "score": 111.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 258,
+      "system": "respiratorio",
+      "name": "Left posterior basal bronchopulmonary segment",
+      "sid": "za:vh-f-left-posterior-basal-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-left-posterior-basal-bronchopulmonary-segment"
+      ],
+      "score": 111.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 259,
+      "system": "respiratorio",
+      "name": "Right superior bronchopulmonary segment",
+      "sid": "za:vh-f-right-superior-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-right-superior-bronchopulmonary-segment"
+      ],
+      "score": 111.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 260,
+      "system": "respiratorio",
+      "name": "Left anterior basal bronchopulmonary segment",
+      "sid": "za:vh-f-left-anterior-basal-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-left-anterior-basal-bronchopulmonary-segment"
+      ],
+      "score": 111.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 261,
+      "system": "respiratorio",
+      "name": "Right lateral bronchopulmonary segmennt",
+      "sid": "za:vh-f-right-lateral-bronchopulmonary-segmennt",
+      "sids": [
+        "za:vh-f-right-lateral-bronchopulmonary-segmennt"
+      ],
+      "score": 111.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 262,
+      "system": "respiratorio",
+      "name": "Right posterior bronchopulmonary segment",
+      "sid": "za:vh-f-right-posterior-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-right-posterior-bronchopulmonary-segment"
+      ],
+      "score": 111.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 263,
+      "system": "respiratorio",
+      "name": "Right medial bronchopulmonary segment",
+      "sid": "za:vh-f-right-medial-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-right-medial-bronchopulmonary-segment"
+      ],
+      "score": 110.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 264,
+      "system": "respiratorio",
+      "name": "Right posterior basal bronchopulmonary segment",
+      "sid": "za:vh-f-right-posterior-basal-bronchopulmonary-segment",
+      "sids": [
+        "za:vh-f-right-posterior-basal-bronchopulmonary-segment"
+      ],
+      "score": 110.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 265,
+      "system": "urinario",
+      "name": "Kidney",
+      "sid": "za:kidney-r",
+      "sids": [
+        "za:kidney-l",
+        "za:kidney-r"
+      ],
+      "score": 209.8,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 266,
+      "system": "urinario",
+      "name": "Renal pelvis",
+      "sid": "za:renal-pelvis-r",
+      "sids": [
+        "za:renal-pelvis-l",
+        "za:renal-pelvis-r"
+      ],
+      "score": 207.5,
+      "reasons": [
+        "usada em fisiologia",
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 267,
+      "system": "urinario",
+      "name": "Kidney capsule",
+      "sid": "za:vh-f-kidney-capsule-l",
+      "sids": [
+        "za:vh-f-kidney-capsule-l"
+      ],
+      "score": 161.4,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 268,
+      "system": "urinario",
+      "name": "Renal column",
+      "sid": "za:vh-f-renal-column-l",
+      "sids": [
+        "za:vh-f-renal-column-l"
+      ],
+      "score": 160,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 269,
+      "system": "urinario",
+      "name": "Urinary bladder",
+      "sid": "za:urinary-bladder",
+      "sids": [
+        "za:urinary-bladder"
+      ],
+      "score": 160,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 270,
+      "system": "urinario",
+      "name": "Hilum of kidney",
+      "sid": "za:vh-f-hilum-of-kidney-l",
+      "sids": [
+        "za:vh-f-hilum-of-kidney-l"
+      ],
+      "score": 158.2,
+      "reasons": [
+        "usada em quiz",
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 271,
+      "system": "urinario",
+      "name": "Outer cortex of kidney",
+      "sid": "za:vh-f-outer-cortex-of-kidney-l",
+      "sids": [
+        "za:vh-f-outer-cortex-of-kidney-l"
+      ],
+      "score": 111.4,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 272,
+      "system": "urinario",
+      "name": "Renal pyramid L a",
+      "sid": "za:vh-f-renal-pyramid-l-a",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-a"
+      ],
+      "score": 106.3,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 273,
+      "system": "urinario",
+      "name": "Renal pyramid L f",
+      "sid": "za:vh-f-renal-pyramid-l-f",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-f"
+      ],
+      "score": 105.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 274,
+      "system": "urinario",
+      "name": "Renal pyramid L g",
+      "sid": "za:vh-f-renal-pyramid-l-g",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-g"
+      ],
+      "score": 105.9,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 275,
+      "system": "urinario",
+      "name": "Renal pyramid L i",
+      "sid": "za:vh-f-renal-pyramid-l-i",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-i"
+      ],
+      "score": 105.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 276,
+      "system": "urinario",
+      "name": "Renal pyramid L j",
+      "sid": "za:vh-f-renal-pyramid-l-j",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-j"
+      ],
+      "score": 104.8,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 277,
+      "system": "urinario",
+      "name": "Renal pyramid L d",
+      "sid": "za:vh-f-renal-pyramid-l-d",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-d"
+      ],
+      "score": 104.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 278,
+      "system": "urinario",
+      "name": "Renal pyramid L e",
+      "sid": "za:vh-f-renal-pyramid-l-e",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-e"
+      ],
+      "score": 104.6,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 279,
+      "system": "urinario",
+      "name": "Renal pyramid L k",
+      "sid": "za:vh-f-renal-pyramid-l-k",
+      "sids": [
+        "za:vh-f-renal-pyramid-l-k"
+      ],
+      "score": 104.5,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 280,
+      "system": "linfatico",
+      "name": "Juxta-oesophageal nodes",
+      "sid": "za:juxta-oesophageal-nodes",
+      "sids": [
+        "za:juxta-oesophageal-nodes"
+      ],
+      "score": 106.2,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 281,
+      "system": "linfatico",
+      "name": "Central axillary nodes",
+      "sid": "za:central-axillary-nodes-r",
+      "sids": [
+        "za:central-axillary-nodes-l",
+        "za:central-axillary-nodes-r"
+      ],
+      "score": 100.2,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 282,
+      "system": "linfatico",
+      "name": "Spleen",
+      "sid": "za:spleen",
+      "sids": [
+        "za:spleen"
+      ],
+      "score": 60.4,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 283,
+      "system": "linfatico",
+      "name": "Palatine tonsil",
+      "sid": "za:palatine-tonsil-r",
+      "sids": [
+        "za:palatine-tonsil-l",
+        "za:palatine-tonsil-r"
+      ],
+      "score": 50.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 284,
+      "system": "linfatico",
+      "name": "Intrapulmonary nodes",
+      "sid": "za:intrapulmonary-nodes",
+      "sids": [
+        "za:intrapulmonary-nodes"
+      ],
+      "score": 14.5,
+      "reasons": []
+    },
+    {
+      "rank": 285,
+      "system": "linfatico",
+      "name": "Paracolic superior mesenteric nodes",
+      "sid": "za:paracolic-superior-mesenteric-nodes",
+      "sids": [
+        "za:paracolic-superior-mesenteric-nodes"
+      ],
+      "score": 13.2,
+      "reasons": []
+    },
+    {
+      "rank": 286,
+      "system": "linfatico",
+      "name": "Juxta-intestinal mesenteric nodes",
+      "sid": "za:juxta-intestinal-mesenteric-nodes",
+      "sids": [
+        "za:juxta-intestinal-mesenteric-nodes"
+      ],
+      "score": 11.3,
+      "reasons": []
+    },
+    {
+      "rank": 287,
+      "system": "linfatico",
+      "name": "Right gastro-omental nodes",
+      "sid": "za:right-gastro-omental-nodes",
+      "sids": [
+        "za:right-gastro-omental-nodes"
+      ],
+      "score": 9.3,
+      "reasons": []
+    },
+    {
+      "rank": 288,
+      "system": "linfatico",
+      "name": "Intercostal nodes",
+      "sid": "za:intercostal-nodes-r",
+      "sids": [
+        "za:intercostal-nodes-l",
+        "za:intercostal-nodes-r"
+      ],
+      "score": 8.4,
+      "reasons": []
+    },
+    {
+      "rank": 289,
+      "system": "linfatico",
+      "name": "Sigmoid nodes",
+      "sid": "za:sigmoid-nodes",
+      "sids": [
+        "za:sigmoid-nodes"
+      ],
+      "score": 8.2,
+      "reasons": []
+    },
+    {
+      "rank": 290,
+      "system": "articular",
+      "name": "Oblique popliteal ligament",
+      "sid": "za:oblique-popliteal-ligament-r",
+      "sids": [
+        "za:oblique-popliteal-ligament-l",
+        "za:oblique-popliteal-ligament-r"
+      ],
+      "score": 57.9,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 291,
+      "system": "articular",
+      "name": "Medial meniscus",
+      "sid": "za:medial-meniscus-r",
+      "sids": [
+        "za:medial-meniscus-l",
+        "za:medial-meniscus-r"
+      ],
+      "score": 55,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 292,
+      "system": "articular",
+      "name": "Sphenomandibular ligament",
+      "sid": "za:sphenomandibular-ligament-r",
+      "sids": [
+        "za:sphenomandibular-ligament-l",
+        "za:sphenomandibular-ligament-r"
+      ],
+      "score": 52.8,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 293,
+      "system": "articular",
+      "name": "External intercostal membrane",
+      "sid": "za:external-intercostal-membrane-r",
+      "sids": [
+        "za:external-intercostal-membrane-l",
+        "za:external-intercostal-membrane-r"
+      ],
+      "score": 13.9,
+      "reasons": []
+    },
+    {
+      "rank": 294,
+      "system": "articular",
+      "name": "Anterior longitudinal ligament",
+      "sid": "za:anterior-longitudinal-ligament",
+      "sids": [
+        "za:anterior-longitudinal-ligament"
+      ],
+      "score": 12.8,
+      "reasons": []
+    },
+    {
+      "rank": 295,
+      "system": "articular",
+      "name": "Intertransverse ligaments",
+      "sid": "za:intertransverse-ligaments-r",
+      "sids": [
+        "za:intertransverse-ligaments-l",
+        "za:intertransverse-ligaments-r"
+      ],
+      "score": 12.7,
+      "reasons": []
+    },
+    {
+      "rank": 296,
+      "system": "endocrino",
+      "name": "Suprarenal gland",
+      "sid": "za:suprarenal-gland-r",
+      "sids": [
+        "za:suprarenal-gland-l",
+        "za:suprarenal-gland-r"
+      ],
+      "score": 106.6,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 297,
+      "system": "endocrino",
+      "name": "Adenohypophysis",
+      "sid": "za:adenohypophysis",
+      "sids": [
+        "za:adenohypophysis"
+      ],
+      "score": 101.3,
+      "reasons": [
+        "usada em fisiologia"
+      ]
+    },
+    {
+      "rank": 298,
+      "system": "endocrino",
+      "name": "Thyroid gland",
+      "sid": "za:thyroid-gland",
+      "sids": [
+        "za:thyroid-gland"
+      ],
+      "score": 57.4,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 299,
+      "system": "endocrino",
+      "name": "Pineal gland",
+      "sid": "za:pineal-gland",
+      "sids": [
+        "za:pineal-gland"
+      ],
+      "score": 50.7,
+      "reasons": [
+        "ficha existente"
+      ]
+    },
+    {
+      "rank": 300,
+      "system": "endocrino",
+      "name": "Neurohypophysis",
+      "sid": "za:neurohypophysis",
+      "sids": [
+        "za:neurohypophysis"
+      ],
+      "score": 1,
+      "reasons": []
+    }
+  ]
+}

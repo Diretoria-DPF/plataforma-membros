@@ -1,134 +1,69 @@
-VH_F_left_posterior_bronchopulmonary_segment
-VH_F_left_posterior_bronchus
-VH_F_left_superior_bronchopulmonary_segment
-VH_F_left_superior_bronchus
-VH_F_left_superior_lobar_bronchus
-VH_F_left_superomedial_segment
-VH_F_left_superomedial_segment1
-VH_F_left_ventricle
-VH_F_ligamentum_venosum
-VH_F_lingula_inferior_bronchopulmonary_segment
-VH_F_lingula_superior_bronchopulmonary_segment
-VH_F_mitral_valve
-VH_F_neck_of_pancreas
-VH_F_optic_chiasm
-VH_F_outer_cortex_of_kidney
-VH_F_papillary_muscle_of_heart_ant
-VH_F_papillary_muscle_of_heart_antlat
-VH_F_papillary_muscle_of_heart_med
-VH_F_papillary_muscle_of_heart_pos
-VH_F_papillary_muscle_of_heart_posmed
-VH_F_porta_hepatis
-VH_F_pulmonary_valve
-VH_F_quadrate_lobe
-VH_F_renal_column
-VH_F_renal_impression_of_liver
-VH_F_renal_papilla_L_a
-VH_F_renal_papilla_L_b
-VH_F_renal_papilla_L_c
-VH_F_renal_papilla_L_d
-VH_F_renal_papilla_L_e
-VH_F_renal_papilla_L_f
-VH_F_renal_papilla_L_g
-VH_F_renal_papilla_L_h
-VH_F_renal_papilla_L_i
-VH_F_renal_papilla_L_j
-VH_F_renal_papilla_L_k
-VH_F_renal_pyramid_L_a
-VH_F_renal_pyramid_L_b
-VH_F_renal_pyramid_L_c
-VH_F_renal_pyramid_L_d
-VH_F_renal_pyramid_L_e
-VH_F_renal_pyramid_L_f
-VH_F_renal_pyramid_L_g
-VH_F_renal_pyramid_L_h
-VH_F_renal_pyramid_L_i
-VH_F_renal_pyramid_L_j
-VH_F_renal_pyramid_L_k
-VH_F_right_anterior_basal_bronchopulmonary_segment
-VH_F_right_anterior_basal_bronchus
-VH_F_right_anterior_bronchopulmonary_segm
-VH_F_right_anterior_bronchus
-VH_F_right_anteroinferior_segment
-VH_F_right_anterosuperior_segment
-VH_F_right_apical_bronchopulmonary_segment
-VH_F_right_apical_bronchus
-VH_F_right_cardiac_atrium
-VH_F_right_inferior_lobar_bronchus
-VH_F_right_lateral_basal_bronchopulmonary_segment
-VH_F_right_lateral_basal_bronchus
-VH_F_right_lateral_bronchopulmonary_segmennt
-VH_F_right_lateral_bronchus
-VH_F_right_medial_basal_bronchopulmonary_segment
-VH_F_right_medial_basal_bronchus
-VH_F_right_medial_bronchopulmonary_segment
-VH_F_right_medial_bronchus
-VH_F_right_middle_lobar_bronchus
-VH_F_right_posterior_basal_bronchopulmonary_segment
-VH_F_right_posterior_basal_bronchus
-VH_F_right_posterior_bronchopulmonary_segment
-VH_F_right_posterior_bronchus
-VH_F_right_posteroinferior_segment
-VH_F_right_posterosuperior_segment
-VH_F_right_superior_bronchopulmonary_segment
-VH_F_right_superior_bronchus
-VH_F_right_superior_lobar_bronchus
-VH_F_right_ventricle
-VH_F_round_ligament_of_liver
-VH_F_skin
-VH_F_suprarenal_impression_of_liver
-VH_F_tail_of_pancreas
-VH_F_triangular_ligament_of_liver
-VH_F_tricuspid_valve
-VH_F_ucinate_process1
-VH_M_aortic_valve
-VH_M_bare_area_of_liver
-VH_M_caudate_lobe_of_liver
-VH_M_colic_impression_of_liver
-VH_M_coronary_ligament_of_liver
-VH_M_diaphragmatic_surface
-VH_M_duodenal_impression_of_liver
-VH_M_esophageal_impression_of_liver
-VH_M_falciform_ligament
-VH_M_gastric_impression_of_liver
-VH_M_heart_left_ventricle
-VH_M_heart_right_ventricle
-VH_M_hepataduodenal_ligament
-VH_M_interventricular_septum
-VH_M_left_anterolateral_segment
-VH_M_left_cardiac_atrium
-VH_M_left_inferomedial_segment
-VH_M_left_posterolateral_segment
-VH_M_left_superiomedial_segment
-VH_M_ligamentum_venosum
-VH_M_liver_capsule
-VH_M_mitral_valve
-VH_M_papillary_muscle_of_heart_anterior
-VH_M_papillary_muscle_of_heart_anterolateral
-VH_M_papillary_muscle_of_heart_medial
-VH_M_papillary_muscle_of_heart_posterior
-VH_M_papillary_muscle_of_heart_posteromedial
-VH_M_porta_hepatis
-VH_M_pulmonary_valve
-VH_M_quadrate_lobe_of_liver
-VH_M_renal_impression_of_liver
-VH_M_right_anteroinferior_segment
-VH_M_right_anterosuperior_segment
-VH_M_right_cardiac_atrium
-VH_M_right_posteroinferior_segment
-VH_M_right_posterosuperior_segment
-VH_M_round_ligament_of_liver
-VH_M_suprarenal_impression_of_liver
-VH_M_triangular_ligament_of_liver
-VH_M_tricuspid_valve
-Vitreous body
-Vomer
-White matter of spinal cord
-White matter of telencephalon
-Wing of central lobule
-Xiphoid process
-Zona orbicularis
-Zonular fibres
-Zygomatic bone
-Zygomaticus major muscle
-Zygomaticus minor muscle
+Spinalis capitis muscle
+Spinalis colli muscle
+Spinalis thoracis muscle
+Splenius capitis muscle
+Splenius colli muscle
+Sternocleidomastoid muscle
+Sternocostal head of pectoralis major muscle
+Sternohyoid muscle
+Sternothyroid muscle
+Straight part of cricothyroid muscle
+Stylohyoid muscle
+Stylopharyngeus muscle
+Subacromial bursa
+Subclavius muscle
+Subcutaneous acromial bursa
+Subcutaneous bursa of lateral malleolus
+Subcutaneous bursa of medial malleolus
+Subcutaneous bursa of tuberosity of tibia
+Subcutaneous calcaneal bursa
+Subcutaneous infrapatellar bursa
+Subcutaneous prepatellar bursa
+Subcutaneous trochanteric bursa
+Subdeltoid bursa
+Subfacial prepatellar bursa
+Subscapularis muscle
+Subtendinous bursa of iliacus muscle
+Subtendinous bursa of infraspinatus muscle
+Subtendinous bursa of obturator internus
+Subtendinous bursa of sartorius muscle
+Subtendinous bursa of teres major muscle
+Subtendinous bursa of tibialis anterior
+Subtendinous bursa of trapezius muscle
+Subtendinous bursa of triceps brachii muscle
+Subtendinous calcaneal bursa
+Subtendinous prepatellar bursa
+Superficial head of flexor pollicis brevis
+Superficial head of pronator teres
+Superficial investing cervical fascia
+Superficial layer of temporal fascia
+Superficial part of masseter
+Superficial transverse metacarpal ligament
+Superficial transverse metatarsal ligament
+Superior bursa of biceps femoris muscle
+Superior extensor retinaculum of ankle
+Superior fibular retinaculum
+Superior gemellus muscle
+Superior head of lateral pterygoid muscle
+Superior oblique muscle
+Superior pharyngeal constrictor
+Superior rectus muscle
+Superior tarsus
+Supinator
+Suprapatellar bursa
+Supraspinatus muscle
+Synovial sheaths of digits of hand
+Temporalis muscle
+Temporoparietalis muscle
+Tendinous arch of levator ani
+Tendon of extensor digitorum longus
+Tendon sheath - abd. pollicis longus - ext. pollicis brevis
+Tendon sheath of extensor carpi ulnaris
+Tendon sheath of extensor digiti minimi manus
+Tendon sheath of extensor digitorum and extensor indicis
+Tendon sheath of extensor digitorum longus
+Tendon sheath of extensor hallucis longus
+Tendon sheath of extensor pollicis longus
+Tendon sheath of extensors carpi radialis
+Tendon sheath of flexor carpi radialis
+Tendon sheath of flexor digitorum longus

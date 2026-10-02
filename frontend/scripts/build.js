@@ -71,4 +71,18 @@ fs.copyFileSync(path.join(ROOT, 'admin-ai.js'), path.join(DIST, 'admin-ai.js'));
   fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true });
 });
 
+// Modelos 3D também em .glb.gz (PR 3.1, meta de boot < 10 s em Fast 3G):
+// o GitHub Pages não comprime .glb, e o gzip tira ~43% do esqueleto. O atlas
+// baixa o .gz e descomprime no navegador (DecompressionStream); sem suporte,
+// cai no .glb — por isso os dois ficam publicados.
+const zlib = require('zlib');
+(function gzipModels(dir) {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) gzipModels(full);
+    else if (entry.name.endsWith('.glb')) fs.writeFileSync(`${full}.gz`, zlib.gzipSync(fs.readFileSync(full), { level: 9 }));
+  }
+})(path.join(DIST, 'modulos', 'anatomia-3d')); // models/ e data/atlas/fixtures/models/
+
 console.log('Build gerado em frontend/dist/ (app.js ofuscado; demais páginas, módulos e vendor copiados).');

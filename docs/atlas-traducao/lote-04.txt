@@ -1,110 +1,27 @@
+Dorsal scaphotriquetral ligament
+Dorsal tarsometatarsal ligaments
+Dorsal ulnocarpal ligament
+External intercostal membrane
+Fibular collateral ligament
 Frenula capsulae
-Frontal bone
-Frontalis muscle
-Gallbladder
-Ganglia of sympathetic trunk
-Genioglossus muscle
-Geniohyoid muscle
-Gingiva
 Glenoid labrum
-Globus pallidus
-Gluteus maximus muscle
-Gluteus medius muscle
-Gluteus minimus muscle
-Gracile fasciculus
-Gracile lobule
-Gracilis muscle
-Habenula
-Hamate bone
-Hip bone
-Hippocampal commissure
-Hippocampus
-Humeral head of extensor carpi ulnaris
-Humeral head of flexor carpi ulnaris
-Humero-ulnar head of flexor digitorum superficialis
-Humerus
-Hyoglossus muscle
-Hyoid bone
-Hypothalamus
-Ileocolic nodes
-Iliacus muscle
-Iliococcygeus muscle
-Iliocostalis colli muscle
-Iliocostalis lumborum muscle
-Iliocostalis thoracis muscle
 Iliolumbar ligament
-Iliopectineal arch
-Iliopsoas fascia
-Iliotibial tract
-Incus
-Inferior colliculus
-Inferior deep lateral cervical nodes
-Inferior diaphragmatic nodes
-Inferior epigastric nodes
-Inferior extensor retinaculum of ankle
-Inferior fibular retinaculum
-Inferior frontal sulcus
-Inferior gemellus muscle
 Inferior glenohumeral ligament
-Inferior gluteal nodes
-Inferior head of lateral pterygoid muscle
-Inferior leaflet of right atrioventricular valve
-Inferior lobe of left lung
-Inferior lobe of right lung
-Inferior nasal concha bone
-Inferior oblique muscle
-Inferior occipital gyrus and sulcus*
-Inferior pancreatic nodes
-Inferior papillary muscle of left ventricle
-Inferior papillary muscle of right ventricle
-Inferior pharyngeal constrictor
 Inferior pubic ligament
-Inferior rectus muscle
-Inferior salivatory nucleus
-Inferior semilunar lobule
-Inferior subtendinous bursa of biceps femoris muscle
-Inferior superficial inguinal nodes
-Inferior tarsus
-Inferior temporal gyrus
-Inferior temporal sulcus
-Inferior tracheobronchial nodes
 Inferior transverse scapular ligament
-Infra-auricular nodes
-Infraclavicular nodes
 Infrapatellar fat pad
-Infraspinatus muscle
-Inguinal ligament
-Innermost intercostal muscles
-Insula (Subcentral gyrus and ant. and post. sulci*)
 Interclavicular ligament
 Intercornual ligament
-Intercostal nodes
 Intercuneiform interosseous ligaments
-Intermediate common iliac nodes
-Intermediate cuneiform bone
-Intermediate external iliac nodes
-Intermediate lumbar nodes
-Intermediate tendon of digastric muscle
-Intermediolateral nucleus
-Intermediomedial nucleus
-Intermuscular gluteal bursae
-Internal abdominal oblique muscle
 Internal intercostal membrane
-Internal intercostal muscles
 Interosseous membrane of forearm
 Interosseous membrane of leg
 Interosseous metacarpal ligaments
 Interosseous sacro-iliac ligament
-Interpectoral nodes
-Interpeduncular fossa
 Interpubic disc
 Intersesamoid ligament
-Interspinales colli muscles
-Interspinales lumborum muscles
-Interspinales thoracis muscles
 Interspinous ligaments
 Intertransverse ligaments
-Intertubercular tendon sheath
 Intervertebral disc C2-C3
 Intervertebral disc C3-C4
 Intervertebral disc C4-C5
@@ -129,14 +46,24 @@ Intervertebral disc T7-T8
 Intervertebral disc T8-T9
 Intervertebral disc T9-T10
 Intra-articular ligament of head of rib
-Intraglandular parotid nodes
-Intraparietal sulcus
-Intrapulmonary nodes
-Investing abdominal fascia
-Iris
 Ischiofemoral ligament
-Jugulodigastric node
-Juxta-intestinal mesenteric nodes
-Juxta-oesophageal nodes
-Kidney
-Lacrimal bone
+Lateral meniscus
+Lateral talocalcaneal ligament
+Lateral temporomandibular ligament
+Lateral thyrohyoid ligament
+Ligament of head of femur
+Ligamenta flava
+Long plantar ligament
+Lunotriquetral interosseous ligament
+Medial meniscus
+Medial talocalcaneal ligament
+Median cricothyroid ligament
+Median thyrohyoid ligament
+Meniscopatellar ligament
+Metatarsal interosseous ligaments
+Middle glenohumeral ligament
+Nuchal ligament
+Nucleus pulposus C2-C3
+Nucleus pulposus C3-C4
+Nucleus pulposus C4-C5
+Nucleus pulposus C5-C6

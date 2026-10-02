@@ -27,6 +27,8 @@ const bootData = fullData.map((s) => ({
   system: s.system,
   layer: s.layer,
   side: s.side,
+  // Nome PT (tools/atlas-content/names-pt.mjs) — só quando existe.
+  ...(s.namePt ? { namePt: s.namePt } : {}),
 }));
 
 // Minify JSON (no spaces, no newlines)

@@ -34,7 +34,7 @@ module.exports = async function atlasAssets() {
   const glbRequests = [];
   app.page.on('request', (req) => {
     const url = req.url();
-    if (/\.glb($|\?)/.test(url)) glbRequests.push(url);
+    if (/\.glb(\.gz)?($|\?)/.test(url)) glbRequests.push(url.replace(/\.gz(?=$|\?)/, '')); // .glb.gz conta como o .glb (PR 3.1)
   });
 
   try {
@@ -170,5 +170,30 @@ module.exports = async function atlasAssets() {
     check(app.errors.length === 0, 'atlas-assets: sem erros de JavaScript' + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));
   } finally {
     await app.close();
+  }
+
+  // ------------------------------------------------------------------
+  // 9) .glb.gz (PR 3.1): com DecompressionStream baixa o .gz; sem ele, o .glb
+  // ------------------------------------------------------------------
+  for (const withStream of [true, false]) {
+    const probe = await startApp({ role: 'member' });
+    const models = [];
+    probe.page.on('request', (req) => { if (/esqueletico\.lod\d\.glb(\.gz)?$/.test(req.url())) models.push(req.url().split('/').pop()); });
+    if (!withStream) await probe.context.addInitScript(() => { try { delete window.DecompressionStream; } catch (e) { window.DecompressionStream = undefined; } });
+    try {
+      await probe.login();
+      const frame = await probe.openModule('anatomia');
+      const ok = await frame.waitForFunction(() => {
+        const I = window.__atlasInternals;
+        return !!I && I.store.get().loadedSystems.includes('esqueletico');
+      }, null, { timeout: 60000 }).then(() => true).catch(() => false);
+      const gz = models.some((m) => m.endsWith('.glb.gz'));
+      const plain = models.some((m) => m.endsWith('.glb'));
+      if (withStream) check(ok && gz && !plain, `esqueleto carregado do .glb.gz, sem baixar o .glb (${models.join(', ')})`);
+      else check(ok && plain, `sem DecompressionStream o esqueleto carrega do .glb (${models.join(', ')})`);
+      check(probe.errors.length === 0, `atlas-assets (.glb.gz ${withStream ? 'com' : 'sem'} DecompressionStream): sem erros de JavaScript${probe.errors.length ? ': ' + probe.errors.join(' | ') : ''}`);
+    } finally {
+      await probe.close();
+    }
   }
 };

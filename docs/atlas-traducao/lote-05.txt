@@ -1,142 +1,69 @@
-Lacrimal canaliculus
-Lacrimal gland
-Lacrimal sac
-Lat_Fis-ant-Horizont
-Lat_Fis-ant-Vertical
-Lat_Fis-post
-Lateral aortic nodes
-Lateral axillary nodes
-Lateral caval nodes
-Lateral common iliac nodes
-Lateral corticospinal tract
-Lateral crico-arytenoid muscle
-Lateral cuneiform bone
-Lateral fasciculus proprius
-Lateral femoral intermuscular septum
-Lateral geniculate body
-Lateral head of flexor hallucis brevis
-Lateral head of gastrocnemius
-Lateral head of triceps brachii
-Lateral intermediate substance
-Lateral intermuscular septum of arm
-Lateral meniscus
-Lateral occipital gyrus (Middle occipital gyrus*)
-Lateral occipitotemporal gyrus
-Lateral patellar retinaculum
-Lateral pericardial nodes
-Lateral process of nasal septal cartilage
-Lateral rectus muscle
-Lateral reticulospinal tract
-Lateral sacral nodes
-Lateral spinothalamic tract
-Lateral subtendinous bursa of gastrocnemius muscle
-Lateral superior jugular node
-Lateral talocalcaneal ligament
-Lateral temporomandibular ligament
-Lateral thyrohyoid ligament
-Lateral ventricle
-Lateral vesical nodes
-Lateral vestibulospinal tract
-Latissimus dorsi muscle
-Left anterior lateral segment of liver (III)
-Left atrium
-Left colic nodes
-Left coronary leaflet
-Left lobe of thymus
-Left medial segment of liver (IV)
-Left posterior lateral segment of liver (II)
-Left semilunar leaflet of pulmonary valve
-Left ventricle
-Lens
-Lentiform nucleus
-Levator anguli oris
-Levator labii superioris
-Levator nasolabialis
-Levator palpebrae superioris
-Levator scapulae
-Levatores breves costarum
-Levatores longi costarum
-Ligament of head of femur
-Ligamenta flava
-Linea alba
-Lingual gyrus
-Lingula of cerebellum
-Liver
-Long head of biceps brachii
-Long head of biceps femoris
-Long head of triceps brachii
-Long plantar ligament
-Longissimus capitis muscle
-Longissimus colli muscle
-Longissimus thoracis muscle
-Longus capitis muscle
-Longus colli muscle
-Lower canine
-Lower first molar tooth
-Lower first premolar
-Lower lateral incisor
-Lower medial incisor
-Lower second molar tooth
-Lower second premolar
-Lumbrical muscles of foot
-Lumbrical muscles of hand
-Lunate bone
-Lunate sulcus
-Lunotriquetral interosseous ligament
-Major alar cartilage
-Malleus
-Mamillary body
-Mandible
-Mandibular node
-Manubrium of sternum
-Masseteric fascia
-Mastoid nodes
-Maxilla
-Medial common iliac nodes
-Medial cuneiform bone
-Medial external iliac nodes
-Medial femoral intermuscular septum
-Medial geniculate body
-Medial head of flexor hallucis brevis
-Medial head of gastrocnemius
-Medial head of triceps brachii
-Medial intermuscular septum of arm
-Medial meniscus
-Medial occipitotemporal gyrus (Parahippocampal*)
-Medial patellar retinaculum
-Medial pterygoid muscle
-Medial rectus muscle
-Medial reticulospinal tract
-Medial subtendinous bursa of gastrocnemius muscle
-Medial talocalcaneal ligament
-Medial vestibulospinal tract
-Median cricothyroid ligament
-Median sacral nodes
-Median thyrohyoid ligament
-Medulla oblongata
-Meniscopatellar ligament
-Mentalis muscle
-Mesocolic taenia
-Metatarsal interosseous ligaments
-Midbrain
-Middle cells of ethmoid bone
-Middle colic nodes
-Middle frontal gyrus
-Middle glenohumeral ligament
-Middle layer of thoracolumbar fascia
-Middle lobe of right lung
-Middle phalanx of fifth finger of foot
-Middle phalanx of fifth finger of hand
-Middle phalanx of fourth finger of foot
-Middle phalanx of fourth finger of hand
-Middle phalanx of second finger of foot
-Middle phalanx of second finger of hand
-Middle phalanx of third finger of foot
-Middle phalanx of third finger of hand
-Middle pharyngeal constrictor
-Middle temporal gyrus
-Motor nucleus of facial nerve
-Motor root of trigeminal nerve
-Mucosa of stomach
-Multifidus colli muscle
-Multifidus lumborum muscle
+Nucleus pulposus C6-C7
+Nucleus pulposus C7-T1
+Nucleus pulposus L1-L2
+Nucleus pulposus L2-L3
+Nucleus pulposus L3-L4
+Nucleus pulposus L4-L5
+Nucleus pulposus L5-S1
+Nucleus pulposus T1-T2
+Nucleus pulposus T10-T11
+Nucleus pulposus T11-T12
+Nucleus pulposus T12-L1
+Nucleus pulposus T2-T3
+Nucleus pulposus T3-T4
+Nucleus pulposus T4-T5
+Nucleus pulposus T5-T6
+Nucleus pulposus T6-T7
+Nucleus pulposus T7-T8
+Nucleus pulposus T8-T9
+Nucleus pulposus T9-T10
+Oblique cord
+Oblique popliteal ligament
+Obturator membrane
+Palmar capitohamate ligament
+Palmar carpometacarpal ligaments
+Palmar interphalangeal ligaments
+Palmar lunotriquetral ligament
+Palmar metacarpal ligaments
+Palmar radio-ulnar ligament
+Palmar scaphotriquetral ligament
+Palmar trapezoideocapitate ligament
+Pisohamate ligament
+Pisometacarpal ligament
+Pisotriquetral ligament
+Plantar calcaneocuboid ligament
+Plantar calcaneonavicular ligament
+Plantar cuboideonavicular ligament
+Plantar cuneocuboid ligament
+Plantar cuneonavicular ligaments
+Plantar intercuneiform ligaments
+Plantar interphalangeal ligaments
+Plantar metatarsal ligaments
+Plantar metatarsophalangeal ligaments
+Plantar tarsometatarsal ligaments
+Popliteofibular ligament
+Posterior cruciate ligament
+Posterior ligament of fibular head
+Posterior longitudinal ligament
+Posterior meniscotibial ligament (Lateral meniscus)
+Posterior meniscotibial ligament (Medial meniscus)
+Posterior sacro-iliac ligament
+Posterior sternoclavicular ligament
+Posterior talocalcaneal ligament
+Posterior talofibular ligament
+Posterior tibiofibular ligament
+Posterior tibiotalar ligament
+Pterygospinous ligament
+Pubic symphysis
+Pubofemoral ligament
+Quadrangular membrane
+Quadrate ligament
+Radial collateral ligament
+Radial collateral ligament of wrist joint
+Radiate carpal ligament
+Radiate ligament of head of rib
+Radiocapitate ligament
+Radioscaphocapitate ligament
+Sacrococcygeal symphysis
+Sacrospinous ligament
+Sacrotuberous ligament

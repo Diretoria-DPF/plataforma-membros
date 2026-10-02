@@ -31,6 +31,10 @@ const BUDGET_BYTES_BEFORE_READY = 2 * MB;
 // NetworkManager.ts): "Fast 3G" = 1,6 Mbit/s × 0,9 de descida, 750 kbit/s ×
 // 0,9 de subida, 150 ms × 3,75 = 562,5 ms de latência; "Slow 3G" = 500
 // kbit/s × 0,8 nos dois sentidos, 400 ms × 5 = 2000 ms. Ver docs/atlas-qa/rede.md.
+// Meta local < 15 s: o servidor de teste é HTTP/1.1 (6 conexões por host), e
+// o .glb e o three.js prendem conexões enquanto ~45 módulos esperam na fila.
+// Em produção (GitHub Pages, HTTP/2) a mesma abertura mede ~9,3 s; a meta
+// da Onda 3 (< 10 s) é conferida lá, por atlas-prod-check.js.
 const FAST_3G = { offline: false, latency: 562.5, downloadThroughput: (1.6 * 1000 * 1000 / 8) * 0.9, uploadThroughput: (750 * 1000 / 8) * 0.9 };
 const SLOW_3G = { offline: false, latency: 2000, downloadThroughput: (500 * 1000 / 8) * 0.8, uploadThroughput: (500 * 1000 / 8) * 0.8 };
 const BUDGET_3G_INTERACTIVE_MS = 15000;

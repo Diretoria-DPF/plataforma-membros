@@ -172,6 +172,34 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
     return tier === 'media' || tier === 'alta' ? 'lod0' : 'lod1';
   }
 
+  /**
+   * Baixa `<url>.gz` e descomprime no navegador. Devolve o ArrayBuffer do GLB
+   * ou `null` (sem suporte, 404, ou servidor que já descomprimiu) — quem
+   * chama cai no `.glb` normal.
+   */
+  async function fetchGzipGlb(url, onProgress) {
+    if (typeof DecompressionStream !== 'function' || typeof TransformStream !== 'function') return null;
+    try {
+      const res = await fetch(`${url}.gz`);
+      if (!res.ok || !res.body) return null;
+      const total = Number(res.headers.get('content-length')) || 0;
+      let loaded = 0;
+      const counter = new TransformStream({
+        transform(chunk, ctl) {
+          loaded += chunk.byteLength;
+          onProgress({ loaded, total });
+          ctl.enqueue(chunk);
+        },
+      });
+      const buffer = await new Response(res.body.pipeThrough(counter).pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+      // Cabeçalho do GLB ("glTF") — se não bater, não era um gzip de GLB.
+      const magic = new Uint8Array(buffer, 0, 4);
+      return magic[0] === 0x67 && magic[1] === 0x6c && magic[2] === 0x54 && magic[3] === 0x46 ? buffer : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function markLoaded(system, asset) {
     loadedSystems.set(system, asset);
     const s = store.get();
@@ -236,9 +264,15 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
       bus.emit(EVENTS.SYSTEM_LOAD_START, { system, variant });
       const url = base + asset.file;
       try {
-        const gltf = await gltfLoader.loadAsync(url, (evt) => {
+        const onProgress = (evt) => {
           emitProgress({ system, loadedBytes: evt.loaded, totalBytes: evt.total || asset.bytes });
-        });
+        };
+        // .glb.gz primeiro (~43% menor; o GitHub Pages não comprime .glb);
+        // sem DecompressionStream, ou se o .gz falhar, o .glb de sempre.
+        const gzBuffer = await fetchGzipGlb(url, onProgress);
+        const gltf = gzBuffer
+          ? await gltfLoader.parseAsync(gzBuffer, url.slice(0, url.lastIndexOf('/') + 1))
+          : await gltfLoader.loadAsync(url, onProgress);
         if (cancelled.has(key)) {
           cancelled.delete(key);
           return null; // descartado por cancelLoad() — nunca registra nem emite "done"

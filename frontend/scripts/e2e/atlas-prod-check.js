@@ -91,7 +91,7 @@ async function run(browser, throttle) {
     `## Atlas em produção — ${BASE}`,
     '',
     `- Esqueleto tocável sem throttle: **${plain.ready === null ? 'NÃO carregou' : (plain.ready / 1000).toFixed(1) + ' s'}**${plain.fatal ? ` — tela de falha: "${plain.fatal}"` : ''}`,
-    `- Esqueleto tocável em Fast 3G (DevTools): **${slow.ready === null ? 'NÃO carregou em 120 s' : (slow.ready / 1000).toFixed(1) + ' s'}** (meta < 15 s)`,
+    `- Esqueleto tocável em Fast 3G (DevTools): **${slow.ready === null ? 'NÃO carregou em 120 s' : (slow.ready / 1000).toFixed(1) + ' s'}** (meta < 10 s, Onda 3 PR 3.1)`,
     `- Transferido até pronto: **${(total / 1024 / 1024).toFixed(2)} MB** (meta < 2 MB)`,
     '',
     '| KB transferidos | content-encoding | status | arquivo |',
@@ -105,6 +105,6 @@ async function run(browser, throttle) {
   const md = lines.join('\n');
   console.log(md);
   if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + '\n');
-  const ok = !plain.problems.length && plain.ready !== null && slow.ready !== null && slow.ready < 15000 && total < 2 * 1024 * 1024;
+  const ok = !plain.problems.length && plain.ready !== null && slow.ready !== null && slow.ready < 10000 && total < 2 * 1024 * 1024;
   process.exit(ok ? 0 : 1);
 })().catch((e) => { console.error(e); process.exit(1); });

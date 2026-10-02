@@ -51,7 +51,7 @@ export function getStatusLabel(review, now = Date.now()) {
 
 const SIDE_LABEL = { l: 'Esquerdo', L: 'Esquerdo', r: 'Direito', R: 'Direito' };
 
-export function createInfoCard(container, { onAction = () => {} } = {}) {
+export function createInfoCard(container, { onAction = () => {}, tts = false } = {}) {
   const { h, setHtml, clear: clearEl, safeUrl } = window.LaiftDom;
 
   let currentEntry = null;
@@ -62,10 +62,41 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
   // Mapeamento de system id → label PT
   const systemMap = Object.fromEntries(SYSTEMS.map((s) => [s.id, s.label]));
 
+  // "Ouvir a ficha" (PR 3.1.10): speechSynthesis em pt-BR. Some quando o
+  // navegador não tem a API; para ao trocar de estrutura ou limpar a ficha.
+  const speech = tts && typeof window !== 'undefined' && window.speechSynthesis && typeof window.SpeechSynthesisUtterance === 'function'
+    ? window.speechSynthesis : null;
+  let speakingBtn = null;
+  function stopSpeech() {
+    if (speech && (speech.speaking || speech.pending)) speech.cancel();
+    if (speakingBtn) {
+      speakingBtn.setAttribute('aria-pressed', 'false');
+      speakingBtn.lastChild.textContent = 'Ouvir';
+      speakingBtn = null;
+    }
+  }
+  function speak(text, btn) {
+    if (!speech) return;
+    if (speakingBtn === btn) { stopSpeech(); return; }
+    stopSpeech();
+    const u = new window.SpeechSynthesisUtterance(text);
+    u.lang = 'pt-BR';
+    const voice = (speech.getVoices() || []).find((v) => /^pt(-|_)BR/i.test(v.lang)) || (speech.getVoices() || []).find((v) => /^pt/i.test(v.lang));
+    if (voice) u.voice = voice;
+    u.rate = 1;
+    u.onend = () => { if (speakingBtn === btn) stopSpeech(); };
+    u.onerror = u.onend;
+    speakingBtn = btn;
+    btn.setAttribute('aria-pressed', 'true');
+    btn.lastChild.textContent = 'Parar';
+    speech.speak(u);
+  }
+
   /**
    * Renderiza a ficha com entrada e conteúdo (ou null enquanto carrega).
    */
   function render(entry, content) {
+    if (!currentEntry || currentEntry.sid !== entry.sid) stopSpeech();
     currentEntry = entry;
     currentContent = content;
     currentTabId = 'resumo';
@@ -94,6 +125,9 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
     // Ações rápidas (sempre visíveis)
     const actions = renderActions(entry);
     contentBox.root.appendChild(actions);
+
+    // Voltar / anterior / próxima (PR 3.1.8/3.1.9)
+    if (entry.nav) contentBox.root.appendChild(renderNav(entry));
 
     // Renderiza o conteúdo da aba ativa
     updateTabContent();
@@ -146,6 +180,14 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
     }));
     if (SIDE_LABEL[entry.side]) {
       subtitle.appendChild(h('span', { className: 'atlas-card-chip atlas-card-side', text: SIDE_LABEL[entry.side] }));
+    }
+    // Nome traduzido com ajuda de IA e ainda não revisado pelo conselho (PR 3.1.5).
+    if (entry.nameAssisted) {
+      subtitle.appendChild(h('span', {
+        className: 'atlas-card-chip atlas-card-assisted',
+        title: `Tradução assistida, ainda sem revisão do conselho. Nome original: ${entry.names.en}`,
+        text: 'Tradução assistida',
+      }));
     }
     // "Ver mais": no celular, abre a ficha completa (painel em "metade").
     const more = h('button', { type: 'button', className: 'atlas-card-more', text: 'Ver mais' });
@@ -254,6 +296,33 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
   }
 
   /**
+   * Barra de navegação: voltar à estrutura anterior (histórico) e andar pela
+   * sequência do sistema (mesma ordem do navegador).
+   */
+  function renderNav(entry) {
+    const { h } = window.LaiftDom;
+    const nav = entry.nav;
+    const bar = h('nav', { className: 'atlas-card-nav', 'aria-label': 'Navegar entre estruturas' });
+    const mk = (action, label, glyph, title, disabled) => {
+      const btn = h('button', {
+        type: 'button', className: `atlas-card-nav-btn atlas-card-nav-${action}`, title, 'aria-label': title,
+        dataset: { navAction: action },
+        onClick: () => onAction({ action, sid: entry.sid }),
+      }, [
+        h('span', { 'aria-hidden': 'true', text: glyph }),
+        h('span', { className: 'atlas-card-nav-label', text: label }),
+      ]);
+      if (disabled) btn.disabled = true;
+      return btn;
+    };
+    bar.appendChild(mk('back', 'Voltar', '←', 'Voltar à estrutura anterior', !nav.canBack));
+    bar.appendChild(mk('prev', 'Anterior', '‹', nav.prevName ? `Anterior: ${nav.prevName}` : 'Anterior', !nav.prevName));
+    if (nav.position) bar.appendChild(h('span', { className: 'atlas-card-nav-pos', text: nav.position }));
+    bar.appendChild(mk('next', 'Próxima', '›', nav.nextName ? `Próxima: ${nav.nextName}` : 'Próxima', !nav.nextName));
+    return bar;
+  }
+
+  /**
    * Atualiza o conteúdo da aba ativa.
    */
   function updateTabContent() {
@@ -303,6 +372,14 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
       section.appendChild(h('p', { className: 'atlas-card-empty', text: 'Sem descrição ainda.' }));
     } else {
       const text = currentContent.summary_pt;
+      if (speech) {
+        const btn = h('button', {
+          type: 'button', className: 'atlas-card-listen', 'aria-pressed': 'false',
+          title: 'Ouvir o resumo em voz alta',
+        }, [h('span', { 'aria-hidden': 'true', text: '🔊 ' }), h('span', { text: 'Ouvir' })]);
+        btn.addEventListener('click', () => speak(`${currentEntry ? currentEntry.names.pt + '. ' : ''}${text}`, btn));
+        section.appendChild(btn);
+      }
       section.appendChild(h('p', { text }));
     }
 
@@ -549,6 +626,7 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
       return currentTabId;
     },
     clear() {
+      stopSpeech();
       if (contentBox.root) clearEl(contentBox.root);
       currentEntry = null;
       currentContent = null;

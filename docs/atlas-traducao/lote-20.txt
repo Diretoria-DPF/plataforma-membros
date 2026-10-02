@@ -1,0 +1,69 @@
+Caudate lobe
+Caudate lobe of liver
+Colic impression of liver
+Coronary ligament of liver
+Diaphragmatic surface
+Diaphragmatic surface of liver
+Duodenal impression of liver
+Esophageal impression of liver
+Falciform ligament
+Gastric impression of liver
+Head of pancreas
+Hepataduodenal ligament
+Left anterolateral segment
+Left inferomedial segment
+Left posterolateral segment
+Left superiomedial segment
+Left superomedial segment
+Left superomedial segment1
+Ligamentum venosum
+Liver capsule
+Neck of pancreas
+Porta hepatis
+Quadrate lobe
+Quadrate lobe of liver
+Renal impression of liver
+Right anteroinferior segment
+Right anterosuperior segment
+Right posteroinferior segment
+Right posterosuperior segment
+Round ligament of liver
+Suprarenal impression of liver
+Tail of pancreas
+Triangular ligament of liver
+Ucinate process1
+Kidney
+Renal pelvis
+Urinary bladder
+Hilum of kidney
+Kidney capsule
+Outer cortex of kidney
+Renal column
+Renal papilla L a
+Renal papilla L b
+Renal papilla L c
+Renal papilla L d
+Renal papilla L e
+Renal papilla L f
+Renal papilla L g
+Renal papilla L h
+Renal papilla L i
+Renal papilla L j
+Renal papilla L k
+Renal pyramid L a
+Renal pyramid L b
+Renal pyramid L c
+Renal pyramid L d
+Renal pyramid L e
+Renal pyramid L f
+Renal pyramid L g
+Renal pyramid L h
+Renal pyramid L i
+Renal pyramid L j
+Renal pyramid L k
+Adenohypophysis
+Neurohypophysis
+Pineal gland
+Suprarenal gland
+Thyroid gland
+Skin

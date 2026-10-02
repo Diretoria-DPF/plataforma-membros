@@ -1,0 +1,69 @@
+Pretracheal nodes
+Prevertebral nodes
+Prevesical nodes
+Retro-aortic nodes
+Retrocaecal nodes
+Retrocaval nodes
+Retropharyngeal nodes
+Right colic nodes
+Right gastric nodes
+Right gastro-omental nodes
+Right lobe of thymus
+Sigmoid nodes
+Spleen
+Splenic nodes
+Subaortic nodes
+Submandibular nodes
+Submental nodes
+Superficial anterior cervical nodes
+Superficial lateral cervical nodes
+Superficial parotid nodes
+Superficial popliteal nodes
+Superior diaphragmatic nodes
+Superior gluteal nodes
+Superior pancreatic nodes
+Superior pancreaticoduodenal nodes
+Superior tracheobronchial nodes
+Superolateral superficial inguinal nodes
+Superomedial superficial inguinal nodes
+Supraclavicular nodes
+Supratrochlear nodes
+Thyroid nodes
+Inferior lobe of left lung
+Inferior lobe of right lung
+Middle lobe of right lung
+Pleura
+Superior lobe of left lung
+Superior lobe of right lung
+Trachea
+Cartilage of lobar bronchus
+Cartilage of tertiary bronchus
+Hilum
+Hilum lower
+Hilum middle
+Hilum upper
+Left anterior basal bronchopulmonary segment
+Left anterior basal bronchus
+Left anterior bronchopulmonary segment
+Left anterior bronchus
+Left apical bronchopulmonary segment
+Left apical bronchus
+Left inferior lobar bronchus
+Left lateral basal bronchopulmonary segment
+Left lateral basal bronchus
+Left lingula inferior bronchi
+Left lingula superior bronchus
+Left medial basal bronchopulmonary segment
+Left medial basal bronchus
+Left posterior basal bronchopulmonary segment
+Left posterior basal bronchus
+Left posterior bronchopulmonary segment
+Left posterior bronchus
+Left superior bronchopulmonary segment
+Left superior bronchus
+Left superior lobar bronchus
+Lingula inferior bronchopulmonary segment
+Lingula superior bronchopulmonary segment
+Right anterior basal bronchopulmonary segment
+Right anterior basal bronchus
+Right anterior bronchopulmonary segm
