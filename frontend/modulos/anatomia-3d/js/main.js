@@ -53,8 +53,21 @@ const MODELS_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : './';
 const MANIFEST_URL = USE_FIXTURES ? undefined : 'models/manifest.json';
 const CONTENT_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : 'data/atlas/';
 
-// Sistemas carregados no primeiro load (≤5MB combinados) — ver plano §4.
-const DEFAULT_SYSTEMS = Object.freeze(['esqueletico', 'muscular']);
+// Sistemas do primeiro carregamento (só o esqueleto ≈ 1 MB) — docs/ATLAS_V2_TAREFAS.md.
+const DEFAULT_SYSTEMS = Object.freeze(['esqueletico']);
+// Baixados em segundo plano logo depois do primeiro quadro (o esqueleto já
+// dá o que tocar). Em conexão lenta ou com economia de dados ligada, só
+// quando o usuário ligar a camada — antes os músculos (1,8 MB) entravam no
+// primeiro carregamento e dobravam a espera no 3G.
+const BACKGROUND_SYSTEMS = Object.freeze(['muscular']);
+const BACKGROUND_DELAY_MS = 1500;
+
+/** Conexão lenta ou economia de dados (Network Information API, quando existe). */
+export function isConstrainedConnection(nav = (typeof navigator !== 'undefined' ? navigator : {})) {
+  const c = nav && nav.connection;
+  if (!c) return false;
+  return !!c.saveData || /^(slow-2g|2g|3g)$/.test(String(c.effectiveType || ''));
+}
 
 // ============================================================================
 // 1. Conteúdo (structures.json + legado PT) — ContentStore
@@ -554,6 +567,25 @@ async function boot() {
   fitWholeBody();
   requestRender();
 
+  // Demais sistemas da abertura: em segundo plano, ou só sob demanda.
+  if (isConstrainedConnection()) {
+    // A camada fica desligada (ligar baixa o sistema — ver LAYER_SET abaixo);
+    // ligada sem o sistema, o botão diria "ligado" sem nada na tela.
+    const layers = storeGet().layers;
+    for (const sys of BACKGROUND_SYSTEMS) {
+      const layer = sys === 'muscular' ? 'musculos' : null;
+      if (layer && layers[layer] && layers[layer].visible) {
+        storeSet({ layers: { ...storeGet().layers, [layer]: { ...layers[layer], visible: false } } });
+        emit(EVENTS.LAYER_SET, { layer, visible: false, opacity: layers[layer].opacity });
+      }
+    }
+  } else {
+    const idle = typeof window.requestIdleCallback === 'function'
+      ? (fn) => window.requestIdleCallback(fn, { timeout: 3000 })
+      : (fn) => setTimeout(fn, 0);
+    setTimeout(() => idle(() => BACKGROUND_SYSTEMS.forEach(loadSystem)), BACKGROUND_DELAY_MS);
+  }
+
   // ---- Enquadramento: corpo inteiro centralizado ----
   // Sem isto a câmera-rig ficava com o centro padrão (0,0,0) — a altura dos
   // pés — e raio 1: o corpo aparecia cortado no alto da tela, e "Reset"/
@@ -882,7 +914,7 @@ async function boot() {
   // ---- Expõe internals para a camada de compatibilidade legada ----
   window.__atlasInternals = {
     bus, store: storeApi, registry, assetLoader, engine,
-    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS,
+    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS,
   };
   // Gancho de teste, só leitura — expõe as estatísticas do renderer
   // (draw calls, triângulos, contagem de frames renderizados) para os

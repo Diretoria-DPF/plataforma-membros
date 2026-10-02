@@ -3,11 +3,12 @@
  * §17) em dois viewports (celular retrato e desktop).
  * ---------------------------------------------------------------------------
  * Depois do modelo ficar pronto (window.__atlasInternals montado e os
- * sistemas padrão — esquelético+muscular, ver DEFAULT_SYSTEMS em js/main.js —
+ * sistemas padrão — só o esquelético, ver DEFAULT_SYSTEMS em js/main.js —
  * carregados):
  *   1. bytes transferidos (respostas HTTP da própria origem, sem compressão
  *      no servidor estático local — ver scripts/e2e/harness.js) até esse
- *      ponto ≤ 5 MB (orçamento de 1ª carga, plano §4);
+ *      ponto ≤ 2 MB (só o esqueleto; os músculos vêm depois, em segundo
+ *      plano). No GitHub Pages JS/JSON vão comprimidos: ≈ 1,3 MB reais;
  *   2. draw calls ≤ 150 e triângulos ≤ 1,5 M, via `renderer.info`
  *      (exposto só-leitura em `window.__atlasPerf.getStats()`, ver js/main.js);
  *   3. heap JS (CDP `Performance.getMetrics` → `JSHeapUsedSize`) ≤ 250 MB;
@@ -20,7 +21,10 @@
 const { startApp, check } = require('./harness');
 
 const MB = 1024 * 1024;
-const BUDGET_BYTES_BEFORE_READY = 5 * MB;
+const BUDGET_BYTES_BEFORE_READY = 2 * MB;
+// "3G rápido" do DevTools: 1,6 Mbit/s, 150 ms de latência.
+const FAST_3G = { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 };
+const BUDGET_3G_INTERACTIVE_MS = 15000;
 const BUDGET_DRAW_CALLS = 150;
 const BUDGET_TRIANGLES = 1_500_000;
 const BUDGET_HEAP_BYTES = 250 * MB;
@@ -83,7 +87,7 @@ async function measureAtViewport(viewport) {
 
     check(bytes.total > 0, `${label}: harness mediu algum byte transferido (sanity check, ${bytes.total}b)`);
     check(bytes.total <= BUDGET_BYTES_BEFORE_READY,
-      `${label}: bytes transferidos até o modelo ficar pronto ≤ 5 MB (medido: ${(bytes.total / MB).toFixed(2)} MB)`);
+      `${label}: bytes transferidos até o modelo ficar pronto ≤ 2 MB (medido: ${(bytes.total / MB).toFixed(2)} MB)`);
 
     // ---- Draw calls / triângulos (renderer.info via window.__atlasPerf) ----
     const stats1 = await frame.evaluate(() => window.__atlasPerf.getStats());
@@ -100,6 +104,12 @@ async function measureAtViewport(viewport) {
     check(heapBytes <= BUDGET_HEAP_BYTES, `${label}: heap JS ≤ 250 MB (medido: ${(heapBytes / MB).toFixed(2)} MB)`);
 
     // ---- Render-on-demand: sem interação, o contador de frames não cresce ----
+    // Os sistemas de segundo plano (músculos) chegam ~1,5 s depois de pronto
+    // e redesenham uma vez — a ociosidade conta a partir daí.
+    await frame.waitForFunction(() => {
+      const I = window.__atlasInternals;
+      return (I.BACKGROUND_SYSTEMS || []).every((s) => I.store.get().loadedSystems.includes(s));
+    }, null, { timeout: 20000 });
     await frame.waitForTimeout(300); // deixa qualquer tween/animação em curso (câmera, tickers) assentar
     const rendersBefore = (await frame.evaluate(() => window.__atlasPerf.getStats())).renders;
     await app.page.waitForTimeout(2000); // 2s sem nenhuma interação do teste
@@ -150,7 +160,49 @@ async function measureAtViewport(viewport) {
   }
 }
 
+/**
+ * Celular em "3G rápido": do toque em Anatomia até o esqueleto estar no
+ * corpo (tocável) em < 15 s; e, com a conexão lenta, os músculos NÃO baixam
+ * sozinhos (só quando a camada for ligada).
+ */
+async function measureFast3g() {
+  const label = '390×844 em 3G rápido';
+  const app = await startApp({ role: 'member', viewport: { width: 390, height: 844 } });
+  try {
+    await app.login();
+    const client = await app.context.newCDPSession(app.page);
+    await client.send('Network.enable');
+    await client.send('Network.emulateNetworkConditions', { ...FAST_3G, connectionType: 'cellular3g' });
+    // O throttle do CDP não muda navigator.connection.effectiveType; simula
+    // o que um celular em 3G informa, para exercitar o caminho "sob demanda".
+    await app.context.addInitScript(() => {
+      try { Object.defineProperty(Navigator.prototype, 'connection', { configurable: true, get: () => ({ effectiveType: '3g', saveData: false }) }); } catch (e) { /* sem suporte */ }
+    });
+    const t0 = Date.now();
+    const frame = await app.openModule('anatomia');
+    await frame.waitForFunction(() => {
+      const I = window.__atlasInternals;
+      return !!I && I.DEFAULT_SYSTEMS.every((s) => I.store.get().loadedSystems.includes(s));
+    }, null, { timeout: 60000, polling: 200 });
+    const elapsed = Date.now() - t0;
+    check(elapsed < BUDGET_3G_INTERACTIVE_MS, `${label}: esqueleto tocável em < 15 s (medido: ${(elapsed / 1000).toFixed(1)} s)`);
+    const constrained = await frame.evaluate(() => /^(slow-2g|2g|3g)$/.test((navigator.connection || {}).effectiveType || ''));
+    if (constrained) {
+      await frame.waitForTimeout(3000);
+      const st = await frame.evaluate(() => {
+        const s = window.__atlasInternals.store.get();
+        return { muscular: s.loadedSystems.includes('muscular'), musculos: s.layers.musculos.visible };
+      });
+      check(!st.muscular && !st.musculos, `${label}: conexão lenta não baixa os músculos sozinha e a camada fica desligada (${JSON.stringify(st)})`);
+    }
+    console.log(`  · ${label}: esqueleto em ${(elapsed / 1000).toFixed(1)} s (effectiveType 3g: ${constrained})`);
+  } finally {
+    await app.close();
+  }
+}
+
 module.exports = async function atlasPerf() {
+  await measureFast3g();
   await measureAtViewport({ width: 390, height: 844 });
   await measureAtViewport({ width: 1440, height: 900 });
 };
