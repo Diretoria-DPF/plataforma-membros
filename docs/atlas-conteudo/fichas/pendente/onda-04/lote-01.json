@@ -1,0 +1,2250 @@
+{
+  "za:liver": {
+    "ids": {},
+    "summary_pt": "O fígado é a maior glândula do corpo e a maior víscera abdominal, com cerca de 1,5 kg no adulto. Ocupa o hipocôndrio direito e parte do epigástrio, abrigado sob a cúpula direita do diafragma e protegido pelas costelas inferiores. É recoberto por peritônio visceral, exceto na área nua, e envolvido por uma cápsula fibrosa fina. Apresenta face diafragmática, convexa, e face visceral, voltada para trás e para baixo, onde estão a porta do fígado, a fossa da vesícula biliar e os sulcos da veia cava inferior e do ligamento venoso. Classicamente divide-se em lobos direito e esquerdo, além dos lobos caudado e quadrado; funcionalmente, em oito segmentos de Couinaud, cada um com pedículo portal e drenagem venosa próprios. Recebe sangue venoso do intestino pela veia porta do fígado e sangue arterial pela artéria hepática própria, e o devolve à veia cava inferior pelas veias hepáticas. Desempenha funções metabólicas, de síntese de proteínas plasmáticas e fatores da coagulação, de detoxificação, de armazenamento e de produção de bile, que é excretada pelas vias biliares até o duodeno.",
+    "anatomy": {
+      "relations": "Situa-se sob o diafragma, em contato com o estômago, o duodeno, a flexura direita do colo, o rim e a glândula suprarrenal direitos e a vesícula biliar. Fixa-se por pregas peritoneais: ligamentos falciforme, coronário, triangulares direito e esquerdo, e omento menor (ligamentos hepatogástrico e hepatoduodenal). Pela porta do fígado entram a veia porta do fígado e a artéria hepática própria e saem os ductos hepáticos.",
+      "vascularization": "Dupla irrigação: a veia porta do fígado traz a maior parte do fluxo, rico em nutrientes, e a artéria hepática própria, ramo da artéria hepática comum (tronco celíaco), supre o oxigênio. A drenagem venosa se faz pelas veias hepáticas direita, intermédia e esquerda, que desembocam na veia cava inferior, logo abaixo do diafragma.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco (nervos esplâncnicos) e parassimpáticas dos troncos vagais. A cápsula e o peritônio da face diafragmática têm inervação sensitiva somática pelos nervos frênico direito e intercostais inferiores.",
+      "lymph": "Os vasos linfáticos drenam para os linfonodos hepáticos, no hilo, e daí para os linfonodos celíacos. Parte da linfa da face diafragmática segue para os linfonodos frênicos e mediastinais posteriores."
+    },
+    "histology": {
+      "epithelium": "A superfície é revestida por mesotélio (peritônio visceral) sobre cápsula de tecido conjuntivo; o parênquima não possui epitélio de revestimento, mas cordões de hepatócitos separados por sinusoides.",
+      "tissues": [
+        "Hepatócitos, células epiteliais poliédricas dispostas em lâminas ou cordões ao redor da veia centrolobular, predominantes",
+        "Sinusoides hepáticos com endotélio fenestrado e células de Kupffer (macrófagos)",
+        "Espaço perissinusoidal (de Disse), com células estreladas hepáticas armazenadoras de vitamina A",
+        "Espaços porta com ramos da veia porta, da artéria hepática e do ducto biliar, em estroma de tecido conjuntivo"
+      ]
+    },
+    "clinical": [
+      "Cirrose hepática: fibrose difusa com nódulos de regeneração, geralmente por hepatite viral, álcool ou esteatose, evolui para hipertensão portal e insuficiência hepática.",
+      "Hipertensão portal: o aumento da resistência ao fluxo portal causa varizes esofágicas, esplenomegalia e ascite, por abertura de anastomoses portossistêmicas.",
+      "Carcinoma hepatocelular: tumor primário mais comum do fígado, associado a cirrose e hepatites B e C.",
+      "Trauma abdominal: o fígado é um dos órgãos mais lesados em traumas contusos e a laceração pode causar hemorragia grave."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:stomach": {
+    "ids": {},
+    "summary_pt": "O estômago é a porção dilatada do tubo digestório entre o esôfago e o duodeno, situada no hipocôndrio esquerdo e no epigástrio, com forma e posição variáveis conforme o biotipo e o enchimento. Divide-se em parte cárdica, ao redor do óstio cárdico, fundo gástrico, corpo e parte pilórica, esta com o antro pilórico e o canal pilórico que termina no piloro, onde o esfíncter pilórico regula o esvaziamento. A curvatura menor, côncava, dá fixação ao omento menor, e a curvatura maior, convexa, ao omento maior. A incisura angular marca a transição entre corpo e antro. Funciona como reservatório, triturando o alimento por contrações peristálticas e misturando-o ao suco gástrico, composto por ácido clorídrico, pepsinogênio e muco, para formar o quimo. Também secreta fator intrínseco, necessário à absorção de vitamina B12, e hormônios como a gastrina. Sua parede é composta por mucosa, submucosa, muscular externa com três camadas e serosa, e a anatomia vascular gástrica tem grande importância cirúrgica pela rica rede anastomótica ao longo das duas curvaturas.",
+    "anatomy": {
+      "relations": "Anteriormente relaciona-se com o diafragma, o lobo esquerdo do fígado e a parede abdominal anterior. Posteriormente, a bolsa omental o separa do leito gástrico, formado pelo pâncreas, baço, rim e glândula suprarrenal esquerdos e mesocolo transverso. Os ligamentos hepatogástrico, gastrocólico, gastroesplênico e gastrofrênico fixam o órgão.",
+      "vascularization": "Curvatura menor: artérias gástricas direita (da hepática própria) e esquerda (do tronco celíaco). Curvatura maior: artérias gastromentais direita (da gastroduodenal) e esquerda (da esplênica); o fundo recebe as artérias gástricas curtas. As veias drenam para a veia porta do fígado, direta ou indiretamente, pelas veias gástricas, gastromentais e esplênica.",
+      "innervation": "Parassimpática pelos troncos vagais anterior e posterior, que estimulam secreção e motilidade; simpática por fibras do plexo celíaco, provenientes dos nervos esplâncnicos maiores. A dor visceral gástrica é referida no epigástrio.",
+      "lymph": "Linfonodos gástricos e gastromentais, pilóricos e pancreaticoesplênicos, que drenam para os linfonodos celíacos."
+    },
+    "histology": {
+      "epithelium": "Epitélio cilíndrico simples secretor de muco, que reveste a superfície e as fovéolas gástricas.",
+      "tissues": [
+        "Mucosa com glândulas gástricas (células mucosas do colo, parietais, principais e enteroendócrinas)",
+        "Submucosa de tecido conjuntivo denso, com vasos e plexo submucoso",
+        "Muscular externa com camadas oblíqua interna, circular média e longitudinal externa",
+        "Serosa de mesotélio sobre tecido conjuntivo frouxo"
+      ]
+    },
+    "clinical": [
+      "Doença ulcerosa péptica: úlceras gástricas e duodenais associadas à infecção por Helicobacter pylori e ao uso de anti-inflamatórios não esteroides.",
+      "Adenocarcinoma gástrico: neoplasia maligna frequente, com disseminação linfática para os linfonodos celíacos e regionais.",
+      "Estenose hipertrófica do piloro: espessamento do músculo pilórico em lactentes causa vômitos em jato.",
+      "Hérnia de hiato: deslocamento do estômago para o tórax por alargamento do hiato esofágico do diafragma."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Estômago",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: estômago",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Estômago",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Estômago",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Estômago",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Estômago",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Estômago",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Estômago",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico correlações clínicas de Estômago",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:duodenum": {
+    "ids": {},
+    "summary_pt": "O duodeno é a primeira e mais curta parte do intestino delgado, com cerca de 25 cm, em forma de C que envolve a cabeça do pâncreas. Estende-se do piloro à flexura duodenojejunal e se divide em quatro partes: superior, descendente, horizontal e ascendente. A parte superior, com sua porção inicial dilatada denominada ampola do duodeno (bulbo), é intraperitoneal e móvel; as demais são retroperitoneais. Na parte descendente, a papila maior do duodeno recebe a ampola hepatopancreática, por onde desembocam o ducto colédoco e o ducto pancreático, e a papila menor recebe o ducto pancreático acessório. A parte horizontal cruza a coluna vertebral entre a aorta e a artéria mesentérica superior. A flexura duodenojejunal é fixada pelo músculo suspensor do duodeno. Recebe o quimo ácido do estômago, a bile e o suco pancreático, neutralizando o conteúdo gástrico e iniciando a digestão de gorduras, proteínas e carboidratos. A transição entre o território irrigado pelo tronco celíaco e o da artéria mesentérica superior ocorre ao nível da papila maior, o que tem importância cirúrgica.",
+    "anatomy": {
+      "relations": "A concavidade em C abriga a cabeça do pâncreas. A parte descendente relaciona-se posteriormente com o hilo do rim direito e, anteriormente, com o colo transverso e o fígado; a parte horizontal passa anterior à veia cava inferior e à aorta, e posterior aos vasos mesentéricos superiores; a parte ascendente sobe à esquerda da aorta até a flexura duodenojejunal.",
+      "vascularization": "Artérias pancreaticoduodenais superiores (ramos da gastroduodenal, do tronco celíaco) e inferiores (da mesentérica superior), além da artéria supraduodenal. As veias acompanham as artérias e drenam para a veia porta do fígado, diretamente ou pelas veias mesentérica superior e esplênica.",
+      "innervation": "Parassimpática pelo nervo vago e simpática por fibras dos plexos celíaco e mesentérico superior, vindas dos nervos esplâncnicos.",
+      "lymph": "Linfonodos pancreaticoduodenais, que drenam para os linfonodos celíacos, pela parte proximal à papila maior, e mesentéricos superiores, pela parte distal."
+    },
+    "histology": {
+      "epithelium": "Epitélio cilíndrico simples com microvilosidades (enterócitos) e células caliciformes, que reveste vilosidades e criptas intestinais.",
+      "tissues": [
+        "Mucosa com vilosidades e criptas, e células enteroendócrinas e de Paneth",
+        "Submucosa com glândulas duodenais (de Brunner), secretoras de muco alcalino, características desta região",
+        "Pregas circulares da mucosa e da submucosa",
+        "Muscular externa com camadas circular interna e longitudinal externa",
+        "Serosa e adventícia, conforme a parte intra ou retroperitoneal"
+      ]
+    },
+    "clinical": [
+      "Úlcera duodenal: ocorre mais frequentemente na parte superior, por hipersecreção ácida e infecção por Helicobacter pylori; a perfuração da parede posterior pode lesar a artéria gastroduodenal.",
+      "Obstrução da ampola hepatopancreática por cálculo biliar pode causar icterícia obstrutiva e pancreatite aguda.",
+      "Atresia duodenal: malformação congênita associada à síndrome de Down, com sinal da dupla bolha na radiografia.",
+      "Síndrome da artéria mesentérica superior: compressão da parte horizontal entre a aorta e a artéria mesentérica superior."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Duodeno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Duodeno",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: duodeno",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Duodeno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Duodeno",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Duodeno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Duodeno",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Duodeno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Duodeno",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Duodeno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Duodeno",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Duodeno",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Duodeno",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico correlações clínicas de Duodeno",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Duodeno",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-liver-capsule": {
+    "ids": {},
+    "summary_pt": "A cápsula do fígado, também chamada cápsula fibrosa perivascular ou cápsula de Glisson, é a delgada camada de tecido conjuntivo que envolve o parênquima hepático logo abaixo do peritônio visceral. Na maior parte da superfície, está recoberta pelo peritônio; na área nua, adere diretamente ao diafragma. Na porta do fígado, o tecido conjuntivo da cápsula penetra no órgão acompanhando os ramos da veia porta do fígado, da artéria hepática própria e dos ductos biliares, formando a bainha fibrosa dos espaços porta, que sustenta a arquitetura interna dos lóbulos. Apesar de fina, é resistente e confere forma ao órgão, que é macio e friável. É a estrutura sensível à dor do fígado, pois o parênquima em si é desprovido de terminações dolorosas; por isso, o estiramento da cápsula em hepatomegalia aguda, congestão ou inflamação causa dor surda no hipocôndrio direito, com possível referência ao ombro direito pelo trajeto do nervo frênico. Em lesões traumáticas, a cápsula pode conter hematomas subcapsulares, e sua ruptura provoca hemoperitônio. Na cirrose, a superfície abaixo da cápsula torna-se nodular, achado visível em exames de imagem e à laparoscopia.",
+    "anatomy": {
+      "relations": "Reveste todo o fígado, em continuidade com o peritônio visceral nas faces diafragmática e visceral e, na área nua, com o tecido conjuntivo frouxo que une o fígado ao diafragma. Na porta do fígado, prolonga-se como bainha fibrosa em torno da tríade portal, no interior do parênquima.",
+      "innervation": "Inervação sensitiva da cápsula pelos nervos frênico direito e intercostais inferiores, responsáveis pela dor do hipocôndrio direito e pela dor referida no ombro direito."
+    },
+    "histology": {
+      "epithelium": "Face externa revestida por mesotélio (peritônio visceral), apoiado em tecido conjuntivo.",
+      "tissues": [
+        "Tecido conjuntivo denso não modelado, com fibras colágenas e elásticas",
+        "Fibroblastos e vasos sanguíneos de pequeno calibre",
+        "Prolongamentos conjuntivos para o interior do órgão, formando os espaços porta"
+      ]
+    },
+    "clinical": [
+      "Hepatomegalia dolorosa: a distensão da cápsula na hepatite aguda, na congestão por insuficiência cardíaca direita ou em tumores causa dor no hipocôndrio direito.",
+      "Hematoma subcapsular e ruptura hepática em trauma abdominal contuso, com risco de hemoperitônio.",
+      "Biópsia hepática percutânea: a punção atravessa a cápsula e pode causar dor no ombro direito e sangramento.",
+      "Cirrose: a superfície nodular sob a cápsula é um achado típico à imagem e à laparoscopia."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: cápsula fibrosa (cápsula de Glisson)",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-diaphragmatic-surface-of-liver": {
+    "ids": {},
+    "summary_pt": "A face diafragmática do fígado é a superfície convexa, lisa e ampla, que abrange as regiões anterior, superior e parte da posterior do órgão e se molda à concavidade da cúpula do diafragma. Os lobos direito e esquerdo são nela separados pela inserção do ligamento falciforme, que contém em sua margem livre o ligamento redondo do fígado, remanescente da veia umbilical. Superiormente, o ligamento coronário, com folhetos anterior (superior) e posterior (inferior), e os ligamentos triangulares direito e esquerdo fixam o órgão ao diafragma; entre os folhetos do coronário situa-se a área nua. No lobo esquerdo, uma depressão produzida pelo centro tendíneo do diafragma forma a impressão cardíaca. Através do diafragma, a face relaciona-se com as pleuras e pulmões, nos recessos costodiafragmáticos, com o pericárdio e o coração e com as costelas inferiores. Entre a face e o diafragma situa-se o recesso subfrênico, parte da cavidade peritoneal, dividido pelo ligamento falciforme em espaços direito e esquerdo. Por ser recoberta por peritônio visceral sensível e pela proximidade com o diafragma, processos inflamatórios e tumorais dessa face podem manifestar-se com dor referida no ombro e com derrame pleural.",
+    "anatomy": {
+      "relations": "Em contato com a face inferior do diafragma, que a separa do pulmão e da pleura (recessos costodiafragmáticos), do pericárdio e do coração. O recesso subfrênico e o ligamento falciforme separam o espaço direito e o esquerdo. Está protegida pelas costelas inferiores e pela cartilagem costal. A maior parte é recoberta por peritônio visceral, com exceção da área nua.",
+      "vascularization": "Suprida por ramos da artéria hepática própria. A drenagem venosa se faz pelas veias hepáticas, em posição próxima à face posterior, onde desembocam na veia cava inferior.",
+      "innervation": "O peritônio da face diafragmática recebe fibras sensitivas do nervo frênico, o que explica a dor referida no ombro, e dos nervos intercostais inferiores."
+    },
+    "clinical": [
+      "Abscesso subfrênico: coleção purulenta no recesso subfrênico, após cirurgia abdominal ou peritonite, que pode causar derrame pleural reacional e dor no ombro.",
+      "Trauma torácico inferior direito com fraturas de costelas pode lesar a face diafragmática e provocar laceração hepática.",
+      "Dor referida: a irritação do peritônio da face diafragmática é percebida no ombro, por convergência de fibras do nervo frênico (C3–C5)."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: face diafragmática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: face diafragmática",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: face diafragmática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: face diafragmática",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: face diafragmática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: face diafragmática",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: face diafragmática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: face diafragmática",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: face diafragmática",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: face diafragmática",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-bare-area-of-liver": {
+    "ids": {},
+    "summary_pt": "A área nua do fígado é uma região triangular, situada na face diafragmática, posterossuperior, desprovida de peritônio visceral e em contato direto com o diafragma por tecido conjuntivo frouxo. É delimitada pelos folhetos anterior (superior) e posterior (inferior) do ligamento coronário, que se continuam lateralmente nos ligamentos triangulares direito e esquerdo, e se estende em direção ao sulco da veia cava inferior, que a cruza. A glândula suprarrenal direita situa-se junto à sua margem inferior. A ausência de peritônio faz da área nua uma zona de contato direto do fígado com o diafragma e o retroperitônio, por onde infecções ou tumores podem se propagar sem atravessar a cavidade peritoneal livre. Em cirurgia hepática, a mobilização do lobo direito exige a secção dos ligamentos coronário e triangular, com cuidado para não lesar a veia cava inferior e as veias hepáticas curtas. Seu estudo também é essencial para compreender o trajeto de abscessos do fígado para o espaço pleural e o pericárdio. Nela a cápsula fibrosa do fígado se continua com o tecido conjuntivo subdiafragmático.",
+    "anatomy": {
+      "relations": "Limitada pelos folhetos anterior e posterior do ligamento coronário e, lateralmente, pelos ligamentos triangulares direito e esquerdo. Relaciona-se diretamente com o diafragma e, junto à margem inferior, com a glândula suprarrenal direita. O sulco da veia cava inferior atravessa a sua parte medial."
+    },
+    "clinical": [
+      "Abscesso hepático (piogênico ou amebiano) do lobo direito pode se propagar pela área nua para o espaço pleural ou para o pericárdio, sem passar pela cavidade peritoneal.",
+      "Mobilização cirúrgica do fígado: a secção dos ligamentos coronário e triangular expõe a área nua e exige cuidado com a veia cava inferior e as veias hepáticas.",
+      "Tumores da área nua podem invadir diretamente o diafragma e a parede torácica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: área nua",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: área nua",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: área nua",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: área nua",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: área nua",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: área nua",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:mucosa-of-stomach": {
+    "ids": {},
+    "summary_pt": "A mucosa gástrica é a túnica interna do estômago, de aspecto rosado e aveludado, que se pregueia em rugas gástricas longitudinais no corpo e no fundo, sobretudo ao longo da curvatura maior, e se achata quando o órgão está distendido. A superfície apresenta pequenas áreas gástricas, sulcadas pelas fovéolas gástricas, invaginações do epitélio em que desembocam as glândulas. A mucosa tem três regiões glandulares: cárdica, estreita e próxima ao óstio cárdico; gástrica própria, no fundo e no corpo; e pilórica, no antro. O epitélio de revestimento é simples, cilíndrico, secretor de muco que forma um gel alcalino protetor contra o ácido clorídrico e a pepsina. Nas glândulas do corpo, as células parietais secretam ácido clorídrico e fator intrínseco, as principais produzem pepsinogênio e lipase gástrica, as mucosas do colo renovam o epitélio e as enteroendócrinas liberam hormônios, como a gastrina, produzida no antro. A renovação do epitélio é rápida, em poucos dias. Alterações dessa barreira mucosa, por infecção, ácido, medicamentos ou autoimunidade, estão na base das gastrites, das úlceras e de neoplasias gástricas.",
+    "anatomy": {
+      "relations": "Reveste a face interna do estômago, apoiada na submucosa, da qual é separada pela lâmina muscular da mucosa. As rugas gástricas convergem para o canal pilórico, onde a mucosa forma o esfíncter pilórico, e a mucosa é contínua com a do esôfago e com a do duodeno.",
+      "vascularization": "Rede capilar da lâmina própria suprida por ramos arteriais do plexo submucoso, derivados das artérias gástricas e gastromentais; as veias do plexo submucoso drenam para as veias gástricas e a veia porta do fígado."
+    },
+    "histology": {
+      "epithelium": "Epitélio cilíndrico simples secretor de muco, que reveste a superfície e as fovéolas gástricas.",
+      "tissues": [
+        "Lâmina própria de tecido conjuntivo frouxo, ocupada por glândulas gástricas tubulares",
+        "Células parietais (oxínticas), produtoras de ácido clorídrico e fator intrínseco",
+        "Células principais, produtoras de pepsinogênio e lipase gástrica",
+        "Células mucosas do colo e células-tronco do epitélio",
+        "Células enteroendócrinas, entre elas células G (gastrina) no antro",
+        "Lâmina muscular da mucosa, de músculo liso, em duas camadas"
+      ]
+    },
+    "clinical": [
+      "Gastrite crônica por Helicobacter pylori: causa comum de inflamação crônica da mucosa antral e fator de risco para úlcera péptica e adenocarcinoma gástrico.",
+      "Gastrite atrófica autoimune: perda de células parietais, com deficiência de fator intrínseco e anemia perniciosa.",
+      "Úlcera péptica: perda da integridade da barreira mucosa, por ácido, Helicobacter pylori ou anti-inflamatórios não esteroides, que atinge a submucosa e a muscular.",
+      "Metaplasia intestinal e displasia: lesões pré-neoplásicas associadas ao adenocarcinoma gástrico do tipo intestinal."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago: mucosa gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Estômago: mucosa gástrica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: estômago",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago: mucosa gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Estômago: mucosa gástrica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago: mucosa gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Estômago: mucosa gástrica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Estômago: mucosa gástrica",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Estômago: mucosa gástrica",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico correlações clínicas de Estômago: mucosa gástrica",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Estômago: mucosa gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:anterior-lateral-segment-of-liver-vi": {
+    "ids": {},
+    "summary_pt": "O segmento VI de Couinaud é o segmento inferior do setor posterior do lobo direito do fígado, situado na parte lateral e posteroinferior do hemifígado direito, abaixo do plano transversal que passa pela bifurcação da veia porta do fígado. É delimitado medialmente pelo segmento V, superiormente pelo segmento VII e lateralmente pela margem direita do órgão. Seu pedículo portal, com ramo da veia porta, ramo da artéria hepática e ramo do ducto biliar, provém do ramo posterior do pedículo direito, e a drenagem venosa se faz pela veia hepática direita. Na face visceral, o segmento relaciona-se com o rim direito, a glândula suprarrenal direita e a flexura direita do colo, que deixam as impressões renal e cólica. Como cada segmento tem pedículo vascular e biliar próprio, ele pode ser ressecado isoladamente, na segmentectomia, preservando o restante do parênquima funcional. A identificação dos segmentos pela tomografia e pela ressonância, por referência às veias hepáticas e aos ramos portais, é essencial para o planejamento de ressecções, de ablação de tumores e de transplante com doador vivo. A divisão de Couinaud baseia-se nos ramos portais e nas veias hepáticas, não em limites visíveis na superfície.",
+    "anatomy": {
+      "relations": "Ocupa a parte inferior e posterior do lobo direito. Limita-se com o segmento V, anteriormente, e com o segmento VII, superiormente, sem separação visível na superfície; na face visceral, está em contato com o rim direito e a flexura direita do colo.",
+      "vascularization": "Pedículo portal próprio (ramo posterior do ramo direito da veia porta, da artéria hepática e do ducto biliar). Drenagem venosa pela veia hepática direita.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Hepatectomia: a segmentectomia VI ou a bissegmentectomia VI e VII preserva parênquima funcional em tumores localizados e em metástases.",
+      "Lesões desse segmento podem estar adjacentes ao rim direito e à flexura direita do colo, com risco de invasão local.",
+      "Carcinoma hepatocelular: a localização segmentar determina a abordagem por ressecção, ablação por radiofrequência ou embolização."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VI (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento VI (Couinaud)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:transverse-colon": {
+    "ids": {},
+    "summary_pt": "O colo transverso é a porção mais longa e mais móvel do intestino grosso, com cerca de 45 cm, que cruza o abdome da flexura direita do colo (hepática) à flexura esquerda do colo (esplênica). É totalmente intraperitoneal e suspenso pelo mesocolo transverso, cuja raiz segue a face anterior da cabeça do pâncreas e da parte descendente do duodeno. Pende frequentemente em alça para baixo, dependendo do enchimento, e está recoberto anteriormente pelo omento maior, a que se une pelo ligamento gastrocólico. A flexura esquerda é mais alta e posterior que a direita e se fixa ao diafragma pelo ligamento frenocólico, o que a torna menos móvel. Como todo o colo, apresenta tênias do colo, saculações (haustros) e apêndices omentais. Absorve água e eletrólitos e forma as fezes. Do ponto de vista embriológico, o terço distal pertence ao intestino posterior e os dois terços proximais ao intestino médio, o que se reflete em sua dupla irrigação arterial e na inervação por diferentes plexos. A zona de transição entre os dois territórios, próxima à flexura esquerda, é vulnerável à isquemia.",
+    "anatomy": {
+      "relations": "Superiormente relaciona-se com o fígado, a vesícula biliar, a curvatura maior do estômago e o baço; inferiormente, com o intestino delgado. A face posterior apoia-se, pelo mesocolo, no duodeno e no pâncreas. Anteriormente, é coberto pelo omento maior e pela parede abdominal.",
+      "vascularization": "Dois terços proximais pela artéria cólica média, da artéria mesentérica superior; terço distal pela artéria cólica esquerda, da mesentérica inferior. A artéria marginal do colo une os dois territórios. As veias drenam para as veias mesentéricas superior e inferior.",
+      "innervation": "Parte proximal: fibras simpáticas do plexo mesentérico superior e parassimpáticas do nervo vago. Parte distal: simpáticas do plexo mesentérico inferior e parassimpáticas dos nervos esplâncnicos pélvicos (S2–S4).",
+      "lymph": "Linfonodos cólicos médios e mesentéricos superiores para a parte proximal; linfonodos mesentéricos inferiores para a distal."
+    },
+    "histology": {
+      "epithelium": "Epitélio cilíndrico simples com enterócitos absorventes e muitas células caliciformes, sem vilosidades.",
+      "tissues": [
+        "Mucosa lisa com criptas intestinais profundas e retas",
+        "Lâmina própria com tecido linfoide associado à mucosa",
+        "Muscular externa com camada longitudinal externa concentrada em três tênias do colo",
+        "Serosa com apêndices omentais adiposos"
+      ]
+    },
+    "clinical": [
+      "Câncer colorretal: adenocarcinoma de colo transverso pode causar anemia, obstrução ou perfuração e metastatiza para o fígado pela veia porta do fígado.",
+      "Colite isquêmica: a zona próxima à flexura esquerda, entre os territórios das artérias mesentéricas superior e inferior, é vulnerável à hipoperfusão.",
+      "Megacólon tóxico: dilatação aguda do colo, sobretudo do transverso, complicação de colite grave, com risco de perfuração.",
+      "Volvo do colo transverso: torção do segmento móvel, menos frequente que a do colo sigmoide."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Colo transverso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Colo transverso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: colo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Colo transverso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Colo transverso",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Colo transverso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Colo transverso",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Colo transverso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Colo transverso",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Colo transverso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Colo transverso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Colo transverso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Colo transverso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico correlações clínicas de Colo transverso",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Colo transverso",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:posterior-lateral-segment-of-liver-vii": {
+    "ids": {},
+    "summary_pt": "O segmento VII de Couinaud é o segmento superior do setor posterior do lobo direito do fígado, situado na parte posterior e superior do hemifígado direito, acima do plano transversal da bifurcação portal. Fica próximo ao diafragma, à área nua e ao sulco da veia cava inferior, e é de difícil abordagem cirúrgica por ser profundo e posterior. É limitado inferiormente pelo segmento VI, medialmente pelo segmento VIII, de que o separa o plano da veia hepática direita, e posteriormente pela margem do órgão. O pedículo portal provém do ramo posterior do pedículo direito, que se divide em ramos para os segmentos VI e VII, e a drenagem venosa ocorre pela veia hepática direita. Pelo diafragma, relaciona-se com o recesso costodiafragmático da pleura. Por localizar-se perto da veia cava inferior, tumores desse segmento podem comprimir ou invadir o vaso e as veias hepáticas. Na ressecção, a mobilização completa do lobo direito, com secção dos ligamentos coronário e triangular direito, é frequentemente necessária. O reconhecimento dos segmentos nos exames de imagem baseia-se nos planos das veias hepáticas e portais.",
+    "anatomy": {
+      "relations": "Ocupa a parte posterossuperior do lobo direito, em contato com o diafragma, a área nua e o sulco da veia cava inferior. Limita-se inferiormente com o segmento VI e anteromedialmente com o segmento VIII; a veia hepática direita percorre o plano entre os setores anterior e posterior.",
+      "vascularization": "Pedículo portal próprio, proveniente do ramo posterior do ramo direito da veia porta do fígado, com ramos da artéria hepática e do ducto biliar. Drenagem venosa pela veia hepática direita.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Ressecção segmentar do VII: considerada de maior dificuldade técnica no lobo direito, por localização profunda e posterior, próxima à veia cava inferior e às veias hepáticas.",
+      "Tumores do segmento VII podem invadir o diafragma por contiguidade.",
+      "Carcinoma hepatocelular ou metástase localizada no VII: a ressecção ou a ablação exige planejamento pelos planos das veias hepáticas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento VII (Couinaud)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-gastric-impression-of-liver": {
+    "ids": {},
+    "summary_pt": "A impressão gástrica do fígado é a depressão côncava, ampla e lisa, na face visceral do lobo esquerdo, produzida pelo contato com a face anterior do estômago e, na parte medial, com o omento menor. Situa-se à esquerda da fissura do ligamento venoso e da fissura do ligamento redondo e ocupa a maior parte da face visceral do lobo esquerdo, ao lado da impressão esofágica, onde o esôfago abdominal se aproxima do órgão. O peritônio visceral cobre a impressão e a separa do estômago, com o qual o fígado se relaciona por intermédio do ligamento hepatogástrico, parte do omento menor, em que correm as artérias gástricas direita e esquerda. A impressão varia com o grau de repleção gástrica, com o biotipo e com a posição do corpo, e nos exames de imagem ajuda a localizar o limite entre os dois órgãos. Do ponto de vista clínico, a relação íntima entre o lobo esquerdo e o estômago explica a extensão de tumores gástricos ao fígado e as aderências pós-inflamatórias ou pós-cirúrgicas entre os dois órgãos.",
+    "anatomy": {
+      "relations": "Situa-se na face visceral do lobo esquerdo, em contato com a face anterior do estômago e o omento menor. Medialmente, vizinha da impressão esofágica; a fissura do ligamento venoso e a porta do fígado limitam-na posteriormente.",
+      "vascularization": "Suprida por ramos da artéria hepática esquerda e drenada pelas veias hepáticas, em continuidade com o parênquima do lobo esquerdo."
+    },
+    "clinical": [
+      "Extensão direta de adenocarcinoma gástrico para o lobo esquerdo do fígado, por contiguidade.",
+      "Aderências entre estômago e fígado após cirurgia ou inflamação podem alterar a relação entre os órgãos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: impressão gástrica",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:posterior-medial-segment-of-liver-viii": {
+    "ids": {},
+    "summary_pt": "O segmento VIII de Couinaud é o segmento superior do setor anterior do lobo direito do fígado, situado sob o diafragma, na parte anterossuperior do hemifígado direito, acima do plano transversal da bifurcação da veia porta do fígado. É limitado medialmente pelo plano da veia hepática média, que o separa do segmento IV, lateral e posteriormente pela veia hepática direita, que o separa do segmento VII, e inferiormente pelo segmento V. Por sua posição alta e anterior, relaciona-se com o diafragma e, por meio dele, com o pulmão e o coração. O pedículo portal provém do ramo anterior do pedículo direito, que supre os segmentos V e VIII, e a drenagem venosa faz-se pela veia hepática média e pela direita. O limite com o segmento IV, dado pela veia hepática média, orienta as hepatectomias maiores. A identificação do segmento nos exames de imagem depende da referência às veias hepáticas e ao plano portal e é imprescindível para o planejamento terapêutico. Como os demais segmentos, tem vascularização arterial, portal e biliar independentes, o que permite sua ressecção anatômica.",
+    "anatomy": {
+      "relations": "Ocupa a parte anterossuperior do lobo direito, sob o diafragma. Limita-se com o segmento IV pelo plano da veia hepática média (plano de Cantlie), com o segmento VII pelo plano da veia hepática direita e com o segmento V, inferiormente, pelo plano portal transverso.",
+      "vascularization": "Pedículo portal próprio, proveniente do ramo anterior do ramo direito da veia porta do fígado, com ramos da artéria hepática e do ducto biliar. Drenagem venosa pelas veias hepáticas média e direita.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Abscesso hepático do segmento VIII pode se propagar ao diafragma e ao espaço pleural, com derrame pleural direito.",
+      "Hepatectomia direita ou esquerda ampliada: a ressecção do segmento VIII depende da preservação da veia hepática média.",
+      "Planejamento cirúrgico: o reconhecimento do segmento VIII na tomografia e na ressonância, pelos planos das veias hepáticas e portais, define a extensão da ressecção."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VIII (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento VIII (Couinaud)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:left-medial-segment-of-liver-iv": {
+    "ids": {},
+    "summary_pt": "O segmento IV de Couinaud é o segmento medial do lobo esquerdo do fígado, situado entre o plano da veia hepática média, à direita, e o ligamento falciforme com a fissura do ligamento redondo, à esquerda. Está dividido pelo plano transversal da bifurcação portal em segmento IVa, superior, e IVb, inferior. Na face visceral, o segmento IVb corresponde ao lobo quadrado, entre a fossa da vesícula biliar e a fissura do ligamento redondo, anterior à porta do fígado, que o separa do segmento I (lobo caudado). O pedículo portal vem do ramo esquerdo da veia porta do fígado, e a drenagem venosa se faz principalmente pela veia hepática média, em parte também pela esquerda. A artéria hepática esquerda e o ducto hepático esquerdo acompanham o pedículo. Do ponto de vista cirúrgico, é um segmento de limites claros pelo plano de Cantlie, linha que une a fossa da vesícula biliar à veia cava inferior e separa os hemifígados funcionais direito e esquerdo. Sua ressecção, isolada ou combinada à hepatectomia direita, é feita em tumores centrais, e o segmento IV é um possível sítio de invasão por carcinoma da vesícula biliar, por contiguidade com o leito vesicular.",
+    "anatomy": {
+      "relations": "Situa-se entre o ligamento falciforme e a fissura do ligamento redondo, à esquerda, e o plano da veia hepática média, à direita. Posteriormente, o segmento IVb limita-se com a porta do fígado, e o IVa, com o diafragma, por meio da face diafragmática.",
+      "vascularization": "Pedículo portal com ramos do ramo esquerdo da veia porta do fígado, da artéria hepática esquerda e do ducto hepático esquerdo. Drenagem venosa pela veia hepática média, em parte também pela esquerda.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Carcinoma da vesícula biliar pode invadir o parênquima hepático adjacente, particularmente os segmentos IVb e V.",
+      "Hepatectomia direita ampliada (trissegmentectomia) inclui o segmento IV, e o plano de Cantlie orienta a hepatectomia direita ou esquerda.",
+      "Colangiocarcinoma hilar (tumor de Klatskin) pode comprometer os ductos do segmento IV e obrigar à ressecção hepática extensa."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento IV (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento IV (Couinaud)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:left-posterior-lateral-segment-of-liver-ii": {
+    "ids": {},
+    "summary_pt": "O segmento II de Couinaud é o segmento superior da divisão lateral esquerda do fígado, também chamado segmento posterior lateral esquerdo. Situa-se na parte posterossuperior do lobo esquerdo, acima do plano transversal da bifurcação portal e à esquerda do ligamento falciforme, que o separa do segmento IV. Inferiormente, o plano da veia hepática esquerda separa-o do segmento III, com o qual compõe a divisão lateral esquerda. Sua face diafragmática, convexa, relaciona-se com o diafragma e, por intermédio dele, com o pericárdio e o coração, e o ápice do lobo esquerdo continua-se em direção ao ligamento triangular esquerdo. O pedículo portal é um ramo do ramo esquerdo da veia porta do fígado, a artéria é ramo da artéria hepática esquerda, e o ducto biliar drena para o ducto hepático esquerdo; a drenagem venosa se dá pela veia hepática esquerda. A segmentectomia lateral esquerda, que inclui os segmentos II e III, é uma ressecção anatômica comum e também a base para o enxerto lateral esquerdo em transplantes pediátricos com doador vivo. A identificação do segmento nos exames de imagem depende dos planos da veia hepática esquerda e do ligamento falciforme, que o delimitam sem separação visível na superfície.",
+    "anatomy": {
+      "relations": "Ocupa a parte posterossuperior do lobo esquerdo, à esquerda do ligamento falciforme. Limita-se com o segmento III inferiormente, pelo plano da veia hepática esquerda, e com o segmento IV medialmente. Relaciona-se com o diafragma, o pericárdio e o coração.",
+      "vascularization": "Pedículo portal próprio, com ramos do ramo esquerdo da veia porta do fígado, da artéria hepática esquerda e do ducto hepático esquerdo. Drenagem venosa pela veia hepática esquerda.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Segmentectomia lateral esquerda (segmentos II e III): ressecção anatômica para tumores do lobo esquerdo.",
+      "Transplante hepático com doador vivo pediátrico: o enxerto lateral esquerdo (II e III) é o mais usado, por sua independência vascular e biliar.",
+      "Lesões do segmento II podem comprometer o diafragma e, por contiguidade, o pericárdio."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento II (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento II (Couinaud)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:anterior-medial-segment-of-liver-v": {
+    "ids": {},
+    "summary_pt": "O segmento V de Couinaud é o segmento inferior do setor anterior do lobo direito do fígado, situado abaixo do plano transversal da bifurcação da veia porta do fígado. Limita-se medialmente com o segmento IVb, pelo plano da veia hepática média e da fossa da vesícula biliar, lateralmente com o segmento VI, pela veia hepática direita, e superiormente com o segmento VIII. Na face visceral, relaciona-se com a vesícula biliar, a flexura direita do colo e o duodeno. O pedículo portal provém do ramo anterior do pedículo direito, que supre os segmentos V e VIII, e a drenagem venosa ocorre pela veia hepática média e pela veia hepática direita. Como a vesícula biliar está alojada em sua margem medial, a colecistectomia pode expor este segmento, e a invasão direta por carcinoma da vesícula biliar compromete os segmentos IVb e V. A ressecção dos segmentos IVb e V é praticada em casos selecionados, e a identificação do segmento nos exames de imagem orienta o planejamento cirúrgico. Como os demais segmentos, tem pedículo vascular e biliar próprio e drenagem venosa intersegmentar, o que permite sua ressecção anatômica sem comprometer o parênquima vizinho.",
+    "anatomy": {
+      "relations": "Ocupa a parte anteroinferior do lobo direito. Limita-se com o segmento IVb, medialmente, na altura da fossa da vesícula biliar, com o VI, lateralmente, e com o VIII, superiormente. Na face visceral, tem contato com a vesícula biliar, a flexura direita do colo e o duodeno.",
+      "vascularization": "Pedículo portal próprio, proveniente do ramo anterior do ramo direito da veia porta do fígado, com ramos da artéria hepática e do ducto biliar. Drenagem venosa pelas veias hepáticas média e direita.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Carcinoma da vesícula biliar: invade com frequência os segmentos IVb e V, e a ressecção desses segmentos faz parte do tratamento em casos selecionados.",
+      "Colecistectomia: a proximidade da fossa da vesícula biliar expõe o segmento V a lesões do leito hepático.",
+      "Ressecção do segmento V: realizada de forma isolada ou combinada, guiada pelos planos das veias hepáticas média e direita."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento V (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento V (Couinaud)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:pancreas": {
+    "ids": {},
+    "summary_pt": "O pâncreas é uma glândula mista, exócrina e endócrina, alongada, com cerca de 12 a 15 cm, situada de forma transversal no retroperitônio, na região epigástrica, ao nível das vértebras L1 e L2. Divide-se em cabeça, que ocupa a concavidade do duodeno e tem o processo uncinado, colo, corpo e cauda, que se estende até o hilo do baço no ligamento esplenorrenal. A cabeça relaciona-se posteriormente com o ducto colédoco e a veia cava inferior; atrás do colo forma-se a veia porta do fígado, pela confluência das veias mesentérica superior e esplênica. O corpo cruza a aorta e a origem da artéria mesentérica superior e forma parte do leito gástrico, na parede posterior da bolsa omental. O ducto pancreático, que percorre a glândula, une-se ao ducto colédoco na ampola hepatopancreática, que se abre na papila maior do duodeno, enquanto o ducto pancreático acessório drena na papila menor. A porção exócrina secreta enzimas digestivas e bicarbonato, e as ilhotas pancreáticas secretam insulina, glucagon e somatostatina, que regulam a glicemia. A posição profunda e as relações vasculares explicam a dificuldade diagnóstica e cirúrgica das doenças pancreáticas.",
+    "anatomy": {
+      "relations": "A cabeça apoia-se na veia cava inferior e na veia renal esquerda; o colo é anterior à veia porta do fígado; o corpo situa-se posterior ao estômago e à bolsa omental, sobre a aorta, a artéria mesentérica superior, o rim e a glândula suprarrenal esquerdos; a cauda alcança o hilo do baço. O mesocolo transverso se insere na face anterior da glândula.",
+      "vascularization": "Cabeça: artérias pancreaticoduodenais superiores (da gastroduodenal) e inferiores (da mesentérica superior). Corpo e cauda: ramos pancreáticos da artéria esplênica. As veias drenam para as veias esplênica e mesentérica superior e, por elas, para a veia porta do fígado.",
+      "innervation": "Parassimpática pelo nervo vago, que estimula a secreção exócrina; simpática por fibras do plexo celíaco e mesentérico superior, que transmitem a dor visceral, referida no epigástrio e nas costas.",
+      "lymph": "Linfonodos pancreaticoesplênicos e pancreaticoduodenais, que drenam para os linfonodos celíacos e mesentéricos superiores."
+    },
+    "histology": {
+      "epithelium": "Os ductos têm epitélio cúbico simples, que se torna cilíndrico nos ductos maiores; os ácinos são formados por células acinares piramidais secretoras de enzimas.",
+      "tissues": [
+        "Ácinos serosos com células acinares ricas em grânulos de zimogênio, predominantes, e células centroacinares",
+        "Sistema de ductos intercalares, intralobulares, interlobulares e ducto pancreático principal",
+        "Ilhotas pancreáticas (de Langerhans), com células alfa (glucagon), beta (insulina), delta (somatostatina) e PP",
+        "Cápsula delgada e septos de tecido conjuntivo que dividem a glândula em lóbulos"
+      ]
+    },
+    "clinical": [
+      "Pancreatite aguda: autodigestão da glândula por ativação intrapancreática de enzimas, em geral por litíase biliar ou álcool, com dor epigástrica irradiada para as costas.",
+      "Adenocarcinoma ductal da cabeça: causa icterícia obstrutiva progressiva, e a vesícula biliar palpável e indolor constitui o sinal de Courvoisier.",
+      "Diabetes melito tipo 1: destruição autoimune das células beta das ilhotas pancreáticas.",
+      "Pâncreas anular: malformação em que tecido pancreático envolve a parte descendente do duodeno e causa obstrução."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Pâncreas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Pâncreas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: pâncreas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Pâncreas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Pâncreas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Pâncreas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Pâncreas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Pâncreas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Pâncreas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Pâncreas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Pâncreas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Pâncreas",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Pâncreas",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pâncreas, tópico correlações clínicas de Pâncreas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Pâncreas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-caudate-lobe-of-liver": {
+    "ids": {},
+    "summary_pt": "O lobo caudado, correspondente ao segmento I de Couinaud, é a porção do fígado situada na face visceral, posterior à porta do fígado, entre o sulco da veia cava inferior, à direita, e a fissura do ligamento venoso, à esquerda. Possui dois prolongamentos: o processo papilar, à esquerda e inferiormente, e o processo caudado, que o liga ao lobo direito entre a veia porta do fígado e a veia cava inferior. Funcionalmente, é um segmento autônomo: recebe ramos portais e arteriais de ambos os ramos, direito e esquerdo, drena o sangue por pequenas veias hepáticas diretas para a veia cava inferior e tem ductos biliares que drenam para os dois ductos hepáticos. Essa independência faz com que seja poupado ou hipertrofiado em doenças que obstruem as veias hepáticas principais. Anteriormente, relaciona-se com a porta do fígado e o ligamento hepatoduodenal; posteriormente, com o pilar direito do diafragma e a veia cava inferior; e, à esquerda, com a bolsa omental, por intermédio do omento menor. O lobo caudado tem importância clínica e cirúrgica pela posição profunda, junto à veia cava inferior e à tríade portal, o que dificulta sua ressecção.",
+    "anatomy": {
+      "relations": "Situa-se entre o sulco da veia cava inferior, à direita, e a fissura do ligamento venoso, à esquerda, posterior à porta do fígado. O processo papilar projeta-se na bolsa omental, junto ao pâncreas e ao tronco celíaco.",
+      "vascularization": "Irrigação portal e arterial de ambos os ramos, direito e esquerdo. Drenagem venosa direta para a veia cava inferior, por pequenas veias hepáticas curtas, independente das três veias hepáticas principais.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Síndrome de Budd-Chiari: a trombose das veias hepáticas poupa a drenagem direta do lobo caudado, que sofre hipertrofia compensatória.",
+      "Cirrose: a hipertrofia do lobo caudado, com atrofia do lobo direito, é um achado de imagem frequente.",
+      "Ressecção do lobo caudado: tecnicamente difícil, por posição profunda entre a veia cava inferior e a tríade portal."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo caudado (segmento I)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: lobo caudado (segmento I)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:left-anterior-lateral-segment-of-liver-iii": {
+    "ids": {},
+    "summary_pt": "O segmento III de Couinaud é o segmento inferior da divisão lateral esquerda do fígado, também chamado anterior lateral esquerdo. Situa-se na parte anteroinferior do lobo esquerdo, abaixo do plano transversal da bifurcação portal, à esquerda do ligamento falciforme e da fissura do ligamento redondo, que o separam do segmento IV. Superiormente, o plano da veia hepática esquerda o separa do segmento II. Na face visceral, relaciona-se com a face anterior do estômago e com o omento menor, e está anterior ao ligamento venoso, que o separa do lobo caudado. O pedículo portal provém da parte umbilical do ramo esquerdo da veia porta do fígado, que nesse ponto recebe o ligamento redondo, remanescente da veia umbilical; o ducto biliar drena para o ducto hepático esquerdo e a drenagem venosa se faz pela veia hepática esquerda. Em conjunto com o segmento II, forma a divisão lateral esquerda, cuja ressecção é denominada segmentectomia lateral esquerda. A relação com a parede abdominal anterior torna o segmento acessível, mas também vulnerável em traumas epigástricos, e a identificação nos exames de imagem baseia-se na posição à esquerda do ligamento falciforme.",
+    "anatomy": {
+      "relations": "Ocupa a parte anteroinferior do lobo esquerdo. Limita-se com o segmento II, superiormente, pela veia hepática esquerda, e com o segmento IV, medialmente, pelo ligamento falciforme e fissura do ligamento redondo. Relaciona-se com o estômago e o omento menor.",
+      "vascularization": "Pedículo portal próprio, com ramos da parte umbilical do ramo esquerdo da veia porta do fígado, da artéria hepática esquerda e do ducto hepático esquerdo. Drenagem venosa pela veia hepática esquerda.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Segmentectomia lateral esquerda (II e III): ressecção anatômica de tumores do lobo esquerdo e base do enxerto de doador vivo pediátrico.",
+      "Trauma abdominal epigástrico: o lobo esquerdo, anterior ao estômago, é vulnerável à laceração.",
+      "Lesões deste segmento podem comprometer o estômago e o omento menor por contiguidade."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento III (Couinaud)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento III (Couinaud)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-quadrate-lobe-of-liver": {
+    "ids": {},
+    "summary_pt": "O lobo quadrado é a porção da face visceral do fígado situada entre a fossa da vesícula biliar, à direita, e a fissura do ligamento redondo, à esquerda, anterior à porta do fígado. Do ponto de vista funcional, corresponde ao segmento IVb de Couinaud e pertence ao hemifígado esquerdo, embora esteja anatomicamente entre os lobos direito e esquerdo. Sua face anterior é contínua com a margem inferior do órgão e, posteriormente, a porta do fígado o separa do lobo caudado. Inferiormente, relaciona-se com o piloro, a parte superior do duodeno e o colo transverso. Suas estruturas vasculares provêm do ramo esquerdo da veia porta do fígado e da artéria hepática esquerda, e o sangue venoso é drenado pelas veias hepáticas média e esquerda. É um ponto de referência cirúrgica, já que a placa hilar, espessamento do tecido conjuntivo da cápsula fibrosa na porta do fígado, encontra-se junto à base do lobo quadrado e é abordada na ressecção de colangiocarcinoma hilar. Também serve de orientação na colecistectomia, em que a fossa da vesícula biliar constitui seu limite direito, e na identificação dos limites dos segmentos nos exames de imagem.",
+    "anatomy": {
+      "relations": "Situa-se na face visceral, entre a fossa da vesícula biliar e a fissura do ligamento redondo, anterior à porta do fígado. Posteriormente, é separado do lobo caudado pela porta do fígado; inferiormente, relaciona-se com o piloro e o colo transverso.",
+      "vascularization": "Ramos do ramo esquerdo da veia porta do fígado e da artéria hepática esquerda. Drenagem venosa pelas veias hepáticas média e esquerda.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco e parassimpáticas dos troncos vagais, que acompanham os ramos do pedículo portal do segmento.",
+      "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
+    },
+    "clinical": [
+      "Colangiocarcinoma hilar: tumor da confluência biliar cuja ressecção pode exigir abordar a base do lobo quadrado e a placa hilar.",
+      "Colecistectomia: o limite direito do lobo quadrado é a fossa da vesícula biliar, referência para evitar lesões do leito hepático e das vias biliares.",
+      "Carcinoma da vesícula biliar pode invadir o lobo quadrado (segmento IVb) por contiguidade."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo quadrado",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: lobo quadrado",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-colic-impression-of-liver": {
+    "ids": {},
+    "summary_pt": "A impressão cólica do fígado é a depressão rasa, na face visceral do lobo direito, formada pelo contato com a flexura direita do colo (flexura hepática) e com a parte proximal do colo transverso. Situa-se na parte inferior e anterior do lobo direito, anteriormente à impressão renal e próxima à fossa da vesícula biliar e à impressão duodenal. O peritônio visceral reveste a face e a separa das alças do colo. A flexura direita do colo, formada pela transição do colo ascendente para o transverso, encontra-se logo abaixo do fígado, o que explica a impressão. A superfície vizinha dos segmentos V e VI é recoberta por peritônio, o que permite o contato direto com o colo. A impressão varia de tamanho e profundidade conforme a posição e o enchimento do colo e pode ser vista, em necropsia ou à cirurgia, como uma área ligeiramente deprimida. Do ponto de vista clínico, a relação do fígado com o colo explica a invasão por neoplasia da flexura, as aderências e a propagação de processos inflamatórios entre os dois órgãos.",
+    "anatomy": {
+      "relations": "Situa-se na parte inferior e anterior da face visceral do lobo direito, em contato com a flexura direita do colo e parte do colo transverso. Fica anterior à impressão renal e próxima à fossa da vesícula biliar e à impressão duodenal.",
+      "vascularization": "Suprida por ramos da artéria hepática própria, como o restante do lobo direito; o colo adjacente é irrigado pelas artérias cólica direita e cólica média, ramos da artéria mesentérica superior."
+    },
+    "clinical": [
+      "Carcinoma da flexura direita do colo pode invadir diretamente o fígado, o duodeno ou a vesícula biliar.",
+      "Metástases hepáticas de adenocarcinoma colorretal chegam ao fígado por via portal, pelas veias mesentéricas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão cólica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome, tópico Fígado: impressão cólica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema digestório: fígado",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão cólica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: impressão cólica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão cólica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: impressão cólica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: impressão cólica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico correlações clínicas de Fígado: impressão cólica",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+}
