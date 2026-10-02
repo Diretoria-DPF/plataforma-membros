@@ -22,7 +22,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "Exige volumes e doses maiores que a via intratecal, porque o fármaco se distribui no espaço epidural, é captado pela rede venosa epidural e pela gordura e só em parte atravessa a dura. Parte da dose chega à circulação sistêmica pelo plexo venoso epidural (e não pela veia porta), de modo que não há primeira passagem hepática; a adrenalina associada ao anestésico local retarda essa absorção. A cefaleia pós-punção ocorre sobretudo quando a agulha epidural perfura acidentalmente a dura-máter; por isso o risco é menor que o da raquianestesia, mas não é nulo. Riscos: injeção intravascular ou intratecal inadvertida (daí a dose-teste), hematoma epidural em pacientes anticoagulados, bloqueio simpático com hipotensão. Biodisponibilidade, Tmax e início de ação dependem do fármaco (lipossolubilidade, pKa), da dose e do nível do bloqueio: não há valor único de livro-texto, por isso os campos numéricos ficam em branco.",
+    "clinicalNotes": "Exige volumes e doses maiores que a via intratecal, porque o fármaco se distribui no espaço epidural, é captado pela rede venosa epidural e pela gordura e só em parte atravessa a dura. Parte da dose chega à circulação sistêmica pelo plexo venoso vertebral interno (epidural) (e não pela veia porta), de modo que não há primeira passagem hepática; a adrenalina associada ao anestésico local retarda essa absorção. A cefaleia pós-punção ocorre sobretudo quando a agulha epidural perfura acidentalmente a dura-máter; por isso o risco é menor que o da raquianestesia, mas não é nulo. Riscos: injeção intravascular ou intratecal inadvertida (daí a dose-teste), hematoma epidural em pacientes anticoagulados, bloqueio simpático com hipotensão. Biodisponibilidade, Tmax e início de ação dependem do fármaco (lipossolubilidade, pKa), da dose e do nível do bloqueio: não há valor único de livro-texto, por isso os campos numéricos ficam em branco.",
     "phaseTiming": {
       "injecao_e_difusao_epidural": 3,
       "travessia_da_dura_e_aracnoide": 3,
@@ -68,11 +68,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -94,16 +89,16 @@
       },
       {
         "sid": "za:capilares-distais",
-        "label_pt": "Artéria hepática no hilo do fígado",
+        "label_pt": "Capilares distais do território-alvo",
         "t": 0.5
       },
       {
         "sid": "za:veias-de-drenagem",
-        "label_pt": "Território-alvo hepático (tumor)",
+        "label_pt": "Veias de drenagem do território-alvo",
         "t": 1
       }
     ],
-    "firstPass": true,
+    "firstPass": false,
     "clinicalNotes": "A vantagem farmacocinética é regional: ao passar primeiro pelo órgão-alvo, o fármaco pode ser extraído ali antes de chegar à circulação sistêmica (primeira passagem regional, no órgão-alvo, e não necessariamente hepática; no exemplo da figura, o alvo é o próprio fígado). A vantagem regional é maior quando a depuração corporal total do fármaco é grande em relação ao fluxo sanguíneo do território. Esse ganho depende do fármaco, então não há F nem Tmax gerais para a via. Riscos específicos: espasmo e trombose arterial, embolização de território não alvo, isquemia e necrose distal, hematoma no local da punção, e lesão tecidual grave se um fármaco de uso venoso for injetado por engano em artéria.",
     "phaseTiming": {
       "acesso_arterial": 2,
@@ -150,11 +145,6 @@
         "field": "firstPass",
         "ref": "Farmacocinética e farmacodinâmica: vias de administração e absorção de fármacos",
         "obraId": "katzung"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "rowland"
       }
     ],
     "review": {
@@ -167,7 +157,7 @@
     "id": "intracardiaca",
     "system": "parenteral",
     "name_pt": "Via Intracardíaca",
-    "description_pt": "Injeção direta na cavidade cardíaca, em geral ventricular, através da parede torácica. Foi usada historicamente na parada cardiorrespiratória (adrenalina), mas não é mais recomendada: foi substituída pelas vias intravenosa e intraóssea, por causa dos riscos e da interrupção das compressões torácicas. Hoje o uso é excepcional e restrito a procedimentos especializados sob guia de imagem.",
+    "description_pt": "Injeção direta na cavidade cardíaca, em geral ventricular, através da parede torácica. Foi usada historicamente na parada cardiorrespiratória (adrenalina); as diretrizes atuais não a recomendam e preconizam as vias intravenosa e intraóssea, por causa dos riscos e da interrupção das compressões torácicas. O uso fica restrito a contextos procedimentais especializados, sob guia de imagem.",
     "anchors": [
       {
         "sid": "za:ventriculo",
@@ -183,7 +173,7 @@
     "bioavailabilityF": 1,
     "tmax": 0,
     "firstPass": false,
-    "clinicalNotes": "Quando a injeção é de fato intracavitária, o fármaco entra direto na circulação, sem etapa de absorção e sem primeira passagem hepática: F = 1 por definição, como na via IV, e o pico coincide com o fim da injeção (tmax = 0 min; a unidade adotada para o campo tmax nas vias é minuto). Na prática a via é pouco confiável: pode haver injeção no miocárdio ou no pericárdio, laceração de artéria coronária, tamponamento cardíaco e pneumotórax, e a injeção intramiocárdica de adrenalina favorece arritmias. Não há vantagem farmacocinética que justifique preferi-la à via IV ou IO.",
+    "clinicalNotes": "Quando a injeção é de fato intracavitária, o fármaco entra direto na circulação, sem etapa de absorção e sem primeira passagem hepática: F = 1 por definição, como na via IV, e o pico coincide com o fim da injeção (tmax = 0 min; a unidade adotada para o campo tmax nas vias é minuto). Na prática a via é pouco confiável: são descritas injeção no miocárdio ou no pericárdio, laceração de artéria coronária, tamponamento cardíaco e pneumotórax, e a injeção intramiocárdica de adrenalina é associada a arritmias. Não há vantagem farmacocinética que justifique preferi-la à via IV ou IO.",
     "phaseTiming": {
       "puncao_e_injecao": 2,
       "distribuicao_sistemica": 4
@@ -250,9 +240,18 @@
         "obraId": "rang"
       },
       {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "guyton"
+        "field": "description_pt",
+        "ref": "Diretrizes de ressuscitação (AHA/ERC): vias de acesso para fármacos na parada cardiorrespiratória",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa revisada à mão."
+      },
+      {
+        "field": "clinicalNotes",
+        "ref": "Diretrizes de ressuscitação (AHA/ERC): vias de acesso para fármacos na parada cardiorrespiratória",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa revisada à mão."
       }
     ],
     "review": {
@@ -265,7 +264,7 @@
     "id": "intradermica",
     "system": "parenteral",
     "name_pt": "Via Intradérmica (ID)",
-    "description_pt": "Injeção de pequeno volume (em geral cerca de 0,1 mL) na derme, formando uma pápula. Usada em testes cutâneos (prova tuberculínica com PPD, testes alérgicos), em vacinas selecionadas (BCG, e vacinas antirrábicas em esquemas intradérmicos) e na anestesia local superficial. A derme é pouco vascularizada, então a absorção é lenta e o objetivo costuma ser a ação local ou a apresentação de antígeno.",
+    "description_pt": "Injeção de pequeno volume (em geral cerca de 0,1 mL) na derme, formando uma pápula. Usada em testes cutâneos (prova tuberculínica com PPD, testes alérgicos), em vacinas selecionadas (BCG, e vacinas antirrábicas em esquemas intradérmicos) e na anestesia local superficial. A derme é pouco vascularizada, então a absorção é mais lenta que a intramuscular; o objetivo costuma ser a ação local ou a apresentação de antígeno.",
     "anchors": [
       {
         "sid": "za:derme-papilar",
@@ -336,11 +335,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -353,7 +347,7 @@
     "id": "intragastrica",
     "system": "enteral",
     "name_pt": "Via Intragástrica (Sonda)",
-    "description_pt": "Administração por sonda nasogástrica, orogástrica ou gastrostomia (SNG/PEG) em pacientes que não conseguem deglutir. O fármaco é instilado diretamente no estômago, sem passar por boca e esôfago, e segue depois o destino de um fármaco oral: absorção no intestino delgado, veia porta e fígado. Não se devem triturar nem abrir formas de liberação prolongada ou com revestimento gastrorresistente, pois isso altera a liberação do fármaco e pode causar toxicidade ou perda de efeito.",
+    "description_pt": "Administração por sonda nasogástrica, orogástrica ou gastrostomia (SNG/GEP) em pacientes que não conseguem deglutir. O fármaco é instilado diretamente no estômago, sem passar por boca e esôfago, e segue depois o destino de um fármaco oral: absorção no intestino delgado, veia porta e fígado. Formas de liberação prolongada ou com revestimento gastrorresistente perdem essa característica quando trituradas ou abertas, o que altera a liberação do fármaco e pode causar toxicidade ou perda de efeito.",
     "anchors": [
       {
         "sid": "za:sonda-gastrica",
@@ -382,7 +376,7 @@
       }
     ],
     "firstPass": true,
-    "clinicalNotes": "Valem as mesmas considerações da via oral: F, Tmax e primeira passagem dependem do fármaco, da formulação e da presença de alimento; por isso não há número geral. Particularidades da sonda: a dieta enteral pode reduzir a absorção de alguns fármacos, então convém administrar separadamente da dieta e lavar a sonda antes e depois; comprimidos triturados podem obstruir sondas de pequeno calibre; formulações líquidas hiperosmolares ou com sorbitol podem causar diarreia; e sondas pós-pilóricas (jejunais) não passam pelo estômago, o que altera a absorção de fármacos que dependem da acidez gástrica.",
+    "clinicalNotes": "Valem as mesmas considerações da via oral: F, Tmax e primeira passagem dependem do fármaco, da formulação e da presença de alimento; por isso não há número geral. Particularidades da sonda: a dieta enteral pode reduzir a absorção de alguns fármacos, então a administração costuma ser separada da dieta, com lavagem da sonda antes e depois; comprimidos triturados podem obstruir sondas de pequeno calibre; formulações líquidas hiperosmolares ou com sorbitol podem causar diarreia; e sondas pós-pilóricas (jejunais) não passam pelo estômago, o que altera a absorção de fármacos que dependem da acidez gástrica.",
     "phaseTiming": {
       "passagem_pela_sonda": 2,
       "instilacao_e_dissolucao_gastrica": 3,
@@ -430,11 +424,6 @@
         "field": "firstPass",
         "ref": "Farmacocinética: absorção, distribuição, metabolismo e excreção — vias de administração",
         "obraId": "goodman"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "rowland"
       }
     ],
     "review": {
@@ -447,7 +436,7 @@
     "id": "intramuscular",
     "system": "parenteral",
     "name_pt": "Via Intramuscular (IM)",
-    "description_pt": "Injeção profunda em músculo esquelético bem vascularizado (deltoide, vasto lateral, glúteo). O fármaco difunde-se do depósito muscular para os capilares e chega à circulação sistêmica sem passar pelo fígado. Aceita soluções aquosas e também suspensões e veículos oleosos que formam depósito (depot) de liberação prolongada.",
+    "description_pt": "Injeção profunda em músculo esquelético bem vascularizado (deltoide, vasto lateral, glúteo). O fármaco difunde-se do depósito muscular para os capilares e chega à circulação sistêmica sem passar pelo fígado. Aceita soluções aquosas e também suspensões e veículos oleosos que formam depósito de liberação prolongada.",
     "anchors": [
       {
         "sid": "za:tecido-muscular-profundo",
@@ -481,7 +470,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "A absorção costuma ser mais rápida que a subcutânea e muito mais lenta que a intravenosa, e depende do fluxo sanguíneo do músculo: deltoide e vasto lateral tendem a absorver mais rápido que o glúteo, exercício e calor aceleram, e choque ou baixa perfusão retardam e tornam o efeito imprevisível. Para soluções aquosas a absorção é em geral rápida e quase completa, mas varia com o fármaco: os pouco solúveis no pH do tecido (por exemplo, diazepam e fenitoína) podem precipitar no músculo e ter absorção lenta e errática. Nos depots (decanoatos, penicilina benzatina, acetato de medroxiprogesterona), a liberação dura dias a semanas e F e Tmax dependem da formulação. Evitar em pacientes com coagulopatia ou em anticoagulação (hematoma); a lesão muscular local pode elevar a creatinoquinase. F e Tmax gerais não são dados, pois dependem do fármaco e da formulação.",
+    "clinicalNotes": "A absorção costuma ser mais rápida que a subcutânea e muito mais lenta que a intravenosa, e depende do fluxo sanguíneo do músculo: deltoide e vasto lateral tendem a absorver mais rápido que o glúteo, exercício e calor aceleram, e choque ou baixa perfusão retardam e tornam o efeito imprevisível. Para soluções aquosas a absorção é em geral rápida e quase completa, mas varia com o fármaco: os pouco solúveis no pH do tecido (por exemplo, diazepam e fenitoína) podem precipitar no músculo e ter absorção lenta e errática. Nos depósitos de liberação prolongada (decanoatos, penicilina benzatina, acetato de medroxiprogesterona), a liberação dura dias a semanas e F e Tmax dependem da formulação. A via é evitada em pacientes com coagulopatia ou em anticoagulação (hematoma); a lesão muscular local pode elevar a creatinoquinase. F e Tmax gerais não são dados, pois dependem do fármaco e da formulação.",
     "phaseTiming": {
       "liberacao_no_deposito": 3,
       "absorcao_capilar": 3,
@@ -529,11 +518,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "rowland"
       }
     ],
     "review": {
@@ -565,7 +549,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "Na emergência, a via IO é tratada como equivalente funcional da IV, com as mesmas doses, e o fármaco não passa pelo trato gastrointestinal nem pelo fígado. Isso não equivale a dizer que a farmacocinética é idêntica: os dados são limitados e a velocidade e a extensão de chegada à circulação podem variar com o fármaco, o osso escolhido (há relatos de fluxos melhores no úmero que na tíbia) e o fluxo de infusão, que em geral exige flush ou pressurização. Por isso nenhum valor de F ou Tmax é fixado aqui. Complicações: extravasamento, síndrome compartimental, osteomielite (rara) e, em crianças, lesão de cartilagem de crescimento. Evitar em osso fraturado, em local infectado ou com tentativa prévia no mesmo osso.",
+    "clinicalNotes": "Nas diretrizes de ressuscitação, a via IO é descrita como alternativa funcional à IV quando o acesso venoso não está disponível, e o fármaco não passa pelo trato gastrointestinal nem pelo fígado. Isso não equivale a dizer que a farmacocinética é idêntica: os dados são limitados e a velocidade e a extensão de chegada à circulação podem variar com o fármaco, o osso escolhido (há relatos de fluxos melhores no úmero que na tíbia) e o fluxo de infusão, que em geral exige lavagem do acesso ou pressurização. Por isso nenhum valor de F ou Tmax é fixado aqui. Complicações descritas: extravasamento, síndrome compartimental, osteomielite (rara) e, em crianças, lesão da lâmina epifisial (rara). Contraindicações descritas: osso fraturado, local infectado e tentativa prévia no mesmo osso.",
     "phaseTiming": {
       "insercao_do_acesso": 2,
       "canal_medular_e_sinusoides": 3,
@@ -613,9 +597,11 @@
         "obraId": "rowland"
       },
       {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
+        "field": "clinicalNotes",
+        "ref": "Diretrizes de ressuscitação (AHA/ERC): acesso intraósseo como alternativa ao acesso venoso",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "Diretrizes de ressuscitação (AHA/ERC), não cobertas pelas obras listadas em fontes.json; referência normativa revisada à mão."
       }
     ],
     "review": {
@@ -647,7 +633,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "Doses muito menores que as epidurais, pois o fármaco é depositado direto no líquor, onde a distribuição depende da baricidade da solução, da posição do paciente e do volume. Como a barreira hematoencefálica é contornada, fármacos que não atravessam a barreira podem atuar no SNC. A cefaleia pós-punção é mais frequente com agulhas calibrosas e de ponta cortante. Segurança: preparar apenas formulações destinadas a uso intratecal (sem conservantes) e verificar a via antes de aplicar; a vincristina é fatal se injetada por via intratecal e deve ser dispensada apenas por via venosa. Biodisponibilidade e Tmax não se aplicam de forma geral, pois a via não visa absorção sistêmica e o comportamento depende do fármaco.",
+    "clinicalNotes": "Doses muito menores que as epidurais, pois o fármaco é depositado direto no líquor, onde a distribuição depende da baricidade da solução, da posição do paciente e do volume. Como a barreira hematoencefálica é contornada, fármacos que não atravessam a barreira podem atuar no SNC. A cefaleia pós-punção é mais frequente com agulhas calibrosas e de ponta cortante. Segurança: usam-se apenas formulações destinadas a uso intratecal (sem conservantes), com verificação da via antes da aplicação. A vincristina injetada por via intratecal causa mieloencefalopatia ascendente, em geral fatal; por isso é de uso exclusivamente intravenoso, vem com rótulo de alerta e costuma ser preparada em minibolsa, o que diferencia o preparo de uma seringa e evita a confusão de via. Biodisponibilidade e Tmax não se aplicam de forma geral, pois a via não visa absorção sistêmica e o comportamento depende do fármaco.",
     "phaseTiming": {
       "puncao_lombar": 2,
       "difusao_no_liquor": 4,
@@ -693,11 +679,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -751,7 +732,7 @@
     "bioavailabilityF": 1,
     "tmax": 0,
     "firstPass": false,
-    "clinicalNotes": "F = 1 por definição, pois não há absorção: a dose atinge a circulação sistêmica integralmente, sem primeira passagem hepática, e o pico coincide com o fim do bolus ou da infusão (tmax = 0 min; a unidade adotada para o campo tmax nas vias é minuto). A passagem pelos pulmões antes do território arterial pode reter transitoriamente alguns fármacos (por exemplo, aminas básicas lipofílicas, como fentanil, lidocaína e propranolol, em grau que depende do fármaco), reduzindo o pico arterial inicial. Riscos: flebite, extravasamento de fármacos vesicantes (que podem exigir acesso central), reações de infusão (por exemplo, vancomicina rápida), embolia (ar, precipitados) e impossibilidade de retirar a dose depois de injetada. Soluções oleosas e suspensões não devem ser injetadas por via IV.",
+    "clinicalNotes": "F = 1 por definição, pois não há absorção: a dose atinge a circulação sistêmica integralmente, sem primeira passagem hepática, e o pico coincide com o fim do bolus ou da infusão (tmax = 0 min; a unidade adotada para o campo tmax nas vias é minuto). A passagem pelos pulmões antes do território arterial pode reter transitoriamente alguns fármacos (por exemplo, aminas básicas lipofílicas, como fentanil, lidocaína e propranolol, em grau que depende do fármaco), reduzindo o pico arterial inicial. Riscos: flebite, extravasamento de fármacos vesicantes (que podem exigir acesso central), reações de infusão (por exemplo, vancomicina rápida), embolia (ar, precipitados) e impossibilidade de retirar a dose depois de injetada. Soluções oleosas e suspensões não são administradas por via IV.",
     "phaseTiming": {
       "acesso_venoso": 1.5,
       "retorno_venoso_central": 1.5,
@@ -820,11 +801,6 @@
         "field": "clinicalNotes",
         "ref": "Absorção e distribuição de fármacos: vias de administração",
         "obraId": "rang"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "guyton"
       }
     ],
     "review": {
@@ -836,8 +812,8 @@
   {
     "id": "nasal",
     "system": "mucosa",
-    "name_pt": "Via Nasal (Inalação / Spray)",
-    "description_pt": "Aplicação na mucosa nasal por spray, gotas ou aerossol, para ação local (corticoides, descongestionantes) ou sistêmica (por exemplo, desmopressina, fentanil, naloxona, midazolam, sumatriptana). A mucosa respiratória, muito vascularizada, absorve o fármaco para as veias da face e do pescoço, evitando a primeira passagem hepática. Existe ainda uma possível via direta nariz-cérebro pela região olfatória, de contribuição quantitativa limitada e ainda estudada.",
+    "name_pt": "Via Nasal (Inalação / Pulverização)",
+    "description_pt": "Aplicação na mucosa nasal por pulverização, gotas ou aerossol, para ação local (corticoides, descongestionantes) ou sistêmica (por exemplo, desmopressina, fentanil, naloxona, midazolam, sumatriptana). A mucosa respiratória, muito vascularizada, absorve o fármaco para as veias da face e do pescoço, evitando a primeira passagem hepática. Existe ainda uma possível via direta nariz-cérebro pela região olfatória, de contribuição quantitativa limitada e ainda estudada.",
     "anchors": [
       {
         "sid": "za:conchas-nasais",
@@ -866,7 +842,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "A absorção sistêmica ocorre pelos capilares e veias da mucosa respiratória (conchas e septo), que drenam para a circulação venosa sistêmica; não se deve confundir isso com o plexo de Kiesselbach, que é uma anastomose arterial do septo anterior (local comum de epistaxe). A fração que escorre para a faringe e é engolida segue a via oral. Pequenos fármacos lipofílicos são bem absorvidos, enquanto peptídeos e proteínas têm absorção baixa (poucos por cento, por exemplo, a desmopressina), a menos que haja promotores de absorção. A chegada direta ao SNC pelos nervos olfatório e trigêmeo é uma hipótese com evidência clínica limitada (estudos com insulina intranasal); o efeito do midazolam intranasal, por exemplo, decorre sobretudo da absorção sistêmica. A depuração mucociliar e a rinite reduzem o tempo de permanência do fármaco na mucosa. F e Tmax dependem do fármaco e do dispositivo: sem número geral.",
+    "clinicalNotes": "A absorção sistêmica ocorre pelos capilares e veias da mucosa respiratória (conchas e septo), que drenam para a circulação venosa sistêmica; isso não se confunde com o plexo de Kiesselbach, que é uma anastomose arterial do septo anterior (local comum de epistaxe). A fração que escorre para a faringe e é engolida segue a via oral. Pequenos fármacos lipofílicos são bem absorvidos, enquanto peptídeos e proteínas têm absorção baixa (poucos por cento, por exemplo, a desmopressina), a menos que haja promotores de absorção. A chegada direta ao SNC pelos nervos olfatório e trigêmeo é uma hipótese com evidência clínica limitada (estudos com insulina intranasal); o efeito do midazolam intranasal, por exemplo, decorre sobretudo da absorção sistêmica. A depuração mucociliar e a rinite reduzem o tempo de permanência do fármaco na mucosa. F e Tmax dependem do fármaco e do dispositivo: sem número geral.",
     "phaseTiming": {
       "deposicao_na_mucosa": 2,
       "absorcao_pela_mucosa_respiratoria": 3,
@@ -914,11 +890,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -960,7 +931,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "O olho comporta poucos microlitros, bem menos que uma gota, e o excesso extravasa ou é drenado rapidamente; pomadas prolongam o contato, mas turvam a visão. A passagem pela córnea exige equilíbrio entre lipofilicidade (epitélio) e hidrofilicidade (estroma), por isso muitos fármacos são formulados como pró-fármacos. A oclusão do ponto lacrimal por 1 a 2 minutos e o fechamento suave das pálpebras reduzem a absorção sistêmica, o que importa, por exemplo, para o timolol (bradicardia e broncoespasmo). A fração absorvida pela mucosa nasal evita a primeira passagem hepática; a deglutida segue a via oral. Para instilações em sequência, aguardar alguns minutos entre colírios; conservantes (cloreto de benzalcônio) podem lesar o epitélio com uso crônico. F sistêmica e Tmax dependem do fármaco: não se dá número geral.",
+    "clinicalNotes": "O olho comporta poucos microlitros, bem menos que uma gota, e o excesso extravasa ou é drenado rapidamente; pomadas prolongam o contato, mas turvam a visão. A passagem pela córnea exige equilíbrio entre lipofilicidade (epitélio) e hidrofilicidade (estroma), por isso muitos fármacos são formulados como pró-fármacos. A oclusão do ponto lacrimal por 1 a 2 minutos e o fechamento suave das pálpebras reduzem a absorção sistêmica, o que importa, por exemplo, para o timolol (bradicardia e broncoespasmo). A fração absorvida pela mucosa nasal evita a primeira passagem hepática; a deglutida segue a via oral. Em instilações em sequência, descreve-se um intervalo de alguns minutos entre colírios; conservantes (cloreto de benzalcônio) podem lesar o epitélio com uso crônico. F sistêmica e Tmax dependem do fármaco: não se dá número geral.",
     "phaseTiming": {
       "instilacao": 2,
       "penetracao_corneana": 3,
@@ -1008,11 +979,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -1069,7 +1035,7 @@
       }
     ],
     "firstPass": true,
-    "clinicalNotes": "A biodisponibilidade oral depende da fração absorvida (fa), da fração que escapa do metabolismo intestinal (Fg) e da que escapa do hepático (Fh): F = fa x Fg x Fh. Por isso a faixa vai de quase 0 a 1 conforme o fármaco, e não existe um valor geral (propranolol e morfina têm F baixa por primeira passagem; muitos fármacos de alta absorção e baixa extração hepática têm F próxima de 1). O Tmax das formas de liberação imediata costuma ficar na faixa de 1 a 3 horas, mas varia com o fármaco, o esvaziamento gástrico, o alimento e a formulação (as de liberação modificada são muito mais lentas). Alimento, pH gástrico, motilidade, transportadores e interações medicamentosas alteram a absorção. Não é adequada em vômitos, inconsciência ou em fármacos degradados pelo trato digestivo (insulina, por exemplo).",
+    "clinicalNotes": "A biodisponibilidade oral depende da fração absorvida (fa), da fração que escapa do metabolismo intestinal (Fg) e da que escapa do hepático (Fh): F = fa x Fg x Fh. Por isso a faixa vai de quase 0 a 1 conforme o fármaco, e não existe um valor geral (propranolol e morfina têm F baixa por primeira passagem; muitos fármacos de alta absorção e baixa extração hepática têm F próxima de 1). O Tmax das formas de liberação imediata costuma ficar em cerca de 0,5 a 3 horas, mas varia com o fármaco, o esvaziamento gástrico, o alimento e a formulação (as de liberação modificada são muito mais lentas). Alimento, pH gástrico, motilidade, transportadores e interações medicamentosas alteram a absorção. Não é adequada em vômitos, inconsciência ou em fármacos degradados pelo trato digestivo (insulina, por exemplo).",
     "phaseTiming": {
       "ingestao": 1,
       "transito_esofagico": 1,
@@ -1121,11 +1087,6 @@
         "obraId": "rang"
       },
       {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "rowland"
-      },
-      {
         "field": "clinicalNotes",
         "ref": "Absorção oral: fatores que afetam a biodisponibilidade",
         "obraId": "goodman"
@@ -1160,7 +1121,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "Se a membrana timpânica estiver perfurada ou houver tubo de timpanostomia, o fármaco pode atingir a orelha média e, potencialmente, a orelha interna: gotas com aminoglicosídeos (por exemplo, neomicina) podem ser ototóxicas nesses casos, e as fluoroquinolonas são as opções habituais quando a integridade da membrana é incerta. Aquecer o frasco na mão até a temperatura corporal evita vertigem por estímulo calórico. Manter o paciente deitado de lado alguns minutos favorece o contato. Como a via é local, F, Tmax e primeira passagem sistêmica não se aplicam de forma geral.",
+    "clinicalNotes": "Se a membrana timpânica estiver perfurada ou houver tubo de timpanostomia, o fármaco pode atingir a orelha média e, potencialmente, a orelha interna: gotas com aminoglicosídeos (por exemplo, neomicina) podem ser ototóxicas nesses casos, e as fluoroquinolonas são as opções descritas quando a integridade da membrana é incerta. O frasco em temperatura corporal evita vertigem por estímulo calórico, e a posição deitada de lado por alguns minutos favorece o contato. Como a via é local, F, Tmax e primeira passagem sistêmica não se aplicam de forma geral.",
     "phaseTiming": {
       "instilacao": 2,
       "passagem_pelo_conduto": 3,
@@ -1169,7 +1130,7 @@
     "sources": [
       {
         "field": "description_pt",
-        "ref": "Farmacologia dermatológica e otológica: administração tópica",
+        "ref": "Farmacologia dermatológica: administração tópica e absorção cutânea",
         "obraId": "goodman"
       },
       {
@@ -1206,11 +1167,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -1251,8 +1207,8 @@
         "t": 1
       }
     ],
-    "firstPass": true,
-    "clinicalNotes": "A deposição depende do tamanho de partícula (partículas de cerca de 1 a 5 micrometros alcançam as vias aéreas distais), da técnica e do dispositivo: em inaladores dosimetrados sem espaçador, grande parte da dose se deposita na orofaringe e é engolida, de modo que só uma fração minoritária chega ao pulmão. Por isso a primeira passagem aparece como parcial, e a baixa biodisponibilidade oral de muitos corticoides inalatórios é parte de sua segurança sistêmica. Enxaguar a boca após corticoide inalado reduz candidíase e absorção oral. Para gases e vapores, a captação depende da solubilidade no sangue e da ventilação. O sangue pulmonar volta ao átrio esquerdo e segue direto para o território arterial, o que explica o início rapidíssimo (segundos a minutos). F e Tmax dependem do fármaco, do dispositivo e da técnica: sem número geral. O óxido nítrico inalatório é inativado pela hemoglobina e tem ação praticamente restrita à vasculatura pulmonar.",
+    "firstPass": false,
+    "clinicalNotes": "A deposição depende do tamanho de partícula (partículas de cerca de 1 a 5 micrometros alcançam as vias aéreas distais), da técnica e do dispositivo: em inaladores dosimetrados sem espaçador, grande parte da dose se deposita na orofaringe e é engolida, de modo que só uma fração minoritária chega ao pulmão. Por isso a primeira passagem hepática fica restrita à fração deglutida, e a absorção pulmonar em si a evita; a baixa biodisponibilidade oral de muitos corticoides inalatórios é parte de sua segurança sistêmica. O enxágue da boca após corticoide inalado reduz candidíase e absorção oral. Para gases e vapores, a captação depende da solubilidade no sangue e da ventilação. O sangue pulmonar volta ao átrio esquerdo e segue direto para o território arterial, o que explica o início rapidíssimo (segundos a minutos). F e Tmax dependem do fármaco, do dispositivo e da técnica: sem número geral. O óxido nítrico inalatório é inativado pela hemoglobina e tem ação praticamente restrita à vasculatura pulmonar.",
     "phaseTiming": {
       "inalacao": 2,
       "conducao_traqueobronquica": 3,
@@ -1300,11 +1256,6 @@
         "field": "firstPass",
         "ref": "Farmacocinética: absorção, distribuição, metabolismo e excreção — vias de administração",
         "obraId": "goodman"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "guyton"
       }
     ],
     "review": {
@@ -1387,11 +1338,6 @@
       {
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
-        "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
         "obraId": "rowland"
       }
     ],
@@ -1476,11 +1422,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -1522,7 +1463,7 @@
       }
     ],
     "firstPass": false,
-    "clinicalNotes": "O início costuma ser em poucos minutos (a nitroglicerina sublingual age em cerca de 1 a 3 minutos), mas F e Tmax dependem do fármaco, de sua lipofilicidade e de seu pKa; por isso não há valor geral. A primeira passagem hepática é evitada para a fração absorvida na mucosa; a parte engolida (saliva) segue a via oral e pode sofrer primeira passagem, o que reduz a vantagem quando o comprimido é deglutido ou o fármaco se dissolve mal. O paciente não deve engolir, mastigar nem comer ou beber enquanto o comprimido se dissolve. Pequeno volume de saliva e xerostomia podem prejudicar a dissolução.",
+    "clinicalNotes": "O início costuma ser em poucos minutos (a nitroglicerina sublingual age em cerca de 1 a 3 minutos), mas F e Tmax dependem do fármaco, de sua lipofilicidade e de seu pKa; por isso não há valor geral. A primeira passagem hepática é evitada para a fração absorvida na mucosa; a parte engolida (saliva) segue a via oral e pode sofrer primeira passagem, o que reduz a vantagem quando o comprimido é deglutido ou o fármaco se dissolve mal. A absorção sublingual pressupõe que o comprimido não seja engolido nem mastigado e que não haja ingestão de alimentos ou líquidos enquanto ele se dissolve. Pequeno volume de saliva e xerostomia podem prejudicar a dissolução.",
     "phaseTiming": {
       "aplicacao_e_dissolucao": 2,
       "absorcao_pela_mucosa": 2,
@@ -1570,11 +1511,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -1664,11 +1600,6 @@
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
         "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
-        "obraId": "katzung"
       }
     ],
     "review": {
@@ -1751,11 +1682,6 @@
       {
         "field": "firstPass",
         "ref": "Biodisponibilidade, absorção e eliminação de primeira passagem",
-        "obraId": "rowland"
-      },
-      {
-        "field": "phaseTiming",
-        "ref": "Escalas de tempo relativas de absorção e distribuição (proporção didática da animação)",
         "obraId": "rowland"
       }
     ],

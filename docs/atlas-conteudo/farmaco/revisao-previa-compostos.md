@@ -43,4 +43,7 @@
 | a, b | vários | texto | Anglicismos e grafia inconsistente. | clearance → depuração; feedback → retrocontrole; DOACs → ACODs; off-label → uso fora da bula; SIADH → SSIHAD; bolus → em bolo; t1/2 → t½; AUC → ASC; β-lactâmico. | baixa |
 
 ## Aplicação
-_Preenchida depois da aplicação._
+- **Aplicado (02/10/2026):** todas as linhas de "Correções" e das "Decisões" nos dois arquivos, com `review.status: "editorial"` mantido e `compounds.json` intocado. Os `targetSid` propostos (`za:left-ventricle`, `za:palatine-tonsil-r`, `za:stomach`, `za:pulmonary-trunk`) existem em `structures.json`.
+- **Validações:** ajv contra `compoundV2` sem erros nos 30 compostos; Tmax simulado a até 7% (aas 0,32 h, amoxicilina 0,96 h, omeprazol 1,26 h, hidroclorotiazida 2,00 h) do `tmax` citado, sem flip-flop, e IV com `tmax` 0 (gentamicina e vancomicina também com `ka` 0); `obraId` todos em `fontes.json`; busca pelos termos proibidos vazia; sem URL, DOI ou PMID.
+- **Exceções com justificativa:** dipirona (`pk.F`, `pk.halfLife`, `pk.vd`, `pk.tmax`, obra `airton`), enalapril (`pk.vd`), sertralina (`pk.F`), glibenclamida e metformina (`pk.halfLife`, t½ terminal).
+- **Aplicado só em parte ou com decisão minha:** os itens propostos de `metabolites` de azitromicina e enoxaparina não estavam na lista e foram redigidos aqui (inativos), para o conselho conferir; as refs de mecanismo, uso e efeitos adversos foram mantidas (já são por tema), e só as de `pk.*` foram unificadas em Goodman; as cautelas tiradas de `contraindications` foram para `pd.efeito`. Nenhuma linha deixou de ser aplicada.

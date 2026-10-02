@@ -118,7 +118,7 @@
         },
         "phaseTiming": {
           "type": "object",
-          "description": "Duração relativa (s de animação) de cada fase da via.",
+          "description": "Duração relativa (s de animação) de cada fase da via. É duração didática da animação, decisão editorial e sem fonte bibliográfica.",
           "additionalProperties": {
             "type": "number",
             "minimum": 0

@@ -67,4 +67,6 @@
 | intraarterial | anchors[1..2].label_pt | rótulos que não casam com o sid: alinhar o rótulo ao sid, sem trocar o sid | baixa |
 
 ## Aplicação
-_Preenchida depois da aplicação._
+- Aplicadas todas as linhas das duas tabelas e as 3 decisões em `processes.json` e `routes.json`, com `review.status: "editorial"` mantido; no schema só a `description` de `phaseTiming` mudou. Na filtração glomerular o `cid` R81 foi removido (opção da revisão).
+- Validação: ajv 2020 item a item contra `$defs.process` e `$defs.route`, sem erros; script de fontes (`obraId`, ausência de URL, DOI e PMID, todo campo com `sources[].field`; `phaseTiming` sem fonte) sem falhas; `lint-pt.mjs` nos dois arquivos com 0 achados.
+- Linhas não aplicadas: nenhuma. Pendente: o conselho confirma D68.5, G70.8 e D68.4/D68.3 no CID-10 Volume 1.

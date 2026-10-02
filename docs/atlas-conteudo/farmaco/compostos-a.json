@@ -18,8 +18,8 @@
       "vd": 10.5,
       "halfLife": 0.25,
       "F": 0.68,
-      "tmax": 0.5,
-      "ka": 1.39,
+      "tmax": 0.3,
+      "ka": 3.5,
       "doseUnit": "mg",
       "concUnit": "mg/L"
     },
@@ -27,7 +27,7 @@
       "emax": 100,
       "ec50": 1,
       "hill": 1,
-      "efeito": "Inibição da COX-1 plaquetária (antiagregação) pela molécula AAS intacta, não pelo salicilato. O AAS tem meia-vida de cerca de 15 minutos porque é hidrolisado a salicilato, mas a acetilação da enzima é irreversível e o efeito dura mais que a molécula. EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas (parâmetro de ensino)."
+      "efeito": "Inibição da COX-1 plaquetária (antiagregação) pela molécula AAS intacta, não pelo salicilato. O AAS tem meia-vida de cerca de 15 minutos porque é hidrolisado a salicilato, mas a acetilação da enzima é irreversível e o efeito dura mais que a molécula. EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas (parâmetro de ensino). O tmax citado vai de 0,25 a 0,5 h, usado como 0,3 h."
     },
     "interactions": [
       {
@@ -130,27 +130,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos salicilatos",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -203,13 +203,13 @@
       "emax": 100,
       "ec50": 10,
       "hill": 1,
-      "efeito": "Analgesia e antipirese (% do efeito máximo). EC50 aproximada pela faixa terapêutica de antipirese (cerca de 10 a 20 mg/L); parâmetro de ensino."
+      "efeito": "Analgesia e antipirese (% do efeito máximo). EC50 aproximada pela faixa terapêutica de antipirese (cerca de 10 a 20 mg/L); parâmetro de ensino. Limite de dose diária: 4 g (3 g em hepatopatas, desnutridos ou etilistas)."
     },
     "interactions": [
       {
         "com": "Etanol (uso crônico ou abusivo)",
         "efeito": "Maior risco de hepatotoxicidade, mesmo em doses próximas às terapêuticas",
-        "severidade": "grave",
+        "severidade": "moderada",
         "mecanismo": "Indução de CYP2E1 (mais NAPQI) e depleção de glutationa"
       },
       {
@@ -276,9 +276,8 @@
       }
     ],
     "contraindications": [
-      "Insuficiência hepática grave",
-      "Hipersensibilidade ao paracetamol",
-      "Dose diária acima de 4 g (3 g em hepatopatas, desnutridos ou etilistas)"
+      "Hepatopatia grave descompensada",
+      "Hipersensibilidade ao paracetamol"
     ],
     "sources": [
       {
@@ -293,27 +292,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção do paracetamol e concentração plasmática máxima",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -380,7 +379,7 @@
         "com": "Metotrexato",
         "efeito": "Aumento da toxicidade hematológica do metotrexato",
         "severidade": "grave",
-        "mecanismo": "Redução do clearance renal do metotrexato e efeito mielotóxico aditivo"
+        "mecanismo": "Redução da depuração renal do metotrexato e efeito mielotóxico aditivo"
       },
       {
         "com": "Ciclosporina",
@@ -469,27 +468,35 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
-        "obraId": "goodman"
+        "ref": "Parâmetros farmacocinéticos do 4-MAA, metabólito ativo da dipirona",
+        "obraId": "airton",
+        "exception": true,
+        "justificativa": "Para a biodisponibilidade do 4-MAA, os valores vêm de literatura primária e de bula, fora das obras listadas; a obra airton está pendente de confirmação."
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
-        "obraId": "goodman"
+        "ref": "Parâmetros farmacocinéticos do 4-MAA, metabólito ativo da dipirona",
+        "obraId": "airton",
+        "exception": true,
+        "justificativa": "Para a meia-vida do 4-MAA, os valores vêm de literatura primária e de bula, fora das obras listadas; a obra airton está pendente de confirmação."
       },
       {
         "field": "pk.vd",
-        "ref": "Volume de distribuição e meia-vida de metabólitos ativos",
-        "obraId": "rowland"
+        "ref": "Parâmetros farmacocinéticos do 4-MAA, metabólito ativo da dipirona",
+        "obraId": "airton",
+        "exception": true,
+        "justificativa": "Para o volume de distribuição do 4-MAA, os valores vêm de literatura primária e de bula, fora das obras listadas; a obra airton está pendente de confirmação."
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima de analgésicos não opioides",
-        "obraId": "katzung"
+        "ref": "Parâmetros farmacocinéticos do 4-MAA, metabólito ativo da dipirona",
+        "obraId": "airton",
+        "exception": true,
+        "justificativa": "Para o tmax do 4-MAA, os valores vêm de literatura primária e de bula, fora das obras listadas; a obra airton está pendente de confirmação."
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -654,27 +661,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção oral e metabolismo de primeira passagem da morfina",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -834,27 +841,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos opioides",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -925,7 +932,7 @@
         "com": "Lítio",
         "efeito": "Aumento da litemia e toxicidade do lítio",
         "severidade": "moderada",
-        "mecanismo": "Redução do clearance renal do lítio"
+        "mecanismo": "Redução da depuração renal do lítio"
       },
       {
         "com": "Ácido acetilsalicílico (dose baixa)",
@@ -1009,27 +1016,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos AINEs",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -1065,7 +1072,7 @@
       "Preferência por COX-2",
       "Primeira passagem"
     ],
-    "targetSid": "za:liver",
+    "targetSid": "za:stomach",
     "mecanismo": "Inibe a COX-1 e a COX-2 com certa preferência pela COX-2, reduzindo a síntese de prostaglandinas e, com isso, a dor, a febre e a inflamação. A ligação às proteínas plasmáticas é superior a 99% e o fármaco se acumula no líquido sinovial, o que mantém o efeito articular além do esperado para uma meia-vida plasmática curta. A preferência por COX-2 não elimina o risco gastrointestinal e se associa a risco cardiovascular trombótico.",
     "pk": {
       "route": "ORAL",
@@ -1191,27 +1198,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos AINEs",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -1248,7 +1255,7 @@
       "Eixo HPA"
     ],
     "targetSid": "za:hypothalamus",
-    "mecanismo": "Glicocorticoide que atravessa a membrana e se liga ao receptor de glicocorticoide citoplasmático; o complexo migra ao núcleo e modula a transcrição gênica, aumentando genes anti-inflamatórios (anexina-1, MKP-1, IκBα) e reprimindo NF-κB e AP-1, com queda de citocinas, COX-2 e migração leucocitária. Como o efeito depende de transcrição e síntese proteica, ele surge horas depois do pico plasmático; o feedback negativo sobre hipotálamo e hipófise suprime o eixo HPA no uso prolongado.",
+    "mecanismo": "Glicocorticoide que atravessa a membrana e se liga ao receptor de glicocorticoide citoplasmático; o complexo migra ao núcleo e modula a transcrição gênica, aumentando genes anti-inflamatórios (anexina-1, MKP-1, IκBα) e reprimindo NF-κB e AP-1, com queda de citocinas, COX-2 e migração leucocitária. Como o efeito depende de transcrição e síntese proteica, ele surge horas depois do pico plasmático; o retrocontrole negativo sobre hipotálamo e hipófise suprime o eixo HPA no uso prolongado.",
     "pk": {
       "route": "ORAL",
       "dose": 20,
@@ -1277,7 +1284,7 @@
         "com": "Rifampicina, fenitoína e carbamazepina",
         "efeito": "Redução da eficácia do corticoide",
         "severidade": "moderada",
-        "mecanismo": "Indução de CYP3A4 e aumento do clearance"
+        "mecanismo": "Indução de CYP3A4 e aumento da depuração"
       },
       {
         "com": "Insulina e antidiabéticos orais",
@@ -1370,27 +1377,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
-        "obraId": "rowland"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos glicocorticoides orais",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -1556,27 +1563,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos betabloqueadores",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -1657,6 +1664,7 @@
         "mecanismo": "Bloqueio adrenérgico dos sintomas e da glicogenólise"
       }
     ],
+    "metabolites": [],
     "clinicalUse": [
       "Hipertensão arterial",
       "Angina estável e prevenção secundária após infarto do miocárdio",
@@ -1718,27 +1726,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos betabloqueadores",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -1894,27 +1902,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Absorção e concentração plasmática máxima dos bloqueadores do receptor de angiotensina",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -1967,7 +1975,7 @@
       "emax": 100,
       "ec50": 0.01,
       "hill": 1,
-      "efeito": "Inibição da ECA e queda da pressão arterial (% do efeito máximo), modelada com o metabólito ativo enalaprilat, que é a molécula descrita em pk (dose em mg de enalapril, sem correção de massa molar; F é a fração que chega como enalaprilat; meia-vida efetiva de acúmulo). EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas; parâmetro de ensino."
+      "efeito": "Inibição da ECA e queda da pressão arterial (% do efeito máximo), modelada com o metabólito ativo enalaprilat, que é a molécula descrita em pk (dose em mg de enalapril, sem correção de massa molar; F é a fração que chega como enalaprilat; meia-vida efetiva de acúmulo). EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas; parâmetro de ensino. O Vd de 50 L é um valor aparente ajustado ao modelo, sem valor de livro; a fonte é uma exceção justificada."
     },
     "interactions": [
       {
@@ -2076,16 +2084,18 @@
       {
         "field": "pk.vd",
         "ref": "Volume de distribuição de fármacos hidrofílicos de excreção renal",
-        "obraId": "rowland"
+        "obraId": "rowland",
+        "exception": true,
+        "justificativa": "O Vd de 50 L é um valor aparente ajustado ao modelo para o enalaprilat; não há valor de livro nas obras listadas."
       },
       {
         "field": "pk.tmax",
-        "ref": "Inibidores da ECA: absorção e concentração plasmática máxima",
-        "obraId": "katzung"
+        "ref": "Inibidores da ECA: absorção e concentração plasmática máxima do enalaprilat",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -2121,6 +2131,7 @@
       "Vasosseletivo",
       "Meia-vida longa"
     ],
+    "targetSid": "za:left-ventricle",
     "mecanismo": "Bloqueador dos canais de Ca2+ do tipo L (diidropiridínico) com seletividade vascular: liga-se à subunidade α1 dos canais voltagem-dependentes da musculatura lisa arteriolar, reduz o influxo de Ca2+ e causa vasodilatação arterial, queda da resistência vascular periférica e da pós-carga. Tem pouco efeito direto sobre contratilidade e condução cardíacas. O volume de distribuição muito grande e a meia-vida de cerca de 40 horas dão efeito estável de 24 horas com dose única diária.",
     "pk": {
       "route": "ORAL",
@@ -2222,27 +2233,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Bloqueadores dos canais de cálcio: absorção e concentração plasmática máxima",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -2283,11 +2294,11 @@
     "pk": {
       "route": "ORAL",
       "dose": 25,
-      "vd": 252,
-      "halfLife": 8,
+      "vd": 58,
+      "halfLife": 2.5,
       "F": 0.7,
       "tmax": 2,
-      "ka": 1.52,
+      "ka": 0.82,
       "doseUnit": "mg",
       "concUnit": "mg/L"
     },
@@ -2295,7 +2306,7 @@
       "emax": 100,
       "ec50": 0.1,
       "hill": 1,
-      "efeito": "Efeito natriurético e anti-hipertensivo (% do efeito máximo). EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas; parâmetro de ensino. A meia-vida usada é a terminal (faixa descrita de 6 a 15 h), e a curva dose-resposta do diurético é relativamente plana acima de 25 mg."
+      "efeito": "Efeito natriurético e anti-hipertensivo (% do efeito máximo). EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas; parâmetro de ensino. A meia-vida de 2,5 h e o Vd de 0,83 L/kg são os de livro-texto; a meia-vida terminal de bula é maior (faixa descrita de 6 a 15 h). A curva dose-resposta do diurético é relativamente plana acima de 25 mg. O ka foi recalculado para um Tmax de 2 h."
     },
     "interactions": [
       {
@@ -2323,6 +2334,7 @@
         "mecanismo": "Perda renal de K+ somada"
       }
     ],
+    "metabolites": [],
     "clinicalUse": [
       "Hipertensão arterial (primeira linha)",
       "Edema leve a moderado de origem cardíaca, hepática ou renal",
@@ -2390,27 +2402,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Diuréticos tiazídicos: absorção e concentração plasmática máxima",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {
@@ -2446,6 +2458,7 @@
       "Bactericida",
       "Tempo acima da CIM"
     ],
+    "targetSid": "za:palatine-tonsil-r",
     "mecanismo": "Aminopenicilina β-lactâmica cujo anel acila a serina do sítio ativo das proteínas ligadoras de penicilina (transpeptidases) e bloqueia a ligação cruzada do peptideoglicano da parede bacteriana. Em células em crescimento, a parede enfraquecida e a ação de autolisinas levam à lise osmótica, um efeito bactericida dependente do tempo em que a concentração permanece acima da CIM. Tem espectro mais amplo que a penicilina G, mas é inativada por β-lactamases, daí a associação com clavulanato.",
     "pk": {
       "route": "ORAL",
@@ -2453,8 +2466,8 @@
       "vd": 21,
       "halfLife": 1,
       "F": 0.85,
-      "tmax": 1.5,
-      "ka": 0.641,
+      "tmax": 1.0,
+      "ka": 1.5,
       "doseUnit": "mg",
       "concUnit": "mg/L"
     },
@@ -2554,27 +2567,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Aminopenicilinas: absorção e concentração plasmática máxima",
-        "obraId": "katzung"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
         "obraId": "rowland"
       },
       {

@@ -13,10 +13,9 @@
     "targetSid": "za:urinary-bladder",
     "mecanismo": "Inibe a DNA girase (topoisomerase II) e a topoisomerase IV bacterianas, bloqueando a replicação e o superenrolamento do DNA; o resultado é fragmentação do cromossomo e morte bactericida dependente de concentração, sobretudo em bacilos Gram-negativos.",
     "clinicalUse": [
-      "Infecções do trato urinário, incluindo pielonefrite, em adultos com bactéria sensível.",
-      "Gastroenterites bacterianas graves (Salmonella, Shigella, Campylobacter) e profilaxia de contatos de meningococo.",
-      "Infecções por Pseudomonas aeruginosa sensível (via oral limitada a casos específicos); atividade fraca contra estreptococos.",
-      "Dose de referência: 500 mg por via oral a cada 12 h; tmax citado de 1 a 2 h, usado como 1,5 h."
+      "Infecções do trato urinário, incluindo pielonefrite, em adultos com bactéria sensível",
+      "Gastroenterites bacterianas graves (Salmonella, Shigella, Campylobacter) e profilaxia de contatos de meningococo",
+      "Infecções por Pseudomonas aeruginosa sensível (via oral limitada a casos específicos); atividade fraca contra estreptococos"
     ],
     "adverseEffects": [
       {
@@ -100,7 +99,7 @@
       "emax": 100,
       "ec50": 0.5,
       "hill": 2,
-      "efeito": "Atividade bactericida dependente de concentração. EC50 didática de 0,5 mg/L, ordem de grandeza da CIM de bacilos Gram-negativos sensíveis (não é uma EC50 publicada)."
+      "efeito": "Atividade bactericida dependente de concentração. EC50 didática de 0,5 mg/L, ordem de grandeza da CIM de bacilos Gram-negativos sensíveis (não é uma EC50 publicada). Dose de referência: 500 mg por via oral a cada 12 h; tmax citado de 1 a 2 h, usado como 1,5 h."
     },
     "sources": [
       {
@@ -120,22 +119,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -169,10 +168,9 @@
     "targetSid": "za:superior-lobe-of-right-lung",
     "mecanismo": "Liga-se à subunidade ribossomal 50S bacteriana (rRNA 23S) e bloqueia a translocação peptídica, interrompendo a síntese proteica; o efeito é bacteriostático, e a azitromicina se concentra nos tecidos e nos fagócitos em níveis muito superiores aos do plasma.",
     "clinicalUse": [
-      "Pneumonia adquirida na comunidade leve, sobretudo por patógenos atípicos (Mycoplasma, Chlamydophila, Legionella).",
-      "Faringite e sinusite em alérgicos a penicilina; infecções de pele não complicadas.",
-      "Uretrite e cervicite por Chlamydia trachomatis (dose única de 1 g).",
-      "Dose de referência: 500 mg por via oral; o modelo de um compartimento subestima o Cmax sérico porque o Vd de 31 L/kg reflete a captação tecidual."
+      "Pneumonia adquirida na comunidade leve, sobretudo por patógenos atípicos (Mycoplasma, Chlamydophila, Legionella)",
+      "Faringite e sinusite em alérgicos a penicilina; infecções de pele não complicadas",
+      "Uretrite e cervicite por Chlamydia trachomatis (dose única de 1 g)"
     ],
     "adverseEffects": [
       {
@@ -196,8 +194,7 @@
     ],
     "contraindications": [
       "Hipersensibilidade a macrolídeos",
-      "História de icterícia colestática ou disfunção hepática com azitromicina",
-      "QT longo congênito ou uso de outros fármacos que prolongam o QT (cautela)"
+      "História de icterícia colestática ou disfunção hepática com azitromicina"
     ],
     "interactions": [
       {
@@ -225,6 +222,13 @@
         "mecanismo": "Menor velocidade de absorção; a extensão da absorção é pouco alterada"
       }
     ],
+    "metabolites": [
+      {
+        "nome": "Derivados N- e O-desmetilados de azitromicina",
+        "ativo": false,
+        "via": "Desmetilação hepática em pequena fração; sem atividade antimicrobiana relevante, e a maior parte é excretada inalterada pela bile"
+      }
+    ],
     "pk": {
       "route": "ORAL",
       "dose": 500,
@@ -240,7 +244,7 @@
       "emax": 100,
       "ec50": 0.25,
       "hill": 1.5,
-      "efeito": "Inibição do crescimento bacteriano (efeito bacteriostático). EC50 didática de 0,25 mg/L, ordem de grandeza da CIM de Streptococcus pneumoniae sensível; a resposta real depende da concentração tecidual, que o modelo plasmático não captura."
+      "efeito": "Inibição do crescimento bacteriano (efeito bacteriostático). EC50 didática de 0,25 mg/L, ordem de grandeza da CIM de Streptococcus pneumoniae sensível. Aviso: o modelo plasmático não representa a concentração tecidual, de que a resposta real depende; o Cmax simulado fica cerca de 5 vezes abaixo do sérico, porque o Vd de 31 L/kg reflete a captação tecidual. Dose de referência: 500 mg por via oral. Cautela: QT longo congênito ou uso de outros fármacos que prolongam o QT."
     },
     "sources": [
       {
@@ -260,22 +264,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -310,10 +314,8 @@
     "targetSid": "za:kidney-r",
     "mecanismo": "Liga-se de modo irreversível à subunidade ribossomal 30S bacteriana, causando leitura errada do mRNA e inibição da síntese proteica; o resultado é bactericida com efeito concentração-dependente e efeito pós-antibiótico prolongado contra bacilos Gram-negativos aeróbios.",
     "clinicalUse": [
-      "Sepse e infecções graves por bacilos Gram-negativos aeróbios, em geral associada a um beta-lactâmico.",
-      "Sinergia com beta-lactâmicos ou vancomicina em endocardite por enterococos e estreptococos.",
-      "Dose de referência: 5 mg/kg (350 mg) por via IV em dose única diária (esquema de intervalo estendido); infusão de cerca de 30 min, por isso o tmax citado é de 0,5 h (fim da infusão).",
-      "Janela estreita: dosar o vale e ajustar pela função renal."
+      "Sepse e infecções graves por bacilos Gram-negativos aeróbios, em geral associada a um β-lactâmico",
+      "Sinergia com β-lactâmicos ou vancomicina em endocardite por enterococos e estreptococos"
     ],
     "adverseEffects": [
       {
@@ -334,7 +336,6 @@
     ],
     "contraindications": [
       "Hipersensibilidade a aminoglicosídeos",
-      "Miastenia gravis (cautela maior)",
       "Gestação (risco de ototoxicidade fetal), salvo necessidade vital"
     ],
     "interactions": [
@@ -357,14 +358,15 @@
         "mecanismo": "Inibição aditiva da liberação pré-sináptica de acetilcolina"
       }
     ],
+    "metabolites": [],
     "pk": {
       "route": "IV",
       "dose": 350,
       "vd": 17.5,
       "halfLife": 2.5,
-      "ka": 1,
+      "ka": 0,
       "F": 1,
-      "tmax": 0.5,
+      "tmax": 0,
       "doseUnit": "mg",
       "concUnit": "mg/L"
     },
@@ -372,7 +374,7 @@
       "emax": 100,
       "ec50": 2,
       "hill": 2,
-      "efeito": "Efeito bactericida dependente de concentração (razão pico/CIM). EC50 didática de 2 mg/L, ordem de grandeza da CIM de bacilos Gram-negativos sensíveis; não é uma EC50 publicada. O modelo IV começa em D/Vd, sem simular a infusão."
+      "efeito": "Efeito bactericida dependente de concentração (razão pico/CIM). EC50 didática de 2 mg/L, ordem de grandeza da CIM de bacilos Gram-negativos sensíveis; não é uma EC50 publicada. Dose de referência: 5 mg/kg (350 mg) por via IV em dose única diária (esquema de intervalo estendido), com infusão de cerca de 30 min; o fim da infusão não é simulado, e o modelo IV começa em D/Vd (tmax 0 e ka 0). Janela estreita: dosar o vale e ajustar pela função renal. Cautela: miastenia gravis."
     },
     "sources": [
       {
@@ -392,27 +394,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
-        "obraId": "goodman"
+        "ref": "Modelo de um compartimento por via IV: concentração máxima no instante zero (fim da infusão não simulado)",
+        "obraId": "rowland"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "ref": "Via IV: sem fase de absorção, por isso ka e tmax valem 0",
         "obraId": "rowland"
       },
       {
@@ -441,10 +443,8 @@
     "targetSid": "za:kidney-l",
     "mecanismo": "Liga-se ao terminal D-alanil-D-alanina dos precursores do peptidoglicano, bloqueando a transglicosilação e a transpeptidação; a parede celular de bactérias Gram-positivas fica fraca e a bactéria morre por efeito bactericida tempo-dependente.",
     "clinicalUse": [
-      "Infecções graves por Staphylococcus aureus resistente à meticilina (MRSA): bacteremia, endocardite, pneumonia, osteomielite.",
-      "Colite por Clostridioides difficile (por via oral, sem absorção sistêmica relevante).",
-      "Dose de referência: 1000 mg por via IV em infusão de cerca de 1 h, por isso o tmax citado é 1 h (fim da infusão); o modelo IV começa em D/Vd.",
-      "Monitorar pelo vale e pela razão AUC/CIM; ajustar à função renal."
+      "Infecções graves por Staphylococcus aureus resistente à meticilina (MRSA): bacteremia, endocardite, pneumonia, osteomielite",
+      "Colite por Clostridioides difficile (por via oral, sem absorção sistêmica relevante)"
     ],
     "adverseEffects": [
       {
@@ -468,8 +468,7 @@
       }
     ],
     "contraindications": [
-      "Hipersensibilidade à vancomicina",
-      "Cautela em insuficiência renal e em perda auditiva prévia"
+      "Hipersensibilidade à vancomicina"
     ],
     "interactions": [
       {
@@ -491,14 +490,15 @@
         "mecanismo": "Toxicidade aditiva na cóclea"
       }
     ],
+    "metabolites": [],
     "pk": {
       "route": "IV",
       "dose": 1000,
       "vd": 49,
       "halfLife": 6,
-      "ka": 1,
+      "ka": 0,
       "F": 1,
-      "tmax": 1,
+      "tmax": 0,
       "doseUnit": "mg",
       "concUnit": "mg/L"
     },
@@ -506,7 +506,7 @@
       "emax": 100,
       "ec50": 10,
       "hill": 2,
-      "efeito": "Efeito antibacteriano contra MRSA. EC50 didática de 10 mg/L, limite inferior da faixa clássica de vale (10 a 20 mg/L); as diretrizes atuais preferem AUC/CIM entre 400 e 600. É uma aproximação, não uma EC50 publicada."
+      "efeito": "Efeito antibacteriano contra MRSA. EC50 didática de 10 mg/L, limite inferior da faixa clássica de vale (10 a 20 mg/L); as diretrizes atuais preferem ASC/CIM entre 400 e 600. É uma aproximação, não uma EC50 publicada. Dose de referência: 1000 mg por via IV em infusão de cerca de 1 h; o fim da infusão não é simulado, e o modelo IV começa em D/Vd (tmax 0 e ka 0). Monitorar pelo vale e pela razão ASC/CIM; ajustar à função renal. Cautela: insuficiência renal e perda auditiva prévia."
     },
     "sources": [
       {
@@ -526,27 +526,27 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
-        "obraId": "goodman"
+        "ref": "Modelo de um compartimento por via IV: concentração máxima no instante zero (fim da infusão não simulado)",
+        "obraId": "rowland"
       },
       {
         "field": "pk.ka",
-        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "ref": "Via IV: sem fase de absorção, por isso ka e tmax valem 0",
         "obraId": "rowland"
       },
       {
@@ -576,10 +576,9 @@
     "targetSid": "za:thalamus-r",
     "mecanismo": "Modulador alostérico positivo do receptor GABA-A, ligado na interface entre as subunidades alfa e gama; aumenta a frequência de abertura do canal de cloreto e a hiperpolarização neuronal, o que produz ansiólise, sedação, anticonvulsivante e relaxamento muscular.",
     "clinicalUse": [
-      "Ansiedade aguda e abstinência alcoólica (prevenção e tratamento de convulsões e delirium tremens).",
-      "Estado de mal epiléptico e convulsões agudas (via IV ou retal).",
-      "Espasmo muscular e pré-medicação anestésica.",
-      "Dose de referência: 10 mg por via oral. O modelo representa a molécula original; o desmetildiazepam (ativo, t1/2 de 50 a 100 h) prolonga o efeito clínico e se acumula com doses repetidas, mas não é simulado."
+      "Ansiedade aguda e abstinência alcoólica (prevenção e tratamento de convulsões e delirium tremens)",
+      "Estado de mal epiléptico e convulsões agudas (via IV ou retal)",
+      "Espasmo muscular e pré-medicação anestésica"
     ],
     "adverseEffects": [
       {
@@ -645,7 +644,7 @@
       {
         "nome": "Desmetildiazepam (nordiazepam)",
         "ativo": true,
-        "via": "Hepática: N-desmetilação por CYP2C19 e CYP3A4; t1/2 de 50 a 100 h"
+        "via": "Hepática: N-desmetilação por CYP2C19 e CYP3A4; t½ de 50 a 100 h"
       },
       {
         "nome": "Temazepam",
@@ -673,7 +672,7 @@
       "emax": 100,
       "ec50": 0.1,
       "hill": 1.5,
-      "efeito": "Efeito ansiolítico e sedativo. EC50 didática de 0,1 mg/L, tomada do limite inferior da faixa de concentração terapêutica citada (cerca de 0,1 a 0,25 mg/L); é uma aproximação, não uma EC50 publicada."
+      "efeito": "Efeito ansiolítico e sedativo. EC50 didática de 0,1 mg/L, tomada do limite inferior da faixa de concentração terapêutica citada (cerca de 0,1 a 0,25 mg/L); é uma aproximação, não uma EC50 publicada. Dose de referência: 10 mg por via oral. O modelo representa a molécula original; o desmetildiazepam (ativo, t½ de 50 a 100 h) prolonga o efeito clínico e se acumula com doses repetidas, mas não é simulado."
     },
     "sources": [
       {
@@ -693,22 +692,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -741,12 +740,11 @@
       "CYP3A4"
     ],
     "targetSid": "za:hippocampus-r",
-    "mecanismo": "Modulador alostérico positivo do receptor GABA-A: aumenta a frequência de abertura do canal de cloreto e a hiperpolarização neuronal. Início rápido e t1/2 curto, com sedação, ansiólise e amnésia anterógrada marcantes.",
+    "mecanismo": "Modulador alostérico positivo do receptor GABA-A: aumenta a frequência de abertura do canal de cloreto e a hiperpolarização neuronal. Início rápido e t½ curto, com sedação, ansiólise e amnésia anterógrada marcantes.",
     "clinicalUse": [
-      "Sedação pré-operatória e pré-procedimento, inclusive pediátrica, por via oral (dose de referência de 7,5 mg).",
-      "Indução e manutenção de sedação em centro cirúrgico e UTI (por via IV, não modelada aqui).",
-      "Crise convulsiva aguda (via bucal, intranasal ou intramuscular).",
-      "Modelada a via oral porque ilustra a baixa biodisponibilidade (F de 0,4) por primeira passagem hepática e intestinal por CYP3A4."
+      "Sedação pré-operatória e pré-procedimento, inclusive pediátrica, por via oral",
+      "Indução e manutenção de sedação em centro cirúrgico e UTI (por via IV)",
+      "Crise convulsiva aguda (via bucal, intranasal ou intramuscular)"
     ],
     "adverseEffects": [
       {
@@ -773,7 +771,7 @@
       "Insuficiência respiratória grave",
       "Miastenia gravis",
       "Hipersensibilidade a benzodiazepínicos",
-      "Uso com inibidores potentes de CYP3A4 por via oral (contraindicação)"
+      "Uso por via oral com inibidores potentes de CYP3A4"
     ],
     "interactions": [
       {
@@ -805,7 +803,7 @@
       {
         "nome": "1-Hidroximidazolam (alfa-hidroximidazolam)",
         "ativo": true,
-        "via": "Hepática: hidroxilação por CYP3A4; depois glicuronidação; t1/2 curto"
+        "via": "Hepática: hidroxilação por CYP3A4; depois glicuronidação; t½ curto"
       },
       {
         "nome": "4-Hidroximidazolam",
@@ -828,7 +826,7 @@
       "emax": 100,
       "ec50": 0.04,
       "hill": 2,
-      "efeito": "Efeito sedativo. EC50 didática de 0,04 mg/L (cerca de 40 ng/mL, concentração em que a sedação costuma surgir); é uma aproximação de ensino, não uma EC50 publicada com segurança."
+      "efeito": "Ansiólise e sedação leve (início do efeito). EC50 didática de 0,04 mg/L (cerca de 40 ng/mL), concentração em que o efeito costuma surgir; é uma aproximação de ensino, não uma EC50 publicada com segurança. Dose de referência: 7,5 mg por via oral (sedação pré-operatória). A via oral ilustra a baixa biodisponibilidade (F de 0,4) por primeira passagem hepática e intestinal por CYP3A4; a via IV não é modelada."
     },
     "sources": [
       {
@@ -848,22 +846,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -897,9 +895,8 @@
     "targetSid": "za:midbrain-r",
     "mecanismo": "Inibe seletivamente o transportador de serotonina (SERT) na membrana pré-sináptica, reduzindo a recaptação e aumentando a serotonina na fenda; a adaptação gradual dos receptores 5-HT explica a latência de 2 a 4 semanas para o efeito antidepressivo.",
     "clinicalUse": [
-      "Transtorno depressivo maior e transtorno obsessivo-compulsivo.",
-      "Bulimia nervosa e transtorno de pânico.",
-      "Dose de referência: 20 mg por via oral ao dia. Com t1/2 de 2 dias (e norfluoxetina de 7 a 15 dias), o estado de equilíbrio demora semanas; o modelo de dose única mostra concentração baixa porque o efeito depende do acúmulo."
+      "Transtorno depressivo maior e transtorno obsessivo-compulsivo",
+      "Bulimia nervosa e transtorno de pânico"
     ],
     "adverseEffects": [
       {
@@ -917,7 +914,7 @@
         "doseDependente": true
       },
       {
-        "efeito": "Hiponatremia (SIADH), sobretudo em idosos",
+        "efeito": "Hiponatremia (SSIHAD), sobretudo em idosos",
         "frequencia": "incomum"
       },
       {
@@ -960,7 +957,7 @@
       {
         "nome": "Norfluoxetina",
         "ativo": true,
-        "via": "Hepática: N-desmetilação por CYP2D6; t1/2 de 7 a 15 dias; potência semelhante à da fluoxetina"
+        "via": "Hepática: N-desmetilação por CYP2D6; t½ de 7 a 15 dias; potência semelhante à da fluoxetina"
       }
     ],
     "pk": {
@@ -978,7 +975,7 @@
       "emax": 100,
       "ec50": 0.1,
       "hill": 1.5,
-      "efeito": "Efeito antidepressivo (ocupação do SERT). EC50 didática de 0,1 mg/L, tomada do limite inferior da faixa típica em equilíbrio (fluoxetina mais norfluoxetina, cerca de 0,1 a 0,3 mg/L); é uma aproximação, não uma EC50 publicada. A dose única simulada não atinge essa faixa."
+      "efeito": "Efeito antidepressivo. A EC50 usada reflete a faixa terapêutica clínica, não a ocupação do SERT, que satura em concentrações bem menores. EC50 didática de 0,1 mg/L, limite inferior da faixa típica em equilíbrio (fluoxetina mais norfluoxetina, cerca de 0,1 a 0,3 mg/L); é uma aproximação, não uma EC50 publicada. A dose única simulada não atinge essa faixa. Dose de referência: 20 mg por via oral ao dia. Com t½ de 2 dias (e norfluoxetina de 7 a 15 dias), o estado de equilíbrio demora semanas; o modelo de dose única mostra concentração baixa porque o efeito depende do acúmulo."
     },
     "sources": [
       {
@@ -998,22 +995,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -1047,10 +1044,8 @@
     "targetSid": "za:midbrain-l",
     "mecanismo": "Inibe seletivamente o transportador de serotonina (SERT), reduzindo a recaptação neuronal e aumentando a serotonina sináptica; tem ação fraca sobre o transportador de dopamina e pouca afinidade por receptores muscarínicos, histaminérgicos e adrenérgicos.",
     "clinicalUse": [
-      "Transtorno depressivo maior e transtorno obsessivo-compulsivo.",
-      "Transtorno de pânico, transtorno de estresse pós-traumático e ansiedade social.",
-      "Dose de referência: 50 mg por via oral ao dia (faixa de 50 a 200 mg); tmax citado de 4,5 a 8 h, usado como 6 h.",
-      "A biodisponibilidade oral absoluta não é bem definida; o valor de F usado é uma estimativa de ensino."
+      "Transtorno depressivo maior e transtorno obsessivo-compulsivo",
+      "Transtorno de pânico, transtorno de estresse pós-traumático e ansiedade social"
     ],
     "adverseEffects": [
       {
@@ -1105,7 +1100,7 @@
       {
         "nome": "Desmetilsertralina",
         "ativo": false,
-        "via": "Hepática: N-desmetilação por CYP2B6, CYP2C19 e CYP3A4; atividade clínica desprezível; t1/2 de 60 a 100 h"
+        "via": "Hepática: N-desmetilação por CYP2B6, CYP2C19 e CYP3A4; atividade clínica desprezível; t½ de 60 a 100 h"
       }
     ],
     "pk": {
@@ -1123,7 +1118,7 @@
       "emax": 100,
       "ec50": 0.03,
       "hill": 1.5,
-      "efeito": "Efeito antidepressivo (ocupação do SERT). EC50 didática de 0,03 mg/L, na faixa baixa do intervalo de referência terapêutico citado (cerca de 10 a 150 ng/mL); é uma aproximação, não uma EC50 publicada."
+      "efeito": "Efeito antidepressivo. A EC50 usada reflete a faixa terapêutica clínica, não a ocupação do SERT, que satura em concentrações bem menores. EC50 didática de 0,03 mg/L, na faixa baixa do intervalo de referência terapêutico citado (cerca de 10 a 150 ng/mL); é uma aproximação, não uma EC50 publicada. A dose única simulada não atinge a faixa terapêutica de equilíbrio. Aviso: a biodisponibilidade oral absoluta não foi determinada, e o F de 0,44 é uma estimativa didática. Dose de referência: 50 mg por via oral ao dia (faixa de 50 a 200 mg); tmax citado de 4,5 a 8 h, usado como 6 h."
     },
     "sources": [
       {
@@ -1143,22 +1138,24 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
-        "obraId": "goodman"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "A biodisponibilidade oral absoluta da sertralina não foi determinada; 0,44 é uma estimativa didática, não valor de obra da lista."
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -1194,10 +1191,9 @@
     "targetSid": "za:hippocampus-l",
     "mecanismo": "Inibe a recaptação de noradrenalina e serotonina (NET e SERT) e bloqueia receptores muscarínicos M1, histamínicos H1 e alfa-1 adrenérgicos; o aumento das monoaminas explica o efeito antidepressivo e analgésico, e o bloqueio dos outros receptores explica a maior parte dos efeitos adversos.",
     "clinicalUse": [
-      "Transtorno depressivo maior, quando outros antidepressivos falharam ou não são tolerados.",
-      "Dor neuropática e profilaxia de enxaqueca, em doses menores que as antidepressivas.",
-      "Insônia associada à depressão e enurese noturna infantil (uso restrito).",
-      "Dose de referência: 50 mg por via oral; margem terapêutica estreita e alta letalidade em superdose (arritmia, convulsão)."
+      "Transtorno depressivo maior, quando outros antidepressivos falharam ou não são tolerados",
+      "Dor neuropática e profilaxia de enxaqueca, em doses menores que as antidepressivas",
+      "Insônia associada à depressão e enurese noturna infantil (uso restrito)"
     ],
     "adverseEffects": [
       {
@@ -1285,7 +1281,7 @@
       "emax": 100,
       "ec50": 0.1,
       "hill": 1.5,
-      "efeito": "Efeito antidepressivo. EC50 didática de 0,1 mg/L, limite inferior da faixa terapêutica citada para amitriptilina mais nortriptilina (cerca de 0,1 a 0,25 mg/L); é uma aproximação, não uma EC50 publicada."
+      "efeito": "Efeito antidepressivo. EC50 didática de 0,1 mg/L, limite inferior da faixa terapêutica citada para amitriptilina mais nortriptilina (cerca de 0,1 a 0,25 mg/L); é uma aproximação, não uma EC50 publicada. A dose única simulada não atinge a faixa terapêutica de equilíbrio. Dose de referência: 50 mg por via oral; margem terapêutica estreita e alta letalidade em superdose (arritmia, convulsão)."
     },
     "sources": [
       {
@@ -1305,22 +1301,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -1354,10 +1350,8 @@
     "targetSid": "za:liver",
     "mecanismo": "Inibe a vitamina K epóxido redutase (VKORC1) no hepatócito, impedindo a regeneração da vitamina K reduzida e a gama-carboxilação dos fatores II, VII, IX e X e das proteínas C e S; o efeito aparece só depois que os fatores já circulantes são depletados (2 a 3 dias).",
     "clinicalUse": [
-      "Prevenção de AVC na fibrilação atrial e profilaxia/tratamento de tromboembolismo venoso.",
-      "Prótese valvar cardíaca mecânica e síndrome antifosfolípide (indicações em que os DOACs não são adequados).",
-      "Dose de referência: 5 mg por via oral ao dia, ajustada pelo INR-alvo (2 a 3); margem terapêutica estreita e grande variabilidade (CYP2C9, VKORC1, dieta).",
-      "O modelo é direto; o atraso real do efeito (indireto, dependente da meia-vida dos fatores) não é simulado."
+      "Prevenção de AVC na fibrilação atrial e profilaxia/tratamento de tromboembolismo venoso",
+      "Prótese valvar cardíaca mecânica e síndrome antifosfolípide (indicações em que os ACODs não são adequados)"
     ],
     "adverseEffects": [
       {
@@ -1400,7 +1394,7 @@
       {
         "com": "Rifampicina e carbamazepina",
         "efeito": "Redução do INR e risco de trombose",
-        "severidade": "moderada",
+        "severidade": "grave",
         "mecanismo": "Indução de CYP2C9, CYP3A4 e CYP1A2"
       },
       {
@@ -1437,7 +1431,7 @@
       "emax": 100,
       "ec50": 1,
       "hill": 1.5,
-      "efeito": "Efeito anticoagulante (redução da atividade dos fatores dependentes de vitamina K). EC50 didática de 1 mg/L, ponto médio da faixa típica de concentração da varfarina racêmica em equilíbrio (cerca de 0,5 a 2,5 mg/L); é uma aproximação, não uma EC50 publicada. O atraso do efeito não é modelado."
+      "efeito": "Efeito anticoagulante (redução da atividade dos fatores dependentes de vitamina K). EC50 didática de 1 mg/L, ponto médio da faixa típica de concentração da varfarina racêmica em equilíbrio (cerca de 0,5 a 2,5 mg/L); é uma aproximação, não uma EC50 publicada. O modelo é direto: o atraso real do efeito (indireto, dependente da meia-vida dos fatores) não é simulado. Dose de referência: 5 mg por via oral ao dia, ajustada pelo INR-alvo (2 a 3); margem terapêutica estreita e grande variabilidade (CYP2C9, VKORC1, dieta)."
     },
     "sources": [
       {
@@ -1457,22 +1451,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -1503,13 +1497,12 @@
       "Anticoagulante parenteral",
       "Profilaxia de TEV"
     ],
-    "targetSid": "za:vh-m-heart-left-ventricle",
+    "targetSid": "za:pulmonary-trunk",
     "mecanismo": "Liga-se à antitrombina por uma sequência pentassacarídica e acelera a inativação do fator Xa; por ter cadeias curtas, inativa pouco a trombina (relação anti-Xa/anti-IIa de cerca de 3,6) e produz efeito mais previsível que o da heparina não fracionada.",
     "clinicalUse": [
-      "Profilaxia de tromboembolismo venoso em pacientes clínicos e cirúrgicos (40 mg por via SC, 1 vez ao dia).",
-      "Tratamento de trombose venosa profunda e embolia pulmonar (1 mg/kg a cada 12 h).",
-      "Síndromes coronarianas agudas sem supradesnivelamento do ST e IAM com supra.",
-      "O alvo é a atividade anti-Xa: 40 mg equivalem a cerca de 4000 UI anti-Xa. O modelo usa mg e mg/L; 1 mg/L corresponde a cerca de 0,1 UI/mL anti-Xa. O alvo anti-Xa da profilaxia é de 0,2 a 0,5 UI/mL."
+      "Profilaxia de tromboembolismo venoso em pacientes clínicos e cirúrgicos (40 mg por via SC, 1 vez ao dia)",
+      "Tratamento de trombose venosa profunda e embolia pulmonar (1 mg/kg a cada 12 h)",
+      "Síndromes coronarianas agudas sem supradesnivelamento do ST e IAM com supra"
     ],
     "adverseEffects": [
       {
@@ -1560,6 +1553,13 @@
         "mecanismo": "Supressão da aldosterona pela heparina"
       }
     ],
+    "metabolites": [
+      {
+        "nome": "Fragmentos de menor massa molecular",
+        "ativo": false,
+        "via": "Metabolismo hepático por dessulfatação e despolimerização; atividade anti-Xa desprezível, com excreção renal"
+      }
+    ],
     "pk": {
       "route": "SC",
       "dose": 40,
@@ -1575,7 +1575,7 @@
       "emax": 100,
       "ec50": 3,
       "hill": 1.5,
-      "efeito": "Atividade anticoagulante (anti-Xa). EC50 didática de 3 mg/L, equivalente a cerca de 0,3 UI/mL anti-Xa, ponto médio do alvo de profilaxia (0,2 a 0,5 UI/mL); a conversão de 100 UI/mg é aproximada e o valor não é uma EC50 publicada."
+      "efeito": "Atividade anticoagulante (anti-Xa). EC50 didática de 3 mg/L, equivalente a cerca de 0,3 UI/mL anti-Xa, ponto médio do alvo de profilaxia (0,2 a 0,5 UI/mL); a conversão de 100 UI/mg é aproximada e o valor não é uma EC50 publicada. O alvo é a atividade anti-Xa: 40 mg equivalem a cerca de 4000 UI anti-Xa, e o modelo usa mg e mg/L."
     },
     "sources": [
       {
@@ -1595,22 +1595,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -1644,10 +1644,8 @@
     "targetSid": "za:liver",
     "mecanismo": "Ativa a proteína quinase ativada por AMP (AMPK) e inibe o complexo I mitocondrial no hepatócito; isso reduz a gliconeogênese hepática e melhora a sensibilidade periférica à insulina, sem estimular a secreção de insulina e, portanto, com baixo risco de hipoglicemia.",
     "clinicalUse": [
-      "Primeira linha no diabetes mellitus tipo 2, associada a mudanças de estilo de vida.",
-      "Pré-diabetes de alto risco e síndrome dos ovários policísticos (uso off-label).",
-      "Dose de referência: 500 mg por via oral (início), até 2000 a 2550 mg ao dia em doses divididas.",
-      "Eliminação renal sem metabolização: ajustar ou suspender conforme a taxa de filtração glomerular."
+      "Primeira linha no diabetes mellitus tipo 2, associada a mudanças de estilo de vida",
+      "Pré-diabetes de alto risco e síndrome dos ovários policísticos (uso fora da bula)"
     ],
     "adverseEffects": [
       {
@@ -1702,10 +1700,11 @@
         "mecanismo": "Efeito hiperglicemiante ou depleção volêmica"
       }
     ],
+    "metabolites": [],
     "pk": {
       "route": "ORAL",
       "dose": 500,
-      "vd": 300,
+      "vd": 200,
       "halfLife": 6,
       "ka": 0.96,
       "F": 0.55,
@@ -1717,7 +1716,7 @@
       "emax": 100,
       "ec50": 1,
       "hill": 1.5,
-      "efeito": "Efeito hipoglicemiante (redução da produção hepática de glicose). EC50 didática de 1 mg/L, ponto médio da faixa terapêutica citada (cerca de 0,5 a 2 mg/L); é uma aproximação, não uma EC50 publicada."
+      "efeito": "Efeito anti-hiperglicemiante (redução da produção hepática de glicose). EC50 didática de 1 mg/L, ponto médio da faixa terapêutica citada (cerca de 0,5 a 2 mg/L); é uma aproximação, não uma EC50 publicada. A t½ de 6 h é a terminal. Dose de referência: 500 mg por via oral (início), até 2000 a 2550 mg ao dia em doses divididas. Eliminação renal sem metabolização: ajustar ou suspender conforme a taxa de filtração glomerular."
     },
     "sources": [
       {
@@ -1737,22 +1736,24 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
-        "obraId": "goodman"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "A t½ de 6 h é declarada como terminal e vem de bula, valor fora das obras listadas; o conselho confere."
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -1786,10 +1787,7 @@
     "targetSid": "za:pancreas",
     "mecanismo": "Liga-se ao receptor de sulfonilureia (SUR1) da célula beta pancreática e fecha o canal de potássio sensível ao ATP (KATP); a despolarização abre canais de cálcio dependentes de voltagem e o influxo de cálcio dispara a exocitose de insulina, independentemente da glicemia.",
     "clinicalUse": [
-      "Diabetes mellitus tipo 2 com função residual de células beta, como segunda linha ou associada à metformina.",
-      "Dose de referência: 5 mg por via oral ao dia, antes do café da manhã (faixa de 2,5 a 15 mg).",
-      "Risco maior de hipoglicemia prolongada que outras sulfonilureias; evitar em idosos e na insuficiência renal.",
-      "O efeito hipoglicemiante dura cerca de 24 h, mais que o previsto pela meia-vida plasmática, por isso o risco de hipoglicemia persiste em jejum."
+      "Diabetes mellitus tipo 2 com função residual de células beta, como segunda linha ou associada à metformina"
     ],
     "adverseEffects": [
       {
@@ -1869,7 +1867,7 @@
       "emax": 100,
       "ec50": 0.05,
       "hill": 1.5,
-      "efeito": "Efeito hipoglicemiante (secreção de insulina). EC50 didática de 0,05 mg/L, na faixa baixa da concentração plasmática terapêutica citada; é uma aproximação, não uma EC50 publicada. A duração real do efeito é maior que a sugerida pela meia-vida plasmática."
+      "efeito": "Efeito hipoglicemiante (secreção de insulina). EC50 didática de 0,05 mg/L, na faixa baixa da concentração plasmática terapêutica citada; é uma aproximação, não uma EC50 publicada. A duração do efeito, de 12 a 24 h, é maior que a sugerida pela t½ terminal de 10 h, por isso o risco de hipoglicemia persiste em jejum. Dose de referência: 5 mg por via oral ao dia, antes do café da manhã (faixa de 2,5 a 15 mg). Risco maior de hipoglicemia prolongada que outras sulfonilureias; evitar em idosos e na insuficiência renal."
     },
     "sources": [
       {
@@ -1889,22 +1887,24 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
-        "obraId": "goodman"
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "O livro tabela uma t½ menor; as 10 h usadas são a t½ terminal de bula, valor fora das obras listadas."
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -1938,10 +1938,9 @@
     "targetSid": "za:stomach",
     "mecanismo": "Pró-fármaco ativado em meio ácido nos canalículos da célula parietal: forma uma sulfenamida que se liga por ligação covalente à H+/K+-ATPase (bomba de prótons) e a inativa de modo irreversível; a secreção ácida só volta com a síntese de novas bombas.",
     "clinicalUse": [
-      "Doença do refluxo gastroesofágico e esofagite erosiva.",
-      "Úlcera péptica e erradicação de Helicobacter pylori (associado a antibióticos).",
-      "Profilaxia de lesão gástrica por AINEs e síndrome de Zollinger-Ellison.",
-      "Dose de referência: 20 mg por via oral, 30 a 60 min antes do café da manhã, em cápsula gastrorresistente."
+      "Doença do refluxo gastroesofágico e esofagite erosiva",
+      "Úlcera péptica e erradicação de Helicobacter pylori (associado a antibióticos)",
+      "Profilaxia de lesão gástrica por AINEs e síndrome de Zollinger-Ellison"
     ],
     "adverseEffects": [
       {
@@ -2006,7 +2005,7 @@
       "halfLife": 1,
       "ka": 0.9,
       "F": 0.4,
-      "tmax": 1.5,
+      "tmax": 1.3,
       "doseUnit": "mg",
       "concUnit": "mg/L"
     },
@@ -2014,7 +2013,7 @@
       "emax": 100,
       "ec50": 0.15,
       "hill": 1.5,
-      "efeito": "Inibição da secreção ácida gástrica. Parâmetros puramente didáticos, sem EC50 publicada segura: o efeito do omeprazol depende da exposição acumulada (AUC) e da inativação covalente da bomba, e dura de 24 a 72 h apesar de t1/2 plasmático de cerca de 1 h."
+      "efeito": "Inibição da secreção ácida gástrica. Parâmetros puramente didáticos, sem EC50 publicada segura: o efeito do omeprazol depende da exposição acumulada (ASC) e da inativação covalente da bomba, e dura de 24 a 72 h apesar de t½ plasmática de cerca de 1 h. O tmax citado vai de 0,5 a 3,5 h, usado como 1,3 h. Dose de referência: 20 mg por via oral, 30 a 60 min antes do café da manhã, em cápsula gastrorresistente."
     },
     "sources": [
       {
@@ -2034,22 +2033,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
@@ -2083,10 +2082,9 @@
     "targetSid": "za:trachea",
     "mecanismo": "Antagonista competitivo e reversível dos receptores muscarínicos (M1 a M5), sem ação nos receptores nicotínicos; bloqueia o excesso de acetilcolina da intoxicação por organofosforados e carbamatos e reverte bradicardia, broncorreia, broncoconstrição e hipersecreção.",
     "clinicalUse": [
-      "Antídoto de intoxicação por organofosforados e carbamatos (crise colinérgica): 1 a 2 mg por via IV, repetidos e titulados até a secagem das secreções brônquicas.",
-      "Bradicardia sinusal sintomática.",
-      "Antissialogogo na pré-anestesia e reversão do bloqueio muscarínico da neostigmina.",
-      "Via IV em bolus: tmax citado como 0 h (início imediato); o modelo começa em D/Vd. A atropina reverte os sinais muscarínicos, mas não a fraqueza nicotínica, que exige pralidoxima."
+      "Antídoto de intoxicação por organofosforados e carbamatos (crise colinérgica)",
+      "Bradicardia sinusal sintomática",
+      "Antissialogogo na pré-anestesia e prevenção dos efeitos muscarínicos (bradicardia, hipersecreção) da neostigmina na reversão do bloqueio neuromuscular"
     ],
     "adverseEffects": [
       {
@@ -2116,10 +2114,7 @@
       }
     ],
     "contraindications": [
-      "Glaucoma de ângulo fechado (sem urgência vital)",
-      "Hipertrofia prostática com retenção urinária (cautela)",
-      "Íleo paralítico e megacólon tóxico (cautela)",
-      "Na intoxicação por organofosforado, não há contraindicação absoluta: o risco vital supera os efeitos adversos"
+      "Glaucoma de ângulo fechado (sem urgência vital)"
     ],
     "interactions": [
       {
@@ -2168,7 +2163,7 @@
       "emax": 100,
       "ec50": 0.003,
       "hill": 1.5,
-      "efeito": "Bloqueio muscarínico (reversão da bradicardia e das secreções). EC50 didática de 0,003 mg/L (cerca de 3 ng/mL), melhor estimativa de ensino sem EC50 publicada segura; revisar. A titulação clínica segue o desfecho (secreções secas), não a concentração."
+      "efeito": "Bloqueio muscarínico (reversão da bradicardia e das secreções). EC50 didática de 0,003 mg/L (cerca de 3 ng/mL), compatível com a EC50 de efeitos muscarínicos em indivíduos sadios (≈ 1 a 4 ng/mL); na intoxicação a EC50 aparente é maior. A titulação clínica segue o desfecho (secreções secas), não a concentração. Dose de referência: 1 a 2 mg por via IV, repetidos e titulados até a secagem das secreções brônquicas. Via IV em bolo: tmax citado como 0 h (início imediato); o modelo começa em D/Vd. A atropina reverte os sinais muscarínicos, mas não a fraqueza nicotínica, que exige pralidoxima. Cautelas: hipertrofia prostática com retenção urinária, íleo paralítico e megacólon tóxico. Na intoxicação por organofosforado, não há contraindicação absoluta: o risco vital supera os efeitos adversos."
     },
     "sources": [
       {
@@ -2188,22 +2183,22 @@
       },
       {
         "field": "pk.F",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.halfLife",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.vd",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {
         "field": "pk.tmax",
-        "ref": "Parâmetros farmacocinéticos de referência por fármaco (tabela de dados de dose e depuração)",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
         "obraId": "goodman"
       },
       {

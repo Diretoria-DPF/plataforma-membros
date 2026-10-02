@@ -126,6 +126,28 @@
         "field": "desviosClinicos",
         "ref": "Cardiopatia valvar e arritmias",
         "obraId": "robbins"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Bomba cardíaca e ciclo cardíaco: função de átrios e ventrículos, valvas, pressões e volumes",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia cardíaca: eventos mecânicos do ciclo cardíaco, volume sistólico e fração de ejeção",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia cardiovascular: ciclo cardíaco, bulhas e relação entre pressão e volume",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -248,7 +270,7 @@
       },
       {
         "order": 6,
-        "description_pt": "Ovulação (por volta do dia 14 em um ciclo de 28 dias): o pico de LH reinicia a meiose do oócito e estimula prostaglandinas e enzimas proteolíticas que rompem a parede folicular. O oócito secundário, parado na metáfase II, é liberado com as células do cumulus cerca de 24 a 36 horas após o início do pico.",
+        "description_pt": "Ovulação (por volta do dia 14 em um ciclo de 28 dias): o pico de LH reinicia a meiose do oócito e estimula prostaglandinas e enzimas proteolíticas que rompem a parede folicular. O oócito secundário, parado na metáfase II, é liberado com as células do cumulus cerca de 24 a 36 horas após o início do pico de LH (algumas fontes citam intervalos um pouco maiores).",
         "anchors": [
           {
             "sid": "za:ciclo-menstrual"
@@ -310,6 +332,53 @@
         "field": "steps",
         "ref": "Aparelho reprodutor feminino: ovário, ciclo ovariano e ciclo uterino",
         "obraId": "junqueira"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia feminina antes da gravidez: ciclo ovariano, ciclo endometrial e regulação hormonal mensal",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia reprodutiva feminina: ciclo menstrual, foliculogênese, ovulação e fase lútea",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Reprodução e desenvolvimento: controle hormonal do ciclo ovariano e uterino",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Aparelho reprodutor feminino: ovário, ciclo ovariano e ciclo uterino",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Ovário, hipófise e trato genital feminino: síndrome dos ovários policísticos, hiperprolactinemia e insuficiência ovariana",
+        "obraId": "robbins"
+      },
+      {
+        "field": "feedback",
+        "ref": "Fisiologia feminina antes da gravidez: retroalimentação hormonal do ciclo ovariano",
+        "obraId": "guyton"
+      },
+      {
+        "field": "feedback",
+        "ref": "Fisiologia reprodutiva feminina: retroalimentação do eixo hipotálamo-hipófise-ovário",
+        "obraId": "berne"
+      },
+      {
+        "field": "feedback",
+        "ref": "Reprodução e desenvolvimento: controle hormonal do ciclo ovariano e uterino",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -423,7 +492,7 @@
           "berne",
           "silverthorn"
         ],
-        "clinica_pt": "A varfarina bloqueia a carboxilação dependente de vitamina K; na hemofilia A (fator VIII) e na B (fator IX) a tenase fica comprometida."
+        "clinica_pt": "A varfarina inibe a epóxido-redutase da vitamina K e, assim, a carboxilação dos fatores dependentes; na hemofilia A (fator VIII) e na B (fator IX), a tenase fica comprometida."
       },
       {
         "order": 5,
@@ -490,6 +559,53 @@
         "field": "steps",
         "ref": "Sangue: plaquetas e coagulação",
         "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Hemostasia e coagulação sanguínea: espasmo vascular, tampão plaquetário, vias de coagulação e fibrinólise",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Hemostasia: plaquetas, cascata de coagulação, anticoagulantes naturais e fibrinólise",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Distúrbios hemodinâmicos, tromboembolia e choque: hemostasia e trombose",
+        "obraId": "robbins"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Sangue: plaquetas e coagulação",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Distúrbios hemorrágicos e trombofilias: hemofilia, doença de von Willebrand, deficiência de vitamina K, fator V de Leiden e coagulação intravascular disseminada",
+        "obraId": "robbins"
+      },
+      {
+        "field": "feedback",
+        "ref": "Hemostasia e coagulação sanguínea: retroalimentação positiva da trombina e anticoagulantes naturais",
+        "obraId": "guyton"
+      },
+      {
+        "field": "feedback",
+        "ref": "Hemostasia: anticoagulantes naturais, proteína C e antitrombina",
+        "obraId": "berne"
+      },
+      {
+        "field": "feedback",
+        "ref": "Sangue: plaquetas e coagulação",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -523,8 +639,8 @@
         "cid": "D68.0"
       },
       {
-        "condicao": "Deficiência de vitamina K ou uso de varfarina",
-        "mecanismo": "Faltam as formas carboxiladas dos fatores II, VII, IX e X e das proteínas C e S; o TP/INR se prolonga e há risco de sangramento.",
+        "condicao": "Deficiência adquirida de fatores dependentes de vitamina K",
+        "mecanismo": "Na carência de vitamina K faltam as formas carboxiladas dos fatores II, VII, IX e X e das proteínas C e S; o TP/INR se prolonga e há risco de sangramento.",
         "cid": "D68.4"
       },
       {
@@ -561,7 +677,7 @@
           "berne",
           "silverthorn"
         ],
-        "clinica_pt": "Na doença do nó sinusal há bradicardia e pausas; pode ser necessário marcapasso artificial."
+        "clinica_pt": "Na doença do nó sinusal há bradicardia e pausas; o tratamento definitivo é o marca-passo artificial."
       },
       {
         "order": 2,
@@ -642,6 +758,38 @@
         "field": "steps",
         "ref": "Tecido muscular cardíaco: sistema de condução e fibras de Purkinje",
         "obraId": "junqueira"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Excitação rítmica do coração: sistema especializado de excitação e condução, automatismo e controle autonômico",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Atividade elétrica do coração: automatismo do nó sinoatrial e sequência de condução",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Eletrofisiologia cardíaca: células autoexcitáveis, sistema de condução e eletrocardiograma",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Tecido muscular cardíaco: sistema de condução e fibras de Purkinje",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Coração: doença do nó sinusal e distúrbios da condução atrioventricular e intraventricular",
+        "obraId": "robbins"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -684,7 +832,7 @@
     "steps": [
       {
         "order": 1,
-        "description_pt": "Junção neuromuscular: o potencial de ação do neurônio motor libera acetilcolina, que abre os receptores nicotínicos da placa motora e gera um potencial de placa sempre suprarlimiar. Ele dispara um potencial de ação na fibra muscular, que se propaga pelo sarcolema.",
+        "description_pt": "Junção neuromuscular: o potencial de ação do neurônio motor libera acetilcolina, que abre os receptores nicotínicos da placa motora e gera um potencial de placa sempre supralimiar. Ele dispara um potencial de ação na fibra muscular, que se propaga pelo sarcolema.",
         "anchors": [
           {
             "sid": "za:synapse-calcium",
@@ -729,7 +877,7 @@
       },
       {
         "order": 4,
-        "description_pt": "Ciclo de pontes cruzadas: a cabeça da miosina, já com ADP e fosfato após a hidrólise do ATP, liga-se à actina; a liberação do fosfato e do ADP produz o movimento de força (power stroke), que desliza a actina em direção ao centro do sarcômero (os filamentos não encurtam, o sarcômero sim). Uma nova molécula de ATP liga-se à miosina e a desprende da actina, e o ciclo se repete enquanto houver Ca²⁺ e ATP.",
+        "description_pt": "Ciclo de pontes cruzadas: a cabeça da miosina, já com ADP e fosfato após a hidrólise do ATP, liga-se à actina; a liberação do fosfato e do ADP produz o golpe de força, que desliza a actina em direção ao centro do sarcômero (os filamentos não encurtam, o sarcômero sim). Uma nova molécula de ATP liga-se à miosina e a desprende da actina, e o ciclo se repete enquanto houver Ca²⁺ e ATP.",
         "anchors": [
           {
             "sid": "za:crossbridge-cycle"
@@ -777,6 +925,43 @@
         "field": "steps",
         "ref": "Tecido muscular: estrutura do sarcômero e mecanismo molecular da contração",
         "obraId": "junqueira"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Contração do músculo esquelético: base molecular, acoplamento excitação-contração e junção neuromuscular",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Músculo esquelético: acoplamento excitação-contração e ciclo das pontes cruzadas",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia do músculo esquelético: contração e relaxamento",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Tecido muscular: estrutura do sarcômero e mecanismo molecular da contração",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Músculo esquelético e junção neuromuscular: miastenia gravis e hipertermia maligna",
+        "obraId": "robbins"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Cálcio extracelular e excitabilidade neuromuscular: tetania hipocalcêmica",
+        "obraId": "guyton"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -792,7 +977,7 @@
       },
       {
         "condicao": "Hipertermia maligna",
-        "mecanismo": "Variantes principalmente do gene do RyR1 tornam o canal hipersensível a anestésicos voláteis e succinilcolina; a liberação maciça de Ca²⁺ causa contração sustentada, hipermetabolismo e febre alta.",
+        "mecanismo": "Variantes principalmente do gene do RyR1 tornam o canal hipersensível a anestésicos voláteis e succinilcolina; a liberação maciça de Ca²⁺ causa contração sustentada, hipermetabolismo e hipertermia intensa.",
         "cid": "T88.3"
       },
       {
@@ -875,7 +1060,7 @@
       },
       {
         "order": 5,
-        "description_pt": "Fase esofágica: a peristalse primária continua a onda iniciada na faringe e leva cerca de 8 a 10 segundos para percorrer o esôfago, a uma velocidade de cerca de 2 a 4 cm/s. O terço superior é de músculo estriado, comandado por neurônios motores do vago; o inferior é de músculo liso, e a onda é coordenada por fibras vagais e pelo plexo mioentérico (de Auerbach). Se resta bolo, a distensão desencadeia peristalse secundária.",
+        "description_pt": "Fase esofágica: a peristalse primária continua a onda iniciada na faringe e leva cerca de 8 a 10 segundos para percorrer o esôfago, a uma velocidade de cerca de 2 a 4 cm/s. O terço superior é de músculo estriado, comandado por neurônios motores do vago; o terço médio é misto; o inferior é de músculo liso, e a onda é coordenada por fibras vagais e pelo plexo mioentérico (de Auerbach). Se resta bolo, a distensão desencadeia peristalse secundária.",
         "anchors": [
           {
             "sid": "za:esophagus-wave"
@@ -886,11 +1071,11 @@
           "berne",
           "silverthorn"
         ],
-        "clinica_pt": "No megaesôfago chagásico, a destruição dos neurônios do plexo mioentérico elimina a peristalse e o relaxamento do esfíncter inferior."
+        "clinica_pt": "No megaesôfago chagásico, a destruição dos neurônios do plexo mioentérico compromete a peristalse e o relaxamento do esfíncter inferior."
       },
       {
         "order": 6,
-        "description_pt": "Entrada no estômago: durante a onda peristáltica, o vago ativa neurônios inibitórios do plexo mioentérico, que liberam óxido nítrico e peptídeo intestinal vasoativo (VIP) e relaxam o esfíncter esofágico inferior (relaxamento receptivo). O bolo alimentar passa ao estômago, onde se tornará quimo, e o esfíncter recupera o tônus para evitar o refluxo.",
+        "description_pt": "Entrada no estômago: durante a onda peristáltica, o vago ativa neurônios inibitórios do plexo mioentérico, que liberam óxido nítrico e peptídeo intestinal vasoativo (VIP) e relaxam o esfíncter esofágico inferior. O bolo alimentar passa ao estômago, onde se tornará quimo, e o esfíncter recupera o tônus para evitar o refluxo.",
         "anchors": [
           {
             "sid": "za:stomach-entry"
@@ -924,6 +1109,38 @@
         "field": "steps",
         "ref": "Sistema digestório: boca, faringe e esôfago, mecanismo da deglutição",
         "obraId": "tortora"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Propulsão e mistura do alimento no trato alimentar: deglutição e função motora do esôfago",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Motilidade do trato gastrointestinal: mastigação, deglutição e motilidade esofágica",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Digestão e motilidade gastrointestinal: reflexos da deglutição",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Sistema digestório: boca, faringe e esôfago, mecanismo da deglutição",
+        "obraId": "tortora"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Esôfago: acalasia, doença do refluxo gastroesofágico e disfagia",
+        "obraId": "robbins"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -1064,6 +1281,48 @@
         "field": "steps",
         "ref": "Hormônios do córtex da suprarrenal e glicocorticoides: ações e uso terapêutico",
         "obraId": "katzung"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Hormônios adrenocorticais: síntese, ações e regulação do cortisol por CRH e ACTH",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Glândula suprarrenal e controle neuroendócrino: eixo hipotálamo-hipófise-adrenal",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Glândulas endócrinas e resposta ao estresse: eixo hipotálamo-hipófise-adrenal",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Hormônios do córtex da suprarrenal e glicocorticoides: ações e uso terapêutico",
+        "obraId": "katzung"
+      },
+      {
+        "field": "feedback",
+        "ref": "Hormônios adrenocorticais: retroalimentação do cortisol e do ACTH",
+        "obraId": "guyton"
+      },
+      {
+        "field": "feedback",
+        "ref": "Glândula suprarrenal e controle neuroendócrino: retroalimentação do eixo hipotálamo-hipófise-adrenal",
+        "obraId": "berne"
+      },
+      {
+        "field": "feedback",
+        "ref": "Glândulas endócrinas e resposta ao estresse: retroalimentação do eixo hipotálamo-hipófise-adrenal",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -1118,7 +1377,7 @@
     "id": "espermatogenese",
     "system": "reprodutor",
     "name_pt": "Espermatogênese",
-    "description_pt": "Produção contínua de espermatozoides nos túbulos seminíferos, apoiada pelas células de Sertoli e controlada por FSH, LH e testosterona. Leva cerca de 64 a 74 dias, conforme a referência, e inclui mitoses, duas divisões meióticas e a diferenciação das espermátides (espermiogênese).",
+    "description_pt": "Produção contínua de espermatozoides nos túbulos seminíferos, apoiada pelas células de Sertoli e controlada por FSH, LH e testosterona. Leva cerca de 64 a 74 dias, conforme a fonte e o método de medida, e inclui mitoses, duas divisões meióticas e a diferenciação das espermátides (espermiogênese).",
     "steps": [
       {
         "order": 1,
@@ -1163,7 +1422,7 @@
         "refs": [
           "junqueira",
           "berne",
-          "robbins"
+          "guyton"
         ],
         "clinica_pt": "Lesão da barreira (trauma, infecção) pode expor antígenos de células haploides ao sistema imune e favorecer anticorpos antiespermatozoide."
       },
@@ -1245,6 +1504,38 @@
         "field": "desviosClinicos",
         "ref": "Doenças do testículo: criptorquidia e anomalias da espermatogênese",
         "obraId": "robbins"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Aparelho reprodutor masculino: túbulos seminíferos, espermatogênese, espermiogênese e células de Sertoli",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Funções reprodutivas e hormonais no homem: espermatogênese e controle hormonal",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia reprodutiva masculina: testículo, eixo hipotálamo-hipófise-gonadal e espermatogênese",
+        "obraId": "berne"
+      },
+      {
+        "field": "feedback",
+        "ref": "Funções reprodutivas e hormonais no homem: retroalimentação por inibina e testosterona",
+        "obraId": "guyton"
+      },
+      {
+        "field": "feedback",
+        "ref": "Fisiologia reprodutiva masculina: eixo hipotálamo-hipófise-gonadal e retroalimentação",
+        "obraId": "berne"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -1274,13 +1565,13 @@
       },
       {
         "condicao": "Varicocele",
-        "mecanismo": "A dilatação do plexo venoso do cordão espermático aquece o testículo e pode reduzir a contagem e a qualidade dos espermatozoides.",
+        "mecanismo": "A dilatação do plexo pampiniforme (veias do cordão espermático) aquece o testículo e pode reduzir a contagem e a qualidade dos espermatozoides.",
         "cid": "I86.1"
       },
       {
         "condicao": "Síndrome de Klinefelter",
         "mecanismo": "O cariótipo 47,XXY causa disfunção das células de Sertoli e de Leydig; os testículos ficam pequenos, há baixa testosterona e FSH e LH altos por perda de retroalimentação.",
-        "cid": "Q98"
+        "cid": "Q98.0"
       },
       {
         "condicao": "Hipogonadismo hipogonadotrófico",
@@ -1417,6 +1708,48 @@
         "field": "desviosClinicos",
         "ref": "Rim: doenças glomerulares e síndrome nefrótica",
         "obraId": "robbins"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Os rins: formação da urina, filtração glomerular, fluxo sanguíneo renal e seu controle",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia renal: filtração glomerular e transporte tubular ao longo do néfron",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Função renal: filtração, reabsorção, secreção e excreção",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Sistema urinário: corpúsculo renal, barreira de filtração e túbulos",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "feedback",
+        "ref": "Os rins: retroalimentação tubuloglomerular e controle da concentração da urina",
+        "obraId": "guyton"
+      },
+      {
+        "field": "feedback",
+        "ref": "Fisiologia renal: retroalimentação tubuloglomerular e ação do hormônio antidiurético",
+        "obraId": "berne"
+      },
+      {
+        "field": "feedback",
+        "ref": "Função renal: autorregulação e hormônio antidiurético",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -1456,8 +1789,7 @@
       },
       {
         "condicao": "Glicosúria do diabetes mellitus",
-        "mecanismo": "A glicose filtrada excede a capacidade máxima de transporte tubular e aparece na urina, com diurese osmótica.",
-        "cid": "R81"
+        "mecanismo": "A glicose filtrada excede a capacidade máxima de transporte tubular e aparece na urina, com diurese osmótica."
       }
     ],
     "interageCom": [
@@ -1591,6 +1923,58 @@
         "field": "steps",
         "ref": "Sistema respiratório: ventilação pulmonar e trocas gasosas",
         "obraId": "tortora"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Ventilação pulmonar e princípios físicos das trocas gasosas: difusão de O2 e CO2 através da membrana respiratória",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia respiratória: ventilação, perfusão, difusão e transporte de gases",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Trocas e transporte de gases: ventilação alveolar e controle da respiração",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Sistema respiratório: alvéolo e barreira hematoaérea",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Sistema respiratório: ventilação pulmonar e trocas gasosas",
+        "obraId": "tortora"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Pulmão: enfisema, doenças intersticiais, edema e embolia pulmonar",
+        "obraId": "robbins"
+      },
+      {
+        "field": "feedback",
+        "ref": "Regulação da respiração: centro respiratório e quimiorreceptores",
+        "obraId": "guyton"
+      },
+      {
+        "field": "feedback",
+        "ref": "Fisiologia respiratória: controle da ventilação",
+        "obraId": "berne"
+      },
+      {
+        "field": "feedback",
+        "ref": "Trocas e transporte de gases: controle da respiração",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -1608,9 +1992,9 @@
     ],
     "desviosClinicos": [
       {
-        "condicao": "Doença pulmonar obstrutiva crônica (enfisema)",
+        "condicao": "Enfisema pulmonar (doença pulmonar obstrutiva crônica)",
         "mecanismo": "A destruição das paredes alveolares reduz a área de troca e desorganiza a relação ventilação/perfusão, com hipoxemia e, nos casos graves, retenção de CO₂.",
-        "cid": "J44"
+        "cid": "J43"
       },
       {
         "condicao": "Fibrose pulmonar",
@@ -1637,7 +2021,7 @@
   {
     "id": "peristaltismo-intestinal",
     "system": "digestorio",
-    "name_pt": "Motilidade e Peristaltismo Enteral",
+    "name_pt": "Motilidade e Peristalse Enteral",
     "description_pt": "Movimentos do intestino que misturam e propelem o conteúdo: segmentação para misturar, peristalse para avançar e complexo motor migratório entre as refeições. O ritmo básico vem das células intersticiais de Cajal e o reflexo peristáltico é integrado pelo plexo mioentérico (de Auerbach).",
     "steps": [
       {
@@ -1710,7 +2094,7 @@
           "berne",
           "silverthorn"
         ],
-        "clinica_pt": "Na doença de Hirschsprung faltam gânglios do plexo mioentérico no segmento distal; sem relaxamento mediado por óxido nítrico e VIP há obstrução funcional."
+        "clinica_pt": "Na doença de Hirschsprung faltam gânglios dos plexos mioentérico e submucoso no segmento distal; sem relaxamento mediado por óxido nítrico e VIP há obstrução funcional."
       },
       {
         "order": 6,
@@ -1753,6 +2137,33 @@
         "field": "desviosClinicos",
         "ref": "Trato gastrointestinal: doença de Hirschsprung e obstrução funcional",
         "obraId": "robbins"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Propulsão e mistura do alimento no trato alimentar: movimentos peristálticos e de segmentação",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Motilidade do trato gastrointestinal: sistema nervoso entérico, ondas lentas e reflexo peristáltico",
+        "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Digestão: motilidade gastrointestinal e controle neural",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Trato digestório: túnica muscular e plexos mioentérico e submucoso",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -1912,6 +2323,46 @@
         "field": "steps",
         "ref": "Fisiologia do movimento: organização espinhal do controle motor",
         "obraId": "berne"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Reflexos medulares: receptores sensoriais musculares, fuso muscular e reflexo de estiramento",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Controle do movimento: reflexos espinhais, fusos neuromusculares e inibição recíproca",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Neuroanatomia funcional: medula espinhal, arco reflexo e propriocepção muscular",
+        "obraId": "machado"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fisiologia do movimento: organização espinhal do controle motor",
+        "obraId": "berne"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Neuroanatomia funcional: vias motoras, lesões do neurônio motor superior e do arco reflexo",
+        "obraId": "machado"
+      },
+      {
+        "field": "feedback",
+        "ref": "Reflexos medulares: fuso muscular e reflexo de estiramento",
+        "obraId": "guyton"
+      },
+      {
+        "field": "feedback",
+        "ref": "Fisiologia do movimento: organização espinhal do controle motor",
+        "obraId": "berne"
+      },
+      {
+        "field": "feedback",
+        "ref": "Controle do movimento: reflexos espinhais e fusos neuromusculares",
+        "obraId": "silverthorn"
       }
     ],
     "review": {
@@ -2006,7 +2457,7 @@
       },
       {
         "order": 5,
-        "description_pt": "Centro germinativo: os linfócitos B proliferam no folículo e sofrem hipermutação somática dos genes de imunoglobulina (enzima AID). Os que ligam o antígeno com maior afinidade são selecionados com o auxílio de Tfh e células dendríticas foliculares. A troca de classe (IgM para IgG, IgA ou IgE, conforme as citocinas) ocorre nessa fase, no linfócito B, e não no plasmócito.",
+        "description_pt": "Centro germinativo: os linfócitos B proliferam no folículo e sofrem hipermutação somática dos genes de imunoglobulina (enzima AID). Os que ligam o antígeno com maior afinidade são selecionados com o auxílio de Tfh e células dendríticas foliculares. A troca de classe (IgM para IgG, IgA ou IgE, conforme as citocinas) começa logo após a ativação do linfócito B pelo Tfh e continua no centro germinativo; ocorre no linfócito B (por ação da AID), e não no plasmócito.",
         "anchors": [
           {
             "sid": "za:resposta-imune-adaptativa"
@@ -2068,6 +2519,38 @@
         "field": "desviosClinicos",
         "ref": "Doenças do sistema imune: imunodeficiências e doenças autoimunes",
         "obraId": "robbins"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Apresentação de antígenos a linfócitos T e ativação de linfócitos T CD4+",
+        "obraId": "abbas"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Ativação de linfócitos B e produção de anticorpos: ajuda do Tfh, centro germinativo, troca de classe e maturação de afinidade",
+        "obraId": "abbas"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Órgãos linfáticos: linfonodo, folículos e zonas de linfócitos T e B",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "feedback",
+        "ref": "Ativação de linfócitos T e B: IL-2, anticorpos e receptores inibitórios",
+        "obraId": "abbas"
+      },
+      {
+        "field": "feedback",
+        "ref": "Doenças do sistema imune: regulação da resposta imune",
+        "obraId": "robbins"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -2148,7 +2631,7 @@
       },
       {
         "order": 3,
-        "description_pt": "Marginação e rolamento: com a lentificação do fluxo, os leucócitos se deslocam para a periferia do vaso. TNF e IL-1 induzem E-selectina e P-selectina no endotélio, que se ligam a ligantes dos leucócitos e produzem o rolamento.",
+        "description_pt": "Marginação e rolamento: com a lentificação do fluxo, os leucócitos se deslocam para a periferia do vaso. A histamina e a trombina induzem a expressão rápida de P-selectina, e o TNF e a IL-1 induzem E-selectina no endotélio; as selectinas se ligam a ligantes dos leucócitos e produzem o rolamento.",
         "anchors": [
           {
             "sid": "za:resposta-inflamatoria"
@@ -2238,6 +2721,48 @@
         "field": "steps",
         "ref": "Defesas do corpo: imunidade inata e inflamação",
         "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Inflamação aguda e crônica: alterações vasculares, recrutamento de leucócitos, fagocitose e resolução",
+        "obraId": "robbins"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Imunidade inata: receptores de reconhecimento, citocinas inflamatórias e recrutamento de leucócitos",
+        "obraId": "abbas"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Resistência do corpo à infecção: leucócitos, macrófagos e inflamação",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Defesas do corpo: imunidade inata e inflamação",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Sepse e choque séptico; deficiências de adesão leucocitária e doença granulomatosa crônica",
+        "obraId": "robbins"
+      },
+      {
+        "field": "feedback",
+        "ref": "Imunidade inata: citocinas inflamatórias e regulação da resposta",
+        "obraId": "abbas"
+      },
+      {
+        "field": "feedback",
+        "ref": "Inflamação aguda: mediadores químicos e resolução",
+        "obraId": "robbins"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
@@ -2263,12 +2788,12 @@
       {
         "condicao": "Sepse e choque séptico",
         "mecanismo": "A ativação sistêmica e desregulada da resposta inflamatória causa vasodilatação generalizada, aumento da permeabilidade vascular e ativação da coagulação, com hipotensão e disfunção de órgãos.",
-        "cid": "A41"
+        "cid": "A41; R57.2"
       },
       {
         "condicao": "Deficiência de adesão leucocitária",
         "mecanismo": "O defeito das integrinas beta-2 impede a adesão firme dos leucócitos ao endotélio; eles não chegam ao tecido e ficam circulando em grande número.",
-        "cid": "D72.0"
+        "cid": "D71"
       },
       {
         "condicao": "Doença granulomatosa crônica",
@@ -2397,6 +2922,43 @@
         "field": "steps",
         "ref": "Transmissão colinérgica: receptores e fármacos que atuam na sinapse",
         "obraId": "rang"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Transmissão de impulsos dos terminais nervosos para as fibras musculares: junção neuromuscular",
+        "obraId": "guyton"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Neurônios: comunicação célula a célula, sinapses e neurotransmissores",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Fármacos colinérgicos: síntese, liberação, receptores nicotínicos e muscarínicos e acetilcolinesterase",
+        "obraId": "katzung"
+      },
+      {
+        "field": "description_pt",
+        "ref": "Transmissão colinérgica: receptores e fármacos que atuam na sinapse",
+        "obraId": "rang"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Fármacos colinérgicos: miastenia gravis, anticolinesterásicos e intoxicação por organofosforados",
+        "obraId": "katzung"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Transmissão colinérgica: junção neuromuscular, botulismo e síndrome miastênica",
+        "obraId": "rang"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "CID-10, Volume 1 (OMS/DATASUS): códigos de classificação das condições",
+        "obraId": "robbins",
+        "exception": true,
+        "justificativa": "CID-10, Volume 1 (OMS/DATASUS), referência normativa de classificação, não coberta pelas obras listadas em fontes.json."
       }
     ],
     "review": {
