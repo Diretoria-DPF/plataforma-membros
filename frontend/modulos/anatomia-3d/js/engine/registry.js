@@ -488,6 +488,9 @@ export function createRegistry({ engine, bus } = {}) {
 
     // 1ª passada: resolve nó→malhas e classifica camada/material por sid.
     const pending = [];
+    // Integridade (devolvida a quem carregou): nós do manifest sem par no GLB
+    // indicam manifest e arquivo de versões diferentes.
+    const integrity = { system, total: Object.keys(nodeToSid).length, missing: 0 };
     for (const [nodeName, sid] of Object.entries(nodeToSid)) {
       // GAP (relatado ao orquestrador — WP13): `THREE.GLTFLoader` sanitiza
       // o nome do nó ao carregar (remove "." — reservado para paths de
@@ -502,6 +505,7 @@ export function createRegistry({ engine, bus } = {}) {
       if (!node) {
         // eslint-disable-next-line no-console
         console.warn(`[atlas/registry] nó "${nodeName}" (sid ${sid}) não encontrado no GLB de "${system}" — nodeToSid do manifest está desalinhado com o arquivo.`);
+        integrity.missing += 1;
         continue;
       }
       if (HRA_SID_RE.test(sid)) alignHraNode(node);
@@ -583,6 +587,7 @@ export function createRegistry({ engine, bus } = {}) {
     bySystem.set(system, sids);
     rebuildPickables();
     if (engine.requestRender) engine.requestRender();
+    return integrity;
   }
 
   /**

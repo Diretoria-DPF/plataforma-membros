@@ -597,3 +597,90 @@ button { font: inherit; }
    A página já ocupa 100% da viewport do módulo; isto só marca o estado
    para quem quiser reagir (ex.: esconder algo a mais no futuro). */
 body.atlas-fullscreen-fallback { background: var(--atlas-canvas-bg); }
+
+/* -----------------------------------------------------------------------
+   Painel "Ferramentas" — no celular a barra fica com 3 botões (Camadas,
+   Isolar, Ferramentas); os demais abrem numa grade compacta ao lado
+   (retrato) ou acima (paisagem baixa). Em tablet/desktop o painel some
+   como caixa (display: contents) e os botões seguem na barra, na ordem
+   original (style.order vindo de js/ui/shell.js).
+   ----------------------------------------------------------------------- */
+.atlas-tools-panel { display: contents; }
+#atlas-toolbar-tools { display: none; }
+
+.atlas-toast[data-open="true"] { display: flex; align-items: center; gap: 12px; }
+.atlas-toast-action {
+  min-height: 44px; min-width: 44px;
+  padding: 0 12px;
+  border: 1px solid currentColor;
+  border-radius: var(--laift-radius-md);
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+}
+
+@media (max-width: 599px), (orientation: landscape) and (max-height: 599px) {
+  #atlas-toolbar-tools { display: flex; }
+  .atlas-tools-panel {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: calc(100% + 8px);
+    grid-template-columns: repeat(3, 60px);
+    gap: 6px;
+    padding: 8px;
+    background: color-mix(in srgb, var(--laift-surface) 96%, transparent);
+    border: 1px solid var(--laift-border);
+    border-radius: var(--laift-radius-lg, 12px);
+    box-shadow: var(--laift-shadow);
+  }
+  .atlas-toolbar[data-tools-open="true"] .atlas-tools-panel { display: grid; }
+  .atlas-toolbar[data-tools-open="true"] #atlas-toolbar-tools {
+    border-color: var(--module-accent);
+    color: var(--module-accent);
+  }
+  /* No painel tudo aparece, inclusive o que telas baixas escondem na barra. */
+  .atlas-toolbar .atlas-tools-panel .atlas-tool-secondary { display: flex; }
+  .atlas-toolbar .atlas-tools-panel button {
+    width: 60px; height: 60px;
+    flex-direction: column; gap: 2px;
+    font-size: 17px;
+  }
+  .atlas-tools-panel .atlas-tool-label {
+    position: static; width: auto; height: auto;
+    clip: auto; clip-path: none;
+    max-width: 56px; overflow: hidden; text-overflow: ellipsis;
+    font-size: 10px; line-height: 1.1;
+  }
+}
+@media (orientation: landscape) and (max-height: 599px) {
+  .atlas-tools-panel { top: auto; right: 0; bottom: calc(100% + 8px); }
+}
+
+/* Falha ao iniciar / WebGL perdido — mensagem no lugar de uma tela vazia
+   (js/main.js showFatal, js/engine/renderer.js). */
+.atlas-fatal {
+  position: fixed; inset: 0;
+  z-index: calc(var(--atlas-z-toast) + 1);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 24px;
+  background: color-mix(in srgb, var(--laift-bg) 92%, transparent);
+  color: var(--laift-text);
+  text-align: center;
+}
+.atlas-fatal-title { font-size: 18px; font-weight: 700; margin: 0; }
+.atlas-fatal-hint { margin: 0; color: var(--laift-muted); }
+.atlas-fatal-reload {
+  min-height: 44px; padding: 0 20px;
+  border-radius: var(--laift-radius-md);
+  border: 1px solid var(--module-accent);
+  background: var(--module-accent); color: var(--laift-bg);
+  font-weight: 700;
+}
+.atlas-webgl-lost {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--laift-bg) 80%, transparent);
+  color: var(--laift-text); font-weight: 600;
+  z-index: 5;
+}

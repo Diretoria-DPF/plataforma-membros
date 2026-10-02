@@ -139,6 +139,34 @@ async function dragHandleBy(page, frame, deltaY, steps = 16) {
   await page.waitForTimeout(250);
 }
 
+/**
+ * Barra de ferramentas no celular: 3 botões visíveis (Camadas, Isolar,
+ * Ferramentas) e o painel "Ferramentas" com o resto, tudo dentro da tela.
+ */
+async function checkMobileToolbar(frame, label) {
+  const visibleButtons = () => frame.evaluate(() => {
+    const vw = window.innerWidth; const vh = window.innerHeight;
+    return [...document.querySelectorAll('#atlas-toolbar button')]
+      .filter((b) => b.offsetParent && window.getComputedStyle(b).visibility !== 'hidden')
+      .map((b) => {
+        const r = b.getBoundingClientRect();
+        return { id: b.id.replace('atlas-toolbar-', ''), inside: r.left >= 0 && r.top >= 0 && r.right <= vw && r.bottom <= vh, w: r.width, h: r.height };
+      });
+  });
+  const closed = await visibleButtons();
+  check(closed.map((b) => b.id).sort().join(',') === 'isolate,layers,tools',
+    `${label}: barra do celular mostra só Camadas, Isolar e Ferramentas (${closed.map((b) => b.id).join(',')})`);
+  await frame.click('#atlas-toolbar-tools');
+  const open = await visibleButtons();
+  const outside = open.filter((b) => !b.inside || b.w < 44 || b.h < 44);
+  check(open.length === 12 && outside.length === 0,
+    `${label}: painel Ferramentas mostra os 9 extras dentro da tela, ≥44px (${open.length} botões; fora/pequenos: ${outside.map((b) => b.id).join(',') || 'nenhum'})`);
+  await frame.click('#atlas-toolbar-xray');
+  const afterAction = await frame.evaluate(() => document.getElementById('atlas-toolbar').dataset.toolsOpen);
+  check(afterAction === 'false', `${label}: uma ação do painel (Raio-X) fecha o painel`);
+  await frame.evaluate(() => window.AtlasShell.toggleXray());
+}
+
 module.exports = async function atlasResponsive() {
   const { chromium } = loadPlaywright();
   const server = await startStaticServer();
@@ -168,6 +196,7 @@ module.exports = async function atlasResponsive() {
         return 1 - r.height / window.innerHeight;
       });
       check(coveragePeek >= 0.549, `390×844: canvas visível ≥55% com o painel em "espiar" (${(coveragePeek * 100).toFixed(1)}%)`);
+      await checkMobileToolbar(frame, '390×844');
 
       await dragHandleBy(page, frame, -290); // peek(96) → perto de half(~380)
       let state = await frame.evaluate(() => document.getElementById('atlas-sheet').getAttribute('data-sheet-state'));
@@ -221,6 +250,7 @@ module.exports = async function atlasResponsive() {
       });
       check(shape.height > shape.width, `844×390: painel é mais alto que largo (lateral, não inferior) — ${shape.width}×${shape.height}`);
       check(shape.right >= shape.viewportW - 2, `844×390: painel encostado na borda direita (right=${shape.right}, viewport=${shape.viewportW})`);
+      await checkMobileToolbar(frame, '844×390');
 
       await context.close();
     }

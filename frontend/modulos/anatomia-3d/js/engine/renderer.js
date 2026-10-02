@@ -65,6 +65,38 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
   renderer.domElement.style.touchAction = 'none';
   container.appendChild(renderer.domElement);
 
+  // ---- Contexto WebGL perdido (aba em segundo plano no celular, driver
+  // reiniciado, memória de GPU esgotada). O WebGLRenderer do three.js já
+  // chama preventDefault() e recria o estado quando o contexto volta; aqui
+  // só avisamos o usuário e redesenhamos. Se não voltar em 8 s, oferece
+  // recarregar (bus: 'renderer:context-lost' / 'renderer:context-restored'
+  // / 'renderer:context-failed').
+  const CONTEXT_RESTORE_TIMEOUT_MS = 8000;
+  let contextLostNotice = null;
+  let contextRestoreTimer = null;
+  function onContextLost() {
+    if (!contextLostNotice && typeof document !== 'undefined') {
+      contextLostNotice = document.createElement('div');
+      contextLostNotice.className = 'atlas-webgl-lost';
+      contextLostNotice.setAttribute('role', 'status');
+      contextLostNotice.textContent = 'Recarregando o 3D…';
+      container.appendChild(contextLostNotice);
+    }
+    clearTimeout(contextRestoreTimer);
+    contextRestoreTimer = setTimeout(() => {
+      if (bus && bus.emit) bus.emit('renderer:context-failed', {});
+    }, CONTEXT_RESTORE_TIMEOUT_MS);
+    if (bus && bus.emit) bus.emit('renderer:context-lost', {});
+  }
+  function onContextRestored() {
+    clearTimeout(contextRestoreTimer);
+    if (contextLostNotice) { contextLostNotice.remove(); contextLostNotice = null; }
+    if (bus && bus.emit) bus.emit('renderer:context-restored', {});
+    requestRender();
+  }
+  renderer.domElement.addEventListener('webglcontextlost', onContextLost, false);
+  renderer.domElement.addEventListener('webglcontextrestored', onContextRestored, false);
+
   // Cria cena e câmera
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, width / height, 0.01, 50);
@@ -297,6 +329,10 @@ export function createRenderer({ container, bus, env = {}, store } = {}) {
       cancelAnimationFrame(requestAnimationFrameId);
       requestAnimationFrameId = null;
     }
+
+    clearTimeout(contextRestoreTimer);
+    renderer.domElement.removeEventListener('webglcontextlost', onContextLost, false);
+    renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored, false);
 
     // Limpa THREE resources
     renderer.dispose();

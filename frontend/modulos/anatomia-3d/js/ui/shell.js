@@ -23,11 +23,13 @@ import { MODES, isValidModeId } from '../core/contracts.js';
 // só decoração (aria-hidden); o rótulo acessível vem do texto/aria-label.
 const TOOLBAR_BUTTONS = [
   // `secondary`: some em telas baixas (css/atlas.css) — tudo continua no ⋯.
+  // `primary`: fica na barra também no celular; os demais vão para o painel
+  // "Ferramentas" (no celular a coluna de 11 botões ocupava ~2/3 da altura).
   { id: 'zoomin', glyph: '+', label: 'Aproximar', action: 'AtlasShell.zoomIn', secondary: true },
   { id: 'zoomout', glyph: '−', label: 'Afastar', action: 'AtlasShell.zoomOut', secondary: true },
-  { id: 'layers', glyph: '▤', label: 'Camadas', action: 'AtlasShell.toggleLayers' },
+  { id: 'layers', glyph: '▤', label: 'Camadas', action: 'AtlasShell.toggleLayers', primary: true },
   { id: 'views', glyph: '◐', label: 'Vistas', action: 'AtlasShell.openViewPresetMenu', secondary: true },
-  { id: 'isolate', glyph: '◎', label: 'Isolar', action: 'AtlasShell.isolateSelected' },
+  { id: 'isolate', glyph: '◎', label: 'Isolar', action: 'AtlasShell.isolateSelected', primary: true },
   { id: 'xray', glyph: '☠', label: 'Raio-X', action: 'AtlasShell.toggleXray' },
   { id: 'clip', glyph: '✂', label: 'Corte', action: 'AtlasShell.openClipMenu' },
   { id: 'labels', glyph: 'Aa', label: 'Rótulos', action: 'AtlasShell.toggleLabels', secondary: true },
@@ -35,6 +37,12 @@ const TOOLBAR_BUTTONS = [
   { id: 'fullscreen', glyph: '⛶', label: 'Tela cheia', action: 'AtlasShell.toggleFullscreen', secondary: true },
   { id: 'more', glyph: '⋯', label: 'Mais', action: 'AtlasShell.openMoreMenu' },
 ];
+
+/** Botão que abre o painel "Ferramentas" — só aparece no celular (CSS). */
+const TOOLS_BUTTON = { id: 'tools', glyph: '⚙', label: 'Ferramentas', action: 'AtlasShell.toggleTools' };
+
+/** Quanto tempo o aviso "Desfazer" fica na tela. */
+const UNDO_MS = 5000;
 
 const CLIP_PLANES = [
   { label: 'Sagital', value: 'sagital' },
@@ -82,6 +90,8 @@ const ALLOWED_ACTIONS = [
   'AtlasShell.setQuality',
   'AtlasShell.openCredits',
   'AtlasShell.closeModal',
+  'AtlasShell.toggleTools',
+  'AtlasShell.undo',
   // Atalhos sem arraste do painel (§2.5, js/ui/sheet.js) — window.AtlasSheet
   // só existe depois de initSheet(), mas resolveAction() do LaiftDom lê o
   // alvo em tempo de clique, não no momento do delegateActions.
@@ -105,18 +115,41 @@ function el(tag, attrs, children) {
 function buildToolbar() {
   const root = document.getElementById('atlas-toolbar');
   if (!root) return;
-  TOOLBAR_BUTTONS.forEach((btn) => {
+  const toolButton = (btn, order) => el('button', {
+    type: 'button', id: `atlas-toolbar-${btn.id}`, dataset: { action: btn.action },
+    className: btn.secondary ? 'atlas-tool-secondary' : '',
+    title: btn.label,
+    // display:contents no painel (tablet/desktop) mantém a ordem original.
+    style: { order: String(order) },
+  }, [
     // Ícone + texto: o texto aparece ao lado do ícone em telas largas
     // (css/atlas.css .atlas-tool-label) — só ícones soltos deixavam as
-    // opções confusas; no celular ele fica só para leitores de tela.
-    root.appendChild(el('button', {
-      type: 'button', id: `atlas-toolbar-${btn.id}`, dataset: { action: btn.action },
-      className: btn.secondary ? 'atlas-tool-secondary' : '',
-      title: btn.label,
-    }, [
-      el('span', { className: 'atlas-tool-glyph', 'aria-hidden': 'true' }, [btn.glyph]),
-      el('span', { className: 'atlas-tool-label' }, [btn.label]),
-    ]));
+    // opções confusas; no celular ele aparece sob o ícone, no painel.
+    el('span', { className: 'atlas-tool-glyph', 'aria-hidden': 'true' }, [btn.glyph]),
+    el('span', { className: 'atlas-tool-label' }, [btn.label]),
+  ]);
+  const panel = el('div', {
+    id: 'atlas-tools-panel', className: 'atlas-tools-panel', role: 'group', 'aria-label': 'Ferramentas',
+  }, []);
+  TOOLBAR_BUTTONS.forEach((btn, i) => {
+    (btn.primary ? root : panel).appendChild(toolButton(btn, i));
+  });
+  const tools = toolButton(TOOLS_BUTTON, TOOLBAR_BUTTONS.length);
+  tools.setAttribute('aria-expanded', 'false');
+  tools.setAttribute('aria-controls', 'atlas-tools-panel');
+  root.appendChild(panel);
+  root.appendChild(tools);
+  // Uma ação direta no painel fecha o painel; as que abrem um menu (Vistas,
+  // Corte, ⋯) o mantêm aberto até a escolha, para o menu ter onde ancorar.
+  panel.addEventListener('click', (evt) => {
+    const b = evt.target.closest('button[data-action]');
+    if (b && !/open\w*Menu$/.test(b.dataset.action)) setToolsOpen(false);
+  });
+  document.addEventListener('click', (evt) => {
+    if (isToolsOpen() && !root.contains(evt.target) && !(openDropdown && openDropdown.contains(evt.target))) setToolsOpen(false);
+  }, true);
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape' && isToolsOpen()) setToolsOpen(false);
   });
   syncIsolateDisabled(storeGet().selectedSid);
   subscribe((s) => s.selectedSid, syncIsolateDisabled);
@@ -128,6 +161,43 @@ function buildToolbar() {
     const b = document.getElementById('atlas-toolbar-clip');
     if (b) b.setAttribute('aria-pressed', String(!!(clip && clip.plane)));
   });
+}
+
+function isToolsOpen() {
+  const root = document.getElementById('atlas-toolbar');
+  return !!root && root.dataset.toolsOpen === 'true';
+}
+function setToolsOpen(open) {
+  const root = document.getElementById('atlas-toolbar');
+  if (!root) return;
+  root.dataset.toolsOpen = String(!!open);
+  const b = document.getElementById('atlas-toolbar-tools');
+  if (b) b.setAttribute('aria-expanded', String(!!open));
+}
+
+// ---------------------------------------------------------------------------
+// Aviso com "Desfazer" (Isolar, Centralizar) — #atlas-toast.
+// ---------------------------------------------------------------------------
+let undoAction = null;
+let undoTimer = null;
+function hideUndo() {
+  clearTimeout(undoTimer);
+  undoAction = null;
+  const toast = document.getElementById('atlas-toast');
+  if (toast) { toast.dataset.open = 'false'; window.LaiftDom.clear(toast); }
+}
+function offerUndo(message, restore) {
+  const toast = document.getElementById('atlas-toast');
+  if (!toast) return;
+  clearTimeout(undoTimer);
+  undoAction = restore;
+  window.LaiftDom.clear(toast);
+  toast.appendChild(el('span', { className: 'atlas-toast-text' }, [message]));
+  toast.appendChild(el('button', {
+    type: 'button', className: 'atlas-toast-action', dataset: { action: 'AtlasShell.undo' },
+  }, ['Desfazer']));
+  toast.dataset.open = 'true';
+  undoTimer = setTimeout(hideUndo, UNDO_MS);
 }
 
 /**
@@ -399,10 +469,29 @@ function installActions() {
     },
 
     toggleLayers() { togglePanel('layers'); },
+    toggleTools() { setToolsOpen(!isToolsOpen()); },
+    undo() {
+      const restore = undoAction;
+      hideUndo();
+      if (typeof restore === 'function') restore();
+    },
 
     isolateSelected() {
       const sid = storeGet().selectedSid;
-      if (sid) emit(EVENTS.VISIBILITY_ISOLATE, { sid });
+      if (!sid) return;
+      const prev = storeGet().isolation;
+      // engine/visibility.js não grava o store — a casca registra o estado
+      // para o "Desfazer" e o Centralizar saberem o que repor.
+      storeSet({ isolation: { active: 'isolate', sid } });
+      emit(EVENTS.VISIBILITY_ISOLATE, { sid });
+      offerUndo('Estrutura isolada.', () => {
+        storeSet({ isolation: { active: 'none', sid: null } });
+        emit(EVENTS.VISIBILITY_RESET, {});
+        if (prev && prev.active === 'isolate' && prev.sid) {
+          storeSet({ isolation: { active: 'isolate', sid: prev.sid } });
+          emit(EVENTS.VISIBILITY_ISOLATE, { sid: prev.sid });
+        }
+      });
     },
 
     toggleXray() {
@@ -426,6 +515,19 @@ function installActions() {
     },
 
     reset() {
+      const before = storeGet();
+      // Câmera atual (main.js responde a 'view:capture' preenchendo `out`).
+      const view = {};
+      emit('view:capture', view);
+      offerUndo('Visão centralizada.', () => {
+        if (before.isolation && before.isolation.active === 'isolate' && before.isolation.sid) {
+          storeSet({ isolation: { active: 'isolate', sid: before.isolation.sid } });
+          emit(EVENTS.VISIBILITY_ISOLATE, { sid: before.isolation.sid });
+        }
+        if (before.xray) emit(EVENTS.XRAY_SET, { enabled: true });
+        if (before.clip && before.clip.plane) emit(EVENTS.CLIP_SET, { plane: before.clip.plane, offset: before.clip.offset });
+        if (view.camera) emit('view:restore', view);
+      });
       // xray/clip: o motor grava o store ao desligar (ver toggleXray).
       storeSet({ isolation: { active: 'none', sid: null } });
       emit(EVENTS.VISIBILITY_RESET, {});
@@ -516,6 +618,23 @@ const SLOTS = {
   modal: 'atlas-modal',
   modalBody: 'atlas-modal-body',
 };
+
+/**
+ * Aviso curto no #atlas-toast (sem botão). Para problemas que o usuário
+ * precisa saber — nunca falhar em silêncio.
+ * @param {string} message
+ * @param {number} [ms=6000]
+ */
+export function showNotice(message, ms = 6000) {
+  const toast = document.getElementById('atlas-toast');
+  if (!toast) return;
+  clearTimeout(undoTimer);
+  undoAction = null;
+  window.LaiftDom.clear(toast);
+  toast.appendChild(el('span', { className: 'atlas-toast-text' }, [message]));
+  toast.dataset.open = 'true';
+  undoTimer = setTimeout(hideUndo, ms);
+}
 
 /** @param {string} name uma chave de SLOTS. @returns {(Element|null)} */
 export function getSlot(name) {

@@ -27,7 +27,7 @@ import { createXrayClip } from './engine/xray-clip.js';
 import { createLabels } from './engine/labels.js';
 import { createFallback } from './engine/fallback.js';
 
-import { getSlot, registerPanel, initShell } from './ui/shell.js';
+import { getSlot, registerPanel, initShell, showNotice } from './ui/shell.js';
 import { initSheet, setContent as setSheetContent, snapTo as snapSheetTo, getState as getSheetState } from './ui/sheet.js';
 import { initFocusNav } from './ui/focus-nav.js';
 import { buildSearchIndex, search } from './ui/search-index.js';
@@ -59,12 +59,60 @@ const DEFAULT_SYSTEMS = Object.freeze(['esqueletico', 'muscular']);
 // ============================================================================
 // 1. Conteúdo (structures.json + legado PT) — ContentStore
 // ============================================================================
+/** Estruturas sem sid/sistema são descartadas; base vazia ou >5% inválida é erro. */
+export function checkStructures(list, { required = true } = {}) {
+  if (!Array.isArray(list) || list.length === 0) {
+    if (!required) return [];
+    throw new AtlasBootError('Base de estruturas indisponível.', 'generated/structures.boot.json vazio ou ausente');
+  }
+  const valid = list.filter((s) => s && typeof s.sid === 'string' && s.sid && typeof s.system === 'string' && s.system);
+  const invalid = list.length - valid.length;
+  if (invalid > 0) {
+    console.error(`[atlas] ${invalid} de ${list.length} estruturas sem sid/sistema foram ignoradas`);
+    if (required && invalid / list.length > 0.05) {
+      throw new AtlasBootError('Base de estruturas corrompida.', `${invalid} de ${list.length} estruturas inválidas`);
+    }
+  }
+  return valid;
+}
+
+/** Erro de inicialização com mensagem para o usuário (tela "Recarregar"). */
+class AtlasBootError extends Error {
+  constructor(userMessage, detail) {
+    super(`${userMessage} (${detail})`);
+    this.userMessage = userMessage;
+  }
+}
+
+/**
+ * Tela de falha do atlas: mensagem clara + "Recarregar" no lugar de uma
+ * tela vazia. Também usada quando o WebGL não volta (renderer.js).
+ */
+function showFatal(message) {
+  const { h } = window.LaiftDom;
+  const prev = document.getElementById('atlas-fatal');
+  if (prev) prev.remove();
+  const reload = h('button', { type: 'button', className: 'atlas-fatal-reload' }, ['Recarregar']);
+  reload.addEventListener('click', () => window.location.reload());
+  const box = h('div', { id: 'atlas-fatal', className: 'atlas-fatal', role: 'alert' }, [
+    h('p', { className: 'atlas-fatal-title' }, [message]),
+    h('p', { className: 'atlas-fatal-hint' }, ['Verifique a conexão e tente de novo.']),
+    reload,
+  ]);
+  document.body.appendChild(box);
+  reload.focus();
+}
+
 async function createContentStore() {
   // Try to load boot structures first (70% smaller, contains sid/names/system/layer/side)
   // Fall back to full structures.json if boot file 404s
   let structures = await fetchJson(`${CONTENT_BASE}generated/structures.boot.json`).catch(() =>
     fetchJson(`${CONTENT_BASE}generated/structures.json`)
   ).catch(() => []);
+  // Sem a base de estruturas a busca, o navegador e os nomes ficam vazios —
+  // antes isso acontecia em silêncio e o atlas parecia quebrado. As fixtures
+  // (?fixtures=1) não têm generated/ e seguem sem a base.
+  structures = checkStructures(structures, { required: !USE_FIXTURES });
 
   const [legacyIndex] = await Promise.all([
     fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []),
@@ -608,6 +656,34 @@ async function boot() {
     else if (evt.key === '-' || evt.key === '_') emit('view:zoom', { factor: 1.25 });
   });
 
+  // ---- WebGL que não voltou: oferece recarregar ----
+  on('renderer:context-failed', () => showFatal('O 3D parou de responder neste aparelho.'));
+
+  // ---- Integridade dos modelos: manifest e GLB de versões diferentes ----
+  on(EVENTS.SYSTEM_LOAD_DONE, ({ system, integrity }) => {
+    if (!integrity || !integrity.total) return;
+    if (integrity.missing / integrity.total > 0.05) {
+      console.error(`[atlas] ${integrity.missing} de ${integrity.total} estruturas de "${system}" não estão no arquivo 3D (manifest desatualizado)`);
+      showNotice(`Parte do sistema ${(SYSTEMS.find((x) => x.id === system) || { label: system }).label} não carregou (${integrity.missing} de ${integrity.total} estruturas).`);
+    }
+  });
+
+  // ---- "Desfazer" do Centralizar (js/ui/shell.js): guarda e repõe a câmera ----
+  on('view:capture', (out) => {
+    if (!out) return;
+    out.camera = {
+      position: camera.position.toArray(),
+      target: controlsApi.controls.target.toArray(),
+    };
+  });
+  on('view:restore', ({ camera: cam } = {}) => {
+    if (!cam || !Array.isArray(cam.position) || !Array.isArray(cam.target)) return;
+    camera.position.fromArray(cam.position);
+    controlsApi.controls.target.fromArray(cam.target);
+    controlsApi.controls.update();
+    requestRender();
+  });
+
   // ---- Zoom pelos botões (+/−) e pelo teclado ----
   on('view:zoom', ({ factor }) => {
     const target = controlsApi.controls.target;
@@ -820,4 +896,5 @@ async function boot() {
 // não precisa esperar DOMContentLoaded.
 boot().catch((e) => {
   console.error('[atlas] falha ao inicializar', e);
+  showFatal((e && e.userMessage) || 'O Atlas não conseguiu iniciar.');
 });

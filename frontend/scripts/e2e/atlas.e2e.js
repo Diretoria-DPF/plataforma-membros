@@ -174,6 +174,23 @@ module.exports = async function atlas() {
     });
     check(toggles.errors.length === 0, `isolar/raio-X/corte não lançam erro${toggles.errors.length ? ': ' + toggles.errors.join(' | ') : ''}`);
 
+    // 4b) Isolar oferece "Desfazer", que devolve todas as estruturas
+    const undo = await frame.evaluate(async () => {
+      const internals = window.__atlasInternals;
+      const sid = [...internals.registry.iterate()][0]?.sid;
+      internals.store.set({ selectedSid: sid || null });
+      window.AtlasShell.isolateSelected();
+      await new Promise((r) => setTimeout(r, 50));
+      const toast = document.getElementById('atlas-toast');
+      const offered = toast.dataset.open === 'true' && /Desfazer/.test(toast.textContent);
+      const isolated = internals.store.get().isolation.active;
+      toast.querySelector('[data-action="AtlasShell.undo"]').click();
+      await new Promise((r) => setTimeout(r, 50));
+      return { offered, isolated, after: internals.store.get().isolation.active, toastOpen: toast.dataset.open };
+    });
+    check(undo.offered && undo.isolated === 'isolate' && undo.after === 'none' && undo.toastOpen === 'false',
+      `Isolar mostra "Desfazer" e desfazer devolve tudo (${JSON.stringify(undo)})`);
+
     // ------------------------------------------------------------------
     // 5) Cada modo abre com o canvas visível (AtlasShell.setMode)
     // ------------------------------------------------------------------
@@ -274,10 +291,48 @@ module.exports = async function atlas() {
     await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
 
     // ------------------------------------------------------------------
+    // 6c) WebGL perdido: aviso na tela e o 3D volta a desenhar
+    // ------------------------------------------------------------------
+    const lost = await frame.evaluate(async () => {
+      const canvas = document.querySelector('#atlas-canvas canvas');
+      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+      const ext = gl && gl.getExtension('WEBGL_lose_context');
+      if (!ext) return { skipped: true };
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      ext.loseContext();
+      await wait(300);
+      const shown = !!document.querySelector('.atlas-webgl-lost');
+      const before = window.__atlasPerf.getStats().renders;
+      ext.restoreContext();
+      await wait(800);
+      return { shown, gone: !document.querySelector('.atlas-webgl-lost'), before, after: window.__atlasPerf.getStats().renders };
+    });
+    check(lost.skipped || (lost.shown && lost.gone && lost.after > lost.before),
+      `WebGL perdido mostra "Recarregando o 3D…" e volta a desenhar (${JSON.stringify(lost)})`);
+
+    // ------------------------------------------------------------------
     // 7) Zero erro de página
     // ------------------------------------------------------------------
     check(app.errors.length === 0, 'atlas: sem erros de JavaScript inesperados' + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));
   } finally {
     await app.close();
+  }
+
+  // ------------------------------------------------------------------
+  // 8) Base de estruturas indisponível: tela "Recarregar", não um atlas vazio
+  // ------------------------------------------------------------------
+  const broken = await startApp({ role: 'member' });
+  try {
+    await broken.page.context().route(/\/generated\/structures(\.boot)?\.json/, (r) => r.fulfill({ status: 404, body: 'not found' }));
+    await broken.login();
+    const frame = await broken.openModule('anatomia');
+    const fatal = await frame.waitForSelector('#atlas-fatal', { timeout: 20000 }).then(() => frame.evaluate(() => ({
+      text: document.getElementById('atlas-fatal').textContent,
+      button: !!document.querySelector('#atlas-fatal .atlas-fatal-reload'),
+    }))).catch(() => null);
+    check(!!fatal && /estruturas indisponível/.test(fatal.text) && fatal.button,
+      `sem structures.json o atlas mostra a falha com "Recarregar" (${JSON.stringify(fatal)})`);
+  } finally {
+    await broken.close();
   }
 };
