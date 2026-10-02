@@ -74,13 +74,28 @@ export function attachRecorder(bus, studyStore) {
     });
   };
 
+  // Estudo de via/processo concluído (PR 3.2, Bloco D).
+  const onStudyPath = ({ kind, id, label, sid }) => {
+    if (!id) return;
+    studyStore.addHistory({
+      type: kind === 'route' ? 'route' : 'process',
+      kind,
+      refId: id,
+      sid: sid || null,
+      label: `${kind === 'route' ? 'Via' : 'Processo'}: ${label || id}`,
+      at: Date.now(),
+    });
+  };
+
   const offSelect = bus.on(EVENTS.STRUCTURE_SELECT, onSelect);
   const offQuiz = bus.on(EVENTS.QUIZ_ANSWER, onQuizAnswer);
+  const offStudy = bus.on(EVENTS.STUDY_PATH, onStudyPath);
 
   // Retorna função para desligar ambos
   return () => {
     offSelect();
     offQuiz();
+    offStudy();
   };
 }
 
