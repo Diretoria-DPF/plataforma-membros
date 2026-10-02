@@ -232,9 +232,9 @@ export function createAssetLoader({ bus, store, baseUrl, engine, registry } = {}
         root.name = `system:${system}`;
         totalTriangles += asset.triangles || 0;
         checkTriangleBudget();
-        if (registry) registry.registerSystem(system, { root, nodeToSid: asset.nodeToSid, sex, lod, asset });
+        const integrity = registry ? registry.registerSystem(system, { root, nodeToSid: asset.nodeToSid, sex, lod, asset }) : undefined;
         markLoaded(system, asset);
-        bus.emit(EVENTS.SYSTEM_LOAD_DONE, { system, sex, lod, root, nodeToSid: asset.nodeToSid, asset });
+        bus.emit(EVENTS.SYSTEM_LOAD_DONE, { system, sex, lod, root, nodeToSid: asset.nodeToSid, asset, integrity });
         if (engine && engine.requestRender) engine.requestRender();
         return { root, asset };
       } catch (err) {

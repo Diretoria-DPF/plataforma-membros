@@ -63,7 +63,7 @@ if (typeof window === 'undefined') {
 // Importa os módulos
 const { on, emit, EVENTS } = await import(path.join(coreDir, 'bus.js'));
 const { get: storeGet, set: storeSet } = await import(path.join(coreDir, 'store.js'));
-const { scoreFor, isCorrect, createQuizMode } = await import(path.join(modesDir, 'quiz.js'));
+const { scoreFor, isCorrect, mainSid, createQuizMode } = await import(path.join(modesDir, 'quiz.js'));
 
 let failures = 0;
 
@@ -117,6 +117,36 @@ test('isCorrect() com array correctSid', () => {
   assert.ok(isCorrect(caso, 'fma:7309'));
   assert.ok(isCorrect(caso, 'fma:7310'));
   assert.ok(!isCorrect(caso, 'fma:7088'));
+});
+
+test('isCorrect() aceita qualquer malha de correctSids', () => {
+  const caso = { correctSid: 'za:left-ventricle', correctSids: ['za:left-ventricle', 'za:right-atrium'] };
+  assert.ok(isCorrect(caso, 'za:right-atrium'));
+  assert.ok(!isCorrect(caso, 'za:liver'));
+});
+
+test('isCorrect() normaliza aliases antigos', () => {
+  const caso = { correctSid: 'fma:7197' };
+  const resolve = (s) => ({ 'fma:7197': 'za:liver' }[s] || s);
+  assert.ok(isCorrect(caso, 'za:liver', { resolve }));
+  assert.ok(!isCorrect(caso, 'za:stomach', { resolve }));
+});
+
+test('isCorrect() com correctSystem aceita qualquer estrutura do sistema', () => {
+  const caso = { correctSid: 'za:acromial-part-of-deltoid-muscle-r', correctSystem: 'muscular' };
+  const systemOf = (s) => (s.includes('muscle') ? 'muscular' : 'esqueletico');
+  assert.ok(isCorrect(caso, 'za:gluteus-medius-muscle-l', { systemOf }));
+  assert.ok(!isCorrect(caso, 'za:femur-l', { systemOf }));
+});
+
+test('mainSid() devolve a resposta principal', () => {
+  assert.equal(mainSid({ correctSid: 'za:liver' }), 'za:liver');
+  assert.equal(mainSid({ correctSid: ['a', 'b'] }), 'a');
+  assert.equal(mainSid({ correctSids: ['x'] }), 'x');
+});
+
+test('scoreFor() sem `pontos` usa 100 como base (nunca NaN)', () => {
+  assert.equal(scoreFor({}, 60000, true), 100);
 });
 
 // =============================================================================

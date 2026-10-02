@@ -27,7 +27,8 @@ import { createXrayClip } from './engine/xray-clip.js';
 import { createLabels } from './engine/labels.js';
 import { createFallback } from './engine/fallback.js';
 
-import { getSlot, registerPanel, initShell } from './ui/shell.js';
+import { getSlot, registerPanel, initShell, showNotice, offerAction } from './ui/shell.js';
+import { parseAtlasHash, readSession, writeSession, snapshotSession, dropUnknownSid, resumeAlreadyOffered, markResumeOffered } from './ui/session.js';
 import { initSheet, setContent as setSheetContent, snapTo as snapSheetTo, getState as getSheetState } from './ui/sheet.js';
 import { initFocusNav } from './ui/focus-nav.js';
 import { buildSearchIndex, search } from './ui/search-index.js';
@@ -53,18 +54,79 @@ const MODELS_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : './';
 const MANIFEST_URL = USE_FIXTURES ? undefined : 'models/manifest.json';
 const CONTENT_BASE = USE_FIXTURES ? 'data/atlas/fixtures/' : 'data/atlas/';
 
-// Sistemas carregados no primeiro load (≤5MB combinados) — ver plano §4.
-const DEFAULT_SYSTEMS = Object.freeze(['esqueletico', 'muscular']);
+// Sistemas do primeiro carregamento (só o esqueleto ≈ 1 MB) — docs/ATLAS_V2_TAREFAS.md.
+const DEFAULT_SYSTEMS = Object.freeze(['esqueletico']);
+// Baixados em segundo plano logo depois do primeiro quadro (o esqueleto já
+// dá o que tocar). Em conexão lenta ou com economia de dados ligada, só
+// quando o usuário ligar a camada — antes os músculos (1,8 MB) entravam no
+// primeiro carregamento e dobravam a espera no 3G.
+const BACKGROUND_SYSTEMS = Object.freeze(['muscular']);
+const BACKGROUND_DELAY_MS = 1500;
+
+/** Conexão lenta ou economia de dados (Network Information API, quando existe). */
+export function isConstrainedConnection(nav = (typeof navigator !== 'undefined' ? navigator : {})) {
+  const c = nav && nav.connection;
+  if (!c) return false;
+  return !!c.saveData || /^(slow-2g|2g|3g)$/.test(String(c.effectiveType || ''));
+}
 
 // ============================================================================
 // 1. Conteúdo (structures.json + legado PT) — ContentStore
 // ============================================================================
+/** Estruturas sem sid/sistema são descartadas; base vazia ou >5% inválida é erro. */
+export function checkStructures(list, { required = true } = {}) {
+  if (!Array.isArray(list) || list.length === 0) {
+    if (!required) return [];
+    throw new AtlasBootError('Base de estruturas indisponível.', 'generated/structures.boot.json vazio ou ausente');
+  }
+  const valid = list.filter((s) => s && typeof s.sid === 'string' && s.sid && typeof s.system === 'string' && s.system);
+  const invalid = list.length - valid.length;
+  if (invalid > 0) {
+    console.error(`[atlas] ${invalid} de ${list.length} estruturas sem sid/sistema foram ignoradas`);
+    if (required && invalid / list.length > 0.05) {
+      throw new AtlasBootError('Base de estruturas corrompida.', `${invalid} de ${list.length} estruturas inválidas`);
+    }
+  }
+  return valid;
+}
+
+/** Erro de inicialização com mensagem para o usuário (tela "Recarregar"). */
+class AtlasBootError extends Error {
+  constructor(userMessage, detail) {
+    super(`${userMessage} (${detail})`);
+    this.userMessage = userMessage;
+  }
+}
+
+/**
+ * Tela de falha do atlas: mensagem clara + "Recarregar" no lugar de uma
+ * tela vazia. Também usada quando o WebGL não volta (renderer.js).
+ */
+function showFatal(message) {
+  const { h } = window.LaiftDom;
+  const prev = document.getElementById('atlas-fatal');
+  if (prev) prev.remove();
+  const reload = h('button', { type: 'button', className: 'atlas-fatal-reload' }, ['Recarregar']);
+  reload.addEventListener('click', () => window.location.reload());
+  const box = h('div', { id: 'atlas-fatal', className: 'atlas-fatal', role: 'alert' }, [
+    h('p', { className: 'atlas-fatal-title' }, [message]),
+    h('p', { className: 'atlas-fatal-hint' }, ['Verifique a conexão e tente de novo.']),
+    reload,
+  ]);
+  document.body.appendChild(box);
+  reload.focus();
+}
+
 async function createContentStore() {
   // Try to load boot structures first (70% smaller, contains sid/names/system/layer/side)
   // Fall back to full structures.json if boot file 404s
   let structures = await fetchJson(`${CONTENT_BASE}generated/structures.boot.json`).catch(() =>
     fetchJson(`${CONTENT_BASE}generated/structures.json`)
   ).catch(() => []);
+  // Sem a base de estruturas a busca, o navegador e os nomes ficam vazios —
+  // antes isso acontecia em silêncio e o atlas parecia quebrado. As fixtures
+  // (?fixtures=1) não têm generated/ e seguem sem a base.
+  structures = checkStructures(structures, { required: !USE_FIXTURES });
 
   const [legacyIndex] = await Promise.all([
     fetchJson(`${CONTENT_BASE}legacy/index.legacy.json`).catch(() => []),
@@ -506,6 +568,25 @@ async function boot() {
   fitWholeBody();
   requestRender();
 
+  // Demais sistemas da abertura: em segundo plano, ou só sob demanda.
+  if (isConstrainedConnection()) {
+    // A camada fica desligada (ligar baixa o sistema — ver LAYER_SET abaixo);
+    // ligada sem o sistema, o botão diria "ligado" sem nada na tela.
+    const layers = storeGet().layers;
+    for (const sys of BACKGROUND_SYSTEMS) {
+      const layer = sys === 'muscular' ? 'musculos' : null;
+      if (layer && layers[layer] && layers[layer].visible) {
+        storeSet({ layers: { ...storeGet().layers, [layer]: { ...layers[layer], visible: false } } });
+        emit(EVENTS.LAYER_SET, { layer, visible: false, opacity: layers[layer].opacity });
+      }
+    }
+  } else {
+    const idle = typeof window.requestIdleCallback === 'function'
+      ? (fn) => window.requestIdleCallback(fn, { timeout: 3000 })
+      : (fn) => setTimeout(fn, 0);
+    setTimeout(() => idle(() => BACKGROUND_SYSTEMS.forEach(loadSystem)), BACKGROUND_DELAY_MS);
+  }
+
   // ---- Enquadramento: corpo inteiro centralizado ----
   // Sem isto a câmera-rig ficava com o centro padrão (0,0,0) — a altura dos
   // pés — e raio 1: o corpo aparecia cortado no alto da tela, e "Reset"/
@@ -542,7 +623,7 @@ async function boot() {
     storeSet({ layers: { ...layers, [layer]: { ...layerState, visible: true } } });
     emit(EVENTS.LAYER_SET, { layer, visible: true, opacity: layerState.opacity });
   }
-  async function revealAndFocus(sid) {
+  async function revealAndFocus(sid, { focus = true } = {}) {
     const entry = contentStore.getEntry(sid);
     if (entry && entry.system && !assetLoader.isLoaded(entry.system)) await loadSystem(entry.system);
     if (storeGet().selectedSid !== sid) return; // o usuário já escolheu outra
@@ -561,11 +642,45 @@ async function boot() {
       emit(EVENTS.XRAY_SET, { enabled: true });
     }
     selection.refresh();
-    engine.focusSid(sid, { animate: true });
+    if (focus) engine.focusSid(sid, { animate: true });
   }
   on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
-    if (sid && source !== 'pick' && source !== 'focus') revealAndFocus(sid);
+    // 'resume': a retomada de sessão revela sem mover a câmera (ela volta
+    // para onde estava — ver resumeSession).
+    if (sid && source !== 'pick' && source !== 'focus' && source !== 'resume') revealAndFocus(sid);
   });
+
+  // ---- Quiz: a resposta precisa estar no corpo para ser tocada ----
+  // Carrega os sistemas das malhas que contam como acerto e liga as camadas
+  // delas (com Raio-X se forem profundas), sem selecionar nem mover a câmera
+  // — isso entregaria a resposta.
+  async function prepareQuizCase(caso) {
+    const sids = [
+      ...(Array.isArray(caso.correctSids) ? caso.correctSids : []),
+      ...(Array.isArray(caso.correctSid) ? caso.correctSid : [caso.correctSid]),
+    ].filter(Boolean);
+    const systems = new Set(caso.correctSystem ? [caso.correctSystem] : []);
+    for (const sid of sids) {
+      const entry = contentStore.getEntry(sid);
+      if (entry && entry.system) systems.add(entry.system);
+    }
+    await Promise.all([...systems].filter((sys) => !assetLoader.isLoaded(sys)).map(loadSystem));
+    const layers = new Set();
+    for (const sid of sids) {
+      const rec = registry.getBySid(sid);
+      const entry = contentStore.getEntry(sid);
+      const layer = (rec && rec.layer) || (entry && entry.layer);
+      if (layer) layers.add(layer);
+    }
+    if (caso.correctSystem === 'muscular') layers.add('musculos');
+    layers.forEach(showLayer);
+    const st = storeGet();
+    if ([...layers].some((l) => DEEP_LAYERS.has(l)) && !st.xray
+        && ((st.layers.musculos && st.layers.musculos.visible) || (st.layers.pele && st.layers.pele.visible))) {
+      emit(EVENTS.XRAY_SET, { enabled: true });
+    }
+    requestRender();
+  }
 
   // ---- Teclado: + / − aproximam e afastam ----
   document.addEventListener('keydown', (evt) => {
@@ -574,6 +689,35 @@ async function boot() {
     if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
     if (evt.key === '+' || evt.key === '=') emit('view:zoom', { factor: 0.8 });
     else if (evt.key === '-' || evt.key === '_') emit('view:zoom', { factor: 1.25 });
+  });
+
+  // ---- WebGL que não voltou: oferece recarregar ----
+  on('renderer:context-failed', () => showFatal('O 3D parou de responder neste aparelho.'));
+
+  // ---- Integridade dos modelos: manifest e GLB de versões diferentes ----
+  on(EVENTS.SYSTEM_LOAD_DONE, ({ system, integrity }) => {
+    if (!integrity || !integrity.total) return;
+    if (integrity.missing / integrity.total > 0.05) {
+      console.error(`[atlas] ${integrity.missing} de ${integrity.total} estruturas de "${system}" não estão no arquivo 3D (manifest desatualizado)`);
+      emit('atlas:integrity-warning', { system, missing: integrity.missing, total: integrity.total });
+      showNotice(`Parte do sistema ${(SYSTEMS.find((x) => x.id === system) || { label: system }).label} não carregou (${integrity.missing} de ${integrity.total} estruturas).`);
+    }
+  });
+
+  // ---- "Desfazer" do Centralizar (js/ui/shell.js): guarda e repõe a câmera ----
+  on('view:capture', (out) => {
+    if (!out) return;
+    out.camera = {
+      position: camera.position.toArray(),
+      target: controlsApi.controls.target.toArray(),
+    };
+  });
+  on('view:restore', ({ camera: cam } = {}) => {
+    if (!cam || !Array.isArray(cam.position) || !Array.isArray(cam.target)) return;
+    camera.position.fromArray(cam.position);
+    controlsApi.controls.target.fromArray(cam.target);
+    controlsApi.controls.update();
+    requestRender();
   });
 
   // ---- Zoom pelos botões (+/−) e pelo teclado ----
@@ -614,7 +758,20 @@ async function boot() {
   // ---- Modos (carregados sob demanda ao trocar de modo) ----
   const modeInstances = new Map();
   const modeLoaders = {
-    quiz: () => import('./modes/quiz.js').then((m) => m.createQuizMode({ bus, store: storeApi, getLabel: labelFor, loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`) })),
+    quiz: () => Promise.all([
+      import('./modes/quiz.js'),
+      fetchJson(`${CONTENT_BASE}sid-aliases.json`).catch(() => ({})),
+    ]).then(([m, aliases]) => m.createQuizMode({
+      bus, store: storeApi, getLabel: labelFor,
+      loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`),
+      resolveSid: (sid) => (aliases && aliases[sid]) || sid,
+      systemOf: (sid) => {
+        const rec = registry.getBySid(sid);
+        const entry = contentStore.getEntry(sid);
+        return (entry && entry.system) || (rec && rec.system) || null;
+      },
+      prepareCase: prepareQuizCase,
+    })),
     fisiologia: () => Promise.all([
       import('./modes/physiology.js'),
       // Âncoras legadas de routes/processes → estrutura real ou ponto 3D
@@ -758,10 +915,63 @@ async function boot() {
 
   on(EVENTS.MODE_CHANGE, ({ mode }) => { enterMode(mode); });
 
+  // ---- Retomar de onde parou + link direto (#sid=…&view=…) ----
+  // A sessão (seleção, camadas, modo, câmera) é gravada com atraso a cada
+  // mudança; ao abrir sem link, oferece "Continuar" por 10 s.
+  const sessionStorageApi = (() => { try { return window.localStorage; } catch (e) { return null; } })();
+  const tabStorageApi = (() => { try { return window.sessionStorage; } catch (e) { return null; } })();
+  const savedSession = dropUnknownSid(readSession(sessionStorageApi), (sid) => !!contentStore.getEntry(sid));
+  let sessionSaveTimer = null;
+  const scheduleSessionSave = () => {
+    clearTimeout(sessionSaveTimer);
+    sessionSaveTimer = setTimeout(() => {
+      const view = {};
+      emit('view:capture', view);
+      writeSession(sessionStorageApi, snapshotSession(storeGet(), view.camera));
+    }, 500);
+  };
+  storeSubscribe((st) => st.selectedSid, scheduleSessionSave);
+  storeSubscribe((st) => st.layers, scheduleSessionSave);
+  storeSubscribe((st) => st.mode, scheduleSessionSave);
+  controlsApi.controls.addEventListener('end', scheduleSessionSave);
+
+  async function resumeSession(saved) {
+    const layers = storeGet().layers;
+    const next = { ...layers };
+    for (const [id, visible] of Object.entries(saved.layers || {})) {
+      if (next[id] && next[id].visible !== visible) next[id] = { ...next[id], visible };
+    }
+    storeSet({ layers: next });
+    for (const id of Object.keys(next)) {
+      if (next[id] !== layers[id]) emit(EVENTS.LAYER_SET, { layer: id, visible: next[id].visible, opacity: next[id].opacity });
+    }
+    if (saved.mode && saved.mode !== storeGet().mode) window.AtlasShell.setMode(saved.mode);
+    if (saved.selectedSid && contentStore.getEntry(saved.selectedSid)) {
+      emit(EVENTS.STRUCTURE_SELECT, { sid: saved.selectedSid, source: 'resume' });
+      await revealAndFocus(saved.selectedSid, { focus: !saved.camera });
+    }
+    if (saved.camera) emit('view:restore', { camera: saved.camera });
+  }
+
+  function openFromHash() {
+    const link = parseAtlasHash(window.location.hash);
+    if (!link.sid || !contentStore.getEntry(link.sid)) return false;
+    if (link.view) emit(EVENTS.VIEW_PRESET, { name: link.view });
+    emit(EVENTS.STRUCTURE_SELECT, { sid: link.sid, source: 'link' });
+    return true;
+  }
+  window.addEventListener('hashchange', openFromHash);
+  if (!openFromHash() && savedSession && !resumeAlreadyOffered(tabStorageApi)) {
+    markResumeOffered(tabStorageApi);
+    const name = savedSession.selectedSid ? labelFor(savedSession.selectedSid) : null;
+    offerAction(name ? `Continuar de onde parou? (${name})` : 'Continuar de onde parou?', 'Continuar',
+      () => { resumeSession(savedSession); }, 10000);
+  }
+
   // ---- Expõe internals para a camada de compatibilidade legada ----
   window.__atlasInternals = {
     bus, store: storeApi, registry, assetLoader, engine,
-    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS,
+    selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS,
   };
   // Gancho de teste, só leitura — expõe as estatísticas do renderer
   // (draw calls, triângulos, contagem de frames renderizados) para os
@@ -775,4 +985,5 @@ async function boot() {
 // não precisa esperar DOMContentLoaded.
 boot().catch((e) => {
   console.error('[atlas] falha ao inicializar', e);
+  showFatal((e && e.userMessage) || 'O Atlas não conseguiu iniciar.');
 });

@@ -255,7 +255,9 @@ function commit(state, { silent } = {}) {
 }
 
 function syncAria(state) {
-  sheetEl.setAttribute('aria-modal', 'false');
+  // aria-modal não vale em role="region" (axe: aria-allowed-attr) — o
+  // painel nunca é modal, então basta não declarar.
+  sheetEl.removeAttribute('aria-modal');
   if (state === 'full') {
     sheetEl.setAttribute('aria-label', 'Painel do Atlas (expandido)');
   } else {

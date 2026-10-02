@@ -102,7 +102,7 @@ export function createNavigator(container, opts) {
   function renderContent() {
     clear(contentEl);
 
-    const list = h('div', { className: 'atlas-nav-list', role: 'listbox' });
+    const list = h('div', { className: 'atlas-nav-list', role: 'listbox', 'aria-label': 'Estruturas' });
 
     state.items.forEach((item, idx) => {
       const row = h('button', {

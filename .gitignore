@@ -19,8 +19,10 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Configuração local de sessão do Claude Code (não é parte do projeto)
-.claude/
+# Configuração local de sessão do Claude Code (não é parte do projeto),
+# exceto os agentes compartilhados do atlas.
+.claude/*
+!.claude/agents/
 
 # temporários dos testes do pipeline de conteúdo
 tools/atlas-content/test/.tmp/

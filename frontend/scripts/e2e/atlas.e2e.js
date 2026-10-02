@@ -174,6 +174,23 @@ module.exports = async function atlas() {
     });
     check(toggles.errors.length === 0, `isolar/raio-X/corte não lançam erro${toggles.errors.length ? ': ' + toggles.errors.join(' | ') : ''}`);
 
+    // 4b) Isolar oferece "Desfazer", que devolve todas as estruturas
+    const undo = await frame.evaluate(async () => {
+      const internals = window.__atlasInternals;
+      const sid = [...internals.registry.iterate()][0]?.sid;
+      internals.store.set({ selectedSid: sid || null });
+      window.AtlasShell.isolateSelected();
+      await new Promise((r) => setTimeout(r, 50));
+      const toast = document.getElementById('atlas-toast');
+      const offered = toast.dataset.open === 'true' && /Desfazer/.test(toast.textContent);
+      const isolated = internals.store.get().isolation.active;
+      toast.querySelector('[data-action="AtlasShell.undo"]').click();
+      await new Promise((r) => setTimeout(r, 50));
+      return { offered, isolated, after: internals.store.get().isolation.active, toastOpen: toast.dataset.open };
+    });
+    check(undo.offered && undo.isolated === 'isolate' && undo.after === 'none' && undo.toastOpen === 'false',
+      `Isolar mostra "Desfazer" e desfazer devolve tudo (${JSON.stringify(undo)})`);
+
     // ------------------------------------------------------------------
     // 5) Cada modo abre com o canvas visível (AtlasShell.setMode)
     // ------------------------------------------------------------------
@@ -205,6 +222,39 @@ module.exports = async function atlas() {
     }
     const submitted = app.calls.worker.some((c) => c.action === 'apiLearnSubmitQuizAttempt');
     check(submitted, `QuizEngine.startQuiz()+completeQuiz() submete uma tentativa via apiLearnSubmitQuizAttempt (chamadas: ${JSON.stringify(app.calls.worker.map((c) => c.action))})`);
+
+    // ------------------------------------------------------------------
+    // 6a) Quiz vencível: o caso carrega o sistema da resposta, a malha
+    // certa fica visível no corpo e tocá-la conta como acerto (antes 6 de 8
+    // casos apontavam para sids legados que nenhum toque devolve).
+    // ------------------------------------------------------------------
+    await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
+    await frame.evaluate(() => window.AtlasShell.setMode('quiz'));
+    await frame.waitForSelector('#quizQuestionCard #quizFeedback', { state: 'attached', timeout: 15000 });
+    const quizPick = await frame.evaluate(async () => {
+      const { registry, bus, store } = window.__atlasInternals;
+      const cases = await (await fetch('data/atlas/quiz-cases.json')).json();
+      const label = document.querySelector('#quizQuestionCard')?.textContent || '';
+      const caso = cases.find((c) => label.includes(c.prompt_pt.slice(0, 60))) || null;
+      if (!caso) return { error: 'caso atual não encontrado no cartão' };
+      const wanted = caso.correctSids || [caso.correctSid];
+      const t0 = Date.now();
+      let rec = null;
+      while (Date.now() - t0 < 20000) {
+        rec = wanted.map((sid) => registry.getBySid(sid)).find((r) => r && r.visible !== false);
+        if (rec) break;
+        await new Promise((r) => setTimeout(r, 200));
+      }
+      if (!rec) return { error: `nenhuma malha da resposta de ${caso.id} ficou visível` };
+      const layer = store.get().layers[rec.layer];
+      bus.emit(bus.EVENTS.STRUCTURE_SELECT, { sid: rec.sid, source: 'pick' });
+      await new Promise((r) => setTimeout(r, 100));
+      const fb = document.querySelector('#quizFeedback');
+      return { id: caso.id, sid: rec.sid, layerVisible: !!(layer && layer.visible), feedback: fb ? fb.textContent : '' };
+    });
+    check(!quizPick.error && quizPick.layerVisible, `quiz: a malha da resposta está carregada e com a camada ligada (${JSON.stringify(quizPick)})`);
+    check(/Acerto/.test(quizPick.feedback || ''), `quiz: tocar ${quizPick.sid} no caso ${quizPick.id} dá "Acerto" (feedback: ${quizPick.feedback})`);
+    await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
 
     // ------------------------------------------------------------------
     // 6b) Fisiologia & Vias: via e processo tocam sobre o corpo
@@ -241,10 +291,86 @@ module.exports = async function atlas() {
     await frame.evaluate(() => window.AtlasShell.setMode('explorar'));
 
     // ------------------------------------------------------------------
+    // 6c) WebGL perdido: aviso na tela e o 3D volta a desenhar
+    // ------------------------------------------------------------------
+    const lost = await frame.evaluate(async () => {
+      const canvas = document.querySelector('#atlas-canvas canvas');
+      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+      const ext = gl && gl.getExtension('WEBGL_lose_context');
+      if (!ext) return { skipped: true };
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      ext.loseContext();
+      await wait(300);
+      const shown = !!document.querySelector('.atlas-webgl-lost');
+      const before = window.__atlasPerf.getStats().renders;
+      ext.restoreContext();
+      await wait(800);
+      return { shown, gone: !document.querySelector('.atlas-webgl-lost'), before, after: window.__atlasPerf.getStats().renders };
+    });
+    check(lost.skipped || (lost.shown && lost.gone && lost.after > lost.before),
+      `WebGL perdido mostra "Recarregando o 3D…" e volta a desenhar (${JSON.stringify(lost)})`);
+
+    // ------------------------------------------------------------------
+    // 6d) Link direto (#sid=…) seleciona a estrutura; ao reabrir, o atlas
+    // oferece "Continuar de onde parou" e repõe a seleção
+    // ------------------------------------------------------------------
+    const linked = await frame.evaluate(async () => {
+      window.location.hash = '#sid=za:liver&view=anterior';
+      const t0 = Date.now();
+      while (Date.now() - t0 < 15000 && window.__atlasInternals.store.get().selectedSid !== 'za:liver') {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return window.__atlasInternals.store.get().selectedSid;
+    });
+    check(linked === 'za:liver', `link #sid=za:liver seleciona o fígado (veio ${linked})`);
+    await app.page.waitForTimeout(1000); // gravação da sessão tem 500 ms de atraso
+    // Simula uma nova visita (o "Continuar" é oferecido uma vez por aba).
+    await frame.evaluate(() => {
+      try { sessionStorage.removeItem('atlas.resumeOffered'); } catch (e) { /* */ }
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      window.location.reload();
+    });
+    await frame.waitForFunction(() => !!window.__atlasInternals, null, { timeout: 30000 });
+    const offer = await frame.waitForFunction(() => {
+      const t = document.getElementById('atlas-toast');
+      return t && t.dataset.open === 'true' && /Continuar/.test(t.textContent) ? t.textContent : false;
+    }, null, { timeout: 10000 }).then((h) => h.jsonValue()).catch(() => null);
+    check(!!offer, `ao reabrir, oferece "Continuar de onde parou" (${offer})`);
+    const resumed = await frame.evaluate(async () => {
+      const btn = document.querySelector('#atlas-toast [data-action="AtlasShell.undo"]');
+      if (btn) btn.click();
+      const t0 = Date.now();
+      while (Date.now() - t0 < 15000 && window.__atlasInternals.store.get().selectedSid !== 'za:liver') {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return window.__atlasInternals.store.get().selectedSid;
+    });
+    check(resumed === 'za:liver', `"Continuar" repõe a seleção salva (veio ${resumed})`);
+    await frame.evaluate(() => { try { localStorage.removeItem('atlas.session.v1'); } catch (e) { /* */ } });
+
+    // ------------------------------------------------------------------
     // 7) Zero erro de página
     // ------------------------------------------------------------------
     check(app.errors.length === 0, 'atlas: sem erros de JavaScript inesperados' + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));
   } finally {
     await app.close();
+  }
+
+  // ------------------------------------------------------------------
+  // 8) Base de estruturas indisponível: tela "Recarregar", não um atlas vazio
+  // ------------------------------------------------------------------
+  const broken = await startApp({ role: 'member' });
+  try {
+    await broken.page.context().route(/\/generated\/structures(\.boot)?\.json/, (r) => r.fulfill({ status: 404, body: 'not found' }));
+    await broken.login();
+    const frame = await broken.openModule('anatomia');
+    const fatal = await frame.waitForSelector('#atlas-fatal', { timeout: 20000 }).then(() => frame.evaluate(() => ({
+      text: document.getElementById('atlas-fatal').textContent,
+      button: !!document.querySelector('#atlas-fatal .atlas-fatal-reload'),
+    }))).catch(() => null);
+    check(!!fatal && /estruturas indisponível/.test(fatal.text) && fatal.button,
+      `sem structures.json o atlas mostra a falha com "Recarregar" (${JSON.stringify(fatal)})`);
+  } finally {
+    await broken.close();
   }
 };

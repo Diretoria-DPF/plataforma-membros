@@ -50,7 +50,8 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
     contentBox.root.appendChild(tabBar);
 
     // Caixa de conteúdo (rola separadamente)
-    contentBox.contentArea = h('div', { className: 'atlas-card-content' });
+    // tabindex: área rolável alcançável pelo teclado (WCAG 2.1.1).
+    contentBox.contentArea = h('div', { className: 'atlas-card-content', tabindex: '0', role: 'region', 'aria-label': 'Conteúdo da aba' });
     contentBox.root.appendChild(contentBox.contentArea);
 
     // Ações rápidas (sempre visíveis)

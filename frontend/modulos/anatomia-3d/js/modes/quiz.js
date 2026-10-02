@@ -15,23 +15,44 @@ export function scoreFor(quizCase, elapsedMs, correct) {
   if (!correct) return 0;
   const timeLeft = Math.max(0, 60000 - elapsedMs); // 60 segundos em ms
   const timeBonus = Math.round(timeLeft / 1000 * 2.5); // mesma fórmula do legacy: timeLeft(s) * 2.5
-  return quizCase.pontos + timeBonus;
+  // Casos sem `pontos` valem 100 (antes somava undefined e virava NaN).
+  const base = Number.isFinite(quizCase.pontos) ? quizCase.pontos : 100;
+  return base + timeBonus;
 }
 
 /**
- * Verifica se a resposta está correta (sid está em correctSid ou é array).
- * @param {Object} quizCase - Caso com `correctSid` (string ou array de strings)
- * @param {string} sid - Sid selecionado
+ * Verifica se a resposta está correta. Conta como acerto:
+ * - `correctSid` (string ou array, formato antigo);
+ * - qualquer sid de `correctSids` (todas as malhas do órgão — tocar o
+ *   ventrículo esquerdo responde "coração");
+ * - qualquer estrutura do sistema `correctSystem`, se `opts.systemOf` souber
+ *   o sistema do sid tocado.
+ * `opts.resolve` normaliza sids antigos (aliases) antes de comparar.
+ * @param {Object} quizCase
+ * @param {string} sid - Sid tocado
+ * @param {{ resolve?: (sid: string) => string, systemOf?: (sid: string) => (string|null) }} [opts]
  * @returns {boolean}
  */
-export function isCorrect(quizCase, sid) {
-  if (typeof quizCase.correctSid === 'string') {
-    return quizCase.correctSid === sid;
-  }
-  if (Array.isArray(quizCase.correctSid)) {
-    return quizCase.correctSid.includes(sid);
+export function isCorrect(quizCase, sid, opts = {}) {
+  if (!quizCase || !sid) return false;
+  const resolve = typeof opts.resolve === 'function' ? opts.resolve : (s) => s;
+  const accepted = new Set();
+  const add = (s) => { if (typeof s === 'string' && s) { accepted.add(s); accepted.add(resolve(s)); } };
+  if (Array.isArray(quizCase.correctSid)) quizCase.correctSid.forEach(add);
+  else add(quizCase.correctSid);
+  if (Array.isArray(quizCase.correctSids)) quizCase.correctSids.forEach(add);
+  if (accepted.has(sid) || accepted.has(resolve(sid))) return true;
+  if (quizCase.correctSystem && typeof opts.systemOf === 'function') {
+    return opts.systemOf(sid) === quizCase.correctSystem;
   }
   return false;
+}
+
+/** Sid principal da resposta (nome no feedback, foco da câmera). */
+export function mainSid(quizCase) {
+  if (!quizCase) return null;
+  if (Array.isArray(quizCase.correctSid)) return quizCase.correctSid[0] || null;
+  return quizCase.correctSid || (Array.isArray(quizCase.correctSids) ? quizCase.correctSids[0] : null) || null;
 }
 
 /**
@@ -42,9 +63,13 @@ export function isCorrect(quizCase, sid) {
  * @param {Object} [opts.api=window.LaiftApi] - API para submissão
  * @param {Function} opts.getLabel - (sid) => string de rótulo
  * @param {Function} opts.loadCases - () => Promise<Array> carrega quiz-cases.json
+ * @param {Function} [opts.resolveSid] - (sid) => sid canônico (aliases antigos)
+ * @param {Function} [opts.systemOf] - (sid) => id do sistema, para `correctSystem`
+ * @param {Function} [opts.prepareCase] - (caso) => void; carrega e mostra os
+ *   sistemas da resposta, para a estrutura certa estar no corpo e poder ser tocada
  * @returns {Object} Implementação do contrato Mode
  */
-export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases }) {
+export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases, resolveSid, systemOf, prepareCase }) {
   const { on, emit, EVENTS } = bus;
   const { get: storeGet, set: storeSet } = store;
 
@@ -101,6 +126,9 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     }
 
     totalCount = cases.length;
+    if (typeof prepareCase === 'function') {
+      try { prepareCase(caso); } catch (err) { console.error('[QuizMode] prepareCase:', err); }
+    }
 
     const cardContent = html`
       <div style="padding: 12px; display: flex; flex-direction: column; gap: 8px;">
@@ -114,10 +142,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
           ${caso.prompt_pt}
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
-          <div style="font-size: 0.8rem; color: #38bdf8; font-weight: 600;">
+          <div style="font-size: 0.8rem; color: var(--laift-text); font-weight: 600;">
             <span id="quizTimer">60s</span> | <span id="quizScore">${score}</span> pts
           </div>
-          <button type="button" id="quizHintBtn" style="padding: 4px 10px; font-size: 0.7rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 4px; color: #3b82f6; cursor: pointer; font-weight: 600;">
+          <button type="button" id="quizHintBtn" style="min-height: 44px; padding: 4px 12px; font-size: 0.8rem; background: transparent; border: 1px solid var(--module-accent); border-radius: 6px; color: var(--laift-text); cursor: pointer; font-weight: 600;">
             💡 Dica
           </button>
         </div>
@@ -157,7 +185,9 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       const timerEl = sheetNode?.querySelector('#quizTimer');
       if (timerEl) {
         timerEl.textContent = `${seconds}s`;
-        timerEl.style.color = seconds <= 8 ? '#ef4444' : seconds <= 15 ? '#f59e0b' : '#38bdf8';
+        // Urgência pelo peso da fonte, não só pela cor (contraste em
+        // qualquer tema — WCAG 1.4.1/1.4.3).
+        timerEl.style.fontWeight = seconds <= 15 ? '800' : '600';
       }
 
       if (remaining <= 0) {
@@ -175,7 +205,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     clearInterval(timerInterval);
     const caso = cases[currentIndex];
     const elapsed = Date.now() - timerStart;
-    const correct = isCorrect(caso, sid);
+    const correct = isCorrect(caso, sid, { resolve: resolveSid, systemOf });
 
     if (correct) {
       correctCount++;
@@ -192,26 +222,24 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     if (!feedbackEl) return;
 
     const { html, setHtml } = window.LaiftDom;
-    let content, bgColor, borderColor, textColor;
+    let content, bgColor, borderColor;
 
     if (correct) {
-      content = html`✔ Acerto! Estrutura: ${caso.prompt_pt.substring(0, 50)}...`;
+      content = html`✔ Acerto! ${getLabel(sid)}${caso.explanation_pt ? ` — ${caso.explanation_pt}` : ''}`;
       bgColor = 'rgba(16, 185, 129, 0.15)';
       borderColor = '#10b981';
-      textColor = '#34d399';
     } else {
-      const correctLabel = getLabel(typeof caso.correctSid === 'string' ? caso.correctSid : caso.correctSid[0]);
-      content = html`❌ Incorreto. Correto: ${correctLabel}`;
+      const correctLabel = getLabel(mainSid(caso));
+      content = html`❌ Incorreto. Correto: ${correctLabel}${caso.explanation_pt ? ` — ${caso.explanation_pt}` : ''}`;
       bgColor = 'rgba(239, 68, 68, 0.15)';
       borderColor = '#ef4444';
-      textColor = '#f87171';
     }
 
     setHtml(feedbackEl, content);
     feedbackEl.style.display = 'block';
     feedbackEl.style.background = bgColor;
     feedbackEl.style.borderLeft = `3px solid ${borderColor}`;
-    feedbackEl.style.color = textColor;
+    feedbackEl.style.color = 'var(--laift-text)';
 
     const scoreEl = sheetNode?.querySelector('#quizScore');
     if (scoreEl) scoreEl.textContent = score;
@@ -228,12 +256,12 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     if (!feedbackEl) return;
 
     const { html, setHtml } = window.LaiftDom;
-    const correctLabel = getLabel(typeof caso.correctSid === 'string' ? caso.correctSid : caso.correctSid[0]);
+    const correctLabel = getLabel(mainSid(caso));
     setHtml(feedbackEl, html`⏱️ Tempo esgotado. Correto: ${correctLabel}`);
     feedbackEl.style.display = 'block';
     feedbackEl.style.background = 'rgba(245, 158, 11, 0.15)';
     feedbackEl.style.borderLeft = '3px solid #f59e0b';
-    feedbackEl.style.color = '#fbbf24';
+    feedbackEl.style.color = 'var(--laift-text)';
 
     setTimeout(() => {
       currentIndex++;
