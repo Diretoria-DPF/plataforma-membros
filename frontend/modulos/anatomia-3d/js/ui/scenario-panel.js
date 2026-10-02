@@ -76,7 +76,7 @@ export function renderScenarioPanel(host, scenario, { onSelectSid = () => {} } =
   fases.forEach((f, i) => {
     phaseNav.appendChild(DOM.h('button', {
       type: 'button', className: 'scenario-phase-btn', dataset: { phase: f.id, start: String(f.inicioMin) },
-      style: { minHeight: '36px', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--laift-border)', background: 'var(--laift-surface-alt)', color: 'var(--laift-text)', cursor: 'pointer', fontSize: '0.72rem' },
+      style: { minHeight: '44px', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--laift-border)', background: 'var(--laift-surface-alt)', color: 'var(--laift-text)', cursor: 'pointer', fontSize: '0.72rem' },
       text: `${i + 1}. ${f.titulo}`,
     }));
   });

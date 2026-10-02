@@ -280,7 +280,7 @@ export function createPhysiologyMode({
           const links = edges.filter((e) => e.from === n.id || e.to === n.id).map((e) => (e.from === n.id ? e.to : e.from));
           const names = links.map((id) => (pos.get(id) || {}).label).filter(Boolean);
           return DOM.h('li', {}, [
-            DOM.h('button', { type: 'button', className: 'systemic-open', dataset: { process: n.id }, style: { background: 'none', border: 'none', padding: '4px 0', color: 'var(--laift-primary)', cursor: 'pointer', textAlign: 'left', minHeight: '32px' }, text: n.label }),
+            DOM.h('button', { type: 'button', className: 'systemic-open', dataset: { process: n.id }, style: { background: 'none', border: 'none', padding: '4px 0', color: 'var(--laift-primary)', cursor: 'pointer', textAlign: 'left', minHeight: '44px' }, text: n.label }),
             DOM.h('span', { style: { color: 'var(--laift-muted)' }, text: names.length ? ` — interage com: ${names.join(', ')}` : ' — sem interações registradas' }),
           ]);
         }));

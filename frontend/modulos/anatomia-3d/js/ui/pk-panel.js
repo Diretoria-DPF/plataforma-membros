@@ -59,7 +59,7 @@ function makeTabs(DOM, tabs) {
     const b = DOM.h('button', {
       type: 'button', role: 'tab', id: `pk-tab-${t.id}`, className: 'pk-tab', dataset: { pkTab: t.id },
       'aria-selected': i === 0 ? 'true' : 'false', 'aria-controls': `pk-tabpanel-${t.id}`, tabindex: i === 0 ? '0' : '-1',
-      style: { flex: '0 0 auto', minHeight: '40px', padding: '6px 12px', border: 'none', borderBottom: i === 0 ? '3px solid var(--laift-primary)' : '3px solid transparent', background: 'none', color: 'var(--laift-text)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: i === 0 ? '700' : '400' },
+      style: { flex: '0 0 auto', minHeight: '44px', padding: '6px 12px', border: 'none', borderBottom: i === 0 ? '3px solid var(--laift-primary)' : '3px solid transparent', background: 'none', color: 'var(--laift-text)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: i === 0 ? '700' : '400' },
       text: t.label,
     });
     const panel = DOM.h('div', { role: 'tabpanel', id: `pk-tabpanel-${t.id}`, className: 'pk-tabpanel', dataset: { pkPanel: t.id }, 'aria-labelledby': `pk-tab-${t.id}` });
@@ -135,7 +135,7 @@ function renderInteracoes(DOM, host, compound) {
     bar.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.sev === filter ? 'true' : 'false'));
   };
   for (const [sev, label] of [['todas', 'Todas'], ['moderada', 'Moderadas'], ['grave', 'Graves']]) {
-    bar.appendChild(DOM.h('button', { type: 'button', dataset: { sev }, className: 'pk-int-btn', style: { minHeight: '36px', padding: '4px 10px', borderRadius: '999px', border: '1px solid var(--laift-border)', background: 'var(--laift-surface)', color: 'var(--laift-text)', cursor: 'pointer', fontSize: '0.74rem' }, text: label, onClick: () => { filter = sev; render(); } }));
+    bar.appendChild(DOM.h('button', { type: 'button', dataset: { sev }, className: 'pk-int-btn', style: { minHeight: '44px', padding: '4px 10px', borderRadius: '999px', border: '1px solid var(--laift-border)', background: 'var(--laift-surface)', color: 'var(--laift-text)', cursor: 'pointer', fontSize: '0.74rem' }, text: label, onClick: () => { filter = sev; render(); } }));
   }
   host.append(bar, tableWrap);
   render();
