@@ -41,6 +41,7 @@ import { ATLAS_FLAGS } from './core/flags.js';
 import { createProgressBar } from './ui/progress-bar.js';
 import { createOnboarding, shouldShowOnboarding, isDeepLink, wasDismissedThisTab } from './ui/onboarding.js';
 import { createHints } from './ui/hints.js';
+import { createSlowDeviceWatcher, classifyDevice } from './ui/slow-device.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -274,6 +275,7 @@ async function boot() {
   // Estado vazio do peek, antes de qualquer conteúdo entrar nele.
   const peekEl = document.getElementById('atlas-sheet-peek');
   EMPTY_PEEK_TEMPLATE = peekEl ? peekEl.cloneNode(true) : document.createElement('div');
+  document.body.dataset.peekV2 = String(ATLAS_FLAGS.peek);
   initShell();
   initSheet();
   initFocusNav();
@@ -454,8 +456,32 @@ async function boot() {
       if (action === 'hide') emit(EVENTS.VISIBILITY_HIDE, { sid });
       if (action === 'ghost') emit(EVENTS.VISIBILITY_GHOST, { sid });
       if (action === 'focus') engine.focusSid(sid, { animate: true });
+      if (action === 'more') snapSheetTo('half');
     },
   });
+
+  // ---- Histórico de estudo (Meu Estudo) e chip "Novo" ----
+  // Antes o histórico só era gravado com o modo Meu Estudo aberto (quase
+  // sempre vazio). Agora um único gravador registra cada ficha aberta; o
+  // modo usa o mesmo armazenamento sem gravar de novo.
+  const seenSids = new Set();
+  let lastSelectSource = null;
+  const newSids = new Set();
+  on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
+    lastSelectSource = source;
+    if (!sid) return;
+    if (!seenSids.has(sid)) newSids.add(sid); else newSids.delete(sid);
+    seenSids.add(sid);
+  });
+  const studyStorePromise = import('./modes/study-store.js').then(async ({ createStudyStore }) => {
+    const studyStore = createStudyStore();
+    const { attachRecorder } = await import('./modes/study.js');
+    attachRecorder(bus, studyStore);
+    try {
+      for (const h of await studyStore.listHistory()) if (h && h.type === 'select' && h.sid) seenSids.add(h.sid);
+    } catch (e) { /* armazenamento indisponível: tudo conta como novo */ }
+    return studyStore;
+  }).catch(() => null);
 
   // #atlas-inspector só existe (visualmente) em ≥600px (css/atlas.css) — no
   // celular o painel arrastável é a única superfície de conteúdo (ver
@@ -464,7 +490,10 @@ async function boot() {
   // montado dentro do painel, senão tocar numa estrutura no celular não
   // mostrava nada (bug real: `<600px` some com o inspetor e ninguém troca
   // o conteúdo do painel pela ficha).
-  const isMobileViewport = () => !window.matchMedia('(min-width: 600px)').matches;
+  // Mesma condição do CSS que mostra o inspetor (grade ≥600×600): celular
+  // deitado (ex.: 844×390) também usa o painel — antes a ficha não aparecia
+  // em lugar nenhum nessa posição.
+  const isMobileViewport = () => !window.matchMedia('(min-width: 600px) and (min-height: 600px)').matches;
   function buildSheetDefaultPeekNode() {
     // Mesma marcação do peek inicial em index.html (estado vazio + #organ-hud
     // escondido), clonada no boot — usado para "voltar ao início" quando a
@@ -508,16 +537,28 @@ async function boot() {
       infocard.clear();
       return;
     }
+    const rec = registry.getBySid(sid);
     const entry = {
       sid,
       names: { pt: labelFor(sid), en: raw.names.en || '', la: raw.names.la || '' },
       system: raw.system,
+      layer: (rec && rec.layer) || raw.layer,
+      side: raw.side,
+      isNew: ATLAS_FLAGS.peek && newSids.has(sid),
     };
+    newSids.delete(sid); // "Novo" só na primeira abertura
     infocard.render(entry, undefined);
     syncInfocardToSheet(sid);
     const content = await contentStore.getContent(sid);
+    if (storeGet().selectedSid !== sid) return;
     infocard.render(entry, content);
     syncInfocardToSheet(sid);
+    // Seleção pelo teclado (busca, navegador, link) no celular: o foco vai
+    // para "Ver mais", que abre a ficha completa.
+    if (isMobileViewport() && lastSelectSource && !['pick', 'focus', 'resume'].includes(lastSelectSource)) {
+      const more = document.querySelector('#atlas-sheet .atlas-card-more');
+      if (more) more.focus({ preventScroll: true });
+    }
   }
 
   on(EVENTS.STRUCTURE_SELECT, ({ sid }) => {
@@ -583,7 +624,22 @@ async function boot() {
     }
   }
 
+  // Aparelho fraco (CPU/memória): começa no nível gráfico baixo.
+  if (classifyDevice() === 'weak-cpu' && rendererApi.setTier) {
+    try { rendererApi.setTier('low'); } catch (e) { /* mantém o detectado */ }
+  }
+  // Avisos de demora/offline até o esqueleto chegar.
+  const defaultsReady = () => DEFAULT_SYSTEMS.every((sys) => assetLoader.isLoaded(sys));
+  const slowWatcher = ATLAS_FLAGS.slowDevice ? createSlowDeviceWatcher({
+    isReady: defaultsReady,
+    retry: () => DEFAULT_SYSTEMS.filter((sys) => !assetLoader.isLoaded(sys)).forEach((sys) => {
+      storeSet({ unavailableSystems: storeGet().unavailableSystems.filter((x) => x !== sys) });
+      loadSystem(sys).then(() => { if (defaultsReady()) { fitWholeBody(); requestRender(); slowWatcher.done(); } });
+    }),
+  }) : null;
+
   await Promise.all(DEFAULT_SYSTEMS.map(loadSystem));
+  if (slowWatcher && defaultsReady()) slowWatcher.done();
   fitWholeBody();
   requestRender();
 
@@ -856,8 +912,8 @@ async function boot() {
     farmacologia: () => import('./modes/pharmacology.js').then((m) => m.createPharmacologyMode({ bus, loadCompounds: () => fetchJson(`${CONTENT_BASE}compounds.json`) })),
     moleculas: () => import('./modes/molecules.js').then((m) => m.createMoleculesMode({ bus, loadProteins: () => fetchJson(`${CONTENT_BASE}proteins.json`) })),
     estudo: () => import('./modes/study.js').then(async (m) => {
-      const { createStudyStore } = await import('./modes/study-store.js');
-      return m.createStudyMode({ bus, store: createStudyStore(), getLabel: labelFor });
+      const studyStore = (await studyStorePromise) || (await import('./modes/study-store.js')).createStudyStore();
+      return m.createStudyMode({ bus, store: studyStore, getLabel: labelFor, recordOwnHistory: false });
     }),
   };
 
@@ -1001,6 +1057,33 @@ async function boot() {
     offerAction(name ? `Continuar de onde parou? (${name})` : 'Continuar de onde parou?', 'Continuar',
       () => { resumeSession(savedSession); }, 10000);
   }
+
+  // ---- Botão Voltar do celular (Android) ----
+  // Cada "abertura" (ficha selecionada, painel em tela cheia) ganha uma
+  // entrada no histórico marcada { atlas: true }; Voltar fecha o que estiver
+  // aberto, do mais aberto para o menos: cheio → metade → espiar → limpa a
+  // seleção. Se não houver nada a fechar numa entrada nossa, segue voltando
+  // (nunca prende o aluno). O iframe divide o histórico com a aba, então o
+  // Voltar da página da plataforma passa por aqui primeiro.
+  let backDepth = 0;
+  const pushBack = (kind) => {
+    if (!isMobileViewport() || backDepth >= 3) return;
+    try { history.pushState({ atlas: true, kind }, ''); backDepth += 1; } catch (e) { /* sandbox */ }
+  };
+  on(EVENTS.STRUCTURE_SELECT, ({ sid }) => { if (sid && backDepth === 0) pushBack('select'); });
+  on(EVENTS.SHEET_SNAP, ({ state }) => { if (state === 'full' && backDepth < 2 && storeGet().selectedSid) pushBack('full'); });
+  window.addEventListener('popstate', () => {
+    if (backDepth > 0) backDepth -= 1;
+    if (!isMobileViewport()) return;
+    const sheetState = getSheetState().state;
+    if (sheetState === 'full') { snapSheetTo('half'); return; }
+    if (storeGet().selectedSid) {
+      if (sheetState === 'half') snapSheetTo('peek');
+      emit(EVENTS.STRUCTURE_SELECT, { sid: null, source: 'back' });
+      return;
+    }
+    if (history.state && history.state.atlas) history.back();
+  });
 
   // ---- Apresentação (3 telas) e dicas contextuais ----
   let hints = null;

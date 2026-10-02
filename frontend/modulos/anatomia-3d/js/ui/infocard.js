@@ -14,6 +14,43 @@ import { SYSTEMS } from '../core/contracts.js';
  * @param {Function} options.onAction - Callback chamado com {action, sid}
  * @returns {Object} Interface da ficha: {render, setTab, clear, getTab}
  */
+/**
+ * Selo de revisão da ficha — um por estado de `content.review.status`
+ * (content.schema.json). Nunca "Rascunho": o conteúdo editorial é
+ * publicado e revisado depois pelo conselho da LAIFT.
+ * @param {{status?: string, by?: string, date?: string, review_requested_at?: string}|undefined} review
+ * @param {number} [now]
+ * @returns {{kind: string, label: string, tooltip: string}|null}
+ */
+export function getStatusLabel(review, now = Date.now()) {
+  if (!review || !review.status) return null;
+  switch (review.status) {
+    case 'editorial': {
+      const asked = review.review_requested_at ? Date.parse(`${review.review_requested_at}T00:00:00Z`) : NaN;
+      const days = Number.isNaN(asked) ? 0 : Math.floor((now - asked) / 86400000);
+      if (days >= 30) {
+        return { kind: 'editorial-late', label: `Aguardando revisão há ${days} dias`, tooltip: 'O conselho editorial da LAIFT ainda não revisou este conteúdo.' };
+      }
+      return { kind: 'editorial', label: 'Em revisão editorial', tooltip: 'O conselho editorial da LAIFT está revisando este conteúdo.' };
+    }
+    case 'legacy-unverified':
+      return { kind: 'legacy', label: 'Conteúdo antigo · sem revisão', tooltip: 'Migrado de base antiga. Sem revisão formal.' };
+    case 'auto-draft':
+      return { kind: 'auto', label: 'Gerado automaticamente · não revisado', tooltip: 'Gerado por script a partir de fontes abertas. Não passe adiante sem conferir.' };
+    case 'reviewed':
+    case 'approved': {
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(review.date || '');
+      const date = m ? `${m[3]}/${m[2]}/${m[1]}` : '';
+      const label = review.by ? `Revisado por ${review.by}${date ? ` em ${date}` : ''}` : `Revisado${date ? ` em ${date}` : ''}`;
+      return { kind: 'reviewed', label, tooltip: 'Revisado pelo conselho editorial da LAIFT.' };
+    }
+    default:
+      return null;
+  }
+}
+
+const SIDE_LABEL = { l: 'Esquerdo', L: 'Esquerdo', r: 'Direito', R: 'Direito' };
+
 export function createInfoCard(container, { onAction = () => {} } = {}) {
   const { h, setHtml, clear: clearEl, safeUrl } = window.LaiftDom;
 
@@ -81,27 +118,39 @@ export function createInfoCard(container, { onAction = () => {} } = {}) {
     const name = h('h2', { id: 'organ-name', className: 'atlas-card-name', text: entry.names.pt });
     nameContainer.appendChild(name);
 
-    // Badge de rascunho se necessário
-    if (content && content.review && content.review.status !== 'reviewed' && content.review.status !== 'approved') {
-      const badge = h('div', { className: 'atlas-card-draft-badge', role: 'status', title: 'Texto gerado automaticamente; ainda não revisado por profissional da área.' });
-      badge.appendChild(h('span', { className: 'atlas-card-draft-icon', text: '⚠' }));
-      badge.appendChild(h('span', { className: 'atlas-card-draft-text', text: 'Rascunho — não revisado' }));
+    // Selo de revisão (4 estados — getStatusLabel)
+    const status = getStatusLabel(content && content.review);
+    if (status) {
+      const badge = h('div', {
+        className: `atlas-card-status atlas-card-status--${status.kind}`, title: status.tooltip,
+      }, [
+        h('span', { className: 'atlas-card-status-icon', 'aria-hidden': 'true', text: status.kind === 'reviewed' ? '✓' : status.kind === 'editorial-late' ? '⏳' : '🛡' }),
+        h('span', { className: 'atlas-card-status-text', text: status.label }),
+        h('span', { className: 'laift-sr-only', text: `. ${status.tooltip}` }),
+      ]);
       nameContainer.appendChild(badge);
+    }
+    if (entry.isNew) {
+      nameContainer.appendChild(h('span', { className: 'atlas-card-new', text: 'Novo' }));
     }
 
     titleZone.appendChild(nameContainer);
 
-    // Subtítulo: sistema · tipo · lado
+    // Selos de sistema (cor da camada) e lado
     const subtitle = h('div', { className: 'atlas-card-subtitle' });
     const sysLabel = systemMap[entry.system] || entry.system;
-    const typeLabel = 'Órgão'; // tipo fixo para demo; pode vir de content se houver
-    const sideLabel = entry.side ? (entry.side === 'L' ? 'Esquerdo' : entry.side === 'R' ? 'Direito' : '—') : '—';
-
-    subtitle.appendChild(h('span', { className: 'atlas-card-system', text: sysLabel }));
-    subtitle.appendChild(h('span', { text: ' · ' }));
-    subtitle.appendChild(h('span', { className: 'atlas-card-type', text: typeLabel }));
-    subtitle.appendChild(h('span', { text: ' · ' }));
-    subtitle.appendChild(h('span', { className: 'atlas-card-side', text: sideLabel }));
+    subtitle.appendChild(h('span', {
+      className: 'atlas-card-chip atlas-card-system',
+      style: entry.layer ? { '--chip-color': `var(--atlas-color-${entry.layer === 'vasos' ? 'vasos-arteria' : entry.layer})` } : {},
+      text: sysLabel,
+    }));
+    if (SIDE_LABEL[entry.side]) {
+      subtitle.appendChild(h('span', { className: 'atlas-card-chip atlas-card-side', text: SIDE_LABEL[entry.side] }));
+    }
+    // "Ver mais": no celular, abre a ficha completa (painel em "metade").
+    const more = h('button', { type: 'button', className: 'atlas-card-more', text: 'Ver mais' });
+    more.addEventListener('click', () => onAction({ action: 'more', sid: entry.sid }));
+    subtitle.appendChild(more);
 
     titleZone.appendChild(subtitle);
     header.appendChild(titleZone);

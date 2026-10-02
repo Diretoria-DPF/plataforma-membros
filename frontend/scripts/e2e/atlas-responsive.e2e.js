@@ -259,6 +259,21 @@ module.exports = async function atlasResponsive() {
       check(shape.height > shape.width, `844×390: painel é mais alto que largo (lateral, não inferior) — ${shape.width}×${shape.height}`);
       check(shape.right >= shape.viewportW - 2, `844×390: painel encostado na borda direita (right=${shape.right}, viewport=${shape.viewportW})`);
       await checkMobileToolbar(frame, '844×390');
+      // Paisagem: "Ver mais" abre a ficha no painel lateral, inteira na tela.
+      await frame.evaluate(() => {
+        const I = window.__atlasInternals;
+        I.bus.emit(I.bus.EVENTS.STRUCTURE_SELECT, { sid: 'za:liver', source: 'search' });
+      });
+      await frame.waitForSelector('#atlas-sheet .atlas-card-more', { timeout: 10000 });
+      await frame.waitForTimeout(400);
+      await frame.locator('#atlas-sheet .atlas-card-more').click();
+      await frame.waitForTimeout(500);
+      const land = await frame.evaluate(() => {
+        const r = document.getElementById('atlas-sheet').getBoundingClientRect();
+        return { state: document.getElementById('atlas-sheet').dataset.sheetState, w: Math.round(r.width), right: Math.round(r.right), vw: window.innerWidth };
+      });
+      check(land.state === 'half' && land.w >= 240 && land.right <= land.vw + 1,
+        `844×390: "Ver mais" abre a ficha no painel lateral, dentro da tela (${JSON.stringify(land)})`);
 
       await context.close();
     }

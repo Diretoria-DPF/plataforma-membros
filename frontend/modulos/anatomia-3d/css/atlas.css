@@ -796,3 +796,29 @@ body.atlas-fullscreen-fallback { background: var(--atlas-canvas-bg); }
 @media (prefers-reduced-motion: reduce) {
   .quiz-check, .quiz-card--shake, .quiz-confetti span { animation: none; }
 }
+
+/* Avisos de demora/offline (js/ui/slow-device.js). */
+.atlas-slow-notice {
+  position: fixed;
+  left: 50%; top: calc(var(--atlas-topbar-h) + env(safe-area-inset-top) + 12px);
+  transform: translateX(-50%);
+  z-index: var(--atlas-z-toast);
+  display: flex; align-items: center; gap: 12px;
+  max-width: min(440px, calc(100vw - 32px));
+  padding: 8px 8px 8px 16px;
+  border-radius: var(--laift-radius-md);
+  background: var(--laift-surface); color: var(--laift-text);
+  border: 1px solid var(--laift-border);
+  box-shadow: var(--laift-shadow);
+  font-size: 14px;
+}
+.atlas-slow-btn {
+  flex: 0 0 auto;
+  min-height: 44px; padding: 0 14px;
+  border-radius: var(--laift-radius-md);
+  border: 1px solid var(--module-accent);
+  background: transparent; color: var(--laift-text);
+  font-weight: 700;
+}
+.atlas-slow-btn--primary { background: var(--module-accent); color: var(--laift-bg); }
+.atlas-slow-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
