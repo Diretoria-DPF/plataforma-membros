@@ -1,0 +1,2602 @@
+[
+  {
+    "schemaVersion": 2,
+    "id": "aas",
+    "nome": "Ácido acetilsalicílico (AAS)",
+    "categoria": "anti-inflamatorio",
+    "tags": [
+      "AINE",
+      "Antiagregante plaquetário",
+      "Salicilato",
+      "Molécula modelada: AAS (não o salicilato)"
+    ],
+    "targetSid": "za:stomach",
+    "mecanismo": "O AAS acetila de forma irreversível um resíduo de serina no canal da ciclo-oxigenase (COX-1 e, em menor grau, COX-2), bloqueando a síntese de prostaglandinas e de tromboxano A2. A plaqueta não tem núcleo e não ressintetiza a enzima, então uma dose baixa inibe a agregação por toda a vida da plaqueta (7 a 10 dias); em doses maiores, a redução de prostaglandinas produz analgesia, antipirese e efeito anti-inflamatório, e também a lesão da mucosa gástrica.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 500,
+      "vd": 10.5,
+      "halfLife": 0.25,
+      "F": 0.68,
+      "tmax": 0.5,
+      "ka": 1.39,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 1,
+      "hill": 1,
+      "efeito": "Inibição da COX-1 plaquetária (antiagregação) pela molécula AAS intacta, não pelo salicilato. O AAS tem meia-vida de cerca de 15 minutos porque é hidrolisado a salicilato, mas a acetilação da enzima é irreversível e o efeito dura mais que a molécula. EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas (parâmetro de ensino)."
+    },
+    "interactions": [
+      {
+        "com": "Varfarina e outros anticoagulantes",
+        "efeito": "Risco hemorrágico muito aumentado",
+        "severidade": "grave",
+        "mecanismo": "Efeito antiplaquetário somado à lesão da mucosa gastrointestinal e ao efeito anticoagulante"
+      },
+      {
+        "com": "Ibuprofeno (e outros AINEs não seletivos)",
+        "efeito": "Pode reduzir a proteção cardiovascular do AAS em dose baixa",
+        "severidade": "moderada",
+        "mecanismo": "Competição reversível pelo sítio da COX-1 plaquetária, impedindo a acetilação irreversível"
+      },
+      {
+        "com": "Metotrexato",
+        "efeito": "Aumento da toxicidade do metotrexato (mielossupressão)",
+        "severidade": "grave",
+        "mecanismo": "Salicilatos reduzem a secreção tubular renal e deslocam o metotrexato da albumina"
+      },
+      {
+        "com": "Corticoides sistêmicos",
+        "efeito": "Maior risco de úlcera e sangramento gastrointestinal",
+        "severidade": "moderada",
+        "mecanismo": "Efeito aditivo sobre a barreira mucosa gástrica"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Ácido salicílico (salicilato)",
+        "ativo": true,
+        "via": "Hidrólise por esterases na mucosa, no plasma e no fígado; responsável pelo efeito anti-inflamatório sustentado"
+      },
+      {
+        "nome": "Ácido salicilúrico",
+        "ativo": false,
+        "via": "Conjugação com glicina, via saturável em doses altas (cinética de ordem zero)"
+      },
+      {
+        "nome": "Glicuronídeos de salicilato",
+        "ativo": false,
+        "via": "Glicuronidação hepática (UGT)"
+      }
+    ],
+    "clinicalUse": [
+      "Prevenção secundária de eventos cardiovasculares e cerebrovasculares (75 a 100 mg por dia)",
+      "Síndrome coronariana aguda e AVC isquêmico agudo (dose de ataque)",
+      "Dor leve a moderada e febre (500 a 1000 mg por dose)",
+      "Doenças reumáticas inflamatórias (doses altas, uso hoje restrito pela toxicidade)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Dispepsia e lesão da mucosa gástrica",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Úlcera e sangramento gastrointestinal",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Aumento do tempo de sangramento",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Zumbido e perda auditiva reversível (salicilismo)",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Broncoespasmo em asma sensível a AINEs",
+        "frequencia": "incomum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Síndrome de Reye em crianças com infecção viral",
+        "frequencia": "raro",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Crianças e adolescentes com infecção viral (síndrome de Reye)",
+      "Úlcera péptica ativa ou hemorragia gastrointestinal",
+      "Hipersensibilidade a AINEs ou asma induzida por AAS",
+      "Distúrbios hemorrágicos graves",
+      "Terceiro trimestre de gestação"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos, antipiréticos e anti-inflamatórios: inibição da ciclo-oxigenase pelo ácido acetilsalicílico",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos anti-inflamatórios não esteroides e antiagregantes plaquetários",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos salicilatos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos terapêuticos do ácido acetilsalicílico",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos e toxicidade dos salicilatos",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "paracetamol",
+    "nome": "Paracetamol (acetaminofeno)",
+    "categoria": "analgesico",
+    "tags": [
+      "Analgésico",
+      "Antipirético",
+      "Hepatotoxicidade",
+      "NAPQI"
+    ],
+    "targetSid": "za:liver",
+    "mecanismo": "Atua principalmente no sistema nervoso central, inibindo a síntese de prostaglandinas (inibição da COX em ambiente pobre em peróxidos, com contribuição de vias serotonérgicas descendentes e do metabólito AM404), o que eleva o limiar da dor e reduz a febre no hipotálamo; o efeito anti-inflamatório periférico é desprezível. Em superdose, a via de conjugação satura e o metabólito reativo NAPQI (CYP2E1/3A4) esgota a glutationa, causando necrose hepática centrolobular.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 1000,
+      "vd": 66.5,
+      "halfLife": 2,
+      "F": 0.88,
+      "tmax": 0.75,
+      "ka": 3.39,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 10,
+      "hill": 1,
+      "efeito": "Analgesia e antipirese (% do efeito máximo). EC50 aproximada pela faixa terapêutica de antipirese (cerca de 10 a 20 mg/L); parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Etanol (uso crônico ou abusivo)",
+        "efeito": "Maior risco de hepatotoxicidade, mesmo em doses próximas às terapêuticas",
+        "severidade": "grave",
+        "mecanismo": "Indução de CYP2E1 (mais NAPQI) e depleção de glutationa"
+      },
+      {
+        "com": "Indutores enzimáticos (carbamazepina, fenitoína, rifampicina)",
+        "efeito": "Maior formação de NAPQI e risco de lesão hepática",
+        "severidade": "moderada",
+        "mecanismo": "Indução de CYP2E1 e CYP3A4"
+      },
+      {
+        "com": "Varfarina",
+        "efeito": "Aumento do INR com uso regular de doses acima de 2 g por dia",
+        "severidade": "moderada",
+        "mecanismo": "Possível interferência no ciclo da vitamina K"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Glicuronídeo de paracetamol",
+        "ativo": false,
+        "via": "Glicuronidação hepática (UGT1A1/1A6), cerca de 50 a 60% da dose"
+      },
+      {
+        "nome": "Sulfato de paracetamol",
+        "ativo": false,
+        "via": "Sulfatação hepática (SULT), cerca de 30%; satura em doses altas"
+      },
+      {
+        "nome": "NAPQI (N-acetil-p-benzoquinona imina)",
+        "ativo": false,
+        "via": "Oxidação por CYP2E1/3A4 (menos de 10%); tóxico, neutralizado pela glutationa"
+      },
+      {
+        "nome": "Conjugados de glutationa (cisteína e mercapturato)",
+        "ativo": false,
+        "via": "Conjugação do NAPQI com glutationa e excreção renal"
+      }
+    ],
+    "clinicalUse": [
+      "Dor leve a moderada (cefaleia, dor muscular, dor dentária)",
+      "Febre em adultos e crianças",
+      "Analgésico de escolha quando AINEs são contraindicados (gestação, úlcera, asma, anticoagulação)",
+      "Componente da analgesia multimodal no pós-operatório"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Hepatotoxicidade em superdose (necrose hepática)",
+        "frequencia": "raro",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Elevação transitória de transaminases",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Reações cutâneas graves (síndrome de Stevens-Johnson, pustulose exantemática)",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Náuseas e desconforto gástrico leve",
+        "frequencia": "incomum",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Insuficiência hepática grave",
+      "Hipersensibilidade ao paracetamol",
+      "Dose diária acima de 4 g (3 g em hepatopatas, desnutridos ou etilistas)"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos-antipiréticos: paracetamol, metabolismo e hepatotoxicidade",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos anti-inflamatórios não esteroides e paracetamol",
+        "obraId": "rang"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção do paracetamol e concentração plasmática máxima",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos terapêuticos do paracetamol",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos e intoxicação por paracetamol",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "dipirona",
+    "nome": "Dipirona (metamizol)",
+    "categoria": "analgesico",
+    "tags": [
+      "Analgésico",
+      "Antipirético",
+      "Pirazolona",
+      "Pró-fármaco",
+      "Molécula modelada: 4-MAA"
+    ],
+    "targetSid": "za:hypothalamus",
+    "mecanismo": "A dipirona é um pró-fármaco hidrolisado de modo não enzimático no trato gastrointestinal a 4-metilaminoantipirina (4-MAA), que é desmetilada a 4-aminoantipirina (4-AA). Os metabólitos reduzem a síntese de prostaglandinas no sistema nervoso central (inibição da COX, com contribuição de vias canabinoides e opioides descendentes), o que produz analgesia e antipirese; há também efeito espasmolítico sobre a musculatura lisa e fraca ação anti-inflamatória periférica.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 500,
+      "vd": 80.5,
+      "halfLife": 2.7,
+      "F": 0.9,
+      "tmax": 1.5,
+      "ka": 1.38,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 5,
+      "hill": 1,
+      "efeito": "Analgesia e antipirese (% do efeito máximo) a partir da concentração do metabólito ativo 4-MAA, a molécula modelada em pk. A dose em mg é de dipirona, sem correção de massa molar para o 4-MAA. EC50 aproximada pela faixa de concentrações de 4-MAA obtidas com doses terapêuticas; parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Clorpromazina",
+        "efeito": "Hipotermia grave",
+        "severidade": "grave",
+        "mecanismo": "Efeito hipotérmico aditivo central"
+      },
+      {
+        "com": "Metotrexato",
+        "efeito": "Aumento da toxicidade hematológica do metotrexato",
+        "severidade": "grave",
+        "mecanismo": "Redução do clearance renal do metotrexato e efeito mielotóxico aditivo"
+      },
+      {
+        "com": "Ciclosporina",
+        "efeito": "Redução das concentrações de ciclosporina",
+        "severidade": "moderada",
+        "mecanismo": "Provável indução do metabolismo da ciclosporina"
+      },
+      {
+        "com": "Ácido acetilsalicílico (dose baixa)",
+        "efeito": "Pode reduzir o efeito antiagregante do AAS",
+        "severidade": "moderada",
+        "mecanismo": "Competição pelo sítio da COX-1 plaquetária"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "4-metilaminoantipirina (4-MAA)",
+        "ativo": true,
+        "via": "Hidrólise não enzimática da dipirona no estômago e no intestino"
+      },
+      {
+        "nome": "4-aminoantipirina (4-AA)",
+        "ativo": true,
+        "via": "N-desmetilação do 4-MAA (CYP)"
+      },
+      {
+        "nome": "4-formilaminoantipirina (4-FAA)",
+        "ativo": false,
+        "via": "Oxidação do 4-MAA"
+      },
+      {
+        "nome": "4-acetilaminoantipirina (4-AAA)",
+        "ativo": false,
+        "via": "Acetilação do 4-AA (NAT2)"
+      }
+    ],
+    "clinicalUse": [
+      "Dor aguda leve a moderada e dor visceral tipo cólica",
+      "Febre refratária a outros antitérmicos",
+      "Dor pós-operatória e dor oncológica (como adjuvante)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Hipotensão (principalmente após infusão intravenosa rápida)",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Reações cutâneas alérgicas",
+        "frequencia": "incomum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Reação anafilática",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Agranulocitose imunoalérgica",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Urina avermelhada sem significado clínico",
+        "frequencia": "incomum",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Hipersensibilidade a pirazolonas (dipirona, propifenazona)",
+      "Histórico de agranulocitose ou de depressão da medula óssea",
+      "Porfiria hepática aguda intermitente",
+      "Deficiência de G6PD",
+      "Terceiro trimestre de gestação"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos e antipiréticos não opioides: pirazolonas e analgesia central",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos não opioides e antipiréticos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Volume de distribuição e meia-vida de metabólitos ativos",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima de analgésicos não opioides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos terapêuticos de analgésicos e antipiréticos não opioides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos analgésicos não opioides e discrasias sanguíneas",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "morfina",
+    "nome": "Morfina",
+    "categoria": "analgesico",
+    "tags": [
+      "Opioide",
+      "Agonista μ",
+      "Dor intensa",
+      "Primeira passagem"
+    ],
+    "targetSid": "za:posterior-horn-of-spinal-cord",
+    "mecanismo": "Agonista pleno dos receptores opioides μ, acoplados a proteínas Gi/o, no corno posterior da medula, no tronco encefálico e no córtex. A ativação reduz o AMPc, abre canais de K+ e fecha canais de Ca2+ pré-sinápticos, o que inibe a liberação de glutamato e substância P e hiperpolariza o neurônio pós-sináptico. O resultado é analgesia, sedação, miose, depressão respiratória e redução da motilidade gastrointestinal.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 10,
+      "vd": 231,
+      "halfLife": 2,
+      "F": 0.25,
+      "tmax": 1,
+      "ka": 2.19,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.01,
+      "hill": 1,
+      "efeito": "Analgesia (% do efeito máximo) com morfina oral de liberação imediata. EC50 aproximada pela concentração analgésica mínima efetiva (cerca de 10 ng/mL = 0,01 mg/L); parâmetro de ensino, com grande variabilidade individual e tolerância."
+    },
+    "interactions": [
+      {
+        "com": "Benzodiazepínicos e outros depressores do SNC",
+        "efeito": "Sedação profunda e depressão respiratória potencialmente fatal",
+        "severidade": "grave",
+        "mecanismo": "Depressão aditiva dos centros respiratórios"
+      },
+      {
+        "com": "Etanol",
+        "efeito": "Depressão respiratória e sedação aditivas",
+        "severidade": "grave",
+        "mecanismo": "Depressão aditiva do SNC"
+      },
+      {
+        "com": "Naloxona e naltrexona",
+        "efeito": "Reversão da analgesia e síndrome de abstinência em dependentes",
+        "severidade": "grave",
+        "mecanismo": "Antagonismo competitivo dos receptores μ"
+      },
+      {
+        "com": "Rifampicina",
+        "efeito": "Redução dos níveis de morfina e de seus glicuronídeos ativos",
+        "severidade": "moderada",
+        "mecanismo": "Indução de UGT2B7"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Morfina-6-glicuronídeo (M6G)",
+        "ativo": true,
+        "via": "Glicuronidação hepática (UGT2B7); agonista μ que acumula na insuficiência renal"
+      },
+      {
+        "nome": "Morfina-3-glicuronídeo (M3G)",
+        "ativo": false,
+        "via": "Glicuronidação hepática (UGT2B7); sem efeito analgésico, possivelmente neuroexcitatório"
+      },
+      {
+        "nome": "Normorfina",
+        "ativo": false,
+        "via": "N-desmetilação (via menor)"
+      }
+    ],
+    "clinicalUse": [
+      "Dor aguda intensa (infarto do miocárdio, trauma, pós-operatório)",
+      "Dor oncológica moderada a intensa",
+      "Cuidados paliativos, incluindo dispneia refratária"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Constipação",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Náuseas e vômitos",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Sedação",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Miose",
+        "frequencia": "muito comum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Depressão respiratória",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Prurido por liberação de histamina",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Retenção urinária",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Tolerância e dependência física",
+        "frequencia": "comum",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Depressão respiratória aguda",
+      "Íleo paralítico ou obstrução intestinal",
+      "Traumatismo craniano com hipertensão intracraniana",
+      "Asma brônquica aguda grave",
+      "Uso de IMAO nas últimas duas semanas"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos opioides: receptores μ e mecanismo de ação da morfina",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos analgésicos opioides",
+        "obraId": "rang"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção oral e metabolismo de primeira passagem da morfina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e concentração analgésica mínima efetiva",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos analgésicos opioides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos opioides",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "tramadol",
+    "nome": "Tramadol",
+    "categoria": "analgesico",
+    "tags": [
+      "Opioide fraco",
+      "Pró-fármaco",
+      "CYP2D6",
+      "Inibidor da recaptação de monoaminas"
+    ],
+    "targetSid": "za:posterior-horn-of-spinal-cord",
+    "mecanismo": "Tem ação dupla: o tramadol e, sobretudo, o metabólito O-desmetiltramadol (M1, formado por CYP2D6 e com afinidade muito maior pelo receptor opioide μ) ativam a via opioide, e o tramadol inibe a recaptação de noradrenalina e serotonina nas vias descendentes da dor. A soma desses efeitos produz analgesia com menos depressão respiratória que a morfina, mas com risco de convulsões e de síndrome serotoninérgica, e com resposta variável conforme o genótipo de CYP2D6.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 50,
+      "vd": 189,
+      "halfLife": 6,
+      "F": 0.75,
+      "tmax": 2,
+      "ka": 1.34,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.1,
+      "hill": 1,
+      "efeito": "Analgesia (% do efeito máximo) a partir da concentração plasmática do tramadol. EC50 aproximada pela concentração analgésica mínima efetiva (cerca de 100 ng/mL = 0,1 mg/L); o efeito real depende também do M1 e da atividade de CYP2D6. Parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "ISRS, IRSN e antidepressivos tricíclicos",
+        "efeito": "Síndrome serotoninérgica e risco de convulsão; inibidores de CYP2D6 (fluoxetina, paroxetina) também reduzem a formação de M1",
+        "severidade": "grave",
+        "mecanismo": "Excesso de serotonina sináptica e inibição de CYP2D6"
+      },
+      {
+        "com": "IMAO",
+        "efeito": "Síndrome serotoninérgica potencialmente fatal",
+        "severidade": "grave",
+        "mecanismo": "Inibição do catabolismo de monoaminas somada à inibição da recaptação"
+      },
+      {
+        "com": "Benzodiazepínicos, etanol e outros depressores do SNC",
+        "efeito": "Sedação e depressão respiratória aditivas",
+        "severidade": "grave",
+        "mecanismo": "Depressão aditiva do SNC"
+      },
+      {
+        "com": "Carbamazepina",
+        "efeito": "Redução das concentrações de tramadol e da analgesia",
+        "severidade": "moderada",
+        "mecanismo": "Indução de CYP3A4 e CYP2B6"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "O-desmetiltramadol (M1)",
+        "ativo": true,
+        "via": "O-desmetilação por CYP2D6; agonista μ muito mais potente que o tramadol"
+      },
+      {
+        "nome": "N-desmetiltramadol (M2)",
+        "ativo": false,
+        "via": "N-desmetilação por CYP2B6 e CYP3A4"
+      },
+      {
+        "nome": "Conjugados glicuronídeos e sulfatos",
+        "ativo": false,
+        "via": "Fase II hepática e excreção renal"
+      }
+    ],
+    "clinicalUse": [
+      "Dor moderada a intensa aguda ou crônica",
+      "Dor neuropática (como alternativa, em combinação com outras medidas)",
+      "Dor pós-operatória quando AINEs não são adequados"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Náuseas e vômitos",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Tontura",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Sonolência",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Constipação",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Convulsões",
+        "frequencia": "raro",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Síndrome serotoninérgica",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Dependência e síndrome de abstinência",
+        "frequencia": "incomum",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Epilepsia não controlada",
+      "Uso concomitante ou recente de IMAO",
+      "Intoxicação aguda por álcool, hipnóticos ou opioides",
+      "Crianças menores de 12 anos e pós-amigdalectomia (risco em ultrametabolizadores de CYP2D6)",
+      "Insuficiência respiratória grave"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos opioides: tramadol, ação opioide e monoaminérgica",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos analgésicos opioides",
+        "obraId": "rang"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos opioides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos analgésicos opioides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos opioides e da inibição da recaptação de monoaminas",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "ibuprofeno",
+    "nome": "Ibuprofeno",
+    "categoria": "anti-inflamatorio",
+    "tags": [
+      "AINE",
+      "Derivado do ácido propiônico",
+      "Inibidor não seletivo de COX"
+    ],
+    "targetSid": "za:stomach",
+    "mecanismo": "Inibidor reversível e não seletivo da COX-1 e da COX-2, que compete com o ácido araquidônico pelo canal hidrofóbico da enzima e reduz a síntese de prostaglandinas e tromboxano. Menos PGE2 diminui a sensibilização dos nociceptores, a febre e o edema; menos prostaglandinas protetoras reduz o muco e o fluxo sanguíneo da mucosa gástrica e o fluxo renal dependente de prostaglandinas, o que explica a gastropatia e a lesão renal.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 400,
+      "vd": 10.5,
+      "halfLife": 2,
+      "F": 0.8,
+      "tmax": 1.5,
+      "ka": 1.14,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 10,
+      "hill": 1,
+      "efeito": "Analgesia e efeito anti-inflamatório por inibição de COX (% do efeito máximo), com o racemato. EC50 aproximada pela faixa terapêutica analgésica (cerca de 10 mg/L); o efeito anti-inflamatório pleno exige concentrações maiores. Parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Varfarina e anticoagulantes orais",
+        "efeito": "Aumento do risco de sangramento gastrointestinal",
+        "severidade": "grave",
+        "mecanismo": "Antiagregação plaquetária e lesão da mucosa somadas ao efeito anticoagulante"
+      },
+      {
+        "com": "IECA, BRA e diuréticos",
+        "efeito": "Menor efeito anti-hipertensivo e risco de lesão renal aguda",
+        "severidade": "moderada",
+        "mecanismo": "Inibição de prostaglandinas vasodilatadoras renais"
+      },
+      {
+        "com": "Lítio",
+        "efeito": "Aumento da litemia e toxicidade do lítio",
+        "severidade": "moderada",
+        "mecanismo": "Redução do clearance renal do lítio"
+      },
+      {
+        "com": "Ácido acetilsalicílico (dose baixa)",
+        "efeito": "Pode reduzir a proteção cardiovascular do AAS",
+        "severidade": "moderada",
+        "mecanismo": "Competição pelo sítio da COX-1 plaquetária"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "(S)-ibuprofeno",
+        "ativo": true,
+        "via": "Inversão quiral do enantiômero (R) inativo, formado no fígado e no intestino"
+      },
+      {
+        "nome": "Hidroxi-ibuprofeno e carboxi-ibuprofeno",
+        "ativo": false,
+        "via": "Oxidação por CYP2C9"
+      },
+      {
+        "nome": "Acil-glicuronídeos",
+        "ativo": false,
+        "via": "Glicuronidação hepática"
+      }
+    ],
+    "clinicalUse": [
+      "Dor leve a moderada (cefaleia, dismenorreia, dor dentária, dor musculoesquelética)",
+      "Febre em adultos e crianças",
+      "Doenças reumáticas inflamatórias (artrite reumatoide, osteoartrite) em doses maiores",
+      "Fechamento farmacológico do canal arterial em prematuros (uso hospitalar)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Dispepsia e pirose",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Úlcera péptica e sangramento gastrointestinal",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Retenção hídrica e elevação da pressão arterial",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Lesão renal aguda",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Broncoespasmo e reações cutâneas",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Eventos cardiovasculares trombóticos (doses altas e uso prolongado)",
+        "frequencia": "raro",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Úlcera péptica ativa ou hemorragia gastrointestinal",
+      "Insuficiência renal, hepática ou cardíaca grave",
+      "Hipersensibilidade a AINEs ou asma induzida por AAS",
+      "Terceiro trimestre de gestação",
+      "Peri-operatório de cirurgia de revascularização do miocárdio"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos, antipiréticos e anti-inflamatórios: inibição da ciclo-oxigenase",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos anti-inflamatórios não esteroides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos AINEs",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos terapêuticos dos AINEs",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos AINEs: trato gastrointestinal, rim e sistema cardiovascular",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "diclofenaco",
+    "nome": "Diclofenaco",
+    "categoria": "anti-inflamatorio",
+    "tags": [
+      "AINE",
+      "Derivado do ácido fenilacético",
+      "Preferência por COX-2",
+      "Primeira passagem"
+    ],
+    "targetSid": "za:liver",
+    "mecanismo": "Inibe a COX-1 e a COX-2 com certa preferência pela COX-2, reduzindo a síntese de prostaglandinas e, com isso, a dor, a febre e a inflamação. A ligação às proteínas plasmáticas é superior a 99% e o fármaco se acumula no líquido sinovial, o que mantém o efeito articular além do esperado para uma meia-vida plasmática curta. A preferência por COX-2 não elimina o risco gastrointestinal e se associa a risco cardiovascular trombótico.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 50,
+      "vd": 12,
+      "halfLife": 1.5,
+      "F": 0.5,
+      "tmax": 1,
+      "ka": 1.85,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.5,
+      "hill": 1,
+      "efeito": "Analgesia e efeito anti-inflamatório por inibição de COX (% do efeito máximo), modelados para a forma de absorção rápida (sal potássico). EC50 aproximada pela faixa de concentrações totais obtidas com doses terapêuticas; parâmetro de ensino, pois a ligação a proteínas é muito alta e o efeito articular persiste além do plasma."
+    },
+    "interactions": [
+      {
+        "com": "Varfarina e anticoagulantes orais",
+        "efeito": "Aumento do risco de sangramento gastrointestinal",
+        "severidade": "grave",
+        "mecanismo": "Antiagregação plaquetária e lesão da mucosa somadas ao efeito anticoagulante"
+      },
+      {
+        "com": "Metotrexato",
+        "efeito": "Aumento da toxicidade do metotrexato",
+        "severidade": "grave",
+        "mecanismo": "Redução da excreção renal do metotrexato"
+      },
+      {
+        "com": "Ciclosporina",
+        "efeito": "Aumento da nefrotoxicidade",
+        "severidade": "moderada",
+        "mecanismo": "Inibição de prostaglandinas vasodilatadoras renais"
+      },
+      {
+        "com": "IECA, BRA e diuréticos",
+        "efeito": "Menor efeito anti-hipertensivo e risco de lesão renal aguda",
+        "severidade": "moderada",
+        "mecanismo": "Inibição de prostaglandinas vasodilatadoras renais"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "4'-hidroxidiclofenaco",
+        "ativo": false,
+        "via": "Hidroxilação por CYP2C9 (via principal)"
+      },
+      {
+        "nome": "5-hidroxidiclofenaco",
+        "ativo": false,
+        "via": "Hidroxilação por CYP3A4"
+      },
+      {
+        "nome": "Acil-glicuronídeo de diclofenaco",
+        "ativo": false,
+        "via": "Glicuronidação (UGT2B7); reativo, implicado em hepatotoxicidade idiossincrática"
+      }
+    ],
+    "clinicalUse": [
+      "Osteoartrite, artrite reumatoide e espondilite anquilosante",
+      "Dor aguda musculoesquelética e pós-operatória",
+      "Dismenorreia e cólica renal",
+      "Uso tópico em tendinites e dor localizada"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Dor abdominal e dispepsia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Elevação de transaminases",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Cefaleia e tontura",
+        "frequencia": "comum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Úlcera péptica e sangramento gastrointestinal",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Eventos cardiovasculares trombóticos",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Lesão renal aguda",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hepatite medicamentosa",
+        "frequencia": "raro",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Doença cardiovascular estabelecida (infarto, AVC, doença arterial periférica)",
+      "Úlcera péptica ativa ou hemorragia gastrointestinal",
+      "Insuficiência cardíaca moderada a grave",
+      "Insuficiência hepática ou renal grave",
+      "Hipersensibilidade a AINEs ou asma induzida por AAS",
+      "Terceiro trimestre de gestação"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Analgésicos, antipiréticos e anti-inflamatórios: seletividade por COX-2 do diclofenaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos anti-inflamatórios não esteroides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos AINEs",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos terapêuticos dos AINEs",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos AINEs: trato gastrointestinal, fígado e sistema cardiovascular",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "prednisolona",
+    "nome": "Prednisolona",
+    "categoria": "anti-inflamatorio",
+    "tags": [
+      "Glicocorticoide",
+      "Imunossupressor",
+      "Receptor nuclear",
+      "Eixo HPA"
+    ],
+    "targetSid": "za:hypothalamus",
+    "mecanismo": "Glicocorticoide que atravessa a membrana e se liga ao receptor de glicocorticoide citoplasmático; o complexo migra ao núcleo e modula a transcrição gênica, aumentando genes anti-inflamatórios (anexina-1, MKP-1, IκBα) e reprimindo NF-κB e AP-1, com queda de citocinas, COX-2 e migração leucocitária. Como o efeito depende de transcrição e síntese proteica, ele surge horas depois do pico plasmático; o feedback negativo sobre hipotálamo e hipófise suprime o eixo HPA no uso prolongado.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 20,
+      "vd": 28,
+      "halfLife": 3,
+      "F": 0.8,
+      "tmax": 1.5,
+      "ka": 1.46,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.05,
+      "hill": 1,
+      "efeito": "Efeito anti-inflamatório e imunossupressor (% do efeito máximo), por exemplo a queda de linfócitos circulantes. EC50 aproximada pela faixa de concentrações totais obtidas com doses terapêuticas; parâmetro de ensino. O efeito biológico dura mais que a meia-vida plasmática (cerca de 12 a 36 h) por depender de transcrição gênica."
+    },
+    "interactions": [
+      {
+        "com": "AINEs",
+        "efeito": "Maior risco de úlcera e sangramento gastrointestinal",
+        "severidade": "moderada",
+        "mecanismo": "Efeito aditivo sobre a barreira mucosa gástrica"
+      },
+      {
+        "com": "Rifampicina, fenitoína e carbamazepina",
+        "efeito": "Redução da eficácia do corticoide",
+        "severidade": "moderada",
+        "mecanismo": "Indução de CYP3A4 e aumento do clearance"
+      },
+      {
+        "com": "Insulina e antidiabéticos orais",
+        "efeito": "Perda do controle glicêmico (hiperglicemia)",
+        "severidade": "moderada",
+        "mecanismo": "Aumento da gliconeogênese e da resistência à insulina"
+      },
+      {
+        "com": "Diuréticos de alça e tiazídicos",
+        "efeito": "Hipocalemia mais intensa",
+        "severidade": "moderada",
+        "mecanismo": "Efeito mineralocorticoide e perda renal de K+ somados"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Prednisona",
+        "ativo": false,
+        "via": "Interconversão reversível por 11β-HSD; a prednisona é pró-fármaco da prednisolona"
+      },
+      {
+        "nome": "6β-hidroxiprednisolona",
+        "ativo": false,
+        "via": "Hidroxilação por CYP3A4 e excreção renal"
+      }
+    ],
+    "clinicalUse": [
+      "Doenças inflamatórias e autoimunes (artrite reumatoide, lúpus, vasculites)",
+      "Exacerbação de asma e de DPOC",
+      "Prevenção de rejeição de transplantes e doenças alérgicas graves",
+      "Síndrome nefrótica por lesão mínima e doenças inflamatórias intestinais"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Hiperglicemia e agravamento do diabetes",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Retenção hídrica e hipertensão",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Insônia, euforia e alterações de humor",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Imunossupressão e infecções",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Supressão do eixo HPA (insuficiência adrenal na retirada abrupta)",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Síndrome de Cushing iatrogênica e osteoporose",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Miopatia, catarata e glaucoma",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Úlcera péptica",
+        "frequencia": "incomum",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Infecções sistêmicas não tratadas, incluindo infecções fúngicas",
+      "Hipersensibilidade ao fármaco",
+      "Vacinas de vírus vivos durante imunossupressão por doses altas"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Hormônios adrenocorticais: receptor de glicocorticoide e regulação da transcrição",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Corticosteroides e antagonistas",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos glicocorticoides orais",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e efeitos dependentes de transcrição",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos corticosteroides",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos glicocorticoides e supressão do eixo HPA",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "propranolol",
+    "nome": "Propranolol",
+    "categoria": "anti-hipertensivo",
+    "tags": [
+      "Betabloqueador",
+      "Não seletivo",
+      "Lipofílico",
+      "Primeira passagem"
+    ],
+    "targetSid": "za:left-ventricle",
+    "mecanismo": "Antagonista competitivo não seletivo dos receptores β1 e β2-adrenérgicos, sem atividade simpatomimética intrínseca. O bloqueio β1 cardíaco reduz frequência, contratilidade e condução atrioventricular, e o bloqueio β1 renal reduz a liberação de renina, o que baixa a pressão arterial e o consumo de oxigênio do miocárdio. O bloqueio β2 pode causar broncoconstrição e mascarar a hipoglicemia; por ser lipofílico, atravessa a barreira hematoencefálica e sofre extensa primeira passagem hepática.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 40,
+      "vd": 280,
+      "halfLife": 4,
+      "F": 0.26,
+      "tmax": 2,
+      "ka": 1.1,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.02,
+      "hill": 1,
+      "efeito": "Bloqueio β-adrenérgico (redução da frequência cardíaca, % do efeito máximo) com a molécula-mãe. EC50 aproximada pelo limite inferior da faixa terapêutica (cerca de 20 a 100 ng/mL); parâmetro de ensino, pois o metabólito 4-hidroxipropranolol também bloqueia receptores β."
+    },
+    "interactions": [
+      {
+        "com": "Verapamil e diltiazem",
+        "efeito": "Bradicardia grave, bloqueio atrioventricular e hipotensão",
+        "severidade": "grave",
+        "mecanismo": "Efeitos cronotrópico e dromotrópico negativos somados"
+      },
+      {
+        "com": "Epinefrina (adrenalina)",
+        "efeito": "Hipertensão grave com bradicardia reflexa",
+        "severidade": "grave",
+        "mecanismo": "Bloqueio β2 vasodilatador deixa a vasoconstrição α sem oposição"
+      },
+      {
+        "com": "Insulina e antidiabéticos",
+        "efeito": "Mascara os sinais adrenérgicos da hipoglicemia e prolonga sua duração",
+        "severidade": "moderada",
+        "mecanismo": "Bloqueio β2 sobre a glicogenólise e os sintomas adrenérgicos"
+      },
+      {
+        "com": "Cimetidina",
+        "efeito": "Aumento das concentrações de propranolol",
+        "severidade": "moderada",
+        "mecanismo": "Inibição do metabolismo hepático e do fluxo hepático"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "4-hidroxipropranolol",
+        "ativo": true,
+        "via": "Hidroxilação por CYP2D6; bloqueia receptores β com potência semelhante à do propranolol"
+      },
+      {
+        "nome": "N-desisopropilpropranolol",
+        "ativo": false,
+        "via": "N-desalquilação por CYP1A2"
+      },
+      {
+        "nome": "Glicuronídeos de propranolol",
+        "ativo": false,
+        "via": "Glicuronidação hepática"
+      }
+    ],
+    "clinicalUse": [
+      "Hipertensão arterial",
+      "Angina estável e prevenção secundária após infarto do miocárdio",
+      "Controle de taquiarritmias supraventriculares",
+      "Profilaxia de enxaqueca, tremor essencial e sintomas adrenérgicos da ansiedade e do hipertireoidismo",
+      "Profilaxia de sangramento de varizes esofágicas na hipertensão portal"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Bradicardia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Fadiga e intolerância ao exercício",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Extremidades frias e fenômeno de Raynaud",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Distúrbios do sono e pesadelos",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Broncoespasmo",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Bloqueio atrioventricular",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Disfunção erétil",
+        "frequencia": "incomum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Rebote adrenérgico na suspensão abrupta",
+        "frequencia": "incomum",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Asma ou DPOC com broncoespasmo",
+      "Bradicardia sinusal grave ou bloqueio atrioventricular de 2º e 3º graus",
+      "Insuficiência cardíaca descompensada ou choque cardiogênico",
+      "Doença do nó sinusal"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Antagonistas dos receptores adrenérgicos: betabloqueadores não seletivos",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos bloqueadores dos receptores adrenérgicos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos betabloqueadores",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos betabloqueadores",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos betabloqueadores",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "atenolol",
+    "nome": "Atenolol",
+    "categoria": "anti-hipertensivo",
+    "tags": [
+      "Betabloqueador",
+      "Cardiosseletivo β1",
+      "Hidrofílico",
+      "Excreção renal"
+    ],
+    "targetSid": "za:left-ventricle",
+    "mecanismo": "Antagonista competitivo seletivo dos receptores β1-adrenérgicos, sem atividade simpatomimética intrínseca, que reduz a frequência cardíaca, a contratilidade, a condução atrioventricular e a liberação de renina, diminuindo débito cardíaco, pressão arterial e consumo de oxigênio do miocárdio. A seletividade é relativa e se perde em doses altas. Por ser hidrofílico, quase não é metabolizado, é excretado inalterado pelos rins e se acumula na doença renal crônica.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 50,
+      "vd": 49,
+      "halfLife": 6.5,
+      "F": 0.5,
+      "tmax": 3,
+      "ka": 0.762,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.2,
+      "hill": 1,
+      "efeito": "Bloqueio β1-adrenérgico (redução da frequência cardíaca, % do efeito máximo). EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas (da ordem de 0,2 mg/L); parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Verapamil e diltiazem",
+        "efeito": "Bradicardia grave, bloqueio atrioventricular e hipotensão",
+        "severidade": "grave",
+        "mecanismo": "Efeitos cronotrópico e dromotrópico negativos somados"
+      },
+      {
+        "com": "Clonidina",
+        "efeito": "Hipertensão rebote grave se a clonidina for suspensa antes do betabloqueador",
+        "severidade": "grave",
+        "mecanismo": "Liberação de catecolaminas sem oposição do bloqueio β no rebote"
+      },
+      {
+        "com": "AINEs",
+        "efeito": "Redução do efeito anti-hipertensivo",
+        "severidade": "moderada",
+        "mecanismo": "Inibição de prostaglandinas vasodilatadoras e retenção de sódio"
+      },
+      {
+        "com": "Insulina e antidiabéticos",
+        "efeito": "Mascara sinais adrenérgicos da hipoglicemia",
+        "severidade": "moderada",
+        "mecanismo": "Bloqueio adrenérgico dos sintomas e da glicogenólise"
+      }
+    ],
+    "clinicalUse": [
+      "Hipertensão arterial",
+      "Angina estável e prevenção secundária após infarto do miocárdio",
+      "Controle da frequência em taquiarritmias supraventriculares"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Bradicardia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Fadiga e intolerância ao exercício",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Extremidades frias",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipotensão e tontura",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Broncoespasmo (perda de seletividade em doses altas)",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Distúrbios do sono e disfunção sexual",
+        "frequencia": "incomum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Rebote adrenérgico na suspensão abrupta",
+        "frequencia": "incomum",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Bradicardia sinusal ou bloqueio atrioventricular de 2º e 3º graus",
+      "Insuficiência cardíaca descompensada ou choque cardiogênico",
+      "Doença do nó sinusal",
+      "Feocromocitoma não tratado"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Antagonistas dos receptores adrenérgicos: betabloqueadores β1-seletivos",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Fármacos bloqueadores dos receptores adrenérgicos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos betabloqueadores",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos betabloqueadores",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos betabloqueadores",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "losartana",
+    "nome": "Losartana",
+    "categoria": "anti-hipertensivo",
+    "tags": [
+      "BRA",
+      "Antagonista AT1",
+      "Sistema renina-angiotensina",
+      "Pró-fármaco parcial"
+    ],
+    "targetSid": "za:kidney-r",
+    "mecanismo": "Antagonista competitivo e seletivo do receptor AT1 da angiotensina II; o metabólito ativo E-3174, formado por CYP2C9 e CYP3A4, é muito mais potente e tem ação mais longa, e responde por boa parte do efeito. O bloqueio de AT1 causa vasodilatação arterial e venosa e reduz a secreção de aldosterona e a retenção de Na+ e água, além de proteger o rim na nefropatia diabética. Não aumenta a bradicinina, por isso quase não causa tosse.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 50,
+      "vd": 34,
+      "halfLife": 2,
+      "F": 0.33,
+      "tmax": 1,
+      "ka": 2.19,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.1,
+      "hill": 1,
+      "efeito": "Bloqueio do receptor AT1 (redução da pressão arterial, % do efeito máximo) em função da concentração da molécula-mãe losartana; o metabólito E-3174, com meia-vida de 6 a 9 h e tmax de 3 a 4 h, prolonga o efeito além do modelado. EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas; parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Suplementos de potássio e diuréticos poupadores de potássio (espironolactona)",
+        "efeito": "Hipercalemia potencialmente grave",
+        "severidade": "grave",
+        "mecanismo": "Redução da aldosterona somada à retenção de K+"
+      },
+      {
+        "com": "IECA ou alisquireno (duplo bloqueio do SRAA)",
+        "efeito": "Hipotensão, hipercalemia e lesão renal aguda",
+        "severidade": "grave",
+        "mecanismo": "Bloqueio duplo do sistema renina-angiotensina-aldosterona"
+      },
+      {
+        "com": "AINEs",
+        "efeito": "Menor efeito anti-hipertensivo e risco de lesão renal aguda",
+        "severidade": "moderada",
+        "mecanismo": "Perda da vasodilatação da arteríola aferente mediada por prostaglandinas"
+      },
+      {
+        "com": "Lítio",
+        "efeito": "Aumento da litemia",
+        "severidade": "moderada",
+        "mecanismo": "Redução da excreção renal de lítio"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "E-3174 (ácido carboxílico de losartana)",
+        "ativo": true,
+        "via": "Oxidação por CYP2C9 e CYP3A4 (cerca de 14% da dose); antagonista AT1 mais potente que a losartana"
+      },
+      {
+        "nome": "Metabólitos inativos",
+        "ativo": false,
+        "via": "Glicuronidação e oxidações adicionais"
+      }
+    ],
+    "clinicalUse": [
+      "Hipertensão arterial",
+      "Nefropatia diabética com proteinúria em diabetes tipo 2",
+      "Insuficiência cardíaca em pacientes que não toleram IECA",
+      "Redução do risco de AVC em hipertensos com hipertrofia ventricular esquerda"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Tontura",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipotensão, principalmente em hipovolêmicos",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipercalemia",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Elevação da creatinina sérica",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Tosse seca",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Angioedema",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Fetotoxicidade no 2º e 3º trimestres",
+        "frequencia": "raro",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Gestação",
+      "Hipersensibilidade à losartana",
+      "Estenose bilateral de artéria renal (ou em rim único)",
+      "Hipercalemia grave",
+      "Uso com alisquireno em diabéticos"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Renina e angiotensina: antagonistas do receptor AT1",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Inibidores da ECA, bloqueadores do receptor de angiotensina e inibidores da renina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Absorção e concentração plasmática máxima dos bloqueadores do receptor de angiotensina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos bloqueadores do receptor de angiotensina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos inibidores do sistema renina-angiotensina",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "enalapril",
+    "nome": "Enalapril",
+    "categoria": "anti-hipertensivo",
+    "tags": [
+      "IECA",
+      "Pró-fármaco",
+      "Sistema renina-angiotensina",
+      "Molécula modelada: enalaprilat"
+    ],
+    "targetSid": "za:kidney-l",
+    "mecanismo": "O enalapril é um pró-fármaco hidrolisado por esterases hepáticas a enalaprilat, que inibe a enzima conversora de angiotensina (ECA) ao se ligar ao sítio ativo com o zinco da enzima. Isso reduz a angiotensina II e a aldosterona (vasodilatação e menor retenção de Na+ e água) e impede a degradação da bradicinina, o que contribui para a vasodilatação, mas também para a tosse seca e o angioedema. A redução da pós-carga e da pré-carga beneficia a insuficiência cardíaca e a nefropatia.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 10,
+      "vd": 50,
+      "halfLife": 11,
+      "F": 0.4,
+      "tmax": 4,
+      "ka": 0.644,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.01,
+      "hill": 1,
+      "efeito": "Inibição da ECA e queda da pressão arterial (% do efeito máximo), modelada com o metabólito ativo enalaprilat, que é a molécula descrita em pk (dose em mg de enalapril, sem correção de massa molar; F é a fração que chega como enalaprilat; meia-vida efetiva de acúmulo). EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas; parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Suplementos de potássio e diuréticos poupadores de potássio",
+        "efeito": "Hipercalemia potencialmente grave",
+        "severidade": "grave",
+        "mecanismo": "Redução da aldosterona somada à retenção de K+"
+      },
+      {
+        "com": "Sacubitril/valsartana",
+        "efeito": "Risco de angioedema grave; uso contraindicado em até 36 horas",
+        "severidade": "grave",
+        "mecanismo": "Inibição simultânea da ECA e da neprilisina, com acúmulo de bradicinina"
+      },
+      {
+        "com": "AINEs",
+        "efeito": "Menor efeito anti-hipertensivo e risco de lesão renal aguda",
+        "severidade": "moderada",
+        "mecanismo": "Perda da vasodilatação mediada por prostaglandinas"
+      },
+      {
+        "com": "Lítio",
+        "efeito": "Aumento da litemia",
+        "severidade": "moderada",
+        "mecanismo": "Redução da excreção renal de lítio"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Enalaprilat",
+        "ativo": true,
+        "via": "Hidrólise do éster por esterases hepáticas; excretado inalterado pelos rins"
+      }
+    ],
+    "clinicalUse": [
+      "Hipertensão arterial",
+      "Insuficiência cardíaca com fração de ejeção reduzida",
+      "Disfunção ventricular esquerda assintomática e pós-infarto do miocárdio",
+      "Nefropatia diabética e proteinúria (nefroproteção)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Tosse seca persistente",
+        "frequencia": "comum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Hipotensão, em especial após a primeira dose",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Tontura",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipercalemia",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Elevação da creatinina sérica",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Angioedema",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Fetotoxicidade no 2º e 3º trimestres",
+        "frequencia": "raro",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Histórico de angioedema associado a IECA",
+      "Gestação",
+      "Uso concomitante de sacubitril/valsartana",
+      "Estenose bilateral de artéria renal (ou em rim único)",
+      "Hipersensibilidade ao enalapril"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Renina e angiotensina: inibidores da enzima conversora de angiotensina",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Inibidores da ECA, bloqueadores do receptor de angiotensina e inibidores da renina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Inibidores da ECA: absorção e conversão do pró-fármaco em metabólito ativo",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Inibidores da ECA: meia-vida efetiva e acúmulo",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Volume de distribuição de fármacos hidrofílicos de excreção renal",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Inibidores da ECA: absorção e concentração plasmática máxima",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos inibidores da ECA",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos inibidores da ECA",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "anlodipino",
+    "nome": "Anlodipino",
+    "categoria": "anti-hipertensivo",
+    "tags": [
+      "Bloqueador de canal de cálcio",
+      "Diidropiridínico",
+      "Vasosseletivo",
+      "Meia-vida longa"
+    ],
+    "mecanismo": "Bloqueador dos canais de Ca2+ do tipo L (diidropiridínico) com seletividade vascular: liga-se à subunidade α1 dos canais voltagem-dependentes da musculatura lisa arteriolar, reduz o influxo de Ca2+ e causa vasodilatação arterial, queda da resistência vascular periférica e da pós-carga. Tem pouco efeito direto sobre contratilidade e condução cardíacas. O volume de distribuição muito grande e a meia-vida de cerca de 40 horas dão efeito estável de 24 horas com dose única diária.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 5,
+      "vd": 1470,
+      "halfLife": 40,
+      "F": 0.75,
+      "tmax": 8,
+      "ka": 0.414,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.005,
+      "hill": 1,
+      "efeito": "Vasodilatação arterial e queda da pressão arterial (% do efeito máximo). EC50 aproximada pela faixa de concentrações no estado de equilíbrio (cerca de 5 a 20 ng/mL); com dose única o modelo mostra efeito parcial, e o efeito pleno aparece após o acúmulo de vários dias. Parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Sinvastatina (doses acima de 20 mg por dia)",
+        "efeito": "Aumento da exposição à sinvastatina e risco de miopatia",
+        "severidade": "moderada",
+        "mecanismo": "Competição pelo metabolismo por CYP3A4"
+      },
+      {
+        "com": "Inibidores potentes de CYP3A4 (claritromicina, itraconazol, ritonavir)",
+        "efeito": "Aumento das concentrações de anlodipino, com hipotensão e edema",
+        "severidade": "moderada",
+        "mecanismo": "Inibição de CYP3A4"
+      },
+      {
+        "com": "Outros anti-hipertensivos e nitratos",
+        "efeito": "Efeito hipotensor aditivo, em geral desejado",
+        "severidade": "leve",
+        "mecanismo": "Mecanismos vasodilatadores somados"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Derivados piridínicos inativos",
+        "ativo": false,
+        "via": "Desidrogenação e oxidação hepática por CYP3A4 (cerca de 90% da dose é metabolizada, excreção renal)"
+      }
+    ],
+    "clinicalUse": [
+      "Hipertensão arterial",
+      "Angina estável crônica e angina vasoespástica (de Prinzmetal)",
+      "Doença arterial coronariana documentada"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Edema periférico (maleolar)",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Cefaleia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Rubor facial e palpitações",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Fadiga e tontura",
+        "frequencia": "comum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Hiperplasia gengival",
+        "frequencia": "incomum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Hipotensão",
+        "frequencia": "incomum",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Choque cardiogênico",
+      "Estenose aórtica grave",
+      "Hipotensão grave",
+      "Hipersensibilidade a diidropiridinas"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Bloqueadores dos canais de cálcio: fármacos diidropiridínicos",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Bloqueadores dos canais de cálcio",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Bloqueadores dos canais de cálcio: absorção e concentração plasmática máxima",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e acúmulo no estado de equilíbrio",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos bloqueadores dos canais de cálcio",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos bloqueadores dos canais de cálcio",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "hidroclorotiazida",
+    "nome": "Hidroclorotiazida",
+    "categoria": "anti-hipertensivo",
+    "tags": [
+      "Diurético tiazídico",
+      "Cotransportador Na-Cl",
+      "Túbulo contorcido distal",
+      "Hipocalemia"
+    ],
+    "targetSid": "za:kidney-r",
+    "mecanismo": "Diurético tiazídico que chega à luz tubular por secreção no túbulo proximal e inibe o cotransportador Na+-Cl- (NCC) da membrana luminal do túbulo contorcido distal, aumentando a excreção de Na+, Cl- e água; a maior oferta de Na+ ao ducto coletor eleva a perda de K+ e H+, e há retenção de Ca2+. O efeito anti-hipertensivo vem primeiro da redução do volume plasmático e, com o uso crônico, da queda da resistência vascular periférica.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 25,
+      "vd": 252,
+      "halfLife": 8,
+      "F": 0.7,
+      "tmax": 2,
+      "ka": 1.52,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.1,
+      "hill": 1,
+      "efeito": "Efeito natriurético e anti-hipertensivo (% do efeito máximo). EC50 aproximada pela faixa de concentrações obtidas com doses terapêuticas; parâmetro de ensino. A meia-vida usada é a terminal (faixa descrita de 6 a 15 h), e a curva dose-resposta do diurético é relativamente plana acima de 25 mg."
+    },
+    "interactions": [
+      {
+        "com": "Lítio",
+        "efeito": "Aumento da litemia e toxicidade do lítio",
+        "severidade": "grave",
+        "mecanismo": "Maior reabsorção proximal de lítio com a depleção de Na+"
+      },
+      {
+        "com": "Digoxina",
+        "efeito": "Maior risco de toxicidade digitálica",
+        "severidade": "moderada",
+        "mecanismo": "Hipocalemia e hipomagnesemia sensibilizam o miocárdio à digoxina"
+      },
+      {
+        "com": "AINEs",
+        "efeito": "Redução do efeito diurético e anti-hipertensivo, com risco de lesão renal",
+        "severidade": "moderada",
+        "mecanismo": "Inibição de prostaglandinas renais e retenção de sódio"
+      },
+      {
+        "com": "Corticoides sistêmicos",
+        "efeito": "Hipocalemia mais intensa",
+        "severidade": "moderada",
+        "mecanismo": "Perda renal de K+ somada"
+      }
+    ],
+    "clinicalUse": [
+      "Hipertensão arterial (primeira linha)",
+      "Edema leve a moderado de origem cardíaca, hepática ou renal",
+      "Prevenção de recorrência de nefrolitíase cálcica",
+      "Diabetes insípido nefrogênico (efeito paradoxal)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Hipocalemia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hiponatremia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hiperuricemia e crise de gota",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipomagnesemia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hiperglicemia e dislipidemia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipercalcemia",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Fotossensibilidade e disfunção erétil",
+        "frequencia": "incomum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Câncer de pele não melanoma com uso crônico",
+        "frequencia": "raro",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Anúria",
+      "Hipersensibilidade a tiazídicos ou a sulfonamidas",
+      "Hipocalemia ou hiponatremia refratárias",
+      "Insuficiência renal grave (pouco eficaz com TFG muito reduzida)"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Diuréticos: inibidores do cotransportador Na-Cl no túbulo contorcido distal",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Agentes diuréticos: tiazídicos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Diuréticos tiazídicos: absorção e concentração plasmática máxima",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos dos diuréticos tiazídicos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos dos diuréticos tiazídicos e distúrbios eletrolíticos",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "amoxicilina",
+    "nome": "Amoxicilina",
+    "categoria": "antibiotico",
+    "tags": [
+      "β-lactâmico",
+      "Aminopenicilina",
+      "Bactericida",
+      "Tempo acima da CIM"
+    ],
+    "mecanismo": "Aminopenicilina β-lactâmica cujo anel acila a serina do sítio ativo das proteínas ligadoras de penicilina (transpeptidases) e bloqueia a ligação cruzada do peptideoglicano da parede bacteriana. Em células em crescimento, a parede enfraquecida e a ação de autolisinas levam à lise osmótica, um efeito bactericida dependente do tempo em que a concentração permanece acima da CIM. Tem espectro mais amplo que a penicilina G, mas é inativada por β-lactamases, daí a associação com clavulanato.",
+    "pk": {
+      "route": "ORAL",
+      "dose": 500,
+      "vd": 21,
+      "halfLife": 1,
+      "F": 0.85,
+      "tmax": 1.5,
+      "ka": 0.641,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 1,
+      "hill": 2,
+      "efeito": "Efeito bactericida (% do efeito máximo) sobre um patógeno sensível. EC50 aproximada pela CIM típica de bactérias sensíveis (cerca de 0,5 a 2 mg/L), e não por um valor publicado de plasma; na prática a eficácia depende do tempo acima da CIM. Parâmetro de ensino."
+    },
+    "interactions": [
+      {
+        "com": "Metotrexato",
+        "efeito": "Aumento da toxicidade do metotrexato",
+        "severidade": "moderada",
+        "mecanismo": "Redução da secreção tubular renal do metotrexato"
+      },
+      {
+        "com": "Varfarina",
+        "efeito": "Possível aumento do INR e do risco de sangramento",
+        "severidade": "moderada",
+        "mecanismo": "Alteração da flora intestinal produtora de vitamina K"
+      },
+      {
+        "com": "Alopurinol",
+        "efeito": "Maior incidência de exantema cutâneo",
+        "severidade": "leve",
+        "mecanismo": "Mecanismo incerto (sensibilização cutânea)"
+      },
+      {
+        "com": "Probenecida",
+        "efeito": "Aumento e prolongamento das concentrações de amoxicilina",
+        "severidade": "leve",
+        "mecanismo": "Inibição da secreção tubular renal de ácidos orgânicos"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Ácido peniciloico",
+        "ativo": false,
+        "via": "Hidrólise do anel β-lactâmico (10 a 25% da dose); a maior parte é excretada inalterada pelos rins"
+      }
+    ],
+    "clinicalUse": [
+      "Otite média aguda, sinusite e faringoamigdalite estreptocócica",
+      "Pneumonia adquirida na comunidade leve a moderada",
+      "Infecção urinária não complicada por germes sensíveis",
+      "Erradicação do Helicobacter pylori (em esquemas combinados)",
+      "Profilaxia de endocardite bacteriana em procedimentos de risco"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Diarreia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Náuseas e vômitos",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Exantema maculopapular",
+        "frequencia": "comum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Candidíase oral ou vaginal",
+        "frequencia": "incomum",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Colite por Clostridioides difficile",
+        "frequencia": "raro",
+        "doseDependente": false
+      },
+      {
+        "efeito": "Reação anafilática",
+        "frequencia": "raro",
+        "doseDependente": false
+      }
+    ],
+    "contraindications": [
+      "Hipersensibilidade a penicilinas ou a outros β-lactâmicos (anafilaxia prévia)",
+      "Mononucleose infecciosa (alto risco de exantema)",
+      "Histórico de icterícia colestática por penicilina"
+    ],
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Penicilinas e β-lactâmicos: inibição da síntese da parede bacteriana",
+        "obraId": "goodman"
+      },
+      {
+        "field": "mecanismo",
+        "ref": "Antibióticos β-lactâmicos e outros inibidores da síntese da parede celular",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (biodisponibilidade)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (meia-vida)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Parâmetros farmacocinéticos de fármacos selecionados (volume de distribuição)",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Aminopenicilinas: absorção e concentração plasmática máxima",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem e relação entre ka e Tmax",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração-efeito: modelo Emax, CIM e tempo acima da CIM",
+        "obraId": "rowland"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Usos clínicos das penicilinas",
+        "obraId": "katzung"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Efeitos adversos das penicilinas e reações de hipersensibilidade",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+]

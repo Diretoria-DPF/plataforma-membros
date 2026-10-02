@@ -1,0 +1,2435 @@
+[
+  {
+    "id": "ciclo-cardiaco",
+    "system": "cardiovascular",
+    "name_pt": "Ciclo Eletromecânico Cardíaco",
+    "description_pt": "Sequência repetida de eventos elétricos e mecânicos do coração. Cada fase é definida pelas diferenças de pressão entre átrios, ventrículos e artérias, que abrem e fecham as valvas: enchimento, sístole atrial, contração isovolumétrica, ejeção e relaxamento isovolumétrico.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Enchimento ventricular (diástole): com as valvas atrioventriculares abertas e as semilunares fechadas, o sangue acumulado nos átrios flui para os ventrículos. Cerca de 80% do enchimento ocorre de forma passiva, antes de os átrios se contraírem.",
+        "anchors": [
+          {
+            "sid": "za:atria-to-ventricle"
+          },
+          {
+            "sid": "za:vh-m-mitral-valve",
+            "label_pt": "Valva mitral aberta"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na taquicardia intensa a diástole encurta mais do que a sístole e o tempo de enchimento diminui; na estenose mitral o enchimento fica restrito pela própria valva."
+      },
+      {
+        "order": 2,
+        "description_pt": "Sístole atrial: a onda P do ECG (despolarização atrial) precede a contração dos átrios, que acrescenta os cerca de 20% finais do enchimento. Ao término, o volume diastólico final é de aproximadamente 110 a 120 mL em cada ventrículo.",
+        "anchors": [
+          {
+            "sid": "za:atria-to-ventricle"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na fibrilação atrial não há contração atrial organizada: perde-se esse reforço do enchimento e a estase no átrio favorece a formação de trombos."
+      },
+      {
+        "order": 3,
+        "description_pt": "Contração isovolumétrica: o complexo QRS (despolarização ventricular) precede a sístole ventricular. Quando a pressão no ventrículo supera a do átrio, as valvas atrioventriculares se fecham (primeira bulha, B1). Com todas as valvas fechadas, a pressão sobe rapidamente sem mudança de volume.",
+        "anchors": [
+          {
+            "sid": "za:ventricle-pressurize"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na insuficiência mitral parte do sangue reflui para o átrio esquerdo durante a sístole, o que gera sopro sistólico."
+      },
+      {
+        "order": 4,
+        "description_pt": "Ejeção ventricular: quando a pressão do ventrículo esquerdo ultrapassa a da aorta (cerca de 80 mmHg, a pressão diastólica) e a do direito ultrapassa a do tronco pulmonar, as valvas semilunares se abrem. Cerca de 70% da ejeção ocorre no primeiro terço da fase. O volume sistólico é de cerca de 70 mL, o volume sistólico final de 40 a 50 mL e a fração de ejeção de cerca de 60%.",
+        "anchors": [
+          {
+            "sid": "za:aorta-flow"
+          },
+          {
+            "sid": "za:vh-m-aortic-valve",
+            "label_pt": "Valva aórtica aberta"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na estenose aórtica há gradiente de pressão sistólico entre o ventrículo esquerdo e a aorta, com sopro ejetivo e hipertrofia ventricular."
+      },
+      {
+        "order": 5,
+        "description_pt": "Fim da sístole: a repolarização ventricular (onda T) acompanha o relaxamento do miocárdio. A pressão ventricular cai abaixo da arterial e as valvas semilunares se fecham (segunda bulha, B2); a incisura dicrótica do pulso aórtico marca esse fechamento.",
+        "anchors": [
+          {
+            "sid": "za:aorta-flow"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na insuficiência aórtica o sangue reflui para o ventrículo na diástole, com sopro diastólico e pressão de pulso aumentada."
+      },
+      {
+        "order": 6,
+        "description_pt": "Relaxamento isovolumétrico: com todas as valvas fechadas, a pressão ventricular cai rapidamente sem mudança de volume. Quando fica abaixo da pressão atrial, as valvas atrioventriculares se abrem, o sangue represado nos átrios entra rápido nos ventrículos e o ciclo recomeça no passo 1.",
+        "anchors": [
+          {
+            "sid": "za:ventricle-pressurize"
+          },
+          {
+            "sid": "za:atria-to-ventricle"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Bomba cardíaca e ciclo cardíaco: função de átrios e ventrículos, valvas, pressões e volumes",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia cardíaca: eventos mecânicos do ciclo cardíaco, volume sistólico e fração de ejeção",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia cardiovascular: ciclo cardíaco, bulhas e relação entre pressão e volume",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Cardiopatia valvar e arritmias",
+        "obraId": "robbins"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "desviosClinicos": [
+      {
+        "condicao": "Fibrilação atrial",
+        "mecanismo": "Atividade elétrica atrial caótica, sem sístole atrial efetiva (perde-se o reforço de cerca de 20% do enchimento), resposta ventricular irregular e estase no átrio com risco de trombo e embolia.",
+        "cid": "I48"
+      },
+      {
+        "condicao": "Estenose aórtica",
+        "mecanismo": "A valva estreitada obriga o ventrículo esquerdo a gerar pressão sistólica bem maior que a da aorta para ejetar; resulta em hipertrofia concêntrica e sopro ejetivo.",
+        "cid": "I35.0"
+      },
+      {
+        "condicao": "Insuficiência mitral",
+        "mecanismo": "O fechamento incompleto da valva mitral permite refluxo para o átrio esquerdo na sístole, com sobrecarga de volume do átrio e do ventrículo.",
+        "cid": "I34.0"
+      },
+      {
+        "condicao": "Insuficiência cardíaca com fração de ejeção reduzida",
+        "mecanismo": "A contratilidade diminuída reduz o volume sistólico e a fração de ejeção em relação aos cerca de 60% normais, com congestão a montante e baixo débito.",
+        "cid": "I50"
+      }
+    ],
+    "interageCom": [
+      "conducao-impulso-cardiaco",
+      "hematose-alveolar",
+      "filtracao-glomerular"
+    ]
+  },
+  {
+    "id": "ciclo-menstrual",
+    "system": "reprodutor",
+    "name_pt": "Ciclo Menstrual (28 dias típico)",
+    "description_pt": "Ciclo médio de cerca de 28 dias que sincroniza o ovário e o endométrio. GnRH hipotalâmico, FSH e LH hipofisários e estradiol, progesterona e inibinas ovarianas controlam o crescimento folicular, a ovulação e o preparo do útero para uma possível implantação.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Menstruação (dia 1 do ciclo): sem gravidez, o corpo lúteo regride e a queda de progesterona e estradiol causa vasoconstrição das artérias espiraladas, isquemia e descamação da camada funcional do endométrio. A queda de estradiol, progesterona e inibina A também retira o freio sobre a hipófise, e o FSH volta a subir.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Recrutamento folicular (fase folicular inicial): o GnRH pulsátil estimula a adeno-hipófise e o FSH recruta uma coorte de folículos antrais. Pela teoria das duas células, o LH estimula as células da teca a produzir androgênios e o FSH induz nas células da granulosa a aromatase, que converte androgênios em estradiol.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual",
+            "label_pt": "Ovário: folículos em crescimento"
+          },
+          {
+            "sid": "za:adenohypophysis",
+            "label_pt": "Adeno-hipófise: FSH e LH"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Seleção do folículo dominante: o estradiol e a inibina B crescentes exercem retroalimentação negativa sobre o FSH. O folículo dominante, mais sensível ao FSH, continua a crescer e adquire receptores de LH nas células da granulosa; os demais sofrem atresia.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Fase proliferativa do endométrio: o estradiol do folículo em crescimento faz a camada funcional do endométrio se regenerar e espessar, com proliferação de glândulas e estroma, angiogênese e indução de receptores de progesterona. Corresponde à fase folicular no ovário.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Pico de LH: quando o estradiol se mantém alto por tempo suficiente, sinal de folículo maduro, a retroalimentação passa a ser positiva e provoca um pico de LH (e um pico menor de FSH) na metade do ciclo.",
+        "anchors": [
+          {
+            "sid": "za:adenohypophysis",
+            "label_pt": "Adeno-hipófise: pico de LH"
+          },
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 6,
+        "description_pt": "Ovulação (por volta do dia 14 em um ciclo de 28 dias): o pico de LH reinicia a meiose do oócito e estimula prostaglandinas e enzimas proteolíticas que rompem a parede folicular. O oócito secundário, parado na metáfase II, é liberado com as células do cumulus cerca de 24 a 36 horas após o início do pico.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "junqueira"
+        ],
+        "clinica_pt": "Os testes de ovulação de venda livre detectam o pico de LH na urina."
+      },
+      {
+        "order": 7,
+        "description_pt": "Fase lútea (secretora): sob ação do LH, o folículo roto se transforma em corpo lúteo, que secreta principalmente progesterona, além de estradiol e inibina A. A progesterona torna o endométrio secretor (glândulas tortuosas ricas em glicogênio, estroma edemaciado), preparando a implantação, e inibe o eixo hipotálamo-hipófise por retroalimentação negativa.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 8,
+        "description_pt": "Desfecho: se houver implantação, o hCG do trofoblasto sustenta o corpo lúteo e a progesterona se mantém. Se não houver, o corpo lúteo regride em cerca de 2 semanas (luteólise), progesterona e estradiol caem e o ciclo recomeça com nova menstruação.",
+        "anchors": [
+          {
+            "sid": "za:ciclo-menstrual"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Fisiologia feminina antes da gravidez: ciclo ovariano, ciclo endometrial e regulação hormonal mensal",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia reprodutiva feminina: ciclo menstrual, foliculogênese, ovulação e fase lútea",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Reprodução e desenvolvimento: controle hormonal do ciclo ovariano e uterino",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Aparelho reprodutor feminino: ovário, ciclo ovariano e ciclo uterino",
+        "obraId": "junqueira"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "negativo",
+        "efetor": "Estradiol e inibina B do folículo em crescimento",
+        "alvo": "Adeno-hipófise (FSH)",
+        "efeito": "Reduzem o FSH na fase folicular, o que seleciona o folículo dominante e faz regredir os demais."
+      },
+      {
+        "tipo": "positivo",
+        "efetor": "Estradiol elevado e sustentado do folículo maduro",
+        "alvo": "Hipotálamo e adeno-hipófise (GnRH e LH)",
+        "efeito": "Desencadeia o pico de LH da metade do ciclo, que induz a ovulação."
+      },
+      {
+        "tipo": "negativo",
+        "efetor": "Progesterona, estradiol e inibina A do corpo lúteo",
+        "alvo": "Hipotálamo e adeno-hipófise (GnRH, LH e FSH)",
+        "efeito": "Mantêm LH e FSH baixos na fase lútea; a regressão do corpo lúteo remove o freio e permite novo ciclo."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Síndrome dos ovários policísticos",
+        "mecanismo": "Anovulação crônica com hiperandrogenismo e relação LH/FSH elevada; os folículos se desenvolvem, mas não há seleção de um dominante nem pico de LH, e o endométrio fica exposto ao estradiol sem progesterona.",
+        "cid": "E28.2"
+      },
+      {
+        "condicao": "Hiperprolactinemia",
+        "mecanismo": "O excesso de prolactina inibe a secreção pulsátil de GnRH, reduz LH e FSH e causa anovulação e amenorreia.",
+        "cid": "E22.1"
+      },
+      {
+        "condicao": "Insuficiência ovariana primária",
+        "mecanismo": "Depleção de folículos reduz estradiol e inibina; sem retroalimentação negativa, FSH e LH sobem e o ciclo cessa.",
+        "cid": "E28.3"
+      }
+    ],
+    "interageCom": [
+      "eixo-hpa",
+      "espermatogenese"
+    ]
+  },
+  {
+    "id": "coagulacao-sanguinea",
+    "system": "cardiovascular",
+    "name_pt": "Cascata de Coagulação Sanguínea",
+    "description_pt": "Hemostasia após lesão vascular: espasmo do vaso e tampão plaquetário (hemostasia primária), ativação sequencial de fatores que gera trombina e fibrina estável (hemostasia secundária), limitação do coágulo por anticoagulantes naturais e dissolução posterior pela fibrinólise.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Hemostasia primária: a lesão provoca vasoconstrição reflexa (espasmo miogênico e mediadores como endotelina e tromboxano A2). O fator de von Willebrand (vWF) liga-se ao colágeno subendotelial exposto, e as plaquetas aderem por meio da GPIb, ativam-se, liberam ADP e tromboxano A2 e se agregam via GPIIb/IIIa e fibrinogênio, formando o tampão plaquetário.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "robbins"
+        ],
+        "clinica_pt": "O ácido acetilsalicílico inibe a COX-1 e a síntese de tromboxano A2 plaquetário; a doença de von Willebrand prejudica a adesão das plaquetas."
+      },
+      {
+        "order": 2,
+        "description_pt": "Iniciação (via do fator tecidual): o fator tecidual, exposto em células perivasculares e subendoteliais, forma complexo com o fator VIIa circulante. O complexo fator tecidual-VIIa ativa, na presença de Ca²⁺ e fosfolipídios, os fatores X e IX. O fator Xa, com o fator Va, gera uma pequena quantidade inicial de trombina.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "robbins"
+        ],
+        "clinica_pt": "O tempo de protrombina (TP/INR) avalia essa via e a via comum, incluindo os fatores dependentes de vitamina K."
+      },
+      {
+        "order": 3,
+        "description_pt": "Amplificação: a trombina inicial ativa as plaquetas e os fatores V, VIII e XI (retroalimentação positiva) e as plaquetas expõem fosfatidilserina, superfície onde os complexos enzimáticos se montam. A chamada via de contato (fator XII, pré-calicreína e cininogênio) explica o TTPa de laboratório, mas a deficiência de fator XII não causa sangramento; in vivo, a ativação do fator XI pela própria trombina é a que importa.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "robbins"
+        ],
+        "clinica_pt": "O TTPa avalia as vias intrínseca e comum; a deficiência de fator XII prolonga o TTPa sem causar sangramento."
+      },
+      {
+        "order": 4,
+        "description_pt": "Propagação: o complexo tenase (IXa com VIIIa) ativa grandes quantidades de fator X sobre a superfície plaquetária, e o complexo protrombinase (Xa com Va e Ca²⁺) converte protrombina em trombina de forma explosiva. A síntese hepática de protrombina e dos fatores VII, IX e X depende de vitamina K.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "A varfarina bloqueia a carboxilação dependente de vitamina K; na hemofilia A (fator VIII) e na B (fator IX) a tenase fica comprometida."
+      },
+      {
+        "order": 5,
+        "description_pt": "Formação do coágulo: a trombina converte o fibrinogênio em monômeros de fibrina, que polimerizam. A própria trombina ativa o fator XIII, que cria ligações covalentes cruzadas e estabiliza a rede de fibrina. As plaquetas retraem o coágulo e aproximam as bordas da lesão.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "robbins"
+        ]
+      },
+      {
+        "order": 6,
+        "description_pt": "Limitação: a antitrombina (potencializada por heparan sulfato e heparina) inativa a trombina e o fator Xa; a trombina ligada à trombomodulina do endotélio ativa a proteína C, que com a proteína S inativa os fatores Va e VIIIa; o inibidor da via do fator tecidual (TFPI) bloqueia o complexo fator tecidual-VIIa-Xa. Assim o coágulo permanece restrito ao local da lesão.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "robbins"
+        ],
+        "clinica_pt": "O fator V de Leiden resiste à inativação pela proteína C ativada e é causa frequente de trombofilia hereditária."
+      },
+      {
+        "order": 7,
+        "description_pt": "Fibrinólise: o ativador do plasminogênio tecidual (t-PA), liberado pelo endotélio, converte o plasminogênio ligado à fibrina em plasmina, que degrada a fibrina em produtos de degradação, entre eles o D-dímero (fibrina com ligações cruzadas). A α2-antiplasmina limita a ação da plasmina fora do coágulo.",
+        "anchors": [
+          {
+            "sid": "za:coagulacao-sanguinea"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "robbins"
+        ],
+        "clinica_pt": "D-dímero elevado indica formação e degradação recentes de fibrina (trombose, CIVD), mas é inespecífico; os trombolíticos usam t-PA recombinante no infarto e no AVC isquêmico."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Hemostasia e coagulação sanguínea: espasmo vascular, tampão plaquetário, vias de coagulação e fibrinólise",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Hemostasia: plaquetas, cascata de coagulação, anticoagulantes naturais e fibrinólise",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Distúrbios hemodinâmicos, tromboembolia e choque: hemostasia e trombose",
+        "obraId": "robbins"
+      },
+      {
+        "field": "steps",
+        "ref": "Sangue: plaquetas e coagulação",
+        "obraId": "silverthorn"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "positivo",
+        "efetor": "Trombina",
+        "alvo": "Plaquetas e fatores V, VIII e XI",
+        "efeito": "Ativa os próprios cofatores e as plaquetas, o que acelera a geração de mais trombina até a formação do coágulo."
+      },
+      {
+        "tipo": "negativo",
+        "efetor": "Trombina ligada à trombomodulina (proteína C ativada) e antitrombina",
+        "alvo": "Fatores Va e VIIIa; trombina e fator Xa",
+        "efeito": "Inativam cofatores e enzimas da cascata e limitam o crescimento do coágulo ao local da lesão."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Hemofilia A",
+        "mecanismo": "Deficiência do fator VIII, que prejudica o complexo tenase e a geração de trombina; causa sangramentos articulares e musculares e TTPa prolongado.",
+        "cid": "D66"
+      },
+      {
+        "condicao": "Doença de von Willebrand",
+        "mecanismo": "Quantidade ou função reduzida do vWF compromete a adesão plaquetária e a estabilidade do fator VIII, com sangramento mucocutâneo.",
+        "cid": "D68.0"
+      },
+      {
+        "condicao": "Deficiência de vitamina K ou uso de varfarina",
+        "mecanismo": "Faltam as formas carboxiladas dos fatores II, VII, IX e X e das proteínas C e S; o TP/INR se prolonga e há risco de sangramento.",
+        "cid": "D68.4"
+      },
+      {
+        "condicao": "Fator V de Leiden",
+        "mecanismo": "Mutação que torna o fator Va resistente à inativação pela proteína C ativada; a coagulação não é adequadamente freada e há risco de trombose venosa.",
+        "cid": "D68.5"
+      },
+      {
+        "condicao": "Coagulação intravascular disseminada",
+        "mecanismo": "Ativação sistêmica da coagulação consome plaquetas e fatores e ativa a fibrinólise; combina microtrombos e sangramento, com D-dímero muito elevado.",
+        "cid": "D65"
+      }
+    ],
+    "interageCom": [
+      "resposta-inflamatoria"
+    ]
+  },
+  {
+    "id": "conducao-impulso-cardiaco",
+    "system": "cardiovascular",
+    "name_pt": "Condução do Impulso Cardíaco",
+    "description_pt": "Propagação ordenada do potencial de ação pelo sistema de condução do coração: nó sinoatrial, átrios, nó atrioventricular, feixe de His e fibras de Purkinje. A sequência garante átrios que se contraem antes dos ventrículos e ventrículos ativados de modo quase simultâneo.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Nó sinoatrial (SA), junto à desembocadura da veia cava superior: é o marcapasso dominante porque sua despolarização diastólica espontânea (automatismo, com a corrente de sódio \"funny\" e canais de cálcio) é a mais rápida do sistema. A frequência de repouso do adulto fica em geral entre 60 e 100 bpm e é ajustada pelo sistema nervoso autônomo: o vago (acetilcolina, receptor M2) a reduz e o simpático (noradrenalina, receptor beta-1) a aumenta. Marcapassos latentes têm frequências próprias menores (junção atrioventricular, cerca de 40 a 60 bpm; fibras de Purkinje, cerca de 15 a 40 bpm) e só assumem se o nó SA falhar.",
+        "anchors": [
+          {
+            "sid": "za:sa-node"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na doença do nó sinusal há bradicardia e pausas; pode ser necessário marcapasso artificial."
+      },
+      {
+        "order": 2,
+        "description_pt": "Átrios: o impulso se propaga célula a célula pelo miocárdio atrial (cerca de 0,3 m/s), com vias preferenciais (feixe interatrial de Bachmann e vias internodais) que levam a ativação ao átrio esquerdo e ao nó atrioventricular. Essa despolarização corresponde à onda P do ECG e precede a sístole atrial.",
+        "anchors": [
+          {
+            "sid": "za:atrial-spread"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Nó atrioventricular (AV): é a única ligação elétrica normal entre átrios e ventrículos, porque o esqueleto fibroso do coração isola as duas câmaras. Suas fibras pequenas, com potencial de ação dependente de cálcio, conduzem lentamente (cerca de 0,05 m/s) e produzem um retardo de aproximadamente 0,1 s (intervalo PR normal de 0,12 a 0,20 s), tempo para o esvaziamento atrial antes da sístole ventricular.",
+        "anchors": [
+          {
+            "sid": "za:av-node"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "No bloqueio AV de primeiro grau o PR passa de 0,20 s; no bloqueio total, átrios e ventrículos batem de forma independente, com escape ventricular lento."
+      },
+      {
+        "order": 4,
+        "description_pt": "Feixe de His e ramos direito e esquerdo: o feixe atravessa o esqueleto fibroso e se divide em ramos que descem de ambos os lados do septo interventricular. Conduz em um só sentido (do átrio ao ventrículo). O septo é o primeiro a ser ativado, da esquerda para a direita, o que inicia o complexo QRS.",
+        "anchors": [
+          {
+            "sid": "za:his-bundle"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Fibras de Purkinje e miocárdio ventricular: as fibras de Purkinje conduzem muito rápido (1,5 a 4 m/s) e entregam o impulso ao endocárdio de ambos os ventrículos de forma quase simultânea. A despolarização avança do ápice para a base e do endocárdio para o epicárdio, gerando o complexo QRS e desencadeando uma contração coordenada que ejeta o sangue.",
+        "anchors": [
+          {
+            "sid": "za:purkinje"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "junqueira"
+        ],
+        "clinica_pt": "No bloqueio de ramo, um ventrículo passa a ser ativado célula a célula, mais lentamente, e o QRS se alarga."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Excitação rítmica do coração: sistema especializado de excitação e condução, automatismo e controle autonômico",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Atividade elétrica do coração: automatismo do nó sinoatrial e sequência de condução",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Eletrofisiologia cardíaca: células autoexcitáveis, sistema de condução e eletrocardiograma",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Tecido muscular cardíaco: sistema de condução e fibras de Purkinje",
+        "obraId": "junqueira"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "desviosClinicos": [
+      {
+        "condicao": "Doença do nó sinusal",
+        "mecanismo": "Disfunção do marcapasso sinoatrial (fibrose, isquemia ou fármacos) causa bradicardia, pausas e alternância com taquiarritmias; marcapassos latentes podem assumir.",
+        "cid": "I49.5"
+      },
+      {
+        "condicao": "Bloqueio atrioventricular total",
+        "mecanismo": "Nenhum impulso atrial atravessa o nó AV ou o feixe de His; os ventrículos passam a ser comandados por um marcapasso de escape lento, com dissociação entre ondas P e QRS.",
+        "cid": "I44.2"
+      },
+      {
+        "condicao": "Síndrome de Wolff-Parkinson-White",
+        "mecanismo": "Uma via acessória atrioventricular contorna o retardo do nó AV e causa pré-excitação ventricular (PR curto e onda delta), com risco de taquicardias por reentrada.",
+        "cid": "I45.6"
+      },
+      {
+        "condicao": "Bloqueio de ramo esquerdo",
+        "mecanismo": "O ventrículo esquerdo é ativado tardiamente por condução célula a célula a partir do direito, com QRS alargado e dessincronia da contração.",
+        "cid": "I44.7"
+      }
+    ],
+    "interageCom": [
+      "ciclo-cardiaco",
+      "sinapse-colinergica"
+    ]
+  },
+  {
+    "id": "contracao-muscular",
+    "system": "muscular",
+    "name_pt": "Contração Muscular Esquelética",
+    "description_pt": "Um potencial de ação do neurônio motor libera Ca²⁺ do retículo sarcoplasmático, o que permite o ciclo de pontes cruzadas entre actina e miosina com gasto de ATP. O relaxamento ocorre quando o Ca²⁺ é recaptado.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Junção neuromuscular: o potencial de ação do neurônio motor libera acetilcolina, que abre os receptores nicotínicos da placa motora e gera um potencial de placa sempre suprarlimiar. Ele dispara um potencial de ação na fibra muscular, que se propaga pelo sarcolema.",
+        "anchors": [
+          {
+            "sid": "za:synapse-calcium",
+            "label_pt": "Junção neuromuscular"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "berne"
+        ],
+        "clinica_pt": "Na miastenia gravis, autoanticorpos contra o receptor nicotínico reduzem o potencial de placa e causam fraqueza que piora com o esforço."
+      },
+      {
+        "order": 2,
+        "description_pt": "Acoplamento excitação-contração: o potencial de ação penetra pelos túbulos T e ativa o receptor de diidropiridina (DHPR), um canal de Ca²⁺ tipo L que funciona como sensor de voltagem e está acoplado mecanicamente ao receptor de rianodina (RyR1) do retículo sarcoplasmático. O RyR1 se abre e o Ca²⁺ é liberado no citosol; no músculo esquelético esse acoplamento não depende da entrada de Ca²⁺ extracelular.",
+        "anchors": [
+          {
+            "sid": "za:calcium-release"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "berne"
+        ],
+        "clinica_pt": "Na hipertermia maligna, variantes do RyR1 permitem liberação descontrolada de Ca²⁺ diante de anestésicos halogenados e succinilcolina, com rigidez e hipertermia."
+      },
+      {
+        "order": 3,
+        "description_pt": "O Ca²⁺ liga-se à troponina C. A mudança de conformação da troponina desloca a tropomiosina e expõe, na actina, os sítios de ligação da miosina.",
+        "anchors": [
+          {
+            "sid": "za:troponin-binding"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Ciclo de pontes cruzadas: a cabeça da miosina, já com ADP e fosfato após a hidrólise do ATP, liga-se à actina; a liberação do fosfato e do ADP produz o movimento de força (power stroke), que desliza a actina em direção ao centro do sarcômero (os filamentos não encurtam, o sarcômero sim). Uma nova molécula de ATP liga-se à miosina e a desprende da actina, e o ciclo se repete enquanto houver Ca²⁺ e ATP.",
+        "anchors": [
+          {
+            "sid": "za:crossbridge-cycle"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "junqueira"
+        ],
+        "clinica_pt": "No rigor mortis falta ATP: a miosina não se desprende da actina e o músculo permanece rígido."
+      },
+      {
+        "order": 5,
+        "description_pt": "Relaxamento: cessa a estimulação, o RyR1 se fecha e a Ca²⁺-ATPase do retículo sarcoplasmático (SERCA) bombeia o Ca²⁺ de volta ao retículo, onde é ligado à calsequestrina. A queda do Ca²⁺ citosólico o desliga da troponina, a tropomiosina volta a cobrir os sítios da actina e o músculo relaxa.",
+        "anchors": [
+          {
+            "sid": "za:serca-uptake"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "berne"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Contração do músculo esquelético: base molecular, acoplamento excitação-contração e junção neuromuscular",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Músculo esquelético: acoplamento excitação-contração e ciclo das pontes cruzadas",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia do músculo esquelético: contração e relaxamento",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Tecido muscular: estrutura do sarcômero e mecanismo molecular da contração",
+        "obraId": "junqueira"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "desviosClinicos": [
+      {
+        "condicao": "Miastenia gravis",
+        "mecanismo": "Autoanticorpos contra o receptor nicotínico da placa motora reduzem o número de receptores funcionais e o potencial de placa; fraqueza flutuante que piora com a repetição do esforço.",
+        "cid": "G70.0"
+      },
+      {
+        "condicao": "Hipertermia maligna",
+        "mecanismo": "Variantes principalmente do gene do RyR1 tornam o canal hipersensível a anestésicos voláteis e succinilcolina; a liberação maciça de Ca²⁺ causa contração sustentada, hipermetabolismo e febre alta.",
+        "cid": "T88.3"
+      },
+      {
+        "condicao": "Tetania hipocalcêmica",
+        "mecanismo": "A baixa concentração extracelular de Ca²⁺ reduz o limiar de excitação dos canais de sódio da membrana, e as fibras nervosas e musculares disparam espontaneamente, com espasmos.",
+        "cid": "E83.5"
+      }
+    ],
+    "interageCom": [
+      "sinapse-colinergica",
+      "reflexo-miotatico"
+    ]
+  },
+  {
+    "id": "degluticao-humana",
+    "system": "digestorio",
+    "name_pt": "Fisiologia da Deglutição Humana",
+    "description_pt": "Sequência reflexa e coordenada que leva o alimento da boca ao estômago, em três fases: oral (voluntária), faríngea e esofágica (involuntárias, comandadas por um centro no tronco encefálico). A coordenação protege as vias aéreas durante a passagem do bolo.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Fase oral (voluntária): a mastigação e a saliva (muco e amilase salivar, a ptialina) formam o bolo alimentar. A língua o comprime contra o palato duro e o empurra para trás, em direção ao istmo das fauces e à orofaringe.",
+        "anchors": [
+          {
+            "sid": "za:oral-cavity"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Disparo do reflexo e vedação da nasofaringe: o bolo toca a mucosa da orofaringe e aferências dos nervos trigêmeo, glossofaríngeo e vago levam o estímulo ao centro da deglutição, no bulbo e na ponte. A partir daí a sequência é involuntária e estereotipada. O palato mole se eleva e veda a nasofaringe, impedindo o refluxo nasal.",
+        "anchors": [
+          {
+            "sid": "za:uvula-of-palate",
+            "label_pt": "Palato mole"
+          },
+          {
+            "sid": "za:pharynx-transit"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Proteção da via aérea: a laringe sobe e se projeta para a frente, as pregas vocais se aproximam e a epiglote se inclina sobre o ádito da laringe. A respiração é interrompida por um breve período (apneia da deglutição).",
+        "anchors": [
+          {
+            "sid": "za:epiglottis"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "tortora"
+        ],
+        "clinica_pt": "Lesões do tronco encefálico (como a síndrome bulbar lateral) e doenças neuromusculares prejudicam esse fechamento, causando disfagia orofaríngea e aspiração."
+      },
+      {
+        "order": 4,
+        "description_pt": "Propulsão faríngea: os músculos constritores da faringe se contraem em sequência, de cima para baixo, e o esfíncter esofágico superior (músculo cricofaríngeo) relaxa, ajudado pela elevação da laringe. O bolo passa para o esôfago, e o esfíncter recupera o tônus atrás dele.",
+        "anchors": [
+          {
+            "sid": "za:pharynx-transit"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Fase esofágica: a peristalse primária continua a onda iniciada na faringe e leva cerca de 8 a 10 segundos para percorrer o esôfago, a uma velocidade de cerca de 2 a 4 cm/s. O terço superior é de músculo estriado, comandado por neurônios motores do vago; o inferior é de músculo liso, e a onda é coordenada por fibras vagais e pelo plexo mioentérico (de Auerbach). Se resta bolo, a distensão desencadeia peristalse secundária.",
+        "anchors": [
+          {
+            "sid": "za:esophagus-wave"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "No megaesôfago chagásico, a destruição dos neurônios do plexo mioentérico elimina a peristalse e o relaxamento do esfíncter inferior."
+      },
+      {
+        "order": 6,
+        "description_pt": "Entrada no estômago: durante a onda peristáltica, o vago ativa neurônios inibitórios do plexo mioentérico, que liberam óxido nítrico e peptídeo intestinal vasoativo (VIP) e relaxam o esfíncter esofágico inferior (relaxamento receptivo). O bolo alimentar passa ao estômago, onde se tornará quimo, e o esfíncter recupera o tônus para evitar o refluxo.",
+        "anchors": [
+          {
+            "sid": "za:stomach-entry"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na acalasia o relaxamento do esfíncter inferior falha e não há peristalse, com disfagia para sólidos e líquidos; relaxamentos transitórios do esfíncter participam da doença do refluxo."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Propulsão e mistura do alimento no trato alimentar: deglutição e função motora do esôfago",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Motilidade do trato gastrointestinal: mastigação, deglutição e motilidade esofágica",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Digestão e motilidade gastrointestinal: reflexos da deglutição",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Sistema digestório: boca, faringe e esôfago, mecanismo da deglutição",
+        "obraId": "tortora"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "desviosClinicos": [
+      {
+        "condicao": "Acalasia",
+        "mecanismo": "Perda dos neurônios inibitórios do plexo mioentérico (óxido nítrico e VIP) impede o relaxamento do esfíncter esofágico inferior e a peristalse do corpo do esôfago; há disfagia e dilatação esofágica.",
+        "cid": "K22.0"
+      },
+      {
+        "condicao": "Disfagia orofaríngea neurogênica",
+        "mecanismo": "Lesão do tronco encefálico ou de nervos cranianos desorganiza a fase faríngea (fechamento laríngeo e relaxamento do esfíncter superior), com aspiração para as vias aéreas.",
+        "cid": "R13"
+      },
+      {
+        "condicao": "Doença do refluxo gastroesofágico",
+        "mecanismo": "Relaxamentos transitórios do esfíncter esofágico inferior, ou sua hipotonia, permitem refluxo do conteúdo gástrico para o esôfago.",
+        "cid": "K21"
+      }
+    ],
+    "interageCom": [
+      "peristaltismo-intestinal",
+      "sinapse-colinergica"
+    ]
+  },
+  {
+    "id": "eixo-hpa",
+    "system": "endocrino",
+    "name_pt": "Eixo Hipotálamo-Hipófise-Adrenal",
+    "description_pt": "Eixo neuroendócrino da resposta ao estresse e do ritmo circadiano: o hipotálamo libera CRH, a adeno-hipófise libera ACTH e o córtex da suprarrenal libera cortisol, que age nos tecidos e freia o próprio eixo por retroalimentação negativa.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Liberação de CRH: estresse físico ou psicológico, hipoglicemia, citocinas inflamatórias e o relógio circadiano ativam neurônios do núcleo paraventricular do hipotálamo, que liberam CRH (e, em sinergia, vasopressina) nos capilares do sistema porta hipotálamo-hipofisário. A secreção é pulsátil e tem pico no início da manhã.",
+        "anchors": [
+          {
+            "sid": "za:eixo-hpa"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Liberação de ACTH: o CRH chega pelo sistema porta à adeno-hipófise e se liga a receptores dos corticotrofos (acoplados à via do AMPc). Essas células clivam a pró-opiomelanocortina (POMC) e secretam ACTH na circulação sistêmica.",
+        "anchors": [
+          {
+            "sid": "za:adenohypophysis",
+            "label_pt": "Adeno-hipófise: corticotrofos"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Secreção de cortisol: o ACTH liga-se ao receptor MC2R do córtex da suprarrenal e estimula a esteroidogênese e a secreção de cortisol pela zona fasciculada (e de androgênios pela zona reticular). A zona glomerulosa, que secreta aldosterona, responde sobretudo à angiotensina II e ao K⁺. A estimulação sustentada por ACTH também tem efeito trófico sobre o córtex.",
+        "anchors": [
+          {
+            "sid": "za:suprarenal-gland-r",
+            "label_pt": "Córtex da suprarrenal"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "robbins"
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Ações do cortisol: ligando-se a receptores intracelulares de glicocorticoide, estimula a gliconeogênese hepática, mobiliza aminoácidos (catabolismo proteico) e ácidos graxos e reduz a captação periférica de glicose, elevando a glicemia. Tem ação anti-inflamatória e imunossupressora e é permissivo para a ação vascular das catecolaminas, o que sustenta a pressão arterial.",
+        "anchors": [
+          {
+            "sid": "za:liver",
+            "label_pt": "Fígado: gliconeogênese"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "katzung"
+        ],
+        "clinica_pt": "O uso prolongado de glicocorticoides causa hiperglicemia, perda de massa muscular, menor resposta inflamatória e maior risco de infecção."
+      },
+      {
+        "order": 5,
+        "description_pt": "Retroalimentação negativa: o cortisol atua no hipotálamo (reduz CRH e vasopressina) e na hipófise (reduz a resposta do corticotrofo ao CRH e a transcrição de POMC); o ACTH também inibe a liberação de CRH (alça curta). Quando o estímulo cessa, o eixo retorna à linha de base.",
+        "anchors": [
+          {
+            "sid": "za:eixo-hpa"
+          },
+          {
+            "sid": "za:adenohypophysis",
+            "label_pt": "Adeno-hipófise"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "O glicocorticoide exógeno prolongado suprime o eixo e atrofia o córtex; a retirada abrupta pode causar insuficiência adrenal."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Hormônios adrenocorticais: síntese, ações e regulação do cortisol por CRH e ACTH",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Glândula suprarrenal e controle neuroendócrino: eixo hipotálamo-hipófise-adrenal",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Glândulas endócrinas e resposta ao estresse: eixo hipotálamo-hipófise-adrenal",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Doenças do córtex da suprarrenal: síndrome de Cushing e insuficiência adrenal",
+        "obraId": "robbins"
+      },
+      {
+        "field": "steps",
+        "ref": "Hormônios do córtex da suprarrenal e glicocorticoides: ações e uso terapêutico",
+        "obraId": "katzung"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "negativo",
+        "efetor": "Cortisol",
+        "alvo": "Hipotálamo (CRH) e adeno-hipófise (ACTH)",
+        "efeito": "Reduz a secreção de CRH e de ACTH e, assim, limita a própria produção de cortisol (alça longa)."
+      },
+      {
+        "tipo": "negativo",
+        "efetor": "ACTH",
+        "alvo": "Hipotálamo (CRH)",
+        "efeito": "Inibe a liberação de CRH (alça curta)."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Síndrome de Cushing",
+        "mecanismo": "Excesso de glicocorticoide, por adenoma hipofisário produtor de ACTH, tumor suprarrenal ou uso exógeno; causa obesidade central, hiperglicemia, hipertensão, fraqueza muscular e estrias.",
+        "cid": "E24"
+      },
+      {
+        "condicao": "Insuficiência adrenal primária (doença de Addison)",
+        "mecanismo": "A destruição do córtex reduz cortisol e aldosterona; sem retroalimentação negativa o ACTH se eleva e, por derivar da POMC, causa hiperpigmentação; há hipotensão, hipoglicemia e perda de sódio.",
+        "cid": "E27.1"
+      },
+      {
+        "condicao": "Hiperplasia adrenal congênita (deficiência de 21-hidroxilase)",
+        "mecanismo": "Bloqueio da síntese de cortisol aumenta o ACTH por perda do freio, causa hiperplasia do córtex e desvia precursores para androgênios.",
+        "cid": "E25.0"
+      },
+      {
+        "condicao": "Supressão do eixo por glicocorticoide exógeno",
+        "mecanismo": "O corticoide usado por tempo prolongado inibe CRH e ACTH e atrofia a zona fasciculada; a suspensão abrupta deixa o paciente sem resposta adrenal ao estresse.",
+        "cid": "E27.3"
+      }
+    ],
+    "interageCom": [
+      "resposta-inflamatoria",
+      "resposta-imune-adaptativa",
+      "ciclo-menstrual",
+      "espermatogenese"
+    ]
+  },
+  {
+    "id": "espermatogenese",
+    "system": "reprodutor",
+    "name_pt": "Espermatogênese",
+    "description_pt": "Produção contínua de espermatozoides nos túbulos seminíferos, apoiada pelas células de Sertoli e controlada por FSH, LH e testosterona. Leva cerca de 64 a 74 dias, conforme a referência, e inclui mitoses, duas divisões meióticas e a diferenciação das espermátides (espermiogênese).",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Controle hormonal: o GnRH pulsátil estimula a adeno-hipófise. O LH atua nas células de Leydig e estimula a produção de testosterona; o FSH atua nas células de Sertoli, que, com a testosterona, sustentam a espermatogênese (inclusive pela proteína ligadora de androgênio, que mantém alta a testosterona no túbulo).",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          },
+          {
+            "sid": "za:adenohypophysis",
+            "label_pt": "Adeno-hipófise: FSH e LH"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Fase mitótica: as espermatogônias, na base do epitélio seminífero, proliferam por mitose. Parte se mantém como células-tronco (tipo A) e parte se diferencia (tipo B) em espermatócitos primários.",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ],
+        "refs": [
+          "junqueira",
+          "guyton",
+          "berne"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Passagem pela barreira hematotesticular: os espermatócitos primários cruzam as junções oclusivas entre células de Sertoli e passam ao compartimento adluminal. A barreira isola as células haploides do sistema imune e cria um microambiente próprio para a meiose.",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ],
+        "refs": [
+          "junqueira",
+          "berne",
+          "robbins"
+        ],
+        "clinica_pt": "Lesão da barreira (trauma, infecção) pode expor antígenos de células haploides ao sistema imune e favorecer anticorpos antiespermatozoide."
+      },
+      {
+        "order": 4,
+        "description_pt": "Meiose I (divisão reducional): cada espermatócito primário (2n, cromossomos duplicados) passa por uma prófase longa, com pareamento e crossing-over, e origina 2 espermatócitos secundários (n, com cromátides duplicadas).",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ],
+        "refs": [
+          "junqueira",
+          "guyton",
+          "berne"
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Meiose II (divisão equacional): os espermatócitos secundários se dividem rapidamente e geram quatro espermátides haploides (n) por espermatócito primário. As células-filhas permanecem unidas por pontes citoplasmáticas, o que sincroniza seu desenvolvimento.",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ],
+        "refs": [
+          "junqueira",
+          "guyton",
+          "berne"
+        ]
+      },
+      {
+        "order": 6,
+        "description_pt": "Espermiogênese: sem nova divisão, as espermátides se diferenciam em espermatozoides. O complexo de Golgi forma o acrossomo, o núcleo se condensa (histonas substituídas por protaminas), o flagelo se desenvolve, as mitocôndrias se organizam na peça intermediária e o citoplasma excedente é eliminado como corpo residual, fagocitado pelas células de Sertoli.",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ],
+        "refs": [
+          "junqueira",
+          "guyton",
+          "berne"
+        ]
+      },
+      {
+        "order": 7,
+        "description_pt": "Espermiação e maturação: os espermatozoides são liberados no lúmen do túbulo, ainda imóveis, e levados pelo fluido testicular até o epidídimo. Lá adquirem motilidade e capacidade de fecundar, e a capacitação se completa no trato genital feminino. A espermatogênese exige temperatura testicular cerca de 2 °C abaixo da corporal.",
+        "anchors": [
+          {
+            "sid": "za:espermatogenese"
+          }
+        ],
+        "refs": [
+          "junqueira",
+          "guyton",
+          "berne"
+        ],
+        "clinica_pt": "Na criptorquidia e na varicocele, a temperatura testicular mais alta prejudica a espermatogênese e reduz a fertilidade."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Aparelho reprodutor masculino: túbulos seminíferos, espermatogênese, espermiogênese e células de Sertoli",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "steps",
+        "ref": "Funções reprodutivas e hormonais no homem: espermatogênese e controle hormonal",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia reprodutiva masculina: testículo, eixo hipotálamo-hipófise-gonadal e espermatogênese",
+        "obraId": "berne"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Doenças do testículo: criptorquidia e anomalias da espermatogênese",
+        "obraId": "robbins"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "negativo",
+        "efetor": "Inibina B das células de Sertoli",
+        "alvo": "Adeno-hipófise (FSH)",
+        "efeito": "Reduz o FSH quando a espermatogênese está ativa, o que regula a atividade do epitélio seminífero."
+      },
+      {
+        "tipo": "negativo",
+        "efetor": "Testosterona das células de Leydig",
+        "alvo": "Hipotálamo (GnRH) e adeno-hipófise (LH)",
+        "efeito": "Reduz a secreção de GnRH e LH e limita a própria produção de testosterona."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Criptorquidia",
+        "mecanismo": "O testículo retido em temperatura mais alta que a escrotal sofre detenção da espermatogênese e perda de células germinativas, com infertilidade e maior risco de neoplasia.",
+        "cid": "Q53"
+      },
+      {
+        "condicao": "Varicocele",
+        "mecanismo": "A dilatação do plexo venoso do cordão espermático aquece o testículo e pode reduzir a contagem e a qualidade dos espermatozoides.",
+        "cid": "I86.1"
+      },
+      {
+        "condicao": "Síndrome de Klinefelter",
+        "mecanismo": "O cariótipo 47,XXY causa disfunção das células de Sertoli e de Leydig; os testículos ficam pequenos, há baixa testosterona e FSH e LH altos por perda de retroalimentação.",
+        "cid": "Q98"
+      },
+      {
+        "condicao": "Hipogonadismo hipogonadotrófico",
+        "mecanismo": "A falta de GnRH, FSH e LH reduz a testosterona intratesticular e interrompe a espermatogênese; costuma responder a gonadotrofinas.",
+        "cid": "E23.0"
+      }
+    ],
+    "interageCom": [
+      "ciclo-menstrual",
+      "eixo-hpa"
+    ]
+  },
+  {
+    "id": "filtracao-glomerular",
+    "system": "urinario",
+    "name_pt": "Filtração Glomerular & Dinâmica Tubular",
+    "description_pt": "Formação da urina: o plasma é ultrafiltrado nos glomérulos (taxa de filtração glomerular de cerca de 125 mL/min, ou cerca de 180 L/dia) e o filtrado é modificado ao longo do néfron por reabsorção e secreção. Menos de 1% do volume filtrado é excretado.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Filtração: o sangue chega ao glomérulo pela arteríola aferente. A pressão hidrostática dos capilares glomerulares (cerca de 60 mmHg) supera a soma da pressão hidrostática da cápsula de Bowman (cerca de 18 mmHg) com a pressão coloidosmótica do plasma (cerca de 32 mmHg), o que resulta em pressão efetiva de filtração de cerca de 10 mmHg.",
+        "anchors": [
+          {
+            "sid": "za:glomerular-filter"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Barreira de filtração: o líquido atravessa três camadas, o endotélio fenestrado, a membrana basal glomerular (colágeno IV e proteoglicanos de carga negativa) e as fendas de filtração entre os pedicelos dos podócitos (nefrina). Água e solutos pequenos passam livremente; células e a maioria das proteínas, como a albumina, ficam retidas. A taxa de filtração glomerular é de cerca de 125 mL/min.",
+        "anchors": [
+          {
+            "sid": "za:glomerular-filter"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "junqueira",
+          "robbins"
+        ],
+        "clinica_pt": "Na síndrome nefrótica a barreira perde a seletividade, com proteinúria acima de 3,5 g em 24 horas, hipoalbuminemia e edema."
+      },
+      {
+        "order": 3,
+        "description_pt": "Regulação da filtração: a autorregulação (resposta miogênica e retroalimentação tubuloglomerular, com sensor na mácula densa) mantém o fluxo sanguíneo renal e a taxa de filtração quase constantes em ampla faixa de pressão arterial. A angiotensina II contrai preferencialmente a arteríola eferente e ajuda a preservar a filtração quando a perfusão cai.",
+        "anchors": [
+          {
+            "sid": "za:glomerular-filter"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Em hipovolemia, anti-inflamatórios não esteroides (reduzem prostaglandinas que dilatam a aferente) e inibidores da ECA ou bloqueadores do receptor de angiotensina (dilatam a eferente) podem precipitar queda da filtração."
+      },
+      {
+        "order": 4,
+        "description_pt": "Túbulo proximal: reabsorve cerca de 65% da água e do Na⁺ filtrados. A Na⁺/K⁺-ATPase basolateral cria o gradiente que move cotransportes apicais (Na⁺-glicose por SGLT2 e SGLT1, Na⁺-aminoácidos) e o trocador Na⁺/H⁺ (reabsorção de bicarbonato); a água segue passivamente por osmose (aquaporina 1). Em condições normais toda a glicose e os aminoácidos filtrados são reabsorvidos.",
+        "anchors": [
+          {
+            "sid": "za:tubular-reabsorption"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Há glicosúria quando a glicose plasmática passa do limiar renal (cerca de 180 a 200 mg/dL), como no diabetes descompensado; os inibidores de SGLT2 provocam glicosúria terapêutica."
+      },
+      {
+        "order": 5,
+        "description_pt": "Alça de Henle: o ramo descendente é permeável à água; o ramo ascendente espesso reabsorve Na⁺, K⁺ e 2Cl⁻ (cotransportador NKCC2) sem reabsorver água, o que dilui o líquido tubular. Cerca de 25% do Na⁺ filtrado é reabsorvido aqui, e o mecanismo de contracorrente gera a medula hipertônica.",
+        "anchors": [
+          {
+            "sid": "za:tubular-reabsorption"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Os diuréticos de alça, como a furosemida, bloqueiam o NKCC2."
+      },
+      {
+        "order": 6,
+        "description_pt": "Túbulo distal e ducto coletor: ajuste fino sob controle hormonal. A aldosterona aumenta a reabsorção de Na⁺ (canal ENaC) e a secreção de K⁺; o ADH insere aquaporina 2 no ducto coletor e concentra a urina; o PTH aumenta a reabsorção de Ca²⁺ no túbulo distal. Somada à secreção tubular, define a urina final, que segue pela pelve renal, ureter e bexiga.",
+        "anchors": [
+          {
+            "sid": "za:tubular-reabsorption"
+          },
+          {
+            "sid": "za:urinary-bladder",
+            "label_pt": "Bexiga: destino da urina"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Os rins: formação da urina, filtração glomerular, fluxo sanguíneo renal e seu controle",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia renal: filtração glomerular e transporte tubular ao longo do néfron",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Função renal: filtração, reabsorção, secreção e excreção",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Sistema urinário: corpúsculo renal, barreira de filtração e túbulos",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Rim: doenças glomerulares e síndrome nefrótica",
+        "obraId": "robbins"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "negativo",
+        "efetor": "Mácula densa (retroalimentação tubuloglomerular)",
+        "alvo": "Arteríola aferente e células justaglomerulares",
+        "efeito": "O aumento da oferta de NaCl ao túbulo distal contrai a aferente e reduz a filtração; a queda da oferta dilata a aferente e estimula a renina."
+      },
+      {
+        "tipo": "negativo",
+        "efetor": "ADH (vasopressina)",
+        "alvo": "Ducto coletor (aquaporina 2)",
+        "efeito": "O aumento da osmolaridade plasmática libera ADH, que aumenta a reabsorção de água e reduz a osmolaridade."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Doença renal crônica",
+        "mecanismo": "A perda progressiva de néfrons reduz a taxa de filtração glomerular; os néfrons restantes hiperfiltram e a sobrecarga acelera a lesão, com retenção de ureia, creatinina, fosfato e água.",
+        "cid": "N18"
+      },
+      {
+        "condicao": "Síndrome nefrótica",
+        "mecanismo": "A lesão dos podócitos ou da membrana basal aumenta a permeabilidade a proteínas e causa proteinúria maciça, hipoalbuminemia e edema.",
+        "cid": "N04"
+      },
+      {
+        "condicao": "Lesão renal aguda pré-renal",
+        "mecanismo": "A hipoperfusão reduz a pressão hidrostática glomerular e a filtração quando a autorregulação é superada ou bloqueada por fármacos.",
+        "cid": "N17"
+      },
+      {
+        "condicao": "Glicosúria do diabetes mellitus",
+        "mecanismo": "A glicose filtrada excede a capacidade máxima de transporte tubular e aparece na urina, com diurese osmótica.",
+        "cid": "R81"
+      }
+    ],
+    "interageCom": [
+      "ciclo-cardiaco",
+      "hematose-alveolar"
+    ]
+  },
+  {
+    "id": "hematose-alveolar",
+    "system": "respiratorio",
+    "name_pt": "Hematose Alvéolo-Capilar",
+    "description_pt": "Troca gasosa entre o ar alveolar e o sangue dos capilares pulmonares, por difusão passiva através da membrana alvéolo-capilar. Depende da ventilação alveolar, da perfusão e do gradiente de pressão parcial de cada gás.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Inspiração: a contração do diafragma (nervo frênico) e dos músculos intercostais externos aumenta o volume torácico; a pressão alveolar cai abaixo da atmosférica e o ar flui pela traqueia e pela árvore brônquica até os alvéolos. A expiração em repouso é passiva, por retração elástica dos pulmões.",
+        "anchors": [
+          {
+            "sid": "za:diaphragm",
+            "label_pt": "Diafragma"
+          },
+          {
+            "sid": "za:ventilation"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "A fraqueza do diafragma (lesão do nervo frênico, doenças neuromusculares) reduz a ventilação alveolar e eleva o CO₂."
+      },
+      {
+        "order": 2,
+        "description_pt": "Ventilação alveolar: de um volume corrente de cerca de 500 mL, cerca de 150 mL ficam no espaço morto anatômico; assim, cerca de 350 mL de ar novo chegam aos alvéolos a cada incursão (com 12 incursões por minuto, cerca de 4,2 L/min). Essa renovação gradual mantém a PO₂ alveolar em cerca de 104 mmHg e a PCO₂ em cerca de 40 mmHg.",
+        "anchors": [
+          {
+            "sid": "za:ventilation"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "A respiração rápida e superficial aumenta a fração do volume corrente perdida no espaço morto e reduz a ventilação alveolar."
+      },
+      {
+        "order": 3,
+        "description_pt": "Perfusão: o sangue venoso misto (PO₂ de cerca de 40 mmHg e PCO₂ de cerca de 45 mmHg) chega pelas artérias pulmonares aos capilares alveolares. A relação ventilação/perfusão ideal é de cerca de 0,8 (ventilação alveolar de 4,2 L/min para débito de cerca de 5 L/min), e a vasoconstrição hipóxica desvia o fluxo de alvéolos mal ventilados.",
+        "anchors": [
+          {
+            "sid": "za:pulmonary-trunk",
+            "label_pt": "Tronco pulmonar"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na embolia pulmonar há alvéolos ventilados sem perfusão (espaço morto alveolar); na pneumonia há perfusão sem ventilação (shunt)."
+      },
+      {
+        "order": 4,
+        "description_pt": "Difusão de O₂: o gradiente alvéolo (104 mmHg) para capilar (40 mmHg) leva o O₂ através de uma membrana respiratória de cerca de 0,6 µm de espessura e área de cerca de 70 m². O equilíbrio se completa em cerca de 0,25 s, um terço do tempo de trânsito da hemácia no capilar em repouso (cerca de 0,75 s), o que dá margem de segurança. O O₂ se liga à hemoglobina (saturação arterial de cerca de 97%).",
+        "anchors": [
+          {
+            "sid": "za:o2-diffusion"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "junqueira"
+        ],
+        "clinica_pt": "Fibrose e edema pulmonar espessam a barreira; no exercício, com trânsito mais curto, a limitação de difusão aparece primeiro."
+      },
+      {
+        "order": 5,
+        "description_pt": "Difusão de CO₂: o gradiente é pequeno (capilar 45 mmHg para alvéolo 40 mmHg), mas o CO₂ difunde cerca de 20 vezes mais rápido que o O₂ por ser muito mais solúvel. No sangue ele é transportado sobretudo como bicarbonato (cerca de 70%), ligado à hemoglobina como carbamino (cerca de 23%) e dissolvido (cerca de 7%); nos pulmões essas reações se invertem.",
+        "anchors": [
+          {
+            "sid": "za:co2-diffusion"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 6,
+        "description_pt": "Retorno e regulação: o sangue arterializado volta ao átrio esquerdo pelas veias pulmonares; sua PO₂ (cerca de 95 mmHg) fica um pouco abaixo da alveolar por mistura com sangue desviado (shunt fisiológico). Quimiorreceptores centrais (sensíveis ao CO₂ e ao H⁺) e periféricos (sensíveis sobretudo à PO₂ baixa) ajustam a ventilação para manter PCO₂ e pH.",
+        "anchors": [
+          {
+            "sid": "za:left-atrium",
+            "label_pt": "Átrio esquerdo: sangue arterializado"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Ventilação pulmonar e princípios físicos das trocas gasosas: difusão de O2 e CO2 através da membrana respiratória",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia respiratória: ventilação, perfusão, difusão e transporte de gases",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Trocas e transporte de gases: ventilação alveolar e controle da respiração",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Sistema respiratório: alvéolo e barreira hematoaérea",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "steps",
+        "ref": "Sistema respiratório: ventilação pulmonar e trocas gasosas",
+        "obraId": "tortora"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "negativo",
+        "efetor": "Quimiorreceptores centrais (CO₂ e H⁺) e periféricos (PO₂ baixa)",
+        "alvo": "Centro respiratório do tronco encefálico (frequência e profundidade da ventilação)",
+        "efeito": "O aumento de PCO₂ ou a queda de PO₂ aumenta a ventilação, e o CO₂ retorna ao valor-alvo."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Doença pulmonar obstrutiva crônica (enfisema)",
+        "mecanismo": "A destruição das paredes alveolares reduz a área de troca e desorganiza a relação ventilação/perfusão, com hipoxemia e, nos casos graves, retenção de CO₂.",
+        "cid": "J44"
+      },
+      {
+        "condicao": "Fibrose pulmonar",
+        "mecanismo": "O espessamento da membrana alvéolo-capilar e do interstício limita a difusão de O₂, principalmente no exercício.",
+        "cid": "J84.1"
+      },
+      {
+        "condicao": "Edema pulmonar",
+        "mecanismo": "O líquido no interstício e nos alvéolos aumenta a distância de difusão e reduz a área ventilada, com hipoxemia.",
+        "cid": "J81"
+      },
+      {
+        "condicao": "Embolia pulmonar",
+        "mecanismo": "O êmbolo interrompe a perfusão de alvéolos ventilados e cria espaço morto alveolar, com hipoxemia e desvio do fluxo para áreas não afetadas.",
+        "cid": "I26"
+      }
+    ],
+    "interageCom": [
+      "ciclo-cardiaco",
+      "filtracao-glomerular",
+      "contracao-muscular"
+    ]
+  },
+  {
+    "id": "peristaltismo-intestinal",
+    "system": "digestorio",
+    "name_pt": "Motilidade e Peristaltismo Enteral",
+    "description_pt": "Movimentos do intestino que misturam e propelem o conteúdo: segmentação para misturar, peristalse para avançar e complexo motor migratório entre as refeições. O ritmo básico vem das células intersticiais de Cajal e o reflexo peristáltico é integrado pelo plexo mioentérico (de Auerbach).",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Ritmo básico: as células intersticiais de Cajal geram ondas lentas de potencial de membrana na musculatura lisa (cerca de 12 por minuto no duodeno, menos nos segmentos distais). A contração só ocorre quando potenciais de ação, estimulados por acetilcolina e pela distensão, se sobrepõem às ondas lentas; por isso a frequência máxima de contração é ditada por elas.",
+        "anchors": [
+          {
+            "sid": "za:quimo-propulsion"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Segmentação (mistura): contrações rítmicas dos anéis de músculo circular, em pontos alternados, dividem e redividem o quimo, misturando-o às secreções digestivas e expondo-o à mucosa para absorção. Há pouco avanço líquido do conteúdo.",
+        "anchors": [
+          {
+            "sid": "za:quimo-propulsion"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Início do reflexo peristáltico: a distensão da parede, ou estímulos químicos e mecânicos da mucosa (com liberação de serotonina por células enterocromafins), ativam neurônios sensitivos intrínsecos do plexo mioentérico, que acionam interneurônios ascendentes e descendentes.",
+        "anchors": [
+          {
+            "sid": "za:quimo-propulsion"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Contração atrás do bolo: neurônios motores excitatórios, situados do lado oral do estímulo, liberam acetilcolina e substância P e contraem o músculo circular proximal ao bolo.",
+        "anchors": [
+          {
+            "sid": "za:quimo-propulsion"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Os opioides ativam receptores mu do plexo mioentérico, reduzem a liberação de acetilcolina e causam constipação."
+      },
+      {
+        "order": 5,
+        "description_pt": "Relaxamento à frente do bolo: neurônios motores inibitórios, do lado anal, liberam óxido nítrico, VIP e ATP e relaxam o músculo circular distal. O anel de contração empurra o bolo para o segmento relaxado e a onda avança em direção anal (\"lei do intestino\"), de forma coordenada e sem depender do sistema nervoso central.",
+        "anchors": [
+          {
+            "sid": "za:quimo-advance"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "Na doença de Hirschsprung faltam gânglios do plexo mioentérico no segmento distal; sem relaxamento mediado por óxido nítrico e VIP há obstrução funcional."
+      },
+      {
+        "order": 6,
+        "description_pt": "Entre as refeições (jejum): o complexo motor migratório, uma onda de contrações que se repete a cada cerca de 90 minutos e percorre o intestino delgado (com participação da motilina), varre resíduos e bactérias. O sistema nervoso autônomo modula o programa intrínseco: em geral o parassimpático (vago) estimula e o simpático inibe a motilidade.",
+        "anchors": [
+          {
+            "sid": "za:quimo-advance"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "berne",
+          "silverthorn"
+        ],
+        "clinica_pt": "No íleo paralítico (pós-operatório, peritonite, distúrbios hidroeletrolíticos) a motilidade cessa e o conteúdo não progride."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Propulsão e mistura do alimento no trato alimentar: movimentos peristálticos e de segmentação",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Motilidade do trato gastrointestinal: sistema nervoso entérico, ondas lentas e reflexo peristáltico",
+        "obraId": "berne"
+      },
+      {
+        "field": "steps",
+        "ref": "Digestão: motilidade gastrointestinal e controle neural",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Trato digestório: túnica muscular e plexos mioentérico e submucoso",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Trato gastrointestinal: doença de Hirschsprung e obstrução funcional",
+        "obraId": "robbins"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "desviosClinicos": [
+      {
+        "condicao": "Íleo paralítico",
+        "mecanismo": "A inibição reflexa ou farmacológica da atividade motora do plexo mioentérico interrompe a peristalse, com distensão e acúmulo de conteúdo.",
+        "cid": "K56.0"
+      },
+      {
+        "condicao": "Doença de Hirschsprung",
+        "mecanismo": "A ausência congênita de células ganglionares no segmento distal do intestino impede o relaxamento por óxido nítrico e VIP; o segmento fica contraído e o proximal se dilata.",
+        "cid": "Q43.1"
+      },
+      {
+        "condicao": "Constipação induzida por opioides",
+        "mecanismo": "A ativação de receptores mu entéricos inibe a liberação de acetilcolina e aumenta o tônus e a segmentação, o que reduz a propulsão.",
+        "cid": "K59.0"
+      }
+    ],
+    "interageCom": [
+      "degluticao-humana",
+      "sinapse-colinergica"
+    ]
+  },
+  {
+    "id": "reflexo-miotatico",
+    "system": "nervoso",
+    "name_pt": "Reflexo Miotático (De Estiramento)",
+    "description_pt": "Arco reflexo espinhal em que o estiramento de um músculo provoca sua contração: aferente Ia do fuso neuromuscular, sinapse monossináptica excitatória no motoneurônio alfa e inibição recíproca do antagonista. Mantém o comprimento muscular e o tônus postural.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Estímulo: a percussão do tendão patelar (ou um alongamento súbito) estira o músculo quadríceps e, com ele, as fibras intrafusais dos fusos neuromusculares, que ficam em paralelo com as fibras extrafusais.",
+        "anchors": [
+          {
+            "sid": "za:reflexo-miotatico"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "machado"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Receptor: as terminações anuloespirais das fibras aferentes Ia, enroladas nas fibras intrafusais, se deformam com o estiramento e abrem canais mecanossensíveis. A frequência de disparo das fibras Ia codifica o comprimento e a velocidade de estiramento. Não confundir com o órgão tendinoso de Golgi (aferentes Ib), que mede tensão e inibe o próprio músculo.",
+        "anchors": [
+          {
+            "sid": "za:reflexo-miotatico"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "machado"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Via aferente: o impulso Ia segue pelo nervo periférico (femoral, no reflexo patelar), tem o corpo celular no gânglio da raiz dorsal e entra na medula pela raiz posterior (segmentos L2 a L4 no reflexo patelar). Os axônios Ia atravessam o corno posterior e projetam para o corno anterior.",
+        "anchors": [
+          {
+            "sid": "za:posterior-horn-of-spinal-cord",
+            "label_pt": "Corno posterior: entrada da aferência Ia"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "machado"
+        ],
+        "clinica_pt": "A ausência do reflexo patelar sugere interrupção do arco: neuropatia periférica, lesão de raiz ou dos segmentos L2 a L4."
+      },
+      {
+        "order": 4,
+        "description_pt": "Sinapse central: o aferente Ia faz sinapse excitatória (glutamato), direta e monossináptica, com os motoneurônios alfa do mesmo músculo e de seus sinergistas, no corno anterior. É o exemplo clássico de reflexo monossináptico, sem interneurônio no ramo excitatório.",
+        "anchors": [
+          {
+            "sid": "za:anterior-horn-of-spinal-cord",
+            "label_pt": "Corno anterior: motoneurônio alfa"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "machado"
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Resposta efetora: o axônio do motoneurônio alfa segue pela raiz anterior e pelo nervo até a placa motora, onde a acetilcolina provoca a contração do quadríceps e a perna se estende. A contração encurta o músculo e reduz o estiramento do fuso, o que fecha uma alça de retroalimentação negativa.",
+        "anchors": [
+          {
+            "sid": "za:reflexo-miotatico"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "berne"
+        ]
+      },
+      {
+        "order": 6,
+        "description_pt": "Inibição recíproca: colaterais do aferente Ia ativam interneurônios inibitórios (glicinérgicos) que inibem os motoneurônios alfa do músculo antagonista (isquiotibiais), de modo que ele não resista à contração do agonista.",
+        "anchors": [
+          {
+            "sid": "za:anterior-horn-of-spinal-cord",
+            "label_pt": "Interneurônio inibitório e antagonista"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "machado"
+        ]
+      },
+      {
+        "order": 7,
+        "description_pt": "Ajuste de ganho: os motoneurônios gama contraem as extremidades das fibras intrafusais e mantêm o fuso tenso e sensível durante a contração (coativação alfa-gama). Vias descendentes modulam esse ganho, de modo que o mesmo estiramento pode gerar respostas de intensidade diferente.",
+        "anchors": [
+          {
+            "sid": "za:reflexo-miotatico"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "machado"
+        ],
+        "clinica_pt": "A lesão do neurônio motor superior reduz a inibição descendente e causa hiperreflexia, clônus e espasticidade; a do neurônio motor inferior causa hiporreflexia ou arreflexia e hipotonia."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Reflexos medulares: receptores sensoriais musculares, fuso muscular e reflexo de estiramento",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Controle do movimento: reflexos espinhais, fusos neuromusculares e inibição recíproca",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Neuroanatomia funcional: medula espinhal, arco reflexo e propriocepção muscular",
+        "obraId": "machado"
+      },
+      {
+        "field": "steps",
+        "ref": "Fisiologia do movimento: organização espinhal do controle motor",
+        "obraId": "berne"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "negativo",
+        "efetor": "Contração do músculo estirado (motoneurônio alfa)",
+        "alvo": "Comprimento muscular e descarga do fuso (aferentes Ia)",
+        "efeito": "O músculo encurta, o estiramento do fuso diminui e a ativação do reflexo cessa; o comprimento muscular é mantido."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Espasticidade por lesão do neurônio motor superior",
+        "mecanismo": "A perda da inibição descendente sobre os circuitos medulares aumenta o ganho do reflexo de estiramento; a resistência ao alongamento passivo cresce com a velocidade e há hiperreflexia e clônus."
+      },
+      {
+        "condicao": "Hiporreflexia por lesão do arco reflexo",
+        "mecanismo": "A interrupção do ramo aferente, do motoneurônio ou do nervo (neuropatia periférica, radiculopatia) abole a resposta ao estiramento, com hipotonia e fraqueza."
+      }
+    ],
+    "interageCom": [
+      "contracao-muscular",
+      "sinapse-colinergica"
+    ]
+  },
+  {
+    "id": "resposta-imune-adaptativa",
+    "system": "imunologico",
+    "name_pt": "Resposta Imune Adaptativa Humoral",
+    "description_pt": "Ativação de linfócitos T auxiliares e B em órgãos linfáticos secundários, com produção de anticorpos específicos, troca de classe, maturação de afinidade e geração de memória imunológica.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Captura e transporte do antígeno: células dendríticas teciduais capturam o antígeno, amadurecem ao receber sinais de receptores de reconhecimento de padrões (como os TLR), aumentam MHC de classe II e moléculas coestimuladoras (B7) e migram pelos linfáticos aferentes até o linfonodo regional, na zona de células T. Antígenos solúveis também chegam aos folículos B pela linfa.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ],
+        "refs": [
+          "abbas",
+          "junqueira",
+          "robbins"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Ativação do linfócito T auxiliar: o TCR do linfócito T CD4+ virgem reconhece o peptídeo apresentado em MHC de classe II e recebe o segundo sinal por CD28-B7. O linfócito secreta IL-2, que age sobre ele mesmo e o faz proliferar, e se diferencia em células auxiliares, entre elas o folicular (Tfh), que produz IL-21 e IL-4.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ],
+        "refs": [
+          "abbas",
+          "robbins",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Reconhecimento pelo linfócito B: o BCR reconhece o antígeno nativo no folículo, sem necessidade de MHC. O linfócito B internaliza o antígeno, processa-o e apresenta peptídeos em MHC de classe II, e migra para a borda entre as zonas T e B.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ],
+        "refs": [
+          "abbas",
+          "junqueira",
+          "robbins"
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Ajuda cognata: o Tfh reconhece o mesmo antígeno apresentado pelo linfócito B e fornece CD40L (que se liga ao CD40 do B) e citocinas (IL-4, IL-21). O B prolifera e uma parte forma focos extrafoliculares de plasmablastos que produzem IgM de baixa afinidade, a resposta humoral precoce.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ],
+        "refs": [
+          "abbas",
+          "robbins",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 5,
+        "description_pt": "Centro germinativo: os linfócitos B proliferam no folículo e sofrem hipermutação somática dos genes de imunoglobulina (enzima AID). Os que ligam o antígeno com maior afinidade são selecionados com o auxílio de Tfh e células dendríticas foliculares. A troca de classe (IgM para IgG, IgA ou IgE, conforme as citocinas) ocorre nessa fase, no linfócito B, e não no plasmócito.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ],
+        "refs": [
+          "abbas",
+          "robbins",
+          "junqueira"
+        ]
+      },
+      {
+        "order": 6,
+        "description_pt": "Diferenciação final: os linfócitos B selecionados se diferenciam em plasmócitos secretores de anticorpos, parte dos quais migra para a medula óssea e vive por longo tempo, e em linfócitos B de memória, que persistem após a infecção.",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ],
+        "refs": [
+          "abbas",
+          "junqueira",
+          "robbins"
+        ]
+      },
+      {
+        "order": 7,
+        "description_pt": "Efeitos dos anticorpos e memória: os anticorpos neutralizam toxinas e microrganismos, opsonizam (IgG, via receptores Fc dos fagócitos) e ativam o complemento. Em um novo contato, as células de memória geram resposta mais rápida, mais intensa e com anticorpos de classes trocadas (resposta secundária).",
+        "anchors": [
+          {
+            "sid": "za:resposta-imune-adaptativa"
+          }
+        ],
+        "refs": [
+          "abbas",
+          "robbins",
+          "junqueira"
+        ],
+        "clinica_pt": "As vacinas exploram essa memória: a primeira exposição gera as células de memória que respondem rapidamente à infecção."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Apresentação de antígenos a linfócitos T e ativação de linfócitos T CD4+",
+        "obraId": "abbas"
+      },
+      {
+        "field": "steps",
+        "ref": "Ativação de linfócitos B e produção de anticorpos: ajuda do Tfh, centro germinativo, troca de classe e maturação de afinidade",
+        "obraId": "abbas"
+      },
+      {
+        "field": "steps",
+        "ref": "Órgãos linfáticos: linfonodo, folículos e zonas de linfócitos T e B",
+        "obraId": "junqueira"
+      },
+      {
+        "field": "desviosClinicos",
+        "ref": "Doenças do sistema imune: imunodeficiências e doenças autoimunes",
+        "obraId": "robbins"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "positivo",
+        "efetor": "IL-2 produzida pelo linfócito T ativado",
+        "alvo": "Linfócito T auxiliar (receptor de IL-2)",
+        "efeito": "Estimula a proliferação do próprio linfócito T e amplia a população de células efetoras."
+      },
+      {
+        "tipo": "negativo",
+        "efetor": "Anticorpo IgG do complexo imune (receptor FcγRIIB)",
+        "alvo": "Linfócito B",
+        "efeito": "O complexo antígeno-anticorpo liga o receptor inibitório FcγRIIB e reduz a ativação do linfócito B quando já há anticorpo suficiente."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Agamaglobulinemia ligada ao X (doença de Bruton)",
+        "mecanismo": "A mutação do gene BTK interrompe a maturação dos linfócitos B; faltam linfócitos B e imunoglobulinas, com infecções bacterianas recorrentes.",
+        "cid": "D80.0"
+      },
+      {
+        "condicao": "Síndrome de hiper-IgM por deficiência de CD40L",
+        "mecanismo": "Sem CD40L no linfócito T, não há sinal CD40 para o B; a troca de classe e o centro germinativo falham e predominam IgM e infecções oportunistas.",
+        "cid": "D80.5"
+      },
+      {
+        "condicao": "Lúpus eritematoso sistêmico",
+        "mecanismo": "A perda de tolerância permite que linfócitos B autorreativos produzam autoanticorpos, e os imunocomplexos depositados nos tecidos ativam o complemento e causam inflamação.",
+        "cid": "M32"
+      }
+    ],
+    "interageCom": [
+      "resposta-inflamatoria",
+      "eixo-hpa"
+    ]
+  },
+  {
+    "id": "resposta-inflamatoria",
+    "system": "imunologico",
+    "name_pt": "Resposta Inflamatória Aguda",
+    "description_pt": "Sequência vascular e celular desencadeada por lesão ou infecção: reconhecimento pelas células sentinelas, alterações vasculares, recrutamento de leucócitos, destruição do agente e resolução ou reparo.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Reconhecimento: macrófagos e mastócitos teciduais reconhecem padrões moleculares de microrganismos e de células lesadas (por exemplo, por receptores do tipo Toll). Liberam histamina, TNF, IL-1, IL-6, quimiocinas, prostaglandinas e leucotrienos, que iniciam e coordenam a resposta.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ],
+        "refs": [
+          "robbins",
+          "abbas",
+          "guyton"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Alterações vasculares: a vasodilatação das arteríolas (histamina, prostaglandinas, óxido nítrico) aumenta o fluxo local e explica o rubor e o calor. A permeabilidade das vênulas aumenta (histamina, bradicinina, leucotrienos), e o exsudato rico em proteínas causa edema (tumor). Bradicinina e PGE2 sensibilizam os nociceptores (dor).",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ],
+        "refs": [
+          "robbins",
+          "guyton",
+          "silverthorn"
+        ],
+        "clinica_pt": "Anti-inflamatórios não esteroides inibem a síntese de prostaglandinas e reduzem vasodilatação, edema e dor."
+      },
+      {
+        "order": 3,
+        "description_pt": "Marginação e rolamento: com a lentificação do fluxo, os leucócitos se deslocam para a periferia do vaso. TNF e IL-1 induzem E-selectina e P-selectina no endotélio, que se ligam a ligantes dos leucócitos e produzem o rolamento.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ],
+        "refs": [
+          "robbins",
+          "abbas",
+          "guyton"
+        ]
+      },
+      {
+        "order": 4,
+        "description_pt": "Adesão firme: quimiocinas ativam as integrinas dos leucócitos (como LFA-1 e Mac-1), que se ligam a ICAM-1, expressa no endotélio sob ação de TNF e IL-1, e interrompem o rolamento.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ],
+        "refs": [
+          "robbins",
+          "abbas"
+        ],
+        "clinica_pt": "Na deficiência de adesão leucocitária, o defeito das integrinas beta-2 impede a adesão firme e causa infecções graves com leucocitose e sem formação de pus."
+      },
+      {
+        "order": 5,
+        "description_pt": "Transmigração (diapedese): os leucócitos atravessam o endotélio entre as células (com PECAM-1/CD31) e a membrana basal, e seguem gradientes quimiotáticos (IL-8, C5a, LTB4, produtos bacterianos) até o foco. Os neutrófilos predominam nas primeiras 6 a 24 horas e os monócitos/macrófagos nas 24 a 48 horas seguintes.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ],
+        "refs": [
+          "robbins",
+          "abbas",
+          "guyton"
+        ]
+      },
+      {
+        "order": 6,
+        "description_pt": "Fagocitose e destruição: o fagócito reconhece o microrganismo (diretamente ou por opsoninas, como IgG e C3b), engloba-o em um fagossomo e o funde a lisossomos. A NADPH oxidase gera espécies reativas de oxigênio e a mieloperoxidase produz hipoclorito; enzimas lisossômicas completam a destruição. O extravasamento dessas substâncias pode lesar o tecido normal.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ],
+        "refs": [
+          "robbins",
+          "abbas",
+          "guyton"
+        ],
+        "clinica_pt": "Na doença granulomatosa crônica, o defeito da NADPH oxidase prejudica a morte intracelular e causa infecções recorrentes e granulomas."
+      },
+      {
+        "order": 7,
+        "description_pt": "Resolução ou cronificação: os neutrófilos morrem por apoptose e os macrófagos removem restos celulares e produzem mediadores pró-resolução (IL-10, lipoxinas e resolvinas); em seguida ocorre o reparo, com fibroblastos e angiogênese. Se o agente persiste, a inflamação se torna crônica, com macrófagos e linfócitos, podendo formar granulomas.",
+        "anchors": [
+          {
+            "sid": "za:resposta-inflamatoria"
+          }
+        ],
+        "refs": [
+          "robbins",
+          "abbas",
+          "guyton"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Inflamação aguda e crônica: alterações vasculares, recrutamento de leucócitos, fagocitose e resolução",
+        "obraId": "robbins"
+      },
+      {
+        "field": "steps",
+        "ref": "Imunidade inata: receptores de reconhecimento, citocinas inflamatórias e recrutamento de leucócitos",
+        "obraId": "abbas"
+      },
+      {
+        "field": "steps",
+        "ref": "Resistência do corpo à infecção: leucócitos, macrófagos e inflamação",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Defesas do corpo: imunidade inata e inflamação",
+        "obraId": "silverthorn"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "feedback": [
+      {
+        "tipo": "positivo",
+        "efetor": "TNF e IL-1 liberados por macrófagos e mastócitos",
+        "alvo": "Endotélio e leucócitos recrutados",
+        "efeito": "Induzem selectinas e ICAM-1 e atraem mais leucócitos, que liberam mais mediadores e amplificam a resposta."
+      },
+      {
+        "tipo": "negativo",
+        "efetor": "IL-10 e mediadores pró-resolução (lipoxinas, resolvinas)",
+        "alvo": "Macrófagos e neutrófilos",
+        "efeito": "Reduzem a produção de citocinas e o recrutamento de neutrófilos e favorecem a resolução e o reparo."
+      }
+    ],
+    "desviosClinicos": [
+      {
+        "condicao": "Sepse e choque séptico",
+        "mecanismo": "A ativação sistêmica e desregulada da resposta inflamatória causa vasodilatação generalizada, aumento da permeabilidade vascular e ativação da coagulação, com hipotensão e disfunção de órgãos.",
+        "cid": "A41"
+      },
+      {
+        "condicao": "Deficiência de adesão leucocitária",
+        "mecanismo": "O defeito das integrinas beta-2 impede a adesão firme dos leucócitos ao endotélio; eles não chegam ao tecido e ficam circulando em grande número.",
+        "cid": "D72.0"
+      },
+      {
+        "condicao": "Doença granulomatosa crônica",
+        "mecanismo": "O defeito da NADPH oxidase impede a explosão oxidativa dos fagócitos; microrganismos como os produtores de catalase sobrevivem e se formam granulomas.",
+        "cid": "D71"
+      }
+    ],
+    "interageCom": [
+      "coagulacao-sanguinea",
+      "resposta-imune-adaptativa",
+      "eixo-hpa"
+    ]
+  },
+  {
+    "id": "sinapse-colinergica",
+    "system": "nervoso",
+    "name_pt": "Transmissão Sináptica Colinérgica",
+    "description_pt": "Neurotransmissão química por acetilcolina: síntese e armazenamento no terminal, liberação dependente de Ca²⁺, ação em receptores nicotínicos (rápidos) ou muscarínicos (lentos) e término por hidrólise pela acetilcolinesterase, com recaptação da colina.",
+    "steps": [
+      {
+        "order": 1,
+        "description_pt": "Síntese e armazenamento: a colina entra no terminal pré-sináptico por um transportador e é acetilada pela colina acetiltransferase (ChAT), com acetil-CoA, formando acetilcolina (ACh). O transportador vesicular (VAChT) a concentra em vesículas sinápticas.",
+        "anchors": [
+          {
+            "sid": "za:synapse-calcium"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "katzung",
+          "rang"
+        ]
+      },
+      {
+        "order": 2,
+        "description_pt": "Chegada do potencial de ação: a despolarização do terminal abre canais de Ca²⁺ dependentes de voltagem (tipo P/Q, Cav2.1, na junção neuromuscular) e o Ca²⁺ entra no terminal.",
+        "anchors": [
+          {
+            "sid": "za:synapse-calcium"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "rang"
+        ]
+      },
+      {
+        "order": 3,
+        "description_pt": "Exocitose: o Ca²⁺ ativa a sinaptotagmina, as proteínas SNARE promovem a fusão das vesículas com a membrana pré-sináptica e a ACh é liberada na fenda sináptica em pacotes (quanta).",
+        "anchors": [
+          {
+            "sid": "za:synapse-calcium"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "katzung"
+        ],
+        "clinica_pt": "A toxina botulínica cliva proteínas SNARE e impede a liberação de ACh, o que causa paralisia flácida (botulismo; uso terapêutico em distonias)."
+      },
+      {
+        "order": 4,
+        "description_pt": "Receptores nicotínicos (ionotrópicos): a ACh liga-se ao receptor nicotínico, um canal catiônico, e a entrada de Na⁺ despolariza a membrana pós-sináptica em milissegundos. No músculo esquelético gera o potencial de placa motora; nos gânglios autonômicos gera potenciais excitatórios pós-sinápticos.",
+        "anchors": [
+          {
+            "sid": "za:synapse-ache-cleave"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "rang"
+        ],
+        "clinica_pt": "Os bloqueadores neuromusculares competitivos (como o rocurônio) impedem a ligação da ACh ao receptor nicotínico muscular e causam paralisia."
+      },
+      {
+        "order": 5,
+        "description_pt": "Receptores muscarínicos (metabotrópicos): nos órgãos-alvo do parassimpático, a ACh liga-se a receptores acoplados a proteínas G, com resposta mais lenta (segundos). O M2 do coração reduz a frequência por abertura de canais de K⁺; o M3 de músculo liso e glândulas ativa a via Gq e causa contração e secreção.",
+        "anchors": [
+          {
+            "sid": "za:synapse-ache-cleave"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "katzung",
+          "rang"
+        ],
+        "clinica_pt": "A atropina bloqueia receptores muscarínicos e causa taquicardia, midríase e secura da boca."
+      },
+      {
+        "order": 6,
+        "description_pt": "Término da sinapse: a acetilcolinesterase (AChE), presente na fenda, hidrolisa a ACh em colina e acetato em poucos milissegundos. A colina é recaptada pelo terminal e reutilizada na síntese de nova ACh; a própria ACh não é recaptada.",
+        "anchors": [
+          {
+            "sid": "za:synapse-ache-cleave"
+          }
+        ],
+        "refs": [
+          "guyton",
+          "silverthorn",
+          "katzung"
+        ],
+        "clinica_pt": "Inibidores da AChE (neostigmina, piridostigmina) prolongam a ação da ACh e tratam a miastenia gravis; organofosforados a inibem de forma irreversível e causam crise colinérgica."
+      }
+    ],
+    "sources": [
+      {
+        "field": "steps",
+        "ref": "Transmissão de impulsos dos terminais nervosos para as fibras musculares: junção neuromuscular",
+        "obraId": "guyton"
+      },
+      {
+        "field": "steps",
+        "ref": "Neurônios: comunicação célula a célula, sinapses e neurotransmissores",
+        "obraId": "silverthorn"
+      },
+      {
+        "field": "steps",
+        "ref": "Fármacos colinérgicos: síntese, liberação, receptores nicotínicos e muscarínicos e acetilcolinesterase",
+        "obraId": "katzung"
+      },
+      {
+        "field": "steps",
+        "ref": "Transmissão colinérgica: receptores e fármacos que atuam na sinapse",
+        "obraId": "rang"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-fisio",
+      "review_requested_at": "2026-10-02"
+    },
+    "desviosClinicos": [
+      {
+        "condicao": "Miastenia gravis",
+        "mecanismo": "Autoanticorpos contra o receptor nicotínico da junção neuromuscular reduzem a resposta pós-sináptica à ACh; fraqueza que piora com o esforço e melhora com inibidores da AChE.",
+        "cid": "G70.0"
+      },
+      {
+        "condicao": "Botulismo",
+        "mecanismo": "A toxina botulínica cliva proteínas SNARE do terminal colinérgico e bloqueia a exocitose de ACh; há paralisia flácida descendente e sintomas autonômicos.",
+        "cid": "A05.1"
+      },
+      {
+        "condicao": "Intoxicação por organofosforados",
+        "mecanismo": "A inibição irreversível da AChE acumula ACh na fenda e causa excesso de estimulação muscarínica (miose, broncorreia, bradicardia) e nicotínica (fasciculações, fraqueza).",
+        "cid": "T60.0"
+      },
+      {
+        "condicao": "Síndrome miastênica de Lambert-Eaton",
+        "mecanismo": "Autoanticorpos contra canais de Ca²⁺ pré-sinápticos reduzem a liberação de ACh; a fraqueza proximal melhora com o esforço repetido e se associa a tumores como o de pulmão de pequenas células.",
+        "cid": "G70.8"
+      }
+    ],
+    "interageCom": [
+      "contracao-muscular",
+      "conducao-impulso-cardiaco",
+      "peristaltismo-intestinal"
+    ]
+  }
+]
