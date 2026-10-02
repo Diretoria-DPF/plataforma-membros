@@ -1,0 +1,295 @@
+{
+  "za:middle-temporal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro temporal médio ocupa a face lateral do lobo temporal, entre o sulco temporal superior e o sulco temporal inferior, e se estende do polo temporal até a transição com os lobos occipital e parietal. Corresponde, em grande parte, à área 21 de Brodmann e é córtex de associação, sem função motora ou sensitiva primária. Recebe informações auditivas e visuais já processadas pelos giros vizinhos e as integra em representações de significado. No hemisfério dominante para a linguagem, em geral o esquerdo, participa da compreensão semântica de palavras e do acesso ao léxico; na sua porção posterior, próxima da junção temporo-occipital, relaciona-se ao processamento do movimento visual. Também contribui para a memória semântica, por conexões com o lobo temporal medial e com o lobo frontal. Seus axônios de associação seguem por feixes longos, como o fascículo longitudinal inferior e o fascículo arqueado, que o ligam às regiões frontais e parietais da linguagem. Sendo uma estrutura par, a descrição vale para os dois hemisférios, com assimetria funcional principalmente no que diz respeito à linguagem. A lesão isolada do giro raramente produz síndrome pura, pois geralmente envolve territórios vizinhos supridos pela artéria cerebral média.",
+    "anatomy": {
+      "relations": "Face lateral do lobo temporal, entre os sulcos temporal superior (acima, separando-o do giro temporal superior) e temporal inferior (abaixo, separando-o do giro temporal inferior). Posteriormente continua com o lobo occipital e com o giro angular. Em profundidade, relaciona-se com o corno temporal do ventrículo lateral.",
+      "vascularization": "Ramos temporais da artéria cerebral média (ramo da artéria carótida interna). A drenagem venosa é feita por veias cerebrais superficiais inferiores, incluindo a veia anastomótica inferior, que desemboca no seio transverso."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Neurônios piramidais (projeção, glutamatérgicos), predominantes, e interneurônios estrelados e granulares",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia, além de neurópilo rico em sinapses",
+        "Substância branca subcortical formada por axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Acidente vascular cerebral isquêmico no território inferior da artéria cerebral média: pode comprometer o lobo temporal lateral e, no hemisfério dominante, produzir déficit de compreensão da linguagem.",
+      "Epilepsia do lobo temporal neocortical: focos na face lateral podem gerar crises focais com alucinações auditivas ou distúrbios de linguagem.",
+      "Tumores gliais temporais: crescem na substância branca subcortical e podem manifestar-se com crises, afasia ou defeitos de campo visual por envolvimento da radiação óptica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal médio",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro temporal médio",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro temporal médio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal médio",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro temporal médio",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro temporal médio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a giro temporal médio",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro temporal médio",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:medulla-oblongata-r": {
+    "ids": {},
+    "summary_pt": "A medula oblonga (bulbo) é a parte mais caudal do tronco encefálico e liga a medula espinal à ponte. Seu limite inferior situa-se ao nível do forame magno, na decussação das pirâmides, e o superior, no sulco bulbopontino. Na face anterior destacam-se a fissura mediana anterior, as pirâmides, que contêm os tratos corticoespinais, e as olivas, formadas pelo complexo olivar inferior. Na face posterior, a metade inferior apresenta os tubérculos do núcleo grácil e do núcleo cuneiforme, e a metade superior forma o assoalho do quarto ventrículo. Abriga núcleos de nervos cranianos: o núcleo do nervo hipoglosso, o núcleo ambíguo, o núcleo dorsal do nervo vago, o núcleo do trato solitário e os núcleos vestibulares e cocleares. A formação reticular bulbar contém centros que regulam a respiração, a frequência cardíaca e a pressão arterial, além dos reflexos de vômito, tosse e deglutição. Pelo bulbo passam as vias motoras descendentes e sensitivas ascendentes, e é nele que cruzam a maior parte das fibras corticoespinais e as fibras arqueadas internas que se originam nos núcleos grácil e cuneiforme e formam o lemnisco medial. Por ser estrutura par, a descrição vale para os dois lados.",
+    "anatomy": {
+      "relations": "Situada no forame magno, anterior ao cerebelo, posterior ao clivo, caudal à ponte, com a qual faz limite no sulco bulbopontino. Os nervos glossofaríngeo, vago e acessório emergem pelo sulco lateral posterior, e o hipoglosso pelo sulco lateral anterior (pré-olivar). O quarto ventrículo situa-se posteriormente à parte superior.",
+      "vascularization": "Artérias vertebrais e seus ramos: artéria espinal anterior (parte medial), artéria cerebelar inferior posterior (parte lateral e dorsal), artéria espinal posterior e ramos diretos da artéria vertebral."
+    },
+    "histology": {
+      "tissues": [
+        "Substância cinzenta organizada em núcleos (de nervos cranianos, olivares, grácil, cuneiforme e formação reticular) e substância branca de axônios mielinizados em feixes",
+        "Neurônios multipolares de tamanhos variados, com corpúsculos de Nissl evidentes nos neurônios motores dos núcleos dos nervos cranianos",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia; células ependimárias revestindo o assoalho do quarto ventrículo"
+      ]
+    },
+    "clinical": [
+      "Síndrome medular lateral (de Wallenberg): infarto no território da artéria cerebelar inferior posterior ou da artéria vertebral, com síndrome de Horner, perda de dor e temperatura na face ipsilateral e no corpo contralateral, disfagia, disfonia, ataxia e vertigem.",
+      "Síndrome medular medial (de Déjerine): oclusão de ramos da artéria espinal anterior, com hemiparesia contralateral, perda contralateral de tato fino e propriocepção e desvio da língua para o lado da lesão.",
+      "Herniação tonsilar: a descida das tonsilas do cerebelo pelo forame magno comprime o bulbo e pode causar insuficiência respiratória e colapso cardiovascular."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Tronco encefálico: medula oblonga",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: medula oblonga",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: medula oblonga",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Tronco encefálico: medula oblonga",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: medula oblonga",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, medula oblonga",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a medula oblonga",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: medula oblonga",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:hypothalamus": {
+    "ids": {},
+    "summary_pt": "O hipotálamo é a parte do diencéfalo situada abaixo do sulco hipotalâmico, formando o assoalho e a parte inferior das paredes laterais do terceiro ventrículo. Apesar do pequeno volume, coordena a homeostase: integra informações viscerais, olfatórias e límbicas e responde por meio do sistema nervoso autônomo, do sistema endócrino e do comportamento. Seus núcleos incluem o supraóptico e o paraventricular, que sintetizam ocitocina e vasopressina (hormônio antidiurético) liberados na neuro-hipófise; o suprequiasmático, marca-passo do ritmo circadiano; o arqueado, que produz hormônios liberadores levados à adeno-hipófise pelo sistema porta hipofisário; os núcleos da área pré-óptica, ligados à termorregulação; e os núcleos ventromediano e lateral, relacionados com a saciedade e a fome. O hipotálamo ainda controla a sede, o ciclo sono-vigília e o comportamento sexual. Anteriormente limita-se pela lâmina terminal e pelo quiasma óptico, e posteriormente pelos corpos mamilares. Suas conexões incluem o fórnix, o feixe prosencefálico medial e o trato mamilotalâmico. Há núcleos pares em cada lado do terceiro ventrículo; a ficha cobre as duas metades.",
+    "anatomy": {
+      "relations": "Limitado anteriormente pela lâmina terminal e pelo quiasma óptico, posteriormente pelos corpos mamilares, superiormente pelo sulco hipotalâmico (que o separa do tálamo) e lateralmente pela cápsula interna. Inferiormente, o túber cinéreo continua com o infundíbulo, que se liga à hipófise.",
+      "vascularization": "Ramos do círculo arterial do cérebro (de Willis): artérias comunicante anterior, cerebral anterior, comunicante posterior e cerebral posterior. A hipófise é suprida pelas artérias hipofisárias superior e inferior, e o sistema porta hipofisário conecta a eminência mediana à adeno-hipófise."
+    },
+    "histology": {
+      "tissues": [
+        "Neurônios magnocelulares (supraóptico e paraventricular) e parvocelulares, com neurossecreção liberada nos capilares da eminência mediana e da neuro-hipófise",
+        "Substância cinzenta organizada em núcleos e áreas, com neurônios multipolares peptidérgicos e monoaminérgicos",
+        "Tanicitos e células ependimárias na parede do terceiro ventrículo, além de astrócitos e micróglia",
+        "Capilares fenestrados na eminência mediana, região sem barreira hematoencefálica contínua"
+      ]
+    },
+    "clinical": [
+      "Diabetes insípido central: lesão dos núcleos supraóptico e paraventricular, ou do trato hipotálamo-hipofisário, reduz o hormônio antidiurético e causa poliúria com polidipsia.",
+      "Síndrome de Wernicke-Korsakoff: a deficiência de tiamina, comum no alcoolismo crônico, lesa os corpos mamilares e o tálamo mediodorsal, com confusão, oftalmoplegia, ataxia e amnésia anterógrada.",
+      "Tumores da região selar e suprasselar, como craniofaringioma e adenoma hipofisário: comprimem o hipotálamo e o quiasma óptico, causando hipopituitarismo e hemianopsia bitemporal."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Diencéfalo: hipotálamo",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: hipotálamo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: hipotálamo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Diencéfalo: hipotálamo",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: hipotálamo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, hipotálamo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema endócrino: hipotálamo e hipófise",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central, tópicos correlatos a hipotálamo",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: hipotálamo",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+}
