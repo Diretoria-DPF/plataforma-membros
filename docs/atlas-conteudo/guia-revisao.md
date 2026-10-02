@@ -1,56 +1,53 @@
 # Guia de revisão do conselho editorial — Atlas 3D
 
-Como uma onda de fichas sai de "pendente" e chega ao aluno. Vale para as 10 ondas do PR 3.2 (`canary.md`, `cotas.md`).
+Como uma onda de fichas sai de "pendente" e chega ao aluno. Vale para os 3 lotes do plano v4.0 (`cotas.md`).
 
 **Regra que não muda:** nenhuma ficha aparece para o aluno sem a assinatura do conselho. O build falha se alguém tentar (`frontend/scripts/atlas/check-curated-signed.mjs`).
 
-## 1. Revisar uma onda (membro do conselho)
-1. A coordenação do atlas envia o pacote da onda (`pacote-onda-NN.json`), gerado por `node frontend/scripts/atlas/pacote-onda.mjs NN`.
-2. Abra a ferramenta no navegador: `…/modulos/anatomia-3d/revisao/` no site da plataforma.
-   - Não precisa de login.
-   - As fichas não saem do seu computador.
-3. Clique em **Escolher arquivos** e selecione o pacote. Se preferir, arraste os `lote-*.json` da onda.
-4. Para cada ficha, leia o resumo, a anatomia, a histologia, a clínica e as fontes. Depois marque uma opção:
-   - **Aprovar**;
-   - **Aprovar com ressalva** (escreva o que muda);
-   - **Reprovar** (escreva o motivo).
-   O progresso fica salvo no navegador: dá para parar e continuar depois, no mesmo computador e no mesmo navegador.
-5. Com 100% das fichas marcadas, preencha nome, registro profissional e data e clique em **Assinar onda**. A ferramenta baixa `revisao-onda-NN.md`.
-6. Envie esse arquivo à coordenação. Ele entra no repositório exatamente como saiu da ferramenta.
-   - O arquivo traz o SHA-256 do conteúdo revisado. Se a ficha mudar depois da assinatura, a mudança aparece.
+## 1. Revisar um lote (plano v4.0)
+As 300 fichas vão ao conselho em 3 lotes:
 
-**Resultado da onda (automático):**
-- todas aprovadas → `aprovado`;
-- alguma ressalva → `aprovado com ressalvas`;
-- alguma reprovada → `reprovado`.
+| Lote | Sistemas | Fichas |
+|---|---|---|
+| 1 | Cardiovascular (31), Nervoso (53), Respiratório (20) | 104 |
+| 2 | Digestório (40), Urinário (15), Endócrino (5) | 60 |
+| 3 | Linfático (10), Esquelético (80), Muscular (40), Articular (6) | 136 |
 
-## 2. Quem faz o quê, e em quanto tempo (C3)
+1. A coordenação envia `lote-N.zip`, gerado por `node frontend/scripts/atlas/pacote-lote.mjs N <pasta> --revisao`. O zip contém:
+   - `LEIA-ME.md`;
+   - `checklist.md`;
+   - `fichas/<sistema>.json`;
+   - `fontes.json`.
+2. O revisor lê as fichas e marca `[x]` em uma opção por ficha no `checklist.md`: Aprovar, Aprovar com ressalva (com o texto da troca) ou Reprovar (com o motivo).
+   - Se leu tudo e está tudo certo, pode marcar **Aprovação em bloco**, que vale para as fichas que não marcou.
+3. Preenche Revisor, Registro profissional e Data e devolve o `checklist.md`.
+4. A sessão commita o arquivo **exatamente como recebido** em `docs/atlas-conteudo/revisao-lote-N.md`. Confira com `node frontend/scripts/atlas/checklist-lote.mjs docs/atlas-conteudo/revisao-lote-N.md`.
+
+**Regra dos 90%:** o lote é aprovado com 90% ou mais das fichas aprovadas, com ou sem ressalva.
+- Só as fichas aprovadas vão ao ar.
+- Uma ficha reprovada, ou sem marca e sem aprovação em bloco, nunca entra. A trava do build confere ficha a ficha.
+- Ressalva com texto literal: a sessão aplica e a ficha entra, com a lista no PR. Ressalva ambígua: a ficha volta na rodada seguinte.
+- Reprovadas: o curador refaz, o revisor técnico confere, e a ficha volta no checklist da rodada seguinte.
+
+**Opcional:** a ferramenta `…/modulos/anatomia-3d/revisao/` faz a mesma revisão no navegador e gera `revisao-onda-NN.md`, também aceito pela trava.
+
+## 2. Quem faz o quê, e em quanto tempo
 | Etapa | Responsável | Prazo |
 |---|---|---|
-| Preparar a onda: curador, revisor técnico prévio, correções, validador e lint | Sessão do atlas (agentes `atlas-curador` e `atlas-revisor-editorial`) | antes do envio |
-| Enviar o pacote e avisar o conselho | Coordenação do atlas | mesmo dia |
-| Revisar a onda na ferramenta | Membro do conselho | 5 dias úteis |
-| Pedir mudança (ressalva ou reprovação) | Membro do conselho | na própria revisão |
-| Aplicar as mudanças pedidas | `atlas-curador` (sessão do atlas) | 2 h depois de receber o .md |
-| Conferir as mudanças aplicadas | Membro do conselho | 1 dia útil |
-| Assinar (nova revisão, só das fichas alteradas) | Membro do conselho | imediato |
-| Commit da onda em `curated/` com `review.status: "reviewed"`, `by` e `date` do conselho | Sessão do atlas | mesmo dia |
+| Preparar o lote: curador, revisor técnico, correções, validador e lint | Sessão do atlas | antes do envio |
+| Enviar o zip e avisar o conselho | Coordenação | mesmo dia |
+| Revisar e devolver o checklist | Conselho | **3 dias** |
+| Aplicar as ressalvas e copiar as aprovadas para `curated/` | Sessão do atlas | mesmo dia |
+| Merge do lote | Usuário autoriza | imediato |
 
-- **Com ressalvas:** a sessão aplica as ressalvas e o revisor confere só as fichas que mudaram. Gere um pacote menor com essas fichas.
-- **Reprovado:** a onda volta inteira para as fichas pendentes. O curador refaz as reprovadas e aplica as ressalvas, o revisor técnico confere, e a onda volta ao conselho como nova revisão.
-
-## 3. Se a assinatura atrasar (C4)
-A contagem começa no envio da onda ao conselho.
-
-| Semana | O que acontece |
+## 3. Se a assinatura atrasar
+| Prazo | O que acontece |
 |---|---|
-| 1 | Onda enviada e conselho avisado. |
-| 2 | Lembrete. A onda seguinte continua sendo preparada em pendente. |
-| 3 | Segundo lembrete. A preparação da onda seguinte pausa. |
-| 4 | Escalação para a coordenação do conselho. Nenhuma onda nova começa. |
-| 8 | Projeto pausado: nenhuma onda nova é preparada. O conselho é avisado de que o conteúdo editorial visível sem revisão será retirado em 30 dias. |
+| 3 dias | Lembrete |
+| 1 semana | Escalação para a coordenação do conselho |
+| 6 semanas | Teto: o lote 3 pausa, os lotes 1 e 2 são mesclados, e o lote 3 é revisado com calma |
 
-O conteúdo editorial visível (selo amarelo "⏳ Em revisão editorial") é formado pelos compostos, processos, vias e cenários. Ficha anatômica sem assinatura nunca fica visível. A ficha mostra "Aguardando revisão há N dias" a partir de 30 dias.
+O conteúdo editorial visível (selo amarelo "⏳ Em revisão editorial") é formado pelos compostos, processos, vias e cenários. Ficha anatômica sem assinatura nunca fica visível.
 
 ## 4. O que o aluno vê
 | Selo | Quando |

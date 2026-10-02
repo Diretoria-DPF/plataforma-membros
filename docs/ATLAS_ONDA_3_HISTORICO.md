@@ -57,3 +57,11 @@ Registro de decisões, situações e respostas às revisões. O plano em vigor f
   - selos, filtro e busca (`47da519`);
   - de passagem, corrigido o painel PK/PD, que ficava dentro do botão da aba.
 - C3, C4 e M3: guia e flag `systemic` (`d9c5ad6`). C5: este documento e o plano v3.0.
+
+## 02/10/2026 — Plano v4.0 (3 lotes, 3 gates, 4 semanas)
+- Adotado por decisão do usuário: 3 lotes (104, 60 e 136 fichas), checklist em markdown por lote, SLA de 3 dias, escalação em 1 semana e teto de 6 semanas.
+- Ajustes por fatos do código:
+  - os números corretos somam 300 (lote 1 = 104, não 99);
+  - a regra dos 90% publica só as fichas aprovadas. Ficha sem marca só entra com "aprovação em bloco" explícita, porque o selo "Revisado por" não pode ser inventado;
+  - a ferramenta C1 e o `review-status` já estavam prontos: ficam no código, como opcionais.
+- Ferramentas novas: `pacote-lote.mjs`, `checklist-lote.mjs` e a trava `check-curated-signed` por ficha. O backlog está em `docs/atlas-backlog.md`.

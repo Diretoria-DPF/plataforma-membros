@@ -1,4 +1,10 @@
-# Atlas 3D — Onda 3: plano (v3.0)
+# Atlas 3D — Onda 3: plano (v4.0)
+
+> **v4.0 (02/10/2026):** 3 lotes, 3 gates e 4 semanas (teto de 6). O conselho recebe um zip com um checklist em markdown por lote e tem 3 dias.
+> - O lote é aprovado com 90% ou mais, e só as fichas aprovadas vão ao ar.
+> - Lotes: 1 = Cardiovascular, Nervoso e Respiratório (104); 2 = Digestório, Urinário e Endócrino (60); 3 = Linfático, Esquelético, Muscular e Articular (136).
+> - Cada lote assinado entra num merge próprio, com autorização do usuário.
+> - Detalhes em `docs/atlas-conteudo/guia-revisao.md`; fora do escopo, em `docs/atlas-backlog.md`. As seções abaixo da v3.0 valem no que não conflitam.
 
 > Versão atual, sem histórico. As decisões, as situações passadas e as respostas às revisões ficam em [ATLAS_ONDA_3_HISTORICO.md](ATLAS_ONDA_3_HISTORICO.md).
 
