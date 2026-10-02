@@ -36,6 +36,8 @@ import * as AttendanceService from './services/attendanceService.js';
 // Fase 3 — IA (Groq) e clínica virtual
 import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
+// PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
+import * as AtlasMoleculeService from './services/atlasMoleculeService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -192,5 +194,8 @@ export const API_REGISTRY = {
   apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.getMyQuota(sql, env, identity)),
   apiAdminAiHealth: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminHealth(sql, env, identity)),
   apiAdminLearnListPendingCases: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.listPendingCases(sql, identity)),
+  // Atlas 3D — moléculas pelo proxy (sem chamada direta do navegador).
+  apiLearnAtlasPdb: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPdb(asInput(input))),
+  apiLearnAtlasPubchem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPubchem(asInput(input))),
   apiAdminLearnReviewCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.reviewCase(sql, env, identity, input || {}, cid)),
 };

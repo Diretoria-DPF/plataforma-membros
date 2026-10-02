@@ -1,0 +1,377 @@
+{
+  "onda": 9,
+  "sistema": "muscular",
+  "total": 40,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:acromial-part-of-deltoid-muscle-r",
+          "sids": [
+            "za:acromial-part-of-deltoid-muscle-l",
+            "za:acromial-part-of-deltoid-muscle-r"
+          ],
+          "nome_pt": "Parte acromial do músculo deltoides",
+          "nome_en": "Acromial part of deltoid muscle"
+        },
+        {
+          "sid": "za:short-head-of-biceps-brachii-r",
+          "sids": [
+            "za:short-head-of-biceps-brachii-l",
+            "za:short-head-of-biceps-brachii-r"
+          ],
+          "nome_pt": "Cabeça curta do músculo bíceps braquial",
+          "nome_en": "Short head of biceps brachii"
+        },
+        {
+          "sid": "za:inferior-pharyngeal-constrictor-r",
+          "sids": [
+            "za:inferior-pharyngeal-constrictor-l",
+            "za:inferior-pharyngeal-constrictor-r"
+          ],
+          "nome_pt": "Constritor faríngeo inferior",
+          "nome_en": "Inferior pharyngeal constrictor"
+        },
+        {
+          "sid": "za:rectus-femoris-muscle-r",
+          "sids": [
+            "za:rectus-femoris-muscle-l",
+            "za:rectus-femoris-muscle-r"
+          ],
+          "nome_pt": "Músculo reto femoral",
+          "nome_en": "Rectus femoris muscle"
+        },
+        {
+          "sid": "za:transversus-abdominis-muscle-r",
+          "sids": [
+            "za:transversus-abdominis-muscle-l",
+            "za:transversus-abdominis-muscle-r"
+          ],
+          "nome_pt": "Músculo transverso do abdômen",
+          "nome_en": "Transversus abdominis muscle"
+        },
+        {
+          "sid": "za:flexor-digitorum-longus-r",
+          "sids": [
+            "za:flexor-digitorum-longus-l",
+            "za:flexor-digitorum-longus-r"
+          ],
+          "nome_pt": "Músculo flexor longo dos dedos",
+          "nome_en": "Flexor digitorum longus"
+        },
+        {
+          "sid": "za:sartorius-muscle-r",
+          "sids": [
+            "za:sartorius-muscle-l",
+            "za:sartorius-muscle-r"
+          ],
+          "nome_pt": "Músculo sartório",
+          "nome_en": "Sartorius muscle"
+        },
+        {
+          "sid": "za:humero-ulnar-head-of-flexor-digitorum-superficialis-r",
+          "sids": [
+            "za:humero-ulnar-head-of-flexor-digitorum-superficialis-l",
+            "za:humero-ulnar-head-of-flexor-digitorum-superficialis-r"
+          ],
+          "nome_pt": "Cabeça umero-ulnar do músculo flexor superficial dos dedos",
+          "nome_en": "Humero-ulnar head of flexor digitorum superficialis"
+        },
+        {
+          "sid": "za:flexor-digitorum-profundus-r",
+          "sids": [
+            "za:flexor-digitorum-profundus-l",
+            "za:flexor-digitorum-profundus-r"
+          ],
+          "nome_pt": "Músculo flexor profundo dos dedos",
+          "nome_en": "Flexor digitorum profundus"
+        },
+        {
+          "sid": "za:extensor-digitorum-r",
+          "sids": [
+            "za:extensor-digitorum-l",
+            "za:extensor-digitorum-r"
+          ],
+          "nome_pt": "Músculo extensor dos dedos",
+          "nome_en": "Extensor digitorum"
+        },
+        {
+          "sid": "za:flexor-hallucis-longus-r",
+          "sids": [
+            "za:flexor-hallucis-longus-l",
+            "za:flexor-hallucis-longus-r"
+          ],
+          "nome_pt": "Músculo flexor longo do hálux",
+          "nome_en": "Flexor hallucis longus"
+        },
+        {
+          "sid": "za:palmaris-longus-muscle-r",
+          "sids": [
+            "za:palmaris-longus-muscle-l",
+            "za:palmaris-longus-muscle-r"
+          ],
+          "nome_pt": "Músculo palmar longo",
+          "nome_en": "Palmaris longus muscle"
+        },
+        {
+          "sid": "za:longissimus-thoracis-muscle-r",
+          "sids": [
+            "za:longissimus-thoracis-muscle-l",
+            "za:longissimus-thoracis-muscle-r"
+          ],
+          "nome_pt": "Músculo longuíssimo torácico",
+          "nome_en": "Longissimus thoracis muscle"
+        },
+        {
+          "sid": "za:platysma-r",
+          "sids": [
+            "za:platysma-l",
+            "za:platysma-r"
+          ],
+          "nome_pt": "Platisma",
+          "nome_en": "Platysma"
+        },
+        {
+          "sid": "za:rectus-abdominis-muscle-r",
+          "sids": [
+            "za:rectus-abdominis-muscle-l",
+            "za:rectus-abdominis-muscle-r"
+          ],
+          "nome_pt": "Músculo reto do abdômen",
+          "nome_en": "Rectus abdominis muscle"
+        },
+        {
+          "sid": "za:long-head-of-biceps-femoris-r",
+          "sids": [
+            "za:long-head-of-biceps-femoris-l",
+            "za:long-head-of-biceps-femoris-r"
+          ],
+          "nome_pt": "Cabeça longa do músculo bíceps femoral",
+          "nome_en": "Long head of biceps femoris"
+        },
+        {
+          "sid": "za:adductor-magnus-r",
+          "sids": [
+            "za:adductor-magnus-l",
+            "za:adductor-magnus-r"
+          ],
+          "nome_pt": "Músculo adutor grande",
+          "nome_en": "Adductor magnus"
+        },
+        {
+          "sid": "za:extensor-hallucis-longus-r",
+          "sids": [
+            "za:extensor-hallucis-longus-l",
+            "za:extensor-hallucis-longus-r"
+          ],
+          "nome_pt": "Músculo extensor longo do hálux",
+          "nome_en": "Extensor hallucis longus"
+        },
+        {
+          "sid": "za:long-head-of-biceps-brachii-r",
+          "sids": [
+            "za:long-head-of-biceps-brachii-l",
+            "za:long-head-of-biceps-brachii-r"
+          ],
+          "nome_pt": "Cabeça longa do músculo bíceps braquial",
+          "nome_en": "Long head of biceps brachii"
+        },
+        {
+          "sid": "za:humeral-head-of-flexor-carpi-ulnaris-r",
+          "sids": [
+            "za:humeral-head-of-flexor-carpi-ulnaris-l",
+            "za:humeral-head-of-flexor-carpi-ulnaris-r"
+          ],
+          "nome_pt": "Cabeça umeral do músculo flexor ulnar do carpo",
+          "nome_en": "Humeral head of flexor carpi ulnaris"
+        }
+      ]
+    },
+    {
+      "lote": 2,
+      "itens": [
+        {
+          "sid": "za:semimembranosus-muscle-r",
+          "sids": [
+            "za:semimembranosus-muscle-l",
+            "za:semimembranosus-muscle-r"
+          ],
+          "nome_pt": "Músculo semimembranoso",
+          "nome_en": "Semimembranosus muscle"
+        },
+        {
+          "sid": "za:iliocostalis-thoracis-muscle-r",
+          "sids": [
+            "za:iliocostalis-thoracis-muscle-l",
+            "za:iliocostalis-thoracis-muscle-r"
+          ],
+          "nome_pt": "Músculo iliocostal do tórax",
+          "nome_en": "Iliocostalis thoracis muscle"
+        },
+        {
+          "sid": "za:infraspinatus-muscle-r",
+          "sids": [
+            "za:infraspinatus-muscle-l",
+            "za:infraspinatus-muscle-r"
+          ],
+          "nome_pt": "Músculo infraespinal",
+          "nome_en": "Infraspinatus muscle"
+        },
+        {
+          "sid": "za:adductor-longus-r",
+          "sids": [
+            "za:adductor-longus-l",
+            "za:adductor-longus-r"
+          ],
+          "nome_pt": "Músculo adutor longo",
+          "nome_en": "Adductor longus"
+        },
+        {
+          "sid": "za:extensor-indicis-r",
+          "sids": [
+            "za:extensor-indicis-l",
+            "za:extensor-indicis-r"
+          ],
+          "nome_pt": "Músculo extensor do indicador",
+          "nome_en": "Extensor indicis"
+        },
+        {
+          "sid": "za:soleus-muscle-r",
+          "sids": [
+            "za:soleus-muscle-l",
+            "za:soleus-muscle-r"
+          ],
+          "nome_pt": "Músculo sóleo",
+          "nome_en": "Soleus muscle"
+        },
+        {
+          "sid": "za:subscapularis-muscle-r",
+          "sids": [
+            "za:subscapularis-muscle-l",
+            "za:subscapularis-muscle-r"
+          ],
+          "nome_pt": "Músculo subescapular",
+          "nome_en": "Subscapularis muscle"
+        },
+        {
+          "sid": "za:long-head-of-triceps-brachii-r",
+          "sids": [
+            "za:long-head-of-triceps-brachii-l",
+            "za:long-head-of-triceps-brachii-r"
+          ],
+          "nome_pt": "Cabeça longa do músculo tríceps braquial",
+          "nome_en": "Long head of triceps brachii"
+        },
+        {
+          "sid": "za:iliacus-muscle-r",
+          "sids": [
+            "za:iliacus-muscle-l",
+            "za:iliacus-muscle-r"
+          ],
+          "nome_pt": "Músculo ilíaco",
+          "nome_en": "Iliacus muscle"
+        },
+        {
+          "sid": "za:omohyoid-muscle-r",
+          "sids": [
+            "za:omohyoid-muscle-l",
+            "za:omohyoid-muscle-r"
+          ],
+          "nome_pt": "Músculo omo-hióideo",
+          "nome_en": "Omohyoid muscle"
+        },
+        {
+          "sid": "za:abductor-pollicis-longus-r",
+          "sids": [
+            "za:abductor-pollicis-longus-l",
+            "za:abductor-pollicis-longus-r"
+          ],
+          "nome_pt": "Músculo abdutor longo do polegar",
+          "nome_en": "Abductor pollicis longus"
+        },
+        {
+          "sid": "za:lateral-head-of-triceps-brachii-r",
+          "sids": [
+            "za:lateral-head-of-triceps-brachii-l",
+            "za:lateral-head-of-triceps-brachii-r"
+          ],
+          "nome_pt": "Cabeça lateral do músculo tríceps braquial",
+          "nome_en": "Lateral head of triceps brachii"
+        },
+        {
+          "sid": "za:adductor-brevis-r",
+          "sids": [
+            "za:adductor-brevis-l",
+            "za:adductor-brevis-r"
+          ],
+          "nome_pt": "Músculo adutor curto",
+          "nome_en": "Adductor brevis"
+        },
+        {
+          "sid": "za:pectineus-muscle-r",
+          "sids": [
+            "za:pectineus-muscle-l",
+            "za:pectineus-muscle-r"
+          ],
+          "nome_pt": "Músculo pectíneo",
+          "nome_en": "Pectineus muscle"
+        },
+        {
+          "sid": "za:teres-minor-muscle-r",
+          "sids": [
+            "za:teres-minor-muscle-l",
+            "za:teres-minor-muscle-r"
+          ],
+          "nome_pt": "Músculo redondo menor",
+          "nome_en": "Teres minor muscle"
+        },
+        {
+          "sid": "za:ulnar-head-of-flexor-carpi-ulnaris-r",
+          "sids": [
+            "za:ulnar-head-of-flexor-carpi-ulnaris-l",
+            "za:ulnar-head-of-flexor-carpi-ulnaris-r"
+          ],
+          "nome_pt": "Cabeça ulnar do flexor ulnar do carpo",
+          "nome_en": "Ulnar head of flexor carpi ulnaris"
+        },
+        {
+          "sid": "za:teres-major-muscle-r",
+          "sids": [
+            "za:teres-major-muscle-l",
+            "za:teres-major-muscle-r"
+          ],
+          "nome_pt": "Músculo redondo maior",
+          "nome_en": "Teres major muscle"
+        },
+        {
+          "sid": "za:temporalis-muscle-r",
+          "sids": [
+            "za:temporalis-muscle-l",
+            "za:temporalis-muscle-r"
+          ],
+          "nome_pt": "Músculo temporal",
+          "nome_en": "Temporalis muscle"
+        },
+        {
+          "sid": "za:obturator-internus-r",
+          "sids": [
+            "za:obturator-internus-l",
+            "za:obturator-internus-r"
+          ],
+          "nome_pt": "Músculo obturador interno",
+          "nome_en": "Obturator internus"
+        },
+        {
+          "sid": "za:short-head-of-biceps-femoris-r",
+          "sids": [
+            "za:short-head-of-biceps-femoris-l",
+            "za:short-head-of-biceps-femoris-r"
+          ],
+          "nome_pt": "Cabeça curta do bíceps femoral",
+          "nome_en": "Short head of biceps femoris"
+        }
+      ]
+    }
+  ]
+}

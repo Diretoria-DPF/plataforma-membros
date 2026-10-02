@@ -1,0 +1,2135 @@
+{
+  "za:left-ventricle": {
+    "ids": {},
+    "summary_pt": "O ventrículo esquerdo (ventrículo esquerdo do coração) é a câmara de maior pressão do coração e propulsiona o sangue oxigenado para a circulação sistêmica. Forma o ápice cardíaco, a maior parte da face esquerda (pulmonar) e grande parte da face diafragmática. Recebe o sangue do átrio esquerdo pelo óstio atrioventricular esquerdo, guarnecido pela valva mitral (atrioventricular esquerda), e o ejeta pelo óstio da aorta, fechado pela valva da aorta, cujas válvulas semilunares impedem o refluxo na diástole. Sua parede é cerca de três vezes mais espessa que a do ventrículo direito, o que reflete a sobrecarga de pressão da circulação sistêmica. A superfície interna apresenta trabéculas cárneas, dois músculos papilares (anterolateral e posteromedial) e cordas tendíneas que se prendem às cúspides da valva mitral. A região de saída, próxima à aorta, é lisa e constitui o vestíbulo da aorta. Medialmente, o septo interventricular, convexo em direção ao ventrículo direito, separa as duas câmaras ventriculares. O desempenho do ventrículo esquerdo determina o débito cardíaco e, em grande parte, a pressão arterial sistêmica.",
+    "anatomy": {
+      "relations": "Ocupa a porção posterior e esquerda da massa ventricular, formando o ápice (projetado no 5º espaço intercostal esquerdo, na linha hemiclavicular). Posteriormente relaciona-se com o átrio esquerdo e o seio coronário; à direita e anteriormente, com o ventrículo direito, pelo septo interventricular; inferiormente, com o diafragma, por meio do pericárdio.",
+      "vascularization": "Artéria coronária esquerda, por meio dos ramos interventricular anterior e circunflexo; a artéria coronária direita contribui pela face diafragmática, por meio do ramo interventricular posterior, conforme a dominância coronária. As veias drenam principalmente para o seio coronário (veias cardíacas magna, média e posterior do ventrículo esquerdo).",
+      "innervation": "Plexo cardíaco, formado por fibras simpáticas dos gânglios cervicais e torácicos superiores e por fibras parassimpáticas do nervo vago. O simpático aumenta a frequência e a força de contração; o parassimpático, atuando sobretudo nos nós e nas artérias coronárias, reduz a frequência. As aferências da dor isquêmica acompanham as fibras simpáticas.",
+      "lymph": "Plexos linfáticos subendocárdico, miocárdico e subepicárdico, que drenam por troncos satélites das artérias coronárias para os linfonodos mediastinais (traqueobronquiais e braquiocefálicos)."
+    },
+    "histology": {
+      "epithelium": "Revestimento interno por endotélio (endocárdio), epitélio pavimentoso simples sobre camada subendotelial de tecido conjuntivo; o epicárdio é revestido por mesotélio.",
+      "tissues": [
+        "Endocárdio: endotélio e tecido conjuntivo subendotelial, com fibras elásticas e colágenas",
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) unidos por discos intercalares, predominantes",
+        "Subendocárdio: ramos do sistema de condução (fibras de Purkinje)",
+        "Epicárdio: mesotélio sobre tecido conjuntivo frouxo com tecido adiposo, vasos e nervos"
+      ]
+    },
+    "clinical": [
+      "Infarto agudo do miocárdio: a oclusão do ramo interventricular anterior ou do ramo circunflexo causa necrose de segmentos da parede do ventrículo esquerdo, com risco de arritmia, insuficiência cardíaca e ruptura.",
+      "Hipertrofia ventricular esquerda: sobrecarga de pressão, como na hipertensão arterial sistêmica e na estenose da valva da aorta, espessa a parede e reduz a complacência ventricular.",
+      "Insuficiência cardíaca esquerda: a falência da câmara represa o sangue na circulação pulmonar e provoca congestão e edema pulmonar.",
+      "Cardiomiopatia dilatada: dilatação com perda da função sistólica, que pode causar regurgitação mitral funcional por afastamento das cúspides."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico ventrículo esquerdo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: ventrículo esquerdo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatias correlatas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:left-atrium": {
+    "ids": {},
+    "summary_pt": "O átrio esquerdo (átrio cardíaco esquerdo) é a câmara de recepção do sangue oxigenado que retorna dos pulmões. Forma a maior parte da base (face posterior) do coração e tem parede lisa, de espessura um pouco maior que a do átrio direito. Recebe as quatro veias pulmonares, duas de cada lado, que desembocam na sua face posterior sem valvas verdadeiras. Anteriormente projeta-se a aurícula esquerda, prolongamento tubular de parede trabeculada com músculos pectíneos, que se dirige para a frente e contorna o lado esquerdo do tronco pulmonar. O sangue passa ao ventrículo esquerdo pelo óstio atrioventricular esquerdo, guarnecido pela valva mitral. A face septal conserva a valva do forame oval, vestígio da circulação fetal, que corresponde à fossa oval vista do lado direito. Posteriormente o átrio esquerdo relaciona-se com o seio oblíquo do pericárdio e com o esôfago, razão pela qual o seu aumento pode ser detectado em exames contrastados do esôfago. Além de reservatório e conduto, a câmara contribui para o enchimento ventricular final na sístole atrial e participa da regulação do volume por meio de hormônio natriurético.",
+    "anatomy": {
+      "relations": "Situa-se na base do coração, posterior ao átrio direito e à raiz da aorta e superior ao seio coronário. A face posterior é separada do esôfago e da aorta descendente pelo pericárdio, estando em relação direta com o seio oblíquo. A aurícula esquerda projeta-se anteriormente e à esquerda do tronco pulmonar.",
+      "vascularization": "Ramos atriais da artéria circunflexa, ramo da artéria coronária esquerda. A drenagem venosa faz-se por pequenas veias que alcançam o seio coronário e por veias cardíacas mínimas que desembocam diretamente na câmara.",
+      "innervation": "Plexo cardíaco, formado por fibras simpáticas dos gânglios cervicais e torácicos superiores e por fibras parassimpáticas do nervo vago. O simpático aumenta a frequência e a força de contração; o parassimpático, atuando sobretudo nos nós e nas artérias coronárias, reduz a frequência. As aferências da dor isquêmica acompanham as fibras simpáticas.",
+      "lymph": "Plexos linfáticos subendocárdico, miocárdico e subepicárdico, que drenam por troncos satélites das artérias coronárias para os linfonodos mediastinais (traqueobronquiais e braquiocefálicos)."
+    },
+    "histology": {
+      "epithelium": "Revestimento interno por endotélio (endocárdio), epitélio pavimentoso simples sobre camada subendotelial de tecido conjuntivo; o epicárdio é revestido por mesotélio.",
+      "tissues": [
+        "Endocárdio: endotélio e tecido conjuntivo subendotelial, relativamente espesso nos átrios",
+        "Miocárdio atrial: cardiomiócitos de menor diâmetro, alguns com grânulos de secreção do fator natriurético atrial",
+        "Epicárdio: mesotélio sobre tecido conjuntivo frouxo com vasos e nervos"
+      ]
+    },
+    "clinical": [
+      "Fibrilação atrial: a contração atrial ineficaz favorece estase e formação de trombos na aurícula esquerda, com risco de embolia sistêmica e acidente vascular encefálico isquêmico.",
+      "Estenose mitral, em geral de origem reumática: a sobrecarga de pressão dilata o átrio esquerdo e eleva a pressão nas veias pulmonares, com congestão pulmonar.",
+      "Comunicação interatrial e forame oval patente: persistência de passagem entre os átrios, que permite desvio de sangue e, no segundo caso, embolia paradoxal.",
+      "Mixoma atrial: tumor cardíaco primário mais frequente do adulto, localizado em geral no átrio esquerdo, ligado ao septo interatrial."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico átrio esquerdo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: átrio esquerdo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatias correlatas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio esquerdo",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:right-ventricle": {
+    "ids": {},
+    "summary_pt": "O ventrículo direito (ventrículo direito do coração) bombeia o sangue pouco oxigenado para a circulação pulmonar, em regime de baixa pressão. Forma a maior parte da face esternocostal (anterior) do coração e parte da face diafragmática. Recebe o sangue do átrio direito pelo óstio atrioventricular direito, guarnecido pela valva tricúspide, e o ejeta pelo óstio do tronco pulmonar, fechado pela valva do tronco pulmonar. A câmara tem duas porções: a via de entrada, trabeculada, e a via de saída, lisa, denominada cone arterial (infundíbulo), separadas pela crista supraventricular. Internamente há trabéculas cárneas, três músculos papilares (anterior, inferior [posterior] e septal) e a trabécula septomarginal, que une o septo ao músculo papilar anterior e conduz o ramo direito do fascículo atrioventricular. A parede é bem mais delgada que a do ventrículo esquerdo, e a câmara tem secção em forma de crescente, voltada para o septo interventricular, que se abaúla para o seu interior. Sua adaptação à baixa resistência pulmonar explica a sensibilidade a aumentos agudos da pressão pulmonar.",
+    "anatomy": {
+      "relations": "Ocupa a região anterior e inferior do coração, logo posterior ao esterno e às cartilagens costais esquerdas, e superior ao diafragma. À direita e posteriormente relaciona-se com o átrio direito, separado pelo sulco coronário; à esquerda e posteriormente, com o ventrículo esquerdo, pelo septo interventricular. A via de saída continua-se com o tronco pulmonar.",
+      "vascularization": "Principalmente a artéria coronária direita, por meio do ramo marginal direito e do ramo interventricular posterior; o ramo interventricular anterior, da artéria coronária esquerda, irriga o septo anterior e a parede do ventrículo direito junto ao septo. O cone arterial recebe, em geral, o ramo do cone arterial, da artéria coronária direita. As veias drenam pelas veias cardíacas anteriores, diretamente no átrio direito, e pelas veias cardíacas parva e média, no seio coronário.",
+      "innervation": "Plexo cardíaco, formado por fibras simpáticas dos gânglios cervicais e torácicos superiores e por fibras parassimpáticas do nervo vago. O simpático aumenta a frequência e a força de contração; o parassimpático, atuando sobretudo nos nós e nas artérias coronárias, reduz a frequência. As aferências da dor isquêmica acompanham as fibras simpáticas.",
+      "lymph": "Plexos linfáticos subendocárdico, miocárdico e subepicárdico, que drenam por troncos satélites das artérias coronárias para os linfonodos mediastinais (traqueobronquiais e braquiocefálicos)."
+    },
+    "histology": {
+      "epithelium": "Revestimento interno por endotélio (endocárdio), epitélio pavimentoso simples sobre camada subendotelial de tecido conjuntivo; o epicárdio é revestido por mesotélio.",
+      "tissues": [
+        "Endocárdio: endotélio e tecido conjuntivo subendotelial, com fibras elásticas e colágenas",
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) unidos por discos intercalares, predominantes",
+        "Subendocárdio: ramos do sistema de condução (fibras de Purkinje)",
+        "Epicárdio: mesotélio sobre tecido conjuntivo frouxo com tecido adiposo, vasos e nervos"
+      ]
+    },
+    "clinical": [
+      "Tetralogia de Fallot: estenose da via de saída do ventrículo direito, comunicação interventricular, dextroposição da aorta e hipertrofia ventricular direita, causa frequente de cianose congênita.",
+      "Cor pulmonale: hipertrofia e dilatação do ventrículo direito secundárias à hipertensão pulmonar de doença pulmonar ou vascular.",
+      "Infarto do ventrículo direito: acompanha a oclusão proximal da artéria coronária direita, comum em infartos inferiores, e pode causar hipotensão com pulmões limpos.",
+      "Cardiomiopatia arritmogênica do ventrículo direito: substituição fibrogordurosa do miocárdio, associada a arritmias ventriculares e morte súbita em jovens."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico ventrículo direito",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: ventrículo direito",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: ventrículo direito",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: ventrículo direito",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatias correlatas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: ventrículo direito",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:right-atrium": {
+    "ids": {},
+    "summary_pt": "O átrio direito (átrio cardíaco direito) recebe o sangue venoso de todo o corpo e do próprio coração e o envia ao ventrículo direito. Forma a borda direita do coração e, externamente, é marcado pelo sulco terminal, que corresponde internamente à crista terminal. Recebe a veia cava superior em sua porção superior, a veia cava inferior em sua porção inferior e o seio coronário entre a veia cava inferior e o óstio atrioventricular. Possui duas partes: o seio das veias cavas, de parede lisa, e o átrio propriamente dito, de parede trabeculada por músculos pectíneos, que se estende para a aurícula direita. No septo interatrial encontra-se a fossa oval, vestígio do forame oval fetal, limitada pelo limbo da fossa oval. A veia cava inferior e o seio coronário têm válvulas rudimentares em seus óstios. O nó sinoatrial, marca-passo do coração, localiza-se na junção da veia cava superior com o átrio, e o nó atrioventricular, no septo interatrial junto ao óstio do seio coronário, no triângulo de Koch. O sangue deixa a câmara pelo óstio atrioventricular direito, guarnecido pela valva tricúspide.",
+    "anatomy": {
+      "relations": "Compõe a borda direita do coração, anterior e à direita do átrio esquerdo, de que o separa o septo interatrial. Em sua face lateral relaciona-se com a pleura e o pulmão direitos, com o nervo frênico e os vasos pericardicofrênicos interpostos. A aurícula direita recobre a raiz da aorta ascendente, e a câmara situa-se à direita do ventrículo direito, separada pelo sulco coronário.",
+      "vascularization": "Artéria coronária direita e seus ramos atriais; o ramo do nó sinoatrial origina-se da coronária direita na maioria dos indivíduos. O seio coronário e as veias cardíacas anteriores desembocam diretamente na câmara.",
+      "innervation": "Plexo cardíaco, formado por fibras simpáticas dos gânglios cervicais e torácicos superiores e por fibras parassimpáticas do nervo vago. O simpático aumenta a frequência e a força de contração; o parassimpático, atuando sobretudo nos nós e nas artérias coronárias, reduz a frequência. As aferências da dor isquêmica acompanham as fibras simpáticas. O nó sinoatrial, situado nesta câmara, é modulado por esses dois componentes autonômicos.",
+      "lymph": "Plexos linfáticos subendocárdico, miocárdico e subepicárdico, que drenam por troncos satélites das artérias coronárias para os linfonodos mediastinais (traqueobronquiais e braquiocefálicos)."
+    },
+    "histology": {
+      "epithelium": "Revestimento interno por endotélio (endocárdio), epitélio pavimentoso simples sobre camada subendotelial de tecido conjuntivo; o epicárdio é revestido por mesotélio.",
+      "tissues": [
+        "Endocárdio: endotélio e tecido conjuntivo subendotelial, espessado nos átrios",
+        "Miocárdio atrial: cardiomiócitos, alguns com grânulos de fator natriurético atrial, inclusive nos músculos pectíneos",
+        "Nó sinoatrial: células musculares cardíacas modificadas (marca-passo) em meio a tecido conjuntivo rico em colágeno, capilares e terminações nervosas",
+        "Epicárdio: mesotélio sobre tecido conjuntivo frouxo com tecido adiposo"
+      ]
+    },
+    "clinical": [
+      "Comunicação interatrial do tipo ostium secundum: defeito na região da fossa oval que gera derivação esquerda-direita e sobrecarga das câmaras direitas.",
+      "Disfunção do nó sinoatrial: perturba a frequência sinusal e causa bradicardia ou pausas.",
+      "Flutter e fibrilação atriais: arritmias originadas nos átrios que comprometem o enchimento ventricular e favorecem a formação de trombos.",
+      "Acesso venoso central: a junção da veia cava superior com o átrio direito é a referência anatômica para a posição da ponta dos cateteres venosos centrais introduzidos pelas veias jugular interna ou subclávia."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico átrio direito",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: átrio direito",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: átrio direito",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: átrio direito",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio direito",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatias correlatas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: átrio direito",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-interventricular-septum": {
+    "ids": {},
+    "summary_pt": "O septo interventricular é a parede obliquamente orientada que separa o ventrículo esquerdo do ventrículo direito. Sua maior extensão é a parte muscular, espessa, de espessura comparável à da parede do ventrículo esquerdo. Na região superior, abaixo das válvulas direita e posterior da valva da aorta, encontra-se a parte membranácea, delgada e fibrosa, continuação do esqueleto fibroso do coração. A inserção da cúspide septal da valva tricúspide atravessa essa parte e a divide em uma porção interventricular e outra atrioventricular, de modo que parte do septo membranáceo separa o ventrículo esquerdo do átrio direito. Por causa da maior pressão do ventrículo esquerdo, o septo abaúla-se para a câmara direita, e sua posição é indicada externamente pelos sulcos interventriculares anterior e posterior, que alojam os ramos interventriculares das artérias coronárias. No lado direito, a trabécula septomarginal liga-o ao músculo papilar anterior. O septo abriga o fascículo atrioventricular (feixe de His) e seus ramos direito e esquerdo, que levam o impulso elétrico aos ventrículos. Assim, é ao mesmo tempo divisor hemodinâmico e componente do sistema de condução.",
+    "anatomy": {
+      "relations": "Estende-se do ápice à base dos ventrículos, entre as faces anterior e diafragmática, marcado externamente pelos sulcos interventriculares anterior e posterior. Superiormente a parte membranácea relaciona-se com a raiz da aorta e com a cúspide septal da valva tricúspide; o fascículo atrioventricular passa ao longo de sua crista, dividindo-se em ramos direito e esquerdo.",
+      "vascularization": "Cerca de dois terços anteriores pelos ramos septais interventriculares do ramo interventricular anterior (artéria coronária esquerda) e o terço posterior pelos ramos septais do ramo interventricular posterior, em geral da artéria coronária direita. Ramos septais da artéria coronária esquerda e da direita anastomosam-se no ápice.",
+      "innervation": "Fibras do plexo cardíaco acompanham as artérias; o fascículo atrioventricular e seus ramos fazem parte do sistema de condução, modulado por fibras simpáticas e vagais."
+    },
+    "histology": {
+      "epithelium": "Ambas as faces são revestidas por endocárdio (endotélio sobre camada subendotelial de tecido conjuntivo).",
+      "tissues": [
+        "Parte muscular: miocárdio (cardiomiócitos e discos intercalares) revestido por endocárdio em ambas as faces",
+        "Parte membranácea: tecido conjuntivo denso fibroso, em continuidade com o esqueleto fibroso do coração",
+        "Fascículo atrioventricular e ramos: células de condução (fibras de Purkinje), maiores e mais claras que os cardiomiócitos contráteis"
+      ]
+    },
+    "clinical": [
+      "Comunicação interventricular: um dos defeitos congênitos mais frequentes, em geral na parte membranácea, gera derivação esquerda-direita, sopro holossistólico e sobrecarga da circulação pulmonar.",
+      "Ruptura do septo interventricular após infarto do miocárdio: complicação mecânica grave, que ocorre dias após a necrose e produz sopro novo e piora hemodinâmica.",
+      "Bloqueios de ramo: lesão do ramo direito ou esquerdo do fascículo atrioventricular, que percorre o septo, atrasa a despolarização do ventrículo correspondente.",
+      "Hipertrofia septal assimétrica: característica da cardiomiopatia hipertrófica, pode obstruir a via de saída do ventrículo esquerdo."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: septo interventricular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico septo interventricular",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: septo interventricular",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: septo interventricular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: septo interventricular",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: septo interventricular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: septo interventricular",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: septo interventricular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatias correlatas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: septo interventricular",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:pulmonary-trunk": {
+    "ids": {},
+    "summary_pt": "O tronco pulmonar é a grande artéria que conduz o sangue pouco oxigenado do ventrículo direito aos pulmões. Mede cerca de 5 cm de comprimento e 3 cm de diâmetro e origina-se do cone arterial do ventrículo direito, onde a valva do tronco pulmonar, de três válvulas semilunares, impede o refluxo durante a diástole. Dilatações da parede logo acima de cada válvula formam os seios do tronco pulmonar. O vaso ascende à esquerda da aorta ascendente, em direção posterior e superior, e fica envolvido, junto com ela, por uma bainha comum de pericárdio seroso. Ao nível do ângulo do esterno, abaixo do arco da aorta, bifurca-se nas artérias pulmonares direita e esquerda, que alcançam os hilos pulmonares. Da região da bifurcação parte o ligamento arterial, cordão fibroso que une o tronco ao arco da aorta e representa o remanescente do ducto arterial fetal. Como se trata de uma artéria elástica, a parede dilata-se na sístole e retorna na diástole, e o circuito pulmonar opera com baixa pressão e resistência, de modo que a parede é muito mais delgada que a da aorta.",
+    "anatomy": {
+      "relations": "Origina-se anteriormente no cone arterial do ventrículo direito, ascende à esquerda da aorta ascendente e posterior ao esterno e, junto com ela, está envolvido por pericárdio seroso. A aurícula esquerda situa-se junto ao seu lado esquerdo. Abaixo do arco da aorta o tronco bifurca-se nas artérias pulmonares, e o ligamento arterial une o ponto da bifurcação ao arco.",
+      "vascularization": "A parede é nutrida por vasos próprios (vasa vasorum) na adventícia.",
+      "innervation": "Fibras autonômicas do plexo cardíaco, situado superiormente à bifurcação do tronco pulmonar, acompanham o vaso."
+    },
+    "histology": {
+      "epithelium": "Íntima revestida por endotélio (epitélio pavimentoso simples), apoiado em camada subendotelial de tecido conjuntivo.",
+      "tissues": [
+        "Túnica íntima: endotélio e camada subendotelial de tecido conjuntivo frouxo",
+        "Túnica média: lâminas elásticas fenestradas alternadas com músculo liso e fibras colágenas, característica de artéria elástica",
+        "Túnica adventícia: tecido conjuntivo com fibras colágenas e elásticas, vasa vasorum e fibras nervosas"
+      ]
+    },
+    "clinical": [
+      "Embolia pulmonar: êmbolos de trombose venosa profunda alojam-se no tronco pulmonar ou nas artérias pulmonares, causando hipoxemia, dor torácica e sobrecarga aguda do ventrículo direito; êmbolo grande na bifurcação, chamado êmbolo em sela, pode ser fatal.",
+      "Hipertensão pulmonar: aumento da pressão arterial pulmonar dilata o tronco pulmonar e sobrecarrega o ventrículo direito, evoluindo para cor pulmonale.",
+      "Persistência do ducto arterial: quando o ducto fetal não se oblitera para formar o ligamento arterial, há desvio de sangue da aorta para o tronco pulmonar.",
+      "Estenose da valva do tronco pulmonar: obstrução da via de saída do ventrículo direito, isolada ou parte da tetralogia de Fallot."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: tronco pulmonar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico tronco pulmonar",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: tronco pulmonar",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: tronco pulmonar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: tronco pulmonar",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: tronco pulmonar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico parede do coração (endocárdio, miocárdio e epicárdio)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatias correlatas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: tronco pulmonar",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:posterior-leaflet-of-left-atrioventricular-valve": {
+    "ids": {},
+    "summary_pt": "A cúspide posterior da valva atrioventricular esquerda (valva mitral) é uma das duas cúspides dessa valva, a outra sendo a cúspide anterior. Insere-se na porção posterior do ânulo atrioventricular esquerdo e projeta-se para o interior do ventrículo esquerdo. É mais curta no sentido radial que a cúspide anterior, mas ocupa cerca de dois terços da circunferência do ânulo e costuma apresentar reentrâncias que a subdividem em três escalopes, P1, P2 e P3 (classificação de Carpentier). A margem livre e a face ventricular recebem cordas tendíneas dos músculos papilares anterolateral e posteromedial, e cada músculo papilar envia cordas a ambas as cúspides; há ainda cordas basais, que partem diretamente da parede ventricular. Durante a sístole ventricular, a cúspide posterior aproxima-se da anterior ao longo da linha de coaptação, fechando o óstio e impedindo o refluxo para o átrio esquerdo. A integridade funcional depende do ânulo, das cúspides, das cordas tendíneas, dos músculos papilares e da parede do ventrículo esquerdo, que formam o aparelho valvar. Por ser mais afastada da via de saída da aorta, a cúspide posterior não participa da continuidade fibrosa com a valva da aorta, ao contrário da cúspide anterior.",
+    "anatomy": {
+      "relations": "Fixa-se na parte posterior do ânulo atrioventricular esquerdo, voltada para a parede posterior do ventrículo esquerdo e para o átrio esquerdo. A cúspide anterior, em continuidade fibrosa com a valva da aorta, situa-se entre o óstio atrioventricular e a via de saída. A coaptação entre as duas cúspides ocorre ao longo de comissuras anterolateral e posteromedial.",
+      "vascularization": "As cúspides são em grande parte avasculares e dependem da difusão de nutrientes a partir do sangue das câmaras; o ânulo e a base da valva recebem ramos das artérias coronárias."
+    },
+    "histology": {
+      "epithelium": "Revestimento por endotélio (epitélio pavimentoso simples), contínuo com o endocárdio das câmaras adjacentes.",
+      "tissues": [
+        "Lâmina de tecido conjuntivo denso (camada fibrosa) revestida em ambas as faces por endotélio",
+        "Cordas tendíneas: tecido conjuntivo denso rico em colágeno, que prolonga as cúspides até os músculos papilares",
+        "Ânulo fibroso: tecido conjuntivo denso do esqueleto fibroso do coração, ponto de inserção da valva e do miocárdio"
+      ]
+    },
+    "clinical": [
+      "Prolapso da valva mitral: a degeneração mixomatosa das cúspides leva ao deslocamento para o átrio esquerdo na sístole, com regurgitação e sopro, e a cúspide posterior é frequentemente afetada.",
+      "Regurgitação mitral: pode decorrer de ruptura de corda tendínea, dilatação do ânulo ou disfunção isquêmica do músculo papilar após infarto.",
+      "Febre reumática e endocardite infecciosa: lesões inflamatórias ou vegetações nas cúspides causam fibrose, retração e disfunção valvar."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide posterior da valva atrioventricular esquerda",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico cúspide posterior da valva atrioventricular esquerda",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: cúspide posterior da valva atrioventricular esquerda",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide posterior da valva atrioventricular esquerda",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: cúspide posterior da valva atrioventricular esquerda",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico cúspide posterior da valva atrioventricular esquerda",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide posterior da valva atrioventricular esquerda",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:inferior-leaflet-of-right-atrioventricular-valve": {
+    "ids": {},
+    "summary_pt": "A cúspide inferior da valva atrioventricular direita (valva tricúspide), também descrita como cúspide posterior, é uma das três cúspides dessa valva, ao lado da anterior e da septal. Insere-se na porção inferior do ânulo atrioventricular direito, voltada para a parede diafragmática do ventrículo direito. Suas margens livres e faces ventriculares recebem cordas tendíneas dos músculos papilares anterior e inferior, de modo que cada músculo papilar se relaciona com duas cúspides vizinhas. Durante a sístole ventricular, a cúspide inferior coapta-se com a anterior e a septal, ao longo das comissuras, vedando o óstio atrioventricular direito e impedindo o refluxo de sangue para o átrio direito. Na diástole, afasta-se e permite o enchimento do ventrículo. Seu ânulo está em relação com o sulco coronário, por onde segue a artéria coronária direita. O funcionamento adequado da cúspide depende do ânulo, que pode se dilatar quando o ventrículo direito aumenta, e da integridade dos músculos papilares. Como as demais cúspides valvares, é uma lâmina fina de tecido conjuntivo revestida por endotélio e sem vascularização própria.",
+    "anatomy": {
+      "relations": "Fixa-se na parte inferior do ânulo atrioventricular direito, junto à parede diafragmática do ventrículo direito. É limitada pelas comissuras que a separam da cúspide anterior e da cúspide septal. A artéria coronária direita percorre o sulco coronário na vizinhança do ânulo, e o seio coronário abre-se no átrio direito perto de sua inserção septal.",
+      "vascularization": "As cúspides são em grande parte avasculares e dependem da difusão de nutrientes a partir do sangue das câmaras; o ânulo e a base da valva recebem ramos das artérias coronárias."
+    },
+    "histology": {
+      "epithelium": "Revestimento por endotélio (epitélio pavimentoso simples), contínuo com o endocárdio das câmaras adjacentes.",
+      "tissues": [
+        "Lâmina de tecido conjuntivo denso (camada fibrosa) revestida em ambas as faces por endotélio",
+        "Cordas tendíneas: tecido conjuntivo denso rico em colágeno, que prolonga as cúspides até os músculos papilares",
+        "Ânulo fibroso: tecido conjuntivo denso do esqueleto fibroso do coração, ponto de inserção da valva e do miocárdio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide: dilatação do ventrículo direito e do ânulo, por hipertensão pulmonar ou insuficiência cardíaca, impede a coaptação das cúspides e causa refluxo para o átrio direito.",
+      "Anomalia de Ebstein: deslocamento apical das cúspides septal e posterior para dentro do ventrículo direito, com porção atrializada do ventrículo e regurgitação.",
+      "Endocardite infecciosa de valva direita: a tricúspide é a valva mais comumente afetada em usuários de drogas injetáveis, com êmbolos sépticos para os pulmões."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide inferior da valva atrioventricular direita",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico cúspide inferior da valva atrioventricular direita",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: cúspide inferior da valva atrioventricular direita",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide inferior da valva atrioventricular direita",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: cúspide inferior da valva atrioventricular direita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico cúspide inferior da valva atrioventricular direita",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide inferior da valva atrioventricular direita",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:septal-leaflet-of-right-atrioventricular-valve": {
+    "ids": {},
+    "summary_pt": "A cúspide septal da valva atrioventricular direita (valva tricúspide) fixa-se à porção do ânulo atrioventricular direito voltada para o septo interventricular. Suas cordas tendíneas ligam-se ao músculo papilar septal e ao músculo papilar inferior, que também dão cordas às cúspides vizinhas. A cúspide septal cruza a parte membranácea do septo interventricular, que fica assim dividida em uma porção atrioventricular, entre o ventrículo esquerdo e o átrio direito, e uma porção interventricular. Essa relação é importante porque o nó atrioventricular e o início do fascículo atrioventricular localizam-se no triângulo de Koch, delimitado pelo tendão de Todaro, pelo óstio do seio coronário e pela inserção da cúspide septal. Na sístole, a cúspide septal coapta-se com as cúspides anterior e inferior, vedando o óstio atrioventricular direito; na diástole, afasta-se do septo para o enchimento. Sua posição junto ao septo e ao tecido de condução tem importância em cirurgias da região, e a valva tricúspide como um todo depende da integridade dessa cúspide para vedar o óstio.",
+    "anatomy": {
+      "relations": "Fixa-se ao ânulo sobre o septo interventricular e cruza a parte membranácea do septo; sua inserção é um dos limites do triângulo de Koch, onde se localizam o nó atrioventricular e o fascículo atrioventricular. Relaciona-se posteroinferiormente com o seio coronário e, na face ventricular, com o septo interventricular e os músculos papilares septais.",
+      "vascularization": "As cúspides são em grande parte avasculares e dependem da difusão de nutrientes a partir do sangue das câmaras; o ânulo e a base da valva recebem ramos das artérias coronárias."
+    },
+    "histology": {
+      "epithelium": "Revestimento por endotélio (epitélio pavimentoso simples), contínuo com o endocárdio das câmaras adjacentes.",
+      "tissues": [
+        "Lâmina de tecido conjuntivo denso (camada fibrosa) revestida em ambas as faces por endotélio",
+        "Cordas tendíneas: tecido conjuntivo denso rico em colágeno, que prolonga as cúspides até os músculos papilares",
+        "Ânulo fibroso: tecido conjuntivo denso do esqueleto fibroso do coração, ponto de inserção da valva e do miocárdio"
+      ]
+    },
+    "clinical": [
+      "Anomalia de Ebstein: a cúspide septal, junto com a posterior, é deslocada apicalmente, com aderência ao septo e regurgitação tricúspide.",
+      "Comunicação interventricular perimembranosa: o defeito na parte membranácea pode ser parcialmente recoberto pela cúspide septal, formando aneurisma do septo membranáceo.",
+      "Proximidade do sistema de condução: o nó atrioventricular e o fascículo atrioventricular localizam-se junto à inserção da cúspide septal, e lesões nessa região associam-se a bloqueio atrioventricular."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide septal da valva atrioventricular direita",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico cúspide septal da valva atrioventricular direita",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: cúspide septal da valva atrioventricular direita",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide septal da valva atrioventricular direita",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: cúspide septal da valva atrioventricular direita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico cúspide septal da valva atrioventricular direita",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: cúspide septal da valva atrioventricular direita",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:inferior-papillary-muscle-of-left-ventricle": {
+    "ids": {},
+    "summary_pt": "O músculo papilar inferior do ventrículo esquerdo, também chamado posterior ou posteromedial, é uma projeção cônica do miocárdio da parede inferior (diafragmática) do ventrículo esquerdo para a cavidade. É um dos dois músculos papilares dessa câmara, ao lado do anterolateral. Seu ápice origina cordas tendíneas que se dividem e se inserem nas margens livres e nas faces ventriculares das cúspides anterior e posterior da valva mitral, de modo que cada músculo se relaciona com as duas cúspides. Durante a sístole ventricular, o músculo papilar se contrai simultaneamente com a parede e mantém as cordas tensas, o que impede a eversão das cúspides para o átrio esquerdo. Não abre ou fecha a valva: sua função é manter a coaptação enquanto a pressão intraventricular sobe. Diferentemente do músculo anterolateral, que costuma ter dupla irrigação, o inferior depende com frequência de um único ramo arterial, o que o torna mais vulnerável à isquemia. Por isso, infartos da parede inferior são classicamente associados a disfunção ou ruptura do aparato subvalvar da valva mitral.",
+    "anatomy": {
+      "relations": "Origina-se da parede inferior (diafragmática) do ventrículo esquerdo, próxima ao septo interventricular, e dirige-se para a luz da câmara. Suas cordas tendíneas ligam-se às margens e às faces ventriculares das cúspides anterior e posterior da valva mitral, nas regiões vizinhas à comissura posteromedial.",
+      "vascularization": "Em geral irrigado por um ramo único do ramo interventricular posterior (da artéria coronária direita ou, na dominância esquerda, da circunflexa); essa irrigação única o torna mais vulnerável à isquemia que o músculo anterolateral."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Ruptura de músculo papilar após infarto do miocárdio: complicação mecânica rara, que causa regurgitação mitral aguda grave, edema pulmonar e choque.",
+      "Disfunção isquêmica do músculo papilar: mesmo sem ruptura, a isquemia compromete a tração das cordas tendíneas e produz regurgitação mitral.",
+      "Regurgitação mitral funcional (isquêmica): o deslocamento dos músculos papilares, por dilatação do ventrículo esquerdo, traciona as cúspides e impede a coaptação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatia isquêmica (infarto do miocárdio e complicações mecânicas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatia isquêmica (complicações mecânicas do infarto) e doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-papillary-muscle-of-heart-anterolateral": {
+    "ids": {},
+    "summary_pt": "O músculo papilar anterolateral é o maior dos dois músculos papilares do ventrículo esquerdo. Projeta-se da parede anterolateral do ventrículo esquerdo para a cavidade, como um cone muscular robusto com o ápice voltado para a valva mitral. Suas cordas tendíneas dividem-se em ramos que se inserem nas margens livres e nas faces ventriculares das cúspides anterior e posterior da valva atrioventricular esquerda, junto à comissura anterolateral. Durante a sístole, o miocárdio papilar contrai-se junto com a parede ventricular e tensiona as cordas, de modo que as cúspides permaneçam coaptadas e não se invertam para o átrio esquerdo. É a contração do músculo que mantém a tração durante o aumento da pressão, e não a abertura da valva, que depende do gradiente de pressão. Costuma receber irrigação dupla, por ramos do ramo interventricular anterior e da artéria circunflexa, e por isso sofre ruptura isquêmica com menor frequência que o músculo posteromedial. Sua posição na parede anterolateral e a inserção das cordas nas duas cúspides explicam por que a perda de sua função resulta em regurgitação mitral.",
+    "anatomy": {
+      "relations": "Origina-se da parede anterolateral do ventrículo esquerdo, voltado para a valva mitral, e suas cordas tendíneas inserem-se nas cúspides anterior e posterior, junto à comissura anterolateral. O músculo papilar posteromedial ocupa a parede oposta, inferior, da mesma câmara.",
+      "vascularization": "Com frequência irrigado por dois ramos: ramos diagonais ou marginais do ramo interventricular anterior e da artéria circunflexa, ambos da artéria coronária esquerda, o que o protege relativamente da isquemia."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Ruptura de músculo papilar após infarto do miocárdio: complicação mecânica rara, que causa regurgitação mitral aguda grave, edema pulmonar e choque.",
+      "Disfunção isquêmica do músculo papilar: mesmo sem ruptura, a isquemia compromete a tração das cordas tendíneas e produz regurgitação mitral.",
+      "Regurgitação mitral funcional (isquêmica): o deslocamento dos músculos papilares, por dilatação do ventrículo esquerdo, traciona as cúspides e impede a coaptação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatia isquêmica (infarto do miocárdio e complicações mecânicas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatia isquêmica (complicações mecânicas do infarto) e doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-papillary-muscle-of-heart-posteromedial": {
+    "ids": {},
+    "summary_pt": "O músculo papilar posteromedial é o segundo músculo papilar do ventrículo esquerdo e corresponde ao músculo inferior (posterior) dessa câmara. Emerge da parede posteromedial do ventrículo esquerdo, próxima ao septo interventricular, e orienta-se para o ápice da valva mitral. Suas cordas tendíneas dividem-se e ligam-se às margens livres e às faces ventriculares das cúspides anterior e posterior, na região da comissura posteromedial. A contração sincronizada com a parede ventricular, durante a sístole, mantém as cordas sob tensão e evita o prolapso das cúspides para o átrio esquerdo. Ao contrário do músculo anterolateral, o posteromedial recebe com frequência irrigação única, por um ramo da artéria interventricular posterior, da artéria coronária direita ou da circunflexa, de acordo com a dominância. Por isso é classicamente o músculo mais sujeito à necrose e à ruptura em infartos da parede inferior do ventrículo esquerdo, evento que causa regurgitação mitral aguda. Esse músculo, as cordas e as cúspides compõem, com o ânulo, o aparelho valvar da mitral.",
+    "anatomy": {
+      "relations": "Origina-se da parede posteromedial do ventrículo esquerdo e dirige-se à valva mitral. Suas cordas tendíneas inserem-se nas cúspides anterior e posterior, junto à comissura posteromedial. Faz par com o músculo papilar anterolateral, na parede oposta do ventrículo.",
+      "vascularization": "Habitualmente com irrigação única, por ramo da artéria interventricular posterior (da coronária direita ou, em dominância esquerda, da circunflexa), o que o torna mais suscetível à isquemia do que o músculo anterolateral."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Ruptura de músculo papilar após infarto do miocárdio: complicação mecânica rara, que causa regurgitação mitral aguda grave, edema pulmonar e choque.",
+      "Disfunção isquêmica do músculo papilar: mesmo sem ruptura, a isquemia compromete a tração das cordas tendíneas e produz regurgitação mitral.",
+      "Regurgitação mitral funcional (isquêmica): o deslocamento dos músculos papilares, por dilatação do ventrículo esquerdo, traciona as cúspides e impede a coaptação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatia isquêmica (infarto do miocárdio e complicações mecânicas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico cardiopatia isquêmica (complicações mecânicas do infarto) e doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:anterior-papillary-muscle-of-right-ventricle": {
+    "ids": {},
+    "summary_pt": "O músculo papilar anterior do ventrículo direito é o maior dos músculos papilares dessa câmara. Origina-se da parede anterior do ventrículo direito, e seu ápice dá cordas tendíneas que se inserem nas cúspides anterior e posterior (inferior) da valva tricúspide. A base é unida ao septo interventricular pela trabécula septomarginal (banda moderadora), feixe muscular que atravessa a cavidade e conduz o ramo direito do fascículo atrioventricular, de modo que o impulso alcança o músculo papilar quase simultaneamente com o septo e a contração se coordena. Durante a sístole ventricular, o músculo se contrai e mantém tensas as cordas tendíneas, o que impede a eversão das cúspides para o átrio direito quando a pressão na câmara aumenta. Sua função é de contenção e coaptação das cúspides, e a abertura da valva é passiva, determinada pelo gradiente de pressão entre átrio e ventrículo. Como os demais músculos papilares, faz parte do aparelho subvalvar da valva tricúspide, formado ainda pelo ânulo, pelas cúspides e pelas cordas tendíneas.",
+    "anatomy": {
+      "relations": "Origina-se da parede anterior do ventrículo direito, perto do ápice. A trabécula septomarginal liga sua base ao septo interventricular. As cordas tendíneas dirigem-se às cúspides anterior e posterior da valva tricúspide.",
+      "vascularization": "Principalmente por ramos da artéria coronária direita (ramo marginal direito); a trabécula septomarginal recebe ramos septais do ramo interventricular anterior."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide funcional: a dilatação do ventrículo direito, por hipertensão pulmonar ou infarto, desloca os músculos papilares e impede a coaptação das cúspides.",
+      "Infarto do ventrículo direito: a isquemia dos músculos papilares pode comprometer a valva tricúspide, com regurgitação e agravamento da congestão venosa sistêmica.",
+      "Endocardite infecciosa da valva tricúspide: as vegetações acometem cúspides e cordas tendíneas, e a destruição do aparelho subvalvar agrava a regurgitação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:inferior-papillary-muscle-of-right-ventricle": {
+    "ids": {},
+    "summary_pt": "O músculo papilar inferior do ventrículo direito, também denominado posterior, projeta-se da parede inferior (diafragmática) da câmara. É de calibre intermediário entre o anterior, maior, e o septal, menor, e pode aparecer subdividido em duas ou mais cabeças. Dele partem cordas tendíneas que se inserem nas cúspides inferior (posterior) e septal da valva tricúspide. Sua contração sincronizada com a parede, na sístole, tensiona as cordas e impede o prolapso das cúspides para o átrio direito. Quando a parede inferior do ventrículo se contrai de modo deficiente, como ocorre na isquemia, o músculo não mantém a coaptação e a valva fica incompetente. Seu papel, portanto, não é abrir ou fechar a valva, que obedece ao gradiente de pressão, mas impedir a inversão das cúspides. Situa-se na parede inferior do ventrículo direito, irrigada sobretudo pela artéria coronária direita. Faz parte do aparelho subvalvar da tricúspide, que inclui o ânulo, as cúspides e as cordas tendíneas, e sua função depende da integridade desse conjunto.",
+    "anatomy": {
+      "relations": "Origina-se da parede inferior (diafragmática) do ventrículo direito, em posição posterior ao músculo papilar anterior. As cordas tendíneas dirigem-se às cúspides inferior (posterior) e septal da valva tricúspide.",
+      "vascularization": "Sobretudo pela artéria coronária direita, por meio de ramos marginais e do ramo interventricular posterior, razão pela qual pode sofrer isquemia nos infartos inferiores por oclusão dessa artéria."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide funcional: a dilatação do ventrículo direito, por hipertensão pulmonar ou infarto, desloca os músculos papilares e impede a coaptação das cúspides.",
+      "Infarto do ventrículo direito: a isquemia dos músculos papilares pode comprometer a valva tricúspide, com regurgitação e agravamento da congestão venosa sistêmica.",
+      "Endocardite infecciosa da valva tricúspide: as vegetações acometem cúspides e cordas tendíneas, e a destruição do aparelho subvalvar agrava a regurgitação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:septal-papillary-muscle-of-right-ventricle": {
+    "ids": {},
+    "summary_pt": "O músculo papilar septal do ventrículo direito é o menor e o mais variável dos músculos papilares dessa câmara. Origina-se diretamente do septo interventricular, e pode ser pequeno, duplo ou composto por vários feixes finos, e em alguns corações é de difícil identificação. Suas cordas tendíneas inserem-se nas cúspides anterior e septal da valva tricúspide, e sua posição é próxima à crista supraventricular, que separa a via de entrada da via de saída do ventrículo direito. A trabécula septomarginal, que liga o septo ao músculo papilar anterior, é vizinha. Durante a sístole, o músculo contrai-se com o septo e mantém tensas as cordas, o que auxilia a coaptação das cúspides e impede o prolapso para o átrio direito. Por situar-se no septo, depende da irrigação septal, que provém principalmente do ramo interventricular anterior da artéria coronária esquerda. É parte do aparelho subvalvar da valva tricúspide, ao lado das demais cordas, do ânulo e das cúspides.",
+    "anatomy": {
+      "relations": "Origina-se do septo interventricular, próximo à crista supraventricular. As cordas tendíneas dirigem-se às cúspides anterior e septal da valva tricúspide, e a trabécula septomarginal passa nas proximidades.",
+      "vascularization": "Ramos septais do ramo interventricular anterior da artéria coronária esquerda, que irrigam o septo interventricular de onde o músculo se origina."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide funcional: a dilatação do ventrículo direito, por hipertensão pulmonar ou infarto, desloca os músculos papilares e impede a coaptação das cúspides.",
+      "Infarto do ventrículo direito: a isquemia dos músculos papilares pode comprometer a valva tricúspide, com regurgitação e agravamento da congestão venosa sistêmica.",
+      "Endocardite infecciosa da valva tricúspide: as vegetações acometem cúspides e cordas tendíneas, e a destruição do aparelho subvalvar agrava a regurgitação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-papillary-muscle-of-heart-anterior": {
+    "ids": {},
+    "summary_pt": "O músculo papilar anterior do coração é a projeção muscular que, pela posição, corresponde ao músculo papilar anterior do ventrículo direito, o de maior calibre dessa câmara. Seu corpo emerge da parede anterior do ventrículo, e o ápice dá cordas tendíneas para as cúspides anterior e posterior (inferior) da valva tricúspide. A base é ligada ao septo pela trabécula septomarginal, que transporta o ramo direito do fascículo atrioventricular e leva o estímulo diretamente ao músculo. Pela contração coordenada com a parede, na sístole ventricular, o músculo tensiona as cordas e sustenta a coaptação das cúspides, impedindo seu prolapso para o átrio direito. Não participa da abertura da valva, que depende do gradiente pressórico entre átrio e ventrículo. O músculo, as cordas, as cúspides e o ânulo formam o aparelho valvar da valva tricúspide, e a disfunção de qualquer um desses componentes pode gerar regurgitação. O aumento da pressão pulmonar e a dilatação da câmara podem afastá-lo do plano valvar e comprometer a coaptação funcional. Na nomenclatura do modelo tridimensional, a designação não especifica o ventrículo; a atribuição ao ventrículo direito é inferência editorial, feita a partir da posição.",
+    "anatomy": {
+      "relations": "Origina-se da parede anterior do ventrículo direito. A trabécula septomarginal une sua base ao septo interventricular, e as cordas tendíneas dirigem-se às cúspides anterior e posterior da valva tricúspide.",
+      "vascularization": "Principalmente por ramos da artéria coronária direita; a trabécula septomarginal recebe ramos septais do ramo interventricular anterior."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide funcional: a dilatação do ventrículo direito, por hipertensão pulmonar ou infarto, desloca os músculos papilares e impede a coaptação das cúspides.",
+      "Infarto do ventrículo direito: a isquemia dos músculos papilares pode comprometer a valva tricúspide, com regurgitação e agravamento da congestão venosa sistêmica.",
+      "Endocardite infecciosa da valva tricúspide: as vegetações acometem cúspides e cordas tendíneas, e a destruição do aparelho subvalvar agrava a regurgitação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-papillary-muscle-of-heart-medial": {
+    "ids": {},
+    "summary_pt": "O músculo papilar medial do coração, que, pela posição, corresponde ao músculo papilar septal do ventrículo direito, é o menor e mais inconstante dos músculos papilares dessa câmara. Nasce na face direita do septo interventricular e pode apresentar-se como um único pequeno cone, como dois ou três feixes ou, às vezes, quase imperceptível. As cordas tendíneas que dele partem inserem-se nas cúspides anterior e septal da valva tricúspide. Situa-se próximo à crista supraventricular, que separa a via de entrada trabeculada da via de saída lisa, ou cone arterial, do ventrículo direito. Na sístole, contrai-se com a parede septal, tensiona as cordas e contribui para a coaptação das cúspides, evitando o prolapso para o átrio direito; a abertura da valva na diástole é passiva. Por nascer do septo, compartilha a irrigação septal dessa parede, derivada principalmente do ramo interventricular anterior, de modo diferente dos músculos papilares anterior e inferior do ventrículo direito, que dependem mais da artéria coronária direita. Na nomenclatura do modelo tridimensional, a designação não especifica o ventrículo; a atribuição ao ventrículo direito é inferência editorial, feita a partir da posição.",
+    "anatomy": {
+      "relations": "Origina-se na face direita do septo interventricular, próximo à crista supraventricular. As cordas tendíneas inserem-se nas cúspides anterior e septal da valva tricúspide.",
+      "vascularization": "Ramos septais do ramo interventricular anterior da artéria coronária esquerda, que irrigam o septo de onde se origina."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide funcional: a dilatação do ventrículo direito, por hipertensão pulmonar ou infarto, desloca os músculos papilares e impede a coaptação das cúspides.",
+      "Infarto do ventrículo direito: a isquemia dos músculos papilares pode comprometer a valva tricúspide, com regurgitação e agravamento da congestão venosa sistêmica.",
+      "Endocardite infecciosa da valva tricúspide: as vegetações acometem cúspides e cordas tendíneas, e a destruição do aparelho subvalvar agrava a regurgitação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-papillary-muscle-of-heart-posterior": {
+    "ids": {},
+    "summary_pt": "O músculo papilar posterior do coração, que, pela posição, corresponde ao músculo papilar inferior do ventrículo direito, emerge da parede posterior (inferior ou diafragmática) dessa câmara e pode ser subdividido em mais de uma cabeça. As cordas tendíneas inserem-se nas cúspides posterior (inferior) e septal da valva tricúspide, o que significa que o músculo contribui para a coaptação dessas duas cúspides. Na sístole ventricular, a contração do músculo, em sincronia com a parede, mantém as cordas tensas e impede o prolapso das cúspides para o átrio direito; na diástole, a abertura da valva ocorre passivamente. Situa-se na parede inferior do ventrículo direito, irrigada sobretudo pela artéria coronária direita, de modo que a oclusão proximal desse vaso pode causar isquemia do músculo e disfunção da valva tricúspide. O músculo, as cordas, o ânulo e as cúspides formam o aparelho subvalvar da valva, e a disfunção de qualquer um desses elementos causa regurgitação. Na nomenclatura do modelo tridimensional, a designação não especifica o ventrículo; a atribuição ao ventrículo direito é inferência editorial, feita a partir da posição.",
+    "anatomy": {
+      "relations": "Origina-se da parede inferior (diafragmática) do ventrículo direito, posterior ao músculo papilar anterior. As cordas tendíneas dirigem-se às cúspides posterior (inferior) e septal da valva tricúspide.",
+      "vascularization": "Sobretudo pela artéria coronária direita, por meio de ramos marginais e do ramo interventricular posterior."
+    },
+    "histology": {
+      "tissues": [
+        "Miocárdio: cardiomiócitos (músculo estriado cardíaco) formando o corpo do músculo papilar, com revestimento de endocárdio (endotélio e tecido conjuntivo subendotelial)",
+        "Subendocárdio: fibras de Purkinje do sistema de condução",
+        "Cordas tendíneas: tecido conjuntivo denso, rico em fibras colágenas, revestido por endotélio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide funcional: a dilatação do ventrículo direito, por hipertensão pulmonar ou infarto, desloca os músculos papilares e impede a coaptação das cúspides.",
+      "Infarto do ventrículo direito: a isquemia dos músculos papilares pode comprometer a valva tricúspide, com regurgitação e agravamento da congestão venosa sistêmica.",
+      "Endocardite infecciosa da valva tricúspide: as vegetações acometem cúspides e cordas tendíneas, e a destruição do aparelho subvalvar agrava a regurgitação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: músculos papilares e cordas tendíneas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico miocárdio, endocárdio e sistema de condução (fibras de Purkinje)",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: músculos papilares e cordas tendíneas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico músculos papilares e cordas tendíneas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-tricuspid-valve": {
+    "ids": {},
+    "summary_pt": "A valva tricúspide (valva atrioventricular direita) guarnece o óstio atrioventricular direito e regula a passagem do sangue do átrio direito para o ventrículo direito. Projeta-se posteriormente ao esterno, ao nível do quarto e quinto espaços intercostais. É composta por três cúspides, anterior, posterior (inferior) e septal, fixadas ao ânulo fibroso do esqueleto fibroso do coração, e unidas por comissuras. Em geral, as cordas tendíneas das margens livres e das faces ventriculares prendem-se a três músculos papilares: o anterior envia cordas às cúspides anterior e posterior, o inferior às cúspides posterior e septal, e o septal às cúspides anterior e septal. Na diástole, as cúspides abrem-se para o ventrículo direito por diferença de pressão; na sístole, a contração dos músculos papilares mantém as cordas tensas, as cúspides coaptam-se e impedem o refluxo para o átrio. A cúspide septal está junto ao septo interventricular e ao triângulo de Koch, região que contém o nó atrioventricular. O ânulo está em relação com o sulco coronário, por onde segue a artéria coronária direita. A valva tricúspide opera em regime de pressões baixas, e sua competência depende da integridade do ânulo, que se dilata quando o ventrículo direito aumenta.",
+    "anatomy": {
+      "relations": "Situa-se entre o átrio direito e o ventrículo direito, posterior ao esterno, ao nível dos 4º e 5º espaços intercostais. A cúspide septal relaciona-se com o septo interventricular e o triângulo de Koch; a cúspide inferior, com a parede diafragmática; a cúspide anterior, com a parede anterior do ventrículo direito.",
+      "vascularization": "As cúspides são em grande parte avasculares e dependem da difusão de nutrientes a partir do sangue das câmaras; o ânulo e a base da valva recebem ramos das artérias coronárias."
+    },
+    "histology": {
+      "epithelium": "Revestimento por endotélio (epitélio pavimentoso simples), contínuo com o endocárdio das câmaras adjacentes.",
+      "tissues": [
+        "Lâmina de tecido conjuntivo denso (camada fibrosa) revestida em ambas as faces por endotélio",
+        "Cordas tendíneas: tecido conjuntivo denso rico em colágeno, que prolonga as cúspides até os músculos papilares",
+        "Ânulo fibroso: tecido conjuntivo denso do esqueleto fibroso do coração, ponto de inserção da valva e do miocárdio"
+      ]
+    },
+    "clinical": [
+      "Regurgitação tricúspide: a dilatação do ventrículo direito e do ânulo, por hipertensão pulmonar ou insuficiência cardíaca, impede a coaptação das cúspides e causa refluxo e congestão venosa sistêmica.",
+      "Endocardite infecciosa: a valva tricúspide é a mais comumente acometida em usuários de drogas injetáveis, com êmbolos sépticos para os pulmões.",
+      "Anomalia de Ebstein: deslocamento apical das cúspides septal e posterior para dentro do ventrículo direito, com regurgitação e risco de arritmias.",
+      "Estenose tricúspide: rara, em geral de origem reumática, causa obstrução ao enchimento do ventrículo direito e congestão venosa sistêmica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: valva tricúspide",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico valva tricúspide",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: valva tricúspide",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: valva tricúspide",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: valva tricúspide",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico valva tricúspide",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: valva tricúspide",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-m-mitral-valve": {
+    "ids": {},
+    "summary_pt": "A valva mitral, também chamada valva atrioventricular esquerda ou valva bicúspide, guarnece o óstio atrioventricular esquerdo e permite a passagem do sangue oxigenado do átrio esquerdo para o ventrículo esquerdo. Projeta-se posteriormente ao esterno, ao nível da quarta cartilagem costal, e seu foco de ausculta é o ápice do coração. Tem duas cúspides, anterior e posterior, fixadas ao ânulo fibroso e unidas por duas comissuras, anterolateral e posteromedial. A cúspide anterior é a mais ampla, em área e altura, e continua-se com a valva da aorta pela cortina fibrosa mitroaórtica, entre a via de entrada e a via de saída do ventrículo esquerdo; a posterior ocupa a maior extensão do ânulo. Das margens livres e das faces ventriculares partem cordas tendíneas que se ligam aos músculos papilares anterolateral e posteromedial; cada músculo envia cordas a ambas as cúspides. Na diástole, a valva se abre por diferença de pressão; na sístole, a elevação da pressão ventricular e a contração dos músculos papilares fecham as cúspides e impedem o refluxo para o átrio esquerdo. A valva é submetida às maiores pressões do coração, e sua competência depende da integridade do aparelho valvar (ânulo, cúspides, cordas e músculos papilares).",
+    "anatomy": {
+      "relations": "Situa-se entre o átrio esquerdo e o ventrículo esquerdo, posterior à metade esquerda do esterno, ao nível da 4ª cartilagem costal. A cúspide anterior continua-se com a valva da aorta; a cúspide posterior relaciona-se com a parede posterior do ventrículo esquerdo. O ápice do coração, no 5º espaço intercostal esquerdo, é o foco de ausculta da valva.",
+      "vascularization": "As cúspides são em grande parte avasculares e dependem da difusão de nutrientes a partir do sangue das câmaras; o ânulo e a base da valva recebem ramos das artérias coronárias."
+    },
+    "histology": {
+      "epithelium": "Revestimento por endotélio (epitélio pavimentoso simples), contínuo com o endocárdio das câmaras adjacentes.",
+      "tissues": [
+        "Lâmina de tecido conjuntivo denso (camada fibrosa) revestida em ambas as faces por endotélio",
+        "Cordas tendíneas: tecido conjuntivo denso rico em colágeno, que prolonga as cúspides até os músculos papilares",
+        "Ânulo fibroso: tecido conjuntivo denso do esqueleto fibroso do coração, ponto de inserção da valva e do miocárdio"
+      ]
+    },
+    "clinical": [
+      "Estenose mitral: na maioria dos casos, sequela de febre reumática, espessa e funde as comissuras, eleva a pressão no átrio esquerdo e na circulação pulmonar e predispõe à fibrilação atrial.",
+      "Regurgitação mitral: por ruptura de corda tendínea, disfunção ou ruptura de músculo papilar após infarto ou dilatação do ânulo, causa refluxo para o átrio esquerdo e sobrecarga de volume.",
+      "Prolapso da valva mitral: a degeneração mixomatosa das cúspides faz com que se projetem para o átrio esquerdo na sístole, com clique mesossistólico e, às vezes, regurgitação.",
+      "Endocardite infecciosa: vegetações nas cúspides causam perfuração e regurgitação, com risco de embolia sistêmica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: valva mitral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico valva mitral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Coração: valva mitral",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: valva mitral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico Coração: valva mitral",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coração, tópico valva mitral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema circulatório, tópico valvas cardíacas e esqueleto fibroso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Coração, tópico doença valvar",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico Coração: valva mitral",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+}

@@ -1,0 +1,524 @@
+{
+  "onda": 2,
+  "sistema": "nervoso",
+  "total": 53,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:middle-temporal-gyrus-r",
+          "sids": [
+            "za:allen-middle-temporal-gyrus-l",
+            "za:allen-middle-temporal-gyrus-r",
+            "za:middle-temporal-gyrus-l",
+            "za:middle-temporal-gyrus-r"
+          ],
+          "nome_pt": "Giro temporal médio",
+          "nome_en": "Middle temporal gyrus"
+        },
+        {
+          "sid": "za:medulla-oblongata-r",
+          "sids": [
+            "za:medulla-oblongata-l",
+            "za:medulla-oblongata-r"
+          ],
+          "nome_pt": "Medula oblonga",
+          "nome_en": "Medulla oblongata"
+        },
+        {
+          "sid": "za:hypothalamus",
+          "sids": [
+            "za:allen-hypothalamus-l",
+            "za:allen-hypothalamus-r",
+            "za:hypothalamus"
+          ],
+          "nome_pt": "Hipotálamo",
+          "nome_en": "Hypothalamus"
+        },
+        {
+          "sid": "za:white-matter-of-telencephalon-r",
+          "sids": [
+            "za:white-matter-of-telencephalon-l",
+            "za:white-matter-of-telencephalon-r"
+          ],
+          "nome_pt": "Substância branca do telencéfalo",
+          "nome_en": "White matter of telencephalon"
+        },
+        {
+          "sid": "za:spinal-dura",
+          "sids": [
+            "za:spinal-dura"
+          ],
+          "nome_pt": "Dura-máter espinal",
+          "nome_en": "Spinal dura"
+        },
+        {
+          "sid": "za:white-matter-of-spinal-cord",
+          "sids": [
+            "za:white-matter-of-spinal-cord"
+          ],
+          "nome_pt": "Substância branca da medula espinal",
+          "nome_en": "White matter of spinal cord"
+        },
+        {
+          "sid": "za:allen-primary-motor-cortex-r",
+          "sids": [
+            "za:allen-primary-motor-cortex-l",
+            "za:allen-primary-motor-cortex-r"
+          ],
+          "nome_pt": "Córtex motor primário",
+          "nome_en": "Allen primary motor cortex"
+        },
+        {
+          "sid": "za:postcentral-gyrus-r",
+          "sids": [
+            "za:allen-postcentral-gyrus-l",
+            "za:allen-postcentral-gyrus-r",
+            "za:postcentral-gyrus-l",
+            "za:postcentral-gyrus-r"
+          ],
+          "nome_pt": "Giro pós-central",
+          "nome_en": "Postcentral gyrus"
+        },
+        {
+          "sid": "za:middle-frontal-gyrus-r",
+          "sids": [
+            "za:allen-middle-frontal-gyrus-l",
+            "za:allen-middle-frontal-gyrus-r",
+            "za:middle-frontal-gyrus-l",
+            "za:middle-frontal-gyrus-r"
+          ],
+          "nome_pt": "Giro frontal médio",
+          "nome_en": "Middle frontal gyrus"
+        },
+        {
+          "sid": "za:superior-frontal-gyrus-r",
+          "sids": [
+            "za:allen-superior-frontal-gyrus-l",
+            "za:allen-superior-frontal-gyrus-r",
+            "za:superior-frontal-gyrus-l",
+            "za:superior-frontal-gyrus-r"
+          ],
+          "nome_pt": "Giro frontal superior",
+          "nome_en": "Superior frontal gyrus"
+        },
+        {
+          "sid": "za:anterior-horn-of-spinal-cord",
+          "sids": [
+            "za:anterior-horn-of-spinal-cord"
+          ],
+          "nome_pt": "Corno anterior da medula espinal",
+          "nome_en": "Anterior horn of spinal cord"
+        },
+        {
+          "sid": "za:posterior-horn-of-spinal-cord",
+          "sids": [
+            "za:posterior-horn-of-spinal-cord"
+          ],
+          "nome_pt": "Corno posterior da medula espinal",
+          "nome_en": "Posterior horn of spinal cord"
+        },
+        {
+          "sid": "za:lateral-ventricle-r",
+          "sids": [
+            "za:lateral-ventricle-l",
+            "za:lateral-ventricle-r"
+          ],
+          "nome_pt": "Ventrículo lateral",
+          "nome_en": "Lateral ventricle"
+        },
+        {
+          "sid": "za:superior-temporal-sulcus-r",
+          "sids": [
+            "za:superior-temporal-sulcus-l",
+            "za:superior-temporal-sulcus-r"
+          ],
+          "nome_pt": "Sulco temporal superior",
+          "nome_en": "Superior temporal sulcus"
+        },
+        {
+          "sid": "za:corpus-callosum",
+          "sids": [
+            "za:allen-corpus-callosum-l",
+            "za:allen-corpus-callosum-r",
+            "za:corpus-callosum"
+          ],
+          "nome_pt": "Corpo caloso",
+          "nome_en": "Corpus callosum"
+        },
+        {
+          "sid": "za:precentral-gyrus-r",
+          "sids": [
+            "za:precentral-gyrus-l",
+            "za:precentral-gyrus-r"
+          ],
+          "nome_pt": "Giro pré-central",
+          "nome_en": "Precentral gyrus"
+        },
+        {
+          "sid": "za:central-sulcus-r",
+          "sids": [
+            "za:central-sulcus-l",
+            "za:central-sulcus-r"
+          ],
+          "nome_pt": "Sulco central",
+          "nome_en": "Central sulcus"
+        },
+        {
+          "sid": "za:angular-gyrus-r",
+          "sids": [
+            "za:allen-angular-gyrus-l",
+            "za:allen-angular-gyrus-r",
+            "za:angular-gyrus-l",
+            "za:angular-gyrus-r"
+          ],
+          "nome_pt": "Giro angular",
+          "nome_en": "Angular gyrus"
+        },
+        {
+          "sid": "za:allen-superior-temporal-gyrus-r",
+          "sids": [
+            "za:allen-superior-temporal-gyrus-l",
+            "za:allen-superior-temporal-gyrus-r"
+          ],
+          "nome_pt": "Giro temporal superior",
+          "nome_en": "Allen superior temporal gyrus"
+        },
+        {
+          "sid": "za:inferior-temporal-gyrus-r",
+          "sids": [
+            "za:allen-inferior-temporal-gyrus-l",
+            "za:allen-inferior-temporal-gyrus-r",
+            "za:inferior-temporal-gyrus-l",
+            "za:inferior-temporal-gyrus-r"
+          ],
+          "nome_pt": "Giro temporal inferior",
+          "nome_en": "Inferior temporal gyrus"
+        }
+      ]
+    },
+    {
+      "lote": 2,
+      "itens": [
+        {
+          "sid": "za:superior-temporal-gyrus-lateral-part-r",
+          "sids": [
+            "za:superior-temporal-gyrus-lateral-part-l",
+            "za:superior-temporal-gyrus-lateral-part-r"
+          ],
+          "nome_pt": "Giro temporal superior (Parte lateral)",
+          "nome_en": "Superior temporal gyrus (Lateral part)"
+        },
+        {
+          "sid": "za:orbital-gyri-r",
+          "sids": [
+            "za:orbital-gyri-l",
+            "za:orbital-gyri-r"
+          ],
+          "nome_pt": "Giros orbitais",
+          "nome_en": "Orbital gyri"
+        },
+        {
+          "sid": "za:precuneus-r",
+          "sids": [
+            "za:allen-precuneus-l",
+            "za:allen-precuneus-r",
+            "za:precuneus-l",
+            "za:precuneus-r"
+          ],
+          "nome_pt": "Pré-cúneo",
+          "nome_en": "Precuneus"
+        },
+        {
+          "sid": "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-r",
+          "sids": [
+            "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-l",
+            "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-r"
+          ],
+          "nome_pt": "Giro lingual (giro occipitotemporal medial)",
+          "nome_en": "Allen lingual gyrus medial occipitotemporal gyrus"
+        },
+        {
+          "sid": "za:postcentral-sulcus-r",
+          "sids": [
+            "za:postcentral-sulcus-l",
+            "za:postcentral-sulcus-r"
+          ],
+          "nome_pt": "Sulco pós-central",
+          "nome_en": "Postcentral sulcus"
+        },
+        {
+          "sid": "za:medial-occipitotemporal-gyrus-parahippocampal-r",
+          "sids": [
+            "za:medial-occipitotemporal-gyrus-parahippocampal-l",
+            "za:medial-occipitotemporal-gyrus-parahippocampal-r"
+          ],
+          "nome_pt": "Giro occipitotemporal medial (giro parahipocampal)",
+          "nome_en": "Medial occipitotemporal gyrus (Parahippocampal*)"
+        },
+        {
+          "sid": "za:allen-cingulate-gyrus-caudal-posterior-part-r",
+          "sids": [
+            "za:allen-cingulate-gyrus-caudal-posterior-part-l",
+            "za:allen-cingulate-gyrus-caudal-posterior-part-r"
+          ],
+          "nome_pt": "Parte caudal posterior do giro do cíngulo",
+          "nome_en": "Allen cingulate gyrus caudal posterior part"
+        },
+        {
+          "sid": "za:collateral-sulcus-r",
+          "sids": [
+            "za:collateral-sulcus-l",
+            "za:collateral-sulcus-r"
+          ],
+          "nome_pt": "Sulco colateral",
+          "nome_en": "Collateral sulcus"
+        },
+        {
+          "sid": "za:allen-inferior-occipital-gyrus-r",
+          "sids": [
+            "za:allen-inferior-occipital-gyrus-l",
+            "za:allen-inferior-occipital-gyrus-r"
+          ],
+          "nome_pt": "Giro occipital inferior",
+          "nome_en": "Allen inferior occipital gyrus"
+        },
+        {
+          "sid": "za:allen-superior-occipital-gyrus-r",
+          "sids": [
+            "za:allen-superior-occipital-gyrus-l",
+            "za:allen-superior-occipital-gyrus-r"
+          ],
+          "nome_pt": "Giro occipital superior",
+          "nome_en": "Allen superior occipital gyrus"
+        },
+        {
+          "sid": "za:lingual-gyrus-r",
+          "sids": [
+            "za:lingual-gyrus-l",
+            "za:lingual-gyrus-r"
+          ],
+          "nome_pt": "Giro lingual",
+          "nome_en": "Lingual gyrus"
+        },
+        {
+          "sid": "za:superior-frontal-sulcus-r",
+          "sids": [
+            "za:superior-frontal-sulcus-l",
+            "za:superior-frontal-sulcus-r"
+          ],
+          "nome_pt": "Sulco frontal superior",
+          "nome_en": "Superior frontal sulcus"
+        },
+        {
+          "sid": "za:supramarginal-gyrus-r",
+          "sids": [
+            "za:allen-supramarginal-gyrus-l",
+            "za:allen-supramarginal-gyrus-r",
+            "za:supramarginal-gyrus-l",
+            "za:supramarginal-gyrus-r"
+          ],
+          "nome_pt": "Giro supramarginal",
+          "nome_en": "Supramarginal gyrus"
+        },
+        {
+          "sid": "za:allen-frontal-pole-r",
+          "sids": [
+            "za:allen-frontal-pole-l",
+            "za:allen-frontal-pole-r"
+          ],
+          "nome_pt": "polo frontal",
+          "nome_en": "Allen frontal pole"
+        },
+        {
+          "sid": "za:allen-cuneus-r",
+          "sids": [
+            "za:allen-cuneus-l",
+            "za:allen-cuneus-r"
+          ],
+          "nome_pt": "Cuneus",
+          "nome_en": "Allen cuneus"
+        },
+        {
+          "sid": "za:allen-cingulate-gyrus-rostral-anterior-part-r",
+          "sids": [
+            "za:allen-cingulate-gyrus-rostral-anterior-part-l",
+            "za:allen-cingulate-gyrus-rostral-anterior-part-r"
+          ],
+          "nome_pt": "Parte rostral anterior do giro do cíngulo",
+          "nome_en": "Allen cingulate gyrus rostral anterior part"
+        },
+        {
+          "sid": "za:inferior-frontal-sulcus-r",
+          "sids": [
+            "za:inferior-frontal-sulcus-l",
+            "za:inferior-frontal-sulcus-r"
+          ],
+          "nome_pt": "Sulco frontal inferior",
+          "nome_en": "Inferior frontal sulcus"
+        },
+        {
+          "sid": "za:calcarine-sulcus-r",
+          "sids": [
+            "za:calcarine-sulcus-l",
+            "za:calcarine-sulcus-r"
+          ],
+          "nome_pt": "Sulco calcarino",
+          "nome_en": "Calcarine sulcus"
+        },
+        {
+          "sid": "za:lateral-occipital-gyrus-middle-occipital-gyrus-r",
+          "sids": [
+            "za:lateral-occipital-gyrus-middle-occipital-gyrus-l",
+            "za:lateral-occipital-gyrus-middle-occipital-gyrus-r"
+          ],
+          "nome_pt": "Giro occipital lateral (giro occipital médio)",
+          "nome_en": "Lateral occipital gyrus (Middle occipital gyrus*)"
+        },
+        {
+          "sid": "za:lateral-occipitotemporal-gyrus-r",
+          "sids": [
+            "za:lateral-occipitotemporal-gyrus-l",
+            "za:lateral-occipitotemporal-gyrus-r"
+          ],
+          "nome_pt": "Giro occipitotemporal lateral",
+          "nome_en": "Lateral occipitotemporal gyrus"
+        }
+      ]
+    },
+    {
+      "lote": 3,
+      "itens": [
+        {
+          "sid": "za:opercular-part-of-inferior-frontal-gyrus-r",
+          "sids": [
+            "za:allen-inferior-frontal-gyrus-opercular-part-l",
+            "za:allen-inferior-frontal-gyrus-opercular-part-r",
+            "za:opercular-part-of-inferior-frontal-gyrus-l",
+            "za:opercular-part-of-inferior-frontal-gyrus-r"
+          ],
+          "nome_pt": "Parte opercular do giro frontal inferior",
+          "nome_en": "Opercular part of inferior frontal gyrus"
+        },
+        {
+          "sid": "za:parieto-occipital-sulcus-r",
+          "sids": [
+            "za:parieto-occipital-sulcus-l",
+            "za:parieto-occipital-sulcus-r"
+          ],
+          "nome_pt": "Sulco parieto-occipital",
+          "nome_en": "Parieto-occipital sulcus"
+        },
+        {
+          "sid": "za:temporal-pole-r",
+          "sids": [
+            "za:allen-temporal-pole-l",
+            "za:allen-temporal-pole-r",
+            "za:temporal-pole-l",
+            "za:temporal-pole-r"
+          ],
+          "nome_pt": "Polo temporal",
+          "nome_en": "Temporal pole"
+        },
+        {
+          "sid": "za:paracentral-gyrus-and-sulcus-r",
+          "sids": [
+            "za:paracentral-gyrus-and-sulcus-l",
+            "za:paracentral-gyrus-and-sulcus-r"
+          ],
+          "nome_pt": "Giro e sulco paracentral",
+          "nome_en": "Paracentral gyrus and sulcus*"
+        },
+        {
+          "sid": "za:precentral-sulcus-inferior-part-r",
+          "sids": [
+            "za:precentral-sulcus-inferior-part-l",
+            "za:precentral-sulcus-inferior-part-r"
+          ],
+          "nome_pt": "Sulco pré-central (Parte inferior)",
+          "nome_en": "Precentral sulcus (inferior part)*"
+        },
+        {
+          "sid": "za:cuneus-r",
+          "sids": [
+            "za:cuneus-l",
+            "za:cuneus-r"
+          ],
+          "nome_pt": "Cunha",
+          "nome_en": "Cuneus"
+        },
+        {
+          "sid": "za:inferior-occipital-gyrus-and-sulcus-r",
+          "sids": [
+            "za:inferior-occipital-gyrus-and-sulcus-l",
+            "za:inferior-occipital-gyrus-and-sulcus-r"
+          ],
+          "nome_pt": "Giro occipital inferior e sulco",
+          "nome_en": "Inferior occipital gyrus and sulcus*"
+        },
+        {
+          "sid": "za:occipital-pole-r",
+          "sids": [
+            "za:allen-occipital-pole-l",
+            "za:allen-occipital-pole-r",
+            "za:occipital-pole-l",
+            "za:occipital-pole-r"
+          ],
+          "nome_pt": "Polo occipital",
+          "nome_en": "Occipital pole",
+          "sinonimos_pt": [
+            "polo occipital"
+          ]
+        },
+        {
+          "sid": "za:allen-frontomarginal-gyrus-r",
+          "sids": [
+            "za:allen-frontomarginal-gyrus-l",
+            "za:allen-frontomarginal-gyrus-r"
+          ],
+          "nome_pt": "Giro frontomarginal",
+          "nome_en": "Allen frontomarginal gyrus"
+        },
+        {
+          "sid": "za:allen-occipitotemporal-fusiform-gyrus-temporal-part-r",
+          "sids": [
+            "za:allen-occipitotemporal-fusiform-gyrus-temporal-part-l",
+            "za:allen-occipitotemporal-fusiform-gyrus-temporal-part-r"
+          ],
+          "nome_pt": "Parte temporal do giro fusiforme occipitotemporal",
+          "nome_en": "Allen occipitotemporal fusiform gyrus temporal part"
+        },
+        {
+          "sid": "za:allen-short-insular-gyri-r",
+          "sids": [
+            "za:allen-short-insular-gyri-l",
+            "za:allen-short-insular-gyri-r"
+          ],
+          "nome_pt": "Giros curtos da ínsula",
+          "nome_en": "Allen short insular gyri"
+        },
+        {
+          "sid": "za:triangular-part-of-inferior-frontal-gyrus-r",
+          "sids": [
+            "za:allen-inferior-frontal-gyrus-triangular-part-l",
+            "za:allen-inferior-frontal-gyrus-triangular-part-r",
+            "za:triangular-part-of-inferior-frontal-gyrus-l",
+            "za:triangular-part-of-inferior-frontal-gyrus-r"
+          ],
+          "nome_pt": "Parte triangular do giro frontal inferior",
+          "nome_en": "Triangular part of inferior frontal gyrus"
+        },
+        {
+          "sid": "za:superior-occipital-gyri-r",
+          "sids": [
+            "za:superior-occipital-gyri-l",
+            "za:superior-occipital-gyri-r"
+          ],
+          "nome_pt": "Giros occipitais superiores",
+          "nome_en": "Superior occipital gyri"
+        }
+      ]
+    }
+  ]
+}

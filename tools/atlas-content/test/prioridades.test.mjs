@@ -6,7 +6,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildPriorities, collectSids, COTAS } from '../prioridades.mjs';
+import { buildPriorities, collectSids, COTAS, groupNameKey, pickGroupName } from '../prioridades.mjs';
+import crypto from 'node:crypto';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(here, '../../..');
@@ -42,8 +43,32 @@ const file = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/atlas-conteudo/pri
 assert.equal(file.itens.length, 300);
 const count = {};
 for (const it of file.itens) count[it.system] = (count[it.system] || 0) + 1;
-for (const [sys, cota] of Object.entries(COTAS)) assert.equal(count[sys] || 0, cota, `${sys}: ${count[sys] || 0} ≠ ${cota}`);
+// Cotas exatas, salvo o cardiovascular (só 31 estruturas distintas no modelo)
+// cujas 5 vagas vão para o nervoso (SPILL_ORDER) — docs/atlas-conteudo/cotas.md.
+for (const [sys, cota] of Object.entries(COTAS)) {
+  if (sys === 'cardiovascular') assert.ok((count[sys] || 0) <= cota, `${sys}: ${count[sys]} > ${cota}`);
+  else if (sys === 'nervoso') assert.ok((count[sys] || 0) >= cota, `${sys}: ${count[sys]} < ${cota}`);
+  else assert.equal(count[sys] || 0, cota, `${sys}: ${count[sys] || 0} ≠ ${cota}`);
+}
+assert.equal((count.cardiovascular || 0) + (count.nervoso || 0), COTAS.cardiovascular + COTAS.nervoso);
 const allSids = file.itens.flatMap((i) => i.sids);
 assert.equal(new Set(allSids).size, allSids.length, 'sid repetido na lista');
+
+// Agrupamento pelo nome PT normalizado (M/F do HRA e ZA × HRA juntos).
+assert.equal(groupNameKey('Ventrículo esquerdo do coração'), groupNameKey('Ventrículo esquerdo'));
+assert.equal(groupNameKey('Átrio cardíaco esquerdo'), groupNameKey('Átrio esquerdo'));
+// O3: precedência do nome ZA × HRA.
+const za = { en: 'Left ventricle', pt: 'Ventrículo esquerdo', hra: false };
+const hraN = { en: 'Heart left ventricle', pt: 'Ventrículo esquerdo do coração', hra: true };
+assert.deepEqual(pickGroupName([hraN, za]), { nome_pt: 'Ventrículo esquerdo', sinonimos_pt: ['Ventrículo esquerdo do coração'], sourceOfName: 'za' });
+assert.equal(pickGroupName([hraN]).sourceOfName, 'hra');
+assert.equal(pickGroupName([za, hraN], new Set(['Heart left ventricle'])).nome_pt, 'Ventrículo esquerdo do coração');
+assert.ok(file.itens.every((i) => i.nome_pt && Array.isArray(i.sinonimos_pt) && ['za', 'hra'].includes(i.sourceOfName)));
+
+// C1: determinismo — gerar duas vezes com o mesmo input dá a mesma saída.
+const runOnce = () => crypto.createHash('sha256').update(JSON.stringify(buildPriorities(structures, {
+  usage: { quiz: new Set(['za:kidney-l']) }, withContent: new Set(['za:vh-m-renal-pelvis-l']),
+}, { urinario: 3 }))).digest('hex');
+assert.equal(runOnce(), runOnce());
 
 console.log('prioridades: ok');

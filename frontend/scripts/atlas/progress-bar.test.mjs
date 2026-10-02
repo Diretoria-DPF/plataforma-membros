@@ -75,7 +75,9 @@ test('erro conta como fim (a barra some)', () => {
 });
 
 test('flags: padrões ligados; ?flags= desliga e liga; overrides de teste', () => {
-  assert.ok(Object.values(FLAG_DEFAULTS).every(Boolean));
+  // Novidades ligadas no padrão; experimentais (aguardando teste com alunos) desligadas.
+  const EXPERIMENTAL = ['systemic'];
+  assert.ok(Object.entries(FLAG_DEFAULTS).every(([k, v]) => (EXPERIMENTAL.includes(k) ? v === false : v === true)));
   const f = parseFlags('?flags=-onboarding,-hints', null);
   assert.equal(f.onboarding, false);
   assert.equal(f.hints, false);

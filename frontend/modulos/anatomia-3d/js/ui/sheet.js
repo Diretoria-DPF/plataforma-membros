@@ -339,10 +339,12 @@ function onHandleKeydown(evt) {
 // Encaixe automático (§2.4) — reage ao bus, não ao contrário.
 // ---------------------------------------------------------------------------
 function wireAutoSnapRules() {
-  on(EVENTS.STRUCTURE_SELECT, ({ sid }) => {
+  on(EVENTS.STRUCTURE_SELECT, ({ sid, source }) => {
     if (sid) {
       if (currentState === 'peek') commit('half');
-    } else if (currentState !== 'peek') {
+    } else if (currentState !== 'peek' && source !== 'study') {
+      // "Estudo de via" (modo Fisiologia) limpa a seleção ao passar por um
+      // ponto sem estrutura: o painel do estudo fica aberto (PR 3.2).
       commit('peek');
     }
   });

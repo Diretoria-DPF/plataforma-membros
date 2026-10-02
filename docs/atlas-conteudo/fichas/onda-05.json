@@ -1,0 +1,134 @@
+{
+  "onda": 5,
+  "sistema": "urinario",
+  "total": 15,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:kidney-r",
+          "sids": [
+            "za:kidney-l",
+            "za:kidney-r"
+          ],
+          "nome_pt": "Rim",
+          "nome_en": "Kidney"
+        },
+        {
+          "sid": "za:renal-pelvis-r",
+          "sids": [
+            "za:renal-pelvis-l",
+            "za:renal-pelvis-r"
+          ],
+          "nome_pt": "Pelve renal",
+          "nome_en": "Renal pelvis"
+        },
+        {
+          "sid": "za:vh-f-kidney-capsule-l",
+          "sids": [
+            "za:vh-f-kidney-capsule-l"
+          ],
+          "nome_pt": "Cápsula renal",
+          "nome_en": "Kidney capsule"
+        },
+        {
+          "sid": "za:vh-f-renal-column-l",
+          "sids": [
+            "za:vh-f-renal-column-l"
+          ],
+          "nome_pt": "Coluna renal",
+          "nome_en": "Renal column"
+        },
+        {
+          "sid": "za:urinary-bladder",
+          "sids": [
+            "za:urinary-bladder"
+          ],
+          "nome_pt": "Bexiga urinária",
+          "nome_en": "Urinary bladder"
+        },
+        {
+          "sid": "za:vh-f-hilum-of-kidney-l",
+          "sids": [
+            "za:vh-f-hilum-of-kidney-l"
+          ],
+          "nome_pt": "Hilo do rim",
+          "nome_en": "Hilum of kidney"
+        },
+        {
+          "sid": "za:vh-f-outer-cortex-of-kidney-l",
+          "sids": [
+            "za:vh-f-outer-cortex-of-kidney-l"
+          ],
+          "nome_pt": "Córtex renal externo",
+          "nome_en": "Outer cortex of kidney"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-a",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-a"
+          ],
+          "nome_pt": "Pirâmide renal L a",
+          "nome_en": "Renal pyramid L a"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-f",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-f"
+          ],
+          "nome_pt": "Pirâmide renal L f",
+          "nome_en": "Renal pyramid L f"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-g",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-g"
+          ],
+          "nome_pt": "Pirâmide renal L g",
+          "nome_en": "Renal pyramid L g"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-i",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-i"
+          ],
+          "nome_pt": "Pirâmide renal L i",
+          "nome_en": "Renal pyramid L i"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-j",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-j"
+          ],
+          "nome_pt": "Pirâmide renal L j",
+          "nome_en": "Renal pyramid L j"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-d",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-d"
+          ],
+          "nome_pt": "Pirâmide renal L d",
+          "nome_en": "Renal pyramid L d"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-e",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-e"
+          ],
+          "nome_pt": "Pirâmide renal L e",
+          "nome_en": "Renal pyramid L e"
+        },
+        {
+          "sid": "za:vh-f-renal-pyramid-l-k",
+          "sids": [
+            "za:vh-f-renal-pyramid-l-k"
+          ],
+          "nome_pt": "Pirâmide renal L k",
+          "nome_en": "Renal pyramid L k"
+        }
+      ]
+    }
+  ]
+}

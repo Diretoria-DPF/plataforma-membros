@@ -1,0 +1,1978 @@
+{
+  "za:middle-temporal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro temporal médio ocupa a face lateral do lobo temporal, entre o sulco temporal superior e o sulco temporal inferior, e se estende do polo temporal até a transição com os lobos occipital e parietal. Corresponde, em grande parte, à área 21 de Brodmann e é córtex de associação, sem função motora ou sensitiva primária. Recebe informações auditivas e visuais já processadas pelos giros vizinhos e as integra em representações de significado. No hemisfério dominante para a linguagem, em geral o esquerdo, participa da compreensão semântica de palavras e do acesso ao léxico; na sua porção posterior, próxima da junção temporo-occipital, relaciona-se ao processamento do movimento visual. Também contribui para a memória semântica, por conexões com o lobo temporal medial e com o lobo frontal. Seus axônios de associação seguem por feixes longos, como o fascículo longitudinal inferior e o fascículo arqueado, que o ligam às regiões frontais e parietais da linguagem. Sendo uma estrutura par, a descrição vale para os dois hemisférios, com assimetria funcional principalmente no que diz respeito à linguagem. A lesão isolada do giro raramente produz síndrome pura, pois geralmente envolve territórios vizinhos supridos pela artéria cerebral média.",
+    "anatomy": {
+      "relations": "Face lateral do lobo temporal, entre os sulcos temporal superior (acima, separando-o do giro temporal superior) e temporal inferior (abaixo, separando-o do giro temporal inferior). Posteriormente continua com o lobo occipital e com o giro angular. Em profundidade, relaciona-se com o corno temporal do ventrículo lateral.",
+      "vascularization": "Ramos temporais da artéria cerebral média (ramo da artéria carótida interna). A drenagem venosa é feita por veias cerebrais superficiais inferiores, incluindo a veia anastomótica inferior, que desemboca no seio transverso."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Neurônios piramidais (projeção, glutamatérgicos), predominantes, e interneurônios estrelados e granulares",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia, além de neurópilo rico em sinapses",
+        "Substância branca subcortical formada por axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Acidente vascular cerebral isquêmico no território inferior da artéria cerebral média: pode comprometer o lobo temporal lateral e, no hemisfério dominante, produzir déficit de compreensão da linguagem.",
+      "Epilepsia do lobo temporal neocortical: focos na face lateral podem gerar crises focais com alucinações auditivas ou distúrbios de linguagem.",
+      "Tumores gliais temporais: crescem na substância branca subcortical e podem manifestar-se com crises, afasia ou defeitos de campo visual por envolvimento da radiação óptica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal médio",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro temporal médio",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro temporal médio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal médio",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro temporal médio",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro temporal médio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro temporal médio",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:medulla-oblongata-r": {
+    "ids": {},
+    "summary_pt": "A medula oblonga (bulbo) é a parte mais caudal do tronco encefálico e liga a medula espinal à ponte. Seu limite inferior situa-se ao nível do forame magno, na decussação das pirâmides, e o superior, no sulco bulbopontino. Na face anterior destacam-se a fissura mediana anterior, as pirâmides, que contêm os tratos corticoespinais, e as olivas, formadas pelo complexo olivar inferior. Na face posterior, a metade inferior apresenta os tubérculos do núcleo grácil e do núcleo cuneiforme, e a metade superior forma o assoalho do quarto ventrículo. Abriga núcleos de nervos cranianos: o núcleo do nervo hipoglosso, o núcleo ambíguo, o núcleo dorsal do nervo vago e o núcleo do trato solitário. A formação reticular bulbar contém centros que regulam a respiração, a frequência cardíaca e a pressão arterial, além dos reflexos de vômito, tosse e deglutição. Pelo bulbo passam as vias motoras descendentes e sensitivas ascendentes, e é nele que cruzam a maior parte das fibras corticoespinais e as fibras arqueadas internas que se originam nos núcleos grácil e cuneiforme e formam o lemnisco medial. Por ser estrutura par, a descrição vale para os dois lados.",
+    "anatomy": {
+      "relations": "Situada no forame magno, anterior ao cerebelo, posterior ao clivo, caudal à ponte, com a qual faz limite no sulco bulbopontino. Os nervos glossofaríngeo, vago e acessório emergem pelo sulco lateral posterior, e o hipoglosso pelo sulco lateral anterior (pré-olivar). O quarto ventrículo situa-se posteriormente à parte superior.",
+      "vascularization": "Artérias vertebrais e seus ramos: artéria espinal anterior (parte medial), artéria cerebelar inferior posterior (parte lateral e dorsal), artéria espinal posterior e ramos diretos da artéria vertebral."
+    },
+    "histology": {
+      "tissues": [
+        "Substância cinzenta organizada em núcleos (de nervos cranianos, olivares, grácil, cuneiforme e formação reticular) e substância branca de axônios mielinizados em feixes",
+        "Neurônios multipolares de tamanhos variados, com corpúsculos de Nissl evidentes nos neurônios motores dos núcleos dos nervos cranianos",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia; células ependimárias revestindo o assoalho do quarto ventrículo"
+      ]
+    },
+    "clinical": [
+      "Síndrome bulbar lateral (de Wallenberg): infarto no território da artéria cerebelar inferior posterior ou da artéria vertebral, com síndrome de Horner, perda de dor e temperatura na face ipsilateral e no corpo contralateral, disfagia, disfonia, ataxia e vertigem.",
+      "Síndrome bulbar medial (de Déjerine): oclusão de ramos da artéria espinal anterior, com hemiparesia contralateral, perda contralateral de tato fino e propriocepção e desvio da língua para o lado da lesão.",
+      "Herniação tonsilar: a descida das tonsilas do cerebelo pelo forame magno comprime o bulbo e pode causar insuficiência respiratória e colapso cardiovascular."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Tronco encefálico: medula oblonga",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: medula oblonga",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: medula oblonga",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Tronco encefálico: medula oblonga",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: medula oblonga",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, medula oblonga",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: medula oblonga",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:hypothalamus": {
+    "ids": {},
+    "summary_pt": "O hipotálamo é a parte do diencéfalo situada abaixo do sulco hipotalâmico, formando o assoalho e a parte inferior das paredes laterais do terceiro ventrículo. Apesar do pequeno volume, coordena a homeostase: integra informações viscerais, olfatórias e límbicas e responde por meio do sistema nervoso autônomo, do sistema endócrino e do comportamento. Seus núcleos incluem o supraóptico e o paraventricular, que sintetizam ocitocina e vasopressina (hormônio antidiurético) liberados na neuro-hipófise; o suprequiasmático, marca-passo do ritmo circadiano; o arqueado, que produz hormônios liberadores levados à adeno-hipófise pelo sistema porta hipofisário; os núcleos da área pré-óptica, ligados à termorregulação; e os núcleos ventromediano e lateral, relacionados com a saciedade e a fome. O hipotálamo ainda controla a sede, o ciclo sono-vigília e o comportamento sexual. Anteriormente limita-se pela lâmina terminal e pelo quiasma óptico, e posteriormente pelos corpos mamilares. Suas conexões incluem o fórnix, o feixe prosencefálico medial e o trato mamilotalâmico. Há núcleos pares em cada lado do terceiro ventrículo; a ficha cobre as duas metades.",
+    "anatomy": {
+      "relations": "Limitado anteriormente pela lâmina terminal e pelo quiasma óptico, posteriormente pelos corpos mamilares, superiormente pelo sulco hipotalâmico (que o separa do tálamo) e lateralmente pela cápsula interna. Inferiormente, o túber cinéreo continua com o infundíbulo, que se liga à hipófise.",
+      "vascularization": "Ramos do círculo arterial do cérebro (de Willis): artérias comunicante anterior, cerebral anterior, comunicante posterior e cerebral posterior. A hipófise é suprida pelas artérias hipofisárias superior e inferior, e o sistema porta hipofisário conecta a eminência mediana à adeno-hipófise."
+    },
+    "histology": {
+      "tissues": [
+        "Neurônios magnocelulares (supraóptico e paraventricular) e parvocelulares, com neurossecreção liberada nos capilares da eminência mediana e da neuro-hipófise",
+        "Substância cinzenta organizada em núcleos e áreas, com neurônios multipolares peptidérgicos e monoaminérgicos",
+        "Tanicitos e células ependimárias na parede do terceiro ventrículo, além de astrócitos e micróglia",
+        "Capilares fenestrados na eminência mediana, região sem barreira hematoencefálica contínua"
+      ]
+    },
+    "clinical": [
+      "Diabetes insípido central: lesão dos núcleos supraóptico e paraventricular, ou do trato hipotálamo-hipofisário, reduz o hormônio antidiurético e causa poliúria com polidipsia.",
+      "Síndrome de Wernicke-Korsakoff: a deficiência de tiamina, comum no alcoolismo crônico, lesa os corpos mamilares e o tálamo mediodorsal, com confusão, oftalmoplegia, ataxia e amnésia anterógrada.",
+      "Tumores da região selar e suprasselar, como craniofaringioma e adenoma hipofisário: comprimem o hipotálamo e o quiasma óptico, causando hipopituitarismo e hemianopsia bitemporal."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Diencéfalo: hipotálamo",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: hipotálamo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: hipotálamo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Diencéfalo: hipotálamo",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: hipotálamo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, hipotálamo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema endócrino: hipotálamo e hipófise",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: hipotálamo",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:white-matter-of-telencephalon-r": {
+    "ids": {},
+    "summary_pt": "A substância branca do telencéfalo é formada por axônios mielinizados que conectam o córtex cerebral entre si, com o hemisfério oposto e com estruturas subcorticais. Ocupa o centro de cada hemisfério, formando o centro semioval, e é classificada em três categorias de fibras. As fibras de associação ligam áreas do mesmo hemisfério: as curtas, em U, unem giros vizinhos, e as longas formam fascículos como o longitudinal superior, o arqueado, o uncinado, o cíngulo e o fronto-occipital inferior. As fibras comissurais cruzam a linha mediana e incluem o corpo caloso, a comissura anterior e a comissura do fórnix. As fibras de projeção ligam o córtex ao tálamo, ao tronco encefálico e à medula espinal; convergem na coroa radiada e atravessam a cápsula interna, entre o núcleo lentiforme, o núcleo caudado e o tálamo. A cápsula interna reúne vias motoras, como a corticoespinal e a corticonuclear, e vias sensitivas, como a radiação talâmica, e por isso pequenas lesões nela produzem déficits extensos. A substância branca representa uma parcela considerável do volume dos hemisférios cerebrais. Por ser estrutura par, a ficha vale para os dois lados.",
+    "anatomy": {
+      "relations": "Situa-se profundamente ao córtex cerebral, ao redor dos ventrículos laterais e dos núcleos da base. Lateralmente aos ventrículos forma o centro semioval; inferiormente à cápsula interna continua com o tronco encefálico pelos pedúnculos cerebrais. O corpo caloso forma o teto dos ventrículos laterais e conecta os hemisférios.",
+      "vascularization": "Artérias medulares longas, ramos corticais das artérias cerebrais anterior, média e posterior, irrigam a substância branca profunda. A cápsula interna é suprida por ramos lenticuloestriados da artéria cerebral média, por ramos da artéria cerebral anterior (artéria recorrente de Heubner) e pela artéria corióidea anterior."
+    },
+    "histology": {
+      "tissues": [
+        "Axônios mielinizados em feixes, predominantes, com ausência de corpos celulares neuronais",
+        "Oligodendrócitos interfasciculares, responsáveis pela síntese e manutenção da bainha de mielina",
+        "Astrócitos fibrosos e micróglia, com capilares contínuos e barreira hematoencefálica"
+      ]
+    },
+    "clinical": [
+      "Esclerose múltipla: doença desmielinizante inflamatória autoimune com placas na substância branca, típicas em localização periventricular, no corpo caloso e no nervo óptico.",
+      "Infarto lacunar da cápsula interna: oclusão de pequenos ramos penetrantes, geralmente em hipertensos, causa hemiparesia motora pura contralateral.",
+      "Doença cerebrovascular de pequenos vasos: leucoaraiose, alterações da substância branca periventricular, associada a declínio cognitivo e distúrbio da marcha."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: substância branca",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: substância branca",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: substância branca",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: substância branca",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: substância branca",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, substância branca",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: substância branca",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:spinal-dura": {
+    "ids": {},
+    "summary_pt": "A dura-máter espinal é a meninge mais externa da medula espinal, de tecido conjuntivo denso e resistente, que forma o saco dural. Diferentemente da dura craniana, constitui uma única lâmina, correspondente à camada meníngea, e não adere ao periósteo das vértebras: entre ela e o canal vertebral há o espaço epidural (extradural), com tecido adiposo e o plexo venoso vertebral interno. Fixa-se ao redor do forame magno e termina, em geral, ao nível da segunda vértebra sacral, formando o fundo de saco dural. Distalmente, continua como filamento terminal externo (ligamento coccígeo), que se prende ao cóccix. Prolonga-se lateralmente em bainhas durais que envolvem as raízes e os nervos espinais e se continuam com o epineuro. Internamente, a dura-máter espinal é separada da aracnoide-máter por um espaço subdural virtual, e a aracnoide delimita o espaço subaracnóideo, com líquido cerebrospinal. Como a medula termina por volta de L1-L2, o saco dural abaixo desse nível contém apenas as raízes da cauda equina, o que torna possível a punção lombar abaixo do cone medular. A dura-máter é uma estrutura ímpar, sem lados.",
+    "anatomy": {
+      "relations": "Reveste a medula espinal, a aracnoide-máter e as raízes nervosas, abaixo do forame magno até S2. O espaço epidural, entre a dura e as paredes do canal vertebral, contém gordura e plexo venoso vertebral interno. Posteriormente ao saco dural encontram-se o ligamento amarelo e os arcos vertebrais.",
+      "vascularization": "Ramos espinais das artérias segmentares: artérias vertebrais, cervicais ascendente e profunda, intercostais posteriores, lombares e sacrais laterais. A drenagem venosa ocorre para o plexo venoso vertebral interno.",
+      "innervation": "Ramos meníngeos (recorrentes) dos nervos espinais, também chamados nervos sinuvertebrais, que inervam a dura-máter, os ligamentos e o anel fibroso e conduzem a sensibilidade dolorosa."
+    },
+    "histology": {
+      "tissues": [
+        "Tecido conjuntivo denso não modelado, com feixes de fibras colágenas e fibras elásticas",
+        "Fibroblastos como células predominantes, com poucos vasos sanguíneos",
+        "Face interna revestida por células da borda dural, justapostas à aracnoide-máter"
+      ]
+    },
+    "clinical": [
+      "Punção lombar: a agulha, introduzida em geral entre L3-L4 ou L4-L5, abaixo do cone medular, atravessa a dura-máter e a aracnoide para colher líquido cerebrospinal.",
+      "Cefaleia pós-punção dural: o extravasamento de líquido cerebrospinal por orifício na dura-máter reduz a pressão intracraniana e causa cefaleia ortostática.",
+      "Anestesia epidural e raquianestesia: a primeira injeta o anestésico no espaço epidural, fora da dura-máter; a segunda, no espaço subaracnóideo, após perfurá-la.",
+      "Hematoma ou abscesso epidural espinal: coleção no espaço epidural comprime a medula espinal e as raízes e constitui emergência neurológica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Meninges: dura-máter espinal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: dura-máter espinal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Meninges espinais: dura-máter espinal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Meninges: dura-máter espinal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: dura-máter espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Meninges espinais: suprimento sanguíneo, dura-máter espinal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Meninges espinais: inervação, dura-máter espinal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Meninges: dura-máter espinal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido conjuntivo e Sistema nervoso: meninges",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: dura-máter espinal",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:white-matter-of-spinal-cord": {
+    "ids": {},
+    "summary_pt": "A substância branca da medula espinal envolve a substância cinzenta e é composta por axônios, em sua maioria mielinizados, dispostos em funículos: anterior, lateral e posterior. Reúne vias ascendentes sensitivas e descendentes motoras. No funículo posterior ascendem o fascículo grácil e o fascículo cuneiforme, que conduzem tato discriminativo, propriocepção consciente e vibração, sem cruzamento até o bulbo. O trato espinotalâmico, nos funículos anterior e lateral, leva dor, temperatura e tato grosseiro; seus axônios cruzam na comissura branca anterior, um ou dois segmentos acima do nível de entrada. Os tratos espinocerebelares, anterior e posterior, transmitem propriocepção inconsciente ao cerebelo. Entre as vias descendentes, o trato corticoespinal lateral, cruzado na decussação das pirâmides, comanda a motricidade voluntária dos músculos distais; o corticoespinal anterior, a dos axiais; além dos tratos rubroespinal, vestibuloespinal, reticuloespinal e tetoespinal, que modulam a postura e o tônus. A proporção entre as substâncias branca e cinzenta aumenta em direção cranial, porque cada nível recebe mais fibras ascendentes e dá passagem a mais descendentes. Por ser um segmento contínuo e ímpar, a ficha não distingue lados.",
+    "anatomy": {
+      "relations": "Dispõe-se em torno da substância cinzenta, delimitada pelos sulcos mediano posterior, intermédio posterior, lateral posterior, lateral anterior e pela fissura mediana anterior. As duas metades anteriores são unidas pela comissura branca anterior, na qual cruzam as fibras do trato espinotalâmico. A medula é envolvida por pia-máter, aracnoide-máter e dura-máter.",
+      "vascularization": "Artéria espinal anterior, que supre os dois terços anteriores da medula (incluindo os funículos anterior e parte do lateral), e duas artérias espinais posteriores, que suprem o terço posterior. Reforçam-nas as artérias radiculares, entre elas a artéria radicular magna (de Adamkiewicz), importante na região toracolombar."
+    },
+    "histology": {
+      "tissues": [
+        "Axônios mielinizados em fascículos e tratos, predominantes, de maior ou menor calibre conforme a via",
+        "Oligodendrócitos interfasciculares, formadores da mielina do sistema nervoso central",
+        "Astrócitos fibrosos e micróglia, sem corpos celulares neuronais"
+      ]
+    },
+    "clinical": [
+      "Síndrome de Brown-Séquard (hemissecção medular): perda ipsilateral de força e de propriocepção abaixo da lesão, e perda contralateral de dor e temperatura, que começa alguns segmentos abaixo.",
+      "Síndrome da artéria espinal anterior: infarto dos dois terços anteriores da medula, com paralisia e perda de dor e temperatura abaixo da lesão, e preservação do tato fino e da propriocepção.",
+      "Degeneração combinada subaguda da medula, por deficiência de vitamina B12: lesa o funículo posterior e o trato corticoespinal lateral, com perda de vibração e propriocepção, ataxia e fraqueza espástica."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Medula espinal: substância branca",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: substância branca",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Medula espinal: substância branca",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Medula espinal: substância branca",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: substância branca",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Medula espinal: suprimento sanguíneo, substância branca",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central: medula espinal",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: substância branca",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:allen-primary-motor-cortex-r": {
+    "ids": {},
+    "summary_pt": "Este rótulo provém do atlas Allen e não é termo da Terminologia Anatômica; corresponde de forma aproximada ao giro pré-central e à parte anterior do lóbulo paracentral. O córtex motor primário corresponde à área 4 de Brodmann e ocupa o giro pré-central, estendendo-se à parte anterior do lóbulo paracentral, na face medial do hemisfério. É a principal origem das vias motoras voluntárias e comanda os músculos do lado oposto do corpo. Sua organização é somatotópica: o pé e a perna representam-se na face medial, o tronco e o membro superior na convexidade, e a mão e a face na parte inferior e lateral do giro; a área cortical de cada parte do corpo é proporcional à precisão do movimento, e não ao tamanho, o que dá origem ao homúnculo motor. Do ponto de vista citoarquitetônico, é um córtex agranular: a camada granular interna é muito reduzida e a camada piramidal interna contém as células piramidais gigantes de Betz, cujos axônios contribuem para os tratos corticoespinal e corticonuclear. Os axônios corticoespinais descem pela coroa radiada e pelo ramo posterior da cápsula interna, e os corticonucleares, pelo joelho, até o tronco encefálico e a medula espinal. O córtex motor recebe aferências da área pré-motora, da área motora suplementar, do córtex somatossensorial e, via tálamo, dos núcleos da base e do cerebelo. A ficha vale para os dois hemisférios.",
+    "anatomy": {
+      "relations": "Ocupa o giro pré-central, anteriormente ao sulco central e posteriormente ao sulco pré-central, estendendo-se ao lóbulo paracentral. Anteriormente faz limite com as áreas pré-motora e motora suplementar (área 6) e, posteriormente, com o córtex somatossensorial primário, do outro lado do sulco central.",
+      "vascularization": "Face lateral (representação da face, do membro superior e do tronco): artéria cerebral média. Face medial (representação do membro inferior): artéria cerebral anterior, por ramos paracentrais da artéria calosomarginal."
+    },
+    "histology": {
+      "tissues": [
+        "Córtex agranular (isocórtex agranular), com camada granular interna muito reduzida",
+        "Células piramidais gigantes de Betz na camada piramidal interna, origem de parte dos axônios corticoespinais",
+        "Neurônios piramidais menores e interneurônios; neuróglia (astrócitos, oligodendrócitos e micróglia)"
+      ]
+    },
+    "clinical": [
+      "Infarto da artéria cerebral anterior: compromete a representação do membro inferior e causa paresia crural contralateral, mais intensa no pé e na perna.",
+      "Infarto da artéria cerebral média: acomete a face lateral e produz hemiparesia contralateral de predomínio faciobraquial.",
+      "Crises focais motoras: descargas no córtex motor primário causam abalos clônicos do segmento representado, com propagação ordenada (marcha jacksoniana).",
+      "Síndrome do neurônio motor superior: lesão do córtex motor ou de seus axônios provoca paresia, espasticidade, hiper-reflexia e sinal de Babinski."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: córtex motor primário",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: córtex motor primário",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: córtex motor primário",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: córtex motor primário",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: córtex motor primário",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, córtex motor primário",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: córtex motor primário",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:postcentral-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro pós-central é o giro do lobo parietal situado posteriormente ao sulco central e anteriormente ao sulco pós-central. Contém o córtex somatossensorial primário, correspondente às áreas 3, 1 e 2 de Brodmann, que recebe as informações de tato, pressão, vibração, propriocepção consciente, dor e temperatura do lado oposto do corpo. As aferências chegam do núcleo ventral posterior do tálamo pela radiação talâmica, que atravessa o ramo posterior da cápsula interna. A organização é somatotópica, formando o homúnculo sensitivo: o membro inferior ocupa a face medial, o tronco e o membro superior a convexidade, e a mão, a face, os lábios e a língua a parte lateral, com grande extensão cortical para as regiões de maior densidade de receptores. A área 3 recebe principalmente aferências cutâneas e proprioceptivas profundas; as áreas 1 e 2 integram essas informações em propriedades como textura, forma e tamanho. As informações seguem para o lóbulo parietal superior e inferior, que as reúnem em percepções complexas. A ficha vale para os dois hemisférios.",
+    "anatomy": {
+      "relations": "Limitado anteriormente pelo sulco central, que o separa do giro pré-central, e posteriormente pelo sulco pós-central, que o separa do lóbulo parietal superior e do lóbulo parietal inferior. Estende-se à face medial, onde participa do lóbulo paracentral. Inferiormente aproxima-se do sulco lateral e do opérculo parietal.",
+      "vascularization": "Face lateral: ramos da artéria cerebral média, em particular os ramos do sulco central e parietal anterior. Face medial: artéria cerebral anterior, por ramos paracentrais."
+    },
+    "histology": {
+      "tissues": [
+        "Córtex granular (koniocórtex), com camada granular interna muito espessa que recebe as aferências talamocorticais",
+        "Neurônios estrelados espinhosos e piramidais, com interneurônios inibitórios",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia"
+      ]
+    },
+    "clinical": [
+      "Infarto da artéria cerebral média: causa hemi-hipoestesia contralateral de predomínio faciobraquial, com perda de discriminação entre dois pontos.",
+      "Infarto da artéria cerebral anterior: compromete a sensibilidade do membro inferior contralateral.",
+      "Síndromes sensitivas corticais: lesões do giro pós-central e do lóbulo parietal adjacente preservam a sensibilidade protopática, mas prejudicam a estereognosia (astereognosia) e a grafestesia.",
+      "Crises focais sensitivas: descargas no giro pós-central causam parestesias que se propagam pelo segmento representado."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo parietal, giro pós-central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro pós-central",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro pós-central",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo parietal, giro pós-central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro pós-central",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro pós-central",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro pós-central",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:middle-frontal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro frontal médio é o giro do lobo frontal situado entre o sulco frontal superior e o sulco frontal inferior, na face lateral do hemisfério. Compreende parte das áreas 8, 9 e 46 de Brodmann e constitui o principal componente do córtex pré-frontal dorsolateral. Sua porção posterior contém o campo ocular frontal (área 8), que comanda movimentos sacádicos voluntários dos olhos para o lado contralateral, por conexões com o colículo superior e a formação reticular pontina paramediana. As porções anteriores participam das funções executivas: memória de trabalho, planejamento, atenção sustentada, flexibilidade cognitiva e tomada de decisão. Mantém conexões recíprocas com o núcleo mediodorsal do tálamo, com o lobo parietal posterior por meio do fascículo longitudinal superior e com os núcleos da base, nos circuitos frontoestriatais. Embora a especialização varie entre os hemisférios, o lado esquerdo associa-se mais a tarefas verbais e o direito a tarefas visuoespaciais. O giro é uma estrutura par e, por estar em região de associação, suas lesões geralmente aparecem como alterações de comportamento e cognição, e não como déficits motores ou sensitivos puros. A ficha vale para os dois hemisférios.",
+    "anatomy": {
+      "relations": "Situa-se entre os sulcos frontal superior (que o separa do giro frontal superior) e frontal inferior (que o separa do giro frontal inferior). Posteriormente é limitado pelo sulco pré-central e pelo giro pré-central, e anteriormente continua com o polo frontal.",
+      "vascularization": "Ramos corticais (frontais) da artéria cerebral média, em particular os ramos pré-frontal e do sulco pré-central. A margem superior pode receber contribuição da artéria cerebral anterior. A drenagem venosa é feita por veias cerebrais superiores para o seio sagital superior."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Neurônios piramidais (projeção, glutamatérgicos), predominantes, e interneurônios estrelados e granulares",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia, além de neurópilo rico em sinapses",
+        "Substância branca subcortical formada por axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Síndrome disexecutiva: lesões do córtex pré-frontal dorsolateral causam déficit de planejamento, de memória de trabalho e de flexibilidade cognitiva, com perseveração e apatia.",
+      "Lesão do campo ocular frontal: a lesão destrutiva provoca desvio do olhar para o lado da lesão, e uma crise epiléptica nessa área causa desvio do olhar para o lado oposto.",
+      "Infarto da artéria cerebral média, divisão superior: compromete a face lateral do lobo frontal, com hemiparesia contralateral e, no hemisfério dominante, afasia de expressão."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo frontal, giro frontal médio",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro frontal médio",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro frontal médio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo frontal, giro frontal médio",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro frontal médio",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro frontal médio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro frontal médio",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:superior-frontal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro frontal superior é o giro do lobo frontal que ocupa a margem superior do hemisfério, acima do sulco frontal superior, e continua na face medial até o sulco do cíngulo. Inclui partes das áreas 6, 8 e 9 de Brodmann. Em sua porção posterior e medial localiza-se a área motora suplementar, parte da área 6, que participa do planejamento e da sequência de movimentos complexos e do início de movimentos voluntários, em especial os bimanuais; ela se projeta para o córtex motor primário, para os núcleos da base e para a medula espinal. A porção anterior corresponde ao córtex pré-frontal dorsomedial e medial, ligado à iniciativa, à motivação, à atenção e à regulação do comportamento, em conexão com o giro do cíngulo e com o núcleo mediodorsal do tálamo. A representação do giro superior se estende pela face medial até a margem do sulco do cíngulo, onde o cíngulo anterior se relaciona com a emoção e o controle de conflito. O giro é par; as lesões bilaterais da face medial produzem alterações motivacionais mais graves que as unilaterais. A ficha vale para os dois hemisférios.",
+    "anatomy": {
+      "relations": "Ocupa a margem superior do hemisfério, acima do sulco frontal superior (que o separa do giro frontal médio). Na face medial limita-se inferiormente pelo sulco do cíngulo, que o separa do giro do cíngulo, e posteriormente pelo lóbulo paracentral. Está sob a foice do cérebro, ao longo do seio sagital superior.",
+      "vascularization": "Face lateral: ramos da artéria cerebral média. Face medial: artéria cerebral anterior, por ramos frontais (artérias frontopolar, calosomarginal e pericalosa). A drenagem venosa ocorre pelas veias cerebrais superiores, para o seio sagital superior."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Neurônios piramidais (projeção, glutamatérgicos), predominantes, e interneurônios estrelados e granulares",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia, além de neurópilo rico em sinapses",
+        "Substância branca subcortical formada por axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Infarto da artéria cerebral anterior: lesão da face medial do lobo frontal causa abulia e apatia; a lesão bilateral pode levar ao mutismo acinético.",
+      "Síndrome da área motora suplementar: lesão no hemisfério dominante causa redução transitória da fala e da iniciativa motora, com paresia contralateral que costuma regredir.",
+      "Meningioma parassagital: tumor extra-axial próximo do seio sagital superior pode comprimir o giro frontal superior e o lóbulo paracentral, com crises focais e paresia crural."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo frontal, giro frontal superior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro frontal superior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro frontal superior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo frontal, giro frontal superior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro frontal superior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro frontal superior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro frontal superior",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:anterior-horn-of-spinal-cord": {
+    "ids": {},
+    "summary_pt": "O corno anterior (ventral) é a coluna da substância cinzenta da medula espinal que contém os neurônios motores somáticos. Em corte transversal tem forma de corno largo, voltado para o sulco lateral anterior, e corresponde às lâminas VIII e IX de Rexed. Os neurônios motores alfa, grandes e multipolares, inervam as fibras musculares extrafusais; os neurônios motores gama inervam as fibras intrafusais dos fusos neuromusculares, regulando a sensibilidade deles ao estiramento. Os axônios saem pela raiz anterior e seguem pelo nervo espinal até o músculo esquelético, constituindo a via final comum da motricidade. A organização é somatotópica: os neurônios dos músculos extensores ficam ventralmente aos dos flexores, os dos músculos proximais e axiais medialmente e os dos músculos distais lateralmente. O corno anterior é mais volumoso nas intumescências cervical e lombossacral, que correspondem à origem dos plexos braquial e lombossacral. Recebe fibras corticoespinais, rubroespinais, vestibuloespinais e reticuloespinais, bem como aferências de interneurônios e de fibras sensitivas, que fecham o arco reflexo monossináptico. A estrutura é contínua ao longo da medula, em ambos os lados.",
+    "anatomy": {
+      "relations": "Parte ventral da substância cinzenta, anterior ao canal central e à comissura cinzenta. Lateralmente é envolvido pelo funículo lateral e anteriormente pelo funículo anterior. Aumenta nas intumescências cervical (C5-T1) e lombossacral (L1-S3). A raiz anterior emerge de seu ápice, atravessa a substância branca e une-se à raiz posterior para formar o nervo espinal.",
+      "vascularization": "Artéria espinal anterior, por meio das artérias sulcais (sulcocomissurais), que irrigam a maior parte da substância cinzenta. Reforço pelas artérias radiculares, com a artéria radicular magna (de Adamkiewicz) na região toracolombar."
+    },
+    "histology": {
+      "tissues": [
+        "Neurônios motores alfa, grandes e multipolares, com núcleo vesiculoso, nucléolo evidente e abundantes corpúsculos de Nissl",
+        "Neurônios motores gama e interneurônios, como as células de Renshaw",
+        "Neurópilo com astrócitos protoplasmáticos, micróglia e oligodendrócitos satélites"
+      ]
+    },
+    "clinical": [
+      "Poliomielite: o poliovírus infecta os neurônios motores do corno anterior e causa paralisia flácida assimétrica, com atrofia muscular e arreflexia.",
+      "Esclerose lateral amiotrófica: degeneração dos neurônios motores superiores e inferiores, com fasciculações e atrofia, associadas a espasticidade e hiper-reflexia.",
+      "Atrofia muscular espinal: doença genética com perda de neurônios motores do corno anterior e fraqueza progressiva, principalmente proximal.",
+      "Síndrome do neurônio motor inferior: a lesão do corno anterior ou do nervo periférico provoca paresia flácida, atrofia, fasciculações e arreflexia."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Medula espinal: substância cinzenta, corno anterior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: corno anterior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Medula espinal: corno anterior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Medula espinal: substância cinzenta, corno anterior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: corno anterior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Medula espinal: suprimento sanguíneo, corno anterior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central: medula espinal",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: corno anterior",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:posterior-horn-of-spinal-cord": {
+    "ids": {},
+    "summary_pt": "O corno posterior (dorsal) é a coluna da substância cinzenta da medula espinal que recebe e processa as informações sensitivas. É formado, em sentido dorsoventral, pelas lâminas I a VI de Rexed. A lâmina I (zona marginal) e a lâmina II (substância gelatinosa) recebem fibras de pequeno calibre, A-delta e C, que conduzem dor e temperatura, e participam da modulação da dor por interneurônios e por vias descendentes. A lâmina III e a lâmina IV (núcleo próprio) recebem o tato; as lâminas V e VI, aferências de fibras de maior calibre, inclusive proprioceptivas. Na base do corno posterior, de C8 a L3, encontra-se o núcleo torácico (de Clarke), origem do trato espinocerebelar posterior. As fibras aferentes entram pela raiz posterior, cujos corpos neuronais estão no gânglio espinal, e muitas se reúnem no trato dorsolateral (de Lissauer) antes de penetrar no corno. Os neurônios de segunda ordem para dor e temperatura cruzam pela comissura branca anterior e ascendem no trato espinotalâmico. A estrutura é contínua ao longo da medula, em ambos os lados.",
+    "anatomy": {
+      "relations": "Parte dorsal da substância cinzenta, posterior ao canal central. O ápice aproxima-se do sulco lateral posterior, onde entram as fibras da raiz posterior; entre o ápice e a superfície encontra-se o trato dorsolateral. Medialmente limita-se pelo funículo posterior e lateralmente pelo funículo lateral.",
+      "vascularization": "Predominantemente pelas artérias espinais posteriores (terço posterior da medula), com contribuição de ramos da artéria espinal anterior na base. Reforço pelas artérias radiculares posteriores."
+    },
+    "histology": {
+      "tissues": [
+        "Neurônios de projeção e interneurônios multipolares, de menor tamanho que os do corno anterior, organizados em lâminas",
+        "Na substância gelatinosa, pequenos interneurônios densamente agrupados e escassez de fibras mielínicas, o que lhe confere aspecto translúcido",
+        "Neurópilo com astrócitos protoplasmáticos e micróglia"
+      ]
+    },
+    "clinical": [
+      "Herpes-zóster: a reativação do vírus varicela-zóster no gânglio espinal causa dor e vesículas em dermátomo, com inflamação do gânglio e do corno posterior; a dor pode persistir como neuralgia pós-herpética.",
+      "Siringomielia: a cavitação central da medula interrompe as fibras do trato espinotalâmico que cruzam na comissura branca anterior, causando perda de dor e temperatura em capa, com preservação do tato.",
+      "Analgesia espinal: os opioides administrados por via intratecal atuam em receptores da substância gelatinosa e inibem a transmissão nociceptiva."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Medula espinal: substância cinzenta, corno posterior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: corno posterior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Medula espinal: corno posterior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Medula espinal: substância cinzenta, corno posterior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: corno posterior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico Medula espinal: suprimento sanguíneo, corno posterior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central: medula espinal",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: corno posterior",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:lateral-ventricle-r": {
+    "ids": {},
+    "summary_pt": "O ventrículo lateral é a cavidade de cada hemisfério cerebral, em forma de C, parte do sistema ventricular que contém o líquido cerebrospinal. Divide-se em corno frontal (anterior), parte central (corpo), átrio (trígono colateral), corno occipital (posterior) e corno temporal (inferior). Comunica-se com o terceiro ventrículo pelo forame interventricular, e este, pelo aqueduto do mesencéfalo, com o quarto ventrículo. O corno frontal é limitado lateralmente pela cabeça do núcleo caudado, medialmente pelo septo pelúcido e superiormente pelo corpo caloso. A parte central tem o corpo caloso como teto, e o tálamo e o núcleo caudado em seu assoalho. No corno temporal, o assoalho é formado pelo hipocampo e a extremidade anterior relaciona-se com a amígdala. O plexo corióideo, no assoalho da parte central, no átrio e no corno temporal, produz a maior parte do líquido cerebrospinal; está ausente nos cornos frontal e occipital. Cada ventrículo é revestido por epêndima. A ficha vale para os dois lados, e o aumento de seu volume, visível em exames de imagem, é um indicador de hidrocefalia ou de atrofia cerebral.",
+    "anatomy": {
+      "relations": "Relaciona-se: corno frontal, com a cabeça do núcleo caudado (parede lateral), o septo pelúcido (parede medial) e o joelho do corpo caloso; parte central, com o corpo caloso (teto), o tálamo e o corpo do núcleo caudado (assoalho); corno temporal, com o hipocampo (assoalho), a cauda do núcleo caudado e a amígdala; corno occipital, com as radiações do corpo caloso e a radiação óptica. Comunica-se com o terceiro ventrículo pelo forame interventricular.",
+      "vascularization": "O plexo corióideo é suprido pela artéria corióidea anterior (ramo da artéria carótida interna) e pelas artérias corióideas posteriores (ramos da artéria cerebral posterior). A drenagem venosa dá-se por veias subependimárias, como a veia talamoestriada superior, que levam às veias cerebrais internas."
+    },
+    "histology": {
+      "tissues": [
+        "Epêndima: epitélio simples cúbico a colunar, com cílios e microvilosidades, revestindo as paredes ventriculares",
+        "Plexo corióideo: epitélio cúbico simples, com junções oclusivas, sobre tecido conjuntivo frouxo vascularizado de capilares fenestrados",
+        "Sob o epêndima, camada subependimária de neuróglia"
+      ],
+      "epithelium": "Epêndima: epitélio simples cúbico a colunar ciliado, revestindo as paredes ventriculares; no plexo corióideo, epitélio cúbico simples modificado."
+    },
+    "clinical": [
+      "Hidrocefalia: obstrutiva, por exemplo, por estenose do aqueduto do mesencéfalo ou tumores, ou comunicante, por déficit de reabsorção nas granulações aracnóideas; dilata os ventrículos laterais e aumenta a pressão intracraniana.",
+      "Hemorragia intraventricular: comum em prematuros, a partir da matriz germinativa subependimária, e pode causar hidrocefalia pós-hemorrágica.",
+      "Hidrocefalia de pressão normal: ventriculomegalia com a tríade de distúrbio da marcha, demência e incontinência urinária."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: sistema ventricular, ventrículo lateral",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: ventrículo lateral",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: ventrículo lateral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: sistema ventricular, ventrículo lateral",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: ventrículo lateral",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, ventrículo lateral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: ventrículo lateral",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:superior-temporal-sulcus-r": {
+    "ids": {},
+    "summary_pt": "O sulco temporal superior é um sulco longo e profundo na face lateral do lobo temporal, paralelo ao ramo posterior do sulco lateral. Separa o giro temporal superior, acima, do giro temporal médio, abaixo, e termina posteriormente no lobo parietal, onde sua extremidade ascendente é circundada pelo giro angular. Como grande parte do córtex que o reveste está em suas paredes e em seu fundo, a superfície cortical oculta é extensa, e o sulco é apontado como uma região de integração multimodal, que recebe informações auditivas, visuais e somatossensoriais. A parte posterior do sulco, no hemisfério dominante, relaciona-se à percepção da fala e à compreensão da linguagem; a região é também associada ao processamento de movimento biológico, da direção do olhar e de expressões faciais, funções da cognição social. Seu padrão é variável entre indivíduos, e frequentemente interrompido por pregas de passagem. Por ser par, a ficha vale para os dois hemisférios. Do ponto de vista clínico, não é uma estrutura isoladamente acometida, mas serve como referência anatômica em exames de imagem e em cirurgias do lobo temporal.",
+    "anatomy": {
+      "relations": "Corre entre o giro temporal superior (margem superior) e o giro temporal médio (margem inferior), em posição paralela ao sulco lateral. Sua extremidade posterior ascende para o lóbulo parietal inferior, envolvida pelo giro angular. Profundamente, as paredes do sulco ficam sobre a substância branca temporal e o corno temporal do ventrículo lateral.",
+      "vascularization": "Ramos temporais da artéria cerebral média, que percorrem o sulco, e ramos angulares na extremidade posterior. A drenagem venosa é feita por veias cerebrais superficiais inferiores, incluindo a veia anastomótica inferior."
+    },
+    "histology": {
+      "tissues": [
+        "Córtex das paredes e do fundo do sulco, neocórtex de seis camadas, com neurônios piramidais predominantes",
+        "Interneurônios e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras em U e fibras de associação"
+      ]
+    },
+    "clinical": [
+      "Infarto da artéria cerebral média, ramos temporais: compromete a face lateral do lobo temporal e, no hemisfério dominante, pode causar déficit de compreensão da linguagem.",
+      "Epilepsia do lobo temporal lateral: focos nessa região podem causar alucinações ou ilusões auditivas, além de dificuldades de linguagem.",
+      "Planejamento cirúrgico: o sulco é referência para a ressecção de lesões temporais e para o mapeamento funcional de linguagem."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, sulco temporal superior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: sulco temporal superior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: sulco temporal superior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, sulco temporal superior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: sulco temporal superior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, sulco temporal superior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: sulco temporal superior",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:corpus-callosum": {
+    "ids": {},
+    "summary_pt": "O corpo caloso é a maior comissura do cérebro e conecta os dois hemisférios por meio de milhões de axônios mielinizados. Em corte sagital mediano, forma um arco com quatro partes: rostro, joelho, tronco (corpo) e esplênio. O rostro continua com a lâmina terminal; o joelho curva-se para a frente e para baixo; o tronco constitui o teto dos ventrículos laterais; e o esplênio, a parte posterior e mais espessa, relaciona-se com a glândula pineal e com o teto do mesencéfalo. Os axônios que passam pelo joelho formam o fórceps menor, que conecta os lobos frontais, e os que passam pelo esplênio formam o fórceps maior, que conecta os lobos occipitais. As fibras que seguem lateralmente em direção ao lobo temporal formam o tapete. Em geral, as fibras unem áreas homólogas dos dois hemisférios, o que permite integrar informações sensitivas, motoras e cognitivas e coordenar tarefas bimanuais. Sobre sua superfície superior correm o giro do cíngulo e as artérias pericalosas, e a foice do cérebro desce acima do tronco. A estrutura é ímpar e mediana, mas as fibras percorrem os dois lados.",
+    "anatomy": {
+      "relations": "Situa-se no fundo da fissura longitudinal do cérebro, abaixo da foice do cérebro e do giro do cíngulo, separado deste pelo sulco do corpo caloso. Inferiormente, relaciona-se com o septo pelúcido, o fórnix e o teto dos ventrículos laterais; o esplênio relaciona-se com a cisterna da veia cerebral magna e com a glândula pineal.",
+      "vascularization": "Artéria cerebral anterior, por meio da artéria pericalosa (e de seus ramos calosos), supre rostro, joelho e tronco. O esplênio é suprido por ramos da artéria cerebral posterior (artéria pericalosa posterior). A drenagem venosa ocorre para as veias cerebrais internas e para a veia cerebral magna."
+    },
+    "histology": {
+      "tissues": [
+        "Fibras comissurais mielinizadas, predominantes, que cruzam a linha mediana",
+        "Oligodendrócitos interfasciculares e astrócitos fibrosos; micróglia",
+        "Predomínio absoluto de axônios, com poucos corpos celulares neuronais"
+      ]
+    },
+    "clinical": [
+      "Agenesia do corpo caloso: malformação de gravidade variável, desde achado incidental até deficiência intelectual e epilepsia, com compensação por outras comissuras.",
+      "Calosotomia: secção do corpo caloso, usada em epilepsia refratária com crises atônicas (quedas súbitas), para impedir a propagação interhemisférica das descargas; pode causar síndrome de desconexão.",
+      "Glioblastoma em borboleta: glioma de alto grau que se estende pelo joelho ou pelo esplênio e invade os dois hemisférios.",
+      "Esclerose múltipla: placas desmielinizantes perpendiculares ao corpo caloso, com disposição periventricular, são comuns."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: substância branca, corpo caloso",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: corpo caloso",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: corpo caloso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: substância branca, corpo caloso",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: corpo caloso",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, corpo caloso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: corpo caloso",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:precentral-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro pré-central é o giro do lobo frontal que forma a parede anterior do sulco central, limitado anteriormente pelo sulco pré-central. Estende-se da fissura longitudinal do cérebro, na face medial, onde continua com o lóbulo paracentral, até o sulco lateral. É uma das principais referências da face lateral do hemisfério e contém o córtex motor primário (área 4 de Brodmann), origem de parte dos tratos corticoespinal e corticonuclear. O giro tem espessura cortical maior do que o giro pós-central, e o seu padrão em imagens de ressonância magnética inclui a chamada saliência da mão, uma dobra em forma de ômega invertido, que serve como referência da representação da mão. A organização é somatotópica, com o membro inferior na face medial, o tronco e o membro superior na convexidade, e a face, os lábios e a língua na parte inferior. O giro é par e a descrição vale para os dois hemisférios. Em direção anterior, a área pré-motora (área 6) planeja e seleciona os movimentos antes da execução pelo córtex motor primário. A lesão do giro causa déficits motores contralaterais.",
+    "anatomy": {
+      "relations": "Limitado posteriormente pelo sulco central (que o separa do giro pós-central) e anteriormente pelo sulco pré-central (que o separa do giro frontal superior e do giro frontal médio na parte superior e do giro frontal inferior na parte inferior). Inferiormente chega ao sulco lateral, junto ao opérculo frontal.",
+      "vascularization": "Face lateral: ramos da artéria cerebral média, entre eles os ramos do sulco pré-central e do sulco central. Face medial e margem superior: artéria cerebral anterior, por ramos paracentrais. A drenagem é feita por veias cerebrais superiores, para o seio sagital superior."
+    },
+    "histology": {
+      "tissues": [
+        "Córtex agranular, de camada granular interna reduzida e camada piramidal interna proeminente",
+        "Células piramidais gigantes de Betz, além de piramidais menores e interneurônios",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia; substância branca subcortical de axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Infarto da artéria cerebral média: causa hemiparesia contralateral de predomínio faciobraquial.",
+      "Infarto da artéria cerebral anterior: compromete a parte medial do giro e causa paresia do membro inferior contralateral.",
+      "Crises focais motoras: descargas no giro pré-central causam abalos clônicos que se propagam segundo a somatotopia (marcha jacksoniana).",
+      "Tumores e metástases frontoparietais podem ocupar o giro e causar déficit motor progressivo, razão pela qual o mapeamento funcional pré-operatório é utilizado."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo frontal, giro pré-central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro pré-central",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro pré-central",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo frontal, giro pré-central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro pré-central",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro pré-central",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro pré-central",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:central-sulcus-r": {
+    "ids": {},
+    "summary_pt": "O sulco central (de Rolando) é o sulco da face lateral do hemisfério que separa o lobo frontal do lobo parietal. Origina-se junto ao ponto médio da margem superior do hemisfério, que em geral recorta discretamente, e desce obliquamente para a frente e para baixo, em geral sem alcançar o sulco lateral, do qual costuma ser separado por uma pequena ponte cortical, o giro subcentral. Sua parede anterior é o giro pré-central, com o córtex motor primário, e a posterior é o giro pós-central, com o córtex somatossensorial primário; por isso é uma referência anatômica fundamental para localizar as áreas sensitivomotoras em exames de imagem e em cirurgias. É um sulco profundo e contínuo, de trajeto sinuoso, e na ressonância magnética pode ser identificado por características como a saliência da mão e a relação com o sulco pré-central e o ramo marginal do sulco do cíngulo. O sulco é par, sua forma pode variar discretamente entre indivíduos e entre os hemisférios, e a ficha vale para os dois lados. Por se tratar de um sulco, não tem patologia própria; sua importância clínica deriva das estruturas funcionais que o margeiam.",
+    "anatomy": {
+      "relations": "Separa o giro pré-central (anterior, lobo frontal) do giro pós-central (posterior, lobo parietal). Superiormente alcança a margem do hemisfério e, em geral, continua na face medial junto ao lóbulo paracentral. Inferiormente aproxima-se do sulco lateral, do qual é separado pelo giro subcentral.",
+      "vascularization": "Percorrido por ramos da artéria cerebral média, entre eles as artérias do sulco pré-central e do sulco central, que irrigam as paredes do sulco. A drenagem venosa dá-se por veias cerebrais superiores, tributárias do seio sagital superior."
+    },
+    "histology": {
+      "tissues": [
+        "Revestido por neocórtex de seis camadas, agranular na parede anterior (córtex motor) e granular na posterior (córtex somatossensorial)",
+        "Neurônios piramidais e interneurônios, com neuróglia associada",
+        "Substância branca subcortical com fibras em U que ligam os giros adjacentes"
+      ]
+    },
+    "clinical": [
+      "Referência cirúrgica e radiológica: o sulco central orienta a localização do córtex motor e do somatossensorial, e o seu deslocamento em exames de imagem indica efeito de massa de tumores ou hematomas.",
+      "Mapeamento pré-operatório: ressonância magnética funcional e estimulação cortical direta preservam o córtex sensitivomotor adjacente ao sulco durante a ressecção de tumores.",
+      "Crises focais sensitivomotoras: descargas em torno do sulco produzem abalos ou parestesias que se propagam segundo a somatotopia."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: sulcos e lobos, sulco central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: sulco central",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: sulco central",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: sulcos e lobos, sulco central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: sulco central",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, sulco central",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: sulco central",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:angular-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro angular é parte do lóbulo parietal inferior e corresponde, em grande parte, à área 39 de Brodmann. Arqueia a extremidade posterior do sulco temporal superior e situa-se posteriormente ao giro supramarginal, na junção dos lobos parietal, temporal e occipital. É área de associação multimodal que integra informações visuais, auditivas e somatossensoriais. No hemisfério dominante, em geral o esquerdo, participa da leitura e da escrita, da linguagem e do cálculo, ligando a representação visual das letras e dos números aos seus significados e sons. Conecta-se às regiões da linguagem, frontal e temporal, pelo fascículo arqueado e pelo fascículo longitudinal superior. No hemisfério não dominante, tem papel em atenção espacial e na integração da imagem corporal. É também parte de uma rede de modo padrão, associada à recuperação de memórias e à cognição social. Por ser uma estrutura par, a ficha vale para os dois lados, com especialização funcional distinta de acordo com a dominância hemisférica. A lesão do giro angular dominante produz um conjunto característico de déficits, descrito como síndrome de Gerstmann.",
+    "anatomy": {
+      "relations": "Parte posterior do lóbulo parietal inferior, em torno da extremidade ascendente do sulco temporal superior, posterior ao giro supramarginal e anterior ao lobo occipital. Inferiormente relaciona-se com o giro temporal médio. Em profundidade, ao longo do corno occipital e do átrio do ventrículo lateral, passam a radiação óptica e fibras de associação.",
+      "vascularization": "Artéria do giro angular, ramo terminal da artéria cerebral média (divisão inferior). Pode haver contribuição de ramos parietais posteriores da artéria cerebral posterior no limite com o lobo occipital. A drenagem venosa é feita por veias cerebrais superficiais, para os seios sagital superior e transverso."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Neurônios piramidais (projeção, glutamatérgicos), predominantes, e interneurônios estrelados e granulares",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia, além de neurópilo rico em sinapses",
+        "Substância branca subcortical formada por axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Síndrome de Gerstmann: lesão do giro angular dominante causa agrafia, acalculia, agnosia digital e desorientação direita-esquerda.",
+      "Alexia com agrafia: lesão do giro angular esquerdo prejudica a leitura e a escrita, com preservação da fala espontânea.",
+      "Infarto da divisão inferior da artéria cerebral média: pode atingir o giro angular, com déficit de linguagem e defeito visual no campo contralateral."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo parietal, giro angular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro angular",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro angular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo parietal, giro angular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro angular",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro angular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro angular",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:allen-superior-temporal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro temporal superior forma a face superior e parte da face lateral do lobo temporal. Situa-se abaixo do sulco lateral e acima do sulco temporal superior. Em sua face superior, oculta no sulco lateral, localizam-se o plano polar, os giros temporais transversos (de Heschl), que contêm o córtex auditivo primário (áreas 41 e 42 de Brodmann), e o plano temporal. A área 22, posterior e lateral, corresponde ao córtex auditivo de associação e, no hemisfério dominante, à área de Wernicke, essencial para a compreensão da linguagem. O córtex auditivo primário recebe informações do corpo geniculado medial do tálamo pela radiação auditiva, com organização tonotópica: os sons agudos e graves são representados em porções diferentes do giro de Heschl. Como cada cóclea projeta-se bilateralmente, a lesão unilateral do córtex auditivo primário não causa surdez, mas dificulta a localização sonora. No hemisfério não dominante, a região participa da percepção de entonação e de música. A ficha vale para os dois hemisférios, com assimetria funcional da área 22 na linguagem.",
+    "anatomy": {
+      "relations": "Limita-se superiormente pelo sulco lateral e inferiormente pelo sulco temporal superior, que o separa do giro temporal médio. Anteriormente continua com o polo temporal e, posteriormente, com o giro supramarginal. Na face superior (no assoalho do sulco lateral), os giros temporais transversos fazem limite com a ínsula.",
+      "vascularization": "Ramos temporais da artéria cerebral média (ramo inferior). A drenagem venosa é feita por veias cerebrais superficiais médias e inferiores, para o seio cavernoso e para o seio transverso."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Neurônios piramidais (projeção, glutamatérgicos), predominantes, e interneurônios estrelados e granulares",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia, além de neurópilo rico em sinapses",
+        "Substância branca subcortical formada por axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Afasia de Wernicke (sensitiva): lesão da área 22 posterior no hemisfério dominante, com fala fluente, parafasias e compreensão gravemente prejudicada.",
+      "Infarto da divisão inferior da artéria cerebral média: afeta o giro temporal superior e pode produzir afasia de Wernicke e defeito de campo visual superior contralateral.",
+      "Alucinações auditivas e auras auditivas: descargas epilépticas no córtex auditivo e na região vizinha causam sons simples ou complexos percebidos sem estímulo externo."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal superior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro temporal superior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro temporal superior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal superior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro temporal superior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro temporal superior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro temporal superior",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:inferior-temporal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro temporal inferior ocupa a parte inferior da face lateral do lobo temporal e se estende à face inferior (basal), até o sulco occipitotemporal. É limitado superiormente pelo sulco temporal inferior, que o separa do giro temporal médio. Corresponde sobretudo à área 20 de Brodmann e integra a via visual ventral, que parte do córtex occipital e processa o que é visto: forma, cor, objetos e faces. Seus neurônios respondem a características complexas dos estímulos visuais e mantêm conexões com o giro fusiforme adjacente, com o lobo temporal medial, que inclui o hipocampo, e com o córtex pré-frontal, contribuindo para o reconhecimento visual e para a memória. O hemisfério dominante também relaciona-se à nomeação e ao significado de palavras escritas. Mantém conexão com o fascículo longitudinal inferior e com o fascículo fronto-occipital inferior. O giro é par e, como depende de projeções do sistema visual, o seu comprometimento afeta de maneira específica a percepção, e não a acuidade visual. A face basal do giro está sobre a fossa média do crânio e a tenda do cerebelo. A ficha vale para os dois hemisférios.",
+    "anatomy": {
+      "relations": "Situa-se abaixo do sulco temporal inferior (que o separa do giro temporal médio) e estende-se à face inferior do lobo temporal, até o sulco occipitotemporal, que o separa do giro fusiforme (giro occipitotemporal lateral). Posteriormente continua com o lobo occipital. A face inferior repousa sobre o assoalho da fossa média do crânio.",
+      "vascularization": "Face lateral: ramos temporais da artéria cerebral média. Face inferior: ramos temporais anteriores e posteriores da artéria cerebral posterior. A drenagem venosa é feita por veias cerebrais inferiores, para o seio transverso e outros seios da base do crânio."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Neurônios piramidais (projeção, glutamatérgicos), predominantes, e interneurônios estrelados e granulares",
+        "Neuróglia: astrócitos, oligodendrócitos e micróglia, além de neurópilo rico em sinapses",
+        "Substância branca subcortical formada por axônios mielinizados"
+      ]
+    },
+    "clinical": [
+      "Agnosia visual associativa e prosopagnosia: lesões da região temporal inferior e occipitotemporal, em especial bilaterais ou do lado direito, impedem o reconhecimento de objetos ou de faces com acuidade visual preservada.",
+      "Infarto da artéria cerebral posterior: pode comprometer a face inferior do lobo temporal, com defeitos de campo visual e déficits de reconhecimento e memória.",
+      "Epilepsia do lobo temporal: focos na face basal e lateral podem causar crises com fenômenos visuais complexos, como alucinações."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: giro temporal inferior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: giro temporal inferior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo: lobo temporal, giro temporal inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Sistema nervoso: giro temporal inferior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Vascularização do sistema nervoso central",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: suprimento sanguíneo, giro temporal inferior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso e Sistema nervoso central",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Correlações anatomoclínicas: giro temporal inferior",
+        "obraId": "machado",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+}

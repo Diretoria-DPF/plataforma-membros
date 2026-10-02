@@ -1,0 +1,1553 @@
+{
+  "za:opercular-part-of-inferior-frontal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "A parte opercular do giro frontal inferior é a porção posterior desse giro, situada entre o ramo ascendente do sulco lateral, anteriormente, e a parte inferior do sulco pré-central, posteriormente. O nome deriva do fato de, junto com as partes triangular e orbital, formar o opérculo frontal, que recobre a ínsula na profundidade do sulco lateral. Corresponde, em grande parte, à área 44 de Brodmann e, no hemisfério dominante para a linguagem (o esquerdo na grande maioria das pessoas), constitui, com a parte triangular, a área de Broca. Participa do planejamento e da programação motora da articulação da fala e da sintaxe. No hemisfério não dominante, a região homóloga relaciona-se à prosódia, isto é, à entonação emocional da fala. Conecta-se à área de Wernicke pelo fascículo arqueado e é vizinha da região do giro pré-central que comanda a musculatura da face, da língua e da laringe. Por localizar-se na convexidade lateral do lobo frontal, é irrigada por ramos corticais da artéria cerebral média. A lesão no hemisfério dominante é causa clássica de afasia de Broca, o que torna a região um alvo constante de estudo em neurologia e neurocirurgia.",
+    "anatomy": {
+      "relations": "Localiza-se na face superolateral do hemisfério, no lobo frontal, entre o ramo ascendente do sulco lateral (anterior) e a parte inferior do sulco pré-central (posterior). Superiormente limita-se com o sulco frontal inferior; inferiormente, com o sulco lateral. Anteriormente continua-se com a parte triangular e, posteriormente, com a extremidade inferior do giro pré-central. Em profundidade, recobre parte da ínsula.",
+      "vascularization": "Ramos corticais do tronco superior da artéria cerebral média, como a artéria pré-central (pré-rolândica). A drenagem venosa é feita por veias cerebrais superficiais, que seguem para o seio sagital superior ou, pela veia cerebral média superficial, para o seio cavernoso.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências de áreas de associação temporais e parietais, sobretudo pelo fascículo arqueado, e do tálamo; envia eferências ao córtex motor primário (representação da face, da língua e da laringe) e aos núcleos da base."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Área 44 de Brodmann, de córtex disgranular, com camada granular interna pouco evidente",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Afasia de Broca (expressiva): a lesão do giro frontal inferior dominante causa fala não fluente, agramática e esforçada, com compreensão relativamente preservada e repetição comprometida; o quadro completo costuma exigir lesão que ultrapasse a área de Broca.",
+      "Acidente vascular isquêmico no território do tronco superior da artéria cerebral média: associa afasia (se o hemisfério for o dominante) a paresia facial e braquial contralateral.",
+      "Lesão da região homóloga no hemisfério não dominante pode causar alteração da prosódia (aprosódia), com fala monótona e perda da expressão emocional."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico giro frontal inferior, parte opercular",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico giro frontal inferior, parte opercular",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico giro frontal inferior, parte opercular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte opercular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:triangular-part-of-inferior-frontal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "A parte triangular do giro frontal inferior ocupa o território entre o ramo anterior horizontal e o ramo ascendente do sulco lateral, de forma aproximadamente triangular, com o ápice voltado para cima. Situa-se acima da parte orbital e anteriormente à parte opercular, e corresponde em grande parte à área 45 de Brodmann. Em conjunto com a parte opercular, constitui no hemisfério dominante a área de Broca, essencial para a produção da linguagem. Enquanto a parte opercular se associa mais à articulação e à sintaxe, a parte triangular participa do processamento semântico e da seleção lexical, isto é, da escolha das palavras adequadas ao discurso. É uma região de córtex de associação pré-frontal, conectada às regiões temporais da linguagem pelo fascículo arqueado e por outras vias de associação que passam sob a ínsula. É irrigada por ramos corticais da artéria cerebral média. A lesão no hemisfério dominante contribui para a afasia não fluente, ao passo que a região homóloga do hemisfério não dominante participa do processamento da prosódia e de aspectos pragmáticos da linguagem.",
+    "anatomy": {
+      "relations": "Face superolateral do lobo frontal, delimitada pelo ramo anterior horizontal (inferior e anterior) e pelo ramo ascendente (posterior) do sulco lateral; superiormente, pelo sulco frontal inferior. Superiormente, além do sulco frontal inferior, relaciona-se com o giro frontal médio; posteriormente, com a parte opercular; inferiormente, com a parte orbital. Em profundidade, recobre a porção anterior da ínsula.",
+      "vascularization": "Ramos corticais do tronco superior da artéria cerebral média, como a artéria pré-frontal. As veias superficiais drenam para o seio sagital superior ou, pela veia cerebral média superficial, para o seio cavernoso.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências de áreas de associação temporais, parietais e pré-frontais, e do tálamo; projeta-se para outras áreas pré-frontais, para o córtex motor e para os núcleos da base."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Área 45 de Brodmann, de córtex granular, com camada granular interna evidente",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Afasia de Broca (expressiva): lesões do giro frontal inferior do hemisfério dominante, envolvendo as partes opercular e triangular, produzem fala não fluente e esforçada, com compreensão relativamente preservada.",
+      "Oclusão do ramo superior da artéria cerebral média: causa infarto frontal lateral, com afasia (se no hemisfério dominante) e déficit motor contralateral predominantemente faciobraquial.",
+      "Tumores e lesões vasculares da região exigem planejamento cirúrgico atento à localização da linguagem, que pode variar entre indivíduos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico giro frontal inferior, parte triangular",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico giro frontal inferior, parte triangular",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico giro frontal inferior, parte triangular",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontal inferior, parte triangular",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:parieto-occipital-sulcus-r": {
+    "ids": {},
+    "summary_pt": "O sulco parieto-occipital é um sulco profundo da face medial do hemisfério cerebral que separa o lobo parietal do lobo occipital. Separa o pré-cúneo, anteriormente, do cúneo, posteriormente, e une-se ao sulco calcarino em ângulo agudo, formando uma figura em Y na parte posterior da face medial. Seu extremo superior alcança a margem superior do hemisfério, onde forma uma pequena incisura, a incisura parieto-occipital, visível na face superolateral e usada como ponto de referência para traçar o limite entre os lobos parietal e occipital. Apesar de ser um limite anatômico, não representa uma fronteira funcional nítida: ao redor dele situa-se o córtex de associação parieto-occipital, que integra a via visual dorsal e participa da orientação espacial, da coordenação visuomotora e da atenção visual. O sulco é bastante profundo e, por isso, aumenta consideravelmente a superfície cortical visual e parietal. A região é irrigada principalmente pela artéria cerebral posterior, por meio do ramo parieto-occipital, que percorre o sulco. Em neurorradiologia, o sulco e o sulco calcarino são pontos de referência constantes nos cortes sagitais.",
+    "anatomy": {
+      "relations": "Face medial do hemisfério, entre o pré-cúneo (lobo parietal) e o cúneo (lobo occipital). Une-se ao sulco calcarino anteriormente e abaixo, formando um Y, e estende-se superiormente até a margem superior do hemisfério. Medialmente, a face do hemisfério está voltada para a foice do cérebro.",
+      "vascularization": "Ramo parieto-occipital da artéria cerebral posterior, que percorre o sulco. A drenagem venosa é feita por veias cerebrais da face medial, que drenam para seios da dura-máter adjacentes.",
+      "innervation": "Estrutura sulcal, sem inervação periférica própria; interessam as conexões das áreas adjacentes. Seu córtex recebe aferências das áreas visuais occipitais e projeta-se para o córtex parietal posterior, na via visual dorsal."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Síndrome de Balint: lesões bilaterais parieto-occipitais, como em infartos de zona de fronteira entre as artérias cerebrais média e posterior, causam simultanagnosia, ataxia óptica e apraxia oculomotora.",
+      "Infarto no território da artéria cerebral posterior: compromete a região do sulco calcarino e do sulco parieto-occipital e pode causar hemianopsia homônima contralateral, com preservação macular em muitos casos.",
+      "Ponto de referência em neuroimagem: o sulco parieto-occipital marca o limite entre os lobos parietal e occipital na face medial e auxilia a identificar o cúneo e o pré-cúneo nos cortes sagitais."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico sulco parieto-occipital",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico sulco parieto-occipital",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico sulco parieto-occipital",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco parieto-occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:temporal-pole-r": {
+    "ids": {},
+    "summary_pt": "O polo temporal é a extremidade anterior do lobo temporal, romba e arredondada, que se projeta anteriormente abaixo do sulco lateral. Aloja-se na parte anterior da fossa média do crânio, junto à face temporal da asa maior do esfenoide, e é separado do lobo frontal pelo sulco lateral. Corresponde em grande parte à área 38 de Brodmann e pertence ao córtex de associação paralímbico, com conexões estreitas com a amígdala, o hipocampo, o córtex orbitofrontal e a ínsula. Participa da memória semântica, do reconhecimento de pessoas e objetos, do processamento de emoções e da integração entre informação sensorial e valor afetivo. Em profundidade e medialmente, relaciona-se com a amígdala e com o corno temporal do ventrículo lateral, bem como com o unco do giro para-hipocampal. A irrigação provém principalmente de ramos temporais da artéria cerebral média, com contribuição da artéria cerebral posterior na face inferior. A região é frequentemente envolvida em epilepsia do lobo temporal e em doenças neurodegenerativas que causam perda do conhecimento semântico, e sofre contusões em traumatismos cranioencefálicos por contato com a fossa média.",
+    "anatomy": {
+      "relations": "Extremidade anterior do lobo temporal, na fossa média do crânio, posterior à asa maior do esfenoide e inferior ao sulco lateral, que a separa do lobo frontal. Medialmente e em profundidade, relaciona-se com a amígdala, o corno temporal do ventrículo lateral e o unco; inferiormente, com a face inferior do lobo temporal.",
+      "vascularization": "Ramos temporais anteriores da artéria cerebral média, com contribuição de ramos temporais da artéria cerebral posterior na face inferior. A drenagem venosa é feita por veias cerebrais inferiores e pela veia cerebral média superficial, para os seios cavernoso e transverso.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências de áreas de associação sensoriais e de estruturas límbicas (amígdala e hipocampo) e projeta-se para o córtex orbitofrontal e para a amígdala; une-se ao lobo frontal pelo fascículo uncinado."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Córtex paralímbico de transição, com camadas menos definidas que o isocórtex e conexões com a amígdala e o hipocampo",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Epilepsia do lobo temporal: as crises focais frequentemente se originam em estruturas temporais anteriores e mediais, com aura epigástrica, sensação de déjà-vu e automatismos; a lobectomia temporal anterior é descrita como opção cirúrgica nos casos refratários.",
+      "Variante semântica da afasia progressiva primária (demência semântica): doença do espectro da degeneração lobar frontotemporal, com atrofia temporal anterior e perda progressiva do significado das palavras e do reconhecimento de objetos.",
+      "Contusões cerebrais traumáticas: os polos temporais e frontais são locais frequentes de contusão, por contato com as asas do esfenoide e a base do crânio."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico polo temporal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico polo temporal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico polo temporal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico polo temporal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico polo temporal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:paracentral-gyrus-and-sulcus-r": {
+    "ids": {},
+    "summary_pt": "O lóbulo paracentral, formado pelo giro paracentral e pelo sulco paracentral, ocupa a face medial do hemisfério cerebral e corresponde à continuação, sobre a margem superior, dos giros pré-central e pós-central. É limitado anteriormente pelo sulco paracentral, ramo do sulco do cíngulo, e posteriormente pelo ramo marginal do sulco do cíngulo; inferiormente, relaciona-se com o próprio sulco do cíngulo. Sua parte anterior pertence ao córtex motor primário e contém a representação do membro inferior e do pé, enquanto a parte posterior pertence ao córtex somestésico e recebe a sensibilidade do membro inferior e da região genital. O lóbulo participa ainda do controle voluntário da micção e da defecação, em conexão com circuitos pré-frontais e do cíngulo. Pelo princípio do homúnculo cortical, a região inferior do corpo é representada sobre a margem superior e a face medial, ao passo que a face e a mão ocupam a convexidade lateral. É irrigado principalmente pela artéria cerebral anterior, através de ramos paracentrais da artéria calosomarginal. Seu comprometimento produz déficits do membro inferior contralateral e distúrbios esfincterianos.",
+    "anatomy": {
+      "relations": "Face medial do hemisfério, no ponto de transição entre os lobos frontal e parietal. Limita-se pelo sulco paracentral (anterior), pelo ramo marginal do sulco do cíngulo (posterior) e pelo sulco do cíngulo (inferior). Superiormente, continua-se com os giros pré-central e pós-central na face superolateral; medialmente, relaciona-se com a foice do cérebro e com o seio sagital superior.",
+      "vascularization": "Artéria cerebral anterior, por ramos paracentrais da artéria calosomarginal; a parte posterior pode receber contribuição da artéria cerebral posterior. A drenagem venosa é feita por veias cerebrais superiores e mediais, para o seio sagital superior.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. A parte anterior origina fibras do trato corticoespinal para o membro inferior; a parte posterior recebe aferências somestésicas do membro inferior pelo tálamo (núcleo ventral posterolateral)."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Parte anterior com córtex motor agranular, com células piramidais gigantes de Betz na camada V; parte posterior com córtex somestésico granular",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Infarto no território da artéria cerebral anterior: causa paresia e perda sensitiva contralaterais com predomínio no membro inferior e pode se associar a incontinência urinária e abulia.",
+      "Lesões parassagitais bilaterais, como meningiomas da foice do cérebro ou trombose do seio sagital superior: podem produzir paraparesia espástica dos membros inferiores com distúrbios esfincterianos.",
+      "Epilepsia focal originada no lóbulo paracentral: pode manifestar-se por crises motoras ou sensitivas restritas ao membro inferior contralateral."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico lóbulo paracentral (giro e sulco paracentral)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:precentral-sulcus-inferior-part-r": {
+    "ids": {},
+    "summary_pt": "O sulco pré-central situa-se na face superolateral do lobo frontal, imediatamente anterior ao giro pré-central, e é frequentemente dividido em partes superior e inferior. A parte inferior, aqui descrita, estende-se da região média do sulco até próximo ao sulco lateral, ao nível do opérculo frontal. Forma o limite posterior da parte opercular do giro frontal inferior, ao passo que o sulco frontal inferior termina nele. O sulco situa-se em córtex pré-motor (área 6) e limita anteriormente o giro pré-central, cujo córtex motor primário (área 4) ocupa sobretudo a parte posterior do giro, na parede anterior do sulco central. A parte inferior relaciona-se com a representação cortical da face, da língua e da laringe, no extremo inferior do giro pré-central, e com a vizinhança da área de Broca no hemisfério dominante. Como ponto de referência, a junção do sulco frontal superior com o sulco pré-central auxilia a identificar o giro pré-central e, a partir dele, o sulco central em cortes de imagem. É irrigado por ramos da artéria cerebral média, em especial as artérias pré-central e central, que percorrem os sulcos adjacentes.",
+    "anatomy": {
+      "relations": "Face superolateral do lobo frontal, anterior ao giro pré-central e posterior à parte opercular do giro frontal inferior. Inferiormente aproxima-se do sulco lateral; superiormente continua-se com a parte superior do sulco, onde se une ao sulco frontal superior. Em sua profundidade, localiza-se a substância branca subcortical, com fibras de projeção e de associação.",
+      "vascularization": "Ramos corticais da artéria cerebral média, em particular as artérias pré-central e central (sulcais), do tronco superior. A drenagem venosa é feita por veias cerebrais superficiais, para o seio sagital superior ou para o seio cavernoso, pela veia cerebral média superficial.",
+      "innervation": "Estrutura sulcal, sem inervação periférica própria; interessam as conexões das áreas adjacentes. A parede posterior pertence ao córtex pré-motor, que se projeta ao córtex motor primário e contribui com fibras corticoespinais e corticonucleares; a parede anterior pertence ao córtex pré-motor rostral."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Córtex motor e pré-motor do tipo agranular, com camada granular interna pouco desenvolvida e camada piramidal interna espessa; no córtex motor primário, as células piramidais gigantes de Betz originam fibras do trato corticoespinal",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Referência cirúrgica e radiológica: o sulco pré-central ajuda a identificar o giro pré-central e o sulco central, orientando o planejamento de ressecções próximas ao córtex motor.",
+      "Infarto no território da artéria cerebral média: lesões da região pré-central inferior causam paresia faciobraquial contralateral, com paralisia facial central poupando a testa.",
+      "Epilepsia focal motora: crises originadas na região inferior do giro pré-central e do sulco pré-central tendem a envolver contração da face contralateral e da mão."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico sulco pré-central, parte inferior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico sulco pré-central, parte inferior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico sulco pré-central, parte inferior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico sulco pré-central, parte inferior",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:cuneus-r": {
+    "ids": {},
+    "summary_pt": "O cúneo é um giro triangular da face medial do lobo occipital, em forma de cúneo, limitado anteriormente pelo sulco parieto-occipital, inferiormente pelo sulco calcarino e, posteriormente, pela margem do hemisfério. Seu ápice, estreito, situa-se na junção dos dois sulcos, e a base se estende até o polo occipital. O cúneo contém a metade superior do córtex visual primário (área 17 de Brodmann, ou córtex estriado), situada no lábio superior do sulco calcarino, e áreas visuais de associação (áreas 18 e 19). O córtex visual primário apresenta organização retinotópica: o lábio superior do sulco calcarino, e portanto o cúneo, recebe as informações da retina superior e representa o quadrante inferior do campo visual contralateral. Por meio da radiação óptica, que parte do corpo geniculado lateral, recebe a informação visual de ambos os olhos referente ao hemicampo visual contralateral. É irrigada principalmente por ramos da artéria cerebral posterior, em particular o ramo calcarino. A lesão do cúneo produz defeito do campo visual característico, a quadrantanopsia inferior homônima contralateral, que ilustra a organização retinotópica do sistema visual.",
+    "anatomy": {
+      "relations": "Face medial do lobo occipital, entre o sulco parieto-occipital (anterior) e o sulco calcarino (inferior). Anteriormente e acima relaciona-se com o pré-cúneo; inferiormente, com o giro lingual, separado pelo sulco calcarino. Medialmente, está voltada para a foice do cérebro.",
+      "vascularization": "Ramos da artéria cerebral posterior, em particular os ramos calcarino e parieto-occipital. A drenagem venosa é feita por veias occipitais e cerebrais mediais, que drenam para seios da dura-máter adjacentes.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe a radiação óptica (corpo geniculado lateral) e projeta-se para as áreas visuais de associação, nas vias dorsal e ventral."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Na área 17 (córtex estriado), córtex granular com camada granular interna espessa, subdividida, e estria de Gennari (faixa de fibras mielínicas, visível a olho nu); nas áreas 18 e 19, córtex de associação visual",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Quadrantanopsia inferior homônima contralateral: lesão do cúneo ou do lábio superior do sulco calcarino compromete o quadrante inferior do campo visual contralateral.",
+      "Infarto no território da artéria cerebral posterior: causa hemianopsia homônima contralateral, frequentemente com preservação macular por irrigação dupla do polo occipital.",
+      "Epilepsia occipital: crises originadas no córtex occipital podem manifestar-se por alucinações visuais elementares, como luzes e cores."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico cunha",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico cunha",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico cunha",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico cunha",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico cunha",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico cunha",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico cunha",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico cunha",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico cunha",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico cunha",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico cunha",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:inferior-occipital-gyrus-and-sulcus-r": {
+    "ids": {},
+    "summary_pt": "O giro occipital inferior ocupa a parte inferior da face lateral do lobo occipital, delimitado superiormente pelo sulco occipital inferior. Inferiormente, é limitado pela margem inferolateral do hemisfério e continua-se, em sua porção anterior, com o giro temporal inferior; a incisura pré-occipital marca o limite aproximado entre os lobos temporal e occipital nessa margem. Essa região pertence, em grande parte, às áreas 18 e 19 de Brodmann, que formam o córtex visual de associação (extraestriado). Esse córtex recebe informação do córtex visual primário e a processa quanto a forma, cor e reconhecimento de objetos, em especial pela via visual ventral, que se projeta para o lobo temporal inferior. Participa também do reconhecimento de faces, em conjunto com o giro fusiforme. A irrigação é feita sobretudo por ramos occipitais e temporais posteriores da artéria cerebral posterior, com contribuição da artéria cerebral média na convexidade lateral. Lesões na região podem causar agnosias visuais e alterações do campo visual, e a região é sede de epilepsia occipital com fenômenos visuais. A Terminologia Anatômica descreve giros occipitais laterais na face lateral do lobo occipital, separados pelos sulcos occipitais laterais; o atlas Allen distingue três giros (superior, lateral ou médio e inferior).",
+    "anatomy": {
+      "relations": "Face lateral do lobo occipital, abaixo do sulco occipital inferior, e a margem inferolateral do hemisfério, inferiormente. Anteriormente continua-se com o giro temporal inferior, nas proximidades da incisura pré-occipital; posteriormente, com o polo occipital. Em profundidade, relaciona-se com a radiação óptica e, inferiormente, com a tenda do cerebelo.",
+      "vascularization": "Ramos occipitais e temporais posteriores da artéria cerebral posterior, com contribuição de ramos da artéria cerebral média na convexidade lateral. A drenagem venosa é feita por veias cerebrais inferiores e occipitais, para o seio transverso.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências do córtex visual primário e do pulvinar do tálamo e projeta-se, pela via visual ventral, para o lobo temporal inferior."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Córtex de associação visual extraestriado (áreas 18 e 19), isocórtex homotípico com camada IV menos espessa que na área 17",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Agnosia visual: a lesão das áreas de associação visual occipitotemporais compromete o reconhecimento de objetos e de faces, mesmo com acuidade visual preservada.",
+      "Infarto no território da artéria cerebral posterior: a lesão occipital pode causar hemianopsia homônima contralateral e, quando bilateral, cegueira cortical.",
+      "Epilepsia occipital: crises originadas no lobo occipital podem manifestar-se por fenômenos visuais, como alucinações elementares e escotomas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico giro occipital inferior e sulco",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico giro occipital inferior e sulco",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro occipital inferior e sulco",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:occipital-pole-r": {
+    "ids": {},
+    "summary_pt": "O polo occipital é a extremidade posterior do hemisfério cerebral, formada pelo lobo occipital, que se projeta sobre a tenda do cerebelo, inferiormente, e relaciona-se com a foice do cérebro, medialmente. Na face medial, o sulco calcarino se estende até as proximidades do polo. Contém a representação cortical da região central da retina, a mácula, que ocupa uma área desproporcionalmente grande do córtex visual primário (área 17 de Brodmann), em razão da alta densidade de fotorreceptores e de células ganglionares da fóvea. O polo occipital é irrigado por dois sistemas arteriais, a artéria cerebral posterior e ramos terminais da artéria cerebral média, o que costuma explicar a preservação da visão macular em muitos infartos do território posterior. O córtex visual primário, caracterizado pela estria de Gennari, recebe a radiação óptica e inicia o processamento da forma, do contraste, da orientação e do movimento. O polo pode sofrer contusão em traumatismos cranioencefálicos, por golpe direto ou por contragolpe. A lesão do polo causa escotomas centrais contralaterais, que prejudicam a leitura e o reconhecimento de faces.",
+    "anatomy": {
+      "relations": "Extremidade posterior do hemisfério, formada pelo lobo occipital. Inferiormente, repousa sobre a tenda do cerebelo; medialmente, relaciona-se com a foice do cérebro; posteriormente, a calvária (osso occipital) o recobre. Anteriormente, continua-se com a face medial e a face lateral do lobo occipital.",
+      "vascularization": "Dupla irrigação, por ramos da artéria cerebral posterior (ramo calcarino) e por ramos terminais da artéria cerebral média, na zona de transição entre os dois territórios. A drenagem venosa é feita por veias occipitais, para o seio sagital superior e o seio transverso.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe a radiação óptica, vinda do corpo geniculado lateral, e projeta-se para as áreas visuais de associação."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Na área 17 (córtex estriado), córtex granular com camada granular interna espessa, subdividida, e estria de Gennari (faixa de fibras mielínicas, visível a olho nu); nas áreas 18 e 19, córtex de associação visual",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Hemianopsia homônima contralateral com preservação macular: típica de infarto do território da artéria cerebral posterior, em razão da dupla irrigação do polo occipital pela artéria cerebral média.",
+      "Escotoma central homônimo: lesões restritas ao polo occipital causam perda da visão central contralateral, com prejuízo da leitura.",
+      "Contusão occipital: golpes diretos ou lesões de contragolpe podem lesar o polo occipital e causar defeitos do campo visual."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico polo occipital",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico polo occipital",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico polo occipital",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico polo occipital",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico polo occipital",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico polo occipital",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:allen-frontomarginal-gyrus-r": {
+    "ids": {},
+    "summary_pt": "O giro frontomarginal é uma designação de atlas, usada na nomenclatura do Allen Institute, que não consta como termo da Terminologia Anatômica. Refere-se a uma faixa de córtex na região do polo frontal, na transição entre a face lateral, a face medial e a face orbital do lobo frontal, relacionada ao sulco frontomarginal. Corresponde, aproximadamente, ao córtex pré-frontal anterior, em grande parte à área frontopolar (área 10 de Brodmann), que é a porção mais anterior do córtex pré-frontal e muito desenvolvida na espécie humana. Essa região participa de funções executivas de nível superior, como planejamento de longo prazo, manutenção de objetivos em segundo plano, tomada de decisão e processamento de intenções, e tem conexões com o córtex orbitofrontal, o córtex pré-frontal dorsolateral, o córtex do cíngulo e o núcleo mediodorsal do tálamo. A irrigação é feita pela artéria cerebral anterior, por meio do ramo frontopolar, e por ramos da artéria cerebral média. O polo frontal é sítio frequente de contusões nos traumatismos cranioencefálicos e de atrofia na demência frontotemporal.",
+    "anatomy": {
+      "relations": "Região do polo frontal, na transição entre as faces lateral, medial e orbital do lobo frontal. Anteriormente, aproxima-se da calvária (osso frontal) e, inferiormente, do teto da órbita e do seio frontal; posteriormente, continua-se com os giros frontais superior e médio e com o córtex orbitofrontal.",
+      "vascularization": "Ramo frontopolar da artéria cerebral anterior, com contribuição de ramos frontais da artéria cerebral média. A drenagem venosa é feita por veias cerebrais superiores, para o seio sagital superior.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências do núcleo mediodorsal do tálamo e de áreas de associação, e projeta-se para outras áreas pré-frontais, o córtex do cíngulo e os núcleos da base."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Córtex pré-frontal granular, com camadas II e IV bem desenvolvidas, de aspecto granular, e ricas conexões com o núcleo mediodorsal do tálamo",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Síndrome do lobo frontal (pré-frontal): lesões do córtex pré-frontal anterior causam alterações de função executiva, apatia ou desinibição e mudanças de personalidade, com preservação relativa da força e da sensibilidade.",
+      "Demência frontotemporal, variante comportamental: degeneração lobar frontotemporal com atrofia do córtex frontal anterior e alterações precoces de comportamento e de juízo crítico.",
+      "Contusões do polo frontal em traumatismos cranioencefálicos: o contato com a base anterior do crânio causa lesões frequentes do polo frontal e do córtex orbitofrontal."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro frontomarginal (região do polo frontal)",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:allen-occipitotemporal-fusiform-gyrus-temporal-part-r": {
+    "ids": {},
+    "summary_pt": "Este rótulo provém do atlas Allen e não é termo da Terminologia Anatômica; corresponde de forma aproximada à parte temporal do giro occipitotemporal lateral (fusiforme). O giro fusiforme, denominado giro occipitotemporal lateral na Terminologia Anatômica, ocupa a face inferior do hemisfério cerebral, entre o sulco occipitotemporal, lateralmente, e o sulco colateral, medialmente. Estende-se do lobo occipital ao lobo temporal, e sua parte temporal corresponde à porção anterior e média do giro, na face inferior do lobo temporal. Em posição medial, o giro vizinho é o giro para-hipocampal, e lateralmente situa-se o giro temporal inferior. Pertence à via visual ventral, que processa a identidade dos objetos, e abriga regiões especializadas, como a área fusiforme das faces, mais evidente no giro fusiforme do hemisfério direito, e a área da forma visual das palavras, no hemisfério esquerdo, relacionada à leitura. Participa ainda do processamento da cor e do reconhecimento de categorias de objetos. É irrigado por ramos temporais inferiores da artéria cerebral posterior, com contribuição de ramos da artéria cerebral média na porção lateral. Lesões bilaterais ou do hemisfério direito podem causar prosopagnosia, e lesões ventrais occipitotemporais, acromatopsia, que ilustram a especialização funcional dessa região.",
+    "anatomy": {
+      "relations": "Face inferior (tentorial) do lobo temporal e do lobo occipital, entre o sulco occipitotemporal (lateral) e o sulco colateral (medial). Lateralmente relaciona-se com o giro temporal inferior; medialmente, com o giro para-hipocampal, na parte temporal, e com o giro lingual, na parte occipital. Inferiormente, repousa sobre o assoalho da fossa média do crânio e sobre a tenda do cerebelo.",
+      "vascularization": "Ramos temporais inferiores (anterior, médio e posterior) da artéria cerebral posterior, com contribuição de ramos da artéria cerebral média na parte lateral. A drenagem venosa é feita por veias cerebrais inferiores, para seios da dura-máter da base do crânio.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências das áreas visuais occipitais (via ventral) e projeta-se para regiões temporais anteriores, para o hipocampo e para o córtex pré-frontal."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Córtex de associação visual extraestriado (área 37), isocórtex homotípico com camada IV menos espessa que na área 17",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Prosopagnosia: incapacidade de reconhecer faces familiares, com acuidade visual e reconhecimento de objetos preservados, associada a lesões bilaterais ou do giro fusiforme do hemisfério direito.",
+      "Acromatopsia cerebral: perda da percepção das cores por lesão occipitotemporal ventral, em geral por infarto do território da artéria cerebral posterior.",
+      "Alexia pura (sem agrafia): comprometimento da leitura com escrita preservada, em geral por lesão occipitotemporal esquerda ou por desconexão entre o córtex visual e as áreas da linguagem."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giro fusiforme (giro occipitotemporal lateral), parte temporal",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:allen-short-insular-gyri-r": {
+    "ids": {},
+    "summary_pt": "Os giros curtos da ínsula são três pequenos giros, anterior, médio e posterior, que ocupam a porção anterior do lobo da ínsula, separados dos giros longos, posteriores, pelo sulco central da ínsula. A ínsula situa-se no fundo do sulco lateral, recoberta pelos opérculos frontal, parietal e temporal, e é circundada pelo sulco circular da ínsula. Os giros curtos convergem para o ápice (polo) da ínsula. A região anterior da ínsula é um córtex de natureza agranular ou disgranular e recebe a sensibilidade gustativa, via núcleo ventral posteromedial do tálamo, além de integrar informações viscerais, olfatórias e emocionais. Participa da interocepção, da consciência corporal, da percepção da dor, do nojo e da empatia, e conecta-se com a amígdala, o córtex orbitofrontal, o córtex do cíngulo e as áreas pré-frontais. É irrigada por ramos insulares da artéria cerebral média, na parte insular (segmento M2) dessa artéria, e a drenagem venosa se faz pela veia cerebral média profunda, tributária da veia basal. A lesão insular pode alterar o paladar, a percepção visceral e funções autonômicas.",
+    "anatomy": {
+      "relations": "Porção anterior do lobo da ínsula, no assoalho do sulco lateral, recoberta pelo opérculo frontal, anteriormente, e pelo opérculo temporal, inferiormente. Posteriormente, limita-se com os giros longos, pelo sulco central da ínsula; ao redor, o sulco circular a separa dos opérculos. Em profundidade, relaciona-se com a cápsula extrema, o claustro, a cápsula externa e o putame.",
+      "vascularization": "Ramos insulares da artéria cerebral média (segmento insular, M2). A drenagem venosa é feita pela veia cerebral média profunda, que se une às veias cerebrais anteriores para formar a veia basal.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências gustativas e viscerais do tálamo (núcleo ventral posteromedial) e projeta-se para a amígdala, o córtex orbitofrontal, o córtex do cíngulo e o hipotálamo."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Ínsula anterior com córtex agranular ou disgranular e posterior granular, com claustro e cápsula extrema subjacentes",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Sinal da fita insular: perda da diferenciação entre a substância cinzenta e a substância branca na região insular, na tomografia, é um sinal precoce de infarto do território da artéria cerebral média.",
+      "Epilepsia insular: crises originadas na ínsula podem causar sensações gustativas, viscerais ou laríngeas e simular epilepsia do lobo temporal.",
+      "Lesões insulares podem causar alterações do paladar, da percepção da dor e de funções autonômicas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema nervoso central: telencéfalo, tópico ínsula, giros curtos",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico ínsula, giros curtos",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico ínsula, giros curtos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico ínsula, giros curtos",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:superior-occipital-gyri-r": {
+    "ids": {},
+    "summary_pt": "Os giros occipitais superiores ocupam a parte superior da face lateral do lobo occipital, junto à margem superomedial do hemisfério, e são delimitados inferiormente pelos sulcos occipitais laterais. Superiormente, aproximam-se da margem superomedial do hemisfério e do sulco parieto-occipital, e anteriormente continuam-se com o lóbulo parietal superior e, lateralmente, com o inferior, sem um limite nítido entre os lobos parietal e occipital na face lateral. A divisão é convencionalmente indicada por uma linha que une a incisura parieto-occipital e a incisura pré-occipital. Correspondem, em grande parte, às áreas 18 e 19 de Brodmann, que formam o córtex visual de associação. Essas áreas pertencem à via visual dorsal, que se dirige ao córtex parietal posterior e processa a localização espacial dos objetos, o movimento e a orientação visuomotora do olhar e da mão. Os giros ficam em zona de fronteira entre os territórios das artérias cerebrais média e posterior, que os irrigam. Lesões dessa região, sobretudo bilaterais, podem causar déficits de atenção visual e de orientação espacial, como na síndrome de Balint, e defeitos do campo visual. A Terminologia Anatômica descreve giros occipitais laterais na face lateral do lobo occipital, separados pelos sulcos occipitais laterais; o atlas Allen distingue três giros (superior, lateral ou médio e inferior).",
+    "anatomy": {
+      "relations": "Face lateral do lobo occipital, acima dos sulcos occipitais laterais, em continuidade posterior com o polo occipital e anterior com o lóbulo parietal superior e, lateralmente, com o inferior, sem limite nítido. Superiormente, alcança a margem superomedial e o sulco parieto-occipital. Em profundidade, relaciona-se com a radiação óptica; a calvária (osso occipital e osso parietal) recobre a região.",
+      "vascularization": "Ramos occipitais e parieto-occipitais da artéria cerebral posterior e ramos angulares e occipitais da artéria cerebral média, em zona de fronteira entre os dois territórios. A drenagem venosa é feita por veias cerebrais superiores, para o seio sagital superior, e por veias occipitais, para o seio transverso.",
+      "innervation": "Região cortical, sem inervação periférica própria; interessam suas conexões. Recebe aferências do córtex visual primário e do tálamo (pulvinar) e projeta-se pela via visual dorsal ao córtex parietal posterior."
+    },
+    "histology": {
+      "tissues": [
+        "Neocórtex (isocórtex) de seis camadas: molecular, granular externa, piramidal externa, granular interna, piramidal interna e multiforme",
+        "Córtex de associação visual extraestriado (áreas 18 e 19), isocórtex homotípico com camada IV menos espessa que na área 17",
+        "Células piramidais, neurônios de projeção glutamatérgicos, predominantes nas camadas III e V",
+        "Interneurônios (células estreladas, em cesto e em candelabro) e neuróglia (astrócitos, oligodendrócitos e micróglia)",
+        "Substância branca subcortical com fibras de associação, comissurais e de projeção"
+      ]
+    },
+    "clinical": [
+      "Síndrome de Balint: lesões bilaterais parieto-occipitais, como em infartos de zona de fronteira, causam simultanagnosia, ataxia óptica e apraxia oculomotora.",
+      "Infarto de zona de fronteira entre as artérias cerebrais média e posterior: ocorre em hipoperfusão grave e afeta a região parieto-occipital, com déficits visuais e visuoespaciais.",
+      "Lesões occipitais bilaterais amplas: podem causar cegueira cortical, com perda da visão e preservação dos reflexos pupilares."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Neuroanatomia, tópico giros occipitais superiores",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça: encéfalo, tópico giros occipitais superiores",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cérebro e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido nervoso, tópico córtex cerebral",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Neuroanatomia Funcional, 3ª ed., capítulo Telencéfalo e córtex cerebral, tópico giros occipitais superiores",
+        "obraId": "machado",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (doença cerebrovascular, traumatismo, neoplasias e doenças degenerativas)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+}

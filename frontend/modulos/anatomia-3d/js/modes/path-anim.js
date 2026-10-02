@@ -105,6 +105,57 @@ export function samplePath(points, t) {
 }
 
 /**
+ * Linha do tempo de uma trajetória (PR 3.2, Bloco D): duração própria de
+ * cada trecho (velocidade da via) e pausas nos pontos (órgãos-alvo).
+ * Devolve o parâmetro t de samplePath (fração do comprimento de arco) para
+ * cada instante — durante uma pausa, t fica parado no ponto.
+ *
+ * @param {Array<[number,number,number]>} points
+ * @param {{ segmentMs?: number[], dwellMs?: number[], totalMs?: number }} [opts]
+ *   segmentMs[i]: duração do trecho i → i+1 (padrão: totalMs repartido pelo comprimento);
+ *   dwellMs[i]: pausa ao chegar no ponto i (padrão 0).
+ * @returns {{ totalMs: number, tAt: (elapsedMs: number) => number }}
+ */
+export function buildTimeline(points, { segmentMs, dwellMs, totalMs = 3000 } = {}) {
+  const n = points.length;
+  if (n < 2) return { totalMs: 0, tAt: () => 0 };
+  const lens = [];
+  for (let i = 1; i < n; i++) {
+    const [a, b] = [points[i - 1], points[i]];
+    lens.push(Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]));
+  }
+  const total = lens.reduce((x, y) => x + y, 0) || 1;
+  const seg = lens.map((l, i) => {
+    const v = segmentMs && Number(segmentMs[i]);
+    return v > 0 ? v : (totalMs * (lens.reduce((x, y) => x + y, 0) ? l / total : 1 / lens.length));
+  });
+  const dwell = Array.from({ length: n }, (_, i) => Math.max(0, Number(dwellMs && dwellMs[i]) || 0));
+  // Fases em ordem: pausa no ponto 0, trecho 0, pausa no ponto 1, trecho 1, …
+  const phases = [];
+  let acc = 0;
+  for (let i = 0; i < n; i++) {
+    const at = acc / total;
+    if (dwell[i] > 0) phases.push({ ms: dwell[i], from: at, to: at });
+    if (i < n - 1) {
+      phases.push({ ms: seg[i], from: at, to: (acc + lens[i]) / total });
+      acc += lens[i];
+    }
+  }
+  const sum = phases.reduce((x, p) => x + p.ms, 0);
+  return {
+    totalMs: sum,
+    tAt(elapsed) {
+      let e = Math.max(0, Math.min(sum, elapsed));
+      for (const p of phases) {
+        if (e <= p.ms) return p.ms > 0 ? p.from + (p.to - p.from) * (e / p.ms) : p.to;
+        e -= p.ms;
+      }
+      return 1;
+    },
+  };
+}
+
+/**
  * Interpola um valor usando Catmull-Rom cubic.
  * @private
  */
@@ -125,7 +176,7 @@ function catmullRomInterpolate(p1, p2, v1, v2, t) {
  *   color?: string|number
  * }} opts
  * @returns {{
- *   play: (points: Array<[number,number,number]>, opts?: {durationMs?: number, loop?: boolean}) => void,
+ *   play: (points: Array<[number,number,number]>, opts?: {durationMs?: number, loop?: boolean, timeline?: ReturnType<typeof buildTimeline>}) => void,
  *   pause: () => void,
  *   resume: () => void,
  *   stepTo: (i: number) => void,
@@ -152,6 +203,7 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
   let startTime = 0;
   let pauseTime = 0;
   let durationMs = 3000;
+  let timeline = null;
   let loop_ = false;
   let removeTickerFn = null;
 
@@ -262,6 +314,7 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
     const now = Date.now();
     const elapsed = now - startTime;
     let t = (elapsed % durationMs) / durationMs;
+    if (timeline) t = timeline.tAt(elapsed % durationMs);
 
     if (!loop_ && elapsed > durationMs) {
       t = 1;
@@ -284,7 +337,9 @@ export function createPathAnimator({ scene, THREE, addTicker, requestRender, col
      * @param {{durationMs?: number, loop?: boolean}} opts
      */
     play(points, opts = {}) {
-      durationMs = opts.durationMs ?? 3000;
+      // opts.timeline (buildTimeline): trechos com duração própria e pausas.
+      timeline = opts.timeline && opts.timeline.totalMs > 0 ? opts.timeline : null;
+      durationMs = timeline ? timeline.totalMs : (opts.durationMs ?? 3000);
       loop_ = opts.loop ?? false;
 
       currentPath = points;

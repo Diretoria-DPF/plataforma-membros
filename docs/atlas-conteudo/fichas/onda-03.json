@@ -1,0 +1,173 @@
+{
+  "onda": 3,
+  "sistema": "respiratorio",
+  "total": 20,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:trachea",
+          "sids": [
+            "za:trachea"
+          ],
+          "nome_pt": "Traqueia",
+          "nome_en": "Trachea"
+        },
+        {
+          "sid": "za:inferior-lobe-of-right-lung",
+          "sids": [
+            "za:inferior-lobe-of-right-lung"
+          ],
+          "nome_pt": "Lobo inferior do pulmão direito",
+          "nome_en": "Inferior lobe of right lung"
+        },
+        {
+          "sid": "za:vh-f-hilum-r",
+          "sids": [
+            "za:vh-f-hilum-l",
+            "za:vh-f-hilum-r"
+          ],
+          "nome_pt": "Hilo",
+          "nome_en": "Hilum"
+        },
+        {
+          "sid": "za:pleura",
+          "sids": [
+            "za:pleura"
+          ],
+          "nome_pt": "Pleura",
+          "nome_en": "Pleura"
+        },
+        {
+          "sid": "za:superior-lobe-of-left-lung",
+          "sids": [
+            "za:superior-lobe-of-left-lung"
+          ],
+          "nome_pt": "Lobo superior do pulmão esquerdo",
+          "nome_en": "Superior lobe of left lung"
+        },
+        {
+          "sid": "za:inferior-lobe-of-left-lung",
+          "sids": [
+            "za:inferior-lobe-of-left-lung"
+          ],
+          "nome_pt": "Lobo inferior do pulmão esquerdo",
+          "nome_en": "Inferior lobe of left lung"
+        },
+        {
+          "sid": "za:superior-lobe-of-right-lung",
+          "sids": [
+            "za:superior-lobe-of-right-lung"
+          ],
+          "nome_pt": "Lobo superior do pulmão direito",
+          "nome_en": "Superior lobe of right lung"
+        },
+        {
+          "sid": "za:middle-lobe-of-right-lung",
+          "sids": [
+            "za:middle-lobe-of-right-lung"
+          ],
+          "nome_pt": "Lobo médio do pulmão direito",
+          "nome_en": "Middle lobe of right lung"
+        },
+        {
+          "sid": "za:vh-f-right-anterior-bronchopulmonary-segm",
+          "sids": [
+            "za:vh-f-right-anterior-bronchopulmonary-segm"
+          ],
+          "nome_pt": "Segmento broncopulmonar anterior direito",
+          "nome_en": "Right anterior bronchopulmonary segm"
+        },
+        {
+          "sid": "za:vh-f-left-anterior-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-left-anterior-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar anterior esquerdo",
+          "nome_en": "Left anterior bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-right-anterior-basal-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-right-anterior-basal-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar basal anterior direito",
+          "nome_en": "Right anterior basal bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-lingula-superior-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-lingula-superior-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar lingular superior",
+          "nome_en": "Lingula superior bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-left-medial-basal-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-left-medial-basal-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar basal medial esquerdo",
+          "nome_en": "Left medial basal bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-left-posterior-basal-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-left-posterior-basal-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar basal posterior esquerdo",
+          "nome_en": "Left posterior basal bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-right-superior-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-right-superior-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar superior",
+          "nome_en": "Right superior bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-left-anterior-basal-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-left-anterior-basal-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar basal anterior esquerdo",
+          "nome_en": "Left anterior basal bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-right-lateral-bronchopulmonary-segmennt",
+          "sids": [
+            "za:vh-f-right-lateral-bronchopulmonary-segmennt"
+          ],
+          "nome_pt": "Segmento broncopulmonar lateral",
+          "nome_en": "Right lateral bronchopulmonary segmennt"
+        },
+        {
+          "sid": "za:vh-f-right-posterior-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-right-posterior-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar posterior",
+          "nome_en": "Right posterior bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-right-medial-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-right-medial-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar medial",
+          "nome_en": "Right medial bronchopulmonary segment"
+        },
+        {
+          "sid": "za:vh-f-right-posterior-basal-bronchopulmonary-segment",
+          "sids": [
+            "za:vh-f-right-posterior-basal-bronchopulmonary-segment"
+          ],
+          "nome_pt": "Segmento broncopulmonar basal posterior",
+          "nome_en": "Right posterior basal bronchopulmonary segment"
+        }
+      ]
+    }
+  ]
+}

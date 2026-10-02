@@ -1,0 +1,2221 @@
+[
+  {
+    "schemaVersion": 2,
+    "id": "ciprofloxacino",
+    "nome": "Ciprofloxacino",
+    "categoria": "antibiotico",
+    "tags": [
+      "Fluoroquinolona",
+      "Antibacteriano",
+      "Gram-negativos",
+      "Inibidor de girase"
+    ],
+    "targetSid": "za:urinary-bladder",
+    "mecanismo": "Inibe a DNA girase (topoisomerase II) e a topoisomerase IV bacterianas, bloqueando a replicação e o superenrolamento do DNA; o resultado é fragmentação do cromossomo e morte bactericida dependente de concentração, sobretudo em bacilos Gram-negativos.",
+    "clinicalUse": [
+      "Infecções do trato urinário, incluindo pielonefrite, em adultos com bactéria sensível",
+      "Gastroenterites bacterianas graves (Salmonella, Shigella, Campylobacter) e profilaxia de contatos de meningococo",
+      "Infecções por Pseudomonas aeruginosa sensível (via oral limitada a casos específicos); atividade fraca contra estreptococos"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Náuseas e diarreia",
+        "frequencia": "comum"
+      },
+      {
+        "efeito": "Tendinite e ruptura de tendão (Aquiles)",
+        "frequencia": "incomum"
+      },
+      {
+        "efeito": "Prolongamento do intervalo QT",
+        "frequencia": "raro",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Neuropatia periférica e efeitos no SNC (confusão, convulsão)",
+        "frequencia": "incomum"
+      },
+      {
+        "efeito": "Disglicemia em diabéticos",
+        "frequencia": "incomum"
+      }
+    ],
+    "contraindications": [
+      "Hipersensibilidade a quinolonas",
+      "Uso concomitante com tizanidina",
+      "História de tendinopatia associada a quinolona",
+      "Miastenia gravis (agrava a fraqueza muscular)"
+    ],
+    "interactions": [
+      {
+        "com": "Antiácidos, ferro, cálcio e zinco",
+        "efeito": "Redução marcada da absorção oral do ciprofloxacino",
+        "severidade": "moderada",
+        "mecanismo": "Quelação por cátions polivalentes no trato gastrointestinal"
+      },
+      {
+        "com": "Tizanidina",
+        "efeito": "Hipotensão e sedação intensas",
+        "severidade": "grave",
+        "mecanismo": "Inibição do CYP1A2 eleva a exposição à tizanidina"
+      },
+      {
+        "com": "Corticosteroides sistêmicos",
+        "efeito": "Maior risco de ruptura de tendão",
+        "severidade": "moderada",
+        "mecanismo": "Efeito tendíneo aditivo"
+      },
+      {
+        "com": "Antiarrítmicos classe IA/III e outros fármacos que prolongam o QT",
+        "efeito": "Risco aditivo de arritmia ventricular (torsades de pointes)",
+        "severidade": "grave",
+        "mecanismo": "Prolongamento aditivo da repolarização cardíaca"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Desetilenociprofloxacino",
+        "ativo": false,
+        "via": "Hepática (oxidação do anel piperazínico); atividade antibacteriana muito reduzida"
+      },
+      {
+        "nome": "Sulfociprofloxacino",
+        "ativo": false,
+        "via": "Hepática (conjugação); atividade antibacteriana muito reduzida"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 500,
+      "vd": 150,
+      "halfLife": 4,
+      "ka": 1.69,
+      "F": 0.7,
+      "tmax": 1.5,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.5,
+      "hill": 2,
+      "efeito": "Atividade bactericida dependente de concentração. EC50 didática de 0,5 mg/L, ordem de grandeza da CIM de bacilos Gram-negativos sensíveis (não é uma EC50 publicada). Dose de referência: 500 mg por via oral a cada 12 h; tmax citado de 1 a 2 h, usado como 1,5 h."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Antibacterianos que inibem a síntese de ácidos nucleicos: quinolonas",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Quinolonas e fluoroquinolonas: usos clínicos",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Quinolonas: efeitos adversos e toxicidade tendínea",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "azitromicina",
+    "nome": "Azitromicina",
+    "categoria": "antibiotico",
+    "tags": [
+      "Macrolídeo",
+      "Azalídeo",
+      "Antibacteriano",
+      "Infecções respiratórias"
+    ],
+    "targetSid": "za:superior-lobe-of-right-lung",
+    "mecanismo": "Liga-se à subunidade ribossomal 50S bacteriana (rRNA 23S) e bloqueia a translocação peptídica, interrompendo a síntese proteica; o efeito é bacteriostático, e a azitromicina se concentra nos tecidos e nos fagócitos em níveis muito superiores aos do plasma.",
+    "clinicalUse": [
+      "Pneumonia adquirida na comunidade leve, sobretudo por patógenos atípicos (Mycoplasma, Chlamydophila, Legionella)",
+      "Faringite e sinusite em alérgicos a penicilina; infecções de pele não complicadas",
+      "Uretrite e cervicite por Chlamydia trachomatis (dose única de 1 g)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Diarreia, náuseas e dor abdominal",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Prolongamento do intervalo QT e arritmia",
+        "frequencia": "raro"
+      },
+      {
+        "efeito": "Elevação de transaminases e hepatotoxicidade",
+        "frequencia": "raro"
+      },
+      {
+        "efeito": "Perda auditiva reversível em doses altas ou prolongadas",
+        "frequencia": "raro",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Hipersensibilidade a macrolídeos",
+      "História de icterícia colestática ou disfunção hepática com azitromicina"
+    ],
+    "interactions": [
+      {
+        "com": "Antiarrítmicos e outros fármacos que prolongam o QT",
+        "efeito": "Risco aditivo de torsades de pointes",
+        "severidade": "grave",
+        "mecanismo": "Prolongamento aditivo da repolarização cardíaca"
+      },
+      {
+        "com": "Varfarina",
+        "efeito": "Aumento do INR e risco de sangramento",
+        "severidade": "moderada",
+        "mecanismo": "Mecanismo incerto; monitorar o INR"
+      },
+      {
+        "com": "Digoxina",
+        "efeito": "Elevação dos níveis de digoxina",
+        "severidade": "moderada",
+        "mecanismo": "Inibição da glicoproteína P"
+      },
+      {
+        "com": "Antiácidos com alumínio ou magnésio",
+        "efeito": "Redução do pico de concentração",
+        "severidade": "leve",
+        "mecanismo": "Menor velocidade de absorção; a extensão da absorção é pouco alterada"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Derivados N- e O-desmetilados de azitromicina",
+        "ativo": false,
+        "via": "Desmetilação hepática em pequena fração; sem atividade antimicrobiana relevante, e a maior parte é excretada inalterada pela bile"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 500,
+      "vd": 2170,
+      "halfLife": 68,
+      "ka": 2.15,
+      "F": 0.37,
+      "tmax": 2.5,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.25,
+      "hill": 1.5,
+      "efeito": "Inibição do crescimento bacteriano (efeito bacteriostático). EC50 didática de 0,25 mg/L, ordem de grandeza da CIM de Streptococcus pneumoniae sensível. Aviso: o modelo plasmático não representa a concentração tecidual, de que a resposta real depende; o Cmax simulado fica cerca de 5 vezes abaixo do sérico, porque o Vd de 31 L/kg reflete a captação tecidual. Dose de referência: 500 mg por via oral. Cautela: QT longo congênito ou uso de outros fármacos que prolongam o QT."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Macrolídeos: mecanismo de ação e resistência",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Macrolídeos e azalídeos: usos clínicos",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Macrolídeos: efeitos adversos e interações",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "gentamicina",
+    "nome": "Gentamicina (IV)",
+    "categoria": "antibiotico",
+    "tags": [
+      "Aminoglicosídeo",
+      "Antibacteriano",
+      "Gram-negativos",
+      "Nefrotoxicidade",
+      "Ototoxicidade"
+    ],
+    "targetSid": "za:kidney-r",
+    "mecanismo": "Liga-se de modo irreversível à subunidade ribossomal 30S bacteriana, causando leitura errada do mRNA e inibição da síntese proteica; o resultado é bactericida com efeito concentração-dependente e efeito pós-antibiótico prolongado contra bacilos Gram-negativos aeróbios.",
+    "clinicalUse": [
+      "Sepse e infecções graves por bacilos Gram-negativos aeróbios, em geral associada a um β-lactâmico",
+      "Sinergia com β-lactâmicos ou vancomicina em endocardite por enterococos e estreptococos"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Nefrotoxicidade (necrose tubular aguda, em geral reversível)",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Ototoxicidade coclear e vestibular, frequentemente irreversível",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Bloqueio neuromuscular",
+        "frequencia": "raro",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Hipersensibilidade a aminoglicosídeos",
+      "Gestação (risco de ototoxicidade fetal), salvo necessidade vital"
+    ],
+    "interactions": [
+      {
+        "com": "Diuréticos de alça (furosemida)",
+        "efeito": "Aumento do risco de ototoxicidade",
+        "severidade": "grave",
+        "mecanismo": "Toxicidade aditiva na cóclea"
+      },
+      {
+        "com": "Outros nefrotóxicos (vancomicina, anfotericina B, AINEs, contraste iodado)",
+        "efeito": "Aumento do risco de lesão renal aguda",
+        "severidade": "grave",
+        "mecanismo": "Toxicidade tubular proximal aditiva"
+      },
+      {
+        "com": "Bloqueadores neuromusculares",
+        "efeito": "Prolongamento do bloqueio e depressão respiratória",
+        "severidade": "moderada",
+        "mecanismo": "Inibição aditiva da liberação pré-sináptica de acetilcolina"
+      }
+    ],
+    "metabolites": [],
+    "pk": {
+      "route": "IV",
+      "dose": 350,
+      "vd": 17.5,
+      "halfLife": 2.5,
+      "ka": 0,
+      "F": 1,
+      "tmax": 0,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 2,
+      "hill": 2,
+      "efeito": "Efeito bactericida dependente de concentração (razão pico/CIM). EC50 didática de 2 mg/L, ordem de grandeza da CIM de bacilos Gram-negativos sensíveis; não é uma EC50 publicada. Dose de referência: 5 mg/kg (350 mg) por via IV em dose única diária (esquema de intervalo estendido), com infusão de cerca de 30 min; o fim da infusão não é simulado, e o modelo IV começa em D/Vd (tmax 0 e ka 0). Janela estreita: dosar o vale e ajustar pela função renal. Cautela: miastenia gravis."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Aminoglicosídeos: mecanismo de ação e resistência",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Aminoglicosídeos: usos clínicos e esquemas de dose",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Aminoglicosídeos: nefrotoxicidade e ototoxicidade",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Modelo de um compartimento por via IV: concentração máxima no instante zero (fim da infusão não simulado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Via IV: sem fase de absorção, por isso ka e tmax valem 0",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "vancomicina",
+    "nome": "Vancomicina (IV)",
+    "categoria": "antibiotico",
+    "tags": [
+      "Glicopeptídeo",
+      "Antibacteriano",
+      "Gram-positivos",
+      "MRSA"
+    ],
+    "targetSid": "za:kidney-l",
+    "mecanismo": "Liga-se ao terminal D-alanil-D-alanina dos precursores do peptidoglicano, bloqueando a transglicosilação e a transpeptidação; a parede celular de bactérias Gram-positivas fica fraca e a bactéria morre por efeito bactericida tempo-dependente.",
+    "clinicalUse": [
+      "Infecções graves por Staphylococcus aureus resistente à meticilina (MRSA): bacteremia, endocardite, pneumonia, osteomielite",
+      "Colite por Clostridioides difficile (por via oral, sem absorção sistêmica relevante)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Reação à infusão rápida (síndrome do homem vermelho)",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Nefrotoxicidade",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Ototoxicidade",
+        "frequencia": "raro",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Neutropenia reversível em uso prolongado",
+        "frequencia": "incomum"
+      }
+    ],
+    "contraindications": [
+      "Hipersensibilidade à vancomicina"
+    ],
+    "interactions": [
+      {
+        "com": "Aminoglicosídeos",
+        "efeito": "Aumento do risco de lesão renal e de ototoxicidade",
+        "severidade": "grave",
+        "mecanismo": "Toxicidade aditiva em túbulo renal e cóclea"
+      },
+      {
+        "com": "Piperacilina-tazobactam",
+        "efeito": "Maior incidência de lesão renal aguda",
+        "severidade": "moderada",
+        "mecanismo": "Mecanismo incerto; descrito em estudos observacionais"
+      },
+      {
+        "com": "Diuréticos de alça",
+        "efeito": "Aumento do risco de ototoxicidade",
+        "severidade": "moderada",
+        "mecanismo": "Toxicidade aditiva na cóclea"
+      }
+    ],
+    "metabolites": [],
+    "pk": {
+      "route": "IV",
+      "dose": 1000,
+      "vd": 49,
+      "halfLife": 6,
+      "ka": 0,
+      "F": 1,
+      "tmax": 0,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 10,
+      "hill": 2,
+      "efeito": "Efeito antibacteriano contra MRSA. EC50 didática de 10 mg/L, limite inferior da faixa clássica de vale (10 a 20 mg/L); as diretrizes atuais preferem ASC/CIM entre 400 e 600. É uma aproximação, não uma EC50 publicada. Dose de referência: 1000 mg por via IV em infusão de cerca de 1 h; o fim da infusão não é simulado, e o modelo IV começa em D/Vd (tmax 0 e ka 0). Monitorar pelo vale e pela razão ASC/CIM; ajustar à função renal. Cautela: insuficiência renal e perda auditiva prévia."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Glicopeptídeos: inibição da síntese da parede celular",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Vancomicina: indicações e monitoramento terapêutico",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Vancomicina: efeitos adversos e toxicidade",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Modelo de um compartimento por via IV: concentração máxima no instante zero (fim da infusão não simulado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Via IV: sem fase de absorção, por isso ka e tmax valem 0",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "diazepam",
+    "nome": "Diazepam",
+    "categoria": "ansiolitico",
+    "tags": [
+      "Benzodiazepínico",
+      "GABA-A",
+      "Anticonvulsivante",
+      "Relaxante muscular",
+      "Metabólito ativo"
+    ],
+    "targetSid": "za:thalamus-r",
+    "mecanismo": "Modulador alostérico positivo do receptor GABA-A, ligado na interface entre as subunidades alfa e gama; aumenta a frequência de abertura do canal de cloreto e a hiperpolarização neuronal, o que produz ansiólise, sedação, anticonvulsivante e relaxamento muscular.",
+    "clinicalUse": [
+      "Ansiedade aguda e abstinência alcoólica (prevenção e tratamento de convulsões e delirium tremens)",
+      "Estado de mal epiléptico e convulsões agudas (via IV ou retal)",
+      "Espasmo muscular e pré-medicação anestésica"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Sedação e sonolência",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Ataxia e quedas, sobretudo em idosos",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Amnésia anterógrada",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Depressão respiratória (em associação a opioides ou álcool)",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Tolerância, dependência e síndrome de abstinência",
+        "frequencia": "comum",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Insuficiência respiratória grave e apneia do sono não tratada",
+      "Miastenia gravis",
+      "Insuficiência hepática grave",
+      "Hipersensibilidade a benzodiazepínicos",
+      "Glaucoma de ângulo fechado agudo"
+    ],
+    "interactions": [
+      {
+        "com": "Opioides",
+        "efeito": "Sedação profunda, depressão respiratória e morte",
+        "severidade": "grave",
+        "mecanismo": "Depressão aditiva do SNC"
+      },
+      {
+        "com": "Álcool e outros depressores do SNC",
+        "efeito": "Potencialização da sedação e do prejuízo psicomotor",
+        "severidade": "grave",
+        "mecanismo": "Depressão aditiva do SNC"
+      },
+      {
+        "com": "Omeprazol, cimetidina e fluvoxamina",
+        "efeito": "Redução da depuração e aumento da meia-vida do diazepam",
+        "severidade": "moderada",
+        "mecanismo": "Inibição do CYP2C19 (e CYP3A4 no caso da cimetidina)"
+      },
+      {
+        "com": "Inibidores potentes de CYP3A4 (cetoconazol, ritonavir)",
+        "efeito": "Aumento da exposição e da sedação",
+        "severidade": "moderada",
+        "mecanismo": "Inibição do metabolismo oxidativo"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Desmetildiazepam (nordiazepam)",
+        "ativo": true,
+        "via": "Hepática: N-desmetilação por CYP2C19 e CYP3A4; t½ de 50 a 100 h"
+      },
+      {
+        "nome": "Temazepam",
+        "ativo": true,
+        "via": "Hepática: 3-hidroxilação por CYP3A4"
+      },
+      {
+        "nome": "Oxazepam",
+        "ativo": true,
+        "via": "Hepática: hidroxilação do desmetildiazepam; depois glicuronidação"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 10,
+      "vd": 77,
+      "halfLife": 43,
+      "ka": 5.92,
+      "F": 0.93,
+      "tmax": 1,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.1,
+      "hill": 1.5,
+      "efeito": "Efeito ansiolítico e sedativo. EC50 didática de 0,1 mg/L, tomada do limite inferior da faixa de concentração terapêutica citada (cerca de 0,1 a 0,25 mg/L); é uma aproximação, não uma EC50 publicada. Dose de referência: 10 mg por via oral. O modelo representa a molécula original; o desmetildiazepam (ativo, t½ de 50 a 100 h) prolonga o efeito clínico e se acumula com doses repetidas, mas não é simulado."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Benzodiazepínicos: mecanismo no receptor GABA-A",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Benzodiazepínicos: usos clínicos",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Benzodiazepínicos: efeitos adversos, tolerância e dependência",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "midazolam",
+    "nome": "Midazolam (oral)",
+    "categoria": "ansiolitico",
+    "tags": [
+      "Benzodiazepínico",
+      "GABA-A",
+      "Sedação",
+      "Primeira passagem",
+      "CYP3A4"
+    ],
+    "targetSid": "za:hippocampus-r",
+    "mecanismo": "Modulador alostérico positivo do receptor GABA-A: aumenta a frequência de abertura do canal de cloreto e a hiperpolarização neuronal. Início rápido e t½ curto, com sedação, ansiólise e amnésia anterógrada marcantes.",
+    "clinicalUse": [
+      "Sedação pré-operatória e pré-procedimento, inclusive pediátrica, por via oral",
+      "Indução e manutenção de sedação em centro cirúrgico e UTI (por via IV)",
+      "Crise convulsiva aguda (via bucal, intranasal ou intramuscular)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Sedação excessiva e sonolência",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Amnésia anterógrada",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Depressão respiratória e apneia",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Reação paradoxal (agitação), sobretudo em crianças e idosos",
+        "frequencia": "incomum"
+      }
+    ],
+    "contraindications": [
+      "Insuficiência respiratória grave",
+      "Miastenia gravis",
+      "Hipersensibilidade a benzodiazepínicos",
+      "Uso por via oral com inibidores potentes de CYP3A4"
+    ],
+    "interactions": [
+      {
+        "com": "Inibidores potentes de CYP3A4 (cetoconazol, itraconazol, ritonavir)",
+        "efeito": "Aumento muito grande da exposição e sedação prolongada",
+        "severidade": "grave",
+        "mecanismo": "Inibição da primeira passagem intestinal e hepática"
+      },
+      {
+        "com": "Opioides",
+        "efeito": "Sedação profunda e depressão respiratória",
+        "severidade": "grave",
+        "mecanismo": "Depressão aditiva do SNC"
+      },
+      {
+        "com": "Suco de toranja",
+        "efeito": "Aumento da biodisponibilidade oral",
+        "severidade": "moderada",
+        "mecanismo": "Inibição do CYP3A4 intestinal"
+      },
+      {
+        "com": "Indutores de CYP3A4 (rifampicina, carbamazepina)",
+        "efeito": "Perda do efeito sedativo",
+        "severidade": "moderada",
+        "mecanismo": "Aumento do metabolismo de primeira passagem"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "1-Hidroximidazolam (alfa-hidroximidazolam)",
+        "ativo": true,
+        "via": "Hepática: hidroxilação por CYP3A4; depois glicuronidação; t½ curto"
+      },
+      {
+        "nome": "4-Hidroximidazolam",
+        "ativo": false,
+        "via": "Hepática: via secundária de CYP3A4; contribuição clínica mínima"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 7.5,
+      "vd": 77,
+      "halfLife": 2.5,
+      "ka": 6.62,
+      "F": 0.4,
+      "tmax": 0.5,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.04,
+      "hill": 2,
+      "efeito": "Ansiólise e sedação leve (início do efeito). EC50 didática de 0,04 mg/L (cerca de 40 ng/mL), concentração em que o efeito costuma surgir; é uma aproximação de ensino, não uma EC50 publicada com segurança. Dose de referência: 7,5 mg por via oral (sedação pré-operatória). A via oral ilustra a baixa biodisponibilidade (F de 0,4) por primeira passagem hepática e intestinal por CYP3A4; a via IV não é modelada."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Benzodiazepínicos: mecanismo no receptor GABA-A",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Midazolam: usos em sedação e anestesia",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Benzodiazepínicos: efeitos adversos e depressão respiratória",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "fluoxetina",
+    "nome": "Fluoxetina",
+    "categoria": "antidepressivo",
+    "tags": [
+      "ISRS",
+      "Serotonina",
+      "CYP2D6",
+      "Metabólito ativo"
+    ],
+    "targetSid": "za:midbrain-r",
+    "mecanismo": "Inibe seletivamente o transportador de serotonina (SERT) na membrana pré-sináptica, reduzindo a recaptação e aumentando a serotonina na fenda; a adaptação gradual dos receptores 5-HT explica a latência de 2 a 4 semanas para o efeito antidepressivo.",
+    "clinicalUse": [
+      "Transtorno depressivo maior e transtorno obsessivo-compulsivo",
+      "Bulimia nervosa e transtorno de pânico"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Náuseas, cefaleia e insônia",
+        "frequencia": "comum"
+      },
+      {
+        "efeito": "Disfunção sexual (redução da libido, anorgasmia)",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Síndrome serotoninérgica",
+        "frequencia": "raro",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hiponatremia (SSIHAD), sobretudo em idosos",
+        "frequencia": "incomum"
+      },
+      {
+        "efeito": "Ideação suicida em jovens no início do tratamento",
+        "frequencia": "incomum"
+      }
+    ],
+    "contraindications": [
+      "Uso concomitante de IMAO ou nos 14 dias seguintes (5 semanas após a fluoxetina)",
+      "Uso concomitante com pimozida ou tioridazina",
+      "Hipersensibilidade a ISRS"
+    ],
+    "interactions": [
+      {
+        "com": "IMAO (fenelzina, tranilcipromina, linezolida)",
+        "efeito": "Síndrome serotoninérgica potencialmente fatal",
+        "severidade": "grave",
+        "mecanismo": "Excesso de serotonina por inibição simultânea da recaptação e da degradação"
+      },
+      {
+        "com": "Tramadol e triptanos",
+        "efeito": "Risco de síndrome serotoninérgica e redução da analgesia do tramadol",
+        "severidade": "grave",
+        "mecanismo": "Efeito serotoninérgico aditivo; inibição de CYP2D6 reduz a formação do metabólito ativo do tramadol"
+      },
+      {
+        "com": "Antidepressivos tricíclicos e tamoxifeno",
+        "efeito": "Aumento do tricíclico e redução da ativação do tamoxifeno",
+        "severidade": "moderada",
+        "mecanismo": "Inibição potente do CYP2D6"
+      },
+      {
+        "com": "Varfarina e AINEs",
+        "efeito": "Aumento do risco de sangramento",
+        "severidade": "moderada",
+        "mecanismo": "Redução da agregação plaquetária pela depleção de serotonina plaquetária"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Norfluoxetina",
+        "ativo": true,
+        "via": "Hepática: N-desmetilação por CYP2D6; t½ de 7 a 15 dias; potência semelhante à da fluoxetina"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 20,
+      "vd": 2450,
+      "halfLife": 48,
+      "ka": 0.65,
+      "F": 0.72,
+      "tmax": 6,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.1,
+      "hill": 1.5,
+      "efeito": "Efeito antidepressivo. A EC50 usada reflete a faixa terapêutica clínica, não a ocupação do SERT, que satura em concentrações bem menores. EC50 didática de 0,1 mg/L, limite inferior da faixa típica em equilíbrio (fluoxetina mais norfluoxetina, cerca de 0,1 a 0,3 mg/L); é uma aproximação, não uma EC50 publicada. A dose única simulada não atinge essa faixa. Dose de referência: 20 mg por via oral ao dia. Com t½ de 2 dias (e norfluoxetina de 7 a 15 dias), o estado de equilíbrio demora semanas; o modelo de dose única mostra concentração baixa porque o efeito depende do acúmulo."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Antidepressivos: inibidores seletivos da recaptação de serotonina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "ISRS: usos clínicos na depressão e na ansiedade",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "ISRS: efeitos adversos e síndrome serotoninérgica",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "sertralina",
+    "nome": "Sertralina",
+    "categoria": "antidepressivo",
+    "tags": [
+      "ISRS",
+      "Serotonina",
+      "Ansiedade",
+      "Metabólito pouco ativo"
+    ],
+    "targetSid": "za:midbrain-l",
+    "mecanismo": "Inibe seletivamente o transportador de serotonina (SERT), reduzindo a recaptação neuronal e aumentando a serotonina sináptica; tem ação fraca sobre o transportador de dopamina e pouca afinidade por receptores muscarínicos, histaminérgicos e adrenérgicos.",
+    "clinicalUse": [
+      "Transtorno depressivo maior e transtorno obsessivo-compulsivo",
+      "Transtorno de pânico, transtorno de estresse pós-traumático e ansiedade social"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Náuseas, diarreia e cefaleia",
+        "frequencia": "muito comum"
+      },
+      {
+        "efeito": "Disfunção sexual",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Insônia ou sonolência",
+        "frequencia": "comum"
+      },
+      {
+        "efeito": "Síndrome serotoninérgica",
+        "frequencia": "raro",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hiponatremia em idosos",
+        "frequencia": "incomum"
+      }
+    ],
+    "contraindications": [
+      "Uso concomitante de IMAO ou nos 14 dias seguintes",
+      "Uso concomitante de pimozida",
+      "Hipersensibilidade a ISRS"
+    ],
+    "interactions": [
+      {
+        "com": "IMAO e linezolida",
+        "efeito": "Síndrome serotoninérgica potencialmente fatal",
+        "severidade": "grave",
+        "mecanismo": "Excesso de serotonina por inibição simultânea da recaptação e da degradação"
+      },
+      {
+        "com": "Tramadol, triptanos e outros serotoninérgicos",
+        "efeito": "Risco de síndrome serotoninérgica",
+        "severidade": "grave",
+        "mecanismo": "Efeito serotoninérgico aditivo"
+      },
+      {
+        "com": "AINEs, AAS e anticoagulantes",
+        "efeito": "Aumento do risco de sangramento",
+        "severidade": "moderada",
+        "mecanismo": "Redução da agregação plaquetária pela depleção de serotonina plaquetária"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Desmetilsertralina",
+        "ativo": false,
+        "via": "Hepática: N-desmetilação por CYP2B6, CYP2C19 e CYP3A4; atividade clínica desprezível; t½ de 60 a 100 h"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 50,
+      "vd": 1400,
+      "halfLife": 26,
+      "ka": 0.52,
+      "F": 0.44,
+      "tmax": 6,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.03,
+      "hill": 1.5,
+      "efeito": "Efeito antidepressivo. A EC50 usada reflete a faixa terapêutica clínica, não a ocupação do SERT, que satura em concentrações bem menores. EC50 didática de 0,03 mg/L, na faixa baixa do intervalo de referência terapêutico citado (cerca de 10 a 150 ng/mL); é uma aproximação, não uma EC50 publicada. A dose única simulada não atinge a faixa terapêutica de equilíbrio. Aviso: a biodisponibilidade oral absoluta não foi determinada, e o F de 0,44 é uma estimativa didática. Dose de referência: 50 mg por via oral ao dia (faixa de 50 a 200 mg); tmax citado de 4,5 a 8 h, usado como 6 h."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Antidepressivos: inibidores seletivos da recaptação de serotonina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "ISRS: usos clínicos na depressão e na ansiedade",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "ISRS: efeitos adversos e síndrome serotoninérgica",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "A biodisponibilidade oral absoluta da sertralina não foi determinada; 0,44 é uma estimativa didática, não valor de obra da lista."
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "amitriptilina",
+    "nome": "Amitriptilina",
+    "categoria": "antidepressivo",
+    "tags": [
+      "Tricíclico",
+      "Noradrenalina",
+      "Serotonina",
+      "Anticolinérgico",
+      "Dor neuropática",
+      "Metabólito ativo"
+    ],
+    "targetSid": "za:hippocampus-l",
+    "mecanismo": "Inibe a recaptação de noradrenalina e serotonina (NET e SERT) e bloqueia receptores muscarínicos M1, histamínicos H1 e alfa-1 adrenérgicos; o aumento das monoaminas explica o efeito antidepressivo e analgésico, e o bloqueio dos outros receptores explica a maior parte dos efeitos adversos.",
+    "clinicalUse": [
+      "Transtorno depressivo maior, quando outros antidepressivos falharam ou não são tolerados",
+      "Dor neuropática e profilaxia de enxaqueca, em doses menores que as antidepressivas",
+      "Insônia associada à depressão e enurese noturna infantil (uso restrito)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Boca seca, constipação e retenção urinária (anticolinérgicos)",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Sedação e ganho de peso (H1)",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipotensão ortostática e taquicardia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Alargamento de QRS e arritmias em superdose",
+        "frequencia": "raro",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Convulsões",
+        "frequencia": "raro",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Uso concomitante de IMAO ou nos 14 dias seguintes",
+      "Infarto agudo do miocárdio recente e arritmias de condução",
+      "Glaucoma de ângulo fechado e hiperplasia prostática com retenção",
+      "Hipersensibilidade a tricíclicos"
+    ],
+    "interactions": [
+      {
+        "com": "IMAO",
+        "efeito": "Crise hipertensiva e síndrome serotoninérgica",
+        "severidade": "grave",
+        "mecanismo": "Excesso de monoaminas por inibição de recaptação e de degradação"
+      },
+      {
+        "com": "Fluoxetina, paroxetina e bupropiona",
+        "efeito": "Aumento da concentração do tricíclico e de toxicidade",
+        "severidade": "grave",
+        "mecanismo": "Inibição do CYP2D6"
+      },
+      {
+        "com": "Outros anticolinérgicos (anti-histamínicos, antipsicóticos)",
+        "efeito": "Efeito anticolinérgico aditivo: retenção urinária, íleo, confusão",
+        "severidade": "moderada",
+        "mecanismo": "Bloqueio muscarínico aditivo"
+      },
+      {
+        "com": "Álcool e outros depressores do SNC",
+        "efeito": "Sedação e depressão respiratória aumentadas",
+        "severidade": "moderada",
+        "mecanismo": "Depressão aditiva do SNC"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Nortriptilina",
+        "ativo": true,
+        "via": "Hepática: N-desmetilação por CYP2C19 (e CYP3A4); inibe preferencialmente a recaptação de noradrenalina"
+      },
+      {
+        "nome": "10-Hidroxiamitriptilina",
+        "ativo": false,
+        "via": "Hepática: hidroxilação por CYP2D6; atividade menor"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 50,
+      "vd": 1050,
+      "halfLife": 21,
+      "ka": 0.84,
+      "F": 0.48,
+      "tmax": 4,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.1,
+      "hill": 1.5,
+      "efeito": "Efeito antidepressivo. EC50 didática de 0,1 mg/L, limite inferior da faixa terapêutica citada para amitriptilina mais nortriptilina (cerca de 0,1 a 0,25 mg/L); é uma aproximação, não uma EC50 publicada. A dose única simulada não atinge a faixa terapêutica de equilíbrio. Dose de referência: 50 mg por via oral; margem terapêutica estreita e alta letalidade em superdose (arritmia, convulsão)."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Antidepressivos tricíclicos: mecanismo e receptores",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Antidepressivos tricíclicos: usos clínicos",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Antidepressivos tricíclicos: efeitos adversos e superdose",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "varfarina",
+    "nome": "Varfarina",
+    "categoria": "anticoagulante",
+    "tags": [
+      "Antagonista da vitamina K",
+      "Anticoagulante oral",
+      "CYP2C9",
+      "Margem estreita"
+    ],
+    "targetSid": "za:liver",
+    "mecanismo": "Inibe a vitamina K epóxido redutase (VKORC1) no hepatócito, impedindo a regeneração da vitamina K reduzida e a gama-carboxilação dos fatores II, VII, IX e X e das proteínas C e S; o efeito aparece só depois que os fatores já circulantes são depletados (2 a 3 dias).",
+    "clinicalUse": [
+      "Prevenção de AVC na fibrilação atrial e profilaxia/tratamento de tromboembolismo venoso",
+      "Prótese valvar cardíaca mecânica e síndrome antifosfolípide (indicações em que os ACODs não são adequados)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Sangramento (de leve a grave)",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Necrose cutânea induzida por varfarina",
+        "frequencia": "raro"
+      },
+      {
+        "efeito": "Embriopatia varfarínica no primeiro trimestre",
+        "frequencia": "raro"
+      },
+      {
+        "efeito": "Síndrome do dedo roxo",
+        "frequencia": "raro"
+      }
+    ],
+    "contraindications": [
+      "Gestação (teratogênica), com exceção de prótese valvar mecânica em situações específicas",
+      "Sangramento ativo ou diátese hemorrágica grave",
+      "Hipertensão grave não controlada",
+      "Cirurgia recente do SNC ou do olho"
+    ],
+    "interactions": [
+      {
+        "com": "AAS e AINEs",
+        "efeito": "Aumento do risco de sangramento gastrointestinal",
+        "severidade": "grave",
+        "mecanismo": "Efeito antiplaquetário e lesão da mucosa, sem alterar o INR"
+      },
+      {
+        "com": "Metronidazol, sulfametoxazol-trimetoprima e fluoroquinolonas",
+        "efeito": "Aumento do INR e sangramento",
+        "severidade": "grave",
+        "mecanismo": "Inibição do CYP2C9 (S-varfarina) ou alteração da flora produtora de vitamina K"
+      },
+      {
+        "com": "Rifampicina e carbamazepina",
+        "efeito": "Redução do INR e risco de trombose",
+        "severidade": "grave",
+        "mecanismo": "Indução de CYP2C9, CYP3A4 e CYP1A2"
+      },
+      {
+        "com": "Alimentos ricos em vitamina K",
+        "efeito": "Redução variável do efeito anticoagulante",
+        "severidade": "leve",
+        "mecanismo": "Antagonismo do mecanismo de ação da varfarina"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "7-Hidroxivarfarina (S-varfarina)",
+        "ativo": false,
+        "via": "Hepática: hidroxilação por CYP2C9"
+      },
+      {
+        "nome": "Hidroxilados da R-varfarina",
+        "ativo": false,
+        "via": "Hepática: CYP1A2 e CYP3A4; álcoois de varfarina pouco ativos"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 5,
+      "vd": 9.8,
+      "halfLife": 40,
+      "ka": 5.84,
+      "F": 0.99,
+      "tmax": 1,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 1,
+      "hill": 1.5,
+      "efeito": "Efeito anticoagulante (redução da atividade dos fatores dependentes de vitamina K). EC50 didática de 1 mg/L, ponto médio da faixa típica de concentração da varfarina racêmica em equilíbrio (cerca de 0,5 a 2,5 mg/L); é uma aproximação, não uma EC50 publicada. O modelo é direto: o atraso real do efeito (indireto, dependente da meia-vida dos fatores) não é simulado. Dose de referência: 5 mg por via oral ao dia, ajustada pelo INR-alvo (2 a 3); margem terapêutica estreita e grande variabilidade (CYP2C9, VKORC1, dieta)."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Anticoagulantes orais: antagonistas da vitamina K",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Varfarina: indicações, INR e dose",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Varfarina: sangramento e outros efeitos adversos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "enoxaparina",
+    "nome": "Enoxaparina (SC)",
+    "categoria": "anticoagulante",
+    "tags": [
+      "Heparina de baixo peso molecular",
+      "Anti-Xa",
+      "Anticoagulante parenteral",
+      "Profilaxia de TEV"
+    ],
+    "targetSid": "za:pulmonary-trunk",
+    "mecanismo": "Liga-se à antitrombina por uma sequência pentassacarídica e acelera a inativação do fator Xa; por ter cadeias curtas, inativa pouco a trombina (relação anti-Xa/anti-IIa de cerca de 3,6) e produz efeito mais previsível que o da heparina não fracionada.",
+    "clinicalUse": [
+      "Profilaxia de tromboembolismo venoso em pacientes clínicos e cirúrgicos (40 mg por via SC, 1 vez ao dia)",
+      "Tratamento de trombose venosa profunda e embolia pulmonar (1 mg/kg a cada 12 h)",
+      "Síndromes coronarianas agudas sem supradesnivelamento do ST e IAM com supra"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Sangramento",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hematoma no local da injeção",
+        "frequencia": "comum"
+      },
+      {
+        "efeito": "Trombocitopenia induzida por heparina (HIT)",
+        "frequencia": "raro"
+      },
+      {
+        "efeito": "Hiperpotassemia",
+        "frequencia": "incomum"
+      },
+      {
+        "efeito": "Hematoma espinhal/epidural em anestesia neuroaxial",
+        "frequencia": "raro"
+      }
+    ],
+    "contraindications": [
+      "Sangramento ativo importante",
+      "Histórico de trombocitopenia induzida por heparina",
+      "Hipersensibilidade a heparinas",
+      "Anestesia neuroaxial sem respeitar o intervalo de segurança entre dose e punção"
+    ],
+    "interactions": [
+      {
+        "com": "AAS, AINEs e antiplaquetários",
+        "efeito": "Aumento do risco de sangramento",
+        "severidade": "grave",
+        "mecanismo": "Efeito hemostático aditivo em vias diferentes"
+      },
+      {
+        "com": "Varfarina e outros anticoagulantes",
+        "efeito": "Risco aditivo de sangramento (esperado apenas na transição intencional)",
+        "severidade": "moderada",
+        "mecanismo": "Inibição aditiva da coagulação"
+      },
+      {
+        "com": "IECA, BRA e diuréticos poupadores de potássio",
+        "efeito": "Aumento do risco de hiperpotassemia",
+        "severidade": "leve",
+        "mecanismo": "Supressão da aldosterona pela heparina"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Fragmentos de menor massa molecular",
+        "ativo": false,
+        "via": "Metabolismo hepático por dessulfatação e despolimerização; atividade anti-Xa desprezível, com excreção renal"
+      }
+    ],
+    "pk": {
+      "route": "SC",
+      "dose": 40,
+      "vd": 4.3,
+      "halfLife": 4.5,
+      "ka": 0.38,
+      "F": 0.9,
+      "tmax": 4,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 3,
+      "hill": 1.5,
+      "efeito": "Atividade anticoagulante (anti-Xa). EC50 didática de 3 mg/L, equivalente a cerca de 0,3 UI/mL anti-Xa, ponto médio do alvo de profilaxia (0,2 a 0,5 UI/mL); a conversão de 100 UI/mg é aproximada e o valor não é uma EC50 publicada. O alvo é a atividade anti-Xa: 40 mg equivalem a cerca de 4000 UI anti-Xa, e o modelo usa mg e mg/L."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Heparinas de baixo peso molecular: ligação à antitrombina e inibição do fator Xa",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Heparinas: indicações em profilaxia e tratamento da trombose",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Heparinas: sangramento e trombocitopenia induzida por heparina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "metformina",
+    "nome": "Metformina",
+    "categoria": "antidiabetico",
+    "tags": [
+      "Biguanida",
+      "AMPK",
+      "Diabetes tipo 2",
+      "Gliconeogênese"
+    ],
+    "targetSid": "za:liver",
+    "mecanismo": "Ativa a proteína quinase ativada por AMP (AMPK) e inibe o complexo I mitocondrial no hepatócito; isso reduz a gliconeogênese hepática e melhora a sensibilidade periférica à insulina, sem estimular a secreção de insulina e, portanto, com baixo risco de hipoglicemia.",
+    "clinicalUse": [
+      "Primeira linha no diabetes mellitus tipo 2, associada a mudanças de estilo de vida",
+      "Pré-diabetes de alto risco e síndrome dos ovários policísticos (uso fora da bula)"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Diarreia, náuseas e desconforto abdominal",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Gosto metálico",
+        "frequencia": "comum"
+      },
+      {
+        "efeito": "Deficiência de vitamina B12 no uso prolongado",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Acidose láctica",
+        "frequencia": "raro",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Insuficiência renal grave (TFG abaixo de 30 mL/min/1,73 m²)",
+      "Condições com risco de hipóxia tecidual e acidose láctica (choque, insuficiência cardíaca descompensada)",
+      "Cetoacidose diabética",
+      "Hipersensibilidade à metformina"
+    ],
+    "interactions": [
+      {
+        "com": "Contrastes iodados",
+        "efeito": "Risco de lesão renal e acidose láctica",
+        "severidade": "grave",
+        "mecanismo": "Redução aguda da depuração renal; suspender temporariamente a metformina"
+      },
+      {
+        "com": "Álcool em excesso",
+        "efeito": "Aumento do risco de acidose láctica e de hipoglicemia",
+        "severidade": "moderada",
+        "mecanismo": "Inibição da gliconeogênese e do metabolismo do lactato"
+      },
+      {
+        "com": "Cimetidina e dolutegravir",
+        "efeito": "Aumento da exposição à metformina",
+        "severidade": "moderada",
+        "mecanismo": "Inibição dos transportadores renais OCT2 e MATE1"
+      },
+      {
+        "com": "Diuréticos e corticoides",
+        "efeito": "Perda do controle glicêmico",
+        "severidade": "leve",
+        "mecanismo": "Efeito hiperglicemiante ou depleção volêmica"
+      }
+    ],
+    "metabolites": [],
+    "pk": {
+      "route": "ORAL",
+      "dose": 500,
+      "vd": 200,
+      "halfLife": 6,
+      "ka": 0.96,
+      "F": 0.55,
+      "tmax": 2.5,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 1,
+      "hill": 1.5,
+      "efeito": "Efeito anti-hiperglicemiante (redução da produção hepática de glicose). EC50 didática de 1 mg/L, ponto médio da faixa terapêutica citada (cerca de 0,5 a 2 mg/L); é uma aproximação, não uma EC50 publicada. A t½ de 6 h é a terminal. Dose de referência: 500 mg por via oral (início), até 2000 a 2550 mg ao dia em doses divididas. Eliminação renal sem metabolização: ajustar ou suspender conforme a taxa de filtração glomerular."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Biguanidas: mecanismo de ação da metformina",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Tratamento farmacológico do diabetes tipo 2: metformina",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Metformina: efeitos adversos e acidose láctica",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "A t½ de 6 h é declarada como terminal e vem de bula, valor fora das obras listadas; o conselho confere."
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "glibenclamida",
+    "nome": "Glibenclamida",
+    "categoria": "antidiabetico",
+    "tags": [
+      "Sulfonilureia",
+      "Secretagogo",
+      "Canal KATP",
+      "Hipoglicemia"
+    ],
+    "targetSid": "za:pancreas",
+    "mecanismo": "Liga-se ao receptor de sulfonilureia (SUR1) da célula beta pancreática e fecha o canal de potássio sensível ao ATP (KATP); a despolarização abre canais de cálcio dependentes de voltagem e o influxo de cálcio dispara a exocitose de insulina, independentemente da glicemia.",
+    "clinicalUse": [
+      "Diabetes mellitus tipo 2 com função residual de células beta, como segunda linha ou associada à metformina"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Hipoglicemia, às vezes prolongada",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Ganho de peso",
+        "frequencia": "comum"
+      },
+      {
+        "efeito": "Náuseas e desconforto gástrico",
+        "frequencia": "incomum"
+      },
+      {
+        "efeito": "Reação cutânea de hipersensibilidade (sulfonamida)",
+        "frequencia": "raro"
+      }
+    ],
+    "contraindications": [
+      "Diabetes tipo 1 e cetoacidose diabética",
+      "Insuficiência renal ou hepática grave",
+      "Uso concomitante de bosentana",
+      "Hipersensibilidade a sulfonilureias ou sulfonamidas"
+    ],
+    "interactions": [
+      {
+        "com": "Bosentana",
+        "efeito": "Hepatotoxicidade aumentada e perda do controle glicêmico",
+        "severidade": "grave",
+        "mecanismo": "Inibição do transportador biliar da bosentana e indução do metabolismo"
+      },
+      {
+        "com": "Fluconazol e outros inibidores de CYP2C9",
+        "efeito": "Aumento da exposição e risco de hipoglicemia grave",
+        "severidade": "moderada",
+        "mecanismo": "Inibição do metabolismo hepático da glibenclamida"
+      },
+      {
+        "com": "Betabloqueadores",
+        "efeito": "Mascaramento dos sintomas adrenérgicos da hipoglicemia",
+        "severidade": "moderada",
+        "mecanismo": "Bloqueio dos receptores beta-adrenérgicos"
+      },
+      {
+        "com": "Álcool",
+        "efeito": "Hipoglicemia prolongada e reação semelhante ao dissulfiram",
+        "severidade": "moderada",
+        "mecanismo": "Inibição da gliconeogênese e acúmulo de acetaldeído"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "4-trans-Hidroxiglibenclamida",
+        "ativo": true,
+        "via": "Hepática: hidroxilação por CYP2C9 e CYP3A4; atividade hipoglicemiante fraca"
+      },
+      {
+        "nome": "3-cis-Hidroxiglibenclamida",
+        "ativo": false,
+        "via": "Hepática: hidroxilação; contribuição clínica pequena"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 5,
+      "vd": 14,
+      "halfLife": 10,
+      "ka": 0.94,
+      "F": 0.9,
+      "tmax": 3,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.05,
+      "hill": 1.5,
+      "efeito": "Efeito hipoglicemiante (secreção de insulina). EC50 didática de 0,05 mg/L, na faixa baixa da concentração plasmática terapêutica citada; é uma aproximação, não uma EC50 publicada. A duração do efeito, de 12 a 24 h, é maior que a sugerida pela t½ terminal de 10 h, por isso o risco de hipoglicemia persiste em jejum. Dose de referência: 5 mg por via oral ao dia, antes do café da manhã (faixa de 2,5 a 15 mg). Risco maior de hipoglicemia prolongada que outras sulfonilureias; evitar em idosos e na insuficiência renal."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Sulfonilureias: mecanismo de ação no canal KATP",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Tratamento farmacológico do diabetes tipo 2: sulfonilureias",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Sulfonilureias: hipoglicemia e outros efeitos adversos",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman",
+        "exception": true,
+        "justificativa": "O livro tabela uma t½ menor; as 10 h usadas são a t½ terminal de bula, valor fora das obras listadas."
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "omeprazol",
+    "nome": "Omeprazol",
+    "categoria": "outro",
+    "tags": [
+      "Inibidor da bomba de prótons",
+      "H+/K+-ATPase",
+      "Gastroprotetor",
+      "CYP2C19"
+    ],
+    "targetSid": "za:stomach",
+    "mecanismo": "Pró-fármaco ativado em meio ácido nos canalículos da célula parietal: forma uma sulfenamida que se liga por ligação covalente à H+/K+-ATPase (bomba de prótons) e a inativa de modo irreversível; a secreção ácida só volta com a síntese de novas bombas.",
+    "clinicalUse": [
+      "Doença do refluxo gastroesofágico e esofagite erosiva",
+      "Úlcera péptica e erradicação de Helicobacter pylori (associado a antibióticos)",
+      "Profilaxia de lesão gástrica por AINEs e síndrome de Zollinger-Ellison"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Cefaleia, diarreia e dor abdominal",
+        "frequencia": "comum"
+      },
+      {
+        "efeito": "Deficiência de vitamina B12 e de magnésio no uso prolongado",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Aumento do risco de fraturas e de infecções entéricas (C. difficile)",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Nefrite intersticial aguda",
+        "frequencia": "raro"
+      }
+    ],
+    "contraindications": [
+      "Hipersensibilidade a benzimidazóis substituídos",
+      "Uso concomitante com nelfinavir ou rilpivirina (perda de absorção)"
+    ],
+    "interactions": [
+      {
+        "com": "Clopidogrel",
+        "efeito": "Redução da ativação do clopidogrel e da proteção antiplaquetária",
+        "severidade": "moderada",
+        "mecanismo": "Inibição do CYP2C19 que converte o pró-fármaco"
+      },
+      {
+        "com": "Cetoconazol e itraconazol",
+        "efeito": "Redução da absorção do antifúngico",
+        "severidade": "moderada",
+        "mecanismo": "Aumento do pH gástrico reduz a dissolução do antifúngico"
+      },
+      {
+        "com": "Diazepam, fenitoína e varfarina",
+        "efeito": "Aumento da exposição aos substratos de CYP2C19",
+        "severidade": "leve",
+        "mecanismo": "Inibição do CYP2C19"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "5-Hidroxiomeprazol",
+        "ativo": false,
+        "via": "Hepática: hidroxilação por CYP2C19 (polimórfico)"
+      },
+      {
+        "nome": "Omeprazol sulfona",
+        "ativo": false,
+        "via": "Hepática: oxidação por CYP3A4"
+      }
+    ],
+    "pk": {
+      "route": "ORAL",
+      "dose": 20,
+      "vd": 21,
+      "halfLife": 1,
+      "ka": 0.9,
+      "F": 0.4,
+      "tmax": 1.3,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.15,
+      "hill": 1.5,
+      "efeito": "Inibição da secreção ácida gástrica. Parâmetros puramente didáticos, sem EC50 publicada segura: o efeito do omeprazol depende da exposição acumulada (ASC) e da inativação covalente da bomba, e dura de 24 a 72 h apesar de t½ plasmática de cerca de 1 h. O tmax citado vai de 0,5 a 3,5 h, usado como 1,3 h. Dose de referência: 20 mg por via oral, 30 a 60 min antes do café da manhã, em cápsula gastrorresistente."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Inibidores da bomba de prótons: mecanismo de ação",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Terapia da doença ácido-péptica: inibidores da bomba de prótons",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Inibidores da bomba de prótons: efeitos adversos no uso prolongado",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "atropina",
+    "nome": "Atropina (IV, antídoto da crise colinérgica)",
+    "categoria": "outro",
+    "tags": [
+      "Antimuscarínico",
+      "Antídoto",
+      "Organofosforados",
+      "Crise colinérgica"
+    ],
+    "targetSid": "za:trachea",
+    "mecanismo": "Antagonista competitivo e reversível dos receptores muscarínicos (M1 a M5), sem ação nos receptores nicotínicos; bloqueia o excesso de acetilcolina da intoxicação por organofosforados e carbamatos e reverte bradicardia, broncorreia, broncoconstrição e hipersecreção.",
+    "clinicalUse": [
+      "Antídoto de intoxicação por organofosforados e carbamatos (crise colinérgica)",
+      "Bradicardia sinusal sintomática",
+      "Antissialogogo na pré-anestesia e prevenção dos efeitos muscarínicos (bradicardia, hipersecreção) da neostigmina na reversão do bloqueio neuromuscular"
+    ],
+    "adverseEffects": [
+      {
+        "efeito": "Boca seca, midríase e visão turva",
+        "frequencia": "muito comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Taquicardia",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Retenção urinária e constipação",
+        "frequencia": "comum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Delirium e agitação (síndrome anticolinérgica)",
+        "frequencia": "incomum",
+        "doseDependente": true
+      },
+      {
+        "efeito": "Hipertermia por redução da sudorese",
+        "frequencia": "raro",
+        "doseDependente": true
+      }
+    ],
+    "contraindications": [
+      "Glaucoma de ângulo fechado (sem urgência vital)"
+    ],
+    "interactions": [
+      {
+        "com": "Antidepressivos tricíclicos, anti-histamínicos e antipsicóticos",
+        "efeito": "Efeito anticolinérgico aditivo: taquicardia, retenção urinária e delirium",
+        "severidade": "moderada",
+        "mecanismo": "Bloqueio muscarínico aditivo"
+      },
+      {
+        "com": "Pralidoxima",
+        "efeito": "Efeito complementar intencional na intoxicação por organofosforados",
+        "severidade": "leve",
+        "mecanismo": "A atropina bloqueia o excesso muscarínico e a pralidoxima reativa a colinesterase"
+      },
+      {
+        "com": "Cetamina e anestésicos halogenados",
+        "efeito": "Taquicardia aditiva",
+        "severidade": "moderada",
+        "mecanismo": "Efeito simpatomimético somado ao bloqueio vagal"
+      }
+    ],
+    "metabolites": [
+      {
+        "nome": "Noratropina",
+        "ativo": false,
+        "via": "Hepática: N-desmetilação; cerca de metade da dose sai inalterada na urina"
+      },
+      {
+        "nome": "Tropina e ácido trópico",
+        "ativo": false,
+        "via": "Hepática: hidrólise do éster"
+      }
+    ],
+    "pk": {
+      "route": "IV",
+      "dose": 2,
+      "vd": 161,
+      "halfLife": 3,
+      "ka": 1,
+      "F": 1,
+      "tmax": 0,
+      "doseUnit": "mg",
+      "concUnit": "mg/L"
+    },
+    "pd": {
+      "emax": 100,
+      "ec50": 0.003,
+      "hill": 1.5,
+      "efeito": "Bloqueio muscarínico (reversão da bradicardia e das secreções). EC50 didática de 0,003 mg/L (cerca de 3 ng/mL), compatível com a EC50 de efeitos muscarínicos em indivíduos sadios (≈ 1 a 4 ng/mL); na intoxicação a EC50 aparente é maior. A titulação clínica segue o desfecho (secreções secas), não a concentração. Dose de referência: 1 a 2 mg por via IV, repetidos e titulados até a secagem das secreções brônquicas. Via IV em bolo: tmax citado como 0 h (início imediato); o modelo começa em D/Vd. A atropina reverte os sinais muscarínicos, mas não a fraqueza nicotínica, que exige pralidoxima. Cautelas: hipertrofia prostática com retenção urinária, íleo paralítico e megacólon tóxico. Na intoxicação por organofosforado, não há contraindicação absoluta: o risco vital supera os efeitos adversos."
+    },
+    "sources": [
+      {
+        "field": "mecanismo",
+        "ref": "Antagonistas muscarínicos: mecanismo e farmacologia",
+        "obraId": "katzung"
+      },
+      {
+        "field": "clinicalUse",
+        "ref": "Atropina: uso como antídoto de intoxicação por organofosforados",
+        "obraId": "goodman"
+      },
+      {
+        "field": "adverseEffects",
+        "ref": "Antimuscarínicos: efeitos adversos e síndrome anticolinérgica",
+        "obraId": "katzung"
+      },
+      {
+        "field": "pk.F",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.halfLife",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.vd",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.tmax",
+        "ref": "Tabela de dados farmacocinéticos de referência por fármaco",
+        "obraId": "goodman"
+      },
+      {
+        "field": "pk.ka",
+        "ref": "Absorção de primeira ordem: relação entre ka, ke e tmax (ka derivado do tmax citado)",
+        "obraId": "rowland"
+      },
+      {
+        "field": "pd",
+        "ref": "Relação concentração–efeito: modelo Emax e faixa terapêutica",
+        "obraId": "rowland"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador-farmaco",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+]

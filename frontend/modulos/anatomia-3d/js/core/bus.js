@@ -223,6 +223,8 @@ export const EVENTS = Object.freeze({
    * @payload {{ caseId: string, sid: string, correct: boolean }}
    */
   QUIZ_ANSWER: 'quiz:answer',
+  /** Estudo de via/processo concluído (PR 3.2): { kind: 'route'|'process', id, label, sid } */
+  STUDY_PATH: 'study:path',
 
   /**
    * O tema efetivo da plataforma mudou (ver `modulos/shared/laift-identity.js`

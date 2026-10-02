@@ -16,6 +16,8 @@ jobs:
       - run: npm ci || npm install
       - run: npm install --no-save playwright
       - run: npx playwright install --with-deps chromium
+      # Unitários do atlas (validador, pk-model, isolamento de pendente/ etc.).
+      - run: node --test scripts/atlas/*.test.mjs
       - run: node scripts/build.js
       # "atlas" casa por prefixo: roda atlas, atlas-a11y (axe), atlas-assets,
       # atlas-perf (inclui 3G rápido) e atlas-responsive.

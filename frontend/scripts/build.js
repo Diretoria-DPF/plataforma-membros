@@ -16,6 +16,16 @@ const JavaScriptObfuscator = require('javascript-obfuscator');
 const ROOT = path.join(__dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 
+// Trava do conteúdo curado (PR 3.2, O2): nenhuma ficha de curated/ vai para
+// produção sem a revisão do conselho assinada (docs/atlas-conteudo/ata-revisao-3-2.md).
+{
+  const check = require('child_process').spawnSync(process.execPath, [path.join(__dirname, 'atlas', 'check-curated-signed.mjs')], { encoding: 'utf8' });
+  if (check.status !== 0) {
+    process.stderr.write(check.stderr || check.stdout || '');
+    throw new Error('Build bloqueado: há fichas curadas sem assinatura do conselho (scripts/atlas/check-curated-signed.mjs).');
+  }
+}
+
 fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
 

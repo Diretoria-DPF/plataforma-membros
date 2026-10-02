@@ -136,15 +136,13 @@
   "ciclo-menstrual:2": { "name": "Adenohypophysis", "note": "FSH" },
   "ciclo-menstrual:3": { "name": "Urinary bladder", "offset": [0.06, 0.045, -0.045], "note": "ovário esquerdo — ovulação" },
   "ciclo-menstrual:4": { "name": "Urinary bladder", "offset": [0, 0.035, -0.05], "note": "endométrio secretor" },
+  "ciclo-menstrual:6": { "name": "Urinary bladder", "offset": [0.06, 0.045, -0.045], "note": "ovário — ovulação" },
+  "ciclo-menstrual:7": { "name": "Urinary bladder", "offset": [0.06, 0.045, -0.045], "note": "ovário — corpo lúteo" },
 
   "eixo-hpa:1": { "name": "Hypothalamus" },
   "eixo-hpa:2": { "name": "Adenohypophysis" },
   "eixo-hpa:3": { "name": "Suprarenal gland" },
-  "eixo-hpa:4": { "name": "Hypothalamus", "note": "feedback negativo" },
 
-  "reflexo-miotatico:1": { "name": "Rectus femoris muscle", "note": "fuso muscular (fibras Ia)" },
-  "reflexo-miotatico:2": { "name": "Intervertebral disc L3-L4", "offset": [0, 0, -0.035], "note": "corno posterior da medula, L3-L4" },
-  "reflexo-miotatico:3": { "name": "Rectus femoris muscle", "note": "contração do quadríceps" },
 
   "resposta-imune-adaptativa:1": { "name": "Radius", "offset": [0, 0.03, 0.025], "note": "célula dendrítica capta o antígeno no tecido" },
   "resposta-imune-adaptativa:2": { "name": "Central axillary nodes", "note": "linfonodo regional — T CD4+" },

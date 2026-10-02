@@ -14,7 +14,7 @@ const path = require('path');
 const { check, loadPlaywright, startStaticServer } = require('./harness');
 
 const AXE_SOURCE = fs.readFileSync(path.join(__dirname, '../../node_modules/axe-core/axe.min.js'), 'utf8');
-const ATLAS_PATH = 'modulos/anatomia-3d/index.html';
+const ATLAS_PATH = 'modulos/anatomia-3d/index.html?flags=systemic'; // visão sistêmica (flag) também é varrida
 const HOST_HTML = `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>host de teste</title></head>
 <body style="margin:0;background:#000;">
@@ -82,6 +82,36 @@ async function runAt(browser, baseUrl, viewport, mobile) {
     await frame.waitForSelector('#quizQuestionCard', { state: 'attached', timeout: 15000 }).catch(() => {});
     await frame.waitForTimeout(500);
     await scan(frame, `${label} Quiz`);
+
+    // PR 3.2: Farmacologia (painel PK/PD e aba Clínica) e Fisiologia
+    // (estudo de via e visão sistêmica).
+    await frame.evaluate(() => window.AtlasShell.setMode('farmacologia'));
+    await frame.waitForSelector('.compound-card', { timeout: 15000 });
+    if (mobile) await frame.evaluate(() => window.AtlasSheet && window.AtlasSheet.snapFull());
+    await frame.evaluate(() => document.querySelector('.compound-card').click());
+    await frame.waitForSelector('#pk-panel', { timeout: 15000 }).catch(() => {});
+    await frame.waitForTimeout(300);
+    await scan(frame, `${label} Farmacologia (composto)`);
+    await frame.evaluate(() => { const t = document.querySelector('#pk-tab-interacoes'); if (t) t.click(); });
+    await scan(frame, `${label} Farmacologia (interações)`);
+    await frame.evaluate(() => { const t = document.querySelector('#pk-tab-clinica'); if (t) t.click(); });
+    await scan(frame, `${label} Farmacologia (clínica do composto)`);
+    await frame.evaluate(() => document.querySelector('.tab-button[data-tab="crise"]').click());
+    await frame.waitForSelector('.scenario-panel', { timeout: 5000 }).catch(() => {});
+    await frame.evaluate(() => { const b = document.querySelectorAll('.scenario-phase-btn')[2]; if (b) b.click(); const c = document.querySelector('.scenario-antidote'); if (c) c.click(); });
+    await frame.waitForTimeout(200);
+    await scan(frame, `${label} Farmacologia (Clínica)`);
+
+    await frame.evaluate(() => window.AtlasShell.setMode('fisiologia'));
+    await frame.waitForSelector('.physiology-card', { timeout: 15000 });
+    if (mobile) await frame.evaluate(() => window.AtlasSheet && window.AtlasSheet.snapFull());
+    await frame.evaluate(() => document.querySelector('.physiology-card').click());
+    await frame.waitForSelector('.physiology-study', { timeout: 5000 }).catch(() => {});
+    await frame.waitForTimeout(200);
+    await scan(frame, `${label} Fisiologia (estudo de via)`);
+    await frame.evaluate(() => document.querySelector('.physiology-tab[data-tab="sistemica"]').click());
+    await frame.waitForSelector('.physiology-systemic', { timeout: 5000 }).catch(() => {});
+    await scan(frame, `${label} Fisiologia (visão sistêmica)`);
   } finally {
     await context.close();
   }

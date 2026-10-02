@@ -1,0 +1,398 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://laift.local/atlas/schema/compounds.schema.json",
+  "title": "Compostos do modo Farmacologia (data/atlas/compounds.json)",
+  "description": "Transição (PR 3.2, D2): aceita o formato v1 (legado, sem PD nem fontes, review legacy-unverified) e o v2 (PK/PD completos com fontes de fontes.json). js/modes/pharmacology.js normaliza os dois (normalizeCompound).",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "$ref": "#/$defs/compoundV2"
+      },
+      {
+        "$ref": "#/$defs/compoundV1"
+      }
+    ]
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "ref",
+        "obraId"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obraId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capitulo": {
+          "type": "string"
+        },
+        "exception": {
+          "type": "boolean"
+        },
+        "justificativa": {
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "status",
+        "published_by",
+        "review_requested_at"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "auto-draft",
+            "legacy-unverified",
+            "editorial",
+            "reviewed",
+            "approved"
+          ]
+        },
+        "published_by": {
+          "type": "string"
+        },
+        "review_requested_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "by": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      }
+    },
+    "compoundV2": {
+      "type": "object",
+      "required": [
+        "id",
+        "nome",
+        "mecanismo",
+        "pk",
+        "pd",
+        "sources",
+        "review"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "nome": {
+          "type": "string",
+          "minLength": 2
+        },
+        "categoria": {
+          "enum": [
+            "analgesico",
+            "anti-inflamatorio",
+            "anti-hipertensivo",
+            "antibiotico",
+            "ansiolitico",
+            "antidepressivo",
+            "anticoagulante",
+            "antidiabetico",
+            "outro"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "targetSid": {
+          "type": "string"
+        },
+        "mecanismo": {
+          "type": "string",
+          "minLength": 50
+        },
+        "pk": {
+          "type": "object",
+          "required": [
+            "route",
+            "dose",
+            "vd",
+            "halfLife",
+            "ka",
+            "F",
+            "tmax"
+          ],
+          "properties": {
+            "route": {
+              "enum": [
+                "ORAL",
+                "IV",
+                "IM",
+                "SC",
+                "SUBLINGUAL",
+                "RETAL",
+                "INALATORIA",
+                "TOPICA"
+              ]
+            },
+            "dose": {
+              "type": "number",
+              "minimum": 0
+            },
+            "vd": {
+              "type": "number",
+              "minimum": 0
+            },
+            "halfLife": {
+              "type": "number",
+              "minimum": 0
+            },
+            "ka": {
+              "type": "number",
+              "minimum": 0
+            },
+            "F": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "tmax": {
+              "type": "number",
+              "minimum": 0
+            },
+            "doseUnit": {
+              "type": "string"
+            },
+            "concUnit": {
+              "type": "string"
+            },
+            "cmaxRef": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "pd": {
+          "type": "object",
+          "required": [
+            "emax",
+            "ec50",
+            "hill"
+          ],
+          "properties": {
+            "emax": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "ec50": {
+              "type": "number",
+              "minimum": 0
+            },
+            "hill": {
+              "type": "number",
+              "minimum": 0.5,
+              "maximum": 4
+            },
+            "efeito": {
+              "type": "string"
+            }
+          }
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "com",
+              "efeito",
+              "severidade"
+            ],
+            "properties": {
+              "com": {
+                "type": "string"
+              },
+              "efeito": {
+                "type": "string"
+              },
+              "severidade": {
+                "enum": [
+                  "leve",
+                  "moderada",
+                  "grave"
+                ]
+              },
+              "mecanismo": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "metabolites": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "nome",
+              "ativo",
+              "via"
+            ],
+            "properties": {
+              "nome": {
+                "type": "string"
+              },
+              "ativo": {
+                "type": "boolean"
+              },
+              "via": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "clinicalUse": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "adverseEffects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "efeito",
+              "frequencia"
+            ],
+            "properties": {
+              "efeito": {
+                "type": "string"
+              },
+              "frequencia": {
+                "enum": [
+                  "raro",
+                  "incomum",
+                  "comum",
+                  "muito comum"
+                ]
+              },
+              "doseDependente": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "contraindications": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 5
+          }
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
+      }
+    },
+    "compoundV1": {
+      "type": "object",
+      "required": [
+        "id",
+        "nome",
+        "mecanismo",
+        "pk",
+        "review"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nome": {
+          "type": "string"
+        },
+        "mecanismo": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pk": {
+          "type": "object",
+          "required": [
+            "route",
+            "vd",
+            "halfLife",
+            "dose",
+            "ka"
+          ],
+          "properties": {
+            "route": {
+              "type": "string"
+            },
+            "vd": {
+              "type": "number"
+            },
+            "halfLife": {
+              "type": "number"
+            },
+            "dose": {
+              "type": "number"
+            },
+            "ka": {
+              "type": "number"
+            }
+          }
+        },
+        "targetSid": {
+          "type": "string"
+        },
+        "review": {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "legacy-unverified"
+            }
+          }
+        }
+      },
+      "not": {
+        "required": [
+          "pd"
+        ]
+      }
+    }
+  }
+}

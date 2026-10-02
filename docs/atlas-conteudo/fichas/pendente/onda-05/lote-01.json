@@ -1,0 +1,1855 @@
+{
+  "za:kidney-r": {
+    "ids": {},
+    "summary_pt": "O rim (ren) é o órgão par responsável pela filtração do plasma, pela formação da urina e pela regulação do volume e da composição dos líquidos corporais, além de funções endócrinas, como a produção de eritropoetina e de renina. Os rins ocupam o espaço retroperitoneal, de cada lado da coluna vertebral, aproximadamente entre as vértebras T12 e L3, e o rim direito costuma situar-se um pouco mais abaixo que o esquerdo, pela presença do fígado. Cada rim tem formato de grão de feijão, com faces anterior e posterior, margem lateral convexa, margem medial côncava e polos superior e inferior. Na margem medial, o hilo renal dá passagem à artéria renal, à veia renal e à pelve renal. Internamente, o córtex renal envolve a medula renal, formada pelas pirâmides renais, que são separadas pelas colunas renais. Os ápices das pirâmides, as papilas renais, projetam-se nos cálices renais menores, que convergem para os cálices maiores e para a pelve renal, continuando-se com o ureter. O rim é envolvido pela cápsula fibrosa, pelo corpo adiposo perirrenal e pela fáscia renal, estruturas que o protegem e o mantêm em posição. A unidade funcional é o néfron.",
+    "anatomy": {
+      "relations": "Retroperitoneal, apoiado sobre os músculos psoas maior, quadrado do lombo e transverso do abdome e sobre o diafragma, na região superior. A glândula suprarrenal situa-se junto ao polo superior. Anteriormente, o rim direito relaciona-se com o fígado, a parte descendente do duodeno e a flexura direita do colo; o rim esquerdo, com o estômago, o baço, o pâncreas e a flexura esquerda do colo. Está envolvido por corpo adiposo perirrenal, fáscia renal e corpo adiposo pararrenal.",
+      "vascularization": "Artéria renal, ramo da parte abdominal da aorta, que se divide em ramos segmentares, interlobares, arqueados e interlobulares. A veia renal drena para a veia cava inferior; a veia renal esquerda, mais longa, cruza anteriormente à aorta.",
+      "innervation": "Plexo renal, com fibras simpáticas dos nervos esplâncnicos torácicos inferiores e lombares e fibras parassimpáticas do nervo vago. As fibras aferentes da dor acompanham as fibras simpáticas.",
+      "lymph": "Vasos linfáticos que acompanham os vasos renais e drenam para os linfonodos lombares (aórticos laterais e cavais)."
+    },
+    "histology": {
+      "epithelium": "Túbulos renais revestidos por epitélio simples, cúbico no túbulo contorcido proximal (com borda em escova) e no distal, e pavimentoso no ramo delgado da alça do néfron; os ductos coletores são revestidos por epitélio simples cúbico a colunar.",
+      "tissues": [
+        "Córtex: corpúsculos renais (glomérulo e cápsula glomerular), túbulos contorcidos proximais e distais e raios medulares",
+        "Medula: segmentos retos dos túbulos, alças do néfron, ductos coletores e vasos retos",
+        "Interstício: tecido conjuntivo escasso, com fibroblastos e capilares peritubulares",
+        "Cápsula: tecido conjuntivo denso, fibroso"
+      ]
+    },
+    "clinical": [
+      "Cólica renal por litíase: cálculos que se deslocam da pelve renal para o ureter podem causar dor intensa em cólica no flanco, com irradiação para a região inguinal, por distensão e peristaltismo da via excretora.",
+      "Hidronefrose: a obstrução ao fluxo da urina, em qualquer ponto da via excretora, dilata os cálices e a pelve renal e pode levar à atrofia do parênquima.",
+      "Doença renal policística: cistos múltiplos aumentam o volume dos rins e podem comprometer progressivamente a função renal.",
+      "Pielonefrite: infecção bacteriana ascendente do trato urinário que afeta a pelve e o parênquima renais, com febre e dor no flanco."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico anatomia macroscópica do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: relações e fáscia renal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: relações",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos renais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico inervação do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: drenagem linfática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico drenagem linfática do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico túbulos renais e ductos coletores",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico córtex e medula renais",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico interstício renal",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico hidronefrose",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doença renal policística",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:renal-pelvis-r": {
+    "ids": {},
+    "summary_pt": "A pelve renal (pelve renal) é a porção dilatada, em forma de funil, do início da via excretora urinária, na qual convergem os cálices renais maiores. Situa-se no seio renal, a cavidade central do rim acessada pelo hilo renal, e é a estrutura mais posterior das que atravessam o hilo, em geral posterior aos vasos renais. Cada rim possui uma pelve, que recebe a urina conduzida pelos cálices renais menores e maiores, cuja origem está nas papilas renais. Inferiormente, a pelve estreita-se e continua-se com o ureter na junção pieloureteral, que corresponde ao primeiro dos locais de estreitamento do ureter. A pelve pode ser inteiramente intrarrenal, quando se encontra quase toda dentro do seio renal, ou extrarrenal, quando parte dela se projeta para fora do hilo. A parede é formada por urotélio, por lâmina própria e por camadas de músculo liso, cujas contrações peristálticas impulsionam a urina em direção ao ureter. A pelve renal tem importância clínica por ser sede de cálculos e de obstruções que dilatam o sistema coletor e comprometem o parênquima, e é um dos pontos de referência na leitura de exames de imagem da via urinária.",
+    "anatomy": {
+      "relations": "Localiza-se no seio renal, posteriormente à artéria e à veia renais no hilo, onde recebe os cálices renais maiores. Continua-se com o ureter na junção pieloureteral, ao nível aproximado da vértebra L2. Posteriormente, o rim e a pelve relacionam-se com o músculo psoas maior.",
+      "vascularization": "Ramos da artéria renal; as veias acompanham as artérias e drenam para a veia renal.",
+      "innervation": "Plexo renal, com fibras simpáticas e parassimpáticas; as fibras aferentes da dor seguem com as fibras simpáticas para os segmentos medulares torácicos inferiores e lombares superiores.",
+      "lymph": "Vasos linfáticos que acompanham os vasos renais e drenam para os linfonodos lombares (aórticos laterais e cavais)."
+    },
+    "histology": {
+      "epithelium": "Urotélio, ou epitélio de transição, com células superficiais em guarda-chuva, revestindo a face luminal.",
+      "tissues": [
+        "Lâmina própria de tecido conjuntivo frouxo, subjacente ao urotélio",
+        "Túnica muscular de músculo liso, com camadas pouco definidas",
+        "Túnica adventícia de tecido conjuntivo, contínua com o tecido adiposo do seio renal"
+      ]
+    },
+    "clinical": [
+      "Hidronefrose: a obstrução na junção pieloureteral, por cálculo, estenose ou compressão extrínseca, dilata a pelve e os cálices renais e pode causar atrofia do parênquima.",
+      "Litíase renal: cálculos formados no sistema coletor podem permanecer na pelve ou migrar para o ureter, onde se alojam preferencialmente nos locais de estreitamento.",
+      "Pielonefrite: a infecção ascendente do trato urinário envolve a pelve e o parênquima renais."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: pelve renal, cálices e ureter",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico pelve renal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: pelve renal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: seio renal e pelve renal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins e ureteres: pelve renal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Ureteres: vascularização",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico vascularização da pelve renal e do ureter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Ureteres: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico inervação da pelve renal e do ureter",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: drenagem linfática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico drenagem linfática do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico cálices, pelve renal e ureter: urotélio",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico cálices, pelve renal e ureter: parede",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico hidronefrose",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico pielonefrite aguda",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico urolitíase",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Ureteres: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-kidney-capsule-l": {
+    "ids": {},
+    "summary_pt": "A cápsula renal (cápsula fibrosa do rim) é a camada de tecido conjuntivo denso, fina e resistente, que reveste diretamente a superfície do parênquima renal. Contorna todo o órgão e, no hilo renal, acompanha os vasos e os cálices para o interior do seio renal. Ela é a camada mais interna de um conjunto de envoltórios do rim, que inclui, de dentro para fora, o corpo adiposo perirrenal, a fáscia renal e o corpo adiposo pararrenal. Em geral, a cápsula destaca-se com facilidade do rim normal, deixando uma superfície lisa; em processos inflamatórios e cicatriciais crônicos pode aderir ao parênquima. Do ponto de vista funcional, a cápsula limita a expansão do órgão e contribui para sua proteção mecânica, de modo que o aumento rápido de volume do parênquima, por edema ou por obstrução, distende a cápsula e é um dos mecanismos relacionados à dor no flanco. Por ser inervada por fibras sensitivas, sua distensão é percebida pelo paciente. Cirurgicamente, é incisada ou preservada em procedimentos como biópsia, drenagem e nefrectomia parcial, e seu rompimento nos traumas favorece o extravasamento de sangue para o espaço perirrenal.",
+    "anatomy": {
+      "relations": "Reveste diretamente o parênquima renal, internamente ao corpo adiposo perirrenal e à fáscia renal. No hilo renal, acompanha os vasos e os cálices para dentro do seio renal.",
+      "vascularization": "Pequenos vasos capsulares, provenientes de ramos da artéria renal, com veias que drenam para a veia renal.",
+      "innervation": "Fibras aferentes de dor, que acompanham as fibras simpáticas do plexo renal; a distensão da cápsula pode provocar dor no flanco."
+    },
+    "histology": {
+      "tissues": [
+        "Tecido conjuntivo denso, com predomínio de fibras colágenas dispostas em feixes",
+        "Fibroblastos como células predominantes, com fibras elásticas em menor quantidade"
+      ]
+    },
+    "clinical": [
+      "Hematoma subcapsular e perirrenal: lacerações do parênquima por trauma podem acumular sangue sob a cápsula ou no espaço perirrenal, delimitado pela fáscia renal.",
+      "Biópsia renal percutânea: a agulha atravessa a cápsula e o sangramento perirrenal é uma das complicações a ser monitorada após o procedimento.",
+      "Dor no flanco: o aumento agudo do volume do rim, como na obstrução da via excretora ou na infecção, pode distender a cápsula renal e contribuir para a dor lombar."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: cápsula fibrosa e fáscia renal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico cápsula e envoltórios do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: cápsula fibrosa",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: cápsula fibrosa e fáscia renal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: envoltórios e relações",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico vascularização capsular do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos renais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico inervação do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico rim: cápsula e estroma",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico rim: correlações clínicas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-column-l": {
+    "ids": {},
+    "summary_pt": "A coluna renal (coluna renal, ou coluna de Bertin) é a porção do córtex renal que se prolonga para o interior do rim, entre pirâmides renais adjacentes, até o seio renal. Em cortes do rim, as colunas aparecem como faixas de tecido cortical de aspecto semelhante ao do córtex periférico, delimitando lateralmente cada pirâmide. Elas dão sustentação ao parênquima e funcionam como vias de passagem para os vasos que irrigam o rim: as artérias interlobares e as veias interlobares seguem em seu interior, a caminho das artérias arqueadas na junção corticomedular. O córtex que recobre a base de uma pirâmide, somado a metades das colunas vizinhas, é descrito como um lobo renal. Por conter, como o restante do córtex, corpúsculos renais e túbulos contorcidos, a coluna participa da filtração e da reabsorção, ainda que se estenda mais profundamente que o córtex periférico. A distinção entre a coluna renal e o córtex subcapsular é topográfica, porque o tecido é o mesmo, e sua compreensão é útil na interpretação de cortes anatômicos e de imagens de ultrassonografia e de tomografia do rim, nas quais o parênquima cortical e as pirâmides medulares são reconhecidos por diferenças de ecogenicidade e de atenuação.",
+    "anatomy": {
+      "relations": "Estende-se do córtex renal ao seio renal, entre duas pirâmides renais vizinhas. Em seu interior, passam as artérias e as veias interlobares. Seu limite profundo é o seio renal, que contém os cálices renais menores.",
+      "vascularization": "As artérias interlobares, ramos das artérias segmentares originadas da artéria renal, ascendem pelas colunas renais e dão origem às artérias arqueadas, na junção entre o córtex e a medula. As veias interlobares acompanham as artérias.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "tissues": [
+        "Tecido cortical: corpúsculos renais e túbulos contorcidos, de estrutura equivalente à do córtex periférico",
+        "Interstício de tecido conjuntivo escasso, com capilares peritubulares",
+        "Vasos interlobares, com túnicas de músculo liso e endotélio"
+      ]
+    },
+    "clinical": [
+      "Infarto renal: a oclusão de ramos arteriais, por êmbolos ou por trombose, causa necrose de uma região do parênquima de aspecto frequentemente cuneiforme, com a base voltada para a cápsula.",
+      "Irrigação segmentar: as artérias segmentares são consideradas artérias terminais, de modo que a lesão de um ramo pode causar isquemia do segmento correspondente, o que é considerado no planejamento de nefrectomias parciais."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, córtex e medula",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico estrutura interna do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: colunas renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico córtex renal",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico infarto renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: segmentos renais e artérias segmentares",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:urinary-bladder": {
+    "ids": {},
+    "summary_pt": "A bexiga urinária (vesica urinaria) é um órgão muscular oco, distensível, que armazena a urina produzida pelos rins e conduzida pelos ureteres, até que ela seja eliminada pela uretra durante a micção. Quando vazia, no adulto, situa-se na pelve menor, posteriormente à sínfise púbica, e, ao se encher, ascende para o interior da cavidade abdominal, acima do nível da sínfise púbica. A bexiga é descrita em ápice, corpo, fundo e colo, e sua face interna apresenta o trígono da bexiga, região triangular lisa delimitada pelos óstios dos ureteres e pelo óstio interno da uretra. A parede é formada pelo músculo detrusor da bexiga, que se contrai durante a micção, e o colo é guarnecido por fibras musculares que participam do mecanismo de continência. O controle é feito pelo sistema nervoso autônomo e por vias somáticas, de modo que o enchimento, a continência e a micção dependem de reflexos integrados na medula espinal e no tronco encefálico, sob influência de centros superiores. A relação da bexiga com o peritônio varia com seu enchimento, o que tem importância em punções suprapúbicas e em cirurgias pélvicas.",
+    "anatomy": {
+      "relations": "Na pelve menor, posteriormente à sínfise púbica e ao espaço retropúbico. No homem, relaciona-se posteriormente com o reto, as vesículas seminais e as ampolas dos ductos deferentes, e inferiormente com a próstata; na mulher, posteriormente com o colo do útero e a vagina. A face superior é coberta por peritônio, e a bexiga cheia projeta-se acima da sínfise púbica, em contato com a parede abdominal anterior.",
+      "vascularization": "Artérias vesicais superiores, ramos da parte patente da artéria umbilical, e artérias vesicais inferiores, ramos da artéria ilíaca interna; na mulher, contribuem ramos da artéria vaginal. As veias formam o plexo venoso vesical, que drena para as veias ilíacas internas.",
+      "innervation": "Plexo vesical, derivado do plexo hipogástrico inferior. Fibras parassimpáticas dos nervos esplâncnicos pélvicos (S2 a S4) estimulam a contração do detrusor e o relaxamento do esfíncter interno; fibras simpáticas (T11 a L2) atuam na continência e, no homem, no fechamento do colo da bexiga durante a ejaculação. O esfíncter externo da uretra é inervado pelo nervo pudendo (fibras somáticas).",
+      "lymph": "Vasos linfáticos que drenam principalmente para os linfonodos ilíacos externos e internos; parte da linfa da face posteroinferior alcança os linfonodos ilíacos comuns."
+    },
+    "histology": {
+      "epithelium": "Urotélio (epitélio de transição), que reveste a face interna e acomoda a distensão da parede; as células superficiais em guarda-chuva têm placas de membrana que reduzem a permeabilidade à urina.",
+      "tissues": [
+        "Lâmina própria de tecido conjuntivo frouxo a denso, com vasos e terminações nervosas",
+        "Túnica muscular de músculo liso (detrusor), disposta em camadas pouco nítidas",
+        "Adventícia de tecido conjuntivo e, na face superior, serosa peritoneal"
+      ]
+    },
+    "clinical": [
+      "Infecção do trato urinário: a cistite, mais frequente em mulheres, causa disúria, polaciúria e dor suprapúbica, e a infecção pode ascender para o rim.",
+      "Carcinoma urotelial da bexiga: neoplasia derivada do urotélio, cujo principal sintoma é a hematúria, frequentemente indolor.",
+      "Bexiga neurogênica: lesões da medula espinal ou dos nervos pélvicos alteram o esvaziamento e a continência, com retenção ou incontinência urinária.",
+      "Punção suprapúbica: como a bexiga cheia ascende acima da sínfise púbica, é possível acessá-la por via suprapúbica, em geral sem atravessar o peritônio."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico Bexiga urinária",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Bexiga, tópico anatomia macroscópica da bexiga urinária",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: bexiga urinária",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico Bexiga urinária: relações",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Pelve e períneo, tópico Bexiga urinária",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico Bexiga urinária: artérias e veias",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Pelve e períneo, tópico Bexiga urinária: vasos",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico Bexiga urinária: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Bexiga, tópico inervação da bexiga",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico Bexiga urinária: drenagem linfática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico bexiga: urotélio",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico bexiga: parede",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico carcinoma urotelial da bexiga",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico cistite",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico Bexiga urinária: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-hilum-of-kidney-l": {
+    "ids": {},
+    "summary_pt": "O hilo do rim (hilo renal) é a fenda vertical, localizada na margem medial côncava do rim, que dá acesso ao seio renal, a cavidade central do órgão. Situa-se aproximadamente ao nível da vértebra L1, na região do plano transpilórico, e é por ele que entram e saem as estruturas do pedículo renal. De anterior para posterior, encontram-se a veia renal, a artéria renal e a pelve renal, que se continua com o ureter, de modo que a pelve ocupa a posição mais posterior. Além desses elementos, passam pelo hilo ramos da artéria renal, linfáticos, fibras nervosas do plexo renal e gordura do seio renal. O hilo é uma referência importante em cirurgia e em exames de imagem: o conhecimento da ordem das estruturas orienta a abordagem do pedículo na nefrectomia e a interpretação de cortes axiais de tomografia, nos quais a pelve renal e os vasos se projetam para o seio renal. A variação do número e da posição dos vasos é frequente e deve ser considerada, sobretudo nos casos de artérias renais acessórias.",
+    "anatomy": {
+      "relations": "Na margem medial do rim, abre-se para o seio renal. A ordem das estruturas de anterior para posterior é veia renal, artéria renal e pelve renal. Situa-se na região do plano transpilórico, próximo à vértebra L1, e relaciona-se posteriormente com o músculo psoas maior.",
+      "vascularization": "Atravessado pela artéria renal, que se divide em ramos anteriores e posteriores, e pela veia renal; a artéria renal origina-se da parte abdominal da aorta e a veia drena para a veia cava inferior.",
+      "innervation": "Fibras do plexo renal, que acompanham os vasos até o hilo.",
+      "lymph": "Vasos linfáticos que saem do hilo com os vasos renais e drenam para os linfonodos lombares."
+    },
+    "clinical": [
+      "Pedículo renal na nefrectomia: o controle cirúrgico da artéria e da veia renais antes da remoção do rim requer o reconhecimento da ordem e das variações dos vasos no hilo.",
+      "Artérias renais acessórias: são variações frequentes que podem passar pelo hilo ou entrar diretamente no polo do rim, e devem ser reconhecidas antes de cirurgias e de transplante renal.",
+      "Obstrução da pelve renal ao nível do hilo: a estenose da junção pieloureteral dilata a pelve renal e os cálices e pode causar hidronefrose."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: hilo renal e seio renal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico hilo e seio renais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: hilo renal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: hilo renal e pedículo renal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: hilo e pedículo renal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos renais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: drenagem linfática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: variações das artérias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico hilo renal: correlações clínicas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-outer-cortex-of-kidney-l": {
+    "ids": {},
+    "summary_pt": "O córtex renal externo corresponde à porção superficial do córtex renal, a camada de parênquima situada imediatamente sob a cápsula do rim, que envolve a medula renal e se prolonga, entre as pirâmides, como colunas renais. Em cortes, o córtex tem aspecto granuloso, enquanto a medula apresenta estrias radiais. É no córtex que estão os corpúsculos renais, cada um formado pelo glomérulo de capilares e pela cápsula glomerular, e os túbulos contorcidos proximais e distais, ao lado dos raios medulares, feixes de túbulos retos que se projetam da medula para o córtex. O conjunto formado pelo corpúsculo renal e pelos túbulos contorcidos recebe o nome de labirinto cortical. A filtração do plasma ocorre nos glomérulos, e a maior parte da reabsorção de água, de sais e de solutos como a glicose ocorre nos túbulos proximais, de modo que o córtex concentra boa parte da atividade de filtração e de reabsorção do rim. A região subcapsular é irrigada pelas artérias interlobulares, que partem das artérias arqueadas. A distinção entre córtex externo e córtex profundo é topográfica, pois o tecido é o mesmo, e interessa sobretudo à descrição de cortes e de imagens.",
+    "anatomy": {
+      "relations": "Camada superficial do rim, imediatamente interna à cápsula fibrosa, que envolve externamente a medula renal. Em direção ao seio renal, continua-se com as colunas renais entre as pirâmides.",
+      "vascularization": "Artérias interlobulares (corticais radiadas), ramos das artérias arqueadas, ascendem pelo córtex e originam as arteríolas aferentes dos glomérulos; o sangue deixa o córtex pelas veias interlobulares, que drenam para as veias arqueadas.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham as arteríolas e regulam o tônus vascular."
+    },
+    "histology": {
+      "epithelium": "Túbulos contorcidos proximais revestidos por epitélio simples cúbico com borda em escova, e túbulos contorcidos distais por epitélio simples cúbico, sem borda em escova; a cápsula glomerular apresenta epitélio simples pavimentoso no folheto parietal e podócitos no folheto visceral.",
+      "tissues": [
+        "Corpúsculos renais: glomérulo (capilares fenestrados, podócitos e células mesangiais) e cápsula glomerular",
+        "Túbulos contorcidos proximais e distais, em maior quantidade nos labirintos corticais",
+        "Raios medulares: túbulos retos e ductos coletores corticais",
+        "Interstício de tecido conjuntivo escasso com capilares peritubulares"
+      ]
+    },
+    "clinical": [
+      "Glomerulopatias: as doenças glomerulares, como as síndromes nefrítica e nefrótica, afetam principalmente o córtex e são avaliadas por biópsia renal.",
+      "Necrose tubular aguda: a lesão isquêmica ou tóxica das células tubulares do córtex é uma causa importante de lesão renal aguda.",
+      "Cicatrizes corticais: a pielonefrite crônica e a doença renal por refluxo podem deixar cicatrizes corticais irregulares, evidenciadas em exames de imagem."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: córtex e medula renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico córtex renal e labirinto cortical",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: córtex renal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico vascularização intrarrenal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Rim e ureter, tópico inervação do rim",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico córtex renal: túbulos contorcidos e corpúsculo renal",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico córtex renal: corpúsculo renal e filtração glomerular",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico córtex renal: raios medulares",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças glomerulares: síndromes nefrítica e nefrótica",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose tubular aguda",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico pielonefrite crônica e nefropatia de refluxo",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-a": {
+    "ids": {},
+    "summary_pt": "Esta ficha descreve a pirâmide renal rotulada \"a\" no modelo do rim esquerdo; a letra é apenas um rótulo do modelo e não indica posição anatômica padronizada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. Os segmentos retos dos túbulos, as alças do néfron e os vasos retos que compõem a pirâmide participam do gradiente osmótico da medula, do qual depende em grande parte a capacidade de concentrar a urina. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-f": {
+    "ids": {},
+    "summary_pt": "Entre as pirâmides do rim esquerdo individualizadas no modelo, a rotulada \"f\" é descrita nesta ficha; a letra é um identificador do modelo, sem valor de nomenclatura anatômica. Os segmentos retos dos túbulos, as alças do néfron e os vasos retos que compõem a pirâmide participam do gradiente osmótico da medula, do qual depende em grande parte a capacidade de concentrar a urina. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-g": {
+    "ids": {},
+    "summary_pt": "Esta ficha trata da pirâmide renal \"g\" do modelo do rim esquerdo, cujo rótulo é apenas um identificador do modelo, sem equivalência com uma posição anatômica padronizada. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. Do córtex, prolongam-se para a base da pirâmide os raios medulares, feixes de túbulos retos e de ductos coletores. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-i": {
+    "ids": {},
+    "summary_pt": "A letra \"i\" identifica, no modelo tridimensional, uma das pirâmides renais do rim esquerdo; o rótulo é do modelo e não indica posição anatômica padronizada. A papila renal é a região por onde a urina deixa o parênquima, de modo que alterações da papila repercutem sobre o fluxo urinário e a integridade da via excretora. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. Os segmentos retos dos túbulos, as alças do néfron e os vasos retos que compõem a pirâmide participam do gradiente osmótico da medula, do qual depende em grande parte a capacidade de concentrar a urina. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-j": {
+    "ids": {},
+    "summary_pt": "A pirâmide renal rotulada \"j\" no modelo do rim esquerdo é o objeto desta ficha; a letra é um identificador do modelo, sem correspondência com a nomenclatura anatômica. Do córtex, prolongam-se para a base da pirâmide os raios medulares, feixes de túbulos retos e de ductos coletores. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. A papila renal é a região por onde a urina deixa o parênquima, de modo que alterações da papila repercutem sobre o fluxo urinário e a integridade da via excretora. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-d": {
+    "ids": {},
+    "summary_pt": "O modelo do rim esquerdo individualiza cada pirâmide renal por uma letra, e a letra \"d\" identifica a pirâmide aqui descrita, sem equivalência com uma posição da nomenclatura anatômica. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal. Do córtex, prolongam-se para a base da pirâmide os raios medulares, feixes de túbulos retos e de ductos coletores. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-e": {
+    "ids": {},
+    "summary_pt": "A pirâmide renal rotulada \"e\" no modelo tridimensional é uma das várias pirâmides do rim esquerdo; o rótulo é do modelo e não corresponde a uma posição padronizada. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. A papila renal é a região por onde a urina deixa o parênquima, de modo que alterações da papila repercutem sobre o fluxo urinário e a integridade da via excretora. Os segmentos retos dos túbulos, as alças do néfron e os vasos retos que compõem a pirâmide participam do gradiente osmótico da medula, do qual depende em grande parte a capacidade de concentrar a urina.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  },
+  "za:vh-f-renal-pyramid-l-k": {
+    "ids": {},
+    "summary_pt": "Nesta ficha, a pirâmide renal rotulada \"k\" no modelo do rim esquerdo é descrita como exemplo das pirâmides da medula renal; o rótulo é do modelo, sem valor de posição anatômica padronizada. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Os segmentos retos dos túbulos, as alças do néfron e os vasos retos que compõem a pirâmide participam do gradiente osmótico da medula, do qual depende em grande parte a capacidade de concentrar a urina.",
+    "anatomy": {
+      "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
+      "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
+      "innervation": "Fibras simpáticas do plexo renal, que acompanham os vasos intrarrenais."
+    },
+    "histology": {
+      "epithelium": "Segmentos retos dos túbulos e alças do néfron revestidos por epitélio simples, cúbico nos segmentos espessos e pavimentoso nos ramos delgados; ductos coletores revestidos por epitélio simples cúbico a colunar, com células mais altas nos ductos papilares.",
+      "tissues": [
+        "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
+        "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
+        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
+      ]
+    },
+    "clinical": [
+      "Necrose papilar: a isquemia do ápice da pirâmide, associada a diabetes melito, pielonefrite, obstrução urinária e uso crônico de analgésicos, pode destacar a papila e causar hematúria ou obstrução.",
+      "Rim em esponja medular: malformação com dilatação cística dos ductos coletores das pirâmides, que pode predispor à formação de cálculos e à infecção urinária.",
+      "Cólica renal: fragmentos de cálculos ou de papila necrótica que se desprendem na via excretora podem causar dor em cólica por obstrução do ureter."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna, pirâmides e papilas renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: pirâmides",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: estrutura interna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: corte do rim",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: artérias e veias renais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Rins: vasos intrarrenais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: inervação",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e alças do néfron",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema urinário, tópico medula renal: ductos coletores e vasos retos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico necrose papilar renal",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico doenças císticas do rim: doença cística medular",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Rins: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-02"
+    }
+  }
+}

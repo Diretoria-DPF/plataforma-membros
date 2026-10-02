@@ -17,7 +17,19 @@ Usadas por `tools/atlas-content/prioridades.mjs` (Onda 3) para gerar `docs/atlas
 | Reprodutor | 0 | **Sem malhas** em `structures.json` — ficha sem estrutura tocável não entra. |
 | **Total** | **300** | |
 
+**Ajuste do PR 3.2:** a lista agrupa pelo nome em português normalizado — as versões M/F do órgão HRA e o mesmo órgão no corpo Z-Anatomy e no HRA ("Ventrículo esquerdo" × "Ventrículo esquerdo do coração") viram **uma** ficha que vale para todos os sids. Com isso o cardiovascular tem só **31** estruturas distintas; as **5** vagas restantes vão para o **Nervoso (53)**, mantendo o total de 300 (`SPILL_ORDER` em `prioridades.mjs`).
+
 Cotas da Onda 3 v1.0 (PR 3.1.6). As anteriores (Reprodutor 15, Endócrino 10, sem Articular) foram redistribuídas: o modelo não tem malhas do reprodutor e tem só 5 do endócrino.
+
+## Alterações pós-aprovação
+Mudanças na lista depois da aprovação das cotas. Cada linha precisa da assinatura de um membro do conselho antes de a onda afetada entrar.
+
+| Data | Sistema | Antes | Depois | Motivo | Assinatura do conselho |
+|---|---|---:|---:|---|---|
+| 2026-10-02 | Cardiovascular | 36 | 31 | Agrupando pelo nome em português (M/F do HRA e o mesmo órgão no ZA e no HRA viram uma ficha), o modelo só tem 31 estruturas cardiovasculares distintas | ___ |
+| 2026-10-02 | Nervoso | 48 | 53 | Absorveu as 5 vagas do cardiovascular (`SPILL_ORDER` em `prioridades.mjs`) | ___ |
+
+**Lista vigente:** `prioridades.json`, SHA-256 `7c9645db8f3dfd2ccaceb4f9bbb60d923e33ee3e9c834f68cac80b7d76956676` (gerada de forma determinística — o teste `tools/atlas-content/test/prioridades.test.mjs` confere que duas gerações dão a mesma saída). Se o hash mudar, a mudança entra nesta tabela.
 
 ## Critérios de seleção (em ordem)
 1. **Existe no corpo 3D** (`data/atlas/generated/structures.json`) — ficha sem malha não é tocável.

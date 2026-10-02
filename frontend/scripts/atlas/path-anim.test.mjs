@@ -17,7 +17,8 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const modesDir = path.resolve(here, '../../modulos/anatomia-3d/js/modes');
 const dataDir = path.resolve(here, '../../modulos/anatomia-3d/data/atlas');
 
-const { resolvePath, samplePath } = await import(path.join(modesDir, 'path-anim.js'));
+const { resolvePath, samplePath, buildTimeline } = await import(path.join(modesDir, 'path-anim.js'));
+const { animationTiming, buildSystemGraph } = await import(path.join(modesDir, 'physiology.js'));
 
 let failures = 0;
 
@@ -171,6 +172,41 @@ function validateDataFile(filePath, type) {
     console.error(`    Items que falharam: ${failures_.slice(0, 10).join(', ')}${failures_.length > 10 ? ', ...' : ''}`);
     failures += 1;
   }
+}
+
+// ============================================================================
+// Linha do tempo (PR 3.2, Bloco D): velocidade por trecho e pausas
+// ============================================================================
+function tcheck(cond, msg) {
+  if (cond) console.log(`  ok — ${msg}`);
+  else { console.error(`  FALHOU — ${msg}`); failures += 1; }
+}
+{
+  const pts = [[0, 0, 0], [1, 0, 0], [3, 0, 0]];
+  const tl = buildTimeline(pts, { segmentMs: [1000, 1000], dwellMs: [0, 500, 0] });
+  tcheck(tl.totalMs === 2500, 'timeline: soma de trechos + pausas');
+  tcheck(Math.abs(tl.tAt(500) - (0.5 / 3)) < 1e-9, 'timeline: meio do 1º trecho em t = 0,5/3 do arco');
+  tcheck(Math.abs(tl.tAt(1200) - 1 / 3) < 1e-9 && Math.abs(tl.tAt(1450) - 1 / 3) < 1e-9, 'timeline: parado no ponto durante a pausa');
+  tcheck(Math.abs(tl.tAt(2000) - 2 / 3) < 1e-9, 'timeline: 2º trecho é mais rápido (mesmo tempo, dobro do arco)');
+  tcheck(tl.tAt(9999) === 1 && tl.tAt(-5) === 0, 'timeline: limites 0 e 1');
+  const dflt = buildTimeline(pts, { totalMs: 3000 });
+  tcheck(dflt.totalMs === 3000 && Math.abs(dflt.tAt(1000) - 1 / 3) < 1e-9, 'timeline: sem segmentMs reparte o total pelo comprimento');
+  const ivTime = animationTiming({ phaseTiming: { injecao: 0.5, distribuicao: 1 } }, 'vias', 4);
+  const oralTime = animationTiming({ phaseTiming: { absorcao: 6, primeiraPassagem: 3, distribuicao: 2 } }, 'vias', 4);
+  tcheck(ivTime.totalMs === 3000 && oralTime.totalMs === 11000, 'animationTiming: duração vem de phaseTiming (mín. 3 s)');
+  tcheck(oralTime.dwellMs[3] === 1200 && oralTime.dwellMs[1] === 250 && oralTime.dwellMs[0] === 0, 'animationTiming: pausa longa no órgão-alvo, curta no caminho');
+  tcheck(animationTiming({}, 'vias', 3).totalMs === 2000, 'animationTiming: via sem phaseTiming mantém o ritmo antigo');
+  tcheck(animationTiming({}, 'processos', 5).dwellMs.filter((d) => d === 600).length === 4, 'animationTiming: processo pausa em cada passo');
+}
+
+{
+  const g = buildSystemGraph([
+    { id: 'a', name_pt: 'A', system: 'x', interageCom: ['b', 'c', 'zz'] },
+    { id: 'b', name_pt: 'B', system: 'x', interageCom: ['a'] },
+    { id: 'c', name_pt: 'C', system: 'y' },
+  ], { size: 200 });
+  tcheck(g.nodes.length === 3 && g.nodes.every((n) => n.x >= 0 && n.x <= 200 && n.y >= 0 && n.y <= 200), 'visão sistêmica: um nó por processo, dentro do quadro');
+  tcheck(g.edges.length === 2 && !g.edges.some((e) => e.to === 'zz'), 'visão sistêmica: A–B uma vez só e sem processo inexistente');
 }
 
 validateDataFile(path.join(dataDir, 'routes.json'), 'routes');

@@ -259,7 +259,18 @@ module.exports = async function apis() {
   const pkgs = mirror.ensureMirror();
   if (!pkgs) console.log('  (aviso: espelho do npm indisponível — SmilesDrawer/3Dmol/OpenChemLib ficam abortados; a verificação de wiring com as APIs segue mesmo assim)');
 
-  const app = await startApp({ role: 'member' });
+  // Atlas (PR 3.2, Bloco E): RCSB e PubChem só pelo proxy da Worker.
+  const atlasProxy = { pdb: [], pubchem: [] };
+  const app = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiLearnAtlasPdb: (args) => { atlasProxy.pdb.push(args[1]); return { success: true, id: String(args[1] && args[1].id).toUpperCase(), pdb: MOCK_PDB }; },
+      apiLearnAtlasPubchem: (args) => {
+        atlasProxy.pubchem.push(args[1]);
+        return { success: true, cid: 1, props: { MolecularFormula: 'C1', MolecularWeight: '12.0', XLogP: 0.1, CanonicalSMILES: 'C', IUPACName: 'mock' } };
+      },
+    },
+  });
   const violations = await instrumentCsp(app, pkgs);
   const { calls, fail } = installApiMocks(app.context);
 
@@ -431,7 +442,7 @@ module.exports = async function apis() {
     await app.page.click('#learn-back');
 
     // =========================================================================
-    // 4. ANATOMIA 3D — RCSB PDB + PubChem (fallback de biohacking)
+    // 4. ANATOMIA 3D — RCSB PDB + PubChem pelo proxy da Worker (PR 3.2)
     // =========================================================================
     frame = await app.openModule('anatomia');
     // js/compat/legacy-api.js instala window.abrirPdb de forma assíncrona
@@ -441,7 +452,8 @@ module.exports = async function apis() {
     await frame.waitForFunction(() => typeof window.abrirPdb === 'function', null, { timeout: 10000 });
     await frame.evaluate(() => window.abrirPdb('4EY7', 'AChE (E2E)'));
     await frame.waitForFunction(() => !!document.querySelector('#canvas-3d-container canvas'), null, { timeout: 6000 }).catch(() => {});
-    check(calls.rcsb.some((c) => c.url.endsWith('/download/4EY7.pdb')), 'anatomia: PDB baixado do RCSB (files.rcsb.org, mock)');
+    check(atlasProxy.pdb.some((a) => a && a.id === '4EY7'), 'anatomia: PDB pedido à Worker (apiLearnAtlasPdb, proxy do RCSB)');
+    check(!calls.rcsb.length, 'anatomia: nenhuma chamada direta ao files.rcsb.org');
     check(await frame.evaluate(() => !!document.querySelector('#canvas-3d-container canvas')), 'anatomia: estrutura do PDB (mock) chega a montar a cena WebGL');
 
     // Busca de biohacking sem correspondência local: antes da correção desta tarefa, renderBiohackingCards
@@ -455,8 +467,9 @@ module.exports = async function apis() {
     });
     await frame.waitForFunction(() => /forcepubchemfallbacke2e/i.test(document.getElementById('biohacking-results-grid').textContent || ''), null, { timeout: 4000 }).catch(() => {});
     const bioText = await frame.evaluate(() => document.getElementById('biohacking-results-grid').textContent || '');
-    check(/forcepubchemfallbacke2e/i.test(bioText), 'anatomia: busca de biohacking sem resultado local cai para o PubChem (mock) — fluxo religado nesta tarefa');
-    check(calls.pubchem.some((c) => c.url.includes('forcepubchemfallbacke2e') && /XLogP/.test(c.url)), 'anatomia: PubChem chamado (MolecularWeight,XLogP,CanonicalSMILES) na busca de biohacking');
+    check(/forcepubchemfallbacke2e/i.test(bioText), 'anatomia: busca de biohacking sem resultado local cai para o PubChem (proxy, mock)');
+    check(atlasProxy.pubchem.some((a) => a && a.name === 'forcepubchemfallbacke2e'), 'anatomia: PubChem pedido à Worker (apiLearnAtlasPubchem) na busca de biohacking');
+    check(!calls.pubchem.some((c) => c.url.includes('forcepubchemfallbacke2e')), 'anatomia: nenhuma chamada direta ao PubChem na busca de biohacking');
     await app.page.click('#learn-back');
 
     // =========================================================================

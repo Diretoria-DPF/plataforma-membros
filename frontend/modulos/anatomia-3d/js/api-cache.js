@@ -33,8 +33,7 @@ const ApiCache = (() => {
     HRA_BASE: "https://apps.humanatlas.io/api/v1",
     HRA_COLLECTION: "https://purl.humanatlas.io/collection/hra",
     NIH_3D_BASE: "https://3d.nih.gov/api/v1",
-    PDB_DATA: "https://files.rcsb.org/download",
-    PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound"
+    // RCSB e PubChem: só pelo proxy da Worker (apiLearnAtlasPdb/Pubchem).
   };
 
   let dbInstance = null;
@@ -250,17 +249,17 @@ const ApiCache = (() => {
       return [cached.payload];
     }
 
-    // 3. Consulta PubChem PUG REST
+    // 3. Consulta PubChem pelo proxy da Worker (PR 3.2, Bloco E): o
+    // navegador não fala mais com o PubChem e a CSP não libera o host. A
+    // Worker devolve só propriedades fixas (e já normaliza o SMILES).
     try {
-      const url = `${API_ENDPOINTS.PUBCHEM}/name/${encodeURIComponent(termo)}/property/MolecularWeight,XLogP,CanonicalSMILES/JSON`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Composto não encontrado no PubChem.");
+      const api = window.LaiftApi;
+      if (!api || typeof api.call !== "function") throw new Error("Serviço de moléculas indisponível.");
+      const res = await api.call("apiLearnAtlasPubchem", { name: termo });
+      if (!res || res.success !== true || !res.props) throw new Error((res && res.message) || "Composto não encontrado no PubChem.");
 
-      const data = await res.json();
-      const props = data.PropertyTable.Properties[0];
-      // CanonicalSMILES segue aceito como alias na requisição, mas desde 2025
-      // o PubChem devolve a propriedade como ConnectivitySMILES (ou SMILES).
-      const smiles = props.CanonicalSMILES || props.ConnectivitySMILES || props.SMILES || props.IsomericSMILES || "N/D";
+      const props = res.props;
+      const smiles = props.CanonicalSMILES || "N/D";
 
       const novoProtocolo = {
         id: `composto_${Date.now()}`,

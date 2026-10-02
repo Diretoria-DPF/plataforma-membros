@@ -149,11 +149,11 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
 
       // Lista de proteínas
       const listContainer = document.createElement('div');
-      listContainer.style.cssText = 'flex:0 1 auto; overflow-y:auto; border:1px solid var(--laift-border); border-radius:4px; padding:4px;';
+      listContainer.style.cssText = 'flex:0 1 auto; max-height:40%; overflow-y:auto; border:1px solid var(--laift-border); border-radius:4px; padding:4px;';
 
       // Detalhes (vazio até seleção)
       const detailContainer = document.createElement('div');
-      detailContainer.style.cssText = 'flex:1; display:none; border:1px solid var(--laift-border); border-radius:4px; overflow:hidden; background:var(--laift-surface-alt);';
+      detailContainer.style.cssText = 'flex:1; min-height:0; display:none; border:1px solid var(--laift-border); border-radius:4px; overflow-y:auto; background:var(--laift-surface-alt);';
 
       // Função para renderizar lista
       const renderList = (query = '') => {
@@ -327,7 +327,7 @@ export function createMoleculesMode({ bus, loadProteins, loadScript = createDefa
           // Exibe mensagem de erro
           const errorMsg = document.createElement('div');
           errorMsg.style.cssText = 'padding:12px; text-align:center; color:#f87171; font-size:0.8rem;';
-          errorMsg.textContent = 'Visualização molecular indisponível sem conexão (RCSB/3Dmol)';
+          errorMsg.textContent = 'Visualização molecular indisponível sem conexão (3Dmol)';
           viewerWrapper.replaceChildren();
           viewerWrapper.appendChild(errorMsg);
         }

@@ -6,6 +6,7 @@
 import { SYSTEMS } from '../core/contracts.js';
 import { EVENTS } from '../core/bus.js';
 import { groupEntries, sideLabel } from './structure-groups.js';
+import { STATUS_RANK, STATUS_CHIP } from './review-status.js';
 
 const { h, clear } = window.LaiftDom;
 
@@ -43,6 +44,9 @@ export function createNavigator(container, opts) {
     isSystemAvailable = () => true,
     onSystemOpen = () => {},
     getSex = () => 'M',
+    // Status de revisão do grupo (PR 3.2, C2): 'r' revisada, 'e' em revisão,
+    // 'l' antiga, 'g' gerada, null sem ficha — ver review-status.js.
+    getStatus = () => null,
   } = opts;
 
   /** @type {NavigatorState} */
@@ -51,6 +55,7 @@ export function createNavigator(container, opts) {
     currentSystemId: null,
     items: [],
     currentSid: null,
+    filter: 'all', // 'all' | 'r' | 'e' — chips [Todas] [Revisadas] [Em revisão]
   };
 
   let unsubscribe = null;
@@ -104,13 +109,31 @@ export function createNavigator(container, opts) {
   function renderContent() {
     clear(contentEl);
 
+    // Filtro por status (PR 3.2, C2): só na lista de estruturas de um sistema.
+    const structural = state.breadcrumb.length > 0 && state.items.some((it) => it.sids);
+    const items = structural && state.filter !== 'all' ? state.items.filter((it) => it.status === state.filter) : state.items;
+    if (structural) {
+      const count = (f) => (f === 'all' ? state.items.length : state.items.filter((it) => it.status === f).length);
+      const chip = (f, label) => h('button', {
+        type: 'button', className: 'atlas-nav-filter-chip', 'aria-pressed': state.filter === f ? 'true' : 'false', dataset: { filter: f },
+        text: `${label} (${count(f)})`,
+        onClick: () => { state.filter = f; renderContent(); },
+      });
+      contentEl.appendChild(h('div', { className: 'atlas-nav-filters', role: 'group', 'aria-label': 'Filtrar por revisão' },
+        [chip('all', 'Todas'), chip('r', 'Revisadas'), chip('e', 'Em revisão')]));
+      if (!items.length) {
+        contentEl.appendChild(h('p', { className: 'atlas-nav-empty', text: state.filter === 'r' ? 'Nenhuma ficha deste sistema foi revisada pelo conselho ainda.' : 'Nenhuma ficha deste sistema está em revisão.' }));
+        return;
+      }
+    }
+
     const list = h('div', { className: 'atlas-nav-list', role: 'listbox', 'aria-label': 'Estruturas' });
     // "Roving tabindex": a lista é UMA parada de Tab (a linha ativa); as
     // setas andam entre as linhas. Com centenas de linhas, cada uma sendo
     // parada de Tab prendia quem navega só pelo teclado (WCAG 2.1.1).
-    const activeIdx = Math.max(0, state.items.findIndex(isCurrent));
+    const activeIdx = Math.max(0, items.findIndex(isCurrent));
 
-    state.items.forEach((item, idx) => {
+    items.forEach((item, idx) => {
       const row = h('button', {
         className: 'atlas-nav-row',
         role: 'option',
@@ -123,6 +146,12 @@ export function createNavigator(container, opts) {
       // Nome e subtítulo
       const nameEl = h('span', { className: 'atlas-nav-row-name', text: item.name });
       row.appendChild(nameEl);
+
+      // Selo de revisão (só revisada / em revisão — o resto não ganha marca).
+      if (item.status === 'r' || item.status === 'e') {
+        const c = STATUS_CHIP[item.status];
+        row.appendChild(h('span', { className: `atlas-nav-status atlas-nav-status--${item.status}`, title: c.label, 'aria-label': c.label, text: c.icon }));
+      }
 
       // Lado (E/D)
       const sideText = item.sideText != null ? item.sideText : item.side && ({ R: 'D', r: 'D', L: 'E', l: 'E' }[item.side] || item.side);
@@ -219,11 +248,15 @@ export function createNavigator(container, opts) {
    */
   function toItems(entries) {
     const sorted = [...entries].sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'));
-    return groupEntries(sorted, { sex: getSex() }).map((g) => ({
+    const items = groupEntries(sorted, { sex: getSex() }).map((g) => ({
       ...entryToItem(g.entry),
       sids: g.sids,
       sideText: sideLabel(g.sides),
+      status: getStatus(g.sids) || null,
     }));
+    // Revisadas primeiro, depois em revisão; o resto na ordem alfabética.
+    const rank = (it) => (it.status === 'r' || it.status === 'e' ? STATUS_RANK[it.status] : 9);
+    return items.map((it, i) => [it, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(([it]) => it);
   }
 
   function isCurrent(item) {
@@ -486,6 +519,8 @@ export function createNavigator(container, opts) {
     goHome,
     getPath: () => state.breadcrumb.map((b) => b.label),
     refresh: () => renderContent(),
+    /** Filtro de revisão ('all' | 'r' | 'e') — usado pelo chip "Novo" (M4). */
+    setFilter: (f) => { state.filter = ['all', 'r', 'e'].includes(f) ? f : 'all'; renderContent(); },
     dispose,
   };
 }

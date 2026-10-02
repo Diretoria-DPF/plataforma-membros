@@ -17,6 +17,7 @@ export const FLAG_DEFAULTS = Object.freeze({
   confetti: true,     // confetes no acerto do quiz (js/modes/quiz.js)
   peek: true,         // peek com selos e "Ver mais" (js/ui/infocard.js)
   tts: true,          // "Ouvir" a ficha com speechSynthesis pt-BR (js/ui/infocard.js)
+  systemic: false,    // "Visão sistêmica" da Fisiologia — desligada até o teste de papel (guia-revisao.md §5)
 });
 
 /**

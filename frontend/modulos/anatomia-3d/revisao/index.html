@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Ferramenta de revisão do conselho editorial (PR 3.2, C1). Não publica
+       fichas: o revisor carrega os lotes pendentes do próprio computador;
+       nada sai do navegador. Gera revisao-onda-NN.md para o repositório. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="robots" content="noindex">
+  <title>Revisão de fichas — Conselho editorial</title>
+  <style>
+    :root { --bg: #f8fafc; --surface: #fff; --text: #0f172a; --muted: #475569; --border: #cbd5e1; --primary: #1d4ed8; --ok: #166534; --okbg: #dcfce7; --warn: #854d0e; --warnbg: #fef9c3; --bad: #991b1b; --badbg: #fee2e2; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0b1220; --surface: #111a2e; --text: #e2e8f0; --muted: #a3b1c6; --border: #334155; --primary: #93c5fd; --ok: #86efac; --okbg: #14321f; --warn: #fde68a; --warnbg: #3a2f0b; --bad: #fca5a5; --badbg: #3b1414; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+    header, main, footer { max-width: 920px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 1.35rem; margin: 0 0 4px; }
+    .muted { color: var(--muted); }
+    .box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 12px 0; }
+    .drop { border: 2px dashed var(--border); text-align: center; padding: 22px; }
+    .drop.over { border-color: var(--primary); }
+    button, select, input[type=text], input[type=date], textarea { font: inherit; color: inherit; }
+    button { min-height: 44px; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; }
+    button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    button[disabled] { opacity: .55; cursor: not-allowed; }
+    .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    @media (prefers-color-scheme: dark) { .primary { color: #0b1220; } }
+    .progress { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .bar { flex: 1; min-width: 160px; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--primary); width: 0; }
+    .ficha h2 { font-size: 1.12rem; margin: 0 0 2px; }
+    .ficha .sid { font-family: ui-monospace, monospace; font-size: .8rem; }
+    .ficha h3 { font-size: .95rem; margin: 14px 0 4px; }
+    .ficha ul { margin: 4px 0; padding-left: 20px; }
+    .ficha dl { margin: 4px 0; } .ficha dt { font-weight: 600; margin-top: 6px; } .ficha dd { margin: 0 0 4px 0; }
+    .sources li { font-size: .9rem; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .actions button[aria-pressed=true][data-decision=aprovar] { background: var(--okbg); color: var(--ok); border-color: var(--ok); }
+    .actions button[aria-pressed=true][data-decision=comentar] { background: var(--warnbg); color: var(--warn); border-color: var(--warn); }
+    .actions button[aria-pressed=true][data-decision=reprovar] { background: var(--badbg); color: var(--bad); border-color: var(--bad); }
+    textarea { width: 100%; min-height: 72px; margin-top: 8px; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); }
+    .state { font-size: .85rem; margin-left: auto; }
+    .err { color: var(--bad); }
+    .sign label { display: block; margin: 8px 0 2px; font-weight: 600; }
+    .sign input { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); }
+    pre { white-space: pre-wrap; background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 6px; font-size: .8rem; max-height: 320px; overflow: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Revisão de fichas do Atlas 3D</h1>
+    <p class="muted">Conselho editorial · LAIFT. Leia cada ficha, marque <strong>Aprovar</strong>, <strong>Aprovar com ressalva</strong> ou <strong>Reprovar</strong> e, no fim, assine a onda. As fichas não saem do seu computador; o progresso fica salvo neste navegador.</p>
+  </header>
+  <main>
+    <section class="box" aria-labelledby="t-carregar">
+      <h2 id="t-carregar" style="font-size:1.05rem;margin:0 0 8px;">1. Carregar a onda</h2>
+      <div id="drop" class="drop">
+        <p style="margin:0 0 8px;">Arraste aqui os arquivos <code>lote-*.json</code> da pasta da onda (<code>onda-NN</code>, fichas pendentes) (ou o pacote <code>pacote-onda-NN.json</code>).</p>
+        <label for="files" class="primary" style="display:inline-block;padding:10px 16px;border-radius:6px;cursor:pointer;">Escolher arquivos</label>
+        <input id="files" type="file" accept=".json,application/json" multiple class="sr-only">
+      </div>
+      <p><label for="onda">Onda:</label> <select id="onda"></select> <span id="load-status" class="muted" role="status"></span></p>
+      <ul id="load-errors" class="err"></ul>
+    </section>
+
+    <div id="progress" class="progress" hidden>
+      <strong id="progress-text">0 de 0 marcadas</strong>
+      <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
+      <a href="#assinar">Ir para a assinatura</a>
+    </div>
+
+    <section id="fichas" aria-label="Fichas da onda"></section>
+
+    <section id="assinar" class="box sign" hidden aria-labelledby="t-assinar">
+      <h2 id="t-assinar" style="font-size:1.05rem;margin:0 0 8px;">2. Assinar a onda</h2>
+      <p id="sign-summary" class="muted"></p>
+      <label for="rev-nome">Nome do revisor</label>
+      <input id="rev-nome" type="text" autocomplete="name">
+      <label for="rev-registro">Registro profissional (ex.: CRF-BA 0000)</label>
+      <input id="rev-registro" type="text">
+      <label for="rev-data">Data</label>
+      <input id="rev-data" type="date">
+      <p><button id="btn-sign" class="primary" type="button" disabled>Assinar onda e baixar revisao-onda-NN.md</button></p>
+      <p id="sign-error" class="err" role="alert"></p>
+      <div id="sign-result" hidden>
+        <p>Arquivo baixado. Envie-o à coordenação do atlas (ele entra no repositório exatamente como está). Conteúdo:</p>
+        <pre id="md-out" tabindex="0" aria-label="Conteúdo do arquivo de revisão gerado"></pre>
+      </div>
+    </section>
+  </main>
+  <footer class="muted" style="font-size:.85rem;">Guia do processo: docs/atlas-conteudo/guia-revisao.md no repositório.</footer>
+  <script type="module" src="../js/revisao/review-app.js"></script>
+</body>
+</html>

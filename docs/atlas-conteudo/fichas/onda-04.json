@@ -1,0 +1,354 @@
+{
+  "onda": 4,
+  "sistema": "digestorio",
+  "total": 40,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:liver",
+          "sids": [
+            "za:liver"
+          ],
+          "nome_pt": "Fígado",
+          "nome_en": "Liver"
+        },
+        {
+          "sid": "za:stomach",
+          "sids": [
+            "za:stomach"
+          ],
+          "nome_pt": "Estômago",
+          "nome_en": "Stomach"
+        },
+        {
+          "sid": "za:duodenum",
+          "sids": [
+            "za:duodenum"
+          ],
+          "nome_pt": "Duodeno",
+          "nome_en": "Duodenum"
+        },
+        {
+          "sid": "za:vh-m-liver-capsule",
+          "sids": [
+            "za:vh-f-capsule-of-the-liver",
+            "za:vh-m-liver-capsule"
+          ],
+          "nome_pt": "Cápsula do fígado",
+          "nome_en": "Liver capsule"
+        },
+        {
+          "sid": "za:vh-f-diaphragmatic-surface-of-liver",
+          "sids": [
+            "za:vh-f-diaphragmatic-surface-of-liver"
+          ],
+          "nome_pt": "Face diafragmática do fígado",
+          "nome_en": "Diaphragmatic surface of liver"
+        },
+        {
+          "sid": "za:vh-m-bare-area-of-liver",
+          "sids": [
+            "za:vh-f-bare-area-of-liver",
+            "za:vh-m-bare-area-of-liver"
+          ],
+          "nome_pt": "Área nua do fígado",
+          "nome_en": "Bare area of liver"
+        },
+        {
+          "sid": "za:mucosa-of-stomach",
+          "sids": [
+            "za:mucosa-of-stomach"
+          ],
+          "nome_pt": "Mucosa gástrica",
+          "nome_en": "Mucosa of stomach"
+        },
+        {
+          "sid": "za:anterior-lateral-segment-of-liver-vi",
+          "sids": [
+            "za:anterior-lateral-segment-of-liver-vi"
+          ],
+          "nome_pt": "Segmento anterolateral do fígado (VI)",
+          "nome_en": "Anterior lateral segment of liver (VI)"
+        },
+        {
+          "sid": "za:transverse-colon",
+          "sids": [
+            "za:transverse-colon"
+          ],
+          "nome_pt": "Colo transverso",
+          "nome_en": "Transverse colon"
+        },
+        {
+          "sid": "za:posterior-lateral-segment-of-liver-vii",
+          "sids": [
+            "za:posterior-lateral-segment-of-liver-vii"
+          ],
+          "nome_pt": "Segmento posterolateral do fígado (VII)",
+          "nome_en": "Posterior lateral segment of liver (VII)"
+        },
+        {
+          "sid": "za:vh-m-gastric-impression-of-liver",
+          "sids": [
+            "za:vh-f-gastric-impression-of-liver",
+            "za:vh-m-gastric-impression-of-liver"
+          ],
+          "nome_pt": "Impressão gástrica do fígado",
+          "nome_en": "Gastric impression of liver"
+        },
+        {
+          "sid": "za:posterior-medial-segment-of-liver-viii",
+          "sids": [
+            "za:posterior-medial-segment-of-liver-viii"
+          ],
+          "nome_pt": "Segmento posteromedial do fígado (VIII)",
+          "nome_en": "Posterior medial segment of liver (VIII)"
+        },
+        {
+          "sid": "za:left-medial-segment-of-liver-iv",
+          "sids": [
+            "za:left-medial-segment-of-liver-iv"
+          ],
+          "nome_pt": "Segmento medial esquerdo do fígado (IV)",
+          "nome_en": "Left medial segment of liver (IV)"
+        },
+        {
+          "sid": "za:left-posterior-lateral-segment-of-liver-ii",
+          "sids": [
+            "za:left-posterior-lateral-segment-of-liver-ii"
+          ],
+          "nome_pt": "Segmento posterolateral esquerdo do fígado (II)",
+          "nome_en": "Left posterior lateral segment of liver (II)"
+        },
+        {
+          "sid": "za:anterior-medial-segment-of-liver-v",
+          "sids": [
+            "za:anterior-medial-segment-of-liver-v"
+          ],
+          "nome_pt": "Segmento anteromedial do fígado (V)",
+          "nome_en": "Anterior medial segment of liver (V)"
+        },
+        {
+          "sid": "za:pancreas",
+          "sids": [
+            "za:pancreas"
+          ],
+          "nome_pt": "Pâncreas",
+          "nome_en": "Pancreas"
+        },
+        {
+          "sid": "za:vh-m-caudate-lobe-of-liver",
+          "sids": [
+            "za:vh-m-caudate-lobe-of-liver"
+          ],
+          "nome_pt": "Lobo caudado do fígado",
+          "nome_en": "Caudate lobe of liver"
+        },
+        {
+          "sid": "za:left-anterior-lateral-segment-of-liver-iii",
+          "sids": [
+            "za:left-anterior-lateral-segment-of-liver-iii"
+          ],
+          "nome_pt": "Segmento anterolateral esquerdo do fígado (III)",
+          "nome_en": "Left anterior lateral segment of liver (III)"
+        },
+        {
+          "sid": "za:vh-m-quadrate-lobe-of-liver",
+          "sids": [
+            "za:vh-m-quadrate-lobe-of-liver"
+          ],
+          "nome_pt": "Lobo quadrado do fígado",
+          "nome_en": "Quadrate lobe of liver"
+        },
+        {
+          "sid": "za:vh-m-colic-impression-of-liver",
+          "sids": [
+            "za:vh-f-colic-impression-of-liver",
+            "za:vh-m-colic-impression-of-liver"
+          ],
+          "nome_pt": "Impressão cólica do fígado",
+          "nome_en": "Colic impression of liver"
+        }
+      ]
+    },
+    {
+      "lote": 2,
+      "itens": [
+        {
+          "sid": "za:posterior-segment-of-liver-i",
+          "sids": [
+            "za:posterior-segment-of-liver-i"
+          ],
+          "nome_pt": "Segmento posterior do fígado (I)",
+          "nome_en": "Posterior segment of liver (I)"
+        },
+        {
+          "sid": "za:vh-m-renal-impression-of-liver",
+          "sids": [
+            "za:vh-f-renal-impression-of-liver",
+            "za:vh-m-renal-impression-of-liver"
+          ],
+          "nome_pt": "Impressão renal do fígado",
+          "nome_en": "Renal impression of liver"
+        },
+        {
+          "sid": "za:vh-m-porta-hepatis",
+          "sids": [
+            "za:vh-f-porta-hepatis",
+            "za:vh-m-porta-hepatis"
+          ],
+          "nome_pt": "Porta do fígado",
+          "nome_en": "Porta hepatis"
+        },
+        {
+          "sid": "za:tongue",
+          "sids": [
+            "za:tongue"
+          ],
+          "nome_pt": "Língua",
+          "nome_en": "Tongue"
+        },
+        {
+          "sid": "za:gallbladder",
+          "sids": [
+            "za:gallbladder"
+          ],
+          "nome_pt": "Vesícula biliar",
+          "nome_en": "Gallbladder"
+        },
+        {
+          "sid": "za:vh-m-esophageal-impression-of-liver",
+          "sids": [
+            "za:vh-f-esophageal-impression-of-liver",
+            "za:vh-m-esophageal-impression-of-liver"
+          ],
+          "nome_pt": "Impressão esofágica do fígado",
+          "nome_en": "Esophageal impression of liver"
+        },
+        {
+          "sid": "za:vh-m-suprarenal-impression-of-liver",
+          "sids": [
+            "za:vh-f-suprarenal-impression-of-liver",
+            "za:vh-m-suprarenal-impression-of-liver"
+          ],
+          "nome_pt": "Impressão suprarrenal do fígado",
+          "nome_en": "Suprarenal impression of liver"
+        },
+        {
+          "sid": "za:vh-m-duodenal-impression-of-liver",
+          "sids": [
+            "za:vh-f-duodenal-impression-of-liver",
+            "za:vh-m-duodenal-impression-of-liver"
+          ],
+          "nome_pt": "Impressão duodenal do fígado",
+          "nome_en": "Duodenal impression of liver"
+        },
+        {
+          "sid": "za:sublingual-gland-r",
+          "sids": [
+            "za:sublingual-gland-l",
+            "za:sublingual-gland-r"
+          ],
+          "nome_pt": "Glândula sublingual",
+          "nome_en": "Sublingual gland"
+        },
+        {
+          "sid": "za:external-anal-sphincter-r",
+          "sids": [
+            "za:external-anal-sphincter-l",
+            "za:external-anal-sphincter-r"
+          ],
+          "nome_pt": "Esfíncter anal externo",
+          "nome_en": "External anal sphincter"
+        },
+        {
+          "sid": "za:mesocolic-taenia",
+          "sids": [
+            "za:mesocolic-taenia"
+          ],
+          "nome_pt": "Tênia mesocólica",
+          "nome_en": "Mesocolic taenia"
+        },
+        {
+          "sid": "za:vh-m-diaphragmatic-surface",
+          "sids": [
+            "za:vh-m-diaphragmatic-surface"
+          ],
+          "nome_pt": "Face diafragmática",
+          "nome_en": "Diaphragmatic surface"
+        },
+        {
+          "sid": "za:descending-colon",
+          "sids": [
+            "za:descending-colon"
+          ],
+          "nome_pt": "Colo descendente",
+          "nome_en": "Descending colon"
+        },
+        {
+          "sid": "za:omental-taenia",
+          "sids": [
+            "za:omental-taenia"
+          ],
+          "nome_pt": "Tênia omental",
+          "nome_en": "Omental taenia"
+        },
+        {
+          "sid": "za:free-taenia",
+          "sids": [
+            "za:free-taenia"
+          ],
+          "nome_pt": "Tênia livre",
+          "nome_en": "Free taenia"
+        },
+        {
+          "sid": "za:vh-m-coronary-ligament-of-liver",
+          "sids": [
+            "za:vh-f-coronary-ligament-of-liver",
+            "za:vh-m-coronary-ligament-of-liver"
+          ],
+          "nome_pt": "Ligamento coronário do fígado",
+          "nome_en": "Coronary ligament of liver"
+        },
+        {
+          "sid": "za:vh-m-right-anteroinferior-segment",
+          "sids": [
+            "za:vh-f-right-anteroinferior-segment",
+            "za:vh-m-right-anteroinferior-segment"
+          ],
+          "nome_pt": "Segmento anteroinferior direito",
+          "nome_en": "Right anteroinferior segment"
+        },
+        {
+          "sid": "za:vh-m-right-anterosuperior-segment",
+          "sids": [
+            "za:vh-f-right-anterosuperior-segment",
+            "za:vh-m-right-anterosuperior-segment"
+          ],
+          "nome_pt": "Segmento anterosuperior direito",
+          "nome_en": "Right anterosuperior segment"
+        },
+        {
+          "sid": "za:vh-m-left-superiomedial-segment",
+          "sids": [
+            "za:vh-f-left-superomedial-segment",
+            "za:vh-f-left-superomedial-segment1",
+            "za:vh-m-left-superiomedial-segment"
+          ],
+          "nome_pt": "Segmento superomedial esquerdo",
+          "nome_en": "Left superiomedial segment"
+        },
+        {
+          "sid": "za:vh-m-right-posteroinferior-segment",
+          "sids": [
+            "za:vh-f-right-posteroinferior-segment",
+            "za:vh-m-right-posteroinferior-segment"
+          ],
+          "nome_pt": "Segmento posteroinferior direito",
+          "nome_en": "Right posteroinferior segment"
+        }
+      ]
+    }
+  ]
+}
