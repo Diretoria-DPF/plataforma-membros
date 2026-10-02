@@ -35,6 +35,7 @@ import { buildSearchIndex, search } from './ui/search-index.js';
 import { createSearchBox } from './ui/search-box.js';
 import { createNavigator } from './ui/navigator.js';
 import { groupEntries, sideLabel, contentCandidates } from './ui/structure-groups.js';
+import { mergeLayers } from './ui/content-merge.js';
 import { createInfoCard } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
 import { linkLegacy } from './ui/legacy-link.js';
@@ -185,25 +186,6 @@ async function createContentStore() {
     return legacySid ? legacyBySid.get(legacySid) || null : null;
   }
 
-  function mergeContent(gen, leg) {
-    const merged = { ...(gen || {}), ...(leg || {}) }; // texto PT curado vence
-    if (gen && leg) {
-      merged.ids = { ...(gen.ids || {}), ...(leg.ids || {}) };
-      const genCells = gen.histology && gen.histology.cells && gen.histology.cells.length;
-      const legCells = leg.histology && leg.histology.cells && leg.histology.cells.length;
-      if (genCells && !legCells) merged.histology = { ...(leg.histology || {}), ...gen.histology };
-      if (!leg.summary_pt && gen.summary_pt) merged.summary_pt = gen.summary_pt;
-      const seen = new Set();
-      merged.sources = [...(leg.sources || []), ...(gen.sources || [])].filter((src) => {
-        const k = JSON.stringify(src);
-        if (seen.has(k)) return false;
-        seen.add(k);
-        return true;
-      });
-    }
-    return merged;
-  }
-
   // Mantém todos os campos de structures.json (system, layer, englishName,
   // parentCollection, bbox, source...) e ACRESCENTA `names` — search-box.js/
   // navigator.js exigem entry.names.{pt,en,la} (ver buildSearchIndex), e
@@ -267,12 +249,14 @@ async function createContentStore() {
         const entry = bySid.get(candidate) || null;
         const legacy = legacyEntryFor(candidate);
         if (!entry && !legacy) continue;
-        const [gen, leg] = await Promise.all([
+        // Ficha curada (curated/, PR 3.2) > legado > gerado — ver content-merge.js.
+        const [cur, gen, leg] = await Promise.all([
+          entry && entry.system ? loadContentFile('curated', entry.system).then((f) => f[candidate] || null) : null,
           entry && entry.system ? loadContentFile('content', entry.system).then((f) => f[candidate] || null) : null,
           legacy && legacy.system ? loadContentFile('legacy/content', legacy.system).then((f) => f[legacy.sid] || null) : null,
         ]);
-        if (gen || leg) {
-          content = { ...mergeContent(gen, leg), draft: true, legacy };
+        if (cur || gen || leg) {
+          content = { ...mergeLayers({ curated: cur, generated: gen, legacy: leg }), draft: !cur, legacy };
           break;
         }
       }

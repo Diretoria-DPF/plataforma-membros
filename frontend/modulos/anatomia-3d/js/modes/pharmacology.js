@@ -35,6 +35,26 @@ export function defaultLoadScript(src, opts = {}) {
 }
 
 /**
+ * Normaliza um composto para o formato v2 (PR 3.2, D2 — schema duplo).
+ * v1 (legado): pk { route, vd, halfLife, dose, ka } sem PD nem fontes →
+ * recebe F/PD padrão e fica marcado como "legacy-unverified" (o selo
+ * avisa que os números não têm fonte). v2 passa como está.
+ * @param {Object} c
+ * @returns {Object}
+ */
+export function normalizeCompound(c) {
+  if (!c || !c.pk) return c;
+  if (c.pd) return c; // v2
+  return {
+    ...c,
+    pk: { ...c.pk, F: c.pk.F != null ? c.pk.F : 0.75, tmax: c.pk.tmax != null ? c.pk.tmax : null },
+    pd: { emax: 100, ec50: 1.25, hill: 1.5 },
+    review: { status: 'legacy-unverified' },
+    legacyDefaults: true,
+  };
+}
+
+/**
  * Mapeia compound.pk para a forma esperada por PkEngine.simulateProtocol()
  * @param {Object} compound { id, nome, pk: { route, vd, halfLife, dose, ka }, targetSid? }
  * @returns {Object} { nome, pkData: { route, vd, halfLife, dose, ka, targetOrgan }, targetMesh }
@@ -52,8 +72,11 @@ export function toPkProtocol(compound) {
       halfLife: compound.pk.halfLife || 4,
       dose: compound.pk.dose || 100,
       ka: compound.pk.ka || 1.5,
+      F: compound.pk.F != null ? compound.pk.F : 1,
+      tmax: compound.pk.tmax != null ? compound.pk.tmax : null,
       targetOrgan: compound.targetSid || 'liver'
     },
+    pd: compound.pd || null,
     targetMesh: compound.targetSid
   };
 }
@@ -85,6 +108,8 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScript = defaul
       compounds = await loadCompounds();
       if (!Array.isArray(compounds)) {
         compounds = [];
+      } else {
+        compounds = compounds.map(normalizeCompound);
       }
     } catch (err) {
       console.error('[pharmacology] Erro ao carregar compostos:', err);

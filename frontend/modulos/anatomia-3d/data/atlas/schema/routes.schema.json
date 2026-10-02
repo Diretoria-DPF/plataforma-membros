@@ -4,7 +4,9 @@
   "title": "Vias de administração/circulação do Atlas Anatômico",
   "description": "data/atlas/routes.json. Cada via é uma sequência de âncoras sobre estruturas reais (sid), com um parâmetro t opcional (0–1) para posicionar um ponto ao longo do trecho entre duas âncoras, usado pela animação do modo Fisiologia & Vias.",
   "type": "array",
-  "items": { "$ref": "#/$defs/route" },
+  "items": {
+    "$ref": "#/$defs/route"
+  },
   "$defs": {
     "sid": {
       "type": "string",
@@ -13,31 +15,147 @@
     "anchor": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["sid"],
+      "required": [
+        "sid"
+      ],
       "properties": {
-        "sid": { "$ref": "#/$defs/sid" },
+        "sid": {
+          "$ref": "#/$defs/sid"
+        },
         "t": {
           "type": "number",
           "description": "Posição relativa (0–1) dentro da estrutura ou do trecho, quando a âncora precisa de mais precisão do que \"a estrutura toda\".",
           "minimum": 0,
           "maximum": 1
         },
-        "label_pt": { "type": "string", "minLength": 1 }
+        "label_pt": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "route": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "system", "name_pt", "description_pt", "anchors"],
+      "required": [
+        "id",
+        "system",
+        "name_pt",
+        "description_pt",
+        "anchors"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" },
-        "system": { "type": "string" },
-        "name_pt": { "type": "string", "minLength": 1 },
-        "description_pt": { "type": "string", "minLength": 1 },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "system": {
+          "type": "string"
+        },
+        "name_pt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description_pt": {
+          "type": "string",
+          "minLength": 1
+        },
         "anchors": {
           "type": "array",
-          "items": { "$ref": "#/$defs/anchor" },
+          "items": {
+            "$ref": "#/$defs/anchor"
+          },
           "minItems": 2
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "review": {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "legacy-unverified",
+                "editorial",
+                "reviewed",
+                "approved"
+              ]
+            },
+            "published_by": {
+              "type": "string"
+            },
+            "review_requested_at": {
+              "type": "string"
+            },
+            "by": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            }
+          }
+        },
+        "bioavailabilityF": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tmax": {
+          "type": "number",
+          "minimum": 0
+        },
+        "firstPass": {
+          "type": "boolean"
+        },
+        "clinicalNotes": {
+          "type": "string"
+        },
+        "phaseTiming": {
+          "type": "object",
+          "description": "Duração relativa (s de animação) de cada fase da via.",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "ref",
+        "obraId"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obraId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capitulo": {
+          "type": "string"
+        },
+        "exception": {
+          "type": "boolean"
+        },
+        "justificativa": {
+          "type": "string",
+          "minLength": 20
         }
       }
     }

@@ -17,6 +17,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { findForbiddenRefs, checkRecord, loadFontes } from './content-rules.mjs';
+import { validateCurated } from './validate-curated.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_DIR = path.resolve(__dirname, '..', '..');
@@ -253,6 +255,55 @@ check('as fixtures geradas passam na validação', () => {
     assert.notEqual(status, 0, 'esperava falha');
     assert.match(stderr, /correctSids.*za:rins.*não é uma estrutura do corpo 3D/);
     assert.match(stderr, /correctSystem.*inexistente/);
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Regras anti-referência inventada (PR 3.2, A.5) e conteúdo curado
+// ---------------------------------------------------------------------------
+{
+  const fontes = loadFontes({ obras: [{ id: 'grays42' }, { id: 'guyton' }], dominiosPermitidos: ['pt.wikipedia.org', 'www.wikidata.org'] });
+  const good = {
+    summary_pt: 'O coração é um órgão muscular.',
+    sources: [
+      { field: 'summary_pt', type: 'textbook', ref: "Gray's Anatomy, 42ª ed., cap. 57", obraId: 'grays42', license: 'citação' },
+      { field: 'summary_pt', type: 'textbook', ref: 'Guyton & Hall, 14ª ed., cap. 9', obraId: 'guyton', license: 'citação' },
+    ],
+    review: { status: 'editorial' },
+  };
+  const clone = () => JSON.parse(JSON.stringify(good));
+
+  check('regras: registro com obras de fontes.json passa', () => {
+    assert.deepEqual(checkRecord(good, fontes, 'x'), []);
+  });
+  check('regras: PMID no texto é erro', () => {
+    const r = clone(); r.summary_pt += ' (PMID: 12345678)';
+    assert.match(checkRecord(r, fontes, 'x').join('\n'), /PMID/);
+  });
+  check('regras: DOI no texto é erro', () => {
+    assert.deepEqual(findForbiddenRefs('ver doi:10.1016/j.cell.2020.01.001'), ['DOI']);
+  });
+  check('regras: obraId inexistente é erro', () => {
+    const r = clone(); r.sources[1].obraId = 'livro-inventado';
+    assert.match(checkRecord(r, fontes, 'x').join('\n'), /obraId "livro-inventado" não existe/);
+  });
+  check('regras: URL do PubChem (domínio fora da lista) é erro', () => {
+    const r = clone(); r.sources[0].url = 'https://pubchem.ncbi.nlm.nih.gov/compound/2244';
+    assert.match(checkRecord(r, fontes, 'x').join('\n'), /URL fora dos domínios permitidos/);
+  });
+  check('regras: URL da Wikipédia PT é aceita', () => {
+    const r = clone(); r.sources[0] = { field: 'summary_pt', type: 'wikipedia', ref: 'Coração', url: 'https://pt.wikipedia.org/wiki/Cora%C3%A7%C3%A3o', license: 'CC BY-SA' };
+    assert.deepEqual(checkRecord(r, fontes, 'x'), []);
+  });
+  check('regras: exception sem justificativa é erro; com justificativa passa', () => {
+    const r = clone(); r.sources[1] = { field: 'summary_pt', type: 'textbook', ref: 'Livro raro', exception: true, license: 'citação' };
+    assert.match(checkRecord(r, fontes, 'x').join('\n'), /justificativa/);
+    r.sources[1].justificativa = 'Obra clássica nacional pedida pelo conselho editorial.';
+    assert.deepEqual(checkRecord(r, fontes, 'x'), []);
+  });
+  check('curado: dados reais (curated/, compostos, processos, vias) sem erros', () => {
+    const { errors } = validateCurated();
+    assert.deepEqual(errors, []);
   });
 }
 

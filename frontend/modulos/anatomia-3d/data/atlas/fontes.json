@@ -1,0 +1,32 @@
+{
+  "descricao": "Obras aprovadas para citar no atlas (PR 3.2, A.2). sources[].obraId precisa existir aqui; fora disso só com exception=true e justificativa (≥ 20 caracteres), revisada à mão. Nunca citar PMID, DOI, URL ou página inventados.",
+  "obras": [
+    { "id": "grays42", "titulo": "Gray's Anatomy: The Anatomical Basis of Clinical Practice", "autores": "Standring S (org.)", "edicao": "42ª", "tipo": "textbook" },
+    { "id": "moore", "titulo": "Clinically Oriented Anatomy (Anatomia Orientada para a Clínica)", "autores": "Moore KL, Dalley AF, Agur AMR", "edicao": "8ª", "tipo": "textbook" },
+    { "id": "netter", "titulo": "Atlas of Human Anatomy (Atlas de Anatomia Humana)", "autores": "Netter FH", "edicao": "7ª", "tipo": "atlas" },
+    { "id": "junqueira", "titulo": "Histologia Básica", "autores": "Junqueira LC, Carneiro J", "edicao": "13ª", "tipo": "textbook" },
+    { "id": "guyton", "titulo": "Tratado de Fisiologia Médica", "autores": "Guyton AC, Hall JE", "edicao": "14ª", "tipo": "textbook" },
+    { "id": "silverthorn", "titulo": "Fisiologia Humana: Uma Abordagem Integrada", "autores": "Silverthorn DU", "edicao": "8ª", "tipo": "textbook" },
+    { "id": "berne", "titulo": "Berne & Levy Physiology", "autores": "Koeppen BM, Stanton BA (orgs.)", "edicao": "7ª", "tipo": "textbook" },
+    { "id": "goodman", "titulo": "Goodman & Gilman: As Bases Farmacológicas da Terapêutica", "autores": "Brunton LL et al. (orgs.)", "edicao": "13ª", "tipo": "textbook" },
+    { "id": "katzung", "titulo": "Basic & Clinical Pharmacology (Farmacologia Básica e Clínica)", "autores": "Katzung BG, Vanderah TW (orgs.)", "edicao": "15ª", "tipo": "textbook" },
+    { "id": "rang", "titulo": "Rang & Dale's Pharmacology (Farmacologia)", "autores": "Ritter JM et al.", "edicao": "9ª", "tipo": "textbook" },
+    { "id": "robbins", "titulo": "Robbins & Cotran: Bases Patológicas das Doenças", "autores": "Kumar V, Abbas AK, Aster JC", "edicao": "10ª", "tipo": "textbook" },
+    { "id": "abbas", "titulo": "Cellular and Molecular Immunology (Imunologia Celular e Molecular)", "autores": "Abbas AK, Lichtman AH, Pillai S", "edicao": "10ª", "tipo": "textbook" },
+    { "id": "alberts", "titulo": "Molecular Biology of the Cell (Biologia Molecular da Célula)", "autores": "Alberts B et al.", "edicao": "7ª", "tipo": "textbook" },
+    { "id": "lodish", "titulo": "Molecular Cell Biology (Biologia Celular e Molecular)", "autores": "Lodish H et al.", "edicao": "9ª", "tipo": "textbook" },
+    { "id": "campbell", "titulo": "Bioquímica", "autores": "Campbell MK, Farrell SO", "edicao": "8ª", "tipo": "textbook" },
+    { "id": "harper", "titulo": "Harper's Illustrated Biochemistry (Bioquímica Ilustrada de Harper)", "autores": "Rodwell VW et al.", "edicao": "32ª", "tipo": "textbook" },
+    { "id": "foye", "titulo": "Foye's Principles of Medicinal Chemistry", "autores": "Roche VF et al. (orgs.)", "edicao": "8ª", "tipo": "textbook" },
+    { "id": "rowland", "titulo": "Clinical Pharmacokinetics and Pharmacodynamics: Concepts and Applications", "autores": "Rowland M, Tozer TN", "edicao": "5ª", "tipo": "textbook" },
+    { "id": "fipat", "titulo": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA)", "autores": "FIPAT; Sociedade Brasileira de Anatomia", "edicao": "2ª", "tipo": "fipat" },
+    { "id": "tortora", "titulo": "Princípios de Anatomia e Fisiologia", "autores": "Tortora GJ, Derrickson B", "edicao": "16ª", "tipo": "textbook" },
+    { "id": "dangelo", "titulo": "Anatomia Humana Sistêmica e Segmentar", "autores": "Dangelo JG, Fattini CA", "edicao": "3ª", "tipo": "textbook" },
+    { "id": "gardner", "titulo": "Anatomia: Estudo Regional do Corpo Humano", "autores": "Gardner E, Gray DJ, O'Rahilly R", "edicao": "4ª", "tipo": "textbook" },
+    { "id": "machado", "titulo": "Neuroanatomia Funcional", "autores": "Machado A, Haertel LM", "edicao": "3ª", "tipo": "textbook" },
+    { "id": "curi", "titulo": "Fisiologia Básica", "autores": "Curi R, Procopio J (orgs.)", "edicao": "2ª", "tipo": "textbook" },
+    { "id": "airton", "titulo": "Farmacologia Clínica", "autores": "a confirmar pelo conselho (provável: Fuchs FD, Wannmacher L — Farmacologia Clínica e Terapêutica)", "edicao": "6ª", "tipo": "textbook", "confirmar": true }
+  ],
+  "excecoesPermitidas": true,
+  "dominiosPermitidos": ["pt.wikipedia.org", "www.wikidata.org", "humanatlas.io", "www.ebi.ac.uk", "obolibrary.org"]
+}

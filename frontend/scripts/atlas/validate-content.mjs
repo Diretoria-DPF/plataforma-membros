@@ -406,6 +406,12 @@ async function main() {
     }
   }
 
+  // --- Conteúdo curado e regras de fonte (PR 3.2) — só quando há fontes.json -
+  if (fs.existsSync(path.join(targetDir, 'fontes.json'))) {
+    const { validateCurated } = await import('./validate-curated.mjs');
+    errors.push(...validateCurated(targetDir).errors);
+  }
+
   // --- Resultado -------------------------------------------------------------
   console.log(`[atlas] validando ${rel(targetDir) === '.' ? targetDir : targetDir}`);
   if (errors.length === 0) {
