@@ -34,6 +34,11 @@ module.exports = async function atlas() {
     const url = req.url();
     if (/\.glb($|\?)/.test(url)) glbRequests.push(url);
   });
+  // C8 (Onda 3): nenhum recurso do Atlas pode responder >= 400.
+  const atlasHttpErrors = [];
+  app.page.on('response', (res) => {
+    if (res.status() >= 400 && res.url().includes('/modulos/anatomia-3d/')) atlasHttpErrors.push(`${res.status()} ${res.url()}`);
+  });
 
   try {
     await app.login();
@@ -390,6 +395,14 @@ module.exports = async function atlas() {
     // ------------------------------------------------------------------
     // 7) Zero erro de página
     // ------------------------------------------------------------------
+    check(atlasHttpErrors.length === 0, 'atlas: nenhum recurso do Atlas com erro HTTP (404…)' + (atlasHttpErrors.length ? ': ' + [...new Set(atlasHttpErrors)].join(' | ') : ''));
+    // C9: tela cheia só por allow="fullscreen" (sem o atributo allowfullscreen).
+    const frameAttrs = await app.page.evaluate(() => {
+      const f = document.querySelector('.learn-frame:not(.hidden)');
+      return f ? { allowfullscreen: f.hasAttribute('allowfullscreen'), allow: f.getAttribute('allow') || '' } : null;
+    });
+    check(!!frameAttrs && !frameAttrs.allowfullscreen && /fullscreen/.test(frameAttrs.allow),
+      `iframe do módulo sem allowfullscreen e com allow="fullscreen" (${JSON.stringify(frameAttrs)})`);
     check(app.errors.length === 0, 'atlas: sem erros de JavaScript inesperados' + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));
   } finally {
     await app.close();

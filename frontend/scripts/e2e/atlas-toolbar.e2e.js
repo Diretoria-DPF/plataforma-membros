@@ -40,6 +40,7 @@ async function runAt(viewport) {
         if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
         document.body.classList.remove('atlas-fullscreen-fallback');
         const t = document.getElementById('atlas-toolbar'); if (t.dataset.toolsOpen === 'true') window.AtlasShell.toggleTools();
+        const lp = document.querySelector('.atlas-layers-host'); if (lp && !lp.hidden) window.AtlasShell.toggleLayers(); // janela de Camadas cobre a barra no celular
       });
     }
     check(!results.some((r) => r.endsWith('AVISO')) && results.filter((r) => r.endsWith(':ok')).length >= 3,
@@ -61,6 +62,34 @@ async function runAt(viewport) {
       return called;
     });
     check(others.length === 4, `${label}: botões do modo Moléculas executam (${others.join(', ')})`);
+
+    // C11: MolEngine.init() idempotente — a carga do script + 3 chamadas
+    // (abrir Moléculas 3 vezes) criam o viewer e logam "Inicializado" 1×.
+    const molInit = await frame.evaluate(async () => {
+      const saved = { mol: window.MolEngine, d: window.$3Dmol };
+      delete window.MolEngine;
+      let viewers = 0;
+      const fakeViewer = new Proxy({}, { get: () => () => fakeViewer });
+      window.$3Dmol = { createViewer: () => { viewers += 1; return fakeViewer; }, rasmolElementColors: {} };
+      const vp = document.createElement('div'); vp.id = 'mol-viewport';
+      const box = document.createElement('div'); box.id = 'mol-viewport-container'; box.appendChild(vp);
+      document.body.appendChild(box);
+      // mol-engine.js já chama init() sozinho ao carregar; os modos chamam de novo.
+      const logs = [];
+      const orig = console.log;
+      console.log = (...a) => { if (/Inicializado/.test(a.join(' '))) logs.push(a.join(' ')); };
+      try {
+        await new Promise((resolve, reject) => {
+          const sc = document.createElement('script'); sc.src = 'js/mol-engine.js'; sc.onload = resolve; sc.onerror = reject;
+          document.head.appendChild(sc);
+        });
+        for (let i = 0; i < 3; i++) window.MolEngine.init();
+      } finally { console.log = orig; }
+      box.remove();
+      window.MolEngine = saved.mol; window.$3Dmol = saved.d;
+      return { viewers, logs: logs.length };
+    });
+    check(molInit.viewers === 1 && molInit.logs === 1, `${label}: carga + MolEngine.init() 3× cria 1 viewer e loga "Inicializado" 1× (${JSON.stringify(molInit)})`);
     check(warnings.length === 0, `${label}: nenhum aviso de ação não permitida no console${warnings.length ? ': ' + [...new Set(warnings)].join(' | ') : ''}`);
   } finally {
     app.page.off('console', onConsole);

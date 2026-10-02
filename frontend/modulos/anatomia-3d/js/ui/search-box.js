@@ -6,6 +6,7 @@
 import { normalize, buildSearchIndex, search } from './search-index.js';
 import { EVENTS } from '../core/bus.js';
 import { SYSTEMS } from '../core/contracts.js';
+import { collapseResults } from './structure-groups.js';
 
 const { h, clear } = window.LaiftDom;
 const STORAGE_KEY = 'atlas.recentSearches';
@@ -21,7 +22,7 @@ const MAX_RECENT = 5;
 
 /**
  * @param {HTMLElement} container
- * @param {{bus: Object, getIndex: Function, onOpenSystem?: Function}} opts
+ * @param {{bus: Object, getIndex: Function, onOpenSystem?: Function, getSex?: Function}} opts
  * @returns {{open(query?: string): void, close(): void, dispose(): void}}
  */
 /** Lupa em SVG (createElementNS — sem innerHTML). */
@@ -48,11 +49,12 @@ function searchIcon() {
 }
 
 export function createSearchBox(container, opts) {
-  const { bus, getIndex, onOpenSystem = () => {} } = opts;
+  const { bus, getIndex, onOpenSystem = () => {}, getSex = () => 'M' } = opts;
 
   // Estado
   let isOpen = false;
   let index = null;
+  let entryBySid = null;
   let debounceTimer = null;
   let activeIndex = -1;
   let results = [];
@@ -194,7 +196,9 @@ export function createSearchBox(container, opts) {
     }
 
     // Buscar no índice
-    results = search(index, query, { limit: 12 });
+    // Um resultado por estrutura (C3): lados e versões M/F do órgão HRA
+    // viram um resultado só, com selo "E/D".
+    results = collapseResults(search(index, query, { limit: 60 }), entryBySid, { sex: getSex() }).slice(0, 12);
   }
 
   /**
@@ -281,12 +285,12 @@ export function createSearchBox(container, opts) {
     }
 
     // Side chip (E ou D)
-    if (result.side) {
-      const sideText = { l: 'E', r: 'D' }[result.side] || result.side;
+    const sideText = result.sideText != null ? result.sideText : result.side && ({ l: 'E', r: 'D' }[result.side] || result.side);
+    if (sideText) {
       const sideChip = h('span', {
         className: 'atlas-search-chip atlas-search-chip-side',
         text: sideText,
-        title: sideText === 'E' ? 'Lado esquerdo' : sideText === 'D' ? 'Lado direito' : '',
+        title: { E: 'Lado esquerdo', D: 'Lado direito', 'E/D': 'Os dois lados' }[sideText] || '',
       });
       option.appendChild(sideChip);
     }
@@ -362,6 +366,7 @@ export function createSearchBox(container, opts) {
     if (!index) {
       const entries = getIndex();
       index = buildSearchIndex(entries);
+      entryBySid = new Map(entries.map((e) => [e.sid, e]));
     }
 
     isOpen = true;

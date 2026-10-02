@@ -12,7 +12,9 @@
  *
  * Mede, sem cache: (1) tempo até o esqueleto estar tocável sem throttle e em
  * "Fast 3G" (preset do DevTools); (2) cada arquivo da abertura com bytes
- * transferidos e content-encoding. Escreve uma tabela em Markdown no stdout
+ * transferidos e content-encoding; (3) toda resposta >= 400, requisição que
+ * falhou e violação de CSP, com a URL (crimes C8/C10 da Onda 3 — só
+ * aparecem em produção). Escreve uma tabela em Markdown no stdout
  * e em $GITHUB_STEP_SUMMARY.
  */
 const fs = require('fs');
@@ -40,6 +42,13 @@ async function run(browser, throttle) {
   await client.send('Network.setCacheDisabled', { cacheDisabled: true });
   if (throttle) await client.send('Network.emulateNetworkConditions', { ...throttle, connectionType: 'cellular3g' });
   const files = new Map();
+  const problems = new Set();
+  page.on('response', (r) => { if (r.status() >= 400) problems.add(`HTTP ${r.status()} ${r.url()}`); });
+  page.on('requestfailed', (r) => {
+    const err = (r.failure() && r.failure().errorText) || 'falhou';
+    if (!/ERR_ABORTED/.test(err)) problems.add(`${err} ${r.url()}`);
+  });
+  page.on('console', (m) => { if (/Content Security Policy|Refused to/i.test(m.text())) problems.add(`CSP ${m.text().slice(0, 300)}`); });
   client.on('Network.responseReceived', ({ requestId, response }) => {
     if (!response.url.includes('/modulos/anatomia-3d/')) return;
     const enc = Object.entries(response.headers || {}).find(([k]) => k.toLowerCase() === 'content-encoding');
@@ -62,7 +71,7 @@ async function run(browser, throttle) {
   } catch (e) { /* fica null */ }
   const fatal = await frame.evaluate(() => (document.getElementById('atlas-fatal') || {}).textContent || '').catch(() => '');
   await context.close();
-  return { ready, fatal, files: [...files.values()].filter((f) => f.transfer > 0) };
+  return { ready, fatal, problems: [...problems], files: [...files.values()].filter((f) => f.transfer > 0) };
 }
 
 (async () => {
@@ -88,10 +97,14 @@ async function run(browser, throttle) {
     '| KB transferidos | content-encoding | status | arquivo |',
     '|---:|---|---|---|',
     ...rows.slice(0, 20).map((f) => `| ${(f.transfer / 1024).toFixed(0)} | ${f.encoding} | ${f.status} | ${f.url.split('/modulos/anatomia-3d/')[1]} |`),
+    '',
+    '### Erros de rede e CSP',
+    '',
+    ...(plain.problems.length ? plain.problems.map((p) => `- ${p}`) : ['- nenhum']),
   ];
   const md = lines.join('\n');
   console.log(md);
   if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + '\n');
-  const ok = plain.ready !== null && slow.ready !== null && slow.ready < 15000 && total < 2 * 1024 * 1024;
+  const ok = !plain.problems.length && plain.ready !== null && slow.ready !== null && slow.ready < 15000 && total < 2 * 1024 * 1024;
   process.exit(ok ? 0 : 1);
 })().catch((e) => { console.error(e); process.exit(1); });

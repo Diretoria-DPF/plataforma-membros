@@ -179,7 +179,7 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
       // Quadrado de cor (swatch)
       window.LaiftDom.h('div', {
         className: 'atlas-layers-swatch',
-        style: { backgroundColor: `var(--atlas-color-${layer.id})` },
+        style: { backgroundColor: `var(--atlas-color-${layer.id === 'vasos' ? 'vasos-arteria' : layer.id})` }, // vasos: só existem as cores de artéria/veia
         role: 'presentation',
       }),
 

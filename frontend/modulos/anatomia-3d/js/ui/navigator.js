@@ -5,6 +5,7 @@
 
 import { SYSTEMS } from '../core/contracts.js';
 import { EVENTS } from '../core/bus.js';
+import { groupEntries, sideLabel } from './structure-groups.js';
 
 const { h, clear } = window.LaiftDom;
 
@@ -41,6 +42,7 @@ export function createNavigator(container, opts) {
     getIndex,
     isSystemAvailable = () => true,
     onSystemOpen = () => {},
+    getSex = () => 'M',
   } = opts;
 
   /** @type {NavigatorState} */
@@ -106,14 +108,14 @@ export function createNavigator(container, opts) {
     // "Roving tabindex": a lista é UMA parada de Tab (a linha ativa); as
     // setas andam entre as linhas. Com centenas de linhas, cada uma sendo
     // parada de Tab prendia quem navega só pelo teclado (WCAG 2.1.1).
-    const activeIdx = Math.max(0, state.items.findIndex((it) => it.sid === state.currentSid));
+    const activeIdx = Math.max(0, state.items.findIndex(isCurrent));
 
     state.items.forEach((item, idx) => {
       const row = h('button', {
         className: 'atlas-nav-row',
         role: 'option',
         tabindex: idx === activeIdx ? '0' : '-1',
-        'aria-selected': item.sid === state.currentSid ? 'true' : 'false',
+        'aria-selected': isCurrent(item) ? 'true' : 'false',
         onKeyDown: (evt) => handleKeyDown(evt, idx),
         onClick: () => selectOrDrill(item),
       });
@@ -123,10 +125,12 @@ export function createNavigator(container, opts) {
       row.appendChild(nameEl);
 
       // Lado (E/D)
-      if (item.side) {
+      const sideText = item.sideText != null ? item.sideText : item.side && ({ R: 'D', r: 'D', L: 'E', l: 'E' }[item.side] || item.side);
+      if (sideText) {
         const sideChip = h('span', {
           className: 'atlas-nav-side-chip',
-          text: { R: 'D', r: 'D', L: 'E', l: 'E' }[item.side] || item.side,
+          text: sideText,
+          title: { E: 'Lado esquerdo', D: 'Lado direito', 'E/D': 'Os dois lados' }[sideText] || '',
         });
         row.appendChild(sideChip);
       }
@@ -210,6 +214,23 @@ export function createNavigator(container, opts) {
   }
 
   /**
+   * Uma linha por estrutura (C3): os dois lados e as versões M/F do órgão
+   * HRA viram uma linha só, com selo "E/D"; o clique abre o sid principal.
+   */
+  function toItems(entries) {
+    const sorted = [...entries].sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'));
+    return groupEntries(sorted, { sex: getSex() }).map((g) => ({
+      ...entryToItem(g.entry),
+      sids: g.sids,
+      sideText: sideLabel(g.sides),
+    }));
+  }
+
+  function isCurrent(item) {
+    return item.sid === state.currentSid || (!!item.sids && item.sids.includes(state.currentSid));
+  }
+
+  /**
    * Navegar para nível home (sistemas)
    */
   function goHome() {
@@ -219,7 +240,7 @@ export function createNavigator(container, opts) {
       sid: sys.id,
       name: sys.label,
       isSystem: true,
-      count: getIndex().filter((e) => e.system === sys.id && !e.parent).length,
+      count: groupEntries(getIndex().filter((e) => e.system === sys.id && !e.parent)).length,
       available: isSystemAvailable(sys.id),
     }));
     state.currentSid = null;
@@ -243,12 +264,10 @@ export function createNavigator(container, opts) {
     const entries = getTopLevelInSystem(systemId);
     if (entries.length > 0 && entries[0].isRegion) {
       state.items = entries.map((region) =>
-        region.entries
-          .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
-          .map(entryToItem)
+        toItems(region.entries)
       ).flat();
     } else {
-      state.items = entries.sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt')).map(entryToItem);
+      state.items = toItems(entries);
     }
 
     state.currentSid = null;
@@ -273,9 +292,7 @@ export function createNavigator(container, opts) {
 
     // Tem filhos: drill down
     state.breadcrumb.push({ id: sid, label: displayName(entry) });
-    state.items = children
-      .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
-      .map(entryToItem);
+    state.items = toItems(children);
     state.currentSid = null;
 
     // Emitir que foi selecionado
@@ -322,9 +339,7 @@ export function createNavigator(container, opts) {
         const levelEntry = getEntryBySid(level.id);
         if (levelEntry) {
           // It's a structure level; show its children
-          state.items = getChildren(level.id)
-            .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
-            .map(entryToItem);
+          state.items = toItems(getChildren(level.id));
         }
       }
 
@@ -347,9 +362,7 @@ export function createNavigator(container, opts) {
       const levelEntry = getEntryBySid(level.id);
       if (levelEntry) {
         state.currentSystemId = levelEntry.system;
-        state.items = getChildren(level.id)
-          .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
-          .map(entryToItem);
+        state.items = toItems(getChildren(level.id));
       }
     }
 
@@ -407,9 +420,7 @@ export function createNavigator(container, opts) {
     // Mostrar o conteúdo do pai
     const parentSid = pathToSid[pathToSid.length - 2];
     if (parentSid) {
-      state.items = getChildren(parentSid)
-        .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
-        .map(entryToItem);
+      state.items = toItems(getChildren(parentSid));
       state.currentSystemId = current.system;
     } else {
       // Top level do sistema
@@ -417,15 +428,11 @@ export function createNavigator(container, opts) {
       if (topLevel.length > 0 && topLevel[0].isRegion) {
         state.items = topLevel
           .map((region) =>
-            region.entries
-              .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
-              .map(entryToItem)
+            toItems(region.entries)
           )
           .flat();
       } else {
-        state.items = topLevel
-          .sort((a, b) => displayName(a).localeCompare(displayName(b), 'pt'))
-          .map(entryToItem);
+        state.items = toItems(topLevel);
       }
       state.currentSystemId = current.system;
     }

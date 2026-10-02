@@ -1,8 +1,10 @@
 /**
  * labels.js — rótulos de estrutura anatômica (WP04)
  * ---------------------------------------------------------------------------
- * Gerencia até 12 rótulos sobrepostos na tela que acompanham as estruturas
- * selecionadas e as maiores visíveis. Exporta funções puras para testes e
+ * Gerencia até 6 rótulos (1 a cada 100 px de largura) que acompanham a estrutura
+ * selecionada e as maiores visíveis — um por estrutura (os dois lados viram
+ * um rótulo com selo E/D) e nunca sobrepostos: cada rótulo é medido de
+ * verdade e, se não couber sem cobrir outro, fica oculto. Exporta funções puras para testes e
  * a fachada `createLabels()` que integra com o motor 3D, câmera e barramento.
  */
 
@@ -64,6 +66,38 @@ export function resolveOverlaps(items) {
 }
 
 /**
+ * Posiciona rótulos já medidos, em ordem de prioridade, sem sobreposição.
+ * Cada rótulo tenta ficar logo acima da âncora; se colidir, tenta descer ou
+ * subir uma linha por vez (até `maxShift`); se ainda colidir ou sair da
+ * área, fica oculto (`shown: false`) — melhor faltar um rótulo do que
+ * empilhar texto ilegível (crime C5).
+ * @param {Array<{sid: string, x: number, y: number, width: number, height: number}>} items
+ * @param {{width: number, height: number}} bounds
+ * @param {{gap?: number, maxShift?: number}} [opts]
+ * @returns {Array<Object>} items com `left`, `top` e `shown`
+ */
+export function placeLabels(items, bounds, { gap = 4, maxShift = 2 } = {}) {
+  const placed = [];
+  const offsets = [0];
+  for (let k = 1; k <= maxShift; k++) offsets.push(-k, k);
+  return items.map((it) => {
+    const maxLeft = Math.max(0, bounds.width - it.width);
+    const left = Math.max(0, Math.min(it.x - it.width / 2, maxLeft));
+    for (const k of offsets) {
+      const top = it.y - it.height - gap + k * (it.height + gap);
+      if (top < 0 || top + it.height > bounds.height) continue;
+      const r = { left, top, right: left + it.width, bottom: top + it.height };
+      const hit = placed.some((p) =>
+        r.left < p.right + gap && r.right + gap > p.left && r.top < p.bottom + gap && r.bottom + gap > p.top);
+      if (hit) continue;
+      placed.push(r);
+      return { ...it, left, top, shown: true };
+    }
+    return { ...it, shown: false };
+  });
+}
+
+/**
  * Escolhe até N estruturas para rótulo, prorizando selecionada e maiores visíveis.
  * @param {Array<{sid: string, size: number, visible?: boolean}>} items
  * @param {string|null} selected SID selecionado, vem primeiro se presente
@@ -107,7 +141,9 @@ function calculateBboxVolume(bbox) {
 
 /**
  * Cria o gerenciador de rótulos.
- * @param {{container: Element, camera: Object, registry: Object, bus: Object, getLabel: Function, addTicker: Function, requestRender: Function, THREE: Object, max?: number}} opts
+ * `groupOf(sid)` (opcional) devolve `{ key, name, sideText }` — sids do
+ * mesmo grupo (lados, versões M/F) dividem um rótulo só.
+ * @param {{container: Element, camera: Object, registry: Object, bus: Object, getLabel: Function, groupOf?: Function, addTicker: Function, requestRender: Function, THREE: Object, max?: number}} opts
  * @returns {{setEnabled: Function, setSids: Function, update: Function, dispose: Function}}
  */
 export function createLabels({
@@ -119,8 +155,12 @@ export function createLabels({
   addTicker,
   requestRender,
   THREE,
-  max = 12,
+  groupOf = () => null,
+  max = 6,
 }) {
+  // Quantos rótulos cabem: no máximo `max` (6) e 1 a cada 100 px de largura
+  // (390 px → 3) — 12 rótulos empilhados no celular eram ilegíveis (C5).
+  const limit = () => Math.max(1, Math.min(max, Math.floor((container.clientWidth || 600) / 100)));
   // Cria overlay para rótulos
   const overlay = document.createElement('div');
   overlay.className = 'atlas-labels';
@@ -161,7 +201,7 @@ export function createLabels({
     }
 
     candidates.sort((a, b) => b.size - a.size);
-    const pickedSids = candidates.slice(0, max).map((c) => c.sid);
+    const pickedSids = candidates.slice(0, limit()).map((c) => c.sid);
 
     // Atualiza fixedSids para os selecionados
     fixedSids = pickedSids;
@@ -196,34 +236,42 @@ export function createLabels({
       }
     }
 
-    // Monta lista de sids a mostrar
-    let sidsToShow = [];
+    // Monta lista de sids a mostrar — um por grupo (lado E e D da mesma
+    // estrutura dividem um rótulo; o selecionado fica com o seu lado).
+    const cap = limit();
+    const visibleSet = new Set(visibleStructures.map((s) => s.sid));
+    const sidsToShow = [];
+    const usedGroups = new Set();
+    const tryAdd = (sid) => {
+      if (sidsToShow.length >= cap || !visibleSet.has(sid) || sidsToShow.includes(sid)) return;
+      const g = groupOf(sid);
+      const key = g && g.key ? g.key : sid;
+      if (usedGroups.has(key)) return;
+      usedGroups.add(key);
+      sidsToShow.push(sid);
+    };
 
     // 1. Selecionado vem primeiro (se visível)
-    if (selectedSid && visibleStructures.some((s) => s.sid === selectedSid)) {
-      sidsToShow.push(selectedSid);
-    }
+    if (selectedSid) tryAdd(selectedSid);
 
     // 2. Sids fixados (via setSids)
-    if (fixedSids.length > 0) {
-      for (const sid of fixedSids) {
-        if (sid !== selectedSid && visibleStructures.some((s) => s.sid === sid)) {
-          sidsToShow.push(sid);
-        }
+    for (const sid of fixedSids) tryAdd(sid);
+
+    // 3. Auto-pick dos maiores se ainda há espaço e modo auto
+    if (autoPickMode && sidsToShow.length < cap) {
+      const remaining = visibleStructures.filter((s) => !sidsToShow.includes(s.sid));
+      remaining.sort((a, b) => b.size - a.size);
+      for (const r of remaining) {
+        if (sidsToShow.length >= cap) break;
+        tryAdd(r.sid);
       }
     }
 
-    // 3. Auto-pick dos maiores se ainda há espaço e modo auto
-    if (autoPickMode && sidsToShow.length < max) {
-      const remaining = visibleStructures.filter((s) => !sidsToShow.includes(s.sid));
-      remaining.sort((a, b) => b.size - a.size);
-      const toAdd = remaining.slice(0, max - sidsToShow.length);
-      sidsToShow.push(...toAdd.map((r) => r.sid));
-    }
-
     // Remove rótulos que não estão mais visíveis
-    for (const [sid, { el, leadLine }] of labelEls.entries()) {
-      if (!sidsToShow.includes(sid)) {
+    for (const [sid, { el, leadLine, isSelected }] of labelEls.entries()) {
+      // Recria quando muda entre "selecionado" (nome com lado) e "grupo"
+      // (nome base + selo E/D).
+      if (!sidsToShow.includes(sid) || isSelected !== (sid === selectedSid)) {
         el.remove();
         if (leadLine) leadLine.remove();
         labelEls.delete(sid);
@@ -237,7 +285,19 @@ export function createLabels({
         // Cria novo rótulo
         const el = document.createElement('div');
         el.className = 'atlas-label';
-        el.textContent = getLabel(sid);
+        const g = sid === selectedSid ? null : groupOf(sid);
+        if (g && g.name) {
+          el.textContent = g.name;
+          if (g.sideText) {
+            const badge = document.createElement('span');
+            badge.className = 'atlas-label-side';
+            badge.textContent = g.sideText;
+            badge.title = g.sideText === 'E/D' ? 'Os dois lados' : g.sideText === 'E' ? 'Lado esquerdo' : 'Lado direito';
+            el.appendChild(badge);
+          }
+        } else {
+          el.textContent = getLabel(sid);
+        }
 
         // Líder (linha fina do âncora até o rótulo)
         const leadLine = document.createElement('div');
@@ -248,7 +308,16 @@ export function createLabels({
         overlay.appendChild(leadLine);
         overlay.appendChild(el);
 
-        labelEls.set(sid, { el, leadLine });
+        // Mede uma vez (o texto não muda): sem medida real, a sobreposição
+        // era estimada com 80×18 px e rótulos longos se cobriam.
+        el.style.visibility = 'hidden';
+        el.style.display = 'block';
+        const width = el.offsetWidth || 80;
+        const height = el.offsetHeight || 18;
+        el.style.display = 'none';
+        el.style.visibility = '';
+
+        labelEls.set(sid, { el, leadLine, width, height, isSelected: sid === selectedSid });
       }
 
       // Projeta o centro da bbox
@@ -269,33 +338,39 @@ export function createLabels({
           height: rect.height,
         });
 
+        const { width, height } = labelEls.get(sid);
         labelData.push({
           sid,
           x: screenPos.x,
           y: screenPos.y,
           visible: screenPos.visible,
-          width: 80,
-          height: 18,
+          width,
+          height,
         });
       }
     }
 
-    // Filtra os visíveis e resolve sobreposição
+    // Filtra os visíveis e posiciona sem sobreposição (ordem = prioridade)
     const visibleLabels = labelData.filter((l) => l.visible);
-    const positioned = resolveOverlaps(visibleLabels);
+    const box = container.getBoundingClientRect();
+    const positioned = placeLabels(visibleLabels, { width: box.width, height: box.height })
+      .filter((p) => p.shown);
 
     // Aplica posições
     for (const item of positioned) {
       const { el, leadLine } = labelEls.get(item.sid);
-      el.style.left = Math.round(item.x - item.width / 2) + 'px';
-      el.style.top = Math.round(item.y - item.height) + 'px';
+      el.style.left = Math.round(item.left) + 'px';
+      el.style.top = Math.round(item.top) + 'px';
       el.style.display = 'block';
 
-      // Líder: desenha uma linha da posição da tela ao rótulo
+      // Líder: linha vertical da âncora até a borda mais próxima do rótulo
+      const bottom = item.top + item.height;
+      const fromY = bottom <= item.y ? bottom : item.y;
+      const toY = bottom <= item.y ? item.y : item.top;
       leadLine.style.left = Math.round(item.x) + 'px';
-      leadLine.style.top = Math.round(item.y) + 'px';
-      leadLine.style.height = '16px';
-      leadLine.style.display = 'block';
+      leadLine.style.top = Math.round(fromY) + 'px';
+      leadLine.style.height = Math.max(0, Math.round(toY - fromY)) + 'px';
+      leadLine.style.display = toY - fromY > 2 ? 'block' : 'none';
     }
 
     // Oculta rótulos que não estão em positioned (off-screen, etc.)

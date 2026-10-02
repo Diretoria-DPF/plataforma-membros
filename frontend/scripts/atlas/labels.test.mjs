@@ -14,7 +14,7 @@ import path from 'node:path';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const engineDir = path.resolve(here, '../../modulos/anatomia-3d/js/engine');
 
-const { projectToScreen, resolveOverlaps, pickLargest } = await import(path.join(engineDir, 'labels.js'));
+const { projectToScreen, resolveOverlaps, pickLargest, placeLabels } = await import(path.join(engineDir, 'labels.js'));
 
 let failures = 0;
 
@@ -108,6 +108,31 @@ test('pickLargest ignora invisíveis', () => {
   ];
   const result = pickLargest(items, null, 2);
   assert.ok(!result.some((i) => i.sid === 'fma:2'));
+});
+
+test('placeLabels: dois rótulos na mesma âncora não se cobrem', () => {
+  const items = [
+    { sid: 'a', x: 100, y: 100, width: 120, height: 20 },
+    { sid: 'b', x: 105, y: 102, width: 140, height: 20 },
+  ];
+  const [a, b] = placeLabels(items, { width: 400, height: 400 });
+  assert.ok(a.shown && b.shown);
+  const overlap = a.left < b.left + b.width && b.left < a.left + a.width && a.top < b.top + b.height && b.top < a.top + a.height;
+  assert.equal(overlap, false);
+});
+
+test('placeLabels: oculta quem não cabe em vez de empilhar', () => {
+  const items = Array.from({ length: 10 }, (_, i) => ({ sid: `s${i}`, x: 100, y: 100, width: 150, height: 20 }));
+  const out = placeLabels(items, { width: 400, height: 400 });
+  assert.equal(out[0].shown, true); // o de maior prioridade sempre aparece
+  assert.ok(out.filter((o) => o.shown).length <= 5);
+  assert.ok(out.some((o) => !o.shown));
+});
+
+test('placeLabels: mantém o rótulo dentro da área', () => {
+  const [r] = placeLabels([{ sid: 'a', x: 395, y: 50, width: 120, height: 20 }], { width: 400, height: 400 });
+  assert.ok(r.shown);
+  assert.ok(r.left >= 0 && r.left + r.width <= 400);
 });
 
 console.log('');

@@ -44,6 +44,7 @@ import { EXTMeshoptCompression, KHRMeshQuantization } from '@gltf-transform/exte
 import { MeshoptDecoder } from 'meshoptimizer';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { normalizeNodeName } from './node-name.mjs';
 
 function parseArgs(argv) {
   const out = {};
@@ -213,7 +214,7 @@ function assetFilePath(relPath) {
 async function buildAsset(io, { filePath, relPath, system, lod, sex, license, attribution, sourceUrl, sourceVersion, transform, rmsError }) {
   const info = await inspectGlb(io, filePath);
   const nodeToSid = {};
-  for (const n of info.nodes) nodeToSid[n.name] = n.sid;
+  for (const n of info.nodes) nodeToSid[normalizeNodeName(n.name)] = n.sid;
 
   return {
     asset: {

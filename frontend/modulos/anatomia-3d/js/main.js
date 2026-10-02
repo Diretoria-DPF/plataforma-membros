@@ -34,6 +34,7 @@ import { initFocusNav } from './ui/focus-nav.js';
 import { buildSearchIndex, search } from './ui/search-index.js';
 import { createSearchBox } from './ui/search-box.js';
 import { createNavigator } from './ui/navigator.js';
+import { groupEntries, sideLabel, contentCandidates } from './ui/structure-groups.js';
 import { createInfoCard } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
 import { linkLegacy } from './ui/legacy-link.js';
@@ -211,16 +212,32 @@ async function createContentStore() {
   // getIndex() devolvia `structures` cru (sem `.names`), então
   // buildSearchIndex(getIndex()) nunca indexava nada — toda busca (inclusive
   // "heart"/"coração") vinha vazia.
+  // O vínculo com o legado casa UM sid por item (ex.: "za:kidney-l" → "Rins");
+  // o outro lado ficava em inglês e virava outra linha na lista (C3). O nome
+  // PT passa para todo sid do mesmo sistema com o mesmo nome em inglês.
+  const ptByEnglish = new Map();
+  for (const s of structures) {
+    const pt = legacyNameBySid.get(s.sid);
+    const key = `${s.system}|${prettifyName(s.englishName)}`;
+    // Nome com lado ("… esquerdo") não serve para o outro lado.
+    if (pt && !/esquerd|direit/i.test(pt) && !ptByEnglish.has(key)) ptByEnglish.set(key, pt);
+  }
   const entries = structures.map((s) => ({
     ...s,
     names: {
-      pt: legacyNameBySid.get(s.sid) || '',
+      pt: legacyNameBySid.get(s.sid) || ptByEnglish.get(`${s.system}|${prettifyName(s.englishName)}`) || '',
       en: prettifyName(s.englishName),
       la: s.latinName || '',
     },
   }));
   const entryBySid = new Map(entries.map((e) => [e.sid, e]));
   const searchIndex = buildSearchIndex(entries);
+  // Visão sem duplicatas (C3): uma entrada por estrutura, com todos os sids
+  // (lados, versões M/F). O índice completo continua em getIndex() — seleção,
+  // quiz e fichas precisam do sid de cada lado.
+  const groups = groupEntries(entries);
+  const groupBySid = new Map();
+  for (const g of groups) for (const s of g.sids) groupBySid.set(s, g);
 
   return {
     getIndex() {
@@ -229,16 +246,30 @@ async function createContentStore() {
     getEntry(sid) {
       return entryBySid.get(sid) || null;
     },
+    getGroups() {
+      return groups;
+    },
+    getGroup(sid) {
+      return groupBySid.get(sid) || null;
+    },
     async getContent(sid) {
       if (contentCache.has(sid)) return contentCache.get(sid);
-      const entry = bySid.get(sid) || null;
-      const legacy = legacyEntryFor(sid);
-      if (!entry && !legacy) return null;
-      const [gen, leg] = await Promise.all([
-        entry && entry.system ? loadContentFile('content', entry.system).then((f) => f[sid] || null) : null,
-        legacy && legacy.system ? loadContentFile('legacy/content', legacy.system).then((f) => f[legacy.sid] || null) : null,
-      ]);
-      const content = gen || leg ? { ...mergeContent(gen, leg), draft: true, legacy } : null;
+      // A ficha gravada num lado (ou no sid sem lado) vale para o outro (A.2).
+      const group = groupBySid.get(sid);
+      let content = null;
+      for (const candidate of contentCandidates(sid, group ? group.sids : [])) {
+        const entry = bySid.get(candidate) || null;
+        const legacy = legacyEntryFor(candidate);
+        if (!entry && !legacy) continue;
+        const [gen, leg] = await Promise.all([
+          entry && entry.system ? loadContentFile('content', entry.system).then((f) => f[candidate] || null) : null,
+          legacy && legacy.system ? loadContentFile('legacy/content', legacy.system).then((f) => f[legacy.sid] || null) : null,
+        ]);
+        if (gen || leg) {
+          content = { ...mergeContent(gen, leg), draft: true, legacy };
+          break;
+        }
+      }
       contentCache.set(sid, content);
       return content;
     },
@@ -404,6 +435,7 @@ async function boot() {
       requestRender,
       THREE: T,
       getLabel: (sid) => labelFor(sid),
+      groupOf: (sid) => labelGroupOf(sid),
     });
   } catch (e) {
     // js/engine/labels.js ainda pode exigir opções que este orquestrador
@@ -440,6 +472,22 @@ async function boot() {
       const sid = registry.pick(ndc);
       if (sid) contextMenu.open({ client, sid });
     });
+  }
+
+  // Grupo do rótulo (C3/C5): lados e versões M/F dividem um rótulo, com o
+  // nome base e o selo E/D. Montado na 1ª consulta (o índice já carregou).
+  let labelGroups = null;
+  function labelGroupOf(sid) {
+    if (!labelGroups) {
+      let index;
+      try { index = contentStore.getIndex(); } catch { return null; } // índice ainda carregando
+      labelGroups = new Map();
+      for (const g of (contentStore.getGroups ? contentStore.getGroups() : groupEntries(index))) {
+        const info = { key: g.key, name: g.name, sideText: sideLabel(g.sides) };
+        for (const s of g.sids) labelGroups.set(s, info);
+      }
+    }
+    return labelGroups.get(sid) || null;
   }
 
   function labelFor(sid) {
@@ -572,23 +620,38 @@ async function boot() {
     bus,
     getIndex: () => contentStore.getIndex(),
     onOpenSystem: () => {},
+    getSex: () => storeGet().sex,
   });
   // Compat legado: js/compat/legacy-api.js dá o id #bio-search-input ao
   // campo real desta caixa (ver LEGACY_COMPAT em core/contracts.js).
 
   // ---- Navegador ----
   const navContainer = document.getElementById('atlas-left-panel');
+  let navigatorApi = null;
   if (navContainer) {
-    createNavigator(navContainer, {
+    navigatorApi = createNavigator(navContainer, {
       bus,
       getIndex: () => contentStore.getIndex(),
       isSystemAvailable: (systemId) => assetLoader.isLoaded(systemId),
       onSystemOpen: (systemId) => { loadSystem(systemId); },
+      getSex: () => storeGet().sex,
     });
   }
 
   // ---- Painel de camadas ----
-  const layersPanelEl = document.createElement('div');
+  // Janela própria (C7, Onda 3): antes o painel entrava solto no <body>,
+  // sem posição, e ficava atrás do canvas — só os interruptores apareciam.
+  const layersPanelEl = window.LaiftDom.h('div', {
+    className: 'atlas-layers-host', role: 'dialog', 'aria-label': 'Camadas',
+  }, [
+    window.LaiftDom.h('button', {
+      type: 'button', className: 'atlas-layers-close', 'aria-label': 'Fechar camadas',
+      'data-action': 'AtlasShell.toggleLayers', text: '×',
+    }),
+  ]);
+  layersPanelEl.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape' && window.AtlasShell) window.AtlasShell.toggleLayers();
+  });
   const layersPanel = createLayersPanel(layersPanelEl, {
     bus,
     store: storeApi,
@@ -1116,7 +1179,7 @@ async function boot() {
   window.__atlasInternals = {
     bus, store: storeApi, registry, assetLoader, engine,
     selection, visibility, contentStore, searchBox, loadSystem, labelFor, DEFAULT_SYSTEMS, BACKGROUND_SYSTEMS, flags: ATLAS_FLAGS,
-    onboarding, getHints: () => hints,
+    onboarding, getHints: () => hints, navigator: navigatorApi, labels,
   };
   // Gancho de teste, só leitura — expõe as estatísticas do renderer
   // (draw calls, triângulos, contagem de frames renderizados) para os
