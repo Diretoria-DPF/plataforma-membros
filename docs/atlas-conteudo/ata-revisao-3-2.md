@@ -12,6 +12,11 @@ O conselho editorial da LAIFT (monitores, doutores e PhD) **revisa 100% das fich
 3. Só com a assinatura "aprovado" ou "aprovado com ressalvas" (e as ressalvas aplicadas) a onda é movida para `data/atlas/curated/` num commit próprio.
 4. "Reprovado" devolve a onda para refazer, com o motivo.
 
+## Declaração a ser assinada (gate 0.2 — **pendente de assinatura**)
+> "Ciente de que cada onda de 20–30 fichas será revisada integralmente por membro do conselho antes de entrar em produção."
+
+O registro do usuário ("conselho já concordou") cobre a aprovação do processo; esta declaração deixa explícito o compromisso de revisar **100% das ~300 fichas em 10 ondas**. Enquanto não estiver assinada, as ondas podem ser **preparadas** em `pendente/`, mas nenhuma entra em `curated/` (trava automática: `frontend/scripts/atlas/check-curated-signed.mjs`, rodada pelo build).
+
 ## Assinaturas
 | Membro do conselho | Função | Data | Assinatura |
 |---|---|---|---|

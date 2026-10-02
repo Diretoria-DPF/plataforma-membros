@@ -4,8 +4,8 @@ Registrado em 02/10/2026 a partir da confirmação do usuário de que o conselho
 
 | Onda | Sistema | Fichas | Por que nesta posição |
 |---|---|---:|---|
-| 01 | Cardiovascular | 36 | Testa o pipeline em escala pequena, conteúdo de alto risco clínico |
-| 02 | Nervoso | 48 | O mais arriscado (mais erros possíveis) — logo cedo, com o processo já testado |
+| 01 | Cardiovascular | 31 | Testa o pipeline em escala pequena, conteúdo de alto risco clínico |
+| 02 | Nervoso | 53 | O mais arriscado (mais erros possíveis) — logo cedo, com o processo já testado |
 | 03 | Respiratório | 20 | |
 | 04 | Digestório | 40 | |
 | 05 | Urinário | 15 | |

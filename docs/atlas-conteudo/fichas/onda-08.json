@@ -1,0 +1,710 @@
+{
+  "onda": 8,
+  "sistema": "esqueletico",
+  "total": 80,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:ethmoid-bone",
+          "sids": [
+            "za:ethmoid-bone"
+          ],
+          "nome_pt": "Osso etmoide",
+          "nome_en": "Ethmoid bone"
+        },
+        {
+          "sid": "za:inferior-nasal-concha-bone-r",
+          "sids": [
+            "za:inferior-nasal-concha-bone-l",
+            "za:inferior-nasal-concha-bone-r"
+          ],
+          "nome_pt": "Osso concha nasal inferior",
+          "nome_en": "Inferior nasal concha bone"
+        },
+        {
+          "sid": "za:scapula-r",
+          "sids": [
+            "za:scapula-l",
+            "za:scapula-r"
+          ],
+          "nome_pt": "Escápula",
+          "nome_en": "Scapula"
+        },
+        {
+          "sid": "za:occipital-bone",
+          "sids": [
+            "za:occipital-bone"
+          ],
+          "nome_pt": "Osso occipital",
+          "nome_en": "Occipital bone"
+        },
+        {
+          "sid": "za:mandible",
+          "sids": [
+            "za:mandible"
+          ],
+          "nome_pt": "Mandíbula",
+          "nome_en": "Mandible"
+        },
+        {
+          "sid": "za:temporal-bone-r",
+          "sids": [
+            "za:temporal-bone-l",
+            "za:temporal-bone-r"
+          ],
+          "nome_pt": "Osso temporal",
+          "nome_en": "Temporal bone"
+        },
+        {
+          "sid": "za:sphenoid-bone",
+          "sids": [
+            "za:sphenoid-bone"
+          ],
+          "nome_pt": "Osso esfenoides",
+          "nome_en": "Sphenoid bone"
+        },
+        {
+          "sid": "za:body-of-sternum",
+          "sids": [
+            "za:body-of-sternum"
+          ],
+          "nome_pt": "Corpo do esterno",
+          "nome_en": "Body of sternum"
+        },
+        {
+          "sid": "za:calcaneus-r",
+          "sids": [
+            "za:calcaneus-l",
+            "za:calcaneus-r"
+          ],
+          "nome_pt": "Calcâneo",
+          "nome_en": "Calcaneus"
+        },
+        {
+          "sid": "za:maxilla-r",
+          "sids": [
+            "za:maxilla-l",
+            "za:maxilla-r"
+          ],
+          "nome_pt": "Maxila",
+          "nome_en": "Maxilla"
+        },
+        {
+          "sid": "za:manubrium-of-sternum",
+          "sids": [
+            "za:manubrium-of-sternum"
+          ],
+          "nome_pt": "Manúbrio do esterno",
+          "nome_en": "Manubrium of sternum"
+        },
+        {
+          "sid": "za:talus-r",
+          "sids": [
+            "za:talus-l",
+            "za:talus-r"
+          ],
+          "nome_pt": "Tálus",
+          "nome_en": "Talus"
+        },
+        {
+          "sid": "za:palatine-bone-r",
+          "sids": [
+            "za:palatine-bone-l",
+            "za:palatine-bone-r"
+          ],
+          "nome_pt": "Osso palatino",
+          "nome_en": "Palatine bone"
+        },
+        {
+          "sid": "za:cuboid-bone-r",
+          "sids": [
+            "za:cuboid-bone-l",
+            "za:cuboid-bone-r"
+          ],
+          "nome_pt": "Osso cuboide",
+          "nome_en": "Cuboid bone"
+        },
+        {
+          "sid": "za:hyoid-bone",
+          "sids": [
+            "za:hyoid-bone"
+          ],
+          "nome_pt": "Osso hioide",
+          "nome_en": "Hyoid bone"
+        },
+        {
+          "sid": "za:coccyx",
+          "sids": [
+            "za:coccyx"
+          ],
+          "nome_pt": "Cóccix",
+          "nome_en": "Coccyx"
+        },
+        {
+          "sid": "za:vomer",
+          "sids": [
+            "za:vomer"
+          ],
+          "nome_pt": "Vômer",
+          "nome_en": "Vomer"
+        },
+        {
+          "sid": "za:xiphoid-process",
+          "sids": [
+            "za:xiphoid-process"
+          ],
+          "nome_pt": "Processo xifoide",
+          "nome_en": "Xiphoid process"
+        },
+        {
+          "sid": "za:nasal-bone-r",
+          "sids": [
+            "za:nasal-bone-l",
+            "za:nasal-bone-r"
+          ],
+          "nome_pt": "Osso nasal",
+          "nome_en": "Nasal bone"
+        },
+        {
+          "sid": "za:lacrimal-bone-r",
+          "sids": [
+            "za:lacrimal-bone-l",
+            "za:lacrimal-bone-r"
+          ],
+          "nome_pt": "Osso lacrimal",
+          "nome_en": "Lacrimal bone"
+        }
+      ]
+    },
+    {
+      "lote": 2,
+      "itens": [
+        {
+          "sid": "za:femur-r",
+          "sids": [
+            "za:femur-l",
+            "za:femur-r"
+          ],
+          "nome_pt": "Fêmur",
+          "nome_en": "Femur"
+        },
+        {
+          "sid": "za:hip-bone-r",
+          "sids": [
+            "za:hip-bone-l",
+            "za:hip-bone-r"
+          ],
+          "nome_pt": "Osso coxal",
+          "nome_en": "Hip bone"
+        },
+        {
+          "sid": "za:seventh-rib-r",
+          "sids": [
+            "za:seventh-rib-l",
+            "za:seventh-rib-r"
+          ],
+          "nome_pt": "Sétima costela",
+          "nome_en": "Seventh rib"
+        },
+        {
+          "sid": "za:sixth-rib-r",
+          "sids": [
+            "za:sixth-rib-l",
+            "za:sixth-rib-r"
+          ],
+          "nome_pt": "Sexta costela",
+          "nome_en": "Sixth rib"
+        },
+        {
+          "sid": "za:eighth-rib-r",
+          "sids": [
+            "za:eighth-rib-l",
+            "za:eighth-rib-r"
+          ],
+          "nome_pt": "Oitava costela",
+          "nome_en": "Eighth rib"
+        },
+        {
+          "sid": "za:fifth-rib-r",
+          "sids": [
+            "za:fifth-rib-l",
+            "za:fifth-rib-r"
+          ],
+          "nome_pt": "Quinta costela",
+          "nome_en": "Fifth rib"
+        },
+        {
+          "sid": "za:ninth-rib-r",
+          "sids": [
+            "za:ninth-rib-l",
+            "za:ninth-rib-r"
+          ],
+          "nome_pt": "Nona costela",
+          "nome_en": "Ninth rib"
+        },
+        {
+          "sid": "za:fourth-rib-r",
+          "sids": [
+            "za:fourth-rib-l",
+            "za:fourth-rib-r"
+          ],
+          "nome_pt": "Quarta costela",
+          "nome_en": "Fourth rib"
+        },
+        {
+          "sid": "za:tenth-rib-r",
+          "sids": [
+            "za:tenth-rib-l",
+            "za:tenth-rib-r"
+          ],
+          "nome_pt": "Décima costela",
+          "nome_en": "Tenth rib"
+        },
+        {
+          "sid": "za:tibia-r",
+          "sids": [
+            "za:tibia-l",
+            "za:tibia-r"
+          ],
+          "nome_pt": "Tíbia",
+          "nome_en": "Tibia"
+        },
+        {
+          "sid": "za:humerus-r",
+          "sids": [
+            "za:humerus-l",
+            "za:humerus-r"
+          ],
+          "nome_pt": "Úmero",
+          "nome_en": "Humerus"
+        },
+        {
+          "sid": "za:third-rib-r",
+          "sids": [
+            "za:third-rib-l",
+            "za:third-rib-r"
+          ],
+          "nome_pt": "Terceira costela",
+          "nome_en": "Third rib"
+        },
+        {
+          "sid": "za:parietal-bone-r",
+          "sids": [
+            "za:parietal-bone-l",
+            "za:parietal-bone-r"
+          ],
+          "nome_pt": "Osso parietal",
+          "nome_en": "Parietal bone"
+        },
+        {
+          "sid": "za:sacrum",
+          "sids": [
+            "za:sacrum"
+          ],
+          "nome_pt": "Sacro",
+          "nome_en": "Sacrum"
+        },
+        {
+          "sid": "za:ulna-r",
+          "sids": [
+            "za:ulna-l",
+            "za:ulna-r"
+          ],
+          "nome_pt": "Ulna",
+          "nome_en": "Ulna"
+        },
+        {
+          "sid": "za:eleventh-rib-r",
+          "sids": [
+            "za:eleventh-rib-l",
+            "za:eleventh-rib-r"
+          ],
+          "nome_pt": "Décima primeira costela",
+          "nome_en": "Eleventh rib"
+        },
+        {
+          "sid": "za:radius-r",
+          "sids": [
+            "za:radius-l",
+            "za:radius-r"
+          ],
+          "nome_pt": "Rádio",
+          "nome_en": "Radius"
+        },
+        {
+          "sid": "za:frontal-bone",
+          "sids": [
+            "za:frontal-bone"
+          ],
+          "nome_pt": "Osso frontal",
+          "nome_en": "Frontal bone"
+        },
+        {
+          "sid": "za:second-rib-r",
+          "sids": [
+            "za:second-rib-l",
+            "za:second-rib-r"
+          ],
+          "nome_pt": "Segunda costela",
+          "nome_en": "Second rib"
+        },
+        {
+          "sid": "za:clavicle-r",
+          "sids": [
+            "za:clavicle-l",
+            "za:clavicle-r"
+          ],
+          "nome_pt": "Clavícula",
+          "nome_en": "Clavicle"
+        }
+      ]
+    },
+    {
+      "lote": 3,
+      "itens": [
+        {
+          "sid": "za:vertebra-l5",
+          "sids": [
+            "za:vertebra-l5"
+          ],
+          "nome_pt": "Vértebra L5",
+          "nome_en": "Vertebra L5"
+        },
+        {
+          "sid": "za:fibula-r",
+          "sids": [
+            "za:fibula-l",
+            "za:fibula-r"
+          ],
+          "nome_pt": "Fíbula",
+          "nome_en": "Fibula"
+        },
+        {
+          "sid": "za:vertebra-l1",
+          "sids": [
+            "za:vertebra-l1"
+          ],
+          "nome_pt": "Vértebra L1",
+          "nome_en": "Vertebra L1"
+        },
+        {
+          "sid": "za:vertebra-l2",
+          "sids": [
+            "za:vertebra-l2"
+          ],
+          "nome_pt": "Vértebra L2",
+          "nome_en": "Vertebra L2"
+        },
+        {
+          "sid": "za:vertebra-t10",
+          "sids": [
+            "za:vertebra-t10"
+          ],
+          "nome_pt": "Vértebra T10",
+          "nome_en": "Vertebra T10"
+        },
+        {
+          "sid": "za:vertebra-l3",
+          "sids": [
+            "za:vertebra-l3"
+          ],
+          "nome_pt": "Vértebra L3",
+          "nome_en": "Vertebra L3"
+        },
+        {
+          "sid": "za:vertebra-l4",
+          "sids": [
+            "za:vertebra-l4"
+          ],
+          "nome_pt": "Vértebra L4",
+          "nome_en": "Vertebra L4"
+        },
+        {
+          "sid": "za:vertebra-t6",
+          "sids": [
+            "za:vertebra-t6"
+          ],
+          "nome_pt": "Vértebra T6",
+          "nome_en": "Vertebra T6"
+        },
+        {
+          "sid": "za:vertebra-t7",
+          "sids": [
+            "za:vertebra-t7"
+          ],
+          "nome_pt": "Vértebra T7",
+          "nome_en": "Vertebra T7"
+        },
+        {
+          "sid": "za:vertebra-t8",
+          "sids": [
+            "za:vertebra-t8"
+          ],
+          "nome_pt": "Vértebra T8",
+          "nome_en": "Vertebra T8"
+        },
+        {
+          "sid": "za:vertebra-t9",
+          "sids": [
+            "za:vertebra-t9"
+          ],
+          "nome_pt": "Vértebra T9",
+          "nome_en": "Vertebra T9"
+        },
+        {
+          "sid": "za:costal-cartilage-of-seventh-rib-r",
+          "sids": [
+            "za:costal-cartilage-of-seventh-rib-l",
+            "za:costal-cartilage-of-seventh-rib-r"
+          ],
+          "nome_pt": "Cartilagem costal da sétima costela",
+          "nome_en": "Costal cartilage of seventh rib"
+        },
+        {
+          "sid": "za:twelfth-rib-r",
+          "sids": [
+            "za:twelfth-rib-l",
+            "za:twelfth-rib-r"
+          ],
+          "nome_pt": "Décima segunda costela",
+          "nome_en": "Twelfth rib"
+        },
+        {
+          "sid": "za:vertebra-t5",
+          "sids": [
+            "za:vertebra-t5"
+          ],
+          "nome_pt": "Vértebra T5",
+          "nome_en": "Vertebra T5"
+        },
+        {
+          "sid": "za:costal-cartilage-of-eighth-rib-r",
+          "sids": [
+            "za:costal-cartilage-of-eighth-rib-l",
+            "za:costal-cartilage-of-eighth-rib-r"
+          ],
+          "nome_pt": "Cartilagem costal da oitava costela",
+          "nome_en": "Costal cartilage of eighth rib"
+        },
+        {
+          "sid": "za:vertebra-t11",
+          "sids": [
+            "za:vertebra-t11"
+          ],
+          "nome_pt": "Vértebra T11",
+          "nome_en": "Vertebra T11"
+        },
+        {
+          "sid": "za:first-rib-r",
+          "sids": [
+            "za:first-rib-l",
+            "za:first-rib-r"
+          ],
+          "nome_pt": "Primeira costela",
+          "nome_en": "First rib"
+        },
+        {
+          "sid": "za:vertebra-t3",
+          "sids": [
+            "za:vertebra-t3"
+          ],
+          "nome_pt": "Vértebra T3",
+          "nome_en": "Vertebra T3"
+        },
+        {
+          "sid": "za:vertebra-t4",
+          "sids": [
+            "za:vertebra-t4"
+          ],
+          "nome_pt": "Vértebra T4",
+          "nome_en": "Vertebra T4"
+        },
+        {
+          "sid": "za:vertebra-t12",
+          "sids": [
+            "za:vertebra-t12"
+          ],
+          "nome_pt": "Vértebra T12",
+          "nome_en": "Vertebra T12"
+        }
+      ]
+    },
+    {
+      "lote": 4,
+      "itens": [
+        {
+          "sid": "za:vertebra-t2",
+          "sids": [
+            "za:vertebra-t2"
+          ],
+          "nome_pt": "Vértebra T2",
+          "nome_en": "Vertebra T2"
+        },
+        {
+          "sid": "za:vertebra-t1",
+          "sids": [
+            "za:vertebra-t1"
+          ],
+          "nome_pt": "Vértebra T1",
+          "nome_en": "Vertebra T1"
+        },
+        {
+          "sid": "za:costal-cartilage-of-ninth-rib-r",
+          "sids": [
+            "za:costal-cartilage-of-ninth-rib-l",
+            "za:costal-cartilage-of-ninth-rib-r"
+          ],
+          "nome_pt": "Cartilagem costal da nona costela",
+          "nome_en": "Costal cartilage of ninth rib"
+        },
+        {
+          "sid": "za:vertebra-c7",
+          "sids": [
+            "za:vertebra-c7"
+          ],
+          "nome_pt": "Vértebra C7",
+          "nome_en": "Vertebra C7"
+        },
+        {
+          "sid": "za:axis-c2",
+          "sids": [
+            "za:axis-c2"
+          ],
+          "nome_pt": "Áxis (C2)",
+          "nome_en": "Axis (C2)"
+        },
+        {
+          "sid": "za:costal-cartilage-of-tenth-rib-r",
+          "sids": [
+            "za:costal-cartilage-of-tenth-rib-l",
+            "za:costal-cartilage-of-tenth-rib-r"
+          ],
+          "nome_pt": "Cartilagem costal da décima costela",
+          "nome_en": "Costal cartilage of tenth rib"
+        },
+        {
+          "sid": "za:costal-cartilage-of-sixth-rib-r",
+          "sids": [
+            "za:costal-cartilage-of-sixth-rib-l",
+            "za:costal-cartilage-of-sixth-rib-r"
+          ],
+          "nome_pt": "Cartilagem costal da sexta costela",
+          "nome_en": "Costal cartilage of sixth rib"
+        },
+        {
+          "sid": "za:vertebra-c6",
+          "sids": [
+            "za:vertebra-c6"
+          ],
+          "nome_pt": "Vértebra C6",
+          "nome_en": "Vertebra C6"
+        },
+        {
+          "sid": "za:atlas-c1",
+          "sids": [
+            "za:atlas-c1"
+          ],
+          "nome_pt": "Atlas (C1)",
+          "nome_en": "Atlas (C1)"
+        },
+        {
+          "sid": "za:fifth-metatarsal-bone-r",
+          "sids": [
+            "za:fifth-metatarsal-bone-l",
+            "za:fifth-metatarsal-bone-r"
+          ],
+          "nome_pt": "Osso metatarsal V",
+          "nome_en": "Fifth metatarsal bone"
+        },
+        {
+          "sid": "za:vertebra-c3",
+          "sids": [
+            "za:vertebra-c3"
+          ],
+          "nome_pt": "Vértebra C3",
+          "nome_en": "Vertebra C3"
+        },
+        {
+          "sid": "za:vertebra-c5",
+          "sids": [
+            "za:vertebra-c5"
+          ],
+          "nome_pt": "Vértebra C5",
+          "nome_en": "Vertebra C5"
+        },
+        {
+          "sid": "za:fourth-metatarsal-bone-r",
+          "sids": [
+            "za:fourth-metatarsal-bone-l",
+            "za:fourth-metatarsal-bone-r"
+          ],
+          "nome_pt": "Osso metatarsal IV",
+          "nome_en": "Fourth metatarsal bone"
+        },
+        {
+          "sid": "za:vertebra-c4",
+          "sids": [
+            "za:vertebra-c4"
+          ],
+          "nome_pt": "Vértebra C4",
+          "nome_en": "Vertebra C4"
+        },
+        {
+          "sid": "za:third-metatarsal-bone-r",
+          "sids": [
+            "za:third-metatarsal-bone-l",
+            "za:third-metatarsal-bone-r"
+          ],
+          "nome_pt": "Osso metatarsal III",
+          "nome_en": "Third metatarsal bone"
+        },
+        {
+          "sid": "za:zygomatic-bone-r",
+          "sids": [
+            "za:zygomatic-bone-l",
+            "za:zygomatic-bone-r"
+          ],
+          "nome_pt": "Osso zigomático",
+          "nome_en": "Zygomatic bone"
+        },
+        {
+          "sid": "za:first-metatarsal-bone-r",
+          "sids": [
+            "za:first-metatarsal-bone-l",
+            "za:first-metatarsal-bone-r"
+          ],
+          "nome_pt": "Osso metatarsal I",
+          "nome_en": "First metatarsal bone"
+        },
+        {
+          "sid": "za:second-metacarpal-bone-r",
+          "sids": [
+            "za:second-metacarpal-bone-l",
+            "za:second-metacarpal-bone-r"
+          ],
+          "nome_pt": "Osso metacarpal II",
+          "nome_en": "Second metacarpal bone"
+        },
+        {
+          "sid": "za:second-metatarsal-bone-r",
+          "sids": [
+            "za:second-metatarsal-bone-l",
+            "za:second-metatarsal-bone-r"
+          ],
+          "nome_pt": "Osso metatarsal II",
+          "nome_en": "Second metatarsal bone"
+        },
+        {
+          "sid": "za:thyroid-cartilage",
+          "sids": [
+            "za:thyroid-cartilage"
+          ],
+          "nome_pt": "Cartilagem tireóidea",
+          "nome_en": "Thyroid cartilage"
+        }
+      ]
+    }
+  ]
+}

@@ -19,6 +19,9 @@
       "rank": 1,
       "system": "esqueletico",
       "name": "Ethmoid bone",
+      "nome_pt": "Osso etmoide",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:ethmoid-bone",
       "sids": [
         "za:ethmoid-bone"
@@ -33,6 +36,9 @@
       "rank": 2,
       "system": "esqueletico",
       "name": "Inferior nasal concha bone",
+      "nome_pt": "Osso concha nasal inferior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-nasal-concha-bone-r",
       "sids": [
         "za:inferior-nasal-concha-bone-l",
@@ -47,6 +53,9 @@
       "rank": 3,
       "system": "esqueletico",
       "name": "Scapula",
+      "nome_pt": "Escápula",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:scapula-r",
       "sids": [
         "za:scapula-l",
@@ -61,6 +70,9 @@
       "rank": 4,
       "system": "esqueletico",
       "name": "Occipital bone",
+      "nome_pt": "Osso occipital",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:occipital-bone",
       "sids": [
         "za:occipital-bone"
@@ -74,6 +86,9 @@
       "rank": 5,
       "system": "esqueletico",
       "name": "Mandible",
+      "nome_pt": "Mandíbula",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:mandible",
       "sids": [
         "za:mandible"
@@ -87,6 +102,9 @@
       "rank": 6,
       "system": "esqueletico",
       "name": "Temporal bone",
+      "nome_pt": "Osso temporal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:temporal-bone-r",
       "sids": [
         "za:temporal-bone-l",
@@ -101,6 +119,9 @@
       "rank": 7,
       "system": "esqueletico",
       "name": "Sphenoid bone",
+      "nome_pt": "Osso esfenoides",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:sphenoid-bone",
       "sids": [
         "za:sphenoid-bone"
@@ -114,6 +135,9 @@
       "rank": 8,
       "system": "esqueletico",
       "name": "Body of sternum",
+      "nome_pt": "Corpo do esterno",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:body-of-sternum",
       "sids": [
         "za:body-of-sternum"
@@ -127,6 +151,9 @@
       "rank": 9,
       "system": "esqueletico",
       "name": "Calcaneus",
+      "nome_pt": "Calcâneo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:calcaneus-r",
       "sids": [
         "za:calcaneus-l",
@@ -141,6 +168,9 @@
       "rank": 10,
       "system": "esqueletico",
       "name": "Maxilla",
+      "nome_pt": "Maxila",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:maxilla-r",
       "sids": [
         "za:maxilla-l",
@@ -155,6 +185,9 @@
       "rank": 11,
       "system": "esqueletico",
       "name": "Manubrium of sternum",
+      "nome_pt": "Manúbrio do esterno",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:manubrium-of-sternum",
       "sids": [
         "za:manubrium-of-sternum"
@@ -168,6 +201,9 @@
       "rank": 12,
       "system": "esqueletico",
       "name": "Talus",
+      "nome_pt": "Tálus",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:talus-r",
       "sids": [
         "za:talus-l",
@@ -182,6 +218,9 @@
       "rank": 13,
       "system": "esqueletico",
       "name": "Palatine bone",
+      "nome_pt": "Osso palatino",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:palatine-bone-r",
       "sids": [
         "za:palatine-bone-l",
@@ -196,6 +235,9 @@
       "rank": 14,
       "system": "esqueletico",
       "name": "Cuboid bone",
+      "nome_pt": "Osso cuboide",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:cuboid-bone-r",
       "sids": [
         "za:cuboid-bone-l",
@@ -210,6 +252,9 @@
       "rank": 15,
       "system": "esqueletico",
       "name": "Hyoid bone",
+      "nome_pt": "Osso hioide",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:hyoid-bone",
       "sids": [
         "za:hyoid-bone"
@@ -223,6 +268,9 @@
       "rank": 16,
       "system": "esqueletico",
       "name": "Coccyx",
+      "nome_pt": "Cóccix",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:coccyx",
       "sids": [
         "za:coccyx"
@@ -236,6 +284,9 @@
       "rank": 17,
       "system": "esqueletico",
       "name": "Vomer",
+      "nome_pt": "Vômer",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vomer",
       "sids": [
         "za:vomer"
@@ -249,6 +300,9 @@
       "rank": 18,
       "system": "esqueletico",
       "name": "Xiphoid process",
+      "nome_pt": "Processo xifoide",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:xiphoid-process",
       "sids": [
         "za:xiphoid-process"
@@ -262,6 +316,9 @@
       "rank": 19,
       "system": "esqueletico",
       "name": "Nasal bone",
+      "nome_pt": "Osso nasal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:nasal-bone-r",
       "sids": [
         "za:nasal-bone-l",
@@ -276,6 +333,9 @@
       "rank": 20,
       "system": "esqueletico",
       "name": "Lacrimal bone",
+      "nome_pt": "Osso lacrimal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:lacrimal-bone-r",
       "sids": [
         "za:lacrimal-bone-l",
@@ -290,6 +350,9 @@
       "rank": 21,
       "system": "esqueletico",
       "name": "Femur",
+      "nome_pt": "Fêmur",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:femur-r",
       "sids": [
         "za:femur-l",
@@ -302,6 +365,9 @@
       "rank": 22,
       "system": "esqueletico",
       "name": "Hip bone",
+      "nome_pt": "Osso coxal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:hip-bone-r",
       "sids": [
         "za:hip-bone-l",
@@ -314,6 +380,9 @@
       "rank": 23,
       "system": "esqueletico",
       "name": "Seventh rib",
+      "nome_pt": "Sétima costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:seventh-rib-r",
       "sids": [
         "za:seventh-rib-l",
@@ -326,6 +395,9 @@
       "rank": 24,
       "system": "esqueletico",
       "name": "Sixth rib",
+      "nome_pt": "Sexta costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:sixth-rib-r",
       "sids": [
         "za:sixth-rib-l",
@@ -338,6 +410,9 @@
       "rank": 25,
       "system": "esqueletico",
       "name": "Eighth rib",
+      "nome_pt": "Oitava costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:eighth-rib-r",
       "sids": [
         "za:eighth-rib-l",
@@ -350,6 +425,9 @@
       "rank": 26,
       "system": "esqueletico",
       "name": "Fifth rib",
+      "nome_pt": "Quinta costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:fifth-rib-r",
       "sids": [
         "za:fifth-rib-l",
@@ -362,6 +440,9 @@
       "rank": 27,
       "system": "esqueletico",
       "name": "Ninth rib",
+      "nome_pt": "Nona costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:ninth-rib-r",
       "sids": [
         "za:ninth-rib-l",
@@ -374,6 +455,9 @@
       "rank": 28,
       "system": "esqueletico",
       "name": "Fourth rib",
+      "nome_pt": "Quarta costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:fourth-rib-r",
       "sids": [
         "za:fourth-rib-l",
@@ -386,6 +470,9 @@
       "rank": 29,
       "system": "esqueletico",
       "name": "Tenth rib",
+      "nome_pt": "Décima costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:tenth-rib-r",
       "sids": [
         "za:tenth-rib-l",
@@ -398,6 +485,9 @@
       "rank": 30,
       "system": "esqueletico",
       "name": "Tibia",
+      "nome_pt": "Tíbia",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:tibia-r",
       "sids": [
         "za:tibia-l",
@@ -410,6 +500,9 @@
       "rank": 31,
       "system": "esqueletico",
       "name": "Humerus",
+      "nome_pt": "Úmero",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:humerus-r",
       "sids": [
         "za:humerus-l",
@@ -422,6 +515,9 @@
       "rank": 32,
       "system": "esqueletico",
       "name": "Third rib",
+      "nome_pt": "Terceira costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:third-rib-r",
       "sids": [
         "za:third-rib-l",
@@ -434,6 +530,9 @@
       "rank": 33,
       "system": "esqueletico",
       "name": "Parietal bone",
+      "nome_pt": "Osso parietal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:parietal-bone-r",
       "sids": [
         "za:parietal-bone-l",
@@ -446,6 +545,9 @@
       "rank": 34,
       "system": "esqueletico",
       "name": "Sacrum",
+      "nome_pt": "Sacro",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:sacrum",
       "sids": [
         "za:sacrum"
@@ -457,6 +559,9 @@
       "rank": 35,
       "system": "esqueletico",
       "name": "Ulna",
+      "nome_pt": "Ulna",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:ulna-r",
       "sids": [
         "za:ulna-l",
@@ -469,6 +574,9 @@
       "rank": 36,
       "system": "esqueletico",
       "name": "Eleventh rib",
+      "nome_pt": "Décima primeira costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:eleventh-rib-r",
       "sids": [
         "za:eleventh-rib-l",
@@ -481,6 +589,9 @@
       "rank": 37,
       "system": "esqueletico",
       "name": "Radius",
+      "nome_pt": "Rádio",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:radius-r",
       "sids": [
         "za:radius-l",
@@ -493,6 +604,9 @@
       "rank": 38,
       "system": "esqueletico",
       "name": "Frontal bone",
+      "nome_pt": "Osso frontal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:frontal-bone",
       "sids": [
         "za:frontal-bone"
@@ -504,6 +618,9 @@
       "rank": 39,
       "system": "esqueletico",
       "name": "Second rib",
+      "nome_pt": "Segunda costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:second-rib-r",
       "sids": [
         "za:second-rib-l",
@@ -516,6 +633,9 @@
       "rank": 40,
       "system": "esqueletico",
       "name": "Clavicle",
+      "nome_pt": "Clavícula",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:clavicle-r",
       "sids": [
         "za:clavicle-l",
@@ -528,6 +648,9 @@
       "rank": 41,
       "system": "esqueletico",
       "name": "Vertebra L5",
+      "nome_pt": "Vértebra L5",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-l5",
       "sids": [
         "za:vertebra-l5"
@@ -539,6 +662,9 @@
       "rank": 42,
       "system": "esqueletico",
       "name": "Fibula",
+      "nome_pt": "Fíbula",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:fibula-r",
       "sids": [
         "za:fibula-l",
@@ -551,6 +677,9 @@
       "rank": 43,
       "system": "esqueletico",
       "name": "Vertebra L1",
+      "nome_pt": "Vértebra L1",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-l1",
       "sids": [
         "za:vertebra-l1"
@@ -562,6 +691,9 @@
       "rank": 44,
       "system": "esqueletico",
       "name": "Vertebra L2",
+      "nome_pt": "Vértebra L2",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-l2",
       "sids": [
         "za:vertebra-l2"
@@ -573,6 +705,9 @@
       "rank": 45,
       "system": "esqueletico",
       "name": "Vertebra T10",
+      "nome_pt": "Vértebra T10",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t10",
       "sids": [
         "za:vertebra-t10"
@@ -584,6 +719,9 @@
       "rank": 46,
       "system": "esqueletico",
       "name": "Vertebra L3",
+      "nome_pt": "Vértebra L3",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-l3",
       "sids": [
         "za:vertebra-l3"
@@ -595,6 +733,9 @@
       "rank": 47,
       "system": "esqueletico",
       "name": "Vertebra L4",
+      "nome_pt": "Vértebra L4",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-l4",
       "sids": [
         "za:vertebra-l4"
@@ -606,6 +747,9 @@
       "rank": 48,
       "system": "esqueletico",
       "name": "Vertebra T6",
+      "nome_pt": "Vértebra T6",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t6",
       "sids": [
         "za:vertebra-t6"
@@ -617,6 +761,9 @@
       "rank": 49,
       "system": "esqueletico",
       "name": "Vertebra T7",
+      "nome_pt": "Vértebra T7",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t7",
       "sids": [
         "za:vertebra-t7"
@@ -628,6 +775,9 @@
       "rank": 50,
       "system": "esqueletico",
       "name": "Vertebra T8",
+      "nome_pt": "Vértebra T8",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t8",
       "sids": [
         "za:vertebra-t8"
@@ -639,6 +789,9 @@
       "rank": 51,
       "system": "esqueletico",
       "name": "Vertebra T9",
+      "nome_pt": "Vértebra T9",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t9",
       "sids": [
         "za:vertebra-t9"
@@ -650,6 +803,9 @@
       "rank": 52,
       "system": "esqueletico",
       "name": "Costal cartilage of seventh rib",
+      "nome_pt": "Cartilagem costal da sétima costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:costal-cartilage-of-seventh-rib-r",
       "sids": [
         "za:costal-cartilage-of-seventh-rib-l",
@@ -662,6 +818,9 @@
       "rank": 53,
       "system": "esqueletico",
       "name": "Twelfth rib",
+      "nome_pt": "Décima segunda costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:twelfth-rib-r",
       "sids": [
         "za:twelfth-rib-l",
@@ -674,6 +833,9 @@
       "rank": 54,
       "system": "esqueletico",
       "name": "Vertebra T5",
+      "nome_pt": "Vértebra T5",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t5",
       "sids": [
         "za:vertebra-t5"
@@ -685,6 +847,9 @@
       "rank": 55,
       "system": "esqueletico",
       "name": "Costal cartilage of eighth rib",
+      "nome_pt": "Cartilagem costal da oitava costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:costal-cartilage-of-eighth-rib-r",
       "sids": [
         "za:costal-cartilage-of-eighth-rib-l",
@@ -697,6 +862,9 @@
       "rank": 56,
       "system": "esqueletico",
       "name": "Vertebra T11",
+      "nome_pt": "Vértebra T11",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t11",
       "sids": [
         "za:vertebra-t11"
@@ -708,6 +876,9 @@
       "rank": 57,
       "system": "esqueletico",
       "name": "First rib",
+      "nome_pt": "Primeira costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:first-rib-r",
       "sids": [
         "za:first-rib-l",
@@ -720,6 +891,9 @@
       "rank": 58,
       "system": "esqueletico",
       "name": "Vertebra T3",
+      "nome_pt": "Vértebra T3",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t3",
       "sids": [
         "za:vertebra-t3"
@@ -731,6 +905,9 @@
       "rank": 59,
       "system": "esqueletico",
       "name": "Vertebra T4",
+      "nome_pt": "Vértebra T4",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t4",
       "sids": [
         "za:vertebra-t4"
@@ -742,6 +919,9 @@
       "rank": 60,
       "system": "esqueletico",
       "name": "Vertebra T12",
+      "nome_pt": "Vértebra T12",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t12",
       "sids": [
         "za:vertebra-t12"
@@ -753,6 +933,9 @@
       "rank": 61,
       "system": "esqueletico",
       "name": "Vertebra T2",
+      "nome_pt": "Vértebra T2",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t2",
       "sids": [
         "za:vertebra-t2"
@@ -764,6 +947,9 @@
       "rank": 62,
       "system": "esqueletico",
       "name": "Vertebra T1",
+      "nome_pt": "Vértebra T1",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-t1",
       "sids": [
         "za:vertebra-t1"
@@ -775,6 +961,9 @@
       "rank": 63,
       "system": "esqueletico",
       "name": "Costal cartilage of ninth rib",
+      "nome_pt": "Cartilagem costal da nona costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:costal-cartilage-of-ninth-rib-r",
       "sids": [
         "za:costal-cartilage-of-ninth-rib-l",
@@ -787,6 +976,9 @@
       "rank": 64,
       "system": "esqueletico",
       "name": "Vertebra C7",
+      "nome_pt": "Vértebra C7",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-c7",
       "sids": [
         "za:vertebra-c7"
@@ -798,6 +990,9 @@
       "rank": 65,
       "system": "esqueletico",
       "name": "Axis (C2)",
+      "nome_pt": "Áxis (C2)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:axis-c2",
       "sids": [
         "za:axis-c2"
@@ -809,6 +1004,9 @@
       "rank": 66,
       "system": "esqueletico",
       "name": "Costal cartilage of tenth rib",
+      "nome_pt": "Cartilagem costal da décima costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:costal-cartilage-of-tenth-rib-r",
       "sids": [
         "za:costal-cartilage-of-tenth-rib-l",
@@ -821,6 +1019,9 @@
       "rank": 67,
       "system": "esqueletico",
       "name": "Costal cartilage of sixth rib",
+      "nome_pt": "Cartilagem costal da sexta costela",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:costal-cartilage-of-sixth-rib-r",
       "sids": [
         "za:costal-cartilage-of-sixth-rib-l",
@@ -833,6 +1034,9 @@
       "rank": 68,
       "system": "esqueletico",
       "name": "Vertebra C6",
+      "nome_pt": "Vértebra C6",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-c6",
       "sids": [
         "za:vertebra-c6"
@@ -844,6 +1048,9 @@
       "rank": 69,
       "system": "esqueletico",
       "name": "Atlas (C1)",
+      "nome_pt": "Atlas (C1)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:atlas-c1",
       "sids": [
         "za:atlas-c1"
@@ -855,6 +1062,9 @@
       "rank": 70,
       "system": "esqueletico",
       "name": "Fifth metatarsal bone",
+      "nome_pt": "Osso metatarsal V",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:fifth-metatarsal-bone-r",
       "sids": [
         "za:fifth-metatarsal-bone-l",
@@ -867,6 +1077,9 @@
       "rank": 71,
       "system": "esqueletico",
       "name": "Vertebra C3",
+      "nome_pt": "Vértebra C3",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-c3",
       "sids": [
         "za:vertebra-c3"
@@ -878,6 +1091,9 @@
       "rank": 72,
       "system": "esqueletico",
       "name": "Vertebra C5",
+      "nome_pt": "Vértebra C5",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-c5",
       "sids": [
         "za:vertebra-c5"
@@ -889,6 +1105,9 @@
       "rank": 73,
       "system": "esqueletico",
       "name": "Fourth metatarsal bone",
+      "nome_pt": "Osso metatarsal IV",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:fourth-metatarsal-bone-r",
       "sids": [
         "za:fourth-metatarsal-bone-l",
@@ -901,6 +1120,9 @@
       "rank": 74,
       "system": "esqueletico",
       "name": "Vertebra C4",
+      "nome_pt": "Vértebra C4",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:vertebra-c4",
       "sids": [
         "za:vertebra-c4"
@@ -912,6 +1134,9 @@
       "rank": 75,
       "system": "esqueletico",
       "name": "Third metatarsal bone",
+      "nome_pt": "Osso metatarsal III",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:third-metatarsal-bone-r",
       "sids": [
         "za:third-metatarsal-bone-l",
@@ -924,6 +1149,9 @@
       "rank": 76,
       "system": "esqueletico",
       "name": "Zygomatic bone",
+      "nome_pt": "Osso zigomático",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:zygomatic-bone-r",
       "sids": [
         "za:zygomatic-bone-l",
@@ -936,6 +1164,9 @@
       "rank": 77,
       "system": "esqueletico",
       "name": "First metatarsal bone",
+      "nome_pt": "Osso metatarsal I",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:first-metatarsal-bone-r",
       "sids": [
         "za:first-metatarsal-bone-l",
@@ -948,6 +1179,9 @@
       "rank": 78,
       "system": "esqueletico",
       "name": "Second metacarpal bone",
+      "nome_pt": "Osso metacarpal II",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:second-metacarpal-bone-r",
       "sids": [
         "za:second-metacarpal-bone-l",
@@ -960,6 +1194,9 @@
       "rank": 79,
       "system": "esqueletico",
       "name": "Second metatarsal bone",
+      "nome_pt": "Osso metatarsal II",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:second-metatarsal-bone-r",
       "sids": [
         "za:second-metatarsal-bone-l",
@@ -972,6 +1209,9 @@
       "rank": 80,
       "system": "esqueletico",
       "name": "Thyroid cartilage",
+      "nome_pt": "Cartilagem tireóidea",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:thyroid-cartilage",
       "sids": [
         "za:thyroid-cartilage"
@@ -983,12 +1223,17 @@
       "rank": 81,
       "system": "nervoso",
       "name": "Middle temporal gyrus",
+      "nome_pt": "Giro temporal médio",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:middle-temporal-gyrus-r",
       "sids": [
+        "za:allen-middle-temporal-gyrus-l",
+        "za:allen-middle-temporal-gyrus-r",
         "za:middle-temporal-gyrus-l",
         "za:middle-temporal-gyrus-r"
       ],
-      "score": 158.4,
+      "score": 158.9,
       "reasons": [
         "usada em quiz",
         "ficha existente"
@@ -998,6 +1243,9 @@
       "rank": 82,
       "system": "nervoso",
       "name": "Medulla oblongata",
+      "nome_pt": "Medula oblonga",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:medulla-oblongata-r",
       "sids": [
         "za:medulla-oblongata-l",
@@ -1013,8 +1261,13 @@
       "rank": 83,
       "system": "nervoso",
       "name": "Hypothalamus",
+      "nome_pt": "Hipotálamo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:hypothalamus",
       "sids": [
+        "za:allen-hypothalamus-l",
+        "za:allen-hypothalamus-r",
         "za:hypothalamus"
       ],
       "score": 153.5,
@@ -1027,6 +1280,9 @@
       "rank": 84,
       "system": "nervoso",
       "name": "White matter of telencephalon",
+      "nome_pt": "Substância branca do telencéfalo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:white-matter-of-telencephalon-r",
       "sids": [
         "za:white-matter-of-telencephalon-l",
@@ -1041,6 +1297,9 @@
       "rank": 85,
       "system": "nervoso",
       "name": "Spinal dura",
+      "nome_pt": "Dura-máter espinal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:spinal-dura",
       "sids": [
         "za:spinal-dura"
@@ -1054,6 +1313,9 @@
       "rank": 86,
       "system": "nervoso",
       "name": "White matter of spinal cord",
+      "nome_pt": "Substância branca da medula espinal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:white-matter-of-spinal-cord",
       "sids": [
         "za:white-matter-of-spinal-cord"
@@ -1067,6 +1329,9 @@
       "rank": 87,
       "system": "nervoso",
       "name": "Allen primary motor cortex",
+      "nome_pt": "Córtex motor primário",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-primary-motor-cortex-r",
       "sids": [
         "za:allen-primary-motor-cortex-l",
@@ -1080,11 +1345,16 @@
     {
       "rank": 88,
       "system": "nervoso",
-      "name": "Allen postcentral gyrus",
-      "sid": "za:allen-postcentral-gyrus-r",
+      "name": "Postcentral gyrus",
+      "nome_pt": "Giro pós-central",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:postcentral-gyrus-r",
       "sids": [
         "za:allen-postcentral-gyrus-l",
-        "za:allen-postcentral-gyrus-r"
+        "za:allen-postcentral-gyrus-r",
+        "za:postcentral-gyrus-l",
+        "za:postcentral-gyrus-r"
       ],
       "score": 109.5,
       "reasons": [
@@ -1095,8 +1365,13 @@
       "rank": 89,
       "system": "nervoso",
       "name": "Middle frontal gyrus",
+      "nome_pt": "Giro frontal médio",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:middle-frontal-gyrus-r",
       "sids": [
+        "za:allen-middle-frontal-gyrus-l",
+        "za:allen-middle-frontal-gyrus-r",
         "za:middle-frontal-gyrus-l",
         "za:middle-frontal-gyrus-r"
       ],
@@ -1109,8 +1384,13 @@
       "rank": 90,
       "system": "nervoso",
       "name": "Superior frontal gyrus",
+      "nome_pt": "Giro frontal superior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:superior-frontal-gyrus-r",
       "sids": [
+        "za:allen-superior-frontal-gyrus-l",
+        "za:allen-superior-frontal-gyrus-r",
         "za:superior-frontal-gyrus-l",
         "za:superior-frontal-gyrus-r"
       ],
@@ -1123,6 +1403,9 @@
       "rank": 91,
       "system": "nervoso",
       "name": "Anterior horn of spinal cord",
+      "nome_pt": "Corno anterior da medula espinal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:anterior-horn-of-spinal-cord",
       "sids": [
         "za:anterior-horn-of-spinal-cord"
@@ -1136,6 +1419,9 @@
       "rank": 92,
       "system": "nervoso",
       "name": "Posterior horn of spinal cord",
+      "nome_pt": "Corno posterior da medula espinal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:posterior-horn-of-spinal-cord",
       "sids": [
         "za:posterior-horn-of-spinal-cord"
@@ -1148,21 +1434,10 @@
     {
       "rank": 93,
       "system": "nervoso",
-      "name": "Allen superior frontal gyrus",
-      "sid": "za:allen-superior-frontal-gyrus-r",
-      "sids": [
-        "za:allen-superior-frontal-gyrus-l",
-        "za:allen-superior-frontal-gyrus-r"
-      ],
-      "score": 109.1,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 94,
-      "system": "nervoso",
       "name": "Lateral ventricle",
+      "nome_pt": "Ventrículo lateral",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:lateral-ventricle-r",
       "sids": [
         "za:lateral-ventricle-l",
@@ -1174,9 +1449,12 @@
       ]
     },
     {
-      "rank": 95,
+      "rank": 94,
       "system": "nervoso",
       "name": "Superior temporal sulcus",
+      "nome_pt": "Sulco temporal superior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:superior-temporal-sulcus-r",
       "sids": [
         "za:superior-temporal-sulcus-l",
@@ -1188,25 +1466,16 @@
       ]
     },
     {
-      "rank": 96,
-      "system": "nervoso",
-      "name": "Allen middle temporal gyrus",
-      "sid": "za:allen-middle-temporal-gyrus-r",
-      "sids": [
-        "za:allen-middle-temporal-gyrus-l",
-        "za:allen-middle-temporal-gyrus-r"
-      ],
-      "score": 108.9,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 97,
+      "rank": 95,
       "system": "nervoso",
       "name": "Corpus callosum",
+      "nome_pt": "Corpo caloso",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:corpus-callosum",
       "sids": [
+        "za:allen-corpus-callosum-l",
+        "za:allen-corpus-callosum-r",
         "za:corpus-callosum"
       ],
       "score": 108.9,
@@ -1215,9 +1484,12 @@
       ]
     },
     {
-      "rank": 98,
+      "rank": 96,
       "system": "nervoso",
       "name": "Precentral gyrus",
+      "nome_pt": "Giro pré-central",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:precentral-gyrus-r",
       "sids": [
         "za:precentral-gyrus-l",
@@ -1229,37 +1501,12 @@
       ]
     },
     {
-      "rank": 99,
-      "system": "nervoso",
-      "name": "Allen middle frontal gyrus",
-      "sid": "za:allen-middle-frontal-gyrus-r",
-      "sids": [
-        "za:allen-middle-frontal-gyrus-l",
-        "za:allen-middle-frontal-gyrus-r"
-      ],
-      "score": 108.7,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 100,
-      "system": "nervoso",
-      "name": "Postcentral gyrus",
-      "sid": "za:postcentral-gyrus-r",
-      "sids": [
-        "za:postcentral-gyrus-l",
-        "za:postcentral-gyrus-r"
-      ],
-      "score": 108.7,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 101,
+      "rank": 97,
       "system": "nervoso",
       "name": "Central sulcus",
+      "nome_pt": "Sulco central",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:central-sulcus-r",
       "sids": [
         "za:central-sulcus-l",
@@ -1271,11 +1518,16 @@
       ]
     },
     {
-      "rank": 102,
+      "rank": 98,
       "system": "nervoso",
       "name": "Angular gyrus",
+      "nome_pt": "Giro angular",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:angular-gyrus-r",
       "sids": [
+        "za:allen-angular-gyrus-l",
+        "za:allen-angular-gyrus-r",
         "za:angular-gyrus-l",
         "za:angular-gyrus-r"
       ],
@@ -1285,9 +1537,12 @@
       ]
     },
     {
-      "rank": 103,
+      "rank": 99,
       "system": "nervoso",
       "name": "Allen superior temporal gyrus",
+      "nome_pt": "Giro temporal superior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-superior-temporal-gyrus-r",
       "sids": [
         "za:allen-superior-temporal-gyrus-l",
@@ -1299,11 +1554,16 @@
       ]
     },
     {
-      "rank": 104,
+      "rank": 100,
       "system": "nervoso",
       "name": "Inferior temporal gyrus",
+      "nome_pt": "Giro temporal inferior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-temporal-gyrus-r",
       "sids": [
+        "za:allen-inferior-temporal-gyrus-l",
+        "za:allen-inferior-temporal-gyrus-r",
         "za:inferior-temporal-gyrus-l",
         "za:inferior-temporal-gyrus-r"
       ],
@@ -1313,9 +1573,12 @@
       ]
     },
     {
-      "rank": 105,
+      "rank": 101,
       "system": "nervoso",
       "name": "Superior temporal gyrus (Lateral part)",
+      "nome_pt": "Giro temporal superior (Parte lateral)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:superior-temporal-gyrus-lateral-part-r",
       "sids": [
         "za:superior-temporal-gyrus-lateral-part-l",
@@ -1327,23 +1590,12 @@
       ]
     },
     {
-      "rank": 106,
-      "system": "nervoso",
-      "name": "Allen precuneus",
-      "sid": "za:allen-precuneus-r",
-      "sids": [
-        "za:allen-precuneus-l",
-        "za:allen-precuneus-r"
-      ],
-      "score": 107.7,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 107,
+      "rank": 102,
       "system": "nervoso",
       "name": "Orbital gyri",
+      "nome_pt": "Giros orbitais",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:orbital-gyri-r",
       "sids": [
         "za:orbital-gyri-l",
@@ -1355,9 +1607,31 @@
       ]
     },
     {
-      "rank": 108,
+      "rank": 103,
+      "system": "nervoso",
+      "name": "Precuneus",
+      "nome_pt": "Pré-cúneo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:precuneus-r",
+      "sids": [
+        "za:allen-precuneus-l",
+        "za:allen-precuneus-r",
+        "za:precuneus-l",
+        "za:precuneus-r"
+      ],
+      "score": 107.7,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 104,
       "system": "nervoso",
       "name": "Allen lingual gyrus medial occipitotemporal gyrus",
+      "nome_pt": "Giro lingual (giro occipitotemporal medial)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-r",
       "sids": [
         "za:allen-lingual-gyrus-medial-occipitotemporal-gyrus-l",
@@ -1369,9 +1643,12 @@
       ]
     },
     {
-      "rank": 109,
+      "rank": 105,
       "system": "nervoso",
       "name": "Postcentral sulcus",
+      "nome_pt": "Sulco pós-central",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:postcentral-sulcus-r",
       "sids": [
         "za:postcentral-sulcus-l",
@@ -1383,23 +1660,12 @@
       ]
     },
     {
-      "rank": 110,
-      "system": "nervoso",
-      "name": "Allen inferior temporal gyrus",
-      "sid": "za:allen-inferior-temporal-gyrus-r",
-      "sids": [
-        "za:allen-inferior-temporal-gyrus-l",
-        "za:allen-inferior-temporal-gyrus-r"
-      ],
-      "score": 107.5,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 111,
+      "rank": 106,
       "system": "nervoso",
       "name": "Medial occipitotemporal gyrus (Parahippocampal*)",
+      "nome_pt": "Giro occipitotemporal medial (giro parahipocampal)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:medial-occipitotemporal-gyrus-parahippocampal-r",
       "sids": [
         "za:medial-occipitotemporal-gyrus-parahippocampal-l",
@@ -1411,9 +1677,12 @@
       ]
     },
     {
-      "rank": 112,
+      "rank": 107,
       "system": "nervoso",
       "name": "Allen cingulate gyrus caudal posterior part",
+      "nome_pt": "Parte caudal posterior do giro do cíngulo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-cingulate-gyrus-caudal-posterior-part-r",
       "sids": [
         "za:allen-cingulate-gyrus-caudal-posterior-part-l",
@@ -1425,9 +1694,12 @@
       ]
     },
     {
-      "rank": 113,
+      "rank": 108,
       "system": "nervoso",
       "name": "Collateral sulcus",
+      "nome_pt": "Sulco colateral",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:collateral-sulcus-r",
       "sids": [
         "za:collateral-sulcus-l",
@@ -1439,23 +1711,12 @@
       ]
     },
     {
-      "rank": 114,
-      "system": "nervoso",
-      "name": "Allen angular gyrus",
-      "sid": "za:allen-angular-gyrus-r",
-      "sids": [
-        "za:allen-angular-gyrus-l",
-        "za:allen-angular-gyrus-r"
-      ],
-      "score": 107.3,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 115,
+      "rank": 109,
       "system": "nervoso",
       "name": "Allen inferior occipital gyrus",
+      "nome_pt": "Giro occipital inferior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-inferior-occipital-gyrus-r",
       "sids": [
         "za:allen-inferior-occipital-gyrus-l",
@@ -1467,9 +1728,12 @@
       ]
     },
     {
-      "rank": 116,
+      "rank": 110,
       "system": "nervoso",
       "name": "Allen superior occipital gyrus",
+      "nome_pt": "Giro occipital superior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-superior-occipital-gyrus-r",
       "sids": [
         "za:allen-superior-occipital-gyrus-l",
@@ -1481,9 +1745,12 @@
       ]
     },
     {
-      "rank": 117,
+      "rank": 111,
       "system": "nervoso",
       "name": "Lingual gyrus",
+      "nome_pt": "Giro lingual",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:lingual-gyrus-r",
       "sids": [
         "za:lingual-gyrus-l",
@@ -1495,9 +1762,12 @@
       ]
     },
     {
-      "rank": 118,
+      "rank": 112,
       "system": "nervoso",
       "name": "Superior frontal sulcus",
+      "nome_pt": "Sulco frontal superior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:superior-frontal-sulcus-r",
       "sids": [
         "za:superior-frontal-sulcus-l",
@@ -1509,11 +1779,16 @@
       ]
     },
     {
-      "rank": 119,
+      "rank": 113,
       "system": "nervoso",
       "name": "Supramarginal gyrus",
+      "nome_pt": "Giro supramarginal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:supramarginal-gyrus-r",
       "sids": [
+        "za:allen-supramarginal-gyrus-l",
+        "za:allen-supramarginal-gyrus-r",
         "za:supramarginal-gyrus-l",
         "za:supramarginal-gyrus-r"
       ],
@@ -1523,37 +1798,12 @@
       ]
     },
     {
-      "rank": 120,
-      "system": "nervoso",
-      "name": "Allen supramarginal gyrus",
-      "sid": "za:allen-supramarginal-gyrus-r",
-      "sids": [
-        "za:allen-supramarginal-gyrus-l",
-        "za:allen-supramarginal-gyrus-r"
-      ],
-      "score": 107.1,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 121,
-      "system": "nervoso",
-      "name": "Precuneus",
-      "sid": "za:precuneus-r",
-      "sids": [
-        "za:precuneus-l",
-        "za:precuneus-r"
-      ],
-      "score": 107.1,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 122,
+      "rank": 114,
       "system": "nervoso",
       "name": "Allen frontal pole",
+      "nome_pt": "polo frontal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-frontal-pole-r",
       "sids": [
         "za:allen-frontal-pole-l",
@@ -1565,9 +1815,12 @@
       ]
     },
     {
-      "rank": 123,
+      "rank": 115,
       "system": "nervoso",
       "name": "Allen cuneus",
+      "nome_pt": "Cuneus",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-cuneus-r",
       "sids": [
         "za:allen-cuneus-l",
@@ -1579,9 +1832,12 @@
       ]
     },
     {
-      "rank": 124,
+      "rank": 116,
       "system": "nervoso",
       "name": "Allen cingulate gyrus rostral anterior part",
+      "nome_pt": "Parte rostral anterior do giro do cíngulo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:allen-cingulate-gyrus-rostral-anterior-part-r",
       "sids": [
         "za:allen-cingulate-gyrus-rostral-anterior-part-l",
@@ -1593,9 +1849,12 @@
       ]
     },
     {
-      "rank": 125,
+      "rank": 117,
       "system": "nervoso",
       "name": "Inferior frontal sulcus",
+      "nome_pt": "Sulco frontal inferior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-frontal-sulcus-r",
       "sids": [
         "za:inferior-frontal-sulcus-l",
@@ -1607,9 +1866,12 @@
       ]
     },
     {
-      "rank": 126,
+      "rank": 118,
       "system": "nervoso",
       "name": "Calcarine sulcus",
+      "nome_pt": "Sulco calcarino",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:calcarine-sulcus-r",
       "sids": [
         "za:calcarine-sulcus-l",
@@ -1621,9 +1883,12 @@
       ]
     },
     {
-      "rank": 127,
+      "rank": 119,
       "system": "nervoso",
       "name": "Lateral occipital gyrus (Middle occipital gyrus*)",
+      "nome_pt": "Giro occipital lateral (giro occipital médio)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:lateral-occipital-gyrus-middle-occipital-gyrus-r",
       "sids": [
         "za:lateral-occipital-gyrus-middle-occipital-gyrus-l",
@@ -1635,9 +1900,12 @@
       ]
     },
     {
-      "rank": 128,
+      "rank": 120,
       "system": "nervoso",
       "name": "Lateral occipitotemporal gyrus",
+      "nome_pt": "Giro occipitotemporal lateral",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:lateral-occipitotemporal-gyrus-r",
       "sids": [
         "za:lateral-occipitotemporal-gyrus-l",
@@ -1649,9 +1917,248 @@
       ]
     },
     {
+      "rank": 121,
+      "system": "nervoso",
+      "name": "Opercular part of inferior frontal gyrus",
+      "nome_pt": "Parte opercular do giro frontal inferior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:opercular-part-of-inferior-frontal-gyrus-r",
+      "sids": [
+        "za:allen-inferior-frontal-gyrus-opercular-part-l",
+        "za:allen-inferior-frontal-gyrus-opercular-part-r",
+        "za:opercular-part-of-inferior-frontal-gyrus-l",
+        "za:opercular-part-of-inferior-frontal-gyrus-r"
+      ],
+      "score": 106.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 122,
+      "system": "nervoso",
+      "name": "Parieto-occipital sulcus",
+      "nome_pt": "Sulco parieto-occipital",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:parieto-occipital-sulcus-r",
+      "sids": [
+        "za:parieto-occipital-sulcus-l",
+        "za:parieto-occipital-sulcus-r"
+      ],
+      "score": 106.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 123,
+      "system": "nervoso",
+      "name": "Temporal pole",
+      "nome_pt": "Polo temporal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:temporal-pole-r",
+      "sids": [
+        "za:allen-temporal-pole-l",
+        "za:allen-temporal-pole-r",
+        "za:temporal-pole-l",
+        "za:temporal-pole-r"
+      ],
+      "score": 106.2,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 124,
+      "system": "nervoso",
+      "name": "Paracentral gyrus and sulcus*",
+      "nome_pt": "Giro e sulco paracentral",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:paracentral-gyrus-and-sulcus-r",
+      "sids": [
+        "za:paracentral-gyrus-and-sulcus-l",
+        "za:paracentral-gyrus-and-sulcus-r"
+      ],
+      "score": 106.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 125,
+      "system": "nervoso",
+      "name": "Precentral sulcus (inferior part)*",
+      "nome_pt": "Sulco pré-central (Parte inferior)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:precentral-sulcus-inferior-part-r",
+      "sids": [
+        "za:precentral-sulcus-inferior-part-l",
+        "za:precentral-sulcus-inferior-part-r"
+      ],
+      "score": 106.1,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 126,
+      "system": "nervoso",
+      "name": "Cuneus",
+      "nome_pt": "Cunha",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:cuneus-r",
+      "sids": [
+        "za:cuneus-l",
+        "za:cuneus-r"
+      ],
+      "score": 106,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 127,
+      "system": "nervoso",
+      "name": "Inferior occipital gyrus and sulcus*",
+      "nome_pt": "Giro occipital inferior e sulco",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:inferior-occipital-gyrus-and-sulcus-r",
+      "sids": [
+        "za:inferior-occipital-gyrus-and-sulcus-l",
+        "za:inferior-occipital-gyrus-and-sulcus-r"
+      ],
+      "score": 106,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
+      "rank": 128,
+      "system": "nervoso",
+      "name": "Occipital pole",
+      "nome_pt": "Polo occipital",
+      "sinonimos_pt": [
+        "polo occipital"
+      ],
+      "sourceOfName": "za",
+      "sid": "za:occipital-pole-r",
+      "sids": [
+        "za:allen-occipital-pole-l",
+        "za:allen-occipital-pole-r",
+        "za:occipital-pole-l",
+        "za:occipital-pole-r"
+      ],
+      "score": 106,
+      "reasons": [
+        "usada em quiz"
+      ]
+    },
+    {
       "rank": 129,
+      "system": "nervoso",
+      "name": "Allen frontomarginal gyrus",
+      "nome_pt": "Giro frontomarginal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:allen-frontomarginal-gyrus-r",
+      "sids": [
+        "za:allen-frontomarginal-gyrus-l",
+        "za:allen-frontomarginal-gyrus-r"
+      ],
+      "score": 105.9,
+      "reasons": [
+        "usada em quiz",
+        "vaga redistribuída"
+      ]
+    },
+    {
+      "rank": 130,
+      "system": "nervoso",
+      "name": "Allen occipitotemporal fusiform gyrus temporal part",
+      "nome_pt": "Parte temporal do giro fusiforme occipitotemporal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:allen-occipitotemporal-fusiform-gyrus-temporal-part-r",
+      "sids": [
+        "za:allen-occipitotemporal-fusiform-gyrus-temporal-part-l",
+        "za:allen-occipitotemporal-fusiform-gyrus-temporal-part-r"
+      ],
+      "score": 105.9,
+      "reasons": [
+        "usada em quiz",
+        "vaga redistribuída"
+      ]
+    },
+    {
+      "rank": 131,
+      "system": "nervoso",
+      "name": "Allen short insular gyri",
+      "nome_pt": "Giros curtos da ínsula",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:allen-short-insular-gyri-r",
+      "sids": [
+        "za:allen-short-insular-gyri-l",
+        "za:allen-short-insular-gyri-r"
+      ],
+      "score": 105.9,
+      "reasons": [
+        "usada em quiz",
+        "vaga redistribuída"
+      ]
+    },
+    {
+      "rank": 132,
+      "system": "nervoso",
+      "name": "Triangular part of inferior frontal gyrus",
+      "nome_pt": "Parte triangular do giro frontal inferior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:triangular-part-of-inferior-frontal-gyrus-r",
+      "sids": [
+        "za:allen-inferior-frontal-gyrus-triangular-part-l",
+        "za:allen-inferior-frontal-gyrus-triangular-part-r",
+        "za:triangular-part-of-inferior-frontal-gyrus-l",
+        "za:triangular-part-of-inferior-frontal-gyrus-r"
+      ],
+      "score": 105.9,
+      "reasons": [
+        "usada em quiz",
+        "vaga redistribuída"
+      ]
+    },
+    {
+      "rank": 133,
+      "system": "nervoso",
+      "name": "Superior occipital gyri",
+      "nome_pt": "Giros occipitais superiores",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:superior-occipital-gyri-r",
+      "sids": [
+        "za:superior-occipital-gyri-l",
+        "za:superior-occipital-gyri-r"
+      ],
+      "score": 105.8,
+      "reasons": [
+        "usada em quiz",
+        "vaga redistribuída"
+      ]
+    },
+    {
+      "rank": 134,
       "system": "muscular",
       "name": "Acromial part of deltoid muscle",
+      "nome_pt": "Parte acromial do músculo deltoides",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:acromial-part-of-deltoid-muscle-r",
       "sids": [
         "za:acromial-part-of-deltoid-muscle-l",
@@ -1664,9 +2171,12 @@
       ]
     },
     {
-      "rank": 130,
+      "rank": 135,
       "system": "muscular",
       "name": "Short head of biceps brachii",
+      "nome_pt": "Cabeça curta do músculo bíceps braquial",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:short-head-of-biceps-brachii-r",
       "sids": [
         "za:short-head-of-biceps-brachii-l",
@@ -1679,9 +2189,12 @@
       ]
     },
     {
-      "rank": 131,
+      "rank": 136,
       "system": "muscular",
       "name": "Inferior pharyngeal constrictor",
+      "nome_pt": "Constritor faríngeo inferior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-pharyngeal-constrictor-r",
       "sids": [
         "za:inferior-pharyngeal-constrictor-l",
@@ -1694,9 +2207,12 @@
       ]
     },
     {
-      "rank": 132,
+      "rank": 137,
       "system": "muscular",
       "name": "Rectus femoris muscle",
+      "nome_pt": "Músculo reto femoral",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:rectus-femoris-muscle-r",
       "sids": [
         "za:rectus-femoris-muscle-l",
@@ -1708,9 +2224,12 @@
       ]
     },
     {
-      "rank": 133,
+      "rank": 138,
       "system": "muscular",
       "name": "Transversus abdominis muscle",
+      "nome_pt": "Músculo transverso do abdômen",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:transversus-abdominis-muscle-r",
       "sids": [
         "za:transversus-abdominis-muscle-l",
@@ -1722,9 +2241,12 @@
       ]
     },
     {
-      "rank": 134,
+      "rank": 139,
       "system": "muscular",
       "name": "Flexor digitorum longus",
+      "nome_pt": "Músculo flexor longo dos dedos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:flexor-digitorum-longus-r",
       "sids": [
         "za:flexor-digitorum-longus-l",
@@ -1736,9 +2258,12 @@
       ]
     },
     {
-      "rank": 135,
+      "rank": 140,
       "system": "muscular",
       "name": "Sartorius muscle",
+      "nome_pt": "Músculo sartório",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:sartorius-muscle-r",
       "sids": [
         "za:sartorius-muscle-l",
@@ -1750,9 +2275,12 @@
       ]
     },
     {
-      "rank": 136,
+      "rank": 141,
       "system": "muscular",
       "name": "Humero-ulnar head of flexor digitorum superficialis",
+      "nome_pt": "Cabeça umero-ulnar do músculo flexor superficial dos dedos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:humero-ulnar-head-of-flexor-digitorum-superficialis-r",
       "sids": [
         "za:humero-ulnar-head-of-flexor-digitorum-superficialis-l",
@@ -1764,9 +2292,12 @@
       ]
     },
     {
-      "rank": 137,
+      "rank": 142,
       "system": "muscular",
       "name": "Flexor digitorum profundus",
+      "nome_pt": "Músculo flexor profundo dos dedos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:flexor-digitorum-profundus-r",
       "sids": [
         "za:flexor-digitorum-profundus-l",
@@ -1778,9 +2309,12 @@
       ]
     },
     {
-      "rank": 138,
+      "rank": 143,
       "system": "muscular",
       "name": "Extensor digitorum",
+      "nome_pt": "Músculo extensor dos dedos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:extensor-digitorum-r",
       "sids": [
         "za:extensor-digitorum-l",
@@ -1792,9 +2326,12 @@
       ]
     },
     {
-      "rank": 139,
+      "rank": 144,
       "system": "muscular",
       "name": "Flexor hallucis longus",
+      "nome_pt": "Músculo flexor longo do hálux",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:flexor-hallucis-longus-r",
       "sids": [
         "za:flexor-hallucis-longus-l",
@@ -1806,9 +2343,12 @@
       ]
     },
     {
-      "rank": 140,
+      "rank": 145,
       "system": "muscular",
       "name": "Palmaris longus muscle",
+      "nome_pt": "Músculo palmar longo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:palmaris-longus-muscle-r",
       "sids": [
         "za:palmaris-longus-muscle-l",
@@ -1820,9 +2360,12 @@
       ]
     },
     {
-      "rank": 141,
+      "rank": 146,
       "system": "muscular",
       "name": "Longissimus thoracis muscle",
+      "nome_pt": "Músculo longuíssimo torácico",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:longissimus-thoracis-muscle-r",
       "sids": [
         "za:longissimus-thoracis-muscle-l",
@@ -1834,9 +2377,12 @@
       ]
     },
     {
-      "rank": 142,
+      "rank": 147,
       "system": "muscular",
       "name": "Platysma",
+      "nome_pt": "Platisma",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:platysma-r",
       "sids": [
         "za:platysma-l",
@@ -1848,9 +2394,12 @@
       ]
     },
     {
-      "rank": 143,
+      "rank": 148,
       "system": "muscular",
       "name": "Rectus abdominis muscle",
+      "nome_pt": "Músculo reto do abdômen",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:rectus-abdominis-muscle-r",
       "sids": [
         "za:rectus-abdominis-muscle-l",
@@ -1862,9 +2411,12 @@
       ]
     },
     {
-      "rank": 144,
+      "rank": 149,
       "system": "muscular",
       "name": "Long head of biceps femoris",
+      "nome_pt": "Cabeça longa do músculo bíceps femoral",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:long-head-of-biceps-femoris-r",
       "sids": [
         "za:long-head-of-biceps-femoris-l",
@@ -1876,9 +2428,12 @@
       ]
     },
     {
-      "rank": 145,
+      "rank": 150,
       "system": "muscular",
       "name": "Adductor magnus",
+      "nome_pt": "Músculo adutor grande",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:adductor-magnus-r",
       "sids": [
         "za:adductor-magnus-l",
@@ -1890,9 +2445,12 @@
       ]
     },
     {
-      "rank": 146,
+      "rank": 151,
       "system": "muscular",
       "name": "Extensor hallucis longus",
+      "nome_pt": "Músculo extensor longo do hálux",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:extensor-hallucis-longus-r",
       "sids": [
         "za:extensor-hallucis-longus-l",
@@ -1904,9 +2462,12 @@
       ]
     },
     {
-      "rank": 147,
+      "rank": 152,
       "system": "muscular",
       "name": "Long head of biceps brachii",
+      "nome_pt": "Cabeça longa do músculo bíceps braquial",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:long-head-of-biceps-brachii-r",
       "sids": [
         "za:long-head-of-biceps-brachii-l",
@@ -1918,9 +2479,12 @@
       ]
     },
     {
-      "rank": 148,
+      "rank": 153,
       "system": "muscular",
       "name": "Humeral head of flexor carpi ulnaris",
+      "nome_pt": "Cabeça umeral do músculo flexor ulnar do carpo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:humeral-head-of-flexor-carpi-ulnaris-r",
       "sids": [
         "za:humeral-head-of-flexor-carpi-ulnaris-l",
@@ -1932,9 +2496,12 @@
       ]
     },
     {
-      "rank": 149,
+      "rank": 154,
       "system": "muscular",
       "name": "Semimembranosus muscle",
+      "nome_pt": "Músculo semimembranoso",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:semimembranosus-muscle-r",
       "sids": [
         "za:semimembranosus-muscle-l",
@@ -1946,9 +2513,12 @@
       ]
     },
     {
-      "rank": 150,
+      "rank": 155,
       "system": "muscular",
       "name": "Iliocostalis thoracis muscle",
+      "nome_pt": "Músculo iliocostal do tórax",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:iliocostalis-thoracis-muscle-r",
       "sids": [
         "za:iliocostalis-thoracis-muscle-l",
@@ -1960,9 +2530,12 @@
       ]
     },
     {
-      "rank": 151,
+      "rank": 156,
       "system": "muscular",
       "name": "Infraspinatus muscle",
+      "nome_pt": "Músculo infraespinal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:infraspinatus-muscle-r",
       "sids": [
         "za:infraspinatus-muscle-l",
@@ -1974,9 +2547,12 @@
       ]
     },
     {
-      "rank": 152,
+      "rank": 157,
       "system": "muscular",
       "name": "Adductor longus",
+      "nome_pt": "Músculo adutor longo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:adductor-longus-r",
       "sids": [
         "za:adductor-longus-l",
@@ -1988,9 +2564,12 @@
       ]
     },
     {
-      "rank": 153,
+      "rank": 158,
       "system": "muscular",
       "name": "Extensor indicis",
+      "nome_pt": "Músculo extensor do indicador",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:extensor-indicis-r",
       "sids": [
         "za:extensor-indicis-l",
@@ -2002,9 +2581,12 @@
       ]
     },
     {
-      "rank": 154,
+      "rank": 159,
       "system": "muscular",
       "name": "Soleus muscle",
+      "nome_pt": "Músculo sóleo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:soleus-muscle-r",
       "sids": [
         "za:soleus-muscle-l",
@@ -2016,9 +2598,12 @@
       ]
     },
     {
-      "rank": 155,
+      "rank": 160,
       "system": "muscular",
       "name": "Subscapularis muscle",
+      "nome_pt": "Músculo subescapular",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:subscapularis-muscle-r",
       "sids": [
         "za:subscapularis-muscle-l",
@@ -2030,9 +2615,12 @@
       ]
     },
     {
-      "rank": 156,
+      "rank": 161,
       "system": "muscular",
       "name": "Long head of triceps brachii",
+      "nome_pt": "Cabeça longa do músculo tríceps braquial",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:long-head-of-triceps-brachii-r",
       "sids": [
         "za:long-head-of-triceps-brachii-l",
@@ -2044,9 +2632,12 @@
       ]
     },
     {
-      "rank": 157,
+      "rank": 162,
       "system": "muscular",
       "name": "Iliacus muscle",
+      "nome_pt": "Músculo ilíaco",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:iliacus-muscle-r",
       "sids": [
         "za:iliacus-muscle-l",
@@ -2058,9 +2649,12 @@
       ]
     },
     {
-      "rank": 158,
+      "rank": 163,
       "system": "muscular",
       "name": "Omohyoid muscle",
+      "nome_pt": "Músculo omo-hióideo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:omohyoid-muscle-r",
       "sids": [
         "za:omohyoid-muscle-l",
@@ -2072,9 +2666,12 @@
       ]
     },
     {
-      "rank": 159,
+      "rank": 164,
       "system": "muscular",
       "name": "Abductor pollicis longus",
+      "nome_pt": "Músculo abdutor longo do polegar",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:abductor-pollicis-longus-r",
       "sids": [
         "za:abductor-pollicis-longus-l",
@@ -2086,9 +2683,12 @@
       ]
     },
     {
-      "rank": 160,
+      "rank": 165,
       "system": "muscular",
       "name": "Lateral head of triceps brachii",
+      "nome_pt": "Cabeça lateral do músculo tríceps braquial",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:lateral-head-of-triceps-brachii-r",
       "sids": [
         "za:lateral-head-of-triceps-brachii-l",
@@ -2100,9 +2700,12 @@
       ]
     },
     {
-      "rank": 161,
+      "rank": 166,
       "system": "muscular",
       "name": "Adductor brevis",
+      "nome_pt": "Músculo adutor curto",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:adductor-brevis-r",
       "sids": [
         "za:adductor-brevis-l",
@@ -2114,9 +2717,12 @@
       ]
     },
     {
-      "rank": 162,
+      "rank": 167,
       "system": "muscular",
       "name": "Pectineus muscle",
+      "nome_pt": "Músculo pectíneo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:pectineus-muscle-r",
       "sids": [
         "za:pectineus-muscle-l",
@@ -2128,9 +2734,12 @@
       ]
     },
     {
-      "rank": 163,
+      "rank": 168,
       "system": "muscular",
       "name": "Teres minor muscle",
+      "nome_pt": "Músculo redondo menor",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:teres-minor-muscle-r",
       "sids": [
         "za:teres-minor-muscle-l",
@@ -2142,9 +2751,12 @@
       ]
     },
     {
-      "rank": 164,
+      "rank": 169,
       "system": "muscular",
       "name": "Ulnar head of flexor carpi ulnaris",
+      "nome_pt": "Cabeça ulnar do flexor ulnar do carpo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:ulnar-head-of-flexor-carpi-ulnaris-r",
       "sids": [
         "za:ulnar-head-of-flexor-carpi-ulnaris-l",
@@ -2156,9 +2768,12 @@
       ]
     },
     {
-      "rank": 165,
+      "rank": 170,
       "system": "muscular",
       "name": "Teres major muscle",
+      "nome_pt": "Músculo redondo maior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:teres-major-muscle-r",
       "sids": [
         "za:teres-major-muscle-l",
@@ -2170,9 +2785,12 @@
       ]
     },
     {
-      "rank": 166,
+      "rank": 171,
       "system": "muscular",
       "name": "Temporalis muscle",
+      "nome_pt": "Músculo temporal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:temporalis-muscle-r",
       "sids": [
         "za:temporalis-muscle-l",
@@ -2184,9 +2802,12 @@
       ]
     },
     {
-      "rank": 167,
+      "rank": 172,
       "system": "muscular",
       "name": "Obturator internus",
+      "nome_pt": "Músculo obturador interno",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:obturator-internus-r",
       "sids": [
         "za:obturator-internus-l",
@@ -2198,9 +2819,12 @@
       ]
     },
     {
-      "rank": 168,
+      "rank": 173,
       "system": "muscular",
       "name": "Short head of biceps femoris",
+      "nome_pt": "Cabeça curta do bíceps femoral",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:short-head-of-biceps-femoris-r",
       "sids": [
         "za:short-head-of-biceps-femoris-l",
@@ -2212,9 +2836,12 @@
       ]
     },
     {
-      "rank": 169,
+      "rank": 174,
       "system": "digestorio",
       "name": "Liver",
+      "nome_pt": "Fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:liver",
       "sids": [
         "za:liver"
@@ -2228,9 +2855,12 @@
       ]
     },
     {
-      "rank": 170,
+      "rank": 175,
       "system": "digestorio",
       "name": "Stomach",
+      "nome_pt": "Estômago",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:stomach",
       "sids": [
         "za:stomach"
@@ -2244,9 +2874,12 @@
       ]
     },
     {
-      "rank": 171,
+      "rank": 176,
       "system": "digestorio",
       "name": "Duodenum",
+      "nome_pt": "Duodeno",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:duodenum",
       "sids": [
         "za:duodenum"
@@ -2258,24 +2891,15 @@
       ]
     },
     {
-      "rank": 172,
-      "system": "digestorio",
-      "name": "Capsule of the liver",
-      "sid": "za:vh-f-capsule-of-the-liver",
-      "sids": [
-        "za:vh-f-capsule-of-the-liver"
-      ],
-      "score": 115.2,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 173,
+      "rank": 177,
       "system": "digestorio",
       "name": "Liver capsule",
+      "nome_pt": "Cápsula do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-liver-capsule",
       "sids": [
+        "za:vh-f-capsule-of-the-liver",
         "za:vh-m-liver-capsule"
       ],
       "score": 115.2,
@@ -2284,9 +2908,12 @@
       ]
     },
     {
-      "rank": 174,
+      "rank": 178,
       "system": "digestorio",
       "name": "Diaphragmatic surface of liver",
+      "nome_pt": "Face diafragmática do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-diaphragmatic-surface-of-liver",
       "sids": [
         "za:vh-f-diaphragmatic-surface-of-liver"
@@ -2297,9 +2924,12 @@
       ]
     },
     {
-      "rank": 175,
+      "rank": 179,
       "system": "digestorio",
       "name": "Bare area of liver",
+      "nome_pt": "Área nua do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-bare-area-of-liver",
       "sids": [
         "za:vh-f-bare-area-of-liver",
@@ -2311,9 +2941,12 @@
       ]
     },
     {
-      "rank": 176,
+      "rank": 180,
       "system": "digestorio",
       "name": "Mucosa of stomach",
+      "nome_pt": "Mucosa gástrica",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:mucosa-of-stomach",
       "sids": [
         "za:mucosa-of-stomach"
@@ -2324,9 +2957,12 @@
       ]
     },
     {
-      "rank": 177,
+      "rank": 181,
       "system": "digestorio",
       "name": "Anterior lateral segment of liver (VI)",
+      "nome_pt": "Segmento anterolateral do fígado (VI)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:anterior-lateral-segment-of-liver-vi",
       "sids": [
         "za:anterior-lateral-segment-of-liver-vi"
@@ -2337,9 +2973,12 @@
       ]
     },
     {
-      "rank": 178,
+      "rank": 182,
       "system": "digestorio",
       "name": "Transverse colon",
+      "nome_pt": "Colo transverso",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:transverse-colon",
       "sids": [
         "za:transverse-colon"
@@ -2350,9 +2989,12 @@
       ]
     },
     {
-      "rank": 179,
+      "rank": 183,
       "system": "digestorio",
       "name": "Posterior lateral segment of liver (VII)",
+      "nome_pt": "Segmento posterolateral do fígado (VII)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:posterior-lateral-segment-of-liver-vii",
       "sids": [
         "za:posterior-lateral-segment-of-liver-vii"
@@ -2363,9 +3005,12 @@
       ]
     },
     {
-      "rank": 180,
+      "rank": 184,
       "system": "digestorio",
       "name": "Gastric impression of liver",
+      "nome_pt": "Impressão gástrica do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-gastric-impression-of-liver",
       "sids": [
         "za:vh-f-gastric-impression-of-liver",
@@ -2377,9 +3022,12 @@
       ]
     },
     {
-      "rank": 181,
+      "rank": 185,
       "system": "digestorio",
       "name": "Posterior medial segment of liver (VIII)",
+      "nome_pt": "Segmento posteromedial do fígado (VIII)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:posterior-medial-segment-of-liver-viii",
       "sids": [
         "za:posterior-medial-segment-of-liver-viii"
@@ -2390,9 +3038,12 @@
       ]
     },
     {
-      "rank": 182,
+      "rank": 186,
       "system": "digestorio",
       "name": "Left medial segment of liver (IV)",
+      "nome_pt": "Segmento medial esquerdo do fígado (IV)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:left-medial-segment-of-liver-iv",
       "sids": [
         "za:left-medial-segment-of-liver-iv"
@@ -2403,9 +3054,12 @@
       ]
     },
     {
-      "rank": 183,
+      "rank": 187,
       "system": "digestorio",
       "name": "Left posterior lateral segment of liver (II)",
+      "nome_pt": "Segmento posterolateral esquerdo do fígado (II)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:left-posterior-lateral-segment-of-liver-ii",
       "sids": [
         "za:left-posterior-lateral-segment-of-liver-ii"
@@ -2416,9 +3070,12 @@
       ]
     },
     {
-      "rank": 184,
+      "rank": 188,
       "system": "digestorio",
       "name": "Anterior medial segment of liver (V)",
+      "nome_pt": "Segmento anteromedial do fígado (V)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:anterior-medial-segment-of-liver-v",
       "sids": [
         "za:anterior-medial-segment-of-liver-v"
@@ -2429,9 +3086,12 @@
       ]
     },
     {
-      "rank": 185,
+      "rank": 189,
       "system": "digestorio",
       "name": "Pancreas",
+      "nome_pt": "Pâncreas",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:pancreas",
       "sids": [
         "za:pancreas"
@@ -2442,9 +3102,12 @@
       ]
     },
     {
-      "rank": 186,
+      "rank": 190,
       "system": "digestorio",
       "name": "Caudate lobe of liver",
+      "nome_pt": "Lobo caudado do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-caudate-lobe-of-liver",
       "sids": [
         "za:vh-m-caudate-lobe-of-liver"
@@ -2455,9 +3118,12 @@
       ]
     },
     {
-      "rank": 187,
+      "rank": 191,
       "system": "digestorio",
       "name": "Left anterior lateral segment of liver (III)",
+      "nome_pt": "Segmento anterolateral esquerdo do fígado (III)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:left-anterior-lateral-segment-of-liver-iii",
       "sids": [
         "za:left-anterior-lateral-segment-of-liver-iii"
@@ -2468,9 +3134,12 @@
       ]
     },
     {
-      "rank": 188,
+      "rank": 192,
       "system": "digestorio",
       "name": "Quadrate lobe of liver",
+      "nome_pt": "Lobo quadrado do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-quadrate-lobe-of-liver",
       "sids": [
         "za:vh-m-quadrate-lobe-of-liver"
@@ -2481,9 +3150,12 @@
       ]
     },
     {
-      "rank": 189,
+      "rank": 193,
       "system": "digestorio",
       "name": "Colic impression of liver",
+      "nome_pt": "Impressão cólica do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-colic-impression-of-liver",
       "sids": [
         "za:vh-f-colic-impression-of-liver",
@@ -2495,9 +3167,12 @@
       ]
     },
     {
-      "rank": 190,
+      "rank": 194,
       "system": "digestorio",
       "name": "Posterior segment of liver (I)",
+      "nome_pt": "Segmento posterior do fígado (I)",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:posterior-segment-of-liver-i",
       "sids": [
         "za:posterior-segment-of-liver-i"
@@ -2508,9 +3183,12 @@
       ]
     },
     {
-      "rank": 191,
+      "rank": 195,
       "system": "digestorio",
       "name": "Renal impression of liver",
+      "nome_pt": "Impressão renal do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-renal-impression-of-liver",
       "sids": [
         "za:vh-f-renal-impression-of-liver",
@@ -2522,9 +3200,12 @@
       ]
     },
     {
-      "rank": 192,
+      "rank": 196,
       "system": "digestorio",
       "name": "Porta hepatis",
+      "nome_pt": "Porta do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-porta-hepatis",
       "sids": [
         "za:vh-f-porta-hepatis",
@@ -2536,9 +3217,12 @@
       ]
     },
     {
-      "rank": 193,
+      "rank": 197,
       "system": "digestorio",
       "name": "Tongue",
+      "nome_pt": "Língua",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:tongue",
       "sids": [
         "za:tongue"
@@ -2549,9 +3233,12 @@
       ]
     },
     {
-      "rank": 194,
+      "rank": 198,
       "system": "digestorio",
       "name": "Gallbladder",
+      "nome_pt": "Vesícula biliar",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:gallbladder",
       "sids": [
         "za:gallbladder"
@@ -2562,9 +3249,12 @@
       ]
     },
     {
-      "rank": 195,
+      "rank": 199,
       "system": "digestorio",
       "name": "Esophageal impression of liver",
+      "nome_pt": "Impressão esofágica do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-esophageal-impression-of-liver",
       "sids": [
         "za:vh-f-esophageal-impression-of-liver",
@@ -2576,9 +3266,12 @@
       ]
     },
     {
-      "rank": 196,
+      "rank": 200,
       "system": "digestorio",
       "name": "Suprarenal impression of liver",
+      "nome_pt": "Impressão suprarrenal do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-suprarenal-impression-of-liver",
       "sids": [
         "za:vh-f-suprarenal-impression-of-liver",
@@ -2590,9 +3283,12 @@
       ]
     },
     {
-      "rank": 197,
+      "rank": 201,
       "system": "digestorio",
       "name": "Duodenal impression of liver",
+      "nome_pt": "Impressão duodenal do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-duodenal-impression-of-liver",
       "sids": [
         "za:vh-f-duodenal-impression-of-liver",
@@ -2604,9 +3300,12 @@
       ]
     },
     {
-      "rank": 198,
+      "rank": 202,
       "system": "digestorio",
       "name": "Sublingual gland",
+      "nome_pt": "Glândula sublingual",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:sublingual-gland-r",
       "sids": [
         "za:sublingual-gland-l",
@@ -2618,9 +3317,12 @@
       ]
     },
     {
-      "rank": 199,
+      "rank": 203,
       "system": "digestorio",
       "name": "External anal sphincter",
+      "nome_pt": "Esfíncter anal externo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:external-anal-sphincter-r",
       "sids": [
         "za:external-anal-sphincter-l",
@@ -2632,9 +3334,12 @@
       ]
     },
     {
-      "rank": 200,
+      "rank": 204,
       "system": "digestorio",
       "name": "Mesocolic taenia",
+      "nome_pt": "Tênia mesocólica",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:mesocolic-taenia",
       "sids": [
         "za:mesocolic-taenia"
@@ -2643,9 +3348,12 @@
       "reasons": []
     },
     {
-      "rank": 201,
+      "rank": 205,
       "system": "digestorio",
       "name": "Diaphragmatic surface",
+      "nome_pt": "Face diafragmática",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-diaphragmatic-surface",
       "sids": [
         "za:vh-m-diaphragmatic-surface"
@@ -2654,9 +3362,12 @@
       "reasons": []
     },
     {
-      "rank": 202,
+      "rank": 206,
       "system": "digestorio",
       "name": "Descending colon",
+      "nome_pt": "Colo descendente",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:descending-colon",
       "sids": [
         "za:descending-colon"
@@ -2665,9 +3376,12 @@
       "reasons": []
     },
     {
-      "rank": 203,
+      "rank": 207,
       "system": "digestorio",
       "name": "Omental taenia",
+      "nome_pt": "Tênia omental",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:omental-taenia",
       "sids": [
         "za:omental-taenia"
@@ -2676,9 +3390,12 @@
       "reasons": []
     },
     {
-      "rank": 204,
+      "rank": 208,
       "system": "digestorio",
       "name": "Free taenia",
+      "nome_pt": "Tênia livre",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:free-taenia",
       "sids": [
         "za:free-taenia"
@@ -2687,9 +3404,12 @@
       "reasons": []
     },
     {
-      "rank": 205,
+      "rank": 209,
       "system": "digestorio",
       "name": "Coronary ligament of liver",
+      "nome_pt": "Ligamento coronário do fígado",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-coronary-ligament-of-liver",
       "sids": [
         "za:vh-f-coronary-ligament-of-liver",
@@ -2699,9 +3419,12 @@
       "reasons": []
     },
     {
-      "rank": 206,
+      "rank": 210,
       "system": "digestorio",
       "name": "Right anteroinferior segment",
+      "nome_pt": "Segmento anteroinferior direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-right-anteroinferior-segment",
       "sids": [
         "za:vh-f-right-anteroinferior-segment",
@@ -2711,9 +3434,12 @@
       "reasons": []
     },
     {
-      "rank": 207,
+      "rank": 211,
       "system": "digestorio",
       "name": "Right anterosuperior segment",
+      "nome_pt": "Segmento anterosuperior direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-right-anterosuperior-segment",
       "sids": [
         "za:vh-f-right-anterosuperior-segment",
@@ -2723,24 +3449,50 @@
       "reasons": []
     },
     {
-      "rank": 208,
+      "rank": 212,
       "system": "digestorio",
-      "name": "Left superomedial segment",
-      "sid": "za:vh-f-left-superomedial-segment",
+      "name": "Left superiomedial segment",
+      "nome_pt": "Segmento superomedial esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
+      "sid": "za:vh-m-left-superiomedial-segment",
       "sids": [
-        "za:vh-f-left-superomedial-segment"
+        "za:vh-f-left-superomedial-segment",
+        "za:vh-f-left-superomedial-segment1",
+        "za:vh-m-left-superiomedial-segment"
       ],
       "score": 11.7,
       "reasons": []
     },
     {
-      "rank": 209,
+      "rank": 213,
+      "system": "digestorio",
+      "name": "Right posteroinferior segment",
+      "nome_pt": "Segmento posteroinferior direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
+      "sid": "za:vh-m-right-posteroinferior-segment",
+      "sids": [
+        "za:vh-f-right-posteroinferior-segment",
+        "za:vh-m-right-posteroinferior-segment"
+      ],
+      "score": 11.6,
+      "reasons": []
+    },
+    {
+      "rank": 214,
       "system": "cardiovascular",
       "name": "Left ventricle",
+      "nome_pt": "Ventrículo esquerdo",
+      "sinonimos_pt": [
+        "Ventrículo esquerdo do coração"
+      ],
+      "sourceOfName": "za",
       "sid": "za:left-ventricle",
       "sids": [
         "za:left-ventricle",
-        "za:vh-f-left-ventricle"
+        "za:vh-f-left-ventricle",
+        "za:vh-m-heart-left-ventricle"
       ],
       "score": 261.4,
       "reasons": [
@@ -2750,13 +3502,19 @@
       ]
     },
     {
-      "rank": 210,
+      "rank": 215,
       "system": "cardiovascular",
-      "name": "Right ventricle",
-      "sid": "za:right-ventricle",
+      "name": "Left atrium",
+      "nome_pt": "Átrio esquerdo",
+      "sinonimos_pt": [
+        "Átrio cardíaco esquerdo"
+      ],
+      "sourceOfName": "za",
+      "sid": "za:left-atrium",
       "sids": [
-        "za:right-ventricle",
-        "za:vh-f-right-ventricle"
+        "za:left-atrium",
+        "za:vh-f-left-cardiac-atrium",
+        "za:vh-m-left-cardiac-atrium"
       ],
       "score": 261.1,
       "reasons": [
@@ -2766,26 +3524,41 @@
       ]
     },
     {
-      "rank": 211,
+      "rank": 216,
       "system": "cardiovascular",
-      "name": "Left atrium",
-      "sid": "za:left-atrium",
-      "sids": [
-        "za:left-atrium"
+      "name": "Right ventricle",
+      "nome_pt": "Ventrículo direito",
+      "sinonimos_pt": [
+        "Ventrículo direito do coração"
       ],
-      "score": 211.1,
+      "sourceOfName": "za",
+      "sid": "za:right-ventricle",
+      "sids": [
+        "za:right-ventricle",
+        "za:vh-f-right-ventricle",
+        "za:vh-m-heart-right-ventricle"
+      ],
+      "score": 261.1,
       "reasons": [
         "usada em fisiologia",
-        "usada em quiz"
+        "usada em quiz",
+        "ficha existente"
       ]
     },
     {
-      "rank": 212,
+      "rank": 217,
       "system": "cardiovascular",
       "name": "Right atrium",
+      "nome_pt": "Átrio direito",
+      "sinonimos_pt": [
+        "Átrio cardíaco direito"
+      ],
+      "sourceOfName": "za",
       "sid": "za:right-atrium",
       "sids": [
-        "za:right-atrium"
+        "za:right-atrium",
+        "za:vh-f-right-cardiac-atrium",
+        "za:vh-m-right-cardiac-atrium"
       ],
       "score": 210.1,
       "reasons": [
@@ -2794,23 +3567,12 @@
       ]
     },
     {
-      "rank": 213,
-      "system": "cardiovascular",
-      "name": "Heart right ventricle",
-      "sid": "za:vh-m-heart-right-ventricle",
-      "sids": [
-        "za:vh-m-heart-right-ventricle"
-      ],
-      "score": 160.9,
-      "reasons": [
-        "usada em quiz",
-        "ficha existente"
-      ]
-    },
-    {
-      "rank": 214,
+      "rank": 218,
       "system": "cardiovascular",
       "name": "Interventricular septum",
+      "nome_pt": "Septo interventricular",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-interventricular-septum",
       "sids": [
         "za:vh-f-interventricular-septum",
@@ -2823,24 +3585,12 @@
       ]
     },
     {
-      "rank": 215,
-      "system": "cardiovascular",
-      "name": "Left cardiac atrium",
-      "sid": "za:vh-m-left-cardiac-atrium",
-      "sids": [
-        "za:vh-f-left-cardiac-atrium",
-        "za:vh-m-left-cardiac-atrium"
-      ],
-      "score": 159.7,
-      "reasons": [
-        "usada em quiz",
-        "ficha existente"
-      ]
-    },
-    {
-      "rank": 216,
+      "rank": 219,
       "system": "cardiovascular",
       "name": "Pulmonary trunk",
+      "nome_pt": "Tronco pulmonar",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:pulmonary-trunk",
       "sids": [
         "za:pulmonary-trunk"
@@ -2852,36 +3602,12 @@
       ]
     },
     {
-      "rank": 217,
-      "system": "cardiovascular",
-      "name": "Heart left ventricle",
-      "sid": "za:vh-m-heart-left-ventricle",
-      "sids": [
-        "za:vh-m-heart-left-ventricle"
-      ],
-      "score": 110.9,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 218,
-      "system": "cardiovascular",
-      "name": "Right cardiac atrium",
-      "sid": "za:vh-m-right-cardiac-atrium",
-      "sids": [
-        "za:vh-f-right-cardiac-atrium",
-        "za:vh-m-right-cardiac-atrium"
-      ],
-      "score": 110.1,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 219,
+      "rank": 220,
       "system": "cardiovascular",
       "name": "Posterior leaflet of left atrioventricular valve",
+      "nome_pt": "Cúspide posterior da valva atrioventricular esquerda",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:posterior-leaflet-of-left-atrioventricular-valve",
       "sids": [
         "za:posterior-leaflet-of-left-atrioventricular-valve"
@@ -2892,9 +3618,12 @@
       ]
     },
     {
-      "rank": 220,
+      "rank": 221,
       "system": "cardiovascular",
       "name": "Inferior papillary muscle of left ventricle",
+      "nome_pt": "Músculo papilar inferior do ventrículo esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-papillary-muscle-of-left-ventricle",
       "sids": [
         "za:inferior-papillary-muscle-of-left-ventricle"
@@ -2905,9 +3634,12 @@
       ]
     },
     {
-      "rank": 221,
+      "rank": 222,
       "system": "cardiovascular",
       "name": "Inferior leaflet of right atrioventricular valve",
+      "nome_pt": "Cúspide inferior da valva atrioventricular direita",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-leaflet-of-right-atrioventricular-valve",
       "sids": [
         "za:inferior-leaflet-of-right-atrioventricular-valve"
@@ -2918,25 +3650,16 @@
       ]
     },
     {
-      "rank": 222,
-      "system": "cardiovascular",
-      "name": "Papillary muscle of heart anterolateral",
-      "sid": "za:vh-m-papillary-muscle-of-heart-anterolateral",
-      "sids": [
-        "za:vh-m-papillary-muscle-of-heart-anterolateral"
-      ],
-      "score": 106,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
       "rank": 223,
       "system": "cardiovascular",
-      "name": "Papillary muscle of heart antlat",
-      "sid": "za:vh-f-papillary-muscle-of-heart-antlat",
+      "name": "Papillary muscle of heart anterolateral",
+      "nome_pt": "Músculo papilar anterolateral do coração",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
+      "sid": "za:vh-m-papillary-muscle-of-heart-anterolateral",
       "sids": [
-        "za:vh-f-papillary-muscle-of-heart-antlat"
+        "za:vh-f-papillary-muscle-of-heart-antlat",
+        "za:vh-m-papillary-muscle-of-heart-anterolateral"
       ],
       "score": 106,
       "reasons": [
@@ -2947,6 +3670,9 @@
       "rank": 224,
       "system": "cardiovascular",
       "name": "Anterior papillary muscle of right ventricle",
+      "nome_pt": "Músculo papilar anterior do ventrículo direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:anterior-papillary-muscle-of-right-ventricle",
       "sids": [
         "za:anterior-papillary-muscle-of-right-ventricle"
@@ -2960,6 +3686,9 @@
       "rank": 225,
       "system": "cardiovascular",
       "name": "Septal leaflet of right atrioventricular valve",
+      "nome_pt": "Cúspide septal da valva atrioventricular direita",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:septal-leaflet-of-right-atrioventricular-valve",
       "sids": [
         "za:septal-leaflet-of-right-atrioventricular-valve"
@@ -2972,10 +3701,14 @@
     {
       "rank": 226,
       "system": "cardiovascular",
-      "name": "Papillary muscle of heart posmed",
-      "sid": "za:vh-f-papillary-muscle-of-heart-posmed",
+      "name": "Papillary muscle of heart posteromedial",
+      "nome_pt": "Músculo papilar posteromedial do coração",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
+      "sid": "za:vh-m-papillary-muscle-of-heart-posteromedial",
       "sids": [
-        "za:vh-f-papillary-muscle-of-heart-posmed"
+        "za:vh-f-papillary-muscle-of-heart-posmed",
+        "za:vh-m-papillary-muscle-of-heart-posteromedial"
       ],
       "score": 105.3,
       "reasons": [
@@ -2986,6 +3719,9 @@
       "rank": 227,
       "system": "cardiovascular",
       "name": "Inferior papillary muscle of right ventricle",
+      "nome_pt": "Músculo papilar inferior do ventrículo direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-papillary-muscle-of-right-ventricle",
       "sids": [
         "za:inferior-papillary-muscle-of-right-ventricle"
@@ -2998,20 +3734,10 @@
     {
       "rank": 228,
       "system": "cardiovascular",
-      "name": "Papillary muscle of heart posteromedial",
-      "sid": "za:vh-m-papillary-muscle-of-heart-posteromedial",
-      "sids": [
-        "za:vh-m-papillary-muscle-of-heart-posteromedial"
-      ],
-      "score": 104.4,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 229,
-      "system": "cardiovascular",
       "name": "Septal papillary muscle of right ventricle",
+      "nome_pt": "Músculo papilar septal do ventrículo direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:septal-papillary-muscle-of-right-ventricle",
       "sids": [
         "za:septal-papillary-muscle-of-right-ventricle"
@@ -3022,11 +3748,15 @@
       ]
     },
     {
-      "rank": 230,
+      "rank": 229,
       "system": "cardiovascular",
       "name": "Papillary muscle of heart anterior",
+      "nome_pt": "Músculo papilar anterior do coração",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-papillary-muscle-of-heart-anterior",
       "sids": [
+        "za:vh-f-papillary-muscle-of-heart-ant",
         "za:vh-m-papillary-muscle-of-heart-anterior"
       ],
       "score": 103.3,
@@ -3035,37 +3765,15 @@
       ]
     },
     {
-      "rank": 231,
-      "system": "cardiovascular",
-      "name": "Papillary muscle of heart ant",
-      "sid": "za:vh-f-papillary-muscle-of-heart-ant",
-      "sids": [
-        "za:vh-f-papillary-muscle-of-heart-ant"
-      ],
-      "score": 103.1,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 232,
-      "system": "cardiovascular",
-      "name": "Papillary muscle of heart med",
-      "sid": "za:vh-f-papillary-muscle-of-heart-med",
-      "sids": [
-        "za:vh-f-papillary-muscle-of-heart-med"
-      ],
-      "score": 100.5,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 233,
+      "rank": 230,
       "system": "cardiovascular",
       "name": "Papillary muscle of heart medial",
+      "nome_pt": "Músculo papilar medial do coração",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-papillary-muscle-of-heart-medial",
       "sids": [
+        "za:vh-f-papillary-muscle-of-heart-med",
         "za:vh-m-papillary-muscle-of-heart-medial"
       ],
       "score": 100.5,
@@ -3074,11 +3782,15 @@
       ]
     },
     {
-      "rank": 234,
+      "rank": 231,
       "system": "cardiovascular",
       "name": "Papillary muscle of heart posterior",
+      "nome_pt": "Músculo papilar posterior do coração",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-papillary-muscle-of-heart-posterior",
       "sids": [
+        "za:vh-f-papillary-muscle-of-heart-pos",
         "za:vh-m-papillary-muscle-of-heart-posterior"
       ],
       "score": 100.5,
@@ -3087,22 +3799,12 @@
       ]
     },
     {
-      "rank": 235,
-      "system": "cardiovascular",
-      "name": "Papillary muscle of heart pos",
-      "sid": "za:vh-f-papillary-muscle-of-heart-pos",
-      "sids": [
-        "za:vh-f-papillary-muscle-of-heart-pos"
-      ],
-      "score": 100.3,
-      "reasons": [
-        "usada em quiz"
-      ]
-    },
-    {
-      "rank": 236,
+      "rank": 232,
       "system": "cardiovascular",
       "name": "Tricuspid valve",
+      "nome_pt": "Valva tricúspide",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-tricuspid-valve",
       "sids": [
         "za:vh-f-tricuspid-valve",
@@ -3114,9 +3816,12 @@
       ]
     },
     {
-      "rank": 237,
+      "rank": 233,
       "system": "cardiovascular",
       "name": "Mitral valve",
+      "nome_pt": "Valva mitral",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-mitral-valve",
       "sids": [
         "za:vh-f-mitral-valve",
@@ -3128,9 +3833,12 @@
       ]
     },
     {
-      "rank": 238,
+      "rank": 234,
       "system": "cardiovascular",
       "name": "Aortic valve",
+      "nome_pt": "Valva da aorta",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-aortic-valve",
       "sids": [
         "za:vh-f-aortic-valve",
@@ -3142,9 +3850,12 @@
       ]
     },
     {
-      "rank": 239,
+      "rank": 235,
       "system": "cardiovascular",
       "name": "Pulmonary valve",
+      "nome_pt": "Valva do tronco pulmonar",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-m-pulmonary-valve",
       "sids": [
         "za:vh-f-pulmonary-valve",
@@ -3156,9 +3867,12 @@
       ]
     },
     {
-      "rank": 240,
+      "rank": 236,
       "system": "cardiovascular",
       "name": "Cavernous sinus",
+      "nome_pt": "Seio cavernoso",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:cavernous-sinus-r",
       "sids": [
         "za:cavernous-sinus-l",
@@ -3170,9 +3884,12 @@
       ]
     },
     {
-      "rank": 241,
+      "rank": 237,
       "system": "cardiovascular",
       "name": "Anterior communicating artery",
+      "nome_pt": "Artéria comunicante anterior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:anterior-communicating-artery",
       "sids": [
         "za:anterior-communicating-artery"
@@ -3183,9 +3900,12 @@
       ]
     },
     {
-      "rank": 242,
+      "rank": 238,
       "system": "cardiovascular",
       "name": "Right semilunar leaflet of pulmonary valve",
+      "nome_pt": "Válvula semilunar direita da valva do tronco pulmonar",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:right-semilunar-leaflet-of-pulmonary-valve",
       "sids": [
         "za:right-semilunar-leaflet-of-pulmonary-valve"
@@ -3194,9 +3914,12 @@
       "reasons": []
     },
     {
-      "rank": 243,
+      "rank": 239,
       "system": "cardiovascular",
       "name": "Anterior semilunar leaflet of pulmonary valve",
+      "nome_pt": "Válvula semilunar anterior da valva do tronco pulmonar",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:anterior-semilunar-leaflet-of-pulmonary-valve",
       "sids": [
         "za:anterior-semilunar-leaflet-of-pulmonary-valve"
@@ -3205,9 +3928,12 @@
       "reasons": []
     },
     {
-      "rank": 244,
+      "rank": 240,
       "system": "cardiovascular",
       "name": "Non-coronary leaflet",
+      "nome_pt": "Cúspide não-coronária",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:non-coronary-leaflet",
       "sids": [
         "za:non-coronary-leaflet"
@@ -3216,9 +3942,68 @@
       "reasons": []
     },
     {
+      "rank": 241,
+      "system": "cardiovascular",
+      "name": "Left semilunar leaflet of pulmonary valve",
+      "nome_pt": "Válvula semilunar esquerda da valva do tronco pulmonar",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:left-semilunar-leaflet-of-pulmonary-valve",
+      "sids": [
+        "za:left-semilunar-leaflet-of-pulmonary-valve"
+      ],
+      "score": 3,
+      "reasons": []
+    },
+    {
+      "rank": 242,
+      "system": "cardiovascular",
+      "name": "Right coronary leaflet",
+      "nome_pt": "Cúspide coronária direita",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:right-coronary-leaflet",
+      "sids": [
+        "za:right-coronary-leaflet"
+      ],
+      "score": 3,
+      "reasons": []
+    },
+    {
+      "rank": 243,
+      "system": "cardiovascular",
+      "name": "Left coronary leaflet",
+      "nome_pt": "Cúspide coronária esquerda",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:left-coronary-leaflet",
+      "sids": [
+        "za:left-coronary-leaflet"
+      ],
+      "score": 2.9,
+      "reasons": []
+    },
+    {
+      "rank": 244,
+      "system": "cardiovascular",
+      "name": "Basilar venous plexus",
+      "nome_pt": "Plexo venoso basilar",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
+      "sid": "za:basilar-venous-plexus",
+      "sids": [
+        "za:basilar-venous-plexus"
+      ],
+      "score": 2.4,
+      "reasons": []
+    },
+    {
       "rank": 245,
       "system": "respiratorio",
       "name": "Trachea",
+      "nome_pt": "Traqueia",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:trachea",
       "sids": [
         "za:trachea"
@@ -3235,6 +4020,9 @@
       "rank": 246,
       "system": "respiratorio",
       "name": "Inferior lobe of right lung",
+      "nome_pt": "Lobo inferior do pulmão direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-lobe-of-right-lung",
       "sids": [
         "za:inferior-lobe-of-right-lung"
@@ -3249,6 +4037,9 @@
       "rank": 247,
       "system": "respiratorio",
       "name": "Hilum",
+      "nome_pt": "Hilo",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-hilum-r",
       "sids": [
         "za:vh-f-hilum-l",
@@ -3264,6 +4055,9 @@
       "rank": 248,
       "system": "respiratorio",
       "name": "Pleura",
+      "nome_pt": "Pleura",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:pleura",
       "sids": [
         "za:pleura"
@@ -3277,6 +4071,9 @@
       "rank": 249,
       "system": "respiratorio",
       "name": "Superior lobe of left lung",
+      "nome_pt": "Lobo superior do pulmão esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:superior-lobe-of-left-lung",
       "sids": [
         "za:superior-lobe-of-left-lung"
@@ -3290,6 +4087,9 @@
       "rank": 250,
       "system": "respiratorio",
       "name": "Inferior lobe of left lung",
+      "nome_pt": "Lobo inferior do pulmão esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:inferior-lobe-of-left-lung",
       "sids": [
         "za:inferior-lobe-of-left-lung"
@@ -3303,6 +4103,9 @@
       "rank": 251,
       "system": "respiratorio",
       "name": "Superior lobe of right lung",
+      "nome_pt": "Lobo superior do pulmão direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:superior-lobe-of-right-lung",
       "sids": [
         "za:superior-lobe-of-right-lung"
@@ -3316,6 +4119,9 @@
       "rank": 252,
       "system": "respiratorio",
       "name": "Middle lobe of right lung",
+      "nome_pt": "Lobo médio do pulmão direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:middle-lobe-of-right-lung",
       "sids": [
         "za:middle-lobe-of-right-lung"
@@ -3329,6 +4135,9 @@
       "rank": 253,
       "system": "respiratorio",
       "name": "Right anterior bronchopulmonary segm",
+      "nome_pt": "Segmento broncopulmonar anterior direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-right-anterior-bronchopulmonary-segm",
       "sids": [
         "za:vh-f-right-anterior-bronchopulmonary-segm"
@@ -3342,6 +4151,9 @@
       "rank": 254,
       "system": "respiratorio",
       "name": "Left anterior bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar anterior esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-left-anterior-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-left-anterior-bronchopulmonary-segment"
@@ -3355,6 +4167,9 @@
       "rank": 255,
       "system": "respiratorio",
       "name": "Right anterior basal bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar basal anterior direito",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-right-anterior-basal-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-right-anterior-basal-bronchopulmonary-segment"
@@ -3368,6 +4183,9 @@
       "rank": 256,
       "system": "respiratorio",
       "name": "Lingula superior bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar lingular superior",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-lingula-superior-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-lingula-superior-bronchopulmonary-segment"
@@ -3381,6 +4199,9 @@
       "rank": 257,
       "system": "respiratorio",
       "name": "Left medial basal bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar basal medial esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-left-medial-basal-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-left-medial-basal-bronchopulmonary-segment"
@@ -3394,6 +4215,9 @@
       "rank": 258,
       "system": "respiratorio",
       "name": "Left posterior basal bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar basal posterior esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-left-posterior-basal-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-left-posterior-basal-bronchopulmonary-segment"
@@ -3407,6 +4231,9 @@
       "rank": 259,
       "system": "respiratorio",
       "name": "Right superior bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar superior",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-right-superior-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-right-superior-bronchopulmonary-segment"
@@ -3420,6 +4247,9 @@
       "rank": 260,
       "system": "respiratorio",
       "name": "Left anterior basal bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar basal anterior esquerdo",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-left-anterior-basal-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-left-anterior-basal-bronchopulmonary-segment"
@@ -3433,6 +4263,9 @@
       "rank": 261,
       "system": "respiratorio",
       "name": "Right lateral bronchopulmonary segmennt",
+      "nome_pt": "Segmento broncopulmonar lateral",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-right-lateral-bronchopulmonary-segmennt",
       "sids": [
         "za:vh-f-right-lateral-bronchopulmonary-segmennt"
@@ -3446,6 +4279,9 @@
       "rank": 262,
       "system": "respiratorio",
       "name": "Right posterior bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar posterior",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-right-posterior-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-right-posterior-bronchopulmonary-segment"
@@ -3459,6 +4295,9 @@
       "rank": 263,
       "system": "respiratorio",
       "name": "Right medial bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar medial",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-right-medial-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-right-medial-bronchopulmonary-segment"
@@ -3472,6 +4311,9 @@
       "rank": 264,
       "system": "respiratorio",
       "name": "Right posterior basal bronchopulmonary segment",
+      "nome_pt": "Segmento broncopulmonar basal posterior",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-right-posterior-basal-bronchopulmonary-segment",
       "sids": [
         "za:vh-f-right-posterior-basal-bronchopulmonary-segment"
@@ -3485,6 +4327,9 @@
       "rank": 265,
       "system": "urinario",
       "name": "Kidney",
+      "nome_pt": "Rim",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:kidney-r",
       "sids": [
         "za:kidney-l",
@@ -3500,6 +4345,9 @@
       "rank": 266,
       "system": "urinario",
       "name": "Renal pelvis",
+      "nome_pt": "Pelve renal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:renal-pelvis-r",
       "sids": [
         "za:renal-pelvis-l",
@@ -3515,6 +4363,9 @@
       "rank": 267,
       "system": "urinario",
       "name": "Kidney capsule",
+      "nome_pt": "Cápsula renal",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-kidney-capsule-l",
       "sids": [
         "za:vh-f-kidney-capsule-l"
@@ -3529,6 +4380,9 @@
       "rank": 268,
       "system": "urinario",
       "name": "Renal column",
+      "nome_pt": "Coluna renal",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-column-l",
       "sids": [
         "za:vh-f-renal-column-l"
@@ -3543,6 +4397,9 @@
       "rank": 269,
       "system": "urinario",
       "name": "Urinary bladder",
+      "nome_pt": "Bexiga urinária",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:urinary-bladder",
       "sids": [
         "za:urinary-bladder"
@@ -3557,6 +4414,9 @@
       "rank": 270,
       "system": "urinario",
       "name": "Hilum of kidney",
+      "nome_pt": "Hilo do rim",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-hilum-of-kidney-l",
       "sids": [
         "za:vh-f-hilum-of-kidney-l"
@@ -3571,6 +4431,9 @@
       "rank": 271,
       "system": "urinario",
       "name": "Outer cortex of kidney",
+      "nome_pt": "Córtex renal externo",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-outer-cortex-of-kidney-l",
       "sids": [
         "za:vh-f-outer-cortex-of-kidney-l"
@@ -3584,6 +4447,9 @@
       "rank": 272,
       "system": "urinario",
       "name": "Renal pyramid L a",
+      "nome_pt": "Pirâmide renal L a",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-a",
       "sids": [
         "za:vh-f-renal-pyramid-l-a"
@@ -3597,6 +4463,9 @@
       "rank": 273,
       "system": "urinario",
       "name": "Renal pyramid L f",
+      "nome_pt": "Pirâmide renal L f",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-f",
       "sids": [
         "za:vh-f-renal-pyramid-l-f"
@@ -3610,6 +4479,9 @@
       "rank": 274,
       "system": "urinario",
       "name": "Renal pyramid L g",
+      "nome_pt": "Pirâmide renal L g",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-g",
       "sids": [
         "za:vh-f-renal-pyramid-l-g"
@@ -3623,6 +4495,9 @@
       "rank": 275,
       "system": "urinario",
       "name": "Renal pyramid L i",
+      "nome_pt": "Pirâmide renal L i",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-i",
       "sids": [
         "za:vh-f-renal-pyramid-l-i"
@@ -3636,6 +4511,9 @@
       "rank": 276,
       "system": "urinario",
       "name": "Renal pyramid L j",
+      "nome_pt": "Pirâmide renal L j",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-j",
       "sids": [
         "za:vh-f-renal-pyramid-l-j"
@@ -3649,6 +4527,9 @@
       "rank": 277,
       "system": "urinario",
       "name": "Renal pyramid L d",
+      "nome_pt": "Pirâmide renal L d",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-d",
       "sids": [
         "za:vh-f-renal-pyramid-l-d"
@@ -3662,6 +4543,9 @@
       "rank": 278,
       "system": "urinario",
       "name": "Renal pyramid L e",
+      "nome_pt": "Pirâmide renal L e",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-e",
       "sids": [
         "za:vh-f-renal-pyramid-l-e"
@@ -3675,6 +4559,9 @@
       "rank": 279,
       "system": "urinario",
       "name": "Renal pyramid L k",
+      "nome_pt": "Pirâmide renal L k",
+      "sinonimos_pt": [],
+      "sourceOfName": "hra",
       "sid": "za:vh-f-renal-pyramid-l-k",
       "sids": [
         "za:vh-f-renal-pyramid-l-k"
@@ -3688,6 +4575,9 @@
       "rank": 280,
       "system": "linfatico",
       "name": "Juxta-oesophageal nodes",
+      "nome_pt": "Linfonodos justa-esofageanos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:juxta-oesophageal-nodes",
       "sids": [
         "za:juxta-oesophageal-nodes"
@@ -3701,6 +4591,9 @@
       "rank": 281,
       "system": "linfatico",
       "name": "Central axillary nodes",
+      "nome_pt": "Linfonodos axilares centrais",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:central-axillary-nodes-r",
       "sids": [
         "za:central-axillary-nodes-l",
@@ -3715,6 +4608,9 @@
       "rank": 282,
       "system": "linfatico",
       "name": "Spleen",
+      "nome_pt": "Baço",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:spleen",
       "sids": [
         "za:spleen"
@@ -3728,6 +4624,9 @@
       "rank": 283,
       "system": "linfatico",
       "name": "Palatine tonsil",
+      "nome_pt": "Amígdala palatina",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:palatine-tonsil-r",
       "sids": [
         "za:palatine-tonsil-l",
@@ -3742,6 +4641,9 @@
       "rank": 284,
       "system": "linfatico",
       "name": "Intrapulmonary nodes",
+      "nome_pt": "Linfonodos intrapulmonares",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:intrapulmonary-nodes",
       "sids": [
         "za:intrapulmonary-nodes"
@@ -3753,6 +4655,9 @@
       "rank": 285,
       "system": "linfatico",
       "name": "Paracolic superior mesenteric nodes",
+      "nome_pt": "Linfonodos mesentéricos superiores paracolicos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:paracolic-superior-mesenteric-nodes",
       "sids": [
         "za:paracolic-superior-mesenteric-nodes"
@@ -3764,6 +4669,9 @@
       "rank": 286,
       "system": "linfatico",
       "name": "Juxta-intestinal mesenteric nodes",
+      "nome_pt": "Linfonodos mesentéricos justa-intestinais",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:juxta-intestinal-mesenteric-nodes",
       "sids": [
         "za:juxta-intestinal-mesenteric-nodes"
@@ -3775,6 +4683,9 @@
       "rank": 287,
       "system": "linfatico",
       "name": "Right gastro-omental nodes",
+      "nome_pt": "Linfonodos gastro-omentais direitos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:right-gastro-omental-nodes",
       "sids": [
         "za:right-gastro-omental-nodes"
@@ -3786,6 +4697,9 @@
       "rank": 288,
       "system": "linfatico",
       "name": "Intercostal nodes",
+      "nome_pt": "Linfonodos intercostais",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:intercostal-nodes-r",
       "sids": [
         "za:intercostal-nodes-l",
@@ -3798,6 +4712,9 @@
       "rank": 289,
       "system": "linfatico",
       "name": "Sigmoid nodes",
+      "nome_pt": "Linfonodos sigmóideos",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:sigmoid-nodes",
       "sids": [
         "za:sigmoid-nodes"
@@ -3809,6 +4726,9 @@
       "rank": 290,
       "system": "articular",
       "name": "Oblique popliteal ligament",
+      "nome_pt": "Ligamento poplíteo oblíquo",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:oblique-popliteal-ligament-r",
       "sids": [
         "za:oblique-popliteal-ligament-l",
@@ -3823,6 +4743,9 @@
       "rank": 291,
       "system": "articular",
       "name": "Medial meniscus",
+      "nome_pt": "Menisco medial",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:medial-meniscus-r",
       "sids": [
         "za:medial-meniscus-l",
@@ -3837,6 +4760,9 @@
       "rank": 292,
       "system": "articular",
       "name": "Sphenomandibular ligament",
+      "nome_pt": "Ligamento esfenomandibular",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:sphenomandibular-ligament-r",
       "sids": [
         "za:sphenomandibular-ligament-l",
@@ -3851,6 +4777,9 @@
       "rank": 293,
       "system": "articular",
       "name": "External intercostal membrane",
+      "nome_pt": "Membrana intercostal externa",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:external-intercostal-membrane-r",
       "sids": [
         "za:external-intercostal-membrane-l",
@@ -3863,6 +4792,9 @@
       "rank": 294,
       "system": "articular",
       "name": "Anterior longitudinal ligament",
+      "nome_pt": "Ligamento longitudinal anterior",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:anterior-longitudinal-ligament",
       "sids": [
         "za:anterior-longitudinal-ligament"
@@ -3874,6 +4806,9 @@
       "rank": 295,
       "system": "articular",
       "name": "Intertransverse ligaments",
+      "nome_pt": "Ligamentos intertransversários",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:intertransverse-ligaments-r",
       "sids": [
         "za:intertransverse-ligaments-l",
@@ -3886,6 +4821,9 @@
       "rank": 296,
       "system": "endocrino",
       "name": "Suprarenal gland",
+      "nome_pt": "Glândula suprarrenal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:suprarenal-gland-r",
       "sids": [
         "za:suprarenal-gland-l",
@@ -3900,6 +4838,9 @@
       "rank": 297,
       "system": "endocrino",
       "name": "Adenohypophysis",
+      "nome_pt": "Adeno-hipófise",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:adenohypophysis",
       "sids": [
         "za:adenohypophysis"
@@ -3913,6 +4854,9 @@
       "rank": 298,
       "system": "endocrino",
       "name": "Thyroid gland",
+      "nome_pt": "Glândula tireoide",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:thyroid-gland",
       "sids": [
         "za:thyroid-gland"
@@ -3926,6 +4870,9 @@
       "rank": 299,
       "system": "endocrino",
       "name": "Pineal gland",
+      "nome_pt": "Glândula pineal",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:pineal-gland",
       "sids": [
         "za:pineal-gland"
@@ -3939,6 +4886,9 @@
       "rank": 300,
       "system": "endocrino",
       "name": "Neurohypophysis",
+      "nome_pt": "Neuro-hipófise",
+      "sinonimos_pt": [],
+      "sourceOfName": "za",
       "sid": "za:neurohypophysis",
       "sids": [
         "za:neurohypophysis"

@@ -1,0 +1,65 @@
+{
+  "onda": 10,
+  "sistema": "articular",
+  "total": 6,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:oblique-popliteal-ligament-r",
+          "sids": [
+            "za:oblique-popliteal-ligament-l",
+            "za:oblique-popliteal-ligament-r"
+          ],
+          "nome_pt": "Ligamento poplíteo oblíquo",
+          "nome_en": "Oblique popliteal ligament"
+        },
+        {
+          "sid": "za:medial-meniscus-r",
+          "sids": [
+            "za:medial-meniscus-l",
+            "za:medial-meniscus-r"
+          ],
+          "nome_pt": "Menisco medial",
+          "nome_en": "Medial meniscus"
+        },
+        {
+          "sid": "za:sphenomandibular-ligament-r",
+          "sids": [
+            "za:sphenomandibular-ligament-l",
+            "za:sphenomandibular-ligament-r"
+          ],
+          "nome_pt": "Ligamento esfenomandibular",
+          "nome_en": "Sphenomandibular ligament"
+        },
+        {
+          "sid": "za:external-intercostal-membrane-r",
+          "sids": [
+            "za:external-intercostal-membrane-l",
+            "za:external-intercostal-membrane-r"
+          ],
+          "nome_pt": "Membrana intercostal externa",
+          "nome_en": "External intercostal membrane"
+        },
+        {
+          "sid": "za:anterior-longitudinal-ligament",
+          "sids": [
+            "za:anterior-longitudinal-ligament"
+          ],
+          "nome_pt": "Ligamento longitudinal anterior",
+          "nome_en": "Anterior longitudinal ligament"
+        },
+        {
+          "sid": "za:intertransverse-ligaments-r",
+          "sids": [
+            "za:intertransverse-ligaments-l",
+            "za:intertransverse-ligaments-r"
+          ],
+          "nome_pt": "Ligamentos intertransversários",
+          "nome_en": "Intertransverse ligaments"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "onda": 7,
+  "sistema": "linfatico",
+  "total": 10,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:juxta-oesophageal-nodes",
+          "sids": [
+            "za:juxta-oesophageal-nodes"
+          ],
+          "nome_pt": "Linfonodos justa-esofageanos",
+          "nome_en": "Juxta-oesophageal nodes"
+        },
+        {
+          "sid": "za:central-axillary-nodes-r",
+          "sids": [
+            "za:central-axillary-nodes-l",
+            "za:central-axillary-nodes-r"
+          ],
+          "nome_pt": "Linfonodos axilares centrais",
+          "nome_en": "Central axillary nodes"
+        },
+        {
+          "sid": "za:spleen",
+          "sids": [
+            "za:spleen"
+          ],
+          "nome_pt": "Baço",
+          "nome_en": "Spleen"
+        },
+        {
+          "sid": "za:palatine-tonsil-r",
+          "sids": [
+            "za:palatine-tonsil-l",
+            "za:palatine-tonsil-r"
+          ],
+          "nome_pt": "Amígdala palatina",
+          "nome_en": "Palatine tonsil"
+        },
+        {
+          "sid": "za:intrapulmonary-nodes",
+          "sids": [
+            "za:intrapulmonary-nodes"
+          ],
+          "nome_pt": "Linfonodos intrapulmonares",
+          "nome_en": "Intrapulmonary nodes"
+        },
+        {
+          "sid": "za:paracolic-superior-mesenteric-nodes",
+          "sids": [
+            "za:paracolic-superior-mesenteric-nodes"
+          ],
+          "nome_pt": "Linfonodos mesentéricos superiores paracolicos",
+          "nome_en": "Paracolic superior mesenteric nodes"
+        },
+        {
+          "sid": "za:juxta-intestinal-mesenteric-nodes",
+          "sids": [
+            "za:juxta-intestinal-mesenteric-nodes"
+          ],
+          "nome_pt": "Linfonodos mesentéricos justa-intestinais",
+          "nome_en": "Juxta-intestinal mesenteric nodes"
+        },
+        {
+          "sid": "za:right-gastro-omental-nodes",
+          "sids": [
+            "za:right-gastro-omental-nodes"
+          ],
+          "nome_pt": "Linfonodos gastro-omentais direitos",
+          "nome_en": "Right gastro-omental nodes"
+        },
+        {
+          "sid": "za:intercostal-nodes-r",
+          "sids": [
+            "za:intercostal-nodes-l",
+            "za:intercostal-nodes-r"
+          ],
+          "nome_pt": "Linfonodos intercostais",
+          "nome_en": "Intercostal nodes"
+        },
+        {
+          "sid": "za:sigmoid-nodes",
+          "sids": [
+            "za:sigmoid-nodes"
+          ],
+          "nome_pt": "Linfonodos sigmóideos",
+          "nome_en": "Sigmoid nodes"
+        }
+      ]
+    }
+  ]
+}

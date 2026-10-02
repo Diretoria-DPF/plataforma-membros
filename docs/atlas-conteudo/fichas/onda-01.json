@@ -1,0 +1,296 @@
+{
+  "onda": 1,
+  "sistema": "cardiovascular",
+  "total": 31,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:left-ventricle",
+          "sids": [
+            "za:left-ventricle",
+            "za:vh-f-left-ventricle",
+            "za:vh-m-heart-left-ventricle"
+          ],
+          "nome_pt": "Ventrículo esquerdo",
+          "nome_en": "Left ventricle",
+          "sinonimos_pt": [
+            "Ventrículo esquerdo do coração"
+          ]
+        },
+        {
+          "sid": "za:left-atrium",
+          "sids": [
+            "za:left-atrium",
+            "za:vh-f-left-cardiac-atrium",
+            "za:vh-m-left-cardiac-atrium"
+          ],
+          "nome_pt": "Átrio esquerdo",
+          "nome_en": "Left atrium",
+          "sinonimos_pt": [
+            "Átrio cardíaco esquerdo"
+          ]
+        },
+        {
+          "sid": "za:right-ventricle",
+          "sids": [
+            "za:right-ventricle",
+            "za:vh-f-right-ventricle",
+            "za:vh-m-heart-right-ventricle"
+          ],
+          "nome_pt": "Ventrículo direito",
+          "nome_en": "Right ventricle",
+          "sinonimos_pt": [
+            "Ventrículo direito do coração"
+          ]
+        },
+        {
+          "sid": "za:right-atrium",
+          "sids": [
+            "za:right-atrium",
+            "za:vh-f-right-cardiac-atrium",
+            "za:vh-m-right-cardiac-atrium"
+          ],
+          "nome_pt": "Átrio direito",
+          "nome_en": "Right atrium",
+          "sinonimos_pt": [
+            "Átrio cardíaco direito"
+          ]
+        },
+        {
+          "sid": "za:vh-m-interventricular-septum",
+          "sids": [
+            "za:vh-f-interventricular-septum",
+            "za:vh-m-interventricular-septum"
+          ],
+          "nome_pt": "Septo interventricular",
+          "nome_en": "Interventricular septum"
+        },
+        {
+          "sid": "za:pulmonary-trunk",
+          "sids": [
+            "za:pulmonary-trunk"
+          ],
+          "nome_pt": "Tronco pulmonar",
+          "nome_en": "Pulmonary trunk"
+        },
+        {
+          "sid": "za:posterior-leaflet-of-left-atrioventricular-valve",
+          "sids": [
+            "za:posterior-leaflet-of-left-atrioventricular-valve"
+          ],
+          "nome_pt": "Cúspide posterior da valva atrioventricular esquerda",
+          "nome_en": "Posterior leaflet of left atrioventricular valve"
+        },
+        {
+          "sid": "za:inferior-papillary-muscle-of-left-ventricle",
+          "sids": [
+            "za:inferior-papillary-muscle-of-left-ventricle"
+          ],
+          "nome_pt": "Músculo papilar inferior do ventrículo esquerdo",
+          "nome_en": "Inferior papillary muscle of left ventricle"
+        },
+        {
+          "sid": "za:inferior-leaflet-of-right-atrioventricular-valve",
+          "sids": [
+            "za:inferior-leaflet-of-right-atrioventricular-valve"
+          ],
+          "nome_pt": "Cúspide inferior da valva atrioventricular direita",
+          "nome_en": "Inferior leaflet of right atrioventricular valve"
+        },
+        {
+          "sid": "za:vh-m-papillary-muscle-of-heart-anterolateral",
+          "sids": [
+            "za:vh-f-papillary-muscle-of-heart-antlat",
+            "za:vh-m-papillary-muscle-of-heart-anterolateral"
+          ],
+          "nome_pt": "Músculo papilar anterolateral do coração",
+          "nome_en": "Papillary muscle of heart anterolateral"
+        },
+        {
+          "sid": "za:anterior-papillary-muscle-of-right-ventricle",
+          "sids": [
+            "za:anterior-papillary-muscle-of-right-ventricle"
+          ],
+          "nome_pt": "Músculo papilar anterior do ventrículo direito",
+          "nome_en": "Anterior papillary muscle of right ventricle"
+        },
+        {
+          "sid": "za:septal-leaflet-of-right-atrioventricular-valve",
+          "sids": [
+            "za:septal-leaflet-of-right-atrioventricular-valve"
+          ],
+          "nome_pt": "Cúspide septal da valva atrioventricular direita",
+          "nome_en": "Septal leaflet of right atrioventricular valve"
+        },
+        {
+          "sid": "za:vh-m-papillary-muscle-of-heart-posteromedial",
+          "sids": [
+            "za:vh-f-papillary-muscle-of-heart-posmed",
+            "za:vh-m-papillary-muscle-of-heart-posteromedial"
+          ],
+          "nome_pt": "Músculo papilar posteromedial do coração",
+          "nome_en": "Papillary muscle of heart posteromedial"
+        },
+        {
+          "sid": "za:inferior-papillary-muscle-of-right-ventricle",
+          "sids": [
+            "za:inferior-papillary-muscle-of-right-ventricle"
+          ],
+          "nome_pt": "Músculo papilar inferior do ventrículo direito",
+          "nome_en": "Inferior papillary muscle of right ventricle"
+        },
+        {
+          "sid": "za:septal-papillary-muscle-of-right-ventricle",
+          "sids": [
+            "za:septal-papillary-muscle-of-right-ventricle"
+          ],
+          "nome_pt": "Músculo papilar septal do ventrículo direito",
+          "nome_en": "Septal papillary muscle of right ventricle"
+        },
+        {
+          "sid": "za:vh-m-papillary-muscle-of-heart-anterior",
+          "sids": [
+            "za:vh-f-papillary-muscle-of-heart-ant",
+            "za:vh-m-papillary-muscle-of-heart-anterior"
+          ],
+          "nome_pt": "Músculo papilar anterior do coração",
+          "nome_en": "Papillary muscle of heart anterior"
+        },
+        {
+          "sid": "za:vh-m-papillary-muscle-of-heart-medial",
+          "sids": [
+            "za:vh-f-papillary-muscle-of-heart-med",
+            "za:vh-m-papillary-muscle-of-heart-medial"
+          ],
+          "nome_pt": "Músculo papilar medial do coração",
+          "nome_en": "Papillary muscle of heart medial"
+        },
+        {
+          "sid": "za:vh-m-papillary-muscle-of-heart-posterior",
+          "sids": [
+            "za:vh-f-papillary-muscle-of-heart-pos",
+            "za:vh-m-papillary-muscle-of-heart-posterior"
+          ],
+          "nome_pt": "Músculo papilar posterior do coração",
+          "nome_en": "Papillary muscle of heart posterior"
+        },
+        {
+          "sid": "za:vh-m-tricuspid-valve",
+          "sids": [
+            "za:vh-f-tricuspid-valve",
+            "za:vh-m-tricuspid-valve"
+          ],
+          "nome_pt": "Valva tricúspide",
+          "nome_en": "Tricuspid valve"
+        },
+        {
+          "sid": "za:vh-m-mitral-valve",
+          "sids": [
+            "za:vh-f-mitral-valve",
+            "za:vh-m-mitral-valve"
+          ],
+          "nome_pt": "Valva mitral",
+          "nome_en": "Mitral valve"
+        }
+      ]
+    },
+    {
+      "lote": 2,
+      "itens": [
+        {
+          "sid": "za:vh-m-aortic-valve",
+          "sids": [
+            "za:vh-f-aortic-valve",
+            "za:vh-m-aortic-valve"
+          ],
+          "nome_pt": "Valva da aorta",
+          "nome_en": "Aortic valve"
+        },
+        {
+          "sid": "za:vh-m-pulmonary-valve",
+          "sids": [
+            "za:vh-f-pulmonary-valve",
+            "za:vh-m-pulmonary-valve"
+          ],
+          "nome_pt": "Valva do tronco pulmonar",
+          "nome_en": "Pulmonary valve"
+        },
+        {
+          "sid": "za:cavernous-sinus-r",
+          "sids": [
+            "za:cavernous-sinus-l",
+            "za:cavernous-sinus-r"
+          ],
+          "nome_pt": "Seio cavernoso",
+          "nome_en": "Cavernous sinus"
+        },
+        {
+          "sid": "za:anterior-communicating-artery",
+          "sids": [
+            "za:anterior-communicating-artery"
+          ],
+          "nome_pt": "Artéria comunicante anterior",
+          "nome_en": "Anterior communicating artery"
+        },
+        {
+          "sid": "za:right-semilunar-leaflet-of-pulmonary-valve",
+          "sids": [
+            "za:right-semilunar-leaflet-of-pulmonary-valve"
+          ],
+          "nome_pt": "Válvula semilunar direita da valva do tronco pulmonar",
+          "nome_en": "Right semilunar leaflet of pulmonary valve"
+        },
+        {
+          "sid": "za:anterior-semilunar-leaflet-of-pulmonary-valve",
+          "sids": [
+            "za:anterior-semilunar-leaflet-of-pulmonary-valve"
+          ],
+          "nome_pt": "Válvula semilunar anterior da valva do tronco pulmonar",
+          "nome_en": "Anterior semilunar leaflet of pulmonary valve"
+        },
+        {
+          "sid": "za:non-coronary-leaflet",
+          "sids": [
+            "za:non-coronary-leaflet"
+          ],
+          "nome_pt": "Cúspide não-coronária",
+          "nome_en": "Non-coronary leaflet"
+        },
+        {
+          "sid": "za:left-semilunar-leaflet-of-pulmonary-valve",
+          "sids": [
+            "za:left-semilunar-leaflet-of-pulmonary-valve"
+          ],
+          "nome_pt": "Válvula semilunar esquerda da valva do tronco pulmonar",
+          "nome_en": "Left semilunar leaflet of pulmonary valve"
+        },
+        {
+          "sid": "za:right-coronary-leaflet",
+          "sids": [
+            "za:right-coronary-leaflet"
+          ],
+          "nome_pt": "Cúspide coronária direita",
+          "nome_en": "Right coronary leaflet"
+        },
+        {
+          "sid": "za:left-coronary-leaflet",
+          "sids": [
+            "za:left-coronary-leaflet"
+          ],
+          "nome_pt": "Cúspide coronária esquerda",
+          "nome_en": "Left coronary leaflet"
+        },
+        {
+          "sid": "za:basilar-venous-plexus",
+          "sids": [
+            "za:basilar-venous-plexus"
+          ],
+          "nome_pt": "Plexo venoso basilar",
+          "nome_en": "Basilar venous plexus"
+        }
+      ]
+    }
+  ]
+}

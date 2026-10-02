@@ -1,0 +1,53 @@
+{
+  "onda": 6,
+  "sistema": "endocrino",
+  "total": 5,
+  "lotes": [
+    {
+      "lote": 1,
+      "itens": [
+        {
+          "sid": "za:suprarenal-gland-r",
+          "sids": [
+            "za:suprarenal-gland-l",
+            "za:suprarenal-gland-r"
+          ],
+          "nome_pt": "Glândula suprarrenal",
+          "nome_en": "Suprarenal gland"
+        },
+        {
+          "sid": "za:adenohypophysis",
+          "sids": [
+            "za:adenohypophysis"
+          ],
+          "nome_pt": "Adeno-hipófise",
+          "nome_en": "Adenohypophysis"
+        },
+        {
+          "sid": "za:thyroid-gland",
+          "sids": [
+            "za:thyroid-gland"
+          ],
+          "nome_pt": "Glândula tireoide",
+          "nome_en": "Thyroid gland"
+        },
+        {
+          "sid": "za:pineal-gland",
+          "sids": [
+            "za:pineal-gland"
+          ],
+          "nome_pt": "Glândula pineal",
+          "nome_en": "Pineal gland"
+        },
+        {
+          "sid": "za:neurohypophysis",
+          "sids": [
+            "za:neurohypophysis"
+          ],
+          "nome_pt": "Neuro-hipófise",
+          "nome_en": "Neurohypophysis"
+        }
+      ]
+    }
+  ]
+}
