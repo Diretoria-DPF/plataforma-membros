@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * peek.test.mjs — selo de revisão da ficha (js/ui/infocard.js getStatusLabel).
  * Uso: node scripts/atlas/peek.test.mjs

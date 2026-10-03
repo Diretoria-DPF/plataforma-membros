@@ -1,6 +1,6 @@
 # Política de Privacidade — Plataforma de Membros LAIFT
 
-**Versão: 2026-09-26** (deve corresponder exatamente a
+**Versão: 2026-10-03** (deve corresponder exatamente a
 `LEGAL_VERSIONS.PRIVACY` em `worker/src/constants.js` — atualize os dois
 juntos sempre que o texto mudar de forma material; o aceite de uma versão
 anterior fica preservado no histórico de consentimentos, nunca é
@@ -12,6 +12,12 @@ retroativamente alterado).
 > (texto proposto pela Equipe 3 em `docs/FASE_3_IA_CLINICA.md`). Esses
 > trechos, como o restante do documento, ainda precisam de revisão
 > jurídica antes de serem considerados finais.
+>
+> A versão 2026-10-03 passa a declarar os serviços de terceiros que tratam
+> dados técnicos de acesso (Cloudflare, Neon, Brevo, Groq, jsDelivr e bancos
+> públicos de moléculas) e a medição de acesso (analytics) feita pela
+> infraestrutura da Cloudflare. Os trechos novos também aguardam revisão
+> jurídica.
 
 ## 1. Quem é o controlador dos dados
 
@@ -45,7 +51,10 @@ escreve nos recursos com inteligência artificial (ver seção 5).
 **Gerados automaticamente pelo sistema, nunca inseridos por você:**
 registros de auditoria de ações administrativas e de autenticação
 (associados a um identificador de conta, nunca ao conteúdo de senha ou
-token), e registros técnicos de erro para diagnóstico.
+token), registros técnicos de erro para diagnóstico e dados técnicos de
+acesso tratados pela infraestrutura de hospedagem (endereço IP, tipo de
+navegador, página acessada, país aproximado e tempo de resposta — ver
+seção 5).
 
 ## 3. Para que usamos cada dado (finalidade e base legal)
 
@@ -58,6 +67,7 @@ token), e registros técnicos de erro para diagnóstico.
 | Registros de auditoria e erro | Segurança da plataforma, prevenção a fraude e investigação de incidentes | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
 | Resultados de estudo na área "Aprender" e presença em eventos | Mostrar suas estatísticas e conquistas; registrar a presença em eventos da liga | Execução de contrato (inciso V) |
 | Perguntas e respostas escritas nos simuladores com IA (clínica virtual e laboratório), métricas de uso da IA | Oferecer o paciente virtual, o preceptor e a geração de casos; controlar custo e abuso (cota diária) | Execução de contrato (inciso V); métricas de uso: legítimo interesse (inciso IX) |
+| Dados técnicos de acesso (IP, navegador, página, país, desempenho) | Entregar o site, proteger contra ataques e abuso e medir de forma agregada a audiência e o desempenho da plataforma (analytics) | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
 
 ## 4. O que NÃO fazemos
 
@@ -70,8 +80,10 @@ token), e registros técnicos de erro para diagnóstico.
 - Não exibimos telefone, e-mail completo ou hash de senha em nenhuma
   listagem — nem para outros membros, nem para administradores, além do
   estritamente necessário para a própria pessoa gerir a própria conta.
-- Não usamos cookies de rastreamento nem ferramentas de analytics de
-  terceiros.
+- Não usamos cookies de rastreamento nem instalamos no seu navegador
+  scripts de publicidade ou de analytics de terceiros. A medição de acesso
+  é feita de forma agregada pela infraestrutura da Cloudflare, sem cookies
+  (ver seção 5).
 
 ## 5. Onde os dados ficam e como são protegidos
 
@@ -82,7 +94,8 @@ criptográfico antes de qualquer armazenamento. Toda ação sensível exige
 sessão autenticada validada a cada chamada contra o banco de dados — nunca
 apenas contra informação enviada pelo próprio navegador. Detalhes técnicos
 completos, incluindo riscos residuais reconhecidos e como são mitigados,
-estão documentados publicamente em `docs/SECURITY.md` deste repositório.
+estão documentados em `docs/SECURITY.md`, que podemos disponibilizar
+mediante solicitação ao canal da seção 1.
 
 **Inteligência artificial.** Os recursos de IA da área "Aprender" (paciente
 virtual, preceptor da clínica, geração de casos e preceptor do laboratório)
@@ -100,6 +113,40 @@ dados seus, apenas o seu vínculo como autor, visível só para
 administradores. O tratamento pela Groq segue os termos e a política de
 privacidade dela, com possível transferência internacional de dados (LGPD,
 art. 33).
+
+**Serviços de terceiros e medição de acesso (analytics).** Para funcionar,
+a plataforma usa os serviços abaixo como operadores. Todos podem tratar
+dados técnicos de acesso (endereço IP, tipo de navegador, página acessada,
+país aproximado e tempo de resposta) e alguns podem estar fora do Brasil
+(transferência internacional, LGPD, art. 33), conforme os termos e as
+políticas de privacidade de cada um:
+
+- **Cloudflare, Inc.** — hospeda o site e a API, resolve o endereço (DNS),
+  entrega o conteúdo por rede de distribuição (CDN), protege contra
+  ataques e abuso, e guarda arquivos (fotos de perfil e imagens de eventos)
+  e dados temporários de cache. A Cloudflare também faz a **medição de
+  acesso (analytics) de forma agregada**, a partir das requisições que
+  passam pela rede dela: quantidade de visitas, países de origem, páginas
+  mais acessadas e desempenho (velocidade e erros). Usamos essas medições
+  para manter o site seguro e estável e para entender, de forma agregada,
+  quanto a plataforma é usada. **Essa medição não usa cookies, não instala
+  rastreadores no seu navegador e não é usada para publicidade nem para
+  criar perfil individual de ninguém.** Se um dia passarmos a carregar um
+  script de analytics no navegador, esta Política será atualizada antes.
+- **Neon** — banco de dados PostgreSQL onde ficam os dados da plataforma.
+- **Brevo** — envio dos e-mails da plataforma (confirmação de cadastro e
+  redefinição de senha); recebe o seu e-mail e, quando usado na mensagem, o
+  seu nome, para entregar o aviso.
+- **Groq, Inc.** — recursos de inteligência artificial, como descrito acima.
+- **jsDelivr** — entrega bibliotecas de código usadas em gráficos e na
+  visualização de moléculas. Ao carregar a página, o seu navegador faz um
+  pedido a esse serviço, que pode registrar o endereço IP. Usamos versões
+  fixas, com verificação de integridade.
+- **Bancos públicos de moléculas (PubChem/NCBI e CACTUS/NCI)** — o
+  laboratório virtual pode carregar imagens e dados de estruturas químicas
+  a partir do seu navegador. Enviamos apenas o nome ou a estrutura
+  pesquisada, nunca dados da sua conta, mas esses serviços podem registrar o
+  seu endereço IP.
 
 ## 6. Sessão e armazenamento no seu navegador
 

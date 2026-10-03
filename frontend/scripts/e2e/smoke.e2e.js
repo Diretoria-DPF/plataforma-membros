@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * smoke.e2e.js — garantias da Fase 1 (unificação). Cada fase acrescenta
  * o próprio arquivo *.e2e.js; este aqui não deve regredir.

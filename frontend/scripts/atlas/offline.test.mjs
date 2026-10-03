@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * offline.test.mjs — registro do Service Worker e regras do sw.js (Onda 3.5, A.1).
  * Uso: node --test scripts/atlas/offline.test.mjs

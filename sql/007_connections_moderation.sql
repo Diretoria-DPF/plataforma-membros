@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 007_connections_moderation.sql
 -- Fase 3a do plano em docs/PLANO_FASE3_MENSAGERIA.md (já revisado por
 -- security-reviewer; achado HIGH do cooldown de recusa já incorporado

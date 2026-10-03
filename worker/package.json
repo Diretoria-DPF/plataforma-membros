@@ -2,6 +2,7 @@
   "name": "plataforma-membros-worker",
   "version": "1.0.0",
   "private": true,
+  "license": "SEE LICENSE IN ../LICENSE",
   "type": "module",
   "description": "Backend da Plataforma de Membros como Cloudflare Worker (API JSON). Substitui o Google Apps Script — mesma lógica de segurança, motor de execução diferente.",
   "scripts": {

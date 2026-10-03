@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * adminService.js — porta fiel de src/services/AdminService.gs, incluindo a
  * checagem de existência do alvo em changeUserRole/banUser/unbanUser

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-slow.e2e.js — avisos de demora e offline (js/ui/slow-device.js).
  *   - Esqueleto atrasado: aos 8 s aparece "Está demorando?" com "Tentar

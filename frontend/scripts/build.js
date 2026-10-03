@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * build.js
  * Gera frontend/dist/ para publicação: index.html e styles.css são
@@ -46,9 +51,15 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 
 // Páginas estáticas (HTML/CSS puro, sem lógica a proteger) — copiadas sem
 // alteração. Adicione aqui qualquer nova página estática do site.
-['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html'].forEach((name) => {
+// robots.txt, sitemap.xml e llms.txt precisam estar na RAIZ do domínio para
+// buscadores e crawlers de IA os encontrarem (por isso exigem domínio próprio).
+['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
+
+// Cabeçalhos HTTP (Cloudflare Workers static assets): o runtime lê este arquivo
+// da raiz do diretório publicado. O GitHub Pages simplesmente o ignora.
+fs.copyFileSync(path.join(ROOT, '_headers'), path.join(DIST, '_headers'));
 
 // Módulos ES da mensageria E2EE (frontend/msg-crypto.js e messaging.js):
 // copiados sem ofuscação, de propósito — ao contrário de app.js, este é

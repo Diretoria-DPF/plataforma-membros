@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * pacote-lote.mjs — monta o .zip de um lote para o conselho (plano v4.0):
  * LEIA-ME.md, checklist.md, fichas/<sistema>.json e fontes.json.

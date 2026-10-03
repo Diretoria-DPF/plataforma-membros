@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /** fichas-lotes.test.mjs — 10 ondas, lotes ≤ 20, as 300 cobertas uma vez (PR 3.2, B.1). */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 import { jest } from '@jest/globals';
 import * as AiService from '../src/services/aiService.js';
 import * as Groq from '../src/ai/groqClient.js';

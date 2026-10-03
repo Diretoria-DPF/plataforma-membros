@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-responsive.e2e.js — casca e layout responsivo do Atlas v2 (WP08)
  * ---------------------------------------------------------------------------

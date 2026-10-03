@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 013_clinical_ai.sql
 -- Fase 3 (docs/PLANO_FASES_2_3_4.md, Contrato 1): IA da clínica virtual e
 -- do laboratório saem do Apps Script e passam a rodar na Worker (Groq, com

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * frontend/scripts/verify-msg-crypto.js
  * Validação em Node de frontend/msg-crypto.js (que é servido ao navegador

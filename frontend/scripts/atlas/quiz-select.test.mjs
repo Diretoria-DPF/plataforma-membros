@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * quiz-select.test.mjs — sorteio e filtros do Quiz (Onda 3.5, B.2).
  * Uso: node --test scripts/atlas/quiz-select.test.mjs

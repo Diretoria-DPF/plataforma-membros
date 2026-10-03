@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * constants.js
  * Espelha exatamente src/Constants.gs (Apps Script). Os valores de enum
@@ -158,7 +163,7 @@ export const LIMITS = {
 // frontend/index.html (texto fixo, sem template de servidor).
 export const LEGAL_VERSIONS = {
   TERMS: '2026-09-25',
-  PRIVACY: '2026-09-26',
+  PRIVACY: '2026-10-03',
 };
 
 export const RATE_LIMITS = {

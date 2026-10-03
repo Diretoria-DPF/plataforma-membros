@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-selos.e2e.js — o aluno vê o que é confiável (PR 3.2, C2) e o boot
  * não baixa fichas (M5).

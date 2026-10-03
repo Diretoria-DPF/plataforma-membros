@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * checklist-lote.mjs — checklist em markdown que o conselho preenche por lote
  * (Onda 3, plano v4.0). Gera o checklist em branco e lê o devolvido.

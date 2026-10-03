@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-farmaco.e2e.js — modo Farmacologia com o modelo PK/PD (PR 3.2, Bloco C).
  *  - Selecionar um composto mostra Cmax/Tmax/AUC calculados por

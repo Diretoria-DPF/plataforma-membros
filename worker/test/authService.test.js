@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 import { jest } from '@jest/globals';
 import * as AuthService from '../src/services/authService.js';
 import { GENERIC_AUTH_FAILURE_MESSAGE } from '../src/constants.js';

@@ -1,7 +1,8 @@
 # Plataforma de Membros
 
-**No ar:** https://diretoria-dpf.github.io/plataforma-membros/ — esta é a
-URL que as pessoas usam.
+**No ar:** https://laift.com.br/ — esta é a URL que as pessoas usam. O
+endereço antigo (`diretoria-dpf.github.io/plataforma-membros/`) continua
+ativo só durante a transição, com um aviso apontando para o novo.
 
 Plataforma unificada da LAIFT (Liga Acadêmica Interdisciplinar de
 Farmacologia e Toxicologia): governança comunitária (eventos, propostas com

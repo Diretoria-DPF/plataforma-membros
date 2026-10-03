@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * cdn-mirror/index.js — serve, nos testes E2E, os arquivos que as páginas
  * pedem ao jsDelivr (https://cdn.jsdelivr.net/npm/<pacote>@<versão>/<caminho>)

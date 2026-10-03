@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * telemetry.test.mjs — telemetria anônima do atlas (Onda 3.5, A.2).
  * Uso: node --test scripts/atlas/telemetry.test.mjs

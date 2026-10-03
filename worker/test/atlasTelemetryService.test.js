@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 import { jest } from '@jest/globals';
 import * as T from '../src/services/atlasTelemetryService.js';
 import { API_REGISTRY } from '../src/handlers.js';

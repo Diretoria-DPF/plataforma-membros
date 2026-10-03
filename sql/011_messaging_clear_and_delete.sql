@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 011_messaging_clear_and_delete.sql
 -- Divide "apagar" em duas ações distintas, pedido direto do dono da
 -- plataforma: "cada usuario apaga apenas a sua visualização, mas não apaga

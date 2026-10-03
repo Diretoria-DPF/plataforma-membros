@@ -1,0 +1,14 @@
+# LAIFT
+
+> LAIFT é a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Este site é a plataforma de membros e de estudo da liga, voltada a estudantes de Farmácia do ensino superior.
+
+A plataforma reúne recursos de aprendizagem (quiz, casos clínicos, laboratório virtual e atlas anatômico 3D) e a gestão da liga (eventos, votações, tarefas e equipe). O acesso aos módulos e à área de membros exige cadastro e login.
+
+## Páginas públicas
+- [Início e entrada](https://laift.com.br/): apresentação da LAIFT, login e cadastro.
+- [Termos de Uso](https://laift.com.br/termos): regras de uso da plataforma.
+- [Política de Privacidade](https://laift.com.br/privacidade): como os dados pessoais são tratados.
+
+## Observações
+- O conteúdo da área de membros é restrito a usuários autenticados.
+- Não há API pública documentada para uso por terceiros.

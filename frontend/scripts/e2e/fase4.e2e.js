@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * fase4.e2e.js — garantias da Fase 4 (Equipe 4: qualidade, design e
  * segurança dos módulos). Duas partes:

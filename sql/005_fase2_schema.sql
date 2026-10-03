@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- =============================================================================
 -- 005_fase2_schema.sql
 -- Plataforma de Membros — Schema da Fase 2 (perfil estendido, avatar/imagem de

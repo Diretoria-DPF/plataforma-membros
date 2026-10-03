@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * slow-device.test.mjs — perfil do aparelho (js/ui/slow-device.js classifyDevice).
  * Uso: node scripts/atlas/slow-device.test.mjs

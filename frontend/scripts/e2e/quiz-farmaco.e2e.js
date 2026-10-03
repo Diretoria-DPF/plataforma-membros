@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * quiz-farmaco.e2e.js — cobre a Fase de "ligar" a detecção de fármaco-alvo
  * (modulos/quiz/farmacos-lexicon.js) ao Simulador de Farmacologia.

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-estudo.e2e.js — favoritos, compartilhar e resumo do estudo (Onda 3.5, C.1–C.3).
  *  - ★ Fixar na ficha: 3 estruturas fixadas aparecem em Meu estudo > Fixados.

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * frontend/admin-ai.js
  * Painel admin "IA" (Fase 3 — docs/FASE_3_IA_CLINICA.md). Substitui o

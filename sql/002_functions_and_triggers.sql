@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- =============================================================================
 -- 002_functions_and_triggers.sql
 -- Plataforma de Membros — Funções e gatilhos (Neon PostgreSQL)

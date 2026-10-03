@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 008_league_org_chart.sql
 -- Estrutura organizacional da liga (fluxograma de membros): cargo de
 -- liderança (independente do papel de permissão da plataforma) e

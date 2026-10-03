@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-pick.e2e.js — tocar/clicar no CORPO abre a estrutura (crime C2).
  * ---------------------------------------------------------------------------

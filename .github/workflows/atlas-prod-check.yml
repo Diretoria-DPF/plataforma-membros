@@ -9,7 +9,7 @@ on:
       url:
         description: 'URL base publicada (com / no fim)'
         required: true
-        default: 'https://diretoria-dpf.github.io/plataforma-membros/'
+        default: 'https://laift.com.br/'
 jobs:
   prod-check:
     runs-on: ubuntu-latest

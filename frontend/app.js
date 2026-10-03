@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 (function () {
   'use strict';
 
@@ -7,7 +12,15 @@
   // trafega aqui, só o token de sessão opaco que o próprio backend emite
   // após login.
   // ===========================================================================
-  var API_BASE_URL = 'https://plataforma-membros-api.diretoria-dpf.workers.dev';
+  // A mesma build serve as duas origens durante a migração (docs/
+  // MIGRACAO_CLOUDFLARE.md): em laift.com.br fala com api.laift.com.br; no
+  // GitHub Pages e em localhost segue no endereço *.workers.dev. É o mesmo
+  // Worker respondendo nos dois — só muda o nome pelo qual ele é alcançado.
+  var API_BASE_URL = (function () {
+    var host = window.location.hostname;
+    if (host === 'laift.com.br' || host === 'www.laift.com.br') return 'https://api.laift.com.br';
+    return 'https://plataforma-membros-api.diretoria-dpf.workers.dev';
+  })();
 
   // ===========================================================================
   // Desestímulo cosmético a clique-direito / atalhos de DevTools.

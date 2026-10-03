@@ -6,6 +6,8 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Política de Privacidade — Plataforma de Membros LAIFT</title>
+  <meta name="description" content="Política de Privacidade da plataforma de membros da LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: como tratamos seus dados.">
+  <link rel="canonical" href="https://laift.com.br/privacidade">
   <link rel="stylesheet" href="styles.css">
   <style>
     .legal-shell { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; position: relative; z-index: 1; }
@@ -27,8 +29,8 @@
     <a class="back-link link-btn" href="./" data-history-back>&larr; Voltar</a>
     <span class="brand-pill">Plataforma de Membros LAIFT</span>
     <h1>Política de Privacidade</h1>
-    <p class="version">Versão: 2026-09-26</p>
-    <p class="notice">Minuta — revisão jurídica pendente. Esta versão acrescenta a área "Aprender" e o uso da Groq, Inc. como operador nos recursos de inteligência artificial.</p>
+    <p class="version">Versão: 2026-10-03</p>
+    <p class="notice">Minuta — revisão jurídica pendente. Esta versão acrescenta a área "Aprender" e o uso da Groq, Inc. como operador nos recursos de inteligência artificial. A versão 2026-10-03 passa a declarar os serviços de terceiros que tratam dados técnicos de acesso e a medição de acesso (analytics) feita pela infraestrutura da Cloudflare.</p>
 
     <h2>1. Quem é o controlador dos dados</h2>
     <p>Esta plataforma é operada pela <strong>Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (LAIFT)</strong>, associação estudantil vinculada ao curso de Farmácia. Para qualquer assunto relacionado a esta Política ou ao tratamento dos seus dados pessoais, o canal de contato é: <strong>laiftligauninassau@gmail.com</strong>.</p>
@@ -38,7 +40,7 @@
     <p><strong>No cadastro (opcionais):</strong> foto de perfil (avatar), perfil do LinkedIn, usuário do Instagram, escolaridade e áreas de interesse. Campos opcionais podem ser deixados em branco sem impedir o cadastro.</p>
     <p><strong>Durante o uso:</strong> preferência de tema da interface, inscrições em eventos, propostas enviadas, votos, adesões a tarefas, comentários e mensagens de feedback enviadas por você.</p>
     <p><strong>Na área "Aprender":</strong> resultados dos simulados e casos clínicos que você conclui (nota, duração, desfecho), formulações do laboratório, presença confirmada em eventos (data, hora e forma do check-in) e o texto que você escreve nos recursos com inteligência artificial (ver seção 5).</p>
-    <p><strong>Gerados automaticamente pelo sistema, nunca inseridos por você:</strong> registros de auditoria de ações administrativas e de autenticação, e registros técnicos de erro para diagnóstico.</p>
+    <p><strong>Gerados automaticamente pelo sistema, nunca inseridos por você:</strong> registros de auditoria de ações administrativas e de autenticação, registros técnicos de erro para diagnóstico e dados técnicos de acesso tratados pela infraestrutura de hospedagem (endereço IP, tipo de navegador, página acessada, país aproximado e tempo de resposta — ver seção 5).</p>
 
     <h2>3. Para que usamos cada dado (finalidade e base legal)</h2>
     <table>
@@ -50,6 +52,7 @@
       <tr><td>Registros de auditoria e erro</td><td>Segurança da plataforma e investigação de incidentes</td><td>Legítimo interesse (inciso IX)</td></tr>
       <tr><td>Resultados de estudo na área "Aprender" e presença em eventos</td><td>Mostrar suas estatísticas e conquistas; registrar a presença em eventos da liga</td><td>Execução de contrato (inciso V)</td></tr>
       <tr><td>Perguntas e respostas escritas nos simuladores com IA (clínica virtual e laboratório), métricas de uso da IA</td><td>Oferecer o paciente virtual, o preceptor e a geração de casos; controlar custo e abuso (cota diária)</td><td>Execução de contrato (inciso V); métricas de uso: legítimo interesse (inciso IX)</td></tr>
+      <tr><td>Dados técnicos de acesso (IP, navegador, página, país, desempenho)</td><td>Entregar o site, proteger contra ataques e abuso e medir de forma agregada a audiência e o desempenho da plataforma (analytics)</td><td>Legítimo interesse (inciso IX), limitado ao mínimo necessário</td></tr>
     </table>
 
     <h2>4. O que NÃO fazemos</h2>
@@ -58,12 +61,22 @@
       <li>Não usamos seus dados para nenhuma finalidade além das listadas na seção 3.</li>
       <li>Não armazenamos sua senha em texto puro em nenhum momento.</li>
       <li>Não exibimos telefone, e-mail completo ou hash de senha em nenhuma listagem além do estritamente necessário para você gerir sua própria conta.</li>
-      <li>Não usamos cookies de rastreamento nem ferramentas de analytics de terceiros.</li>
+      <li>Não usamos cookies de rastreamento nem instalamos no seu navegador scripts de publicidade ou de analytics de terceiros. A medição de acesso é feita de forma agregada pela infraestrutura da Cloudflare, sem cookies (ver seção 5).</li>
     </ul>
 
     <h2>5. Onde os dados ficam e como são protegidos</h2>
     <p>Os dados são armazenados em um banco de dados PostgreSQL hospedado pelo provedor Neon, acessado por um backend em Cloudflare Workers — ambos com conexão sempre criptografada (TLS). Senhas passam por hash criptográfico antes de qualquer armazenamento. Toda ação sensível exige sessão autenticada validada a cada chamada contra o banco de dados.</p>
     <p><strong>Inteligência artificial.</strong> Os recursos de IA da área "Aprender" (paciente virtual, preceptor da clínica, geração de casos e preceptor do laboratório) usam o serviço da <strong>Groq, Inc.</strong> como operador de dados. Quando você usa esses recursos, o texto que você escreve (perguntas, hipótese diagnóstica e conduta) e o contexto do caso clínico <strong>fictício</strong> são enviados à Groq para gerar a resposta. <strong>Não enviamos seu nome, e-mail ou qualquer identificador da sua conta.</strong> Não escreva dados pessoais reais seus ou de terceiros nesses campos. Na plataforma, guardamos apenas métricas de uso da IA (qual recurso, quando, quantos tokens, se funcionou), sem o conteúdo das conversas, e a nota e o desfecho dos casos que você concluir, que aparecem nas suas estatísticas. Casos gerados com IA podem ser publicados na biblioteca da liga depois de revisados pela diretoria; eles não contêm dados seus, apenas o seu vínculo como autor, visível só para administradores. O tratamento pela Groq segue os termos e a política de privacidade dela, com possível transferência internacional de dados (LGPD, art. 33).</p>
+
+    <p><strong>Serviços de terceiros e medição de acesso (analytics).</strong> Para funcionar, a plataforma usa os serviços abaixo como operadores. Todos podem tratar dados técnicos de acesso (endereço IP, tipo de navegador, página acessada, país aproximado e tempo de resposta) e alguns podem estar fora do Brasil (transferência internacional, LGPD, art. 33), conforme os termos e as políticas de privacidade de cada um:</p>
+    <ul>
+      <li><strong>Cloudflare, Inc.</strong> — hospeda o site e a API, resolve o endereço (DNS), entrega o conteúdo por rede de distribuição (CDN), protege contra ataques e abuso, e guarda arquivos (fotos de perfil e imagens de eventos) e dados temporários de cache. A Cloudflare também faz a <strong>medição de acesso (analytics) de forma agregada</strong>, a partir das requisições que passam pela rede dela: quantidade de visitas, países de origem, páginas mais acessadas e desempenho (velocidade e erros). Usamos essas medições para manter o site seguro e estável e para entender, de forma agregada, quanto a plataforma é usada. <strong>Essa medição não usa cookies, não instala rastreadores no seu navegador e não é usada para publicidade nem para criar perfil individual de ninguém.</strong> Se um dia passarmos a carregar um script de analytics no navegador, esta Política será atualizada antes.</li>
+      <li><strong>Neon</strong> — banco de dados PostgreSQL onde ficam os dados da plataforma.</li>
+      <li><strong>Brevo</strong> — envio dos e-mails da plataforma (confirmação de cadastro e redefinição de senha); recebe o seu e-mail e, quando usado na mensagem, o seu nome, para entregar o aviso.</li>
+      <li><strong>Groq, Inc.</strong> — recursos de inteligência artificial, como descrito acima.</li>
+      <li><strong>jsDelivr</strong> — entrega bibliotecas de código usadas em gráficos e na visualização de moléculas. Ao carregar a página, o seu navegador faz um pedido a esse serviço, que pode registrar o endereço IP. Usamos versões fixas, com verificação de integridade.</li>
+      <li><strong>Bancos públicos de moléculas (PubChem/NCBI e CACTUS/NCI)</strong> — o laboratório virtual pode carregar imagens e dados de estruturas químicas a partir do seu navegador. Enviamos apenas o nome ou a estrutura pesquisada, nunca dados da sua conta, mas esses serviços podem registrar o seu endereço IP.</li>
+    </ul>
 
     <h2>6. Sessão e armazenamento no seu navegador</h2>
     <p>Para evitar que você precise fazer login toda vez que abrir a página, o token de sessão (um valor opaco, sem significado fora desta plataforma) fica salvo no armazenamento local do seu navegador por <strong>até 30 minutos</strong>, expirando e sendo apagado automaticamente depois disso. Esse token não é uma senha nem contém dado pessoal legível. Ao fazer logout, esse token é apagado imediatamente.</p>

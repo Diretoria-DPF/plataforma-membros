@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * fichas-lotes.mjs — divide as 300 estruturas de prioridades.json em 10
  * ondas por sistema (canary, docs/atlas-conteudo/canary.md) e, dentro de

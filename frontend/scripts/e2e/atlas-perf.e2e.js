@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-perf.e2e.js — orçamento de desempenho do Atlas v2 (docs/ATLAS_UX_SPEC.md
  * §17) em dois viewports (celular retrato e desktop).

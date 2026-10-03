@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-quiz.e2e.js — Quiz com escolha de sistema/dificuldade e sorteio (Onda 3.5, B.2).
  *  - Tela de escolha com contagem; filtros mudam o total.

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-prod-check.js — mede o Atlas PUBLICADO (GitHub Pages), não o build local.
  * ---------------------------------------------------------------------------
@@ -76,7 +81,7 @@ async function run(browser, throttle) {
 
 (async () => {
   if (!BASE.startsWith('http')) {
-    console.error('Defina ATLAS_BASE_URL (ex.: https://diretoria-dpf.github.io/plataforma-membros/)');
+    console.error('Defina ATLAS_BASE_URL (ex.: https://laift.com.br/)');
     process.exit(2);
   }
   const { chromium } = loadPlaywright();

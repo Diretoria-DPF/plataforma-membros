@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-fundacao.e2e.js — telemetria anônima e persistência (Onda 3.5, A.2 e A.3).
  *  - Telemetria (flag ligada): lote com abertura e estrutura vista pela ponte,

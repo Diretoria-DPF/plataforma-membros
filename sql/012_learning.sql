@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- =============================================================================
 -- 012_learning.sql
 -- Plataforma de Membros — Fase 2 da unificação LAIFT (docs/PLANO_FASES_2_3_4.md,

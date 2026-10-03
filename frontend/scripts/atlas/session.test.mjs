@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * session.test.mjs — "continuar de onde parou" e link direto (js/ui/session.js).
  * Uso: node scripts/atlas/session.test.mjs

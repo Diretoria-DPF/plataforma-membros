@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * node-name.mjs — nome de nó normalizado para o `nodeToSid` do manifesto.
  * Alguns nós do Z-Anatomy têm espaço duplo ("Orbital part of  inferior

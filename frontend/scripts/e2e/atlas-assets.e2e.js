@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-assets.e2e.js — js/engine/{assets,registry,fallback}.js (WP05)
  * ---------------------------------------------------------------------------

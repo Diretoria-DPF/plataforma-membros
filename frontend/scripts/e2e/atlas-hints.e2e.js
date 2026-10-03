@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-hints.e2e.js — dicas contextuais (js/ui/hints.js).
  * 1ª seleção mostra a dica (anunciada por role="status"); × dispensa e ela

@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * prioridades.mjs — lista das 300 estruturas prioritárias para as fichas do
  * PR 3.2 (PR 3.1.7, Onda 3). Cotas e critérios: docs/atlas-conteudo/cotas.md.

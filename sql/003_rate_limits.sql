@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- =============================================================================
 -- 003_rate_limits.sql
 -- Plataforma de Membros — Limitação de tentativas (substitui o CacheService

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-revisao.e2e.js — ferramenta de revisão do conselho (PR 3.2, C1).
  *  - Carrega o pacote da onda 01 (gerado na hora; pendente/ não vai ao site).

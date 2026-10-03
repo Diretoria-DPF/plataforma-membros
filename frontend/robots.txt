@@ -1,0 +1,37 @@
+# robots.txt — https://laift.com.br
+# Plataforma privada: só a página pública (apresentação da LAIFT, termos e
+# privacidade) é descobrível. A área de membros exige login.
+#
+# Content-Signal (contentsignals.org): busca = sim; resposta de IA citando a
+# fonte = sim; treino de modelos de IA = não.
+
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+Allow: /
+Disallow: /modulos/anatomia-3d/dev/
+Disallow: /modulos/anatomia-3d/revisao/
+
+# Assistentes e buscadores de IA: leem a página pública para responder a quem
+# pergunta "o que é a LAIFT". Um grupo próprio ignora o grupo "*", por isso
+# repete as regras.
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+Allow: /
+Disallow: /modulos/anatomia-3d/dev/
+Disallow: /modulos/anatomia-3d/revisao/
+
+# Coletores para TREINO de modelos de IA: bloqueados.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: CCBot
+User-agent: Applebot-Extended
+User-agent: Bytespider
+Disallow: /
+
+Sitemap: https://laift.com.br/sitemap.xml

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-layers-mobile.e2e.js — painel de Camadas legível e utilizável em
  * qualquer tela (crime C7 da Onda 3). Antes o painel entrava no <body> sem

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * frontend/messaging.js
  * Estado e UI da mensageria E2EE (Fase 3f de docs/PLANO_FASE3_MENSAGERIA.md,

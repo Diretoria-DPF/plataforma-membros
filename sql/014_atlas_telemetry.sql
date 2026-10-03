@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 014_atlas_telemetry.sql — uso anônimo do Atlas 3D (Onda 3.5, A.2).
 --
 -- Privacidade (LGPD): a tabela NÃO guarda profile_id, e-mail, IP nem texto

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-toolbar.e2e.js — cada botão da barra funciona sem "ação não
  * permitida" (crime C1) e as ações do modo Moléculas / "Refazer" do quiz

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * static-page.js — folhas decorativas e o link "← Voltar" das páginas
  * estáticas (404, termos e privacidade). Antes era um <script> inline repetido em cada página; saiu

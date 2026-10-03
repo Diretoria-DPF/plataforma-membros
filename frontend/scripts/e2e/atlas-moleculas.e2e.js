@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-moleculas.e2e.js — modo Moléculas pelo proxy da Worker (PR 3.2, Bloco E).
  *  - O .pdb vem de apiLearnAtlasPdb; nenhuma requisição ao files.rcsb.org nem
