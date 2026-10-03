@@ -135,6 +135,70 @@
     });
   }
 
+  // ===========================================================================
+  // Uso do Atlas 3D (Onda 3.5, A.2) — telemetria anônima, só contagens
+  // ===========================================================================
+  var ATLAS_EVENT_LABELS = {
+    app_open: 'Aberturas do atlas',
+    structure_view: 'Estruturas vistas',
+    quiz_finish: 'Quizzes concluídos',
+    search: 'Buscas',
+    error_js: 'Erros de JavaScript',
+    session_end: 'Fins de sessão',
+  };
+
+  function renderAtlasUsage(res) {
+    var container = $('admin-ai-atlas');
+    if (!container) return;
+    var h = App().h;
+    var text = App().text;
+    App().clearEl(container);
+    if (res.unavailable) {
+      container.appendChild(text('p', 'A tabela de telemetria ainda não foi criada (sql/014_atlas_telemetry.sql).', { className: 'empty-state' }));
+      return;
+    }
+    var totals = res.totals || {};
+    var any = Object.keys(ATLAS_EVENT_LABELS).some(function (k) { return Number(totals[k]) > 0; });
+    if (!any) {
+      container.appendChild(text('p', 'Nenhum evento nos últimos ' + res.days + ' dias. A coleta fica desligada até a flag "telemetry" do atlas ser ligada.', { className: 'empty-state' }));
+      return;
+    }
+    container.appendChild(h('div', { className: 'meta-row' }, [
+      text('span', 'Últimos ' + res.days + ' dias'),
+      text('span', (Number(res.sessions) || 0) + ' sessões distintas'),
+    ]));
+    Object.keys(ATLAS_EVENT_LABELS).forEach(function (key) {
+      container.appendChild(h('div', { className: 'list-item ai-usage-row' }, [
+        text('strong', ATLAS_EVENT_LABELS[key]),
+        h('div', { className: 'meta-row' }, [text('span', (Number(totals[key]) || 0).toLocaleString('pt-BR'))]),
+      ]));
+    });
+    (res.byDay || []).slice(-7).forEach(function (d) {
+      var ev = d.events || {};
+      container.appendChild(h('div', { className: 'list-item ai-usage-row' }, [
+        text('strong', String(d.day || '')),
+        h('div', { className: 'meta-row' }, Object.keys(ATLAS_EVENT_LABELS).filter(function (k) { return ev[k]; }).map(function (k) {
+          return text('span', ATLAS_EVENT_LABELS[k] + ': ' + ev[k]);
+        })),
+      ]));
+    });
+  }
+
+  function loadAtlasUsage(days) {
+    if (!token()) return;
+    var gen = generation;
+    App().setStatus('msg-admin-ai-atlas', 'Carregando…', 'info');
+    App().callApi('apiAdminLearnAtlasTelemetry', token(), { days: days || 7 }).then(function (res) {
+      if (gen !== generation) return;
+      if (!res || !res.success) {
+        App().setStatus('msg-admin-ai-atlas', (res && res.message) || 'Não foi possível carregar o uso do atlas.', 'error');
+        return;
+      }
+      App().setStatus('msg-admin-ai-atlas', '', null);
+      renderAtlasUsage(res);
+    });
+  }
+
   function renderConfig(config) {
     var container = $('admin-ai-quotas');
     if (!container || !config) return;
@@ -239,9 +303,14 @@
       if (btn) btn.addEventListener('click', runHealth);
       var refresh = $('btn-admin-ai-cases-refresh');
       if (refresh) refresh.addEventListener('click', function () { loadPending(false); });
+      var d7 = $('btn-admin-ai-atlas-7');
+      var d30 = $('btn-admin-ai-atlas-30');
+      if (d7) d7.addEventListener('click', function () { loadAtlasUsage(7); });
+      if (d30) d30.addEventListener('click', function () { loadAtlasUsage(30); });
     }
     runHealth();
     loadPending(false);
+    loadAtlasUsage(7);
   }
 
   /** Logout/expiração: descarta respostas pendentes e limpa o que foi exibido. */
@@ -250,11 +319,11 @@
     healthBusy = false;
     var btn = $('btn-admin-ai-health');
     if (btn) btn.disabled = false;
-    ['admin-ai-health-summary', 'admin-ai-keys', 'admin-ai-usage', 'admin-ai-quotas', 'admin-ai-pending'].forEach(function (id) {
+    ['admin-ai-health-summary', 'admin-ai-keys', 'admin-ai-usage', 'admin-ai-quotas', 'admin-ai-pending', 'admin-ai-atlas'].forEach(function (id) {
       var el = $(id);
       if (el && window.App) App().clearEl(el);
     });
-    ['msg-admin-ai-health', 'msg-admin-ai-cases'].forEach(function (id) {
+    ['msg-admin-ai-health', 'msg-admin-ai-cases', 'msg-admin-ai-atlas'].forEach(function (id) {
       if (window.App) App().setStatus(id, '', null);
     });
   }

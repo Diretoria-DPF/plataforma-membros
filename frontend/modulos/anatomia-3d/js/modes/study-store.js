@@ -264,6 +264,28 @@ export function createStudyStore({
       }
     },
 
+    async listNotes() {
+      await initDb();
+      if (isPersistentMode && dbInstance) return (await readStore(STORE_NOTES)) || [];
+      return Array.from(memory.notes.values());
+    },
+
+    /** Fixa sem alternar (importação do progresso). */
+    async putPin({ sid, label, at }) {
+      await initDb();
+      const pin = { sid, label, at: at || Date.now() };
+      if (isPersistentMode && dbInstance) await writeStore(STORE_PINS, pin);
+      else memory.pins.set(sid, pin);
+    },
+
+    /** Grava anotação com a data dada (importação do progresso). */
+    async putNote({ sid, text, at }) {
+      await initDb();
+      const note = { sid, text, at: at || Date.now() };
+      if (isPersistentMode && dbInstance) await writeStore(STORE_NOTES, note);
+      else memory.notes.set(sid, note);
+    },
+
     isPersistent() {
       return isPersistentMode;
     },

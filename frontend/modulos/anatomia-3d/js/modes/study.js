@@ -6,6 +6,8 @@
  */
 
 import { EVENTS } from '../core/bus.js';
+import { ATLAS_FLAGS } from '../core/flags.js';
+import { buildExport, validateImport, planMerge, summarize } from './study-io.js';
 
 // CSS para impressão de PDF
 const DOSSIE_CSS = `
@@ -194,6 +196,51 @@ export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHis
         },
       });
       root.appendChild(exportBtn);
+
+      // A.3 (Onda 3.5): levar o progresso para outro aparelho (arquivo JSON do aluno).
+      const ioMsg = h('p', { className: 'study-io-msg', role: 'status', 'aria-live': 'polite', style: { fontSize: '0.875rem', margin: '0.5rem 0 0' } });
+      const ioBtnStyle = { flex: '1', minHeight: '44px', padding: '0.5rem', background: 'var(--laift-surface)', color: 'var(--laift-text)', border: '1px solid var(--laift-border)', borderRadius: '4px', cursor: 'pointer' };
+      const snapshot = async () => ({ history: await studyStore.listHistory(), pins: await studyStore.listPins(), notes: await studyStore.listNotes() });
+      const fileInput = h('input', { type: 'file', accept: 'application/json,.json', className: 'study-io-file', 'aria-label': 'Escolher arquivo de progresso', style: { display: 'none' } });
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files && fileInput.files[0];
+        fileInput.value = '';
+        if (!file) return;
+        try {
+          const parsed = validateImport(JSON.parse(await file.text()));
+          if (!parsed.ok) { ioMsg.textContent = parsed.error; return; }
+          const plan = planMerge(await snapshot(), parsed.data);
+          for (const e of plan.history) await studyStore.addHistory(e);
+          for (const p of plan.pins) await studyStore.putPin(p);
+          for (const n of plan.notes) await studyStore.putNote(n);
+          ioMsg.textContent = summarize(plan);
+          if (typeof updateContent === 'function') await updateContent();
+        } catch (err) {
+          ioMsg.textContent = 'Não consegui ler esse arquivo.';
+        }
+      });
+      const ioRow = h('div', { className: 'study-io', style: { display: 'flex', gap: '0.5rem', marginTop: '0.5rem' } }, [
+        h('button', {
+          type: 'button', className: 'study-io-export', text: 'Exportar progresso (JSON)', style: ioBtnStyle,
+          onClick: async () => {
+            const blob = new Blob([JSON.stringify(buildExport(await snapshot()), null, 1)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = h('a', { href: url, download: `atlas-progresso-${new Date().toISOString().slice(0, 10)}.json` });
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            ioMsg.textContent = 'Progresso exportado.';
+          },
+        }),
+        h('button', { type: 'button', className: 'study-io-import', text: 'Importar', style: ioBtnStyle, onClick: () => fileInput.click() }),
+        fileInput,
+      ]);
+      root.appendChild(ioRow);
+      root.appendChild(ioMsg);
+      if (ATLAS_FLAGS.telemetry) {
+        root.appendChild(h('p', { className: 'study-privacy', text: 'O atlas conta usos de forma anônima (sem nome, e-mail nem o texto das buscas) para melhorar o conteúdo.', style: { fontSize: '0.8125rem', margin: '0.75rem 0 0', opacity: '0.85' } }));
+      }
 
       // Aviso de persistência
       if (!studyStore.isPersistent()) {

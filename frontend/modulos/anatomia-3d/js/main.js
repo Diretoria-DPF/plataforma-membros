@@ -45,8 +45,10 @@ import { createOnboarding, shouldShowOnboarding, isDeepLink, wasDismissedThisTab
 import { createHints } from './ui/hints.js';
 import { createSlowDeviceWatcher, classifyDevice } from './ui/slow-device.js';
 import { createReviewStatus, SEARCH_BOOST } from './ui/review-status.js';
-import { mountNewReviewedChip, reviewedProgress } from './ui/discovery.js';
+import { mountNewReviewedChip, reviewedProgress, mountContinueChip } from './ui/discovery.js';
+import { lastStudiedSid } from './modes/study-io.js';
 import { registerOffline } from './core/offline.js';
+import { createTelemetry } from './core/telemetry.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -1177,6 +1179,18 @@ async function boot() {
     offerAction(name ? `Continuar de onde parou? (${name})` : 'Continuar de onde parou?', 'Continuar',
       () => { resumeSession(savedSession); }, 10000);
   }
+  // A.3: além do aviso de 10 s, um chip fixo na barra enquanto nada foi aberto.
+  (async () => {
+    const hist = await studyStorePromise.then((st) => (st ? st.listHistory({ limit: 50 }) : [])).catch(() => []);
+    const sid = (savedSession && savedSession.selectedSid) || lastStudiedSid(hist, (x) => !!contentStore.getEntry(x));
+    if (!sid || storeGet().selectedSid) return;
+    const chip = mountContinueChip({
+      host: document.getElementById('atlas-toolbar'),
+      label: labelFor(sid),
+      onContinue: () => { if (savedSession && savedSession.selectedSid === sid) resumeSession(savedSession); else { emit(EVENTS.STRUCTURE_SELECT, { sid, source: 'resume' }); revealAndFocus(sid, { focus: true }); } },
+    });
+    const off = on(EVENTS.STRUCTURE_SELECT, ({ sid: s }) => { if (s) { chip.dismiss(); off(); } });
+  })();
 
   // ---- Botão Voltar do celular (Android) ----
   // Cada "abertura" (ficha selecionada, painel em tela cheia) ganha uma
@@ -1238,6 +1252,7 @@ async function boot() {
   window.__atlasPerf = Object.freeze({ getStats: () => rendererApi.getStats() });
   emit('atlas:ready', {});
   registerOffline(ATLAS_FLAGS);
+  createTelemetry({ bus, api: window.LaiftApi, flags: ATLAS_FLAGS, getMode: () => storeApi.get().mode });
 }
 
 // `type="module"` já executa depois do parsing do DOM (como `defer`), então

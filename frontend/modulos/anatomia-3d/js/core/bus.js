@@ -223,6 +223,10 @@ export const EVENTS = Object.freeze({
    * @payload {{ caseId: string, sid: string, correct: boolean }}
    */
   QUIZ_ANSWER: 'quiz:answer',
+  /** Um quiz terminou (Onda 3.5, telemetria): { correct: number, total: number } */
+  QUIZ_FINISH: 'quiz:finish',
+  /** Uma busca foi feita (Onda 3.5, telemetria): { len: number, results: number } — só tamanhos, nunca o texto */
+  SEARCH_RUN: 'search:run',
   /** Estudo de via/processo concluído (PR 3.2): { kind: 'route'|'process', id, label, sid } */
   STUDY_PATH: 'study:path',
 

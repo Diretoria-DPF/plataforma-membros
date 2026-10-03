@@ -134,6 +134,7 @@ export function createSearchBox(container, opts) {
       activeIndex = -1;
       performSearch(query);
       renderListbox();
+      if (query.trim().length >= 2) bus.emit(EVENTS.SEARCH_RUN, { len: query.trim().length, results: results.length });
     }, 80);
   }
 

@@ -347,6 +347,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     ]));
 
     // Submete a tentativa
+    emit(EVENTS.QUIZ_FINISH, { correct: correctCount, total: totalCount });
     submitQuizAttempt();
   }
 

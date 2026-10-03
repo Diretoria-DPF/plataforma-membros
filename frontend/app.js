@@ -365,6 +365,8 @@
       headers: { 'Content-Type': 'application/json' },
       body: body,
       signal: controller ? controller.signal : undefined,
+      // Telemetria do atlas enviada ao esconder/fechar a aba precisa sobreviver à navegação.
+      keepalive: action === 'apiLearnAtlasTelemetry',
     }).then(function (res) {
       if (!res.ok) throw new Error('http');
       return res.json();
