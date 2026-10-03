@@ -46,6 +46,7 @@ import { createHints } from './ui/hints.js';
 import { createSlowDeviceWatcher, classifyDevice } from './ui/slow-device.js';
 import { createReviewStatus, SEARCH_BOOST } from './ui/review-status.js';
 import { mountNewReviewedChip, reviewedProgress } from './ui/discovery.js';
+import { registerOffline } from './core/offline.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -1236,6 +1237,7 @@ async function boot() {
   // altera nada no motor; `getStats()` já existe em js/engine/renderer.js.
   window.__atlasPerf = Object.freeze({ getStats: () => rendererApi.getStats() });
   emit('atlas:ready', {});
+  registerOffline(ATLAS_FLAGS);
 }
 
 // `type="module"` já executa depois do parsing do DOM (como `defer`), então

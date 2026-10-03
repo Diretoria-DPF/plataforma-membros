@@ -95,4 +95,39 @@ const zlib = require('zlib');
   }
 })(path.join(DIST, 'modulos', 'anatomia-3d')); // models/ e data/atlas/fixtures/models/
 
+// Atlas offline (Onda 3.5, A.1): hash do conteúdo de modulos/anatomia-3d (sem
+// o próprio sw.js e sem os .gz, que derivam dos .glb) → nome do cache do SW;
+// precache.json lista o que o SW baixa ao instalar (código, estilos e o
+// esqueleto; os demais modelos e as fichas entram no cache ao serem usados).
+{
+  const crypto = require('crypto');
+  const A3D = path.join(DIST, 'modulos', 'anatomia-3d');
+  const files = [];
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walk(full);
+      else files.push(path.relative(A3D, full).split(path.sep).join('/'));
+    }
+  })(A3D);
+  files.sort();
+  const hash = crypto.createHash('sha256');
+  for (const f of files) {
+    if (f === 'sw.js' || f === 'precache.json' || f.endsWith('.gz')) continue;
+    hash.update(f).update('\0').update(fs.readFileSync(path.join(A3D, f))).update('\0');
+  }
+  const build = hash.digest('hex').slice(0, 16);
+  const swPath = path.join(A3D, 'sw.js');
+  fs.writeFileSync(swPath, fs.readFileSync(swPath, 'utf8').replace(/__ATLAS_BUILD__/g, build));
+  const precache = files.filter((f) => /\.(js|css|html|wasm)$/.test(f)
+    && f !== 'sw.js' && !/^(revisao\/|js\/revisao\/|vendor\/draco\/|data\/atlas\/fixtures\/|dev\/|scripts\/)/.test(f));
+  precache.push('data/atlas/generated/structures.boot.json', 'data/atlas/generated/review-status.json',
+    'data/atlas/legacy/index.legacy.json', 'models/manifest.json', 'models/zanatomy/esqueletico.lod1.glb.gz');
+  // ../shared/ (identidade, safe-dom, tokens) é carregado pela página do atlas
+  const SHARED = path.join(DIST, 'modulos', 'shared');
+  for (const f of fs.readdirSync(SHARED)) if (/\.(js|css)$/.test(f)) precache.push(`../shared/${f}`);
+  fs.writeFileSync(path.join(A3D, 'precache.json'), JSON.stringify({ build, urls: [...new Set(precache)].filter((f) => f.startsWith('../') || files.includes(f)) }));
+  console.log(`Atlas offline: build ${build}, ${precache.length} arquivos no precache.`);
+}
+
 console.log('Build gerado em frontend/dist/ (app.js ofuscado; demais páginas, módulos e vendor copiados).');

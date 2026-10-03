@@ -18,6 +18,7 @@ export const FLAG_DEFAULTS = Object.freeze({
   peek: true,         // peek com selos e "Ver mais" (js/ui/infocard.js)
   tts: true,          // "Ouvir" a ficha com speechSynthesis pt-BR (js/ui/infocard.js)
   systemic: false,    // "Visão sistêmica" da Fisiologia — desligada até o teste de papel (guia-revisao.md §5)
+  offline: true,      // Service Worker: abre o atlas sem rede depois da 1ª visita (sw.js, js/core/offline.js); desligar remove o SW dos aparelhos
 });
 
 /**
