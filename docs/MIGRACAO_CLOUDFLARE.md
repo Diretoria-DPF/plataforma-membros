@@ -7,6 +7,33 @@ ainda no Registro.br (`a.auto.dns.br`).
 **Princípio:** o GitHub Pages continua no ar durante toda a transição. Quem não for avisado segue usando o
 endereço antigo sem perceber nada. O "corte" para os usuários é o anúncio, não o DNS.
 
+## Status (03/10/2026)
+| Item | Situação |
+|---|---|
+| DNS no Cloudflare (`penny` / `nick`) | Concluído |
+| `api.laift.com.br` (Worker da API) | No ar; CORS aceita `https://laift.com.br` |
+| `laift.com.br` (Worker `laift-web`, static assets) | No ar, com `_headers`, SEO, `robots.txt`, `sitemap.xml`, `llms.txt` |
+| `www.laift.com.br` | Worker `laift-www-redirect`: 301 para o domínio principal |
+| `APP_BASE_URL` (links dos e-mails) | `https://laift.com.br/` |
+| Aviso de mudança no `github.io` | Pronto (`frontend/domain-notice.js`); aparece quando a branch for para a `main` e o GitHub Pages republicar |
+| HTTP → HTTPS | **Pendente (painel):** *SSL/TLS → Edge Certificates → Always Use HTTPS* |
+| Remetente de e-mail `@laift.com.br` | Pendente (Brevo: autenticar domínio) |
+| Repositório privado | Só depois do período de transição (ver "Notas") |
+
+## Diagnostics de IA do Cloudflare (Agent Readiness)
+O painel avalia seis itens. Como a plataforma é **privada e restrita**, só o que é verdadeiro e seguro foi feito:
+
+| Item do diagnóstico | Decisão |
+|---|---|
+| Declarar como sistemas automatizados podem usar o conteúdo | **Feito:** `Content-Signal: search=yes, ai-input=yes, ai-train=no` no `robots.txt`; assistentes e buscadores de IA liberados, coletores de treino (GPTBot, ClaudeBot, Google-Extended, CCBot, Applebot-Extended, Bytespider) bloqueados |
+| Guiar bots de IA para dados do site | **Feito:** cabeçalho `Link` na página inicial para `/sitemap.xml` e `/llms.txt` |
+| Formatos de texto otimizados para IA | **Parcial:** `llms.txt`. O recurso *Markdown for Agents* é um interruptor do painel; sem utilidade para uma tela de login, então não ativado |
+| Diretório de serviços web (API catalog) | **Não publicado:** a API é privada; listá-la convidaria bots para o login e a API |
+| Instruções de login para bots de IA (OAuth/discovery) | **Não publicado:** não há OAuth nem acesso de agentes à plataforma |
+| Cartão de agente A2A | **Não publicado:** não existe agente público; um cartão seria falso |
+
+O teste `seo.test.mjs` garante que `api-catalog`, `agent-card`, `oauth-*` e `.well-known/` não sejam publicados por engano.
+
 ## Arquitetura de destino
 | Peça | Antes | Depois |
 |---|---|---|
