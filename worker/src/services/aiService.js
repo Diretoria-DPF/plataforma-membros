@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * aiService.js
  * Fase 3 — IA na Worker (docs/FASE_3_IA_CLINICA.md). Três responsabilidades:

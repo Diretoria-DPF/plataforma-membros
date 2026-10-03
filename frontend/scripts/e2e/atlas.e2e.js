@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas.e2e.js — casca funcional do Atlas v2 (index.html → js/main.js +
  * js/compat/legacy-api.js, ver WP13).

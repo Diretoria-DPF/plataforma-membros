@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-offline.e2e.js — o atlas abre sem rede depois da 1ª visita
  * (Onda 3.5, A.1: sw.js, js/core/offline.js, flag `offline`).

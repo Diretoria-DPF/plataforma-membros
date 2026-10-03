@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 010_messaging_simplify.sql
 -- Remove a exigência de frase-secreta da mensageria (feedback direto do
 -- dono da plataforma: uma frase de 12+ caracteres "ficou muito complicado

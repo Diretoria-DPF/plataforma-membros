@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * run.js
  * Executa, em sequência, todos os cenários *.e2e.js desta pasta (ou só os

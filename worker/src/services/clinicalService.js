@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * clinicalService.js
  * Fase 3 — Clínica Médica Virtual na Worker (substitui conversarComPaciente,

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-fisiologia.e2e.js — modo Fisiologia & Vias (PR 3.2, Bloco D).
  *  - Via: dados de PK da via (F, Tmax, primeira passagem) e "estudo de via"

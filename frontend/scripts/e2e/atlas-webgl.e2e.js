@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-webgl.e2e.js — o 3D sem WebGL 2 e depois de perder o contexto.
  * ---------------------------------------------------------------------------

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * apis.e2e.js — APIs científicas públicas usadas pelos módulos (OpenFDA,
  * RxNav, PubChem, CACTUS/NIH, Wikidata, ChEBI/EBI Search, ChEMBL, UniChem,

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * parsers.e2e.js — testes de unidade (Node puro, sem navegador) para os
  * parsers de APIs científicas mantidos por este agente:

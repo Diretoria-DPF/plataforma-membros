@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * quality.test.mjs — teste de CI para lógica de qualidade adaptativa (WP08)
  * ---------------------------------------------------------------------------

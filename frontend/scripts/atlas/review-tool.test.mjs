@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * review-tool.test.mjs — ferramenta de revisão do conselho (PR 3.2, C1).
  * O .md gerado passa na trava do build (check-curated-signed: isSigned)

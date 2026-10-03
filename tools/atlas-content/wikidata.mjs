@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * Script para enriquecer dados de estruturas anatômicas com informações do Wikidata
  * Uso: node wikidata.mjs --in structures.json --out wikidata.json [--offline-fixture file]

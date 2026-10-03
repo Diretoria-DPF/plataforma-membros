@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-a11y.e2e.js — acessibilidade do Atlas v2 com axe-core (WCAG 2.x A/AA).
  * ---------------------------------------------------------------------------

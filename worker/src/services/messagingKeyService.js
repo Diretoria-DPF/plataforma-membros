@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * messagingKeyService.js
  * Publicação e leitura da CHAVE PÚBLICA de mensageria de cada conta (Fase

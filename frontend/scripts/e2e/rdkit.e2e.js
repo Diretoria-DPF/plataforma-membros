@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * rdkit.e2e.js — prova, sob a CSP real do Estúdio (build em frontend/dist/,
  * navegador de verdade), que o RDKit WASM (religado na Fase 4, Onda 3 —

@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- =============================================================================
 -- 004_event_visibility_guard.sql
 -- Plataforma de Membros — Fecha uma falha real de controle de acesso

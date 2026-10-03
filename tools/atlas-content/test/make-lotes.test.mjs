@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * make-lotes.test.mjs — 20 lotes cobrem todos os nomes únicos, sem repetição
  * (PR 3.1.1, Onda 3).

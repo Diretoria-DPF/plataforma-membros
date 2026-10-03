@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * make-lotes.mjs — divide os nomes únicos em inglês de structures.json em
  * 20 lotes para tradução (PR 3.1.1, Onda 3).

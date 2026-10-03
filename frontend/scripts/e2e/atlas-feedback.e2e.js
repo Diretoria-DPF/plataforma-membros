@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-feedback.e2e.js — resposta visual ao tocar (Onda 2).
  *   - Pulso no destaque: anima alguns quadros e o 3D volta a ficar parado.

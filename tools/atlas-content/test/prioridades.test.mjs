@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * prioridades.test.mjs — lista das 300 respeita as cotas e a ordem dos
  * critérios (PR 3.1.7, Onda 3).

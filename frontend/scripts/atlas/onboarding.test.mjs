@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * onboarding.test.mjs — regras da apresentação (js/ui/onboarding.js) e das
  * dicas contextuais (js/ui/hints.js).

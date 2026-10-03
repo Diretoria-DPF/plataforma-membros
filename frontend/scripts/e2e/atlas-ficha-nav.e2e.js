@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-ficha-nav.e2e.js — navegação e "Ouvir" na ficha (PR 3.1.8–3.1.10).
  *  - "Voltar": depois de abrir 5 estruturas, percorre as 4 anteriores.

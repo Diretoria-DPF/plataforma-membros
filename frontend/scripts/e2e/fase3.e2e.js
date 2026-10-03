@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * fase3.e2e.js — IA na Worker, clínica virtual, preceptor do laboratório e
  * painel admin de IA (docs/FASE_3_IA_CLINICA.md).

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-onboarding.e2e.js — apresentação de 3 telas (js/ui/onboarding.js).
  * Abre uma vez; "Pular" em todas as telas com o foco inicial; Tab não sai do

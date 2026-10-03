@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * pacote-onda.mjs — junta os lotes de uma onda num arquivo só para o
  * conselho carregar na ferramenta de revisão (modulos/anatomia-3d/revisao/).

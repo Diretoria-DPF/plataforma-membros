@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlas-labels.e2e.js — rótulos legíveis e sem nomes repetidos (crimes C3 e
  * C5 da Onda 3).

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * atlasMoleculeService.js
  * Proxy do modo Moléculas do Atlas 3D (PR 3.2, Bloco E). O navegador não

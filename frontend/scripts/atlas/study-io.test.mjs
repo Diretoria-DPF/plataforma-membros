@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * study-io.test.mjs — exportar/importar o progresso e "Continuar" (Onda 3.5, A.3).
  * Uso: node --test scripts/atlas/study-io.test.mjs

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 import { jest } from '@jest/globals';
 import * as AdminService from '../src/services/adminService.js';
 import { makeSql } from './helpers/mockEnv.js';

@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * attendanceService.js — presença em eventos e credencial QR
  * (Fase 2 da unificação: docs/PLANO_FASES_2_3_4.md, Contrato 2).

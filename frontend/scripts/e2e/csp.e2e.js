@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * csp.e2e.js — Content-Security-Policy da plataforma e dos módulos (Fase 4,
  * Onda 2; Onda 3 religou o RDKit do Estúdio). Roda sobre o BUILD

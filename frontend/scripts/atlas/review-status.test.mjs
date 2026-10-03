@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * review-status.test.mjs — selo, filtro e peso de revisão (PR 3.2, C2).
  * Uso: node --test scripts/atlas/review-status.test.mjs

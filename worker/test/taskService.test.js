@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 import * as TaskService from '../src/services/taskService.js';
 import { makeSql } from './helpers/mockEnv.js';
 

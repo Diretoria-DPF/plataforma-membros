@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * validate-curated.mjs — valida o conteúdo curado e as bases do atlas
  * contra os esquemas e as regras de fonte (PR 3.2, A.5):

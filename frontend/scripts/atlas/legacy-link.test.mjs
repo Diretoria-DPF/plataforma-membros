@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * legacy-link.test.mjs — Unit tests for linkLegacy function
  * Run with: node frontend/scripts/atlas/legacy-link.test.mjs

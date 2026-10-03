@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 /**
  * learningService.js — progresso de aprendizagem dos módulos LAIFT
  * (Fase 2 da unificação: docs/PLANO_FASES_2_3_4.md, Contratos 1 e 2).

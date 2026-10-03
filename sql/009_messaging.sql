@@ -1,3 +1,6 @@
+-- Plataforma de Membros LAIFT
+-- © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+-- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 009_messaging.sql
 -- Fase 3d/3e do plano em docs/PLANO_FASE3_MENSAGERIA.md: chaves de
 -- mensageria (X25519, uma pública por conta, nunca a privada), conversas
