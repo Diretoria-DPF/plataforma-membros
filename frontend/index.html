@@ -3,9 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plataforma de Membros</title>
+  <title>LAIFT – Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</title>
+  <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Quiz, casos clínicos, laboratório virtual e atlas 3D para estudantes de Farmácia.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://laift.com.br/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LAIFT">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://laift.com.br/">
+  <meta property="og:title" content="LAIFT – Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia">
+  <meta property="og:description" content="Quiz, casos clínicos, laboratório virtual e atlas 3D para estudantes de Farmácia.">
+  <meta property="og:image" content="https://laift.com.br/modulos/cracha/laift-marca.png">
+  <meta name="twitter:card" content="summary">
+  <!-- Dados estruturados para buscadores (bloco de dados, não executa script; ver exceção em csp.e2e.js). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://laift.com.br/#organization",
+        "name": "LAIFT",
+        "alternateName": "Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia",
+        "url": "https://laift.com.br/",
+        "logo": "https://laift.com.br/modulos/cracha/laift-marca.png",
+        "description": "Liga acadêmica de Farmacologia e Toxicologia para estudantes de Farmácia do ensino superior."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://laift.com.br/#website",
+        "url": "https://laift.com.br/",
+        "name": "LAIFT",
+        "inLanguage": "pt-BR",
+        "publisher": { "@id": "https://laift.com.br/#organization" }
+      }
+    ]
+  }
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,7 +55,7 @@
       <section id="screen-welcome" class="auth-card" aria-labelledby="welcome-title">
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="welcome-title">Entrar</h1>
-        <p class="muted">Acompanhe eventos, participe de votações e organize tarefas coletivas.</p>
+        <p class="muted">LAIFT — Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Acompanhe eventos, participe de votações e organize tarefas coletivas.</p>
 
         <form id="form-login" novalidate>
           <label for="login-email">E-mail

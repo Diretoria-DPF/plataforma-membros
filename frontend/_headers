@@ -1,0 +1,23 @@
+# Cabeçalhos HTTP do site (Cloudflare Workers static assets / Pages).
+# Valem só para arquivos estáticos; o GitHub Pages ignora este arquivo.
+#
+# Por que NÃO há um CSP completo aqui: cada página e cada módulo já tem a sua
+# própria CSP em <meta> (index.html, 404.html, modulos/*/index.html), com
+# necessidades diferentes (Atlas: wasm e workers; laboratório: RDKit). Um CSP
+# completo em cabeçalho seria SOMADO a elas e quebraria os módulos. O que o
+# <meta> não consegue expressar é frame-ancestors — só ele vai no cabeçalho.
+#
+# Desvios deliberados das regras genéricas (X-Frame-Options: DENY, camera=()):
+# os módulos rodam em iframes do próprio site (frame-ancestors 'self' basta
+# para impedir que OUTROS sites embutam a plataforma) e o check-in por QR
+# (learning.js / modulos/fiscal) usa a câmera dentro de um desses iframes.
+#
+# HSTS começa com 5 minutos de propósito: se algo estiver errado no HTTPS do
+# domínio novo, o navegador esquece rápido. Depois de validar tudo, subir para
+# max-age=31536000 (1 ano) e só então considerar includeSubDomains/preload.
+/*
+  Strict-Transport-Security: max-age=300
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(self), microphone=(), geolocation=()
+  Content-Security-Policy: frame-ancestors 'self'

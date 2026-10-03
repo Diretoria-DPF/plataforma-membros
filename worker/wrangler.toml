@@ -2,6 +2,17 @@ name = "plataforma-membros-api"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 
+# CORTE PARA laift.com.br (docs/MIGRACAO_CLOUDFLARE.md) — só depois de a zona
+# estar "Active" no Cloudflare, descomente o bloco abaixo e faça o deploy.
+# `workers_dev = true` mantém a URL antiga (*.workers.dev) funcionando para o
+# front do GitHub Pages durante a transição; sem ele, definir `routes` a desliga.
+# Ao cortar, troque também APP_BASE_URL para "https://laift.com.br/" (links de
+# confirmação/redefinição de senha enviados por e-mail).
+workers_dev = true
+[[routes]]
+pattern = "api.laift.com.br"
+custom_domain = true
+
 # Segredos reais (DATABASE_URL, SESSION_TOKEN_PEPPER, BREVO_API_KEY e, na
 # Fase 3, GROQ_API_KEYS) NUNCA ficam aqui — são cadastrados via `wrangler
 # secret put <NOME>`, que os guarda criptografados no lado da Cloudflare,
@@ -12,7 +23,10 @@ APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
 # mantido na lista só para permitir testar mudanças de front-end localmente
 # antes de publicar; não concede acesso a nada que o token de sessão já não
 # controle.
-ALLOWED_ORIGINS = "https://diretoria-dpf.github.io,http://localhost:4174,http://localhost:4175"
+# https://laift.com.br já entra na lista antes do corte: é só uma origem
+# permitida, não muda nada para quem usa o GitHub Pages. Na migração, a
+# origem do github.io continua até o fim do período de transição.
+ALLOWED_ORIGINS = "https://diretoria-dpf.github.io,https://laift.com.br,http://localhost:4174,http://localhost:4175"
 MAIL_FROM_NAME = "Plataforma de Membros"
 # Precisa ser um remetente CADASTRADO E VERIFICADO no painel da Brevo
 # (Campanhas > Remetentes, ou Configurações > Remetentes) antes de

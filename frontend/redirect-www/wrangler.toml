@@ -1,0 +1,12 @@
+# Redireciona www.laift.com.br -> https://laift.com.br (301).
+# Deploy: cd frontend/redirect-www && wrangler deploy
+name = "laift-www-redirect"
+main = "worker.js"
+compatibility_date = "2026-09-22"
+
+# Só o domínio próprio; não precisa da URL *.workers.dev.
+workers_dev = false
+
+[[routes]]
+pattern = "www.laift.com.br"
+custom_domain = true

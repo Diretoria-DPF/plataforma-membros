@@ -1,0 +1,79 @@
+name: Publicar front-end na Cloudflare (Workers static assets)
+
+# Publica frontend/dist no Cloudflare como o Worker "laift-web"
+# (frontend/wrangler.toml). Por enquanto SÓ dispara à mão (aba Actions → este
+# workflow → "Run workflow"): o site oficial continua no GitHub Pages
+# (deploy-frontend.yml) até o corte descrito em docs/MIGRACAO_CLOUDFLARE.md.
+# No corte, troque o gatilho abaixo por `push` na main e aposente o deploy
+# do GitHub Pages.
+#
+# Segredos do repositório (os mesmos do deploy do Worker da API):
+#   CLOUDFLARE_API_TOKEN  — token "Edit Cloudflare Workers"
+#   CLOUDFLARE_ACCOUNT_ID — opcional se o token só enxerga uma conta
+# Para ligar o domínio laift.com.br pelo wrangler, o token também precisa de
+# permissão na ZONA laift.com.br (DNS: Edit e Workers Routes: Edit). Se o
+# deploy reclamar de permissão nesse passo, ou ajuste o token, ou anexe o
+# domínio uma única vez pelo painel (Workers & Pages → laift-web → Domínios).
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-cloudflare-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instala dependências do build (javascript-obfuscator)
+        working-directory: frontend
+        run: npm install
+
+      - name: Gera frontend/dist/ (app.js ofuscado; _headers e demais arquivos copiados)
+        working-directory: frontend
+        run: npm run build
+
+      # Mesma validação do deploy do Worker: aceita o token colado com quebra
+      # de linha/aspas, mascara o valor limpo e confirma que a Cloudflare o
+      # considera ativo antes de publicar.
+      - name: Confere o token da Cloudflare
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          RAW_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$RAW_TOKEN" ]; then
+            echo "::error::Falta o segredo CLOUDFLARE_API_TOKEN (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+          TOKEN=$(printf '%s' "$RAW_TOKEN" | tr -d "\"'\r" | tr -s '[:space:]' '\n' | grep -E '^[A-Za-z0-9_-]{35,80}$' | head -n1 || true)
+          if [ -z "$TOKEN" ]; then
+            echo "::error::O segredo CLOUDFLARE_API_TOKEN não contém um token válido."
+            exit 1
+          fi
+          echo "::add-mask::$TOKEN"
+          STATUS=$(curl -s -o /tmp/verify.json -w '%{http_code}' -H "Authorization: Bearer $TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify || true)
+          if [ "$STATUS" != "200" ] || ! grep -Eq '"status" *: *"active"' /tmp/verify.json; then
+            echo "::error::A Cloudflare recusou o token (HTTP $STATUS)."
+            exit 1
+          fi
+          echo "Token da Cloudflare válido e ativo."
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          ACCOUNT_ID=$(printf '%s' "$RAW_ACCOUNT_ID" | tr -d "\"'[:space:]")
+          if [ -n "$ACCOUNT_ID" ]; then
+            echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
+          fi
+
+      # Versão do wrangler fixada na major 4 para o deploy ser reproduzível.
+      - name: Publica o front-end
+        working-directory: frontend
+        run: npx --yes wrangler@4 deploy

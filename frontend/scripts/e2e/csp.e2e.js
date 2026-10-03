@@ -138,7 +138,10 @@ function staticChecks() {
     const rel = path.relative(FRONT, file);
     const text = stripComments(fs.readFileSync(file, 'utf8'), file);
     (text.match(/\son[a-z]+\s*=\s*["'\\]/g) || []).forEach((m) => bad.inline.push(`${rel}: ${m.trim()}`));
-    if (file.endsWith('.html')) (text.match(/<script(?![^>]*\bsrc=)[^>]*>/g) || []).forEach((m) => bad.inlineScript.push(`${rel}: ${m}`));
+    // JSON-LD (type="application/ld+json") é bloco de DADOS para buscadores: o
+    // navegador não o executa e a CSP de script-src não se aplica a ele. É a
+    // única exceção; qualquer outro <script> sem src continua proibido.
+    if (file.endsWith('.html')) (text.match(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/g) || []).forEach((m) => bad.inlineScript.push(`${rel}: ${m}`));
     // href/src="javascript:..." também é script inline para a CSP.
     (text.match(/(?:href|src|action)\s*=\s*["']\s*javascript:/gi) || []).forEach((m) => bad.jsUrl.push(`${rel}: ${m}`));
     if (!file.endsWith(path.join('shared', 'safe-dom.js'))) {

@@ -1,0 +1,19 @@
+# robots.txt — https://laift.com.br
+# Páginas públicas liberadas; páginas internas de desenvolvimento e revisão
+# editorial do Atlas ficam fora dos buscadores.
+User-agent: *
+Allow: /
+Disallow: /modulos/anatomia-3d/dev/
+Disallow: /modulos/anatomia-3d/revisao/
+
+# Crawlers de IA podem ler as páginas públicas (descrição da liga, termos e
+# privacidade). Um grupo próprio ignora o grupo "*", por isso repete as regras.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+Allow: /
+Disallow: /modulos/anatomia-3d/dev/
+Disallow: /modulos/anatomia-3d/revisao/
+
+Sitemap: https://laift.com.br/sitemap.xml

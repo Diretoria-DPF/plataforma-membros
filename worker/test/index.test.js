@@ -40,6 +40,43 @@ describe('index.js — roteamento e CORS', () => {
     expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
   });
 
+  describe('migração para laift.com.br', () => {
+    const envComDominio = {
+      ...env,
+      ALLOWED_ORIGINS: 'https://diretoria-dpf.github.io,https://laift.com.br',
+    };
+
+    function preflight(origin) {
+      return new Request('https://api.laift.com.br/', { method: 'OPTIONS', headers: { Origin: origin } });
+    }
+
+    test('aceita a origem https://laift.com.br quando ela consta em ALLOWED_ORIGINS', async () => {
+      const res = await worker.fetch(preflight('https://laift.com.br'), envComDominio);
+      expect(res.status).toBe(204);
+      expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://laift.com.br');
+    });
+
+    test('mantém a origem antiga do GitHub Pages durante a transição', async () => {
+      const res = await worker.fetch(preflight('https://diretoria-dpf.github.io'), envComDominio);
+      expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://diretoria-dpf.github.io');
+    });
+
+    test('www.laift.com.br não é aceito se não estiver listado (o www só redireciona)', async () => {
+      const res = await worker.fetch(preflight('https://www.laift.com.br'), envComDominio);
+      expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
+    });
+
+    test('rejeita domínio parecido que apenas começa com laift.com.br', async () => {
+      const res = await worker.fetch(preflight('https://laift.com.br.site-malicioso.example'), envComDominio);
+      expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
+    });
+
+    test('rejeita http:// (sem TLS) para o mesmo domínio', async () => {
+      const res = await worker.fetch(preflight('http://laift.com.br'), envComDominio);
+      expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
+    });
+  });
+
   test('GET é rejeitado com 405', async () => {
     const res = await worker.fetch(req(undefined, { method: 'GET' }), env);
     expect(res.status).toBe(405);

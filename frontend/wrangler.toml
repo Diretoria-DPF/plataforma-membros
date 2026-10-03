@@ -1,0 +1,23 @@
+# Front-end estático em Cloudflare Workers (static assets).
+# Publica o conteúdo de frontend/dist (gerado por `npm run build`).
+# Deploy: .github/workflows/deploy-frontend-cloudflare.yml
+# Passo a passo e reversão: docs/MIGRACAO_CLOUDFLARE.md
+name = "laift-web"
+compatibility_date = "2026-09-22"
+
+# Chaves de topo SEMPRE antes das tabelas ([assets], [[routes]]): em TOML, uma
+# chave escrita depois de um cabeçalho de tabela pertence àquela tabela.
+# `workers_dev` mantém a URL de teste *.workers.dev funcionando junto com o
+# domínio próprio.
+workers_dev = true
+
+# Domínio principal do site. Exige a zona laift.com.br "Active" no Cloudflare.
+# Para desfazer: comente este bloco e rode o deploy (ou remova o domínio no painel).
+[[routes]]
+pattern = "laift.com.br"
+custom_domain = true
+
+[assets]
+directory = "./dist"
+# Rotas desconhecidas devolvem o 404.html mais próximo, com status 404.
+not_found_handling = "404-page"
