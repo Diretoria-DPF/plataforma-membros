@@ -19,7 +19,7 @@
     "clinical": [
       "Síndrome de Budd-Chiari: na obstrução das veias hepáticas principais, o lobo caudado costuma sofrer hipertrofia compensatória, porque sua drenagem venosa independente para a veia cava inferior é preservada.",
       "Cirrose hepática: o remodelamento do parênquima pode associar-se a atrofia do lobo direito e aumento relativo do lobo caudado, achado reconhecido nos exames de imagem.",
-      "Ressecção segmentar e hepatectomia: a dupla irrigação e a drenagem direta para a veia cava inferior tornam o segmento I um desafio técnico e determinam a conduta em tumores dessa região."
+      "Tumores do lobo caudado: a posição profunda, junto à veia cava inferior, torna a ressecção tecnicamente desafiadora."
     ],
     "sources": [
       {
@@ -88,22 +88,15 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: cápsula e peritônio",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula e peritônio",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: lóbulo hepático e sinusoides",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: lóbulo hepático e sinusoides",
         "obraId": "junqueira",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópicos cirrose e distúrbios vasculares hepáticos",
-        "obraId": "robbins",
         "license": "citação"
       },
       {
@@ -122,7 +115,7 @@
   },
   "za:vh-m-renal-impression-of-liver": {
     "ids": {},
-    "summary_pt": "A impressão renal é a depressão da face visceral do lobo direito do fígado onde repousa a face anterior do polo superior do rim direito. Localiza-se posterior e inferiormente, lateral à impressão suprarrenal e posterior à impressão colônica, e constitui um dos acidentes que, em conjunto, moldam a face visceral hepática de acordo com os órgãos vizinhos: impressões esofágica, gástrica, duodenal, colônica, renal e suprarrenal. Entre o fígado e o rim direito interpõe-se o peritônio, que forma o recesso hepatorrenal, também chamado de bolsa de Morison, porção do espaço subepático que é a mais profunda com o paciente em decúbito dorsal. O rim direito encontra-se em posição discretamente mais baixa que o esquerdo, o que se atribui à presença do fígado. A face anterior do rim é retroperitoneal, e o peritônio que a recobre reflete-se para o fígado, formando o ligamento hepatorrenal. Seu conhecimento é útil na interpretação de exames de imagem do hipocôndrio direito e na avaliação de coleções líquidas, tumores e traumatismos nessa região.",
+    "summary_pt": "A impressão renal é a depressão da face visceral do lobo direito do fígado onde repousa a face anterior do polo superior do rim direito. Localiza-se posterior e inferiormente, lateral à impressão suprarrenal e posterior à impressão cólica, e constitui um dos acidentes que, em conjunto, moldam a face visceral hepática de acordo com os órgãos vizinhos: impressões esofágica, gástrica, duodenal, cólica, renal e suprarrenal. Entre o fígado e o rim direito interpõe-se o peritônio, que forma o recesso hepatorrenal, também chamado de bolsa de Morison, porção do espaço subepático que é a mais profunda com o paciente em decúbito dorsal. O rim direito encontra-se em posição discretamente mais baixa que o esquerdo, o que se atribui à presença do fígado. A face anterior do rim é retroperitoneal, e o peritônio que a recobre reflete-se para o fígado, formando o ligamento hepatorrenal. Seu conhecimento é útil na interpretação de exames de imagem do hipocôndrio direito e na avaliação de coleções líquidas, tumores e traumatismos nessa região.",
     "anatomy": {
       "relations": "Face visceral do lobo direito, posterior e inferior. Relaciona-se com a face anterior do rim direito (polo superior), com a glândula suprarrenal direita (impressão suprarrenal, logo acima e medial), com a parte descendente do duodeno (medialmente) e com a flexura direita do colo (anterior e lateralmente). O peritônio forma o recesso hepatorrenal entre o fígado e o rim.",
       "vascularization": "Parênquima do lobo direito irrigado por ramos da divisão direita da artéria hepática própria e da veia porta; a drenagem venosa ocorre pela veia hepática direita.",
@@ -201,14 +194,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: cápsula e peritônio",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula e peritônio",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: lóbulo hepático",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: lóbulo hepático",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -243,7 +236,7 @@
       "lymph": "Os vasos linfáticos do fígado convergem para os linfonodos hepáticos, situados na porta e ao longo do pedículo, e daí para os linfonodos celíacos."
     },
     "clinical": [
-      "Manobra de Pringle: a compressão do ligamento hepatoduodenal com pinça, com oclusão da artéria hepática própria e da veia porta, controla o sangramento do fígado durante cirurgias e traumatismos hepáticos.",
+      "Manobra de Pringle: a oclusão temporária do ligamento hepatoduodenal interrompe o fluxo da artéria hepática própria e da veia porta para o fígado; não controla o sangramento de origem nas veias hepáticas.",
       "Icterícia obstrutiva: tumores da via biliar na confluência dos ductos hepáticos (colangiocarcinoma hilar) ou linfonodos aumentados na porta comprimem os ductos e impedem a drenagem da bile.",
       "Hipertensão portal: a obstrução ao fluxo da veia porta ou no fígado cirrótico leva à formação de circulação colateral portossistêmica, com varizes esofágicas e esplenomegalia."
     ],
@@ -316,13 +309,6 @@
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópicos Ligamento hepatoduodenal e Fígado: aspectos clínicos",
         "obraId": "moore",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópicos hipertensão portal e tumores biliares",
-        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -409,13 +395,6 @@
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópicos Anastomoses portossistêmicas e Hérnia de hiato",
         "obraId": "moore",
         "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópicos esôfago: varizes e doença do refluxo",
-        "obraId": "robbins",
-        "license": "citação"
       }
     ],
     "review": {
@@ -434,7 +413,7 @@
       "lymph": "Suprarrenal: linfonodos lombares (aórticos laterais). Fígado: linfonodos hepáticos e celíacos."
     },
     "clinical": [
-      "Adrenalectomia direita: a veia suprarrenal direita é muito curta e se abre direto na veia cava inferior, o que torna sua ligadura delicada; a proximidade do fígado exige mobilização do lobo direito.",
+      "Adrenalectomia direita: a proximidade do fígado e da veia cava inferior é relevante na abordagem cirúrgica.",
       "Massas da suprarrenal direita (adenomas, feocromocitoma, carcinoma e metástases) podem invadir o fígado por contiguidade ou serem confundidas com lesões hepáticas nos exames de imagem.",
       "Lesões hepáticas posteriores no trauma abdominal podem comprometer a glândula suprarrenal direita e a veia cava inferior."
     ],
@@ -505,13 +484,6 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema endócrino, tópico suprarrenal: neoplasias",
-        "obraId": "robbins",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Glândulas suprarrenais: aspectos clínicos",
         "obraId": "moore",
         "license": "citação"
@@ -525,7 +497,7 @@
   },
   "za:vh-m-duodenal-impression-of-liver": {
     "ids": {},
-    "summary_pt": "A impressão duodenal é a marca que a parte superior do duodeno, e por vezes o início da parte descendente, deixa na face visceral do lobo direito do fígado. Localiza-se próxima à fossa da vesícula biliar e à impressão renal e relaciona-se com o pedículo hepático, porque o duodeno é a víscera que recebe a bile e o suco pancreático e está unido ao fígado pelo ligamento hepatoduodenal. A parte superior do duodeno, com cerca de 5 cm, é a porção mais móvel do órgão e cobre-se por peritônio; sua porção inicial, o bulbo duodenal, constitui o ponto de maior ocorrência de úlcera péptica. Posteriormente a essa porção passam o ducto colédoco, a veia porta e a artéria gastroduodenal, vizinhança que explica complicações de úlceras duodenais posteriores. A impressão duodenal faz parte do conjunto de acidentes da face visceral hepática que registra a topografia dos órgãos vizinhos: esôfago, estômago, duodeno, colo, rim e suprarrenal. Seu reconhecimento ajuda a compreender a relação anatômica entre o fígado, a vesícula biliar, a via biliar e o duodeno.",
+    "summary_pt": "A impressão duodenal é a marca que a parte superior do duodeno, e por vezes o início da parte descendente, deixa na face visceral do lobo direito do fígado. Localiza-se próxima à fossa da vesícula biliar e à impressão renal e relaciona-se com o pedículo hepático, porque o duodeno é a víscera que recebe a bile e o suco pancreático e está unido ao fígado pelo ligamento hepatoduodenal. A parte superior do duodeno (ampola do duodeno, ou bulbo duodenal) é o local mais comum de úlcera duodenal. Posteriormente a essa porção passam o ducto colédoco, a veia porta e a artéria gastroduodenal, vizinhança que explica complicações de úlceras duodenais posteriores. A impressão duodenal faz parte do conjunto de acidentes da face visceral hepática que registra a topografia dos órgãos vizinhos: esôfago, estômago, duodeno, colo, rim e suprarrenal. Seu reconhecimento ajuda a compreender a relação anatômica entre o fígado, a vesícula biliar, a via biliar e o duodeno.",
     "anatomy": {
       "relations": "Face visceral do lobo direito, próxima à fossa da vesícula biliar e à impressão renal. Corresponde à parte superior do duodeno, que se une ao fígado pelo ligamento hepatoduodenal; posteriormente a ela passam o ducto colédoco, a veia porta e a artéria gastroduodenal. Relaciona-se também com o colo da vesícula biliar.",
       "vascularization": "Duodeno superior: artéria gastroduodenal, ramo da artéria hepática comum, e artérias pancreaticoduodenais; drenagem para a veia porta. Parênquima hepático: divisão direita da artéria hepática própria e da veia porta.",
@@ -599,13 +571,6 @@
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Duodeno: aspectos clínicos",
         "obraId": "moore",
         "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópicos doença ulcerosa péptica e Fígado e vias biliares: colelitíase",
-        "obraId": "robbins",
-        "license": "citação"
       }
     ],
     "review": {
@@ -634,7 +599,7 @@
     },
     "clinical": [
       "Lesão do nervo hipoglosso: o músculo genioglosso do lado paralisado não protrai a língua, que se desvia para o lado da lesão na protrusão; com o tempo, ocorre atrofia hemilingual.",
-      "Carcinoma epidermoide de língua: acomete mais as margens laterais e pode metastatizar precocemente para linfonodos cervicais, inclusive contralaterais, o que orienta o esvaziamento cervical.",
+      "Câncer de língua: a drenagem linfática explica o acometimento cervical, inclusive contralateral.",
       "Anquiloglossia: o frênulo curto limita a mobilidade do ápice e pode interferir na amamentação e na fala."
     ],
     "sources": [
@@ -711,14 +676,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Cavidade oral: língua",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Cavidade oral: língua",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Cavidade oral: língua, papilas e botões gustativos",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Cavidade oral: língua, papilas e botões gustativos",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -747,7 +712,7 @@
     "ids": {},
     "summary_pt": "A vesícula biliar é um saco piriforme de parede fina, com cerca de 7 a 10 cm de comprimento e capacidade média de 30 a 50 mL, que armazena e concentra a bile produzida pelo fígado. Aloja-se na fossa da vesícula biliar, na face visceral do fígado, entre o lobo direito e o lobo quadrado, e divide-se em fundo, corpo, infundíbulo e colo. O fundo costuma projetar-se além da margem inferior do fígado, em contato com a parede abdominal no ponto em que a margem lateral do músculo reto do abdome cruza o rebordo costal, ao nível da nona cartilagem costal. O colo continua-se com o ducto cístico, que contém pregas espirais e se une ao ducto hepático comum para formar o ducto colédoco. A bile concentrada é liberada sob estímulo da colecistocinina, secretada pela mucosa duodenal em resposta à gordura da dieta, que provoca a contração da musculatura lisa vesicular e o relaxamento do esfíncter da ampola hepatopancreática. A vesícula não possui submucosa nem muscular da mucosa. Sua topografia, irrigação e variações do trígono cistohepático são centrais na colecistectomia e no diagnóstico por imagem das doenças biliares.",
     "anatomy": {
-      "relations": "Fossa da vesícula biliar, entre o lobo direito e o lobo quadrado do fígado. O fundo contacta a parede abdominal anterior; o corpo relaciona-se com o colo transverso e com a parte superior do duodeno; o colo continua-se com o ducto cístico. O trígono cistohepático é limitado pelo ducto cístico, pelo ducto hepático comum e pela margem inferior do fígado e contém a artéria cística.",
+      "relations": "Fossa da vesícula biliar, entre o lobo direito e o lobo quadrado do fígado. O fundo contacta a parede abdominal anterior; o corpo relaciona-se com o colo transverso e com a parte superior do duodeno; o colo continua-se com o ducto cístico. O trígono cisto-hepático é limitado pelo ducto cístico, pelo ducto hepático comum e pela face visceral do fígado.",
       "vascularization": "Artéria cística, em geral ramo da artéria hepática direita, que atravessa o trígono cistohepático. As veias císticas drenam para a veia porta, diretamente ou pelo ramo direito, e pequenas veias drenam diretamente para o fígado.",
       "innervation": "Plexo celíaco (fibras simpáticas de T7 a T9), nervo vago (parassimpático) e nervo frênico direito, por fibras sensitivas que justificam a dor referida no ombro direito quando há irritação do peritônio adjacente.",
       "lymph": "Vasos linfáticos que drenam para o linfonodo cístico, junto ao colo, e depois para os linfonodos hepáticos e celíacos."
@@ -763,7 +728,7 @@
     "clinical": [
       "Colelitíase: a formação de cálculos (de colesterol e pigmentares) é a doença biliar mais comum e pode causar cólica biliar por obstrução transitória do ducto cístico.",
       "Colecistite aguda: a obstrução persistente do ducto cístico por cálculo provoca inflamação da parede; o sinal de Murphy (dor e interrupção da inspiração à palpação do ponto cístico) é um achado clássico.",
-      "Colecistectomia videolaparoscópica: exige identificação do trígono cistohepático, pois variações da artéria cística e dos ductos expõem a lesão iatrogênica da via biliar.",
+      "Colecistectomia: a identificação do trígono cisto-hepático é referência anatômica; variações da artéria cística e dos ductos predispõem à lesão iatrogênica.",
       "Carcinoma da vesícula biliar: costuma ser diagnosticado tardiamente e invade o fígado por contiguidade."
     ],
     "sources": [
@@ -833,14 +798,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Vesícula biliar",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Vesícula biliar",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Vesícula biliar",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Vesícula biliar",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -954,14 +919,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Glândulas salivares: sublingual",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Glândulas salivares: sublingual",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Glândulas salivares: sublingual",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Glândulas salivares: sublingual",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -1163,14 +1128,14 @@
       {
         "field": "anatomy.innervation",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso: plexo mioentérico",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso: plexo mioentérico",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso: camada muscular",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso: camada muscular",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -1260,14 +1225,14 @@
       {
         "field": "anatomy.innervation",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso: plexo mioentérico",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso: plexo mioentérico",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso: camada muscular",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso: camada muscular",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -1357,14 +1322,14 @@
       {
         "field": "anatomy.innervation",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso: plexo mioentérico",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso: plexo mioentérico",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso: camada muscular",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso: camada muscular",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -1395,7 +1360,7 @@
     "anatomy": {
       "relations": "Superior, anterior, direita e posterior; contacta o diafragma, que a separa da base dos pulmões, das pleuras e, à esquerda, do pericárdio e do coração. O ligamento falciforme a divide nos lobos direito e esquerdo; posteriormente situam-se a área nua, delimitada pelo ligamento coronário, e o sulco da veia cava inferior. O espaço subfrênico, entre o fígado e o diafragma, comunica-se com o espaço subepático.",
       "vascularization": "Parênquima irrigado por ramos das artérias hepáticas direita e esquerda e das veias porta direita e esquerda, com drenagem pelas veias hepáticas direita, média e esquerda, que emergem na região posterior e abrem-se na veia cava inferior. O diafragma adjacente é irrigado pelas artérias frênicas inferiores.",
-      "innervation": "A cápsula e o peritônio visceral do fígado têm sensibilidade conduzida por fibras do plexo hepático, que acompanham os ramos da artéria hepática, e por fibras do nervo frênico direito. O peritônio sobre o diafragma recebe o nervo frênico (porção central) e os nervos intercostais inferiores (periferia).",
+      "innervation": "O peritônio da face diafragmática recebe o nervo frênico e os intercostais inferiores; o estiramento da cápsula é conduzido por aferentes viscerais do plexo hepático (dor mal localizada). O peritônio sobre o diafragma recebe o nervo frênico (porção central) e os nervos intercostais inferiores (periferia).",
       "lymph": "Os vasos linfáticos da face diafragmática drenam, em grande parte, para os linfonodos frênicos e mediastinais posteriores, e parte para os linfonodos hepáticos e celíacos."
     },
     "histology": {
@@ -1477,14 +1442,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: cápsula e peritônio",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula e peritônio",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: lóbulo hepático",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: lóbulo hepático",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -1493,13 +1458,6 @@
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópicos Espaços subfrênicos e Fígado: aspectos clínicos",
         "obraId": "moore",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico lesões traumáticas e abscessos hepáticos",
-        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -1514,7 +1472,7 @@
     "summary_pt": "O colo descendente é o segmento do intestino grosso que se estende da flexura esquerda do colo (flexura esplênica), junto ao baço, até a fossa ilíaca esquerda, onde se continua com o colo sigmoide. Tem cerca de 25 cm de comprimento, é secundariamente retroperitoneal, com peritônio na face anterior e nas laterais, e apresenta calibre menor que o do colo ascendente. A flexura esquerda situa-se mais alta e mais posterior que a direita e fixa-se ao diafragma pelo ligamento frenocólico. Ao descer, o colo repousa sobre a margem lateral do rim esquerdo e sobre o músculo quadrado do lombo, e depois sobre o músculo ilíaco, em relação com os nervos do plexo lombar. A irrigação arterial provém da artéria mesentérica inferior, por meio da artéria cólica esquerda, e a drenagem venosa segue pela veia mesentérica inferior. O colo descendente armazena as fezes e completa a absorção de água e eletrólitos, com mucosa desprovida de vilosidades e rica em células caliciformes. Junto com o colo sigmoide, é sede frequente de divertículos, e sua luz mais estreita faz com que os tumores obstrutivos se manifestem precocemente com alteração do hábito intestinal.",
     "anatomy": {
       "relations": "Da flexura esquerda do colo até a fossa ilíaca esquerda. Posteriormente relaciona-se com o diafragma, a margem lateral do rim esquerdo, o músculo quadrado do lombo, o músculo transverso do abdome, o músculo ilíaco e ramos do plexo lombar. Anteriormente, com alças do intestino delgado e o omento maior. Recoberto por peritônio anterior e lateralmente; a flexura esquerda une-se ao diafragma pelo ligamento frenocólico.",
-      "vascularization": "Artéria cólica esquerda e artérias sigmóideas, ramos da artéria mesentérica inferior, que se anastomosam com ramos da mesentérica superior na artéria marginal. Veia mesentérica inferior, que drena para a veia esplênica ou para a junção esplenomesentérica (sistema porta).",
+      "vascularization": "Artéria cólica esquerda, ramo da mesentérica inferior, que se anastomosa com a mesentérica superior pela artéria marginal. Veia mesentérica inferior, que drena para a veia esplênica ou para a junção esplenomesentérica (sistema porta).",
       "innervation": "Simpática: nervos esplâncnicos lombares (L1–L2) pelo plexo mesentérico inferior. Parassimpática: nervos esplâncnicos pélvicos (S2–S4), que chegam ao colo descendente por via retrógrada pelos plexos hipogástricos e mesentérico inferior.",
       "lymph": "Linfonodos epicólicos e paracólicos, depois linfonodos cólicos esquerdos (intermédios), mesentéricos inferiores e, por fim, linfonodos lombares (aórticos)."
     },
@@ -1601,14 +1559,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Intestino grosso",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Intestino grosso",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -1635,7 +1593,7 @@
   },
   "za:vh-m-coronary-ligament-of-liver": {
     "ids": {},
-    "summary_pt": "O ligamento coronário do fígado é a reflexão do peritônio que une a face diafragmática do órgão ao diafragma. É formado por dois folhetos, anterior e posterior, que se afastam e circunscrevem entre si a área nua do fígado, a porção da face diafragmática desprovida de peritônio e diretamente em contato com o diafragma. O folheto anterior continua-se, à direita, com o ligamento falciforme e, nas extremidades, os dois folhetos se aproximam e formam os ligamentos triangulares direito e esquerdo. O folheto posterior, em seu limite inferior direito, reflete-se sobre o rim e a glândula suprarrenal direitos e constitui o ligamento hepatorrenal. A veia cava inferior encontra-se na área nua, e as veias hepáticas desembocam nela imediatamente abaixo do diafragma, o que confere ao ligamento grande importância cirúrgica. Ao lado dos ligamentos falciforme e triangulares, o ligamento coronário contribui para manter o fígado em posição sob o diafragma. Por ser uma duplicatura peritoneal, é revestido por mesotélio e contém tecido conjuntivo frouxo.",
+    "summary_pt": "O ligamento coronário do fígado é a reflexão do peritônio que une a face diafragmática do órgão ao diafragma. É formado por dois folhetos, anterior e posterior, que se afastam e circunscrevem entre si a área nua do fígado, a porção da face diafragmática desprovida de peritônio e diretamente em contato com o diafragma. O folheto anterior continua-se com o folheto direito do ligamento falciforme. O folheto posterior, em seu limite inferior direito, reflete-se sobre o rim e a glândula suprarrenal direitos e constitui o ligamento hepatorrenal. A veia cava inferior encontra-se na área nua, e as veias hepáticas desembocam nela imediatamente abaixo do diafragma, o que confere ao ligamento grande importância cirúrgica. O ligamento tem papel limitado na fixação do fígado, que depende sobretudo da veia cava inferior e da pressão intra-abdominal. Por ser uma duplicatura peritoneal, é revestido por mesotélio e contém tecido conjuntivo frouxo.",
     "anatomy": {
       "relations": "Reflexão peritoneal entre a face diafragmática do fígado e o diafragma, com folhetos anterior e posterior que delimitam a área nua. Lateralmente, os folhetos se unem e formam os ligamentos triangulares direito e esquerdo; o folheto anterior continua com o ligamento falciforme, e a extremidade inferior do posterior, com o ligamento hepatorrenal. A veia cava inferior e a glândula suprarrenal direita relacionam-se com a área nua.",
       "innervation": "O peritônio que recobre a face inferior do diafragma recebe fibras do nervo frênico (porção central) e dos nervos intercostais inferiores (periferia)."
@@ -1696,14 +1654,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Peritônio e serosas",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Tubo digestivo, tópico serosa",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Aparelho digestório, tópico Peritônio e serosas",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tubo digestivo, tópico Tubo digestivo, tópico serosa",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -1730,7 +1688,7 @@
   },
   "za:vh-m-right-anterosuperior-segment": {
     "ids": {},
-    "summary_pt": "O segmento anterosuperior direito corresponde ao segmento VIII de Couinaud e ocupa a parte superior do setor anterior do lobo direito, logo abaixo da cúpula do diafragma. Os segmentos do fígado são unidades funcionais independentes, cada qual com um pedículo próprio de ramo da veia porta, da artéria hepática e do ducto biliar, e com drenagem venosa pelas veias hepáticas, que correm entre eles. O segmento VIII é limitado medialmente pela veia hepática média, que o separa do segmento IV, e lateralmente pela veia hepática direita, que o separa do segmento VII; inferiormente, um plano transverso pelo ramo direito da veia porta o separa do segmento V. Sua face superior contacta o diafragma e, por meio dele, a base do pulmão direito e a pleura. Por ser a porção mais alta e anterior do lobo direito, é de acesso mais difícil na cirurgia e é a região em que os processos hepáticos mais facilmente se comunicam com o tórax. O conhecimento da segmentação de Couinaud permite a ressecção anatômica de tumores e o planejamento de procedimentos percutâneos.",
+    "summary_pt": "O segmento anterosuperior direito corresponde ao segmento VIII de Couinaud e ocupa a parte superior do setor anterior do lobo direito, logo abaixo da cúpula do diafragma. Os segmentos do fígado são unidades funcionais independentes, cada qual com um pedículo próprio de ramo da veia porta, da artéria hepática e do ducto biliar, e com drenagem venosa pelas veias hepáticas, que correm entre eles. O segmento VIII é limitado medialmente pela veia hepática média, que o separa do segmento IV, e lateralmente pela veia hepática direita, que o separa do segmento VII; inferiormente, um plano transverso pelo ramo direito da veia porta o separa do segmento V. Sua face superior contacta o diafragma e, por meio dele, a base do pulmão direito e a pleura. Esse segmento fica junto ao diafragma, região em que processos hepáticos podem se comunicar com o tórax. O conhecimento da segmentação de Couinaud permite a ressecção anatômica de tumores e o planejamento de procedimentos percutâneos.",
     "anatomy": {
       "relations": "Face diafragmática e superior do lobo direito, no setor anterior. Limitado medialmente pela veia hepática média (plano principal, que o separa do segmento IV), lateralmente pela veia hepática direita (separa-o do segmento VII) e inferiormente pelo plano transverso da bifurcação da veia porta direita (separa-o do segmento V). Relaciona-se, pelo diafragma, com a pleura e a base do pulmão direito.",
       "vascularization": "Ramo do pedículo portal anterior direito (ramo da veia porta direita, da artéria hepática direita e do ducto setorial anterior). A drenagem venosa dá-se pelas veias hepáticas média e direita.",
@@ -1816,22 +1774,15 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: cápsula e peritônio",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula e peritônio",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: lóbulo hepático",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: lóbulo hepático",
         "obraId": "junqueira",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópicos abscessos e tumores hepáticos",
-        "obraId": "robbins",
         "license": "citação"
       },
       {
@@ -1867,7 +1818,7 @@
     },
     "clinical": [
       "Carcinoma da vesícula biliar: costuma invadir o fígado por contiguidade, comprometendo sobretudo os segmentos IVb e V; por isso a cirurgia oncológica pode incluir a ressecção do leito vesicular com esses segmentos.",
-      "Colecistectomia: o leito vesicular está em contato com os segmentos IVb e V, e a dissecção da vesícula deve respeitar o plano para evitar lesão do parênquima e sangramento."
+      "Colecistectomia: o leito vesicular está em contato com os segmentos IVb e V, o que explica o sangramento do leito hepático."
     ],
     "sources": [
       {
@@ -1936,22 +1887,15 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: cápsula e peritônio",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula e peritônio",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: lóbulo hepático",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: lóbulo hepático",
         "obraId": "junqueira",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico carcinoma da vesícula biliar",
-        "obraId": "robbins",
         "license": "citação"
       },
       {
@@ -1986,7 +1930,7 @@
       ]
     },
     "clinical": [
-      "Biópsia hepática percutânea: costuma ser feita por via intercostal direita, na linha axilar média, ao final da expiração, e atinge o lobo direito, o que o torna o setor mais usado para amostragem.",
+      "Biópsia hepática percutânea: costuma ser feita por via intercostal direita e atinge o lobo direito.",
       "Traumatismo hepático: o lobo direito, volumoso e superficial, está sujeito a lesões nos traumatismos contusos do hipocôndrio direito.",
       "Neoplasias e abscessos: lesões do segmento VI podem envolver a flexura direita do colo e o rim direito por contiguidade."
     ],
@@ -2057,14 +2001,14 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: cápsula e peritônio",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula e peritônio",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: lóbulo hepático",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: lóbulo hepático",
         "obraId": "junqueira",
         "license": "citação"
       },
@@ -2073,13 +2017,6 @@
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: biópsia hepática e traumatismos",
         "obraId": "moore",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópicos lesões hepáticas e tumores",
-        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -2091,7 +2028,7 @@
   },
   "za:vh-m-left-superiomedial-segment": {
     "ids": {},
-    "summary_pt": "O segmento superomedial esquerdo corresponde à porção superior (IVa) do segmento IV de Couinaud, também chamado segmento medial do lobo esquerdo. Situa-se à esquerda da veia hepática média, que o separa do setor anterior do lobo direito (segmentos V e VIII), e à direita do ligamento falciforme e da fissura do ligamento redondo, que o separam do setor lateral esquerdo (segmentos II e III). Sua porção superior fica sob o diafragma, em relação, através dele, com o pericárdio e o coração, enquanto a porção inferior (IVb) corresponde ao lobo quadrado da face visceral, entre a fossa da vesícula biliar e a fissura do ligamento redondo. A irrigação provém de ramos da divisão esquerda da veia porta e da artéria hepática, e a drenagem venosa ocorre pelas veias hepáticas média e esquerda. Como todo segmento, é unidade funcional com pedículo próprio, o que permite a ressecção segmentar. Por sua posição junto à porta do fígado e à confluência biliar, é frequentemente incluído nas ressecções por tumores da via biliar proximal, e o conhecimento de sua divisão superior e inferior é importante para o planejamento cirúrgico.",
+    "summary_pt": "O segmento superomedial esquerdo corresponde à porção superior (IVa) do segmento IV de Couinaud, também chamado segmento medial do lobo esquerdo. Situa-se à esquerda da veia hepática média, que o separa do setor anterior do lobo direito (segmentos V e VIII), e à direita do ligamento falciforme e da fissura do ligamento redondo, que o separam do setor lateral esquerdo (segmentos II e III). Sua porção superior fica sob o diafragma, em relação, através dele, com o pericárdio e o coração, enquanto a porção inferior (IVb) corresponde ao lobo quadrado da face visceral, entre a fossa da vesícula biliar e a fissura do ligamento redondo. O segmento IVb (inferior), junto à porta do fígado e à confluência biliar, é frequentemente incluído nas ressecções por tumores da via biliar proximal. Esta ficha descreve o IVa; o IVb é o lobo quadrado. Como todo segmento, é unidade funcional com pedículo próprio, o que permite a ressecção segmentar. Por sua posição junto à porta do fígado e à confluência biliar, é frequentemente incluído nas ressecções por tumores da via biliar proximal, e o conhecimento de sua divisão superior e inferior é importante para o planejamento cirúrgico.",
     "anatomy": {
       "relations": "Parte superior do segmento medial do lobo esquerdo, entre a veia hepática média (à direita) e o ligamento falciforme e a fissura do ligamento redondo (à esquerda). Superiormente relaciona-se, pelo diafragma, com o pericárdio e o coração; inferiormente continua-se com o segmento IVb (lobo quadrado), que se limita posteriormente com a porta do fígado.",
       "vascularization": "Ramos mediais da divisão esquerda da veia porta e da artéria hepática (ramos da parte umbilical). A drenagem venosa ocorre pelas veias hepáticas média e esquerda.",
@@ -2178,22 +2115,15 @@
       {
         "field": "histology.epithelium",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: cápsula e peritônio",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: cápsula e peritônio",
         "obraId": "junqueira",
         "license": "citação"
       },
       {
         "field": "histology.tissues",
         "type": "textbook",
-        "ref": "Histologia Básica, 13ª ed., capítulo Órgãos associados ao tubo digestivo, tópico Fígado: lóbulo hepático",
+        "ref": "Histologia Básica, 13ª ed., capítulo Fígado, vesícula biliar e pâncreas, tópico Fígado: lóbulo hepático",
         "obraId": "junqueira",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópicos tumores biliares e abscessos hepáticos",
-        "obraId": "robbins",
         "license": "citação"
       },
       {

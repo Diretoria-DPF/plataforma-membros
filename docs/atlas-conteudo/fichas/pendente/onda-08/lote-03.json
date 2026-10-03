@@ -1,0 +1,1246 @@
+{
+  "za:vertebra-t3": {
+    "ids": {},
+    "summary_pt": "A terceira vértebra torácica (T3) pertence ao segmento superior da região torácica e apresenta as características das vértebras torácicas típicas. O corpo tem contorno cordiforme em vista superior e exibe, de cada lado, as fóveas costais superior e inferior. A cabeça da terceira costela articula-se com a fóvea costal superior de T3 e com a fóvea costal inferior de T2; a fóvea inferior de T3 participa da articulação com a cabeça da quarta costela, em conjunto com a fóvea superior de T4. O forame vertebral é pequeno e arredondado, o processo espinhoso é longo e inclina-se inferiormente, e o processo transverso, robusto, traz a fóvea costal do processo transverso, para o tubérculo da costela. Os processos articulares dispõem-se aproximadamente no plano coronal: os superiores voltam-se posteriormente e os inferiores, anteriormente, arranjo compatível com movimentos de rotação e de limitação da flexão. Como referência de superfície, o processo espinhoso de T3 situa-se de modo aproximado no nível da raiz da espinha da escápula, ponto usado na palpação do dorso. Por ser uma vértebra superior da região torácica, relaciona-se anteriormente com o mediastino superior e com a traqueia.",
+    "anatomy": {
+      "relations": "Articula-se com T2 e T4 por meio dos discos intervertebrais e das articulações zigapofisárias, e com as costelas 3 e 4 por articulações da cabeça da costela (fóveas costais do corpo) e com a terceira costela por articulação costotransversária (fóvea costal do processo transverso). Acidentes: corpo, pedículos, lâminas, forame vertebral, incisuras vertebrais superior e inferior, processos articulares superior e inferior, processos transversos e processo espinhoso. Inserções: músculos eretor da espinha, semiespinal do tórax, multífidos e rotadores, levantadores das costelas e, no processo espinhoso, o músculo trapézio e ligamentos supraespinal e interespinal; o ligamento amarelo une as lâminas adjacentes. Anteriormente, o corpo relaciona-se com o ligamento longitudinal anterior, o esôfago e a traqueia, no mediastino superior.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T3 emerge pelo forame intervertebral situado abaixo do pedículo de T3."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóveas costais e processos articulares: cartilagem hialina revestindo as superfícies articulares sinoviais costovertebrais e zigapofisárias"
+      ]
+    },
+    "clinical": [
+      "Escoliose: a deformidade com curvatura lateral e rotação dos corpos vertebrais associa-se a gibosidade costal, porque as costelas acompanham a rotação da vértebra a que se articulam.",
+      "Hérnia de disco torácica: é menos frequente que nas regiões cervical e lombar, em parte pela menor mobilidade do segmento torácico, estabilizado pelas costelas e pelo esterno.",
+      "Metástases vertebrais: o corpo vertebral esponjoso, rico em medula vermelha, e a comunicação dos plexos venosos vertebrais com as veias do tronco favorecem a disseminação de tumores como os de mama, próstata e pulmão."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t4": {
+    "ids": {},
+    "summary_pt": "A quarta vértebra torácica (T4) é uma vértebra torácica típica e situa-se no limite inferior do mediastino superior. A cabeça da quarta costela articula-se com a fóvea costal superior de T4 e com a fóvea costal inferior de T3, enquanto a cabeça da quinta costela se apoia na fóvea inferior de T4 e na fóvea superior de T5; o tubérculo da quarta costela articula-se com a fóvea costal do processo transverso de T4. O corpo é cordiforme, o forame vertebral é circular e relativamente estreito, e o processo espinhoso, longo, inclina-se inferiormente. Os processos articulares estão no plano coronal. O plano horizontal que passa pelo ângulo do esterno e pelo disco intervertebral entre T4 e T5 é uma referência clássica: nesse plano situam-se o início e o fim do arco da aorta, a bifurcação da traqueia, o arco da veia ázigo e o limite entre os mediastinos superior e inferior, além da articulação da segunda cartilagem costal com o esterno. O dermátomo T4 inclui a região do mamilo, referência de exame sensitivo, embora o nível do dermátomo não coincida com o da vértebra.",
+    "anatomy": {
+      "relations": "Articula-se com T3 e T5 por discos intervertebrais e articulações zigapofisárias; com as costelas 4 e 5 por articulações da cabeça da costela e com a quarta costela por articulação costotransversária. O corpo relaciona-se anteriormente com o ligamento longitudinal anterior e com o esôfago e, à direita, com a veia ázigo; à esquerda, o arco da aorta continua como parte descendente da aorta junto ao limite inferior do corpo de T4. Posteriormente, o processo espinhoso dá inserção aos ligamentos supraespinal e interespinal e aos músculos trapézio e romboides, e o canal vertebral aloja a medula espinal. O tronco simpático e seus gânglios situam-se junto às cabeças das costelas adjacentes.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T4 emerge pelo forame intervertebral situado abaixo do pedículo de T4. O ramo ventral de T4 forma o quarto nervo intercostal."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Articulações costovertebrais: cartilagem hialina nas superfícies articulares das fóveas costais e da cabeça da costela, com cápsula articular de tecido conjuntivo denso"
+      ]
+    },
+    "clinical": [
+      "Ângulo do esterno: o plano de T4–T5 serve de ponto de referência para contar as costelas, pois a segunda costela articula-se com o esterno nesse nível, e para localizar estruturas do mediastino em exames de imagem.",
+      "Cifose torácica acentuada: fraturas por compressão dos corpos vertebrais, como as associadas à osteoporose, reduzem a altura anterior do corpo e podem acentuar a curvatura.",
+      "Espondilodiscite tuberculosa (doença de Pott): a infecção óssea pode acometer os corpos vertebrais torácicos e discos, com colapso do corpo e deformidade angular da coluna."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteomielite e osteomielite tuberculosa (doença de Pott)",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t5": {
+    "ids": {},
+    "summary_pt": "A quinta vértebra torácica (T5) é uma vértebra torácica típica da região média superior do segmento, imediatamente inferior ao plano do ângulo do esterno. O corpo apresenta as fóveas costais superior e inferior: a cabeça da quinta costela articula-se com a fóvea superior de T5 e com a fóvea inferior de T4, e a cabeça da sexta costela, com a fóvea inferior de T5 e a superior de T6. O tubérculo da quinta costela articula-se com a fóvea costal do processo transverso de T5. O forame vertebral é pequeno e circular, e o processo espinhoso é longo e inclina-se para baixo, com ponta projetada em nível inferior ao do corpo. Os processos articulares estão em orientação aproximadamente coronal, o que favorece a rotação e restringe a flexão e a extensão em comparação com a região lombar. Os corpos de T5 a T12 formam a parede posterior do mediastino posterior, em relação com o esôfago, a parte descendente da aorta, o ducto torácico e as veias ázigo e hemiázigo. Os gânglios do tronco simpático correspondentes a esse segmento dão origem, em parte, ao nervo esplâncnico maior, que se forma a partir de raízes dos níveis T5 a T9.",
+    "anatomy": {
+      "relations": "Articula-se com T4 e T6 por discos intervertebrais e articulações zigapofisárias; com as costelas 5 e 6 por articulações da cabeça da costela e com a quinta costela por articulação costotransversária. Anteriormente, o corpo relaciona-se com o ligamento longitudinal anterior e, mais à frente, com o esôfago, o ducto torácico e a veia ázigo (à direita), e com a parte descendente da aorta (à esquerda). Posteriormente, o processo espinhoso e as lâminas dão inserção a ligamentos amarelo, supraespinal e interespinal e aos músculos eretor da espinha, trapézio (por meio do processo espinhoso), romboides e multífidos. O canal vertebral aloja a medula espinal, envolta pelas meninges.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T5 emerge pelo forame intervertebral situado abaixo do pedículo de T5."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóveas costais do corpo e do processo transverso: cartilagem hialina nas superfícies articulares sinoviais, com cápsula de tecido conjuntivo denso reforçada por ligamentos"
+      ]
+    },
+    "clinical": [
+      "Fraturas por compressão: o enfraquecimento do osso esponjoso do corpo vertebral, como na osteoporose, pode levar a fraturas em cunha, com perda da altura anterior do corpo.",
+      "Compressão medular torácica: o forame vertebral torácico é pequeno e circular, de modo que tumores, abscessos epidurais ou fragmentos ósseos no canal podem comprimir a medula com pouca margem de espaço."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t6": {
+    "ids": {},
+    "summary_pt": "A sexta vértebra torácica (T6) é típica e ocupa a porção média do segmento torácico da coluna vertebral. O corpo, cordiforme, tem as fóveas costais superior e inferior: a cabeça da sexta costela articula-se com a fóvea superior de T6 e com a fóvea inferior de T5, enquanto a sétima costela, a última a alcançar o esterno por cartilagem própria, articula-se com a fóvea inferior de T6 e a fóvea superior de T7. O tubérculo da sexta costela encontra a fóvea costal do processo transverso de T6. O pedículo é curto, a lâmina é larga e imbricada com as vizinhas, e o processo espinhoso, longo, inclina-se inferiormente e sobrepõe-se em parte ao da vértebra subjacente. Os processos articulares, em plano quase coronal, orientam o movimento predominante de rotação, limitado pela caixa torácica. Anteriormente, o corpo relaciona-se com o esôfago, a parte descendente da aorta, o ducto torácico e as veias ázigo e hemiázigo, no mediastino posterior. Do ponto de vista de superfície, o dermátomo T6 corresponde à região do processo xifoide, referência útil para o exame sensitivo do tronco, embora não coincida com o nível da vértebra.",
+    "anatomy": {
+      "relations": "Articula-se com T5 e T7 por discos intervertebrais e articulações zigapofisárias; com as costelas 6 e 7 por articulações da cabeça da costela e com a sexta costela por articulação costotransversária. O corpo mantém relação anterior com o ligamento longitudinal anterior, o esôfago, o ducto torácico e as veias ázigo e hemiázigo, além da parte descendente da aorta. Os músculos levantadores das costelas, o eretor da espinha, o semiespinal do tórax e os multífidos inserem-se nos processos transverso e espinhoso e nas lâminas. O tronco simpático e o ramo comunicante ficam junto às cabeças das costelas, e o nervo esplâncnico maior tem origem em raízes que incluem as de T6.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T6 emerge pelo forame intervertebral situado abaixo do pedículo de T6."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóveas costais superior e inferior e fóvea costal do processo transverso: superfícies articulares cobertas por cartilagem hialina"
+      ]
+    },
+    "clinical": [
+      "Herpes-zóster: a reativação do vírus varicela-zóster no gânglio sensitivo do nervo espinal pode produzir lesões vesiculares em faixa unilateral, restritas ao dermátomo T6.",
+      "Cifose torácica por fraturas em cunha: fraturas por compressão repetidas dos corpos da região média torácica podem acentuar a curvatura e reduzir a estatura.",
+      "Escoliose: a rotação dos corpos vertebrais da região média torácica projeta as costelas posteriormente do lado convexo, formando a gibosidade."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: nervos intercostais, dermátomos e herpes-zóster",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t7": {
+    "ids": {},
+    "summary_pt": "A sétima vértebra torácica (T7) é uma vértebra torácica típica da região média do segmento. Cada lado do corpo exibe as fóveas costais superior e inferior: a cabeça da sétima costela articula-se com a fóvea superior de T7 e a inferior de T6, e a cabeça da oitava costela, com a fóvea inferior de T7 e a superior de T8; o tubérculo da sétima costela apoia-se na fóvea costal do processo transverso. O forame vertebral é circular e o processo espinhoso é longo e muito inclinado, de modo que sua ponta tende a projetar-se ao nível do corpo da vértebra subjacente. Os processos articulares, em plano quase coronal, permitem pouca flexão e extensão e favorecem a rotação. Em posição anatômica, com os membros superiores ao lado do corpo, o ângulo inferior da escápula costuma coincidir com o processo espinhoso de T7 e com a sétima costela ou o sétimo espaço intercostal, referência de superfície usada para contagem de costelas no dorso. Anteriormente, o corpo relaciona-se com o esôfago, a aorta descendente, o ducto torácico e o sistema ázigo, no mediastino posterior, à altura da base do pericárdio e do coração.",
+    "anatomy": {
+      "relations": "Articula-se com T6 e T8 por discos intervertebrais e articulações zigapofisárias; com as costelas 7 e 8 por articulações da cabeça da costela e com a sétima costela por articulação costotransversária. Anteriormente, o corpo relaciona-se com o ligamento longitudinal anterior, o esôfago, o ducto torácico e as veias ázigo e hemiázigo; a aorta descendente localiza-se à esquerda. Posteriormente, o processo espinhoso é ponto de fixação do ligamento supraespinal e de fibras do trapézio e do latíssimo do dorso; as lâminas e os processos transversos recebem inserções dos músculos multífidos, rotadores, semiespinal do tórax e eretor da espinha. A raiz do nervo esplâncnico maior deriva de segmentos que incluem T7.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T7 emerge pelo forame intervertebral situado abaixo do pedículo de T7."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Superfícies articulares das fóveas costais e zigapofisárias: cartilagem hialina; cápsulas articulares de tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "Referência pelo ângulo inferior da escápula: o nível de T7 e da sétima costela auxilia a contagem de costelas e espaços intercostais no dorso, com a ressalva de que a posição da escápula varia com a postura e com o movimento do membro superior.",
+      "Fraturas por compressão: o corpo da região média torácica, rico em osso esponjoso, pode sofrer fraturas em cunha quando há osteoporose ou neoplasia óssea."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t8": {
+    "ids": {},
+    "summary_pt": "A oitava vértebra torácica (T8) é uma vértebra torácica típica, na transição entre a porção média e a inferior do segmento. O corpo exibe, de cada lado, as fóveas costais superior e inferior: a cabeça da oitava costela articula-se com a fóvea superior de T8 e com a fóvea inferior de T7; a cabeça da nona costela, com a fóvea inferior de T8 e a superior de T9. O processo transverso, com a fóvea costal para o tubérculo da oitava costela, é mais curto que nas vértebras superiores. O processo espinhoso permanece longo e inclinado, embora menos que nas vértebras T5 a T7, e os processos articulares conservam o plano aproximadamente coronal. O nível de T8 é a referência vertebral clássica do forame da veia cava, no tendão central do diafragma, por onde a veia cava inferior passa do abdome ao tórax, acompanhada do ramo frênico do nervo frênico direito. Anteriormente, o corpo relaciona-se com o esôfago, que se aproxima do hiato esofágico, e com a aorta descendente, que se desloca gradualmente para a linha mediana. Nesse segmento, a medula espinal ainda é volumosa e ocupa o canal vertebral com pequena folga.",
+    "anatomy": {
+      "relations": "Articula-se com T7 e T9 por discos intervertebrais e articulações zigapofisárias; com as costelas 8 e 9 por articulações da cabeça da costela e com a oitava costela por articulação costotransversária. Anteriormente, o corpo relaciona-se com o ligamento longitudinal anterior, o esôfago, o ducto torácico, as veias ázigo e hemiázigo e a parte descendente da aorta, que tende a ocupar posição mais mediana nos níveis inferiores. Inserções: eretor da espinha, multífidos, rotadores, levantadores das costelas, semiespinal do tórax; ligamentos amarelo, supraespinal e interespinal. O nervo esplâncnico maior contém fibras de segmentos que incluem T8 e atravessa o pilar do diafragma.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T8 emerge pelo forame intervertebral situado abaixo do pedículo de T8."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóveas costais e processos articulares: cartilagem hialina; no processo transverso, a fóvea costal é de dimensões menores do que nas vértebras torácicas superiores"
+      ]
+    },
+    "clinical": [
+      "Referência do forame da veia cava inferior: em T8, a veia atravessa o diafragma, e compreender esse nível ajuda a localizar o limite entre tórax e abdome em cortes tomográficos.",
+      "Fratura vertebral torácica por compressão: o corpo vertebral pode colapsar anteriormente e formar uma cunha, com possível aumento da curvatura cifótica regional."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico diafragma: aberturas (forame da veia cava, hiato esofágico e hiato aórtico)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico diafragma: aberturas (forame da veia cava, hiato esofágico e hiato aórtico)",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t9": {
+    "ids": {},
+    "summary_pt": "A nona vértebra torácica (T9) é considerada de transição entre as vértebras torácicas típicas e as inferiores, que se articulam com uma única costela. Apresenta a fóvea costal superior, que, junto com a fóvea inferior de T8, recebe a cabeça da nona costela; a fóvea costal inferior pode estar reduzida ou ausente, porque a cabeça da décima costela articula-se apenas com T10. O processo transverso conserva a fóvea costal para o tubérculo da nona costela. O corpo é mais volumoso do que nas vértebras superiores, o forame vertebral é circular e o processo espinhoso, longo, tem inclinação menos acentuada. Os processos articulares permanecem no plano aproximadamente coronal. Como referência de superfície, a articulação xifoesternal projeta-se, em geral, no nível de T9, o que ajuda a situar a margem inferior do esterno e o início do ângulo infraesternal. Anteriormente, o corpo relaciona-se com o esôfago, a parte descendente da aorta, o ducto torácico e o sistema ázigo, no mediastino posterior, logo acima do diafragma. A raiz do nervo esplâncnico maior inclui fibras originadas em T9.",
+    "anatomy": {
+      "relations": "Articula-se com T8 e T10 por discos intervertebrais e articulações zigapofisárias; com a nona costela por articulação da cabeça da costela (fóvea superior de T9 e fóvea inferior de T8) e por articulação costotransversária. Anteriormente, o corpo relaciona-se com o ligamento longitudinal anterior, o esôfago, o ducto torácico, as veias ázigo e hemiázigo e a aorta descendente. Inserções musculares nos processos transverso e espinhoso e nas lâminas: eretor da espinha, multífidos, rotadores, levantadores das costelas e semiespinal do tórax; ligamentos supraespinal, interespinal e amarelo.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T9 emerge pelo forame intervertebral situado abaixo do pedículo de T9."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóveas costais: cartilagem hialina em superfícies articulares sinoviais; a fóvea inferior pode estar ausente, de modo que o corpo desse lado é coberto apenas por periósteo e ligamentos"
+      ]
+    },
+    "clinical": [
+      "Referência xifoesternal: o nível T9 da articulação xifoesternal é usado para localizar, em superfície, a margem inferior do esterno e a posição aproximada do diafragma.",
+      "Fraturas por compressão: assim como em outras vértebras torácicas, o colapso do corpo pode ocorrer em ossos fragilizados por osteoporose ou invadidos por neoplasia."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t10": {
+    "ids": {},
+    "summary_pt": "A décima vértebra torácica (T10) é atípica quanto à articulação com as costelas: o corpo apresenta, de cada lado, uma única fóvea costal completa, situada junto ao pedículo, para a cabeça da décima costela, que se articula apenas com T10. Ao contrário das vértebras superiores, não há fóvea costal inferior; o tubérculo da décima costela articula-se com a fóvea costal do processo transverso, que pode ser pequena. O corpo é relativamente volumoso e o forame vertebral permanece circular. O processo espinhoso é mais curto e menos inclinado que o das vértebras médias, e os processos articulares mantêm-se em plano coronal. O nível de T10 é a referência vertebral do hiato esofágico, no pilar direito do diafragma, por onde passam o esôfago e os troncos vagais anterior e posterior. O dermátomo T10 corresponde à região do umbigo, referência clínica para avaliar o nível sensitivo do tronco, ainda que o nível vertebral e o segmental não coincidam. Os gânglios torácicos inferiores do tronco simpático contribuem para o nervo esplâncnico menor, que inclui fibras de T10 e T11 e atravessa o pilar do diafragma para chegar aos gânglios celíacos.",
+    "anatomy": {
+      "relations": "Articula-se com T9 e T11 por discos intervertebrais e articulações zigapofisárias, e com a décima costela pela articulação da cabeça da costela (fóvea costal única do corpo) e pela articulação costotransversária. O corpo relaciona-se anteriormente com o ligamento longitudinal anterior, o ducto torácico, as veias ázigo e hemiázigo e a aorta descendente, e com o esôfago que se aproxima do hiato do diafragma. Inserções: eretor da espinha, multífidos, rotadores e levantadores das costelas; ligamentos amarelo, supraespinal e interespinal. Os ramos ventrais formam o décimo nervo intercostal, que segue para a parede abdominal anterolateral como nervo toracoabdominal.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T10 emerge pelo forame intervertebral situado abaixo do pedículo de T10."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóvea costal completa do corpo (junto ao pedículo) e fóvea do processo transverso: cartilagem hialina recobrindo as superfícies articulares sinoviais"
+      ]
+    },
+    "clinical": [
+      "Hérnia de hiato: o hiato esofágico, no nível de T10, é um ponto de fraqueza do diafragma por onde parte do estômago pode ascender ao tórax, com consequente refluxo gastroesofágico.",
+      "Nível sensitivo T10: o dermátomo umbilical é referência no exame neurológico do tronco, por exemplo para delimitar o nível de lesões da medula espinal.",
+      "Fratura por compressão: a vértebra torácica inferior, com corpo mais volumoso, é afetada em fraturas osteoporóticas e em lesões da transição toracolombar."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico diafragma: aberturas (forame da veia cava, hiato esofágico e hiato aórtico)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico hérnia de hiato e diafragma",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t11": {
+    "ids": {},
+    "summary_pt": "A décima primeira vértebra torácica (T11) é uma vértebra de transição, com características que anunciam o padrão lombar. O corpo é volumoso e apresenta, de cada lado, uma única fóvea costal completa, situada sobre o pedículo, para a cabeça da décima primeira costela, que se articula apenas com T11. O processo transverso é curto e não possui fóvea costal, pois a décima primeira costela não se articula com ele, e a costela correspondente é do tipo flutuante, sem ligação com o esterno. O processo espinhoso é curto, aproximadamente horizontal, e o forame vertebral, circular, tem calibre ligeiramente maior que nas vértebras torácicas superiores. Os processos articulares conservam o plano coronal, com transição gradual para a orientação sagital observada em T12 e nas lombares. Anteriormente, o corpo relaciona-se com a parte descendente da aorta, o ducto torácico e o sistema ázigo, e lateralmente com o recesso costodiafragmático da pleura. Os gânglios torácicos inferiores do tronco simpático contribuem para o nervo esplâncnico menor, formado por raízes de T10 e T11 que atravessam o pilar do diafragma. Em radiografias, T11 e T12 costumam servir como referência para identificar a transição toracolombar.",
+    "anatomy": {
+      "relations": "Articula-se com T10 e T12 por discos intervertebrais e articulações zigapofisárias, e com a décima primeira costela somente pela articulação da cabeça da costela (fóvea única do corpo); não há articulação costotransversária. Anteriormente, o corpo relaciona-se com o ligamento longitudinal anterior, a aorta descendente, o ducto torácico e as veias ázigo e hemiázigo; lateralmente, com a pleura e o recesso costodiafragmático. Inserções: eretor da espinha, multífidos e rotadores; ligamentos amarelo, supraespinal e interespinal; no corpo, o pilar do diafragma fixa-se em níveis lombares superiores.",
+      "vascularization": "Artérias segmentares dorsais: ramos espinhais das artérias intercostais posteriores, que entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As artérias intercostais posteriores a partir do terceiro espaço originam-se da parte torácica da aorta; as dos dois primeiros espaços derivam da artéria intercostal suprema. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para as veias intercostais posteriores e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T11 emerge pelo forame intervertebral situado abaixo do pedículo de T11."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóvea costal única do corpo, sobre o pedículo: cartilagem hialina em superfície articular sinovial; o processo transverso curto não tem superfície articular costal"
+      ]
+    },
+    "clinical": [
+      "Artéria radicular magna (de Adamkiewicz): ramo segmentar que, em geral à esquerda e entre os níveis torácicos inferiores e lombares superiores, contribui de modo expressivo para a artéria espinal anterior; lesões ou oclusões nessa região, por exemplo em cirurgias da aorta, podem causar isquemia da medula espinal inferior.",
+      "Fraturas da transição toracolombar: a mudança de rigidez entre a região torácica, com costelas, e a lombar, mais móvel, concentra tensão mecânica e favorece fraturas por compressão ou por flexão."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico medula espinal: suprimento arterial e artéria radicular magna",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t12": {
+    "ids": {},
+    "summary_pt": "A décima segunda vértebra torácica (T12) é a vértebra de transição entre os segmentos torácico e lombar. O corpo é volumoso e traz uma única fóvea costal completa, de cada lado, para a cabeça da décima segunda costela; o processo transverso é curto e não se articula com a costela. Diferentemente das demais torácicas, o processo articular inferior volta-se lateralmente, em orientação sagital semelhante à das vértebras lombares, enquanto o superior ainda mantém o plano coronal; o processo transverso pode apresentar pequenas elevações, semelhantes aos processos mamilar e acessório lombares. O processo espinhoso é curto, quadrangular e quase horizontal. Em T12 situa-se o hiato aórtico do diafragma, por onde passam a aorta e o ducto torácico, e próximo a esse nível origina-se o tronco celíaco. O nervo subcostal, ramo ventral de T12, passa inferiormente à décima segunda costela. O músculo psoas maior origina-se das faces laterais dos corpos de T12 a L5, de modo que T12 é a vértebra mais cranial a dar origem a ele. Anteriormente, os pilares do diafragma e o ligamento arqueado medial relacionam-se com a transição toracolombar.",
+    "anatomy": {
+      "relations": "Articula-se com T11 e L1 por discos intervertebrais e articulações zigapofisárias, e com a décima segunda costela pela articulação da cabeça da costela. Anteriormente, o corpo relaciona-se com o ligamento longitudinal anterior, a aorta (no hiato aórtico), o ducto torácico e as cisternas do quilo e, lateralmente, com os pilares do diafragma, o ligamento arqueado medial e o psoas maior. Inserções: origem do psoas maior (lados do corpo e disco), fixação do ligamento arqueado lateral e do músculo quadrado do lombo na décima segunda costela e níveis lombares; eretor da espinha, multífidos e ligamentos supraespinal, interespinal e amarelo.",
+      "vascularization": "Ramos espinhais da artéria subcostal, ramo da parte torácica da aorta que acompanha o nervo subcostal inferiormente à décima segunda costela, em associação com ramos da primeira artéria lombar; entram pelo forame intervertebral e irrigam o corpo, o arco vertebral e o conteúdo do canal vertebral. As veias drenam pelos plexos venosos vertebrais internos e externos e pela veia basivertebral, para a veia subcostal, a veia lombar ascendente e o sistema ázigo.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) dos nervos espinais inervam o periósteo, o anel fibroso do disco e os ligamentos longitudinais. As articulações zigapofisárias recebem ramos mediais dos ramos posteriores dos nervos espinais. O nervo espinal T12 emerge pelo forame intervertebral situado abaixo do pedículo de T12. O ramo ventral de T12 forma o nervo subcostal."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo vertebral: osso esponjoso (trabecular) predominante, com medula óssea vermelha hematopoiética nos espaços entre as trabéculas, envolvido por fina camada de osso compacto",
+        "Arco vertebral e processos: osso compacto com sistemas de Havers, coberto por periósteo; células ósseas: osteoblastos, osteócitos e osteoclastos",
+        "Faces superior e inferior do corpo: placas terminais de cartilagem hialina em contato com o disco intervertebral, de fibrocartilagem (anel fibroso e núcleo pulposo)",
+        "Fóvea costal única do corpo e processos articulares: cartilagem hialina nas superfícies sinoviais, com mudança na orientação das faces articulares inferiores"
+      ]
+    },
+    "clinical": [
+      "Fraturas da transição toracolombar: T12 e L1 concentram parte das fraturas por flexão-compressão e por explosão da coluna, pela mudança de mobilidade entre as regiões torácica e lombar.",
+      "Síndrome do cone medular e da cauda equina: lesões nesse nível podem comprometer o cone medular ou as raízes lombossacrais, com déficits motores e esfincterianos.",
+      "Isquemia medular: a artéria radicular magna origina-se em níveis torácicos inferiores ou lombares superiores, e a interrupção do fluxo pode causar lesão da medula espinal."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): coluna vertebral, vértebra torácica",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vértebras torácicas",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e suprimento arterial da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico vasos da coluna vertebral e da medula espinal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico inervação das vértebras, articulações zigapofisárias e ligamentos",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Dorso, capítulo Coluna vertebral, tópico inervação da coluna vertebral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras e discos intervertebrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico correlações clínicas da coluna vertebral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas por compressão, osteoporose e metástases ósseas",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico diafragma, hiato aórtico e músculo psoas maior",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  }
+}
