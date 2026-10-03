@@ -65,3 +65,10 @@ Registro de decisões, situações e respostas às revisões. O plano em vigor f
   - a regra dos 90% publica só as fichas aprovadas. Ficha sem marca só entra com "aprovação em bloco" explícita, porque o selo "Revisado por" não pode ser inventado;
   - a ferramenta C1 e o `review-status` já estavam prontos: ficam no código, como opcionais.
 - Ferramentas novas: `pacote-lote.mjs`, `checklist-lote.mjs` e a trava `check-curated-signed` por ficha. O backlog está em `docs/atlas-backlog.md`.
+
+## 03/10/2026 — Onda 3.5 e fim da preparação dos lotes
+- PR #13 mesclado (lote 1, 104 fichas, na pasta de pendentes). Os agentes do dia seguinte pararam no limite de uso; retomados sem perda.
+- 300 fichas escritas. Revisão técnica prévia nos lotes 1 e 2 (todas as correções aplicadas); lote 3 sem revisão prévia, com pontos de atenção para o conselho (plano v4.0, ajuste de custo pedido pelo usuário).
+- Quiz: 50 casos (lote 4a) em `docs/atlas-conteudo/quiz/pendente/`, com a mesma trava dos checklists.
+- Onda 3.5 entregue em código: A.1 offline, A.2 telemetria, A.3 persistência, B.2 quiz, C favoritos/compartilhar/resumo, D.1 sem CDN, D.2 conselho plural, D.3 "O que mudou". Itens humanos: migração 014 e deploy da Worker (para ligar a telemetria), teste em aparelho real, 3 revisores titulares, 3 alunos e post-mortem.
+- O `index.html` da plataforma (fora do atlas) ainda carrega Chart.js do jsDelivr para seus próprios painéis: fora do escopo desta onda.
