@@ -1,9 +1,9 @@
 {
   "za:suprarenal-gland-r": {
     "ids": {},
-    "summary_pt": "A glândula suprarrenal (glandula suprarenalis) é uma glândula endócrina par, que se situa no retroperitônio, junto ao polo superior de cada rim, envolvida pela fáscia renal e separada do rim por uma porção do corpo adiposo perirrenal. A glândula direita tem forma piramidal ou triangular, e a esquerda, semilunar. Cada glândula é composta por duas partes de origens embriológicas e funções distintas: o córtex, de origem mesodérmica, que produz hormônios esteroides, e a medula, de origem na crista neural, formada por células cromafins que secretam catecolaminas. O córtex divide-se em três zonas: a zona glomerulosa, produtora de mineralocorticoides como a aldosterona; a zona fasciculada, produtora de glicocorticoides como o cortisol; e a zona reticular, produtora de androgênios. A medula secreta adrenalina e, em menor proporção, noradrenalina, em resposta à estimulação simpática pré-ganglionar. O córtex é regulado pelo eixo hipotálamo-hipófise-suprarrenal, em especial pelo hormônio adrenocorticotrófico (ACTH), enquanto a secreção de aldosterona depende sobretudo do sistema renina-angiotensina e da concentração plasmática de potássio. A glândula é muito vascularizada e recebe sangue de três artérias, o que favorece sua participação como sede de metástases de neoplasias de outros órgãos.",
+    "summary_pt": "A glândula suprarrenal (glandula suprarenalis) é uma glândula endócrina par, que se situa no retroperitônio, junto ao polo superior de cada rim, envolvida pela fáscia renal e separada do rim por uma porção do corpo adiposo perirrenal. A glândula direita tem forma piramidal ou triangular, e a esquerda, semilunar. Cada glândula é composta por duas partes de origens embriológicas e funções distintas: o córtex, de origem mesodérmica, que produz hormônios esteroides, e a medula, de origem na crista neural, formada por células cromafins que secretam catecolaminas. O córtex divide-se em três zonas: a zona glomerulosa, produtora de mineralocorticoides como a aldosterona; a zona fasciculada, produtora de glicocorticoides como o cortisol; e a zona reticular, produtora de androgênios. A medula secreta adrenalina e, em menor proporção, noradrenalina, em resposta à estimulação simpática pré-ganglionar. O córtex é regulado pelo eixo hipotálamo-hipófise-suprarrenal, em especial pelo hormônio adrenocorticotrófico (ACTH), enquanto a secreção de aldosterona depende sobretudo do sistema renina-angiotensina e da concentração plasmática de potássio. A glândula é muito vascularizada e recebe sangue de três artérias e é sítio frequente de metástases de neoplasias de outros órgãos.",
     "anatomy": {
-      "relations": "No retroperitônio, junto ao polo superior do rim, A glândula direita relaciona-se anteriormente com a veia cava inferior e com a face visceral do fígado, e posteriormente com o diafragma; a esquerda relaciona-se com a bolsa omental e o estômago, anteriormente, com o pâncreas e os vasos esplênicos, inferiormente, e posteriormente com o diafragma.",
+      "relations": "No retroperitônio, junto ao polo superior do rim. A glândula direita relaciona-se anteriormente com a veia cava inferior e com a face visceral do fígado, e posteriormente com o diafragma; a esquerda relaciona-se com a bolsa omental e o estômago, anteriormente, com o pâncreas e os vasos esplênicos, inferiormente, e posteriormente com o diafragma.",
       "vascularization": "Três artérias de cada lado: suprarrenal superior (ramo da artéria frênica inferior), suprarrenal média (ramo da parte abdominal da aorta) e suprarrenal inferior (ramo da artéria renal). Em geral, uma única veia suprarrenal drena cada glândula: a direita, curta, abre-se na veia cava inferior; a esquerda desemboca na veia renal esquerda.",
       "innervation": "Fibras simpáticas pré-ganglionares, dos nervos esplâncnicos, atravessam o plexo celíaco e fazem sinapse diretamente nas células cromafins da medula, sem passar por gânglio; a medula funciona, assim, como um gânglio simpático modificado.",
       "lymph": "Vasos linfáticos que drenam para os linfonodos lombares."
@@ -41,7 +41,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Glândulas endócrinas: glândula suprarrenal",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Glândulas endócrinas: glândula suprarrenal",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -83,7 +83,7 @@
       {
         "field": "anatomy.innervation",
         "type": "textbook",
-        "ref": "Gray's Anatomy, 42ª ed., capítulo Sistema endócrino, tópico glândula suprarrenal: inervação",
+        "ref": "Gray's Anatomy, 42ª ed., seção Abdome (glândula suprarrenal)",
         "obraId": "grays42",
         "license": "citação"
       },
@@ -141,7 +141,7 @@
     "summary_pt": "A adeno-hipófise (adenohypophysis) é a porção glandular, de origem epitelial, da hipófise, e produz hormônios que regulam a tireoide, o córtex da suprarrenal, as gônadas, o crescimento e a lactação. Deriva da bolsa de Rathke, uma evaginação do ectoderma da cavidade oral primitiva, e compreende a parte distal, a parte tuberal, que envolve a haste hipofisária, e a parte intermédia, pouco desenvolvida no ser humano. A hipófise ocupa a fossa hipofisial da sela turca do osso esfenoide, coberta superiormente pelo diafragma da sela, e relaciona-se com o quiasma óptico, os seios cavernosos e o seio esfenoidal. A adeno-hipófise secreta hormônio do crescimento (GH), prolactina, hormônio adrenocorticotrófico (ACTH), hormônio estimulante da tireoide (TSH), hormônio folículo-estimulante (FSH) e hormônio luteinizante (LH). Não é regulada por inervação secretora direta, e sim por hormônios liberadores e inibidores, produzidos por neurônios hipotalâmicos e transportados pelo sistema porta-hipofisário. A prolactina é exceção, pois seu controle hipotalâmico é predominantemente inibitório, mediado pela dopamina. A glândula é, por isso, o elo entre o sistema nervoso e o sistema endócrino e coordena o funcionamento de várias glândulas periféricas.",
     "anatomy": {
       "relations": "Ocupa a parte anterior da fossa hipofisial da sela turca, no osso esfenoide. Superiormente, o diafragma da sela separa-a do quiasma óptico; lateralmente, relaciona-se com os seios cavernosos, que contêm a artéria carótida interna e nervos cranianos; inferiormente, relaciona-se com o seio esfenoidal.",
-      "vascularization": "Irrigada pelas artérias hipofisiais superiores, ramos da artéria carótida interna, que formam um plexo capilar primário na eminência mediana; os vasos porta-hipofisiais conduzem o sangue ao plexo capilar secundário da parte distal. Drena por veias hipofisiais para os seios cavernosos.",
+      "vascularization": "Recebe sangue principalmente pelos vasos porta-hipofisiais, que ligam o plexo capilar primário (eminência mediana e infundíbulo, nutridos pelas artérias hipofisiais superiores, ramos da artéria carótida interna) ao plexo secundário da parte distal; as artérias hipofisiais inferiores suprem sobretudo a neuro-hipófise. Drena por veias hipofisiais para os seios cavernosos.",
       "innervation": "Sem inervação secretora direta; recebe fibras simpáticas vasomotoras, que acompanham os vasos. A secreção é controlada por hormônios hipotalâmicos transportados pelo sistema porta-hipofisário."
     },
     "histology": {
@@ -176,7 +176,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Glândulas endócrinas: hipófise: adeno-hipófise",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Glândulas endócrinas: hipófise: adeno-hipófise",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -204,7 +204,7 @@
       {
         "field": "anatomy.vascularization",
         "type": "textbook",
-        "ref": "Gray's Anatomy, 42ª ed., capítulo Sistema endócrino, tópico hipófise: vascularização",
+        "ref": "Gray's Anatomy, 42ª ed., seção Cabeça e Pescoço (hipófise)",
         "obraId": "grays42",
         "license": "citação"
       },
@@ -266,10 +266,10 @@
   },
   "za:thyroid-gland": {
     "ids": {},
-    "summary_pt": "A glândula tireoide (glandula thyroidea) é uma glândula endócrina situada na região anterior do pescoço, que produz os hormônios tireoidianos, tiroxina (T4) e tri-iodotironina (T3), reguladores do metabolismo basal, do crescimento e do desenvolvimento, e a calcitonina, envolvida na homeostase do cálcio. Tem forma de H ou de borboleta, constituída pelos lobos direito e esquerdo, unidos pelo istmo da glândula tireoide, que se projeta sobre os anéis superiores da traqueia; um lobo piramidal, inconstante, pode estender-se superiormente a partir do istmo. A glândula é envolvida por uma cápsula fibrosa e pela lâmina pré-traqueal da fáscia cervical, o que faz com que se mova com a laringe na deglutição, característica útil no exame físico. Origina-se do assoalho da faringe, na região do forame cego da língua, e migra caudalmente pelo ducto tireoglosso. Seu parênquima é organizado em folículos que armazenam o hormônio na forma de tireoglobulina, no coloide. A síntese hormonal depende da captação de iodeto e é estimulada pelo hormônio estimulante da tireoide (TSH) da adeno-hipófise. A glândula é muito vascularizada, e sua proximidade com os nervos laríngeos e com as glândulas paratireoides é essencial para o planejamento cirúrgico.",
+    "summary_pt": "A glândula tireoide (glandula thyroidea) é uma glândula endócrina situada na região anterior do pescoço, que produz os hormônios tireoidianos, tiroxina (T4) e tri-iodotironina (T3), reguladores do metabolismo basal, do crescimento e do desenvolvimento, e a calcitonina, envolvida na homeostase do cálcio. Tem forma de H ou de borboleta, constituída pelos lobos direito e esquerdo, unidos pelo istmo da glândula tireoide, que se projeta sobre o segundo ao quarto anel da traqueia; um lobo piramidal, inconstante, pode estender-se superiormente a partir do istmo. A glândula é envolvida por uma cápsula fibrosa e pela lâmina pré-traqueal da fáscia cervical, o que faz com que se mova com a laringe na deglutição, característica útil no exame físico. Origina-se do assoalho da faringe, na região do forame cego da língua, e migra caudalmente pelo ducto tireoglosso. Seu parênquima é organizado em folículos que armazenam o hormônio na forma de tireoglobulina, no coloide. A síntese hormonal depende da captação de iodeto e é estimulada pelo hormônio estimulante da tireoide (TSH) da adeno-hipófise. A glândula é muito vascularizada, e sua proximidade com os nervos laríngeos e com as glândulas paratireoides é essencial para o planejamento cirúrgico.",
     "anatomy": {
       "relations": "Na região anterior do pescoço, anteriormente à laringe e à traqueia, aproximadamente entre as vértebras C5 e T1. Anteriormente, é recoberta pelos músculos infra-hioideos (esterno-hióideo, esternotireóideo e omo-hióideo); lateralmente, relaciona-se com a bainha carótica. Posteriormente, relaciona-se com as glândulas paratireoides, o esôfago e o nervo laríngeo recorrente, que ascende no sulco traqueoesofágico.",
-      "vascularization": "Artéria tireóidea superior, ramo da artéria carótida externa, e artéria tireóidea inferior, ramo do tronco tireocervical; em alguns indivíduos, existe também a artéria tireóidea ima. As veias tireóideas superior e média drenam para a veia jugular interna, e as inferiores, para as veias braquiocefálicas.",
+      "vascularization": "Artéria tireóidea superior, ramo da artéria carótida externa, e artéria tireóidea inferior, ramo do tronco tireocervical; em alguns indivíduos, existe também a artéria tireóidea ima (variação inconstante, originada do tronco braquiocefálico ou do arco da aorta). As veias tireóideas superior e média drenam para a veia jugular interna, e as inferiores, para as veias braquiocefálicas.",
       "innervation": "Fibras simpáticas dos gânglios cervicais, que acompanham os vasos e regulam o fluxo sanguíneo; a secreção hormonal é controlada pelo eixo hipotálamo-hipófise-tireoide, e não por inervação direta.",
       "lymph": "Linfonodos pré-laríngeos, pré-traqueais e paratraqueais, e linfonodos cervicais profundos."
     },
@@ -306,7 +306,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Glândulas endócrinas: glândula tireoide",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Glândulas endócrinas: glândula tireoide",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -396,7 +396,7 @@
   },
   "za:pineal-gland": {
     "ids": {},
-    "summary_pt": "A glândula pineal (corpo pineal, glandula pinealis) é uma pequena glândula endócrina, ímpar e mediana, em forma de cone, que se localiza no epitálamo, na extremidade posterior do teto do terceiro ventrículo, entre os colículos superiores e acima da comissura posterior. Está unida ao diencéfalo por um pedúnculo, cuja parte anterior forma a comissura habenular e cuja parte inferior faz parte da comissura posterior, e projeta-se sobre a face dorsal do mesencéfalo, sob o esplênio do corpo caloso. Sua principal função é secretar a melatonina, hormônio que participa da sincronização do ritmo circadiano e do ciclo sono-vigília. A secreção é maior no escuro e é controlada pela luz ambiental: os estímulos luminosos captados na retina chegam ao núcleo supraquiasmático do hipotálamo, que, por vias que incluem fibras simpáticas do gânglio cervical superior, modulam a atividade dos pinealócitos. A glândula não responde diretamente à luz, e sim a essa informação transmitida por via indireta. Em adultos, é comum haver concreções de sais de cálcio, o que a torna visível em radiografias e em tomografias e a transforma em um marcador de linha média no estudo de exames de imagem do crânio.",
+    "summary_pt": "A glândula pineal (corpo pineal, glandula pinealis) é uma pequena glândula endócrina, ímpar e mediana, em forma de cone, que se localiza no epitálamo, na extremidade posterior do teto do terceiro ventrículo, entre os colículos superiores e acima da comissura posterior. Está unida ao diencéfalo por um pedúnculo, cuja lâmina superior forma a comissura habenular e cuja lâmina inferior forma a comissura posterior, e projeta-se sobre a face dorsal do mesencéfalo, sob o esplênio do corpo caloso. Sua principal função é secretar a melatonina, hormônio que participa da sincronização do ritmo circadiano e do ciclo sono-vigília. A secreção é maior no escuro e é controlada pela luz ambiental: os estímulos luminosos captados na retina chegam ao núcleo supraquiasmático do hipotálamo, que, por vias que incluem fibras simpáticas do gânglio cervical superior, modulam a atividade dos pinealócitos. A glândula não responde diretamente à luz, e sim a essa informação transmitida por via indireta. Em adultos, é comum haver concreções de sais de cálcio, o que a torna visível em radiografias e em tomografias e a transforma em um marcador de linha média no estudo de exames de imagem do crânio.",
     "anatomy": {
       "relations": "No epitálamo, na parte posterior do teto do terceiro ventrículo, ao qual se liga pelo recesso pineal. Situa-se entre os colículos superiores, posteriormente à comissura posterior e inferiormente ao esplênio do corpo caloso; posteriormente, relaciona-se com a veia cerebral magna.",
       "vascularization": "Ramos coroidais posteriores da artéria cerebral posterior, que irrigam a glândula. A drenagem venosa ocorre por tributárias da veia cerebral magna.",
@@ -433,7 +433,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Glândulas endócrinas: glândula pineal",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Glândulas endócrinas: glândula pineal",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -461,7 +461,7 @@
       {
         "field": "anatomy.vascularization",
         "type": "textbook",
-        "ref": "Gray's Anatomy, 42ª ed., capítulo Sistema endócrino, tópico glândula pineal: vascularização",
+        "ref": "Gray's Anatomy, 42ª ed., seção Cabeça e Pescoço (encéfalo: pineal)",
         "obraId": "grays42",
         "license": "citação"
       },
@@ -503,8 +503,8 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico Encéfalo: diencéfalo e glândula pineal",
-        "obraId": "moore",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema nervoso central (tumores da região pineal)",
+        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -516,7 +516,7 @@
   },
   "za:neurohypophysis": {
     "ids": {},
-    "summary_pt": "A neuro-hipófise (neurohypophysis) é a porção neural da hipófise, formada pela parte nervosa, pelo infundíbulo (haste hipofisária) e pela eminência mediana do hipotálamo. Deriva de uma evaginação do assoalho do diencéfalo e, diferentemente da adeno-hipófise, não sintetiza hormônios, mas armazena e libera os hormônios produzidos no hipotálamo: a vasopressina (hormônio antidiurético, ADH) e a ocitocina. Esses hormônios são sintetizados pelos neurônios magnocelulares dos núcleos supraóptico e paraventricular do hipotálamo e transportados, ao longo dos axônios do trato hipotálamo-hipofisial, até a parte nervosa, onde são armazenados em dilatações axonais, os corpos de Herring, e liberados nos capilares em resposta a estímulos neuronais. A vasopressina aumenta a reabsorção de água nos ductos coletores renais e, em doses altas, contrai a musculatura lisa vascular; a ocitocina estimula a contração do útero no parto e a ejeção do leite pelas células mioepiteliais da mama. A neuro-hipófise ocupa a parte posterior da fossa hipofisial da sela turca, atrás da adeno-hipófise, e sua haste atravessa o diafragma da sela, em direção ao hipotálamo, em posição posterior ao quiasma óptico.",
+    "summary_pt": "A neuro-hipófise (neurohypophysis) é a porção neural da hipófise, formada pela parte nervosa, pelo infundíbulo (haste hipofisária) e pela eminência mediana do hipotálamo. Deriva de uma evaginação do assoalho do diencéfalo e, diferentemente da adeno-hipófise, não sintetiza hormônios, mas armazena e libera os hormônios produzidos no hipotálamo: a vasopressina (hormônio antidiurético, ADH) e a ocitocina. A eminência mediana, sede do plexo capilar primário do sistema porta-hipofisário, libera os hormônios hipotalâmicos liberadores e inibidores. Esses hormônios são sintetizados pelos neurônios magnocelulares dos núcleos supraóptico e paraventricular do hipotálamo e transportados, ao longo dos axônios do trato hipotálamo-hipofisial, até a parte nervosa, onde são armazenados em dilatações axonais, os corpos de Herring, e liberados nos capilares em resposta a estímulos neuronais. A vasopressina aumenta a reabsorção de água nos ductos coletores renais e, em doses altas, contrai a musculatura lisa vascular; a ocitocina estimula a contração do útero no parto e a ejeção do leite pelas células mioepiteliais da mama. A neuro-hipófise ocupa a parte posterior da fossa hipofisial da sela turca, atrás da adeno-hipófise, e sua haste atravessa o diafragma da sela, em direção ao hipotálamo, em posição posterior ao quiasma óptico.",
     "anatomy": {
       "relations": "Ocupa a parte posterior da fossa hipofisial da sela turca, posteriormente à adeno-hipófise. A haste hipofisária atravessa o diafragma da sela e liga-se ao túber cinéreo do hipotálamo, posteriormente ao quiasma óptico.",
       "vascularization": "Artérias hipofisiais inferiores, ramos da artéria carótida interna, formam o plexo capilar da parte nervosa, que drena por veias hipofisiais para os seios cavernosos; as artérias hipofisiais superiores irrigam a eminência mediana e a haste.",
@@ -553,7 +553,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Glândulas endócrinas: hipófise: neuro-hipófise",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Glândulas endócrinas: hipófise: neuro-hipófise",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -581,7 +581,7 @@
       {
         "field": "anatomy.vascularization",
         "type": "textbook",
-        "ref": "Gray's Anatomy, 42ª ed., capítulo Sistema endócrino, tópico hipófise: vascularização",
+        "ref": "Gray's Anatomy, 42ª ed., seção Cabeça e Pescoço (hipófise)",
         "obraId": "grays42",
         "license": "citação"
       },

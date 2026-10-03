@@ -41,7 +41,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -190,7 +190,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: pelve renal",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: pelve renal",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -315,7 +315,7 @@
     },
     "clinical": [
       "Hematoma subcapsular e perirrenal: lacerações do parênquima por trauma podem acumular sangue sob a cápsula ou no espaço perirrenal, delimitado pela fáscia renal.",
-      "Biópsia renal percutânea: a agulha atravessa a cápsula e o sangramento perirrenal é uma das complicações a ser monitorada após o procedimento.",
+      "Biópsia renal percutânea: a agulha atravessa a cápsula e o sangramento perirrenal é uma das complicações possíveis.",
       "Dor no flanco: o aumento agudo do volume do rim, como na obstrução da via excretora ou na infecção, pode distender a cápsula renal e contribuir para a dor lombar."
     ],
     "sources": [
@@ -336,7 +336,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: cápsula fibrosa",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: cápsula fibrosa",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -447,7 +447,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: colunas renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: colunas renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -520,7 +520,7 @@
     "anatomy": {
       "relations": "Na pelve menor, posteriormente à sínfise púbica e ao espaço retropúbico. No homem, relaciona-se posteriormente com o reto, as vesículas seminais e as ampolas dos ductos deferentes, e inferiormente com a próstata; na mulher, posteriormente com o colo do útero e a vagina. A face superior é coberta por peritônio, e a bexiga cheia projeta-se acima da sínfise púbica, em contato com a parede abdominal anterior.",
       "vascularization": "Artérias vesicais superiores, ramos da parte patente da artéria umbilical, e artérias vesicais inferiores, ramos da artéria ilíaca interna; na mulher, contribuem ramos da artéria vaginal. As veias formam o plexo venoso vesical, que drena para as veias ilíacas internas.",
-      "innervation": "Plexo vesical, derivado do plexo hipogástrico inferior. Fibras parassimpáticas dos nervos esplâncnicos pélvicos (S2 a S4) estimulam a contração do detrusor e o relaxamento do esfíncter interno; fibras simpáticas (T11 a L2) atuam na continência e, no homem, no fechamento do colo da bexiga durante a ejaculação. O esfíncter externo da uretra é inervado pelo nervo pudendo (fibras somáticas).",
+      "innervation": "Plexo vesical, derivado do plexo hipogástrico inferior. Fibras parassimpáticas dos nervos esplâncnicos pélvicos (S2 a S4) estimulam a contração do detrusor e o relaxamento do esfíncter interno; fibras simpáticas (T11 a L2) têm papel menor na micção e, no homem, fecham o colo da bexiga durante a ejaculação. O esfíncter externo da uretra é inervado pelo nervo pudendo (fibras somáticas).",
       "lymph": "Vasos linfáticos que drenam principalmente para os linfonodos ilíacos externos e internos; parte da linfa da face posteroinferior alcança os linfonodos ilíacos comuns."
     },
     "histology": {
@@ -548,14 +548,14 @@
       {
         "field": "summary_pt",
         "type": "textbook",
-        "ref": "Gray's Anatomy, 42ª ed., capítulo Bexiga, tópico anatomia macroscópica da bexiga urinária",
+        "ref": "Gray's Anatomy, 42ª ed., seção Pelve e Períneo (bexiga urinária)",
         "obraId": "grays42",
         "license": "citação"
       },
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: bexiga urinária",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: bexiga urinária",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -597,7 +597,7 @@
       {
         "field": "anatomy.innervation",
         "type": "textbook",
-        "ref": "Gray's Anatomy, 42ª ed., capítulo Bexiga, tópico inervação da bexiga",
+        "ref": "Gray's Anatomy, 42ª ed., seção Pelve e Períneo (bexiga urinária)",
         "obraId": "grays42",
         "license": "citação"
       },
@@ -625,14 +625,14 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico carcinoma urotelial da bexiga",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema genital masculino e vias urinárias inferiores (tumores e inflamações da bexiga)",
         "obraId": "robbins",
         "license": "citação"
       },
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Rim e suas vias excretoras, tópico cistite",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Sistema genital masculino e vias urinárias inferiores (tumores e inflamações da bexiga)",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -652,7 +652,7 @@
   },
   "za:vh-f-hilum-of-kidney-l": {
     "ids": {},
-    "summary_pt": "O hilo do rim (hilo renal) é a fenda vertical, localizada na margem medial côncava do rim, que dá acesso ao seio renal, a cavidade central do órgão. Situa-se aproximadamente ao nível da vértebra L1, na região do plano transpilórico, e é por ele que entram e saem as estruturas do pedículo renal. De anterior para posterior, encontram-se a veia renal, a artéria renal e a pelve renal, que se continua com o ureter, de modo que a pelve ocupa a posição mais posterior. Além desses elementos, passam pelo hilo ramos da artéria renal, linfáticos, fibras nervosas do plexo renal e gordura do seio renal. O hilo é uma referência importante em cirurgia e em exames de imagem: o conhecimento da ordem das estruturas orienta a abordagem do pedículo na nefrectomia e a interpretação de cortes axiais de tomografia, nos quais a pelve renal e os vasos se projetam para o seio renal. A variação do número e da posição dos vasos é frequente e deve ser considerada, sobretudo nos casos de artérias renais acessórias.",
+    "summary_pt": "O hilo do rim (hilo renal) é a fenda vertical, localizada na margem medial côncava do rim, que dá acesso ao seio renal, a cavidade central do órgão. Situa-se aproximadamente ao nível da vértebra L1 (o hilo esquerdo; o direito costuma ficar ligeiramente mais baixo), na região do plano transpilórico, e é por ele que entram e saem as estruturas do pedículo renal. De anterior para posterior, encontram-se a veia renal, a artéria renal e a pelve renal, que se continua com o ureter, de modo que a pelve ocupa a posição mais posterior. Além desses elementos, passam pelo hilo ramos da artéria renal, linfáticos, fibras nervosas do plexo renal e gordura do seio renal. O hilo é uma referência importante em cirurgia e em exames de imagem: o conhecimento da ordem das estruturas orienta a abordagem do pedículo na nefrectomia e a interpretação de cortes axiais de tomografia, nos quais a pelve renal e os vasos se projetam para o seio renal. A variação do número e da posição dos vasos é frequente e deve ser considerada, sobretudo nos casos de artérias renais acessórias.",
     "anatomy": {
       "relations": "Na margem medial do rim, abre-se para o seio renal. A ordem das estruturas de anterior para posterior é veia renal, artéria renal e pelve renal. Situa-se na região do plano transpilórico, próximo à vértebra L1, e relaciona-se posteriormente com o músculo psoas maior.",
       "vascularization": "Atravessado pela artéria renal, que se divide em ramos anteriores e posteriores, e pela veia renal; a artéria renal origina-se da parte abdominal da aorta e a veia drena para a veia cava inferior.",
@@ -682,7 +682,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: hilo renal",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: hilo renal",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -751,7 +751,7 @@
   },
   "za:vh-f-outer-cortex-of-kidney-l": {
     "ids": {},
-    "summary_pt": "O córtex renal externo corresponde à porção superficial do córtex renal, a camada de parênquima situada imediatamente sob a cápsula do rim, que envolve a medula renal e se prolonga, entre as pirâmides, como colunas renais. Em cortes, o córtex tem aspecto granuloso, enquanto a medula apresenta estrias radiais. É no córtex que estão os corpúsculos renais, cada um formado pelo glomérulo de capilares e pela cápsula glomerular, e os túbulos contorcidos proximais e distais, ao lado dos raios medulares, feixes de túbulos retos que se projetam da medula para o córtex. O conjunto formado pelo corpúsculo renal e pelos túbulos contorcidos recebe o nome de labirinto cortical. A filtração do plasma ocorre nos glomérulos, e a maior parte da reabsorção de água, de sais e de solutos como a glicose ocorre nos túbulos proximais, de modo que o córtex concentra boa parte da atividade de filtração e de reabsorção do rim. A região subcapsular é irrigada pelas artérias interlobulares, que partem das artérias arqueadas. A distinção entre córtex externo e córtex profundo é topográfica, pois o tecido é o mesmo, e interessa sobretudo à descrição de cortes e de imagens.",
+    "summary_pt": "O córtex renal externo corresponde à porção superficial do córtex renal, a camada de parênquima situada imediatamente sob a cápsula do rim, que envolve a medula renal; o córtex profundo continua-se, entre as pirâmides, com as colunas renais. Em cortes, o córtex tem aspecto granuloso, enquanto a medula apresenta estrias radiais. É no córtex que estão os corpúsculos renais, cada um formado pelo glomérulo de capilares e pela cápsula glomerular, e os túbulos contorcidos proximais e distais, ao lado dos raios medulares, feixes de túbulos retos que se projetam da medula para o córtex. O conjunto formado pelo corpúsculo renal e pelos túbulos contorcidos recebe o nome de labirinto cortical. A filtração do plasma ocorre nos glomérulos, e a maior parte da reabsorção de água, de sais e de solutos como a glicose ocorre nos túbulos proximais, de modo que o córtex concentra boa parte da atividade de filtração e de reabsorção do rim. A região subcapsular é irrigada pelas artérias interlobulares, que partem das artérias arqueadas. A distinção entre córtex externo e córtex profundo é topográfica, pois o tecido é o mesmo, e interessa sobretudo à descrição de cortes e de imagens.",
     "anatomy": {
       "relations": "Camada superficial do rim, imediatamente interna à cápsula fibrosa, que envolve externamente a medula renal. Em direção ao seio renal, continua-se com as colunas renais entre as pirâmides.",
       "vascularization": "Artérias interlobulares (corticais radiadas), ramos das artérias arqueadas, ascendem pelo córtex e originam as arteríolas aferentes dos glomérulos; o sangue deixa o córtex pelas veias interlobulares, que drenam para as veias arqueadas.",
@@ -789,7 +789,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: córtex renal",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: córtex renal",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -897,7 +897,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -924,7 +924,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -1018,7 +1018,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -1045,7 +1045,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -1128,7 +1128,7 @@
   },
   "za:vh-f-renal-pyramid-l-g": {
     "ids": {},
-    "summary_pt": "Esta ficha trata da pirâmide renal \"g\" do modelo do rim esquerdo, cujo rótulo é apenas um identificador do modelo, sem equivalência com uma posição anatômica padronizada. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. Do córtex, prolongam-se para a base da pirâmide os raios medulares, feixes de túbulos retos e de ductos coletores. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão.",
+    "summary_pt": "Esta ficha trata da pirâmide renal \"g\" do modelo do rim esquerdo, cujo rótulo é apenas um identificador do modelo, sem equivalência com uma posição anatômica padronizada. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. Da base da pirâmide, os raios medulares, feixes de túbulos retos e de ductos coletores, prolongam-se para o córtex. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão.",
     "anatomy": {
       "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
       "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
@@ -1139,7 +1139,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -1166,7 +1166,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -1260,7 +1260,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -1287,7 +1287,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -1370,7 +1370,7 @@
   },
   "za:vh-f-renal-pyramid-l-j": {
     "ids": {},
-    "summary_pt": "A pirâmide renal rotulada \"j\" no modelo do rim esquerdo é o objeto desta ficha; a letra é um identificador do modelo, sem correspondência com a nomenclatura anatômica. Do córtex, prolongam-se para a base da pirâmide os raios medulares, feixes de túbulos retos e de ductos coletores. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. A papila renal é a região por onde a urina deixa o parênquima, de modo que alterações da papila repercutem sobre o fluxo urinário e a integridade da via excretora. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal.",
+    "summary_pt": "A pirâmide renal rotulada \"j\" no modelo do rim esquerdo é o objeto desta ficha; a letra é um identificador do modelo, sem correspondência com a nomenclatura anatômica. Da base da pirâmide, os raios medulares, feixes de túbulos retos e de ductos coletores, prolongam-se para o córtex. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. A papila renal é a região por onde a urina deixa o parênquima, de modo que alterações da papila repercutem sobre o fluxo urinário e a integridade da via excretora. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal.",
     "anatomy": {
       "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
       "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
@@ -1381,7 +1381,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -1408,7 +1408,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -1491,7 +1491,7 @@
   },
   "za:vh-f-renal-pyramid-l-d": {
     "ids": {},
-    "summary_pt": "O modelo do rim esquerdo individualiza cada pirâmide renal por uma letra, e a letra \"d\" identifica a pirâmide aqui descrita, sem equivalência com uma posição da nomenclatura anatômica. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal. Do córtex, prolongam-se para a base da pirâmide os raios medulares, feixes de túbulos retos e de ductos coletores. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão.",
+    "summary_pt": "O modelo do rim esquerdo individualiza cada pirâmide renal por uma letra, e a letra \"d\" identifica a pirâmide aqui descrita, sem equivalência com uma posição da nomenclatura anatômica. A base da pirâmide volta-se para o córtex renal e o ápice, a papila renal, projeta-se em um cálice renal menor, onde a urina é lançada. As pirâmides renais, em conjunto, constituem a medula renal; cada uma tem formato aproximadamente cônico, é separada das vizinhas pelas colunas renais e aparece estriada em cortes, pela disposição radial dos túbulos retos e dos vasos retos. Uma pirâmide, com o córtex que recobre sua base e metades das colunas vizinhas, forma um lobo renal. Da base da pirâmide, os raios medulares, feixes de túbulos retos e de ductos coletores, prolongam-se para o córtex. Os ductos coletores convergem em direção ao ápice e formam os ductos papilares, que se abrem na área crivosa da papila renal. Cada rim possui várias pirâmides, cujo número e cuja disposição variam entre os indivíduos, e por isso a contagem e o formato das pirâmides de um modelo não devem ser tomados como padrão.",
     "anatomy": {
       "relations": "Situa-se na medula renal, com a base voltada para o córtex e o ápice (papila renal) voltado para o seio renal, onde se relaciona com um cálice renal menor. Lateralmente, é limitada pelas colunas renais; o córtex recobre sua base.",
       "vascularization": "As artérias arqueadas, ramos das artérias interlobares, contornam a base da pirâmide, na junção corticomedular; os vasos retos, originados das arteríolas eferentes, penetram na pirâmide. As veias arqueadas e interlobares drenam para a veia renal.",
@@ -1502,7 +1502,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -1529,7 +1529,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -1623,7 +1623,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -1650,7 +1650,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },
@@ -1744,7 +1744,7 @@
       "tissues": [
         "Ductos coletores e ductos papilares, que convergem para a área crivosa da papila",
         "Alças do néfron (ramos descendente e ascendente) e segmentos retos dos túbulos",
-        "Vasos retos, de capilares contínuos, em feixes paralelos aos túbulos",
+        "Vasos retos: ramos descendentes de endotélio contínuo e ascendentes de endotélio fenestrado, em feixes paralelos aos túbulos",
         "Interstício de tecido conjuntivo escasso, com fibroblastos e células intersticiais"
       ]
     },
@@ -1771,7 +1771,7 @@
       {
         "field": "summary_pt",
         "type": "fipat",
-        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema urinário: rim: pirâmides renais",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), seção Sistema urinário: rim: pirâmides renais",
         "obraId": "fipat",
         "license": "citação"
       },

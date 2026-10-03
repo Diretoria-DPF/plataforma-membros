@@ -1,0 +1,538 @@
+{
+  "za:juxta-oesophageal-nodes": {
+    "ids": {},
+    "summary_pt": "Os linfonodos justaesofágicos formam a cadeia que acompanha o esôfago torácico no mediastino posterior, em contato com a sua parede e com o tecido conjuntivo periesofágico. Pertencem ao grupo dos linfonodos mediastinais posteriores e, com os linfonodos paratraqueais, traqueobronquiais e do hilo pulmonar, compõem as estações linfáticas intratorácicas. Recebem a linfa do segmento torácico do esôfago e, segundo a descrição clássica, de estruturas vizinhas, como o pericárdio posterior e a face diafragmática. A drenagem do esôfago é descrita como longitudinal e pouco segmentar: o terço superior tende a drenar para linfonodos cervicais profundos, o terço médio para linfonodos mediastinais e o terço inferior para linfonodos gástricos esquerdos e celíacos, de modo que a linfa pode alcançar estações distantes do ponto de origem. Os vasos linfáticos eferentes seguem para outros linfonodos mediastinais, como os traqueobronquiais inferiores, e para o ducto torácico, que percorre o mediastino posterior em relação próxima ao esôfago. Como os demais linfonodos, são órgãos linfoides secundários que filtram a linfa e participam das respostas imunitárias adaptativas.",
+    "anatomy": {
+      "relations": "Situam-se no mediastino posterior, aderidos à parede do esôfago torácico, entre este e a aorta torácica descendente, à frente da coluna vertebral. Anteriormente aproximam-se da bifurcação da traqueia, dos brônquios principais e do pericárdio; o ducto torácico e a veia ázigo ocupam o mesmo compartimento.",
+      "lymph": "Aferentes: vasos linfáticos do esôfago torácico e de estruturas vizinhas do mediastino posterior. Eferentes: linfonodos traqueobronquiais inferiores e outros mediastinais, além de vasos que alcançam o ducto torácico. O território drenado é sobretudo o esôfago torácico, com comunicação longitudinal para as estações cervicais e abdominais."
+    },
+    "histology": {
+      "tissues": [
+        "Cápsula de tecido conjuntivo denso, com trabéculas que penetram no parênquima",
+        "Córtex com nódulos linfoides, ricos em linfócitos B e células dendríticas foliculares, alguns com centro germinativo",
+        "Paracórtex com predomínio de linfócitos T e vênulas de endotélio alto",
+        "Medula com cordões medulares (plasmócitos e macrófagos) e seios medulares",
+        "Seios subcapsular e trabeculares sustentados por rede de fibras reticulares e células reticulares"
+      ]
+    },
+    "clinical": [
+      "Carcinoma do esôfago: a drenagem longitudinal da parede esofágica faz com que o comprometimento linfonodal possa envolver estações mediastinais, cervicais ou abdominais, conforme o nível do tumor.",
+      "Linfadenopatia mediastinal posterior: aumento desses linfonodos, por processos neoplásicos ou inflamatórios, pode ser identificado em exames de imagem do tórax e, em volume maior, relacionar-se com a compressão do esôfago.",
+      "Por estarem próximos ao ducto torácico e ao esôfago, são referência de localização em cirurgias e procedimentos endoscópicos e de imagem do mediastino posterior."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico linfáticos do mediastino posterior e esôfago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema linfático, tópico linfonodos do tórax",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Mediastino posterior, tópico esôfago e linfonodos",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico mediastino posterior: esôfago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico mediastino posterior e esôfago",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico drenagem linfática do esôfago",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Mediastino posterior, tópico linfonodos justaesofágicos",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema imunitário e órgãos linfoides, tópico linfonodos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico esôfago: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico carcinoma do esôfago",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:central-axillary-nodes-r": {
+    "ids": {},
+    "summary_pt": "Os linfonodos axilares centrais ocupam o centro da fossa axilar, imersos no tecido adiposo, em geral profundamente ao músculo peitoral menor e próximos à segunda parte da artéria axilar. Constituem uma estação intermediária da drenagem linfática do membro superior e da mama. Recebem os vasos eferentes dos outros grupos axilares: os linfonodos peitorais (anteriores), subescapulares (posteriores) e umerais (laterais), que reúnem a linfa da parede anterolateral do tronco, da mama, do dorso superior e do membro superior. Seus vasos eferentes dirigem-se aos linfonodos axilares apicais, de onde a linfa prossegue para o tronco subclávio e alcança o sistema venoso na região da junção jugulossubclávia. Na descrição habitual, parte considerável da linfa da mama é drenada para os linfonodos axilares, o que torna esse conjunto uma referência para o estudo da disseminação de neoplasias mamárias. Devido à posição central e ao tamanho, os linfonodos desse grupo podem ser palpáveis quando aumentados. Como os demais linfonodos, são órgãos linfoides secundários, nos quais a linfa é filtrada e antígenos são apresentados aos linfócitos. A ficha vale para os dois lados do corpo.",
+    "anatomy": {
+      "relations": "Localizam-se no tecido adiposo do centro da axila, em geral profundamente ao músculo peitoral menor, próximos à parte média da artéria axilar e às veias e nervos do plexo braquial que atravessam a fossa. Estão separados da pele pela fáscia axilar e pelo tecido subcutâneo.",
+      "lymph": "Aferentes: linfonodos axilares peitorais (anteriores), subescapulares (posteriores) e umerais (laterais). Eferentes: linfonodos axilares apicais e, a seguir, tronco subclávio. Território drenado: por intermédio dos grupos tributários, mama, parede anterolateral do tronco, região escapular e membro superior."
+    },
+    "histology": {
+      "tissues": [
+        "Cápsula de tecido conjuntivo denso, com trabéculas que penetram no parênquima",
+        "Córtex com nódulos linfoides, ricos em linfócitos B e células dendríticas foliculares, alguns com centro germinativo",
+        "Paracórtex com predomínio de linfócitos T e vênulas de endotélio alto",
+        "Medula com cordões medulares (plasmócitos e macrófagos) e seios medulares",
+        "Seios subcapsular e trabeculares sustentados por rede de fibras reticulares e células reticulares"
+      ]
+    },
+    "clinical": [
+      "Câncer de mama: a drenagem linfática axilar é via descrita de disseminação regional, e o comprometimento dos linfonodos axilares integra a avaliação do estadiamento.",
+      "Linfadenopatia axilar: pode surgir em infecções ou lesões do membro superior, da mama e do tronco, em doenças inflamatórias sistêmicas e em neoplasias hematológicas, e os linfonodos desse grupo podem ser palpados quando aumentados.",
+      "Linfedema do membro superior: a remoção ou a lesão de linfonodos axilares e vasos linfáticos pode comprometer a drenagem do membro e se associar a edema crônico."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico axila e linfonodos axilares",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema linfático, tópico linfonodos axilares",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico axila: linfonodos",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico axila: conteúdo e relações",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico região axilar",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico drenagem linfática do membro superior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico drenagem linfática da mama",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema imunitário e órgãos linfoides, tópico linfonodos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico câncer de mama e linfonodos axilares",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Mama, tópico carcinoma da mama",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:spleen": {
+    "ids": {},
+    "summary_pt": "O baço é o maior órgão linfoide do corpo e situa-se na região do hipocôndrio esquerdo, no peritônio intraperitoneal, em contato com o diafragma e protegido pelas costelas inferiores esquerdas. Apresenta face diafragmática, convexa, e face visceral, que se relaciona com o estômago, o rim esquerdo e a flexura esquerda do colo. O hilo esplênico dá passagem aos vasos e é alcançado pelos ligamentos gastroesplênico e esplenorrenal, nos quais correm vasos esplênicos e, no segundo, a cauda do pâncreas. Seu parênquima organiza-se em polpa branca, tecido linfoide em torno das arteríolas, e polpa vermelha, rica em sinusoides e cordões esplênicos. Funcionalmente, o baço filtra o sangue, remove hemácias envelhecidas e partículas, participa de respostas imunitárias contra antígenos circulantes e, em algumas circunstâncias, pode atuar como sítio de hematopoese. Diferentemente dos linfonodos, filtra sangue, e não linfa. Seu tamanho e peso variam com a idade e com o estado fisiológico, e baços acessórios (esplênulos) podem ocorrer próximos ao hilo ou nos ligamentos vizinhos. Por ser órgão ricamente vascularizado e de cápsula fina, tem importância na avaliação de traumatismos abdominais.",
+    "anatomy": {
+      "relations": "Localiza-se no hipocôndrio esquerdo, junto à face inferior do diafragma, em relação com as costelas IX a XI. A face visceral relaciona-se com o estômago, o rim esquerdo, a flexura esquerda do colo e a cauda do pâncreas. Fixa-se por meio dos ligamentos gastroesplênico e esplenorrenal, que prolongam o peritônio até o hilo.",
+      "vascularization": "Artéria esplênica, ramo do tronco celíaco, que se divide em ramos terminais próximos ao hilo; a veia esplênica une-se à veia mesentérica superior, formando a veia porta do fígado.",
+      "innervation": "Plexo esplênico, derivado do plexo celíaco, com fibras simpáticas que acompanham a artéria esplênica e controlam sobretudo o calibre vascular e a cápsula.",
+      "lymph": "Vasos linfáticos que partem do hilo e acompanham a artéria esplênica até linfonodos esplênicos e pancreaticoesplênicos, seguindo para linfonodos celíacos."
+    },
+    "histology": {
+      "tissues": [
+        "Cápsula de tecido conjuntivo denso, com trabéculas que penetram no órgão e contêm algumas células musculares lisas",
+        "Polpa branca: bainha linfoide periarteriolar (linfócitos T) e nódulos linfoides (linfócitos B), com zona marginal ao redor",
+        "Polpa vermelha: cordões esplênicos (cordões de Billroth) com macrófagos, plasmócitos e hemácias, entre sinusoides esplênicos",
+        "Rede de fibras reticulares e células reticulares como arcabouço do parênquima"
+      ]
+    },
+    "clinical": [
+      "Ruptura esplênica: traumatismos do abdome superior esquerdo ou das costelas inferiores esquerdas podem lesar o baço, órgão ricamente vascularizado de cápsula fina, com risco de hemorragia intraperitoneal.",
+      "Esplenomegalia: o aumento do baço pode associar-se a hipertensão portal, doenças hematológicas e infecções, e o baço aumentado pode tornar-se palpável abaixo do rebordo costal esquerdo.",
+      "Asplenia: a ausência ou a perda da função do baço relaciona-se com maior suscetibilidade a infecções por bactérias encapsuladas.",
+      "Baços acessórios (esplênulos) são variações anatômicas descritas e podem ser confundidos com linfonodos ou massas nos exames de imagem."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico baço",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Baço, tópico anatomia macroscópica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema linfático, tópico baço",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico baço: relações e ligamentos peritoneais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico baço",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico baço: artéria e veia esplênicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico vasos esplênicos",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico baço: inervação pelo plexo celíaco",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico baço: drenagem linfática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema imunitário e órgãos linfoides, tópico baço",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico baço: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Doenças dos glóbulos brancos, linfonodos, baço e timo, tópico esplenomegalia",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:palatine-tonsil-r": {
+    "ids": {},
+    "summary_pt": "A amígdala palatina é um agregado de tecido linfoide situado de cada lado na parte oral da faringe, na fossa tonsilar, entre os arcos palatoglosso (anterior) e palatofaríngeo (posterior). Compõe, com a tonsila faríngea, as tonsilas tubárias e a tonsila lingual, o anel linfático da faringe (anel de Waldeyer), posicionado na entrada dos tratos digestivo e respiratório, onde antígenos inalados e ingeridos contatam o tecido linfoide. A face medial, voltada para a faringe, é recoberta por epitélio e apresenta aberturas de criptas profundas, e a face lateral é revestida por uma cápsula fibrosa que a separa do músculo constritor superior da faringe. Costuma ser maior na infância e tende a involuir após a puberdade. Ao contrário dos linfonodos, não apresenta vasos linfáticos aferentes: o antígeno chega pela superfície epitelial e a linfa sai por vasos eferentes. Esses vasos drenam principalmente para os linfonodos cervicais profundos superiores, em especial o linfonodo jugulodigástrico. Participa da vigilância imunitária da mucosa, com produção de linfócitos e de anticorpos locais, sobretudo da classe IgA. Seu volume e sua inflamação interferem na passagem do ar e do alimento pelo istmo das fauces.",
+    "anatomy": {
+      "relations": "Ocupa a fossa tonsilar, entre os arcos palatoglosso e palatofaríngeo, na parede lateral da parte oral da faringe. O leito tonsilar é formado pela fáscia faringobasilar e pelo músculo constritor superior da faringe; em posição lateral a este situam-se o nervo glossofaríngeo e, mais distantes, vasos de grande calibre do pescoço, como a artéria carótida interna.",
+      "vascularization": "Ramo tonsilar da artéria facial, principal suprimento, com contribuições da artéria faríngea ascendente, de ramos palatinos e do ramo dorsal da língua. A veia palatina externa (paratonsilar) drena para o plexo venoso faríngeo e para a veia facial.",
+      "innervation": "Ramos tonsilares do nervo glossofaríngeo (IX par) e nervos palatinos menores, derivados do nervo maxilar.",
+      "lymph": "Sem vasos linfáticos aferentes. Vasos eferentes drenam para os linfonodos cervicais profundos superiores, em especial o jugulodigástrico, junto ao ângulo da mandíbula."
+    },
+    "histology": {
+      "epithelium": "Epitélio pavimentoso estratificado não queratinizado, que se invagina formando criptas.",
+      "tissues": [
+        "Tecido linfoide difuso e nódulos linfoides, com linfócitos B predominantes e centros germinativos nos nódulos secundários",
+        "Linfócitos T nas zonas interfoliculares",
+        "Cápsula parcial de tecido conjuntivo denso na face profunda, com septos que se dirigem ao parênquima",
+        "Criptas com linfócitos que infiltram o epitélio e restos celulares descamados"
+      ]
+    },
+    "clinical": [
+      "Amigdalite aguda: a inflamação da amígdala palatina, de causa viral ou bacteriana, pode cursar com odinofagia, aumento de volume e linfonodos cervicais aumentados.",
+      "Abscesso periamigdaliano: coleção purulenta que pode se formar entre a cápsula tonsilar e o músculo constritor superior da faringe, como complicação de infecção tonsilar.",
+      "Hipertrofia tonsilar: o aumento de volume pode estreitar o istmo das fauces e a via aérea, sobretudo em crianças, com repercussão sobre a deglutição e o sono.",
+      "Na tonsilectomia, a proximidade com a artéria tonsilar e a veia palatina externa é descrita como relevante para o sangramento do leito."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico faringe: tonsila palatina",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema linfático, tópico tonsilas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema imunitário e órgãos linfoides, tópico tonsilas",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico faringe: fossa tonsilar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico cavidade oral e faringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico faringe: suprimento arterial e venoso da tonsila palatina",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Faringe, tópico tonsila palatina",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico faringe: inervação da tonsila palatina",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico faringe: drenagem linfática da tonsila",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "histology.epithelium",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema imunitário e órgãos linfoides, tópico tonsilas",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema imunitário e órgãos linfoides, tópico tonsilas",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico tonsilas: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Faringe, tópico tonsila palatina: aspectos clínicos",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:intrapulmonary-nodes": {
+    "ids": {},
+    "summary_pt": "Os linfonodos intrapulmonares são pequenos linfonodos localizados no interior do parênquima pulmonar, em geral ao longo das ramificações dos brônquios lobares e segmentares e dos vasos que os acompanham, sobretudo em pontos de bifurcação. Constituem a estação mais periférica da cadeia linfática do pulmão, anterior aos linfonodos broncopulmonares do hilo. Recebem a linfa dos plexos linfáticos do pulmão: o plexo superficial, subpleural, e o plexo profundo, peribrônquico e perivascular, que se comunicam e conduzem a linfa em direção ao hilo. Os vasos eferentes dirigem-se aos linfonodos broncopulmonares (hilares) e, a seguir, aos traqueobronquiais, aos paratraqueais e aos troncos broncomediastinais, que desembocam nos ductos linfáticos ou diretamente nas veias da base do pescoço. Por filtrarem a linfa pulmonar, esses linfonodos retêm partículas inaladas e células, e é comum que se tornem escurecidos em adultos expostos à poluição ou ao tabaco, pelo acúmulo de pigmento carbonáceo nos macrófagos. Sua posição no parênquima os distingue dos linfonodos hilares, e eles nem sempre são visíveis em exames de imagem, o que contribui para sua importância na descrição da disseminação linfática de doenças pulmonares. A ficha vale para ambos os pulmões.",
+    "anatomy": {
+      "relations": "Situam-se no parênquima pulmonar, junto aos brônquios lobares e segmentares e às divisões da artéria pulmonar, em geral nos pontos de bifurcação. São periféricos em relação aos linfonodos broncopulmonares, localizados no hilo do pulmão.",
+      "lymph": "Aferentes: plexos linfáticos superficial (subpleural) e profundo (peribrônquico e perivascular) do pulmão. Eferentes: linfonodos broncopulmonares (hilares), depois traqueobronquiais e paratraqueais, e troncos broncomediastinais. O território drenado é o parênquima pulmonar e a pleura visceral adjacente."
+    },
+    "histology": {
+      "tissues": [
+        "Cápsula de tecido conjuntivo denso, com trabéculas que penetram no parênquima",
+        "Córtex com nódulos linfoides, ricos em linfócitos B e células dendríticas foliculares, alguns com centro germinativo",
+        "Paracórtex com predomínio de linfócitos T e vênulas de endotélio alto",
+        "Medula com cordões medulares (plasmócitos e macrófagos) e seios medulares",
+        "Seios subcapsular e trabeculares sustentados por rede de fibras reticulares e células reticulares",
+        "Macrófagos que podem conter pigmento carbonáceo (antracótico) em indivíduos expostos a partículas inaladas"
+      ]
+    },
+    "clinical": [
+      "Carcinoma broncogênico: a disseminação linfática costuma progredir dos linfonodos intrapulmonares e hilares para as estações mediastinais, e essa sequência é a base do estadiamento linfonodal.",
+      "Antracose: o acúmulo de pigmento carbonáceo nos linfonodos pulmonares é achado associado à inalação de partículas, e em pneumoconioses pode acompanhar-se de aumento linfonodal.",
+      "Infecções granulomatosas e sarcoidose: podem comprometer linfonodos intrapulmonares e hilares, com aumento de volume que é documentado em exames de imagem do tórax."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: drenagem linfática",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema linfático, tópico linfonodos do tórax",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Pulmão, tópico linfonodos pulmonares",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: raiz e hilo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico linfonodos do pulmão e dos brônquios",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: plexos e linfonodos broncopulmonares",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Pulmão, tópico drenagem linfática",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Sistema imunitário e órgãos linfoides, tópico linfonodos",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico carcinoma pulmonar e pneumoconioses",
+        "obraId": "robbins",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico pulmões: correlações clínicas",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  }
+}

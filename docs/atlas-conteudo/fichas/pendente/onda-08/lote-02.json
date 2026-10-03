@@ -1730,7 +1730,7 @@
   },
   "za:tenth-rib-r": {
     "ids": {},
-    "summary_pt": "A décima costela é uma costela falsa e atípica. Diferentemente das costelas típicas, a cabeça tem uma única face articular, que se articula apenas com o corpo da vértebra T10, e não com a vértebra superior. O tubérculo articula-se com o processo transverso de T10. O corpo é relativamente curto, com sulco da costela menos marcado, e a cartilagem costal une-se à cartilagem da nona costela, constituindo a parte inferior do arco costal. A margem inferior da décima cartilagem costal é o ponto mais baixo da margem costal, e o plano subcostal, que passa pela margem inferior dessa cartilagem, localiza-se aproximadamente no nível de L3. Na face externa fixam-se as digitações do oblíquo externo do abdome, o serrátil posterior inferior e o latíssimo do dorso, e, na face interna da cartilagem, origem do diafragma e do transverso do abdome. Na linha axilar média, a pleura costal cruza a décima costela, ao passo que o pulmão termina na oitava, e o recesso costodiafragmático situa-se entre as duas. Profundamente, o diafragma separa a costela, à direita, do fígado, e, à esquerda, do baço e do estômago.",
+    "summary_pt": "A décima costela é uma costela falsa e atípica. Diferentemente das costelas típicas, a cabeça tem uma única face articular, que se articula apenas com o corpo da vértebra T10, e não com a vértebra superior. O tubérculo articula-se com o processo transverso de T10. O corpo tem ângulo e sulco da costela, e a cartilagem costal une-se à cartilagem da nona costela, constituindo a parte inferior do arco costal. A margem inferior da décima cartilagem costal é o ponto mais baixo da margem costal, e o plano subcostal, que passa pela margem inferior dessa cartilagem, localiza-se aproximadamente no nível de L3. Na face externa fixam-se as digitações do oblíquo externo do abdome, o serrátil posterior inferior e o latíssimo do dorso, e, na face interna da cartilagem, origem do diafragma e do transverso do abdome. Na linha axilar média, a pleura costal cruza a décima costela, ao passo que o pulmão termina na oitava, e o recesso costodiafragmático situa-se entre as duas. Profundamente, o diafragma separa a costela, à direita, do fígado, e, à esquerda, do baço e do estômago.",
     "anatomy": {
       "relations": "Articula-se com a vértebra T10 por uma única face articular (articulação da cabeça da costela), com o processo transverso de T10 (articulação costotransversária) e, por meio da cartilagem costal, com a cartilagem da nona costela (articulação interconcondral). Inserções: oblíquo externo do abdome, serrátil posterior inferior, latíssimo do dorso, origem do diafragma e do transverso do abdome (face interna da cartilagem), intercostais externos e internos e levantadores das costelas.",
       "vascularization": "Ramos periosteais e nutrícios das artérias intercostais posteriores do décimo espaço, ramos da parte torácica da aorta, com contribuição de ramos da artéria musculofrênica para a parte anterior.",
@@ -1745,8 +1745,8 @@
     },
     "clinical": [
       "Plano subcostal: a margem inferior da décima cartilagem costal marca o plano subcostal, referência de superfície para a região do abdome, aproximadamente no nível de L3.",
-      "Recesso costodiafragmático: o espaço pleural que se estende abaixo do limite do pulmão, na altura da décima costela, pode acumular líquido pleural em derrames, e a décima costela é referência na avaliação dessa região.",
-      "Fraturas das costelas inferiores: podem se associar a lesão do diafragma, do fígado ou do baço, e a mobilidade das extremidades anteriores pode aumentar a dor ao movimento."
+      "Recesso costodiafragmático: na linha axilar média, a pleura costal alcança a décima costela, enquanto o pulmão termina na oitava; o recesso entre esses limites é local em que o líquido pleural pode acumular-se nos derrames.",
+      "Fraturas das costelas inferiores: podem associar-se a lesão do diafragma, do fígado ou do baço, conforme o lado e a intensidade do traumatismo."
     ],
     "sources": [
       {
@@ -1842,7 +1842,7 @@
   },
   "za:eleventh-rib-r": {
     "ids": {},
-    "summary_pt": "A décima primeira costela é uma costela flutuante, ou vertebral, e atípica: não se une ao esterno nem às cartilagens das costelas vizinhas, e sua extremidade anterior termina livre na parede lateral do abdome, com uma pequena cartilagem. A cabeça tem uma única face articular, para o corpo da vértebra T11, e a costela não possui colo bem definido nem tubérculo, de modo que não há articulação costotransversária. O ângulo e o sulco da costela são pouco evidentes. É curta, com leve curvatura, e a extremidade livre é palpável na região lateral do flanco. Na face externa fixam-se partes do oblíquo externo do abdome, do serrátil posterior inferior e do latíssimo do dorso; na face interna, digitações do diafragma e do transverso do abdome. Posteriormente, a costela relaciona-se com o músculo iliocostal e, por sua posição, com o recesso costodiafragmático, com o polo superior do rim esquerdo, geralmente mais elevado que o direito, e com o baço. Por isso, a décima primeira costela é referência para a região posterior do flanco e para estruturas retroperitoneais altas, embora a localização exata dependa de variações individuais.",
+    "summary_pt": "A décima primeira costela é uma costela flutuante, ou vertebral, e atípica: não se une ao esterno nem às cartilagens das costelas vizinhas, e sua extremidade anterior termina livre na parede lateral do abdome, com uma pequena cartilagem. A cabeça tem uma única face articular, para o corpo da vértebra T11, e a costela não possui colo bem definido nem tubérculo, de modo que não há articulação costotransversária. O ângulo e o sulco da costela são pouco evidentes. É curta, com leve curvatura, e a extremidade livre pode ser palpável na região lateral do flanco. Na face externa fixam-se partes do oblíquo externo do abdome, do serrátil posterior inferior e do latíssimo do dorso; na face interna, digitações do diafragma e do transverso do abdome. Posteriormente, a costela relaciona-se com o músculo iliocostal e, por sua posição, pelo diafragma, com o recesso costodiafragmático e, de modo variável, com o polo superior dos rins e com o baço. A décima primeira costela serve, assim, de referência para o flanco posterior e para estruturas retroperitoneais altas, embora a localização exata dependa de variações individuais.",
     "anatomy": {
       "relations": "Articula-se apenas com o corpo da vértebra T11 (articulação da cabeça da costela); não há articulação costotransversária nem união com a cartilagem de outra costela. Inserções: oblíquo externo do abdome, serrátil posterior inferior, latíssimo do dorso, iliocostal, parte costal do diafragma, transverso do abdome, intercostais externos e internos e levantadores das costelas.",
       "vascularization": "Ramos periosteais e nutrícios das artérias intercostais posteriores do décimo primeiro espaço, ramos da parte torácica da aorta.",
@@ -1856,9 +1856,9 @@
       ]
     },
     "clinical": [
-      "Costelas flutuantes: a extremidade livre, mais móvel, pode amortecer parte do impacto, mas fraturas das costelas inferiores podem associar-se a lesão de rim, baço ou fígado.",
-      "Referência retroperitoneal: a décima primeira costela relaciona-se com a parte superior do rim, pois os rins se projetam, em parte, sob as últimas costelas; a dor de origem renal pode ser sentida no flanco.",
-      "Costela supranumerária ou ausência de costela: a contagem a partir de uma costela flutuante pode ser comprometida em variações do número de costelas."
+      "Fraturas das costelas inferiores (décima a décima segunda): podem associar-se a lesão do rim, do baço, do fígado ou do diafragma, conforme o lado.",
+      "Relação com o rim: os rins projetam-se, em parte, sob as últimas costelas, e a dor de origem renal costuma ser referida ao flanco e ao dorso.",
+      "Variações do número de costelas, como costelas cervicais ou lombares, podem dificultar a identificação do nível costal."
     ],
     "sources": [
       {
@@ -1942,6 +1942,345 @@
         "field": "clinical",
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:parietal-bone-r": {
+    "ids": {},
+    "summary_pt": "O osso parietal é um osso plano, de contorno quadrangular, que forma grande parte da face lateral e do teto da calvária. A face externa é convexa, com a eminência parietal (túber parietal), ponto de maior convexidade e de início da ossificação, e as linhas temporais superior e inferior, que limitam a fossa temporal e dão fixação à fáscia e ao músculo temporal. Pode-se observar o forame parietal, que transmite uma veia emissária. A face interna é côncava e marcada pelos sulcos das artérias meníngeas, pelo sulco do seio sagital superior, ao longo da margem sagital, e, perto do ângulo mastóideo, pelo sulco do seio sigmóideo, além de depressões das granulações aracnóideas. As quatro margens, sagital, frontal, occipital e escamosa, articulam-se, respectivamente, com o parietal contralateral, o frontal, o occipital e a parte escamosa do temporal por suturas. O ângulo esfenoidal, anteroinferior, participa do ptério, região em que se encontram o frontal, o parietal, o esfenoide e o temporal. Como a maioria dos ossos da calvária, é formado por duas lâminas compactas e uma camada esponjosa intermédia, o díploe, de espessura variável.",
+    "anatomy": {
+      "relations": "Articula-se, por suturas, com o parietal contralateral (sutura sagital), com o frontal (sutura coronal), com o occipital (sutura lambdóidea), com o temporal (sutura escamosa) e com a asa maior do esfenoide. Acidentes: eminência parietal, linhas temporais superior e inferior, forame parietal, sulcos das artérias meníngeas, sulco do seio sagital superior e sulco do seio sigmóideo. Inserções: músculo temporal e fáscia temporal nas linhas temporais; o epicrânio e a gálea aponeurótica relacionam-se com a face externa.",
+      "vascularization": "Ramos das artérias meníngeas, sobretudo da artéria meníngea média, ramo da artéria maxilar, irrigam a lâmina interna e o díploe; ramos da artéria temporal superficial e da artéria occipital irrigam o pericrânio e a face externa. As veias diploicas e emissárias comunicam o díploe com os seios da dura-máter e com veias do couro cabeludo.",
+      "innervation": "Ramos meníngeos do nervo trigêmeo inervam a dura-máter adjacente; o periósteo externo (pericrânio) recebe fibras de nervos do couro cabeludo, como o auriculotemporal (V3), o occipital maior (ramo posterior de C2) e ramos do supraorbital (V1)."
+    },
+    "histology": {
+      "tissues": [
+        "Duas lâminas de osso compacto (tábua externa e tábua interna) separadas por osso esponjoso (díploe), com medula óssea vermelha",
+        "Ossificação intramembranosa a partir de um centro de ossificação, com formação óssea direta a partir de tecido conjuntivo mesenquimal",
+        "Periósteo externo (pericrânio) e dura-máter como periósteo interno; osteoblastos, osteócitos e osteoclastos",
+        "Suturas de tecido conjuntivo denso fibroso entre os ossos, que permitem o crescimento do crânio"
+      ]
+    },
+    "clinical": [
+      "Fratura da região do ptério: o osso é relativamente delgado nessa região, e a artéria meníngea média pode ser lesada, com formação de hematoma epidural.",
+      "Craniossinostose: o fechamento precoce de uma sutura, como a sagital, altera o crescimento do crânio e a forma da cabeça, como na escafocefalia.",
+      "Fontanelas: no recém-nascido, as membranas fibrosas entre os parietais e os ossos vizinhos, como as fontanelas anterior e posterior, permitem a moldagem da cabeça no parto e o crescimento do encéfalo."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária: osso parietal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária: osso parietal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): calvária: osso parietal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária: osso parietal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária: osso parietal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária: osso parietal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária: osso parietal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária: osso parietal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária: osso parietal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico ossificação intramembranosa; osso compacto e díploe",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária: osso parietal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária: fraturas, suturas e ptério",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:frontal-bone": {
+    "ids": {},
+    "summary_pt": "O osso frontal forma a fronte, a parte anterior da calvária, o teto das órbitas e parte da fossa anterior do crânio. Possui uma parte escamosa, vertical e convexa, com a glabela, os arcos superciliares e as margens supraorbitais, que podem exibir uma incisura ou forame supraorbital para os vasos e o nervo de mesmo nome; duas partes orbitais, horizontais, que formam o teto das órbitas e se separam pela incisura etmoidal; e uma parte nasal, que se articula com os ossos nasais. Na face orbital, a fossa da glândula lacrimal e a fóvea troclear estão presentes. A face interna apresenta o sulco do seio sagital superior e a crista frontal, onde se prende a foice do cérebro, e o forame cego. No interior do osso, os seios frontais, cavidades de ar pares, comunicam-se com a cavidade nasal. O frontal articula-se com os parietais pela sutura coronal, com o esfenoide, o etmoide, os ossos nasais, as maxilas, os lacrimais e os zigomáticos. Origina-se de dois centros de ossificação, que normalmente se fundem na infância, formando um osso único.",
+    "anatomy": {
+      "relations": "Articula-se com os parietais (sutura coronal), com o esfenoide (asas maior e menor), com o etmoide, com os ossos nasais, com as maxilas, com os lacrimais e com os zigomáticos. Acidentes: glabela, arcos superciliares, margens supraorbitais, incisura ou forame supraorbital, fossa da glândula lacrimal, fóvea troclear, espinha nasal, crista frontal, forame cego e seios frontais. Inserções: corrugador do supercílio no arco superciliar; músculo temporal na face temporal; tróclea do músculo oblíquo superior na fóvea troclear; origem do orbicular do olho próxima à margem orbital medial; o ventre frontal do occipitofrontal relaciona-se com a pele e a gálea aponeurótica.",
+      "vascularization": "Ramos das artérias supraorbital e supratroclear, ramos da artéria oftálmica, irrigam a porção anterior e o seio frontal; a artéria etmoidal anterior contribui; a artéria temporal superficial irriga o couro cabeludo adjacente. As veias diploicas e emissárias drenam para veias supraorbital e supratroclear.",
+      "innervation": "Os nervos supraorbital e supratroclear (ramos do nervo frontal, divisão oftálmica do nervo trigêmeo) inervam o couro cabeludo da fronte e o periósteo adjacente, e o seio frontal recebe fibras do nervo supraorbital. A dura-máter da fossa anterior recebe ramos meníngeos do nervo trigêmeo."
+    },
+    "histology": {
+      "tissues": [
+        "Duas lâminas de osso compacto (tábua externa e tábua interna) separadas por díploe, com osso esponjoso e medula óssea vermelha",
+        "Ossificação intramembranosa a partir de dois centros de ossificação, que se fundem na sutura frontal",
+        "Seio frontal revestido por mucosa respiratória (epitélio pseudoestratificado ciliado com células caliciformes) sobre lâmina própria fina",
+        "Periósteo e pericrânio externos; osteoblastos, osteócitos e osteoclastos"
+      ]
+    },
+    "clinical": [
+      "Sinusite frontal: o seio frontal drena para o meato médio da cavidade nasal por meio do ducto frontonasal, e a inflamação com edema pode dificultar essa drenagem.",
+      "Fraturas da região frontal: traumatismos diretos podem deprimir a tábua externa ou comprometer o seio frontal; fraturas do teto da órbita ou da fossa anterior do crânio podem associar-se a equimose periorbitária ou saída de líquido cerebrospinal pelo nariz.",
+      "Lesão do nervo supraorbital: pode provocar alteração de sensibilidade na fronte e no couro cabeludo anterior."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária e face: osso frontal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária e face: osso frontal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): calvária e face: osso frontal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária e face: osso frontal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária e face: osso frontal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária e face: osso frontal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária e face: osso frontal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária e face: osso frontal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico calvária e face: osso frontal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico ossificação intramembranosa; osso compacto e díploe",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico calvária e face: osso frontal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico osso frontal: fraturas e seio frontal",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:sacrum": {
+    "ids": {},
+    "summary_pt": "O sacro é um osso triangular, resultante da fusão das cinco vértebras sacrais, que forma a parede posterior da pelve óssea e transmite o peso do tronco aos ossos coxais. Diferentemente das vértebras lombares, as vértebras sacrais não têm discos intervertebrais funcionais no adulto, e os corpos fundidos apresentam linhas transversas e, na face pélvica, quatro pares de forames sacrais anteriores. A base articula-se com a quinta vértebra lombar, com o promontório como projeção anterior, e o ápice articula-se com o cóccix. As partes laterais, formadas pela fusão dos processos transversos e costais, têm a face auricular, que se articula com o ílio na articulação sacroilíaca. A face dorsal, convexa e irregular, apresenta a crista sacral mediana, formada pela fusão dos processos espinhosos, as cristas sacrais intermédias e laterais e quatro pares de forames sacrais posteriores. O canal sacral, continuação do canal vertebral, abriga a cauda equina e termina no hiato sacral, limitado pelos cornos sacrais. O sacro é mais largo e curto no sexo feminino, e a curvatura côncava anterior é um dos fatores que moldam o canal do parto.",
+    "anatomy": {
+      "relations": "Articula-se com a vértebra L5 (articulação lombossacral, com disco intervertebral), com o cóccix (articulação sacrococcígea) e com os ossos coxais (articulações sacroilíacas). Acidentes: promontório, asa do sacro, face auricular, tuberosidade sacral, forames sacrais anteriores e posteriores, crista sacral mediana, hiato sacral e cornos sacrais. Inserções: piriforme na face pélvica; glúteo máximo, multífido e eretor da espinha na face dorsal; origem do isquiococcígeo e ligamentos sacroilíacos, sacroespinal e sacrotuberal nas margens laterais.",
+      "vascularization": "Recebe ramos das artérias sacrais laterais (ramos da artéria ilíaca interna) e da artéria sacral mediana (ramo da aorta); ramos espinais passam pelos forames sacrais anteriores e irrigam o canal sacral e seu conteúdo.",
+      "innervation": "Os ramos anteriores dos nervos espinais sacrais emergem pelos forames sacrais anteriores e formam o plexo sacral; os ramos posteriores saem pelos forames posteriores. O quinto nervo sacral e o nervo coccígeo saem pelo hiato sacral. O periósteo é sensível, com fibras que acompanham os nervos regionais."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso (trabecular) abundante, com medula óssea vermelha hematopoiética, envolto por camada de osso compacto relativamente fina",
+        "Cartilagem articular recobrindo a face auricular e fibrocartilagem no disco intervertebral lombossacral (anel fibroso e núcleo pulposo)",
+        "Articulação sacroilíaca com parte sinovial e parte fibrosa (ligamentos sacroilíacos interósseos)"
+      ]
+    },
+    "clinical": [
+      "Hiato sacral: referência de acesso ao espaço epidural na anestesia caudal; o canal sacral contém tecido adiposo, plexo venoso e raízes nervosas, e o saco dural termina em nível mais alto.",
+      "Variações de segmentação: a sacralização da quinta vértebra lombar e a lombarização da primeira vértebra sacral alteram o número de vértebras livres e podem dificultar a identificação dos níveis.",
+      "Espinha bífida oculta: o fechamento incompleto do arco vertebral, frequentemente descrito nas vértebras sacrais superiores e lombares inferiores, geralmente sem sintomas.",
+      "Fraturas do sacro: podem associar-se a lesões das raízes dos nervos sacrais, com alterações de sensibilidade e de função vesical e intestinal."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico sacro",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico sacro",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): sacro",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico sacro",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico sacro",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico sacro",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico sacro",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico sacro",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico sacro",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; cartilagem e fibrocartilagem",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico sacro",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico sacro: hiato sacral, variações e fraturas",
         "obraId": "moore",
         "license": "citação"
       }
