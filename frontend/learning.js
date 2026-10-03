@@ -233,6 +233,19 @@
     return frame;
   }
 
+  /** Link compartilhado (#atlas=<sid>): abre o Atlas já na estrutura (Onda 3.5, C.2). */
+  function openAtlasLink(sid) {
+    var mod = findModule('anatomia');
+    if (!mod || typeof sid !== 'string' || !/^[A-Za-z0-9:_.-]{1,120}$/.test(sid)) return false;
+    if (!frames.anatomia) {
+      frames.anatomia = createFrame($('learn-frames'), mod.path + '#sid=' + sid, mod.title);
+    } else {
+      try { frames.anatomia.contentWindow.location.hash = 'sid=' + sid; } catch (e) { /* outro domínio: abre sem a estrutura */ }
+    }
+    openModule('anatomia');
+    return true;
+  }
+
   function openModule(id) {
     var mod = findModule(id);
     if (!mod) return;
@@ -422,6 +435,7 @@
     loadPanel: loadPanel,
     loadFiscalPanel: loadFiscalPanel,
     openModule: openModule,
+    openAtlasLink: openAtlasLink,
     closeModule: closeModule,
     onProfileReady: onProfileReady,
     reset: reset,

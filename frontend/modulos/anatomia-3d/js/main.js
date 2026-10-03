@@ -496,9 +496,24 @@ async function boot() {
     const side = SIDE_PT[entry.side];
     return side && !/(esquerd|direit)/i.test(base) ? `${base} (${side})` : base;
   }
+  // C.2: link da estrutura = página da plataforma + #atlas=<sid> (app.js abre o módulo e repassa o sid).
+  async function shareStructure(sid) {
+    const url = `${new URL('../../', window.location.href).href}#atlas=${sid}`;
+    const title = `Atlas 3D: ${labelFor(sid)}`;
+    try {
+      if (typeof navigator.share === 'function' && isMobileViewport()) { await navigator.share({ title, url }); return 'Compartilhado.'; }
+    } catch (e) { if (e && e.name === 'AbortError') return ''; }
+    try { await navigator.clipboard.writeText(url); return 'Link copiado.'; } catch (e) { return `Copie o link: ${url}`; }
+  }
   // ---- Ficha (infocard) — inspetor (tablet/desktop) e painel (celular) ----
   const infocard = createInfoCard(getSlot('inspector') || document.getElementById('atlas-inspector'), {
+    isPinned: async (sid) => {
+      const st = await studyStorePromise;
+      return !!st && (await st.listPins()).some((p) => p.sid === sid);
+    },
     onAction: ({ action, sid }) => {
+      if (action === 'pin') return studyStorePromise.then((st) => (st ? st.togglePin({ sid, label: labelFor(sid) }) : false));
+      if (action === 'share') return shareStructure(sid);
       if (action === 'isolate') emit(EVENTS.VISIBILITY_ISOLATE, { sid });
       if (action === 'hide') emit(EVENTS.VISIBILITY_HIDE, { sid });
       if (action === 'ghost') emit(EVENTS.VISIBILITY_GHOST, { sid });
@@ -1035,6 +1050,7 @@ async function boot() {
       return m.createStudyMode({
         bus, store: studyStore, getLabel: labelFor, recordOwnHistory: false,
         getReviewed: async () => reviewedProgress(await studyStore.listHistory({ limit: 500 }), reviewStatus.statusOf, reviewStatus.counts.r),
+        getNovidades: () => fetchJson(`${CONTENT_BASE}novidades.json`),
       });
     }),
   };

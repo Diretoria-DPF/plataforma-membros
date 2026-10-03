@@ -9,16 +9,12 @@
  *  - Celular e desktop; sem erros de JavaScript.
  */
 const { startApp, check } = require('./harness');
-const mirror = require('./cdn-mirror');
 
-async function runAt(viewport, pkgs) {
+async function runAt(viewport) {
   const label = `${viewport.width}×${viewport.height}`;
   const app = await startApp({ role: 'member', viewport });
-  await app.context.route('https://cdn.jsdelivr.net/**', (route) => {
-    const file = pkgs && mirror.resolveCdnUrl(pkgs, route.request().url());
-    if (!file) return route.abort();
-    return route.fulfill({ status: 200, contentType: file.contentType, body: file.body, headers: { 'Access-Control-Allow-Origin': '*' } });
-  });
+  const atlasCdn = [];
+  app.context.on('request', (r) => { try { if (/jsdelivr/.test(r.url()) && /anatomia-3d/.test(r.frame().url())) atlasCdn.push(r.url()); } catch (e) { /* sem frame */ } });
   try {
     await app.login();
     const frame = await app.openModule('anatomia');
@@ -56,8 +52,8 @@ async function runAt(viewport, pkgs) {
     check(await frame.evaluate(() => !document.querySelector('.tab-button #pk-panel') && !!document.querySelector('.pharma-panel #pk-panel')), `${label}: painel PK/PD fica no painel da aba, não dentro do botão`);
     check(/F [\d,]+/.test(ui.params) && /Vd/.test(ui.params), `${label}: parâmetros usados visíveis (${ui.params})`);
     check(ui.legacy === ref.legacy, `${label}: aviso de rascunho ${ref.legacy ? 'presente' : 'ausente'} conforme o status do composto`);
-    if (pkgs) check(ui.chart && ui.cp && ui.eff, `${label}: gráficos Cp(t) e E(t) desenhados`);
-    else check(!ui.cp, `${label}: sem Chart.js, só o resumo em texto`);
+    check(ui.chart && ui.cp && ui.eff, `${label}: gráficos Cp(t) e E(t) desenhados (Chart.js do próprio site)`);
+    check(atlasCdn.length === 0, `${label}: o atlas não pede nada ao jsDelivr${atlasCdn.length ? ' (' + atlasCdn.join(',') + ')' : ''}`);
     // ---- M1: abas do composto [PK/PD] [Clínica] [Interações] ----
     const tabs = await frame.evaluate(async () => {
       const q = (s) => document.querySelector(s);
@@ -112,7 +108,6 @@ async function runAt(viewport, pkgs) {
 }
 
 module.exports = async function atlasFarmaco() {
-  const pkgs = mirror.ensureMirror();
-  await runAt({ width: 1280, height: 800 }, pkgs);
-  await runAt({ width: 390, height: 844 }, pkgs);
+  await runAt({ width: 1280, height: 800 });
+  await runAt({ width: 390, height: 844 });
 };

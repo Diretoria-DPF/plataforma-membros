@@ -49,3 +49,17 @@ test('resumo ao aluno e última estrutura estudada', () => {
   assert.equal(lastStudiedSid([], () => true), null);
   assert.equal(lastStudiedSid([{ type: 'quiz', sid: 'za:q', at: 99 }], () => true), null);
 });
+
+import { studyStats } from '../../modulos/anatomia-3d/js/modes/study-io.js';
+
+test('studyStats: estruturas distintas (lados juntos), quizzes e sequência de dias', () => {
+  const day = 86400000;
+  const now = new Date(2026, 9, 10, 15).getTime();
+  const h = (type, sid, daysAgo) => ({ type, sid, at: now - daysAgo * day });
+  const hist = [h('select', 'za:kidney-l', 0), h('select', 'za:kidney-r', 0), h('select', 'za:heart', 1), h('quiz', null, 2), h('select', 'za:x', 5)];
+  assert.deepEqual(studyStats(hist, now), { structures: 3, quizzes: 1, days: 4, streak: 3 });
+  assert.equal(studyStats([h('select', 'za:a', 1)], now).streak, 1, 'ontem ainda conta');
+  assert.equal(studyStats([h('select', 'za:a', 3)], now).streak, 0, 'sequência quebrada');
+  assert.deepEqual(studyStats([], now), { structures: 0, quizzes: 0, days: 0, streak: 0 });
+  assert.equal(studyStats([{ type: 'select', sid: 'za:a' }, null], now).structures, 0);
+});

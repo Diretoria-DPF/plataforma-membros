@@ -1911,8 +1911,8 @@
     "summary_pt": "A fíbula é o osso longo, fino e lateral da perna, situado paralelamente à tíbia. Em contraste com a tíbia, não participa da articulação do joelho e transmite pouca carga, servindo sobretudo de local de origem de músculos da perna e de estabilização da articulação talocrural. A extremidade proximal compreende a cabeça, com face articular para o côndilo lateral da tíbia e ápice voltado para cima, e o colo, em torno do qual passa o nervo fibular comum. O corpo apresenta margens anterior, interóssea e posterior e faces lateral, medial e posterior, esta com a crista medial. A margem interóssea dá fixação à membrana interóssea da perna. Distalmente, a fíbula expande-se no maléolo lateral, que é mais longo e desce mais que o maléolo medial; sua face medial tem a face articular do maléolo, para o tálus, e, posteriormente, a fossa do maléolo lateral, onde se fixa o ligamento talofibular posterior. Uma incisura fibular da tíbia recebe a extremidade distal da fíbula na sindesmose tibiofibular. O maléolo lateral limita a movimentação lateral do tálus e dá origem aos ligamentos laterais do tornozelo.",
     "anatomy": {
       "relations": "Articula-se proximalmente com a tíbia (articulação tibiofibular, sinovial) e distalmente com a tíbia (sindesmose tibiofibular) e com o tálus (face articular do maléolo lateral, na articulação talocrural). Acidentes: cabeça, ápice da cabeça, colo, margens anterior, interóssea e posterior, faces lateral, medial e posterior, crista medial, maléolo lateral, fossa do maléolo lateral e sulco maleolar. Inserções e origens: ápice da cabeça dá inserção ao tendão do bíceps femoral e ao ligamento colateral fibular; originam-se na fíbula os músculos fibulares longo, curto e terceiro, extensor longo dos dedos, extensor longo do hálux, sóleo, flexor longo do hálux e tibial posterior; fixam-se os ligamentos talofibulares anterior e posterior e o calcaneofibular, no maléolo lateral.",
-      "vascularization": "A diáfise é irrigada pela artéria nutrícia da fíbula, ramo da artéria fibular, que penetra por forame nutrício na face posterior; ramos periosteais da artéria fibular completam o suprimento. A cabeça e o colo recebem ramos da artéria circunflexa fibular e de ramos da artéria tibial anterior, anastomosados com a rede articular do joelho, e o maléolo lateral recebe ramos maleolares da artéria fibular e da tibial anterior.",
-      "innervation": "O periósteo e o osso são inervados por fibras sensitivas que acompanham os vasos nutrícios. O nervo fibular comum contorna o colo da fíbula, e seus ramos fibular superficial e fibular profundo seguem em compartimentos vizinhos. A articulação tibiofibular proximal recebe ramos do nervo fibular comum e do nervo do músculo poplíteo; a sindesmose e a articulação talocrural, de ramos dos nervos tibial, fibular profundo e sural."
+      "vascularization": "A diáfise é irrigada pela artéria nutrícia da fíbula, ramo da artéria fibular, que penetra por forame nutrício, em geral na face posterior; ramos periosteais da artéria fibular completam o suprimento. A cabeça e o colo recebem ramos da artéria circunflexa fibular e da rede articular do joelho, e o maléolo lateral recebe ramos maleolares da artéria fibular e da tibial anterior.",
+      "innervation": "O periósteo e o osso são inervados por fibras sensitivas que acompanham os vasos nutrícios. O nervo fibular comum contorna o colo da fíbula, e seus ramos fibular superficial e fibular profundo seguem em compartimentos vizinhos. A articulação tibiofibular proximal recebe ramos do nervo fibular comum e do nervo do músculo poplíteo; a sindesmose e a articulação talocrural, de ramos dos nervos tibial e fibular profundo."
     },
     "histology": {
       "tissues": [
@@ -2028,22 +2028,22 @@
   },
   "za:first-rib-r": {
     "ids": {},
-    "summary_pt": "A primeira costela é a mais curta, larga e curva das costelas e a mais robusta, com face superior e inferior em vez de faces externa e interna, em posição quase horizontal. Articula-se posteriormente com T1, por meio da cabeça, que tem uma única face articular, e do tubérculo, que se apoia no processo transverso; anteriormente, sua cartilagem costal liga-se ao manúbrio do esterno por sincondrose. Na face superior, o tubérculo do músculo escaleno anterior separa dois sulcos: anteriormente, o sulco da veia subclávia e, posteriormente, o sulco da artéria subclávia, no qual também repousa o tronco inferior do plexo braquial. Atrás do sulco arterial, há uma área rugosa para a fixação do músculo escaleno médio. A margem interna dá fixação à membrana suprapleural, que cobre a cúpula da pleura, e a face lateral recebe a primeira digitação do músculo serrátil anterior. A extremidade anterior mantém contato com o músculo subclávio e com o ligamento costoclavicular. A primeira costela delimita, com a clavícula, o canal cervicoaxilar e é uma referência para a localização da cúpula da pleura e do ápice do pulmão.",
+    "summary_pt": "A primeira costela é a mais curta, larga e curva das costelas e a mais robusta, com face superior e inferior em vez de faces externa e interna, em posição quase horizontal. Articula-se posteriormente com T1, por meio da cabeça, que tem uma única face articular, e do tubérculo, que se apoia no processo transverso; anteriormente, sua cartilagem costal liga-se ao manúbrio do esterno por sincondrose. Na face superior, o tubérculo do músculo escaleno anterior separa dois sulcos: anteriormente, o sulco da veia subclávia e, posteriormente, o sulco da artéria subclávia, no qual também repousa o tronco inferior do plexo braquial. Atrás do sulco arterial, há uma área rugosa para a fixação do músculo escaleno médio. A margem interna dá fixação à membrana suprapleural, que cobre a cúpula da pleura, e a face lateral recebe a primeira digitação do músculo serrátil anterior. A extremidade anterior mantém contato com o músculo subclávio e com o ligamento costoclavicular. Com T1 e o manúbrio, a primeira costela delimita a abertura superior do tórax e relaciona-se com a cúpula da pleura e o ápice do pulmão.",
     "anatomy": {
-      "relations": "Articula-se com T1 (articulação da cabeça da costela, por face única, e articulação costotransversária) e com o manúbrio (sincondrose da primeira cartilagem costal). Acidentes: cabeça, colo, tubérculo, ângulo, sulco da veia subclávia, tubérculo do músculo escaleno anterior, sulco da artéria subclávia e margens interna e externa. Inserções: escalenos anterior e médio, subclávio (extremidade anterior), primeira digitação do serrátil anterior, primeiro músculo intercostal externo, ligamento costoclavicular e membrana suprapleural; nela também se fixam fibras do músculo escaleno mínimo, quando presente.",
-      "vascularization": "A primeira artéria intercostal posterior origina-se da artéria intercostal suprema, ramo do tronco costocervical da artéria subclávia, e supre o periósteo e o osso, com ramos da artéria torácica interna pela parte anterior. A artéria subclávia e a veia subclávia passam sobre a costela, sem lhe dar ramos principais.",
-      "innervation": "O periósteo é inervado pelo primeiro nervo intercostal, que é ramo ventral de T1; a maior parte das fibras de T1 contribui para o plexo braquial, e apenas um pequeno ramo segue como nervo intercostal. A articulação costovertebral recebe ramos dos ramos posteriores adjacentes."
+      "relations": "Articula-se com T1 (articulação da cabeça da costela, por face única, e articulação costotransversária) e com o manúbrio (sincondrose da primeira cartilagem costal). Acidentes: cabeça, colo, tubérculo, ângulo, sulco da veia subclávia, tubérculo do músculo escaleno anterior, sulco da artéria subclávia e margens interna e externa. Inserções: escalenos anterior e médio, subclávio (extremidade anterior), primeira digitação do serrátil anterior, primeiro músculo intercostal externo, ligamento costoclavicular e membrana suprapleural.",
+      "vascularization": "A primeira artéria intercostal posterior origina-se da artéria intercostal suprema, ramo do tronco costocervical da artéria subclávia, e supre o periósteo e o osso, com ramos da artéria torácica interna pela parte anterior.",
+      "innervation": "O periósteo é inervado pelo primeiro nervo intercostal, que é ramo ventral de T1; a maior parte das fibras de T1 contribui para o plexo braquial, e apenas um pequeno ramo segue como nervo intercostal."
     },
     "histology": {
       "tissues": [
-        "Osso compacto cortical espesso na face externa, com osso esponjoso e medula óssea vermelha hematopoiética no interior",
+        "Osso compacto cortical delgado na superfície, com osso esponjoso e medula óssea vermelha hematopoiética no interior",
         "Periósteo e endósteo com osteoblastos, osteócitos e osteoclastos; cartilagem articular hialina na cabeça e no tubérculo, e cartilagem costal hialina com pericôndrio na extremidade anterior",
         "Articulação costotransversária e articulação da cabeça da costela: cartilagem hialina e cápsula articular de tecido conjuntivo denso"
       ]
     },
     "clinical": [
       "Síndrome do desfiladeiro torácico: a compressão do plexo braquial (em especial do tronco inferior) e dos vasos subclávios entre os escalenos, a primeira costela e a clavícula, às vezes por costela cervical ou banda fibrosa, causa dor, parestesias e alterações vasculares no membro superior.",
-      "Fratura da primeira costela: geralmente associada a traumatismos de maior energia, pode relacionar-se com lesão da artéria subclávia, do plexo braquial ou da cúpula da pleura, por conta dessas relações com a costela.",
+      "Fratura da primeira costela: descrita em traumatismos de maior energia, pode relacionar-se com lesão da artéria subclávia, do plexo braquial ou da cúpula da pleura, em razão da proximidade dessas estruturas com a costela.",
       "Tumor de Pancoast: o carcinoma do sulco superior do pulmão pode invadir a primeira costela, o plexo braquial e o tronco simpático, causando dor no ombro e na face medial do braço e síndrome de Horner."
     ],
     "sources": [
@@ -2136,6 +2136,363 @@
         "type": "textbook",
         "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico carcinoma de pulmão e tumor do sulco superior (Pancoast)",
         "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:twelfth-rib-r": {
+    "ids": {},
+    "summary_pt": "A décima segunda costela é a mais caudal e, em geral, a mais curta das costelas, sendo classificada como costela flutuante, porque a extremidade anterior não se liga ao esterno nem a outra cartilagem costal. A cabeça apresenta uma única face articular, para o corpo de T12, e a costela não tem colo, tubérculo nem ângulo bem definidos, nem articulação com o processo transverso. O corpo é delgado, com sulco da costela pouco marcado, e termina anteriormente em uma pequena cartilagem pontiaguda embutida na parede abdominal posterior. A 12ª costela serve de ponto de fixação a músculos e ligamentos do dorso, do diafragma e da parede abdominal: nela se inserem o quadrado do lombo, o serrátil posterior inferior e o latíssimo do dorso, e a parte costal do diafragma origina-se de sua face interna. O ligamento arqueado lateral do diafragma estende-se do processo costal de L1 até a margem inferior da costela. O nervo subcostal, ramo ventral de T12, e os vasos subcostais correm logo abaixo dela. A costela situa-se posteriormente ao rim, e a reflexão inferior da pleura pode projetar-se até ela, ou abaixo dela, na parte posterior.",
+    "anatomy": {
+      "relations": "Articula-se apenas com T12, por meio da articulação da cabeça da costela (face articular única); não há articulação costotransversária. Acidentes: cabeça, corpo, extremidade anterior com cartilagem costal rudimentar; colo, tubérculo e ângulo são ausentes ou pouco evidentes. Inserções: quadrado do lombo (margem inferior da metade medial), serrátil posterior inferior, latíssimo do dorso, oblíquos externo e interno do abdome, parte costal do diafragma (face interna), ligamento arqueado lateral e ligamento lombocostal. Relações: a costela situa-se posteriormente ao rim; a pleura e o recesso costodiafragmático relacionam-se com ela em nível variável.",
+      "vascularization": "A artéria subcostal, ramo da parte torácica da aorta, corre inferiormente à costela, acompanhada pela veia subcostal e pelo nervo subcostal, e supre o periósteo e o osso com ramos periosteais.",
+      "innervation": "O periósteo é inervado pelo nervo subcostal (ramo ventral de T12), que corre inferiormente à costela e segue para a parede abdominal anterolateral."
+    },
+    "histology": {
+      "tissues": [
+        "Osso compacto cortical delgado e osso esponjoso com medula óssea vermelha hematopoiética no interior",
+        "Periósteo e endósteo com osteoblastos, osteócitos e osteoclastos",
+        "Cartilagem articular hialina na face articular da cabeça; cartilagem costal rudimentar de tipo hialino, com pericôndrio, na extremidade anterior"
+      ]
+    },
+    "clinical": [
+      "Fratura de costelas inferiores: fraturas das costelas 9 a 12 podem associar-se a lesões de vísceras vizinhas, como baço, fígado, rim e diafragma, conforme o lado e a energia do traumatismo.",
+      "Incisões lombares e relação com a pleura: a pleura parietal pode projetar-se até a 12ª costela posteriormente, de modo que abordagens cirúrgicas ou punções nessa região podem alcançar o recesso costodiafragmático, com risco de pneumotórax.",
+      "Variações do número de costelas: a 12ª costela pode ser rudimentar ou ausente, e podem existir costelas lombares supranumerárias, o que pode alterar a contagem de vértebras e costelas em imagens."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: costelas flutuantes (11ª e 12ª)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico costelas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: costelas flutuantes (11ª e 12ª)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico esqueleto da parede torácica; seção Abdome, tópico parede posterior do abdome",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico artérias da parede torácica: artéria subcostal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico artérias da parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico nervos intercostais e nervo subcostal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico nervos intercostais e subcostal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; capítulo Tecido cartilaginoso, tópico cartilagem hialina",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: costelas flutuantes (11ª e 12ª)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico fraturas de costelas, costelas supranumerárias e reflexões da pleura",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico variações das costelas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:costal-cartilage-of-seventh-rib-r": {
+    "ids": {},
+    "summary_pt": "A cartilagem costal da sétima costela é a última das cartilagens que se ligam diretamente ao esterno e participa da formação do arco costal. As cartilagens costais, de cartilagem hialina, prolongam anteriormente as costelas e conferem elasticidade à parede torácica; seu comprimento aumenta da primeira à sétima, a partir da qual diminui. A sétima cartilagem articula-se com a parte inferior do corpo do esterno, junto à articulação xifoesternal, por uma articulação sinovial esternocostal, e relaciona-se acima com a sexta cartilagem e abaixo com a oitava por articulações intercondrais, que permitem pequenos deslizamentos durante a respiração. Em conjunto com as cartilagens 8 a 10, a sétima compõe o arco costal, que delimita a abertura inferior do tórax e, com o processo xifoide, o ângulo infraesternal. Na face externa dá fixação ao músculo reto do abdome (que se origina das cartilagens 5 a 7), e na face interna, à parte costal do diafragma e ao músculo transverso do abdome, que se origina das cartilagens das seis costelas inferiores. É nutrida por difusão a partir do pericôndrio, sem vasos próprios. Com a idade, a cartilagem pode sofrer calcificação, o que a torna visível em radiografias.",
+    "anatomy": {
+      "relations": "Articula-se com a sétima costela (junção costocondral), com o esterno (articulação sinovial esternocostal, próxima à junção xifoesternal) e com as cartilagens da sexta e da oitava costelas (articulações intercondrais). Acidentes: extremidade esternal, extremidade costal e margem inferior que se une à oitava cartilagem. Inserções: reto do abdome (origem, junto às cartilagens 5 a 7), transverso do abdome e parte costal do diafragma (face interna), músculos intercostais, membrana intercostal externa; o ligamento esternocostal radiado recobre a articulação com o esterno.",
+      "vascularization": "A cartilagem não tem vasos próprios: o pericôndrio é irrigado por ramos intercostais anteriores da artéria musculofrênica, ramo terminal da artéria torácica interna, que supre os espaços intercostais 7 a 9, e a nutrição ocorre por difusão. As veias acompanham as artérias, com drenagem para as veias musculofrênicas e torácicas internas.",
+      "innervation": "O pericôndrio e as articulações esternocostal e intercondral são inervados por ramos dos nervos intercostais dos espaços intercostais vizinhos; a partir do sétimo nervo, os nervos intercostais continuam como nervos toracoabdominais para a parede abdominal."
+    },
+    "histology": {
+      "tissues": [
+        "Cartilagem hialina: condrócitos isolados ou em grupos isógenos em lacunas, imersos em matriz rica em colágeno tipo II e proteoglicanos; tecido avascular, nutrido por difusão a partir do pericôndrio",
+        "Pericôndrio: camada externa de tecido conjuntivo denso fibroso e camada interna condrogênica, com células progenitoras e capilares",
+        "Junção costocondral: transição entre o osso da costela e a cartilagem, sem articulação sinovial; com a idade, a matriz pode calcificar e ser parcialmente substituída por osso"
+      ]
+    },
+    "clinical": [
+      "Calcificação da cartilagem costal: com o envelhecimento, a cartilagem da sétima costela e de outras costelas pode calcificar ou ossificar, tornando-se visível em radiografias e podendo ser confundida com lesões intratorácicas.",
+      "Luxações esternocostais e intercondrais: o deslocamento das articulações esternocostais ou intercondrais dos níveis 7 a 10, por traumatismo ou por esforço, pode causar dor à respiração e protuberância local, às vezes denominada costela separada.",
+      "Proteção das vísceras abdominais: o arco costal formado pelas cartilagens 7 a 10 recobre parcialmente fígado, estômago e baço, e traumatismos dessa região podem associar-se a lesões dessas vísceras."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: cartilagens costais e articulações esternocostais e intercondrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico cartilagens costais e esterno",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): cartilagens costais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: cartilagens costais e articulações esternocostais e intercondrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico esqueleto da parede torácica e articulações costocondrais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico artérias da parede torácica: artéria torácica interna e artéria musculofrênica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico artérias da parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico nervos intercostais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico nervos intercostais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido cartilaginoso, tópico cartilagem hialina e pericôndrio",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: cartilagens costais e articulações esternocostais e intercondrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico luxação de costelas, calcificação de cartilagens costais e proteção das vísceras pelo arco costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico cartilagens costais",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:costal-cartilage-of-eighth-rib-r": {
+    "ids": {},
+    "summary_pt": "A cartilagem costal da oitava costela pertence ao grupo das costelas falsas (vertebrocondrais), as costelas 8 a 10, cujas cartilagens não alcançam o esterno e se unem à cartilagem imediatamente superior. A oitava cartilagem, de cartilagem hialina, liga-se à sétima por articulação intercondral e à nona por outra articulação do mesmo tipo, contribuindo para a margem inferior do arco costal, que delimita a abertura inferior do tórax. Essas articulações são, em geral, sinoviais, podendo ser fibrosas em alguns níveis, e as cartilagens 7 a 10 acompanham-se nos movimentos da respiração. A cartilagem prolonga anteriormente a oitava costela por uma junção costocondral e inclina-se para cima, antes de se unir à sétima. Na face interna, dá origem à parte costal do diafragma e ao músculo transverso do abdome. Não recebe vasos próprios: a nutrição ocorre por difusão a partir do pericôndrio, irrigado por ramos intercostais anteriores da artéria musculofrênica. A oitava cartilagem pode calcificar com o envelhecimento e integra o rebordo costal, que recobre parcialmente o fígado e o baço.",
+    "anatomy": {
+      "relations": "Articula-se com a oitava costela (junção costocondral) e com as cartilagens da sétima, acima, e da nona, abaixo (articulações intercondrais); não se articula diretamente com o esterno. Acidentes: extremidade costal, extremidade intercondral superior (ligada à sétima cartilagem por ligamento fibroso) e margem inferior. Inserções: parte costal do diafragma e transverso do abdome (face interna), músculos intercostais e membrana intercostal externa; ligamentos intercondrais fixam-na à cartilagem superior. Relaciona-se internamente com a margem do diafragma e com as vísceras do hipocôndrio.",
+      "vascularization": "A cartilagem não tem vasos próprios: o pericôndrio é irrigado por ramos intercostais anteriores da artéria musculofrênica, que supre os espaços intercostais 7 a 9, e a nutrição ocorre por difusão a partir do pericôndrio. As veias acompanham as artérias, com drenagem para as veias musculofrênicas e torácicas internas.",
+      "innervation": "O pericôndrio e as articulações intercondrais são inervados por ramos dos nervos intercostais dos espaços intercostais vizinhos, que, a partir do sétimo nervo, seguem como nervos toracoabdominais para a parede abdominal anterolateral."
+    },
+    "histology": {
+      "tissues": [
+        "Cartilagem hialina: condrócitos isolados ou em grupos isógenos em lacunas, imersos em matriz rica em colágeno tipo II e proteoglicanos; tecido avascular, nutrido por difusão a partir do pericôndrio",
+        "Pericôndrio: camada externa de tecido conjuntivo denso fibroso e camada interna condrogênica, com células progenitoras e capilares",
+        "Articulações intercondrais: superfícies de cartilagem hialina, em geral com cápsula e cavidade sinovial, e ligamentos de tecido conjuntivo denso; com a idade, a matriz pode calcificar"
+      ]
+    },
+    "clinical": [
+      "Síndrome da costela deslizante: a hipermobilidade das cartilagens das costelas 8 a 10, unidas à cartilagem superior por ligamentos fibrosos e não ao esterno, pode favorecer subluxação com dor na parte inferior do tórax ou no abdome superior.",
+      "Calcificação da cartilagem costal: com o envelhecimento, a cartilagem hialina costal pode calcificar, tornando-se visível em radiografias.",
+      "Traumatismo do rebordo costal: fraturas ou deslocamentos das cartilagens 8 a 10 podem acompanhar-se de lesão de órgãos do hipocôndrio, como fígado e baço, conforme o lado."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: cartilagens costais e articulações esternocostais e intercondrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico cartilagens costais e esterno",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): cartilagens costais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: cartilagens costais e articulações esternocostais e intercondrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico esqueleto da parede torácica e articulações costocondrais",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico artérias da parede torácica: artéria torácica interna e artéria musculofrênica",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico artérias da parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico nervos intercostais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico nervos intercostais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido cartilaginoso, tópico cartilagem hialina e pericôndrio",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: cartilagens costais e articulações esternocostais e intercondrais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico síndrome da costela deslizante, luxação de costelas e traumatismo do rebordo costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, capítulo Parede torácica, tópico cartilagens costais",
+        "obraId": "grays42",
         "license": "citação"
       }
     ],

@@ -98,9 +98,9 @@ export function createPharmacologyMode({ bus, loadCompounds, loadScenario = null
   let offStructureSelect = null;
   let offModeChange = null;
 
-  // URL do Chart.js conforme index.html
-  const CHART_JS_URL = 'https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js';
-  const CHART_JS_SRI = 'sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ';
+  // Chart.js 4.5.1 servido do próprio site (vendor/chartjs, sem CDN — Onda 3.5, D.1)
+  const CHART_JS_URL = 'vendor/chartjs/chart.umd.min.js';
+  const CHART_JS_SRI = 'sha384-NO4oBg7U+sYOLwaoslYLRIVIW0JTqdPuRFlbzi7loV/T3vzxf9sWDkEyMjdxbbzb';
 
   /**
    * enter(ctx) — chamado ao entrar no modo

@@ -1,0 +1,226 @@
+[
+  {
+    "id": "q4a-endocrino-01",
+    "system": "endocrino",
+    "difficulty": "facil",
+    "prompt_pt": "Mulher de 35 anos nota um nódulo indolor na face anterior do pescoço, abaixo da cartilagem cricóidea, que sobe e desce quando ela engole. Aponte no modelo 3D a glândula onde o nódulo se localiza.",
+    "correctSid": "za:thyroid-gland",
+    "correctSids": [
+      "za:thyroid-gland"
+    ],
+    "distractorSids": [
+      "za:trachea",
+      "za:cricoid-cartilage",
+      "za:adenohypophysis"
+    ],
+    "anchors": [
+      {
+        "sid": "za:thyroid-gland"
+      }
+    ],
+    "explanation_pt": "A glândula tireoide fica na região anterior do pescoço, junto à traqueia, e é envolvida pela fáscia pré-traqueal, por isso acompanha a laringe na deglutição. A traqueia e a cartilagem cricóidea são vizinhas, mas não são glândulas e não formam nódulo tireoidiano; a adeno-hipófise é endócrina, porém fica na sela turca."
+  },
+  {
+    "id": "q4a-endocrino-02",
+    "system": "endocrino",
+    "difficulty": "medio",
+    "prompt_pt": "Homem de 45 anos tem crises de cefaleia, sudorese e palpitações com picos de pressão arterial. A investigação mostra um tumor da medula de uma glândula retroperitoneal situada sobre o polo superior do rim, produtora de catecolaminas. Aponte essa glândula (o lado não importa).",
+    "correctSid": "za:suprarenal-gland-r",
+    "correctSids": [
+      "za:suprarenal-gland-r",
+      "za:suprarenal-gland-l"
+    ],
+    "distractorSids": [
+      "za:kidney-r",
+      "za:pancreas",
+      "za:spleen"
+    ],
+    "anchors": [
+      {
+        "sid": "za:suprarenal-gland-r"
+      }
+    ],
+    "explanation_pt": "As glândulas suprarrenais ficam sobre os polos superiores dos rins; a medula é formada por células cromafins, que liberam adrenalina e noradrenalina. O rim é vizinho, mas sua função é filtrar o sangue; o pâncreas produz insulina e glucagon, e o baço é um órgão linfático, nenhum deles secreta catecolaminas."
+  },
+  {
+    "id": "q4a-endocrino-03",
+    "system": "endocrino",
+    "difficulty": "medio",
+    "prompt_pt": "Homem de 40 anos percebe que as mãos e os pés aumentaram, que a mandíbula ficou proeminente e que os anéis não servem mais. A ressonância revela um adenoma na parte anterior da hipófise, que secreta hormônio do crescimento em excesso. Aponte no modelo 3D a parte da hipófise afetada.",
+    "correctSid": "za:adenohypophysis",
+    "correctSids": [
+      "za:adenohypophysis"
+    ],
+    "distractorSids": [
+      "za:neurohypophysis",
+      "za:pineal-gland",
+      "za:hypothalamus"
+    ],
+    "anchors": [
+      {
+        "sid": "za:adenohypophysis"
+      }
+    ],
+    "explanation_pt": "A adeno-hipófise (lobo anterior) sintetiza e secreta o hormônio do crescimento, além de prolactina, ACTH, TSH, FSH e LH. A neuro-hipófise apenas armazena e libera ADH e ocitocina produzidos no hipotálamo; o hipotálamo regula a adeno-hipófise por hormônios liberadores, mas não secreta GH, e a pineal produz melatonina."
+  },
+  {
+    "id": "q4a-endocrino-04",
+    "system": "endocrino",
+    "difficulty": "dificil",
+    "prompt_pt": "Após traumatismo cranioencefálico grave, um paciente passa a urinar grandes volumes de urina muito diluída e tem sede intensa. O quadro decorre da falha na liberação do hormônio antidiurético, produzido no hipotálamo, no ponto em que ele é armazenado e lançado na circulação. Aponte essa estrutura.",
+    "correctSid": "za:neurohypophysis",
+    "correctSids": [
+      "za:neurohypophysis"
+    ],
+    "distractorSids": [
+      "za:adenohypophysis",
+      "za:hypothalamus",
+      "za:pineal-gland"
+    ],
+    "anchors": [
+      {
+        "sid": "za:neurohypophysis"
+      }
+    ],
+    "explanation_pt": "Os axônios dos núcleos supraóptico e paraventricular descem pela haste hipofisária e terminam na neuro-hipófise, que armazena e libera ADH e ocitocina. O hipotálamo sintetiza o hormônio, mas a pergunta pede o local de liberação; a adeno-hipófise secreta hormônios próprios sob controle de fatores liberadores, e a pineal secreta melatonina."
+  },
+  {
+    "id": "q4a-endocrino-05",
+    "system": "endocrino",
+    "difficulty": "facil",
+    "prompt_pt": "Trabalhador de turnos noturnos queixa-se de sono desregulado. O médico explica que o ciclo claro-escuro regula a secreção de melatonina por uma pequena glândula do epitálamo, situada atrás do terceiro ventrículo. Aponte essa glândula no modelo 3D.",
+    "correctSid": "za:pineal-gland",
+    "correctSids": [
+      "za:pineal-gland"
+    ],
+    "distractorSids": [
+      "za:adenohypophysis",
+      "za:thalamus-r",
+      "za:corpus-callosum"
+    ],
+    "anchors": [
+      {
+        "sid": "za:pineal-gland"
+      }
+    ],
+    "explanation_pt": "A glândula pineal, no epitálamo, secreta melatonina, hormônio que sincroniza o ritmo sono-vigília e é inibido pela luz. A adeno-hipófise fica na base do crânio e secreta outros hormônios; o tálamo, vizinho da pineal, é núcleo de retransmissão sensorial, e o corpo caloso é uma comissura de substância branca."
+  },
+  {
+    "id": "q4a-urinario-01",
+    "system": "urinario",
+    "difficulty": "facil",
+    "prompt_pt": "Homem de 58 anos com doença renal crônica apresenta anemia normocítica e cansaço, com níveis baixos de eritropoetina. Aponte no modelo 3D o órgão que produz a maior parte desse hormônio no adulto (o lado não importa).",
+    "correctSid": "za:kidney-r",
+    "correctSids": [
+      "za:kidney-r",
+      "za:kidney-l",
+      "za:vh-f-outer-cortex-of-kidney-l"
+    ],
+    "distractorSids": [
+      "za:urinary-bladder",
+      "za:spleen",
+      "za:pancreas"
+    ],
+    "anchors": [
+      {
+        "sid": "za:kidney-r"
+      }
+    ],
+    "explanation_pt": "Os rins produzem eritropoetina, em células intersticiais peritubulares do córtex, em resposta à hipóxia; sua perda leva à anemia da doença renal crônica. A bexiga apenas armazena urina, o baço destrói hemácias velhas e o pâncreas tem função digestiva e endócrina (insulina), sem produzir eritropoetina."
+  },
+  {
+    "id": "q4a-urinario-02",
+    "system": "urinario",
+    "difficulty": "facil",
+    "prompt_pt": "Mulher de 70 anos relata urgência miccional e esvaziamento incompleto. O órgão envolvido é um reservatório muscular, de parede com músculo detrusor, situado na pelve atrás da sínfise púbica, que armazena a urina até a micção. Aponte-o no modelo 3D.",
+    "correctSid": "za:urinary-bladder",
+    "correctSids": [
+      "za:urinary-bladder"
+    ],
+    "distractorSids": [
+      "za:kidney-l",
+      "za:renal-pelvis-r",
+      "za:sigmoid-colon"
+    ],
+    "anchors": [
+      {
+        "sid": "za:urinary-bladder"
+      }
+    ],
+    "explanation_pt": "A bexiga urinária é o reservatório pélvico de parede muscular lisa (detrusor) que armazena e expulsa a urina. O rim e a pelve renal ficam no retroperitônio e formam e coletam a urina, sem armazená-la; o colo sigmoide é digestório, embora vizinho na pelve."
+  },
+  {
+    "id": "q4a-urinario-03",
+    "system": "urinario",
+    "difficulty": "medio",
+    "prompt_pt": "Paciente de 32 anos tem dor intensa no flanco, em cólica, e a ultrassonografia mostra dilatação do sistema coletor por um cálculo impactado na junção com o ureter. Aponte no modelo 3D a cavidade em forma de funil, formada pela união dos cálices maiores, que se continua com o ureter (o lado não importa).",
+    "correctSid": "za:renal-pelvis-r",
+    "correctSids": [
+      "za:renal-pelvis-r",
+      "za:renal-pelvis-l"
+    ],
+    "distractorSids": [
+      "za:urinary-bladder",
+      "za:suprarenal-gland-l",
+      "za:psoas-major-l"
+    ],
+    "anchors": [
+      {
+        "sid": "za:renal-pelvis-r"
+      }
+    ],
+    "explanation_pt": "A pelve renal recebe a urina dos cálices maiores no seio renal e se continua com o ureter na junção ureteropélvica, um local comum de impactação de cálculos e de hidronefrose a montante. A bexiga fica abaixo, após o ureter; a suprarrenal é endócrina, e o músculo psoas maior, embora vizinho do rim, não faz parte da via urinária."
+  },
+  {
+    "id": "q4a-urinario-04",
+    "system": "urinario",
+    "difficulty": "medio",
+    "prompt_pt": "Após biópsia do rim esquerdo, um paciente desenvolve hematoma contido entre o parênquima e a camada fibrosa resistente que envolve o órgão, sem atravessá-la. Aponte no modelo 3D, no lado esquerdo, essa camada.",
+    "correctSid": "za:vh-f-kidney-capsule-l",
+    "correctSids": [
+      "za:vh-f-kidney-capsule-l"
+    ],
+    "distractorSids": [
+      "za:vh-f-outer-cortex-of-kidney-l",
+      "za:renal-pelvis-l",
+      "za:vh-f-renal-column-l"
+    ],
+    "anchors": [
+      {
+        "sid": "za:vh-f-kidney-capsule-l"
+      }
+    ],
+    "explanation_pt": "A cápsula fibrosa reveste a superfície do rim e se destaca do parênquima com facilidade, o que explica o hematoma subcapsular delimitado por ela. O córtex externo e a coluna renal são parênquima, situados abaixo da cápsula, e a pelve renal é uma cavidade coletora no seio renal."
+  },
+  {
+    "id": "q4a-urinario-05",
+    "system": "urinario",
+    "difficulty": "dificil",
+    "prompt_pt": "Diabético de 60 anos, em uso crônico de anti-inflamatórios, tem hematúria e febre e elimina fragmentos de tecido na urina. A suspeita é necrose da ponta das pirâmides renais, que se projeta no cálice menor. Aponte no modelo 3D, no rim esquerdo, essa estrutura.",
+    "correctSid": "za:vh-f-renal-papilla-l-a",
+    "correctSids": [
+      "za:vh-f-renal-papilla-l-a",
+      "za:vh-f-renal-papilla-l-b",
+      "za:vh-f-renal-papilla-l-c",
+      "za:vh-f-renal-papilla-l-d",
+      "za:vh-f-renal-papilla-l-e",
+      "za:vh-f-renal-papilla-l-f",
+      "za:vh-f-renal-papilla-l-g",
+      "za:vh-f-renal-papilla-l-h",
+      "za:vh-f-renal-papilla-l-i",
+      "za:vh-f-renal-papilla-l-j",
+      "za:vh-f-renal-papilla-l-k"
+    ],
+    "distractorSids": [
+      "za:vh-f-renal-column-l",
+      "za:vh-f-outer-cortex-of-kidney-l",
+      "za:renal-pelvis-l"
+    ],
+    "anchors": [
+      {
+        "sid": "za:vh-f-renal-papilla-l-a"
+      }
+    ],
+    "explanation_pt": "A papila renal é o ápice de cada pirâmide medular; ela se projeta no cálice menor e despeja a urina dos ductos coletores. Por ser a região de menor irrigação e de maior concentração do filtrado, é vulnerável à necrose. A coluna renal e o córtex externo são parênquima cortical, e a pelve renal é a via coletora, não o ápice das pirâmides."
+  }
+]

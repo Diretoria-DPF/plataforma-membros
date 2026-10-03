@@ -686,6 +686,13 @@
     document.getElementById('nav-group-admin').classList.add('hidden');
     document.getElementById('header-scope-label').textContent = 'Área do membro';
     showPanel('panel-home');
+    // Link compartilhado do Atlas (#atlas=<sid>): abre o módulo na estrutura e limpa o hash.
+    var atlasLink = /^#atlas=([A-Za-z0-9:_.-]{1,120})$/.exec(window.location.hash || '');
+    if (atlasLink && window.LaiftLearning && typeof window.LaiftLearning.openAtlasLink === 'function') {
+      showPanel('panel-learn');
+      window.LaiftLearning.openAtlasLink(atlasLink[1]);
+      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
+    }
     loadProfileAndPreferences();
     refreshNavBadges();
     // Contador de mensagens precisa atualizar sozinho mesmo sem o usuário

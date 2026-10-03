@@ -40,6 +40,15 @@ As 300 fichas vão ao conselho em 3 lotes:
 | Aplicar as ressalvas e copiar as aprovadas para `curated/` | Sessão do atlas | mesmo dia |
 | Merge do lote | Usuário autoriza | imediato |
 
+## 2b. Conselho plural (3 revisores)
+A revisão de cada lote não depende de uma só pessoa.
+- **Titulares:** 3 revisores do conselho, nomeados pela coordenação do conselho (nomes e registros no topo deste arquivo, na ata `ata-revisao-3-2.md`).
+- **Rodízio:** cada lote tem um revisor principal. O 1º lote vai ao titular A, o 2º ao B, o 3º ao C, e depois repete. Os outros dois são suplentes daquele lote.
+- **SLA por pessoa:** 3 dias para devolver o checklist. Sem retorno em 3 dias, o lote passa ao suplente seguinte e o titular é avisado. O prazo é contado a partir do envio.
+- **Dois lados:** o suplente também pode revisar em paralelo se o lote tiver mais de 100 fichas (lote 3); cada checklist cobre um intervalo de fichas combinado com a coordenação, e a trava do build confere ficha a ficha.
+- **Ausência:** quem vai se ausentar avisa a coordenação com antecedência, e o rodízio pula a pessoa.
+- **Pendente (humano):** nomear os 3 titulares e registrar a assinatura da coordenação neste item. Enquanto isso, vale o revisor único de cada lote.
+
 ## 3. Se a assinatura atrasar
 | Prazo | O que acontece |
 |---|---|

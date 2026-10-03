@@ -59,3 +59,27 @@ export function lastStudiedSid(history, exists = () => true) {
   const hit = sorted.find((e) => exists(e.sid));
   return hit ? hit.sid : null;
 }
+
+const dayKey = (at) => { const d = new Date(at); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+
+/**
+ * Resumo do estudo (Onda 3.5, C.3), só a partir do histórico local:
+ * estruturas distintas vistas (lados contam uma vez), quizzes concluídos,
+ * dias com estudo e a sequência de dias seguidos (conta se o último foi hoje ou ontem).
+ */
+export function studyStats(history, now = Date.now()) {
+  const seen = new Set();
+  const days = new Set();
+  let quizzes = 0;
+  for (const e of history || []) {
+    if (!e || !Number.isFinite(e.at) || e.at <= 0) continue;
+    days.add(dayKey(e.at));
+    if (e.type === 'select' && e.sid) seen.add(String(e.sid).replace(/-[lr]$/, ''));
+    if (e.type === 'quiz') quizzes += 1;
+  }
+  let streak = 0;
+  const cursor = new Date(now);
+  if (!days.has(dayKey(cursor.getTime()))) cursor.setDate(cursor.getDate() - 1);
+  while (days.has(dayKey(cursor.getTime()))) { streak += 1; cursor.setDate(cursor.getDate() - 1); }
+  return { structures: seen.size, quizzes, days: days.size, streak };
+}

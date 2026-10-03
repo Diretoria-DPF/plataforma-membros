@@ -8,7 +8,6 @@
  *  - CSP do atlas sem RCSB/PubChem no connect-src.
  */
 const { startApp, check } = require('./harness');
-const mirror = require('./cdn-mirror');
 
 const MOCK_PDB = [
   'HEADER    HYDROLASE                               01-JAN-00   4EY7',
@@ -20,7 +19,6 @@ const MOCK_PDB = [
 ].join('\n');
 
 module.exports = async function atlasMoleculas() {
-  const pkgs = mirror.ensureMirror();
   let workerMode = 'ok';
   const proxyCalls = [];
   const app = await startApp({
@@ -43,12 +41,9 @@ module.exports = async function atlasMoleculas() {
     }
     return route.fallback();
   });
-  await app.context.route('https://cdn.jsdelivr.net/**', (route) => {
-    const file = pkgs && mirror.resolveCdnUrl(pkgs, route.request().url());
-    if (!file) return route.abort();
-    return route.fulfill({ status: 200, contentType: file.contentType, body: file.body, headers: { 'Access-Control-Allow-Origin': '*' } });
-  });
 
+  const atlasCdn = [];
+  app.context.on('request', (r) => { try { if (/jsdelivr/.test(r.url()) && /anatomia-3d/.test(r.frame().url())) atlasCdn.push(r.url()); } catch (e) { /* sem frame */ } });
   try {
     await app.login();
     const frame = await app.openModule('anatomia');
@@ -87,8 +82,9 @@ module.exports = async function atlasMoleculas() {
     await frame.waitForFunction(() => !document.querySelector('#molInfoDetails [data-mol-error]'), null, { timeout: 15000 }).catch(() => {});
     s = await hudState();
     check(proxyCalls.length > before && proxyCalls[proxyCalls.length - 1].id === '4EY7', `"Tentar de novo" pede 4EY7 de novo à Worker (${JSON.stringify(proxyCalls[proxyCalls.length - 1])})`);
-    check(!s.error, `depois de "Tentar de novo", a estrutura carrega sem aviso${pkgs ? '' : ' (sem espelho do 3Dmol: só o aviso é conferido)'}`);
-    if (pkgs) check(s.canvas, 'estrutura do PDB (mock) monta a cena do 3Dmol');
+    check(!s.error, `depois de "Tentar de novo", a estrutura carrega sem aviso`);
+    check(s.canvas, 'estrutura do PDB (mock) monta a cena do 3Dmol (3Dmol do próprio site)');
+    check(atlasCdn.length === 0, `o atlas não pede nada ao jsDelivr${atlasCdn.length ? ' (' + atlasCdn.join(',') + ')' : ''}`);
 
     // ---- 3. Worker antiga, sem a ação (deploy fora de ordem) ----
     workerMode = 'unknown';

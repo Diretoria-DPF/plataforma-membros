@@ -1,0 +1,25 @@
+{
+  "v": 1,
+  "itens": [
+    {
+      "data": "2026-10-03",
+      "titulo": "Estudo mais fácil e sem depender da rede",
+      "notas": [
+        "O atlas abre sem internet depois da primeira visita.",
+        "Botão \"Continuar\" volta à última estrutura estudada.",
+        "Fixe estruturas com ☆ e compartilhe o link de uma ficha.",
+        "Em Meu estudo: seus números, exportar e importar o progresso.",
+        "Quiz: escolha o sistema e a dificuldade; cada rodada sorteia até 10 casos."
+      ]
+    },
+    {
+      "data": "2026-10-02",
+      "titulo": "Conteúdo com fonte e selos de revisão",
+      "notas": [
+        "30 fármacos com gráficos de concentração e efeito, 15 processos e 19 vias com fontes.",
+        "Selos mostram o que o conselho editorial já revisou (✓), o que está em revisão (⏳) e o que ainda não foi revisado (○).",
+        "Moléculas e Farmacologia funcionam sem serviços externos no navegador."
+      ]
+    }
+  ]
+}

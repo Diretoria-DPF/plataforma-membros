@@ -300,7 +300,7 @@ async function install() {
   // clica numa proteína da lista (sheetContent()); este gancho legado
   // reproduz o mesmo carregamento sob demanda para quem chama
   // window.abrirPdb(pdbId, titulo) direto (ex.: scripts/e2e/apis.e2e.js).
-  const THREEDMOL_URL = 'https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js';
+  const THREEDMOL_URL = 'vendor/3dmol/3Dmol-min.js';
   const THREEDMOL_SRI = 'sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d';
   function loadScriptOnce(src, integrity) {
     return new Promise((resolve, reject) => {

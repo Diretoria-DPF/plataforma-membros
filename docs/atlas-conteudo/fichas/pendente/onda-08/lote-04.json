@@ -249,10 +249,10 @@
     },
     "histology": {
       "tissues": [
-        "Corpo: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; os processos unciformes são projeções ósseas das bordas laterais superiores do corpo",
-        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
-        "Cartilagem hialina nas placas terminais do corpo e nas faces articulares dos processos articulares (articulações zigapofisiais sinoviais)",
-        "Disco intervertebral adjacente: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+        "Corpo de C3: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; os processos unciformes são projeções ósseas das bordas laterais superiores do corpo",
+        "Células ósseas de C3: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C3 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C2 e com a vértebra inferior",
+        "Discos intervertebrais C2–C3 e C3–C4: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
       ]
     },
     "clinical": [
@@ -369,10 +369,10 @@
     },
     "histology": {
       "tissues": [
-        "Corpo: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; trabéculas orientadas segundo as linhas de carga axial",
-        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
-        "Cartilagem hialina nas placas terminais do corpo e nas faces articulares dos processos articulares (articulações zigapofisiais sinoviais)",
-        "Disco intervertebral adjacente: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+        "Corpo de C4: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; trabéculas orientadas segundo as linhas de carga axial",
+        "Células ósseas de C4: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C4 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C3 e com a vértebra inferior",
+        "Discos intervertebrais C3–C4 e C4–C5: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
       ]
     },
     "clinical": [
@@ -489,10 +489,10 @@
     },
     "histology": {
       "tissues": [
-        "Corpo: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; trabéculas dispostas segundo as linhas de força de compressão do segmento cervical",
-        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
-        "Cartilagem hialina nas placas terminais do corpo e nas faces articulares dos processos articulares (articulações zigapofisiais sinoviais)",
-        "Disco intervertebral adjacente: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+        "Corpo de C5: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; trabéculas dispostas segundo as linhas de força de compressão do segmento cervical",
+        "Células ósseas de C5: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C5 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C4 e com a vértebra inferior",
+        "Discos intervertebrais C4–C5 e C5–C6: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
       ]
     },
     "clinical": [
@@ -609,10 +609,10 @@
     },
     "histology": {
       "tissues": [
-        "Corpo: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; tubérculo carótico de osso compacto e esponjoso com periósteo espesso para inserções musculares",
-        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
-        "Cartilagem hialina nas placas terminais do corpo e nas faces articulares dos processos articulares (articulações zigapofisiais sinoviais)",
-        "Disco intervertebral adjacente: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+        "Corpo de C6: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; tubérculo carótico de osso compacto e esponjoso com periósteo espesso para inserções musculares",
+        "Células ósseas de C6: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C6 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C5 e com a vértebra inferior",
+        "Discos intervertebrais C5–C6 e C6–C7: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
       ]
     },
     "clinical": [
@@ -729,10 +729,10 @@
     },
     "histology": {
       "tissues": [
-        "Corpo: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; o processo espinhoso longo apresenta cortical compacta e extremidade com periósteo e fixações fibrosas do ligamento nucal",
-        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
-        "Cartilagem hialina nas placas terminais do corpo e nas faces articulares dos processos articulares (articulações zigapofisiais sinoviais)",
-        "Disco intervertebral adjacente: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+        "Corpo de C7: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; o processo espinhoso longo apresenta cortical compacta e extremidade com periósteo e fixações fibrosas do ligamento nucal",
+        "Células ósseas de C7: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C7 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C6 e com a vértebra inferior",
+        "Discos intervertebrais C6–C7 e C7–T1: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
       ]
     },
     "clinical": [
@@ -1457,7 +1457,7 @@
   },
   "za:first-metatarsal-bone-r": {
     "ids": {},
-    "summary_pt": "O primeiro osso metatarsal é o do hálux e, entre os cinco, é o mais curto e o mais robusto. Como os demais, tem base proximal, corpo e cabeça distal. A base apresenta face articular côncava para o cuneiforme medial, na articulação tarsometatarsal, e, na face plantar e lateral, uma tuberosidade para a inserção do tendão do fibular longo; o tibial anterior fixa-se na face medial da base. O corpo é espesso e de secção aproximadamente triangular. A cabeça, volumosa, articula-se com a falange proximal do hálux, na articulação metatarsofalângica, e na face plantar exibe dois sulcos separados por crista, onde se alojam os ossos sesamoides medial e lateral, incluídos nos tendões do flexor curto do hálux. Diferentemente dos metatarsais II a V, o primeiro não costuma dispor de ligamento metatarsal transverso profundo que o una ao segundo, e seu centro secundário de ossificação aparece na base. Por sustentar grande parte da carga na fase de propulsão da marcha, o primeiro metatarsal participa do arco longitudinal medial e da transmissão de forças do retropé para o hálux, sendo a articulação metatarsofalângica do hálux a de maior amplitude de dorsiflexão do pé.",
+    "summary_pt": "O primeiro osso metatarsal é o do hálux e, entre os cinco, é o mais curto e o mais robusto. Como os demais, tem base proximal, corpo e cabeça distal. A base apresenta face articular côncava para o cuneiforme medial, na articulação tarsometatarsal, e, na face plantar e lateral, uma tuberosidade para a inserção do tendão do fibular longo; o tibial anterior fixa-se na face medial da base. O corpo é espesso e de secção aproximadamente triangular. A cabeça, volumosa, articula-se com a falange proximal do hálux, na articulação metatarsofalângica, e na face plantar exibe dois sulcos separados por crista, onde se alojam os ossos sesamoides medial e lateral, incluídos nos tendões do flexor curto do hálux. Diferentemente dos metatarsais II a V, o centro secundário de ossificação do primeiro situa-se na base, e não na cabeça. Por sustentar parte importante da carga na fase de propulsão da marcha, participa do arco longitudinal medial e da transmissão de forças do retropé ao hálux.",
     "anatomy": {
       "relations": "Articula-se com o cuneiforme medial (articulação tarsometatarsal), com a falange proximal do hálux (articulação metatarsofalângica) e, por vezes, por pequena faceta com a base do 2º metatarsal. Acidentes: base, tuberosidade plantar lateral, corpo triangular, cabeça com sulcos plantares para os sesamoides. Inserções: tibial anterior (face medial da base), fibular longo (tuberosidade) e origem parcial do 1º interósseo dorsal; os tendões do flexor curto do hálux envolvem os sesamoides, e o tendão do flexor longo do hálux passa entre eles.",
       "vascularization": "Artéria metatarsal dorsal do primeiro espaço, originada da artéria dorsal do pé, e artéria metatarsal plantar do primeiro espaço, ligada ao arco plantar profundo; a artéria nutrícia deriva desses ramos e penetra no corpo. As veias acompanham as artérias e drenam para o arco venoso dorsal e plantar.",
@@ -1578,10 +1578,10 @@
   },
   "za:second-metatarsal-bone-r": {
     "ids": {},
-    "summary_pt": "O segundo osso metatarsal é, em regra, o mais longo dos metatarsais e ocupa posição central no antepé. A base, em forma de cunha, encaixa-se entre os cuneiformes medial e lateral e articula-se com os três cuneiformes (medial, intermédio e lateral), formando um recesso que confere estabilidade à articulação tarsometatarsal; por isso, funciona como pedra angular do arco transverso do pé. A base articula-se ainda com o terceiro metatarsal, por faces laterais, e, por vezes, com o primeiro. O corpo é prismático, ligeiramente curvo, e a cabeça articula-se com a falange proximal do segundo dedo na articulação metatarsofalângica. Ao ligamento cuneometatarsal interósseo, que une o cuneiforme medial à base do segundo metatarsal e é conhecido como ligamento de Lisfranc, atribui-se grande importância na estabilidade do mediopé. Na face plantar, fixa-se uma expansão do tibial posterior e origina-se parte da cabeça oblíqua do adutor do hálux. O segundo metatarsal recebe a inserção dos músculos interósseos, que originam-se de suas faces laterais, o que torna esse osso de tração complexa. A cabeça, por sustentar carga no apoio, é sede frequente de sobrecarga mecânica.",
+    "summary_pt": "O segundo osso metatarsal é, em regra, o mais longo dos metatarsais e ocupa posição central no antepé. A base, em forma de cunha, encaixa-se entre os cuneiformes medial e lateral e articula-se com os três cuneiformes (medial, intermédio e lateral), formando um recesso que confere estabilidade à articulação tarsometatarsal; por isso, funciona como pedra angular do arco transverso do pé. A base articula-se ainda com o terceiro metatarsal, por faces laterais, e, por vezes, com o primeiro. O corpo é prismático, ligeiramente curvo, e a cabeça articula-se com a falange proximal do segundo dedo na articulação metatarsofalângica. Ao ligamento cuneometatarsal interósseo, que une o cuneiforme medial à base do segundo metatarsal e é conhecido como ligamento de Lisfranc, atribui-se grande importância na estabilidade do mediopé. Na face plantar, fixa-se uma expansão do tibial posterior e origina-se parte da cabeça oblíqua do adutor do hálux. Das faces laterais do corpo originam-se fibras dos interósseos dorsais. A cabeça, por sustentar carga no apoio, pode sofrer sobrecarga mecânica.",
     "anatomy": {
       "relations": "Articula-se com os três cuneiformes (articulação tarsometatarsal), com as bases dos 1º (por vezes) e 3º metatarsais (articulações intermetatarsais) e com a falange proximal do 2º dedo (articulação metatarsofalângica). Acidentes: base em cunha, corpo prismático, cabeça. Ligamentos: cuneometatarsal interósseo (de Lisfranc) e ligamentos tarsometatarsais dorsais e plantares. Inserções e origens: 1º e 2º interósseos dorsais (faces adjacentes do 1º, 2º e 3º metatarsais), expansão do tibial posterior (face plantar da base), cabeça oblíqua do adutor do hálux (bases do 2º ao 4º metatarsais) e ligamento metatarsal transverso profundo, na cabeça.",
-      "vascularization": "Artéria metatarsal dorsal do segundo espaço (da artéria arqueada) e artérias metatarsais plantares do primeiro e do segundo espaços (do arco plantar profundo) emitem as artérias nutrícias do corpo; ramos perfurantes ligam as redes dorsal e plantar.",
+      "vascularization": "Artérias metatarsais dorsais (ramos da artéria arqueada) e artérias metatarsais plantares (ramos do arco plantar profundo) dos espaços adjacentes originam as artérias nutrícias do corpo; ramos perfurantes ligam as redes dorsal e plantar.",
       "innervation": "O periósteo é sensível. As articulações recebem ramos dos nervos plantar lateral, plantar medial e fibular profundo; os interósseos são inervados pelo ramo profundo do nervo plantar lateral, e o adutor do hálux, pelo ramo profundo do mesmo nervo."
     },
     "histology": {
@@ -1686,6 +1686,740 @@
         "field": "clinical",
         "type": "textbook",
         "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:third-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O terceiro osso metatarsal ocupa posição central no antepé, entre o segundo e o quarto, e é, em comprimento, semelhante ao segundo. A base é triangular e articula-se com o cuneiforme lateral, por face posterior, e com as bases dos metatarsais vizinhos por faces laterais; a face articular com o segundo metatarsal localiza-se medialmente, e a face com o quarto, lateralmente. O corpo é prismático, ligeiramente curvo, com concavidade plantar, e a cabeça articula-se com a falange proximal do terceiro dedo, na articulação metatarsofalângica. Na face plantar da base fixa-se uma expansão do tendão do tibial posterior, e da base origina-se parte da cabeça oblíqua do adutor do hálux. Das faces do corpo originam-se os interósseos dorsais do segundo e do terceiro espaços e, de sua face medial, o primeiro interósseo plantar, que se dirige ao terceiro dedo. As cabeças dos metatarsais III e IV delimitam o terceiro espaço intermetatarsal, por onde passa o terceiro nervo digital plantar comum, ligado a ramos dos nervos plantares medial e lateral. As cabeças são unidas pelo ligamento metatarsal transverso profundo, que limita o afastamento entre elas.",
+    "anatomy": {
+      "relations": "Articula-se com o cuneiforme lateral (articulação tarsometatarsal), com os 2º e 4º metatarsais (articulações intermetatarsais) e com a falange proximal do 3º dedo (articulação metatarsofalângica). Acidentes: base triangular, corpo prismático e cabeça. Inserções e origens: expansão do tibial posterior e cabeça oblíqua do adutor do hálux (face plantar da base), 2º e 3º interósseos dorsais e 1º interósseo plantar (corpo), ligamento metatarsal transverso profundo e ligamentos tarsometatarsais. O terceiro espaço intermetatarsal, entre as cabeças do 3º e do 4º metatarsais, relaciona-se com o nervo digital plantar comum e com vasos digitais.",
+      "vascularization": "Artérias metatarsais dorsais (ramos da artéria arqueada) e artérias metatarsais plantares (ramos do arco plantar profundo) do segundo e do terceiro espaços originam as artérias nutrícias; ramos perfurantes anastomosam as redes dorsal e plantar.",
+      "innervation": "O periósteo é sensível. A articulação metatarsofalângica recebe ramos dos nervos plantares e do fibular profundo; os interósseos e a cabeça oblíqua do adutor do hálux são inervados pelo ramo profundo do nervo plantar lateral; a pele do terceiro espaço recebe o terceiro nervo digital plantar comum."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com sistemas de Havers e canal medular preenchido por medula óssea",
+        "Base e cabeça: osso esponjoso com medula óssea; placa epifisária na cabeça durante o crescimento (ossificação endocondral)",
+        "Cartilagem articular hialina na base, na cabeça e nas faces intermetatarsais",
+        "Células ósseas: osteoblastos, osteócitos, osteoclastos e células osteoprogenitoras do periósteo"
+      ]
+    },
+    "clinical": [
+      "Neuroma de Morton: espessamento perineural do terceiro nervo digital plantar comum, no espaço entre as cabeças do 3º e do 4º metatarsais, causa dor em queimação e parestesia nos dedos adjacentes.",
+      "Fratura de estresse (de marcha): sobrecarga repetitiva descrita na diáfise de metatarsais, em especial do segundo e do terceiro.",
+      "Metatarsalgia: dor na região das cabeças, associada a sobrecarga do antepé e a alterações do arco transverso."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:fourth-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O quarto osso metatarsal é o penúltimo no sentido medial para lateral e situa-se entre o terceiro e o quinto. A base, de contorno quadrangular, articula-se principalmente com o cubóide, por face posterior, e, em menor extensão, com o cuneiforme lateral; as faces laterais articulam-se com as bases do terceiro e do quinto metatarsais. O corpo é prismático e a cabeça articula-se com a falange proximal do quarto dedo, na articulação metatarsofalângica. Na face plantar da base fixa-se uma expansão do tendão do tibial posterior, e dela origina-se parte da cabeça oblíqua do adutor do hálux. Dos lados do corpo originam-se os interósseos dorsais do terceiro e do quarto espaços e, em sua face medial, o segundo interósseo plantar, que se dirige ao quarto dedo. A cabeça forma, com a do terceiro metatarsal, o limite do terceiro espaço intermetatarsal. As articulações tarsometatarsais laterais, como a do quarto metatarsal com o cubóide, têm mobilidade maior que as mediais, o que acompanha a adaptação do antepé ao solo.",
+    "anatomy": {
+      "relations": "Articula-se com o cubóide e, em parte, com o cuneiforme lateral (articulação tarsometatarsal), com os 3º e 5º metatarsais (articulações intermetatarsais) e com a falange proximal do 4º dedo. Acidentes: base quadrangular, corpo prismático, cabeça. Inserções e origens: expansão do tibial posterior e origem de fibras da cabeça oblíqua do adutor do hálux (face plantar da base), 3º e 4º interósseos dorsais e 2º interósseo plantar (corpo), ligamento metatarsal transverso profundo e ligamentos tarsometatarsais. O quarto espaço intermetatarsal relaciona-se com o quarto nervo digital plantar comum.",
+      "vascularization": "Artérias metatarsais dorsais e plantares dos espaços adjacentes (terceiro e quarto), ramos da artéria arqueada e do arco plantar profundo, originam as artérias nutrícias; ramos perfurantes anastomosam as redes dorsal e plantar.",
+      "innervation": "O periósteo é sensível. Os interósseos que se originam do osso são inervados pelo ramo profundo do nervo plantar lateral; a articulação metatarsofalângica recebe ramos dos nervos plantares e a articulação com o cubóide, ramos de nervos plantares e do fibular profundo."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com lamelas circunferenciais e sistemas de Havers e canal medular com medula óssea",
+        "Base e cabeça: osso esponjoso com trabéculas e medula óssea, com placa epifisária na cabeça durante o crescimento",
+        "Cartilagem articular hialina na base (cubóide e metatarsais vizinhos) e na cabeça",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo e endósteo"
+      ]
+    },
+    "clinical": [
+      "Fratura de estresse: sobrecarga repetitiva do antepé pode afetar a diáfise de metatarsais, incluindo o quarto.",
+      "Lesões tarsometatarsais (tipo Lisfranc) podem incluir fraturas das bases dos metatarsais laterais, com deslocamento em relação ao cubóide.",
+      "Metatarsalgia: dor das cabeças, relacionada a sobrecarga do antepé e a alterações da distribuição de carga."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:fifth-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O quinto osso metatarsal é o mais lateral e forma o bordo lateral do pé. Sua base projeta-se lateral e posteriormente, formando uma tuberosidade palpável, sob a pele, no meio da margem lateral do pé. A face posterior da base articula-se com o cubóide, e a face medial, com a base do quarto metatarsal; a tuberosidade serve de inserção ao fibular curto e à aponeurose plantar lateral, e o fibular terceiro, quando presente, insere-se na face dorsal da base e do corpo. O corpo é delgado e a cabeça articula-se com a falange proximal do dedo mínimo. Da base origina-se o flexor curto do dedo mínimo, e do corpo, o terceiro interósseo plantar e o quarto interósseo dorsal, em parte. O abdutor do dedo mínimo, originado no calcâneo, relaciona-se com a base do osso e a tuberosidade. O quinto metatarsal participa do apoio lateral do arco longitudinal e, em adolescentes, a tuberosidade possui um núcleo de ossificação secundário, cuja linha não deve ser confundida com fratura.",
+    "anatomy": {
+      "relations": "Articula-se com o cubóide (articulação tarsometatarsal), com a base do 4º metatarsal (articulação intermetatarsal) e com a falange proximal do dedo mínimo (articulação metatarsofalângica). Acidentes: base com tuberosidade (processo estiloide), corpo delgado e cabeça. Inserções e origens: fibular curto (tuberosidade), fibular terceiro (face dorsal), parte lateral da aponeurose plantar, abdutor do dedo mínimo (relação com a tuberosidade), flexor curto do dedo mínimo (base), 3º interósseo plantar e 4º interósseo dorsal (corpo).",
+      "vascularization": "Artéria metatarsal dorsal do quarto espaço (ramo da artéria arqueada) e ramos da artéria plantar lateral, por artéria metatarsal plantar; a artéria nutrícia penetra no corpo, e a região da transição entre a metáfise e a diáfise é descrita como de irrigação mais limitada.",
+      "innervation": "O periósteo é sensível; a pele da margem lateral do pé é suprida pelo nervo sural e seus ramos. O fibular curto é inervado pelo nervo fibular superficial, o fibular terceiro, pelo nervo fibular profundo, e o flexor curto do dedo mínimo e os interósseos, pelo nervo plantar lateral."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com sistemas de Havers e canal medular com medula óssea",
+        "Tuberosidade da base: osso esponjoso coberto por cortical delgada, com inserções tendíneas (êntese) de tecido conjuntivo denso e fibrocartilagem",
+        "Cartilagem articular hialina na face do cubóide, na face com o quarto metatarsal e na cabeça; placa epifisária na cabeça durante o crescimento",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo e endósteo"
+      ]
+    },
+    "clinical": [
+      "Fratura por avulsão da tuberosidade: associa-se a trauma de inversão do pé, com tração do fibular curto e da aponeurose plantar lateral sobre a base.",
+      "Fratura na transição metafisodiafisária proximal: descrita como mais sujeita a atraso de consolidação, relacionado com a irrigação mais limitada dessa região.",
+      "Joanete do quinto metatarsal (de alfaiate): proeminência dolorosa da cabeça, com desvio do dedo mínimo para o lado medial."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:second-metacarpal-bone-r": {
+    "ids": {},
+    "summary_pt": "O segundo osso metacarpal é o do dedo indicador e, em geral, é o mais longo dos cinco metacarpais. Compõe-se de base proximal, corpo e cabeça distal. A base é a mais complexa da série: sua face proximal, em forma de sulco, articula-se principalmente com o trapezoide, e articula-se também, por pequenas facetas, com o trapézio e o capitato, formando a articulação carpometacarpal do indicador, de mobilidade muito reduzida. Lateralmente, a base articula-se com a base do terceiro metacarpal. Na face dorsal da base há uma tuberosidade para a inserção do extensor radial longo do carpo, e na face palmar fixa-se o tendão do flexor radial do carpo. O corpo é prismático, com leve curvatura de concavidade palmar, e dá origem aos músculos interósseos dorsais e palmar do indicador. A cabeça, arredondada, articula-se com a falange proximal na articulação metacarpofalângica e é palpável como o relevo do dedo indicador no punho fechado. Por sua posição, o segundo metacarpal participa da pinça e da preensão, com o indicador relativamente independente dos demais dedos.",
+    "anatomy": {
+      "relations": "Articula-se com o trapezoide, o trapézio e o capitato (articulação carpometacarpal), com a base do 3º metacarpal (articulação intermetacarpal) e com a falange proximal do indicador (articulação metacarpofalângica). Acidentes: base com tuberosidade dorsal, corpo prismático e cabeça. Inserções e origens: extensor radial longo do carpo (face dorsal da base), flexor radial do carpo (face palmar da base), 1º e 2º interósseos dorsais e interósseo palmar do indicador (corpo), cabeça oblíqua do adutor do polegar (base) e ligamentos carpometacarpais e metacarpais transversos profundos.",
+      "vascularization": "Artérias metacarpais dorsais (da rede carpal dorsal) e artérias metacarpais palmares (do arco palmar profundo) dos espaços adjacentes, além da artéria radial do indicador, ramo da artéria radial, originam as artérias nutrícias, que penetram no corpo; ramos perfurantes anastomosam as redes dorsal e palmar.",
+      "innervation": "O periósteo é sensível. As articulações recebem ramos do nervo ulnar (ramo profundo), do nervo mediano e do ramo interósseo posterior do nervo radial; os músculos que se fixam ao osso são inervados pelo nervo radial (extensor radial longo do carpo), pelo nervo mediano (flexor radial do carpo) e pelo ramo profundo do nervo ulnar (interósseos e adutor do polegar)."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com sistemas de Havers e canal medular com medula óssea",
+        "Base e cabeça: osso esponjoso com trabéculas e medula óssea; placa epifisária na cabeça durante o crescimento (ossificação endocondral)",
+        "Cartilagem articular hialina nas faces carpometacarpais e intermetacarpais e na cabeça, em articulações sinoviais",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo e endósteo"
+      ]
+    },
+    "clinical": [
+      "Fraturas metacarpais: podem acometer base, diáfise ou colo, por impacto direto ou queda, com desvio angular que pode alterar o alinhamento do dedo.",
+      "Artrite reumatoide: as articulações metacarpofalângicas, entre elas a do indicador, estão entre as acometidas, com sinovite, erosões da cabeça e desvio ulnar dos dedos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro superior, tópico mão: ossos do metacarpo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metacarpi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ossos da mão",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ossos da mão",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ossos da mão",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro superior, tópico mão: ossos do metacarpo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico artrite reumatoide e osteoartrite",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:zygomatic-bone-r": {
+    "ids": {},
+    "summary_pt": "O osso zigomático é um osso par, de forma quadrangular, que constitui a proeminência da bochecha (região malar) e parte das paredes lateral e inferior da órbita. Apresenta faces lateral (facial), temporal e orbital, margens e três processos: o frontal, que se articula com o osso frontal e forma parte da margem lateral da órbita; o temporal, que se une ao processo zigomático do osso temporal para formar o arco zigomático; e o processo maxilar, articulado com o osso maxilar, na parte inferior da margem infraorbital. Na face orbital articula-se com a asa maior do osso esfenoide. Perfuram-no o forame zigomaticofacial, o zigomaticotemporal e o zigomático-orbital, que dão passagem a ramos do nervo zigomático. A face lateral serve de origem aos músculos zigomático maior e zigomático menor, e o arco zigomático fornece origem ao masseter e fixação à fáscia temporal. O tendão palpebral lateral prende-se à face orbital. O osso tem papel na sustentação do contorno do terço médio da face, na transmissão de forças da mastigação até o crânio e na proteção do globo ocular, em conjunto com os ossos vizinhos.",
+    "anatomy": {
+      "relations": "Articula-se com o osso frontal (sutura frontozigomática), com o osso maxilar (sutura zigomaticomaxilar), com a asa maior do osso esfenoide (sutura esfenozigomática) e com o osso temporal (sutura temporozigomática, no arco zigomático). Acidentes: face lateral, face temporal, face orbital, processos frontal, temporal e maxilar, forames zigomaticofacial, zigomaticotemporal e zigomático-orbital e tubérculo orbital. Inserções: zigomático maior e zigomático menor (face lateral), masseter (parte inferior do arco e face medial), fáscia temporal (margem superior do arco) e tendão palpebral lateral (próximo ao tubérculo orbital).",
+      "vascularization": "Ramos zigomático-orbital e transverso da face da artéria temporal superficial, além de ramos zigomáticos da artéria lacrimal, ramo da artéria oftálmica, que passam por forames do osso; as veias drenam para a veia temporal superficial e a veia facial.",
+      "innervation": "O nervo zigomático, ramo do nervo maxilar (V2), entra na órbita pela fissura orbital inferior e emite os ramos zigomaticofacial e zigomaticotemporal, que atravessam o osso para inervar a pele da região malar e da têmpora. O masseter recebe o nervo massetérico (V3), e os músculos zigomáticos, o nervo facial (VII)."
+    },
+    "histology": {
+      "tissues": [
+        "Osso formado por ossificação intramembranosa, com lâminas de osso compacto delgadas, circundando pequena quantidade de osso esponjoso (díploe) com medula óssea",
+        "Células ósseas: osteoblastos, osteócitos, osteoclastos e células osteoprogenitoras; periósteo externo e endósteo",
+        "Suturas com os ossos vizinhos: tecido conjuntivo fibroso denso entre as bordas ósseas"
+      ]
+    },
+    "clinical": [
+      "Fratura do complexo zigomaticomaxilar (fratura trípode): ruptura das suturas frontozigomática, zigomaticomaxilar e do arco zigomático pode causar achatamento da região malar e alteração da posição do globo ocular.",
+      "Lesão do nervo infraorbital em fraturas da margem infraorbital pode causar hipoestesia da pele da bochecha, do lábio superior e da asa do nariz.",
+      "Fratura do arco zigomático: o deslocamento do arco para a fossa temporal pode contatar o processo coronoide da mandíbula e o músculo temporal, com dor e limitação da abertura da boca."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico osso zigomático",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): os zygomaticum",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico crânio e órbita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico crânio e órbita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico crânio e órbita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico ossificação intramembranosa; osso compacto e esponjoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico osso zigomático",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico osso zigomático",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:thyroid-cartilage": {
+    "ids": {},
+    "summary_pt": "A cartilagem tireóidea é a maior cartilagem da laringe e forma a maior parte do arcabouço anterior e lateral dessa estrutura. É ímpar e composta por duas lâminas, direita e esquerda, que se unem na linha mediana, anteriormente, em um ângulo aberto para trás, constituindo a proeminência laríngea; esse ângulo é mais agudo no homem, em torno de 90 graus, e mais obtuso na mulher, em torno de 120 graus. Acima da proeminência há a incisura tireóidea superior. A margem posterior de cada lâmina projeta-se superior e inferiormente em dois cornos, o superior, ligado ao osso hioide pelo ligamento tíreo-hióideo lateral, e o inferior, que se articula com a cartilagem cricóidea na articulação cricotireóidea. Na face externa há a linha oblíqua, para inserção do esternotireóideo e do tíreo-hióideo, e origem do constritor inferior da faringe. Na face interna fixam-se os ligamentos vestibular e vocal, a epiglote e o músculo tireoaritenóideo. A cartilagem situa-se, em geral, ao nível das vértebras C4 e C5, e a membrana tíreo-hióidea a une ao hioide. Fornece proteção às pregas vocais e participa da fonação.",
+    "anatomy": {
+      "relations": "Articula-se com a cartilagem cricóidea (articulação cricotireóidea, pelos cornos inferiores) e liga-se ao osso hioide pela membrana tíreo-hióidea e pelos ligamentos tíreo-hióideos. Acidentes: lâminas, proeminência laríngea, incisura tireóidea superior, cornos superior e inferior e linha oblíqua. Inserções: esternotireóideo e tíreo-hióideo (linha oblíqua), constritor inferior da faringe, cricotireóideo (margem inferior e corno inferior), tireoaritenóideo e tireoepiglótico (face interna) e ligamentos vestibular, vocal e tireoepiglótico. Os lobos da glândula tireoide situam-se lateralmente, e os músculos infra-hioideos, anteriormente.",
+      "vascularization": "Artéria laríngea superior, ramo da artéria tireóidea superior, que perfura a membrana tíreo-hióidea com o ramo interno do nervo laríngeo superior; ramo cricotireóideo da artéria tireóidea superior; artéria laríngea inferior, ramo da artéria tireóidea inferior, que acompanha o nervo laríngeo recorrente. As veias acompanham as artérias e drenam para as veias tireóideas.",
+      "innervation": "A inervação sensitiva da mucosa acima das pregas vocais provém do ramo interno do nervo laríngeo superior (ramo do vago); o ramo externo desse nervo inerva o cricotireóideo, e o nervo laríngeo recorrente inerva os demais músculos intrínsecos, incluindo o tireoaritenóideo. A cartilagem em si é avascular e aneural; o pericôndrio recebe ramos sensitivos.",
+      "lymph": "Os vasos linfáticos da laringe acima das pregas vocais drenam para os linfonodos cervicais profundos superiores, e, abaixo delas, para linfonodos pré-laríngeos, pré-traqueais e paratraqueais e, depois, para os cervicais profundos inferiores."
+    },
+    "histology": {
+      "tissues": [
+        "Cartilagem hialina: condrócitos em lacunas, grupos isógenos e matriz de colágeno tipo II e proteoglicanos, circundada por pericôndrio",
+        "Pericôndrio com camada fibrosa externa e camada condrogênica interna",
+        "Calcificação e ossificação progressivas da matriz a partir da vida adulta, com formação de osso e medula óssea em áreas internas",
+        "Ao contrário da epiglote, formada por cartilagem elástica, a cartilagem tireóidea é predominantemente hialina"
+      ]
+    },
+    "clinical": [
+      "Fratura da cartilagem tireóidea: traumas cervicais, como impacto direto ou estrangulamento, podem fraturar as lâminas e comprometer a via aérea e a voz, com rouquidão e edema.",
+      "Lesão do nervo laríngeo recorrente: sua passagem posterior à articulação cricotireóidea e o trajeto junto à artéria tireóidea inferior o expõem a lesão em cirurgias da tireoide, com alteração da voz.",
+      "Carcinoma espinocelular de laringe: tumores supraglóticos, glóticos e subglóticos podem invadir a cartilagem tireóidea, em especial quando relacionados ao tabagismo.",
+      "Dimorfismo sexual: na puberdade, o crescimento da laringe no sexo masculino associa-se a ângulo mais agudo entre as lâminas e a voz mais grave."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico laringe",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Larynx: cartilago thyroidea",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido cartilaginoso, tópico cartilagem hialina; cartilagem elástica",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico laringe",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Cabeça e pescoço, tópico carcinoma de laringe",
         "obraId": "robbins",
         "license": "citação"
       }
