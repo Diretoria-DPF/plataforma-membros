@@ -839,6 +839,17 @@ button.learn-card:focus-visible { outline-offset: 3px; }
    página rola e o padding de .app-main mantém o fim acima da barra inferior. */
 .learn-frame.learn-frame-auto { min-height: 320px; height: 320px; }
 
+/* Aviso de mudança de endereço (domain-notice.js): só aparece no GitHub Pages. */
+.domain-notice {
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 6px 14px; padding: 10px 16px;
+  background: var(--primary); color: var(--on-primary);
+  font-size: 14px; line-height: 1.4; text-align: center;
+}
+.domain-notice a { color: inherit; font-weight: 700; text-decoration: underline; }
+.domain-notice a:hover, .domain-notice a:focus-visible { text-decoration-thickness: 2px; }
+
 .ai-admin-head { margin-bottom: 8px; }
 /* Painel de IA no celular: título e botão empilham sem espremer. */
 @media (max-width: 480px) {

@@ -75,6 +75,48 @@ test('robots.txt: permite tudo, bloqueia páginas de desenvolvimento e aponta o 
   }
 });
 
+test('robots.txt: Content-Signal declara o uso permitido (busca e resposta de IA sim, treino não)', () => {
+  const robots = read('robots.txt');
+  const signals = robots.match(/^Content-Signal: .+$/gm) ?? [];
+  assert.ok(signals.length >= 2, 'o sinal deve estar no grupo "*" e no grupo dos bots de IA');
+  for (const line of signals) {
+    assert.equal(line, 'Content-Signal: search=yes, ai-input=yes, ai-train=no');
+  }
+});
+
+function robotsGroups(text) {
+  return text.split(/\n\s*\n/)
+    .map((block) => ({
+      agents: [...block.matchAll(/^User-agent: (.+)$/gm)].map((m) => m[1].trim()),
+      lines: block.split('\n').map((line) => line.trim()),
+    }))
+    .filter((group) => group.agents.length);
+}
+
+test('robots.txt: coletores de treino de IA bloqueados; assistentes e buscadores de IA liberados', () => {
+  const groups = robotsGroups(read('robots.txt'));
+  const groupOf = (agent) => groups.find((group) => group.agents.includes(agent));
+  for (const bot of ['GPTBot', 'ClaudeBot', 'Google-Extended', 'CCBot', 'Applebot-Extended']) {
+    assert.ok(groupOf(bot)?.lines.includes('Disallow: /'), `${bot} deveria estar bloqueado`);
+  }
+  for (const bot of ['OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User']) {
+    assert.ok(groupOf(bot)?.lines.includes('Allow: /'), `${bot} deveria estar liberado`);
+  }
+});
+
+test('_headers: a página inicial aponta para o sitemap e o llms.txt via Link', () => {
+  const headers = read('_headers');
+  const block = /^\/\n((?:[ \t]+.+\n?)+)/m.exec(headers)?.[1] ?? '';
+  assert.match(block, /Link: <\/sitemap\.xml>; rel="sitemap"/);
+  assert.match(block, /<\/llms\.txt>; rel="describedby"/);
+});
+
+test('_headers: não publica API, OAuth ou cartão de agente (plataforma restrita)', () => {
+  const headers = read('_headers');
+  assert.ok(!/api-catalog|agent-card|oauth-/i.test(headers));
+  assert.ok(!existsSync(join(ROOT, '.well-known')), 'não deve existir .well-known público');
+});
+
 test('sitemap.xml: XML com as páginas públicas no domínio principal', () => {
   assert.ok(existsSync(join(ROOT, 'sitemap.xml')), 'sitemap.xml ausente');
   const sitemap = read('sitemap.xml');

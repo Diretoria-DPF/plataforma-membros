@@ -18,7 +18,7 @@ custom_domain = true
 # secret put <NOME>`, que os guarda criptografados no lado da Cloudflare,
 # fora do repositório. Ver docs/DEPLOYMENT.md e docs/FASE_3_IA_CLINICA.md.
 [vars]
-APP_BASE_URL = "https://diretoria-dpf.github.io/plataforma-membros/"
+APP_BASE_URL = "https://laift.com.br/"
 # localhost:4174 é o servidor de pré-visualização local (frontend/dev-server.js) —
 # mantido na lista só para permitir testar mudanças de front-end localmente
 # antes de publicar; não concede acesso a nada que o token de sessão já não

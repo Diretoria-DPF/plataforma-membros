@@ -15,6 +15,11 @@
 # HSTS começa com 5 minutos de propósito: se algo estiver errado no HTTPS do
 # domínio novo, o navegador esquece rápido. Depois de validar tudo, subir para
 # max-age=31536000 (1 ano) e só então considerar includeSubDomains/preload.
+# Guia para bots e agentes de IA (RFC 8288): da página inicial para o sitemap e
+# para a descrição em texto da LAIFT. Só aponta para arquivos públicos.
+/
+  Link: </sitemap.xml>; rel="sitemap", </llms.txt>; rel="describedby"; type="text/plain"
+
 /*
   Strict-Transport-Security: max-age=300
   X-Content-Type-Options: nosniff

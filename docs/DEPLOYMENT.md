@@ -83,8 +83,8 @@ Não são segredo; ficam versionadas.
 
 | Var / binding | Valor atual | Para quê |
 |---|---|---|
-| `APP_BASE_URL` | `https://diretoria-dpf.github.io/plataforma-membros/` | links dos e-mails |
-| `ALLOWED_ORIGINS` | `https://diretoria-dpf.github.io`, `http://localhost:4174`, `http://localhost:4175` | CORS |
+| `APP_BASE_URL` | `https://laift.com.br/` | links dos e-mails |
+| `ALLOWED_ORIGINS` | `https://diretoria-dpf.github.io` (só na transição), `https://laift.com.br`, `http://localhost:4174`, `http://localhost:4175` | CORS |
 | `MAIL_FROM_NAME`, `MAIL_FROM_ADDRESS` | remetente **verificado** na Brevo | e-mail |
 | `MEDIA_PUBLIC_URL` | URL pública do bucket R2 | avatares e imagens de evento |
 | `GROQ_MODEL_FAST` | `openai/gpt-oss-20b` | paciente virtual (chat) |
