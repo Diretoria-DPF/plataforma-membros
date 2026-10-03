@@ -1,0 +1,1955 @@
+{
+  "za:femur-r": {
+    "ids": {},
+    "summary_pt": "O fêmur é o osso da coxa e o mais longo e robusto osso do corpo. Na extremidade proximal, a cabeça articula-se com o acetábulo do osso coxal, formando a articulação do quadril; o colo une a cabeça à diáfise e os trocanteres maior e menor oferecem inserção a músculos glúteos e ao iliopsoas. Anteriormente, a linha intertrocantérica une os trocanteres; posteriormente, a crista intertrocantérica faz o mesmo. A diáfise tem leve convexidade anterior e, na face posterior, a linha áspera, com lábios medial e lateral, onde se inserem os adutores e se originam os vastos. Distalmente, os côndilos medial e lateral, separados pela fossa intercondilar, articulam-se com a tíbia, e a face patelar recebe a patela. O ângulo de inclinação entre o colo e a diáfise é variável e, em adultos, costuma situar-se em torno de 125 graus, o que afasta a cabeça lateralmente da diáfise e favorece a amplitude de movimento do quadril. Como a cabeça e o colo recebem irrigação por vasos que percorrem a superfície do colo, a anatomia vascular da região proximal é decisiva para a compreensão das lesões do quadril.",
+    "anatomy": {
+      "relations": "Articula-se com o acetábulo (articulação do quadril), com a tíbia (articulação do joelho) e com a patela. Acidentes principais: fóvea da cabeça (fixa o ligamento da cabeça do fêmur), trocanteres maior e menor, fossa trocantérica, tuberosidade glútea, linha pectínea, linha áspera, linhas supracondilares, tubérculo adutor e epicôndilos medial e lateral. Inserções: músculos glúteos médio e mínimo e piriforme no trocanter maior; iliopsoas no trocanter menor; glúteo máximo na tuberosidade glútea; adutores e pectíneo na região posterior da diáfise; vastos medial, lateral e intermédio a partir da diáfise; cabeça curta do bíceps femoral na linha áspera.",
+      "vascularization": "A cabeça e o colo recebem ramos das artérias circunflexas medial e lateral do fêmur, que formam um anel arterial na base do colo; os ramos retinaculares ascendem sobre o colo até a cabeça. Contribui o ramo acetabular da artéria obturatória, pela artéria do ligamento da cabeça do fêmur. A diáfise é nutrida por artérias nutrícias originadas de ramos perfurantes da artéria femoral profunda, e a extremidade distal recebe ramos das artérias geniculares.",
+      "innervation": "O periósteo é sensível e a inervação do osso acompanha os vasos nutrícios. A articulação do quadril recebe ramos dos nervos femoral, obturatório, glúteo superior e do nervo do músculo quadrado femoral; o joelho recebe ramos dos nervos femoral, obturatório, tibial e fibular comum."
+    },
+    "histology": {
+      "tissues": [
+        "Diáfise: osso compacto espesso, com sistemas de Havers (ósteons), canais de Volkmann e lamelas circunferenciais, envolvendo o canal medular com medula óssea amarela no adulto",
+        "Epífises e metáfises: osso esponjoso com trabéculas orientadas segundo as linhas de força e medula óssea vermelha hematopoiética nos espaços",
+        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo (externo) e endósteo (interno)",
+        "Cartilagem articular hialina recobrindo a cabeça, os côndilos e a face patelar; placa epifisária (cartilagem de crescimento) enquanto houver crescimento"
+      ]
+    },
+    "clinical": [
+      "Fratura do colo do fêmur: a lesão dos ramos retinaculares das artérias circunflexas pode comprometer a irrigação da cabeça e associar-se a necrose avascular, especialmente em fraturas com deslocamento.",
+      "Fragilidade óssea na osteoporose: a perda de massa do osso esponjoso do colo e da região trocantérica torna essa região suscetível a fraturas após traumas de baixa energia em idosos.",
+      "Coxa vara e coxa valga: redução ou aumento do ângulo de inclinação em relação ao esperado alteram a distribuição de forças no quadril e o comprimento aparente do membro.",
+      "Epifisiólise proximal do fêmur: deslizamento da epífise da cabeça sobre o colo, descrito em adolescentes, pela fragilidade da placa de crescimento."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico fêmur",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Cintura pélvica e membro inferior, tópico fêmur",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): fêmur",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico fêmur",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico fêmur",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico fêmur",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico fêmur",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico fêmur",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico fêmur",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; cartilagem articular",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico fêmur",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico fêmur",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas e osteoporose",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:hip-bone-r": {
+    "ids": {},
+    "summary_pt": "O osso coxal é um osso plano e irregular que, junto ao osso coxal contralateral, ao sacro e ao cóccix, forma a pelve óssea. Na infância é constituído por três ossos, o ílio, o ísquio e o púbis, que se encontram no acetábulo, unidos por cartilagem em forma de Y e fundidos ao longo da adolescência. O ílio é a parte superior e expandida, com asa, crista ilíaca e fossa ilíaca; o ísquio forma a parte póstero-inferior, com a espinha isquiática e o túber isquiático; o púbis forma a parte anterior, com os ramos superior e inferior e a face sinfisial. O acetábulo, cavidade hemisférica com face semilunar revestida de cartilagem, recebe a cabeça do fêmur, e o forame obturado é quase fechado pela membrana obturadora. Posteriormente, a face auricular articula-se com o sacro na articulação sacroilíaca, enquanto, anteriormente, os dois ossos púbicos se unem na sínfise púbica. A crista ilíaca e as espinhas ilíacas oferecem inserção a músculos do abdome, da coxa e do dorso, e o túber isquiático serve de apoio na posição sentada.",
+    "anatomy": {
+      "relations": "Articula-se com o sacro (articulação sacroilíaca), com o fêmur (articulação do quadril) e com o osso coxal oposto (sínfise púbica). Acidentes: crista ilíaca, espinhas ilíacas anterossuperior, anteroinferior, posterossuperior e posteroinferior, linha arqueada, incisuras isquiáticas maior e menor, espinha isquiática, túber isquiático, tubérculo púbico, crista púbica, forame obturado, incisura do acetábulo e fossa do acetábulo. Inserções: sartório e tensor da fáscia lata na espinha ilíaca anterossuperior; reto femoral na espinha ilíaca anteroinferior; ilíaco na fossa ilíaca; glúteos na face glútea; isquiotibiais no túber isquiático; adutores no ramo inferior do púbis; reto do abdome na crista púbica; oblíquos do abdome e quadrado do lombo na crista ilíaca.",
+      "vascularization": "Recebe ramos nutrícios das artérias ilíaca circunflexa profunda e iliolombar (ramo ilíaco) para a fossa ilíaca, das artérias glúteas superior e inferior para a face glútea e da artéria obturatória para o forame obturado e o ramo do púbis; o acetábulo recebe ramos da artéria obturatória (ramo acetabular) e das artérias glúteas.",
+      "innervation": "O periósteo é sensível e a inervação óssea acompanha os vasos nutrícios. Nervos regionais do plexo lombar e do plexo sacral, como o obturatório, o femoral e o glúteo superior, e o nervo do músculo quadrado femoral, suprem os músculos inseridos no osso e a articulação do quadril."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso abundante no ílio e no túber isquiático, com medula óssea vermelha hematopoiética, envolvido por camada de osso compacto de espessura variável",
+        "Osso compacto mais espesso nas regiões de transmissão de carga, como a margem do acetábulo e o arco anterior",
+        "Cartilagem hialina recobrindo a face semilunar do acetábulo e a face auricular; o lábio do acetábulo é de fibrocartilagem",
+        "Cartilagem trirradiada (em Y) entre ílio, ísquio e púbis no acetábulo, com crescimento por ossificação endocondral até a fusão"
+      ]
+    },
+    "clinical": [
+      "Fraturas da pelve: por formar um anel osteoligamentar, lesões em um ponto costumam acompanhar-se de ruptura em outro local do anel; o osso esponjoso e os plexos venosos adjacentes podem resultar em hemorragia significativa e lesões de bexiga e uretra.",
+      "Fraturas por avulsão: nas espinhas ilíacas e no túber isquiático, a tração de músculos fortes sobre apófises ainda não fundidas pode destacar fragmentos em adolescentes e atletas.",
+      "Contusão da crista ilíaca: pancada direta sobre essa região subcutânea pode lesionar a inserção dos músculos abdominais.",
+      "A crista ilíaca, de fácil acesso, é sítio de obtenção de medula óssea e de enxerto ósseo."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico osso coxal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Cintura pélvica e membro inferior, tópico osso coxal",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): osso coxal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico osso coxal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico osso coxal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico osso coxal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico osso coxal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico osso coxal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico osso coxal",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; cartilagem articular",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico osso coxal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico osso coxal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:tibia-r": {
+    "ids": {},
+    "summary_pt": "A tíbia é o osso medial da perna e o segundo mais longo do corpo; sustenta o peso transmitido pelo fêmur e o repassa ao tálus. Proximalmente, os côndilos medial e lateral, de face articular superior, recebem os côndilos do fêmur e são separados pela área intercondilar, onde se fixam os ligamentos cruzados e os meniscos. Na face anterior, a tuberosidade da tíbia recebe o ligamento da patela, e a margem anterior forma a crista da tíbia, palpável sob a pele. A diáfise tem secção aproximadamente triangular, com face medial subcutânea, face lateral voltada para o compartimento anterior da perna e face posterior com a linha do músculo sóleo. A margem interóssea lateral dá fixação à membrana interóssea da perna. A extremidade distal projeta-se medialmente como maléolo medial e apresenta face articular inferior para o tálus e incisura fibular, que se articula com a fíbula. Por essa organização, a tíbia é o principal osso de sustentação de carga da perna, enquanto a fíbula participa sobretudo de inserções musculares e da face lateral do tornozelo.",
+    "anatomy": {
+      "relations": "Articula-se com o fêmur (joelho), com a fíbula (articulações tibiofibulares proximal, sinovial, e distal, sindesmose) e com o tálus (tornozelo). Acidentes: côndilos, eminência intercondilar, área intercondilar anterior e posterior, tuberosidade da tíbia, margem anterior, margem interóssea, linha do músculo sóleo, maléolo medial e incisura fibular. Inserções: ligamento da patela (quadríceps) na tuberosidade; sartório, grácil e semitendíneo na face medial proximal; semimembranoso no côndilo medial; sóleo na linha do sóleo; tibial posterior e flexor longo dos dedos na face posterior; tibial anterior na face lateral; ligamento cruzado anterior e posterior na área intercondilar.",
+      "vascularization": "A diáfise é nutrida pela artéria nutrícia da tíbia, ramo da artéria tibial posterior, que penetra a face posterior abaixo da linha do sóleo. As extremidades recebem ramos das artérias geniculares, que formam a rede do joelho, e, distalmente, das artérias tibiais anterior e posterior e de ramos maleolares.",
+      "innervation": "O periósteo é sensível e a inervação óssea acompanha as artérias nutrícias, a partir do nervo tibial. Os nervos tibial e fibular comum fornecem ramos às articulações do joelho e do tornozelo; a pele da face medial recebe ramos do nervo safeno."
+    },
+    "histology": {
+      "tissues": [
+        "Diáfise: osso compacto espesso, com ósteons e lamelas circunferenciais, envolvendo canal medular com medula óssea amarela no adulto",
+        "Epífises: osso esponjoso trabecular sob fina cortical, com medula óssea vermelha hematopoiética nos espaços",
+        "Cartilagem articular hialina sobre os côndilos e a face articular inferior; fibrocartilagem dos meniscos inserida na área intercondilar",
+        "Placas epifisárias proximal e distal, com cartilagem de crescimento e ossificação endocondral durante o crescimento"
+      ]
+    },
+    "clinical": [
+      "Fratura da diáfise: a face medial é subcutânea, de modo que as fraturas tendem a ser expostas; a vascularização em parte do osso é menos abundante, o que pode relacionar-se com consolidação mais lenta.",
+      "Fratura dos côndilos (platô tibial): resulta de força axial ou lateral sobre o joelho e compromete a superfície articular de sustentação de carga.",
+      "Periostite tibial por estresse (dor na face medial da perna): descrita em corredores, com dor ao longo da margem medial.",
+      "Fratura do maléolo medial: pode ocorrer isolada ou associada a lesões do maléolo lateral e dos ligamentos em torções do tornozelo."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico tíbia",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Cintura pélvica e membro inferior, tópico tíbia",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): tíbia",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico tíbia",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico tíbia",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico tíbia",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico tíbia",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico tíbia",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico tíbia",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; cartilagem articular",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico tíbia",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico tíbia",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:humerus-r": {
+    "ids": {},
+    "summary_pt": "O úmero é o osso do braço e o maior osso do membro superior. Na extremidade proximal, a cabeça, de superfície articular hemisférica, articula-se com a cavidade glenoidal da escápula na articulação do ombro; o colo anatômico a limita, e o colo cirúrgico, logo abaixo dos tubérculos maior e menor, é região de fragilidade, sujeita a fraturas. Os tubérculos são separados pelo sulco intertubercular, por onde passa o tendão da cabeça longa do bíceps braquial. A diáfise apresenta, no terço médio da face lateral, a tuberosidade para o deltoide e, na face posterior, o sulco do nervo radial, que acompanha a artéria braquial profunda. Distalmente, o côndilo do úmero reúne o capítulo, que se articula com a cabeça do rádio, e a tróclea, que se articula com a incisura troclear da ulna. Acima deles ficam as fossas radial, coronóidea e do olécrano, que acomodam esses ossos na flexão e na extensão do cotovelo, e lateralmente ficam os epicôndilos medial e lateral, de onde se originam músculos do antebraço. O nervo ulnar passa no sulco posterior ao epicôndilo medial.",
+    "anatomy": {
+      "relations": "Articula-se com a escápula (articulação do ombro), com a ulna (articulação umeroulnar) e com o rádio (articulação umerorradial). Acidentes: cabeça, colo anatômico, colo cirúrgico, tubérculos maior e menor, sulco intertubercular, tuberosidade para o deltoide, sulco do nervo radial, crista supracondilar medial e lateral, fossas radial, coronóidea e do olécrano, epicôndilos medial e lateral, sulco do nervo ulnar. Inserções: supraespinal, infraespinal e redondo menor no tubérculo maior; subescapular no tubérculo menor; peitoral maior, latíssimo do dorso e redondo maior no sulco intertubercular; deltoide na tuberosidade; coracobraquial e braquial na diáfise; braquiorradial e extensor radial longo do carpo na crista supracondilar lateral; origem dos flexores no epicôndilo medial e dos extensores no lateral.",
+      "vascularization": "A cabeça e o colo recebem ramos das artérias circunflexas anterior e posterior do úmero, ramos da artéria axilar. A diáfise é nutrida por artéria nutrícia que costuma ser ramo da artéria braquial ou da braquial profunda; a extremidade distal recebe ramos das artérias colaterais e recorrentes que formam a rede do cotovelo.",
+      "innervation": "O periósteo é sensível e a inervação óssea acompanha as artérias nutrícias. Relações nervosas importantes: o nervo axilar contorna o colo cirúrgico; o nervo radial percorre o sulco do nervo radial na face posterior da diáfise; o nervo ulnar passa posteriormente ao epicôndilo medial; o nervo mediano relaciona-se com a região distal anterior, junto à artéria braquial."
+    },
+    "histology": {
+      "tissues": [
+        "Diáfise: osso compacto com ósteons e lamelas circunferenciais, envolvendo o canal medular com medula óssea amarela no adulto",
+        "Extremidades: osso esponjoso trabecular sob fina cortical, com medula óssea vermelha hematopoiética",
+        "Cartilagem articular hialina recobrindo a cabeça, o capítulo e a tróclea",
+        "Placas epifisárias da extremidade proximal e do côndilo, com cartilagem de crescimento, durante o crescimento"
+      ]
+    },
+    "clinical": [
+      "Fratura do colo cirúrgico: pode associar-se a lesão do nervo axilar e da artéria circunflexa posterior do úmero, com déficit sensitivo sobre o deltoide e fraqueza na abdução do braço.",
+      "Fratura da diáfise no sulco do nervo radial: pode comprometer o nervo radial e causar dificuldade de extensão do punho e dos dedos.",
+      "Fratura supracondilar: descrita sobretudo em crianças, pode relacionar-se com lesão da artéria braquial e do nervo mediano, com risco de isquemia do antebraço.",
+      "Fratura do epicôndilo medial: pode lesionar o nervo ulnar no sulco posterior e causar alteração de sensibilidade e fraqueza na mão."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico úmero",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Cintura peitoral e membro superior, tópico úmero",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): úmero",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico úmero",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico úmero",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico úmero",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico úmero",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico úmero",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico úmero",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; cartilagem articular",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico úmero",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico úmero",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:radius-r": {
+    "ids": {},
+    "summary_pt": "O rádio é o osso lateral do antebraço, mais curto que a ulna e mais largo distalmente. A extremidade proximal possui a cabeça em forma de disco, com fóvea articular para o capítulo do úmero e circunferência articular, que gira na incisura radial da ulna, mantida pelo ligamento anular. Abaixo do colo, a tuberosidade do rádio recebe o tendão do bíceps braquial. A diáfise, com margem interóssea voltada para a ulna, é convexa lateralmente e mais espessa em direção distal. A extremidade distal alarga-se, apresenta o processo estiloide lateralmente, a incisura ulnar para a cabeça da ulna e uma face articular carpal côncava para os ossos escafoide e semilunar. Na face dorsal, o tubérculo dorsal separa sulcos por onde passam tendões extensores. O rádio gira em torno da ulna nos movimentos de pronação e supinação, com articulações radioulnares proximal e distal e membrana interóssea entre os dois ossos. Como grande parte da carga transmitida pela mão passa pelo rádio, sua extremidade distal tem papel central na sustentação do punho.",
+    "anatomy": {
+      "relations": "Articula-se com o úmero (articulação umerorradial), com a ulna (articulações radioulnares proximal e distal) e com os ossos escafoide e semilunar (articulação radiocarpal). Acidentes: cabeça, colo, tuberosidade do rádio, margem interóssea, processo estiloide, incisura ulnar e tubérculo dorsal. Inserções: bíceps braquial na tuberosidade; supinador na face proximal lateral e posterior; pronador redondo na face lateral do corpo; flexor superficial dos dedos na linha oblíqua; flexor longo do polegar na face anterior; pronador quadrado no quarto distal; braquiorradial na base do processo estiloide; abdutor longo e extensor curto do polegar na face posterior.",
+      "vascularization": "A artéria nutrícia do rádio costuma originar-se da artéria interóssea anterior; o periósteo e as extremidades recebem ramos da artéria radial e das redes carpais palmar e dorsal.",
+      "innervation": "O periósteo é sensível e a inervação óssea acompanha a artéria nutrícia. O nervo interósseo anterior (do nervo mediano) e o nervo interósseo posterior (ramo do nervo radial) fornecem ramos aos músculos inseridos e à articulação do punho; o ramo superficial do nervo radial relaciona-se com a face lateral do rádio."
+    },
+    "histology": {
+      "tissues": [
+        "Diáfise: osso compacto com ósteons e lamelas circunferenciais, com canal medular e medula óssea amarela no adulto",
+        "Extremidade distal: osso esponjoso trabecular sob fina cortical, com medula óssea vermelha hematopoiética",
+        "Cartilagem articular hialina sobre a fóvea da cabeça, a circunferência articular e a face carpal",
+        "Placas epifisárias proximal e distal, que permitem o alongamento do osso enquanto o crescimento durar"
+      ]
+    },
+    "clinical": [
+      "Fratura distal do rádio: a queda sobre a mão espalmada pode fraturar a extremidade distal, com deslocamento dorsal do fragmento no padrão descrito como fratura de Colles.",
+      "Subluxação da cabeça do rádio (pronação dolorosa): descrita em crianças pequenas após tração do antebraço, quando a cabeça desliza sob o ligamento anular.",
+      "Fratura da cabeça do rádio: ocorre por impacto axial no cotovelo e pode limitar a rotação do antebraço.",
+      "Fragilidade na osteoporose: a extremidade distal do rádio é uma das regiões descritas como suscetíveis a fraturas por traumas de baixa energia em idosos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico rádio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Cintura peitoral e membro superior, tópico rádio",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): rádio",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico rádio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico rádio",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico rádio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico rádio",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico rádio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico rádio",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; cartilagem articular",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico rádio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico rádio",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas e osteoporose",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:ulna-r": {
+    "ids": {},
+    "summary_pt": "A ulna é o osso medial do antebraço e o principal constituinte da articulação do cotovelo no lado do antebraço. Proximalmente, o olécrano, que forma a saliência posterior do cotovelo, e o processo coronoide delimitam a incisura troclear, que abraça a tróclea do úmero. Lateralmente, a incisura radial recebe a cabeça do rádio. Abaixo do processo coronoide, a tuberosidade da ulna recebe o tendão do braquial. A diáfise afila-se em direção distal e tem uma margem interóssea lateral, que dá fixação à membrana interóssea, e a crista do músculo supinador, onde se origina esse músculo. Na extremidade distal, a cabeça da ulna articula-se com a incisura ulnar do rádio, e o processo estiloide fica posteromedialmente. A cabeça da ulna não se articula diretamente com os ossos do carpo, pois é separada deles pelo disco articular da articulação radioulnar distal. Assim, durante a pronação e a supinação, é o rádio que gira ao redor da ulna, relativamente estável. A diáfise é palpável em toda a extensão ao longo da margem posterior subcutânea.",
+    "anatomy": {
+      "relations": "Articula-se com o úmero (articulação umeroulnar), com o rádio (articulações radioulnares proximal e distal) e, por meio do disco articular, relaciona-se com o carpo. Acidentes: olécrano, processo coronoide, incisura troclear, incisura radial, tuberosidade da ulna, crista do supinador, margem interóssea, cabeça e processo estiloide. Inserções: tríceps braquial no olécrano; ancôneo no olécrano e na face posterior proximal; braquial na tuberosidade; flexor profundo dos dedos nas faces anterior e medial; flexor ulnar do carpo no olécrano e na margem posterior; supinador na crista; pronador quadrado no quarto distal; músculos profundos do compartimento posterior, como o abdutor longo do polegar e os extensores do polegar e do indicador, na face posterior.",
+      "vascularization": "A artéria nutrícia da ulna costuma originar-se da artéria interóssea anterior; o olécrano e o processo coronoide recebem ramos das artérias recorrentes ulnares e da rede arterial do cotovelo, e o periósteo recebe ramos da artéria ulnar.",
+      "innervation": "O periósteo é sensível e a inervação óssea acompanha a artéria nutrícia. O nervo ulnar passa posteriormente ao epicôndilo medial do úmero e, no antebraço, relaciona-se com a ulna; o nervo interósseo anterior (nervo mediano) e o nervo interósseo posterior (nervo radial) inervam músculos inseridos no osso."
+    },
+    "histology": {
+      "tissues": [
+        "Diáfise: osso compacto com ósteons e lamelas circunferenciais, com canal medular e medula óssea amarela no adulto",
+        "Olécrano e extremidades: osso esponjoso trabecular sob fina cortical, com medula óssea vermelha hematopoiética",
+        "Cartilagem articular hialina na incisura troclear, na incisura radial e na circunferência da cabeça",
+        "Placas epifisárias com cartilagem de crescimento no olécrano e nas extremidades, durante o crescimento"
+      ]
+    },
+    "clinical": [
+      "Fratura do olécrano: a tração do tríceps braquial pode afastar o fragmento proximal e comprometer a extensão ativa do cotovelo.",
+      "Fratura de Monteggia: fratura da diáfise proximal da ulna associada à luxação da cabeça do rádio.",
+      "Fratura da diáfise de rádio e ulna: os dois ossos formam um anel com a membrana interóssea, e a fratura costuma envolver ambos, com deslocamentos influenciados pela ação dos músculos pronadores e supinador.",
+      "Bursite olecraniana: inflamação da bolsa subcutânea sobre o olécrano, relacionada a apoio repetido sobre o cotovelo."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ulna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Cintura peitoral e membro superior, tópico ulna",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ulna",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ulna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ulna",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ulna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ulna",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ulna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ulna",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; cartilagem articular",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ulna",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ulna",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:clavicle-r": {
+    "ids": {},
+    "summary_pt": "A clavícula é um osso longo, curvo em forma de S, que conecta o esqueleto axial ao membro superior. Atua como escora que mantém a escápula afastada do tronco e transmite ao esterno parte da força aplicada ao ombro. A extremidade esternal, volumosa, articula-se com o manúbrio do esterno e com a primeira cartilagem costal na articulação esternoclavicular, que contém disco articular. A extremidade acromial, achatada, articula-se com o acrômio da escápula na articulação acromioclavicular. O corpo é convexo anteriormente na metade medial e côncavo anteriormente na metade lateral. Na face inferior, destacam-se a tuberosidade do ligamento costoclavicular, o sulco do músculo subclávio e, lateralmente, o tubérculo conoide e a linha trapezoidal, onde se fixam os ligamentos coracoclaviculares. Na face superior, inserem-se o esternocleidomastóideo, o deltoide e o trapézio, e a face anterior recebe o peitoral maior. A clavícula é subcutânea e palpável em todo o comprimento, protege a artéria e a veia subclávias e relaciona-se, posteriormente, com o plexo braquial. A clavícula é descrita como um dos primeiros ossos a ossificar no embrião, por ossificação em parte intramembranosa.",
+    "anatomy": {
+      "relations": "Articula-se com o manúbrio do esterno (articulação esternoclavicular, com disco articular) e com o acrômio da escápula (articulação acromioclavicular). Ligamentos: costoclavicular, conoide e trapezoide (coracoclavicular). Acidentes: tuberosidade do ligamento costoclavicular, sulco do músculo subclávio, tubérculo conoide e linha trapezoidal. Inserções: esternocleidomastóideo no terço medial da face superior; peitoral maior na face anterior da metade medial; deltoide no terço lateral anterior; trapézio no terço lateral posterior; subclávio no sulco inferior; esternoióideo na face posterior da extremidade esternal.",
+      "vascularization": "Recebe ramos das artérias supraescapular e toracoacromial (ramo clavicular) e, medialmente, da artéria torácica interna; as veias drenam para as veias supraescapular e toracoacromial. A artéria e a veia subclávias passam posteriormente ao osso.",
+      "innervation": "Os nervos supraclaviculares, ramos do plexo cervical, cruzam a clavícula e inervam a pele que a recobre; o nervo para o músculo subclávio, ramo do plexo braquial, relaciona-se com a face inferior. O periósteo é sensível."
+    },
+    "histology": {
+      "tissues": [
+        "Osso compacto na diáfise, envolvendo osso esponjoso trabecular com medula óssea vermelha nas extremidades",
+        "Ossificação em parte intramembranosa e em parte endocondral, com centro de ossificação secundário na extremidade esternal",
+        "Superfícies articulares das extremidades recobertas por fibrocartilagem nas articulações esternoclavicular e acromioclavicular",
+        "Periósteo espesso e vascularizado, com osteoblastos e células osteoprogenitoras"
+      ]
+    },
+    "clinical": [
+      "Fratura da clavícula: o terço médio é um local comum de fratura; o fragmento medial pode ser elevado pelo esternocleidomastóideo e o lateral deslocado para baixo pelo peso do membro.",
+      "Luxação acromioclavicular: lesão dos ligamentos acromioclavicular e coracoclavicular desloca a extremidade acromial em relação ao acrômio.",
+      "Fraturas e luxações da clavícula podem lesionar estruturas posteriores, como a artéria e a veia subclávias e o plexo braquial, pela proximidade anatômica.",
+      "Ossificação tardia da extremidade esternal: essa epífise é descrita como uma das últimas a se fundir, o que serve como referência na estimativa da idade esquelética."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico clavícula",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Cintura peitoral e membro superior, tópico clavícula",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): clavícula",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico clavícula",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico clavícula",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico clavícula",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico clavícula",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico clavícula",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico clavícula",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico clavícula",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico clavícula",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:second-rib-r": {
+    "ids": {},
+    "summary_pt": "A segunda costela é uma costela verdadeira, considerada atípica por ser mais fina e menos curvada que as costelas típicas, e com cerca do dobro do comprimento da primeira. A cabeça apresenta duas faces articulares, que se articulam com os corpos das vértebras T1 e T2 e com o disco intervertebral entre elas; o tubérculo articula-se com o processo transverso de T2. O corpo tem um ângulo discreto e, na face externa, uma tuberosidade para o músculo serrátil anterior. A extremidade anterior continua-se com a segunda cartilagem costal, que se articula com o esterno no ângulo do esterno, na junção entre o manúbrio e o corpo; por isso, essa articulação é ponto de partida para a contagem de costelas e espaços intercostais na parede torácica anterior. O sulco da costela, na margem inferior, abriga o feixe vasculonervoso do segundo espaço intercostal. Na face anterior do tórax, a costela fica profunda ao músculo peitoral maior e, em sua porção lateral, à mama; posteriormente, a escápula recobre parte de seu segmento posterior.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T1 e T2 (articulação da cabeça da costela), com o processo transverso de T2 (articulação costotransversária) e, por meio da cartilagem costal, com o esterno no ângulo do esterno (articulação esternocostal). Inserções: serrátil anterior (tuberosidade e digitações superiores), escaleno posterior, serrátil posterior superior, intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do segundo espaço: a artéria intercostal posterior é ramo da artéria intercostal suprema (tronco costocervical) e a artéria intercostal anterior é ramo da artéria torácica interna.",
+      "innervation": "O feixe vasculonervoso percorre o sulco da costela. O nervo intercostal do segundo espaço (ramo anterior do nervo espinal T2) supre os músculos e a pele da parede e emite o nervo intercostobraquial para a face medial do braço. O periósteo é sensível."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, que pode calcificar com a idade",
+        "Articulações costovertebral e costotransversária sinoviais, com cartilagem articular"
+      ]
+    },
+    "clinical": [
+      "Referência de superfície: o ângulo do esterno localiza a segunda cartilagem costal e orienta a contagem de costelas e espaços intercostais.",
+      "Fraturas de costelas superiores: a cintura peitoral protege as costelas superiores, de modo que fraturas nessa região sugerem traumatismo de alta energia e podem associar-se a lesões de vasos subclávios, plexo braquial ou pulmão.",
+      "Dor referida: o nervo intercostobraquial leva a sensibilidade da face medial do braço, região a que pode ser referida a dor visceral cardíaca, pela convergência de aferências dos segmentos torácicos superiores."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: segunda costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: segunda costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: segunda costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: segunda costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: segunda costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: segunda costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: segunda costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: segunda costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: segunda costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: segunda costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:third-rib-r": {
+    "ids": {},
+    "summary_pt": "A terceira costela é uma costela verdadeira e típica, a primeira de uma série (terceira a nona) que compartilha o mesmo plano estrutural. A cabeça possui duas faces articulares, separadas pela crista da cabeça, que se articulam com os corpos das vértebras T2 e T3 e com o disco intervertebral entre elas. O colo une a cabeça ao tubérculo, cuja parte articular se articula com o processo transverso de T3. O corpo curva-se no ângulo da costela, e a face interna, junto à margem inferior, apresenta o sulco da costela, que protege o feixe vasculonervoso intercostal. Anteriormente, a cartilagem costal articula-se com o corpo do esterno. Na face externa, inserem-se o serrátil anterior e, na vizinhança do ângulo, o serrátil posterior superior, e a face anterior da costela dá origem ao músculo peitoral menor. A costela é recoberta pelo músculo peitoral maior e, em parte, pela mama, e profundamente relaciona-se com a pleura parietal e com o pulmão. Embora curva e relativamente delgada, conta com a proteção parcial da escápula, posteriormente, e da clavícula e do ombro, lateral e anteriormente.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T2 e T3 (articulação da cabeça da costela), com o processo transverso de T3 (articulação costotransversária) e, por meio da cartilagem costal, com o esterno (articulação esternocostal). Inserções: peitoral menor (face externa, junto com as costelas quarta e quinta), serrátil anterior, serrátil posterior superior, intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do terceiro espaço: a artéria intercostal posterior é ramo da parte torácica da aorta e a artéria intercostal anterior é ramo da artéria torácica interna.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do terceiro espaço (ramo anterior do nervo espinal T3) percorre o sulco da costela e supre os músculos e a pele da parede torácica."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, sujeita a calcificação progressiva com o envelhecimento; articulações costovertebrais e costotransversárias sinoviais"
+      ]
+    },
+    "clinical": [
+      "Fraturas de costelas superiores: a escápula e a clavícula protegem parcialmente as costelas superiores, de modo que fraturas nessa região sugerem traumatismo intenso e podem associar-se a lesão de pulmão, vasos subclávios ou plexo braquial.",
+      "Relação com a mama: a base da mama estende-se aproximadamente da segunda à sexta costela e repousa sobre o peitoral maior, de modo que a parede torácica pode ser relevante na avaliação de tumores mamários profundos.",
+      "Fraturas de várias costelas adjacentes em mais de um ponto podem produzir segmento móvel da parede (tórax instável), com movimento paradoxal na respiração."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: terceira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: terceira costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: terceira costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: terceira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: terceira costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: terceira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: terceira costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: terceira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: terceira costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: terceira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:fourth-rib-r": {
+    "ids": {},
+    "summary_pt": "A quarta costela é uma costela verdadeira e típica, com cabeça de duas faces articulares para os corpos de T3 e T4, colo, tubérculo para o processo transverso de T4 e corpo curvo, cujo ângulo marca a mudança de direção da curvatura. A margem inferior apresenta o sulco da costela, no qual correm a veia, a artéria e o nervo intercostais. A extremidade anterior continua-se com a cartilagem costal, que se articula com o corpo do esterno. Na face externa inserem-se o serrátil anterior, o serrátil posterior superior e, na face anterior, o peitoral menor, que se origina das costelas terceira a quinta. A costela subjacente à parte superior da mama relaciona-se profundamente com a pleura e o pulmão. No homem e em mulheres jovens, o mamilo costuma localizar-se na altura do quarto espaço intercostal, o que oferece uma referência de superfície, embora haja variação individual. Na parede anterior do lado esquerdo, a quarta cartilagem costal marca aproximadamente o ponto em que a margem anterior do pulmão e da pleura se afasta da linha mediana, formando a incisura cardíaca do pulmão esquerdo, que deixa o pericárdio mais próximo da parede torácica.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T3 e T4 (articulação da cabeça da costela), com o processo transverso de T4 (articulação costotransversária) e, por meio da cartilagem costal, com o esterno (articulação esternocostal). Inserções: peitoral menor, serrátil anterior, serrátil posterior superior, intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do quarto espaço: a artéria intercostal posterior é ramo da parte torácica da aorta e a artéria intercostal anterior é ramo da artéria torácica interna.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do quarto espaço (ramo anterior do nervo espinal T4) percorre o sulco da costela e supre os músculos e a pele da parede torácica, incluindo a região do mamilo."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, que tende a calcificar-se com a idade; articulação esternocostal sinovial"
+      ]
+    },
+    "clinical": [
+      "Referência de superfície: o mamilo costuma situar-se no quarto espaço intercostal em homens, o que auxilia na localização de estruturas torácicas, com variação individual.",
+      "Incisura cardíaca do pulmão esquerdo: a região da quarta cartilagem costal relaciona-se com o recesso em que o pericárdio fica mais próximo da parede torácica.",
+      "Fraturas de costelas médias: costumam resultar de trauma direto ou compressão, com dor à respiração e risco de lesão pleural por fragmentos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quarta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: quarta costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: quarta costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quarta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: quarta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quarta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: quarta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quarta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: quarta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quarta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:fifth-rib-r": {
+    "ids": {},
+    "summary_pt": "A quinta costela é uma costela verdadeira e típica, que reproduz o plano geral da série: cabeça com duas faces articulares para os corpos de T4 e T5, colo, tubérculo que se articula com o processo transverso de T5 e corpo curvo, com ângulo e sulco da costela na face interna inferior. Anteriormente, a cartilagem costal articula-se com o corpo do esterno. Na face externa fixam-se o serrátil anterior, cujas digitações se interdigitam com as do oblíquo externo do abdome, e o peitoral menor, que se origina também da terceira e da quarta costelas. O oblíquo externo origina-se das costelas quinta a décima segunda, de modo que a quinta é a primeira em que há inserção desse músculo, e o reto do abdome origina-se das cartilagens costais quinta a sétima. Na parede torácica anterior esquerda, o ápice do coração projeta-se no quinto espaço intercostal, na linha hemiclavicular, local em que o impulso apical costuma ser palpável. A quinta costela também se relaciona com a mama e com a pleura parietal e o pulmão, em profundidade.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T4 e T5 (articulação da cabeça da costela), com o processo transverso de T5 (articulação costotransversária) e, por meio da cartilagem costal, com o esterno (articulação esternocostal). Inserções: peitoral menor, serrátil anterior, serrátil posterior superior, origem do oblíquo externo do abdome, origem do reto do abdome (cartilagem costal), intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do quinto espaço: a artéria intercostal posterior é ramo da parte torácica da aorta e a artéria intercostal anterior é ramo da artéria torácica interna.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do quinto espaço (ramo anterior do nervo espinal T5) percorre o sulco da costela e supre os músculos e a pele da parede torácica."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, sujeita a calcificação com a idade; zona de transição osso–cartilagem na junção costocondral"
+      ]
+    },
+    "clinical": [
+      "Referência para o ápice cardíaco: o quinto espaço intercostal esquerdo, na linha hemiclavicular, é o local de projeção do ápice do coração e de palpação do impulso apical.",
+      "Tórax instável: fratura de várias costelas adjacentes, em mais de um ponto, produz segmento da parede torácica que se move de modo paradoxal na respiração.",
+      "Dor intercostal e lesão do feixe vasculonervoso: o sulco da costela protege o feixe, mas fraturas podem lesioná-lo e provocar hemorragia no espaço pleural ou dor intensa."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quinta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: quinta costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: quinta costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quinta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: quinta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quinta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: quinta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quinta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: quinta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: quinta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:sixth-rib-r": {
+    "ids": {},
+    "summary_pt": "A sexta costela é uma costela verdadeira e típica. A cabeça apresenta duas faces articulares para os corpos de T5 e T6, e o tubérculo articula-se com o processo transverso de T6. O corpo tem ângulo e sulco da costela, que abriga o feixe intercostal. A cartilagem costal articula-se diretamente com o corpo do esterno, por meio de articulação sinovial. A face externa dá inserção ao serrátil anterior e ao oblíquo externo do abdome; a cartilagem costal, ao reto do abdome. Em profundidade, a sexta costela relaciona-se com a pleura parietal e com o pulmão,. O limite inferior do pulmão cruza a sexta costela na linha hemiclavicular, a oitava na linha axilar média e a décima na linha paravertebral, enquanto o limite da pleura costal fica mais baixo, na oitava, décima e décima segunda costelas, respectivamente, o que cria o recesso costodiafragmático. Esses referenciais são úteis na ausculta, na percussão e na compreensão de punções pleurais.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T5 e T6 (articulação da cabeça da costela), com o processo transverso de T6 (articulação costotransversária) e, por meio da cartilagem costal, com o esterno (articulação esternocostal). Inserções: serrátil anterior, origem do oblíquo externo do abdome, origem do reto do abdome (cartilagem costal), intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do sexto espaço: a artéria intercostal posterior é ramo da parte torácica da aorta e a artéria intercostal anterior é ramo da artéria torácica interna.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do sexto espaço (ramo anterior do nervo espinal T6) percorre o sulco da costela e supre os músculos e a pele da parede torácica e do abdome superior."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, que pode calcificar com a idade; articulação esternocostal sinovial"
+      ]
+    },
+    "clinical": [
+      "Projeção do pulmão e da pleura: a sexta costela, na linha hemiclavicular, marca o limite inferior do pulmão, e o recesso costodiafragmático situa-se abaixo desse nível.",
+      "Fraturas costais: fragmentos agudos podem lesar a pleura e o pulmão e provocar pneumotórax ou hemotórax."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sexta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: sexta costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: sexta costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sexta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: sexta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sexta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: sexta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sexta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: sexta costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sexta costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:seventh-rib-r": {
+    "ids": {},
+    "summary_pt": "A sétima costela é a última das costelas verdadeiras, ou esternais, isto é, aquelas cuja cartilagem costal se articula diretamente com o esterno. É uma costela típica, com cabeça de duas faces articulares para os corpos de T6 e T7, colo, tubérculo para o processo transverso de T7 e corpo com ângulo e sulco da costela. Sua cartilagem costal articula-se com a extremidade inferior do corpo do esterno, próximo à articulação xifoesternal. A face externa dá inserção ao serrátil anterior e ao oblíquo externo do abdome; as cartilagens costais da quinta à sétima dão origem ao reto do abdome, e a face interna das cartilagens costais da sétima à décima segunda, ao diafragma e ao transverso do abdome. A margem inferior da cartilagem forma a parte superior do arco costal, que delimita a abertura inferior do tórax. Em pé, o ângulo inferior da escápula costuma projetar-se na altura da sétima costela, referência usada para contar costelas pela parede posterior. Profundamente, a costela relaciona-se com a pleura costal, o recesso costodiafragmático e, à direita, com o fígado, separado pelo diafragma.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T6 e T7 (articulação da cabeça da costela), com o processo transverso de T7 (articulação costotransversária) e, por meio da cartilagem costal, com o esterno (articulação esternocostal). Inserções: serrátil anterior, oblíquo externo, origem do reto do abdome (cartilagem), origem do diafragma e do transverso do abdome (face interna da cartilagem), intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do sétimo espaço: a artéria intercostal posterior é ramo da parte torácica da aorta e a artéria intercostal anterior é ramo da artéria musculofrênica, ramo terminal da artéria torácica interna.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do sétimo espaço (ramo anterior do nervo espinal T7) percorre o sulco da costela e, na parte anterior, continua como nervo toracoabdominal para a parede do abdome."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, com tendência à calcificação com o envelhecimento; articulação esternocostal sinovial e articulação costovertebral com cartilagem articular"
+      ]
+    },
+    "clinical": [
+      "Referência de superfície: o ângulo inferior da escápula, a sétima costela e o processo espinhoso de T7 aproximam-se no indivíduo em posição anatômica, o que auxilia a contar costelas na face posterior do tórax.",
+      "Fraturas das costelas médias e inferiores: podem acompanhar-se de lesão de pulmão, pleura, fígado ou baço, conforme o lado e a profundidade do traumatismo.",
+      "Tórax instável: fraturas em mais de um ponto de várias costelas adjacentes produzem movimento paradoxal de um segmento da parede torácica durante a respiração."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sétima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: sétima costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: sétima costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sétima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: sétima costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sétima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: sétima costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sétima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: sétima costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: sétima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:eighth-rib-r": {
+    "ids": {},
+    "summary_pt": "A oitava costela é a primeira das costelas falsas, ou asternais, porque sua cartilagem costal não se articula diretamente com o esterno, e sim com a cartilagem da costela imediatamente superior, formando, com as cartilagens da nona e da décima, o arco costal. É costela típica quanto à morfologia da cabeça, com duas faces articulares para os corpos de T7 e T8, e do tubérculo, que se articula com o processo transverso de T8. O corpo tem ângulo e sulco da costela. Na face externa inserem-se as digitações inferiores do serrátil anterior e as do oblíquo externo do abdome, e a face interna da cartilagem costal dá origem ao diafragma e ao transverso do abdome. O limite inferior do pulmão cruza a oitava costela na linha axilar média, enquanto a pleura costal ainda desce até a décima costela nessa linha; entre os dois, fica o recesso costodiafragmático, que o pulmão ocupa apenas em parte durante a inspiração. Profundamente, à direita, o fígado e, à esquerda, o estômago e o baço relacionam-se com a parede através do diafragma.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T7 e T8 (articulação da cabeça da costela), com o processo transverso de T8 (articulação costotransversária) e, por meio da cartilagem costal, com a cartilagem da sétima costela (articulação interconcondral), compondo o arco costal. Inserções: serrátil anterior, oblíquo externo do abdome, origem do diafragma e do transverso do abdome (face interna da cartilagem), intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do oitavo espaço: a artéria intercostal posterior é ramo da parte torácica da aorta e a artéria intercostal anterior é ramo da artéria musculofrênica.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do oitavo espaço (ramo anterior do nervo espinal T8) percorre o sulco da costela e continua anteriormente como nervo toracoabdominal para a parede do abdome."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, unida à cartilagem da costela superior por articulação interconcondral e sujeita a calcificação com a idade"
+      ]
+    },
+    "clinical": [
+      "Limites pleuropulmonares: a oitava costela, na linha axilar média, corresponde ao limite inferior do pulmão, e o recesso costodiafragmático situa-se abaixo desse nível.",
+      "Fraturas das costelas inferiores: podem associar-se a lesão de órgãos subdiafragmáticos, como fígado e baço, pela proximidade com o diafragma.",
+      "Dor referida: a pleura costal e a periferia do diafragma são inervadas por nervos intercostais, de modo que sua inflamação pode causar dor referida na parede do abdome."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: oitava costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: oitava costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: oitava costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: oitava costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: oitava costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: oitava costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: oitava costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: oitava costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: oitava costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: oitava costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:ninth-rib-r": {
+    "ids": {},
+    "summary_pt": "A nona costela é uma costela falsa, típica, cuja cartilagem costal se une à da oitava, compondo o arco costal. A cabeça tem duas faces articulares, para os corpos de T8 e T9, e o tubérculo articula-se com o processo transverso de T9. O corpo, de ângulo e sulco da costela evidentes, é menos curvo que o das costelas superiores. Na face externa fixam-se as digitações do oblíquo externo do abdome, e, junto ao ângulo, insere-se o serrátil posterior inferior, que se fixa nas costelas nona a décima segunda. A face interna da cartilagem costal dá origem ao diafragma e ao transverso do abdome. A extremidade da nona cartilagem costal é usada como referência de superfície, pois o plano transpilórico, que passa aproximadamente por L1, cruza as pontas das nonas cartilagens costais; o fundo da vesícula biliar costuma projetar-se próximo de onde a cartilagem costal direita encontra a margem lateral do músculo reto do abdome. Profundamente, o recesso costodiafragmático e, à esquerda, o baço e o estômago, e, à direita, o fígado relacionam-se com a parede, separados pelo diafragma.",
+    "anatomy": {
+      "relations": "Articula-se com as vértebras T8 e T9 (articulação da cabeça da costela), com o processo transverso de T9 (articulação costotransversária) e, por meio da cartilagem costal, com a cartilagem da oitava costela (articulação interconcondral), compondo o arco costal. Inserções: oblíquo externo do abdome, serrátil posterior inferior, origem do diafragma e do transverso do abdome (face interna da cartilagem), intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais do nono espaço: a artéria intercostal posterior é ramo da parte torácica da aorta e a artéria intercostal anterior é ramo da artéria musculofrênica.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do nono espaço (ramo anterior do nervo espinal T9) percorre o sulco da costela e continua anteriormente como nervo toracoabdominal para a parede do abdome."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, ligada à cartilagem da oitava costela por articulação interconcondral, com calcificação progressiva ao longo da vida"
+      ]
+    },
+    "clinical": [
+      "Plano transpilórico: a ponta da nona cartilagem costal é referência de superfície para esse plano, que passa aproximadamente por L1 e serve para localizar estruturas abdominais.",
+      "Ponto vesicular: o encontro da nona cartilagem costal direita com a margem lateral do reto do abdome costuma corresponder à projeção do fundo da vesícula biliar, local em que a palpação pode ser dolorosa na inflamação da vesícula.",
+      "Fraturas das costelas inferiores: podem associar-se a lesão de fígado ou baço, conforme o lado."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: nona costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: nona costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: nona costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: nona costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: nona costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: nona costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: nona costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: nona costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: nona costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: nona costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:tenth-rib-r": {
+    "ids": {},
+    "summary_pt": "A décima costela é uma costela falsa e atípica. Diferentemente das costelas típicas, a cabeça tem uma única face articular, que se articula apenas com o corpo da vértebra T10, e não com a vértebra superior. O tubérculo articula-se com o processo transverso de T10. O corpo é relativamente curto, com sulco da costela menos marcado, e a cartilagem costal une-se à cartilagem da nona costela, constituindo a parte inferior do arco costal. A margem inferior da décima cartilagem costal é o ponto mais baixo da margem costal, e o plano subcostal, que passa pela margem inferior dessa cartilagem, localiza-se aproximadamente no nível de L3. Na face externa fixam-se as digitações do oblíquo externo do abdome, o serrátil posterior inferior e o latíssimo do dorso, e, na face interna da cartilagem, origem do diafragma e do transverso do abdome. Na linha axilar média, a pleura costal cruza a décima costela, ao passo que o pulmão termina na oitava, e o recesso costodiafragmático situa-se entre as duas. Profundamente, o diafragma separa a costela, à direita, do fígado, e, à esquerda, do baço e do estômago.",
+    "anatomy": {
+      "relations": "Articula-se com a vértebra T10 por uma única face articular (articulação da cabeça da costela), com o processo transverso de T10 (articulação costotransversária) e, por meio da cartilagem costal, com a cartilagem da nona costela (articulação interconcondral). Inserções: oblíquo externo do abdome, serrátil posterior inferior, latíssimo do dorso, origem do diafragma e do transverso do abdome (face interna da cartilagem), intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais posteriores do décimo espaço, ramos da parte torácica da aorta, com contribuição de ramos da artéria musculofrênica para a parte anterior.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do décimo espaço (ramo anterior do nervo espinal T10) percorre o sulco da costela e continua anteriormente como nervo toracoabdominal para a parede do abdome."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Cartilagem costal hialina com pericôndrio, unida à da nona costela por articulação interconcondral, com calcificação progressiva ao longo da vida"
+      ]
+    },
+    "clinical": [
+      "Plano subcostal: a margem inferior da décima cartilagem costal marca o plano subcostal, referência de superfície para a região do abdome, aproximadamente no nível de L3.",
+      "Recesso costodiafragmático: o espaço pleural que se estende abaixo do limite do pulmão, na altura da décima costela, pode acumular líquido pleural em derrames, e a décima costela é referência na avaliação dessa região.",
+      "Fraturas das costelas inferiores: podem se associar a lesão do diafragma, do fígado ou do baço, e a mobilidade das extremidades anteriores pode aumentar a dor ao movimento."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: décima costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: décima costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: décima costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: décima costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: décima costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:eleventh-rib-r": {
+    "ids": {},
+    "summary_pt": "A décima primeira costela é uma costela flutuante, ou vertebral, e atípica: não se une ao esterno nem às cartilagens das costelas vizinhas, e sua extremidade anterior termina livre na parede lateral do abdome, com uma pequena cartilagem. A cabeça tem uma única face articular, para o corpo da vértebra T11, e a costela não possui colo bem definido nem tubérculo, de modo que não há articulação costotransversária. O ângulo e o sulco da costela são pouco evidentes. É curta, com leve curvatura, e a extremidade livre é palpável na região lateral do flanco. Na face externa fixam-se partes do oblíquo externo do abdome, do serrátil posterior inferior e do latíssimo do dorso; na face interna, digitações do diafragma e do transverso do abdome. Posteriormente, a costela relaciona-se com o músculo iliocostal e, por sua posição, com o recesso costodiafragmático, com o polo superior do rim esquerdo, geralmente mais elevado que o direito, e com o baço. Por isso, a décima primeira costela é referência para a região posterior do flanco e para estruturas retroperitoneais altas, embora a localização exata dependa de variações individuais.",
+    "anatomy": {
+      "relations": "Articula-se apenas com o corpo da vértebra T11 (articulação da cabeça da costela); não há articulação costotransversária nem união com a cartilagem de outra costela. Inserções: oblíquo externo do abdome, serrátil posterior inferior, latíssimo do dorso, iliocostal, parte costal do diafragma, transverso do abdome, intercostais externos e internos e levantadores das costelas.",
+      "vascularization": "Ramos periosteais e nutrícios das artérias intercostais posteriores do décimo primeiro espaço, ramos da parte torácica da aorta.",
+      "innervation": "O periósteo é sensível. O nervo intercostal do décimo primeiro espaço (ramo anterior do nervo espinal T11) percorre o sulco da costela e continua anteriormente como nervo toracoabdominal para a parede do abdome."
+    },
+    "histology": {
+      "tissues": [
+        "Osso esponjoso com medula óssea vermelha hematopoiética, envolvido por camada fina de osso compacto e por periósteo vascularizado",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos nas trabéculas e na cortical",
+        "Pequena cartilagem na extremidade anterior livre, de cartilagem hialina com pericôndrio; articulação da cabeça da costela sinovial, com cartilagem articular"
+      ]
+    },
+    "clinical": [
+      "Costelas flutuantes: a extremidade livre, mais móvel, pode amortecer parte do impacto, mas fraturas das costelas inferiores podem associar-se a lesão de rim, baço ou fígado.",
+      "Referência retroperitoneal: a décima primeira costela relaciona-se com a parte superior do rim, pois os rins se projetam, em parte, sob as últimas costelas; a dor de origem renal pode ser sentida no flanco.",
+      "Costela supranumerária ou ausência de costela: a contagem a partir de uma costela flutuante pode ser comprometida em variações do número de costelas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima primeira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., parte Tórax, tópico costelas: décima primeira costela",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): costelas: décima primeira costela",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima primeira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: décima primeira costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima primeira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: décima primeira costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima primeira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico costelas: décima primeira costela",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso esponjoso e compacto; periósteo",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas: décima primeira costela",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico costelas e cartilagens costais: fraturas e referências de superfície",
+        "obraId": "moore",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  }
+}

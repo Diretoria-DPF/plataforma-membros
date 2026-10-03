@@ -1,0 +1,2224 @@
+{
+  "za:semimembranosus-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo semimembranoso integra o grupo dos isquiotibiais e ocupa o compartimento posterior da coxa, em posição medial e profunda ao músculo semitendíneo. O nome refere-se ao longo tendão de origem, em forma de lâmina, que ocupa o terço superior do ventre muscular. Origina-se na tuberosidade isquiática, desce pela face posteromedial da coxa e chega à região posterior do joelho, onde se insere sobretudo na face posterior do côndilo medial da tíbia. Como cruza as articulações do quadril e do joelho, atua na extensão da coxa e na flexão da perna, além de produzir rotação medial da perna quando o joelho está fletido. Com o semitendíneo e o bíceps femoral, contribui para a desaceleração da flexão do quadril e para o controle da posição da pelve na marcha e na corrida. A inervação provém da divisão tibial do nervo isquiático. Expansões do tendão distal participam da formação do ligamento poplíteo oblíquo e da fáscia que recobre o músculo poplíteo. Na fossa poplítea, o tendão forma parte do limite superomedial do espaço, e sua região distal mantém relação com a bolsa sinovial situada entre o músculo e a cabeça medial do gastrocnêmio.",
+    "anatomy": {
+      "relations": "Origem: parte superolateral da tuberosidade isquiática. Inserção: face posterior do côndilo medial da tíbia, com expansões para o ligamento poplíteo oblíquo e para a fáscia do músculo poplíteo. Ação: estende a coxa (parte isquiocondilar) e flexiona o joelho; com o joelho fletido, gira medialmente a perna. Relações: profundo ao semitendíneo; lateralmente relaciona-se com o bíceps femoral e com o nervo isquiático; seu tendão limita medialmente a fossa poplítea, em contato com a cabeça medial do gastrocnêmio por meio de uma bolsa sinovial.",
+      "vascularization": "Ramos perfurantes da artéria profunda da coxa e ramos da artéria glútea inferior; contribuições distais das artérias do joelho.",
+      "innervation": "Nervo tibial, parte tibial do nervo isquiático (raízes L5–S2)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas, com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II, em proporção variável entre indivíduos",
+        "Tendão proximal e distal: tecido conjuntivo denso modelado, com fibras colágenas paralelas e fibroblastos (tenócitos) entre elas"
+      ]
+    },
+    "clinical": [
+      "Distensões e avulsões dos isquiotibiais ocorrem sobretudo próximo à origem na tuberosidade isquiática, em atividades de aceleração ou de alongamento rápido, e cursam com dor na região glútea inferior e posterior da coxa.",
+      "A bolsa entre o semimembranoso e a cabeça medial do gastrocnêmio pode comunicar-se com a cavidade da articulação do joelho; sua distensão com líquido sinovial forma o cisto poplíteo, palpável na região posteromedial do joelho.",
+      "Lesões do nervo isquiático na coxa ou na região glútea podem comprometer a flexão do joelho, com repercussão sobre a marcha."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo semimembranoso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo semimembranoso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo semimembranoso",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo semimembranoso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo semimembranoso",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo semimembranoso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo semimembranoso",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo semimembranoso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo semimembranoso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo semimembranoso",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo semimembranoso",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:iliocostalis-thoracis-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo iliocostal do tórax é a porção torácica da coluna lateral do músculo eretor da espinha, situada profundamente à fáscia toracolombar e aos músculos superficiais do dorso. Suas fibras formam fascículos finos que se estendem entre as costelas: originam-se nos ângulos das costelas inferiores e inserem-se nos ângulos das costelas superiores e, de modo variável, no processo transverso da sétima vértebra cervical. Dessa forma, o músculo faz a ligação funcional entre o iliocostal do lombo, situado inferiormente, e o iliocostal do pescoço, situado superiormente. Quando atua bilateralmente, contribui para a extensão da coluna vertebral torácica e para a manutenção da postura ereta; quando atua de um lado, participa da inclinação lateral do tronco e pode auxiliar a fixar as costelas durante movimentos do tronco. Os ramos posteriores dos nervos espinais torácicos inervam o músculo, de forma segmentar, e os ramos dorsais das artérias intercostais posteriores participam da irrigação. O iliocostal do tórax relaciona-se anteriormente com as costelas e com os músculos levantadores das costelas, e medialmente com o longuíssimo do tórax, com o qual forma a massa muscular paravertebral palpável de cada lado da coluna.",
+    "anatomy": {
+      "relations": "Origem: ângulos das seis costelas inferiores, medialmente ao iliocostal do lombo. Inserção: ângulos das seis costelas superiores e, de modo variável, processo transverso da vértebra C7. Ação: bilateralmente, estende a coluna torácica; unilateralmente, inclina lateralmente o tronco. Relações: faz parte da coluna lateral do eretor da espinha, lateral ao longuíssimo do tórax, profundo à fáscia toracolombar e aos músculos superficiais do dorso.",
+      "vascularization": "Ramos dorsais das artérias intercostais posteriores e da artéria subcostal, de forma segmentar.",
+      "innervation": "Ramos posteriores (dorsais) dos nervos espinais torácicos, de forma segmentar."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas organizadas em fascículos longos e finos, envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II, em proporção variável",
+        "Tendões curtos de inserção costal: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "Distensões e espasmos dos músculos paravertebrais são causas descritas de dor torácica e lombar de origem musculoesquelética, em geral com sensibilidade à palpação da massa muscular lateral à coluna.",
+      "Lesão dos ramos posteriores dos nervos espinais, por trauma ou por procedimentos cirúrgicos no dorso, pode causar denervação segmentar e atrofia dos músculos paravertebrais."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo iliocostal do tórax",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Dorso, tópico músculo iliocostal do tórax (eretor da espinha)",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:infraspinatus-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo infraespinal é um dos quatro músculos do manguito rotador do ombro, ao lado do supraespinal, do redondo menor e do subescapular. Preenche a maior parte da fossa infraespinal da escápula, sob a espinha da escápula, e é parcialmente recoberto pelo deltoide e pelo trapézio. Suas fibras convergem para um tendão que se insere na faceta média do tubérculo maior do úmero, após fundir-se à cápsula da articulação do ombro. A principal ação é a rotação lateral do braço, função compartilhada com o redondo menor. O músculo também contribui para manter a cabeça do úmero centrada na cavidade glenoidal durante os movimentos do ombro, e as fibras superiores participam da abdução. É inervado pelo nervo supraescapular, ramo do tronco superior do plexo braquial, que atravessa a incisura da escápula, passa sob o ligamento transverso superior da escápula e contorna a espinha na incisura espinoglenoidal. A irrigação provém das artérias supraescapular e circunflexa da escápula, que se anastomosam na fossa infraespinal. Por sua posição posterior à articulação do ombro, o infraespinal é avaliado clinicamente pela força de rotação lateral do braço com o cotovelo fletido.",
+    "anatomy": {
+      "relations": "Origem: dois terços mediais da fossa infraespinal da escápula e fáscia infraespinal. Inserção: faceta média do tubérculo maior do úmero, com fusão à cápsula articular. Ação: rotação lateral do braço; estabiliza a cabeça do úmero na cavidade glenoidal. Relações: inferior à espinha da escápula, profundo ao deltoide e ao trapézio, superior ao redondo menor, do qual é separado por septo fibroso; o nervo supraescapular o alcança pela incisura espinoglenoidal.",
+      "vascularization": "Artéria supraescapular e ramo da artéria circunflexa da escápula, que se anastomosam na fossa infraespinal.",
+      "innervation": "Nervo supraescapular, do tronco superior do plexo braquial (raízes C5–C6)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos e envoltas por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de inserção: tecido conjuntivo denso modelado, com tenócitos entre feixes de colágeno paralelos, que se funde à cápsula articular"
+      ]
+    },
+    "clinical": [
+      "Tendinopatia e ruptura do manguito rotador podem envolver o tendão do infraespinal, com dor no ombro e redução da força de rotação lateral do braço.",
+      "A compressão do nervo supraescapular na incisura espinoglenoidal pode causar atrofia isolada do infraespinal, com preservação do supraespinal, enquanto a compressão na incisura da escápula pode afetar os dois músculos.",
+      "A atrofia do infraespinal pode ser reconhecida pela depressão da fossa infraespinal à inspeção, abaixo da espinha da escápula."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo infraespinal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo infraespinal (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:adductor-longus-r": {
+    "ids": {},
+    "summary_pt": "O músculo adutor longo é um dos músculos mais anteriores do grupo adutor, no compartimento medial da coxa. Tem forma triangular e origem por tendão estreito na face anterior do púbis, inferiormente à crista púbica. Seu ventre se alarga em direção distal e se insere no terço médio da linha áspera do fêmur, em seu lábio medial, por meio de aponeurose. A ação principal é a adução da coxa, com participação na flexão e na rotação medial do quadril, em movimentos como a marcha e as mudanças de direção. Sua borda lateral limita medialmente o trígono femoral, e o músculo recobre anteriormente o adutor curto e o adutor magno, de modo que seu plano é uma referência na dissecção da coxa. O nervo obturatório inerva o músculo por meio de seu ramo anterior. A artéria profunda da coxa e ramos da artéria obturatória fornecem a irrigação, e a artéria femoral percorre o trígono femoral lateralmente ao tendão proximal. A origem tendínea concentra as forças de tração do grupo adutor, o que se relaciona com a ocorrência de lesões por sobrecarga em atletas.",
+    "anatomy": {
+      "relations": "Origem: face anterior do corpo do púbis, inferiormente à crista púbica. Inserção: terço médio da linha áspera do fêmur (lábio medial). Ação: aduz a coxa; contribui para a flexão e a rotação medial do quadril. Relações: forma o limite medial do trígono femoral; situa-se anteriormente ao adutor curto e ao adutor magno, medialmente ao pectíneo; o ramo anterior do nervo obturatório passa entre o adutor longo e o adutor curto.",
+      "vascularization": "Artéria profunda da coxa e ramos da artéria obturatória.",
+      "innervation": "Ramo anterior do nervo obturatório (raízes L2–L4)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas organizadas em fascículos, com endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de origem e aponeurose de inserção: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "Distensões e tendinopatias da origem do adutor longo ocorrem em atividades com mudança brusca de direção e chutes, e causam dor na região inguinal medial que pode ser reproduzida pela adução contra resistência.",
+      "Lesões do nervo obturatório, por exemplo por compressão na pelve ou no canal obturatório, podem causar dor na face medial da coxa e redução da força de adução.",
+      "O adutor longo, com o adutor magno, forma a parede posterior do canal dos adutores, por onde passam os vasos femorais e o nervo safeno, e é referência na dissecção da região."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor longo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo adutor longo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo adutor longo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor longo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo adutor longo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor longo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo adutor longo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor longo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo adutor longo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor longo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo adutor longo",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:extensor-indicis-r": {
+    "ids": {},
+    "summary_pt": "O músculo extensor do indicador é um músculo estreito e longo da camada profunda do compartimento posterior do antebraço. Origina-se na face posterior da ulna, em sua parte distal, e na membrana interóssea adjacente. Seu ventre dá lugar a um tendão que passa sob o retináculo dos músculos extensores, no mesmo compartimento fibroso do extensor dos dedos, e alcança o dorso da mão. Insere-se na expansão extensora (aponeurose dorsal) do dedo indicador, onde o tendão se une ao tendão do extensor dos dedos destinado a esse dedo, situando-se em posição ulnar a ele. A ação é a extensão da articulação metacarpofalângica do indicador e, por meio da expansão extensora, das articulações interfalângicas, o que confere ao indicador capacidade de extensão independente dos demais dedos, como no gesto de apontar. Também contribui para a extensão do punho. O nervo interósseo posterior, ramo profundo do nervo radial, inerva o músculo, e a artéria interóssea posterior participa de sua irrigação. Por ser um músculo vizinho do extensor longo do polegar e do abdutor longo do polegar, é comumente descrito junto a eles como parte do grupo profundo dos extensores.",
+    "anatomy": {
+      "relations": "Origem: face posterior da ulna, em sua parte distal, e membrana interóssea. Inserção: expansão extensora do dedo indicador, em posição ulnar ao tendão do extensor dos dedos. Ação: estende o indicador e contribui para a extensão do punho. Relações: camada profunda do compartimento posterior do antebraço; seu tendão passa pelo quarto compartimento do retináculo dos músculos extensores, junto ao tendão do extensor dos dedos.",
+      "vascularization": "Artéria interóssea posterior, com contribuição de ramos distais da artéria interóssea anterior.",
+      "innervation": "Nervo interósseo posterior, ramo profundo do nervo radial (raízes C7–C8)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos e envoltas por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão longo, envolvido por bainha sinovial no trajeto sob o retináculo dos músculos extensores: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "A lesão do nervo interósseo posterior, como na compressão por estruturas próximas ao músculo supinador, pode causar fraqueza de extensão dos dedos, com sensibilidade cutânea preservada, por tratar-se de ramo predominantemente motor.",
+      "A tenossinovite dos tendões do quarto compartimento extensor pode causar dor e tumefação no dorso do punho.",
+      "Tendões extensores no dorso do punho podem sofrer desgaste e ruptura em doenças inflamatórias articulares, como a artrite reumatoide."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo extensor do indicador",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo extensor do indicador",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo extensor do indicador",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo extensor do indicador",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo extensor do indicador",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo extensor do indicador",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo extensor do indicador",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo extensor do indicador",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo extensor do indicador",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo extensor do indicador",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo extensor do indicador",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:soleus-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo sóleo é um músculo largo e achatado do compartimento posterior da perna, situado profundamente ao gastrocnêmio, com o qual compõe o tríceps sural. Origina-se na cabeça e no quarto proximal da face posterior da fíbula, na linha do sóleo e no terço médio da margem medial da tíbia, além de um arco tendíneo que une esses dois pontos e dá passagem aos vasos poplíteos e ao nervo tibial. Suas fibras convergem para um tendão que se une ao do gastrocnêmio e forma o tendão do calcâneo, inserido na face posterior do calcâneo. Por não cruzar a articulação do joelho, realiza a flexão plantar do pé independentemente da posição dessa articulação, e tem papel postural importante, pois evita que o corpo se incline anteriormente sobre os pés na posição ortostática. Sua irrigação provém principalmente das artérias tibial posterior e fibular, e a inervação é feita pelo nervo tibial. Entre as fibras do músculo existem plexos venosos calibrosos, as veias sóleas, que drenam para as veias tibiais posteriores e fibulares, e o músculo participa, com os demais músculos da panturrilha, da bomba muscular que auxilia o retorno venoso do membro inferior.",
+    "anatomy": {
+      "relations": "Origem: face posterior da cabeça e do quarto proximal do corpo da fíbula, linha do sóleo e terço médio da margem medial da tíbia, e arco tendíneo do sóleo entre os dois ossos. Inserção: face posterior do calcâneo, por meio do tendão do calcâneo, comum com o gastrocnêmio. Ação: flexão plantar do pé, independente da posição do joelho; estabiliza a perna sobre o pé na posição ortostática. Relações: profundo ao gastrocnêmio e ao plantar; superficial ao tibial posterior, ao flexor longo dos dedos e ao flexor longo do hálux, de que o separa a fáscia profunda da perna.",
+      "vascularization": "Ramos das artérias tibial posterior e fibular, com contribuição de ramos da artéria poplítea; as veias sóleas drenam para as veias tibiais posteriores e fibulares.",
+      "innervation": "Nervo tibial (raízes S1–S2)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Proporção elevada de fibras tipo I (oxidativas, de contração lenta), compatível com a função postural; a proporção varia entre indivíduos",
+        "Tendão do calcâneo: tecido conjuntivo denso modelado, com feixes paralelos de colágeno tipo I e tenócitos entre eles"
+      ]
+    },
+    "clinical": [
+      "As veias sóleas são descritas como local de origem de trombose venosa profunda do membro inferior, e a trombose na panturrilha pode cursar com dor e edema da perna.",
+      "A ruptura do tendão do calcâneo compromete a flexão plantar contra resistência, com perda da elevação do calcanhar na posição ortostática.",
+      "A lesão do nervo tibial ou de suas raízes S1–S2 reduz a força do tríceps sural, o que se evidencia na dificuldade de elevar o calcanhar do solo apoiado em um só pé."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo sóleo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Perna, tópico músculo sóleo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo sóleo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo sóleo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo sóleo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo sóleo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo sóleo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo sóleo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Perna, tópico músculo sóleo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo sóleo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Perna, tópico músculo sóleo",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:subscapularis-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo subescapular é o maior e o mais anterior dos quatro músculos do manguito rotador. Preenche a fossa subescapular, na face costal da escápula, e forma parte da parede posterior da axila, onde se relaciona com o plexo braquial e os vasos axilares. Suas fibras convergem lateralmente e dão origem a um tendão que passa anteriormente à articulação do ombro e se insere no tubérculo menor do úmero. Algumas fibras alcançam a cápsula articular, e uma bolsa sinovial, a bolsa subtendínea do subescapular, separa o tendão do colo da escápula e comunica-se com a cavidade articular. A ação principal é a rotação medial do braço, e o músculo contribui para manter a cabeça do úmero no interior da cavidade glenoidal, resistindo à translação anterior. O subescapular é inervado pelos nervos subescapulares superior e inferior, que se originam do fascículo posterior do plexo braquial. A irrigação provém das artérias subescapular, circunflexa da escápula e supraescapular. Como separa a escápula da parede torácica, em associação com o serrátil anterior, o músculo participa do espaço de deslizamento escapulotorácico, e seu tendão é um dos estabilizadores anteriores do ombro.",
+    "anatomy": {
+      "relations": "Origem: fossa subescapular da escápula. Inserção: tubérculo menor do úmero, com fibras para a cápsula da articulação do ombro. Ação: rotação medial do braço; estabiliza anteriormente a cabeça do úmero. Relações: forma parte da parede posterior da axila; sua face anterior relaciona-se com o serrátil anterior, os vasos axilares e o plexo braquial; a bolsa subtendínea do subescapular comunica-se com a cavidade articular.",
+      "vascularization": "Artéria subescapular (ramos escapulares), artéria circunflexa da escápula e artéria supraescapular.",
+      "innervation": "Nervos subescapulares superior e inferior, do fascículo posterior do plexo braquial (raízes C5–C7)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de inserção: tecido conjuntivo denso modelado, com fibras colágenas paralelas e tenócitos, em continuidade com a cápsula articular"
+      ]
+    },
+    "clinical": [
+      "Lesões do manguito rotador podem envolver o tendão do subescapular, com dor anterior no ombro e redução da força de rotação medial do braço.",
+      "A ruptura do tendão do subescapular pode ocorrer em associação com a luxação anterior da articulação do ombro e com a instabilidade do tendão da cabeça longa do bíceps braquial no sulco intertubercular.",
+      "Como a bolsa subtendínea comunica-se com a cavidade da articulação do ombro, processos inflamatórios ou derrames articulares podem distender essa bolsa."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo subescapular (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo subescapular (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo subescapular",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo subescapular (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo subescapular (manguito rotador)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo subescapular (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo subescapular (manguito rotador)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo subescapular (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo subescapular (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo subescapular (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo subescapular (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:long-head-of-triceps-brachii-r": {
+    "ids": {},
+    "summary_pt": "A cabeça longa é a única das três cabeças do músculo tríceps braquial que atravessa a articulação do ombro, e ocupa o compartimento posterior do braço em posição medial em relação à cabeça lateral. Origina-se no tubérculo infraglenoidal da escápula, abaixo da cavidade glenoidal, e desce entre os músculos redondo menor e redondo maior, onde divide a região posterior da axila em dois espaços: o espaço quadrangular (espaço axilar lateral) e o espaço triangular (espaço axilar medial). Une-se às cabeças lateral e medial em um tendão comum que se insere na face posterior do olécrano da ulna, além de expansões para a fáscia do antebraço. A principal ação é a extensão do antebraço na articulação do cotovelo. Por cruzar também o ombro, a cabeça longa auxilia a extensão e a adução do braço e contribui para a estabilidade da articulação glenoumeral, ao impedir a translação inferior da cabeça do úmero com o braço em abdução. Os ramos do nervo radial inervam o músculo, e a artéria profunda do braço e a artéria circunflexa da escápula participam da irrigação. O nervo radial passa profundamente à cabeça longa antes de entrar no sulco do nervo radial do úmero.",
+    "anatomy": {
+      "relations": "Origem: tubérculo infraglenoidal da escápula. Inserção: face posterior do olécrano da ulna, por tendão comum às três cabeças. Ação: estende o antebraço; auxilia a extensão e a adução do braço. Relações: passa entre os músculos redondo menor (superior) e redondo maior (inferior), separando o espaço quadrangular (axilar lateral) do espaço triangular (axilar medial); o nervo radial e a artéria profunda do braço passam anteriormente a ela, a caminho do sulco do nervo radial.",
+      "vascularization": "Artéria profunda do braço e artéria circunflexa da escápula.",
+      "innervation": "Nervo radial, por ramos que o deixam antes do sulco do nervo radial (raízes C6–C8)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de origem curto e tendão comum de inserção: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "A lesão do nervo radial por fratura da diáfise do úmero no sulco do nervo radial pode preservar a extensão do cotovelo, porque os ramos para a cabeça longa deixam o nervo proximalmente, e comprometer a extensão do punho e dos dedos.",
+      "O reflexo tendíneo tricipital, obtido pela percussão do tendão comum acima do olécrano, é usado na avaliação dos segmentos medulares C6–C8 e do nervo radial.",
+      "A cabeça longa é um dos limites dos espaços quadrangular e triangular; o nervo axilar e a artéria circunflexa posterior do úmero atravessam o primeiro, e a artéria circunflexa da escápula, o segundo, e podem ser comprometidos por lesões que alteram essa região."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: cabeça longa do músculo tríceps braquial",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo tríceps braquial: cabeça longa",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:iliacus-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo ilíaco é um músculo plano e triangular que reveste a fossa ilíaca, na parede posterior do abdome e na transição para o membro inferior. Origina-se nos dois terços superiores da fossa ilíaca, na asa do sacro e nos ligamentos sacroilíacos anteriores. Suas fibras convergem e unem-se ao tendão do músculo psoas maior, formando o tendão do iliopsoas, que passa sob o ligamento inguinal, pela lacuna dos músculos, e se insere no trocanter menor do fêmur. O iliopsoas é o principal flexor do quadril, e atua na flexão da coxa sobre o tronco e do tronco sobre a coxa, como ao levantar-se da posição deitada. O nervo femoral inerva o ilíaco, e o nervo corre em um sulco entre o ilíaco e o psoas maior, recoberto pela fáscia ilíaca. A irrigação provém sobretudo do ramo ilíaco da artéria iliolombar e da artéria circunflexa ilíaca profunda. A face anterior do músculo relaciona-se com o ceco, à direita, e com o cólon descendente, à esquerda, separados pelo peritônio parietal e pela fáscia ilíaca, e a bolsa iliopectínea situa-se entre o tendão e a cápsula da articulação do quadril, em contato com a face anterior dessa articulação.",
+    "anatomy": {
+      "relations": "Origem: dois terços superiores da fossa ilíaca, asa do sacro e ligamentos sacroilíacos anteriores. Inserção: trocanter menor do fêmur, por meio do tendão do iliopsoas, comum com o psoas maior. Ação: flexão do quadril; flexiona o tronco sobre a coxa quando o membro está fixo. Relações: reveste a fossa ilíaca sob a fáscia ilíaca; o nervo femoral desce em sulco entre o ilíaco e o psoas maior; o ceco (à direita) e o cólon descendente (à esquerda) situam-se anteriormente, com o peritônio parietal interposto; o tendão passa sob o ligamento inguinal.",
+      "vascularization": "Ramo ilíaco da artéria iliolombar e artéria circunflexa ilíaca profunda.",
+      "innervation": "Nervo femoral (raízes L2–L3)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão do iliopsoas: tecido conjuntivo denso modelado; a fáscia ilíaca é lâmina de tecido conjuntivo denso que recobre o músculo"
+      ]
+    },
+    "clinical": [
+      "Hematomas no compartimento do ilíaco, por trauma ou por distúrbios da coagulação, podem comprimir o nervo femoral no sulco entre o ilíaco e o psoas maior, com fraqueza do quadríceps e alteração da sensibilidade da face anterior da coxa.",
+      "A inflamação da bolsa iliopectínea ou a tendinopatia do iliopsoas pode causar dor na região anterior do quadril, que se agrava com a flexão ativa da coxa.",
+      "A fáscia ilíaca e a bainha do psoas podem conduzir coleções purulentas da região lombar até a coxa, em um trajeto que se relaciona à origem e à inserção do iliopsoas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Região glútea e quadril, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo ilíaco",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Região glútea e quadril, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Região glútea e quadril, tópico músculo ilíaco (iliopsoas)",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:omohyoid-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo omo-hióideo é um músculo infra-hióideo longo e delgado, formado por dois ventres, o inferior e o superior, unidos por um tendão intermediário. O ventre inferior origina-se na margem superior da escápula, próximo à incisura da escápula, e segue obliquamente pela região cervical lateral, cruzando o plexo braquial e os vasos cervicais transversos. O tendão intermediário situa-se profundamente ao músculo esternocleidomastóideo, sobre a veia jugular interna, e prende-se à clavícula e à primeira costela por uma alça de fáscia cervical. O ventre superior sobe quase verticalmente e se insere na margem inferior do corpo do osso hioide, lateralmente à inserção do esterno-hióideo. A ação do músculo é abaixar e retrair o hioide, em associação com os demais músculos infra-hióideos, e tensionar a lâmina pré-traqueal da fáscia cervical. O omo-hióideo é inervado pela alça cervical, formada por ramos dos nervos espinais C1 a C3. Sua posição é referência anatômica importante no pescoço: o ventre inferior divide o trígono cervical lateral em trígono omoclavicular (subclávio), inferior, e trígono occipital, superior.",
+    "anatomy": {
+      "relations": "Origem: margem superior da escápula, perto da incisura da escápula (ventre inferior). Inserção: margem inferior do corpo do osso hioide, lateralmente ao esterno-hióideo (ventre superior); tendão intermediário preso à clavícula e à primeira costela por alça fascial. Ação: abaixa e retrai o hioide; tensiona a fáscia cervical. Relações: ventre inferior cruza a região cervical lateral e divide-a em trígonos occipital e omoclavicular; o tendão intermediário passa profundamente ao esternocleidomastóideo e sobre a veia jugular interna.",
+      "innervation": "Alça cervical (raízes C1–C3)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético digástrico: dois ventres de fibras multinucleadas com núcleos periféricos, unidos por tendão intermediário",
+        "Endomísio, perimísio e epimísio envolvem as fibras e os fascículos; composição mista de fibras tipo I e tipo II",
+        "Tendão intermediário: tecido conjuntivo denso modelado, com fibras colágenas paralelas e tenócitos"
+      ]
+    },
+    "clinical": [
+      "O ventre inferior do omo-hióideo é referência no pescoço para o trígono omoclavicular, onde a terceira parte da artéria subclávia e o plexo braquial são acessíveis à palpação acima da clavícula.",
+      "Em cirurgias do pescoço, o omo-hióideo é identificado como referência para localizar estruturas vizinhas, como a veia jugular interna e a bainha carótica, e a alça cervical que o inerva pode ser lesada nesses acessos, com denervação dos músculos infra-hióideos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico músculo omo-hióideo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Pescoço, tópico músculo omo-hióideo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo omo-hióideo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico músculo omo-hióideo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico músculo omo-hióideo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico músculo omo-hióideo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Pescoço, tópico músculo omo-hióideo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico músculo omo-hióideo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Pescoço, tópico músculo omo-hióideo",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:abductor-pollicis-longus-r": {
+    "ids": {},
+    "summary_pt": "O músculo abdutor longo do polegar pertence à camada profunda do compartimento posterior do antebraço. Origina-se nas faces posteriores da ulna e do rádio e na membrana interóssea, em posição distal ao músculo supinador. Seu ventre cruza obliquamente o antebraço, superficialmente aos tendões dos extensores radiais do carpo, e emerge entre estes e o extensor dos dedos, tornando-se superficial na região distal. O tendão passa pelo primeiro compartimento do retináculo dos músculos extensores, junto ao tendão do extensor curto do polegar, e insere-se na face lateral da base do primeiro metacarpal. A ação é a abdução do polegar, além da extensão da articulação carpometacarpal e, de modo auxiliar, do desvio radial da mão. O nervo interósseo posterior, ramo do nervo radial, inerva o músculo, e a artéria interóssea posterior o irriga. O tendão do abdutor longo do polegar e o do extensor curto do polegar formam o limite lateral (radial) da tabaqueira anatômica, depressão triangular visível no dorso da mão quando o polegar está estendido, e o assoalho dessa depressão relaciona-se com o osso escafoide e com a artéria radial.",
+    "anatomy": {
+      "relations": "Origem: face posterior da ulna e do rádio, distalmente ao supinador, e membrana interóssea. Inserção: face lateral da base do primeiro metacarpal. Ação: abduz o polegar e estende a articulação carpometacarpal; contribui para o desvio radial da mão. Relações: seu tendão ocupa o primeiro compartimento do retináculo dos músculos extensores com o extensor curto do polegar, e ambos formam o limite radial da tabaqueira anatômica; cruza os tendões dos extensores radiais do carpo.",
+      "vascularization": "Artéria interóssea posterior.",
+      "innervation": "Nervo interósseo posterior, ramo profundo do nervo radial (raízes C7–C8)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão longo, com bainha sinovial no primeiro compartimento extensor: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "A tenossinovite estenosante dos tendões do abdutor longo e do extensor curto do polegar no primeiro compartimento extensor, descrita como doença de De Quervain, cursa com dor na face radial do punho, que se agrava com os movimentos do polegar.",
+      "A dor à palpação da tabaqueira anatômica, delimitada em parte pelo tendão do abdutor longo do polegar, é descrita nas fraturas do osso escafoide.",
+      "A lesão do nervo interósseo posterior pode reduzir a abdução do polegar e a extensão dos dedos, com preservação da sensibilidade cutânea."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo abdutor longo do polegar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo abdutor longo do polegar",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo abdutor longo do polegar",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo abdutor longo do polegar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo abdutor longo do polegar",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo abdutor longo do polegar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo abdutor longo do polegar",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo abdutor longo do polegar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo abdutor longo do polegar",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo abdutor longo do polegar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo abdutor longo do polegar",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:lateral-head-of-triceps-brachii-r": {
+    "ids": {},
+    "summary_pt": "A cabeça lateral é a mais superficial das três cabeças do músculo tríceps braquial, e forma a massa visível na face posterolateral do braço. Origina-se na face posterior do úmero, acima do sulco do nervo radial, e no septo intermuscular lateral. Suas fibras convergem para um tendão comum, que recebe também as cabeças longa e medial e se insere na face posterior do olécrano da ulna, e para a aponeurose do tríceps. A ação é a extensão do antebraço na articulação do cotovelo, em conjunto com as demais cabeças; ao contrário da cabeça longa, não atravessa o ombro e não atua sobre o braço. O nervo radial inerva a cabeça lateral por ramos que se destacam do tronco antes ou durante sua passagem pelo sulco do nervo radial. O nervo e a artéria profunda do braço percorrem esse sulco profundamente à cabeça lateral, entre ela e a cabeça medial, relação importante nas fraturas da diáfise do úmero. A irrigação provém da artéria profunda do braço, por ramos que acompanham o nervo radial.",
+    "anatomy": {
+      "relations": "Origem: face posterior do úmero, superior ao sulco do nervo radial, e septo intermuscular lateral. Inserção: face posterior do olécrano da ulna, por tendão comum às cabeças do tríceps. Ação: estende o antebraço na articulação do cotovelo. Relações: situa-se superficialmente; o nervo radial e a artéria profunda do braço percorrem o sulco do nervo radial profundamente a ela, entre as cabeças lateral e medial.",
+      "vascularization": "Artéria profunda do braço, por ramos que acompanham o nervo radial.",
+      "innervation": "Nervo radial (raízes C6–C8)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II, em proporção variável",
+        "Tendão comum e aponeurose do tríceps: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "Fraturas da diáfise do úmero no nível do sulco do nervo radial podem lesar o nervo radial, com perda da extensão do punho e dos dedos (mão em gota); o comprometimento do tríceps varia com o nível da lesão em relação à origem dos ramos para cada cabeça.",
+      "A atrofia do tríceps braquial, evidenciada pela perda de volume da face posterior do braço, acompanha lesões do nervo radial em nível proximal, como a compressão na axila.",
+      "O reflexo tricipital é um dos reflexos tendíneos do membro superior avaliados no exame neurológico, com participação do nervo radial e dos segmentos medulares cervicais baixos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: cabeça lateral do músculo tríceps braquial",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo tríceps braquial: cabeça lateral",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:adductor-brevis-r": {
+    "ids": {},
+    "summary_pt": "O músculo adutor curto é um músculo de forma triangular do compartimento medial da coxa, situado em plano intermediário do grupo adutor, entre o pectíneo e o adutor longo, anteriormente, e o adutor magno, posteriormente. Origina-se no corpo e no ramo inferior do púbis, em posição profunda à origem do adutor longo, e alarga-se em direção lateral e inferior até se inserir na linha pectínea do fêmur e na parte proximal da linha áspera. A principal ação é a adução da coxa, com contribuição para a flexão do quadril, em atividades como a marcha e a corrida. O nervo obturatório inerva o músculo, por meio de seu ramo anterior, e a artéria profunda da coxa e a artéria obturatória participam da irrigação. O adutor curto é uma referência na dissecção da região medial da coxa, pois o ramo anterior do nervo obturatório desce em sua face anterior, entre ele e o adutor longo, enquanto o ramo posterior do mesmo nervo passa posteriormente ao músculo, após atravessar o obturador externo, e supre o adutor magno.",
+    "anatomy": {
+      "relations": "Origem: corpo e ramo inferior do púbis. Inserção: linha pectínea e parte proximal da linha áspera do fêmur. Ação: aduz a coxa; contribui para a flexão do quadril. Relações: posterior ao pectíneo e ao adutor longo, anterior ao adutor magno; o ramo anterior do nervo obturatório passa anteriormente a ele, e o ramo posterior, posteriormente.",
+      "vascularization": "Artéria profunda da coxa e artéria obturatória.",
+      "innervation": "Nervo obturatório, ramo anterior (raízes L2–L3)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão curto de origem e aponeurose de inserção: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "Distensões dos adutores, incluindo o adutor curto, estão relacionadas a esforços de aceleração e de mudança de direção e causam dor inguinal e na face medial da coxa, que aumenta com a adução contra resistência.",
+      "A lesão do nervo obturatório, por exemplo por compressão na pelve ou por hérnia obturatória, pode causar dor na face medial da coxa e fraqueza da adução, com comprometimento do adutor curto.",
+      "Em cirurgias da região medial da coxa e do quadril, o adutor curto é referência para localizar os ramos do nervo obturatório e seus vasos acompanhantes."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor curto",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo adutor curto",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo adutor curto",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor curto",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo adutor curto",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor curto",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo adutor curto",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor curto",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo adutor curto",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo adutor curto",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo adutor curto",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:pectineus-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo pectíneo é um músculo plano e quadrilátero, situado na parte superior e anterior da coxa, na transição entre os compartimentos anterior e medial. Origina-se na linha pectínea do púbis e na superfície adjacente do ramo superior do púbis, e desce lateralmente e para trás até se inserir na linha pectínea do fêmur, entre o trocanter menor e a linha áspera. O músculo forma, com o iliopsoas, o assoalho do trígono femoral; a veia femoral situa-se anteriormente a ele. A ação é a flexão e a adução da coxa, com participação na rotação medial. A inervação do pectíneo é variável: o nervo femoral é a inervação principal, e em parte dos indivíduos o músculo recebe também um ramo do nervo obturatório, o que explica a descrição, em alguns textos, de dupla inervação. A irrigação provém da artéria circunflexa femoral medial e de ramos da artéria obturatória e da artéria femoral.",
+    "anatomy": {
+      "relations": "Origem: linha pectínea do púbis e superfície adjacente do ramo superior do púbis. Inserção: linha pectínea do fêmur, entre o trocanter menor e a linha áspera. Ação: flexiona e aduz a coxa; contribui para a rotação medial. Relações: compõe, com o iliopsoas, o assoalho do trígono femoral; situa-se medialmente ao iliopsoas e lateralmente ao adutor longo; a veia femoral e seus tributários passam anteriormente a ele; posteriormente relaciona-se com o adutor curto e com o obturador externo.",
+      "vascularization": "Artéria circunflexa femoral medial e ramos das artérias obturatória e femoral.",
+      "innervation": "Nervo femoral (raízes L2–L3); em parte dos indivíduos, recebe também ramo do nervo obturatório."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão curto de origem e aponeurose de inserção: tecido conjuntivo denso modelado"
+      ]
+    },
+    "clinical": [
+      "As lesões por distensão da musculatura da região inguinal, que incluem o pectíneo e os adutores, estão associadas a esforços de corrida e de chute e podem causar dor na região anterior e medial da coxa.",
+      "Como pode receber inervação do nervo femoral e do nervo obturatório, o pectíneo pode manter parte de sua função em lesões que afetam apenas um desses nervos.",
+      "O pectíneo forma parte do assoalho do trígono femoral, o que o relaciona com o trajeto dos vasos femorais e com a anatomia de superfície usada em punções e em acessos vasculares dessa região."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo pectíneo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo pectíneo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo pectíneo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo pectíneo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo pectíneo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo pectíneo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo pectíneo",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo pectíneo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo pectíneo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo pectíneo",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo pectíneo",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:teres-minor-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo redondo menor é um músculo fino e alongado da região escapular posterior e participa do manguito rotador do ombro, em conjunto com o supraespinal, o infraespinal e o subescapular. Origina-se na parte superior da margem lateral da escápula, em sua face posterior, e segue superolateralmente, inferiormente ao infraespinal. Insere-se na faceta inferior do tubérculo maior do úmero e na cápsula articular adjacente. A ação principal é a rotação lateral do braço, e o músculo contribui, com o infraespinal, para centrar a cabeça do úmero na cavidade glenoidal. O redondo menor é inervado por um ramo do nervo axilar, que se origina do fascículo posterior do plexo braquial, e a irrigação provém da artéria circunflexa da escápula e da artéria circunflexa posterior do úmero. Forma o limite superior do espaço quadrangular e do espaço triangular da região axilar posterior. O nervo axilar e a artéria circunflexa posterior do úmero passam inferiormente ao músculo, no espaço quadrangular, em contato com o colo cirúrgico do úmero; por essa razão, a lesão desse colo ósseo pode comprometer o nervo e, com ele, o redondo menor e o deltoide.",
+    "anatomy": {
+      "relations": "Origem: parte superior da margem lateral da face posterior da escápula. Inserção: faceta inferior do tubérculo maior do úmero. Ação: rotação lateral do braço; estabiliza a cabeça do úmero. Relações: inferior ao infraespinal e superior ao redondo maior; limita superiormente o espaço quadrangular, atravessado pelo nervo axilar e pela artéria circunflexa posterior do úmero, e o espaço triangular; a cabeça longa do tríceps braquial passa entre ele e o redondo maior.",
+      "vascularization": "Artéria circunflexa da escápula e artéria circunflexa posterior do úmero.",
+      "innervation": "Ramo do nervo axilar, do fascículo posterior do plexo braquial (raízes C5–C6)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de inserção: tecido conjuntivo denso modelado, em continuidade com a cápsula articular"
+      ]
+    },
+    "clinical": [
+      "A lesão do nervo axilar, por fratura do colo cirúrgico do úmero ou luxação anterior do ombro, pode comprometer o redondo menor e o deltoide, com fraqueza da rotação lateral e da abdução do braço e perda de sensibilidade sobre a região lateral do ombro.",
+      "As lesões do manguito rotador podem envolver o tendão do redondo menor, geralmente em associação com o tendão do infraespinal.",
+      "No contexto da compressão de estruturas do espaço quadrangular, descrita como síndrome do espaço quadrangular, o redondo menor delimita superiormente o espaço, e a atrofia desse músculo é um achado possível."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo redondo menor",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo redondo menor (manguito rotador)",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:ulnar-head-of-flexor-carpi-ulnaris-r": {
+    "ids": {},
+    "summary_pt": "O músculo flexor ulnar do carpo, situado na face medial do compartimento anterior do antebraço, apresenta duas cabeças de origem, a umeral e a ulnar. A cabeça ulnar origina-se, por meio de uma aponeurose, na margem posterior da ulna e no olécrano, em seus três quartos proximais, e na fáscia antebraquial; a cabeça umeral origina-se no epicôndilo medial do úmero, por meio do tendão comum dos flexores. As duas cabeças unem-se em um ventre único, que desce pela face anteromedial do antebraço e forma um tendão que se insere no osso pisiforme, e, por meio de ligamentos, no hamato e na base do quinto metacarpal. O arco tendíneo entre as duas cabeças, ligado ao epicôndilo medial e ao olécrano, limita o túnel cubital, por onde passa o nervo ulnar ao entrar no antebraço, acompanhado pela artéria recorrente ulnar posterior. O conjunto do músculo flete e aduz a mão na articulação do punho, produzindo o desvio ulnar, e atua em sinergia com o extensor ulnar do carpo na adução da mão. A inervação é feita pelo nervo ulnar, e a artéria ulnar, com seus ramos, fornece a irrigação.",
+    "anatomy": {
+      "relations": "Origem (cabeça ulnar): olécrano e margem posterior da ulna, por meio de aponeurose; a cabeça umeral origina-se no epicôndilo medial. Inserção: osso pisiforme, com extensões ao hamato e à base do quinto metacarpal por meio de ligamentos. Ação: flete e aduz a mão (desvio ulnar). Relações: o arco tendíneo entre as cabeças limita o túnel cubital, em que passa o nervo ulnar; o músculo situa-se medialmente ao palmar longo e ao flexor superficial dos dedos; o nervo e a artéria ulnares seguem profundamente a ele no antebraço distal.",
+      "vascularization": "Artéria ulnar e seus ramos, com contribuição da artéria recorrente ulnar posterior.",
+      "innervation": "Nervo ulnar (raízes C7–C8)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Aponeurose de origem e tendão de inserção: tecido conjuntivo denso modelado, com fibras colágenas paralelas e tenócitos"
+      ]
+    },
+    "clinical": [
+      "A compressão do nervo ulnar sob o arco tendíneo entre as duas cabeças do flexor ulnar do carpo (síndrome do túnel cubital) pode causar parestesia nos dedos anular e mínimo e fraqueza da musculatura intrínseca da mão suprida pelo nervo ulnar.",
+      "Em lesões do nervo ulnar, conforme o nível em relação aos ramos para o músculo, a força de flexão e de adução do punho pode estar reduzida, com tendência ao desvio radial da mão na flexão do punho.",
+      "A tendinopatia do flexor ulnar do carpo, próxima ao pisiforme, pode causar dor na face ulnar do punho e é descrita em atividades com flexão e desvio ulnar repetidos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: cabeça ulnar do flexor ulnar do carpo",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cotovelo e antebraço, tópico músculo flexor ulnar do carpo: cabeça ulnar",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:teres-major-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo redondo maior é um músculo espesso e achatado da região posterior do ombro, que não pertence ao manguito rotador. Origina-se na face posterior do ângulo inferior da escápula e na fáscia que a recobre, e segue superolateralmente, por baixo do redondo menor, até um tendão achatado que se insere no lábio medial do sulco intertubercular do úmero, posteriormente ao tendão do latíssimo do dorso. A ação é a adução e a rotação medial do braço, e o músculo auxilia a extensão do braço a partir da posição fletida, em movimentos como puxar e remar. O músculo forma o limite inferior dos espaços quadrangular e triangular da região axilar posterior, e a cabeça longa do tríceps braquial passa entre o redondo menor e o redondo maior. O nervo subescapular inferior, ramo do fascículo posterior do plexo braquial, inerva o redondo maior, e a artéria circunflexa da escápula participa da irrigação, em associação com ramos da artéria toracodorsal.",
+    "anatomy": {
+      "relations": "Origem: face posterior do ângulo inferior da escápula. Inserção: lábio medial do sulco intertubercular do úmero. Ação: aduz e gira medialmente o braço; auxilia a extensão. Relações: forma o limite inferior dos espaços quadrangular e triangular; situa-se inferiormente ao redondo menor; a cabeça longa do tríceps braquial passa entre os dois músculos redondos; seu tendão situa-se posteriormente ao tendão do latíssimo do dorso.",
+      "vascularization": "Artéria circunflexa da escápula, com ramos da artéria toracodorsal.",
+      "innervation": "Nervo subescapular inferior, do fascículo posterior do plexo braquial."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de inserção: tecido conjuntivo denso modelado, com fibras colágenas paralelas e tenócitos"
+      ]
+    },
+    "clinical": [
+      "O redondo maior forma o limite inferior do espaço quadrangular, e a compressão do nervo axilar e da artéria circunflexa posterior do úmero nesse espaço é descrita como síndrome do espaço quadrangular.",
+      "A lesão do nervo subescapular inferior, em lesões do plexo braquial ou do fascículo posterior, pode reduzir a força de rotação medial e de adução do braço, com redução do volume dos músculos redondo maior e subescapular."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo maior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo redondo maior",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo redondo maior",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo maior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo redondo maior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo maior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Ombro e membro superior, tópico músculo redondo maior",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo maior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo redondo maior",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico músculo redondo maior",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Ombro e braço, tópico músculo redondo maior",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:temporalis-muscle-r": {
+    "ids": {},
+    "summary_pt": "O músculo temporal é um músculo largo, em forma de leque, que ocupa a fossa temporal e integra o grupo dos músculos da mastigação, ao lado do masseter e dos pterigóideos medial e lateral. Origina-se no assoalho da fossa temporal, abaixo da linha temporal inferior, e na face profunda da fáscia temporal. Suas fibras convergem inferiormente, passam profundamente ao arco zigomático e formam um tendão forte que se insere no ápice e na face medial do processo coronoide da mandíbula, estendendo-se pela margem anterior do ramo da mandíbula. As fibras anteriores, de orientação quase vertical, elevam a mandíbula e fecham a boca; as posteriores, de trajeto horizontal, retraem a mandíbula após sua protrusão. O músculo é inervado pelos nervos temporais profundos, ramos do nervo mandibular, divisão do nervo trigêmeo, e recebe sangue das artérias temporais profundas, ramos da artéria maxilar, e da artéria temporal média, ramo da artéria temporal superficial. A região do ptério, onde se encontram os ossos frontal, parietal, esfenoide e temporal, fica sobre a parte anterior da fossa temporal e é recoberta pelo músculo.",
+    "anatomy": {
+      "relations": "Origem: assoalho da fossa temporal, inferiormente à linha temporal inferior, e face profunda da fáscia temporal. Inserção: ápice e face medial do processo coronoide da mandíbula e margem anterior do ramo da mandíbula. Ação: eleva a mandíbula (fibras anteriores) e a retrai (fibras posteriores). Relações: recoberto pela fáscia temporal e pela gálea aponeurótica; passa profundamente ao arco zigomático; o ptério situa-se sobre a sua região anterior.",
+      "vascularization": "Artérias temporais profundas (ramos da artéria maxilar) e artéria temporal média (ramo da artéria temporal superficial).",
+      "innervation": "Nervos temporais profundos, anterior e posterior, ramos do nervo mandibular (V3) do nervo trigêmeo."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de inserção e fáscia temporal: tecido conjuntivo denso modelado e não modelado, respectivamente"
+      ]
+    },
+    "clinical": [
+      "A dor miofascial e a hipertrofia dos músculos da mastigação, incluindo o temporal, podem estar associadas ao bruxismo e a disfunções temporomandibulares, e podem cursar com dor na região temporal e limitação da abertura da boca.",
+      "A fratura do arco zigomático, ao deslocar o osso em direção medial, pode impedir o movimento do processo coronoide e do tendão do temporal, o que limita a abertura da boca.",
+      "O ptério, região de junção óssea mais delgada recoberta pelo músculo temporal, relaciona-se com o ramo anterior da artéria meníngea média; traumatismos nessa região podem lesar esse vaso e causar hematoma extradural."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico músculo temporal (mastigação)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cabeça e pescoço: fossa temporal e fossa infratemporal, tópico músculo temporal (mastigação)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo temporal",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico músculo temporal (mastigação)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico músculo temporal (mastigação)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico músculo temporal (mastigação)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico músculo temporal (mastigação)",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico músculo temporal (mastigação)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cabeça e pescoço: fossa temporal e fossa infratemporal, tópico músculo temporal (mastigação)",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico músculo temporal (mastigação)",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Cabeça e pescoço: fossa temporal e fossa infratemporal, tópico músculo temporal (mastigação)",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:obturator-internus-r": {
+    "ids": {},
+    "summary_pt": "O músculo obturador interno é um músculo em leque que reveste a face interna da parede lateral da pelve, na região do forame obturado, e atravessa o forame isquiático menor para alcançar a região glútea. Origina-se na face pélvica da membrana obturadora e nas margens ósseas do forame obturado, no púbis e no ísquio, o que lhe confere relação íntima com a fossa isquioanal. Suas fibras convergem para um tendão que contorna a incisura isquiática menor e passa posteriormente à articulação do quadril, entre os músculos gêmeo superior e gêmeo inferior, antes de inserir-se na face medial do trocanter maior. A ação é a rotação lateral da coxa estendida e a abdução da coxa fletida, e o músculo contribui, com os demais rotadores laterais profundos, para estabilizar a cabeça do fêmur no acetábulo. A inervação provém do nervo para o obturador interno, ramo do plexo sacral. A irrigação é feita por ramos das artérias obturatória, pudenda interna e glútea inferior. A fáscia que cobre o músculo dá origem ao arco tendíneo do músculo levantador do ânus e forma o canal pudendo, por onde passam o nervo pudendo e os vasos pudendos internos.",
+    "anatomy": {
+      "relations": "Origem: face pélvica da membrana obturadora e margens ósseas do forame obturado. Inserção: face medial do trocanter maior do fêmur, por meio de tendão que sai pelo forame isquiático menor. Ação: rotação lateral da coxa estendida e abdução da coxa fletida; estabiliza a cabeça do fêmur no acetábulo. Relações: reveste a parede lateral da pelve e limita a fossa isquioanal; sua fáscia dá origem ao arco tendíneo do músculo levantador do ânus e forma o canal pudendo; o tendão passa entre os gêmeos superior e inferior.",
+      "vascularization": "Ramos das artérias obturatória, pudenda interna e glútea inferior.",
+      "innervation": "Nervo para o obturador interno, do plexo sacral (raízes L5–S1)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II",
+        "Tendão de inserção: tecido conjuntivo denso modelado; a fáscia obturatória é lâmina de tecido conjuntivo denso que recobre o músculo"
+      ]
+    },
+    "clinical": [
+      "A fáscia do obturador interno forma o canal pudendo, e o nervo pudendo pode ser comprimido ou lesado nesse trajeto, com dor perineal ou alteração da sensibilidade do períneo.",
+      "A fossa isquioanal é limitada lateralmente pelo obturador interno e por sua fáscia, de modo que infecções dessa fossa mantêm relação com essa parede muscular.",
+      "Os rotadores laterais profundos, entre eles o obturador interno e os gêmeos, contribuem para a estabilidade posterior do quadril e podem ser comprometidos em abordagens cirúrgicas posteriores da articulação."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico músculo obturador interno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Região glútea e quadril, tópico músculo obturador interno",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: músculo obturador interno",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico músculo obturador interno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Pelve e períneo, tópico músculo obturador interno",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico músculo obturador interno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Pelve e períneo, tópico músculo obturador interno",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico músculo obturador interno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Região glútea e quadril, tópico músculo obturador interno",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pelve e períneo, tópico músculo obturador interno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Região glútea e quadril, tópico músculo obturador interno",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:short-head-of-biceps-femoris-r": {
+    "ids": {},
+    "summary_pt": "A cabeça curta é a parte do músculo bíceps femoral que não se origina no ísquio, e difere da cabeça longa por não cruzar a articulação do quadril. Origina-se no lábio lateral da linha áspera, em seu terço médio, na linha supracondilar lateral do fêmur e no septo intermuscular lateral. Suas fibras descem obliquamente e unem-se ao tendão da cabeça longa, formando um tendão comum que se insere principalmente na cabeça da fíbula, com expansões para o côndilo lateral da tíbia e para o ligamento colateral fibular. A ação é a flexão do joelho e, com o joelho fletido, a rotação lateral da perna. Por não ter origem pélvica, a cabeça curta não participa da extensão do quadril. A inervação distingue-se do restante do grupo posterior: enquanto a cabeça longa recebe ramos da divisão tibial do nervo isquiático, a cabeça curta é inervada pela divisão fibular comum. A irrigação provém sobretudo dos ramos perfurantes da artéria profunda da coxa. O tendão comum do bíceps femoral forma o limite superolateral da fossa poplítea, e o nervo fibular comum segue ao longo de sua margem medial antes de contornar o colo da fíbula, o que o torna vulnerável nessa região.",
+    "anatomy": {
+      "relations": "Origem: lábio lateral da linha áspera (terço médio), linha supracondilar lateral do fêmur e septo intermuscular lateral. Inserção: cabeça da fíbula, por tendão comum com a cabeça longa, com expansões para o côndilo lateral da tíbia. Ação: flexão do joelho e rotação lateral da perna fletida. Relações: profunda à cabeça longa; o tendão comum limita lateralmente a fossa poplítea, com o nervo fibular comum em sua margem medial.",
+      "vascularization": "Ramos perfurantes da artéria profunda da coxa.",
+      "innervation": "Nervo fibular comum, divisão fibular do nervo isquiático (raízes L5–S2)."
+    },
+    "histology": {
+      "tissues": [
+        "Músculo estriado esquelético: fibras multinucleadas com núcleos periféricos, organizadas em fascículos envoltos por endomísio, perimísio e epimísio",
+        "Composição mista de fibras tipo I e tipo II, em proporção variável",
+        "Tendão comum com a cabeça longa: tecido conjuntivo denso modelado, com fibras colágenas paralelas e tenócitos"
+      ]
+    },
+    "clinical": [
+      "O nervo fibular comum segue na margem medial do tendão do bíceps femoral e contorna o colo da fíbula; a lesão nesse ponto, por trauma ou compressão, pode causar queda do pé e alteração da sensibilidade da face lateral da perna e do dorso do pé.",
+      "Uma lesão da divisão fibular do nervo isquiático pode afetar a cabeça curta do bíceps femoral e preservar os demais isquiotibiais, que recebem inervação da divisão tibial.",
+      "Avulsões do tendão comum na cabeça da fíbula podem ocorrer em lesões esportivas e, por proximidade, associar-se a lesões do nervo fibular comum."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Sistema muscular: cabeça curta do bíceps femoral",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido muscular, tópico músculo esquelético; capítulo Tecido conjuntivo, tópico tendões",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., capítulo Coxa, tópico músculo bíceps femoral: cabeça curta",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  }
+}
