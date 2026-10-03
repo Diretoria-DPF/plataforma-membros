@@ -2,6 +2,7 @@
   "name": "plataforma-membros-frontend",
   "version": "1.0.0",
   "private": true,
+  "license": "SEE LICENSE IN ../LICENSE",
   "description": "Build do front-end estático (ofusca app.js antes de publicar no GitHub Pages).",
   "scripts": {
     "build": "node scripts/build.js",
