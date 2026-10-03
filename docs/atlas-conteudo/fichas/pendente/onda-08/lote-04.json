@@ -1,0 +1,2433 @@
+{
+  "za:atlas-c1": {
+    "ids": {},
+    "summary_pt": "O atlas (C1) é a primeira vértebra cervical e sustenta o crânio por meio das articulações atlantoccipitais. Distingue-se das demais por não possuir corpo nem processo espinhoso: forma um anel ósseo constituído pelos arcos anterior e posterior, unidos por duas massas laterais. O arco anterior apresenta o tubérculo anterior e, na face posterior, a fóvea do dente, onde se articula o dente do áxis. O arco posterior tem o tubérculo posterior, rudimento do processo espinhoso, e, na face superior, o sulco da artéria vertebral. Cada massa lateral exibe uma face articular superior côncava, que recebe o côndilo do osso occipital, e uma face articular inferior, aproximadamente plana, voltada para o áxis. Os processos transversos são longos, projetam-se lateralmente e são perfurados pelos forames transversos. O ligamento transverso do atlas, tenso entre os tubérculos das massas laterais, mantém o dente em contato com o arco anterior e divide o forame vertebral em um compartimento anterior, ocupado pelo dente, e outro posterior, que aloja a medula espinal. A flexão e a extensão da cabeça ocorrem sobretudo nas articulações atlantoccipitais, e a rotação, nas articulações atlantoaxiais.",
+    "anatomy": {
+      "relations": "Articula-se superiormente com os côndilos do osso occipital (articulações atlantoccipitais) e inferiormente com o áxis, pelas articulações atlantoaxiais lateral (entre as massas laterais e as faces articulares superiores de C2) e mediana (entre o dente e a fóvea do dente do atlas). Não há disco intervertebral entre o occipital, C1 e C2. Acidentes principais: arcos anterior e posterior, tubérculos anterior e posterior, massas laterais, forames transversos e sulco da artéria vertebral. Inserções: reto anterior da cabeça (massa lateral), reto posterior menor da cabeça (tubérculo posterior), oblíquo superior da cabeça e oblíquo inferior da cabeça (processo transverso), levantador da escápula e esplênio do pescoço (processo transverso), longo do pescoço (tubérculo anterior) e ligamento transverso do atlas (face medial das massas laterais).",
+      "vascularization": "Ramos da artéria vertebral, que atravessa o forame transverso e contorna a massa lateral pelo sulco da artéria vertebral antes de penetrar no forame magno; ramos musculares e espinais dessa artéria e anastomoses com ramos da artéria occipital contribuem para a rede arterial da região.",
+      "innervation": "O periósteo e as articulações atlantoccipitais e atlantoaxiais recebem ramos dos nervos espinais cervicais superiores. O ramo posterior de C1 (nervo suboccipital) emerge entre o arco posterior do atlas e a artéria vertebral e inerva os músculos suboccipitais."
+    },
+    "histology": {
+      "tissues": [
+        "Osso compacto delgado recobrindo pequena quantidade de osso esponjoso nas massas laterais, com medula óssea nos espaços trabeculares",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem articular hialina nas faces articulares superiores e inferiores das massas laterais e na fóvea do dente, em articulações sinoviais",
+        "Ligamento transverso do atlas: tecido conjuntivo denso modelado, com predomínio de fibras colágenas"
+      ]
+    },
+    "clinical": [
+      "Fratura de Jefferson: fratura do anel do atlas, geralmente em mais de um ponto dos arcos, descrita em traumas por carga axial sobre o crânio.",
+      "Instabilidade atlantoaxial: a insuficiência do ligamento transverso do atlas, descrita em doenças inflamatórias das articulações e em alterações do desenvolvimento, permite deslocamento do atlas em relação ao dente do áxis, com risco para a medula espinal.",
+      "Relação com a artéria vertebral: o trajeto sinuoso da artéria no sulco do arco posterior a torna vulnerável em lesões cervicais altas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico atlas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): atlas (C1)",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico atlas e áxis",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico atlas e áxis",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico atlas e áxis",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico atlas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico atlas",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:axis-c2": {
+    "ids": {},
+    "summary_pt": "O áxis (C2) é a segunda vértebra cervical e constitui o eixo em torno do qual o atlas e o crânio realizam a rotação da cabeça. Sua marca é o dente (processo odontoide), projeção vertical que se ergue da face superior do corpo e articula-se com a fóvea do dente do atlas; o dente representa, do ponto de vista do desenvolvimento, o corpo do atlas incorporado ao áxis. Lateralmente ao dente, as faces articulares superiores, amplas e levemente convexas, sustentam as massas laterais do atlas. O corpo é pequeno, os pedículos são curtos e as lâminas, espessas. O processo espinhoso é grande, bífido e serve de ponto de fixação para músculos suboccipitais e cervicais profundos. Os processos transversos são pequenos, dirigidos para baixo e perfurados pelos forames transversos, que seguem o trajeto oblíquo da artéria vertebral. As faces articulares inferiores continuam-se com as de C3, e o primeiro disco intervertebral situa-se entre C2 e C3. Ligamentos do dente, como o ligamento apical do dente, os ligamentos alares e o ligamento transverso do atlas, mantêm a união com o occipital e o atlas e limitam a amplitude do movimento.",
+    "anatomy": {
+      "relations": "Articula-se com o atlas (articulações atlantoaxiais mediana e laterais) e com C3, por articulação zigapofisial e disco intervertebral (disco C2–C3). Acidentes: dente do áxis, faces articulares superiores e inferiores, istmo (parte interarticular), lâminas, processo espinhoso bífido e forames transversos. Ligamentos: apical do dente, alares, transverso do atlas (parte do ligamento cruciforme do atlas) e membrana tectória, posterior ao dente. Inserções: reto posterior maior da cabeça e oblíquo inferior da cabeça (processo espinhoso), semiespinal do pescoço e multífidos (lâminas e processo espinhoso), longo do pescoço (face anterior do corpo), interespinais e ligamento nucal.",
+      "vascularization": "Ramos da artéria vertebral, que descreve alça lateral ao passar pelos forames transversos de C2 e C1; o dente recebe pequenos ramos arteriais ascendentes derivados das artérias vertebrais, que se anastomosam em torno do ápice. As veias drenam para o plexo venoso vertebral interno e externo e para as veias vertebrais.",
+      "innervation": "O ramo posterior do nervo espinal C2 (nervo occipital maior) passa abaixo do oblíquo inferior da cabeça, posteriormente ao áxis; o gânglio espinal de C2 situa-se posteriormente à articulação atlantoaxial lateral. O periósteo e as articulações recebem ramos de nervos cervicais superiores."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo e dente: osso esponjoso com trabéculas e medula óssea vermelha, envolvido por cortical de osso compacto",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem articular hialina nas faces articulares superiores, inferiores e na face articular anterior do dente",
+        "Ligamentos do dente: tecido conjuntivo denso, com predomínio de fibras colágenas"
+      ]
+    },
+    "clinical": [
+      "Fratura do dente do áxis: classificada segundo o traço (ápice, base ou extensão ao corpo); a fratura da base é descrita como mais sujeita a não consolidação, associada à irrigação limitada dessa região.",
+      "Fratura do enforcado: fratura bilateral do istmo do áxis, com espondilolistese traumática de C2 sobre C3, descrita em hiperextensão com distração cervical.",
+      "Comprometimento dos ligamentos do dente em traumas ou doenças inflamatórias pode permitir subluxação atlantoaxial e compressão do bulbo ou da medula cervical."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico áxis",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): áxis (C2)",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico atlas e áxis",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico atlas e áxis",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico atlas e áxis",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico áxis",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico atlas e áxis",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico áxis",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-c3": {
+    "ids": {},
+    "summary_pt": "A vértebra C3 é a terceira vértebra cervical e a primeira de morfologia típica abaixo do áxis. O corpo é pequeno, mais largo no sentido transversal que no anteroposterior, com a face superior côncava lateralmente, onde se projetam os processos unciformes (úncus do corpo), e a face inferior convexa. O forame vertebral é amplo e triangular. O processo espinhoso é curto e bífido, com a ponta dividida em dois tubérculos. Os processos transversos exibem forame transverso, por onde passa a artéria vertebral, e terminam em tubérculos anterior e posterior, separados pelo sulco do nervo espinal. As faces articulares dos processos articulares são aproximadamente planas, orientadas em plano oblíquo entre o horizontal e o coronal, o que facilita a flexão, a extensão, a inclinação lateral e a rotação. C3 articula-se superiormente com o áxis, no primeiro disco intervertebral da coluna, e inferiormente com C4. Em geral, seu corpo situa-se ao nível do osso hioide, ponto de referência palpável na região anterior do pescoço, e as raízes de C3 contribuem para o plexo cervical e para o nervo frênico.",
+    "anatomy": {
+      "relations": "Articula-se com o áxis (disco C2–C3 e articulações zigapofisiais) e com C4 (disco C3–C4, articulações zigapofisiais e uncovertebrais, entre os processos unciformes). Acidentes: processo unciforme, forame transverso, tubérculos anterior e posterior do processo transverso, sulco do nervo espinal e processo espinhoso bífido. Inserções: levantador da escápula, esplênio do pescoço, escaleno médio e longuíssimo do pescoço (processo transverso); longo do pescoço e longo da cabeça (tubérculo anterior e corpo); semiespinal do pescoço, multífidos e ligamento nucal (processo espinhoso e lâminas). Relaciona-se anteriormente com a faringe e o espaço retrofaríngeo.",
+      "vascularization": "Ramos espinais e musculares da artéria vertebral, que ascende pelos forames transversos, e ramos da artéria cervical ascendente (ramo da artéria tireóidea inferior), que contribuem para a irrigação dos corpos e dos arcos vertebrais. As veias drenam para os plexos venosos vertebrais internos e externos.",
+      "innervation": "Ramos meníngeos (nervos sinuvertebrais) inervam o periósteo, os discos e as articulações; os ramos posteriores dos nervos espinais cervicais correspondentes inervam as articulações zigapofisiais e a musculatura profunda. O nervo espinal C3 emerge pelo forame intervertebral entre C2 e C3 e participa do plexo cervical e, com C4 e C5, do nervo frênico."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo de C3: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; os processos unciformes são projeções ósseas das bordas laterais superiores do corpo",
+        "Células ósseas de C3: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C3 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C2 e com a vértebra inferior",
+        "Discos intervertebrais C2–C3 e C3–C4: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+      ]
+    },
+    "clinical": [
+      "Lesões medulares no nível de C3 podem comprometer as origens do nervo frênico (C3–C5) e associar-se a insuficiência respiratória.",
+      "Espondilose cervical: osteófitos nas articulações uncovertebrais e zigapofisiais estreitam o forame intervertebral e podem comprimir a raiz do nervo espinal.",
+      "Lesões de hiperflexão ou hiperextensão podem causar subluxação ou luxação dos processos articulares entre vértebras cervicais adjacentes."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): vértebras cervicais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteoartrite",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-c4": {
+    "ids": {},
+    "summary_pt": "A vértebra C4 é a quarta vértebra cervical e compartilha as características das vértebras cervicais típicas: corpo pequeno e largo, com úncus nas bordas superiores, forame vertebral triangular, processo espinhoso curto e bífido e forames transversos perfurando os processos transversos. A artéria vertebral percorre esses forames desde C6 até C1, e o nervo espinal segue no sulco do nervo espinal, entre os tubérculos anterior e posterior de cada processo transverso. Em C4, as articulações zigapofisiais conservam orientação oblíqua, e as articulações entre os processos unciformes e o corpo da vértebra suprajacente (uncovertebrais) limitam o deslocamento lateral. O disco C3–C4 e o disco C4–C5 contribuem para a mobilidade cervical. A posição anterior de C4 corresponde, em geral, à margem superior da cartilagem tireóidea e à região de bifurcação da artéria carótida comum, relação útil como referência topográfica no pescoço. O nervo espinal C4 emerge entre C3 e C4, contribui para o plexo cervical e para o nervo frênico, e seu dermátomo inclui a região supraclavicular e o ombro, onde pode ser percebida a dor referida de origem diafragmática.",
+    "anatomy": {
+      "relations": "Articula-se com C3 e C5 por discos intervertebrais, articulações zigapofisiais e articulações uncovertebrais. Acidentes: processo unciforme, forame transverso, tubérculos do processo transverso, sulco do nervo espinal, lâmina e processo espinhoso bífido. Inserções: escalenos anterior e médio e levantador da escápula (processo transverso), longo do pescoço (corpo e processo transverso), esplênio do pescoço, semiespinal do pescoço, multífidos e ligamento nucal (processo espinhoso). Anteriormente relaciona-se com a laringe e a faringe, com a bainha carótica lateralmente ao nível da bifurcação da artéria carótida comum.",
+      "vascularization": "Ramos da artéria vertebral que passa pelo forame transverso e ramos da artéria cervical ascendente irrigam o corpo e o arco; ramos espinais entram pelo forame intervertebral. As veias drenam para os plexos venosos vertebrais e para a veia vertebral.",
+      "innervation": "Ramos meníngeos do nervo espinal C4 inervam o periósteo, o disco e o ligamento longitudinal posterior; os ramos posteriores inervam as articulações zigapofisiais e os músculos profundos. O ramo anterior de C4 contribui para o plexo cervical (nervos supraclaviculares e raiz do nervo frênico)."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo de C4: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; trabéculas orientadas segundo as linhas de carga axial",
+        "Células ósseas de C4: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C4 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C3 e com a vértebra inferior",
+        "Discos intervertebrais C3–C4 e C4–C5: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+      ]
+    },
+    "clinical": [
+      "Dor referida do diafragma no ombro: a irritação da parte central do diafragma pelo nervo frênico (C3–C5) pode ser percebida no dermátomo C4, na região do ombro.",
+      "A hérnia de disco C4–C5 pode comprimir a raiz do nervo espinal C5, que emerge pelo forame intervertebral entre C4 e C5.",
+      "Lesões da medula espinal no nível de C4 podem comprometer os quatro membros e a função respiratória."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): vértebras cervicais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteoartrite",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-c5": {
+    "ids": {},
+    "summary_pt": "A vértebra C5 é a quinta vértebra cervical, típica quanto à forma do corpo, do forame vertebral e do processo espinhoso bífido, mas de interesse particular por sua relação com o plexo braquial. A raiz do nervo espinal C5 emerge pelo forame intervertebral entre C4 e C5 e, com C6, forma o tronco superior do plexo braquial, de que se originam fibras para o deltoide, o bíceps braquial, o braquial e os músculos do manguito rotador. O corpo é pequeno e largo, com processos unciformes nas bordas laterais superiores, que formam as articulações uncovertebrais com o corpo de C4. O forame transverso é pérvio e acolhe a artéria vertebral e plexo venoso associado. Os processos transversos terminam em tubérculos anterior e posterior, que oferecem inserção aos músculos escalenos e pré-vertebrais. O nível C5–C6 é de grande mobilidade na coluna cervical, o que o torna sede frequente de alterações degenerativas. Anteriormente, C5 relaciona-se com a laringe, cuja cartilagem tireóidea projeta-se aproximadamente nos níveis de C4 e C5, e com os músculos longos do pescoço e da cabeça, que cobrem a face anterior das vértebras.",
+    "anatomy": {
+      "relations": "Articula-se com C4 e C6 (discos intervertebrais, articulações zigapofisiais e uncovertebrais). Acidentes: processo unciforme, forame transverso, tubérculos anterior e posterior, sulco do nervo espinal, lâminas e processo espinhoso curto bífido. Inserções: escalenos anterior, médio e posterior, longuíssimo do pescoço e iliocostal do pescoço (processo transverso), longo do pescoço e longo da cabeça (tubérculo anterior e corpo), semiespinal do pescoço, multífidos e ligamento nucal (processo espinhoso). O ramo anterior do nervo espinal C5 passa sobre o sulco do nervo espinal do processo transverso de C5.",
+      "vascularization": "Ramos da artéria vertebral (ramos espinais e musculares) e da artéria cervical ascendente, ramo da artéria tireóidea inferior; as veias acompanham a artéria e drenam para os plexos venosos vertebrais.",
+      "innervation": "Ramos meníngeos do nervo espinal inervam periósteo, disco e ligamentos; os ramos posteriores inervam as articulações zigapofisiais e a musculatura profunda. O ramo anterior de C5 forma, com C6, o tronco superior do plexo braquial (origem dos nervos dorsal da escápula e supraescapular) e contribui para o nervo frênico."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo de C5: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; trabéculas dispostas segundo as linhas de força de compressão do segmento cervical",
+        "Células ósseas de C5: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C5 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C4 e com a vértebra inferior",
+        "Discos intervertebrais C4–C5 e C5–C6: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+      ]
+    },
+    "clinical": [
+      "Radiculopatia C5: a compressão da raiz de C5, entre C4 e C5, por hérnia de disco ou osteófitos pode causar dor na região do ombro e déficit de abdução do braço, pela inervação do deltoide.",
+      "Lesões por tração do tronco superior do plexo braquial (raízes C5 e C6) causam o padrão de paralisia descrito por Erb, com adução e rotação medial do membro.",
+      "Espondilose cervical: o segmento C5–C6 é descrito entre os mais acometidos por osteófitos e perda de altura do disco."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): vértebras cervicais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteoartrite",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-c6": {
+    "ids": {},
+    "summary_pt": "A vértebra C6 é a sexta vértebra cervical e apresenta duas particularidades de grande interesse topográfico. Seu tubérculo anterior do processo transverso, o tubérculo carótico, é grande e proeminente, e a artéria carótida comum passa anteriormente a ele; contra essa saliência a artéria pode ser comprimida. Em geral, o forame transverso de C6 é o primeiro pelo qual penetra a artéria vertebral, que antes percorre o espaço entre os músculos longo do pescoço e escaleno anterior. O corpo é pequeno, com processos unciformes, e o forame vertebral é triangular e amplo. O processo espinhoso é curto e pode ser bífido. Anteriormente, a vértebra situa-se ao nível da cartilagem cricóidea, da transição entre laringe e traqueia e da transição entre a faringe e o esôfago, referências usadas na descrição topográfica do pescoço. O nervo espinal C6 emerge entre C5 e C6, participa do tronco superior do plexo braquial e inerva dermátomos do polegar e da face lateral do antebraço. Articula-se com C5 e C7 por discos intervertebrais e articulações zigapofisiais.",
+    "anatomy": {
+      "relations": "Articula-se com C5 e C7 (discos, articulações zigapofisiais e uncovertebrais). Acidentes: tubérculo carótico (tubérculo anterior do processo transverso), forame transverso (em geral, o primeiro a dar passagem à artéria vertebral), sulco do nervo espinal e processo espinhoso curto. Inserções: escaleno anterior (tubérculo anterior), escalenos médio e posterior (tubérculo posterior), longo do pescoço, longo da cabeça, iliocostal do pescoço e longuíssimo do pescoço. A artéria carótida comum, a veia jugular interna e o nervo vago, na bainha carótica, passam anteriormente ao processo transverso; o gânglio cervical médio e a artéria tireóidea inferior situam-se nas proximidades.",
+      "vascularization": "Ramos espinais e musculares da artéria vertebral, que penetra no forame transverso de C6, e ramos da artéria cervical ascendente, ramo da artéria tireóidea inferior; a artéria tireóidea inferior curva-se medialmente nas proximidades do nível de C6.",
+      "innervation": "O periósteo, o disco e os ligamentos recebem ramos meníngeos; as articulações zigapofisiais, ramos mediais dos ramos posteriores. O nervo espinal C6, que sai pelo forame intervertebral entre C5 e C6, contribui para o tronco superior do plexo braquial e inerva, entre outros, os músculos bíceps braquial e braquiorradial."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo de C6: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; tubérculo carótico de osso compacto e esponjoso com periósteo espesso para inserções musculares",
+        "Células ósseas de C6: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C6 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C5 e com a vértebra inferior",
+        "Discos intervertebrais C5–C6 e C6–C7: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+      ]
+    },
+    "clinical": [
+      "Hérnia de disco C5–C6: pode comprimir a raiz do nervo espinal C6 e provocar dor e parestesia na face lateral do antebraço e no polegar, com déficit da flexão do cotovelo e do reflexo bicipital.",
+      "Tubérculo carótico: ponto de referência palpável contra o qual a artéria carótida comum pode ser comprimida e o pulso carotídeo palpado.",
+      "Espondilose e osteófitos no nível C5–C6 e C6–C7 podem estreitar o forame intervertebral (radiculopatia) ou o canal vertebral (mielopatia)."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): vértebras cervicais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteoartrite",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-c7": {
+    "ids": {},
+    "summary_pt": "A vértebra C7, chamada vértebra proeminente, é a sétima vértebra cervical e a de transição para a região torácica. Seu processo espinhoso é longo, não bífido e terminado em ponta única, de modo que forma uma saliência palpável, e muitas vezes visível, na base do pescoço, que serve de referência para a contagem das vértebras. O corpo é maior que o das vértebras cervicais típicas, com processos unciformes pouco desenvolvidos. Os processos transversos são grandes, com tubérculo anterior pequeno; o forame transverso é de menor calibre e dá passagem às veias vertebrais acessórias, mas, de modo geral, não à artéria vertebral, que entra em C6. O sulco do nervo espinal é amplo e acolhe o ramo anterior de C7. A articulação com T1, pelo disco C7–T1, é a transição entre a lordose cervical e a cifose torácica. O processo espinhoso fixa o ligamento nucal e a origem do músculo trapézio, e C7 pode apresentar costela cervical, variação anatômica, uni ou bilateral, que se articula com o processo transverso e, por vezes, com a primeira costela.",
+    "anatomy": {
+      "relations": "Articula-se com C6 e T1 (discos C6–C7 e C7–T1, articulações zigapofisiais). Acidentes: processo espinhoso longo e não bífido, processos transversos amplos com forame transverso menor, tubérculo anterior pequeno e sulco do nervo espinal. Inserções: ligamento nucal e trapézio (processo espinhoso), romboide menor e serrátil posterior superior (processos espinhosos de C7 e vértebras vizinhas), escalenos médio e posterior (tubérculo posterior), longo do pescoço, semiespinal do pescoço e multífidos. O ramo anterior do nervo espinal C7 passa sobre o processo transverso, e a cúpula da pleura relaciona-se com a transição cervicotorácica, logo abaixo.",
+      "vascularization": "Ramos da artéria cervical profunda (do tronco costocervical), que irriga a região posterior, e da artéria vertebral por ramos espinais; o forame transverso contém principalmente veias vertebrais acessórias.",
+      "innervation": "Ramos meníngeos inervam o periósteo, o disco e os ligamentos; os ramos posteriores inervam as articulações zigapofisiais e a musculatura profunda. O nervo espinal C7 emerge entre C6 e C7 e participa do plexo braquial (tronco médio), com inervação, por exemplo, do tríceps braquial."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo de C7: osso esponjoso com medula óssea vermelha, envolvido por delgada cortical de osso compacto; o processo espinhoso longo apresenta cortical compacta e extremidade com periósteo e fixações fibrosas do ligamento nucal",
+        "Células ósseas de C7: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais do corpo de C7 e nas faces articulares dos processos articulares, que formam articulações zigapofisiais sinoviais com C6 e com a vértebra inferior",
+        "Discos intervertebrais C6–C7 e C7–T1: fibrocartilagem do anel fibroso e núcleo pulposo de matriz gelatinosa"
+      ]
+    },
+    "clinical": [
+      "A saliência do processo espinhoso de C7 é referência para contagem vertebral e para a localização de níveis cervicais e torácicos superiores.",
+      "Costela cervical: variação anatômica em C7 que, ao se articular com o processo transverso, pode relacionar-se com compressão do plexo braquial (tronco inferior) e da artéria subclávia, no chamado desfiladeiro torácico.",
+      "Fratura por avulsão do processo espinhoso de C7 é descrita em trações vigorosas do trapézio e dos romboides.",
+      "Radiculopatia C7: a compressão por hérnia do disco C6–C7 pode alterar a extensão do cotovelo e a sensibilidade do dedo médio."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais e vértebra proeminente",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): vértebras cervicais",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais e vértebra proeminente",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais e vértebra proeminente",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais e vértebra proeminente",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral cervical",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras cervicais",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras cervicais e vértebra proeminente",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteoartrite",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t1": {
+    "ids": {},
+    "summary_pt": "A vértebra T1 é a primeira vértebra torácica e faz a transição entre a coluna cervical e o segmento torácico, o que se reflete em sua morfologia mista. O corpo assemelha-se ao das vértebras cervicais, com ligeiros processos unciformes, mas apresenta, de cada lado, uma faceta costal superior completa, que recebe a cabeça da primeira costela, e uma faceta costal inferior parcial (semifaceta), que, em conjunto com a semifaceta superior de T2, articula-se com a cabeça da segunda costela. O forame vertebral é circular ou oval e menor que o das vértebras cervicais. O processo espinhoso é longo, quase horizontal e palpável, logo abaixo do processo espinhoso de C7. Cada processo transverso possui uma faceta costal transversal, onde se articula o tubérculo da primeira costela. Os processos articulares superiores têm faces voltadas para trás e um pouco para cima e lateralmente, como nas vértebras torácicas. O nervo espinal T1 sai entre T1 e T2 e contribui para o plexo braquial; os neurônios simpáticos pré-ganglionares que suprem a cabeça e o pescoço têm origem na medula espinal em níveis torácicos superiores, incluindo T1.",
+    "anatomy": {
+      "relations": "Articula-se com C7 (disco C7–T1) e T2 (disco T1–T2), por articulações zigapofisiais, e com as costelas: cabeça da 1ª costela na faceta costal superior completa, tubérculo da 1ª costela na faceta costal transversal e cabeça da 2ª costela na semifaceta inferior (articulações das cabeças e costotransversárias). Acidentes: faceta costal superior e semifaceta inferior, processo transverso com faceta costal transversal e processo espinhoso longo. Inserções: romboide menor e serrátil posterior superior (processos espinhosos), semiespinal do pescoço e multífidos, longo do pescoço (corpo), levantadores das costelas (processo transverso) e ligamentos costotransversários. Anteriormente relaciona-se com o esôfago, a traqueia e o gânglio cervicotorácico, perto do colo da 1ª costela.",
+      "vascularization": "Ramos dorsais e espinais das artérias intercostais posteriores irrigam o corpo e o arco; as duas primeiras artérias intercostais posteriores originam-se da artéria intercostal suprema, ramo do tronco costocervical. As veias drenam para os plexos venosos vertebrais.",
+      "innervation": "Ramos meníngeos inervam o periósteo, o disco e os ligamentos; os ramos posteriores do nervo espinal T1 inervam as articulações zigapofisiais e a musculatura profunda. O ramo anterior de T1 contribui para o tronco inferior do plexo braquial (C8–T1) e, parcialmente, para o primeiro nervo intercostal."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso esponjoso com medula óssea vermelha envolvido por cortical de osso compacto, sustentando carga de compressão axial",
+        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo e endósteo",
+        "Cartilagem hialina nas placas terminais e nas faces articulares: facetas costais, processo articular e faceta costal transversal, em articulações sinoviais com a costela",
+        "Discos adjacentes C7–T1 e T1–T2: fibrocartilagem do anel fibroso e núcleo pulposo"
+      ]
+    },
+    "clinical": [
+      "Síndrome de Horner: a interrupção da via simpática originada em T1–T2, por tumores, traumas ou lesões do gânglio cervicotorácico, associa-se a ptose palpebral, miose e redução da sudorese facial ipsilateral.",
+      "Tumor do sulco superior do pulmão (tumor de Pancoast): pode invadir a pleura apical, a primeira costela, o corpo vertebral de T1, o plexo braquial inferior e a cadeia simpática, com dor no ombro e no braço.",
+      "Lesão do tronco inferior do plexo braquial (C8–T1), por tração ou compressão, associa-se a déficit dos músculos intrínsecos da mão."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): vértebras torácicas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pulmão, tópico carcinoma de pulmão",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:vertebra-t2": {
+    "ids": {},
+    "summary_pt": "A vértebra T2 é a segunda vértebra torácica e mantém, em grande parte, a morfologia de transição de T1, embora já apresente o padrão de articulação costal típico da região torácica superior. Cada lado do corpo possui uma semifaceta costal superior, que recebe, com a semifaceta inferior de T1, a cabeça da segunda costela, e uma semifaceta costal inferior, que participa da articulação com a cabeça da terceira costela. O processo transverso é espesso e traz, na extremidade, a faceta costal transversal para o tubérculo da segunda costela. O processo espinhoso é longo e inclinado para baixo. O forame vertebral é circular e de calibre menor que o da região cervical. Em T2 originam-se o músculo romboide maior e o serrátil posterior superior, entre outros. A incisura jugular do esterno projeta-se, de modo aproximado, ao nível do disco T2–T3. O nervo intercostobraquial, ramo cutâneo do segundo nervo intercostal, inerva a pele da face medial do braço, e a dor referida cardíaca pode se estender a essa região.",
+    "anatomy": {
+      "relations": "Articula-se com T1 e T3 (discos e articulações zigapofisiais) e com a 2ª e 3ª costelas: semifaceta superior com a cabeça da 2ª costela, semifaceta inferior com a cabeça da 3ª costela e faceta costal transversal com o tubérculo da 2ª costela. Acidentes: semifacetas costais, faceta costal transversal, processo transverso espesso e processo espinhoso longo e inclinado. Inserções: romboide maior (processo espinhoso de T2 a T5), serrátil posterior superior, trapézio (processo espinhoso), semiespinal do tórax, multífidos, rotadores e levantadores das costelas (processo transverso). Anteriormente, o esôfago e a traqueia situam-se no mediastino superior, nas proximidades desse nível.",
+      "vascularization": "Ramos dorsais e espinais das artérias intercostais posteriores (a 2ª origina-se da artéria intercostal suprema, ramo do tronco costocervical); as veias drenam para os plexos venosos vertebrais e para as veias intercostais posteriores.",
+      "innervation": "Ramos meníngeos inervam periósteo, disco e ligamentos; os ramos posteriores de T2 inervam as articulações zigapofisiais e os músculos profundos. O ramo anterior de T2 forma o 2º nervo intercostal, que fornece o nervo intercostobraquial, e fibras simpáticas pré-ganglionares da medula espinal em T2 integram o suprimento simpático da cabeça e do membro superior."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso esponjoso com medula óssea vermelha, envolvido por cortical de osso compacto",
+        "Células ósseas: osteoblastos, osteócitos, células osteoprogenitoras e osteoclastos; periósteo externo e endósteo interno",
+        "Cartilagem hialina nas placas terminais e nas faces articulares das semifacetas costais e da faceta costal transversal",
+        "Disco intervertebral T1–T2 e T2–T3: fibrocartilagem com anel fibroso e núcleo pulposo"
+      ]
+    },
+    "clinical": [
+      "Dor referida cardíaca: a convergência de aferências viscerais torácicas altas (T1–T4) com o nervo intercostobraquial pode explicar dor percebida na face medial do braço em isquemia miocárdica.",
+      "Fratura por compressão em corpo vertebral torácico: a perda de massa óssea na osteoporose pode levar a deformidades em cunha e acentuação da cifose torácica.",
+      "Escoliose: curvas laterais da coluna com rotação vertebral podem incluir as vértebras torácicas superiores, com assimetria das costelas associadas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): vértebras torácicas",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Dorso e medula espinal, tópico coluna vertebral torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Dorso, tópico vértebras torácicas",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Dorso, tópico vértebras torácicas",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteoporose",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:costal-cartilage-of-sixth-rib-r": {
+    "ids": {},
+    "summary_pt": "A cartilagem costal da sexta costela é o segmento de cartilagem hialina que prolonga anteriormente a sexta costela e a une ao esterno. Pertence às costelas verdadeiras, ou esternais, porque se articula diretamente com o osso do esterno, na articulação esternocostal, em geral junto à borda lateral da parte inferior do corpo do esterno. Seu trajeto é ascendente em direção ao esterno e a articulação esternocostal é sinovial, o que permite pequenos deslizamentos durante os movimentos respiratórios. Lateralmente, a cartilagem continua-se com a extremidade anterior da costela, na junção costocondral, em que o periósteo e o pericôndrio se fundem. Inferiormente, a sexta cartilagem costal pode se articular com a sétima por articulações intercondrais, e o conjunto das cartilagens de 6 a 9 contribui para a elasticidade do gradil costal. A cartilagem oferece inserção a músculos da parede anterior do tórax, como peitoral maior e transverso do tórax, e o músculo reto do abdome origina-se das cartilagens costais da quinta à sétima. A cartilagem costal torna-se mais rígida com a idade, por calcificação gradual da matriz, e pode ser visualizada em exames de imagem.",
+    "anatomy": {
+      "relations": "Articula-se com o esterno (articulação esternocostal da 6ª costela, em geral na parte inferior do corpo do esterno), com a extremidade anterior da 6ª costela (junção costocondral) e, por articulações intercondrais, com as cartilagens vizinhas (5ª e 7ª). Inserções e relações: peitoral maior (origem nas cartilagens das seis primeiras costelas), transverso do tórax (face interna das cartilagens da 2ª à 6ª), reto do abdome (origem nas cartilagens da 5ª à 7ª), músculos intercostais externos e internos, além da membrana intercostal externa. Posteriormente relaciona-se com a fáscia endotorácica, a pleura costal e o pulmão.",
+      "vascularization": "A cartilagem é avascular; o pericôndrio é irrigado por ramos intercostais anteriores da artéria torácica interna, que, em geral, se divide ao nível do 6º espaço intercostal em artéria musculofrênica e artéria epigástrica superior. Vênulas satélites drenam para as veias torácicas internas.",
+      "innervation": "O pericôndrio e a articulação esternocostal recebem ramos do 6º nervo intercostal (T6); a cartilagem em si não possui inervação.",
+      "lymph": "Os vasos linfáticos da parede torácica anterior drenam, em grande parte, para os linfonodos paraesternais, ao longo dos vasos torácicos internos."
+    },
+    "histology": {
+      "tissues": [
+        "Cartilagem hialina: condrócitos em lacunas, isolados ou em grupos isógenos, em matriz de colágeno tipo II e proteoglicanos",
+        "Pericôndrio: camada fibrosa externa de tecido conjuntivo denso e camada celular interna que origina condroblastos, responsável pelo crescimento aposicional",
+        "Junção costocondral: o pericôndrio da cartilagem continua-se com o periósteo da extremidade anterior da costela",
+        "Cartilagem avascular, nutrida por difusão a partir do pericôndrio; com a idade, a matriz pode calcificar"
+      ]
+    },
+    "clinical": [
+      "Costocondrite: inflamação das junções costocondrais ou esternocostais, que pode causar dor na parede anterior do tórax com sensibilidade à palpação e ser confundida com dor de origem cardíaca.",
+      "Luxação costocondral: a separação da costela de sua cartilagem, descrita em traumas torácicos, causa dor intensa com os movimentos respiratórios e pode acompanhar lesões de estruturas subjacentes.",
+      "Calcificação das cartilagens costais com a idade pode ser vista nas radiografias do tórax e não deve ser confundida com lesões pleurais ou pulmonares."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e esterno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Systema skeletale: cartilagines costales",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e esterno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e esterno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e esterno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e esterno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido cartilaginoso, tópico cartilagem hialina e pericôndrio",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e esterno",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:costal-cartilage-of-ninth-rib-r": {
+    "ids": {},
+    "summary_pt": "A cartilagem costal da nona costela prolonga anteriormente a nona costela e pertence ao grupo das costelas falsas (vertebrocondrais), da oitava à décima, que não se articulam diretamente com o esterno. Sua extremidade anterior une-se à cartilagem da oitava costela, por tecido fibroso e articulação intercondral, e, com as cartilagens vizinhas, contribui para formar o arco costal (margem costal), que delimita inferiormente a abertura inferior do tórax. A ponta da nona cartilagem costal situa-se, em geral, próxima ao plano transpilórico, que passa pelo nível da primeira vértebra lombar, e à projeção do fundo da vesícula biliar, junto à margem lateral do músculo reto do abdome. Do ponto de vista muscular, a cartilagem recebe origem do diafragma e do transverso do abdome, que se fixam às faces internas das cartilagens da sétima à décima segunda costelas. Ela é formada por cartilagem hialina, avascular, nutrida pelo pericôndrio. Por ser flexível, acompanha os movimentos da margem costal na respiração e pode ser sede de dor local em traumas.",
+    "anatomy": {
+      "relations": "Articula-se com a extremidade anterior da 9ª costela (junção costocondral) e com a cartilagem da 8ª costela (articulação intercondral e tecido fibroso) formando o arco costal; não alcança o esterno. Inserções e relações: diafragma e transverso do abdome (faces internas das cartilagens da 7ª à 12ª costelas), músculos intercostais do 8º e do 9º espaços, aponeurose do oblíquo externo e margem lateral do reto do abdome nas proximidades. Referências: ponta da cartilagem costal próxima ao plano transpilórico e à projeção do fundo da vesícula biliar à direita; à esquerda, relaciona-se com a projeção do baço e do estômago, sob a margem costal.",
+      "vascularization": "O pericôndrio recebe ramos intercostais anteriores da artéria musculofrênica, ramo terminal da torácica interna que irriga os espaços intercostais 7º a 9º, com anastomoses com as artérias intercostais posteriores. A cartilagem é avascular.",
+      "innervation": "O pericôndrio e as articulações recebem ramos do 9º nervo intercostal (T9), que, como os nervos intercostais inferiores, segue em direção à parede abdominal (nervo toracoabdominal) e inerva a pele do dermátomo de T9, acima da região umbilical."
+    },
+    "histology": {
+      "tissues": [
+        "Cartilagem hialina com condrócitos em lacunas, grupos isógenos e matriz rica em colágeno tipo II e proteoglicanos",
+        "Pericôndrio com camada fibrosa externa e camada celular interna; nutrição por difusão, por ser avascular",
+        "Região de união com a 8ª cartilagem: tecido conjuntivo denso fibroso entre os pericôndrios, com possível formação de articulação sinovial intercondral",
+        "Calcificação progressiva da matriz com a idade, mais evidente nas cartilagens costais inferiores"
+      ]
+    },
+    "clinical": [
+      "Dor na margem costal direita: a projeção do fundo da vesícula biliar sob a junção da nona cartilagem costal com o músculo reto do abdome é referência usada no exame físico do hipocôndrio direito.",
+      "Síndrome da costela deslizante: a mobilidade das cartilagens das costelas 8 a 10 (falsas), que se prendem apenas por tecido fibroso às cartilagens superiores, está associada a dor e estalidos na margem costal.",
+      "Fraturas das costelas inferiores em traumas fechados podem associar-se a lesões do fígado (à direita) ou do baço (à esquerda)."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Systema skeletale: cartilagines costales",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido cartilaginoso, tópico cartilagem hialina e pericôndrio",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:costal-cartilage-of-tenth-rib-r": {
+    "ids": {},
+    "summary_pt": "A cartilagem costal da décima costela é a última cartilagem do arco costal que se une às cartilagens superiores, e pertence às costelas falsas (8 a 10). Sua extremidade anterior liga-se à cartilagem da nona costela por tecido fibroso, e, em geral, constitui o ponto mais inferior da margem costal. Essa borda inferior marca, de modo aproximado, o plano subcostal, situado ao nível da terceira vértebra lombar, usado como referência para dividir as regiões do abdome. A décima costela articula-se posteriormente com um único corpo vertebral (T10), por faceta costal única, diferentemente das costelas típicas, que se articulam com duas vértebras. A cartilagem serve de origem ao diafragma e ao transverso do abdome, por suas faces internas, e de fixação ao oblíquo interno do abdome, cujas fibras se inserem nas margens inferiores das últimas costelas e suas cartilagens. Como a união com a cartilagem da nona costela é fibrosa e flexível, a décima cartilagem pode exibir hipermobilidade. É constituída por cartilagem hialina, circundada por pericôndrio e nutrida por difusão, e tende a calcificar-se com a idade, como as demais cartilagens costais.",
+    "anatomy": {
+      "relations": "Articula-se com a extremidade anterior da 10ª costela (junção costocondral) e com a cartilagem da 9ª costela, por tecido fibroso, formando a parte inferior do arco costal; não se liga ao esterno. Posteriormente, a 10ª costela articula-se com a faceta costal do corpo de T10. Inserções e relações: diafragma e transverso do abdome (faces internas), oblíquo interno do abdome (margens inferiores das últimas costelas), oblíquo externo e intercostais do 9º e do 10º espaços; a parte inferior da margem costal relaciona-se com o fígado, à direita, e com o baço e o estômago, à esquerda.",
+      "vascularization": "O pericôndrio é nutrido por ramos da artéria musculofrênica, que se anastomosam com as artérias intercostais posteriores do 9º e do 10º espaços, ramos da aorta torácica. A cartilagem é avascular.",
+      "innervation": "O pericôndrio e a junção costocondral recebem ramos do 10º nervo intercostal (T10), que, como os nervos intercostais inferiores, continua-se como nervo toracoabdominal; seu dermátomo situa-se, em geral, ao nível do umbigo."
+    },
+    "histology": {
+      "tissues": [
+        "Cartilagem hialina com condrócitos em lacunas, grupos isógenos e matriz de colágeno tipo II e proteoglicanos, cercada por pericôndrio",
+        "Ligação com a 9ª cartilagem: tecido conjuntivo denso, com fibras colágenas entre os pericôndrios adjacentes",
+        "Junção costocondral: o pericôndrio da cartilagem continua-se com o periósteo da costela",
+        "Calcificação da matriz e redução da difusão de nutrientes com o envelhecimento"
+      ]
+    },
+    "clinical": [
+      "Síndrome da costela deslizante: a fixação frouxa das cartilagens das costelas falsas, em especial 8 a 10, permite deslocamento da extremidade da cartilagem e pode causar dor na região costal inferior.",
+      "Fraturas das costelas inferiores ou da junção costocondral podem associar-se a lesão do fígado ou do baço, em traumas fechados.",
+      "A margem inferior da cartilagem é referência do plano subcostal (L3), para a divisão topográfica do abdome em regiões."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Systema skeletale: cartilagines costales",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Tórax, tópico parede torácica",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido cartilaginoso, tópico cartilagem hialina e pericôndrio",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Tórax, tópico parede torácica: costelas, cartilagens costais e margem costal",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Tórax, tópico parede torácica",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:first-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O primeiro osso metatarsal é o do hálux e, entre os cinco, é o mais curto e o mais robusto. Como os demais, tem base proximal, corpo e cabeça distal. A base apresenta face articular côncava para o cuneiforme medial, na articulação tarsometatarsal, e, na face plantar e lateral, uma tuberosidade para a inserção do tendão do fibular longo; o tibial anterior fixa-se na face medial da base. O corpo é espesso e de secção aproximadamente triangular. A cabeça, volumosa, articula-se com a falange proximal do hálux, na articulação metatarsofalângica, e na face plantar exibe dois sulcos separados por crista, onde se alojam os ossos sesamoides medial e lateral, incluídos nos tendões do flexor curto do hálux. Diferentemente dos metatarsais II a V, o centro secundário de ossificação do primeiro situa-se na base, e não na cabeça. Por sustentar parte importante da carga na fase de propulsão da marcha, participa do arco longitudinal medial e da transmissão de forças do retropé ao hálux.",
+    "anatomy": {
+      "relations": "Articula-se com o cuneiforme medial (articulação tarsometatarsal), com a falange proximal do hálux (articulação metatarsofalângica) e, por vezes, por pequena faceta com a base do 2º metatarsal. Acidentes: base, tuberosidade plantar lateral, corpo triangular, cabeça com sulcos plantares para os sesamoides. Inserções: tibial anterior (face medial da base), fibular longo (tuberosidade) e origem parcial do 1º interósseo dorsal; os tendões do flexor curto do hálux envolvem os sesamoides, e o tendão do flexor longo do hálux passa entre eles.",
+      "vascularization": "Artéria metatarsal dorsal do primeiro espaço, originada da artéria dorsal do pé, e artéria metatarsal plantar do primeiro espaço, ligada ao arco plantar profundo; a artéria nutrícia deriva desses ramos e penetra no corpo. As veias acompanham as artérias e drenam para o arco venoso dorsal e plantar.",
+      "innervation": "O periósteo é sensível. Os nervos plantar medial e fibular profundo suprem a articulação metatarsofalângica do hálux; os músculos que se fixam ao osso são inervados pelo fibular profundo (tibial anterior), fibular superficial (fibular longo) e plantar medial (flexor curto do hálux)."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto espesso com sistemas de Havers e canal medular com medula óssea",
+        "Base e cabeça: osso esponjoso com trabéculas e medula óssea vermelha, no jovem, e amarela, no adulto",
+        "Cartilagem articular hialina na base, na cabeça e nos sulcos para os sesamoides; placa epifisária na base durante o crescimento",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo e endósteo"
+      ]
+    },
+    "clinical": [
+      "Hálux valgo (joanete): desvio lateral do hálux com deslocamento medial da cabeça do primeiro metatarsal, associado a dor, inflamação da bolsa sinovial e deformidade do antepé.",
+      "Gota: depósito de cristais de urato na articulação metatarsofalângica do hálux, que costuma ser acometida em crises de artrite aguda, com dor, calor e edema.",
+      "Osteoartrite metatarsofalângica do hálux (hálux rígido): perda de cartilagem e osteófitos reduzem a dorsiflexão, com dor na fase de propulsão da marcha.",
+      "Fratura ou inflamação dos sesamoides, na cabeça, relaciona-se com sobrecarga repetida do antepé."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteoartrite e gota",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:second-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O segundo osso metatarsal é, em regra, o mais longo dos metatarsais e ocupa posição central no antepé. A base, em forma de cunha, encaixa-se entre os cuneiformes medial e lateral e articula-se com os três cuneiformes (medial, intermédio e lateral), formando um recesso que confere estabilidade à articulação tarsometatarsal; por isso, funciona como pedra angular do arco transverso do pé. A base articula-se ainda com o terceiro metatarsal, por faces laterais, e, por vezes, com o primeiro. O corpo é prismático, ligeiramente curvo, e a cabeça articula-se com a falange proximal do segundo dedo na articulação metatarsofalângica. Ao ligamento cuneometatarsal interósseo, que une o cuneiforme medial à base do segundo metatarsal e é conhecido como ligamento de Lisfranc, atribui-se grande importância na estabilidade do mediopé. Na face plantar, fixa-se uma expansão do tibial posterior e origina-se parte da cabeça oblíqua do adutor do hálux. Das faces laterais do corpo originam-se fibras dos interósseos dorsais. A cabeça, por sustentar carga no apoio, pode sofrer sobrecarga mecânica.",
+    "anatomy": {
+      "relations": "Articula-se com os três cuneiformes (articulação tarsometatarsal), com as bases dos 1º (por vezes) e 3º metatarsais (articulações intermetatarsais) e com a falange proximal do 2º dedo (articulação metatarsofalângica). Acidentes: base em cunha, corpo prismático, cabeça. Ligamentos: cuneometatarsal interósseo (de Lisfranc) e ligamentos tarsometatarsais dorsais e plantares. Inserções e origens: 1º e 2º interósseos dorsais (faces adjacentes do 1º, 2º e 3º metatarsais), expansão do tibial posterior (face plantar da base), cabeça oblíqua do adutor do hálux (bases do 2º ao 4º metatarsais) e ligamento metatarsal transverso profundo, na cabeça.",
+      "vascularization": "Artérias metatarsais dorsais (ramos da artéria arqueada) e artérias metatarsais plantares (ramos do arco plantar profundo) dos espaços adjacentes originam as artérias nutrícias do corpo; ramos perfurantes ligam as redes dorsal e plantar.",
+      "innervation": "O periósteo é sensível. As articulações recebem ramos dos nervos plantar lateral, plantar medial e fibular profundo; os interósseos são inervados pelo ramo profundo do nervo plantar lateral, e o adutor do hálux, pelo ramo profundo do mesmo nervo."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com sistemas de Havers, lamelas circunferenciais e canal medular",
+        "Base e cabeça: osso esponjoso com medula óssea; no jovem, placa epifisária na cabeça (ossificação endocondral)",
+        "Cartilagem articular hialina nas faces dos três cuneiformes e na cabeça",
+        "Células ósseas: osteoblastos, osteócitos, osteoclastos e células osteoprogenitoras do periósteo e do endósteo"
+      ]
+    },
+    "clinical": [
+      "Fratura de estresse (de marcha): sobrecarga repetitiva, descrita em diáfise do segundo e do terceiro metatarsais, produz dor ao apoio.",
+      "Lesão do ligamento de Lisfranc: ruptura do ligamento cuneometatarsal interósseo ou fratura da base do segundo metatarsal pode causar instabilidade tarsometatarsal e alargamento do espaço entre o primeiro e o segundo metatarsais.",
+      "Osteonecrose da cabeça do segundo metatarsal (doença de Freiberg), descrita em adolescentes, associa-se a dor e rigidez metatarsofalângicas."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:third-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O terceiro osso metatarsal ocupa posição central no antepé, entre o segundo e o quarto, e é, em comprimento, semelhante ao segundo. A base é triangular e articula-se com o cuneiforme lateral, por face posterior, e com as bases dos metatarsais vizinhos por faces laterais; a face articular com o segundo metatarsal localiza-se medialmente, e a face com o quarto, lateralmente. O corpo é prismático, ligeiramente curvo, com concavidade plantar, e a cabeça articula-se com a falange proximal do terceiro dedo, na articulação metatarsofalângica. Na face plantar da base fixa-se uma expansão do tendão do tibial posterior, e da base origina-se parte da cabeça oblíqua do adutor do hálux. Das faces do corpo originam-se os interósseos dorsais do segundo e do terceiro espaços e, de sua face medial, o primeiro interósseo plantar, que se dirige ao terceiro dedo. As cabeças dos metatarsais III e IV delimitam o terceiro espaço intermetatarsal, por onde passa o terceiro nervo digital plantar comum, ligado a ramos dos nervos plantares medial e lateral. As cabeças são unidas pelo ligamento metatarsal transverso profundo, que limita o afastamento entre elas.",
+    "anatomy": {
+      "relations": "Articula-se com o cuneiforme lateral (articulação tarsometatarsal), com os 2º e 4º metatarsais (articulações intermetatarsais) e com a falange proximal do 3º dedo (articulação metatarsofalângica). Acidentes: base triangular, corpo prismático e cabeça. Inserções e origens: expansão do tibial posterior e cabeça oblíqua do adutor do hálux (face plantar da base), 2º e 3º interósseos dorsais e 1º interósseo plantar (corpo), ligamento metatarsal transverso profundo e ligamentos tarsometatarsais. O terceiro espaço intermetatarsal, entre as cabeças do 3º e do 4º metatarsais, relaciona-se com o nervo digital plantar comum e com vasos digitais.",
+      "vascularization": "Artérias metatarsais dorsais (ramos da artéria arqueada) e artérias metatarsais plantares (ramos do arco plantar profundo) do segundo e do terceiro espaços originam as artérias nutrícias; ramos perfurantes anastomosam as redes dorsal e plantar.",
+      "innervation": "O periósteo é sensível. A articulação metatarsofalângica recebe ramos dos nervos plantares e do fibular profundo; os interósseos e a cabeça oblíqua do adutor do hálux são inervados pelo ramo profundo do nervo plantar lateral; a pele do terceiro espaço recebe o terceiro nervo digital plantar comum."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com sistemas de Havers e canal medular preenchido por medula óssea",
+        "Base e cabeça: osso esponjoso com medula óssea; placa epifisária na cabeça durante o crescimento (ossificação endocondral)",
+        "Cartilagem articular hialina na base, na cabeça e nas faces intermetatarsais",
+        "Células ósseas: osteoblastos, osteócitos, osteoclastos e células osteoprogenitoras do periósteo"
+      ]
+    },
+    "clinical": [
+      "Neuroma de Morton: espessamento perineural do terceiro nervo digital plantar comum, no espaço entre as cabeças do 3º e do 4º metatarsais, causa dor em queimação e parestesia nos dedos adjacentes.",
+      "Fratura de estresse (de marcha): sobrecarga repetitiva descrita na diáfise de metatarsais, em especial do segundo e do terceiro.",
+      "Metatarsalgia: dor na região das cabeças, associada a sobrecarga do antepé e a alterações do arco transverso."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:fourth-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O quarto osso metatarsal é o penúltimo no sentido medial para lateral e situa-se entre o terceiro e o quinto. A base, de contorno quadrangular, articula-se principalmente com o cubóide, por face posterior, e, em menor extensão, com o cuneiforme lateral; as faces laterais articulam-se com as bases do terceiro e do quinto metatarsais. O corpo é prismático e a cabeça articula-se com a falange proximal do quarto dedo, na articulação metatarsofalângica. Na face plantar da base fixa-se uma expansão do tendão do tibial posterior, e dela origina-se parte da cabeça oblíqua do adutor do hálux. Dos lados do corpo originam-se os interósseos dorsais do terceiro e do quarto espaços e, em sua face medial, o segundo interósseo plantar, que se dirige ao quarto dedo. A cabeça forma, com a do terceiro metatarsal, o limite do terceiro espaço intermetatarsal. As articulações tarsometatarsais laterais, como a do quarto metatarsal com o cubóide, têm mobilidade maior que as mediais, o que acompanha a adaptação do antepé ao solo.",
+    "anatomy": {
+      "relations": "Articula-se com o cubóide e, em parte, com o cuneiforme lateral (articulação tarsometatarsal), com os 3º e 5º metatarsais (articulações intermetatarsais) e com a falange proximal do 4º dedo. Acidentes: base quadrangular, corpo prismático, cabeça. Inserções e origens: expansão do tibial posterior e origem de fibras da cabeça oblíqua do adutor do hálux (face plantar da base), 3º e 4º interósseos dorsais e 2º interósseo plantar (corpo), ligamento metatarsal transverso profundo e ligamentos tarsometatarsais. O quarto espaço intermetatarsal relaciona-se com o quarto nervo digital plantar comum.",
+      "vascularization": "Artérias metatarsais dorsais e plantares dos espaços adjacentes (terceiro e quarto), ramos da artéria arqueada e do arco plantar profundo, originam as artérias nutrícias; ramos perfurantes anastomosam as redes dorsal e plantar.",
+      "innervation": "O periósteo é sensível. Os interósseos que se originam do osso são inervados pelo ramo profundo do nervo plantar lateral; a articulação metatarsofalângica recebe ramos dos nervos plantares e a articulação com o cubóide, ramos de nervos plantares e do fibular profundo."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com lamelas circunferenciais e sistemas de Havers e canal medular com medula óssea",
+        "Base e cabeça: osso esponjoso com trabéculas e medula óssea, com placa epifisária na cabeça durante o crescimento",
+        "Cartilagem articular hialina na base (cubóide e metatarsais vizinhos) e na cabeça",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo e endósteo"
+      ]
+    },
+    "clinical": [
+      "Fratura de estresse: sobrecarga repetitiva do antepé pode afetar a diáfise de metatarsais, incluindo o quarto.",
+      "Lesões tarsometatarsais (tipo Lisfranc) podem incluir fraturas das bases dos metatarsais laterais, com deslocamento em relação ao cubóide.",
+      "Metatarsalgia: dor das cabeças, relacionada a sobrecarga do antepé e a alterações da distribuição de carga."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:fifth-metatarsal-bone-r": {
+    "ids": {},
+    "summary_pt": "O quinto osso metatarsal é o mais lateral e forma o bordo lateral do pé. Sua base projeta-se lateral e posteriormente, formando uma tuberosidade palpável, sob a pele, no meio da margem lateral do pé. A face posterior da base articula-se com o cubóide, e a face medial, com a base do quarto metatarsal; a tuberosidade serve de inserção ao fibular curto e à aponeurose plantar lateral, e o fibular terceiro, quando presente, insere-se na face dorsal da base e do corpo. O corpo é delgado e a cabeça articula-se com a falange proximal do dedo mínimo. Da base origina-se o flexor curto do dedo mínimo, e do corpo, o terceiro interósseo plantar e o quarto interósseo dorsal, em parte. O abdutor do dedo mínimo, originado no calcâneo, relaciona-se com a base do osso e a tuberosidade. O quinto metatarsal participa do apoio lateral do arco longitudinal e, em adolescentes, a tuberosidade possui um núcleo de ossificação secundário, cuja linha não deve ser confundida com fratura.",
+    "anatomy": {
+      "relations": "Articula-se com o cubóide (articulação tarsometatarsal), com a base do 4º metatarsal (articulação intermetatarsal) e com a falange proximal do dedo mínimo (articulação metatarsofalângica). Acidentes: base com tuberosidade (processo estiloide), corpo delgado e cabeça. Inserções e origens: fibular curto (tuberosidade), fibular terceiro (face dorsal), parte lateral da aponeurose plantar, abdutor do dedo mínimo (relação com a tuberosidade), flexor curto do dedo mínimo (base), 3º interósseo plantar e 4º interósseo dorsal (corpo).",
+      "vascularization": "Artéria metatarsal dorsal do quarto espaço (ramo da artéria arqueada) e ramos da artéria plantar lateral, por artéria metatarsal plantar; a artéria nutrícia penetra no corpo, e a região da transição entre a metáfise e a diáfise é descrita como de irrigação mais limitada.",
+      "innervation": "O periósteo é sensível; a pele da margem lateral do pé é suprida pelo nervo sural e seus ramos. O fibular curto é inervado pelo nervo fibular superficial, o fibular terceiro, pelo nervo fibular profundo, e o flexor curto do dedo mínimo e os interósseos, pelo nervo plantar lateral."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com sistemas de Havers e canal medular com medula óssea",
+        "Tuberosidade da base: osso esponjoso coberto por cortical delgada, com inserções tendíneas (êntese) de tecido conjuntivo denso e fibrocartilagem",
+        "Cartilagem articular hialina na face do cubóide, na face com o quarto metatarsal e na cabeça; placa epifisária na cabeça durante o crescimento",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo e endósteo"
+      ]
+    },
+    "clinical": [
+      "Fratura por avulsão da tuberosidade: associa-se a trauma de inversão do pé, com tração do fibular curto e da aponeurose plantar lateral sobre a base.",
+      "Fratura na transição metafisodiafisária proximal: descrita como mais sujeita a atraso de consolidação, relacionado com a irrigação mais limitada dessa região.",
+      "Joanete do quinto metatarsal (de alfaiate): proeminência dolorosa da cabeça, com desvio do dedo mínimo para o lado medial."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metatarsi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro inferior, tópico ossos do pé",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro inferior, tópico pé: ossos do metatarso",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro inferior, tópico ossos do pé: metatarsais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico osteonecrose e fraturas",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:second-metacarpal-bone-r": {
+    "ids": {},
+    "summary_pt": "O segundo osso metacarpal é o do dedo indicador e, em geral, é o mais longo dos cinco metacarpais. Compõe-se de base proximal, corpo e cabeça distal. A base é a mais complexa da série: sua face proximal, em forma de sulco, articula-se principalmente com o trapezoide, e articula-se também, por pequenas facetas, com o trapézio e o capitato, formando a articulação carpometacarpal do indicador, de mobilidade muito reduzida. Lateralmente, a base articula-se com a base do terceiro metacarpal. Na face dorsal da base há uma tuberosidade para a inserção do extensor radial longo do carpo, e na face palmar fixa-se o tendão do flexor radial do carpo. O corpo é prismático, com leve curvatura de concavidade palmar, e dá origem aos músculos interósseos dorsais e palmar do indicador. A cabeça, arredondada, articula-se com a falange proximal na articulação metacarpofalângica e é palpável como o relevo do dedo indicador no punho fechado. Por sua posição, o segundo metacarpal participa da pinça e da preensão, com o indicador relativamente independente dos demais dedos.",
+    "anatomy": {
+      "relations": "Articula-se com o trapezoide, o trapézio e o capitato (articulação carpometacarpal), com a base do 3º metacarpal (articulação intermetacarpal) e com a falange proximal do indicador (articulação metacarpofalângica). Acidentes: base com tuberosidade dorsal, corpo prismático e cabeça. Inserções e origens: extensor radial longo do carpo (face dorsal da base), flexor radial do carpo (face palmar da base), 1º e 2º interósseos dorsais e interósseo palmar do indicador (corpo), cabeça oblíqua do adutor do polegar (base) e ligamentos carpometacarpais e metacarpais transversos profundos.",
+      "vascularization": "Artérias metacarpais dorsais (da rede carpal dorsal) e artérias metacarpais palmares (do arco palmar profundo) dos espaços adjacentes, além da artéria radial do indicador, ramo da artéria radial, originam as artérias nutrícias, que penetram no corpo; ramos perfurantes anastomosam as redes dorsal e palmar.",
+      "innervation": "O periósteo é sensível. As articulações recebem ramos do nervo ulnar (ramo profundo), do nervo mediano e do ramo interósseo posterior do nervo radial; os músculos que se fixam ao osso são inervados pelo nervo radial (extensor radial longo do carpo), pelo nervo mediano (flexor radial do carpo) e pelo ramo profundo do nervo ulnar (interósseos e adutor do polegar)."
+    },
+    "histology": {
+      "tissues": [
+        "Corpo: osso compacto com sistemas de Havers e canal medular com medula óssea",
+        "Base e cabeça: osso esponjoso com trabéculas e medula óssea; placa epifisária na cabeça durante o crescimento (ossificação endocondral)",
+        "Cartilagem articular hialina nas faces carpometacarpais e intermetacarpais e na cabeça, em articulações sinoviais",
+        "Células ósseas: osteoblastos, osteócitos e osteoclastos; periósteo e endósteo"
+      ]
+    },
+    "clinical": [
+      "Fraturas metacarpais: podem acometer base, diáfise ou colo, por impacto direto ou queda, com desvio angular que pode alterar o alinhamento do dedo.",
+      "Artrite reumatoide: as articulações metacarpofalângicas, entre elas a do indicador, estão entre as acometidas, com sinovite, erosões da cabeça e desvio ulnar dos dedos."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro superior, tópico mão: ossos do metacarpo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): ossa metacarpi",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ossos da mão",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ossos da mão",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Membro superior, tópico ossos da mão",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico osso compacto e esponjoso; ossificação endocondral; tecido cartilaginoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Membro superior, tópico mão: ossos do metacarpo",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Membro superior, tópico ossos da mão: metacarpais",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Ossos, articulações e tumores de partes moles, tópico artrite reumatoide e osteoartrite",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:zygomatic-bone-r": {
+    "ids": {},
+    "summary_pt": "O osso zigomático é um osso par, de forma quadrangular, que constitui a proeminência da bochecha (região malar) e parte das paredes lateral e inferior da órbita. Apresenta faces lateral (facial), temporal e orbital, margens e três processos: o frontal, que se articula com o osso frontal e forma parte da margem lateral da órbita; o temporal, que se une ao processo zigomático do osso temporal para formar o arco zigomático; e o processo maxilar, articulado com o osso maxilar, na parte inferior da margem infraorbital. Na face orbital articula-se com a asa maior do osso esfenoide. Perfuram-no o forame zigomaticofacial, o zigomaticotemporal e o zigomático-orbital, que dão passagem a ramos do nervo zigomático. A face lateral serve de origem aos músculos zigomático maior e zigomático menor, e o arco zigomático fornece origem ao masseter e fixação à fáscia temporal. O tendão palpebral lateral prende-se à face orbital. O osso tem papel na sustentação do contorno do terço médio da face, na transmissão de forças da mastigação até o crânio e na proteção do globo ocular, em conjunto com os ossos vizinhos.",
+    "anatomy": {
+      "relations": "Articula-se com o osso frontal (sutura frontozigomática), com o osso maxilar (sutura zigomaticomaxilar), com a asa maior do osso esfenoide (sutura esfenozigomática) e com o osso temporal (sutura temporozigomática, no arco zigomático). Acidentes: face lateral, face temporal, face orbital, processos frontal, temporal e maxilar, forames zigomaticofacial, zigomaticotemporal e zigomático-orbital e tubérculo orbital. Inserções: zigomático maior e zigomático menor (face lateral), masseter (parte inferior do arco e face medial), fáscia temporal (margem superior do arco) e tendão palpebral lateral (próximo ao tubérculo orbital).",
+      "vascularization": "Ramos zigomático-orbital e transverso da face da artéria temporal superficial, além de ramos zigomáticos da artéria lacrimal, ramo da artéria oftálmica, que passam por forames do osso; as veias drenam para a veia temporal superficial e a veia facial.",
+      "innervation": "O nervo zigomático, ramo do nervo maxilar (V2), entra na órbita pela fissura orbital inferior e emite os ramos zigomaticofacial e zigomaticotemporal, que atravessam o osso para inervar a pele da região malar e da têmpora. O masseter recebe o nervo massetérico (V3), e os músculos zigomáticos, o nervo facial (VII)."
+    },
+    "histology": {
+      "tissues": [
+        "Osso formado por ossificação intramembranosa, com lâminas de osso compacto delgadas, circundando pequena quantidade de osso esponjoso (díploe) com medula óssea",
+        "Células ósseas: osteoblastos, osteócitos, osteoclastos e células osteoprogenitoras; periósteo externo e endósteo",
+        "Suturas com os ossos vizinhos: tecido conjuntivo fibroso denso entre as bordas ósseas"
+      ]
+    },
+    "clinical": [
+      "Fratura do complexo zigomaticomaxilar (fratura trípode): ruptura das suturas frontozigomática, zigomaticomaxilar e do arco zigomático pode causar achatamento da região malar e alteração da posição do globo ocular.",
+      "Lesão do nervo infraorbital em fraturas da margem infraorbital pode causar hipoestesia da pele da bochecha, do lábio superior e da asa do nariz.",
+      "Fratura do arco zigomático: o deslocamento do arco para a fossa temporal pode contatar o processo coronoide da mandíbula e o músculo temporal, com dor e limitação da abertura da boca."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico osso zigomático",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Ossa (sistema esquelético): os zygomaticum",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico crânio e órbita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico crânio e órbita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico crânio e órbita",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido ósseo, tópico ossificação intramembranosa; osso compacto e esponjoso",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico osso zigomático",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Cabeça, tópico crânio: osso zigomático",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico osso zigomático",
+        "obraId": "grays42",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  },
+  "za:thyroid-cartilage": {
+    "ids": {},
+    "summary_pt": "A cartilagem tireóidea é a maior cartilagem da laringe e forma a maior parte do arcabouço anterior e lateral dessa estrutura. É ímpar e composta por duas lâminas, direita e esquerda, que se unem na linha mediana, anteriormente, em um ângulo aberto para trás, constituindo a proeminência laríngea; esse ângulo é mais agudo no homem, em torno de 90 graus, e mais obtuso na mulher, em torno de 120 graus. Acima da proeminência há a incisura tireóidea superior. A margem posterior de cada lâmina projeta-se superior e inferiormente em dois cornos, o superior, ligado ao osso hioide pelo ligamento tíreo-hióideo lateral, e o inferior, que se articula com a cartilagem cricóidea na articulação cricotireóidea. Na face externa há a linha oblíqua, para inserção do esternotireóideo e do tíreo-hióideo, e origem do constritor inferior da faringe. Na face interna fixam-se os ligamentos vestibular e vocal, a epiglote e o músculo tireoaritenóideo. A cartilagem situa-se, em geral, ao nível das vértebras C4 e C5, e a membrana tíreo-hióidea a une ao hioide. Fornece proteção às pregas vocais e participa da fonação.",
+    "anatomy": {
+      "relations": "Articula-se com a cartilagem cricóidea (articulação cricotireóidea, pelos cornos inferiores) e liga-se ao osso hioide pela membrana tíreo-hióidea e pelos ligamentos tíreo-hióideos. Acidentes: lâminas, proeminência laríngea, incisura tireóidea superior, cornos superior e inferior e linha oblíqua. Inserções: esternotireóideo e tíreo-hióideo (linha oblíqua), constritor inferior da faringe, cricotireóideo (margem inferior e corno inferior), tireoaritenóideo e tireoepiglótico (face interna) e ligamentos vestibular, vocal e tireoepiglótico. Os lobos da glândula tireoide situam-se lateralmente, e os músculos infra-hioideos, anteriormente.",
+      "vascularization": "Artéria laríngea superior, ramo da artéria tireóidea superior, que perfura a membrana tíreo-hióidea com o ramo interno do nervo laríngeo superior; ramo cricotireóideo da artéria tireóidea superior; artéria laríngea inferior, ramo da artéria tireóidea inferior, que acompanha o nervo laríngeo recorrente. As veias acompanham as artérias e drenam para as veias tireóideas.",
+      "innervation": "A inervação sensitiva da mucosa acima das pregas vocais provém do ramo interno do nervo laríngeo superior (ramo do vago); o ramo externo desse nervo inerva o cricotireóideo, e o nervo laríngeo recorrente inerva os demais músculos intrínsecos, incluindo o tireoaritenóideo. A cartilagem em si é avascular e aneural; o pericôndrio recebe ramos sensitivos.",
+      "lymph": "Os vasos linfáticos da laringe acima das pregas vocais drenam para os linfonodos cervicais profundos superiores, e, abaixo delas, para linfonodos pré-laríngeos, pré-traqueais e paratraqueais e, depois, para os cervicais profundos inferiores."
+    },
+    "histology": {
+      "tissues": [
+        "Cartilagem hialina: condrócitos em lacunas, grupos isógenos e matriz de colágeno tipo II e proteoglicanos, circundada por pericôndrio",
+        "Pericôndrio com camada fibrosa externa e camada condrogênica interna",
+        "Calcificação e ossificação progressivas da matriz a partir da vida adulta, com formação de osso e medula óssea em áreas internas",
+        "Ao contrário da epiglote, formada por cartilagem elástica, a cartilagem tireóidea é predominantemente hialina"
+      ]
+    },
+    "clinical": [
+      "Fratura da cartilagem tireóidea: traumas cervicais, como impacto direto ou estrangulamento, podem fraturar as lâminas e comprometer a via aérea e a voz, com rouquidão e edema.",
+      "Lesão do nervo laríngeo recorrente: sua passagem posterior à articulação cricotireóidea e o trajeto junto à artéria tireóidea inferior o expõem a lesão em cirurgias da tireoide, com alteração da voz.",
+      "Carcinoma espinocelular de laringe: tumores supraglóticos, glóticos e subglóticos podem invadir a cartilagem tireóidea, em especial quando relacionados ao tabagismo.",
+      "Dimorfismo sexual: na puberdade, o crescimento da laringe no sexo masculino associa-se a ângulo mais agudo entre as lâminas e a voz mais grave."
+    ],
+    "sources": [
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico laringe",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "summary_pt",
+        "type": "fipat",
+        "ref": "Terminologia Anatomica (FIPAT) / Terminologia Anatômica (SBA), 2ª ed., seção Larynx: cartilago thyroidea",
+        "obraId": "fipat",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.relations",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.vascularization",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.innervation",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "anatomy.lymph",
+        "type": "atlas",
+        "ref": "Atlas of Human Anatomy, 7ª ed., seção Cabeça e pescoço, tópico laringe",
+        "obraId": "netter",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Histologia Básica, 13ª ed., capítulo Tecido cartilaginoso, tópico cartilagem hialina; cartilagem elástica",
+        "obraId": "junqueira",
+        "license": "citação"
+      },
+      {
+        "field": "histology.tissues",
+        "type": "textbook",
+        "ref": "Gray's Anatomy, 42ª ed., seção regional Cabeça e pescoço, tópico laringe",
+        "obraId": "grays42",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Pescoço, tópico laringe: cartilagens da laringe",
+        "obraId": "moore",
+        "license": "citação"
+      },
+      {
+        "field": "clinical",
+        "type": "textbook",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Cabeça e pescoço, tópico carcinoma de laringe",
+        "obraId": "robbins",
+        "license": "citação"
+      }
+    ],
+    "review": {
+      "status": "editorial",
+      "published_by": "atlas-curador (LAIFT)",
+      "review_requested_at": "2026-10-03"
+    }
+  }
+}

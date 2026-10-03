@@ -49,3 +49,20 @@ export function reviewedProgress(history, statusOf, total) {
   for (const e of history || []) if (e && e.type === 'select' && e.sid && statusOf(e.sid) === 'r') seen.add(String(e.sid).replace(/-[lr]$/, ''));
   return { visited: Math.min(seen.size, total), total };
 }
+
+/**
+ * "Continuar de onde parei" (Onda 3.5, A.3): chip fixo na barra enquanto nada
+ * foi selecionado; some ao tocar nele ou assim que o aluno abre outra estrutura.
+ * @param {{ host: HTMLElement, label: string, onContinue: () => void }} p
+ * @returns {{ el: HTMLElement|null, dismiss: () => void }}
+ */
+export function mountContinueChip({ host, label, onContinue }) {
+  if (!host || !label) return { el: null, dismiss() {} };
+  const { h } = window.LaiftDom;
+  const chip = h('button', {
+    type: 'button', className: 'atlas-continue', 'aria-label': `Continuar de onde parou: ${label}`, text: `↺ Continuar: ${label}`,
+    onClick: () => { chip.remove(); onContinue(); },
+  });
+  host.appendChild(chip);
+  return { el: chip, dismiss: () => chip.remove() };
+}

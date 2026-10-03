@@ -1,0 +1,239 @@
+[
+  {
+    "id": "q4a-respiratorio-01",
+    "system": "respiratorio",
+    "prompt_pt": "Paciente de 58 anos, em ventilação mecânica após afogamento, faz radiografia de controle: o tubo orotraqueal tem a ponta cerca de 4 cm acima da carina. Aponte no modelo 3D o tubo fibrocartilagíneo de cerca de 12 cm, com anéis cartilagíneos em C, onde o tubo está posicionado.",
+    "difficulty": "facil",
+    "correctSid": "za:trachea",
+    "correctSids": [
+      "za:trachea"
+    ],
+    "distractorSids": [
+      "za:pleura",
+      "za:vh-f-right-superior-lobar-bronchus",
+      "za:superior-lobe-of-left-lung"
+    ],
+    "anchors": [
+      {
+        "sid": "za:trachea"
+      }
+    ],
+    "explanation_pt": "A traqueia é o tubo de anéis cartilagíneos incompletos, abertos posteriormente, que desce do nível de C6 e se bifurca na carina, perto do ângulo do esterno. A pleura envolve os pulmões; o brônquio lobar superior direito e o lobo superior esquerdo ficam abaixo da carina, já na árvore brônquica ou no parênquima."
+  },
+  {
+    "id": "q4a-respiratorio-02",
+    "system": "respiratorio",
+    "prompt_pt": "Após trauma torácico com fratura de costelas, um jovem tem dispneia súbita e ausência de murmúrio vesicular à direita; a radiografia mostra ar entre o pulmão colabado e a parede do tórax. Aponte no modelo 3D a membrana serosa de dois folhetos, visceral e parietal, cujo espaço virtual foi ocupado pelo ar.",
+    "difficulty": "facil",
+    "correctSid": "za:pleura",
+    "correctSids": [
+      "za:pleura"
+    ],
+    "distractorSids": [
+      "za:trachea",
+      "za:middle-lobe-of-right-lung",
+      "za:inferior-lobe-of-left-lung"
+    ],
+    "anchors": [
+      {
+        "sid": "za:pleura"
+      }
+    ],
+    "explanation_pt": "A pleura é a serosa de dois folhetos que reveste o pulmão (visceral) e a parede torácica (parietal); entre eles há um espaço virtual com pouco líquido. Na entrada de ar nesse espaço o pulmão colaba, mas o parênquima (lobos) e a traqueia não são a estrutura que contém esse espaço."
+  },
+  {
+    "id": "q4a-respiratorio-03",
+    "system": "respiratorio",
+    "prompt_pt": "Mulher de 45 anos, com febre e tosse, tem à radiografia frontal opacidade que apaga a borda direita do coração, enquanto a cúpula diafragmática direita permanece nítida. Aponte no modelo 3D o lobo do pulmão direito, delimitado pelas fissuras horizontal e oblíqua, em contato com essa borda cardíaca.",
+    "difficulty": "medio",
+    "correctSid": "za:middle-lobe-of-right-lung",
+    "correctSids": [
+      "za:middle-lobe-of-right-lung",
+      "za:vh-f-right-medial-bronchopulmonary-segment",
+      "za:vh-f-right-lateral-bronchopulmonary-segmennt",
+      "za:vh-f-right-middle-lobar-bronchus",
+      "za:vh-f-right-medial-bronchus",
+      "za:vh-f-right-lateral-bronchus",
+      "za:vh-f-hilum-middle-r"
+    ],
+    "distractorSids": [
+      "za:superior-lobe-of-right-lung",
+      "za:inferior-lobe-of-right-lung",
+      "za:superior-lobe-of-left-lung"
+    ],
+    "anchors": [
+      {
+        "sid": "za:middle-lobe-of-right-lung"
+      }
+    ],
+    "explanation_pt": "O lobo médio do pulmão direito ocupa a face anterior inferior do pulmão, entre as fissuras horizontal e oblíqua, e fica junto à borda direita do coração; sua consolidação apaga essa borda (sinal da silhueta). O lobo superior toca o mediastino superior e o lobo inferior, a cúpula do diafragma; por isso, nesses lobos, a opacidade apagaria outros contornos."
+  },
+  {
+    "id": "q4a-respiratorio-04",
+    "system": "respiratorio",
+    "prompt_pt": "Homem de 67 anos, com pneumonia, tem à radiografia frontal a borda esquerda do coração indistinta. Aponte no modelo 3D o lobo do pulmão esquerdo que possui a língula, homóloga ao lobo médio direito, e se relaciona com a borda esquerda do coração.",
+    "difficulty": "medio",
+    "correctSid": "za:superior-lobe-of-left-lung",
+    "correctSids": [
+      "za:superior-lobe-of-left-lung",
+      "za:vh-f-lingula-superior-bronchopulmonary-segment",
+      "za:vh-f-lingula-inferior-bronchopulmonary-segment",
+      "za:vh-f-left-superior-lobar-bronchus",
+      "za:vh-f-left-lingula-superior-bronchus",
+      "za:vh-f-left-lingula-inferior-bronchi",
+      "za:vh-f-left-apical-bronchopulmonary-segment",
+      "za:vh-f-left-anterior-bronchopulmonary-segment",
+      "za:vh-f-left-posterior-bronchopulmonary-segment",
+      "za:vh-f-hilum-upper-l"
+    ],
+    "distractorSids": [
+      "za:middle-lobe-of-right-lung",
+      "za:inferior-lobe-of-left-lung",
+      "za:trachea"
+    ],
+    "anchors": [
+      {
+        "sid": "za:superior-lobe-of-left-lung"
+      }
+    ],
+    "explanation_pt": "O pulmão esquerdo tem dois lobos; o lobo superior inclui a língula, que corresponde ao lobo médio direito e fica junto à borda esquerda do coração. O lobo médio existe apenas à direita, o lobo inferior esquerdo é posterior e inferior, e a traqueia não faz parte do parênquima pulmonar."
+  },
+  {
+    "id": "q4a-respiratorio-05",
+    "system": "respiratorio",
+    "prompt_pt": "Homem de 63 anos, tabagista, com tosse e hemoptise, tem à tomografia uma massa central que comprime a região por onde o brônquio principal e os vasos pulmonares entram e saem do pulmão. Aponte no modelo 3D essa região de entrada e saída da raiz do pulmão.",
+    "difficulty": "dificil",
+    "correctSid": "za:vh-f-hilum-r",
+    "correctSids": [
+      "za:vh-f-hilum-r",
+      "za:vh-f-hilum-l",
+      "za:vh-f-hilum-upper-l",
+      "za:vh-f-hilum-lower-l",
+      "za:vh-f-hilum-lower-r",
+      "za:vh-f-hilum-middle-r",
+      "za:vh-f-hilum-upper-r"
+    ],
+    "distractorSids": [
+      "za:pleura",
+      "za:trachea",
+      "za:superior-lobe-of-right-lung"
+    ],
+    "anchors": [
+      {
+        "sid": "za:vh-f-hilum-r"
+      }
+    ],
+    "explanation_pt": "O hilo é a área da face mediastinal do pulmão por onde passam brônquio principal, artéria e veias pulmonares, vasos brônquicos, nervos e linfáticos, formando a raiz do pulmão. A pleura reflete-se em torno dele, a traqueia fica acima da bifurcação e o lobo superior é parênquima, não a região de entrada."
+  },
+  {
+    "id": "q4a-digestorio-01",
+    "system": "digestorio",
+    "prompt_pt": "Mulher de 38 anos tem dor em cólica no hipocôndrio direito, após refeição gordurosa, e interrompe a inspiração profunda quando o examinador palpa o ponto em que o fundo do órgão toca a parede abdominal (sinal de Murphy). Aponte no modelo 3D o reservatório que armazena e concentra a bile.",
+    "difficulty": "facil",
+    "correctSid": "za:gallbladder",
+    "correctSids": [
+      "za:gallbladder"
+    ],
+    "distractorSids": [
+      "za:stomach",
+      "za:pancreas",
+      "za:duodenum"
+    ],
+    "anchors": [
+      {
+        "sid": "za:gallbladder"
+      }
+    ],
+    "explanation_pt": "A vesícula biliar fica na face visceral do fígado e seu fundo encosta na parede abdominal na altura da 9ª cartilagem costal, junto à margem lateral do músculo reto do abdome; por isso a inflamação gera dor à palpação nesse ponto. Estômago, pâncreas e duodeno não armazenam a bile nem têm esse contato com a parede."
+  },
+  {
+    "id": "q4a-digestorio-02",
+    "system": "digestorio",
+    "prompt_pt": "Adolescente de 16 anos refere dor que começou ao redor do umbigo, com náuseas, e em algumas horas migrou para a fossa ilíaca direita, com dor à palpação no ponto de McBurney. Aponte no modelo 3D o divertículo estreito e com fundo cego, implantado no ceco, que tem origem nessa dor.",
+    "difficulty": "facil",
+    "correctSid": "za:vermiform-appendix",
+    "correctSids": [
+      "za:vermiform-appendix"
+    ],
+    "distractorSids": [
+      "za:ascending-colon",
+      "za:sigmoid-colon",
+      "za:transverse-colon"
+    ],
+    "anchors": [
+      {
+        "sid": "za:vermiform-appendix"
+      }
+    ],
+    "explanation_pt": "O apêndice vermiforme, de base fixa no ceco, projeta-se no ponto de McBurney. A dor começa periumbilical (visceral) e migra para a fossa ilíaca direita quando o peritônio parietal é irritado. O colo ascendente, o sigmoide e o transverso são segmentos longos do colo e não têm esse fundo cego."
+  },
+  {
+    "id": "q4a-digestorio-03",
+    "system": "digestorio",
+    "prompt_pt": "Homem de 52 anos tem dor epigástrica intensa em faixa, irradiada para o dorso, com náuseas. A tomografia mostra edema de um órgão retroperitoneal posterior ao estômago, cuja cabeça é envolvida pela alça em C do duodeno. Aponte no modelo 3D esse órgão, que tem cabeça, colo, corpo e cauda.",
+    "difficulty": "medio",
+    "correctSid": "za:pancreas",
+    "correctSids": [
+      "za:pancreas",
+      "za:vh-f-head-of-pancreas",
+      "za:vh-f-neck-of-pancreas",
+      "za:vh-f-body-of-pancreas",
+      "za:vh-f-tail-of-pancreas",
+      "za:vh-f-ucinate-process1"
+    ],
+    "distractorSids": [
+      "za:stomach",
+      "za:duodenum",
+      "za:gallbladder"
+    ],
+    "anchors": [
+      {
+        "sid": "za:pancreas"
+      }
+    ],
+    "explanation_pt": "O pâncreas é retroperitoneal, fica posterior ao estômago, tem a cabeça abraçada pelo duodeno e a cauda junto ao hilo do baço; essa posição explica a dor que irradia para o dorso. Estômago e vesícula biliar não são retroperitoneais, e o duodeno é apenas o segmento que envolve a cabeça."
+  },
+  {
+    "id": "q4a-digestorio-04",
+    "system": "digestorio",
+    "prompt_pt": "Idoso de 78 anos, acamado e constipado há anos, tem distensão abdominal súbita e dor em cólica. A radiografia mostra uma alça do colo muito dilatada, em U invertido, compatível com torção sobre o próprio mesocolo. Aponte no modelo 3D o segmento do colo, em forma de S, mais sujeito a esse volvo.",
+    "difficulty": "medio",
+    "correctSid": "za:sigmoid-colon",
+    "correctSids": [
+      "za:sigmoid-colon"
+    ],
+    "distractorSids": [
+      "za:descending-colon",
+      "za:transverse-colon",
+      "za:ascending-colon"
+    ],
+    "anchors": [
+      {
+        "sid": "za:sigmoid-colon"
+      }
+    ],
+    "explanation_pt": "O colo sigmoide, em forma de S, é intraperitoneal e tem mesocolo sigmoide longo, o que permite que a alça gire sobre o próprio eixo (volvo). O colo descendente e o ascendente são fixos ao retroperitônio e o transverso tem mesocolo transverso, que o prende à parede posterior do abdome."
+  },
+  {
+    "id": "q4a-digestorio-05",
+    "system": "digestorio",
+    "prompt_pt": "Mulher de 34 anos, após parto vaginal com laceração extensa do períneo, tem incontinência de fezes e gases quando tenta reter. Seu esfíncter interno, de músculo liso, está íntegro. Aponte no modelo 3D o músculo de fibras estriadas, voluntário, inervado pelo nervo pudendo (ramo retal inferior), que envolve o canal anal.",
+    "difficulty": "dificil",
+    "correctSid": "za:external-anal-sphincter-r",
+    "correctSids": [
+      "za:external-anal-sphincter-r",
+      "za:external-anal-sphincter-l"
+    ],
+    "distractorSids": [
+      "za:sigmoid-colon",
+      "za:descending-colon",
+      "za:vermiform-appendix"
+    ],
+    "anchors": [
+      {
+        "sid": "za:external-anal-sphincter-r"
+      }
+    ],
+    "explanation_pt": "O esfíncter externo do ânus é de músculo estriado esquelético, voluntário, e é inervado pelo ramo retal inferior do nervo pudendo; a laceração obstétrica compromete a retenção voluntária. O esfíncter interno é liso e involuntário e os segmentos do colo e o apêndice não formam esfíncter do canal anal."
+  }
+]

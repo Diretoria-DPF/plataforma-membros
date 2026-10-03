@@ -50,3 +50,10 @@ No modo Moléculas, o atlas busca o `.pdb` (RCSB) e as propriedades (PubChem) pe
   3. Para reverter, use o `git revert` do merge (seção 1). Ele devolve as chamadas diretas **e** a CSP antiga juntas.
      - Não basta reabrir o `connect-src` à mão: o front novo não chama mais o RCSB direto.
 - **Cache:** respostas boas ficam 7 dias na Cache API da Worker, por data center. Uma estrutura corrigida no RCSB aparece no atlas em até 7 dias. Não há purga manual.
+
+## 6. Onda 3.5 — desligar o que entrou (offline, telemetria, quiz)
+Todas as chaves ficam em `frontend/modulos/anatomia-3d/js/core/flags.js`; trocar o padrão é um PR de 1 linha.
+- **Offline (`offline`)**: com a chave em `false`, o atlas passa a **remover o Service Worker e os caches `atlas-*`** dos aparelhos na próxima abertura (`js/core/offline.js`). Para testar sem publicar: `?flags=-offline`. Se um build publicado ficar com cache quebrado, publicar um novo build já resolve: o nome do cache muda a cada build e o antigo é apagado.
+- **Telemetria (`telemetry`)**: desligada por padrão. Para parar de coletar, deixar em `false`. Os dados já gravados saem sozinhos em 90 dias (`worker/src/maintenance.js`); para apagar já: `DELETE FROM atlas_telemetry;` no Neon (confirmar antes). Sem a migração `sql/014_atlas_telemetry.sql`, a Worker responde `stored: 0` e nada quebra.
+- **Quiz com escolha e sorteio (`quizSetup`)**: em `false`, o quiz volta a abrir direto no 1º caso, com todos os casos em ordem fixa (semente 42).
+- **Sem CDN**: Chart.js e 3Dmol estão em `vendor/`. Para trocar de versão, substituir os arquivos e atualizar o SRI em `js/modes/pharmacology.js` e `molecules.js`.

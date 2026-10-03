@@ -12,6 +12,7 @@
  *  - sessões expiradas há mais de 1 dia (o servidor já as recusa; a folga
  *    evita apagar algo que uma requisição em voo ainda esteja resolvendo);
  *  - tokens de conta (confirmação/redefinição) expirados há mais de 7 dias;
+ *  - telemetria anônima do atlas (atlas_telemetry) com mais de 90 dias;
  *  - baldes de rate limit cuja janela começou há mais de 8 dias — a maior
  *    janela configurada é de 7 dias (CONNECTION_REQUEST), então um balde
  *    mais velho que isso já foi "zerado" de qualquer forma.
@@ -23,6 +24,7 @@ import * as Logging from './logging.js';
 
 export const RETENTION = {
   AI_USAGE_LOG_DAYS: 180,
+  ATLAS_TELEMETRY_DAYS: 90,
   EXPIRED_SESSION_GRACE_DAYS: 1,
   EXPIRED_TOKEN_GRACE_DAYS: 7,
   RATE_LIMIT_BUCKET_MAX_AGE_DAYS: 8,
@@ -37,6 +39,10 @@ export async function runMaintenance(sql, correlationId) {
     aiUsageLog: () => sql`
       DELETE FROM ai_usage_log
       WHERE created_at < now() - make_interval(days => ${RETENTION.AI_USAGE_LOG_DAYS})
+      RETURNING 1`,
+    atlasTelemetry: () => sql`
+      DELETE FROM atlas_telemetry
+      WHERE created_at < now() - make_interval(days => ${RETENTION.ATLAS_TELEMETRY_DAYS})
       RETURNING 1`,
     sessions: () => sql`
       DELETE FROM sessions

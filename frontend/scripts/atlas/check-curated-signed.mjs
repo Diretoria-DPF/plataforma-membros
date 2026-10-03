@@ -19,7 +19,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { LOTES, parseChecklist } from './checklist-lote.mjs';
+import { LOTES, QUIZ_LOTE, parseChecklist } from './checklist-lote.mjs';
+
+/** Casos de quiz que já estavam no atlas antes do lote 4a; os demais exigem checklist assinado. */
+export const QUIZ_BASE_IDS = Object.freeze(["caso-organofosforado", "caso-primeira-passagem", "caso-broncoespasmo", "caso-filtro-renal", "caso-bhe-neurologia", "caso-acidez-gastrica", "caso-neuroeixo-espinhal", "caso-injecao-deltoide"]);
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(here, '../../..');
@@ -83,6 +86,17 @@ export function checkCuratedSigned({ root = ROOT } = {}) {
           if (approvedInLote.get(mainOfSid.get(sid)) !== loteOfOnda(onda)) errors.push(`curated/${f}: "${sid}" não foi aprovada no checklist assinado do lote ${loteOfOnda(onda)} (revisao-lote-${loteOfOnda(onda)}.md)`);
         } else errors.push(`curated/${f}: "${sid}" é da onda ${onda}, sem revisao-onda-${String(onda).padStart(2, '0')}.md assinada (aprovado) nem revisao-lote-${loteOfOnda(onda)}.md assinado`);
       }
+    }
+  }
+  // Casos de quiz novos (lote 4a): só entram aprovados no checklist assinado.
+  const quizFile = path.join(dataDir, 'quiz-cases.json');
+  if (fs.existsSync(quizFile)) {
+    const novos = (JSON.parse(fs.readFileSync(quizFile, 'utf8')) || []).filter((c) => c && !QUIZ_BASE_IDS.includes(c.id));
+    if (novos.length) {
+      const p = path.join(revDir, `revisao-lote-${QUIZ_LOTE}.md`);
+      const r = fs.existsSync(p) ? parseChecklist(fs.readFileSync(p, 'utf8')) : null;
+      const ok = new Set(r && r.signed && r.lote === QUIZ_LOTE ? r.approvedSids : []);
+      for (const c of novos) if (!ok.has(c.id)) errors.push(`quiz-cases.json: o caso "${c.id}" não foi aprovado no checklist assinado do lote ${QUIZ_LOTE} (revisao-lote-${QUIZ_LOTE}.md)`);
     }
   }
   return { errors, signedOndas, signedLotes };

@@ -1,0 +1,220 @@
+[
+  {
+    "id": "q4a-linfatico-01",
+    "system": "linfatico",
+    "difficulty": "facil",
+    "prompt_pt": "Homem de 24 anos sofre queda de moto com impacto no flanco esquerdo e fratura das costelas IX a XI. Chega com dor no hipocôndrio esquerdo, dor referida no ombro esquerdo e sinais de hipovolemia. Aponte no modelo 3D o órgão linfoide mais vulnerável nesse trauma.",
+    "correctSid": "za:spleen",
+    "correctSids": [
+      "za:spleen"
+    ],
+    "distractorSids": [
+      "za:kidney-l",
+      "za:stomach",
+      "za:pancreas"
+    ],
+    "explanation_pt": "O baço é o maior órgão linfoide e fica no hipocôndrio esquerdo, protegido pelas costelas IX a XI, que o lesam quando fraturam. Sua cápsula fina e a rica vascularização explicam o sangramento, e a irritação do diafragma causa dor referida no ombro. Rim, estômago e pâncreas são vizinhos, mas não são órgãos linfoides.",
+    "anchors": [
+      {
+        "sid": "za:spleen"
+      }
+    ]
+  },
+  {
+    "id": "q4a-linfatico-02",
+    "system": "linfatico",
+    "difficulty": "facil",
+    "prompt_pt": "Lactente com malformação da terceira e quarta bolsas faríngeas apresenta infecções virais e fúngicas de repetição e baixa contagem de linfócitos T. A radiografia de tórax não mostra a sombra habitual no mediastino superior anterior. Aponte no modelo 3D o órgão linfoide ausente ou hipoplásico.",
+    "correctSid": "za:right-lobe-of-thymus",
+    "correctSids": [
+      "za:right-lobe-of-thymus",
+      "za:left-lobe-of-thymus"
+    ],
+    "distractorSids": [
+      "za:spleen",
+      "za:palatine-tonsil-r",
+      "za:brachiocephalic-nodes"
+    ],
+    "explanation_pt": "O timo, formado por dois lobos no mediastino superior anterior, é o órgão onde os linfócitos T se diferenciam e amadurecem; sua hipoplasia compromete a imunidade celular. O baço e as tonsilas palatinas são órgãos linfoides secundários, e os linfonodos braquiocefálicos apenas filtram a linfa, sem produzir linfócitos T maduros.",
+    "anchors": [
+      {
+        "sid": "za:right-lobe-of-thymus"
+      }
+    ]
+  },
+  {
+    "id": "q4a-linfatico-03",
+    "system": "linfatico",
+    "difficulty": "medio",
+    "prompt_pt": "Homem de 62 anos, com emagrecimento e epigastralgia, tem adenocarcinoma gástrico avançado. No exame, nota-se um linfonodo duro e indolor na fossa supraclavicular esquerda, na junção entre o músculo esternocleidomastóideo e a clavícula. Aponte no modelo 3D o linfonodo que recebeu a disseminação.",
+    "correctSid": "za:supraclavicular-nodes-l",
+    "correctSids": [
+      "za:supraclavicular-nodes-l"
+    ],
+    "distractorSids": [
+      "za:supraclavicular-nodes-r",
+      "za:central-axillary-nodes-l",
+      "za:jugulodigastric-node-l"
+    ],
+    "explanation_pt": "O ducto torácico recebe a linfa abdominal e desemboca no ângulo venoso esquerdo, perto dos linfonodos supraclaviculares esquerdos (sinal de Virchow ou Troisier). Os supraclaviculares direitos não estão nessa via de drenagem abdominal, os axilares drenam o membro superior e a mama, e o jugulodigástrico drena a cabeça e o pescoço.",
+    "anchors": [
+      {
+        "sid": "za:supraclavicular-nodes-l"
+      }
+    ]
+  },
+  {
+    "id": "q4a-linfatico-04",
+    "system": "linfatico",
+    "difficulty": "medio",
+    "prompt_pt": "Mulher de 51 anos apresenta nódulo endurecido no quadrante superolateral da mama direita. A ultrassonografia mostra linfonodo aumentado na parede anterior da axila direita, junto à margem inferior do músculo peitoral maior. Aponte no modelo 3D o grupo linfonodal que costuma ser o primeiro a receber a drenagem do quadrante.",
+    "correctSid": "za:anterior-axillary-nodes-r",
+    "correctSids": [
+      "za:anterior-axillary-nodes-r"
+    ],
+    "distractorSids": [
+      "za:parasternal-nodes-r",
+      "za:supraclavicular-nodes-r",
+      "za:cubital-nodes-r"
+    ],
+    "explanation_pt": "Cerca de três quartos da linfa da mama drenam para os linfonodos axilares, principalmente os anteriores (peitorais), que ficam ao longo da margem inferior do peitoral maior. Os paraesternais recebem sobretudo os quadrantes mediais, os supraclaviculares são uma estação posterior, e os cubitais drenam a mão e o antebraço.",
+    "anchors": [
+      {
+        "sid": "za:anterior-axillary-nodes-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-linfatico-05",
+    "system": "linfatico",
+    "difficulty": "dificil",
+    "prompt_pt": "Homem de 28 anos, com massa testicular indolor, é estadiado por tomografia, que mostra linfonodomegalia retroperitoneal ao lado da aorta e da veia cava, na altura de L2. Não há aumento dos linfonodos inguinais. Aponte no modelo 3D o grupo linfonodal que recebe a drenagem direta do testículo.",
+    "correctSid": "za:lateral-aortic-nodes",
+    "correctSids": [
+      "za:lateral-aortic-nodes",
+      "za:lateral-caval-nodes",
+      "za:intermediate-lumbar-nodes"
+    ],
+    "distractorSids": [
+      "za:superomedial-superficial-inguinal-nodes-r",
+      "za:intermediate-external-iliac-nodes-l",
+      "za:medial-common-iliac-nodes"
+    ],
+    "explanation_pt": "O testículo se origina na parede posterior do abdome e conserva sua drenagem linfática, que acompanha os vasos testiculares até os linfonodos lombares, aórticos laterais e cavais laterais, junto a L2. Os linfonodos inguinais superficiais e os ilíacos recebem a linfa da pele escrotal e dos membros inferiores, por isso não são a primeira estação do testículo.",
+    "anchors": [
+      {
+        "sid": "za:lateral-aortic-nodes"
+      }
+    ]
+  },
+  {
+    "id": "q4a-articular-01",
+    "system": "articular",
+    "difficulty": "facil",
+    "prompt_pt": "Jogador de futebol de 22 anos sente um estalo no joelho direito ao frear e girar com o pé fixo no chão. Surgem edema rápido e sensação de que o joelho falseia. No exame, a tíbia desliza para a frente em relação ao fêmur (gaveta anterior positiva). Aponte no modelo 3D o ligamento rompido.",
+    "correctSid": "za:anterior-cruciate-ligament-r",
+    "correctSids": [
+      "za:anterior-cruciate-ligament-l",
+      "za:anterior-cruciate-ligament-r"
+    ],
+    "distractorSids": [
+      "za:posterior-cruciate-ligament-r",
+      "za:fibular-collateral-ligament-r",
+      "za:medial-meniscus-r"
+    ],
+    "explanation_pt": "O ligamento cruzado anterior impede a translação anterior da tíbia sobre o fêmur, e sua ruptura produz a gaveta anterior. O cruzado posterior impede o deslizamento posterior, o colateral fibular resiste ao estresse em varo e o menisco medial é um amortecedor fibrocartilagíneo, não um estabilizador contra a translação anterior.",
+    "anchors": [
+      {
+        "sid": "za:anterior-cruciate-ligament-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-articular-02",
+    "system": "articular",
+    "difficulty": "facil",
+    "prompt_pt": "Menino de 2 anos foi puxado pelo braço por um adulto para não cair e passou a recusar usar o membro, que fica estendido, em pronação e junto ao corpo. Não há deformidade nem equimose. A cabeça do rádio escapou parcialmente do anel fibroso que a mantém contra a ulna. Aponte no modelo 3D esse anel.",
+    "correctSid": "za:annular-ligament-of-radius-r",
+    "correctSids": [
+      "za:annular-ligament-of-radius-l",
+      "za:annular-ligament-of-radius-r"
+    ],
+    "distractorSids": [
+      "za:radial-collateral-ligament-r",
+      "za:ulnar-collateral-ligament-r",
+      "za:quadrate-ligament-r"
+    ],
+    "explanation_pt": "O ligamento anular do rádio envolve a cabeça do rádio e a prende à incisura radial da ulna; na criança pequena, a tração longitudinal pode deslocar a cabeça para fora dele (pronação dolorosa). Os ligamentos colaterais radial e ulnar estabilizam os lados do cotovelo, e o ligamento quadrado fica inferiormente, junto ao colo do rádio.",
+    "anchors": [
+      {
+        "sid": "za:annular-ligament-of-radius-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-articular-03",
+    "system": "articular",
+    "difficulty": "medio",
+    "prompt_pt": "Mulher de 25 anos inverte o tornozelo direito, com o pé em flexão plantar, ao descer um degrau. Há edema e equimose anterolaterais ao maléolo lateral, com dor à palpação logo à frente dele. Aponte no modelo 3D o ligamento lesado com mais frequência nesse mecanismo.",
+    "correctSid": "za:anterior-talofibular-ligament-r",
+    "correctSids": [
+      "za:anterior-talofibular-ligament-l",
+      "za:anterior-talofibular-ligament-r"
+    ],
+    "distractorSids": [
+      "za:calcaneofibular-ligament-r",
+      "za:posterior-talofibular-ligament-r",
+      "za:anterior-tibiofibular-ligament-r"
+    ],
+    "explanation_pt": "O ligamento talofibular anterior é o mais delgado do complexo lateral e é o primeiro a se romper na inversão com flexão plantar. O calcaneofibular só se lesa em inversões mais intensas, o talofibular posterior raramente se rompe, e o tibiofibular anterior pertence à sindesmose e se lesa nas rotações externas (entorse alta).",
+    "anchors": [
+      {
+        "sid": "za:anterior-talofibular-ligament-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-articular-04",
+    "system": "articular",
+    "difficulty": "medio",
+    "prompt_pt": "Corredora de 40 anos tem dor na linha articular medial do joelho esquerdo após agachar e girar o tronco com o pé apoiado, com travamentos ocasionais e estalido na extensão. A ressonância mostra fissura em uma fibrocartilagem em forma de C, fixada à parte profunda do ligamento colateral tibial. Aponte no modelo 3D a estrutura lesada.",
+    "correctSid": "za:medial-meniscus-l",
+    "correctSids": [
+      "za:medial-meniscus-l",
+      "za:medial-meniscus-r"
+    ],
+    "distractorSids": [
+      "za:lateral-meniscus-l",
+      "za:anterior-cruciate-ligament-l",
+      "za:infrapatellar-fat-pad-l"
+    ],
+    "explanation_pt": "O menisco medial tem forma de C e está firmemente preso à parte profunda do ligamento colateral tibial, o que limita sua mobilidade e o torna mais vulnerável às forças de rotação. O menisco lateral, mais circular, é mais móvel; o ligamento cruzado anterior e o coxim gorduroso infrapatelar não são fibrocartilagens em C.",
+    "anchors": [
+      {
+        "sid": "za:medial-meniscus-l"
+      }
+    ]
+  },
+  {
+    "id": "q4a-articular-05",
+    "system": "articular",
+    "difficulty": "dificil",
+    "prompt_pt": "Mulher de 30 anos, ciclista, tem dor perineal e neuralgia do pudendo. O nervo pudendo sai pelo forame isquiático maior, contorna a espinha isquiática e reentra na pelve pelo forame isquiático menor. Aponte no modelo 3D o ligamento que se fixa à espinha isquiática e separa esses dois forames.",
+    "correctSid": "za:sacrospinous-ligament-r",
+    "correctSids": [
+      "za:sacrospinous-ligament-l",
+      "za:sacrospinous-ligament-r"
+    ],
+    "distractorSids": [
+      "za:sacrotuberous-ligament-r",
+      "za:iliolumbar-ligament-r",
+      "za:obturator-membrane-r"
+    ],
+    "explanation_pt": "O ligamento sacroespinal vai do sacro e do cóccix à espinha isquiática e separa o forame isquiático maior do menor; o nervo pudendo passa por trás da espinha, junto a ele. O sacrotuberal se fixa no túber isquiático, e o iliolombar e a membrana obturadora não participam desses forames.",
+    "anchors": [
+      {
+        "sid": "za:sacrospinous-ligament-r"
+      }
+    ]
+  }
+]

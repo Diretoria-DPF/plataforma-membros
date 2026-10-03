@@ -4,8 +4,8 @@
     "summary_pt": "O fígado é a maior glândula do corpo e a maior víscera abdominal, com cerca de 1,5 kg no adulto. Ocupa o hipocôndrio direito e parte do epigástrio, abrigado sob a cúpula direita do diafragma e protegido pelas costelas inferiores. É recoberto por peritônio visceral, exceto na área nua, e envolvido por uma cápsula fibrosa fina. Apresenta face diafragmática, convexa, e face visceral, voltada para trás e para baixo, onde estão a porta do fígado, a fossa da vesícula biliar e os sulcos da veia cava inferior e do ligamento venoso. Classicamente divide-se em lobos direito e esquerdo, além dos lobos caudado e quadrado; funcionalmente, em oito segmentos de Couinaud, cada um com pedículo portal e drenagem venosa próprios. Recebe sangue venoso do intestino pela veia porta do fígado e sangue arterial pela artéria hepática própria, e o devolve à veia cava inferior pelas veias hepáticas. Desempenha funções metabólicas, de síntese de proteínas plasmáticas e fatores da coagulação, de detoxificação, de armazenamento e de produção de bile, que é excretada pelas vias biliares até o duodeno.",
     "anatomy": {
       "relations": "Situa-se sob o diafragma, em contato com o estômago, o duodeno, a flexura direita do colo, o rim e a glândula suprarrenal direitos e a vesícula biliar. Fixa-se por pregas peritoneais: ligamentos falciforme, coronário, triangulares direito e esquerdo, e omento menor (ligamentos hepatogástrico e hepatoduodenal). Pela porta do fígado entram a veia porta do fígado e a artéria hepática própria e saem os ductos hepáticos.",
-      "vascularization": "Dupla irrigação: a veia porta do fígado traz a maior parte do fluxo, rico em nutrientes, e a artéria hepática própria, ramo da artéria hepática comum (tronco celíaco), supre o oxigênio. A drenagem venosa se faz pelas veias hepáticas direita, intermédia e esquerda, que desembocam na veia cava inferior, logo abaixo do diafragma.",
-      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco (nervos esplâncnicos) e parassimpáticas dos troncos vagais. A cápsula e o peritônio da face diafragmática têm inervação sensitiva somática pelos nervos frênico direito e intercostais inferiores.",
+      "vascularization": "A artéria hepática própria traz cerca de um quarto do fluxo e aproximadamente metade do oxigênio; a veia porta traz o restante, rico em nutrientes. A drenagem venosa se faz pelas veias hepáticas direita, intermédia e esquerda, que desembocam na veia cava inferior, logo abaixo do diafragma.",
+      "innervation": "Plexo hepático, com fibras simpáticas do plexo celíaco (nervos esplâncnicos) e parassimpáticas dos troncos vagais. O peritônio da face diafragmática recebe o nervo frênico e os intercostais inferiores; o estiramento da cápsula é conduzido por aferentes viscerais do plexo hepático (dor mal localizada).",
       "lymph": "Os vasos linfáticos drenam para os linfonodos hepáticos, no hilo, e daí para os linfonodos celíacos. Parte da linfa da face diafragmática segue para os linfonodos frênicos e mediastinais posteriores."
     },
     "histology": {
@@ -118,7 +118,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal e fígado, tópico Cirrose, hipertensão portal, carcinoma hepatocelular",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -149,7 +149,7 @@
       "epithelium": "Epitélio cilíndrico simples secretor de muco, que reveste a superfície e as fovéolas gástricas.",
       "tissues": [
         "Mucosa com glândulas gástricas (células mucosas do colo, parietais, principais e enteroendócrinas)",
-        "Submucosa de tecido conjuntivo denso, com vasos e plexo submucoso",
+        "Submucosa de tecido conjuntivo, com vasos e plexo submucoso",
         "Muscular externa com camadas oblíqua interna, circular média e longitudinal externa",
         "Serosa de mesotélio sobre tecido conjuntivo frouxo"
       ]
@@ -255,7 +255,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico correlações clínicas de Estômago",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal e fígado, tópico Gastrite, doença ulcerosa péptica e carcinoma gástrico",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -275,12 +275,12 @@
   },
   "za:duodenum": {
     "ids": {},
-    "summary_pt": "O duodeno é a primeira e mais curta parte do intestino delgado, com cerca de 25 cm, em forma de C que envolve a cabeça do pâncreas. Estende-se do piloro à flexura duodenojejunal e se divide em quatro partes: superior, descendente, horizontal e ascendente. A parte superior, com sua porção inicial dilatada denominada ampola do duodeno (bulbo), é intraperitoneal e móvel; as demais são retroperitoneais. Na parte descendente, a papila maior do duodeno recebe a ampola hepatopancreática, por onde desembocam o ducto colédoco e o ducto pancreático, e a papila menor recebe o ducto pancreático acessório. A parte horizontal cruza a coluna vertebral entre a aorta e a artéria mesentérica superior. A flexura duodenojejunal é fixada pelo músculo suspensor do duodeno. Recebe o quimo ácido do estômago, a bile e o suco pancreático, neutralizando o conteúdo gástrico e iniciando a digestão de gorduras, proteínas e carboidratos. A transição entre o território irrigado pelo tronco celíaco e o da artéria mesentérica superior ocorre ao nível da papila maior, o que tem importância cirúrgica.",
+    "summary_pt": "O duodeno é a primeira e mais curta parte do intestino delgado, com cerca de 25 cm, em forma de C que envolve a cabeça do pâncreas. Estende-se do piloro à flexura duodenojejunal e se divide em quatro partes: superior, descendente, horizontal e ascendente. Apenas a porção inicial da parte superior (ampola do duodeno, ou bulbo duodenal, cerca de 2 cm) é intraperitoneal e móvel; o restante é retroperitoneal, e a ampola do duodeno não se confunde com a ampola hepatopancreática. Na parte descendente, a papila maior do duodeno recebe a ampola hepatopancreática, por onde desembocam o ducto colédoco e o ducto pancreático, e a papila menor recebe o ducto pancreático acessório. Os territórios do tronco celíaco (proximal) e da artéria mesentérica superior (distal) encontram-se aproximadamente ao nível da papila maior, junção entre intestino anterior e médio, e se anastomosam pelas arcadas pancreaticoduodenais. A flexura duodenojejunal é fixada pelo músculo suspensor do duodeno. Recebe o quimo ácido do estômago, a bile e o suco pancreático, neutralizando o conteúdo gástrico e iniciando a digestão de gorduras, proteínas e carboidratos. A transição entre o território irrigado pelo tronco celíaco e o da artéria mesentérica superior ocorre ao nível da papila maior, o que tem importância cirúrgica.",
     "anatomy": {
       "relations": "A concavidade em C abriga a cabeça do pâncreas. A parte descendente relaciona-se posteriormente com o hilo do rim direito e, anteriormente, com o colo transverso e o fígado; a parte horizontal passa anterior à veia cava inferior e à aorta, e posterior aos vasos mesentéricos superiores; a parte ascendente sobe à esquerda da aorta até a flexura duodenojejunal.",
       "vascularization": "Artérias pancreaticoduodenais superiores (ramos da gastroduodenal, do tronco celíaco) e inferiores (da mesentérica superior), além da artéria supraduodenal. As veias acompanham as artérias e drenam para a veia porta do fígado, diretamente ou pelas veias mesentérica superior e esplênica.",
       "innervation": "Parassimpática pelo nervo vago e simpática por fibras dos plexos celíaco e mesentérico superior, vindas dos nervos esplâncnicos.",
-      "lymph": "Linfonodos pancreaticoduodenais, que drenam para os linfonodos celíacos, pela parte proximal à papila maior, e mesentéricos superiores, pela parte distal."
+      "lymph": "Vasos anteriores drenam para linfonodos pancreaticoduodenais e pilóricos e vasos posteriores para linfonodos mesentéricos superiores; os eferentes seguem para os linfonodos celíacos."
     },
     "histology": {
       "epithelium": "Epitélio cilíndrico simples com microvilosidades (enterócitos) e células caliciformes, que reveste vilosidades e criptas intestinais.",
@@ -416,7 +416,7 @@
     "summary_pt": "A cápsula do fígado, também chamada cápsula fibrosa perivascular ou cápsula de Glisson, é a delgada camada de tecido conjuntivo que envolve o parênquima hepático logo abaixo do peritônio visceral. Na maior parte da superfície, está recoberta pelo peritônio; na área nua, adere diretamente ao diafragma. Na porta do fígado, o tecido conjuntivo da cápsula penetra no órgão acompanhando os ramos da veia porta do fígado, da artéria hepática própria e dos ductos biliares, formando a bainha fibrosa dos espaços porta, que sustenta a arquitetura interna dos lóbulos. Apesar de fina, é resistente e confere forma ao órgão, que é macio e friável. É a estrutura sensível à dor do fígado, pois o parênquima em si é desprovido de terminações dolorosas; por isso, o estiramento da cápsula em hepatomegalia aguda, congestão ou inflamação causa dor surda no hipocôndrio direito, com possível referência ao ombro direito pelo trajeto do nervo frênico. Em lesões traumáticas, a cápsula pode conter hematomas subcapsulares, e sua ruptura provoca hemoperitônio. Na cirrose, a superfície abaixo da cápsula torna-se nodular, achado visível em exames de imagem e à laparoscopia.",
     "anatomy": {
       "relations": "Reveste todo o fígado, em continuidade com o peritônio visceral nas faces diafragmática e visceral e, na área nua, com o tecido conjuntivo frouxo que une o fígado ao diafragma. Na porta do fígado, prolonga-se como bainha fibrosa em torno da tríade portal, no interior do parênquima.",
-      "innervation": "Inervação sensitiva da cápsula pelos nervos frênico direito e intercostais inferiores, responsáveis pela dor do hipocôndrio direito e pela dor referida no ombro direito."
+      "innervation": "O peritônio da face diafragmática recebe o nervo frênico e os intercostais inferiores; o estiramento da cápsula é conduzido por aferentes viscerais do plexo hepático (dor mal localizada)."
     },
     "histology": {
       "epithelium": "Face externa revestida por mesotélio (peritônio visceral), apoiado em tecido conjuntivo.",
@@ -519,9 +519,9 @@
   },
   "za:vh-f-diaphragmatic-surface-of-liver": {
     "ids": {},
-    "summary_pt": "A face diafragmática do fígado é a superfície convexa, lisa e ampla, que abrange as regiões anterior, superior e parte da posterior do órgão e se molda à concavidade da cúpula do diafragma. Os lobos direito e esquerdo são nela separados pela inserção do ligamento falciforme, que contém em sua margem livre o ligamento redondo do fígado, remanescente da veia umbilical. Superiormente, o ligamento coronário, com folhetos anterior (superior) e posterior (inferior), e os ligamentos triangulares direito e esquerdo fixam o órgão ao diafragma; entre os folhetos do coronário situa-se a área nua. No lobo esquerdo, uma depressão produzida pelo centro tendíneo do diafragma forma a impressão cardíaca. Através do diafragma, a face relaciona-se com as pleuras e pulmões, nos recessos costodiafragmáticos, com o pericárdio e o coração e com as costelas inferiores. Entre a face e o diafragma situa-se o recesso subfrênico, parte da cavidade peritoneal, dividido pelo ligamento falciforme em espaços direito e esquerdo. Por ser recoberta por peritônio visceral sensível e pela proximidade com o diafragma, processos inflamatórios e tumorais dessa face podem manifestar-se com dor referida no ombro e com derrame pleural.",
+    "summary_pt": "A face diafragmática do fígado é a superfície convexa, lisa e ampla, que abrange as regiões anterior, superior e parte da posterior do órgão e se molda à concavidade da cúpula do diafragma. Os lobos direito e esquerdo são nela separados pela inserção do ligamento falciforme, que contém em sua margem livre o ligamento redondo do fígado, remanescente da veia umbilical. Superiormente, o ligamento coronário, com folhetos anterior (superior) e posterior (inferior), e os ligamentos triangulares direito e esquerdo fixam o órgão ao diafragma; entre os folhetos do coronário situa-se a área nua. A impressão cardíaca é produzida pelo coração através do centro tendíneo do diafragma. Através do diafragma, a face relaciona-se com as pleuras e pulmões, nos recessos costodiafragmáticos, com o pericárdio e o coração e com as costelas inferiores. Entre a face e o diafragma situa-se o recesso subfrênico, parte da cavidade peritoneal, dividido pelo ligamento falciforme em espaços direito e esquerdo. Por ser recoberta por peritônio visceral sensível e pela proximidade com o diafragma, processos inflamatórios e tumorais dessa face podem manifestar-se com dor referida no ombro e com derrame pleural.",
     "anatomy": {
-      "relations": "Em contato com a face inferior do diafragma, que a separa do pulmão e da pleura (recessos costodiafragmáticos), do pericárdio e do coração. O recesso subfrênico e o ligamento falciforme separam o espaço direito e o esquerdo. Está protegida pelas costelas inferiores e pela cartilagem costal. A maior parte é recoberta por peritônio visceral, com exceção da área nua.",
+      "relations": "Em contato com a face inferior do diafragma, que a separa do pulmão e da pleura (recessos costodiafragmáticos), do pericárdio e do coração. O ligamento falciforme divide o recesso subfrênico em espaços direito e esquerdo. Está protegida pelas costelas inferiores e pela cartilagem costal. A maior parte é recoberta por peritônio visceral, com exceção da área nua.",
       "vascularization": "Suprida por ramos da artéria hepática própria. A drenagem venosa se faz pelas veias hepáticas, em posição próxima à face posterior, onde desembocam na veia cava inferior.",
       "innervation": "O peritônio da face diafragmática recebe fibras sensitivas do nervo frênico, o que explica a dor referida no ombro, e dos nervos intercostais inferiores."
     },
@@ -592,13 +592,6 @@
         "type": "atlas",
         "ref": "Atlas of Human Anatomy, 7ª ed., seção Abdome, tópico Fígado: face diafragmática",
         "obraId": "netter",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: face diafragmática",
-        "obraId": "robbins",
         "license": "citação"
       },
       {
@@ -687,7 +680,7 @@
     "ids": {},
     "summary_pt": "A mucosa gástrica é a túnica interna do estômago, de aspecto rosado e aveludado, que se pregueia em rugas gástricas longitudinais no corpo e no fundo, sobretudo ao longo da curvatura maior, e se achata quando o órgão está distendido. A superfície apresenta pequenas áreas gástricas, sulcadas pelas fovéolas gástricas, invaginações do epitélio em que desembocam as glândulas. A mucosa tem três regiões glandulares: cárdica, estreita e próxima ao óstio cárdico; gástrica própria, no fundo e no corpo; e pilórica, no antro. O epitélio de revestimento é simples, cilíndrico, secretor de muco que forma um gel alcalino protetor contra o ácido clorídrico e a pepsina. Nas glândulas do corpo, as células parietais secretam ácido clorídrico e fator intrínseco, as principais produzem pepsinogênio e lipase gástrica, as mucosas do colo renovam o epitélio e as enteroendócrinas liberam hormônios, como a gastrina, produzida no antro. A renovação do epitélio é rápida, em poucos dias. Alterações dessa barreira mucosa, por infecção, ácido, medicamentos ou autoimunidade, estão na base das gastrites, das úlceras e de neoplasias gástricas.",
     "anatomy": {
-      "relations": "Reveste a face interna do estômago, apoiada na submucosa, da qual é separada pela lâmina muscular da mucosa. As rugas gástricas convergem para o canal pilórico, onde a mucosa forma o esfíncter pilórico, e a mucosa é contínua com a do esôfago e com a do duodeno.",
+      "relations": "Reveste a face interna do estômago, apoiada na submucosa, da qual é separada pela lâmina muscular da mucosa. No piloro, a mucosa recobre o esfíncter pilórico (músculo) e forma a prega pilórica.",
       "vascularization": "Rede capilar da lâmina própria suprida por ramos arteriais do plexo submucoso, derivados das artérias gástricas e gastromentais; as veias do plexo submucoso drenam para as veias gástricas e a veia porta do fígado."
     },
     "histology": {
@@ -794,7 +787,7 @@
   },
   "za:anterior-lateral-segment-of-liver-vi": {
     "ids": {},
-    "summary_pt": "O segmento VI de Couinaud é o segmento inferior do setor posterior do lobo direito do fígado, situado na parte lateral e posteroinferior do hemifígado direito, abaixo do plano transversal que passa pela bifurcação da veia porta do fígado. É delimitado medialmente pelo segmento V, superiormente pelo segmento VII e lateralmente pela margem direita do órgão. Seu pedículo portal, com ramo da veia porta, ramo da artéria hepática e ramo do ducto biliar, provém do ramo posterior do pedículo direito, e a drenagem venosa se faz pela veia hepática direita. Na face visceral, o segmento relaciona-se com o rim direito, a glândula suprarrenal direita e a flexura direita do colo, que deixam as impressões renal e cólica. Como cada segmento tem pedículo vascular e biliar próprio, ele pode ser ressecado isoladamente, na segmentectomia, preservando o restante do parênquima funcional. A identificação dos segmentos pela tomografia e pela ressonância, por referência às veias hepáticas e aos ramos portais, é essencial para o planejamento de ressecções, de ablação de tumores e de transplante com doador vivo. A divisão de Couinaud baseia-se nos ramos portais e nas veias hepáticas, não em limites visíveis na superfície.",
+    "summary_pt": "O segmento VI de Couinaud é o segmento inferior do setor posterior do lobo direito do fígado, situado na parte lateral e posteroinferior do hemifígado direito, abaixo do plano transversal que passa pela bifurcação da veia porta do fígado. É delimitado medialmente pelo segmento V, superiormente pelo segmento VII e lateralmente pela margem direita do órgão. Seu pedículo portal, com ramo da veia porta, ramo da artéria hepática e ramo do ducto biliar, provém do ramo posterior do pedículo direito, e a drenagem venosa se faz pela veia hepática direita. Na face visceral, o segmento relaciona-se com o rim direito, a glândula suprarrenal direita e a flexura direita do colo, que deixam as impressões renal e cólica. Como cada segmento tem pedículo vascular e biliar próprio, ele pode ser ressecado isoladamente, na segmentectomia, preservando o restante do parênquima funcional. A identificação dos segmentos pela tomografia e pela ressonância, por referência às veias hepáticas e aos ramos portais, é essencial para o planejamento de ressecções, de ablação de tumores e de transplante com doador vivo. A divisão de Couinaud baseia-se nos ramos portais e nas veias hepáticas, não em limites visíveis na superfície. Nota: o nome do modelo 3D (\"anterior lateral\") não corresponde à posição de Couinaud; o segmento VI é posteroinferior. A ficha segue o numeral.",
     "anatomy": {
       "relations": "Ocupa a parte inferior e posterior do lobo direito. Limita-se com o segmento V, anteriormente, e com o segmento VII, superiormente, sem separação visível na superfície; na face visceral, está em contato com o rim direito e a flexura direita do colo.",
       "vascularization": "Pedículo portal próprio (ramo posterior do ramo direito da veia porta, da artéria hepática e do ducto biliar). Drenagem venosa pela veia hepática direita.",
@@ -804,7 +797,7 @@
     "clinical": [
       "Hepatectomia: a segmentectomia VI ou a bissegmentectomia VI e VII preserva parênquima funcional em tumores localizados e em metástases.",
       "Lesões desse segmento podem estar adjacentes ao rim direito e à flexura direita do colo, com risco de invasão local.",
-      "Carcinoma hepatocelular: a localização segmentar determina a abordagem por ressecção, ablação por radiofrequência ou embolização."
+      "Tumores hepáticos: a localização segmentar influencia a escolha entre ressecção, ablação por radiofrequência ou embolização."
     ],
     "sources": [
       {
@@ -889,13 +882,6 @@
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VI (Couinaud)",
         "obraId": "moore",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento VI (Couinaud)",
-        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -1140,13 +1126,6 @@
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VII (Couinaud)",
         "obraId": "moore",
         "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento VII (Couinaud)",
-        "obraId": "robbins",
-        "license": "citação"
       }
     ],
     "review": {
@@ -1159,7 +1138,7 @@
     "ids": {},
     "summary_pt": "A impressão gástrica do fígado é a depressão côncava, ampla e lisa, na face visceral do lobo esquerdo, produzida pelo contato com a face anterior do estômago e, na parte medial, com o omento menor. Situa-se à esquerda da fissura do ligamento venoso e da fissura do ligamento redondo e ocupa a maior parte da face visceral do lobo esquerdo, ao lado da impressão esofágica, onde o esôfago abdominal se aproxima do órgão. O peritônio visceral cobre a impressão e a separa do estômago, com o qual o fígado se relaciona por intermédio do ligamento hepatogástrico, parte do omento menor, em que correm as artérias gástricas direita e esquerda. A impressão varia com o grau de repleção gástrica, com o biotipo e com a posição do corpo, e nos exames de imagem ajuda a localizar o limite entre os dois órgãos. Do ponto de vista clínico, a relação íntima entre o lobo esquerdo e o estômago explica a extensão de tumores gástricos ao fígado e as aderências pós-inflamatórias ou pós-cirúrgicas entre os dois órgãos.",
     "anatomy": {
-      "relations": "Situa-se na face visceral do lobo esquerdo, em contato com a face anterior do estômago e o omento menor. Medialmente, vizinha da impressão esofágica; a fissura do ligamento venoso e a porta do fígado limitam-na posteriormente.",
+      "relations": "Situa-se na face visceral do lobo esquerdo, em contato com a face anterior do estômago e o omento menor. Posteriormente, a fissura do ligamento venoso a limita; a porta do fígado fica à direita, junto aos lobos quadrado e caudado.",
       "vascularization": "Suprida por ramos da artéria hepática esquerda e drenada pelas veias hepáticas, em continuidade com o parênquima do lobo esquerdo."
     },
     "clinical": [
@@ -1239,7 +1218,7 @@
   },
   "za:posterior-medial-segment-of-liver-viii": {
     "ids": {},
-    "summary_pt": "O segmento VIII de Couinaud é o segmento superior do setor anterior do lobo direito do fígado, situado sob o diafragma, na parte anterossuperior do hemifígado direito, acima do plano transversal da bifurcação da veia porta do fígado. É limitado medialmente pelo plano da veia hepática média, que o separa do segmento IV, lateral e posteriormente pela veia hepática direita, que o separa do segmento VII, e inferiormente pelo segmento V. Por sua posição alta e anterior, relaciona-se com o diafragma e, por meio dele, com o pulmão e o coração. O pedículo portal provém do ramo anterior do pedículo direito, que supre os segmentos V e VIII, e a drenagem venosa faz-se pela veia hepática média e pela direita. O limite com o segmento IV, dado pela veia hepática média, orienta as hepatectomias maiores. A identificação do segmento nos exames de imagem depende da referência às veias hepáticas e ao plano portal e é imprescindível para o planejamento terapêutico. Como os demais segmentos, tem vascularização arterial, portal e biliar independentes, o que permite sua ressecção anatômica.",
+    "summary_pt": "O segmento VIII de Couinaud é o segmento superior do setor anterior do lobo direito do fígado, situado sob o diafragma, na parte anterossuperior do hemifígado direito, acima do plano transversal da bifurcação da veia porta do fígado. É limitado medialmente pelo plano da veia hepática média, que o separa do segmento IV, lateral e posteriormente pela veia hepática direita, que o separa do segmento VII, e inferiormente pelo segmento V. Por sua posição alta e anterior, relaciona-se com o diafragma e, por meio dele, com o pulmão e o coração. O pedículo portal provém do ramo anterior do pedículo direito, que supre os segmentos V e VIII, e a drenagem venosa faz-se pela veia hepática média e pela direita. O limite com o segmento IV, dado pela veia hepática média, orienta as hepatectomias maiores. A identificação do segmento nos exames de imagem depende da referência às veias hepáticas e ao plano portal e é imprescindível para o planejamento terapêutico. Como os demais segmentos, tem vascularização arterial, portal e biliar independentes, o que permite sua ressecção anatômica. Nota: o nome do modelo 3D (\"posterior medial\") diverge de Couinaud; o segmento VIII é anterossuperior. A ficha segue o numeral.",
     "anatomy": {
       "relations": "Ocupa a parte anterossuperior do lobo direito, sob o diafragma. Limita-se com o segmento IV pelo plano da veia hepática média (plano de Cantlie), com o segmento VII pelo plano da veia hepática direita e com o segmento V, inferiormente, pelo plano portal transverso.",
       "vascularization": "Pedículo portal próprio, proveniente do ramo anterior do ramo direito da veia porta do fígado, com ramos da artéria hepática e do ducto biliar. Drenagem venosa pelas veias hepáticas média e direita.",
@@ -1248,7 +1227,7 @@
     },
     "clinical": [
       "Abscesso hepático do segmento VIII pode se propagar ao diafragma e ao espaço pleural, com derrame pleural direito.",
-      "Hepatectomia direita ou esquerda ampliada: a ressecção do segmento VIII depende da preservação da veia hepática média.",
+      "Hepatectomia direita ou esquerda ampliada: o plano da veia hepática média, que drena parte do segmento VIII, é referência para delimitar a ressecção.",
       "Planejamento cirúrgico: o reconhecimento do segmento VIII na tomografia e na ressonância, pelos planos das veias hepáticas e portais, define a extensão da ressecção."
     ],
     "sources": [
@@ -1334,13 +1313,6 @@
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento VIII (Couinaud)",
         "obraId": "moore",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento VIII (Couinaud)",
-        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -1448,13 +1420,6 @@
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento IV (Couinaud)",
         "obraId": "moore",
         "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento IV (Couinaud)",
-        "obraId": "robbins",
-        "license": "citação"
       }
     ],
     "review": {
@@ -1474,7 +1439,7 @@
     },
     "clinical": [
       "Segmentectomia lateral esquerda (segmentos II e III): ressecção anatômica para tumores do lobo esquerdo.",
-      "Transplante hepático com doador vivo pediátrico: o enxerto lateral esquerdo (II e III) é o mais usado, por sua independência vascular e biliar.",
+      "Transplante com doador vivo: o enxerto lateral esquerdo (segmentos II e III) é o mais usado, por seu tamanho adequado ao receptor pediátrico e por sua independência vascular e biliar.",
       "Lesões do segmento II podem comprometer o diafragma e, por contiguidade, o pericárdio."
     ],
     "sources": [
@@ -1561,13 +1526,6 @@
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento II (Couinaud)",
         "obraId": "moore",
         "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento II (Couinaud)",
-        "obraId": "robbins",
-        "license": "citação"
       }
     ],
     "review": {
@@ -1586,7 +1544,7 @@
       "lymph": "Linfonodos hepáticos do hilo e, em seguida, linfonodos celíacos."
     },
     "clinical": [
-      "Carcinoma da vesícula biliar: invade com frequência os segmentos IVb e V, e a ressecção desses segmentos faz parte do tratamento em casos selecionados.",
+      "Tumores hepáticos: a ressecção desses segmentos é descrita em casos selecionados.",
       "Colecistectomia: a proximidade da fossa da vesícula biliar expõe o segmento V a lesões do leito hepático.",
       "Ressecção do segmento V: realizada de forma isolada ou combinada, guiada pelos planos das veias hepáticas média e direita."
     ],
@@ -1673,13 +1631,6 @@
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento V (Couinaud)",
         "obraId": "moore",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento V (Couinaud)",
-        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -1808,7 +1759,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Pâncreas, tópico correlações clínicas de Pâncreas",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal e fígado, tópico Pancreatite e carcinoma pancreático",
         "obraId": "robbins",
         "license": "citação"
       },
@@ -1924,13 +1875,6 @@
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo caudado (segmento I)",
         "obraId": "moore",
         "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: lobo caudado (segmento I)",
-        "obraId": "robbins",
-        "license": "citação"
       }
     ],
     "review": {
@@ -2036,13 +1980,6 @@
         "type": "textbook",
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: segmento III (Couinaud)",
         "obraId": "moore",
-        "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: segmento III (Couinaud)",
-        "obraId": "robbins",
         "license": "citação"
       }
     ],
@@ -2150,13 +2087,6 @@
         "ref": "Clinically Oriented Anatomy, 8ª ed., capítulo Abdome, tópico Fígado: lobo quadrado",
         "obraId": "moore",
         "license": "citação"
-      },
-      {
-        "field": "clinical",
-        "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Fígado e vias biliares, tópico correlações clínicas de Fígado: lobo quadrado",
-        "obraId": "robbins",
-        "license": "citação"
       }
     ],
     "review": {
@@ -2236,7 +2166,7 @@
       {
         "field": "clinical",
         "type": "textbook",
-        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal, tópico correlações clínicas de Fígado: impressão cólica",
+        "ref": "Robbins & Cotran: Bases Patológicas das Doenças, 10ª ed., capítulo Trato gastrointestinal e fígado, tópico Neoplasias do colo (adenocarcinoma)",
         "obraId": "robbins",
         "license": "citação"
       }

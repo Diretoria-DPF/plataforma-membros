@@ -51,7 +51,7 @@ export function getStatusLabel(review, now = Date.now()) {
 
 const SIDE_LABEL = { l: 'Esquerdo', L: 'Esquerdo', r: 'Direito', R: 'Direito' };
 
-export function createInfoCard(container, { onAction = () => {}, tts = false } = {}) {
+export function createInfoCard(container, { onAction = () => {}, tts = false, isPinned = null } = {}) {
   const { h, setHtml, clear: clearEl, safeUrl } = window.LaiftDom;
 
   let currentEntry = null;
@@ -291,6 +291,31 @@ export function createInfoCard(container, { onAction = () => {}, tts = false } =
       ]);
       actionBar.appendChild(btn);
     });
+
+    // Onda 3.5 (C.1/C.2): fixar em "Meu estudo" e compartilhar o link da estrutura.
+    const note = h('span', { className: 'atlas-card-action-note', role: 'status', 'aria-live': 'polite' });
+    const pinBtn = h('button', {
+      className: 'atlas-card-action-btn atlas-card-pin', 'aria-pressed': 'false', 'aria-label': 'Fixar em Meu estudo', title: 'Fixar em Meu estudo',
+      onClick: async () => {
+        const pinned = await onAction({ action: 'pin', sid: entry.sid });
+        setPinned(!!pinned);
+      },
+    }, [h('span', { className: 'atlas-card-action-icon', 'aria-hidden': 'true', text: '☆' }), h('span', { className: 'atlas-card-action-label', text: 'Fixar' })]);
+    function setPinned(on) {
+      pinBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      pinBtn.setAttribute('aria-label', on ? 'Remover de Meu estudo' : 'Fixar em Meu estudo');
+      pinBtn.title = on ? 'Remover de Meu estudo' : 'Fixar em Meu estudo';
+      pinBtn.firstChild.textContent = on ? '★' : '☆';
+      pinBtn.lastChild.textContent = on ? 'Fixada' : 'Fixar';
+    }
+    if (typeof isPinned === 'function') Promise.resolve(isPinned(entry.sid)).then((on) => { if (on) setPinned(true); }).catch(() => {});
+    const shareBtn = h('button', {
+      className: 'atlas-card-action-btn atlas-card-share', 'aria-label': 'Compartilhar link', title: 'Compartilhar link',
+      onClick: async () => { const msg = await onAction({ action: 'share', sid: entry.sid }); if (msg) note.textContent = String(msg); },
+    }, [h('span', { className: 'atlas-card-action-icon', 'aria-hidden': 'true', text: '↗' }), h('span', { className: 'atlas-card-action-label', text: 'Compartilhar' })]);
+    actionBar.appendChild(pinBtn);
+    actionBar.appendChild(shareBtn);
+    actionBar.appendChild(note);
 
     return actionBar;
   }

@@ -285,3 +285,29 @@ export const AI_LIMITS = {
   PENDING_MAX: 50,            // casos na fila de moderação
   REPLY_MAX: 2000,            // fala do paciente / resposta do preceptor (o excesso é cortado)
 };
+
+// Onda 3.5 (A.2) — telemetria anônima do Atlas 3D (sql/014_atlas_telemetry.sql).
+// Cada evento só pode levar as chaves listadas aqui, com o tipo indicado
+// ('n' número, 's' texto curto, 'b' booleano); o resto é descartado.
+export const ATLAS_TELEMETRY = {
+  BATCH_MAX: 50,
+  SESSION_ID_RE: /^[A-Za-z0-9_-]{8,40}$/,
+  SID_RE: /^[A-Za-z0-9:_.-]{1,120}$/,
+  TEXT_MAX: 120,
+  RETENTION_DAYS: 90,
+  EVENTS: {
+    app_open: { mode: 's', viewport: 's', offline: 'b' },
+    structure_view: { source: 's' },
+    quiz_finish: { correct: 'n', total: 'n', system: 's' },
+    search: { len: 'n', results: 'n' },
+    error_js: { code: 's', message: 's' },
+    session_end: { durationS: 'n', views: 'n' },
+  },
+  STATS_DAYS: [7, 30],
+};
+
+Object.assign(RATE_LIMITS, {
+  // Um lote a cada 30 s por aba aberta, mais o envio ao fechar: 240/h por perfil.
+  ATLAS_TELEMETRY: { MAX_ATTEMPTS: 240, WINDOW_SECONDS: 3600 },
+  ATLAS_TELEMETRY_STATS: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+});

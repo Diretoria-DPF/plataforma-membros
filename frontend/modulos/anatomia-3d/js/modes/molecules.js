@@ -72,8 +72,8 @@ export function filterProteins(proteins, query) {
 export function createMoleculesMode({ bus, loadProteins, loadScript = createDefaultScriptLoader() }) {
   const MODES_LIST = MODES; // Re-export MODES para acesso local
 
-  // URLs do 3Dmol (mesmo de index.html)
-  const THREEDMOL_URL = 'https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js';
+  // 3Dmol 2.5.5 servido do próprio site (vendor/3dmol, sem CDN — Onda 3.5, D.1)
+  const THREEDMOL_URL = 'vendor/3dmol/3Dmol-min.js';
   const THREEDMOL_SRI = 'sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d';
 
   let proteins = [];

@@ -153,7 +153,9 @@ async function startApp(opts = {}) {
   // desligadas por padrão nos cenários e2e para não interceptarem cliques;
   // as suítes que testam essas telas passam `atlasFlags: {}` (padrão real)
   // ou as chaves que quiserem (js/core/flags.js lê window.__atlasFlags).
-  const atlasFlags = opts.atlasFlags !== undefined ? opts.atlasFlags : { onboarding: false, hints: false };
+  // O Service Worker (flag `offline`) fica desligado nos cenários: ele atenderia
+  // os arquivos do atlas antes das rotas dos testes. Só atlas-offline o liga.
+  const atlasFlags = Object.assign({ offline: false, quizSetup: false }, opts.atlasFlags !== undefined ? opts.atlasFlags : { onboarding: false, hints: false });
   await context.addInitScript((flags) => { window.__atlasFlags = flags; }, atlasFlags);
 
   await context.route('**/*', async (route) => {

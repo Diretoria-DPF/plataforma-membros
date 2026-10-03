@@ -16,6 +16,16 @@ import { fileURLToPath } from 'node:url';
 
 export const LOTES = Object.freeze({ 1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8, 9, 10] });
 export const MIN_PCT = 90;
+/** Lote de casos de quiz (Onda 3.5, B.1): mesmo checklist, itens por id de caso. */
+export const QUIZ_LOTE = '4a';
+
+const PERGUNTAS_QUIZ = [
+  'O enunciado é claro e a resposta é uma estrutura anatômica tocável.',
+  'A resposta marcada como correta está certa (anatomia e clínica).',
+  'Os distratores são plausíveis, mas estão errados para esse caso.',
+  'A explicação está correta e ajuda quem errou.',
+  'A terminologia está na Terminologia Anatômica, sem dose nem conduta.',
+];
 
 const PERGUNTAS = [
   'O resumo condiz com a estrutura (não a confunde com outra).',
@@ -31,14 +41,15 @@ const OPCOES = '[ ] Aprovar · [ ] Aprovar com ressalva · [ ] Reprovar';
  * @param {{lote: number, sistemas: string[], fichas: Array<{sid: string, nome: string}>, hash: string}} p
  * @returns {string} checklist em branco
  */
-export function buildChecklist({ lote, sistemas, fichas, hash }) {
+export function buildChecklist({ lote, sistemas, fichas, hash, tipo = 'fichas' }) {
+  const perguntas = tipo === 'quiz' ? PERGUNTAS_QUIZ : PERGUNTAS;
   const out = [
     `# Checklist de revisão — Lote ${lote} (${sistemas.join(', ')})`,
     '',
-    '<!-- Preencha o cabeçalho, marque [x] em uma opção por ficha e devolva este arquivo. Não mude os códigos entre crases. -->',
+    `<!-- Preencha o cabeçalho, marque [x] em uma opção por ${tipo === 'quiz' ? 'caso' : 'ficha'} e devolva este arquivo. Não mude os códigos entre crases. -->`,
     '',
     `- **Lote:** ${lote}`,
-    `- **Fichas:** ${fichas.length}`,
+    `- **${tipo === 'quiz' ? 'Casos' : 'Fichas'}:** ${fichas.length}`,
     `- **Conteúdo revisado (SHA-256):** ${hash}`,
     '- **Revisor:** ___',
     '- **Registro profissional:** ___',
@@ -46,13 +57,13 @@ export function buildChecklist({ lote, sistemas, fichas, hash }) {
     '',
     '## Aprovação em bloco (opcional)',
     '',
-    '- [ ] Li todas as fichas e aprovo todas as que não marquei como ressalva ou reprovação.',
+    tipo === 'quiz' ? '- [ ] Li todos os casos e aprovo todos os que não marquei como ressalva ou reprovação.' : '- [ ] Li todas as fichas e aprovo todas as que não marquei como ressalva ou reprovação.',
     '',
-    '## As 5 perguntas (valem para cada ficha)',
+    `## As 5 perguntas (valem para cada ${tipo === 'quiz' ? 'caso' : 'ficha'})`,
     '',
-    ...PERGUNTAS.map((q, i) => `${i + 1}. ${q}`),
+    ...perguntas.map((q, i) => `${i + 1}. ${q}`),
     '',
-    `Resultado do lote: aprovado com ${MIN_PCT}% ou mais das fichas aprovadas. Só as fichas aprovadas vão ao ar; as reprovadas são refeitas.`,
+    `Resultado do lote: aprovado com ${MIN_PCT}% ou mais ${tipo === 'quiz' ? 'dos casos aprovados' : 'das fichas aprovadas'}. Só ${tipo === 'quiz' ? 'os casos aprovados vão' : 'as fichas aprovadas vão'} ao ar; ${tipo === 'quiz' ? 'os reprovados são refeitos' : 'as reprovadas são refeitas'}.`,
     '',
     '## Fichas',
     '',
@@ -80,12 +91,13 @@ const filled = (v) => v.length >= 3 && !/^_+/.test(v);
  */
 export function parseChecklist(md) {
   const text = String(md || '');
-  const lote = Number(field(text, 'Lote')) || null;
+  const loteRaw = field(text, 'Lote');
+  const lote = loteRaw === QUIZ_LOTE ? QUIZ_LOTE : (Number(loteRaw) || null);
   const revisor = field(text, 'Revisor');
   const registro = field(text, 'Registro profissional');
   const data = field(text, 'Data');
   const hash = field(text, 'Conteúdo revisado \\(SHA-256\\)');
-  const bloco = /^\s*-\s*\[[xX]\]\s*Li todas as fichas e aprovo/m.test(text);
+  const bloco = /^\s*-\s*\[[xX]\]\s*Li tod[ao]s (as|os) (fichas|casos) e aprovo/m.test(text);
   const aprovadas = [];
   const ressalvas = [];
   const reprovadas = [];
@@ -116,7 +128,7 @@ export function parseChecklist(md) {
   const pct = total ? Math.floor((1000 * ok) / total) / 10 : 0;
   const header = filled(revisor) && filled(registro) && /^\d{4}-\d{2}-\d{2}$/.test(data);
   if (!header) problemas.push('cabeçalho incompleto (revisor, registro profissional e data AAAA-MM-DD)');
-  const signed = Boolean(lote && LOTES[lote] && header && total && pct >= MIN_PCT);
+  const signed = Boolean(lote && (LOTES[lote] || lote === QUIZ_LOTE) && header && total && pct >= MIN_PCT);
   const resultado = !signed ? (header && total && pct < MIN_PCT ? 'reprovado' : 'não assinado') : ressalvas.length || reprovadas.length ? 'aprovado com ressalvas' : 'aprovado';
   return {
     lote, hash, revisor, registro, data, bloco, total, aprovadas, ressalvas, reprovadas, naoMarcadas, problemas, pct, signed, resultado,

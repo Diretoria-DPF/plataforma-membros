@@ -16,20 +16,24 @@ describe('maintenance.runMaintenance', () => {
     const sql = makeSql();
     sql
       .mockResolvedValueOnce([1, 1, 1])  // ai_usage_log
+      .mockResolvedValueOnce([1, 1])     // atlas_telemetry
       .mockResolvedValueOnce([1])        // sessions
       .mockResolvedValueOnce([])         // account_tokens
       .mockResolvedValueOnce([1, 1]);    // rate_limit_buckets
     const res = await runMaintenance(sql, 'cid');
-    expect(res).toEqual({ aiUsageLog: 3, sessions: 1, accountTokens: 0, rateLimitBuckets: 2 });
+    expect(res).toEqual({ aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2 });
     expect(queryText(sql, 0)).toMatch(/DELETE FROM ai_usage_log/);
     expect(sql.mock.calls[0]).toContain(RETENTION.AI_USAGE_LOG_DAYS);
     expect(RETENTION.AI_USAGE_LOG_DAYS).toBe(180);
-    expect(queryText(sql, 1)).toMatch(/DELETE FROM sessions/);
-    expect(sql.mock.calls[1]).toContain(RETENTION.EXPIRED_SESSION_GRACE_DAYS);
-    expect(queryText(sql, 2)).toMatch(/DELETE FROM account_tokens/);
-    expect(sql.mock.calls[2]).toContain(RETENTION.EXPIRED_TOKEN_GRACE_DAYS);
-    expect(queryText(sql, 3)).toMatch(/DELETE FROM rate_limit_buckets/);
-    expect(sql.mock.calls[3]).toContain(RETENTION.RATE_LIMIT_BUCKET_MAX_AGE_DAYS);
+    expect(queryText(sql, 1)).toMatch(/DELETE FROM atlas_telemetry/);
+    expect(sql.mock.calls[1]).toContain(RETENTION.ATLAS_TELEMETRY_DAYS);
+    expect(RETENTION.ATLAS_TELEMETRY_DAYS).toBe(90);
+    expect(queryText(sql, 2)).toMatch(/DELETE FROM sessions/);
+    expect(sql.mock.calls[2]).toContain(RETENTION.EXPIRED_SESSION_GRACE_DAYS);
+    expect(queryText(sql, 3)).toMatch(/DELETE FROM account_tokens/);
+    expect(sql.mock.calls[3]).toContain(RETENTION.EXPIRED_TOKEN_GRACE_DAYS);
+    expect(queryText(sql, 4)).toMatch(/DELETE FROM rate_limit_buckets/);
+    expect(sql.mock.calls[4]).toContain(RETENTION.RATE_LIMIT_BUCKET_MAX_AGE_DAYS);
     // A folga dos baldes precisa ser maior que a maior janela de rate limit (7 dias).
     expect(RETENTION.RATE_LIMIT_BUCKET_MAX_AGE_DAYS).toBeGreaterThan(7);
   });
@@ -46,11 +50,12 @@ describe('maintenance.runMaintenance', () => {
     sql
       .mockRejectedValueOnce(new Error('relation "ai_usage_log" does not exist'))
       .mockResolvedValueOnce(undefined)  // logError do ai_usage_log
+      .mockResolvedValueOnce([])         // atlas_telemetry
       .mockResolvedValueOnce([1])        // sessions
       .mockResolvedValueOnce([1])        // account_tokens
       .mockResolvedValueOnce([]);        // rate_limit_buckets
     const res = await runMaintenance(sql, 'cid');
-    expect(res).toEqual({ aiUsageLog: null, sessions: 1, accountTokens: 1, rateLimitBuckets: 0 });
+    expect(res).toEqual({ aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0 });
     expect(queryText(sql, 1)).toMatch(/error_logs/);
   });
 });
@@ -64,6 +69,6 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     await worker.scheduled({ cron: '17 6 * * *' }, makeEnv(), { waitUntil: (p) => pending.push(p) });
     expect(pending).toHaveLength(1);
     await pending[0];
-    expect(sql).toHaveBeenCalledTimes(4);
+    expect(sql).toHaveBeenCalledTimes(5);
   });
 });

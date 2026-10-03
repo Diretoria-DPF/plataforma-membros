@@ -45,7 +45,10 @@ import { createOnboarding, shouldShowOnboarding, isDeepLink, wasDismissedThisTab
 import { createHints } from './ui/hints.js';
 import { createSlowDeviceWatcher, classifyDevice } from './ui/slow-device.js';
 import { createReviewStatus, SEARCH_BOOST } from './ui/review-status.js';
-import { mountNewReviewedChip, reviewedProgress } from './ui/discovery.js';
+import { mountNewReviewedChip, reviewedProgress, mountContinueChip } from './ui/discovery.js';
+import { lastStudiedSid } from './modes/study-io.js';
+import { registerOffline } from './core/offline.js';
+import { createTelemetry } from './core/telemetry.js';
 
 const params = new URLSearchParams(location.search);
 const USE_FIXTURES = params.get('fixtures') === '1';
@@ -493,9 +496,24 @@ async function boot() {
     const side = SIDE_PT[entry.side];
     return side && !/(esquerd|direit)/i.test(base) ? `${base} (${side})` : base;
   }
+  // C.2: link da estrutura = página da plataforma + #atlas=<sid> (app.js abre o módulo e repassa o sid).
+  async function shareStructure(sid) {
+    const url = `${new URL('../../', window.location.href).href}#atlas=${sid}`;
+    const title = `Atlas 3D: ${labelFor(sid)}`;
+    try {
+      if (typeof navigator.share === 'function' && isMobileViewport()) { await navigator.share({ title, url }); return 'Compartilhado.'; }
+    } catch (e) { if (e && e.name === 'AbortError') return ''; }
+    try { await navigator.clipboard.writeText(url); return 'Link copiado.'; } catch (e) { return `Copie o link: ${url}`; }
+  }
   // ---- Ficha (infocard) — inspetor (tablet/desktop) e painel (celular) ----
   const infocard = createInfoCard(getSlot('inspector') || document.getElementById('atlas-inspector'), {
+    isPinned: async (sid) => {
+      const st = await studyStorePromise;
+      return !!st && (await st.listPins()).some((p) => p.sid === sid);
+    },
     onAction: ({ action, sid }) => {
+      if (action === 'pin') return studyStorePromise.then((st) => (st ? st.togglePin({ sid, label: labelFor(sid) }) : false));
+      if (action === 'share') return shareStructure(sid);
       if (action === 'isolate') emit(EVENTS.VISIBILITY_ISOLATE, { sid });
       if (action === 'hide') emit(EVENTS.VISIBILITY_HIDE, { sid });
       if (action === 'ghost') emit(EVENTS.VISIBILITY_GHOST, { sid });
@@ -953,7 +971,7 @@ async function boot() {
       import('./modes/quiz.js'),
       fetchJson(`${CONTENT_BASE}sid-aliases.json`).catch(() => ({})),
     ]).then(([m, aliases]) => m.createQuizMode({
-      bus, store: storeApi, getLabel: labelFor,
+      bus, store: storeApi, getLabel: labelFor, setup: ATLAS_FLAGS.quizSetup, search: location.search,
       loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`),
       resolveSid: (sid) => (aliases && aliases[sid]) || sid,
       systemOf: (sid) => {
@@ -1032,6 +1050,7 @@ async function boot() {
       return m.createStudyMode({
         bus, store: studyStore, getLabel: labelFor, recordOwnHistory: false,
         getReviewed: async () => reviewedProgress(await studyStore.listHistory({ limit: 500 }), reviewStatus.statusOf, reviewStatus.counts.r),
+        getNovidades: () => fetchJson(`${CONTENT_BASE}novidades.json`),
       });
     }),
   };
@@ -1176,6 +1195,18 @@ async function boot() {
     offerAction(name ? `Continuar de onde parou? (${name})` : 'Continuar de onde parou?', 'Continuar',
       () => { resumeSession(savedSession); }, 10000);
   }
+  // A.3: além do aviso de 10 s, um chip fixo na barra enquanto nada foi aberto.
+  (async () => {
+    const hist = await studyStorePromise.then((st) => (st ? st.listHistory({ limit: 50 }) : [])).catch(() => []);
+    const sid = (savedSession && savedSession.selectedSid) || lastStudiedSid(hist, (x) => !!contentStore.getEntry(x));
+    if (!sid || storeGet().selectedSid) return;
+    const chip = mountContinueChip({
+      host: document.getElementById('atlas-toolbar'),
+      label: labelFor(sid),
+      onContinue: () => { if (savedSession && savedSession.selectedSid === sid) resumeSession(savedSession); else { emit(EVENTS.STRUCTURE_SELECT, { sid, source: 'resume' }); revealAndFocus(sid, { focus: true }); } },
+    });
+    const off = on(EVENTS.STRUCTURE_SELECT, ({ sid: s }) => { if (s) { chip.dismiss(); off(); } });
+  })();
 
   // ---- Botão Voltar do celular (Android) ----
   // Cada "abertura" (ficha selecionada, painel em tela cheia) ganha uma
@@ -1236,6 +1267,8 @@ async function boot() {
   // altera nada no motor; `getStats()` já existe em js/engine/renderer.js.
   window.__atlasPerf = Object.freeze({ getStats: () => rendererApi.getStats() });
   emit('atlas:ready', {});
+  registerOffline(ATLAS_FLAGS);
+  createTelemetry({ bus, api: window.LaiftApi, flags: ATLAS_FLAGS, getMode: () => storeApi.get().mode });
 }
 
 // `type="module"` já executa depois do parsing do DOM (como `defer`), então

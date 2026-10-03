@@ -4,6 +4,7 @@
 > - O lote é aprovado com 90% ou mais, e só as fichas aprovadas vão ao ar.
 > - Lotes: 1 = Cardiovascular, Nervoso e Respiratório (104); 2 = Digestório, Urinário e Endócrino (60); 3 = Linfático, Esquelético, Muscular e Articular (136).
 > - Cada lote assinado entra num merge próprio, com autorização do usuário.
+> - **Onda 3.5 (03/10/2026):** offline, telemetria anônima, "Continuar", exportar/importar progresso, favoritos, compartilhar, quiz com filtros e sorteio, atlas sem CDN, conselho plural e "O que mudou" (ver `docs/atlas-conteudo/CHANGELOG.md`). Quiz: 50 casos novos (lote 4a) aguardam o conselho.
 > - Detalhes em `docs/atlas-conteudo/guia-revisao.md`; fora do escopo, em `docs/atlas-backlog.md`. As seções abaixo da v3.0 valem no que não conflitam.
 
 > Versão atual, sem histórico. As decisões, as situações passadas e as respostas às revisões ficam em [ATLAS_ONDA_3_HISTORICO.md](ATLAS_ONDA_3_HISTORICO.md).

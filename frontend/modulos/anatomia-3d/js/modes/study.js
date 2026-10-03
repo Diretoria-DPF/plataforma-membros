@@ -6,6 +6,8 @@
  */
 
 import { EVENTS } from '../core/bus.js';
+import { ATLAS_FLAGS } from '../core/flags.js';
+import { buildExport, validateImport, planMerge, summarize, studyStats } from './study-io.js';
 
 // CSS para impressão de PDF
 const DOSSIE_CSS = `
@@ -102,7 +104,7 @@ export function attachRecorder(bus, studyStore) {
 /**
  * Cria o modo "Meu estudo" (estudo).
  */
-export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHistory = true, getReviewed = null } = {}) {
+export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHistory = true, getReviewed = null, getNovidades = null } = {}) {
   let unsubscribeRecorder = null;
 
   // Estado local
@@ -147,6 +149,40 @@ export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHis
           root.insertBefore(card, root.firstChild);
         }).catch(() => {});
       }
+
+      // D.3 (Onda 3.5): "O que mudou" — notas de cada versão (data/atlas/novidades.json).
+      if (typeof getNovidades === 'function') {
+        Promise.resolve(getNovidades()).then((nov) => {
+          const itens = nov && Array.isArray(nov.itens) ? nov.itens.slice(0, 5) : [];
+          if (!itens.length) return;
+          const box = h('details', { className: 'study-changelog', style: { padding: '0.5rem 0.75rem', border: '1px solid var(--laift-border)', borderRadius: '6px', margin: '0 0 0.75rem' } }, [
+            h('summary', { style: { fontWeight: '600', cursor: 'pointer', minHeight: '44px', display: 'flex', alignItems: 'center' }, text: 'O que mudou' }),
+            ...itens.map((it) => h('div', { style: { margin: '0.5rem 0' } }, [
+              h('div', { style: { fontWeight: '600' }, text: `${String(it.data || '').split('-').reverse().join('/')} — ${it.titulo || ''}` }),
+              h('ul', { style: { margin: '0.25rem 0 0 1.25rem', fontSize: '0.875rem' } }, (it.notas || []).map((n) => h('li', { text: String(n) }))),
+            ])),
+          ]);
+          root.appendChild(box);
+        }).catch(() => {});
+      }
+
+      // C.3 (Onda 3.5): números do estudo, só do histórico guardado neste aparelho.
+      studyStore.listHistory().then((hist) => {
+        const st = studyStats(hist);
+        const item = (n, label) => h('div', { style: { textAlign: 'center', flex: '1' } }, [
+          h('div', { className: 'study-stat-n', style: { fontSize: '1.4rem', fontWeight: '700' }, text: String(n) }),
+          h('div', { style: { fontSize: '0.78rem', color: 'var(--laift-muted)' }, text: label }),
+        ]);
+        const card = h('section', { className: 'study-stats', 'aria-label': 'Seu estudo', style: { padding: '0.75rem', border: '1px solid var(--laift-border)', borderRadius: '6px', margin: '0 0 0.75rem' } }, [
+          h('div', { style: { fontWeight: '600', marginBottom: '0.5rem' }, text: 'Seu estudo' }),
+          h('div', { style: { display: 'flex', gap: '0.5rem' } }, [
+            item(st.structures, st.structures === 1 ? 'estrutura vista' : 'estruturas vistas'),
+            item(st.quizzes, st.quizzes === 1 ? 'quiz feito' : 'quizzes feitos'),
+            item(st.streak, st.streak === 1 ? 'dia seguido' : 'dias seguidos'),
+          ]),
+        ]);
+        root.insertBefore(card, root.firstChild);
+      }).catch(() => {});
 
       // Aba de navegação
       const tabBar = h('div', { className: 'study-tabs', style: { display: 'flex', borderBottom: '1px solid var(--laift-border)' } }, [
@@ -194,6 +230,51 @@ export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHis
         },
       });
       root.appendChild(exportBtn);
+
+      // A.3 (Onda 3.5): levar o progresso para outro aparelho (arquivo JSON do aluno).
+      const ioMsg = h('p', { className: 'study-io-msg', role: 'status', 'aria-live': 'polite', style: { fontSize: '0.875rem', margin: '0.5rem 0 0' } });
+      const ioBtnStyle = { flex: '1', minHeight: '44px', padding: '0.5rem', background: 'var(--laift-surface)', color: 'var(--laift-text)', border: '1px solid var(--laift-border)', borderRadius: '4px', cursor: 'pointer' };
+      const snapshot = async () => ({ history: await studyStore.listHistory(), pins: await studyStore.listPins(), notes: await studyStore.listNotes() });
+      const fileInput = h('input', { type: 'file', accept: 'application/json,.json', className: 'study-io-file', 'aria-label': 'Escolher arquivo de progresso', style: { display: 'none' } });
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files && fileInput.files[0];
+        fileInput.value = '';
+        if (!file) return;
+        try {
+          const parsed = validateImport(JSON.parse(await file.text()));
+          if (!parsed.ok) { ioMsg.textContent = parsed.error; return; }
+          const plan = planMerge(await snapshot(), parsed.data);
+          for (const e of plan.history) await studyStore.addHistory(e);
+          for (const p of plan.pins) await studyStore.putPin(p);
+          for (const n of plan.notes) await studyStore.putNote(n);
+          ioMsg.textContent = summarize(plan);
+          if (typeof updateContent === 'function') await updateContent();
+        } catch (err) {
+          ioMsg.textContent = 'Não consegui ler esse arquivo.';
+        }
+      });
+      const ioRow = h('div', { className: 'study-io', style: { display: 'flex', gap: '0.5rem', marginTop: '0.5rem' } }, [
+        h('button', {
+          type: 'button', className: 'study-io-export', text: 'Exportar progresso (JSON)', style: ioBtnStyle,
+          onClick: async () => {
+            const blob = new Blob([JSON.stringify(buildExport(await snapshot()), null, 1)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = h('a', { href: url, download: `atlas-progresso-${new Date().toISOString().slice(0, 10)}.json` });
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            ioMsg.textContent = 'Progresso exportado.';
+          },
+        }),
+        h('button', { type: 'button', className: 'study-io-import', text: 'Importar', style: ioBtnStyle, onClick: () => fileInput.click() }),
+        fileInput,
+      ]);
+      root.appendChild(ioRow);
+      root.appendChild(ioMsg);
+      if (ATLAS_FLAGS.telemetry) {
+        root.appendChild(h('p', { className: 'study-privacy', text: 'O atlas conta usos de forma anônima (sem nome, e-mail nem o texto das buscas) para melhorar o conteúdo.', style: { fontSize: '0.8125rem', margin: '0.75rem 0 0', opacity: '0.85' } }));
+      }
 
       // Aviso de persistência
       if (!studyStore.isPersistent()) {
@@ -288,13 +369,13 @@ export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHis
           const item = h('div', {
             style: { padding: '0.75rem', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
           }, [
-            h('div', [
-              h('div', { style: { fontWeight: '500' }, text: escapeHtml(pin.label) }),
+            h('div', {}, [
+              h('div', { style: { fontWeight: '500' }, text: pin.label }),
               h('div', { style: { fontSize: '0.75rem', color: 'var(--laift-muted)' }, text: pin.sid }),
             ]),
             h('button', {
-              text: '✕',
-              style: { background: '#ff4444', color: 'white', border: 'none', borderRadius: '4px', padding: '0.25rem 0.5rem', cursor: 'pointer' },
+              text: '✕', 'aria-label': `Remover ${pin.label} dos fixados`, title: 'Remover dos fixados',
+              style: { background: '#b91c1c', color: 'white', border: 'none', borderRadius: '4px', padding: '0.25rem 0.5rem', minWidth: '44px', minHeight: '44px', cursor: 'pointer' },
               onClick: async () => {
                 await studyStore.togglePin({ sid: pin.sid, label: pin.label });
                 await updateContent();
@@ -315,7 +396,7 @@ export function createStudyMode({ bus, store: studyStore, getLabel, recordOwnHis
         for (const pin of pins) {
           const noteText = await studyStore.getNote(pin.sid);
           const noteSection = h('div', { style: { padding: '0.75rem', borderBottom: '1px solid #eee' } }, [
-            h('div', { style: { fontWeight: '500', marginBottom: '0.5rem' }, text: escapeHtml(pin.label) }),
+            h('div', { style: { fontWeight: '500', marginBottom: '0.5rem' }, text: pin.label }),
             h('textarea', {
               value: noteText || '',
               style: { width: '100%', padding: '0.5rem', border: '1px solid var(--laift-border)', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.875rem' },

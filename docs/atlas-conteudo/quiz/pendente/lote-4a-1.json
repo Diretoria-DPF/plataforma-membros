@@ -1,0 +1,225 @@
+[
+  {
+    "id": "q4a-cardio-01",
+    "system": "cardiovascular",
+    "difficulty": "facil",
+    "prompt_pt": "Mulher de 58 anos, hipertensa de longa data e mal controlada, apresenta ao ecocardiograma espessamento concêntrico da parede de uma câmara cardíaca. Essa câmara precisa vencer a pressão elevada da circulação sistêmica a cada sístole. Aponte no modelo 3D a câmara que sofreu a hipertrofia.",
+    "correctSid": "za:left-ventricle",
+    "correctSids": [
+      "za:left-ventricle",
+      "za:vh-m-heart-left-ventricle",
+      "za:vh-f-left-ventricle"
+    ],
+    "distractorSids": [
+      "za:right-ventricle",
+      "za:left-atrium",
+      "za:right-atrium"
+    ],
+    "explanation_pt": "O ventrículo esquerdo ejeta o sangue na aorta contra a resistência vascular sistêmica, por isso hipertrofia na hipertensão arterial crônica. O ventrículo direito trabalha contra a baixa pressão pulmonar, e os átrios são câmaras de recepção com parede fina, sem essa sobrecarga de pressão.",
+    "anchors": [
+      {
+        "sid": "za:left-ventricle"
+      }
+    ]
+  },
+  {
+    "id": "q4a-cardio-02",
+    "system": "cardiovascular",
+    "difficulty": "facil",
+    "prompt_pt": "Mulher de 35 anos, com antecedente de febre reumática na infância, tem dispneia aos esforços e sopro diastólico em ruflar no foco apical. O ecocardiograma mostra átrio esquerdo dilatado e uma valva com abertura restrita. Aponte no modelo 3D a valva acometida.",
+    "correctSid": "za:vh-m-mitral-valve",
+    "correctSids": [
+      "za:vh-m-mitral-valve",
+      "za:vh-f-mitral-valve",
+      "za:posterior-leaflet-of-left-atrioventricular-valve"
+    ],
+    "distractorSids": [
+      "za:vh-m-tricuspid-valve",
+      "za:vh-m-aortic-valve",
+      "za:vh-m-pulmonary-valve"
+    ],
+    "explanation_pt": "A valva mitral (atrioventricular esquerda) separa o átrio esquerdo do ventrículo esquerdo; a estenose dificulta o esvaziamento do átrio, que se dilata. A valva tricúspide fica entre as câmaras direitas, e as valvas da aorta e do tronco pulmonar são semilunares, situadas na saída dos ventrículos.",
+    "anchors": [
+      {
+        "sid": "za:vh-m-mitral-valve"
+      }
+    ]
+  },
+  {
+    "id": "q4a-cardio-03",
+    "system": "cardiovascular",
+    "difficulty": "medio",
+    "prompt_pt": "Recém-nascido apresenta sopro holossistólico áspero na borda esternal esquerda inferior. O ecocardiograma revela comunicação anormal entre as duas câmaras de maior pressão, com desvio de sangue da esquerda para a direita. Aponte no modelo 3D a estrutura onde está o defeito.",
+    "correctSid": "za:vh-m-interventricular-septum",
+    "correctSids": [
+      "za:vh-m-interventricular-septum",
+      "za:vh-f-interventricular-septum"
+    ],
+    "distractorSids": [
+      "za:left-atrium",
+      "za:right-atrium",
+      "za:right-ventricle"
+    ],
+    "explanation_pt": "O septo interventricular separa os ventrículos esquerdo e direito; um defeito nele (comunicação interventricular) permite o shunt do ventrículo esquerdo, de maior pressão, para o direito durante a sístole. Os átrios são separados pelo septo interatrial, e o ventrículo direito é uma das câmaras comunicadas, não a estrutura que as separa.",
+    "anchors": [
+      {
+        "sid": "za:vh-m-interventricular-septum"
+      }
+    ]
+  },
+  {
+    "id": "q4a-cardio-04",
+    "system": "cardiovascular",
+    "difficulty": "medio",
+    "prompt_pt": "Homem de 62 anos, no pós-operatório de cirurgia ortopédica, tem dispneia súbita e dor torácica pleurítica. A angiotomografia mostra êmbolo em um vaso que sai do ventrículo direito e se divide em artérias pulmonares direita e esquerda. Aponte no modelo 3D esse vaso.",
+    "correctSid": "za:pulmonary-trunk",
+    "correctSids": [
+      "za:pulmonary-trunk"
+    ],
+    "distractorSids": [
+      "za:right-ventricle",
+      "za:left-atrium",
+      "za:left-ventricle"
+    ],
+    "explanation_pt": "O tronco pulmonar nasce do ventrículo direito e se bifurca nas artérias pulmonares, levando sangue pouco oxigenado aos pulmões, onde o êmbolo se aloja. O ventrículo direito é a câmara de origem, não o vaso; o átrio e o ventrículo esquerdos recebem e ejetam sangue já oxigenado.",
+    "anchors": [
+      {
+        "sid": "za:pulmonary-trunk"
+      }
+    ]
+  },
+  {
+    "id": "q4a-cardio-05",
+    "system": "cardiovascular",
+    "difficulty": "dificil",
+    "prompt_pt": "Em um ecocardiograma transesofágico em eixo curto da valva da aorta, o examinador identifica três cúspides em formato de trevo. Duas delas ficam abaixo dos óstios das artérias coronárias; a terceira, voltada para o septo interatrial, não dá origem a nenhuma coronária. Aponte no modelo 3D essa cúspide.",
+    "correctSid": "za:non-coronary-leaflet",
+    "correctSids": [
+      "za:non-coronary-leaflet"
+    ],
+    "distractorSids": [
+      "za:right-coronary-leaflet",
+      "za:left-coronary-leaflet",
+      "za:anterior-semilunar-leaflet-of-pulmonary-valve"
+    ],
+    "explanation_pt": "A cúspide não coronária (posterior) da valva da aorta é a que não se associa a um óstio coronário; as cúspides coronárias direita e esquerda ficam sob a origem das respectivas artérias coronárias. A válvula semilunar anterior pertence à valva do tronco pulmonar, que não dá origem a artérias coronárias.",
+    "anchors": [
+      {
+        "sid": "za:non-coronary-leaflet"
+      }
+    ]
+  },
+  {
+    "id": "q4a-nervoso-01",
+    "system": "nervoso",
+    "difficulty": "facil",
+    "prompt_pt": "Homem destro de 67 anos sofre AVC isquêmico no território da artéria cerebral média direita e fica com fraqueza intensa do braço e da face esquerdos, com menor comprometimento da perna. Aponte no modelo 3D o giro do córtex motor primário lesado, no hemisfério direito.",
+    "correctSid": "za:precentral-gyrus-r",
+    "correctSids": [
+      "za:precentral-gyrus-r",
+      "za:allen-primary-motor-cortex-r"
+    ],
+    "distractorSids": [
+      "za:postcentral-gyrus-r",
+      "za:superior-frontal-gyrus-r",
+      "za:middle-frontal-gyrus-r"
+    ],
+    "explanation_pt": "O giro pré-central contém o córtex motor primário, e as vias motoras cruzam, de modo que a lesão à direita causa déficit à esquerda; a região do braço e da face fica na convexidade lateral, irrigada pela artéria cerebral média. O giro pós-central é sensitivo, e os giros frontais superior e médio são áreas de planejamento motor e funções executivas, não o córtex motor primário.",
+    "anchors": [
+      {
+        "sid": "za:precentral-gyrus-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-nervoso-02",
+    "system": "nervoso",
+    "difficulty": "facil",
+    "prompt_pt": "Mulher de 48 anos apresenta febre persistente, intolerância ao calor, sede excessiva e alteração do ciclo sono-vigília após um tumor selar com extensão superior. A estrutura diencefálica comprometida integra termorregulação, equilíbrio hídrico e controle da hipófise. Aponte-a no modelo 3D.",
+    "correctSid": "za:hypothalamus",
+    "correctSids": [
+      "za:hypothalamus",
+      "za:allen-hypothalamus-l",
+      "za:allen-hypothalamus-r"
+    ],
+    "distractorSids": [
+      "za:thalamus-r",
+      "za:medulla-oblongata-r",
+      "za:corpus-callosum"
+    ],
+    "explanation_pt": "O hipotálamo regula a temperatura corporal, a sede, o ritmo circadiano e a função da hipófise. O tálamo retransmite informações sensitivas ao córtex, a medula oblonga controla funções cardiorrespiratórias e o corpo caloso conecta os hemisférios cerebrais.",
+    "anchors": [
+      {
+        "sid": "za:hypothalamus"
+      }
+    ]
+  },
+  {
+    "id": "q4a-nervoso-03",
+    "system": "nervoso",
+    "difficulty": "medio",
+    "prompt_pt": "Criança não vacinada apresenta, após quadro febril, paralisia flácida assimétrica da perna esquerda, com arreflexia e atrofia muscular, sem perda de sensibilidade. O vírus destrói os corpos celulares dos neurônios motores inferiores na medula espinal. Aponte no modelo 3D a região da medula onde eles se localizam.",
+    "correctSid": "za:anterior-horn-of-spinal-cord",
+    "correctSids": [
+      "za:anterior-horn-of-spinal-cord"
+    ],
+    "distractorSids": [
+      "za:posterior-horn-of-spinal-cord",
+      "za:white-matter-of-spinal-cord",
+      "za:spinal-dura"
+    ],
+    "explanation_pt": "O corno anterior da substância cinzenta abriga os corpos dos neurônios motores alfa, cuja destruição causa paralisia flácida com arreflexia e atrofia. O corno posterior recebe aferências sensitivas, preservadas no caso; a substância branca contém os tratos, e a dura-máter espinal é uma meninge, sem neurônios.",
+    "anchors": [
+      {
+        "sid": "za:anterior-horn-of-spinal-cord"
+      }
+    ]
+  },
+  {
+    "id": "q4a-nervoso-04",
+    "system": "nervoso",
+    "difficulty": "medio",
+    "prompt_pt": "Um paciente com epilepsia refratária foi submetido à secção da principal comissura entre os hemisférios cerebrais. Depois, com os olhos vendados, ele usa corretamente um objeto colocado na mão esquerda, mas não consegue nomeá-lo. Aponte no modelo 3D a estrutura seccionada.",
+    "correctSid": "za:corpus-callosum",
+    "correctSids": [
+      "za:corpus-callosum",
+      "za:allen-corpus-callosum-l",
+      "za:allen-corpus-callosum-r"
+    ],
+    "distractorSids": [
+      "za:lateral-ventricle-r",
+      "za:septum-pellucidum",
+      "za:thalamus-r"
+    ],
+    "explanation_pt": "O corpo caloso é a maior comissura inter-hemisférica; sem ele, a informação tátil da mão esquerda, processada no hemisfério direito, não alcança as áreas da linguagem do hemisfério esquerdo. O ventrículo lateral e o septo pelúcido ficam logo abaixo dele, mas não conectam os hemisférios, e o tálamo é uma massa de substância cinzenta diencefálica.",
+    "anchors": [
+      {
+        "sid": "za:corpus-callosum"
+      }
+    ]
+  },
+  {
+    "id": "q4a-nervoso-05",
+    "system": "nervoso",
+    "difficulty": "dificil",
+    "prompt_pt": "Homem destro de 60 anos, após AVC no hemisfério esquerdo, compreende bem o que lhe dizem, mas fala com esforço, em frases curtas e telegráficas, sem paralisia da língua. Aponte no modelo 3D as partes do giro frontal inferior esquerdo que formam a área motora da fala.",
+    "correctSid": "za:opercular-part-of-inferior-frontal-gyrus-l",
+    "correctSids": [
+      "za:opercular-part-of-inferior-frontal-gyrus-l",
+      "za:triangular-part-of-inferior-frontal-gyrus-l",
+      "za:allen-inferior-frontal-gyrus-opercular-part-l",
+      "za:allen-inferior-frontal-gyrus-triangular-part-l"
+    ],
+    "distractorSids": [
+      "za:superior-temporal-gyrus-lateral-part-l",
+      "za:angular-gyrus-l",
+      "za:supramarginal-gyrus-l"
+    ],
+    "explanation_pt": "A área de Broca corresponde às partes opercular e triangular do giro frontal inferior do hemisfério dominante, em geral o esquerdo; sua lesão causa afasia não fluente com compreensão preservada. O giro temporal superior posterior (área de Wernicke) está ligado à compreensão, e os giros angular e supramarginal participam da leitura e da integração parietal da linguagem.",
+    "anchors": [
+      {
+        "sid": "za:opercular-part-of-inferior-frontal-gyrus-l"
+      }
+    ]
+  }
+]

@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { buildChecklist, parseChecklist } from './checklist-lote.mjs';
 import { checkCuratedSigned } from './check-curated-signed.mjs';
 import { leiaMe } from './pacote-lote.mjs';
@@ -110,4 +111,32 @@ test('LEIA-ME tem as 10 instruções com prazo e regra dos 90%', () => {
   assert.equal(t.split('\n').filter((l) => /^\d+\. /.test(l)).length, 10);
   assert.match(t, /3 dias/);
   assert.match(t, /90%/);
+});
+
+test('lote de quiz (4a): checklist por caso e trava de quiz-cases.json', async () => {
+  const { buildChecklist: build, parseChecklist: parse, QUIZ_LOTE } = await import('./checklist-lote.mjs');
+  const casos = Array.from({ length: 10 }, (_, i) => ({ sid: `q4a-x-0${i}`, nome: `Caso ${i}` }));
+  let md = build({ lote: QUIZ_LOTE, sistemas: ['Quiz'], fichas: casos, hash: 'h', tipo: 'quiz' });
+  assert.match(md, /Li todos os casos/);
+  assert.equal(parse(md).lote, '4a');
+  assert.equal(parse(md).signed, false);
+  md = md.replace('- **Revisor:** ___', '- **Revisor:** Dr. Caio Souza').replace('- **Registro profissional:** ___', '- **Registro profissional:** CRM 1').replace('- **Data:** AAAA-MM-DD', '- **Data:** 2026-10-06')
+    .replace('- [ ] Li todos os casos', '- [x] Li todos os casos');
+  md = mark(md, 'q4a-x-03', 'Reprovar', 'resposta errada');
+  const r = parse(md);
+  assert.equal(r.signed, true);
+  assert.ok(!r.approvedSids.includes('q4a-x-03') && r.approvedSids.length === 9);
+
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-quiz-'));
+  const data = path.join(tmp, 'frontend/modulos/anatomia-3d/data/atlas');
+  fs.mkdirSync(data, { recursive: true });
+  fs.mkdirSync(path.join(tmp, 'docs/atlas-conteudo'), { recursive: true });
+  const base = JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '../../modulos/anatomia-3d/data/atlas/quiz-cases.json'), 'utf8'));
+  fs.writeFileSync(path.join(data, 'quiz-cases.json'), JSON.stringify([...base, { id: 'q4a-x-00' }, { id: 'q4a-x-03' }]));
+  assert.equal(checkCuratedSigned({ root: tmp }).errors.length, 2, 'sem checklist: os dois casos novos travam');
+  fs.writeFileSync(path.join(tmp, 'docs/atlas-conteudo/revisao-lote-4a.md'), md);
+  const res = checkCuratedSigned({ root: tmp });
+  assert.equal(res.errors.length, 1);
+  assert.match(res.errors[0], /q4a-x-03/);
+  fs.rmSync(tmp, { recursive: true, force: true });
 });
