@@ -956,7 +956,7 @@ async function boot() {
       import('./modes/quiz.js'),
       fetchJson(`${CONTENT_BASE}sid-aliases.json`).catch(() => ({})),
     ]).then(([m, aliases]) => m.createQuizMode({
-      bus, store: storeApi, getLabel: labelFor,
+      bus, store: storeApi, getLabel: labelFor, setup: ATLAS_FLAGS.quizSetup, search: location.search,
       loadCases: () => fetchJson(`${CONTENT_BASE}quiz-cases.json`),
       resolveSid: (sid) => (aliases && aliases[sid]) || sid,
       systemOf: (sid) => {

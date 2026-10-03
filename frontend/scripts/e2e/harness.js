@@ -155,7 +155,7 @@ async function startApp(opts = {}) {
   // ou as chaves que quiserem (js/core/flags.js lê window.__atlasFlags).
   // O Service Worker (flag `offline`) fica desligado nos cenários: ele atenderia
   // os arquivos do atlas antes das rotas dos testes. Só atlas-offline o liga.
-  const atlasFlags = Object.assign({ offline: false }, opts.atlasFlags !== undefined ? opts.atlasFlags : { onboarding: false, hints: false });
+  const atlasFlags = Object.assign({ offline: false, quizSetup: false }, opts.atlasFlags !== undefined ? opts.atlasFlags : { onboarding: false, hints: false });
   await context.addInitScript((flags) => { window.__atlasFlags = flags; }, atlasFlags);
 
   await context.route('**/*', async (route) => {

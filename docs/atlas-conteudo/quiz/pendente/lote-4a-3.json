@@ -1,0 +1,213 @@
+[
+  {
+    "id": "q4a-esqueletico-01",
+    "system": "esqueletico",
+    "difficulty": "facil",
+    "prompt_pt": "Ciclista de 24 anos cai sobre o ombro direito. Há dor intensa, um degrau palpável no terço médio do osso que liga o esterno ao acrômio, e o ombro direito está caído para a frente e para baixo. Aponte no modelo 3D, no lado direito, o osso fraturado.",
+    "correctSid": "za:clavicle-r",
+    "correctSids": [
+      "za:clavicle-r"
+    ],
+    "distractorSids": [
+      "za:scapula-r",
+      "za:humerus-r",
+      "za:first-rib-r"
+    ],
+    "explanation_pt": "A clavícula é o único elo ósseo entre o esqueleto axial (esterno) e o membro superior, e seu terço médio é o ponto mais frágil, por isso é o local mais comum de fratura. A escápula e o úmero não se articulam com o esterno, e a primeira costela fica abaixo da clavícula, sem formar esse arcabouço de sustentação do ombro.",
+    "anchors": [
+      {
+        "sid": "za:clavicle-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-esqueletico-02",
+    "system": "esqueletico",
+    "difficulty": "facil",
+    "prompt_pt": "Mulher de 82 anos, com osteoporose, escorrega no banheiro e não consegue se levantar, com o membro inferior direito encurtado, em rotação lateral e dor inguinal direita. A radiografia mostra fratura do colo da peça óssea que se articula com o acetábulo. Aponte no modelo 3D, no lado direito, o osso fraturado.",
+    "correctSid": "za:femur-r",
+    "correctSids": [
+      "za:femur-r"
+    ],
+    "distractorSids": [
+      "za:hip-bone-r",
+      "za:tibia-r",
+      "za:patella-r"
+    ],
+    "explanation_pt": "A cabeça do fêmur encaixa-se no acetábulo, e o colo do fêmur, região fina e muito solicitada no osso osteoporótico, é sítio clássico de fratura no idoso. O osso coxal contém o acetábulo, mas não possui colo; a tíbia e a patela pertencem ao joelho e à perna, distais ao quadril.",
+    "anchors": [
+      {
+        "sid": "za:femur-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-esqueletico-03",
+    "system": "esqueletico",
+    "difficulty": "medio",
+    "prompt_pt": "Homem de 27 anos cai com a mão direita espalmada e refere dor à palpação da tabaqueira anatômica direita, com radiografia inicial aparentemente normal. Há receio de necrose avascular do fragmento proximal, pois a irrigação desse osso entra por sua porção distal. Aponte no modelo 3D, no punho direito, o osso suspeito de fratura.",
+    "correctSid": "za:scaphoid-bone-r",
+    "correctSids": [
+      "za:scaphoid-bone-r"
+    ],
+    "distractorSids": [
+      "za:lunate-bone-r",
+      "za:capitate-bone-r",
+      "za:hamate-bone-r"
+    ],
+    "explanation_pt": "O escafoide forma o assoalho da tabaqueira anatômica e é o carpal mais fraturado após queda sobre a mão espalmada; seus vasos entram distalmente, o que expõe o polo proximal à necrose. O semilunar e o capitato ocupam a fileira proximal e a região central do carpo, mais profundos e sem relação com o assoalho da tabaqueira, e o hamato fica no lado ulnar, com seu hâmulo.",
+    "anchors": [
+      {
+        "sid": "za:scaphoid-bone-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-esqueletico-04",
+    "system": "esqueletico",
+    "difficulty": "medio",
+    "prompt_pt": "Mulher de 41 anos tem cefaleia e perda do campo visual temporal em ambos os olhos (hemianopsia bitemporal). A ressonância mostra um adenoma de hipófise alojado na sela turca, uma depressão na face superior de um osso da base do crânio que contém um seio aéreo logo abaixo. Aponte no modelo 3D esse osso.",
+    "correctSid": "za:sphenoid-bone",
+    "correctSids": [
+      "za:sphenoid-bone"
+    ],
+    "distractorSids": [
+      "za:ethmoid-bone",
+      "za:occipital-bone",
+      "za:frontal-bone",
+      "za:temporal-bone-r"
+    ],
+    "explanation_pt": "A hipófise ocupa a fossa hipofisial da sela turca, no corpo do osso esfenoide, que tem o seio esfenoidal logo abaixo. O etmoide fica anterior, entre as órbitas e a cavidade nasal, o occipital forma a parte posterior da base do crânio e o frontal compõe a fronte e o teto das órbitas; nenhum deles aloja a sela turca.",
+    "anchors": [
+      {
+        "sid": "za:sphenoid-bone"
+      }
+    ]
+  },
+  {
+    "id": "q4a-esqueletico-05",
+    "system": "esqueletico",
+    "difficulty": "dificil",
+    "prompt_pt": "Homem de 35 anos, motorista, sofre colisão frontal com hiperextensão súbita do pescoço. A radiografia lateral mostra fratura bilateral da porção do arco entre os processos articulares superior e inferior (pars interarticularis) da segunda vértebra cervical, com deslocamento anterior do corpo vertebral sobre a vértebra seguinte. Aponte no modelo 3D a vértebra fraturada.",
+    "correctSid": "za:axis-c2",
+    "correctSids": [
+      "za:axis-c2"
+    ],
+    "distractorSids": [
+      "za:atlas-c1",
+      "za:vertebra-c3",
+      "za:vertebra-c7"
+    ],
+    "explanation_pt": "Essa é a fratura do enforcado: lesão bilateral da pars interarticularis do áxis (C2), com espondilolistese traumática de C2 sobre C3. O atlas (C1) é um anel sem corpo e sem essa porção do arco, C3 é a vértebra que recebe o deslocamento sem estar fraturada e C7 fica na transição cervicotorácica, longe do mecanismo descrito.",
+    "anchors": [
+      {
+        "sid": "za:axis-c2"
+      }
+    ]
+  },
+  {
+    "id": "q4a-muscular-01",
+    "system": "muscular",
+    "difficulty": "facil",
+    "prompt_pt": "Mulher de 36 anos, no puerpério, nota um abaulamento longitudinal na linha média do abdome ao levantar a cabeça deitada, por afastamento dos dois ventres do músculo em faixa vertical, com intersecções tendíneas. Aponte no modelo 3D o ventre direito desse músculo.",
+    "correctSid": "za:rectus-abdominis-muscle-r",
+    "correctSids": [
+      "za:rectus-abdominis-muscle-r"
+    ],
+    "distractorSids": [
+      "za:transversus-abdominis-muscle-r",
+      "za:external-abdominal-oblique-muscle-r",
+      "za:internal-abdominal-oblique-muscle-r"
+    ],
+    "explanation_pt": "A diástase dos retos é o afastamento dos ventres do músculo reto do abdômen ao longo da linha alba, e esses ventres são verticais e interrompidos por intersecções tendíneas. Os músculos transverso e oblíquos formam camadas laterais da parede, de trajeto transversal ou oblíquo, e suas aponeuroses é que envolvem o reto.",
+    "anchors": [
+      {
+        "sid": "za:rectus-abdominis-muscle-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-muscular-02",
+    "system": "muscular",
+    "difficulty": "facil",
+    "prompt_pt": "Homem de 55 anos sente um estalo no ombro direito ao levantar um peso. Depois surge uma massa arredondada na parte distal do braço direito (sinal de Popeye), por ruptura do tendão que percorre o sulco intertubercular do úmero e se insere no tubérculo supraglenoidal. Aponte no modelo 3D, no lado direito, a cabeça muscular acometida.",
+    "correctSid": "za:long-head-of-biceps-brachii-r",
+    "correctSids": [
+      "za:long-head-of-biceps-brachii-r"
+    ],
+    "distractorSids": [
+      "za:long-head-of-triceps-brachii-r",
+      "za:brachialis-muscle-r",
+      "za:coracobrachialis-muscle-r"
+    ],
+    "explanation_pt": "O tendão da cabeça longa do bíceps braquial passa pelo sulco intertubercular e se fixa no tubérculo supraglenoidal; quando se rompe, o ventre retrai e forma a massa distal. O tríceps está na face posterior do braço, e o braquial e o coracobraquial não têm esse trajeto intertubercular: o braquial não cruza o ombro e o coracobraquial se fixa no processo coracoide.",
+    "anchors": [
+      {
+        "sid": "za:long-head-of-biceps-brachii-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-muscular-03",
+    "system": "muscular",
+    "difficulty": "medio",
+    "prompt_pt": "Pintor de 52 anos, com dor no ombro direito ao elevar o braço, tem dificuldade para iniciar a abdução nos primeiros graus. O teste da lata vazia é positivo, e a ressonância mostra rotura do tendão que passa sob o acrômio, na fossa acima da espinha da escápula. Aponte no modelo 3D, no lado direito, o músculo acometido.",
+    "correctSid": "za:supraspinatus-muscle-r",
+    "correctSids": [
+      "za:supraspinatus-muscle-r"
+    ],
+    "distractorSids": [
+      "za:infraspinatus-muscle-r",
+      "za:subscapularis-muscle-r",
+      "za:teres-minor-muscle-r"
+    ],
+    "explanation_pt": "O supraespinal ocupa a fossa supraespinal e inicia a abdução do braço; seu tendão passa sob o acrômio e é o mais lesado no manguito rotador. O infraespinal e o redondo menor fazem rotação lateral e se situam abaixo da espinha da escápula, e o subescapular faz rotação medial a partir da face costal da escápula.",
+    "anchors": [
+      {
+        "sid": "za:supraspinatus-muscle-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-muscular-04",
+    "system": "muscular",
+    "difficulty": "medio",
+    "prompt_pt": "Homem de 30 anos tem lesão do nervo fibular comum na altura da cabeça da fíbula direita após fratura com imobilização apertada. Ele não consegue fazer a dorsiflexão do pé direito, arrasta a ponta do pé e levanta muito o joelho ao andar. Aponte no modelo 3D, na perna direita, o principal músculo dorsiflexor, situado no compartimento anterior.",
+    "correctSid": "za:tibialis-anterior-muscle-r",
+    "correctSids": [
+      "za:tibialis-anterior-muscle-r"
+    ],
+    "distractorSids": [
+      "za:soleus-muscle-r",
+      "za:tibialis-posterior-muscle-r",
+      "za:medial-head-of-gastrocnemius-r"
+    ],
+    "explanation_pt": "O tibial anterior fica no compartimento anterior da perna, é inervado pelo nervo fibular profundo e é o principal dorsiflexor; sua paralisia causa o pé caído. O sóleo, o tibial posterior e o gastrocnêmio ficam no compartimento posterior, inervados pelo nervo tibial, e fazem flexão plantar, preservada nessa lesão.",
+    "anchors": [
+      {
+        "sid": "za:tibialis-anterior-muscle-r"
+      }
+    ]
+  },
+  {
+    "id": "q4a-muscular-05",
+    "system": "muscular",
+    "difficulty": "dificil",
+    "prompt_pt": "Mulher de 62 anos, após cirurgia no quadril direito com lesão do nervo glúteo superior direito, apresenta sinal de Trendelenburg. Ao apoiar-se só no membro inferior direito, a pelve esquerda cai e o tronco se inclina para compensar. Aponte no modelo 3D o principal músculo do lado direito que, em condição normal, mantém a pelve nivelada na fase de apoio.",
+    "correctSid": "za:gluteus-medius-muscle-r",
+    "correctSids": [
+      "za:gluteus-medius-muscle-r"
+    ],
+    "distractorSids": [
+      "za:gluteus-maximus-muscle-r",
+      "za:piriformis-muscle-r",
+      "za:psoas-major-r"
+    ],
+    "explanation_pt": "O glúteo médio, inervado pelo nervo glúteo superior, abduz o quadril e estabiliza a pelve no apoio unipodal; sua fraqueza faz a pelve contralateral cair. O glúteo máximo é extensor do quadril e inervado pelo nervo glúteo inferior, o piriforme é rotador lateral e o psoas maior é flexor do quadril, nenhum com essa função estabilizadora.",
+    "anchors": [
+      {
+        "sid": "za:gluteus-medius-muscle-r"
+      }
+    ]
+  }
+]

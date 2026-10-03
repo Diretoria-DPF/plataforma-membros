@@ -4,6 +4,8 @@
  * e integração com a API de submissão de tentativas.
  */
 
+import { shuffleWithSeed, pickCases, availableFilters, filterCases, randomSeed, seedFromSearch, QUIZ_COUNT } from './quiz-select.js';
+
 /**
  * Calcula pontos para uma resposta.
  * @param {Object} quizCase - Caso com propriedade `pontos` (pontos base)
@@ -98,7 +100,7 @@ export function mainSid(quizCase) {
  *   sistemas da resposta, para a estrutura certa estar no corpo e poder ser tocada
  * @returns {Object} Implementação do contrato Mode
  */
-export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases, resolveSid, systemOf, prepareCase, confettiCount = () => 0, reducedMotion = () => false }) {
+export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, loadCases, resolveSid, systemOf, prepareCase, confettiCount = () => 0, reducedMotion = () => false, setup = false, search = '' }) {
   const { on, emit, EVENTS } = bus;
   const { get: storeGet, set: storeSet } = store;
 
@@ -118,25 +120,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
   let answeredCurrent = false;
   let resumeNotice = null;
   let advanceTimer = null;
+  let allCases = [];
+  let selection = null; // { system, difficulty, seed } da rodada atual (setup ligado)
 
   const QUESTION_TIME_MS = 60000; // 60 segundos
-
-  /**
-   * Embaralha array de forma determinística com seed fixa (para testes).
-   * @param {Array} arr
-   * @param {number} seed
-   * @returns {Array}
-   */
-  function shuffleWithSeed(arr, seed = 42) {
-    const shuffled = [...arr];
-    // Simples LCG-based shuffle determinístico
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-      const j = seed % (i + 1);
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }
 
   // main.js chama enter() ANTES de sheetContent(): sem criar o nó aqui, a
   // primeira pergunta era desenhada em lugar nenhum e o Quiz abria vazio.
@@ -149,6 +136,44 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
   }
 
   function el(tag, attrs, children) { return window.LaiftDom.h(tag, attrs, children); }
+
+  /** Tela de escolha: sistema e dificuldade; sorteia até 10 casos com semente nova (ou ?seed=). */
+  function renderSetup() {
+    ensureSheetNode();
+    clearTimeout(advanceTimer);
+    clearInterval(timerInterval);
+    const f = availableFilters(allCases);
+    const mkSelect = (id, label, options) => el('label', { className: 'quiz-setup-field', htmlFor: id }, [
+      el('span', {}, [label]),
+      el('select', { id, className: 'quiz-setup-select' }, options.map((o) => el('option', { value: o.value }, [o.text]))),
+    ]);
+    const sysSel = mkSelect('quizSystem', 'Sistema', [{ value: 'todos', text: `Todos os sistemas (${allCases.length})` }, ...f.systems.map((x) => ({ value: x.id, text: `${x.label} (${x.count})` }))]);
+    const difSel = mkSelect('quizDifficulty', 'Dificuldade', [{ value: 'todas', text: 'Todas' }, ...f.difficulties.map((x) => ({ value: x.id, text: `${x.label} (${x.count})` }))]);
+    const info = el('p', { className: 'quiz-setup-info', role: 'status', 'aria-live': 'polite' }, []);
+    const start = el('button', { type: 'button', id: 'quizStartBtn', className: 'quiz-btn' }, ['Começar']);
+    const read = () => ({ system: sheetNode.querySelector('#quizSystem').value, difficulty: sheetNode.querySelector('#quizDifficulty').value });
+    const refresh = () => {
+      const n = filterCases(allCases, read()).length;
+      const q = Math.min(n, QUIZ_COUNT);
+      info.textContent = n ? `${n} caso${n === 1 ? '' : 's'} disponíve${n === 1 ? 'l' : 'is'}; sorteio de ${q} por rodada.` : 'Nenhum caso com esses filtros.';
+      start.disabled = !n;
+    };
+    window.LaiftDom.clear(sheetNode);
+    sheetNode.appendChild(el('div', { className: 'quiz-card quiz-setup' }, [
+      el('h3', { className: 'quiz-summary-title' }, ['Quiz 3D']),
+      el('p', {}, ['Escolha o que treinar. Em cada caso, toque na estrutura que responde à pergunta.']),
+      sysSel, difSel, info, start,
+    ]));
+    sheetNode.querySelector('#quizSystem').addEventListener('change', refresh);
+    sheetNode.querySelector('#quizDifficulty').addEventListener('change', refresh);
+    start.addEventListener('click', () => {
+      selection = { ...read(), seed: seedFromSearch(search) ?? randomSeed() };
+      cases = pickCases(allCases, selection);
+      currentIndex = 0; score = 0; correctCount = 0; totalCount = 0; sessionStartedAt = Date.now();
+      renderQuizCard();
+    });
+    refresh();
+  }
 
   function renderQuizCard() {
     ensureSheetNode();
@@ -248,8 +273,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
   }
 
   /** Avança para o próximo caso: sozinho (mais tempo se houver explicação) ou pelo botão. */
-  function scheduleAdvance(withExplanation) {
+  function scheduleAdvance(withExplanation, correct = true) {
     clearTimeout(advanceTimer);
+    // Setup ligado: no erro (ou no tempo esgotado) quem avança é o aluno, depois de ler a explicação.
+    if (setup && !correct) return;
     advanceTimer = setTimeout(() => {
       if (!isRunning) return;
       currentIndex++;
@@ -288,7 +315,8 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     if (!feedbackEl) return;
     window.LaiftDom.clear(feedbackEl);
     const card = sheetNode.querySelector('.quiz-card');
-    const explanation = caso.explanation_pt ? el('p', { className: 'quiz-explanation' }, [caso.explanation_pt]) : null;
+    const explanation = caso.explanation_pt ? el('p', { className: 'quiz-explanation' }, [caso.explanation_pt])
+      : (!correct && setup ? el('p', { className: 'quiz-explanation' }, [`Revise ${getLabel(mainSid(caso))} na ficha e compare com sua resposta.`]) : null);
 
     if (correct) {
       feedbackEl.dataset.kind = 'acerto';
@@ -315,7 +343,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
 
     const scoreEl = sheetNode?.querySelector('#quizScore');
     if (scoreEl) scoreEl.textContent = score;
-    scheduleAdvance(!!explanation);
+    scheduleAdvance(!!explanation, correct);
   }
 
   function handleTimeout() {
@@ -329,7 +357,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
     if (caso.explanation_pt) feedbackEl.appendChild(el('p', { className: 'quiz-explanation' }, [caso.explanation_pt]));
     feedbackEl.appendChild(nextButton());
     feedbackEl.hidden = false;
-    scheduleAdvance(!!caso.explanation_pt);
+    scheduleAdvance(!!caso.explanation_pt, false);
   }
 
   function renderResultCard() {
@@ -343,9 +371,10 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
         el('div', {}, [el('dt', {}, ['Pontuação']), el('dd', {}, [String(score)])]),
         el('div', {}, [el('dt', {}, ['Precisão']), el('dd', {}, [`${accuracy}%`])]),
       ]),
-      el('button', { type: 'button', id: 'quizRefazerBtn', className: 'quiz-btn', dataset: { action: 'QuizEngine.startQuiz' } }, ['🔄 Refazer']),
+      el('button', { type: 'button', id: 'quizRefazerBtn', className: 'quiz-btn', ...(setup ? {} : { dataset: { action: 'QuizEngine.startQuiz' } }) }, [setup ? '🔄 Nova rodada' : '🔄 Refazer']),
     ]));
 
+    if (setup) { const again = sheetNode.querySelector('#quizRefazerBtn'); if (again) again.addEventListener('click', renderSetup); }
     // Submete a tentativa
     emit(EVENTS.QUIZ_FINISH, { correct: correctCount, total: totalCount });
     submitQuizAttempt();
@@ -385,18 +414,28 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       sessionStartedAt = Date.now();
 
       // Carrega casos
+      selection = null;
       try {
-        const loaded = await loadCases();
-        cases = shuffleWithSeed(loaded, QUIZ_SEED);
+        allCases = await loadCases();
       } catch (err) {
         console.error('[QuizMode] Erro ao carregar casos:', err);
+        allCases = [];
+      }
+      resumeNotice = null;
+      const resume = ctx && ctx.resumeFrom;
+      if (setup && resume && resume.selection) {
+        // Retomada de uma rodada sorteada: mesmos filtros e mesma semente.
+        selection = { ...resume.selection };
+        cases = pickCases(allCases, selection);
+      } else if (setup) {
         cases = [];
+      } else {
+        cases = shuffleWithSeed(allCases, QUIZ_SEED);
       }
 
       // Retomada (js/main.js passa o progresso salvo na sessão).
-      resumeNotice = null;
-      if (ctx && ctx.resumeFrom) {
-        const r = resolveResume(cases, ctx.resumeFrom, QUIZ_SEED);
+      if (resume && (!setup || resume.selection)) {
+        const r = resolveResume(cases, resume, selection ? selection.seed : QUIZ_SEED);
         currentIndex = r.index;
         score = r.score;
         correctCount = r.correct;
@@ -406,8 +445,8 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       // Assina STRUCTURE_SELECT
       unsubscribeStructure = on(EVENTS.STRUCTURE_SELECT, handleStructureSelect);
 
-      // Renderiza o primeiro caso
-      renderQuizCard();
+      // Renderiza a tela de escolha (setup) ou o primeiro caso
+      if (setup && !selection) renderSetup(); else renderQuizCard();
     },
 
     /**
@@ -419,7 +458,7 @@ export function createQuizMode({ bus, store, api = window.LaiftApi, getLabel, lo
       if (!isRunning) return null;
       const next = currentIndex + (answeredCurrent ? 1 : 0);
       if (!cases[next]) return null;
-      return { caseId: cases[next].id, sessionSeed: QUIZ_SEED, score, correct: correctCount, answered: next };
+      return { caseId: cases[next].id, sessionSeed: selection ? selection.seed : QUIZ_SEED, score, correct: correctCount, answered: next, ...(selection ? { selection: { ...selection } } : {}) };
     },
 
     exit() {

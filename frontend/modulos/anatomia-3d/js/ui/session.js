@@ -75,7 +75,12 @@ export function snapshotSession(state, camera, now = Date.now(), quiz = null) {
 function validQuiz(q) {
   if (!q || typeof q !== 'object' || typeof q.caseId !== 'string' || !/^[a-z][a-z0-9-]*$/.test(q.caseId)) return null;
   const n = (v) => (Number.isFinite(v) && v >= 0 ? v : 0);
-  return { caseId: q.caseId, sessionSeed: Number.isFinite(q.sessionSeed) ? q.sessionSeed : null, score: n(q.score), correct: n(q.correct), answered: n(q.answered) };
+  const out = { caseId: q.caseId, sessionSeed: Number.isFinite(q.sessionSeed) ? q.sessionSeed : null, score: n(q.score), correct: n(q.correct), answered: n(q.answered) };
+  const sel = q.selection;
+  if (sel && typeof sel === 'object' && Number.isInteger(sel.seed) && sel.seed >= 0 && /^[a-z]+$/.test(String(sel.system)) && /^[a-z]+$/.test(String(sel.difficulty))) {
+    out.selection = { system: sel.system, difficulty: sel.difficulty, seed: sel.seed }; // rodada sorteada (B.2)
+  }
+  return out;
 }
 
 /**
