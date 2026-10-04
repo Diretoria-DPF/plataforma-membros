@@ -25,7 +25,7 @@ Como as chaves dos provedores de IA são guardadas, usadas e trocadas. **Este ar
 | Rodízio (`AI_KEY_STRATEGY=round-robin`) | Começa em uma chave aleatória e segue em ordem; cada chamada avança | Chaves de **organizações diferentes**: espalha o limite de 8 mil tokens/min entre as contas |
 | Chave por modelo | Chaves fixas para cada modelo | Descartada: com limite por organização não adiciona capacidade |
 
-A variável fica em `[vars]` do `wrangler.toml`; valor desconhecido cai no failover. Se as chaves do pool forem de contas diferentes (decisão do responsável registrada em `docs/PLANO_FASES_2_3_4.md`; os termos do Groq para isso seguem pendentes de confirmação, ver `docs/SECURITY.md`), o rodízio pode render mais fôlego por minuto; vale medir no painel **IA** antes de trocar.
+A variável fica em `[vars]` do `wrangler.toml`; valor desconhecido cai no failover. **Configuração atual (decisão do responsável, 2026-10-04): produção em `round-robin`, staging em `failover`** (o padrão do código, sem a variável, é failover). Se as chaves do pool forem de contas diferentes (decisão do responsável registrada em `docs/PLANO_FASES_2_3_4.md`; os termos do Groq para isso seguem pendentes de confirmação, ver `docs/SECURITY.md`), o rodízio pode render mais fôlego por minuto; vale medir no painel **IA** antes de trocar.
 
 O cooldown fica em memória e no KV (`ai:key-cooldown:<índice>` no Groq, `ai:key-cooldown:nvidia:<índice>` na NVIDIA); cada chave tentada gasta uma leitura de KV por chamada.
 

@@ -46,7 +46,7 @@ GROQ_MODEL_SMART = "openai/gpt-oss-120b"
 # Como o pool escolhe a chave: "failover" (usa a 1ª até ela falhar; padrão) ou
 # "round-robin" (reveza; só vale a pena com chaves de ORGANIZAÇÕES diferentes,
 # porque o limite do Groq é por organização). Ver docs/AI_KEYS.md.
-AI_KEY_STRATEGY = "failover"
+AI_KEY_STRATEGY = "round-robin"
 # NVIDIA NIM: cliente construído mas NÃO ligado (nenhum serviço o chama). Os IDs
 # vêm do catálogo público (GET https://integrate.api.nvidia.com/v1/models) e
 # podem mudar: conferir antes de ligar. A chave é o segredo NVIDIA_API_KEY.
