@@ -7,9 +7,10 @@ name: Segurança
 #    alta/crítica (hoje: 0 no Worker e 0 no front);
 #  - auditoria completa (inclui jest/wrangler, só de desenvolvimento): apenas
 #    informa — quem as mantém atualizadas é o Dependabot;
-#  - gitleaks (segredos no histórico) e Semgrep (análise estática): começam
-#    como RELATÓRIO. Depois da primeira rodada limpa ou triada, remova o
-#    `continue-on-error` para passarem a bloquear.
+#  - gitleaks (segredos no histórico): BLOQUEIA. Falsos positivos já triados
+#    ficam em .gitleaksignore, um por impressão digital;
+#  - Semgrep (análise estática): ainda RELATÓRIO. Depois de triar a primeira
+#    rodada, remova o `continue-on-error` do job para passar a bloquear.
 
 on:
   pull_request: {}
@@ -57,9 +58,9 @@ jobs:
         continue-on-error: true
         run: npm audit --audit-level=high
 
+  # Bloqueante: os 5 falsos positivos históricos estão triados em .gitleaksignore.
   segredos:
     runs-on: ubuntu-latest
-    continue-on-error: true   # relatório até a primeira rodada triada
     steps:
       - uses: actions/checkout@v4
         with:

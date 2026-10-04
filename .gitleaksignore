@@ -1,0 +1,13 @@
+# Falsos positivos já triados do gitleaks (regra generic-api-key), 2026-10-04.
+# Cada linha é a impressão digital exata de UMA ocorrência (commit:arquivo:regra:linha);
+# qualquer segredo novo continua sendo detectado.
+#
+# worker/src/services/attendanceService.js — QR_KEY_DOMAIN: rótulo constante de
+#   separação de domínio do HMAC do QR, não é segredo.
+897f4e4d3a8ccf357d793842195b4aaa69c6e4e4:worker/src/services/attendanceService.js:generic-api-key:30
+# frontend/scripts/verify-msg-crypto.js — chave PÚBLICA esperada, usada na verificação.
+0284ebe973f45a1d5152183ff34e6bd6726d817c:frontend/scripts/verify-msg-crypto.js:generic-api-key:61
+# worker/test/authService.test.js — senhas fictícias de teste.
+5bf196e11795eac69ea4b132c94066b5968c0e18:worker/test/authService.test.js:generic-api-key:106
+5bf196e11795eac69ea4b132c94066b5968c0e18:worker/test/authService.test.js:generic-api-key:126
+5bf196e11795eac69ea4b132c94066b5968c0e18:worker/test/authService.test.js:generic-api-key:147
