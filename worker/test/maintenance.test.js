@@ -24,9 +24,13 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([1, 1])     // atlas_telemetry
       .mockResolvedValueOnce([1])        // sessions
       .mockResolvedValueOnce([])         // account_tokens
-      .mockResolvedValueOnce([1, 1]);    // rate_limit_buckets
+      .mockResolvedValueOnce([1, 1])     // rate_limit_buckets
+      .mockResolvedValueOnce([1])        // audit_logs
+      .mockResolvedValueOnce([1, 1, 1, 1]); // error_logs
     const res = await runMaintenance(sql, 'cid');
-    expect(res).toEqual({ aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2 });
+    expect(res).toEqual({
+      aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, errorLogs: 4,
+    });
     expect(queryText(sql, 0)).toMatch(/DELETE FROM ai_usage_log/);
     expect(sql.mock.calls[0]).toContain(RETENTION.AI_USAGE_LOG_DAYS);
     expect(RETENTION.AI_USAGE_LOG_DAYS).toBe(180);
@@ -43,11 +47,22 @@ describe('maintenance.runMaintenance', () => {
     expect(RETENTION.RATE_LIMIT_BUCKET_MAX_AGE_DAYS).toBeGreaterThan(7);
   });
 
-  test('nunca toca audit_logs nem error_logs (só registra erro)', async () => {
+  test('audit_logs guarda 2 anos e error_logs 30 dias; o corte é sempre por created_at', async () => {
     const sql = makeSql();
     sql.mockResolvedValue([]);
     await runMaintenance(sql, 'cid');
-    sql.mock.calls.forEach((_, i) => expect(queryText(sql, i)).not.toMatch(/DELETE FROM (audit_logs|error_logs)/));
+    expect(RETENTION.AUDIT_LOGS_DAYS).toBe(730);
+    expect(RETENTION.ERROR_LOGS_DAYS).toBe(30);
+    const byTable = {};
+    sql.mock.calls.forEach((call, i) => {
+      const text = queryText(sql, i);
+      const m = text.match(/DELETE FROM (audit_logs|error_logs)/);
+      if (m) byTable[m[1]] = { text, values: call.slice(1) };
+    });
+    expect(byTable.audit_logs.values).toEqual([RETENTION.AUDIT_LOGS_DAYS]);
+    expect(byTable.error_logs.values).toEqual([RETENTION.ERROR_LOGS_DAYS]);
+    // Nenhuma das duas pode virar um DELETE sem filtro de idade.
+    Object.values(byTable).forEach(({ text }) => expect(text).toMatch(/WHERE\s+created_at\s*<\s*now\(\)/));
   });
 
   test('uma limpeza que falha é registrada e não impede as outras', async () => {
@@ -58,9 +73,13 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([])         // atlas_telemetry
       .mockResolvedValueOnce([1])        // sessions
       .mockResolvedValueOnce([1])        // account_tokens
-      .mockResolvedValueOnce([]);        // rate_limit_buckets
+      .mockResolvedValueOnce([])         // rate_limit_buckets
+      .mockResolvedValueOnce([])         // audit_logs
+      .mockResolvedValueOnce([1]);       // error_logs
     const res = await runMaintenance(sql, 'cid');
-    expect(res).toEqual({ aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0 });
+    expect(res).toEqual({
+      aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, errorLogs: 1,
+    });
     expect(queryText(sql, 1)).toMatch(/error_logs/);
   });
 });
@@ -74,6 +93,6 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     await worker.scheduled({ cron: '17 6 * * *' }, makeEnv(), { waitUntil: (p) => pending.push(p) });
     expect(pending).toHaveLength(1);
     await pending[0];
-    expect(sql).toHaveBeenCalledTimes(5);
+    expect(sql).toHaveBeenCalledTimes(7);
   });
 });
