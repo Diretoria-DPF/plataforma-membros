@@ -92,7 +92,7 @@ export default {
     const sql = createDb(env.DATABASE_URL);
     // env é o objeto local desta invocação de fetch() (não é estado global
     // compartilhado entre requisições) — seguro acrescentar o IP aqui para
-    // os handlers que precisam dele (hoje só o rate limit de login).
+    // os handlers que precisam dele (limites de login, cadastro, redefinição e MFA).
     const requestEnv = Object.assign({}, env, { clientIp: request.headers.get('CF-Connecting-IP') || '' });
 
     try {
@@ -116,7 +116,7 @@ export default {
   // waitUntil deixa a limpeza terminar mesmo depois que o evento retorna.
   async scheduled(event, env, ctx) {
     const sql = createDb(env.DATABASE_URL);
-    ctx.waitUntil(runMaintenance(sql, newCorrelationId()).then((deleted) => {
+    ctx.waitUntil(runMaintenance(sql, newCorrelationId(), env).then((deleted) => {
       console.log('Manutenção diária concluída:', JSON.stringify(deleted));
     }).catch((err) => {
       // runMaintenance já isola cada limpeza; isto só impede que algo

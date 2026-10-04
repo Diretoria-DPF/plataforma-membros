@@ -40,4 +40,5 @@ export const AI_MESSAGES = {
   NOT_CONFIGURED: 'A IA ainda não foi configurada na plataforma. Avise a diretoria.',
   INVALID_OUTPUT: 'A IA não conseguiu produzir uma resposta válida desta vez. Tente novamente.',
   REJECTED: 'A IA não aceitou esta solicitação. Reformule e tente novamente.',
+  BUDGET: 'A IA da plataforma atingiu o limite diário de uso de toda a liga e volta amanhã.',
 };

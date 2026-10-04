@@ -226,6 +226,7 @@ export const API_REGISTRY = {
   apiLearnLabPreceptor: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.askLabPreceptor(sql, env, identity, input || {})),
   apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.getMyQuota(sql, env, identity)),
   apiAdminAiHealth: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminHealth(sql, env, identity)),
+  apiAdminAiMetrics: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminMetrics(sql, env, identity, asInput(input))),
   apiAdminLearnListPendingCases: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.listPendingCases(sql, identity)),
   // Atlas 3D — moléculas pelo proxy (sem chamada direta do navegador).
   apiLearnAtlasTelemetry: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AtlasTelemetryService.record(sql, identity, asInput(input))),

@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 104 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 105 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -48,6 +48,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiLoginMfa', 'apiMfaStatus', 'apiMfaBeginEnrollment', 'apiMfaConfirmEnrollment',
       'apiMfaRegenerateRecoveryCodes', 'apiMfaDisable', 'apiAdminResetUserMfa'
     );
+    // Fase 3 — painel de métricas da IA
+    expected.push('apiAdminAiMetrics');
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 

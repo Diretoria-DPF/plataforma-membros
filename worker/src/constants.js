@@ -272,11 +272,16 @@ export const AI_FEATURE = {
 // Cota diária POR PESSOA (janela de 24 h do rate_limit_buckets), por recurso
 // e papel. Visitante tem cota menor (decisão do responsável: IA para todos os
 // logados, com cota diária). Valores iniciais do plano.
+// Recalibradas (Fase 3) pelo ORÇAMENTO DE TOKENS: o Groq gratuito dá ~200 mil
+// tokens/dia por modelo (~600 mil nos três) para a ORGANIZAÇÃO, e uma troca de
+// chat gasta ~1,2 mil. Com ~25 pessoas ativas por dia, 40 mensagens de chat
+// por membro já fecham a conta; os valores antigos (150) estourariam o teto
+// com 4 pessoas. O limite que vale para todos é AI_DAILY_TOKEN_BUDGET.
 export const AI_QUOTAS = {
-  chat: { visitor: 40, member: 150, admin: 300 },
-  evaluate: { visitor: 5, member: 20, admin: 40 },
-  generate_case: { visitor: 2, member: 8, admin: 20 },
-  lab_preceptor: { visitor: 20, member: 80, admin: 160 },
+  chat: { visitor: 15, member: 40, admin: 100 },
+  evaluate: { visitor: 5, member: 10, admin: 40 },
+  generate_case: { visitor: 2, member: 4, admin: 20 },
+  lab_preceptor: { visitor: 10, member: 30, admin: 100 },
 };
 export const AI_QUOTA_WINDOW_SECONDS = 86400;
 
@@ -284,6 +289,33 @@ export const AI_QUOTA_WINDOW_SECONDS = 86400;
 // plataforma em 24 h. Protege o pool de chaves (e a conta) de um abuso
 // distribuído entre muitas contas que ficaria abaixo de cada cota individual.
 export const AI_GLOBAL_DAILY_MAX = 3000;
+
+// Orçamento de TOKENS por dia (janela móvel de 24 h, só o Groq): ~75% do teto
+// gratuito (~600 mil nos três modelos), deixando folga para picos e para a
+// janela móvel do provedor. Passou disso, o orquestrador não chama o provedor
+// (usa o cache, ou avisa que a IA volta amanhã). Ajustável sem deploy pela
+// variável AI_DAILY_TOKEN_BUDGET.
+export const AI_DAILY_TOKEN_BUDGET = 450000;
+export const AI_BUDGET_REFRESH_MS = 30000; // reconsulta o uso a cada 30 s por instância
+
+// Cache semântico (pg_trgm). Só pergunta genérica, sem dado pessoal.
+export const AI_CACHE = {
+  SIMILARITY: 0.85,        // acerto normal
+  STALE_SIMILARITY: 0.55,  // aproximado, só quando o provedor está indisponível
+  TTL_DAYS: 7,
+  QUESTION_MIN: 8,
+  QUESTION_MAX: 300,
+  ANSWER_MAX: 8000,
+};
+
+// Alertas por e-mail aos administradores (cron diário, maintenance.js).
+export const AI_ALERTS = {
+  BUDGET_PCT: 80,           // tokens do dia acima de 80% do orçamento
+  HIT_RATE_MIN_PCT: 30,     // taxa de acerto do cache abaixo disto por 3 dias
+  HIT_RATE_DAYS: 3,
+  RATE_LIMITED_MAX_PCT: 5,  // mais de 5% das chamadas com 429
+  MIN_CALLS: 20,            // amostra mínima para um alerta fazer sentido
+};
 
 // Teste de saúde das chaves (painel admin): cada execução faz uma chamada
 // por chave ao Groq, então também tem limite, mesmo sendo só para admin.

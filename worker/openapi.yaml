@@ -31,6 +31,7 @@ paths:
             schema:
               oneOf:
                 - "$ref": "#/components/schemas/apiAdminAiHealth"
+                - "$ref": "#/components/schemas/apiAdminAiMetrics"
                 - "$ref": "#/components/schemas/apiAdminAttendanceBadges"
                 - "$ref": "#/components/schemas/apiAdminAttendanceCheckIn"
                 - "$ref": "#/components/schemas/apiAdminAttendanceExportCsv"
@@ -174,6 +175,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiAdminAiMetrics:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAiMetrics"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminAttendanceBadges:
       type: "object"
       required:

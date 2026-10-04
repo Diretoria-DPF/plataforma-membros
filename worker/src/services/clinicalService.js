@@ -23,7 +23,7 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 import { getCached, setCached, invalidateCached } from '../cache.js';
-import * as Groq from '../ai/groqClient.js';
+import * as Orchestrator from '../ai/orchestrator.js';
 import { AiInvalidOutputError, AI_MESSAGES } from '../ai/errors.js';
 import { buildPatientMessages, buildEvaluationMessages, buildCaseGenerationMessages } from '../ai/prompts.js';
 import {
@@ -98,7 +98,7 @@ export async function chat(sql, env, identity, rawInput) {
   }
 
   return withQuota(sql, identity, C.AI_FEATURE.CHAT, async () => {
-    const out = await Groq.complete(env, sql, {
+    const out = await Orchestrator.complete(sql, env, identity, {
       feature: C.AI_FEATURE.CHAT,
       messages: buildPatientMessages({ context, question, history }),
       profileId: identity.profileId,
@@ -135,7 +135,7 @@ export async function evaluate(sql, env, identity, rawInput, correlationId) {
   }
 
   return withQuota(sql, identity, C.AI_FEATURE.EVALUATE, async () => {
-    const out = await Groq.complete(env, sql, {
+    const out = await Orchestrator.complete(sql, env, identity, {
       feature: C.AI_FEATURE.EVALUATE,
       messages: buildEvaluationMessages({ answerKey, attendance, caseMeta }),
       profileId: identity.profileId,
@@ -189,7 +189,7 @@ export async function generateCase(sql, env, identity, rawInput, correlationId) 
   const difficulty = normalizeDifficulty(input.difficulty, 'Intermediário');
 
   return withQuota(sql, identity, C.AI_FEATURE.GENERATE_CASE, async () => {
-    const out = await Groq.complete(env, sql, {
+    const out = await Orchestrator.complete(sql, env, identity, {
       feature: C.AI_FEATURE.GENERATE_CASE,
       messages: buildCaseGenerationMessages({ topic, difficulty }),
       profileId: identity.profileId,

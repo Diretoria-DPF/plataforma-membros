@@ -119,9 +119,9 @@ describe('ClinicalService.chat — paciente virtual', () => {
   });
 
   test('cota de chat estourada → quotaExceeded, sem IA', async () => {
-    const sql = routedSql([[RATE_LIMIT_SQL, (v) => [{ attempts: v[0] === 'AI_CHAT' ? 41 : 1 }]]]);
+    const sql = routedSql([[RATE_LIMIT_SQL, (v) => [{ attempts: v[0] === 'AI_CHAT' ? 16 : 1 }]]]);
     const res = await Clinical.chat(sql, envWith(), VISITOR, base);
-    expect(res).toMatchObject({ success: false, quotaExceeded: true, message: expect.stringContaining('40 perguntas ao paciente virtual') });
+    expect(res).toMatchObject({ success: false, quotaExceeded: true, message: expect.stringContaining('15 perguntas ao paciente virtual') });
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
