@@ -68,3 +68,35 @@ id = "6ee17e571c044c43bd5b32599b6fbab9"
 # fora do horário de uso; o minuto "quebrado" evita a fila do minuto zero.
 [triggers]
 crons = ["17 6 * * *"]
+
+# ---------------------------------------------------------------------------
+# HOMOLOGAÇÃO (staging): Worker `plataforma-membros-api-staging` em
+# staging-api.laift.com.br, com banco Neon PRÓPRIO (uma branch do projeto).
+# Deploy: `npx wrangler deploy --env staging` ou
+# .github/workflows/deploy-staging.yml. Passo a passo: docs/DEPLOYMENT.md.
+#
+# `vars`, bindings e `triggers` NÃO são herdados pelo ambiente: o que não
+# estiver abaixo não existe em staging. Por escolha:
+#  - sem cron (a faxina diária só roda em produção);
+#  - sem KV e sem R2 (cache vira no-op; upload de avatar não funciona até
+#    existirem recursos de teste);
+#  - segredos próprios, cadastrados com `wrangler secret put <NOME> --env
+#    staging`: DATABASE_URL (branch do Neon), SESSION_TOKEN_PEPPER (valor
+#    DIFERENTE do de produção). Não cadastrar BREVO_API_KEY de produção: a
+#    homologação não deve mandar e-mail a ninguém.
+# ---------------------------------------------------------------------------
+[env.staging]
+workers_dev = true
+
+[[env.staging.routes]]
+pattern = "staging-api.laift.com.br"
+custom_domain = true
+
+[env.staging.vars]
+APP_BASE_URL = "https://staging.laift.com.br/"
+ALLOWED_ORIGINS = "https://staging.laift.com.br,http://localhost:4174,http://localhost:4175"
+MAIL_FROM_NAME = "Plataforma de Membros (homologação)"
+MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"
+GROQ_MODEL_FAST = "openai/gpt-oss-20b"
+GROQ_MODEL_SMART = "openai/gpt-oss-120b"
+AI_KEY_STRATEGY = "failover"

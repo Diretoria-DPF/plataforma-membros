@@ -12,7 +12,7 @@ e R2), conta Brevo (e-mail transacional), chaves do Groq (IA da área
 
 Faça na ordem. Cada passo diz como conferir antes de seguir.
 
-## 1. Banco (Neon) e migrações 001–013
+## 1. Banco (Neon) e migrações 001–015
 
 1. Crie o projeto no [console do Neon](https://console.neon.tech) (ou uma
    **branch** nova, para isolar homologação de produção).
@@ -34,21 +34,26 @@ Faça na ordem. Cada passo diz como conferir antes de seguir.
    | 11 | `sql/011_messaging_clear_and_delete.sql` | limpar/apagar mensagens |
    | 12 | `sql/012_learning.sql` | `learning_attempts` e presença (check-in) — Fase 2 |
    | 13 | `sql/013_clinical_ai.sql` | `clinical_cases` e `ai_usage_log` — Fase 3 |
+   | 14 | `sql/014_atlas_telemetry.sql` | telemetria anônima do Atlas 3D |
+   | 15 | `sql/015_ai_usage_provider.sql` | coluna `provider` em `ai_usage_log` (Groq/NVIDIA) |
 
    Todas são idempotentes (`IF NOT EXISTS`, `CREATE OR REPLACE`, blocos de
    guarda). Mesmo assim, o fluxo normal é aplicar cada uma **uma vez**, e
-   toda mudança futura é um arquivo **novo** (`014_*.sql`…), nunca uma
-   edição de migração já aplicada. A 013 depende da 012.
-3. Antes de aplicar em produção, valide localmente as 13 migrações contra um
-   Postgres em memória (PGlite), em banco vazio e reaplicadas:
+   toda mudança futura é um arquivo **novo** (`016_*.sql`…), nunca uma
+   edição de migração já aplicada. A 013 depende da 012 e a 015 da 013.
+   A reversão de cada migração nova fica em `sql/down/NNN_*.sql` (fora da
+   ordem de aplicação; só se usa à mão, em rollback).
+3. Antes de aplicar em produção, valide localmente as 15 migrações contra um
+   Postgres em memória (PGlite), em banco vazio, reaplicadas e com a
+   passada de reversão (down + nova aplicação):
    ```bash
    cd worker && npm ci && npm run validate:sql
-   # esperado: "13 migrações, 27 tabelas no schema public, 0 falha(s)."
+   # esperado: "15 migrações, 28 tabelas no schema public, 0 falha(s)."
    ```
 4. Conferência no Neon:
    ```sql
    SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';
-   -- esperado: 27
+   -- esperado: 28
    ```
 5. Para uma migração arriscada, crie antes uma branch no Neon, aplique e
    teste nela, e só então aplique na principal.
@@ -238,3 +243,51 @@ plataforma (painel admin).
   Cloudflare → Workers → plataforma-membros-api → Logs; falhas vão para
   `error_logs` com o código `MAINTENANCE_FAILED`.
 - Revisar a fila de casos gerados por IA (painel **IA** → pendentes).
+
+## 10. Homologação (staging)
+
+Ambiente à parte para testar uma branch **antes** de ela ir para a `main`
+(que publica em produção). Fica em `staging.laift.com.br` (site) e
+`staging-api.laift.com.br` (API), com **banco próprio e sem dados reais**.
+
+**Nunca** crie o banco de staging como cópia do de produção: uma *branch*
+comum do Neon copia tudo, inclusive dados pessoais dos membros. Use um banco
+novo e vazio (outro projeto do Neon ou um banco novo na mesma instância) e
+aplique as migrações da seção 1.
+
+Uma vez, para montar o ambiente:
+
+1. **Banco:** crie o banco vazio e aplique `sql/001` … `sql/015` na ordem.
+   Crie o primeiro administrador de teste como na seção 6.
+2. **Segredos da API de staging** (no diretório `worker/`; cada comando pede o
+   valor no terminal):
+   ```bash
+   npx wrangler secret put DATABASE_URL --env staging         # string de conexão do banco de staging
+   npx wrangler secret put SESSION_TOKEN_PEPPER --env staging # valor ALEATÓRIO, diferente do de produção
+   npx wrangler secret put GROQ_API_KEYS --env staging        # opcional: 1 chave, para testar a IA
+   ```
+   **Não** cadastre a `BREVO_API_KEY` de produção: sem ela a Brevo recusa o
+   envio e a homologação não manda e-mail a ninguém (crie as contas de teste
+   pelo SQL da seção 6 em vez do fluxo de confirmação por e-mail).
+3. **Token do GitHub Actions:** além de *Edit Cloudflare Workers*, o token
+   precisa de **DNS: Edit** e **Workers Routes: Edit** na zona `laift.com.br`
+   para o wrangler anexar os dois domínios na primeira publicação.
+
+Para publicar uma branch na homologação: GitHub → **Actions** → *Publicar
+homologação (staging)* → em *Use workflow from* escolha a branch → *Run
+workflow* (alvo: ambos, api ou site). Conferência:
+
+```bash
+curl -I https://staging.laift.com.br/ | grep -i x-robots-tag   # noindex, nofollow
+curl -i -X OPTIONS https://staging-api.laift.com.br/ -H "Origin: https://staging.laift.com.br"   # 204
+```
+
+O fluxo normal passa a ser: PR → publicar a branch em staging → conferir
+(login, painéis, o que a mudança toca) → mesclar na `main`. Migrações novas
+entram **primeiro** no banco de staging.
+
+O que a homologação **não** tem, de propósito: cron de faxina (a manutenção
+diária só roda em produção), KV (o cache vira no-op) e R2 (envio de avatar e
+de imagem de evento não funciona até existirem recursos de teste). O site de
+staging fica fora dos buscadores por cabeçalho (`X-Robots-Tag`, regra por host
+em `frontend/_headers`), assim como as URLs `*.workers.dev`.
