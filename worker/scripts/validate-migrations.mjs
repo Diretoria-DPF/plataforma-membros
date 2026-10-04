@@ -73,6 +73,43 @@ if (downFiles.length) {
   }
 }
 
+// Passada 4: sql/ops/readonly_role.sql (não é migração). Aplica duas vezes
+// (idempotência) e prova a política: o papel lê o que deve e é NEGADO nas
+// colunas e tabelas sensíveis.
+const OPS_FILE = path.join(SQL_DIR, 'ops', 'readonly_role.sql');
+if (fs.existsSync(OPS_FILE)) {
+  console.log('\n== Passada 4: papel somente leitura (ops/readonly_role.sql)');
+  const expectOk = async (label, query) => {
+    try { await db.exec(query); console.log(`  ok     ${label}`); } catch (err) {
+      failures++; console.log(`  FALHA  ${label}: ${err.message}`);
+    }
+  };
+  const expectDenied = async (label, query) => {
+    try {
+      await db.exec(query);
+      failures++; console.log(`  FALHA  ${label}: deveria ser NEGADO e foi permitido`);
+    } catch (err) {
+      console.log(/permission denied/i.test(err.message) ? `  ok     ${label} (negado)` : `  FALHA  ${label}: erro inesperado: ${err.message}`);
+      if (!/permission denied/i.test(err.message)) failures++;
+    }
+  };
+  for (const round of [1, 2]) {
+    await expectOk(`aplica o script (rodada ${round})`, fs.readFileSync(OPS_FILE, 'utf8'));
+  }
+  await db.exec('SET ROLE laift_readonly');
+  await expectOk('lê events', 'SELECT count(*) FROM events');
+  await expectOk('lê profiles (colunas permitidas)', 'SELECT id, full_name, role, status FROM profiles LIMIT 1');
+  for (const col of ['email', 'password_hash', 'phone', 'phone_normalized']) {
+    await expectDenied(`profiles.${col}`, `SELECT ${col} FROM profiles LIMIT 1`);
+  }
+  await expectDenied('SELECT * em profiles', 'SELECT * FROM profiles LIMIT 1');
+  for (const table of ['sessions', 'account_tokens', 'mfa_credentials', 'mfa_recovery_codes', 'mfa_challenges', 'messages', 'messaging_keys', 'votes', 'rate_limit_buckets', 'error_logs']) {
+    await expectDenied(table, `SELECT 1 FROM ${table} LIMIT 1`);
+  }
+  await expectDenied('escrita em events', 'UPDATE events SET title = title WHERE false');
+  await db.exec('RESET ROLE');
+}
+
 const { rows } = await db.query(
   "SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema = 'public'"
 );

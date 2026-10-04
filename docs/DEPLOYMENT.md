@@ -12,7 +12,7 @@ e R2), conta Brevo (e-mail transacional), chaves do Groq (IA da área
 
 Faça na ordem. Cada passo diz como conferir antes de seguir.
 
-## 1. Banco (Neon) e migrações 001–015
+## 1. Banco (Neon) e migrações 001–017
 
 1. Crie o projeto no [console do Neon](https://console.neon.tech) (ou uma
    **branch** nova, para isolar homologação de produção).
@@ -36,6 +36,13 @@ Faça na ordem. Cada passo diz como conferir antes de seguir.
    | 13 | `sql/013_clinical_ai.sql` | `clinical_cases` e `ai_usage_log` — Fase 3 |
    | 14 | `sql/014_atlas_telemetry.sql` | telemetria anônima do Atlas 3D |
    | 15 | `sql/015_ai_usage_provider.sql` | coluna `provider` em `ai_usage_log` (Groq/NVIDIA) |
+   | 16 | `sql/016_feature_flags.sql` | `feature_flags` (liga/desliga e rollout por percentual) — Fase 2 |
+   | 17 | `sql/017_mfa.sql` | verificação em duas etapas: segredo cifrado, códigos de recuperação, desafio de login |
+
+   O código implantado **antes** de 016/017 continua funcionando (tabela ausente
+   = flags desligadas e login sem segundo fator). Reversões em `sql/down/`.
+   Papel somente leitura para relatórios: `sql/ops/readonly_role.sql` (não é
+   migração; ver o cabeçalho do arquivo).
 
    Todas são idempotentes (`IF NOT EXISTS`, `CREATE OR REPLACE`, blocos de
    guarda). Mesmo assim, o fluxo normal é aplicar cada uma **uma vez**, e
@@ -70,6 +77,7 @@ npx wrangler secret put DATABASE_URL          # connection string do Neon (postg
 npx wrangler secret put SESSION_TOKEN_PEPPER  # openssl rand -hex 32
 npx wrangler secret put BREVO_API_KEY         # chave da API da Brevo
 npx wrangler secret put GROQ_API_KEYS         # TODAS as chaves do pool, uma por linha ou separadas por vírgula
+npx wrangler secret put MFA_ENCRYPTION_KEY    # openssl rand -hex 32 — cifra o segredo da verificação em duas etapas
 ```
 
 | Segredo | Uso | Efeito de trocar |
@@ -78,6 +86,7 @@ npx wrangler secret put GROQ_API_KEYS         # TODAS as chaves do pool, uma por
 | `SESSION_TOKEN_PEPPER` | hash de sessões/tokens e **chave do QR de presença v2** (derivada por HMAC, domínio `laift-attendance-qr-v1`) | logout global, links de e-mail pendentes invalidados e **todos os QRs e crachás impressos deixam de valer** (ver `docs/SECURITY.md`) |
 | `BREVO_API_KEY` | e-mails de confirmação e redefinição (`worker/src/mailer.js`) | nenhum |
 | `GROQ_API_KEYS` | pool de chaves da IA (`worker/src/ai/groqClient.js`) | nenhum; chaves repetidas ou vazias são ignoradas |
+| `MFA_ENCRYPTION_KEY` | AES-256-GCM do segredo TOTP (`worker/src/mfa/secretBox.js`). Sem ela, deriva-se do `SESSION_TOKEN_PEPPER` | **trocar invalida o MFA de todo mundo** (todos precisam recadastrar; um admin reseta com `apiAdminResetUserMfa`). Guarde em cofre e defina **antes** de alguém ativar o MFA |
 
 Conferência: `npx wrangler secret list` mostra os quatro nomes (nunca os
 valores).
@@ -226,6 +235,13 @@ plataforma (painel admin).
   (`NNN_rollback_*.sql`) — por isso o teste em branch do Neon antes.
 - **Credenciais comprometidas:** `docs/SECURITY.md`, seção "Rotação de
   credenciais".
+- **Perda de dados:** backup diário cifrado no R2 e teste de restauração em
+  `docs/BACKUP_RESTORE.md` (`.github/workflows/backup.yml`).
+- **Admin sem acesso ao MFA** (perdeu o celular e os códigos): **outro**
+  administrador chama `apiAdminResetUserMfa`; a pessoa entra com a senha e
+  cadastra o autenticador de novo. Com dois administradores, nenhum fica
+  trancado. Para desligar a obrigatoriedade em emergência, ponha a flag
+  `mfa_required` em `enabled=false` (`apiAdminSetFeatureFlag`).
 
 ## 9. Manutenção periódica
 
