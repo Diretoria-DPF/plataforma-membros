@@ -167,6 +167,37 @@ summary:focus-visible,
 .home-list li { display: grid; gap: 2px; }
 .home-list-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 
+/* ---------- Verificação em duas etapas ---------- */
+#mfa-card-body { display: grid; gap: 12px; justify-items: start; }
+.mfa-secret {
+  display: block;
+  padding: 10px 12px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  word-break: break-all;
+}
+.mfa-codes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.mfa-codes li {
+  padding: 8px 10px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+}
+.mfa-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.state-error-text { margin: 0; color: var(--danger); font-weight: 600; }
+
 /* ---------- Movimento reduzido ---------- */
 @media (prefers-reduced-motion: reduce) {
   button, .list-item, .stat-card, .bottom-nav button, a { transition: none; }

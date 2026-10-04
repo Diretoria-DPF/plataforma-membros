@@ -192,6 +192,17 @@ export const RATE_LIMITS = {
   // ENVIO de mensagem (esse é o silenciamento progressivo, ver LIMITS
   // acima e apply_message_penalty).
   KEY_PUBLISH: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
+  // Fase 2 — camadas por IP além das por conta e globais já existentes.
+  // IP compartilhado (NAT de campus) é comum, então os tetos são folgados
+  // para uso legítimo e curtos para força bruta.
+  REGISTER_IP: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
+  RESET_REQUEST_IP: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
+  // Verificação em duas etapas (mfaService.js).
+  MFA_VERIFY: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
+  MFA_VERIFY_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 900 },
+  MFA_ENROLL: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
+  MFA_DISABLE: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
+  MFA_ADMIN_RESET: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
 };
 
 export const GENERIC_ERROR_MESSAGE = 'Não foi possível concluir a operação. Tente novamente em instantes.';

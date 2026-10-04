@@ -73,6 +73,11 @@ export async function runMaintenance(sql, correlationId) {
       DELETE FROM error_logs
       WHERE created_at < now() - make_interval(days => ${RETENTION.ERROR_LOGS_DAYS})
       RETURNING 1`,
+    // Desafios de MFA vivem 5 minutos; o que sobrou é lixo (login abandonado).
+    mfaChallenges: () => sql`
+      DELETE FROM mfa_challenges
+      WHERE expires_at < now() - interval '1 day'
+      RETURNING 1`,
   };
 
   const deleted = {};

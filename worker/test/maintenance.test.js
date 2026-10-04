@@ -29,8 +29,9 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([1, 1, 1, 1]); // error_logs
     const res = await runMaintenance(sql, 'cid');
     expect(res).toEqual({
-      aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, errorLogs: 4,
+      aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, errorLogs: 4, mfaChallenges: 0,
     });
+    expect(queryText(sql, 7)).toMatch(/DELETE FROM mfa_challenges/);
     expect(queryText(sql, 0)).toMatch(/DELETE FROM ai_usage_log/);
     expect(sql.mock.calls[0]).toContain(RETENTION.AI_USAGE_LOG_DAYS);
     expect(RETENTION.AI_USAGE_LOG_DAYS).toBe(180);
@@ -78,7 +79,7 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([1]);       // error_logs
     const res = await runMaintenance(sql, 'cid');
     expect(res).toEqual({
-      aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, errorLogs: 1,
+      aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, errorLogs: 1, mfaChallenges: 0,
     });
     expect(queryText(sql, 1)).toMatch(/error_logs/);
   });

@@ -25,6 +25,8 @@ import { GENERIC_ERROR_MESSAGE } from './constants.js';
 import * as AuthService from './services/authService.js';
 import * as ProfileService from './services/profileService.js';
 import * as HomeService from './services/homeService.js';
+import * as FeatureFlagService from './services/featureFlagService.js';
+import * as MfaService from './services/mfaService.js';
 import * as EventService from './services/eventService.js';
 import * as ProposalService from './services/proposalService.js';
 import * as TaskService from './services/taskService.js';
@@ -52,16 +54,20 @@ async function run(sql, callback) {
     return await callback(correlationId);
   } catch (err) {
     if (err && err.expected) {
-      return { success: false, message: err.message };
+      // `payload` carrega sinais para a interface (ex.: mfaSetupRequired), nunca dados sensíveis.
+      return Object.assign({ success: false, message: err.message }, err.payload || {});
     }
     await Logging.logError(sql, correlationId, (err && err.name) || 'UNEXPECTED_ERROR', String((err && err.message) || err), null);
     return { success: false, message: GENERIC_ERROR_MESSAGE + ' (ref: ' + correlationId + ')' };
   }
 }
 
-async function runWithSession(sql, env, sessionToken, callback) {
+async function runWithSession(sql, env, sessionToken, callback, options) {
   return run(sql, async (correlationId) => {
     const identity = await S.requireSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken);
+    // Com `mfa_required` ligada, admin sem autenticador só chega às ações de
+    // cadastro do MFA (allowMfaSetup); o resto é recusado com mfaSetupRequired.
+    if (!(options && options.allowMfaSetup)) await MfaService.assertAdminMfaSatisfied(sql, identity);
     return callback(identity, correlationId);
   });
 }
@@ -82,6 +88,16 @@ export const API_REGISTRY = {
   apiValidateResetToken: (sql, env, [token]) => run(sql, () => AuthService.validateResetToken(sql, env, token)),
   apiConfirmPasswordReset: (sql, env, [token, newPassword]) => run(sql, (cid) => AuthService.confirmPasswordReset(sql, env, token, newPassword, cid)),
 
+  // ---- Verificação em duas etapas ----
+  apiLoginMfa: (sql, env, [mfaToken, code]) => run(sql, (cid) => MfaService.completeLogin(sql, env, mfaToken, code, '', cid)),
+  // As ações abaixo valem também para admin que ainda não cadastrou o MFA (allowMfaSetup).
+  apiMfaStatus: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MfaService.status(sql, identity), { allowMfaSetup: true }),
+  apiMfaBeginEnrollment: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MfaService.beginEnrollment(sql, env, identity), { allowMfaSetup: true }),
+  apiMfaConfirmEnrollment: (sql, env, [sessionToken, code]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.confirmEnrollment(sql, env, identity, code, cid), { allowMfaSetup: true }),
+  apiMfaRegenerateRecoveryCodes: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.regenerateRecoveryCodes(sql, env, identity, input || {}, cid)),
+  apiMfaDisable: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.disable(sql, env, identity, input || {}, cid)),
+  apiAdminResetUserMfa: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.adminResetUserMfa(sql, identity, targetProfileId, cid)),
+
   // ---- Sessão ----
   apiLogout: (sql, env, [sessionToken]) => run(sql, (cid) => AuthService.logout(sql, env, sessionToken, cid)),
   apiTouchSession: (sql, env, [sessionToken]) => run(sql, async () => {
@@ -90,7 +106,7 @@ export const API_REGISTRY = {
   }),
 
   // ---- Perfil (requer sessão) ----
-  apiGetMyProfile: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyProfile(sql, identity)),
+  apiGetMyProfile: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyProfile(sql, identity), { allowMfaSetup: true }),
   apiUpdateMyProfile: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyProfile(sql, identity, input || {}, cid)),
   apiUpdateMyPreferences: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyPreferences(sql, identity, input || {}, cid)),
   apiSubmitFeedback: (sql, env, [sessionToken, message]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.submitFeedback(sql, identity, message, cid)),
@@ -98,6 +114,14 @@ export const API_REGISTRY = {
   apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
   // Início: eventos, tarefas, votações, aprendizado e caixa de entrada em UMA requisição.
   apiGetHomeSummary: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HomeService.getHomeSummary(sql, env, identity)),
+
+  // ---- Feature flags (identidade opcional: visitante anônimo só vê flags a 100%) ----
+  apiGetFeatureFlags: (sql, env, [sessionToken]) => run(sql, async () => {
+    const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
+    return { success: true, flags: await FeatureFlagService.getFlagsFor(sql, identity) };
+  }),
+  apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),
+  apiAdminSetFeatureFlag: (sql, env, [sessionToken, key, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => FeatureFlagService.adminSet(sql, identity, key, input || {}, cid)),
 
   // ---- Eventos ----
   apiListEvents: (sql, env, [sessionToken]) => run(sql, async () => {
