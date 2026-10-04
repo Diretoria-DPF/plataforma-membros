@@ -47,6 +47,11 @@ GROQ_MODEL_SMART = "openai/gpt-oss-120b"
 # "round-robin" (reveza; só vale a pena com chaves de ORGANIZAÇÕES diferentes,
 # porque o limite do Groq é por organização). Ver docs/AI_KEYS.md.
 AI_KEY_STRATEGY = "failover"
+# NVIDIA NIM: cliente construído mas NÃO ligado (nenhum serviço o chama). Os IDs
+# vêm do catálogo público (GET https://integrate.api.nvidia.com/v1/models) e
+# podem mudar: conferir antes de ligar. A chave é o segredo NVIDIA_API_KEY.
+NVIDIA_MODEL_FAST = "nvidia/nemotron-3.5-lightning-30b-a3b"
+NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o
@@ -108,3 +113,5 @@ MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"
 GROQ_MODEL_FAST = "openai/gpt-oss-20b"
 GROQ_MODEL_SMART = "openai/gpt-oss-120b"
 AI_KEY_STRATEGY = "failover"
+NVIDIA_MODEL_FAST = "nvidia/nemotron-3.5-lightning-30b-a3b"
+NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"

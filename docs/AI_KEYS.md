@@ -31,7 +31,7 @@ O cooldown fica em memória e no KV (`ai:key-cooldown:<índice>` no Groq, `ai:ke
 
 ## Código
 - `worker/src/ai/providers/poolClient.js` — motor (pool, failover, cooldown, `ai_usage_log`).
-- `worker/src/ai/providers/groq.js` e `nvidia.js` — descritores (URL, secret, modelo). A NVIDIA está construída e testada, **mas não ligada**: nenhum service a chama, e os IDs de modelo vêm de `NVIDIA_MODEL_FAST`/`NVIDIA_MODEL_SMART` (sem eles o provedor se declara não configurado).
+- `worker/src/ai/providers/groq.js` e `nvidia.js` — descritores (URL, secret, modelo). A NVIDIA está construída e testada, **mas não ligada**: nenhum service a chama, e os IDs de modelo vêm de `NVIDIA_MODEL_FAST`/`NVIDIA_MODEL_SMART` (sem eles o provedor se declara não configurado). Valores atuais, tirados do catálogo público em 2026-10-04: `nvidia/nemotron-3.5-lightning-30b-a3b` (rápido) e `nvidia/nemotron-3-super-120b-a12b` (forte). O `deepseek-v4-pro` citado no plano v4.0 não constava do catálogo nessa data. Conferir `GET https://integrate.api.nvidia.com/v1/models` antes de ligar.
 - `worker/src/ai/groqClient.js` — fachada com a API de sempre; os services só importam este arquivo.
 - `sql/015_ai_usage_provider.sql` — coluna `provider` em `ai_usage_log` (reversão em `sql/down/`). O INSERT do Groq não menciona a coluna, então código e migração podem ser implantados em qualquer ordem.
 
