@@ -20,6 +20,7 @@
 import { PGlite } from '@electric-sql/pglite';
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 import { uuid_ossp } from '@electric-sql/pglite/contrib/uuid_ossp';
+import { pg_trgm } from '@electric-sql/pglite/contrib/pg_trgm';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -28,7 +29,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const SQL_DIR = path.resolve(process.argv[2] || path.join(here, '..', '..', 'sql'));
 
 const files = fs.readdirSync(SQL_DIR).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort();
-const db = new PGlite({ extensions: { pgcrypto, uuid_ossp } });
+const db = new PGlite({ extensions: { pgcrypto, uuid_ossp, pg_trgm } });
 let failures = 0;
 
 for (const pass of [1, 2]) {
