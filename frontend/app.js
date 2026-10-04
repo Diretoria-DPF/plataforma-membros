@@ -198,7 +198,9 @@
     if (!container) return;
     clearEl(container);
     if (!items || !items.length) {
-      container.appendChild(h('p', { className: 'empty-state' }, [emptyMessage]));
+      // Estado vazio padronizado (shared-states.js); sem ele, o parágrafo antigo.
+      if (window.LaiftStates) container.appendChild(window.LaiftStates.createStateNode(document, 'empty', { title: emptyMessage }));
+      else container.appendChild(h('p', { className: 'empty-state' }, [emptyMessage]));
       return;
     }
     items.forEach(function (item) {
