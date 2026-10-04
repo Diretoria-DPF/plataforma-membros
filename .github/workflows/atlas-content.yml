@@ -234,7 +234,7 @@ jobs:
         # out/wikidata.json e out/wikipedia-pt.json sem precisar rodar o
         # pipeline completo.
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: atlas-content-${{ github.run_number }}
           path: |

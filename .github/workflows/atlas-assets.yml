@@ -212,7 +212,7 @@ jobs:
             --structures out/structures.json
 
       - name: Enviar artefato (manifesto, GLBs, relatórios, log do discover)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: atlas-assets-${{ github.run_number }}
           path: |
