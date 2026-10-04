@@ -108,6 +108,20 @@ function defaultWorkerReply(action, args, ctx) {
         success: true,
         metrics: { eventsCount: 0, tasksCount: 0, tasksCompletedCount: 0, proposalsCount: 0, votesCount: 0, feedbackCount: 0 },
       };
+    case 'apiGetHomeSummary': {
+      // Resumo vazio e válido; visitante não recebe as seções de membro.
+      const isMember = p.role !== 'visitor';
+      return {
+        success: true,
+        summary: {
+          nextEvents: [],
+          tasks: isMember ? { myPendingCount: 0, availableCount: 0, next: null } : null,
+          voting: isMember ? { openCount: 0, pendingCount: 0, nextClosesAt: null } : null,
+          learning: { accuracyPct: null, questionsAnswered: 0, totalActivities: 0, unlockedBadges: 0, totalBadges: 0 },
+          inbox: isMember ? { unreadMessages: 0, pendingConnectionRequests: 0 } : null,
+        },
+      };
+    }
     case 'apiLearnGetMyAttendanceQr':
       // Formato v2 (Fase 2) — assinatura fictícia, só precisa ter a forma certa.
       return { success: true, qrPayload: 'LAIFT:v2:00000000-0000-4000-8000-000000000000.AAAAAAAAAAAAAAAAAAAAAAAA' };

@@ -1,0 +1,176 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Base visual da Fase 1: vidro (glassmorphism) com fallback, hover/foco
+   consistentes, estados (carregando/vazio/erro), esqueletos e aviso offline.
+   Vem DEPOIS de styles.css e só usa os tokens dele (claro/escuro). Todo
+   movimento respeita prefers-reduced-motion; nenhum texto abaixo de 11 px. */
+
+:root {
+  --ux-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ux-fast: 120ms;
+  --glass-blur: 14px;
+  /* 86% de opacidade: o vidro continua legível (contraste >= 4,5:1) sobre as
+     folhas decorativas do fundo. */
+  --glass-bg: color-mix(in srgb, var(--surface) 86%, transparent);
+  --glass-border: color-mix(in srgb, var(--border) 75%, transparent);
+}
+
+/* ---------- Vidro ---------- */
+/* Sem suporte a backdrop-filter nada muda: valem as superfícies opacas do
+   styles.css. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .app-header,
+  .bottom-nav,
+  .auth-card,
+  .modal-box {
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: var(--surface); }
+}
+
+/* ---------- Hover e foco ---------- */
+button,
+.list-item,
+.stat-card,
+.bottom-nav button,
+a {
+  transition:
+    background-color var(--ux-fast) var(--ux-ease),
+    border-color var(--ux-fast) var(--ux-ease),
+    color var(--ux-fast) var(--ux-ease),
+    box-shadow var(--ux-fast) var(--ux-ease),
+    transform var(--ux-fast) var(--ux-ease),
+    filter var(--ux-fast) var(--ux-ease);
+}
+
+@media (hover: hover) {
+  button:hover:not(:disabled) { filter: brightness(1.07); }
+  button.secondary:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface-alt));
+    border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+    filter: none;
+  }
+  button.link-btn:hover:not(:disabled) { filter: none; text-decoration: underline; text-underline-offset: 3px; }
+  .bottom-nav button:hover:not(.active) { color: var(--text); filter: none; }
+  .list-item:hover {
+    border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+    box-shadow: 0 6px 18px rgba(20, 30, 50, 0.08);
+    transform: translateY(-1px);
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  a:hover { text-decoration-thickness: 2px; text-underline-offset: 3px; }
+}
+
+/* Foco visível em tudo que é interativo, inclusive onde o styles.css não cobre. */
+.bottom-nav button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent);
+  outline-offset: -3px;
+}
+summary:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+/* ---------- Estados de tela ---------- */
+.state {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--surface-alt);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+.state-title { margin: 0; font-weight: 700; color: var(--text); }
+.state-message { margin: 0; font-size: 14px; }
+.state button { margin-top: 8px; width: auto; }
+.state-error { border-color: color-mix(in srgb, var(--danger) 45%, var(--border)); background: var(--danger-soft); }
+.state-error .state-title { color: var(--danger); }
+
+.state-loading::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  border-top-color: var(--primary);
+  animation: ux-spin 0.8s linear infinite;
+}
+@keyframes ux-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Esqueletos ---------- */
+.skeleton { display: grid; gap: 10px; padding: 4px 0; }
+.skeleton-line {
+  height: 14px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-alt) 25%,
+    color-mix(in srgb, var(--border) 60%, var(--surface-alt)) 50%,
+    var(--surface-alt) 75%
+  );
+  background-size: 200% 100%;
+  animation: ux-shimmer 1.4s linear infinite;
+}
+.skeleton-line-short { width: 60%; }
+@keyframes ux-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* ---------- Aviso offline ---------- */
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--admin-soft);
+  color: var(--admin);
+  border-bottom: 1px solid color-mix(in srgb, var(--admin) 40%, transparent);
+}
+.offline-banner[hidden] { display: none; }
+
+/* ---------- Painel Início ---------- */
+/* .hidden usa !important, então o display:grid não reabre o painel escondido. */
+#panel-home { display: grid; gap: var(--density-gap); }
+.home-grid { display: grid; grid-template-columns: 1fr; gap: var(--density-gap); }
+@media (min-width: 720px) {
+  .home-grid { grid-template-columns: 1fr 1fr; }
+  .home-card-events { grid-column: 1 / -1; }
+}
+.home-card { display: grid; gap: 10px; align-content: start; }
+.home-card-title { margin: 0; font-size: 15px; font-weight: 700; color: var(--muted); }
+.home-card-detail { margin: 0; font-size: 14px; }
+.home-card > button { justify-self: start; width: auto; }
+.home-metric { display: flex; align-items: baseline; gap: 8px; }
+.home-metric-value { font-size: 34px; line-height: 1; font-weight: 800; color: var(--primary-strong); }
+.home-metric-label { color: var(--muted); font-size: 14px; }
+.home-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.home-list li { display: grid; gap: 2px; }
+.home-list-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+/* ---------- Movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  button, .list-item, .stat-card, .bottom-nav button, a { transition: none; }
+  .list-item:hover, .stat-card:hover { transform: none; }
+  .state-loading::before { animation: none; }
+  .skeleton-line { animation: none; }
+}

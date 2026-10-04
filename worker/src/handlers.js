@@ -24,6 +24,7 @@ import * as Logging from './logging.js';
 import { GENERIC_ERROR_MESSAGE } from './constants.js';
 import * as AuthService from './services/authService.js';
 import * as ProfileService from './services/profileService.js';
+import * as HomeService from './services/homeService.js';
 import * as EventService from './services/eventService.js';
 import * as ProposalService from './services/proposalService.js';
 import * as TaskService from './services/taskService.js';
@@ -95,6 +96,8 @@ export const API_REGISTRY = {
   apiSubmitFeedback: (sql, env, [sessionToken, message]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.submitFeedback(sql, identity, message, cid)),
   apiUpdateMyAvatar: (sql, env, [sessionToken, avatarBase64, avatarMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyAvatarFromBase64(sql, env, identity, avatarBase64, avatarMimeType, cid)),
   apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
+  // Início: eventos, tarefas, votações, aprendizado e caixa de entrada em UMA requisição.
+  apiGetHomeSummary: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HomeService.getHomeSummary(sql, env, identity)),
 
   // ---- Eventos ----
   apiListEvents: (sql, env, [sessionToken]) => run(sql, async () => {

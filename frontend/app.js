@@ -198,7 +198,9 @@
     if (!container) return;
     clearEl(container);
     if (!items || !items.length) {
-      container.appendChild(h('p', { className: 'empty-state' }, [emptyMessage]));
+      // Estado vazio padronizado (shared-states.js); sem ele, o parágrafo antigo.
+      if (window.LaiftStates) container.appendChild(window.LaiftStates.createStateNode(document, 'empty', { title: emptyMessage }));
+      else container.appendChild(h('p', { className: 'empty-state' }, [emptyMessage]));
       return;
     }
     items.forEach(function (item) {
@@ -788,6 +790,8 @@
   document.getElementById('btn-exit-admin-mode').addEventListener('click', function () { setAdminMode(false); });
 
   var PANEL_LOADERS = {
+    // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
+    'panel-home': function () { if (window.LaiftHome) window.LaiftHome.load(window.App, document); },
     'panel-events': loadEvents,
     'panel-proposals': loadProposalsAndVoting,
     'panel-tasks': loadTasks,
