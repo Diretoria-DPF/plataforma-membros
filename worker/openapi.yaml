@@ -1,0 +1,1808 @@
+# Gerado por `npm run openapi` a partir de worker/src/handlers.js. NÃO edite à mão.
+openapi: "3.1.0"
+info:
+  title: "API da Plataforma de Membros LAIFT"
+  version: "1.0.0"
+  description: "Uma única rota POST com {action, args}. Documentação gerada de worker/src/handlers.js (npm run openapi). Erros de negócio voltam com HTTP 200 e {success:false, message}; só falhas de protocolo usam 4xx/5xx. O token de sessão é opaco, vai como primeiro argumento e nunca em cookie."
+  license:
+    name: "Proprietária — ver LICENSE"
+    identifier: "LicenseRef-Proprietary"
+servers:
+  - url: "https://api.laift.com.br"
+    description: "Produção"
+  - url: "https://staging-api.laift.com.br"
+    description: "Homologação"
+tags:
+  - name: "Administração"
+  - name: "Plataforma"
+  - name: "Conta e sessão"
+  - name: "Aprendizagem e IA"
+  - name: "Verificação em duas etapas"
+paths:
+  "/v1/":
+    post:
+      operationId: "call"
+      summary: "Chama uma action"
+      description: "`POST /` (legado) responde igual a `POST /v1/`. A lista de actions está em `components.schemas`."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - "$ref": "#/components/schemas/apiAdminAiHealth"
+                - "$ref": "#/components/schemas/apiAdminAttendanceBadges"
+                - "$ref": "#/components/schemas/apiAdminAttendanceCheckIn"
+                - "$ref": "#/components/schemas/apiAdminAttendanceExportCsv"
+                - "$ref": "#/components/schemas/apiAdminAttendanceListEvents"
+                - "$ref": "#/components/schemas/apiAdminAttendanceSearch"
+                - "$ref": "#/components/schemas/apiAdminBanUser"
+                - "$ref": "#/components/schemas/apiAdminChangeUserRole"
+                - "$ref": "#/components/schemas/apiAdminCreateEvent"
+                - "$ref": "#/components/schemas/apiAdminCreateTask"
+                - "$ref": "#/components/schemas/apiAdminDashboard"
+                - "$ref": "#/components/schemas/apiAdminLearnAtlasTelemetry"
+                - "$ref": "#/components/schemas/apiAdminLearnListPendingCases"
+                - "$ref": "#/components/schemas/apiAdminLearnReviewCase"
+                - "$ref": "#/components/schemas/apiAdminListAllEvents"
+                - "$ref": "#/components/schemas/apiAdminListAllTasks"
+                - "$ref": "#/components/schemas/apiAdminListAuditLogs"
+                - "$ref": "#/components/schemas/apiAdminListErrorLogs"
+                - "$ref": "#/components/schemas/apiAdminListFeatureFlags"
+                - "$ref": "#/components/schemas/apiAdminListFeedback"
+                - "$ref": "#/components/schemas/apiAdminListProposalsForReview"
+                - "$ref": "#/components/schemas/apiAdminListReports"
+                - "$ref": "#/components/schemas/apiAdminListUsers"
+                - "$ref": "#/components/schemas/apiAdminResetUserMfa"
+                - "$ref": "#/components/schemas/apiAdminResolveReport"
+                - "$ref": "#/components/schemas/apiAdminSetFeatureFlag"
+                - "$ref": "#/components/schemas/apiAdminSetLeaguePosition"
+                - "$ref": "#/components/schemas/apiAdminTransitionProposal"
+                - "$ref": "#/components/schemas/apiAdminUnbanUser"
+                - "$ref": "#/components/schemas/apiAdminUpdateEventStatus"
+                - "$ref": "#/components/schemas/apiAdminUpdateTaskStatus"
+                - "$ref": "#/components/schemas/apiAdminUploadEventImage"
+                - "$ref": "#/components/schemas/apiBlockProfile"
+                - "$ref": "#/components/schemas/apiCastVote"
+                - "$ref": "#/components/schemas/apiClearConversation"
+                - "$ref": "#/components/schemas/apiConfirmEmail"
+                - "$ref": "#/components/schemas/apiConfirmPasswordReset"
+                - "$ref": "#/components/schemas/apiDeleteMessage"
+                - "$ref": "#/components/schemas/apiGetFeatureFlags"
+                - "$ref": "#/components/schemas/apiGetHomeSummary"
+                - "$ref": "#/components/schemas/apiGetMemberProfile"
+                - "$ref": "#/components/schemas/apiGetMyMessagingKey"
+                - "$ref": "#/components/schemas/apiGetMyMetrics"
+                - "$ref": "#/components/schemas/apiGetMyProfile"
+                - "$ref": "#/components/schemas/apiGetOrgChart"
+                - "$ref": "#/components/schemas/apiGetPeerMessagingKeys"
+                - "$ref": "#/components/schemas/apiGetProposalResults"
+                - "$ref": "#/components/schemas/apiHideMessageForMe"
+                - "$ref": "#/components/schemas/apiLearnAtlasPdb"
+                - "$ref": "#/components/schemas/apiLearnAtlasPubchem"
+                - "$ref": "#/components/schemas/apiLearnAtlasTelemetry"
+                - "$ref": "#/components/schemas/apiLearnClinicalChat"
+                - "$ref": "#/components/schemas/apiLearnClinicalEpidemiology"
+                - "$ref": "#/components/schemas/apiLearnClinicalEvaluate"
+                - "$ref": "#/components/schemas/apiLearnClinicalGenerateCase"
+                - "$ref": "#/components/schemas/apiLearnClinicalLibrary"
+                - "$ref": "#/components/schemas/apiLearnGetMyAiQuota"
+                - "$ref": "#/components/schemas/apiLearnGetMyAttendanceQr"
+                - "$ref": "#/components/schemas/apiLearnGetMyStats"
+                - "$ref": "#/components/schemas/apiLearnLabPreceptor"
+                - "$ref": "#/components/schemas/apiLearnRecordLabFormulation"
+                - "$ref": "#/components/schemas/apiLearnSubmitQuizAttempt"
+                - "$ref": "#/components/schemas/apiListConversations"
+                - "$ref": "#/components/schemas/apiListEvents"
+                - "$ref": "#/components/schemas/apiListIncomingConnectionRequests"
+                - "$ref": "#/components/schemas/apiListMessages"
+                - "$ref": "#/components/schemas/apiListMyBlocks"
+                - "$ref": "#/components/schemas/apiListMyConnections"
+                - "$ref": "#/components/schemas/apiListMyProposals"
+                - "$ref": "#/components/schemas/apiListOpenProposalsForVoting"
+                - "$ref": "#/components/schemas/apiListRecentCompletedEvents"
+                - "$ref": "#/components/schemas/apiListTaskComments"
+                - "$ref": "#/components/schemas/apiListTasks"
+                - "$ref": "#/components/schemas/apiLogin"
+                - "$ref": "#/components/schemas/apiLoginMfa"
+                - "$ref": "#/components/schemas/apiLogout"
+                - "$ref": "#/components/schemas/apiMarkConversationRead"
+                - "$ref": "#/components/schemas/apiMarkTaskComplete"
+                - "$ref": "#/components/schemas/apiMessagingSync"
+                - "$ref": "#/components/schemas/apiMfaBeginEnrollment"
+                - "$ref": "#/components/schemas/apiMfaConfirmEnrollment"
+                - "$ref": "#/components/schemas/apiMfaDisable"
+                - "$ref": "#/components/schemas/apiMfaRegenerateRecoveryCodes"
+                - "$ref": "#/components/schemas/apiMfaStatus"
+                - "$ref": "#/components/schemas/apiOpenConversation"
+                - "$ref": "#/components/schemas/apiPublishMessagingKey"
+                - "$ref": "#/components/schemas/apiRegister"
+                - "$ref": "#/components/schemas/apiRegisterForEvent"
+                - "$ref": "#/components/schemas/apiRemoveConnection"
+                - "$ref": "#/components/schemas/apiReportProfile"
+                - "$ref": "#/components/schemas/apiRequestPasswordReset"
+                - "$ref": "#/components/schemas/apiRespondConnectionRequest"
+                - "$ref": "#/components/schemas/apiSendConnectionRequest"
+                - "$ref": "#/components/schemas/apiSendMessage"
+                - "$ref": "#/components/schemas/apiSignupForTask"
+                - "$ref": "#/components/schemas/apiSubmitFeedback"
+                - "$ref": "#/components/schemas/apiSubmitProposal"
+                - "$ref": "#/components/schemas/apiSubmitTaskComment"
+                - "$ref": "#/components/schemas/apiTouchSession"
+                - "$ref": "#/components/schemas/apiUnblockProfile"
+                - "$ref": "#/components/schemas/apiUpdateMyAvatar"
+                - "$ref": "#/components/schemas/apiUpdateMyPreferences"
+                - "$ref": "#/components/schemas/apiUpdateMyProfile"
+                - "$ref": "#/components/schemas/apiValidateResetToken"
+      responses:
+        "200":
+          description: "Resultado da action (sucesso ou erro de negócio)."
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Resultado"
+        "400":
+          description: "Corpo que não é JSON."
+        "404":
+          description: "Caminho inexistente."
+        "405":
+          description: "Método diferente de POST/OPTIONS."
+components:
+  schemas:
+    Resultado:
+      type: "object"
+      required:
+        - "success"
+      properties:
+        success:
+          type: "boolean"
+        message:
+          type: "string"
+      additionalProperties: true
+    apiAdminAiHealth:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAiHealth"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminAttendanceBadges:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAttendanceBadges"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminAttendanceCheckIn:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAttendanceCheckIn"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminAttendanceExportCsv:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAttendanceExportCsv"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminAttendanceListEvents:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAttendanceListEvents"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminAttendanceSearch:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAttendanceSearch"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminBanUser:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminBanUser"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "targetProfileId"
+          minItems: 0
+          maxItems: 2
+    apiAdminChangeUserRole:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminChangeUserRole"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "targetProfileId"
+            - description: "newRole"
+          minItems: 0
+          maxItems: 3
+    apiAdminCreateEvent:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminCreateEvent"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminCreateTask:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminCreateTask"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminDashboard:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminDashboard"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminLearnAtlasTelemetry:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnAtlasTelemetry"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnListPendingCases:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnListPendingCases"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminLearnReviewCase:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnReviewCase"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminListAllEvents:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListAllEvents"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminListAllTasks:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListAllTasks"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminListAuditLogs:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListAuditLogs"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminListErrorLogs:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListErrorLogs"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminListFeatureFlags:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListFeatureFlags"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminListFeedback:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListFeedback"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminListProposalsForReview:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListProposalsForReview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminListReports:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListReports"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminListUsers:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListUsers"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminResetUserMfa:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminResetUserMfa"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "targetProfileId"
+          minItems: 0
+          maxItems: 2
+    apiAdminResolveReport:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminResolveReport"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "reportId"
+            - description: "input"
+          minItems: 0
+          maxItems: 3
+    apiAdminSetFeatureFlag:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminSetFeatureFlag"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "key"
+            - description: "input"
+          minItems: 0
+          maxItems: 3
+    apiAdminSetLeaguePosition:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminSetLeaguePosition"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "targetProfileId"
+            - description: "input"
+          minItems: 0
+          maxItems: 3
+    apiAdminTransitionProposal:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminTransitionProposal"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "proposalId"
+            - description: "newStatus"
+            - description: "extra"
+          minItems: 0
+          maxItems: 4
+    apiAdminUnbanUser:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminUnbanUser"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "targetProfileId"
+          minItems: 0
+          maxItems: 2
+    apiAdminUpdateEventStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminUpdateEventStatus"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "eventId"
+            - description: "newStatus"
+          minItems: 0
+          maxItems: 3
+    apiAdminUpdateTaskStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminUpdateTaskStatus"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "taskId"
+            - description: "newStatus"
+          minItems: 0
+          maxItems: 3
+    apiAdminUploadEventImage:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminUploadEventImage"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "eventId"
+            - description: "imageBase64"
+            - description: "imageMimeType"
+          minItems: 0
+          maxItems: 4
+    apiBlockProfile:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiBlockProfile"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "targetProfileId"
+          minItems: 0
+          maxItems: 2
+    apiCastVote:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiCastVote"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "proposalId"
+            - description: "choice"
+            - description: "complementText"
+          minItems: 0
+          maxItems: 4
+    apiClearConversation:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiClearConversation"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "conversationId"
+          minItems: 0
+          maxItems: 2
+    apiConfirmEmail:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiConfirmEmail"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "token"
+          minItems: 0
+          maxItems: 1
+    apiConfirmPasswordReset:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiConfirmPasswordReset"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "token"
+            - description: "newPassword"
+          minItems: 0
+          maxItems: 2
+    apiDeleteMessage:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiDeleteMessage"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "conversationId"
+            - description: "messageId"
+          minItems: 0
+          maxItems: 3
+    apiGetFeatureFlags:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetFeatureFlags"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiGetHomeSummary:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetHomeSummary"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiGetMemberProfile:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMemberProfile"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "username"
+          minItems: 0
+          maxItems: 2
+    apiGetMyMessagingKey:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMyMessagingKey"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiGetMyMetrics:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMyMetrics"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiGetMyProfile:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMyProfile"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiGetOrgChart:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetOrgChart"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiGetPeerMessagingKeys:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetPeerMessagingKeys"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "peerProfileId"
+          minItems: 0
+          maxItems: 2
+    apiGetProposalResults:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetProposalResults"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "proposalId"
+          minItems: 0
+          maxItems: 2
+    apiHideMessageForMe:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiHideMessageForMe"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "conversationId"
+            - description: "messageId"
+          minItems: 0
+          maxItems: 3
+    apiLearnAtlasPdb:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnAtlasPdb"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnAtlasPubchem:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnAtlasPubchem"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnAtlasTelemetry:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnAtlasTelemetry"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnClinicalChat:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnClinicalChat"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnClinicalEpidemiology:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnClinicalEpidemiology"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLearnClinicalEvaluate:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnClinicalEvaluate"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnClinicalGenerateCase:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnClinicalGenerateCase"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnClinicalLibrary:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnClinicalLibrary"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnGetMyAiQuota:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnGetMyAiQuota"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLearnGetMyAttendanceQr:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnGetMyAttendanceQr"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLearnGetMyStats:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnGetMyStats"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLearnLabPreceptor:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLabPreceptor"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnRecordLabFormulation:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnRecordLabFormulation"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnSubmitQuizAttempt:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnSubmitQuizAttempt"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiListConversations:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListConversations"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListEvents:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListEvents"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListIncomingConnectionRequests:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListIncomingConnectionRequests"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListMessages:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListMessages"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "conversationId"
+            - description: "input"
+          minItems: 0
+          maxItems: 3
+    apiListMyBlocks:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListMyBlocks"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListMyConnections:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListMyConnections"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListMyProposals:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListMyProposals"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListOpenProposalsForVoting:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListOpenProposalsForVoting"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiListRecentCompletedEvents:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiListRecentCompletedEvents"
+        args:
+          type: "array"
+          prefixItems: []
+          minItems: 0
+          maxItems: 0
+    apiListTaskComments:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListTaskComments"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "taskId"
+          minItems: 0
+          maxItems: 2
+    apiListTasks:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiListTasks"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLogin:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiLogin"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "email"
+            - description: "password"
+          minItems: 0
+          maxItems: 2
+    apiLoginMfa:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiLoginMfa"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "mfaToken"
+            - description: "code"
+          minItems: 0
+          maxItems: 2
+    apiLogout:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLogout"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMarkConversationRead:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMarkConversationRead"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "conversationId"
+            - description: "lastReadMessageId"
+          minItems: 0
+          maxItems: 3
+    apiMarkTaskComplete:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMarkTaskComplete"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "taskId"
+          minItems: 0
+          maxItems: 2
+    apiMessagingSync:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMessagingSync"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMfaBeginEnrollment:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMfaBeginEnrollment"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMfaConfirmEnrollment:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMfaConfirmEnrollment"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "code"
+          minItems: 0
+          maxItems: 2
+    apiMfaDisable:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMfaDisable"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMfaRegenerateRecoveryCodes:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMfaRegenerateRecoveryCodes"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMfaStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiMfaStatus"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiOpenConversation:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiOpenConversation"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "peerProfileId"
+          minItems: 0
+          maxItems: 2
+    apiPublishMessagingKey:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiPublishMessagingKey"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiRegister:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiRegister"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "input"
+          minItems: 0
+          maxItems: 1
+    apiRegisterForEvent:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiRegisterForEvent"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "eventId"
+          minItems: 0
+          maxItems: 2
+    apiRemoveConnection:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiRemoveConnection"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "connectionId"
+          minItems: 0
+          maxItems: 2
+    apiReportProfile:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiReportProfile"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiRequestPasswordReset:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiRequestPasswordReset"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "email"
+          minItems: 0
+          maxItems: 1
+    apiRespondConnectionRequest:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiRespondConnectionRequest"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "connectionId"
+            - description: "decision"
+          minItems: 0
+          maxItems: 3
+    apiSendConnectionRequest:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSendConnectionRequest"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSendMessage:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSendMessage"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "conversationId"
+            - description: "payload"
+          minItems: 0
+          maxItems: 3
+    apiSignupForTask:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSignupForTask"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "taskId"
+          minItems: 0
+          maxItems: 2
+    apiSubmitFeedback:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSubmitFeedback"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "message"
+          minItems: 0
+          maxItems: 2
+    apiSubmitProposal:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSubmitProposal"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSubmitTaskComment:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSubmitTaskComment"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "taskId"
+            - description: "message"
+          minItems: 0
+          maxItems: 3
+    apiTouchSession:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiTouchSession"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiUnblockProfile:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiUnblockProfile"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "targetProfileId"
+          minItems: 0
+          maxItems: 2
+    apiUpdateMyAvatar:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiUpdateMyAvatar"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "avatarBase64"
+            - description: "avatarMimeType"
+          minItems: 0
+          maxItems: 3
+    apiUpdateMyPreferences:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiUpdateMyPreferences"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiUpdateMyProfile:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiUpdateMyProfile"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiValidateResetToken:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiValidateResetToken"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "token"
+          minItems: 0
+          maxItems: 1

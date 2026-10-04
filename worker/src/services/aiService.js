@@ -178,7 +178,13 @@ export async function askLabPreceptor(sql, env, identity, rawInput) {
   if (!question) throw E.ValidationError('Escreva sua dúvida para o preceptor.');
   if (question.length > C.AI_LIMITS.QUESTION_MAX) throw E.ValidationError('A pergunta passou do limite de ' + C.AI_LIMITS.QUESTION_MAX + ' caracteres.');
 
-  const benchRaw = typeof input.benchContext === 'string' ? input.benchContext : (input.benchContext ? JSON.stringify(input.benchContext) : '');
+  // O módulo envia o contexto como TEXTO. Objetos/listas não são aceitos: um
+  // objeto arbitrário serializado entraria no prompt com campos que o
+  // servidor nunca revisou.
+  if (input.benchContext !== undefined && input.benchContext !== null && typeof input.benchContext !== 'string') {
+    throw E.ValidationError('O contexto da bancada precisa ser um texto.');
+  }
+  const benchRaw = typeof input.benchContext === 'string' ? input.benchContext : '';
   if (byteLength(benchRaw) > C.AI_LIMITS.CONTEXT_MAX_BYTES) throw E.ValidationError('O contexto da bancada é grande demais.');
   const benchContext = cleanText(benchRaw, C.AI_LIMITS.CONTEXT_MAX_BYTES);
   const history = sanitizeHistory(input.history, ['student', 'preceptor'], C.AI_LIMITS.HISTORY_MAX_TURNS, C.AI_LIMITS.HISTORY_TURN_MAX);

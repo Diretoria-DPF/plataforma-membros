@@ -94,6 +94,6 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     await worker.scheduled({ cron: '17 6 * * *' }, makeEnv(), { waitUntil: (p) => pending.push(p) });
     expect(pending).toHaveLength(1);
     await pending[0];
-    expect(sql).toHaveBeenCalledTimes(7);
+    expect(sql).toHaveBeenCalledTimes(8);
   });
 });

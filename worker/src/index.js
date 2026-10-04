@@ -22,6 +22,8 @@ import { API_REGISTRY } from './handlers.js';
 import { runMaintenance } from './maintenance.js';
 import { newCorrelationId } from './security.js';
 
+const API_PATHS = new Set(['/', '/v1', '/v1/']);
+
 function parseAllowedOrigins(env) {
   return (env.ALLOWED_ORIGINS || '')
     .split(',')
@@ -59,6 +61,13 @@ export default {
 
     if (request.method !== 'POST') {
       return jsonResponse({ success: false, message: 'Método não suportado.' }, request, env, 405);
+    }
+
+    // `/v1/` é o endereço versionado (worker/openapi.yaml); a raiz continua
+    // valendo para o front-end já instalado/em cache. Qualquer outro caminho
+    // não é a API.
+    if (!API_PATHS.has(new URL(request.url).pathname)) {
+      return jsonResponse({ success: false, message: 'Caminho não encontrado.' }, request, env, 404);
     }
 
     let body;

@@ -29,6 +29,28 @@ function req(body, options) {
 describe('index.js — roteamento e CORS', () => {
   const env = makeEnv();
 
+  test.each(['/', '/v1', '/v1/'])('POST em %s chega à API (alias versionado e raiz legada)', async (pathname) => {
+    const request = new Request('https://api.example.com' + pathname, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'naoExiste', args: [] }),
+    });
+    const res = await worker.fetch(request, env);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ success: false, message: 'Ação desconhecida.' });
+  });
+
+  test.each(['/v2/', '/api', '/v1/extra', '/admin', '/.env'])('POST em %s é 404 e nem lê o corpo', async (pathname) => {
+    const request = new Request('https://api.example.com' + pathname, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'apiLogin', args: ['a@b.c', 'x'] }),
+    });
+    const res = await worker.fetch(request, env);
+    expect(res.status).toBe(404);
+    expect((await res.json()).success).toBe(false);
+  });
+
   test('OPTIONS (preflight) responde 204 com Access-Control-Allow-Origin quando a origem está na allowlist', async () => {
     const request = new Request('https://api.example.com/', {
       method: 'OPTIONS',
