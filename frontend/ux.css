@@ -148,6 +148,25 @@ summary:focus-visible,
 }
 .offline-banner[hidden] { display: none; }
 
+/* ---------- Painel Início ---------- */
+/* .hidden usa !important, então o display:grid não reabre o painel escondido. */
+#panel-home { display: grid; gap: var(--density-gap); }
+.home-grid { display: grid; grid-template-columns: 1fr; gap: var(--density-gap); }
+@media (min-width: 720px) {
+  .home-grid { grid-template-columns: 1fr 1fr; }
+  .home-card-events { grid-column: 1 / -1; }
+}
+.home-card { display: grid; gap: 10px; align-content: start; }
+.home-card-title { margin: 0; font-size: 15px; font-weight: 700; color: var(--muted); }
+.home-card-detail { margin: 0; font-size: 14px; }
+.home-card > button { justify-self: start; width: auto; }
+.home-metric { display: flex; align-items: baseline; gap: 8px; }
+.home-metric-value { font-size: 34px; line-height: 1; font-weight: 800; color: var(--primary-strong); }
+.home-metric-label { color: var(--muted); font-size: 14px; }
+.home-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.home-list li { display: grid; gap: 2px; }
+.home-list-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
 /* ---------- Movimento reduzido ---------- */
 @media (prefers-reduced-motion: reduce) {
   button, .list-item, .stat-card, .bottom-nav button, a { transition: none; }

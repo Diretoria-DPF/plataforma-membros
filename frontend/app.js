@@ -790,6 +790,8 @@
   document.getElementById('btn-exit-admin-mode').addEventListener('click', function () { setAdminMode(false); });
 
   var PANEL_LOADERS = {
+    // Início: resumo em uma requisição (frontend/home.js + apiGetHomeSummary).
+    'panel-home': function () { if (window.LaiftHome) window.LaiftHome.load(window.App, document); },
     'panel-events': loadEvents,
     'panel-proposals': loadProposalsAndVoting,
     'panel-tasks': loadTasks,
