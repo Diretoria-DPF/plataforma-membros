@@ -1,0 +1,48 @@
+# REFERÊNCIA — NÃO ATIVO.
+#
+# Esboço do 9drive (gateway que agrega contas do Google Drive) para quando um
+# gatilho de docs/backlog-futuro.md ocorrer. Hoje não existe VPS, o DNS
+# storage.laift.com.br não deve ser criado e nada aqui é implantado.
+#
+# Antes de ativar:
+#  1. confirmar o projeto 9drive (origem do código, licença, manutenção);
+#  2. confirmar os termos do Google para agregar várias contas;
+#  3. o responsável autorizar o custo da VPS;
+#  4. nenhum dado pessoal nem transacional vai para o Drive.
+#
+# Todos os valores vêm de um .env FORA do git (ver infra/README.md).
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ninedrive
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ninedrive:
+    build: .   # código do 9drive; origem a confirmar
+    ports:
+      - "127.0.0.1:3000:3000"   # exposto só atrás de proxy/túnel, nunca direto
+    environment:
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/ninedrive
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NINEDRIVE_PUBLIC_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ninedrive_data:/app/data
+
+volumes:
+  mysql_data:
+  ninedrive_data:

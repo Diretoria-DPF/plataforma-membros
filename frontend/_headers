@@ -20,6 +20,18 @@
 /
   Link: </sitemap.xml>; rel="sitemap", </llms.txt>; rel="describedby"; type="text/plain"
 
+# Fora dos buscadores: a homologação e as URLs *.workers.dev (que servem o mesmo
+# site) não devem aparecer no Google nem competir com laift.com.br. O noindex
+# vai em cabeçalho porque robots.txt não impede a indexação de uma URL.
+https://staging.laift.com.br/*
+  X-Robots-Tag: noindex, nofollow
+
+https://:name.:subdomain.workers.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://:version.:name.:subdomain.workers.dev/*
+  X-Robots-Tag: noindex, nofollow
+
 /*
   Strict-Transport-Security: max-age=300
   X-Content-Type-Options: nosniff

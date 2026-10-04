@@ -1,0 +1,73 @@
+name: Testes (Worker e unitários)
+
+# Pega o problema antes do merge. O deploy-worker.yml só roda na main, depois
+# que o código já entrou; este roda em todo pull request que mexe no Worker,
+# nas migrações ou nos testes unitários do front e das ferramentas.
+
+on:
+  pull_request:
+    paths:
+      - 'worker/**'
+      - 'sql/**'
+      - 'tools/license/**'
+      - 'frontend/scripts/*.test.mjs'
+      - 'frontend/app.js'
+      - 'frontend/wrangler.toml'
+      - 'frontend/redirect-www/**'
+      - 'frontend/domain-notice.js'
+      - 'frontend/index.html'
+      - 'frontend/_headers'
+      - 'frontend/robots.txt'
+      - 'frontend/sitemap.xml'
+      - 'frontend/llms.txt'
+      - '.github/workflows/worker-test.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Instala dependências
+        working-directory: worker
+        run: npm ci
+
+      - name: Testes da Worker
+        working-directory: worker
+        run: npm test
+
+      # Banco vazio + reaplicação por cima (idempotência), em PGlite.
+      - name: Valida as migrações SQL
+        working-directory: worker
+        run: npm run validate:sql
+
+  unitarios:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # SEO/robots, aviso de mudança de domínio, redirecionamento do www e o
+      # script de cabeçalhos de copyright. Não precisam de npm install.
+      - name: Testes unitários do front e das ferramentas
+        run: node --test frontend/scripts/*.test.mjs tools/license/*.test.mjs frontend/redirect-www/*.test.mjs
+
+      - name: Todo arquivo próprio tem o cabeçalho de copyright
+        run: node tools/license/apply-headers.mjs --check

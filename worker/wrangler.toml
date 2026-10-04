@@ -43,6 +43,15 @@ MEDIA_PUBLIC_URL = "https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev"
 # vírgula) — ver docs/FASE_3_IA_CLINICA.md.
 GROQ_MODEL_FAST = "openai/gpt-oss-20b"
 GROQ_MODEL_SMART = "openai/gpt-oss-120b"
+# Como o pool escolhe a chave: "failover" (usa a 1ª até ela falhar; padrão) ou
+# "round-robin" (reveza; só vale a pena com chaves de ORGANIZAÇÕES diferentes,
+# porque o limite do Groq é por organização). Ver docs/AI_KEYS.md.
+AI_KEY_STRATEGY = "round-robin"
+# NVIDIA NIM: cliente construído mas NÃO ligado (nenhum serviço o chama). Os IDs
+# vêm do catálogo público (GET https://integrate.api.nvidia.com/v1/models) e
+# podem mudar: conferir antes de ligar. A chave é o segredo NVIDIA_API_KEY.
+NVIDIA_MODEL_FAST = "nvidia/nemotron-3.5-lightning-30b-a3b"
+NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o
@@ -60,7 +69,49 @@ binding = "HOT_CACHE"
 id = "6ee17e571c044c43bd5b32599b6fbab9"
 
 # Faxina diária (src/maintenance.js): sessões/tokens/rate limit expirados e
-# retenção de 180 dias do log de uso da IA. 06:17 UTC = 03:17 em Brasília,
+# retenção por idade de ai_usage_log (180 dias), atlas_telemetry (90),
+# audit_logs (2 anos) e error_logs (30). 06:17 UTC = 03:17 em Brasília,
 # fora do horário de uso; o minuto "quebrado" evita a fila do minuto zero.
 [triggers]
 crons = ["17 6 * * *"]
+
+# ---------------------------------------------------------------------------
+# HOMOLOGAÇÃO (staging): Worker `plataforma-membros-api-staging` em
+# staging-api.laift.com.br, com banco Neon NOVO E VAZIO (nunca uma cópia nem
+# uma branch do banco de produção: ela levaria os dados pessoais dos membros;
+# ver docs/DEPLOYMENT.md, seção 10).
+# Deploy: `npx wrangler deploy --env staging` ou
+# .github/workflows/deploy-staging.yml.
+#
+# `vars` e os bindings (KV, R2) NÃO são herdados pelo ambiente: o que não
+# estiver abaixo não existe em staging. Já `triggers` É herdado, por isso o
+# `[env.staging.triggers]` vazio abaixo. Por escolha:
+#  - sem cron (a faxina diária só roda em produção);
+#  - sem KV e sem R2 (cache vira no-op; upload de avatar não funciona até
+#    existirem recursos de teste);
+#  - sem *.workers.dev: só o domínio de staging responde;
+#  - segredos próprios, cadastrados com `wrangler secret put <NOME> --env
+#    staging`: DATABASE_URL (banco de staging), SESSION_TOKEN_PEPPER (valor
+#    DIFERENTE do de produção). Não cadastrar BREVO_API_KEY de produção: a
+#    homologação não deve mandar e-mail a ninguém.
+# ---------------------------------------------------------------------------
+[env.staging]
+workers_dev = false
+
+[env.staging.triggers]
+crons = []
+
+[[env.staging.routes]]
+pattern = "staging-api.laift.com.br"
+custom_domain = true
+
+[env.staging.vars]
+APP_BASE_URL = "https://staging.laift.com.br/"
+ALLOWED_ORIGINS = "https://staging.laift.com.br,http://localhost:4174,http://localhost:4175"
+MAIL_FROM_NAME = "Plataforma de Membros (homologação)"
+MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"
+GROQ_MODEL_FAST = "openai/gpt-oss-20b"
+GROQ_MODEL_SMART = "openai/gpt-oss-120b"
+AI_KEY_STRATEGY = "failover"
+NVIDIA_MODEL_FAST = "nvidia/nemotron-3.5-lightning-30b-a3b"
+NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"

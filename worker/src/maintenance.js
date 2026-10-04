@@ -20,10 +20,12 @@
  *  - telemetria anônima do atlas (atlas_telemetry) com mais de 90 dias;
  *  - baldes de rate limit cuja janela começou há mais de 8 dias — a maior
  *    janela configurada é de 7 dias (CONNECTION_REQUEST), então um balde
- *    mais velho que isso já foi "zerado" de qualquer forma.
- *
- * audit_logs e error_logs NÃO são tocados: a política de guarda deles é
- * outra (registros de segurança, ver docs/SECURITY.md).
+ *    mais velho que isso já foi "zerado" de qualquer forma;
+ *  - audit_logs com mais de 2 anos (registros de segurança e de decisões
+ *    administrativas; a Política de Privacidade, seção 7, fala em guarda
+ *    pelo prazo mínimo necessário) e error_logs com mais de 30 dias (só
+ *    diagnóstico técnico). O corte é sempre por created_at — nunca um
+ *    DELETE sem filtro de idade.
  */
 import * as Logging from './logging.js';
 
@@ -33,6 +35,8 @@ export const RETENTION = {
   EXPIRED_SESSION_GRACE_DAYS: 1,
   EXPIRED_TOKEN_GRACE_DAYS: 7,
   RATE_LIMIT_BUCKET_MAX_AGE_DAYS: 8,
+  AUDIT_LOGS_DAYS: 730,
+  ERROR_LOGS_DAYS: 30,
 };
 
 /**
@@ -60,6 +64,14 @@ export async function runMaintenance(sql, correlationId) {
     rateLimitBuckets: () => sql`
       DELETE FROM rate_limit_buckets
       WHERE window_started_at < now() - make_interval(days => ${RETENTION.RATE_LIMIT_BUCKET_MAX_AGE_DAYS})
+      RETURNING 1`,
+    auditLogs: () => sql`
+      DELETE FROM audit_logs
+      WHERE created_at < now() - make_interval(days => ${RETENTION.AUDIT_LOGS_DAYS})
+      RETURNING 1`,
+    errorLogs: () => sql`
+      DELETE FROM error_logs
+      WHERE created_at < now() - make_interval(days => ${RETENTION.ERROR_LOGS_DAYS})
       RETURNING 1`,
   };
 

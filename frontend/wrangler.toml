@@ -21,3 +21,20 @@ custom_domain = true
 directory = "./dist"
 # Rotas desconhecidas devolvem o 404.html mais próximo, com status 404.
 not_found_handling = "404-page"
+
+# Homologação: Worker `laift-web-staging` em staging.laift.com.br, falando com
+# a API de staging (staging-api.laift.com.br) e um banco Neon separado. Deploy
+# manual: .github/workflows/deploy-staging.yml (ou `wrangler deploy --env staging`).
+# Chaves não herdadas precisam ser repetidas no ambiente. O noindex vem do
+# _headers (regra por host).
+[env.staging]
+# Sem *.workers.dev: nessa URL o app.js cairia na API de produção.
+workers_dev = false
+
+[[env.staging.routes]]
+pattern = "staging.laift.com.br"
+custom_domain = true
+
+[env.staging.assets]
+directory = "./dist"
+not_found_handling = "404-page"

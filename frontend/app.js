@@ -19,6 +19,8 @@
   var API_BASE_URL = (function () {
     var host = window.location.hostname;
     if (host === 'laift.com.br' || host === 'www.laift.com.br') return 'https://api.laift.com.br';
+    // Homologação: front e API próprios, com banco separado (docs/DEPLOYMENT.md).
+    if (host === 'staging.laift.com.br') return 'https://staging-api.laift.com.br';
     return 'https://plataforma-membros-api.diretoria-dpf.workers.dev';
   })();
 

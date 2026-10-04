@@ -57,7 +57,7 @@ módulo (iframe) ──LaiftApi.call(action, input)──► app.js (token da se
 ### Pool de chaves (`ai/groqClient.js`)
 
 - **`GROQ_API_KEYS`.** Traz **todas** as chaves, separadas por vírgula, `;` ou quebra de linha. Chaves repetidas e vazias são ignoradas.
-- **Rodízio round-robin por isolate, com ponto de partida aleatório.** A alternativa seria um ponteiro compartilhado em KV. Não usamos porque cada chamada gravaria no KV, e o plano gratuito do Workers KV aceita só 1.000 gravações por dia, menos que o disjuntor de 3.000 chamadas.
+- **Rodízio round-robin por isolate, com ponto de partida aleatório** (era o padrão da Fase 3; desde a Fundação v5 o padrão é o **failover ordenado**, e o rodízio vira opção via `AI_KEY_STRATEGY=round-robin`; ver `docs/AI_KEYS.md`). A alternativa seria um ponteiro compartilhado em KV. Não usamos porque cada chamada gravaria no KV, e o plano gratuito do Workers KV aceita só 1.000 gravações por dia, menos que o disjuntor de 3.000 chamadas.
 - **Failover.** Em HTTP 401, 403, 429 ou 5xx, ou em timeout ou falha de rede, a chave entra em cooldown e o cliente tenta a próxima.
   - O cooldown fica em memória e em KV, na chave `ai:key-cooldown:<i>`.
   - O TTL é o do `Retry-After`, entre 60 s e 1 h. Sem `Retry-After`, é de 60 s.
