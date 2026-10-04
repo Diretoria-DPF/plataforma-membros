@@ -92,11 +92,11 @@ export const API_REGISTRY = {
   apiLoginMfa: (sql, env, [mfaToken, code]) => run(sql, (cid) => MfaService.completeLogin(sql, env, mfaToken, code, '', cid)),
   // As ações abaixo valem também para admin que ainda não cadastrou o MFA (allowMfaSetup).
   apiMfaStatus: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MfaService.status(sql, identity), { allowMfaSetup: true }),
-  apiMfaBeginEnrollment: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MfaService.beginEnrollment(sql, env, identity), { allowMfaSetup: true }),
+  apiMfaBeginEnrollment: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => MfaService.beginEnrollment(sql, env, identity, input || {}), { allowMfaSetup: true }),
   apiMfaConfirmEnrollment: (sql, env, [sessionToken, code]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.confirmEnrollment(sql, env, identity, code, cid), { allowMfaSetup: true }),
   apiMfaRegenerateRecoveryCodes: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.regenerateRecoveryCodes(sql, env, identity, input || {}, cid)),
   apiMfaDisable: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.disable(sql, env, identity, input || {}, cid)),
-  apiAdminResetUserMfa: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.adminResetUserMfa(sql, identity, targetProfileId, cid)),
+  apiAdminResetUserMfa: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MfaService.adminResetUserMfa(sql, env, identity, targetProfileId, input || {}, cid)),
 
   // ---- Sessão ----
   apiLogout: (sql, env, [sessionToken]) => run(sql, (cid) => AuthService.logout(sql, env, sessionToken, cid)),
@@ -118,10 +118,10 @@ export const API_REGISTRY = {
   // ---- Feature flags (identidade opcional: visitante anônimo só vê flags a 100%) ----
   apiGetFeatureFlags: (sql, env, [sessionToken]) => run(sql, async () => {
     const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
-    return { success: true, flags: await FeatureFlagService.getFlagsFor(sql, identity) };
+    return { success: true, flags: await FeatureFlagService.getPublicFlagsFor(sql, identity) };
   }),
   apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),
-  apiAdminSetFeatureFlag: (sql, env, [sessionToken, key, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => FeatureFlagService.adminSet(sql, identity, key, input || {}, cid)),
+  apiAdminSetFeatureFlag: (sql, env, [sessionToken, key, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => FeatureFlagService.adminSet(sql, identity, key, input || {}, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
 
   // ---- Eventos ----
   apiListEvents: (sql, env, [sessionToken]) => run(sql, async () => {

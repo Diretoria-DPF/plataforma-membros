@@ -87,7 +87,7 @@ describe('TOTP (RFC 6238)', () => {
 });
 
 describe('secretBox (AES-GCM)', () => {
-  const env = { SESSION_TOKEN_PEPPER: 'pepper-de-teste', MFA_ENCRYPTION_KEY: 'chave-propria-de-teste' };
+  const env = { SESSION_TOKEN_PEPPER: 'pepper-de-teste', MFA_ENCRYPTION_KEY: 'chave-propria-de-teste-com-32-caracteres-ou-mais' };
   const profileId = '11111111-1111-4111-8111-111111111111';
 
   test('cifra e decifra, e o texto guardado não revela o segredo', async () => {
@@ -111,7 +111,11 @@ describe('secretBox (AES-GCM)', () => {
     const parts = stored.split('.');
     const tampered = [parts[0], parts[1], parts[2].slice(0, -2) + (parts[2].endsWith('AA') ? 'BB' : 'AA')].join('.');
     await expect(decryptSecret(env, tampered, profileId)).rejects.toThrow();
-    await expect(decryptSecret({ ...env, MFA_ENCRYPTION_KEY: 'outra-chave' }, stored, profileId)).rejects.toThrow();
+    await expect(decryptSecret({ ...env, MFA_ENCRYPTION_KEY: 'outra-chave-tambem-com-32-caracteres-ou-mais' }, stored, profileId)).rejects.toThrow();
+  });
+
+  test('chave própria curta demais é recusada (erro de configuração, não cifra fraco)', async () => {
+    await expect(encryptSecret({ SESSION_TOKEN_PEPPER: 'p', MFA_ENCRYPTION_KEY: 'curta' }, RFC_SECRET, profileId)).rejects.toThrow('curta demais');
   });
 
   test('sem MFA_ENCRYPTION_KEY usa o pepper como material da chave', async () => {

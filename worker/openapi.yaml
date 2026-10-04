@@ -534,8 +534,9 @@ components:
           prefixItems:
             - description: "sessionToken"
             - description: "targetProfileId"
+            - description: "input"
           minItems: 0
-          maxItems: 2
+          maxItems: 3
     apiAdminResolveReport:
       type: "object"
       required:
@@ -1421,8 +1422,9 @@ components:
           type: "array"
           prefixItems:
             - description: "sessionToken"
+            - description: "input"
           minItems: 0
-          maxItems: 1
+          maxItems: 2
     apiMfaConfirmEnrollment:
       type: "object"
       required:

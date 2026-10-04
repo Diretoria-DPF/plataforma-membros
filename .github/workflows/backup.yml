@@ -37,6 +37,9 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Environment "backup": permite restringir à main e exigir aprovação
+    # (Settings → Environments). Os secrets podem continuar no repositório.
+    environment: backup
     env:
       PG_MAJOR: ${{ vars.PG_MAJOR || '17' }}
     steps:
@@ -58,6 +61,12 @@ jobs:
           [ -z "$S5" ] && faltam="$faltam R2_SECRET_ACCESS_KEY"
           [ -z "$S6" ] && faltam="$faltam R2_BACKUP_BUCKET"
           if [ -n "$faltam" ]; then
+            # Agendado: segredo sumido É falha (abre Issue). Manual: só avisa,
+            # para dar para testar o resto antes de configurar tudo.
+            if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+              echo "::error::Backup NÃO executado: faltam os secrets:$faltam. Veja docs/BACKUP_RESTORE.md."
+              exit 1
+            fi
             echo "::warning::Backup pulado: faltam os secrets:$faltam. Veja docs/BACKUP_RESTORE.md."
             echo "tem=false" >> "$GITHUB_OUTPUT"
           elif ! printf '%s' "$S2" | grep -Eq '^age1[a-z0-9]{50,}$'; then

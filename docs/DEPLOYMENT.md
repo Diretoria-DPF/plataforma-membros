@@ -88,7 +88,7 @@ npx wrangler secret put MFA_ENCRYPTION_KEY    # openssl rand -hex 32 — cifra o
 | `GROQ_API_KEYS` | pool de chaves da IA (`worker/src/ai/groqClient.js`) | nenhum; chaves repetidas ou vazias são ignoradas |
 | `MFA_ENCRYPTION_KEY` | AES-256-GCM do segredo TOTP (`worker/src/mfa/secretBox.js`). Sem ela, deriva-se do `SESSION_TOKEN_PEPPER` | **trocar invalida o MFA de todo mundo** (todos precisam recadastrar; um admin reseta com `apiAdminResetUserMfa`). Guarde em cofre e defina **antes** de alguém ativar o MFA |
 
-Conferência: `npx wrangler secret list` mostra os quatro nomes (nunca os
+Conferência: `npx wrangler secret list` mostra os cinco nomes (nunca os
 valores).
 
 ## 3. Variáveis públicas e bindings (`worker/wrangler.toml`)
@@ -238,10 +238,21 @@ plataforma (painel admin).
 - **Perda de dados:** backup diário cifrado no R2 e teste de restauração em
   `docs/BACKUP_RESTORE.md` (`.github/workflows/backup.yml`).
 - **Admin sem acesso ao MFA** (perdeu o celular e os códigos): **outro**
-  administrador chama `apiAdminResetUserMfa`; a pessoa entra com a senha e
-  cadastra o autenticador de novo. Com dois administradores, nenhum fica
-  trancado. Para desligar a obrigatoriedade em emergência, ponha a flag
-  `mfa_required` em `enabled=false` (`apiAdminSetFeatureFlag`).
+  administrador chama `apiAdminResetUserMfa`, informando a **própria senha e o
+  próprio código** (reautenticação). O reset apaga o MFA da pessoa, encerra as
+  sessões dela, **invalida a senha** e envia o link de redefinição ao e-mail
+  dela — assim, quem só conhece a senha antiga não consegue entrar e cadastrar o
+  próprio autenticador antes do dono. Com dois administradores, nenhum fica
+  trancado. Não há tela para isso ainda; chamada de emergência:
+  ```bash
+  curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' \
+    -d '{"action":"apiAdminResetUserMfa","args":["<seu token de sessão>","<id da pessoa>",{"password":"<sua senha>","code":"<código de 6 dígitos>"}]}'
+  ```
+  O token de sessão sai do login (`apiLogin`/`apiLoginMfa`); digite a senha num
+  arquivo ou prompt, não direto na linha de comando, para não ir ao histórico.
+- **Desligar a obrigatoriedade em emergência:** `apiAdminSetFeatureFlag` com
+  `["<token>","mfa_required",{"enabled":false,"password":"…","code":"…"}]`. Essa
+  flag só vale para todos (sem percentual nem condições) e exige reautenticação.
 
 ## 9. Manutenção periódica
 

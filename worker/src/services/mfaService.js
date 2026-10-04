@@ -32,7 +32,7 @@ import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 import * as Totp from '../mfa/totp.js';
 import { encryptSecret, decryptSecret } from '../mfa/secretBox.js';
-import { isEnabled } from './featureFlagService.js';
+import { isEnabled, isMissingTable } from './featureFlagService.js';
 
 export const MFA_CHALLENGE_TTL_SECONDS = 300;
 export const MFA_CHALLENGE_MAX_ATTEMPTS = 5;
@@ -45,10 +45,6 @@ export const MFA_REQUIRED_FLAG = 'mfa_required';
 const RECOVERY_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const RECOVERY_LENGTH = 10;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function isMissingTable(err) {
-  return !!err && (err.code === '42P01' || /relation .* does not exist/i.test(String(err.message || '')));
-}
 
 export function generateRecoveryCodes(count = RECOVERY_CODE_COUNT) {
   const codes = [];
@@ -65,7 +61,7 @@ function normalizeRecoveryCode(code) {
 }
 
 function isRecoveryShape(code) {
-  return /^[A-Z2-9]{10}$/.test(normalizeRecoveryCode(code)) && !/^\d{6}$/.test(String(code || '').replace(/\s/g, ''));
+  return /^[A-Z2-9]{10}$/.test(normalizeRecoveryCode(code));
 }
 
 function hashRecoveryCode(env, code) {
@@ -217,7 +213,14 @@ export async function assertAdminMfaSatisfied(sql, identity) {
 // Cadastro e manutenção (sessão obrigatória)
 // ---------------------------------------------------------------------------
 export async function status(sql, identity) {
-  const cred = await getCredential(sql, identity.profileId);
+  let cred;
+  try {
+    cred = await getCredential(sql, identity.profileId);
+  } catch (err) {
+    // Migração 017 ainda não aplicada: o recurso simplesmente não existe ainda.
+    if (isMissingTable(err)) return { success: true, enabled: false, pendingEnrollment: false, recoveryCodesLeft: 0, required: false, available: false };
+    throw err;
+  }
   const enabled = !!(cred && cred.confirmed_at);
   let recoveryCodesLeft = 0;
   if (enabled) {
@@ -225,22 +228,44 @@ export async function status(sql, identity) {
     recoveryCodesLeft = Number(rows[0].n) || 0;
   }
   const adminRequired = identity.role === C.ROLES.ADMIN && await isEnabled(sql, MFA_REQUIRED_FLAG, identity);
-  return { success: true, enabled, pendingEnrollment: !!cred && !enabled, recoveryCodesLeft, required: adminRequired };
+  return { success: true, enabled, pendingEnrollment: !!cred && !enabled, recoveryCodesLeft, required: adminRequired, available: true };
 }
 
-export async function beginEnrollment(sql, env, identity) {
+/** Senha (e, se houver MFA, o segundo fator) de quem executa uma ação sensível. */
+export async function requireStepUp(sql, env, identity, rawInput) {
+  const input = rawInput && typeof rawInput === 'object' ? rawInput : {};
+  await S.enforceRateLimit(sql, 'MFA_MANAGE', identity.profileId, C.RATE_LIMITS.MFA_MANAGE.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_MANAGE.WINDOW_SECONDS);
+  await assertPassword(sql, identity.profileId, input.password);
+  let enrolled = null;
+  try {
+    enrolled = await getConfirmed(sql, identity.profileId);
+  } catch (err) {
+    if (!isMissingTable(err)) throw err;
+  }
+  if (enrolled && !(await checkSecondFactor(sql, env, identity.profileId, input.code))) {
+    throw E.AuthError('Código inválido ou já utilizado.');
+  }
+}
+
+// Cadastrar um autenticador troca a defesa da conta: exige a SENHA (uma sessão
+// roubada sozinha não basta para trancar o dono do lado de fora).
+export async function beginEnrollment(sql, env, identity, rawInput) {
+  const input = rawInput && typeof rawInput === 'object' ? rawInput : {};
   await S.enforceRateLimit(sql, 'MFA_ENROLL', identity.profileId, C.RATE_LIMITS.MFA_ENROLL.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_ENROLL.WINDOW_SECONDS);
+  await assertPassword(sql, identity.profileId, input.password);
   const existing = await getCredential(sql, identity.profileId);
   if (existing && existing.confirmed_at) throw E.ConflictError('A verificação em duas etapas já está ativa.');
 
   const secret = Totp.generateSecret();
   const secretEnc = await encryptSecret(env, secret, identity.profileId);
-  await sql`
+  const saved = await sql`
     INSERT INTO mfa_credentials (profile_id, secret_enc)
     VALUES (${identity.profileId}::uuid, ${secretEnc})
     ON CONFLICT (profile_id) DO UPDATE SET secret_enc = EXCLUDED.secret_enc, created_at = now()
     WHERE mfa_credentials.confirmed_at IS NULL
+    RETURNING profile_id
   `;
+  if (!saved.length) throw E.ConflictError('A verificação em duas etapas já está ativa.');
   return {
     success: true,
     secret,
@@ -250,7 +275,7 @@ export async function beginEnrollment(sql, env, identity) {
 }
 
 export async function confirmEnrollment(sql, env, identity, code, correlationId, now = Date.now()) {
-  await S.enforceRateLimit(sql, 'MFA_VERIFY', identity.profileId, C.RATE_LIMITS.MFA_VERIFY.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_VERIFY.WINDOW_SECONDS);
+  await S.enforceRateLimit(sql, 'MFA_MANAGE', identity.profileId, C.RATE_LIMITS.MFA_MANAGE.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_MANAGE.WINDOW_SECONDS);
   const cred = await getCredential(sql, identity.profileId);
   if (!cred) throw E.ValidationError('Inicie o cadastro do autenticador primeiro.');
   if (cred.confirmed_at) throw E.ConflictError('A verificação em duas etapas já está ativa.');
@@ -259,15 +284,31 @@ export async function confirmEnrollment(sql, env, identity, code, correlationId,
   const step = await Totp.verifyTotp(secret, code, now, 0);
   if (step === null) throw E.ValidationError('Código inválido. Confira o horário do celular e tente de novo.');
 
+  // Ativação + códigos de recuperação num ÚNICO comando: se falhar, nada fica
+  // pela metade (MFA ativa sem nenhum código que a pessoa tenha visto).
+  const recoveryCodes = generateRecoveryCodes();
+  const hashes = [];
+  for (const recovery of recoveryCodes) hashes.push(await hashRecoveryCode(env, recovery));
   const confirmed = await sql`
-    UPDATE mfa_credentials SET confirmed_at = now(), last_used_step = ${step}
-    WHERE profile_id = ${identity.profileId}::uuid AND confirmed_at IS NULL
-    RETURNING profile_id
+    WITH activated AS (
+      UPDATE mfa_credentials SET confirmed_at = now(), last_used_step = ${step}
+      WHERE profile_id = ${identity.profileId}::uuid AND confirmed_at IS NULL
+      RETURNING profile_id
+    ), cleared AS (
+      DELETE FROM mfa_recovery_codes WHERE profile_id IN (SELECT profile_id FROM activated)
+    )
+    INSERT INTO mfa_recovery_codes (profile_id, code_hash)
+    SELECT profile_id, unnest(${hashes}::text[]) FROM activated
+    RETURNING id
   `;
   if (!confirmed.length) throw E.ConflictError('A verificação em duas etapas já está ativa.');
 
-  const recoveryCodes = generateRecoveryCodes();
-  await replaceRecoveryCodes(sql, env, identity.profileId, recoveryCodes);
+  // Quem estava logado com a senha antes (talvez um intruso) é desconectado; a sessão atual fica.
+  const keep = identity.sessionToken ? await S.hashToken(identity.sessionToken, env.SESSION_TOKEN_PEPPER) : '';
+  await sql`
+    UPDATE sessions SET revoked_at = now()
+    WHERE profile_id = ${identity.profileId}::uuid AND revoked_at IS NULL AND token_hash <> ${keep}
+  `;
   await Logging.logAudit(sql, correlationId, identity.profileId, 'MFA_ENABLE', 'profile', identity.profileId, 'success', null);
   return {
     success: true,
@@ -284,7 +325,7 @@ async function assertPassword(sql, profileId, password) {
 }
 
 export async function regenerateRecoveryCodes(sql, env, identity, rawInput, correlationId) {
-  await S.enforceRateLimit(sql, 'MFA_VERIFY', identity.profileId, C.RATE_LIMITS.MFA_VERIFY.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_VERIFY.WINDOW_SECONDS);
+  await S.enforceRateLimit(sql, 'MFA_MANAGE', identity.profileId, C.RATE_LIMITS.MFA_MANAGE.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_MANAGE.WINDOW_SECONDS);
   const input = rawInput && typeof rawInput === 'object' ? rawInput : {};
   if (!(await getConfirmed(sql, identity.profileId))) throw E.ValidationError('A verificação em duas etapas não está ativa.');
   const method = await checkSecondFactor(sql, env, identity.profileId, input.code);
@@ -296,10 +337,13 @@ export async function regenerateRecoveryCodes(sql, env, identity, rawInput, corr
   return { success: true, message: 'Novos códigos gerados. Os anteriores deixaram de valer.', recoveryCodes };
 }
 
+// Um único comando: nunca sobra credencial sem códigos (ou o inverso).
 async function wipe(sql, profileId) {
-  await sql`DELETE FROM mfa_challenges WHERE profile_id = ${profileId}::uuid`;
-  await sql`DELETE FROM mfa_recovery_codes WHERE profile_id = ${profileId}::uuid`;
-  await sql`DELETE FROM mfa_credentials WHERE profile_id = ${profileId}::uuid`;
+  await sql`
+    WITH challenges AS (DELETE FROM mfa_challenges WHERE profile_id = ${profileId}::uuid),
+         recovery AS (DELETE FROM mfa_recovery_codes WHERE profile_id = ${profileId}::uuid)
+    DELETE FROM mfa_credentials WHERE profile_id = ${profileId}::uuid
+  `;
 }
 
 export async function disable(sql, env, identity, rawInput, correlationId) {
@@ -318,8 +362,21 @@ export async function disable(sql, env, identity, rawInput, correlationId) {
   return { success: true, message: 'Verificação em duas etapas desativada.' };
 }
 
-/** Recuperação de conta: OUTRO administrador apaga o MFA da pessoa e encerra as sessões dela. */
-export async function adminResetUserMfa(sql, identity, targetProfileId, correlationId) {
+async function sendResetLink(env, email, correlationId, sql) {
+  // Import tardio: authService importa este arquivo (evita dependência circular).
+  const AuthService = await import('./authService.js');
+  return AuthService.requestPasswordReset(sql, env, email, correlationId);
+}
+
+/**
+ * Recuperação de conta: OUTRO administrador apaga o MFA da pessoa. Como isto
+ * enfraquece a conta (e seria o atalho de um admin comprometido), exige a
+ * senha e o segundo fator de quem executa e deixa a conta do alvo SEM senha
+ * válida: ele precisa criar uma nova pelo link enviado ao e-mail dele. Assim
+ * quem apenas sabe a senha antiga não consegue entrar e cadastrar o PRÓPRIO
+ * autenticador na janela entre o reset e o recadastro.
+ */
+export async function adminResetUserMfa(sql, env, identity, targetProfileId, rawInput, correlationId, deps) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
   const target = S.normalizeText(targetProfileId);
   if (!UUID_RE.test(target)) throw E.ValidationError('Pessoa inválida.');
@@ -327,12 +384,29 @@ export async function adminResetUserMfa(sql, identity, targetProfileId, correlat
     throw E.ForbiddenError('Peça a outro administrador para redefinir a sua verificação em duas etapas.');
   }
   await S.enforceRateLimit(sql, 'MFA_ADMIN_RESET', identity.profileId, C.RATE_LIMITS.MFA_ADMIN_RESET.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_ADMIN_RESET.WINDOW_SECONDS);
+  await requireStepUp(sql, env, identity, rawInput);
 
-  const exists = await sql`SELECT id FROM profiles WHERE id = ${target}::uuid`;
-  if (!exists.length) throw E.NotFoundError('Pessoa não encontrada.');
+  const found = await sql`SELECT id, email FROM profiles WHERE id = ${target}::uuid`;
+  if (!found.length) throw E.NotFoundError('Pessoa não encontrada.');
 
-  await wipe(sql, target);
+  // Sessões primeiro: mesmo que algo falhe depois, o alvo já não tem acesso aberto.
   await S.revokeAllSessionsForProfile(sql, target);
+  await wipe(sql, target);
+  await sql`UPDATE profiles SET password_hash = crypt(${S.generateRawToken()}, gen_salt('bf', 10)) WHERE id = ${target}::uuid`;
   await Logging.logAudit(sql, correlationId, identity.profileId, 'MFA_ADMIN_RESET', 'profile', target, 'success', null);
-  return { success: true, message: 'Verificação em duas etapas redefinida. A pessoa precisa entrar e cadastrar de novo.' };
+
+  let linkSent = true;
+  try {
+    const send = (deps && deps.sendResetLink) || sendResetLink;
+    await send(env, found[0].email, correlationId, sql);
+  } catch (err) {
+    linkSent = false;
+  }
+  return {
+    success: true,
+    linkSent,
+    message: linkSent
+      ? 'Verificação em duas etapas redefinida. A senha da pessoa foi invalidada e um link para criar uma nova foi enviado ao e-mail dela.'
+      : 'Verificação em duas etapas redefinida e senha invalidada, mas o e-mail não saiu. A pessoa deve usar "Esqueci minha senha".',
+  };
 }

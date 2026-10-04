@@ -195,12 +195,17 @@ export const RATE_LIMITS = {
   // Fase 2 — camadas por IP além das por conta e globais já existentes.
   // IP compartilhado (NAT de campus) é comum, então os tetos são folgados
   // para uso legítimo e curtos para força bruta.
-  REGISTER_IP: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
-  RESET_REQUEST_IP: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
+  // 40/h: uma turma ou evento atrás do mesmo NAT se cadastra junta sem barrar;
+  // um script, que faz centenas, é barrado (e o teto global continua valendo).
+  REGISTER_IP: { MAX_ATTEMPTS: 40, WINDOW_SECONDS: 3600 },
+  RESET_REQUEST_IP: { MAX_ATTEMPTS: 40, WINDOW_SECONDS: 3600 },
   // Verificação em duas etapas (mfaService.js).
   MFA_VERIFY: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
   MFA_VERIFY_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 900 },
   MFA_ENROLL: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
+  // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
+  // do MFA_VERIFY, para o login legítimo não ser travado por quem gerencia.
+  MFA_MANAGE: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
   MFA_DISABLE: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   MFA_ADMIN_RESET: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
 };

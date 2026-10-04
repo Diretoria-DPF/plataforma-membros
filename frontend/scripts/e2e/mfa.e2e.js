@@ -67,11 +67,12 @@ module.exports = async function mfa() {
     await back.close();
   }
 
-  // ---- Cadastro no perfil: QR, confirmação e códigos de recuperação ----
+  // ---- Cadastro no perfil: senha, QR, confirmação e códigos de recuperação ----
+  const enrollArgs = [];
   const enroll = await startApp({
     role: 'member',
     workerHandlers: {
-      apiMfaBeginEnrollment: () => ({ success: true, secret: 'JBSWY3DPEHPK3PXP', issuer: 'LAIFT', otpauthUri: 'otpauth://totp/LAIFT:ana?secret=JBSWY3DPEHPK3PXP&issuer=LAIFT' }),
+      apiMfaBeginEnrollment: (args) => { enrollArgs.push(args); return { success: true, secret: 'JBSWY3DPEHPK3PXP', issuer: 'LAIFT', otpauthUri: 'otpauth://totp/LAIFT:ana?secret=JBSWY3DPEHPK3PXP&issuer=LAIFT' }; },
       apiMfaConfirmEnrollment: (args) => (args[1] === '654321'
         ? { success: true, message: 'Verificação em duas etapas ativada.', recoveryCodes: ['AAAAA-BBBBB', 'CCCCC-DDDDD'] }
         : { success: false, message: 'Código inválido.' }),
@@ -80,9 +81,14 @@ module.exports = async function mfa() {
   try {
     await enroll.login();
     await enroll.showPanel('panel-profile');
-    await enroll.page.waitForSelector('#mfa-card-body button');
+    await enroll.page.waitForSelector('#mfa-enroll-password');
+    await enroll.page.click('#mfa-card-body button');
+    await enroll.page.waitForFunction(() => /Informe sua senha/.test(document.getElementById('msg-mfa').textContent));
+    check(enrollArgs.length === 0, 'sem a senha o cadastro nem chama o servidor');
+    await enroll.page.fill('#mfa-enroll-password', 'senha-de-teste-123');
     await enroll.page.click('#mfa-card-body button');
     await enroll.page.waitForSelector('#mfa-confirm-code');
+    check(enrollArgs[0] && enrollArgs[0][1] && enrollArgs[0][1].password === 'senha-de-teste-123', 'a senha é enviada para iniciar o cadastro');
     check((await enroll.page.textContent('#mfa-card-body')).includes('JBSW Y3DP EHPK 3PXP'), 'a chave aparece agrupada de 4 em 4');
     await enroll.page.waitForSelector('#mfa-card-body img[src^="data:image"]');
     check(true, 'o QR Code é desenhado a partir do URI otpauth');

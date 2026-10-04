@@ -109,7 +109,13 @@
       if (!code) return;
       app.setStatus('msg-login', 'Verificando...', 'info');
       app.callApi('apiLoginMfa', mfaToken, code).then(function (res) {
-        if (!res.success) { app.setStatus('msg-login', res.message, 'error'); input.select(); return; }
+        if (!res.success) {
+          app.setStatus('msg-login', res.message, 'error');
+          // Desafio vencido ou sem tentativas: não adianta insistir, volta à senha.
+          if (/expirou|excedeu/i.test(res.message || '')) { leave(); app.setStatus('msg-login', res.message, 'error'); return; }
+          input.select();
+          return;
+        }
         leave();
         app.finishLogin(res);
       });
@@ -133,17 +139,27 @@
   }
 
   function renderDisabled(app, doc, host, status) {
+    if (status.available === false) {
+      host.appendChild(element(doc, 'p', 'muted', 'Este recurso ainda não está disponível nesta instalação.'));
+      return;
+    }
     if (status.required) {
       host.appendChild(element(doc, 'p', 'state-error-text', 'A verificação em duas etapas é obrigatória para administradores. Ative para continuar usando a administração.'));
     } else {
       host.appendChild(element(doc, 'p', 'muted', 'Proteja sua conta: além da senha, o login pede um código do aplicativo autenticador (Google Authenticator, Microsoft Authenticator, Authy…).'));
     }
-    host.appendChild(button(doc, 'Ativar verificação em duas etapas', '', function () { beginEnrollment(app, doc, host); }));
+    // A senha é exigida: uma sessão esquecida aberta não basta para trocar a defesa da conta.
+    var pwd = field(doc, 'mfa-enroll-password', 'Confirme sua senha para continuar', { type: 'password', autocomplete: 'current-password' });
+    host.appendChild(pwd.wrap);
+    host.appendChild(button(doc, 'Ativar verificação em duas etapas', '', function () {
+      if (!pwd.input.value) { app.setStatus('msg-mfa', 'Informe sua senha.', 'error'); return; }
+      beginEnrollment(app, doc, host, pwd.input.value);
+    }));
   }
 
-  function beginEnrollment(app, doc, host) {
+  function beginEnrollment(app, doc, host, password) {
     app.setStatus('msg-mfa', 'Preparando...', 'info');
-    app.callApi('apiMfaBeginEnrollment', app.getState().sessionToken || '').then(function (res) {
+    app.callApi('apiMfaBeginEnrollment', app.getState().sessionToken || '', { password: password }).then(function (res) {
       if (!res.success) { app.setStatus('msg-mfa', res.message, 'error'); return; }
       app.setStatus('msg-mfa', '', null);
       host.textContent = '';
@@ -221,7 +237,7 @@
     head.appendChild(doc.createTextNode(' Códigos de recuperação restantes: ' + status.recoveryCodesLeft + '.'));
     host.appendChild(head);
 
-    var regenerate = field(doc, 'mfa-regen-code', 'Código atual (para gerar novos códigos de recuperação)', { type: 'text', inputmode: 'numeric', autocomplete: 'one-time-code', maxlength: '8' });
+    var regenerate = field(doc, 'mfa-regen-code', 'Código do aplicativo ou de recuperação (para gerar novos códigos)', { type: 'text', inputmode: 'text', autocomplete: 'one-time-code', maxlength: '16' });
     host.appendChild(regenerate.wrap);
     host.appendChild(button(doc, 'Gerar novos códigos', 'secondary', function () {
       var code = normalizeLoginCode(regenerate.input.value);
@@ -236,7 +252,7 @@
     if (status.required) return;
     host.appendChild(element(doc, 'h4', '', 'Desativar'));
     var pwd = field(doc, 'mfa-off-password', 'Senha', { type: 'password', autocomplete: 'current-password' });
-    var code = field(doc, 'mfa-off-code', 'Código atual', { type: 'text', inputmode: 'numeric', autocomplete: 'one-time-code', maxlength: '8' });
+    var code = field(doc, 'mfa-off-code', 'Código do aplicativo ou de recuperação', { type: 'text', inputmode: 'text', autocomplete: 'one-time-code', maxlength: '16' });
     host.appendChild(pwd.wrap);
     host.appendChild(code.wrap);
     host.appendChild(button(doc, 'Desativar verificação em duas etapas', 'secondary', function () {

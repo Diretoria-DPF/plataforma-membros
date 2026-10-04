@@ -19,4 +19,4 @@ paths = [
 
 [[allowlists]]
 description = "Vetor público de teste da RFC 6238 (segredo ASCII 12345678901234567890 em base32) — não é credencial"
-paths = ['''worker/test/mfaTotp\.test\.js$''']
+regexes = ['''GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ''']

@@ -73,6 +73,11 @@ export function evaluateFlag(flag, identity) {
   return rolloutBucket(flag.key, identity.profileId) < pct;
 }
 
+/** Tabela ainda não migrada (Postgres 42P01). Só este caso vale como "tudo desligado". */
+export function isMissingTable(err) {
+  return !!err && (err.code === '42P01' || /relation .* does not exist/i.test(String(err.message || '')));
+}
+
 async function loadFlags(sql, now) {
   if (cache.flags && now - cache.at < FLAG_CACHE_TTL_MS) return cache.flags;
   try {
@@ -82,8 +87,13 @@ async function loadFlags(sql, now) {
     cache = { at: now, flags };
     return flags;
   } catch (err) {
-    // Tabela ausente ou banco indisponível: tudo desligado, sem guardar no cache.
-    return {};
+    // Migração 016 ainda não aplicada: tudo desligado (comportamento anterior).
+    if (isMissingTable(err)) return {};
+    // Banco instável: usa o último valor conhecido. Sem ele, o erro SOBE — uma
+    // falha transitória nunca pode virar "flag desligada" (falha aberta), em
+    // especial para mfa_required.
+    if (cache.flags) return cache.flags;
+    throw err;
   }
 }
 
@@ -99,6 +109,21 @@ export async function getFlagsFor(sql, identity, now = Date.now()) {
   Object.keys(flags).forEach((key) => { out[key] = evaluateFlag(flags[key], identity); });
   return out;
 }
+
+// Só estas chaves vão ao navegador (inclusive de anônimos). As de segurança
+// (mfa_required...) e as internas (use_orchestrator, nvidia_fallback) ficam no servidor.
+export const PUBLIC_FLAGS = ['ux_v2_enabled'];
+
+export async function getPublicFlagsFor(sql, identity, now = Date.now()) {
+  const all = await getFlagsFor(sql, identity, now);
+  const out = {};
+  PUBLIC_FLAGS.forEach((key) => { if (key in all) out[key] = all[key]; });
+  return out;
+}
+
+// Flags que protegem a conta de todos: só valem para todos (sem rollout nem
+// condições) e mudá-las exige reautenticação do admin (senha + segundo fator).
+export const RESERVED_FLAGS = ['mfa_required'];
 
 // ---------------------------------------------------------------------------
 // Administração
@@ -166,13 +191,23 @@ function parseInput(input) {
   return out;
 }
 
-export async function adminSet(sql, identity, key, rawInput, correlationId) {
+export async function adminSet(sql, identity, key, rawInput, correlationId, options) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
   const flagKey = S.normalizeText(key);
   if (!FLAG_KEY_RE.test(flagKey)) throw E.ValidationError('Chave de flag inválida (minúsculas, números e "_").');
   const input = rawInput && typeof rawInput === 'object' && !Array.isArray(rawInput) ? rawInput : {};
   const patch = parseInput(input);
   if (!Object.keys(patch).length) throw E.ValidationError('Nada para alterar.');
+
+  if (RESERVED_FLAGS.indexOf(flagKey) !== -1) {
+    const hasConditions = patch.conditions !== undefined && Object.keys(patch.conditions).length > 0;
+    if ((patch.rolloutPct !== undefined && patch.rolloutPct !== 100) || hasConditions) {
+      throw E.ValidationError('Esta flag de segurança vale para todos: não aceita percentual nem condições.');
+    }
+    // Reautenticação (senha + segundo fator) fornecida pelo handler.
+    if (!options || typeof options.stepUp !== 'function') throw E.ForbiddenError('Esta flag exige reautenticação.');
+    await options.stepUp();
+  }
 
   const existing = await sql`SELECT key, enabled, rollout_pct, conditions, description FROM feature_flags WHERE key = ${flagKey}`;
   const base = existing && existing.length

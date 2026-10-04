@@ -3,8 +3,9 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
+import { jest } from '@jest/globals';
 import {
-  evaluateFlag, rolloutBucket, isEnabled, getFlagsFor, adminList, adminSet,
+  evaluateFlag, rolloutBucket, isEnabled, getFlagsFor, getPublicFlagsFor, adminList, adminSet,
   __resetFlagCacheForTests, FLAG_CACHE_TTL_MS,
 } from '../src/services/featureFlagService.js';
 import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
@@ -76,6 +77,30 @@ describe('leitura com cache', () => {
     expect(callsMatching(sql, 'FROM feature_flags')).toHaveLength(2);
   });
 
+  test('erro de banco que NÃO é tabela ausente sobe (nunca vira "flag desligada")', async () => {
+    const sql = routedSql([['FROM feature_flags', new Error('connection reset by peer')]]);
+    await expect(isEnabled(sql, 'mfa_required', ADMIN)).rejects.toThrow('connection reset');
+  });
+
+  test('banco instável depois de uma leitura boa: usa o último valor conhecido', async () => {
+    let calls = 0;
+    const sql = routedSql([['FROM feature_flags', () => {
+      calls += 1;
+      if (calls === 1) return [flag({ key: 'mfa_required' })];
+      return new Error('timeout');
+    }]]);
+    expect(await isEnabled(sql, 'mfa_required', ADMIN, 1000)).toBe(true);
+    expect(await isEnabled(sql, 'mfa_required', ADMIN, 1000 + FLAG_CACHE_TTL_MS + 5)).toBe(true);
+    expect(calls).toBe(2);
+  });
+
+  test('getPublicFlagsFor devolve só as flags de interface', async () => {
+    const sql = routedSql([['FROM feature_flags', [
+      flag({ key: 'mfa_required' }), flag({ key: 'use_orchestrator' }), flag({ key: 'ux_v2_enabled' }),
+    ]]]);
+    expect(await getPublicFlagsFor(sql, MEMBER)).toEqual({ ux_v2_enabled: true });
+  });
+
   test('tabela ausente (migração 016 ainda não aplicada) deixa tudo desligado, sem erro', async () => {
     const sql = routedSql([['FROM feature_flags', new Error('relation "feature_flags" does not exist')]]);
     expect(await isEnabled(sql, 'nova_tela', MEMBER)).toBe(false);
@@ -117,6 +142,45 @@ describe('administração', () => {
     expect(insert).toContain(40);
     expect(insert).toContain('antiga');
     expect(insert).toContain(JSON.stringify({ role: 'member' }));
+  });
+
+  describe('flag de segurança mfa_required', () => {
+    const saved = { key: 'mfa_required', enabled: true, rollout_pct: 100, conditions: {}, description: '', updated_at: 'x' };
+
+    test('não aceita percentual nem condições (valeria só para alguns admins)', async () => {
+      const stepUp = jest.fn().mockResolvedValue(undefined);
+      const sql = routedSql([['INSERT INTO feature_flags', [saved]]]);
+      await expect(adminSet(sql, ADMIN, 'mfa_required', { enabled: true, rolloutPct: 50 }, CID, { stepUp })).rejects.toMatchObject({ name: 'ValidationError' });
+      await expect(adminSet(sql, ADMIN, 'mfa_required', { enabled: true, conditions: { role: 'member' } }, CID, { stepUp })).rejects.toMatchObject({ name: 'ValidationError' });
+      expect(callsMatching(sql, 'INSERT INTO feature_flags')).toHaveLength(0);
+    });
+
+    test('sem reautenticação disponível, recusa', async () => {
+      const sql = routedSql([['INSERT INTO feature_flags', [saved]]]);
+      await expect(adminSet(sql, ADMIN, 'mfa_required', { enabled: false }, CID)).rejects.toMatchObject({ name: 'ForbiddenError' });
+    });
+
+    test('a reautenticação que falha impede a mudança', async () => {
+      const stepUp = jest.fn().mockRejectedValue(Object.assign(new Error('Senha incorreta.'), { name: 'AuthError', expected: true }));
+      const sql = routedSql([['INSERT INTO feature_flags', [saved]]]);
+      await expect(adminSet(sql, ADMIN, 'mfa_required', { enabled: false }, CID, { stepUp })).rejects.toMatchObject({ name: 'AuthError' });
+      expect(callsMatching(sql, 'INSERT INTO feature_flags')).toHaveLength(0);
+    });
+
+    test('com a reautenticação certa, grava e audita', async () => {
+      const stepUp = jest.fn().mockResolvedValue(undefined);
+      const sql = routedSql([['INSERT INTO feature_flags', [saved]]]);
+      const out = await adminSet(sql, ADMIN, 'mfa_required', { enabled: true }, CID, { stepUp });
+      expect(out.success).toBe(true);
+      expect(stepUp).toHaveBeenCalledTimes(1);
+    });
+
+    test('flags comuns não pedem reautenticação', async () => {
+      const stepUp = jest.fn();
+      const sql = routedSql([['INSERT INTO feature_flags', [{ ...saved, key: 'nova_tela' }]]]);
+      await adminSet(sql, ADMIN, 'nova_tela', { enabled: true }, CID, { stepUp });
+      expect(stepUp).not.toHaveBeenCalled();
+    });
   });
 
   test.each([

@@ -12,7 +12,7 @@ import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
 const PID = '11111111-1111-4111-8111-111111111111';
 const OTHER = '99999999-9999-4999-8999-999999999999';
 const CID = '33333333-3333-4333-8333-333333333333';
-const ENV = { SESSION_TOKEN_PEPPER: 'pepper-de-teste', MFA_ENCRYPTION_KEY: 'chave-de-teste', clientIp: '203.0.113.9' };
+const ENV = { SESSION_TOKEN_PEPPER: 'pepper-de-teste', MFA_ENCRYPTION_KEY: 'chave-de-teste-com-32-caracteres-ou-mais!', clientIp: '203.0.113.9' };
 const ADMIN = { profileId: PID, role: 'admin', email: 'admin@exemplo.com' };
 const MEMBER = { profileId: PID, role: 'member', email: 'ana@exemplo.com' };
 
@@ -187,8 +187,12 @@ describe('obrigatoriedade para administradores', () => {
 
 describe('cadastro', () => {
   test('beginEnrollment devolve segredo e URI, e guarda o segredo CIFRADO', async () => {
-    const sql = routedSql([['FROM mfa_credentials', []]]);
-    const out = await Mfa.beginEnrollment(sql, ENV, MEMBER);
+    const sql = routedSql([
+      ['crypt(', [{ ok: true }]],
+      ['FROM mfa_credentials', []],
+      ['INSERT INTO mfa_credentials', [{ profile_id: PID }]],
+    ]);
+    const out = await Mfa.beginEnrollment(sql, ENV, MEMBER, { password: 'senha-certa' });
     expect(out.secret).toMatch(/^[A-Z2-7]{32}$/);
     expect(out.otpauthUri).toContain('secret=' + out.secret);
     const insert = callsMatching(sql, 'INSERT INTO mfa_credentials')[0];
@@ -197,8 +201,24 @@ describe('cadastro', () => {
   });
 
   test('beginEnrollment recusa quando já há MFA confirmada', async () => {
-    const sql = routedSql([['FROM mfa_credentials', [await credentialRow(generateSecret())]]]);
-    await expect(Mfa.beginEnrollment(sql, ENV, MEMBER)).rejects.toMatchObject({ name: 'ConflictError' });
+    const sql = routedSql([['crypt(', [{ ok: true }]], ['FROM mfa_credentials', [await credentialRow(generateSecret())]]]);
+    await expect(Mfa.beginEnrollment(sql, ENV, MEMBER, { password: 'senha-certa' })).rejects.toMatchObject({ name: 'ConflictError' });
+  });
+
+  test('beginEnrollment exige a SENHA: sessão roubada sozinha não ativa um autenticador', async () => {
+    const sql = routedSql([['crypt(', [{ ok: false }]]]);
+    await expect(Mfa.beginEnrollment(sql, ENV, MEMBER, { password: 'errada' })).rejects.toMatchObject({ name: 'AuthError' });
+    await expect(Mfa.beginEnrollment(sql, ENV, MEMBER, {})).rejects.toMatchObject({ name: 'ValidationError' });
+    expect(callsMatching(sql, 'INSERT INTO mfa_credentials')).toHaveLength(0);
+  });
+
+  test('beginEnrollment não devolve segredo que não foi gravado (corrida com a confirmação)', async () => {
+    const sql = routedSql([
+      ['crypt(', [{ ok: true }]],
+      ['FROM mfa_credentials', []],
+      ['INSERT INTO mfa_credentials', []],
+    ]);
+    await expect(Mfa.beginEnrollment(sql, ENV, MEMBER, { password: 'senha-certa' })).rejects.toMatchObject({ name: 'ConflictError' });
   });
 
   test('confirmEnrollment com código certo ativa e devolve 10 códigos de recuperação UMA vez', async () => {
@@ -264,25 +284,144 @@ describe('desativar e resetar', () => {
 
   test('admin não reseta a própria MFA; peça a outro administrador', async () => {
     const sql = routedSql([]);
-    await expect(Mfa.adminResetUserMfa(sql, ADMIN, PID, CID)).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(Mfa.adminResetUserMfa(sql, ENV, ADMIN, PID, {}, CID)).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
   test('só administrador reseta a MFA de outra pessoa', async () => {
     const sql = routedSql([]);
-    await expect(Mfa.adminResetUserMfa(sql, MEMBER, OTHER, CID)).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(Mfa.adminResetUserMfa(sql, ENV, MEMBER, OTHER, {}, CID)).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
-  test('reset por outro admin apaga a MFA, encerra as sessões da pessoa e audita', async () => {
-    const sql = routedSql([['SELECT id FROM profiles', [{ id: OTHER }]]]);
-    const out = await Mfa.adminResetUserMfa(sql, ADMIN, OTHER, CID);
-    expect(out.success).toBe(true);
+  test('reset exige a SENHA do admin que executa; sem ela nada é apagado', async () => {
+    const sql = routedSql([['crypt(', [{ ok: false }]]]);
+    await expect(Mfa.adminResetUserMfa(sql, ENV, ADMIN, OTHER, { password: 'errada' }, CID)).rejects.toMatchObject({ name: 'AuthError' });
+    expect(callsMatching(sql, 'DELETE FROM mfa_credentials')).toHaveLength(0);
+    expect(callsMatching(sql, 'UPDATE profiles SET password_hash')).toHaveLength(0);
+  });
+
+  test('reset exige também o segundo fator do admin que executa, quando ele tem MFA', async () => {
+    const sql = routedSql([
+      ['crypt(', [{ ok: true }]],
+      ['FROM mfa_credentials', [await credentialRow(generateSecret())]],
+    ]);
+    await expect(Mfa.adminResetUserMfa(sql, ENV, ADMIN, OTHER, { password: 'certa', code: '000000' }, CID)).rejects.toMatchObject({ name: 'AuthError' });
+    expect(callsMatching(sql, 'DELETE FROM mfa_credentials')).toHaveLength(0);
+  });
+
+  test('reset por outro admin: sessões revogadas, MFA apagada, SENHA invalidada, link enviado e auditoria', async () => {
+    const sent = [];
+    const sql = routedSql([
+      ['crypt(', [{ ok: true }]],
+      ['FROM mfa_credentials', []],
+      ['SELECT id, email FROM profiles', [{ id: OTHER, email: 'alvo@exemplo.com' }]],
+    ]);
+    const out = await Mfa.adminResetUserMfa(sql, ENV, ADMIN, OTHER, { password: 'certa' }, CID, {
+      sendResetLink: async (_env, email) => { sent.push(email); },
+    });
+    expect(out).toMatchObject({ success: true, linkSent: true });
+    expect(sent).toEqual(['alvo@exemplo.com']);
     expect(callsMatching(sql, 'DELETE FROM mfa_credentials')).toHaveLength(1);
-    expect(callsMatching(sql, 'UPDATE sessions SET revoked_at')).toHaveLength(1);
+    expect(callsMatching(sql, 'UPDATE profiles SET password_hash')).toHaveLength(1);
+    // Ordem: as sessões do alvo caem antes de qualquer outra mudança.
+    const order = sql.mock.calls.map((c) => (Array.isArray(c[0]) ? c[0].join('?') : String(c[0])));
+    const revoke = order.findIndex((t) => t.includes('UPDATE sessions SET revoked_at'));
+    const wipeAt = order.findIndex((t) => t.includes('DELETE FROM mfa_credentials'));
+    expect(revoke).toBeGreaterThan(-1);
+    expect(revoke).toBeLessThan(wipeAt);
+  });
+
+  test('se o e-mail de redefinição falhar, o reset vale e a resposta avisa', async () => {
+    const sql = routedSql([['crypt(', [{ ok: true }]], ['FROM mfa_credentials', []], ['SELECT id, email FROM profiles', [{ id: OTHER, email: 'alvo@exemplo.com' }]]]);
+    const out = await Mfa.adminResetUserMfa(sql, ENV, ADMIN, OTHER, { password: 'certa' }, CID, {
+      sendResetLink: async () => { throw new Error('brevo fora'); },
+    });
+    expect(out).toMatchObject({ success: true, linkSent: false });
+    expect(out.message).toContain('Esqueci minha senha');
+    expect(callsMatching(sql, 'UPDATE profiles SET password_hash')).toHaveLength(1);
     expect(callsMatching(sql, 'INSERT INTO audit_logs')[0]).toContain('MFA_ADMIN_RESET');
   });
 
   test('reset com identificador inválido ou pessoa inexistente é recusado', async () => {
-    await expect(Mfa.adminResetUserMfa(routedSql([]), ADMIN, 'nao-uuid', CID)).rejects.toMatchObject({ name: 'ValidationError' });
-    await expect(Mfa.adminResetUserMfa(routedSql([['SELECT id FROM profiles', []]]), ADMIN, OTHER, CID)).rejects.toMatchObject({ name: 'NotFoundError' });
+    await expect(Mfa.adminResetUserMfa(routedSql([]), ENV, ADMIN, 'nao-uuid', {}, CID)).rejects.toMatchObject({ name: 'ValidationError' });
+    const semAlvo = routedSql([['crypt(', [{ ok: true }]], ['FROM mfa_credentials', []], ['SELECT id, email FROM profiles', []]]);
+    await expect(Mfa.adminResetUserMfa(semAlvo, ENV, ADMIN, OTHER, { password: 'certa' }, CID)).rejects.toMatchObject({ name: 'NotFoundError' });
+  });
+});
+
+describe('status', () => {
+  test('sem credencial: desativada, com o recurso disponível', async () => {
+    const sql = routedSql([['FROM mfa_credentials', []]]);
+    expect(await Mfa.status(sql, MEMBER)).toMatchObject({ success: true, enabled: false, pendingEnrollment: false, available: true, required: false });
+  });
+
+  test('com MFA confirmada informa quantos códigos de recuperação restam', async () => {
+    const sql = routedSql([
+      ['FROM mfa_credentials', [await credentialRow(generateSecret())]],
+      ['count(*)', [{ n: 7 }]],
+    ]);
+    expect(await Mfa.status(sql, MEMBER)).toMatchObject({ enabled: true, recoveryCodesLeft: 7 });
+  });
+
+  test('cadastro iniciado e não confirmado aparece como pendente', async () => {
+    const sql = routedSql([['FROM mfa_credentials', [await credentialRow(generateSecret(), { confirmed_at: null })]]]);
+    expect(await Mfa.status(sql, MEMBER)).toMatchObject({ enabled: false, pendingEnrollment: true });
+  });
+
+  test('antes da migração 017 responde available:false em vez de erro', async () => {
+    const err = Object.assign(new Error('relation "mfa_credentials" does not exist'), { code: '42P01' });
+    const sql = routedSql([['FROM mfa_credentials', err]]);
+    expect(await Mfa.status(sql, MEMBER)).toMatchObject({ success: true, enabled: false, available: false });
+  });
+
+  test('outro erro de banco não é escondido', async () => {
+    const sql = routedSql([['FROM mfa_credentials', new Error('connection reset')]]);
+    await expect(Mfa.status(sql, MEMBER)).rejects.toThrow('connection reset');
+  });
+
+  test('admin com a obrigatoriedade ligada vê required:true', async () => {
+    const sql = routedSql([
+      ['FROM mfa_credentials', []],
+      ['FROM feature_flags', [{ key: 'mfa_required', enabled: true, rollout_pct: 100, conditions: {} }]],
+    ]);
+    expect(await Mfa.status(sql, ADMIN)).toMatchObject({ required: true });
+  });
+});
+
+describe('regenerateRecoveryCodes e requireStepUp', () => {
+  test('gera 10 códigos novos com um TOTP válido e audita', async () => {
+    const secret = generateSecret();
+    const now = Date.now();
+    const sql = routedSql([
+      ['FROM mfa_credentials', [await credentialRow(secret)]],
+      ['UPDATE mfa_credentials SET last_used_step', [{ profile_id: PID }]],
+    ]);
+    const out = await Mfa.regenerateRecoveryCodes(sql, ENV, MEMBER, { code: await codeForStep(secret, stepAt(now)) }, CID);
+    expect(out.recoveryCodes).toHaveLength(10);
+    expect(callsMatching(sql, 'INSERT INTO mfa_recovery_codes')).toHaveLength(1);
+    expect(callsMatching(sql, 'INSERT INTO audit_logs')[0]).toContain('MFA_RECOVERY_REGENERATE');
+  });
+
+  test('código errado não troca os códigos antigos', async () => {
+    const sql = routedSql([['FROM mfa_credentials', [await credentialRow(generateSecret())]]]);
+    await expect(Mfa.regenerateRecoveryCodes(sql, ENV, MEMBER, { code: '000000' }, CID)).rejects.toMatchObject({ name: 'AuthError' });
+    expect(callsMatching(sql, 'INSERT INTO mfa_recovery_codes')).toHaveLength(0);
+  });
+
+  test('sem MFA ativa não há o que regenerar', async () => {
+    const sql = routedSql([['FROM mfa_credentials', []]]);
+    await expect(Mfa.regenerateRecoveryCodes(sql, ENV, MEMBER, { code: '123456' }, CID)).rejects.toMatchObject({ name: 'ValidationError' });
+  });
+
+  test('requireStepUp: senha certa e sem MFA passa; senha errada não', async () => {
+    await expect(Mfa.requireStepUp(routedSql([['crypt(', [{ ok: true }]], ['FROM mfa_credentials', []]]), ENV, ADMIN, { password: 'certa' })).resolves.toBeUndefined();
+    await expect(Mfa.requireStepUp(routedSql([['crypt(', [{ ok: false }]]]), ENV, ADMIN, { password: 'errada' })).rejects.toMatchObject({ name: 'AuthError' });
+  });
+
+  test('requireStepUp: com MFA ativa o código também é exigido', async () => {
+    const secret = generateSecret();
+    const now = Date.now();
+    const rows = [['crypt(', [{ ok: true }]], ['FROM mfa_credentials', [await credentialRow(secret)]], ['UPDATE mfa_credentials SET last_used_step', [{ profile_id: PID }]]];
+    await expect(Mfa.requireStepUp(routedSql(rows), ENV, ADMIN, { password: 'certa', code: await codeForStep(secret, stepAt(now)) })).resolves.toBeUndefined();
+    await expect(Mfa.requireStepUp(routedSql(rows), ENV, ADMIN, { password: 'certa', code: '000000' })).rejects.toMatchObject({ name: 'AuthError' });
   });
 });

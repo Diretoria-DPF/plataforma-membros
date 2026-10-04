@@ -29,8 +29,13 @@ function fromB64Url(text) {
   return Uint8Array.from(binary, (c) => c.charCodeAt(0));
 }
 
+const MIN_KEY_CHARS = 32; // `openssl rand -hex 32` dá 64
+
 function keyMaterial(env) {
-  const raw = String((env && env.MFA_ENCRYPTION_KEY) || '').trim() || String((env && env.SESSION_TOKEN_PEPPER) || '');
+  const own = String((env && env.MFA_ENCRYPTION_KEY) || '').trim();
+  // Uma chave própria curta é erro de configuração: falha em vez de cifrar fraco.
+  if (own && own.length < MIN_KEY_CHARS) throw new Error('MFA_ENCRYPTION_KEY curta demais (mínimo ' + MIN_KEY_CHARS + ' caracteres).');
+  const raw = own || String((env && env.SESSION_TOKEN_PEPPER) || '');
   if (!raw) throw new Error('Sem chave para cifrar o segredo de MFA.');
   return raw;
 }
