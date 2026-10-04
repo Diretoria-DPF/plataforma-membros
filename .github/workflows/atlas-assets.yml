@@ -110,7 +110,7 @@ jobs:
 
       - name: Cache do Blender
         id: cache-blender
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: tools/atlas-pipeline/work/blender
           key: blender-${{ steps.discovery.outputs.blender_version }}-${{ steps.discovery.outputs.blender_tarball }}
@@ -125,7 +125,7 @@ jobs:
 
       - name: Cache do Z-Anatomy.zip
         id: cache-zanatomy
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: tools/atlas-pipeline/work/raw/Z-Anatomy.zip
           key: zanatomy-${{ steps.discovery.outputs.zanatomy_ref }}
