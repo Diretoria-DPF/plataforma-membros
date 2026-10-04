@@ -13,7 +13,7 @@
     "validate:sql": "node scripts/validate-migrations.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.4"
+    "@neondatabase/serverless": "^1.1.0"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
