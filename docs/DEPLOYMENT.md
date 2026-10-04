@@ -303,3 +303,36 @@ KV (o cache vira no-op) e R2 (envio de avatar e de imagem de evento não
 funciona até existirem recursos de teste). O site de
 staging fica fora dos buscadores por cabeçalho (`X-Robots-Tag`, regra por host
 em `frontend/_headers`), assim como as URLs `*.workers.dev`.
+
+## 11. PWA (instalar como aplicativo)
+
+O site é um PWA: `frontend/manifest.webmanifest`, ícones em `frontend/icons/`
+(gerados por `node tools/pwa/generate-icons.mjs` a partir do logo),
+`frontend/pwa.js` (registro) e `frontend/sw.js` (service worker).
+
+- **Instalar:** Android/Chrome → menu → *Instalar app*. iPhone/Safari →
+  *Compartilhar* → *Adicionar à Tela de Início*.
+- **O que o service worker faz:** só o shell estático do próprio site, com
+  *rede primeiro e cache de reserva*; abre a tela inicial mesmo offline. Nunca
+  intercepta a API (outra origem), `POST`, `Range`, o próprio `sw.js` nem o
+  Atlas 3D (que tem service worker próprio). Nada autenticado fica em cache.
+- **Atualizações:** quem está online recebe a versão nova no carregamento
+  seguinte. Para descartar os caches antigos de todo mundo, suba a versão em
+  `frontend/sw.js` (`CACHE_NAME = CACHE_PREFIX + 'v2'`); na ativação os
+  `laift-shell-*` antigos são apagados.
+- **Desligar em emergência:** publique um `frontend/sw.js` que se desregistra
+  e apaga os caches. Os navegadores conferem o `sw.js` a cada navegação
+  (no máximo a cada 24 h), então os aparelhos se limpam sozinhos:
+  ```js
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', (event) => {
+    event.waitUntil(
+      caches.keys()
+        .then((names) => Promise.all(names.filter((n) => n.startsWith('laift-shell-')).map((n) => caches.delete(n))))
+        .then(() => self.registration.unregister())
+    );
+  });
+  ```
+- **Conferência em aparelho real** (antes de anunciar): o ícone do iPhone não
+  pode ter fundo preto; o do Android deve ficar bem recortado (ícone
+  *maskable*); com o modo avião, o app abre a tela de entrada.

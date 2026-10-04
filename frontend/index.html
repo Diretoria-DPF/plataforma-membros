@@ -3,12 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>LAIFT – Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</title>
   <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Quiz, casos clínicos, laboratório virtual e atlas 3D para estudantes de Farmácia.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://laift.com.br/">
+  <!-- PWA: instalável no Android e no iPhone (manifest + service worker em pwa.js/sw.js). -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#0f6f62">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="LAIFT">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="LAIFT">
   <meta property="og:locale" content="pt_BR">
@@ -846,6 +855,7 @@
   <!-- Área "Aprender" (módulos LAIFT): só usa window.App dentro de funções. -->
   <script src="domain-notice.js" defer></script>
   <script src="shared-states.js" defer></script>
+  <script src="pwa.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>
