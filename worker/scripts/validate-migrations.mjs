@@ -49,6 +49,30 @@ for (const pass of [1, 2]) {
   }
 }
 
+// Reversões ficam em sql/down/NNN_*.sql (nunca ao lado das migrações: o
+// regex acima as aplicaria como se fossem "para frente"). Passada 3: desfaz
+// na ordem inversa e aplica tudo de novo, provando que o caminho de volta
+// funciona e que a migração pode ser reaplicada depois dele.
+const DOWN_DIR = path.join(SQL_DIR, 'down');
+const downFiles = fs.existsSync(DOWN_DIR)
+  ? fs.readdirSync(DOWN_DIR).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort().reverse()
+  : [];
+if (downFiles.length) {
+  console.log('\n== Passada 3: reversão (down) e nova aplicação');
+  for (const [dir, list, tag] of [[DOWN_DIR, downFiles, 'down'], [SQL_DIR, files, 'up  ']]) {
+    for (const file of list) {
+      try {
+        await db.exec(fs.readFileSync(path.join(dir, file), 'utf8'));
+        console.log(`  ok     ${tag} ${file}`);
+      } catch (err) {
+        failures++;
+        console.log(`  FALHA  ${tag} ${file}: ${err.message}`);
+        try { await db.exec('ROLLBACK'); } catch (e) { /* já fora de transação */ }
+      }
+    }
+  }
+}
+
 const { rows } = await db.query(
   "SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema = 'public'"
 );

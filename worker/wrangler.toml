@@ -43,6 +43,10 @@ MEDIA_PUBLIC_URL = "https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev"
 # vírgula) — ver docs/FASE_3_IA_CLINICA.md.
 GROQ_MODEL_FAST = "openai/gpt-oss-20b"
 GROQ_MODEL_SMART = "openai/gpt-oss-120b"
+# Como o pool escolhe a chave: "failover" (usa a 1ª até ela falhar; padrão) ou
+# "round-robin" (reveza; só vale a pena com chaves de ORGANIZAÇÕES diferentes,
+# porque o limite do Groq é por organização). Ver docs/AI_KEYS.md.
+AI_KEY_STRATEGY = "failover"
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o

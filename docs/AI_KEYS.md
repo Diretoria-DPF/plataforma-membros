@@ -5,7 +5,7 @@ Como as chaves dos provedores de IA são guardadas, usadas e trocadas. **Este ar
 ## Onde ficam
 | Segredo | Provedor | Como cadastrar | Quem lê |
 |---|---|---|---|
-| `GROQ_API_KEYS` | Groq | `npx wrangler secret put GROQ_API_KEYS` (várias chaves separadas por vírgula, espaço ou `;`) | `worker/src/ai/groqClient.js` (`parseKeys`) |
+| `GROQ_API_KEYS` | Groq | `npx wrangler secret put GROQ_API_KEYS` (várias chaves separadas por vírgula, espaço ou `;`), **ou** o segredo de mesmo nome em GitHub → Settings → Secrets, que `deploy-worker.yml` grava a cada publicação | `worker/src/ai/providers/poolClient.js` (`parseKeys`), via `groqClient.js` |
 | `NVIDIA_API_KEY` | NVIDIA NIM | `npx wrangler secret put NVIDIA_API_KEY` — só quando a Fase 3 entregar o cliente | ainda não lido |
 
 - Nunca no código, no `wrangler.toml`, em `.env` versionado, em log, em `error_logs` ou em conversa de chat.
@@ -21,11 +21,19 @@ Como as chaves dos provedores de IA são guardadas, usadas e trocadas. **Este ar
 ## Estratégia de uso das chaves
 | Estratégia | Comportamento | Quando serve |
 |---|---|---|
-| Rodízio (estado atual de `rotationOrder`) | Começa em uma chave aleatória e segue em ordem | Espalha a carga entre chaves **de organizações diferentes** |
-| **Failover ordenado (adotada, a implementar na Fase 0)** | Usa a chave 1 até receber 429/401/403/5xx; então a 2, e assim por diante. Cooldown da chave = `Retry-After` (teto de 1 h); sem o cabeçalho, 60 s | Chaves da mesma organização: um 429 diário não faz a plataforma insistir em chaves que vão falhar pelo mesmo motivo |
+| **Failover ordenado (padrão, `AI_KEY_STRATEGY=failover`)** | Usa a chave 1 até receber 429/401/403/5xx/timeout; então a 2, e assim por diante. Cooldown da chave = `Retry-After` (teto de 1 h); sem o cabeçalho, 60 s | Chaves da mesma organização: um 429 diário não faz a plataforma insistir em chaves que vão falhar pelo mesmo motivo |
+| Rodízio (`AI_KEY_STRATEGY=round-robin`) | Começa em uma chave aleatória e segue em ordem; cada chamada avança | Chaves de **organizações diferentes**: espalha o limite de 8 mil tokens/min entre as contas |
 | Chave por modelo | Chaves fixas para cada modelo | Descartada: com limite por organização não adiciona capacidade |
 
-O cooldown fica em memória e no KV (`ai:key-cooldown:<índice>`); cada chave gasta uma leitura de KV por chamada.
+A variável fica em `[vars]` do `wrangler.toml`; valor desconhecido cai no failover. Se as chaves do pool forem de contas diferentes (decisão registrada no cabeçalho de `groqClient.js`), o rodízio pode render mais fôlego por minuto; vale medir no painel **IA** antes de trocar.
+
+O cooldown fica em memória e no KV (`ai:key-cooldown:<índice>` no Groq, `ai:key-cooldown:nvidia:<índice>` na NVIDIA); cada chave tentada gasta uma leitura de KV por chamada.
+
+## Código
+- `worker/src/ai/providers/poolClient.js` — motor (pool, failover, cooldown, `ai_usage_log`).
+- `worker/src/ai/providers/groq.js` e `nvidia.js` — descritores (URL, secret, modelo). A NVIDIA está construída e testada, **mas não ligada**: nenhum service a chama, e os IDs de modelo vêm de `NVIDIA_MODEL_FAST`/`NVIDIA_MODEL_SMART` (sem eles o provedor se declara não configurado).
+- `worker/src/ai/groqClient.js` — fachada com a API de sempre; os services só importam este arquivo.
+- `sql/015_ai_usage_provider.sql` — coluna `provider` em `ai_usage_log` (reversão em `sql/down/`). O INSERT do Groq não menciona a coluna, então código e migração podem ser implantados em qualquer ordem.
 
 ## Rotação
 - **Trimestral** e imediatamente após qualquer suspeita de vazamento ou saída de quem tinha acesso ao painel.

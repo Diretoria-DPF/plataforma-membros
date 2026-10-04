@@ -50,9 +50,45 @@ describe('groqClient — configuração do pool', () => {
 });
 
 describe('groqClient — rodízio e failover', () => {
-  test('round-robin: chamadas consecutivas começam em chaves diferentes', async () => {
+  test('failover (padrão): todas as chamadas começam na primeira chave enquanto ela responde', async () => {
     globalThis.fetch.mockResolvedValue(groqReply('ok'));
     const env = envWith();
+    const used = [];
+    for (let i = 0; i < 4; i++) {
+      const out = await Groq.complete(env, null, { feature: 'chat', messages: MESSAGES });
+      used.push(out.keyIndex);
+    }
+    expect(used).toEqual([0, 0, 0, 0]);
+    expect(authOf(globalThis.fetch.mock.calls[3])).toBe('Bearer ' + KEYS[0]);
+  });
+
+  test('failover: depois de um 429 a chave 0 descansa e as chamadas seguintes ficam na chave 1', async () => {
+    globalThis.fetch
+      .mockResolvedValueOnce(httpError(429, { 'retry-after': '3600' }))
+      .mockResolvedValue(groqReply('ok'));
+    const env = envWith();
+    const used = [];
+    for (let i = 0; i < 3; i++) {
+      const out = await Groq.complete(env, null, { feature: 'chat', messages: MESSAGES });
+      used.push(out.keyIndex);
+    }
+    expect(used).toEqual([1, 1, 1]);
+    // 1 tentativa na chave 0 (429) + 3 na chave 1: a 0 não é insistida enquanto descansa.
+    expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+    expect(env.HOT_CACHE.put).toHaveBeenCalledWith('ai:key-cooldown:0', expect.any(String), { expirationTtl: 3600 });
+  });
+
+  test('AI_KEY_STRATEGY desconhecida cai no failover (nunca em algo imprevisto)', async () => {
+    globalThis.fetch.mockResolvedValue(groqReply('ok'));
+    const env = envWith({ AI_KEY_STRATEGY: 'aleatorio' });
+    const first = await Groq.complete(env, null, { feature: 'chat', messages: MESSAGES });
+    const second = await Groq.complete(env, null, { feature: 'chat', messages: MESSAGES });
+    expect([first.keyIndex, second.keyIndex]).toEqual([0, 0]);
+  });
+
+  test('round-robin (AI_KEY_STRATEGY=round-robin): chamadas consecutivas começam em chaves diferentes', async () => {
+    globalThis.fetch.mockResolvedValue(groqReply('ok'));
+    const env = envWith({ AI_KEY_STRATEGY: 'round-robin' });
     const used = [];
     for (let i = 0; i < 4; i++) {
       const out = await Groq.complete(env, null, { feature: 'chat', messages: MESSAGES });
@@ -105,7 +141,7 @@ describe('groqClient — rodízio e failover', () => {
   });
 
   test('cooldown lembrado em memória (sem KV): a chave que falhou é pulada quando o rodízio volta a ela', async () => {
-    const env = envWith({ HOT_CACHE: undefined });
+    const env = envWith({ HOT_CACHE: undefined, AI_KEY_STRATEGY: 'round-robin' });
     globalThis.fetch.mockResolvedValueOnce(httpError(429)).mockResolvedValue(groqReply('ok'));
     await Groq.complete(env, null, { feature: 'chat', messages: MESSAGES }); // começa na 0: falha → cooldown; usa a 1
     await Groq.complete(env, null, { feature: 'chat', messages: MESSAGES }); // começa na 1
