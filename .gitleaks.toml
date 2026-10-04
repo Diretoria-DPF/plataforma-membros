@@ -1,0 +1,22 @@
+title = "LAIFT — configuração do Gitleaks"
+
+# Mantém todas as regras padrão do Gitleaks e só acrescenta exceções estreitas.
+# Falsos positivos do HISTÓRICO ficam em .gitleaksignore (um por impressão digital).
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Dependências, artefatos de build e arquivos gerados"
+paths = [
+  '''node_modules/''',
+  '''(^|/)dist/''',
+  '''\.map$''',
+  '''package-lock\.json$''',
+  '''pnpm-lock\.yaml$''',
+  '''yarn\.lock$''',
+  '''\.min\.(js|css)$''',
+]
+
+[[allowlists]]
+description = "Vetor público de teste da RFC 6238 (segredo ASCII 12345678901234567890 em base32) — não é credencial"
+paths = ['''worker/test/mfaTotp\.test\.js$''']

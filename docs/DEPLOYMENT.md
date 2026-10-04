@@ -336,3 +336,59 @@ O site é um PWA: `frontend/manifest.webmanifest`, ícones em `frontend/icons/`
 - **Conferência em aparelho real** (antes de anunciar): o ícone do iPhone não
   pode ter fundo preto; o do Android deve ficar bem recortado (ícone
   *maskable*); com o modo avião, o app abre a tela de entrada.
+
+## 12. CI/CD — Security Scans (`.github/workflows/security.yml`)
+
+### Agendamento
+| Gatilho | Quando | Strix | Duração |
+|---|---|---|---|
+| Pull request | a cada PR (do próprio repositório) | `quick` | minutos |
+| Agendado | segunda e quinta, 03:00 UTC (00:00 em Brasília) | `standard` | 30–60 min |
+| Manual (*Actions → Segurança → Run workflow*) | quando quiser; indicado antes de releases | `deep` (ou o escolhido) | 1–4 h |
+| Push em `main`, `feat/v5-*`, `staging` | a cada push | não roda | — |
+
+Em todos os gatilhos rodam também: `npm audit` das dependências de produção
+(Worker e front), gitleaks (histórico completo), Trivy e Semgrep (este ainda
+só relatório).
+
+### O que bloqueia
+`npm audit` (alta/crítica, só produção), gitleaks, Trivy (CRITICAL/HIGH com
+correção disponível) e Strix (`--fail-on high`). Falso positivo do gitleaks:
+caminho em `.gitleaks.toml` ou impressão digital em `.gitleaksignore`, sempre
+com a justificativa em comentário.
+
+### Notificações
+- Falha em agendamento, push ou execução manual → **Issue** automática com as
+  labels `security` e `bug`, listando quais verificações falharam e o link da
+  execução. Se já houver uma Issue de segurança aberta, o workflow comenta nela
+  em vez de abrir outra. Em PR a falha aparece no próprio PR.
+- Você é avisado por e-mail se estiver *watching* o repositório.
+- **Slack (opcional):** crie o secret `SLACK_WEBHOOK_URL` (webhook em
+  api.slack.com); sem ele o passo é ignorado.
+
+### Segredos e variáveis
+| Nome | Tipo | Para quê | Como criar |
+|---|---|---|---|
+| `OPENROUTER_API_KEY` | secret | chave do OpenRouter, só o Strix usa | `powershell -ExecutionPolicy Bypass -File tools\ci\registrar-segredo-openrouter.ps1 -Arquivo "<json com a chave>"` (lê o arquivo localmente e envia ao `gh secret set` sem exibir o valor; depois apague o arquivo) ou `gh secret set OPENROUTER_API_KEY` |
+| `STRIX_LLM` | variable (opcional) | modelo do Strix. Padrão: `openrouter/nvidia/nemotron-3-super-120b-a12b:free` | `gh variable set STRIX_LLM --body "openrouter/z-ai/glm-5.3"` |
+| `SLACK_WEBHOOK_URL` | secret (opcional) | aviso no Slack | `gh secret set SLACK_WEBHOOK_URL` |
+
+Sem `OPENROUTER_API_KEY` o job do Strix é **pulado com um aviso** (não fica
+vermelho); os demais scans seguem normalmente. O `SEMGREP_APP_TOKEN` não é
+usado: o Semgrep roda com as regras públicas (`p/javascript`,
+`p/security-audit`), sem conta.
+
+### Pontos de atenção
+- **Modelo.** O `z-ai/glm-5.3:free` do roteiro original **não existe** no
+  OpenRouter (conferido no catálogo público em 04/10/2026); o `z-ai/glm-5.3` é
+  pago. Modelos gratuitos têm limite diário e de requisições por minuto: um
+  `deep` pode ser interrompido por rate limit — nesse caso rode de novo ou
+  defina `STRIX_LLM` com um modelo pago.
+- **Privacidade do código.** O Strix envia trechos do código ao provedor do
+  modelo. Em modelos gratuitos, considere que o conteúdo pode ser registrado.
+  Revise antes de privar o repositório ou de incluir conteúdo sensível.
+- **Relatórios.** Em repositório público os achados aparecem no log da
+  execução antes de serem corrigidos; só em repositório privado o relatório é
+  guardado como artefato (14 dias).
+- **Versões fixas:** gitleaks 8.30.1 (SHA-256 conferido), `strix-agent==1.6.2`
+  e `trivy-action` por commit. Atualize de propósito, não por acaso.

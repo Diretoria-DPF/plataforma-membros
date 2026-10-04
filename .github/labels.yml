@@ -1,0 +1,10 @@
+# Labels usadas pelas Issues automáticas do workflow de segurança
+# (.github/workflows/security.yml). O próprio workflow cria as que faltarem;
+# este arquivo é a referência e serve a qualquer ação de sincronização de labels.
+- name: security
+  description: "Questões relacionadas a segurança"
+  color: "d73a4a"
+
+- name: bug
+  description: "Algo não está funcionando"
+  color: "d73a4a"

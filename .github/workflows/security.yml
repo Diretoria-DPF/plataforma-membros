@@ -1,31 +1,62 @@
 name: Segurança
 
-# Substitui o que o repositório privado perde no plano gratuito do GitHub
-# (CodeQL e secret scanning nativos exigem GitHub Advanced Security).
+# Pipeline de segurança (substitui o que o repositório perde no plano gratuito
+# do GitHub: CodeQL e secret scanning nativos exigem GitHub Advanced Security).
 #
-#  - auditoria de dependências de PRODUÇÃO: bloqueia o PR em vulnerabilidade
-#    alta/crítica (hoje: 0 no Worker e 0 no front);
-#  - auditoria completa (inclui jest/wrangler, só de desenvolvimento): apenas
-#    informa — quem as mantém atualizadas é o Dependabot;
-#  - gitleaks (segredos no histórico): BLOQUEIA. Falsos positivos já triados
-#    ficam em .gitleaksignore, um por impressão digital;
-#  - Semgrep (análise estática): ainda RELATÓRIO. Depois de triar a primeira
-#    rodada, remova o `continue-on-error` do job para passar a bloquear.
+# QUANDO RODA
+#   pull_request        todos os scans; Strix em modo QUICK (minutos)
+#   push                main, feat/v5-* e staging (sem Strix)
+#   schedule            segunda e quinta, 03:00 UTC (00:00 em Brasília):
+#                       todos os scans; Strix em modo STANDARD (~30-60 min)
+#   workflow_dispatch   manual; Strix em modo à escolha (padrão DEEP, 1-4 h),
+#                       indicado antes de releases
+#
+# O QUE BLOQUEIA
+#   - npm audit das dependências de PRODUÇÃO (alta/crítica);
+#   - gitleaks (segredos no histórico). Falsos positivos triados ficam em
+#     .gitleaks.toml (caminhos) e .gitleaksignore (impressão digital);
+#   - Trivy (CRITICAL/HIGH com correção disponível);
+#   - Strix (achado de severidade alta ou maior).
+#   Semgrep ainda é RELATÓRIO: depois de triar a primeira rodada, remova o
+#   `continue-on-error` do job para passar a bloquear.
+#
+# NOTIFICAÇÃO
+#   Falha em schedule, push ou execução manual abre uma Issue (labels
+#   `security` e `bug`); se já houver uma aberta, comenta nela em vez de criar
+#   outra. Em PR a falha já aparece no próprio PR. Slack é opcional: defina o
+#   secret SLACK_WEBHOOK_URL.
+#
+# SEGREDOS E VARIÁVEIS (nenhum valor fica no repositório)
+#   OPENROUTER_API_KEY   (secret)    chave do OpenRouter, usada só pelo Strix
+#   STRIX_LLM            (variable)  modelo do Strix; padrão: Nemotron 3 Super
+#                                    gratuito. Para um modelo pago, ex.:
+#                                    openrouter/z-ai/glm-5.3
+#   SLACK_WEBHOOK_URL    (secret, opcional)
+#   Sem OPENROUTER_API_KEY o job do Strix é pulado com um aviso (não fica vermelho).
 
 on:
   pull_request: {}
   push:
-    branches: [main]
+    branches: [main, 'feat/v5-*', staging]
   schedule:
-    - cron: '23 9 * * 1'   # segunda-feira, 06:23 em Brasília
-  workflow_dispatch: {}
+    - cron: '0 3 * * 1'   # segunda-feira, 03:00 UTC (00:00 em Brasília)
+    - cron: '0 3 * * 4'   # quinta-feira, 03:00 UTC (00:00 em Brasília)
+  workflow_dispatch:
+    inputs:
+      strix_mode:
+        description: 'Profundidade do Strix na execução manual'
+        type: choice
+        options: [quick, standard, deep]
+        default: deep
 
 permissions:
   contents: read
 
+# Um PR novo cancela a rodada anterior do mesmo PR; as rodadas agendadas e
+# manuais (longas) nunca são canceladas por um push.
 concurrency:
-  group: security-${{ github.ref }}
-  cancel-in-progress: true
+  group: security-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   dependencias:
@@ -58,7 +89,9 @@ jobs:
         continue-on-error: true
         run: npm audit --audit-level=high
 
-  # Bloqueante: os 5 falsos positivos históricos estão triados em .gitleaksignore.
+  # Bloqueante. Binário oficial em versão fixa, conferido contra o SHA-256
+  # publicado na release (a gitleaks-action pede licença em repositório de
+  # organização).
   segredos:
     runs-on: ubuntu-latest
     steps:
@@ -67,20 +100,15 @@ jobs:
           fetch-depth: 0   # histórico completo
           persist-credentials: false
 
-      # Binário oficial em versão fixa, conferido contra o checksums.txt da
-      # mesma versão (a gitleaks-action pede licença em repositório de
-      # organização).
-      - name: Baixa o gitleaks
+      - name: Baixa o gitleaks 8.30.1
         run: |
-          BASE=https://github.com/gitleaks/gitleaks/releases/download/v8.18.4
-          curl -sSfLO "$BASE/gitleaks_8.18.4_linux_x64.tar.gz"
-          curl -sSfLO "$BASE/gitleaks_8.18.4_checksums.txt"
-          grep " gitleaks_8.18.4_linux_x64.tar.gz\$" gitleaks_8.18.4_checksums.txt | sha256sum -c -
-          tar -xzf gitleaks_8.18.4_linux_x64.tar.gz gitleaks
+          curl -sSfLO https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  gitleaks_8.30.1_linux_x64.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks_8.30.1_linux_x64.tar.gz gitleaks
           ./gitleaks version
 
       - name: Procura segredos no histórico
-        run: ./gitleaks detect --source . --redact --no-banner --verbose
+        run: ./gitleaks detect --source . --config .gitleaks.toml --redact --no-banner --verbose
 
   semgrep:
     runs-on: ubuntu-latest
@@ -98,3 +126,185 @@ jobs:
           --config p/javascript --config p/security-audit
           --exclude node_modules --exclude vendor --exclude dist --exclude models
           --exclude '*.min.js'
+
+  # Bloqueante. Só dependências de produção (o Trivy ignora devDependencies de
+  # lockfiles npm por padrão) e só vulnerabilidades que já têm correção.
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Trivy (sistema de arquivos)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          skip-dirs: node_modules,dist
+          format: table
+          exit-code: '1'
+
+  # Pentest com IA (Strix), white-box sobre o código. Modo conforme o gatilho:
+  # PR = quick, agendado = standard, manual = o escolhido (padrão deep).
+  # PRs de fork e do Dependabot não recebem segredos, então ficam de fora.
+  # O código do repositório é enviado ao provedor do modelo escolhido: com
+  # modelos gratuitos do OpenRouter, trate-o como público.
+  strix:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       github.actor != 'dependabot[bot]')
+    timeout-minutes: ${{ github.event_name == 'workflow_dispatch' && 300 || github.event_name == 'schedule' && 120 || 30 }}
+    env:
+      STRIX_MODE: ${{ github.event_name == 'pull_request' && 'quick' || github.event_name == 'schedule' && 'standard' || inputs.strix_mode || 'deep' }}
+      STRIX_LLM: ${{ vars.STRIX_LLM || 'openrouter/nvidia/nemotron-3-super-120b-a12b:free' }}
+    steps:
+      # A chave só existe nos passos que precisam dela (não no checkout nem na instalação).
+      - name: Verifica a chave do OpenRouter
+        id: chave
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "::warning::OPENROUTER_API_KEY não configurada: o Strix foi pulado. Veja docs/DEPLOYMENT.md (CI/CD - Security Scans)."
+            echo "tem=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "tem=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.chave.outputs.tem == 'true'
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        if: steps.chave.outputs.tem == 'true'
+        with:
+          python-version: '3.12'
+
+      # Versão fixa do pacote oficial (em vez de `curl | bash`).
+      - name: Instala o Strix
+        if: steps.chave.outputs.tem == 'true'
+        run: pipx install strix-agent==1.6.2
+
+      - name: Strix (${{ env.STRIX_MODE }})
+        if: steps.chave.outputs.tem == 'true'
+        env:
+          LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: strix -n -t ./ --scan-mode "$STRIX_MODE" --fail-on high
+
+      # Relatórios só como artefato em repositório PRIVADO: em repositório
+      # público eles expõem vulnerabilidades ainda não corrigidas.
+      - name: Guarda o relatório
+        if: always() && steps.chave.outputs.tem == 'true' && github.event.repository.private
+        uses: actions/upload-artifact@v4
+        with:
+          name: strix-${{ env.STRIX_MODE }}-${{ github.run_id }}
+          path: strix_runs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # Abre (ou atualiza) uma Issue quando algo falha fora de PR.
+  notificar:
+    needs: [dependencias, segredos, semgrep, trivy, strix]
+    if: failure() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      NEEDS: ${{ toJSON(needs) }}
+    steps:
+      - name: Abre ou atualiza a Issue de segurança
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const date = new Date().toISOString().split('T')[0];
+            const prefix = '🔒 Falha na verificação de segurança';
+            const names = {
+              dependencias: 'npm audit (dependências de produção)',
+              segredos: 'Gitleaks (segredos expostos)',
+              semgrep: 'Semgrep (análise estática)',
+              trivy: 'Trivy (dependências vulneráveis)',
+              strix: 'Strix (pentest com IA)',
+            };
+            const needs = JSON.parse(process.env.NEEDS);
+            const failed = Object.keys(needs)
+              .filter((k) => needs[k].result === 'failure')
+              .map((k) => names[k] || k);
+
+            const labels = [
+              ['security', 'Questões relacionadas a segurança'],
+              ['bug', 'Algo não está funcionando'],
+            ];
+            for (const [name, description] of labels) {
+              try {
+                await github.rest.issues.createLabel({ owner, repo, name, color: 'd73a4a', description });
+              } catch (e) {
+                if (e.status !== 422) throw e; // 422 = a label já existe
+              }
+            }
+
+            const detalhes = [
+              `- **Verificações que falharam:** ${failed.join(', ') || 'ver a execução'}`,
+              `- **Data:** ${date}`,
+              `- **Gatilho:** ${context.eventName} (${context.ref})`,
+              `- **Execução:** ${runUrl}`,
+            ];
+
+            const abertas = await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: 'security', per_page: 50 });
+            const existente = abertas.data.find((i) => !i.pull_request && i.title.startsWith(prefix));
+            if (existente) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: existente.number,
+                body: ['## Nova falha de segurança', '', ...detalhes].join('\n'),
+              });
+              core.info(`Comentário adicionado à Issue #${existente.number}.`);
+              return;
+            }
+
+            const body = [
+              '## Verificação de segurança falhou',
+              '',
+              'Alguma das verificações automatizadas encontrou um problema que precisa ser corrigido.',
+              '',
+              '### Detalhes da execução',
+              ...detalhes,
+              '',
+              '### Como corrigir',
+              '1. Abra a execução pelo link acima e veja qual job falhou e por quê.',
+              '2. Corrija: atualize a dependência, revogue o segredo exposto, ajuste o código.',
+              '3. Faça commit e push — o workflow roda de novo.',
+              '4. Feche esta Issue quando tudo estiver verde.',
+              '',
+              '### Prioridade',
+              '- Vulnerabilidades CRITICAL/HIGH: corrigir imediatamente.',
+              '- Segredo exposto: revogar a chave primeiro; só depois limpar o histórico.',
+              '- Falso positivo: registre em `.gitleaks.toml` / `.gitleaksignore` com justificativa.',
+              '',
+              '> Issue criada automaticamente por `.github/workflows/security.yml`.',
+            ].join('\n');
+            const criada = await github.rest.issues.create({
+              owner, repo, title: `${prefix} — ${date}`, body, labels: ['security', 'bug'],
+            });
+            core.info(`Issue #${criada.data.number} criada.`);
+
+      - name: Avisa no Slack (opcional)
+        if: env.SLACK_WEBHOOK_URL != ''
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          MSG=":rotating_light: Falha na verificação de segurança em ${GITHUB_REPOSITORY} (${GITHUB_EVENT_NAME}). ${RUN_URL}"
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            --data "$(jq -n --arg text "$MSG" '{text: $text}')" "$SLACK_WEBHOOK_URL"
