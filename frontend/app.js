@@ -335,6 +335,7 @@
       // indisponível" preso na tela pelo resto da sessão, mesmo com tudo
       // voltando a funcionar normalmente logo em seguida.
       showSystemUnavailable(false);
+      if (res && res.mfaSetupRequired) requireMfaSetup();
       return res;
     }, function (err) {
       showSystemUnavailable(true);
@@ -566,15 +567,35 @@
 
     callApi('apiLogin', email, password).then(function (res) {
       if (!res.success) { setStatus('msg-login', res.message, 'error'); return; }
-      showSystemUnavailable(false);
-      state.sessionToken = res.sessionToken;
-      state.profile = res.profile;
-      saveSessionCache(res.sessionToken);
-      scheduleSessionExpiry(Date.now() + SESSION_TTL_MS);
-      setStatus('msg-login', '', null);
-      enterApp();
+      // Verificação em duas etapas ativa: ainda não há sessão, só um desafio.
+      if (res.mfaRequired) {
+        if (window.LaiftMfa) window.LaiftMfa.startLoginStep(window.App, res.mfaToken);
+        else setStatus('msg-login', 'Não foi possível carregar a verificação em duas etapas. Recarregue a página.', 'error');
+        return;
+      }
+      finishLogin(res);
     });
   });
+
+  // Conclui o login (senha, ou senha + segundo fator via mfa.js).
+  function finishLogin(res) {
+    showSystemUnavailable(false);
+    state.sessionToken = res.sessionToken;
+    state.profile = res.profile;
+    saveSessionCache(res.sessionToken);
+    scheduleSessionExpiry(Date.now() + SESSION_TTL_MS);
+    setStatus('msg-login', '', null);
+    enterApp();
+    if (res.mfaSetupRequired) requireMfaSetup();
+  }
+
+  // Admin sem autenticador com a obrigatoriedade ligada: leva ao cartão de cadastro.
+  function requireMfaSetup() {
+    if (!state.sessionToken) return;
+    var profilePanel = document.getElementById('panel-profile');
+    if (profilePanel && !profilePanel.classList.contains('hidden')) return;
+    showPanel('panel-profile');
+  }
 
   var regAvatarPayload = null; // { base64, mimeType } — preenchido ao escolher um arquivo válido
 
@@ -796,7 +817,10 @@
     'panel-proposals': loadProposalsAndVoting,
     'panel-tasks': loadTasks,
     'panel-orgchart': loadOrgChartPanel,
-    'panel-profile': loadProfileAndPreferences,
+    'panel-profile': function () {
+      loadProfileAndPreferences();
+      if (window.LaiftMfa) window.LaiftMfa.load(window.App);
+    },
     'panel-admin-dashboard': loadAdminDashboard,
     'panel-admin-users': function () { loadAdminUsers(1); },
     'panel-admin-events': loadAdminEvents,
@@ -2254,6 +2278,7 @@
     getTheme: getEffectiveTheme,
     getThemePreference: function () { return themePreference; },
     callApi: callApi,
+    finishLogin: finishLogin,
     h: h,
     text: text,
     clearEl: clearEl,

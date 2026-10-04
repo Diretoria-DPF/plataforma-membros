@@ -21,6 +21,10 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import { getCached, setCached } from '../cache.js';
 import * as Groq from '../ai/groqClient.js';
+import * as Orchestrator from '../ai/orchestrator.js';
+import * as Metrics from '../ai/metrics.js';
+import * as SemanticCache from '../ai/semanticCache.js';
+import { isMissingTable } from './featureFlagService.js';
 import { resolveModel } from '../ai/config.js';
 import { QuotaExceededError, AiInvalidOutputError, AI_MESSAGES } from '../ai/errors.js';
 import { buildLabMessages, buildLabSynthesisMessages } from '../ai/prompts.js';
@@ -178,7 +182,13 @@ export async function askLabPreceptor(sql, env, identity, rawInput) {
   if (!question) throw E.ValidationError('Escreva sua dúvida para o preceptor.');
   if (question.length > C.AI_LIMITS.QUESTION_MAX) throw E.ValidationError('A pergunta passou do limite de ' + C.AI_LIMITS.QUESTION_MAX + ' caracteres.');
 
-  const benchRaw = typeof input.benchContext === 'string' ? input.benchContext : (input.benchContext ? JSON.stringify(input.benchContext) : '');
+  // O módulo envia o contexto como TEXTO. Objetos/listas não são aceitos: um
+  // objeto arbitrário serializado entraria no prompt com campos que o
+  // servidor nunca revisou.
+  if (input.benchContext !== undefined && input.benchContext !== null && typeof input.benchContext !== 'string') {
+    throw E.ValidationError('O contexto da bancada precisa ser um texto.');
+  }
+  const benchRaw = typeof input.benchContext === 'string' ? input.benchContext : '';
   if (byteLength(benchRaw) > C.AI_LIMITS.CONTEXT_MAX_BYTES) throw E.ValidationError('O contexto da bancada é grande demais.');
   const benchContext = cleanText(benchRaw, C.AI_LIMITS.CONTEXT_MAX_BYTES);
   const history = sanitizeHistory(input.history, ['student', 'preceptor'], C.AI_LIMITS.HISTORY_MAX_TURNS, C.AI_LIMITS.HISTORY_TURN_MAX);
@@ -195,9 +205,21 @@ export async function askLabPreceptor(sql, env, identity, rawInput) {
     }
   }
 
+  // Pergunta GENÉRICA (sem termo de síntese, bancada nem histórico) pode usar o
+  // cache semântico do orquestrador. Acerto não chama a IA, então não consome cota.
+  const generic = !term && !benchContext && history.length === 0;
+  if (generic) {
+    const hit = await Orchestrator.lookupCache(sql, env, identity, C.AI_FEATURE.LAB_PRECEPTOR, question);
+    if (hit) return { success: true, answer: cleanReply(hit.answer, C.AI_LIMITS.REPLY_MAX), cached: true };
+  }
+
   return withQuota(sql, identity, C.AI_FEATURE.LAB_PRECEPTOR, async () => {
     const messages = term ? buildLabSynthesisMessages({ term }) : buildLabMessages({ question, benchContext, history });
-    const out = await Groq.complete(env, sql, { feature: C.AI_FEATURE.LAB_PRECEPTOR, messages, profileId: identity.profileId });
+    const out = await Orchestrator.complete(
+      sql, env, identity,
+      { feature: C.AI_FEATURE.LAB_PRECEPTOR, messages, profileId: identity.profileId },
+      { cacheQuestion: generic ? question : null }
+    );
     const answer = cleanReply(out.content, C.AI_LIMITS.REPLY_MAX);
     if (!answer) throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
     // Só respostas que terminaram normalmente vão para o cache — uma
@@ -205,8 +227,44 @@ export async function askLabPreceptor(sql, env, identity, rawInput) {
     if (term && out.finishReason !== 'length') {
       await setCached(env, labSynthCacheKey(term), { answer, createdAt: new Date().toISOString() }, LAB_SYNTH_TTL_SECONDS);
     }
-    return { success: true, answer, cached: false };
+    // `degraded`: o provedor estava fora e a resposta veio de uma pergunta parecida do cache.
+    return Object.assign({ success: true, answer, cached: !!out.cached }, out.degraded ? { degraded: true } : {});
   });
+}
+
+// ---------------------------------------------------------------------------
+// apiAdminAiMetrics — painel de consumo (tokens por modelo/recurso/provedor,
+// orçamento do dia, cache semântico e alertas ativos)
+// ---------------------------------------------------------------------------
+export async function adminMetrics(sql, env, identity, rawInput) {
+  S.requireRole(identity, [C.ROLES.ADMIN]);
+  const requested = Number(asObject(rawInput).days);
+  const days = requested === 30 ? 30 : 7;
+
+  let rows = [];
+  let available = true;
+  try {
+    rows = await Metrics.readDaily(sql, days);
+  } catch (err) {
+    if (!isMissingTable(err)) throw err;
+    available = false; // migração 018 ainda não aplicada
+  }
+  const budget = await Metrics.budgetStatus(sql, env);
+  const totals = Metrics.totalsByDay(rows);
+  const alerts = Metrics.evaluateAlerts({
+    daily: totals, tokensUsed: budget.used, budget: budget.budget, today: new Date().toISOString().slice(0, 10),
+  });
+  return {
+    success: true,
+    available,
+    days,
+    orchestratorEnabled: await Orchestrator.orchestratorEnabled(sql, identity),
+    budget,
+    rows,
+    totals,
+    cache: await SemanticCache.stats(sql),
+    alerts,
+  };
 }
 
 // ---------------------------------------------------------------------------

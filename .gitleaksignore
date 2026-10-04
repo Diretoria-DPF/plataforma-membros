@@ -11,3 +11,10 @@
 5bf196e11795eac69ea4b132c94066b5968c0e18:worker/test/authService.test.js:generic-api-key:106
 5bf196e11795eac69ea4b132c94066b5968c0e18:worker/test/authService.test.js:generic-api-key:126
 5bf196e11795eac69ea4b132c94066b5968c0e18:worker/test/authService.test.js:generic-api-key:147
+
+# Reportados só a partir do gitleaks 8.30 (regras novas). Triados em 2026-10-04: nenhum é credencial.
+# senha de teste fictícia no e2e do reset de senha
+2ed514ab51c83b22aa1d1d5767f36cff38872daa:frontend/scripts/e2e/qa-full.e2e.js:generic-api-key:226
+# texto de documentação: nome do rótulo HMAC do QR de presença (não é segredo)
+b2848842a1949bd6a70cc1d2b5a4fa809c6e6b4c:docs/SECURITY.md:generic-api-key:199
+d4553a91679ea092c0cf9e5f98a26ddd821605e5:docs/FASE_2_DADOS_PRESENCA.md:generic-api-key:122

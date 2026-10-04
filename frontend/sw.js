@@ -23,7 +23,7 @@
   var PRECACHE = [
     './', 'styles.css', 'ux.css', 'manifest.webmanifest', 'icons/icon-192.png',
     'app.js', 'shared-states.js', 'pwa.js', 'domain-notice.js', 'learning.js', 'admin-ai.js',
-    'msg-crypto.js', 'messaging.js',
+    'msg-crypto.js', 'messaging.js', 'home.js', 'mfa.js',
   ];
   var ATLAS_PATH = '/modulos/anatomia-3d/';
 

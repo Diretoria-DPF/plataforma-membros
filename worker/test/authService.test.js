@@ -48,6 +48,7 @@ describe('AuthService.login', () => {
       .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_IP
       .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN (por e-mail)
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'active', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: true }])
+      .mockResolvedValueOnce([]) // mfa_credentials: sem MFA
       .mockResolvedValueOnce(undefined) // INSERT sessions (createSession)
       .mockResolvedValueOnce(undefined); // logAudit
 
@@ -55,6 +56,27 @@ describe('AuthService.login', () => {
     expect(res.success).toBe(true);
     expect(res.sessionToken).toMatch(/^[0-9a-f]{64}$/);
     expect(res.profile).toEqual({ fullName: 'Fulano', role: 'member' });
+    expect(res.mfaRequired).toBeUndefined();
+  });
+
+  test('com MFA ativa a senha certa NÃO cria sessão: devolve o desafio', async () => {
+    const sql = makeSql();
+    const env = makeEnv();
+    sql
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN_GLOBAL
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN_IP
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN
+      .mockResolvedValueOnce([{ id: 'p1', role: 'admin', status: 'active', full_name: 'Ana', email_confirmed_at: '2024-01-01', password_ok: true }])
+      .mockResolvedValueOnce([{ profile_id: 'p1', secret_enc: 'v1.a.b', confirmed_at: '2026-10-01', last_used_step: 0 }]) // mfa_credentials
+      .mockResolvedValueOnce(undefined) // INSERT mfa_challenges
+      .mockResolvedValueOnce(undefined); // logAudit
+
+    const res = await AuthService.login(sql, env, 'ana@x.com', 'senha-correta', 'UA', 'cid-1');
+    expect(res).toMatchObject({ success: true, mfaRequired: true });
+    expect(res.mfaToken).toMatch(/^[0-9a-f]{64}$/);
+    expect(res.sessionToken).toBeUndefined();
+    const sqlTexts = sql.mock.calls.map((c) => (Array.isArray(c[0]) ? c[0].join('?') : String(c[0])));
+    expect(sqlTexts.some((t) => t.includes('INSERT INTO sessions'))).toBe(false);
   });
 
   test('senha errada (password_ok false) falha mesmo com conta ativa/confirmada', async () => {
@@ -148,6 +170,7 @@ describe('AuthService.register', () => {
     const env = makeEnv();
     sql
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit global
+      .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por IP
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por e-mail
       .mockResolvedValueOnce([{ id: 'existing' }]); // SELECT id FROM profiles — já existe
 
@@ -169,6 +192,7 @@ describe('AuthService.register', () => {
     const env = makeEnv();
     sql
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit global
+      .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por IP
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por e-mail
       .mockResolvedValueOnce([]) // e-mail não existe ainda
       .mockResolvedValueOnce([]) // username não existe ainda

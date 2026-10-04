@@ -18,6 +18,7 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 import { sendEmail } from '../mailer.js';
+import * as MfaService from './mfaService.js';
 
 const BCRYPT_COST = 10;
 // Hash bcrypt fixo (não corresponde a nenhuma senha real) usado só para
@@ -126,6 +127,7 @@ async function sendConfirmationEmail(env, email, fullName, rawToken, correlation
 export async function register(sql, env, input, correlationId) {
   const data = assertValidRegistration(input);
   await S.enforceRateLimit(sql, 'REGISTER_GLOBAL', 'global', C.RATE_LIMITS.REGISTER_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER_GLOBAL.WINDOW_SECONDS);
+  await S.enforceRateLimit(sql, 'REGISTER_IP', env.clientIp || 'unknown', C.RATE_LIMITS.REGISTER_IP.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER_IP.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'REGISTER', data.email, C.RATE_LIMITS.REGISTER.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER.WINDOW_SECONDS);
 
   const existing = await sql`SELECT id FROM profiles WHERE email = ${data.email} LIMIT 1`;
@@ -265,15 +267,25 @@ export async function login(sql, env, email, password, userAgent, correlationId)
     throw E.AuthError(C.GENERIC_AUTH_FAILURE_MESSAGE);
   }
 
+  // Segundo fator: quem tem MFA ativa só recebe sessão em apiLoginMfa.
+  const mfaToken = await MfaService.startLoginChallenge(sql, env, row.id);
+  if (mfaToken) {
+    await Logging.logAudit(sql, correlationId, row.id, 'LOGIN', 'profile', row.id, 'success', { step: 'password_ok_mfa_pending' });
+    return { success: true, mfaRequired: true, mfaToken, message: 'Informe o código do aplicativo autenticador.' };
+  }
+
   const sessionToken = await S.createSession(sql, env.SESSION_TOKEN_PEPPER, row.id, userAgent || '');
   await Logging.logAudit(sql, correlationId, row.id, 'LOGIN', 'profile', row.id, 'success', null);
 
-  return {
+  const result = {
     success: true,
     message: 'Login realizado com sucesso.',
     sessionToken,
     profile: { fullName: row.full_name, role: row.role },
   };
+  // Admin sem MFA com a obrigatoriedade ligada: a interface leva direto ao cadastro.
+  if (await MfaService.adminNeedsSetup(sql, { profileId: row.id, role: row.role })) result.mfaSetupRequired = true;
+  return result;
 }
 
 export async function logout(sql, env, rawSessionToken, correlationId) {
@@ -292,6 +304,7 @@ export async function requestPasswordReset(sql, env, email, correlationId) {
   }
 
   await S.enforceRateLimit(sql, 'RESET_REQUEST_GLOBAL', 'global', C.RATE_LIMITS.RESET_REQUEST_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST_GLOBAL.WINDOW_SECONDS);
+  await S.enforceRateLimit(sql, 'RESET_REQUEST_IP', env.clientIp || 'unknown', C.RATE_LIMITS.RESET_REQUEST_IP.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST_IP.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'RESET_REQUEST', normalizedEmail, C.RATE_LIMITS.RESET_REQUEST.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST.WINDOW_SECONDS);
 
   const rows = await sql`SELECT id, full_name FROM profiles WHERE email = ${normalizedEmail} AND status = 'active'::account_status LIMIT 1`;

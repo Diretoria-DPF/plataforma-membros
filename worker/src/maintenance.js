@@ -28,6 +28,7 @@
  *    DELETE sem filtro de idade.
  */
 import * as Logging from './logging.js';
+import { runAiAlerts } from './ai/alerts.js';
 
 export const RETENTION = {
   AI_USAGE_LOG_DAYS: 180,
@@ -43,7 +44,7 @@ export const RETENTION = {
  * Cada limpeza roda isolada: uma falha (ex.: tabela ainda não migrada) é
  * registrada e não impede as outras. Devolve quantas linhas cada uma apagou.
  */
-export async function runMaintenance(sql, correlationId) {
+export async function runMaintenance(sql, correlationId, env) {
   const tasks = {
     aiUsageLog: () => sql`
       DELETE FROM ai_usage_log
@@ -73,6 +74,18 @@ export async function runMaintenance(sql, correlationId) {
       DELETE FROM error_logs
       WHERE created_at < now() - make_interval(days => ${RETENTION.ERROR_LOGS_DAYS})
       RETURNING 1`,
+    // Desafios de MFA vivem 5 minutos; o que sobrou é lixo (login abandonado).
+    mfaChallenges: () => sql`
+      DELETE FROM mfa_challenges
+      WHERE expires_at < now() - interval '1 day'
+      RETURNING 1`,
+    // Cache semântico da IA: vencido há mais de 30 dias não serve nem de reserva.
+    semanticCache: () => sql`
+      DELETE FROM ai_semantic_cache
+      WHERE expires_at < now() - interval '30 days'
+      RETURNING 1`,
+    // Alertas da IA (tokens, 429, cache) por e-mail aos admins; devolve os alertas enviados.
+    aiAlerts: () => (env ? runAiAlerts(sql, env, correlationId) : []),
   };
 
   const deleted = {};

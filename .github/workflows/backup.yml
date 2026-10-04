@@ -1,0 +1,186 @@
+name: Backup do banco
+
+# Backup diário do Postgres (Neon), CIFRADO antes de sair do runner:
+#   pg_dump (formato custom) → age (chave PÚBLICA) → Cloudflare R2.
+# A chave PRIVADA do age nunca vem ao GitHub: sem ela, nem quem lê o bucket nem
+# quem lê os logs consegue abrir o dump. Restauração: docs/BACKUP_RESTORE.md.
+#
+# RETENÇÃO
+#   daily/    7 dias
+#   monthly/  cópia do dia 1 de cada mês, 400 dias (~13 meses)
+#   Em repositório PRIVADO, a cópia do dia 1 também vai como artefato (90 dias):
+#   uma segunda cópia fora do R2.
+#
+# SEGREDOS (todos obrigatórios; sem eles o backup é PULADO com um aviso)
+#   BACKUP_DATABASE_URL      URL DIRETA (sem "-pooler") de um papel com leitura total
+#   BACKUP_AGE_PUBLIC_KEY    chave pública do age (age1...)
+#   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BACKUP_BUCKET
+# VARIÁVEL (opcional)
+#   PG_MAJOR                 versão do pg_dump; precisa ser >= a do servidor (padrão 17)
+#
+# Falha abre uma Issue (label backup). Backup que falha em silêncio é pior que
+# nenhum: por isso o job NÃO usa continue-on-error.
+
+on:
+  schedule:
+    - cron: '30 5 * * *'   # diário, 05:30 UTC (02:30 em Brasília)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Environment "backup": permite restringir à main e exigir aprovação
+    # (Settings → Environments). Os secrets podem continuar no repositório.
+    environment: backup
+    env:
+      PG_MAJOR: ${{ vars.PG_MAJOR || '17' }}
+    steps:
+      - name: Confere os segredos
+        id: segredos
+        env:
+          S1: ${{ secrets.BACKUP_DATABASE_URL }}
+          S2: ${{ secrets.BACKUP_AGE_PUBLIC_KEY }}
+          S3: ${{ secrets.R2_ACCOUNT_ID }}
+          S4: ${{ secrets.R2_ACCESS_KEY_ID }}
+          S5: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          S6: ${{ secrets.R2_BACKUP_BUCKET }}
+        run: |
+          faltam=""
+          [ -z "$S1" ] && faltam="$faltam BACKUP_DATABASE_URL"
+          [ -z "$S2" ] && faltam="$faltam BACKUP_AGE_PUBLIC_KEY"
+          [ -z "$S3" ] && faltam="$faltam R2_ACCOUNT_ID"
+          [ -z "$S4" ] && faltam="$faltam R2_ACCESS_KEY_ID"
+          [ -z "$S5" ] && faltam="$faltam R2_SECRET_ACCESS_KEY"
+          [ -z "$S6" ] && faltam="$faltam R2_BACKUP_BUCKET"
+          if [ -n "$faltam" ]; then
+            # Agendado: segredo sumido É falha (abre Issue). Manual: só avisa,
+            # para dar para testar o resto antes de configurar tudo.
+            if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+              echo "::error::Backup NÃO executado: faltam os secrets:$faltam. Veja docs/BACKUP_RESTORE.md."
+              exit 1
+            fi
+            echo "::warning::Backup pulado: faltam os secrets:$faltam. Veja docs/BACKUP_RESTORE.md."
+            echo "tem=false" >> "$GITHUB_OUTPUT"
+          elif ! printf '%s' "$S2" | grep -Eq '^age1[a-z0-9]{50,}$'; then
+            echo "::error::BACKUP_AGE_PUBLIC_KEY não parece uma chave pública do age (age1...)."
+            exit 1
+          else
+            echo "tem=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Instala o pg_dump e o age
+        if: steps.segredos.outputs.tem == 'true'
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -sSfo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          . /etc/os-release
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+          sudo apt-get update -q
+          sudo apt-get install -y -q "postgresql-client-${PG_MAJOR}" age
+
+      - name: Dump cifrado
+        if: steps.segredos.outputs.tem == 'true'
+        env:
+          BACKUP_DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+          AGE_PUBLIC_KEY: ${{ secrets.BACKUP_AGE_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          FILE="laift-$(date -u +%Y-%m-%dT%H%M%SZ).dump.age"
+          "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_dump" --format=custom --no-owner --no-privileges --dbname="$BACKUP_DATABASE_URL" \
+            | age -r "$AGE_PUBLIC_KEY" -o "$FILE"
+          SIZE=$(stat -c %s "$FILE")
+          if [ "$SIZE" -lt 10240 ]; then
+            echo "::error::Dump suspeitamente pequeno ($SIZE bytes): banco vazio ou conexão errada."
+            exit 1
+          fi
+          echo "FILE=$FILE" >> "$GITHUB_ENV"
+          echo "SIZE=$SIZE" >> "$GITHUB_ENV"
+          echo "PRIMEIRO_DO_MES=$([ "$(date -u +%d)" = "01" ] && echo true || echo false)" >> "$GITHUB_ENV"
+          echo "Dump cifrado: $FILE ($SIZE bytes)"
+
+      - name: Envia ao R2 e aplica a retenção
+        if: steps.segredos.outputs.tem == 'true'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          set -euo pipefail
+          aws s3 cp "$FILE" "s3://$BUCKET/daily/$FILE" --endpoint-url "$ENDPOINT" --only-show-errors
+          REMOTE=$(aws s3api head-object --bucket "$BUCKET" --key "daily/$FILE" --endpoint-url "$ENDPOINT" --query ContentLength --output text)
+          [ "$REMOTE" = "$SIZE" ] || { echo "::error::Tamanho no R2 ($REMOTE) difere do local ($SIZE)."; exit 1; }
+          if [ "$PRIMEIRO_DO_MES" = "true" ]; then
+            aws s3 cp "$FILE" "s3://$BUCKET/monthly/$FILE" --endpoint-url "$ENDPOINT" --only-show-errors
+          fi
+
+          prune() {
+            local prefix="$1" days="$2" cutoff key modified
+            cutoff=$(date -u -d "-${days} days" +%s)
+            aws s3api list-objects-v2 --bucket "$BUCKET" --prefix "${prefix}/" --endpoint-url "$ENDPOINT" \
+              --query 'Contents[].[Key,LastModified]' --output text | while read -r key modified; do
+              if [ -z "$key" ] || [ "$key" = "None" ]; then continue; fi
+              if [ "$(date -u -d "$modified" +%s)" -lt "$cutoff" ]; then
+                aws s3 rm "s3://$BUCKET/$key" --endpoint-url "$ENDPOINT" --only-show-errors
+                echo "Removido (retenção ${days} dias): $key"
+              fi
+            done
+          }
+          prune daily 7
+          prune monthly 400
+
+      # Segunda cópia, fora do R2 — só em repositório privado: em público,
+      # artefatos são baixáveis por qualquer pessoa logada no GitHub.
+      - name: Cópia mensal como artefato
+        if: steps.segredos.outputs.tem == 'true' && env.PRIMEIRO_DO_MES == 'true' && github.event.repository.private
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-mensal-${{ github.run_id }}
+          path: ${{ env.FILE }}
+          retention-days: 90
+
+  notificar:
+    needs: backup
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Abre ou atualiza a Issue do backup
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const prefix = '💾 Backup do banco falhou';
+            try {
+              await github.rest.issues.createLabel({ owner, repo, name: 'backup', color: '0e8a16', description: 'Backup e restauração' });
+            } catch (e) { if (e.status !== 422) throw e; }
+            const abertas = await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: 'backup', per_page: 20 });
+            const existente = abertas.data.find((i) => !i.pull_request && i.title.startsWith(prefix));
+            const date = new Date().toISOString().split('T')[0];
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: `Nova falha em ${date}: ${runUrl}` });
+              return;
+            }
+            await github.rest.issues.create({
+              owner, repo, title: `${prefix} — ${date}`, labels: ['backup', 'bug'],
+              body: [
+                'O backup diário do banco falhou. Sem backup recente, uma perda de dados não tem volta.',
+                '',
+                `- **Execução:** ${runUrl}`,
+                '',
+                'Causas comuns: URL do banco com "-pooler" (use a direta), senha trocada, versão do `pg_dump` menor que a do servidor (variável `PG_MAJOR`), credencial do R2 expirada.',
+                'Runbook: `docs/BACKUP_RESTORE.md`.',
+              ].join('\n'),
+            });

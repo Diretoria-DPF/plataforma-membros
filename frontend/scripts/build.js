@@ -53,7 +53,7 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 // alteração. Adicione aqui qualquer nova página estática do site.
 // robots.txt, sitemap.xml e llms.txt precisam estar na RAIZ do domínio para
 // buscadores e crawlers de IA os encontrarem (por isso exigem domínio próprio).
-['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js'].forEach((name) => {
+['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 

@@ -141,6 +141,107 @@
   }
 
   // ===========================================================================
+  // Orçamento de tokens e métricas por modelo (Fase 3, apiAdminAiMetrics)
+  // ===========================================================================
+  function n(value) { return (Number(value) || 0).toLocaleString('pt-BR'); }
+
+  /** Soma as linhas diárias por (recurso, modelo, provedor) no período. */
+  function groupMetrics(rows) {
+    var map = {};
+    (rows || []).forEach(function (r) {
+      var key = r.feature + '|' + r.model + '|' + r.provider;
+      var g = map[key] || (map[key] = { feature: r.feature, model: r.model, provider: r.provider, calls: 0, tokens: 0, cacheHits: 0, rateLimited: 0, latencyTotal: 0 });
+      g.calls += Number(r.calls) || 0;
+      g.tokens += (Number(r.tokensIn) || 0) + (Number(r.tokensOut) || 0);
+      g.cacheHits += Number(r.cacheHits) || 0;
+      g.rateLimited += Number(r.rateLimited) || 0;
+      g.latencyTotal += (Number(r.avgLatencyMs) || 0) * (Number(r.calls) || 0);
+    });
+    return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return b.tokens - a.tokens; });
+  }
+
+  function renderMetrics(res) {
+    var container = $('admin-ai-metrics');
+    if (!container) return;
+    var h = App().h;
+    var text = App().text;
+    App().clearEl(container);
+
+    var orch = res.orchestratorEnabled ? 'ligado' : 'desligado';
+    container.appendChild(h('p', { className: 'muted' }, [
+      'Orquestrador (cache e orçamento): ', text('strong', orch),
+      res.available === false ? ' · migração 018 ainda não aplicada: sem histórico.' : '',
+    ]));
+
+    var b = res.budget;
+    if (b && Number(b.budget) > 0) {
+      var level = b.exceeded ? 'down' : b.pct >= 80 ? 'warn' : 'ok';
+      var meter = h('progress', { max: String(b.budget), value: String(Math.min(b.used, b.budget)), 'aria-label': 'Tokens usados nas últimas 24 horas' });
+      container.appendChild(h('div', { className: 'ai-budget', 'data-level': level }, [
+        text('strong', n(b.used) + ' de ' + n(b.budget) + ' tokens (' + (Number(b.pct) || 0) + '%)'),
+        text('span', 'nas últimas 24 h, só Groq', { className: 'muted' }),
+        meter,
+      ]));
+    }
+
+    var alerts = res.alerts || [];
+    if (alerts.length) {
+      var list = h('ul', { className: 'ai-alerts', role: 'alert' }, alerts.map(function (a) { return text('li', a.message); }));
+      container.appendChild(list);
+    }
+
+    if (res.cache) {
+      container.appendChild(text('p', 'Cache semântico: ' + n(res.cache.entries) + ' respostas guardadas · ' + n(res.cache.hits) + ' acertos.', { className: 'muted' }));
+    }
+
+    var groups = groupMetrics(res.rows);
+    if (!groups.length) {
+      container.appendChild(text('p', 'Sem chamadas registradas neste período.', { className: 'empty-state' }));
+      return;
+    }
+    var head = ['Recurso', 'Modelo', 'Provedor', 'Chamadas', 'Tokens', 'Cache', '429', 'Latência'];
+    var table = h('table', { className: 'ai-metrics-table' }, [
+      h('thead', {}, [h('tr', {}, head.map(function (t) { return text('th', t, { scope: 'col' }); }))]),
+      h('tbody', {}, groups.map(function (g) {
+        return h('tr', {}, [
+          text('td', FEATURE_LABELS[g.feature] || g.feature),
+          text('td', g.model),
+          text('td', g.provider),
+          text('td', n(g.calls)),
+          text('td', n(g.tokens)),
+          text('td', n(g.cacheHits)),
+          text('td', n(g.rateLimited)),
+          text('td', g.calls ? n(Math.round(g.latencyTotal / g.calls)) + ' ms' : '—'),
+        ]);
+      })),
+    ]);
+    container.appendChild(h('div', { className: 'table-scroll' }, [table]));
+
+    var days = res.totals || [];
+    var max = days.reduce(function (m, d) { return Math.max(m, d.tokens || 0); }, 0) || 1;
+    container.appendChild(h('div', { className: 'ai-days' }, days.slice(0, 30).map(function (d) {
+      var bar = h('span', { className: 'ai-day-bar', 'aria-hidden': 'true' });
+      bar.style.width = Math.max(2, Math.round(((d.tokens || 0) / max) * 100)) + '%';
+      return h('div', { className: 'ai-day' }, [text('span', String(d.day).slice(5), { className: 'muted' }), bar, text('span', n(d.tokens) + ' tokens')]);
+    })));
+  }
+
+  function loadMetrics(days) {
+    if (!token()) return;
+    var gen = generation;
+    App().setStatus('msg-admin-ai-metrics', 'Carregando…', 'info');
+    App().callApi('apiAdminAiMetrics', token(), { days: days || 7 }).then(function (res) {
+      if (gen !== generation) return;
+      if (!res || !res.success) {
+        App().setStatus('msg-admin-ai-metrics', (res && res.message) || 'Não foi possível carregar as métricas da IA.', 'error');
+        return;
+      }
+      App().setStatus('msg-admin-ai-metrics', '', null);
+      renderMetrics(res);
+    });
+  }
+
+  // ===========================================================================
   // Uso do Atlas 3D (Onda 3.5, A.2) — telemetria anônima, só contagens
   // ===========================================================================
   var ATLAS_EVENT_LABELS = {
@@ -312,8 +413,13 @@
       var d30 = $('btn-admin-ai-atlas-30');
       if (d7) d7.addEventListener('click', function () { loadAtlasUsage(7); });
       if (d30) d30.addEventListener('click', function () { loadAtlasUsage(30); });
+      var m7 = $('btn-admin-ai-metrics-7');
+      var m30 = $('btn-admin-ai-metrics-30');
+      if (m7) m7.addEventListener('click', function () { loadMetrics(7); });
+      if (m30) m30.addEventListener('click', function () { loadMetrics(30); });
     }
     runHealth();
+    loadMetrics(7);
     loadPending(false);
     loadAtlasUsage(7);
   }
@@ -324,11 +430,11 @@
     healthBusy = false;
     var btn = $('btn-admin-ai-health');
     if (btn) btn.disabled = false;
-    ['admin-ai-health-summary', 'admin-ai-keys', 'admin-ai-usage', 'admin-ai-quotas', 'admin-ai-pending', 'admin-ai-atlas'].forEach(function (id) {
+    ['admin-ai-health-summary', 'admin-ai-keys', 'admin-ai-usage', 'admin-ai-metrics', 'admin-ai-quotas', 'admin-ai-pending', 'admin-ai-atlas'].forEach(function (id) {
       var el = $(id);
       if (el && window.App) App().clearEl(el);
     });
-    ['msg-admin-ai-health', 'msg-admin-ai-cases', 'msg-admin-ai-atlas'].forEach(function (id) {
+    ['msg-admin-ai-health', 'msg-admin-ai-metrics', 'msg-admin-ai-cases', 'msg-admin-ai-atlas'].forEach(function (id) {
       if (window.App) App().setStatus(id, '', null);
     });
   }
