@@ -1,0 +1,89 @@
+name: Segurança
+
+# Substitui o que o repositório privado perde no plano gratuito do GitHub
+# (CodeQL e secret scanning nativos exigem GitHub Advanced Security).
+#
+#  - auditoria de dependências de PRODUÇÃO: bloqueia o PR em vulnerabilidade
+#    alta/crítica (hoje: 0 no Worker e 0 no front);
+#  - auditoria completa (inclui jest/wrangler, só de desenvolvimento): apenas
+#    informa — quem as mantém atualizadas é o Dependabot;
+#  - gitleaks (segredos no histórico) e Semgrep (análise estática): começam
+#    como RELATÓRIO. Depois da primeira rodada limpa ou triada, remova o
+#    `continue-on-error` para passarem a bloquear.
+
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 9 * * 1'   # segunda-feira, 06:23 em Brasília
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependencias:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pasta: [worker, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: ${{ matrix.pasta }}/package-lock.json
+
+      - name: Instala dependências
+        working-directory: ${{ matrix.pasta }}
+        run: npm ci
+
+      - name: Auditoria das dependências de produção (bloqueia em alta/crítica)
+        working-directory: ${{ matrix.pasta }}
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Auditoria completa (informativa)
+        working-directory: ${{ matrix.pasta }}
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+  segredos:
+    runs-on: ubuntu-latest
+    continue-on-error: true   # relatório até a primeira rodada triada
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # histórico completo
+
+      # Binário oficial em versão fixa (a gitleaks-action pede licença em
+      # repositório de organização).
+      - name: Baixa o gitleaks
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks version
+
+      - name: Procura segredos no histórico
+        run: ./gitleaks detect --source . --redact --no-banner --verbose
+
+  semgrep:
+    runs-on: ubuntu-latest
+    continue-on-error: true   # relatório até a primeira rodada triada
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Análise estática
+        run: >
+          semgrep scan --metrics=off
+          --config p/javascript --config p/security-audit
+          --exclude node_modules --exclude vendor --exclude dist --exclude models
+          --exclude '*.min.js'

@@ -1,0 +1,35 @@
+version: 2
+
+# Dependabot é grátis também em repositório privado. Um PR por grupo e por
+# semana, para não inundar a revisão.
+updates:
+  - package-ecosystem: npm
+    directory: /worker
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      desenvolvimento:
+        dependency-type: development
+    ignore:
+      # wrangler 4 é mudança incompatível e só será avaliada em staging.
+      - dependency-name: wrangler
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      desenvolvimento:
+        dependency-type: development
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
