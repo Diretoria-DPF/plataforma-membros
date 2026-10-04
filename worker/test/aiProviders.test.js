@@ -3,6 +3,9 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { jest } from '@jest/globals';
 import * as Pool from '../src/ai/providers/poolClient.js';
 import { groqProvider } from '../src/ai/providers/groq.js';
@@ -52,6 +55,20 @@ describe('descritores de provedor', () => {
     expect(nvidiaProvider.resolveModel({}, 'fast')).toBe('');
     expect(nvidiaProvider.resolveModel({ NVIDIA_MODEL_FAST: ' a/b ', NVIDIA_MODEL_SMART: 'c/d' }, 'fast')).toBe('a/b');
     expect(nvidiaProvider.resolveModel({ NVIDIA_MODEL_FAST: 'a/b', NVIDIA_MODEL_SMART: 'c/d' }, 'smart')).toBe('c/d');
+  });
+});
+
+describe('migrações x provedores', () => {
+  test('todo provedor declarado cabe no CHECK de ai_usage_log.provider (senão o log falha em silêncio)', () => {
+    const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'sql');
+    const sqlText = fs.readdirSync(dir).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort()
+      .map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    const checks = [...sqlText.matchAll(/ai_usage_log_provider_chk\s+CHECK\s*\(\s*provider\s+IN\s*\(([^)]*)\)/g)];
+    expect(checks.length).toBeGreaterThan(0);
+    const allowed = checks[checks.length - 1][1].split(',').map((s) => s.trim().replace(/'/g, ''));
+    for (const provider of [groqProvider, nvidiaProvider]) {
+      expect(allowed).toContain(provider.name);
+    }
   });
 });
 

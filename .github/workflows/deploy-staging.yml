@@ -35,6 +35,9 @@ jobs:
   api:
     if: ${{ inputs.alvo != 'site' }}
     runs-on: ubuntu-latest
+    # Ambiente do GitHub: permite restringir as branches que podem publicar e
+    # exigir aprovação (Settings → Environments → staging). Ver DEPLOYMENT.md §10.
+    environment: staging
     steps:
       - uses: actions/checkout@v4
 
@@ -85,16 +88,19 @@ jobs:
   site:
     if: ${{ inputs.alvo != 'api' }}
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Instala dependências do build (javascript-obfuscator)
         working-directory: frontend
-        run: npm install
+        run: npm ci
 
       - name: Gera frontend/dist/
         working-directory: frontend

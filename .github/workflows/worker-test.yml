@@ -11,6 +11,8 @@ on:
       - 'sql/**'
       - 'tools/license/**'
       - 'frontend/scripts/*.test.mjs'
+      - 'frontend/app.js'
+      - 'frontend/wrangler.toml'
       - 'frontend/redirect-www/**'
       - 'frontend/domain-notice.js'
       - 'frontend/index.html'

@@ -70,7 +70,8 @@ test('CSP do index.html permite conectar à API de staging', () => {
 test('Worker: [env.staging] tem nome, domínio, variáveis e banco próprios; sem cron nem bindings de produção', () => {
   const toml = read('worker/wrangler.toml');
   const env = tomlSection(toml, '[env.staging]');
-  assert.match(env, /workers_dev\s*=\s*true/);
+  // Sem *.workers.dev: o front de staging nessa URL cairia na API de produção.
+  assert.match(env, /workers_dev\s*=\s*false/);
   const route = tomlSection(toml, '[[env.staging.routes]]');
   assert.match(route, /pattern\s*=\s*"staging-api\.laift\.com\.br"/);
   assert.match(route, /custom_domain\s*=\s*true/);
@@ -81,15 +82,18 @@ test('Worker: [env.staging] tem nome, domínio, variáveis e banco próprios; se
   for (const prod of ['https://laift.com.br', 'https://diretoria-dpf.github.io']) {
     assert.ok(!origins.includes(prod), 'staging não pode aceitar a origem de produção ' + prod);
   }
-  // Segredos e bindings nunca são herdados; garantir que não foram copiados por engano.
-  assert.doesNotMatch(toml, /\[env\.staging\.triggers\]/);
+  // `triggers` É herdável no wrangler: sem esta tabela vazia, o staging herdaria o
+  // cron de produção e rodaria a faxina diária no banco de homologação.
+  assert.match(tomlSection(toml, '[env.staging.triggers]'), /crons\s*=\s*\[\s*\]/);
+  // vars e bindings (KV, R2) não são herdados; garantir que não foram copiados por engano.
   assert.doesNotMatch(toml, /env\.staging\.kv_namespaces/);
+  assert.doesNotMatch(toml, /env\.staging\.r2_buckets/);
   assert.doesNotMatch(toml, /DATABASE_URL\s*=/);
 });
 
 test('Front: [env.staging] publica em staging.laift.com.br com os mesmos assets', () => {
   const toml = read('frontend/wrangler.toml');
-  assert.match(tomlSection(toml, '[env.staging]'), /workers_dev\s*=\s*true/);
+  assert.match(tomlSection(toml, '[env.staging]'), /workers_dev\s*=\s*false/);
   const route = tomlSection(toml, '[[env.staging.routes]]');
   assert.match(route, /pattern\s*=\s*"staging\.laift\.com\.br"/);
   assert.match(route, /custom_domain\s*=\s*true/);

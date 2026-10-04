@@ -28,7 +28,8 @@ not_found_handling = "404-page"
 # Chaves não herdadas precisam ser repetidas no ambiente. O noindex vem do
 # _headers (regra por host).
 [env.staging]
-workers_dev = true
+# Sem *.workers.dev: nessa URL o app.js cairia na API de produção.
+workers_dev = false
 
 [[env.staging.routes]]
 pattern = "staging.laift.com.br"

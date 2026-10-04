@@ -282,12 +282,24 @@ curl -I https://staging.laift.com.br/ | grep -i x-robots-tag   # noindex, nofoll
 curl -i -X OPTIONS https://staging-api.laift.com.br/ -H "Origin: https://staging.laift.com.br"   # 204
 ```
 
+**Cuidado com quem pode publicar.** O workflow roda a partir de qualquer
+branch e usa o token da Cloudflare do repositório: quem tem escrita no
+repositório poderia, numa branch, alterar o workflow ou o `wrangler.toml` e
+publicar por cima da produção. Os jobs usam o *Environment* `staging` do
+GitHub; em **Settings → Environments → staging** restrinja as branches
+permitidas e, se houver mais de uma pessoa com escrita, exija aprovação. O
+ideal é um token próprio de staging; como o token atual também precisa de
+DNS na zona, outra opção é anexar os dois domínios de staging uma única vez
+pelo painel e manter o token do CI sem permissão de DNS.
+
 O fluxo normal passa a ser: PR → publicar a branch em staging → conferir
 (login, painéis, o que a mudança toca) → mesclar na `main`. Migrações novas
 entram **primeiro** no banco de staging.
 
 O que a homologação **não** tem, de propósito: cron de faxina (a manutenção
-diária só roda em produção), KV (o cache vira no-op) e R2 (envio de avatar e
-de imagem de evento não funciona até existirem recursos de teste). O site de
+diária só roda em produção; o `wrangler.toml` esvazia o cron que o ambiente
+herdaria), URL `*.workers.dev` (só os dois domínios de staging respondem),
+KV (o cache vira no-op) e R2 (envio de avatar e de imagem de evento não
+funciona até existirem recursos de teste). O site de
 staging fica fora dos buscadores por cabeçalho (`X-Robots-Tag`, regra por host
 em `frontend/_headers`), assim como as URLs `*.workers.dev`.

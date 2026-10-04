@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS ai_usage_log (
   - Secret `GROQ_API_KEYS`: lista de chaves separadas por vírgula ou quebra de linha. É aqui que entram **todas** as chaves atuais.
   - Vars `GROQ_MODEL_FAST` (padrão `openai/gpt-oss-20b`) e `GROQ_MODEL_SMART` (padrão `openai/gpt-oss-120b`).
 - **Pool de chaves**:
-  - rodízio round-robin;
+  - rodízio round-robin (hoje opcional: o padrão passou a ser failover ordenado, ver `docs/AI_KEYS.md`);
   - failover em 401/403/429/5xx/timeout;
   - cooldown por chave em KV (`ai:key-cooldown:<i>`, TTL do `Retry-After` ou 60 s);
   - a chave nunca aparece em log, resposta ou erro.
