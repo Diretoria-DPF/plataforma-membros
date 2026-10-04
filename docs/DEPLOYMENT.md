@@ -38,9 +38,11 @@ Faça na ordem. Cada passo diz como conferir antes de seguir.
    | 15 | `sql/015_ai_usage_provider.sql` | coluna `provider` em `ai_usage_log` (Groq/NVIDIA) |
    | 16 | `sql/016_feature_flags.sql` | `feature_flags` (liga/desliga e rollout por percentual) — Fase 2 |
    | 17 | `sql/017_mfa.sql` | verificação em duas etapas: segredo cifrado, códigos de recuperação, desafio de login |
+   | 18 | `sql/018_ai_orchestrator.sql` | `ai_metrics_daily` e `ai_semantic_cache` (extensão `pg_trgm`) — Fase 3 |
 
-   O código implantado **antes** de 016/017 continua funcionando (tabela ausente
-   = flags desligadas e login sem segundo fator). Reversões em `sql/down/`.
+   O código implantado **antes** de 016/017/018 continua funcionando (tabela
+   ausente = flags desligadas, login sem segundo fator, IA pelo caminho antigo).
+   Reversões em `sql/down/`.
    Papel somente leitura para relatórios: `sql/ops/readonly_role.sql` (não é
    migração; ver o cabeçalho do arquivo).
 
@@ -364,7 +366,39 @@ O site é um PWA: `frontend/manifest.webmanifest`, ícones em `frontend/icons/`
   pode ter fundo preto; o do Android deve ficar bem recortado (ícone
   *maskable*); com o modo avião, o app abre a tela de entrada.
 
-## 12. CI/CD — Security Scans (`.github/workflows/security.yml`)
+## 12. IA: orquestrador, orçamento de tokens e cache (Fase 3)
+
+Tudo nasce **desligado**: a IA segue pelo caminho de sempre até você ligar a flag.
+
+1. Aplique `sql/018_ai_orchestrator.sql` (Neon → SQL Editor). Confira com
+   `SELECT count(*) FROM ai_metrics_daily;` (deve responder 0, sem erro).
+2. Ligue em **staging** primeiro: flag `use_orchestrator` (`apiAdminSetFeatureFlag`
+   com `["<token>","use_orchestrator",{"enabled":true}]`; essa flag aceita
+   percentual e condições, ex.: `{"conditions":{"role":"admin"}}` para testar só
+   com administradores). Desligar volta ao caminho antigo na hora (até 60 s).
+3. Painel **Administração → IA → Orçamento de tokens e consumo**: uso das últimas
+   24 h, alertas ativos, cache e consumo por modelo/recurso/provedor.
+4. **Orçamento:** `AI_DAILY_TOKEN_BUDGET` (padrão 450 000 tokens/24 h, ~75% do teto
+   gratuito do Groq). Mude em `[vars]` do `wrangler.toml` sem tocar em código.
+   Passou do teto → o orquestrador não chama o provedor: responde pelo cache ou
+   avisa que a IA volta amanhã (a cota da pessoa é devolvida).
+5. **Cache semântico:** só pergunta genérica do preceptor do laboratório (sem
+   bancada, histórico nem dado pessoal); acerto não gasta cota nem token;
+   validade de 7 dias. Em falha do provedor, uma pergunta parecida pode ser
+   servida e vem marcada `degraded`.
+6. **NVIDIA como reserva:** flag `nvidia_fallback` + secret `NVIDIA_API_KEY` + as
+   variáveis `NVIDIA_MODEL_FAST/SMART`. Sem os três, a reserva não é usada.
+7. **Alertas** (cron diário, por e-mail aos administradores e `audit_logs`):
+   tokens > 80% do orçamento, 429 em > 5% das chamadas do dia, taxa de acerto do
+   cache < 30% por 3 dias. O mesmo alerta não se repete em 20 h.
+8. **Cotas por pessoa** foram recalibradas pelo orçamento (chat do membro 40/dia,
+   visitante 15; avaliação 10; caso gerado 4; preceptor 30). Ajuste em
+   `AI_QUOTAS` (`worker/src/constants.js`).
+
+**Rollback:** `use_orchestrator` em `enabled=false`. A migração 018 é aditiva
+(`sql/down/018_ai_orchestrator.sql` só se quiser apagar métricas e cache).
+
+## 13. CI/CD — Security Scans (`.github/workflows/security.yml`)
 
 ### Agendamento
 | Gatilho | Quando | Strix | Duração |
