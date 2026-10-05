@@ -29,6 +29,7 @@
  */
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
+import { AI_CACHE } from './constants.js';
 
 export const RETENTION = {
   AI_USAGE_LOG_DAYS: 180,
@@ -80,9 +81,17 @@ export async function runMaintenance(sql, correlationId, env) {
       WHERE expires_at < now() - interval '1 day'
       RETURNING 1`,
     // Cache semântico da IA: vencido há mais de 30 dias não serve nem de reserva.
+    // Além do vencido, mantém no máximo N linhas por recurso (as menos usadas saem primeiro).
     semanticCache: () => sql`
       DELETE FROM ai_semantic_cache
       WHERE expires_at < now() - interval '30 days'
+         OR id IN (
+           SELECT id FROM (
+             SELECT id, row_number() OVER (PARTITION BY feature ORDER BY coalesce(last_hit_at, created_at) DESC) AS rn
+             FROM ai_semantic_cache
+             WHERE expires_at >= now() - interval '30 days'
+           ) ranked WHERE rn > ${AI_CACHE.MAX_ROWS_PER_FEATURE}
+         )
       RETURNING 1`,
     // Alertas da IA (tokens, 429, cache) por e-mail aos admins; devolve os alertas enviados.
     aiAlerts: () => (env ? runAiAlerts(sql, env, correlationId) : []),

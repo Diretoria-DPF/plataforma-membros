@@ -9,6 +9,8 @@ import * as Groq from '../src/ai/groqClient.js';
 import * as S from '../src/security.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 import { __resetMetricsForTests } from '../src/ai/metrics.js';
+import { normalizeQuestion } from '../src/ai/semanticCache.js';
+import { AI_MESSAGES } from '../src/ai/errors.js';
 import { AI_QUOTAS, AI_GLOBAL_DAILY_MAX } from '../src/constants.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 import { routedSql, callsMatching, sqlText, groqReply, httpError, memoryKv, KEYS, RATE_LIMIT_SQL } from './helpers/aiTestUtils.js';
@@ -258,8 +260,9 @@ describe('AiService.adminHealth', () => {
 
 describe('AiService — orquestrador (flag use_orchestrator ligada)', () => {
   const ON = ['FROM feature_flags', [{ key: 'use_orchestrator', enabled: true, rollout_pct: 100, conditions: {} }]];
-  const CACHED = ['FROM ai_semantic_cache', [{ id: '11111111-1111-4111-8111-111111111111', answer: 'Resposta do cache.', sim: 0.95 }]];
   const GENERIC = { question: 'Qual é a diferença entre agonista e antagonista?' };
+  const cached = (answer, sim) => ['FROM ai_semantic_cache', [{ id: '11111111-1111-4111-8111-111111111111', answer, sim, question_norm: normalizeQuestion(GENERIC.question) }]];
+  const CACHED = cached('Resposta do cache.', 0.95);
 
   beforeEach(() => {
     __resetFlagCacheForTests();
@@ -271,7 +274,8 @@ describe('AiService — orquestrador (flag use_orchestrator ligada)', () => {
     const res = await AiService.askLabPreceptor(sql, envWith(), MEMBER, GENERIC);
     expect(res).toEqual({ success: true, answer: 'Resposta do cache.', cached: true });
     expect(globalThis.fetch).not.toHaveBeenCalled();
-    expect(callsMatching(sql, RATE_LIMIT_SQL)).toHaveLength(0);
+    // Só o limite de CONSULTAS ao cache; nenhuma unidade da cota de IA da pessoa nem do disjuntor global.
+    expect(callsMatching(sql, RATE_LIMIT_SQL).map((c) => c[1])).toEqual(['AI_CACHE_LOOKUP']);
   });
 
   test('pergunta com bancada ou histórico NÃO usa o cache (depende do contexto da pessoa)', async () => {
@@ -296,15 +300,27 @@ describe('AiService — orquestrador (flag use_orchestrator ligada)', () => {
   test('IA fora e pergunta parecida no cache: responde marcado como aproximado e devolve a cota', async () => {
     globalThis.fetch.mockResolvedValue(httpError(503));
     // Busca normal (allowExpired=false) não acha; a de último recurso (allowExpired=true) acha uma parecida.
-    const stale = ['FROM ai_semantic_cache', (values) => (values.includes(true) ? [{ id: '11111111-1111-4111-8111-111111111111', answer: 'Aproximada.', sim: 0.6 }] : [])];
-    const sql = routedSql([ON, stale]);
+    const stale = ['FROM ai_semantic_cache', (values) => (values.includes(true) ? cached('Aproximada.', 0.9)[1] : [])];
+    const sql = routedSql([ON, stale, [RATE_LIMIT_SQL, [{ attempts: 1 }]]]);
     const res = await AiService.askLabPreceptor(sql, envWith(), MEMBER, GENERIC);
     expect(res).toMatchObject({ success: true, answer: 'Aproximada.', cached: true, degraded: true });
+    // Nenhum token foi gasto: a unidade cobrada da pessoa e a do disjuntor global voltam.
+    const refunds = callsMatching(sql, 'UPDATE rate_limit_buckets SET attempts = GREATEST').map((c) => c[1]);
+    expect(refunds).toEqual(['AI_LAB_PRECEPTOR', 'AI_GLOBAL']);
+  });
+
+  test('cache: o limite de consultas por pessoa é respeitado (passou, segue pela IA com cota)', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Resposta nova.'));
+    const sql = routedSql([ON, CACHED, [RATE_LIMIT_SQL, (values) => [{ attempts: values[0] === 'AI_CACHE_LOOKUP' ? 999 : 1 }]]]);
+    const res = await AiService.askLabPreceptor(sql, envWith(), MEMBER, GENERIC);
+    expect(res).toMatchObject({ success: true, answer: 'Resposta nova.', cached: false });
   });
 
   test('orçamento de tokens estourado: mensagem clara e a cota da pessoa é devolvida', async () => {
     const sql = routedSql([ON, ['FROM ai_usage_log', [{ tokens: 999999 }]], [RATE_LIMIT_SQL, [{ attempts: 1 }]]]);
-    await expect(AiService.askLabPreceptor(sql, envWith(), MEMBER, { ...GENERIC, benchContext: 'pH 2' })).rejects.toMatchObject({ aiUnavailable: true });
+    await expect(AiService.askLabPreceptor(sql, envWith(), MEMBER, { ...GENERIC, benchContext: 'pH 2' })).rejects.toMatchObject({
+      aiUnavailable: true, message: AI_MESSAGES.BUDGET,
+    });
     expect(callsMatching(sql, 'UPDATE rate_limit_buckets SET attempts = GREATEST').length).toBeGreaterThan(0);
   });
 });

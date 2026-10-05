@@ -88,7 +88,11 @@ async function loadFlags(sql, now) {
     return flags;
   } catch (err) {
     // Migração 016 ainda não aplicada: tudo desligado (comportamento anterior).
-    if (isMissingTable(err)) return {};
+    // Guardado no cache pelo mesmo prazo, para não repetir a consulta que falha a cada chamada.
+    if (isMissingTable(err)) {
+      cache = { at: now, flags: {} };
+      return {};
+    }
     // Banco instável: usa o último valor conhecido. Sem ele, o erro SOBE — uma
     // falha transitória nunca pode virar "flag desligada" (falha aberta), em
     // especial para mfa_required.

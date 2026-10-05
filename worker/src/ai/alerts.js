@@ -26,7 +26,8 @@ function escapeHtml(text) {
 export async function runAiAlerts(sql, env, correlationId, now = new Date()) {
   let daily;
   try {
-    daily = Metrics.totalsByDay(await Metrics.readDaily(sql, 3));
+    // 4 dias: hoje (parcial, o cron roda de madrugada) + os 3 dias completos que as regras olham.
+    daily = Metrics.totalsByDay(await Metrics.readDaily(sql, 4));
   } catch (err) {
     if (isMissingTable(err)) return []; // migração 018 ainda não aplicada
     throw err;
@@ -54,19 +55,23 @@ export async function runAiAlerts(sql, env, correlationId, now = new Date()) {
     WHERE role = 'admin'::user_role AND status = 'active'::account_status AND email_confirmed_at IS NOT NULL
   `;
   const lines = fresh.map((a) => '- ' + a.message);
+  let delivered = 0;
   for (const admin of admins) {
     try {
       await sendEmail(env, {
         to: admin.email,
         subject: 'Alerta da IA — ' + env.MAIL_FROM_NAME,
-        text: 'Olá, ' + admin.full_name + '.\n\nO monitoramento da IA encontrou:\n' + lines.join('\n') + '\n\nVeja o painel de IA na administração.',
+        text: 'Olá.\n\nO monitoramento da IA encontrou:\n' + lines.join('\n') + '\n\nVeja o painel de IA na administração.',
         html: '<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222"><h2>Alerta da IA</h2><ul>' +
           fresh.map((a) => '<li>' + escapeHtml(a.message) + '</li>').join('') + '</ul><p>Veja o painel de IA na administração.</p></div>',
       });
+      delivered += 1;
     } catch (mailErr) {
       await Logging.logError(sql, correlationId, 'AI_ALERT_MAIL_FAILED', 'Falha ao enviar o alerta da IA.', null);
     }
   }
+  // Só registra (e com isso silencia por 20 h) se alguém foi de fato avisado.
+  if (!delivered) return [];
   for (const alert of fresh) {
     await Logging.logAudit(sql, correlationId, null, 'AI_ALERT', 'ai', null, 'success', { kind: alert.kind });
   }

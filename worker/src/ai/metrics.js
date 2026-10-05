@@ -155,15 +155,17 @@ export function evaluateAlerts({ daily, tokensUsed, budget, today }) {
     alerts.push({ kind: 'budget', message: 'Consumo de tokens em ' + Math.round(pct) + '% do orçamento diário (' + tokensUsed + ' de ' + budget + ').' });
   }
 
-  const todayRow = daily.find((d) => d.day === today);
-  if (todayRow && todayRow.calls >= A.MIN_CALLS) {
-    const rate = (todayRow.rateLimited / todayRow.calls) * 100;
+  // Hoje ainda está pela metade (o cron roda de madrugada): 429 e cache olham só dias COMPLETOS.
+  const complete = daily.filter((d) => d.day < today);
+  const lastDay = complete[0];
+  if (lastDay && lastDay.calls >= A.MIN_CALLS) {
+    const rate = (lastDay.rateLimited / lastDay.calls) * 100;
     if (rate > A.RATE_LIMITED_MAX_PCT) {
-      alerts.push({ kind: 'rate_limited', message: 'O provedor devolveu limite de requisições (429) em ' + rate.toFixed(1) + '% das chamadas de hoje.' });
+      alerts.push({ kind: 'rate_limited', message: 'O provedor devolveu limite de requisições (429) em ' + rate.toFixed(1) + '% das chamadas do último dia completo (' + lastDay.day + ').' });
     }
   }
 
-  const recent = daily.slice(0, A.HIT_RATE_DAYS);
+  const recent = complete.slice(0, A.HIT_RATE_DAYS);
   const hits = recent.reduce((s, d) => s + d.cacheHits, 0);
   const lookups = hits + recent.reduce((s, d) => s + d.cacheMisses, 0);
   if (recent.length >= A.HIT_RATE_DAYS && lookups >= A.MIN_CALLS) {

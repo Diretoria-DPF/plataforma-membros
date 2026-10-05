@@ -9,7 +9,8 @@ import { __resetMetricsForTests } from '../src/ai/metrics.js';
 import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
 import { makeEnv } from './helpers/mockEnv.js';
 
-const NOW = new Date('2026-10-10T12:00:00Z');
+// Cron de madrugada de 2026-10-11: o último dia COMPLETO é 2026-10-10.
+const NOW = new Date('2026-10-11T06:17:00Z');
 const CID = '33333333-3333-4333-8333-333333333333';
 
 function metricRow(over) {
@@ -56,19 +57,37 @@ describe('runAiAlerts', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  test('429 em mais de 5% das chamadas de hoje gera alerta', async () => {
+  test('429 em mais de 5% das chamadas do último dia completo gera alerta', async () => {
     const sql = world({ rows: [metricRow({ calls: 100, rate_limited: 9 })] });
     const sent = await runAiAlerts(sql, makeEnv(), CID, NOW);
     expect(sent.map((a) => a.kind)).toContain('rate_limited');
   });
 
-  test('uma falha do Brevo não impede o registro nem derruba o cron', async () => {
+  test('se NENHUM e-mail sair, o alerta não é registrado (assim volta a ser tentado, em vez de ficar mudo por 20 h)', async () => {
     global.fetch = jest.fn().mockRejectedValue(new Error('brevo fora'));
     const sql = world({ rows: [metricRow()], tokens: 440000 });
-    const sent = await runAiAlerts(sql, makeEnv(), CID, NOW);
-    expect(sent).toHaveLength(1);
+    expect(await runAiAlerts(sql, makeEnv(), CID, NOW)).toEqual([]);
     expect(callsMatching(sql, 'INSERT INTO error_logs')).toHaveLength(1);
+    expect(callsMatching(sql, 'INSERT INTO audit_logs')).toHaveLength(0);
+  });
+
+  test('sem nenhum administrador ativo também não registra', async () => {
+    const sql = world({ rows: [metricRow()], tokens: 440000, admins: [] });
+    expect(await runAiAlerts(sql, makeEnv(), CID, NOW)).toEqual([]);
+    expect(callsMatching(sql, 'INSERT INTO audit_logs')).toHaveLength(0);
+  });
+
+  test('se ao menos um e-mail sair, registra (um admin com falha não esconde o alerta dos outros)', async () => {
+    global.fetch = jest.fn().mockRejectedValueOnce(new Error('brevo fora')).mockResolvedValue({ ok: true, status: 201, json: async () => ({}), text: async () => '' });
+    const sql = world({ rows: [metricRow()], tokens: 440000, admins: [{ email: 'a@x.com', full_name: 'A' }, { email: 'b@x.com', full_name: 'B' }] });
+    expect(await runAiAlerts(sql, makeEnv(), CID, NOW)).toHaveLength(1);
     expect(callsMatching(sql, 'INSERT INTO audit_logs')).toHaveLength(1);
+  });
+
+  test('o texto do e-mail não leva o nome da pessoa', async () => {
+    const sql = world({ rows: [metricRow()], tokens: 440000, admins: [{ email: 'a@x.com', full_name: 'Nome Secreto' }] });
+    await runAiAlerts(sql, makeEnv(), CID, NOW);
+    expect(JSON.stringify(global.fetch.mock.calls[0][1].body)).not.toContain('Nome Secreto');
   });
 
   test('antes da migração 018 não faz nada', async () => {

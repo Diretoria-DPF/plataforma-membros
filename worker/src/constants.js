@@ -203,6 +203,8 @@ export const RATE_LIMITS = {
   MFA_VERIFY: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
   MFA_VERIFY_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 900 },
   MFA_ENROLL: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
+  // Consultas ao cache semântico da IA (acerto não gasta cota, então tem teto próprio).
+  AI_CACHE_LOOKUP: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
   // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
   // do MFA_VERIFY, para o login legítimo não ser travado por quem gerencia.
   MFA_MANAGE: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
@@ -299,13 +301,17 @@ export const AI_DAILY_TOKEN_BUDGET = 450000;
 export const AI_BUDGET_REFRESH_MS = 30000; // reconsulta o uso a cada 30 s por instância
 
 // Cache semântico (pg_trgm). Só pergunta genérica, sem dado pessoal.
+// Perguntas CURTAS e conceituais: texto longo pode carregar dado pessoal ou
+// instruções para a IA, e a resposta guardada é lida por outras pessoas.
 export const AI_CACHE = {
   SIMILARITY: 0.85,        // acerto normal
-  STALE_SIMILARITY: 0.55,  // aproximado, só quando o provedor está indisponível
+  STALE_SIMILARITY: 0.8,   // aproximado, só quando o provedor está indisponível (mesmas guardas)
+  LENGTH_RATIO_MIN: 0.75,  // pergunta parecida precisa ter tamanho parecido (cauda de instrução não passa)
   TTL_DAYS: 7,
   QUESTION_MIN: 8,
-  QUESTION_MAX: 300,
+  QUESTION_MAX: 150,       // acima disso NÃO é cacheável (não é truncado)
   ANSWER_MAX: 8000,
+  MAX_ROWS_PER_FEATURE: 2000,
 };
 
 // Alertas por e-mail aos administradores (cron diário, maintenance.js).

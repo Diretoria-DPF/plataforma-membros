@@ -228,6 +228,8 @@ export async function askLabPreceptor(sql, env, identity, rawInput) {
       await setCached(env, labSynthCacheKey(term), { answer, createdAt: new Date().toISOString() }, LAB_SYNTH_TTL_SECONDS);
     }
     // `degraded`: o provedor estava fora e a resposta veio de uma pergunta parecida do cache.
+    // Nenhum token foi gasto, então a unidade de cota cobrada volta.
+    if (out.degraded) await refundQuota(sql, identity, C.AI_FEATURE.LAB_PRECEPTOR);
     return Object.assign({ success: true, answer, cached: !!out.cached }, out.degraded ? { degraded: true } : {});
   });
 }

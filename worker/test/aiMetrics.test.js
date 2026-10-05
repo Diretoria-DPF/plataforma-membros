@@ -122,7 +122,8 @@ describe('totalsByDay e evaluateAlerts', () => {
     expect(totals[0]).toMatchObject({ calls: 7, tokens: 6, cacheHits: 1 });
   });
 
-  const today = '2026-10-10';
+  // O cron roda de madrugada: "hoje" (2026-10-11) está pela metade e NÃO conta para 429 nem cache.
+  const today = '2026-10-11';
 
   test('sem motivo, sem alerta', () => {
     expect(evaluateAlerts({ daily: [], tokensUsed: 1000, budget: 450000, today })).toEqual([]);
@@ -135,17 +136,22 @@ describe('totalsByDay e evaluateAlerts', () => {
     expect(at(1500)).toEqual(['budget']);
   });
 
-  test('429: acima de 5% das chamadas de hoje e com amostra mínima', () => {
-    const daily = (calls, limited) => [{ day: today, calls, rateLimited: limited, cacheHits: 0, cacheMisses: 0, tokens: 0 }];
+  test('429: acima de 5% das chamadas do último dia completo e com amostra mínima', () => {
+    const daily = (calls, limited) => [{ day: '2026-10-10', calls, rateLimited: limited, cacheHits: 0, cacheMisses: 0, tokens: 0 }];
     const kinds = (d) => evaluateAlerts({ daily: d, tokensUsed: 0, budget: 1000, today }).map((a) => a.kind);
     expect(kinds(daily(100, 5))).toEqual([]);          // exatamente 5% não passa
     expect(kinds(daily(100, 6))).toEqual(['rate_limited']);
     expect(kinds(daily(AI_ALERTS.MIN_CALLS - 1, AI_ALERTS.MIN_CALLS - 1))).toEqual([]); // amostra pequena
   });
 
-  test('429 só olha o dia de hoje', () => {
-    const daily = [{ day: '2026-10-09', calls: 100, rateLimited: 50, cacheHits: 0, cacheMisses: 0, tokens: 0 }];
-    expect(evaluateAlerts({ daily, tokensUsed: 0, budget: 1000, today })).toEqual([]);
+  test('429 olha só o ÚLTIMO dia completo: o dia parcial de hoje e os mais antigos não contam', () => {
+    const row = (day, limited) => ({ day, calls: 100, rateLimited: limited, cacheHits: 0, cacheMisses: 0, tokens: 0 });
+    // Hoje (parcial) com 50% de 429 não dispara; ontem limpo.
+    expect(evaluateAlerts({ daily: [row('2026-10-11', 50), row('2026-10-10', 1)], tokensUsed: 0, budget: 1000, today })).toEqual([]);
+    // Anteontem ruim, ontem limpo: não dispara.
+    expect(evaluateAlerts({ daily: [row('2026-10-10', 1), row('2026-10-09', 50)], tokensUsed: 0, budget: 1000, today })).toEqual([]);
+    // Ontem ruim: dispara.
+    expect(evaluateAlerts({ daily: [row('2026-10-10', 50)], tokensUsed: 0, budget: 1000, today }).map((a) => a.kind)).toEqual(['rate_limited']);
   });
 
   test('cache: taxa abaixo de 30% somando 3 dias gera alerta; com poucos dados ou 2 dias, não', () => {
@@ -157,11 +163,14 @@ describe('totalsByDay e evaluateAlerts', () => {
     expect(evaluateAlerts({ daily: three.slice(0, 2), tokensUsed: 0, budget: 1000, today })).toEqual([]);
     const tiny = [day('2026-10-10', 0, 3), day('2026-10-09', 0, 3), day('2026-10-08', 0, 3)];
     expect(evaluateAlerts({ daily: tiny, tokensUsed: 0, budget: 1000, today })).toEqual([]);
+    // O dia parcial de hoje não entra na janela de 3 dias.
+    const withToday = [day('2026-10-11', 0, 40), ...good];
+    expect(evaluateAlerts({ daily: withToday, tokensUsed: 0, budget: 1000, today })).toEqual([]);
   });
 
   test('vários alertas podem disparar juntos', () => {
     const daily = [
-      { day: today, calls: 100, rateLimited: 20, cacheHits: 0, cacheMisses: 30, tokens: 0 },
+      { day: '2026-10-10', calls: 100, rateLimited: 20, cacheHits: 0, cacheMisses: 30, tokens: 0 },
       { day: '2026-10-09', calls: 0, rateLimited: 0, cacheHits: 0, cacheMisses: 30, tokens: 0 },
       { day: '2026-10-08', calls: 0, rateLimited: 0, cacheHits: 0, cacheMisses: 30, tokens: 0 },
     ];

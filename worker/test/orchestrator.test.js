@@ -9,12 +9,16 @@ import { __resetPoolStateForTests } from '../src/ai/groqClient.js';
 import { __resetMetricsForTests } from '../src/ai/metrics.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 import { AI_MESSAGES } from '../src/ai/errors.js';
+import { normalizeQuestion } from '../src/ai/semanticCache.js';
 import { routedSql, callsMatching, groqReply, httpError } from './helpers/aiTestUtils.js';
 import { makeEnv } from './helpers/mockEnv.js';
 
 const MEMBER = { profileId: '22222222-2222-4222-8222-222222222222', role: 'member' };
 const REQ = { feature: 'lab_preceptor', messages: [{ role: 'user', content: 'pergunta' }], profileId: MEMBER.profileId };
 const QUESTION = 'Qual é a diferença entre agonista e antagonista farmacológico?';
+const ID = '11111111-1111-4111-8111-111111111111';
+// Linha do cache como o banco devolve: a guarda de sentido compara `question_norm`.
+const cacheRow = (answer, sim) => [{ id: ID, answer, sim, question_norm: normalizeQuestion(QUESTION) }];
 
 const flag = (key, enabled) => ({ key, enabled, rollout_pct: 100, conditions: {} });
 
@@ -76,7 +80,8 @@ describe('flag ligada — caminho feliz', () => {
     const out = await complete(sql, env(), MEMBER, REQ);
     expect(out).toMatchObject({ content: 'Resposta do Groq', provider: 'groq', cached: false });
     const insert = callsMatching(sql, 'INSERT INTO ai_metrics_daily')[0];
-    expect(insert).toEqual(expect.arrayContaining(['lab_preceptor', 'groq', 11, 22]));
+    // Parâmetros do UPSERT: 1 recurso, 2 modelo, 3 provedor, 4 chamadas, 5 ok, 6 429, 7 tokens_in, 8 tokens_out, 9 hits, 10 misses.
+    expect([insert[1], insert[3], insert[4], insert[5], insert[6], insert[7], insert[8]]).toEqual(['lab_preceptor', 'groq', 1, 1, 0, 11, 22]);
   });
 
   test('com cacheQuestion guarda a resposta e conta o cache_miss', async () => {
@@ -86,6 +91,10 @@ describe('flag ligada — caminho feliz', () => {
     expect(store).toHaveLength(1);
     expect(store[0]).toContain('Resposta do Groq');
     expect(store[0]).not.toContain(QUESTION); // vai normalizada
+    expect(store[0]).toContain(normalizeQuestion(QUESTION));
+    const metrics = callsMatching(sql, 'INSERT INTO ai_metrics_daily')[0];
+    expect(metrics[10]).toBe(1); // cache_misses
+    expect(metrics[9]).toBe(0);  // cache_hits
   });
 
   test('resposta cortada pelo max_tokens NÃO vai para o cache', async () => {
@@ -108,22 +117,46 @@ describe('flag ligada — caminho feliz', () => {
     const out = await complete(sql, env({ GROQ_API_KEYS: 'k1,k2' }), MEMBER, REQ);
     expect(out.content).toBe('Segunda chave');
     const insert = callsMatching(sql, 'INSERT INTO ai_metrics_daily')[0];
-    expect(insert).toContain(1); // rate_limited
+    expect(insert[6]).toBe(1); // rate_limited: um 429 da primeira chave
+    expect(insert[4]).toBe(1); // mas é UMA chamada
   });
 });
 
 describe('lookupCache (antes da cota)', () => {
-  const hitRow = [{ id: '11111111-1111-4111-8111-111111111111', answer: 'Do cache', sim: 0.93 }];
+  const hitRow = cacheRow('Do cache', 0.93);
 
   test('acerto devolve a resposta e registra cache_hit', async () => {
     const sql = world({ cache: hitRow });
     expect(await lookupCache(sql, env(), MEMBER, 'lab_preceptor', QUESTION)).toEqual({ answer: 'Do cache', similarity: 0.93 });
-    expect(callsMatching(sql, 'INSERT INTO ai_metrics_daily')).toHaveLength(1);
+    const metrics = callsMatching(sql, 'INSERT INTO ai_metrics_daily');
+    expect(metrics).toHaveLength(1);
+    expect([metrics[0][3], metrics[0][4], metrics[0][9]]).toEqual(['cache', 0, 1]); // provedor cache, 0 chamadas, 1 hit
   });
 
   test('similaridade abaixo de 0,85 não conta', async () => {
-    const sql = world({ cache: [{ id: '11111111-1111-4111-8111-111111111111', answer: 'Parecida', sim: 0.7 }] });
+    const sql = world({ cache: cacheRow('Parecida', 0.7) });
     expect(await lookupCache(sql, env(), MEMBER, 'lab_preceptor', QUESTION)).toBeNull();
+  });
+
+  test('linha com sentido diferente (negação) não vale mesmo com similaridade alta', async () => {
+    const opposite = [{ id: ID, answer: 'Oposta', sim: 0.97, question_norm: normalizeQuestion('Qual NÃO é a diferença entre agonista e antagonista farmacológico?') }];
+    expect(await lookupCache(world({ cache: opposite }), env(), MEMBER, 'lab_preceptor', QUESTION)).toBeNull();
+  });
+
+  test('o limite de consultas ao cache é por pessoa: passou, segue sem cache (sem erro)', async () => {
+    const sql = routedSql([
+      ['FROM feature_flags', [flag('use_orchestrator', true)]],
+      ['INSERT INTO rate_limit_buckets', (values) => [{ attempts: values[0] === 'AI_CACHE_LOOKUP' ? 121 : 1 }]],
+      ['FROM ai_semantic_cache', hitRow],
+    ]);
+    expect(await lookupCache(sql, env(), MEMBER, 'lab_preceptor', QUESTION)).toBeNull();
+    expect(callsMatching(sql, 'FROM ai_semantic_cache')).toHaveLength(0);
+  });
+
+  test('flag ilegível (banco instável) = caminho antigo, nunca erro', async () => {
+    const sql = routedSql([['FROM feature_flags', new Error('connection reset')]]);
+    expect(await lookupCache(sql, env(), MEMBER, 'lab_preceptor', QUESTION)).toBeNull();
+    expect((await complete(sql, env(), MEMBER, REQ)).content).toBe('Resposta do Groq');
   });
 
   test('pergunta com dado pessoal nem chega a consultar o cache', async () => {
@@ -141,10 +174,28 @@ describe('orçamento diário de tokens', () => {
   });
 
   test('estourado com pergunta parecida no cache: devolve a resposta aproximada, marcada', async () => {
-    const sql = world({ tokens: 450000, cache: [{ id: '11111111-1111-4111-8111-111111111111', answer: 'Aproximada', sim: 0.6 }] });
+    const sql = world({ tokens: 450000, cache: cacheRow('Aproximada', 0.9) });
     const out = await complete(sql, env(), MEMBER, REQ, { cacheQuestion: QUESTION });
     expect(out).toMatchObject({ content: 'Aproximada', cached: true, degraded: true, provider: 'cache' });
     expect(global.fetch).not.toHaveBeenCalled();
+    // Só o acerto de cache entra nas métricas: o provedor não foi chamado.
+    const metrics = callsMatching(sql, 'INSERT INTO ai_metrics_daily');
+    expect(metrics).toHaveLength(1);
+    expect([metrics[0][3], metrics[0][4], metrics[0][9], metrics[0][10]]).toEqual(['cache', 0, 1, 0]);
+  });
+
+  test('estourado SEM cache nem reserva: nenhuma chamada é registrada (não houve chamada ao provedor)', async () => {
+    const sql = world({ tokens: 450000 });
+    await expect(complete(sql, env(), MEMBER, REQ)).rejects.toMatchObject({ aiUnavailable: true });
+    expect(callsMatching(sql, 'INSERT INTO ai_metrics_daily')).toHaveLength(0);
+  });
+
+  test('estourado com a reserva NVIDIA ligada e configurada: a NVIDIA atende (o orçamento é do Groq)', async () => {
+    global.fetch = fetchByHost({ groq: () => groqReply('não deveria'), nvidia: () => groqReply('Resposta da NVIDIA') });
+    const flags = [flag('use_orchestrator', true), flag('nvidia_fallback', true)];
+    const out = await complete(world({ flags, tokens: 450000 }), env(), MEMBER, REQ);
+    expect(out).toMatchObject({ content: 'Resposta da NVIDIA', provider: 'nvidia' });
+    expect(global.fetch.mock.calls.some((c) => String(c[0]).includes('groq'))).toBe(false);
   });
 
   test('o teto vem de AI_DAILY_TOKEN_BUDGET quando definido', async () => {
@@ -188,9 +239,27 @@ describe('provedor indisponível', () => {
     global.fetch = fetchByHost({ groq: groqDown, nvidia: groqDown });
     const flags = [flag('use_orchestrator', true), flag('nvidia_fallback', true)];
     await expect(complete(world({ flags }), env(), MEMBER, REQ)).rejects.toMatchObject({ aiUnavailable: true });
-    const cache = [{ id: '11111111-1111-4111-8111-111111111111', answer: 'Aproximada', sim: 0.6 }];
+    const cache = cacheRow('Aproximada', 0.9);
     const out = await complete(world({ flags, cache }), env(), MEMBER, REQ, { cacheQuestion: QUESTION });
     expect(out).toMatchObject({ content: 'Aproximada', degraded: true });
+  });
+
+  test('a flag da reserva ilegível não troca o erro do Groq por um erro de banco', async () => {
+    global.fetch = fetchByHost({ groq: groqDown, nvidia: () => groqReply('não deveria') });
+    const sql = routedSql([
+      ['FROM feature_flags', (_v, text) => [flag('use_orchestrator', true)]],
+      ['FROM ai_usage_log', [{ tokens: 0 }]],
+    ]);
+    await expect(complete(sql, env(), MEMBER, REQ)).rejects.toMatchObject({ aiUnavailable: true, message: AI_MESSAGES.UNAVAILABLE });
+  });
+
+  test('resposta aproximada não é contada como cache_miss, só como hit', async () => {
+    global.fetch = fetchByHost({ groq: groqDown });
+    const sql = world({ cache: cacheRow('Aproximada', 0.9) });
+    await complete(sql, env(), MEMBER, REQ, { cacheQuestion: QUESTION });
+    const rows = callsMatching(sql, 'INSERT INTO ai_metrics_daily');
+    const miss = rows.filter((r) => r[10] === 1);
+    expect(miss).toHaveLength(0);
   });
 
   test('saída inválida do provedor NÃO vira cache nem reserva (o erro sobe)', async () => {
@@ -202,6 +271,8 @@ describe('provedor indisponível', () => {
     global.fetch = fetchByHost({ groq: groqDown });
     const sql = world();
     await expect(complete(sql, env(), MEMBER, REQ)).rejects.toBeTruthy();
-    expect(callsMatching(sql, 'INSERT INTO ai_metrics_daily')).toHaveLength(1);
+    const rows = callsMatching(sql, 'INSERT INTO ai_metrics_daily');
+    expect(rows).toHaveLength(1);
+    expect([rows[0][4], rows[0][5]]).toEqual([1, 0]); // uma chamada, nenhuma com sucesso
   });
 });

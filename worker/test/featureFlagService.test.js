@@ -107,6 +107,14 @@ describe('leitura com cache', () => {
     expect(await getFlagsFor(sql, MEMBER)).toEqual({});
   });
 
+  test('tabela ausente é consultada UMA vez por janela (não a cada chamada de IA)', async () => {
+    const sql = routedSql([['FROM feature_flags', Object.assign(new Error('relation "feature_flags" does not exist'), { code: '42P01' })]]);
+    await isEnabled(sql, 'use_orchestrator', MEMBER, 1000);
+    await isEnabled(sql, 'use_orchestrator', MEMBER, 2000);
+    await isEnabled(sql, 'mfa_required', ADMIN, 3000);
+    expect(callsMatching(sql, 'FROM feature_flags')).toHaveLength(1);
+  });
+
   test('getFlagsFor devolve o mapa já avaliado para a pessoa', async () => {
     const sql = routedSql([['FROM feature_flags', [flag({ key: 'a' }), flag({ key: 'b', conditions: { role: 'admin' } })]]]);
     expect(await getFlagsFor(sql, MEMBER)).toEqual({ a: true, b: false });
