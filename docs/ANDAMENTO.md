@@ -9,10 +9,11 @@ Fases 0, 2 e 3 do plano estão prontas e testadas; a Fase 1 está pela metade; *
 | PR | Branch | O que traz | Estado |
 |---|---|---|---|
 | #16 | `feat/v5-fundacao` | F0: staging, retenção de logs, provedores de IA (Groq/NVIDIA), CI, docs | **Mesclada** |
-| #25 | `feat/v5-ux-base` | F1 parcial: base visual, PWA, painel Início | Aberta, verde. **Mesclar primeiro** |
-| #26 | `feat/v5-seguranca` | F2 + F3 + pipeline de segurança + backup | Aberta, empilhada sobre #25. **Mesclar depois** |
+| #25 | `feat/v5-ux-base` | F1 parcial: base visual, PWA, painel Início | **Mesclada na `main`** |
+| #26 | `feat/v5-seguranca` | F2 + F3 + pipeline de segurança + backup | Mesclada **na branch `feat/v5-ux-base`, não na `main`** (a #25 já tinha entrado, a base empilhada ficou para trás). Não vale mais |
+| **#27** | `feat/v5-seguranca` | Os mesmos F2 + F3, mais as correções finais, direto para a `main` | **Aberta. Esta é a que falta mesclar** |
 
-Ordem: #25 → #26 (a #26 tem base na #25; depois da #25 mesclada o GitHub recalcula a base sozinho).
+Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima para a `main`** antes de mesclar (ou mescle a de cima primeiro).
 
 ## O que está pronto
 - **F2 Segurança:** feature flags (`sql/016`), MFA TOTP com códigos de recuperação e reautenticação no reset (`sql/017`), limites por IP no cadastro e na redefinição, magic bytes nas imagens, `benchContext` só texto, alias `POST /v1/` + `worker/openapi.yaml` (`npm run openapi`), papel somente leitura (`sql/ops/readonly_role.sql`), backup diário cifrado age→R2 (`.github/workflows/backup.yml`, `docs/BACKUP_RESTORE.md`).
