@@ -10,7 +10,8 @@
     "deploy": "wrangler deploy",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "tail": "wrangler tail",
-    "validate:sql": "node scripts/validate-migrations.mjs"
+    "validate:sql": "node scripts/validate-migrations.mjs",
+    "openapi": "node scripts/gen-openapi.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4"

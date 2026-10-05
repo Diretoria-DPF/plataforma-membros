@@ -28,6 +28,20 @@ const ALLOWED_MIME_TYPES = {
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024; // 2MB
 const MAX_EVENT_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
 
+/**
+ * Tipo REAL do arquivo pelos primeiros bytes (magic bytes). O MIME informado
+ * pelo cliente não prova nada: sem esta checagem, um HTML ou um executável
+ * enviado como "image/png" iria para o bucket público com Content-Type de imagem.
+ */
+export function sniffImageType(bytes) {
+  const at = (signature, offset = 0) => signature.every((b, i) => bytes[offset + i] === b);
+  if (at([0xff, 0xd8, 0xff])) return 'image/jpeg';
+  if (at([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return 'image/png';
+  if (at([0x47, 0x49, 0x46, 0x38, 0x37, 0x61]) || at([0x47, 0x49, 0x46, 0x38, 0x39, 0x61])) return 'image/gif';
+  if (at([0x52, 0x49, 0x46, 0x46]) && at([0x57, 0x45, 0x42, 0x50], 8)) return 'image/webp';
+  return null;
+}
+
 function decodeImage(base64Data, mimeType, maxBytes) {
   if (!ALLOWED_MIME_TYPES[mimeType]) {
     throw E.ValidationError('Formato de imagem não suportado. Use JPEG, PNG, WEBP ou GIF.');
@@ -47,6 +61,9 @@ function decodeImage(base64Data, mimeType, maxBytes) {
   if (bytes.length === 0) throw E.ValidationError('Nenhuma imagem enviada.');
   if (bytes.length > maxBytes) {
     throw E.ValidationError('Imagem muito grande (máximo ' + Math.round(maxBytes / (1024 * 1024)) + 'MB).');
+  }
+  if (sniffImageType(bytes) !== mimeType) {
+    throw E.ValidationError('O arquivo não é uma imagem válida do tipo informado.');
   }
 
   return bytes;

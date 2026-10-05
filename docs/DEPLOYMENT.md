@@ -12,7 +12,7 @@ e R2), conta Brevo (e-mail transacional), chaves do Groq (IA da área
 
 Faça na ordem. Cada passo diz como conferir antes de seguir.
 
-## 1. Banco (Neon) e migrações 001–015
+## 1. Banco (Neon) e migrações 001–017
 
 1. Crie o projeto no [console do Neon](https://console.neon.tech) (ou uma
    **branch** nova, para isolar homologação de produção).
@@ -36,6 +36,15 @@ Faça na ordem. Cada passo diz como conferir antes de seguir.
    | 13 | `sql/013_clinical_ai.sql` | `clinical_cases` e `ai_usage_log` — Fase 3 |
    | 14 | `sql/014_atlas_telemetry.sql` | telemetria anônima do Atlas 3D |
    | 15 | `sql/015_ai_usage_provider.sql` | coluna `provider` em `ai_usage_log` (Groq/NVIDIA) |
+   | 16 | `sql/016_feature_flags.sql` | `feature_flags` (liga/desliga e rollout por percentual) — Fase 2 |
+   | 17 | `sql/017_mfa.sql` | verificação em duas etapas: segredo cifrado, códigos de recuperação, desafio de login |
+   | 18 | `sql/018_ai_orchestrator.sql` | `ai_metrics_daily` e `ai_semantic_cache` (extensão `pg_trgm`) — Fase 3 |
+
+   O código implantado **antes** de 016/017/018 continua funcionando (tabela
+   ausente = flags desligadas, login sem segundo fator, IA pelo caminho antigo).
+   Reversões em `sql/down/`.
+   Papel somente leitura para relatórios: `sql/ops/readonly_role.sql` (não é
+   migração; ver o cabeçalho do arquivo).
 
    Todas são idempotentes (`IF NOT EXISTS`, `CREATE OR REPLACE`, blocos de
    guarda). Mesmo assim, o fluxo normal é aplicar cada uma **uma vez**, e
@@ -70,6 +79,7 @@ npx wrangler secret put DATABASE_URL          # connection string do Neon (postg
 npx wrangler secret put SESSION_TOKEN_PEPPER  # openssl rand -hex 32
 npx wrangler secret put BREVO_API_KEY         # chave da API da Brevo
 npx wrangler secret put GROQ_API_KEYS         # TODAS as chaves do pool, uma por linha ou separadas por vírgula
+npx wrangler secret put MFA_ENCRYPTION_KEY    # openssl rand -hex 32 — cifra o segredo da verificação em duas etapas
 ```
 
 | Segredo | Uso | Efeito de trocar |
@@ -78,8 +88,9 @@ npx wrangler secret put GROQ_API_KEYS         # TODAS as chaves do pool, uma por
 | `SESSION_TOKEN_PEPPER` | hash de sessões/tokens e **chave do QR de presença v2** (derivada por HMAC, domínio `laift-attendance-qr-v1`) | logout global, links de e-mail pendentes invalidados e **todos os QRs e crachás impressos deixam de valer** (ver `docs/SECURITY.md`) |
 | `BREVO_API_KEY` | e-mails de confirmação e redefinição (`worker/src/mailer.js`) | nenhum |
 | `GROQ_API_KEYS` | pool de chaves da IA (`worker/src/ai/groqClient.js`) | nenhum; chaves repetidas ou vazias são ignoradas |
+| `MFA_ENCRYPTION_KEY` | AES-256-GCM do segredo TOTP (`worker/src/mfa/secretBox.js`). Sem ela, deriva-se do `SESSION_TOKEN_PEPPER` | **trocar invalida o MFA de todo mundo** (todos precisam recadastrar; um admin reseta com `apiAdminResetUserMfa`). Guarde em cofre e defina **antes** de alguém ativar o MFA |
 
-Conferência: `npx wrangler secret list` mostra os quatro nomes (nunca os
+Conferência: `npx wrangler secret list` mostra os cinco nomes (nunca os
 valores).
 
 ## 3. Variáveis públicas e bindings (`worker/wrangler.toml`)
@@ -226,6 +237,24 @@ plataforma (painel admin).
   (`NNN_rollback_*.sql`) — por isso o teste em branch do Neon antes.
 - **Credenciais comprometidas:** `docs/SECURITY.md`, seção "Rotação de
   credenciais".
+- **Perda de dados:** backup diário cifrado no R2 e teste de restauração em
+  `docs/BACKUP_RESTORE.md` (`.github/workflows/backup.yml`).
+- **Admin sem acesso ao MFA** (perdeu o celular e os códigos): **outro**
+  administrador chama `apiAdminResetUserMfa`, informando a **própria senha e o
+  próprio código** (reautenticação). O reset apaga o MFA da pessoa, encerra as
+  sessões dela, **invalida a senha** e envia o link de redefinição ao e-mail
+  dela — assim, quem só conhece a senha antiga não consegue entrar e cadastrar o
+  próprio autenticador antes do dono. Com dois administradores, nenhum fica
+  trancado. Não há tela para isso ainda; chamada de emergência:
+  ```bash
+  curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' \
+    -d '{"action":"apiAdminResetUserMfa","args":["<seu token de sessão>","<id da pessoa>",{"password":"<sua senha>","code":"<código de 6 dígitos>"}]}'
+  ```
+  O token de sessão sai do login (`apiLogin`/`apiLoginMfa`); digite a senha num
+  arquivo ou prompt, não direto na linha de comando, para não ir ao histórico.
+- **Desligar a obrigatoriedade em emergência:** `apiAdminSetFeatureFlag` com
+  `["<token>","mfa_required",{"enabled":false,"password":"…","code":"…"}]`. Essa
+  flag só vale para todos (sem percentual nem condições) e exige reautenticação.
 
 ## 9. Manutenção periódica
 
@@ -336,3 +365,91 @@ O site é um PWA: `frontend/manifest.webmanifest`, ícones em `frontend/icons/`
 - **Conferência em aparelho real** (antes de anunciar): o ícone do iPhone não
   pode ter fundo preto; o do Android deve ficar bem recortado (ícone
   *maskable*); com o modo avião, o app abre a tela de entrada.
+
+## 12. IA: orquestrador, orçamento de tokens e cache (Fase 3)
+
+Tudo nasce **desligado**: a IA segue pelo caminho de sempre até você ligar a flag.
+
+1. Aplique `sql/018_ai_orchestrator.sql` (Neon → SQL Editor). Confira com
+   `SELECT count(*) FROM ai_metrics_daily;` (deve responder 0, sem erro).
+2. Ligue em **staging** primeiro: flag `use_orchestrator` (`apiAdminSetFeatureFlag`
+   com `["<token>","use_orchestrator",{"enabled":true}]`; essa flag aceita
+   percentual e condições, ex.: `{"conditions":{"role":"admin"}}` para testar só
+   com administradores). Desligar volta ao caminho antigo na hora (até 60 s).
+3. Painel **Administração → IA → Orçamento de tokens e consumo**: uso das últimas
+   24 h, alertas ativos, cache e consumo por modelo/recurso/provedor.
+4. **Orçamento:** `AI_DAILY_TOKEN_BUDGET` (padrão 450 000 tokens/24 h, ~75% do teto
+   gratuito do Groq). Mude em `[vars]` do `wrangler.toml` sem tocar em código.
+   Passou do teto → o orquestrador não chama o provedor: responde pelo cache ou
+   avisa que a IA volta amanhã (a cota da pessoa é devolvida).
+5. **Cache semântico:** só pergunta genérica do preceptor do laboratório (sem
+   bancada, histórico nem dado pessoal); acerto não gasta cota nem token;
+   validade de 7 dias. Em falha do provedor, uma pergunta parecida pode ser
+   servida e vem marcada `degraded`.
+6. **NVIDIA como reserva:** flag `nvidia_fallback` + secret `NVIDIA_API_KEY` + as
+   variáveis `NVIDIA_MODEL_FAST/SMART`. Sem os três, a reserva não é usada.
+7. **Alertas** (cron diário, por e-mail aos administradores e `audit_logs`):
+   tokens > 80% do orçamento, 429 em > 5% das chamadas do dia, taxa de acerto do
+   cache < 30% por 3 dias. O mesmo alerta não se repete em 20 h.
+8. **Cotas por pessoa** foram recalibradas pelo orçamento (chat do membro 40/dia,
+   visitante 15; avaliação 10; caso gerado 4; preceptor 30). Ajuste em
+   `AI_QUOTAS` (`worker/src/constants.js`).
+
+**Rollback:** `use_orchestrator` em `enabled=false`. A migração 018 é aditiva
+(`sql/down/018_ai_orchestrator.sql` só se quiser apagar métricas e cache).
+
+## 13. CI/CD — Security Scans (`.github/workflows/security.yml`)
+
+### Agendamento
+| Gatilho | Quando | Strix | Duração |
+|---|---|---|---|
+| Pull request | a cada PR (do próprio repositório) | `quick` | minutos |
+| Agendado | segunda e quinta, 03:00 UTC (00:00 em Brasília) | `standard` | 30–60 min |
+| Manual (*Actions → Segurança → Run workflow*) | quando quiser; indicado antes de releases | `deep` (ou o escolhido) | 1–4 h |
+| Push em `main`, `feat/v5-*`, `staging` | a cada push | não roda | — |
+
+Em todos os gatilhos rodam também: `npm audit` das dependências de produção
+(Worker e front), gitleaks (histórico completo), Trivy e Semgrep (este ainda
+só relatório).
+
+### O que bloqueia
+`npm audit` (alta/crítica, só produção), gitleaks, Trivy (CRITICAL/HIGH com
+correção disponível) e Strix (`--fail-on high`). Falso positivo do gitleaks:
+caminho em `.gitleaks.toml` ou impressão digital em `.gitleaksignore`, sempre
+com a justificativa em comentário.
+
+### Notificações
+- Falha em agendamento, push ou execução manual → **Issue** automática com as
+  labels `security` e `bug`, listando quais verificações falharam e o link da
+  execução. Se já houver uma Issue de segurança aberta, o workflow comenta nela
+  em vez de abrir outra. Em PR a falha aparece no próprio PR.
+- Você é avisado por e-mail se estiver *watching* o repositório.
+- **Slack (opcional):** crie o secret `SLACK_WEBHOOK_URL` (webhook em
+  api.slack.com); sem ele o passo é ignorado.
+
+### Segredos e variáveis
+| Nome | Tipo | Para quê | Como criar |
+|---|---|---|---|
+| `OPENROUTER_API_KEY` | secret | chave do OpenRouter, só o Strix usa | `powershell -ExecutionPolicy Bypass -File tools\ci\registrar-segredo-openrouter.ps1 -Arquivo "<json com a chave>"` (lê o arquivo localmente e envia ao `gh secret set` sem exibir o valor; depois apague o arquivo) ou `gh secret set OPENROUTER_API_KEY` |
+| `STRIX_LLM` | variable (opcional) | modelo do Strix. Padrão: `openrouter/nvidia/nemotron-3-super-120b-a12b:free` | `gh variable set STRIX_LLM --body "openrouter/z-ai/glm-5.3"` |
+| `SLACK_WEBHOOK_URL` | secret (opcional) | aviso no Slack | `gh secret set SLACK_WEBHOOK_URL` |
+
+Sem `OPENROUTER_API_KEY` o job do Strix é **pulado com um aviso** (não fica
+vermelho); os demais scans seguem normalmente. O `SEMGREP_APP_TOKEN` não é
+usado: o Semgrep roda com as regras públicas (`p/javascript`,
+`p/security-audit`), sem conta.
+
+### Pontos de atenção
+- **Modelo.** O `z-ai/glm-5.3:free` do roteiro original **não existe** no
+  OpenRouter (conferido no catálogo público em 04/10/2026); o `z-ai/glm-5.3` é
+  pago. Modelos gratuitos têm limite diário e de requisições por minuto: um
+  `deep` pode ser interrompido por rate limit — nesse caso rode de novo ou
+  defina `STRIX_LLM` com um modelo pago.
+- **Privacidade do código.** O Strix envia trechos do código ao provedor do
+  modelo. Em modelos gratuitos, considere que o conteúdo pode ser registrado.
+  Revise antes de privar o repositório ou de incluir conteúdo sensível.
+- **Relatórios.** Em repositório público os achados aparecem no log da
+  execução antes de serem corrigidos; só em repositório privado o relatório é
+  guardado como artefato (14 dias).
+- **Versões fixas:** gitleaks 8.30.1 (SHA-256 conferido), `strix-agent==1.6.2`
+  e `trivy-action` por commit. Atualize de propósito, não por acaso.

@@ -167,6 +167,50 @@ summary:focus-visible,
 .home-list li { display: grid; gap: 2px; }
 .home-list-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 
+/* ---------- Verificação em duas etapas ---------- */
+#mfa-card-body { display: grid; gap: 12px; justify-items: start; }
+.mfa-secret {
+  display: block;
+  padding: 10px 12px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  word-break: break-all;
+}
+.mfa-codes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.mfa-codes li {
+  padding: 8px 10px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+}
+.mfa-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.state-error-text { margin: 0; color: var(--danger); font-weight: 600; }
+
+/* ---------- Painel de métricas da IA ---------- */
+.ai-budget { display: grid; gap: 6px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-alt); }
+.ai-budget[data-level="warn"] { border-color: var(--admin); background: var(--admin-soft); }
+.ai-budget[data-level="down"] { border-color: var(--danger); background: var(--danger-soft); }
+.ai-budget progress { width: 100%; height: 10px; }
+.ai-alerts { margin: 8px 0; padding: 10px 12px 10px 28px; color: var(--danger); background: var(--danger-soft); border-radius: var(--radius-md); font-weight: 600; }
+.table-scroll { overflow-x: auto; }
+.ai-metrics-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ai-metrics-table th, .ai-metrics-table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.ai-days { display: grid; gap: 4px; margin-top: 12px; }
+.ai-day { display: grid; grid-template-columns: 48px 1fr auto; gap: 8px; align-items: center; font-size: 13px; }
+.ai-day-bar { display: block; height: 10px; border-radius: 5px; background: var(--primary); }
+
 /* ---------- Movimento reduzido ---------- */
 @media (prefers-reduced-motion: reduce) {
   button, .list-item, .stat-card, .bottom-nav button, a { transition: none; }

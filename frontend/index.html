@@ -76,6 +76,15 @@
           </label>
           <button type="submit">Entrar</button>
         </form>
+        <!-- Segundo passo do login: aparece só para quem ativou a verificação em duas etapas (mfa.js). -->
+        <form id="form-login-mfa" class="hidden" novalidate>
+          <label for="login-mfa-code">Código de verificação
+            <input type="text" id="login-mfa-code" inputmode="text" autocomplete="one-time-code" maxlength="16" aria-describedby="login-mfa-help">
+          </label>
+          <p id="login-mfa-help" class="muted">Digite o código de 6 dígitos do aplicativo autenticador ou um código de recuperação.</p>
+          <button type="submit">Verificar</button>
+          <button type="button" class="link-btn" id="btn-login-mfa-back">Voltar</button>
+        </form>
         <div id="msg-login" class="status-msg" role="alert" aria-live="polite"></div>
 
         <div class="auth-links">
@@ -517,6 +526,11 @@
               </form>
               <div id="msg-profile" class="status-msg" role="alert" aria-live="polite"></div>
             </div>
+            <div class="card" id="mfa-card">
+              <h3>Verificação em duas etapas</h3>
+              <div id="mfa-card-body"></div>
+              <div id="msg-mfa" class="status-msg" role="alert" aria-live="polite"></div>
+            </div>
             <div class="card">
               <h3>Minhas métricas</h3>
               <div id="profile-metrics" class="stat-grid"></div>
@@ -726,6 +740,18 @@
           </div>
           <div class="card">
             <div class="ai-admin-head">
+              <h2>Orçamento de tokens e consumo</h2>
+              <span>
+                <button type="button" class="secondary" id="btn-admin-ai-metrics-7">7 dias</button>
+                <button type="button" class="secondary" id="btn-admin-ai-metrics-30">30 dias</button>
+              </span>
+            </div>
+            <p class="muted">O Groq gratuito limita os tokens por dia para a liga inteira. Aqui você vê quanto do orçamento já foi usado, por modelo e por recurso, e os alertas ativos (orçamento, limite do provedor, cache).</p>
+            <div id="msg-admin-ai-metrics" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="admin-ai-metrics"></div>
+          </div>
+          <div class="card">
+            <div class="ai-admin-head">
               <h2>Atlas 3D — uso anônimo</h2>
               <span>
                 <button type="button" class="secondary" id="btn-admin-ai-atlas-7">7 dias</button>
@@ -858,6 +884,7 @@
   <script src="shared-states.js" defer></script>
   <script src="pwa.js" defer></script>
   <script src="home.js" defer></script>
+  <script src="mfa.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>

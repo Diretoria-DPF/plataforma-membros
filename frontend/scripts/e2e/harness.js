@@ -122,6 +122,8 @@ function defaultWorkerReply(action, args, ctx) {
         },
       };
     }
+    case 'apiMfaStatus':
+      return { success: true, enabled: false, pendingEnrollment: false, recoveryCodesLeft: 0, required: false };
     case 'apiLearnGetMyAttendanceQr':
       // Formato v2 (Fase 2) — assinatura fictícia, só precisa ter a forma certa.
       return { success: true, qrPayload: 'LAIFT:v2:00000000-0000-4000-8000-000000000000.AAAAAAAAAAAAAAAAAAAAAAAA' };

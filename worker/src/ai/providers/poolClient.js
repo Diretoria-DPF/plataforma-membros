@@ -146,6 +146,12 @@ function isFailoverStatus(status) {
   return status === 401 || status === 403 || status === 429 || status >= 500;
 }
 
+/** Avisa quem observa (o orquestrador) o resultado de CADA tentativa; nunca derruba a chamada. */
+function notify(req, event) {
+  if (!req || typeof req.observer !== 'function') return;
+  try { req.observer(event); } catch (err) { /* observador não pode afetar a IA */ }
+}
+
 function toIntOrNull(value) {
   const n = Number(value);
   return Number.isFinite(n) && n >= 0 ? Math.round(n) : null;
@@ -241,9 +247,11 @@ export async function complete(provider, env, sql, req) {
       // carregar detalhes da requisição).
       await startCooldown(provider, env, index, KEY_COOLDOWN_DEFAULT_SECONDS);
       await logUsage(sql, Object.assign({}, base, { latencyMs: Date.now() - started, ok: false }));
+      notify(req, { status: 0, ok: false });
       continue;
     }
     const latencyMs = Date.now() - started;
+    notify(req, { status: res.status, ok: !!res.ok });
 
     if (res.ok) {
       let data = null;
@@ -259,7 +267,7 @@ export async function complete(provider, env, sql, req) {
         // max_tokens (finish_reason "length"). Não é culpa da chave.
         throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
       }
-      return { content, model, keyIndex: index, usage, latencyMs, finishReason: (choice && choice.finish_reason) || null };
+      return { content, model, keyIndex: index, usage, latencyMs, finishReason: (choice && choice.finish_reason) || null, provider: provider.name };
     }
 
     await logUsage(sql, Object.assign({}, base, { latencyMs, ok: false }));
