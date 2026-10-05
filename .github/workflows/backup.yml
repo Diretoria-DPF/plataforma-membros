@@ -157,7 +157,7 @@ jobs:
       issues: write
     steps:
       - name: Abre ou atualiza a Issue do backup
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { owner, repo } = context.repo;
