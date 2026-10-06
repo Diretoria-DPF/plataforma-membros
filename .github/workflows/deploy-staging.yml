@@ -16,6 +16,18 @@ name: Publicar homologação (staging)
 # cadastrados com `wrangler secret put <NOME> --env staging`.
 
 on:
+  # Push na branch `staging`: publica a API sozinho (migra o banco de staging se
+  # existir o segredo STAGING_DATABASE_URL, publica o Worker e roda o smoke test).
+  # O SITE de staging é publicado por deploy-frontend-cloudflare.yml, que também
+  # dispara no push de `staging`; aqui o job `site` só roda no disparo manual.
+  push:
+    branches: [staging]
+    paths:
+      - 'worker/**'
+      - 'sql/**'
+      - 'tools/db/**'
+      - 'tools/ci/smoke.mjs'
+      - '.github/workflows/deploy-staging.yml'
   workflow_dispatch:
     inputs:
       alvo:
@@ -81,12 +93,29 @@ jobs:
             echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
           fi
 
+      # Migra ANTES de publicar o código, para o Worker novo já achar as tabelas.
+      # Só roda se o segredo STAGING_DATABASE_URL (URL DIRETA do Neon de staging,
+      # nunca a de produção) existir no ambiente "staging"; sem ele, avisa e segue.
+      # Um banco que já foi migrado à mão precisa do baseline uma única vez:
+      #   DATABASE_URL=... node tools/db/migrate.mjs --baseline-through 015
+      - name: Migra o banco de homologação (se houver STAGING_DATABASE_URL)
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::warning::STAGING_DATABASE_URL não cadastrado: migrações NÃO aplicadas. Ver docs/AMBIENTES.md."
+            exit 0
+          fi
+          (cd tools/db && npm ci)
+          node tools/db/migrate.mjs
+
       - name: Publica a API de homologação
         working-directory: worker
         run: npx wrangler deploy --env staging
 
   site:
-    if: ${{ inputs.alvo != 'api' }}
+    # No push de `staging` o site é publicado por deploy-frontend-cloudflare.yml.
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.alvo != 'api' }}
     runs-on: ubuntu-latest
     environment: staging
     steps:
@@ -135,3 +164,24 @@ jobs:
       - name: Publica o site de homologação
         working-directory: frontend
         run: npx --yes wrangler@4 deploy --env staging
+
+  # Teste de fumaça depois do deploy: site responde 200 com CSP e a API responde
+  # apiGetFeatureFlags. Tenta por ~3 min porque, no push, o site de staging é
+  # publicado em paralelo por deploy-frontend-cloudflare.yml.
+  smoke:
+    needs: [api, site]
+    # Roda se nenhum dos dois falhou (um deles pode ter sido pulado de propósito).
+    if: ${{ !cancelled() && !contains(needs.*.result, 'failure') }}
+    runs-on: ubuntu-latest
+    env:
+      SMOKE_SITE_URL: https://staging.laift.com.br
+      SMOKE_API_URL: https://staging-api.laift.com.br
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Teste de fumaça da homologação
+        run: node tools/ci/smoke.mjs --retry 9 --delay 20

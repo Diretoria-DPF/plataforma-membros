@@ -1,33 +1,87 @@
 name: Publicar front-end na Cloudflare (Workers static assets)
 
-# Publica frontend/dist no Cloudflare como o Worker "laift-web"
-# (frontend/wrangler.toml). Por enquanto SÓ dispara à mão (aba Actions → este
-# workflow → "Run workflow"): o site oficial continua no GitHub Pages
-# (deploy-frontend.yml) até o corte descrito em docs/MIGRACAO_CLOUDFLARE.md.
-# No corte, troque o gatilho abaixo por `push` na main e aposente o deploy
-# do GitHub Pages.
+# Publica frontend/dist na Cloudflare:
+#   branch main    → produção   (Worker laift-web,         https://laift.com.br)
+#   branch staging → homologação (Worker laift-web-staging, https://staging.laift.com.br)
+# Dispara sozinho a cada push dessas branches que mexa em frontend/, e também à
+# mão (aba Actions → este workflow → escolha a branch em "Use workflow from").
+# Qualquer outra branch é recusada: nada de publicar branch de trabalho em produção.
+#
+# Antes de publicar, roda os testes unitários do front e os e2e "csp" e "smoke"
+# (um CSP quebrado ou um script externo não liberado BLOQUEIA a publicação).
+# Depois de publicar, tools/ci/smoke.mjs confere o site e a API do ambiente.
+#
+# O ambiente do GitHub ("production" / "staging") permite exigir aprovação de uma
+# pessoa antes do deploy: Settings → Environments → production → Required reviewers.
 #
 # Segredos do repositório (os mesmos do deploy do Worker da API):
 #   CLOUDFLARE_API_TOKEN  — token "Edit Cloudflare Workers"
 #   CLOUDFLARE_ACCOUNT_ID — opcional se o token só enxerga uma conta
-# Para ligar o domínio laift.com.br pelo wrangler, o token também precisa de
-# permissão na ZONA laift.com.br (DNS: Edit e Workers Routes: Edit). Se o
-# deploy reclamar de permissão nesse passo, ou ajuste o token, ou anexe o
-# domínio uma única vez pelo painel (Workers & Pages → laift-web → Domínios).
+# Para ligar o domínio pelo wrangler, o token também precisa de permissão na ZONA
+# laift.com.br (DNS: Edit e Workers Routes: Edit). Ver docs/AMBIENTES.md.
 
 on:
+  push:
+    branches: [main, staging]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend-cloudflare.yml'
   workflow_dispatch: {}
 
 permissions:
   contents: read
 
+# Uma publicação por branch de cada vez; a mais nova espera a anterior.
 concurrency:
-  group: frontend-cloudflare-deploy
+  group: frontend-cloudflare-deploy-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  testes:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Só main (produção) e staging (homologação) publicam
+        run: |
+          case "$GITHUB_REF_NAME" in
+            main|staging) echo "Destino: $GITHUB_REF_NAME" ;;
+            *) echo "::error::Este workflow só publica a partir da branch main (produção) ou staging (homologação). Escolha uma delas em \"Use workflow from\"."; exit 1 ;;
+          esac
+
+      # SEO/robots, domínio, MFA, PWA, home, staging… Não precisam de npm install.
+      - name: Testes unitários do front
+        run: node --test frontend/scripts/*.test.mjs frontend/redirect-www/*.test.mjs
+
+      - name: Instala dependências do front e o navegador do Playwright
+        working-directory: frontend
+        run: |
+          npm ci || npm install
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Gera o build
+        working-directory: frontend
+        run: node scripts/build.js
+
+      # CSP em todas as páginas publicadas e o fluxo básico de entrada.
+      - name: Testes e2e (csp e smoke)
+        working-directory: frontend
+        run: node scripts/e2e/run.js csp smoke
+
+  publicar:
+    needs: testes
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    env:
+      DESTINO: ${{ github.ref_name == 'main' && 'producao' || 'homologacao' }}
+      SMOKE_SITE_URL: ${{ github.ref_name == 'main' && 'https://laift.com.br' || 'https://staging.laift.com.br' }}
+      SMOKE_API_URL: ${{ github.ref_name == 'main' && 'https://api.laift.com.br' || 'https://staging-api.laift.com.br' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -37,7 +91,7 @@ jobs:
 
       - name: Instala dependências do build (javascript-obfuscator)
         working-directory: frontend
-        run: npm install
+        run: npm ci || npm install
 
       - name: Gera frontend/dist/ (app.js ofuscado; _headers e demais arquivos copiados)
         working-directory: frontend
@@ -74,6 +128,16 @@ jobs:
           fi
 
       # Versão do wrangler fixada na major 4 para o deploy ser reproduzível.
-      - name: Publica o front-end
+      - name: Publica o front-end (${{ env.DESTINO }})
         working-directory: frontend
-        run: npx --yes wrangler@4 deploy
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            npx --yes wrangler@4 deploy
+          else
+            npx --yes wrangler@4 deploy --env staging
+          fi
+
+      # Site e API do ambiente que acabou de ser publicado. Tenta por ~2 min
+      # porque a Cloudflare leva alguns segundos para propagar a versão nova.
+      - name: Teste de fumaça do ambiente publicado
+        run: node tools/ci/smoke.mjs --retry 6 --delay 20

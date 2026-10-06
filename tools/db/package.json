@@ -1,0 +1,19 @@
+{
+  "name": "laift-tools-db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "description": "Runner de migrações SQL (sql/NNN_*.sql) com tabela de controle schema_migrations.",
+  "scripts": {
+    "test": "node --test migrate.test.mjs",
+    "migrate": "node migrate.mjs",
+    "migrate:dry": "node migrate.mjs --dry-run"
+  },
+  "dependencies": {
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8"
+  }
+}

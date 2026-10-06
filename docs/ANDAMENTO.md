@@ -5,13 +5,21 @@
 ## Em uma frase
 Fases 0, 2 e 3 do plano estão prontas e testadas; a Fase 1 está pela metade; **nada disso está em produção** até você mesclar as PRs e fazer os passos manuais abaixo. Tudo que é novo nasce **desligado** (feature flag), então mesclar não muda o comportamento de ninguém.
 
+## Atualização de 2026-10-05 — por que o laift.com.br não refletia a F2/F3
+- **A #27 foi mesclada** (02:32 UTC). A **API** de produção foi republicada na hora (`deploy-worker.yml` dispara em push na `main`).
+- **O site não subiu**: `deploy-frontend-cloudflare.yml` só rodava à mão. Isto está corrigido na branch `feat/v5-ativacao` (PR para a `main`): o workflow passa a publicar sozinho no push em `main` (produção) e `staging` (homologação), com testes unitários + e2e `csp smoke` antes e `tools/ci/smoke.mjs` depois. `deploy-staging.yml` também publica no push de `staging`. Fluxo completo, rollback e passos únicos: **`docs/AMBIENTES.md`**.
+- **Novo:** `tools/db/migrate.mjs` (runner com `schema_migrations`, `--dry-run`, `--baseline-through`) e `tools/ci/smoke.mjs`, ambos com testes (18 + 13).
+- **Os bancos ainda não têm as migrações 016–018** (produção `plataforma-membros` e staging `laift-staging` estão na 015). Por isso flags, MFA e orquestrador seguem desligados. Rode o `--baseline-through 015` e depois o runner (`docs/AMBIENTES.md`).
+- **Bloqueio conhecido:** o commit `847ecc2` (script do Google Ads no `index.html`) quebra o e2e `csp`; o gate novo **vai barrar a publicação do site** até haver decisão (liberar o domínio na CSP + consentimento/Privacidade, ou tirar o script).
+- **Fora deste lote (próximos passos):** chave do OpenRouter (`gh secret set` pelo script), `MFA_ENCRYPTION_KEY`, ligar `use_orchestrator`, guia "Lia", atalho de promoção, RAG híbrido.
+
 ## Pull requests
 | PR | Branch | O que traz | Estado |
 |---|---|---|---|
 | #16 | `feat/v5-fundacao` | F0: staging, retenção de logs, provedores de IA (Groq/NVIDIA), CI, docs | **Mesclada** |
 | #25 | `feat/v5-ux-base` | F1 parcial: base visual, PWA, painel Início | **Mesclada na `main`** |
 | #26 | `feat/v5-seguranca` | F2 + F3 + pipeline de segurança + backup | Mesclada **na branch `feat/v5-ux-base`, não na `main`** (a #25 já tinha entrado, a base empilhada ficou para trás). Não vale mais |
-| **#27** | `feat/v5-seguranca` | Os mesmos F2 + F3, mais as correções finais, direto para a `main` | **Aberta. Esta é a que falta mesclar** |
+| **#27** | `feat/v5-seguranca` | Os mesmos F2 + F3, mais as correções finais, direto para a `main` | **Mesclada na `main` em 2026-10-05** |
 
 Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima para a `main`** antes de mesclar (ou mescle a de cima primeiro).
 

@@ -10,6 +10,9 @@ on:
       - 'worker/**'
       - 'sql/**'
       - 'tools/license/**'
+      - 'tools/ci/**'
+      - 'tools/db/**'
+      - '.github/workflows/deploy-*.yml'
       - 'frontend/scripts/*.test.mjs'
       - 'frontend/app.js'
       - 'frontend/mfa.js'
@@ -74,7 +77,28 @@ jobs:
       # SEO/robots, aviso de mudança de domínio, redirecionamento do www e o
       # script de cabeçalhos de copyright. Não precisam de npm install.
       - name: Testes unitários do front e das ferramentas
-        run: node --test frontend/scripts/*.test.mjs tools/license/*.test.mjs frontend/redirect-www/*.test.mjs
+        run: node --test frontend/scripts/*.test.mjs tools/license/*.test.mjs tools/ci/*.test.mjs frontend/redirect-www/*.test.mjs
 
       - name: Todo arquivo próprio tem o cabeçalho de copyright
         run: node tools/license/apply-headers.mjs --check
+
+  # Runner de migrações (tools/db): testes com PGlite, inclusive aplicando as
+  # migrações reais de sql/ em banco vazio. Precisa do próprio npm ci.
+  ferramentas-db:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: tools/db/package-lock.json
+
+      - name: Instala dependências
+        working-directory: tools/db
+        run: npm ci
+
+      - name: Testes do runner de migrações
+        working-directory: tools/db
+        run: npm test
