@@ -343,7 +343,7 @@
                 <div class="learn-stat"><strong id="learn-stat-lab">—</strong><span>Formulações</span></div>
               </div>
               <div id="learn-status" class="status-msg" role="status" aria-live="polite"></div>
-              <button type="button" class="secondary" id="btn-learn-credential" style="width:auto;">Minha credencial (QR de presença)</button>
+              <button type="button" class="secondary" id="btn-learn-credential" data-open-credential style="width:auto;">Meu crachá virtual (QR de presença)</button>
             </div>
             <!-- Fase 2 — desempenho por módulo e conquistas (calculados na Worker; montados por learning.js). -->
             <div class="card learn-progress hidden" id="learn-progress">
@@ -831,14 +831,32 @@
     </div>
   </div>
 
-  <!-- Credencial de presença (QR gerado localmente por learning.js). -->
+  <!-- Crachá virtual (credential.js): cartão com o QR de presença gerado localmente. -->
   <div id="modal-learn-credential" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-learn-credential-title">
-    <div class="modal-box" style="text-align:center;">
-      <h3 id="modal-learn-credential-title">Sua credencial LAIFT</h3>
-      <img id="learn-credential-qr" class="learn-credential-qr" alt="QR Code de presença">
-      <p><strong id="learn-credential-name"></strong><br><span id="learn-credential-email" class="muted"></span></p>
-      <p class="muted" style="font-size:13px;" id="learn-credential-note">Apresente na portaria para registrar presença em eventos.</p>
-      <div class="modal-actions" style="justify-content:center;">
+    <div class="modal-box credential-box" id="learn-credential-box">
+      <h3 id="modal-learn-credential-title" class="visually-hidden">Seu crachá virtual LAIFT</h3>
+      <div class="credential-card">
+        <div class="credential-head">
+          <img class="credential-logo" src="modulos/cracha/laift-marca.png" alt="" width="40" height="40">
+          <span class="credential-brand">LAIFT</span>
+          <span class="credential-role" id="learn-credential-role"></span>
+        </div>
+        <div class="credential-person">
+          <span class="credential-avatar" id="learn-credential-avatar" aria-hidden="true"></span>
+          <span class="credential-who">
+            <strong id="learn-credential-name"></strong>
+            <span id="learn-credential-email" class="credential-line"></span>
+            <span id="learn-credential-since" class="credential-line"></span>
+          </span>
+        </div>
+        <div class="credential-qr-wrap">
+          <img id="learn-credential-qr" class="learn-credential-qr" alt="QR Code de presença">
+        </div>
+      </div>
+      <p class="muted credential-note" id="learn-credential-note">Apresente na portaria para registrar presença em eventos.</p>
+      <div class="modal-actions credential-actions">
+        <button type="button" class="secondary" id="learn-credential-zoom" aria-pressed="false">Ampliar QR</button>
+        <button type="button" class="secondary" id="learn-credential-save" disabled>Salvar imagem</button>
         <button type="button" class="secondary" id="learn-credential-close">Fechar</button>
       </div>
     </div>
@@ -885,6 +903,8 @@
   <script src="pwa.js" defer></script>
   <script src="home.js" defer></script>
   <script src="mfa.js" defer></script>
+  <script src="credential.js" defer></script>
+  <script src="assistant.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>

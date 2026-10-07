@@ -122,11 +122,6 @@
     });
     $('learn-back').addEventListener('click', closeModule);
     $('learn-fullscreen').addEventListener('click', toggleFullscreen);
-    $('btn-learn-credential').addEventListener('click', openCredential);
-    $('learn-credential-close').addEventListener('click', closeCredential);
-    $('modal-learn-credential').addEventListener('click', function (evt) {
-      if (evt.target.id === 'modal-learn-credential') closeCredential();
-    });
     hubRendered = true;
   }
 
@@ -300,77 +295,8 @@
     else frame.requestFullscreen().catch(function () {});
   }
 
-  // ===========================================================================
-  // Credencial (QR de presença)
-  //
-  // Fase 2: o QR carrega a credencial ASSINADA pela Worker
-  // (apiLearnGetMyAttendanceQr → LAIFT:v2:<profileId>.<assinatura>), a única
-  // que o terminal fiscal aceita por leitura. É gerado localmente
-  // (vendor/qrcode-generator.js) — nada vai para serviço de terceiros.
-  // Se a Worker não responder, cai para o formato antigo LAIFT:ID:<e-mail>,
-  // sem assinatura, avisando: o fiscal então só PREENCHE o e-mail para a
-  // presença manual, que o admin confirma — nunca registra direto.
-  // ===========================================================================
-  var qrLibPromise = null;
-  var credentialRequestId = 0;
-  var QR_V2_RE = /^LAIFT:v2:[0-9a-f-]{36}\.[A-Za-z0-9_-]{24}$/;
-  var CREDENTIAL_NOTE = 'Apresente na portaria para registrar presença em eventos.';
-  var CREDENTIAL_NOTE_LEGACY = 'Credencial provisória: não foi possível obter a credencial assinada agora. Na portaria, a presença será confirmada pelo seu e-mail. Tente abrir de novo mais tarde.';
-
-  function loadQrLib() {
-    if (window.qrcode) return Promise.resolve(window.qrcode);
-    if (!qrLibPromise) {
-      qrLibPromise = new Promise(function (resolve, reject) {
-        var s = document.createElement('script');
-        s.src = 'vendor/qrcode-generator.js';
-        s.onload = function () { resolve(window.qrcode); };
-        s.onerror = function () { qrLibPromise = null; reject(new Error('qr')); };
-        document.head.appendChild(s);
-      });
-    }
-    return qrLibPromise;
-  }
-
-  function openCredential() {
-    var A = app();
-    var identity = A.getIdentity();
-    if (!identity) return;
-    var requestId = ++credentialRequestId;
-    var img = $('learn-credential-qr');
-    img.removeAttribute('src');
-    img.removeAttribute('data-qr-kind');
-    $('learn-credential-name').textContent = identity.fullName || '';
-    $('learn-credential-email').textContent = identity.email || '';
-    $('learn-credential-note').textContent = 'Gerando sua credencial...';
-    $('modal-learn-credential').classList.remove('hidden');
-
-    Promise.all([A.callLearningApi('apiLearnGetMyAttendanceQr'), loadQrLib()]).then(function (results) {
-      if (requestId !== credentialRequestId) return;
-      var res = results[0];
-      var qrcode = results[1];
-      var payload = res && res.success && typeof res.qrPayload === 'string' && QR_V2_RE.test(res.qrPayload) ? res.qrPayload : null;
-      var kind = payload ? 'v2' : 'legacy';
-      if (!payload) {
-        if (!identity.email) throw new Error('sem-email');
-        payload = 'LAIFT:ID:' + identity.email;
-      }
-      qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
-      var qr = qrcode(0, 'M');
-      qr.addData(payload);
-      qr.make();
-      img.src = qr.createDataURL(8, 4);
-      img.setAttribute('data-qr-kind', kind);
-      $('learn-credential-note').textContent = kind === 'v2' ? CREDENTIAL_NOTE : CREDENTIAL_NOTE_LEGACY;
-    }).catch(function () {
-      if (requestId !== credentialRequestId) return;
-      A.setStatus('learn-status', 'Não foi possível gerar o QR Code agora.', 'error');
-      closeCredential();
-    });
-  }
-
-  function closeCredential() {
-    $('modal-learn-credential').classList.add('hidden');
-  }
+  // O crachá virtual (QR de presença) vive em credential.js (window.LaiftCredential);
+  // aqui ele só é fechado ao sair da conta (ver reset()).
 
   // ===========================================================================
   // Terminal fiscal (modo admin)
@@ -431,8 +357,7 @@
       app().clearEl($('learn-by-module'));
       app().clearEl($('learn-badges'));
       $('learn-progress').classList.add('hidden');
-      credentialRequestId++;
-      closeCredential();
+      if (window.LaiftCredential) window.LaiftCredential.close();
     }
   }
 

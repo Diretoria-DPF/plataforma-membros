@@ -211,6 +211,100 @@ summary:focus-visible,
 .ai-day { display: grid; grid-template-columns: 48px 1fr auto; gap: 8px; align-items: center; font-size: 13px; }
 .ai-day-bar { display: block; height: 10px; border-radius: 5px; background: var(--primary); }
 
+/* ---------- Crachá virtual ---------- */
+.credential-box { text-align: center; max-width: 380px; max-height: calc(100dvh - 32px); overflow-y: auto; }
+.credential-card {
+  display: grid; gap: 14px; padding: 18px; text-align: left; color: #ffffff;
+  border-radius: var(--radius-lg); box-shadow: var(--shadow);
+  /* Cores fixas (não os tokens do tema): no escuro --primary clareia e o texto branco perderia o contraste;
+     o PNG salvo usa as mesmas cores. */
+  background: linear-gradient(145deg, #08342d 0%, #0b5349 55%, #0f6f62 100%);
+}
+.credential-head { display: flex; align-items: center; gap: 10px; }
+.credential-logo { width: 40px; height: 40px; border-radius: 10px; background: #ffffff; object-fit: contain; }
+.credential-brand { font-size: 20px; font-weight: 800; letter-spacing: 0.08em; }
+.credential-role {
+  margin-left: auto; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.18);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.credential-person { display: flex; align-items: center; gap: 12px; }
+.credential-avatar {
+  flex: none; display: grid; place-items: center; width: 64px; height: 64px; overflow: hidden;
+  border-radius: 50%; background: rgba(255, 255, 255, 0.18); font-size: 24px; font-weight: 800;
+}
+.credential-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.credential-who { display: grid; gap: 2px; min-width: 0; }
+.credential-who strong { font-size: 18px; overflow-wrap: anywhere; }
+.credential-line { font-size: 13px; opacity: 0.85; overflow-wrap: anywhere; }
+.credential-line:empty { display: none; }
+.credential-qr-wrap { display: grid; place-items: center; padding: 10px; border-radius: var(--radius-md); background: #ffffff; }
+.credential-qr-wrap .learn-credential-qr { width: 200px; height: 200px; margin: 0; }
+.credential-note { margin: 12px 0 0; font-size: 13px; }
+.credential-actions { flex-wrap: wrap; justify-content: center; }
+.credential-actions button { width: auto; }
+.credential-zoom { max-width: min(96vw, 560px); }
+.credential-zoom .credential-qr-wrap .learn-credential-qr { width: 100%; max-width: 380px; height: auto; aspect-ratio: 1; }
+
+/* ---------- Lia, guia da plataforma ---------- */
+.lia-launcher {
+  position: fixed; right: 16px; bottom: 16px; z-index: 30; width: auto;
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px;
+  border: 0; border-radius: 999px; box-shadow: var(--shadow);
+  background: var(--primary); color: var(--on-primary); font-weight: 700;
+}
+.lia-launcher.lia-in-app { bottom: 88px; }
+.lia-launcher:hover { background: var(--primary-strong); }
+.lia-orb {
+  flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 28%, #ffffff 0%, #bfeee6 38%, #e1f4f0 100%);
+  color: #0b5349; font-weight: 800; font-size: 16px; /* fixos: legíveis nos dois temas */
+}
+.lia-panel {
+  position: fixed; right: 16px; bottom: 16px; z-index: 31;
+  display: grid; grid-template-rows: auto 1fr auto auto;
+  width: min(380px, calc(100vw - 32px)); height: min(560px, calc(100dvh - 32px));
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
+}
+.lia-launcher.lia-in-app ~ .lia-panel { bottom: 88px; height: min(560px, calc(100dvh - 104px)); }
+.lia-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface-alt); }
+.lia-title { display: grid; flex: 1; min-width: 0; }
+.lia-sub { font-size: 12px; color: var(--muted); }
+.lia-close { width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; }
+.lia-close:hover { background: var(--border); color: var(--text); }
+.lia-log { display: grid; align-content: start; gap: 10px; padding: 14px; overflow-y: auto; overscroll-behavior: contain; }
+.lia-msg { display: grid; gap: 8px; max-width: 92%; }
+.lia-msg-user { justify-self: end; }
+.lia-msg-lia { justify-self: start; }
+.lia-bubble {
+  margin: 0; padding: 10px 12px; border-radius: var(--radius-md); font-size: 14px; line-height: 1.45;
+  white-space: pre-line; overflow-wrap: anywhere;
+}
+.lia-msg-lia .lia-bubble { background: var(--surface-alt); border: 1px solid var(--border); }
+.lia-msg-user .lia-bubble { background: var(--primary); color: var(--on-primary); }
+.lia-msg-error .lia-bubble { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+.lia-actions, .lia-suggestions { display: flex; flex-wrap: wrap; gap: 6px; }
+.lia-chip {
+  width: auto; padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600;
+}
+.lia-chip:hover { background: var(--surface-alt); }
+.lia-chip-action { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-strong); }
+.lia-chip-action:hover { background: var(--primary); color: var(--on-primary); }
+.lia-typing { margin: 0; color: var(--muted); font-size: 13px; font-style: italic; }
+.lia-form { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
+.lia-form input { flex: 1; min-width: 0; margin: 0; }
+.lia-send { width: auto; }
+.lia-note { margin: 0; padding: 0 14px 10px; font-size: 12px; color: var(--muted); }
+@media (pointer: coarse) {
+  .lia-close, .lia-chip, .lia-send { min-height: 44px; min-width: 44px; }
+}
+@media (max-width: 480px) {
+  .lia-launcher-label { display: none; }
+  .lia-launcher { padding: 6px; }
+  .lia-panel, .lia-launcher.lia-in-app ~ .lia-panel { right: 8px; left: 8px; width: auto; }
+}
+
 /* ---------- Movimento reduzido ---------- */
 @media (prefers-reduced-motion: reduce) {
   button, .list-item, .stat-card, .bottom-nav button, a { transition: none; }

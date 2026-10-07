@@ -20,7 +20,7 @@ const TOKEN = 'token-de-sessao-de-teste';
 //  - cadastro do MFA e leitura do próprio perfil (precisam funcionar para o admin se cadastrar);
 //  - sessão opcional / encerrar sessão (não devolvem dado de administração).
 const OPEN_FOR_SETUP = ['apiMfaStatus', 'apiMfaBeginEnrollment', 'apiMfaConfirmEnrollment', 'apiGetMyProfile'];
-const OPTIONAL_SESSION = ['apiLogout', 'apiTouchSession', 'apiListEvents', 'apiGetFeatureFlags'];
+const OPTIONAL_SESSION = ['apiLogout', 'apiTouchSession', 'apiListEvents', 'apiGetFeatureFlags', 'apiAssistantChat'];
 
 function world({ role = 'admin', flagEnabled = true, enrolled = false } = {}) {
   return routedSql([

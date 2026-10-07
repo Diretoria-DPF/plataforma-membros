@@ -8,6 +8,7 @@
 // decide os papéis, dado vai em bloco JSON escapado e a saída é texto puro.
 import {
   buildPatientMessages, buildEvaluationMessages, buildCaseGenerationMessages, buildLabMessages, buildLabSynthesisMessages,
+  buildAssistantMessages,
 } from '../src/ai/prompts.js';
 import { sanitizeHistory, cleanReply, cleanText, normalizeSynthTerm } from '../src/ai/validators.js';
 import { isCacheable } from '../src/ai/semanticCache.js';
@@ -56,6 +57,13 @@ describe('texto livre do usuário (pergunta e histórico) fica FORA da mensagem 
     const messages = buildLabMessages({ question: payload, benchContext: '', history: [{ role: 'student', text: payload }] });
     expectStructure(messages);
     expect(messages[0].content).not.toContain(payload);
+  });
+
+  test.each(CORPUS)('Lia, guia da plataforma: %#', (payload) => {
+    const messages = buildAssistantMessages({ question: payload, history: [{ role: 'user', text: payload }], role: 'member', panel: 'panel-learn' });
+    expectStructure(messages);
+    expect(messages[0].content).not.toContain(payload);
+    expect(messages[messages.length - 1]).toEqual({ role: 'user', content: payload });
   });
 });
 
@@ -119,6 +127,7 @@ describe('o prompt de sistema não carrega segredo', () => {
   test.each([
     ['paciente', () => buildPatientMessages({ context: { titulo: 'x' }, question: 'oi', history: [] })],
     ['preceptor', () => buildLabMessages({ question: 'oi', benchContext: '', history: [] })],
+    ['Lia', () => buildAssistantMessages({ question: 'oi', history: [], role: 'member', panel: '' })],
     ['avaliação', () => buildEvaluationMessages({ answerKey: {}, attendance: { questionsAsked: [] }, caseMeta: {} })],
     ['geração de caso', () => buildCaseGenerationMessages({ topic: 'x', difficulty: 'Fácil' })],
   ])('%s', (_label, build) => {

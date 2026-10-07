@@ -44,6 +44,8 @@ import * as AttendanceService from './services/attendanceService.js';
 // Fase 3 — IA (Groq) e clínica virtual
 import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
+// Lia, guia da plataforma (orienta e navega; nunca altera dados)
+import * as AssistantService from './services/assistantService.js';
 // PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
 import * as AtlasMoleculeService from './services/atlasMoleculeService.js';
 import * as AtlasTelemetryService from './services/atlasTelemetryService.js';
@@ -119,6 +121,11 @@ export const API_REGISTRY = {
   apiGetFeatureFlags: (sql, env, [sessionToken]) => run(sql, async () => {
     const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
     return { success: true, flags: await FeatureFlagService.getPublicFlagsFor(sql, identity) };
+  }),
+  // Sessão OPCIONAL (como apiListEvents): quem não está logado conversa só com a base fixa.
+  apiAssistantChat: (sql, env, [sessionToken, input]) => run(sql, async (cid) => {
+    const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
+    return AssistantService.chat(sql, env, identity, input || {}, cid);
   }),
   apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),
   apiAdminSetFeatureFlag: (sql, env, [sessionToken, key, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => FeatureFlagService.adminSet(sql, identity, key, input || {}, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),

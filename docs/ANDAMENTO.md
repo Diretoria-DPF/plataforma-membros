@@ -13,6 +13,19 @@ Fases 0, 2 e 3 do plano estão prontas e testadas; a Fase 1 está pela metade; *
 - **Google Ads:** o commit `847ecc2` (script do AdSense no `index.html`) quebrava o e2e `csp` e barraria a publicação do site. Por decisão do usuário (2026-10-06) o script **saiu do `index.html`** por enquanto; para recolocar, o texto está no `847ecc2`, mas antes é preciso liberar `pagead2.googlesyndication.com` (e os demais domínios do AdSense) no CSP da página e ter aviso de consentimento + Privacidade atualizados.
 - **Fora deste lote (próximos passos):** chave do OpenRouter (`gh secret set` pelo script), `MFA_ENCRYPTION_KEY`, ligar `use_orchestrator`, guia "Lia", atalho de promoção, RAG híbrido.
 
+## Atualização de 2026-10-07 — Lia, crachá virtual e orquestrador (branch `feat/v5-lia-cracha`)
+- **Lia** (guia da plataforma; orienta e leva às telas, **nunca altera dados**): `worker/src/assistant/{targets,kb}.js`, `services/assistantService.js`, action `apiAssistantChat` (sessão opcional), flag `chatbot_enabled`, migração **019**. Intenção por regra primeiro (sem IA); eventos com dado vivo só do que a própria pessoa já vê; IA só para quem está logado, tem cota (`assistant`: membro 25, admin 60, visitante 0) e fez pergunta sem intenção; botões só da lista branca por papel; texto da IA nunca vira botão. Front: `frontend/assistant.js`.
+- **Crachá virtual**: `frontend/credential.js` (cartão com papel, "membro desde", QR assinado, ampliar QR, salvar imagem PNG). Abre pelo hub, por qualquer `[data-open-credential]` e pela Lia.
+- **Orquestrador**: o código está pronto desde a #27; falta ligar. Ver o passo a passo em `docs/AMBIENTES.md` ("Ligar e desligar recursos") e o script `tools/ci/gerar-segredo-mfa.ps1`.
+- **Revisões** (`code-reviewer` + `security-reviewer`) feitas e corrigidas: cache compartilhado só para membro, injeção também no histórico, sessão expirada com a Lia aberta, contraste do cartão no tema escuro, QR ampliado a 375 px, corrida no envio, colisões de palavra-chave. Riscos aceitos: O13–O16 em `docs/riscos-residuais.md`.
+- **Números**: Worker 997 testes, 19 migrações válidas, front 115 unitários (+2 falhas só no Windows por fim de linha), e2e `assistant credential csp smoke fase2 mfa home` verdes.
+- **Ativação feita em 2026-10-07**:
+  - **Staging** (`laift-staging`): migrações 016–019 + ledger `schema_migrations` (19 linhas), `MFA_ENCRYPTION_KEY` própria, flags `use_orchestrator` e `chatbot_enabled` ligadas; API e site publicados a partir da branch `feat/v5-lia-cracha` (deploy manual); Lia respondendo em `staging.laift.com.br`.
+  - **Produção** (`plataforma-membro`): branch de backup `backup-pre-016-019-2026-10-07` no Neon, migrações 016–019 + ledger, `MFA_ENCRYPTION_KEY` própria cadastrada e **`use_orchestrator` ligada** (registrada em `audit_logs`). 6 perfis intactos, 0 erros depois. `chatbot_enabled` **segue desligada em produção** até as PRs #35 e #36 serem mescladas e o site/API novos publicados.
+  - Cópias das chaves do MFA em `Desktop\segredo-mfa-staging.txt` e `segredo-mfa-producao.txt`: guardar no cofre e apagar.
+- **Depois de mesclar #35 e #36** (nessa ordem, a #36 reapontada para a `main`): conferir o site em `laift.com.br` e ligar a Lia com `UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'` (ver `docs/AMBIENTES.md`).
+- **Pendências**: o Environment `staging` do GitHub só aceita as branches `feat/*`, `fix/*` e `main` (a branch `staging` foi recusada: adicionar `staging` à regra para o deploy por push funcionar); o Trivy acusa `sharp` HIGH em `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w, corrigido na 0.35.5); apagar a branch de backup do Neon depois de alguns dias.
+
 ## Pull requests
 | PR | Branch | O que traz | Estado |
 |---|---|---|---|
