@@ -35,6 +35,7 @@ export const QUOTA_BUCKETS = {
   evaluate: 'AI_EVALUATE',
   generate_case: 'AI_GENERATE_CASE',
   lab_preceptor: 'AI_LAB_PRECEPTOR',
+  assistant: 'AI_ASSISTANT',
 };
 export const GLOBAL_BUCKET = 'AI_GLOBAL';
 const GLOBAL_IDENTIFIER = 'global';
@@ -44,6 +45,7 @@ const QUOTA_LABELS = {
   evaluate: 'avaliações do preceptor',
   generate_case: 'casos gerados com IA',
   lab_preceptor: 'perguntas ao preceptor do laboratório',
+  assistant: 'perguntas à Lia que usam IA',
 };
 
 // 30 dias: uma rota de síntese didática não muda; o cache existe para não
@@ -169,6 +171,7 @@ export async function getMyQuota(sql, env, identity) {
       evaluate: entry('evaluate'),
       generateCase: entry('generate_case'),
       labPreceptor: entry('lab_preceptor'),
+      assistant: entry('assistant'),
     },
   };
 }

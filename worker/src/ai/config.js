@@ -43,6 +43,8 @@ export const FEATURE_CONFIG = {
   evaluate: { tier: 'smart', maxTokens: 2500, temperature: 0.2, reasoningEffort: 'medium', attemptTimeoutMs: 45000, totalBudgetMs: 55000, json: true },
   generate_case: { tier: 'smart', maxTokens: 6000, temperature: 0.8, reasoningEffort: 'low', attemptTimeoutMs: 45000, totalBudgetMs: 55000, json: true },
   lab_preceptor: { tier: 'smart', maxTokens: 1500, temperature: 0.4, reasoningEffort: 'low', attemptTimeoutMs: 25000, totalBudgetMs: 40000, json: false },
+  // Lia, guia da plataforma: resposta curta, modelo rápido.
+  assistant: { tier: 'fast', maxTokens: 600, temperature: 0.4, reasoningEffort: 'low', attemptTimeoutMs: 15000, totalBudgetMs: 20000, json: false },
 };
 
 export function resolveModel(env, tier) {

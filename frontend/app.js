@@ -117,6 +117,8 @@
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
+      // Lia: a conversa da conta que expirou não pode ficar à vista na tela de login.
+      if (window.LaiftAssistant) window.LaiftAssistant.refresh();
       setStatus('msg-login', 'Sua sessão expirou. Faça login novamente.', 'info');
     }, msLeft);
   }
@@ -700,6 +702,7 @@
     document.getElementById('public-shell').classList.remove('hidden');
     document.getElementById('form-login').reset();
     showPublicScreen('screen-welcome');
+    if (window.LaiftAssistant) window.LaiftAssistant.refresh();
     if (token) callApi('apiLogout', token);
   });
 
@@ -737,6 +740,8 @@
     // nunca ter aberto a aba "Mensagens" (pedido: "sem precisar alterar de
     // tela") — por isso começa aqui, não só dentro do painel de mensagens.
     if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
+    // Lia: relê a flag e zera a conversa da conta anterior.
+    if (window.LaiftAssistant) window.LaiftAssistant.refresh();
   }
 
   /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */

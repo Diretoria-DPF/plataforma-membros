@@ -57,6 +57,20 @@ DATABASE_URL=... node tools/db/migrate.mjs                            # aplica o
 3. Rodar o `--baseline-through 015` em staging e em produção (comando acima).
 4. O token da Cloudflare já usado nos deploys precisa de **Workers Routes: Edit** e **DNS: Edit** na zona `laift.com.br` (staging usa domínio próprio).
 
+## Ligar e desligar recursos (feature flags)
+
+Cada recurso novo nasce **desligado** na tabela `feature_flags`. Para ligar ou desligar, rode no SQL Editor do Neon do ambiente (ou peça pelo painel de administração, que registra em `audit_logs`):
+
+```sql
+UPDATE feature_flags SET enabled = TRUE,  rollout_pct = 100, updated_at = now() WHERE key = 'use_orchestrator';  -- IA com orçamento e cache
+UPDATE feature_flags SET enabled = TRUE,  rollout_pct = 100, updated_at = now() WHERE key = 'chatbot_enabled';   -- Lia
+UPDATE feature_flags SET enabled = FALSE, updated_at = now() WHERE key = 'chatbot_enabled';                      -- desligar
+```
+
+A mudança vale em até 60 segundos (cache de flags em cada instância do Worker). `mfa_required` só se liga depois de **dois** administradores cadastrarem o autenticador; `nvidia_fallback`, só com a `NVIDIA_API_KEY` cadastrada.
+
+Segredo do MFA: `powershell -ExecutionPolicy Bypass -File tools\ci\gerar-segredo-mfa.ps1 -Ambiente staging|producao` (gera, cadastra no Worker sem mostrar o valor e deixa uma cópia fora do repositório para o cofre; recusa trocar uma chave que já existe).
+
 ## Reverter
 
 - **Site ou API, agora**: Cloudflare → Workers & Pages → o Worker → *Deployments* → **Rollback** para a versão anterior (imediato). Depois, `git revert` do commit na `main` para o repositório refletir o que está no ar.

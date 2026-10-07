@@ -116,7 +116,7 @@ export async function getFlagsFor(sql, identity, now = Date.now()) {
 
 // Só estas chaves vão ao navegador (inclusive de anônimos). As de segurança
 // (mfa_required...) e as internas (use_orchestrator, nvidia_fallback) ficam no servidor.
-export const PUBLIC_FLAGS = ['ux_v2_enabled'];
+export const PUBLIC_FLAGS = ['ux_v2_enabled', 'chatbot_enabled'];
 
 export async function getPublicFlagsFor(sql, identity, now = Date.now()) {
   const all = await getFlagsFor(sql, identity, now);

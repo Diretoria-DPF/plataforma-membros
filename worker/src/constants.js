@@ -205,6 +205,11 @@ export const RATE_LIMITS = {
   MFA_ENROLL: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   // Consultas ao cache semântico da IA (acerto não gasta cota, então tem teto próprio).
   AI_CACHE_LOOKUP: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
+  // Lia (guia da plataforma). Resposta por regra não gasta IA, então o teto é
+  // por hora e não por cota: 60 mensagens/h por pessoa logada; sem login, por
+  // IP (NAT de campus é comum, então 30/h dá para uma turma conversar).
+  ASSISTANT_CHAT: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  ASSISTANT_CHAT_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
   // do MFA_VERIFY, para o login legítimo não ser travado por quem gerencia.
   MFA_MANAGE: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
@@ -268,6 +273,7 @@ export const AI_FEATURE = {
   EVALUATE: 'evaluate',
   GENERATE_CASE: 'generate_case',
   LAB_PRECEPTOR: 'lab_preceptor',
+  ASSISTANT: 'assistant',
   HEALTH: 'health',
 };
 
@@ -284,6 +290,9 @@ export const AI_QUOTAS = {
   evaluate: { visitor: 5, member: 10, admin: 40 },
   generate_case: { visitor: 2, member: 4, admin: 20 },
   lab_preceptor: { visitor: 10, member: 30, admin: 100 },
+  // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
+  // Visitante e quem não tem login recebem só a base fixa (cota 0).
+  assistant: { visitor: 0, member: 25, admin: 60 },
 };
 export const AI_QUOTA_WINDOW_SECONDS = 86400;
 

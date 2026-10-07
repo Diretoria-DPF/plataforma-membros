@@ -63,6 +63,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminUpdateEventStatus"
                 - "$ref": "#/components/schemas/apiAdminUpdateTaskStatus"
                 - "$ref": "#/components/schemas/apiAdminUploadEventImage"
+                - "$ref": "#/components/schemas/apiAssistantChat"
                 - "$ref": "#/components/schemas/apiBlockProfile"
                 - "$ref": "#/components/schemas/apiCastVote"
                 - "$ref": "#/components/schemas/apiClearConversation"
@@ -691,6 +692,22 @@ components:
             - description: "imageMimeType"
           minItems: 0
           maxItems: 4
+    apiAssistantChat:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiAssistantChat"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiBlockProfile:
       type: "object"
       required:
