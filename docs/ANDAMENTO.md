@@ -19,7 +19,12 @@ Fases 0, 2 e 3 do plano estão prontas e testadas; a Fase 1 está pela metade; *
 - **Orquestrador**: o código está pronto desde a #27; falta ligar. Ver o passo a passo em `docs/AMBIENTES.md` ("Ligar e desligar recursos") e o script `tools/ci/gerar-segredo-mfa.ps1`.
 - **Revisões** (`code-reviewer` + `security-reviewer`) feitas e corrigidas: cache compartilhado só para membro, injeção também no histórico, sessão expirada com a Lia aberta, contraste do cartão no tema escuro, QR ampliado a 375 px, corrida no envio, colisões de palavra-chave. Riscos aceitos: O13–O16 em `docs/riscos-residuais.md`.
 - **Números**: Worker 997 testes, 19 migrações válidas, front 115 unitários (+2 falhas só no Windows por fim de linha), e2e `assistant credential csp smoke fase2 mfa home` verdes.
-- **Próximos passos do lote** (ordem segura, staging antes): aplicar 016–019 no Neon de staging e depois no de produção (com branch de backup), `gerar-segredo-mfa.ps1`, ligar `use_orchestrator` e `chatbot_enabled`, conferir pela tela.
+- **Ativação feita em 2026-10-07**:
+  - **Staging** (`laift-staging`): migrações 016–019 + ledger `schema_migrations` (19 linhas), `MFA_ENCRYPTION_KEY` própria, flags `use_orchestrator` e `chatbot_enabled` ligadas; API e site publicados a partir da branch `feat/v5-lia-cracha` (deploy manual); Lia respondendo em `staging.laift.com.br`.
+  - **Produção** (`plataforma-membro`): branch de backup `backup-pre-016-019-2026-10-07` no Neon, migrações 016–019 + ledger, `MFA_ENCRYPTION_KEY` própria cadastrada e **`use_orchestrator` ligada** (registrada em `audit_logs`). 6 perfis intactos, 0 erros depois. `chatbot_enabled` **segue desligada em produção** até as PRs #35 e #36 serem mescladas e o site/API novos publicados.
+  - Cópias das chaves do MFA em `Desktop\segredo-mfa-staging.txt` e `segredo-mfa-producao.txt`: guardar no cofre e apagar.
+- **Depois de mesclar #35 e #36** (nessa ordem, a #36 reapontada para a `main`): conferir o site em `laift.com.br` e ligar a Lia com `UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'` (ver `docs/AMBIENTES.md`).
+- **Pendências**: o Environment `staging` do GitHub só aceita as branches `feat/*`, `fix/*` e `main` (a branch `staging` foi recusada: adicionar `staging` à regra para o deploy por push funcionar); o Trivy acusa `sharp` HIGH em `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w, corrigido na 0.35.5); apagar a branch de backup do Neon depois de alguns dias.
 
 ## Pull requests
 | PR | Branch | O que traz | Estado |

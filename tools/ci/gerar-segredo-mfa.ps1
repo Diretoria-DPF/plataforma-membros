@@ -20,7 +20,10 @@ param(
   [switch]$Substituir
 )
 
-$ErrorActionPreference = 'Stop'
+# 'Continue' (não 'Stop'): no Windows PowerShell 5.1 qualquer linha que o wrangler escreva no stderr (um
+# simples aviso de versão) viraria erro. Os comandos nativos são conferidos por $LASTEXITCODE e os
+# cmdlets que gravam usam -ErrorAction Stop.
+$ErrorActionPreference = 'Continue'
 $Nome = 'MFA_ENCRYPTION_KEY'
 $Raiz = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Worker = Join-Path $Raiz 'worker'
@@ -50,12 +53,12 @@ try {
 
   # Primeiro o cofre local, depois o Worker: se o wrangler falhar, a chave não se perde nem fica órfã.
   $cabecalho = "LAIFT - $Nome ($Ambiente) gerada em $((Get-Date).ToString('yyyy-MM-dd HH:mm'))`r`nGuarde no cofre de senhas e apague este arquivo. Perder esta chave invalida o MFA de todos.`r`n`r`n"
-  Set-Content -LiteralPath $SalvarEm -Value ($cabecalho + $chave) -Encoding UTF8
+  Set-Content -LiteralPath $SalvarEm -Value ($cabecalho + $chave) -Encoding UTF8 -ErrorAction Stop
   & icacls $SalvarEm /inheritance:r /grant:r "${env:USERNAME}:(R,W)" *> $null
 
   $chave | & npx --yes wrangler secret put $Nome @EnvArgs
   if ($LASTEXITCODE -ne 0) {
-    Remove-Item -LiteralPath $SalvarEm -Force
+    Remove-Item -LiteralPath $SalvarEm -Force -ErrorAction Stop
     throw 'O wrangler não conseguiu gravar o segredo; a cópia local foi removida.'
   }
   $chave = $null
