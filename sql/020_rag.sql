@@ -10,6 +10,11 @@
 --                Índice HNSW (cosseno) com parâmetros explícitos e índice GIN trigrama.
 -- ai_usage_log   ganha retrieval_used (a resposta usou trechos recuperados). A restrição
 --                ai_usage_log_feature_chk já aceita 'assistant' desde a 019: sem ajuste.
+--                É tabela QUENTE (uma linha por chamada de IA): o ALTER TABLE pede bloqueio
+--                exclusivo e, se uma transação longa segurar a tabela, ele entraria na fila e
+--                travaria toda gravação atrás dele. Por isso vai por último no arquivo (o
+--                bloqueio dura só até o fim da transação) e sob lock_timeout de 3 s: passou
+--                disso, a migração inteira é desfeita e basta rodar de novo.
 -- Aditiva e idempotente. Requer a extensão pgvector (suportada pelo Neon) e pg_trgm.
 -- Trocar de modelo de embedding (outra dimensão) exige NOVA migração.
 -- Reversão: sql/down/020_rag.sql (a extensão vector NÃO é removida).
@@ -32,4 +37,10 @@ CREATE TABLE IF NOT EXISTS kb_chunks (
 CREATE INDEX IF NOT EXISTS idx_kb_chunks_embedding_hnsw ON kb_chunks USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64);
 CREATE INDEX IF NOT EXISTS idx_kb_chunks_content_trgm ON kb_chunks USING gin (content gin_trgm_ops);
 
+-- SET/RESET de sessão, e não SET LOCAL. O runner (tools/db/migrate.mjs) envia o arquivo numa
+-- única chamada (transação implícita), onde SET LOCAL também valeria; mas aplicado à mão
+-- (psql -f, console do Neon) cada comando roda em autocommit e SET LOCAL não teria efeito.
+-- Se o ALTER estourar o tempo, o ROLLBACK desfaz também este SET.
+SET lock_timeout = '3s';
 ALTER TABLE ai_usage_log ADD COLUMN IF NOT EXISTS retrieval_used BOOLEAN NOT NULL DEFAULT FALSE;
+RESET lock_timeout;

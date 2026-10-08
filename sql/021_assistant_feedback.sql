@@ -3,15 +3,27 @@
 -- Licença proprietária: ver LICENSE na raiz do repositório.
 -- 021_assistant_feedback.sql — respostas da Lia e feedback (polegar) das pessoas.
 --
--- assistant_messages  uma linha por resposta da Lia a uma pessoa logada. Guarda só o
---                     mínimo: hash da pergunta normalizada (NUNCA o texto da pergunta),
---                     tópico, origem (regra, ao vivo, IA...), a resposta (texto gerado a
---                     partir de um prompt sem dado pessoal), citações e se foi degradada.
+-- assistant_messages  uma linha por resposta da Lia a uma pessoa logada. Guarda: hash da
+--                     pergunta normalizada (NUNCA o texto da pergunta), tópico, origem
+--                     (regra, ao vivo, IA, moderação...), a resposta EM TEXTO, citações e
+--                     se foi degradada. A resposta fica legível por até 180 dias. O prompt
+--                     enviado à IA não leva dado pessoal, mas a resposta gerada não é
+--                     garantidamente livre dele; por isso é tratada como dado ligado ao
+--                     perfil (retenção e exclusão de conta abaixo).
 -- assistant_feedback  avaliação de uma resposta (up/down), categoria e comentário livre.
---                     O comentário pode ter dado pessoal: após 90 dias vira hash
---                     irreversível e o texto é apagado; após 12 meses o registro sai
---                     (ADR 0005; worker/src/maintenance.js e tools/db/cleanup-feedback.mjs).
--- Exclusão de conta: as duas tabelas saem junto (ON DELETE CASCADE).
+--                     O comentário pode ter dado pessoal e fica em texto por até 90 dias;
+--                     depois é anonimizado e comment_anonymized_at marca o momento.
+--
+-- Retenção (ADR 0005): feita só pelo cron diário de worker/src/maintenance.js. Não existe
+-- script manual de limpeza (não há tools/db/cleanup-feedback.mjs).
+--   comentário com mais de 90 dias → anonimizado;
+--   resposta com mais de 180 dias → apagada, e o ON DELETE CASCADE de
+--   assistant_feedback.message_id leva junto a avaliação dela. Prazo efetivo da avaliação:
+--   180 dias. O corte de 365 dias em assistant_feedback é só trava de segurança.
+-- Exclusão de conta: as duas tabelas saem junto (ON DELETE CASCADE em profile_id). O
+-- CASCADE varre assistant_feedback por profile_id, por isso ela tem índice próprio.
+-- comment_hash: sem uso na limpeza; só é zerada em assistantFeedbackService.upsertFeedback.
+-- Ao remover a coluna, remover aquela linha junto.
 -- Aditiva e idempotente. Reversão: sql/down/021_assistant_feedback.sql.
 
 CREATE TABLE IF NOT EXISTS assistant_messages (
@@ -24,7 +36,7 @@ CREATE TABLE IF NOT EXISTS assistant_messages (
   sources        JSONB NOT NULL DEFAULT '[]'::jsonb,
   degraded       BOOLEAN NOT NULL DEFAULT FALSE,
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-  CONSTRAINT assistant_messages_source_chk CHECK (source IN ('kb', 'live', 'ai', 'fallback', 'refusal', 'suspended')),
+  CONSTRAINT assistant_messages_source_chk CHECK (source IN ('kb', 'live', 'ai', 'fallback', 'refusal', 'suspended', 'moderation')),
   CONSTRAINT assistant_messages_len CHECK (char_length(answer) <= 4000 AND char_length(question_hash) <= 64),
   CONSTRAINT assistant_messages_sources_chk CHECK (jsonb_typeof(sources) = 'array')
 );
@@ -50,3 +62,4 @@ CREATE TABLE IF NOT EXISTS assistant_feedback (
 );
 CREATE INDEX IF NOT EXISTS idx_assistant_feedback_created ON assistant_feedback (created_at);
 CREATE INDEX IF NOT EXISTS idx_assistant_feedback_status ON assistant_feedback (status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_assistant_feedback_profile ON assistant_feedback (profile_id);
