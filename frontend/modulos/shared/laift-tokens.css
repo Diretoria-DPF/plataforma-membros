@@ -162,9 +162,11 @@
   --laift-font: "Segoe UI", Inter, system-ui, -apple-system, Roboto, sans-serif;
   --laift-font-mono: ui-monospace, "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
 
-  /* Foco visível, igual ao da plataforma */
+  /* Foco visível, igual ao da plataforma. --laift-focus-color é cor SÓLIDA:
+     com alfa (70%) o anel caía a 2,95:1 sobre --layer-2 (claro). Sólida, a
+     primária tem ≥ 3:1 em --layer-0..3 nos dois temas (glass-contrast.test.mjs). */
   --laift-focus-ring: 0 0 0 3px color-mix(in srgb, var(--laift-primary) 45%, transparent);
-  --laift-focus-color: color-mix(in srgb, var(--laift-primary) 70%, transparent);
+  --laift-focus-color: var(--laift-primary);
 
   /* Acento do módulo (ver cabeçalho) */
   --module-accent: var(--module-accent-light, var(--laift-primary));
