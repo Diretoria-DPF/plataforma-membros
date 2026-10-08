@@ -416,10 +416,17 @@ export const MODERATION = {
   PAGE_SIZE: 25,
 };
 
+// Séries do Início (timeseriesService.js). 6m são 6 buckets mensais (mês corrente incluso).
+// study_hours = soma de learning_attempts.duration_seconds em horas (2 casas).
 export const TIMESERIES = {
-  RANGES: { '30d': { granularity: 'day', days: 30 }, '90d': { granularity: 'day', days: 90 }, '12m': { granularity: 'week', weeks: 52 } },
+  RANGES: {
+    '30d': { granularity: 'day', count: 30 },
+    '90d': { granularity: 'day', count: 90 },
+    '6m': { granularity: 'month', count: 6 },
+    '12m': { granularity: 'week', count: 52 },
+  },
   DEFAULT_RANGE: '30d',
-  METRICS: ['activity', 'events', 'learning', 'tasks'],
+  METRICS: ['activity', 'events', 'learning', 'tasks', 'study_hours'],
   DEFAULT_METRIC: 'activity',
   CACHE_TTL_SECONDS: 300,
 };
