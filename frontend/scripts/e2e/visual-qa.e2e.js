@@ -196,7 +196,16 @@ function readLayout() {
       return sides.some((side) => parseFloat(style['border' + side + 'Width']) > 0);
     })
     .map(describe);
+  // Abas da navegação inferior do membro: cada uma precisa estar inteira dentro da tela (sem rolagem).
+  const hiddenTabs = Array.from(document.querySelectorAll('#nav-group-member button'))
+    .filter((el) => el.getClientRects().length > 0)
+    .filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.left < -0.5 || r.right > root.clientWidth + 0.5;
+    })
+    .map((el) => (el.textContent || '').trim() || describe(el));
   return {
+    hiddenTabs,
     overflow: root.scrollWidth - root.clientWidth,
     theme: root.getAttribute('data-theme'),
     flag: root.hasAttribute('data-flag-ux-v2-enabled'),
@@ -264,6 +273,7 @@ async function measure(app, qa, slug, mark) {
   verify(layout.theme === qa.theme, `${where}: data-theme="${layout.theme}" em vez de "${qa.theme}"`);
   verify(layout.flag, `${where}: flag ux_v2 não aplicada (sem data-flag-ux-v2-enabled no html)`);
   verify(layout.borders.length === 0, `${where}: cards com borda sob ux_v2: ${layout.borders.join(', ')}`);
+  verify(layout.hiddenTabs.length === 0, `${where}: abas da navegação inferior fora da tela: ${layout.hiddenTabs.join(', ')}`);
   checkErrors(app, qa, mark, where);
   if (qa.vp.width < 600) await checkTargets(app.page, where);
   await checkAxe(app.page, where);

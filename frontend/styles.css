@@ -241,9 +241,6 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
   min-height: 56px;
 }
 .bottom-nav button svg { width: 22px; height: 22px; }
-/* 8 abas de membro em 375 px: sem isto "Mensagens" empurra a barra para fora da tela.
-   A faixa do admin (rolável) mantém o min-width de 78px dela. */
-#nav-group-member button { min-width: 0; }
 
 .nav-badge {
   position: absolute; top: 2px; right: calc(50% - 22px);
@@ -585,6 +582,11 @@ button.learn-card:focus-visible .learn-card-title { color: var(--primary-strong)
    espaço. */
 #nav-group-member button { flex: 1 0 auto; min-width: 48px; padding-left: 6px; padding-right: 6px; }
 #nav-group-member button span { white-space: nowrap; }
+/* Celular: as 8 abas de membro dividem a largura por igual e cabem todas (a 375 px o Perfil não
+   some atrás da rolagem). Em telas menores que o rótulo suporta, a faixa rolável continua valendo. */
+@media (max-width: 480px) {
+  #nav-group-member button { flex: 1 1 0; min-width: 0; padding-left: 1px; padding-right: 1px; }
+}
 
 /* As seções são itens do grid de .app-main: sem min-width: 0, o título
    (nowrap) da barra do visualizador alarga a coluna além da tela no
