@@ -22,8 +22,8 @@
 --   180 dias. O corte de 365 dias em assistant_feedback é só trava de segurança.
 -- Exclusão de conta: as duas tabelas saem junto (ON DELETE CASCADE em profile_id). O
 -- CASCADE varre assistant_feedback por profile_id, por isso ela tem índice próprio.
--- comment_hash: sem uso na limpeza; só é zerada em assistantFeedbackService.upsertFeedback.
--- Ao remover a coluna, remover aquela linha junto.
+-- Anonimização do comentário: o texto é apagado (comment = NULL) e comment_anonymized_at registra
+-- quando; não há hash do comentário (hash de texto curto se desfaz por dicionário).
 -- Aditiva e idempotente. Reversão: sql/down/021_assistant_feedback.sql.
 
 CREATE TABLE IF NOT EXISTS assistant_messages (
@@ -50,8 +50,7 @@ CREATE TABLE IF NOT EXISTS assistant_feedback (
   rating                 TEXT NOT NULL,
   category               TEXT,
   comment                TEXT,
-  comment_hash           TEXT,
-  status                 TEXT NOT NULL DEFAULT 'new',
+  status                TEXT NOT NULL DEFAULT 'new',
   created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
   comment_anonymized_at  TIMESTAMPTZ,
   CONSTRAINT assistant_feedback_unique UNIQUE (message_id, profile_id),
