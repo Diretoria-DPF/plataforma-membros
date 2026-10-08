@@ -165,7 +165,7 @@
   /* Foco visível, igual ao da plataforma. --laift-focus-color é cor SÓLIDA:
      com alfa (70%) o anel caía a 2,95:1 sobre --layer-2 (claro). Sólida, a
      primária tem ≥ 3:1 em --layer-0..3 nos dois temas (glass-contrast.test.mjs). */
-  --laift-focus-ring: 0 0 0 3px color-mix(in srgb, var(--laift-primary) 45%, transparent);
+  --laift-focus-ring: 0 0 0 3px var(--laift-focus-color); /* sólido: 45% de alfa dava 2,0:1 no claro (WCAG 1.4.11) */
   --laift-focus-color: var(--laift-primary);
 
   /* Acento do módulo (ver cabeçalho) */
