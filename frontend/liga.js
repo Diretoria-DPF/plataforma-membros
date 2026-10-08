@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Página pública da Liga (/liga). Só mostra o CTA de inscrição quando a flag
 // pública selection_open está ligada e o link do formulário é válido.
 // Todo texto é escrito com textContent (nunca HTML bruto).
