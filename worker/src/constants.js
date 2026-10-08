@@ -423,3 +423,17 @@ export const TIMESERIES = {
   DEFAULT_METRIC: 'activity',
   CACHE_TTL_SECONDS: 300,
 };
+
+// ---- Lia: feedback (D2), painel de satisfação e reindexação da base (D1) ----
+// Página e comentário usam FEEDBACK (acima). Aqui só o que o painel e a reindexação precisam.
+export const FEEDBACK_STATS = {
+  DAYS_DEFAULT: 30,   // janela padrão do painel de satisfação
+  DAYS_MAX: 365,      // janela máxima aceita na consulta agregada
+  LIST_MAX: 100,      // teto de itens por página na lista do admin
+};
+
+Object.assign(RATE_LIMITS, {
+  // Reindexação reescreve kb_chunks e gasta embeddings: uma por minuto, na instância toda.
+  // (ASSISTANT_REINDEX, de 5/h, continua valendo para o que já existia; não é usado aqui.)
+  ASSISTANT_REINDEX_MINUTE: { MAX_ATTEMPTS: 1, WINDOW_SECONDS: 60 },
+});

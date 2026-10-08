@@ -47,6 +47,8 @@ import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
 // Lia, guia da plataforma (orienta e navega; nunca altera dados)
 import * as AssistantService from './services/assistantService.js';
+// Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
+import * as AssistantFeedbackService from './services/assistantFeedbackService.js';
 // PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
 import * as AtlasMoleculeService from './services/atlasMoleculeService.js';
 import * as AtlasTelemetryService from './services/atlasTelemetryService.js';
@@ -130,6 +132,15 @@ export const API_REGISTRY = {
     const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
     return AssistantService.chat(sql, env, identity, input || {}, cid);
   }),
+  // Lia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
+  apiAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.submitFeedback(sql, identity, asInput(input), cid)),
+  apiAdminListAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.listFeedback(sql, identity, asInput(input))),
+  apiAdminUpdateAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.updateFeedback(sql, identity, asInput(input), cid)),
+  apiAdminAssistantStats: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.feedbackStats(sql, identity, asInput(input))),
+  // Fontes do acervo para as citações (sem conteúdo). Exige sessão e portão de MFA como as demais
+  // actions: mfaGate.test.js só isenta de sessão obrigatória as actions listadas em OPTIONAL_SESSION.
+  apiAssistantSources: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => AssistantFeedbackService.listKbSources(sql)),
+  apiAdminReindexKb: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.reindexKb(sql, env, identity, cid)),
   apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),
   apiAdminSetFeatureFlag: (sql, env, [sessionToken, key, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => FeatureFlagService.adminSet(sql, identity, key, input || {}, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
 
