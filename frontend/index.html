@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>LAIFT – Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</title>
   <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Quiz, casos clínicos, laboratório virtual e atlas 3D para estudantes de Farmácia.">
@@ -587,7 +587,7 @@
           </div>
           <div class="card">
             <h3>Indicadores em gráfico</h3>
-            <canvas id="admin-dashboard-chart" height="220" role="img" aria-label="Gráfico de indicadores administrativos"></canvas>
+            <div id="admin-dashboard-chart"></div>
           </div>
         </section>
 
@@ -809,6 +809,14 @@
             <div id="admin-ai-sat-list"></div>
             <button type="button" class="secondary hidden" id="btn-admin-ai-sat-more">Carregar mais</button>
           </div>
+          <div class="card" id="admin-moderation-card">
+            <div class="ai-admin-head">
+              <h2 id="h-admin-moderation">Moderação da Lia</h2>
+              <button type="button" class="secondary" data-action="LaiftAdminModeration.reload">Atualizar</button>
+            </div>
+            <p class="muted">Incidentes de moderação da Lia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
+            <div id="admin-moderation"></div>
+          </div>
           <div class="card">
             <h2>Cotas diárias por pessoa</h2>
             <div id="admin-ai-quotas"><p class="empty-state">Aparecem depois do teste das chaves.</p></div>
@@ -831,7 +839,7 @@
     Modais genéricos. O conteúdo dinâmico (mensagem de confirmação) é sempre
     definido via textContent por app.js — nunca via innerHTML.
   -->
-  <div id="modal-confirm" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+  <div id="modal-confirm" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title" aria-describedby="modal-confirm-message">
     <div class="modal-box">
       <h3 id="modal-confirm-title">Confirmar ação</h3>
       <p id="modal-confirm-message"></p>
@@ -925,11 +933,6 @@
     </div>
   </div>
 
-  <!-- Chart.js 4.5.1 (o mesmo do atlas 3D): arquivo que EXISTE no pacote npm,
-       com SRI calculado dele. O 4.4.4 anterior apontava para um
-       chart.umd.min.js que o pacote não tem — o jsDelivr o gerava na hora, e
-       o hash podia deixar de bater (docs/FASE_4_QUALIDADE.md §5). -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous" defer></script>
   <!--
     Mensageria E2EE (Fase 3f): dois módulos ES, carregados ANTES de
     app.js (script clássico com defer). Scripts type="module" já são
@@ -968,6 +971,9 @@
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>
+  <!-- Moderação da Lia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
+  <script src="modulos/shared/safe-dom.js" defer></script>
+  <script src="admin-moderation.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

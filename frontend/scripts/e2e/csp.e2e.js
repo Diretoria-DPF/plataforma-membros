@@ -118,6 +118,8 @@ function staticChecks() {
     if (isAtlasPage && script.includes("'unsafe-eval'")) problems.push(`${rel}: Atlas só pode ter 'wasm-unsafe-eval' (não precisa de 'unsafe-eval')`);
     if (isAtlasPage && !script.includes("'wasm-unsafe-eval'")) problems.push(`${rel}: Atlas sem 'wasm-unsafe-eval' — DRACOLoader (WebAssembly) não inicializa`);
     if (script.some((s) => /^https?:\/\//.test(s) && s !== 'https://cdn.jsdelivr.net')) problems.push(`${rel}: script-src com host além do jsDelivr`);
+    // A plataforma (index.html) não carrega script de terceiro: o gráfico do painel admin é SVG próprio (charts.js).
+    if (rel === 'index.html' && (script.length !== 1 || script[0] !== "'self'")) problems.push(`${rel}: script-src da plataforma deve ser só 'self' (sem CDN de terceiro)`);
     if (script.includes('*') || script.includes('https:') || script.includes('data:')) problems.push(`${rel}: script-src aberto demais`);
     if ((p['object-src'] || []).join(' ') !== "'none'") problems.push(`${rel}: object-src não é 'none'`);
     if ((p['base-uri'] || []).join(' ') !== "'self'") problems.push(`${rel}: base-uri não é 'self'`);
@@ -307,7 +309,7 @@ async function memberTour(pkgs) {
     if (pkgs) {
       check(served.missing.length === 0, 'toda URL do jsDelivr pedida existe no pacote npm pinado' + (served.missing.length ? ': ' + served.missing.join(', ') : ''));
       check(quizLib && labLibs && studioLibs.mol,
-        'bibliotecas de CDN carregam com o SRI conferido pelo navegador (SmilesDrawer, 3Dmol, Chart.js)');
+        'bibliotecas de CDN dos módulos carregam com o SRI conferido pelo navegador (SmilesDrawer, 3Dmol)');
       // Atlas v2: three.js é vendorizado (vendor/three/), sem SRI/CDN — o
       // que este teste confere aqui é só que a cena WebGL montou.
       check(atlas.canvas, 'atlas 3D monta a cena WebGL sob a CSP');
@@ -337,8 +339,13 @@ async function adminTour(pkgs) {
     const fiscal = await (await app.page.waitForSelector('#admin-fiscal-frame-wrap iframe')).contentFrame();
     await fiscal.waitForLoadState('load').catch(() => {});
     await fiscal.waitForTimeout(500);
+    // Painel admin sem biblioteca de gráficos de terceiros: o gráfico é o SVG próprio de LaiftCharts
+    // (com a tabela sr-only) e a plataforma só executa script da mesma origem.
+    check(await app.page.evaluate(() => typeof Chart === 'undefined'), 'painel admin: sem Chart.js (nenhum script de terceiro é permitido na plataforma)');
+    check(await app.page.evaluate(() => [...document.scripts].every((s) => !s.src || new URL(s.src).origin === location.origin)), 'plataforma: todo <script> é da mesma origem (nenhum de terceiro)');
+    check(await app.page.evaluate(() => !!document.querySelector('#admin-dashboard-chart svg.laift-chart__svg') && !!document.querySelector('#admin-dashboard-chart table.sr-only')),
+      'painel admin: gráfico de indicadores é SVG próprio, com tabela alternativa');
     if (pkgs) {
-      check(await app.page.evaluate(() => typeof Chart !== 'undefined'), 'Chart.js do painel admin carrega com SRI (4.5.1, arquivo do pacote npm)');
       check(await fiscal.evaluate(() => typeof Html5QrcodeScanner !== 'undefined'), 'html5-qrcode do terminal fiscal carrega com SRI');
     }
     report(violations, 'admin (painel, gráficos, fiscal e IA)');
