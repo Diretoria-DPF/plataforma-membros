@@ -152,6 +152,22 @@ summary:focus-visible,
 }
 .offline-banner[hidden] { display: none; }
 
+/* ---------- Atalhos de teclado (keyboard-shortcuts.js) ---------- */
+/* Grade termo | descrição com espaço entre as linhas; o termo é uma tecla (kbd), texto em tokens. */
+.shortcuts-list { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 16px; align-items: center; margin: 12px 0 16px; }
+.shortcuts-list dt { margin: 0; }
+.shortcuts-list dd { margin: 0; color: var(--laift-text); line-height: 1.4; }
+.shortcuts-list kbd {
+  display: inline-block; min-width: 2.2em; padding: 2px 8px; text-align: center;
+  border: 1px solid var(--laift-border-strong); border-radius: var(--laift-radius-sm);
+  background: var(--laift-surface-alt); color: var(--laift-text);
+  font-family: var(--laift-font-mono); font-size: 13px;
+}
+
+/* ---------- Títulos de autenticação (cadastro, redefinição) ---------- */
+/* Mesmo tamanho que o inline style="font-size:1.5em" tinha: tira o estilo inline da CSP de estilo. Sem flag. */
+.auth-heading { font-size: 1.5em; }
+
 /* ---------- Painel Início ---------- */
 /* .hidden usa !important, então o display:grid não reabre o painel escondido. */
 #panel-home { display: grid; gap: var(--density-gap); }
@@ -280,9 +296,8 @@ summary:focus-visible,
 .lia-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface-alt); }
 .lia-title { display: grid; flex: 1; min-width: 0; }
 .lia-sub { font-size: 12px; color: var(--muted); }
-.lia-close { position: relative; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; }
-/* Área de toque de 44x44 com o mouse; o desenho continua 36x36 e o foco visível é o do próprio botão. */
-.lia-close::after { content: ""; position: absolute; inset: -4px; }
+/* 44x44 de alvo de toque (igual ao pointer: coarse abaixo). A margem negativa à direita mantém o ícone no lugar de antes (36 px). */
+.lia-close { min-width: 44px; min-height: 44px; margin-right: -4px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; }
 @media (hover: hover) {
   .lia-close:hover { background: var(--border); color: var(--text); }
 }
@@ -517,7 +532,10 @@ summary:focus-visible,
   border: 0;
   border-radius: var(--laift-radius-xl);
   background: var(--layer-1);
+  display: flex; justify-content: center; min-height: 112px; /* altura reservada: a Lia montada não faz o login pular (CLS) */
 }
+/* Recorte de cabeça do hero (crop head, lia.js): quadrado 84x84 -> caixa 1:1 de 112 px, não o 2:3 padrão. */
+:root[data-flag-ux-v2-enabled] .hero .lia { aspect-ratio: 1 / 1; --lia-size: 112px; }
 
 /* Módulos com canvas 3D (Atlas imersivo): nenhum desfoque sobre o canvas;
    barras voltam ao fundo opaco. */
