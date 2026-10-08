@@ -354,3 +354,32 @@ test('app.js emite laift:panelchange só quando a tela muda de fato; learning.js
   assert.match(learning, /if \(previousModuleId !== id\) emitModuleChange\(id\);/);
   assert.match(learning, /if \(wasOpen\) emitModuleChange\(''\);/);
 });
+
+// ---------- Humor da Lia (L7): cola em assistant.js (lógica em assistant-mood-glue.js) ----------
+
+test('a cola do humor: sessão só na memória, zerada ao trocar de conta, eventos ligados nos pontos certos', () => {
+  const src = read('frontend/assistant.js');
+  assert.match(src, /function moodLib\(\) \{ return root\.AssistantMood; \}/);
+  assert.match(src, /ui\.mood = moodLib\(\)\.newSession\(\);/); // refresh: login, logout ou sessão expirada
+  assert.match(src, /ui\.mood = moodLib\(\)\.onQuestion\(ui\.mood, message, Date\.now\(\)\)/); // quick-reply e asks-detail
+  assert.match(src, /ui\.mood = moodLib\(\)\.onReply\(ui\.mood, mod\.mode, Date\.now\(\)\)/); // negative pela moderação
+  assert.match(src, /ui\.mood = moodLib\(\)\.onFeedback\(ui\.mood, payload && payload\.rating\)/); // positive no 👍
+  assert.match(src, /moodLib\(\)\.greeting\(ui\.mood, Math\.random\)/); // saudação com variação
+  assert.match(src, /fixedLine\('error', text\)/);
+  assert.match(src, /fixedLine\('confirmation', text\)/);
+  assert.doesNotMatch(src, /text: GREETING\b/, 'a frase fixa de boas-vindas saiu');
+  assert.doesNotMatch(src, /setInterval/);
+});
+
+test('idle da Lia: uma pose por vez, só em repouso, parada ao fechar e ao reagir', () => {
+  const src = read('frontend/assistant.js');
+  const body = (name, next) => src.slice(src.indexOf(`function ${name}`), src.indexOf(`function ${next}`));
+  assert.match(src, /ui\.idle = moodLib\(\)\.createIdle\(/);
+  assert.match(src, /apply: function \(pose\) \{ ui\.panelLia\.setState\('idle', pose\); \}/);
+  assert.match(src, /getAttribute\('data-state'\) === 'idle'/, 'só em repouso: pensando, falando e celebrando têm data-state próprio');
+  assert.match(src, /ui\.restTimer === null && !ui\.moderation\.isSuspended\(\)/);
+  assert.match(body('reactLia', 'speakThenRest'), /ui\.idle\.disarm\(\)/, 'qualquer reação para o idle');
+  assert.match(body('closePanel', 'hideLauncher'), /ui\.idle\.disarm\(\)/, 'fechar o painel para o idle');
+  assert.match(body('speakThenRest', 'failReply'), /reactLia\('setState', 'idle'\); ui\.idle\.arm\(\)/, 'volta a mexer só depois de falar');
+  assert.match(body('restLiaState', 'mountPanelLia'), /ui\.idle\.arm\(\)/);
+});

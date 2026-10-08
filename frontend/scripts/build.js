@@ -53,7 +53,7 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 // alteração. Adicione aqui qualquer nova página estática do site.
 // robots.txt, sitemap.xml e llms.txt precisam estar na RAIZ do domínio para
 // buscadores e crawlers de IA os encontrarem (por isso exigem domínio próprio).
-['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-hints.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css'].forEach((name) => {
+['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-hints.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 

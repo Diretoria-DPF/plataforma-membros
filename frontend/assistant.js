@@ -28,7 +28,6 @@
   var HISTORY_TURNS = 5;
   var MESSAGE_MAX = 500;
   var LABEL_MAX = 40;
-  var GREETING = 'Oi! Eu sou a Lia, a guia da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. Sobre o que você quer saber?';
   var GREETING_SUGGESTIONS = ['Eventos abertos', 'Como funciona o laboratório?', 'Meu crachá', 'Módulos de estudo'];
   var ERROR_TEXT = 'Não consegui responder agora. Tente de novo em instantes.';
   var DEGRADED_TEXT = 'Resposta aproximada: a IA está indisponível no momento.';
@@ -153,6 +152,7 @@
   /** Aplica um método da Lia nas instâncias montadas (bolha e painel). Toda reação cancela o repouso pendente. */
   function reactLia(method) {
     clearRestTimer();
+    ui.idle.disarm(); // qualquer reação suspende as micro-poses idle
     var args = Array.prototype.slice.call(arguments, 1);
     [ui.launcherLia, ui.panelLia].forEach(function (inst) {
       if (inst) inst[method].apply(inst, args);
@@ -162,11 +162,11 @@
   /** Resposta chegou: a Lia fala e volta ao repouso, se nada mais acontecer antes. */
   function speakThenRest() {
     reactLia('say');
-    ui.restTimer = root.setTimeout(function () { reactLia('setState', 'idle'); }, SPEAK_MS);
+    ui.restTimer = root.setTimeout(function () { reactLia('setState', 'idle'); ui.idle.arm(); }, SPEAK_MS);
   }
 
   function failReply(text) {
-    addMessage({ role: 'lia', text: text, error: true });
+    addMessage({ role: 'lia', text: text === ERROR_TEXT ? fixedLine('error', text) : text, error: true });
     reactLia('setState', 'confused');
   }
 
@@ -197,7 +197,7 @@
   /** Repouso da Lia: suspensa enquanto o chat estiver suspenso; senão, reage à tela atual. */
   function restLiaState() {
     if (ui.moderation.isSuspended()) reactLia('suspend');
-    else reactLia('react', hint('context') || moduleOf(currentPanel()));
+    else { reactLia('react', hint('context') || moduleOf(currentPanel())); ui.idle.arm(); }
   }
 
   /** Painel aberto: corpo inteiro no cabeçalho, reage à tela atual e acena na primeira abertura da página. */
@@ -252,6 +252,11 @@
   /** Moderação (assistant-moderation.js): obrigatória, carregada antes deste arquivo. */
   function modLib() { return root.AssistantModeration; }
 
+  /** Humor da sessão (assistant-mood-glue.js, antes deste arquivo). Fica só em ui.mood, na memória. */
+  function moodLib() { return root.AssistantMood; }
+  /** Frase fixa da Lia; no tom reflexivo ganha uma variação na frente. */
+  function fixedLine(kind, text) { var out = moodLib().fixedLine(ui.mood, kind, text, Math.random); ui.mood = out.session; return out.text; }
+
   function feedbackFlag(flags) {
     var lib = feedbackLib();
     return !!lib && lib.feedbackEnabled(flags);
@@ -275,6 +280,7 @@
       }
       // O card não expõe evento: o 👍 aceito chega aqui, pelo próprio envio.
       if (res && res.success === true && payload && payload.rating === 'up' && !ui.moderation.isSuspended()) reactLia('celebrate');
+      if (res && res.success === true) ui.mood = moodLib().onFeedback(ui.mood, payload && payload.rating);
       return res;
     });
   }
@@ -350,6 +356,7 @@
     if (!message || ui.busy || !ui.enabled || ui.moderation.isSuspended()) return;
     if (token() !== ui.lastToken) { refresh(); return; } // a conta mudou (ex.: sessão expirou): recomeça limpo
     var history = pickHistory(ui.messages);
+    ui.mood = moodLib().onQuestion(ui.mood, message, Date.now());
     addMessage({ role: 'user', text: message });
     ui.input.value = '';
     ui.input.focus({ preventScroll: true }); // clicar numa sugestão remove o botão: o foco volta ao campo
@@ -365,6 +372,7 @@
         return;
       }
       var mod = modLib().moderationFromChat(res);
+      ui.mood = moodLib().onReply(ui.mood, mod.mode, Date.now());
       addMessage({
         role: 'lia',
         text: clip(res.reply, 2000) || ERROR_TEXT,
@@ -391,7 +399,9 @@
 
   function greet() {
     if (ui.messages.length) return;
-    addMessage({ role: 'lia', text: GREETING, suggestions: GREETING_SUGGESTIONS });
+    var out = moodLib().greeting(ui.mood, Math.random);
+    ui.mood = out.session;
+    addMessage({ role: 'lia', text: out.text, suggestions: GREETING_SUGGESTIONS });
   }
 
   function openPanel() {
@@ -415,6 +425,7 @@
     ui.open = false;
     ui.panelLia = destroyLia(ui.panelLia);
     ui.moderation.stop(); // o relógio da moderação só roda com o painel aberto
+    ui.idle.disarm(); // as micro-poses idle param junto com o painel
     if (returnFocus !== false) ui.launcher.focus({ preventScroll: true });
   }
 
@@ -495,7 +506,7 @@
       sync: function () { syncInputs(); },
       restLia: function () { restLiaState(); },
       lia: function (method) { reactLia(method); },
-      note: function (text) { addMessage({ role: 'lia', text: text }); },
+      note: function (text) { addMessage({ role: 'lia', text: fixedLine('confirmation', text) }); },
     };
   }
 
@@ -522,9 +533,16 @@
       app: app, doc: doc, launcher: launcher.button, panel: panel, log: log, input: composer.input, send: composer.send,
       messages: [], busy: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
       launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null,
-      moderation: moderation,
+      moderation: moderation, mood: moodLib().newSession(),
       hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,
     };
+    ui.idle = moodLib().createIdle({
+      allowed: function () { return ui.open && !!root.Lia && !root.Lia.reducedMotion(); },
+      canPose: function () { return !!ui.panelLia && !ui.busy && ui.restTimer === null && !ui.moderation.isSuspended() && ui.panelLia.element.getAttribute('data-state') === 'idle'; },
+      mood: function () { return ui.mood; },
+      apply: function (pose) { ui.panelLia.setState('idle', pose); },
+      random: Math.random,
+    });
 
     launcher.button.addEventListener('click', function () { if (ui.open) closePanel(); else openPanel(); });
     head.close.addEventListener('click', function () { closePanel(); });
@@ -540,6 +558,7 @@
     var current = token();
     if (current !== ui.lastToken) {
       ui.lastToken = current;
+      ui.mood = moodLib().newSession(); // humor da sessão: nasce com a conta e some com ela
       resetConversation();
       closePanel(false);
       ui.launcherLia = destroyLia(ui.launcherLia); // a Lia da conta anterior não fica montada (tom e listeners)
