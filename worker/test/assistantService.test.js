@@ -399,6 +399,8 @@ describe('Lia — segurança', () => {
   test('todo botão devolvido, em toda intenção e papel, está na lista branca', async () => {
     const { INTENTS } = await import('../src/assistant/kb.js');
     const { ACTION_KEYS } = await import('../src/assistant/targets.js');
+    // Perguntas de admin feitas por membro/visitante caem na IA (mockada): a asserção vale para todo caminho.
+    globalThis.fetch.mockResolvedValue(groqReply('Posso ajudar com a plataforma.'));
     for (const identity of [null, VISITOR, MEMBER, ADMIN]) {
       for (const intent of INTENTS) {
         const res = await chat(routedSql([ON, EVENTS_SQL, ['FROM event_registrations', []]]), identity, { message: intent.keywords[0] });
@@ -749,6 +751,41 @@ describe('Lia — RAG x cache semântico (O27): resposta com fontes nunca entra 
     const res = await chat(sql, MEMBER, NO_INTENT);
     expect(res).toMatchObject({ success: true, source: 'ai', cached: true, reply: 'Resposta antiga guardada.' });
     expect(res).not.toHaveProperty('sources');
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe('Lia — intenções de administração só para admin', () => {
+  const ADMIN_QUESTION = { message: 'como banir uma conta' };
+  const ADMIN_SCREEN = /área Admin|banimento|Banir conta|panel-admin/;
+
+  test('membro: a pergunta de admin cai no fluxo normal (IA), sem botão e sem resposta de admin', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Posso ajudar com a plataforma.'));
+    const res = await chat(routedSql([ON]), MEMBER, ADMIN_QUESTION);
+    expect(res).toMatchObject({ success: true, source: 'ai' });
+    expect(res.actions).toEqual([]);
+    expect(JSON.stringify(res)).not.toMatch(ADMIN_SCREEN);
+  });
+
+  test('o prompt da IA enviado para membro não leva nenhuma tela de admin', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('ok'));
+    await chat(routedSql([ON]), MEMBER, ADMIN_QUESTION);
+    const body = globalThis.fetch.mock.calls[0][1].body;
+    expect(body).not.toMatch(ADMIN_SCREEN);
+  });
+
+  test('visitante: sem IA e sem resposta de admin (resposta fixa de ajuda, sem botão)', async () => {
+    const res = await chat(routedSql([ON]), VISITOR, ADMIN_QUESTION);
+    expect(res.source).toBe('fallback');
+    expect(res.actions).toEqual([]);
+    expect(JSON.stringify(res)).not.toMatch(ADMIN_SCREEN);
+  });
+
+  test('admin: recebe a resposta da área de administração e o botão para a tela', async () => {
+    const res = await chat(routedSql([ON]), ADMIN, ADMIN_QUESTION);
+    expect(res).toMatchObject({ success: true, source: 'kb' });
+    expect(res.reply).toMatch(/área Admin/);
+    expect(res.actions).toEqual([{ type: 'navigate', target: 'panel-admin-users', label: 'Usuários' }]);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 });

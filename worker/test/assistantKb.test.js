@@ -62,16 +62,6 @@ describe('matchIntent — perguntas reais', () => {
     ['como envio feedback para a administração', 'feedback_liga'],
     ['onde altero meu nome de usuário', 'perfil'],
     ['como denuncio um membro', 'equipe'],
-    ['quero criar um evento', 'admin_eventos'],
-    ['como aprovo uma proposta', 'admin_propostas'],
-    ['como abro a votação', 'admin_propostas'],
-    ['como banir uma conta', 'admin_usuarios'],
-    ['onde fica o terminal fiscal', 'admin_fiscal'],
-    ['qual o painel de IA', 'admin_ia'],
-    ['onde vejo as denúncias', 'admin_denuncias'],
-    ['onde leio o feedback recebido', 'admin_feedback'],
-    ['o que tem na área admin', 'admin_area'],
-    ['como crio uma tarefa', 'admin_tarefas'],
   ])('%s → %s', (message, id) => {
     const hit = matchIntent(message, []);
     expect(hit && hit.id).toBe(id);
@@ -244,13 +234,27 @@ describe('cobertura da Lia: administração só para admin, acervo e prompt sem 
     });
   });
 
-  test('membro recebe a resposta da área de admin, mas nenhum botão para a tela', () => {
-    const hit = matchIntent('quero criar um evento', []);
+  test('membro e visitante não acertam a intenção de admin (nem a resposta, nem o botão); admin acerta', () => {
+    const question = 'como aprovo uma proposta';
+    expect(matchIntent(question, [], 'member').id).toBe('propostas');
+    expect(matchIntent(question, [], 'visitor').id).toBe('propostas');
+    expect(matchIntent(question, [], 'admin').id).toBe('admin_propostas');
+    const hit = matchIntent('quero criar um evento', [], 'admin');
     expect(hit.id).toBe('admin_eventos');
-    expect(filterActions(hit.intent.actions, 'member')).toEqual([]);
     expect(filterActions(hit.intent.actions, 'admin')).toEqual([
       { type: 'navigate', target: 'panel-admin-events', label: 'Gerir eventos' },
     ]);
+  });
+
+  test('sem papel informado, só as intenções de uso geral (padrão seguro)', () => {
+    expect(matchIntent('como banir uma conta', [])).toBeNull();
+    expect(matchIntent('como banir uma conta', [], undefined)).toBeNull();
+  });
+
+  test('seguimento de conversa também não usa intenção de admin para membro', () => {
+    const history = [{ role: 'user', text: 'como banir uma conta' }];
+    expect(matchIntent('e quando?', history, 'member')).toBeNull();
+    expect(matchIntent('e quando?', history, 'admin')).toMatchObject({ id: 'admin_usuarios', followUp: true });
   });
 
   test('sugestões de intenção de admin não viram chip para membro (usam só assuntos gerais)', () => {
@@ -279,5 +283,31 @@ describe('cobertura da Lia: administração só para admin, acervo e prompt sem 
     expect(hit.id).toBe('cotas');
     expect(hit.intent.reply).toContain(String(AI_QUOTAS.assistant.member));
     expect(hit.intent.reply).toContain(String(AI_QUOTAS.assistant.admin));
+  });
+});
+
+describe('intenções de administração por papel', () => {
+  const ADMIN_PHRASES = [
+    ['quero criar um evento', 'admin_eventos'],
+    ['como aprovo uma proposta', 'admin_propostas'],
+    ['como abro a votação', 'admin_propostas'],
+    ['como banir uma conta', 'admin_usuarios'],
+    ['onde fica o terminal fiscal', 'admin_fiscal'],
+    ['qual o painel de IA', 'admin_ia'],
+    ['onde vejo as denúncias', 'admin_denuncias'],
+    ['onde leio o feedback recebido', 'admin_feedback'],
+    ['o que tem na área admin', 'admin_area'],
+    ['como crio uma tarefa', 'admin_tarefas'],
+  ];
+
+  test.each(ADMIN_PHRASES)('admin: "%s" → %s', (message, id) => {
+    expect(matchIntent(message, [], 'admin').id).toBe(id);
+  });
+
+  test.each(ADMIN_PHRASES)('membro e visitante: "%s" nunca acerta intenção de admin', (message) => {
+    ['member', 'visitor'].forEach((role) => {
+      const hit = matchIntent(message, [], role);
+      expect(hit && hit.intent.adminOnly).toBeFalsy();
+    });
   });
 });
