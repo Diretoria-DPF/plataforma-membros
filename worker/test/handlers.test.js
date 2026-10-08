@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 107 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 113 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -52,6 +52,11 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     expected.push('apiAdminAiMetrics');
     // Lia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
     expected.push('apiAssistantChat');
+    // Lia — feedback, painel de satisfação, fontes e reindexação (assistantFeedbackService.js)
+    expected.push(
+      'apiAssistantFeedback', 'apiAdminListAssistantFeedback', 'apiAdminUpdateAssistantFeedback',
+      'apiAdminAssistantStats', 'apiAssistantSources', 'apiAdminReindexKb'
+    );
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 
