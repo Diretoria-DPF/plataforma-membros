@@ -76,6 +76,7 @@ paths:
                 - "$ref": "#/components/schemas/apiGetMyMessagingKey"
                 - "$ref": "#/components/schemas/apiGetMyMetrics"
                 - "$ref": "#/components/schemas/apiGetMyProfile"
+                - "$ref": "#/components/schemas/apiGetMyTimeseries"
                 - "$ref": "#/components/schemas/apiGetOrgChart"
                 - "$ref": "#/components/schemas/apiGetPeerMessagingKeys"
                 - "$ref": "#/components/schemas/apiGetProposalResults"
@@ -897,6 +898,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiGetMyTimeseries:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMyTimeseries"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiGetOrgChart:
       type: "object"
       required:

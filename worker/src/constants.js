@@ -163,7 +163,7 @@ export const LIMITS = {
 // frontend/index.html (texto fixo, sem template de servidor).
 export const LEGAL_VERSIONS = {
   TERMS: '2026-09-25',
-  PRIVACY: '2026-10-03',
+  PRIVACY: '2026-10-07',
 };
 
 export const RATE_LIMITS = {
@@ -210,6 +210,8 @@ export const RATE_LIMITS = {
   // IP (NAT de campus é comum, então 30/h dá para uma turma conversar).
   ASSISTANT_CHAT: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
   ASSISTANT_CHAT_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+  ASSISTANT_FEEDBACK: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+  ASSISTANT_REINDEX: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
   // do MFA_VERIFY, para o login legítimo não ser travado por quem gerencia.
   MFA_MANAGE: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
@@ -292,7 +294,7 @@ export const AI_QUOTAS = {
   lab_preceptor: { visitor: 10, member: 30, admin: 100 },
   // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
   // Visitante e quem não tem login recebem só a base fixa (cota 0).
-  assistant: { visitor: 0, member: 25, admin: 60 },
+  assistant: { visitor: 0, member: 25, admin: 100 },
 };
 export const AI_QUOTA_WINDOW_SECONDS = 86400;
 
@@ -379,3 +381,45 @@ Object.assign(RATE_LIMITS, {
   ATLAS_TELEMETRY: { MAX_ATTEMPTS: 240, WINDOW_SECONDS: 3600 },
   ATLAS_TELEMETRY_STATS: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
 });
+
+// ---- Lia: RAG, feedback e moderação (sql/020-022; ADR 0004 e 0005) ----
+// Embedding via Workers AI. A dimensão está no SQL (vector(1024)): trocar de modelo exige nova migração.
+export const EMBEDDING_MODEL = '@cf/baai/bge-m3';
+export const EMBEDDING_DIM = 1024;
+export const RAG = {
+  TOP_K: 4,                 // trechos que entram no prompt
+  CANDIDATES: 8,            // candidatos de cada busca (vetor e trigramas) antes de fundir
+  MIN_TRIGRAM_SCORE: 0.12,  // similaridade mínima de trigramas
+  MIN_VECTOR_SCORE: 0.45,   // similaridade de cosseno mínima
+  RRF_K: 60,                // constante da fusão por posição (Reciprocal Rank Fusion)
+  EMBED_BATCH: 16,          // textos por chamada ao modelo na reindexação
+  CONTEXT_CHARS: 900,       // máximo de caracteres de cada trecho no prompt
+};
+
+export const FEEDBACK = {
+  COMMENT_MAX: 500,
+  RATINGS: ['up', 'down'],
+  CATEGORIES: ['incorreta', 'incompleta', 'confusa', 'ofensiva', 'outra'],
+  STATUSES: ['new', 'reviewed', 'dismissed'],
+  PAGE_SIZE: 25,
+  ANONYMIZE_AFTER_DAYS: 90,   // comentário: hash irreversível + texto apagado
+  PURGE_AFTER_DAYS: 365,      // registro removido
+};
+
+export const MODERATION = {
+  MAX_LEVEL: 3,
+  DECAY_DAYS: 30,             // -1 nível a cada 30 dias sem incidente
+  SUSPENSION_HOURS: 24,
+  REDEEM_RETRY_SECONDS: 3600, // nova tentativa de redenção após 1 h
+  REDEEM_MIN_CHARS: 40,
+  REDEEM_MAX_CHARS: 600,
+  PAGE_SIZE: 25,
+};
+
+export const TIMESERIES = {
+  RANGES: { '30d': { granularity: 'day', days: 30 }, '90d': { granularity: 'day', days: 90 }, '12m': { granularity: 'week', weeks: 52 } },
+  DEFAULT_RANGE: '30d',
+  METRICS: ['activity', 'events', 'learning', 'tasks'],
+  DEFAULT_METRIC: 'activity',
+  CACHE_TTL_SECONDS: 300,
+};

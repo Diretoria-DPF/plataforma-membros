@@ -21,6 +21,7 @@ import { PGlite } from '@electric-sql/pglite';
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 import { uuid_ossp } from '@electric-sql/pglite/contrib/uuid_ossp';
 import { pg_trgm } from '@electric-sql/pglite/contrib/pg_trgm';
+import { loadVectorExtension, adaptForNoVector } from './pgvector-shim.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,7 +30,13 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const SQL_DIR = path.resolve(process.argv[2] || path.join(here, '..', '..', 'sql'));
 
 const files = fs.readdirSync(SQL_DIR).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort();
-const db = new PGlite({ extensions: { pgcrypto, uuid_ossp, pg_trgm } });
+const vectorExt = await loadVectorExtension();
+if (!vectorExt) console.log('Aviso: pgvector indisponível no PGlite; validando a 020 com o shim (real[], sem HNSW).');
+const db = new PGlite({ extensions: Object.assign({ pgcrypto, uuid_ossp, pg_trgm }, vectorExt ? { vector: vectorExt } : {}) });
+const readSql = (file) => {
+  const text = fs.readFileSync(file, 'utf8');
+  return vectorExt ? text : adaptForNoVector(text);
+};
 let failures = 0;
 
 for (const pass of [1, 2]) {
@@ -37,7 +44,7 @@ for (const pass of [1, 2]) {
   console.log(`\n== Passada ${pass}: ${label}`);
   for (const file of files) {
     try {
-      await db.exec(fs.readFileSync(path.join(SQL_DIR, file), 'utf8'));
+      await db.exec(readSql(path.join(SQL_DIR, file)));
       console.log(`  ok     ${file}`);
     } catch (err) {
       failures++;
@@ -63,7 +70,7 @@ if (downFiles.length) {
   for (const [dir, list, tag] of [[DOWN_DIR, downFiles, 'down'], [SQL_DIR, files, 'up  ']]) {
     for (const file of list) {
       try {
-        await db.exec(fs.readFileSync(path.join(dir, file), 'utf8'));
+        await db.exec(readSql(path.join(dir, file)));
         console.log(`  ok     ${tag} ${file}`);
       } catch (err) {
         failures++;

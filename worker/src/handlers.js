@@ -25,6 +25,7 @@ import { GENERIC_ERROR_MESSAGE } from './constants.js';
 import * as AuthService from './services/authService.js';
 import * as ProfileService from './services/profileService.js';
 import * as HomeService from './services/homeService.js';
+import * as TimeseriesService from './services/timeseriesService.js';
 import * as FeatureFlagService from './services/featureFlagService.js';
 import * as MfaService from './services/mfaService.js';
 import * as EventService from './services/eventService.js';
@@ -114,6 +115,8 @@ export const API_REGISTRY = {
   apiSubmitFeedback: (sql, env, [sessionToken, message]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.submitFeedback(sql, identity, message, cid)),
   apiUpdateMyAvatar: (sql, env, [sessionToken, avatarBase64, avatarMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyAvatarFromBase64(sql, env, identity, avatarBase64, avatarMimeType, cid)),
   apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
+  // Série temporal da própria atividade (gráficos do Início): { range?, metric? }.
+  apiGetMyTimeseries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => TimeseriesService.getMyTimeseries(sql, env, identity, input)),
   // Início: eventos, tarefas, votações, aprendizado e caixa de entrada em UMA requisição.
   apiGetHomeSummary: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HomeService.getHomeSummary(sql, env, identity)),
 
