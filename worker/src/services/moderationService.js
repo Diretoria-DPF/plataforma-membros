@@ -149,3 +149,151 @@ export async function resolveReport(sql, identity, reportId, input, correlationI
   await Logging.logAudit(sql, correlationId, identity.profileId, 'RESOLVE_REPORT', 'report', id, 'success', { newStatus });
   return { success: true, message: 'Denúncia atualizada.' };
 }
+
+// ===========================================================================
+// Moderação da Lia (ADR 0004; sql/022). Regras puras em assistant/moderationRules.js.
+// Tolerante a tabela ausente: quem chama (assistantService) trata falha como "sem moderação".
+// ===========================================================================
+const FLAG_MODERATION = 'moderation_enabled';
+const MSG_MODERATION_OFF = 'A moderação da Lia está desligada no momento.';
+
+export async function moderationEnabled(sql, identity) {
+  try {
+    return await isEnabled(sql, FLAG_MODERATION, identity);
+  } catch (err) {
+    return false; // falha fechada: sem saber, a moderação fica desligada e a Lia segue normal
+  }
+}
+
+async function readRow(sql, profileId) {
+  const rows = await sql`
+    SELECT level, until, last_incident_at, last_decay_at, redeemed_at, redeem_attempt_at
+    FROM assistant_moderation WHERE profile_id = ${profileId}::uuid`;
+  return rows[0] || null;
+}
+
+async function writeState(sql, profileId, state, extra) {
+  const e = extra || {};
+  await sql`
+    INSERT INTO assistant_moderation (profile_id, level, until, last_incident_at, last_decay_at, redeemed_at, redeem_attempt_at, updated_at)
+    VALUES (${profileId}::uuid, ${state.level}, ${state.until}, ${state.lastIncidentAt}, ${state.lastDecayAt}, ${e.redeemedAt || null}, ${e.redeemAttemptAt || null}, now())
+    ON CONFLICT (profile_id) DO UPDATE SET
+      level = EXCLUDED.level, until = EXCLUDED.until, last_incident_at = EXCLUDED.last_incident_at,
+      last_decay_at = EXCLUDED.last_decay_at, redeemed_at = EXCLUDED.redeemed_at,
+      redeem_attempt_at = EXCLUDED.redeem_attempt_at, updated_at = now()`;
+}
+
+const extrasOf = (row) => ({ redeemedAt: row && row.redeemed_at, redeemAttemptAt: row && row.redeem_attempt_at });
+
+/** Estado atual da pessoa, já com o decaimento devido (e gravado, se mudou). */
+export async function getAssistantState(sql, profileId, now) {
+  const at = now || new Date();
+  const row = await readRow(sql, profileId);
+  if (!row) return { state: Rules.EMPTY_STATE, row: null };
+  const before = Rules.normalizeState(row);
+  const state = Rules.decay(row, at);
+  if (state.level !== before.level) await writeState(sql, profileId, state, extrasOf(row));
+  return { state, row };
+}
+
+/** Registra um incidente: sobe o nível, grava o histórico (sem o texto) e audita. Devolve o novo estado. */
+export async function registerAssistantIncident(sql, correlationId, profileId, detection, now) {
+  const at = now || new Date();
+  const { state: current, row } = await getAssistantState(sql, profileId, at);
+  const next = Rules.registerIncident(current, at);
+  await writeState(sql, profileId, next, extrasOf(row));
+  await sql`INSERT INTO assistant_incidents (profile_id, kind, detection, level_after) VALUES (${profileId}::uuid, 'offensive', ${detection}, ${next.level})`;
+  await Logging.logAudit(sql, correlationId, profileId, 'assistant_incident', 'profile', profileId, 'success', { level: next.level, detection });
+  return next;
+}
+
+/** Job diário (maintenance.js): aplica o decaimento a todos com nível acima de 0. */
+export async function decayAssistantModeration(sql, now) {
+  const at = now || new Date();
+  const rows = await sql`SELECT profile_id, level, until, last_incident_at, last_decay_at, redeemed_at, redeem_attempt_at FROM assistant_moderation WHERE level > 0`;
+  let lowered = 0;
+  for (const row of rows) {
+    const before = Rules.normalizeState(row);
+    const after = Rules.decay(row, at);
+    if (after.level !== before.level) {
+      await writeState(sql, row.profile_id, after, extrasOf(row));
+      lowered += 1;
+    }
+  }
+  return { checked: rows.length, lowered };
+}
+
+function verdict(content) {
+  const word = normalize(String(content || '')).split(' ')[0];
+  if (word === 'sim') return true;
+  if (word === 'nao') return false;
+  return null;
+}
+
+async function askJudge(sql, env, identity, messages) {
+  const out = await Orchestrator.complete(sql, env, identity, { feature: C.AI_FEATURE.ASSISTANT, messages, profileId: identity.profileId }, {});
+  return verdict(out && out.content);
+}
+
+/**
+ * Mensagem ofensiva? Termos PT-BR primeiro (barato); só se houver termo, o LLM confirma
+ * (evita punir citação ou dúvida legítima). LLM fora do ar ou resposta confusa: vale o termo.
+ * @returns {Promise<{ offensive: boolean, detection: 'terms'|'llm'|null }>}
+ */
+export async function judgeOffense(sql, env, identity, message) {
+  if (!Rules.containsOffensiveTerm(message)) return { offensive: false, detection: null };
+  try {
+    const sayYes = await askJudge(sql, env, identity, buildModerationJudgeMessages({ message }));
+    if (sayYes === false) return { offensive: false, detection: null };
+    if (sayYes === true) return { offensive: true, detection: 'llm' };
+  } catch (err) {
+    // sem LLM: decide só pelo termo
+  }
+  return { offensive: true, detection: 'terms' };
+}
+
+const MSG_REDEEM_ACCEPTED = 'Obrigada por conversar. Redenção aceita: seu nível voltou ao normal.';
+const MSG_REDEEM_REFUSED = 'Não consegui perceber sinceridade no seu texto. Conte com suas palavras o que houve e como vai agir daqui em diante; você pode tentar de novo em 1 hora.';
+
+function retryError(secondsLeft) {
+  const err = E.RateLimitError('Você já tentou há pouco. Tente a redenção de novo em ' + Math.ceil(secondsLeft / 60) + ' minuto(s).');
+  err.payload = { retryAfterSeconds: Math.ceil(secondsLeft) };
+  return err;
+}
+
+/** apiAssistantRedeem: { message } com a explicação da pessoa. */
+export async function redeemAssistant(sql, env, identity, input, correlationId, now) {
+  assertMemberOrAdmin(identity);
+  if (!(await moderationEnabled(sql, identity))) return { success: false, disabled: true, message: MSG_MODERATION_OFF };
+  const at = now || new Date();
+  const text = input && typeof input.message === 'string' ? input.message.trim() : '';
+  if (text.length < C.MODERATION.REDEEM_MIN_CHARS || text.length > C.MODERATION.REDEEM_MAX_CHARS) {
+    throw E.ValidationError('Explique em ' + C.MODERATION.REDEEM_MIN_CHARS + ' a ' + C.MODERATION.REDEEM_MAX_CHARS + ' caracteres o que houve e como vai agir daqui em diante.');
+  }
+  const { state, row } = await getAssistantState(sql, identity.profileId, at);
+  if (state.level === 0) throw E.ValidationError('Seu nível já está normal: não há nada a redimir.');
+  if (row && row.redeem_attempt_at) {
+    const left = C.MODERATION.REDEEM_RETRY_SECONDS - (at.getTime() - new Date(row.redeem_attempt_at).getTime()) / 1000;
+    if (left > 0) throw retryError(left);
+  }
+
+  let accepted = Rules.sincerityHeuristic(text).ok;
+  if (accepted) {
+    try {
+      const sayYes = await askJudge(sql, env, identity, buildRedeemJudgeMessages({ text }));
+      if (sayYes === false) accepted = false;
+    } catch (err) {
+      // sem LLM: vale a heurística
+    }
+  }
+
+  if (!accepted) {
+    await writeState(sql, identity.profileId, state, { redeemedAt: row && row.redeemed_at, redeemAttemptAt: at });
+    await Logging.logAudit(sql, correlationId, identity.profileId, 'assistant_redeem_refused', 'profile', identity.profileId, 'failure', { level: state.level });
+    return { success: true, accepted: false, level: state.level, retryAfterSeconds: C.MODERATION.REDEEM_RETRY_SECONDS, message: MSG_REDEEM_REFUSED };
+  }
+  const next = Rules.redeem(state);
+  await writeState(sql, identity.profileId, next, { redeemedAt: at, redeemAttemptAt: null });
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'assistant_redeemed', 'profile', identity.profileId, 'success', { levelBefore: state.level, level: next.level });
+  return { success: true, accepted: true, level: next.level, message: MSG_REDEEM_ACCEPTED };
+}

@@ -17,13 +17,14 @@
   'use strict';
 
   var CACHE_PREFIX = 'laift-shell-';
-  var CACHE_NAME = CACHE_PREFIX + 'v2';
+  var CACHE_NAME = CACHE_PREFIX + 'v3';
   // O shell inteiro (HTML, estilos e scripts) entra no cache na instalação, para
   // a tela inicial abrir offline já na primeira visita. Item ausente é ignorado.
   var PRECACHE = [
     './', 'styles.css', 'ux.css', 'manifest.webmanifest', 'icons/icon-192.png',
     'app.js', 'shared-states.js', 'pwa.js', 'domain-notice.js', 'learning.js', 'admin-ai.js',
     'msg-crypto.js', 'messaging.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js',
+    'ux-v2.js', 'splash.js', 'splash.css', 'modulos/shared/laift-tokens.css',
     'modulos/cracha/laift-marca.png',
   ];
   var ATLAS_PATH = '/modulos/anatomia-3d/';

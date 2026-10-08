@@ -412,6 +412,41 @@
       var el = document.getElementById(screenId);
       if (el) el.classList.toggle('hidden', screenId !== id);
     });
+    refreshUiFlags();
+    signalReady();
+  }
+
+  // Flags públicas -> atributos data-flag-* no <html> (ux-v2.js; docs/FEATURE_FLAGS.md).
+  // O CSS do visual v2 se condiciona a data-flag-ux-v2-enabled; sem a flag vale a UI anterior.
+  // Memoizado por token: o login/logout pede de novo, a navegação entre telas não.
+  var uiFlagsKey = null;
+  function refreshUiFlags() {
+    var key = state.sessionToken || '';
+    if (!window.LaiftUx || uiFlagsKey === key) return;
+    uiFlagsKey = key;
+    callApi('apiGetFeatureFlags', key).then(function (res) {
+      if (res && res.success === true) window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
+      else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
+    });
+  }
+
+  // Avisa a splash (splash.js) e quem mais precisar de que a primeira tela está pronta.
+  function signalReady() {
+    if (window.__laiftReady === true) return;
+    window.__laiftReady = true;
+    document.dispatchEvent(new Event('laift:ready'));
+  }
+
+  // Esqueleto pulsante (classe .skeleton, ux.css) enquanto a lista carrega; só quando está vazia.
+  function showSkeleton(containerId, rows) {
+    var container = document.getElementById(containerId);
+    if (!container || container.childElementCount > 0 || !window.LaiftStates) return;
+    container.appendChild(window.LaiftStates.createSkeleton(document, rows));
+  }
+  function clearSkeleton(containerId) {
+    var container = document.getElementById(containerId);
+    var skeleton = container && container.querySelector('.skeleton');
+    if (skeleton) container.removeChild(skeleton);
   }
 
   document.querySelectorAll('[data-nav]').forEach(function (btn) {
@@ -712,6 +747,8 @@
   function enterApp() {
     document.getElementById('public-shell').classList.add('hidden');
     document.getElementById('app-root').classList.remove('hidden');
+    refreshUiFlags();
+    signalReady();
 
     document.getElementById('header-user-name').textContent = state.profile.fullName || '';
     var badge = document.getElementById('header-role-badge');
@@ -933,8 +970,9 @@
   // ===========================================================================
   function loadEvents() {
     setStatus('events-status', 'Carregando eventos...', 'info');
+    showSkeleton('events-list', 3);
     var loaded = callApi('apiListEvents', state.sessionToken || '').then(function (res) {
-      if (!res.success) { setStatus('events-status', res.message, 'error'); return; }
+      if (!res.success) { clearSkeleton('events-list'); setStatus('events-status', res.message, 'error'); return; }
       setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
     });
@@ -1030,8 +1068,9 @@
   });
 
   function loadProposalsAndVoting() {
+    showSkeleton('my-proposals-list', 2);
     callApi('apiListMyProposals', state.sessionToken).then(function (res) {
-      if (!res.success) return;
+      if (!res.success) { clearSkeleton('my-proposals-list'); return; }
       renderList('my-proposals-list', res.proposals, function (p) {
         return h('article', { className: 'list-item' }, [
           text('h4', p.title),
@@ -1051,8 +1090,9 @@
     }
 
     setStatus('voting-status', 'Carregando votações abertas...', 'info');
+    showSkeleton('voting-list', 3);
     callApi('apiListOpenProposalsForVoting', state.sessionToken).then(function (res) {
-      if (!res.success) { setStatus('voting-status', res.message, 'error'); return; }
+      if (!res.success) { clearSkeleton('voting-list'); setStatus('voting-status', res.message, 'error'); return; }
       setStatus('voting-status', '', null);
       renderList('voting-list', res.proposals, renderVotingItem, 'Não há votações abertas no momento.');
     });

@@ -24,13 +24,99 @@
    (≥ 4,5:1) contra --laift-surface do respectivo tema.
    ========================================================================= */
 
+/* -------------------------------------------------------------------------
+   Valores da paleta ESCURA — escritos uma única vez. Os dois seletores
+   abaixo (tema escolhido pela ponte / módulos sempre escuros, e preferência
+   do sistema) só apontam para estes valores; nenhum valor é repetido.
+   ------------------------------------------------------------------------- */
+:root {
+  --dk-layer-0: #0e1114;
+  --dk-layer-1: #14181c;
+  --dk-layer-2: #1a1f24;
+  --dk-layer-3: #22282e;
+  --dk-border: #2b3345;
+  --dk-border-strong: #3d4860;
+  --dk-text: #e7ebf3;
+  --dk-muted: #9aa5bb;
+  --dk-primary: #3fcfb6;
+  --dk-primary-strong: #63e0c9;
+  --dk-primary-soft: #10352f;
+  --dk-on-primary: #06231e;
+  --dk-danger: #ff7a70;
+  --dk-danger-soft: #3a1c1c;
+  --dk-on-danger: #3a0805;
+  --dk-success: #7be3a0;
+  --dk-success-soft: #163a26;
+  --dk-warning: #ffc857;
+  --dk-warning-soft: #3a2e12;
+  --dk-info: #7cb4ff;
+  --dk-info-soft: #16294a;
+  --dk-admin: #ff9a5c;
+  --dk-admin-soft: #3a2415;
+  --dk-on-admin: #2a1200;
+  --dk-overlay: rgba(0, 0, 0, 0.65);
+  --dk-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+  --dk-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --dk-elev-1: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --dk-elev-2: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.42);
+  --dk-elev-3: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 44px rgba(0, 0, 0, 0.5);
+  --dk-chart-1: #3ef7d7;
+  --dk-chart-2: #d8732b;
+  --dk-chart-3: #1dcaf7;
+  --dk-chart-4: #a1790c;
+  --dk-chart-5: #91b7fe;
+  --dk-chart-6: #ca545d;
+  --dk-chart-7: #bbea7a;
+  --dk-chart-8: #b872cd;
+}
+
 :root {
   color-scheme: light;
 
-  /* Superfícies e texto (iguais a frontend/styles.css) */
-  --laift-bg: #f4f6fb;
-  --laift-surface: #ffffff;
-  --laift-surface-alt: #f1f4fa;
+  /* Camadas (separação por tom, não por borda): 0 = página, 1 = cartões,
+     2 = blocos dentro de cartões, 3 = poço/realce mais profundo. */
+  --layer-0: #fafaf7;
+  --layer-1: #f4f3ef;
+  --layer-2: #edebe5;
+  --layer-3: #e4e1d8;
+
+  /* Elevação por luz: filete claro no topo + sombra suave. */
+  --elev-1: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(20, 30, 50, 0.06);
+  --elev-2: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 18px rgba(20, 30, 50, 0.08);
+  --elev-3: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 18px 44px rgba(20, 30, 50, 0.14);
+  --hairline: color-mix(in srgb, var(--laift-text) 9%, transparent);
+
+  /* Movimento (docs/adr/0002-motion-tokens.md): nenhuma animação usa
+     duração ou curva literal. Animar só transform e opacity. */
+  --dur-instant: 100ms;
+  --dur-fast: 180ms;
+  --dur-base: 280ms;
+  --dur-slow: 480ms;
+  --dur-lazy: 800ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-anticipate: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  --move-xs: 4px;
+  --move-sm: 8px;
+  --move-md: 16px;
+  --move-lg: 32px;
+
+  /* Paleta de gráficos (docs/CHART_PALETTE.md). Para 1–5 séries usar 1…5. */
+  --chart-1: #03483d;
+  --chart-2: #c05e05;
+  --chart-3: #0a5f75;
+  --chart-4: #8f6b09;
+  --chart-5: #194cb1;
+  --chart-6: #c03a4a;
+  --chart-7: #2e4600;
+  --chart-8: #a656bd;
+
+  /* Superfícies e texto: bg/surface/surface-alt são aliases das camadas. */
+  --laift-bg: var(--layer-0);
+  --laift-surface: var(--layer-1);
+  --laift-surface-alt: var(--layer-2);
+  --laift-surface-deep: var(--layer-3);
   --laift-border: #dde3ee;
   --laift-border-strong: #b8c2d6;
   --laift-text: #1c2333;
@@ -50,6 +136,9 @@
   --laift-warning-soft: #fff4d6;
   --laift-info: #1d5fb8;
   --laift-info-soft: #e5effc;
+  --laift-admin: #8a3b12;
+  --laift-admin-soft: #fdece0;
+  --laift-on-admin: #ffffff;
   --laift-overlay: rgba(10, 14, 22, 0.55);
 
   /* Forma, profundidade e ritmo */
@@ -58,6 +147,7 @@
   --laift-radius-sm: 8px;
   --laift-radius-md: 14px;
   --laift-radius-lg: 20px;
+  --laift-radius-xl: 28px; /* cartões do visual v2: 24–32px */
   --laift-radius-pill: 999px;
   --laift-space-1: 4px;
   --laift-space-2: 8px;
@@ -82,35 +172,50 @@
   --module-accent-soft: color-mix(in srgb, var(--module-accent) 12%, var(--laift-surface));
 }
 
-/* Paleta escura — a mesma de :root[data-theme="dark"] da plataforma. Três
-   seletores com o mesmo conteúdo: tema escolhido pela ponte, módulos sempre
-   escuros e, sem atributo, a preferência do sistema. */
+/* Aplicação da paleta escura: tema escolhido pela ponte, módulos sempre
+   escuros e, sem atributo, a preferência do sistema (bloco @media abaixo).
+   As duas listas de declarações são idênticas e só citam --dk-*. */
 html[data-theme="dark"],
 html.laift-always-dark {
   color-scheme: dark;
-  --laift-bg: #10141c;
-  --laift-surface: #171d29;
-  --laift-surface-alt: #1c2330;
-  --laift-border: #2b3345;
-  --laift-border-strong: #3d4860;
-  --laift-text: #e7ebf3;
-  --laift-muted: #9aa5bb;
-  --laift-primary: #3fcfb6;
-  --laift-primary-strong: #63e0c9;
-  --laift-primary-soft: #10352f;
-  --laift-on-primary: #06231e;
-  --laift-danger: #ff7a70;
-  --laift-danger-soft: #3a1c1c;
-  --laift-on-danger: #3a0805;
-  --laift-success: #7be3a0;
-  --laift-success-soft: #163a26;
-  --laift-warning: #ffc857;
-  --laift-warning-soft: #3a2e12;
-  --laift-info: #7cb4ff;
-  --laift-info-soft: #16294a;
-  --laift-overlay: rgba(0, 0, 0, 0.65);
-  --laift-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
-  --laift-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --layer-0: var(--dk-layer-0);
+  --layer-1: var(--dk-layer-1);
+  --layer-2: var(--dk-layer-2);
+  --layer-3: var(--dk-layer-3);
+  --elev-1: var(--dk-elev-1);
+  --elev-2: var(--dk-elev-2);
+  --elev-3: var(--dk-elev-3);
+  --chart-1: var(--dk-chart-1);
+  --chart-2: var(--dk-chart-2);
+  --chart-3: var(--dk-chart-3);
+  --chart-4: var(--dk-chart-4);
+  --chart-5: var(--dk-chart-5);
+  --chart-6: var(--dk-chart-6);
+  --chart-7: var(--dk-chart-7);
+  --chart-8: var(--dk-chart-8);
+  --laift-border: var(--dk-border);
+  --laift-border-strong: var(--dk-border-strong);
+  --laift-text: var(--dk-text);
+  --laift-muted: var(--dk-muted);
+  --laift-primary: var(--dk-primary);
+  --laift-primary-strong: var(--dk-primary-strong);
+  --laift-primary-soft: var(--dk-primary-soft);
+  --laift-on-primary: var(--dk-on-primary);
+  --laift-danger: var(--dk-danger);
+  --laift-danger-soft: var(--dk-danger-soft);
+  --laift-on-danger: var(--dk-on-danger);
+  --laift-success: var(--dk-success);
+  --laift-success-soft: var(--dk-success-soft);
+  --laift-warning: var(--dk-warning);
+  --laift-warning-soft: var(--dk-warning-soft);
+  --laift-info: var(--dk-info);
+  --laift-info-soft: var(--dk-info-soft);
+  --laift-admin: var(--dk-admin);
+  --laift-admin-soft: var(--dk-admin-soft);
+  --laift-on-admin: var(--dk-on-admin);
+  --laift-overlay: var(--dk-overlay);
+  --laift-shadow: var(--dk-shadow);
+  --laift-shadow-sm: var(--dk-shadow-sm);
   --module-accent: var(--module-accent-dark, var(--laift-primary));
   --module-on-accent: var(--module-on-accent-dark, #06231e);
 }
@@ -118,29 +223,44 @@ html.laift-always-dark {
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]):not([data-theme="dark"]) {
     color-scheme: dark;
-    --laift-bg: #10141c;
-    --laift-surface: #171d29;
-    --laift-surface-alt: #1c2330;
-    --laift-border: #2b3345;
-    --laift-border-strong: #3d4860;
-    --laift-text: #e7ebf3;
-    --laift-muted: #9aa5bb;
-    --laift-primary: #3fcfb6;
-    --laift-primary-strong: #63e0c9;
-    --laift-primary-soft: #10352f;
-    --laift-on-primary: #06231e;
-    --laift-danger: #ff7a70;
-    --laift-danger-soft: #3a1c1c;
-    --laift-on-danger: #3a0805;
-    --laift-success: #7be3a0;
-    --laift-success-soft: #163a26;
-    --laift-warning: #ffc857;
-    --laift-warning-soft: #3a2e12;
-    --laift-info: #7cb4ff;
-    --laift-info-soft: #16294a;
-    --laift-overlay: rgba(0, 0, 0, 0.65);
-    --laift-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
-    --laift-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+    --layer-0: var(--dk-layer-0);
+    --layer-1: var(--dk-layer-1);
+    --layer-2: var(--dk-layer-2);
+    --layer-3: var(--dk-layer-3);
+    --elev-1: var(--dk-elev-1);
+    --elev-2: var(--dk-elev-2);
+    --elev-3: var(--dk-elev-3);
+    --chart-1: var(--dk-chart-1);
+    --chart-2: var(--dk-chart-2);
+    --chart-3: var(--dk-chart-3);
+    --chart-4: var(--dk-chart-4);
+    --chart-5: var(--dk-chart-5);
+    --chart-6: var(--dk-chart-6);
+    --chart-7: var(--dk-chart-7);
+    --chart-8: var(--dk-chart-8);
+    --laift-border: var(--dk-border);
+    --laift-border-strong: var(--dk-border-strong);
+    --laift-text: var(--dk-text);
+    --laift-muted: var(--dk-muted);
+    --laift-primary: var(--dk-primary);
+    --laift-primary-strong: var(--dk-primary-strong);
+    --laift-primary-soft: var(--dk-primary-soft);
+    --laift-on-primary: var(--dk-on-primary);
+    --laift-danger: var(--dk-danger);
+    --laift-danger-soft: var(--dk-danger-soft);
+    --laift-on-danger: var(--dk-on-danger);
+    --laift-success: var(--dk-success);
+    --laift-success-soft: var(--dk-success-soft);
+    --laift-warning: var(--dk-warning);
+    --laift-warning-soft: var(--dk-warning-soft);
+    --laift-info: var(--dk-info);
+    --laift-info-soft: var(--dk-info-soft);
+    --laift-admin: var(--dk-admin);
+    --laift-admin-soft: var(--dk-admin-soft);
+    --laift-on-admin: var(--dk-on-admin);
+    --laift-overlay: var(--dk-overlay);
+    --laift-shadow: var(--dk-shadow);
+    --laift-shadow-sm: var(--dk-shadow-sm);
     --module-accent: var(--module-accent-dark, var(--laift-primary));
     --module-on-accent: var(--module-on-accent-dark, #06231e);
   }
@@ -187,13 +307,17 @@ html.laift-always-dark > body {
   outline-offset: 2px;
 }
 
-/* Quem pediu menos movimento ao sistema operacional não recebe animações
-   decorativas nem transições longas em nenhum módulo. */
+/* ÚNICO bloco de movimento reduzido da plataforma e dos módulos (ADR 0002):
+   zera duração e iterações; contagens e gráficos mostram o valor final.
+   Folhas decorativas do fundo somem. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
+  .leaf { display: none; }
 }

@@ -16,13 +16,18 @@ import { PGlite } from '@electric-sql/pglite';
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 import { uuid_ossp } from '@electric-sql/pglite/contrib/uuid_ossp';
 import { pg_trgm } from '@electric-sql/pglite/contrib/pg_trgm';
+import { loadVectorExtension, adaptForNoVector } from '../../scripts/pgvector-shim.mjs';
 
 const SQL_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'sql');
 
 export async function createMigratedDb() {
-  const db = new PGlite({ extensions: { pgcrypto, uuid_ossp, pg_trgm } });
+  const vectorExt = await loadVectorExtension();
+  const db = new PGlite({ extensions: Object.assign({ pgcrypto, uuid_ossp, pg_trgm }, vectorExt ? { vector: vectorExt } : {}) });
   const files = fs.readdirSync(SQL_DIR).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort();
-  for (const file of files) await db.exec(fs.readFileSync(path.join(SQL_DIR, file), 'utf8'));
+  for (const file of files) {
+    const text = fs.readFileSync(path.join(SQL_DIR, file), 'utf8');
+    await db.exec(vectorExt ? text : adaptForNoVector(text));
+  }
   return db;
 }
 

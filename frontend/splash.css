@@ -1,0 +1,71 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Splash de abertura (splash.js). Decorativa e sem captura de toque. Entrada
+   por transform+opacity com os tokens de movimento (ADR 0002); vidro com
+   fallback opaco. Movimento reduzido: o bloco único de laift-tokens.css zera
+   as animações. */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: var(--layer-0);
+  color: var(--primary-strong);
+  opacity: 1;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.splash-leaving { opacity: 0; }
+
+/* Vidro translúcido onde há suporte; o fundo opaco acima é o fallback. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .splash {
+    background: color-mix(in srgb, var(--layer-0) 88%, transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 14px)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur, 14px)) saturate(140%);
+  }
+}
+
+.splash-inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--move-md);
+  padding: var(--move-lg);
+}
+.splash-logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  border-radius: var(--laift-radius-xl);
+  background: #ffffff;
+  box-shadow: var(--elev-3);
+  animation: splash-pop var(--dur-slow) var(--ease-spring) both;
+}
+.splash-brand {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--text);
+  animation: splash-rise var(--dur-slow) var(--ease-spring) both;
+  animation-delay: 80ms;
+}
+.splash-icons { display: flex; gap: var(--move-md); color: var(--primary); }
+.splash-icon { animation: splash-rise var(--dur-slow) var(--ease-spring) both; }
+.splash-icon[data-i="0"] { animation-delay: 160ms; }
+.splash-icon[data-i="1"] { animation-delay: 240ms; }
+.splash-icon[data-i="2"] { animation-delay: 320ms; }
+
+@keyframes splash-pop {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes splash-rise {
+  from { opacity: 0; transform: translateY(var(--move-md)); }
+  to { opacity: 1; transform: none; }
+}
