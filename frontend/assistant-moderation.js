@@ -196,6 +196,8 @@
     var hint = el(doc, 'p', 'lia-redeem-hint');
     hint.id = 'lia-redeem-hint';
     var timer = el(doc, 'p', 'lia-redeem-timer'); // sem role: a contagem não é anunciada a cada segundo
+    var alert = el(doc, 'p', 'lia-redeem-alert hidden'); // só para falha real (rede, exceção, erro do servidor)
+    alert.setAttribute('role', 'alert');
     var send = el(doc, 'button', 'lia-redeem-send', 'Enviar');
     send.type = 'submit';
     var cancel = el(doc, 'button', 'lia-redeem-cancel secondary', 'Voltar');
@@ -204,9 +206,9 @@
     actions.appendChild(send);
     actions.appendChild(cancel);
     var note = el(doc, 'p', 'lia-redeem-note', 'A Lia confere o que você escrever. Se não for suficiente, você poderá tentar de novo em 1 hora.');
-    [note, label, area, count, hint, timer, actions].forEach(function (node) { form.appendChild(node); });
+    [note, label, area, count, hint, timer, alert, actions].forEach(function (node) { form.appendChild(node); });
     [status, returnText, open, form].forEach(function (node) { section.appendChild(node); });
-    return { root: section, status: status, returnText: returnText, open: open, form: form, area: area, count: count, hint: hint, timer: timer, send: send, cancel: cancel };
+    return { root: section, status: status, returnText: returnText, open: open, form: form, area: area, count: count, hint: hint, timer: timer, alert: alert, send: send, cancel: cancel };
   }
 
   // ---------------------------------------------------------------------------
@@ -258,6 +260,12 @@
 
   function setRedeemStatus(m, text) { m.redeem.status.textContent = text || ''; }
 
+  /** Aviso de falha real: some quando não há texto. Fica separado do status para não anunciar "Enviando…" como erro. */
+  function setRedeemAlert(m, text) {
+    m.redeem.alert.textContent = text || '';
+    m.redeem.alert.classList.toggle('hidden', !text);
+  }
+
   function openRedeemForm(m, isOpen) {
     m.redeemOpen = isOpen;
     renderModeration(m);
@@ -281,6 +289,7 @@
     m.mod = freshMod();
     m.redeemOpen = false;
     setRedeemStatus(m, '');
+    setRedeemAlert(m, '');
     renderModeration(m);
     m.ctx.restLia();
     m.ctx.note(BACK_TEXT);
@@ -293,10 +302,21 @@
     m.ctx.input.focus({ preventScroll: true }); // o botão de redenção some: o foco vai para a pergunta
   }
 
+  /** Falha de envio (rede, exceção ou erro do servidor): aviso de alerta; o texto fica e Enviar volta a valer. */
+  function failRedeem(m, text) {
+    m.redeemBusy = false;
+    setRedeemStatus(m, '');
+    setRedeemAlert(m, text);
+    renderRedeem(m);
+    // Enviar ficou desabilitado durante o envio e o foco caiu: devolve o foco ao botão de tentar de novo.
+    (m.redeem.send.disabled ? m.redeem.area : m.redeem.send).focus({ preventScroll: true });
+  }
+
   function applyRedeemOutcome(m, out) {
     m.redeemBusy = false;
     if (out.kind === 'accepted') return acceptRedeem(m);
     if (out.kind === 'disabled') return liftSuspension(m);
+    if (out.kind === 'network' || out.kind === 'error') return failRedeem(m, out.message);
     setRedeemStatus(m, out.message);
     if (out.kind === 'retry' && out.retryAfterSeconds > 0) {
       m.mod = Object.assign({}, m.mod, { retryAt: Date.now() + out.retryAfterSeconds * 1000 });
@@ -306,17 +326,26 @@
     renderRedeem(m);
   }
 
-  /** Envia a redenção. Resposta que chega depois de trocar de conta não vale. */
+  /** Chamada à API como promessa: exceção síncrona vira rejeição, tratada do mesmo jeito. */
+  function apiCall(m, name, args) {
+    return new Promise(function (resolve) {
+      resolve(m.ctx.app.callApi.apply(m.ctx.app, [name].concat(args)));
+    });
+  }
+
+  /** Envia a redenção. Resposta que chega depois de trocar de conta não vale; falha reabilita o envio. */
   function submitRedeem(m) {
     var v = validateRedemption(m.redeem.area.value);
     if (!v.ok || m.redeemBusy || m.mod.retryAt !== null) return;
     var sentWith = m.ctx.token();
     m.redeemBusy = true;
+    setRedeemAlert(m, '');
     setRedeemStatus(m, 'Enviando…');
     renderRedeem(m);
-    m.ctx.app.callApi('apiAssistantRedeem', sentWith, { message: v.value }).then(function (res) {
-      if (sentWith === m.ctx.token()) applyRedeemOutcome(m, redeemOutcome(res));
-    });
+    apiCall(m, 'apiAssistantRedeem', [sentWith, { message: v.value }])
+      .then(redeemOutcome, function () { return { kind: 'network', message: NETWORK_TEXT }; })
+      .then(function (out) { if (sentWith === m.ctx.token()) applyRedeemOutcome(m, out); })
+      .catch(function () { if (sentWith === m.ctx.token()) failRedeem(m, REDEEM_ERROR_TEXT); });
   }
 
   /** Papel da conta atual, lido do estado do app. */
@@ -331,11 +360,16 @@
     var sentWith = m.ctx.token();
     if (!sentWith || m.modToken === sentWith || !isModeratedRole(currentRole(m))) return;
     m.modToken = sentWith;
-    m.ctx.app.callApi('apiAssistantModerationState', sentWith).then(function (res) {
-      if (sentWith !== m.ctx.token() || m.modToken !== sentWith || m.mod.suspended) return;
-      var st = moderationFromState(res);
-      if (st.mode === 'suspended') setSuspended(m, st.until, st.retryAfterSeconds);
-    });
+    apiCall(m, 'apiAssistantModerationState', [sentWith])
+      .then(function (res) {
+        if (sentWith !== m.ctx.token() || m.modToken !== sentWith || m.mod.suspended) return;
+        var st = moderationFromState(res);
+        if (st.mode === 'suspended') setSuspended(m, st.until, st.retryAfterSeconds);
+      })
+      .catch(function (err) {
+        // Falha aberta (ADR 0004): o chat segue como está. Fica registrado no console, sem aviso à pessoa.
+        if (root.console) root.console.warn('Lia: consulta de moderação falhou; o chat segue.', err);
+      });
   }
 
   /** Saiu ou trocou de conta: zera suspensão, pedido em curso e relógio. */
@@ -347,6 +381,7 @@
     m.redeemOpen = false;
     m.redeem.area.value = '';
     setRedeemStatus(m, '');
+    setRedeemAlert(m, '');
     renderModeration(m);
   }
 
