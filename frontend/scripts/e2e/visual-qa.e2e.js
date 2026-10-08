@@ -77,23 +77,6 @@ function timeseriesReply(metric, range) {
   return { success: true, range, granularity, series: dateList(range).map((date) => ({ date, value })) };
 }
 
-// Chaves do pacote de apiGetMyDashboardSeries (espelham DASHBOARD_SERIES da Worker).
-const DASHBOARD_BUNDLE = [
-  ['activity30d', 'activity', '30d'], ['events30d', 'events', '30d'], ['learning30d', 'learning', '30d'],
-  ['tasks30d', 'tasks', '30d'], ['studyHours30d', 'study_hours', '30d'],
-  ['events6m', 'events', '6m'], ['learning6m', 'learning', '6m'], ['tasks6m', 'tasks', '6m'],
-];
-
-/** Pacote do Início: o painel pede tudo numa chamada só (sem ela, todos os gráficos mostram erro). */
-function dashboardReply() {
-  const series = {};
-  DASHBOARD_BUNDLE.forEach(([key, metric, range]) => {
-    const reply = timeseriesReply(metric, range);
-    series[key] = { range: reply.range, granularity: reply.granularity, series: reply.series };
-  });
-  return { success: true, series };
-}
-
 function homeSummary() {
   return {
     nextEvents: [
@@ -151,7 +134,6 @@ function memberHandlers() {
   return {
     apiGetFeatureFlags: () => ({ success: true, flags: FLAGS_ON }),
     apiGetHomeSummary: () => ({ success: true, summary: homeSummary() }),
-    apiGetMyDashboardSeries: () => dashboardReply(),
     apiGetMyTimeseries: (args) => timeseriesReply(args[1].metric, args[1].range),
     apiGetMyDashboardSeries: () => dashboardSeriesReply(),
     apiAssistantChat: () => liaReply(),
