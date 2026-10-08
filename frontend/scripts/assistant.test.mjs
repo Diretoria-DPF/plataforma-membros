@@ -16,6 +16,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
 const require = createRequire(import.meta.url);
 const Lia = require('../assistant.js');
+const Moderation = require('../assistant-moderation.js');
 
 test('a lista de destinos do front é IGUAL à do Worker (assistant/targets.js)', async () => {
   const workerTargets = await import(pathToFileURL(path.join(root, 'worker', 'src', 'assistant', 'targets.js')).href);
@@ -159,118 +160,118 @@ test('reações da Lia: pensa ao enviar, fala ao responder, fica confusa em degr
 // ---------- Moderação (ADR 0004): funções puras ----------
 
 test('formatReturnTime: horário de Brasília em dd/mm às hh:mm, por epoch ou ISO; vazio se inválido', () => {
-  assert.equal(Lia.formatReturnTime(Date.parse('2026-10-08T17:30:00Z')), '08/10 às 14:30');
-  assert.equal(Lia.formatReturnTime('2026-10-08T17:30:00.000Z'), '08/10 às 14:30');
-  assert.equal(Lia.formatReturnTime('2026-10-09T02:05:00Z'), '08/10 às 23:05'); // 23h, nunca "24"
-  for (const bad of ['lixo', '', null, undefined, NaN]) assert.equal(Lia.formatReturnTime(bad), '', String(bad));
+  assert.equal(Moderation.formatReturnTime(Date.parse('2026-10-08T17:30:00Z')), '08/10 às 14:30');
+  assert.equal(Moderation.formatReturnTime('2026-10-08T17:30:00.000Z'), '08/10 às 14:30');
+  assert.equal(Moderation.formatReturnTime('2026-10-09T02:05:00Z'), '08/10 às 23:05'); // 23h, nunca "24"
+  for (const bad of ['lixo', '', null, undefined, NaN]) assert.equal(Moderation.formatReturnTime(bad), '', String(bad));
 });
 
 test('formatCountdown: "1 h 00 min", "59 min 59 s", "1 min 01 s" e "42 s"; abaixo de zero ou inválido vira 0 s', () => {
-  assert.equal(Lia.formatCountdown(3600), '1 h 00 min');
-  assert.equal(Lia.formatCountdown(3599), '59 min 59 s');
-  assert.equal(Lia.formatCountdown(61), '1 min 01 s');
-  assert.equal(Lia.formatCountdown(42), '42 s');
-  assert.equal(Lia.formatCountdown(-4), '0 s');
-  assert.equal(Lia.formatCountdown(NaN), '0 s');
+  assert.equal(Moderation.formatCountdown(3600), '1 h 00 min');
+  assert.equal(Moderation.formatCountdown(3599), '59 min 59 s');
+  assert.equal(Moderation.formatCountdown(61), '1 min 01 s');
+  assert.equal(Moderation.formatCountdown(42), '42 s');
+  assert.equal(Moderation.formatCountdown(-4), '0 s');
+  assert.equal(Moderation.formatCountdown(NaN), '0 s');
 });
 
 test('secondsLeft: arredonda para cima e nunca fica negativo', () => {
-  assert.equal(Lia.secondsLeft(10000, 0), 10);
-  assert.equal(Lia.secondsLeft(10001, 0), 11);
-  assert.equal(Lia.secondsLeft(0, 10000), 0);
-  assert.equal(Lia.secondsLeft(NaN, 0), 0);
+  assert.equal(Moderation.secondsLeft(10000, 0), 10);
+  assert.equal(Moderation.secondsLeft(10001, 0), 11);
+  assert.equal(Moderation.secondsLeft(0, 10000), 0);
+  assert.equal(Moderation.secondsLeft(NaN, 0), 0);
 });
 
 test('validateRedemption: 40 a 600 caracteres sem contar as pontas (como o servidor)', () => {
-  assert.equal(Lia.REDEEM_MIN, 40);
-  assert.equal(Lia.REDEEM_MAX, 600);
-  assert.equal(Lia.validateRedemption('a'.repeat(39)).ok, false);
-  assert.equal(Lia.validateRedemption('a'.repeat(40)).ok, true);
-  assert.equal(Lia.validateRedemption('a'.repeat(600)).ok, true);
-  assert.equal(Lia.validateRedemption('a'.repeat(601)).ok, false);
-  assert.equal(Lia.validateRedemption('   ' + 'a'.repeat(39) + '   ').ok, false);
-  assert.equal(Lia.validateRedemption(null).ok, false);
-  const v = Lia.validateRedemption('  ' + 'a'.repeat(45) + '  ');
+  assert.equal(Moderation.REDEEM_MIN, 40);
+  assert.equal(Moderation.REDEEM_MAX, 600);
+  assert.equal(Moderation.validateRedemption('a'.repeat(39)).ok, false);
+  assert.equal(Moderation.validateRedemption('a'.repeat(40)).ok, true);
+  assert.equal(Moderation.validateRedemption('a'.repeat(600)).ok, true);
+  assert.equal(Moderation.validateRedemption('a'.repeat(601)).ok, false);
+  assert.equal(Moderation.validateRedemption('   ' + 'a'.repeat(39) + '   ').ok, false);
+  assert.equal(Moderation.validateRedemption(null).ok, false);
+  const v = Moderation.validateRedemption('  ' + 'a'.repeat(45) + '  ');
   assert.equal(v.value.length, 45);
   assert.equal(v.counter, '45/600');
-  assert.equal(Lia.validateRedemption('a'.repeat(39)).hint, 'Escreva mais 1 caractere (mínimo 40).');
-  assert.equal(Lia.validateRedemption('a'.repeat(601)).hint, 'Remova 1 caractere (máximo 600).');
+  assert.equal(Moderation.validateRedemption('a'.repeat(39)).hint, 'Escreva mais 1 caractere (mínimo 40).');
+  assert.equal(Moderation.validateRedemption('a'.repeat(601)).hint, 'Remova 1 caractere (máximo 600).');
 });
 
 test('warningLabel: "Aviso 1 de 3" e "Aviso 2 de 3", em texto (nunca só cor)', () => {
-  assert.equal(Lia.warningLabel(1), 'Aviso 1 de 3');
-  assert.equal(Lia.warningLabel(2), 'Aviso 2 de 3');
+  assert.equal(Moderation.warningLabel(1), 'Aviso 1 de 3');
+  assert.equal(Moderation.warningLabel(2), 'Aviso 2 de 3');
 });
 
 test('suspensionText: cita o horário de retorno em Brasília e oferece a redenção', () => {
-  const text = Lia.suspensionText(Date.parse('2026-10-08T17:30:00Z'));
+  const text = Moderation.suspensionText(Date.parse('2026-10-08T17:30:00Z'));
   assert.match(text, /suspenso até 08\/10 às 14:30 \(horário de Brasília\)/);
   assert.match(text, /pedir redenção/);
-  assert.doesNotMatch(Lia.suspensionText(null), / até /);
+  assert.doesNotMatch(Moderation.suspensionText(null), / até /);
 });
 
 test('moderationFromChat: aviso nos níveis 1 e 2; nível 3 ou suspended vira suspensão com o fim; sem moderação, nada', () => {
-  assert.deepEqual(Lia.moderationFromChat({ moderation: { level: 1, suspended: false, until: null } }), { mode: 'warning', level: 1 });
-  assert.deepEqual(Lia.moderationFromChat({ moderation: { level: 2, suspended: false, until: null } }), { mode: 'warning', level: 2 });
-  const on = Lia.moderationFromChat({ moderation: { level: 3, suspended: true, until: '2026-10-09T17:30:00.000Z' } });
+  assert.deepEqual(Moderation.moderationFromChat({ moderation: { level: 1, suspended: false, until: null } }), { mode: 'warning', level: 1 });
+  assert.deepEqual(Moderation.moderationFromChat({ moderation: { level: 2, suspended: false, until: null } }), { mode: 'warning', level: 2 });
+  const on = Moderation.moderationFromChat({ moderation: { level: 3, suspended: true, until: '2026-10-09T17:30:00.000Z' } });
   assert.equal(on.mode, 'suspended');
   assert.equal(on.until, Date.parse('2026-10-09T17:30:00.000Z'));
-  assert.equal(Lia.moderationFromChat({ moderation: { level: 3, suspended: false, until: 'lixo' } }).until, null);
-  assert.deepEqual(Lia.moderationFromChat({ moderation: { level: 0, suspended: false, until: null } }), { mode: 'none' });
-  assert.deepEqual(Lia.moderationFromChat({ reply: 'oi' }), { mode: 'none' });
-  assert.deepEqual(Lia.moderationFromChat(null), { mode: 'none' });
+  assert.equal(Moderation.moderationFromChat({ moderation: { level: 3, suspended: false, until: 'lixo' } }).until, null);
+  assert.deepEqual(Moderation.moderationFromChat({ moderation: { level: 0, suspended: false, until: null } }), { mode: 'none' });
+  assert.deepEqual(Moderation.moderationFromChat({ reply: 'oi' }), { mode: 'none' });
+  assert.deepEqual(Moderation.moderationFromChat(null), { mode: 'none' });
 });
 
 test('moderationFromState: só a suspensão restaurada muda a tela; falha ou conta sem moderação não mudam nada', () => {
-  const on = Lia.moderationFromState({ success: true, moderated: true, level: 3, suspended: true, until: '2026-10-09T17:30:00.000Z', canRedeem: false, retryAfterSeconds: 120 });
+  const on = Moderation.moderationFromState({ success: true, moderated: true, level: 3, suspended: true, until: '2026-10-09T17:30:00.000Z', canRedeem: false, retryAfterSeconds: 120 });
   assert.deepEqual(on, { mode: 'suspended', until: Date.parse('2026-10-09T17:30:00.000Z'), retryAfterSeconds: 120 });
-  assert.deepEqual(Lia.moderationFromState({ success: false, message: 'falhou' }), { mode: 'none' }); // falha aberta
-  assert.deepEqual(Lia.moderationFromState({ success: true, moderated: false, level: 0, suspended: false }), { mode: 'none' });
-  assert.deepEqual(Lia.moderationFromState({ success: true, moderated: true, level: 1, suspended: false, until: null, retryAfterSeconds: 0 }), { mode: 'none' });
-  assert.deepEqual(Lia.moderationFromState({ success: true, events: [] }), { mode: 'none' }); // resposta padrão sem campos
-  assert.deepEqual(Lia.moderationFromState(undefined), { mode: 'none' });
+  assert.deepEqual(Moderation.moderationFromState({ success: false, message: 'falhou' }), { mode: 'none' }); // falha aberta
+  assert.deepEqual(Moderation.moderationFromState({ success: true, moderated: false, level: 0, suspended: false }), { mode: 'none' });
+  assert.deepEqual(Moderation.moderationFromState({ success: true, moderated: true, level: 1, suspended: false, until: null, retryAfterSeconds: 0 }), { mode: 'none' });
+  assert.deepEqual(Moderation.moderationFromState({ success: true, events: [] }), { mode: 'none' }); // resposta padrão sem campos
+  assert.deepEqual(Moderation.moderationFromState(undefined), { mode: 'none' });
 });
 
 test('redeemOutcome: aceita, recusa com espera de 1 h, limite com retryAfterSeconds, desligada, rede e erro', () => {
-  assert.equal(Lia.redeemOutcome({ success: true, accepted: true, level: 0, message: 'ok' }).kind, 'accepted');
-  const refused = Lia.redeemOutcome({ success: true, accepted: false, level: 3, retryAfterSeconds: 3600, message: 'não convenceu' });
+  assert.equal(Moderation.redeemOutcome({ success: true, accepted: true, level: 0, message: 'ok' }).kind, 'accepted');
+  const refused = Moderation.redeemOutcome({ success: true, accepted: false, level: 3, retryAfterSeconds: 3600, message: 'não convenceu' });
   assert.deepEqual(refused, { kind: 'retry', message: 'não convenceu', retryAfterSeconds: 3600 });
-  const limit = Lia.redeemOutcome({ success: false, message: 'Você já tentou há pouco.', retryAfterSeconds: 1200 });
+  const limit = Moderation.redeemOutcome({ success: false, message: 'Você já tentou há pouco.', retryAfterSeconds: 1200 });
   assert.equal(limit.kind, 'retry');
   assert.equal(limit.retryAfterSeconds, 1200);
-  assert.equal(Lia.redeemOutcome({ success: false, message: 'Explique em 40 a 600 caracteres.' }).kind, 'error');
-  assert.equal(Lia.redeemOutcome({ success: false, disabled: true, message: 'desligada' }).kind, 'disabled');
-  const net = Lia.redeemOutcome({ success: false, networkUnavailable: true, message: 'Failed to fetch' });
+  assert.equal(Moderation.redeemOutcome({ success: false, message: 'Explique em 40 a 600 caracteres.' }).kind, 'error');
+  assert.equal(Moderation.redeemOutcome({ success: false, disabled: true, message: 'desligada' }).kind, 'disabled');
+  const net = Moderation.redeemOutcome({ success: false, networkUnavailable: true, message: 'Failed to fetch' });
   assert.equal(net.kind, 'network');
   assert.doesNotMatch(net.message, /Failed to fetch/);
   assert.match(net.message, /tente de novo/);
-  assert.equal(Lia.redeemOutcome(null).kind, 'error');
+  assert.equal(Moderation.redeemOutcome(null).kind, 'error');
 });
 
 test('nextTickDelay: 1 s durante a contagem, até o fim da suspensão (com teto) ou nunca', () => {
   const idle = { suspended: false, until: null, retryAt: null };
-  assert.equal(Lia.nextTickDelay(idle, 0), null);
-  assert.equal(Lia.nextTickDelay({ ...idle, retryAt: 10000 }, 0), 1000);
-  assert.equal(Lia.nextTickDelay({ ...idle, retryAt: 500 }, 0), 500);
-  assert.equal(Lia.nextTickDelay({ ...idle, retryAt: 100 }, 200), null); // contagem que já acabou
-  assert.equal(Lia.nextTickDelay({ suspended: true, until: 3600000, retryAt: null }, 0), 3600000);
-  assert.equal(Lia.nextTickDelay({ suspended: true, until: 1e12, retryAt: null }, 0), 2147483647);
-  assert.equal(Lia.nextTickDelay({ suspended: true, until: 1e12, retryAt: 2000 }, 0), 1000);
+  assert.equal(Moderation.nextTickDelay(idle, 0), null);
+  assert.equal(Moderation.nextTickDelay({ ...idle, retryAt: 10000 }, 0), 1000);
+  assert.equal(Moderation.nextTickDelay({ ...idle, retryAt: 500 }, 0), 500);
+  assert.equal(Moderation.nextTickDelay({ ...idle, retryAt: 100 }, 200), null); // contagem que já acabou
+  assert.equal(Moderation.nextTickDelay({ suspended: true, until: 3600000, retryAt: null }, 0), 3600000);
+  assert.equal(Moderation.nextTickDelay({ suspended: true, until: 1e12, retryAt: null }, 0), 2147483647);
+  assert.equal(Moderation.nextTickDelay({ suspended: true, until: 1e12, retryAt: 2000 }, 0), 1000);
 });
 
 test('lapsedSuspension: suspensão com horário passado vale como liberada, sem mudar o objeto original', () => {
   const mod = { suspended: true, until: 100, retryAt: null };
-  assert.deepEqual(Lia.lapsedSuspension(mod, 200), { suspended: false, until: null, retryAt: null });
+  assert.deepEqual(Moderation.lapsedSuspension(mod, 200), { suspended: false, until: null, retryAt: null });
   assert.equal(mod.suspended, true);
-  assert.equal(Lia.lapsedSuspension(mod, 50), mod);
+  assert.equal(Moderation.lapsedSuspension(mod, 50), mod);
 });
 
 test('constantes da moderação batem com o bloco MODERATION de worker/src/constants.js', () => {
   const src = read('worker/src/constants.js');
   const block = src.slice(src.indexOf('export const MODERATION'));
-  assert.equal(Number(block.match(/REDEEM_MIN_CHARS:\s*(\d+)/)[1]), Lia.REDEEM_MIN);
-  assert.equal(Number(block.match(/REDEEM_MAX_CHARS:\s*(\d+)/)[1]), Lia.REDEEM_MAX);
-  assert.equal(Number(block.match(/MAX_LEVEL:\s*(\d+)/)[1]), Lia.SUSPEND_LEVEL);
+  assert.equal(Number(block.match(/REDEEM_MIN_CHARS:\s*(\d+)/)[1]), Moderation.REDEEM_MIN);
+  assert.equal(Number(block.match(/REDEEM_MAX_CHARS:\s*(\d+)/)[1]), Moderation.REDEEM_MAX);
+  assert.equal(Number(block.match(/MAX_LEVEL:\s*(\d+)/)[1]), Moderation.SUSPEND_LEVEL);
 });
 
 test('contextos da Lia usados pela moderação existem em lia-states.js com os rótulos certos', () => {
@@ -281,11 +282,23 @@ test('contextos da Lia usados pela moderação existem em lia-states.js com os r
 });
 
 test('moderação na tela: aviso com papel de status, um só relógio (sem setInterval), consulta por papel e uma vez', () => {
+  const mod = read('frontend/assistant-moderation.js');
+  const chat = read('frontend/assistant.js');
+  assert.match(mod, /band\.setAttribute\('role', 'status'\)/);
+  assert.doesNotMatch(mod + chat, /setInterval/);
+  assert.match(chat, /ui\.moderation\.stop\(\); \/\/ o relógio da moderação só roda com o painel aberto/);
+  assert.doesNotMatch(mod, /lia-redeem-timer[^\n]*aria-live/);
+  assert.match(mod, /role === 'member' \|\| role === 'admin'/);
+  assert.equal((mod.match(/'apiAssistantModerationState'/g) || []).length, 1);
+  assert.equal((chat.match(/'apiAssistantModerationState'/g) || []).length, 0);
+});
+
+test('a cola da Lia delega a moderação ao módulo: cria uma vez, consulta ao abrir, pinta e para o relógio', () => {
   const src = read('frontend/assistant.js');
-  assert.match(src, /band\.setAttribute\('role', 'status'\)/);
-  assert.doesNotMatch(src, /setInterval/);
-  assert.match(src, /clearTick\(\); \/\/ o relógio da moderação só roda com o painel aberto/);
-  assert.doesNotMatch(src, /lia-redeem-timer[^\n]*aria-live/);
-  assert.match(src, /role === 'member' \|\| role === 'admin'/);
-  assert.equal((src.match(/'apiAssistantModerationState'/g) || []).length, 1);
+  assert.match(src, /var moderation = modLib\(\)\.createModeration\(moderationContext\(app, doc, composer\.input, panel\)\);/);
+  assert.match(src, /root\.AssistantModeration/);
+  assert.match(src, /ui\.moderation\.lapse\(\);[\s\S]*ui\.moderation\.render\(\);[\s\S]*ui\.moderation\.checkOnOpen\(\);/);
+  assert.match(src, /ui\.moderation\.suspend\(mod\.until, 0\)/);
+  assert.match(src, /modLib\(\)\.moderationFromChat\(res\)/);
+  assert.doesNotMatch(src, /function (buildRedeem|warningBand|setSuspended|checkModerationOnce|liftSuspension)\b/);
 });
