@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Props e poses novos das cenas 1-7 (Onda 2, ADR 0003). Fonte de lia-props-art.js (build-lia-art.mjs).
+     Cada <g> de topo e um id lia-pv-* do contrato (README, secao "Contrato de ids").
+     data-cena = cena da onda (1-7). data-pai = onde o no entra: "svg" = raiz do .lia-svg (coordenadas do viewBox 200x300);
+     "#lia-prop-flask", "#lia-head", "#lia-coat" = id existente em lia.svg (coordenadas do proprio grupo).
+     data-posicao="primeiro" = inserir antes de #lia-body (atras do corpo).
+     Cores so por classes da paleta: p k c h a t s n rd (lia.css) e ln al gi vu (novas, ver README). Traco = --lia-stroke. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <g id="lia-pv-veu" data-cena="5" data-pai="svg" data-posicao="primeiro" opacity="0">
+    <rect class="vu" x="-20" y="-20" width="240" height="340" rx="8"/>
+  </g>
+  <g id="lia-pv-liquido-b" data-cena="1" data-pai="#lia-prop-flask">
+    <path class="s" d="M132 234h30l4 8a4 4 0 01-3.5 6H131.5a4 4 0 01-3.5-6z"/>
+  </g>
+  <g id="lia-pv-bolha-1" data-cena="1" data-pai="#lia-prop-flask">
+    <circle class="p" cx="140" cy="241" r="1.6"/>
+  </g>
+  <g id="lia-pv-bolha-2" data-cena="1" data-pai="#lia-prop-flask">
+    <circle class="p" cx="148" cy="237" r="1.6"/>
+  </g>
+  <g id="lia-pv-bolha-3" data-cena="1" data-pai="#lia-prop-flask">
+    <circle class="p" cx="153" cy="243" r="1.6"/>
+  </g>
+  <g id="lia-pv-monitor" data-cena="2" data-pai="svg">
+    <rect class="p rd" x="166" y="86" width="52" height="38"/>
+    <g id="lia-pv-ecg">
+      <path class="ln" d="M171 112h9l3-12 4 22 3-16 3 6h7l3-4 2 4h9"/>
+    </g>
+    <g id="lia-pv-coracao">
+      <circle class="t" cx="211" cy="95" r="2.6"/>
+    </g>
+  </g>
+  <g id="lia-pv-osso" data-cena="3" data-pai="svg">
+    <rect class="p" x="170" y="168" width="16" height="6" rx="3"/>
+    <circle class="p" cx="168" cy="166" r="3"/>
+    <circle class="p" cx="168" cy="172" r="3"/>
+    <circle class="p" cx="188" cy="166" r="3"/>
+    <circle class="p" cx="188" cy="172" r="3"/>
+  </g>
+  <g id="lia-pv-estrela" data-cena="3" data-pai="svg">
+    <path class="s n" d="M0-8 2-2 8 0 2 2 0 8-2 2-8 0-2-2z" transform="translate(184 150) scale(1.4)"/>
+  </g>
+  <g id="lia-pv-folha" data-cena="4" data-pai="svg">
+    <path class="p" d="M100 160c12-5 24-5 36 0v28c-12-5-24-5-36 0z"/>
+  </g>
+  <g id="lia-pv-interrogacao" data-cena="4" data-pai="svg">
+    <ellipse class="p" cx="156" cy="40" rx="13" ry="12"/>
+    <path class="ln" d="M152 37a4 4 0 1 1 6.2 3.3c-1.2.8-2.2 1.6-2.2 3.2"/>
+    <circle class="a n" cx="156.2" cy="49" r="1.6"/>
+  </g>
+  <g id="lia-pv-tela" data-cena="4" data-pai="svg">
+    <rect class="p rd" x="166" y="94" width="32" height="24"/>
+    <path d="M172 102h20M172 108h13M172 114h17M182 118v5M177 123h10"/>
+  </g>
+  <g id="lia-pv-cruzados" data-cena="5" data-pai="svg">
+    <path class="c" d="M62 180L126 160L130 172L66 192Z"/>
+    <path class="c" d="M138 180L74 160L70 172L134 192Z"/>
+    <circle class="k" cx="127" cy="165" r="5.5"/>
+    <circle class="k" cx="73" cy="165" r="5.5"/>
+  </g>
+  <g id="lia-pv-aviso" data-cena="5" data-pai="svg">
+    <path class="al" d="M150 58l-8 16 17-10z"/>
+    <ellipse class="al" cx="164" cy="48" rx="26" ry="17"/>
+    <rect class="gi" x="162" y="38" width="4.4" height="12" rx="2.2"/>
+    <circle class="gi" cx="164.2" cy="56" r="2.4"/>
+  </g>
+  <g id="lia-pv-costas-cabeca" data-cena="6" data-pai="#lia-head">
+    <ellipse class="h" cx="100" cy="106" rx="44" ry="42"/>
+  </g>
+  <g id="lia-pv-costas-costura" data-cena="6" data-pai="#lia-coat">
+    <path d="M100 190v70"/>
+  </g>
+</svg>
