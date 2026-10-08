@@ -856,6 +856,67 @@
     });
   }
 
+  // >>> nav-a11y (puro)
+  // Texto oculto e estado de aba da navegação inferior (WCAG 1.3.1 e 4.1.2).
+  // Sem DOM, para ser testado em scripts/nav-a11y.test.mjs. Não remova os marcadores.
+  var NAV_BADGES = [
+    { id: 'nav-badge-voting', srId: 'nav-badge-voting-sr', kind: 'voting' },
+    { id: 'nav-badge-tasks', srId: 'nav-badge-tasks-sr', kind: 'tasks' },
+    { id: 'nav-badge-connections', srId: 'nav-badge-connections-sr', kind: 'connections' },
+    { id: 'nav-badge-messages', srId: 'nav-badge-messages-sr', kind: 'messages' },
+  ];
+  var NAV_BADGE_NOUNS = {
+    tasks: { one: 'tarefa pendente', many: 'tarefas pendentes' },
+    connections: { one: 'solicitação de conexão pendente', many: 'solicitações de conexão pendentes' },
+    messages: { one: 'mensagem não lida', many: 'mensagens não lidas' },
+  };
+
+  /** Texto oculto do badge (vazio quando não há o que anunciar). */
+  function navBadgeSrText(kind, count) {
+    var n = Math.floor(Number(count)) || 0;
+    if (n <= 0) return '';
+    if (kind === 'voting') return 'há votação aberta';
+    if (!Object.prototype.hasOwnProperty.call(NAV_BADGE_NOUNS, kind)) return '';
+    var nouns = NAV_BADGE_NOUNS[kind];
+    return n + ' ' + (n === 1 ? nouns.one : nouns.many);
+  }
+
+  /** Estado de uma aba: só a do painel atual fica ativa e recebe aria-current="page" (não depende só de cor). */
+  function navItemState(panelId, activePanelId) {
+    var isActive = panelId === activePanelId;
+    return { active: isActive, ariaCurrent: isActive ? 'page' : null };
+  }
+  // <<< nav-a11y (puro)
+
+  /** Lê o número (ou o "!" de votação, que é só presença) de um badge e atualiza o texto oculto dentro do botão. */
+  function syncNavBadgeSr(entry) {
+    var badge = document.getElementById(entry.id);
+    var sr = document.getElementById(entry.srId);
+    if (!badge || !sr) return;
+    var count = 0;
+    if (!badge.classList.contains('hidden')) {
+      count = entry.kind === 'voting' ? 1 : parseInt(badge.textContent, 10);
+    }
+    var text = navBadgeSrText(entry.kind, count);
+    if (sr.textContent !== text) sr.textContent = text;
+  }
+
+  function syncAllNavBadgesSr() {
+    NAV_BADGES.forEach(syncNavBadgeSr);
+  }
+
+  /** O badge de mensagens é escrito por messaging.js; o observador cobre qualquer escrita sem acoplar os módulos. */
+  function watchNavBadges() {
+    syncAllNavBadgesSr();
+    if (!window.MutationObserver) return;
+    var observer = new MutationObserver(syncAllNavBadgesSr);
+    NAV_BADGES.forEach(function (entry) {
+      var badge = document.getElementById(entry.id);
+      if (badge) observer.observe(badge, { attributes: true, attributeFilter: ['class'], childList: true, characterData: true, subtree: true });
+    });
+  }
+  watchNavBadges();
+
   function setupNavigationForRole(role) {
     document.querySelectorAll('#app-nav [data-scope]').forEach(function (btn) {
       var scope = btn.getAttribute('data-scope');
@@ -929,7 +990,10 @@
       section.classList.toggle('hidden', section.id !== panelId);
     });
     document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
+      var state = navItemState(btn.getAttribute('data-panel'), panelId);
+      btn.classList.toggle('active', state.active);
+      if (state.ariaCurrent) btn.setAttribute('aria-current', state.ariaCurrent);
+      else btn.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
   }
