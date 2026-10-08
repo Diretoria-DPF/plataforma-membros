@@ -69,11 +69,12 @@ test('telas públicas não têm salto de nível dentro de si', () => {
   }
 });
 
-test('títulos de cadastro, redefinição e esqueci-senha são h1 visíveis, com o tamanho antigo do h2', () => {
+test('títulos de cadastro, redefinição e esqueci-senha são h1 visíveis com a classe auth-heading (sem style inline)', () => {
   for (const titleId of ['register-title', 'forgot-title', 'reset-title']) {
     const tag = h1Tags(HTML).find((t) => t.includes(`id="${titleId}"`));
     assert.ok(tag, `${titleId} deveria ser h1`);
-    assert.match(tag, /style="font-size:1\.5em;?"/, `${titleId} precisa manter o tamanho do h2 anterior`);
+    assert.match(tag, /class="auth-heading"/, `${titleId} usa a classe auth-heading (tamanho no design system)`);
+    assert.doesNotMatch(tag, /style=/, `${titleId} não pode usar style inline (CSP)`);
     assert.doesNotMatch(tag, /sr-only|visually-hidden/, `${titleId} é título visível, não pode ficar oculto`);
   }
 });
