@@ -4,6 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 import { jest } from '@jest/globals';
+import * as C from '../src/constants.js';
 import { getMyTimeseries, getMyDashboardSeries, DASHBOARD_SERIES } from '../src/services/timeseriesService.js';
 import { makeEnv } from './helpers/mockEnv.js';
 import { memoryKv } from './helpers/aiTestUtils.js';
@@ -235,23 +236,155 @@ describe('apiGetMyDashboardSeries — as 8 séries do Início', () => {
     expect(logged.rows[0].context).toEqual({ metric: 'events', range: '6m' });
   });
 
-  test('cache: a segunda chamada não consulta o banco e cada série tem chave privada própria', async () => {
+  test('cache do pacote: miss consulta as 8 séries e grava UMA chave privada; hit não consulta o banco', async () => {
     const kv = memoryKv();
     const env = makeEnv({ HOT_CACHE: kv });
     const spy = jest.fn(sql);
     const a = await getMyDashboardSeries(spy, env, identity(), {}, CID);
-    const calls = spy.mock.calls.length;
-    expect(calls).toBeGreaterThan(0);
+    expect(spy.mock.calls.length).toBe(KEYS.length);
+    expect(kv.put).toHaveBeenCalledTimes(1);
+    const keys = [...kv.store.keys()];
+    expect(keys).toHaveLength(1);
+    expect(keys[0]).toContain(me);
     const b = await getMyDashboardSeries(spy, env, identity(), {}, CID);
     expect(b).toEqual(a);
-    expect(spy.mock.calls.length).toBe(calls);
-    const keys = [...kv.store.keys()];
-    expect(keys).toHaveLength(KEYS.length);
-    expect(keys.every((k) => k.includes(me))).toBe(true);
-    expect(keys.some((k) => k.endsWith(':6m:events'))).toBe(true);
+    expect(spy.mock.calls.length).toBe(KEYS.length);
+    expect(kv.put).toHaveBeenCalledTimes(1);
+  });
+
+  test('cache do pacote: com uma série falha nada é gravado; a chamada seguinte consulta de novo e então grava', async () => {
+    const kv = memoryKv();
+    const env = makeEnv({ HOT_CACHE: kv });
+    const partial = await getMyDashboardSeries(failingSql(sql), env, identity(), {}, CID);
+    expect(partial.series.events6m).toBeNull();
+    expect(kv.put).not.toHaveBeenCalled();
+    expect(kv.store.size).toBe(0);
+    const spy = jest.fn(sql);
+    const full = await getMyDashboardSeries(spy, env, identity(), {}, CID);
+    expect(full.series.events6m).not.toBeNull();
+    expect(spy.mock.calls.length).toBe(KEYS.length);
+    expect(kv.put).toHaveBeenCalledTimes(1);
+    const again = jest.fn(sql);
+    expect(await getMyDashboardSeries(again, env, identity(), {}, CID)).toEqual(full);
+    expect(again).not.toHaveBeenCalled();
   });
 
   test.each([[[]], ['x'], [7]])('entrada inválida %p: erro de validação', async (input) => {
     await expect(getMyDashboardSeries(sql, makeEnv(), identity(), input, CID)).rejects.toMatchObject({ name: 'ValidationError', expected: true });
   });
+});
+
+// Instantes de fronteira em SQL (timestamptz). "Início" = 00:00 de Brasília do 1º bucket da janela.
+const LOCAL = `'${TZ}'`;
+const START_30D = `((date_trunc('day', now() AT TIME ZONE ${LOCAL}) - interval '29 days') AT TIME ZONE ${LOCAL})`;
+const START_6M = `((date_trunc('month', now() AT TIME ZONE ${LOCAL}) - interval '5 months') AT TIME ZONE ${LOCAL})`;
+const START_12M = `((date_trunc('week', now() AT TIME ZONE ${LOCAL}) - interval '51 weeks') AT TIME ZONE ${LOCAL})`;
+const CURRENT_MONTH = `(date_trunc('month', now() AT TIME ZONE ${LOCAL}) AT TIME ZONE ${LOCAL})`;
+const NEXT_MONTH = `((date_trunc('month', now() AT TIME ZONE ${LOCAL}) + interval '1 month') AT TIME ZONE ${LOCAL})`;
+const ONE_SECOND_BEFORE = (start) => `(${start} - interval '1 second')`;
+
+/** Tentativa de estudo com created_at = instante SQL e duração em segundos. */
+async function attemptAt(profileId, instant, seconds) {
+  await db.query(`INSERT INTO learning_attempts (profile_id, module, activity, duration_seconds, created_at) VALUES ($1, 'farmacologia', 'quiz_estudo', $2, ${instant})`, [profileId, seconds]);
+}
+
+/** Inscrição com registered_at = instante SQL (um evento novo por inscrição: UNIQUE(event_id, profile_id)). */
+async function registrationAt(profileId, instant) {
+  const ev = await db.query("INSERT INTO events (title, description, event_date, status) VALUES ('Evento de borda', 'descricao', now(), 'published') RETURNING id");
+  await db.query(`INSERT INTO event_registrations (event_id, profile_id, registered_at) VALUES ($1, $2, ${instant})`, [ev.rows[0].id, profileId]);
+}
+
+// Oráculo: a consulta anterior ao filtro de data (lê o histórico inteiro e só depois
+// recorta os buckets). O resultado atual tem que ser igual a ela em todo range e métrica.
+const LEGACY_SOURCES = {
+  events: 'SELECT registered_at AS t, 1 AS amount FROM event_registrations WHERE profile_id = $1',
+  learning: 'SELECT created_at AS t, 1 AS amount FROM learning_attempts WHERE profile_id = $1',
+  hours: 'SELECT created_at AS t, COALESCE(duration_seconds, 0) AS amount FROM learning_attempts WHERE profile_id = $1',
+  tasks: 'SELECT completed_at AS t, 1 AS amount FROM task_signups WHERE profile_id = $1 AND completed_at IS NOT NULL',
+};
+const LEGACY_PARTS = {
+  activity: ['events', 'learning', 'tasks'],
+  events: ['events'],
+  learning: ['learning'],
+  tasks: ['tasks'],
+  study_hours: ['hours'],
+};
+
+async function legacySeries(profileId, range, metric) {
+  const spec = C.TIMESERIES.RANGES[range];
+  const trunc = { day: 'day', week: 'week', month: 'month' }[spec.granularity];
+  const union = LEGACY_PARTS[metric].map((part) => LEGACY_SOURCES[part]).join(' UNION ALL ');
+  const { rows } = await db.query(
+    `WITH cur AS (SELECT date_trunc('${trunc}', now() AT TIME ZONE $2) AS c),
+          hits AS (SELECT date_trunc('${trunc}', u.t AT TIME ZONE $2) AS d, SUM(u.amount) AS total
+                   FROM (${union}) u GROUP BY 1)
+     SELECT to_char(g.d, 'YYYY-MM-DD') AS date, COALESCE(h.total, 0) AS value
+     FROM cur, generate_series(cur.c - ($3::interval * $4), cur.c, $3::interval) AS g(d)
+     LEFT JOIN hits h ON h.d = g.d
+     ORDER BY g.d`,
+    [profileId, TZ, `1 ${trunc}`, spec.count - 1]);
+  const isHours = metric === 'study_hours';
+  return rows.map((r) => ({ date: r.date, value: isHours ? Math.round((Number(r.value) / 3600) * 100) / 100 : Number(r.value) }));
+}
+
+describe('apiGetMyTimeseries — fronteiras da janela (filtro de data)', () => {
+  let j30;
+  let j6m;
+  let j12m;
+  beforeAll(async () => {
+    j30 = await profile('janela30@exemplo.com');
+    j6m = await profile('janela6m@exemplo.com');
+    j12m = await profile('janela12m@exemplo.com');
+    // 30d: 1º dia às 00:00 (entra), 1 s antes dele (fica fora), agora (entra), daqui a 2 dias (fora).
+    await registrationAt(j30, START_30D);
+    await registrationAt(j30, ONE_SECOND_BEFORE(START_30D));
+    await registrationAt(j30, 'now()');
+    await registrationAt(j30, "now() + interval '2 days'");
+    // 6m: 1º mês às 00:00 (entra), último segundo do mês anterior (fora), 1º dia do mês corrente (entra), agora (entra), 1º dia do mês seguinte (fora).
+    await attemptAt(j6m, START_6M, 3600);
+    await attemptAt(j6m, ONE_SECOND_BEFORE(START_6M), 3600);
+    await attemptAt(j6m, CURRENT_MONTH, 3600);
+    await attemptAt(j6m, 'now()', 3600);
+    await attemptAt(j6m, NEXT_MONTH, 3600);
+    // 12m: segunda da 1ª semana às 00:00 (entra, 3600 s), 1 s antes (fora, 7200 s), agora (entra, 1800 s).
+    await attemptAt(j12m, START_12M, 3600);
+    await attemptAt(j12m, ONE_SECOND_BEFORE(START_12M), 7200);
+    await attemptAt(j12m, 'now()', 1800);
+  }, 60000);
+
+  test('30d: registro no 1º dia às 00:00 entra; 1 s antes da janela fica fora; futuro fica fora', async () => {
+    const res = await getMyTimeseries(sql, makeEnv(), identity(j30), { range: '30d', metric: 'events' });
+    expect(res.series[0].value).toBe(1);
+    expect(res.series[29].value).toBe(1);
+    expect(total(res)).toBe(2);
+    const wider = await getMyTimeseries(sql, makeEnv(), identity(j30), { range: '90d', metric: 'events' });
+    expect(total(wider)).toBe(3); // o registro de 1 s antes da janela de 30 dias cai dentro da de 90
+  });
+
+  test('6m: 1º mês às 00:00 entra; último segundo do mês anterior e o mês seguinte ficam fora', async () => {
+    const res = await getMyTimeseries(sql, makeEnv(), identity(j6m), { range: '6m', metric: 'learning' });
+    expect(res.series[0].value).toBe(1);
+    expect(res.series[5].value).toBe(2);
+    expect(total(res)).toBe(3);
+  });
+
+  test('12m: 1ª semana às 00:00 entra; 1 s antes fica fora; horas somam só a janela', async () => {
+    const res = await getMyTimeseries(sql, makeEnv(), identity(j12m), { range: '12m', metric: 'study_hours' });
+    expect(res.series).toHaveLength(52);
+    expect(res.series[0].value).toBe(1); // 3600 s
+    expect(res.series[51].value).toBe(0.5); // 1800 s, semana corrente
+    expect(total(res)).toBe(1.5); // os 7200 s de antes da janela ficaram de fora
+  });
+
+  test('resultado idêntico ao da consulta anterior (sem filtro de data) em todo range e métrica', async () => {
+    for (const pid of [j30, j6m, j12m, me, estudo]) {
+      for (const range of Object.keys(C.TIMESERIES.RANGES)) {
+        for (const metric of C.TIMESERIES.METRICS) {
+          const got = await getMyTimeseries(sql, makeEnv(), identity(pid), { range, metric });
+          const legacy = await legacySeries(pid, range, metric);
+          expect({ combo: range + '/' + metric, series: got.series }).toEqual({ combo: range + '/' + metric, series: legacy });
+        }
+      }
+    }
+  }, 120000);
 });
