@@ -32,8 +32,9 @@
     celebrating: ctx('celebrating', 'happy', 'smile', 'heart', 'heart', 'none', 'glow heart sparkles', 'Lia está celebrando'),
     confused: ctx('idle', 'worried', 'worried', 'idle', 'idle', 'none', null, 'Lia não entendeu'),
     alert: ctx('idle', 'focused', 'flat', 'idle', 'idle', 'none', null, 'Lia está atenta'),
-    warning: ctx('idle', 'sad', 'flat', 'idle', 'idle', 'none', null, 'Lia emitiu um alerta'),
+    warning: ctx('idle', 'worried', 'worried', 'idle', 'idle', 'none', null, 'Lia emitiu um alerta'),
     suspended: ctx('suspended', 'sad', 'flat', 'idle', 'idle', 'none', null, 'Lia está suspensa'),
+    redeem: ctx('idle', 'happy', 'smile', 'idle', 'idle', 'none', 'glow heart', 'Lia'), // volta ao repouso: o rótulo é o de sempre
     events: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'calendar', null, 'Lia, assistente de Eventos'),
     proposals: ctx('idle', 'focused', 'flat', 'idle', 'idle', 'pencil', null, 'Lia, assistente de Propostas'),
     lab: ctx('idle', 'focused', 'flat', 'idle', 'idle', 'flask', null, 'Lia, assistente do Laboratório'),
@@ -42,6 +43,42 @@
     learn: ctx('idle', 'neutral', 'neutral', 'idle', 'idle', 'book', null, 'Lia, assistente de Aulas'),
   });
   var MODULES = Object.freeze(['events', 'proposals', 'lab', 'clinic', 'atlas', 'learn']);
+
+  // Peças extras (lia-props-art.js, carregado sob demanda) e cena de movimento (lia-scenes.js) de cada contexto.
+  // extras: aparecem com o contexto e ficam enquanto ele durar. sceneExtras: só existem durante a animação.
+  // late: com a arte ainda carregando, a cena começa quando ela chegar. O aria-label é o do contexto (um por estado).
+  var EXTRA_NAMES = Object.freeze([
+    'veu', 'liquido-b', 'bolha-1', 'bolha-2', 'bolha-3', 'monitor', 'osso', 'estrela', 'folha', 'interrogacao', 'tela',
+    'cruzados', 'aviso', 'costas-cabeca', 'costas-costura',
+  ]);
+  var BACK = Object.freeze(['costas-cabeca', 'costas-costura']);
+  var NO_PLAN = Object.freeze({ extras: Object.freeze([]), sceneExtras: Object.freeze([]), scene: null, late: false });
+
+  function plan(extras, scene, rest) {
+    var more = rest || {};
+    return Object.freeze({
+      extras: Object.freeze(extras),
+      sceneExtras: Object.freeze(more.sceneExtras || []),
+      scene: scene,
+      late: more.late === true,
+    });
+  }
+
+  var PLANS = Object.freeze({
+    confused: plan([], 'confused'),
+    warning: plan(['veu', 'cruzados', 'aviso'], 'warning', { late: true }),
+    suspended: plan(BACK, null),
+    redeem: plan([], 'redeem', { sceneExtras: BACK }),
+    lab: plan(['liquido-b', 'bolha-1', 'bolha-2', 'bolha-3'], 'lab', { late: true }),
+    clinic: plan(['monitor'], 'clinic', { late: true }),
+    atlas: plan(['osso', 'estrela'], 'atlas', { late: true }),
+    learn: plan(['folha', 'interrogacao', 'tela'], 'learn', { late: true }),
+  });
+
+  /** Peças e cena do contexto (contexto sem plano devolve um plano vazio). */
+  function planFor(name) {
+    return Object.prototype.hasOwnProperty.call(PLANS, name) ? PLANS[name] : NO_PLAN;
+  }
 
   function hasContext(name) {
     return typeof name === 'string' && Object.prototype.hasOwnProperty.call(CONTEXTS, name);
@@ -100,8 +137,10 @@
     CONTEXTS: Object.freeze(Object.keys(CONTEXTS)),
     MODULES: MODULES,
     NONE_SCENE: NONE_SCENE,
+    EXTRA_NAMES: EXTRA_NAMES,
     hasContext: hasContext,
     isModule: isModule,
+    planFor: planFor,
     resolve: resolve,
     ariaLabelFor: ariaLabelFor,
   });

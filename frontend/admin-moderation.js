@@ -7,9 +7,10 @@
  * frontend/admin-moderation.js
  * Seção "Moderação da Lia" do painel admin de IA (ADR 0004, risco O28). Mostra o que
  * apiAdminAssistantModeration já devolve: incidentes por tipo de detecção, pessoas com
- * incidente (maior nível e data do último), pessoas hoje em cada nível, tentativas e taxa
- * de redenção. O servidor nunca manda texto de mensagem; aqui também não se mostra nome:
- * a pessoa aparece só por um trecho curto do identificador.
+ * incidente (nível atual e maior nível, data do último incidente, suspensão em curso, última
+ * detecção e última redenção), pessoas hoje em cada nível, tentativas e taxa de redenção.
+ * O servidor nunca manda texto de mensagem; aqui também não se mostra nome (minimização de
+ * dados): a pessoa aparece só por um trecho curto do identificador.
  *
  * Script clássico, carregado depois de modulos/shared/safe-dom.js e antes de app.js, que
  * chama load(window.App) ao abrir o painel de IA e reset() no logout/sessão expirada.
@@ -33,6 +34,7 @@
     2: 'Nível 2 — aviso sério',
     3: 'Nível 3 — suspensão de 24 h',
   };
+  var DETECTION_LABELS = { terms: 'por termos', llm: 'pela análise automática' };
   var ERROR_TITLE = 'Não foi possível carregar a moderação da Lia.';
   // Regra do ADR 0004: aparece na tela para quem administra saber por que o nível sobe e desce.
   var RULE_LINES = [
@@ -80,9 +82,34 @@
     return { 1: toCount(src[1]), 2: toCount(src[2]), 3: toCount(src[3]) };
   }
 
+  /** Última detecção: só os dois valores do servidor; qualquer outro vira null (e some da tela). */
+  function detectionOf(value) {
+    return value === 'terms' || value === 'llm' ? value : null;
+  }
+
+  function detectionLabel(detection) {
+    return Object.prototype.hasOwnProperty.call(DETECTION_LABELS, detection) ? DETECTION_LABELS[detection] : '';
+  }
+
+  /** Suspensão que ainda vale: data válida no futuro (uma data que já passou não vira "Suspensa até"). */
+  function isActiveSuspension(until, now) {
+    var ms = typeof until === 'string' ? Date.parse(until) : NaN;
+    return !isNaN(ms) && ms > now;
+  }
+
+  /** Só o que a action devolve por pessoa; nome nunca entra (minimização de dados): a conta é o começo do id. */
   function normalizePerson(person) {
     var p = person || {};
-    return { id: shortId(p.profileId), incidents: toCount(p.incidents), maxLevel: toCount(p.maxLevel), lastAt: p.lastAt || null };
+    return {
+      id: shortId(p.profileId),
+      incidents: toCount(p.incidents),
+      maxLevel: toCount(p.maxLevel),
+      lastAt: p.lastAt || null,
+      currentLevel: toCount(p.currentLevel),
+      suspendedUntil: p.suspendedUntil || null,
+      lastDetection: detectionOf(p.lastDetection),
+      lastRedeemedAt: p.lastRedeemedAt || null,
+    };
   }
 
   /** Resposta do servidor em formato fixo: campo ausente vira 0/vazio, nunca quebra a tela. */
@@ -199,21 +226,39 @@
     });
   }
 
-  function personRow(person, formatDate) {
-    var badge = person.maxLevel >= LEVELS[LEVELS.length - 1] ? 'badge banned' : 'badge';
+  /** "Nível atual: [selo]": o selo de perigo é só o reforço; o nome do nível sempre vai escrito. */
+  function levelFact(label, level) {
+    var badge = level >= LEVELS[LEVELS.length - 1] ? 'badge banned' : 'badge';
+    return h('span', null, [label + ': ', h('span', { className: badge }, [levelLabel(level)])]);
+  }
+
+  /** Segunda linha: só o que existe (suspensão que ainda vale, última detecção e última redenção). */
+  function personExtras(person, formatDate, now) {
+    var facts = [];
+    if (isActiveSuspension(person.suspendedUntil, now)) facts.push(h('span', null, ['Suspensa até ' + formatDate(person.suspendedUntil)]));
+    var how = detectionLabel(person.lastDetection);
+    if (how) facts.push(h('span', null, ['Última detecção: ' + how]));
+    if (person.lastRedeemedAt) facts.push(h('span', null, ['Última redenção: ' + formatDate(person.lastRedeemedAt)]));
+    return facts.length ? h('div', { className: 'meta-row' }, facts) : null;
+  }
+
+  function personRow(person, formatDate, now) {
     return h('div', { className: 'list-item ai-usage-row' }, [
       h('strong', null, ['Conta ' + person.id]),
       h('div', { className: 'meta-row' }, [
-        h('span', null, ['Maior nível no período: ', h('span', { className: badge }, [levelLabel(person.maxLevel)])]),
+        levelFact('Nível atual', person.currentLevel),
+        levelFact('Maior nível no período', person.maxLevel),
         h('span', null, [plural(person.incidents, 'incidente', 'incidentes')]),
-        h('span', null, ['Último: ' + formatDate(person.lastAt)]),
+        h('span', null, ['Último incidente: ' + formatDate(person.lastAt)]),
       ]),
+      personExtras(person, formatDate, now),
     ]);
   }
 
   function peopleSection(summary, formatDate) {
+    var now = Date.now();
     var rows = summary.people.length
-      ? summary.people.map(function (person) { return personRow(person, formatDate); })
+      ? summary.people.map(function (person) { return personRow(person, formatDate, now); })
       : [h('p', { className: 'empty-state' }, ['Nenhuma pessoa com incidente no período.'])];
     return [h('h3', null, ['Pessoas com incidentes (as mais recentes primeiro)'])].concat(rows);
   }
@@ -282,6 +327,7 @@
   var pure = {
     plural: plural, levelLabel: levelLabel, percentLabel: percentLabel, shortId: shortId,
     normalizeSummary: normalizeSummary, isEmptySummary: isEmptySummary, errorMessage: errorMessage,
+    isActiveSuspension: isActiveSuspension, detectionLabel: detectionLabel,
     RULE_LINES: RULE_LINES,
   };
 

@@ -9,6 +9,7 @@
   const DUR_FAST = 180;                                      // --dur-fast
   const DUR_BASE = 280;                                      // --dur-base
   const DUR_SLOW = 480;                                      // --dur-slow
+  const DUR_LAZY = 800;                                      // --dur-lazy (cenas das ondas 2-4, lia-scenes.js)
   const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';         // --ease-out
   const EASE_IN_OUT = 'cubic-bezier(0.65, 0, 0.35, 1)';      // --ease-in-out
   const EASE_SPRING = 'cubic-bezier(0.34, 1.56, 0.64, 1)';   // --ease-spring
@@ -265,7 +266,7 @@
     eyeOffset,
     destroy,
     tokens: {
-      DUR_FAST, DUR_BASE, DUR_SLOW, EASE_OUT, EASE_IN_OUT, EASE_SPRING,
+      DUR_FAST, DUR_BASE, DUR_SLOW, DUR_LAZY, EASE_OUT, EASE_IN_OUT, EASE_SPRING,
     },
   };
 

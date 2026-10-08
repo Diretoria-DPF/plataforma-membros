@@ -162,6 +162,19 @@
 .lia[data-scene~="sparkles"] #lia-scene-sparkles,
 .lia:not([data-scene])[data-state="celebrating"] #lia-scene-sparkles { display: inline; }
 
+/* 7) Ondas 2-4: pecas sob demanda (lia-props-art.js). O JS poe as pecas dentro do <svg> e lista os nomes em
+   data-extras; as pecas nao tem regra display: fora da cena elas nao existem. Mesmas classes de H2 (README, "Classes novas"). */
+.lia-svg .ln { fill: none; stroke: var(--lia-accent, #0f6f62); }
+.lia-svg .al { fill: var(--lia-alert, var(--laift-danger, #b3261e)); }
+.lia-svg .gi { fill: var(--lia-alert-ink, var(--laift-on-danger, #ffffff)); stroke: none; }
+.lia-svg .vu { fill: var(--lia-shadow, #1a2b28); stroke: none; }
+/* Bracos cruzados (cena 5): os bracos ociosos saem; os cruzados vem de lia-pv-cruzados. */
+.lia[data-extras~="cruzados"] [id^="lia-arm-"] { display: none !important; }
+/* Veu (cena 5): o retangulo cobre o palco, entao o host recorta no proprio cartao da Lia. */
+.lia[data-extras~="veu"] { overflow: hidden; border-radius: var(--lia-radius, 8px); }
+/* Costas (suspensa, cena 6): somem rosto, mecha, oculos, blush e lapela; as sobreposicoes da cabeca e do casaco ficam. */
+.lia[data-extras~="costas-cabeca"] :is([id^="lia-eyes-"], [id^="lia-brows-"], [id^="lia-mouth-"], #lia-lock, #lia-glasses, .bl, #lia-coat > .a) { display: none !important; }
+
 /* Loops basicos (sequencias ficam com o JS) */
 .lia-svg { animation: lia-breathe var(--dur-breath, 3s) var(--ease-in-out, ease-in-out) infinite; }
 /* Piscada: só pela WAAPI (lia-anim.js, startBlinkLoop). Aqui fica só o eixo do olho, usado pelo scaleY. */

@@ -597,6 +597,9 @@
    * foco inicial em Cancelar (o botão seguro), foco preso entre Cancelar e Confirmar, Esc cancela,
    * Enter só age no botão que está focado (e a repetição da tecla é ignorada, para não confirmar
    * sem querer) e o foco volta a quem abriu. Abrir de novo com um diálogo aberto descarta o anterior.
+   * As teclas são ouvidas no documento (captura) enquanto o diálogo está aberto: se o foco cair no <body>
+   * (clique no texto do modal), Esc e Tab continuam valendo. O fundo (#app-root) fica inert até fechar;
+   * o inert sai em qualquer saída (Cancelar, Confirmar, Esc, troca de diálogo e erro na abertura).
    */
   function createConfirmDialog(doc) {
     var current = null;
@@ -607,7 +610,14 @@
         message: doc.getElementById('modal-confirm-message'),
         ok: doc.getElementById('modal-confirm-ok'),
         cancel: doc.getElementById('modal-confirm-cancel'),
+        background: doc.getElementById('app-root'),
       };
+    }
+
+    function setInert(node, on) {
+      if (!node) return;
+      if (on) node.setAttribute('inert', '');
+      else node.removeAttribute('inert');
     }
 
     /** Quem abriu: se ainda havia um diálogo aberto, o foco atual está dentro dele e vale o opener original. */
@@ -645,8 +655,9 @@
       if (current) current.dispose();
 
       function dispose() {
+        setInert(els.background, false);
+        doc.removeEventListener('keydown', onKeydown, true);
         els.overlay.classList.add('hidden');
-        els.overlay.removeEventListener('keydown', onKeydown);
         els.ok.removeEventListener('click', onOk);
         els.cancel.removeEventListener('click', onCancel);
         current = null;
@@ -665,12 +676,18 @@
       }
 
       current = { opener: opener, dispose: dispose };
-      els.message.textContent = message;
-      els.overlay.classList.remove('hidden');
-      els.overlay.addEventListener('keydown', onKeydown);
-      els.ok.addEventListener('click', onOk);
-      els.cancel.addEventListener('click', onCancel);
-      els.cancel.focus();
+      try {
+        els.message.textContent = message;
+        els.overlay.classList.remove('hidden');
+        setInert(els.background, true);
+        doc.addEventListener('keydown', onKeydown, true);
+        els.ok.addEventListener('click', onOk);
+        els.cancel.addEventListener('click', onCancel);
+        els.cancel.focus();
+      } catch (err) {
+        dispose(); // erro na abertura: nunca deixa o fundo inert nem o ouvinte para trás
+        throw err;
+      }
     };
   }
   // <<< confirm-dialog (puro)
