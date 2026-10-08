@@ -452,3 +452,12 @@ export const ASSISTANT_RETENTION = {
   MESSAGES_PURGE_AFTER_DAYS: 180,   // resposta registrada da Lia (assistant_messages)
   INCIDENTS_PURGE_AFTER_DAYS: 365,  // incidente de moderação, sem texto (assistant_incidents)
 };
+
+// ---- Séries do Início: rate limit por perfil (revisão de segurança, S2) ----
+// Cada chamada conta, inclusive cache hit. Sem KV (staging) uma chamada faz 8
+// consultas ao banco, e o plano gratuito do KV aceita 1.000 escritas por dia:
+// um membro em loop esgotaria os dois. A chave é a sessão (profileId), nunca IP.
+Object.assign(RATE_LIMITS, {
+  TIMESERIES: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  DASHBOARD_SERIES: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+});
