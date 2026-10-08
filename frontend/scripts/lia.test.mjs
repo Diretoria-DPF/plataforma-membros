@@ -21,6 +21,7 @@ const require = createRequire(import.meta.url);
 const States = require('../modulos/shared/lia/lia-states.js');
 const Lia = require('../modulos/shared/lia/lia.js');
 const art = require('../modulos/shared/lia/lia-art.js');
+const RealLiaAnim = require('../modulos/shared/lia/lia-anim.js');
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const EMOTIONS = ['neutral', 'curious', 'happy', 'worried', 'focused', 'sad'];
@@ -55,13 +56,40 @@ function captureWarn(fn) {
   }
 }
 
+function findById(node, id) {
+  for (const child of node.children) {
+    if (child.attrs.id === id) return child;
+    const hit = findById(child, id);
+    if (hit) return hit;
+  }
+  return null;
+}
+
+/** Animação WAAPI falsa: cancelar rejeita `finished`, como o navegador faz. */
+function fakeWaapiAnimation(frames, options) {
+  let rejectFinished = () => {};
+  const finished = new Promise((resolve, reject) => { rejectFinished = reject; });
+  return {
+    frames,
+    options,
+    cancelled: false,
+    finished,
+    cancel() {
+      this.cancelled = true;
+      rejectFinished(new Error('AbortError'));
+    },
+  };
+}
+
 /** DOM mínimo. innerHTML lança: a Lia nunca pode converter texto em marcação. */
-function fakeEl(tag, ns) {
+function fakeEl(tag, ns, ownerDocument = null) {
   const el = {
     tag,
     ns,
+    ownerDocument,
     attrs: {},
     children: [],
+    animations: [],
     parentNode: null,
     style: { props: {}, setProperty(name, value) { this.props[name] = value; } },
     setAttribute(name, value) { this.attrs[name] = String(value); },
@@ -77,18 +105,46 @@ function fakeEl(tag, ns) {
       child.parentNode = null;
       return child;
     },
+    /** Só seletores #id: é o que a Lia usa para achar olhos e braços. */
+    querySelector(selector) { return selector.startsWith('#') ? findById(el, selector.slice(1)) : null; },
+    animate(frames, options) {
+      const anim = fakeWaapiAnimation(frames, options);
+      el.animations.push(anim);
+      return anim;
+    },
+    getBoundingClientRect: () => ({ left: 0, top: 0, width: 120, height: 180 }),
   };
   Object.defineProperty(el, 'innerHTML', { set() { throw new Error('innerHTML proibido'); }, get() { return ''; } });
   return el;
 }
 
-function fakeDocument() {
+function fakeDocument(win = null) {
   const targets = {};
-  return {
+  const listeners = new Map();
+  const doc = {
     targets,
-    createElement: (tag) => fakeEl(tag, null),
-    createElementNS: (ns, tag) => fakeEl(tag, ns),
+    defaultView: win,
+    createElement: (tag) => fakeEl(tag, null, doc),
+    createElementNS: (ns, tag) => fakeEl(tag, ns, doc),
     querySelector: (selector) => targets[selector] || null,
+    addEventListener(type, fn) { listeners.set(type, [...(listeners.get(type) || []), fn]); },
+    removeEventListener(type, fn) { listeners.set(type, (listeners.get(type) || []).filter((f) => f !== fn)); },
+    listenerCount: (type) => (listeners.get(type) || []).length,
+    dispatch(type, ev) { (listeners.get(type) || []).forEach((fn) => fn(ev)); },
+  };
+  return doc;
+}
+
+/** Janela falsa para o LiaAnim real: sem preferências de movimento, rAF manual. */
+function fakeWindow() {
+  const frames = [];
+  return {
+    matchMedia: () => ({ matches: false }),
+    getComputedStyle: (el) => ({ display: el.style.display || 'inline' }),
+    requestAnimationFrame(fn) { frames.push(fn); return frames.length; },
+    cancelAnimationFrame() {},
+    pending: () => frames.length,
+    flushFrames() { while (frames.length) frames.shift()(); },
   };
 }
 
@@ -633,4 +689,64 @@ test('crop head: o recorte sobrevive às mudanças de estado e o tom admin conti
   assert.equal(host.children[0].attrs.viewBox, cropped);
   assert.notEqual(cropped, FULL_VIEWBOX);
   assert.equal(host.attrs['data-tone'], 'admin');
+});
+
+// ---------- integração: lia-anim.js real (sem stub), documento e janela falsos ----------
+
+/** Monta a Lia com o LiaAnim de verdade; o host herda o documento (ownerDocument) como no navegador. */
+function mountWithRealAnim(opts) {
+  const win = fakeWindow();
+  const doc = fakeDocument(win);
+  const stage = fakeEl('section', null, doc);
+  setGlobal('document', doc);
+  setGlobal('LiaArt', art);
+  setGlobal('LiaAnim', RealLiaAnim);
+  const lia = Lia.mount(stage, opts);
+  if (lia) mounted.push(lia);
+  return { win, doc, lia, host: stage.children[0] };
+}
+
+test('integração: o olhar segue o cursor com LiaAnim real; o listener entra no mount e sai no destroy', () => {
+  const timers = fakeTimers();
+  const { win, doc, lia, host } = mountWithRealAnim();
+  assert.equal(doc.listenerCount('mousemove'), 1, 'mousemove registrado no mount');
+  doc.dispatch('mousemove', { clientX: 1000, clientY: 90 });
+  win.flushFrames();
+  const eyes = host.querySelector('#lia-eyes-neutral');
+  assert.ok(parseFloat(eyes.style.translate.split(' ')[0]) > 2.9, `olhos não seguiram: ${eyes.style.translate}`);
+  lia.destroy();
+  assert.equal(doc.listenerCount('mousemove'), 0, 'mousemove removido no destroy');
+  assert.equal(timers.pendingCount(), 0, 'piscada agendada também para no destroy');
+});
+
+test('integração: destroy cancela o aceno em andamento; depois do destroy, redeem não anima de novo', async () => {
+  fakeTimers();
+  const { lia, host } = mountWithRealAnim();
+  lia.redeem();
+  const arm = host.querySelector('#lia-arm-right-idle');
+  assert.equal(arm.animations.length, 1, 'o aceno começa no redeem');
+  lia.destroy();
+  assert.equal(arm.animations[0].cancelled, true, 'destroy cancela a animação pontual');
+  assert.doesNotThrow(() => lia.redeem());
+  assert.equal(arm.animations.length, 1, 'instância destruída não anima mais');
+  for (let i = 0; i < 5; i += 1) await Promise.resolve(); // a Promise do aceno assenta sem reabrir nada
+  assert.equal(arm.animations.length, 1);
+});
+
+test('piscada: só a WAAPI pisca; lia.css não tem keyframes de piscar e mantém o eixo do olho e a respiração', () => {
+  const css = read(`${LIA}/lia.css`);
+  assert.equal(/lia-blink/.test(css), false, 'piscada em CSS duplicaria a WAAPI');
+  assert.match(css, /@keyframes lia-breathe/, 'respiração segue em CSS');
+  assert.match(css, /lia-eyes-"\] \{ transform-box: fill-box; transform-origin: center; \}/, 'eixo do olho para o scaleY da WAAPI');
+});
+
+test('sem LiaAnim: estados, aceno e destroy funcionam sem lançar', () => {
+  setGlobal('LiaAnim', undefined);
+  const { lia, host } = mountLia();
+  assert.doesNotThrow(() => {
+    lia.think();
+    lia.redeem();
+    lia.destroy();
+  });
+  assert.equal(host.attrs['data-arm-right'], 'wave');
 });

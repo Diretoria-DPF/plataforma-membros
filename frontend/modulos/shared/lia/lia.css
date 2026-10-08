@@ -164,12 +164,12 @@
 
 /* Loops basicos (sequencias ficam com o JS) */
 .lia-svg { animation: lia-breathe var(--dur-breath, 3s) var(--ease-in-out, ease-in-out) infinite; }
-.lia-svg [id^="lia-eyes-"] { transform-box: fill-box; transform-origin: center; animation: lia-blink var(--dur-blink, 6s) var(--ease-linear, linear) infinite; }
+/* Piscada: só pela WAAPI (lia-anim.js, startBlinkLoop). Aqui fica só o eixo do olho, usado pelo scaleY. */
+.lia-svg [id^="lia-eyes-"] { transform-box: fill-box; transform-origin: center; }
 #lia-scene-particles { animation: lia-float var(--dur-float, 4s) var(--ease-in-out, ease-in-out) infinite alternate; }
 #lia-scene-sparkles, #lia-scene-heart { transform-box: fill-box; transform-origin: center; animation: lia-pulse var(--dur-pulse, 1.6s) var(--ease-in-out, ease-in-out) infinite alternate; }
 
 @keyframes lia-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-@keyframes lia-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
 @keyframes lia-float { from { transform: translateY(0); } to { transform: translateY(-6px); } }
 @keyframes lia-pulse { from { opacity: .65; transform: scale(.96); } to { opacity: 1; transform: scale(1.04); } }
 

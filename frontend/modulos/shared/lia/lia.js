@@ -119,38 +119,62 @@
     try { stop(); } catch (err) { warn('parada de animação falhou', err); }
   }
 
-  /** Animações opcionais (LiaAnim). Cada chamada devolve a função de parada, se houver. */
+  /**
+   * Animações opcionais (LiaAnim). Todas recebem o host e o documento dele: o olhar precisa do
+   * documento para ouvir o mousemove. Loops devolvem função de parada; pontuais devolvem Promise.
+   */
   function createMotion(host) {
+    var doc = host.ownerDocument;
     var loops = [];
-    var transient = null;
+    var transient = null; // { stop } da animação em curso
+    var alive = true;
     function call(name) {
       var anim = root.LiaAnim;
       if (reducedMotion() || !anim || typeof anim[name] !== 'function') return null;
       try {
-        var stop = anim[name](host);
-        return typeof stop === 'function' ? stop : null;
+        return anim[name](host, doc);
       } catch (err) {
         warn('animação ' + name + ' falhou', err);
         return null;
       }
     }
+    /** Inicia uma animação e guarda a parada (loop) ou a Promise (pontual), sem perdê-la. */
+    function startTransient(name) {
+      var slot = { stop: null };
+      var result = call(name);
+      if (typeof result === 'function') {
+        slot.stop = result;
+      } else if (result && typeof result.then === 'function') {
+        var release = function () {
+          // Roda depois da Promise: se a Lia foi destruída ou outra animação tomou o lugar, não mexe em nada.
+          if (alive && transient === slot) transient = null;
+        };
+        result.then(release, release);
+      }
+      return slot;
+    }
     return {
       startLoops: function () {
-        loops = [call('startBlinkLoop'), call('startEyeTracking')].filter(Boolean);
+        loops = [call('startBlinkLoop'), call('startEyeTracking')].filter(function (stop) { return typeof stop === 'function'; });
       },
       play: function (name) {
-        stopOne(transient);
-        transient = call(name);
+        stopOne(transient && transient.stop);
+        transient = startTransient(name);
       },
       stopTransient: function () {
-        stopOne(transient);
+        stopOne(transient && transient.stop);
         transient = null;
       },
-      stopAll: function () {
+      destroy: function () {
+        alive = false;
         loops.forEach(stopOne);
         loops = [];
-        stopOne(transient);
+        stopOne(transient && transient.stop);
         transient = null;
+        var anim = root.LiaAnim;
+        if (anim && typeof anim.destroy === 'function') {
+          try { anim.destroy(host); } catch (err) { warn('cancelamento de animações falhou', err); }
+        }
       },
     };
   }
@@ -176,7 +200,7 @@
     core.destroy = function () {
       core.destroyed = true;
       core.clearHold();
-      motion.stopAll();
+      motion.destroy();
       if (host.parentNode) host.parentNode.removeChild(host);
     };
     return core;

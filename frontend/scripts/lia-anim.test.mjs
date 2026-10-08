@@ -311,6 +311,16 @@ test('olhar: host sem olhos nao registra listener', () => {
   stop();
 });
 
+test('olhar: frame já agendado que chega depois do stop não mexe mais nos olhos', () => {
+  const { host, win, doc, els } = makeScene();
+  win.cancelAnimationFrame = () => {}; // navegador que ignora o cancelamento: o guarda interno precisa segurar
+  const stop = LiaAnim.startEyeTracking(host, doc);
+  doc.dispatch('mousemove', { clientX: 1000, clientY: 90 });
+  stop();
+  win.flushFrames();
+  assert.equal(els['lia-eyes-neutral'].style.translate, '0px 0px');
+});
+
 // ---------- aceno ----------
 test('aceno: anima o braco visivel por 700 ms, so com transform, e resolve', async () => {
   const { host, els } = makeScene({ visible: ['lia-arm-right-idle'] });
