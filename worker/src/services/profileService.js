@@ -32,6 +32,7 @@ export async function getMyProfile(sql, identity) {
   return {
     success: true,
     profile: {
+      id: identity.profileId, // o da sessão (é o mesmo do WHERE acima)
       fullName: row.full_name,
       username: row.username,
       email: row.email,
