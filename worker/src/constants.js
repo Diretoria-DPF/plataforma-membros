@@ -402,7 +402,7 @@ export const FEEDBACK = {
   CATEGORIES: ['incorreta', 'incompleta', 'confusa', 'ofensiva', 'outra'],
   STATUSES: ['new', 'reviewed', 'dismissed'],
   PAGE_SIZE: 25,
-  ANONYMIZE_AFTER_DAYS: 90,   // comentário: hash irreversível + texto apagado
+  ANONYMIZE_AFTER_DAYS: 90,   // comentário: texto apagado (comment = NULL); sem hash
   PURGE_AFTER_DAYS: 365,      // registro removido
 };
 
