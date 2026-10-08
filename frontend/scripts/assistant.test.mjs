@@ -138,3 +138,20 @@ test('o app avisa a Lia ao entrar e ao sair da conta', () => {
   // entrar, sair e sessão expirada: nos três caminhos a conversa da conta anterior precisa sumir
   assert.ok((app.match(/LaiftAssistant\.refresh\(\)/g) || []).length >= 3, 'faltam chamadas de refresh em app.js');
 });
+
+test('a Lia é montada com window.Lia: recorte da cabeça na bolha, corpo inteiro no painel, desmontada ao fechar', () => {
+  const src = read('frontend/assistant.js');
+  assert.match(src, /mountLia\(ui\.launcherFigure, \{ crop: 'head' \}\)/);
+  assert.match(src, /mountLia\(ui\.headFigure, \{ size: PANEL_LIA_SIZE \}\)/);
+  assert.match(src, /ui\.panelLia = destroyLia\(ui\.panelLia\)/);
+  assert.match(src, /ui\.launcherLia = destroyLia\(ui\.launcherLia\)/);
+  assert.doesNotMatch(src, /'lia-orb'/, 'o orb "L" saiu');
+});
+
+test('reações da Lia: pensa ao enviar, fala ao responder, fica confusa em degradação ou erro, comemora o 👍', () => {
+  const src = read('frontend/assistant.js');
+  assert.match(src, /reactLia\('think'\)/);
+  assert.match(src, /speakThenRest\(\)/);
+  assert.match(src, /reactLia\('setState', 'confused'\)/);
+  assert.match(src, /payload\.rating === 'up'[\s\S]*reactLia\('celebrate'\)/);
+});

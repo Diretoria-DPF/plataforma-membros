@@ -250,9 +250,10 @@ summary:focus-visible,
 .credential-zoom .credential-qr-wrap .learn-credential-qr { width: 100%; max-width: 380px; height: auto; aspect-ratio: 1; }
 
 /* ---------- Lia, guia da plataforma ---------- */
+/* Bolha fechada: 48 px com a cabeça da Lia (recorte 'head', ADR 0003). Alvo de toque >= 44 px. */
 .lia-launcher {
-  position: fixed; right: 16px; bottom: 16px; z-index: 30; width: auto;
-  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px;
+  position: fixed; right: 16px; bottom: 16px; z-index: 30; width: auto; min-height: 48px;
+  display: inline-flex; align-items: center; gap: 8px; padding: 0 14px 0 0;
   border: 0; border-radius: 999px; box-shadow: var(--shadow);
   background: var(--primary); color: var(--on-primary); font-weight: 700;
 }
@@ -260,11 +261,14 @@ summary:focus-visible,
 @media (hover: hover) {
   .lia-launcher:hover { background: var(--primary-strong); }
 }
-.lia-orb {
-  flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
-  background: radial-gradient(circle at 30% 28%, #ffffff 0%, #bfeee6 38%, #e1f4f0 100%);
-  color: #0b5349; font-weight: 800; font-size: 16px; /* fixos: legíveis nos dois temas */
+.lia-launcher-figure {
+  flex: none; display: block; width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 30% 28%, #ffffff 0%, #bfeee6 38%, #e1f4f0 100%); /* fixo: legível nos dois temas */
 }
+.lia-launcher-figure .lia { display: block; width: 100%; height: 100%; }
+.lia-launcher-figure .lia-svg { overflow: hidden; } /* o recorte da cabeça esconde o resto do corpo */
+/* Cabeçalho do painel: corpo inteiro em ~108 px de altura (a largura vem de PANEL_LIA_SIZE em assistant.js). */
+.lia-head-figure { flex: none; display: block; line-height: 0; }
 .lia-panel {
   position: fixed; right: 16px; bottom: 16px; z-index: 31;
   display: grid; grid-template-rows: auto 1fr auto auto;
@@ -311,7 +315,7 @@ summary:focus-visible,
 }
 @media (max-width: 480px) {
   .lia-launcher-label { display: none; }
-  .lia-launcher { padding: 6px; }
+  .lia-launcher { padding: 0; }
   .lia-panel, .lia-launcher.lia-in-app ~ .lia-panel { right: 8px; left: 8px; width: auto; }
 }
 
