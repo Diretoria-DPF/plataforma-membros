@@ -42,16 +42,32 @@ async function addAdmin(id, username) {
   );
 }
 
+const HERDADAS = ['ux_v2_enabled', 'chatbot_enabled'];
 const flagRow = async (key) =>
-  (await db.query('SELECT key, enabled, updated_by, description, updated_at FROM feature_flags WHERE key = $1', [key])).rows[0];
+  (await db.query('SELECT key, enabled, updated_by, description, rollout_pct, created_at, updated_at FROM feature_flags WHERE key = $1', [key])).rows[0];
 const enabledOf = async (key) => (await flagRow(key)).enabled;
 const apply023 = () => db.exec(readSql('023_flags_v2.sql'));
+// tgtype: bit 2 = BEFORE, bit 16 = UPDATE. Exige um gatilho BEFORE UPDATE com esse nome.
+const triggerExists = async () =>
+  (await db.query("SELECT 1 FROM pg_trigger WHERE tgrelid = 'feature_flags'::regclass AND tgname = 'trg_feature_flags_updated_at' AND (tgtype & 2) = 2 AND (tgtype & 16) = 16 AND NOT tgisinternal")).rows.length === 1;
 
-/** Estado de antes da 023: 016/019 desligadas, sem marca de admin e sem trilha. */
+/**
+ * Semente: as linhas como 016/019 deixaram (updated_at = created_at, sem updated_by).
+ * O gatilho fica suspenso só aqui, porque ele é justamente o que marca todo UPDATE real.
+ */
+async function semearHerdadas() {
+  await db.exec(`
+    ALTER TABLE feature_flags DISABLE TRIGGER trg_feature_flags_updated_at;
+    UPDATE feature_flags SET enabled = FALSE, updated_by = NULL, updated_at = created_at
+      WHERE key IN ('ux_v2_enabled', 'chatbot_enabled');
+    ALTER TABLE feature_flags ENABLE TRIGGER trg_feature_flags_updated_at;`);
+}
+
+/** Estado de antes da 023: as 3 novas removidas, herdadas na semente, sem trilha de admin. */
 async function resetToBefore023() {
   await db.exec(readSql('down/023_flags_v2.sql'));
+  await semearHerdadas();
   await db.exec(`
-    UPDATE feature_flags SET enabled = FALSE, updated_by = NULL WHERE key IN ('ux_v2_enabled', 'chatbot_enabled');
     DELETE FROM feature_flags WHERE key = 'chave_do_admin';
     DELETE FROM audit_logs;`);
 }
@@ -72,7 +88,16 @@ beforeEach(async () => {
 });
 
 describe('023_flags_v2 — nascem ligadas, sem desfazer decisão do admin', () => {
-  test('sem decisão de admin: liga as duas herdadas e cria as três novas, todas sem marca de admin', async () => {
+  test('estrutura: created_at obrigatório com default now() e gatilho que marca todo UPDATE', async () => {
+    const col = await db.query(
+      "SELECT is_nullable, column_default FROM information_schema.columns WHERE table_name = 'feature_flags' AND column_name = 'created_at'"
+    );
+    expect(col.rows[0]).toMatchObject({ is_nullable: 'NO' });
+    expect(col.rows[0].column_default).toMatch(/now\(\)/);
+    expect(await triggerExists()).toBe(true);
+  });
+
+  test('(c) sem decisão de admin: liga as duas herdadas e cria as três novas, todas sem marca de admin', async () => {
     expect(await enabledOf('ux_v2_enabled')).toBe(false);
     expect(await enabledOf('chatbot_enabled')).toBe(false);
     await apply023();
@@ -123,26 +148,66 @@ describe('023_flags_v2 — nascem ligadas, sem desfazer decisão do admin', () =
     }
   });
 
-  test('admin desligou e teve a conta excluída (updated_by vira NULL): a trilha de auditoria ainda protege', async () => {
+  test('admin desligou e teve a conta excluída (updated_by vira NULL): só a trilha de auditoria protege', async () => {
     await addAdmin(ADMIN2_ID, 'admin_dois');
     await apply023();
     await adminSet(sql, ADMIN2, 'chatbot_enabled', { enabled: false }, CID);
     await db.query('DELETE FROM profiles WHERE id = $1', [ADMIN2_ID]);
     // Pré-condição: a FK ON DELETE SET NULL apagou a marca de updated_by.
     expect(await flagRow('chatbot_enabled')).toMatchObject({ enabled: false, updated_by: null });
+    // Linha com cara de semente (updated_at = created_at): só a trilha SET_FEATURE_FLAG guarda a decisão.
+    await db.exec(`
+      ALTER TABLE feature_flags DISABLE TRIGGER trg_feature_flags_updated_at;
+      UPDATE feature_flags SET updated_at = created_at WHERE key = 'chatbot_enabled';
+      ALTER TABLE feature_flags ENABLE TRIGGER trg_feature_flags_updated_at;`);
 
     await apply023();
 
     expect(await enabledOf('chatbot_enabled')).toBe(false);
   });
 
-  test('o down da 023 e uma nova aplicação respeitam a decisão do admin sobre a herdada', async () => {
+  test('(a) UPDATE manual de SQL numa linha de semente (ainda desligada) segura a reaplicação', async () => {
+    await db.exec("UPDATE feature_flags SET enabled = FALSE WHERE key IN ('ux_v2_enabled', 'chatbot_enabled')");
+    for (const key of HERDADAS) {
+      const row = await flagRow(key);
+      expect(row.updated_at.getTime()).toBeGreaterThan(row.created_at.getTime());
+    }
     await apply023();
-    await adminSet(sql, ADMIN, 'ux_v2_enabled', { enabled: false }, CID);
-    await db.exec(readSql('down/023_flags_v2.sql'));
+    for (const key of HERDADAS) expect(await enabledOf(key)).toBe(false);
+    for (const key of NEW_FLAGS) expect(await enabledOf(key)).toBe(true);
+  });
+
+  test('(a) desligada à mão depois que a 023 ligou: reaplicar a 023 NÃO religa', async () => {
     await apply023();
-    expect(await enabledOf('ux_v2_enabled')).toBe(false);
     expect(await enabledOf('chatbot_enabled')).toBe(true);
+    await db.exec("UPDATE feature_flags SET enabled = FALSE WHERE key IN ('ux_v2_enabled', 'chatbot_enabled')");
+    await apply023();
+    for (const key of HERDADAS) expect(await flagRow(key)).toMatchObject({ enabled: false, updated_by: null });
+  });
+
+  test.each([
+    ['description', "UPDATE feature_flags SET description = 'nota manual' WHERE key = 'chatbot_enabled'"],
+    ['rollout_pct', 'UPDATE feature_flags SET rollout_pct = 100 WHERE key = \'chatbot_enabled\''],
+    ['conditions', "UPDATE feature_flags SET conditions = '{}'::jsonb WHERE key = 'chatbot_enabled'"],
+    ['updated_at, sem mudar valor', "UPDATE feature_flags SET updated_at = updated_at WHERE key = 'chatbot_enabled'"],
+  ])('(b) UPDATE manual de %s, sem mudar enabled, marca a linha e a 023 não a liga', async (_coluna, update) => {
+    await db.exec(update);
+    const row = await flagRow('chatbot_enabled');
+    expect(row.updated_at.getTime()).toBeGreaterThan(row.created_at.getTime());
+    await apply023();
+    expect(await enabledOf('chatbot_enabled')).toBe(false);
+  });
+
+  test('down remove as três criadas e deixa as duas desligadas; reaplicar (o runner, com a linha do ledger removida) não as religa', async () => {
+    await apply023();
+    await db.exec(readSql('down/023_flags_v2.sql'));
+    for (const key of NEW_FLAGS) expect(await flagRow(key)).toBeUndefined();
+    for (const key of HERDADAS) expect(await enabledOf(key)).toBe(false);
+    // O down mantém created_at e o gatilho de propósito: sem eles, a reaplicação religaria as duas.
+    expect(await triggerExists()).toBe(true);
+    await apply023();
+    for (const key of HERDADAS) expect(await enabledOf(key)).toBe(false);
+    for (const key of NEW_FLAGS) expect(await enabledOf(key)).toBe(true);
   });
 
   test('nenhuma flag nova depende de UPDATE incondicional: as novas só entram se ausentes', async () => {
