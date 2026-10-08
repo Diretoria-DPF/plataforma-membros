@@ -4,9 +4,9 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Adaptador do painel Início: isola o formato das respostas da Worker
-// (apiGetHomeSummary e apiGetMyTimeseries). Se a API mudar, só este arquivo
-// muda. Funções puras (sem DOM nem rede), testadas em Node; no navegador
-// expõe window.LaiftDashboardAdapter.
+// (apiGetHomeSummary, apiGetMyDashboardSeries e apiGetMyTimeseries). Se a API
+// mudar, só este arquivo muda. Funções puras (sem DOM nem rede), testadas em
+// Node; no navegador expõe window.LaiftDashboardAdapter.
 (function (root) {
   'use strict';
 
@@ -90,6 +90,48 @@
       .sort(byDateAsc)
       .map(toPoint(granularity));
     return { ok: true, range: res.range, granularity: granularity, points: points };
+  }
+
+  /**
+   * Resposta de apiGetMyDashboardSeries -> { ok, series }. Falha da chamada
+   * inteira vira ok:false com mensagem; cada série fica crua em series[chave].
+   */
+  function normalizeDashboard(res) {
+    if (!res || res.success !== true || !res.series || typeof res.series !== 'object') {
+      return { ok: false, message: messageOf(res) };
+    }
+    return { ok: true, series: res.series };
+  }
+
+  // Espelha DASHBOARD_SERIES de worker/src/services/timeseriesService.js: "métrica|período" -> chave.
+  var BUNDLE_KEYS = {
+    'activity|30d': 'activity30d',
+    'events|30d': 'events30d',
+    'learning|30d': 'learning30d',
+    'tasks|30d': 'tasks30d',
+    'study_hours|30d': 'studyHours30d',
+    'events|6m': 'events6m',
+    'learning|6m': 'learning6m',
+    'tasks|6m': 'tasks6m'
+  };
+
+  /** Chave da série no pacote; null fora dele (ex.: atividade em 90 dias ou 12 meses). */
+  function bundleKey(metric, range) {
+    var id = metric + '|' + range;
+    return Object.prototype.hasOwnProperty.call(BUNDLE_KEYS, id) ? BUNDLE_KEYS[id] : null;
+  }
+
+  /**
+   * Uma série do pacote já normalizada. Série que falhou no servidor vem null:
+   * vira { ok: true, missing: true, points: [] }, e só esse gráfico fica sem dados.
+   * Falha da chamada inteira passa adiante como ok:false.
+   */
+  function pickSeries(dashboard, key) {
+    if (!dashboard || !dashboard.ok) return { ok: false, message: messageOf(dashboard) };
+    var raw = dashboard.series ? dashboard.series[key] : null;
+    if (!raw || !Array.isArray(raw.series)) return { ok: true, missing: true, granularity: 'day', points: [] };
+    var body = normalizeSeries({ success: true, range: raw.range, granularity: raw.granularity, series: raw.series });
+    return { ok: true, missing: false, range: body.range, granularity: body.granularity, points: body.points };
   }
 
   /** Soma dos valores com 2 casas (horas de estudo vêm fracionadas). */
@@ -202,6 +244,9 @@
     RANGE_OPTIONS: RANGE_OPTIONS,
     COMPARISON_METRICS: COMPARISON_METRICS,
     normalizeSeries: normalizeSeries,
+    normalizeDashboard: normalizeDashboard,
+    bundleKey: bundleKey,
+    pickSeries: pickSeries,
     labelFor: labelFor,
     sumValues: sumValues,
     isEmptySeries: isEmptySeries,

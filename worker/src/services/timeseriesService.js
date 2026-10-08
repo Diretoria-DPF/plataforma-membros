@@ -16,10 +16,12 @@
  * Dias, semanas e meses no horário de Brasília; buckets sem atividade vêm com 0
  * (série sem buracos, pronta para o gráfico). Resposta em cache privado de
  * 300 s no KV, com profileId, range e metric na chave (nunca compartilhada).
+ * apiGetMyDashboardSeries: as 8 séries do Início em uma chamada (getMyDashboardSeries).
  */
 import * as C from '../constants.js';
 import * as E from '../errors.js';
 import { getCached, setCached } from '../cache.js';
+import * as Logging from '../logging.js';
 
 const TZ = 'America/Sao_Paulo';
 const HOUR_SECONDS = 3600;
@@ -106,4 +108,47 @@ export async function getMyTimeseries(sql, env, identity, input) {
   const result = { success: true, range, granularity: spec.granularity, series };
   await setCached(env, key, result, C.TIMESERIES.CACHE_TTL_SECONDS);
   return result;
+}
+
+// Séries do Início que apiGetMyDashboardSeries devolve juntas. `key` é o nome no
+// objeto de resposta. Cada uma usa getMyTimeseries (mesmas consultas e cache).
+export const DASHBOARD_SERIES = [
+  { key: 'activity30d', metric: 'activity', range: '30d' },
+  { key: 'events30d', metric: 'events', range: '30d' },
+  { key: 'learning30d', metric: 'learning', range: '30d' },
+  { key: 'tasks30d', metric: 'tasks', range: '30d' },
+  { key: 'studyHours30d', metric: 'study_hours', range: '30d' },
+  { key: 'events6m', metric: 'events', range: '6m' },
+  { key: 'learning6m', metric: 'learning', range: '6m' },
+  { key: 'tasks6m', metric: 'tasks', range: '6m' },
+];
+
+/** Entrada opcional e sem parâmetros: aceita ausência ou um objeto; o resto é recusado. */
+function parseDashboardInput(input) {
+  if (input === undefined || input === null) return;
+  if (typeof input !== 'object' || Array.isArray(input)) {
+    throw E.ValidationError('Entrada inválida para as séries do Início.');
+  }
+}
+
+/** Uma série isolada: falha vira null, é registrada e não derruba as outras. */
+async function loadDashboardSeries(sql, env, identity, spec, cid) {
+  try {
+    const res = await getMyTimeseries(sql, env, identity, { range: spec.range, metric: spec.metric });
+    return { range: res.range, granularity: res.granularity, series: res.series };
+  } catch (err) {
+    await Logging.logError(sql, cid, 'DASHBOARD_SERIES_FAILED', String((err && err.message) || err), { metric: spec.metric, range: spec.range });
+    return null;
+  }
+}
+
+/**
+ * apiGetMyDashboardSeries: as 8 séries do Início em uma chamada, em paralelo.
+ * series[key] tem o formato de getMyTimeseries (sem `success`), ou null se falhou.
+ */
+export async function getMyDashboardSeries(sql, env, identity, input, cid) {
+  parseDashboardInput(input);
+  const loaded = await Promise.all(DASHBOARD_SERIES.map((spec) => loadDashboardSeries(sql, env, identity, spec, cid)));
+  const series = Object.fromEntries(DASHBOARD_SERIES.map((spec, i) => [spec.key, loaded[i]]));
+  return { success: true, series };
 }
