@@ -841,3 +841,8 @@ button.learn-card:focus-visible { outline-offset: 3px; }
   .ai-health-summary strong { font-size: 24px; }
 }
 
+/* Faixa da Liga na tela de entrada (index.html): o aviso só aparece com a flag pública selection_open. */
+.welcome-liga__aviso { display: none; }
+:root[data-flag-selection-open] .welcome-liga__aviso { display: block; }
+.welcome-liga__link { display: inline-flex; align-items: center; min-height: 44px; }
+
