@@ -91,6 +91,31 @@ function startStaticServer() {
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
+/**
+ * Resumo da moderação da Lia: mesmo formato de worker/src/assistant/moderationGate.js
+ * (adminAssistantModeration), com os campos por pessoa que o S1 adiciona. Nenhum texto de mensagem.
+ */
+function moderationSummary() {
+  const DAY = 24 * 60 * 60 * 1000;
+  const ago = (days) => new Date(Date.now() - days * DAY).toISOString();
+  return {
+    success: true,
+    windowDays: 90,
+    incidents: {
+      total: 7,
+      byDetection: { terms: 5, llm: 2 },
+      byLevelAfter: { 1: 3, 2: 2, 3: 2 },
+    },
+    people: [
+      { profileId: 'a1b2c3d4-0000-4000-8000-000000000001', incidents: 3, maxLevel: 3, lastAt: ago(2), currentLevel: 3, suspendedUntil: new Date(Date.now() + DAY).toISOString(), lastDetection: 'llm', lastRedeemedAt: null, displayName: 'Maria Exemplo' },
+      { profileId: 'e5f6a7b8-0000-4000-8000-000000000002', incidents: 2, maxLevel: 2, lastAt: ago(9), currentLevel: 1, suspendedUntil: null, lastDetection: 'terms', lastRedeemedAt: ago(5), displayName: 'João Teste' },
+      { profileId: 'c9d0e1f2-0000-4000-8000-000000000003', incidents: 2, maxLevel: 1, lastAt: ago(30), currentLevel: 0, suspendedUntil: null, lastDetection: 'terms', lastRedeemedAt: null, displayName: 'Ana Modelo' },
+    ],
+    currentLevels: { 1: 1, 2: 0, 3: 1 },
+    redemption: { accepted: 3, refused: 1, rate: 0.75 },
+  };
+}
+
 /** Respostas padrão da Worker — o suficiente para o app autenticado abrir sem erro. */
 function defaultWorkerReply(action, args, ctx) {
   const p = ctx.profile;
@@ -132,6 +157,8 @@ function defaultWorkerReply(action, args, ctx) {
         success: true,
         indicators: { active_members: 1, active_admins: 1, banned_accounts: 0, published_events: 0, proposals_pending: 0, proposals_voting: 0, tasks_open: 0 },
       };
+    case 'apiAdminAssistantModeration':
+      return moderationSummary();
     default:
       // Listas vazias cobrem os loaders de eventos/propostas/tarefas etc.
       return { success: true, events: [], proposals: [], tasks: [], requests: [], items: [], users: [], logs: [], reports: [], conversations: [], messages: [] };
@@ -244,4 +271,4 @@ function check(condition, description) {
   }
 }
 
-module.exports = { startApp, check, loadPlaywright, startStaticServer };
+module.exports = { startApp, check, loadPlaywright, startStaticServer, moderationSummary };
