@@ -9,7 +9,7 @@
   return {
     "viewBox": "0 0 200 300",
     "tree": [
-    {"tag":"g","attrs":{"id":"lia-pv-veu","data-cena":"5","data-pai":"svg","data-posicao":"primeiro","opacity":"0"},"children":[{"tag":"rect","attrs":{"class":"vu","x":"-20","y":"-20","width":"240","height":"340","rx":"8"},"children":[]}]},
+    {"tag":"g","attrs":{"id":"lia-pv-veu","data-cena":"5","data-pai":"svg","data-posicao":"primeiro","opacity":"0"},"children":[{"tag":"rect","attrs":{"class":"vu","x":"-80","y":"-40","width":"360","height":"380","rx":"8"},"children":[]}]},
     {"tag":"g","attrs":{"id":"lia-pv-liquido-b","data-cena":"1","data-pai":"#lia-prop-flask"},"children":[{"tag":"path","attrs":{"class":"s","d":"M132 234h30l4 8a4 4 0 01-3.5 6H131.5a4 4 0 01-3.5-6z"},"children":[]}]},
     {"tag":"g","attrs":{"id":"lia-pv-bolha-1","data-cena":"1","data-pai":"#lia-prop-flask"},"children":[{"tag":"circle","attrs":{"class":"p","cx":"140","cy":"241","r":"1.6"},"children":[]}]},
     {"tag":"g","attrs":{"id":"lia-pv-bolha-2","data-cena":"1","data-pai":"#lia-prop-flask"},"children":[{"tag":"circle","attrs":{"class":"p","cx":"148","cy":"237","r":"1.6"},"children":[]}]},

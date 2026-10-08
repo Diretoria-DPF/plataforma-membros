@@ -7,7 +7,7 @@
      Cores so por classes da paleta: p k c h a t s n rd (lia.css) e ln al gi vu (novas, ver README). Traco = --lia-stroke. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
   <g id="lia-pv-veu" data-cena="5" data-pai="svg" data-posicao="primeiro" opacity="0">
-    <rect class="vu" x="-20" y="-20" width="240" height="340" rx="8"/>
+    <rect class="vu" x="-80" y="-40" width="360" height="380" rx="8"/>
   </g>
   <g id="lia-pv-liquido-b" data-cena="1" data-pai="#lia-prop-flask">
     <path class="s" d="M132 234h30l4 8a4 4 0 01-3.5 6H131.5a4 4 0 01-3.5-6z"/>

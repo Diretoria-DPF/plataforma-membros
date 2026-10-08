@@ -76,4 +76,51 @@ Os sliders alteram as variaveis `--lia-*` do host do palco. O botao **Exportar p
 Limitacoes conhecidas: ao mudar `--lia-shoulder`, a espessura das bordas horizontais do casaco varia um pouco (compensacao so no eixo vertical). `--lia-radius` afeta so os retangulos; as curvas dos paths sao fixas. Propriedades CSS individuais (`translate`, `scale`, `rx` em SVG) exigem Safari 14.1+ e navegadores atuais.
 
 ## Integracao
-Dentro de `.lia`, insira o SVG com `fetch` + `DOMParser` + `importNode` (ou `createElementNS`), nunca `innerHTML` (CSP). Carregue `lia.css`. Ids se repetem se houver varias Lias na pagina; o CSS usa seletores de atributo e ids, entao funciona, mas remova os `id` dos clones se precisar de ids unicos. Tema: `[data-theme="dark"]` ou `.laift-always-dark`. Tamanho: `--lia-size` (padrao 120px). Animacoes JS (WAAPI) ficam para a onda de codigo; `lia.css` so tem respiracao 3s, piscada 6s e loops leves, desligados em `prefers-reduced-motion`.
+Dentro de `.lia`, monte a arte com `createElementNS` a partir de `window.LiaArt` (`lia-art.js`), nunca `innerHTML` (CSP). `fetch` nao serve (CSP e `file://`). Carregue `lia.css`. Ids se repetem se houver varias Lias na pagina; o CSS usa seletores de atributo e ids, entao funciona, mas remova os `id` dos clones se precisar de ids unicos. Tema: `[data-theme="dark"]` ou `.laift-always-dark`. Tamanho: `--lia-size` (padrao 120px). Animacoes JS (WAAPI) ficam para a onda de codigo; `lia.css` so tem respiracao 3s, piscada 6s e loops leves, desligados em `prefers-reduced-motion`.
+
+## Props e poses da Onda 2 (lia-props-art.js)
+Fonte: `lia-props.svg`. `build-lia-art.mjs` gera `lia-props-art.js` com o mesmo gerador do `lia-art.js` e expoe `window.LIA_PROPS_ART = { viewBox, tree }` (UMD, com `module.exports`). Carregue por `<script>` sob demanda (a CSP nao permite `fetch`). Orcamento: 16 KB (hoje 4,9 KB).
+Regras do arquivo: cada no de topo e um `<g id="lia-pv-*">`. `data-cena` (1-7); `data-pai` = `svg` (raiz do `.lia-svg`, coordenadas do viewBox 200x300) ou um id existente de `lia.svg` (coordenadas do proprio grupo); `data-posicao="primeiro"` = inserir antes de `#lia-body` (atras da Lia). So as tags `g path rect circle ellipse`; sem `style`, `on*`, `xmlns` nem `use`.
+Para o `build-lia-art.mjs` falhar: id fora de `lia-pv-*`, id repetido (de topo ou aninhado), id ja existente em `lia.svg`, `data-cena` fora de 1-7 ou `data-pai` invalido.
+
+### Contrato de ids
+| id | o que e | cena | pai | como aparece |
+|---|---|---|---|---|
+| `lia-pv-veu` | veu escuro atras do corpo (opacity 0 ate 0,35) | 5 | svg, primeiro | com o balao; cobre o palco 360x380: o contenor precisa de `overflow: hidden` |
+| `lia-pv-liquido-b` | liquido 2 (ambar) do frasco | 1 | `#lia-prop-flask` | com `data-prop="flask"`; troca de cor por opacity; acompanha o chacoalhar do frasco |
+| `lia-pv-bolha-1`, `-2`, `-3` | bolhas no liquido | 1 | `#lia-prop-flask` | sobem e somem (translateY + opacity) |
+| `lia-pv-monitor` | moldura do monitor; filhos `lia-pv-ecg` (traco) e `lia-pv-coracao` (ponto) | 2 | svg | com `data-prop="none"` e `data-arm-right="point"` |
+| `lia-pv-osso` | osso que encaixa na mao do esqueleto | 3 | svg | desliza e encaixa (ease-spring); com `data-prop="skeleton"` |
+| `lia-pv-estrela` | estrela da conexao | 3 | svg | pulso (scale + opacity) |
+| `lia-pv-folha` | pagina que vira (sobre o livro) | 4 | svg | scaleX 1 a 0 a -1, origem na lombada (x=100) |
+| `lia-pv-interrogacao` | "?" sobre a cabeca | 4 | svg | sobe com opacity, depois fica |
+| `lia-pv-tela` | tela com suporte apontada pela mao | 4 | svg | aparece ao apontar (`data-arm-right="point"`) |
+| `lia-pv-cruzados` | bracos cruzados (no lugar dos bracos ociosos) | 5 | svg | some os bracos ociosos (`#lia-arm-left-idle`, `#lia-arm-right-idle`) |
+| `lia-pv-aviso` | balao vermelho com "!" | 5 | svg | scale 0,4 a 1,08 a 1 |
+| `lia-pv-costas-cabeca` | cabeca de costas (cobre o rosto com a cor do cabelo) | 6 | `#lia-head` | pose costas |
+| `lia-pv-costas-costura` | costura do casaco de costas | 6 | `#lia-coat` | pose costas |
+
+Ja existem em `lia.svg` (sem id novo): `#lia-prop-flask`, `#lia-prop-stethoscope`, `#lia-prop-thermometer` (o mercurio e `path.g`), `#lia-prop-skeleton`, `#lia-prop-book`, `#lia-arm-right-point`, `#lia-eyes-focused > *`, `#lia-head`, `#lia-coat`, `#lia-limbs`, `#lia-scene-heart`, `#lia-scene-glow`.
+
+### Classes novas (pedido ao H1: sao do lia.css)
+As pecas usam as classes da paleta que ja existem (`p k c h a t s n rd`) e quatro novas. Elas precisam entrar no `lia.css`:
+```
+.lia-svg .ln { fill: none; stroke: var(--lia-accent); }
+.lia-svg .al { fill: var(--lia-alert, var(--laift-danger, #b3261e)); }
+.lia-svg .gi { fill: var(--lia-alert-ink, var(--laift-on-danger, #ffffff)); }
+.lia-svg .vu { fill: var(--lia-shadow); }
+```
+`--laift-danger` ja muda no escuro (tokens). A copia de referencia usada na prova esta em `preview-props.css`.
+
+### Pose de costas (regra para lia.css e S2)
+Ocultar `#lia-eyes-*`, `#lia-brows-*`, `#lia-mouth-*`, `#lia-lock`, `#lia-glasses`, `.bl` e `#lia-coat > path.a` (lapela). Inserir `lia-pv-costas-cabeca` e `lia-pv-costas-costura`. A Lia fica com `data-state="suspended"` (opacidade 0,55). Sobreposicoes e nao um corpo copiado: assim a pose segue os `--lia-*`.
+
+### Animacao, CSP e carregamento
+- Origem de transformacao: ajuste pelo CSSOM (nao use `style` no atributo, a CSP bloqueia). `transform-box: fill-box` com origem na base em `lia-pv-ecg`, `lia-pv-liquido-b` e `#lia-prop-thermometer path.g`; origem `0% 50%` em `lia-pv-folha`; centro em `lia-pv-aviso` e `lia-pv-estrela`.
+- Inserir so quando a cena pedir e remover ao sair: as props nao tem regra `display` no `lia.css`.
+- Offline: `lia-props-art.js` deve entrar no PRECACHE de `sw.js`. `lia-props.svg` e so a fonte.
+
+### Build e prova
+- `scripts/build.js` nao muda: copia `modulos` por inteiro, e `lia-props.svg` e `lia-props-art.js` vao ao dist como `lia.svg` (nao sao excluidos por `LIA_REVIEW_ONLY`).
+- Regerar: `node frontend/modulos/shared/lia/build-lia-art.mjs` (gera `lia-art.js` e `lia-props-art.js`).
+- Revisao: `preview-ondas.html` (cenas) e `preview-props.html` (prova de fidelidade: cada id isolado e as composicoes finais).
