@@ -14,7 +14,8 @@
  *   4. dado vivo SÓ DE LEITURA e só do que a própria pessoa já pode ver (eventos);
  *   5. IA (Orchestrator.complete) apenas para quem está logado, tem cota e fez uma
  *      pergunta sem intenção; o prompt não leva nome, e-mail nem dado pessoal;
- *   6. base fixa quando não há IA, cota ou provedor.
+ *      com rag_enabled, os trechos do acervo (ragService) entram como DADO não confiável;
+ *   6. base fixa (kb.js) quando não há IA, cota, provedor ou trechos; resposta degradada e honesta.
  *
  * Os botões (actions) saem SEMPRE da base fixa e passam pela lista branca por
  * papel (assistant/targets.js); texto vindo da IA nunca vira botão.
@@ -33,8 +34,12 @@ import { buildAssistantMessages } from '../ai/prompts.js';
 import { cleanText, cleanReply, sanitizeHistory } from '../ai/validators.js';
 import { matchIntent, normalize, DEFAULT_SUGGESTIONS } from '../assistant/kb.js';
 import { filterActions } from '../assistant/targets.js';
+import * as Rag from './ragService.js';
+import { normalizeQuestion } from '../ai/semanticCache.js';
 
 const FLAG_CHATBOT = 'chatbot_enabled';
+const FLAG_RAG = 'rag_enabled';
+const ANSWER_MAX = 4000; // limite de assistant_messages.answer (sql/021)
 const HISTORY_TURNS = 5;
 const EVENTS_SHOWN = 3;
 const EVENT_TITLE_MAX = 80;
@@ -45,6 +50,9 @@ const MSG_REFUSAL = 'Não posso seguir esse tipo de instrução, mas posso te aj
 const MSG_FALLBACK = 'Ainda não sei responder isso por aqui. Posso te ajudar com eventos, módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), seu crachá e seu perfil. Escolha uma opção ou pergunte de outro jeito.';
 const MSG_AI_DOWN = 'A IA está indisponível agora, então respondo só com o que já sei: eventos, módulos de estudo, seu crachá e seu perfil. Escolha uma opção ou tente de novo mais tarde.';
 const MSG_QUOTA = 'Você atingiu o limite diário de perguntas que usam IA; ele volta amanhã. Enquanto isso, posso te ajudar com eventos, módulos de estudo, seu crachá e seu perfil.';
+const MSG_KB_FAILED = 'Não consegui consultar a base de conhecimento agora, então não tenho como responder a isso com segurança. ';
+const MSG_KB_EMPTY = 'Não encontrei essa informação na base de conhecimento da plataforma, então prefiro não chutar. ';
+const MSG_KB_HELP = 'Posso te ajudar com eventos, módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), seu crachá e seu perfil.';
 
 // Tentativas de dar ordens à IA ou de embutir marcação. Textos normalizados (sem acento, minúsculos).
 const INJECTION_TEXT = [
@@ -116,9 +124,9 @@ function fromIntent(hit, role, reply, source) {
   });
 }
 
-async function flagOn(sql, identity) {
+async function flagOn(sql, identity, key = FLAG_CHATBOT) {
   try {
-    return await isEnabled(sql, FLAG_CHATBOT, identity);
+    return await isEnabled(sql, key, identity);
   } catch (err) {
     return false; // falha fechada: sem saber, a Lia fica desligada
   }
@@ -135,15 +143,15 @@ async function enforceChatLimit(sql, env, identity) {
 }
 
 /** Pergunta sem intenção: IA para quem pode usar; senão, a base fixa. */
-async function askAi(sql, env, identity, message, history) {
+async function askAi(sql, env, identity, message, history, context = null) {
   const role = identity ? identity.role : null;
-  const canUseAi = !!identity && quotaLimit(role, C.AI_FEATURE.ASSISTANT) > 0 && Groq.parseKeys(env).length > 0;
-  if (!canUseAi) return answer({ reply: MSG_FALLBACK, source: 'fallback' });
+  if (!canUseAi(identity, env)) return answer({ reply: MSG_FALLBACK, source: 'fallback' });
 
   // Pergunta GENÉRICA (sem histórico) de MEMBRO pode vir do cache semântico: não chama a IA e não gasta
   // cota. Só membro guarda e lê: a resposta depende do papel (o prompt cita o papel), e uma resposta
-  // gerada para admin nunca pode ser servida a outra pessoa.
-  const generic = history.length === 0 && role === C.ROLES.MEMBER;
+  // gerada para admin nunca pode ser servida a outra pessoa. Com trechos do acervo a resposta depende
+  // deles, então não lê nem grava o cache genérico.
+  const generic = !context && history.length === 0 && role === C.ROLES.MEMBER;
   if (generic) {
     const hit = await Orchestrator.lookupCache(sql, env, identity, C.AI_FEATURE.ASSISTANT, message);
     if (hit) return answer({ reply: cleanReply(hit.answer, C.AI_LIMITS.REPLY_MAX), source: 'ai', cached: true });
@@ -152,7 +160,7 @@ async function askAi(sql, env, identity, message, history) {
   let outcome;
   try {
     outcome = await withQuota(sql, identity, C.AI_FEATURE.ASSISTANT, async () => {
-      const messages = buildAssistantMessages({ question: message, history, role });
+      const messages = buildAssistantMessages({ question: message, history, role, context });
       const out = await Orchestrator.complete(
         sql, env, identity,
         { feature: C.AI_FEATURE.ASSISTANT, messages, profileId: identity.profileId },
@@ -172,6 +180,82 @@ async function askAi(sql, env, identity, message, history) {
   }
   if (outcome && outcome.quotaExceeded) return answer({ reply: MSG_QUOTA, source: 'fallback', quotaExceeded: true });
   return outcome;
+}
+
+/** Pode usar a IA nesta pergunta: pessoa logada, com cota no papel e chave configurada. */
+function canUseAi(identity, env) {
+  return !!identity && quotaLimit(identity.role, C.AI_FEATURE.ASSISTANT) > 0 && Groq.parseKeys(env).length > 0;
+}
+
+/** Busca os trechos do acervo. Nunca lança: falha vira { failed: true }. Trecho com cara de instrução sai. */
+async function retrieveContext(sql, env, message, correlationId) {
+  let found;
+  try {
+    found = (await Rag.retrieve(sql, env, message)).chunks;
+  } catch (err) {
+    await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_FAILED', String((err && err.message) || err), null);
+    return { chunks: [], failed: true };
+  }
+  const chunks = found.filter((c) => !looksLikeInjection(c.content));
+  if (chunks.length < found.length) {
+    await Logging.logAudit(sql, correlationId, null, 'ASSISTANT_RAG_CHUNK_SUPPRESSED', 'assistant', null, 'failure', { dropped: found.length - chunks.length });
+  }
+  const trimmed = chunks.map((c) => ({ source: c.source, section: c.section, content: String(c.content).slice(0, C.RAG.CONTEXT_CHARS) }));
+  return { chunks: trimmed, failed: false };
+}
+
+/** Último degrau da cadeia: a base estática (kb.js) responde com honestidade que não tem essa informação agora. */
+function staticKbFallback(failed) {
+  const lead = failed ? MSG_KB_FAILED : MSG_KB_EMPTY;
+  return answer({ reply: lead + MSG_KB_HELP, source: 'kb', degraded: true });
+}
+
+/** Cita as seções usadas no próprio texto e devolve `sources` (só origem e seção, nunca o conteúdo). */
+function withCitations(result, chunks) {
+  const sections = Array.from(new Set(chunks.map((c) => c.section)));
+  const unique = new Map(chunks.map((c) => [c.source + '|' + c.section, { source: c.source, section: c.section }]));
+  return Object.assign({}, result, {
+    reply: result.reply + '\n\nFontes: ' + sections.join('; ') + '.',
+    sources: Array.from(unique.values()),
+  });
+}
+
+/** Trechos viram DADO para a IA. Sem trechos, a base estática responde; a IA indisponível também marca degradado. */
+async function answerFromKnowledge(sql, env, identity, message, history, correlationId) {
+  const { chunks, failed } = await retrieveContext(sql, env, message, correlationId);
+  if (!chunks.length) return staticKbFallback(failed);
+  const result = await askAi(sql, env, identity, message, history, chunks);
+  if (result.source === 'ai') return withCitations(result, chunks);
+  return Object.assign({}, result, { degraded: true });
+}
+
+/**
+ * Grava o mínimo (ADR 0005, sql/021): hash da pergunta normalizada, nunca o texto, e a resposta.
+ * Devolve messageId para a avaliação. Anônimo não grava (profile_id é obrigatório). Não derruba a resposta.
+ */
+async function recordAnswer(sql, identity, message, result, correlationId) {
+  const shaped = Object.assign({ sources: [], messageId: null }, result);
+  if (!identity) return shaped;
+  try {
+    const questionHash = await Rag.sha256Hex(identity.profileId + ':' + normalizeQuestion(message));
+    const rows = await sql`
+      INSERT INTO assistant_messages (profile_id, question_hash, source, answer, sources, degraded)
+      VALUES (${identity.profileId}::uuid, ${questionHash}, ${shaped.source}, ${String(shaped.reply).slice(0, ANSWER_MAX)}, ${JSON.stringify(shaped.sources)}::jsonb, ${!!shaped.degraded})
+      RETURNING id`;
+    return Object.assign({}, shaped, { messageId: rows && rows[0] ? rows[0].id : null });
+  } catch (err) {
+    await Logging.logError(sql, correlationId, 'ASSISTANT_MESSAGE_SAVE_FAILED', String((err && err.message) || err), null);
+    return shaped;
+  }
+}
+
+/** Pergunta sem intenção por regra. Com rag_enabled desligada, é exatamente o comportamento anterior. */
+async function askWithKnowledge(sql, env, identity, message, history, correlationId) {
+  if (!(await flagOn(sql, identity, FLAG_RAG))) return askAi(sql, env, identity, message, history);
+  const result = canUseAi(identity, env)
+    ? await answerFromKnowledge(sql, env, identity, message, history, correlationId)
+    : await askAi(sql, env, identity, message, history);
+  return recordAnswer(sql, identity, message, result, correlationId);
 }
 
 /**
@@ -205,5 +289,5 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
     }
     return fromIntent(hit, role, hit.intent.reply, 'kb');
   }
-  return askAi(sql, env, identity, message, history);
+  return askWithKnowledge(sql, env, identity, message, history, correlationId);
 }

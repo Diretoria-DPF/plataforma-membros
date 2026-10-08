@@ -68,6 +68,13 @@ binding = "MEDIA_BUCKET"
 binding = "HOT_CACHE"
 id = "6ee17e571c044c43bd5b32599b6fbab9"
 
+# Workers AI: gera os embeddings da base da Lia (@cf/baai/bge-m3, ver
+# worker/src/services/ragService.js). Sem este binding o RAG NÃO quebra: a busca
+# cai para trigramas (pg_trgm) e a resposta segue normalmente. Em staging não é
+# herdado (como KV e R2): lá a busca é só por trigramas até que se decida ligar.
+[ai]
+binding = "AI"
+
 # Faxina diária (src/maintenance.js): sessões/tokens/rate limit expirados e
 # retenção por idade de ai_usage_log (180 dias), atlas_telemetry (90),
 # audit_logs (2 anos) e error_logs (30). 06:17 UTC = 03:17 em Brasília,

@@ -105,7 +105,7 @@ export async function retrieve(sql, env, question) {
   return { chunks: fuse(lists, C.RAG.TOP_K), mode: vectorList ? 'hybrid' : 'trigram', embeddingError };
 }
 
-async function sha256Hex(text) {
+export async function sha256Hex(text) {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
