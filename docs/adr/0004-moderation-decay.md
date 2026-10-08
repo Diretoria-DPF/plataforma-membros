@@ -1,6 +1,6 @@
 # ADR 0004 — Decaimento da moderação da Lia
 
-Status: aceita (2026-10-08); a tela de moderação do admin ainda não existe no front. Data: 2026-10-07.
+Status: aceita (2026-10-08). A tela de moderação do admin existe desde 2026-10-08, com agregados (`frontend/admin-moderation.js`); a visão por pessoa segue em andamento. Data: 2026-10-07.
 
 ## Contexto
 A moderação da Lia tem 4 níveis (normal, alerta, aviso sério, suspensão) com redenção. Sem decaimento, um deslize antigo pesa para sempre.
@@ -44,3 +44,15 @@ Depende de D2 (`assistant_feedback.message_id`). Auditoria preservada em `audit_
 **Chat.** A conversa (`worker/src/assistant/moderationGate.js`) não devolve `stateChanged`. O estado de moderação vem no objeto `moderation` (`level`, `suspended`, `until`).
 
 **Testes.** `worker/test/moderationConcurrency.test.js`: bloco "redenção x incidente DURANTE o julgamento (achado 4)" (nível 3, nível 1, decaimento no meio, cooldown devolvido) e o teste de concorrência com incidente em paralelo.
+
+## Portão do chat quando o estado não pode ser lido (2026-10-08)
+
+Quando a flag ou a leitura do estado de moderação falha, o portão do chat (`worker/src/assistant/moderationGate.js`, `whenStateUnknown`) registra `ASSISTANT_MODERATION_FAILED` em `error_logs` e relê a suspensão no banco (`ModerationService.resolveSuspension`):
+
+- Suspensa: a conversa segue sem IA, com o texto fixo da suspensão.
+- Livre: a conversa segue normal.
+- Banco indisponível: vale a suspensão que esta instância já conhecia (`KNOWN_SUSPENSIONS`, só como reserva).
+- Banco e memória indisponíveis: a Lia pausa para todos. A resposta vem com `source: 'moderation'` e `degraded: true`. É um aviso neutro, que não é suspensão nem conta como ocorrência.
+- Tabela `assistant_moderation` ausente (migração 022 não aplicada): tratada como livre.
+
+No front, a consulta de suspensão ao abrir o painel (`checkModerationOnce`, em `frontend/assistant-moderation.js`) é falha aberta: se falhar, o chat segue e só fica um aviso no console. Quem impede a conversa é o servidor.
