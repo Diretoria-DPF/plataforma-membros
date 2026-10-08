@@ -88,8 +88,10 @@ fs.copyFileSync(path.join(ROOT, 'static-page.js'), path.join(DIST, 'static-page.
 // Fase 3 — painel admin de IA: sem segredo (só chama a Worker com o token da
 // sessão, como o resto), copiado sem ofuscação, como learning.js.
 fs.copyFileSync(path.join(ROOT, 'admin-ai.js'), path.join(DIST, 'admin-ai.js'));
+// Ferramentas de revisão da arte da Lia (preview, Lia Lab) e o README ficam só no repositório (ADR 0003).
+const LIA_REVIEW_ONLY = /[\\/]shared[\\/]lia[\\/](?:preview[^\\/]*|lab[^\\/]*|build-lab[^\\/]*|README\.md)$/;
 ['modulos', 'vendor', 'icons'].forEach((dir) => {
-  fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true });
+  fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true, filter: (src) => !LIA_REVIEW_ONLY.test(src) });
 });
 
 // Modelos 3D também em .glb.gz (PR 3.1, meta de boot < 10 s em Fast 3G):
