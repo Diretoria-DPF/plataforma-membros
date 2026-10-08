@@ -103,6 +103,34 @@ test('assistant.js está no index.html, na lista do build e no precache do servi
   assert.match(read('frontend/sw.js'), /'assistant\.js'/);
 });
 
+test('sanitizeSources: no máximo 4 fontes, só texto curto, sem vazias', () => {
+  const out = Lia.sanitizeSources([
+    { source: 'Manual do aluno', section: '2.1 Crachá' },
+    { source: '   ', section: 'vazia' },
+    null,
+    { section: 'sem fonte' },
+    { source: 'a'.repeat(200), section: 's'.repeat(300) },
+    { source: 'b' }, { source: 'c' }, { source: 'd' },
+  ]);
+  assert.equal(out.length, 4);
+  assert.deepEqual(out[0], { source: 'Manual do aluno', section: '2.1 Crachá' });
+  assert.ok(out[1].source.length <= 80 && out[1].section.length <= 120);
+  out.forEach((s) => {
+    assert.equal(typeof s.source, 'string');
+    assert.equal(typeof s.section, 'string');
+  });
+  assert.deepEqual(Lia.sanitizeSources(null), []);
+  assert.deepEqual(Lia.sanitizeSources('Manual'), []);
+});
+
+test('fontes e avisos da Lia são texto: nenhum vira link, e o card de feedback é opcional', () => {
+  const src = read('frontend/assistant.js');
+  assert.doesNotMatch(src, /el\(doc, 'a'/);
+  assert.doesNotMatch(src, /\.href\s*=/);
+  // sem o módulo carregado, a Lia segue funcionando (sem card)
+  assert.match(src, /root\.LaiftAssistantFeedback \|\| null/);
+});
+
 test('o app avisa a Lia ao entrar e ao sair da conta', () => {
   const app = read('frontend/app.js');
   assert.match(app, /LaiftAssistant/);
