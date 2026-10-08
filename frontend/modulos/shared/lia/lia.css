@@ -1,0 +1,177 @@
+/* Lia - visibilidade dos grupos por data-*, cores por --lia-* e animacoes CSS.
+   Host: <div class="lia" data-state="idle" ...> contendo o <svg class="lia-svg"> do lia.svg.
+   Geometria por --lia-* (ver README, secao "Lia Lab"). Padrao = preset "Estilizada (1:4)". */
+
+.lia {
+  --lia-line: #24403b; --lia-skin: #f4cfae; --lia-hair: #3a3f4d; --lia-cloth: #ffffff;
+  --lia-accent: #0f6f62; --lia-paper: #ffffff; --lia-outer: #24403b; --lia-glow: #0f6f62;
+  --lia-shadow: #1a2b28; --lia-blush: #e8806b; --lia-fever: #d6452d; --lia-heart: #e0526b; --lia-spark: #f2b63d;
+  --lia-pants: var(--lia-hair);
+  /* Geometria (unidades do viewBox 200x300). */
+  --lia-top: 20;          /* topo do cabelo (y) */
+  --lia-head-scale: .544; /* escala da cabeca; pivo na base do rosto */
+  --lia-neck: 10;         /* pescoco visivel (entre a cabeca e o casaco) */
+  --lia-leg-len: 93.81;   /* pernas: comprimento abaixo do casaco */
+  --lia-shoulder: 1;      /* largura dos ombros (escala X do casaco) */
+  --lia-arm-len: 1;       /* comprimento dos bracos */
+  --lia-eye-size: 1;      /* tamanho dos olhos */
+  --lia-eye-gap: 0;       /* variacao da distancia entre os olhos (olhos e sobrancelhas) */
+  --lia-stroke: 1.5;      /* traco unico da arte */
+  --lia-radius: 4px;      /* arredondamento dos retangulos (pescoco, calendario, termometro) */
+  --lia-lock-x: 0; --lia-lock-y: 0; /* posicao da mecha */
+  display: inline-block; width: var(--lia-size, 120px); aspect-ratio: 2 / 3; line-height: 0;
+}
+[data-theme="dark"] .lia, .laift-always-dark .lia {
+  --lia-hair: #5b6376; --lia-cloth: #e6efed; --lia-accent: #3fcfb6; --lia-paper: #f1f6f5;
+  --lia-outer: #cfe6e1; --lia-glow: #3fcfb6; --lia-shadow: #000000;
+}
+/* Modulo administrativo: acento laranja. */
+.lia[data-tone="admin"] { --lia-accent: #8a3b12; --lia-glow: #8a3b12; }
+[data-theme="dark"] .lia[data-tone="admin"], .laift-always-dark .lia[data-tone="admin"] { --lia-accent: #f0a070; --lia-glow: #f0a070; }
+
+.lia-svg {
+  display: block; width: 100%; height: 100%; overflow: visible;
+  fill: none; stroke: var(--lia-line, #24403b); stroke-width: var(--lia-stroke, 1.5); stroke-linecap: round; stroke-linejoin: round;
+  transform-origin: 50% 95%;
+}
+.lia-svg .k { fill: var(--lia-skin, #f4cfae); }
+.lia-svg .h { fill: var(--lia-hair, #3a3f4d); }
+.lia-svg .c { fill: var(--lia-cloth, #ffffff); }
+.lia-svg .a { fill: var(--lia-accent, #0f6f62); }
+.lia-svg .p { fill: var(--lia-paper, #ffffff); }
+.lia-svg .f { fill: var(--lia-line, #24403b); }
+.lia-svg .g { fill: var(--lia-fever, #d6452d); }
+.lia-svg .t { fill: var(--lia-heart, #e0526b); }
+.lia-svg .s { fill: var(--lia-spark, #f2b63d); }
+.lia-svg .w { stroke: var(--lia-fever, #d6452d); }
+.lia-svg .o { stroke: var(--lia-outer, #24403b); }
+.lia-svg .n { stroke: none; }
+.lia-svg .pt { fill: var(--lia-pants, #3a3f4d); }
+.lia-svg .sh { fill: var(--lia-shadow, #1a2b28); opacity: .2; }
+.lia-svg .bl { fill: var(--lia-blush, #e8806b); opacity: .4; }
+.lia-svg .gl { fill: var(--lia-glow, #0f6f62); opacity: .16; }
+
+/* Geometria. A cabeca tem 118 unidades de altura (topo do cabelo ate a base) com escala 1.
+   --_hb = base da cabeca (y); --_dy = deslocamento do tronco e dos bracos. */
+.lia-svg {
+  --_hb: calc(var(--lia-top, 20) + 118 * var(--lia-head-scale, .544));
+  --_dy: calc(var(--_hb) + var(--lia-neck, 10) - 188);
+}
+#lia-head {
+  transform: translate(0px, calc((var(--_hb) - 154) * 1px)) scale(var(--lia-head-scale, .544));
+  transform-origin: 100px 154px;
+  stroke-width: calc(var(--lia-stroke, 1.5) / var(--lia-head-scale, .544));
+}
+#lia-torso, #lia-limbs { transform: translateY(calc(var(--_dy) * 1px)); }
+#lia-ground { transform: translateY(calc((var(--_dy) + var(--lia-leg-len, 0)) * 1px)); }
+#lia-feet { translate: 0px calc(var(--lia-leg-len, 0) * 1px); }
+#lia-legs rect { scale: 1 calc((8 + var(--lia-leg-len, 0)) / 8); transform-origin: 100px 262px; }
+#lia-coat {
+  transform: scaleX(var(--lia-shoulder, 1)); transform-origin: 100px 188px;
+  stroke-width: calc(var(--lia-stroke, 1.5) / var(--lia-shoulder, 1));
+}
+.lia-svg .rd { rx: var(--lia-radius, 4px); }
+#lia-lock { translate: calc(var(--lia-lock-x, 0) * 1px) calc(var(--lia-lock-y, 0) * 1px); }
+
+/* Olhos: .el/.er = olho esquerdo/direito (gap); .ey = tamanho do olho. */
+.lia-svg .el { translate: calc(var(--lia-eye-gap, 0) * -.5px) 0px; }
+.lia-svg .er { translate: calc(var(--lia-eye-gap, 0) * .5px) 0px; }
+.lia-svg .ey {
+  scale: var(--lia-eye-size, 1); transform-box: fill-box; transform-origin: center;
+  stroke-width: calc(var(--lia-stroke, 1.5) / (var(--lia-head-scale, .544) * var(--lia-eye-size, 1)));
+}
+/* Bracos: escala a partir do ombro; o ombro acompanha a largura dos ombros. */
+.lia-svg [id^="lia-arm-left-"] {
+  transform-origin: 84px 192px; scale: var(--lia-arm-len, 1); translate: calc((var(--lia-shoulder, 1) - 1) * -16px) 0px;
+  stroke-width: calc(var(--lia-stroke, 1.5) / var(--lia-arm-len, 1));
+}
+.lia-svg [id^="lia-arm-right-"] {
+  transform-origin: 116px 192px; scale: var(--lia-arm-len, 1); translate: calc((var(--lia-shoulder, 1) - 1) * 16px) 0px;
+  stroke-width: calc(var(--lia-stroke, 1.5) / var(--lia-arm-len, 1));
+}
+
+/* Mecha (padrao) ou oculos: data-accessory="glasses" */
+.lia-svg #lia-glasses { display: none; }
+.lia[data-accessory="glasses"] #lia-glasses { display: inline; }
+.lia[data-accessory="glasses"] #lia-lock { display: none; }
+
+/* 1) tudo escondido (exceto lia-body) */
+.lia-svg :is([id^="lia-eyes-"], [id^="lia-brows-"], [id^="lia-mouth-"], [id^="lia-arm-"], [id^="lia-prop-"], [id^="lia-scene-"]) { display: none; }
+
+/* 2) olhos e sobrancelhas: data-emotion (neutral|curious|happy|worried|focused|sad) ou padrao do estado */
+.lia:is([data-emotion="neutral"], :not([data-emotion]):not([data-state="thinking"]):not([data-state="celebrating"])) #lia-eyes-neutral,
+.lia:is([data-emotion="neutral"], :not([data-emotion]):not([data-state="thinking"]):not([data-state="celebrating"]):not([data-state="speaking"])) #lia-brows-neutral,
+.lia:is([data-emotion="curious"], :not([data-emotion])[data-state="thinking"]) :is(#lia-eyes-curious, #lia-brows-curious),
+.lia:is([data-emotion="happy"], :not([data-emotion])[data-state="celebrating"]) #lia-eyes-happy,
+.lia:is([data-emotion="happy"], :not([data-emotion]):is([data-state="celebrating"], [data-state="speaking"])) #lia-brows-happy,
+.lia[data-emotion="worried"] :is(#lia-eyes-worried, #lia-brows-worried),
+.lia[data-emotion="focused"] :is(#lia-eyes-focused, #lia-brows-focused),
+.lia[data-emotion="sad"] :is(#lia-eyes-sad, #lia-brows-sad) { display: inline; }
+
+/* 3) boca: data-mouth > estado (speaking/thinking/celebrating) > data-emotion > neutra */
+.lia[data-mouth="neutral"] #lia-mouth-neutral,
+.lia:not([data-mouth]):not([data-state="speaking"]):not([data-state="thinking"]):not([data-state="celebrating"]):is(:not([data-emotion]), [data-emotion="neutral"], [data-emotion="curious"]) #lia-mouth-neutral,
+.lia[data-mouth="smile"] #lia-mouth-smile,
+.lia:not([data-mouth])[data-state="celebrating"] #lia-mouth-smile,
+.lia:not([data-mouth]):not([data-state="speaking"]):not([data-state="thinking"]):not([data-state="celebrating"])[data-emotion="happy"] #lia-mouth-smile,
+.lia[data-mouth="open"] #lia-mouth-open,
+.lia:not([data-mouth])[data-state="speaking"] #lia-mouth-open,
+.lia[data-mouth="flat"] #lia-mouth-flat,
+.lia:not([data-mouth])[data-state="thinking"] #lia-mouth-flat,
+.lia:not([data-mouth]):not([data-state="speaking"]):not([data-state="thinking"]):not([data-state="celebrating"]):is([data-emotion="focused"], [data-emotion="sad"]) #lia-mouth-flat,
+.lia[data-mouth="worried"] #lia-mouth-worried,
+.lia:not([data-mouth]):not([data-state="speaking"]):not([data-state="thinking"]):not([data-state="celebrating"])[data-emotion="worried"] #lia-mouth-worried { display: inline; }
+
+/* 4) bracos: data-arm-left / data-arm-right (idle|wave|point|chin|heart) ou padrao do estado */
+.lia[data-arm-left="idle"] #lia-arm-left-idle,
+.lia:not([data-arm-left]):not([data-state="celebrating"]) #lia-arm-left-idle,
+.lia[data-arm-left="wave"] #lia-arm-left-wave,
+.lia[data-arm-left="point"] #lia-arm-left-point,
+.lia[data-arm-left="chin"] #lia-arm-left-chin,
+.lia[data-arm-left="heart"] #lia-arm-left-heart,
+.lia:not([data-arm-left])[data-state="celebrating"] #lia-arm-left-heart,
+.lia[data-arm-right="idle"] #lia-arm-right-idle,
+.lia:not([data-arm-right]):not([data-state="thinking"]):not([data-state="speaking"]):not([data-state="celebrating"]) #lia-arm-right-idle,
+.lia[data-arm-right="wave"] #lia-arm-right-wave,
+.lia[data-arm-right="point"] #lia-arm-right-point,
+.lia:not([data-arm-right])[data-state="speaking"] #lia-arm-right-point,
+.lia[data-arm-right="chin"] #lia-arm-right-chin,
+.lia:not([data-arm-right])[data-state="thinking"] #lia-arm-right-chin,
+.lia[data-arm-right="heart"] #lia-arm-right-heart,
+.lia:not([data-arm-right])[data-state="celebrating"] #lia-arm-right-heart { display: inline; }
+
+/* 5) prop: data-prop (none|calendar|pencil|flask|stethoscope|thermometer|book|skeleton|bone) */
+.lia[data-prop="calendar"] #lia-prop-calendar,
+.lia[data-prop="pencil"] #lia-prop-pencil,
+.lia[data-prop="flask"] #lia-prop-flask,
+.lia[data-prop="stethoscope"] #lia-prop-stethoscope,
+.lia[data-prop="thermometer"] #lia-prop-thermometer,
+.lia[data-prop="book"] #lia-prop-book,
+.lia[data-prop="skeleton"] #lia-prop-skeleton,
+.lia[data-prop="bone"] #lia-prop-bone { display: inline; }
+
+/* 6) cenario: data-scene com lista (particles glow heart bubble sparkles) ou padrao do estado */
+.lia[data-scene~="particles"] #lia-scene-particles,
+.lia[data-scene~="glow"] #lia-scene-glow,
+.lia:not([data-scene])[data-state="celebrating"] #lia-scene-glow,
+.lia[data-scene~="heart"] #lia-scene-heart,
+.lia:not([data-scene])[data-state="celebrating"] #lia-scene-heart,
+.lia[data-scene~="bubble"] #lia-scene-bubble,
+.lia:not([data-scene])[data-state="thinking"] #lia-scene-bubble,
+.lia[data-scene~="sparkles"] #lia-scene-sparkles,
+.lia:not([data-scene])[data-state="celebrating"] #lia-scene-sparkles { display: inline; }
+
+/* Loops basicos (sequencias ficam com o JS) */
+.lia-svg { animation: lia-breathe var(--dur-breath, 3s) var(--ease-in-out, ease-in-out) infinite; }
+.lia-svg [id^="lia-eyes-"] { transform-box: fill-box; transform-origin: center; animation: lia-blink var(--dur-blink, 6s) var(--ease-linear, linear) infinite; }
+#lia-scene-particles { animation: lia-float var(--dur-float, 4s) var(--ease-in-out, ease-in-out) infinite alternate; }
+#lia-scene-sparkles, #lia-scene-heart { transform-box: fill-box; transform-origin: center; animation: lia-pulse var(--dur-pulse, 1.6s) var(--ease-in-out, ease-in-out) infinite alternate; }
+
+@keyframes lia-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+@keyframes lia-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes lia-float { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+@keyframes lia-pulse { from { opacity: .65; transform: scale(.96); } to { opacity: 1; transform: scale(1.04); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lia-svg, .lia-svg * { animation: none !important; }
+}
