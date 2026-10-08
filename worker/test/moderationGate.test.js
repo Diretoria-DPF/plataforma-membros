@@ -377,6 +377,114 @@ describe('moderação da Lia — estado da própria pessoa e resumo do admin', (
   });
 });
 
+// W4: dados por pessoa no resumo do admin (campos NOVOS; os antigos seguem iguais). Só admin chama.
+describe('moderação da Lia — resumo do admin: dados por pessoa (W4)', () => {
+  // Os 4 campos antigos (profileId, incidents, maxLevel, lastAt) + os 5 novos. Nada além disso sai.
+  const ALLOWED_KEYS = [
+    'currentLevel', 'displayName', 'incidents', 'lastAt', 'lastDetection', 'lastRedeemedAt', 'maxLevel', 'profileId', 'suspendedUntil',
+  ];
+  const daysAgo = (days) => `now() - interval '${days} days'`;
+  const addIncident = (profileId, detection, levelAfter, days) => db.query(
+    `INSERT INTO assistant_incidents (profile_id, detection, level_after, created_at) VALUES ($1, $2, $3, ${daysAgo(days)})`,
+    [profileId, detection, levelAfter]
+  );
+  const summaryOf = (input, now) => Gate.adminAssistantModeration(sql, ADMIN, input || { limit: 10 }, now);
+  const personOf = async (profileId) => (await summaryOf()).people.find((p) => p.profileId === profileId);
+
+  test('traz nível atual, fim da suspensão, última detecção, última redenção e o nome do perfil', async () => {
+    await suspendNow();
+    const person = await personOf(ME);
+    expect(person).toMatchObject({
+      profileId: ME, incidents: 3, maxLevel: 3, currentLevel: 3, lastDetection: 'terms', lastRedeemedAt: null, displayName: 'Maria Souza',
+    });
+    const until = new Date(person.suspendedUntil).getTime();
+    expect(until).toBeGreaterThan(Date.now() + 23 * HOUR);
+    expect(until).toBeLessThanOrEqual(Date.now() + 24 * HOUR);
+    expect(person.lastAt).toBeTruthy(); // campo antigo continua lá
+  });
+
+  test('a última detecção é a do incidente mais recente, não a mais frequente', async () => {
+    await addIncident(ME, 'llm', 1, 3);
+    await addIncident(ME, 'llm', 2, 2);
+    await addIncident(ME, 'terms', 3, 1);
+    expect((await personOf(ME)).lastDetection).toBe('terms');
+    await addIncident(ME, 'llm', 3, 0);
+    expect((await personOf(ME)).lastDetection).toBe('llm');
+  });
+
+  test('redenção aceita: nível 0, sem suspensão e a data da redenção aparece', async () => {
+    await suspendNow();
+    await ModerationService.redeemAssistant(sql, env, MEMBER, { message: SINCERE }, CID, new Date());
+    const person = await personOf(ME);
+    expect(person).toMatchObject({ currentLevel: 0, suspendedUntil: null, maxLevel: 3 });
+    expect(Math.abs(new Date(person.lastRedeemedAt).getTime() - Date.now())).toBeLessThan(60 * 1000);
+  });
+
+  test('o decaimento devido já aparece no nível atual, sem gravar nada (leitura somente leitura)', async () => {
+    await addIncident(ME, 'terms', 3, 70);
+    await db.query(
+      `INSERT INTO assistant_moderation (profile_id, level, until, last_incident_at) VALUES ($1, 3, ${daysAgo(69)}, ${daysAgo(70)})`,
+      [ME]
+    );
+    const before = (await db.query('SELECT * FROM assistant_moderation WHERE profile_id = $1', [ME])).rows[0];
+    expect(await personOf(ME)).toMatchObject({ currentLevel: 1, suspendedUntil: null });
+    expect((await db.query('SELECT * FROM assistant_moderation WHERE profile_id = $1', [ME])).rows[0]).toEqual(before);
+  });
+
+  test('pessoa com incidente mas sem linha de moderação (apagada): nível 0 e sem suspensão', async () => {
+    await addIncident(ME, 'terms', 1, 1);
+    expect(await personOf(ME)).toMatchObject({ currentLevel: 0, suspendedUntil: null, lastRedeemedAt: null, lastDetection: 'terms' });
+  });
+
+  test('nunca devolve texto de mensagem, hash, e-mail, telefone nem senha: só as chaves esperadas', async () => {
+    await suspendNow();
+    await ModerationService.redeemAssistant(sql, env, MEMBER, { message: NOT_SINCERE }, CID, new Date());
+    const summary = await summaryOf();
+    summary.people.forEach((p) => expect(Object.keys(p).sort()).toEqual(ALLOWED_KEYS));
+    const text = JSON.stringify(summary);
+    expect(text).not.toMatch(/idiota|desculpas|Quero que o chat/i);
+    expect(text).not.toMatch(/maria@exemplo|11999990000|password|question_hash|"x"/i);
+    expect(text).not.toMatch(/[0-9a-f]{64}/); // nenhum hash SHA-256
+  });
+
+  test('só admin: membro, visitante e conta sem sessão são recusados, com os campos novos ou não', async () => {
+    await suspendNow();
+    await expect(Gate.adminAssistantModeration(sql, MEMBER, { limit: 10 })).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(Gate.adminAssistantModeration(sql, VISITOR, { limit: 10 })).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(Gate.adminAssistantModeration(sql, null, { limit: 10 })).rejects.toBeDefined();
+  });
+
+  describe('limite da lista (existente): padrão e teto de C.MODERATION.PAGE_SIZE, mais recentes primeiro', () => {
+    const PAGE = 25;
+    const BULK = PAGE + 2;
+    beforeEach(async () => {
+      await db.exec(`DELETE FROM profiles WHERE username LIKE 'bulk%'`);
+      await db.query(
+        `INSERT INTO profiles (id, full_name, username, email, password_hash, phone, role)
+         SELECT uuid_generate_v4(), 'Pessoa ' || n, 'bulk' || n, 'bulk' || n || '@exemplo.com', 'x', '1188880' || lpad(n::text, 4, '0'), 'member'
+         FROM generate_series(1, $1::int) AS n`,
+        [BULK]
+      );
+      await db.exec(`INSERT INTO assistant_incidents (profile_id, detection, level_after, created_at)
+        SELECT p.id, 'terms', 1, now() - (row_number() OVER (ORDER BY length(p.username), p.username) || ' hours')::interval FROM profiles p WHERE p.username LIKE 'bulk%'`);
+    });
+    afterEach(async () => { await db.exec(`DELETE FROM profiles WHERE username LIKE 'bulk%'`); });
+
+    test('sem limite ou com limite inválido: no máximo uma página; limite acima do teto também', async () => {
+      for (const limit of [undefined, 0, -3, 'abc', 9999]) {
+        const { people } = await summaryOf({ limit });
+        expect(people).toHaveLength(PAGE);
+      }
+    });
+
+    test('limite menor devolve só tantos, os mais recentes primeiro, já com os campos novos', async () => {
+      const { people } = await summaryOf({ limit: 2 });
+      expect(people.map((p) => p.displayName)).toEqual(['Pessoa 1', 'Pessoa 2']);
+      people.forEach((p) => expect(p).toMatchObject({ currentLevel: 0, suspendedUntil: null, lastDetection: 'terms' }));
+    });
+  });
+});
+
 // ---- Revisão final ----
 const chatAttempts = async () => {
   const rows = (await db.query(`SELECT attempts FROM rate_limit_buckets WHERE bucket = 'ASSISTANT_CHAT'`)).rows;

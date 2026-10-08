@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lia - prova dos props (lia-props-art.js)</title>
+<link rel="stylesheet" href="../laift-tokens.css">
+<link rel="stylesheet" href="lia.css">
+<link rel="stylesheet" href="preview-props.css">
+</head>
+<body>
+<header class="topo">
+  <h1>Prova de fidelidade: lia-props-art.js</h1>
+  <p>Cada id de LIA_PROPS_ART desenhado estático e as composições finais das cenas, para comparar com preview-ondas.html. Não entra no build (LIA_REVIEW_ONLY).</p>
+  <div class="controles">
+    <button type="button" class="botao" id="btn-tema" aria-pressed="false">Tema escuro</button>
+  </div>
+</header>
+<main class="prova">
+  <section>
+    <h2>Ids isolados (um por caixa)</h2>
+    <div class="grade" id="ids"></div>
+  </section>
+  <section>
+    <h2>Composições finais das cenas (comparar com preview-ondas.html)</h2>
+    <div class="grade grade-cenas" id="cenas"></div>
+  </section>
+</main>
+<script src="lia-art.js"></script>
+<script src="lia-props-art.js"></script>
+<script src="preview-props.js"></script>
+</body>
+</html>

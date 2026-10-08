@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Gera lia-art.js a partir de lia.svg (ADR 0003).
+ * Gera lia-art.js a partir de lia.svg e lia-props-art.js a partir de lia-props.svg (ADR 0003, Onda 2).
  * Por que: a CSP do site nao permite fetch do SVG, entao a arte vai embutida
  * em JS como arvore de dados ({tag, attrs, children}), nunca como string de
  * marcacao. O mount (lia.js) recria os nos com createElementNS.
@@ -83,19 +83,18 @@ export function extractArt(svgXml) {
   return { viewBox: svg.attrs.viewBox, tree: svg.children };
 }
 
-/** Texto completo de lia-art.js para o SVG dado (função pura: o teste compara com o arquivo). */
-export function buildLiaArtSource(svgXml) {
-  const art = extractArt(svgXml);
+/** Módulo JS (UMD) que expõe `global` com { viewBox, tree } validados. */
+function renderModule(art, { global, origem }) {
   // Um nó por linha: legível no diff e sem a indentação do JSON (o arquivo vai para o precache).
   const nodes = art.tree.map((node) => `    ${JSON.stringify(node)}`).join(',\n');
   const literal = `{\n    "viewBox": ${JSON.stringify(art.viewBox)},\n    "tree": [\n${nodes}\n    ]\n  }`;
   return [
-    '/* Gerado por build-lia-art.mjs a partir de lia.svg (ADR 0003). Nao edite a mao: rode o script. */',
+    `/* Gerado por build-lia-art.mjs a partir de ${origem} (ADR 0003). Nao edite a mao: rode o script. */`,
     '(function (root, factory) {',
     "  'use strict';",
     '  var art = factory();',
     "  if (typeof module === 'object' && module.exports) module.exports = art;",
-    '  if (root) root.LiaArt = art;',
+    `  if (root) root.${global} = art;`,
     "})(typeof window !== 'undefined' ? window : null, function () {",
     "  'use strict';",
     `  return ${literal};`,
@@ -104,9 +103,66 @@ export function buildLiaArtSource(svgXml) {
   ].join('\n');
 }
 
+/** Texto completo de lia-art.js para o SVG dado (função pura: o teste compara com o arquivo). */
+export function buildLiaArtSource(svgXml) {
+  return renderModule(extractArt(svgXml), { global: 'LiaArt', origem: 'lia.svg' });
+}
+
+const CENAS = ['1', '2', '3', '4', '5', '6', '7'];
+
+/** Ids de todos os nós (para checar colisão entre props e lia.svg). */
+function collectIds(nodes, ids = new Set()) {
+  for (const node of nodes) {
+    if (node.attrs.id) ids.add(node.attrs.id);
+    collectIds(node.children, ids);
+  }
+  return ids;
+}
+
+/** Contrato dos props (README, "Contrato de ids"): cada <g> de topo é lia-pv-*, com cena e pai; ids nunca repetem. */
+function assertPropsContract(tree, baseIds) {
+  for (const node of tree) {
+    const { id, 'data-cena': cena, 'data-pai': pai } = node.attrs;
+    if (node.tag !== 'g' || !id || !id.startsWith('lia-pv-')) throw new Error(`lia-props.svg: <g id="lia-pv-…"> esperado, achei ${node.tag} ${id ?? ''}`);
+    if (!CENAS.includes(cena)) throw new Error(`lia-props.svg: "${id}" sem data-cena válido (1-7)`);
+    if (!pai || (pai !== 'svg' && !pai.startsWith('#'))) throw new Error(`lia-props.svg: "${id}" sem data-pai válido`);
+  }
+  const todos = [...collectIdsList(tree)];
+  const unicos = new Set(todos);
+  if (unicos.size !== todos.length) throw new Error('lia-props.svg: id repetido (de topo ou aninhado)');
+  const colidem = todos.filter((id) => baseIds.has(id));
+  if (colidem.length) throw new Error(`lia-props.svg: id(s) ja existentes em lia.svg: ${colidem.join(', ')}`);
+}
+
+/** Lista (com repetição) de todos os ids do array de nós, em ordem. */
+function collectIdsList(nodes, acc = []) {
+  for (const node of nodes) {
+    if (node.attrs.id) acc.push(node.attrs.id);
+    collectIdsList(node.children, acc);
+  }
+  return acc;
+}
+
+/** Orçamento de lia-props-art.js (ADR 0003 / Onda 2): carregado sob demanda, mas sem estourar 16 KB. */
+export const PROPS_MAX_BYTES = 16 * 1024;
+
+/** Texto de lia-props-art.js. `baseSvgXml` (lia.svg) só serve para checar colisão de ids. */
+export function buildLiaPropsSource(svgXml, baseSvgXml) {
+  const art = extractArt(svgXml);
+  assertPropsContract(art.tree, collectIds(extractArt(baseSvgXml).tree));
+  const source = renderModule(art, { global: 'LIA_PROPS_ART', origem: 'lia-props.svg' });
+  if (Buffer.byteLength(source, 'utf8') > PROPS_MAX_BYTES) throw new Error(`lia-props-art.js acima de ${PROPS_MAX_BYTES} bytes`);
+  return source;
+}
+
 const here = dirname(fileURLToPath(import.meta.url));
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const source = buildLiaArtSource(await readFile(join(here, 'lia.svg'), 'utf8'));
+  const baseSvg = await readFile(join(here, 'lia.svg'), 'utf8');
+  const propsSvg = await readFile(join(here, 'lia-props.svg'), 'utf8');
+  const source = buildLiaArtSource(baseSvg);
+  const propsSource = buildLiaPropsSource(propsSvg, baseSvg);
   await writeFile(join(here, 'lia-art.js'), source, 'utf8');
+  await writeFile(join(here, 'lia-props-art.js'), propsSource, 'utf8');
   console.log(`lia-art.js gerado (${Buffer.byteLength(source, 'utf8')} bytes).`);
+  console.log(`lia-props-art.js gerado (${Buffer.byteLength(propsSource, 'utf8')} bytes).`);
 }
