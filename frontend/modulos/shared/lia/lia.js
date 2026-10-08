@@ -74,9 +74,21 @@
     return el;
   }
 
-  function buildSvg(doc, art) {
+  /**
+   * Recorte da cabeça para a bolha fechada (ADR 0003, bolha de 48 px). Medido com o bbox real de
+   * #lia-head sob lia.css (padrão: --lia-head-scale .631, --lia-top 52,5, --lia-lock-y 10):
+   * x 68,45..131,55 e y 52,50..128,22. Quadrado de 84 unidades centrado na cabeça, com ~4 de margem.
+   * Se a geometria de lia.css mudar, meça de novo e atualize esta constante.
+   */
+  var HEAD_VIEWBOX = '58 48.4 84 84';
+
+  function viewBoxOf(art, opts) {
+    return opts.crop === 'head' ? HEAD_VIEWBOX : art.viewBox;
+  }
+
+  function buildSvg(doc, art, opts) {
     var svg = doc.createElementNS(SVG_NS, 'svg');
-    applyAttributes(svg, { class: 'lia-svg', viewBox: art.viewBox, 'aria-hidden': 'true', focusable: 'false' });
+    applyAttributes(svg, { class: 'lia-svg', viewBox: viewBoxOf(art, opts), 'aria-hidden': 'true', focusable: 'false' });
     art.tree.forEach(function (node) { svg.appendChild(renderNode(doc, node)); });
     return svg;
   }
@@ -227,8 +239,9 @@
       warn('Lia não montada: arte, estados ou alvo ausente');
       return null;
     }
-    var host = createHost(doc, options && typeof options === 'object' ? options : {});
-    host.appendChild(buildSvg(doc, art));
+    var opts = options && typeof options === 'object' ? options : {};
+    var host = createHost(doc, opts);
+    host.appendChild(buildSvg(doc, art, opts));
     parent.appendChild(host);
     var instance = createInstance(host, forget);
     live = live.concat([instance]);

@@ -593,3 +593,44 @@ test('sem LiaAnim, a montagem e os estados funcionam normalmente', () => {
   assert.equal(host.attrs['data-state'], 'celebrating');
   assert.equal(host.attrs['data-scene'], 'glow heart sparkles');
 });
+
+// ---------- recorte da cabeça (bolha fechada de 48 px, ADR 0003) ----------
+
+// bbox real de #lia-head no lab.html com o lia.css padrão (medido no navegador, unidades do viewBox 200x300).
+const HEAD_BBOX = { x: 68.45, y: 52.5, w: 63.1, h: 75.72 };
+const FULL_VIEWBOX = '0 0 200 300';
+
+test('crop head: o viewBox é quadrado e contém a cabeça inteira com margem de pelo menos 3 unidades', () => {
+  const { host } = mountLia({ crop: 'head' });
+  const [x, y, w, h] = host.children[0].attrs.viewBox.split(' ').map(Number);
+  assert.equal(w, h, 'recorte quadrado para a bolha');
+  assert.ok(HEAD_BBOX.x - x >= 3, 'margem esquerda');
+  assert.ok(x + w - (HEAD_BBOX.x + HEAD_BBOX.w) >= 3, 'margem direita');
+  assert.ok(HEAD_BBOX.y - y >= 3, 'margem superior');
+  assert.ok(y + h - (HEAD_BBOX.y + HEAD_BBOX.h) >= 3, 'margem inferior');
+});
+
+test('crop head: monta a mesma árvore de nós e só troca o viewBox', () => {
+  const full = mountLia();
+  const head = mountLia({ crop: 'head' });
+  assert.equal(full.host.children[0].attrs.viewBox, FULL_VIEWBOX);
+  assert.notEqual(head.host.children[0].attrs.viewBox, FULL_VIEWBOX);
+  assert.equal(walk(head.host.children[0]).length, walk(full.host.children[0]).length);
+});
+
+test('crop: valor desconhecido, ausente ou não-objeto mantém o corpo inteiro', () => {
+  assert.equal(mountLia({ crop: 'full' }).host.children[0].attrs.viewBox, FULL_VIEWBOX);
+  assert.equal(mountLia({ crop: true }).host.children[0].attrs.viewBox, FULL_VIEWBOX);
+  assert.equal(mountLia(null).host.children[0].attrs.viewBox, FULL_VIEWBOX);
+});
+
+test('crop head: o recorte sobrevive às mudanças de estado e o tom admin continua valendo', () => {
+  const { lia, host } = mountLia({ crop: 'head', tone: 'admin' });
+  const cropped = host.children[0].attrs.viewBox;
+  lia.think();
+  lia.celebrate();
+  lia.setState('idle');
+  assert.equal(host.children[0].attrs.viewBox, cropped);
+  assert.notEqual(cropped, FULL_VIEWBOX);
+  assert.equal(host.attrs['data-tone'], 'admin');
+});

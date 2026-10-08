@@ -107,6 +107,22 @@ function homeSummary() {
   };
 }
 
+// Pacote de apiGetMyDashboardSeries (espelha DASHBOARD_SERIES da Worker).
+const DASHBOARD_BUNDLE = [
+  ['activity30d', 'activity', '30d'], ['events30d', 'events', '30d'], ['learning30d', 'learning', '30d'],
+  ['tasks30d', 'tasks', '30d'], ['studyHours30d', 'study_hours', '30d'],
+  ['events6m', 'events', '6m'], ['learning6m', 'learning', '6m'], ['tasks6m', 'tasks', '6m'],
+];
+
+function dashboardSeriesReply() {
+  const series = {};
+  DASHBOARD_BUNDLE.forEach(([key, metric, range]) => {
+    const reply = timeseriesReply(metric, range);
+    series[key] = { range: reply.range, granularity: reply.granularity, series: reply.series };
+  });
+  return { success: true, series };
+}
+
 function liaReply() {
   return {
     success: true,
@@ -137,6 +153,7 @@ function memberHandlers() {
     apiGetHomeSummary: () => ({ success: true, summary: homeSummary() }),
     apiGetMyDashboardSeries: () => dashboardReply(),
     apiGetMyTimeseries: (args) => timeseriesReply(args[1].metric, args[1].range),
+    apiGetMyDashboardSeries: () => dashboardSeriesReply(),
     apiAssistantChat: () => liaReply(),
   };
 }
