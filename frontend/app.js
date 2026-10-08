@@ -67,8 +67,33 @@
 
   var state = {
     sessionToken: null,
-    profile: null, // { fullName, role }
+    profile: null, // { id, fullName, role } (+ email e username depois de apiGetMyProfile)
   };
+
+  // >>> profile-id (puro)
+  // O id do PRÓPRIO perfil (UUID) chega em apiLogin, apiLoginMfa e apiGetMyProfile e serve ao onboarding.
+  // O cache de sessão (localStorage) continua guardando só o token e a validade: ao restaurar, o perfil
+  // (e o id) vem de apiGetMyProfile, então nenhum dado novo é gravado no navegador.
+  var PROFILE_ID_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  /** Id do perfil: só vale texto em formato UUID; qualquer outra coisa vira undefined. */
+  function profileIdOf(value) {
+    return typeof value === 'string' && PROFILE_ID_FORMAT.test(value) ? String(value) : undefined;
+  }
+
+  /** Perfil do estado a partir da resposta do login: cópia (nunca o objeto cru da API) com o id validado. */
+  function profileFromResponse(raw) {
+    var profile = Object.assign({}, raw);
+    profile.id = profileIdOf(raw && raw.id);
+    return profile;
+  }
+
+  /** Perfil já no estado + id da resposta. Resposta sem id válido (servidor antigo) mantém o id que já havia. */
+  function mergeProfileId(profile, raw) {
+    var id = profileIdOf(raw && raw.id);
+    return id ? Object.assign({}, profile, { id: id }) : profile;
+  }
+  // <<< profile-id (puro)
 
   function saveSessionCache(token) {
     try {
@@ -573,6 +598,9 @@
    * foco inicial em Cancelar (o botão seguro), foco preso entre Cancelar e Confirmar, Esc cancela,
    * Enter só age no botão que está focado (e a repetição da tecla é ignorada, para não confirmar
    * sem querer) e o foco volta a quem abriu. Abrir de novo com um diálogo aberto descarta o anterior.
+   * As teclas são ouvidas no documento (captura) enquanto o diálogo está aberto: se o foco cair no <body>
+   * (clique no texto do modal), Esc e Tab continuam valendo. O fundo (#app-root) fica inert até fechar;
+   * o inert sai em qualquer saída (Cancelar, Confirmar, Esc, troca de diálogo e erro na abertura).
    */
   function createConfirmDialog(doc) {
     var current = null;
@@ -583,7 +611,14 @@
         message: doc.getElementById('modal-confirm-message'),
         ok: doc.getElementById('modal-confirm-ok'),
         cancel: doc.getElementById('modal-confirm-cancel'),
+        background: doc.getElementById('app-root'),
       };
+    }
+
+    function setInert(node, on) {
+      if (!node) return;
+      if (on) node.setAttribute('inert', '');
+      else node.removeAttribute('inert');
     }
 
     /** Quem abriu: se ainda havia um diálogo aberto, o foco atual está dentro dele e vale o opener original. */
@@ -621,8 +656,9 @@
       if (current) current.dispose();
 
       function dispose() {
+        setInert(els.background, false);
+        doc.removeEventListener('keydown', onKeydown, true);
         els.overlay.classList.add('hidden');
-        els.overlay.removeEventListener('keydown', onKeydown);
         els.ok.removeEventListener('click', onOk);
         els.cancel.removeEventListener('click', onCancel);
         current = null;
@@ -641,12 +677,18 @@
       }
 
       current = { opener: opener, dispose: dispose };
-      els.message.textContent = message;
-      els.overlay.classList.remove('hidden');
-      els.overlay.addEventListener('keydown', onKeydown);
-      els.ok.addEventListener('click', onOk);
-      els.cancel.addEventListener('click', onCancel);
-      els.cancel.focus();
+      try {
+        els.message.textContent = message;
+        els.overlay.classList.remove('hidden');
+        setInert(els.background, true);
+        doc.addEventListener('keydown', onKeydown, true);
+        els.ok.addEventListener('click', onOk);
+        els.cancel.addEventListener('click', onCancel);
+        els.cancel.focus();
+      } catch (err) {
+        dispose(); // erro na abertura: nunca deixa o fundo inert nem o ouvinte para trás
+        throw err;
+      }
     };
   }
   // <<< confirm-dialog (puro)
@@ -727,7 +769,7 @@
   function finishLogin(res) {
     showSystemUnavailable(false);
     state.sessionToken = res.sessionToken;
-    state.profile = res.profile;
+    state.profile = profileFromResponse(res.profile); // vale também para o login com MFA (mfa.js chama finishLogin)
     saveSessionCache(res.sessionToken);
     scheduleSessionExpiry(Date.now() + SESSION_TTL_MS);
     setStatus('msg-login', '', null);
@@ -1724,11 +1766,13 @@
     callApi('apiGetMyProfile', state.sessionToken).then(function (res) {
       if (!res.success) { setStatus('msg-profile', res.message, 'error'); return; }
 
-      // O login só devolve nome e papel; o e-mail (identificador enviado aos
-      // módulos de aprendizagem — ver learning.js) chega por aqui.
+      // O login só devolve id, nome e papel; o e-mail (identificador enviado aos
+      // módulos de aprendizagem — ver learning.js) chega por aqui. O id nunca é apagado:
+      // resposta sem id válido deixa o que já estava.
       if (state.profile) {
         state.profile.email = res.profile.email;
         state.profile.username = res.profile.username;
+        state.profile = mergeProfileId(state.profile, res.profile);
         if (window.LaiftLearning) window.LaiftLearning.onProfileReady();
       }
 
@@ -2573,7 +2617,7 @@
           showPublicScreen('screen-welcome');
           return;
         }
-        state.profile = { fullName: res.profile.fullName, role: res.profile.role };
+        state.profile = { id: profileIdOf(res.profile.id), fullName: res.profile.fullName, role: res.profile.role };
         scheduleSessionExpiry(cached.expiresAt);
         enterApp();
       });

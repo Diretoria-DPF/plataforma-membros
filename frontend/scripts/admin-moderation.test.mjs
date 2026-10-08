@@ -99,6 +99,8 @@ const byClass = (node, cls) => findAll(node, (n) => (n.attrs.class || '').split(
 const byTag = (node, tag) => findAll(node, (n) => n.tag === tag);
 
 const UUID = '3f2b8c1a-9d4e-4f60-a7b5-123456789abc';
+const IN_AN_HOUR = new Date(Date.now() + 3600 * 1000).toISOString();
+const AN_HOUR_AGO = new Date(Date.now() - 3600 * 1000).toISOString();
 
 function summary(extra = {}) {
   return Object.assign({
@@ -106,8 +108,15 @@ function summary(extra = {}) {
     windowDays: 90,
     incidents: { total: 5, byDetection: { terms: 3, llm: 2 }, byLevelAfter: { 1: 2, 2: 2, 3: 1 } },
     people: [
-      { profileId: UUID, incidents: 3, maxLevel: 3, lastAt: '2026-10-08T10:00:00Z' },
-      { profileId: '11111111-2222-4333-8444-555555555555', incidents: 1, maxLevel: 1, lastAt: '2026-10-01T09:00:00Z' },
+      {
+        profileId: UUID, incidents: 3, maxLevel: 3, lastAt: '2026-10-08T10:00:00Z',
+        currentLevel: 3, suspendedUntil: IN_AN_HOUR, lastDetection: 'llm', lastRedeemedAt: '2026-10-05T12:00:00Z',
+        displayName: 'Ana Souza', // o servidor não manda mais; se mandar, a tela ignora
+      },
+      {
+        profileId: '11111111-2222-4333-8444-555555555555', incidents: 1, maxLevel: 1, lastAt: '2026-10-01T09:00:00Z',
+        currentLevel: 0, suspendedUntil: AN_HOUR_AGO, lastDetection: 'terms', lastRedeemedAt: null,
+      },
     ],
     currentLevels: { 1: 1, 2: 0, 3: 1 },
     redemption: { accepted: 1, refused: 1, rate: 0.5 },
@@ -200,19 +209,74 @@ test('sucesso: resumo, pessoas, taxa de redenção e regra; aria-busy sai', asyn
   assert.match(all, /não reinicia a contagem/);
 });
 
-test('pessoas: nível, data do último incidente e quantidade; o nível 3 usa o selo de perigo e nome', async () => {
+test('pessoas: nível atual e maior nível, data do último incidente e quantidade; o nível 3 usa o selo de perigo e nome', async () => {
   Moderation.load(app);
   lastPending().resolve(summary());
   await flush();
   const rows = byClass(box(), 'list-item').filter((n) => /^Conta /.test(textOf(n.children[0])));
   assert.equal(rows.length, 2);
   assert.match(textOf(rows[0]), /Conta 3f2b8c1a/);
-  assert.match(textOf(rows[0]), /Nível 3 — suspensão de 24 h/);
+  assert.match(textOf(rows[0]), /Nível atual: Nível 3 — suspensão de 24 h/);
+  assert.match(textOf(rows[0]), /Maior nível no período: Nível 3 — suspensão de 24 h/);
   assert.match(textOf(rows[0]), /3 incidentes/);
-  assert.match(textOf(rows[0]), /Último: em 2026-10-08T10:00:00Z/);
+  assert.match(textOf(rows[0]), /Último incidente: em 2026-10-08T10:00:00Z/);
   assert.match(byClass(rows[0], 'badge')[0].attrs.class, /banned/);
   assert.doesNotMatch(byClass(rows[1], 'badge')[0].attrs.class, /banned/);
+  assert.match(textOf(rows[1]), /Nível atual: Nível 0 — normal/);
   assert.match(textOf(rows[1]), /1 incidente(?!s)/, 'singular para exatamente 1');
+});
+
+test('pessoas: suspensão ativa, última detecção e última redenção só quando existem', async () => {
+  Moderation.load(app);
+  lastPending().resolve(summary());
+  await flush();
+  const rows = byClass(box(), 'list-item').filter((n) => /^Conta /.test(textOf(n.children[0])));
+  assert.match(textOf(rows[0]), new RegExp(`Suspensa até em ${IN_AN_HOUR.replace(/[.+]/g, '\\$&')}`));
+  assert.match(textOf(rows[0]), /Última detecção: pela análise automática/);
+  assert.match(textOf(rows[0]), /Última redenção: em 2026-10-05T12:00:00Z/);
+  assert.doesNotMatch(textOf(rows[1]), /Suspensa até/, 'suspensão que já passou não aparece');
+  assert.match(textOf(rows[1]), /Última detecção: por termos/);
+  assert.doesNotMatch(textOf(rows[1]), /Última redenção/);
+});
+
+test('pessoas sem os campos novos (servidor antigo) continuam aparecendo, sem inventar nada', async () => {
+  Moderation.load(app);
+  lastPending().resolve(summary({ people: [{ profileId: UUID, incidents: 2, maxLevel: 2, lastAt: '2026-10-08T10:00:00Z' }] }));
+  await flush();
+  const text = textOf(box());
+  assert.match(text, /Conta 3f2b8c1a/);
+  assert.match(text, /Nível atual: Nível 0 — normal/);
+  assert.doesNotMatch(text, /Suspensa até|Última detecção|Última redenção/);
+});
+
+test('nenhum nome aparece: displayName não é lido nem mostrado, mesmo se vier no payload', async () => {
+  Moderation.load(app);
+  lastPending().resolve(summary());
+  await flush();
+  assert.doesNotMatch(textOf(box()), /Ana Souza/);
+  const person = Moderation.normalizeSummary(summary()).people[0];
+  assert.equal('displayName' in person, false);
+  assert.deepEqual(Object.keys(person).sort(), ['currentLevel', 'id', 'incidents', 'lastAt', 'lastDetection', 'lastRedeemedAt', 'maxLevel', 'suspendedUntil']);
+});
+
+test('última detecção: só "terms" e "llm" valem; qualquer outro valor some', () => {
+  const only = (detection) => Moderation.normalizeSummary({ people: [{ profileId: UUID, lastDetection: detection }] }).people[0].lastDetection;
+  assert.equal(only('terms'), 'terms');
+  assert.equal(only('llm'), 'llm');
+  assert.equal(only('<b>x</b>'), null);
+  assert.equal(only(undefined), null);
+  assert.equal(Moderation.detectionLabel('terms'), 'por termos');
+  assert.equal(Moderation.detectionLabel('llm'), 'pela análise automática');
+  assert.equal(Moderation.detectionLabel('constructor'), '');
+});
+
+test('isActiveSuspension: só data válida no futuro', () => {
+  const now = Date.parse('2026-10-08T12:00:00Z');
+  assert.equal(Moderation.isActiveSuspension('2026-10-08T12:00:01Z', now), true);
+  assert.equal(Moderation.isActiveSuspension('2026-10-08T12:00:00Z', now), false);
+  assert.equal(Moderation.isActiveSuspension('2026-10-07T00:00:00Z', now), false);
+  assert.equal(Moderation.isActiveSuspension('não é data', now), false);
+  assert.equal(Moderation.isActiveSuspension(null, now), false);
 });
 
 test('o identificador inteiro e nenhum texto de mensagem chegam à tela', async () => {

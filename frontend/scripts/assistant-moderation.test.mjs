@@ -150,6 +150,7 @@ test('redenção aceita: a explicação vai com a sessão da pessoa, a suspensã
     assert.equal(m.isSuspended(), false);
     assert.equal(m.root.classList.contains('hidden'), true);
     assert.deepEqual(calls.lia, ['redeem']);
+    assert.equal(calls.restLia, 1, 'só o restLia da suspensão: a redenção aceita não repousa a Lia, a cena de redenção a põe de frente');
     assert.deepEqual(calls.note, [BACK]);
     assert.equal(input.focused, 1);
     assert.equal(area.value, '');

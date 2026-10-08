@@ -35,6 +35,9 @@ function makeNode(id, doc) {
     listeners: {},
     textContent: '',
     isConnected: true,
+    attrs: {},
+    setAttribute(name, value) { node.attrs[name] = String(value); },
+    removeAttribute(name) { delete node.attrs[name]; },
     classList: {
       add(name) { hidden.add(name); },
       remove(name) { hidden.delete(name); },
@@ -57,10 +60,21 @@ let okBtn;
 let cancelBtn;
 let opener;
 let outside;
+let background;
 let open;
 
 function buildDom() {
-  doc = { activeElement: null, body: { id: 'body' } };
+  const docListeners = [];
+  doc = {
+    activeElement: null,
+    body: { id: 'body' },
+    docListeners,
+    addEventListener(type, fn, capture) { docListeners.push({ type, fn, capture: capture === true }); },
+    removeEventListener(type, fn, capture) {
+      const at = docListeners.findIndex((l) => l.type === type && l.fn === fn && l.capture === (capture === true));
+      if (at >= 0) docListeners.splice(at, 1);
+    },
+  };
   overlay = makeNode('modal-confirm', doc);
   message = makeNode('modal-confirm-message', doc);
   okBtn = makeNode('modal-confirm-ok', doc);
@@ -68,23 +82,27 @@ function buildDom() {
   overlay.children = [message, cancelBtn, okBtn];
   opener = makeNode('btn-ban', doc);
   outside = makeNode('fora', doc);
-  const byId = { 'modal-confirm': overlay, 'modal-confirm-message': message, 'modal-confirm-ok': okBtn, 'modal-confirm-cancel': cancelBtn };
+  background = makeNode('app-root', doc);
+  background.children = [opener, outside];
+  const byId = { 'modal-confirm': overlay, 'modal-confirm-message': message, 'modal-confirm-ok': okBtn, 'modal-confirm-cancel': cancelBtn, 'app-root': background };
   doc.getElementById = (id) => byId[id];
 }
 
-/** Evento de teclado no diálogo; devolve o evento e simula o padrão do navegador quando ninguém o cancelou. */
+const keydownListeners = () => doc.docListeners.filter((l) => l.type === 'keydown');
+
+/** Evento de teclado no documento (captura); devolve o evento e simula o padrão do navegador quando ninguém o cancelou. */
 function press(key, { shiftKey = false, repeat = false, target } = {}) {
   const evt = {
     key,
     shiftKey,
     repeat,
-    target: target || doc.activeElement,
+    target: target || doc.activeElement || doc.body,
     defaultPrevented: false,
     propagationStopped: false,
     preventDefault() { this.defaultPrevented = true; },
     stopPropagation() { this.propagationStopped = true; },
   };
-  overlay.dispatch('keydown', evt);
+  keydownListeners().forEach((l) => l.fn(evt));
   if (!evt.defaultPrevented) naturalDefault(evt);
   return evt;
 }
@@ -217,8 +235,9 @@ test('Enter deliberado em Confirmar (Tab até ele) confirma', () => {
 test('depois de fechar, os ouvintes saem: Esc e cliques não fazem mais nada', () => {
   let confirmed = 0;
   open('?', () => { confirmed += 1; });
+  assert.equal(keydownListeners().length, 1);
   cancelBtn.click();
-  assert.equal(overlay.listeners.keydown.length, 0);
+  assert.equal(keydownListeners().length, 0, 'o ouvinte do documento sai');
   assert.equal(okBtn.listeners.click.length, 0);
   assert.equal(cancelBtn.listeners.click.length, 0);
   okBtn.click();
@@ -231,6 +250,8 @@ test('abrir com um diálogo já aberto descarta o anterior e mantém o opener or
   open('segundo', () => calls.push('segundo'));
   assert.equal(message.textContent, 'segundo');
   assert.equal(okBtn.listeners.click.length, 1, 'sem ouvintes empilhados');
+  assert.equal(keydownListeners().length, 1, 'um ouvinte de teclado só');
+  assert.equal('inert' in background.attrs, true, 'o fundo segue inert na troca');
   okBtn.click();
   assert.deepEqual(calls, ['segundo']);
   assert.equal(doc.activeElement, opener, 'o foco volta ao elemento que abriu o primeiro, não a um botão do diálogo');
@@ -259,6 +280,111 @@ test('index.html: o diálogo segue com role, aria-modal e rótulos; Cancelar vem
   assert.match(dialog[0], /aria-labelledby="modal-confirm-title"/);
   assert.match(dialog[0], /aria-describedby="modal-confirm-message"/);
   assert.ok(HTML.indexOf('id="modal-confirm-cancel"') < HTML.indexOf('id="modal-confirm-ok"'), 'ordem de Tab: Cancelar, depois Confirmar');
+});
+
+// ---------- teclado no documento (captura) e fundo inert ----------
+
+test('as teclas são ouvidas no documento, em captura (não no overlay)', () => {
+  open('?', () => {});
+  assert.equal(keydownListeners().length, 1);
+  assert.equal(keydownListeners()[0].capture, true);
+  assert.equal(overlay.listeners.keydown, undefined);
+});
+
+test('com o foco no <body> (clique no texto do modal), Esc continua cancelando e devolve o foco a quem abriu', () => {
+  let confirmed = 0;
+  open('Banir?', () => { confirmed += 1; });
+  doc.activeElement = doc.body;
+  const evt = press('Escape');
+  assert.equal(isOpen(), false);
+  assert.equal(confirmed, 0);
+  assert.equal(evt.propagationStopped, true);
+  assert.equal(doc.activeElement, opener);
+});
+
+test('com o foco no <body>, Tab não sai para a página: o foco vai para Cancelar', () => {
+  open('?', () => {});
+  doc.activeElement = doc.body;
+  const evt = press('Tab');
+  assert.equal(evt.defaultPrevented, true);
+  assert.equal(doc.activeElement, cancelBtn);
+  doc.activeElement = doc.body;
+  const back = press('Tab', { shiftKey: true });
+  assert.equal(back.defaultPrevented, true);
+  assert.equal(doc.activeElement, cancelBtn);
+});
+
+test('com o foco no <body>, Enter não faz nada (nem confirma, nem ativa a página)', () => {
+  let confirmed = 0;
+  open('?', () => { confirmed += 1; });
+  doc.activeElement = doc.body;
+  const evt = press('Enter');
+  assert.equal(evt.defaultPrevented, true);
+  assert.equal(confirmed, 0);
+  assert.equal(isOpen(), true);
+});
+
+test('fundo (#app-root) fica inert enquanto o diálogo está aberto e volta ao normal em toda saída', () => {
+  assert.equal('inert' in background.attrs, false);
+  open('?', () => {});
+  assert.equal(background.attrs.inert, '');
+  cancelBtn.click();
+  assert.equal('inert' in background.attrs, false, 'Cancelar');
+  open('?', () => {});
+  okBtn.click();
+  assert.equal('inert' in background.attrs, false, 'Confirmar');
+  open('?', () => {});
+  press('Escape');
+  assert.equal('inert' in background.attrs, false, 'Esc');
+});
+
+test('o inert sai ANTES do callback de confirmação: o callback pode mexer na página e mesmo se lançar erro nada fica preso', () => {
+  const seen = [];
+  open('?', () => { seen.push('inert' in background.attrs); throw new Error('falha do chamador'); });
+  assert.throws(() => okBtn.click(), /falha do chamador/);
+  assert.deepEqual(seen, [false]);
+  assert.equal('inert' in background.attrs, false);
+  assert.equal(keydownListeners().length, 0);
+  assert.equal(isOpen(), false);
+});
+
+test('erro ao abrir (ex.: foco impossível): desfaz inert, ouvintes e overlay antes de repassar o erro', () => {
+  cancelBtn.focus = () => { throw new Error('sem foco'); };
+  assert.throws(() => open('?', () => {}), /sem foco/);
+  assert.equal('inert' in background.attrs, false);
+  assert.equal(keydownListeners().length, 0);
+  assert.equal(okBtn.listeners.click.length, 0);
+  assert.equal(isOpen(), false);
+  // e o diálogo funciona normalmente na próxima abertura
+  cancelBtn.focus = () => { doc.activeElement = cancelBtn; };
+  open('?', () => {});
+  assert.equal(isOpen(), true);
+  assert.equal(background.attrs.inert, '');
+});
+
+test('sem #app-root na página o diálogo abre e fecha normalmente', () => {
+  const byId = doc.getElementById;
+  doc.getElementById = (id) => (id === 'app-root' ? null : byId(id));
+  assert.doesNotThrow(() => open('?', () => {}));
+  assert.equal(isOpen(), true);
+  cancelBtn.click();
+  assert.equal(isOpen(), false);
+});
+
+test('app.js: o diálogo fica fora do #app-root (senão o inert o travaria) e o fundo é o #app-root', () => {
+  // Conta a profundidade das tags de bloco a partir da abertura de #app-root até ele fechar.
+  const open = HTML.lastIndexOf('<', HTML.indexOf('id="app-root"'));
+  const tags = /<(\/?)(div|section|main|header|nav|aside|footer|form|ul|ol|table|article)\b[^>]*>/g;
+  tags.lastIndex = open;
+  let depth = 0;
+  let closedAt = -1;
+  for (let m = tags.exec(HTML); m && closedAt < 0; m = tags.exec(HTML)) {
+    depth += m[1] ? -1 : 1;
+    if (depth === 0) closedAt = m.index;
+  }
+  assert.ok(closedAt > open, '#app-root fecha');
+  assert.ok(HTML.indexOf('id="modal-confirm"') > closedAt, 'o diálogo de confirmação fica depois do fim de #app-root');
+  assert.match(APP, /background: doc\.getElementById\('app-root'\)/);
 });
 
 test('os chamadores existentes continuam com dois argumentos', () => {
