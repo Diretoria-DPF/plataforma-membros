@@ -307,3 +307,54 @@ test('app.js aplica as flags públicas via LaiftUx e usa esqueleto nos carregame
   assert.match(app, /applyAndRememberFlags\(document\.documentElement/);
   for (const id of ['events-list', 'my-proposals-list', 'voting-list']) assert.ok(app.includes("showSkeleton('" + id + "'"), id);
 });
+
+// Lê o CSS em regras (seletor, bloco) e devolve os seletores com :hover fora de @media (hover: hover).
+function hoverSelectorsOutsideHoverMedia(css) {
+  const src = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const offenders = [];
+  const stack = [];
+  let prelude = '';
+  for (const c of src) {
+    if (c === '{') {
+      const sel = prelude.trim();
+      if (/:hover/.test(sel)) {
+        const inHoverMedia = stack.some((p) => /@media\s*\(\s*hover:\s*hover\s*\)/.test(p));
+        if (!inHoverMedia) offenders.push(sel);
+      }
+      stack.push(sel);
+      prelude = '';
+    } else if (c === '}') {
+      stack.pop();
+      prelude = '';
+    } else if (c === ';') {
+      prelude = '';
+    } else {
+      prelude += c;
+    }
+  }
+  return offenders;
+}
+
+test('v2: cartões e listas sem borda sob a flag (border: 0 ou none)', () => {
+  const css = read('frontend/ux.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter((m) => /(^|[;\s])border:\s*(0|none)\s*(;|$)/.test(m[2]))
+    .map((m) => m[1].split(',').map((s) => s.trim()));
+  const cardSelectors = ['.card', '.learn-card', '.list-item', '.stat-card', '.learn-stat', '.orgchart-directorate-box',
+    '.ai-key-card', '.ai-budget', '.checkbox-row', '.state', '.mfa-secret', '.learn-badge', '.modal-box', '.auth-card', '.lia-panel'];
+  for (const sel of cardSelectors) {
+    const flagged = rules.some((pieces) => pieces.some((p) => p.includes('data-flag-ux-v2-enabled') && p.endsWith(' ' + sel)));
+    assert.ok(flagged, 'sem border: 0 sob a flag para ' + sel);
+  }
+});
+
+test('hover visual fica só em @media (hover: hover) nos seletores de botão, cartão e item', () => {
+  const targets = /\.card|\.list-item|\.btn|button/;
+  const offenders = [];
+  for (const f of ['frontend/styles.css', 'frontend/ux.css']) {
+    for (const sel of hoverSelectorsOutsideHoverMedia(read(f))) {
+      if (targets.test(sel)) offenders.push(f + ': ' + sel);
+    }
+  }
+  assert.deepEqual(offenders, []);
+});

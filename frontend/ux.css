@@ -330,7 +330,11 @@ summary:focus-visible,
 /* ---------- Cartões e listas sem borda: separação por camada ---------- */
 :root[data-flag-ux-v2-enabled] {
   --radius-lg: var(--laift-radius-xl);
-  --radius-md: 20px;
+  --radius-card: 24px;
+  --radius-inner: 20px;
+  --radius-md: var(--radius-inner);
+  /* Contorno de campo: ~3:1 ou mais sobre a superfície, nos dois temas (WCAG 1.4.11). */
+  --field-border: color-mix(in srgb, var(--text) 62%, var(--surface));
 }
 
 :root[data-flag-ux-v2-enabled] .card,
@@ -363,7 +367,7 @@ summary:focus-visible,
 :root[data-flag-ux-v2-enabled] .list-item,
 :root[data-flag-ux-v2-enabled] .stat-card {
   background: var(--layer-1);
-  border-radius: 24px;
+  border-radius: var(--radius-card);
   box-shadow: var(--elev-1);
 }
 
@@ -382,9 +386,9 @@ summary:focus-visible,
 :root[data-flag-ux-v2-enabled] .learn-badge {
   background: var(--layer-2);
   box-shadow: none;
-  border-radius: 20px;
+  border-radius: var(--radius-inner);
 }
-:root[data-flag-ux-v2-enabled] .learn-stat { background: var(--layer-2); border-radius: 20px; }
+:root[data-flag-ux-v2-enabled] .learn-stat { background: var(--layer-2); border-radius: var(--radius-inner); }
 :root[data-flag-ux-v2-enabled] .mfa-codes li { background: var(--layer-2); }
 :root[data-flag-ux-v2-enabled] .learn-badge.unlocked { background: var(--primary-soft); }
 :root[data-flag-ux-v2-enabled] .state-error { background: var(--danger-soft); }
@@ -425,6 +429,16 @@ summary:focus-visible,
   box-shadow: var(--elev-3);
 }
 :root[data-flag-ux-v2-enabled] .lia-msg-lia .lia-bubble { border: 0; background: var(--layer-2); }
+:root[data-flag-ux-v2-enabled] .chat-row-theirs .chat-bubble { border: 0; background: var(--layer-2); }
+/* Estado de erro no cartão: tom de perigo, sem depender só de borda ou cor. */
+:root[data-flag-ux-v2-enabled] .ai-key-card[data-ok="nao"] { background: var(--danger-soft); }
+/* Organograma: divisor tracejado vira hairline (fio de luz). */
+:root[data-flag-ux-v2-enabled] .orgchart-level { border-bottom: 1px solid var(--hairline); }
+:root[data-flag-ux-v2-enabled] .orgchart-level:last-child { border-bottom: 0; }
+/* Campos mantêm contorno com contraste >= 3:1; checkbox e radio ficam como estão. */
+:root[data-flag-ux-v2-enabled] :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border-color: var(--field-border);
+}
 
 /* Hover (só com ponteiro fino) troca a sombra, não a borda. */
 @media (hover: hover) {
@@ -438,7 +452,7 @@ summary:focus-visible,
 :root[data-flag-ux-v2-enabled] .list-item:active,
 :root[data-flag-ux-v2-enabled] .stat-card:active,
 :root[data-flag-ux-v2-enabled] button.learn-card:active {
-  transform: scale(0.985);
+  transform: scale(var(--press-scale));
   transition-duration: var(--dur-instant);
 }
 :root[data-flag-ux-v2-enabled] .modal-box:not(.hidden) {
