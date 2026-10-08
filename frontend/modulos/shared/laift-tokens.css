@@ -60,13 +60,13 @@
   --dk-elev-1: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.4);
   --dk-elev-2: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.42);
   --dk-elev-3: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 44px rgba(0, 0, 0, 0.5);
-  --dk-chart-1: #3ef7d7;
+  --dk-chart-1: #04a891;
   --dk-chart-2: #d8732b;
-  --dk-chart-3: #1dcaf7;
+  --dk-chart-3: #0f7ed1;
   --dk-chart-4: #a1790c;
-  --dk-chart-5: #91b7fe;
+  --dk-chart-5: #4466a6;
   --dk-chart-6: #ca545d;
-  --dk-chart-7: #bbea7a;
+  --dk-chart-7: #537806;
   --dk-chart-8: #b872cd;
 }
 
@@ -103,13 +103,13 @@
   --move-lg: 32px;
 
   /* Paleta de gráficos (docs/CHART_PALETTE.md). Para 1–5 séries usar 1…5. */
-  --chart-1: #03483d;
+  --chart-1: #008b77;
   --chart-2: #c05e05;
-  --chart-3: #0a5f75;
+  --chart-3: #1a8de7;
   --chart-4: #8f6b09;
   --chart-5: #194cb1;
   --chart-6: #c03a4a;
-  --chart-7: #2e4600;
+  --chart-7: #6c9a00;
   --chart-8: #a656bd;
 
   /* Superfícies e texto: bg/surface/surface-alt são aliases das camadas. */

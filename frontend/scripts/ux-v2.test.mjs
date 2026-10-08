@@ -191,8 +191,8 @@ test('camadas 0..3 e paleta de gráficos 1..8 (claro e escuro)', () => {
   const dark = ['#0e1114', '#14181c', '#1a1f24', '#22282e'];
   light.forEach((v, i) => assert.equal(tokenValue('layer-' + i), v));
   dark.forEach((v, i) => assert.equal(tokenValue('dk-layer-' + i), v));
-  const chartsLight = ['#03483d', '#c05e05', '#0a5f75', '#8f6b09', '#194cb1', '#c03a4a', '#2e4600', '#a656bd'];
-  const chartsDark = ['#3ef7d7', '#d8732b', '#1dcaf7', '#a1790c', '#91b7fe', '#ca545d', '#bbea7a', '#b872cd'];
+  const chartsLight = ['#008b77', '#c05e05', '#1a8de7', '#8f6b09', '#194cb1', '#c03a4a', '#6c9a00', '#a656bd'];
+  const chartsDark = ['#04a891', '#d8732b', '#0f7ed1', '#a1790c', '#4466a6', '#ca545d', '#537806', '#b872cd'];
   chartsLight.forEach((v, i) => assert.equal(tokenValue('chart-' + (i + 1)), v));
   chartsDark.forEach((v, i) => assert.equal(tokenValue('dk-chart-' + (i + 1)), v));
   for (let i = 1; i <= 3; i++) assert.ok(tokenValue('elev-' + i), 'elev-' + i);
@@ -357,4 +357,42 @@ test('hover visual fica só em @media (hover: hover) nos seletores de botão, ca
     }
   }
   assert.deepEqual(offenders, []);
+});
+
+// Paleta de gráficos (docs/CHART_PALETTE.md): 8 tokens por tema, definidos uma única vez,
+// com hex válido e contraste >= 3:1 contra --layer-0 do respectivo tema.
+test('paleta de gráficos: 8 tokens claros e 8 escuros, uma vez, hex válido, contraste >= 3:1 vs layer-0', () => {
+  const css = read('frontend/modulos/shared/laift-tokens.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  // Só declarações com valor literal (#hex); aliases var(...) não contam como definição.
+  const literals = (name) => [...css.matchAll(new RegExp(`(?:^|[;{\\s])${name}:\\s*([^;]+);`, 'gm'))]
+    .map((m) => m[1].trim())
+    .filter((v) => v.startsWith('#'));
+  const lum = (hex) => {
+    const [r, g, b] = [1, 3, 5].map((i) => {
+      const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => {
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
+  };
+  const themes = [
+    { label: 'claro', prefix: '--chart', layer0: '--layer-0' },
+    { label: 'escuro', prefix: '--dk-chart', layer0: '--dk-layer-0' },
+  ];
+  for (const theme of themes) {
+    const [surface] = literals(theme.layer0);
+    assert.match(surface ?? '', /^#[0-9a-f]{6}$/i, `${theme.layer0} (${theme.label}) deve ser um hex único`);
+    assert.equal(literals(theme.layer0).length, 1, `${theme.layer0} definido mais de uma vez`);
+    for (let n = 1; n <= 8; n++) {
+      const name = `${theme.prefix}-${n}`;
+      const values = literals(name);
+      assert.equal(values.length, 1, `${name} (${theme.label}) deve ser definido uma única vez, achados: ${values.length}`);
+      assert.match(values[0], /^#[0-9a-f]{6}$/i, `${name} (${theme.label}) com hex inválido: ${values[0]}`);
+      const r = ratio(values[0], surface);
+      assert.ok(r >= 3, `${name} (${theme.label}) tem contraste ${r.toFixed(2)}:1 contra ${theme.layer0}, mínimo 3:1`);
+    }
+  }
 });
