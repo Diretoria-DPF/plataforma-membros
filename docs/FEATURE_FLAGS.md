@@ -13,7 +13,7 @@ Leitura com cache de 60 s por instância do Worker. Se a tabela ainda não exist
 
 Quem altera:
 - `apiAdminSetFeatureFlag` (API): grava `updated_by` e a linha `SET_FEATURE_FLAG` em `audit_logs`. É o caminho recomendado.
-- `UPDATE` de SQL: não grava nenhum dos dois. Serve para emergência, e não é protegido contra a reaplicação da 023 (ver "Regra de nascimento").
+- `UPDATE` de SQL: não grava `updated_by` nem auditoria, mas o gatilho `trg_feature_flags_updated_at` (criado na 023) marca `updated_at`, então a reaplicação da 023 NÃO religa uma flag desligada por SQL (ver "Regra de nascimento"). Serve para emergência; antes da 023 existir no banco, desligue só pela API.
 
 `mfa_required` é reservada (`RESERVED_FLAGS`): não aceita percentual nem condições, e exige reautenticação.
 

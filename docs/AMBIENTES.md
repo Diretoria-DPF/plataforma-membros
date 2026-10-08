@@ -67,7 +67,7 @@ UPDATE feature_flags SET enabled = TRUE,  rollout_pct = 100, updated_at = now() 
 UPDATE feature_flags SET enabled = FALSE, updated_at = now() WHERE key = 'chatbot_enabled';                      -- desligar
 ```
 
-> **Atenção:** o `UPDATE` não grava `updated_by` nem auditoria. Para uma decisão que deve valer depois de qualquer reaplicação de migração, use a API, `apiAdminSetFeatureFlag` (ver §5.1 do runbook), que grava os dois.
+> **Atenção:** um `UPDATE` de SQL também vale depois de reaplicar a 023, porque o gatilho `trg_feature_flags_updated_at` marca a linha (a 023 só liga `ux_v2_enabled` e `chatbot_enabled` se a linha estiver intocada desde a semente: `enabled = FALSE`, `updated_by IS NULL`, `updated_at = created_at` e sem `SET_FEATURE_FLAG` na auditoria). Mas o `UPDATE` não grava `updated_by` nem auditoria: para uma decisão que deve constar da trilha, use `apiAdminSetFeatureFlag` (ver §5.1 do runbook). **Antes da 023 ser aplicada**, desligue só pela API, porque o gatilho ainda não existe no banco.
 
 A mudança vale em até 60 segundos (cache de flags em cada instância do Worker). `mfa_required` só se liga depois de **dois** administradores cadastrarem o autenticador; `nvidia_fallback`, só com a `NVIDIA_API_KEY` cadastrada.
 
