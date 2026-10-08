@@ -8,6 +8,7 @@ import * as Gate from '../src/assistant/moderationGate.js';
 import * as ModerationService from '../src/services/moderationService.js';
 import * as Assistant from '../src/services/assistantService.js';
 import * as Groq from '../src/ai/groqClient.js';
+import * as Security from '../src/security.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 import { makeEnv } from './helpers/mockEnv.js';
@@ -46,6 +47,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
   __resetFlagCacheForTests();
+  ModerationService.__resetKnownSuspensionsForTests();
   Groq.__resetPoolStateForTests(0);
   await db.exec('TRUNCATE assistant_incidents, assistant_moderation, audit_logs, error_logs, rate_limit_buckets');
   await db.query(
@@ -156,6 +158,105 @@ describe('moderação da Lia — portão do chat', () => {
   test('chat: pergunta normal de visitante segue o fluxo habitual (sem campo de moderação)', async () => {
     const res = await Assistant.chat(sql, env, VISITOR, { message: 'qual a previsão do tempo para amanhã' }, CID);
     expect(res.moderation).toBeUndefined();
+  });
+});
+
+/** `sql` que falha com erro de conexão (nunca 42P01) em toda consulta cujo texto contém o trecho. */
+function failingOn(fragment) {
+  return (strings, ...values) => {
+    const text = Array.isArray(strings) ? strings.join('?') : String(strings);
+    if (text.includes(fragment)) return Promise.reject(Object.assign(new Error('connection terminated'), { code: '08006' }));
+    return sql(strings, ...values);
+  };
+}
+const judgeAttempts = async () => {
+  const rows = (await db.query(`SELECT attempts FROM rate_limit_buckets WHERE bucket = 'ASSISTANT_JUDGE'`)).rows;
+  return rows.length ? Number(rows[0].attempts) : 0;
+};
+
+describe('moderação da Lia — teto do juiz LLM por perfil (achado 2)', () => {
+  test('pergunta sem termo ofensivo não gasta o teto nem chama o juiz', async () => {
+    expect(await gate(MEMBER, LEGIT, at(0))).toBeNull();
+    expect(await judgeAttempts()).toBe(0);
+    expect(aiCalls()).toBe(0);
+  });
+
+  test('dentro do teto o juiz LLM confirma e a detecção é "llm"', async () => {
+    const res = await gate(MEMBER, OFFENSIVE, at(0));
+    expect(res.moderation.level).toBe(1);
+    expect(aiCalls()).toBe(1);
+    expect(await judgeAttempts()).toBe(1);
+    expect((await db.query('SELECT detection FROM assistant_incidents')).rows[0].detection).toBe('llm');
+  });
+
+  test('estourado o teto, o chat NÃO cai: segue SEM juiz, só pelo termo (detecção "terms")', async () => {
+    const limit = 20;
+    for (let i = 0; i < limit; i += 1) await Security.enforceRateLimit(sql, 'ASSISTANT_JUDGE', ME, limit, 3600);
+    const res = await gate(MEMBER, OFFENSIVE, at(0));
+    expect(res).toMatchObject({ source: 'moderation', moderation: { level: 1 } });
+    expect(aiCalls()).toBe(0);
+    expect((await db.query('SELECT detection FROM assistant_incidents')).rows[0].detection).toBe('terms');
+    // E a pergunta normal continua livre mesmo com o teto estourado.
+    expect(await gate(MEMBER, LEGIT, at(1))).toBeNull();
+  });
+
+  test('o teto é por perfil: o estouro de uma pessoa não tira o juiz da outra', async () => {
+    for (let i = 0; i < 21; i += 1) await Security.enforceRateLimit(sql, 'ASSISTANT_JUDGE', ME, 20, 3600).catch(() => null); // o 21º estoura
+    await gate(ADMIN, OFFENSIVE, at(0));
+    expect(aiCalls()).toBe(1);
+  });
+});
+
+describe('moderação da Lia — falha do juiz e do estado (achados 5 e 6)', () => {
+  test('juiz fora do ar: a ofensa vale pelo termo e a falha vai para error_logs, sem a mensagem', async () => {
+    globalThis.fetch = jest.fn(async () => groqReply('', { status: 503 }));
+    const res = await gate(MEMBER, OFFENSIVE, at(0));
+    expect(res).toMatchObject({ moderation: { level: 1 } });
+    const logs = (await db.query(`SELECT code, message, context FROM error_logs WHERE code = 'ASSISTANT_JUDGE_FAILED'`)).rows;
+    expect(logs).toHaveLength(1);
+    expect(JSON.stringify(logs)).not.toMatch(/idiota/i);
+    expect((await db.query('SELECT detection FROM assistant_incidents')).rows[0].detection).toBe('terms');
+  });
+
+  test('leitura do estado falha e a pessoa é SABIDAMENTE suspensa: responde sem IA, não libera a conversa', async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
+    const callsBefore = aiCalls();
+    const res = await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ source: 'moderation', actions: [], moderation: { level: 3, suspended: true } });
+    expect(res.message).toMatch(/suspenso até/);
+    expect(aiCalls()).toBe(callsBefore);
+    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
+  });
+
+  test('leitura da FLAG falha (erro que não é tabela ausente) e a pessoa é sabidamente suspensa: segue sem IA', async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
+    __resetFlagCacheForTests();
+    const res = await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ moderation: { level: 3, suspended: true } });
+  });
+
+  test('suspensão conhecida já expirada não prende ninguém quando a leitura falha', async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
+    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(52))).toBeNull();
+  });
+
+  test('leitura falha e a suspensão NÃO é conhecida: segue normal (falha aberta) e registra o erro', async () => {
+    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(0))).toBeNull();
+    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
+  });
+
+  test('redenção aceita esquece a suspensão conhecida: depois dela, a falha de leitura não prende a pessoa', async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
+    await ModerationService.redeemAssistant(sql, env, MEMBER, { message: SINCERE }, CID, at(50.5));
+    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.6))).toBeNull();
+  });
+
+  test('estado da própria pessoa: com a leitura falhando, a suspensão conhecida continua aparecendo', async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
+    expect(await Gate.assistantModerationState(failingOn('FROM assistant_moderation'), MEMBER, at(50.5))).toMatchObject({
+      moderated: true, level: 3, suspended: true,
+    });
+    expect(await Gate.assistantModerationState(failingOn('FROM assistant_moderation'), ADMIN, at(50.5))).toMatchObject({ moderated: false });
   });
 });
 

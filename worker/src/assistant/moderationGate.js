@@ -7,8 +7,11 @@
  * assistant/moderationGate.js
  * Moderação da Lia na conversa (ADR 0004; sql/022): o portão do chat, o estado da própria
  * pessoa e o resumo para a administração. Quem decide o nível é moderationService; aqui só
- * se monta a resposta. Visitante não é moderado. Falha da moderação = falha ABERTA para a
- * conversa (ela segue normal), mas o erro sempre vai para error_logs.
+ * se monta a resposta. Visitante não é moderado.
+ * Falha da moderação: o erro sempre vai para error_logs e a conversa segue normal (falha ABERTA),
+ * com UMA exceção: quem esta instância já viu suspenso continua sem IA (texto fixo) enquanto o
+ * estado não puder ser lido. O juiz LLM só roda dentro de um teto por perfil; acima dele vale
+ * só o termo (nunca derruba o chat).
  */
 import * as C from '../constants.js';
 import * as S from '../security.js';
@@ -77,6 +80,37 @@ async function logFailOpen(sql, correlationId, err) {
   }
 }
 
+const JUDGE_LIMIT = C.RATE_LIMITS.ASSISTANT_JUDGE;
+const VERDICT_CLEAN = Object.freeze({ offensive: false, detection: null });
+
+/** Pode chamar o juiz LLM? Teto por perfil ANTES da chamada. Estourou (ou o limitador falhou): só pelos termos. */
+async function judgeAllowed(sql, correlationId, profileId) {
+  try {
+    await S.enforceRateLimit(sql, 'ASSISTANT_JUDGE', profileId, JUDGE_LIMIT.MAX_ATTEMPTS, JUDGE_LIMIT.WINDOW_SECONDS);
+    return true;
+  } catch (err) {
+    if (!err || err.name !== 'RateLimitError') await logFailOpen(sql, correlationId, err);
+    return false;
+  }
+}
+
+/** Sem termo ofensivo não há juiz nem gasto do teto; com termo, o LLM só confirma dentro do teto. */
+async function judgeMessage(sql, env, identity, message, correlationId) {
+  if (!Rules.containsOffensiveTerm(message)) return VERDICT_CLEAN;
+  const allowLlm = await judgeAllowed(sql, correlationId, identity.profileId);
+  return ModerationService.judgeOffense(sql, env, identity, message, correlationId, { allowLlm });
+}
+
+/**
+ * Não deu para saber o estado (flag ou leitura falhou). O erro é registrado; quem esta instância
+ * já viu suspenso segue SEM IA (o texto fixo da suspensão) e os demais seguem normal (falha aberta).
+ */
+async function whenStateUnknown(sql, identity, correlationId, err, at) {
+  await logFailOpen(sql, correlationId, err);
+  const until = ModerationService.knownSuspensionUntil(identity.profileId, at);
+  return until ? suspendedPayload({ until }) : null;
+}
+
 /**
  * Portão do chat (chamado por assistantService.chat depois da validação da pergunta).
  * Devolve a resposta da moderação quando a conversa deve parar; null quando segue normal.
@@ -85,11 +119,16 @@ async function logFailOpen(sql, correlationId, err) {
 export async function moderationGate(sql, env, identity, message, correlationId, now) {
   if (!isModerated(identity)) return null;
   const at = now || new Date();
+  let state;
   try {
     if (!(await ModerationService.moderationEnabled(sql, identity))) return null;
-    const { state } = await ModerationService.getAssistantState(sql, identity.profileId, at);
-    if (Rules.isSuspended(state, at)) return suspendedPayload(state);
-    const verdict = await ModerationService.judgeOffense(sql, env, identity, message);
+    ({ state } = await ModerationService.getAssistantState(sql, identity.profileId, at));
+  } catch (err) {
+    return whenStateUnknown(sql, identity, correlationId, err, at);
+  }
+  if (Rules.isSuspended(state, at)) return suspendedPayload(state);
+  try {
+    const verdict = await judgeMessage(sql, env, identity, message, correlationId);
     if (!verdict.offensive) return null;
     const next = await ModerationService.registerAssistantIncident(sql, correlationId, identity.profileId, verdict.detection, at);
     return incidentPayload(next);
@@ -124,7 +163,9 @@ export async function assistantModerationState(sql, identity, now) {
     };
   } catch (err) {
     await logFailOpen(sql, S.newCorrelationId(), err);
-    return NOT_MODERATED;
+    const until = ModerationService.knownSuspensionUntil(identity.profileId, at);
+    if (!until) return NOT_MODERATED;
+    return Object.assign({}, NOT_MODERATED, { moderated: true, level: C.MODERATION.MAX_LEVEL, suspended: true, until: until.toISOString() });
   }
 }
 
