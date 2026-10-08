@@ -134,7 +134,7 @@ Princípio: **código primeiro, banco depois, flags por último.** Com o código
 
 #### 2.1 Publicar Worker e site
 
-- [ ] Mesclar a PR `staging → main`. Disparam três workflows: `deploy-worker.yml` (API), `deploy-frontend-cloudflare.yml` (site `laift-web`) e `deploy-frontend.yml` (GitHub Pages, legado). Nenhum deles roda migração. Espere os três ficarem verdes em **Actions**.
+- [ ] Mesclar a PR `staging → main`. Disparam até três workflows, conforme o que o merge toca: `deploy-worker.yml` (API) roda se mexer em `worker/`; `deploy-frontend-cloudflare.yml` (site `laift-web`) e `deploy-frontend.yml` (GitHub Pages, legado) rodam se mexerem em `frontend/`. Nenhum deles roda migração. Espere os que dispararem ficarem verdes em **Actions**.
 - [ ] A API responde e as flags seguem desligadas ou ausentes.
   ```bash
   curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d '{"action":"apiGetFeatureFlags","args":[]}'
@@ -337,4 +337,4 @@ SELECT name FROM schema_migrations ORDER BY name;
 - [ ] **Homologação.** (a) `[env.staging.ai]` existe, então a busca da Lia em staging usa embeddings quando há reindexação. Mas a reindexação diária não roda em staging (`crons = []`); a base de staging só é reindexada por `apiAdminReindexKb`. (b) Se `STAGING_DATABASE_URL` existir, o push em `staging` roda o runner inteiro, **inclusive a 023**, **antes** de publicar a API (`deploy-staging.yml`). Escolha: cadastrar o segredo (a homologação liga as flags no primeiro push) ou migrar staging à mão, na ordem desta seção.
 - [ ] **A 023 e a regra "não religar".** Resolvido na migração: a 023 segue a regra descrita em *Fatos que definem a ordem*. A ressalva que permanece: um `UPDATE` de SQL não é protegido (ver §5.1 e o risco O30 em `docs/riscos-residuais.md`).
 - [ ] **Migração 024.** Existe (`sql/024_indices.sql`) e entra no lote da seção 2.2. Resolvido.
-- [ ] **Documentação fora deste escopo.** `docs/FEATURE_FLAGS.md` foi atualizado nesta entrega. `docs/DEPLOYMENT.md`, seção 1, ainda diz "migrações 001–023" e que a 023 liga as flags inclusive as que estiverem desligadas. Corrigir em PR própria.
+- [x] **Documentação.** `docs/FEATURE_FLAGS.md` foi atualizado nesta entrega. `docs/DEPLOYMENT.md`, seção 1, foi corrigido na passada final de 2026-10-08: migrações 001 a 024, e a 023 não religa o que um admin desligou.

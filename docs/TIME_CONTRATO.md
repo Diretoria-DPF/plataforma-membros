@@ -10,7 +10,7 @@ Todo agente lê este arquivo antes de editar. Plano completo: `C:\Users\Administ
 5. **Relatório final ≤ 15 linhas**: arquivos alterados, comando e resultado, pendências. O relatório é a entrega.
 
 ## Restrições inegociáveis do repositório
-- **CSP**: sem `unsafe-inline` em script, sem handler inline (`onclick=`), sem `innerHTML` fora de `frontend/modulos/shared/safe-dom.js`. Use `data-action` + `LaiftDom.delegateActions` e `LaiftDom.h`. Fontes só do sistema; nenhum script ou CDN de terceiros.
+- **CSP**: sem `unsafe-inline` em script, sem handler inline (`onclick=`), sem `innerHTML` fora de `frontend/modulos/shared/safe-dom.js` (exceção de desenvolvimento: `frontend/modulos/anatomia-3d/dev/*-demo.js`). Use `data-action` + `LaiftDom.delegateActions` e `LaiftDom.h`. Fontes só do sistema; nenhum script ou CDN de terceiros (exceção registrada: o Chart.js do painel de administração, O31 em `docs/riscos-residuais.md`).
 - **Arquivo novo no frontend** entra em `frontend/scripts/build.js`, no `PRECACHE` de `frontend/sw.js` e, se preciso, na CSP. O e2e `csp` barra o deploy.
 - **A11y**: alvos de toque ≥ 44px, contraste ≥ 4,5:1 nos dois temas (inclusive sobre vidro), foco visível, nada comunicado só por cor, `prefers-reduced-motion` respeitado (valor final direto).
 - **Movimento**: só `transform` e `opacity`; duração e curva só via `--dur-*` e `--ease-*` de `modulos/shared/laift-tokens.css`.

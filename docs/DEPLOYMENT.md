@@ -12,7 +12,7 @@ e R2), conta Brevo (e-mail transacional), chaves do Groq (IA da área
 
 Faça na ordem. Cada passo diz como conferir antes de seguir.
 
-## 1. Banco (Neon) e migrações 001–023
+## 1. Banco (Neon) e migrações 001–024
 
 1. Crie o projeto no [console do Neon](https://console.neon.tech) (ou uma
    **branch** nova, para isolar homologação de produção).
@@ -42,9 +42,10 @@ Faça na ordem. Cada passo diz como conferir antes de seguir.
    | 20 | `sql/020_rag.sql` | `kb_chunks` (base da Lia, busca vetorial e trigramas) e `ai_usage_log.retrieval_used` |
    | 21 | `sql/021_assistant_feedback.sql` | `assistant_messages` e `assistant_feedback` (avaliação das respostas da Lia) |
    | 22 | `sql/022_assistant_moderation.sql` | `assistant_moderation` e `assistant_incidents` (moderação da Lia) |
-   | 23 | `sql/023_flags_v2.sql` | liga as cinco flags da renovação, **inclusive** as que estiverem desligadas. Não aplicar antes do acervo: ver [AMBIENTES.md](AMBIENTES.md), "Ativação da UX v2…", seção 2 |
+   | 23 | `sql/023_flags_v2.sql` | insere `rag_enabled`, `feedback_enabled` e `moderation_enabled` ligadas (se não existirem). Liga `ux_v2_enabled` e `chatbot_enabled` **só se** estiverem desligadas e nunca tiverem sido alteradas por admin (`updated_by` nulo e sem `SET_FEATURE_FLAG` em `audit_logs`). **Não religa** o que um admin desligou. Não aplicar antes do acervo: ver [AMBIENTES.md](AMBIENTES.md), "Ativação da UX v2…", seção 2 |
+   | 24 | `sql/024_indices.sql` | índices de `rate_limit_buckets` (purga diária) e das séries do Início (`event_registrations`, `task_signups`, `learning_attempts`). Não mexe em flags |
 
-   O código implantado **antes** de 016 a 023 continua funcionando (tabela
+   O código implantado **antes** de 016 a 024 continua funcionando (tabela
    ausente = flags desligadas, login sem segundo fator, IA pelo caminho antigo, Lia inativa).
    Reversões em `sql/down/`.
    Papel somente leitura para relatórios: `sql/ops/readonly_role.sql` (não é
@@ -112,7 +113,7 @@ Não são segredo; ficam versionadas.
 | `GROQ_MODEL_SMART` | `openai/gpt-oss-120b` | preceptor, geração de caso, preceptor do laboratório |
 | `MEDIA_BUCKET` (R2) | `plataforma-membros-media` | upload de mídia |
 | `HOT_CACHE` (KV) | namespace `6ee17e57…` | cache curto de leitura, cooldown das chaves do Groq, cache de síntese do laboratório |
-| `AI` (Workers AI, `[ai]`) | binding de produção | embeddings da base da Lia (`@cf/baai/bge-m3`). Sem ele, a busca cai para trigramas. A homologação não herda o binding (ver seção 10) |
+| `AI` (Workers AI, `[ai]`) | binding de produção | embeddings da base da Lia (`@cf/baai/bge-m3`). Sem ele, a busca cai para trigramas. A homologação tem o seu, em `[env.staging.ai]` (ver seção 10) |
 
 Para usar um modelo só, ponha o mesmo valor nas duas vars `GROQ_MODEL_*`.
 Cotas diárias por papel e o disjuntor global (3.000 chamadas/dia) ficam em
@@ -183,7 +184,7 @@ Antes do merge, rode localmente:
 ```bash
 cd frontend
 npm install
-npm run e2e      # build + cenários csp, fase2, fase3, fase4 e smoke (Playwright)
+npm run e2e      # build + todos os cenários frontend/scripts/e2e/*.e2e.js (Playwright; inclui csp, smoke, home, assistant, credential e visual-qa)
 ```
 
 O cenário `csp` usa um espelho local dos pacotes npm do jsDelivr
@@ -238,7 +239,7 @@ plataforma (painel admin).
 - **Worker:** `npx wrangler rollback` volta à versão anterior (ou
   `npx wrangler deployments list` e escolha). Não mexe no banco.
 - **Site (`laift.com.br`):** Cloudflare → Workers & Pages → `laift-web` → *Deployments* → **Rollback** (imediato); depois, `git revert` na `main`. O GitHub Pages (legado) republica pelo `deploy-frontend.yml`.
-- **Schema:** o runner não reverte. Há reversões manuais em `sql/down/` (ordem inversa; não são aplicadas pelo deploy), e elas não apagam a linha de `schema_migrations`. Procedimento: [AMBIENTES.md](AMBIENTES.md), "Ativação da UX v2…", seção 5. Antes de qualquer migração arriscada, teste numa branch do Neon.
+- **Schema:** o runner não reverte. Há reversões manuais em `sql/down/` (ordem inversa; não são aplicadas pelo deploy), os `down` de 020 a 024 apagam a linha de `schema_migrations`; os de 015 a 019 não. Procedimento: [AMBIENTES.md](AMBIENTES.md), "Ativação da UX v2…", seção 5. Antes de qualquer migração arriscada, teste numa branch do Neon.
 - **Credenciais comprometidas:** `docs/SECURITY.md`, seção "Rotação de
   credenciais".
 - **Perda de dados:** backup diário cifrado no R2 e teste de restauração em
@@ -332,10 +333,10 @@ entram **primeiro** no banco de staging.
 O que a homologação **não** tem, de propósito: cron de faxina (a manutenção
 diária só roda em produção; o `wrangler.toml` esvazia o cron que o ambiente
 herdaria), URL `*.workers.dev` (só os dois domínios de staging respondem),
-KV (o cache vira no-op), binding Workers AI `[ai]` (a busca da Lia fica só por trigramas) e R2 (envio de avatar e de imagem de evento não
+KV (o cache vira no-op) e R2 (envio de avatar e de imagem de evento não
 funciona até existirem recursos de teste). O site de
 staging fica fora dos buscadores por cabeçalho (`X-Robots-Tag`, regra por host
-em `frontend/_headers`), assim como as URLs `*.workers.dev`.
+em `frontend/_headers`), assim como as URLs `*.workers.dev`. O binding Workers AI existe na homologação (`[env.staging.ai]`), mas sem cron (`crons = []`) a base só é reindexada à mão, por `apiAdminReindexKb`.
 
 ## 11. PWA (instalar como aplicativo)
 
@@ -372,7 +373,7 @@ O site é um PWA: `frontend/manifest.webmanifest`, ícones em `frontend/icons/`
 
 ## 12. IA: orquestrador, orçamento de tokens e cache (Fase 3)
 
-Flag nova nasce **desligada**: a IA segue pelo caminho de sempre até você ligar a flag. (Exceção: as cinco flags da renovação, que a migração 023 liga; ver [AMBIENTES.md](AMBIENTES.md), "Ativação da UX v2…".)
+Flag nova nasce **desligada**: a IA segue pelo caminho de sempre até você ligar a flag. (Exceção: as cinco flags da renovação, que a migração 023 insere ou liga sem religar o que um admin desligou; ver [AMBIENTES.md](AMBIENTES.md), "Ativação da UX v2…".)
 
 1. Aplique `sql/018_ai_orchestrator.sql` (Neon → SQL Editor). Confira com
    `SELECT count(*) FROM ai_metrics_daily;` (deve responder 0, sem erro).

@@ -13,8 +13,9 @@ antigo repositório o-bala-vip, incorporado aqui; ver
 `docs/PLANO_UNIFICACAO_LAIFT.md`). Dividida em duas partes publicadas
 separadamente:
 
-- **Front-end**: site estático (HTML/CSS/JS puro, sem framework) publicado
-  no **GitHub Pages** (pasta `frontend/`).
+- **Front-end**: site estático (HTML/CSS/JS puro, sem framework), pasta
+  `frontend/`, publicado como Worker `laift-web` (Cloudflare) em produção; o
+  GitHub Pages é legado.
 - **Back-end**: **API JSON em Cloudflare Workers** (pasta `worker/`), com
   **Neon PostgreSQL** como banco relacional via o driver serverless do
   próprio Neon.
@@ -33,7 +34,7 @@ Ver `docs/SECURITY.md`.
 
 ```
 ┌──────────────────────────────┐        POST JSON          ┌────────────────────────────────┐
-│  frontend/ (GitHub Pages)    │  ────────────────────────▶ │  worker/ (Cloudflare Workers)   │
+│  frontend/ (laift-web)       │  ────────────────────────▶ │  worker/ (Cloudflare Workers)   │
 │  index.html + app.js + css   │  ◀────────────────────────  │  API_REGISTRY (allowlist)       │
 │  site 100% estático          │       {success, ...}        │  services/* → Neon (HTTP)       │
 └──────────────────────────────┘                             └────────────────────────────────┘
@@ -64,7 +65,8 @@ Ver `docs/SECURITY.md`.
 ## Stack
 
 - **Front-end:** HTML5 + CSS3 responsivo mobile-first + JavaScript vanilla
-  (sem framework), publicado como site estático no GitHub Pages.
+  (sem framework), publicado como site estático no Worker `laift-web`
+  (Cloudflare); o GitHub Pages é legado.
 - **Back-end/API:** Cloudflare Workers (JavaScript, runtime V8 na borda),
   roteamento por allowlist fechada.
 - **Persistência:** Neon PostgreSQL, acessado via `@neondatabase/serverless`
@@ -88,7 +90,9 @@ Ver `docs/SECURITY.md`.
 plataforma-membros/
 ├── README.md
 ├── .github/workflows/
-│   └── deploy-frontend.yml   # build (ofusca app.js) e publica frontend/dist no GitHub Pages
+│   ├── deploy-worker.yml, deploy-frontend-cloudflare.yml, deploy-staging.yml  # API e site (Cloudflare)
+│   ├── deploy-frontend.yml   # legado: build (ofusca app.js) e publica frontend/dist no GitHub Pages
+│   └── security.yml, backup.yml, worker-test.yml, atlas-*.yml  # testes, segurança e backup
 │
 ├── frontend/                 # site estático — publicado no GitHub Pages
 │   ├── index.html, styles.css, app.js   # plataforma (app.js é ofuscado no build)
@@ -108,7 +112,7 @@ plataforma-membros/
 │   ├── vendor/               # bibliotecas versionadas localmente (QR Code)
 │   ├── scripts/
 │   │   ├── build.js          # gera dist/
-│   │   └── e2e/              # Playwright: smoke, fase2, fase3, fase4, csp (+ cdn-mirror/)
+│   │   └── e2e/              # Playwright: todos os *.e2e.js (csp, smoke, home, assistant, credential, visual-qa, fase2–4, mfa, atlas-*) (+ cdn-mirror/)
 │   └── dev-server.js         # pré-visualização local, não é publicado
 │
 ├── worker/                   # backend — Cloudflare Workers
@@ -127,6 +131,7 @@ plataforma-membros/
 │
 ├── docs/
 │   ├── DEPLOYMENT.md                 # Neon, segredos, Worker, Pages, primeiro admin
+│   ├── AMBIENTES.md                  # staging e produção, deploy e runbook de ativação (Lia, RAG, moderação)
 │   ├── SECURITY.md                   # controles, CSP por página, riscos, rotação
 │   ├── PLANO_UNIFICACAO_LAIFT.md     # fusão com o o-bala-vip
 │   ├── PLANO_FASES_2_3_4.md          # contratos e status das fases 2, 3 e 4
@@ -170,7 +175,7 @@ cliente. Ver `docs/SECURITY.md`.
 ## Começando
 
 Siga `docs/DEPLOYMENT.md` do início ao fim — cobre o banco Neon e as
-migrações 001–023 (a 024 e a ativação da renovação estão em `docs/AMBIENTES.md`), os segredos do Worker (`DATABASE_URL`,
+migrações 001–024 (a ativação da renovação, com Lia, RAG, feedback e moderação, está em `docs/AMBIENTES.md`), os segredos do Worker (`DATABASE_URL`,
 `SESSION_TOKEN_PEPPER`, `BREVO_API_KEY`, `GROQ_API_KEYS`), o deploy via
 Wrangler, a publicação do front-end e a promoção manual do primeiro
 administrador.
