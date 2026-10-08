@@ -1,0 +1,64 @@
+/* Prova de fidelidade dos props (P-2). Nao entra no build (LIA_REVIEW_ONLY).
+   As regras da secao "Regras pedidas ao lia.css" sao a copia de referencia para o H1 (dono do lia.css):
+   aqui valem so para esta pagina. */
+
+body {
+  margin: 0;
+  background: var(--laift-bg);
+  color: var(--laift-text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.topo { max-width: 1080px; margin: 0 auto; padding: 20px 16px 4px; }
+.topo h1 { margin: 0 0 4px; font-size: 20px; }
+.topo p { margin: 0 0 12px; color: var(--laift-muted); }
+.controles { display: flex; flex-wrap: wrap; gap: 8px; }
+.botao {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--laift-border-strong);
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-surface);
+  color: var(--laift-text);
+  font: inherit;
+  cursor: pointer;
+}
+.botao[aria-pressed="true"] { background: var(--laift-primary); border-color: var(--laift-primary); color: var(--laift-on-primary); }
+.botao:focus-visible { outline: 3px solid var(--laift-primary); outline-offset: 2px; }
+
+.prova { max-width: 1080px; margin: 0 auto; padding: 8px 16px 24px; box-sizing: border-box; }
+.prova h2 { font-size: 16px; margin: 20px 0 8px; }
+.grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.grade-cenas { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
+figcaption { font-size: 13px; color: var(--laift-muted); }
+
+.palco {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  overflow: hidden;
+  border-radius: var(--laift-radius-lg);
+  background: var(--laift-surface-alt);
+}
+.palco > .lia { --lia-size: 200px; }
+.celula .palco { min-height: 200px; }
+.celula .palco > .lia { --lia-size: 150px; }
+
+/* ---- Regras pedidas ao lia.css (H1) ---- */
+.lia-svg .ln { fill: none; stroke: var(--lia-accent); }
+.lia-svg .al { fill: var(--lia-alert, var(--laift-danger, #b3261e)); }
+.lia-svg .gi { fill: var(--lia-alert-ink, var(--laift-on-danger, #ffffff)); }
+.lia-svg .vu { fill: var(--lia-shadow); }
+
+/* Pose de costas: some rosto, mecha, oculos, blush e lapela (sobreposicoes da pose ficam). */
+.lia.pose-costas .lia-svg :is([id^="lia-eyes-"], [id^="lia-brows-"], [id^="lia-mouth-"], #lia-lock, #lia-glasses, .bl, #lia-coat > .a) {
+  display: none !important;
+}
+/* Braços cruzados: some o par ocioso (o cruzado vem de lia-pv-cruzados). */
+.lia.sem-bracos .lia-svg :is(#lia-arm-left-idle, #lia-arm-right-idle) {
+  display: none !important;
+}
