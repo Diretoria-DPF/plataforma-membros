@@ -5,8 +5,10 @@
  */
 // Lia — lista branca de destinos e base de conhecimento por intenção.
 // Nada aqui chama IA nem banco: é regra pura.
-import { normalize, matchIntent, INTENTS, DEFAULT_SUGGESTIONS, kbOutline } from '../src/assistant/kb.js';
+import { normalize, matchIntent, INTENTS, PUBLIC_INTENTS, DEFAULT_SUGGESTIONS, kbOutline } from '../src/assistant/kb.js';
 import { buildAction, filterActions, ACTION_KEYS, MAX_ACTIONS } from '../src/assistant/targets.js';
+import { buildDocuments } from '../src/assistant/docs.js';
+import { AI_QUOTAS } from '../src/constants.js';
 
 describe('normalize', () => {
   test('minúsculas, sem acento e sem pontuação', () => {
@@ -52,6 +54,24 @@ describe('matchIntent — perguntas reais', () => {
     ['horário de atendimento da diretoria', 'equipe'],
     ['agenda do laboratório', 'laboratorio'],
     ['em termos de dose, o que o laboratório mostra', 'laboratorio'],
+    ['como envio uma proposta', 'propostas'],
+    ['como aderir a uma tarefa', 'tarefas'],
+    ['quero marcar uma resposta da Lia como útil', 'avaliacao_lia'],
+    ['fui suspenso no chat, como peço redenção', 'redencao'],
+    ['quantas perguntas com IA posso fazer por dia', 'cotas'],
+    ['como envio feedback para a administração', 'feedback_liga'],
+    ['onde altero meu nome de usuário', 'perfil'],
+    ['como denuncio um membro', 'equipe'],
+    ['quero criar um evento', 'admin_eventos'],
+    ['como aprovo uma proposta', 'admin_propostas'],
+    ['como abro a votação', 'admin_propostas'],
+    ['como banir uma conta', 'admin_usuarios'],
+    ['onde fica o terminal fiscal', 'admin_fiscal'],
+    ['qual o painel de IA', 'admin_ia'],
+    ['onde vejo as denúncias', 'admin_denuncias'],
+    ['onde leio o feedback recebido', 'admin_feedback'],
+    ['o que tem na área admin', 'admin_area'],
+    ['como crio uma tarefa', 'admin_tarefas'],
   ])('%s → %s', (message, id) => {
     const hit = matchIntent(message, []);
     expect(hit && hit.id).toBe(id);
@@ -206,5 +226,58 @@ describe('lista branca de destinos', () => {
     expect(ACTION_KEYS).toContain('navigate:panel-events');
     expect(ACTION_KEYS).toContain('open_module:lab');
     expect(ACTION_KEYS).toContain('open_credential:credential');
+  });
+});
+
+describe('cobertura da Lia: administração só para admin, acervo e prompt sem telas de admin', () => {
+  const ADMIN_IDS = INTENTS.filter((i) => i.adminOnly).map((i) => i.id);
+
+  test('há intenções de administração e todas usam o destino de admin da lista branca', () => {
+    expect(ADMIN_IDS.length).toBeGreaterThan(5);
+    INTENTS.filter((i) => i.adminOnly).forEach((i) => {
+      expect(i.actions.length).toBeGreaterThan(0);
+      i.actions.forEach((a) => {
+        expect(a.target.startsWith('panel-admin-')).toBe(true);
+        expect(buildAction(a.type, a.target, 'member')).toBeNull();
+        expect(buildAction(a.type, a.target, 'admin')).not.toBeNull();
+      });
+    });
+  });
+
+  test('membro recebe a resposta da área de admin, mas nenhum botão para a tela', () => {
+    const hit = matchIntent('quero criar um evento', []);
+    expect(hit.id).toBe('admin_eventos');
+    expect(filterActions(hit.intent.actions, 'member')).toEqual([]);
+    expect(filterActions(hit.intent.actions, 'admin')).toEqual([
+      { type: 'navigate', target: 'panel-admin-events', label: 'Gerir eventos' },
+    ]);
+  });
+
+  test('sugestões de intenção de admin não viram chip para membro (usam só assuntos gerais)', () => {
+    INTENTS.filter((i) => i.adminOnly).forEach((i) => {
+      (i.suggestions || []).forEach((s) => {
+        const hit = matchIntent(s, []);
+        expect(hit && hit.intent.adminOnly).toBeFalsy();
+      });
+    });
+  });
+
+  test('o acervo (RAG) e o prompt da IA usam só as intenções de uso geral', () => {
+    expect(PUBLIC_INTENTS.some((i) => i.adminOnly)).toBe(false);
+    expect(PUBLIC_INTENTS.length).toBe(INTENTS.length - ADMIN_IDS.length);
+    const kbSections = buildDocuments().filter((d) => d.source === 'kb').map((d) => d.section);
+    INTENTS.filter((i) => i.adminOnly).forEach((i) => expect(kbSections).not.toContain(i.title));
+    ADMIN_IDS.forEach((id) => expect(kbOutline()).not.toContain('- ' + id + ':'));
+  });
+
+  test('o rótulo do painel de denúncias é o do menu ("Denúncias"), não "Relatórios"', () => {
+    expect(buildAction('navigate', 'panel-admin-reports', 'admin')).toEqual({ type: 'navigate', target: 'panel-admin-reports', label: 'Denúncias' });
+  });
+
+  test('o limite de perguntas usa as cotas do plano, nunca um número fixo', () => {
+    const hit = matchIntent('qual o limite de perguntas da Lia?', []);
+    expect(hit.id).toBe('cotas');
+    expect(hit.intent.reply).toContain(String(AI_QUOTAS.assistant.member));
+    expect(hit.intent.reply).toContain(String(AI_QUOTAS.assistant.admin));
   });
 });

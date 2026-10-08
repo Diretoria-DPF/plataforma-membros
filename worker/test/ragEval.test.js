@@ -32,9 +32,10 @@ const GOLD = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
 const POSITIVES = GOLD.filter((g) => g.secao !== null);
 const NEGATIVES = GOLD.filter((g) => g.secao === null);
 
-// Baseline medido DEPOIS da calibração de RAG.MIN_TRIGRAM_SCORE (constants.js):
-// 5 de 14 com o negativo rejeitado. Antes da calibração era 11 de 14, aceitando o negativo.
-const BASELINE_RECALL_AT_4 = 5 / 14;
+// Baseline medido DEPOIS da calibração de RAG.MIN_TRIGRAM_SCORE (constants.js) e com o golden set atual
+// (24 positivas, sendo 10 de cobertura da Lia): 13 de 24 com o negativo rejeitado. Com as 14 positivas
+// da calibração era 5 de 14; antes dela, 11 de 14, aceitando o negativo.
+const BASELINE_RECALL_AT_4 = 13 / 24;
 const RECALL_REGRESSION_TOLERANCE = 0.07;
 const RECALL_FLOOR = BASELINE_RECALL_AT_4 - RECALL_REGRESSION_TOLERANCE;
 

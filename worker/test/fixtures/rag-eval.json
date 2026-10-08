@@ -13,5 +13,16 @@
   { "pergunta": "Quero ver os encontros da liga marcados para o mês que vem", "secao": "Eventos da liga" },
   { "pergunta": "Onde faço experimentos de química com simulação?", "secao": "Laboratório Virtual e Estúdio 3D" },
   { "pergunta": "Quero revisar casos de envenenamento para a prova", "secao": "Toxicologia Clínica e Forense" },
-  { "pergunta": "Quanto custa a mensalidade da liga?", "secao": null }
+  { "pergunta": "Como envio um feedback para a administração?", "secao": "Enviar feedback à administração" },
+  { "pergunta": "Posso marcar uma resposta da Lia como útil ou não útil?", "secao": "Avaliar uma resposta da Lia" },
+  { "pergunta": "Qual o prazo para pedir redenção depois de uma suspensão no chat?", "secao": "Pedido de redenção na Lia" },
+  { "pergunta": "Qual o limite de perguntas com IA que eu tenho por dia?", "secao": "Limite de perguntas da Lia" },
+  { "pergunta": "Como adiciono uma pessoa como contato na equipe?", "secao": "Equipe e organograma" },
+  { "pergunta": "Minhas mensagens são criptografadas?", "secao": "Mensagens entre membros" },
+  { "pergunta": "Onde envio uma nova proposta para a liga?", "secao": "Propostas e votações" },
+  { "pergunta": "Como faço para aderir a uma tarefa?", "secao": "Tarefas" },
+  { "pergunta": "Onde altero o meu nome de usuário?", "secao": "Meu perfil e preferências" },
+  { "pergunta": "Posso ver os eventos que já aconteceram?", "secao": "Eventos da liga" },
+  { "pergunta": "Quanto custa a mensalidade da liga?", "secao": null },
+  { "pergunta": "Qual é a previsão do tempo para amanhã?", "secao": null }
 ]
