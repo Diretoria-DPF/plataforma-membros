@@ -3,7 +3,9 @@
 **Atualizado em 2026-10-08.** Para retomar: leia a seção "Atualização de 2026-10-08" (logo antes de "Pull requests"), depois `docs/AMBIENTES.md` (runbook de ativação) e `docs/riscos-residuais.md`. O plano completo, com DoD e rollback por fase, está em `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-an-lise-c-merry-reddy.md`.
 
 ## Em uma frase
-A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação estão prontos e testados no PR único `feat/v5-ux-fundacao`, atrás de feature flags. **Nada disso está em produção** até você mesclar e seguir a ordem do runbook de `docs/AMBIENTES.md`. Mesclar sozinho não muda o comportamento: a migração 023 só liga as flags da renovação quando for aplicada, e ela não religa o que um admin já desligou.
+A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação foram **mesclados na `main` pela #38 em 2026-10-08 (10:38 UTC)**, atrás de feature flags, e o Worker e o site foram publicados. **O banco de produção ainda precisa do runbook de `docs/AMBIENTES.md`** (backup Neon, migrações 020–022 e 024, reindexação e, por último, a 023). Até lá os recursos novos ficam inertes: a migração 023 só liga as flags da renovação quando for aplicada, e ela não religa o que um admin já desligou.
+
+**Pós-fusão (2026-10-08):** a #38 foi mesclada com dois checks vermelhos, e a `main` ficou com o workflow "Segurança" falhando. Os dois foram corrigidos na PR `fix/ci-pos-fusao`: cabeçalho de copyright em 3 testes novos (`lia-anim`, `nav-a11y`, `ux-v2`) e `sharp` 0.35.4 → 0.35.5 no lock de `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w). **Pendência do dono:** o workflow "Backup do banco" falha todo dia desde 2026-10-05 porque faltam os secrets `BACKUP_DATABASE_URL`, `BACKUP_AGE_PUBLIC_KEY`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` e `R2_BACKUP_BUCKET` (`docs/BACKUP_RESTORE.md`).
 
 ## Atualização de 2026-10-05 — por que o laift.com.br não refletia a F2/F3
 - **A #27 foi mesclada** (02:32 UTC). A **API** de produção foi republicada na hora (`deploy-worker.yml` dispara em push na `main`).
@@ -24,11 +26,11 @@ A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação estão pron
   - **Produção** (`plataforma-membro`): branch de backup `backup-pre-016-019-2026-10-07` no Neon, migrações 016–019 + ledger, `MFA_ENCRYPTION_KEY` própria cadastrada e **`use_orchestrator` ligada** (registrada em `audit_logs`). 6 perfis intactos, 0 erros depois. `chatbot_enabled` **segue desligada em produção** até as PRs #35 e #36 serem mescladas e o site/API novos publicados.
   - Cópias das chaves do MFA em `Desktop\segredo-mfa-staging.txt` e `segredo-mfa-producao.txt`: guardar no cofre e apagar.
 - **Depois de mesclar #35 e #36** (nessa ordem, a #36 reapontada para a `main`): conferir o site em `laift.com.br` e ligar a Lia com `UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'` (ver `docs/AMBIENTES.md`).
-- **Pendências**: o Environment `staging` do GitHub só aceita as branches `feat/*`, `fix/*` e `main` (a branch `staging` foi recusada: adicionar `staging` à regra para o deploy por push funcionar); o Trivy acusa `sharp` HIGH em `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w, corrigido na 0.35.5); apagar a branch de backup do Neon depois de alguns dias.
+- **Pendências**: o Environment `staging` do GitHub só aceita as branches `feat/*`, `fix/*` e `main` (a branch `staging` foi recusada: adicionar `staging` à regra para o deploy por push funcionar); o Trivy acusava `sharp` HIGH em `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w), corrigido para a 0.35.5 na PR `fix/ci-pos-fusao` (2026-10-08); apagar a branch de backup do Neon depois de alguns dias.
 
 ## Atualização de 2026-10-08 — UX v2, Lia viva, RAG, feedback e moderação (branch `feat/v5-ux-fundacao`)
 
-**Entrega única.** Um PR só, a partir de `feat/v5-ux-fundacao` (100 commits acima da `main`, conferidos com `git rev-list --count main..feat/v5-ux-fundacao`). Em 2026-10-08 ainda não há PR aberto (`gh pr list --head feat/v5-ux-fundacao --state all` veio vazio). Tudo está atrás de feature flags. A ativação é do dono, pelo runbook de `docs/AMBIENTES.md`, seção "Ativação da UX v2, Lia viva, RAG, feedback e moderação".
+**Entrega única.** Um PR só, a partir de `feat/v5-ux-fundacao` (100 commits acima da `main`), aberto como **#38** e mesclado na `main` em 2026-10-08. Tudo está atrás de feature flags. A ativação é do dono, pelo runbook de `docs/AMBIENTES.md`, seção "Ativação da UX v2, Lia viva, RAG, feedback e moderação".
 
 ### O que entrou
 - **Fase A, fundação visual** (`ux_v2_enabled`): tokens de cor, movimento e vidro v5 (`frontend/modulos/shared/laift-tokens.css`, `frontend/ux-glass.css`, com teste de contraste WCAG); visual sem borda de cartão sob `:root[data-flag-ux-v2-enabled]`; hover só com ponteiro fino.
@@ -61,8 +63,8 @@ A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação estão pron
 
 ### O que você precisa fazer
 Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva, RAG, feedback e moderação"** (pré-requisitos na seção 1, passos 2.1 a 2.4, validação na seção 4, rollback na seção 5). Checklist curto, na ordem:
-1. Mesclar o PR: `feat/v5-ux-fundacao` → `staging`; testado em `staging.laift.com.br`, depois `staging` → `main`.
-2. Deploy do Worker e do site: esperar em Actions os workflows que dispararem (`deploy-worker.yml` se o merge tocar `worker/`; `deploy-frontend-cloudflare.yml` e `deploy-frontend.yml` se tocar `frontend/`). Conferir `apiGetFeatureFlags` (seção 2.1).
+1. ~~Mesclar o PR~~ **Feito:** a #38 entrou direto na `main` em 2026-10-08 10:38 UTC (sem passar pela `staging`).
+2. ~~Deploy do Worker e do site~~ **Feito:** os workflows de publicação da `main` passaram em 2026-10-08. Conferir `apiGetFeatureFlags` (seção 2.1).
 3. Backup no Neon: branch `backup-pre-020-024-AAAA-MM-DD` (seção 1). O runbook o põe entre os pré-requisitos, antes da mescla; aqui ele vem antes da migração, que é o ponto que importa. Não migre sem ele.
 4. Migrar 020, 021, 022 e 024, com `--dir` sem a 023 (seção 2.2). Se alguma migração de 016 a 022 foi aplicada à mão, faça antes o baseline (seção 3).
 5. Reindexar o acervo: `apiAdminReindexKb`, conferindo `embeddingAvailable: true` (seção 2.3).
@@ -85,7 +87,7 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 - **Tela de moderação do admin.** No lado do membro, a redenção e a consulta de estado já são chamadas (`frontend/assistant-moderation.js`), e a Lia aciona aviso e suspensão (`frontend/assistant.js`). Falta a tela do admin (ADR 0004): `apiAdminAssistantModeration` está no `API_REGISTRY`, mas nenhum arquivo do front a chama (O28).
 - **Chart.js por CDN.** `frontend/index.html` (linha 932, com SRI) carrega Chart.js 4.5.1 do jsDelivr para o gráfico do painel "Administração — dashboard" (`frontend/app.js`, `renderAdminDashboardChart`). O painel de IA não usa Chart.js. Isso contraria a regra "nenhum script ou CDN de terceiros" de `docs/TIME_CONTRATO.md` (exceção registrada, O31). Os gráficos novos não dependem dele.
 - **Blocos locais de movimento reduzido.** Além do bloco único de `frontend/modulos/shared/laift-tokens.css`, outros 15 arquivos CSS ainda têm `prefers-reduced-motion` (por exemplo `frontend/ux.css` e `frontend/modulos/anatomia-3d/css/atlas.css`). Isso fica fora da regra "um único bloco" do ADR 0002.
-- **Desligar por SQL não é protegido.** Um `UPDATE` de `feature_flags` não grava `updated_by` nem auditoria; se a 023 for reaplicada num banco em que `ux_v2_enabled` ou `chatbot_enabled` foi desligada assim, ela religa. Para decisões que devem durar, use `apiAdminSetFeatureFlag`.
+- **Desligar por SQL não grava auditoria.** Um `UPDATE` de `feature_flags` não grava `updated_by` nem auditoria, mas o gatilho `trg_feature_flags_updated_at` (criado na 023) marca `updated_at`, e a 023 só liga `ux_v2_enabled` e `chatbot_enabled` em linha intocada. Limite (O30): um `UPDATE` feito antes de a 023 existir no banco não deixa marca. Antes da primeira 023 em produção, confira `apiAdminListFeatureFlags` e, para decisões que devem durar, use `apiAdminSetFeatureFlag`.
 - **Documentação:** `docs/DEPLOYMENT.md` (seção 1) foi corrigida na passada final de 2026-10-08: migrações 001 a 024, e a 023 não religa o que um admin desligou.
 - **Staging aplica tudo antes da API.** Se `STAGING_DATABASE_URL` existir, o push em `staging` roda o runner inteiro, incluindo a 023, antes de publicar a API (`.github/workflows/deploy-staging.yml`).
 - **Riscos novos** registrados em `docs/riscos-residuais.md` (O17 a O36; O28 e O31 corrigidos na passada final). Itens adiados com gatilho, em `docs/backlog-futuro.md`, seção "Lia e RAG".
@@ -97,7 +99,10 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 | #25 | `feat/v5-ux-base` | F1 parcial: base visual, PWA, painel Início | **Mesclada na `main`** |
 | #26 | `feat/v5-seguranca` | F2 + F3 + pipeline de segurança + backup | Mesclada **na branch `feat/v5-ux-base`, não na `main`** (a #25 já tinha entrado, a base empilhada ficou para trás). Não vale mais |
 | **#27** | `feat/v5-seguranca` | Os mesmos F2 + F3, mais as correções finais, direto para a `main` | **Mesclada na `main` em 2026-10-05** |
-| — | `feat/v5-ux-fundacao` | UX v2, Lia viva, RAG, feedback e moderação (100 commits acima da `main`) | **Sem PR aberto** em 2026-10-08. Caminho: PR para `staging`, testado, depois `staging` → `main` |
+| **#35** | `feat/v5-ativacao` | Deploy automático do site, runner de migrações e smoke test | **Mesclada na `main`** |
+| **#36** | `feat/v5-lia-cracha` | Lia (guia da plataforma), crachá virtual e flag `chatbot_enabled` | **Mesclada na `main`** |
+| **#38** | `feat/v5-ux-fundacao` | UX v2, Lia viva, RAG, feedback e moderação (128 arquivos) | **Mesclada na `main` em 2026-10-08 10:38 UTC** (merge `21dce33`); Worker e site publicados; banco de produção aguarda o runbook |
+| — | `fix/ci-pos-fusao` | Cabeçalho de copyright em 3 testes e `sharp` 0.35.5 (CI verde na `main`) | Aberta para a `main` |
 
 Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima para a `main`** antes de mesclar (ou mescle a de cima primeiro).
 
@@ -113,7 +118,7 @@ Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima 
 3. **Aviso `degraded` no front** (`frontend/modulos/laboratorio/js/lab-preceptor.js`): hoje a resposta aproximada aparece como "recuperada do acervo". Mostrar "resposta aproximada, a IA está indisponível".
 4. **Polimentos do painel de métricas:** dia como DD/MM; ignorar resposta atrasada ao alternar 7/30 dias; e2e sem `check(true)` vazio.
 5. **Reserva do orçamento por papel** (risco O10) e **orçamento da NVIDIA** (O11): só se o gatilho de `docs/riscos-residuais.md` disparar.
-6. **F1 restante:** credencial virtual (`credential.js`), onboarding (`<dialog>` por papel), hero + `laift-orb.js`, Equipe em árvore, `openConfirm` com foco/Esc, SEO (h1 único, noindex no app), acessibilidade (axe, NVDA/VoiceOver), atalhos Ctrl+K/?.
+6. **F1 restante** (conferido no código em 2026-10-08): credencial virtual (`credential.js`), Equipe em árvore (`renderOrgChartTree`, `app.js`) e PWA **já existem**. Faltam onboarding (`<dialog>` por papel), hero no login (o mascote será a cabeça da Lia, sem `laift-orb.js`), `openConfirm` com foco/Esc, `h1` único por tela, acessibilidade (axe hoje só avisa; NVDA/VoiceOver é do dono), atalhos Ctrl+K/? e a medição Lighthouse. **Sem `noindex` em `/`:** login e app são o mesmo `index.html`, e `noindex` tiraria o site do Google.
 
 ## Passos que só você pode fazer
 1. **Chave do OpenRouter** (a chave nunca passa pelo chat): `powershell -ExecutionPolicy Bypass -File tools\ci\registrar-segredo-openrouter.ps1 -Arquivo "$env:USERPROFILE\Desktop\segredos-openrouter.json"`, depois apague o arquivo. Defina um **limite de gasto baixo** na chave no painel do OpenRouter (risco O9). Sem a chave o Strix é pulado com aviso. Modelo padrão: Nemotron 3 Super gratuito; o `z-ai/glm-5.3:free` do roteiro **não existe** — para o GLM pago: `gh variable set STRIX_LLM --body "openrouter/z-ai/glm-5.3"`.
@@ -125,7 +130,7 @@ Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima 
 
 ## Como retomar o trabalho
 ```bash
-git checkout feat/v5-ux-fundacao && git pull
+git switch main && git pull
 cd worker && npm ci && npm test && npm run validate:sql      # 48 suítes, 24 migrações e 1424 testes (execução final de 2026-10-08)
 cd ../frontend && npm ci && node scripts/build.js && node scripts/e2e/run.js csp smoke home assistant credential visual-qa
 ```
