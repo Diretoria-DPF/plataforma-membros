@@ -128,7 +128,7 @@ test('build.js publica ux.css e shared-states.js', () => {
 
 test('ux.css respeita movimento reduzido, tem fallback sem backdrop-filter e nenhum texto abaixo de 11 px', () => {
   const css = read('frontend/ux.css');
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(read('frontend/modulos/shared/laift-tokens.css'), /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /@supports not \(\(backdrop-filter: blur\(1px\)\) or \(-webkit-backdrop-filter: blur\(1px\)\)\)/);
   const sizes = [...css.matchAll(/font-size:\s*([\d.]+)(px|rem|em)/g)].map((m) => (m[2] === 'px' ? Number(m[1]) : Number(m[1]) * 16));
   assert.ok(sizes.every((s) => s >= 11), 'font-size abaixo de 11 px: ' + sizes.filter((s) => s < 11));
