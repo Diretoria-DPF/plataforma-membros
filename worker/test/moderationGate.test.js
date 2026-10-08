@@ -379,9 +379,10 @@ describe('moderação da Lia — estado da própria pessoa e resumo do admin', (
 
 // W4: dados por pessoa no resumo do admin (campos NOVOS; os antigos seguem iguais). Só admin chama.
 describe('moderação da Lia — resumo do admin: dados por pessoa (W4)', () => {
-  // Os 4 campos antigos (profileId, incidents, maxLevel, lastAt) + os 5 novos. Nada além disso sai.
+  // Os 4 campos antigos (profileId, incidents, maxLevel, lastAt) + os 4 novos. Nada além disso sai: sem nome
+  // de exibição (minimização, LGPD): o prefixo do profileId basta para a tela correlacionar a conta.
   const ALLOWED_KEYS = [
-    'currentLevel', 'displayName', 'incidents', 'lastAt', 'lastDetection', 'lastRedeemedAt', 'maxLevel', 'profileId', 'suspendedUntil',
+    'currentLevel', 'incidents', 'lastAt', 'lastDetection', 'lastRedeemedAt', 'maxLevel', 'profileId', 'suspendedUntil',
   ];
   const daysAgo = (days) => `now() - interval '${days} days'`;
   const addIncident = (profileId, detection, levelAfter, days) => db.query(
@@ -391,12 +392,13 @@ describe('moderação da Lia — resumo do admin: dados por pessoa (W4)', () => 
   const summaryOf = (input, now) => Gate.adminAssistantModeration(sql, ADMIN, input || { limit: 10 }, now);
   const personOf = async (profileId) => (await summaryOf()).people.find((p) => p.profileId === profileId);
 
-  test('traz nível atual, fim da suspensão, última detecção, última redenção e o nome do perfil', async () => {
+  test('traz nível atual, fim da suspensão, última detecção e última redenção (e nenhum nome)', async () => {
     await suspendNow();
     const person = await personOf(ME);
     expect(person).toMatchObject({
-      profileId: ME, incidents: 3, maxLevel: 3, currentLevel: 3, lastDetection: 'terms', lastRedeemedAt: null, displayName: 'Maria Souza',
+      profileId: ME, incidents: 3, maxLevel: 3, currentLevel: 3, lastDetection: 'terms', lastRedeemedAt: null,
     });
+    expect(person).not.toHaveProperty('displayName');
     const until = new Date(person.suspendedUntil).getTime();
     expect(until).toBeGreaterThan(Date.now() + 23 * HOUR);
     expect(until).toBeLessThanOrEqual(Date.now() + 24 * HOUR);
@@ -447,6 +449,32 @@ describe('moderação da Lia — resumo do admin: dados por pessoa (W4)', () => 
     expect(text).not.toMatch(/[0-9a-f]{64}/); // nenhum hash SHA-256
   });
 
+  // Minimização (LGPD): a tela é só de leitura. Nada que identifique a pessoa além do id vai ao front.
+  test('nenhum nome, apelido, e-mail, telefone nem hash é devolvido; todo valor de pessoa tem formato fechado', async () => {
+    await suspendNow();
+    await ModerationService.redeemAssistant(sql, env, MEMBER, { message: SINCERE }, CID, new Date());
+    await addIncident(ME, 'llm', 1, 1);
+    const summary = await summaryOf();
+    expect(summary.people.length).toBeGreaterThan(0);
+
+    const text = JSON.stringify(summary);
+    expect(text).not.toMatch(/Maria|Souza|"maria"|maria@|exemplo\.com|11999990000|Ana Admin|ana@/i);
+    expect(text).not.toMatch(/displayName|full_name|username|email|phone|password|hash/i);
+    expect(text).not.toMatch(/[0-9a-f]{64}/);
+
+    const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+    const asText = (value) => (value instanceof Date ? value.toISOString() : value);
+    summary.people.forEach((person) => {
+      expect(person.profileId).toMatch(UUID);
+      ['incidents', 'maxLevel', 'currentLevel'].forEach((key) => expect(typeof person[key]).toBe('number'));
+      ['lastAt', 'suspendedUntil', 'lastRedeemedAt'].forEach((key) => {
+        if (person[key] !== null) expect(asText(person[key])).toMatch(ISO);
+      });
+      expect([null, 'terms', 'llm']).toContain(person.lastDetection);
+    });
+  });
+
   test('só admin: membro, visitante e conta sem sessão são recusados, com os campos novos ou não', async () => {
     await suspendNow();
     await expect(Gate.adminAssistantModeration(sql, MEMBER, { limit: 10 })).rejects.toMatchObject({ name: 'ForbiddenError' });
@@ -479,7 +507,8 @@ describe('moderação da Lia — resumo do admin: dados por pessoa (W4)', () => 
 
     test('limite menor devolve só tantos, os mais recentes primeiro, já com os campos novos', async () => {
       const { people } = await summaryOf({ limit: 2 });
-      expect(people.map((p) => p.displayName)).toEqual(['Pessoa 1', 'Pessoa 2']);
+      const idOf = async (username) => (await db.query('SELECT id FROM profiles WHERE username = $1', [username])).rows[0].id;
+      expect(people.map((p) => p.profileId)).toEqual([await idOf('bulk1'), await idOf('bulk2')]);
       people.forEach((p) => expect(p).toMatchObject({ currentLevel: 0, suspendedUntil: null, lastDetection: 'terms' }));
     });
   });

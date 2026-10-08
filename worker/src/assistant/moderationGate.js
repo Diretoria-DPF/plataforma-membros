@@ -214,9 +214,10 @@ const DETECTIONS = Object.freeze(['terms', 'llm']);
 const isoOrNull = (value) => (value ? new Date(value).toISOString() : null);
 
 /**
- * Uma pessoa do resumo. Os 4 primeiros campos são os de sempre; os 5 últimos são novos (retrocompatível).
+ * Uma pessoa do resumo. Os 4 primeiros campos são os de sempre; os 4 últimos são novos (retrocompatível).
  * O nível atual já traz o decaimento devido (cálculo puro, sem gravar), e a suspensão só aparece se ainda vale.
- * Só tipo de detecção (nunca texto), nome do perfil e datas: sem e-mail, telefone, hash nem mensagem.
+ * Minimização (LGPD): só identificador, níveis, tipo de detecção (nunca texto) e datas. Nem nome, nem e-mail,
+ * telefone, hash ou mensagem: a tela é de leitura e o prefixo do identificador basta para correlacionar.
  */
 function personSummary(row, at) {
   const state = Rules.decay(row, at);
@@ -229,7 +230,6 @@ function personSummary(row, at) {
     suspendedUntil: Rules.isSuspended(state, at) ? state.until.toISOString() : null,
     lastDetection: DETECTIONS.indexOf(row.last_detection) === -1 ? null : row.last_detection,
     lastRedeemedAt: isoOrNull(row.redeemed_at),
-    displayName: row.full_name || null,
   };
 }
 
@@ -246,10 +246,9 @@ async function incidentPeople(sql, limit, at) {
       LIMIT ${limit}
     )
     SELECT page.profile_id, page.incidents, page.max_level, page.last_at, page.last_detection,
-           m.level, m.until, m.last_incident_at, m.last_decay_at, m.redeemed_at, p.full_name
+           m.level, m.until, m.last_incident_at, m.last_decay_at, m.redeemed_at
     FROM page
     LEFT JOIN assistant_moderation m ON m.profile_id = page.profile_id
-    LEFT JOIN profiles p ON p.id = page.profile_id
     ORDER BY page.last_at DESC, page.profile_id`;
   return rows.map((row) => personSummary(row, at));
 }
