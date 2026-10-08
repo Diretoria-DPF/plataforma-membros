@@ -28,7 +28,7 @@ import * as Groq from '../ai/groqClient.js';
 import * as Orchestrator from '../ai/orchestrator.js';
 import * as EventService from './eventService.js';
 import { isEnabled } from './featureFlagService.js';
-import { asObject, withQuota, refundQuota, quotaLimit } from './aiService.js';
+import { asObject, withQuota, refundQuota, quotaLimit, getMyQuota } from './aiService.js';
 import { AiInvalidOutputError, AI_MESSAGES } from '../ai/errors.js';
 import { buildAssistantMessages } from '../ai/prompts.js';
 import { cleanText, cleanReply, sanitizeHistory } from '../ai/validators.js';
@@ -45,6 +45,7 @@ const HISTORY_TURNS = 5;
 const EVENTS_SHOWN = 3;
 const EVENT_TITLE_MAX = 80;
 const EVENT_PLACE_MAX = 60;
+const RETRIEVAL_QUERY_MAX = 300; // mesmo teto de ragService (QUERY_MAX); a pergunta atual cabe inteira
 
 const MSG_DISABLED = 'A Lia está indisponível no momento. Tente novamente mais tarde.';
 const MSG_REFUSAL = 'Não posso seguir esse tipo de instrução, mas posso te ajudar a usar a plataforma: eventos, módulos de estudo, seu crachá e seu perfil.';
@@ -53,6 +54,7 @@ const MSG_AI_DOWN = 'A IA está indisponível agora, então respondo só com o q
 const MSG_QUOTA = 'Você atingiu o limite diário de perguntas que usam IA; ele volta amanhã. Enquanto isso, posso te ajudar com eventos, módulos de estudo, seu crachá e seu perfil.';
 const MSG_KB_FAILED = 'Não consegui consultar a base de conhecimento agora, então não tenho como responder a isso com segurança. ';
 const MSG_KB_EMPTY = 'Não encontrei essa informação na base de conhecimento da plataforma, então prefiro não chutar. ';
+const MSG_KB_NO_REPLY = 'Não consegui montar uma resposta a partir da base agora, então prefiro não chutar. ';
 const MSG_KB_HELP = 'Posso te ajudar com eventos, módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), seu crachá e seu perfil.';
 
 // Tentativas de dar ordens à IA ou de embutir marcação. Textos normalizados (sem acento, minúsculos).
@@ -64,6 +66,11 @@ const INJECTION_TEXT = [
 ];
 // Marcação testada no texto original: tags, delimitadores de chat e pseudo-instruções.
 const INJECTION_MARKUP = /<\s*\/?\s*(system|script|iframe|img|svg)\b|<\|im_|\[\[?\s*\/?\s*inst\b|\bsystem\s*:/i;
+
+// Recusa: a IA disse que não tem a informação na base. Texto normalizado (normalize() de kb.js).
+const REFUSAL_TEXT = [/\bnao tenho (a |essa |esta )?informacao\b/, /\bnao encontrei\b/];
+// Citação no texto da IA: "[n]", n é o número do trecho enviado no prompt (1 a 99).
+const CITATION = /\s*\[(\d{1,2})\]/g;
 
 // Caracteres invisíveis (largura zero, marcas de direção) usados para quebrar palavras-chave.
 const INVISIBLE = /[\u200B-\u200F\u2060\u202A-\u202E\uFEFF\u00AD]/g;
@@ -143,7 +150,10 @@ async function enforceChatLimit(sql, env, identity) {
   return S.enforceRateLimit(sql, 'ASSISTANT_CHAT_IP', env.clientIp || 'unknown', l.MAX_ATTEMPTS, l.WINDOW_SECONDS);
 }
 
-/** Pergunta sem intenção: IA para quem pode usar; senão, a base fixa. */
+/**
+ * Pergunta sem intenção: IA para quem pode usar; senão, a base fixa. Com trechos (`context`), uma saída
+ * vazia da IA devolve null: quem chama responde pela base estática (answerFromKnowledge).
+ */
 async function askAi(sql, env, identity, message, history, context = null) {
   const role = identity ? identity.role : null;
   if (!canUseAi(identity, env)) return answer({ reply: MSG_FALLBACK, source: 'fallback' });
@@ -174,13 +184,38 @@ async function askAi(sql, env, identity, message, history, context = null) {
     });
   } catch (err) {
     // IA fora, orçamento do dia ou resposta vazia: a Lia continua útil com a base fixa.
-    if (err && (err.aiUnavailable || err.aiInvalidOutput || err.name === 'AiInvalidOutputError')) {
-      return answer({ reply: MSG_AI_DOWN, source: 'fallback' });
-    }
+    if (isEmptyOutput(err) && context) return null;
+    if (err && (err.aiUnavailable || isEmptyOutput(err))) return answer({ reply: MSG_AI_DOWN, source: 'fallback' });
     throw err;
   }
   if (outcome && outcome.quotaExceeded) return answer({ reply: MSG_QUOTA, source: 'fallback', quotaExceeded: true });
   return outcome;
+}
+
+function isEmptyOutput(err) {
+  return !!err && (!!err.aiInvalidOutput || err.name === 'AiInvalidOutputError');
+}
+
+/** Resposta que não veio da IA sai sempre marcada como degradada. */
+function asDegradedIfNotAi(result) {
+  return result.source === 'ai' ? result : Object.assign({}, result, { degraded: true });
+}
+
+/** Cota da Lia ainda livre para a pessoa? Só lê: não consome cota nem chama a IA. */
+async function hasAiQuota(sql, env, identity) {
+  const { quotas } = await getMyQuota(sql, env, identity);
+  return quotas.assistant.remaining > 0;
+}
+
+/**
+ * Consulta da busca: a pergunta atual vem primeiro (o ragService corta no fim, então ela nunca some) e
+ * depois a última pergunta da própria pessoa, para que "e no sábado?" ache o assunto anterior.
+ */
+function retrievalQuery(message, history) {
+  const current = message.slice(0, RETRIEVAL_QUERY_MAX);
+  const previous = history.filter((t) => t.role === 'user').pop();
+  const room = RETRIEVAL_QUERY_MAX - current.length - 1;
+  return previous && room > 0 ? current + ' ' + previous.text.slice(0, room) : current;
 }
 
 /** Pode usar a IA nesta pergunta: pessoa logada, com cota no papel e chave configurada. */
@@ -189,45 +224,70 @@ function canUseAi(identity, env) {
 }
 
 /** Busca os trechos do acervo. Nunca lança: falha vira { failed: true }. Trecho com cara de instrução sai. */
-async function retrieveContext(sql, env, message, correlationId) {
+async function retrieveContext(sql, env, query, correlationId) {
   let found;
   try {
-    found = (await Rag.retrieve(sql, env, message)).chunks;
+    found = await Rag.retrieve(sql, env, query);
   } catch (err) {
     await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_FAILED', String((err && err.message) || err), null);
-    return { chunks: [], failed: true };
+    return { chunks: [], failed: true, degraded: false };
   }
-  const chunks = found.filter((c) => !looksLikeInjection(c.content));
-  if (chunks.length < found.length) {
-    await Logging.logAudit(sql, correlationId, null, 'ASSISTANT_RAG_CHUNK_SUPPRESSED', 'assistant', null, 'failure', { dropped: found.length - chunks.length });
+  // Embedding caiu: a busca seguiu só com trigramas. Registra o fato, sem a pergunta nem o trecho.
+  const degraded = !!found.embeddingError;
+  if (degraded) await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_EMBEDDING_FAILED', 'Embedding indisponível: busca só por trigramas.', null);
+  const chunks = found.chunks.filter((c) => !looksLikeInjection(c.content));
+  if (chunks.length < found.chunks.length) {
+    await Logging.logAudit(sql, correlationId, null, 'ASSISTANT_RAG_CHUNK_SUPPRESSED', 'assistant', null, 'failure', { dropped: found.chunks.length - chunks.length });
   }
   const trimmed = chunks.map((c) => ({ source: c.source, section: c.section, content: String(c.content).slice(0, C.RAG.CONTEXT_CHARS) }));
-  return { chunks: trimmed, failed: false };
+  return { chunks: trimmed, failed: false, degraded };
 }
 
 /** Último degrau da cadeia: a base estática (kb.js) responde com honestidade que não tem essa informação agora. */
-function staticKbFallback(failed) {
-  const lead = failed ? MSG_KB_FAILED : MSG_KB_EMPTY;
+function staticKbFallback(lead) {
   return answer({ reply: lead + MSG_KB_HELP, source: 'kb', degraded: true });
 }
 
-/** Cita as seções usadas no próprio texto e devolve `sources` (só origem e seção, nunca o conteúdo). */
-function withCitations(result, chunks) {
-  const sections = Array.from(new Set(chunks.map((c) => c.section)));
-  const unique = new Map(chunks.map((c) => [c.source + '|' + c.section, { source: c.source, section: c.section }]));
-  return Object.assign({}, result, {
-    reply: result.reply + '\n\nFontes: ' + sections.join('; ') + '.',
-    sources: Array.from(unique.values()),
-  });
+function isRefusal(reply) {
+  const text = normalize(reply);
+  return REFUSAL_TEXT.some((re) => re.test(text));
 }
 
-/** Trechos viram DADO para a IA. Sem trechos, a base estática responde; a IA indisponível também marca degradado. */
+/** Números [n] da resposta que apontam para trechos existentes, sem repetir e em ordem crescente. */
+function citedNumbers(reply, count) {
+  const numbers = Array.from(reply.matchAll(CITATION), (m) => Number(m[1]));
+  return Array.from(new Set(numbers)).filter((n) => n >= 1 && n <= count).sort((a, b) => a - b);
+}
+
+/**
+ * Cita só os trechos que a IA usou ("[n]" no texto): o texto mostra "(Fonte: seção X)" no fim, e
+ * `sources` leva só origem e seção (nunca o conteúdo). Recusa não cita fonte. Sem [n] e sem recusa,
+ * cita o trecho de maior score (o primeiro, pois a busca já devolve ordenado).
+ */
+function withCitations(result, chunks) {
+  const body = result.reply.replace(CITATION, '').trim();
+  if (isRefusal(result.reply)) return Object.assign({}, result, { reply: body, sources: [] });
+  const numbers = citedNumbers(result.reply, chunks.length);
+  const used = numbers.length ? numbers.map((n) => chunks[n - 1]) : chunks.slice(0, 1);
+  const sections = Array.from(new Set(used.map((c) => c.section)));
+  const sources = Array.from(new Map(used.map((c) => [c.source + '|' + c.section, { source: c.source, section: c.section }])).values());
+  const label = sections.length > 1 ? 'Fontes' : 'Fonte';
+  const note = '(' + label + ': ' + sections.map((s) => 'seção ' + s).join('; ') + ')';
+  return Object.assign({}, result, { reply: (body ? body + '\n\n' : '') + note, sources });
+}
+
+/**
+ * Trechos viram DADO para a IA. A cota é conferida ANTES da busca (sem cota não há embedding nem consulta).
+ * Sem trechos, ou com saída vazia da IA, a base estática responde; IA fora ou cota do dia dão resposta fixa.
+ */
 async function answerFromKnowledge(sql, env, identity, message, history, correlationId) {
-  const { chunks, failed } = await retrieveContext(sql, env, message, correlationId);
-  if (!chunks.length) return staticKbFallback(failed);
-  const result = await askAi(sql, env, identity, message, history, chunks);
-  if (result.source === 'ai') return withCitations(result, chunks);
-  return Object.assign({}, result, { degraded: true });
+  if (!(await hasAiQuota(sql, env, identity))) return asDegradedIfNotAi(await askAi(sql, env, identity, message, history));
+  const found = await retrieveContext(sql, env, retrievalQuery(message, history), correlationId);
+  if (!found.chunks.length) return staticKbFallback(found.failed ? MSG_KB_FAILED : MSG_KB_EMPTY);
+  const result = await askAi(sql, env, identity, message, history, found.chunks);
+  if (result === null) return staticKbFallback(MSG_KB_NO_REPLY);
+  const out = result.source === 'ai' ? withCitations(result, found.chunks) : asDegradedIfNotAi(result);
+  return found.degraded ? Object.assign({}, out, { degraded: true }) : out;
 }
 
 /**
@@ -290,7 +350,7 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
       const live = await liveEventsReply(sql, env, identity, correlationId);
       if (live) return fromIntent(hit, role, live, 'live');
     }
-    return fromIntent(hit, role, hit.intent.reply, 'kb');
+    return recordAnswer(sql, identity, message, fromIntent(hit, role, hit.intent.reply, 'kb'), correlationId);
   }
   return askWithKnowledge(sql, env, identity, message, history, correlationId);
 }

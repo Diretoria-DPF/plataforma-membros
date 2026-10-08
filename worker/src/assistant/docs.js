@@ -38,7 +38,7 @@ const GUIDE_MARKDOWN = [
     markdown: [
       '# Privacidade da Lia',
       '## O que a Lia guarda',
-      'Para quem está logado, a Lia guarda a resposta dada, o tema e um código irreversível da pergunta, nunca o texto da pergunta. O prompt enviado à IA não leva nome, e-mail nem outros dados pessoais.',
+      'Para quem está logado, a Lia guarda a resposta dada, a origem dela (regra, base de conhecimento, IA ou resposta fixa) e um código irreversível da pergunta, nunca o texto da pergunta. Esses registros saem após 180 dias. Respostas com dados do momento (eventos abertos) e recusas não são guardadas. O prompt enviado à IA não leva nome, e-mail nem outros dados pessoais.',
       '## Feedback sobre as respostas',
       'Você pode marcar uma resposta como útil ou não útil e deixar um comentário. Após 90 dias o comentário é anonimizado (o texto é apagado) e, após 12 meses, o registro é removido. Ao excluir a conta, o feedback e o histórico de respostas saem junto.',
     ].join('\n'),
