@@ -176,3 +176,12 @@
 @media (prefers-reduced-motion: reduce) {
   .lia-svg, .lia-svg * { animation: none !important; }
 }
+
+/* Suspensa (moderação, ADR 0004): esmaecida. O estado vem do rótulo ARIA e do texto do painel, nunca só da cor. */
+.lia[data-state="suspended"] {
+  opacity: .55;
+  transition: opacity var(--dur-base, 280ms) var(--ease-out, ease-out), transform var(--dur-base, 280ms) var(--ease-out, ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lia[data-state="suspended"] { transition: none; }
+}

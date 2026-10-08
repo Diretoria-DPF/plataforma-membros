@@ -41,6 +41,191 @@ function liaReply(args) {
   return { success: true, source: 'fallback', reply: 'Ainda não sei responder isso.', actions: [], suggestions: [] };
 }
 
+// ---- Moderação (ADR 0004): aviso, suspensão, redenção e consulta ao abrir ----
+const WARN_TEXT = { 1: 'Isso não é permitido. Vamos manter o respeito.', 2: 'Se continuar, vou precisar me retirar.' };
+const inADay = () => new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+function warnReply(args) {
+  const level = /\[aviso2\]/.test(String(args[1].message)) ? 2 : 1;
+  return { success: true, source: 'moderation', reply: WARN_TEXT[level], message: WARN_TEXT[level], actions: [], suggestions: [], moderation: { level, suspended: false, until: null } };
+}
+
+function suspendedReply() {
+  const text = 'Chat suspenso por mensagens ofensivas repetidas.';
+  return { success: true, source: 'moderation', reply: text, message: text, actions: [], suggestions: [], moderation: { level: 3, suspended: true, until: inADay() } };
+}
+
+/** Faz login, abre a Lia e, se houver mensagem, envia. Devolve a página. */
+async function openLia(app, message) {
+  await app.login();
+  const page = app.page;
+  await page.waitForSelector('#lia-launcher:not(.hidden)');
+  await page.click('#lia-launcher');
+  if (message) {
+    await page.fill('#lia-input', message);
+    await page.press('#lia-input', 'Enter');
+  }
+  return page;
+}
+
+async function moderacao() {
+  // ---- Aviso nível 1 e 2: faixa com ícone e texto, Lia em alerta, chat continua ----
+  const warn = await startApp({ role: 'member', workerHandlers: { apiGetFeatureFlags: FLAGS_ON, apiAssistantChat: warnReply } });
+  try {
+    const page = await openLia(warn, '[aviso1] oi');
+    await page.waitForSelector('#lia-log .lia-warning-1');
+    check(/Aviso 1 de 3/.test(await page.textContent('#lia-log .lia-warning-1')), 'o nível 1 mostra a faixa "Aviso 1 de 3" (texto, não só cor)');
+    check(await page.getAttribute('#lia-log .lia-warning-1', 'role') === 'status', 'a faixa de aviso tem papel de status');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está atenta"]');
+    check(await page.isEnabled('#lia-input'), 'com aviso, o chat continua disponível');
+    await page.fill('#lia-input', '[aviso2] oi');
+    await page.press('#lia-input', 'Enter');
+    await page.waitForSelector('#lia-log .lia-warning-2');
+    check(/Aviso 2 de 3/.test(await page.textContent('#lia-log .lia-warning-2')), 'o nível 2 mostra a faixa "Aviso 2 de 3"');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia emitiu um alerta"]');
+    check(await page.locator('#lia-redeem.hidden').count() === 1, 'sem suspensão, o pedido de redenção continua escondido');
+    check(warn.errors.length === 0, 'sem erros de página nos avisos (' + warn.errors.join('; ') + ')');
+  } finally {
+    await warn.close();
+  }
+
+  // ---- Suspensão + redenção aceita: campo travado, pedido, campo liberado ----
+  const redeemed = [];
+  const sus = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetFeatureFlags: FLAGS_ON,
+      apiAssistantChat: suspendedReply,
+      apiAssistantRedeem: (args) => {
+        redeemed.push(args);
+        return { success: true, accepted: true, level: 0, message: 'Redenção aceita.' };
+      },
+    },
+  });
+  try {
+    const page = await openLia(sus, '[suspende] oi');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    check(await page.isDisabled('#lia-input'), 'com o chat suspenso, o campo de pergunta fica desabilitado');
+    check(await page.isVisible('#lia-redeem'), 'a suspensão mostra o pedido de redenção');
+    check(/\d{2}\/\d{2} às \d{2}:\d{2} \(horário de Brasília\)/.test(await page.textContent('.lia-redeem-return')), 'a suspensão informa o horário de retorno em Brasília');
+    check(await page.evaluate(() => document.activeElement.classList.contains('lia-redeem-open')), 'ao suspender, o foco vai para "Pedir redenção"');
+    await page.click('.lia-redeem-open');
+    check(await page.evaluate(() => document.activeElement.id) === 'lia-redeem-text', 'ao abrir o formulário, o foco vai para o campo da explicação');
+    await page.fill('#lia-redeem-text', 'a'.repeat(39));
+    check(await page.isDisabled('.lia-redeem-send'), 'com 39 caracteres, o Enviar fica desabilitado');
+    await page.fill('#lia-redeem-text', 'Errei ao xingar a colega. Vou responder com respeito daqui em diante.');
+    check(await page.isEnabled('.lia-redeem-send'), 'com 40 a 600 caracteres, o Enviar é liberado');
+    await page.click('.lia-redeem-send');
+    await page.waitForSelector('#lia-redeem.hidden', { state: 'attached' });
+    check(redeemed.length === 1 && redeemed[0][0] === 'e2e-session-token' && /Errei ao xingar/.test(redeemed[0][1].message), 'a redenção vai com a sessão da pessoa e com a explicação');
+    check(await page.isEnabled('#lia-input'), 'redenção aceita: o campo de pergunta volta');
+    check(await page.evaluate(() => document.activeElement.id) === 'lia-input', 'ao aceitar, o foco vai para a pergunta');
+    check(await page.locator('#lia-panel .lia[aria-label="Lia"]').count() === 1, 'a Lia volta ao repouso depois da redenção');
+    check(/O chat voltou ao normal/.test(await page.textContent('#lia-log')), 'a Lia dá as boas-vindas de volta');
+    check(sus.errors.length === 0, 'sem erros de página na redenção (' + sus.errors.join('; ') + ')');
+  } finally {
+    await sus.close();
+  }
+
+  // ---- Redenção recusada: mensagem, contador e nada reenviado sozinho ----
+  const refusedCalls = [];
+  const refusal = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetFeatureFlags: FLAGS_ON,
+      apiAssistantChat: suspendedReply,
+      apiAssistantRedeem: (args) => {
+        refusedCalls.push(args);
+        return { success: true, accepted: false, level: 3, retryAfterSeconds: 3, message: 'Não consegui perceber sinceridade no seu texto. Tente de novo em instantes.' };
+      },
+    },
+  });
+  try {
+    const page = await openLia(refusal, '[suspende] oi');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    await page.click('.lia-redeem-open');
+    await page.fill('#lia-redeem-text', 'Peço desculpas e vou manter o respeito com a equipe.');
+    await page.click('.lia-redeem-send');
+    await page.waitForSelector('.lia-redeem-timer:has-text("Você poderá tentar de novo em")');
+    check(/Não consegui perceber sinceridade/.test(await page.textContent('.lia-redeem-status')), 'a recusa mostra a mensagem num aviso de status');
+    check(/em \d+ s\./.test(await page.textContent('.lia-redeem-timer')), 'a recusa mostra o contador até a nova tentativa');
+    check(await page.isDisabled('.lia-redeem-send'), 'durante a espera, o Enviar fica desabilitado');
+    await page.waitForSelector('.lia-redeem-send:not([disabled])', { timeout: 10000 });
+    check(refusedCalls.length === 1, 'o contador acaba e nada é reenviado sozinho (sem polling)');
+    check(await page.isDisabled('#lia-input'), 'recusada, o chat segue suspenso');
+    check(refusal.errors.length === 0, 'sem erros de página na recusa (' + refusal.errors.join('; ') + ')');
+  } finally {
+    await refusal.close();
+  }
+
+  // ---- Consulta ao abrir: restaura a suspensão; uma vez por página; sair da conta limpa tudo ----
+  const stateCalls = [];
+  const restore = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetFeatureFlags: FLAGS_ON,
+      apiAssistantModerationState: (args) => {
+        stateCalls.push(args[0]);
+        return { success: true, moderated: true, level: 3, suspended: true, until: inADay(), canRedeem: true, retryAfterSeconds: 0 };
+      },
+    },
+  });
+  try {
+    await restore.login();
+    const page = restore.page;
+    await page.waitForSelector('#lia-launcher:not(.hidden)');
+    check(stateCalls.length === 0, 'a página não consulta a moderação antes de abrir a Lia');
+    await page.click('#lia-launcher');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    check(stateCalls.length === 1 && stateCalls[0] === 'e2e-session-token', 'ao abrir a Lia, a suspensão é consultada uma vez, com a sessão da pessoa');
+    check(await page.isDisabled('#lia-input'), 'após recarregar a página, a suspensão volta a valer na tela');
+    await page.keyboard.press('Escape');
+    await page.click('#lia-launcher');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    check(stateCalls.length === 1, 'reabrir o painel não consulta de novo nesta página');
+    await page.click('#btn-logout');
+    await page.waitForSelector('#public-shell:not(.hidden)');
+    check(await page.locator('#lia-redeem.hidden').count() === 1, 'sair da conta esconde o bloco de suspensão');
+    check(restore.errors.length === 0, 'sem erros de página na restauração (' + restore.errors.join('; ') + ')');
+  } finally {
+    await restore.close();
+  }
+
+  // ---- Falha ao consultar não trava o chat (falha aberta) ----
+  const open = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetFeatureFlags: FLAGS_ON,
+      apiAssistantModerationState: () => ({ success: false, message: 'Sistema indisponível.' }),
+      apiAssistantChat: () => ({ success: true, source: 'fallback', reply: 'Ainda não sei responder isso.', actions: [], suggestions: [] }),
+    },
+  });
+  try {
+    const page = await openLia(open, 'oi');
+    await page.waitForSelector('#lia-log .lia-bubble:has-text("Ainda não sei responder")');
+    check(await page.isEnabled('#lia-input') && await page.locator('#lia-redeem.hidden').count() === 1, 'se a consulta falha, o chat segue normal');
+    check(open.calls.worker.filter((c) => c.action === 'apiAssistantModerationState').length === 1, 'a consulta foi feita uma vez, mesmo com falha');
+  } finally {
+    await open.close();
+  }
+
+  // ---- Visitante não consulta a moderação ----
+  const guest = await startApp({
+    role: 'visitor',
+    workerHandlers: {
+      apiGetFeatureFlags: FLAGS_ON,
+      apiAssistantChat: () => ({ success: true, source: 'fallback', reply: 'Ainda não sei responder isso.', actions: [], suggestions: [] }),
+    },
+  });
+  try {
+    const page = await openLia(guest, 'oi');
+    await page.waitForSelector('#lia-log .lia-bubble:has-text("Ainda não sei responder")');
+    check(guest.calls.worker.every((c) => c.action !== 'apiAssistantModerationState'), 'visitante não consulta a moderação');
+  } finally {
+    await guest.close();
+  }
+}
+
 module.exports = async function assistant() {
   // ---- Flag desligada (padrão): a Lia não existe na tela ----
   const off = await startApp({ role: 'member' });
@@ -228,4 +413,6 @@ module.exports = async function assistant() {
   } finally {
     await fb.close();
   }
+
+  await moderacao();
 };
