@@ -71,6 +71,9 @@ a { color: var(--primary-strong); }
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+  /* Zera o padding e a altura mínima que input/select/button herdam das regras globais
+     (sem isso, um input escondido mede 30x44 e vira falso alvo de toque). */
+  padding: 0; border: 0; min-height: 0;
 }
 
 /* Folhas decorativas: fixas atrás de TODA a plataforma (tela pública e app

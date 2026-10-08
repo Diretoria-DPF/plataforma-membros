@@ -51,6 +51,11 @@
 .lia-svg .sh { fill: var(--lia-shadow, #1a2b28); opacity: .2; }
 .lia-svg .bl { fill: var(--lia-blush, #e8806b); opacity: .4; }
 .lia-svg .gl { fill: var(--lia-glow, #0f6f62); opacity: .16; }
+/* Classes dos props (lia-props.svg, README "Classes novas"): só tokens da paleta, sem cor nova. */
+.lia-svg .ln { fill: none; stroke: var(--lia-accent); }
+.lia-svg .al { fill: var(--lia-alert, var(--laift-danger)); }
+.lia-svg .gi { fill: var(--lia-alert-ink, var(--laift-on-danger)); }
+.lia-svg .vu { fill: var(--lia-shadow); }
 
 /* Geometria. A cabeca tem 118 unidades de altura (topo do cabelo ate a base) com escala 1.
    --_hb = base da cabeca (y); --_dy = deslocamento do tronco e dos bracos. */

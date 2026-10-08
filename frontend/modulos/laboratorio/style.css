@@ -1600,6 +1600,12 @@ canvas {
 .lab-chat-msg { white-space: pre-wrap; overflow-wrap: anywhere; }
 .lab-chat-msg.is-error { border-left-color: var(--laift-danger); }
 .lab-chat-msg.is-typing { opacity: 0.75; font-style: italic; }
+/* Aviso de resposta degradada (preceptor sem IA): texto em --laift-text sobre fundo de aviso (>= 4,5:1 nos
+   dois temas) e uma borda lateral, para não depender só da cor. */
+.lab-chat-aviso {
+  padding: 6px 10px; border-radius: 6px; border-left: 3px solid var(--laift-warning);
+  background: var(--laift-warning-soft); color: var(--laift-text); font-size: 0.72rem; line-height: 1.45;
+}
 .chat-error-detail { font-size: 0.72rem; color: var(--laift-danger); }
 .chat-status-badge[data-state="busy"] { border-color: #38bdf8; color: #38bdf8; }
 .chat-status-badge[data-state="online"] { border-color: #00ff88; color: #4ade80; }
