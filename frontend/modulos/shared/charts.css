@@ -16,9 +16,10 @@
   line-height: 1.4;
 }
 
+/* Tamanho em px vem do atributo width (= viewBox): sem width:100%, o SVG não é esticado. */
 .laift-chart__svg {
   display: block;
-  width: 100%;
+  max-width: 100%;
   height: auto;
   overflow: visible;
 }
@@ -90,6 +91,22 @@
 
 .laift-chart__dot {
   fill: currentColor;
+}
+
+/* Pontos intermediários da linha ficam ocultos; aparecem no hover e no foco do teclado. */
+.laift-chart__dot--quiet {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .laift-chart__item:hover .laift-chart__dot--quiet {
+    opacity: 1;
+  }
+}
+
+.laift-chart__item:focus-visible .laift-chart__dot--quiet {
+  opacity: 1;
 }
 
 .laift-chart__track {
@@ -166,6 +183,12 @@
   font-size: 12px;
 }
 
+.laift-chart__axis-label {
+  fill: var(--laift-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
 .laift-chart__center-value {
   fill: var(--laift-text);
   font-size: 22px;
@@ -174,7 +197,7 @@
 
 .laift-chart__empty {
   fill: var(--laift-muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 /* Pulso do sparkline "live": só opacidade, em loop. */

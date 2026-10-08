@@ -24,6 +24,9 @@
   var PAD = 36;
   var DOT_R = 4;
   var DOT_HIT_R = 22;
+  // Margem à esquerda da linha/área para os rótulos do eixo Y.
+  var GUTTER = 36;
+  var RESIZE_DEBOUNCE_MS = 120;
   var uid = 0;
 
   var DEFAULTS = {
@@ -95,8 +98,10 @@
   function frame(doc, ctx, spec) {
     var titleId = nextId('laift-chart-title');
     var descId = nextId('laift-chart-desc');
+    // width em px = viewBox: 1 unidade do SVG é 1 px. Sem isso a fonte cresce com o contêiner.
     var svg = svgNode(doc, 'svg', {
       class: 'laift-chart__svg',
+      width: spec.width,
       viewBox: '0 0 ' + spec.width + ' ' + spec.height,
       role: 'img',
       'aria-labelledby': titleId + ' ' + descId
@@ -113,12 +118,14 @@
     return appendAll(parts.wrap, [parts.svg].concat(extras || []));
   }
 
+  /** Sem dados: aviso discreto de altura fixa (EMPTY_HEIGHT), nunca o bloco inteiro do gráfico. */
   function emptyParts(doc, ctx, kind, width, height, title) {
+    var h = Math.min(height, EMPTY_HEIGHT);
     var parts = frame(doc, ctx, {
-      kind: kind, width: width, height: height, title: title,
+      kind: kind, width: width, height: h, title: title,
       description: core.EMPTY_LABEL + '.', empty: true
     });
-    appendAll(parts.svg, [svgText(doc, 'laift-chart__empty', width / 2, height / 2, 'middle', core.EMPTY_LABEL)]);
+    appendAll(parts.svg, [svgText(doc, 'laift-chart__empty', width / 2, h / 2 + 4, 'middle', core.EMPTY_LABEL)]);
     return finish(parts, []);
   }
 
@@ -231,11 +238,21 @@
 
   // ---------- Montagem e ciclo de vida ----------
 
-  /** Liga o render ao container e devolve { el, update, destroy }. */
+  /** Largura do contêiner em px; sem medida (Node, painel oculto) usa a largura padrão. */
+  function measureWidth(container, fallback) {
+    var measured = container && container.clientWidth;
+    return measured > 0 ? Math.floor(measured) : fallback;
+  }
+
+  /**
+   * Liga o render ao container e devolve { el, update, destroy }. Com options.fluid,
+   * o gráfico é desenhado na largura real do contêiner e refeito (com debounce)
+   * quando ela muda, para o SVG nunca ser esticado.
+   */
   function mount(container, data, options, defaults, paint) {
     if (!container) throw new Error('LaiftCharts: container obrigatório');
     var opts = Object.assign({}, defaults, options || {});
-    var state = { node: null, handles: [] };
+    var state = { node: null, handles: [], data: data, timer: null, observer: null };
     var ctx = {
       options: opts,
       reduced: isReducedMotion(opts),
@@ -251,18 +268,44 @@
     function render(next) {
       cancelHandles();
       var doc = container.ownerDocument || root.document;
+      var width = opts.fluid ? measureWidth(container, opts.width) : opts.width;
+      ctx.options = Object.assign({}, opts, { width: width });
       var node = paint(doc, next, ctx);
       if (state.node) container.removeChild(state.node);
       container.appendChild(node);
       state.node = node;
+      state.data = next;
+    }
+
+    function refit() {
+      state.timer = null;
+      if (state.node && measureWidth(container, opts.width) !== ctx.options.width) render(state.data);
+    }
+
+    function onResize() {
+      if (state.timer !== null) root.clearTimeout(state.timer);
+      state.timer = root.setTimeout(refit, RESIZE_DEBOUNCE_MS);
+    }
+
+    function observe() {
+      var Observer = root.ResizeObserver;
+      if (!opts.fluid || typeof Observer !== 'function') return null;
+      var observer = new Observer(onResize);
+      observer.observe(container);
+      return observer;
     }
 
     render(data);
+    state.observer = observe();
 
     var api = {
       get el() { return state.node; },
       update: function (next) { render(next); return api; },
       destroy: function () {
+        if (state.observer) state.observer.disconnect();
+        if (state.timer !== null) root.clearTimeout(state.timer);
+        state.observer = null;
+        state.timer = null;
         cancelHandles();
         if (state.node) container.removeChild(state.node);
         state.node = null;
@@ -308,29 +351,37 @@
 
   // ---------- Linha e área ----------
 
-  function gridLines(doc, max, width, plotH) {
-    return core.ticks(max, 4).map(function (tick) {
+  /** Eixo Y com três marcas (0, metade e máximo): grade e rótulo na margem esquerda. */
+  function yAxis(doc, max, plotW, plotH) {
+    var nodes = [];
+    core.ticks(max, 2).forEach(function (tick) {
       var y = plotH - (tick / max) * plotH;
-      return svgNode(doc, 'line', { class: 'laift-chart__grid', x1: 0, x2: width, y1: y, y2: y });
+      nodes.push(svgNode(doc, 'line', { class: 'laift-chart__grid', x1: GUTTER, x2: GUTTER + plotW, y1: y, y2: y }));
+      nodes.push(svgNode(doc, 'text', {
+        class: 'laift-chart__axis-label', x: GUTTER - 6, y: y, 'text-anchor': 'end', 'dominant-baseline': 'middle'
+      }, core.formatNumber(tick)));
     });
+    return nodes;
   }
 
-  function pointItem(doc, label, point) {
+  /** Ponto da linha: marcador visível só no último; os demais aparecem no hover e no foco. */
+  function pointItem(doc, label, point, isLast) {
+    var dotClass = isLast ? 'laift-chart__dot' : 'laift-chart__dot laift-chart__dot--quiet';
     return item(doc, label, point.value, [
       svgNode(doc, 'circle', { class: 'laift-chart__hit', cx: point.x, cy: point.y, r: DOT_HIT_R }),
-      svgNode(doc, 'circle', { class: 'laift-chart__dot', 'data-series': 1, cx: point.x, cy: point.y, r: DOT_R }),
+      svgNode(doc, 'circle', { class: dotClass, 'data-series': 1, cx: point.x, cy: point.y, r: DOT_R }),
       svgNode(doc, 'text', { class: 'laift-chart__value', x: point.x, y: point.y - 12, 'text-anchor': 'middle' }, core.formatNumber(point.value))
     ]);
   }
 
   /** Rótulos só do primeiro e do último período (rótulos seletivos). */
-  function axisLabels(doc, rows, width, plotH) {
+  function axisLabels(doc, rows, startX, endX, plotH) {
     if (!rows.length) return [];
     var base = plotH + LABEL_BASELINE;
-    if (rows.length === 1) return [svgText(doc, 'laift-chart__label', width / 2, base, 'middle', rows[0].label)];
+    if (rows.length === 1) return [svgText(doc, 'laift-chart__label', (startX + endX) / 2, base, 'middle', rows[0].label)];
     return [
-      svgText(doc, 'laift-chart__label', 0, base, 'start', rows[0].label),
-      svgText(doc, 'laift-chart__label', width, base, 'end', rows[rows.length - 1].label)
+      svgText(doc, 'laift-chart__label', startX, base, 'start', rows[0].label),
+      svgText(doc, 'laift-chart__label', endX, base, 'end', rows[rows.length - 1].label)
     ];
   }
 
@@ -339,17 +390,19 @@
     var rows = core.normalizeRows(data);
     if (core.isEmpty(rows)) return emptyParts(doc, ctx, 'line', o.width, o.height, o.title);
     var plotH = o.height - o.labelHeight;
-    var model = core.lineModel(rows.map(function (row) { return row.value; }), { width: o.width, height: plotH });
+    var plotW = Math.max(1, o.width - GUTTER);
+    var model = core.lineModel(rows.map(function (row) { return row.value; }), { width: plotW, height: plotH });
     var parts = frame(doc, ctx, {
       kind: 'line', width: o.width, height: o.height, title: o.title,
       description: core.describeRows(rows, core.formatNumber)
     });
-    var nodes = gridLines(doc, model.max, o.width, plotH).concat([
+    var last = model.points.length - 1;
+    var plot = svgNode(doc, 'g', { transform: 'translate(' + GUTTER + ' 0)' });
+    appendAll(plot, [
       svgNode(doc, 'path', { class: 'laift-chart__area', 'data-series': 1, d: model.areaPath }),
       svgNode(doc, 'path', { class: 'laift-chart__line', 'data-series': 1, d: model.linePath, pathLength: '1' })
-    ]);
-    nodes = nodes.concat(model.points.map(function (p, i) { return pointItem(doc, rows[i].label, p); }));
-    appendAll(parts.svg, nodes.concat(axisLabels(doc, rows, o.width, plotH)));
+    ].concat(model.points.map(function (p, i) { return pointItem(doc, rows[i].label, p, i === last); })));
+    appendAll(parts.svg, yAxis(doc, model.max, plotW, plotH).concat([plot], axisLabels(doc, rows, GUTTER, o.width, plotH)));
     return finish(parts, [toTable(rows, o.title, { doc: doc, headers: ['Período', 'Valor'] })]);
   }
 
