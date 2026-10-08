@@ -9,8 +9,9 @@
    movimento respeita prefers-reduced-motion; nenhum texto abaixo de 11 px. */
 
 :root {
-  --ux-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ux-fast: 120ms;
+  /* Aliases dos tokens de movimento (ADR 0002, modulos/shared/laift-tokens.css). */
+  --ux-ease: var(--ease-out);
+  --ux-fast: var(--dur-fast);
   --glass-blur: 14px;
   /* 86% de opacidade: o vidro continua legível (contraste >= 4,5:1) sobre as
      folhas decorativas do fundo. */
@@ -49,9 +50,20 @@ a {
     border-color var(--ux-fast) var(--ux-ease),
     color var(--ux-fast) var(--ux-ease),
     box-shadow var(--ux-fast) var(--ux-ease),
-    transform var(--ux-fast) var(--ux-ease),
+    transform var(--dur-instant) var(--ease-out),
     filter var(--ux-fast) var(--ux-ease);
 }
+
+/* Campos: foco e preenchimento animam com os mesmos tokens. */
+input, select, textarea {
+  transition: box-shadow var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  box-shadow: var(--laift-focus-ring);
+}
+
+/* Toque: feedback imediato no :active (hover não existe em touch). */
+.list-item:active, .stat-card:active { transform: scale(0.99); }
 
 @media (hover: hover) {
   button:hover:not(:disabled) { filter: brightness(1.07); }
@@ -107,28 +119,26 @@ summary:focus-visible,
   border-radius: 50%;
   border: 3px solid color-mix(in srgb, var(--primary) 25%, transparent);
   border-top-color: var(--primary);
-  animation: ux-spin 0.8s linear infinite;
+  animation: ux-spin var(--dur-lazy) linear infinite;
 }
 @keyframes ux-spin { to { transform: rotate(360deg); } }
 
 /* ---------- Esqueletos ---------- */
+/* .skeleton é o contêiner criado por LaiftStates.createSkeleton (aria-hidden);
+   as linhas e blocos pulsam só em opacity (nada de background animado). */
 .skeleton { display: grid; gap: 10px; padding: 4px 0; }
-.skeleton-line {
-  height: 14px;
+.skeleton-line,
+.skeleton-card {
+  background: var(--layer-3);
   border-radius: 8px;
-  background: linear-gradient(
-    90deg,
-    var(--surface-alt) 25%,
-    color-mix(in srgb, var(--border) 60%, var(--surface-alt)) 50%,
-    var(--surface-alt) 75%
-  );
-  background-size: 200% 100%;
-  animation: ux-shimmer 1.4s linear infinite;
+  animation: ux-pulse var(--dur-lazy) var(--ease-in-out) infinite alternate;
 }
+.skeleton-line { height: 14px; }
 .skeleton-line-short { width: 60%; }
-@keyframes ux-shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+.skeleton-card { height: 88px; border-radius: var(--radius-md); }
+@keyframes ux-pulse {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
 }
 
 /* ---------- Aviso offline ---------- */
@@ -305,10 +315,185 @@ summary:focus-visible,
   .lia-panel, .lia-launcher.lia-in-app ~ .lia-panel { right: 8px; left: 8px; width: auto; }
 }
 
-/* ---------- Movimento reduzido ---------- */
-@media (prefers-reduced-motion: reduce) {
-  button, .list-item, .stat-card, .bottom-nav button, a { transition: none; }
-  .list-item:hover, .stat-card:hover { transform: none; }
-  .state-loading::before { animation: none; }
-  .skeleton-line { animation: none; }
+/* Movimento reduzido: um único bloco, em modulos/shared/laift-tokens.css. */
+
+/* =========================================================================
+   Visual v2 — flag ux_v2_enabled (app.js põe data-flag-ux-v2-enabled="1" no
+   <html>). Tudo daqui para baixo é condicionado a esse atributo: sem a
+   flag valem os estilos de styles.css (UI anterior, totalmente usável).
+   Princípios: camadas por tom em vez de borda, raio 24–32px, elevação por
+   luz, divisores hairline, vidro nas superfícies que flutuam. Controles
+   (input/select/textarea) mantêm contorno: o limite do campo precisa de
+   contraste 3:1 (WCAG 1.4.11).
+   ========================================================================= */
+
+/* ---------- Cartões e listas sem borda: separação por camada ---------- */
+:root[data-flag-ux-v2-enabled] {
+  --radius-lg: var(--laift-radius-xl);
+  --radius-md: 20px;
+}
+
+:root[data-flag-ux-v2-enabled] .card,
+:root[data-flag-ux-v2-enabled] .learn-card,
+:root[data-flag-ux-v2-enabled] .list-item,
+:root[data-flag-ux-v2-enabled] .stat-card,
+:root[data-flag-ux-v2-enabled] .learn-stat,
+:root[data-flag-ux-v2-enabled] .orgchart-directorate-box,
+:root[data-flag-ux-v2-enabled] .ai-key-card,
+:root[data-flag-ux-v2-enabled] .ai-budget,
+:root[data-flag-ux-v2-enabled] .checkbox-row,
+:root[data-flag-ux-v2-enabled] .state,
+:root[data-flag-ux-v2-enabled] .mfa-secret,
+:root[data-flag-ux-v2-enabled] .mfa-codes li,
+:root[data-flag-ux-v2-enabled] .learn-badge,
+:root[data-flag-ux-v2-enabled] .modal-box,
+:root[data-flag-ux-v2-enabled] .auth-card,
+:root[data-flag-ux-v2-enabled] .lia-panel {
+  border: 0;
+}
+
+/* Camada 1: superfície dos cartões. */
+:root[data-flag-ux-v2-enabled] .card,
+:root[data-flag-ux-v2-enabled] .learn-card,
+:root[data-flag-ux-v2-enabled] .auth-card {
+  background: var(--layer-1);
+  border-radius: var(--laift-radius-xl);
+  box-shadow: var(--elev-2);
+}
+:root[data-flag-ux-v2-enabled] .list-item,
+:root[data-flag-ux-v2-enabled] .stat-card {
+  background: var(--layer-1);
+  border-radius: 24px;
+  box-shadow: var(--elev-1);
+}
+
+/* Camada 2: blocos dentro de um cartão (sem sombra: só tom). */
+:root[data-flag-ux-v2-enabled] .card .list-item,
+:root[data-flag-ux-v2-enabled] .card .stat-card,
+:root[data-flag-ux-v2-enabled] .card .state,
+:root[data-flag-ux-v2-enabled] .card .learn-stat,
+:root[data-flag-ux-v2-enabled] .learn-card .learn-stat,
+:root[data-flag-ux-v2-enabled] .orgchart-directorate-box,
+:root[data-flag-ux-v2-enabled] .ai-key-card,
+:root[data-flag-ux-v2-enabled] .ai-budget,
+:root[data-flag-ux-v2-enabled] .checkbox-row,
+:root[data-flag-ux-v2-enabled] .state,
+:root[data-flag-ux-v2-enabled] .mfa-secret,
+:root[data-flag-ux-v2-enabled] .learn-badge {
+  background: var(--layer-2);
+  box-shadow: none;
+  border-radius: 20px;
+}
+:root[data-flag-ux-v2-enabled] .learn-stat { background: var(--layer-2); border-radius: 20px; }
+:root[data-flag-ux-v2-enabled] .mfa-codes li { background: var(--layer-2); }
+:root[data-flag-ux-v2-enabled] .learn-badge.unlocked { background: var(--primary-soft); }
+:root[data-flag-ux-v2-enabled] .state-error { background: var(--danger-soft); }
+:root[data-flag-ux-v2-enabled] .ai-budget[data-level="warn"] { background: var(--admin-soft); }
+:root[data-flag-ux-v2-enabled] .ai-budget[data-level="down"] { background: var(--danger-soft); }
+
+/* Botão secundário: tom (camada 3) em vez de contorno. */
+:root[data-flag-ux-v2-enabled] button.secondary {
+  border: 0;
+  background: var(--layer-3);
+}
+
+/* Divisores: um fio de luz, nunca uma linha sólida. */
+:root[data-flag-ux-v2-enabled] .app-header {
+  border-bottom: 0;
+  box-shadow: 0 1px 0 var(--hairline);
+}
+:root[data-flag-ux-v2-enabled] .bottom-nav {
+  border-top: 0;
+  box-shadow: 0 -1px 0 var(--hairline), var(--elev-2);
+}
+:root[data-flag-ux-v2-enabled] table.data-table th,
+:root[data-flag-ux-v2-enabled] table.data-table td,
+:root[data-flag-ux-v2-enabled] .ai-metrics-table th,
+:root[data-flag-ux-v2-enabled] .ai-metrics-table td {
+  border-bottom-color: var(--hairline);
+}
+:root[data-flag-ux-v2-enabled] .task-comments,
+:root[data-flag-ux-v2-enabled] .lia-form,
+:root[data-flag-ux-v2-enabled] .lia-head,
+:root[data-flag-ux-v2-enabled] .chat-thread-header,
+:root[data-flag-ux-v2-enabled] .chat-composer {
+  border-color: var(--hairline);
+}
+:root[data-flag-ux-v2-enabled] .modal-box,
+:root[data-flag-ux-v2-enabled] .lia-panel {
+  border-radius: var(--laift-radius-xl);
+  box-shadow: var(--elev-3);
+}
+:root[data-flag-ux-v2-enabled] .lia-msg-lia .lia-bubble { border: 0; background: var(--layer-2); }
+
+/* Hover (só com ponteiro fino) troca a sombra, não a borda. */
+@media (hover: hover) {
+  :root[data-flag-ux-v2-enabled] .list-item:hover {
+    border-color: transparent;
+    box-shadow: var(--elev-2);
+  }
+}
+
+/* ---------- Micro-animações de toque ---------- */
+:root[data-flag-ux-v2-enabled] .list-item:active,
+:root[data-flag-ux-v2-enabled] .stat-card:active,
+:root[data-flag-ux-v2-enabled] button.learn-card:active {
+  transform: scale(0.985);
+  transition-duration: var(--dur-instant);
+}
+:root[data-flag-ux-v2-enabled] .modal-box:not(.hidden) {
+  animation: ux-modal-in var(--dur-base) var(--ease-spring);
+}
+@keyframes ux-modal-in {
+  from { opacity: 0; transform: translateY(var(--move-md)) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Vidro ampliado ---------- */
+/* Sem suporte a backdrop-filter valem as superfícies opacas (camadas). */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-flag-ux-v2-enabled] .lia-panel,
+  :root[data-flag-ux-v2-enabled] .chat-bubble-actions,
+  :root[data-flag-ux-v2-enabled] #agendamento-info,
+  :root[data-flag-ux-v2-enabled] .agendamento-info,
+  :root[data-flag-ux-v2-enabled] .hero,
+  :root[data-flag-ux-v2-enabled] .splash {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  }
+  :root[data-flag-ux-v2-enabled] .modal-overlay {
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+}
+:root[data-flag-ux-v2-enabled] #agendamento-info,
+:root[data-flag-ux-v2-enabled] .agendamento-info,
+:root[data-flag-ux-v2-enabled] .hero {
+  border: 0;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+}
+
+/* Módulos com canvas 3D (Atlas imersivo): nenhum desfoque sobre o canvas;
+   barras voltam ao fundo opaco. */
+body:has(.learn-viewer-immersive:not(.hidden)) .app-header,
+body:has(.learn-viewer-immersive:not(.hidden)) .bottom-nav,
+body:has(.learn-viewer-immersive:not(.hidden)) .modal-overlay,
+body:has(.learn-viewer-immersive:not(.hidden)) .lia-panel {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--surface);
+}
+
+/* ---------- Barra flutuante: esconde ao rolar, volta ao parar ---------- */
+/* ux-v2.js põe data-scrolling no <html> durante a rolagem e tira ~150 ms
+   depois. Nunca esconde com foco dentro da barra, nem sob movimento reduzido. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-flag-ux-v2-enabled] .bottom-nav {
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  :root[data-flag-ux-v2-enabled][data-scrolling] .bottom-nav:not(:focus-within) {
+    transform: translateY(calc(100% + var(--move-sm)));
+  }
 }

@@ -3,29 +3,32 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
+/* Tokens: as cores vêm de modulos/shared/laift-tokens.css (camadas, claro e
+   escuro, movimento, gráficos) — este arquivo só dá os nomes curtos da
+   plataforma. A paleta escura existe uma única vez, lá. Quem carrega
+   styles.css também carrega laift-tokens.css, antes dele. */
 :root {
-  color-scheme: light;
-  --bg: #f4f6fb;
-  --surface: #ffffff;
-  --surface-alt: #f1f4fa;
-  --border: #dde3ee;
-  --text: #1c2333;
-  --muted: #5b6478;
-  --primary: #0f6f62;
-  --primary-strong: #0b5349;
-  --primary-soft: #e1f4f0;
+  --bg: var(--laift-bg);
+  --surface: var(--laift-surface);
+  --surface-alt: var(--laift-surface-alt);
+  --border: var(--laift-border);
+  --text: var(--laift-text);
+  --muted: var(--laift-muted);
+  --primary: var(--laift-primary);
+  --primary-strong: var(--laift-primary-strong);
+  --primary-soft: var(--laift-primary-soft);
   /* Texto sobre --primary/--admin: branco no claro (o antigo #06231e sobre
      #0f6f62 dava 2,8:1, abaixo do AA). Fase 4. */
-  --on-primary: #ffffff;
-  --on-admin: #ffffff;
-  --admin: #8a3b12;
-  --admin-soft: #fdece0;
-  --danger: #b3261e;
-  --danger-soft: #fbe6e4;
-  --on-danger: #ffffff;
-  --success: #1e6b3c;
-  --success-soft: #e3f6e9;
-  --shadow: 0 14px 34px rgba(20, 30, 50, 0.08);
+  --on-primary: var(--laift-on-primary);
+  --on-admin: var(--laift-on-admin);
+  --admin: var(--laift-admin);
+  --admin-soft: var(--laift-admin-soft);
+  --danger: var(--laift-danger);
+  --danger-soft: var(--laift-danger-soft);
+  --on-danger: var(--laift-on-danger);
+  --success: var(--laift-success);
+  --success-soft: var(--laift-success-soft);
+  --shadow: var(--laift-shadow);
   --radius-lg: 20px;
   --radius-md: 14px;
   --gap: 16px;
@@ -33,54 +36,6 @@
   --density-gap: 16px;
   --app-header-h: 60px;
   --app-nav-h: 56px;
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #10141c;
-  --surface: #171d29;
-  --surface-alt: #1c2330;
-  --border: #2b3345;
-  --text: #e7ebf3;
-  --muted: #9aa5bb;
-  --primary: #3fcfb6;
-  --primary-strong: #63e0c9;
-  --primary-soft: #10352f;
-  --on-primary: #06231e;
-  --on-admin: #2a1200;
-  --admin: #ff9a5c;
-  --admin-soft: #3a2415;
-  --danger: #ff7a70;
-  --danger-soft: #3a1c1c;
-  --on-danger: #3a0805;
-  --success: #7be3a0;
-  --success-soft: #163a26;
-  --shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    color-scheme: dark;
-    --bg: #10141c;
-    --surface: #171d29;
-    --surface-alt: #1c2330;
-    --border: #2b3345;
-    --text: #e7ebf3;
-    --muted: #9aa5bb;
-    --primary: #3fcfb6;
-    --primary-strong: #63e0c9;
-    --primary-soft: #10352f;
-    --on-primary: #06231e;
-    --on-admin: #2a1200;
-    --admin: #ff9a5c;
-    --admin-soft: #3a2415;
-    --danger: #ff7a70;
-    --danger-soft: #3a1c1c;
-    --on-danger: #3a0805;
-    --success: #7be3a0;
-    --success-soft: #163a26;
-    --shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
-  }
 }
 
 * { box-sizing: border-box; }
@@ -146,10 +101,6 @@ a { color: var(--primary-strong); }
   to { transform: translateY(110vh) translateX(40px) rotate(280deg); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .leaf { animation: none; display: none; }
-}
-
 .auth-card {
   position: relative;
   z-index: 1;
@@ -208,16 +159,14 @@ button {
   color: var(--on-primary);
   font-weight: 700;
   cursor: pointer;
-  transition: filter 120ms ease, transform 120ms ease;
+  transition: filter var(--dur-fast) var(--ease-out), transform var(--dur-instant) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
 }
 
-button:hover { filter: brightness(1.03); }
+@media (hover: hover) {
+  button:hover:not(:disabled) { filter: brightness(1.03); }
+}
 button:active:not(:disabled) { transform: scale(0.97); }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
-@media (prefers-reduced-motion: reduce) {
-  button { transition: none; }
-  button:active:not(:disabled) { transform: none; }
-}
 
 button.secondary { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
 button.danger { background: var(--danger); color: var(--on-danger); }
@@ -296,7 +245,6 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 }
 .nav-badge-alert { animation: badge-pulse 1.6s ease-in-out infinite; }
 @keyframes badge-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
-@media (prefers-reduced-motion: reduce) { .nav-badge-alert { animation: none; } }
 .bottom-nav button.active { color: var(--primary-strong); }
 .nav-group-admin button.active { color: var(--admin); }
 
@@ -322,10 +270,7 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
   to { opacity: 1; transform: translateY(0); }
 }
 .app-main > section:not(.hidden) {
-  animation: panel-enter 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .app-main > section:not(.hidden) { animation: none; }
+  animation: panel-enter var(--dur-base) var(--ease-out);
 }
 
 @media (min-width: 720px) {
@@ -542,7 +487,7 @@ button, input, select, textarea, .list-item .actions-row button {
 .chat-bubble-menu-btn {
   position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; padding: 0;
   border-radius: 50%; font-size: 12px; line-height: 1; background: var(--surface-alt);
-  color: var(--muted); border: 1px solid var(--border); opacity: 0; transition: opacity 120ms ease;
+  color: var(--muted); border: 1px solid var(--border); opacity: 0; transition: opacity var(--dur-fast) var(--ease-out);
 }
 .chat-bubble:hover .chat-bubble-menu-btn, .chat-bubble-menu-btn:focus { opacity: 1; }
 .chat-bubble-actions {
@@ -601,10 +546,6 @@ button.learn-card:focus-visible .learn-card-title { color: var(--primary-strong)
   .app-shell:has(#learn-viewer:not(.hidden)) .app-header .scope-label { display: none; }
   .learn-viewer-bar button { padding-left: 12px; padding-right: 12px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .learn-frame { scroll-behavior: auto; }
-}
-
 /* ---------- Área "Aprender" (módulos LAIFT — learning.js) ---------- */
 /* Com "Aprender" a barra de membro chega a 9 botões: em telas muito
    estreitas vira faixa rolável (como a do admin) em vez de espremer os
@@ -836,7 +777,6 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
 }
 .learn-stats[aria-busy="true"] strong { animation: learn-pulse 1.2s ease-in-out infinite; }
 @keyframes learn-pulse { 50% { opacity: 0.35; } }
-@media (prefers-reduced-motion: reduce) { .learn-stats[aria-busy="true"] strong { animation: none; } }
 button.learn-card:focus-visible { outline-offset: 3px; }
 .learn-card-tags .badge { font-weight: 600; }
 
