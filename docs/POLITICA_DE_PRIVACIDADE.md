@@ -218,15 +218,26 @@ denúncia em andamento envolvendo a conta) e para cumprir obrigação legal
 de guarda de registros de auditoria de segurança pelo prazo mínimo exigido
 pela legislação aplicável.
 
-**Lia: avaliações, comentários e registros de moderação.** O comentário
-opcional fica guardado em texto completo por até 90 dias. Após 90 dias, ele é
-anonimizado: o texto é apagado e substituído por um código (hash)
-irreversível. A avaliação (polegar) e a categoria permanecem, sem o texto,
-para medir a qualidade das respostas. Após 365 dias (cerca de 12 meses), o
-registro da avaliação é removido. O prazo de guarda das respostas registradas
-da Lia e do histórico de moderação ainda não foi fixado nesta versão e será
-definido antes da revisão jurídica final. Esses registros estão vinculados à
-sua conta com exclusão em cascata: quando a conta é excluída, eles saem junto.
+**Lia: respostas, avaliações, comentários e registros de moderação.** Os
+prazos abaixo são aplicados automaticamente por uma rotina de limpeza que roda
+todos os dias na plataforma:
+
+- **Resposta registrada da Lia** (o texto da resposta e o código da pergunta,
+  nunca o texto da pergunta): removida após **180 dias**.
+- **Avaliação (polegar), categoria e comentário opcional:** o comentário fica em
+  texto completo por até **90 dias**. Depois disso é anonimizado: o texto é
+  substituído por um código (hash SHA-256), que não permite recuperar o que
+  você escreveu. A avaliação e a categoria permanecem, sem o texto, para medir a
+  qualidade das respostas. A avaliação sai junto com a resposta da Lia a que se
+  refere, ou seja, em até 180 dias. A regra de remoção da avaliação aos 365 dias
+  é um limite de segurança e, na prática, não chega a ser aplicada.
+- **Registros de incidentes de moderação** (tipo do incidente, forma de detecção
+  e nível, sem o texto da mensagem): removidos após **365 dias**.
+
+Esses registros são vinculados à sua conta. Quando o cadastro é excluído, eles
+saem junto, pela exclusão em cascata no banco de dados. Hoje a exclusão de conta
+é feita pelo responsável da liga a partir do seu pedido; a plataforma ainda não
+tem um botão para isso.
 
 Após a exclusão: dados de identificação pessoal (nome, e-mail, telefone,
 avatar, redes sociais) são apagados ou anonimizados de forma
@@ -272,10 +283,11 @@ titular descritos na seção 8, inclusive ao direito de solicitar exclusão.
 
 ## 10. Alterações desta Política
 
-Alterações materiais geram uma nova versão numerada por data. O aceite de
-uma nova versão é solicitado a partir de então; o registro do aceite de
-versões anteriores é preservado no seu histórico de consentimentos, nunca
-apagado ou reescrito.
+Alterações materiais geram uma nova versão numerada por data. Mudanças materiais
+são comunicadas na própria plataforma e nesta página. Hoje a plataforma não
+solicita novo aceite a cada versão: o aceite registrado no seu cadastro
+corresponde à versão vigente naquele dia. O registro de versões anteriores é
+preservado no seu histórico de consentimentos, nunca apagado ou reescrito.
 
 ## 11. Autoridade Nacional de Proteção de Dados (ANPD)
 

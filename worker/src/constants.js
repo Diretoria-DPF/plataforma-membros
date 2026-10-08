@@ -444,3 +444,11 @@ Object.assign(RATE_LIMITS, {
   // (ASSISTANT_REINDEX, de 5/h, continua valendo para o que já existia; não é usado aqui.)
   ASSISTANT_REINDEX_MINUTE: { MAX_ATTEMPTS: 1, WINDOW_SECONDS: 60 },
 });
+
+// ---- Lia: retenção de mensagens e incidentes (ADR 0005; limpeza em maintenance.js) ----
+// Comentário e avaliação usam FEEDBACK (acima). Pelo CASCADE de sql/021, a avaliação sai junto
+// com a resposta da Lia a que se refere (ASSISTANT_MESSAGES), antes dos 365 dias de FEEDBACK.
+export const ASSISTANT_RETENTION = {
+  MESSAGES_PURGE_AFTER_DAYS: 180,   // resposta registrada da Lia (assistant_messages)
+  INCIDENTS_PURGE_AFTER_DAYS: 365,  // incidente de moderação, sem texto (assistant_incidents)
+};
