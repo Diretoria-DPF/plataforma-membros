@@ -55,6 +55,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ux.css">
   <link rel="stylesheet" href="ux-glass.css">
+  <link rel="stylesheet" href="assistant-feedback.css">
   <link rel="stylesheet" href="modulos/shared/charts.css">
   <link rel="stylesheet" href="home-editorial.css">
   <link rel="stylesheet" href="modulos/shared/lia/lia.css">
@@ -771,6 +772,39 @@
             <div id="admin-ai-atlas"></div>
           </div>
           <div class="card">
+            <div class="ai-admin-head">
+              <h2>Satisfação da Lia</h2>
+              <span>
+                <button type="button" class="secondary" id="btn-admin-ai-sat-7">7 dias</button>
+                <button type="button" class="secondary" id="btn-admin-ai-sat-30">30 dias</button>
+              </span>
+            </div>
+            <p class="muted">Respostas da Lia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
+            <div id="msg-admin-ai-sat" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="admin-ai-sat-totals"></div>
+            <div id="admin-ai-sat-categories"></div>
+            <div id="admin-ai-sat-days"></div>
+            <div class="actions-row">
+              <label>Status
+                <select id="admin-ai-sat-status">
+                  <option value="">Todos</option>
+                  <option value="new">Novos</option>
+                  <option value="reviewed">Revisados</option>
+                  <option value="dismissed">Descartados</option>
+                </select>
+              </label>
+              <label>Avaliação
+                <select id="admin-ai-sat-rating">
+                  <option value="">Todas</option>
+                  <option value="up">Úteis</option>
+                  <option value="down">Não úteis</option>
+                </select>
+              </label>
+            </div>
+            <div id="admin-ai-sat-list"></div>
+            <button type="button" class="secondary hidden" id="btn-admin-ai-sat-more">Carregar mais</button>
+          </div>
+          <div class="card">
             <h2>Cotas diárias por pessoa</h2>
             <div id="admin-ai-quotas"><p class="empty-state">Aparecem depois do teste das chaves.</p></div>
           </div>
@@ -920,6 +954,7 @@
   <script src="modulos/shared/lia/lia-states.js" defer></script>
   <script src="modulos/shared/lia/lia-anim.js" defer></script>
   <script src="modulos/shared/lia/lia.js" defer></script>
+  <script src="assistant-feedback.js" defer></script>
   <script src="assistant.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
