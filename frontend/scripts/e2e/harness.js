@@ -32,6 +32,10 @@ const path = require('path');
 const { gzipSync } = require('zlib');
 
 const DIST = path.join(__dirname, '..', '..', 'dist');
+// Id do perfil simulado. O cliente só sabe qual chave de "onboarding visto" usar com este id
+// (frontend/onboarding.js: laift_onboarding_seen_<profileId>).
+const E2E_PROFILE_ID = 'e2e00000-0000-4000-8000-000000000001';
+const ONBOARDING_SEEN_PREFIX = 'laift_onboarding_seen_';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -121,11 +125,11 @@ function defaultWorkerReply(action, args, ctx) {
   const p = ctx.profile;
   switch (action) {
     case 'apiLogin':
-      return { success: true, sessionToken: ctx.sessionToken, profile: { fullName: p.fullName, role: p.role } };
+      return { success: true, sessionToken: ctx.sessionToken, profile: { id: p.id, fullName: p.fullName, role: p.role } };
     case 'apiGetMyProfile':
       return {
         success: true,
-        profile: { fullName: p.fullName, username: p.username, email: p.email, role: p.role },
+        profile: { id: p.id, fullName: p.fullName, username: p.username, email: p.email, role: p.role },
         preferences: { theme: ctx.theme, emailNotifications: true },
       };
     case 'apiGetMyMetrics':
@@ -175,6 +179,8 @@ function defaultWorkerReply(action, args, ctx) {
  * @param {object} [opts.atlasFlags] chaves do Atlas (js/core/flags.js); padrão desliga apresentação e dicas
  * @param {string[]} [opts.launchArgs]  flags extras do Chromium (ex.: câmera falsa para o leitor de QR)
  * @param {string[]} [opts.permissions]  permissões concedidas ao contexto (ex.: ['camera'])
+ * @param {boolean} [opts.firstLogin]  true = primeira entrada da pessoa: o onboarding por papel aparece.
+ *   Padrão false: o onboarding já vem marcado como visto (laift_onboarding_seen_<id>), para não bloquear a UI.
  */
 async function startApp(opts = {}) {
   const { chromium } = loadPlaywright();
@@ -183,7 +189,7 @@ async function startApp(opts = {}) {
   const ctx = {
     sessionToken: 'e2e-session-token',
     theme: opts.theme || 'light',
-    profile: Object.assign({ fullName: 'Ana Teste', email: 'ana@exemplo.com', username: 'ana', role: opts.role || 'member' }, opts.profile || {}),
+    profile: Object.assign({ id: E2E_PROFILE_ID, fullName: 'Ana Teste', email: 'ana@exemplo.com', username: 'ana', role: opts.role || 'member' }, opts.profile || {}),
   };
   const calls = { worker: [], external: [] };
   const errors = [];
@@ -205,6 +211,12 @@ async function startApp(opts = {}) {
   // os arquivos do atlas antes das rotas dos testes. Só atlas-offline o liga.
   const atlasFlags = Object.assign({ offline: false, quizSetup: false }, opts.atlasFlags !== undefined ? opts.atlasFlags : { onboarding: false, hints: false });
   await context.addInitScript((flags) => { window.__atlasFlags = flags; }, atlasFlags);
+  if (!opts.firstLogin) {
+    // Onboarding visto antes do app carregar (o script só lê o storage ao entrar).
+    await context.addInitScript((key) => {
+      try { window.localStorage.setItem(key, '1'); } catch (err) { /* storage bloqueado: o diálogo aparece */ }
+    }, ONBOARDING_SEEN_PREFIX + ctx.profile.id);
+  }
 
   await context.route('**/*', async (route) => {
     const req = route.request();
@@ -271,4 +283,4 @@ function check(condition, description) {
   }
 }
 
-module.exports = { startApp, check, loadPlaywright, startStaticServer, moderationSummary };
+module.exports = { startApp, check, loadPlaywright, startStaticServer, moderationSummary, E2E_PROFILE_ID, ONBOARDING_SEEN_PREFIX };
