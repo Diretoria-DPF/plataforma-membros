@@ -1,48 +1,49 @@
 # Paleta de gráficos (`--chart-1` … `--chart-8`)
 
-Status: **proposta calculada, falta a validação visual em simulador** (ver "Pendente"). Decisão registrada em `docs/adr/0001-charts-palette.md`.
+Status: **validada pelo validador da skill `dataviz`** nos dois temas (2026-10-08). Decisão em `docs/adr/0001-charts-palette.md`. Tokens em `frontend/modulos/shared/laift-tokens.css`. Teste de regressão em `frontend/scripts/ux-v2.test.mjs` ("paleta de gráficos").
 
 ## Método
-- 8 matizes OKLCH em torno do teal da marca (`--primary` #0f6f62, matiz ≈ 178°): 178, 52, 262, 18, 128, 318, 222, 85.
-- Por tema, luminosidade alternada e ordem dos tons otimizada por busca exaustiva para maximizar o menor ΔE entre cores **adjacentes** (ΔE = distância em OKLab × 100).
-- Simulação de daltonismo: matrizes de Machado et al. (2009), severidade 1,0 (protanopia e deuteranopia), em RGB linear.
-- Contraste WCAG calculado contra as camadas do plano mestre: claro `#FAFAF7` (layer-0) e `#EDEBE5` (layer-2); escuro `#0E1114` (layer-0) e `#1A1F24` (layer-2).
-- O cálculo é reproduzível em ~60 linhas de Node (OKLab ↔ sRGB, Machado). Se virar item de CI, entra em `tools/`.
+- Matiz de cada slot preservado: 1 teal da marca (178°, `--primary` #0f6f62), 2 laranja (52°), 3 azul (249°), 4 ocre (85°), 5 azul-royal (262°), 6 vermelho (18°), 7 verde-oliva (128°), 8 violeta (318°).
+- Os slots reprovados (claro: 1, 3, 7; escuro: 1, 3, 5, 7) foram ajustados só em L e C, por busca em grade dentro da banda do validador. Nomes e ordem dos tokens não mudaram.
+- Validador: `scripts/validate_palette.js` da skill `dataviz`, com `--mode` e `--surface` por camada. Contraste testado contra `--layer-0` e `--layer-1` de cada tema, e também contra a superfície padrão da skill.
+- Simulação de daltonismo: Machado et al. (2009), severidade 1,0. Pares: adjacentes (barras, linhas, pilhas).
 
-## Claro (`:root`)
-| Token | Hex | OKLCH | Contraste layer-0 / layer-2 |
-|---|---|---|---|
-| `--chart-1` | `#03483d` | 0.36 0.06 178 | 10,05 / 8,82 |
-| `--chart-2` | `#c05e05` | 0.59 0.145 52 | 4,15 / 3,64 |
-| `--chart-3` | `#0a5f75` | 0.45 0.075 222 | 6,93 / 6,08 |
-| `--chart-4` | `#8f6b09` | 0.55 0.105 85 | 4,68 / 4,11 |
-| `--chart-5` | `#194cb1` | 0.45 0.165 262 | 7,36 / 6,46 |
-| `--chart-6` | `#c03a4a` | 0.55 0.165 18 | 5,07 / 4,45 |
-| `--chart-7` | `#2e4600` | 0.36 0.09 128 | 10,11 / 8,87 |
-| `--chart-8` | `#a656bd` | 0.59 0.165 318 | 4,28 / 3,75 |
+## Tabela final
 
-Menor ΔE entre adjacentes: **20,3** (visão normal), **20,0** (deuteranopia), **11,3** (protanopia).
+| Slot | Claro | OKLCH | Contraste layer-0 / layer-1 | Escuro | OKLCH | Contraste layer-0 / layer-1 |
+|---|---|---|---|---|---|---|
+| 1 | `#008b77` | 0.57 0.105 178 | 4,05 / 3,81 | `#04a891` | 0.65 0.120 178 | 6,33 / 5,96 |
+| 2 | `#c05e05` | 0.59 0.150 52 | 4,15 / 3,90 | `#d8732b` | 0.66 0.150 52 | 5,78 / 5,44 |
+| 3 | `#1a8de7` | 0.63 0.165 249 | 3,34 / 3,15 | `#0f7ed1` | 0.58 0.155 249 | 4,44 / 4,18 |
+| 4 | `#8f6b09` | 0.55 0.110 85 | 4,70 / 4,42 | `#a1790c` | 0.60 0.120 85 | 4,74 / 4,46 |
+| 5 | `#194cb1` | 0.45 0.170 262 | 7,41 / 6,98 | `#4466a6` | 0.52 0.109 262 | 3,33 / 3,14 |
+| 6 | `#c03a4a` | 0.55 0.170 18 | 5,09 / 4,79 | `#ca545d` | 0.60 0.150 18 | 4,45 / 4,19 |
+| 7 | `#6c9a00` | 0.63 0.164 128 | 3,21 / 3,02 | `#537806` | 0.52 0.135 128 | 3,66 / 3,45 |
+| 8 | `#a656bd` | 0.59 0.170 318 | 4,28 / 4,03 | `#b872cd` | 0.66 0.150 318 | 5,70 / 5,37 |
 
-## Escuro (`:root[data-theme="dark"]`)
-| Token | Hex | OKLCH | Contraste layer-0 / layer-2 |
-|---|---|---|---|
-| `--chart-1` | `#3ef7d7` | 0.88 0.145 178 | 14,00 / 12,27 |
-| `--chart-2` | `#d8732b` | 0.66 0.145 52 | 5,79 / 5,07 |
-| `--chart-3` | `#1dcaf7` | 0.78 0.135 222 | 9,81 / 8,60 |
-| `--chart-4` | `#a1790c` | 0.60 0.115 85 | 4,75 / 4,16 |
-| `--chart-5` | `#91b7fe` | 0.78 0.105 262 | 9,42 / 8,25 |
-| `--chart-6` | `#ca545d` | 0.60 0.145 18 | 4,45 / 3,90 |
-| `--chart-7` | `#bbea7a` | 0.88 0.145 128 | 13,68 / 11,99 |
-| `--chart-8` | `#b872cd` | 0.66 0.145 318 | 5,68 / 4,98 |
+Claro: `:root`, `--chart-N` com hex literal. Escuro: `--dk-chart-N` com hex literal; o escuro é aplicado aos `--chart-N` por alias `var(--dk-chart-N)` nas duas declarações de escuro (`:root[data-theme="dark"]` e `prefers-color-scheme`).
 
-Menor ΔE entre adjacentes: **28,5** (normal), **23,3** (deuteranopia), **29,6** (protanopia).
+## Saída do validador (resumo)
 
-## Limites conhecidos (por isso há regra de uso)
-- **Critério ΔE ≥ 20 em protanopia no tema claro não foi atingido (11,3).** Oito categorias só por cor não são distinguíveis por todos. Regra: gráficos com mais de 5 séries precisam de codificação redundante (rótulo direto, padrão/traço ou marcador diferente), e nenhuma informação vai só por cor (WCAG 1.4.1, já exigido pelo repositório). A tabela `.sr-only` por gráfico cobre leitores de tela.
-- Pares não adjacentes podem ficar muito próximos (ex.: 2–4 no claro). Não colocar essas cores lado a lado em legendas sem rótulo.
-- Para 1–5 séries usar `--chart-1` … `--chart-5` nessa ordem.
+Comando: `node scripts/validate_palette.js "<hex,...>" --mode light|dark --surface <camada>`
 
-## Pendente antes de `charts.js`
-1. Conferir as duas listas em simulador visual (Coblis ou similar) e anotar o resultado aqui.
-2. Se algum par ficar ilegível, ajustar só o `L` do token afetado e recalcular.
-3. Só então copiar os valores para `modulos/shared/laift-tokens.css` (Fase B).
+| Execução | Banda L | Croma | CVD adjacente (alvo 8) | Normal adjacente (piso 15) | Contraste ≥3:1 | Resultado |
+|---|---|---|---|---|---|---|
+| Claro, camada `#fafaf7` (layer-0) | PASS 0,43–0,77 | PASS | PASS ΔE 9,2 (deutan) | PASS ΔE 22,9 | PASS (mín. 3,21) | ALL CHECKS PASS |
+| Claro, camada `#f4f3ef` (layer-1) | - | - | - | - | PASS (mín. 3,02) | ALL CHECKS PASS |
+| Escuro, camada `#0e1114` (layer-0) | PASS 0,48–0,67 | PASS | PASS ΔE 9,0 (protan) | PASS ΔE 23,7 | PASS (mín. 3,33) | ALL CHECKS PASS |
+| Escuro, camada `#14181c` (layer-1) | - | - | - | - | PASS (mín. 3,14) | ALL CHECKS PASS |
+| Superfície padrão da skill (`#fcfcfb` claro, `#1a1a19` escuro) | PASS | PASS | PASS | PASS | PASS | ALL CHECKS PASS, sem WARN |
+| `--pairs all`, slots 1–3 (claro e escuro) | - | - | PASS ΔE 12,0 / 13,2 | PASS ΔE 17,5 / 17,8 | - | ALL CHECKS PASS |
+
+Todas as execuções acima saíram com código 0.
+
+## Regras de uso
+- Usar `--chart-1` … `--chart-N` nessa ordem, sem reordenar nem gerar cor nova. Mais de 5 séries: agrupar em "Outros" ou facetar.
+- Dispersão, bolha, mapa e pequenos múltiplos (`--pairs all`): no máximo 3 séries. Medido com 4 ou 5 slots, o critério falha (ex.: laranja vs ocre, ΔE 0,1 em protanopia no claro). Isso segue o mesmo limite documentado para a paleta de referência da skill.
+- Nenhuma informação só por cor: legenda, rótulo direto ou tabela `.sr-only` por gráfico (WCAG 1.4.1).
+- Tons perto de 3:1 contra a camada (claro: 3, 7; escuro: 5): marcas finas nesses slots devem ter rótulo direto ou tabela.
+
+## Pendente
+1. Conferir as duas listas em simulador visual (Coblis ou similar) e na tela real do dashboard (Fase B). Esta validação visual ainda não foi feita.
+2. Se algum par ficar ilegível na tela, ajustar só L ou C do token afetado, mantendo o matiz, e rodar o validador de novo nos dois temas.
