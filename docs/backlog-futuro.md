@@ -35,6 +35,7 @@ Itens adiados de propósito. Cada um tem um **gatilho** objetivo: enquanto o gat
 | Página de status pública | O painel da Cloudflare e o health check de admin bastam | Primeiro incidente que os membros percebam |
 | Modo apresentação | Conveniência | Pedido da diretoria |
 | Texto com menos de 11 px nos módulos (82 ocorrências; 46 em `studio.css`) | A interface densa do estúdio de laboratório depende dele | Revisão de acessibilidade dos módulos |
+| Tirar o `sessionToken` de `window.App.getState()` e expor `callApiAuthed(action, input)` (O37) | `getState()` (`frontend/app.js`, linha 2500) devolve o `state` com o token, e qualquer script da mesma origem o lê. A mudança toca todos os módulos e os scripts do app, por isso foi aceita nesta rodada como risco. Um `getIdentity` já existe sem o token (linhas 2501 a 2503) | Qualquer script de terceiro na mesma origem, ou módulo que passe a renderizar conteúdo de usuário (ver O37 em `docs/riscos-residuais.md`) |
 
 ## Lia e RAG (entrega UX v2, 2026-10-08)
 Itens fora desta entrega. Os gatilhos desta seção são **propostas** desta revisão; confirmar com o dono antes de usá-los.
