@@ -70,8 +70,8 @@ id = "6ee17e571c044c43bd5b32599b6fbab9"
 
 # Workers AI: gera os embeddings da base da Lia (@cf/baai/bge-m3, ver
 # worker/src/services/ragService.js). Sem este binding o RAG NÃO quebra: a busca
-# cai para trigramas (pg_trgm) e a resposta segue normalmente. Em staging não é
-# herdado (como KV e R2): lá a busca é só por trigramas até que se decida ligar.
+# cai para trigramas (pg_trgm) e a resposta segue normalmente. Em staging o binding
+# é declarado à parte, em [env.staging.ai] (ver abaixo).
 [ai]
 binding = "AI"
 
@@ -107,6 +107,14 @@ workers_dev = false
 
 [env.staging.triggers]
 crons = []
+
+# Workers AI da homologação: o schema do wrangler (env.ai) diz que o binding NÃO é
+# herdado do topo e precisa estar em cada ambiente nomeado. Sem este bloco, a
+# homologação faria só busca por trigramas, diferente de produção. A reindexação
+# diária não roda aqui (crons vazio); a base de staging é embutida pelo admin
+# (apiAdminReindexKb) ou por uma execução manual.
+[env.staging.ai]
+binding = "AI"
 
 [[env.staging.routes]]
 pattern = "staging-api.laift.com.br"

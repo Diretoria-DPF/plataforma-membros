@@ -6,7 +6,7 @@
 import { jest } from '@jest/globals';
 import * as Rag from '../src/services/ragService.js';
 import { buildDocuments, chunkMarkdown } from '../src/assistant/docs.js';
-import { EMBEDDING_DIM, EMBEDDING_MODEL } from '../src/constants.js';
+import { EMBEDDING_DIM, EMBEDDING_MODEL, RAG } from '../src/constants.js';
 import { makeEnv } from './helpers/mockEnv.js';
 import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
@@ -68,7 +68,8 @@ describe('fuse (RRF)', () => {
 
 describe('retrieve — híbrido e degradação (SQL simulado)', () => {
   const V = [{ id: 'v1', source: 'kb', section: 'Eventos', content: 'eventos...', score: 0.9 }];
-  const T = [{ id: 't1', source: 'guia', section: 'Cotas', content: 'cotas...', score: 0.4 }, { id: 'v1', source: 'kb', section: 'Eventos', content: 'eventos...', score: 0.3 }];
+  // Scores de trigrama acima do piso (RAG.MIN_TRIGRAM_SCORE): a fusão é que é testada aqui.
+  const T = [{ id: 't1', source: 'guia', section: 'Cotas', content: 'cotas...', score: 0.5 }, { id: 'v1', source: 'kb', section: 'Eventos', content: 'eventos...', score: 0.4 }];
 
   test('com embedding: consulta vetorial + trigramas e funde', async () => {
     const sql = routedSql([['<=>', V], ['FROM kb_chunks', T]]);
@@ -99,6 +100,69 @@ describe('retrieve — híbrido e degradação (SQL simulado)', () => {
   test('trigramas falham (tabela ausente): lança, para a cascata degradar', async () => {
     const sql = routedSql([['FROM kb_chunks', new Error('relation "kb_chunks" does not exist')]]);
     await expect(Rag.retrieve(sql, makeEnv(), 'oi')).rejects.toThrow(/kb_chunks/);
+  });
+});
+
+describe('piso por lista, antes da fusão (score bruto)', () => {
+  const row = (id, score) => ({ id, source: 's', section: id, content: 'c' + id, score });
+
+  test('aboveFloor mantém o que está no piso e descarta abaixo dele e score inválido', () => {
+    const kept = Rag.aboveFloor([row('a', 0.5), row('b', 0.33), row('c', 0.1), row('d', NaN)], 0.33);
+    expect(kept.map((r) => r.id)).toEqual(['a', 'b']);
+  });
+
+  test('trigrama de 0,13 não empata com vetor de 0,9: sai, e a busca devolve só o vetor', async () => {
+    const V = [{ id: 'v1', source: 'kb', section: 'Eventos', content: 'eventos...', score: 0.9 }];
+    const T = [{ id: 't1', source: 'guia', section: 'Cotas', content: 'cotas...', score: 0.13 }];
+    const sql = routedSql([['<=>', V], ['FROM kb_chunks', T]]);
+    const out = await Rag.retrieve(sql, makeEnv({ AI: aiOk() }), 'pergunta qualquer');
+    expect(out.mode).toBe('hybrid');
+    expect(out.chunks.map((c) => c.id)).toEqual(['v1']);
+  });
+
+  test('o piso de trigramas tem de ficar acima de 0,13 para o cenário acima valer', () => {
+    expect(RAG.MIN_TRIGRAM_SCORE).toBeGreaterThan(0.13);
+  });
+
+  test('nada passa no piso (vetor e trigramas abaixo): devolve []', async () => {
+    const V = [{ id: 'v1', source: 'kb', section: 'Eventos', content: 'eventos...', score: 0.2 }];
+    const T = [{ id: 't1', source: 'guia', section: 'Cotas', content: 'cotas...', score: 0.1 }];
+    const sql = routedSql([['<=>', V], ['FROM kb_chunks', T]]);
+    const out = await Rag.retrieve(sql, makeEnv({ AI: aiOk() }), 'nada a ver');
+    expect(out.chunks).toEqual([]);
+  });
+});
+
+describe('hash da reindexação inclui o modelo de embedding', () => {
+  const DOCS = [{ source: 'a', section: '1', content: 'um' }, { source: 'a', section: '2', content: 'dois' }];
+
+  test('mesmo conteúdo com modelos diferentes gera hashes diferentes; padrão é EMBEDDING_MODEL', async () => {
+    const a = await Rag.reindexHash('texto', 'modelo-a');
+    const b = await Rag.reindexHash('texto', 'modelo-b');
+    expect(a).not.toBe(b);
+    expect(await Rag.reindexHash('texto')).toBe(await Rag.sha256Hex(EMBEDDING_MODEL + '\n' + 'texto'));
+  });
+
+  test('trocar o modelo reindexa tudo: hash guardado de outro modelo não conta como igual', async () => {
+    const stored = await Promise.all(DOCS.map(async (d, i) => ({
+      id: 'id' + i, source: d.source, section: d.section, content_hash: await Rag.reindexHash(d.content, 'modelo-antigo'), has_embedding: true,
+    })));
+    const sql = routedSql([['FROM kb_chunks', stored]]);
+    const ai = aiOk();
+    const res = await Rag.reindex(sql, makeEnv({ AI: ai }), DOCS);
+    expect(res).toMatchObject({ upserted: 2, embedded: 2, unchanged: 0 });
+    expect(ai.run).toHaveBeenCalled();
+  });
+
+  test('hash igual e já com embedding: não chama o modelo nem regrava (custo baixo no cron)', async () => {
+    const stored = await Promise.all(DOCS.map(async (d, i) => ({
+      id: 'id' + i, source: d.source, section: d.section, content_hash: await Rag.reindexHash(d.content), has_embedding: true,
+    })));
+    const sql = routedSql([['FROM kb_chunks', stored]]);
+    const ai = aiOk();
+    const res = await Rag.reindex(sql, makeEnv({ AI: ai }), DOCS);
+    expect(res).toMatchObject({ upserted: 0, unchanged: 2, embedded: 0 });
+    expect(ai.run).not.toHaveBeenCalled();
   });
 });
 

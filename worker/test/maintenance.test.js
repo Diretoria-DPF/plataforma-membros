@@ -5,7 +5,11 @@
  */
 import { jest } from '@jest/globals';
 import { makeSql, makeEnv } from './helpers/mockEnv.js';
+import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
 import { runMaintenance, RETENTION } from '../src/maintenance.js';
+import { buildDocuments } from '../src/assistant/docs.js';
+import { EMBEDDING_DIM } from '../src/constants.js';
+import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 
 jest.unstable_mockModule('../src/db.js', () => ({ createDb: jest.fn() }));
 const { createDb } = await import('../src/db.js');
@@ -43,6 +47,7 @@ describe('maintenance.runMaintenance', () => {
       aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, errorLogs: 4, mfaChallenges: 0,
       semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
       assistantFeedbackAnonymize: 2, assistantFeedbackPurge: 1, assistantMessagesPurge: 0, assistantIncidentsPurge: 3,
+      ragReindex: 0,
     });
     expect(queryText(sql, 7)).toMatch(/DELETE FROM mfa_challenges/);
     expect(queryText(sql, 8)).toMatch(/DELETE FROM ai_semantic_cache/);
@@ -107,6 +112,7 @@ describe('maintenance.runMaintenance', () => {
       aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, errorLogs: 1, mfaChallenges: 0,
       semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
       assistantFeedbackAnonymize: 0, assistantFeedbackPurge: 0, assistantMessagesPurge: 0, assistantIncidentsPurge: 0,
+      ragReindex: 0,
     });
     expect(queryText(sql, 1)).toMatch(/error_logs/);
   });
@@ -154,7 +160,55 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     await worker.scheduled({ cron: '17 6 * * *' }, makeEnv(), { waitUntil: (p) => pending.push(p) });
     expect(pending).toHaveLength(1);
     await pending[0];
-    // 9 limpezas + 2 consultas dos alertas da IA + 1 do decaimento da moderação da Lia + 4 da retenção da Lia.
-    expect(sql).toHaveBeenCalledTimes(16);
+    // 9 limpezas + 2 consultas dos alertas da IA + 1 do decaimento da moderação da Lia + 4 da retenção da Lia
+    // + 1 da flag rag_enabled (ragReindex, que só roda com env; aqui a flag está desligada).
+    expect(sql).toHaveBeenCalledTimes(17);
+  });
+});
+
+describe('ragReindex — reindexação diária da base da Lia (cron)', () => {
+  const FLAG_ON = [{ key: 'rag_enabled', enabled: true, rollout_pct: 100, conditions: {} }];
+  const aiOk = () => ({
+    run: jest.fn(async (_model, { text }) => ({ data: text.map(() => Array.from({ length: EMBEDDING_DIM }, () => 0.01)) })),
+  });
+
+  beforeEach(() => { __resetFlagCacheForTests(); });
+
+  test('flag desligada: não reindexa, não chama o modelo e não grava nada', async () => {
+    const sql = routedSql([['feature_flags', []]]);
+    const ai = aiOk();
+    const res = await runMaintenance(sql, 'cid', makeEnv({ AI: ai }));
+    expect(res.ragReindex).toBe(0);
+    expect(ai.run).not.toHaveBeenCalled();
+    expect(callsMatching(sql, 'INSERT INTO kb_chunks')).toHaveLength(0);
+  });
+
+  test('flag ligada e Workers AI: reindexa a base inteira e conta os gravados (upserted)', async () => {
+    const total = buildDocuments().length;
+    const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', []]]);
+    const ai = aiOk();
+    const res = await runMaintenance(sql, 'cid', makeEnv({ AI: ai }));
+    expect(res.ragReindex).toBe(total);
+    expect(ai.run).toHaveBeenCalled();
+    expect(callsMatching(sql, 'INSERT INTO kb_chunks')).toHaveLength(total);
+  });
+
+  test('sem Workers AI: não lança, grava os trechos sem embedding e conta (a busca segue por trigramas)', async () => {
+    const total = buildDocuments().length;
+    const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', []]]);
+    const res = await runMaintenance(sql, 'cid', makeEnv());
+    expect(res.ragReindex).toBe(total);
+  });
+
+  test('falha do banco na reindexação: vira null, é registrada e não derruba as outras limpezas', async () => {
+    const sql = routedSql([
+      ['feature_flags', FLAG_ON],
+      ['FROM kb_chunks', new Error('relation "kb_chunks" does not exist')],
+    ]);
+    const res = await runMaintenance(sql, 'cid', makeEnv({ AI: aiOk() }));
+    expect(res.ragReindex).toBeNull();
+    expect(res.aiUsageLog).toBe(0);
+    expect(res.sessions).toBe(0);
+    expect(callsMatching(sql, 'INSERT INTO error_logs')).toHaveLength(1);
   });
 });

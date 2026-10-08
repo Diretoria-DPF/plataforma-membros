@@ -1,0 +1,17 @@
+[
+  { "pergunta": "Quantas perguntas com IA posso fazer por dia?", "secao": "Quem pode usar a IA da Lia" },
+  { "pergunta": "A Lia pode alterar algo na minha conta?", "secao": "O que a Lia faz" },
+  { "pergunta": "Por quanto tempo o comentário do meu feedback fica guardado?", "secao": "Feedback sobre as respostas" },
+  { "pergunta": "O que a Lia guarda quando eu faço uma pergunta?", "secao": "O que a Lia guarda" },
+  { "pergunta": "O que acontece se eu xingar a assistente repetidamente?", "secao": "Respeito nas conversas" },
+  { "pergunta": "Se meu pedido de redenção for recusado, quando posso tentar de novo?", "secao": "Redenção" },
+  { "pergunta": "Quais telas a Lia consegue abrir para mim?", "secao": "Telas e módulos que a Lia pode abrir" },
+  { "pergunta": "Onde altero a imagem que aparece na minha conta?", "secao": "Meu perfil e preferências" },
+  { "pergunta": "Quero proteger minha conta com um aplicativo de códigos", "secao": "Senha e verificação em duas etapas" },
+  { "pergunta": "Quem consegue enxergar minhas informações cadastradas?", "secao": "Privacidade dos dados" },
+  { "pergunta": "Quero treinar atendimento com um paciente fictício e receber nota", "secao": "Clínica Médica Virtual (OSCE)" },
+  { "pergunta": "Quero ver os encontros da liga marcados para o mês que vem", "secao": "Eventos da liga" },
+  { "pergunta": "Onde faço experimentos de química com simulação?", "secao": "Laboratório Virtual e Estúdio 3D" },
+  { "pergunta": "Quero revisar casos de envenenamento para a prova", "secao": "Toxicologia Clínica e Forense" },
+  { "pergunta": "Quanto custa a mensalidade da liga?", "secao": null }
+]

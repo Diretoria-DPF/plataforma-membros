@@ -389,7 +389,10 @@ export const EMBEDDING_DIM = 1024;
 export const RAG = {
   TOP_K: 4,                 // trechos que entram no prompt
   CANDIDATES: 8,            // candidatos de cada busca (vetor e trigramas) antes de fundir
-  MIN_TRIGRAM_SCORE: 0.12,  // similaridade mínima de trigramas
+  // Calibrado no golden set (test/ragEval.test.js): o maior score de trigramas de uma pergunta
+  // sem resposta na base é 0,317 ("quanto custa a mensalidade"); com 0,12 ela devolvia trechos.
+  // Com 0,33 o negativo sai vazio e o recall@4 cai de 11/14 para 5/14 (busca só por trigramas).
+  MIN_TRIGRAM_SCORE: 0.33,  // similaridade mínima de trigramas (piso por lista, antes da fusão)
   MIN_VECTOR_SCORE: 0.45,   // similaridade de cosseno mínima
   RRF_K: 60,                // constante da fusão por posição (Reciprocal Rank Fusion)
   EMBED_BATCH: 16,          // textos por chamada ao modelo na reindexação
