@@ -110,7 +110,7 @@ Runbook da entrega única `feat/v5-ux-fundacao`. Quem executa é o dono, em prod
   ```bash
   cd worker && npx wrangler secret list --env staging
   ```
-  Esperado: `DATABASE_URL` e `SESSION_TOKEN_PEPPER`. Sem `BREVO_API_KEY`, de propósito.
+  Esperado: `DATABASE_URL`, `SESSION_TOKEN_PEPPER`, `MFA_ENCRYPTION_KEY` e `NVIDIA_API_KEY`. Sem `BREVO_API_KEY`, de propósito.
 - [ ] **Binding Workers AI (`[ai]`).** Produção usa o binding `AI` para os embeddings do RAG (`@cf/baai/bge-m3`). Staging tem o próprio, em `[env.staging.ai]`. Confira:
   ```bash
   grep -n -A1 "^\[.*ai\]" worker/wrangler.toml

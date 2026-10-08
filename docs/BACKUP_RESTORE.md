@@ -29,9 +29,29 @@ Cloudflare R2. Workflow: `.github/workflows/backup.yml`. Teste de restauração:
    prompt): `BACKUP_DATABASE_URL`, `BACKUP_AGE_PUBLIC_KEY` (a pública, `age1...`),
    `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BACKUP_BUCKET`.
    Variável opcional: `PG_MAJOR` (padrão 17; precisa ser ≥ à versão do servidor).
-5. Rode uma vez à mão: *Actions → Backup do banco → Run workflow*. Sem os secrets, o
-   job termina com um aviso (não fica vermelho); com eles, falha de verdade se algo
-   estiver errado e abre uma Issue com a label `backup`.
+5. Rode uma vez à mão: *Actions → Backup do banco → Run workflow*. Atenção: o job
+   AGENDADO (todo dia, 05:30 UTC) **falha** (fica vermelho) enquanto os secrets faltarem;
+   só a execução manual termina com aviso (`::warning::`). Com os secrets, falha de
+   verdade se algo estiver errado e abre uma Issue com a label `backup`.
+
+### Roteiro dos 6 secrets
+
+Caminho recomendado: `powershell -File tools\ci\registrar-segredos-backup.ps1`. Ele gera
+a chave age fora do repositório (`%USERPROFILE%\laift-backup-chave`), pede cada valor
+sem eco e cadastra os 6 secrets com `gh secret set`.
+
+| Nome | De onde vem | Formato esperado (sem valor real) | Observação |
+|---|---|---|---|
+| `BACKUP_DATABASE_URL` | Neon → Roles → papel `laift_backup`, URL direta (sem `-pooler`) | `postgresql://laift_backup:<senha>@<host-direto>/<banco>?sslmode=require` | Papel próprio de leitura total, não o da aplicação |
+| `BACKUP_AGE_PUBLIC_KEY` | Saída do `age-keygen` (chave pública) | `age1…` | A chave privada nunca vai ao repositório nem ao chat |
+| `R2_ACCOUNT_ID` | Painel da Cloudflare (ID da conta) | `<id-da-conta>` | Compõe o endpoint `https://<id-da-conta>.r2.cloudflarestorage.com` |
+| `R2_ACCESS_KEY_ID` | Token de API do R2 (*Object Read & Write*, limitado ao bucket) | `<id-da-chave>` | Par com `R2_SECRET_ACCESS_KEY` |
+| `R2_SECRET_ACCESS_KEY` | Mesmo token de API do R2 | `<chave-secreta>` | Par com `R2_ACCESS_KEY_ID` |
+| `R2_BACKUP_BUCKET` | Bucket R2 privado criado para o backup | `<nome-do-bucket>` | Usado só para backup |
+
+- (a) Quem digita os valores é o dono, no terminal, nunca no chat.
+- (b) Conferir só os nomes com `gh secret list` (ou `powershell -File tools\ci\registrar-segredos-backup.ps1 -SomenteVerificar`).
+- (c) Rodar "Backup do banco" uma vez à mão, com o OK do dono.
 
 ## Restaurar (e treinar a restauração)
 
