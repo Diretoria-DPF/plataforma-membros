@@ -329,8 +329,45 @@ export async function registerAssistantIncident(sql, correlationId, profileId, d
   const next = await bumpLevel(sql, profileId, at);
   await sql`INSERT INTO assistant_incidents (profile_id, kind, detection, level_after) VALUES (${profileId}::uuid, 'offensive', ${detection}, ${next.level})`;
   await Logging.logAudit(sql, correlationId, profileId, 'assistant_incident', 'profile', profileId, 'success', { level: next.level, detection });
+  await escalateModeration(sql, correlationId, profileId, next.level, detection);
   noteSuspension(profileId, next, at);
   return next;
+}
+
+/** Nível em que a administração é avisada (só auditoria: nada é bloqueado por isto). */
+const ALERT_LEVEL = 2;
+/** Categoria da denúncia automática: a Lia não sabe qual assunto a motivou. */
+const AUTO_REPORT_CATEGORY = 'other';
+
+/**
+ * Escalonamento da Lia: no nível 2 audita o aviso à administração; no nível 3 abre uma denúncia automática
+ * sobre a conta, sem denunciante e sem evidência (a Lia não guarda o texto). Não repete denúncia automática
+ * ainda aberta. Nunca lança erro: o incidente já está registrado e não pode falhar por causa disto.
+ */
+async function escalateModeration(sql, correlationId, profileId, level, detection) {
+  if (level === ALERT_LEVEL) {
+    await Logging.logAudit(sql, correlationId, profileId, 'assistant_moderation_alert', 'profile', profileId, 'success', { level, detection });
+    return;
+  }
+  if (level < C.MODERATION.MAX_LEVEL) return;
+  const details = `Denúncia automática da Lia: nível ${level} de moderação (suspensão de ${C.MODERATION.SUSPENSION_HOURS} h). Detecção: ${detection}.`;
+  try {
+    // Denúncias sem denunciante (reporter_id NULL) não entram no índice único: o NOT EXISTS é o que evita repetir.
+    const rows = await sql`
+      INSERT INTO profile_reports (reporter_id, reported_profile_id, category, details, evidence_excerpt)
+      SELECT NULL::uuid, ${profileId}::uuid, ${AUTO_REPORT_CATEGORY}::report_category, ${details}::text, NULL::text
+      WHERE NOT EXISTS (
+        SELECT 1 FROM profile_reports
+        WHERE reporter_id IS NULL AND reported_profile_id = ${profileId}::uuid AND status IN ('open', 'under_review')
+      )
+      RETURNING id`;
+    if (rows.length) {
+      await Logging.logAudit(sql, correlationId, profileId, 'assistant_auto_report', 'profile', profileId, 'success', { level, detection, reportId: rows[0].id });
+    }
+  } catch (err) {
+    if (isMissingTable(err)) return;
+    await Logging.logError(sql, correlationId, 'AUTO_REPORT_FAILED', 'Falha ao abrir denúncia automática.', { profileId, level });
+  }
 }
 
 /**
