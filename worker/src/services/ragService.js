@@ -51,7 +51,16 @@ export async function embedTexts(env, texts) {
   }
 }
 
-/** Fusão por posição: cada lista contribui 1/(k + posição). Devolve os melhores, já ordenados. */
+/**
+ * Piso por lista, aplicado ANTES da fusão e sobre o score BRUTO da própria lista
+ * (cosseno do vetor ou similaridade de trigramas). A fusão por posição ignora o
+ * score: sem o piso, um trigrama de 0,13 empataria com um vetor de 0,9 na mesma posição.
+ */
+export function aboveFloor(rows, floor) {
+  return rows.filter((row) => Number(row.score) >= floor);
+}
+
+/** Fusão por posição: cada lista contribui 1/(k + posição). Devolve os melhores, já ordenados; sem nada, []. */
 export function fuse(lists, limit) {
   const merged = new Map();
   lists.forEach((rows) => {
@@ -96,11 +105,11 @@ export async function retrieve(sql, env, question) {
   let embeddingError = null;
   try {
     const [vec] = await embedTexts(env, [query]);
-    vectorList = await vectorRows(sql, toVectorLiteral(vec));
+    vectorList = aboveFloor(await vectorRows(sql, toVectorLiteral(vec)), C.RAG.MIN_VECTOR_SCORE);
   } catch (err) {
     embeddingError = String((err && err.message) || err).slice(0, 200);
   }
-  const trigramList = await trigramRows(sql, query);
+  const trigramList = aboveFloor(await trigramRows(sql, query), C.RAG.MIN_TRIGRAM_SCORE);
   const lists = vectorList ? [vectorList, trigramList] : [trigramList];
   return { chunks: fuse(lists, C.RAG.TOP_K), mode: vectorList ? 'hybrid' : 'trigram', embeddingError };
 }
@@ -108,6 +117,15 @@ export async function retrieve(sql, env, question) {
 export async function sha256Hex(text) {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Hash do trecho na reindexação: sha256(modelo + "\n" + conteúdo). O MODELO entra na conta,
+ * então trocar o modelo de embedding reindexa tudo, mesmo com a mesma dimensão (vetores de
+ * outro espaço não podem ficar misturados com os novos).
+ */
+export async function reindexHash(content, model = C.EMBEDDING_MODEL) {
+  return sha256Hex(model + '\n' + content);
 }
 
 async function embedInBatches(env, texts) {
@@ -130,7 +148,7 @@ export async function reindex(sql, env, documents) {
   const existing = await sql`SELECT id, source, section, content_hash, (embedding IS NOT NULL) AS has_embedding FROM kb_chunks`;
   const byKey = new Map(existing.map((r) => [r.source + '|' + r.section, r]));
 
-  const hashed = await Promise.all(docs.map(async (d) => Object.assign({}, d, { hash: await sha256Hex(d.content) })));
+  const hashed = await Promise.all(docs.map(async (d) => Object.assign({}, d, { hash: await reindexHash(d.content) })));
   const pending = hashed.filter((d) => {
     const row = byKey.get(d.source + '|' + d.section);
     return !row || row.content_hash !== d.hash || !row.has_embedding;

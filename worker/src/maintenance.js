@@ -32,11 +32,20 @@
  *    mais de 180 dias sai — e o CASCADE de sql/021 leva junto a avaliação
  *    dela; incidente de moderação (assistant_incidents, sem texto) com mais
  *    de 365 dias sai.
+ *  - Base da Lia (ragService.reindex, tarefa ragReindex): reindexa o que mudou
+ *    (hash = modelo + conteúdo) só quando há env (Workers AI) e a flag rag_enabled
+ *    está ligada. Exceção consciente à regra "corte por idade": trechos que saíram
+ *    de kb.js/docs.js somem, porque a base é a fonte da verdade e não um histórico.
  */
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
 import { AI_CACHE, ASSISTANT_RETENTION, FEEDBACK } from './constants.js';
 import * as ModerationService from './services/moderationService.js';
+import * as Rag from './services/ragService.js';
+import { buildDocuments } from './assistant/docs.js';
+import { isEnabled } from './services/featureFlagService.js';
+
+const RAG_FLAG = 'rag_enabled';
 
 export const RETENTION = {
   AI_USAGE_LOG_DAYS: 180,
@@ -54,6 +63,7 @@ export const RETENTION = {
 
 /** Quantas linhas a limpeza mexeu: a lista de linhas apagadas ou o `lowered` do decaimento da moderação. */
 function countOf(result) {
+  if (typeof result === 'number') return result;
   if (Array.isArray(result)) return result.length;
   return result && typeof result.lowered === 'number' ? result.lowered : 0;
 }
@@ -147,11 +157,26 @@ function assistantRetentionTasks(sql) {
 }
 
 /**
+ * Reindexa a base da Lia (ver o cabeçalho). Sem env ou com a flag desligada, não toca em nada.
+ * Devolve quantos trechos foram gravados (upserted); o hash deixa de fora o que não mudou.
+ */
+async function ragReindexIfEnabled(sql, env) {
+  if (!env) return 0;
+  if (!(await isEnabled(sql, RAG_FLAG, null))) return 0;
+  const report = await Rag.reindex(sql, env, buildDocuments());
+  return report.upserted;
+}
+
+/**
  * Cada limpeza roda isolada: uma falha (ex.: tabela ainda não migrada) é
  * registrada e não impede as outras. Devolve quantas linhas cada uma apagou.
  */
 export async function runMaintenance(sql, correlationId, env) {
-  const tasks = { ...coreTasks(sql, correlationId, env), ...assistantRetentionTasks(sql) };
+  const tasks = {
+    ...coreTasks(sql, correlationId, env),
+    ...assistantRetentionTasks(sql),
+    ragReindex: () => ragReindexIfEnabled(sql, env),
+  };
 
   const deleted = {};
   for (const [name, task] of Object.entries(tasks)) {
