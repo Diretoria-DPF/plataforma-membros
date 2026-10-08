@@ -6,12 +6,16 @@
 /* Gráficos SVG (charts.js). Cores só por [data-series] -> var(--chart-1..8).
    Movimento só em transform, opacity e stroke-dashoffset, com duração e curva
    de --dur-* e --ease-*. Um único bloco de reduced-motion zera tudo: os
-   gráficos mostram o valor final direto. Hover só em (hover: hover); foco de
-   teclado em :focus-visible. Textos usam tokens de texto, nunca a cor da série. */
+   gráficos mostram o valor final direto. Valores são visíveis sem hover
+   (.laift-chart__value); só o que não cabe sem colidir revela no hover, e o
+   hover só realça. Nenhum item recebe foco: a tabela sr-only entrega os valores.
+   Textos usam tokens de texto, nunca a cor da série. */
 
+/* Fundo de camada 0: as cores de série são validadas sobre a camada 0/1, nunca 2/3. */
 .laift-chart {
   position: relative;
   color: var(--laift-text);
+  background: var(--layer-0);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -93,7 +97,7 @@
   fill: currentColor;
 }
 
-/* Pontos intermediários da linha ficam ocultos; aparecem no hover e no foco do teclado. */
+/* Pontos intermediários da linha ficam ocultos; aparecem só no hover do mouse. */
 .laift-chart__dot--quiet {
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-out);
@@ -103,10 +107,6 @@
   .laift-chart__item:hover .laift-chart__dot--quiet {
     opacity: 1;
   }
-}
-
-.laift-chart__item:focus-visible .laift-chart__dot--quiet {
-  opacity: 1;
 }
 
 .laift-chart__track {
@@ -130,10 +130,19 @@
   cursor: default;
 }
 
-/* Valor revelado por hover e foco: fade de opacidade. */
-.laift-chart__value {
+/* Valor de série: sempre visível, sem hover. Halo na cor do fundo para ler sobre linha e área. */
+.laift-chart__svg .laift-chart__value {
   fill: var(--laift-text);
+  font-size: 11px;
   font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--layer-0);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* Valor que não cabe sem colidir: só realce de hover do mouse. Nada depende dele (legenda e tabela trazem os números). */
+.laift-chart__svg .laift-chart__value--hover {
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-out);
 }
@@ -149,32 +158,9 @@
     opacity: 1;
   }
 
-  .laift-chart__item:hover .laift-chart__value {
+  .laift-chart__item:hover .laift-chart__value--hover {
     opacity: 1;
   }
-}
-
-.laift-chart__item:focus {
-  outline: none;
-}
-
-.laift-chart__item:focus-visible .laift-chart__hit {
-  stroke: var(--laift-focus-color);
-  stroke-width: 2px;
-}
-
-.laift-chart__item:focus-visible .laift-chart__bar--h {
-  transform: translateX(4px);
-  opacity: 1;
-}
-
-.laift-chart__item:focus-visible .laift-chart__bar--v {
-  transform: translateY(-4px);
-  opacity: 1;
-}
-
-.laift-chart__item:focus-visible .laift-chart__value {
-  opacity: 1;
 }
 
 .laift-chart__label,

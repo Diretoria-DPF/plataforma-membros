@@ -62,6 +62,11 @@ function walk(node, out = []) {
 }
 const byTag = (node, tag) => walk(node).filter((n) => n.tag === tag);
 const byClass = (node, cls) => walk(node).filter((n) => (n.attrs.class || '').split(/\s+/).includes(cls));
+const classesOf = (node) => (node.attrs.class || '').split(/\s+/).filter(Boolean);
+/** Rótulos de valor sempre visíveis (sem a classe de realce de hover). */
+const persistentValues = (node) => byClass(node, 'laift-chart__value').filter((n) => !classesOf(n).includes('laift-chart__value--hover'));
+/** Marcadores visíveis de ponto (o marcador quieto, só de hover, fica de fora). */
+const visibleDots = (node) => byClass(node, 'laift-chart__dot').filter((n) => !classesOf(n).includes('laift-chart__dot--quiet'));
 
 /** Troca matchMedia/rAF temporariamente e restaura, mesmo se o teste falhar. */
 function withGlobal(name, value, fn) {
@@ -143,15 +148,28 @@ test('sem medida (painel oculto) o gráfico usa a largura padrão', () => {
   assert.equal(container.children[0].children[0].attrs.width, '640');
 });
 
-test('eixo Y tem três rótulos (0, metade e máximo) e o marcador fica só no último ponto', () => {
+test('eixo Y tem três rótulos (0, metade e máximo); marcador só no último ponto e no máximo', () => {
   const container = mountPoint(fakeDoc());
   Charts.lineArea(container, [0, 4, 8, 2], { width: 300, height: 220 });
   const wrap = container.children[0];
   assert.deepEqual(byClass(wrap, 'laift-chart__axis-label').map((n) => n.textContent), ['0', '5', '10']);
-  const dots = byClass(wrap, 'laift-chart__dot');
-  assert.equal(dots.length, 4);
-  assert.equal(byClass(wrap, 'laift-chart__dot--quiet').length, 3);
-  assert.equal(dots[3].attrs.class, 'laift-chart__dot');
+  assert.equal(visibleDots(wrap).length, 2);
+  assert.equal(byClass(wrap, 'laift-chart__dot--quiet').length, 2);
+});
+
+test('linha: valor do último ponto é persistente e o do máximo também, quando não colidem', () => {
+  const container = mountPoint(fakeDoc());
+  Charts.lineArea(container, [0, 4, 8, 2], { width: 300, height: 220 });
+  const wrap = container.children[0];
+  assert.deepEqual(persistentValues(wrap).map((n) => n.textContent), ['8', '2']);
+  assert.equal(byClass(wrap, 'laift-chart__value--hover').length, 2, 'pontos intermediários só realçam no hover');
+});
+
+test('linha: com o máximo no último ponto há um só rótulo persistente', () => {
+  const container = mountPoint(fakeDoc());
+  Charts.lineArea(container, [0, 2, 9], { width: 300, height: 220 });
+  const wrap = container.children[0];
+  assert.deepEqual(persistentValues(wrap).map((n) => n.textContent), ['9']);
 });
 
 test('largura medida tem piso de 160 px e variação menor que 8 px não refaz o gráfico', async () => {
@@ -305,7 +323,7 @@ test('describeRows usa o texto de vazio ou resume quantidade e maior valor', () 
 
 // ---------- Renderização SVG (DOM mínimo) ----------
 
-test('barsHorizontal monta svg role=img com título, descrição, barras focáveis e tabela irmã', () => {
+test('barsHorizontal monta svg role=img com título, descrição, valores e tabela irmã, sem foco', () => {
   const doc = fakeDoc();
   const container = mountPoint(doc);
   const chart = Charts.barsHorizontal(container, [{ label: 'Ana', value: 30 }, { label: 'Bia', value: 12 }], { title: 'Presenças' });
@@ -315,7 +333,9 @@ test('barsHorizontal monta svg role=img com título, descrição, barras focáve
   assert.equal(byTag(svg, 'title')[0].textContent, 'Presenças');
   assert.ok(byTag(svg, 'desc')[0].textContent.length > 0);
   assert.equal(byClass(svg, 'laift-chart__bar').length, 2);
-  assert.ok(byClass(svg, 'laift-chart__item').every((n) => n.attrs.tabindex === '0'));
+  assert.equal(byClass(svg, 'laift-chart__item').length, 2);
+  assert.deepEqual(persistentValues(svg).map((n) => n.textContent), ['30', '12'], 'valor de cada barra visível sem hover');
+  assert.ok(walk(svg).every((n) => !('tabindex' in n.attrs)), 'nenhum elemento do gráfico recebe foco');
   assert.equal(byClass(svg, 'laift-chart__bar')[0].attrs['data-series'], '1');
   const table = byTag(wrap, 'table')[0];
   assert.equal(table.attrs.class, 'sr-only');
@@ -369,14 +389,14 @@ test('donut desenha um segmento por parcela e mostra o total no centro (reduced 
   assert.equal(byClass(wrap, 'laift-chart__center-value')[0].textContent, '4');
 });
 
-test('sparkline com live marca o pulso e expõe o último valor focável', () => {
+test('sparkline com live marca o pulso e mostra o último valor, sem foco', () => {
   const container = mountPoint(fakeDoc());
   Charts.sparkline(container, [1, 4, 2], { live: true });
   const wrap = container.children[0];
   assert.ok(wrap.attrs.class.includes('laift-chart--live'));
   assert.equal(byClass(wrap, 'laift-chart__pulse').length, 1);
-  const last = byClass(wrap, 'laift-chart__item')[0];
-  assert.equal(last.attrs['aria-label'], 'Último valor: 2');
+  assert.deepEqual(persistentValues(wrap).map((n) => n.textContent), ['2']);
+  assert.ok(walk(wrap).every((n) => !('tabindex' in n.attrs)), 'sparkline sem foco');
 });
 
 test('prefers-reduced-motion ativo vira classe estática em qualquer gráfico', () => {
@@ -418,6 +438,70 @@ test('toTable devolve tabela sr-only com cabeçalho, linhas formatadas e legenda
   assert.equal(byTag(table, 'td')[0].textContent, '1.500');
 });
 
+test('colunas agrupadas mostram o valor de cada barra de forma persistente quando cabem', () => {
+  const container = mountPoint(fakeDoc());
+  Charts.groupedBars(container, [{ label: 'Jan', values: [3, 4] }, { label: 'Fev', values: [5, 1] }], { series: ['Entradas', 'Saídas'] });
+  const wrap = container.children[0];
+  assert.deepEqual(persistentValues(wrap).map((n) => n.textContent), ['3', '4', '5', '1']);
+  assert.equal(byClass(wrap, 'laift-chart__value--hover').length, 0);
+});
+
+test('colunas estreitas: rótulo persistente só onde cabe e legenda com o total de cada série', () => {
+  const container = mountPoint(fakeDoc());
+  const rows = Array.from({ length: 12 }, (_, i) => ({ label: 'g' + i, values: [10, 10] }));
+  Charts.groupedBars(container, rows, { width: 160, height: 200, series: ['set/26', 'out/26'] });
+  const wrap = container.children[0];
+  const shown = persistentValues(wrap);
+  assert.ok(shown.length >= 1 && shown.length < 24, 'alguns rótulos cabem, outros não');
+  assert.ok(byClass(wrap, 'laift-chart__value--hover').length > 0, 'rótulo que colide vira só realce');
+  assert.deepEqual(byClass(wrap, 'laift-chart__legend-text').map((n) => n.textContent), ['set/26 · 120', 'out/26 · 120']);
+});
+
+test('nenhum gráfico tem elemento focável: tabindex fica fora de todas as marcas', () => {
+  const doc = fakeDoc();
+  const charts = [
+    Charts.barsHorizontal(mountPoint(doc), [{ label: 'a', value: 2 }]),
+    Charts.groupedBars(mountPoint(doc), [{ label: 'a', values: [1, 2] }, { label: 'b', values: [2, 1] }]),
+    Charts.lineArea(mountPoint(doc), [1, 3, 2]),
+    Charts.donut(mountPoint(doc), [{ label: 'a', value: 1 }, { label: 'b', value: 2 }]),
+    Charts.radialProgress(mountPoint(doc), 40),
+    Charts.sparkline(mountPoint(doc), [1, 2, 3])
+  ];
+  charts.forEach((chart) => {
+    assert.equal(walk(chart.el).filter((n) => 'tabindex' in n.attrs).length, 0);
+    assert.equal(walk(chart.el).filter((n) => 'aria-label' in n.attrs && n.tag === 'g').length, 0, 'aria-label em g sem papel não é exposto');
+  });
+});
+
+test('placeValueLabels: o maior valor entra primeiro e o que colide some sem tocar os aceitos', () => {
+  const shown = Core.placeValueLabels([
+    { x: 10, y: 20, text: '100', priority: 100 },
+    { x: 14, y: 20, text: '200', priority: 200 },
+    { x: 80, y: 20, text: '5', priority: 5 }
+  ], { size: 11 });
+  assert.deepEqual(shown, [false, true, true]);
+});
+
+test('placeValueLabels: candidato obrigatório aparece mesmo colidindo; fora dos limites some', () => {
+  const shown = Core.placeValueLabels([
+    { x: 50, y: 20, text: '9', priority: 0, required: true },
+    { x: 52, y: 20, text: '8', priority: 9 },
+    { x: 2, y: 20, text: '1234', anchor: 'middle', priority: 3 }
+  ], { size: 11, bounds: { minX: 0, maxX: 100, minY: 0, maxY: 40 } });
+  assert.deepEqual(shown, [true, false, false]);
+});
+
+test('placeValueLabels: rótulos afastados cabem todos; lista vazia devolve lista vazia', () => {
+  assert.deepEqual(Core.placeValueLabels([{ x: 10, y: 20, text: '1' }, { x: 60, y: 20, text: '2' }]), [true, true]);
+  assert.deepEqual(Core.placeValueLabels([]), []);
+});
+
+test('estimateTextWidth cresce com o texto e com o corpo do rótulo; seriesTotals soma por série', () => {
+  assert.ok(Core.estimateTextWidth('12345', 11) > Core.estimateTextWidth('1', 11));
+  assert.ok(Core.estimateTextWidth('12', 16) > Core.estimateTextWidth('12', 11));
+  assert.deepEqual(Core.seriesTotals([{ values: [1, 2] }, { values: [3] }], 2), [4, 2]);
+});
+
 // ---------- Higiene do código e do CSS ----------
 
 test('charts.js e charts-core.js não usam innerHTML nem style inline', () => {
@@ -457,4 +541,24 @@ test('charts.css move só transform, opacity e stroke-dashoffset, com duração 
   }
   assert.doesNotMatch(css, /\b\d+(\.\d+)?(ms|s)\b/, 'duração literal');
   assert.doesNotMatch(css, /cubic-bezier\(/, 'curva literal');
+});
+
+test('charts.css: valor de série é persistente; só o realce de hover o esconde', () => {
+  const css = read('modulos/shared/charts.css');
+  const base = css.match(/\.laift-chart__svg \.laift-chart__value\s*\{([^}]*)\}/);
+  assert.ok(base, 'regra do valor persistente');
+  assert.doesNotMatch(base[1], /opacity/, 'valor persistente não pode nascer invisível');
+  assert.match(css, /@media \(hover: hover\) \{[\s\S]*?\.laift-chart__item:hover \.laift-chart__value--hover\s*\{\s*opacity:\s*1/);
+});
+
+test('charts.css: nenhum item de gráfico recebe foco (sem regras :focus de item)', () => {
+  assert.doesNotMatch(read('modulos/shared/charts.css'), /laift-chart__item:focus|laift-chart__dot--quiet:focus/);
+});
+
+test('charts.css: fundo do gráfico é camada 0 ou 1, nunca superfície 2 ou 3', () => {
+  assert.match(read('modulos/shared/charts.css'), /\.laift-chart \{[^}]*background:\s*var\(--layer-[01]\)/);
+});
+
+test('charts.css: rótulo de valor de 11 px, acima da regra geral de texto de 12 px', () => {
+  assert.match(read('modulos/shared/charts.css'), /\.laift-chart__svg \.laift-chart__value \{[^}]*font-size:\s*11px/);
 });

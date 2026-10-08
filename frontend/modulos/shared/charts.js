@@ -24,6 +24,10 @@
   var PAD = 36;
   var DOT_R = 4;
   var DOT_HIT_R = 22;
+  // Rótulo de valor: 11 px, linha de base VALUE_OFFSET acima da marca; VALUE_HEADROOM abre espaço no topo.
+  var VALUE_SIZE = 11;
+  var VALUE_OFFSET = 6;
+  var VALUE_HEADROOM = 16;
   // Margem à esquerda da linha/área para os rótulos do eixo Y.
   var GUTTER = 36;
   var RESIZE_DEBOUNCE_MS = 120;
@@ -140,14 +144,17 @@
     }));
   }
 
-  /** Item focável (hover e teclado): aria-label com rótulo e valor. */
-  function item(doc, label, value, children) {
-    var g = svgNode(doc, 'g', {
-      class: 'laift-chart__item',
-      tabindex: '0',
-      'aria-label': label + ': ' + core.formatNumber(value)
-    });
-    return appendAll(g, children);
+  /** Agrupa marca e rótulos para o realce de hover. Sem tabindex nem aria: a tabela sr-only entrega os valores. */
+  function item(doc, children) {
+    return appendAll(svgNode(doc, 'g', { class: 'laift-chart__item' }), children);
+  }
+
+  /** Rótulo de valor: persistente, ou só realce de hover quando não cabe sem colidir. */
+  function valueText(doc, at, value, persistent) {
+    var cls = persistent ? 'laift-chart__value' : 'laift-chart__value laift-chart__value--hover';
+    return svgNode(doc, 'text', {
+      class: cls, x: at.x, y: at.y, 'text-anchor': at.anchor, 'dominant-baseline': at.baseline
+    }, core.formatNumber(value));
   }
 
   // ---------- Tabela alternativa ----------
@@ -338,11 +345,12 @@
       d: core.barPath(o.labelWidth, bar.y, bar.length, o.rowHeight, RADIUS, 'horizontal')
     });
     setVar(path, '--i', bar.index);
-    return item(doc, bar.label, bar.value, [
+    // Barra horizontal sempre cabe o valor: uma linha por categoria, sem colisão vertical.
+    return item(doc, [
       svgNode(doc, 'rect', { class: 'laift-chart__hit', x: 0, y: bar.y - o.gap / 2, width: o.width, height: o.rowHeight + o.gap }),
       svgNode(doc, 'text', { class: 'laift-chart__label', x: o.labelWidth - LABEL_GAP, y: mid, 'text-anchor': 'end', 'dominant-baseline': 'middle' }, bar.label),
       path,
-      svgNode(doc, 'text', { class: 'laift-chart__value', x: o.labelWidth + bar.length + LABEL_GAP, y: mid, 'dominant-baseline': 'middle' }, core.formatNumber(bar.value))
+      valueText(doc, { x: o.labelWidth + bar.length + LABEL_GAP, y: mid, baseline: 'middle' }, bar.value, true)
     ]);
   }
 
@@ -365,27 +373,17 @@
 
   // ---------- Linha e área ----------
 
-  /** Eixo Y com três marcas (0, metade e máximo): grade e rótulo na margem esquerda. */
-  function yAxis(doc, max, plotW, plotH) {
+  /** Eixo Y com três marcas (0, metade e máximo): grade e rótulo na margem esquerda, entre o topo e a base. */
+  function yAxis(doc, max, plotW, innerH, bottom) {
     var nodes = [];
     core.ticks(max, 2).forEach(function (tick) {
-      var y = plotH - (tick / max) * plotH;
+      var y = bottom - (tick / max) * innerH;
       nodes.push(svgNode(doc, 'line', { class: 'laift-chart__grid', x1: GUTTER, x2: GUTTER + plotW, y1: y, y2: y }));
       nodes.push(svgNode(doc, 'text', {
         class: 'laift-chart__axis-label', x: GUTTER - 6, y: y, 'text-anchor': 'end', 'dominant-baseline': 'middle'
       }, core.formatNumber(tick)));
     });
     return nodes;
-  }
-
-  /** Ponto da linha: marcador visível só no último; os demais aparecem no hover e no foco. */
-  function pointItem(doc, label, point, isLast) {
-    var dotClass = isLast ? 'laift-chart__dot' : 'laift-chart__dot laift-chart__dot--quiet';
-    return item(doc, label, point.value, [
-      svgNode(doc, 'circle', { class: 'laift-chart__hit', cx: point.x, cy: point.y, r: DOT_HIT_R }),
-      svgNode(doc, 'circle', { class: dotClass, 'data-series': 1, cx: point.x, cy: point.y, r: DOT_R }),
-      svgNode(doc, 'text', { class: 'laift-chart__value', x: point.x, y: point.y - 12, 'text-anchor': 'middle' }, core.formatNumber(point.value))
-    ]);
   }
 
   /** Rótulos só do primeiro e do último período (rótulos seletivos). */
@@ -399,24 +397,71 @@
     ];
   }
 
+  /** Índice do maior valor da linha (o primeiro, em empate). */
+  function peakIndex(points) {
+    return points.reduce(function (best, p, i) { return p.value > points[best].value ? i : best; }, 0);
+  }
+
+  /**
+   * Quais pontos da linha mostram o valor de forma persistente: o último sempre; o máximo
+   * quando não colide com ele. Os demais só realçam no hover. Coordenadas absolutas do SVG.
+   */
+  function linePointFlags(points, o) {
+    var last = points.length - 1;
+    var peak = peakIndex(points);
+    var idx = peak === last ? [last] : [last, peak];
+    var cands = idx.map(function (i) {
+      var p = points[i];
+      return {
+        x: GUTTER + p.x,
+        y: VALUE_HEADROOM + p.y - VALUE_OFFSET,
+        text: core.formatNumber(p.value),
+        anchor: i === last ? 'end' : 'middle',
+        priority: 1,
+        required: i === last
+      };
+    });
+    var shown = core.placeValueLabels(cands, {
+      size: VALUE_SIZE, bounds: { minX: 0, maxX: o.width, minY: 0, maxY: o.height }
+    });
+    var flags = points.map(function () { return false; });
+    idx.forEach(function (i, k) { flags[i] = shown[k]; });
+    return flags;
+  }
+
+  /** Ponto da linha (coordenadas do grupo da linha): alvo de hover, marcador e rótulo. */
+  function linePoint(doc, p, state) {
+    var dotClass = state.marker ? 'laift-chart__dot' : 'laift-chart__dot laift-chart__dot--quiet';
+    return item(doc, [
+      svgNode(doc, 'circle', { class: 'laift-chart__hit', cx: p.x, cy: p.y, r: DOT_HIT_R }),
+      svgNode(doc, 'circle', { class: dotClass, 'data-series': 1, cx: p.x, cy: p.y, r: DOT_R }),
+      valueText(doc, { x: p.x, y: p.y - VALUE_OFFSET, anchor: state.anchor }, p.value, state.show)
+    ]);
+  }
+
   function paintLine(doc, data, ctx) {
     var o = ctx.options;
     var rows = core.normalizeRows(data);
     if (core.isEmpty(rows)) return emptyParts(doc, ctx, 'line', o.width, o.height, o.title);
-    var plotH = o.height - o.labelHeight;
+    var bottom = o.height - o.labelHeight;
+    var innerH = Math.max(1, bottom - VALUE_HEADROOM);
     var plotW = Math.max(1, o.width - GUTTER);
-    var model = core.lineModel(rows.map(function (row) { return row.value; }), { width: plotW, height: plotH });
+    var model = core.lineModel(rows.map(function (row) { return row.value; }), { width: plotW, height: innerH });
     var parts = frame(doc, ctx, {
       kind: 'line', width: o.width, height: o.height, title: o.title,
       description: core.describeRows(rows, core.formatNumber)
     });
     var last = model.points.length - 1;
-    var plot = svgNode(doc, 'g', { transform: 'translate(' + GUTTER + ' 0)' });
+    var peak = peakIndex(model.points);
+    var flags = linePointFlags(model.points, o);
+    var plot = svgNode(doc, 'g', { transform: 'translate(' + GUTTER + ' ' + VALUE_HEADROOM + ')' });
     appendAll(plot, [
       svgNode(doc, 'path', { class: 'laift-chart__area', 'data-series': 1, d: model.areaPath }),
       svgNode(doc, 'path', { class: 'laift-chart__line', 'data-series': 1, d: model.linePath, pathLength: '1' })
-    ].concat(model.points.map(function (p, i) { return pointItem(doc, rows[i].label, p, i === last); })));
-    appendAll(parts.svg, yAxis(doc, model.max, plotW, plotH).concat([plot], axisLabels(doc, rows, GUTTER, o.width, plotH)));
+    ].concat(model.points.map(function (p, i) {
+      return linePoint(doc, p, { marker: i === last || i === peak, anchor: i === last ? 'end' : 'middle', show: flags[i] });
+    })));
+    appendAll(parts.svg, yAxis(doc, model.max, plotW, innerH, bottom).concat([plot], axisLabels(doc, rows, GUTTER, o.width, bottom)));
     return finish(parts, [toTable(rows, o.title, { doc: doc, headers: ['Período', 'Valor'] })]);
   }
 
@@ -434,30 +479,51 @@
     return out;
   }
 
-  function groupItem(doc, group, index, geo, names) {
-    var summary = group.bars.map(function (bar, i) {
-      return names[i] + ' ' + core.formatNumber(bar.value);
-    }).join(' · ');
-    var g = svgNode(doc, 'g', {
-      class: 'laift-chart__item',
-      tabindex: '0',
-      'aria-label': group.label + ': ' + summary
+  /** Posição do rótulo de uma coluna: linha de base logo acima do topo da barra (coordenadas do SVG). */
+  function columnValueAt(bar, geo) {
+    return { x: bar.x + bar.width / 2, y: geo.top + bar.y - VALUE_OFFSET, anchor: 'middle' };
+  }
+
+  /**
+   * Rótulos das colunas: o maior valor primeiro (em empate, a coluna mais à direita). O que colide
+   * vira só realce de hover; a legenda passa a trazer o total de cada série. Devolve [grupo][barra].
+   */
+  function columnLabelFlags(groups, geo, width) {
+    var cands = [];
+    groups.forEach(function (group) {
+      group.bars.forEach(function (bar) {
+        var at = columnValueAt(bar, geo);
+        cands.push({ x: at.x, y: at.y, anchor: at.anchor, text: core.formatNumber(bar.value), priority: bar.value });
+      });
     });
+    var shown = core.placeValueLabels(cands, {
+      size: VALUE_SIZE, bounds: { minX: 0, maxX: width, minY: 0, maxY: geo.bottom }
+    });
+    var offset = 0;
+    return groups.map(function (group) {
+      var row = shown.slice(offset, offset + group.bars.length);
+      offset += group.bars.length;
+      return row;
+    });
+  }
+
+  /** Coluna de uma série: sobe da linha de base; o rótulo aparece se a decisão de colisão aprovar. */
+  function groupItem(doc, group, index, geo, flags) {
     var children = [svgNode(doc, 'rect', {
       class: 'laift-chart__hit',
-      x: group.center - geo.groupWidth / 2, y: 0, width: geo.groupWidth, height: geo.plotH + LABEL_BASELINE + 4
+      x: group.center - geo.groupWidth / 2, y: 0, width: geo.groupWidth, height: geo.bottom + LABEL_BASELINE + 4
     })];
-    group.bars.forEach(function (bar) {
+    group.bars.forEach(function (bar, i) {
       var path = svgNode(doc, 'path', {
         class: 'laift-chart__bar laift-chart__bar--v',
         'data-series': bar.slot,
-        d: core.barPath(bar.x, bar.y, bar.width, bar.height, RADIUS, 'vertical')
+        d: core.barPath(bar.x, bar.y + geo.top, bar.width, bar.height, RADIUS, 'vertical')
       });
       setVar(path, '--i', index);
-      children.push(path, svgText(doc, 'laift-chart__value', bar.x + bar.width / 2, bar.y - LABEL_GAP / 2, 'middle', core.formatNumber(bar.value)));
+      children.push(path, valueText(doc, columnValueAt(bar, geo), bar.value, flags[i]));
     });
-    children.push(svgText(doc, 'laift-chart__label', group.center, geo.plotH + LABEL_BASELINE, 'middle', group.label));
-    return appendAll(g, children);
+    children.push(svgText(doc, 'laift-chart__label', group.center, geo.bottom + LABEL_BASELINE, 'middle', group.label));
+    return item(doc, children);
   }
 
   function paintGrouped(doc, data, ctx) {
@@ -466,18 +532,26 @@
     if (core.isEmpty(rows)) return emptyParts(doc, ctx, 'grouped', o.width, o.height, o.title);
     var count = Math.max(1, Math.min(seriesCount(rows), core.MAX_SERIES));
     var names = seriesNames(count, o.series);
-    var plotH = o.height - o.labelHeight;
-    var model = core.groupedModel(rows, count, { plotWidth: o.width, plotHeight: plotH });
+    var bottom = o.height - o.labelHeight;
+    // As colunas sobem até bottom - VALUE_HEADROOM; groupItem soma geo.top para assentá-las na linha de base.
+    var model = core.groupedModel(rows, count, { plotWidth: o.width, plotHeight: bottom - VALUE_HEADROOM });
     var parts = frame(doc, ctx, {
       kind: 'grouped', width: o.width, height: o.height, title: o.title,
       description: rows.length + (rows.length === 1 ? ' grupo' : ' grupos') + ', ' + count + (count === 1 ? ' série.' : ' séries.')
     });
-    var geo = { plotH: plotH, groupWidth: o.width / rows.length };
-    var nodes = [svgNode(doc, 'line', { class: 'laift-chart__axis', x1: 0, x2: o.width, y1: plotH, y2: plotH })];
-    model.groups.forEach(function (group, g) { nodes.push(groupItem(doc, group, g, geo, names)); });
+    var geo = { top: VALUE_HEADROOM, bottom: bottom, groupWidth: o.width / rows.length };
+    var flags = columnLabelFlags(model.groups, geo, o.width);
+    var nodes = [svgNode(doc, 'line', { class: 'laift-chart__axis', x1: 0, x2: o.width, y1: bottom, y2: bottom })];
+    model.groups.forEach(function (group, g) { nodes.push(groupItem(doc, group, g, geo, flags[g])); });
     appendAll(parts.svg, nodes);
+    var hidden = flags.some(function (row) { return row.some(function (shown) { return !shown; }); });
+    var totals = core.seriesTotals(rows, count);
     var extras = [];
-    if (count >= 2) extras.push(legendNode(doc, names.map(function (name, i) { return { slot: i + 1, label: name }; })));
+    if (count >= 2 || hidden) {
+      extras.push(legendNode(doc, names.map(function (name, i) {
+        return { slot: i + 1, label: hidden ? name + ' · ' + core.formatNumber(totals[i]) : name };
+      })));
+    }
     extras.push(toTable(rows, o.title, { doc: doc, headers: ['Grupo'].concat(names) }));
     return finish(parts, extras);
   }
@@ -490,9 +564,23 @@
     return cos < -0.3 ? 'end' : 'middle';
   }
 
-  function donutItem(doc, seg, center, radius, o) {
+  /** Rótulo de um segmento, fora do anel, no meio do arco (linha de base ajustada ao centro). */
+  function donutValueAt(seg, center, radius, o) {
     var mid = (seg.start + seg.end) / 2;
     var outer = core.polarPoint(center, center, radius + o.thickness / 2 + LABEL_GAP * 2, mid);
+    return { x: outer.x, y: outer.y + VALUE_SIZE * 0.35, anchor: anchorFor(mid) };
+  }
+
+  /** Rótulos da rosca: os que cabem dentro da caixa e não colidem. O resto fica só no hover; a legenda traz os valores. */
+  function donutLabelFlags(segments, center, radius, o, box) {
+    var cands = segments.map(function (seg) {
+      var at = donutValueAt(seg, center, radius, o);
+      return { x: at.x, y: at.y, anchor: at.anchor, text: core.formatNumber(seg.value), priority: seg.value };
+    });
+    return core.placeValueLabels(cands, { size: VALUE_SIZE, bounds: { minX: 0, maxX: box, minY: 0, maxY: box } });
+  }
+
+  function donutItem(doc, seg, center, radius, o, persistent) {
     var path = svgNode(doc, 'path', {
       class: 'laift-chart__seg',
       'data-series': seg.slot,
@@ -501,10 +589,7 @@
       pathLength: '1'
     });
     setVar(path, '--i', seg.index);
-    return item(doc, seg.label, seg.value, [
-      path,
-      svgNode(doc, 'text', { class: 'laift-chart__value', x: outer.x, y: outer.y, 'text-anchor': anchorFor(mid), 'dominant-baseline': 'middle' }, core.formatNumber(seg.value))
-    ]);
+    return item(doc, [path, valueText(doc, donutValueAt(seg, center, radius, o), seg.value, persistent)]);
   }
 
   function paintDonut(doc, data, ctx) {
@@ -519,8 +604,9 @@
       kind: 'donut', width: box, height: box, title: o.title,
       description: core.describeRows(rows, core.formatNumber)
     });
+    var flags = donutLabelFlags(model.segments, center, radius, o, box);
     var nodes = [svgNode(doc, 'circle', { class: 'laift-chart__track', cx: center, cy: center, r: radius, 'stroke-width': o.thickness, fill: 'none' })];
-    model.segments.forEach(function (seg) { nodes.push(donutItem(doc, seg, center, radius, o)); });
+    model.segments.forEach(function (seg, i) { nodes.push(donutItem(doc, seg, center, radius, o, flags[i])); });
     nodes = nodes.concat(centerValue(doc, ctx, { x: center, y: center, label: o.centerLabel, target: model.total, format: core.formatNumber, duration: o.duration }));
     appendAll(parts.svg, nodes.filter(Boolean));
     var legend = legendNode(doc, model.segments.map(function (seg) {
@@ -566,21 +652,23 @@
     var o = ctx.options;
     var rows = core.normalizeRows(data);
     if (core.isEmpty(rows)) return emptyParts(doc, ctx, 'spark', o.width, o.height, o.title);
-    var model = core.lineModel(rows.map(function (row) { return row.value; }), { width: o.width, height: o.height });
+    var model = core.lineModel(rows.map(function (row) { return row.value; }), { width: o.width, height: o.height - VALUE_HEADROOM });
     var last = model.points[model.points.length - 1];
+    var lastY = VALUE_HEADROOM + last.y;
     var parts = frame(doc, ctx, {
       kind: 'spark', width: o.width, height: o.height, title: o.title,
       description: core.describeRows(rows, core.formatNumber)
     });
-    var pulse = svgNode(doc, 'g', { class: 'laift-chart__pulse', 'data-series': 1 });
+    var pulse = svgNode(doc, 'g', { class: 'laift-chart__pulse', 'data-series': 1, transform: 'translate(0 ' + VALUE_HEADROOM + ')' });
     appendAll(pulse, [
       svgNode(doc, 'path', { class: 'laift-chart__area', d: model.areaPath }),
       svgNode(doc, 'path', { class: 'laift-chart__line', d: model.linePath, pathLength: '1' })
     ]);
-    var end = item(doc, 'Último valor', last.value, [
-      svgNode(doc, 'circle', { class: 'laift-chart__hit', cx: last.x, cy: last.y, r: DOT_HIT_R }),
-      svgNode(doc, 'circle', { class: 'laift-chart__dot', 'data-series': 1, cx: last.x, cy: last.y, r: DOT_R }),
-      svgNode(doc, 'text', { class: 'laift-chart__value', x: last.x, y: last.y - 8, 'text-anchor': 'end' }, core.formatNumber(last.value))
+    // Último valor sempre visível, ao lado do marcador; a faixa do topo (VALUE_HEADROOM) o acomoda.
+    var end = item(doc, [
+      svgNode(doc, 'circle', { class: 'laift-chart__hit', cx: last.x, cy: lastY, r: DOT_HIT_R }),
+      svgNode(doc, 'circle', { class: 'laift-chart__dot', 'data-series': 1, cx: last.x, cy: lastY, r: DOT_R }),
+      valueText(doc, { x: last.x, y: lastY - VALUE_OFFSET, anchor: 'end' }, last.value, true)
     ]);
     appendAll(parts.svg, [pulse, end]);
     return finish(parts, [toTable(rows, o.title, { doc: doc, headers: ['Período', 'Valor'] })]);
