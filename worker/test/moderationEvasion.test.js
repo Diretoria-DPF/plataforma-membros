@@ -107,6 +107,48 @@ describe('redencao: disfarce tambem e recusado como ofensivo', () => {
   });
 });
 
+// Revisão final (achado 6): confusáveis que ainda furavam o fold. Os caracteres estão escritos por
+// ponto de código para o teste não depender do alfabeto do editor.
+const cp = (...codes) => String.fromCodePoint(...codes);
+describe('evasão: ı, ø e cirílico fonético (achado 6)', () => {
+  test.each([
+    ['i sem ponto (U+0131)', cp(0x131) + 'd' + cp(0x131) + 'ota voce'],
+    ['"idiota" em cirílico (U+0438 U+0434 U+0438 U+043E U+0442 U+0430)', cp(0x438, 0x434, 0x438, 0x43E, 0x442, 0x430) + ' voce'],
+    ['"idiota" em cirílico, maiúsculo', cp(0x418, 0x414, 0x418, 0x41E, 0x422, 0x410) + ' VOCÊ'],
+    ['ø no lugar de o: "vai se føder" (U+00F8)', 'vai se f' + cp(0xF8) + 'der'],
+    ['ø no lugar de u: "pøta" (U+00F8)', 'p' + cp(0xF8) + 'ta'],
+    ['Ø maiúsculo: "PØTA"', 'P' + cp(0xD8) + 'TA'],
+    ['đ no lugar de d: "i" + đ + "iota"', 'seu i' + cp(0x111) + 'iota'],
+    ['ł no lugar de l: "ł" + "ixo"', 'voce e ' + cp(0x142) + 'ixo'],
+  ])('detecta: %s', (_label, message) => {
+    expect(R.containsOffensiveTerm(message)).toBe(true);
+  });
+
+  test.each([
+    ['и', 0x438, 'i'], ['д', 0x434, 'd'], ['т', 0x442, 't'], ['г', 0x433, 'g'], ['к', 0x43A, 'k'], ['л', 0x43B, 'l'],
+    ['н', 0x43D, 'n'], ['п', 0x43F, 'p'], ['ф', 0x444, 'f'], ['з', 0x437, 'z'], ['б', 0x431, 'b'], ['я', 0x44F, 'r'],
+    ['ı', 0x131, 'i'], ['ø', 0xF8, 'o'], ['ł', 0x142, 'l'], ['ð', 0xF0, 'd'], ['β', 0x3B2, 'b'], ['τ', 0x3C4, 't'],
+  ])('%s vira a letra latina esperada', (_char, code, latin) => {
+    expect(R.moderationForms(cp(code))[0]).toBe(latin);
+  });
+
+  test('ø tem duas leituras (o e u); texto sem ø continua com só duas formas', () => {
+    expect(R.moderationForms('p' + cp(0xF8) + 'ta')).toEqual(['pota', 'pota', 'puta', 'puta']);
+    expect(R.moderationForms('puta')).toEqual(['puta', 'puta']);
+  });
+
+  test('falsos positivos continuam fora: palavra comum com essas letras e termo dirigido sem alvo', () => {
+    expect(R.containsOffensiveTerm('o ' + cp(0x131) + 'dioma da pergunta')).toBe(false);
+    expect(R.containsOffensiveTerm('a palavra ' + cp(0x438, 0x434, 0x438, 0x43E, 0x442, 0x430) + ' aparece no dicionario')).toBe(false);
+    expect(R.containsOffensiveTerm('a cidade de Tr' + cp(0xF8) + 'ndelag')).toBe(false);
+  });
+
+  test('o alvo genérico (seu/sua) segue como antes: sem mudança neste lote', () => {
+    expect(R.containsOffensiveTerm('seu lixo')).toBe(true);
+    expect(R.containsOffensiveTerm('o lixo hospitalar')).toBe(false);
+  });
+});
+
 describe('comentario do feedback: bidi e invisiveis nao chegam ao painel', () => {
   test('isolates e embeddings bidi (U+2066-U+2069, U+202A-U+202E) sao removidos', () => {
     expect(F.normalizeComment('\u2067Oi\u2069 \u202Atudo\u202C bem \u2066fim\u2069')).toBe('Oi tudo bem fim');

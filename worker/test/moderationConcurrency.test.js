@@ -191,7 +191,7 @@ describe('redenções paralelas (achado 3): a tentativa é reivindicada antes do
       await new Promise((resolve) => setTimeout(resolve, JUDGE_DELAY_MS));
       return groqReply('', { status: 503 });
     });
-    const settled = await Promise.allSettled(Array.from({ length: PARALLEL_REDEMPTIONS }, () => redeem('Desculpa, me arrependo. a b c d e f g h i j k l')));
+    const settled = await Promise.allSettled(Array.from({ length: PARALLEL_REDEMPTIONS }, () => redeem('Desculpa, me arrependo. Mas ainda acho que a regra do chat foi injusta comigo ontem.')));
 
     expect(settled.some((r) => r.status === 'fulfilled' && r.value.accepted === true)).toBe(false);
     expect(settled.some((r) => r.status === 'fulfilled' && r.value.unavailable === true)).toBe(true);
@@ -208,9 +208,80 @@ describe('redenções paralelas (achado 3): a tentativa é reivindicada antes do
       redeem(SINCERE),
       ModerationService.registerAssistantIncident(sql, CID, ME, 'terms', at(50.5)),
     ]);
-    expect(redemption.accepted).toBe(true);
+    // Duas ordens são legítimas: o incidente entra ANTES da leitura do estado (a redenção vale e zera o
+    // nível) ou ENTRE a leitura e o UPDATE (a aceitação condicional não se aplica: `stateChanged` e o
+    // nível, já com o incidente, fica). Em nenhuma delas o incidente se perde.
+    expect([redemption.accepted, redemption.stateChanged === true]).toContain(true);
+    expect((await modRow()).level).toBe(redemption.accepted ? 0 : 3);
     // A redenção só mexe em nível e suspensão: o histórico de incidentes e o relógio do decaimento ficam.
     expect(await count('assistant_incidents')).toBe(4);
     expect(new Date((await modRow()).last_incident_at).getTime()).toBe(at(50.5).getTime());
+  });
+});
+
+// Revisão final (achado 4): o juiz leva segundos. Um incidente (ou o decaimento) ocorrido DURANTE o
+// julgamento não pode ser apagado pelo UPDATE da aceitação, que só vale se a linha ainda é a julgada.
+describe('redenção x incidente DURANTE o julgamento (achado 4): aceitação condicional', () => {
+  /** O juiz responde "sim", mas antes disso `during()` mexe no estado, como outra requisição faria. */
+  const judgeThat = (during) => jest.fn(async () => {
+    await during();
+    return groqReply('sim');
+  });
+  const incidentNow = () => ModerationService.registerAssistantIncident(sql, CID, ME, 'terms', at(50.6));
+
+  test('nível 3: incidente entre a leitura e o UPDATE -> estado mudou, nível NÃO é zerado e o cooldown não é gasto', async () => {
+    await seedSuspended();
+    globalThis.fetch = judgeThat(incidentNow);
+    const res = await redeem(SINCERE);
+
+    expect(res).toMatchObject({ success: true, accepted: false, stateChanged: true, level: 3, retryAfterSeconds: 0 });
+    expect(res.message).toMatch(/não conta como tentativa/);
+    const row = await modRow();
+    expect(row.level).toBe(3);
+    expect(new Date(row.last_incident_at).getTime()).toBe(at(50.6).getTime()); // o incidente novo continua valendo
+    expect(row.redeem_attempt_at).toBeNull(); // cooldown devolvido
+    expect(row.redeemed_at).toBeNull();
+    expect(await count('assistant_incidents')).toBe(4);
+    expect(await count('audit_logs', `action = 'assistant_redeemed'`)).toBe(0);
+    expect(await count('audit_logs', `action = 'assistant_redeem_refused'`)).toBe(0);
+  });
+
+  test('nível 1: o incidente sobe para 2 durante o julgamento e a redenção não o apaga', async () => {
+    await insertRow({ level: 1, until: null, lastIncidentAt: at(50), lastDecayAt: null });
+    globalThis.fetch = judgeThat(incidentNow);
+    const res = await redeem(SINCERE);
+
+    expect(res).toMatchObject({ accepted: false, stateChanged: true, level: 2 });
+    expect((await modRow()).level).toBe(2);
+    expect((await modRow()).redeem_attempt_at).toBeNull();
+  });
+
+  test('decaimento aplicado durante o julgamento também invalida a aceitação (o nível lido não é mais o da linha)', async () => {
+    // Nível 3 sem incidente há 30,5 dias: ao ler, o estado já decai para 2 (e é gravado). Enquanto o juiz
+    // pensa, o job diário (30 dias depois) baixa para 1; a linha deixou de ser a que foi julgada.
+    await insertRow({ level: 3, until: at(1), lastIncidentAt: at(0), lastDecayAt: null });
+    globalThis.fetch = judgeThat(() => ModerationService.decayAssistantModeration(sql, at(60.5)));
+    const res = await redeem(SINCERE, at(30.5));
+
+    expect(res).toMatchObject({ accepted: false, stateChanged: true, level: 1 });
+    expect((await modRow()).level).toBe(1);
+    expect((await modRow()).redeem_attempt_at).toBeNull();
+    expect(await count('audit_logs', `action = 'assistant_redeemed'`)).toBe(0);
+  });
+
+  test('sem mudança no meio, a aceitação continua funcionando (controle)', async () => {
+    await seedSuspended();
+    globalThis.fetch = judgeThat(async () => {});
+    expect(await redeem(SINCERE)).toMatchObject({ accepted: true, level: 0 });
+    expect((await modRow()).level).toBe(0);
+    expect(await count('audit_logs', `action = 'assistant_redeemed'`)).toBe(1);
+  });
+
+  test('após o "estado mudou", uma nova tentativa logo em seguida é julgada (o cooldown não foi consumido)', async () => {
+    await seedSuspended();
+    globalThis.fetch = judgeThat(incidentNow);
+    expect(await redeem(SINCERE)).toMatchObject({ stateChanged: true });
+    globalThis.fetch = jest.fn(async () => groqReply('sim'));
+    expect(await redeem(SINCERE, at(50.7))).toMatchObject({ accepted: true, level: 0 });
   });
 });

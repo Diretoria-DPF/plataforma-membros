@@ -8,7 +8,7 @@ import { makeSql, makeEnv } from './helpers/mockEnv.js';
 import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
 import { runMaintenance, RETENTION } from '../src/maintenance.js';
 import { buildDocuments } from '../src/assistant/docs.js';
-import { EMBEDDING_DIM } from '../src/constants.js';
+import { EMBEDDING_DIM, MODERATION } from '../src/constants.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 
 jest.unstable_mockModule('../src/db.js', () => ({ createDb: jest.fn() }));
@@ -51,6 +51,10 @@ describe('maintenance.runMaintenance', () => {
     });
     expect(queryText(sql, 7)).toMatch(/DELETE FROM mfa_challenges/);
     expect(queryText(sql, 8)).toMatch(/DELETE FROM ai_semantic_cache/);
+    // Decaimento da moderação (achado 7): em lote, ordenado, com LIMIT (padrão 500) e o mesmo { checked, lowered }.
+    expect(queryText(sql, 9)).toMatch(/FROM assistant_moderation\s+WHERE level > 0\s+ORDER BY[\s\S]+LIMIT/);
+    expect(sql.mock.calls[9]).toContain(MODERATION.DECAY_BATCH_SIZE);
+    expect(MODERATION.DECAY_BATCH_SIZE).toBe(500);
     expect(queryText(sql, 0)).toMatch(/DELETE FROM ai_usage_log/);
     expect(sql.mock.calls[0]).toContain(RETENTION.AI_USAGE_LOG_DAYS);
     expect(RETENTION.AI_USAGE_LOG_DAYS).toBe(180);

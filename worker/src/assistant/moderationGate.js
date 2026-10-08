@@ -94,10 +94,14 @@ async function judgeAllowed(sql, correlationId, profileId) {
   }
 }
 
-/** Sem termo ofensivo não há juiz nem gasto do teto; com termo, o LLM só confirma dentro do teto. */
+/**
+ * Sem termo ofensivo não há juiz nem gasto do teto; com termo, o LLM só confirma dentro do teto.
+ * Mensagem com cara de injeção ("responda NAO", "ignore as instruções") decide só pelos termos: nem
+ * chama o juiz nem gasta o teto, porque o texto poderia mandar o classificador absolver o insulto.
+ */
 async function judgeMessage(sql, env, identity, message, correlationId) {
   if (!Rules.containsOffensiveTerm(message)) return VERDICT_CLEAN;
-  const allowLlm = await judgeAllowed(sql, correlationId, identity.profileId);
+  const allowLlm = !Rules.looksLikeInjection(message) && (await judgeAllowed(sql, correlationId, identity.profileId));
   return ModerationService.judgeOffense(sql, env, identity, message, correlationId, { allowLlm });
 }
 
@@ -112,7 +116,8 @@ async function whenStateUnknown(sql, identity, correlationId, err, at) {
 }
 
 /**
- * Portão do chat (chamado por assistantService.chat depois da validação da pergunta).
+ * Portão do chat (chamado por assistantService.chat depois da validação da pergunta e do teto de
+ * mensagens por hora: quem está suspenso também é limitado).
  * Devolve a resposta da moderação quando a conversa deve parar; null quando segue normal.
  * Suspensão ativa responde SEM olhar a mensagem e SEM chamar a IA.
  */

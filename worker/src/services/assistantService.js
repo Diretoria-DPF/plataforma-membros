@@ -37,6 +37,11 @@ import { filterActions } from '../assistant/targets.js';
 import * as Rag from './ragService.js';
 import { normalizeQuestion } from '../ai/semanticCache.js';
 import { moderationGate } from '../assistant/moderationGate.js';
+import { looksLikeInjection, withoutOffensiveTurns } from '../assistant/moderationRules.js';
+
+// O filtro de injeção mora em assistant/moderationRules.js (compartilhado com a redenção, sem import
+// circular); segue exportado daqui para quem já o importa deste módulo.
+export { looksLikeInjection };
 
 const FLAG_CHATBOT = 'chatbot_enabled';
 const FLAG_RAG = 'rag_enabled';
@@ -57,30 +62,10 @@ const MSG_KB_EMPTY = 'Não encontrei essa informação na base de conhecimento d
 const MSG_KB_NO_REPLY = 'Não consegui montar uma resposta a partir da base agora, então prefiro não chutar. ';
 const MSG_KB_HELP = 'Posso te ajudar com eventos, módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), seu crachá e seu perfil.';
 
-// Tentativas de dar ordens à IA ou de embutir marcação. Textos normalizados (sem acento, minúsculos).
-const INJECTION_TEXT = [
-  /\b(ignore|ignorar|ignora|ignorem|desconsidere|esqueca)\b.{0,60}\b(instrucoes|instrucao|regras|prompt|anteriores|papel)\b/,
-  /\b(ignore|disregard|forget)\b.{0,40}\b(instructions|rules|previous|prompt)\b/,
-  /\b(system prompt|prompt de sistema|prompt do sistema|developer mode|modo desenvolvedor|jailbreak)\b/,
-  /\b(revele|revelar|mostre|mostrar|repita|exiba)\b.{0,30}\b(prompt|instrucoes internas|instrucoes do sistema)\b/,
-];
-// Marcação testada no texto original: tags, delimitadores de chat e pseudo-instruções.
-const INJECTION_MARKUP = /<\s*\/?\s*(system|script|iframe|img|svg)\b|<\|im_|\[\[?\s*\/?\s*inst\b|\bsystem\s*:/i;
-
 // Recusa: a IA disse que não tem a informação na base. Texto normalizado (normalize() de kb.js).
 const REFUSAL_TEXT = [/\bnao tenho (a |essa |esta )?informacao\b/, /\bnao encontrei\b/];
 // Citação no texto da IA: "[n]", n é o número do trecho enviado no prompt (1 a 99).
 const CITATION = /\s*\[(\d{1,2})\]/g;
-
-// Caracteres invisíveis (largura zero, marcas de direção) usados para quebrar palavras-chave.
-const INVISIBLE = /[\u200B-\u200F\u2060\u202A-\u202E\uFEFF\u00AD]/g;
-
-export function looksLikeInjection(message) {
-  const clean = String(message).replace(INVISIBLE, '');
-  if (INJECTION_MARKUP.test(clean)) return true;
-  const text = normalize(clean);
-  return INJECTION_TEXT.some((re) => re.test(text));
-}
 
 const EVENT_DATE_FORMAT = new Intl.DateTimeFormat('pt-BR', {
   timeZone: 'America/Sao_Paulo', weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
@@ -331,14 +316,16 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
   const message = typeof input.message === 'string' ? cleanText(input.message, C.AI_LIMITS.QUESTION_MAX + 1) : '';
   if (!message) throw E.ValidationError('Escreva sua pergunta para a Lia.');
   if (message.length > C.AI_LIMITS.QUESTION_MAX) throw E.ValidationError('A pergunta passou do limite de ' + C.AI_LIMITS.QUESTION_MAX + ' caracteres.');
+  // O teto de mensagens por hora vem ANTES do portão: quem está suspenso também gasta o teto (60/h) e não
+  // consegue martelar o endpoint só porque a resposta é um texto fixo.
+  await enforceChatLimit(sql, env, identity);
   const moderated = await moderationGate(sql, env, identity, message, correlationId);
   if (moderated) return moderated;
 
-  await enforceChatLimit(sql, env, identity);
-
   const role = identity ? identity.role : null;
-  // Só perguntas anteriores DA PESSOA; respostas antigas não voltam do cliente.
-  const history = sanitizeHistory(input.history, ['user'], HISTORY_TURNS, C.AI_LIMITS.HISTORY_TURN_MAX);
+  // Só perguntas anteriores DA PESSOA; respostas antigas não voltam do cliente. Turno com termo ofensivo
+  // sai do histórico (não é punido de novo, mas também não chega à busca nem ao LLM).
+  const history = withoutOffensiveTurns(sanitizeHistory(input.history, ['user'], HISTORY_TURNS, C.AI_LIMITS.HISTORY_TURN_MAX));
   if (looksLikeInjection(message) || history.some((turn) => looksLikeInjection(turn.text))) {
     await Logging.logAudit(sql, correlationId, identity ? identity.profileId : null, 'ASSISTANT_INJECTION_BLOCKED', 'assistant', null, 'failure', { length: message.length });
     return answer({ reply: MSG_REFUSAL, source: 'fallback' });

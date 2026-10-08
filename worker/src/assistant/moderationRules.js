@@ -124,7 +124,7 @@ const NON_WORD_RE = /[^\p{L}\p{N}]+/gu;
 
 // Parecidos com letras latinas (cirílico e grego) e leetspeak simples. Escritos em \u para o código
 // não depender de qual alfabeto o editor usou.
-const CHAR_FOLD = new Map([
+const BASE_FOLD = new Map([
   ['\u0430', 'a'], ['\u0432', 'b'], ['\u0441', 'c'], ['\u0435', 'e'], ['\u0456', 'i'], ['\u0458', 'j'],
   ['\u043C', 'm'], ['\u043E', 'o'], ['\u0440', 'p'], ['\u0455', 's'], ['\u0443', 'y'], ['\u0445', 'x'],
   ['\u04BB', 'h'], ['\u0501', 'd'], ['\u0475', 'v'],
@@ -133,25 +133,46 @@ const CHAR_FOLD = new Map([
   ['0', 'o'], ['1', 'i'], ['3', 'e'], ['4', 'a'], ['5', 's'], ['@', 'a'], ['$', 's'],
 ]);
 
+// Mais confusáveis, por ponto de código (U+XXXX). Letras com acento (é, ç, ё, й, ї) não precisam estar
+// aqui: o NFKD já as separa da marca, que é descartada. Cirílico: as idênticas às latinas ficam em
+// BASE_FOLD; as demais seguem o som ("идиота" lê-se idiota). Onde há duas leituras, vale a mais comum
+// em insulto escrito em PT-BR.
+const EXTRA_FOLD_CODES = [
+  // Cirílico: б г д з и к л н п т ф ш щ ъ ь э я є ґ
+  [0x0431, 'b'], [0x0433, 'g'], [0x0434, 'd'], [0x0437, 'z'], [0x0438, 'i'], [0x043A, 'k'], [0x043B, 'l'],
+  [0x043D, 'n'], [0x043F, 'p'], [0x0442, 't'], [0x0444, 'f'], [0x0448, 'w'], [0x0449, 'w'], [0x044A, 'b'],
+  [0x044C, 'b'], [0x044D, 'e'], [0x044F, 'r'], [0x0454, 'e'], [0x0491, 'g'],
+  // Grego: β γ δ η μ σ ς τ ω
+  [0x03B2, 'b'], [0x03B3, 'y'], [0x03B4, 'd'], [0x03B7, 'n'], [0x03BC, 'u'], [0x03C3, 's'], [0x03C2, 's'],
+  [0x03C4, 't'], [0x03C9, 'w'],
+  // Latino estendido: ı ø đ ð ł ħ ŧ ƒ ß
+  [0x0131, 'i'], [0x00F8, 'o'], [0x0111, 'd'], [0x00F0, 'd'], [0x0142, 'l'], [0x0127, 'h'], [0x0167, 't'],
+  [0x0192, 'f'], [0x00DF, 'ss'],
+];
+const CHAR_FOLD = new Map([...BASE_FOLD, ...EXTRA_FOLD_CODES.map(([code, letter]) => [String.fromCodePoint(code), letter])]);
+
+// Letras que valem por duas vogais: "ø" aparece no lugar de "o" ("føder") e de "u" ("pøta"). Quando o
+// texto tem uma delas, as formas são geradas também com a segunda leitura.
+const OSLASH = String.fromCodePoint(0x00F8);
+const ALT_FOLD = new Map([[OSLASH, 'u']]);
+
 /** Dobra o texto para comparar termos: sem invisível, sem acento, sem confusável, sem leet, sem repetição. */
-function foldForModeration(message) {
-  const plain = message
+function plainForModeration(message) {
+  return message
     .replace(INVISIBLE_RE, '')
     .replace(CONTROL_RE, '')
     .normalize('NFKD')
     .replace(COMBINING_RE, '')
     .toLowerCase();
-  return Array.from(plain, (ch) => CHAR_FOLD.get(ch) || ch).join('').replace(REPEATED_LETTER_RE, '$1');
 }
 
-/**
- * Duas formas do texto para casar termos: `spaced` (pontuação vira espaço) e `joined` (pontuação entre
- * letras some e letras soltas separadas por espaço se juntam: "i.d.i.o.t.a", "i d i o t a").
- * @returns {string[]}
- */
-export function moderationForms(message) {
-  if (typeof message !== 'string') return [];
-  const folded = foldForModeration(message);
+function foldForModeration(plain, useAlt) {
+  const read = (ch) => (useAlt && ALT_FOLD.get(ch)) || CHAR_FOLD.get(ch) || ch;
+  return Array.from(plain, read).join('').replace(REPEATED_LETTER_RE, '$1');
+}
+
+/** `spaced` (pontuação vira espaço) e `joined` (pontuação entre letras some; letras soltas se juntam). */
+function formsOf(folded) {
   const spaced = folded.replace(NON_WORD_RE, ' ').trim();
   const joined = folded
     .replace(PUNCT_BETWEEN_LETTERS_RE, '$1')
@@ -159,6 +180,18 @@ export function moderationForms(message) {
     .replace(NON_WORD_RE, ' ')
     .trim();
   return [spaced, joined];
+}
+
+/**
+ * Formas do texto para casar termos: `spaced` e `joined` ("i.d.i.o.t.a", "i d i o t a"). Texto com
+ * letra de leitura dupla (ø) ganha mais duas formas, com a segunda leitura.
+ * @returns {string[]}
+ */
+export function moderationForms(message) {
+  if (typeof message !== 'string') return [];
+  const plain = plainForModeration(message);
+  const forms = formsOf(foldForModeration(plain, false));
+  return plain.includes(OSLASH) ? forms.concat(formsOf(foldForModeration(plain, true))) : forms;
 }
 
 function hasTargetNear(tokens, index) {
@@ -176,19 +209,95 @@ export function containsOffensiveTerm(message) {
   return moderationForms(message).some(hasOffense);
 }
 
+/**
+ * Histórico do cliente sem os turnos com termo ofensivo. A ofensa vai a julgamento só quando é a
+ * mensagem ATUAL (portão do chat); um turno antigo não é punido de novo, mas também não chega ao LLM
+ * nem à busca. Devolve uma lista nova.
+ */
+export function withoutOffensiveTurns(history) {
+  return (Array.isArray(history) ? history : []).filter((turn) => !containsOffensiveTerm(turn && turn.text));
+}
+
+// ---- Injeção de prompt (chat, trechos do acervo e redenção) ----
+// Tentativas de dar ordens à IA ou de embutir marcação. Textos normalizados (sem acento, minúsculos).
+const INJECTION_TEXT = [
+  /\b(ignore|ignorar|ignora|ignorem|desconsidere|esqueca)\b.{0,60}\b(instrucoes|instrucao|regras|prompt|anteriores|papel)\b/,
+  /\b(ignore|disregard|forget)\b.{0,40}\b(instructions|rules|previous|prompt)\b/,
+  /\b(system prompt|prompt de sistema|prompt do sistema|developer mode|modo desenvolvedor|jailbreak)\b/,
+  /\b(revele|revelar|mostre|mostrar|repita|exiba)\b.{0,30}\b(prompt|instrucoes internas|instrucoes do sistema)\b/,
+];
+// Marcação testada no texto original: tags, delimitadores de chat e pseudo-instruções.
+const INJECTION_MARKUP = /<\s*\/?\s*(system|script|iframe|img|svg)\b|<\|im_|\[\[?\s*\/?\s*inst\b|\bsystem\s*:/i;
+
+/** O texto tenta dar ordens à IA (ou embute marcação de prompt)? Invisíveis não quebram a palavra-chave. */
+export function looksLikeInjection(message) {
+  const clean = String(message).replace(INVISIBLE_RE, '');
+  if (INJECTION_MARKUP.test(clean)) return true;
+  const text = normalize(clean);
+  return INJECTION_TEXT.some((re) => re.test(text));
+}
+
 // ---- Redenção: heurística de sinceridade ----
+// Barra o que claramente não é um pedido de desculpas honesto ANTES de gastar o juiz. Quem aceita é só o
+// juiz; aqui só se reprova. Texto sem sentido (letras aleatórias, repetição, só emoji, gritaria) e texto
+// com ordem embutida para o juiz ("respondo SIM", "ignore as instruções") nunca chegam a ele.
 const ACKNOWLEDGE = ['desculpa', 'desculpe', 'desculpas', 'perdao', 'errei', 'erro meu', 'me arrependo', 'arrependido', 'arrependida', 'lamento', 'nao vou repetir', 'nao vai se repetir', 'prometo', 'me comprometo', 'respeito', 'foi errado', 'agi mal', 'passei do limite', 'nao devia'];
 const MIN_DISTINCT_WORDS = 8;
+const MAX_TOP_WORD_SHARE = 0.4;    // uma palavra não pode ser mais de 40% do texto
+const MIN_LETTER_SHARE = 0.6;      // letras / caracteres: barra emoji, símbolos e números soltos
+const MAX_UPPER_SHARE = 0.6;       // acima disso é gritaria
+const MIN_PLAUSIBLE_SHARE = 0.7;   // palavras que podem ser português
+const MAX_WORD_LETTERS = 15;
+const MIN_FUNCTION_WORDS = 2;      // palavras comuns distintas (de, que, não, eu...): texto real tem
+// Palavras gramaticais comuns do PT-BR, já normalizadas (normalize() de kb.js).
+const FUNCTION_WORDS = new Set(['a', 'o', 'e', 'as', 'os', 'um', 'uma', 'de', 'do', 'da', 'dos', 'das', 'em', 'no', 'na', 'nos', 'nas', 'ao',
+  'com', 'por', 'para', 'pra', 'pelo', 'pela', 'que', 'se', 'me', 'te', 'eu', 'nao', 'mas', 'como', 'foi', 'fui', 'era', 'ser', 'vou', 'vai',
+  'tenho', 'estou', 'estava', 'isso', 'esse', 'essa', 'meu', 'minha', 'mais', 'muito', 'agora', 'daqui', 'sempre', 'nunca', 'porque',
+  'quando', 'sem', 'so', 'ja', 'tambem']);
+const VOWEL_RE = /[aeiou]/;
+const CONSONANT_RUN_RE = /[^aeiou0-9]{5,}/; // normalize() só deixa a-z e 0-9
+const LETTER_RE = /\p{L}/gu;
+const UPPER_RE = /\p{Lu}/gu;
+
+const countMatches = (re, text) => (text.match(re) || []).length;
+const fail = (reason) => ({ ok: false, reason });
+
+/** Palavra que pode ser portuguesa: tem vogal, não é longa demais e não tem 5 consoantes seguidas. */
+function isPlausibleWord(word) {
+  return word.length <= MAX_WORD_LETTERS && VOWEL_RE.test(word) && !CONSONANT_RUN_RE.test(word);
+}
+
+function isRepetitive(tokens) {
+  const counts = new Map();
+  tokens.forEach((t) => counts.set(t, (counts.get(t) || 0) + 1));
+  return counts.size < MIN_DISTINCT_WORDS || Math.max(...counts.values()) / tokens.length > MAX_TOP_WORD_SHARE;
+}
+
+function isGibberish(tokens) {
+  const plausible = tokens.filter(isPlausibleWord).length;
+  const functionWords = new Set(tokens.filter((t) => FUNCTION_WORDS.has(t))).size;
+  return plausible / tokens.length < MIN_PLAUSIBLE_SHARE || functionWords < MIN_FUNCTION_WORDS;
+}
+
+function hasAcknowledgement(norm) {
+  const padded = ' ' + norm + ' ';
+  return ACKNOWLEDGE.some((k) => padded.includes(' ' + k + ' ') || padded.includes(' ' + k));
+}
 
 /** @returns {{ ok: boolean, reason?: string }} */
 export function sincerityHeuristic(text) {
   const raw = typeof text === 'string' ? text.trim() : '';
-  if (raw.length < MODERATION.REDEEM_MIN_CHARS) return { ok: false, reason: 'curto' };
-  if (raw.length > MODERATION.REDEEM_MAX_CHARS) return { ok: false, reason: 'longo' };
+  if (raw.length < MODERATION.REDEEM_MIN_CHARS) return fail('curto');
+  if (raw.length > MODERATION.REDEEM_MAX_CHARS) return fail('longo');
+  const letters = countMatches(LETTER_RE, raw);
+  if (letters / raw.length < MIN_LETTER_SHARE) return fail('sem_letras');
+  if (looksLikeInjection(raw)) return fail('instrucao');
   const norm = normalize(raw);
-  if (new Set(norm.split(' ')).size < MIN_DISTINCT_WORDS) return { ok: false, reason: 'repetitivo' };
-  if (containsOffensiveTerm(raw)) return { ok: false, reason: 'ofensivo' };
-  const padded = ' ' + norm + ' ';
-  if (!ACKNOWLEDGE.some((k) => padded.includes(' ' + k + ' ') || padded.includes(' ' + k))) return { ok: false, reason: 'sem_reconhecimento' };
+  const tokens = norm.split(' ').filter(Boolean);
+  if (isRepetitive(tokens)) return fail('repetitivo');
+  if (countMatches(UPPER_RE, raw) / letters > MAX_UPPER_SHARE) return fail('gritado');
+  if (isGibberish(tokens)) return fail('sem_sentido');
+  if (containsOffensiveTerm(raw)) return fail('ofensivo');
+  if (!hasAcknowledgement(norm)) return fail('sem_reconhecimento');
   return { ok: true };
 }
