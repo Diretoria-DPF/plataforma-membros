@@ -464,3 +464,14 @@ Object.assign(RATE_LIMITS, {
   TIMESERIES: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
   DASHBOARD_SERIES: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
 });
+
+// ---- Lia: moderação sob concorrência e abuso (juiz LLM e redenção) ----
+// Limites por perfil, via enforceRateLimit. Estourar o juiz não derruba o chat: segue só pelos termos.
+Object.assign(RATE_LIMITS, {
+  ASSISTANT_JUDGE: { MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 },       // julgamentos de ofensa pelo LLM
+  ASSISTANT_REDEEM_TRY: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },  // pedidos de redenção (qualquer desfecho)
+});
+Object.assign(MODERATION, {
+  REDEEM_ACCEPTED_MAX: 3,          // redenções ACEITAS por pessoa na janela abaixo (conta em audit_logs)
+  REDEEM_ACCEPTED_WINDOW_DAYS: 30,
+});
