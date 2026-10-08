@@ -1,6 +1,6 @@
 # ADR 0002 — Tokens de movimento
 
-Status: proposta. Data: 2026-10-07.
+Status: aceita (2026-10-08). Data: 2026-10-07.
 
 ## Contexto
 Hoje o movimento é solto: `ux.css` tem `--ux-ease` e `--ux-fast: 120ms`, e há 6 blocos espalhados de `prefers-reduced-motion`.

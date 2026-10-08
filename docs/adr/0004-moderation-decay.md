@@ -1,6 +1,6 @@
 # ADR 0004 — Decaimento da moderação da Lia
 
-Status: proposta. Data: 2026-10-07.
+Status: aceita (2026-10-08); a tela de moderação do admin ainda não existe no front. Data: 2026-10-07.
 
 ## Contexto
 A moderação da Lia tem 4 níveis (normal, alerta, aviso sério, suspensão) com redenção. Sem decaimento, um deslize antigo pesa para sempre.
