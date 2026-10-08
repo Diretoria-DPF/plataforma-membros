@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Lia - animacoes WAAPI (modulos/shared/lia/lia-anim.js). Fakes de DOM, sem navegador.
 import { test, mock, afterEach } from 'node:test';
 import assert from 'node:assert/strict';

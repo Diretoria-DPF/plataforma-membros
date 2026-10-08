@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Visual v2 (Fase A): flags -> data-flag-*, cache de flags, porta de rolagem, splash e tokens.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
