@@ -414,5 +414,23 @@ module.exports = async function assistant() {
     await fb.close();
   }
 
+  // ---- Humor (L7): a saudação abre com uma variação, não repete ao reabrir e a conversa segue sem erro ----
+  const mood = await startApp({ role: 'member', workerHandlers: { apiGetFeatureFlags: FLAGS_ON, apiAssistantChat: liaReply } });
+  try {
+    const page = await openLia(mood, null);
+    await page.waitForSelector('#lia-log .lia-msg-lia .lia-bubble');
+    const greeting = await page.textContent('#lia-log .lia-msg-lia .lia-bubble');
+    check(/^(Oi!|Olá!|E aí!|Bem-vindo!|Chegou!) Eu sou a Lia, a guia da plataforma LAIFT\./.test(greeting), 'a saudação abre com uma variação e mantém a apresentação');
+    await page.keyboard.press('Escape'); // fecha
+    await page.click('#lia-launcher'); // reabre
+    check(await page.locator('#lia-log .lia-msg-lia').count() === 1, 'reabrir o painel não repete a saudação');
+    await page.fill('#lia-input', 'explique melhor');
+    await page.press('#lia-input', 'Enter');
+    await page.waitForFunction(() => document.querySelectorAll('#lia-log .lia-msg-lia').length === 2);
+    check(mood.errors.length === 0, 'o humor não gera erros de página (' + mood.errors.join('; ') + ')');
+  } finally {
+    await mood.close();
+  }
+
   await moderacao();
 };
