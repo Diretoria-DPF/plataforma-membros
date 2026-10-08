@@ -42,10 +42,32 @@ Plano: `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-audit
 
 - **Passo 0 de todo agente:** o worktree parte de um commit antigo. Rode `git merge feat/v5-fechamento` (branch local, já visível no worktree) antes de qualquer edição.
 - **Arquivos novos do frontend** (`build.js`, `sw.js` PRECACHE): o orquestrador registra. Informe no relatório o caminho do arquivo e como ele é carregado (`<script defer>` ou `<link>`).
-- **Esta PR não cria migração.** A 025 está reservada para a F4 (`feat/v5-f4-acervo`).
+- **Esta PR não cria migração.** A 025 está reservada para a F4 (`feat/v5-f4-acervo`). *(Superado na Rodada 3: a 025 é da inscrição nativa; a F4 passa para a 026.)*
 - **Lia ondas 2–4:** nenhum código antes de o dono aprovar o preview da arte.
 - **Memória (3,9 GB):** testes do worker só das suítes afetadas, com `-i`; no máximo **um** e2e (Playwright) por agente e só o cenário que você precisa. A suíte completa é do orquestrador, em série, no fim.
 - **Hot file de outro dono:** não edite. Entregue o trecho exato (arquivo, linha, antes/depois) no relatório.
+
+## Rodada 3 (operação, Liga e inscrição, 2026-10-08)
+Plano: `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-auditoria-lucky-planet.md` (v3). Um **orquestrador Opus 5.5** elabora as fichas de tarefa e revisa os relatórios; os executores são **Haiku 5.5**, no máximo **3 ao mesmo tempo**. Subagente não cria subagente: a **sessão principal dispara os Haiku**, integra as branches e fala com o dono. Esta seção vale no lugar da Rodada 2 (sem Sonnet).
+
+| Agente | Modelo | Dono dos arquivos quentes |
+|---|---|---|
+| O `laift-orquestrador` | Opus | nenhum (não edita código) |
+| H1 `laift-design-system` | Haiku | `frontend/ux.css`, `frontend/styles.css`, `frontend/modulos/shared/laift-tokens.css`, `frontend/liga.css` |
+| H2 `laift-identidade-liga` | Haiku | `docs/liga/IDENTIDADE_VISUAL.md`, `docs/liga/KIT_INSTAGRAM.md`, `docs/liga/REFERENCIAS_LIGAS.md`, `docs/liga/previa/*` |
+| H3 `laift-qa-a11y` | Haiku | `frontend/scripts/e2e/*`, `docs/LIGHTHOUSE_*`, `docs/QA_LEITORES_DE_TELA.md`, `docs/qa/*` |
+| H4 `laift-docs-release` | Haiku | `docs/*` (exceto os de H2 e H3), `docs/adr/*` |
+| H5 `laift-front-integrador` | Haiku | `frontend/index.html`, `frontend/app.js`, `frontend/liga.html`, `frontend/liga.js`, `frontend/inscricao.js` |
+| H6 `laift-backend` | Haiku | `worker/src/handlers.js`, `worker/src/constants.js`, `worker/src/assistant/*`, `sql/` |
+| Sessão principal | Sonnet | `frontend/scripts/build.js`, `frontend/sw.js` (PRECACHE), CSP, merges e suítes completas |
+
+- **Passo 0 de todo agente:** `git rev-parse --show-toplevel` precisa apontar para um worktree em `.claude/worktrees/`; se for o checkout principal, pare e reporte. Depois `git merge --no-edit <BASE>`, com a branch-base nomeada na ficha (`docs/ops-rotina-2026-10`, `feat/liga-identidade`, ...). Conflito: `git merge --abort` e reporte.
+- **Migrações:** a **025 é da inscrição nativa**. A F4 `shared_assets` (rascunho local em `feat/v5-f4-acervo`) passa a **026** quando for retomada. Flag nova **não** pede migração: entra na constante `PUBLIC_FLAGS` (`worker/src/services/featureFlagService.js:119`) se for pública, a linha só nasce quando o admin liga (`apiAdminSetFeatureFlag` faz upsert) e flag ausente = desligada.
+- **Fatos da Liga** (vagas, datas, pesos, nome oficial): nunca inventar; escreva "a definir pela diretoria".
+- **Menores:** nenhum dado de menor entra em produção antes do parecer jurídico; a flag `minors_enabled` nasce desligada.
+- **Neon (free, 100 CU-h/mês):** página pública não consulta o banco a cada visita; o ciclo de seleção abre e fecha pela flag pública `selection_open`, que o app já carrega.
+- **Segredos:** nunca em arquivo, commit ou relatório; só nomes. Quem digita valores é o dono, no terminal.
+- **Saída:** um commit local por ficha, sem trailer de atribuição, relatório ≤ 15 linhas.
 
 ## Ambiente
 - O hook **GateGuard** nega a primeira edição/criação/Bash de cada arquivo e pede fatos (quem chama o arquivo, que não há duplicata, estrutura dos dados, instrução do usuário citada). Apresente os fatos em texto e **repita a mesma chamada**.
