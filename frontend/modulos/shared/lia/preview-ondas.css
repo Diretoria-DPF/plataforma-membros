@@ -1,0 +1,106 @@
+/* Preview das ondas 2-4 da Lia (revisao de arte; nao entra no build, ver LIA_REVIEW_ONLY).
+   Cores por tokens (laift-tokens.css) e por --lia-*; traco unico = --lia-stroke. Animacoes em transform e opacity. */
+
+body {
+  margin: 0;
+  background: var(--laift-bg);
+  color: var(--laift-text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Topo e controles */
+.topo { max-width: 1080px; margin: 0 auto; padding: 20px 16px 4px; }
+.topo h1 { margin: 0 0 4px; font-size: 20px; }
+.topo p { margin: 0 0 12px; color: var(--laift-muted); }
+.controles { display: flex; flex-wrap: wrap; gap: 8px; }
+.botao {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--laift-border-strong);
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-surface);
+  color: var(--laift-text);
+  font: inherit;
+  cursor: pointer;
+}
+.botao[aria-pressed="true"] {
+  background: var(--laift-primary);
+  border-color: var(--laift-primary);
+  color: var(--laift-on-primary);
+}
+.botao:focus-visible { outline: 3px solid var(--laift-primary); outline-offset: 2px; }
+
+/* Cartoes de cena */
+.cenas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.cena {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: var(--laift-radius-xl);
+  background: var(--laift-surface);
+  box-shadow: var(--laift-shadow-sm);
+}
+.cena-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.cena h2 { margin: 0; font-size: 16px; }
+.duracao { color: var(--laift-muted); font-size: 13px; white-space: nowrap; }
+.legenda { margin: 0; font-size: 14px; color: var(--laift-muted); }
+.reproduzir { justify-self: start; }
+
+/* Palco: a Lia e as pecas extras empilhadas na mesma celula da grade */
+.palco {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  border-radius: var(--laift-radius-lg);
+  background: var(--laift-surface-alt);
+}
+.palco > * { grid-area: 1 / 1; }
+.palco > .lia { --lia-size: 200px; position: relative; z-index: 1; }
+.veu {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: #0a0e16;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Pecas extras: mesmo traco, arredondamento e paleta da arte (tokens, sem laranja novo) */
+.pv-ecg { fill: none; stroke: var(--lia-accent, #0f6f62); stroke-linecap: round; stroke-linejoin: round; }
+.pv-glifo { fill: none; stroke: var(--lia-accent, #0f6f62); stroke-linecap: round; }
+.pv-glifo-ponto { fill: var(--lia-accent, #0f6f62); stroke: none; }
+.pv-aviso-bal { fill: var(--laift-danger, #b3261e); }
+.pv-glifo-claro { fill: var(--laift-on-danger, #ffffff); stroke: none; }
+[data-theme="dark"] .pv-aviso-bal { fill: var(--dk-danger, #ff7a70); }
+[data-theme="dark"] .pv-glifo-claro { fill: var(--dk-on-danger, #3a0805); }
+
+/* Origens de transformacao (caixa do proprio elemento) */
+.pv-base { transform-box: fill-box; transform-origin: 50% 100%; }
+.pv-centro { transform-box: fill-box; transform-origin: 50% 50%; }
+.pv-esq { transform-box: fill-box; transform-origin: 0% 50%; }
+
+/* Cena de aviso: os bracos ociosos saem; os bracos cruzados entram em data-pv="cruzados" */
+.cena[data-cena="aviso"] .lia-svg #lia-arm-left-idle,
+.cena[data-cena="aviso"] .lia-svg #lia-arm-right-idle { display: none; }
+
+/* Movimento reduzido (interruptor da pagina): sem animacao CSS nem SVG */
+[data-movimento="reduzido"] .lia-svg,
+[data-movimento="reduzido"] .lia-svg * { animation: none !important; }
+
+@media (max-width: 380px) {
+  .cenas { padding: 12px; }
+  .cena { padding: 12px; }
+}
