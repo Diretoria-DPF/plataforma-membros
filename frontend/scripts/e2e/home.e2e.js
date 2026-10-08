@@ -5,8 +5,9 @@
  */
 /**
  * home.e2e.js — painel Início em layout editorial (frontend/home.js,
- * dashboardAdapter.js, home-editorial.css) com apiGetHomeSummary e
- * apiGetMyTimeseries.
+ * dashboardAdapter.js, home-editorial.css) com apiGetHomeSummary,
+ * apiGetMyDashboardSeries (pacote de 30 dias e 6 meses) e apiGetMyTimeseries
+ * (só para atividade em 90 dias e 12 meses).
  */
 const { startApp, check } = require('./harness');
 
@@ -34,6 +35,29 @@ function timeseriesReply(metric, range) {
   return { success: true, range, granularity, series: dateList(range).map((date) => ({ date, value: VALUE[metric] })) };
 }
 
+// Chaves do pacote de apiGetMyDashboardSeries (espelham DASHBOARD_SERIES da Worker).
+const BUNDLE = [
+  ['activity30d', 'activity', '30d'], ['events30d', 'events', '30d'], ['learning30d', 'learning', '30d'],
+  ['tasks30d', 'tasks', '30d'], ['studyHours30d', 'study_hours', '30d'],
+  ['events6m', 'events', '6m'], ['learning6m', 'learning', '6m'], ['tasks6m', 'tasks', '6m'],
+];
+
+/** Resposta do pacote. `missing`: chaves que vêm null (falha daquela série); `zero`: todos os valores zerados. */
+function dashboardReply(opts) {
+  const { missing = [], zero = false } = opts || {};
+  const series = {};
+  BUNDLE.forEach(([key, metric, range]) => {
+    if (missing.includes(key)) {
+      series[key] = null;
+      return;
+    }
+    const reply = timeseriesReply(metric, range);
+    const values = zero ? reply.series.map((p) => ({ ...p, value: 0 })) : reply.series;
+    series[key] = { range: reply.range, granularity: reply.granularity, series: values };
+  });
+  return { success: true, series };
+}
+
 function summary(extra) {
   return Object.assign({
     nextEvents: [
@@ -58,11 +82,13 @@ async function waitText(page, selector, text) {
 module.exports = async function home() {
   // ---- Membro: números, gráficos, comparativo, selos, avisos e navegação ----
   let summaryCalls = 0;
+  const bundleCalls = [];
   const seriesCalls = [];
   const member = await startApp({
     role: 'member',
     workerHandlers: {
       apiGetHomeSummary: () => { summaryCalls += 1; return { success: true, summary: summary() }; },
+      apiGetMyDashboardSeries: () => { bundleCalls.push(1); return dashboardReply(); },
       apiGetMyTimeseries: (args) => {
         seriesCalls.push({ metric: args[1].metric, range: args[1].range });
         return timeseriesReply(args[1].metric, args[1].range);
@@ -73,6 +99,8 @@ module.exports = async function home() {
     await member.login();
     await member.page.waitForSelector('#home-dashboard.home-editorial');
     await member.page.waitForSelector('#home-dashboard[aria-busy="false"]', { timeout: 15000 });
+    check(bundleCalls.length === 1, 'o Início pede todas as séries de 30 dias e 6 meses numa chamada só (' + bundleCalls.length + ')');
+    check(seriesCalls.length === 0, 'carregamento inicial não pede série avulsa (' + seriesCalls.length + ')');
     check((await member.page.locator('#home-dashboard .home-card').count()) === 0, 'Início não usa cartões com borda (sem .home-card)');
     check((await member.page.locator('#home-dashboard .home-kpi').count()) === 4, 'membro vê os quatro números grandes');
 
@@ -94,7 +122,8 @@ module.exports = async function home() {
     await member.page.click('#home-dashboard .home-range-btn:nth-child(3)');
     await member.page.waitForFunction(() => document.querySelector('#home-dashboard .home-range-btn:nth-child(3)').getAttribute('aria-pressed') === 'true');
     await member.page.waitForFunction(() => !!document.querySelector('#home-dashboard .home-chart-main .laift-chart--line'));
-    check(seriesCalls.some((c) => c.metric === 'activity' && c.range === '12m'), 'trocar para 12 meses pede a série de atividade de 12m');
+    check(seriesCalls.length === 1 && seriesCalls[0].metric === 'activity' && seriesCalls[0].range === '12m', 'trocar para 12 meses pede só a série de atividade de 12m');
+    check(bundleCalls.length === 1, 'trocar o período não refaz o pacote de 30 dias e 6 meses');
 
     check((await member.page.locator('#home-dashboard .home-metric-block').count()) === 6, 'membro vê eventos, aprendizagem, tarefas, horas, comparativo e selos');
     check((await member.page.locator('#home-dashboard .home-metric-compare .laift-chart--grouped').count()) === 1, 'comparativo mensal é colunas agrupadas');
@@ -116,12 +145,13 @@ module.exports = async function home() {
     await member.close();
   }
 
-  // ---- Visitante: sem tarefas, votações nem caixa; nada disso é pedido à API ----
+  // ---- Visitante: sem tarefas, votações nem caixa na tela; nenhum bloco deles é desenhado ----
   const visitorSeries = [];
   const visitor = await startApp({
     role: 'visitor',
     workerHandlers: {
       apiGetHomeSummary: () => ({ success: true, summary: summary({ tasks: null, voting: null, inbox: null }) }),
+      apiGetMyDashboardSeries: () => dashboardReply(),
       apiGetMyTimeseries: (args) => {
         visitorSeries.push(args[1].metric);
         return timeseriesReply(args[1].metric, args[1].range);
@@ -134,7 +164,7 @@ module.exports = async function home() {
     check((await visitor.page.locator('#home-dashboard .home-kpi').count()) === 3, 'visitante vê três números (sem pendentes)');
     check((await visitor.page.locator('#home-dashboard .home-metric-tasks').count()) === 0, 'visitante não vê o bloco de tarefas');
     check((await visitor.page.locator('#home-dashboard .home-agora .home-row').count()) === 1, 'visitante vê só os eventos no Agora');
-    check(!visitorSeries.includes('tasks'), 'visitante não pede série de tarefas');
+    check(!visitorSeries.includes('tasks'), 'visitante não pede série avulsa de tarefas');
   } finally {
     await visitor.close();
   }
@@ -147,6 +177,7 @@ module.exports = async function home() {
         success: true,
         summary: summary({ nextEvents: [{ id: 'x', title: '<img src=x onerror="window.__xss=1">', eventDate: inDays(1), location: '<b>l</b>', isRegistered: false, spotsLeft: 1 }] }),
       }),
+      apiGetMyDashboardSeries: () => dashboardReply(),
       apiGetMyTimeseries: (args) => timeseriesReply(args[1].metric, args[1].range),
     },
   });
@@ -168,6 +199,7 @@ module.exports = async function home() {
         attempt += 1;
         return attempt === 1 ? { success: false, message: 'Servidor ocupado.' } : { success: true, summary: summary() };
       },
+      apiGetMyDashboardSeries: () => dashboardReply(),
       apiGetMyTimeseries: (args) => timeseriesReply(args[1].metric, args[1].range),
     },
   });
@@ -183,32 +215,53 @@ module.exports = async function home() {
     await failing.close();
   }
 
-  // ---- Falha de UM gráfico não derruba os demais ----
-  let eventsAttempt = 0;
+  // ---- Uma série que não veio (null) não derruba as outras: só aquele gráfico fica sem dados ----
   const partial = await startApp({
     role: 'member',
     workerHandlers: {
       apiGetHomeSummary: () => ({ success: true, summary: summary() }),
-      apiGetMyTimeseries: (args) => {
-        if (args[1].metric === 'events') {
-          eventsAttempt += 1;
-          if (eventsAttempt === 1) return { success: false, message: 'Série indisponível.' };
-        }
-        return timeseriesReply(args[1].metric, args[1].range);
-      },
+      apiGetMyDashboardSeries: () => dashboardReply({ missing: ['events30d'] }),
+      apiGetMyTimeseries: (args) => timeseriesReply(args[1].metric, args[1].range),
     },
   });
   try {
     await partial.login();
-    await partial.page.waitForSelector('#home-dashboard .home-metric-events .state-error');
-    check((await partial.page.textContent('#home-dashboard .home-metric-events .state-error')).includes('Série indisponível.'), 'falha de um gráfico mostra a mensagem só naquele espaço');
+    await partial.page.waitForSelector('#home-dashboard[aria-busy="false"]', { timeout: 15000 });
+    check((await partial.page.textContent('#home-dashboard .home-metric-events')).includes('Sem dados no período'), 'série que não veio mostra "Sem dados no período" só naquele gráfico');
+    check((await partial.page.locator('#home-dashboard .home-metric-events .state-error').count()) === 0, 'série que não veio não mostra erro');
+    check((await partial.page.textContent('#home-dashboard .home-metric-events .home-metric-total')) === '—', 'total da série que não veio é um traço');
     check((await partial.page.locator('#home-dashboard .home-metric-learning .laift-chart--spark').count()) === 1, 'os outros gráficos continuam desenhados');
     check((await partial.page.locator('#home-dashboard .home-chart-main .laift-chart--line').count()) === 1, 'o gráfico principal segue desenhado');
-    await partial.page.click('#home-dashboard .home-metric-events .state-error button');
-    await partial.page.waitForSelector('#home-dashboard .home-metric-events .laift-chart--spark');
-    check(true, '"Tentar de novo" do gráfico recarrega só aquele gráfico');
   } finally {
     await partial.close();
+  }
+
+  // ---- Falha do pacote inteiro: erro em cada gráfico; "Tentar de novo" refaz o pacote uma vez ----
+  let bundleAttempt = 0;
+  const bundleDown = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetHomeSummary: () => ({ success: true, summary: summary() }),
+      apiGetMyDashboardSeries: () => {
+        bundleAttempt += 1;
+        return bundleAttempt === 1 ? { success: false, message: 'Séries indisponíveis.' } : dashboardReply();
+      },
+      apiGetMyTimeseries: (args) => timeseriesReply(args[1].metric, args[1].range),
+    },
+  });
+  try {
+    await bundleDown.login();
+    await bundleDown.page.waitForSelector('#home-dashboard .home-metric-events .state-error');
+    check((await bundleDown.page.textContent('#home-dashboard .home-metric-events .state-error')).includes('Séries indisponíveis.'), 'falha do pacote mostra a mensagem em cada gráfico');
+    check((await bundleDown.page.locator('#home-dashboard .home-chart-main .state-error').count()) === 1, 'o gráfico principal também mostra o erro');
+    check((await bundleDown.page.locator('#home-dashboard .home-metric-learning .state-error').count()) === 1, 'as sparklines também mostram o erro');
+    await bundleDown.page.click('#home-dashboard .home-metric-events .state-error button');
+    await bundleDown.page.waitForSelector('#home-dashboard .home-metric-events .laift-chart--spark');
+    await bundleDown.page.waitForSelector('#home-dashboard .home-chart-main .laift-chart--line');
+    check(bundleAttempt === 2, '"Tentar de novo" refaz o pacote uma única vez (' + bundleAttempt + ')');
+    check((await bundleDown.page.locator('#home-dashboard .state-error').count()) === 0, 'depois do retry, nenhum gráfico segue em erro');
+  } finally {
+    await bundleDown.close();
   }
 
   // ---- Série sem valores: estado vazio do gráfico ----
@@ -216,7 +269,8 @@ module.exports = async function home() {
     role: 'member',
     workerHandlers: {
       apiGetHomeSummary: () => ({ success: true, summary: summary() }),
-      apiGetMyTimeseries: (args) => ({ ...timeseriesReply(args[1].metric, args[1].range), series: timeseriesReply(args[1].metric, args[1].range).series.map((p) => ({ ...p, value: 0 })) }),
+      apiGetMyDashboardSeries: () => dashboardReply({ zero: true }),
+      apiGetMyTimeseries: (args) => timeseriesReply(args[1].metric, args[1].range),
     },
   });
   try {

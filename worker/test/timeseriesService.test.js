@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 import { jest } from '@jest/globals';
-import { getMyTimeseries } from '../src/services/timeseriesService.js';
+import { getMyTimeseries, getMyDashboardSeries, DASHBOARD_SERIES } from '../src/services/timeseriesService.js';
 import { makeEnv } from './helpers/mockEnv.js';
 import { memoryKv } from './helpers/aiTestUtils.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
@@ -175,5 +175,83 @@ describe('apiGetMyTimeseries — cache privado', () => {
     expect(keys.some((k) => k.endsWith(':6m:study_hours'))).toBe(true);
     expect(keys.some((k) => k.endsWith(':30d:activity'))).toBe(true);
     expect(keys.every((k) => k.includes(estudo))).toBe(true);
+  });
+});
+
+// Falha simulada numa só série: a consulta de eventos dos últimos 6 meses (só events e passo mensal).
+function failingSql(target) {
+  return (strings, ...values) => {
+    const flags = values.filter((v) => typeof v === 'boolean').join(',');
+    if (flags === 'true,false,false,false' && values.includes('1 month')) return Promise.reject(new Error('falha simulada'));
+    return target(strings, ...values);
+  };
+}
+
+const CID = '00000000-0000-4000-8000-0000000000aa';
+const KEYS = DASHBOARD_SERIES.map((spec) => spec.key);
+
+describe('apiGetMyDashboardSeries — as 8 séries do Início', () => {
+  test('devolve as 8 séries no formato de getMyTimeseries (success só no envelope)', async () => {
+    const res = await getMyDashboardSeries(sql, makeEnv(), identity(), {}, CID);
+    expect(res.success).toBe(true);
+    expect(Object.keys(res.series).sort()).toEqual([...KEYS].sort());
+    KEYS.forEach((key) => expect(Object.keys(res.series[key]).sort()).toEqual(['granularity', 'range', 'series']));
+    expect(res.series.activity30d).toMatchObject({ range: '30d', granularity: 'day' });
+    expect(res.series.activity30d.series).toHaveLength(30);
+    expect(res.series.events6m).toMatchObject({ range: '6m', granularity: 'month' });
+    expect(res.series.events6m.series).toHaveLength(6);
+    expect(res.series.studyHours30d.series.every((p) => typeof p.value === 'number')).toBe(true);
+  });
+
+  test('cada série é igual à resposta de apiGetMyTimeseries para o mesmo período e métrica', async () => {
+    const res = await getMyDashboardSeries(sql, makeEnv(), identity(estudo), {}, CID);
+    for (const spec of DASHBOARD_SERIES) {
+      const single = await getMyTimeseries(sql, makeEnv(), identity(estudo), { range: spec.range, metric: spec.metric });
+      expect(res.series[spec.key]).toEqual({ range: single.range, granularity: single.granularity, series: single.series });
+    }
+  });
+
+  test('isolamento de perfil: só a atividade da própria pessoa entra em cada série', async () => {
+    const mine = await getMyDashboardSeries(sql, makeEnv(), identity(me), {}, CID);
+    expect(total(mine.series.events30d)).toBe(1);
+    expect(total(mine.series.events6m)).toBe(1);
+    expect(total(mine.series.studyHours30d)).toBe(0);
+    const theirs = await getMyDashboardSeries(sql, makeEnv(), identity(estudo), {}, CID);
+    expect(total(theirs.series.studyHours30d)).toBeCloseTo(2.28, 2);
+    expect(total(theirs.series.events30d)).toBe(0);
+    const empty = await getMyDashboardSeries(sql, makeEnv(), identity(vazio), {}, CID);
+    expect(KEYS.every((key) => total(empty.series[key]) === 0)).toBe(true);
+  });
+
+  test('falha isolada: a série que falha vira null, as outras seguem intactas e a falha é registrada', async () => {
+    const env = makeEnv();
+    const ok = await getMyDashboardSeries(sql, env, identity(), {}, CID);
+    const res = await getMyDashboardSeries(failingSql(sql), env, identity(), {}, CID);
+    expect(res.success).toBe(true);
+    expect(res.series.events6m).toBeNull();
+    KEYS.filter((key) => key !== 'events6m').forEach((key) => expect(res.series[key]).toEqual(ok.series[key]));
+    const logged = await db.query("SELECT code, context FROM error_logs WHERE code = 'DASHBOARD_SERIES_FAILED'");
+    expect(logged.rows.length).toBeGreaterThanOrEqual(1);
+    expect(logged.rows[0].context).toEqual({ metric: 'events', range: '6m' });
+  });
+
+  test('cache: a segunda chamada não consulta o banco e cada série tem chave privada própria', async () => {
+    const kv = memoryKv();
+    const env = makeEnv({ HOT_CACHE: kv });
+    const spy = jest.fn(sql);
+    const a = await getMyDashboardSeries(spy, env, identity(), {}, CID);
+    const calls = spy.mock.calls.length;
+    expect(calls).toBeGreaterThan(0);
+    const b = await getMyDashboardSeries(spy, env, identity(), {}, CID);
+    expect(b).toEqual(a);
+    expect(spy.mock.calls.length).toBe(calls);
+    const keys = [...kv.store.keys()];
+    expect(keys).toHaveLength(KEYS.length);
+    expect(keys.every((k) => k.includes(me))).toBe(true);
+    expect(keys.some((k) => k.endsWith(':6m:events'))).toBe(true);
+  });
+
+  test.each([[[]], ['x'], [7]])('entrada inválida %p: erro de validação', async (input) => {
+    await expect(getMyDashboardSeries(sql, makeEnv(), identity(), input, CID)).rejects.toMatchObject({ name: 'ValidationError', expected: true });
   });
 });

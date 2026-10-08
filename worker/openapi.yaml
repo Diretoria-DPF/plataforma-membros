@@ -82,6 +82,7 @@ paths:
                 - "$ref": "#/components/schemas/apiGetFeatureFlags"
                 - "$ref": "#/components/schemas/apiGetHomeSummary"
                 - "$ref": "#/components/schemas/apiGetMemberProfile"
+                - "$ref": "#/components/schemas/apiGetMyDashboardSeries"
                 - "$ref": "#/components/schemas/apiGetMyMessagingKey"
                 - "$ref": "#/components/schemas/apiGetMyMetrics"
                 - "$ref": "#/components/schemas/apiGetMyProfile"
@@ -1001,6 +1002,22 @@ components:
           prefixItems:
             - description: "sessionToken"
             - description: "username"
+          minItems: 0
+          maxItems: 2
+    apiGetMyDashboardSeries:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMyDashboardSeries"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
           minItems: 0
           maxItems: 2
     apiGetMyMessagingKey:

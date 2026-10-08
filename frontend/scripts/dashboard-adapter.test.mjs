@@ -4,7 +4,8 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Adaptador do Início (frontend/dashboardAdapter.js): funções puras sobre as
-// respostas de apiGetHomeSummary e apiGetMyTimeseries. Nada de DOM aqui.
+// respostas de apiGetHomeSummary, apiGetMyDashboardSeries e apiGetMyTimeseries.
+// Nada de DOM aqui.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
@@ -169,6 +170,92 @@ test('comparativo mensal sem métrica utilizável devolve null', () => {
   const umMes = A.normalizeSeries({ success: true, granularity: 'month', series: [{ date: '2026-10-01', value: 2 }] });
   assert.equal(A.monthlyComparison({ events: umMes }), null);
   assert.equal(A.monthlyComparison(undefined), null);
+});
+
+/** Pacote como a Worker devolve: cada série sem `success`, ou null se aquela falhou. */
+const bundleItem = (points, granularity) => ({
+  range: granularity === 'month' ? '6m' : '30d',
+  granularity: granularity || 'day',
+  series: points.map(([date, value]) => ({ date, value })),
+});
+const dashboardOk = (series) => ({ success: true, series });
+
+test('pacote: falha da chamada inteira vira ok:false com mensagem', () => {
+  assert.deepEqual(A.normalizeDashboard({ success: false, message: 'Sessão expirou.' }), { ok: false, message: 'Sessão expirou.' });
+  assert.equal(A.normalizeDashboard({ success: true }).ok, false);
+  assert.equal(A.normalizeDashboard(null).ok, false);
+  assert.equal(A.normalizeDashboard(null).message, 'Não foi possível carregar os dados.');
+});
+
+test('pacote: cada chave do pacote resolve a série certa, no formato do adaptador', () => {
+  const dash = A.normalizeDashboard(dashboardOk({
+    activity30d: bundleItem([['2026-10-02', 3], ['2026-10-01', 1]]),
+    events6m: bundleItem([['2026-09-01', 5], ['2026-10-01', 7]], 'month'),
+  }));
+  const act = A.pickSeries(dash, 'activity30d');
+  assert.equal(act.ok, true);
+  assert.equal(act.missing, false);
+  assert.equal(act.granularity, 'day');
+  assert.deepEqual(act.points, [
+    { date: '2026-10-01', label: '01/10', value: 1 },
+    { date: '2026-10-02', label: '02/10', value: 3 },
+  ]);
+  assert.deepEqual(A.pickSeries(dash, 'events6m').points.map((p) => p.label), ['set/26', 'out/26']);
+});
+
+test('pacote: série null vem como ausente, e as outras seguem intactas (falha isolada)', () => {
+  const dash = A.normalizeDashboard(dashboardOk({
+    events30d: null,
+    learning30d: bundleItem([['2026-10-01', 2]]),
+  }));
+  const missing = A.pickSeries(dash, 'events30d');
+  assert.deepEqual(missing, { ok: true, missing: true, granularity: 'day', points: [] });
+  assert.equal(A.isEmptySeries(missing.points), true);
+  const other = A.pickSeries(dash, 'learning30d');
+  assert.equal(other.missing, false);
+  assert.equal(A.sumValues(other.points), 2);
+  // Chave que o servidor não mandou também conta como ausente.
+  assert.equal(A.pickSeries(dash, 'tasks6m').missing, true);
+});
+
+test('pacote: série com formato errado é ausente, nunca lança', () => {
+  const dash = A.normalizeDashboard(dashboardOk({ tasks30d: { series: 'lixo' }, events30d: 5 }));
+  assert.equal(A.pickSeries(dash, 'tasks30d').missing, true);
+  assert.equal(A.pickSeries(dash, 'events30d').missing, true);
+});
+
+test('pacote: com a chamada inteira falha, toda série vira ok:false com a mesma mensagem', () => {
+  const failed = A.normalizeDashboard({ success: false, message: 'Servidor ocupado.' });
+  assert.deepEqual(A.pickSeries(failed, 'activity30d'), { ok: false, message: 'Servidor ocupado.' });
+  assert.deepEqual(A.pickSeries(undefined, 'activity30d').ok, false);
+});
+
+test('pacote: chave por métrica e período; fora do pacote, null', () => {
+  assert.equal(A.bundleKey('activity', '30d'), 'activity30d');
+  assert.equal(A.bundleKey('study_hours', '30d'), 'studyHours30d');
+  assert.equal(A.bundleKey('tasks', '6m'), 'tasks6m');
+  assert.equal(A.bundleKey('activity', '90d'), null);
+  assert.equal(A.bundleKey('activity', '12m'), null);
+  assert.equal(A.bundleKey('events', '12m'), null);
+  assert.equal(A.bundleKey('senhas', '30d'), null);
+  assert.equal(A.bundleKey('constructor', '30d'), null);
+});
+
+test('pacote: comparativo mensal deixa de fora a série ausente e usa as demais', () => {
+  const dash = A.normalizeDashboard(dashboardOk({
+    events6m: null,
+    learning6m: bundleItem([['2026-09-01', 4], ['2026-10-01', 6]], 'month'),
+    tasks6m: bundleItem([['2026-09-01', 1], ['2026-10-01', 2]], 'month'),
+  }));
+  const byMetric = {
+    events: A.pickSeries(dash, 'events6m'),
+    learning: A.pickSeries(dash, 'learning6m'),
+    tasks: A.pickSeries(dash, 'tasks6m'),
+  };
+  assert.deepEqual(A.monthlyComparison(byMetric).rows, [
+    { label: 'Aprendizagem', values: [4, 6] },
+    { label: 'Tarefas', values: [1, 2] },
+  ]);
 });
 
 test('entrada da API e métricas do membro', () => {

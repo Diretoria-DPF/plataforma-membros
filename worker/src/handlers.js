@@ -120,6 +120,8 @@ export const API_REGISTRY = {
   apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
   // Série temporal da própria atividade (gráficos do Início): { range?, metric? }.
   apiGetMyTimeseries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => TimeseriesService.getMyTimeseries(sql, env, identity, input)),
+  // Todas as séries do Início numa chamada (falha isolada por série: null); ver timeseriesService.js.
+  apiGetMyDashboardSeries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => TimeseriesService.getMyDashboardSeries(sql, env, identity, input, cid)),
   // Início: eventos, tarefas, votações, aprendizado e caixa de entrada em UMA requisição.
   apiGetHomeSummary: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HomeService.getHomeSummary(sql, env, identity)),
 

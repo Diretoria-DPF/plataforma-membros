@@ -5,7 +5,9 @@
  */
 // Painel "Início" em layout editorial, sem cards (estilo em home-editorial.css).
 // Uma chamada obrigatória (apiGetHomeSummary) monta os números e os avisos;
-// cada gráfico carrega sozinho (apiGetMyTimeseries) e falha sem derrubar o resto.
+// uma chamada (apiGetMyDashboardSeries) traz todas as séries de 30 dias e 6 meses.
+// Série que não veio mostra "Sem dados"; falha da chamada inteira mostra erro com
+// "Tentar de novo" em cada gráfico.
 // Formato da API: window.LaiftDashboardAdapter (dashboardAdapter.js); desenho:
 // window.LaiftCharts (charts.js). Texto da API nunca vira HTML: só
 // createElement e textContent. Expõe window.LaiftHome.
@@ -371,17 +373,35 @@
 
   // ---------- Dados (cada bloco isolado) ----------
 
-  /** Uma chamada por (métrica, período) por carregamento; falha vira { ok: false }. */
+  /**
+   * Séries: o pacote (apiGetMyDashboardSeries) é pedido uma vez por carregamento.
+   * Atividade em 90 dias e 12 meses fica fora dele: pede-se só quando o membro
+   * troca o período (apiGetMyTimeseries, com cache por período).
+   */
   function createLoader(app, token) {
-    var cache = {};
+    var dashboardPromise = null;
+    var single = {};
+    function dashboard(force) {
+      if (force || !dashboardPromise) {
+        dashboardPromise = app.callApi('apiGetMyDashboardSeries', token, {})
+          .then(ADAPTER.normalizeDashboard, function () { return ADAPTER.normalizeDashboard(null); });
+      }
+      return dashboardPromise;
+    }
+    function oneSeries(metric, range, force) {
+      var key = metric + '|' + range;
+      if (force || !single[key]) {
+        single[key] = app.callApi('apiGetMyTimeseries', token, ADAPTER.seriesInput(metric, range))
+          .then(ADAPTER.normalizeSeries, function () { return ADAPTER.normalizeSeries(null); });
+      }
+      return single[key];
+    }
     return {
+      dashboard: dashboard,
       series: function (metric, range, force) {
-        var key = metric + '|' + range;
-        if (force || !cache[key]) {
-          cache[key] = app.callApi('apiGetMyTimeseries', token, ADAPTER.seriesInput(metric, range))
-            .then(ADAPTER.normalizeSeries, function () { return ADAPTER.normalizeSeries(null); });
-        }
-        return cache[key];
+        var key = ADAPTER.bundleKey(metric, range);
+        if (!key) return oneSeries(metric, range, force);
+        return dashboard(false).then(function (res) { return ADAPTER.pickSeries(res, key); });
       },
     };
   }
@@ -393,7 +413,7 @@
     var pairs = [[kpis.events, 'events'], [kpis.hours, 'study_hours']];
     return Promise.all(pairs.map(function (pair) {
       return ctx.loader.series(pair[1], WINDOW_RANGE).then(function (res) {
-        animateValue(pair[0].value, res.ok ? ADAPTER.sumValues(res.points) : null, fmt);
+        animateValue(pair[0].value, res.ok && !res.missing ? ADAPTER.sumValues(res.points) : null, fmt);
       });
     }));
   }
@@ -403,11 +423,17 @@
     return ctx.loader.series('activity', range, force).then(function (res) {
       if (main.current !== range) return;
       if (!res.ok) {
-        showFailure(ctx.doc, main.slot, res.message, function () { drawMain(ctx, main, range, true); });
+        showFailure(ctx.doc, main.slot, res.message, function () { retryMain(ctx, main, range); });
         return;
       }
       drawChart(main.slot, 'lineArea', seriesRows(res.points), { title: 'Atividade no período', width: 640, height: 220 });
     });
+  }
+
+  /** "Tentar de novo" do gráfico principal: 30 dias volta ao pacote; outros períodos pedem a série de novo. */
+  function retryMain(ctx, main, range) {
+    if (ADAPTER.bundleKey('activity', range)) ctx.repaint(true);
+    else drawMain(ctx, main, range, true);
   }
 
   function bindRange(ctx, main) {
@@ -421,30 +447,40 @@
     });
   }
 
-  function drawSpark(ctx, block, force) {
+  /** Total e variação do sparkline; série que não veio mostra traço no total. */
+  function sparkTexts(block, res) {
+    if (res.missing) return { total: '—', trend: '' };
+    return {
+      total: fmt(ADAPTER.sumValues(res.points)) + ' ' + SPARK_UNITS[block.metric],
+      trend: ADAPTER.formatVariation(ADAPTER.variation(res.points).percent),
+    };
+  }
+
+  function drawSpark(ctx, block) {
     showSkeleton(ctx.doc, block.slot);
-    return ctx.loader.series(block.metric, WINDOW_RANGE, force).then(function (res) {
+    return ctx.loader.series(block.metric, WINDOW_RANGE).then(function (res) {
       if (!res.ok) {
         block.total.textContent = '—';
         block.trend.textContent = '';
-        showFailure(ctx.doc, block.slot, res.message, function () { drawSpark(ctx, block, true); });
+        showFailure(ctx.doc, block.slot, res.message, function () { ctx.repaint(true); });
         return;
       }
-      block.total.textContent = fmt(ADAPTER.sumValues(res.points)) + ' ' + SPARK_UNITS[block.metric];
-      block.trend.textContent = ADAPTER.formatVariation(ADAPTER.variation(res.points).percent);
+      var texts = sparkTexts(block, res);
+      block.total.textContent = texts.total;
+      block.trend.textContent = texts.trend;
       drawChart(block.slot, 'sparkline', seriesRows(res.points), { title: SPARK_TITLES[block.metric] + ' nos últimos 30 dias', width: 200, height: 48 });
     });
   }
 
-  function loadCompare(ctx, compare, force) {
+  function loadCompare(ctx, compare) {
     showSkeleton(ctx.doc, compare.slot);
     var metrics = ADAPTER.COMPARISON_METRICS.filter(function (m) { return m !== 'tasks' || ctx.view.hasTasks; });
     return Promise.all(metrics.map(function (metric) {
-      return ctx.loader.series(metric, COMPARE_RANGE, force).then(function (res) { return [metric, res]; });
+      return ctx.loader.series(metric, COMPARE_RANGE).then(function (res) { return [metric, res]; });
     })).then(function (pairs) {
       var anyOk = pairs.some(function (p) { return p[1].ok; });
       if (!anyOk) {
-        showFailure(ctx.doc, compare.slot, pairs[0][1].message, function () { loadCompare(ctx, compare, true); });
+        showFailure(ctx.doc, compare.slot, pairs[0][1].message, function () { ctx.repaint(true); });
         return;
       }
       var byMetric = pairs.reduce(function (acc, p) { acc[p[0]] = p[1]; return acc; }, {});
@@ -474,17 +510,23 @@
     });
   }
 
+  /** Desenha todos os blocos no período atual. `force` refaz o pacote (só o "Tentar de novo" pede). */
+  function paintAll(ctx, layout, force) {
+    if (force) ctx.loader.dashboard(true);
+    return Promise.all([
+      isolated(loadKpis(ctx, layout.kpis)),
+      isolated(drawMain(ctx, layout.main, layout.main.current, false)),
+      isolated(loadCompare(ctx, layout.metrics.compare)),
+    ].concat(layout.metrics.sparks.map(function (block) { return isolated(drawSpark(ctx, block)); })));
+  }
+
   function renderEditorial(app, doc, host, summary, now, token) {
     var ctx = { doc: doc, summary: summary, now: now, view: ADAPTER.summaryView(summary), loader: createLoader(app, token) };
     var layout = buildLayout(ctx, host, function (panel) { app.showPanel(panel); });
+    ctx.repaint = function (force) { return paintAll(ctx, layout, force); };
     bindRange(ctx, layout.main);
     renderBadges(ctx, layout.metrics.badges);
-    return Promise.all([
-      isolated(loadKpis(ctx, layout.kpis)),
-      isolated(drawMain(ctx, layout.main, DEFAULT_RANGE, false)),
-      isolated(loadCompare(ctx, layout.metrics.compare, false)),
-    ].concat(layout.metrics.sparks.map(function (block) { return isolated(drawSpark(ctx, block, false)); })))
-      .then(function () { host.setAttribute('aria-busy', 'false'); });
+    return ctx.repaint(false).then(function () { host.setAttribute('aria-busy', 'false'); });
   }
 
   /** Carrega e desenha o Início. `app` é window.App (callApi, getState, showPanel). */
