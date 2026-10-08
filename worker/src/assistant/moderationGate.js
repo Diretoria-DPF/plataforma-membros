@@ -8,10 +8,12 @@
  * Moderação da Lia na conversa (ADR 0004; sql/022): o portão do chat, o estado da própria
  * pessoa e o resumo para a administração. Quem decide o nível é moderationService; aqui só
  * se monta a resposta. Visitante não é moderado.
- * Falha da moderação: o erro sempre vai para error_logs e a conversa segue normal (falha ABERTA),
- * com UMA exceção: quem esta instância já viu suspenso continua sem IA (texto fixo) enquanto o
- * estado não puder ser lido. O juiz LLM só roda dentro de um teto por perfil; acima dele vale
- * só o termo (nunca derruba o chat).
+ * Falha da moderação: o erro sempre vai para error_logs. Não deu para ler o estado (flag ou leitura):
+ * a suspensão é relida do banco (verdade persistida; ModerationService.resolveSuspension) e, se o banco
+ * não responder, vale a memória desta instância. Suspensa: segue sem IA (texto fixo). Livre pelo banco,
+ * ou tabela ausente (migração 022 não aplicada): a conversa segue normal. Nem banco nem memória: falha
+ * SEGURA, a Lia não responde com IA nem libera quem pode estar suspenso (aviso neutro, sem punir).
+ * O juiz LLM só roda dentro de um teto por perfil; acima dele vale só o termo (nunca derruba o chat).
  */
 import * as C from '../constants.js';
 import * as S from '../security.js';
@@ -72,6 +74,14 @@ function incidentPayload(state) {
   return payload(state.level, null, GATE_TEXTS[state.level]);
 }
 
+const MSG_STATE_UNVERIFIED = 'A Lia não conseguiu verificar o estado da moderação agora e, por segurança, pausou as respostas. '
+  + 'Isso não é um aviso nem uma suspensão e não conta como ocorrência. Tente de novo em alguns minutos.';
+
+/** Falha segura: sem saber se a pessoa está suspensa, a Lia pausa (nível 0, sem suspensão) e o chat marca a resposta como degradada. */
+function unverifiedPayload() {
+  return Object.assign(payload(0, null, MSG_STATE_UNVERIFIED), { degraded: true });
+}
+
 async function logFailOpen(sql, correlationId, err) {
   try {
     await Logging.logError(sql, correlationId, 'ASSISTANT_MODERATION_FAILED', String((err && err.message) || err), null);
@@ -106,13 +116,15 @@ async function judgeMessage(sql, env, identity, message, correlationId) {
 }
 
 /**
- * Não deu para saber o estado (flag ou leitura falhou). O erro é registrado; quem esta instância
- * já viu suspenso segue SEM IA (o texto fixo da suspensão) e os demais seguem normal (falha aberta).
+ * Não deu para saber o estado (flag ou leitura falhou). O erro é registrado e a suspensão é resolvida
+ * pelo banco, com a memória da instância só como reserva (ModerationService.resolveSuspension):
+ * suspensa segue SEM IA (texto fixo da suspensão); livre segue normal; sem resposta nenhuma, falha segura.
  */
 async function whenStateUnknown(sql, identity, correlationId, err, at) {
   await logFailOpen(sql, correlationId, err);
-  const until = ModerationService.knownSuspensionUntil(identity.profileId, at);
-  return until ? suspendedPayload({ until }) : null;
+  const found = await ModerationService.resolveSuspension(sql, identity.profileId, at);
+  if (found.status === 'suspended') return suspendedPayload({ until: found.until });
+  return found.status === 'unknown' ? unverifiedPayload() : null;
 }
 
 /**
@@ -168,9 +180,9 @@ export async function assistantModerationState(sql, identity, now) {
     };
   } catch (err) {
     await logFailOpen(sql, S.newCorrelationId(), err);
-    const until = ModerationService.knownSuspensionUntil(identity.profileId, at);
-    if (!until) return NOT_MODERATED;
-    return Object.assign({}, NOT_MODERATED, { moderated: true, level: C.MODERATION.MAX_LEVEL, suspended: true, until: until.toISOString() });
+    const found = await ModerationService.resolveSuspension(sql, identity.profileId, at);
+    if (found.status !== 'suspended') return NOT_MODERATED; // a tela não quebra; quem protege é o portão do chat
+    return Object.assign({}, NOT_MODERATED, { moderated: true, level: C.MODERATION.MAX_LEVEL, suspended: true, until: found.until.toISOString() });
   }
 }
 

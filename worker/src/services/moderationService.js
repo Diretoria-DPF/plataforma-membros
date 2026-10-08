@@ -186,8 +186,9 @@ export async function moderationEnabled(sql, identity) {
   }
 }
 
-// Suspensões vistas por ESTA instância do Worker (memória; some quando a instância reinicia).
-// Só servem à falha segura: se a leitura do estado falhar, quem já sabemos suspenso segue sem IA.
+// Suspensões vistas por ESTA instância do Worker (memória; some quando a instância reinicia, e outra
+// instância não a conhece). A verdade é assistant_moderation: quando o estado normal não pode ser lido,
+// resolveSuspension relê a suspensão no banco e a memória só vale se essa leitura também falhar (O17).
 const KNOWN_SUSPENSIONS = new Map();
 const KNOWN_SUSPENSIONS_MAX = 500;
 
@@ -216,6 +217,47 @@ export function knownSuspensionUntil(profileId, now) {
 
 export function __resetKnownSuspensionsForTests() {
   KNOWN_SUSPENSIONS.clear();
+}
+
+/**
+ * Suspensão ATIVA lida direto do banco (a verdade persistida): nível de suspensão com o prazo ainda no
+ * futuro. Leitura estreita, sem gravar e sem decaimento: enquanto a suspensão vale, o decaimento não a
+ * altera (Rules.decay). Devolve o fim (Date) ou null. Lança se a leitura falhar.
+ */
+export async function persistedSuspensionUntil(sql, profileId, now) {
+  const at = now || new Date();
+  const rows = await sql`
+    SELECT until FROM assistant_moderation
+    WHERE profile_id = ${profileId}::uuid AND level >= ${C.MODERATION.MAX_LEVEL} AND until > ${iso(at)}::timestamptz`;
+  return rows.length ? new Date(rows[0].until) : null;
+}
+
+const SUSPENSION_CLEAR = Object.freeze({ status: 'clear' });
+const SUSPENSION_UNKNOWN = Object.freeze({ status: 'unknown' });
+
+/**
+ * A pessoa está suspensa? Para quando o estado normal NÃO pôde ser lido (flag ou leitura falhou). O banco manda:
+ * relê só a suspensão em assistant_moderation (e a instância passa a lembrar dela, ou a esquecer se já acabou).
+ * A memória desta instância só vale quando essa leitura também falha. Sem banco e sem memória, o estado é
+ * desconhecido: quem chama NÃO pode tratar isso como "livre".
+ * Tabela ausente (migração 022 não aplicada) é "livre": sem a tabela ninguém está suspenso.
+ * @returns {Promise<{status:'suspended',until:Date}|{status:'clear'}|{status:'unknown'}>}
+ */
+export async function resolveSuspension(sql, profileId, now) {
+  const at = now || new Date();
+  try {
+    const until = await persistedSuspensionUntil(sql, profileId, at);
+    if (!until) {
+      KNOWN_SUSPENSIONS.delete(profileId);
+      return SUSPENSION_CLEAR;
+    }
+    noteSuspension(profileId, { level: C.MODERATION.MAX_LEVEL, until }, at);
+    return { status: 'suspended', until };
+  } catch (err) {
+    if (isMissingTable(err)) return SUSPENSION_CLEAR;
+    const remembered = knownSuspensionUntil(profileId, at);
+    return remembered ? { status: 'suspended', until: remembered } : SUSPENSION_UNKNOWN;
+  }
 }
 
 async function readRow(sql, profileId) {
@@ -369,15 +411,23 @@ export async function judgeOffense(sql, env, identity, message, correlationId, o
 }
 
 // ---- Redenção ----
-const MSG_REDEEM_ACCEPTED = 'Obrigada por conversar. Redenção aceita: seu nível voltou ao normal.';
-const MSG_REDEEM_REFUSED = 'Não consegui perceber sinceridade no seu texto. Conte com suas palavras o que houve e como vai agir daqui em diante; você pode tentar de novo em 1 hora.';
-const MSG_REDEEM_UNAVAILABLE = 'Não consegui avaliar o seu pedido agora. Isso não conta como tentativa: tente de novo em alguns minutos.';
-const MSG_REDEEM_CHANGED = 'O seu estado mudou enquanto o pedido era avaliado, então não apliquei a redenção. Isso não conta como tentativa: confira o seu nível e tente de novo.';
-const MSG_REDEEM_NORMAL ='Seu nível já está normal: não há nada a redimir.';
-const MSG_REDEEM_LIMIT = 'Você já teve ' + C.MODERATION.REDEEM_ACCEPTED_MAX + ' redenções aceitas nos últimos ' + C.MODERATION.REDEEM_ACCEPTED_WINDOW_DAYS + ' dias. Aguarde o fim da suspensão; se acredita que houve engano, fale com a administração.';
+// Copy da redenção: cada mensagem diz o que houve, o nível, o que a pessoa pode fazer e quando. Sem acusar
+// e sem dado pessoal. O prazo da nova tentativa vem de REDEEM_RETRY_SECONDS (1 hora), nunca escrito à mão.
+const RETRY_HOURS = C.MODERATION.REDEEM_RETRY_SECONDS / 3600;
+const RETRY_LABEL = RETRY_HOURS === 1 ? '1 hora' : RETRY_HOURS + ' horas';
+const MSG_REDEEM_ACCEPTED = 'Redenção aceita. O nível de moderação voltou a 0 e você já pode conversar com a Lia normalmente. Obrigada por explicar o que houve.';
+const MSG_REDEEM_REFUSED = 'A redenção não foi aceita desta vez: a explicação não deixou claro o que houve e como a conversa vai mudar daqui em diante. '
+  + 'O nível de moderação continua o mesmo. Você pode enviar uma nova explicação, com palavras próprias, daqui a ' + RETRY_LABEL + '.';
+const MSG_REDEEM_UNAVAILABLE = 'A avaliação da redenção não está disponível agora, então nada mudou no nível de moderação. Isso não conta como tentativa: tente de novo em alguns minutos.';
+const MSG_REDEEM_CHANGED = 'O nível de moderação mudou enquanto a explicação era avaliada (uma nova ocorrência ou a passagem do tempo), então a redenção não foi aplicada. '
+  + 'Isso não conta como tentativa: confira o nível atual e envie de novo.';
+const MSG_REDEEM_NORMAL = 'O nível de moderação já é 0: não há nada a redimir e a conversa com a Lia está liberada.';
+const MSG_REDEEM_LIMIT = 'O limite de ' + C.MODERATION.REDEEM_ACCEPTED_MAX + ' redenções aceitas em ' + C.MODERATION.REDEEM_ACCEPTED_WINDOW_DAYS + ' dias foi atingido, '
+  + 'então não é possível pedir outra agora. O nível atual diminui com o tempo, um nível a cada ' + C.MODERATION.DECAY_DAYS + ' dias sem nova ocorrência, '
+  + 'e a suspensão de ' + C.MODERATION.SUSPENSION_HOURS + ' horas termina sozinha. Se acredita que houve engano, fale com a administração.';
 
 function retryError(secondsLeft) {
-  const err = E.RateLimitError('Você já tentou há pouco. Tente a redenção de novo em ' + Math.ceil(secondsLeft / 60) + ' minuto(s).');
+  const err = E.RateLimitError('Já houve um pedido de redenção há pouco. Um novo pedido pode ser enviado em ' + Math.ceil(secondsLeft / 60) + ' minuto(s).');
   err.payload = { retryAfterSeconds: Math.ceil(secondsLeft) };
   return err;
 }
