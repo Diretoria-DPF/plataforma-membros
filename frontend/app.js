@@ -97,6 +97,7 @@
   function clearSessionCache() {
     try { localStorage.removeItem(SESSION_CACHE_KEY); } catch (err) { /* ignora */ }
     if (sessionExpiryTimer) { clearTimeout(sessionExpiryTimer); sessionExpiryTimer = null; }
+    if (window.LaiftOnboarding) window.LaiftOnboarding.reset(); // fecha o diálogo ao sair ou expirar a sessão
   }
 
   /** Agenda o retorno automático à tela de login exatamente quando o cache expira, mesmo com a aba aberta o tempo todo. */
@@ -890,6 +891,8 @@
     if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
     // Lia: relê a flag e zera a conversa da conta anterior.
     if (window.LaiftAssistant) window.LaiftAssistant.refresh();
+    // Primeira entrada da pessoa: apresentação curta por papel (a Lia e o crachá).
+    if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: state.profile.role, profileId: state.profile.id });
   }
 
   /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */
