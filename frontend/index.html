@@ -73,6 +73,7 @@
     <!-- ================= PÚBLICO ================= -->
     <main id="public-shell" class="public-shell">
       <section id="screen-welcome" class="auth-card" aria-labelledby="welcome-title">
+        <div class="hero hidden" id="hero-lia" aria-hidden="true"></div>
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="welcome-title">Entrar</h1>
         <p class="muted">LAIFT — Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Acompanhe eventos, participe de votações e organize tarefas coletivas.</p>
@@ -105,7 +106,7 @@
 
       <section id="screen-register" class="auth-card hidden" aria-labelledby="register-title">
         <span class="brand-pill">Plataforma de Membros</span>
-        <h2 id="register-title">Criar conta</h2>
+        <h1 id="register-title" style="font-size:1.5em">Criar conta</h1>
         <p class="muted">Sua conta começa como visitante; a confirmação por e-mail é obrigatória para entrar.</p>
 
         <form id="form-register" novalidate>
@@ -180,7 +181,7 @@
 
       <section id="screen-forgot" class="auth-card hidden" aria-labelledby="forgot-title">
         <span class="brand-pill">Plataforma de Membros</span>
-        <h2 id="forgot-title">Redefinir senha</h2>
+        <h1 id="forgot-title" style="font-size:1.5em">Redefinir senha</h1>
         <p class="muted">Informe seu e-mail para receber o link de redefinição.</p>
 
         <form id="form-forgot" novalidate>
@@ -198,7 +199,7 @@
 
       <section id="screen-reset" class="auth-card hidden" aria-labelledby="reset-title">
         <span class="brand-pill">Plataforma de Membros</span>
-        <h2 id="reset-title">Criar nova senha</h2>
+        <h1 id="reset-title" style="font-size:1.5em">Criar nova senha</h1>
         <p class="muted">Defina uma nova senha para voltar a acessar sua conta.</p>
 
         <form id="form-reset" novalidate>
@@ -332,6 +333,7 @@
 
       <main class="app-main">
         <section id="panel-home">
+          <h1 class="sr-only">Início</h1>
           <div class="card">
             <h2>Início</h2>
             <p id="home-greeting" class="muted">Bem-vindo(a). Use a navegação para acessar eventos, propostas, tarefas e a área de aprendizagem.</p>
@@ -345,6 +347,7 @@
           em modulos/ e herdam a identidade desta sessão.
         -->
         <section id="panel-learn" class="hidden">
+          <h1 class="sr-only">Aprender</h1>
           <div id="learn-hub">
             <div class="card">
               <h2>Aprender</h2>
@@ -379,6 +382,7 @@
         </section>
 
         <section id="panel-events" class="hidden">
+          <h1 class="sr-only">Eventos</h1>
           <div class="card">
             <h2>Eventos</h2>
             <div id="events-status" class="status-msg" role="status" aria-live="polite"></div>
@@ -392,6 +396,7 @@
         </section>
 
         <section id="panel-proposals" class="hidden">
+          <h1 class="sr-only">Propostas</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Enviar proposta</h2>
@@ -419,6 +424,7 @@
         </section>
 
         <section id="panel-tasks" class="hidden">
+          <h1 class="sr-only">Tarefas</h1>
           <div class="card">
             <h2>Tarefas</h2>
             <div id="tasks-status" class="status-msg" role="status" aria-live="polite"></div>
@@ -427,6 +433,7 @@
         </section>
 
         <section id="panel-orgchart" class="hidden">
+          <h1 class="sr-only">Equipe da liga</h1>
           <div class="card">
             <h2>Equipe da liga</h2>
             <p class="muted">Clique numa pessoa para ver o perfil e adicionar.</p>
@@ -462,6 +469,7 @@
           é sempre montado via h()/text(), nunca innerHTML.
         -->
         <section id="panel-messages" class="hidden">
+          <h1 class="sr-only">Mensagens</h1>
           <div class="card" id="messaging-preparing">
             <h2>Mensagens</h2>
             <p class="muted">Suas mensagens são cifradas de ponta a ponta — nem a liga consegue ler.</p>
@@ -498,6 +506,7 @@
         </section>
 
         <section id="panel-profile" class="hidden">
+          <h1 class="sr-only">Perfil</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Meu perfil</h2>
@@ -581,6 +590,7 @@
 
         <!-- ============ ADMIN ============ -->
         <section id="panel-admin-dashboard" class="hidden">
+          <h1 class="sr-only">Admin: painel</h1>
           <div class="card">
             <h2>Visão geral</h2>
             <div id="admin-dashboard-stats" class="stat-grid"></div>
@@ -592,6 +602,7 @@
         </section>
 
         <section id="panel-admin-users" class="hidden">
+          <h1 class="sr-only">Admin: usuários</h1>
           <div class="card">
             <h2>Usuários</h2>
             <form id="form-user-search" novalidate style="display:flex; gap:10px; margin-top:0;">
@@ -604,6 +615,7 @@
         </section>
 
         <section id="panel-admin-events" class="hidden">
+          <h1 class="sr-only">Admin: eventos</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Novo evento</h2>
@@ -642,6 +654,7 @@
         </section>
 
         <section id="panel-admin-proposals" class="hidden">
+          <h1 class="sr-only">Admin: propostas</h1>
           <div class="card">
             <h2>Propostas em análise / acompanhamento</h2>
             <div id="admin-proposals-list"></div>
@@ -649,6 +662,7 @@
         </section>
 
         <section id="panel-admin-tasks" class="hidden">
+          <h1 class="sr-only">Admin: tarefas</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Nova tarefa</h2>
@@ -674,6 +688,7 @@
         </section>
 
         <section id="panel-admin-feedback" class="hidden">
+          <h1 class="sr-only">Admin: feedback</h1>
           <div class="card">
             <h2>Feedback recebido</h2>
             <div id="admin-feedback-list"></div>
@@ -681,6 +696,7 @@
         </section>
 
         <section id="panel-admin-audit" class="hidden">
+          <h1 class="sr-only">Admin: auditoria</h1>
           <div class="card">
             <h2>Auditoria</h2>
             <form id="form-audit-filter" novalidate style="display:flex; flex-wrap:wrap; gap:10px; margin-top:0;">
@@ -709,6 +725,7 @@
         </section>
 
         <section id="panel-admin-reports" class="hidden">
+          <h1 class="sr-only">Admin: denúncias</h1>
           <div class="card">
             <h2>Denúncias</h2>
             <form id="form-report-filter" novalidate style="display:flex; gap:10px; margin-top:0;">
@@ -729,6 +746,7 @@
         </section>
 
         <section id="panel-admin-fiscal" class="hidden">
+          <h1 class="sr-only">Admin: terminal fiscal</h1>
           <div class="card">
             <h2>Terminal fiscal</h2>
             <p class="muted">Check-in por QR Code, presença manual ou pela lista, exportação em CSV e crachás. Presenças gravadas nos eventos da plataforma; acesso exclusivo de administradores.</p>
@@ -738,6 +756,7 @@
 
         <!-- Fase 3 — painel admin de IA (frontend/admin-ai.js). Conteúdo dinâmico só via textContent. -->
         <section id="panel-admin-ai" class="hidden">
+          <h1 class="sr-only">Admin: IA</h1>
           <div class="card">
             <div class="ai-admin-head">
               <h2>IA — saúde das chaves</h2>
@@ -961,10 +980,12 @@
   <script src="assistant-mood-glue.js" defer></script>
   <script src="modulos/shared/lia/lia-anim.js" defer></script>
   <script src="modulos/shared/lia/lia.js" defer></script>
+  <script src="hero.js" defer></script>
   <script src="assistant-feedback.js" defer></script>
   <script src="assistant-moderation.js" defer></script>
   <script src="assistant-hints.js" defer></script>
   <script src="assistant.js" defer></script>
+  <script src="keyboard-shortcuts.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>
