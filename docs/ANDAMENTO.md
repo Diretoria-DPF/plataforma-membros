@@ -1,6 +1,6 @@
 # Andamento do Plano v5 — onde paramos
 
-**Atualizado em 2026-10-08.** Para retomar: leia a seção "Atualização de 2026-10-08" (logo antes de "Pull requests"), depois `docs/AMBIENTES.md` (runbook de ativação) e `docs/riscos-residuais.md`. O plano completo, com DoD e rollback por fase, está em `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-an-lise-c-merry-reddy.md`.
+**Atualizado em 2026-10-08.** Para retomar: leia as seções "Atualização de 2026-10-08" e "Atualização de 2026-10-08 (rodada 2)" (logo antes de "Pull requests"), depois `docs/AMBIENTES.md` (runbook de ativação) e `docs/riscos-residuais.md`. O plano completo, com DoD e rollback por fase, está em `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-an-lise-c-merry-reddy.md`.
 
 ## Em uma frase
 A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação foram **mesclados na `main` pela #38 em 2026-10-08 (10:38 UTC)**, atrás de feature flags, e o Worker e o site foram publicados. **O banco de produção ainda precisa do runbook de `docs/AMBIENTES.md`** (backup Neon, migrações 020–022 e 024, reindexação e, por último, a 023). Até lá os recursos novos ficam inertes: a migração 023 só liga as flags da renovação quando for aplicada, e ela não religa o que um admin já desligou.
@@ -81,16 +81,41 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 - **PGlite não valida pgvector nem HNSW.** A sintaxe do índice `hnsw` de `sql/020_rag.sql` só é conferida no Neon (`worker/scripts/pgvector-shim.mjs`).
 - **Reindexação depende dos bindings `[ai]`** (produção) e `[env.staging.ai]` (staging), ambos presentes em `worker/wrangler.toml`. Sem eles, `embeddingAvailable` vem `false` e a busca fica só com trigramas.
 - **Folhas decorativas podem cobrir texto.** `frontend/styles.css` (linhas 72 a 104, `.leaf-field` e `.leaf`) ficam atrás do conteúdo e podem cobrir texto em alguns pontos. Conferir no QA visual.
-- **Cache semântico não usa os trechos do RAG.** Uma resposta vinda do cache (validade de 7 dias) não traz fontes.
+- **Cache semântico não usa os trechos do RAG.** Respostas com fontes não entram no cache (O27, resolvido). O cache guarda só respostas genéricas, sem fontes, com validade de 7 dias.
 - **Hash da pergunta é reversível por dicionário** para quem lê o banco: `assistant_messages.question_hash` é o SHA-256 de `profile_id:pergunta normalizada`, e o `profile_id` fica na mesma linha. Nenhuma API devolve esse hash.
 - **Política × auditoria.** A Política (seção 7) diz que incidentes saem em 365 dias, mas `assistant_incident` é gravado em `audit_logs` (`worker/src/services/moderationService.js`), que guarda 730 dias.
-- **Tela de moderação do admin.** No lado do membro, a redenção e a consulta de estado já são chamadas (`frontend/assistant-moderation.js`), e a Lia aciona aviso e suspensão (`frontend/assistant.js`). Falta a tela do admin (ADR 0004): `apiAdminAssistantModeration` está no `API_REGISTRY`, mas nenhum arquivo do front a chama (O28).
-- **Chart.js por CDN.** `frontend/index.html` (linha 932, com SRI) carrega Chart.js 4.5.1 do jsDelivr para o gráfico do painel "Administração — dashboard" (`frontend/app.js`, `renderAdminDashboardChart`). O painel de IA não usa Chart.js. Isso contraria a regra "nenhum script ou CDN de terceiros" de `docs/TIME_CONTRATO.md` (exceção registrada, O31). Os gráficos novos não dependem dele.
+- **Tela de moderação do admin.** Criada em `frontend/admin-moderation.js` com agregados (O28, mitigado). A visão por pessoa (nome e demais dados) está em andamento: o commit `66cdbcf` (`feat(moderacao): dados por pessoa`) está na branch `feat/v5-f4-acervo` e ainda não foi integrado à `feat/v5-fechamento`.
+- **Chart.js.** Saiu do painel de administração: o gráfico é `LaiftCharts.groupedBars` (`charts.js`), e `index.html` tem `script-src 'self'` (O31, mitigado). Restam as bibliotecas de jsDelivr das páginas de módulo (quiz, laboratório, studio e fiscal), com SRI e versão fixa: exceção registrada como O31b em `docs/TIME_CONTRATO.md`.
 - **Blocos locais de movimento reduzido.** Além do bloco único de `frontend/modulos/shared/laift-tokens.css`, outros 15 arquivos CSS ainda têm `prefers-reduced-motion` (por exemplo `frontend/ux.css` e `frontend/modulos/anatomia-3d/css/atlas.css`). Isso fica fora da regra "um único bloco" do ADR 0002.
 - **Desligar por SQL não grava auditoria.** Um `UPDATE` de `feature_flags` não grava `updated_by` nem auditoria, mas o gatilho `trg_feature_flags_updated_at` (criado na 023) marca `updated_at`, e a 023 só liga `ux_v2_enabled` e `chatbot_enabled` em linha intocada. Limite (O30): um `UPDATE` feito antes de a 023 existir no banco não deixa marca. Antes da primeira 023 em produção, confira `apiAdminListFeatureFlags` e, para decisões que devem durar, use `apiAdminSetFeatureFlag`.
 - **Documentação:** `docs/DEPLOYMENT.md` (seção 1) foi corrigida na passada final de 2026-10-08: migrações 001 a 024, e a 023 não religa o que um admin desligou.
 - **Staging aplica tudo antes da API.** Se `STAGING_DATABASE_URL` existir, o push em `staging` roda o runner inteiro, incluindo a 023, antes de publicar a API (`.github/workflows/deploy-staging.yml`).
-- **Riscos novos** registrados em `docs/riscos-residuais.md` (O17 a O36; O28 e O31 corrigidos na passada final). Itens adiados com gatilho, em `docs/backlog-futuro.md`, seção "Lia e RAG".
+- **Riscos novos** registrados em `docs/riscos-residuais.md` (O17 a O43; O28 e O31 corrigidos na passada final e na rodada 2). Itens adiados com gatilho, em `docs/backlog-futuro.md`, seção "Lia e RAG".
+
+## Atualização de 2026-10-08 (rodada 2, fechamento da Onda 1)
+
+**O que entrou em `feat/v5-fechamento`.**
+- **Moderação da Lia:** a suspensão é relida do banco quando a leitura do estado falha. Sem banco e sem memória, a Lia pausa para todos (falha segura). Detalhes no ADR 0004, seção "Portão do chat" (O17 mitigado).
+- **RAG:** reindexação sem embeddings grava `ASSISTANT_RAG_REINDEX_DEGRADED` em `error_logs` (O20 mitigado). Resposta com fontes nunca entra no cache (O27 resolvido).
+- **Admin:** seção "Moderação da Lia" com agregados (`frontend/admin-moderation.js`, O28 mitigado).
+- **Front:** Chart.js saiu do painel de administração (O31 mitigado). As páginas de módulo ainda usam jsDelivr com SRI (O31b).
+- **Acessibilidade:** `.lia-close` com área de toque de 44 px (O35 resolvido). O checkbox do e-mail fica como está (O34 aceito).
+- **Lia viva:** ondas 2 a 4 aceitas em 2026-10-08 (ADR 0003). `lia-props-art.js` está no PRECACHE, mas o runtime ainda não o carrega: só `preview-props.html`.
+- **Hero da Lia:** só aparece com `ux_v2_enabled` e `chatbot_enabled` ligadas (O39).
+- **Lighthouse mobile** (build local, sem alteração de código): Performance 81, Acessibilidade 100, Boas práticas 96, SEO 100. CLS 0,113 na tela de entrada (O43). Relatório em `docs/LIGHTHOUSE_2026-10-08.md`.
+- **Decisões novas:** ADR 0006 (animação sem biblioteca, `docs/adr/0006-animacao-sem-biblioteca.md`) e minutas da F4 em `docs/F4_DECISOES_JURIDICAS.md`, que dependem de revisão do advogado.
+
+**Atalhos de teclado.** O `?` (Shift+/) segue registrado em `frontend/keyboard-shortcuts.js` (linha 186) como ajuda de tecla única. A troca por `Ctrl/Cmd+/`, pedida por causa do WCAG 2.1.4, **ainda não está no código**: não há `mod+/` em nenhuma branch, verificado em 2026-10-08. Ctrl/Cmd+K abre a Lia e cancela o atalho padrão do navegador (`dispatch` chama `preventDefault`). O teste com NVDA e JAWS é do dono.
+
+**Segurança.** `window.App.getState()` (`frontend/app.js`, linha 2500) devolve o `sessionToken`, e qualquer script da mesma origem pode lê-lo (O37). Aceito nesta rodada por ser mudança grande, com o item registrado em `docs/backlog-futuro.md` (seção "Segurança e produto").
+
+**Pendências desta rodada.**
+- Dono: confirmar a leitura do critério de stagger que sustenta a decisão do ADR 0006 (O40); decidir qual fonte vale para os três desenhos novos da Lia, que existem em `lia-props.svg` e em `preview-ondas.js` (ADR 0003); decidir sobre `noindex` em `/` (O38).
+- Antes da F4: Política seção 6 e Código de Conduta (J5 e J6).
+- Admin: visão por pessoa (commit `66cdbcf`, na branch `feat/v5-f4-acervo`).
+- Geometria: se o CI divergir, regravar a baseline com `UPDATE_GEOMETRY=1` (O41).
+
+**Números finais:** a informar pelo coordenador ao fechar a rodada.
 
 ## Pull requests
 | PR | Branch | O que traz | Estado |
