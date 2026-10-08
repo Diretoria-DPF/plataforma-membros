@@ -25,10 +25,28 @@
   var COMPARE_RANGE = '6m';
   var AGORA_IDS = ['events', 'voting', 'inbox'];
   var SPARK_TITLES = { events: 'Eventos', learning: 'Aprendizagem', tasks: 'Tarefas concluídas', study_hours: 'Horas de estudo' };
-  var SPARK_UNITS = { events: 'eventos', learning: 'atividades', tasks: 'concluídas', study_hours: 'horas' };
+  /** Unidade do total do sparkline: [singular, plural]. */
+  var SPARK_UNIT_FORMS = {
+    events: ['evento', 'eventos'],
+    learning: ['atividade', 'atividades'],
+    tasks: ['concluída', 'concluídas'],
+    study_hours: ['hora', 'horas']
+  };
 
   function plural(n, one, many) {
     return n === 1 ? one : many;
+  }
+
+  /** Total do sparkline com a unidade: singular só para exatamente 1 ("1 evento", "1 hora"). */
+  function sparkTotalText(metric, total, format) {
+    var forms = SPARK_UNIT_FORMS[metric] || [metric, metric];
+    var shown = typeof format === 'function' ? format(total) : String(total);
+    return shown + ' ' + plural(total, forms[0], forms[1]);
+  }
+
+  /** "2 de 5 selos", e "0 de 1 selo" quando o total é 1. */
+  function badgeCountText(unlocked, total) {
+    return unlocked + ' de ' + total + ' ' + plural(total, 'selo', 'selos');
   }
 
   function startOfDay(date) {
@@ -122,7 +140,7 @@
       id: 'learning', title: 'Aprendizado', kind: 'metric',
       metric: l.accuracyPct === null || l.accuracyPct === undefined ? '—' : l.accuracyPct + '%',
       metricLabel: 'de acerto',
-      detail: l.questionsAnswered + ' ' + plural(l.questionsAnswered, 'questão', 'questões') + ' · ' + l.unlockedBadges + ' de ' + l.totalBadges + ' selos',
+      detail: l.questionsAnswered + ' ' + plural(l.questionsAnswered, 'questão', 'questões') + ' · ' + badgeCountText(l.unlockedBadges, l.totalBadges),
       action: { label: 'Estudar', panel: 'panel-learn' },
     };
   }
@@ -205,19 +223,50 @@
     node.textContent = '';
   }
 
+  // ---------- Ciclo de vida: cada carregamento é uma "geração" ----------
+  // Ao abrir uma entrada, gráficos e contagens da anterior são soltos (destroy/cancel)
+  // e respostas de gerações velhas são descartadas: nada antigo desenha por cima.
+
+  var generation = 0;
+  var live = [];
+
+  /** Registra o que precisa de destroy() (contêiner de gráfico ou contagem) para soltar na próxima entrada. */
+  function track(handle) {
+    live.push(handle);
+    return handle;
+  }
+
+  function releaseLive() {
+    var pending = live;
+    live = [];
+    pending.forEach(function (handle) { handle.destroy(); });
+  }
+
+  /** Abre uma nova entrada no Início: solta a anterior e devolve o predicado "ainda é a tela atual?". */
+  function openView() {
+    releaseLive();
+    generation += 1;
+    var gen = generation;
+    return function isCurrent() { return gen === generation; };
+  }
+
   // ---------- Layout editorial ----------
 
   /** Contêiner de gráfico que troca de conteúdo sem deixar gráfico antigo vivo. */
   function makeSlot(doc, className) {
     var el = element(doc, 'div', className);
     var slot = { el: el, chart: null };
-    slot.reset = function () {
+    slot.destroy = function () {
       if (slot.chart) slot.chart.destroy();
       slot.chart = null;
+    };
+    slot.reset = function () {
+      slot.destroy();
       el.removeAttribute('aria-busy');
       clear(el);
       return el;
     };
+    track(slot);
     return slot;
   }
 
@@ -260,8 +309,12 @@
       return;
     }
     var charts = root.LaiftCharts;
-    if (charts && charts.countUp) charts.countUp(el, value, { format: format });
-    else el.textContent = format(value);
+    if (!charts || !charts.countUp) {
+      el.textContent = format(value);
+      return;
+    }
+    var counter = charts.countUp(el, value, { format: format });
+    track({ destroy: function () { counter.cancel(); } });
   }
 
   function kpiBlock(doc, label) {
@@ -420,6 +473,7 @@
     var pairs = [[kpis.events, 'events'], [kpis.hours, 'study_hours']];
     return Promise.all(pairs.map(function (pair) {
       return ctx.loader.series(pair[1], WINDOW_RANGE).then(function (res) {
+        if (!ctx.isCurrent()) return;
         animateValue(pair[0].value, res.ok && !res.missing ? ADAPTER.sumValues(res.points) : null, fmt);
       });
     }));
@@ -428,7 +482,7 @@
   function drawMain(ctx, main, range, force) {
     showSkeleton(ctx.doc, main.slot);
     return ctx.loader.series('activity', range, force).then(function (res) {
-      if (main.current !== range) return;
+      if (!ctx.isCurrent() || main.current !== range) return;
       if (!res.ok) {
         showFailure(ctx.doc, main.slot, res.message, function () { retryMain(ctx, main, range); });
         return;
@@ -458,7 +512,7 @@
   function sparkTexts(block, res) {
     if (res.missing) return { total: '—', trend: '' };
     return {
-      total: fmt(ADAPTER.sumValues(res.points)) + ' ' + SPARK_UNITS[block.metric],
+      total: sparkTotalText(block.metric, ADAPTER.sumValues(res.points), fmt),
       trend: ADAPTER.formatVariation(ADAPTER.variation(res.points).percent),
     };
   }
@@ -466,6 +520,7 @@
   function drawSpark(ctx, block) {
     showSkeleton(ctx.doc, block.slot);
     return ctx.loader.series(block.metric, WINDOW_RANGE).then(function (res) {
+      if (!ctx.isCurrent()) return;
       if (!res.ok) {
         block.total.textContent = '—';
         block.trend.textContent = '';
@@ -485,6 +540,7 @@
     return Promise.all(metrics.map(function (metric) {
       return ctx.loader.series(metric, COMPARE_RANGE).then(function (res) { return [metric, res]; });
     })).then(function (pairs) {
+      if (!ctx.isCurrent()) return;
       var anyOk = pairs.some(function (p) { return p[1].ok; });
       if (!anyOk) {
         showFailure(ctx.doc, compare.slot, pairs[0][1].message, function () { ctx.repaint(true); });
@@ -507,7 +563,7 @@
       return;
     }
     drawChart(badges.slot, 'donut', ADAPTER.badgeRows(progress), { title: 'Selos conquistados', centerLabel: 'selos', size: 160 });
-    badges.caption.textContent = progress.unlocked + ' de ' + progress.total + ' selos conquistados';
+    badges.caption.textContent = badgeCountText(progress.unlocked, progress.total) + ' conquistados';
   }
 
   /** Falha inesperada de um bloco não derruba os demais. */
@@ -527,19 +583,30 @@
     ].concat(layout.metrics.sparks.map(function (block) { return isolated(drawSpark(ctx, block)); })));
   }
 
-  function renderEditorial(app, doc, host, summary, now, token) {
-    var ctx = { doc: doc, summary: summary, now: now, view: ADAPTER.summaryView(summary), loader: createLoader(app, token) };
+  /** `isCurrent()` diz se esta entrada ainda é a tela; respostas que chegam depois de trocada são descartadas. */
+  function renderEditorial(app, doc, host, summary, now, token, isCurrent) {
+    var ctx = {
+      doc: doc, summary: summary, now: now, view: ADAPTER.summaryView(summary),
+      loader: createLoader(app, token), isCurrent: isCurrent
+    };
     var layout = buildLayout(ctx, host, function (panel) { app.showPanel(panel); });
     ctx.repaint = function (force) { return paintAll(ctx, layout, force); };
     bindRange(ctx, layout.main);
     renderBadges(ctx, layout.metrics.badges);
-    return ctx.repaint(false).then(function () { host.setAttribute('aria-busy', 'false'); });
+    return ctx.repaint(false).then(function () {
+      if (isCurrent()) host.setAttribute('aria-busy', 'false');
+    });
   }
 
-  /** Carrega e desenha o Início. `app` é window.App (callApi, getState, showPanel). */
+  /**
+   * Carrega e desenha o Início. `app` é window.App (callApi, getState, showPanel).
+   * Cada chamada abre uma geração: a entrada anterior é solta antes da nova, e a
+   * resposta de uma chamada já trocada não toca na tela.
+   */
   function load(app, doc) {
     var host = doc.getElementById('home-dashboard');
     if (!host) return Promise.resolve();
+    var isCurrent = openView();
     var states = root.LaiftStates;
     var state = app.getState();
     var now = new Date();
@@ -554,6 +621,7 @@
     if (states) host.appendChild(states.createStateNode(doc, 'loading'));
 
     return app.callApi('apiGetHomeSummary', token).then(function (res) {
+      if (!isCurrent()) return undefined;
       clear(host);
       if (!res.success) {
         host.setAttribute('aria-busy', 'false');
@@ -566,8 +634,13 @@
         }
         return undefined;
       }
-      return renderEditorial(app, doc, host, res.summary || {}, now, token);
+      return renderEditorial(app, doc, host, res.summary || {}, now, token, isCurrent);
     });
+  }
+
+  /** Logout ou painel descartado: solta gráficos e contagens e descarta respostas em voo. */
+  function reset() {
+    openView();
   }
 
   var api = {
@@ -575,7 +648,10 @@
     relativeDay: relativeDay,
     buildCards: buildCards,
     renderCards: renderCards,
+    sparkTotalText: sparkTotalText,
+    badgeCountText: badgeCountText,
     load: load,
+    reset: reset,
   };
 
   if (typeof module !== 'undefined' && module.exports) {

@@ -42,12 +42,17 @@
     return Math.round(value * factor) / factor;
   }
 
+  /** Data real no calendário (AAAA-MM-DD): 31 de fevereiro e 29 de fevereiro de ano comum são ausentes. */
   function isValidDate(value) {
     var m = typeof value === 'string' ? DATE_RE.exec(value) : null;
     if (!m) return false;
+    var year = Number(m[1]);
     var month = Number(m[2]);
     var day = Number(m[3]);
-    return month >= 1 && month <= 12 && day >= 1 && day <= 31;
+    if (month < 1 || month > 12 || day < 1) return false;
+    var probe = new Date(Date.UTC(2000, 0, 1));
+    probe.setUTCFullYear(year, month - 1, day);
+    return probe.getUTCFullYear() === year && probe.getUTCMonth() === month - 1 && probe.getUTCDate() === day;
   }
 
   /** Rótulo curto do período: "08/10" (dia ou semana) e "set/26" (mês). */
