@@ -333,7 +333,7 @@ test('warning sob movimento reduzido: peças na tela, véu já em 35% e rosto pr
 test('confused: cabeça balança por rotate e ombros sobem por translate, mesmo sem LiaProps', async () => {
   const { lia, host, svg } = await mountStaged({ props: false, ready: false });
   lia.setState('confused');
-  assert.equal(host.attrs['data-emotion'], 'worried');
+  assert.equal(host.attrs['data-emotion'], 'curious');
   const head = byId(svg, 'lia-head');
   assert.equal(head.animations.length, 1);
   assert.equal(head.animations[0].frames[1].rotate, '-9deg');

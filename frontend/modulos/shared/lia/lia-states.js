@@ -30,7 +30,7 @@
     thinking: ctx('thinking', 'curious', 'flat', 'idle', 'chin', 'none', 'bubble', 'Lia está pensando'),
     speaking: ctx('speaking', null, 'open', 'idle', 'point', 'none', null, 'Lia está respondendo'),
     celebrating: ctx('celebrating', 'happy', 'smile', 'heart', 'heart', 'none', 'glow heart sparkles', 'Lia está celebrando'),
-    confused: ctx('idle', 'worried', 'worried', 'idle', 'idle', 'none', null, 'Lia não entendeu'),
+    confused: ctx('idle', 'curious', 'neutral', 'idle', 'idle', 'none', null, 'Lia não entendeu'),
     alert: ctx('idle', 'focused', 'flat', 'idle', 'idle', 'none', null, 'Lia está atenta'),
     warning: ctx('idle', 'worried', 'worried', 'idle', 'idle', 'none', null, 'Lia emitiu um alerta'),
     suspended: ctx('suspended', 'sad', 'flat', 'idle', 'idle', 'none', null, 'Lia está suspensa'),

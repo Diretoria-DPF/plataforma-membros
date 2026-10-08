@@ -35,6 +35,8 @@
   fill: none; stroke: var(--lia-line, #24403b); stroke-width: var(--lia-stroke, 1.5); stroke-linecap: round; stroke-linejoin: round;
   transform-origin: 50% 95%;
 }
+/* Bolha da cabeça (launcher de 48 px): o corpo e os props não podem vazar sobre os vizinhos. */
+.lia[data-crop="head"] .lia-svg { overflow: hidden; }
 .lia-svg .k { fill: var(--lia-skin, #f4cfae); }
 .lia-svg .h { fill: var(--lia-hair, #3a3f4d); }
 .lia-svg .c { fill: var(--lia-cloth, #ffffff); }

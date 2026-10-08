@@ -100,6 +100,7 @@
     if (size) host.style.setProperty('--lia-size', size);
     var tone = toneAttr(opts.tone);
     if (tone) host.setAttribute('data-tone', tone);
+    if (opts.crop === 'head') host.setAttribute('data-crop', 'head');
     return host;
   }
 

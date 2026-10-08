@@ -245,11 +245,11 @@ test('celebrating: feliz, sorriso, braços em coração e cenário completo', ()
   assert.equal(s.ariaLabel, 'Lia está celebrando');
 });
 
-test('confused: preocupada com boca preocupada (erro ou pergunta não entendida)', () => {
+test('confused: curiosa e simpática, sem cara de tristeza (erro ou pergunta não entendida)', () => {
   const s = States.resolve('confused');
   assert.equal(s.state, 'idle');
-  assert.equal(s.emotion, 'worried');
-  assert.equal(s.mouth, 'worried');
+  assert.equal(s.emotion, 'curious');
+  assert.equal(s.mouth, 'neutral');
 });
 
 test('alert e warning: focada no nível 1; preocupada de braços cruzados no nível 2 (cena 5)', () => {
