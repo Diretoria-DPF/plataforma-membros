@@ -400,6 +400,180 @@
   // ===========================================================================
   // Ciclo de vida
   // ===========================================================================
+  // ===========================================================================
+  // Satisfação da Lia (avaliações dos membros, apiAdminAssistantStats e
+  // apiAdminListAssistantFeedback). Só texto no DOM; cada item é revisado aqui.
+  // ===========================================================================
+  var SAT_CATEGORY_LABELS = { incorreta: 'Incorreta', incompleta: 'Incompleta', confusa: 'Confusa', ofensiva: 'Ofensiva', outra: 'Outra', sem_categoria: 'Sem categoria' };
+  var SAT_STATUS_LABELS = { new: 'Novo', reviewed: 'Revisado', dismissed: 'Descartado' };
+  var SAT_PAGE_SIZE = 20;
+  var SAT_ANSWER_MAX = 300;
+  var satDays = 7;
+  var satCursor = null;
+  var satFilters = { status: '', rating: '' };
+  var satSeq = 0;
+
+  function clipText(value, max) {
+    var s = String(value || '');
+    return s.length > max ? s.slice(0, max - 1) + '…' : s;
+  }
+
+  /** O servidor manda a utilidade como fração (0 a 1) ou null sem avaliações. */
+  function satPercent(rate) {
+    return typeof rate === 'number' ? Math.round(rate * 100) + '%' : '—';
+  }
+
+  function renderSatTotals(res) {
+    var container = $('admin-ai-sat-totals');
+    if (!container) return;
+    var h = App().h;
+    var text = App().text;
+    App().clearEl(container);
+    var t = res.totals || {};
+    if (!t.total) {
+      container.appendChild(text('p', 'Nenhuma avaliação nos últimos ' + satDays + ' dias.', { className: 'empty-state' }));
+      return;
+    }
+    container.appendChild(h('div', { className: 'ai-budget' }, [
+      text('strong', 'Utilidade: ' + satPercent(t.utilityRate)),
+      text('span', n(t.up) + ' úteis · ' + n(t.down) + ' não úteis · ' + n(t.total) + ' avaliações nos últimos ' + satDays + ' dias', { className: 'muted' }),
+    ]));
+  }
+
+  function renderSatCategories(rows) {
+    var container = $('admin-ai-sat-categories');
+    if (!container) return;
+    var h = App().h;
+    var text = App().text;
+    App().clearEl(container);
+    rows.forEach(function (r) {
+      container.appendChild(h('div', { className: 'list-item ai-usage-row' }, [
+        text('strong', SAT_CATEGORY_LABELS[r.category] || r.category),
+        h('div', { className: 'meta-row' }, [text('span', n(r.up) + ' úteis'), text('span', n(r.down) + ' não úteis')]),
+      ]));
+    });
+  }
+
+  function renderSatDays(rows) {
+    var container = $('admin-ai-sat-days');
+    if (!container) return;
+    var h = App().h;
+    var text = App().text;
+    App().clearEl(container);
+    var totalOf = function (d) { return (Number(d.up) || 0) + (Number(d.down) || 0); };
+    var max = rows.reduce(function (m, d) { return Math.max(m, totalOf(d)); }, 0) || 1;
+    container.appendChild(h('div', { className: 'ai-days' }, rows.slice(-30).map(function (d) {
+      var bar = h('span', { className: 'ai-day-bar', 'aria-hidden': 'true' });
+      bar.style.width = Math.max(2, Math.round((totalOf(d) / max) * 100)) + '%';
+      return h('div', { className: 'ai-day' }, [
+        text('span', String(d.day).slice(5), { className: 'muted' }),
+        bar,
+        text('span', n(d.up) + ' úteis · ' + n(d.down) + ' não'),
+      ]);
+    })));
+  }
+
+  function loadSatisfaction(days) {
+    if (!token()) return;
+    satDays = days || 7;
+    var gen = generation;
+    App().setStatus('msg-admin-ai-sat', 'Carregando…', 'info');
+    App().callApi('apiAdminAssistantStats', token(), { days: satDays }).then(function (res) {
+      if (gen !== generation) return;
+      if (!res || !res.success) {
+        App().setStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar a satisfação da Lia.', 'error');
+        return;
+      }
+      App().setStatus('msg-admin-ai-sat', '', null);
+      renderSatTotals(res);
+      renderSatCategories(res.byCategory || []);
+      renderSatDays(res.byDay || []);
+    });
+  }
+
+  function satButton(label, onClick, danger) {
+    var button = App().h('button', { type: 'button', className: danger ? 'danger' : 'secondary' }, [label]);
+    button.addEventListener('click', onClick);
+    return button;
+  }
+
+  function satItemNode(item) {
+    var h = App().h;
+    var text = App().text;
+    var answer = item.answer || {};
+    var author = item.author && item.author.username ? 'De ' + item.author.username : 'Conta removida';
+    var head = (item.rating === 'up' ? 'Útil' : 'Não útil') + (item.category ? ' · ' + (SAT_CATEGORY_LABELS[item.category] || item.category) : '');
+    var buttons = [];
+    if (item.status !== 'reviewed') buttons.push(satButton('Marcar revisado', function () { decideSat(item, 'reviewed'); }, false));
+    if (item.status !== 'dismissed') buttons.push(satButton('Descartar', function () { decideSat(item, 'dismissed'); }, true));
+    return h('div', { className: 'list-item ai-case' }, [
+      text('strong', head),
+      h('div', { className: 'meta-row' }, [
+        text('span', SAT_STATUS_LABELS[item.status] || item.status, { className: 'badge' }),
+        answer.degraded ? text('span', 'Resposta aproximada') : null,
+        text('span', author + ' · ' + App().formatDate(item.createdAt)),
+      ]),
+      summaryLine('Assunto', answer.topic),
+      summaryLine('Resposta da Lia', clipText(answer.text, SAT_ANSWER_MAX)),
+      summaryLine('Origem', answer.source),
+      summaryLine('Comentário', item.comment),
+      buttons.length ? h('div', { className: 'actions-row' }, buttons) : null,
+    ]);
+  }
+
+  function satListParams(reset) {
+    var params = { limit: SAT_PAGE_SIZE };
+    if (satFilters.status) params.status = satFilters.status;
+    if (satFilters.rating) params.rating = satFilters.rating;
+    if (!reset && satCursor) params.cursor = satCursor;
+    return params;
+  }
+
+  function renderSatItems(items, reset) {
+    var list = $('admin-ai-sat-list');
+    if (!list) return;
+    if (reset) App().clearEl(list);
+    if (reset && !items.length) list.appendChild(App().text('p', 'Nenhuma avaliação com esses filtros.', { className: 'empty-state' }));
+    items.forEach(function (item) { list.appendChild(satItemNode(item)); });
+  }
+
+  /** `reset`: volta à primeira página. `keepStatus`: mantém a mensagem de uma revisão. */
+  function loadSatList(reset, keepStatus) {
+    if (!token()) return;
+    var gen = generation;
+    var mine = ++satSeq;
+    if (reset) satCursor = null;
+    if (!keepStatus) App().setStatus('msg-admin-ai-sat', 'Carregando…', 'info');
+    App().callApi('apiAdminListAssistantFeedback', token(), satListParams(reset)).then(function (res) {
+      if (gen !== generation || mine !== satSeq) return;
+      if (!res || !res.success) {
+        App().setStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar as avaliações.', 'error');
+        return;
+      }
+      if (!keepStatus) App().setStatus('msg-admin-ai-sat', '', null);
+      renderSatItems(res.items || [], reset);
+      satCursor = res.nextCursor || null;
+      var more = $('btn-admin-ai-sat-more');
+      if (more) more.classList.toggle('hidden', !satCursor);
+    });
+  }
+
+  function decideSat(item, status) {
+    var question = status === 'reviewed' ? 'Marcar esta avaliação como revisada?' : 'Descartar esta avaliação?';
+    App().openConfirm(question, function () {
+      App().callApi('apiAdminUpdateAssistantFeedback', token(), { id: item.id, status: status }).then(function (res) {
+        var ok = !!res && res.success === true;
+        App().setStatus('msg-admin-ai-sat', (res && res.message) || (ok ? 'Feito.' : 'Não foi possível concluir.'), ok ? 'success' : 'error');
+        loadSatList(true, true);
+      });
+    });
+  }
+
+  function loadSatAll(days) {
+    loadSatisfaction(days);
+    loadSatList(true, false);
+  }
+
   var bound = false;
 
   function loadPanel() {
@@ -417,11 +591,26 @@
       var m30 = $('btn-admin-ai-metrics-30');
       if (m7) m7.addEventListener('click', function () { loadMetrics(7); });
       if (m30) m30.addEventListener('click', function () { loadMetrics(30); });
+      bindSatisfaction();
     }
     runHealth();
     loadMetrics(7);
     loadPending(false);
     loadAtlasUsage(7);
+    loadSatAll(7);
+  }
+
+  function bindSatisfaction() {
+    var s7 = $('btn-admin-ai-sat-7');
+    var s30 = $('btn-admin-ai-sat-30');
+    if (s7) s7.addEventListener('click', function () { loadSatAll(7); });
+    if (s30) s30.addEventListener('click', function () { loadSatAll(30); });
+    var status = $('admin-ai-sat-status');
+    var rating = $('admin-ai-sat-rating');
+    if (status) status.addEventListener('change', function () { satFilters.status = status.value; loadSatList(true, false); });
+    if (rating) rating.addEventListener('change', function () { satFilters.rating = rating.value; loadSatList(true, false); });
+    var more = $('btn-admin-ai-sat-more');
+    if (more) more.addEventListener('click', function () { loadSatList(false, false); });
   }
 
   /** Logout/expiração: descarta respostas pendentes e limpa o que foi exibido. */
@@ -430,13 +619,17 @@
     healthBusy = false;
     var btn = $('btn-admin-ai-health');
     if (btn) btn.disabled = false;
-    ['admin-ai-health-summary', 'admin-ai-keys', 'admin-ai-usage', 'admin-ai-metrics', 'admin-ai-quotas', 'admin-ai-pending', 'admin-ai-atlas'].forEach(function (id) {
+    ['admin-ai-health-summary', 'admin-ai-keys', 'admin-ai-usage', 'admin-ai-metrics', 'admin-ai-quotas', 'admin-ai-pending', 'admin-ai-atlas',
+      'admin-ai-sat-totals', 'admin-ai-sat-categories', 'admin-ai-sat-days', 'admin-ai-sat-list'].forEach(function (id) {
       var el = $(id);
       if (el && window.App) App().clearEl(el);
     });
-    ['msg-admin-ai-health', 'msg-admin-ai-metrics', 'msg-admin-ai-cases', 'msg-admin-ai-atlas'].forEach(function (id) {
+    ['msg-admin-ai-health', 'msg-admin-ai-metrics', 'msg-admin-ai-cases', 'msg-admin-ai-atlas', 'msg-admin-ai-sat'].forEach(function (id) {
       if (window.App) App().setStatus(id, '', null);
     });
+    satCursor = null;
+    var more = $('btn-admin-ai-sat-more');
+    if (more) more.classList.add('hidden');
   }
 
   window.LaiftAdminAi = { loadPanel: loadPanel, reset: reset };

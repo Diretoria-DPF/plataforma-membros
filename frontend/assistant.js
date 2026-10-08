@@ -30,6 +30,8 @@
   var GREETING = 'Oi! Eu sou a Lia, a guia da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. Sobre o que você quer saber?';
   var GREETING_SUGGESTIONS = ['Eventos abertos', 'Como funciona o laboratório?', 'Meu crachá', 'Módulos de estudo'];
   var ERROR_TEXT = 'Não consegui responder agora. Tente de novo em instantes.';
+  var DEGRADED_TEXT = 'Resposta aproximada: a IA está indisponível no momento.';
+  var MAX_SOURCES = 4;
 
   // ---------------------------------------------------------------------------
   // Funções puras
@@ -64,6 +66,14 @@
     if (!Array.isArray(list)) return [];
     return list.filter(function (s) { return typeof s === 'string' && s.trim(); })
       .slice(0, MAX_SUGGESTIONS).map(function (s) { return clip(s, LABEL_MAX); });
+  }
+
+  /** Fontes citadas sob a resposta: só texto curto, no máximo 4. Nunca viram botão nem link. */
+  function sanitizeSources(list) {
+    if (!Array.isArray(list)) return [];
+    return list.filter(function (s) { return !!s && typeof s.source === 'string' && s.source.trim(); })
+      .slice(0, MAX_SOURCES)
+      .map(function (s) { return { source: clip(s.source, 80).trim(), section: clip(s.section, 120).trim() }; });
   }
 
   /** As últimas 5 perguntas DA PESSOA; as respostas da Lia nunca voltam ao servidor. */
@@ -124,10 +134,61 @@
     Array.prototype.forEach.call(ui.log.querySelectorAll('.lia-suggestions'), function (node) { node.remove(); });
   }
 
+  /** Lista de fontes sob a resposta (texto; nada clicável). */
+  function renderSources(sources) {
+    var doc = ui.doc;
+    var box = el(doc, 'div', 'lia-sources');
+    box.appendChild(el(doc, 'p', 'lia-sources-title', 'Fontes'));
+    var list = el(doc, 'ul', 'lia-sources-list');
+    list.setAttribute('aria-label', 'Fontes desta resposta');
+    sources.forEach(function (s) {
+      list.appendChild(el(doc, 'li', '', s.section ? s.source + ' · ' + s.section : s.source));
+    });
+    box.appendChild(list);
+    return box;
+  }
+
+  // Micro-card de feedback: módulo opcional (assistant-feedback.js). Sem ele, a Lia funciona igual.
+  function feedbackLib() { return root.LaiftAssistantFeedback || null; }
+
+  function feedbackFlag(flags) {
+    var lib = feedbackLib();
+    return !!lib && lib.feedbackEnabled(flags);
+  }
+
+  function messageIdOf(value) {
+    var lib = feedbackLib();
+    return lib ? lib.sanitizeMessageId(value) : null;
+  }
+
+  function removeFeedbackCards() {
+    Array.prototype.forEach.call(ui.log.querySelectorAll('.lia-feedback'), function (node) { node.remove(); });
+  }
+
+  /** Envia o feedback; se o servidor disser que a função está desligada, some com todos os cards. */
+  function sendFeedback(payload) {
+    return ui.app.callApi('apiAssistantFeedback', token(), payload).then(function (res) {
+      if (res && res.disabled === true) {
+        ui.feedbackOn = false;
+        removeFeedbackCards();
+      }
+      return res;
+    });
+  }
+
+  function appendFeedback(wrap, messageId) {
+    var lib = feedbackLib();
+    if (!lib || !ui.feedbackOn) return;
+    var card = lib.mount(ui.doc, { messageId: messageId, enabled: true, send: sendFeedback });
+    if (card) wrap.appendChild(card);
+  }
+
   function renderMessage(msg) {
     var doc = ui.doc;
     var wrap = el(doc, 'div', 'lia-msg lia-msg-' + (msg.role === 'user' ? 'user' : 'lia') + (msg.error ? ' lia-msg-error' : ''));
     wrap.appendChild(el(doc, 'p', 'lia-bubble', msg.text));
+    if (msg.degraded) wrap.appendChild(el(doc, 'p', 'lia-degraded', DEGRADED_TEXT));
+    if (msg.sources && msg.sources.length) wrap.appendChild(renderSources(msg.sources));
     if (msg.actions && msg.actions.length) {
       var actions = el(doc, 'div', 'lia-actions');
       msg.actions.forEach(function (a) {
@@ -148,6 +209,7 @@
       });
       wrap.appendChild(row);
     }
+    if (msg.role === 'lia' && msg.messageId) appendFeedback(wrap, msg.messageId);
     return wrap;
   }
 
@@ -194,6 +256,9 @@
         text: clip(res.reply, 2000) || ERROR_TEXT,
         actions: sanitizeActions(res.actions),
         suggestions: sanitizeSuggestions(res.suggestions),
+        sources: sanitizeSources(res.sources),
+        degraded: res.degraded === true,
+        messageId: messageIdOf(res.messageId),
       });
     }).catch(function () {
       if (mine === ui.sendId) addMessage({ role: 'lia', text: ERROR_TEXT, error: true });
@@ -291,7 +356,7 @@
     doc.body.appendChild(launcher);
     doc.body.appendChild(panel);
 
-    ui = { app: app, doc: doc, launcher: launcher, panel: panel, log: log, input: input, send: sendBtn, messages: [], busy: false, enabled: false, open: false, lastToken: null, refreshId: 0, sendId: 0 };
+    ui = { app: app, doc: doc, launcher: launcher, panel: panel, log: log, input: input, send: sendBtn, messages: [], busy: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0 };
 
     launcher.addEventListener('click', function () { if (ui.open) closePanel(); else openPanel(); });
     closeBtn.addEventListener('click', function () { closePanel(); });
@@ -315,6 +380,7 @@
       if (id !== ui.refreshId) return;
       var on = !!res && res.success === true && shouldShow(res.flags);
       ui.enabled = on;
+      ui.feedbackOn = on && feedbackFlag(res.flags);
       ui.launcher.classList.toggle('hidden', !on);
       if (!on) closePanel(false);
     }, function () { /* sem rede: mantém o estado atual */ });
@@ -332,6 +398,7 @@
     isAllowedAction: isAllowedAction,
     sanitizeActions: sanitizeActions,
     sanitizeSuggestions: sanitizeSuggestions,
+    sanitizeSources: sanitizeSources,
     pickHistory: pickHistory,
     shouldShow: shouldShow,
     refresh: refresh,
