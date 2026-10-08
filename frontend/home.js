@@ -530,7 +530,7 @@
       var texts = sparkTexts(block, res);
       block.total.textContent = texts.total;
       block.trend.textContent = texts.trend;
-      drawChart(block.slot, 'sparkline', seriesRows(res.points), { title: SPARK_TITLES[block.metric] + ' nos últimos 30 dias', width: 200, height: 48, fluid: true });
+      drawChart(block.slot, 'sparkline', seriesRows(res.points), { title: SPARK_TITLES[block.metric] + ' nos últimos 30 dias', width: 200, height: 48, fluid: true, live: true });
     });
   }
 
