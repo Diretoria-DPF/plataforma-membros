@@ -22,6 +22,9 @@
 const LabPreceptorEngine = {
   // Histórico de conversação contínuo (memória recente para réplicas e tréplicas)
   historicoChatLab: [],
+  // Último pedido ao preceptor veio com degraded (IA fora; resposta aproximada do cache). O chat lê depois de cada pergunta.
+  ultimaRespostaDegradada: false,
+  AVISO_DEGRADADO: 'Resposta aproximada: a IA está indisponível agora.',
 
   // =========================================================================
   // 1. ACERVO CURADO DE SÍNTESES FARMACÊUTICAS E INDUSTRIAIS (CAMADA 1)
@@ -361,7 +364,7 @@ const LabPreceptorEngine = {
   },
 
   /**
-   * Consulta o preceptor na Worker. Resolve { texto, cached } ou lança um
+   * Consulta o preceptor na Worker. Resolve { texto, cached, degraded } ou lança um
    * Error com mensagem PRONTA para exibir (texto fixo ou mensagem do
    * servidor, como a de cota diária esgotada).
    */
@@ -398,13 +401,14 @@ const LabPreceptorEngine = {
     this.historicoChatLab.push({ autor: 'preceptor', texto: texto.slice(0, 500) });
     while (this.historicoChatLab.length > 8) this.historicoChatLab.shift();
 
-    return { texto, cached: !!res.cached };
+    return { texto, cached: !!res.cached, degraded: res.degraded === true };
   },
 
   // =========================================================================
   // 3. MOTOR PRINCIPAL DE PROCESSAMENTO EM CASCATA
   // =========================================================================
   async processarMensagem(msgUsuario, sys, calcularpH, agitadorAtivo) {
+    this.ultimaRespostaDegradada = false;
     const texto = msgUsuario.toLowerCase().trim();
     const textoNorm = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
@@ -482,6 +486,7 @@ ${diag.detalhes}
     const termoSintese = (ehPedidoSintese && termoComposto.length >= 3) ? termoComposto : '';
     try {
       const resposta = await this.consultarPreceptorRemoto(msgUsuario, sys, calcularpH, agitadorAtivo, termoSintese);
+      this.ultimaRespostaDegradada = resposta.degraded === true;
       const rodape = resposta.cached
         ? '(🌐 Rota recuperada do acervo coletivo LAIFT — resposta gerada por IA)'
         : '(👨‍🔬 Resposta gerada por IA — confira em fontes oficiais antes de aplicar numa bancada real)';

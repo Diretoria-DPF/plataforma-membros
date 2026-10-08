@@ -882,7 +882,11 @@
 
       const respostaTexto = await LabPreceptorEngine.processarMensagem(msg, sys, calcularpH, agitadorAtivo);
       if (digitando) digitando.remove();
-      bolhaChat('msg-preceptor', [String(respostaTexto || '')]);
+      const conteudo = [String(respostaTexto || '')];
+      if (LabPreceptorEngine.ultimaRespostaDegradada === true) {
+        conteudo.push(h('div', { className: 'lab-chat-aviso', role: 'status', text: LabPreceptorEngine.AVISO_DEGRADADO }));
+      }
+      bolhaChat('msg-preceptor', conteudo);
       statusPreceptor('Online', 'online');
     } catch (e) {
       if (digitando) digitando.remove();
