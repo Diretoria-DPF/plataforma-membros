@@ -190,3 +190,12 @@ test('admin-ai.js: painel "Satisfação da Lia" usa só as ações do servidor e
   // o cabeçalho cita "innerHTML" em texto; o que importa é o uso no código
   assert.doesNotMatch(src, /\.innerHTML\s*\+?=|insertAdjacentHTML\(|document\.write\(|\beval\(/);
 });
+
+test('admin-ai.js: comentário apagado após 90 dias mostra o aviso, nunca o texto (ADR 0005)', () => {
+  const src = read('frontend/admin-ai.js');
+  // O aviso vem ANTES do texto: com commentAnonymizedAt preenchido, o comentário nunca é exibido.
+  assert.match(src, /function satCommentLine\(item\) \{\s*if \(item\.commentAnonymizedAt\) return [^;]*Comentário apagado após 90 dias/);
+  assert.match(src, /satCommentLine\(item\)/);
+  // A linha da lista não pode mais chamar summaryLine direto (o helper satCommentLine é quem decide).
+  assert.doesNotMatch(src, /summaryLine\('Comentário', item\.comment\),\s*buttons/);
+});

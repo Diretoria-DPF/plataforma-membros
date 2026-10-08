@@ -7,7 +7,7 @@ Status: aceita. Data: 2026-10-07 (atualizada em 2026-10-08).
 
 ## Decisão
 - `assistant_feedback`, de 0 a 90 dias: registro bruto.
-- Após 90 dias: `comment` é substituído pelo hash SHA-256 hex (pgcrypto) e recebe `comment_anonymized_at`. Rating e categoria permanecem para métricas. A limpeza só atua em linhas com comentário ainda não anonimizado.
+- Após 90 dias: `comment` é APAGADO (vira NULL) e recebe `comment_anonymized_at` com a data. Rating e categoria permanecem para métricas. A limpeza só atua em linhas com comentário ainda não anonimizado. Não há hash: um SHA-256 sem sal de texto livre curto é reversível por dicionário, então não anonimiza.
 - Após 365 dias: o registro de `assistant_feedback` é removido.
 - `assistant_messages`: removida após 180 dias.
 - `assistant_incidents`: removida após 365 dias.
@@ -19,6 +19,6 @@ Status: aceita. Data: 2026-10-07 (atualizada em 2026-10-08).
 - **Efeito do CASCADE (sql/021).** `assistant_feedback.message_id` referencia `assistant_messages(id) ON DELETE CASCADE`. Ao remover a resposta aos 180 dias, sai também a avaliação dela. Como a avaliação sempre nasce depois da resposta, nenhum registro de avaliação chega aos 365 dias. A regra de 365 dias fica como limite de segurança. O prazo efetivo da avaliação é de 180 dias (mais até um dia, pela periodicidade do cron). A anonimização aos 90 dias é o único passo intermediário com efeito.
 - **Exclusão de conta.** Não existe fluxo automatizado: a exclusão é feita pelo responsável a partir do pedido do titular (roteiro previsto em `docs/PLANO_FASE3_MENSAGERIA.md`, item R9). As FKs `ON DELETE CASCADE` de sql/021 e sql/022 removem avaliações, respostas, moderação e incidentes ligados ao perfil quando o cadastro é excluído.
 - **Denúncias.** O ADR de origem pedia que o fluxo de denúncias cobrisse `assistant_feedback`. Hoje não há código de denúncia que faça isso: pendência.
-- **Hash sem sal.** SHA-256 sem segredo é vulnerável a dicionário para comentários curtos e comuns. A decisão foi mantida, mas um HMAC com segredo do servidor seria mais forte. Pendência para revisão jurídica e de segurança.
-- **Painel do admin.** Após a anonimização, o campo `comment` das listagens traz o hash no lugar do texto, com `comment_anonymized_at` preenchido. A apresentação deve tratar esse caso.
+- **Sem hash (revisão de 2026-10-08).** A versão anterior trocava o comentário por SHA-256 sem sal. Isso era reversível por dicionário para comentários curtos e comuns, então não é garantia de anonimização. O texto agora é apagado. A coluna `comment_hash` deixa de existir (sai da migração 021).
+- **Painel do admin.** Após 90 dias, `comment` vem nulo e `comment_anonymized_at` vem preenchido. O painel "Satisfação da Lia" (`frontend/admin-ai.js`) mostra "Comentário apagado após 90 dias" no lugar do texto.
 - **Versão da política.** A alteração de texto não mudou `LEGAL_VERSIONS.PRIVACY` (2026-10-08). Se a revisão jurídica considerar o texto materialmente alterado, a versão deve ser atualizada em `worker/src/constants.js`, na página e na política juntas, antes do merge de D2.

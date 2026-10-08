@@ -82,7 +82,7 @@ async function upsertFeedback(sql, identity, row) {
     WHERE m.id = ${row.messageId}::uuid AND m.profile_id = ${identity.profileId}::uuid
     ON CONFLICT (message_id, profile_id) DO UPDATE SET
       rating = EXCLUDED.rating, category = EXCLUDED.category, comment = EXCLUDED.comment,
-      comment_hash = NULL, comment_anonymized_at = NULL, status = 'new', created_at = now()
+      comment_anonymized_at = NULL, status = 'new', created_at = now()
     RETURNING id`;
 }
 

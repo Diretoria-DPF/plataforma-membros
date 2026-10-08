@@ -225,12 +225,12 @@ todos os dias na plataforma:
 - **Resposta registrada da Lia** (o texto da resposta e o código da pergunta,
   nunca o texto da pergunta): removida após **180 dias**.
 - **Avaliação (polegar), categoria e comentário opcional:** o comentário fica em
-  texto completo por até **90 dias**. Depois disso é anonimizado: o texto é
-  substituído por um código (hash SHA-256), que não permite recuperar o que
-  você escreveu. A avaliação e a categoria permanecem, sem o texto, para medir a
-  qualidade das respostas. A avaliação sai junto com a resposta da Lia a que se
-  refere, ou seja, em até 180 dias. A regra de remoção da avaliação aos 365 dias
-  é um limite de segurança e, na prática, não chega a ser aplicada.
+  texto completo por até **90 dias**. Depois disso o texto é **apagado**, sem
+  substituição por código ou resumo, e não pode ser recuperado. A avaliação e a
+  categoria permanecem, sem o texto, para medir a qualidade das respostas. A
+  avaliação sai junto com a resposta da Lia a que se refere, ou seja, em até
+  180 dias. A regra de remoção da avaliação aos 365 dias é um limite de
+  segurança e, na prática, não chega a ser aplicada.
 - **Registros de incidentes de moderação** (tipo do incidente, forma de detecção
   e nível, sem o texto da mensagem): removidos após **365 dias**.
 

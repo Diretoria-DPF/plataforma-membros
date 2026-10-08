@@ -5,11 +5,10 @@
  */
 /**
  * Retenção da Lia (ADR 0005) contra Postgres de verdade (PGlite com todas as
- * migrações). Prova o que um mock não prova: o corte por idade, o hash feito
- * pelo pgcrypto e o efeito do CASCADE de sql/021 sobre a avaliação.
- * Para cada teste, os dias são "recuados" nas colunas created_at.
+ * migrações). Prova o que um mock não prova: o corte por idade, o apagamento
+ * do texto do comentário aos 90 dias e o efeito do CASCADE de sql/021 sobre a
+ * avaliação. Para cada teste, os dias são "recuados" nas colunas created_at.
  */
-import { createHash } from 'node:crypto';
 import { runMaintenance } from '../src/maintenance.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 
@@ -18,8 +17,6 @@ const CID = '99999999-9999-4999-8999-999999999999';
 
 let db;
 let sql;
-
-const sha256Hex = (text) => createHash('sha256').update(text, 'utf8').digest('hex');
 
 async function seedMessage(daysAgo = 0) {
   const res = await db.query(
@@ -86,7 +83,7 @@ beforeEach(async () => {
 });
 
 describe('(a) comentário da avaliação anonimizado aos 90 dias', () => {
-  test('comentário de 91 dias vira SHA-256 e ganha a data; o de 89 dias fica como está', async () => {
+  test('comentário de 91 dias é apagado (NULL) e ganha a data; o de 89 dias fica como está', async () => {
     const m91 = await seedMessage(0);
     const f91 = await seedFeedback({ messageId: m91, daysAgo: 91, comment: 'Errou a data da prova', category: 'incorreta' });
     const m89 = await seedMessage(0);
@@ -96,7 +93,8 @@ describe('(a) comentário da avaliação anonimizado aos 90 dias', () => {
 
     expect(res.assistantFeedbackAnonymize).toBe(1);
     const anon = await feedbackRow(f91);
-    expect(anon.comment).toBe(sha256Hex('Errou a data da prova'));
+    // Sem hash: o texto some por completo, nem como código.
+    expect(anon.comment).toBeNull();
     expect(anon.comment_anonymized_at).not.toBeNull();
     // Rating e categoria permanecem para métricas.
     expect(anon).toMatchObject({ rating: 'down', category: 'incorreta' });
@@ -106,14 +104,15 @@ describe('(a) comentário da avaliação anonimizado aos 90 dias', () => {
     expect(kept.comment_anonymized_at).toBeNull();
   });
 
-  test('é idempotente: a segunda limpeza não rehasheia um comentário já anonimizado', async () => {
+  test('é idempotente: a segunda limpeza não mexe num comentário já apagado nem reescreve a data', async () => {
     const m = await seedMessage(0);
     const f = await seedFeedback({ messageId: m, daysAgo: 120, comment: 'Texto original' });
     await runMaintenance(sql, CID);
     const primeiro = await feedbackRow(f);
+    expect(primeiro.comment).toBeNull();
     const res = await runMaintenance(sql, CID);
     expect(res.assistantFeedbackAnonymize).toBe(0);
-    expect((await feedbackRow(f)).comment).toBe(primeiro.comment);
+    expect(await feedbackRow(f)).toEqual(primeiro);
   });
 
   test('só atua em avaliação com comentário: sem texto, nada é marcado', async () => {
