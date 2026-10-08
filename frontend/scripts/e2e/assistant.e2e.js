@@ -63,7 +63,12 @@ module.exports = async function assistant() {
     role: 'member',
     workerHandlers: {
       apiGetFeatureFlags: FLAGS_ON,
-      apiAssistantChat: (args) => { chats.push(args); return liaReply(args); },
+      // "[lento]" simula uma resposta demorada, para observar o estado "pensando" da Lia.
+      apiAssistantChat: async (args) => {
+        chats.push(args);
+        if (/\[lento\]/.test(String(args[1].message))) await new Promise((resolve) => setTimeout(resolve, 600));
+        return liaReply(args);
+      },
     },
   });
   try {
@@ -72,10 +77,14 @@ module.exports = async function assistant() {
     await page.waitForSelector('#lia-launcher:not(.hidden)');
     check(true, 'com a flag ligada o botão da Lia aparece');
     check(await page.locator('#lia-panel.hidden').count() === 1, 'o painel começa fechado');
+    const crop = await page.getAttribute('#lia-launcher .lia-launcher-figure svg.lia-svg', 'viewBox');
+    check(!!crop && crop !== '0 0 200 300', 'a bolha fechada mostra a Lia recortada na cabeça (viewBox ' + crop + ')');
 
     await page.click('#lia-launcher');
     await page.waitForSelector('#lia-panel:not(.hidden)');
     check(await page.getAttribute('#lia-launcher', 'aria-expanded') === 'true', 'o botão informa que o painel está aberto (aria-expanded)');
+    check(await page.getAttribute('#lia-panel .lia-head-figure svg.lia-svg', 'viewBox') === '0 0 200 300', 'o painel mostra a Lia de corpo inteiro no cabeçalho');
+    check(await page.getAttribute('#lia-panel .lia', 'aria-label') === 'Lia', 'a Lia do painel começa com o rótulo de repouso');
     check(/Eu sou a Lia/.test(await page.textContent('#lia-log')), 'a Lia se apresenta ao abrir');
     check(await page.evaluate(() => document.activeElement && document.activeElement.id) === 'lia-input', 'o foco vai para o campo de pergunta');
 
@@ -90,6 +99,7 @@ module.exports = async function assistant() {
     await page.click('#lia-log .lia-chip-action:has-text("Eventos")');
     await page.waitForSelector('#panel-events:not(.hidden)');
     check(await page.locator('#lia-panel.hidden').count() === 1, 'ao clicar no botão a Lia sai da frente e a tela de eventos abre');
+    check(await page.locator('#lia-panel .lia').count() === 0, 'ao fechar o painel, a Lia do cabeçalho é desmontada');
 
     // Laboratório → botão abre o módulo; o botão hostil não existe
     await page.click('#lia-launcher');
@@ -124,6 +134,19 @@ module.exports = async function assistant() {
 
     // Texto da resposta é texto, nunca HTML
     check(await page.locator('#lia-log script, #lia-log img').count() === 0, 'a conversa não tem elementos ativos');
+
+    // Reações: pensa enquanto a resposta demora, fala quando ela chega
+    await page.click('#lia-launcher');
+    await page.waitForSelector('#lia-panel:not(.hidden)');
+    await page.fill('#lia-input', '[lento] meu crachá');
+    await page.press('#lia-input', 'Enter');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está pensando"]');
+    check(true, 'enquanto a resposta vem, o rótulo da Lia diz que ela está pensando');
+    // "digitando" some quando a resposta chega (o texto já existia de um passo anterior, então não serve de sinal)
+    await page.waitForSelector('#lia-log .lia-typing', { state: 'detached' });
+    check(await page.locator('#lia-panel .lia[aria-label="Lia está respondendo"]').count() === 1, 'quando a resposta chega, a Lia fala');
+    await page.keyboard.press('Escape');
+    check(await page.locator('#lia-panel .lia').count() === 0, 'fechar o painel desmonta a Lia do cabeçalho');
 
     // Sair da conta zera a conversa
     await page.click('#btn-logout');
@@ -173,8 +196,36 @@ module.exports = async function assistant() {
     await err.page.press('#lia-input', 'Enter');
     await err.page.waitForSelector('#lia-log .lia-msg-error');
     check(/Muitas tentativas/.test(await err.page.textContent('#lia-log .lia-msg-error')), 'o erro do servidor aparece como mensagem da Lia');
+    check(await err.page.locator('#lia-panel .lia[aria-label="Lia não entendeu"]').count() === 1, 'um erro do servidor deixa a Lia confusa');
     check(await err.page.locator('.lia-send:not([disabled])').count() === 1, 'o envio é liberado de novo depois do erro');
   } finally {
     await err.close();
+  }
+
+  // ---- O 👍 no micro-card faz a Lia comemorar ----
+  const fb = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetFeatureFlags: () => ({ success: true, flags: { chatbot_enabled: true, feedback_enabled: true } }),
+      apiAssistantChat: () => ({
+        success: true, source: 'kb', reply: 'Seu crachá fica na tela Meu crachá.', actions: [], suggestions: [],
+        messageId: '6f1c2b8e-3d4a-4b5c-8d9e-0f1a2b3c4d5e',
+      }),
+      apiAssistantFeedback: () => ({ success: true }),
+    },
+  });
+  try {
+    await fb.login();
+    await fb.page.waitForSelector('#lia-launcher:not(.hidden)');
+    await fb.page.click('#lia-launcher');
+    await fb.page.fill('#lia-input', 'oi');
+    await fb.page.press('#lia-input', 'Enter');
+    await fb.page.waitForSelector('#lia-log .lia-fb-choice');
+    await fb.page.click('#lia-log .lia-fb-choice:has-text("Útil")');
+    await fb.page.waitForSelector('#lia-panel .lia[aria-label="Lia está celebrando"]');
+    check(fb.calls.worker.some((c) => c.action === 'apiAssistantFeedback'), 'o 👍 vai ao servidor');
+    check(true, 'o 👍 aceito faz a Lia comemorar');
+  } finally {
+    await fb.close();
   }
 };
