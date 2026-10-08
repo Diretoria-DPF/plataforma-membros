@@ -9,9 +9,6 @@
    movimento respeita prefers-reduced-motion; nenhum texto abaixo de 11 px. */
 
 :root {
-  /* Aliases dos tokens de movimento (ADR 0002, modulos/shared/laift-tokens.css). */
-  --ux-ease: var(--ease-out);
-  --ux-fast: var(--dur-fast);
   --glass-blur: 14px;
   /* 86% de opacidade: o vidro continua legível (contraste >= 4,5:1) sobre as
      folhas decorativas do fundo. */
@@ -45,13 +42,10 @@ button,
 .stat-card,
 .bottom-nav button,
 a {
+  /* Só transform e background-color animam; o resto troca de estado direto. */
   transition:
-    background-color var(--ux-fast) var(--ux-ease),
-    border-color var(--ux-fast) var(--ux-ease),
-    color var(--ux-fast) var(--ux-ease),
-    box-shadow var(--ux-fast) var(--ux-ease),
-    transform var(--dur-instant) var(--ease-out),
-    filter var(--ux-fast) var(--ux-ease);
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
 }
 
 /* Campos: foco e preenchimento animam com os mesmos tokens. */
@@ -63,7 +57,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 }
 
 /* Toque: feedback imediato no :active (hover não existe em touch). */
-.list-item:active, .stat-card:active { transform: scale(0.99); }
+.list-item:active, .stat-card:active { transform: scale(var(--press-scale)); }
 
 @media (hover: hover) {
   button:hover:not(:disabled) { filter: brightness(1.07); }
@@ -263,7 +257,9 @@ summary:focus-visible,
   background: var(--primary); color: var(--on-primary); font-weight: 700;
 }
 .lia-launcher.lia-in-app { bottom: 88px; }
-.lia-launcher:hover { background: var(--primary-strong); }
+@media (hover: hover) {
+  .lia-launcher:hover { background: var(--primary-strong); }
+}
 .lia-orb {
   flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
   background: radial-gradient(circle at 30% 28%, #ffffff 0%, #bfeee6 38%, #e1f4f0 100%);
@@ -281,7 +277,9 @@ summary:focus-visible,
 .lia-title { display: grid; flex: 1; min-width: 0; }
 .lia-sub { font-size: 12px; color: var(--muted); }
 .lia-close { width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; }
-.lia-close:hover { background: var(--border); color: var(--text); }
+@media (hover: hover) {
+  .lia-close:hover { background: var(--border); color: var(--text); }
+}
 .lia-log { display: grid; align-content: start; gap: 10px; padding: 14px; overflow-y: auto; overscroll-behavior: contain; }
 .lia-msg { display: grid; gap: 8px; max-width: 92%; }
 .lia-msg-user { justify-self: end; }
@@ -298,9 +296,11 @@ summary:focus-visible,
   width: auto; padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
   background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600;
 }
-.lia-chip:hover { background: var(--surface-alt); }
 .lia-chip-action { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-strong); }
-.lia-chip-action:hover { background: var(--primary); color: var(--on-primary); }
+@media (hover: hover) {
+  .lia-chip:hover { background: var(--surface-alt); }
+  .lia-chip-action:hover { background: var(--primary); color: var(--on-primary); }
+}
 .lia-typing { margin: 0; color: var(--muted); font-size: 13px; font-style: italic; }
 .lia-form { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
 .lia-form input { flex: 1; min-width: 0; margin: 0; }
