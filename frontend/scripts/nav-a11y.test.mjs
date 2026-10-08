@@ -1,3 +1,8 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
 // Semântica da navegação inferior (WCAG 1.3.1 e 4.1.2): aba ativa com aria-current e badges com texto oculto.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
