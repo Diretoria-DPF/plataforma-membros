@@ -49,9 +49,9 @@ A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação estão pron
 - **Decisões:** `docs/adr/0001` a `0005` (o ADR 0003 é a arte da Lia).
 
 ### Números
-- **Worker:** 48 suítes (48 arquivos `*.test.js` em `worker/test`); 117 actions no `API_REGISTRY` (`worker/src/handlers.js`, linhas 88 a 271); 1324 testes (número da última execução do dono, não reexecutado nesta revisão; contagem estática: 827 blocos `test(`/`it(` e 56 chamadas `.each(`).
+- **Worker:** 48 suítes (48 arquivos `*.test.js` em `worker/test`); 117 actions no `API_REGISTRY` (`worker/src/handlers.js`, linhas 88 a 271); **1424 testes verdes** (execução final de 2026-10-08, `cd worker && npm test`, serial; contagem estática: 827+ blocos `test(`/`it(` e chamadas `.each(`).
 - **Migrações:** 001 a 024 (24 arquivos em `sql/`; reversões em `sql/down/` de 015 a 024). `npm run validate:sql` não foi rodado nesta revisão.
-- **Front:** ≈644 testes unitários (número do dono: 642 verdes). Duas falhas, só no Windows, nos testes de `_headers` em `seo.test.mjs` (15 blocos) e `staging.test.mjs` (6 blocos): o checkout traz `frontend/_headers` com CRLF, e no índice do git o arquivo está com LF (`git ls-files --eol`). Contagem estática: 489 blocos `test()`/`it()` em 22 arquivos `frontend/scripts/*.test.mjs`.
+- **Front:** **650 testes unitários, 648 verdes** (execução final de 2026-10-08), e2e `csp smoke home assistant credential visual-qa` verdes (visual-qa: 222 verificações). Duas falhas, só no Windows, nos testes de `_headers` em `seo.test.mjs` (15 blocos) e `staging.test.mjs` (6 blocos): o checkout traz `frontend/_headers` com CRLF, e no índice do git o arquivo está com LF (`git ls-files --eol`). Contagem estática: 489 blocos `test()`/`it()` em 22 arquivos `frontend/scripts/*.test.mjs`.
 - **E2E** (número do dono): `csp`, `smoke`, `home`, `assistant`, `credential` e `visual-qa` verdes. Os cenários existem em `frontend/scripts/e2e/`.
 
 ### Decisões do dono
@@ -126,7 +126,7 @@ Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima 
 ## Como retomar o trabalho
 ```bash
 git checkout feat/v5-ux-fundacao && git pull
-cd worker && npm ci && npm test && npm run validate:sql      # 48 suítes e 24 migrações (1324 testes na última execução do dono)
+cd worker && npm ci && npm test && npm run validate:sql      # 48 suítes, 24 migrações e 1424 testes (execução final de 2026-10-08)
 cd ../frontend && npm ci && node scripts/build.js && node scripts/e2e/run.js csp smoke home assistant credential visual-qa
 ```
 Próximo passo técnico depois das mesclas: terminar a **F1** (itens acima) e seguir para a **F4** (acervo, bibliografia, mentores, casos clínicos, busca global). A Lia já entrou (ver 2026-10-08). A próxima migração livre é a **025** (`docs/TIME_CONTRATO.md`).
