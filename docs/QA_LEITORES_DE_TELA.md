@@ -106,7 +106,7 @@ Deve anunciar:
 - com suspensão: botão "Pedir redenção" e campo de pergunta desabilitado.
 
 Critério de falha: o foco não vai ao campo ao abrir a Lia; a resposta não é anunciada; botão sem nome; foco que não volta ao botão ao fechar.
-Conferir: a área de mensagens (`#lia-log`) não tem papel nem `aria-live` na leitura do código em `frontend/assistant.js` (linha 571). Se a resposta não for anunciada, registre como falha.
+Conferir: a área de mensagens (`#lia-log`) tem `role="log"` e `aria-live="polite"` (`frontend/assistant.js`, linhas 573 e 574), então cada resposta deve ser anunciada sozinha. Se não for, registre como falha.
 Não digite dado pessoal na pergunta.
 
 ### 5. Onboarding (primeira entrada)
