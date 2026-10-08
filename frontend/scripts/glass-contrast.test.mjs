@@ -18,7 +18,12 @@ const GLASS_CSS = read('ux-glass.css');
 
 const MINIMO_TEXTO = 4.5;
 const MINIMO_GRANDE = 3;
-const FUNDOS = ['--layer-0', '--layer-1'];
+const MINIMO_FOCO = 3;
+const MINIMO_VEU_COM_TEXTO = 0.92;
+const CAMADAS = ['--layer-0', '--layer-1', '--layer-2', '--layer-3'];
+// Pior caso do vidro: o texto do próprio módulo por trás aparece através do véu.
+const TEXTO_POR_TRAS = '--laift-text';
+const FUNDOS = [...CAMADAS, TEXTO_POR_TRAS];
 
 /** Mapa de tokens do tema claro: todos os `--x: valor;` dos blocos `:root { }`. */
 function tokensClaros(css) {
@@ -179,3 +184,20 @@ test('tokens de movimento usados existem em laift-tokens.css', () => {
     assert.match(GLASS_CSS, new RegExp(`var\\(${token}\\)`));
   }
 });
+
+test('véus do vidro com texto: alfa >= 92% em todas as superfícies (pior caso: texto por trás)', () => {
+  for (const superficie of SUPERFICIES) {
+    const { alfa } = VEUS[superficie.veu];
+    assert.ok(alfa >= MINIMO_VEU_COM_TEXTO, `${superficie.veu} com ${alfa * 100}%, mínimo ${MINIMO_VEU_COM_TEXTO * 100}%`);
+  }
+});
+
+// Foco visível (WCAG 2.4.11 e 1.4.11): o anel precisa de 3:1 sobre cada camada, nos dois temas.
+for (const [tema, mapa] of Object.entries(TEMAS)) {
+  for (const camada of CAMADAS) {
+    test(`foco / ${tema} / --laift-focus-color sobre ${camada} >= 3:1`, () => {
+      const razao = contraste(rgb(resolver(mapa, '--laift-focus-color')), rgb(resolver(mapa, camada)));
+      assert.ok(razao >= MINIMO_FOCO, `${razao.toFixed(2)}:1 abaixo de ${MINIMO_FOCO}:1`);
+    });
+  }
+}

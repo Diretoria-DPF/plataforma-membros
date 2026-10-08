@@ -12,12 +12,16 @@
    qualquer coisa que não seja transform ou opacity. */
 
 :root[data-flag-ux-v2-enabled] {
-  /* Véus do vidro: camada de origem + opacidade. scripts/glass-contrast.test.mjs
-     lê estas linhas e mede o contraste sobre --layer-0 e --layer-1, nos dois temas. */
-  --glass-fill-0: color-mix(in srgb, var(--layer-0) 80%, transparent);
-  --glass-fill-1: color-mix(in srgb, var(--layer-1) 84%, transparent);
-  --glass-fill-2: color-mix(in srgb, var(--layer-2) 86%, transparent);
-  --glass-hero-glow: color-mix(in srgb, var(--laift-primary) 12%, transparent);
+  /* Véus do vidro: camada de origem + opacidade. Todas as superfícies do vidro
+     levam texto; com o texto do módulo por trás (pior caso), o véu de 80–86%
+     deixava o rótulo muted em 3,8:1 (claro) e 4,4:1 (escuro). Com 97% o muted
+     fica ≥ 4,5:1 em todas as camadas e sobre o texto por trás; o brilho do
+     Início baixou de 12% para 8% porque, a 12%, nem 98% de véu bastava.
+     scripts/glass-contrast.test.mjs lê estas linhas e mede o contraste. */
+  --glass-fill-0: color-mix(in srgb, var(--layer-0) 97%, transparent);
+  --glass-fill-1: color-mix(in srgb, var(--layer-1) 97%, transparent);
+  --glass-fill-2: color-mix(in srgb, var(--layer-2) 97%, transparent);
+  --glass-hero-glow: color-mix(in srgb, var(--laift-primary) 8%, transparent);
 }
 
 /* ---------- Base opaca (vale sempre; é o fallback sem backdrop-filter) ---------- */
