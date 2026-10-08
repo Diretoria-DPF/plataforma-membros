@@ -38,7 +38,7 @@ Outras flags semeadas na 016: `use_orchestrator` (`FALSE`), `nvidia_fallback` (`
 - Toda flag nova nasce desligada (`FALSE`). Só entra em `PUBLIC_FLAGS` se for de interface.
 - Exceção decidida pelo dono: as cinco da renovação nascem **ligadas**, pela 023. Ela insere com `ON CONFLICT (key) DO NOTHING`, então uma linha que já existe não é alterada pelas três de RAG, feedback e moderação.
 - A 023 nunca religa o que um admin desligou. `ux_v2_enabled` e `chatbot_enabled` só são ligadas se `updated_by IS NULL` e não houver `SET_FEATURE_FLAG` para a chave em `audit_logs`. A regra completa está em `sql/023_flags_v2.sql`.
-- Limite conhecido: um desligamento feito por `UPDATE` de SQL não tem `updated_by` nem auditoria. Reaplicar a 023 num banco assim religaria essas duas flags. Por isso, decisões de desligar que devem durar passam pela API.
+- Desligamento por `UPDATE` de SQL: o gatilho `trg_feature_flags_updated_at` grava `updated_at` em qualquer UPDATE da tabela (inclusive só `description`, `rollout_pct` ou `conditions`), e a 023 só liga `ux_v2_enabled`/`chatbot_enabled` em linha intocada (`updated_at = created_at`). Logo, reaplicar a 023 não religa uma flag desligada à mão depois de a 023 existir no banco. Limite: um `UPDATE` feito antes de a 023 existir no banco não deixa marca; nesse caso, desligue pela API. A API continua o caminho recomendado, porque grava `updated_by` e auditoria.
 
 ## Rollback
 
