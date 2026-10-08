@@ -1,0 +1,104 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Vidro (glassmorphism) das superfícies flutuantes da v5 UX: barra inferior,
+   popover da Lia, modais, cartão de boas-vindas da Início, seletores e o
+   painel de agendamento. Vem DEPOIS de ux.css e só age sob
+   :root[data-flag-ux-v2-enabled]. A base é sempre opaca; o translúcido e o
+   backdrop-filter entram só dentro de @supports, então sem suporte nada muda.
+   Proibido aqui: blur sobre o canvas do Atlas 3D e dentro de iframes; animar
+   qualquer coisa que não seja transform ou opacity. */
+
+:root[data-flag-ux-v2-enabled] {
+  /* Véus do vidro: camada de origem + opacidade. scripts/glass-contrast.test.mjs
+     lê estas linhas e mede o contraste sobre --layer-0 e --layer-1, nos dois temas. */
+  --glass-fill-0: color-mix(in srgb, var(--layer-0) 80%, transparent);
+  --glass-fill-1: color-mix(in srgb, var(--layer-1) 84%, transparent);
+  --glass-fill-2: color-mix(in srgb, var(--layer-2) 86%, transparent);
+  --glass-hero-glow: color-mix(in srgb, var(--laift-primary) 12%, transparent);
+}
+
+/* ---------- Base opaca (vale sempre; é o fallback sem backdrop-filter) ---------- */
+:root[data-flag-ux-v2-enabled] .lia-panel,
+:root[data-flag-ux-v2-enabled] .modal-box {
+  background: var(--layer-1);
+  border-radius: var(--laift-radius-xl);
+  box-shadow: inset 0 0 0 1px var(--hairline), var(--elev-3);
+}
+:root[data-flag-ux-v2-enabled] #panel-home > .card:first-child {
+  background: var(--layer-1);
+  border-radius: var(--laift-radius-xl);
+  box-shadow: inset 0 0 0 1px var(--hairline), var(--elev-2);
+}
+:root[data-flag-ux-v2-enabled] .bottom-nav {
+  background: var(--layer-0);
+  border-radius: var(--laift-radius-xl) var(--laift-radius-xl) 0 0;
+}
+:root[data-flag-ux-v2-enabled] select {
+  background-color: var(--layer-2);
+  border-color: transparent;
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+/* ---------- Vidro (só com backdrop-filter) ---------- */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-flag-ux-v2-enabled] .lia-panel,
+  :root[data-flag-ux-v2-enabled] .modal-box,
+  :root[data-flag-ux-v2-enabled] #panel-home > .card:first-child,
+  :root[data-flag-ux-v2-enabled] .bottom-nav {
+    -webkit-backdrop-filter: blur(var(--glass-blur, 14px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 14px)) saturate(180%);
+  }
+  :root[data-flag-ux-v2-enabled] .lia-panel,
+  :root[data-flag-ux-v2-enabled] .modal-box {
+    background: var(--glass-fill-1);
+  }
+  /* Início: brilho radial sutil do acento no canto superior, sobre o vidro. */
+  :root[data-flag-ux-v2-enabled] #panel-home > .card:first-child {
+    background:
+      radial-gradient(120% 140% at 0% 0%, var(--glass-hero-glow), transparent 62%),
+      var(--glass-fill-1);
+  }
+  :root[data-flag-ux-v2-enabled] .bottom-nav {
+    background: var(--glass-fill-0);
+  }
+  /* Seletor fechado: sem blur (há vários na tela), só véu translúcido. */
+  :root[data-flag-ux-v2-enabled] select {
+    background-color: var(--glass-fill-2);
+  }
+}
+
+/* Atlas 3D imersivo: nada de desfoque sobre o canvas; superfícies voltam ao
+   fundo opaco (mesma regra de ux.css, repetida aqui para o vidro novo). */
+body:has(.learn-viewer-immersive:not(.hidden)) :root[data-flag-ux-v2-enabled] .lia-panel,
+body:has(.learn-viewer-immersive:not(.hidden)) :root[data-flag-ux-v2-enabled] .modal-box,
+body:has(.learn-viewer-immersive:not(.hidden)) :root[data-flag-ux-v2-enabled] .bottom-nav {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ---------- Interação ---------- */
+@media (hover: hover) {
+  :root[data-flag-ux-v2-enabled] select:hover:not(:disabled) {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--laift-primary) 45%, transparent);
+  }
+}
+@media (pointer: coarse) {
+  :root[data-flag-ux-v2-enabled] select { min-height: 44px; }
+}
+
+/* ---------- Painel de agendamento: expande com a mola ----------
+   Só transform e opacity; sem animar altura nem blur. */
+@keyframes ux-glass-expand {
+  from { opacity: 0; transform: translateY(var(--move-sm)) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-flag-ux-v2-enabled] #agendamento-info:not([hidden]):not(.hidden),
+  :root[data-flag-ux-v2-enabled] .agendamento-info:not([hidden]):not(.hidden) {
+    animation: ux-glass-expand var(--dur-base) var(--ease-spring);
+  }
+}
