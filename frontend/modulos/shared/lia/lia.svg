@@ -14,25 +14,25 @@
 <ellipse class="k" cx="100" cy="106" rx="44" ry="42"/>
 <path class="h" d="M55 98C53 64 76 48 100 48s47 16 45 50c-12-6-26-18-36-30-10 16-30 26-54 30z"/>
 <path id="lia-lock" class="a" d="M58 88c-10 18-10 42-2 58 8-8 8-22 6-34-1-8-2-16-4-24z"/>
-<ellipse class="bl n" cx="74" cy="124" rx="7" ry="4"/><ellipse class="bl n" cx="126" cy="124" rx="7" ry="4"/>
+<ellipse class="bl n" cx="74" cy="124" rx="7" ry="4"/><ellipse class="bl n" cx="126" cy="124" rx="7" ry="4"/><ellipse class="bl n" cx="74" cy="124" rx="8" ry="4.6"/><ellipse class="bl n" cx="126" cy="124" rx="8" ry="4.6"/>
 <g id="lia-glasses"><circle class="el" cx="82" cy="112" r="8.5"/><circle class="er" cx="118" cy="112" r="8.5"/><path d="M90.5 112h19"/></g>
-<g id="lia-eyes-neutral"><circle class="f n el ey" cx="82" cy="112" r="3.6"/><circle class="f n er ey" cx="118" cy="112" r="3.6"/></g>
+<g id="lia-eyes-neutral"><circle class="f n el ey" cx="82" cy="112" r="4.6"/><circle class="f n er ey" cx="118" cy="112" r="4.6"/><circle class="p n el ey" cx="83.4" cy="110.4" r="1.6"/><circle class="p n er ey" cx="119.4" cy="110.4" r="1.6"/></g>
 <g id="lia-eyes-curious"><circle class="f n el ey" cx="82" cy="112" r="3.6"/><circle class="f n er ey" cx="118" cy="111" r="4.6"/></g>
 <g id="lia-eyes-happy"><path class="el ey" d="M75 114q7-9 14 0"/><path class="er ey" d="M111 114q7-9 14 0"/></g>
 <g id="lia-eyes-worried"><circle class="f n el ey" cx="82" cy="113" r="4.2"/><circle class="f n er ey" cx="118" cy="113" r="4.2"/></g>
-<g id="lia-eyes-focused"><ellipse class="f n el ey" cx="82" cy="112" rx="4.2" ry="2.4"/><ellipse class="f n er ey" cx="118" cy="112" rx="4.2" ry="2.4"/></g>
+<g id="lia-eyes-focused"><circle class="f n el ey" cx="82" cy="112" r="4.1"/><circle class="f n er ey" cx="118" cy="112" r="4.1"/><circle class="p n el ey" cx="83.2" cy="110.6" r="1.5"/><circle class="p n er ey" cx="119.2" cy="110.6" r="1.5"/></g>
 <g id="lia-eyes-sad"><path class="el ey" d="M75 111q7 7 14 0"/><path class="er ey" d="M111 111q7 7 14 0"/></g>
-<g id="lia-brows-neutral" class="br"><path class="el" d="M74 100h16"/><path class="er" d="M110 100h16"/></g>
-<g id="lia-brows-curious" class="br"><path class="el" d="M74 101h16"/><path class="er" d="M110 95q8-5 16 0"/></g>
-<g id="lia-brows-happy" class="br"><path class="el" d="M74 99q8-5 16 0"/><path class="er" d="M110 99q8-5 16 0"/></g>
-<g id="lia-brows-worried" class="br"><path class="el" d="M74 101l16-6"/><path class="er" d="M110 95l16 6"/></g>
-<g id="lia-brows-focused" class="br"><path class="el" d="M74 96l16 5"/><path class="er" d="M110 101l16-5"/></g>
-<g id="lia-brows-sad" class="br"><path class="el" d="M74 103l16-8"/><path class="er" d="M110 95l16 8"/></g>
-<g id="lia-mouth-neutral"><path d="M92 131q8 3 16 0"/></g>
+<g id="lia-brows-neutral" class="br" stroke-width="1.3"><path class="el" d="M74 98q8-5 16 0"/><path class="er" d="M110 98q8-5 16 0"/></g>
+<g id="lia-brows-curious" class="br" stroke-width="1.3"><path class="el" d="M74 99h16"/><path class="er" d="M110 93q8-5 16 0"/></g>
+<g id="lia-brows-happy" class="br" stroke-width="1.3"><path class="el" d="M74 99q8-5 16 0"/><path class="er" d="M110 99q8-5 16 0"/></g>
+<g id="lia-brows-worried" class="br" stroke-width="1.3"><path class="el" d="M74 100l16-3"/><path class="er" d="M110 97l16 3"/></g>
+<g id="lia-brows-focused" class="br" stroke-width="1.3"><path class="el" d="M74 96q8-5 16 0"/><path class="er" d="M110 96q8-5 16 0"/></g>
+<g id="lia-brows-sad" class="br" stroke-width="1.3"><path class="el" d="M74 103l16-8"/><path class="er" d="M110 95l16 8"/></g>
+<g id="lia-mouth-neutral"><path d="M89 130q11 7 22 0"/></g>
 <g id="lia-mouth-smile"><path d="M90 129q10 10 20 0"/></g>
 <g id="lia-mouth-open"><path class="f" d="M92 128q8 15 16 0z"/></g>
 <g id="lia-mouth-flat"><path d="M93 132h14"/></g>
-<g id="lia-mouth-worried"><path d="M91 134q4-4 9 0t9 0"/></g>
+<g id="lia-mouth-worried"><path d="M93 133q3-2 6 0t6 0"/></g>
 </g>
 </g>
 <g id="lia-limbs">
@@ -44,10 +44,10 @@
 <g id="lia-arm-right-idle"><path class="c" d="M118 192c14 8 18 28 16 46l-12 2c0-18-4-30-10-40z"/><circle class="k" cx="128" cy="244" r="6"/></g>
 <g id="lia-arm-right-wave"><g transform="translate(8 6)"><path class="c" d="M118 194c16 0 28-14 32-42l-12-3c-3 18-10 24-22 28z"/><circle class="k" cx="144" cy="146" r="6.5"/></g></g>
 <g id="lia-arm-right-point"><path class="c" d="M118 194c14-2 26-10 36-22l-8-8c-8 8-16 14-28 16z"/><circle class="k" cx="153" cy="167" r="5.5"/></g>
-<g id="lia-arm-right-chin"><path class="c" d="M120 194c12-6 12-18 4-28l-14 8c4 8 4 14 0 22z"/><circle class="k" cx="110" cy="172" r="6"/></g>
+<g id="lia-arm-right-chin" transform="translate(0 8)"><path class="c" d="M120 194c12-6 12-18 4-28l-14 8c4 8 4 14 0 22z"/><circle class="k" cx="110" cy="172" r="6"/></g>
 <g id="lia-arm-right-heart"><path class="c" d="M118 194c4 10 0 20-8 24l-4-8c4-2 6-8 4-14z"/><circle class="k" cx="106" cy="214" r="5.5"/></g>
 <g id="lia-prop-none"/>
-<g id="lia-prop-calendar"><rect class="p rd" x="122" y="204" width="42" height="42" rx="4"/><path class="a" d="M122 208a4 4 0 014-4h34a4 4 0 014 4v8h-42z"/><path d="M133 200v8M153 200v8"/><path class="f n" d="M130 224h5v5h-5zM141 224h5v5h-5zM152 224h5v5h-5zM130 235h5v5h-5zM141 235h5v5h-5z"/></g>
+<g id="lia-prop-calendar" transform="translate(12 0)"><rect class="p rd" x="122" y="204" width="42" height="42" rx="4"/><path class="a" d="M122 208a4 4 0 014-4h34a4 4 0 014 4v8h-42z"/><path d="M133 200v8M153 200v8"/><path class="f n" d="M130 224h5v5h-5zM141 224h5v5h-5zM152 224h5v5h-5zM130 235h5v5h-5zM141 235h5v5h-5z"/></g>
 <g id="lia-prop-pencil"><g transform="rotate(35 140 224)"><rect class="a" x="135" y="196" width="10" height="44" rx="2"/><rect class="p" x="135" y="196" width="10" height="7" rx="2"/><path class="k" d="M135 240h10l-5 13z"/><path class="f n" d="M138.4 248.5h3.2L140 253z"/></g></g>
 <g id="lia-prop-flask"><path class="p" d="M142 202h10v14l14 26a4 4 0 01-3.5 6H131.5a4 4 0 01-3.5-6l14-26z"/><path class="a" d="M132 234h30l4 8a4 4 0 01-3.5 6H131.5a4 4 0 01-3.5-6z"/><path d="M139 202h16"/><circle class="p" cx="145" cy="241" r="2"/><circle class="p" cx="153" cy="238" r="1.5"/></g>
 <g id="lia-prop-stethoscope"><path d="M84 186c-8 26 4 42 16 42M116 186c8 26-4 42-16 42"/><circle class="p" cx="100" cy="234" r="7"/><circle class="f n" cx="100" cy="234" r="2"/></g>

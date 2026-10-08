@@ -8,6 +8,38 @@ import { makeSql, makeEnv } from './helpers/mockEnv.js';
 
 const MEMBER = { profileId: 'm1', role: 'member' };
 
+describe('ProfileService.getMyProfile', () => {
+  const ROW = {
+    full_name: 'Maria Souza', username: 'maria', email: 'maria@exemplo.com', phone: '11999990000', education: 'Farmácia',
+    avatar_url: null, linkedin_url: null, instagram_handle: null, interests: null, role: 'member',
+    created_at: '2026-01-01T00:00:00Z', theme: null, email_notifications: null,
+  };
+
+  test('devolve o id do PRÓPRIO perfil (o da sessão), sem mudar o resto do formato', async () => {
+    const ProfileService = await import('../src/services/profileService.js');
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([ROW]);
+
+    const res = await ProfileService.getMyProfile(sql, MEMBER);
+
+    expect(res.success).toBe(true);
+    expect(res.profile.id).toBe(MEMBER.profileId);
+    expect(Object.keys(res.profile).sort()).toEqual([
+      'avatarUrl', 'education', 'email', 'fullName', 'id', 'instagramHandle', 'interests',
+      'linkedinUrl', 'memberSince', 'phone', 'role', 'username',
+    ]);
+    // O corpo da consulta é sempre o profileId da sessão, nunca algo vindo do cliente.
+    expect(sql.mock.calls[0].slice(1)).toContain(MEMBER.profileId);
+  });
+
+  test('perfil inexistente continua NotFoundError', async () => {
+    const ProfileService = await import('../src/services/profileService.js');
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([]);
+    await expect(ProfileService.getMyProfile(sql, MEMBER)).rejects.toMatchObject({ name: 'NotFoundError' });
+  });
+});
+
 describe('ProfileService.getMyMetrics', () => {
   test('agrega contagens e listas recentes, tudo filtrado pelo profileId da própria sessão', async () => {
     const ProfileService = await import('../src/services/profileService.js');

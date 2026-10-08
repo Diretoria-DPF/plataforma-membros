@@ -40,7 +40,7 @@ const TARGET_LIST = [
   ['navigate', 'panel-admin-tasks', 'Gerir tarefas', ADMINS],
   ['navigate', 'panel-admin-feedback', 'Feedback', ADMINS],
   ['navigate', 'panel-admin-audit', 'Auditoria', ADMINS],
-  ['navigate', 'panel-admin-reports', 'Relatórios', ADMINS],
+  ['navigate', 'panel-admin-reports', 'Denúncias', ADMINS],
   ['navigate', 'panel-admin-fiscal', 'Terminal fiscal', ADMINS],
   ['navigate', 'panel-admin-ai', 'Painel de IA', ADMINS],
   ['open_module', 'farmaco', 'Farmacologia Básica', LOGGED],

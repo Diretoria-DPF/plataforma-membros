@@ -13,16 +13,19 @@
  *      reprovam; os demais viram AVISO;
  *  (d) nenhum .card/.list-item/.modal-box com borda sob a flag ux_v2;
  *  (e) com prefers-reduced-motion, o Início já mostra os valores finais (sem contagem);
- *  (f) axe-core, se estiver em node_modules: violações serious/critical viram AVISO.
+ *  (f) axe-core (axe-gate.js): violações serious/critical REPROVAM o cenário;
+ *  (g) geometria (sem pixels): caixas (x, y, largura, altura) de cabeçalho, nav e abas,
+ *      4 números do Início, gráfico principal, launcher e painel da Lia, em claro/escuro e
+ *      nas duas telas, comparadas com geometry-baseline.json; diferença > 2 px reprova.
+ *      UPDATE_GEOMETRY=1 regrava a baseline.
  * Usa a mesma API simulada do harness (sem rede). Não altera código de produção.
  */
 const fs = require('fs');
 const path = require('path');
 const { startApp, check } = require('./harness');
+const { axeGate } = require('./axe-gate');
 
 const SHOTS_DIR = path.join(__dirname, '.shots');
-const AXE_FILE = path.join(__dirname, '..', '..', 'node_modules', 'axe-core', 'axe.min.js');
-const AXE_SRC = fs.existsSync(AXE_FILE) ? fs.readFileSync(AXE_FILE, 'utf8') : null;
 
 const THEMES = ['light', 'dark'];
 const THEME_SLUG = { light: 'claro', dark: 'escuro' };
@@ -44,6 +47,18 @@ const MEMBER_PANELS = [
   { id: 'panel-learn', slug: 'aprender' },
   { id: 'panel-profile', slug: 'perfil' },
 ];
+const GEOMETRY_FILE = path.join(__dirname, 'geometry-baseline.json');
+const GEOMETRY_TOLERANCE_PX = 2;
+// [prefixo, seletor, atributo opcional]: com atributo, o nome leva o valor dele; com vários elementos, leva o índice.
+const HOME_GEOMETRY = [
+  ['cabecalho', '.app-header'],
+  ['nav', '#app-nav'],
+  ['aba', '#nav-group-member button[data-panel]', 'data-panel'],
+  ['kpi', '#home-dashboard .home-kpi-value'],
+  ['grafico-principal', '#home-dashboard .home-chart-main'],
+  ['lia-launcher', '#lia-launcher'],
+];
+const LIA_PANEL_GEOMETRY = [['lia-panel', '#lia-panel']];
 
 // Erros de ambiente: bibliotecas de CDN abortadas de propósito (mesma lista do smoke)
 // e requisições abortadas pelo harness (net::ERR_FAILED). Qualquer outro erro é falha.
@@ -51,6 +66,7 @@ const IGNORABLE = /\b(THREE|QRCode|\$3Dmol|SmilesDrawer|Chart|OCL|Html5QrcodeSca
 const ABORTED_REQUEST = /net::ERR_FAILED/;
 
 const tally = { passed: 0, warnings: [] };
+const geometry = {}; // "tema/viewport/nome" -> [x, y, largura, altura] (ou null se oculto), medido nesta execução
 
 // ---------------------------------------------------------------------------
 // Dados simulados da Worker (formatos iguais aos de home.e2e.js e assistant.e2e.js)
@@ -176,12 +192,6 @@ function markErrors(app, qa) {
   return { pageErrors: app.errors.length, consoleErrors: qa.consoleErrors.length };
 }
 
-async function ensureAxe(page) {
-  if (!AXE_SRC) return;
-  const loaded = await page.evaluate(() => typeof window.axe === 'object' && window.axe !== null);
-  if (!loaded) await page.evaluate(AXE_SRC);
-}
-
 // ---------------------------------------------------------------------------
 // Leituras feitas dentro da página (funções autocontidas: são serializadas)
 // ---------------------------------------------------------------------------
@@ -228,11 +238,21 @@ function collectSmallTargets() {
   return small;
 }
 
-async function runAxeInPage() {
-  const result = await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } });
-  return result.violations
-    .filter((v) => v.impact === 'serious' || v.impact === 'critical')
-    .map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length, target: v.nodes[0] ? v.nodes[0].target.join(' ') : '' }));
+/** Dentro da página: caixas arredondadas de cada elemento; null se o elemento não está na tela. */
+function readGeometry(groups) {
+  const boxes = {};
+  groups.forEach(([prefix, selector, attr]) => {
+    const nodes = Array.from(document.querySelectorAll(selector));
+    nodes.forEach((el, i) => {
+      let name = prefix;
+      if (attr) name = `${prefix}:${el.getAttribute(attr)}`;
+      else if (nodes.length > 1) name = `${prefix}-${i + 1}`;
+      const r = el.getBoundingClientRect();
+      const shown = el.getClientRects().length > 0 && r.width > 0 && r.height > 0;
+      boxes[name] = shown ? [r.x, r.y, r.width, r.height].map(Math.round) : null;
+    });
+  });
+  return boxes;
 }
 
 // ---------------------------------------------------------------------------
@@ -257,14 +277,6 @@ async function checkTargets(page, where) {
   if (others.length) warn(`${where}: ${others.length} controle(s) abaixo de 44x44 (não bloqueia): ${describeTargets(others)}`);
 }
 
-async function checkAxe(page, where) {
-  if (!AXE_SRC) return;
-  const serious = await page.evaluate(runAxeInPage);
-  if (serious.length) {
-    warn(`${where}: axe serious/critical: ${serious.map((v) => `${v.id} ${v.impact} x${v.nodes} (ex.: ${v.target})`).join('; ')}`);
-  }
-}
-
 /** Confere layout, tema, flag, erros e alvos; devolve à captura o que foi medido. */
 async function measure(app, qa, slug, mark) {
   const where = `${THEME_SLUG[qa.theme]}/${qa.vp.label}/${slug}`;
@@ -276,11 +288,10 @@ async function measure(app, qa, slug, mark) {
   verify(layout.hiddenTabs.length === 0, `${where}: abas da navegação inferior fora da tela: ${layout.hiddenTabs.join(', ')}`);
   checkErrors(app, qa, mark, where);
   if (qa.vp.width < 600) await checkTargets(app.page, where);
-  await checkAxe(app.page, where);
+  await axeGate(app.page, where);
 }
 
 async function captureView(app, qa, slug, mark) {
-  await ensureAxe(app.page);
   await app.page.screenshot({ path: shotPath(qa.theme, qa.vp, slug), fullPage: true, timeout: 60000 });
   await measure(app, qa, slug, mark);
 }
@@ -295,6 +306,60 @@ async function visitPanel(app, qa, panel) {
   await app.showPanel(panel.id);
   await settle(app.page, panel.id);
   await captureView(app, qa, panel.slug, mark);
+}
+
+// ---------------------------------------------------------------------------
+// Geometria: medida nesta execução e comparada com geometry-baseline.json
+// ---------------------------------------------------------------------------
+async function recordGeometry(app, qa, groups) {
+  const boxes = await app.page.evaluate(readGeometry, groups);
+  Object.entries(boxes).forEach(([name, box]) => {
+    geometry[`${THEME_SLUG[qa.theme]}/${qa.vp.label}/${name}`] = box;
+  });
+}
+
+function formatBox(box) {
+  return box ? `[${box.join(', ')}]` : 'oculto';
+}
+
+/** Diferenças entre a baseline e o medido: caixa que mudou além da tolerância, sumiu ou é nova. */
+function compareGeometry(baseline, current) {
+  const problems = [];
+  Object.keys(baseline).forEach((key) => {
+    if (!(key in current)) {
+      problems.push(`${key} sumiu`);
+      return;
+    }
+    const before = baseline[key];
+    const after = current[key];
+    if (!before || !after) {
+      if (before !== after) problems.push(`${key} ${formatBox(before)} -> ${formatBox(after)}`);
+      return;
+    }
+    const moved = before.some((value, i) => Math.abs(value - after[i]) > GEOMETRY_TOLERANCE_PX);
+    if (moved) problems.push(`${key} ${formatBox(before)} -> ${formatBox(after)}`);
+  });
+  Object.keys(current).forEach((key) => {
+    if (!(key in baseline)) problems.push(`${key} sem baseline (elemento novo)`);
+  });
+  return problems;
+}
+
+function verifyGeometry() {
+  if (!fs.existsSync(GEOMETRY_FILE)) {
+    verify(false, 'geometria: geometry-baseline.json ausente (grave com UPDATE_GEOMETRY=1)');
+    return;
+  }
+  const { caixas } = JSON.parse(fs.readFileSync(GEOMETRY_FILE, 'utf8'));
+  const problems = compareGeometry(caixas, geometry);
+  verify(problems.length === 0, `geometria: ${problems.length} caixa(s) fora da tolerância de ${GEOMETRY_TOLERANCE_PX} px: ${problems.slice(0, 8).join('; ')}`);
+}
+
+function writeGeometryBaseline() {
+  const keys = Object.keys(geometry).sort();
+  const lines = keys.map((key) => `    ${JSON.stringify(key)}: ${JSON.stringify(geometry[key])}`);
+  fs.writeFileSync(GEOMETRY_FILE, `{\n  "tolerancia_px": ${GEOMETRY_TOLERANCE_PX},\n  "caixas": {\n${lines.join(',\n')}\n  }\n}\n`);
+  console.log(`  Geometria regravada: ${keys.length} caixas em ${path.basename(GEOMETRY_FILE)}.`);
 }
 
 // ---------------------------------------------------------------------------
@@ -319,6 +384,7 @@ async function liaFlow(app, qa) {
   verify(await page.locator('#lia-log .lia-sources li').count() > 0, `${where}: resposta da Lia sem lista de fontes`);
   verify(await page.locator('#lia-log .lia-feedback').count() === 1, `${where}: micro-card de feedback não apareceu sob a resposta`);
   await captureView(app, qa, 'lia-aberta', openMark);
+  await recordGeometry(app, qa, LIA_PANEL_GEOMETRY);
 }
 
 async function runMemberPanels(qa) {
@@ -327,7 +393,10 @@ async function runMemberPanels(qa) {
     watchConsole(app, qa);
     await app.login();
     await app.page.waitForSelector('#home-dashboard[aria-busy="false"]', { timeout: 15000 });
-    for (const panel of MEMBER_PANELS) await visitPanel(app, qa, panel);
+    for (const panel of MEMBER_PANELS) {
+      await visitPanel(app, qa, panel);
+      if (panel.id === 'panel-home') await recordGeometry(app, qa, HOME_GEOMETRY);
+    }
     await liaFlow(app, qa);
   } finally {
     await app.close();
@@ -382,13 +451,14 @@ module.exports = async function visualQa() {
   fs.mkdirSync(SHOTS_DIR, { recursive: true });
   tally.passed = 0;
   tally.warnings = [];
-  if (!AXE_SRC) warn('axe-core não está em node_modules: verificação (f) pulada');
   // Um fluxo por tema (dois em paralelo; viewports em sequência). Mais paralelismo sobrecarrega o host
   // e estoura o tempo das capturas.
   await Promise.all(THEMES.map(async (theme) => {
     for (const vp of VIEWPORTS) await runCombo(theme, vp);
     await reducedMotionCheck(theme);
   }));
+  if (process.env.UPDATE_GEOMETRY === '1') writeGeometryBaseline();
+  else verifyGeometry();
   console.log(`\n  Resumo visual-qa: ${tally.passed} verificações ok, ${tally.warnings.length} aviso(s).`);
   for (const w of tally.warnings) console.log(`  ⚠ AVISO: ${w}`);
 };

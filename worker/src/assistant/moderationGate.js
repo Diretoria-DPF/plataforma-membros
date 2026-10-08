@@ -8,10 +8,12 @@
  * Moderação da Lia na conversa (ADR 0004; sql/022): o portão do chat, o estado da própria
  * pessoa e o resumo para a administração. Quem decide o nível é moderationService; aqui só
  * se monta a resposta. Visitante não é moderado.
- * Falha da moderação: o erro sempre vai para error_logs e a conversa segue normal (falha ABERTA),
- * com UMA exceção: quem esta instância já viu suspenso continua sem IA (texto fixo) enquanto o
- * estado não puder ser lido. O juiz LLM só roda dentro de um teto por perfil; acima dele vale
- * só o termo (nunca derruba o chat).
+ * Falha da moderação: o erro sempre vai para error_logs. Não deu para ler o estado (flag ou leitura):
+ * a suspensão é relida do banco (verdade persistida; ModerationService.resolveSuspension) e, se o banco
+ * não responder, vale a memória desta instância. Suspensa: segue sem IA (texto fixo). Livre pelo banco,
+ * ou tabela ausente (migração 022 não aplicada): a conversa segue normal. Nem banco nem memória: falha
+ * SEGURA, a Lia não responde com IA nem libera quem pode estar suspenso (aviso neutro, sem punir).
+ * O juiz LLM só roda dentro de um teto por perfil; acima dele vale só o termo (nunca derruba o chat).
  */
 import * as C from '../constants.js';
 import * as S from '../security.js';
@@ -72,6 +74,14 @@ function incidentPayload(state) {
   return payload(state.level, null, GATE_TEXTS[state.level]);
 }
 
+const MSG_STATE_UNVERIFIED = 'A Lia não conseguiu verificar o estado da moderação agora e, por segurança, pausou as respostas. '
+  + 'Isso não é um aviso nem uma suspensão e não conta como ocorrência. Tente de novo em alguns minutos.';
+
+/** Falha segura: sem saber se a pessoa está suspensa, a Lia pausa (nível 0, sem suspensão) e o chat marca a resposta como degradada. */
+function unverifiedPayload() {
+  return Object.assign(payload(0, null, MSG_STATE_UNVERIFIED), { degraded: true });
+}
+
 async function logFailOpen(sql, correlationId, err) {
   try {
     await Logging.logError(sql, correlationId, 'ASSISTANT_MODERATION_FAILED', String((err && err.message) || err), null);
@@ -106,13 +116,15 @@ async function judgeMessage(sql, env, identity, message, correlationId) {
 }
 
 /**
- * Não deu para saber o estado (flag ou leitura falhou). O erro é registrado; quem esta instância
- * já viu suspenso segue SEM IA (o texto fixo da suspensão) e os demais seguem normal (falha aberta).
+ * Não deu para saber o estado (flag ou leitura falhou). O erro é registrado e a suspensão é resolvida
+ * pelo banco, com a memória da instância só como reserva (ModerationService.resolveSuspension):
+ * suspensa segue SEM IA (texto fixo da suspensão); livre segue normal; sem resposta nenhuma, falha segura.
  */
 async function whenStateUnknown(sql, identity, correlationId, err, at) {
   await logFailOpen(sql, correlationId, err);
-  const until = ModerationService.knownSuspensionUntil(identity.profileId, at);
-  return until ? suspendedPayload({ until }) : null;
+  const found = await ModerationService.resolveSuspension(sql, identity.profileId, at);
+  if (found.status === 'suspended') return suspendedPayload({ until: found.until });
+  return found.status === 'unknown' ? unverifiedPayload() : null;
 }
 
 /**
@@ -168,9 +180,9 @@ export async function assistantModerationState(sql, identity, now) {
     };
   } catch (err) {
     await logFailOpen(sql, S.newCorrelationId(), err);
-    const until = ModerationService.knownSuspensionUntil(identity.profileId, at);
-    if (!until) return NOT_MODERATED;
-    return Object.assign({}, NOT_MODERATED, { moderated: true, level: C.MODERATION.MAX_LEVEL, suspended: true, until: until.toISOString() });
+    const found = await ModerationService.resolveSuspension(sql, identity.profileId, at);
+    if (found.status !== 'suspended') return NOT_MODERATED; // a tela não quebra; quem protege é o portão do chat
+    return Object.assign({}, NOT_MODERATED, { moderated: true, level: C.MODERATION.MAX_LEVEL, suspended: true, until: found.until.toISOString() });
   }
 }
 
@@ -198,17 +210,47 @@ async function incidentTotals(sql) {
   };
 }
 
-async function incidentPeople(sql, limit) {
+const DETECTIONS = Object.freeze(['terms', 'llm']);
+const isoOrNull = (value) => (value ? new Date(value).toISOString() : null);
+
+/**
+ * Uma pessoa do resumo. Os 4 primeiros campos são os de sempre; os 4 últimos são novos (retrocompatível).
+ * O nível atual já traz o decaimento devido (cálculo puro, sem gravar), e a suspensão só aparece se ainda vale.
+ * Minimização (LGPD): só identificador, níveis, tipo de detecção (nunca texto) e datas. Nem nome, nem e-mail,
+ * telefone, hash ou mensagem: a tela é de leitura e o prefixo do identificador basta para correlacionar.
+ */
+function personSummary(row, at) {
+  const state = Rules.decay(row, at);
+  return {
+    profileId: row.profile_id,
+    incidents: Number(row.incidents),
+    maxLevel: Number(row.max_level),
+    lastAt: row.last_at,
+    currentLevel: state.level,
+    suspendedUntil: Rules.isSuspended(state, at) ? state.until.toISOString() : null,
+    lastDetection: DETECTIONS.indexOf(row.last_detection) === -1 ? null : row.last_detection,
+    lastRedeemedAt: isoOrNull(row.redeemed_at),
+  };
+}
+
+/** Pessoas com incidente na janela (as mais recentes primeiro), já com o estado atual de cada uma numa só consulta. */
+async function incidentPeople(sql, limit, at) {
   const rows = await sql`
-    SELECT profile_id, count(*) AS incidents, max(level_after) AS max_level, max(created_at) AS last_at
-    FROM assistant_incidents
-    WHERE created_at >= now() - make_interval(days => ${SUMMARY_WINDOW_DAYS})
-    GROUP BY profile_id
-    ORDER BY max(created_at) DESC
-    LIMIT ${limit}`;
-  return rows.map((r) => ({
-    profileId: r.profile_id, incidents: Number(r.incidents), maxLevel: Number(r.max_level), lastAt: r.last_at,
-  }));
+    WITH page AS (
+      SELECT profile_id, count(*) AS incidents, max(level_after) AS max_level, max(created_at) AS last_at,
+             (array_agg(detection ORDER BY created_at DESC))[1] AS last_detection
+      FROM assistant_incidents
+      WHERE created_at >= now() - make_interval(days => ${SUMMARY_WINDOW_DAYS})
+      GROUP BY profile_id
+      ORDER BY max(created_at) DESC, profile_id
+      LIMIT ${limit}
+    )
+    SELECT page.profile_id, page.incidents, page.max_level, page.last_at, page.last_detection,
+           m.level, m.until, m.last_incident_at, m.last_decay_at, m.redeemed_at
+    FROM page
+    LEFT JOIN assistant_moderation m ON m.profile_id = page.profile_id
+    ORDER BY page.last_at DESC, page.profile_id`;
+  return rows.map((row) => personSummary(row, at));
 }
 
 async function redemptionOutcomes(sql) {
@@ -233,16 +275,16 @@ async function currentLevels(sql) {
 
 /**
  * Resumo para a administração (apiAdminAssistantModeration): agregados e pessoas com incidentes.
- * NUNCA traz texto de mensagem: o histórico só guarda tipo, detecção e nível.
+ * NUNCA traz texto de mensagem: o histórico só guarda tipo, detecção e nível. `now` é só para os testes.
  */
-export async function adminAssistantModeration(sql, identity, input) {
+export async function adminAssistantModeration(sql, identity, input, now) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
   const limit = clampPageSize(input && input.limit);
   return {
     success: true,
     windowDays: SUMMARY_WINDOW_DAYS,
     incidents: await incidentTotals(sql),
-    people: await incidentPeople(sql, limit),
+    people: await incidentPeople(sql, limit, now || new Date()),
     currentLevels: await currentLevels(sql),
     redemption: await redemptionOutcomes(sql),
   };

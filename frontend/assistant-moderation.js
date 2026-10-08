@@ -21,7 +21,7 @@
   var TICK_MS = 1000;
   var MAX_TIMEOUT_MS = 2147483647; // limite do setTimeout (~24,8 dias)
   var SERVER_TEXT_MAX = 300;
-  var REDEEM_ERROR_TEXT = 'Não consegui registrar seu pedido agora. Tente de novo em instantes.';
+  var REDEEM_ERROR_TEXT = 'O pedido de redenção não foi registrado agora e o nível de moderação não mudou. Envie de novo em alguns instantes.';
   var NETWORK_TEXT = 'Não foi possível enviar agora. Confira a conexão e tente de novo.';
   var BACK_TEXT = 'O chat voltou ao normal. Pode perguntar à vontade.';
 
@@ -284,20 +284,24 @@
     if (focusLost) m.redeem.open.focus({ preventScroll: true });
   }
 
-  /** Fim da suspensão (relógio, redenção aceita ou moderação desligada): o chat volta ao normal. */
-  function liftSuspension(m) {
+  /**
+   * Fim da suspensão (relógio, redenção aceita ou moderação desligada): o chat volta ao normal.
+   * `redeemed`: na redenção aceita a Lia ainda está de costas; quem a põe de frente é a cena 'redeem'
+   * (ctx.lia), então o repouso imediato (restLia) não entra: ele apagaria as costas antes do giro.
+   */
+  function liftSuspension(m, redeemed) {
     m.mod = freshMod();
     m.redeemOpen = false;
     setRedeemStatus(m, '');
     setRedeemAlert(m, '');
     renderModeration(m);
-    m.ctx.restLia();
+    if (redeemed !== true) m.ctx.restLia();
     m.ctx.note(BACK_TEXT);
   }
 
   function acceptRedeem(m) {
     m.redeem.area.value = '';
-    liftSuspension(m);
+    liftSuspension(m, true);
     m.ctx.lia('redeem');
     m.ctx.input.focus({ preventScroll: true }); // o botão de redenção some: o foco vai para a pergunta
   }

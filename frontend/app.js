@@ -67,8 +67,33 @@
 
   var state = {
     sessionToken: null,
-    profile: null, // { fullName, role }
+    profile: null, // { id, fullName, role } (+ email e username depois de apiGetMyProfile)
   };
+
+  // >>> profile-id (puro)
+  // O id do PRÓPRIO perfil (UUID) chega em apiLogin, apiLoginMfa e apiGetMyProfile e serve ao onboarding.
+  // O cache de sessão (localStorage) continua guardando só o token e a validade: ao restaurar, o perfil
+  // (e o id) vem de apiGetMyProfile, então nenhum dado novo é gravado no navegador.
+  var PROFILE_ID_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  /** Id do perfil: só vale texto em formato UUID; qualquer outra coisa vira undefined. */
+  function profileIdOf(value) {
+    return typeof value === 'string' && PROFILE_ID_FORMAT.test(value) ? String(value) : undefined;
+  }
+
+  /** Perfil do estado a partir da resposta do login: cópia (nunca o objeto cru da API) com o id validado. */
+  function profileFromResponse(raw) {
+    var profile = Object.assign({}, raw);
+    profile.id = profileIdOf(raw && raw.id);
+    return profile;
+  }
+
+  /** Perfil já no estado + id da resposta. Resposta sem id válido (servidor antigo) mantém o id que já havia. */
+  function mergeProfileId(profile, raw) {
+    var id = profileIdOf(raw && raw.id);
+    return id ? Object.assign({}, profile, { id: id }) : profile;
+  }
+  // <<< profile-id (puro)
 
   function saveSessionCache(token) {
     try {
@@ -97,6 +122,7 @@
   function clearSessionCache() {
     try { localStorage.removeItem(SESSION_CACHE_KEY); } catch (err) { /* ignora */ }
     if (sessionExpiryTimer) { clearTimeout(sessionExpiryTimer); sessionExpiryTimer = null; }
+    if (window.LaiftOnboarding) window.LaiftOnboarding.reset(); // fecha o diálogo ao sair ou expirar a sessão
   }
 
   /** Agenda o retorno automático à tela de login exatamente quando o cache expira, mesmo com a aba aberta o tempo todo. */
@@ -114,6 +140,8 @@
       if (window.LaiftLearning) window.LaiftLearning.reset();
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
+      if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+      resetAdminDashboardChart();
       if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
@@ -564,25 +592,112 @@
   // ===========================================================================
   // Modal genérico de confirmação
   // ===========================================================================
-  function openConfirm(message, onConfirm) {
-    var overlay = document.getElementById('modal-confirm');
-    var msgEl = document.getElementById('modal-confirm-message');
-    var okBtn = document.getElementById('modal-confirm-ok');
-    var cancelBtn = document.getElementById('modal-confirm-cancel');
+  // >>> confirm-dialog (puro)
+  /**
+   * Diálogo de confirmação acessível (WCAG 2.1.2, 2.4.3, 4.1.2). Devolve open(mensagem, aoConfirmar):
+   * foco inicial em Cancelar (o botão seguro), foco preso entre Cancelar e Confirmar, Esc cancela,
+   * Enter só age no botão que está focado (e a repetição da tecla é ignorada, para não confirmar
+   * sem querer) e o foco volta a quem abriu. Abrir de novo com um diálogo aberto descarta o anterior.
+   * As teclas são ouvidas no documento (captura) enquanto o diálogo está aberto: se o foco cair no <body>
+   * (clique no texto do modal), Esc e Tab continuam valendo. O fundo (#app-root) fica inert até fechar;
+   * o inert sai em qualquer saída (Cancelar, Confirmar, Esc, troca de diálogo e erro na abertura).
+   */
+  function createConfirmDialog(doc) {
+    var current = null;
 
-    msgEl.textContent = message;
-    overlay.classList.remove('hidden');
-
-    function cleanup() {
-      overlay.classList.add('hidden');
-      okBtn.removeEventListener('click', onOk);
-      cancelBtn.removeEventListener('click', onCancel);
+    function elements() {
+      return {
+        overlay: doc.getElementById('modal-confirm'),
+        message: doc.getElementById('modal-confirm-message'),
+        ok: doc.getElementById('modal-confirm-ok'),
+        cancel: doc.getElementById('modal-confirm-cancel'),
+        background: doc.getElementById('app-root'),
+      };
     }
-    function onOk() { cleanup(); onConfirm(); }
-    function onCancel() { cleanup(); }
 
-    okBtn.addEventListener('click', onOk);
-    cancelBtn.addEventListener('click', onCancel);
+    function setInert(node, on) {
+      if (!node) return;
+      if (on) node.setAttribute('inert', '');
+      else node.removeAttribute('inert');
+    }
+
+    /** Quem abriu: se ainda havia um diálogo aberto, o foco atual está dentro dele e vale o opener original. */
+    function openerFor(els) {
+      var active = doc.activeElement;
+      var insideOld = !!current && !!active && typeof els.overlay.contains === 'function' && els.overlay.contains(active);
+      return insideOld ? current.opener : active;
+    }
+
+    /** Tab e Shift+Tab giram entre Cancelar e Confirmar; foco fora dos dois volta para Cancelar. */
+    function trapTab(els, evt) {
+      var items = [els.cancel, els.ok];
+      var index = items.indexOf(doc.activeElement);
+      if (index === -1) { evt.preventDefault(); items[0].focus(); return; }
+      var next = index + (evt.shiftKey ? -1 : 1);
+      if (next < 0 || next >= items.length) {
+        evt.preventDefault();
+        items[(next + items.length) % items.length].focus();
+      }
+    }
+
+    /** Enter fora de um dos dois botões (ou repetido por tecla segurada) não faz nada. */
+    function guardEnter(els, evt) {
+      var onButton = evt.target === els.ok || evt.target === els.cancel;
+      if (!onButton || evt.repeat) evt.preventDefault();
+    }
+
+    function restoreFocus(opener) {
+      if (opener && opener !== doc.body && opener.isConnected !== false && typeof opener.focus === 'function') opener.focus();
+    }
+
+    return function open(message, onConfirm) {
+      var els = elements();
+      var opener = openerFor(els);
+      if (current) current.dispose();
+
+      function dispose() {
+        setInert(els.background, false);
+        doc.removeEventListener('keydown', onKeydown, true);
+        els.overlay.classList.add('hidden');
+        els.ok.removeEventListener('click', onOk);
+        els.cancel.removeEventListener('click', onCancel);
+        current = null;
+      }
+      function finish(confirmed) {
+        dispose();
+        restoreFocus(opener);
+        if (confirmed && typeof onConfirm === 'function') onConfirm();
+      }
+      function onOk() { finish(true); }
+      function onCancel() { finish(false); }
+      function onKeydown(evt) {
+        if (evt.key === 'Escape') { evt.preventDefault(); evt.stopPropagation(); finish(false); }
+        else if (evt.key === 'Tab') trapTab(els, evt);
+        else if (evt.key === 'Enter') guardEnter(els, evt);
+      }
+
+      current = { opener: opener, dispose: dispose };
+      try {
+        els.message.textContent = message;
+        els.overlay.classList.remove('hidden');
+        setInert(els.background, true);
+        doc.addEventListener('keydown', onKeydown, true);
+        els.ok.addEventListener('click', onOk);
+        els.cancel.addEventListener('click', onCancel);
+        els.cancel.focus();
+      } catch (err) {
+        dispose(); // erro na abertura: nunca deixa o fundo inert nem o ouvinte para trás
+        throw err;
+      }
+    };
+  }
+  // <<< confirm-dialog (puro)
+
+  var confirmDialog = createConfirmDialog(document);
+
+  /** Mantém a assinatura (mensagem, aoConfirmar): há ~10 chamadores em app.js, admin-ai.js e messaging.js. */
+  function openConfirm(message, onConfirm) {
+    confirmDialog(message, onConfirm);
   }
 
   function openImageLightbox(src, alt) {
@@ -654,7 +769,7 @@
   function finishLogin(res) {
     showSystemUnavailable(false);
     state.sessionToken = res.sessionToken;
-    state.profile = res.profile;
+    state.profile = profileFromResponse(res.profile); // vale também para o login com MFA (mfa.js chama finishLogin)
     saveSessionCache(res.sessionToken);
     scheduleSessionExpiry(Date.now() + SESSION_TTL_MS);
     setStatus('msg-login', '', null);
@@ -768,6 +883,8 @@
     if (window.LaiftLearning) window.LaiftLearning.reset();
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
+    if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    resetAdminDashboardChart();
     if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
@@ -816,6 +933,8 @@
     if (window.LaiftMessaging) window.LaiftMessaging.startBackgroundSync();
     // Lia: relê a flag e zera a conversa da conta anterior.
     if (window.LaiftAssistant) window.LaiftAssistant.refresh();
+    // Primeira entrada da pessoa: apresentação curta por papel (a Lia e o crachá).
+    if (window.LaiftOnboarding) window.LaiftOnboarding.maybeShow({ role: state.profile.role, profileId: state.profile.id });
   }
 
   /** Atualiza o "!" de votação aberta e o número de tarefas ativas na navegação inferior. Chamada no login e sempre que uma ação relevante (votar, aderir/concluir tarefa) muda esses números. */
@@ -973,7 +1092,10 @@
     'panel-learn': function () { if (window.LaiftLearning) window.LaiftLearning.loadPanel(); },
     'panel-admin-fiscal': function () { if (window.LaiftLearning) window.LaiftLearning.loadFiscalPanel(); },
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)
-    'panel-admin-ai': function () { if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel(); },
+    'panel-admin-ai': function () {
+      if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
+      if (window.LaiftAdminModeration) window.LaiftAdminModeration.load(window.App); // moderação da Lia (ADR 0004, O28)
+    },
   };
 
   var currentPanelId = 'panel-home';
@@ -1644,11 +1766,13 @@
     callApi('apiGetMyProfile', state.sessionToken).then(function (res) {
       if (!res.success) { setStatus('msg-profile', res.message, 'error'); return; }
 
-      // O login só devolve nome e papel; o e-mail (identificador enviado aos
-      // módulos de aprendizagem — ver learning.js) chega por aqui.
+      // O login só devolve id, nome e papel; o e-mail (identificador enviado aos
+      // módulos de aprendizagem — ver learning.js) chega por aqui. O id nunca é apagado:
+      // resposta sem id válido deixa o que já estava.
       if (state.profile) {
         state.profile.email = res.profile.email;
         state.profile.username = res.profile.username;
+        state.profile = mergeProfileId(state.profile, res.profile);
         if (window.LaiftLearning) window.LaiftLearning.onProfileReady();
       }
 
@@ -1819,38 +1943,44 @@
           text('strong', res.indicators[key]),
         ]));
       });
-      renderAdminDashboardChart(labels, res.indicators);
+      renderAdminDashboardChart(res.indicators);
     });
   }
 
-  /** Gráfico de barras dos mesmos indicadores dos cartões — usa Chart.js via CDN (index.html); se o script não carregar (bloqueio de rede etc.), o painel continua funcional só sem o gráfico. */
-  function renderAdminDashboardChart(labels, indicators) {
-    var canvas = document.getElementById('admin-dashboard-chart');
-    if (!canvas || typeof window.Chart === 'undefined') return;
+  // >>> admin-dashboard-chart (puro)
+  // Rótulos curtos do eixo: o gráfico mora em ~44 px por indicador no celular. Os nomes completos
+  // ficam nos cartões logo acima; aqui a ordem é a mesma deles.
+  var ADMIN_CHART_LABELS = {
+    active_members: 'Ativos', active_admins: 'Admins', banned_accounts: 'Banidas',
+    published_events: 'Eventos', proposals_pending: 'Análise', proposals_voting: 'Votação',
+    tasks_open: 'Tarefas',
+  };
 
-    var dataLabels = Object.keys(labels).map(function (key) { return labels[key]; });
-    var dataValues = Object.keys(labels).map(function (key) { return indicators[key] || 0; });
-
-    if (adminDashboardChart) { adminDashboardChart.destroy(); }
-    adminDashboardChart = new window.Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels: dataLabels,
-        datasets: [{
-          label: 'Indicadores',
-          data: dataValues,
-          backgroundColor: 'rgba(15, 111, 98, 0.55)',
-          borderColor: 'rgba(15, 111, 98, 1)',
-          borderWidth: 1,
-          borderRadius: 6,
-        }],
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-      },
+  /** Uma coluna por indicador (série única); valor ausente, negativo ou não numérico vira 0. */
+  function adminDashboardRows(indicators) {
+    var source = indicators || {};
+    return Object.keys(ADMIN_CHART_LABELS).map(function (key) {
+      var value = Number(source[key]);
+      return { label: ADMIN_CHART_LABELS[key], values: [isFinite(value) && value > 0 ? value : 0] };
     });
+  }
+  // <<< admin-dashboard-chart (puro)
+
+  /** Colunas dos mesmos indicadores dos cartões (LaiftCharts.groupedBars: SVG próprio, valores visíveis e tabela sr-only). */
+  function renderAdminDashboardChart(indicators) {
+    var container = document.getElementById('admin-dashboard-chart');
+    var charts = window.LaiftCharts;
+    if (!container || !charts) return;
+    var rows = adminDashboardRows(indicators);
+    if (adminDashboardChart) { adminDashboardChart.update(rows); return; }
+    adminDashboardChart = charts.groupedBars(container, rows, {
+      title: 'Indicadores administrativos', series: ['Indicadores'], width: 320, height: 220, fluid: true,
+    });
+  }
+
+  /** Logout e sessão expirada: solta o gráfico (e o observer de largura) para a próxima conta começar limpa. */
+  function resetAdminDashboardChart() {
+    if (adminDashboardChart) { adminDashboardChart.destroy(); adminDashboardChart = null; }
   }
 
   // ===========================================================================
@@ -2487,7 +2617,7 @@
           showPublicScreen('screen-welcome');
           return;
         }
-        state.profile = { fullName: res.profile.fullName, role: res.profile.role };
+        state.profile = { id: profileIdOf(res.profile.id), fullName: res.profile.fullName, role: res.profile.role };
         scheduleSessionExpiry(cached.expiresAt);
         enterApp();
       });

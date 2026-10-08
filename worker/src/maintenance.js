@@ -36,6 +36,8 @@
  *    (hash = modelo + conteúdo) só quando há env (Workers AI) e a flag rag_enabled
  *    está ligada. Exceção consciente à regra "corte por idade": trechos que saíram
  *    de kb.js/docs.js somem, porque a base é a fonte da verdade e não um histórico.
+ *    Sem embeddings (embeddingAvailable: false) a busca da Lia cai para trigramas: o cron registra o
+ *    aviso ASSISTANT_RAG_REINDEX_DEGRADED em error_logs e segue (risco O20).
  */
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
@@ -157,14 +159,32 @@ function assistantRetentionTasks(sql) {
   };
 }
 
+/** Por que faltaram embeddings: sem o binding Workers AI, ou o modelo falhou. Só a categoria vai ao log. */
+function embeddingGapReason(env) {
+  return env.AI && typeof env.AI.run === 'function' ? 'erro_do_modelo' : 'binding_ausente';
+}
+
+/**
+ * O20: reindexação sem embeddings degrada a busca da Lia para trigramas. Deixa um aviso estruturado em
+ * error_logs (motivo e contagens, nunca o texto da base nem a mensagem do erro). logError não lança, então
+ * o aviso nunca derruba o cron.
+ */
+async function warnIfEmbeddingUnavailable(sql, env, correlationId, report) {
+  if (report.embeddingAvailable !== false) return;
+  await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_REINDEX_DEGRADED', 'Reindexação sem embeddings: a busca da Lia segue só por trigramas.', {
+    reason: embeddingGapReason(env), total: report.total, upserted: report.upserted, embedded: report.embedded,
+  });
+}
+
 /**
  * Reindexa a base da Lia (ver o cabeçalho). Sem env ou com a flag desligada, não toca em nada.
  * Devolve quantos trechos foram gravados (upserted); o hash deixa de fora o que não mudou.
  */
-async function ragReindexIfEnabled(sql, env) {
+async function ragReindexIfEnabled(sql, env, correlationId) {
   if (!env) return 0;
   if (!(await isEnabled(sql, RAG_FLAG, null))) return 0;
   const report = await Rag.reindex(sql, env, buildDocuments());
+  await warnIfEmbeddingUnavailable(sql, env, correlationId, report);
   return report.upserted;
 }
 
@@ -176,7 +196,7 @@ export async function runMaintenance(sql, correlationId, env) {
   const tasks = {
     ...coreTasks(sql, correlationId, env),
     ...assistantRetentionTasks(sql),
-    ragReindex: () => ragReindexIfEnabled(sql, env),
+    ragReindex: () => ragReindexIfEnabled(sql, env, correlationId),
   };
 
   const deleted = {};

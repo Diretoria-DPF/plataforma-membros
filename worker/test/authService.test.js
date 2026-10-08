@@ -55,7 +55,11 @@ describe('AuthService.login', () => {
     const res = await AuthService.login(sql, env, 'fulano@x.com', 'senha-correta', 'UA', 'cid-1');
     expect(res.success).toBe(true);
     expect(res.sessionToken).toMatch(/^[0-9a-f]{64}$/);
-    expect(res.profile).toEqual({ fullName: 'Fulano', role: 'member' });
+    // O front precisa do id do PRÓPRIO perfil (onboarding por conta). Chave exata: nada de e-mail nem telefone.
+    expect(res.profile).toEqual({ id: 'p1', fullName: 'Fulano', role: 'member' });
+    expect(Object.keys(res.profile).sort()).toEqual(['fullName', 'id', 'role']);
+    expect(Object.keys(res).sort()).toEqual(['message', 'profile', 'sessionToken', 'success']);
+    expect(JSON.stringify(res)).not.toMatch(/@|phone|telefone|password|senha-correta/i);
     expect(res.mfaRequired).toBeUndefined();
   });
 

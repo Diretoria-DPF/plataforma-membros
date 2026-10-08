@@ -100,6 +100,7 @@
     if (size) host.style.setProperty('--lia-size', size);
     var tone = toneAttr(opts.tone);
     if (tone) host.setAttribute('data-tone', tone);
+    if (opts.crop === 'head') host.setAttribute('data-crop', 'head');
     return host;
   }
 
@@ -127,6 +128,7 @@
     var doc = host.ownerDocument;
     var loops = [];
     var transient = null; // { stop } da animação em curso
+    var sceneStop = null; // parada da cena das ondas 2-4 (a pose final dura até o próximo estado)
     var alive = true;
     function call(name) {
       var anim = root.LiaAnim;
@@ -161,9 +163,26 @@
         stopOne(transient && transient.stop);
         transient = startTransient(name);
       },
+      /** Cena de lia-scenes.js (WAAPI + passos). Ela decide sozinha o movimento reduzido: termina na pose final. */
+      scene: function (name, env) {
+        stopOne(sceneStop);
+        sceneStop = null;
+        var scenes = root.LiaScenes;
+        if (!alive || !scenes || typeof scenes.play !== 'function') return false;
+        try {
+          var handle = scenes.play(name, env);
+          sceneStop = handle ? handle.stop : null;
+          return !!handle;
+        } catch (err) {
+          warn('cena ' + name + ' falhou', err);
+          return false;
+        }
+      },
       stopTransient: function () {
         stopOne(transient && transient.stop);
         transient = null;
+        stopOne(sceneStop);
+        sceneStop = null;
       },
       destroy: function () {
         alive = false;
@@ -171,6 +190,8 @@
         loops = [];
         stopOne(transient && transient.stop);
         transient = null;
+        stopOne(sceneStop);
+        sceneStop = null;
         var anim = root.LiaAnim;
         if (anim && typeof anim.destroy === 'function') {
           try { anim.destroy(host); } catch (err) { warn('cancelamento de animações falhou', err); }
@@ -179,16 +200,84 @@
     };
   }
 
+  /**
+   * Peças extras (LiaProps, sob demanda) e cena (LiaScenes) do contexto, ondas 2-4. A Lia de recorte (bolha de 48 px)
+   * nunca as recebe. Sem LiaProps/LiaScenes, ou com a arte ainda carregando, a Lia base segue como está.
+   * O atributo data-extras do host lista as peças que estão na tela: é o gancho do lia.css (costas, braços cruzados).
+   */
+  function createStage(host, svg, cropped, motion) {
+    var set = null;
+    function reflect() {
+      var names = set ? set.names() : [];
+      if (names.length) host.setAttribute('data-extras', names.join(' '));
+      else host.removeAttribute('data-extras');
+    }
+    var stage = {
+      cropped: cropped,
+      propsReady: function () { return !cropped && !!root.LiaProps && root.LiaProps.ready(); },
+      canPlay: function (plan) { return !cropped && !!root.LiaScenes && (!plan.sceneExtras.length || stage.propsReady()); },
+      sync: function (wanted) {
+        if (!set) set = root.LiaProps.createSet(svg, host.ownerDocument);
+        set.remove(set.names().filter(function (name) { return wanted.indexOf(name) < 0; }));
+        set.add(wanted);
+        reflect();
+      },
+      remove: function (names) {
+        if (set) set.remove(names);
+        reflect();
+      },
+      clear: function () {
+        if (set) set.clear();
+        reflect();
+      },
+      play: function (plan, reduced) {
+        if (cropped || !plan.scene) return false;
+        return motion.scene(plan.scene, { host: host, svg: svg, reduced: reduced, detach: function (names) { stage.remove(names); } });
+      },
+    };
+    return stage;
+  }
+
   /** Núcleo de uma instância: guarda o snapshot atual e aplica cada mudança como um objeto novo. */
-  function createCore(host) {
+  function createCore(host, svg, cropped) {
     var motion = createMotion(host);
-    var core = { current: null, version: 0, holdTimer: null, destroyed: false, motion: motion };
+    var stage = createStage(host, svg, cropped, motion);
+    var core = { current: null, version: 0, holdTimer: null, destroyed: false, motion: motion, stage: stage };
     core.clearHold = function () {
       if (core.holdTimer !== null) root.clearTimeout(core.holdTimer);
       core.holdTimer = null;
     };
+    /** Mostra as peças do plano e toca a cena. O aria-label já é o do contexto (um por estado). */
+    function showPlan(plan, wanted, reduced) {
+      stage.sync(wanted);
+      return stage.play(plan, reduced);
+    }
+    /** Peças e cena do contexto atual. Devolve true se uma cena começou agora. */
+    function stageContext(plan) {
+      if (cropped) return false;
+      var reduced = reducedMotion();
+      var wanted = plan.extras.concat(reduced ? [] : plan.sceneExtras);
+      if (!wanted.length) {
+        stage.clear();
+        return stage.play(plan, reduced);
+      }
+      if (!root.LiaProps) {
+        stage.clear();
+        return false;
+      }
+      if (stage.propsReady()) return showPlan(plan, wanted, reduced);
+      stage.clear(); // até a arte chegar, vale a Lia base
+      if (plan.late) loadThen(plan, wanted, reduced, core.version);
+      return false;
+    }
+    function loadThen(plan, wanted, reduced, version) {
+      root.LiaProps.load(host.ownerDocument).then(function () {
+        if (core.destroyed || core.version !== version || !stage.propsReady()) return;
+        showPlan(plan, wanted, reduced);
+      });
+    }
     core.commit = function (context, overrides) {
-      if (core.destroyed) return;
+      if (core.destroyed) return false;
       core.version += 1;
       core.clearHold();
       core.current = snapshotOf(context, overrides);
@@ -196,6 +285,7 @@
       motion.stopTransient();
       var name = motionFor(core.current.context);
       if (name) motion.play(name);
+      return stageContext(States.planFor(core.current.context));
     };
     core.destroy = function () {
       core.destroyed = true;
@@ -215,8 +305,19 @@
     }, HOLD_MS);
   }
 
-  function createInstance(host, onDestroy) {
-    var core = createCore(host);
+  /**
+   * Redenção aceita (cena 6): de costas -> gira -> de frente, sorri e ganha corações. Sem arte das costas ou
+   * sem cenas, o que valia antes: acena. Com movimento reduzido, a pose final parada.
+   */
+  function redeemOf(core) {
+    var reduced = reducedMotion();
+    var scene = !reduced && core.stage.canPlay(States.planFor('redeem'));
+    core.commit('redeem', scene || reduced ? {} : { armRight: 'wave' });
+    if (!scene && !reduced && !core.destroyed) core.motion.play('wave');
+  }
+
+  function createInstance(host, svg, cropped, onDestroy) {
+    var core = createCore(host, svg, cropped);
     var instance = {
       element: host,
       setState: function (context, overrides) { core.commit(context, overrides); return instance; },
@@ -234,11 +335,7 @@
         return instance;
       },
       suspend: function () { core.commit('suspended'); return instance; },
-      redeem: function () {
-        core.commit('idle', { armRight: 'wave' });
-        if (!core.destroyed) core.motion.play('wave');
-        return instance;
-      },
+      redeem: function () { redeemOf(core); return instance; },
       destroy: function () {
         if (core.destroyed) return;
         core.destroy();
@@ -265,9 +362,10 @@
     }
     var opts = options && typeof options === 'object' ? options : {};
     var host = createHost(doc, opts);
-    host.appendChild(buildSvg(doc, art, opts));
+    var svg = buildSvg(doc, art, opts);
+    host.appendChild(svg);
     parent.appendChild(host);
-    var instance = createInstance(host, forget);
+    var instance = createInstance(host, svg, opts.crop === 'head', forget);
     live = live.concat([instance]);
     return instance;
   }

@@ -112,6 +112,14 @@
   --chart-7: #6c9a00;
   --chart-8: #a656bd;
 
+  /* Crachá virtual (ux.css): cores fixas nos dois temas, iguais às do PNG salvo (credential.js). */
+  --credential-start: #08342d;
+  --credential-mid: #0b5349;
+  --credential-end: #0f6f62;
+  --credential-ink: #ffffff;
+  --credential-surface: #ffffff;
+  --credential-chip: rgba(255, 255, 255, 0.18);
+
   /* Superfícies e texto: bg/surface/surface-alt são aliases das camadas. */
   --laift-bg: var(--layer-0);
   --laift-surface: var(--layer-1);
@@ -322,4 +330,8 @@ html.laift-always-dark > body {
     scroll-behavior: auto !important;
   }
   .leaf { display: none; }
+  /* Movidos de charts.css e lia.css: estado final sem animação (valor direto). */
+  .laift-chart *, .laift-chart *::before, .laift-chart *::after { animation: none !important; transition: none !important; }
+  .lia-svg, .lia-svg * { animation: none !important; }
+  .lia[data-state="suspended"] { transition: none !important; }
 }

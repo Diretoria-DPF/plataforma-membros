@@ -34,6 +34,8 @@
   var MAX_SOURCES = 4;
   var PANEL_LIA_SIZE = 72; // px de largura do corpo inteiro no cabeçalho (altura ≈ 108 px, proporção 2:3)
   var SPEAK_MS = 2500; // depois da resposta, a Lia fica falando por este tempo e volta ao repouso
+  var WARNING_HOLD_MS = 8000; // aviso de moderação (braços cruzados e balão): a pose dura isto e a Lia volta ao repouso
+  var REDEEM_REST_MS = 4500; // redenção aceita: a cena (2,2 s) e um tempo de sorriso, depois repouso
   var MODULE_BY_PANEL = { 'panel-events': 'events', 'panel-proposals': 'proposals', 'panel-learn': 'learn' };
 
   // ---------------------------------------------------------------------------
@@ -165,8 +167,20 @@
     ui.restTimer = root.setTimeout(function () { reactLia('setState', 'idle'); ui.idle.arm(); }, SPEAK_MS);
   }
 
+  /** Depois de `ms`, a Lia volta ao repouso da tela (módulo) ou à suspensão, se nada mais acontecer antes. */
+  function restAfter(ms) {
+    clearRestTimer();
+    ui.restTimer = root.setTimeout(function () { ui.restTimer = null; restLiaState(); }, ms);
+  }
+
+  /** Aviso de moderação: nível 2 = braços cruzados e balão vermelho (cena 5); nível 1 = atenta. Depois a Lia relaxa. */
+  function warnLia(level) {
+    reactLia('setState', level === 2 ? 'warning' : 'alert');
+    restAfter(WARNING_HOLD_MS);
+  }
+
   function failReply(text) {
-    addMessage({ role: 'lia', text: text === ERROR_TEXT ? fixedLine('error', text) : text, error: true });
+    addMessage({ role: 'lia', text: text === ERROR_TEXT ? fixedLine('error', text) : text, error: true, typing: true });
     reactLia('setState', 'confused');
   }
 
@@ -292,11 +306,38 @@
     if (card) wrap.appendChild(card);
   }
 
+  /** Digitação (assistant-typing.js, opcional): só respostas novas da Lia. Devolve a lista a revelar no fim. */
+  function typingLib() { return root.AssistantTyping || null; }
+
+  /** Termina já todo balão que ainda digita (nova pergunta, painel fechado, conversa zerada). */
+  function finishTyping() {
+    var pending = ui.typers;
+    ui.typers = [];
+    pending.forEach(function (handle) { handle.finish(); });
+  }
+
+  /**
+   * Põe o texto no balão. Respostas novas (msg.typing) digitam e o que vem depois do balão (fontes, botões, sugestões,
+   * feedback) fica escondido até o fim; o leitor de tela recebe o texto completo de uma vez. Sem a biblioteca, o
+   * texto entra direto.
+   */
+  function fillBubble(wrap, bubble, msg) {
+    var lib = typingLib();
+    if (!msg.typing || !lib) { bubble.textContent = msg.text; return; }
+    var later = Array.prototype.slice.call(wrap.children, Array.prototype.indexOf.call(wrap.children, bubble) + 1);
+    var reveal = function () { later.forEach(function (node) { node.classList.remove('hidden'); }); scrollToEnd(); };
+    var handle = lib.render(ui.doc, bubble, msg.text, { win: root, onDone: reveal });
+    if (!handle) return;
+    later.forEach(function (node) { node.classList.add('hidden'); });
+    ui.typers = ui.typers.filter(function (h) { return !h.isDone(); }).concat([handle]);
+  }
+
   function renderMessage(msg) {
     var doc = ui.doc;
     var wrap = el(doc, 'div', 'lia-msg lia-msg-' + (msg.role === 'user' ? 'user' : 'lia') + (msg.error ? ' lia-msg-error' : ''));
     if (msg.warningLevel) wrap.appendChild(modLib().warningBand(doc, msg.warningLevel));
-    wrap.appendChild(el(doc, 'p', 'lia-bubble', msg.text));
+    var bubble = el(doc, 'p', 'lia-bubble');
+    wrap.appendChild(bubble);
     if (msg.degraded) wrap.appendChild(el(doc, 'p', 'lia-degraded', DEGRADED_TEXT));
     if (msg.sources && msg.sources.length) wrap.appendChild(renderSources(msg.sources));
     if (msg.actions && msg.actions.length) {
@@ -320,6 +361,7 @@
       wrap.appendChild(row);
     }
     if (msg.role === 'lia' && msg.messageId) appendFeedback(wrap, msg.messageId);
+    fillBubble(wrap, bubble, msg);
     return wrap;
   }
 
@@ -356,6 +398,7 @@
     if (!message || ui.busy || !ui.enabled || ui.moderation.isSuspended()) return;
     if (token() !== ui.lastToken) { refresh(); return; } // a conta mudou (ex.: sessão expirou): recomeça limpo
     var history = pickHistory(ui.messages);
+    finishTyping(); // a resposta anterior termina de aparecer antes da pergunta nova
     ui.mood = moodLib().onQuestion(ui.mood, message, Date.now());
     addMessage({ role: 'user', text: message });
     ui.input.value = '';
@@ -382,11 +425,12 @@
         degraded: res.degraded === true,
         messageId: messageIdOf(res.messageId),
         warningLevel: mod.mode === 'warning' ? mod.level : 0,
+        typing: true,
       });
       if (mod.mode === 'suspended') {
         ui.moderation.suspend(mod.until, 0);
       } else if (mod.mode === 'warning') {
-        reactLia('setState', mod.level === 2 ? 'warning' : 'alert');
+        warnLia(mod.level);
       } else if (res.degraded === true) {
         reactLia('setState', 'confused');
       } else {
@@ -424,6 +468,7 @@
     ui.launcher.setAttribute('aria-expanded', 'false');
     ui.open = false;
     ui.panelLia = destroyLia(ui.panelLia);
+    finishTyping(); // nada digita em segundo plano com o painel fechado
     ui.moderation.stop(); // o relógio da moderação só roda com o painel aberto
     ui.idle.disarm(); // as micro-poses idle param junto com o painel
     if (returnFocus !== false) ui.launcher.focus({ preventScroll: true });
@@ -440,6 +485,7 @@
   function resetConversation() {
     ui.sendId += 1; // invalida qualquer resposta ainda a caminho
     clearRestTimer();
+    finishTyping();
     hint('reset'); // sair da conta: some a dica e zera o que já foi mostrado
     ui.messages = [];
     while (ui.log.firstChild) ui.log.removeChild(ui.log.firstChild);
@@ -505,7 +551,10 @@
       isOpen: function () { return ui.open; },
       sync: function () { syncInputs(); },
       restLia: function () { restLiaState(); },
-      lia: function (method) { reactLia(method); },
+      lia: function (method) {
+        reactLia(method);
+        if (method === 'redeem') restAfter(REDEEM_REST_MS); // a cena dura ~2 s; depois a Lia volta ao repouso da tela
+      },
       note: function (text) { addMessage({ role: 'lia', text: fixedLine('confirmation', text) }); },
     };
   }
@@ -532,7 +581,7 @@
     ui = {
       app: app, doc: doc, launcher: launcher.button, panel: panel, log: log, input: composer.input, send: composer.send,
       messages: [], busy: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
-      launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null,
+      launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null, typers: [],
       moderation: moderation, mood: moodLib().newSession(),
       hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,
     };

@@ -460,6 +460,7 @@ test('tokens: espelham modulos/shared/laift-tokens.css', () => {
   assert.equal(`${t.DUR_FAST}ms`, cssValue('--dur-fast'));
   assert.equal(`${t.DUR_BASE}ms`, cssValue('--dur-base'));
   assert.equal(`${t.DUR_SLOW}ms`, cssValue('--dur-slow'));
+  assert.equal(`${t.DUR_LAZY}ms`, cssValue('--dur-lazy'));
   assert.equal(t.EASE_OUT, cssValue('--ease-out'));
   assert.equal(t.EASE_IN_OUT, cssValue('--ease-in-out'));
   assert.equal(t.EASE_SPRING, cssValue('--ease-spring'));

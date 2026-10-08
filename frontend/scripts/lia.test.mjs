@@ -245,18 +245,54 @@ test('celebrating: feliz, sorriso, braços em coração e cenário completo', ()
   assert.equal(s.ariaLabel, 'Lia está celebrando');
 });
 
-test('confused: preocupada com boca preocupada (erro ou pergunta não entendida)', () => {
+test('confused: curiosa e simpática, sem cara de tristeza (erro ou pergunta não entendida)', () => {
   const s = States.resolve('confused');
   assert.equal(s.state, 'idle');
-  assert.equal(s.emotion, 'worried');
-  assert.equal(s.mouth, 'worried');
+  assert.equal(s.emotion, 'curious');
+  assert.equal(s.mouth, 'neutral');
 });
 
-test('alert e warning: focada no nível 1 e triste no nível 2, ambas com boca reta', () => {
+test('alert e warning: focada no nível 1; preocupada de braços cruzados no nível 2 (cena 5)', () => {
   const alert = States.resolve('alert');
   const warning = States.resolve('warning');
-  assert.deepEqual([alert.emotion, alert.mouth], ['focused', 'flat']);
-  assert.deepEqual([warning.emotion, warning.mouth], ['sad', 'flat']);
+  assert.deepEqual([alert.emotion, alert.mouth], ['focused', 'neutral']);
+  assert.deepEqual([warning.emotion, warning.mouth], ['worried', 'worried']);
+  assert.equal(warning.ariaLabel, 'Lia emitiu um alerta');
+});
+
+test('redeem: feliz, sorrindo, com brilho e coração (pose final da cena 6)', () => {
+  const s = States.resolve('redeem');
+  assert.deepEqual([s.state, s.emotion, s.mouth, s.armLeft, s.armRight], ['idle', 'happy', 'smile', 'idle', 'idle']);
+  assert.equal(s.scene, 'glow heart');
+  assert.equal(s.ariaLabel, 'Lia', 'volta ao repouso: o rótulo é o de sempre');
+});
+
+test('planFor: peças e cena de cada contexto das ondas 2-4; os demais não têm plano', () => {
+  const plan = (name) => States.planFor(name);
+  assert.deepEqual([...plan('warning').extras], ['veu', 'cruzados', 'aviso']);
+  assert.equal(plan('warning').scene, 'warning');
+  assert.deepEqual([...plan('suspended').extras], ['costas-cabeca', 'costas-costura']);
+  assert.equal(plan('suspended').scene, null);
+  assert.deepEqual([...plan('redeem').extras], []);
+  assert.deepEqual([...plan('redeem').sceneExtras], ['costas-cabeca', 'costas-costura']);
+  assert.equal(plan('redeem').late, false);
+  assert.equal(plan('confused').scene, 'confused');
+  assert.deepEqual([...plan('lab').extras], ['liquido-b', 'bolha-1', 'bolha-2', 'bolha-3']);
+  assert.deepEqual([...plan('clinic').extras], ['monitor']);
+  assert.deepEqual([...plan('atlas').extras], ['osso', 'estrela']);
+  assert.deepEqual([...plan('learn').extras], ['folha', 'interrogacao', 'tela']);
+  ['idle', 'thinking', 'events', 'proposals', 'nope', 'constructor'].forEach((name) => {
+    assert.equal(plan(name).scene, null, name);
+    assert.deepEqual([...plan(name).extras], [], name);
+  });
+});
+
+test('planFor: toda peça pedida está na lista de nomes conhecidos e o plano é imutável', () => {
+  States.CONTEXTS.forEach((name) => {
+    const p = States.planFor(name);
+    [...p.extras, ...p.sceneExtras].forEach((extra) => assert.ok(States.EXTRA_NAMES.includes(extra), `${name} -> ${extra}`));
+    assert.ok(Object.isFrozen(p), name);
+  });
 });
 
 test('suspended: estado suspended com rótulo "Lia está suspensa"', () => {
@@ -567,7 +603,7 @@ test('celebrate volta ao idle após 2,5 s, mas não reverte se outra mudança oc
   assert.equal(host.attrs['data-state'], 'thinking');
 });
 
-test('suspend muda para suspensa; redeem volta ao idle com braço direito em aceno', () => {
+test('suspend muda para suspensa; redeem (sem a arte das cenas) volta ao idle feliz, com braço direito em aceno', () => {
   const { lia, host } = mountLia();
   lia.suspend();
   assert.equal(host.attrs['data-state'], 'suspended');
@@ -575,6 +611,7 @@ test('suspend muda para suspensa; redeem volta ao idle com braço direito em ace
   lia.redeem();
   assert.equal(host.attrs['data-state'], 'idle');
   assert.equal(host.attrs['data-arm-right'], 'wave');
+  assert.equal(host.attrs['data-emotion'], 'happy');
   assert.equal(host.attrs['aria-label'], 'Lia');
 });
 

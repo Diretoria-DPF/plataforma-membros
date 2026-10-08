@@ -10,6 +10,7 @@
  * conversa zerada ao trocar de conta, "disabled" do servidor esconde a Lia.
  */
 const { startApp, check } = require('./harness');
+const { axeGate } = require('./axe-gate');
 
 const FLAGS_ON = () => ({ success: true, flags: { chatbot_enabled: true } });
 
@@ -385,6 +386,7 @@ module.exports = async function assistant() {
     check(chats[0][1].message === 'quais eventos estão abertos?' && Array.isArray(chats[0][1].history) && chats[0][1].history.length === 0, 'a primeira pergunta não leva histórico');
     check(/^panel-/.test(chats[0][1].context.panel), 'o painel atual vai como contexto (' + chats[0][1].context.panel + ')');
     check(!JSON.stringify(chats[0]).includes('ana@exemplo.com'), 'o e-mail da pessoa nunca vai na pergunta');
+    await axeGate(page, 'Lia aberta com resposta (membro)');
     await page.click('#lia-log .lia-chip-action:has-text("Eventos")');
     await page.waitForSelector('#panel-events:not(.hidden)');
     check(await page.locator('#lia-panel.hidden').count() === 1, 'ao clicar no botão a Lia sai da frente e a tela de eventos abre');

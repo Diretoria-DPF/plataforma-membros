@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>LAIFT – Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</title>
   <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Quiz, casos clínicos, laboratório virtual e atlas 3D para estudantes de Farmácia.">
@@ -73,6 +73,7 @@
     <!-- ================= PÚBLICO ================= -->
     <main id="public-shell" class="public-shell">
       <section id="screen-welcome" class="auth-card" aria-labelledby="welcome-title">
+        <div class="hero hidden" id="hero-lia" aria-hidden="true"></div>
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="welcome-title">Entrar</h1>
         <p class="muted">LAIFT — Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Acompanhe eventos, participe de votações e organize tarefas coletivas.</p>
@@ -105,7 +106,7 @@
 
       <section id="screen-register" class="auth-card hidden" aria-labelledby="register-title">
         <span class="brand-pill">Plataforma de Membros</span>
-        <h2 id="register-title">Criar conta</h2>
+        <h1 id="register-title" class="auth-heading">Criar conta</h1>
         <p class="muted">Sua conta começa como visitante; a confirmação por e-mail é obrigatória para entrar.</p>
 
         <form id="form-register" novalidate>
@@ -180,7 +181,7 @@
 
       <section id="screen-forgot" class="auth-card hidden" aria-labelledby="forgot-title">
         <span class="brand-pill">Plataforma de Membros</span>
-        <h2 id="forgot-title">Redefinir senha</h2>
+        <h1 id="forgot-title" class="auth-heading">Redefinir senha</h1>
         <p class="muted">Informe seu e-mail para receber o link de redefinição.</p>
 
         <form id="form-forgot" novalidate>
@@ -198,7 +199,7 @@
 
       <section id="screen-reset" class="auth-card hidden" aria-labelledby="reset-title">
         <span class="brand-pill">Plataforma de Membros</span>
-        <h2 id="reset-title">Criar nova senha</h2>
+        <h1 id="reset-title" class="auth-heading">Criar nova senha</h1>
         <p class="muted">Defina uma nova senha para voltar a acessar sua conta.</p>
 
         <form id="form-reset" novalidate>
@@ -332,6 +333,7 @@
 
       <main class="app-main">
         <section id="panel-home">
+          <h1 class="sr-only">Início</h1>
           <div class="card">
             <h2>Início</h2>
             <p id="home-greeting" class="muted">Bem-vindo(a). Use a navegação para acessar eventos, propostas, tarefas e a área de aprendizagem.</p>
@@ -345,6 +347,7 @@
           em modulos/ e herdam a identidade desta sessão.
         -->
         <section id="panel-learn" class="hidden">
+          <h1 class="sr-only">Aprender</h1>
           <div id="learn-hub">
             <div class="card">
               <h2>Aprender</h2>
@@ -379,6 +382,7 @@
         </section>
 
         <section id="panel-events" class="hidden">
+          <h1 class="sr-only">Eventos</h1>
           <div class="card">
             <h2>Eventos</h2>
             <div id="events-status" class="status-msg" role="status" aria-live="polite"></div>
@@ -392,6 +396,7 @@
         </section>
 
         <section id="panel-proposals" class="hidden">
+          <h1 class="sr-only">Propostas</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Enviar proposta</h2>
@@ -419,6 +424,7 @@
         </section>
 
         <section id="panel-tasks" class="hidden">
+          <h1 class="sr-only">Tarefas</h1>
           <div class="card">
             <h2>Tarefas</h2>
             <div id="tasks-status" class="status-msg" role="status" aria-live="polite"></div>
@@ -427,6 +433,7 @@
         </section>
 
         <section id="panel-orgchart" class="hidden">
+          <h1 class="sr-only">Equipe da liga</h1>
           <div class="card">
             <h2>Equipe da liga</h2>
             <p class="muted">Clique numa pessoa para ver o perfil e adicionar.</p>
@@ -462,6 +469,7 @@
           é sempre montado via h()/text(), nunca innerHTML.
         -->
         <section id="panel-messages" class="hidden">
+          <h1 class="sr-only">Mensagens</h1>
           <div class="card" id="messaging-preparing">
             <h2>Mensagens</h2>
             <p class="muted">Suas mensagens são cifradas de ponta a ponta — nem a liga consegue ler.</p>
@@ -498,6 +506,7 @@
         </section>
 
         <section id="panel-profile" class="hidden">
+          <h1 class="sr-only">Perfil</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Meu perfil</h2>
@@ -581,17 +590,19 @@
 
         <!-- ============ ADMIN ============ -->
         <section id="panel-admin-dashboard" class="hidden">
+          <h1 class="sr-only">Admin: painel</h1>
           <div class="card">
             <h2>Visão geral</h2>
             <div id="admin-dashboard-stats" class="stat-grid"></div>
           </div>
           <div class="card">
             <h3>Indicadores em gráfico</h3>
-            <canvas id="admin-dashboard-chart" height="220" role="img" aria-label="Gráfico de indicadores administrativos"></canvas>
+            <div id="admin-dashboard-chart"></div>
           </div>
         </section>
 
         <section id="panel-admin-users" class="hidden">
+          <h1 class="sr-only">Admin: usuários</h1>
           <div class="card">
             <h2>Usuários</h2>
             <form id="form-user-search" novalidate style="display:flex; gap:10px; margin-top:0;">
@@ -604,6 +615,7 @@
         </section>
 
         <section id="panel-admin-events" class="hidden">
+          <h1 class="sr-only">Admin: eventos</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Novo evento</h2>
@@ -642,6 +654,7 @@
         </section>
 
         <section id="panel-admin-proposals" class="hidden">
+          <h1 class="sr-only">Admin: propostas</h1>
           <div class="card">
             <h2>Propostas em análise / acompanhamento</h2>
             <div id="admin-proposals-list"></div>
@@ -649,6 +662,7 @@
         </section>
 
         <section id="panel-admin-tasks" class="hidden">
+          <h1 class="sr-only">Admin: tarefas</h1>
           <div class="grid-2">
             <div class="card">
               <h2>Nova tarefa</h2>
@@ -674,6 +688,7 @@
         </section>
 
         <section id="panel-admin-feedback" class="hidden">
+          <h1 class="sr-only">Admin: feedback</h1>
           <div class="card">
             <h2>Feedback recebido</h2>
             <div id="admin-feedback-list"></div>
@@ -681,6 +696,7 @@
         </section>
 
         <section id="panel-admin-audit" class="hidden">
+          <h1 class="sr-only">Admin: auditoria</h1>
           <div class="card">
             <h2>Auditoria</h2>
             <form id="form-audit-filter" novalidate style="display:flex; flex-wrap:wrap; gap:10px; margin-top:0;">
@@ -709,6 +725,7 @@
         </section>
 
         <section id="panel-admin-reports" class="hidden">
+          <h1 class="sr-only">Admin: denúncias</h1>
           <div class="card">
             <h2>Denúncias</h2>
             <form id="form-report-filter" novalidate style="display:flex; gap:10px; margin-top:0;">
@@ -729,6 +746,7 @@
         </section>
 
         <section id="panel-admin-fiscal" class="hidden">
+          <h1 class="sr-only">Admin: terminal fiscal</h1>
           <div class="card">
             <h2>Terminal fiscal</h2>
             <p class="muted">Check-in por QR Code, presença manual ou pela lista, exportação em CSV e crachás. Presenças gravadas nos eventos da plataforma; acesso exclusivo de administradores.</p>
@@ -738,6 +756,7 @@
 
         <!-- Fase 3 — painel admin de IA (frontend/admin-ai.js). Conteúdo dinâmico só via textContent. -->
         <section id="panel-admin-ai" class="hidden">
+          <h1 class="sr-only">Admin: IA</h1>
           <div class="card">
             <div class="ai-admin-head">
               <h2>IA — saúde das chaves</h2>
@@ -809,6 +828,14 @@
             <div id="admin-ai-sat-list"></div>
             <button type="button" class="secondary hidden" id="btn-admin-ai-sat-more">Carregar mais</button>
           </div>
+          <div class="card" id="admin-moderation-card">
+            <div class="ai-admin-head">
+              <h2 id="h-admin-moderation">Moderação da Lia</h2>
+              <button type="button" class="secondary" data-action="LaiftAdminModeration.reload">Atualizar</button>
+            </div>
+            <p class="muted">Incidentes de moderação da Lia, situação atual e taxa de redenção. Só tipo de detecção, nível e data: o texto das mensagens nunca é guardado nem aparece aqui.</p>
+            <div id="admin-moderation"></div>
+          </div>
           <div class="card">
             <h2>Cotas diárias por pessoa</h2>
             <div id="admin-ai-quotas"><p class="empty-state">Aparecem depois do teste das chaves.</p></div>
@@ -831,7 +858,7 @@
     Modais genéricos. O conteúdo dinâmico (mensagem de confirmação) é sempre
     definido via textContent por app.js — nunca via innerHTML.
   -->
-  <div id="modal-confirm" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+  <div id="modal-confirm" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title" aria-describedby="modal-confirm-message">
     <div class="modal-box">
       <h3 id="modal-confirm-title">Confirmar ação</h3>
       <p id="modal-confirm-message"></p>
@@ -925,11 +952,6 @@
     </div>
   </div>
 
-  <!-- Chart.js 4.5.1 (o mesmo do atlas 3D): arquivo que EXISTE no pacote npm,
-       com SRI calculado dele. O 4.4.4 anterior apontava para um
-       chart.umd.min.js que o pacote não tem — o jsDelivr o gerava na hora, e
-       o hash podia deixar de bater (docs/FASE_4_QUALIDADE.md §5). -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous" defer></script>
   <!--
     Mensageria E2EE (Fase 3f): dois módulos ES, carregados ANTES de
     app.js (script clássico com defer). Scripts type="module" já são
@@ -960,14 +982,23 @@
   <script src="modulos/shared/lia/lia-mood.js" defer></script>
   <script src="assistant-mood-glue.js" defer></script>
   <script src="modulos/shared/lia/lia-anim.js" defer></script>
+  <script src="modulos/shared/lia/lia-props.js" defer></script>
+  <script src="modulos/shared/lia/lia-scenes.js" defer></script>
   <script src="modulos/shared/lia/lia.js" defer></script>
+  <script src="hero.js" defer></script>
   <script src="assistant-feedback.js" defer></script>
   <script src="assistant-moderation.js" defer></script>
   <script src="assistant-hints.js" defer></script>
+  <script src="assistant-typing.js" defer></script>
   <script src="assistant.js" defer></script>
+  <script src="keyboard-shortcuts.js" defer></script>
+  <script src="onboarding.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>
+  <!-- Moderação da Lia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
+  <script src="modulos/shared/safe-dom.js" defer></script>
+  <script src="admin-moderation.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

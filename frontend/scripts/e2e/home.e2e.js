@@ -10,6 +10,7 @@
  * (só para atividade em 90 dias e 12 meses).
  */
 const { startApp, check } = require('./harness');
+const { axeGate } = require('./axe-gate');
 
 const DAY = 24 * 60 * 60 * 1000;
 const inDays = (n) => new Date(Date.now() + n * DAY).toISOString();
@@ -112,6 +113,7 @@ module.exports = async function home() {
     check(true, 'horas de estudo: soma em horas dos últimos 30 dias (15)');
     await waitText(member.page, '#home-dashboard .home-kpi:nth-child(4) .home-kpi-value', '72%');
     check(true, 'acerto em porcentagem (72%)');
+    await axeGate(member.page, 'Início (membro)');
 
     check((await member.page.locator('#home-dashboard .home-chart-main .laift-chart--line').count()) === 1, 'gráfico principal de atividade é linha+área');
     check((await member.page.locator('#home-dashboard .laift-chart [tabindex]').count()) === 0, 'nenhum gráfico do Início recebe foco por tabindex');
@@ -195,6 +197,7 @@ module.exports = async function home() {
     check((await visitor.page.locator('#home-dashboard .home-metric-tasks').count()) === 0, 'visitante não vê o bloco de tarefas');
     check((await visitor.page.locator('#home-dashboard .home-agora .home-row').count()) === 1, 'visitante vê só os eventos no Agora');
     check(!visitorSeries.includes('tasks'), 'visitante não pede série avulsa de tarefas');
+    await axeGate(visitor.page, 'Início (visitante)');
   } finally {
     await visitor.close();
   }

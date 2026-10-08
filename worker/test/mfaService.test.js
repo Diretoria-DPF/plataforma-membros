@@ -118,6 +118,9 @@ describe('login com desafio', () => {
     ]);
     const out = await Mfa.completeLogin(sql, ENV, 'token-bruto', code, 'ua', CID);
     expect(out).toMatchObject({ success: true, profile: { role: 'admin' }, usedRecoveryCode: false });
+    // O id vem do desafio já validado (o mesmo da sessão criada), não do corpo; chave exata, sem e-mail nem telefone.
+    expect(out.profile).toEqual({ id: PID, fullName: 'Ana', role: 'admin' });
+    expect(Object.keys(out).sort()).toEqual(['message', 'profile', 'sessionToken', 'success', 'usedRecoveryCode']);
     expect(out.sessionToken).toMatch(/^[0-9a-f]{64}$/);
     expect(callsMatching(sql, 'DELETE FROM mfa_challenges')).toHaveLength(1);
     expect(callsMatching(sql, 'INSERT INTO sessions')).toHaveLength(1);

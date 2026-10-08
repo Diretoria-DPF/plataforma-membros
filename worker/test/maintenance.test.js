@@ -8,6 +8,7 @@ import { makeSql, makeEnv } from './helpers/mockEnv.js';
 import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
 import { runMaintenance, RETENTION } from '../src/maintenance.js';
 import { buildDocuments } from '../src/assistant/docs.js';
+import { reindexHash } from '../src/services/ragService.js';
 import { EMBEDDING_DIM, MODERATION } from '../src/constants.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 
@@ -202,6 +203,59 @@ describe('ragReindex — reindexação diária da base da Lia (cron)', () => {
     const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', []]]);
     const res = await runMaintenance(sql, 'cid', makeEnv());
     expect(res.ragReindex).toBe(total);
+  });
+
+  // O20: reindexação sem embeddings degrada a busca da Lia para trigramas; o cron precisa deixar rastro disso.
+  describe('embeddingAvailable: false deixa um aviso estruturado (O20) e o cron segue', () => {
+    const WARNING = 'ASSISTANT_RAG_REINDEX_DEGRADED';
+    const warnings = (sql) => callsMatching(sql, 'INSERT INTO error_logs').filter((call) => call.includes(WARNING));
+    const contextOf = (call) => JSON.parse(call[call.length - 1]);
+
+    test('sem o binding Workers AI: um aviso com o motivo e as contagens, sem texto da base', async () => {
+      const docs = buildDocuments();
+      const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', []]]);
+      const res = await runMaintenance(sql, 'cid', makeEnv());
+      expect(res.ragReindex).toBe(docs.length);
+      expect(warnings(sql)).toHaveLength(1);
+      const call = warnings(sql)[0];
+      expect(contextOf(call)).toEqual({ reason: 'binding_ausente', total: docs.length, upserted: docs.length, embedded: 0 });
+      expect(JSON.stringify(call)).not.toContain(docs[0].content.slice(0, 40));
+      expect(res.sessions).toBe(0); // as outras limpezas rodaram
+    });
+
+    test('binding presente, mas o modelo falha: o motivo é "erro_do_modelo" e a mensagem do erro não vai ao log', async () => {
+      const broken = { run: jest.fn(async () => { throw new Error('modelo fora do ar'); }) };
+      const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', []]]);
+      const res = await runMaintenance(sql, 'cid', makeEnv({ AI: broken }));
+      expect(res.ragReindex).toBe(buildDocuments().length);
+      expect(warnings(sql)).toHaveLength(1);
+      expect(contextOf(warnings(sql)[0]).reason).toBe('erro_do_modelo');
+      expect(JSON.stringify(warnings(sql)[0])).not.toContain('modelo fora do ar');
+    });
+
+    test('com embeddings disponíveis não há aviso', async () => {
+      const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', []]]);
+      await runMaintenance(sql, 'cid', makeEnv({ AI: aiOk() }));
+      expect(warnings(sql)).toHaveLength(0);
+      expect(callsMatching(sql, 'INSERT INTO error_logs')).toHaveLength(0);
+    });
+
+    test('nada mudou na base e sem binding: não há o que embutir, então não há aviso', async () => {
+      const rows = await Promise.all(buildDocuments().map(async (d, i) => ({
+        id: 'chunk-' + i, source: d.source, section: d.section, content_hash: await reindexHash(d.content), has_embedding: true,
+      })));
+      const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', rows]]);
+      const res = await runMaintenance(sql, 'cid', makeEnv());
+      expect(res.ragReindex).toBe(0);
+      expect(warnings(sql)).toHaveLength(0);
+    });
+
+    test('se o próprio aviso não puder ser gravado, o cron não cai e o total continua contado', async () => {
+      const sql = routedSql([['feature_flags', FLAG_ON], ['FROM kb_chunks', []], ['INSERT INTO error_logs', new Error('disco cheio')]]);
+      const res = await runMaintenance(sql, 'cid', makeEnv());
+      expect(res.ragReindex).toBe(buildDocuments().length);
+      expect(warnings(sql)).toHaveLength(1);
+    });
   });
 
   test('falha do banco na reindexação: vira null, é registrada e não derruba as outras limpezas', async () => {

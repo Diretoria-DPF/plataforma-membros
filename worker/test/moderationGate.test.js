@@ -169,6 +169,18 @@ function failingOn(fragment) {
     return sql(strings, ...values);
   };
 }
+/** Como failingOn, mas só a PRIMEIRA consulta que casa falha (falha transitória do banco). */
+function failingOnceOn(fragment) {
+  let failed = false;
+  return (strings, ...values) => {
+    const text = Array.isArray(strings) ? strings.join('?') : String(strings);
+    if (!failed && text.includes(fragment)) {
+      failed = true;
+      return Promise.reject(Object.assign(new Error('connection terminated'), { code: '08006' }));
+    }
+    return sql(strings, ...values);
+  };
+}
 const judgeAttempts = async () => {
   const rows = (await db.query(`SELECT attempts FROM rate_limit_buckets WHERE bucket = 'ASSISTANT_JUDGE'`)).rows;
   return rows.length ? Number(rows[0].attempts) : 0;
@@ -235,20 +247,17 @@ describe('moderação da Lia — falha do juiz e do estado (achados 5 e 6)', () 
     expect(res).toMatchObject({ moderation: { level: 3, suspended: true } });
   });
 
-  test('suspensão conhecida já expirada não prende ninguém quando a leitura falha', async () => {
+  test('suspensão já expirada no banco não prende ninguém quando só a FLAG não pôde ser lida', async () => {
     for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
-    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(52))).toBeNull();
+    __resetFlagCacheForTests();
+    expect(await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(52))).toBeNull();
   });
 
-  test('leitura falha e a suspensão NÃO é conhecida: segue normal (falha aberta) e registra o erro', async () => {
-    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(0))).toBeNull();
-    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
-  });
-
-  test('redenção aceita esquece a suspensão conhecida: depois dela, a falha de leitura não prende a pessoa', async () => {
+  test('redenção aceita: depois dela, a falha de leitura da flag não prende a pessoa (o banco manda)', async () => {
     for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
     await ModerationService.redeemAssistant(sql, env, MEMBER, { message: SINCERE }, CID, at(50.5));
-    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.6))).toBeNull();
+    __resetFlagCacheForTests();
+    expect(await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.6))).toBeNull();
   });
 
   test('estado da própria pessoa: com a leitura falhando, a suspensão conhecida continua aparecendo', async () => {
@@ -257,6 +266,79 @@ describe('moderação da Lia — falha do juiz e do estado (achados 5 e 6)', () 
       moderated: true, level: 3, suspended: true,
     });
     expect(await Gate.assistantModerationState(failingOn('FROM assistant_moderation'), ADMIN, at(50.5))).toMatchObject({ moderated: false });
+  });
+});
+
+describe('moderação da Lia — a suspensão vem do banco, não da memória da instância (O17)', () => {
+  const SUSPENDED_UNTIL = () => new Date(at(50).getTime() + 24 * HOUR).toISOString();
+  const suspendThenForget = async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
+    ModerationService.__resetKnownSuspensionsForTests(); // reinício do Worker ou outra instância: a memória está vazia
+    __resetFlagCacheForTests();
+  };
+
+  test('memória vazia e a FLAG não pôde ser lida: a suspensão persistida vale e a conversa segue sem IA', async () => {
+    await suspendThenForget();
+    const callsBefore = aiCalls();
+    const res = await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ source: 'moderation', actions: [], moderation: { level: 3, suspended: true, until: SUSPENDED_UNTIL() } });
+    expect(res.message).toMatch(/suspenso até/);
+    expect(aiCalls()).toBe(callsBefore);
+  });
+
+  test('memória vazia e a 1ª leitura do estado falha de forma transitória: relê o banco e mantém a suspensão', async () => {
+    await suspendThenForget();
+    const res = await Gate.moderationGate(failingOnceOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ moderation: { level: 3, suspended: true, until: SUSPENDED_UNTIL() } });
+    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
+  });
+
+  test('a suspensão relida do banco volta à memória: se a leitura cair de vez, a pessoa continua retida', async () => {
+    await suspendThenForget();
+    await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.5));
+    const res = await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.6));
+    expect(res).toMatchObject({ moderation: { level: 3, suspended: true } });
+  });
+
+  test('a memória diz "suspensa", mas o banco já mostra a redenção (outra instância): o banco manda e libera', async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d)); // esta instância anota a suspensão
+    await db.query(`UPDATE assistant_moderation SET level = 0, until = NULL, redeemed_at = now() WHERE profile_id = $1`, [ME]);
+    __resetFlagCacheForTests();
+    expect(await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.5))).toBeNull();
+  });
+
+  test('nada pôde ser lido e a memória está vazia: falha SEGURA, sem IA e sem acusar, e o erro fica registrado', async () => {
+    await suspendThenForget();
+    const callsBefore = aiCalls();
+    const res = await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ success: true, source: 'moderation', actions: [], degraded: true, moderation: { level: 0, suspended: false, until: null } });
+    expect(res.message).toMatch(/não conseguiu verificar/i);
+    expect(res.message).toMatch(/não é um aviso nem uma suspensão/i);
+    expect(res.message).toMatch(/alguns minutos/i);
+    expect(res.message).not.toMatch(/\b(seu|sua|seus|suas)\b/i);
+    expect(aiCalls()).toBe(callsBefore);
+    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
+  });
+
+  test('tabela da moderação ausente (42P01): ninguém pode estar suspenso, a conversa segue (não é falha de leitura)', async () => {
+    await db.exec('ALTER TABLE assistant_moderation RENAME TO assistant_moderation_off');
+    try {
+      expect(await gate(MEMBER, LEGIT, at(0))).toBeNull();
+    } finally {
+      await db.exec('ALTER TABLE assistant_moderation_off RENAME TO assistant_moderation');
+    }
+  });
+
+  test('estado da própria pessoa: memória vazia e a flag ilegível mostram a suspensão persistida', async () => {
+    await suspendThenForget();
+    expect(await Gate.assistantModerationState(failingOn('FROM feature_flags'), MEMBER, at(50.5))).toMatchObject({
+      moderated: true, level: 3, suspended: true, until: SUSPENDED_UNTIL(),
+    });
+  });
+
+  test('estado da própria pessoa: sem poder ler nada e sem memória, a tela não quebra (o portão é quem protege)', async () => {
+    await suspendThenForget();
+    expect(await Gate.assistantModerationState(failingOn('FROM assistant_moderation'), MEMBER, at(50.5))).toMatchObject({ success: true, moderated: false });
   });
 });
 
@@ -292,6 +374,143 @@ describe('moderação da Lia — estado da própria pessoa e resumo do admin', (
 
   test('resumo do admin: membro não acessa (ForbiddenError)', async () => {
     await expect(Gate.adminAssistantModeration(sql, MEMBER, {})).rejects.toMatchObject({ name: 'ForbiddenError' });
+  });
+});
+
+// W4: dados por pessoa no resumo do admin (campos NOVOS; os antigos seguem iguais). Só admin chama.
+describe('moderação da Lia — resumo do admin: dados por pessoa (W4)', () => {
+  // Os 4 campos antigos (profileId, incidents, maxLevel, lastAt) + os 4 novos. Nada além disso sai: sem nome
+  // de exibição (minimização, LGPD): o prefixo do profileId basta para a tela correlacionar a conta.
+  const ALLOWED_KEYS = [
+    'currentLevel', 'incidents', 'lastAt', 'lastDetection', 'lastRedeemedAt', 'maxLevel', 'profileId', 'suspendedUntil',
+  ];
+  const daysAgo = (days) => `now() - interval '${days} days'`;
+  const addIncident = (profileId, detection, levelAfter, days) => db.query(
+    `INSERT INTO assistant_incidents (profile_id, detection, level_after, created_at) VALUES ($1, $2, $3, ${daysAgo(days)})`,
+    [profileId, detection, levelAfter]
+  );
+  const summaryOf = (input, now) => Gate.adminAssistantModeration(sql, ADMIN, input || { limit: 10 }, now);
+  const personOf = async (profileId) => (await summaryOf()).people.find((p) => p.profileId === profileId);
+
+  test('traz nível atual, fim da suspensão, última detecção e última redenção (e nenhum nome)', async () => {
+    await suspendNow();
+    const person = await personOf(ME);
+    expect(person).toMatchObject({
+      profileId: ME, incidents: 3, maxLevel: 3, currentLevel: 3, lastDetection: 'terms', lastRedeemedAt: null,
+    });
+    expect(person).not.toHaveProperty('displayName');
+    const until = new Date(person.suspendedUntil).getTime();
+    expect(until).toBeGreaterThan(Date.now() + 23 * HOUR);
+    expect(until).toBeLessThanOrEqual(Date.now() + 24 * HOUR);
+    expect(person.lastAt).toBeTruthy(); // campo antigo continua lá
+  });
+
+  test('a última detecção é a do incidente mais recente, não a mais frequente', async () => {
+    await addIncident(ME, 'llm', 1, 3);
+    await addIncident(ME, 'llm', 2, 2);
+    await addIncident(ME, 'terms', 3, 1);
+    expect((await personOf(ME)).lastDetection).toBe('terms');
+    await addIncident(ME, 'llm', 3, 0);
+    expect((await personOf(ME)).lastDetection).toBe('llm');
+  });
+
+  test('redenção aceita: nível 0, sem suspensão e a data da redenção aparece', async () => {
+    await suspendNow();
+    await ModerationService.redeemAssistant(sql, env, MEMBER, { message: SINCERE }, CID, new Date());
+    const person = await personOf(ME);
+    expect(person).toMatchObject({ currentLevel: 0, suspendedUntil: null, maxLevel: 3 });
+    expect(Math.abs(new Date(person.lastRedeemedAt).getTime() - Date.now())).toBeLessThan(60 * 1000);
+  });
+
+  test('o decaimento devido já aparece no nível atual, sem gravar nada (leitura somente leitura)', async () => {
+    await addIncident(ME, 'terms', 3, 70);
+    await db.query(
+      `INSERT INTO assistant_moderation (profile_id, level, until, last_incident_at) VALUES ($1, 3, ${daysAgo(69)}, ${daysAgo(70)})`,
+      [ME]
+    );
+    const before = (await db.query('SELECT * FROM assistant_moderation WHERE profile_id = $1', [ME])).rows[0];
+    expect(await personOf(ME)).toMatchObject({ currentLevel: 1, suspendedUntil: null });
+    expect((await db.query('SELECT * FROM assistant_moderation WHERE profile_id = $1', [ME])).rows[0]).toEqual(before);
+  });
+
+  test('pessoa com incidente mas sem linha de moderação (apagada): nível 0 e sem suspensão', async () => {
+    await addIncident(ME, 'terms', 1, 1);
+    expect(await personOf(ME)).toMatchObject({ currentLevel: 0, suspendedUntil: null, lastRedeemedAt: null, lastDetection: 'terms' });
+  });
+
+  test('nunca devolve texto de mensagem, hash, e-mail, telefone nem senha: só as chaves esperadas', async () => {
+    await suspendNow();
+    await ModerationService.redeemAssistant(sql, env, MEMBER, { message: NOT_SINCERE }, CID, new Date());
+    const summary = await summaryOf();
+    summary.people.forEach((p) => expect(Object.keys(p).sort()).toEqual(ALLOWED_KEYS));
+    const text = JSON.stringify(summary);
+    expect(text).not.toMatch(/idiota|desculpas|Quero que o chat/i);
+    expect(text).not.toMatch(/maria@exemplo|11999990000|password|question_hash|"x"/i);
+    expect(text).not.toMatch(/[0-9a-f]{64}/); // nenhum hash SHA-256
+  });
+
+  // Minimização (LGPD): a tela é só de leitura. Nada que identifique a pessoa além do id vai ao front.
+  test('nenhum nome, apelido, e-mail, telefone nem hash é devolvido; todo valor de pessoa tem formato fechado', async () => {
+    await suspendNow();
+    await ModerationService.redeemAssistant(sql, env, MEMBER, { message: SINCERE }, CID, new Date());
+    await addIncident(ME, 'llm', 1, 1);
+    const summary = await summaryOf();
+    expect(summary.people.length).toBeGreaterThan(0);
+
+    const text = JSON.stringify(summary);
+    expect(text).not.toMatch(/Maria|Souza|"maria"|maria@|exemplo\.com|11999990000|Ana Admin|ana@/i);
+    expect(text).not.toMatch(/displayName|full_name|username|email|phone|password|hash/i);
+    expect(text).not.toMatch(/[0-9a-f]{64}/);
+
+    const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+    const asText = (value) => (value instanceof Date ? value.toISOString() : value);
+    summary.people.forEach((person) => {
+      expect(person.profileId).toMatch(UUID);
+      ['incidents', 'maxLevel', 'currentLevel'].forEach((key) => expect(typeof person[key]).toBe('number'));
+      ['lastAt', 'suspendedUntil', 'lastRedeemedAt'].forEach((key) => {
+        if (person[key] !== null) expect(asText(person[key])).toMatch(ISO);
+      });
+      expect([null, 'terms', 'llm']).toContain(person.lastDetection);
+    });
+  });
+
+  test('só admin: membro, visitante e conta sem sessão são recusados, com os campos novos ou não', async () => {
+    await suspendNow();
+    await expect(Gate.adminAssistantModeration(sql, MEMBER, { limit: 10 })).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(Gate.adminAssistantModeration(sql, VISITOR, { limit: 10 })).rejects.toMatchObject({ name: 'ForbiddenError' });
+    await expect(Gate.adminAssistantModeration(sql, null, { limit: 10 })).rejects.toBeDefined();
+  });
+
+  describe('limite da lista (existente): padrão e teto de C.MODERATION.PAGE_SIZE, mais recentes primeiro', () => {
+    const PAGE = 25;
+    const BULK = PAGE + 2;
+    beforeEach(async () => {
+      await db.exec(`DELETE FROM profiles WHERE username LIKE 'bulk%'`);
+      await db.query(
+        `INSERT INTO profiles (id, full_name, username, email, password_hash, phone, role)
+         SELECT uuid_generate_v4(), 'Pessoa ' || n, 'bulk' || n, 'bulk' || n || '@exemplo.com', 'x', '1188880' || lpad(n::text, 4, '0'), 'member'
+         FROM generate_series(1, $1::int) AS n`,
+        [BULK]
+      );
+      await db.exec(`INSERT INTO assistant_incidents (profile_id, detection, level_after, created_at)
+        SELECT p.id, 'terms', 1, now() - (row_number() OVER (ORDER BY length(p.username), p.username) || ' hours')::interval FROM profiles p WHERE p.username LIKE 'bulk%'`);
+    });
+    afterEach(async () => { await db.exec(`DELETE FROM profiles WHERE username LIKE 'bulk%'`); });
+
+    test('sem limite ou com limite inválido: no máximo uma página; limite acima do teto também', async () => {
+      for (const limit of [undefined, 0, -3, 'abc', 9999]) {
+        const { people } = await summaryOf({ limit });
+        expect(people).toHaveLength(PAGE);
+      }
+    });
+
+    test('limite menor devolve só tantos, os mais recentes primeiro, já com os campos novos', async () => {
+      const { people } = await summaryOf({ limit: 2 });
+      const idOf = async (username) => (await db.query('SELECT id FROM profiles WHERE username = $1', [username])).rows[0].id;
+      expect(people.map((p) => p.profileId)).toEqual([await idOf('bulk1'), await idOf('bulk2')]);
+      people.forEach((p) => expect(p).toMatchObject({ currentLevel: 0, suspendedUntil: null, lastDetection: 'terms' }));
+    });
   });
 });
 

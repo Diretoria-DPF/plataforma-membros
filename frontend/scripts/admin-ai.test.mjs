@@ -211,6 +211,22 @@ test('Métricas: resposta antiga de 7 dias não sobrescreve a de 30', async () =
   assert.doesNotMatch(rendered, /499/);
 });
 
+test('Métricas: resposta de 7 dias que chega antes (ordem inversa) não é desenhada; a de 30 dias segue e libera o estado de busy', async () => {
+  Admin.loadMetrics(7);
+  Admin.loadMetrics(30);
+  requests('apiAdminAiMetrics', 7)[0].resolve(metricsRes(499));
+  await flush();
+  assert.doesNotMatch(textOf(field('admin-ai-metrics')), /499/);
+  assert.equal(field('admin-ai-metrics').getAttribute('aria-busy'), 'true');
+  requests('apiAdminAiMetrics', 30)[0].resolve(metricsRes(50));
+  await flush();
+  const rendered = textOf(field('admin-ai-metrics'));
+  assert.match(rendered, /50 de 500 tokens/);
+  assert.doesNotMatch(rendered, /499/);
+  assert.equal(field('admin-ai-metrics').getAttribute('aria-busy'), null);
+  assert.equal(field('btn-admin-ai-metrics-30').getAttribute('aria-pressed'), 'true');
+});
+
 test('Satisfação: contagens no singular e dia em dd/mm', async () => {
   Admin.loadSatisfaction(7);
   requests('apiAdminAssistantStats', 7)[0].resolve({

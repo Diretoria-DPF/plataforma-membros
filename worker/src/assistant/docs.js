@@ -7,13 +7,14 @@
  * assistant/docs.js
  * Documentos da base de conhecimento da Lia (RAG). Três fontes, todas SEM dado
  * de pessoa alguma:
- *   - 'kb'        as intenções de assistant/kb.js (uma seção por intenção);
+ *   - 'kb'        as intenções de uso geral de assistant/kb.js (uma seção por intenção; as de
+ *                 administração ficam de fora: o acervo é o mesmo para todos os papéis);
  *   - 'destinos'  as telas e módulos da lista branca de assistant/targets.js;
  *   - 'guia'      documentos markdown embutidos abaixo, divididos por "## ".
  * `buildDocuments()` devolve a lista de trechos {source, section, content} que
  * `ragService.reindex` grava em kb_chunks (idempotente: source + section).
  */
-import { INTENTS } from './kb.js';
+import { PUBLIC_INTENTS } from './kb.js';
 import { TARGETS } from './targets.js';
 import { AI_QUOTAS } from '../constants.js';
 
@@ -77,7 +78,7 @@ export function chunkMarkdown(source, markdown) {
 }
 
 function kbChunks() {
-  return INTENTS.map((intent) => ({
+  return PUBLIC_INTENTS.map((intent) => ({
     source: 'kb',
     section: String(intent.title).slice(0, SECTION_MAX),
     content: (intent.title + '. ' + intent.reply).slice(0, CONTENT_MAX),

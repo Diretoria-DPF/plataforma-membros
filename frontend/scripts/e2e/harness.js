@@ -32,6 +32,10 @@ const path = require('path');
 const { gzipSync } = require('zlib');
 
 const DIST = path.join(__dirname, '..', '..', 'dist');
+// Id do perfil simulado. O cliente só sabe qual chave de "onboarding visto" usar com este id
+// (frontend/onboarding.js: laift_onboarding_seen_<profileId>).
+const E2E_PROFILE_ID = 'e2e00000-0000-4000-8000-000000000001';
+const ONBOARDING_SEEN_PREFIX = 'laift_onboarding_seen_';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -91,16 +95,41 @@ function startStaticServer() {
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
+/**
+ * Resumo da moderação da Lia: mesmo formato de worker/src/assistant/moderationGate.js
+ * (adminAssistantModeration), com os campos por pessoa que o S1 adiciona. Nenhum texto de mensagem.
+ */
+function moderationSummary() {
+  const DAY = 24 * 60 * 60 * 1000;
+  const ago = (days) => new Date(Date.now() - days * DAY).toISOString();
+  return {
+    success: true,
+    windowDays: 90,
+    incidents: {
+      total: 7,
+      byDetection: { terms: 5, llm: 2 },
+      byLevelAfter: { 1: 3, 2: 2, 3: 2 },
+    },
+    people: [
+      { profileId: 'a1b2c3d4-0000-4000-8000-000000000001', incidents: 3, maxLevel: 3, lastAt: ago(2), currentLevel: 3, suspendedUntil: new Date(Date.now() + DAY).toISOString(), lastDetection: 'llm', lastRedeemedAt: null, displayName: 'Maria Exemplo' },
+      { profileId: 'e5f6a7b8-0000-4000-8000-000000000002', incidents: 2, maxLevel: 2, lastAt: ago(9), currentLevel: 1, suspendedUntil: null, lastDetection: 'terms', lastRedeemedAt: ago(5), displayName: 'João Teste' },
+      { profileId: 'c9d0e1f2-0000-4000-8000-000000000003', incidents: 2, maxLevel: 1, lastAt: ago(30), currentLevel: 0, suspendedUntil: null, lastDetection: 'terms', lastRedeemedAt: null, displayName: 'Ana Modelo' },
+    ],
+    currentLevels: { 1: 1, 2: 0, 3: 1 },
+    redemption: { accepted: 3, refused: 1, rate: 0.75 },
+  };
+}
+
 /** Respostas padrão da Worker — o suficiente para o app autenticado abrir sem erro. */
 function defaultWorkerReply(action, args, ctx) {
   const p = ctx.profile;
   switch (action) {
     case 'apiLogin':
-      return { success: true, sessionToken: ctx.sessionToken, profile: { fullName: p.fullName, role: p.role } };
+      return { success: true, sessionToken: ctx.sessionToken, profile: { id: p.id, fullName: p.fullName, role: p.role } };
     case 'apiGetMyProfile':
       return {
         success: true,
-        profile: { fullName: p.fullName, username: p.username, email: p.email, role: p.role },
+        profile: { id: p.id, fullName: p.fullName, username: p.username, email: p.email, role: p.role },
         preferences: { theme: ctx.theme, emailNotifications: true },
       };
     case 'apiGetMyMetrics':
@@ -132,6 +161,8 @@ function defaultWorkerReply(action, args, ctx) {
         success: true,
         indicators: { active_members: 1, active_admins: 1, banned_accounts: 0, published_events: 0, proposals_pending: 0, proposals_voting: 0, tasks_open: 0 },
       };
+    case 'apiAdminAssistantModeration':
+      return moderationSummary();
     default:
       // Listas vazias cobrem os loaders de eventos/propostas/tarefas etc.
       return { success: true, events: [], proposals: [], tasks: [], requests: [], items: [], users: [], logs: [], reports: [], conversations: [], messages: [] };
@@ -148,6 +179,8 @@ function defaultWorkerReply(action, args, ctx) {
  * @param {object} [opts.atlasFlags] chaves do Atlas (js/core/flags.js); padrão desliga apresentação e dicas
  * @param {string[]} [opts.launchArgs]  flags extras do Chromium (ex.: câmera falsa para o leitor de QR)
  * @param {string[]} [opts.permissions]  permissões concedidas ao contexto (ex.: ['camera'])
+ * @param {boolean} [opts.firstLogin]  true = primeira entrada da pessoa: o onboarding por papel aparece.
+ *   Padrão false: o onboarding já vem marcado como visto (laift_onboarding_seen_<id>), para não bloquear a UI.
  */
 async function startApp(opts = {}) {
   const { chromium } = loadPlaywright();
@@ -156,7 +189,7 @@ async function startApp(opts = {}) {
   const ctx = {
     sessionToken: 'e2e-session-token',
     theme: opts.theme || 'light',
-    profile: Object.assign({ fullName: 'Ana Teste', email: 'ana@exemplo.com', username: 'ana', role: opts.role || 'member' }, opts.profile || {}),
+    profile: Object.assign({ id: E2E_PROFILE_ID, fullName: 'Ana Teste', email: 'ana@exemplo.com', username: 'ana', role: opts.role || 'member' }, opts.profile || {}),
   };
   const calls = { worker: [], external: [] };
   const errors = [];
@@ -178,6 +211,12 @@ async function startApp(opts = {}) {
   // os arquivos do atlas antes das rotas dos testes. Só atlas-offline o liga.
   const atlasFlags = Object.assign({ offline: false, quizSetup: false }, opts.atlasFlags !== undefined ? opts.atlasFlags : { onboarding: false, hints: false });
   await context.addInitScript((flags) => { window.__atlasFlags = flags; }, atlasFlags);
+  if (!opts.firstLogin) {
+    // Onboarding visto antes do app carregar (o script só lê o storage ao entrar).
+    await context.addInitScript((key) => {
+      try { window.localStorage.setItem(key, '1'); } catch (err) { /* storage bloqueado: o diálogo aparece */ }
+    }, ONBOARDING_SEEN_PREFIX + ctx.profile.id);
+  }
 
   await context.route('**/*', async (route) => {
     const req = route.request();
@@ -244,4 +283,4 @@ function check(condition, description) {
   }
 }
 
-module.exports = { startApp, check, loadPlaywright, startStaticServer };
+module.exports = { startApp, check, loadPlaywright, startStaticServer, moderationSummary, E2E_PROFILE_ID, ONBOARDING_SEEN_PREFIX };
