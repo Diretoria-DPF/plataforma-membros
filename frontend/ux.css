@@ -570,3 +570,26 @@ body:has(.learn-viewer-immersive:not(.hidden)) .lia-panel {
     transform: translateY(calc(100% + var(--move-sm)));
   }
 }
+
+/* ---------- Sem bordas sob ux-v2: tom + hairline por box-shadow (largura inalterada) ---------- */
+/* Estado vazio: o fundo já é --layer-2 (bloco "Camada 2"); .state-error mantém o tom de perigo. */
+:root[data-flag-ux-v2-enabled] .state {
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+/* Tecla: hairline de contraste de controle (1.4.11) para a leitura. */
+:root[data-flag-ux-v2-enabled] .shortcuts-list kbd {
+  border-color: transparent;
+  background: var(--layer-2);
+  box-shadow: inset 0 0 0 1px var(--field-border);
+}
+:root[data-flag-ux-v2-enabled] .mfa-codes li {
+  border-color: transparent;
+  background: var(--layer-2);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+/* Chip: fundo já é --layer-1 (--surface); o hover existente continua valendo. */
+:root[data-flag-ux-v2-enabled] .lia-chip {
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--field-border);
+}
