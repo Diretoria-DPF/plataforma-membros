@@ -106,6 +106,73 @@ describe('ModerationService — decaimento e redenção da Lia (ADR 0004, banco 
     ).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
+  // Copy da redenção: cada mensagem diz o que houve, o nível, o que a pessoa pode fazer e quando; não acusa
+  // ("seu texto", "sinceridade") e não leva dado pessoal (nome, e-mail, identificador).
+  describe('redenção: mensagens específicas, sem acusar e sem dado pessoal', () => {
+    const GENERIC = /\b(seu|sua|seus|suas)\b/i;
+    const PERSONAL = /maria|exemplo\.com|44444444/i;
+    const clean = (text) => {
+      expect(text).not.toMatch(GENERIC);
+      expect(text).not.toMatch(PERSONAL);
+      expect(text).not.toMatch(/sinceridade|mentir|culp/i);
+    };
+
+    test('aceita: diz que o nível voltou a 0 e que a conversa está liberada', async () => {
+      const res = await redeem(SINCERE);
+      expect(res.message).toMatch(/^Redenção aceita\. O nível de moderação voltou a 0 e você já pode conversar com a Lia normalmente\./);
+      clean(res.message);
+    });
+
+    test('recusada: diz o motivo sem acusar, que o nível não mudou e quando tentar de novo (1 hora)', async () => {
+      globalThis.fetch = jest.fn(async () => groqReply('nao'));
+      const res = await redeem(SINCERE);
+      expect(res.message).toMatch(/A redenção não foi aceita desta vez/);
+      expect(res.message).toMatch(/O nível de moderação continua o mesmo/);
+      expect(res.message).toMatch(/daqui a 1 hora/);
+      clean(res.message);
+    });
+
+    test('juiz indisponível: nada mudou no nível, não conta como tentativa e quando tentar de novo', async () => {
+      globalThis.fetch = jest.fn(async () => groqReply('', { status: 503 }));
+      const res = await redeem(NONSENSE);
+      expect(res.message).toMatch(/nada mudou no nível de moderação/);
+      expect(res.message).toMatch(/não conta como tentativa/);
+      expect(res.message).toMatch(/tente de novo em alguns minutos/);
+      clean(res.message);
+    });
+
+    test('nível já em 0: diz que não há o que redimir', async () => {
+      await redeem(SINCERE);
+      const err = await redeem(SINCERE, at(50.6)).catch((e) => e);
+      expect(err).toMatchObject({ name: 'ValidationError' });
+      expect(err.message).toMatch(/O nível de moderação já é 0: não há nada a redimir/);
+      clean(err.message);
+    });
+
+    test('espera de nova tentativa: diz que já houve um pedido e em quantos minutos pode enviar outro', async () => {
+      globalThis.fetch = jest.fn(async () => groqReply('nao'));
+      await redeem(SINCERE, at(50.1));
+      const err = await redeem(SINCERE, new Date(at(50.1).getTime() + HOUR / 2)).catch((e) => e);
+      expect(err).toMatchObject({ name: 'RateLimitError', payload: { retryAfterSeconds: 1800 } });
+      expect(err.message).toMatch(/Já houve um pedido de redenção há pouco\. Um novo pedido pode ser enviado em 30 minuto\(s\)\./);
+      clean(err.message);
+    });
+
+    test('limite de redenções aceitas: diz o limite, como o nível diminui e a quem recorrer', async () => {
+      for (let i = 0; i < C.MODERATION.REDEEM_ACCEPTED_MAX; i += 1) {
+        await db.query(`UPDATE assistant_moderation SET level = 2, redeem_attempt_at = NULL WHERE profile_id = $1`, [PROFILE]);
+        await redeem(SINCERE, at(50.5 + i));
+      }
+      await db.query(`UPDATE assistant_moderation SET level = 2, redeem_attempt_at = NULL WHERE profile_id = $1`, [PROFILE]);
+      const res = await redeem(SINCERE, at(60));
+      expect(res.message).toMatch(/O limite de 3 redenções aceitas em 30 dias foi atingido/);
+      expect(res.message).toMatch(/um nível a cada 30 dias sem nova ocorrência/);
+      expect(res.message).toMatch(/suspensão de 24 horas termina sozinha/);
+      expect(res.message).toMatch(/fale com a administração/);
+      clean(res.message);
+    });
+  });
+
   describe('redenção: só o veredito afirmativo do juiz aceita (achado 1)', () => {
     test('texto sem sentido + juiz indisponível: NÃO aceita, avisa e NÃO consome o cooldown de 1 h', async () => {
       globalThis.fetch = jest.fn(async () => groqReply('', { status: 503 }));
@@ -173,7 +240,7 @@ describe('ModerationService — decaimento e redenção da Lia (ADR 0004, banco 
     test('instrução embutida (filtro de injeção): recusa local com a mensagem padrão, SEM chamar o juiz', async () => {
       const res = await redeem(INJECTED);
       expect(res).toMatchObject({ success: true, accepted: false, level: 3, retryAfterSeconds: 3600 });
-      expect(res.message).toMatch(/Não consegui perceber sinceridade/);
+      expect(res.message).toMatch(/A redenção não foi aceita desta vez/);
       expect(globalThis.fetch).not.toHaveBeenCalled();
       expect((await row()).level).toBe(3);
       expect((await row()).redeem_attempt_at).not.toBeNull(); // a recusa consome o cooldown, como as demais

@@ -688,3 +688,67 @@ describe('Lia — RAG: citação só dos usados, follow-up, cota antes da busca,
     expect(insertsOf(sql)[0][6]).toBe(true);
   });
 });
+
+// O27: a resposta que carrega fontes/trechos do acervo depende desses trechos (que mudam) e o cache semântico
+// guarda só o texto, compartilhado entre pessoas por 7 dias. Por isso ela nunca entra nele nem é lida dele.
+describe('Lia — RAG x cache semântico (O27): resposta com fontes nunca entra no cache compartilhado', () => {
+  const orchestrated = (ragEnabled) => flags(FLAG_ROW('chatbot_enabled'), FLAG_ROW('use_orchestrator'), FLAG_ROW('rag_enabled', ragEnabled));
+  const RAG_ORCH = orchestrated(true);
+  const NO_RAG_ORCH = orchestrated(false);
+  const NO_INTENT = { message: 'qual a diferença entre agonista e antagonista?' };
+  const CHUNK = { id: 'c-1', source: 'kb', section: 'Eventos', content: 'Eventos abertos aparecem na aba Eventos.', score: 0.6 };
+  const KB = (rows) => ['FROM kb_chunks', rows];
+  const SAVED = ['INSERT INTO assistant_messages', [{ id: 'msg-1' }]];
+  const STORED = ['FROM ai_semantic_cache', [{
+    id: '11111111-1111-4111-8111-111111111111', answer: 'Resposta antiga guardada.', sim: 0.99, question_norm: normalizeQuestion(NO_INTENT.message),
+  }]];
+  const cacheTouches = (sql) => callsMatching(sql, 'ai_semantic_cache');
+
+  test('com fontes (RAG ligado e trechos achados): responde com a citação e não lê nem grava o cache', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Agonista ativa o receptor [1].'));
+    const sql = routedSql([RAG_ORCH, KB([CHUNK]), SAVED]);
+    const res = await chat(sql, MEMBER, NO_INTENT);
+    expect(res).toMatchObject({ success: true, source: 'ai', cached: false, sources: [{ source: 'kb', section: 'Eventos' }] });
+    expect(res.reply).toMatch(/\(Fonte: seção Eventos\)$/);
+    expect(cacheTouches(sql)).toHaveLength(0);
+  });
+
+  test('com fontes, uma resposta parecida já guardada NÃO é servida: a IA responde de novo, com as fontes de agora', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Resposta nova [1].'));
+    const sql = routedSql([RAG_ORCH, KB([CHUNK]), SAVED, STORED]);
+    const res = await chat(sql, MEMBER, NO_INTENT);
+    expect(res).toMatchObject({ source: 'ai', cached: false });
+    expect(res.reply).not.toMatch(/Resposta antiga/);
+    expect(res.sources).toEqual([{ source: 'kb', section: 'Eventos' }]);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+    expect(cacheTouches(sql)).toHaveLength(0);
+  });
+
+  test('com fontes, a recusa da IA ("não encontrei") também não vai ao cache', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Não encontrei essa informação nos trechos [1].'));
+    const sql = routedSql([RAG_ORCH, KB([CHUNK]), SAVED]);
+    const res = await chat(sql, MEMBER, NO_INTENT);
+    expect(res).toMatchObject({ source: 'ai', sources: [] });
+    expect(cacheTouches(sql)).toHaveLength(0);
+  });
+
+  test('sem fontes (RAG desligado): continua cacheando, e o texto guardado não leva citação nem "(Fonte: ...)"', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Agonista ativa o receptor.'));
+    const sql = routedSql([NO_RAG_ORCH, KB([CHUNK]), SAVED]);
+    const res = await chat(sql, MEMBER, NO_INTENT);
+    expect(res).not.toHaveProperty('sources');
+    const stores = callsMatching(sql, 'INSERT INTO ai_semantic_cache');
+    expect(stores).toHaveLength(1);
+    const values = stores[0].slice(1);
+    expect(values).toContain('Agonista ativa o receptor.');
+    expect(JSON.stringify(values)).not.toMatch(/Fonte|\[\d\]/);
+  });
+
+  test('sem fontes, pergunta repetida acerta o cache: sem IA e sem fontes na resposta', async () => {
+    const sql = routedSql([NO_RAG_ORCH, STORED]);
+    const res = await chat(sql, MEMBER, NO_INTENT);
+    expect(res).toMatchObject({ success: true, source: 'ai', cached: true, reply: 'Resposta antiga guardada.' });
+    expect(res).not.toHaveProperty('sources');
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+});

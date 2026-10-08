@@ -21,7 +21,7 @@
   var TICK_MS = 1000;
   var MAX_TIMEOUT_MS = 2147483647; // limite do setTimeout (~24,8 dias)
   var SERVER_TEXT_MAX = 300;
-  var REDEEM_ERROR_TEXT = 'Não consegui registrar seu pedido agora. Tente de novo em instantes.';
+  var REDEEM_ERROR_TEXT = 'O pedido de redenção não foi registrado agora e o nível de moderação não mudou. Envie de novo em alguns instantes.';
   var NETWORK_TEXT = 'Não foi possível enviar agora. Confira a conexão e tente de novo.';
   var BACK_TEXT = 'O chat voltou ao normal. Pode perguntar à vontade.';
 

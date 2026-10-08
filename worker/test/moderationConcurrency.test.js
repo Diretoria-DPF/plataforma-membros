@@ -236,6 +236,10 @@ describe('redenção x incidente DURANTE o julgamento (achado 4): aceitação co
 
     expect(res).toMatchObject({ success: true, accepted: false, stateChanged: true, level: 3, retryAfterSeconds: 0 });
     expect(res.message).toMatch(/não conta como tentativa/);
+    // Copy específico: o que houve (o nível mudou durante a avaliação), o que fazer (conferir e enviar de novo).
+    expect(res.message).toMatch(/nível de moderação mudou enquanto a explicação era avaliada/);
+    expect(res.message).toMatch(/confira o nível atual e envie de novo/);
+    expect(res.message).not.toMatch(/\b(seu|sua|seus|suas)\b/i);
     const row = await modRow();
     expect(row.level).toBe(3);
     expect(new Date(row.last_incident_at).getTime()).toBe(at(50.6).getTime()); // o incidente novo continua valendo
@@ -283,5 +287,63 @@ describe('redenção x incidente DURANTE o julgamento (achado 4): aceitação co
     expect(await redeem(SINCERE)).toMatchObject({ stateChanged: true });
     globalThis.fetch = jest.fn(async () => groqReply('sim'));
     expect(await redeem(SINCERE, at(50.7))).toMatchObject({ accepted: true, level: 0 });
+  });
+});
+
+describe('suspensão persistida (O17): a verdade está em assistant_moderation, a memória só cobre a falha de leitura', () => {
+  const UNTIL = () => new Date(at(50).getTime() + 24 * HOUR);
+  const failingReads = (error) => (strings, ...values) => {
+    const text = Array.isArray(strings) ? strings.join('?') : String(strings);
+    if (text.includes('FROM assistant_moderation')) return Promise.reject(error);
+    return sql(strings, ...values);
+  };
+  const connectionLost = () => Object.assign(new Error('connection terminated'), { code: '08006' });
+
+  test('lê a suspensão ativa direto do banco, sem gravar nada', async () => {
+    await seedSuspended();
+    ModerationService.__resetKnownSuspensionsForTests();
+    const before = await modRow();
+    expect(await ModerationService.persistedSuspensionUntil(sql, ME, at(50.5))).toEqual(UNTIL());
+    expect(await modRow()).toEqual(before);
+  });
+
+  test('sem suspensão ativa devolve null: sem linha, nível abaixo de 3 e prazo vencido (inclusive no instante exato)', async () => {
+    expect(await ModerationService.persistedSuspensionUntil(sql, ME, at(0))).toBeNull();
+    await insertRow({ level: 2, until: null, lastIncidentAt: at(0), lastDecayAt: null });
+    expect(await ModerationService.persistedSuspensionUntil(sql, ME, at(1))).toBeNull();
+    await db.query(`UPDATE assistant_moderation SET level = 3, until = $2 WHERE profile_id = $1`, [ME, UNTIL()]);
+    expect(await ModerationService.persistedSuspensionUntil(sql, ME, new Date(UNTIL().getTime() - 1))).toEqual(UNTIL());
+    expect(await ModerationService.persistedSuspensionUntil(sql, ME, UNTIL())).toBeNull();
+  });
+
+  test('memória vazia: o banco responde "suspensa" e a instância passa a lembrar', async () => {
+    await seedSuspended();
+    ModerationService.__resetKnownSuspensionsForTests();
+    expect(await ModerationService.resolveSuspension(sql, ME, at(50.5))).toEqual({ status: 'suspended', until: UNTIL() });
+    expect(ModerationService.knownSuspensionUntil(ME, at(50.5))).toEqual(UNTIL());
+  });
+
+  test('o banco responde "livre" e manda mais do que a memória: a anotação velha é esquecida', async () => {
+    await seedSuspended();
+    await db.query(`UPDATE assistant_moderation SET level = 0, until = NULL WHERE profile_id = $1`, [ME]);
+    expect(await ModerationService.resolveSuspension(sql, ME, at(50.5))).toEqual({ status: 'clear' });
+    expect(ModerationService.knownSuspensionUntil(ME, at(50.5))).toBeNull();
+  });
+
+  test('leitura do banco falha: vale a memória se ela conhece a suspensão; sem memória o estado é "desconhecido"', async () => {
+    await seedSuspended();
+    expect(await ModerationService.resolveSuspension(failingReads(connectionLost()), ME, at(50.5))).toEqual({ status: 'suspended', until: UNTIL() });
+    ModerationService.__resetKnownSuspensionsForTests();
+    expect(await ModerationService.resolveSuspension(failingReads(connectionLost()), ME, at(50.5))).toEqual({ status: 'unknown' });
+  });
+
+  test('memória com suspensão já vencida e leitura falhando: é "desconhecido", nunca "livre" por palpite', async () => {
+    await seedSuspended();
+    expect(await ModerationService.resolveSuspension(failingReads(connectionLost()), ME, at(52))).toEqual({ status: 'unknown' });
+  });
+
+  test('tabela ausente (42P01) é "livre": sem a tabela ninguém está suspenso', async () => {
+    const missing = Object.assign(new Error('relation "assistant_moderation" does not exist'), { code: '42P01' });
+    expect(await ModerationService.resolveSuspension(failingReads(missing), ME, at(50.5))).toEqual({ status: 'clear' });
   });
 });

@@ -169,6 +169,18 @@ function failingOn(fragment) {
     return sql(strings, ...values);
   };
 }
+/** Como failingOn, mas só a PRIMEIRA consulta que casa falha (falha transitória do banco). */
+function failingOnceOn(fragment) {
+  let failed = false;
+  return (strings, ...values) => {
+    const text = Array.isArray(strings) ? strings.join('?') : String(strings);
+    if (!failed && text.includes(fragment)) {
+      failed = true;
+      return Promise.reject(Object.assign(new Error('connection terminated'), { code: '08006' }));
+    }
+    return sql(strings, ...values);
+  };
+}
 const judgeAttempts = async () => {
   const rows = (await db.query(`SELECT attempts FROM rate_limit_buckets WHERE bucket = 'ASSISTANT_JUDGE'`)).rows;
   return rows.length ? Number(rows[0].attempts) : 0;
@@ -235,20 +247,17 @@ describe('moderação da Lia — falha do juiz e do estado (achados 5 e 6)', () 
     expect(res).toMatchObject({ moderation: { level: 3, suspended: true } });
   });
 
-  test('suspensão conhecida já expirada não prende ninguém quando a leitura falha', async () => {
+  test('suspensão já expirada no banco não prende ninguém quando só a FLAG não pôde ser lida', async () => {
     for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
-    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(52))).toBeNull();
+    __resetFlagCacheForTests();
+    expect(await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(52))).toBeNull();
   });
 
-  test('leitura falha e a suspensão NÃO é conhecida: segue normal (falha aberta) e registra o erro', async () => {
-    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(0))).toBeNull();
-    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
-  });
-
-  test('redenção aceita esquece a suspensão conhecida: depois dela, a falha de leitura não prende a pessoa', async () => {
+  test('redenção aceita: depois dela, a falha de leitura da flag não prende a pessoa (o banco manda)', async () => {
     for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
     await ModerationService.redeemAssistant(sql, env, MEMBER, { message: SINCERE }, CID, at(50.5));
-    expect(await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.6))).toBeNull();
+    __resetFlagCacheForTests();
+    expect(await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.6))).toBeNull();
   });
 
   test('estado da própria pessoa: com a leitura falhando, a suspensão conhecida continua aparecendo', async () => {
@@ -257,6 +266,79 @@ describe('moderação da Lia — falha do juiz e do estado (achados 5 e 6)', () 
       moderated: true, level: 3, suspended: true,
     });
     expect(await Gate.assistantModerationState(failingOn('FROM assistant_moderation'), ADMIN, at(50.5))).toMatchObject({ moderated: false });
+  });
+});
+
+describe('moderação da Lia — a suspensão vem do banco, não da memória da instância (O17)', () => {
+  const SUSPENDED_UNTIL = () => new Date(at(50).getTime() + 24 * HOUR).toISOString();
+  const suspendThenForget = async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d));
+    ModerationService.__resetKnownSuspensionsForTests(); // reinício do Worker ou outra instância: a memória está vazia
+    __resetFlagCacheForTests();
+  };
+
+  test('memória vazia e a FLAG não pôde ser lida: a suspensão persistida vale e a conversa segue sem IA', async () => {
+    await suspendThenForget();
+    const callsBefore = aiCalls();
+    const res = await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ source: 'moderation', actions: [], moderation: { level: 3, suspended: true, until: SUSPENDED_UNTIL() } });
+    expect(res.message).toMatch(/suspenso até/);
+    expect(aiCalls()).toBe(callsBefore);
+  });
+
+  test('memória vazia e a 1ª leitura do estado falha de forma transitória: relê o banco e mantém a suspensão', async () => {
+    await suspendThenForget();
+    const res = await Gate.moderationGate(failingOnceOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ moderation: { level: 3, suspended: true, until: SUSPENDED_UNTIL() } });
+    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
+  });
+
+  test('a suspensão relida do banco volta à memória: se a leitura cair de vez, a pessoa continua retida', async () => {
+    await suspendThenForget();
+    await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.5));
+    const res = await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.6));
+    expect(res).toMatchObject({ moderation: { level: 3, suspended: true } });
+  });
+
+  test('a memória diz "suspensa", mas o banco já mostra a redenção (outra instância): o banco manda e libera', async () => {
+    for (const d of [0, 25, 50]) await gate(MEMBER, OFFENSIVE, at(d)); // esta instância anota a suspensão
+    await db.query(`UPDATE assistant_moderation SET level = 0, until = NULL, redeemed_at = now() WHERE profile_id = $1`, [ME]);
+    __resetFlagCacheForTests();
+    expect(await Gate.moderationGate(failingOn('FROM feature_flags'), env, MEMBER, LEGIT, CID, at(50.5))).toBeNull();
+  });
+
+  test('nada pôde ser lido e a memória está vazia: falha SEGURA, sem IA e sem acusar, e o erro fica registrado', async () => {
+    await suspendThenForget();
+    const callsBefore = aiCalls();
+    const res = await Gate.moderationGate(failingOn('FROM assistant_moderation'), env, MEMBER, LEGIT, CID, at(50.5));
+    expect(res).toMatchObject({ success: true, source: 'moderation', actions: [], degraded: true, moderation: { level: 0, suspended: false, until: null } });
+    expect(res.message).toMatch(/não conseguiu verificar/i);
+    expect(res.message).toMatch(/não é um aviso nem uma suspensão/i);
+    expect(res.message).toMatch(/alguns minutos/i);
+    expect(res.message).not.toMatch(/\b(seu|sua|seus|suas)\b/i);
+    expect(aiCalls()).toBe(callsBefore);
+    expect((await db.query(`SELECT code FROM error_logs`)).rows.map((r) => r.code)).toContain('ASSISTANT_MODERATION_FAILED');
+  });
+
+  test('tabela da moderação ausente (42P01): ninguém pode estar suspenso, a conversa segue (não é falha de leitura)', async () => {
+    await db.exec('ALTER TABLE assistant_moderation RENAME TO assistant_moderation_off');
+    try {
+      expect(await gate(MEMBER, LEGIT, at(0))).toBeNull();
+    } finally {
+      await db.exec('ALTER TABLE assistant_moderation_off RENAME TO assistant_moderation');
+    }
+  });
+
+  test('estado da própria pessoa: memória vazia e a flag ilegível mostram a suspensão persistida', async () => {
+    await suspendThenForget();
+    expect(await Gate.assistantModerationState(failingOn('FROM feature_flags'), MEMBER, at(50.5))).toMatchObject({
+      moderated: true, level: 3, suspended: true, until: SUSPENDED_UNTIL(),
+    });
+  });
+
+  test('estado da própria pessoa: sem poder ler nada e sem memória, a tela não quebra (o portão é quem protege)', async () => {
+    await suspendThenForget();
+    expect(await Gate.assistantModerationState(failingOn('FROM assistant_moderation'), MEMBER, at(50.5))).toMatchObject({ success: true, moderated: false });
   });
 });
 

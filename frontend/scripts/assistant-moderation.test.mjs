@@ -224,6 +224,15 @@ function captureWarn() {
   return { warned, restore: () => { console.warn = real; } };
 }
 
+test('redenção sem resposta útil do servidor: o erro diz o que houve, o nível e o que fazer, sem "seu/sua" genérico', () => {
+  const out = Moderation.redeemOutcome(null);
+  assert.equal(out.kind, 'error');
+  assert.match(out.message, /O pedido de redenção não foi registrado agora/);
+  assert.match(out.message, /o nível de moderação não mudou/);
+  assert.match(out.message, /Envie de novo em alguns instantes/);
+  assert.doesNotMatch(out.message, /\b(seu|sua|seus|suas)\b/i);
+});
+
 test('redenção com falha de rede: o aviso vai como alerta, o texto fica no campo e Enviar volta a valer', async () => {
   const { ctx, calls } = fakeCtx((name) => (name === 'apiAssistantRedeem' ? Promise.reject(new TypeError('Failed to fetch')) : {}));
   const m = Moderation.createModeration(ctx);
