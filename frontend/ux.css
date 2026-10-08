@@ -527,15 +527,26 @@ summary:focus-visible,
   }
 }
 :root[data-flag-ux-v2-enabled] #agendamento-info,
-:root[data-flag-ux-v2-enabled] .agendamento-info,
-:root[data-flag-ux-v2-enabled] .hero {
+:root[data-flag-ux-v2-enabled] .agendamento-info {
   border: 0;
   border-radius: var(--laift-radius-xl);
   background: var(--layer-1);
-  display: flex; justify-content: center; min-height: 112px; /* altura reservada: a Lia montada não faz o login pular (CLS) */
+}
+/* Hero da entrada FORA do fluxo do cartão (sem altura reservada, sem CLS): a cabeça da Lia espia sobre a
+   borda superior de #screen-welcome e termina dentro do padding, acima do selo "Plataforma de Membros"
+   (padding do cartão: 22 px até 480 px, 32 px acima). Sem superfície própria e sem interação. */
+:root[data-flag-ux-v2-enabled] #screen-welcome { position: relative; }
+:root[data-flag-ux-v2-enabled] #screen-welcome > .hero {
+  position: absolute; top: -92px; left: 50%; transform: translateX(-50%); margin: 0;
+  display: flex; justify-content: center; min-height: 0;
+  border: 0; border-radius: 0; box-shadow: none; background: transparent;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  pointer-events: none;
 }
 /* Recorte de cabeça do hero (crop head, lia.js): quadrado 84x84 -> caixa 1:1 de 112 px, não o 2:3 padrão. */
 :root[data-flag-ux-v2-enabled] .hero .lia { aspect-ratio: 1 / 1; --lia-size: 112px; }
+/* Sem este recorte o corpo (fora do viewBox da cabeça) aparece por cima do título, como no lançador. */
+:root[data-flag-ux-v2-enabled] .hero .lia-svg { overflow: hidden; }
 
 /* Módulos com canvas 3D (Atlas imersivo): nenhum desfoque sobre o canvas;
    barras voltam ao fundo opaco. */
