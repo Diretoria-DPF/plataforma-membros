@@ -114,6 +114,8 @@ module.exports = async function home() {
     check(true, 'acerto em porcentagem (72%)');
 
     check((await member.page.locator('#home-dashboard .home-chart-main .laift-chart--line').count()) === 1, 'gráfico principal de atividade é linha+área');
+    check((await member.page.locator('#home-dashboard .laift-chart [tabindex]').count()) === 0, 'nenhum gráfico do Início recebe foco por tabindex');
+    check((await member.page.locator('#home-dashboard .home-chart-main .laift-chart__value:not(.laift-chart__value--hover)').count()) >= 1, 'o último valor da atividade aparece sem hover');
     const pressed = await member.page.$$eval('#home-dashboard .home-range-btn', (n) => n.map((b) => b.getAttribute('aria-pressed')));
     check(pressed.join(',') === 'true,false,false', 'período padrão é 30 dias (' + pressed + ')');
     const sizes = await member.page.$$eval('#home-dashboard .home-range-btn', (n) => n.map((b) => b.getBoundingClientRect().height));

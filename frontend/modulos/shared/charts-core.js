@@ -16,6 +16,11 @@
   var ARC_EPSILON = 0.01;
   var BAR_GAP = 2;
   var EMPTY_LABEL = 'Sem dados no período';
+  /** Largura média de um caractere de rótulo, em múltiplos do corpo (dígitos tabulares). */
+  var LABEL_EM = 0.62;
+  /** Folga mínima entre dois rótulos de valor que não podem se tocar. */
+  var LABEL_GAP_PX = 2;
+  var LABEL_SIZE = 11;
 
   function toNumber(value) {
     var n = typeof value === 'number' ? value : Number(value);
@@ -353,6 +358,80 @@
     });
   }
 
+  /** Largura estimada (px) de um rótulo de `size` px, sem medir o DOM (o núcleo segue puro). */
+  function estimateTextWidth(text, size) {
+    return String(text).length * toNumber(size) * LABEL_EM;
+  }
+
+  function anchoredX(x, width, anchor) {
+    if (anchor === 'end') return x - width;
+    if (anchor === 'middle') return x - width / 2;
+    return x;
+  }
+
+  /** Caixa do rótulo: y é a linha de base; a caixa sobe até a altura das maiúsculas. */
+  function labelBox(cand, size) {
+    var w = estimateTextWidth(cand.text, size);
+    var x0 = anchoredX(toNumber(cand.x), w, cand.anchor);
+    return { x0: x0, x1: x0 + w, y0: toNumber(cand.y) - size * 0.8, y1: toNumber(cand.y) + size * 0.25 };
+  }
+
+  function boxesTouch(a, b) {
+    return a.x0 < b.x1 + LABEL_GAP_PX && b.x0 < a.x1 + LABEL_GAP_PX
+      && a.y0 < b.y1 + LABEL_GAP_PX && b.y0 < a.y1 + LABEL_GAP_PX;
+  }
+
+  function insideBox(box, bounds) {
+    if (!bounds) return true;
+    return box.x0 >= bounds.minX && box.x1 <= bounds.maxX && box.y0 >= bounds.minY && box.y1 <= bounds.maxY;
+  }
+
+  /** Ordem de aceitação: obrigatórios; depois maior prioridade; empate: o de índice maior (as últimas). */
+  function acceptanceOrder(list) {
+    return list.map(function (_, i) { return i; }).sort(function (a, b) {
+      var ca = list[a];
+      var cb = list[b];
+      if (!!ca.required !== !!cb.required) return ca.required ? -1 : 1;
+      var diff = toNumber(cb.priority) - toNumber(ca.priority);
+      return diff !== 0 ? diff : b - a;
+    });
+  }
+
+  /**
+   * Decide quais rótulos de valor aparecem sem colidir (função pura).
+   * candidates: [{ x, y, text, anchor, priority, required }]; y é a linha de base.
+   * Obrigatórios sempre entram. Os demais entram por prioridade, se a caixa cabe em
+   * options.bounds e não toca os já aceitos. Devolve um boolean por candidato, na ordem de entrada.
+   */
+  function placeValueLabels(candidates, options) {
+    var opts = options || {};
+    var size = toNumber(opts.size) || LABEL_SIZE;
+    var list = Array.isArray(candidates) ? candidates : [];
+    var accepted = [];
+    var show = list.map(function () { return false; });
+    acceptanceOrder(list).forEach(function (i) {
+      var cand = list[i];
+      var box = labelBox(cand, size);
+      if (!cand.required) {
+        if (!insideBox(box, opts.bounds)) return;
+        if (accepted.some(function (other) { return boxesTouch(box, other); })) return;
+      }
+      accepted.push(box);
+      show[i] = true;
+    });
+    return show;
+  }
+
+  /** Soma de cada série (índice = série) nas linhas; valor ausente conta zero. */
+  function seriesTotals(rows, count) {
+    var n = clamp(Math.floor(toNumber(count)) || 1, 1, MAX_SERIES);
+    var totals = [];
+    for (var s = 0; s < n; s += 1) {
+      totals.push(rows.reduce(function (acc, row) { return acc + toNumber((row.values || [])[s]); }, 0));
+    }
+    return totals;
+  }
+
   var api = {
     MAX_SERIES: MAX_SERIES,
     EMPTY_LABEL: EMPTY_LABEL,
@@ -382,7 +461,10 @@
     countUpValue: countUpValue,
     parseDuration: parseDuration,
     describeRows: describeRows,
-    tableRows: tableRows
+    tableRows: tableRows,
+    estimateTextWidth: estimateTextWidth,
+    placeValueLabels: placeValueLabels,
+    seriesTotals: seriesTotals
   };
 
   if (typeof module !== 'undefined' && module.exports) {
