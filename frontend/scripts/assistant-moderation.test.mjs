@@ -213,6 +213,142 @@ test('relógio: com o painel aberto, a suspensão acaba no horário e o chat vol
   }
 });
 
+const NETWORK = 'Não foi possível enviar agora. Confira a conexão e tente de novo.';
+const EXPLANATION = 'Errei ao xingar a colega. Vou responder com respeito daqui em diante.';
+
+/** Captura o console.warn da falha aberta, para conferir sem poluir a saída do teste. */
+function captureWarn() {
+  const warned = [];
+  const real = console.warn;
+  console.warn = (...args) => { warned.push(args); };
+  return { warned, restore: () => { console.warn = real; } };
+}
+
+test('redenção com falha de rede: o aviso vai como alerta, o texto fica no campo e Enviar volta a valer', async () => {
+  const { ctx, calls } = fakeCtx((name) => (name === 'apiAssistantRedeem' ? Promise.reject(new TypeError('Failed to fetch')) : {}));
+  const m = Moderation.createModeration(ctx);
+  try {
+    m.suspend(inOneHour(), 0);
+    const area = find(m.root, 'lia-redeem-text');
+    const send = find(m.root, 'lia-redeem-send');
+    area.value = EXPLANATION;
+    find(m.root, 'lia-redeem-form').dispatch('submit');
+    await tick();
+    const alert = find(m.root, 'lia-redeem-alert');
+    assert.equal(alert.attrs.role, 'alert');
+    assert.equal(alert.classList.contains('hidden'), false);
+    assert.equal(alert.textContent, NETWORK);
+    assert.equal(find(m.root, 'lia-redeem-status').textContent, '', 'não fica "Enviando…" preso');
+    assert.equal(send.disabled, false, 'Enviar volta ao normal');
+    assert.equal(send.focused, 1, 'o foco volta para Enviar');
+    assert.equal(area.value, EXPLANATION, 'o texto fica para tentar de novo');
+    assert.equal(m.isSuspended(), true, 'a falha não libera o chat');
+    assert.deepEqual(calls.lia, []);
+    assert.deepEqual(calls.note, []);
+  } finally {
+    m.stop();
+  }
+});
+
+test('exceção síncrona ao chamar a API: não lança para quem enviou, o alerta aparece e Enviar volta', async () => {
+  const { ctx } = fakeCtx((name) => { if (name === 'apiAssistantRedeem') throw new Error('falha interna'); return {}; });
+  const m = Moderation.createModeration(ctx);
+  try {
+    m.suspend(inOneHour(), 0);
+    find(m.root, 'lia-redeem-text').value = EXPLANATION;
+    assert.doesNotThrow(() => find(m.root, 'lia-redeem-form').dispatch('submit'));
+    await tick();
+    assert.equal(find(m.root, 'lia-redeem-alert').textContent, NETWORK);
+    assert.equal(find(m.root, 'lia-redeem-send').disabled, false);
+  } finally {
+    m.stop();
+  }
+});
+
+test('depois de uma falha de rede, tentar de novo funciona: a redenção aceita sai da suspensão', async () => {
+  let attempts = 0;
+  const { ctx, calls } = fakeCtx((name) => {
+    if (name !== 'apiAssistantRedeem') return {};
+    attempts += 1;
+    return attempts === 1 ? Promise.reject(new TypeError('Failed to fetch')) : { success: true, accepted: true, message: 'ok' };
+  });
+  const m = Moderation.createModeration(ctx);
+  try {
+    m.suspend(inOneHour(), 0);
+    find(m.root, 'lia-redeem-text').value = EXPLANATION;
+    find(m.root, 'lia-redeem-form').dispatch('submit');
+    await tick();
+    find(m.root, 'lia-redeem-form').dispatch('submit');
+    await tick();
+    assert.equal(attempts, 2);
+    assert.equal(m.isSuspended(), false);
+    assert.deepEqual(calls.lia, ['redeem']);
+    assert.equal(find(m.root, 'lia-redeem-alert').classList.contains('hidden'), true, 'o alerta some ao aceitar');
+  } finally {
+    m.stop();
+  }
+});
+
+test('falha no envio não cria relógio órfão: a suspensão segue com um só relógio e stop() limpa tudo', async () => {
+  const { ctx } = fakeCtx((name) => (name === 'apiAssistantRedeem' ? Promise.reject(new TypeError('Failed to fetch')) : {}));
+  const m = Moderation.createModeration(ctx);
+  const live = new Set();
+  const realSetTimeout = globalThis.setTimeout;
+  const realClearTimeout = globalThis.clearTimeout;
+  globalThis.setTimeout = (fn, ms) => {
+    const id = realSetTimeout(() => { live.delete(id); fn(); }, ms);
+    live.add(id);
+    return id;
+  };
+  globalThis.clearTimeout = (id) => { live.delete(id); realClearTimeout(id); };
+  try {
+    m.suspend(inOneHour(), 0);
+    const before = live.size;
+    find(m.root, 'lia-redeem-text').value = EXPLANATION;
+    find(m.root, 'lia-redeem-form').dispatch('submit');
+    await tick();
+    assert.equal(before, 1, 'a suspensão tem um só relógio');
+    assert.equal(live.size, before, 'a falha não cria relógio novo');
+    m.stop();
+    assert.equal(live.size, 0, 'parar limpa o relógio');
+  } finally {
+    m.stop();
+    globalThis.setTimeout = realSetTimeout;
+    globalThis.clearTimeout = realClearTimeout;
+  }
+});
+
+test('consulta ao abrir com falha de rede: falha aberta, sem erro não tratado, o chat segue e a falha vai ao console', async () => {
+  const warn = captureWarn();
+  const { ctx } = fakeCtx((name) => (name === 'apiAssistantModerationState' ? Promise.reject(new TypeError('Failed to fetch')) : {}));
+  const m = Moderation.createModeration(ctx);
+  try {
+    m.checkOnOpen();
+    await tick();
+    assert.equal(m.isSuspended(), false);
+    assert.equal(m.root.classList.contains('hidden'), true);
+    assert.equal(warn.warned.length, 1);
+  } finally {
+    warn.restore();
+    m.stop();
+  }
+});
+
+test('consulta ao abrir com exceção síncrona: checkOnOpen não lança, então abrir o painel segue', async () => {
+  const warn = captureWarn();
+  const { ctx } = fakeCtx(() => { throw new Error('falha interna'); });
+  const m = Moderation.createModeration(ctx);
+  try {
+    assert.doesNotThrow(() => m.checkOnOpen());
+    await tick();
+    assert.equal(m.isSuspended(), false);
+    assert.equal(warn.warned.length, 1);
+  } finally {
+    warn.restore();
+    m.stop();
+  }
+});
+
 test('assistant-moderation.js não converte texto em HTML, não guarda nada, não cria links e não usa intervalo', () => {
   const src = read('frontend/assistant-moderation.js');
   assert.doesNotMatch(src, /innerHTML|insertAdjacentHTML|document\.write|eval\(/);

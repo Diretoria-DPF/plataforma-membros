@@ -158,6 +158,45 @@ async function moderacao() {
     await refusal.close();
   }
 
+  // ---- Falha de rede ao enviar a redenção: aviso de alerta, texto preservado, Enviar volta e a 2ª tentativa vale ----
+  const flaky = await startApp({
+    role: 'member',
+    workerHandlers: {
+      apiGetFeatureFlags: FLAGS_ON,
+      apiAssistantChat: suspendedReply,
+      apiAssistantRedeem: () => ({ success: true, accepted: true, level: 0, message: 'Redenção aceita.' }),
+    },
+  });
+  try {
+    const page = await openLia(flaky, '[suspende] oi');
+    await page.waitForSelector('#lia-panel .lia[aria-label="Lia está suspensa"]');
+    await page.click('.lia-redeem-open');
+    const explanation = 'Errei ao xingar a colega. Vou responder com respeito daqui em diante.';
+    await page.fill('#lia-redeem-text', explanation);
+    // A primeira tentativa cai na rede (requisição abortada); a segunda segue para o servidor de teste.
+    let sends = 0;
+    await page.route((url) => url.toString().includes('.workers.dev'), (route) => {
+      if (!/apiAssistantRedeem/.test(route.request().postData() || '')) return route.fallback();
+      sends += 1;
+      return sends === 1 ? route.abort('failed') : route.fallback();
+    });
+    await page.click('.lia-redeem-send');
+    await page.waitForSelector('.lia-redeem-alert', { state: 'visible' });
+    check(/Não foi possível enviar agora/.test(await page.textContent('.lia-redeem-alert')), 'a falha de rede aparece em português, como aviso de alerta');
+    check(await page.getAttribute('.lia-redeem-alert', 'role') === 'alert', 'o aviso de falha tem papel de alerta');
+    check(await page.textContent('.lia-redeem-status') === '', 'a falha não deixa "Enviando…" preso');
+    check(await page.isEnabled('.lia-redeem-send'), 'depois da falha, Enviar volta ao normal');
+    check(await page.inputValue('#lia-redeem-text') === explanation, 'depois da falha, a explicação continua no campo');
+    check(await page.evaluate(() => document.activeElement.classList.contains('lia-redeem-send')), 'o foco volta para Enviar, para tentar de novo');
+    check(await page.isDisabled('#lia-input'), 'a falha não libera o chat: segue suspenso');
+    await page.click('.lia-redeem-send');
+    await page.waitForSelector('#lia-redeem.hidden', { state: 'attached' });
+    check(sends === 2 && await page.isEnabled('#lia-input'), 'a segunda tentativa é aceita e o chat volta');
+    check(flaky.errors.length === 0, 'sem erros de página na falha de rede (' + flaky.errors.join('; ') + ')');
+  } finally {
+    await flaky.close();
+  }
+
   // ---- Consulta ao abrir: restaura a suspensão; uma vez por página; sair da conta limpa tudo ----
   const stateCalls = [];
   const restore = await startApp({
