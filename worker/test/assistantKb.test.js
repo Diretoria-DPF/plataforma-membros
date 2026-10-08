@@ -311,3 +311,37 @@ describe('intenções de administração por papel', () => {
     });
   });
 });
+
+describe('Lia sobre a Liga: processo seletivo (fatos do edital de 2026, sem vagas nem datas)', () => {
+  test.each([
+    ['como entro na liga?', 'liga_processo'],
+    ['quando abre o processo seletivo', 'liga_processo'],
+    ['quero entrar na liga', 'liga_processo'],
+    ['quais são as áreas da liga?', 'liga_processo'],
+    ['qual o contato da liga?', 'liga_processo'],
+  ])('%s → %s', (message, id) => {
+    const hit = matchIntent(message, []);
+    expect(hit && hit.id).toBe(id);
+  });
+
+  test('inscrição em evento continua em eventos', () => {
+    expect(matchIntent('quero me inscrever no evento', [], 'member').id).toBe('eventos');
+  });
+
+  test('a resposta do processo não traz vagas nem datas, cabe em 400 caracteres e não usa nome oficial', () => {
+    const intent = INTENTS.find((i) => i.id === 'liga_processo');
+    expect(intent.reply).not.toMatch(/\d+\s*vagas|\d{1,2}\/\d{1,2}/);
+    expect(intent.reply.length).toBeLessThanOrEqual(400);
+    expect(intent.reply).not.toMatch(/Liga Acadêmica/i);
+    expect(intent.reply).not.toMatch(/[<>]/);
+  });
+
+  test('o acervo traz a seção da Liga, com trechos de até 1.200 caracteres e sem vagas, datas ou Edital v2', () => {
+    const liga = buildDocuments().filter((d) => d.source === 'liga');
+    expect(liga.map((d) => d.section)).toEqual(expect.arrayContaining(['Como entrar', 'Áreas', 'Contato']));
+    liga.forEach((d) => {
+      expect(d.content.length).toBeLessThanOrEqual(1200);
+      expect(d.content).not.toMatch(/\d+\s*vagas|\d{1,2}\/\d{1,2}|edital v2/i);
+    });
+  });
+});

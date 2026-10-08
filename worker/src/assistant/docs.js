@@ -10,7 +10,7 @@
  *   - 'kb'        as intenções de uso geral de assistant/kb.js (uma seção por intenção; as de
  *                 administração ficam de fora: o acervo é o mesmo para todos os papéis);
  *   - 'destinos'  as telas e módulos da lista branca de assistant/targets.js;
- *   - 'guia'      documentos markdown embutidos abaixo, divididos por "## ".
+ *   - 'guia' e 'liga'  documentos markdown embutidos abaixo, divididos por "## ".
  * `buildDocuments()` devolve a lista de trechos {source, section, content} que
  * `ragService.reindex` grava em kb_chunks (idempotente: source + section).
  */
@@ -52,6 +52,20 @@ const GUIDE_MARKDOWN = [
       'Mensagens ofensivas à Lia geram um aviso. Reincidências aumentam o nível: alerta, aviso sério e suspensão de 24 horas do chat. Cada 30 dias sem novo incidente reduz um nível.',
       '## Redenção',
       'Quem está com nível acima de zero pode explicar com sinceridade o que houve e pedir redenção. Se aceita, o nível volta a zero na hora; se recusada, é possível tentar de novo após 1 hora.',
+    ].join('\n'),
+  },
+  {
+    source: 'liga',
+    markdown: [
+      '# A Liga',
+      '## O que é a LAIFT',
+      'A LAIFT é uma liga acadêmica de ensino, pesquisa e extensão voltada às ciências farmacológicas. Ela funciona no campus UNINASSAU Pituba, em Salvador. Os canais oficiais são o Instagram @laift.liga e a página laift.com.br/liga.',
+      '## Como entrar',
+      'Para entrar na LAIFT há processo seletivo, pelo edital de 2026. É preciso estar matriculado ou ter concluído curso da área da saúde ou correlatos, como Farmácia, Biomedicina, Medicina, Nutrição ou Enfermagem. Também é preciso ter carga horária semanal mínima para as atividades, reuniões e planejamentos da Liga, cujo valor é a definir pela diretoria, e preencher a ficha de inscrição eletrônica de forma completa e fidedigna. A análise de perfil e a divulgação dos selecionados são feitas pelos canais oficiais e por e-mail, com prazos a definir pela diretoria. Datas e vagas: a definir pela diretoria. Com processo aberto, o aviso aparece na tela de entrada e na página da Liga.',
+      '## Áreas',
+      'As áreas de interesse são seis: Farmacologia Clínica e Terapêutica Aplicada; Toxicologia Forense e Química Analítica Operacional; Farmacocinética Avançada e Modelagem Computacional; Toxicologia Ambiental, Ocupacional e Ecotoxicologia; Escrita Científica, Pesquisa Clínica e Publicação de Artigos; Gestão Organizacional, Marketing Científico e Extensão Universitária. No formulário, você marca todas com afinidade.',
+      '## Contato',
+      'O contato oficial da Liga é o e-mail laiftligauninassau@gmail.com. A Lia nunca lê nem guarda inscrições e não altera dados. Os dados enviados no processo são tratados pela comissão organizadora só para a triagem e a comunicação oficial, sem compartilhamento com terceiros.',
     ].join('\n'),
   },
 ];
