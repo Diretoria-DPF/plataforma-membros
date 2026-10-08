@@ -475,3 +475,10 @@ Object.assign(MODERATION, {
   REDEEM_ACCEPTED_MAX: 3,          // redenções ACEITAS por pessoa na janela abaixo (conta em audit_logs)
   REDEEM_ACCEPTED_WINDOW_DAYS: 30,
 });
+
+// ---- Lia: revisão final da moderação (lote do decaimento diário) ----
+// O job diário (maintenance.js) processa no máximo este tanto de pessoas por execução, as de relógio
+// mais antigo primeiro. O que sobrar fica para o dia seguinte.
+Object.assign(MODERATION, {
+  DECAY_BATCH_SIZE: 500,
+});

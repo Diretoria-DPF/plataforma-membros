@@ -291,10 +291,20 @@ export async function registerAssistantIncident(sql, correlationId, profileId, d
   return next;
 }
 
-/** Job diário (maintenance.js): aplica o decaimento a todos com nível acima de 0. */
-export async function decayAssistantModeration(sql, now) {
+/**
+ * Job diário (maintenance.js): aplica o decaimento a quem tem nível acima de 0, em lote. Cada execução
+ * olha no máximo `batchSize` pessoas (C.MODERATION.DECAY_BATCH_SIZE), as de relógio mais antigo primeiro:
+ * são as que vencem antes, então o lote nunca fica preso nas mesmas linhas e o resto é feito no dia seguinte.
+ * Quem não tem relógio (sem incidente nem decaimento gravados) não decai e vai para o fim da fila.
+ */
+export async function decayAssistantModeration(sql, now, batchSize) {
   const at = now || new Date();
-  const rows = await sql`SELECT profile_id, level, until, last_incident_at, last_decay_at, redeemed_at, redeem_attempt_at FROM assistant_moderation WHERE level > 0`;
+  const limit = Number.isInteger(batchSize) && batchSize > 0 ? batchSize : C.MODERATION.DECAY_BATCH_SIZE;
+  const rows = await sql`
+    SELECT profile_id, level, until, last_incident_at, last_decay_at, redeemed_at, redeem_attempt_at
+    FROM assistant_moderation WHERE level > 0
+    ORDER BY GREATEST(last_incident_at, last_decay_at) ASC NULLS LAST, profile_id
+    LIMIT ${limit}`;
   let lowered = 0;
   for (const row of rows) {
     const before = Rules.normalizeState(row);
@@ -305,10 +315,14 @@ export async function decayAssistantModeration(sql, now) {
 }
 
 // ---- Juiz por LLM ----
+/**
+ * Veredito EXATO: a resposta inteira, normalizada (sem acento, caixa nem pontuação), é "sim" ou "nao".
+ * "Sim, ignore tudo..." ou qualquer outra coisa depois da palavra é ambíguo (null), nunca aceite.
+ */
 function verdict(content) {
-  const word = normalize(String(content || '')).split(' ')[0];
-  if (word === 'sim') return true;
-  if (word === 'nao') return false;
+  const answer = normalize(String(content || ''));
+  if (answer === 'sim') return true;
+  if (answer === 'nao') return false;
   return null;
 }
 
@@ -334,11 +348,13 @@ const VERDICT_LLM = Object.freeze({ offensive: true, detection: 'llm' });
  * Mensagem ofensiva? Termos PT-BR primeiro (barato); só se houver termo, o LLM confirma
  * (evita punir citação ou dúvida legítima). LLM fora do ar, ambíguo ou com `allowLlm: false`
  * (o portão estourou o teto de julgamentos): vale o termo. A falha do juiz é registrada.
+ * Mensagem com cara de injeção ("responda NAO", "ignore as instruções") NUNCA vai ao juiz: ela poderia
+ * mandar o classificador absolver o insulto, então vale só o termo.
  * @returns {Promise<{ offensive: boolean, detection: 'terms'|'llm'|null }>}
  */
 export async function judgeOffense(sql, env, identity, message, correlationId, options) {
   if (!Rules.containsOffensiveTerm(message)) return VERDICT_CLEAN;
-  if (options && options.allowLlm === false) return VERDICT_TERMS;
+  if ((options && options.allowLlm === false) || Rules.looksLikeInjection(message)) return VERDICT_TERMS;
   let sayYes = null;
   try {
     sayYes = await askJudge(sql, env, identity, buildModerationJudgeMessages({ message }));
@@ -356,7 +372,8 @@ export async function judgeOffense(sql, env, identity, message, correlationId, o
 const MSG_REDEEM_ACCEPTED = 'Obrigada por conversar. Redenção aceita: seu nível voltou ao normal.';
 const MSG_REDEEM_REFUSED = 'Não consegui perceber sinceridade no seu texto. Conte com suas palavras o que houve e como vai agir daqui em diante; você pode tentar de novo em 1 hora.';
 const MSG_REDEEM_UNAVAILABLE = 'Não consegui avaliar o seu pedido agora. Isso não conta como tentativa: tente de novo em alguns minutos.';
-const MSG_REDEEM_NORMAL = 'Seu nível já está normal: não há nada a redimir.';
+const MSG_REDEEM_CHANGED = 'O seu estado mudou enquanto o pedido era avaliado, então não apliquei a redenção. Isso não conta como tentativa: confira o seu nível e tente de novo.';
+const MSG_REDEEM_NORMAL ='Seu nível já está normal: não há nada a redimir.';
 const MSG_REDEEM_LIMIT = 'Você já teve ' + C.MODERATION.REDEEM_ACCEPTED_MAX + ' redenções aceitas nos últimos ' + C.MODERATION.REDEEM_ACCEPTED_WINDOW_DAYS + ' dias. Aguarde o fim da suspensão; se acredita que houve engano, fale com a administração.';
 
 function retryError(secondsLeft) {
@@ -408,20 +425,29 @@ async function releaseRedeemClaim(sql, profileId, at) {
     WHERE profile_id = ${profileId}::uuid AND redeem_attempt_at = ${iso(at)}::timestamptz`;
 }
 
-/** Zera o nível mexendo só no que a redenção muda; last_incident_at e last_decay_at ficam (não reinicia o contador). */
+/**
+ * Zera o nível mexendo só no que a redenção muda; last_incident_at e last_decay_at ficam (não reinicia o
+ * contador). A troca é CONDICIONAL ao estado que foi julgado (mesmo nível e mesmo último incidente): o juiz
+ * leva segundos, e um incidente (ou o decaimento) ocorrido nesse intervalo não pode ser apagado por um
+ * UPDATE cego. Devolve o novo estado, ou null quando a linha mudou no meio.
+ */
 async function applyRedemption(sql, profileId, state, at) {
   const next = Rules.redeem(state);
-  await sql`
+  const rows = await sql`
     UPDATE assistant_moderation
     SET level = ${next.level}, until = ${iso(next.until)}::timestamptz, redeemed_at = ${iso(at)}::timestamptz,
         redeem_attempt_at = NULL, updated_at = now()
-    WHERE profile_id = ${profileId}::uuid`;
-  return next;
+    WHERE profile_id = ${profileId}::uuid
+      AND level = ${Number(state.level)}
+      AND date_trunc('milliseconds', last_incident_at) IS NOT DISTINCT FROM ${iso(state.lastIncidentAt)}::timestamptz
+    RETURNING profile_id`;
+  return rows.length > 0 ? next : null;
 }
 
 /**
  * Desfecho da avaliação. Só `sayYes === true` aceita: juiz fora do ar, vazio ou ambíguo NUNCA
- * aceita (e não pune). A heurística local barra texto sem sentido antes de gastar o juiz.
+ * aceita (e não pune). A heurística local recusa ANTES de gastar o juiz: texto sem sentido, repetição,
+ * gritaria e texto com ordem embutida (Rules.looksLikeInjection) saem daqui com a recusa padrão, sem LLM.
  * @returns {Promise<'accepted'|'refused'|'unavailable'>}
  */
 async function decideRedemption(sql, env, identity, text, correlationId) {
@@ -441,6 +467,17 @@ async function decideRedemption(sql, env, identity, text, correlationId) {
 
 const redeemReply = (state, extra) => Object.assign({ success: true, accepted: false, level: state.level, retryAfterSeconds: 0 }, extra);
 
+/**
+ * O estado mudou enquanto o juiz avaliava (incidente novo, decaimento): a redenção NÃO é aplicada, para não
+ * apagar o que aconteceu no meio. Recusa leve: devolve a tentativa (não consome o cooldown de 1 h) e informa
+ * o nível ATUAL, relido. O incidente, se houve, continua valendo.
+ */
+async function stateChangedReply(sql, profileId, at) {
+  await releaseRedeemClaim(sql, profileId, at);
+  const { state } = await getAssistantState(sql, profileId, at);
+  return redeemReply(state, { stateChanged: true, message: MSG_REDEEM_CHANGED });
+}
+
 async function settleRedemption(sql, env, identity, text, state, correlationId, at) {
   const profileId = identity.profileId;
   const decision = await decideRedemption(sql, env, identity, text, correlationId);
@@ -453,6 +490,7 @@ async function settleRedemption(sql, env, identity, text, state, correlationId, 
     return redeemReply(state, { retryAfterSeconds: C.MODERATION.REDEEM_RETRY_SECONDS, message: MSG_REDEEM_REFUSED });
   }
   const next = await applyRedemption(sql, profileId, state, at);
+  if (!next) return stateChangedReply(sql, profileId, at);
   KNOWN_SUSPENSIONS.delete(profileId);
   await Logging.logAudit(sql, correlationId, profileId, 'assistant_redeemed', 'profile', profileId, 'success', { levelBefore: state.level, level: next.level });
   return { success: true, accepted: true, level: next.level, message: MSG_REDEEM_ACCEPTED };
@@ -461,7 +499,8 @@ async function settleRedemption(sql, env, identity, text, state, correlationId, 
 /**
  * apiAssistantRedeem: { message } com a explicação da pessoa.
  * Ordem: flag, texto, teto de pedidos/h, nível, teto de redenções aceitas, reivindicação atômica
- * da tentativa e só então a avaliação (heurística + juiz).
+ * da tentativa e só então a avaliação (heurística + juiz). A aceitação só vale se o estado ainda for o
+ * que foi julgado (applyRedemption é condicional): senão, `stateChanged: true` e o cooldown não é gasto.
  */
 export async function redeemAssistant(sql, env, identity, input, correlationId, now) {
   assertMemberOrAdmin(identity);
