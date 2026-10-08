@@ -331,7 +331,8 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
     return answer({ reply: MSG_REFUSAL, source: 'fallback' });
   }
 
-  const hit = matchIntent(message, history);
+  // O papel limita as intenções: a de administração não existe para quem não é admin (cai no fluxo normal).
+  const hit = matchIntent(message, history, role);
   if (hit) {
     if (hit.id === 'eventos') {
       const live = await liveEventsReply(sql, env, identity, correlationId);

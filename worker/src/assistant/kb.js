@@ -15,7 +15,7 @@
  * - Nada aqui contém dado de pessoa alguma.
  */
 
-import { AI_QUOTAS, MODERATION } from '../constants.js';
+import { AI_QUOTAS, MODERATION, ROLES } from '../constants.js';
 
 /** Minúsculas, sem acento, só letras/números e espaço simples. */
 export function normalize(value) {
@@ -323,10 +323,18 @@ function scoreOf(intent, padded) {
   return hits * (intent.weight || 1);
 }
 
-function bestIntent(text) {
+/**
+ * Intenções que o papel pode receber. Só o admin enxerga as de administração; para quem não é admin
+ * (visitante, membro ou sem papel) elas não existem: não acertam nem como seguimento de conversa.
+ */
+function intentsFor(role) {
+  return role === ROLES.ADMIN ? INTENTS : PUBLIC_INTENTS;
+}
+
+function bestIntent(text, intents) {
   const padded = ' ' + normalize(text) + ' ';
   let best = null;
-  for (const intent of INTENTS) {
+  for (const intent of intents) {
     const score = scoreOf(intent, padded);
     if (score > 0 && (!best || score > best.score)) best = { id: intent.id, score, intent };
   }
@@ -336,15 +344,17 @@ function bestIntent(text) {
 /**
  * Acha a intenção da mensagem. `history` é a lista de perguntas ANTERIORES da
  * pessoa ([{role:'user', text}]); só é usada para pergunta curta sem palavra-chave.
+ * `role` é o papel de quem pergunta: só 'admin' pode acertar as intenções de administração.
  * @returns {{id: string, score: number, intent: object, followUp?: boolean} | null}
  */
-export function matchIntent(message, history) {
-  const direct = bestIntent(message);
+export function matchIntent(message, history, role) {
+  const intents = intentsFor(role);
+  const direct = bestIntent(message, intents);
   if (direct) return direct;
   const text = normalize(message);
   if (!text || text.length > FOLLOW_UP_MAX_CHARS || !FOLLOW_UP_START.test(text) || !Array.isArray(history)) return null;
   for (let i = history.length - 1; i >= 0; i -= 1) {
-    const previous = history[i] && history[i].role === 'user' ? bestIntent(history[i].text) : null;
+    const previous = history[i] && history[i].role === 'user' ? bestIntent(history[i].text, intents) : null;
     if (previous && previous.id !== 'saudacao') return Object.assign({}, previous, { followUp: true });
   }
   return null;
