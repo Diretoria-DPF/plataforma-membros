@@ -118,7 +118,7 @@ Ocultar `#lia-eyes-*`, `#lia-brows-*`, `#lia-mouth-*`, `#lia-lock`, `#lia-glasse
 ### Animacao, CSP e carregamento
 - Origem de transformacao: ajuste pelo CSSOM (nao use `style` no atributo, a CSP bloqueia). `transform-box: fill-box` com origem na base em `lia-pv-liquido-b` e `#lia-prop-thermometer path.g`; origem `0% 50%` (esquerda) em `lia-pv-ecg` e `lia-pv-folha`; centro em `lia-pv-aviso`, `lia-pv-estrela` e `#lia-prop-skeleton`.
 - Inserir so quando a cena pedir e remover ao sair: as props nao tem regra `display` no `lia.css`.
-- Offline: `lia-props-art.js` deve entrar no PRECACHE de `sw.js`. `lia-props.svg` e so a fonte.
+- Offline: `lia-props-art.js` está no PRECACHE de `sw.js`. `lia-props.svg` é só a fonte.
 
 ### Build e prova
 - `scripts/build.js` nao muda: copia `modulos` por inteiro, e `lia-props.svg` e `lia-props-art.js` vao ao dist como `lia.svg` (nao sao excluidos por `LIA_REVIEW_ONLY`).

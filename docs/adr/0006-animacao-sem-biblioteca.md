@@ -15,8 +15,8 @@ O ADR 0003 deixa o Anime.js (MIT, `frontend/vendor/anime.min.js`, versão fixa) 
 
 | Critério do ADR 0003 | Resultado no código |
 |---|---|
-| Três ou mais sequências com mais de 5 keyframes encadeados | 0. Os arrays de `lia-anim.js` têm 3 quadros (`BLINK_FRAMES`, `DOT_FRAMES`, `HEART_FRAMES`, `SPARKLE_FRAMES`). A sequência `turn` tem 5. |
-| Uso repetido de stagger com delay | Em CSS, 3 regras de `charts.css` (linhas 60, 67 e 94): `animation-delay: calc(var(--i, 0) * var(--dur-instant))`, para barras horizontais, barras verticais e segmentos da rosca. Em WAAPI, 1 uso em `lia-anim.js` (linha 242, pontos de espera com `delay: i * DUR_FAST`). |
+| Três ou mais sequências com mais de 5 keyframes encadeados | 0. Os arrays de `lia-anim.js` têm 3 quadros (`BLINK_FRAMES`, `DOT_FRAMES`, `HEART_FRAMES`, `SPARKLE_FRAMES`). A sequência `turn` tem 5. Em `lia-scenes.js` (cenas da Lia, WAAPI), o maior array tem 5 quadros (`shakeX` e `beat`). |
+| Uso repetido de stagger com delay | Em CSS, 3 regras de `charts.css` (linhas 60, 67 e 94): `animation-delay: calc(var(--i, 0) * var(--dur-instant))`, para barras horizontais, barras verticais e segmentos da rosca. Em WAAPI, 2 usos: `lia-anim.js` (linha 243, pontos de espera com `delay: i * DUR_FAST`) e `lia-scenes.js` (linha 69, bolhas com `mix + i * DUR_BASE`). |
 
 O primeiro critério não é atingido. O segundo é atingido pela letra do texto, por causa do stagger em CSS. A decisão de não adotar depende de ler o critério como orquestração que WAAPI e CSS não expressam, e não como delay por índice, que já existe. Essa leitura precisa de confirmação do dono (ver Pendências).
 

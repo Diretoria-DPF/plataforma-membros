@@ -1,6 +1,6 @@
 # ADR 0004 — Decaimento da moderação da Lia
 
-Status: aceita (2026-10-08). A tela de moderação do admin existe desde 2026-10-08, com agregados (`frontend/admin-moderation.js`); a visão por pessoa segue em andamento. Data: 2026-10-07.
+Status: aceita (2026-10-08). A tela de moderação do admin existe desde 2026-10-08, com agregados e, por pessoa, nível, suspensão, última detecção e última redenção, sem nome (`frontend/admin-moderation.js`). Data: 2026-10-07.
 
 ## Contexto
 A moderação da Lia tem 4 níveis (normal, alerta, aviso sério, suspensão) com redenção. Sem decaimento, um deslize antigo pesa para sempre.

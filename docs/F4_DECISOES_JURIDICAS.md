@@ -122,7 +122,7 @@ Os itens (a) a (e) ficam fora desta rodada porque dependem de decisão jurídica
 
 ## (e) Acervo compartilhado (`shared_assets`)
 
-**Estado.** Não existe no código. A branch `feat/v5-f4-acervo` ainda não tem código de `shared_assets`: verificado em 2026-10-08, a única referência é este documento. A fatia 1 da F4 (migração 025) está planejada para criar `shared_assets` com a flag desligada, autoria anônima por padrão e moderação com motivo. A convivência com `ClinicalService.library` (casos da biblioteca já aprovados por admin) fica decidida só quando o dono escolher. A Política (seção 5) já descreve um precedente: casos gerados com IA podem ir à biblioteca depois de revisão da diretoria, com o vínculo de autor visível só para administradores.
+**Estado.** Não existe no código. A branch local `feat/v5-f4-acervo` tem um rascunho da migração 025 (`sql/025_shared_assets.sql` e o `down`) e testes em andamento. Nada disso entra na PR-2. A fatia 1 da F4 (migração 025) está planejada para criar `shared_assets` com a flag desligada, autoria anônima por padrão e moderação com motivo. A convivência com `ClinicalService.library` (casos da biblioteca já aprovados por admin) fica decidida só quando o dono escolher. A Política (seção 5) já descreve um precedente: casos gerados com IA podem ir à biblioteca depois de revisão da diretoria, com o vínculo de autor visível só para administradores.
 
 **Decisões necessárias.**
 1. Autoria: opt-in e anônima por padrão (já previsto no plano). Quem vê o autor: só administradores?

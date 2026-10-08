@@ -84,7 +84,7 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 - **Cache semântico não usa os trechos do RAG.** Respostas com fontes não entram no cache (O27, resolvido). O cache guarda só respostas genéricas, sem fontes, com validade de 7 dias.
 - **Hash da pergunta é reversível por dicionário** para quem lê o banco: `assistant_messages.question_hash` é o SHA-256 de `profile_id:pergunta normalizada`, e o `profile_id` fica na mesma linha. Nenhuma API devolve esse hash.
 - **Política × auditoria.** A Política (seção 7) diz que incidentes saem em 365 dias, mas `assistant_incident` é gravado em `audit_logs` (`worker/src/services/moderationService.js`), que guarda 730 dias.
-- **Tela de moderação do admin.** Criada em `frontend/admin-moderation.js` com agregados (O28, mitigado). A visão por pessoa (nome e demais dados) está em andamento: o commit `66cdbcf` (`feat(moderacao): dados por pessoa`) está na branch `feat/v5-f4-acervo` e ainda não foi integrado à `feat/v5-fechamento`.
+- **Tela de moderação do admin.** Criada em `frontend/admin-moderation.js` (O28, resolvido): agregados e, por pessoa, nível, suspensão, última detecção e última redenção, sem nome.
 - **Chart.js.** Saiu do painel de administração: o gráfico é `LaiftCharts.groupedBars` (`charts.js`), e `index.html` tem `script-src 'self'` (O31, mitigado). Restam as bibliotecas de jsDelivr das páginas de módulo (quiz, laboratório, studio e fiscal), com SRI e versão fixa: exceção registrada como O31b em `docs/TIME_CONTRATO.md`.
 - **Blocos locais de movimento reduzido.** Além do bloco único de `frontend/modulos/shared/laift-tokens.css`, outros 15 arquivos CSS ainda têm `prefers-reduced-motion` (por exemplo `frontend/ux.css` e `frontend/modulos/anatomia-3d/css/atlas.css`). Isso fica fora da regra "um único bloco" do ADR 0002.
 - **Desligar por SQL não grava auditoria.** Um `UPDATE` de `feature_flags` não grava `updated_by` nem auditoria, mas o gatilho `trg_feature_flags_updated_at` (criado na 023) marca `updated_at`, e a 023 só liga `ux_v2_enabled` e `chatbot_enabled` em linha intocada. Limite (O30): um `UPDATE` feito antes de a 023 existir no banco não deixa marca. Antes da primeira 023 em produção, confira `apiAdminListFeatureFlags` e, para decisões que devem durar, use `apiAdminSetFeatureFlag`.
@@ -97,25 +97,36 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 **O que entrou em `feat/v5-fechamento`.**
 - **Moderação da Lia:** a suspensão é relida do banco quando a leitura do estado falha. Sem banco e sem memória, a Lia pausa para todos (falha segura). Detalhes no ADR 0004, seção "Portão do chat" (O17 mitigado).
 - **RAG:** reindexação sem embeddings grava `ASSISTANT_RAG_REINDEX_DEGRADED` em `error_logs` (O20 mitigado). Resposta com fontes nunca entra no cache (O27 resolvido).
-- **Admin:** seção "Moderação da Lia" com agregados (`frontend/admin-moderation.js`, O28 mitigado).
+- **Admin:** seção "Moderação da Lia" com agregados e, por pessoa, nível, suspensão, última detecção e última redenção, sem nome (`frontend/admin-moderation.js`, O28 resolvido).
 - **Front:** Chart.js saiu do painel de administração (O31 mitigado). As páginas de módulo ainda usam jsDelivr com SRI (O31b).
 - **Acessibilidade:** `.lia-close` com área de toque de 44 px (O35 resolvido). O checkbox do e-mail fica como está (O34 aceito).
-- **Lia viva:** ondas 2 a 4 aceitas em 2026-10-08 (ADR 0003). `lia-props-art.js` está no PRECACHE, mas o runtime ainda não o carrega: só `preview-props.html`.
+- **Lia viva:** ondas 2 a 4 aceitas em 2026-10-08 (ADR 0003). `lia-props.js` carrega `lia-props-art.js` sob demanda (uma vez, com cache; se falhar, a Lia segue na base). Cenas em `frontend/modulos/shared/lia/lia-scenes.js`. O dono aprovou as 7 cenas e escolheu o rosto mais leve, variante A.
 - **Hero da Lia:** só aparece com `ux_v2_enabled` e `chatbot_enabled` ligadas (O39).
-- **Lighthouse mobile** (build local, sem alteração de código): Performance 81, Acessibilidade 100, Boas práticas 96, SEO 100. CLS 0,113 na tela de entrada (O43). Relatório em `docs/LIGHTHOUSE_2026-10-08.md`.
+- **Login:** o hero saiu do fluxo (`frontend/ux.css`, linhas 539 a 540). O CLS ficou em 0 nas medições do QA, exceto um deslocamento inicial de 0,11 marcado `hadRecentInput` em cerca de 2 de 14 cargas frias (O43). O `axe-gate` espera as animações finitas (`frontend/scripts/e2e/axe-gate.js`).
+- **Lia (cobertura e voz):** intenções para propostas, equipe, mensagens, feedback, redenção, limite de IA e 10 telas de admin. Intenções de admin só respondem a admin (sem papel, só uso geral). Golden set de RAG: recall@4 de 5 em 14 (0,357) para 13 em 24 (0,542), sem falsos positivos; piso do teste, 0,472 (`worker/test/ragEval.test.js`). A digitação dura até 2,5 s e o leitor de tela recebe o texto completo (`frontend/assistant-typing.js`). Lacunas da cobertura: tutorial (`onboarding.js`), atalhos de teclado e PWA.
+- **API (aditiva):** `profile.id` (id do próprio perfil) vem em `apiLogin`, `apiLoginMfa` e `apiGetMyProfile` e fica em `state.profile.id`, para o onboarding abrir em produção. O cache de sessão guarda só token e validade.
+- **Lighthouse mobile** (build local, antes do ajuste do hero, sem alteração de código): Performance 81, Acessibilidade 100, Boas práticas 96, SEO 100, CLS 0,113 na tela de entrada. Relatório em `docs/LIGHTHOUSE_2026-10-08.md`. Nova rodada: pendência do dono.
 - **Decisões novas:** ADR 0006 (animação sem biblioteca, `docs/adr/0006-animacao-sem-biblioteca.md`) e minutas da F4 em `docs/F4_DECISOES_JURIDICAS.md`, que dependem de revisão do advogado.
 
-**Atalhos de teclado.** O `?` (Shift+/) segue registrado em `frontend/keyboard-shortcuts.js` (linha 186) como ajuda de tecla única. A troca por `Ctrl/Cmd+/`, pedida por causa do WCAG 2.1.4, **ainda não está no código**: não há `mod+/` em nenhuma branch, verificado em 2026-10-08. Ctrl/Cmd+K abre a Lia e cancela o atalho padrão do navegador (`dispatch` chama `preventDefault`). O teste com NVDA e JAWS é do dono.
+**Atalhos de teclado.** A ajuda passou de `?` para `Ctrl/Cmd+/` (WCAG 2.1.4). `frontend/keyboard-shortcuts.js` (`HELP_COMBO`, linha 17) ignora tecla segurada (`evt.repeat`), e `register()` recusa combinação já registrada. Ctrl/Cmd+K segue abrindo a Lia e cancelando o atalho padrão do navegador. O teste com NVDA, JAWS e VoiceOver é do dono.
 
 **Segurança.** `window.App.getState()` (`frontend/app.js`, linha 2500) devolve o `sessionToken`, e qualquer script da mesma origem pode lê-lo (O37). Aceito nesta rodada por ser mudança grande, com o item registrado em `docs/backlog-futuro.md` (seção "Segurança e produto").
 
-**Pendências desta rodada.**
-- Dono: confirmar a leitura do critério de stagger que sustenta a decisão do ADR 0006 (O40); decidir qual fonte vale para os três desenhos novos da Lia, que existem em `lia-props.svg` e em `preview-ondas.js` (ADR 0003); decidir sobre `noindex` em `/` (O38).
-- Antes da F4: Política seção 6 e Código de Conduta (J5 e J6).
-- Admin: visão por pessoa (commit `66cdbcf`, na branch `feat/v5-f4-acervo`).
-- Geometria: se o CI divergir, regravar a baseline com `UPDATE_GEOMETRY=1` (O41).
+**Pendências do dono (rodada 2).**
+- Mesclar a #39 e a PR-2 (`feat/v5-fechamento`).
+- Backup do banco: cadastrar os 6 secrets (`docs/BACKUP_RESTORE.md`).
+- Runbook de produção: migrações 020 a 022 e 024, reindexar, e só depois a 023 (`docs/AMBIENTES.md`).
+- Confirmar a leitura do critério de stagger do ADR 0006 (O40).
+- `noindex` em `/`: decidido não aplicar (O38).
+- Testes com NVDA, JAWS e VoiceOver.
+- Nova rodada de Lighthouse (O43).
+- Decidir se a F4 segue já ou depois da mescla.
+- Fonte única dos desenhos da Lia no preview (ADR 0003).
+- Revisão jurídica da Política seção 6 e do Código de Conduta (J5 e J6), antes da F4.
 
-**Números finais:** a informar pelo coordenador ao fechar a rodada.
+**Fora desta PR:** a branch `feat/v5-f4-acervo` (local) tem o rascunho da migração 025 (`sql/025_shared_assets.sql`) e testes em andamento. `feat/v5-f4-arte` tem `search-icons.js` e `.css`. A próxima migração livre continua 025.
+
+**Números (rodada 2, 2026-10-08).** Worker: 48 suítes, 1506 testes verdes, 117 actions no `API_REGISTRY` e 24 migrações (`validate:sql` ok; a PR-2 não cria migração). Front: 899 testes, 897 verdes e 2 falhas só no Windows (`_headers`, CRLF). E2E `csp smoke home assistant credential visual-qa lowend admin-moderation confirm-a11y onboarding lia-estados`: 319 ✔ e 0 ✘. `visual-qa` com 1 aviso conhecido (`pref-email-notif`, 13×44 px, dentro de uma linha de 44 px). Linha de base anterior: 1424 e 650. Time da rodada: 6 agentes Haiku 5.5. Os testes foram executados pelo coordenador; esta passada conferiu contagens de arquivos e de actions, sem reexecutar a suíte.
 
 ## Pull requests
 | PR | Branch | O que traz | Estado |
@@ -143,7 +154,7 @@ Lição: com PRs empilhadas, depois de mesclar a de baixo, **reaponte a de cima 
 3. **Aviso `degraded` no front** (`frontend/modulos/laboratorio/js/lab-preceptor.js`): hoje a resposta aproximada aparece como "recuperada do acervo". Mostrar "resposta aproximada, a IA está indisponível".
 4. **Polimentos do painel de métricas:** dia como DD/MM; ignorar resposta atrasada ao alternar 7/30 dias; e2e sem `check(true)` vazio.
 5. **Reserva do orçamento por papel** (risco O10) e **orçamento da NVIDIA** (O11): só se o gatilho de `docs/riscos-residuais.md` disparar.
-6. **F1 restante** (conferido no código em 2026-10-08): credencial virtual (`credential.js`), Equipe em árvore (`renderOrgChartTree`, `app.js`) e PWA **já existem**. Faltam onboarding (`<dialog>` por papel), hero no login (o mascote será a cabeça da Lia, sem `laift-orb.js`), `openConfirm` com foco/Esc, `h1` único por tela, acessibilidade (axe hoje só avisa; NVDA/VoiceOver é do dono), atalhos Ctrl+K/? e a medição Lighthouse. **Sem `noindex` em `/`:** login e app são o mesmo `index.html`, e `noindex` tiraria o site do Google.
+6. **F1 restante** (conferido no código em 2026-10-08; na rodada 2 já entraram onboarding, hero, `openConfirm` com o e2e `confirm-a11y`, atalhos `Ctrl/Cmd+/` e a medição Lighthouse local): credencial virtual (`credential.js`), Equipe em árvore (`renderOrgChartTree`, `app.js`) e PWA **já existem**. Feitos na rodada 2: onboarding, hero no login (a cabeça da Lia, sem `laift-orb.js`), `openConfirm`, atalhos e a medição Lighthouse local. O `axe-gate` reprova violações serious e critical. Não conferido nesta rodada: `h1` único por tela. NVDA, JAWS e VoiceOver são do dono. **Sem `noindex` em `/`:** login e app são o mesmo `index.html`, e `noindex` tiraria o site do Google.
 
 ## Passos que só você pode fazer
 1. **Chave do OpenRouter** (a chave nunca passa pelo chat): `powershell -ExecutionPolicy Bypass -File tools\ci\registrar-segredo-openrouter.ps1 -Arquivo "$env:USERPROFILE\Desktop\segredos-openrouter.json"`, depois apague o arquivo. Defina um **limite de gasto baixo** na chave no painel do OpenRouter (risco O9). Sem a chave o Strix é pulado com aviso. Modelo padrão: Nemotron 3 Super gratuito; o `z-ai/glm-5.3:free` do roteiro **não existe** — para o GLM pago: `gh variable set STRIX_LLM --body "openrouter/z-ai/glm-5.3"`.

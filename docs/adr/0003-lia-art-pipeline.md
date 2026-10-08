@@ -28,12 +28,13 @@ Regra para o código (onda 2): a **bolha fechada** (48 px) usa um recorte do `vi
 ## Ondas 2–4 (2026-10-08)
 Aceitas em 2026-10-08. O dono aprovou as 7 cenas no preview `frontend/modulos/shared/lia/preview-ondas.html` (funções `cenaFrasco`, `cenaClinica`, `cenaAtlas`, `cenaAprender`, `cenaAviso`, `cenaSuspensa` e `cenaErro` em `preview-ondas.js`). Registro da aprovação: coordenador da rodada 2.
 
-- **SVGO não adotado.** `lia.svg` tem 8.188 B, abaixo do alvo de 12 KB (item 5). Não há dependência nova: `frontend/package.json` não cita svgo.
+- **SVGO não adotado.** `lia.svg` tem 8.691 B, abaixo do alvo de 12 KB (item 5). Não há dependência nova: `frontend/package.json` não cita svgo.
 - **Props e poses novas.** Ficam em `lia-props.svg` (3.682 B), fonte de `lia-props-art.js` (4.901 B). `build-lia-art.mjs` gera o arquivo e expõe `window.LIA_PROPS_ART`. O orçamento é de 16 KB. `lia-props-art.js` está no PRECACHE de `frontend/sw.js`.
-- **Carregamento sob demanda: ainda não implementado.** Nenhum código do runtime carrega `lia-props-art.js`. Hoje só `preview-props.html`, a prova de fidelidade, carrega o arquivo.
+- **Carregamento sob demanda: implementado.** `lia-props.js` injeta um `<script>` de `lia-props-art.js` uma vez, com cache. Se falhar, a Lia segue na base, sem erro visível, e tenta de novo após 60 s. `preview-props.html` é a prova de fidelidade.
 - **Desvios técnicos aceitos.**
   - O ECG usa `scaleX`, que é função de `transform`. Continua dentro da regra de `transform` e `opacity`.
   - A cabeça e o esqueleto usam a propriedade CSS individual `rotate`. O casaco e os membros usam `translate`. Ambas estão fora de `transform` e ficam registradas como desvio.
   - Braços cruzados, balão de aviso e costas são desenhos novos, feitos em `preview-ondas.js` (`bracosCruzados`, `balao` e a Lia de costas).
-- **Pendência.** Os mesmos três desenhos existem também em `lia-props.svg` (ids `lia-pv-cruzados`, `lia-pv-aviso`, `lia-pv-costas-cabeca` e `lia-pv-costas-costura`). Há duas fontes para a mesma imagem. Decidir qual vale no runtime antes de carregar `lia-props-art.js`.
+- **Pendência.** O runtime usa `lia-props-art.js` (`lia-scenes.js` usa os ids `lia-pv-*`, por exemplo `lia-pv-cruzados`, linha 157). `preview-ondas.js` ainda desenha por conta própria os braços cruzados, o balão e as costas, e a prova `preview-props.html` compara as duas fontes. Unificar a fonte do preview fica como pendência.
 - **Não verificado nesta rodada.** O limite de 3 KB por prop (item 5) não foi medido prop a prop, porque os props estão num único arquivo gerado.
+- **Ajuste do rosto (2026-10-08, depois da aprovação das 7 cenas).** O dono pediu um rosto mais leve e escolheu a variante A, "suave": sobrancelhas a 60% do traço e mais altas, olhos maiores com brilho, sorriso mais largo e blush. `alert` e `proposals` usam a boca `neutral` (um sorriso leve). `confused` usa o olhar `curious`. A bolha de 48 px usa `data-crop="head"` com `overflow: hidden` (`lia.js`, linha 103), com reforço de sobrancelha só na bolha (`lia.css`, linha 40). Não localizei no código um parâmetro com o nome da variante A; a palavra "suave" em `lab.js` é a proporção chibi (1:3). Desvio aceito: o véu do aviso é recortado pelo cartão da Lia e não cobre o palco inteiro. Registro do coordenador, que informou a escolha do dono.
