@@ -40,6 +40,20 @@ async function ensureAxe(page) {
   if (!loaded) await page.evaluate(AXE_SRC);
 }
 
+/**
+ * Espera as animações finitas em andamento (ex.: panel-enter, fade de 280 ms ao abrir uma seção).
+ * Durante o fade a opacidade é parcial e o axe calcula contraste com o texto misturado ao fundo,
+ * dando um falso positivo. Animações infinitas (respiração da Lia, partículas) não são esperadas.
+ */
+async function waitFiniteAnimations(page) {
+  await page.evaluate(() => Promise.race([
+    Promise.all(document.getAnimations()
+      .filter((a) => a.playState === 'running' && a.effect && a.effect.getComputedTiming().iterations !== Infinity)
+      .map((a) => a.finished.catch(() => null))),
+    new Promise((resolve) => setTimeout(resolve, 2000)),
+  ]));
+}
+
 function describeBlocking(list) {
   return list.map((v) => `${v.id} ${v.impact} x${v.count} (${v.targets.join(' | ')})`).join(' ; ');
 }
@@ -54,6 +68,7 @@ async function axeGate(page, where, { enforce = true } = {}) {
     return [];
   }
   await ensureAxe(page);
+  await waitFiniteAnimations(page);
   const found = await page.evaluate(runAxeInPage, WCAG_TAGS);
   const blocking = found.filter((v) => BLOCKING_IMPACTS.has(v.impact));
   for (const v of found.filter((item) => !BLOCKING_IMPACTS.has(item.impact))) {
