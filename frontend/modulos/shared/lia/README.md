@@ -86,7 +86,7 @@ Para o `build-lia-art.mjs` falhar: id fora de `lia-pv-*`, id repetido (de topo o
 ### Contrato de ids
 | id | o que e | cena | pai | como aparece |
 |---|---|---|---|---|
-| `lia-pv-veu` | veu escuro atras do corpo (opacity 0 ate 0,35) | 5 | svg, primeiro | com o balao; cobre o palco 360x380: o contenor precisa de `overflow: hidden` |
+| `lia-pv-veu` | veu escuro atras do corpo (opacity 0 ate 0,35) | 5 | svg, primeiro | com o balao; recortado pelo cartao da Lia (`.lia[data-extras~="veu"]` em `lia.css`), nao pelo palco inteiro (desvio aceito pelo dono) |
 | `lia-pv-liquido-b` | liquido 2 (ambar) do frasco | 1 | `#lia-prop-flask` | com `data-prop="flask"`; troca de cor por opacity; acompanha o chacoalhar do frasco |
 | `lia-pv-bolha-1`, `-2`, `-3` | bolhas no liquido | 1 | `#lia-prop-flask` | sobem e somem (translateY + opacity) |
 | `lia-pv-monitor` | moldura do monitor; filhos `lia-pv-ecg` (traco) e `lia-pv-coracao` (ponto) | 2 | svg | com `data-prop="none"` e `data-arm-right="point"` |
@@ -102,8 +102,8 @@ Para o `build-lia-art.mjs` falhar: id fora de `lia-pv-*`, id repetido (de topo o
 
 Ja existem em `lia.svg` (sem id novo): `#lia-prop-flask`, `#lia-prop-stethoscope`, `#lia-prop-thermometer` (o mercurio e `path.g`), `#lia-prop-skeleton`, `#lia-prop-book`, `#lia-arm-right-point`, `#lia-eyes-focused > *`, `#lia-head`, `#lia-coat`, `#lia-limbs`, `#lia-scene-heart`, `#lia-scene-glow`.
 
-### Classes novas (pedido ao H1: sao do lia.css)
-As pecas usam as classes da paleta que ja existem (`p k c h a t s n rd`) e quatro novas. Elas precisam entrar no `lia.css`:
+### Classes novas (ja estao em lia.css, blocos "Ondas 2-4")
+As pecas usam as classes da paleta que ja existem (`p k c h a t s n rd`) e quatro novas, definidas em `lia.css` (`ln`, `al`, `gi`, `vu`). Referencia:
 ```
 .lia-svg .ln { fill: none; stroke: var(--lia-accent); }
 .lia-svg .al { fill: var(--lia-alert, var(--laift-danger, #b3261e)); }
@@ -116,7 +116,7 @@ As pecas usam as classes da paleta que ja existem (`p k c h a t s n rd`) e quatr
 Ocultar `#lia-eyes-*`, `#lia-brows-*`, `#lia-mouth-*`, `#lia-lock`, `#lia-glasses`, `.bl` e `#lia-coat > path.a` (lapela). Inserir `lia-pv-costas-cabeca` e `lia-pv-costas-costura`. A Lia fica com `data-state="suspended"` (opacidade 0,55). Sobreposicoes e nao um corpo copiado: assim a pose segue os `--lia-*`.
 
 ### Animacao, CSP e carregamento
-- Origem de transformacao: ajuste pelo CSSOM (nao use `style` no atributo, a CSP bloqueia). `transform-box: fill-box` com origem na base em `lia-pv-ecg`, `lia-pv-liquido-b` e `#lia-prop-thermometer path.g`; origem `0% 50%` em `lia-pv-folha`; centro em `lia-pv-aviso` e `lia-pv-estrela`.
+- Origem de transformacao: ajuste pelo CSSOM (nao use `style` no atributo, a CSP bloqueia). `transform-box: fill-box` com origem na base em `lia-pv-liquido-b` e `#lia-prop-thermometer path.g`; origem `0% 50%` (esquerda) em `lia-pv-ecg` e `lia-pv-folha`; centro em `lia-pv-aviso`, `lia-pv-estrela` e `#lia-prop-skeleton`.
 - Inserir so quando a cena pedir e remover ao sair: as props nao tem regra `display` no `lia.css`.
 - Offline: `lia-props-art.js` deve entrar no PRECACHE de `sw.js`. `lia-props.svg` e so a fonte.
 
