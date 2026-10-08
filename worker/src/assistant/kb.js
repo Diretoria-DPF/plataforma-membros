@@ -15,6 +15,8 @@
  * - Nada aqui contém dado de pessoa alguma.
  */
 
+import { AI_QUOTAS, MODERATION } from '../constants.js';
+
 /** Minúsculas, sem acento, só letras/números e espaço simples. */
 export function normalize(value) {
   if (typeof value !== 'string') return '';
@@ -36,7 +38,7 @@ export const INTENTS = [
     id: 'eventos',
     title: 'Eventos da liga',
     keywords: ['evento', 'eventos', 'inscrever', 'inscricao', 'inscricoes', 'inscrito', 'congresso', 'palestra', 'workshop', 'agenda de eventos', 'vagas', 'proximo encontro', 'me inscrevo', 'me inscrevi'],
-    reply: 'Os eventos da liga ficam na aba Eventos: lá você vê data, local e vagas e faz a sua inscrição. Posso te levar até lá.',
+    reply: 'Os eventos da liga ficam na aba Eventos: lá você vê data, local e vagas e faz a sua inscrição com Inscrever-se. O Histórico mostra os eventos já concluídos. Posso te levar até lá.',
     actions: [nav('panel-events'), { type: 'open_credential', target: 'credential' }],
     suggestions: ['Meu crachá', 'Módulos de estudo'],
   },
@@ -92,7 +94,7 @@ export const INTENTS = [
     id: 'aprender',
     title: 'Aba Aprender (todos os módulos)',
     keywords: ['aprender', 'modulo', 'modulos', 'estudar', 'estudos', 'conteudo', 'conteudos', 'cursos', 'trilha'],
-    reply: 'A aba Aprender reúne os módulos de estudo: Farmacologia (quiz), Toxicologia, Clínica Virtual, Laboratório Virtual e Atlas 3D. Escolha um para abrir.',
+    reply: 'A aba Aprender reúne os módulos de estudo: Farmacologia (quiz), Toxicologia, Clínica Virtual, Laboratório Virtual e Atlas 3D. Escolha um para abrir. Lá também aparecem seu desempenho por módulo, suas conquistas e o seu crachá virtual.',
     actions: [nav('panel-learn'), mod('lab'), mod('anatomia'), mod('clinica')],
     suggestions: ['Como funciona o laboratório?', 'Atlas 3D'],
   },
@@ -100,7 +102,7 @@ export const INTENTS = [
     id: 'seguranca',
     title: 'Senha e verificação em duas etapas',
     keywords: ['verificacao em duas etapas', 'duas etapas', 'autenticador', 'autenticacao', 'mfa', '2fa', 'senha', 'seguranca', 'codigo de recuperacao', 'codigos de recuperacao'],
-    reply: 'Para proteger a conta, ative a verificação em duas etapas em Meu perfil: você usa um aplicativo autenticador e guarda os códigos de recuperação. Se esqueceu a senha, use a opção de redefinir na tela de entrada.',
+    reply: 'Para proteger a conta, ative a verificação em duas etapas em Meu perfil: você usa um aplicativo autenticador e guarda os códigos de recuperação. Se esqueceu a senha, toque em Esqueci minha senha na tela de entrada.',
     actions: [nav('panel-profile')],
     suggestions: ['Quem vê meus dados?'],
   },
@@ -115,32 +117,32 @@ export const INTENTS = [
   {
     id: 'perfil',
     title: 'Meu perfil e preferências',
-    keywords: ['perfil', 'foto', 'avatar', 'editar perfil', 'linkedin', 'instagram', 'preferencias', 'tema escuro'],
-    reply: 'Em Meu perfil você edita foto, nome, contatos e preferências, como o tema e os avisos por e-mail, e cuida da segurança da conta.',
+    keywords: ['perfil', 'foto', 'avatar', 'editar perfil', 'linkedin', 'instagram', 'preferencias', 'tema escuro', 'nome de usuario', 'minhas metricas'],
+    reply: 'Em Meu perfil você troca a foto, edita o nome de usuário, o telefone, o LinkedIn, o Instagram, a escolaridade e os assuntos de interesse. Em Preferências, escolhe o tema e se quer receber e-mails de confirmação de inscrição em eventos. O nome completo não pode ser alterado.',
     actions: [nav('panel-profile')],
     suggestions: ['Segurança da conta', 'Meu crachá'],
   },
   {
     id: 'equipe',
     title: 'Equipe e organograma',
-    keywords: ['equipe', 'organograma', 'diretoria', 'quem faz parte', 'lideranca', 'coordenacao'],
-    reply: 'A aba Equipe mostra o organograma da liga, com diretorias e posições. Ela está disponível para membros.',
+    keywords: ['equipe', 'organograma', 'diretoria', 'quem faz parte', 'lideranca', 'coordenacao', 'adicionar amigo', 'pedido de amizade', 'pedidos de amizade', 'denunciar', 'denuncio', 'denunciar alguem'],
+    reply: 'A aba Equipe mostra o organograma da liga. Clique numa pessoa para ver o perfil e adicionar. Você também envia pedidos pelo nome de usuário e aceita os que recebe. Para denunciar alguém, abra o perfil da pessoa e use Enviar denúncia. A aba é para membros.',
     actions: [nav('panel-orgchart')],
     suggestions: ['Propostas', 'Mensagens'],
   },
   {
     id: 'propostas',
     title: 'Propostas e votações',
-    keywords: ['proposta', 'propostas', 'votar', 'votacao', 'votacoes', 'enquete', 'sugerir'],
-    reply: 'Em Propostas você acompanha as propostas da liga e vota nas que estão abertas.',
+    keywords: ['proposta', 'propostas', 'votar', 'votacao', 'votacoes', 'enquete', 'sugerir', 'enviar proposta', 'minhas propostas'],
+    reply: 'Em Propostas você envia uma proposta com título e descrição, acompanha as que enviou (em Minhas propostas) e vota nas que estão com Votação aberta.',
     actions: [nav('panel-proposals')],
     suggestions: ['Equipe'],
   },
   {
     id: 'tarefas',
     title: 'Tarefas',
-    keywords: ['tarefa', 'tarefas', 'atividades', 'prazo', 'prazos'],
-    reply: 'Em Tarefas, disponível para membros, você vê o que foi atribuído a você, com prazo e situação.',
+    keywords: ['tarefa', 'tarefas', 'atividades', 'prazo', 'prazos', 'aderir', 'marcar como concluida'],
+    reply: 'Em Tarefas você vê as tarefas publicadas pela liga, com prazo e situação. Clique em Aderir para participar; depois de cumprir a tarefa, marque como concluída. Cada tarefa também tem comentários.',
     actions: [nav('panel-tasks')],
     suggestions: ['Equipe'],
   },
@@ -148,7 +150,7 @@ export const INTENTS = [
     id: 'mensagens',
     title: 'Mensagens entre membros',
     keywords: ['mensagem', 'mensagens', 'chat', 'conversar', 'conversa', 'falar com'],
-    reply: 'Em Mensagens, disponível para membros, você troca conversas diretas com outras pessoas da liga.',
+    reply: 'Em Mensagens você troca conversas diretas com outras pessoas da liga. Cada conversa é cifrada de ponta a ponta: só você e a outra pessoa conseguem ler o conteúdo.',
     actions: [nav('panel-messages')],
     suggestions: ['Equipe'],
   },
@@ -159,6 +161,132 @@ export const INTENTS = [
     reply: 'Para entrar na plataforma, crie sua conta na tela inicial (opção de cadastro), confirme o e-mail e faça o login. Depois disso você já pode explorar os módulos de estudo e os eventos.',
     actions: [],
     suggestions: ['O que posso fazer aqui?'],
+  },
+  {
+    id: 'avaliacao_lia',
+    title: 'Avaliar uma resposta da Lia',
+    keywords: ['avaliar resposta', 'avaliar a resposta', 'avaliar a lia', 'avaliacao da lia', 'resposta da lia', 'resposta util', 'nao util', 'marcar como util', 'resposta incorreta', 'resposta confusa'],
+    reply: 'Abaixo de cada resposta da Lia há as opções Útil e Não útil. Ao marcar Não útil, você pode escolher o motivo (incorreta, incompleta, confusa, ofensiva ou outro) e deixar um comentário de até 500 caracteres. O motivo e o comentário são opcionais, e o comentário é apagado após 90 dias.',
+    actions: [],
+    suggestions: ['Quem vê meus dados?', 'Meu crachá'],
+  },
+  {
+    id: 'redencao',
+    title: 'Pedido de redenção na Lia',
+    keywords: ['redencao', 'redimir', 'chat suspenso', 'suspenso', 'suspensa', 'suspensao', 'pedir redencao', 'advertencia da lia', 'nivel de moderacao'],
+    reply: 'Mensagens ofensivas à Lia geram avisos que sobem de nível. Nos casos mais graves, o chat fica suspenso por ' + MODERATION.SUSPENSION_HOURS + ' horas. Enquanto estiver suspenso, aparece o botão Pedir redenção: explique com sinceridade o que houve, em ' + MODERATION.REDEEM_MIN_CHARS + ' a ' + MODERATION.REDEEM_MAX_CHARS + ' caracteres. Se for aceito, o nível volta a zero. Se for recusado, dá para tentar de novo após ' + MODERATION.REDEEM_RETRY_SECONDS / 3600 + ' hora. Cada pessoa pode ter até ' + MODERATION.REDEEM_ACCEPTED_MAX + ' redenções aceitas em ' + MODERATION.REDEEM_ACCEPTED_WINDOW_DAYS + ' dias.',
+    actions: [],
+    suggestions: ['Meu crachá', 'Eventos abertos'],
+  },
+  {
+    id: 'cotas',
+    title: 'Limite de perguntas da Lia',
+    keywords: ['limite de perguntas', 'quantas perguntas', 'perguntas por dia', 'limite diario', 'cota da lia', 'cota de perguntas', 'limite da lia', 'limite de uso'],
+    reply: 'Perguntas de rotina (eventos, crachá, módulos e perfil) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA: membros têm ' + AI_QUOTAS.assistant.member + ' por dia, e administradores, ' + AI_QUOTAS.assistant.admin + '. Quando a Lia está em modo limitado, a resposta não gasta essa cota.',
+    actions: [],
+    suggestions: ['Eventos abertos', 'O que posso fazer aqui?'],
+  },
+  {
+    id: 'feedback_liga',
+    title: 'Enviar feedback à administração',
+    keywords: ['enviar feedback', 'enviar um feedback', 'envio feedback', 'envio um feedback', 'mandar feedback', 'mando feedback', 'dar feedback', 'deixar feedback', 'feedback para a liga', 'feedback sobre a plataforma', 'sugestao para a plataforma', 'reclamacao sobre a plataforma'],
+    reply: 'Para enviar um feedback à administração, abra Meu perfil, vá até a seção Feedback, escreva sua mensagem e clique em Enviar feedback.',
+    actions: [nav('panel-profile')],
+    suggestions: ['Meu perfil', 'Equipe'],
+  },
+  {
+    id: 'admin_area',
+    title: 'Área de administração (botão Admin)',
+    adminOnly: true,
+    keywords: ['area admin', 'area de administracao', 'area administrativa', 'painel do administrador', 'painel admin', 'botao admin', 'modo admin', 'sou administrador', 'sou admin', 'o que tem no admin'],
+    reply: 'O botão Admin, no menu, abre a área de administração, que só existe para administradores. Ela tem Painel (visão geral com gráficos), Usuários, Eventos, Propostas, Tarefas, Feedback, Auditoria, Denúncias, Fiscal e IA. O botão Voltar retorna à área do membro.',
+    actions: [nav('panel-admin-dashboard')],
+    suggestions: ['Eventos abertos', 'Meu crachá'],
+  },
+  {
+    id: 'admin_usuarios',
+    title: 'Usuários: papel, banimento e reativação',
+    adminOnly: true,
+    keywords: ['gerir usuarios', 'lista de usuarios', 'buscar usuario', 'alterar papel', 'mudar papel', 'mudar o papel', 'banir', 'banir conta', 'banimento', 'reativar conta', 'desbanir'],
+    reply: 'Em Usuários, na área Admin, você busca uma pessoa e altera o papel dela entre Visitante, Membro e Administrador. Banir conta revoga todas as sessões ativas da pessoa; Reativar conta devolve o acesso. Cada ação pede confirmação.',
+    actions: [nav('panel-admin-users')],
+    suggestions: ['Eventos abertos', 'O que posso fazer aqui?'],
+  },
+  {
+    id: 'admin_eventos',
+    title: 'Criar eventos (administração)',
+    adminOnly: true,
+    weight: 1.5,
+    keywords: ['criar evento', 'criar eventos', 'criar um evento', 'crio evento', 'crio um evento', 'novo evento', 'cadastrar evento', 'gerir evento', 'gerir eventos'],
+    reply: 'Em Eventos, na área Admin, o formulário Novo evento pede título, descrição, data e visibilidade: Pública, Autenticados ou Somente membros. Local e capacidade são opcionais. Abaixo do formulário fica a lista dos eventos já criados.',
+    actions: [nav('panel-admin-events')],
+    suggestions: ['Eventos abertos', 'Propostas'],
+  },
+  {
+    id: 'admin_propostas',
+    title: 'Aprovar propostas e abrir votação',
+    adminOnly: true,
+    weight: 1.5,
+    keywords: ['aprovar proposta', 'aprovar propostas', 'aprovar uma proposta', 'aprovo uma proposta', 'aprovo proposta', 'rejeitar proposta', 'rejeitar uma proposta', 'abrir votacao', 'abrir a votacao', 'abro a votacao', 'encerrar votacao', 'encerrar a votacao', 'fechar votacao', 'fechar a votacao', 'fecho a votacao', 'gerir propostas', 'resultado da votacao', 'resultados da votacao', 'propostas em analise', 'analisar proposta'],
+    reply: 'Em Propostas, na área Admin, a proposta enviada por um membro chega para análise: você aprova ou rejeita. Aprovada, define o início e o fim da votação e clica em Abrir votação. Depois, Encerrar votação. Ver resultados mostra os votos Sim e Não e os comentários.',
+    actions: [nav('panel-admin-proposals')],
+    suggestions: ['Propostas', 'Equipe'],
+  },
+  {
+    id: 'admin_tarefas',
+    title: 'Criar e publicar tarefas (administração)',
+    adminOnly: true,
+    weight: 1.5,
+    keywords: ['criar tarefa', 'criar uma tarefa', 'crio tarefa', 'crio uma tarefa', 'nova tarefa', 'publicar tarefa', 'gerir tarefas', 'gerir tarefa', 'arquivar tarefa'],
+    reply: 'Em Tarefas, na área Admin, a nova tarefa pede título, descrição e prazo (opcional) e começa como rascunho. Para publicá-la, escolha Publicada e clique em Atualizar status. Uma tarefa publicada pode ser marcada como concluída ou arquivada.',
+    actions: [nav('panel-admin-tasks')],
+    suggestions: ['Tarefas', 'Eventos abertos'],
+  },
+  {
+    id: 'admin_fiscal',
+    title: 'Terminal fiscal e presença (administração)',
+    adminOnly: true,
+    weight: 1.5,
+    keywords: ['terminal fiscal', 'presenca manual', 'lista de presenca', 'exportar csv', 'csv', 'leitor de qr', 'check in por qr', 'checkin por qr'],
+    reply: 'O Terminal fiscal, na área Admin, registra a presença nos eventos por QR Code do crachá, por presença manual ou pela lista. Também há exportação em CSV e crachás.',
+    actions: [nav('panel-admin-fiscal')],
+    suggestions: ['Meu crachá', 'Eventos abertos'],
+  },
+  {
+    id: 'admin_ia',
+    title: 'Painel de IA e moderação da Lia (administração)',
+    adminOnly: true,
+    keywords: ['painel de ia', 'painel da ia', 'saude das chaves', 'testar chaves', 'chaves do groq', 'orcamento de tokens', 'consumo de ia', 'satisfacao da lia', 'moderacao da lia', 'incidentes da lia', 'cotas diarias', 'acervo da clinica', 'casos gerados', 'revisar casos'],
+    reply: 'O Painel de IA, na área Admin, mostra a saúde das chaves do provedor (com Testar chaves agora), o orçamento e o consumo de tokens, o uso anônimo do Atlas 3D, a satisfação da Lia, a moderação da Lia (incidentes e taxa de redenção) e as cotas diárias por pessoa. Casos clínicos gerados com IA entram no acervo da clínica só depois de aprovados nesse painel.',
+    actions: [nav('panel-admin-ai')],
+    suggestions: ['Meu crachá', 'Eventos abertos'],
+  },
+  {
+    id: 'admin_auditoria',
+    title: 'Auditoria e logs técnicos (administração)',
+    adminOnly: true,
+    keywords: ['auditoria', 'logs tecnicos', 'log tecnico', 'registro de atividades', 'historico de acoes', 'atividade administrativa'],
+    reply: 'Em Auditoria, na área Admin, você filtra as atividades por tipo e por resultado (sucesso ou falha) e clica em Filtrar. Os Logs técnicos ficam na mesma tela.',
+    actions: [nav('panel-admin-audit')],
+    suggestions: ['Eventos abertos', 'Meu crachá'],
+  },
+  {
+    id: 'admin_denuncias',
+    title: 'Denúncias: análise e resolução (administração)',
+    adminOnly: true,
+    keywords: ['denuncias', 'denuncia', 'resolver denuncia', 'arquivar denuncia', 'nota de resolucao', 'denuncias abertas', 'denuncia em analise'],
+    reply: 'Em Denúncias, na área Admin, você filtra por status (abertas, em análise, resolvidas ou arquivadas) e vê quem denunciou e quem foi denunciado. Para resolver, escolha o novo status, escreva uma nota de resolução (opcional) e clique em Atualizar.',
+    actions: [nav('panel-admin-reports')],
+    suggestions: ['Meu perfil', 'Equipe'],
+  },
+  {
+    id: 'admin_feedback',
+    title: 'Feedback recebido da liga (administração)',
+    adminOnly: true,
+    keywords: ['feedback recebido', 'feedbacks recebidos', 'ver feedback', 'ler feedback', 'feedback dos membros', 'feedback da liga'],
+    reply: 'Em Feedback, na área Admin, você lê as mensagens que os membros enviaram pelo Meu perfil. Cada uma mostra o autor, ou Anônimo quando o nome não aparece.',
+    actions: [nav('panel-admin-feedback')],
+    suggestions: ['Eventos abertos', 'Meu crachá'],
   },
   {
     id: 'ajuda',
@@ -222,9 +350,15 @@ export function matchIntent(message, history) {
   return null;
 }
 
+// Intenções de uso geral: só estas entram no prompt da IA e no acervo (RAG), que são compartilhados por
+// todos os papéis. As de administração (adminOnly) respondem só pelas regras, com botão só para admin.
+export const PUBLIC_INTENTS = INTENTS.filter((intent) => !intent.adminOnly);
+
+const OUTLINE_REPLY_MAX = 70; // 2.331 caracteres com as 22 intenções de uso geral (teto do teste: 2.500)
+
 /** Resumo curto das intenções para o prompt da IA (sem dado de ninguém). */
 export function kbOutline() {
-  return INTENTS
-    .map((i) => '- ' + i.id + ': ' + i.title + '. ' + i.reply.split('. ')[0].slice(0, 110))
+  return PUBLIC_INTENTS
+    .map((i) => '- ' + i.id + ': ' + i.title + '. ' + i.reply.split('. ')[0].slice(0, OUTLINE_REPLY_MAX))
     .join('\n');
 }
