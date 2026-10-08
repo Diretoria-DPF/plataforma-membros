@@ -224,14 +224,3 @@
     margin: 0;
   }
 }
-
-/* Movimento reduzido: contagens e gráficos mostram o valor final direto. */
-@media (prefers-reduced-motion: reduce) {
-  .home-editorial *,
-  .home-editorial *::before,
-  .home-editorial *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}

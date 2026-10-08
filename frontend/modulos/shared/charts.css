@@ -252,16 +252,7 @@
   50% { opacity: 1; }
 }
 
-/* Reduced motion: sem animação; o valor final aparece direto. Bloco único. */
-@media (prefers-reduced-motion: reduce) {
-  .laift-chart *,
-  .laift-chart *::before,
-  .laift-chart *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
+/* Reduced motion: o bloco único de laift-tokens.css já zera o movimento dos gráficos. */
 .laift-chart--static,
 .laift-chart--static * {
   animation: none !important;
