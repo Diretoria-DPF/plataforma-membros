@@ -21,7 +21,7 @@
  */
 import * as S from './security.js';
 import * as Logging from './logging.js';
-import { GENERIC_ERROR_MESSAGE } from './constants.js';
+import { GENERIC_ERROR_MESSAGE, RATE_LIMITS } from './constants.js';
 import * as AuthService from './services/authService.js';
 import * as ProfileService from './services/profileService.js';
 import * as HomeService from './services/homeService.js';
@@ -119,9 +119,15 @@ export const API_REGISTRY = {
   apiUpdateMyAvatar: (sql, env, [sessionToken, avatarBase64, avatarMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyAvatarFromBase64(sql, env, identity, avatarBase64, avatarMimeType, cid)),
   apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
   // Série temporal da própria atividade (gráficos do Início): { range?, metric? }.
-  apiGetMyTimeseries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => TimeseriesService.getMyTimeseries(sql, env, identity, input)),
+  apiGetMyTimeseries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity) => {
+    await S.enforceRateLimit(sql, 'TIMESERIES', identity.profileId, RATE_LIMITS.TIMESERIES.MAX_ATTEMPTS, RATE_LIMITS.TIMESERIES.WINDOW_SECONDS);
+    return TimeseriesService.getMyTimeseries(sql, env, identity, input);
+  }),
   // Todas as séries do Início numa chamada (falha isolada por série: null); ver timeseriesService.js.
-  apiGetMyDashboardSeries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => TimeseriesService.getMyDashboardSeries(sql, env, identity, input, cid)),
+  apiGetMyDashboardSeries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
+    await S.enforceRateLimit(sql, 'DASHBOARD_SERIES', identity.profileId, RATE_LIMITS.DASHBOARD_SERIES.MAX_ATTEMPTS, RATE_LIMITS.DASHBOARD_SERIES.WINDOW_SECONDS);
+    return TimeseriesService.getMyDashboardSeries(sql, env, identity, input, cid);
+  }),
   // Início: eventos, tarefas, votações, aprendizado e caixa de entrada em UMA requisição.
   apiGetHomeSummary: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HomeService.getHomeSummary(sql, env, identity)),
 
