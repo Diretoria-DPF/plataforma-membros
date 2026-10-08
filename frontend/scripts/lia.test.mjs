@@ -255,7 +255,7 @@ test('confused: curiosa e simpática, sem cara de tristeza (erro ou pergunta nã
 test('alert e warning: focada no nível 1; preocupada de braços cruzados no nível 2 (cena 5)', () => {
   const alert = States.resolve('alert');
   const warning = States.resolve('warning');
-  assert.deepEqual([alert.emotion, alert.mouth], ['focused', 'flat']);
+  assert.deepEqual([alert.emotion, alert.mouth], ['focused', 'neutral']);
   assert.deepEqual([warning.emotion, warning.mouth], ['worried', 'worried']);
   assert.equal(warning.ariaLabel, 'Lia emitiu um alerta');
 });
