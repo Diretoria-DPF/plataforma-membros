@@ -68,6 +68,11 @@ function fakeNode(tag, doc) {
 
 function fakeDocument({ dialogSupported = true, flags = [] } = {}) {
   const doc = { activeElement: null };
+  const listeners = {};
+  doc.addEventListener = (name, fn) => { (listeners[name] ||= []).push(fn); };
+  doc.removeEventListener = (name, fn) => { listeners[name] = (listeners[name] || []).filter((f) => f !== fn); };
+  doc.fire = (name, evt) => (listeners[name] || []).slice().forEach((fn) => fn(evt));
+  doc.listenerCount = (name) => (listeners[name] || []).length;
   doc.body = fakeNode('body', doc);
   doc.documentElement = { hasAttribute: (name) => flags.includes(name) };
   doc.createElement = (tag) => {
@@ -285,6 +290,97 @@ test('navegador sem <dialog> com showModal: não exibe e não lança erro', () =
   const { api, doc } = setup({ dialogSupported: false });
   assert.equal(api.maybeShow({ role: 'member', profileId: 'p1' }), false);
   assert.equal(doc.body.children.length, 0);
+});
+
+// ---------- foco preso, Esc e devolução do foco ----------
+function keyEvent(key, { shift = false } = {}) {
+  const evt = { key, shiftKey: shift, prevented: 0, stopped: 0, preventDefault() { evt.prevented += 1; }, stopPropagation() { evt.stopped += 1; } };
+  return evt;
+}
+
+test('Tab em "Próximo" (último visível) volta ao primeiro botão visível, "Pular", sem sair do diálogo', () => {
+  const { api, doc } = setup();
+  api.maybeShow({ role: 'member', profileId: 'p1' });
+  const dialog = dialogOf(doc);
+  buttonNamed(dialog, 'Próximo').focus();
+  const tab = keyEvent('Tab');
+  doc.fire('keydown', tab);
+  assert.equal(tab.prevented, 1);
+  assert.equal(doc.activeElement, buttonNamed(dialog, 'Pular'));
+});
+
+test('Shift+Tab em "Pular" (primeiro) vai para "Próximo" (último visível); "Voltar" oculto não entra', () => {
+  const { api, doc } = setup();
+  api.maybeShow({ role: 'member', profileId: 'p1' });
+  const dialog = dialogOf(doc);
+  buttonNamed(dialog, 'Pular').focus();
+  const tab = keyEvent('Tab', { shift: true });
+  doc.fire('keydown', tab);
+  assert.equal(tab.prevented, 1);
+  assert.equal(doc.activeElement, buttonNamed(dialog, 'Próximo'));
+});
+
+test('foco fora do diálogo: Tab traz o foco para dentro, no primeiro botão visível', () => {
+  const { api, doc } = setup();
+  api.maybeShow({ role: 'admin', profileId: 'p1' });
+  const outside = fakeNode('a', doc);
+  doc.activeElement = outside;
+  const tab = keyEvent('Tab');
+  doc.fire('keydown', tab);
+  assert.equal(tab.prevented, 1);
+  assert.equal(doc.activeElement, buttonNamed(dialogOf(doc), 'Pular'));
+});
+
+test('Esc pelo teclado: fecha, grava "visto" e devolve o foco a quem estava focado antes', () => {
+  const s = setup();
+  const opener = fakeNode('button', s.doc);
+  s.doc.activeElement = opener;
+  s.api.maybeShow({ role: 'member', profileId: 'p1' });
+  const esc = keyEvent('Escape');
+  s.doc.fire('keydown', esc);
+  assert.equal(dialogOf(s.doc).open, false);
+  assert.equal(s.storage.data['laift_onboarding_seen_p1'], '1');
+  assert.equal(s.doc.activeElement, opener);
+  assert.equal(esc.prevented, 1);
+});
+
+test('evento cancel do diálogo (Esc do navegador): não deixa fechar pelo navegador e segue pelo finish', () => {
+  const s = setup();
+  s.api.maybeShow({ role: 'member', profileId: 'p1' });
+  const dialog = dialogOf(s.doc);
+  const cancel = { prevented: 0, preventDefault() { cancel.prevented += 1; } };
+  dialog.fire('cancel', cancel);
+  assert.equal(cancel.prevented, 1);
+  assert.equal(dialog.open, false);
+  assert.equal(s.storage.data['laift_onboarding_seen_p1'], '1');
+});
+
+test('"Pular" devolve o foco ao elemento de origem', () => {
+  const s = setup();
+  const opener = fakeNode('button', s.doc);
+  s.doc.activeElement = opener;
+  s.api.maybeShow({ role: 'visitor', profileId: 'p1' });
+  buttonNamed(dialogOf(s.doc), 'Pular').click();
+  assert.equal(s.doc.activeElement, opener);
+});
+
+test('ao fechar, o listener de teclado do documento é removido (Tab volta a não ser tratado)', () => {
+  const s = setup();
+  s.api.maybeShow({ role: 'visitor', profileId: 'p1' });
+  assert.equal(s.doc.listenerCount('keydown'), 1);
+  buttonNamed(dialogOf(s.doc), 'Pular').click();
+  assert.equal(s.doc.listenerCount('keydown'), 0);
+  const tab = keyEvent('Tab');
+  s.doc.fire('keydown', tab);
+  assert.equal(tab.prevented, 0);
+});
+
+test('reset() com o diálogo aberto também solta o listener e não grava "visto"', () => {
+  const s = setup();
+  s.api.maybeShow({ role: 'member', profileId: 'p1' });
+  s.api.reset();
+  assert.equal(s.doc.listenerCount('keydown'), 0);
+  assert.equal(s.storage.data['laift_onboarding_seen_p1'], undefined);
 });
 
 // ---------- página ----------
