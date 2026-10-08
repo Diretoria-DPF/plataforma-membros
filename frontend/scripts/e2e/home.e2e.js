@@ -143,6 +143,34 @@ module.exports = async function home() {
     await member.page.click('#app-nav [data-panel="panel-home"]');
     await member.page.waitForSelector('#home-dashboard.home-editorial');
     check(summaryCalls === 2, 'voltar ao Início recarrega o resumo (uma chamada por visita: ' + summaryCalls + ')');
+
+    // Observers ativos (ResizeObserver dos gráficos fluidos): contados a partir de agora.
+    await member.page.evaluate(() => {
+      const Native = window.ResizeObserver;
+      window.__ro = { active: 0 };
+      window.ResizeObserver = class extends Native {
+        constructor(cb) { super(cb); this.__on = false; }
+        observe(el, opts) {
+          if (!this.__on) { this.__on = true; window.__ro.active += 1; }
+          return super.observe(el, opts);
+        }
+        disconnect() {
+          if (this.__on) { this.__on = false; window.__ro.active -= 1; }
+          return super.disconnect();
+        }
+      };
+    });
+    const entries = [];
+    for (let i = 0; i < 3; i += 1) {
+      await member.page.evaluate(() => window.LaiftHome.load(window.App, document));
+      entries.push(await member.page.evaluate(() => window.__ro.active));
+    }
+    check(entries[0] > 0 && entries.every((n) => n === entries[0]), 'três entradas no Início: observers ativos não crescem (' + entries + ')');
+    await member.page.evaluate(() => Promise.all([window.LaiftHome.load(window.App, document), window.LaiftHome.load(window.App, document)]));
+    check((await member.page.evaluate(() => window.__ro.active)) === entries[0], 'duas entradas em paralelo: mesmo número de observers');
+    check((await member.page.locator('#home-dashboard .home-kpis').count()) === 1, 'entradas em paralelo não duplicam o Início');
+    await member.page.evaluate(() => window.LaiftHome.reset());
+    check((await member.page.evaluate(() => window.__ro.active)) === 0, 'reset do Início solta todos os observers');
   } finally {
     await member.close();
   }

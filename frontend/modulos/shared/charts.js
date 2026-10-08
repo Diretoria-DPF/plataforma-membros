@@ -190,10 +190,15 @@
 
   // ---------- countUp ----------
 
+  /** --dur-lazy lido de um nó montado; nó desanexado não tem estilo calculado (sempre o padrão). */
+  function lazyDuration(node) {
+    var style = node && typeof root.getComputedStyle === 'function' ? root.getComputedStyle(node) : null;
+    return core.parseDuration(style ? style.getPropertyValue('--dur-lazy') : '');
+  }
+
   function readDuration(el, opts) {
     if (typeof opts.duration === 'number') return opts.duration;
-    var style = typeof root.getComputedStyle === 'function' ? root.getComputedStyle(el) : null;
-    return core.parseDuration(style ? style.getPropertyValue('--dur-lazy') : '');
+    return lazyDuration(el);
   }
 
   /**
@@ -235,9 +240,10 @@
   function centerValue(doc, ctx, spec) {
     var label = spec.label ? svgText(doc, 'laift-chart__center-label', spec.x, spec.y - 4, 'middle', spec.label) : null;
     var value = svgText(doc, 'laift-chart__center-value', spec.x, spec.y + 22, 'middle', '0');
+    // A duração vem do contêiner montado: o nó "value" ainda não está na árvore quando a contagem começa.
     ctx.track(countUp(value, spec.target, {
       format: spec.format,
-      duration: spec.duration,
+      duration: typeof spec.duration === 'number' ? spec.duration : lazyDuration(ctx.container),
       reducedMotion: ctx.reduced
     }));
     return [label, value];
@@ -271,11 +277,12 @@
   function mount(container, data, options, defaults, paint) {
     if (!container) throw new Error('LaiftCharts: container obrigatório');
     var opts = Object.assign({}, defaults, options || {});
-    var state = { node: null, handles: [], data: data, timer: null, observer: null };
+    var state = { node: null, handles: [], data: data, timer: null, observer: null, destroyed: false };
     var ctx = {
       options: opts,
       reduced: isReducedMotion(opts),
       live: !!opts.live,
+      container: container,
       track: function (handle) { state.handles.push(handle); return handle; }
     };
 
@@ -285,6 +292,7 @@
     }
 
     function render(next) {
+      if (state.destroyed) return;
       cancelHandles();
       var doc = container.ownerDocument || root.document;
       var width = opts.fluid ? measureWidth(container, opts.width) : opts.width;
@@ -323,6 +331,8 @@
       get el() { return state.node; },
       update: function (next) { render(next); return api; },
       destroy: function () {
+        if (state.destroyed) return;
+        state.destroyed = true;
         if (state.observer) state.observer.disconnect();
         if (state.timer !== null) root.clearTimeout(state.timer);
         state.observer = null;
