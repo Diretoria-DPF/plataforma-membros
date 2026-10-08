@@ -174,6 +174,22 @@
     return Object.prototype.hasOwnProperty.call(MODULE_BY_PANEL, panelId) ? MODULE_BY_PANEL[panelId] : '';
   }
 
+  /** Dica contextual (assistant-hints.js, opcional): sem o módulo, a Lia segue igual. */
+  function hint(method, arg) {
+    return ui && ui.hints ? ui.hints[method](arg) : undefined;
+  }
+
+  /** O que decide se a dica aparece: Lia ligada, painel da Lia fechado e sem suspensão. */
+  function hintFlags() {
+    return { chatbot_enabled: ui.enabled, panelOpen: ui.open, moderated: ui.moderation.isSuspended() };
+  }
+
+  /** Toque na dica: abre o painel com a pergunta pronta no campo. Nada é enviado. */
+  function openWithQuestion(text) {
+    openPanel();
+    if (ui.open && !ui.moderation.isSuspended()) ui.input.value = text;
+  }
+
   function ensureLauncherLia() {
     if (!ui.launcherLia) ui.launcherLia = mountLia(ui.launcherFigure, { crop: 'head' });
   }
@@ -181,7 +197,7 @@
   /** Repouso da Lia: suspensa enquanto o chat estiver suspenso; senão, reage à tela atual. */
   function restLiaState() {
     if (ui.moderation.isSuspended()) reactLia('suspend');
-    else reactLia('react', moduleOf(currentPanel()));
+    else reactLia('react', hint('context') || moduleOf(currentPanel()));
   }
 
   /** Painel aberto: corpo inteiro no cabeçalho, reage à tela atual e acena na primeira abertura da página. */
@@ -381,6 +397,7 @@
   function openPanel() {
     if (!ui.enabled) return;
     if (token() !== ui.lastToken) { refresh(); return; } // conta diferente da última conversa: zera antes de abrir
+    hint('hide'); // a dica some quando a Lia abre
     ui.panel.classList.remove('hidden');
     ui.launcher.setAttribute('aria-expanded', 'true');
     ui.open = true;
@@ -403,6 +420,7 @@
 
   function hideLauncher() {
     ui.enabled = false;
+    hint('hide');
     closePanel(false);
     ui.launcher.classList.add('hidden');
     ui.launcherLia = destroyLia(ui.launcherLia);
@@ -411,6 +429,7 @@
   function resetConversation() {
     ui.sendId += 1; // invalida qualquer resposta ainda a caminho
     clearRestTimer();
+    hint('reset'); // sair da conta: some a dica e zera o que já foi mostrado
     ui.messages = [];
     while (ui.log.firstChild) ui.log.removeChild(ui.log.firstChild);
     setBusy(false);
@@ -504,12 +523,15 @@
       messages: [], busy: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
       launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null,
       moderation: moderation,
+      hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,
     };
 
     launcher.button.addEventListener('click', function () { if (ui.open) closePanel(); else openPanel(); });
     head.close.addEventListener('click', function () { closePanel(); });
     panel.addEventListener('keydown', function (evt) { if (evt.key === 'Escape') { evt.stopPropagation(); closePanel(); } });
     composer.form.addEventListener('submit', function (evt) { evt.preventDefault(); send(composer.input.value); });
+    doc.addEventListener('laift:panelchange', function (evt) { hint('panelChanged', evt.detail && evt.detail.panel); });
+    doc.addEventListener('laift:modulechange', function (evt) { hint('moduleChanged', evt.detail && evt.detail.module); });
   }
 
   /** Relê a flag e zera a conversa se a conta mudou (login, logout, sessão expirada). */
@@ -532,6 +554,7 @@
       ui.feedbackOn = on && feedbackFlag(res.flags);
       ui.launcher.classList.toggle('hidden', !on);
       if (!on) {
+        hint('hide');
         closePanel(false);
         ui.launcherLia = destroyLia(ui.launcherLia);
       } else {

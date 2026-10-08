@@ -987,6 +987,7 @@
   // conversa recém-aberta de volta para a lista (bug relatado: "ao clicar
   // para enviar, não vai").
   function showPanelSection(panelId) {
+    var previousPanelId = currentPanelId;
     currentPanelId = panelId;
     document.querySelectorAll('.app-main > section').forEach(function (section) {
       section.classList.toggle('hidden', section.id !== panelId);
@@ -998,6 +999,8 @@
       else btn.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
+    // Dica da Lia (assistant-hints.js): só avisa quando a tela muda de fato.
+    if (previousPanelId !== panelId) document.dispatchEvent(new CustomEvent('laift:panelchange', { detail: { panel: panelId } }));
   }
 
   function showPanel(panelId) {

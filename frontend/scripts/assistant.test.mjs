@@ -302,3 +302,55 @@ test('a cola da Lia delega a moderação ao módulo: cria uma vez, consulta ao a
   assert.match(src, /modLib\(\)\.moderationFromChat\(res\)/);
   assert.doesNotMatch(src, /function (buildRedeem|warningBand|setSuspended|checkModerationOnce|liftSuspension)\b/);
 });
+
+// ---------- Dica contextual (assistant-hints.js): só a cola fica aqui ----------
+
+/** Corpo de uma função de assistant.js (do sinal até a chave de fechamento de 2 espaços). */
+function bodyOf(src, signature) {
+  const text = src.replace(/\r\n/g, '\n'); // o checkout do Windows grava CRLF
+  const start = text.indexOf(signature);
+  assert.ok(start >= 0, 'falta ' + signature);
+  return text.slice(start, text.indexOf('\n  }\n', start) + 4);
+}
+
+test('a cola da dica ouve os dois eventos da tela e entrega ao controlador (sem lógica de negócio)', () => {
+  const src = read('frontend/assistant.js');
+  assert.match(src, /doc\.addEventListener\('laift:panelchange'/);
+  assert.match(src, /doc\.addEventListener\('laift:modulechange'/);
+  assert.match(src, /hint\('panelChanged', evt\.detail && evt\.detail\.panel\)/);
+  assert.match(src, /hint\('moduleChanged', evt\.detail && evt\.detail\.module\)/);
+  assert.match(src, /root\.AssistantHints/);
+  assert.match(src, /createHints\(\{ doc: doc, onOpen: openWithQuestion, flags: hintFlags \}\)/);
+  assert.match(src, /function hint\(method, arg\)/);
+});
+
+test('tocar na dica abre o painel com a pergunta no campo e NÃO envia', () => {
+  const body = bodyOf(read('frontend/assistant.js'), 'function openWithQuestion(text) {');
+  assert.match(body, /openPanel\(\);/);
+  assert.match(body, /ui\.input\.value = text;/);
+  assert.doesNotMatch(body, /send\(/);
+  assert.doesNotMatch(body, /callApi/);
+});
+
+test('o painel da Lia abre no contexto da tela ou do módulo (react com o prop certo)', () => {
+  const src = read('frontend/assistant.js');
+  assert.match(src, /reactLia\('react', hint\('context'\) \|\| moduleOf\(currentPanel\(\)\)\)/);
+});
+
+test('a dica some ao abrir a Lia, ao sair da conta e quando a Lia é desligada; a cola não guarda nada', () => {
+  const src = read('frontend/assistant.js');
+  assert.match(bodyOf(src, 'function openPanel() {'), /hint\('hide'\)/);
+  assert.match(bodyOf(src, 'function resetConversation() {'), /hint\('reset'\)/);
+  assert.match(bodyOf(src, 'function hideLauncher() {'), /hint\('hide'\)/);
+  assert.doesNotMatch(src, /localStorage|sessionStorage/);
+});
+
+test('app.js emite laift:panelchange só quando a tela muda de fato; learning.js emite laift:modulechange sem repetir', () => {
+  const app = read('frontend/app.js');
+  assert.match(app, /var previousPanelId = currentPanelId;/);
+  assert.match(app, /if \(previousPanelId !== panelId\) document\.dispatchEvent\(new CustomEvent\('laift:panelchange', \{ detail: \{ panel: panelId \} \}\)\);/);
+  const learning = read('frontend/learning.js');
+  assert.match(learning, /function emitModuleChange\(moduleId\) \{/);
+  assert.match(learning, /if \(previousModuleId !== id\) emitModuleChange\(id\);/);
+  assert.match(learning, /if \(wasOpen\) emitModuleChange\(''\);/);
+});

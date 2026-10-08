@@ -270,9 +270,15 @@
     return true;
   }
 
+  /** Avisa a Lia (assistant-hints.js) que o módulo mudou. Só evento DOM: não altera nada aqui. */
+  function emitModuleChange(moduleId) {
+    document.dispatchEvent(new CustomEvent('laift:modulechange', { detail: { module: moduleId } }));
+  }
+
   function openModule(id) {
     var mod = findModule(id);
     if (!mod) return;
+    var previousModuleId = activeModuleId;
     activeModuleId = id;
     openerCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.learn-card') : null;
     if (!frames[id]) frames[id] = createFrame($('learn-frames'), mod.path, mod.title);
@@ -296,10 +302,12 @@
     // Teclado/leitor de tela: o foco vai para "← Módulos" (antes ficava num
     // cartão que acabou de sumir, e o próximo Tab ia para a barra inferior).
     $('learn-back').focus({ preventScroll: true });
+    if (previousModuleId !== id) emitModuleChange(id);
   }
 
   /** Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). */
   function closeModule() {
+    var wasOpen = activeModuleId !== null;
     if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
     if (activeModuleId && frames[activeModuleId]) frames[activeModuleId].classList.remove('learn-frame-immersive');
     activeModuleId = null;
@@ -310,6 +318,7 @@
     if (openerCard && document.contains(openerCard)) openerCard.focus({ preventScroll: true });
     openerCard = null;
     loadStats();
+    if (wasOpen) emitModuleChange('');
   }
 
   function toggleFullscreen() {

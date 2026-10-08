@@ -226,6 +226,71 @@ async function moderacao() {
   }
 }
 
+// ---- Dica contextual (plano §3.4): um balão por módulo por sessão, perto da Lia ----
+const DICA = {
+  eventos: 'Quer ajuda com sua inscrição?',
+  propostas: 'Posso te levar para criar uma proposta.',
+  aprender: 'Quer sugestão por onde começar a estudar?',
+  lab: 'Dúvida sobre vidraria ou preparo?',
+};
+
+async function dicas() {
+  const app = await startApp({ role: 'member', workerHandlers: { apiGetFeatureFlags: FLAGS_ON } });
+  try {
+    const page = app.page;
+    await app.login();
+    await page.waitForSelector('#lia-launcher:not(.hidden)');
+    const textoDaDica = () => page.$eval('.lia-hint-open', (b) => b.textContent).catch(() => '');
+
+    // Entrar em Eventos mostra a dica, sem abrir o painel da Lia
+    await page.click('#app-nav [data-panel="panel-events"]');
+    await page.waitForSelector('.lia-hint[role="status"]');
+    check(await textoDaDica() === DICA.eventos, 'entrar em Eventos mostra a dica da Lia');
+    check(await page.locator('#lia-panel.hidden').count() === 1, 'a dica não abre o painel da Lia sozinha');
+
+    // Fechar pelo × some a dica; voltar a Eventos na mesma sessão não a repete
+    await page.click('.lia-hint-close');
+    await page.waitForSelector('.lia-hint', { state: 'detached' });
+    await page.click('#app-nav [data-panel="panel-proposals"]');
+    await page.waitForSelector('.lia-hint-open');
+    check(await textoDaDica() === DICA.propostas, 'Propostas tem a sua dica');
+    await page.click('.lia-hint-close');
+    await page.waitForSelector('.lia-hint', { state: 'detached' });
+    await page.click('#app-nav [data-panel="panel-events"]');
+    await page.waitForTimeout(400);
+    check(await page.locator('.lia-hint').count() === 0, 'voltar a Eventos na mesma sessão não repete a dica');
+
+    // Ao abrir a Lia, ela já vem com o prop da tela (Eventos); com o painel aberto, nenhuma dica
+    await page.click('#lia-launcher');
+    await page.waitForSelector('#lia-panel:not(.hidden)');
+    check(await page.locator('#lia-panel .lia[aria-label="Lia, assistente de Eventos"]').count() === 1, 'a Lia abre já com o prop de Eventos');
+    check(await page.locator('.lia-hint').count() === 0, 'com o painel da Lia aberto, nenhuma dica aparece');
+    await page.keyboard.press('Escape');
+
+    // Tocar na dica abre a Lia com a pergunta no campo; nada é enviado
+    await page.click('#app-nav [data-panel="panel-learn"]');
+    await page.waitForSelector('.lia-hint-open');
+    check(await textoDaDica() === DICA.aprender, 'Aprender tem a sua dica');
+    await page.click('.lia-hint-open');
+    await page.waitForSelector('#lia-panel:not(.hidden)');
+    check(await page.inputValue('#lia-input') === DICA.aprender, 'tocar na dica abre a Lia com a pergunta pronta no campo');
+    check(await page.locator('.lia-msg-user').count() === 0, 'a pergunta não foi enviada');
+    check(app.calls.worker.every((c) => c.action !== 'apiAssistantChat'), 'tocar na dica não chama o chat');
+    await page.keyboard.press('Escape');
+
+    // Laboratório: a dica do módulo, que some sozinha em alguns segundos
+    await page.click('.learn-card[data-module="lab"]');
+    await page.waitForSelector('#learn-viewer:not(.hidden)');
+    await page.waitForSelector('.lia-hint-open');
+    check(await textoDaDica() === DICA.lab, 'entrar no Laboratório mostra a dica do módulo');
+    await page.waitForSelector('.lia-hint', { state: 'detached', timeout: 12000 });
+    check(true, 'a dica some sozinha depois de alguns segundos');
+    check(app.errors.length === 0, 'sem erros de página na dica (' + app.errors.join('; ') + ')');
+  } finally {
+    await app.close();
+  }
+}
+
 module.exports = async function assistant() {
   // ---- Flag desligada (padrão): a Lia não existe na tela ----
   const off = await startApp({ role: 'member' });
@@ -415,4 +480,5 @@ module.exports = async function assistant() {
   }
 
   await moderacao();
+  await dicas();
 };
