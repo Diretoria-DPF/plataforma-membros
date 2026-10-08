@@ -494,7 +494,7 @@
       var cmp = ADAPTER.monthlyComparison(byMetric);
       var hasData = !!cmp && cmp.rows.some(function (row) { return row.values.some(function (v) { return v > 0; }); });
       drawChart(compare.slot, 'groupedBars', hasData ? cmp.rows : [], {
-        title: 'Comparativo mensal', series: hasData ? cmp.seriesNames : null, width: 320, height: 200, fluid: true,
+        title: 'Comparativo mensal', series: hasData ? cmp.seriesNames : null, width: 320, height: 232, fluid: true,
       });
     });
   }

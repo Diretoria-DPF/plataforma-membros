@@ -238,10 +238,22 @@
 
   // ---------- Montagem e ciclo de vida ----------
 
-  /** Largura do contêiner em px; sem medida (Node, painel oculto) usa a largura padrão. */
+  /** Piso de largura: contêiner estreito não desenha menor que isso (o SVG encolhe pelo max-width). */
+  var MIN_FLUID_WIDTH = 160;
+  /** Variação mínima de largura para refazer o gráfico (evita laço de resize). */
+  var RESIZE_MIN_DELTA_PX = 8;
+
+  function paddingOf(el) {
+    if (typeof root.getComputedStyle !== 'function') return 0;
+    var style = root.getComputedStyle(el);
+    return (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
+  }
+
+  /** Largura útil do contêiner (border box menos padding) em px; sem medida usa a padrão. */
   function measureWidth(container, fallback) {
-    var measured = container && container.clientWidth;
-    return measured > 0 ? Math.floor(measured) : fallback;
+    if (!container || typeof container.getBoundingClientRect !== 'function') return fallback;
+    var inner = Math.floor(container.getBoundingClientRect().width - paddingOf(container));
+    return inner > 0 ? Math.max(MIN_FLUID_WIDTH, inner) : fallback;
   }
 
   /**
@@ -279,7 +291,9 @@
 
     function refit() {
       state.timer = null;
-      if (state.node && measureWidth(container, opts.width) !== ctx.options.width) render(state.data);
+      if (state.node && Math.abs(measureWidth(container, opts.width) - ctx.options.width) >= RESIZE_MIN_DELTA_PX) {
+        render(state.data);
+      }
     }
 
     function onResize() {

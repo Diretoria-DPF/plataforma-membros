@@ -50,6 +50,8 @@ function fakeDoc() {
 function mountPoint(doc) {
   const container = fakeNode('div');
   container.ownerDocument = doc;
+  // Medida do contêiner como o navegador daria: a largura de clientWidth, sem padding.
+  container.getBoundingClientRect = () => ({ width: container.clientWidth || 0 });
   return container;
 }
 
@@ -150,6 +152,36 @@ test('eixo Y tem três rótulos (0, metade e máximo) e o marcador fica só no �
   assert.equal(dots.length, 4);
   assert.equal(byClass(wrap, 'laift-chart__dot--quiet').length, 3);
   assert.equal(dots[3].attrs.class, 'laift-chart__dot');
+});
+
+test('largura medida tem piso de 160 px e variação menor que 8 px não refaz o gráfico', async () => {
+  let fire = null;
+  class FakeObserver {
+    constructor(cb) { fire = cb; }
+    observe() {}
+    disconnect() {}
+  }
+  const had = Object.prototype.hasOwnProperty.call(globalThis, 'ResizeObserver');
+  const prev = globalThis.ResizeObserver;
+  globalThis.ResizeObserver = FakeObserver;
+  try {
+    const narrow = mountPoint(fakeDoc());
+    narrow.clientWidth = 120;
+    const chart = Charts.lineArea(narrow, [1, 2], { fluid: true, width: 640, height: 220 });
+    assert.equal(narrow.children[0].children[0].attrs.width, '160');
+    narrow.clientWidth = 200;
+    fire();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    assert.equal(narrow.children[0].children[0].attrs.width, '200');
+    narrow.clientWidth = 205;
+    fire();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    assert.equal(narrow.children[0].children[0].attrs.width, '200', 'variação de 5 px não refaz o gráfico');
+    chart.destroy();
+  } finally {
+    if (had) globalThis.ResizeObserver = prev;
+    else delete globalThis.ResizeObserver;
+  }
 });
 
 test('sem dados, o aviso ocupa uma faixa de 56 px e não a altura do gráfico', () => {

@@ -130,6 +130,12 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* Células da grade podem encolher abaixo do conteúdo (SVG e tabela sr-only). */
+.home-sparks > *,
+.home-metric-pair > * {
+  min-width: 0;
+}
+
 .home-metric-block {
   display: grid;
   gap: var(--move-xs);

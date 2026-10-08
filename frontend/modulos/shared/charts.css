@@ -240,7 +240,7 @@
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
+  /* Sem nowrap: a tabela não pode ter largura de conteúdo (estourava a grade de 375 px). */
   border: 0;
 }
 
