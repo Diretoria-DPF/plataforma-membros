@@ -5,9 +5,10 @@
  */
 // Hero da tela de entrada: monta a Lia (só a cabeça, estado idle) no contêiner decorativo
 // #hero-lia. Melhoria progressiva: só monta com as flags ux_v2 e chatbot ligadas e com a Lia
-// carregada (window.Lia); fora disso o contêiner segue oculto. Não cria animação própria: a
-// Lia já não roda loops sob prefers-reduced-motion. Sem innerHTML (CSP).
-// Expõe window.LaiftHero; as funções são testadas em Node.
+// carregada (window.Lia). Na primeira visita as flags chegam pela rede, depois do carregamento:
+// observamos os atributos data-flag-* do <html> (não há evento em ux-v2.js) e montamos assim que
+// as duas aparecem, sem recarregar. Não cria animação própria: a Lia já não roda loops sob
+// prefers-reduced-motion. Sem innerHTML (CSP). Expõe window.LaiftHero; as funções são testadas em Node.
 (function (root) {
   'use strict';
 
@@ -34,13 +35,38 @@
     return instance;
   }
 
-  /** Entrada do hero: só age com as flags ligadas. */
+  /** Entrada imediata: só age com as flags já ligadas. */
   function heroMountIfEnabled(doc, lia) {
     if (!doc || !flagsOn(doc.documentElement)) return null;
     return mountHero(doc, lia);
   }
 
-  var api = { flagsOn: flagsOn, mountHero: mountHero, heroMountIfEnabled: heroMountIfEnabled };
+  /**
+   * Monta assim que as flags estiverem no <html>, mesmo que cheguem depois. Se já estiverem, monta
+   * na hora e não cria observador. Devolve o MutationObserver enquanto espera, ou null.
+   */
+  function watchFlags(doc, lia, ObserverCtor) {
+    var html = doc && doc.documentElement;
+    if (!html) return null;
+    var observer = null;
+    function check() {
+      if (!flagsOn(html)) return false;
+      if (observer) observer.disconnect();
+      mountHero(doc, lia);
+      return true;
+    }
+    if (check() || typeof ObserverCtor !== 'function') return null;
+    observer = new ObserverCtor(function () { check(); });
+    observer.observe(html, { attributes: true, attributeFilter: REQUIRED_FLAGS });
+    return observer;
+  }
+
+  var api = {
+    flagsOn: flagsOn,
+    mountHero: mountHero,
+    heroMountIfEnabled: heroMountIfEnabled,
+    watchFlags: watchFlags,
+  };
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = api;
@@ -48,7 +74,7 @@
     root.LaiftHero = api;
     var doc = root.document;
     if (doc) {
-      var run = function () { heroMountIfEnabled(doc, root.Lia); };
+      var run = function () { watchFlags(doc, root.Lia, root.MutationObserver); };
       if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', run);
       else run();
     }

@@ -146,3 +146,96 @@ test('chamadas repetidas não montam a Lia duas vezes', () => {
   assert.equal(Hero.heroMountIfEnabled(doc, lia), null);
   assert.equal(lia.calls.length, 1);
 });
+
+// ---------- flags que chegam depois (primeira visita, pela rede) ----------
+class FakeObserver {
+  constructor(callback) {
+    this.callback = callback;
+    this.target = null;
+    this.options = null;
+    this.disconnected = false;
+    FakeObserver.instances.push(this);
+  }
+  observe(target, options) { this.target = target; this.options = options; }
+  disconnect() { this.disconnected = true; }
+}
+
+function liveHtml(initial = []) {
+  const attrs = new Set(initial);
+  return {
+    hasAttribute: (name) => attrs.has(name),
+    setFlag: (name) => { attrs.add(name); },
+  };
+}
+
+function liveDoc(container, html) {
+  return { documentElement: html, getElementById: (id) => (id === 'hero-lia' ? container : null) };
+}
+
+test('watchFlags: flags já ligadas montam na hora e não criam observador', () => {
+  FakeObserver.instances = [];
+  const container = fakeContainer();
+  const lia = fakeLia();
+  const result = Hero.watchFlags(liveDoc(container, liveHtml(BOTH_FLAGS)), lia, FakeObserver);
+  assert.equal(result, null);
+  assert.equal(FakeObserver.instances.length, 0);
+  assert.equal(lia.calls.length, 1);
+  assert.equal(container.classList.contains('hidden'), false);
+});
+
+test('watchFlags: flags que chegam depois observam o <html> e montam só quando as duas existem', () => {
+  FakeObserver.instances = [];
+  const html = liveHtml(['data-flag-ux-v2-enabled']);
+  const container = fakeContainer();
+  const lia = fakeLia();
+  const observer = Hero.watchFlags(liveDoc(container, html), lia, FakeObserver);
+  assert.equal(observer, FakeObserver.instances[0]);
+  assert.equal(observer.target, html);
+  assert.deepEqual(observer.options, { attributes: true, attributeFilter: BOTH_FLAGS });
+  observer.callback();
+  assert.equal(lia.calls.length, 0, 'com uma flag só não monta');
+  assert.equal(observer.disconnected, false);
+  html.setFlag('data-flag-chatbot-enabled');
+  observer.callback();
+  assert.equal(lia.calls.length, 1);
+  assert.equal(observer.disconnected, true);
+  assert.equal(container.classList.contains('hidden'), false, 'o contêiner aparece sem recarregar');
+});
+
+test('watchFlags: mutações repetidas depois de montar não montam de novo', () => {
+  FakeObserver.instances = [];
+  const html = liveHtml();
+  const lia = fakeLia();
+  const observer = Hero.watchFlags(liveDoc(fakeContainer(), html), lia, FakeObserver);
+  BOTH_FLAGS.forEach((name) => html.setFlag(name));
+  observer.callback();
+  observer.callback();
+  assert.equal(lia.calls.length, 1);
+});
+
+test('watchFlags: sem MutationObserver no navegador, não monta e não lança erro', () => {
+  const lia = fakeLia();
+  const container = fakeContainer();
+  assert.equal(Hero.watchFlags(liveDoc(container, liveHtml()), lia, undefined), null);
+  assert.equal(lia.calls.length, 0);
+  assert.equal(container.classList.contains('hidden'), true);
+});
+
+test('watchFlags: sem <html> devolve null', () => {
+  assert.equal(Hero.watchFlags({ getElementById: () => null }, fakeLia(), FakeObserver), null);
+});
+
+test('watchFlags: Lia ausente quando as flags chegam não lança, mantém o contêiner oculto e desliga o observador', () => {
+  FakeObserver.instances = [];
+  const html = liveHtml();
+  const container = fakeContainer();
+  const observer = Hero.watchFlags(liveDoc(container, html), null, FakeObserver);
+  BOTH_FLAGS.forEach((name) => html.setFlag(name));
+  assert.doesNotThrow(() => observer.callback());
+  assert.equal(container.classList.contains('hidden'), true);
+  assert.equal(observer.disconnected, true);
+});
+
+test('hero.js liga o observador no navegador (MutationObserver do window), não só no carregamento', () => {
+  assert.match(SOURCE, /watchFlags\(doc, root\.Lia, root\.MutationObserver\)/);
+});

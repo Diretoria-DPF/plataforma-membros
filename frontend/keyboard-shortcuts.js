@@ -3,40 +3,43 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Atalhos de teclado da plataforma. "?" (Shift+/) abre a ajuda com a lista de atalhos;
-// Ctrl+K (Cmd+K no Mac) abre e foca o campo da Lia (window.LaiftAssistant.open). Nada dispara
-// quando o foco está em campo de texto ou contenteditable, nem com outro diálogo aberto, e só
-// há combinações que não colidem com leitores de tela. Ponto de extensão:
-// window.LaiftShortcuts.register('Ctrl+Shift+F', handler, 'Busca global') (a busca da F4 entra aqui).
+// Atalhos de teclado da plataforma. Todo atalho exige modificador (WCAG 2.1.4): Ctrl+/ (Cmd+/
+// no Mac) abre a ajuda com a lista de atalhos; Ctrl+K (Cmd+K) abre e foca o campo da Lia
+// (window.LaiftAssistant.open). Nada dispara com tecla segurada (evt.repeat), dentro de campo de
+// texto (input, textarea, select, role textbox/combobox/searchbox ou contenteditable), nem com
+// outro diálogo aberto. Ponto de extensão: window.LaiftShortcuts.register('Ctrl+Shift+F', handler,
+// 'Busca global'); combinação já registrada é recusada (register devolve false), nunca sobrescrita.
 // Expõe window.LaiftShortcuts; as funções são testadas em Node.
 (function (root) {
   'use strict';
 
   var HELP_ID = 'modal-shortcuts-help';
+  var HELP_COMBO = 'mod+/';
+  var LIA_COMBO = 'mod+k';
   var NON_TEXT_INPUT_TYPES = ['button', 'checkbox', 'color', 'file', 'image', 'radio', 'range', 'reset', 'submit'];
+  var TEXT_ROLES = ['textbox', 'combobox', 'searchbox'];
+  var EDITABLE_CE_VALUES = ['', 'true', 'plaintext-only'];
   var MODIFIERS = ['mod', 'alt', 'shift'];
   var ALIASES = { ctrl: 'mod', cmd: 'mod', meta: 'mod', control: 'mod', option: 'alt' };
 
   function isLetter(key) { return /^[a-z]$/i.test(key); }
 
-  /** Forma canônica de uma tecla pressionada: 'mod+k', 'mod+shift+f', '?'. Ctrl e Cmd contam como 'mod'. */
+  /** Forma canônica de uma tecla pressionada: 'mod+k', 'mod+shift+f', 'mod+/'. Ctrl e Cmd contam como 'mod'. */
   function comboOf(evt) {
     var key = String(evt.key || '');
-    if (key === '/' && evt.shiftKey) key = '?';
     var parts = [];
     if (evt.ctrlKey || evt.metaKey) parts.push('mod');
     if (evt.altKey) parts.push('alt');
-    if (evt.shiftKey && isLetter(key)) parts.push('shift'); // "?" e outros símbolos já trazem o shift
+    if (evt.shiftKey && isLetter(key)) parts.push('shift'); // símbolos já trazem o shift (ex.: "?")
     parts.push(key.toLowerCase());
     return parts.join('+');
   }
 
-  /** Escreve uma combinação do mesmo jeito que comboOf: aceita "Ctrl+K", "Cmd+Shift+K", "shift+/". */
+  /** Escreve uma combinação do mesmo jeito que comboOf: aceita "Ctrl+K", "Cmd+Shift+K", "Ctrl+/". */
   function normalizeCombo(text) {
     var words = String(text || '').toLowerCase().split('+').map(function (w) { return w.trim(); }).filter(Boolean);
     if (!words.length) return '';
     var key = words.pop();
-    if (key === '/' && words.indexOf('shift') >= 0) key = '?';
     var names = words.map(function (w) { return ALIASES[w] || w; });
     var mods = MODIFIERS.filter(function (m) {
       return names.indexOf(m) >= 0 && (m !== 'shift' || isLetter(key));
@@ -44,10 +47,23 @@
     return mods.concat([key]).join('+');
   }
 
-  /** Campo de texto, área de texto, seleção ou contenteditable: a tecla pertence ao campo. */
+  function attrOf(el, name) {
+    return typeof el.getAttribute === 'function' ? el.getAttribute(name) : null;
+  }
+
+  function isEditableAttribute(el) {
+    var value = attrOf(el, 'contenteditable');
+    return value !== null && EDITABLE_CE_VALUES.indexOf(String(value).toLowerCase()) >= 0;
+  }
+
+  function isTextRole(el) {
+    return TEXT_ROLES.indexOf(String(attrOf(el, 'role') || '').toLowerCase()) >= 0;
+  }
+
+  /** Campo de texto, área de texto, seleção, controle com papel de texto ou contenteditable: a tecla é do campo. */
   function isEditableTarget(el) {
     if (!el) return false;
-    if (el.isContentEditable === true) return true;
+    if (el.isContentEditable === true || isEditableAttribute(el) || isTextRole(el)) return true;
     var tag = String(el.tagName || '').toUpperCase();
     if (tag === 'TEXTAREA' || tag === 'SELECT') return true;
     if (tag !== 'INPUT') return false;
@@ -75,16 +91,43 @@
     return el;
   }
 
+  function enabledButtons(box) {
+    return Array.prototype.filter.call(box.querySelectorAll('button'), function (b) { return !b.disabled; });
+  }
+
+  /** Foco preso no diálogo: Tab dá a volta, e foco fora do diálogo é trazido de volta. */
   function trapTab(doc, evt, box) {
-    var items = Array.prototype.filter.call(box.querySelectorAll('button'), function (b) { return !b.disabled; });
+    var items = enabledButtons(box);
     if (!items.length) return;
     var first = items[0];
     var last = items[items.length - 1];
-    if (evt.shiftKey && doc.activeElement === first) { evt.preventDefault(); last.focus({ preventScroll: true }); }
-    else if (!evt.shiftKey && doc.activeElement === last) { evt.preventDefault(); first.focus({ preventScroll: true }); }
+    if (items.indexOf(doc.activeElement) < 0) {
+      evt.preventDefault();
+      (evt.shiftKey ? last : first).focus({ preventScroll: true });
+    } else if (evt.shiftKey && doc.activeElement === first) {
+      evt.preventDefault();
+      last.focus({ preventScroll: true });
+    } else if (!evt.shiftKey && doc.activeElement === last) {
+      evt.preventDefault();
+      first.focus({ preventScroll: true });
+    }
   }
 
-  /** Diálogo de ajuda no padrão de credential.js: foco preso, Esc fecha, foco volta à origem. */
+  function renderShortcutList(doc, list, described) {
+    while (list.firstChild) list.removeChild(list.firstChild);
+    described.forEach(function (item) {
+      var term = make(doc, 'dt');
+      term.appendChild(make(doc, 'kbd', '', comboLabel(item.combo)));
+      list.appendChild(term);
+      list.appendChild(make(doc, 'dd', '', item.description));
+    });
+  }
+
+  /**
+   * Diálogo de ajuda no padrão de credential.js: foco preso, Esc fecha, foco volta à origem.
+   * Esc e Tab são tratados no document (enquanto o diálogo estiver aberto), não no overlay:
+   * o foco pode estar em qualquer lugar quando a tecla chega.
+   */
   function createHelpDialog(doc, shortcuts) {
     var overlay = make(doc, 'div', 'modal-overlay hidden');
     overlay.id = HELP_ID;
@@ -104,24 +147,15 @@
     overlay.appendChild(box);
     doc.body.appendChild(overlay);
 
-    var dialog = { overlay: overlay, list: list, close: close, opener: null };
+    var dialog = { overlay: overlay, box: box, list: list, close: close, opener: null };
     close.addEventListener('click', function () { shortcuts.closeHelp(); });
     overlay.addEventListener('click', function (evt) { if (evt.target === overlay) shortcuts.closeHelp(); });
-    overlay.addEventListener('keydown', function (evt) {
-      if (evt.key === 'Escape') { evt.stopPropagation(); shortcuts.closeHelp(); }
+    doc.addEventListener('keydown', function (evt) {
+      if (overlay.classList.contains('hidden')) return;
+      if (evt.key === 'Escape') { evt.preventDefault(); shortcuts.closeHelp(); }
       else if (evt.key === 'Tab') trapTab(doc, evt, box);
     });
     return dialog;
-  }
-
-  function renderShortcutList(doc, list, described) {
-    while (list.firstChild) list.removeChild(list.firstChild);
-    described.forEach(function (item) {
-      var term = make(doc, 'dt');
-      term.appendChild(make(doc, 'kbd', '', comboLabel(item.combo)));
-      list.appendChild(term);
-      list.appendChild(make(doc, 'dd', '', item.description));
-    });
   }
 
   /** Cria o gerenciador de atalhos para um documento. Usado pela página e pelos testes. */
@@ -129,11 +163,10 @@
     var entries = new Map();
     var help = null;
 
+    /** Devolve a função que remove o atalho, ou false se a combinação é inválida ou já existe. */
     function register(combo, handler, description) {
       var key = normalizeCombo(combo);
-      if (!key || typeof handler !== 'function') {
-        throw new TypeError('LaiftShortcuts.register: combinação e função são obrigatórias');
-      }
+      if (!key || typeof handler !== 'function' || entries.has(key)) return false;
       var entry = { combo: key, handler: handler, description: String(description || '') };
       entries.set(key, entry);
       return function unregister() { if (entries.get(key) === entry) entries.delete(key); };
@@ -174,7 +207,7 @@
 
     /** Trata uma tecla. Devolve true só quando um atalho a reclamou (e o padrão foi cancelado). */
     function dispatch(evt) {
-      if (!evt || evt.isComposing || evt.defaultPrevented) return false;
+      if (!evt || evt.repeat || evt.isComposing || evt.defaultPrevented) return false;
       var entry = entries.get(comboOf(evt));
       if (!entry || isEditableTarget(evt.target) || hasOpenModal(doc)) return false;
       if (entry.handler(evt) === false) return false;
@@ -183,8 +216,8 @@
     }
 
     var shortcuts = { register: register, dispatch: dispatch, openHelp: openHelp, closeHelp: closeHelp };
-    register('?', openHelp, 'Mostra esta lista de atalhos');
-    register('mod+k', openLia, 'Abre a Lia e foca o campo de pergunta');
+    register(HELP_COMBO, openHelp, 'Mostra esta lista de atalhos');
+    register(LIA_COMBO, openLia, 'Abre a Lia e foca o campo de pergunta');
     return shortcuts;
   }
 
