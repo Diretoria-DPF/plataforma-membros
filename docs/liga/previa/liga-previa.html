@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prévia A/B da identidade da Liga</title>
+<link rel="stylesheet" href="../../../frontend/modulos/shared/laift-tokens.css">
+<style>
+/* Variáveis de cada combinação (valores copiados dos tokens de laift-tokens.css e de lia.css). */
+.va.claro {
+  --layer-0: #fafaf7;
+  --layer-1: #f4f3ef;
+  --layer-2: #edebe5;
+  --layer-3: #e4e1d8;
+  --elev-1: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(20, 30, 50, 0.06);
+  --elev-2: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 18px rgba(20, 30, 50, 0.08);
+  --laift-text: #1c2333;
+  --laift-muted: #5b6478;
+  --laift-primary: #0f6f62;
+  --laift-on-primary: #ffffff;
+  --laift-primary-soft: #e1f4f0;
+  --laift-danger: #b3261e;
+  --laift-danger-soft: #fbe6e4;
+  --hero-bg: #f4f3ef;
+  --hero-text: #1c2333;
+  --hero-muted: #5b6478;
+  --hero-accent: #0f6f62;
+  --linha-bg: #edebe5;
+  --linha-text: #1c2333;
+  --linha-muted: #5b6478;
+  --linha-step: #0f6f62;
+  --linha-step-text: #ffffff;
+  --linha-tag: #b3261e;
+  --linha-tag-bg: #fbe6e4;
+  --lia-accent: #0f6f62;
+  --lia-glow: transparent;
+  --lia-line: #24403b;
+  --cover-bg: #0f6f62;
+  --cover-text: #ffffff;
+  --body-bg: #f4f3ef;
+  --body-text: #1c2333;
+  --num-bg: #0f6f62;
+  --num-text: #ffffff;
+}
+.va.escuro {
+  --layer-0: #0e1114;
+  --layer-1: #14181c;
+  --layer-2: #1a1f24;
+  --layer-3: #22282e;
+  --elev-1: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-2: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.42);
+  --laift-text: #e7ebf3;
+  --laift-muted: #9aa5bb;
+  --laift-primary: #3fcfb6;
+  --laift-on-primary: #06231e;
+  --laift-primary-soft: #10352f;
+  --laift-danger: #ff7a70;
+  --laift-danger-soft: #3a1c1c;
+  --hero-bg: #14181c;
+  --hero-text: #e7ebf3;
+  --hero-muted: #9aa5bb;
+  --hero-accent: #3fcfb6;
+  --linha-bg: #1a1f24;
+  --linha-text: #e7ebf3;
+  --linha-muted: #9aa5bb;
+  --linha-step: #3fcfb6;
+  --linha-step-text: #06231e;
+  --linha-tag: #ff7a70;
+  --linha-tag-bg: #3a1c1c;
+  --lia-accent: #3fcfb6;
+  --lia-glow: transparent;
+  --lia-line: #b9e6dc;
+  --cover-bg: #3fcfb6;
+  --cover-text: #06231e;
+  --body-bg: #14181c;
+  --body-text: #e7ebf3;
+  --num-bg: #3fcfb6;
+  --num-text: #06231e;
+}
+.vb.claro {
+  --layer-0: #fafaf7;
+  --layer-1: #f4f3ef;
+  --layer-2: #edebe5;
+  --layer-3: #e4e1d8;
+  --elev-1: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(20, 30, 50, 0.06);
+  --elev-2: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 18px rgba(20, 30, 50, 0.08);
+  --laift-text: #1c2333;
+  --laift-muted: #5b6478;
+  --laift-primary: #0f6f62;
+  --laift-on-primary: #ffffff;
+  --laift-primary-soft: #e1f4f0;
+  --laift-danger: #b3261e;
+  --laift-danger-soft: #fbe6e4;
+  --hero-bg: #14181c;
+  --hero-text: #e7ebf3;
+  --hero-muted: #9aa5bb;
+  --hero-accent: #3fcfb6;
+  --linha-bg: #14181c;
+  --linha-text: #e7ebf3;
+  --linha-muted: #9aa5bb;
+  --linha-step: #ffc857;
+  --linha-step-text: #0e1114;
+  --linha-tag: #ff7a70;
+  --linha-tag-bg: #3a1c1c;
+  --lia-accent: #3fcfb6;
+  --lia-glow: #3fcfb6;
+  --lia-line: #cfe9e3;
+  --cover-bg: #14181c;
+  --cover-text: #e7ebf3;
+  --body-bg: #1a1f24;
+  --body-text: #e7ebf3;
+  --num-bg: #ffc857;
+  --num-text: #0e1114;
+}
+.vb.escuro {
+  --layer-0: #0e1114;
+  --layer-1: #14181c;
+  --layer-2: #1a1f24;
+  --layer-3: #22282e;
+  --elev-1: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-2: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.42);
+  --laift-text: #e7ebf3;
+  --laift-muted: #9aa5bb;
+  --laift-primary: #3fcfb6;
+  --laift-on-primary: #06231e;
+  --laift-primary-soft: #10352f;
+  --laift-danger: #ff7a70;
+  --laift-danger-soft: #3a1c1c;
+  --hero-bg: #14181c;
+  --hero-text: #e7ebf3;
+  --hero-muted: #9aa5bb;
+  --hero-accent: #3fcfb6;
+  --linha-bg: #14181c;
+  --linha-text: #e7ebf3;
+  --linha-muted: #9aa5bb;
+  --linha-step: #ffc857;
+  --linha-step-text: #0e1114;
+  --linha-tag: #ff7a70;
+  --linha-tag-bg: #3a1c1c;
+  --lia-accent: #3fcfb6;
+  --lia-glow: #3fcfb6;
+  --lia-line: #cfe9e3;
+  --cover-bg: #14181c;
+  --cover-text: #e7ebf3;
+  --body-bg: #1a1f24;
+  --body-text: #e7ebf3;
+  --num-bg: #ffc857;
+  --num-text: #0e1114;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--laift-font); background: var(--layer-0); color: var(--laift-text); line-height: 1.45; }
+main { max-width: 1320px; margin: 0 auto; padding: 16px; }
+.topo h1 { font-size: 1.5rem; margin: 8px 0 4px; }
+.topo p { margin: 4px 0; color: var(--laift-muted); }
+.bloco { margin-top: 32px; }
+.bloco h2 { font-size: 1.125rem; margin: 0 0 12px; }
+.linha-quadros { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.quadro { margin: 0; width: min(var(--w), 100%); min-width: 0; container-type: inline-size; }
+.quadro figcaption { font-size: .875rem; font-weight: 600; color: var(--laift-muted); margin-bottom: 8px; }
+.w375 { --w: 375px; }
+.w1280 { --w: 1280px; }
+.tela { width: 100%; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 20px; border-radius: 32px; background: var(--layer-0); color: var(--laift-text); box-shadow: var(--elev-1); }
+.tela > *, .corpo > *, .hero > *, .linha li > * { min-width: 0; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 20px; border-radius: 28px; background: var(--hero-bg); color: var(--hero-text); box-shadow: var(--elev-2); }
+.vb.w375 .hero { grid-template-columns: minmax(0, 1fr); }
+.vb.w375 .lia-view { justify-self: center; }
+.marca { width: 72px; height: 72px; border-radius: 50%; background: #fafaf7; display: grid; place-items: center; margin-bottom: 8px; }
+.marca img { width: 64px; height: 64px; display: block; }
+.kicker { margin: 0; font-size: .8125rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--hero-accent); }
+.hero h2 { margin: 4px 0 0; font-size: 1.375rem; line-height: 1.2; }
+.lema { margin: 8px 0 0; color: var(--hero-muted); }
+.link { margin: 8px 0 0; font-size: .875rem; font-weight: 600; color: var(--hero-accent); }
+.lia-view { display: block; width: 96px; height: 144px; overflow: visible; }
+.w1280 .lia-view { width: 128px; height: 192px; }
+.vb .lia-view { width: 150px; height: 225px; }
+.vb.w1280 .lia-view { width: 240px; height: 360px; }
+.linha { list-style: none; margin: 0; padding: 20px; border-radius: 28px; display: grid; gap: 16px; background: var(--linha-bg); color: var(--linha-text); box-shadow: var(--elev-2); }
+.vb .linha { box-shadow: inset 0 3px 0 var(--linha-step), var(--elev-2); }
+.linha li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; }
+.passo { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--linha-step); color: var(--linha-step-text); }
+.vb .passo { width: 56px; height: 56px; font-size: 1.25rem; }
+.linha strong { display: block; }
+.linha small { display: block; margin-top: 2px; color: var(--linha-muted); }
+.tag { display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 999px; font-size: .75rem; font-weight: 700; background: var(--linha-tag-bg); color: var(--linha-tag); }
+.corpo { display: grid; gap: 12px; }
+@container (min-width: 700px) {
+  .w1280 .linha { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .w1280 .corpo { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: center; }
+}
+.cartao { padding: 20px; border-radius: 28px; background: var(--layer-1); color: var(--laift-text); box-shadow: var(--elev-1); }
+.cartao h3 { margin: 0 0 8px; font-size: 1.0625rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.chips li { padding: 6px 12px; border-radius: 999px; font-size: .875rem; font-weight: 600; background: var(--laift-primary-soft); color: var(--laift-primary); }
+.nota { margin: 12px 0 0; font-size: .875rem; color: var(--laift-muted); }
+.cta { min-height: 44px; padding: 12px 24px; border: 0; border-radius: 999px; background: var(--laift-primary); color: var(--laift-on-primary); font: inherit; font-weight: 700; cursor: pointer; box-shadow: var(--elev-2); }
+.ig { --w: 375px; width: var(--w); max-width: 100%; display: grid; gap: 16px; padding: 16px; border-radius: 32px; background: var(--layer-0); color: var(--laift-text); box-shadow: var(--elev-1); }
+.perfil { display: flex; gap: 16px; align-items: center; }
+.avatar { width: 84px; height: 84px; flex: none; border-radius: 50%; background: #fafaf7; display: grid; place-items: center; }
+.avatar img { width: 76px; height: 76px; display: block; }
+.ig-nome { margin: 0; font-weight: 700; }
+.ig-sub { margin: 4px 0 0; font-size: .875rem; color: var(--laift-muted); }
+.destaques { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; text-align: center; font-size: .75rem; color: var(--laift-muted); }
+.destaques li { display: grid; justify-items: center; gap: 6px; }
+.capa-dest { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--layer-2); color: var(--laift-primary); font-weight: 800; }
+.slides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.slide { margin: 0; aspect-ratio: 1 / 1; border-radius: 24px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; overflow: hidden; }
+.slide.capa { background: var(--cover-bg); color: var(--cover-text); }
+.slide.etapas { background: var(--body-bg); color: var(--body-text); }
+.s-kicker { margin: 0; font-size: .6875rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.s-titulo { margin: 0; font-size: 1.125rem; font-weight: 800; line-height: 1.15; }
+.s-texto { margin: 0; font-size: .8125rem; }
+.slide ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: .75rem; }
+.slide li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px; align-items: start; }
+.n { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: .6875rem; font-weight: 800; background: var(--num-bg); color: var(--num-text); }
+@media (prefers-reduced-motion: reduce) { .lia-view { transition: none; } }
+
+.lia-art { fill: none; stroke: var(--lia-line, #24403b); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.lia-art .k { fill: var(--lia-skin, #f4cfae); }
+.lia-art .h { fill: var(--lia-hair, #3a3f4d); }
+.lia-art .c { fill: var(--lia-cloth, #ffffff); }
+.lia-art .a { fill: var(--lia-accent, #0f6f62); }
+.lia-art .p { fill: var(--lia-paper, #ffffff); }
+.lia-art .f { fill: var(--lia-line, #24403b); }
+.lia-art .g { fill: var(--lia-fever, #d6452d); }
+.lia-art .t { fill: var(--lia-heart, #e0526b); }
+.lia-art .s { fill: var(--lia-spark, #f2b63d); }
+.lia-art .w { stroke: var(--lia-fever, #d6452d); }
+.lia-art .o { stroke: var(--lia-line, #24403b); }
+.lia-art .n { stroke: none; }
+.lia-art .pt { fill: var(--lia-pants, #3a3f4d); }
+.lia-art .sh { fill: var(--lia-shadow, #1a2b28); opacity: .2; }
+.lia-art .bl { fill: var(--lia-blush, #e8806b); opacity: .4; }
+.lia-art .gl { fill: var(--lia-glow, #0f6f62); opacity: .16; }
+.lia-art :is([id^="lia-eyes-"], [id^="lia-brows-"], [id^="lia-mouth-"], [id^="lia-arm-"], [id^="lia-prop-"], [id^="lia-scene-"], #lia-glasses) { display: none; }
+.lia-art :is(#lia-eyes-neutral, #lia-brows-neutral, #lia-mouth-neutral, #lia-arm-left-idle, #lia-arm-right-idle, #lia-scene-glow) { display: inline; }
+</style>
+</head>
+<body>
+<svg class="lia-art" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <defs>
+    <symbol id="lia-sym" viewBox="0 0 200 300">
+<defs><path id="lia-star" class="s n" d="M0-8 2-2 8 0 2 2 0 8-2 2-8 0-2-2z"/></defs>
+<g id="lia-scene-glow"><circle class="gl n" cx="100" cy="150" r="104"/></g>
+<g id="lia-body">
+<g id="lia-ground"><ellipse class="sh n" cx="100" cy="286" rx="40" ry="6"/></g>
+<g id="lia-torso">
+<rect id="lia-neck" class="k rd" x="93" y="160" width="14" height="32" rx="4"/>
+<g id="lia-legs"><rect class="pt n" x="80" y="262" width="18" height="8"/><rect class="pt n" x="102" y="262" width="18" height="8"/></g>
+<path id="lia-feet" class="a" d="M76 268h20v9H76zM104 268h20v9h-20z"/>
+<g id="lia-coat"><path class="c" d="M66 270c-2-46 4-72 14-82h40c10 10 16 36 14 82z"/><path class="a" d="M86 188l14 16 14-16z"/></g>
+</g>
+<g id="lia-head">
+<path class="h" d="M50 104c0-44 22-68 50-68s50 24 50 68c0 24-4 42-10 50H60c-6-8-10-26-10-50z"/>
+<ellipse class="k" cx="100" cy="106" rx="44" ry="42"/>
+<path class="h" d="M55 98C53 64 76 48 100 48s47 16 45 50c-12-6-26-18-36-30-10 16-30 26-54 30z"/>
+<path id="lia-lock" class="a" d="M58 88c-10 18-10 42-2 58 8-8 8-22 6-34-1-8-2-16-4-24z"/>
+<ellipse class="bl n" cx="74" cy="124" rx="7" ry="4"/><ellipse class="bl n" cx="126" cy="124" rx="7" ry="4"/><ellipse class="bl n" cx="74" cy="124" rx="8" ry="4.6"/><ellipse class="bl n" cx="126" cy="124" rx="8" ry="4.6"/>
+<g id="lia-glasses"><circle class="el" cx="82" cy="112" r="8.5"/><circle class="er" cx="118" cy="112" r="8.5"/><path d="M90.5 112h19"/></g>
+<g id="lia-eyes-neutral"><circle class="f n el ey" cx="82" cy="112" r="4.6"/><circle class="f n er ey" cx="118" cy="112" r="4.6"/><circle class="p n el ey" cx="83.4" cy="110.4" r="1.6"/><circle class="p n er ey" cx="119.4" cy="110.4" r="1.6"/></g>
+<g id="lia-eyes-curious"><circle class="f n el ey" cx="82" cy="112" r="3.6"/><circle class="f n er ey" cx="118" cy="111" r="4.6"/></g>
+<g id="lia-eyes-happy"><path class="el ey" d="M75 114q7-9 14 0"/><path class="er ey" d="M111 114q7-9 14 0"/></g>
+<g id="lia-eyes-worried"><circle class="f n el ey" cx="82" cy="113" r="4.2"/><circle class="f n er ey" cx="118" cy="113" r="4.2"/></g>
+<g id="lia-eyes-focused"><circle class="f n el ey" cx="82" cy="112" r="4.1"/><circle class="f n er ey" cx="118" cy="112" r="4.1"/><circle class="p n el ey" cx="83.2" cy="110.6" r="1.5"/><circle class="p n er ey" cx="119.2" cy="110.6" r="1.5"/></g>
+<g id="lia-eyes-sad"><path class="el ey" d="M75 111q7 7 14 0"/><path class="er ey" d="M111 111q7 7 14 0"/></g>
+<g id="lia-brows-neutral" class="br" stroke-width="1.3"><path class="el" d="M74 98q8-5 16 0"/><path class="er" d="M110 98q8-5 16 0"/></g>
+<g id="lia-brows-curious" class="br" stroke-width="1.3"><path class="el" d="M74 99h16"/><path class="er" d="M110 93q8-5 16 0"/></g>
+<g id="lia-brows-happy" class="br" stroke-width="1.3"><path class="el" d="M74 99q8-5 16 0"/><path class="er" d="M110 99q8-5 16 0"/></g>
+<g id="lia-brows-worried" class="br" stroke-width="1.3"><path class="el" d="M74 100l16-3"/><path class="er" d="M110 97l16 3"/></g>
+<g id="lia-brows-focused" class="br" stroke-width="1.3"><path class="el" d="M74 96q8-5 16 0"/><path class="er" d="M110 96q8-5 16 0"/></g>
+<g id="lia-brows-sad" class="br" stroke-width="1.3"><path class="el" d="M74 103l16-8"/><path class="er" d="M110 95l16 8"/></g>
+<g id="lia-mouth-neutral"><path d="M89 130q11 7 22 0"/></g>
+<g id="lia-mouth-smile"><path d="M90 129q10 10 20 0"/></g>
+<g id="lia-mouth-open"><path class="f" d="M92 128q8 15 16 0z"/></g>
+<g id="lia-mouth-flat"><path d="M93 132h14"/></g>
+<g id="lia-mouth-worried"><path d="M93 133q3-2 6 0t6 0"/></g>
+</g>
+</g>
+<g id="lia-limbs">
+<g id="lia-arm-left-idle"><path class="c" d="M82 192c-14 8-18 28-16 46l12 2c0-18 4-30 10-40z"/><circle class="k" cx="72" cy="244" r="6"/></g>
+<g id="lia-arm-left-wave"><g transform="translate(-8 6)"><path class="c" d="M82 194c-16 0-28-14-32-42l12-3c3 18 10 24 22 28z"/><circle class="k" cx="56" cy="146" r="6.5"/></g></g>
+<g id="lia-arm-left-point"><path class="c" d="M82 194c-14-2-26-10-36-22l8-8c8 8 16 14 28 16z"/><circle class="k" cx="47" cy="167" r="5.5"/></g>
+<g id="lia-arm-left-chin"><path class="c" d="M80 194c-12-4-14-22 0-44l12 4c-8 14-8 22 0 32z"/><circle class="k" cx="92" cy="150" r="6"/></g>
+<g id="lia-arm-left-heart"><path class="c" d="M82 194c-4 10 0 20 8 24l4-8c-4-2-6-8-4-14z"/><circle class="k" cx="94" cy="214" r="5.5"/></g>
+<g id="lia-arm-right-idle"><path class="c" d="M118 192c14 8 18 28 16 46l-12 2c0-18-4-30-10-40z"/><circle class="k" cx="128" cy="244" r="6"/></g>
+<g id="lia-arm-right-wave"><g transform="translate(8 6)"><path class="c" d="M118 194c16 0 28-14 32-42l-12-3c-3 18-10 24-22 28z"/><circle class="k" cx="144" cy="146" r="6.5"/></g></g>
+<g id="lia-arm-right-point"><path class="c" d="M118 194c14-2 26-10 36-22l-8-8c-8 8-16 14-28 16z"/><circle class="k" cx="153" cy="167" r="5.5"/></g>
+<g id="lia-arm-right-chin" transform="translate(0 8)"><path class="c" d="M120 194c12-6 12-18 4-28l-14 8c4 8 4 14 0 22z"/><circle class="k" cx="110" cy="172" r="6"/></g>
+<g id="lia-arm-right-heart"><path class="c" d="M118 194c4 10 0 20-8 24l-4-8c4-2 6-8 4-14z"/><circle class="k" cx="106" cy="214" r="5.5"/></g>
+<g id="lia-prop-none"/>
+<g id="lia-prop-calendar" transform="translate(12 0)"><rect class="p rd" x="122" y="204" width="42" height="42" rx="4"/><path class="a" d="M122 208a4 4 0 014-4h34a4 4 0 014 4v8h-42z"/><path d="M133 200v8M153 200v8"/><path class="f n" d="M130 224h5v5h-5zM141 224h5v5h-5zM152 224h5v5h-5zM130 235h5v5h-5zM141 235h5v5h-5z"/></g>
+<g id="lia-prop-pencil"><g transform="rotate(35 140 224)"><rect class="a" x="135" y="196" width="10" height="44" rx="2"/><rect class="p" x="135" y="196" width="10" height="7" rx="2"/><path class="k" d="M135 240h10l-5 13z"/><path class="f n" d="M138.4 248.5h3.2L140 253z"/></g></g>
+<g id="lia-prop-flask"><path class="p" d="M142 202h10v14l14 26a4 4 0 01-3.5 6H131.5a4 4 0 01-3.5-6l14-26z"/><path class="a" d="M132 234h30l4 8a4 4 0 01-3.5 6H131.5a4 4 0 01-3.5-6z"/><path d="M139 202h16"/><circle class="p" cx="145" cy="241" r="2"/><circle class="p" cx="153" cy="238" r="1.5"/></g>
+<g id="lia-prop-stethoscope"><path d="M84 186c-8 26 4 42 16 42M116 186c8 26-4 42-16 42"/><circle class="p" cx="100" cy="234" r="7"/><circle class="f n" cx="100" cy="234" r="2"/></g>
+<g id="lia-prop-thermometer"><circle class="g" cx="150" cy="243" r="7"/><rect class="p rd" x="146" y="198" width="8" height="42" rx="4"/><path class="g n" d="M148.5 240v-20h3v20z"/><path d="M158 208h5M158 216h5M158 224h5"/><path class="w" d="M166 196q3 4 0 8t0 8M172 198q3 4 0 8t0 8"/></g>
+<g id="lia-prop-book"><path class="p" d="M100 214c-12-6-28-6-40 0v28c12-6 28-6 40 0 12-6 28-6 40 0v-28c-12-6-28-6-40 0z"/><path d="M100 214v28M68 223c8-2 16-2 26 2M68 231c8-2 16-2 26 2M106 225c10-4 18-4 26-2M106 233c10-4 18-4 26-2"/><path class="a" d="M60 242c12-6 28-6 40 0 12-6 28-6 40 0v4c-12-6-28-6-40 0-12-6-28-6-40 0z"/></g>
+<g id="lia-prop-skeleton" class="o"><circle class="p" cx="152" cy="198" r="7.5"/><circle class="f n" cx="149.5" cy="198" r="1.5"/><circle class="f n" cx="154.5" cy="198" r="1.5"/><path d="M149 205h6M152 206v28M144 212h16M145 218h14M146 224h12M144 212l-8 14M160 212l8 14M147 238l-3 16M157 238l3 16"/><path class="p" d="M144 234q8 8 16 0v-3h-16z"/></g>
+<g id="lia-prop-bone"><g transform="rotate(-35 140 224)" class="o"><circle class="p" cx="120" cy="219" r="5"/><circle class="p" cx="120" cy="229" r="5"/><circle class="p" cx="160" cy="219" r="5"/><circle class="p" cx="160" cy="229" r="5"/><rect class="p n" x="121" y="219" width="38" height="10"/><path d="M121 219h38M121 229h38"/></g></g>
+</g>
+<g id="lia-scene-particles" class="a n"><circle cx="30" cy="104" r="2.5"/><circle cx="172" cy="84" r="3"/><circle cx="22" cy="190" r="2"/><circle cx="180" cy="166" r="2.5"/><circle cx="44" cy="44" r="2"/><circle cx="162" cy="34" r="2.5"/></g>
+<g id="lia-scene-heart"><path class="t" d="M100 216c-14-8-18-20-10-26 5-4 10-2 10 4 0-6 5-8 10-4 8 6 4 18-10 26z"/><path class="t" d="M160 118c-5-3-7-8-4-10 2-2 4-1 4 1 0-2 2-3 4-1 3 2 1 7-4 10z"/></g>
+<g id="lia-scene-bubble"><ellipse class="p" cx="152" cy="30" rx="28" ry="18"/><circle class="p" cx="126" cy="56" r="4.5"/><circle class="p" cx="118" cy="66" r="2.8"/><g class="f n"><circle cx="141" cy="30" r="2.6"/><circle cx="152" cy="30" r="2.6"/><circle cx="163" cy="30" r="2.6"/></g></g>
+<g id="lia-scene-sparkles"><use href="#lia-star" transform="translate(30 70)"/><use href="#lia-star" transform="translate(172 60) scale(.8)"/><use href="#lia-star" transform="translate(170 150) scale(.6)"/><use href="#lia-star" transform="translate(26 150) scale(.7)"/></g>
+    </symbol>
+  </defs>
+</svg>
+<main>
+  <header class="topo">
+    <h1>Prévia A/B da identidade da Liga</h1>
+    <p>Para escolha da diretoria. Nada aqui é publicado. Vagas, datas, pesos, critérios e nome oficial: a definir pela diretoria.</p>
+    <p>A (Institucional): base clara e a marca como acento. B (Laboratório vivo): painel profundo, Lia maior e linha do tempo em destaque.</p>
+  </header>
+
+  <section class="bloco" aria-labelledby="h-a">
+    <h2 id="h-a">Variante A · Institucional</h2>
+    <div class="linha-quadros">
+
+    <figure class="quadro va claro w375">
+      <figcaption>A · Institucional · claro · 375 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure class="quadro va escuro w375">
+      <figcaption>A · Institucional · escuro · 375 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure class="quadro va claro w1280">
+      <figcaption>A · Institucional · claro · 1280 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure class="quadro va escuro w1280">
+      <figcaption>A · Institucional · escuro · 1280 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+    </div>
+  </section>
+
+  <section class="bloco" aria-labelledby="h-b">
+    <h2 id="h-b">Variante B · Laboratório vivo</h2>
+    <div class="linha-quadros">
+
+    <figure class="quadro vb claro w375">
+      <figcaption>B · Laboratório vivo · claro · 375 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure class="quadro vb escuro w375">
+      <figcaption>B · Laboratório vivo · escuro · 375 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure class="quadro vb claro w1280">
+      <figcaption>B · Laboratório vivo · claro · 1280 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure class="quadro vb escuro w1280">
+      <figcaption>B · Laboratório vivo · escuro · 1280 px</figcaption>
+      <div class="tela">
+        <header class="hero">
+          <div>
+            <div class="marca"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Marca da Liga LAIFT" width="64" height="64"></div>
+            <p class="kicker">Processo seletivo</p>
+            <h2>Faça parte da Liga</h2>
+            <p class="lema">Nada se cria, nada se perde, tudo se transforma</p>
+            <p class="link">laift.com.br/liga</p>
+          </div>
+          <svg class="lia-art lia-view" viewBox="0 0 200 300" role="img" aria-label="Lia"><use href="#lia-sym"/></svg>
+        </header>
+        <ol class="linha">
+          <li><span class="passo">1</span><div><strong>Inscrição e ficha diagnóstica</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">2</span><div><strong>Análise de perfil e filtro crítico</strong><span class="tag">Eliminatória</span><small>Data: a definir pela diretoria</small></div></li>
+          <li><span class="passo">3</span><div><strong>Divulgação dos selecionados</strong><small>Data: a definir pela diretoria</small></div></li>
+        </ol>
+        <div class="corpo">
+          <section class="cartao">
+            <h3>Áreas</h3>
+            <ul class="chips"><li>Farmacologia</li><li>Toxicologia</li></ul>
+            <p class="nota">Áreas tiradas do texto da marca; a diretoria confirma. Vagas: a definir pela diretoria.</p>
+          </section>
+          <button class="cta" type="button">Quero participar</button>
+        </div>
+      </div>
+    </figure>
+    </div>
+  </section>
+
+  <section class="bloco" aria-labelledby="h-ig">
+    <h2 id="h-ig">Instagram · perfil, destaques e slides 1 e 4</h2>
+    <div class="linha-quadros">
+
+    <article class="ig va claro" aria-label="Perfil e destaques, variante A">
+      <div class="perfil">
+        <div class="avatar"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Foto de perfil: marca da Liga" width="76" height="76"></div>
+        <div>
+          <p class="ig-nome">LAIFT · nome oficial a definir pela diretoria</p>
+          <p class="ig-sub">Bio e link: ver KIT_INSTAGRAM.md</p>
+        </div>
+      </div>
+      <ul class="destaques">
+          <li><span class="capa-dest">01</span>Processo seletivo</li>
+          <li><span class="capa-dest">02</span>Quem somos</li>
+          <li><span class="capa-dest">03</span>Projetos e eventos</li>
+          <li><span class="capa-dest">04</span>Depoimentos</li>
+          <li><span class="capa-dest">05</span>Dúvidas</li>
+      </ul>
+      <div class="slides">
+        <figure class="slide capa">
+          <p class="s-kicker">Slide 1 · capa</p>
+          <div><p class="s-titulo">Processo seletivo</p><p class="s-texto">Vagas: a definir pela diretoria</p></div>
+          <p class="s-texto">Nada se cria, nada se perde, tudo se transforma</p>
+        </figure>
+        <figure class="slide etapas">
+          <p class="s-kicker">Slide 4 · etapas</p>
+          <ol>
+            <li><span class="n">1</span><span>Inscrição e ficha diagnóstica (eliminatória)</span></li>
+            <li><span class="n">2</span><span>Análise de perfil e filtro crítico (eliminatória)</span></li>
+            <li><span class="n">3</span><span>Divulgação dos selecionados</span></li>
+          </ol>
+        </figure>
+      </div>
+    </article>
+
+    <article class="ig vb escuro" aria-label="Perfil e destaques, variante B">
+      <div class="perfil">
+        <div class="avatar"><img src="../../../frontend/modulos/cracha/laift-marca.png" alt="Foto de perfil: marca da Liga" width="76" height="76"></div>
+        <div>
+          <p class="ig-nome">LAIFT · nome oficial a definir pela diretoria</p>
+          <p class="ig-sub">Bio e link: ver KIT_INSTAGRAM.md</p>
+        </div>
+      </div>
+      <ul class="destaques">
+          <li><span class="capa-dest">01</span>Processo seletivo</li>
+          <li><span class="capa-dest">02</span>Quem somos</li>
+          <li><span class="capa-dest">03</span>Projetos e eventos</li>
+          <li><span class="capa-dest">04</span>Depoimentos</li>
+          <li><span class="capa-dest">05</span>Dúvidas</li>
+      </ul>
+      <div class="slides">
+        <figure class="slide capa">
+          <p class="s-kicker">Slide 1 · capa</p>
+          <div><p class="s-titulo">Processo seletivo</p><p class="s-texto">Vagas: a definir pela diretoria</p></div>
+          <p class="s-texto">Nada se cria, nada se perde, tudo se transforma</p>
+        </figure>
+        <figure class="slide etapas">
+          <p class="s-kicker">Slide 4 · etapas</p>
+          <ol>
+            <li><span class="n">1</span><span>Inscrição e ficha diagnóstica (eliminatória)</span></li>
+            <li><span class="n">2</span><span>Análise de perfil e filtro crítico (eliminatória)</span></li>
+            <li><span class="n">3</span><span>Divulgação dos selecionados</span></li>
+          </ol>
+        </figure>
+      </div>
+    </article>
+    </div>
+  </section>
+</main>
+</body>
+</html>
