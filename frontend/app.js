@@ -67,8 +67,33 @@
 
   var state = {
     sessionToken: null,
-    profile: null, // { fullName, role }
+    profile: null, // { id, fullName, role } (+ email e username depois de apiGetMyProfile)
   };
+
+  // >>> profile-id (puro)
+  // O id do PRÓPRIO perfil (UUID) chega em apiLogin, apiLoginMfa e apiGetMyProfile e serve ao onboarding.
+  // O cache de sessão (localStorage) continua guardando só o token e a validade: ao restaurar, o perfil
+  // (e o id) vem de apiGetMyProfile, então nenhum dado novo é gravado no navegador.
+  var PROFILE_ID_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  /** Id do perfil: só vale texto em formato UUID; qualquer outra coisa vira undefined. */
+  function profileIdOf(value) {
+    return typeof value === 'string' && PROFILE_ID_FORMAT.test(value) ? String(value) : undefined;
+  }
+
+  /** Perfil do estado a partir da resposta do login: cópia (nunca o objeto cru da API) com o id validado. */
+  function profileFromResponse(raw) {
+    var profile = Object.assign({}, raw);
+    profile.id = profileIdOf(raw && raw.id);
+    return profile;
+  }
+
+  /** Perfil já no estado + id da resposta. Resposta sem id válido (servidor antigo) mantém o id que já havia. */
+  function mergeProfileId(profile, raw) {
+    var id = profileIdOf(raw && raw.id);
+    return id ? Object.assign({}, profile, { id: id }) : profile;
+  }
+  // <<< profile-id (puro)
 
   function saveSessionCache(token) {
     try {
@@ -726,7 +751,7 @@
   function finishLogin(res) {
     showSystemUnavailable(false);
     state.sessionToken = res.sessionToken;
-    state.profile = res.profile;
+    state.profile = profileFromResponse(res.profile); // vale também para o login com MFA (mfa.js chama finishLogin)
     saveSessionCache(res.sessionToken);
     scheduleSessionExpiry(Date.now() + SESSION_TTL_MS);
     setStatus('msg-login', '', null);
@@ -1721,11 +1746,13 @@
     callApi('apiGetMyProfile', state.sessionToken).then(function (res) {
       if (!res.success) { setStatus('msg-profile', res.message, 'error'); return; }
 
-      // O login só devolve nome e papel; o e-mail (identificador enviado aos
-      // módulos de aprendizagem — ver learning.js) chega por aqui.
+      // O login só devolve id, nome e papel; o e-mail (identificador enviado aos
+      // módulos de aprendizagem — ver learning.js) chega por aqui. O id nunca é apagado:
+      // resposta sem id válido deixa o que já estava.
       if (state.profile) {
         state.profile.email = res.profile.email;
         state.profile.username = res.profile.username;
+        state.profile = mergeProfileId(state.profile, res.profile);
         if (window.LaiftLearning) window.LaiftLearning.onProfileReady();
       }
 
@@ -2570,7 +2597,7 @@
           showPublicScreen('screen-welcome');
           return;
         }
-        state.profile = { fullName: res.profile.fullName, role: res.profile.role };
+        state.profile = { id: profileIdOf(res.profile.id), fullName: res.profile.fullName, role: res.profile.role };
         scheduleSessionExpiry(cached.expiresAt);
         enterApp();
       });
