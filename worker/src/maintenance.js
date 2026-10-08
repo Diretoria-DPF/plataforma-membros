@@ -27,7 +27,7 @@
  *    diagnóstico técnico). O corte é sempre por created_at — nunca um
  *    DELETE sem filtro de idade.
  *  - Lia (ADR 0005): comentário de avaliação com mais de 90 dias é
- *    anonimizado (vira SHA-256 hex; ganha comment_anonymized_at); avaliação
+ *    apagado (comment vira NULL; ganha comment_anonymized_at); avaliação
  *    com mais de 365 dias sai; resposta registrada (assistant_messages) com
  *    mais de 180 dias sai — e o CASCADE de sql/021 leva junto a avaliação
  *    dela; incidente de moderação (assistant_incidents, sem texto) com mais
@@ -120,11 +120,12 @@ function coreTasks(sql, correlationId, env) {
  */
 function assistantRetentionTasks(sql) {
   return {
-    // Comentário com mais de 90 dias: o texto vira SHA-256 hex (pgcrypto) e ganha a data.
-    // Só atua em linha com comentário ainda não anonimizado.
+    // Comentário com mais de 90 dias: o texto é APAGADO (comment = NULL) e ganha a data.
+    // Sem hash: SHA-256 de texto curto é reversível por dicionário, não anonimiza.
+    // Só atua em linha com comentário ainda não anonimizado; rating e categoria ficam.
     assistantFeedbackAnonymize: () => sql`
       UPDATE assistant_feedback
-      SET comment = encode(digest(comment, 'sha256'), 'hex'),
+      SET comment = NULL,
           comment_anonymized_at = now()
       WHERE comment IS NOT NULL
         AND comment_anonymized_at IS NULL

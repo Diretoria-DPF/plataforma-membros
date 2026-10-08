@@ -497,6 +497,12 @@
     return button;
   }
 
+  /** Após 90 dias o servidor apaga o texto e manda commentAnonymizedAt: mostra o aviso, nunca o texto. */
+  function satCommentLine(item) {
+    if (item.commentAnonymizedAt) return App().text('p', 'Comentário apagado após 90 dias', { className: 'ai-case-line muted' });
+    return summaryLine('Comentário', item.comment);
+  }
+
   function satItemNode(item) {
     var h = App().h;
     var text = App().text;
@@ -516,7 +522,7 @@
       summaryLine('Assunto', answer.topic),
       summaryLine('Resposta da Lia', clipText(answer.text, SAT_ANSWER_MAX)),
       summaryLine('Origem', answer.source),
-      summaryLine('Comentário', item.comment),
+      satCommentLine(item),
       buttons.length ? h('div', { className: 'actions-row' }, buttons) : null,
     ]);
   }
