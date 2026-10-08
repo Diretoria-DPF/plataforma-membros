@@ -15,8 +15,25 @@ import { uuid_ossp } from '@electric-sql/pglite/contrib/uuid_ossp';
 import { pg_trgm } from '@electric-sql/pglite/contrib/pg_trgm';
 import { listMigrations, parseArgs, runMigrations } from './migrate.mjs';
 
+import { adaptForNoVector } from '../../worker/scripts/pgvector-shim.mjs';
+
 const aqui = path.dirname(fileURLToPath(import.meta.url));
-const SQL_REAL = path.resolve(aqui, '..', '..', 'sql');
+const SQL_ORIGINAL = path.resolve(aqui, '..', '..', 'sql');
+
+/**
+ * Cópia de sql/ adaptada para o PGlite, que não traz o pgvector: `vector(N)` vira `real[]` e o
+ * índice HNSW é omitido (mesmo adaptador do validador do worker). Só para testar o runner; a
+ * DDL do pgvector de verdade é conferida contra o Neon antes de produção (docs/AMBIENTES.md).
+ */
+function copiaAdaptada() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'laift-sql-real-'));
+  for (const nome of fs.readdirSync(SQL_ORIGINAL).filter((f) => f.endsWith('.sql'))) {
+    const texto = fs.readFileSync(path.join(SQL_ORIGINAL, nome), 'utf8');
+    fs.writeFileSync(path.join(dir, nome), adaptForNoVector(texto));
+  }
+  return dir;
+}
+const SQL_REAL = copiaAdaptada();
 
 /** Adaptador PGlite com a mesma forma do `pg`: query(texto, params?) → { rows }. */
 function clientePglite(db) {
