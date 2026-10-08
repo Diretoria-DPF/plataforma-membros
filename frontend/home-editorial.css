@@ -109,17 +109,30 @@
   min-width: 0;
 }
 
-.home-editorial .laift-chart__svg {
-  display: block;
-  width: 100%;
-  height: auto;
+/* Tamanho dos gráficos vem do charts.js (px = viewBox). Este arquivo não estica o SVG. */
+
+/* Métricas: fileira de sparklines (2x2 no celular) e um par de mesma altura embaixo. */
+.home-metrics {
+  display: grid;
+  gap: var(--move-lg);
+  min-width: 0;
 }
 
-/* Métricas secundárias: sparklines, comparativo e selos em grade de filetes. */
-.home-metrics {
+.home-sparks,
+.home-metric-pair {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--move-lg) var(--move-md);
+  min-width: 0;
+}
+
+.home-sparks {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Células da grade podem encolher abaixo do conteúdo (SVG e tabela sr-only). */
+.home-sparks > *,
+.home-metric-pair > * {
   min-width: 0;
 }
 
@@ -185,22 +198,30 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .home-metrics {
+  .home-metric-pair {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-metric-compare {
-    grid-column: 1 / -1;
   }
 }
 
+@media (min-width: 48rem) {
+  .home-sparks {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Selos: legenda ao lado da rosca em telas largas; no celular, embaixo. */
 @media (min-width: 64rem) {
-  .home-metrics {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .home-metric-badges .laift-chart {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--move-md);
   }
 
-  .home-metric-compare {
-    grid-column: span 2;
+  .home-metric-badges .laift-chart__legend {
+    grid-column: 2;
+    flex-direction: column;
+    margin: 0;
   }
 }
 

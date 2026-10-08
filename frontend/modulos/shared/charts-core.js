@@ -207,8 +207,28 @@
     return list.reduce(function (best, v) { return Math.max(best, toNumber(v)); }, 0);
   }
 
-  function linePathOf(points) {
-    return points.map(function (p, i) { return (i ? 'L ' : 'M ') + p.x + ' ' + p.y; }).join(' ');
+  /** Controle de Bézier preso à faixa vertical [0, height]: a curva não passa da base nem do topo. */
+  function controlPoint(x, y, height) {
+    return { x: round(x), y: round(clamp(y, 0, height)) };
+  }
+
+  /**
+   * Linha suave: Catmull-Rom uniforme convertido em Bézier cúbica (tensão 1/6).
+   * Os pontos de controle ficam dentro de [0, height], então a área não vaza.
+   */
+  function linePathOf(points, height) {
+    if (!points.length) return '';
+    var out = ['M ' + points[0].x + ' ' + points[0].y];
+    for (var i = 0; i < points.length - 1; i += 1) {
+      var p0 = points[i - 1] || points[i];
+      var p1 = points[i];
+      var p2 = points[i + 1];
+      var p3 = points[i + 2] || p2;
+      var c1 = controlPoint(p1.x + (p2.x - p0.x) / 6, p1.y + (p2.y - p0.y) / 6, height);
+      var c2 = controlPoint(p2.x - (p3.x - p1.x) / 6, p2.y - (p3.y - p1.y) / 6, height);
+      out.push('C ' + c1.x + ' ' + c1.y + ' ' + c2.x + ' ' + c2.y + ' ' + p2.x + ' ' + p2.y);
+    }
+    return out.join(' ');
   }
 
   /** Área fechada até a base (height) a partir da linha. */
@@ -216,7 +236,7 @@
     if (!points.length) return '';
     var first = points[0];
     var last = points[points.length - 1];
-    return linePathOf(points) + ' L ' + last.x + ' ' + height + ' L ' + first.x + ' ' + height + ' Z';
+    return linePathOf(points, height) + ' L ' + last.x + ' ' + height + ' L ' + first.x + ' ' + height + ' Z';
   }
 
   /** Linha/área sobre números: x uniforme, y proporcional ao máximo "redondo". */
@@ -237,7 +257,7 @@
     return {
       max: max,
       points: points,
-      linePath: linePathOf(points),
+      linePath: linePathOf(points, height),
       areaPath: areaPathOf(points, height)
     };
   }

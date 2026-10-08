@@ -344,7 +344,14 @@
     var badges = plainBlock(doc, 'home-metric-badges', 'Selos');
     badges.caption = element(doc, 'p', 'muted home-metric-trend');
     badges.node.appendChild(badges.caption);
-    sparks.concat([compare, badges]).forEach(function (block) { section.appendChild(block.node); });
+    // Fileira de sparklines (4 em linha, 2x2 no celular) e par de mesma altura embaixo.
+    var sparkRow = element(doc, 'div', 'home-sparks');
+    sparks.forEach(function (block) { sparkRow.appendChild(block.node); });
+    var pair = element(doc, 'div', 'home-metric-pair');
+    pair.appendChild(compare.node);
+    pair.appendChild(badges.node);
+    section.appendChild(sparkRow);
+    section.appendChild(pair);
     return { node: section, sparks: sparks, compare: compare, badges: badges };
   }
 
@@ -426,7 +433,7 @@
         showFailure(ctx.doc, main.slot, res.message, function () { retryMain(ctx, main, range); });
         return;
       }
-      drawChart(main.slot, 'lineArea', seriesRows(res.points), { title: 'Atividade no período', width: 640, height: 220 });
+      drawChart(main.slot, 'lineArea', seriesRows(res.points), { title: 'Atividade no período', width: 640, height: 220, fluid: true });
     });
   }
 
@@ -468,7 +475,7 @@
       var texts = sparkTexts(block, res);
       block.total.textContent = texts.total;
       block.trend.textContent = texts.trend;
-      drawChart(block.slot, 'sparkline', seriesRows(res.points), { title: SPARK_TITLES[block.metric] + ' nos últimos 30 dias', width: 200, height: 48 });
+      drawChart(block.slot, 'sparkline', seriesRows(res.points), { title: SPARK_TITLES[block.metric] + ' nos últimos 30 dias', width: 200, height: 48, fluid: true });
     });
   }
 
@@ -487,7 +494,7 @@
       var cmp = ADAPTER.monthlyComparison(byMetric);
       var hasData = !!cmp && cmp.rows.some(function (row) { return row.values.some(function (v) { return v > 0; }); });
       drawChart(compare.slot, 'groupedBars', hasData ? cmp.rows : [], {
-        title: 'Comparativo mensal', series: hasData ? cmp.seriesNames : null, width: 320, height: 200,
+        title: 'Comparativo mensal', series: hasData ? cmp.seriesNames : null, width: 320, height: 232, fluid: true,
       });
     });
   }

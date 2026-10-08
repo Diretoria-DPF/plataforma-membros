@@ -50,6 +50,8 @@ function fakeDoc() {
 function mountPoint(doc) {
   const container = fakeNode('div');
   container.ownerDocument = doc;
+  // Medida do contêiner como o navegador daria: a largura de clientWidth, sem padding.
+  container.getBoundingClientRect = () => ({ width: container.clientWidth || 0 });
   return container;
 }
 
@@ -115,6 +117,107 @@ test('formatação pt-BR: milhar com ponto, decimal com vírgula, percentual e p
   assert.equal(Core.formatNumber(1234.5), '1.234,5');
   assert.equal(NBSP_FREE(Core.formatPercent(0.42)), '42%');
   assert.equal(Core.formatPoints(73.4), '73%');
+});
+
+test('linha suave: curvas Bézier com controles dentro da faixa, sem passar da base nem do topo', () => {
+  const model = Core.lineModel([0, 10, 0, 10], { width: 300, height: 100 });
+  assert.match(model.linePath, /^M \S+ \S+ C /);
+  const nums = model.linePath.replace(/[MCL]/g, ' ').trim().split(/\s+/).map(Number);
+  nums.forEach((n, i) => {
+    if (i % 2 === 1) assert.ok(n >= 0 && n <= 100, `y fora da faixa: ${n}`);
+  });
+});
+
+test('gráfico de linha usa a largura medida do contêiner: SVG em px igual ao viewBox', () => {
+  const container = mountPoint(fakeDoc());
+  container.clientWidth = 412;
+  Charts.lineArea(container, [1, 2, 3], { fluid: true, width: 640, height: 220 });
+  const svg = container.children[0].children[0];
+  assert.equal(svg.attrs.width, '412');
+  assert.equal(svg.attrs.viewBox, '0 0 412 220');
+});
+
+test('sem medida (painel oculto) o gráfico usa a largura padrão', () => {
+  const container = mountPoint(fakeDoc());
+  Charts.lineArea(container, [1, 2], { fluid: true, width: 640, height: 220 });
+  assert.equal(container.children[0].children[0].attrs.width, '640');
+});
+
+test('eixo Y tem três rótulos (0, metade e máximo) e o marcador fica só no último ponto', () => {
+  const container = mountPoint(fakeDoc());
+  Charts.lineArea(container, [0, 4, 8, 2], { width: 300, height: 220 });
+  const wrap = container.children[0];
+  assert.deepEqual(byClass(wrap, 'laift-chart__axis-label').map((n) => n.textContent), ['0', '5', '10']);
+  const dots = byClass(wrap, 'laift-chart__dot');
+  assert.equal(dots.length, 4);
+  assert.equal(byClass(wrap, 'laift-chart__dot--quiet').length, 3);
+  assert.equal(dots[3].attrs.class, 'laift-chart__dot');
+});
+
+test('largura medida tem piso de 160 px e variação menor que 8 px não refaz o gráfico', async () => {
+  let fire = null;
+  class FakeObserver {
+    constructor(cb) { fire = cb; }
+    observe() {}
+    disconnect() {}
+  }
+  const had = Object.prototype.hasOwnProperty.call(globalThis, 'ResizeObserver');
+  const prev = globalThis.ResizeObserver;
+  globalThis.ResizeObserver = FakeObserver;
+  try {
+    const narrow = mountPoint(fakeDoc());
+    narrow.clientWidth = 120;
+    const chart = Charts.lineArea(narrow, [1, 2], { fluid: true, width: 640, height: 220 });
+    assert.equal(narrow.children[0].children[0].attrs.width, '160');
+    narrow.clientWidth = 200;
+    fire();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    assert.equal(narrow.children[0].children[0].attrs.width, '200');
+    narrow.clientWidth = 205;
+    fire();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    assert.equal(narrow.children[0].children[0].attrs.width, '200', 'variação de 5 px não refaz o gráfico');
+    chart.destroy();
+  } finally {
+    if (had) globalThis.ResizeObserver = prev;
+    else delete globalThis.ResizeObserver;
+  }
+});
+
+test('sem dados, o aviso ocupa uma faixa de 56 px e não a altura do gráfico', () => {
+  const container = mountPoint(fakeDoc());
+  Charts.lineArea(container, [], { width: 300, height: 220 });
+  assert.equal(container.children[0].children[0].attrs.viewBox, '0 0 300 56');
+});
+
+test('mudança de largura refaz o gráfico com debounce; destroy desliga o observador', async () => {
+  let fire = null;
+  let disconnected = false;
+  class FakeObserver {
+    constructor(cb) { fire = cb; }
+    observe() {}
+    disconnect() { disconnected = true; }
+  }
+  const had = Object.prototype.hasOwnProperty.call(globalThis, 'ResizeObserver');
+  const prev = globalThis.ResizeObserver;
+  globalThis.ResizeObserver = FakeObserver;
+  try {
+    const container = mountPoint(fakeDoc());
+    container.clientWidth = 300;
+    const chart = Charts.lineArea(container, [1, 2, 3], { fluid: true, width: 640, height: 220 });
+    assert.equal(container.children[0].children[0].attrs.width, '300');
+    container.clientWidth = 520;
+    fire();
+    fire();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    assert.equal(container.children[0].children[0].attrs.width, '520');
+    chart.destroy();
+    assert.equal(disconnected, true);
+    assert.equal(container.children.length, 0);
+  } finally {
+    if (had) globalThis.ResizeObserver = prev;
+    else delete globalThis.ResizeObserver;
+  }
 });
 
 test('countUpValue parte do início, termina exatamente no alvo e desacelera', () => {
