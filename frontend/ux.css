@@ -9,9 +9,6 @@
    movimento respeita prefers-reduced-motion; nenhum texto abaixo de 11 px. */
 
 :root {
-  /* Aliases dos tokens de movimento (ADR 0002, modulos/shared/laift-tokens.css). */
-  --ux-ease: var(--ease-out);
-  --ux-fast: var(--dur-fast);
   --glass-blur: 14px;
   /* 86% de opacidade: o vidro continua legível (contraste >= 4,5:1) sobre as
      folhas decorativas do fundo. */
@@ -45,13 +42,10 @@ button,
 .stat-card,
 .bottom-nav button,
 a {
+  /* Só transform e background-color animam; o resto troca de estado direto. */
   transition:
-    background-color var(--ux-fast) var(--ux-ease),
-    border-color var(--ux-fast) var(--ux-ease),
-    color var(--ux-fast) var(--ux-ease),
-    box-shadow var(--ux-fast) var(--ux-ease),
-    transform var(--dur-instant) var(--ease-out),
-    filter var(--ux-fast) var(--ux-ease);
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
 }
 
 /* Campos: foco e preenchimento animam com os mesmos tokens. */
@@ -63,7 +57,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 }
 
 /* Toque: feedback imediato no :active (hover não existe em touch). */
-.list-item:active, .stat-card:active { transform: scale(0.99); }
+.list-item:active, .stat-card:active { transform: scale(var(--press-scale)); }
 
 @media (hover: hover) {
   button:hover:not(:disabled) { filter: brightness(1.07); }
@@ -263,7 +257,9 @@ summary:focus-visible,
   background: var(--primary); color: var(--on-primary); font-weight: 700;
 }
 .lia-launcher.lia-in-app { bottom: 88px; }
-.lia-launcher:hover { background: var(--primary-strong); }
+@media (hover: hover) {
+  .lia-launcher:hover { background: var(--primary-strong); }
+}
 .lia-orb {
   flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
   background: radial-gradient(circle at 30% 28%, #ffffff 0%, #bfeee6 38%, #e1f4f0 100%);
@@ -281,7 +277,9 @@ summary:focus-visible,
 .lia-title { display: grid; flex: 1; min-width: 0; }
 .lia-sub { font-size: 12px; color: var(--muted); }
 .lia-close { width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; }
-.lia-close:hover { background: var(--border); color: var(--text); }
+@media (hover: hover) {
+  .lia-close:hover { background: var(--border); color: var(--text); }
+}
 .lia-log { display: grid; align-content: start; gap: 10px; padding: 14px; overflow-y: auto; overscroll-behavior: contain; }
 .lia-msg { display: grid; gap: 8px; max-width: 92%; }
 .lia-msg-user { justify-self: end; }
@@ -298,9 +296,11 @@ summary:focus-visible,
   width: auto; padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
   background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600;
 }
-.lia-chip:hover { background: var(--surface-alt); }
 .lia-chip-action { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-strong); }
-.lia-chip-action:hover { background: var(--primary); color: var(--on-primary); }
+@media (hover: hover) {
+  .lia-chip:hover { background: var(--surface-alt); }
+  .lia-chip-action:hover { background: var(--primary); color: var(--on-primary); }
+}
 .lia-typing { margin: 0; color: var(--muted); font-size: 13px; font-style: italic; }
 .lia-form { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
 .lia-form input { flex: 1; min-width: 0; margin: 0; }
@@ -330,7 +330,11 @@ summary:focus-visible,
 /* ---------- Cartões e listas sem borda: separação por camada ---------- */
 :root[data-flag-ux-v2-enabled] {
   --radius-lg: var(--laift-radius-xl);
-  --radius-md: 20px;
+  --radius-card: 24px;
+  --radius-inner: 20px;
+  --radius-md: var(--radius-inner);
+  /* Contorno de campo: ~3:1 ou mais sobre a superfície, nos dois temas (WCAG 1.4.11). */
+  --field-border: color-mix(in srgb, var(--text) 62%, var(--surface));
 }
 
 :root[data-flag-ux-v2-enabled] .card,
@@ -363,7 +367,7 @@ summary:focus-visible,
 :root[data-flag-ux-v2-enabled] .list-item,
 :root[data-flag-ux-v2-enabled] .stat-card {
   background: var(--layer-1);
-  border-radius: 24px;
+  border-radius: var(--radius-card);
   box-shadow: var(--elev-1);
 }
 
@@ -382,9 +386,9 @@ summary:focus-visible,
 :root[data-flag-ux-v2-enabled] .learn-badge {
   background: var(--layer-2);
   box-shadow: none;
-  border-radius: 20px;
+  border-radius: var(--radius-inner);
 }
-:root[data-flag-ux-v2-enabled] .learn-stat { background: var(--layer-2); border-radius: 20px; }
+:root[data-flag-ux-v2-enabled] .learn-stat { background: var(--layer-2); border-radius: var(--radius-inner); }
 :root[data-flag-ux-v2-enabled] .mfa-codes li { background: var(--layer-2); }
 :root[data-flag-ux-v2-enabled] .learn-badge.unlocked { background: var(--primary-soft); }
 :root[data-flag-ux-v2-enabled] .state-error { background: var(--danger-soft); }
@@ -425,6 +429,16 @@ summary:focus-visible,
   box-shadow: var(--elev-3);
 }
 :root[data-flag-ux-v2-enabled] .lia-msg-lia .lia-bubble { border: 0; background: var(--layer-2); }
+:root[data-flag-ux-v2-enabled] .chat-row-theirs .chat-bubble { border: 0; background: var(--layer-2); }
+/* Estado de erro no cartão: tom de perigo, sem depender só de borda ou cor. */
+:root[data-flag-ux-v2-enabled] .ai-key-card[data-ok="nao"] { background: var(--danger-soft); }
+/* Organograma: divisor tracejado vira hairline (fio de luz). */
+:root[data-flag-ux-v2-enabled] .orgchart-level { border-bottom: 1px solid var(--hairline); }
+:root[data-flag-ux-v2-enabled] .orgchart-level:last-child { border-bottom: 0; }
+/* Campos mantêm contorno com contraste >= 3:1; checkbox e radio ficam como estão. */
+:root[data-flag-ux-v2-enabled] :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border-color: var(--field-border);
+}
 
 /* Hover (só com ponteiro fino) troca a sombra, não a borda. */
 @media (hover: hover) {
@@ -438,7 +452,7 @@ summary:focus-visible,
 :root[data-flag-ux-v2-enabled] .list-item:active,
 :root[data-flag-ux-v2-enabled] .stat-card:active,
 :root[data-flag-ux-v2-enabled] button.learn-card:active {
-  transform: scale(0.985);
+  transform: scale(var(--press-scale));
   transition-duration: var(--dur-instant);
 }
 :root[data-flag-ux-v2-enabled] .modal-box:not(.hidden) {

@@ -36,6 +36,11 @@
   --density-gap: 16px;
   --app-header-h: 60px;
   --app-nav-h: 56px;
+  /* Escala de toque (botões e itens) e sombras/cores fixas de componentes. */
+  --press-scale: 0.98;
+  --shadow-nav: 0 -8px 24px rgba(0, 0, 0, 0.12);
+  /* Fundo do QR: branco fixo, para o leitor de crachá ter contraste em qualquer tema. */
+  --qr-bg: #ffffff;
 }
 
 * { box-sizing: border-box; }
@@ -164,14 +169,14 @@ button {
 
 @media (hover: hover) {
   button:hover:not(:disabled) { filter: brightness(1.03); }
+  button.link-btn:hover { color: var(--text); }
 }
-button:active:not(:disabled) { transform: scale(0.97); }
+button:active:not(:disabled) { transform: scale(var(--press-scale)); }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 button.secondary { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
 button.danger { background: var(--danger); color: var(--on-danger); }
 button.link-btn { background: transparent; color: var(--muted); padding: 4px 0; font-weight: 600; }
-button.link-btn:hover { color: var(--text); }
 button.admin-btn { background: var(--admin); color: var(--on-admin); }
 
 .checkbox-row {
@@ -206,7 +211,7 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 .bottom-nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
   background: var(--surface); border-top: 1px solid var(--border);
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-nav);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -312,7 +317,7 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 .pagination button { width: auto; }
 
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(10, 14, 22, 0.5);
+  position: fixed; inset: 0; background: var(--laift-overlay);
   display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50;
 }
 .modal-box {
@@ -410,7 +415,9 @@ button, input, select, textarea, .list-item .actions-row button {
   background: transparent; border: 0; padding: 4px; cursor: pointer; width: 84px;
   color: var(--text); font: inherit;
 }
-.orgchart-card:hover .orgchart-avatar { filter: brightness(1.08); box-shadow: 0 0 0 3px var(--primary-soft); }
+@media (hover: hover) {
+  .orgchart-card:hover .orgchart-avatar { filter: brightness(1.08); box-shadow: 0 0 0 3px var(--primary-soft); }
+}
 .orgchart-avatar {
   width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
   background: var(--surface-alt); border: 1px solid var(--border);
@@ -452,7 +459,9 @@ button, input, select, textarea, .list-item .actions-row button {
 }
 .chat-avatar-placeholder { display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--muted); }
 .chat-list-item { display: flex; align-items: center; gap: 12px; }
-.chat-list-item:hover { border-color: var(--primary); }
+@media (hover: hover) {
+  .chat-list-item:hover { border-color: var(--primary); }
+}
 
 .chat-thread {
   display: flex; flex-direction: column; height: min(72vh, 640px);
@@ -489,7 +498,14 @@ button, input, select, textarea, .list-item .actions-row button {
   border-radius: 50%; font-size: 12px; line-height: 1; background: var(--surface-alt);
   color: var(--muted); border: 1px solid var(--border); opacity: 0; transition: opacity var(--dur-fast) var(--ease-out);
 }
-.chat-bubble:hover .chat-bubble-menu-btn, .chat-bubble-menu-btn:focus { opacity: 1; }
+.chat-bubble-menu-btn:focus { opacity: 1; }
+@media (hover: hover) {
+  .chat-bubble:hover .chat-bubble-menu-btn { opacity: 1; }
+}
+/* Sem ponteiro fino não existe hover: o botão de ações fica visível no toque. */
+@media (hover: none) {
+  .chat-bubble-menu-btn { opacity: 1; }
+}
 .chat-bubble-actions {
   display: flex; flex-direction: column; gap: 4px; margin-top: 6px; align-items: flex-start;
 }
@@ -533,12 +549,16 @@ a.button-link {
   padding: 12px 18px; border-radius: var(--radius-md); background: var(--primary);
   color: var(--on-primary); font-weight: 700; text-decoration: none;
 }
-a.button-link:hover { filter: brightness(1.03); }
+@media (hover: hover) {
+  a.button-link:hover { filter: brightness(1.03); }
+}
 
 /* Cartões da área "Aprender": foco visível do mesmo jeito que o hover. */
 button.learn-card:focus-visible { border-color: var(--primary); }
-button.learn-card:hover .learn-card-title,
 button.learn-card:focus-visible .learn-card-title { color: var(--primary-strong); }
+@media (hover: hover) {
+  button.learn-card:hover .learn-card-title { color: var(--primary-strong); }
+}
 
 /* Com um módulo aberto no celular, o cabeçalho da plataforma não precisa
    do rótulo "Área do membro": sobra altura para o iframe. */
@@ -588,7 +608,9 @@ button.learn-card {
   border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--density-pad);
   font-weight: 400;
 }
-button.learn-card:hover { border-color: var(--primary); filter: none; }
+@media (hover: hover) {
+  button.learn-card:hover { border-color: var(--primary); filter: none; }
+}
 .learn-card-icon { font-size: 28px; line-height: 1; }
 .learn-card-title { font-size: 16px; }
 .learn-card-desc { font-size: 13px; color: var(--muted); }
@@ -607,7 +629,7 @@ button.learn-card:hover { border-color: var(--primary); filter: none; }
 }
 .learn-credential-qr {
   display: block; width: 220px; height: 220px; margin: 12px auto; image-rendering: pixelated;
-  background: #ffffff; border-radius: var(--radius-md);
+  background: var(--qr-bg); border-radius: var(--radius-md);
 }
 @media (max-width: 480px) {
   .learn-stats { gap: 6px; }
@@ -793,7 +815,10 @@ button.learn-card:focus-visible { outline-offset: 3px; }
   font-size: 14px; line-height: 1.4; text-align: center;
 }
 .domain-notice a { color: inherit; font-weight: 700; text-decoration: underline; }
-.domain-notice a:hover, .domain-notice a:focus-visible { text-decoration-thickness: 2px; }
+.domain-notice a:focus-visible { text-decoration-thickness: 2px; }
+@media (hover: hover) {
+  .domain-notice a:hover { text-decoration-thickness: 2px; }
+}
 
 .ai-admin-head { margin-bottom: 8px; }
 /* Painel de IA no celular: título e botão empilham sem espremer. */
