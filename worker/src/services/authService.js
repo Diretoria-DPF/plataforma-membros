@@ -281,7 +281,8 @@ export async function login(sql, env, email, password, userAgent, correlationId)
     success: true,
     message: 'Login realizado com sucesso.',
     sessionToken,
-    profile: { fullName: row.full_name, role: row.role },
+    // O id é o do PRÓPRIO perfil (o cliente precisa dele para o onboarding por conta). Sem e-mail nem telefone.
+    profile: { id: row.id, fullName: row.full_name, role: row.role },
   };
   // Admin sem MFA com a obrigatoriedade ligada: a interface leva direto ao cadastro.
   if (await MfaService.adminNeedsSetup(sql, { profileId: row.id, role: row.role })) result.mfaSetupRequired = true;

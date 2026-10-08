@@ -183,7 +183,7 @@ export async function completeLogin(sql, env, rawToken, code, userAgent, correla
     success: true,
     message: 'Login realizado com sucesso.',
     sessionToken,
-    profile: { fullName: p.full_name, role: p.role },
+    profile: { id: profileId, fullName: p.full_name, role: p.role }, // id do PRÓPRIO perfil (o do desafio validado)
     usedRecoveryCode: method === 'recovery',
   };
 }
