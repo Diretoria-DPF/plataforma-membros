@@ -234,13 +234,16 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 .nav-group-admin #btn-exit-admin-mode { color: var(--admin); }
 
 .bottom-nav button {
-  flex: 1 1 0; min-width: 0; /* 8 abas em 375 px: sem isto "Mensagens" empurra a barra para fora da tela */
+  flex: 1 1 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 2px; background: transparent; color: var(--muted);
   border-radius: 0; padding: 8px 2px 6px; font-size: 11px; font-weight: 600;
   min-height: 56px;
 }
 .bottom-nav button svg { width: 22px; height: 22px; }
+/* 8 abas de membro em 375 px: sem isto "Mensagens" empurra a barra para fora da tela.
+   A faixa do admin (rolável) mantém o min-width de 78px dela. */
+#nav-group-member button { min-width: 0; }
 
 .nav-badge {
   position: absolute; top: 2px; right: calc(50% - 22px);
