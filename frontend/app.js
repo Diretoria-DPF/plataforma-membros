@@ -195,10 +195,45 @@
     else el.removeAttribute('data-kind');
   }
 
+  // Listas assíncronas: esqueleto enquanto carrega (showSkeleton), erro com
+  // "Tentar de novo" em falha. resetListForLoading limpa a lista e marca aria-busy;
+  // renderList e showListError removem a marcação ao terminar.
+  function resetListForLoading(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    clearEl(container);
+    if (window.LaiftStates) window.LaiftStates.setBusy(container, true);
+  }
+
+  function showListError(containerId, res, retry) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    clearEl(container);
+    var states = window.LaiftStates;
+    if (!states) {
+      container.appendChild(h('p', { className: 'empty-state' }, [(res && res.message) || 'Tente novamente em instantes.']));
+      return;
+    }
+    states.setBusy(container, false);
+    container.appendChild(states.createStateNode(document, 'error', {
+      message: states.errorMessageFor(res),
+      actionLabel: 'Tentar de novo',
+      onAction: retry,
+    }));
+  }
+
+  function renderAsyncList(containerId, res, items, renderItem, emptyMessage, retry) {
+    var states = window.LaiftStates;
+    var verdict = states ? states.resolveListState(res, items) : { kind: res && res.success ? 'ready' : 'error' };
+    if (verdict.kind === 'error') showListError(containerId, res, retry);
+    else renderList(containerId, items, renderItem, emptyMessage);
+  }
+
   function renderList(containerId, items, renderItem, emptyMessage) {
     var container = document.getElementById(containerId);
     if (!container) return;
     clearEl(container);
+    if (window.LaiftStates) window.LaiftStates.setBusy(container, false);
     if (!items || !items.length) {
       // Estado vazio padronizado (shared-states.js); sem ele, o parágrafo antigo.
       if (window.LaiftStates) container.appendChild(window.LaiftStates.createStateNode(document, 'empty', { title: emptyMessage }));
@@ -981,9 +1016,11 @@
   }
 
   function loadEventsHistory() {
+    resetListForLoading('events-history-list');
+    showSkeleton('events-history-list', 3);
     callApi('apiListRecentCompletedEvents').then(function (res) {
-      if (!res.success) return;
-      renderList('events-history-list', res.events, renderEventHistoryItem, 'Ainda não há eventos concluídos no histórico.');
+      renderAsyncList('events-history-list', res, res && res.events, renderEventHistoryItem,
+        'Ainda não há eventos concluídos no histórico.', loadEventsHistory);
     });
   }
 
@@ -1068,10 +1105,15 @@
   });
 
   function loadProposalsAndVoting() {
+    loadMyProposals();
+    loadOpenVotings();
+  }
+
+  function loadMyProposals() {
+    resetListForLoading('my-proposals-list');
     showSkeleton('my-proposals-list', 2);
     callApi('apiListMyProposals', state.sessionToken).then(function (res) {
-      if (!res.success) { clearSkeleton('my-proposals-list'); return; }
-      renderList('my-proposals-list', res.proposals, function (p) {
+      renderAsyncList('my-proposals-list', res, res && res.proposals, function (p) {
         return h('article', { className: 'list-item' }, [
           text('h4', p.title),
           text('p', p.description),
@@ -1080,21 +1122,23 @@
             text('span', 'Enviada em: ' + formatDate(p.created_at)),
           ]),
         ]);
-      }, 'Você ainda não enviou propostas.');
+      }, 'Você ainda não enviou propostas. Quando enviar uma, acompanhe a análise aqui.', loadMyProposals);
     });
+  }
 
+  function loadOpenVotings() {
     if (state.profile.role === 'visitor') {
       setStatus('voting-status', 'Somente membros e administradores podem votar.', 'info');
-      renderList('voting-list', [], function () {}, '');
+      renderList('voting-list', [], function () {}, 'Votações abertas aparecem aqui para membros e administradores.');
       return;
     }
 
     setStatus('voting-status', 'Carregando votações abertas...', 'info');
+    resetListForLoading('voting-list');
     showSkeleton('voting-list', 3);
     callApi('apiListOpenProposalsForVoting', state.sessionToken).then(function (res) {
-      if (!res.success) { clearSkeleton('voting-list'); setStatus('voting-status', res.message, 'error'); return; }
       setStatus('voting-status', '', null);
-      renderList('voting-list', res.proposals, renderVotingItem, 'Não há votações abertas no momento.');
+      renderAsyncList('voting-list', res, res && res.proposals, renderVotingItem, 'Não há votações abertas no momento.', loadOpenVotings);
     });
   }
 
