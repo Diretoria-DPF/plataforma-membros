@@ -26,11 +26,14 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([])         // account_tokens
       .mockResolvedValueOnce([1, 1])     // rate_limit_buckets
       .mockResolvedValueOnce([1])        // audit_logs
-      .mockResolvedValueOnce([1, 1, 1, 1]); // error_logs
+      .mockResolvedValueOnce([1, 1, 1, 1]) // error_logs
+      .mockResolvedValueOnce([])         // mfa_challenges
+      .mockResolvedValueOnce([])         // semantic_cache
+      .mockResolvedValueOnce([]);        // assistant_moderation (decaimento)
     const res = await runMaintenance(sql, 'cid');
     expect(res).toEqual({
       aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, errorLogs: 4, mfaChallenges: 0,
-      semanticCache: 0, aiAlerts: 0,
+      semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
     });
     expect(queryText(sql, 7)).toMatch(/DELETE FROM mfa_challenges/);
     expect(queryText(sql, 8)).toMatch(/DELETE FROM ai_semantic_cache/);
@@ -78,11 +81,14 @@ describe('maintenance.runMaintenance', () => {
       .mockResolvedValueOnce([1])        // account_tokens
       .mockResolvedValueOnce([])         // rate_limit_buckets
       .mockResolvedValueOnce([])         // audit_logs
-      .mockResolvedValueOnce([1]);       // error_logs
+      .mockResolvedValueOnce([1])        // error_logs
+      .mockResolvedValueOnce([])         // mfa_challenges
+      .mockResolvedValueOnce([])         // semantic_cache
+      .mockResolvedValueOnce([]);        // assistant_moderation (decaimento)
     const res = await runMaintenance(sql, 'cid');
     expect(res).toEqual({
       aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, errorLogs: 1, mfaChallenges: 0,
-      semanticCache: 0, aiAlerts: 0,
+      semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
     });
     expect(queryText(sql, 1)).toMatch(/error_logs/);
   });
@@ -97,7 +103,7 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     await worker.scheduled({ cron: '17 6 * * *' }, makeEnv(), { waitUntil: (p) => pending.push(p) });
     expect(pending).toHaveLength(1);
     await pending[0];
-    // 9 limpezas + 2 consultas dos alertas da IA (métricas e orçamento), que não achando nada não enviam e-mail.
-    expect(sql).toHaveBeenCalledTimes(11);
+    // 9 limpezas + 2 consultas dos alertas da IA + 1 do decaimento da moderação da Lia.
+    expect(sql).toHaveBeenCalledTimes(12);
   });
 });

@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 113 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 116 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -57,6 +57,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiAssistantFeedback', 'apiAdminListAssistantFeedback', 'apiAdminUpdateAssistantFeedback',
       'apiAdminAssistantStats', 'apiAssistantSources', 'apiAdminReindexKb'
     );
+    // Moderação da Lia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
+    expected.push('apiAssistantRedeem', 'apiAssistantModerationState', 'apiAdminAssistantModeration');
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 

@@ -30,6 +30,7 @@
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
 import { AI_CACHE } from './constants.js';
+import * as ModerationService from './services/moderationService.js';
 
 export const RETENTION = {
   AI_USAGE_LOG_DAYS: 180,
@@ -40,6 +41,12 @@ export const RETENTION = {
   AUDIT_LOGS_DAYS: 730,
   ERROR_LOGS_DAYS: 30,
 };
+
+/** Quantas linhas a limpeza mexeu: a lista de linhas apagadas ou o `lowered` do decaimento da moderação. */
+function countOf(result) {
+  if (Array.isArray(result)) return result.length;
+  return result && typeof result.lowered === 'number' ? result.lowered : 0;
+}
 
 /**
  * Cada limpeza roda isolada: uma falha (ex.: tabela ainda não migrada) é
@@ -95,13 +102,14 @@ export async function runMaintenance(sql, correlationId, env) {
       RETURNING 1`,
     // Alertas da IA (tokens, 429, cache) por e-mail aos admins; devolve os alertas enviados.
     aiAlerts: () => (env ? runAiAlerts(sql, env, correlationId) : []),
+    // Moderação da Lia (ADR 0004): -1 nível a cada 30 dias sem incidente; devolve { checked, lowered }.
+    assistantModeration: () => ModerationService.decayAssistantModeration(sql),
   };
 
   const deleted = {};
   for (const [name, task] of Object.entries(tasks)) {
     try {
-      const rows = await task();
-      deleted[name] = Array.isArray(rows) ? rows.length : 0;
+      deleted[name] = countOf(await task());
     } catch (err) {
       deleted[name] = null;
       await Logging.logError(sql, correlationId, 'MAINTENANCE_FAILED', name + ': ' + String((err && err.message) || err), null);

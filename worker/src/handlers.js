@@ -49,6 +49,7 @@ import * as ClinicalService from './services/clinicalService.js';
 import * as AssistantService from './services/assistantService.js';
 // Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
 import * as AssistantFeedbackService from './services/assistantFeedbackService.js';
+import * as AssistantModeration from './assistant/moderationGate.js';
 // PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
 import * as AtlasMoleculeService from './services/atlasMoleculeService.js';
 import * as AtlasTelemetryService from './services/atlasTelemetryService.js';
@@ -141,6 +142,9 @@ export const API_REGISTRY = {
   // actions: mfaGate.test.js só isenta de sessão obrigatória as actions listadas em OPTIONAL_SESSION.
   apiAssistantSources: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => AssistantFeedbackService.listKbSources(sql)),
   apiAdminReindexKb: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.reindexKb(sql, env, identity, cid)),
+  // Moderação da Lia (ADR 0004): redenção e estado exigem sessão (portão de MFA incluso); visitante não é moderado.
+  apiAssistantRedeem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.redeemAssistant(sql, env, identity, asInput(input), cid)),
+  apiAssistantModerationState: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AssistantModeration.assistantModerationState(sql, identity)),
   apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),
   apiAdminSetFeatureFlag: (sql, env, [sessionToken, key, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => FeatureFlagService.adminSet(sql, identity, key, input || {}, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
 
@@ -204,6 +208,7 @@ export const API_REGISTRY = {
   apiReportProfile: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.submitReport(sql, identity, input || {}, cid)),
   apiAdminListReports: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ModerationService.listReports(sql, identity, input || {})),
   apiAdminResolveReport: (sql, env, [sessionToken, reportId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.resolveReport(sql, identity, reportId, input || {}, cid)),
+  apiAdminAssistantModeration: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantModeration.adminAssistantModeration(sql, identity, asInput(input))),
 
   // ---- Mensageria E2EE — chaves (Fase 3d) ----
   apiGetMyMessagingKey: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessagingKeyService.getMyMessagingKey(sql, identity)),

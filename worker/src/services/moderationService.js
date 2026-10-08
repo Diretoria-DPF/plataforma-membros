@@ -12,6 +12,12 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+// Moderação da Lia (ADR 0004): regras puras, juiz por LLM e flag.
+import * as Rules from '../assistant/moderationRules.js';
+import { normalize } from '../assistant/kb.js';
+import * as Orchestrator from '../ai/orchestrator.js';
+import { buildModerationJudgeMessages, buildRedeemJudgeMessages } from '../ai/prompts.js';
+import { isEnabled } from './featureFlagService.js';
 
 function assertAdmin(identity) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
