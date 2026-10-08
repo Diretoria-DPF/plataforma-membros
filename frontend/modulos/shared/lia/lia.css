@@ -37,6 +37,8 @@
 }
 /* Bolha da cabeça (launcher de 48 px): o corpo e os props não podem vazar sobre os vizinhos. */
 .lia[data-crop="head"] .lia-svg { overflow: hidden; }
+/* A 48 px o traço fino das sobrancelhas (1,3) fica tênue; reforço só na bolha. */
+.lia[data-crop="head"] .br { stroke-width: 2; }
 .lia-svg .k { fill: var(--lia-skin, #f4cfae); }
 .lia-svg .h { fill: var(--lia-hair, #3a3f4d); }
 .lia-svg .c { fill: var(--lia-cloth, #ffffff); }
