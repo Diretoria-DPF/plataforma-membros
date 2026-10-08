@@ -332,6 +332,8 @@ module.exports = async function fase3() {
     await admin.login();
     await admin.page.click('#btn-enter-admin-mode');
     await admin.showPanel('panel-admin-ai');
+    // O teste de chaves não roda mais ao abrir o painel: só pelo botão.
+    await admin.page.click('#btn-admin-ai-health');
     await admin.page.waitForSelector('#admin-ai-keys .ai-key-card', { timeout: 8000 });
     check((await admin.page.locator('#admin-ai-keys .ai-key-card').count()) === 3, 'um cartão por chave do pool');
     const keysText = await admin.page.textContent('#admin-ai-keys');

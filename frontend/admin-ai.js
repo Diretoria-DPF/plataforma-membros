@@ -50,6 +50,61 @@
   };
   var ROLE_LABELS = { visitor: 'Visitante', member: 'Membro', admin: 'Admin' };
 
+  // Textos e estado de acessibilidade. As funções puras são testadas em
+  // scripts/admin-ai.test.mjs.
+  /** Contador com plural pt-BR: "1 útil", "2 úteis", "0 úteis". */
+  function countLabel(value, one, many) {
+    var num = Number(value) || 0;
+    return n(num) + ' ' + (num === 1 ? one : many);
+  }
+
+  /** "2026-10-08" vira "08/10" (dd/mm). A data do gráfico vem só com o dia, então não passa por fuso. */
+  function shortDayLabel(day) {
+    var m = /^\d{4}-(\d{2})-(\d{2})/.exec(String(day || ''));
+    return m ? m[2] + '/' + m[1] : String(day || '');
+  }
+
+  /** aria-pressed do botão de período: "true" só no período ativo (padrão de home.js). */
+  function periodPressed(optionDays, activeDays) {
+    return String(Number(optionDays) === Number(activeDays));
+  }
+
+  /** Mantém aria-pressed sincronizado nos botões btn-admin-ai-<prefix>-7 e -30. */
+  function markPeriod(prefix, activeDays) {
+    [7, 30].forEach(function (days) {
+      var btn = $('btn-admin-ai-' + prefix + '-' + days);
+      if (btn) btn.setAttribute('aria-pressed', periodPressed(days, activeDays));
+    });
+  }
+
+  /** Rótulo único por botão de avaliação: repete só o que a própria linha já mostra. */
+  function satActionAriaLabel(action, item, dateText) {
+    var author = item && item.author;
+    var who = author && author.username ? author.username : 'conta removida';
+    return action + ': avaliação de ' + who + ' em ' + dateText;
+  }
+
+  /** Erro real vira role="alert"; carregando e sucesso ficam em role="status". */
+  function panelStatusRole(kind) {
+    return kind === 'error' ? 'alert' : 'status';
+  }
+
+  function setPanelStatus(id, message, kind) {
+    App().setStatus(id, message, kind);
+    var el = $(id);
+    if (el) el.setAttribute('role', panelStatusRole(kind));
+  }
+
+  /** aria-busy no contêiner enquanto a busca está em andamento. */
+  function setBusy(ids, busy) {
+    ids.forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      if (busy) el.setAttribute('aria-busy', 'true');
+      else el.removeAttribute('aria-busy');
+    });
+  }
+
   // Contador de geração: descarta respostas que chegam depois de um logout
   // ou de um recarregamento mais novo do painel (mesma ideia de
   // statsRequestId em learning.js).
@@ -102,7 +157,7 @@
     var level = pct >= 80 ? 'ok' : pct >= 40 ? 'warn' : 'down';
     summary.appendChild(h('div', { className: 'ai-health-summary', 'data-level': level }, [
       text('strong', pct + '%'),
-      text('span', okCount + ' de ' + keys.length + ' chaves respondendo'),
+      text('span', okCount + ' de ' + countLabel(keys.length, 'chave', 'chaves') + ' respondendo'),
     ]));
 
     keys.forEach(function (k) {
@@ -132,9 +187,9 @@
       container.appendChild(h('div', { className: 'list-item ai-usage-row' }, [
         text('strong', FEATURE_LABELS[r.feature] || r.feature),
         h('div', { className: 'meta-row' }, [
-          text('span', (Number(r.calls) || 0) + ' chamadas'),
-          text('span', (Number(r.failures) || 0) + ' falhas'),
-          text('span', ((Number(r.promptTokens) || 0) + (Number(r.completionTokens) || 0)).toLocaleString('pt-BR') + ' tokens'),
+          text('span', countLabel(r.calls, 'chamada', 'chamadas')),
+          text('span', countLabel(r.failures, 'falha', 'falhas')),
+          text('span', countLabel((Number(r.promptTokens) || 0) + (Number(r.completionTokens) || 0), 'token', 'tokens')),
         ]),
       ]));
     });
@@ -191,7 +246,7 @@
     }
 
     if (res.cache) {
-      container.appendChild(text('p', 'Cache semântico: ' + n(res.cache.entries) + ' respostas guardadas · ' + n(res.cache.hits) + ' acertos.', { className: 'muted' }));
+      container.appendChild(text('p', 'Cache semântico: ' + countLabel(res.cache.entries, 'resposta guardada', 'respostas guardadas') + ' · ' + countLabel(res.cache.hits, 'acerto', 'acertos') + '.', { className: 'muted' }));
     }
 
     var groups = groupMetrics(res.rows);
@@ -222,21 +277,29 @@
     container.appendChild(h('div', { className: 'ai-days' }, days.slice(0, 30).map(function (d) {
       var bar = h('span', { className: 'ai-day-bar', 'aria-hidden': 'true' });
       bar.style.width = Math.max(2, Math.round(((d.tokens || 0) / max) * 100)) + '%';
-      return h('div', { className: 'ai-day' }, [text('span', String(d.day).slice(5), { className: 'muted' }), bar, text('span', n(d.tokens) + ' tokens')]);
+      return h('div', { className: 'ai-day' }, [text('span', shortDayLabel(d.day), { className: 'muted' }), bar, text('span', countLabel(d.tokens, 'token', 'tokens'))]);
     })));
   }
 
+  var metricsSeq = 0;
+
+  /** Só a resposta do pedido mais recente é desenhada (cliques rápidos em 7 e 30 dias). */
   function loadMetrics(days) {
     if (!token()) return;
+    var period = days || 7;
     var gen = generation;
-    App().setStatus('msg-admin-ai-metrics', 'Carregando…', 'info');
-    App().callApi('apiAdminAiMetrics', token(), { days: days || 7 }).then(function (res) {
-      if (gen !== generation) return;
+    var mine = ++metricsSeq;
+    markPeriod('metrics', period);
+    setPanelStatus('msg-admin-ai-metrics', 'Carregando…', 'info');
+    setBusy(['admin-ai-metrics'], true);
+    App().callApi('apiAdminAiMetrics', token(), { days: period }).then(function (res) {
+      if (gen !== generation || mine !== metricsSeq) return;
+      setBusy(['admin-ai-metrics'], false);
       if (!res || !res.success) {
-        App().setStatus('msg-admin-ai-metrics', (res && res.message) || 'Não foi possível carregar as métricas da IA.', 'error');
+        setPanelStatus('msg-admin-ai-metrics', (res && res.message) || 'Não foi possível carregar as métricas da IA.', 'error');
         return;
       }
-      App().setStatus('msg-admin-ai-metrics', '', null);
+      setPanelStatus('msg-admin-ai-metrics', '', null);
       renderMetrics(res);
     });
   }
@@ -271,7 +334,7 @@
     }
     container.appendChild(h('div', { className: 'meta-row' }, [
       text('span', 'Últimos ' + res.days + ' dias'),
-      text('span', (Number(res.sessions) || 0) + ' sessões distintas'),
+      text('span', countLabel(res.sessions, 'sessão distinta', 'sessões distintas')),
     ]));
     Object.keys(ATLAS_EVENT_LABELS).forEach(function (key) {
       container.appendChild(h('div', { className: 'list-item ai-usage-row' }, [
@@ -290,17 +353,24 @@
     });
   }
 
+  var atlasSeq = 0;
+
   function loadAtlasUsage(days) {
     if (!token()) return;
+    var period = days || 7;
     var gen = generation;
-    App().setStatus('msg-admin-ai-atlas', 'Carregando…', 'info');
-    App().callApi('apiAdminLearnAtlasTelemetry', token(), { days: days || 7 }).then(function (res) {
-      if (gen !== generation) return;
+    var mine = ++atlasSeq;
+    markPeriod('atlas', period);
+    setPanelStatus('msg-admin-ai-atlas', 'Carregando…', 'info');
+    setBusy(['admin-ai-atlas'], true);
+    App().callApi('apiAdminLearnAtlasTelemetry', token(), { days: period }).then(function (res) {
+      if (gen !== generation || mine !== atlasSeq) return;
+      setBusy(['admin-ai-atlas'], false);
       if (!res || !res.success) {
-        App().setStatus('msg-admin-ai-atlas', (res && res.message) || 'Não foi possível carregar o uso do atlas.', 'error');
+        setPanelStatus('msg-admin-ai-atlas', (res && res.message) || 'Não foi possível carregar o uso do atlas.', 'error');
         return;
       }
-      App().setStatus('msg-admin-ai-atlas', '', null);
+      setPanelStatus('msg-admin-ai-atlas', '', null);
       renderAtlasUsage(res);
     });
   }
@@ -332,7 +402,7 @@
       ]));
     }
     if (config.globalDailyMax) {
-      container.appendChild(text('p', 'Disjuntor global: até ' + config.globalDailyMax + ' chamadas por dia somando toda a liga.', { className: 'muted' }));
+      container.appendChild(text('p', 'Disjuntor global: até ' + countLabel(config.globalDailyMax, 'chamada', 'chamadas') + ' por dia somando toda a liga.', { className: 'muted' }));
     }
   }
 
@@ -389,7 +459,7 @@
       summaryLine('Exposição real', s.hiddenExposure),
       summaryLine('Diagnóstico (gabarito)', s.diagnosis),
       summaryLine('Conduta (gabarito)', s.conduct),
-      s.examsCount ? text('p', s.examsCount + ' exames cadastrados.', { className: 'muted' }) : null,
+      s.examsCount ? text('p', countLabel(s.examsCount, 'exame cadastrado', 'exames cadastrados') + '.', { className: 'muted' }) : null,
       h('div', { className: 'actions-row' }, [
         h('button', { type: 'button', onclick: function () { decide('approved'); } }, ['Aprovar']),
         h('button', { type: 'button', className: 'danger', onclick: function () { decide('rejected'); } }, ['Rejeitar']),
@@ -408,7 +478,6 @@
   var SAT_STATUS_LABELS = { new: 'Novo', reviewed: 'Revisado', dismissed: 'Descartado' };
   var SAT_PAGE_SIZE = 20;
   var SAT_ANSWER_MAX = 300;
-  var satDays = 7;
   var satCursor = null;
   var satFilters = { status: '', rating: '' };
   var satSeq = 0;
@@ -423,7 +492,8 @@
     return typeof rate === 'number' ? Math.round(rate * 100) + '%' : '—';
   }
 
-  function renderSatTotals(res) {
+  /** `days` é o período deste pedido (vem da closure, não de variável global). */
+  function renderSatTotals(res, days) {
     var container = $('admin-ai-sat-totals');
     if (!container) return;
     var h = App().h;
@@ -431,12 +501,12 @@
     App().clearEl(container);
     var t = res.totals || {};
     if (!t.total) {
-      container.appendChild(text('p', 'Nenhuma avaliação nos últimos ' + satDays + ' dias.', { className: 'empty-state' }));
+      container.appendChild(text('p', 'Nenhuma avaliação nos últimos ' + days + ' dias.', { className: 'empty-state' }));
       return;
     }
     container.appendChild(h('div', { className: 'ai-budget' }, [
       text('strong', 'Utilidade: ' + satPercent(t.utilityRate)),
-      text('span', n(t.up) + ' úteis · ' + n(t.down) + ' não úteis · ' + n(t.total) + ' avaliações nos últimos ' + satDays + ' dias', { className: 'muted' }),
+      text('span', countLabel(t.up, 'útil', 'úteis') + ' · ' + countLabel(t.down, 'não útil', 'não úteis') + ' · ' + countLabel(t.total, 'avaliação', 'avaliações') + ' nos últimos ' + days + ' dias', { className: 'muted' }),
     ]));
   }
 
@@ -449,7 +519,7 @@
     rows.forEach(function (r) {
       container.appendChild(h('div', { className: 'list-item ai-usage-row' }, [
         text('strong', SAT_CATEGORY_LABELS[r.category] || r.category),
-        h('div', { className: 'meta-row' }, [text('span', n(r.up) + ' úteis'), text('span', n(r.down) + ' não úteis')]),
+        h('div', { className: 'meta-row' }, [text('span', countLabel(r.up, 'útil', 'úteis')), text('span', countLabel(r.down, 'não útil', 'não úteis'))]),
       ]));
     });
   }
@@ -466,33 +536,45 @@
       var bar = h('span', { className: 'ai-day-bar', 'aria-hidden': 'true' });
       bar.style.width = Math.max(2, Math.round((totalOf(d) / max) * 100)) + '%';
       return h('div', { className: 'ai-day' }, [
-        text('span', String(d.day).slice(5), { className: 'muted' }),
+        text('span', shortDayLabel(d.day), { className: 'muted' }),
         bar,
-        text('span', n(d.up) + ' úteis · ' + n(d.down) + ' não'),
+        text('span', countLabel(d.up, 'útil', 'úteis') + ' · ' + n(d.down) + ' não'),
       ]);
     })));
   }
 
+  var satStatsSeq = 0;
+  var SAT_STAT_IDS = ['admin-ai-sat-totals', 'admin-ai-sat-categories', 'admin-ai-sat-days'];
+
+  /**
+   * Cada pedido guarda o próprio período e a própria ordem. Se a resposta de 7 dias
+   * chegar depois da de 30, ela é descartada: nada é desenhado com o período errado.
+   */
   function loadSatisfaction(days) {
     if (!token()) return;
-    satDays = days || 7;
+    var period = days || 7;
     var gen = generation;
-    App().setStatus('msg-admin-ai-sat', 'Carregando…', 'info');
-    App().callApi('apiAdminAssistantStats', token(), { days: satDays }).then(function (res) {
-      if (gen !== generation) return;
+    var mine = ++satStatsSeq;
+    markPeriod('sat', period);
+    setPanelStatus('msg-admin-ai-sat', 'Carregando…', 'info');
+    setBusy(SAT_STAT_IDS, true);
+    App().callApi('apiAdminAssistantStats', token(), { days: period }).then(function (res) {
+      if (gen !== generation || mine !== satStatsSeq) return;
+      setBusy(SAT_STAT_IDS, false);
       if (!res || !res.success) {
-        App().setStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar a satisfação da Lia.', 'error');
+        setPanelStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar a satisfação da Lia.', 'error');
         return;
       }
-      App().setStatus('msg-admin-ai-sat', '', null);
-      renderSatTotals(res);
+      setPanelStatus('msg-admin-ai-sat', '', null);
+      renderSatTotals(res, period);
       renderSatCategories(res.byCategory || []);
       renderSatDays(res.byDay || []);
     });
   }
 
-  function satButton(label, onClick, danger) {
+  function satButton(label, ariaLabel, onClick, danger) {
     var button = App().h('button', { type: 'button', className: danger ? 'danger' : 'secondary' }, [label]);
+    button.setAttribute('aria-label', ariaLabel);
     button.addEventListener('click', onClick);
     return button;
   }
@@ -509,15 +591,16 @@
     var answer = item.answer || {};
     var author = item.author && item.author.username ? 'De ' + item.author.username : 'Conta removida';
     var head = (item.rating === 'up' ? 'Útil' : 'Não útil') + (item.category ? ' · ' + (SAT_CATEGORY_LABELS[item.category] || item.category) : '');
+    var dateText = App().formatDate(item.createdAt);
     var buttons = [];
-    if (item.status !== 'reviewed') buttons.push(satButton('Marcar revisado', function () { decideSat(item, 'reviewed'); }, false));
-    if (item.status !== 'dismissed') buttons.push(satButton('Descartar', function () { decideSat(item, 'dismissed'); }, true));
+    if (item.status !== 'reviewed') buttons.push(satButton('Marcar revisado', satActionAriaLabel('Marcar revisado', item, dateText), function () { decideSat(item, 'reviewed'); }, false));
+    if (item.status !== 'dismissed') buttons.push(satButton('Descartar', satActionAriaLabel('Descartar', item, dateText), function () { decideSat(item, 'dismissed'); }, true));
     return h('div', { className: 'list-item ai-case' }, [
       text('strong', head),
       h('div', { className: 'meta-row' }, [
         text('span', SAT_STATUS_LABELS[item.status] || item.status, { className: 'badge' }),
         answer.degraded ? text('span', 'Resposta aproximada') : null,
-        text('span', author + ' · ' + App().formatDate(item.createdAt)),
+        text('span', author + ' · ' + dateText),
       ]),
       summaryLine('Assunto', answer.topic),
       summaryLine('Resposta da Lia', clipText(answer.text, SAT_ANSWER_MAX)),
@@ -549,14 +632,16 @@
     var gen = generation;
     var mine = ++satSeq;
     if (reset) satCursor = null;
-    if (!keepStatus) App().setStatus('msg-admin-ai-sat', 'Carregando…', 'info');
+    if (!keepStatus) setPanelStatus('msg-admin-ai-sat', 'Carregando…', 'info');
+    setBusy(['admin-ai-sat-list'], true);
     App().callApi('apiAdminListAssistantFeedback', token(), satListParams(reset)).then(function (res) {
       if (gen !== generation || mine !== satSeq) return;
+      setBusy(['admin-ai-sat-list'], false);
       if (!res || !res.success) {
-        App().setStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar as avaliações.', 'error');
+        setPanelStatus('msg-admin-ai-sat', (res && res.message) || 'Não foi possível carregar as avaliações.', 'error');
         return;
       }
-      if (!keepStatus) App().setStatus('msg-admin-ai-sat', '', null);
+      if (!keepStatus) setPanelStatus('msg-admin-ai-sat', '', null);
       renderSatItems(res.items || [], reset);
       satCursor = res.nextCursor || null;
       var more = $('btn-admin-ai-sat-more');
@@ -569,7 +654,7 @@
     App().openConfirm(question, function () {
       App().callApi('apiAdminUpdateAssistantFeedback', token(), { id: item.id, status: status }).then(function (res) {
         var ok = !!res && res.success === true;
-        App().setStatus('msg-admin-ai-sat', (res && res.message) || (ok ? 'Feito.' : 'Não foi possível concluir.'), ok ? 'success' : 'error');
+        setPanelStatus('msg-admin-ai-sat', (res && res.message) || (ok ? 'Feito.' : 'Não foi possível concluir.'), ok ? 'success' : 'error');
         loadSatList(true, true);
       });
     });
@@ -599,7 +684,8 @@
       if (m30) m30.addEventListener('click', function () { loadMetrics(30); });
       bindSatisfaction();
     }
-    runHealth();
+    // Sem runHealth() aqui: cada visita não gera chamada real à IA por chave.
+    // O teste de chaves roda só pelo botão "Testar chaves agora".
     loadMetrics(7);
     loadPending(false);
     loadAtlasUsage(7);
@@ -619,7 +705,17 @@
     if (more) more.addEventListener('click', function () { loadSatList(false, false); });
   }
 
-  /** Logout/expiração: descarta respostas pendentes e limpa o que foi exibido. */
+  /** Filtros da Satisfação voltam ao padrão, junto com os controles visíveis. */
+  function resetSatFilters() {
+    satFilters = { status: '', rating: '' };
+    satCursor = null;
+    ['admin-ai-sat-status', 'admin-ai-sat-rating'].forEach(function (id) {
+      var el = $(id);
+      if (el) el.value = '';
+    });
+  }
+
+  /** Logout/expiração: descarta respostas pendentes, limpa o exibido e zera os filtros da Satisfação. */
   function reset() {
     generation++;
     healthBusy = false;
@@ -631,12 +727,33 @@
       if (el && window.App) App().clearEl(el);
     });
     ['msg-admin-ai-health', 'msg-admin-ai-metrics', 'msg-admin-ai-cases', 'msg-admin-ai-atlas', 'msg-admin-ai-sat'].forEach(function (id) {
-      if (window.App) App().setStatus(id, '', null);
+      if (window.App) setPanelStatus(id, '', null);
     });
-    satCursor = null;
+    setBusy(['admin-ai-metrics', 'admin-ai-atlas', 'admin-ai-sat-list'].concat(SAT_STAT_IDS), false);
+    resetSatFilters();
     var more = $('btn-admin-ai-sat-more');
     if (more) more.classList.add('hidden');
   }
 
-  window.LaiftAdminAi = { loadPanel: loadPanel, reset: reset };
+  var api = {
+    loadPanel: loadPanel,
+    reset: reset,
+    loadMetrics: loadMetrics,
+    loadAtlasUsage: loadAtlasUsage,
+    loadSatisfaction: loadSatisfaction,
+    loadSatList: loadSatList,
+    countLabel: countLabel,
+    shortDayLabel: shortDayLabel,
+    periodPressed: periodPressed,
+    satActionAriaLabel: satActionAriaLabel,
+    panelStatusRole: panelStatusRole,
+  };
+
+  // Navegador: window.LaiftAdminAi (só loadPanel e reset, como antes).
+  // Node: module.exports, para scripts/admin-ai.test.mjs.
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = api;
+  } else {
+    window.LaiftAdminAi = { loadPanel: loadPanel, reset: reset };
+  }
 })();
