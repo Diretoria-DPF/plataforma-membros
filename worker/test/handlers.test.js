@@ -52,6 +52,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     expected.push('apiAdminAiMetrics');
     // Lia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
     expected.push('apiAssistantChat');
+    // Moderação da Lia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
+    expected.push('apiAssistantRedeem', 'apiAssistantModerationState', 'apiAdminAssistantModeration');
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 

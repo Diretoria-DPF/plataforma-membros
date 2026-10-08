@@ -33,6 +33,7 @@ import { buildAssistantMessages } from '../ai/prompts.js';
 import { cleanText, cleanReply, sanitizeHistory } from '../ai/validators.js';
 import { matchIntent, normalize, DEFAULT_SUGGESTIONS } from '../assistant/kb.js';
 import { filterActions } from '../assistant/targets.js';
+import { moderationGate } from '../assistant/moderationGate.js';
 
 const FLAG_CHATBOT = 'chatbot_enabled';
 const HISTORY_TURNS = 5;
@@ -186,6 +187,8 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
   const message = typeof input.message === 'string' ? cleanText(input.message, C.AI_LIMITS.QUESTION_MAX + 1) : '';
   if (!message) throw E.ValidationError('Escreva sua pergunta para a Lia.');
   if (message.length > C.AI_LIMITS.QUESTION_MAX) throw E.ValidationError('A pergunta passou do limite de ' + C.AI_LIMITS.QUESTION_MAX + ' caracteres.');
+  const moderated = await moderationGate(sql, env, identity, message, correlationId);
+  if (moderated) return moderated;
 
   await enforceChatLimit(sql, env, identity);
 

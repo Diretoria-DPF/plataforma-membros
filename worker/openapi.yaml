@@ -32,6 +32,7 @@ paths:
               oneOf:
                 - "$ref": "#/components/schemas/apiAdminAiHealth"
                 - "$ref": "#/components/schemas/apiAdminAiMetrics"
+                - "$ref": "#/components/schemas/apiAdminAssistantModeration"
                 - "$ref": "#/components/schemas/apiAdminAttendanceBadges"
                 - "$ref": "#/components/schemas/apiAdminAttendanceCheckIn"
                 - "$ref": "#/components/schemas/apiAdminAttendanceExportCsv"
@@ -64,6 +65,8 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminUpdateTaskStatus"
                 - "$ref": "#/components/schemas/apiAdminUploadEventImage"
                 - "$ref": "#/components/schemas/apiAssistantChat"
+                - "$ref": "#/components/schemas/apiAssistantModerationState"
+                - "$ref": "#/components/schemas/apiAssistantRedeem"
                 - "$ref": "#/components/schemas/apiBlockProfile"
                 - "$ref": "#/components/schemas/apiCastVote"
                 - "$ref": "#/components/schemas/apiClearConversation"
@@ -186,6 +189,22 @@ components:
       properties:
         action:
           const: "apiAdminAiMetrics"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminAssistantModeration:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAssistantModeration"
         args:
           type: "array"
           prefixItems:
@@ -702,6 +721,37 @@ components:
       properties:
         action:
           const: "apiAssistantChat"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAssistantModerationState:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiAssistantModerationState"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAssistantRedeem:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiAssistantRedeem"
         args:
           type: "array"
           prefixItems:
