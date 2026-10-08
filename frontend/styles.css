@@ -234,7 +234,7 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 .nav-group-admin #btn-exit-admin-mode { color: var(--admin); }
 
 .bottom-nav button {
-  flex: 1 1 0;
+  flex: 1 1 0; min-width: 0; /* 8 abas em 375 px: sem isto "Mensagens" empurra a barra para fora da tela */
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 2px; background: transparent; color: var(--muted);
   border-radius: 0; padding: 8px 2px 6px; font-size: 11px; font-weight: 600;
@@ -335,7 +335,10 @@ table.data-table th { color: var(--muted); font-weight: 600; }
   .app-header { flex-wrap: wrap; padding: 12px 14px; }
   .auth-card { padding: 22px; margin: 12px; }
   .card { padding: 16px; }
-  .bottom-nav button span { font-size: 11px; }
+  .bottom-nav button span:not(.nav-badge) { font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+@media (max-width: 400px) {
+  .bottom-nav button span:not(.nav-badge) { font-size: 10px; letter-spacing: -0.01em; }
 }
 
 /* Alvo de toque mínimo confortável em qualquer botão/campo interativo. */

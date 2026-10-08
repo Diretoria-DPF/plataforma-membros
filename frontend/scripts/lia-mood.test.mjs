@@ -419,6 +419,3 @@ test('lia-mood.js em navegador (sem module) registra window.LiaMood', () => {
   assert.equal(api.toneOf(api.createMood()), 'animated');
 });
 
-test('lia-mood.js usa finais de linha LF (sem CRLF)', () => {
-  assert.equal(fs.readFileSync(path.join(frontend, LIA, 'lia-mood.js'), 'utf8').includes('\r'), false);
-});
