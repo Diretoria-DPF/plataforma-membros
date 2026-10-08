@@ -163,6 +163,15 @@ export const INTENTS = [
     suggestions: ['O que posso fazer aqui?'],
   },
   {
+    id: 'liga_processo',
+    title: 'Processo seletivo da LAIFT',
+    weight: 1.5,
+    keywords: ['processo seletivo', 'seletivo', 'entrar na liga', 'entro na liga', 'fazer parte da liga', 'ser membro', 'virar membro', 'edital', 'areas da liga', 'contato da liga'],
+    reply: 'Para entrar na LAIFT há processo seletivo. Pelo edital de 2026, é preciso estar matriculado ou ter concluído curso da área da saúde, ter carga horária semanal e preencher a ficha de inscrição. Áreas: seis temas, de farmacologia a gestão. Contato: laiftligauninassau@gmail.com. Datas e vagas: a definir pela diretoria. Com processo aberto, o aviso aparece na tela de entrada e na página da Liga.',
+    actions: [],
+    suggestions: ['Equipe', 'Eventos abertos'],
+  },
+  {
     id: 'avaliacao_lia',
     title: 'Avaliar uma resposta da Lia',
     keywords: ['avaliar resposta', 'avaliar a resposta', 'avaliar a lia', 'avaliacao da lia', 'resposta da lia', 'resposta util', 'nao util', 'marcar como util', 'resposta incorreta', 'resposta confusa'],
@@ -364,7 +373,7 @@ export function matchIntent(message, history, role) {
 // todos os papéis. As de administração (adminOnly) respondem só pelas regras, com botão só para admin.
 export const PUBLIC_INTENTS = INTENTS.filter((intent) => !intent.adminOnly);
 
-const OUTLINE_REPLY_MAX = 70; // 2.331 caracteres com as 22 intenções de uso geral (teto do teste: 2.500)
+const OUTLINE_REPLY_MAX = 70; // 2.418 caracteres com as 23 intenções de uso geral (teto do teste: 2.500)
 
 /** Resumo curto das intenções para o prompt da IA (sem dado de ninguém). */
 export function kbOutline() {
