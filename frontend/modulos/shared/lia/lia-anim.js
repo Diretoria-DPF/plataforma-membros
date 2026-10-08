@@ -19,7 +19,6 @@
   const WAVE_MS = 700;
   const HEART_MS = 1200;
   const EYE_MAX_PX = 3;
-  const SVG_NS = 'http://www.w3.org/2000/svg';
   const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
   const COARSE_QUERY = '(pointer: coarse)';
   const EYE_IDS = ['neutral', 'curious', 'happy', 'worried', 'focused', 'sad'].map((e) => `lia-eyes-${e}`);
@@ -167,9 +166,11 @@
     let latest = null;
     let scheduled = false;
     let frameId = null;
+    let stopped = false;
     const apply = () => {
       scheduled = false;
       frameId = null;
+      if (stopped) return; // frame que escapou do cancelamento não mexe mais nos olhos
       setEyeShift(groups, eyeOffset(host.getBoundingClientRect(), latest));
     };
     const onMove = (ev) => {
@@ -181,6 +182,7 @@
     };
     doc.addEventListener('mousemove', onMove);
     return () => {
+      stopped = true;
       doc.removeEventListener('mousemove', onMove);
       if (frameId !== null && typeof win.cancelAnimationFrame === 'function') win.cancelAnimationFrame(frameId);
       scheduled = false;
