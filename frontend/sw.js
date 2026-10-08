@@ -21,7 +21,7 @@
   // O shell inteiro (HTML, estilos e scripts) entra no cache na instalação, para
   // a tela inicial abrir offline já na primeira visita. Item ausente é ignorado.
   var PRECACHE = [
-    './', 'styles.css', 'ux.css', 'ux-glass.css', 'modulos/shared/charts.css', 'modulos/shared/charts-core.js', 'modulos/shared/charts.js', 'home-editorial.css', 'dashboardAdapter.js', 'manifest.webmanifest', 'icons/icon-192.png',
+    './', 'styles.css', 'ux.css', 'ux-glass.css', 'modulos/shared/charts.css', 'modulos/shared/charts-core.js', 'modulos/shared/charts.js', 'home-editorial.css', 'dashboardAdapter.js', 'modulos/shared/lia/lia.css', 'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia.js', 'manifest.webmanifest', 'icons/icon-192.png',
     'app.js', 'shared-states.js', 'pwa.js', 'domain-notice.js', 'learning.js', 'admin-ai.js',
     'msg-crypto.js', 'messaging.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js',
     'ux-v2.js', 'splash.js', 'splash.css', 'modulos/shared/laift-tokens.css',
