@@ -210,17 +210,48 @@ async function incidentTotals(sql) {
   };
 }
 
-async function incidentPeople(sql, limit) {
+const DETECTIONS = Object.freeze(['terms', 'llm']);
+const isoOrNull = (value) => (value ? new Date(value).toISOString() : null);
+
+/**
+ * Uma pessoa do resumo. Os 4 primeiros campos são os de sempre; os 5 últimos são novos (retrocompatível).
+ * O nível atual já traz o decaimento devido (cálculo puro, sem gravar), e a suspensão só aparece se ainda vale.
+ * Só tipo de detecção (nunca texto), nome do perfil e datas: sem e-mail, telefone, hash nem mensagem.
+ */
+function personSummary(row, at) {
+  const state = Rules.decay(row, at);
+  return {
+    profileId: row.profile_id,
+    incidents: Number(row.incidents),
+    maxLevel: Number(row.max_level),
+    lastAt: row.last_at,
+    currentLevel: state.level,
+    suspendedUntil: Rules.isSuspended(state, at) ? state.until.toISOString() : null,
+    lastDetection: DETECTIONS.indexOf(row.last_detection) === -1 ? null : row.last_detection,
+    lastRedeemedAt: isoOrNull(row.redeemed_at),
+    displayName: row.full_name || null,
+  };
+}
+
+/** Pessoas com incidente na janela (as mais recentes primeiro), já com o estado atual de cada uma numa só consulta. */
+async function incidentPeople(sql, limit, at) {
   const rows = await sql`
-    SELECT profile_id, count(*) AS incidents, max(level_after) AS max_level, max(created_at) AS last_at
-    FROM assistant_incidents
-    WHERE created_at >= now() - make_interval(days => ${SUMMARY_WINDOW_DAYS})
-    GROUP BY profile_id
-    ORDER BY max(created_at) DESC
-    LIMIT ${limit}`;
-  return rows.map((r) => ({
-    profileId: r.profile_id, incidents: Number(r.incidents), maxLevel: Number(r.max_level), lastAt: r.last_at,
-  }));
+    WITH page AS (
+      SELECT profile_id, count(*) AS incidents, max(level_after) AS max_level, max(created_at) AS last_at,
+             (array_agg(detection ORDER BY created_at DESC))[1] AS last_detection
+      FROM assistant_incidents
+      WHERE created_at >= now() - make_interval(days => ${SUMMARY_WINDOW_DAYS})
+      GROUP BY profile_id
+      ORDER BY max(created_at) DESC, profile_id
+      LIMIT ${limit}
+    )
+    SELECT page.profile_id, page.incidents, page.max_level, page.last_at, page.last_detection,
+           m.level, m.until, m.last_incident_at, m.last_decay_at, m.redeemed_at, p.full_name
+    FROM page
+    LEFT JOIN assistant_moderation m ON m.profile_id = page.profile_id
+    LEFT JOIN profiles p ON p.id = page.profile_id
+    ORDER BY page.last_at DESC, page.profile_id`;
+  return rows.map((row) => personSummary(row, at));
 }
 
 async function redemptionOutcomes(sql) {
@@ -245,16 +276,16 @@ async function currentLevels(sql) {
 
 /**
  * Resumo para a administração (apiAdminAssistantModeration): agregados e pessoas com incidentes.
- * NUNCA traz texto de mensagem: o histórico só guarda tipo, detecção e nível.
+ * NUNCA traz texto de mensagem: o histórico só guarda tipo, detecção e nível. `now` é só para os testes.
  */
-export async function adminAssistantModeration(sql, identity, input) {
+export async function adminAssistantModeration(sql, identity, input, now) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
   const limit = clampPageSize(input && input.limit);
   return {
     success: true,
     windowDays: SUMMARY_WINDOW_DAYS,
     incidents: await incidentTotals(sql),
-    people: await incidentPeople(sql, limit),
+    people: await incidentPeople(sql, limit, now || new Date()),
     currentLevels: await currentLevels(sql),
     redemption: await redemptionOutcomes(sql),
   };
