@@ -28,7 +28,8 @@
   overflow: visible;
 }
 
-.laift-chart__svg text {
+/* :where() zera a especificidade: assim .laift-chart__center-value (22 px) e .laift-chart__label (cor muted) vencem. */
+:where(.laift-chart__svg text) {
   fill: var(--laift-text);
   font-size: 12px;
 }
