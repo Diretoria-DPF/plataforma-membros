@@ -137,7 +137,7 @@
 
   /** Cria o onboarding para um documento. Usado pela página e pelos testes. */
   function createOnboarding(doc, win, store) {
-    var state = { current: null };
+    var state = { current: null, opener: null, keyListening: false };
     var nodes = null;
 
     function chatbotOn() {
@@ -171,12 +171,72 @@
       renderStep();
     }
 
-    /** Fecha e marca como visto (Pular, Concluir, ação de Lia/crachá). */
-    function finish() {
+    /** Botões visíveis do diálogo, na ordem do DOM. Os ocultos (Voltar no 1º passo, ação) não recebem foco. */
+    function visibleButtons() {
+      return [nodes.skip, nodes.back, nodes.action, nodes.next].filter(function (b) {
+        return !b.classList.contains('hidden');
+      });
+    }
+
+    /**
+     * Prende o Tab no diálogo. O showModal nativo não impede o foco de sair para o body no Chromium:
+     * Tab em "Próximo" e Shift+Tab em "Pular" são tratados aqui. Foco fora do diálogo volta ao primeiro.
+     */
+    function trapTab(evt) {
+      var items = visibleButtons();
+      var index = items.indexOf(doc.activeElement);
+      if (index === -1) {
+        evt.preventDefault();
+        items[0].focus({ preventScroll: true });
+      } else if (evt.shiftKey && index === 0) {
+        evt.preventDefault();
+        items[items.length - 1].focus({ preventScroll: true });
+      } else if (!evt.shiftKey && index === items.length - 1) {
+        evt.preventDefault();
+        items[0].focus({ preventScroll: true });
+      }
+    }
+
+    /** Esc = pular (grava visto). Tab fica preso. Enquanto o diálogo estiver aberto. */
+    function onKeydown(evt) {
+      if (!state.current) return;
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        evt.stopPropagation();
+        finish();
+      } else if (evt.key === 'Tab') {
+        trapTab(evt);
+      }
+    }
+
+    /** Um único listener em capture no document: o Tab de dentro do diálogo sobe até ele, então não há dupla contagem. */
+    function attachKeys() {
+      if (state.keyListening) return;
+      doc.addEventListener('keydown', onKeydown, true);
+      state.keyListening = true;
+    }
+
+    function detachKeys() {
+      if (!state.keyListening) return;
+      doc.removeEventListener('keydown', onKeydown, true);
+      state.keyListening = false;
+    }
+
+    /** Encerramento único: solta as teclas, fecha e devolve o foco a quem estava focado antes de abrir. */
+    function settle(markAsSeen) {
       var cur = state.current;
+      var opener = state.opener;
       state.current = null;
-      if (cur) store.markSeen(cur.profileId);
-      nodes.dialog.close();
+      state.opener = null;
+      detachKeys();
+      if (cur && markAsSeen) store.markSeen(cur.profileId);
+      if (nodes) nodes.dialog.close();
+      if (opener && typeof opener.focus === 'function') opener.focus({ preventScroll: true });
+    }
+
+    /** Fecha e marca como visto (Pular, Concluir, Esc, ação de Lia/crachá). Idempotente. */
+    function finish() {
+      if (state.current) settle(true);
     }
 
     function runAction() {
@@ -198,13 +258,9 @@
       if (state.current && state.current.index > 0) goTo(state.current.index - 1);
     }
 
-    /** Esc (fechamento nativo) também conta como visto; reset() não conta. */
+    /** Fechamento que não veio de finish() (ex.: o navegador fechou o diálogo): conta como visto. */
     function onNativeClose() {
-      var cur = state.current;
-      if (cur && !nodes.dialog.open) {
-        state.current = null;
-        store.markSeen(cur.profileId);
-      }
+      if (state.current && !nodes.dialog.open) settle(true);
     }
 
     function wire() {
@@ -213,6 +269,8 @@
       nodes.back.addEventListener('click', onBack);
       nodes.action.addEventListener('click', runAction);
       nodes.dialog.addEventListener('close', onNativeClose);
+      // Esc do navegador passa por aqui: bloqueamos o fechamento nativo e seguimos pelo finish(), que grava "visto".
+      nodes.dialog.addEventListener('cancel', function (evt) { evt.preventDefault(); finish(); });
     }
 
     /** Monta o diálogo na primeira vez. Sem <dialog> com showModal, devolve false (não exibe). */
@@ -230,17 +288,18 @@
       if (state.current || !isUsableId(opts.profileId) || store.isSeen(opts.profileId)) return false;
       if (!ensureNodes()) return false;
       state.current = { profileId: String(opts.profileId), steps: stepsFor(opts.role, { chatbotOn: chatbotOn() }), index: 0 };
+      state.opener = doc.activeElement;
       renderStep();
       try { nodes.dialog.showModal(); }
-      catch (err) { state.current = null; return false; }
+      catch (err) { state.current = null; state.opener = null; return false; }
+      attachKeys();
       nodes.next.focus({ preventScroll: true });
       return true;
     }
 
     /** Fecha sem marcar como visto (sessão expirada ou logout). */
     function reset() {
-      state.current = null;
-      if (nodes) nodes.dialog.close();
+      if (state.current) settle(false);
     }
 
     return { maybeShow: maybeShow, reset: reset };
