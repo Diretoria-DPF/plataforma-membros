@@ -114,6 +114,7 @@
       if (window.LaiftLearning) window.LaiftLearning.reset();
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
+      if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
       document.getElementById('app-root').classList.add('hidden');
       document.getElementById('public-shell').classList.remove('hidden');
       showPublicScreen('screen-welcome');
@@ -195,10 +196,45 @@
     else el.removeAttribute('data-kind');
   }
 
+  // Listas assíncronas: esqueleto enquanto carrega (showSkeleton), erro com
+  // "Tentar de novo" em falha. resetListForLoading limpa a lista e marca aria-busy;
+  // renderList e showListError removem a marcação ao terminar.
+  function resetListForLoading(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    clearEl(container);
+    if (window.LaiftStates) window.LaiftStates.setBusy(container, true);
+  }
+
+  function showListError(containerId, res, retry) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    clearEl(container);
+    var states = window.LaiftStates;
+    if (!states) {
+      container.appendChild(h('p', { className: 'empty-state' }, [(res && res.message) || 'Tente novamente em instantes.']));
+      return;
+    }
+    states.setBusy(container, false);
+    container.appendChild(states.createStateNode(document, 'error', {
+      message: states.errorMessageFor(res),
+      actionLabel: 'Tentar de novo',
+      onAction: retry,
+    }));
+  }
+
+  function renderAsyncList(containerId, res, items, renderItem, emptyMessage, retry) {
+    var states = window.LaiftStates;
+    var verdict = states ? states.resolveListState(res, items) : { kind: res && res.success ? 'ready' : 'error' };
+    if (verdict.kind === 'error') showListError(containerId, res, retry);
+    else renderList(containerId, items, renderItem, emptyMessage);
+  }
+
   function renderList(containerId, items, renderItem, emptyMessage) {
     var container = document.getElementById(containerId);
     if (!container) return;
     clearEl(container);
+    if (window.LaiftStates) window.LaiftStates.setBusy(container, false);
     if (!items || !items.length) {
       // Estado vazio padronizado (shared-states.js); sem ele, o parágrafo antigo.
       if (window.LaiftStates) container.appendChild(window.LaiftStates.createStateNode(document, 'empty', { title: emptyMessage }));
@@ -412,6 +448,41 @@
       var el = document.getElementById(screenId);
       if (el) el.classList.toggle('hidden', screenId !== id);
     });
+    refreshUiFlags();
+    signalReady();
+  }
+
+  // Flags públicas -> atributos data-flag-* no <html> (ux-v2.js; docs/FEATURE_FLAGS.md).
+  // O CSS do visual v2 se condiciona a data-flag-ux-v2-enabled; sem a flag vale a UI anterior.
+  // Memoizado por token: o login/logout pede de novo, a navegação entre telas não.
+  var uiFlagsKey = null;
+  function refreshUiFlags() {
+    var key = state.sessionToken || '';
+    if (!window.LaiftUx || uiFlagsKey === key) return;
+    uiFlagsKey = key;
+    callApi('apiGetFeatureFlags', key).then(function (res) {
+      if (res && res.success === true) window.LaiftUx.applyAndRememberFlags(document.documentElement, res.flags, window.localStorage);
+      else if (uiFlagsKey === key) uiFlagsKey = null; // falhou: tenta de novo na próxima troca de tela
+    });
+  }
+
+  // Avisa a splash (splash.js) e quem mais precisar de que a primeira tela está pronta.
+  function signalReady() {
+    if (window.__laiftReady === true) return;
+    window.__laiftReady = true;
+    document.dispatchEvent(new Event('laift:ready'));
+  }
+
+  // Esqueleto pulsante (classe .skeleton, ux.css) enquanto a lista carrega; só quando está vazia.
+  function showSkeleton(containerId, rows) {
+    var container = document.getElementById(containerId);
+    if (!container || container.childElementCount > 0 || !window.LaiftStates) return;
+    container.appendChild(window.LaiftStates.createSkeleton(document, rows));
+  }
+  function clearSkeleton(containerId) {
+    var container = document.getElementById(containerId);
+    var skeleton = container && container.querySelector('.skeleton');
+    if (skeleton) container.removeChild(skeleton);
   }
 
   document.querySelectorAll('[data-nav]').forEach(function (btn) {
@@ -697,6 +768,7 @@
     if (window.LaiftLearning) window.LaiftLearning.reset();
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
+    if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
     clearSessionCache();
     document.getElementById('app-root').classList.add('hidden');
     document.getElementById('public-shell').classList.remove('hidden');
@@ -712,6 +784,8 @@
   function enterApp() {
     document.getElementById('public-shell').classList.add('hidden');
     document.getElementById('app-root').classList.remove('hidden');
+    refreshUiFlags();
+    signalReady();
 
     document.getElementById('header-user-name').textContent = state.profile.fullName || '';
     var badge = document.getElementById('header-role-badge');
@@ -784,6 +858,67 @@
     });
   }
 
+  // >>> nav-a11y (puro)
+  // Texto oculto e estado de aba da navegação inferior (WCAG 1.3.1 e 4.1.2).
+  // Sem DOM, para ser testado em scripts/nav-a11y.test.mjs. Não remova os marcadores.
+  var NAV_BADGES = [
+    { id: 'nav-badge-voting', srId: 'nav-badge-voting-sr', kind: 'voting' },
+    { id: 'nav-badge-tasks', srId: 'nav-badge-tasks-sr', kind: 'tasks' },
+    { id: 'nav-badge-connections', srId: 'nav-badge-connections-sr', kind: 'connections' },
+    { id: 'nav-badge-messages', srId: 'nav-badge-messages-sr', kind: 'messages' },
+  ];
+  var NAV_BADGE_NOUNS = {
+    tasks: { one: 'tarefa pendente', many: 'tarefas pendentes' },
+    connections: { one: 'solicitação de conexão pendente', many: 'solicitações de conexão pendentes' },
+    messages: { one: 'mensagem não lida', many: 'mensagens não lidas' },
+  };
+
+  /** Texto oculto do badge (vazio quando não há o que anunciar). */
+  function navBadgeSrText(kind, count) {
+    var n = Math.floor(Number(count)) || 0;
+    if (n <= 0) return '';
+    if (kind === 'voting') return 'há votação aberta';
+    if (!Object.prototype.hasOwnProperty.call(NAV_BADGE_NOUNS, kind)) return '';
+    var nouns = NAV_BADGE_NOUNS[kind];
+    return n + ' ' + (n === 1 ? nouns.one : nouns.many);
+  }
+
+  /** Estado de uma aba: só a do painel atual fica ativa e recebe aria-current="page" (não depende só de cor). */
+  function navItemState(panelId, activePanelId) {
+    var isActive = panelId === activePanelId;
+    return { active: isActive, ariaCurrent: isActive ? 'page' : null };
+  }
+  // <<< nav-a11y (puro)
+
+  /** Lê o número (ou o "!" de votação, que é só presença) de um badge e atualiza o texto oculto dentro do botão. */
+  function syncNavBadgeSr(entry) {
+    var badge = document.getElementById(entry.id);
+    var sr = document.getElementById(entry.srId);
+    if (!badge || !sr) return;
+    var count = 0;
+    if (!badge.classList.contains('hidden')) {
+      count = entry.kind === 'voting' ? 1 : parseInt(badge.textContent, 10);
+    }
+    var text = navBadgeSrText(entry.kind, count);
+    if (sr.textContent !== text) sr.textContent = text;
+  }
+
+  function syncAllNavBadgesSr() {
+    NAV_BADGES.forEach(syncNavBadgeSr);
+  }
+
+  /** O badge de mensagens é escrito por messaging.js; o observador cobre qualquer escrita sem acoplar os módulos. */
+  function watchNavBadges() {
+    syncAllNavBadgesSr();
+    if (!window.MutationObserver) return;
+    var observer = new MutationObserver(syncAllNavBadgesSr);
+    NAV_BADGES.forEach(function (entry) {
+      var badge = document.getElementById(entry.id);
+      if (badge) observer.observe(badge, { attributes: true, attributeFilter: ['class'], childList: true, characterData: true, subtree: true });
+    });
+  }
+  watchNavBadges();
+
   function setupNavigationForRole(role) {
     document.querySelectorAll('#app-nav [data-scope]').forEach(function (btn) {
       var scope = btn.getAttribute('data-scope');
@@ -852,14 +987,20 @@
   // conversa recém-aberta de volta para a lista (bug relatado: "ao clicar
   // para enviar, não vai").
   function showPanelSection(panelId) {
+    var previousPanelId = currentPanelId;
     currentPanelId = panelId;
     document.querySelectorAll('.app-main > section').forEach(function (section) {
       section.classList.toggle('hidden', section.id !== panelId);
     });
     document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
+      var state = navItemState(btn.getAttribute('data-panel'), panelId);
+      btn.classList.toggle('active', state.active);
+      if (state.ariaCurrent) btn.setAttribute('aria-current', state.ariaCurrent);
+      else btn.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
+    // Dica da Lia (assistant-hints.js): só avisa quando a tela muda de fato.
+    if (previousPanelId !== panelId) document.dispatchEvent(new CustomEvent('laift:panelchange', { detail: { panel: panelId } }));
   }
 
   function showPanel(panelId) {
@@ -933,8 +1074,9 @@
   // ===========================================================================
   function loadEvents() {
     setStatus('events-status', 'Carregando eventos...', 'info');
+    showSkeleton('events-list', 3);
     var loaded = callApi('apiListEvents', state.sessionToken || '').then(function (res) {
-      if (!res.success) { setStatus('events-status', res.message, 'error'); return; }
+      if (!res.success) { clearSkeleton('events-list'); setStatus('events-status', res.message, 'error'); return; }
       setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
     });
@@ -943,9 +1085,11 @@
   }
 
   function loadEventsHistory() {
+    resetListForLoading('events-history-list');
+    showSkeleton('events-history-list', 3);
     callApi('apiListRecentCompletedEvents').then(function (res) {
-      if (!res.success) return;
-      renderList('events-history-list', res.events, renderEventHistoryItem, 'Ainda não há eventos concluídos no histórico.');
+      renderAsyncList('events-history-list', res, res && res.events, renderEventHistoryItem,
+        'Ainda não há eventos concluídos no histórico.', loadEventsHistory);
     });
   }
 
@@ -1030,9 +1174,15 @@
   });
 
   function loadProposalsAndVoting() {
+    loadMyProposals();
+    loadOpenVotings();
+  }
+
+  function loadMyProposals() {
+    resetListForLoading('my-proposals-list');
+    showSkeleton('my-proposals-list', 2);
     callApi('apiListMyProposals', state.sessionToken).then(function (res) {
-      if (!res.success) return;
-      renderList('my-proposals-list', res.proposals, function (p) {
+      renderAsyncList('my-proposals-list', res, res && res.proposals, function (p) {
         return h('article', { className: 'list-item' }, [
           text('h4', p.title),
           text('p', p.description),
@@ -1041,20 +1191,23 @@
             text('span', 'Enviada em: ' + formatDate(p.created_at)),
           ]),
         ]);
-      }, 'Você ainda não enviou propostas.');
+      }, 'Você ainda não enviou propostas. Quando enviar uma, acompanhe a análise aqui.', loadMyProposals);
     });
+  }
 
+  function loadOpenVotings() {
     if (state.profile.role === 'visitor') {
       setStatus('voting-status', 'Somente membros e administradores podem votar.', 'info');
-      renderList('voting-list', [], function () {}, '');
+      renderList('voting-list', [], function () {}, 'Votações abertas aparecem aqui para membros e administradores.');
       return;
     }
 
     setStatus('voting-status', 'Carregando votações abertas...', 'info');
+    resetListForLoading('voting-list');
+    showSkeleton('voting-list', 3);
     callApi('apiListOpenProposalsForVoting', state.sessionToken).then(function (res) {
-      if (!res.success) { setStatus('voting-status', res.message, 'error'); return; }
       setStatus('voting-status', '', null);
-      renderList('voting-list', res.proposals, renderVotingItem, 'Não há votações abertas no momento.');
+      renderAsyncList('voting-list', res, res && res.proposals, renderVotingItem, 'Não há votações abertas no momento.', loadOpenVotings);
     });
   }
 

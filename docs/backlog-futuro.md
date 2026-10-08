@@ -36,7 +36,18 @@ Itens adiados de propósito. Cada um tem um **gatilho** objetivo: enquanto o gat
 | Modo apresentação | Conveniência | Pedido da diretoria |
 | Texto com menos de 11 px nos módulos (82 ocorrências; 46 em `studio.css`) | A interface densa do estúdio de laboratório depende dele | Revisão de acessibilidade dos módulos |
 
+## Lia e RAG (entrega UX v2, 2026-10-08)
+Itens fora desta entrega. Os gatilhos desta seção são **propostas** desta revisão; confirmar com o dono antes de usá-los.
+
+| Item | Por que foi adiado | Gatilho de reconsideração (proposto) |
+|---|---|---|
+| Crawl4AI (coleta automática de páginas e scraping para a base da Lia) | Fora do stack atual (decisão de escopo da entrega UX v2/Lia). A base é escrita à mão em `worker/src/assistant/docs.js` e `worker/src/assistant/kb.js` e entra no Neon por reindexação | Acervo com mais de 200 fontes externas que precisem de atualização periódica, ou fonte que não possa ser copiada à mão |
+| Ollama + FAISS (embeddings e índice locais) | Fora do stack atual: embeddings no Workers AI (`@cf/baai/bge-m3`) e índice no pgvector do Neon | Custo mensal do Workers AI acima do teto a definir (`docs/AMBIENTES.md`, seção 6), ou exigência de que o texto não saia da Cloudflare e do Neon |
+| RAG vetorial com reranker | A fusão RRF com piso por lista já atende o golden set; um reranker acrescenta latência e custo sem medição | Recall@4 do golden set abaixo do piso de regressão com embeddings ligados e calibrados (ver `docs/riscos-residuais.md`, O21) |
+| Avaliação contínua da Lia (RAGAS ou equivalente) | Hoje a qualidade é medida pelo golden set (`worker/test/fixtures/rag-eval.json`) e pelo polegar; não há avaliação automática das respostas em produção | Dois meses seguidos de satisfação abaixo de 80% no painel "Satisfação da Lia", ou troca do modelo de embedding |
+| Re-aceite da Política de Privacidade | Só o cadastro grava o aceite (`worker/src/services/authService.js`); quem já tem conta não tem registro da versão 2026-10-08 | Decisão jurídica de que a alteração é material (ADR 0005, "Versão da política"), ou nova versão publicada |
+
 ## Regras
 - Sem custo recorrente sem decisão explícita.
 - Se o gatilho do 9drive não ocorrer em 12 meses, o item volta para revisão.
-- Ao ativar um item, mover a linha para o plano da fase correspondente e registrar a decisão no `docs/CHANGELOG.md`.
+- Ao ativar um item, mover a linha para o plano da fase correspondente e registrar a decisão num changelog (o `docs/CHANGELOG.md` citado aqui ainda não existe no repositório).

@@ -82,6 +82,29 @@
     return box;
   }
 
+  /** Texto de erro para o usuário: a mensagem da API quando houver, senão a padrão. */
+  function errorMessageFor(res) {
+    var message = res && typeof res.message === 'string' ? res.message.trim() : '';
+    return message || DEFAULTS.error.message;
+  }
+
+  /**
+   * Decide o que uma lista deve mostrar: 'error' se a chamada falhou (com a
+   * mensagem a exibir), 'empty' se veio sem itens, 'ready' caso contrário.
+   */
+  function resolveListState(res, items) {
+    if (!res || !res.success) return { kind: 'error', message: errorMessageFor(res) };
+    if (!items || !items.length) return { kind: 'empty' };
+    return { kind: 'ready' };
+  }
+
+  /** Liga/desliga aria-busy num contêiner; sem nó, não faz nada. */
+  function setBusy(node, busy) {
+    if (!node) return;
+    if (busy) node.setAttribute('aria-busy', 'true');
+    else node.removeAttribute('aria-busy');
+  }
+
   /** Mostra/esconde um aviso fixo conforme a conexão do navegador. */
   function watchConnection(win, doc) {
     var banner = element(doc, 'div', 'offline-banner', OFFLINE_TEXT);
@@ -102,6 +125,9 @@
     createStateNode: createStateNode,
     createSkeleton: createSkeleton,
     watchConnection: watchConnection,
+    errorMessageFor: errorMessageFor,
+    resolveListState: resolveListState,
+    setBusy: setBusy,
   };
 
   if (typeof module !== 'undefined' && module.exports) {

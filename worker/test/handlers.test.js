@@ -8,11 +8,11 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 106 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 117 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
-      'apiSubmitFeedback', 'apiUpdateMyAvatar', 'apiGetMyMetrics', 'apiGetHomeSummary',
+      'apiSubmitFeedback', 'apiUpdateMyAvatar', 'apiGetMyMetrics', 'apiGetMyTimeseries', 'apiGetMyDashboardSeries', 'apiGetHomeSummary',
       'apiListEvents', 'apiRegisterForEvent', 'apiListRecentCompletedEvents',
       'apiSubmitProposal', 'apiListMyProposals',
       'apiListOpenProposalsForVoting', 'apiCastVote', 'apiGetProposalResults',
@@ -52,6 +52,13 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     expected.push('apiAdminAiMetrics');
     // Lia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
     expected.push('apiAssistantChat');
+    // Lia — feedback, painel de satisfação, fontes e reindexação (assistantFeedbackService.js)
+    expected.push(
+      'apiAssistantFeedback', 'apiAdminListAssistantFeedback', 'apiAdminUpdateAssistantFeedback',
+      'apiAdminAssistantStats', 'apiAssistantSources', 'apiAdminReindexKb'
+    );
+    // Moderação da Lia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
+    expected.push('apiAssistantRedeem', 'apiAssistantModerationState', 'apiAdminAssistantModeration');
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 
@@ -72,6 +79,16 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     const env = makeEnv();
     const res = await API_REGISTRY.apiGetMyProfile(sql, env, ['token-invalido']);
     expect(res).toMatchObject({ success: false, message: expect.stringContaining('Sessão') });
+  });
+
+  test('apiGetMyDashboardSeries exige sessão: sem sessão válida, mesma resposta de apiGetMyTimeseries', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValue([]);
+    const env = makeEnv();
+    const dashboard = await API_REGISTRY.apiGetMyDashboardSeries(sql, env, ['token-invalido', {}]);
+    const single = await API_REGISTRY.apiGetMyTimeseries(sql, env, ['token-invalido', {}]);
+    expect(dashboard).toEqual(single);
+    expect(dashboard).toMatchObject({ success: false, message: expect.stringContaining('Sessão') });
   });
 
   test('erro inesperado (não .expected) vira mensagem genérica com correlationId, nunca o detalhe interno', async () => {

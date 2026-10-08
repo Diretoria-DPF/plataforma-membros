@@ -1,0 +1,237 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Início em layout editorial (home.js): sem cards e sem borda de caixa.
+   Separação por filetes de 1 px (--hairline) e espaço. Só tokens de
+   modulos/shared/laift-tokens.css; nenhuma duração ou curva literal. */
+
+#home-dashboard.home-editorial {
+  display: grid;
+  gap: var(--move-lg);
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+.home-editorial .home-section-title {
+  margin: 0 0 var(--move-sm);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--laift-muted);
+}
+
+.home-editorial .home-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--move-sm);
+}
+
+.home-editorial .home-section-head .home-section-title {
+  margin: 0;
+}
+
+/* Números grandes: sem caixa, um filete acima de cada um. */
+.home-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--move-md);
+}
+
+.home-kpi {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  padding-top: var(--move-sm);
+  border-top: 1px solid var(--hairline);
+  min-width: 0;
+}
+
+.home-kpi-value {
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--laift-text);
+  overflow-wrap: anywhere;
+}
+
+.home-kpi-label {
+  font-size: 0.875rem;
+  color: var(--laift-muted);
+}
+
+/* Gráfico principal e seletor de período. */
+.home-main,
+.home-agora {
+  display: grid;
+  gap: var(--move-sm);
+  padding-top: var(--move-md);
+  border-top: 1px solid var(--hairline);
+  min-width: 0;
+}
+
+.home-range {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.home-range-btn {
+  min-height: var(--laift-touch);
+  min-width: var(--laift-touch);
+  padding: 0 var(--move-md);
+  border: 0;
+  border-radius: var(--laift-radius-pill);
+  background: transparent;
+  color: var(--laift-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-range-btn[aria-pressed="true"] {
+  background: var(--laift-primary-soft);
+  color: var(--laift-primary-strong);
+}
+
+.home-range-btn:focus-visible {
+  outline: 2px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
+
+.home-chart {
+  min-width: 0;
+}
+
+/* Tamanho dos gráficos vem do charts.js (px = viewBox). Este arquivo não estica o SVG. */
+
+/* Métricas: fileira de sparklines (2x2 no celular) e um par de mesma altura embaixo. */
+.home-metrics {
+  display: grid;
+  gap: var(--move-lg);
+  min-width: 0;
+}
+
+.home-sparks,
+.home-metric-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--move-lg) var(--move-md);
+  min-width: 0;
+}
+
+.home-sparks {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Células da grade podem encolher abaixo do conteúdo (SVG e tabela sr-only). */
+.home-sparks > *,
+.home-metric-pair > * {
+  min-width: 0;
+}
+
+.home-metric-block {
+  display: grid;
+  gap: var(--move-xs);
+  align-content: start;
+  padding-top: var(--move-sm);
+  border-top: 1px solid var(--hairline);
+  min-width: 0;
+}
+
+.home-metric-total {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--laift-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.home-metric-trend,
+.home-metric-note {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.home-metric-note:empty {
+  display: none;
+}
+
+/* Linhas do "Agora": eventos, votações e caixa de entrada, separadas por filete. */
+.home-agora-list {
+  display: grid;
+}
+
+.home-editorial .home-row {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: var(--move-sm) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.home-editorial .home-row:last-child {
+  border-bottom: 0;
+}
+
+.home-editorial .home-row .home-card-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--laift-text);
+}
+
+.home-editorial .home-row > button {
+  justify-self: start;
+  min-height: var(--laift-touch);
+  width: auto;
+}
+
+@media (min-width: 40rem) {
+  .home-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .home-metric-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 48rem) {
+  .home-sparks {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Selos: legenda ao lado da rosca em telas largas; no celular, embaixo. */
+@media (min-width: 64rem) {
+  .home-metric-badges .laift-chart {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--move-md);
+  }
+
+  .home-metric-badges .laift-chart__legend {
+    grid-column: 2;
+    flex-direction: column;
+    margin: 0;
+  }
+}
+
+/* Movimento reduzido: contagens e gráficos mostram o valor final direto. */
+@media (prefers-reduced-motion: reduce) {
+  .home-editorial *,
+  .home-editorial *::before,
+  .home-editorial *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

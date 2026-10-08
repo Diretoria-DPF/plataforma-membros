@@ -1,0 +1,147 @@
+/* Lia Lab - interface de ajuste. Sem dependencias externas. Cores em tokens; tema por data-theme em <html>. */
+
+:root {
+  color-scheme: light;
+  --bg: #f4f8f7; --cartao: #ffffff; --texto: #17302b; --suave: #4d6772; --borda: #d3e2de;
+  --palco: #e7f1ee; --acento: #0f6f62; --acento-txt: #ffffff; --foco: #d98e00; --erro: #b3261e;
+  --sombra: 0 1px 2px rgba(15, 40, 36, .08);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e1a18; --cartao: #152522; --texto: #e3f0ed; --suave: #9fb8b2; --borda: #29403b;
+  --palco: #0b1613; --acento: #3fcfb6; --acento-txt: #06201b; --foco: #ffc857; --erro: #f2b8b5;
+  --sombra: none;
+}
+
+[hidden] { display: none !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--texto);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+h1 { font-size: 26px; margin: 0; line-height: 1.2; }
+h2 { font-size: 18px; margin: 18px 0 8px; }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 15px; margin: 12px 0 6px; }
+p { margin: 6px 0; }
+code { font: 13px ui-monospace, Consolas, monospace; background: var(--palco); padding: 1px 5px; border-radius: 6px; }
+.sub { margin: 4px 0 0; color: var(--suave); max-width: 62ch; }
+.pequeno { font-size: 13px; color: var(--suave); }
+.selo {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  background: var(--acento); color: var(--acento-txt); vertical-align: middle;
+}
+
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+
+/* Cabecalho e layout */
+.cab {
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 16px 16px 4px;
+}
+.lab {
+  max-width: 1200px; margin: 0 auto; padding: 8px 16px 48px;
+  display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 900px) {
+  .lab { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .presets { grid-column: 1 / -1; }
+}
+.painel {
+  background: var(--cartao); border: 1px solid var(--borda); border-radius: 14px;
+  padding: 16px; box-shadow: var(--sombra); min-width: 0;
+}
+
+/* Palco e miniaturas */
+.palco {
+  display: flex; justify-content: center; align-items: center;
+  background: var(--palco); border-radius: 12px; padding: 16px 12px;
+}
+.palco-lia { --lia-size: 260px; }
+.razao { text-align: center; font-size: 16px; font-weight: 600; margin: 10px 0 4px; }
+.razao output { font-variant-numeric: tabular-nums; color: var(--acento); }
+.bolhas { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; align-items: flex-end; }
+.fig { margin: 0; display: grid; justify-items: center; gap: 4px; font-size: 13px; color: var(--suave); }
+.lia-48 { --lia-size: 48px; }
+.lia-120 { --lia-size: 120px; }
+.lia-galeria { --lia-size: 150px; }
+
+/* Botoes e acoes */
+.acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.acoes .botao { flex: 1 1 160px; }
+.botao {
+  min-height: 44px; min-width: 44px; padding: 8px 14px; border-radius: 10px;
+  border: 1px solid var(--borda); background: var(--cartao); color: var(--texto);
+  font: inherit; font-weight: 600; cursor: pointer;
+}
+.botao:hover { border-color: var(--acento); }
+.botao.primario { background: var(--acento); border-color: var(--acento); color: var(--acento-txt); }
+.botao[aria-pressed="true"], .botao[aria-expanded="true"] { border-color: var(--acento); box-shadow: inset 0 0 0 1px var(--acento); }
+
+/* Galeria e exportacao */
+.galeria { margin-top: 12px; }
+.galeria-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; justify-items: center; }
+.exportar { margin-top: 16px; border-top: 1px solid var(--borda); padding-top: 12px; }
+.rotulo-simples { display: block; font-size: 13px; color: var(--suave); margin-bottom: 6px; }
+#export-texto {
+  width: 100%; min-height: 200px; resize: vertical; padding: 10px; border-radius: 10px;
+  border: 1px solid var(--borda); background: var(--palco); color: var(--texto);
+  font: 13px/1.45 ui-monospace, Consolas, monospace;
+}
+.status { min-height: 1.5em; font-size: 13px; color: var(--acento); }
+
+/* Controles */
+.campo { display: grid; gap: 2px; padding: 4px 0; }
+.campo label, .campo > .rotulo { font-size: 14px; }
+.linha-campo { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.linha-campo output {
+  min-width: 4.5em; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--acento);
+}
+input[type="range"] {
+  width: 100%; min-height: 44px; margin: 0; accent-color: var(--acento); background: transparent; cursor: pointer;
+}
+select {
+  width: 100%; min-height: 44px; padding: 0 10px; border-radius: 10px;
+  border: 1px solid var(--borda); background: var(--cartao); color: var(--texto); font: inherit;
+}
+.grupo {
+  border: 1px solid var(--borda); border-radius: 12px; padding: 8px 12px 10px; margin: 12px 0;
+  display: grid; gap: 2px;
+}
+.grupo legend { font-size: 14px; font-weight: 600; padding: 0 6px; }
+.opcao {
+  display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; font-size: 15px;
+}
+.opcao input { width: 22px; height: 22px; margin: 0; accent-color: var(--acento); flex: 0 0 auto; }
+.sw { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--texto); flex: 0 0 auto; }
+.sw-marca { background: #0f6f62; }
+.sw-oceano { background: #1d5fa6; }
+.sw-ambar { background: #b8560f; }
+.sw-ameixa { background: #6b3fa0; }
+
+/* Presets */
+.presets-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+@media (min-width: 900px) { .presets-grade { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.preset {
+  display: grid; justify-items: center; align-content: start; gap: 6px; text-align: center;
+  padding: 12px; border: 1px solid var(--borda); border-radius: 12px; background: var(--cartao);
+}
+.preset h3 { margin: 4px 0 0; font-size: 15px; }
+.preset .botao { width: 100%; margin-top: auto; }
+
+/* Celulares (375 px): sem rolagem horizontal, alvos de 44 px */
+@media (max-width: 480px) {
+  .cab { padding: 12px 12px 0; }
+  .lab { padding: 8px 12px 40px; }
+  .painel { padding: 14px; }
+  .palco-lia { --lia-size: 220px; }
+  .bolhas { gap: 16px; }
+  .acoes .botao { flex: 1 1 100%; }
+  .galeria-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Movimento reduzido: sem transicoes nem animacoes no lab */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -85,3 +85,8 @@ export function filterActions(candidates, role) {
   }
   return out;
 }
+
+/** Destinos que um MEMBRO pode receber (sem as telas de administração): vira texto da base (RAG). */
+export const TARGETS = Array.from(BY_KEY.values())
+  .filter((entry) => entry.roles.includes('member'))
+  .map(({ type, target, label }) => ({ type, target, label }));

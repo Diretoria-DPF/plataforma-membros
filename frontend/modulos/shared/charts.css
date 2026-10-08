@@ -1,0 +1,269 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Gráficos SVG (charts.js). Cores só por [data-series] -> var(--chart-1..8).
+   Movimento só em transform, opacity e stroke-dashoffset, com duração e curva
+   de --dur-* e --ease-*. Um único bloco de reduced-motion zera tudo: os
+   gráficos mostram o valor final direto. Valores são visíveis sem hover
+   (.laift-chart__value); só o que não cabe sem colidir revela no hover, e o
+   hover só realça. Nenhum item recebe foco: a tabela sr-only entrega os valores.
+   Textos usam tokens de texto, nunca a cor da série. */
+
+/* Fundo de camada 0: as cores de série são validadas sobre a camada 0/1, nunca 2/3. */
+.laift-chart {
+  position: relative;
+  color: var(--laift-text);
+  background: var(--layer-0);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Tamanho em px vem do atributo width (= viewBox): sem width:100%, o SVG não é esticado. */
+.laift-chart__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* :where() zera a especificidade: assim .laift-chart__center-value (22 px) e .laift-chart__label (cor muted) vencem. */
+:where(.laift-chart__svg text) {
+  fill: var(--laift-text);
+  font-size: 12px;
+}
+
+/* Cores de série: o elemento herda currentColor; nenhum gráfico usa cor solta. */
+.laift-chart [data-series="1"] { color: var(--chart-1); }
+.laift-chart [data-series="2"] { color: var(--chart-2); }
+.laift-chart [data-series="3"] { color: var(--chart-3); }
+.laift-chart [data-series="4"] { color: var(--chart-4); }
+.laift-chart [data-series="5"] { color: var(--chart-5); }
+.laift-chart [data-series="6"] { color: var(--chart-6); }
+.laift-chart [data-series="7"] { color: var(--chart-7); }
+.laift-chart [data-series="8"] { color: var(--chart-8); }
+
+/* Marcas: barras e pontos preenchidos; linhas e arcos só traço, finos. */
+.laift-chart__bar {
+  fill: currentColor;
+  opacity: 0.9;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+
+.laift-chart__bar--h {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+  animation: laift-chart-grow var(--dur-slow) var(--ease-spring) backwards;
+  animation-delay: calc(var(--i, 0) * var(--dur-instant));
+}
+
+.laift-chart__bar--v {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: laift-chart-rise var(--dur-slow) var(--ease-spring) backwards;
+  animation-delay: calc(var(--i, 0) * var(--dur-instant));
+}
+
+.laift-chart__area {
+  fill: currentColor;
+  fill-opacity: 0.16;
+  animation: laift-chart-fade var(--dur-slow) var(--ease-out) backwards;
+  animation-delay: var(--dur-base);
+}
+
+.laift-chart__line,
+.laift-chart__seg {
+  fill: none;
+  stroke: currentColor;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.laift-chart__line {
+  stroke-width: 2px;
+  stroke-linecap: round;
+  animation: laift-chart-draw var(--dur-lazy) var(--ease-out) backwards;
+}
+
+.laift-chart__seg {
+  stroke-linecap: butt;
+  animation: laift-chart-draw var(--dur-lazy) var(--ease-spring) backwards;
+  animation-delay: calc(var(--i, 0) * var(--dur-instant));
+}
+
+.laift-chart__dot {
+  fill: currentColor;
+}
+
+/* Pontos intermediários da linha ficam ocultos; aparecem só no hover do mouse. */
+.laift-chart__dot--quiet {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .laift-chart__item:hover .laift-chart__dot--quiet {
+    opacity: 1;
+  }
+}
+
+.laift-chart__track {
+  fill: none;
+  stroke: var(--laift-border);
+}
+
+.laift-chart__grid,
+.laift-chart__axis {
+  stroke: var(--laift-border);
+  stroke-width: 1px;
+}
+
+/* Alvos de toque e de foco maiores que a marca. */
+.laift-chart__hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.laift-chart__item {
+  cursor: default;
+}
+
+/* Valor de série: sempre visível, sem hover. Halo na cor do fundo para ler sobre linha e área. */
+.laift-chart__svg .laift-chart__value {
+  fill: var(--laift-text);
+  font-size: 11px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--layer-0);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* Valor que não cabe sem colidir: só realce de hover do mouse. Nada depende dele (legenda e tabela trazem os números). */
+.laift-chart__svg .laift-chart__value--hover {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .laift-chart__item:hover .laift-chart__bar--h {
+    transform: translateX(4px);
+    opacity: 1;
+  }
+
+  .laift-chart__item:hover .laift-chart__bar--v {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+
+  .laift-chart__item:hover .laift-chart__value--hover {
+    opacity: 1;
+  }
+}
+
+.laift-chart__label,
+.laift-chart__center-label {
+  fill: var(--laift-muted);
+  font-size: 12px;
+}
+
+.laift-chart__axis-label {
+  fill: var(--laift-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.laift-chart__center-value {
+  fill: var(--laift-text);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.laift-chart__empty {
+  fill: var(--laift-muted);
+  font-size: 12px;
+}
+
+/* Pulso do sparkline "live": só opacidade, em loop. */
+.laift-chart--live .laift-chart__pulse {
+  animation: laift-chart-pulse var(--dur-lazy) var(--ease-in-out) infinite;
+}
+
+/* Legenda: obrigatória com 2 ou mais séries; identidade nunca só por cor. */
+.laift-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--laift-space-2, 8px) var(--laift-space-3, 12px);
+  margin: var(--laift-space-2, 8px) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--laift-text);
+}
+
+.laift-chart__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.laift-chart__swatch {
+  display: inline-block;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: currentColor;
+}
+
+/* Tabela alternativa para leitores de tela: fora da tela, sem sumir da árvore de acessibilidade. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  /* Sem nowrap: a tabela não pode ter largura de conteúdo (estourava a grade de 375 px). */
+  border: 0;
+}
+
+@keyframes laift-chart-grow {
+  from { transform: scaleX(0); }
+}
+
+@keyframes laift-chart-rise {
+  from { transform: scaleY(0); }
+}
+
+@keyframes laift-chart-draw {
+  from { stroke-dashoffset: 1; }
+}
+
+@keyframes laift-chart-fade {
+  from { opacity: 0; }
+}
+
+@keyframes laift-chart-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Reduced motion: sem animação; o valor final aparece direto. Bloco único. */
+@media (prefers-reduced-motion: reduce) {
+  .laift-chart *,
+  .laift-chart *::before,
+  .laift-chart *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.laift-chart--static,
+.laift-chart--static * {
+  animation: none !important;
+  transition: none !important;
+}

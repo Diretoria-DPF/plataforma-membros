@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<title>Lia - preview (revisao de arte)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="lia.css">
+<style>
+body { margin: 0; font: 14px system-ui, sans-serif; }
+.tema { padding: 20px; display: grid; gap: 16px; }
+.tema[data-theme="light"] { background: #f6faf9; color: #17302b; }
+.tema[data-theme="dark"] { background: #0e1a18; color: #e3f0ed; }
+.tema h2 { margin: 0; font-size: 16px; }
+.linha { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-end; }
+figure { margin: 0; display: grid; justify-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+<section class="tema" data-theme="light">
+  <h2>Tema claro</h2>
+  <div class="linha">
+    <figure><div class="lia" data-preview data-state="idle" style="--lia-size:120px"></div><figcaption>idle 120</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="thinking" style="--lia-size:120px"></div><figcaption>pensando 120</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="speaking" style="--lia-size:120px"></div><figcaption>falando 120</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="celebrating" style="--lia-size:120px"></div><figcaption>celebrando 120</figcaption></figure>
+  </div>
+  <div class="linha">
+    <figure><div class="lia" data-preview data-state="idle" style="--lia-size:240px"></div><figcaption>idle 240</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="thinking" style="--lia-size:240px"></div><figcaption>pensando 240</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="speaking" style="--lia-size:240px"></div><figcaption>falando 240</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="celebrating" style="--lia-size:240px"></div><figcaption>celebrando 240</figcaption></figure>
+  </div>
+  <h2>Props e emocoes (claro)</h2>
+  <div class="linha">
+    <div class="lia" data-preview data-prop="calendar" data-emotion="happy" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="pencil" data-emotion="focused" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="flask" data-emotion="curious" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="stethoscope" data-emotion="focused" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="thermometer" data-emotion="worried" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="book" data-emotion="focused" data-arm-right="idle" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="skeleton" data-emotion="curious" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="bone" data-emotion="sad" data-arm-left="wave" style="--lia-size:120px"></div>
+  </div>
+</section>
+<section class="tema" data-theme="dark">
+  <h2>Tema escuro</h2>
+  <div class="linha">
+    <figure><div class="lia" data-preview data-state="idle" style="--lia-size:120px"></div><figcaption>idle 120</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="thinking" style="--lia-size:120px"></div><figcaption>pensando 120</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="speaking" style="--lia-size:120px"></div><figcaption>falando 120</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="celebrating" style="--lia-size:120px"></div><figcaption>celebrando 120</figcaption></figure>
+  </div>
+  <div class="linha">
+    <figure><div class="lia" data-preview data-state="idle" style="--lia-size:240px"></div><figcaption>idle 240</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="thinking" style="--lia-size:240px"></div><figcaption>pensando 240</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="speaking" style="--lia-size:240px"></div><figcaption>falando 240</figcaption></figure>
+    <figure><div class="lia" data-preview data-state="celebrating" style="--lia-size:240px"></div><figcaption>celebrando 240</figcaption></figure>
+  </div>
+  <h2>Props e emocoes (escuro)</h2>
+  <div class="linha">
+    <div class="lia" data-preview data-prop="calendar" data-emotion="happy" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="pencil" data-emotion="focused" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="flask" data-emotion="curious" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="stethoscope" data-emotion="focused" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="thermometer" data-emotion="worried" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="book" data-emotion="focused" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="skeleton" data-emotion="curious" style="--lia-size:120px"></div>
+    <div class="lia" data-preview data-prop="bone" data-emotion="sad" data-arm-left="wave" style="--lia-size:120px"></div>
+  </div>
+</section>
+<script src="preview.js"></script>
+</body>
+</html>

@@ -182,31 +182,55 @@
    * O histórico do sistema antigo ainda não foi importado (pendência em
    * docs/FASE_2_DADOS_PRESENCA.md).
    */
+  /** aria-busy no bloco de números: ligado durante a busca, sempre removido ao fim. */
+  function setStatsBusy(statsBox, busy) {
+    if (statsBox && window.LaiftStates) window.LaiftStates.setBusy(statsBox, busy);
+  }
+
+  /** Enquanto carrega, os números mostram "…"; nunca o valor da busca anterior. */
+  function showStatsPlaceholder(value) {
+    STAT_IDS.forEach(function (id) { setStat(id, value); });
+  }
+
+  function startStatsLoading(A, statsBox) {
+    setStatsBusy(statsBox, true);
+    showStatsPlaceholder('…');
+    A.setStatus('learn-status', 'Carregando seu desempenho...', 'info');
+  }
+
+  function showStatsFailure(A, statsBox, res) {
+    setStatsBusy(statsBox, false);
+    showStatsPlaceholder('—');
+    $('learn-progress').classList.add('hidden');
+    A.setStatus('learn-status', (res && res.message) || 'Não foi possível carregar seu desempenho agora. Os módulos continuam disponíveis.', 'error');
+  }
+
+  function showStats(A, statsBox, st) {
+    setStatsBusy(statsBox, false);
+    setStat('learn-stat-accuracy', formatPct(st.accuracyPct));
+    setStat('learn-stat-answered', Number(st.questionsAnswered) || 0);
+    setStat('learn-stat-sims', Number(st.quizzesCompleted) || 0);
+    setStat('learn-stat-cases', Number(st.clinicalCasesCompleted) || 0);
+    setStat('learn-stat-lab', Number(st.labFormulations) || 0);
+    renderByModule(st.byModule);
+    renderBadges(st.badges);
+    $('learn-progress').classList.remove('hidden');
+    A.setStatus('learn-status', '', null);
+  }
+
   function loadStats() {
     var A = app();
     if (!A || typeof A.callLearningApi !== 'function') return;
     var requestId = ++statsRequestId;
     var statsBox = document.querySelector('#learn-hub .learn-stats');
-    // Estado "carregando" visível (os números pulsam) e anunciado.
-    if (statsBox) statsBox.setAttribute('aria-busy', 'true');
-    A.setStatus('learn-status', 'Carregando seu desempenho...', 'info');
+    startStatsLoading(A, statsBox);
     A.callLearningApi('apiLearnGetMyStats').then(function (res) {
+      if (requestId !== statsRequestId) return; // resposta antiga: quem manda agora é a busca mais nova
+      if (!res || !res.success || !res.stats) showStatsFailure(A, statsBox, res);
+      else showStats(A, statsBox, res.stats);
+    }).catch(function () {
       if (requestId !== statsRequestId) return;
-      if (statsBox) statsBox.removeAttribute('aria-busy');
-      if (!res || !res.success || !res.stats) {
-        A.setStatus('learn-status', (res && res.message) || 'Não foi possível carregar seu desempenho agora. Os módulos continuam disponíveis.', 'error');
-        return;
-      }
-      var st = res.stats;
-      setStat('learn-stat-accuracy', formatPct(st.accuracyPct));
-      setStat('learn-stat-answered', Number(st.questionsAnswered) || 0);
-      setStat('learn-stat-sims', Number(st.quizzesCompleted) || 0);
-      setStat('learn-stat-cases', Number(st.clinicalCasesCompleted) || 0);
-      setStat('learn-stat-lab', Number(st.labFormulations) || 0);
-      renderByModule(st.byModule);
-      renderBadges(st.badges);
-      $('learn-progress').classList.remove('hidden');
-      A.setStatus('learn-status', '', null);
+      showStatsFailure(A, statsBox, null);
     });
   }
 
@@ -246,9 +270,15 @@
     return true;
   }
 
+  /** Avisa a Lia (assistant-hints.js) que o módulo mudou. Só evento DOM: não altera nada aqui. */
+  function emitModuleChange(moduleId) {
+    document.dispatchEvent(new CustomEvent('laift:modulechange', { detail: { module: moduleId } }));
+  }
+
   function openModule(id) {
     var mod = findModule(id);
     if (!mod) return;
+    var previousModuleId = activeModuleId;
     activeModuleId = id;
     openerCard = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.learn-card') : null;
     if (!frames[id]) frames[id] = createFrame($('learn-frames'), mod.path, mod.title);
@@ -272,10 +302,12 @@
     // Teclado/leitor de tela: o foco vai para "← Módulos" (antes ficava num
     // cartão que acabou de sumir, e o próximo Tab ia para a barra inferior).
     $('learn-back').focus({ preventScroll: true });
+    if (previousModuleId !== id) emitModuleChange(id);
   }
 
   /** Volta ao hub. Também chamado pelos módulos via LaiftIdentity.backToHub(). */
   function closeModule() {
+    var wasOpen = activeModuleId !== null;
     if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
     if (activeModuleId && frames[activeModuleId]) frames[activeModuleId].classList.remove('learn-frame-immersive');
     activeModuleId = null;
@@ -286,6 +318,7 @@
     if (openerCard && document.contains(openerCard)) openerCard.focus({ preventScroll: true });
     openerCard = null;
     loadStats();
+    if (wasOpen) emitModuleChange('');
   }
 
   function toggleFullscreen() {
@@ -349,6 +382,8 @@
     if (fiscalFrame) { fiscalFrame.remove(); fiscalFrame = null; }
     activeModuleId = null;
     statsRequestId++;
+    // A busca em voo (se houver) será descartada: não pode deixar aria-busy preso.
+    setStatsBusy(document.querySelector('#learn-hub .learn-stats'), false);
     if ($('learn-viewer')) {
       $('learn-viewer').classList.remove('learn-viewer-immersive');
       $('learn-viewer').classList.add('hidden');

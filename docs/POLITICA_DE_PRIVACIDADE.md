@@ -1,6 +1,6 @@
 # Política de Privacidade — Plataforma de Membros LAIFT
 
-**Versão: 2026-10-03** (deve corresponder exatamente a
+**Versão: 2026-10-08** (deve corresponder exatamente a
 `LEGAL_VERSIONS.PRIVACY` em `worker/src/constants.js` — atualize os dois
 juntos sempre que o texto mudar de forma material; o aceite de uma versão
 anterior fica preservado no histórico de consentimentos, nunca é
@@ -13,11 +13,13 @@ retroativamente alterado).
 > trechos, como o restante do documento, ainda precisam de revisão
 > jurídica antes de serem considerados finais.
 >
-> A versão 2026-10-03 passa a declarar os serviços de terceiros que tratam
-> dados técnicos de acesso (Cloudflare, Neon, Brevo, Groq, jsDelivr e bancos
-> públicos de moléculas) e a medição de acesso (analytics) feita pela
-> infraestrutura da Cloudflare. Os trechos novos também aguardam revisão
-> jurídica.
+> A versão 2026-10-08 acrescenta a **Lia**, assistente da plataforma. Passam a
+> ser registrados: perguntas e respostas da conversa (a pergunta é guardada só
+> como código, não como texto), avaliações com polegar para cima ou para baixo,
+> comentário opcional de até 500 caracteres e registros de moderação sem o texto
+> das mensagens. O texto das perguntas é enviado à Groq, Inc. e ao Workers AI da
+> Cloudflare. Os trechos novos também aguardam revisão jurídica. A versão
+> anterior (2026-10-03) continua valendo para os demais tratamentos.
 
 ## 1. Quem é o controlador dos dados
 
@@ -43,13 +45,19 @@ eventos, propostas enviadas, votos (o voto em si é vinculado à sua conta
 para impedir duplicidade — ver seção 6 sobre como isso é protegido),
 adesões a tarefas, comentários e mensagens de feedback enviadas por você.
 
+**Na Lia (assistente da plataforma):** as perguntas e respostas da conversa
+(a pergunta é guardada só como código, ver seção 5), as avaliações com
+polegar para cima ou para baixo, a categoria escolhida e o comentário
+opcional de até 500 caracteres que você envia sobre uma resposta.
+
 **Na área "Aprender":** resultados dos simulados e casos clínicos que você
 conclui (nota, duração, desfecho), formulações do laboratório, presença
 confirmada em eventos (data, hora e forma do check-in) e o texto que você
 escreve nos recursos com inteligência artificial (ver seção 5).
 
 **Gerados automaticamente pelo sistema, nunca inseridos por você:**
-registros de auditoria de ações administrativas e de autenticação
+registros de moderação da Lia (nível e tipo de incidente, sem o texto da
+mensagem), registros de auditoria de ações administrativas e de autenticação
 (associados a um identificador de conta, nunca ao conteúdo de senha ou
 token), registros técnicos de erro para diagnóstico e dados técnicos de
 acesso tratados pela infraestrutura de hospedagem (endereço IP, tipo de
@@ -68,6 +76,9 @@ seção 5).
 | Resultados de estudo na área "Aprender" e presença em eventos | Mostrar suas estatísticas e conquistas; registrar a presença em eventos da liga | Execução de contrato (inciso V) |
 | Perguntas e respostas escritas nos simuladores com IA (clínica virtual e laboratório), métricas de uso da IA | Oferecer o paciente virtual, o preceptor e a geração de casos; controlar custo e abuso (cota diária) | Execução de contrato (inciso V); métricas de uso: legítimo interesse (inciso IX) |
 | Dados técnicos de acesso (IP, navegador, página, país, desempenho) | Entregar o site, proteger contra ataques e abuso e medir de forma agregada a audiência e o desempenho da plataforma (analytics) | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
+| Perguntas, respostas e cache de perguntas genéricas da Lia | Responder dúvidas sobre a plataforma e levar você à tela certa; reaproveitar a resposta de perguntas iguais | Execução de contrato (inciso V) |
+| Avaliações (polegar), categoria e comentário opcional sobre a Lia | Medir a qualidade das respostas e corrigir a base de conhecimento. O comentário só existe se você decidir enviá-lo | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
+| Registros de moderação da Lia (nível, tipo de incidente, forma de detecção) | Proteger a comunidade e a assistente contra ofensas | Legítimo interesse do controlador (inciso IX), limitado ao mínimo necessário |
 
 ## 4. O que NÃO fazemos
 
@@ -75,6 +86,9 @@ seção 5).
   fins de marketing ou publicidade.
 - Não usamos seus dados para nenhuma finalidade além das listadas na
   seção 3.
+- Não enviamos à IA seu nome, e-mail nem identificadores da sua conta. O
+  texto que você digita, porém, é enviado: por isso, não escreva dados
+  pessoais seus ou de terceiros nas conversas com a IA ou com a Lia.
 - Não armazenamos sua senha em texto puro em nenhum momento, em nenhum
   sistema, por nenhuma razão.
 - Não exibimos telefone, e-mail completo ou hash de senha em nenhuma
@@ -99,7 +113,7 @@ mediante solicitação ao canal da seção 1.
 
 **Inteligência artificial.** Os recursos de IA da área "Aprender" (paciente
 virtual, preceptor da clínica, geração de casos e preceptor do laboratório)
-usam o serviço da **Groq, Inc.** como operador de dados. Quando você usa
+e a Lia usam o serviço da **Groq, Inc.** como operador de dados. Quando você usa
 esses recursos, o texto que você escreve (perguntas, hipótese diagnóstica e
 conduta) e o contexto do caso clínico **fictício** são enviados à Groq para
 gerar a resposta. **Não enviamos seu nome, e-mail ou qualquer identificador
@@ -114,6 +128,34 @@ administradores. O tratamento pela Groq segue os termos e a política de
 privacidade dela, com possível transferência internacional de dados (LGPD,
 art. 33).
 
+**Lia, assistente da plataforma.** A Lia responde dúvidas sobre a plataforma
+e leva você até a tela certa. Ela não altera dados da sua conta. Quando você
+conversa com ela:
+
+- **A pergunta não é guardada como texto.** Guardamos, ligados à sua conta,
+  um código (hash) calculado a partir da pergunta, para reconhecer perguntas
+  repetidas, e o texto da resposta. O código não é a pergunta e não permite
+  recuperá-la diretamente, mas continua sendo um dado vinculado à sua conta.
+- **A IA recebe o texto.** Quando a resposta precisa de IA, o texto da
+  pergunta, as últimas mensagens da conversa e trechos da base de
+  conhecimento da própria plataforma são enviados à Groq, Inc. Não enviamos
+  seu nome, e-mail ou identificador da conta, mas o que você digitar vai junto.
+- **Busca e cache.** Para buscar na base de conhecimento, a pergunta é
+  convertida em um vetor numérico pelo Workers AI, da Cloudflare. Perguntas
+  curtas e genéricas (de 8 a 150 caracteres, sem dados pessoais e sem
+  instruções) podem ser guardadas, em forma normalizada, para responder outras
+  pessoas com a mesma resposta, por até 7 dias. Um filtro automático tenta
+  impedir que perguntas com dados pessoais entrem nesse cache, mas ele não é
+  infalível.
+- **Moderação.** Se uma mensagem contém termo ofensivo, o texto é enviado à IA
+  para confirmar se é de fato uma ofensa. Guardamos o nível de moderação e o
+  registro do incidente (tipo, forma de detecção e nível resultante), mas não
+  o texto da mensagem.
+- **Avaliações.** Você pode avaliar cada resposta com polegar para cima ou para
+  baixo, escolher uma categoria e, se quiser, escrever um comentário de até 500
+  caracteres. Administradores veem as avaliações com apelido e papel de quem
+  avaliou, sem nome ou e-mail.
+
 **Serviços de terceiros e medição de acesso (analytics).** Para funcionar,
 a plataforma usa os serviços abaixo como operadores. Todos podem tratar
 dados técnicos de acesso (endereço IP, tipo de navegador, página acessada,
@@ -124,7 +166,9 @@ políticas de privacidade de cada um:
 - **Cloudflare, Inc.** — hospeda o site e a API, resolve o endereço (DNS),
   entrega o conteúdo por rede de distribuição (CDN), protege contra
   ataques e abuso, e guarda arquivos (fotos de perfil e imagens de eventos)
-  e dados temporários de cache. A Cloudflare também faz a **medição de
+  e dados temporários de cache, além de gerar (Workers AI) o vetor numérico
+  das perguntas da Lia para a busca na base de conhecimento. A Cloudflare
+  também faz a **medição de
   acesso (analytics) de forma agregada**, a partir das requisições que
   passam pela rede dela: quantidade de visitas, países de origem, páginas
   mais acessadas e desempenho (velocidade e erros). Usamos essas medições
@@ -137,7 +181,11 @@ políticas de privacidade de cada um:
 - **Brevo** — envio dos e-mails da plataforma (confirmação de cadastro e
   redefinição de senha); recebe o seu e-mail e, quando usado na mensagem, o
   seu nome, para entregar o aviso.
-- **Groq, Inc.** — recursos de inteligência artificial, como descrito acima.
+- **Groq, Inc.** — recursos de inteligência artificial (área "Aprender" e
+  Lia), como descrito acima.
+- **NVIDIA Corporation** — reserva técnica de IA, desligada por padrão. Se a
+  administração a ativar, esta Política será atualizada antes, e os mesmos
+  textos descritos acima poderão ser enviados a ela.
 - **jsDelivr** — entrega bibliotecas de código usadas em gráficos e na
   visualização de moléculas. Ao carregar a página, o seu navegador faz um
   pedido a esse serviço, que pode registrar o endereço IP. Usamos versões
@@ -170,6 +218,27 @@ denúncia em andamento envolvendo a conta) e para cumprir obrigação legal
 de guarda de registros de auditoria de segurança pelo prazo mínimo exigido
 pela legislação aplicável.
 
+**Lia: respostas, avaliações, comentários e registros de moderação.** Os
+prazos abaixo são aplicados automaticamente por uma rotina de limpeza que roda
+todos os dias na plataforma:
+
+- **Resposta registrada da Lia** (o texto da resposta e o código da pergunta,
+  nunca o texto da pergunta): removida após **180 dias**.
+- **Avaliação (polegar), categoria e comentário opcional:** o comentário fica em
+  texto completo por até **90 dias**. Depois disso o texto é **apagado**, sem
+  substituição por código ou resumo, e não pode ser recuperado. A avaliação e a
+  categoria permanecem, sem o texto, para medir a qualidade das respostas. A
+  avaliação sai junto com a resposta da Lia a que se refere, ou seja, em até
+  180 dias. A regra de remoção da avaliação aos 365 dias é um limite de
+  segurança e, na prática, não chega a ser aplicada.
+- **Registros de incidentes de moderação** (tipo do incidente, forma de detecção
+  e nível, sem o texto da mensagem): removidos após **365 dias**.
+
+Esses registros são vinculados à sua conta. Quando o cadastro é excluído, eles
+saem junto, pela exclusão em cascata no banco de dados. Hoje a exclusão de conta
+é feita pelo responsável da liga a partir do seu pedido; a plataforma ainda não
+tem um botão para isso.
+
 Após a exclusão: dados de identificação pessoal (nome, e-mail, telefone,
 avatar, redes sociais) são apagados ou anonimizados de forma
 irreversível. Registros de auditoria, votos e participações em decisões
@@ -193,7 +262,9 @@ expressa; eliminação dos dados tratados com base no seu consentimento
 foram eventualmente compartilhados; informação sobre a possibilidade de
 não fornecer consentimento e as consequências disso; e revogação do
 consentimento a qualquer momento, para os dados cuja base legal seja o
-consentimento (ver tabela da seção 3).
+consentimento (ver tabela da seção 3). Se a moderação da Lia limitar seu uso
+(suspensão de 24 horas), você pode pedir a revisão da decisão por uma pessoa,
+pelo canal da seção 1 (LGPD, art. 20).
 
 Respondemos solicitações de titulares em prazo razoável, observado o
 volume de pedidos e a necessidade eventual de verificar sua identidade
@@ -212,10 +283,11 @@ titular descritos na seção 8, inclusive ao direito de solicitar exclusão.
 
 ## 10. Alterações desta Política
 
-Alterações materiais geram uma nova versão numerada por data. O aceite de
-uma nova versão é solicitado a partir de então; o registro do aceite de
-versões anteriores é preservado no seu histórico de consentimentos, nunca
-apagado ou reescrito.
+Alterações materiais geram uma nova versão numerada por data. Mudanças materiais
+são comunicadas na própria plataforma e nesta página. Hoje a plataforma não
+solicita novo aceite a cada versão: o aceite registrado no seu cadastro
+corresponde à versão vigente naquele dia. O registro de versões anteriores é
+preservado no seu histórico de consentimentos, nunca apagado ou reescrito.
 
 ## 11. Autoridade Nacional de Proteção de Dados (ANPD)
 

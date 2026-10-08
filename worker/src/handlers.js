@@ -21,10 +21,11 @@
  */
 import * as S from './security.js';
 import * as Logging from './logging.js';
-import { GENERIC_ERROR_MESSAGE } from './constants.js';
+import { GENERIC_ERROR_MESSAGE, RATE_LIMITS } from './constants.js';
 import * as AuthService from './services/authService.js';
 import * as ProfileService from './services/profileService.js';
 import * as HomeService from './services/homeService.js';
+import * as TimeseriesService from './services/timeseriesService.js';
 import * as FeatureFlagService from './services/featureFlagService.js';
 import * as MfaService from './services/mfaService.js';
 import * as EventService from './services/eventService.js';
@@ -46,6 +47,9 @@ import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
 // Lia, guia da plataforma (orienta e navega; nunca altera dados)
 import * as AssistantService from './services/assistantService.js';
+// Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
+import * as AssistantFeedbackService from './services/assistantFeedbackService.js';
+import * as AssistantModeration from './assistant/moderationGate.js';
 // PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
 import * as AtlasMoleculeService from './services/atlasMoleculeService.js';
 import * as AtlasTelemetryService from './services/atlasTelemetryService.js';
@@ -114,6 +118,16 @@ export const API_REGISTRY = {
   apiSubmitFeedback: (sql, env, [sessionToken, message]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.submitFeedback(sql, identity, message, cid)),
   apiUpdateMyAvatar: (sql, env, [sessionToken, avatarBase64, avatarMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyAvatarFromBase64(sql, env, identity, avatarBase64, avatarMimeType, cid)),
   apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
+  // Série temporal da própria atividade (gráficos do Início): { range?, metric? }.
+  apiGetMyTimeseries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity) => {
+    await S.enforceRateLimit(sql, 'TIMESERIES', identity.profileId, RATE_LIMITS.TIMESERIES.MAX_ATTEMPTS, RATE_LIMITS.TIMESERIES.WINDOW_SECONDS);
+    return TimeseriesService.getMyTimeseries(sql, env, identity, input);
+  }),
+  // Todas as séries do Início numa chamada (falha isolada por série: null); ver timeseriesService.js.
+  apiGetMyDashboardSeries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
+    await S.enforceRateLimit(sql, 'DASHBOARD_SERIES', identity.profileId, RATE_LIMITS.DASHBOARD_SERIES.MAX_ATTEMPTS, RATE_LIMITS.DASHBOARD_SERIES.WINDOW_SECONDS);
+    return TimeseriesService.getMyDashboardSeries(sql, env, identity, input, cid);
+  }),
   // Início: eventos, tarefas, votações, aprendizado e caixa de entrada em UMA requisição.
   apiGetHomeSummary: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HomeService.getHomeSummary(sql, env, identity)),
 
@@ -127,6 +141,18 @@ export const API_REGISTRY = {
     const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
     return AssistantService.chat(sql, env, identity, input || {}, cid);
   }),
+  // Lia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
+  apiAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.submitFeedback(sql, identity, asInput(input), cid)),
+  apiAdminListAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.listFeedback(sql, identity, asInput(input))),
+  apiAdminUpdateAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.updateFeedback(sql, identity, asInput(input), cid)),
+  apiAdminAssistantStats: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.feedbackStats(sql, identity, asInput(input))),
+  // Fontes do acervo para as citações (sem conteúdo). Exige sessão e portão de MFA como as demais
+  // actions: mfaGate.test.js só isenta de sessão obrigatória as actions listadas em OPTIONAL_SESSION.
+  apiAssistantSources: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => AssistantFeedbackService.listKbSources(sql)),
+  apiAdminReindexKb: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.reindexKb(sql, env, identity, cid)),
+  // Moderação da Lia (ADR 0004): redenção e estado exigem sessão (portão de MFA incluso); visitante não é moderado.
+  apiAssistantRedeem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.redeemAssistant(sql, env, identity, asInput(input), cid)),
+  apiAssistantModerationState: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AssistantModeration.assistantModerationState(sql, identity)),
   apiAdminListFeatureFlags: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => FeatureFlagService.adminList(sql, identity)),
   apiAdminSetFeatureFlag: (sql, env, [sessionToken, key, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => FeatureFlagService.adminSet(sql, identity, key, input || {}, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
 
@@ -190,6 +216,7 @@ export const API_REGISTRY = {
   apiReportProfile: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.submitReport(sql, identity, input || {}, cid)),
   apiAdminListReports: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ModerationService.listReports(sql, identity, input || {})),
   apiAdminResolveReport: (sql, env, [sessionToken, reportId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ModerationService.resolveReport(sql, identity, reportId, input || {}, cid)),
+  apiAdminAssistantModeration: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantModeration.adminAssistantModeration(sql, identity, asInput(input))),
 
   // ---- Mensageria E2EE — chaves (Fase 3d) ----
   apiGetMyMessagingKey: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MessagingKeyService.getMyMessagingKey(sql, identity)),

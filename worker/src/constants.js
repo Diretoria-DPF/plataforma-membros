@@ -163,7 +163,7 @@ export const LIMITS = {
 // frontend/index.html (texto fixo, sem template de servidor).
 export const LEGAL_VERSIONS = {
   TERMS: '2026-09-25',
-  PRIVACY: '2026-10-03',
+  PRIVACY: '2026-10-08',
 };
 
 export const RATE_LIMITS = {
@@ -210,6 +210,8 @@ export const RATE_LIMITS = {
   // IP (NAT de campus é comum, então 30/h dá para uma turma conversar).
   ASSISTANT_CHAT: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
   ASSISTANT_CHAT_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+  ASSISTANT_FEEDBACK: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+  ASSISTANT_REINDEX: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
   // do MFA_VERIFY, para o login legítimo não ser travado por quem gerencia.
   MFA_MANAGE: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
@@ -292,7 +294,7 @@ export const AI_QUOTAS = {
   lab_preceptor: { visitor: 10, member: 30, admin: 100 },
   // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
   // Visitante e quem não tem login recebem só a base fixa (cota 0).
-  assistant: { visitor: 0, member: 25, admin: 60 },
+  assistant: { visitor: 0, member: 25, admin: 100 },
 };
 export const AI_QUOTA_WINDOW_SECONDS = 86400;
 
@@ -378,4 +380,105 @@ Object.assign(RATE_LIMITS, {
   // Um lote a cada 30 s por aba aberta, mais o envio ao fechar: 240/h por perfil.
   ATLAS_TELEMETRY: { MAX_ATTEMPTS: 240, WINDOW_SECONDS: 3600 },
   ATLAS_TELEMETRY_STATS: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+});
+
+// ---- Lia: RAG, feedback e moderação (sql/020-022; ADR 0004 e 0005) ----
+// Embedding via Workers AI. A dimensão está no SQL (vector(1024)): trocar de modelo exige nova migração.
+export const EMBEDDING_MODEL = '@cf/baai/bge-m3';
+export const EMBEDDING_DIM = 1024;
+export const RAG = {
+  TOP_K: 4,                 // trechos que entram no prompt
+  CANDIDATES: 8,            // candidatos de cada busca (vetor e trigramas) antes de fundir
+  // Calibrado no golden set (test/ragEval.test.js): o maior score de trigramas de uma pergunta
+  // sem resposta na base é 0,317 ("quanto custa a mensalidade"); com 0,12 ela devolvia trechos.
+  // Com 0,33 o negativo sai vazio e o recall@4 cai de 11/14 para 5/14 (busca só por trigramas).
+  MIN_TRIGRAM_SCORE: 0.33,  // similaridade mínima de trigramas (piso por lista, antes da fusão)
+  MIN_VECTOR_SCORE: 0.45,   // similaridade de cosseno mínima
+  RRF_K: 60,                // constante da fusão por posição (Reciprocal Rank Fusion)
+  EMBED_BATCH: 16,          // textos por chamada ao modelo na reindexação
+  CONTEXT_CHARS: 900,       // máximo de caracteres de cada trecho no prompt
+};
+
+export const FEEDBACK = {
+  COMMENT_MAX: 500,
+  RATINGS: ['up', 'down'],
+  CATEGORIES: ['incorreta', 'incompleta', 'confusa', 'ofensiva', 'outra'],
+  STATUSES: ['new', 'reviewed', 'dismissed'],
+  PAGE_SIZE: 25,
+  ANONYMIZE_AFTER_DAYS: 90,   // comentário: texto apagado (comment = NULL); sem hash
+  PURGE_AFTER_DAYS: 365,      // registro removido
+};
+
+export const MODERATION = {
+  MAX_LEVEL: 3,
+  DECAY_DAYS: 30,             // -1 nível a cada 30 dias sem incidente
+  SUSPENSION_HOURS: 24,
+  REDEEM_RETRY_SECONDS: 3600, // nova tentativa de redenção após 1 h
+  REDEEM_MIN_CHARS: 40,
+  REDEEM_MAX_CHARS: 600,
+  PAGE_SIZE: 25,
+};
+
+// Séries do Início (timeseriesService.js). 6m são 6 buckets mensais (mês corrente incluso).
+// study_hours = soma de learning_attempts.duration_seconds em horas (2 casas).
+export const TIMESERIES = {
+  RANGES: {
+    '30d': { granularity: 'day', count: 30 },
+    '90d': { granularity: 'day', count: 90 },
+    '6m': { granularity: 'month', count: 6 },
+    '12m': { granularity: 'week', count: 52 },
+  },
+  DEFAULT_RANGE: '30d',
+  METRICS: ['activity', 'events', 'learning', 'tasks', 'study_hours'],
+  DEFAULT_METRIC: 'activity',
+  CACHE_TTL_SECONDS: 300,
+};
+
+// ---- Lia: feedback (D2), painel de satisfação e reindexação da base (D1) ----
+// Página e comentário usam FEEDBACK (acima). Aqui só o que o painel e a reindexação precisam.
+export const FEEDBACK_STATS = {
+  DAYS_DEFAULT: 30,   // janela padrão do painel de satisfação
+  DAYS_MAX: 365,      // janela máxima aceita na consulta agregada
+  LIST_MAX: 100,      // teto de itens por página na lista do admin
+};
+
+Object.assign(RATE_LIMITS, {
+  // Reindexação reescreve kb_chunks e gasta embeddings: uma por minuto, na instância toda.
+  // (ASSISTANT_REINDEX, de 5/h, continua valendo para o que já existia; não é usado aqui.)
+  ASSISTANT_REINDEX_MINUTE: { MAX_ATTEMPTS: 1, WINDOW_SECONDS: 60 },
+});
+
+// ---- Lia: retenção de mensagens e incidentes (ADR 0005; limpeza em maintenance.js) ----
+// Comentário e avaliação usam FEEDBACK (acima). Pelo CASCADE de sql/021, a avaliação sai junto
+// com a resposta da Lia a que se refere (ASSISTANT_MESSAGES), antes dos 365 dias de FEEDBACK.
+export const ASSISTANT_RETENTION = {
+  MESSAGES_PURGE_AFTER_DAYS: 180,   // resposta registrada da Lia (assistant_messages)
+  INCIDENTS_PURGE_AFTER_DAYS: 365,  // incidente de moderação, sem texto (assistant_incidents)
+};
+
+// ---- Séries do Início: rate limit por perfil (revisão de segurança, S2) ----
+// Cada chamada conta, inclusive cache hit. Sem KV (staging) uma chamada faz 8
+// consultas ao banco, e o plano gratuito do KV aceita 1.000 escritas por dia:
+// um membro em loop esgotaria os dois. A chave é a sessão (profileId), nunca IP.
+Object.assign(RATE_LIMITS, {
+  TIMESERIES: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  DASHBOARD_SERIES: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+});
+
+// ---- Lia: moderação sob concorrência e abuso (juiz LLM e redenção) ----
+// Limites por perfil, via enforceRateLimit. Estourar o juiz não derruba o chat: segue só pelos termos.
+Object.assign(RATE_LIMITS, {
+  ASSISTANT_JUDGE: { MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 },       // julgamentos de ofensa pelo LLM
+  ASSISTANT_REDEEM_TRY: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },  // pedidos de redenção (qualquer desfecho)
+});
+Object.assign(MODERATION, {
+  REDEEM_ACCEPTED_MAX: 3,          // redenções ACEITAS por pessoa na janela abaixo (conta em audit_logs)
+  REDEEM_ACCEPTED_WINDOW_DAYS: 30,
+});
+
+// ---- Lia: revisão final da moderação (lote do decaimento diário) ----
+// O job diário (maintenance.js) processa no máximo este tanto de pessoas por execução, as de relógio
+// mais antigo primeiro. O que sobrar fica para o dia seguinte.
+Object.assign(MODERATION, {
+  DECAY_BATCH_SIZE: 500,
 });

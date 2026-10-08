@@ -11,6 +11,7 @@
 // A conversa fica só na memória da página (nada vai para o armazenamento do
 // navegador) e some ao sair da conta. Só aparece se a flag chatbot_enabled
 // estiver ligada (apiGetFeatureFlags). Expõe window.LaiftAssistant.
+// A moderação (aviso, suspensão e redenção) fica em assistant-moderation.js.
 (function (root) {
   'use strict';
 
@@ -27,9 +28,13 @@
   var HISTORY_TURNS = 5;
   var MESSAGE_MAX = 500;
   var LABEL_MAX = 40;
-  var GREETING = 'Oi! Eu sou a Lia, a guia da plataforma LAIFT. Posso te explicar cada parte e te levar direto para a tela certa. Sobre o que você quer saber?';
   var GREETING_SUGGESTIONS = ['Eventos abertos', 'Como funciona o laboratório?', 'Meu crachá', 'Módulos de estudo'];
   var ERROR_TEXT = 'Não consegui responder agora. Tente de novo em instantes.';
+  var DEGRADED_TEXT = 'Resposta aproximada: a IA está indisponível no momento.';
+  var MAX_SOURCES = 4;
+  var PANEL_LIA_SIZE = 72; // px de largura do corpo inteiro no cabeçalho (altura ≈ 108 px, proporção 2:3)
+  var SPEAK_MS = 2500; // depois da resposta, a Lia fica falando por este tempo e volta ao repouso
+  var MODULE_BY_PANEL = { 'panel-events': 'events', 'panel-proposals': 'proposals', 'panel-learn': 'learn' };
 
   // ---------------------------------------------------------------------------
   // Funções puras
@@ -66,6 +71,14 @@
       .slice(0, MAX_SUGGESTIONS).map(function (s) { return clip(s, LABEL_MAX); });
   }
 
+  /** Fontes citadas sob a resposta: só texto curto, no máximo 4. Nunca viram botão nem link. */
+  function sanitizeSources(list) {
+    if (!Array.isArray(list)) return [];
+    return list.filter(function (s) { return !!s && typeof s.source === 'string' && s.source.trim(); })
+      .slice(0, MAX_SOURCES)
+      .map(function (s) { return { source: clip(s.source, 80).trim(), section: clip(s.section, 120).trim() }; });
+  }
+
   /** As últimas 5 perguntas DA PESSOA; as respostas da Lia nunca voltam ao servidor. */
   function pickHistory(messages) {
     return (messages || [])
@@ -81,7 +94,7 @@
   // ---------------------------------------------------------------------------
   // Interface
   // ---------------------------------------------------------------------------
-  var ui = null; // { app, doc, launcher, panel, log, input, send, messages, busy, enabled, open, lastToken, refreshId }
+  var ui = null; // { app, doc, launcher, panel, log, input, send, messages, busy, enabled, open, lastToken, refreshId, moderation, ... }
 
   function el(doc, tag, className, text) {
     var node = doc.createElement(tag);
@@ -104,6 +117,101 @@
     ui.log.scrollTop = ui.log.scrollHeight;
   }
 
+  // ---------------------------------------------------------------------------
+  // Lia (personagem, window.Lia). A bolha fechada mostra só a cabeça (crop 'head');
+  // o painel mostra o corpo inteiro e só existe com o painel aberto (desmontado ao fechar).
+  // ---------------------------------------------------------------------------
+  function liaApi() { return root.Lia && typeof root.Lia.mount === 'function' ? root.Lia : null; }
+
+  function isAdmin() {
+    var state = ui.app.getState && ui.app.getState();
+    return !!(state && state.profile && state.profile.role === 'admin');
+  }
+
+  /** Monta a Lia em `parent` (tom laranja para admin). Sem window.Lia, devolve null e a UI segue sem ela. */
+  function mountLia(parent, extra) {
+    var api = liaApi();
+    if (!api) return null;
+    return api.mount(parent, Object.assign({ tone: isAdmin() ? 'admin' : undefined }, extra));
+  }
+
+  /** Desmonta a Lia: cancela as animações pendentes e tira o elemento do DOM. Devolve null para reatribuir. */
+  function destroyLia(inst) {
+    if (inst) {
+      if (root.LiaAnim && typeof root.LiaAnim.destroy === 'function') root.LiaAnim.destroy(inst.element);
+      inst.destroy();
+    }
+    return null;
+  }
+
+  function clearRestTimer() {
+    if (ui.restTimer !== null) root.clearTimeout(ui.restTimer);
+    ui.restTimer = null;
+  }
+
+  /** Aplica um método da Lia nas instâncias montadas (bolha e painel). Toda reação cancela o repouso pendente. */
+  function reactLia(method) {
+    clearRestTimer();
+    ui.idle.disarm(); // qualquer reação suspende as micro-poses idle
+    var args = Array.prototype.slice.call(arguments, 1);
+    [ui.launcherLia, ui.panelLia].forEach(function (inst) {
+      if (inst) inst[method].apply(inst, args);
+    });
+  }
+
+  /** Resposta chegou: a Lia fala e volta ao repouso, se nada mais acontecer antes. */
+  function speakThenRest() {
+    reactLia('say');
+    ui.restTimer = root.setTimeout(function () { reactLia('setState', 'idle'); ui.idle.arm(); }, SPEAK_MS);
+  }
+
+  function failReply(text) {
+    addMessage({ role: 'lia', text: text === ERROR_TEXT ? fixedLine('error', text) : text, error: true });
+    reactLia('setState', 'confused');
+  }
+
+  function moduleOf(panelId) {
+    return Object.prototype.hasOwnProperty.call(MODULE_BY_PANEL, panelId) ? MODULE_BY_PANEL[panelId] : '';
+  }
+
+  /** Dica contextual (assistant-hints.js, opcional): sem o módulo, a Lia segue igual. */
+  function hint(method, arg) {
+    return ui && ui.hints ? ui.hints[method](arg) : undefined;
+  }
+
+  /** O que decide se a dica aparece: Lia ligada, painel da Lia fechado e sem suspensão. */
+  function hintFlags() {
+    return { chatbot_enabled: ui.enabled, panelOpen: ui.open, moderated: ui.moderation.isSuspended() };
+  }
+
+  /** Toque na dica: abre o painel com a pergunta pronta no campo. Nada é enviado. */
+  function openWithQuestion(text) {
+    openPanel();
+    if (ui.open && !ui.moderation.isSuspended()) ui.input.value = text;
+  }
+
+  function ensureLauncherLia() {
+    if (!ui.launcherLia) ui.launcherLia = mountLia(ui.launcherFigure, { crop: 'head' });
+  }
+
+  /** Repouso da Lia: suspensa enquanto o chat estiver suspenso; senão, reage à tela atual. */
+  function restLiaState() {
+    if (ui.moderation.isSuspended()) reactLia('suspend');
+    else { reactLia('react', hint('context') || moduleOf(currentPanel())); ui.idle.arm(); }
+  }
+
+  /** Painel aberto: corpo inteiro no cabeçalho, reage à tela atual e acena na primeira abertura da página. */
+  function mountPanelLia() {
+    if (ui.panelLia) return;
+    ui.panelLia = mountLia(ui.headFigure, { size: PANEL_LIA_SIZE });
+    if (!ui.panelLia) return;
+    restLiaState();
+    if (!ui.waved && root.LiaAnim && typeof root.LiaAnim.wave === 'function') {
+      ui.waved = true;
+      root.LiaAnim.wave(ui.panelLia.element);
+    }
+  }
+
   function runAction(action) {
     var app = ui.app;
     // O botão clicado some junto com o painel: o foco vai para o botão da Lia, que continua
@@ -124,10 +232,73 @@
     Array.prototype.forEach.call(ui.log.querySelectorAll('.lia-suggestions'), function (node) { node.remove(); });
   }
 
+  /** Lista de fontes sob a resposta (texto; nada clicável). */
+  function renderSources(sources) {
+    var doc = ui.doc;
+    var box = el(doc, 'div', 'lia-sources');
+    box.appendChild(el(doc, 'p', 'lia-sources-title', 'Fontes'));
+    var list = el(doc, 'ul', 'lia-sources-list');
+    list.setAttribute('aria-label', 'Fontes desta resposta');
+    sources.forEach(function (s) {
+      list.appendChild(el(doc, 'li', '', s.section ? s.source + ' · ' + s.section : s.source));
+    });
+    box.appendChild(list);
+    return box;
+  }
+
+  // Micro-card de feedback: módulo opcional (assistant-feedback.js). Sem ele, a Lia funciona igual.
+  function feedbackLib() { return root.LaiftAssistantFeedback || null; }
+
+  /** Moderação (assistant-moderation.js): obrigatória, carregada antes deste arquivo. */
+  function modLib() { return root.AssistantModeration; }
+
+  /** Humor da sessão (assistant-mood-glue.js, antes deste arquivo). Fica só em ui.mood, na memória. */
+  function moodLib() { return root.AssistantMood; }
+  /** Frase fixa da Lia; no tom reflexivo ganha uma variação na frente. */
+  function fixedLine(kind, text) { var out = moodLib().fixedLine(ui.mood, kind, text, Math.random); ui.mood = out.session; return out.text; }
+
+  function feedbackFlag(flags) {
+    var lib = feedbackLib();
+    return !!lib && lib.feedbackEnabled(flags);
+  }
+
+  function messageIdOf(value) {
+    var lib = feedbackLib();
+    return lib ? lib.sanitizeMessageId(value) : null;
+  }
+
+  function removeFeedbackCards() {
+    Array.prototype.forEach.call(ui.log.querySelectorAll('.lia-feedback'), function (node) { node.remove(); });
+  }
+
+  /** Envia o feedback; se o servidor disser que a função está desligada, some com todos os cards. */
+  function sendFeedback(payload) {
+    return ui.app.callApi('apiAssistantFeedback', token(), payload).then(function (res) {
+      if (res && res.disabled === true) {
+        ui.feedbackOn = false;
+        removeFeedbackCards();
+      }
+      // O card não expõe evento: o 👍 aceito chega aqui, pelo próprio envio.
+      if (res && res.success === true && payload && payload.rating === 'up' && !ui.moderation.isSuspended()) reactLia('celebrate');
+      if (res && res.success === true) ui.mood = moodLib().onFeedback(ui.mood, payload && payload.rating);
+      return res;
+    });
+  }
+
+  function appendFeedback(wrap, messageId) {
+    var lib = feedbackLib();
+    if (!lib || !ui.feedbackOn) return;
+    var card = lib.mount(ui.doc, { messageId: messageId, enabled: true, send: sendFeedback });
+    if (card) wrap.appendChild(card);
+  }
+
   function renderMessage(msg) {
     var doc = ui.doc;
     var wrap = el(doc, 'div', 'lia-msg lia-msg-' + (msg.role === 'user' ? 'user' : 'lia') + (msg.error ? ' lia-msg-error' : ''));
+    if (msg.warningLevel) wrap.appendChild(modLib().warningBand(doc, msg.warningLevel));
     wrap.appendChild(el(doc, 'p', 'lia-bubble', msg.text));
+    if (msg.degraded) wrap.appendChild(el(doc, 'p', 'lia-degraded', DEGRADED_TEXT));
+    if (msg.sources && msg.sources.length) wrap.appendChild(renderSources(msg.sources));
     if (msg.actions && msg.actions.length) {
       var actions = el(doc, 'div', 'lia-actions');
       msg.actions.forEach(function (a) {
@@ -148,6 +319,7 @@
       });
       wrap.appendChild(row);
     }
+    if (msg.role === 'lia' && msg.messageId) appendFeedback(wrap, msg.messageId);
     return wrap;
   }
 
@@ -158,9 +330,17 @@
     scrollToEnd();
   }
 
+  /** Campo e envio: presos enquanto a Lia responde (envio) ou quando o chat está suspenso (os dois). */
+  function syncInputs() {
+    var suspended = ui.moderation.isSuspended();
+    ui.input.disabled = suspended;
+    ui.input.placeholder = suspended ? 'Chat suspenso: peça redenção abaixo' : 'Pergunte sobre a plataforma';
+    ui.send.disabled = ui.busy || suspended;
+  }
+
   function setBusy(busy) {
     ui.busy = busy;
-    ui.send.disabled = busy;
+    syncInputs();
     ui.log.setAttribute('aria-busy', busy ? 'true' : 'false');
     var typing = ui.log.querySelector('.lia-typing');
     if (busy && !typing) {
@@ -173,100 +353,134 @@
 
   function send(text) {
     var message = clip(String(text || ''), MESSAGE_MAX).trim();
-    if (!message || ui.busy || !ui.enabled) return;
+    if (!message || ui.busy || !ui.enabled || ui.moderation.isSuspended()) return;
     if (token() !== ui.lastToken) { refresh(); return; } // a conta mudou (ex.: sessão expirou): recomeça limpo
     var history = pickHistory(ui.messages);
+    ui.mood = moodLib().onQuestion(ui.mood, message, Date.now());
     addMessage({ role: 'user', text: message });
     ui.input.value = '';
     ui.input.focus({ preventScroll: true }); // clicar numa sugestão remove o botão: o foco volta ao campo
     setBusy(true);
+    reactLia('think');
     var sentWith = token();
     var mine = ++ui.sendId;
     ui.app.callApi('apiAssistantChat', sentWith, { message: message, context: { panel: currentPanel() }, history: history }).then(function (res) {
       if (mine !== ui.sendId) return; // a conta mudou no meio: a conversa foi zerada e esta resposta não vale
       if (res && res.disabled) { hideLauncher(); return; }
       if (!res || !res.success) {
-        addMessage({ role: 'lia', text: (res && typeof res.message === 'string' && res.message) ? clip(res.message, 300) : ERROR_TEXT, error: true });
+        failReply((res && typeof res.message === 'string' && res.message) ? clip(res.message, 300) : ERROR_TEXT);
         return;
       }
+      var mod = modLib().moderationFromChat(res);
+      ui.mood = moodLib().onReply(ui.mood, mod.mode, Date.now());
       addMessage({
         role: 'lia',
         text: clip(res.reply, 2000) || ERROR_TEXT,
         actions: sanitizeActions(res.actions),
         suggestions: sanitizeSuggestions(res.suggestions),
+        sources: sanitizeSources(res.sources),
+        degraded: res.degraded === true,
+        messageId: messageIdOf(res.messageId),
+        warningLevel: mod.mode === 'warning' ? mod.level : 0,
       });
+      if (mod.mode === 'suspended') {
+        ui.moderation.suspend(mod.until, 0);
+      } else if (mod.mode === 'warning') {
+        reactLia('setState', mod.level === 2 ? 'warning' : 'alert');
+      } else if (res.degraded === true) {
+        reactLia('setState', 'confused');
+      } else {
+        speakThenRest();
+      }
     }).catch(function () {
-      if (mine === ui.sendId) addMessage({ role: 'lia', text: ERROR_TEXT, error: true });
+      if (mine === ui.sendId) failReply(ERROR_TEXT);
     }).then(function () { if (mine === ui.sendId) setBusy(false); });
   }
 
   function greet() {
     if (ui.messages.length) return;
-    addMessage({ role: 'lia', text: GREETING, suggestions: GREETING_SUGGESTIONS });
+    var out = moodLib().greeting(ui.mood, Math.random);
+    ui.mood = out.session;
+    addMessage({ role: 'lia', text: out.text, suggestions: GREETING_SUGGESTIONS });
   }
 
   function openPanel() {
     if (!ui.enabled) return;
     if (token() !== ui.lastToken) { refresh(); return; } // conta diferente da última conversa: zera antes de abrir
+    hint('hide'); // a dica some quando a Lia abre
     ui.panel.classList.remove('hidden');
     ui.launcher.setAttribute('aria-expanded', 'true');
     ui.open = true;
+    ui.moderation.lapse();
+    mountPanelLia();
+    ui.moderation.render();
+    ui.moderation.checkOnOpen();
     greet();
-    ui.input.focus({ preventScroll: true });
+    (ui.moderation.isSuspended() ? ui.moderation.openButton : ui.input).focus({ preventScroll: true });
   }
 
   function closePanel(returnFocus) {
     ui.panel.classList.add('hidden');
     ui.launcher.setAttribute('aria-expanded', 'false');
     ui.open = false;
+    ui.panelLia = destroyLia(ui.panelLia);
+    ui.moderation.stop(); // o relógio da moderação só roda com o painel aberto
+    ui.idle.disarm(); // as micro-poses idle param junto com o painel
     if (returnFocus !== false) ui.launcher.focus({ preventScroll: true });
   }
 
   function hideLauncher() {
     ui.enabled = false;
+    hint('hide');
     closePanel(false);
     ui.launcher.classList.add('hidden');
+    ui.launcherLia = destroyLia(ui.launcherLia);
   }
 
   function resetConversation() {
     ui.sendId += 1; // invalida qualquer resposta ainda a caminho
+    clearRestTimer();
+    hint('reset'); // sair da conta: some a dica e zera o que já foi mostrado
     ui.messages = [];
     while (ui.log.firstChild) ui.log.removeChild(ui.log.firstChild);
     setBusy(false);
+    ui.moderation.reset();
   }
 
-  function build(app, doc) {
-    var launcher = el(doc, 'button', 'lia-launcher hidden');
-    launcher.type = 'button';
-    launcher.id = 'lia-launcher';
-    launcher.setAttribute('aria-haspopup', 'dialog');
-    launcher.setAttribute('aria-expanded', 'false');
-    launcher.setAttribute('aria-controls', 'lia-panel');
-    launcher.setAttribute('aria-label', 'Abrir a Lia, guia da plataforma');
-    launcher.appendChild(el(doc, 'span', 'lia-orb', 'L'));
-    launcher.appendChild(el(doc, 'span', 'lia-launcher-label', 'Lia'));
+  /** Botão flutuante da Lia: a bolha fechada mostra só a cabeça (crop 'head'). */
+  function buildLauncher(doc) {
+    var button = el(doc, 'button', 'lia-launcher hidden');
+    button.type = 'button';
+    button.id = 'lia-launcher';
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', 'lia-panel');
+    button.setAttribute('aria-label', 'Abrir a Lia');
+    var figure = el(doc, 'span', 'lia-launcher-figure');
+    figure.setAttribute('aria-hidden', 'true'); // o botão já tem nome; a figura é só desenho
+    button.appendChild(figure);
+    button.appendChild(el(doc, 'span', 'lia-launcher-label', 'Lia'));
+    return { button: button, figure: figure };
+  }
 
-    var panel = el(doc, 'section', 'lia-panel hidden');
-    panel.id = 'lia-panel';
-    panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-label', 'Lia, guia da plataforma');
-
-    var head = el(doc, 'header', 'lia-head');
-    head.appendChild(el(doc, 'span', 'lia-orb', 'L'));
+  /** Cabeçalho do painel: a Lia de corpo inteiro, o título e o botão de fechar. */
+  function buildHead(doc) {
+    var node = el(doc, 'header', 'lia-head');
+    var figure = el(doc, 'span', 'lia-head-figure');
+    node.appendChild(figure);
     var title = el(doc, 'div', 'lia-title');
     title.appendChild(el(doc, 'strong', '', 'Lia'));
     title.appendChild(el(doc, 'span', 'lia-sub', 'Guia da plataforma LAIFT'));
-    head.appendChild(title);
-    var closeBtn = el(doc, 'button', 'lia-close', '×');
-    closeBtn.type = 'button';
-    closeBtn.setAttribute('aria-label', 'Fechar a Lia');
-    head.appendChild(closeBtn);
+    node.appendChild(title);
+    var close = el(doc, 'button', 'lia-close', '×');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Fechar a Lia');
+    node.appendChild(close);
+    return { node: node, figure: figure, close: close };
+  }
 
-    var log = el(doc, 'div', 'lia-log');
-    log.id = 'lia-log';
-    log.setAttribute('role', 'log');
-    log.setAttribute('aria-live', 'polite');
-
+  /** Campo da pergunta e botão Enviar (o envio fica preso enquanto a Lia responde). */
+  function buildComposer(doc) {
     var form = el(doc, 'form', 'lia-form');
     var label = el(doc, 'label', 'visually-hidden', 'Pergunte à Lia');
     label.setAttribute('for', 'lia-input');
@@ -276,27 +490,66 @@
     input.maxLength = MESSAGE_MAX;
     input.autocomplete = 'off';
     input.placeholder = 'Pergunte sobre a plataforma';
-    var sendBtn = el(doc, 'button', 'lia-send', 'Enviar');
-    sendBtn.type = 'submit';
+    var send = el(doc, 'button', 'lia-send', 'Enviar');
+    send.type = 'submit';
     form.appendChild(label);
     form.appendChild(input);
-    form.appendChild(sendBtn);
+    form.appendChild(send);
+    return { form: form, input: input, send: send };
+  }
 
+  /** O que a moderação precisa do chat (o módulo não conhece o DOM do chat). */
+  function moderationContext(app, doc, input, panel) {
+    return {
+      doc: doc, app: app, input: input, panel: panel, token: token,
+      isOpen: function () { return ui.open; },
+      sync: function () { syncInputs(); },
+      restLia: function () { restLiaState(); },
+      lia: function (method) { reactLia(method); },
+      note: function (text) { addMessage({ role: 'lia', text: fixedLine('confirmation', text) }); },
+    };
+  }
+
+  /** Monta a Lia: bolha, painel (cabeçalho, conversa, moderação e campo) e os eventos. */
+  function build(app, doc) {
+    var launcher = buildLauncher(doc);
+    var head = buildHead(doc);
+    var composer = buildComposer(doc);
+    var panel = el(doc, 'section', 'lia-panel hidden');
+    panel.id = 'lia-panel';
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-label', 'Lia, guia da plataforma');
+    var log = el(doc, 'div', 'lia-log');
+    log.id = 'lia-log';
+    log.setAttribute('role', 'log');
+    log.setAttribute('aria-live', 'polite');
     var note = el(doc, 'p', 'lia-note', 'A Lia orienta e leva às telas; ela não altera seus dados.');
-
-    panel.appendChild(head);
-    panel.appendChild(log);
-    panel.appendChild(form);
-    panel.appendChild(note);
-    doc.body.appendChild(launcher);
+    var moderation = modLib().createModeration(moderationContext(app, doc, composer.input, panel));
+    [head.node, log, moderation.root, composer.form, note].forEach(function (node) { panel.appendChild(node); });
+    doc.body.appendChild(launcher.button);
     doc.body.appendChild(panel);
 
-    ui = { app: app, doc: doc, launcher: launcher, panel: panel, log: log, input: input, send: sendBtn, messages: [], busy: false, enabled: false, open: false, lastToken: null, refreshId: 0, sendId: 0 };
+    ui = {
+      app: app, doc: doc, launcher: launcher.button, panel: panel, log: log, input: composer.input, send: composer.send,
+      messages: [], busy: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
+      launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null,
+      moderation: moderation, mood: moodLib().newSession(),
+      hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,
+    };
+    ui.idle = moodLib().createIdle({
+      allowed: function () { return ui.open && !!root.Lia && !root.Lia.reducedMotion(); },
+      canPose: function () { return !!ui.panelLia && !ui.busy && ui.restTimer === null && !ui.moderation.isSuspended() && ui.panelLia.element.getAttribute('data-state') === 'idle'; },
+      mood: function () { return ui.mood; },
+      apply: function (pose) { ui.panelLia.setState('idle', pose); },
+      random: Math.random,
+    });
 
-    launcher.addEventListener('click', function () { if (ui.open) closePanel(); else openPanel(); });
-    closeBtn.addEventListener('click', function () { closePanel(); });
+    launcher.button.addEventListener('click', function () { if (ui.open) closePanel(); else openPanel(); });
+    head.close.addEventListener('click', function () { closePanel(); });
     panel.addEventListener('keydown', function (evt) { if (evt.key === 'Escape') { evt.stopPropagation(); closePanel(); } });
-    form.addEventListener('submit', function (evt) { evt.preventDefault(); send(input.value); });
+    composer.form.addEventListener('submit', function (evt) { evt.preventDefault(); send(composer.input.value); });
+    doc.addEventListener('laift:panelchange', function (evt) { hint('panelChanged', evt.detail && evt.detail.panel); });
+    doc.addEventListener('laift:modulechange', function (evt) { hint('moduleChanged', evt.detail && evt.detail.module); });
   }
 
   /** Relê a flag e zera a conversa se a conta mudou (login, logout, sessão expirada). */
@@ -305,8 +558,10 @@
     var current = token();
     if (current !== ui.lastToken) {
       ui.lastToken = current;
+      ui.mood = moodLib().newSession(); // humor da sessão: nasce com a conta e some com ela
       resetConversation();
       closePanel(false);
+      ui.launcherLia = destroyLia(ui.launcherLia); // a Lia da conta anterior não fica montada (tom e listeners)
     }
     var id = ++ui.refreshId;
     var inApp = ui.doc.getElementById('app-root');
@@ -315,8 +570,15 @@
       if (id !== ui.refreshId) return;
       var on = !!res && res.success === true && shouldShow(res.flags);
       ui.enabled = on;
+      ui.feedbackOn = on && feedbackFlag(res.flags);
       ui.launcher.classList.toggle('hidden', !on);
-      if (!on) closePanel(false);
+      if (!on) {
+        hint('hide');
+        closePanel(false);
+        ui.launcherLia = destroyLia(ui.launcherLia);
+      } else {
+        ensureLauncherLia();
+      }
     }, function () { /* sem rede: mantém o estado atual */ });
   }
 
@@ -332,6 +594,7 @@
     isAllowedAction: isAllowedAction,
     sanitizeActions: sanitizeActions,
     sanitizeSuggestions: sanitizeSuggestions,
+    sanitizeSources: sanitizeSources,
     pickHistory: pickHistory,
     shouldShow: shouldShow,
     refresh: refresh,

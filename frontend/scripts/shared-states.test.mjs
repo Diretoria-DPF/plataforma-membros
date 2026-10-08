@@ -23,6 +23,7 @@ function fakeDoc() {
       tag, children: [], attrs: {}, className: '', textContent: '', hidden: false, listeners: {},
       appendChild(child) { this.children.push(child); return child; },
       setAttribute(k, v) { this.attrs[k] = String(v); },
+      removeAttribute(k) { delete this.attrs[k]; },
       addEventListener(type, fn) { this.listeners[type] = fn; },
     };
     Object.defineProperty(node, 'innerHTML', { set() { throw new Error('innerHTML proibido'); }, get() { return ''; } });
@@ -92,6 +93,33 @@ test('esqueleto: escondido dos leitores de tela e com 1 a 8 linhas', () => {
   assert.equal(States.createSkeleton(doc).children.length, 3);
 });
 
+test('errorMessageFor usa a mensagem da API ou a padrão em português', () => {
+  assert.equal(States.errorMessageFor({ success: false, message: '  Sessão expirada.  ' }), 'Sessão expirada.');
+  assert.match(States.errorMessageFor({ success: false }), /Tente novamente/);
+  assert.match(States.errorMessageFor({ success: false, message: '   ' }), /Tente novamente/);
+  assert.match(States.errorMessageFor(undefined), /Tente novamente/);
+  assert.match(States.errorMessageFor({ message: 42 }), /Tente novamente/);
+});
+
+test('resolveListState: erro quando a chamada falha, vazio sem itens, pronto com itens', () => {
+  assert.deepEqual(States.resolveListState({ success: false, message: 'Falhou.' }, []), { kind: 'error', message: 'Falhou.' });
+  assert.deepEqual(States.resolveListState(null, []).kind, 'error');
+  assert.deepEqual(States.resolveListState({ success: true }, []), { kind: 'empty' });
+  assert.deepEqual(States.resolveListState({ success: true }, undefined), { kind: 'empty' });
+  assert.deepEqual(States.resolveListState({ success: true }, [{ id: 1 }]), { kind: 'ready' });
+  // Falha com itens antigos ainda é erro: não se mostra lista velha como atual.
+  assert.equal(States.resolveListState({ success: false }, [{ id: 1 }]).kind, 'error');
+});
+
+test('setBusy liga e desliga aria-busy e ignora nó ausente', () => {
+  const node = fakeDoc().createElement('div');
+  States.setBusy(node, true);
+  assert.equal(node.attrs['aria-busy'], 'true');
+  States.setBusy(node, false);
+  assert.equal(node.attrs['aria-busy'], undefined);
+  assert.doesNotThrow(() => States.setBusy(null, true));
+});
+
 test('aviso offline aparece ao perder a conexão e some ao voltar', () => {
   const doc = fakeDoc();
   const handlers = {};
@@ -128,7 +156,7 @@ test('build.js publica ux.css e shared-states.js', () => {
 
 test('ux.css respeita movimento reduzido, tem fallback sem backdrop-filter e nenhum texto abaixo de 11 px', () => {
   const css = read('frontend/ux.css');
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(read('frontend/modulos/shared/laift-tokens.css'), /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /@supports not \(\(backdrop-filter: blur\(1px\)\) or \(-webkit-backdrop-filter: blur\(1px\)\)\)/);
   const sizes = [...css.matchAll(/font-size:\s*([\d.]+)(px|rem|em)/g)].map((m) => (m[2] === 'px' ? Number(m[1]) : Number(m[1]) * 16));
   assert.ok(sizes.every((s) => s >= 11), 'font-size abaixo de 11 px: ' + sizes.filter((s) => s < 11));

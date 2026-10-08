@@ -32,6 +32,8 @@ paths:
               oneOf:
                 - "$ref": "#/components/schemas/apiAdminAiHealth"
                 - "$ref": "#/components/schemas/apiAdminAiMetrics"
+                - "$ref": "#/components/schemas/apiAdminAssistantModeration"
+                - "$ref": "#/components/schemas/apiAdminAssistantStats"
                 - "$ref": "#/components/schemas/apiAdminAttendanceBadges"
                 - "$ref": "#/components/schemas/apiAdminAttendanceCheckIn"
                 - "$ref": "#/components/schemas/apiAdminAttendanceExportCsv"
@@ -47,6 +49,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminLearnReviewCase"
                 - "$ref": "#/components/schemas/apiAdminListAllEvents"
                 - "$ref": "#/components/schemas/apiAdminListAllTasks"
+                - "$ref": "#/components/schemas/apiAdminListAssistantFeedback"
                 - "$ref": "#/components/schemas/apiAdminListAuditLogs"
                 - "$ref": "#/components/schemas/apiAdminListErrorLogs"
                 - "$ref": "#/components/schemas/apiAdminListFeatureFlags"
@@ -54,16 +57,22 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminListProposalsForReview"
                 - "$ref": "#/components/schemas/apiAdminListReports"
                 - "$ref": "#/components/schemas/apiAdminListUsers"
+                - "$ref": "#/components/schemas/apiAdminReindexKb"
                 - "$ref": "#/components/schemas/apiAdminResetUserMfa"
                 - "$ref": "#/components/schemas/apiAdminResolveReport"
                 - "$ref": "#/components/schemas/apiAdminSetFeatureFlag"
                 - "$ref": "#/components/schemas/apiAdminSetLeaguePosition"
                 - "$ref": "#/components/schemas/apiAdminTransitionProposal"
                 - "$ref": "#/components/schemas/apiAdminUnbanUser"
+                - "$ref": "#/components/schemas/apiAdminUpdateAssistantFeedback"
                 - "$ref": "#/components/schemas/apiAdminUpdateEventStatus"
                 - "$ref": "#/components/schemas/apiAdminUpdateTaskStatus"
                 - "$ref": "#/components/schemas/apiAdminUploadEventImage"
                 - "$ref": "#/components/schemas/apiAssistantChat"
+                - "$ref": "#/components/schemas/apiAssistantFeedback"
+                - "$ref": "#/components/schemas/apiAssistantModerationState"
+                - "$ref": "#/components/schemas/apiAssistantRedeem"
+                - "$ref": "#/components/schemas/apiAssistantSources"
                 - "$ref": "#/components/schemas/apiBlockProfile"
                 - "$ref": "#/components/schemas/apiCastVote"
                 - "$ref": "#/components/schemas/apiClearConversation"
@@ -73,9 +82,11 @@ paths:
                 - "$ref": "#/components/schemas/apiGetFeatureFlags"
                 - "$ref": "#/components/schemas/apiGetHomeSummary"
                 - "$ref": "#/components/schemas/apiGetMemberProfile"
+                - "$ref": "#/components/schemas/apiGetMyDashboardSeries"
                 - "$ref": "#/components/schemas/apiGetMyMessagingKey"
                 - "$ref": "#/components/schemas/apiGetMyMetrics"
                 - "$ref": "#/components/schemas/apiGetMyProfile"
+                - "$ref": "#/components/schemas/apiGetMyTimeseries"
                 - "$ref": "#/components/schemas/apiGetOrgChart"
                 - "$ref": "#/components/schemas/apiGetPeerMessagingKeys"
                 - "$ref": "#/components/schemas/apiGetProposalResults"
@@ -185,6 +196,38 @@ components:
       properties:
         action:
           const: "apiAdminAiMetrics"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminAssistantModeration:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAssistantModeration"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminAssistantStats:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminAssistantStats"
         args:
           type: "array"
           prefixItems:
@@ -428,6 +471,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiAdminListAssistantFeedback:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListAssistantFeedback"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminListAuditLogs:
       type: "object"
       required:
@@ -538,6 +597,21 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAdminReindexKb:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminReindexKb"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiAdminResetUserMfa:
       type: "object"
       required:
@@ -640,6 +714,22 @@ components:
             - description: "targetProfileId"
           minItems: 0
           maxItems: 2
+    apiAdminUpdateAssistantFeedback:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminUpdateAssistantFeedback"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminUpdateEventStatus:
       type: "object"
       required:
@@ -708,6 +798,68 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAssistantFeedback:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiAssistantFeedback"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAssistantModerationState:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiAssistantModerationState"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAssistantRedeem:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiAssistantRedeem"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAssistantSources:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiAssistantSources"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiBlockProfile:
       type: "object"
       required:
@@ -852,6 +1004,22 @@ components:
             - description: "username"
           minItems: 0
           maxItems: 2
+    apiGetMyDashboardSeries:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMyDashboardSeries"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiGetMyMessagingKey:
       type: "object"
       required:
@@ -897,6 +1065,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiGetMyTimeseries:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiGetMyTimeseries"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiGetOrgChart:
       type: "object"
       required:

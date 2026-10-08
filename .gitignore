@@ -27,3 +27,6 @@ Thumbs.db
 # temporários dos testes do pipeline de conteúdo
 tools/atlas-content/test/.tmp/
 tools/atlas-content/test/fixtures/.tmp/
+
+# capturas do QA visual (visual-qa.e2e.js) — geradas a cada execução
+frontend/scripts/e2e/.shots/

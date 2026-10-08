@@ -9,8 +9,6 @@
    movimento respeita prefers-reduced-motion; nenhum texto abaixo de 11 px. */
 
 :root {
-  --ux-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ux-fast: 120ms;
   --glass-blur: 14px;
   /* 86% de opacidade: o vidro continua legível (contraste >= 4,5:1) sobre as
      folhas decorativas do fundo. */
@@ -44,14 +42,22 @@ button,
 .stat-card,
 .bottom-nav button,
 a {
+  /* Só transform e background-color animam; o resto troca de estado direto. */
   transition:
-    background-color var(--ux-fast) var(--ux-ease),
-    border-color var(--ux-fast) var(--ux-ease),
-    color var(--ux-fast) var(--ux-ease),
-    box-shadow var(--ux-fast) var(--ux-ease),
-    transform var(--ux-fast) var(--ux-ease),
-    filter var(--ux-fast) var(--ux-ease);
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
 }
+
+/* Campos: foco e preenchimento animam com os mesmos tokens. */
+input, select, textarea {
+  transition: box-shadow var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  box-shadow: var(--laift-focus-ring);
+}
+
+/* Toque: feedback imediato no :active (hover não existe em touch). */
+.list-item:active, .stat-card:active { transform: scale(var(--press-scale)); }
 
 @media (hover: hover) {
   button:hover:not(:disabled) { filter: brightness(1.07); }
@@ -107,28 +113,26 @@ summary:focus-visible,
   border-radius: 50%;
   border: 3px solid color-mix(in srgb, var(--primary) 25%, transparent);
   border-top-color: var(--primary);
-  animation: ux-spin 0.8s linear infinite;
+  animation: ux-spin var(--dur-lazy) linear infinite;
 }
 @keyframes ux-spin { to { transform: rotate(360deg); } }
 
 /* ---------- Esqueletos ---------- */
+/* .skeleton é o contêiner criado por LaiftStates.createSkeleton (aria-hidden);
+   as linhas e blocos pulsam só em opacity (nada de background animado). */
 .skeleton { display: grid; gap: 10px; padding: 4px 0; }
-.skeleton-line {
-  height: 14px;
+.skeleton-line,
+.skeleton-card {
+  background: var(--layer-3);
   border-radius: 8px;
-  background: linear-gradient(
-    90deg,
-    var(--surface-alt) 25%,
-    color-mix(in srgb, var(--border) 60%, var(--surface-alt)) 50%,
-    var(--surface-alt) 75%
-  );
-  background-size: 200% 100%;
-  animation: ux-shimmer 1.4s linear infinite;
+  animation: ux-pulse var(--dur-lazy) var(--ease-in-out) infinite alternate;
 }
+.skeleton-line { height: 14px; }
 .skeleton-line-short { width: 60%; }
-@keyframes ux-shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+.skeleton-card { height: 88px; border-radius: var(--radius-md); }
+@keyframes ux-pulse {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
 }
 
 /* ---------- Aviso offline ---------- */
@@ -246,19 +250,25 @@ summary:focus-visible,
 .credential-zoom .credential-qr-wrap .learn-credential-qr { width: 100%; max-width: 380px; height: auto; aspect-ratio: 1; }
 
 /* ---------- Lia, guia da plataforma ---------- */
+/* Bolha fechada: 48 px com a cabeça da Lia (recorte 'head', ADR 0003). Alvo de toque >= 44 px. */
 .lia-launcher {
-  position: fixed; right: 16px; bottom: 16px; z-index: 30; width: auto;
-  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px;
+  position: fixed; right: 16px; bottom: 16px; z-index: 30; width: auto; min-height: 48px;
+  display: inline-flex; align-items: center; gap: 8px; padding: 0 14px 0 0;
   border: 0; border-radius: 999px; box-shadow: var(--shadow);
   background: var(--primary); color: var(--on-primary); font-weight: 700;
 }
 .lia-launcher.lia-in-app { bottom: 88px; }
-.lia-launcher:hover { background: var(--primary-strong); }
-.lia-orb {
-  flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
-  background: radial-gradient(circle at 30% 28%, #ffffff 0%, #bfeee6 38%, #e1f4f0 100%);
-  color: #0b5349; font-weight: 800; font-size: 16px; /* fixos: legíveis nos dois temas */
+@media (hover: hover) {
+  .lia-launcher:hover { background: var(--primary-strong); }
 }
+.lia-launcher-figure {
+  flex: none; display: block; width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 30% 28%, #ffffff 0%, #bfeee6 38%, #e1f4f0 100%); /* fixo: legível nos dois temas */
+}
+.lia-launcher-figure .lia { display: block; width: 100%; height: 100%; }
+.lia-launcher-figure .lia-svg { overflow: hidden; } /* o recorte da cabeça esconde o resto do corpo */
+/* Cabeçalho do painel: corpo inteiro em ~108 px de altura (a largura vem de PANEL_LIA_SIZE em assistant.js). */
+.lia-head-figure { flex: none; display: block; line-height: 0; }
 .lia-panel {
   position: fixed; right: 16px; bottom: 16px; z-index: 31;
   display: grid; grid-template-rows: auto 1fr auto auto;
@@ -271,7 +281,9 @@ summary:focus-visible,
 .lia-title { display: grid; flex: 1; min-width: 0; }
 .lia-sub { font-size: 12px; color: var(--muted); }
 .lia-close { width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; }
-.lia-close:hover { background: var(--border); color: var(--text); }
+@media (hover: hover) {
+  .lia-close:hover { background: var(--border); color: var(--text); }
+}
 .lia-log { display: grid; align-content: start; gap: 10px; padding: 14px; overflow-y: auto; overscroll-behavior: contain; }
 .lia-msg { display: grid; gap: 8px; max-width: 92%; }
 .lia-msg-user { justify-self: end; }
@@ -288,9 +300,11 @@ summary:focus-visible,
   width: auto; padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
   background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600;
 }
-.lia-chip:hover { background: var(--surface-alt); }
 .lia-chip-action { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-strong); }
-.lia-chip-action:hover { background: var(--primary); color: var(--on-primary); }
+@media (hover: hover) {
+  .lia-chip:hover { background: var(--surface-alt); }
+  .lia-chip-action:hover { background: var(--primary); color: var(--on-primary); }
+}
 .lia-typing { margin: 0; color: var(--muted); font-size: 13px; font-style: italic; }
 .lia-form { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
 .lia-form input { flex: 1; min-width: 0; margin: 0; }
@@ -301,14 +315,227 @@ summary:focus-visible,
 }
 @media (max-width: 480px) {
   .lia-launcher-label { display: none; }
-  .lia-launcher { padding: 6px; }
+  .lia-launcher { padding: 0; }
   .lia-panel, .lia-launcher.lia-in-app ~ .lia-panel { right: 8px; left: 8px; width: auto; }
 }
+/* Moderação da Lia (ADR 0004): faixa de aviso e pedido de redenção. Cor nunca é o único sinal (ícone e texto). */
+.lia-warning {
+  display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: var(--radius-md);
+  background: var(--surface-alt); color: var(--text); font-size: 13px; font-weight: 700; line-height: 1.35;
+}
+.lia-warning-2 { background: var(--danger-soft); }
+.lia-warning-icon {
+  display: inline-grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--text); color: var(--surface); font-size: 14px; line-height: 1;
+}
+.lia-warning-2 .lia-warning-icon { background: var(--danger); color: var(--on-danger); }
+.lia-redeem {
+  display: grid; gap: 8px; max-height: min(280px, 45dvh); overflow-y: auto; padding: 10px 14px;
+  border-top: 1px solid var(--hairline, var(--border)); background: var(--surface-alt);
+}
+.lia-redeem-status, .lia-redeem-return, .lia-redeem-alert { margin: 0; font-size: 13px; line-height: 1.45; color: var(--text); }
+.lia-redeem-alert { font-weight: 700; }
+.lia-redeem-alert:not(:empty)::before { content: "Erro: "; } /* nunca só cor: o prefixo em texto sinaliza a falha */
+.lia-redeem-form { display: grid; gap: 6px; }
+.lia-redeem-label { font-size: 13px; font-weight: 700; color: var(--text); }
+.lia-redeem-text { width: 100%; margin: 0; }
+.lia-redeem-note, .lia-redeem-count, .lia-redeem-hint, .lia-redeem-timer { margin: 0; font-size: 12px; color: var(--muted); }
+.lia-redeem-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.lia-redeem-open, .lia-redeem-send, .lia-redeem-cancel { width: auto; }
 
-/* ---------- Movimento reduzido ---------- */
-@media (prefers-reduced-motion: reduce) {
-  button, .list-item, .stat-card, .bottom-nav button, a { transition: none; }
-  .list-item:hover, .stat-card:hover { transform: none; }
-  .state-loading::before { animation: none; }
-  .skeleton-line { animation: none; }
+/* Movimento reduzido: um único bloco, em modulos/shared/laift-tokens.css. */
+
+/* =========================================================================
+   Visual v2 — flag ux_v2_enabled (app.js põe data-flag-ux-v2-enabled="1" no
+   <html>). Tudo daqui para baixo é condicionado a esse atributo: sem a
+   flag valem os estilos de styles.css (UI anterior, totalmente usável).
+   Princípios: camadas por tom em vez de borda, raio 24–32px, elevação por
+   luz, divisores hairline, vidro nas superfícies que flutuam. Controles
+   (input/select/textarea) mantêm contorno: o limite do campo precisa de
+   contraste 3:1 (WCAG 1.4.11).
+   ========================================================================= */
+
+/* ---------- Cartões e listas sem borda: separação por camada ---------- */
+:root[data-flag-ux-v2-enabled] {
+  --radius-lg: var(--laift-radius-xl);
+  --radius-card: 24px;
+  --radius-inner: 20px;
+  --radius-md: var(--radius-inner);
+  /* Contorno de campo: ~3:1 ou mais sobre a superfície, nos dois temas (WCAG 1.4.11). */
+  --field-border: color-mix(in srgb, var(--text) 62%, var(--surface));
+}
+
+:root[data-flag-ux-v2-enabled] .card,
+:root[data-flag-ux-v2-enabled] .learn-card,
+:root[data-flag-ux-v2-enabled] .list-item,
+:root[data-flag-ux-v2-enabled] .stat-card,
+:root[data-flag-ux-v2-enabled] .learn-stat,
+:root[data-flag-ux-v2-enabled] .orgchart-directorate-box,
+:root[data-flag-ux-v2-enabled] .ai-key-card,
+:root[data-flag-ux-v2-enabled] .ai-budget,
+:root[data-flag-ux-v2-enabled] .checkbox-row,
+:root[data-flag-ux-v2-enabled] .state,
+:root[data-flag-ux-v2-enabled] .mfa-secret,
+:root[data-flag-ux-v2-enabled] .mfa-codes li,
+:root[data-flag-ux-v2-enabled] .learn-badge,
+:root[data-flag-ux-v2-enabled] .modal-box,
+:root[data-flag-ux-v2-enabled] .auth-card,
+:root[data-flag-ux-v2-enabled] .lia-panel {
+  border: 0;
+}
+
+/* Camada 1: superfície dos cartões. */
+:root[data-flag-ux-v2-enabled] .card,
+:root[data-flag-ux-v2-enabled] .learn-card,
+:root[data-flag-ux-v2-enabled] .auth-card {
+  background: var(--layer-1);
+  border-radius: var(--laift-radius-xl);
+  box-shadow: var(--elev-2);
+}
+:root[data-flag-ux-v2-enabled] .list-item,
+:root[data-flag-ux-v2-enabled] .stat-card {
+  background: var(--layer-1);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-1);
+}
+
+/* Camada 2: blocos dentro de um cartão (sem sombra: só tom). */
+:root[data-flag-ux-v2-enabled] .card .list-item,
+:root[data-flag-ux-v2-enabled] .card .stat-card,
+:root[data-flag-ux-v2-enabled] .card .state,
+:root[data-flag-ux-v2-enabled] .card .learn-stat,
+:root[data-flag-ux-v2-enabled] .learn-card .learn-stat,
+:root[data-flag-ux-v2-enabled] .orgchart-directorate-box,
+:root[data-flag-ux-v2-enabled] .ai-key-card,
+:root[data-flag-ux-v2-enabled] .ai-budget,
+:root[data-flag-ux-v2-enabled] .checkbox-row,
+:root[data-flag-ux-v2-enabled] .state,
+:root[data-flag-ux-v2-enabled] .mfa-secret,
+:root[data-flag-ux-v2-enabled] .learn-badge {
+  background: var(--layer-2);
+  box-shadow: none;
+  border-radius: var(--radius-inner);
+}
+:root[data-flag-ux-v2-enabled] .learn-stat { background: var(--layer-2); border-radius: var(--radius-inner); }
+:root[data-flag-ux-v2-enabled] .mfa-codes li { background: var(--layer-2); }
+:root[data-flag-ux-v2-enabled] .learn-badge.unlocked { background: var(--primary-soft); }
+:root[data-flag-ux-v2-enabled] .state-error { background: var(--danger-soft); }
+:root[data-flag-ux-v2-enabled] .ai-budget[data-level="warn"] { background: var(--admin-soft); }
+:root[data-flag-ux-v2-enabled] .ai-budget[data-level="down"] { background: var(--danger-soft); }
+
+/* Botão secundário: tom (camada 3) em vez de contorno. */
+:root[data-flag-ux-v2-enabled] button.secondary {
+  border: 0;
+  background: var(--layer-3);
+}
+
+/* Divisores: um fio de luz, nunca uma linha sólida. */
+:root[data-flag-ux-v2-enabled] .app-header {
+  border-bottom: 0;
+  box-shadow: 0 1px 0 var(--hairline);
+}
+:root[data-flag-ux-v2-enabled] .bottom-nav {
+  border-top: 0;
+  box-shadow: 0 -1px 0 var(--hairline), var(--elev-2);
+}
+:root[data-flag-ux-v2-enabled] table.data-table th,
+:root[data-flag-ux-v2-enabled] table.data-table td,
+:root[data-flag-ux-v2-enabled] .ai-metrics-table th,
+:root[data-flag-ux-v2-enabled] .ai-metrics-table td {
+  border-bottom-color: var(--hairline);
+}
+:root[data-flag-ux-v2-enabled] .task-comments,
+:root[data-flag-ux-v2-enabled] .lia-form,
+:root[data-flag-ux-v2-enabled] .lia-head,
+:root[data-flag-ux-v2-enabled] .chat-thread-header,
+:root[data-flag-ux-v2-enabled] .chat-composer {
+  border-color: var(--hairline);
+}
+:root[data-flag-ux-v2-enabled] .modal-box,
+:root[data-flag-ux-v2-enabled] .lia-panel {
+  border-radius: var(--laift-radius-xl);
+  box-shadow: var(--elev-3);
+}
+:root[data-flag-ux-v2-enabled] .lia-msg-lia .lia-bubble { border: 0; background: var(--layer-2); }
+:root[data-flag-ux-v2-enabled] .chat-row-theirs .chat-bubble { border: 0; background: var(--layer-2); }
+/* Estado de erro no cartão: tom de perigo, sem depender só de borda ou cor. */
+:root[data-flag-ux-v2-enabled] .ai-key-card[data-ok="nao"] { background: var(--danger-soft); }
+/* Organograma: divisor tracejado vira hairline (fio de luz). */
+:root[data-flag-ux-v2-enabled] .orgchart-level { border-bottom: 1px solid var(--hairline); }
+:root[data-flag-ux-v2-enabled] .orgchart-level:last-child { border-bottom: 0; }
+/* Campos mantêm contorno com contraste >= 3:1; checkbox e radio ficam como estão. */
+:root[data-flag-ux-v2-enabled] :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border-color: var(--field-border);
+}
+
+/* Hover (só com ponteiro fino) troca a sombra, não a borda. */
+@media (hover: hover) {
+  :root[data-flag-ux-v2-enabled] .list-item:hover {
+    border-color: transparent;
+    box-shadow: var(--elev-2);
+  }
+}
+
+/* ---------- Micro-animações de toque ---------- */
+:root[data-flag-ux-v2-enabled] .list-item:active,
+:root[data-flag-ux-v2-enabled] .stat-card:active,
+:root[data-flag-ux-v2-enabled] button.learn-card:active {
+  transform: scale(var(--press-scale));
+  transition-duration: var(--dur-instant);
+}
+:root[data-flag-ux-v2-enabled] .modal-box:not(.hidden) {
+  animation: ux-modal-in var(--dur-base) var(--ease-spring);
+}
+@keyframes ux-modal-in {
+  from { opacity: 0; transform: translateY(var(--move-md)) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Vidro ampliado ---------- */
+/* Sem suporte a backdrop-filter valem as superfícies opacas (camadas). */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-flag-ux-v2-enabled] .lia-panel,
+  :root[data-flag-ux-v2-enabled] .chat-bubble-actions,
+  :root[data-flag-ux-v2-enabled] #agendamento-info,
+  :root[data-flag-ux-v2-enabled] .agendamento-info,
+  :root[data-flag-ux-v2-enabled] .hero,
+  :root[data-flag-ux-v2-enabled] .splash {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  }
+  :root[data-flag-ux-v2-enabled] .modal-overlay {
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+}
+:root[data-flag-ux-v2-enabled] #agendamento-info,
+:root[data-flag-ux-v2-enabled] .agendamento-info,
+:root[data-flag-ux-v2-enabled] .hero {
+  border: 0;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+}
+
+/* Módulos com canvas 3D (Atlas imersivo): nenhum desfoque sobre o canvas;
+   barras voltam ao fundo opaco. */
+body:has(.learn-viewer-immersive:not(.hidden)) .app-header,
+body:has(.learn-viewer-immersive:not(.hidden)) .bottom-nav,
+body:has(.learn-viewer-immersive:not(.hidden)) .modal-overlay,
+body:has(.learn-viewer-immersive:not(.hidden)) .lia-panel {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--surface);
+}
+
+/* ---------- Barra flutuante: esconde ao rolar, volta ao parar ---------- */
+/* ux-v2.js põe data-scrolling no <html> durante a rolagem e tira ~150 ms
+   depois. Nunca esconde com foco dentro da barra, nem sob movimento reduzido. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-flag-ux-v2-enabled] .bottom-nav {
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  :root[data-flag-ux-v2-enabled][data-scrolling] .bottom-nav:not(:focus-within) {
+    transform: translateY(calc(100% + var(--move-sm)));
+  }
 }

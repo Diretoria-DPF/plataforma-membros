@@ -51,8 +51,18 @@
     ]
   }
   </script>
+  <link rel="stylesheet" href="modulos/shared/laift-tokens.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ux.css">
+  <link rel="stylesheet" href="ux-glass.css">
+  <link rel="stylesheet" href="assistant-feedback.css">
+  <link rel="stylesheet" href="modulos/shared/charts.css">
+  <link rel="stylesheet" href="home-editorial.css">
+  <link rel="stylesheet" href="modulos/shared/lia/lia.css">
+  <link rel="stylesheet" href="assistant-hints.css">
+  <link rel="stylesheet" href="splash.css">
+  <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
+  <script src="ux-v2.js"></script>
 </head>
 <body>
   <div id="app-shell" class="app-shell">
@@ -156,7 +166,7 @@
           </label>
           <label class="checkbox-row" for="reg-privacy">
             <input type="checkbox" id="reg-privacy" required>
-            <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-10-03).</span>
+            <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-10-08).</span>
           </label>
 
           <button type="submit">Enviar cadastro</button>
@@ -239,24 +249,28 @@
             <span>Eventos</span>
           </button>
           <button type="button" data-panel="panel-proposals" data-scope="all" style="position:relative;">
-            <span id="nav-badge-voting" class="nav-badge nav-badge-alert hidden" aria-label="Há votação aberta">!</span>
+            <span id="nav-badge-voting" class="nav-badge nav-badge-alert hidden" aria-hidden="true">!</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l14-7-4 16-4-6-6-3z"/></svg>
             <span>Propostas</span>
+            <span id="nav-badge-voting-sr" class="visually-hidden"></span>
           </button>
           <button type="button" data-panel="panel-tasks" data-scope="member" style="position:relative;">
-            <span id="nav-badge-tasks" class="nav-badge hidden"></span>
+            <span id="nav-badge-tasks" class="nav-badge hidden" aria-hidden="true"></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.3 2.3L16 10"/></svg>
             <span>Tarefas</span>
+            <span id="nav-badge-tasks-sr" class="visually-hidden"></span>
           </button>
           <button type="button" data-panel="panel-orgchart" data-scope="member" style="position:relative;">
-            <span id="nav-badge-connections" class="nav-badge hidden"></span>
+            <span id="nav-badge-connections" class="nav-badge hidden" aria-hidden="true"></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4m0 0l-5.5 5m5.5-5l5.5 5"/></svg>
             <span>Equipe</span>
+            <span id="nav-badge-connections-sr" class="visually-hidden"></span>
           </button>
           <button type="button" data-panel="panel-messages" data-scope="member" style="position:relative;">
-            <span id="nav-badge-messages" class="nav-badge hidden"></span>
+            <span id="nav-badge-messages" class="nav-badge hidden" aria-hidden="true"></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             <span>Mensagens</span>
+            <span id="nav-badge-messages-sr" class="visually-hidden"></span>
           </button>
           <button type="button" data-panel="panel-profile" data-scope="all">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
@@ -496,7 +510,7 @@
                 <span>
                   <button type="button" id="btn-profile-avatar-pick" class="secondary" style="width:auto;">Trocar foto</button>
                 </span>
-                <input type="file" id="profile-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden">
+                <input type="file" id="profile-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden" aria-label="Escolher foto de perfil" tabindex="-1">
               </div>
               <div id="msg-profile-avatar" class="status-msg" role="alert" aria-live="polite"></div>
 
@@ -740,10 +754,10 @@
           </div>
           <div class="card">
             <div class="ai-admin-head">
-              <h2>Orçamento de tokens e consumo</h2>
-              <span>
-                <button type="button" class="secondary" id="btn-admin-ai-metrics-7">7 dias</button>
-                <button type="button" class="secondary" id="btn-admin-ai-metrics-30">30 dias</button>
+              <h2 id="h-admin-ai-metrics">Orçamento de tokens e consumo</h2>
+              <span role="group" aria-labelledby="h-admin-ai-metrics">
+                <button type="button" class="secondary" id="btn-admin-ai-metrics-7" aria-pressed="true">7 dias</button>
+                <button type="button" class="secondary" id="btn-admin-ai-metrics-30" aria-pressed="false">30 dias</button>
               </span>
             </div>
             <p class="muted">O Groq gratuito limita os tokens por dia para a liga inteira. Aqui você vê quanto do orçamento já foi usado, por modelo e por recurso, e os alertas ativos (orçamento, limite do provedor, cache).</p>
@@ -752,15 +766,48 @@
           </div>
           <div class="card">
             <div class="ai-admin-head">
-              <h2>Atlas 3D — uso anônimo</h2>
-              <span>
-                <button type="button" class="secondary" id="btn-admin-ai-atlas-7">7 dias</button>
-                <button type="button" class="secondary" id="btn-admin-ai-atlas-30">30 dias</button>
+              <h2 id="h-admin-ai-atlas">Atlas 3D — uso anônimo</h2>
+              <span role="group" aria-labelledby="h-admin-ai-atlas">
+                <button type="button" class="secondary" id="btn-admin-ai-atlas-7" aria-pressed="true">7 dias</button>
+                <button type="button" class="secondary" id="btn-admin-ai-atlas-30" aria-pressed="false">30 dias</button>
               </span>
             </div>
             <p class="muted">Contagens por evento, sem dados pessoais: o atlas não envia nome, e-mail, IP nem o texto das buscas. Guardadas por 90 dias.</p>
             <div id="msg-admin-ai-atlas" class="status-msg" role="status" aria-live="polite"></div>
             <div id="admin-ai-atlas"></div>
+          </div>
+          <div class="card">
+            <div class="ai-admin-head">
+              <h2 id="h-admin-ai-sat">Satisfação da Lia</h2>
+              <span role="group" aria-labelledby="h-admin-ai-sat">
+                <button type="button" class="secondary" id="btn-admin-ai-sat-7" aria-pressed="true">7 dias</button>
+                <button type="button" class="secondary" id="btn-admin-ai-sat-30" aria-pressed="false">30 dias</button>
+              </span>
+            </div>
+            <p class="muted">Respostas da Lia marcadas como úteis ou não úteis pelos membros. Revise cada item. Os comentários são apagados depois de 90 dias.</p>
+            <div id="msg-admin-ai-sat" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="admin-ai-sat-totals"></div>
+            <div id="admin-ai-sat-categories"></div>
+            <div id="admin-ai-sat-days"></div>
+            <div class="actions-row">
+              <label>Status
+                <select id="admin-ai-sat-status">
+                  <option value="">Todos</option>
+                  <option value="new">Novos</option>
+                  <option value="reviewed">Revisados</option>
+                  <option value="dismissed">Descartados</option>
+                </select>
+              </label>
+              <label>Avaliação
+                <select id="admin-ai-sat-rating">
+                  <option value="">Todas</option>
+                  <option value="up">Úteis</option>
+                  <option value="down">Não úteis</option>
+                </select>
+              </label>
+            </div>
+            <div id="admin-ai-sat-list"></div>
+            <button type="button" class="secondary hidden" id="btn-admin-ai-sat-more">Carregar mais</button>
           </div>
           <div class="card">
             <h2>Cotas diárias por pessoa</h2>
@@ -899,11 +946,24 @@
   <script type="module" src="messaging.js"></script>
   <!-- Área "Aprender" (módulos LAIFT): só usa window.App dentro de funções. -->
   <script src="domain-notice.js" defer></script>
+  <script src="splash.js" defer></script>
   <script src="shared-states.js" defer></script>
   <script src="pwa.js" defer></script>
+  <script src="modulos/shared/charts-core.js" defer></script>
+  <script src="modulos/shared/charts.js" defer></script>
+  <script src="dashboardAdapter.js" defer></script>
   <script src="home.js" defer></script>
   <script src="mfa.js" defer></script>
   <script src="credential.js" defer></script>
+  <script src="modulos/shared/lia/lia-art.js" defer></script>
+  <script src="modulos/shared/lia/lia-states.js" defer></script>
+  <script src="modulos/shared/lia/lia-mood.js" defer></script>
+  <script src="assistant-mood-glue.js" defer></script>
+  <script src="modulos/shared/lia/lia-anim.js" defer></script>
+  <script src="modulos/shared/lia/lia.js" defer></script>
+  <script src="assistant-feedback.js" defer></script>
+  <script src="assistant-moderation.js" defer></script>
+  <script src="assistant-hints.js" defer></script>
   <script src="assistant.js" defer></script>
   <script src="learning.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
