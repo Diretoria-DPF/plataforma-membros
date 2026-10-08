@@ -6,6 +6,7 @@ A plataforma reúne recursos de aprendizagem (quiz, casos clínicos, laboratóri
 
 ## Páginas públicas
 - [Início e entrada](https://laift.com.br/): apresentação da LAIFT, login e cadastro.
+- [A Liga](https://laift.com.br/liga): apresentação da Liga e informações sobre o processo seletivo.
 - [Termos de Uso](https://laift.com.br/termos): regras de uso da plataforma.
 - [Política de Privacidade](https://laift.com.br/privacidade): como os dados pessoais são tratados.
 
