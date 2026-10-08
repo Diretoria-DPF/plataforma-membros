@@ -192,10 +192,26 @@
     STAT_IDS.forEach(function (id) { setStat(id, value); });
   }
 
+  /**
+   * Carregando: o skeleton (LaiftStates.createSkeleton) ocupa o lugar do texto. O
+   * aviso "Carregando seu desempenho..." fica só para leitor de tela (sr-only) dentro
+   * de #learn-status, que é role="status" e anuncia a mudança.
+   */
+  function showStatsLoadingState(A) {
+    A.setStatus('learn-status', '', 'info');
+    var status = $('learn-status');
+    if (!status) return;
+    var srText = document.createElement('span');
+    srText.className = 'laift-sr-only';
+    srText.textContent = 'Carregando seu desempenho...';
+    status.appendChild(srText);
+    if (window.LaiftStates) status.appendChild(window.LaiftStates.createSkeleton(document, 3));
+  }
+
   function startStatsLoading(A, statsBox) {
     setStatsBusy(statsBox, true);
     showStatsPlaceholder('…');
-    A.setStatus('learn-status', 'Carregando seu desempenho...', 'info');
+    showStatsLoadingState(A);
   }
 
   function showStatsFailure(A, statsBox, res) {
@@ -384,6 +400,7 @@
     statsRequestId++;
     // A busca em voo (se houver) será descartada: não pode deixar aria-busy preso.
     setStatsBusy(document.querySelector('#learn-hub .learn-stats'), false);
+    app().setStatus('learn-status', '', null); // tira o skeleton de uma busca cancelada
     if ($('learn-viewer')) {
       $('learn-viewer').classList.remove('learn-viewer-immersive');
       $('learn-viewer').classList.add('hidden');

@@ -55,6 +55,10 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Fundo pintado pelo html (canvas). Se o body tivesse fundo, ele cobriria as
+   folhas decorativas (.leaf-field, z-index -1). Mesma cor: visual inalterado. */
+body { background: transparent; }
+
 a { color: var(--primary-strong); }
 
 .app-shell { min-height: 100vh; }
@@ -70,16 +74,15 @@ a { color: var(--primary-strong); }
 }
 
 /* Folhas decorativas: fixas atrás de TODA a plataforma (tela pública e app
-   autenticado), sempre visíveis independente da tela ativa. Ficam atrás do
-   conteúdo por ordem de DOM (primeiro filho de .app-shell) + pelos fundos
-   opacos de .auth-card/.app-header/.card por cima — sem precisar de
-   z-index alto que atrapalharia modais. */
+   autenticado). z-index -1 as põe abaixo de todo o conteúdo, inclusive texto
+   sem posicionamento; o body é transparente (o fundo vem do html) para não
+   cobri-las. pointer-events none: nunca captura toque. */
 .leaf-field {
   position: fixed;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
-  z-index: 0;
+  z-index: -1;
 }
 
 /* ---------- Tela pública / boas-vindas ---------- */

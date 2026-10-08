@@ -173,15 +173,8 @@
 @keyframes lia-float { from { transform: translateY(0); } to { transform: translateY(-6px); } }
 @keyframes lia-pulse { from { opacity: .65; transform: scale(.96); } to { opacity: 1; transform: scale(1.04); } }
 
-@media (prefers-reduced-motion: reduce) {
-  .lia-svg, .lia-svg * { animation: none !important; }
-}
-
 /* Suspensa (moderação, ADR 0004): esmaecida. O estado vem do rótulo ARIA e do texto do painel, nunca só da cor. */
 .lia[data-state="suspended"] {
   opacity: .55;
   transition: opacity var(--dur-base, 280ms) var(--ease-out, ease-out), transform var(--dur-base, 280ms) var(--ease-out, ease-out);
-}
-@media (prefers-reduced-motion: reduce) {
-  .lia[data-state="suspended"] { transition: none; }
 }
