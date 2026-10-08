@@ -1,9 +1,9 @@
 # Andamento do Plano v5 — onde paramos
 
-**Atualizado em 2026-10-04.** Para retomar: leia este arquivo, depois `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-an-lise-c-merry-reddy.md` (plano completo, com DoD e rollback por fase) e `docs/riscos-residuais.md`.
+**Atualizado em 2026-10-08.** Para retomar: leia a seção "Atualização de 2026-10-08" (logo antes de "Pull requests"), depois `docs/AMBIENTES.md` (runbook de ativação) e `docs/riscos-residuais.md`. O plano completo, com DoD e rollback por fase, está em `C:\Users\Administrador\.claude\plans\c-users-administrador-desktop-an-lise-c-merry-reddy.md`.
 
 ## Em uma frase
-Fases 0, 2 e 3 do plano estão prontas e testadas; a Fase 1 está pela metade; **nada disso está em produção** até você mesclar as PRs e fazer os passos manuais abaixo. Tudo que é novo nasce **desligado** (feature flag), então mesclar não muda o comportamento de ninguém.
+A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação estão prontos e testados no PR único `feat/v5-ux-fundacao`, atrás de feature flags. **Nada disso está em produção** até você mesclar e seguir a ordem do runbook de `docs/AMBIENTES.md`. Mesclar sozinho não muda o comportamento: a migração 023 só liga as flags da renovação quando for aplicada, e ela não religa o que um admin já desligou.
 
 ## Atualização de 2026-10-05 — por que o laift.com.br não refletia a F2/F3
 - **A #27 foi mesclada** (02:32 UTC). A **API** de produção foi republicada na hora (`deploy-worker.yml` dispara em push na `main`).
@@ -25,6 +25,58 @@ Fases 0, 2 e 3 do plano estão prontas e testadas; a Fase 1 está pela metade; *
   - Cópias das chaves do MFA em `Desktop\segredo-mfa-staging.txt` e `segredo-mfa-producao.txt`: guardar no cofre e apagar.
 - **Depois de mesclar #35 e #36** (nessa ordem, a #36 reapontada para a `main`): conferir o site em `laift.com.br` e ligar a Lia com `UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'` (ver `docs/AMBIENTES.md`).
 - **Pendências**: o Environment `staging` do GitHub só aceita as branches `feat/*`, `fix/*` e `main` (a branch `staging` foi recusada: adicionar `staging` à regra para o deploy por push funcionar); o Trivy acusa `sharp` HIGH em `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w, corrigido na 0.35.5); apagar a branch de backup do Neon depois de alguns dias.
+
+## Atualização de 2026-10-08 — UX v2, Lia viva, RAG, feedback e moderação (branch `feat/v5-ux-fundacao`)
+
+**Entrega única.** Um PR só, a partir de `feat/v5-ux-fundacao` (74 commits acima da `main`, com merges). Tudo está atrás de feature flags. A ativação é do dono, pelo runbook de `docs/AMBIENTES.md`, seção "Ativação da UX v2, Lia viva, RAG, feedback e moderação".
+
+### O que entrou
+- **Fase A, fundação visual** (`ux_v2_enabled`): tokens de cor, movimento e vidro v5 (`frontend/modulos/shared/laift-tokens.css`, `frontend/ux-glass.css`, com teste de contraste WCAG); visual sem borda de cartão sob `:root[data-flag-ux-v2-enabled]`; hover só com ponteiro fino.
+- **Fase B, Início editorial e séries** (`frontend/home-editorial.css`, `frontend/dashboardAdapter.js`): layout sem cards; séries temporais em `worker/src/services/timeseriesService.js`, entregues numa chamada (`apiGetMyDashboardSeries`) e limitadas por perfil. Uma série com falha vem como `null`. Gráficos em SVG, sem biblioteca (`frontend/modulos/shared/charts.js`).
+- **Fase C, Lia viva** (`chatbot_enabled`): personagem SVG em `frontend/modulos/shared/lia/` (`lia.svg`; núcleo em `lia.js`; animações WAAPI em `lia-anim.js`; estados em `lia-states.js`; humor e variações de fala em `lia-mood.js`). Micro-card de feedback em `frontend/assistant-feedback.js`. A moderação aparece na conversa como resposta da própria Lia.
+- **Fase D, RAG, feedback, moderação e retenção**:
+  - RAG híbrido: trigramas e vetor (`@cf/baai/bge-m3` no pgvector), fundidos por RRF com piso por lista, atrás de `rag_enabled` (`worker/src/services/ragService.js`; migração 020). As fontes aparecem como texto, sem link.
+  - Feedback por resposta (polegar, categoria e comentário de até 500 caracteres) e painel "Satisfação da Lia" em `frontend/admin-ai.js` (migração 021; `feedback_enabled`).
+  - Moderação com 4 níveis (0 a 3); juiz por LLM só quando há termo ofensivo; redenção com reivindicação atômica e intervalo de 1 h; decaimento de 1 nível a cada 30 dias (`worker/src/services/moderationService.js`, `worker/src/assistant/moderationGate.js`; migração 022; `moderation_enabled`).
+  - Retenção da Lia (ADR 0005) em tarefas isoladas da faxina diária (`worker/src/maintenance.js`).
+- **Fase E, polimento e QA visual**: esqueleto e estado de erro com nova tentativa nas listas; navegação inferior com 8 abas em 375 px; `frontend/scripts/e2e/visual-qa.e2e.js` (claro e escuro, 375×812 e 1280×800).
+- **Banco**: 020 (RAG, `kb_chunks`), 021 (feedback e mensagens), 022 (moderação), 023 (flags da renovação) e 024 (índices de `rate_limit_buckets`, `event_registrations`, `task_signups` e `learning_attempts`).
+
+### Números
+- **Worker:** 48 suítes (48 arquivos em `worker/test`, conferido); 117 actions no `API_REGISTRY` (conferido); 1324 testes (número da última execução do dono, não reexecutado nesta revisão; a contagem estática dá 827 blocos `test(`/`it(` e 56 chamadas `.each(`).
+- **Migrações:** 001 a 024 (24 arquivos em `sql/`; `npm run validate:sql` não foi rodado nesta revisão).
+- **Front:** ~421 testes (número do dono, não reexecutado) em 17 arquivos `frontend/scripts/*.test.mjs`. Duas falhas conhecidas, só no Windows, nos testes de `_headers` (`seo.test.mjs` e `staging.test.mjs`): nesses dois arquivos, 19 de 21 passam. A causa é o CRLF do checkout; no índice do git, `frontend/_headers` está em LF.
+
+### Decisões do dono
+- Um PR único.
+- As cinco flags da renovação nascem **ligadas**, mas a 023 **nunca religa o que um admin desligou**: `ux_v2_enabled` e `chatbot_enabled` só são ligadas se `updated_by` for NULL e não houver `SET_FEATURE_FLAG` para a chave em `audit_logs`. As outras três só entram se estiverem ausentes. Regra completa em `sql/023_flags_v2.sql`.
+- Arte da Lia aprovada em 2026-10-08 (ADR 0003): cabeça:corpo ≈ 1:3,1, mecha lateral no lugar dos óculos, traço único de 2,2, cantos de 8 px, paleta da marca.
+
+### O que você precisa fazer
+1. Antes de tudo: os pré-requisitos da seção 1 do runbook (branch de backup no Neon, secrets, `MFA_ENCRYPTION_KEY`, chaves de IA, binding `[ai]`, testes) e a homologação validada.
+2. Mesclar o PR. A `main` publica a API (`deploy-worker.yml`) e o site (`deploy-frontend-cloudflare.yml`). Não há migração automática em produção.
+3. Migrar 020, 021, 022 e 024 (lote sem a 023) e depois reindexar o acervo da Lia.
+4. Aplicar a 023 por último; conferir as cinco flags e a auditoria.
+
+Ordem e comandos exatos: `docs/AMBIENTES.md`.
+
+### Pendências conhecidas
+- **Re-aceite da Política não existe.** `LEGAL_VERSIONS.PRIVACY` (2026-10-08) só é gravado no cadastro (`worker/src/services/authService.js`). Quem já tem conta não tem registro dessa versão.
+- **Exclusão de conta é manual.** Não há ação de exclusão no `API_REGISTRY`.
+- **Limiar vetorial sem calibração.** `MIN_VECTOR_SCORE` (0,45, em `worker/src/constants.js`) só pode ser calibrado no staging, com o modelo real. O PGlite não executa a busca vetorial (`worker/test/ragEval.test.js`).
+- **PGlite não valida pgvector nem HNSW.** A sintaxe do índice `hnsw` de `sql/020_rag.sql` só é conferida no Neon (`worker/scripts/pgvector-shim.mjs`).
+- **Reindexação depende dos bindings `[ai]`** (produção) e `[env.staging.ai]` (staging), ambos presentes em `worker/wrangler.toml`. Sem eles, `embeddingAvailable` vem `false` e a busca fica só com trigramas.
+- **Folhas decorativas podem cobrir texto.** `frontend/styles.css` (linhas 72 a 104, `.leaf-field` e `.leaf`) ficam atrás do conteúdo e podem cobrir texto em alguns pontos. Conferir no QA visual.
+- **Cache semântico não usa os trechos do RAG.** Uma resposta vinda do cache (validade de 7 dias) não traz fontes.
+- **Hash da pergunta é reversível por dicionário** para quem lê o banco: `assistant_messages.question_hash` é o SHA-256 de `profile_id:pergunta normalizada`, e o `profile_id` fica na mesma linha. Nenhuma API devolve esse hash.
+- **Política × auditoria.** A Política (seção 7) diz que incidentes saem em 365 dias, mas `assistant_incident` é gravado em `audit_logs` (`worker/src/services/moderationService.js`), que guarda 730 dias.
+- **Redenção e estados de moderação sem tela.** `apiAssistantRedeem` e `apiAssistantModerationState` não são chamadas pelo front. A Lia não aciona os estados `alert`, `warning` e `suspended`. Não há tela de moderação do admin (o ADR 0004 prevê uma; hoje existe só `apiAdminAssistantModeration`).
+- **Chart.js por CDN.** `frontend/index.html` (linha 927) carrega Chart.js 4.5.1 do jsdelivr para o gráfico do painel administrativo (`frontend/app.js`, `renderAdminDashboardChart`). Isso contraria a regra "nenhum script ou CDN de terceiros" de `docs/TIME_CONTRATO.md`. Os gráficos novos não dependem dele.
+- **Blocos locais de movimento reduzido.** Além do bloco único de `frontend/modulos/shared/laift-tokens.css`, outros 14 arquivos CSS ainda têm `prefers-reduced-motion` (por exemplo `frontend/ux.css` e `frontend/modulos/anatomia-3d/css/atlas.css`). Isso fica fora da regra "um único bloco" do ADR 0002.
+- **Desligar por SQL não é protegido.** Um `UPDATE` de `feature_flags` não grava `updated_by` nem auditoria; se a 023 for reaplicada num banco em que `ux_v2_enabled` ou `chatbot_enabled` foi desligada assim, ela religa. Para decisões que devem durar, use `apiAdminSetFeatureFlag`.
+- **Documentação desatualizada fora deste escopo.** `docs/DEPLOYMENT.md` (seção 1) ainda diz "migrações 001–023" e que a 023 liga as flags inclusive as desligadas. Corrigir em PR própria.
+- **Staging aplica tudo antes da API.** Se `STAGING_DATABASE_URL` existir, o push em `staging` roda o runner inteiro, incluindo a 023, antes de publicar a API (`.github/workflows/deploy-staging.yml`).
+- **Riscos novos** registrados em `docs/riscos-residuais.md` (O17 a O31). Itens adiados com gatilho, em `docs/backlog-futuro.md`, seção "Lia e RAG".
 
 ## Pull requests
 | PR | Branch | O que traz | Estado |

@@ -123,7 +123,7 @@ plataforma-membros/
 │   ├── scripts/validate-migrations.mjs  # aplica sql/ num Postgres em memória (PGlite)
 │   └── test/                 # Jest (ESM nativo do Node)
 │
-├── sql/                      # migrações numeradas e idempotentes (001 … 013)
+├── sql/                      # migrações numeradas e idempotentes (001 … 024)
 │
 ├── docs/
 │   ├── DEPLOYMENT.md                 # Neon, segredos, Worker, Pages, primeiro admin
@@ -160,7 +160,7 @@ autenticado independentemente do papel que tinha antes.
 | Consultar auditoria e logs técnicos | Não | Não | Sim | Não |
 
 ¹ Cotas por dia (`worker/src/constants.js`, `AI_QUOTAS`), por exemplo
-perguntas ao paciente virtual: 40 (visitor), 150 (member), 300 (admin);
+perguntas ao paciente virtual: 15 (visitor), 40 (member), 100 (admin);
 mais um teto global de 3.000 chamadas/dia para toda a plataforma.
 
 Toda checagem de papel/status é feita **no servidor**, a cada chamada, a
@@ -170,7 +170,7 @@ cliente. Ver `docs/SECURITY.md`.
 ## Começando
 
 Siga `docs/DEPLOYMENT.md` do início ao fim — cobre o banco Neon e as
-migrações 001–013, os segredos do Worker (`DATABASE_URL`,
+migrações 001–023 (a 024 e a ativação da renovação estão em `docs/AMBIENTES.md`), os segredos do Worker (`DATABASE_URL`,
 `SESSION_TOKEN_PEPPER`, `BREVO_API_KEY`, `GROQ_API_KEYS`), o deploy via
 Wrangler, a publicação do front-end e a promoção manual do primeiro
 administrador.

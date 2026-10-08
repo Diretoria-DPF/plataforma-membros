@@ -1,6 +1,6 @@
 # ADR 0001 — Paleta categórica dos gráficos
 
-Status: proposta (aguarda validação em simulador). Data: 2026-10-07.
+Status: aceita (2026-10-08); validação visual em simulador segue pendente. Data: 2026-10-07.
 
 ## Contexto
 O dashboard animado (Fase B) precisa de cores categóricas coerentes com a marca, legíveis nos dois temas e em visão de cores reduzida.
