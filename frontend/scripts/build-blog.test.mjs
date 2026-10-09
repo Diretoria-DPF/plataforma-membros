@@ -153,10 +153,10 @@ test('build recusa slug repetido e lista todos os problemas juntos', () => {
   assert.throws(() => gerador.build({ srcDir: src, outDir: pastaTemporaria() }), /slug repetido[\s\S]*frase proibida|frase proibida[\s\S]*slug repetido/);
 });
 
-test('o conteúdo real do blog compila: 18 posts, sem palavra de status na interface, índice <= 20 KB', () => {
+test('o conteúdo real do blog compila: 19 posts, sem palavra de status na interface, índice <= 20 KB', () => {
   const saida = pastaTemporaria();
   const resultado = gerador.build({ srcDir: CONTEUDO, outDir: saida });
-  assert.equal(resultado.posts, 18);
+  assert.equal(resultado.posts, 19);
   const pasta = path.join(saida, 'blog');
   const paginas = fs.readdirSync(pasta).filter((nome) => nome.endsWith('.html'));
   const texto = paginas.map((nome) => fs.readFileSync(path.join(pasta, nome), 'utf8')).join('\n');

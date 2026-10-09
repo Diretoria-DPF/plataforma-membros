@@ -12,8 +12,9 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const ICONES_URL = '/blog/icones.svg#';
 const INDICE_URL = '/blog/index.json';
 const MSG_ERRO = 'Não foi possível carregar os posts.';
-const FILTROS = ['liga', 'modulos', 'plataforma'];
-const SERIE_ROTULO = { liga: 'Liga', modulos: 'Módulos', plataforma: 'Plataforma' };
+const MSG_VAZIO = 'Ainda não há posts neste assunto.';
+const FILTROS = ['liga', 'modulos', 'plataforma', 'campanhas'];
+const SERIE_ROTULO = { liga: 'Liga', modulos: 'Módulos', plataforma: 'Plataforma', campanhas: 'Publicações' };
 const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 const RE_SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -47,6 +48,10 @@ const els = {
   dialog: document.getElementById('modal'),
   chips: Array.from(document.querySelectorAll('.blog-chip')),
   mapaItens: Array.from(document.querySelectorAll('.blog-mapa__item')),
+  destaque: document.getElementById('campanha'),
+  destaqueTitulo: document.querySelector('.blog-campanha-destaque__titulo'),
+  destaqueResumo: document.querySelector('.blog-campanha-destaque__resumo'),
+  destaqueLink: document.querySelector('.blog-campanha-destaque__link'),
 };
 
 const estado = {
@@ -162,7 +167,7 @@ function renderProxima() {
 function atualizarStatus() {
   const total = estado.lista.length;
   if (total === 0) {
-    els.status.textContent = 'Nenhum post neste assunto.';
+    els.status.textContent = '0 posts';
     return;
   }
   els.status.textContent = estado.mostrados + ' de ' + total + (total === 1 ? ' post' : ' posts');
@@ -226,7 +231,13 @@ function aplicarFiltro(filtro) {
     chip.setAttribute('aria-pressed', String(chip.getAttribute('data-filtro') === filtro));
   });
   renderProxima();
+  mostrarVazio();
   atualizarControles();
+}
+
+// Filtro sem posts: mensagem simples no feed (o anúncio aria-live já diz "0 posts").
+function mostrarVazio() {
+  if (estado.lista.length === 0) els.feed.appendChild(criarNo('p', '', MSG_VAZIO));
 }
 
 function aoClicarChip(evento) {
@@ -268,12 +279,24 @@ function mostrarErro(erro) {
   els.status.textContent = MSG_ERRO;
 }
 
+// Campanha fixada do mês: 1º post de campanha fixado do índice. Sem ele, a seção fica escondida.
+function mostrarDestaque(posts) {
+  if (!els.destaque) return;
+  const campanha = posts.find(function (post) { return post.serie === 'campanhas' && post.fixado === true; });
+  els.destaque.hidden = !campanha;
+  if (!campanha) return;
+  els.destaqueTitulo.textContent = campanha.titulo;
+  els.destaqueResumo.textContent = campanha.resumo;
+  els.destaqueLink.setAttribute('href', '/' + campanha.href);
+}
+
 function iniciarFeed() {
   estado.pronto = false;
   mostrarCarregando();
   return carregarIndice()
     .then(function (posts) {
       estado.posts = posts;
+      mostrarDestaque(posts);
       estado.pronto = true;
       els.feed.setAttribute('aria-busy', 'false');
       aplicarFiltro(filtroDoHash());

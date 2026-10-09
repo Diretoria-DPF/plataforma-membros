@@ -1,0 +1,94 @@
+{
+  "parte": 1,
+  "blocos": [
+    { "t": "h2", "texto": "O que é o Outubro Rosa" },
+    { "t": "p", "texto": "O Outubro Rosa é uma campanha anual de atividades para conscientização sobre o câncer de mama. Ele acontece todo mês de outubro." },
+    { "t": "p", "texto": "A [Lei nº 13.733/2018](#ref-dir-lei-13733) prevê essas atividades todos os anos, no mês de outubro." },
+    { "t": "fatos", "itens": [
+      { "rotulo": "Quando", "valor": "Todo mês de outubro" },
+      { "rotulo": "Foco", "valor": "Câncer de mama" },
+      { "rotulo": "Lei", "valor": "Lei nº 13.733/2018" }
+    ] },
+    { "t": "h2", "texto": "O que ganha destaque em outubro" },
+    { "t": "p", "texto": "Estes são os temas em destaque. Cada um tem a fonte oficial ao lado." },
+    { "t": "lista", "itens": [
+      "Câncer de mama: é o foco central da campanha, previsto em lei [Lei nº 13.733/2018](#ref-dir-lei-13733).",
+      "Meninas de até 15 anos: prevenção, diagnóstico precoce e vacina contra o HPV, ações previstas no Outubrinho Rosa desde 2024 [Lei nº 15.009/2024](#ref-ras-lei-15009)."
+    ] },
+    { "t": "h2", "texto": "Por que isso importa" },
+    { "t": "p", "texto": "No Brasil, o INCA estima 78.610 casos novos por ano entre 2026 e 2028 [INCA](#ref-epi-inca-sintese-2026). Em 2023, o câncer de mama causou cerca de 20.165 mortes de mulheres [INCA](#ref-epi-inca-sintese-2026)." },
+    { "t": "p", "texto": "A sobrevida em 5 anos compara quem teve o diagnóstico com a população geral, cinco anos depois. Nos dados dos Estados Unidos, com o tumor só na mama, ela é de 100% [NCI SEER](#ref-epi-seer-mama). Quando já se espalhou para outros órgãos, cai para 33,8% [NCI SEER](#ref-epi-seer-mama)." },
+    { "t": "p", "texto": "Conhecer o corpo e fazer os exames na idade indicada pode mudar o resultado. Quanto mais cedo a doença é encontrada, maior a sobrevida [NCI SEER](#ref-epi-seer-mama)." },
+    { "t": "h2", "texto": "O cenário em números" },
+    { "t": "p", "texto": "Como ler este painel: os casos e as mortes do Brasil são do INCA. A sobrevida vem de dados dos Estados Unidos, do NCI SEER. Os dados regionais são estimativas de 2026, uma página por região: [Sudeste](#ref-epi2-inca-regiao-sudeste), [Sul](#ref-epi2-inca-regiao-sul), [Centro-Oeste](#ref-epi2-inca-regiao-centro-oeste), [Nordeste](#ref-epi2-inca-regiao-nordeste) e [Norte](#ref-epi2-inca-regiao-norte)." },
+    { "t": "painel", "titulo": "Câncer de mama em números",
+      "kpis": [
+        { "valor": 78610, "casas": 0, "sufixo": " por ano", "rotulo": "casos novos de câncer de mama em mulheres, no Brasil", "detalhe": "Estimativa para 2026 a 2028.", "ref": "epi-inca-sintese-2026" },
+        { "valor": 20165, "casas": 0, "sufixo": " mortes", "rotulo": "de mulheres por câncer de mama, em 2023, no Brasil", "ref": "epi-inca-sintese-2026" },
+        { "valor": 2296840, "casas": 0, "sufixo": " casos novos", "rotulo": "de câncer de mama em mulheres, no mundo, em 2022", "ref": "epi2-pmc-mama-mundo-2022" },
+        { "valor": 666103, "casas": 0, "sufixo": " mortes", "rotulo": "por câncer de mama em mulheres, no mundo, em 2022", "ref": "epi2-pmc-mama-mundo-2022" },
+        { "valor": 23.8, "casas": 1, "sufixo": "%", "rotulo": "dos casos de câncer em mulheres, no mundo, em 2022", "detalhe": "Sem contar o câncer de pele não melanoma.", "ref": "epi-inca-sintese-2026" },
+        { "valor": 100, "casas": 0, "sufixo": "%", "rotulo": "de sobrevida em 5 anos quando o câncer está só na mama", "detalhe": "Dados dos Estados Unidos, de 2016 a 2022.", "ref": "epi-seer-mama" }
+      ],
+      "graficos": [
+        { "titulo": "Incidência estimada em 2026, por região", "unidade": "taxa bruta por 100 mil mulheres", "casas": 2,
+          "itens": [
+            { "rotulo": "Sudeste", "valores": [88.29] },
+            { "rotulo": "Sul", "valores": [77.91] },
+            { "rotulo": "Centro-Oeste", "valores": [61.32] },
+            { "rotulo": "Nordeste", "valores": [58.02] },
+            { "rotulo": "Norte", "valores": [31.28] }
+          ],
+          "nota": "Estimativa de 2026, por região, do INCA. Taxa bruta: casos novos por 100 mil mulheres. Os links das regiões estão logo acima do painel." },
+        { "titulo": "Sobrevida em 5 anos, por estágio", "unidade": "%", "casas": 1,
+          "itens": [
+            { "rotulo": "Localizado", "valores": [100] },
+            { "rotulo": "Regional", "valores": [87.5] },
+            { "rotulo": "À distância", "valores": [33.8] }
+          ],
+          "nota": "Dados dos Estados Unidos (NCI SEER), de 2016 a 2022. Localizado: o tumor ainda está só na mama. Regional: atingiu tecidos vizinhos à mama. À distância: já se espalhou para outros órgãos.",
+          "ref": "epi-seer-mama" }
+      ],
+      "tabelas": [
+        { "titulo": "Brasil em números", "colunas": ["Indicador", "Valor", "Período"],
+          "linhas": [
+            ["Casos novos de câncer de mama em mulheres, por ano", "78.610", "2026 a 2028"],
+            ["Risco estimado, por 100 mil mulheres", "71,6", "2026 a 2028"],
+            ["Mortes de mulheres por câncer de mama", "20.165", "2023"],
+            ["Risco estimado de morte, por 100 mil mulheres", "18,59", "2023"]
+          ],
+          "nota": "Casos e risco estimado de 2026 a 2028 são estimativas do INCA. Mortes e risco de morte são de 2023.",
+          "ref": "epi-inca-sintese-2026" },
+        { "titulo": "Casos e taxas por região em 2026", "colunas": ["Região", "Casos novos", "Taxa bruta", "Taxa ajustada"],
+          "linhas": [
+            ["Sudeste", "40.560", "88,29", "51,72"],
+            ["Sul", "12.550", "77,91", "47,65"],
+            ["Centro-Oeste", "5.420", "61,32", "45,94"],
+            ["Nordeste", "17.130", "58,02", "42,50"],
+            ["Norte", "2.950", "31,28", "30,26"]
+          ],
+          "nota": "Taxas por 100 mil mulheres, em 2026. Casos arredondados para múltiplos de 10. A soma das cinco regiões é 78.610." }
+      ]
+    },
+    { "t": "p", "texto": "Brasil e mundo lado a lado. Os anos são diferentes, e cada número traz o seu ano." },
+    { "t": "comparativo", "titulo": "Brasil e mundo", "rotulos": { "tema": "Indicador", "antes": "Brasil", "agora": "Mundo" },
+      "itens": [
+        { "tema": "Casos novos de câncer de mama em mulheres", "antes": "78.610 por ano, de 2026 a 2028 [INCA](#ref-epi-inca-sintese-2026)", "agora": "2.296.840 em 2022", "ref": "epi2-pmc-mama-mundo-2022" },
+        { "tema": "Mortes por câncer de mama em mulheres", "antes": "20.165 em 2023 [INCA](#ref-epi-inca-sintese-2026)", "agora": "666.103 em 2022", "ref": "epi2-pmc-mama-mundo-2022" },
+        { "tema": "Posição entre os cânceres em mulheres", "antes": "O mais incidente, sem contar o câncer de pele não melanoma [INCA](#ref-epi-inca-sintese-2026)", "agora": "A principal causa de casos novos e de mortes; 15,4% das mortes por câncer em mulheres (2022)", "ref": "epi2-pmc-mama-mundo-2022" }
+      ]
+    }
+  ],
+  "referencias": [
+    { "id": "dir-lei-13733", "titulo": "Lei nº 13.733/2018 (atividades da campanha Outubro Rosa)", "orgao": "Presidência da República (Planalto)", "href": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13733.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "ras-lei-15009", "titulo": "Lei nº 15.009/2024 (institui o Outubrinho Rosa)", "orgao": "Presidência da República", "href": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L15009.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "epi-inca-sintese-2026", "titulo": "Estimativa 2026-2028: síntese de resultados e comentários", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/cancer/numeros/estimativa/sintese-de-resultados-e-comentarios", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "epi-seer-mama", "titulo": "Cancer Stat Facts: Female Breast Cancer", "orgao": "NCI SEER", "href": "https://seer.cancer.gov/statfacts/html/breast.html", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "epi2-inca-regiao-sudeste", "titulo": "Estimativa 2026 por região: casos novos e taxas de câncer, Sudeste", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/cancer/numeros/estimativa/regiao/sudeste", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "epi2-inca-regiao-nordeste", "titulo": "Estimativa 2026 por região: casos novos e taxas de câncer, Nordeste", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/cancer/numeros/estimativa/regiao/nordeste", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "epi2-inca-regiao-sul", "titulo": "Estimativa 2026 por região: casos novos e taxas de câncer, Sul", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/cancer/numeros/estimativa/regiao/sul", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "epi2-inca-regiao-centro-oeste", "titulo": "Estimativa 2026 por região: casos novos e taxas de câncer, Centro-Oeste", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/cancer/numeros/estimativa/regiao/centro-oeste", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "epi2-inca-regiao-norte", "titulo": "Estimativa 2026 por região: casos novos e taxas de câncer, Norte", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/cancer/numeros/estimativa/regiao/norte", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "epi2-pmc-mama-mundo-2022", "titulo": "Global burden of female breast cancer: new estimates in 2022, temporal trend and future projections up to 2050", "orgao": "Journal of the National Cancer Center (dados GLOBOCAN 2022, IARC)", "href": "https://pmc.ncbi.nlm.nih.gov/articles/12276554/", "doi": "10.1016/j.jncc.2025.02.002", "acesso": "2026-10-09", "tipo": "artigo" }
+  ]
+}

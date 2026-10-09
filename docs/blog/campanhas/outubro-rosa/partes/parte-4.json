@@ -1,0 +1,112 @@
+{
+  "parte": 4,
+  "blocos": [
+    { "t": "h2", "texto": "Seus direitos" },
+    { "t": "p", "texto": "Quem tem câncer de mama tem direitos previstos em lei. Procure o serviço social do hospital, a UBS ou o INSS. [INCA](#ref-dir-inca-direitos)." },
+    { "t": "guia", "itens": [
+      { "nome": "Mamografia pelo SUS a partir dos 40 anos",
+        "campos": [
+          { "rotulo": "O que a lei prevê", "texto": "Mamografia pelo SUS para todas as mulheres a partir dos 40 anos." },
+          { "rotulo": "Lei", "texto": "Lei nº 15.284/2025" },
+          { "rotulo": "Como pedir", "texto": "Procure a Unidade Básica de Saúde do seu bairro." }
+        ],
+        "ref": "dir-lei-15284" },
+      { "nome": "Começar o tratamento em até 60 dias",
+        "campos": [
+          { "rotulo": "O que a lei prevê", "texto": "O tratamento do câncer pelo SUS deve começar em no máximo 60 dias." },
+          { "rotulo": "Lei", "texto": "Lei nº 12.732/2012" },
+          { "rotulo": "Como pedir", "texto": "Depois do diagnóstico, peça à equipe de saúde o encaminhamento ao tratamento no SUS." }
+        ],
+        "ref": "dir-lei-12732" },
+      { "nome": "Exames de diagnóstico em até 30 dias",
+        "campos": [
+          { "rotulo": "O que a lei prevê", "texto": "Prazo de 30 dias para os exames que confirmam o diagnóstico, quando a principal hipótese é câncer." },
+          { "rotulo": "Lei", "texto": "Lei nº 13.896/2019" },
+          { "rotulo": "Como pedir", "texto": "Leve os sinais ou sintomas à Unidade Básica de Saúde e peça a investigação." }
+        ],
+        "ref": "trat-lei-13896" },
+      { "nome": "Reconstrução da mama pelo SUS",
+        "campos": [
+          { "rotulo": "O que a lei prevê", "texto": "Cirurgia plástica reconstrutiva para mulheres que tiveram a mama retirada, total ou parcialmente, por câncer. Quando houver condição técnica, a reconstrução deve ser feita na mesma cirurgia que retira o tumor." },
+          { "rotulo": "Lei", "texto": "Lei nº 9.797/1999 e [Lei nº 12.802/2013](#ref-dir-lei-12802)" },
+          { "rotulo": "Como pedir", "texto": "Converse com a equipe de cirurgia ou de reconstrução do serviço onde faz o tratamento." }
+        ],
+        "ref": "dir-lei-9797" },
+      { "nome": "Troca de implante e acompanhamento psicológico",
+        "campos": [
+          { "rotulo": "O que a lei prevê", "texto": "Troca do implante mamário em caso de complicações, e acompanhamento psicológico e multidisciplinar especializado." },
+          { "rotulo": "Lei", "texto": "Lei nº 14.538/2023" },
+          { "rotulo": "Como pedir", "texto": "Peça o acompanhamento à equipe do serviço de reconstrução." }
+        ],
+        "ref": "dir-inca-legislacao" },
+      { "nome": "Fisioterapia depois da retirada da mama",
+        "campos": [
+          { "rotulo": "O que a lei prevê", "texto": "Fisioterapia para quem teve a mama retirada por câncer, quando o médico indicar. A lei vale também para homens." },
+          { "rotulo": "Lei", "texto": "Lei nº 15.267/2025" },
+          { "rotulo": "Como pedir", "texto": "Converse com o médico que acompanha o tratamento." }
+        ],
+        "ref": "dir-lei-15267" },
+      { "nome": "Auxílio por incapacidade temporária sem carência",
+        "campos": [
+          { "rotulo": "O que a regra prevê", "texto": "Pessoas com câncer seguradas do INSS não precisam cumprir a carência de 12 contribuições, desde que a perícia confirme a incapacidade." },
+          { "rotulo": "Base legal", "texto": "Portarias Interministeriais MTP/MS nº 22/2022 e nº 15/2026" },
+          { "rotulo": "Como pedir", "texto": "Procure o INSS para pedir o benefício." }
+        ],
+        "ref": "dir-inss-auxilio" },
+      { "nome": "Aposentadoria isenta de Imposto de Renda",
+        "campos": [
+          { "rotulo": "O que a regra prevê", "texto": "A aposentadoria de quem tem câncer é isenta de Imposto de Renda, com comprovação por laudo médico oficial." },
+          { "rotulo": "Base legal", "texto": "Regulamento do Imposto de Renda (RIR/1999, art. 39, XXXIII) e Instrução Normativa SRF nº 15/2001" },
+          { "rotulo": "Como pedir", "texto": "Apresente o laudo médico oficial a quem paga a aposentadoria ou à Receita Federal." }
+        ],
+        "ref": "dir-inca-direitos" },
+      { "nome": "Saque do FGTS e do PIS/Pasep na fase sintomática",
+        "campos": [
+          { "rotulo": "O que você tem direito", "texto": "Na fase sintomática da doença, você pode sacar o FGTS com relatório médico emitido há no máximo 30 dias. Quem estava cadastrado no PIS ou no Pasep antes de 1988 também pode sacar o saldo." },
+          { "rotulo": "Como pedir", "texto": "Peça o saque na Caixa (FGTS) ou no banco do PIS/Pasep, com relatório médico recente." }
+        ],
+        "ref": "dir-inca-direitos" }
+    ] },
+    { "t": "h2", "texto": "Mitos e verdades" },
+    { "t": "deck", "instrucao": "Toque em cada carta para ver a resposta.", "cartas": [
+      { "frase": "Sutiã causa câncer de mama.", "veredito": "mito", "explicacao": "Não há dados científicos ou clínicos que mostrem esse efeito, segundo a American Cancer Society.", "ref": "mit-acs-controversos" },
+      { "frase": "Homens também podem ter câncer de mama.", "veredito": "verdade", "explicacao": "Sim. O tratamento segue princípios parecidos com os das mulheres, segundo o National Cancer Institute (EUA).", "ref": "trat-nci-homens" },
+      { "frase": "Mamografia causa câncer.", "veredito": "depende", "explicacao": "A radiação aumenta o risco conforme a dose e a frequência dos exames. O risco é muito baixo, segundo o [National Cancer Institute](#ref-tec-nci-rastreamento).", "ref": "mit-inca-fatores" },
+      { "frase": "Desodorante ou antitranspirante causa câncer de mama.", "veredito": "mito", "explicacao": "Não há evidência científica que ligue esses produtos ao câncer de mama, segundo o National Cancer Institute (EUA).", "ref": "mit-nci-desodorante" },
+      { "frase": "O álcool aumenta o risco de câncer de mama.", "veredito": "verdade", "explicacao": "A Organização Mundial da Saúde (OMS) diz que não existe nível de consumo considerado seguro para a saúde.", "ref": "mit-oms-alcool" },
+      { "frase": "Se minha mãe teve câncer de mama, eu também vou ter.", "veredito": "mito", "explicacao": "Só de 5% a 10% dos casos são de caráter hereditário, segundo o INCA.", "ref": "mit-inca-fatores" },
+      { "frase": "Terapia hormonal sempre causa câncer de mama.", "veredito": "depende", "explicacao": "O risco aparece sobretudo com estrogênio e progesterona por mais de 5 anos, segundo o INCA.", "ref": "mit-inca-fatores" },
+      { "frase": "Implante de mama causa câncer de mama.", "veredito": "mito", "explicacao": "Implantes não aumentam esse risco. Há, porém, um linfoma raro associado a alguns deles, segundo a American Cancer Society.", "ref": "mit-acs-controversos" },
+      { "frase": "Fazer o autoexame das mamas basta para evitar a morte por câncer de mama.", "veredito": "mito", "explicacao": "Em um estudo randomizado em Xangai, ensinar o autoexame não reduziu a mortalidade por câncer de mama.", "ref": "ras-jnci-shanghai" }
+    ] },
+    { "t": "h2", "texto": "Hábitos que ajudam" },
+    { "t": "p", "texto": "Estes hábitos podem reduzir o risco, mas não eliminam a chance de ter a doença. Quem tem câncer não causou a doença. [INCA](#ref-mit-inca-fatores)." },
+    { "t": "habitos", "itens": [
+      { "emoji": "🏃‍♀️", "titulo": "Atividade física", "efeito": "protege", "texto": "Pelo menos 150 minutos por semana de atividade moderada, segundo a OMS. Ficar inativo é um fator de risco bem estabelecido, segundo o [INCA](#ref-mit-inca-fatores).", "ref": "hab-oms-atividade" },
+      { "emoji": "🥗", "titulo": "Vegetais todo dia", "efeito": "protege", "texto": "Comer pelo menos 400 g de vegetais por dia faz parte da prevenção do câncer, em geral.", "ref": "mit-inca-mitos" },
+      { "emoji": "⚖️", "titulo": "Peso saudável", "efeito": "reduz-risco", "texto": "O excesso de gordura corporal aumenta o risco de câncer de mama depois da menopausa.", "ref": "mit-inca-mitos" },
+      { "emoji": "🍷", "titulo": "Evitar bebida alcoólica", "efeito": "evitar", "texto": "O álcool aumenta o risco de câncer de mama. Não existe nível de consumo considerado seguro para a saúde.", "ref": "mit-oms-alcool" },
+      { "emoji": "🚭", "titulo": "Não fumar", "efeito": "evitar", "texto": "O cigarro pode aumentar o risco de câncer de mama. A evidência ainda é sugestiva, não conclusiva, segundo o INCA.", "ref": "mit-inca-fatores" }
+    ] }
+  ],
+  "referencias": [
+    { "id": "dir-lei-15284", "titulo": "Lei nº 15.284/2025", "orgao": "Presidência da República (Planalto)", "href": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15284.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "dir-lei-12732", "titulo": "Lei nº 12.732/2012", "orgao": "Presidência da República (Planalto)", "href": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12732.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "trat-lei-13896", "titulo": "Lei nº 13.896/2019", "orgao": "Presidência da República (texto no Senado Federal)", "href": "https://legis.senado.leg.br/norma/31629923/publicacao/31630122", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "dir-lei-9797", "titulo": "Lei nº 9.797/1999", "orgao": "Presidência da República (Planalto)", "href": "https://www.planalto.gov.br/ccivil_03/leis/L9797.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "dir-lei-12802", "titulo": "Lei nº 12.802, de 2013 (momento da reconstrução mamária)", "orgao": "Presidência da República (Planalto)", "href": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12802.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "dir-inca-legislacao", "titulo": "Legislação - Controle do câncer de mama", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/gestor-e-profissional-de-saude/controle-do-cancer-de-mama/legislacao", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "dir-lei-15267", "titulo": "Lei nº 15.267/2025", "orgao": "Presidência da República (Planalto)", "href": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15267.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "dir-inss-auxilio", "titulo": "Auxílio por incapacidade temporária", "orgao": "Instituto Nacional do Seguro Social (INSS)", "href": "https://www.gov.br/inss/pt-br/direitos-e-deveres/beneficios-por-incapacidade/auxilio-por-incapacidade-temporaria", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "dir-inca-direitos", "titulo": "Direitos sociais da pessoa com câncer", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/acesso-a-informacao/perguntas-frequentes/direitos-sociais-da-pessoa-com-cancer", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "trat-nci-homens", "titulo": "Male Breast Cancer Treatment (PDQ)", "orgao": "National Cancer Institute (NCI)", "href": "https://www.cancer.gov/types/breast/hp/male-breast-treatment-pdq", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "tec-nci-rastreamento", "titulo": "Breast Cancer Screening (PDQ) – Patient Version", "orgao": "National Cancer Institute", "href": "https://www.cancer.gov/types/breast/patient/breast-screening-pdq", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "mit-inca-fatores", "titulo": "Fatores de risco (câncer de mama)", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/gestor-e-profissional-de-saude/controle-do-cancer-de-mama/fatores-de-risco", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "mit-acs-controversos", "titulo": "Unclear, Disproven, and Controversial Breast Cancer Risk Factors", "orgao": "American Cancer Society", "href": "https://www.cancer.org/cancer/types/breast-cancer/risk-and-prevention/disproven-or-controversial-breast-cancer-risk-factors.html", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "mit-nci-desodorante", "titulo": "Antiperspirants/Deodorants and Breast Cancer", "orgao": "National Cancer Institute (NCI)", "href": "https://www.cancer.gov/about-cancer/causes-prevention/risk/myths/antiperspirants-fact-sheet", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "mit-oms-alcool", "titulo": "No level of alcohol consumption is safe for our health", "orgao": "Organização Mundial da Saúde (OMS/Europa)", "href": "https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras-jnci-shanghai", "titulo": "Randomized Trial of Breast Self-Examination in Shanghai: Final Results", "orgao": "JNCI: Journal of the National Cancer Institute (Oxford University Press)", "href": "https://doi.org/10.1093/jnci/94.19.1445", "doi": "10.1093/jnci/94.19.1445", "acesso": "2026-10-09", "tipo": "artigo" },
+    { "id": "hab-oms-atividade", "titulo": "Physical activity (fact sheet)", "orgao": "Organização Mundial da Saúde (OMS)", "href": "https://www.who.int/news-room/fact-sheets/detail/physical-activity", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "mit-inca-mitos", "titulo": "Mitos e verdades", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/causas-e-prevencao-do-cancer/mitos-e-verdades", "acesso": "2026-10-09", "tipo": "guia" }
+  ]
+}

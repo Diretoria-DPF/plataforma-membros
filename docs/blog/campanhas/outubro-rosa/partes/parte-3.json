@@ -1,0 +1,90 @@
+{
+  "parte": 3,
+  "blocos": [
+    { "t": "h2", "texto": "Conheça suas mamas" },
+    { "t": "p", "texto": "Conhecer as mamas é um cuidado simples. O INCA recomenda que todas as mulheres conheçam o próprio corpo, sem técnica específica. [INCA](#ref-ras2-inca-populacao)." },
+    { "t": "p", "texto": "O INCA não exige técnica de autoexame nem dia fixo do mês. Você pode observar e sentir as mamas sempre que se sentir confortável. [INCA](#ref-ras2-inca-deteccao)." },
+    { "t": "p", "texto": "Ensaios clínicos mostraram que o autoexame não reduz a mortalidade por câncer de mama. Essa é uma das razões da mudança de orientação do INCA. Um desses estudos foi feito em [Xangai, na China](#ref-ras-jnci-shanghai)." },
+    { "t": "etapas", "itens": [
+      { "titulo": "Observe", "texto": "Observe e sinta as mamas quando se sentir confortável. Não há roteiro obrigatório nem dia fixo. [INCA](#ref-ras2-inca-deteccao)." },
+      { "titulo": "Conheça o seu normal", "texto": "As mamas têm mudanças habituais em diferentes fases da vida. Saber o que é habitual para você ajuda a notar o que muda. [INCA](#ref-ras2-inca-deteccao)." },
+      { "titulo": "Procure avaliação", "texto": "Notou um dos sinais da lista abaixo? Procure avaliação médica. [Ministério da Saúde](#ref-ras2-msaude-az)." }
+    ] },
+    { "t": "p", "texto": "Fique de olho nestes sinais:" },
+    { "t": "lista", "itens": [
+      "Nódulo endurecido e fixo, ou que vem aumentando de tamanho. [Ministério da Saúde](#ref-ras2-msaude-az)",
+      "Pele com aspecto de casca de laranja ou retraída. [INCA](#ref-ras2-inca-populacao)",
+      "Mudança no formato do mamilo. [INCA](#ref-ras2-inca-populacao)",
+      "Saída de sangue por um só mamilo. [Ministério da Saúde](#ref-ras2-msaude-az)",
+      "Pequenos nódulos na axila ou no pescoço. [INCA](#ref-ras2-inca-populacao)"
+    ] },
+    { "t": "destaque", "tom": "atencao", "titulo": "Atenção", "texto": "Notou alguma alteração nas mamas? Procure uma Unidade Básica de Saúde. Só a avaliação de um profissional de saúde diz o que é." },
+    { "t": "h2", "texto": "Quando procurar atendimento" },
+    { "t": "p", "texto": "O rastreamento é o exame feito sem sinais de alteração." },
+    { "t": "fatos", "itens": [
+      { "rotulo": "De 50 a 74 anos", "valor": "Mamografia de rastreamento no SUS, a cada dois anos, desde setembro de 2025" },
+      { "rotulo": "De 40 a 49 anos e acima de 74 anos", "valor": "Mamografia por demanda, após orientação profissional" },
+      { "rotulo": "Com sintomas", "valor": "Mamografia em qualquer idade, a critério médico" }
+    ] },
+    { "t": "p", "texto": "Desde setembro de 2025, a mamografia de rastreamento no SUS é indicada de 50 a 74 anos, a cada dois anos. [Notícia do INCA](#ref-ras2-inca-noticia). Antes, o INCA indicava de 50 a 69 anos. [Comunicado do INCA](#ref-ras2-inca-posicionamento)." },
+    { "t": "p", "texto": "De 40 a 49 anos, sem sinais, o exame pode ser pedido por demanda, após orientação profissional. [INCA](#ref-ras2-inca-populacao)." },
+    { "t": "p", "texto": "A [Lei nº 15.284/2025](#ref-ras-lei-15284) assegura a mamografia pelo SUS a partir dos 40 anos, conforme diretrizes do Ministério da Saúde. Para o rastreamento, o INCA indica de 50 a 74 anos." },
+    { "t": "p", "texto": "Histórico de câncer de mama na família, principalmente antes dos 50 anos, e mutações em BRCA1 ou BRCA2 pedem acompanhamento individualizado. [NCI](#ref-ras2-nci-brca)." },
+    { "t": "h2", "texto": "Em cada fase da vida" },
+    { "t": "p", "texto": "Cada fase da vida tem sua conversa com a equipe de saúde." },
+    { "t": "faixas", "itens": [
+      {
+        "faixa": "criancas",
+        "rotulo": "Crianças e adolescentes",
+        "idade": "até 18 anos",
+        "texto": "Câncer de mama nessa idade é raro. Até os 18 anos, o tumor benigno mais comum da mama é o fibroadenoma, um nódulo que não é câncer. A [Lei nº 15.009/2024](#ref-ras-lei-15009) instituiu o Outubrinho Rosa, com ações para meninas de até 15 anos.",
+        "dicas": ["Fale sobre o corpo com palavras simples, sem assustar.", "Se notar algo diferente, conte para um adulto de confiança e procure uma Unidade Básica de Saúde."],
+        "ref": "ras2-nci-criancas"
+      },
+      {
+        "faixa": "jovens",
+        "rotulo": "Jovens",
+        "texto": "Nas mulheres mais jovens, a mamografia não tem boa sensibilidade, porque as mamas são mais densas. [INCA](#ref-ras2-inca-populacao). Em mulheres com mais de 30 anos, um nódulo que persiste por mais de um ciclo menstrual precisa ser avaliado. [Ministério da Saúde](#ref-ras2-msaude-az).",
+        "dicas": ["Anote quando notou a mudança e leve a informação para a consulta.", "Converse com a equipe de saúde sobre qualquer mudança que notar."],
+        "ref": "ras2-inca-populacao"
+      },
+      {
+        "faixa": "adultas",
+        "rotulo": "Adultas",
+        "idade": "a partir dos 40 anos",
+        "texto": "De 50 a 74 anos, a mamografia de rastreamento é indicada a cada dois anos. De 40 a 49 anos, o exame pode ser pedido por demanda, após orientação profissional. [Notícia do INCA](#ref-ras2-inca-noticia).",
+        "dicas": ["Praticar atividade física, manter peso adequado, evitar bebida alcoólica, amamentar e não fumar reduzem a exposição a fatores de risco. [INCA](#ref-ras2-inca-prevencao).", "Converse com a equipe de saúde sobre quando fazer o exame."],
+        "ref": "ras2-inca-noticia"
+      },
+      {
+        "faixa": "idosas",
+        "rotulo": "Idosas",
+        "texto": "Com sintomas, a mamografia pode ser pedida em qualquer idade, a critério médico. Em mulheres com mais de 50 anos, qualquer nódulo na mama deve ser investigado. [Ministério da Saúde](#ref-ras2-msaude-az). Acima de 74 anos, o exame também pode ser pedido por demanda, após orientação profissional.",
+        "dicas": ["Converse com a equipe de saúde sobre o acompanhamento ao longo da vida.", "Avise a equipe de saúde sobre qualquer nódulo ou mudança nas mamas."],
+        "ref": "ras2-inca-populacao"
+      },
+      {
+        "faixa": "homens",
+        "rotulo": "Homens",
+        "texto": "Homens também podem ter câncer de mama, mas é raro: cerca de 1% dos casos, segundo o [INCA](#ref-ras2-inca-incidencia) e o [Ministério da Saúde](#ref-ras2-msaude-az). Em homens com mais de 50 anos, um nódulo em apenas uma das mamas pede avaliação urgente.",
+        "dicas": ["Fique atento às suas mamas e procure avaliação médica se notar alguma alteração suspeita. [INCA](#ref-ras2-inca-deteccao).", "Conte à equipe de saúde se houver histórico de câncer de mama na família. [INCA](#ref-ras2-inca-populacao).", "Em homens, exames de imagem da mama são feitos quando há suspeita, e não como rastreamento de rotina. [NCI](#ref-ras2-nci-homem)."],
+        "ref": "ras2-nci-homem"
+      }
+    ] }
+  ],
+  "referencias": [
+    { "id": "ras2-msaude-az", "titulo": "Câncer de mama (página Saúde de A a Z)", "orgao": "Ministério da Saúde", "href": "https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/c/cancer-de-mama", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras2-inca-deteccao", "titulo": "Detecção precoce do câncer de mama", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/gestor-e-profissional-de-saude/controle-do-cancer-de-mama/acoes/deteccao-precoce", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras2-inca-populacao", "titulo": "Câncer de mama: versão para população", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/cancer/tipos/mama/versao-para-populacao", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras2-inca-prevencao", "titulo": "Prevenção do câncer de mama", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/gestor-e-profissional-de-saude/controle-do-cancer-de-mama/acoes/prevencao", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras2-inca-noticia", "titulo": "Ministério da Saúde padroniza informações para acesso ao exame de mamografia no SUS", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/noticias/2025/ministerio-da-saude-padroniza-informacoes-para-acesso-ao-exame-de-mamografia-no-sus", "acesso": "2026-10-09", "tipo": "noticia" },
+    { "id": "ras2-inca-posicionamento", "titulo": "Posicionamento oficial do INCA sobre faixa etária recomendada para mamografia de rastreio", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/canais-de-atendimento/imprensa/releases/2025/posicionamento-oficial-do-instituto-nacional-de-cancer-inca-sobre-faixa-etaria-recomendada-para-mamografia-de-rastreio", "acesso": "2026-10-09", "tipo": "noticia" },
+    { "id": "ras2-inca-incidencia", "titulo": "Incidência de câncer de mama", "orgao": "Instituto Nacional de Câncer (INCA)", "href": "https://www.gov.br/inca/pt-br/assuntos/gestor-e-profissional-de-saude/controle-do-cancer-de-mama/dados-e-numeros/incidencia", "acesso": "2026-10-09", "tipo": "dados" },
+    { "id": "ras2-nci-criancas", "titulo": "Childhood Breast Tumors Treatment (PDQ)", "orgao": "National Cancer Institute (NCI)", "href": "https://www.cancer.gov/types/breast/hp/child-breast-treatment-pdq", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras2-nci-brca", "titulo": "Genetics of Breast and Gynecologic Cancers (PDQ)", "orgao": "National Cancer Institute (NCI)", "href": "https://www.cancer.gov/types/breast/hp/breast-ovarian-genetics-pdq", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras2-nci-homem", "titulo": "Male Breast Cancer Treatment (PDQ)", "orgao": "National Cancer Institute (NCI)", "href": "https://www.cancer.gov/types/breast/hp/male-breast-treatment-pdq", "acesso": "2026-10-09", "tipo": "guia" },
+    { "id": "ras-lei-15284", "titulo": "Lei nº 15.284/2025 (mamografia pelo SUS a partir dos 40 anos)", "orgao": "Presidência da República", "href": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15284.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "ras-lei-15009", "titulo": "Lei nº 15.009/2024 (institui o Outubrinho Rosa)", "orgao": "Presidência da República", "href": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L15009.htm", "acesso": "2026-10-09", "tipo": "lei" },
+    { "id": "ras-jnci-shanghai", "titulo": "Randomized Trial of Breast Self-Examination in Shanghai: Final Results", "orgao": "JNCI: Journal of the National Cancer Institute (Oxford University Press)", "href": "https://doi.org/10.1093/jnci/94.19.1445", "doi": "10.1093/jnci/94.19.1445", "acesso": "2026-10-09", "tipo": "artigo" }
+  ]
+}

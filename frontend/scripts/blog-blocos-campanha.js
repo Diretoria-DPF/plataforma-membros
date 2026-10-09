@@ -28,6 +28,7 @@ const HOSTS_FONTES = Object.freeze([
   'www.wcrf.org', 'www.paho.org', 'www.ibge.gov.br', 'biblioteca.ibge.gov.br', 'www.saude.ba.gov.br',
   'agenciabrasil.ebc.com.br', 'agenciagov.ebc.com.br', 'www1.folha.uol.com.br', 'g1.globo.com',
   'oglobo.globo.com', 'www.estadao.com.br', 'www.bbc.com',
+  'ninho.inca.gov.br', 'rbc.inca.gov.br', 'agenciadenoticias.ibge.gov.br',
 ]);
 const RE_ID = /^[a-z0-9-]{3,48}$/;
 const RE_ISO = /^\d{4}-\d{2}-\d{2}$/;

@@ -16,6 +16,7 @@
 <meta property="og:image" content="https://laift.com.br/blog/og-default.jpg">
 <link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
 <link rel="stylesheet" href="/blog.css">
+<link rel="stylesheet" href="/blog-campanha.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Conheça a LAIFT","url":"https://laift.com.br/blog","description":"O blog da Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia e da plataforma de membros.","inLanguage":"pt-BR","publisher":{"@type":"Organization","name":"LAIFT","url":"https://laift.com.br"}}</script>
 </head>
 <body class="blog-page blog-feed">
@@ -45,6 +46,14 @@
     </div>
   </section>
 
+  <section class="blog-campanha-destaque" id="campanha" aria-labelledby="t-campanha" hidden>
+    <svg class="blog-icone blog-campanha-destaque__icone" aria-hidden="true" focusable="false"><use href="/blog/icones.svg#laco"></use></svg>
+    <p class="blog-campanha-destaque__selo">Campanha do mês</p>
+    <h2 id="t-campanha" class="blog-campanha-destaque__titulo"></h2>
+    <p class="blog-campanha-destaque__resumo"></p>
+    <a class="blog-botao blog-campanha-destaque__link" href="/blog.html#filtro=campanhas">Ler a publicação</a>
+  </section>
+
   <section class="blog-mapa" id="mapa" aria-labelledby="t-mapa">
     <h2 id="t-mapa">Mapa da plataforma</h2>
     <ul class="blog-mapa__lista">
@@ -72,6 +81,7 @@
       <button class="blog-chip" type="button" aria-pressed="false" data-filtro="liga">Liga</button>
       <button class="blog-chip" type="button" aria-pressed="false" data-filtro="modulos">Módulos</button>
       <button class="blog-chip" type="button" aria-pressed="false" data-filtro="plataforma">Plataforma</button>
+      <button class="blog-chip" type="button" aria-pressed="false" data-filtro="campanhas">Publicações</button>
     </div>
     <div class="blog-feed" id="feed" role="feed" aria-labelledby="t-feed" aria-busy="true"></div>
     <p class="blog-sr-only" id="feed-status" aria-live="polite"></p>

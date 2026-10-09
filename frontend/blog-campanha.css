@@ -3,4 +3,726 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-/* Estilos das publicações (série "campanhas"). Esqueleto criado pelo S1 para o build não quebrar; o M2 substitui este arquivo. */
+/* =========================================================================
+   blog-campanha.css: estilos das publicações (série "campanhas").
+   Contrato: docs/blog/CAMPANHAS.md (§3 blocos, §4 CSS, §7 destaque do feed).
+   Carrega depois de laift-tokens.css e blog.css. Mobile primeiro (375 px, sem
+   rolagem horizontal da página). Movimento só em transform e opacity; movimento
+   reduzido mostra o estado final. Sem fonte externa e sem imagem.
+   ========================================================================= */
+
+/* ---------- 1. Tokens da série ----------
+   Claro: acento #a61d56 tem 6,45:1 sobre --laift-surface (#f4f3ef), 6,85:1 sobre
+   --laift-bg (#fafaf7) e 6,09:1 sobre o suave (#fce7f3). Apoio #5b6478: 5,05:1 sobre
+   o suave. Forte #8f1a4f (hover): 7,79:1 sobre a superfície. Branco sobre acento: 7,16:1.
+   Escuro: acento #ff9ccb tem 9,23:1 sobre --dk-layer-1 (#14181c) e 7,98:1 sobre o
+   suave (#3a1a2b). Texto sobre o acento escuro: #2a0716, 9,53:1.
+   Barras e bordas: acento contra o suave, 6,09:1 (claro) e 7,98:1 (escuro). */
+:is(.blog-artigo, .blog-card)[data-serie="campanhas"],
+.blog-campanha-destaque {
+  --campanha-acento: #a61d56;
+  --campanha-forte: #8f1a4f;
+  --campanha-suave: #fce7f3;
+  --campanha-on: #ffffff;
+  --blog-serie: var(--campanha-acento);
+  --blog-serie-soft: var(--campanha-suave);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) :is(.blog-artigo, .blog-card)[data-serie="campanhas"],
+  :root:not([data-theme="light"]) .blog-campanha-destaque {
+    --campanha-acento: #ff9ccb;
+    --campanha-forte: #ffb8dc;
+    --campanha-suave: #3a1a2b;
+    --campanha-on: #2a0716;
+  }
+}
+
+:root[data-theme="dark"] :is(.blog-artigo, .blog-card)[data-serie="campanhas"],
+:root[data-theme="dark"] .blog-campanha-destaque {
+  --campanha-acento: #ff9ccb;
+  --campanha-forte: #ffb8dc;
+  --campanha-suave: #3a1a2b;
+  --campanha-on: #2a0716;
+}
+
+/* ---------- 2. [hidden] vence o display destes blocos ---------- */
+.blog-campanha-destaque[hidden],
+.blog-deck__filtros[hidden],
+.blog-deck__placar[hidden],
+.blog-carta[hidden] { display: none; }
+
+/* ---------- 3. Títulos opcionais dos blocos (h3) ----------
+   Painel, deck, comparativo e faixas trazem o h3 dentro do contêiner;
+   guia e hábitos trazem o h3 como irmão antes da lista. */
+h3.blog-painel__titulo, h3.blog-deck__titulo, h3.blog-comparativo__titulo,
+h3.blog-faixas__titulo, h3.blog-guia__titulo, h3.blog-habitos__titulo {
+  margin: 0 0 .6em;
+  font-size: clamp(1.125rem, 1.05rem + .4vw, 1.3125rem);
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+h3.blog-guia__titulo, h3.blog-habitos__titulo { margin-top: 1.6em; }
+
+/* ---------- 4. Sumário: chips roláveis no celular ---------- */
+.blog-sumario { margin: 0 0 1.5em; }
+.blog-sumario__titulo {
+  margin: 0 0 8px;
+  color: var(--laift-muted, #5b6478);
+  font-size: .8125rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.blog-sumario__lista {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 4px 8px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+.blog-sumario__lista > li { flex: none; scroll-snap-align: start; }
+a.blog-sumario__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch, 44px);
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--laift-surface-alt, #edebe5);
+  box-shadow: inset 0 0 0 1px var(--hairline, rgba(20, 30, 50, .09));
+  color: var(--laift-text, #1c2333);
+  font-size: .9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.blog-sumario__link[aria-current="true"] {
+  background: var(--campanha-acento, #a61d56);
+  box-shadow: none;
+  color: var(--campanha-on, #ffffff);
+}
+@media (min-width: 720px) {
+  .blog-sumario__lista { flex-wrap: wrap; overflow: visible; }
+}
+
+/* ---------- 5. Painel: KPIs, gráficos e tabelas ---------- */
+.blog-painel {
+  display: grid;
+  gap: 16px;
+  margin: 1.5em 0;
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--laift-surface, #f4f3ef);
+  box-shadow: var(--elev-1, 0 1px 2px rgba(20, 30, 50, .06));
+}
+.blog-painel__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.blog-kpi {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--laift-bg, #fafaf7);
+  box-shadow: inset 0 0 0 1px var(--hairline, rgba(20, 30, 50, .09));
+}
+.blog-kpi__valor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 4px;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.blog-kpi__num {
+  color: var(--campanha-acento, #a61d56);
+  font-size: clamp(2rem, 1.7rem + 1.6vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  overflow-wrap: anywhere;
+}
+.blog-kpi__prefixo,
+.blog-kpi__sufixo { font-size: .9375rem; font-weight: 700; }
+.blog-kpi__rotulo { margin: 0; font-weight: 700; line-height: 1.35; }
+.blog-kpi__detalhe {
+  margin: 0;
+  color: var(--laift-muted, #5b6478);
+  font-size: .875rem;
+  line-height: 1.5;
+}
+.blog-grafico {
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--laift-bg, #fafaf7);
+  box-shadow: inset 0 0 0 1px var(--hairline, rgba(20, 30, 50, .09));
+}
+.blog-grafico__titulo { margin: 0 0 10px; font-size: 1rem; font-weight: 800; line-height: 1.35; }
+.blog-grafico__unidade {
+  display: block;
+  margin-top: 2px;
+  color: var(--laift-muted, #5b6478);
+  font-size: .875rem;
+  font-weight: 500;
+}
+.blog-grafico__legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  font-size: .875rem;
+  font-weight: 600;
+}
+.blog-grafico__legenda li { display: inline-flex; align-items: center; gap: 8px; }
+.blog-grafico__legenda li::before {
+  content: "";
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--campanha-acento, #a61d56);
+}
+/* Série 2 usa listras, para não depender só da cor. */
+.blog-grafico__legenda li[data-serie="2"]::before,
+.blog-grafico__barra[data-serie="2"] {
+  background: repeating-linear-gradient(135deg, var(--campanha-acento, #a61d56) 0 3px, transparent 3px 6px);
+}
+.blog-grafico__legenda li[data-serie="2"]::before { box-shadow: inset 0 0 0 2px var(--campanha-acento, #a61d56); }
+.blog-grafico__linhas { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.blog-grafico__linha { display: grid; gap: 6px; min-width: 0; }
+.blog-grafico__rotulo { font-size: .9375rem; font-weight: 700; line-height: 1.3; }
+.blog-grafico__trilho {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--campanha-suave, #fce7f3);
+}
+/* O JS põe --v (0 a 1). Sem JS vale o fallback data-p, abaixo. */
+.blog-grafico__barra {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--campanha-acento, #a61d56);
+  transform-origin: left center;
+  transform: scaleX(var(--v, 0));
+}
+.blog-grafico__barra[data-p="0"] { --v: 0; }
+.blog-grafico__barra[data-p="5"] { --v: .05; }
+.blog-grafico__barra[data-p="10"] { --v: .1; }
+.blog-grafico__barra[data-p="15"] { --v: .15; }
+.blog-grafico__barra[data-p="20"] { --v: .2; }
+.blog-grafico__barra[data-p="25"] { --v: .25; }
+.blog-grafico__barra[data-p="30"] { --v: .3; }
+.blog-grafico__barra[data-p="35"] { --v: .35; }
+.blog-grafico__barra[data-p="40"] { --v: .4; }
+.blog-grafico__barra[data-p="45"] { --v: .45; }
+.blog-grafico__barra[data-p="50"] { --v: .5; }
+.blog-grafico__barra[data-p="55"] { --v: .55; }
+.blog-grafico__barra[data-p="60"] { --v: .6; }
+.blog-grafico__barra[data-p="65"] { --v: .65; }
+.blog-grafico__barra[data-p="70"] { --v: .7; }
+.blog-grafico__barra[data-p="75"] { --v: .75; }
+.blog-grafico__barra[data-p="80"] { --v: .8; }
+.blog-grafico__barra[data-p="85"] { --v: .85; }
+.blog-grafico__barra[data-p="90"] { --v: .9; }
+.blog-grafico__barra[data-p="95"] { --v: .95; }
+.blog-grafico__barra[data-p="100"] { --v: 1; }
+.blog-grafico__valores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  font-size: .9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.blog-grafico__nota {
+  margin: 12px 0 0;
+  color: var(--laift-muted, #5b6478);
+  font-size: .875rem;
+  line-height: 1.5;
+}
+@media (min-width: 600px) {
+  .blog-grafico__linha {
+    grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr) minmax(4.5rem, auto);
+    align-items: center;
+    gap: 12px;
+  }
+  .blog-grafico__valores { justify-content: flex-end; text-align: right; }
+}
+.blog-tabela-dados {
+  max-width: 100%;
+  margin: 16px 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-radius: 18px;
+  background: var(--laift-bg, #fafaf7);
+  box-shadow: inset 0 0 0 1px var(--hairline, rgba(20, 30, 50, .09));
+}
+.blog-tabela-dados:focus-visible { outline: 3px solid var(--laift-focus-color, #0f6f62); outline-offset: 2px; }
+.blog-tabela-dados table {
+  width: 100%;
+  min-width: 22rem;
+  border-collapse: collapse;
+  font-size: .9375rem;
+  font-variant-numeric: tabular-nums;
+}
+.blog-tabela-dados caption {
+  caption-side: top;
+  padding: 14px 16px 8px;
+  text-align: left;
+  font-weight: 800;
+}
+.blog-tabela-dados th,
+.blog-tabela-dados td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--hairline, rgba(20, 30, 50, .09));
+  text-align: left;
+  vertical-align: top;
+}
+.blog-tabela-dados thead th { background: var(--laift-surface-alt, #edebe5); font-weight: 700; }
+.blog-tabela-dados tbody th {
+  position: sticky;
+  left: 0;
+  background: var(--laift-bg, #fafaf7);
+  font-weight: 600;
+}
+.blog-tabela-dados td[data-num] { white-space: nowrap; text-align: right; }
+.blog-tabela-dados__nota {
+  margin: 0;
+  padding: 10px 16px 14px;
+  color: var(--laift-muted, #5b6478);
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+/* ---------- 6. Deck: mitos e verdades, cartas com frente e verso ---------- */
+.blog-deck { margin: 1.5em 0; }
+.blog-deck__instrucao { margin: 0 0 12px; color: var(--laift-muted, #5b6478); }
+.blog-deck__filtros { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.blog-deck__placar {
+  margin: 0 0 12px;
+  color: var(--campanha-acento, #a61d56);
+  font-size: .9375rem;
+  font-weight: 700;
+}
+.blog-deck__cartas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 640px) {
+  .blog-deck__cartas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.blog-carta {
+  --veredito: var(--laift-border-strong, #b8c2d6);
+  --veredito-soft: var(--laift-surface-alt, #edebe5);
+  min-width: 0;
+  border-radius: 22px;
+  background: var(--laift-surface, #f4f3ef);
+  box-shadow: inset 4px 0 0 var(--veredito), var(--elev-1, 0 1px 2px rgba(20, 30, 50, .06));
+}
+.blog-carta[data-veredito="mito"] {
+  --veredito: var(--laift-danger, #b3261e);
+  --veredito-soft: var(--laift-danger-soft, #fbe6e4);
+}
+.blog-carta[data-veredito="verdade"] {
+  --veredito: var(--laift-success, #1e6b3c);
+  --veredito-soft: var(--laift-success-soft, #e3f6e9);
+}
+.blog-carta[data-veredito="depende"] {
+  --veredito: var(--laift-warning, #8a5a00);
+  --veredito-soft: var(--laift-warning-soft, #fff4d6);
+}
+/* A perspectiva fica no details, pai do verso: o giro é só transform e opacity. */
+.blog-carta__det { perspective: 800px; }
+.blog-carta__frente {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  min-height: var(--laift-touch, 44px);
+  padding: 16px 18px;
+  border-radius: 22px;
+  cursor: pointer;
+  list-style: none;
+}
+.blog-carta__frente::-webkit-details-marker { display: none; }
+.blog-carta__pergunta {
+  flex: 1 0 100%;
+  color: var(--laift-muted, #5b6478);
+  font-size: .8125rem;
+  font-weight: 700;
+}
+.blog-carta__frase {
+  flex: 1 1 10rem;
+  min-width: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.blog-carta__dica { flex: none; color: var(--campanha-acento, #a61d56); font-size: .875rem; font-weight: 700; }
+/* Seta da carta: gira só com transform. Aberta, some o texto "Ver resposta". */
+.blog-carta__frente::after {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin: 0 4px 4px 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.blog-carta__det[open] > .blog-carta__frente::after { margin-top: 4px; transform: rotate(225deg); }
+.blog-carta__det[open] > .blog-carta__frente .blog-carta__dica { display: none; }
+.blog-carta__verso { padding: 0 18px 18px; transform-origin: 50% 0; }
+.blog-carta__veredito {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin: 0 0 10px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--veredito-soft);
+  color: var(--veredito);
+  font-size: .875rem;
+  font-weight: 800;
+}
+.blog-carta__explicacao { margin: 0; line-height: 1.6; overflow-wrap: anywhere; }
+
+/* ---------- 7. Comparativo: tabela no desktop, cartões abaixo de 600 px ---------- */
+.blog-comparativo { margin: 1.5em 0; }
+.blog-comparativo__tabela {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--laift-bg, #fafaf7);
+  box-shadow: inset 0 0 0 1px var(--hairline, rgba(20, 30, 50, .09));
+  font-size: .9375rem;
+}
+.blog-comparativo__tabela th,
+.blog-comparativo__tabela td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--hairline, rgba(20, 30, 50, .09));
+  text-align: left;
+  vertical-align: top;
+}
+.blog-comparativo__tabela thead th { background: var(--laift-surface-alt, #edebe5); font-size: .875rem; font-weight: 800; }
+.blog-comparativo__tabela thead th[data-col="agora"] {
+  background: var(--campanha-suave, #fce7f3);
+  color: var(--campanha-acento, #a61d56);
+}
+.blog-comparativo__tabela tbody th { width: 28%; font-weight: 700; }
+.blog-comparativo__tabela td[data-col="antes"] { color: var(--laift-muted, #5b6478); }
+.blog-comparativo__tabela td[data-col="agora"] { font-weight: 600; }
+@media (max-width: 599px) {
+  .blog-comparativo__tabela,
+  .blog-comparativo__tabela tbody { display: block; overflow: visible; background: none; box-shadow: none; }
+  /* O cabeçalho sai da tela; os rótulos vêm de data-rotulo. */
+  .blog-comparativo__tabela thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  .blog-comparativo__tabela tr {
+    display: block;
+    margin: 0 0 12px;
+    padding: 12px 16px 4px;
+    border-radius: 18px;
+    background: var(--laift-bg, #fafaf7);
+    box-shadow: inset 0 0 0 1px var(--hairline, rgba(20, 30, 50, .09));
+  }
+  .blog-comparativo__tabela th,
+  .blog-comparativo__tabela td { display: block; padding: 4px 0 8px; border: 0; }
+  .blog-comparativo__tabela tbody th { width: auto; padding-top: 0; font-size: 1.0625rem; font-weight: 800; }
+  .blog-comparativo__tabela td::before {
+    content: attr(data-rotulo);
+    display: block;
+    margin-bottom: 2px;
+    color: var(--laift-muted, #5b6478);
+    font-size: .8125rem;
+    font-weight: 700;
+  }
+  .blog-comparativo__tabela td[data-col="agora"]::before { color: var(--campanha-acento, #a61d56); }
+}
+
+/* ---------- 8. Guia: cartões com campos rotulados ---------- */
+.blog-guia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 12px;
+  margin: 0 0 1.5em;
+  padding: 0;
+  list-style: none;
+}
+.blog-guia__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-width: 0;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--laift-surface, #f4f3ef);
+  box-shadow: var(--elev-1, 0 1px 2px rgba(20, 30, 50, .06));
+}
+.blog-guia__icone {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border-radius: 14px;
+  background: var(--campanha-suave, #fce7f3);
+  color: var(--campanha-acento, #a61d56);
+}
+h3.blog-guia__nome {
+  flex: 1 1 8rem;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.blog-guia__campos { flex: 0 0 100%; display: grid; gap: 10px; margin: 0; }
+.blog-guia__campos > div { display: grid; gap: 2px; }
+.blog-guia__campos dt { color: var(--laift-muted, #5b6478); font-size: .8125rem; font-weight: 700; }
+.blog-guia__campos dd { margin: 0; line-height: 1.55; overflow-wrap: anywhere; }
+.blog-guia__fonte { flex: 0 0 100%; margin: 0; color: var(--laift-muted, #5b6478); font-size: .8125rem; }
+
+/* ---------- 9. Faixas: públicos por fase da vida (sanfona) ---------- */
+.blog-faixas { display: grid; gap: 10px; margin: 1.5em 0; }
+.blog-faixas__titulo { margin-bottom: 4px; }
+.blog-faixa {
+  min-width: 0;
+  border-radius: 18px;
+  background: var(--laift-surface, #f4f3ef);
+  box-shadow: inset 4px 0 0 var(--campanha-acento, #a61d56);
+}
+.blog-faixa__resumo {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  min-height: var(--laift-touch, 44px);
+  padding: 12px 52px 12px 18px;
+  border-radius: 18px;
+  cursor: pointer;
+  list-style: none;
+}
+.blog-faixa__resumo::-webkit-details-marker { display: none; }
+.blog-faixa__rotulo { font-size: 1.0625rem; font-weight: 800; line-height: 1.3; }
+.blog-faixa__idade {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--laift-surface-alt, #edebe5);
+  color: var(--laift-muted, #5b6478);
+  font-size: .8125rem;
+  font-weight: 600;
+}
+/* Seta da sanfona: gira só com transform. */
+.blog-faixa__resumo::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 22px;
+  width: 10px;
+  height: 10px;
+  margin-top: -6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.blog-faixa[open] > .blog-faixa__resumo::after { transform: rotate(225deg); }
+.blog-faixa__corpo { padding: 0 18px 16px; }
+.blog-faixa__corpo > p { margin: 0 0 8px; line-height: 1.6; }
+.blog-faixa__corpo .blog-lista { margin-bottom: 0; }
+
+/* ---------- 10. Hábitos: emoji grande e selo do efeito ---------- */
+.blog-habitos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 12px;
+  margin: 0 0 1.5em;
+  padding: 0;
+  list-style: none;
+}
+.blog-habito {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--laift-surface, #f4f3ef);
+  box-shadow: var(--elev-1, 0 1px 2px rgba(20, 30, 50, .06));
+}
+.blog-habito__emoji { margin-bottom: 4px; font-size: 2.5rem; line-height: 1; }
+h3.blog-habito__titulo { margin: 0; font-size: 1.0625rem; font-weight: 800; line-height: 1.3; }
+.blog-habito__efeito {
+  align-self: flex-start;
+  min-height: 24px;
+  margin: 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--efeito-soft, var(--laift-primary-soft, #e1f4f0));
+  color: var(--efeito, var(--laift-primary, #0f6f62));
+  font-size: .8125rem;
+  font-weight: 700;
+}
+.blog-habito__texto { margin: 0; line-height: 1.6; }
+.blog-habito[data-efeito="protege"] {
+  --efeito: var(--laift-success, #1e6b3c);
+  --efeito-soft: var(--laift-success-soft, #e3f6e9);
+}
+.blog-habito[data-efeito="reduz-risco"] {
+  --efeito: var(--laift-info, #1d5fb8);
+  --efeito-soft: var(--laift-info-soft, #e5effc);
+}
+.blog-habito[data-efeito="apoia-tratamento"] {
+  --efeito: var(--laift-admin, #8a3b12);
+  --efeito-soft: var(--laift-admin-soft, #fdece0);
+}
+.blog-habito[data-efeito="evitar"] {
+  --efeito: var(--laift-danger, #b3261e);
+  --efeito-soft: var(--laift-danger-soft, #fbe6e4);
+}
+
+/* ---------- 11. Referências e sobrescrito de fonte ---------- */
+.blog-referencias { margin: 2em 0 0; padding-left: 1.6em; font-size: .9375rem; line-height: 1.55; }
+.blog-referencia { margin: 0 0 12px; padding: 6px 10px; border-radius: 12px; scroll-margin-top: 96px; }
+.blog-referencia::marker { color: var(--campanha-acento, #a61d56); font-weight: 800; }
+/* Destino de #ref-<id>: fundo e filete, não só cor. */
+.blog-referencia:target {
+  background: var(--campanha-suave, #fce7f3);
+  box-shadow: inset 4px 0 0 var(--campanha-acento, #a61d56);
+}
+.blog-referencia__titulo { font-weight: 700; }
+.blog-referencia__acesso { display: block; margin-top: 4px; color: var(--laift-muted, #5b6478); font-size: .8125rem; }
+/* Links do texto nas publicações usam o acento da série (contraste igual ao dos textos). */
+.blog-artigo[data-serie="campanhas"] a:not([class]) { color: var(--campanha-acento, #a61d56); }
+.blog-ref { font-size: .75em; line-height: 0; vertical-align: super; white-space: nowrap; }
+/* Alvo de toque do número: o ::before amplia a área para cerca de 44 px sem mudar a linha. */
+.blog-page .blog-ref a {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0 3px;
+  color: var(--campanha-acento, #a61d56);
+  font-weight: 800;
+  text-decoration: none;
+}
+.blog-page .blog-ref a::before { content: ""; position: absolute; top: -22px; bottom: -22px; left: -16px; right: -16px; }
+
+/* ---------- 12. Destaque do feed (campanha do mês) ---------- */
+.blog-campanha-destaque {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  min-width: 0;
+  margin: 16px 0;
+  padding: 22px 20px;
+  border-radius: 28px;
+  background: var(--campanha-suave, #fce7f3);
+  color: var(--laift-text, #1c2333);
+  box-shadow: var(--elev-1, 0 1px 2px rgba(20, 30, 50, .06));
+}
+.blog-campanha-destaque__icone {
+  width: 56px;
+  height: 56px;
+  padding: 12px;
+  border-radius: 20px;
+  background: var(--laift-bg, #fafaf7);
+  color: var(--campanha-acento, #a61d56);
+}
+.blog-campanha-destaque__selo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  margin: 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--campanha-acento, #a61d56);
+  color: var(--campanha-on, #ffffff);
+  font-size: .8125rem;
+  font-weight: 700;
+}
+h2.blog-campanha-destaque__titulo {
+  margin: 2px 0 0;
+  font-size: clamp(1.25rem, 1.1rem + .8vw, 1.625rem);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+.blog-campanha-destaque__resumo { margin: 0; color: var(--laift-muted, #5b6478); line-height: 1.55; }
+.blog-page .blog-campanha-destaque a.blog-botao {
+  margin-top: 6px;
+  background: var(--campanha-acento, #a61d56);
+  color: var(--campanha-on, #ffffff);
+}
+
+/* ---------- 13. Movimento: só fora de movimento reduzido ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .blog-grafico__barra { transition: transform var(--dur-slow, 480ms) var(--ease-out, ease-out); }
+  .blog-carta__frente::after,
+  .blog-faixa__resumo::after { transition: transform var(--dur-fast, 180ms) var(--ease-out, ease-out); }
+  .blog-carta__det[open] > .blog-carta__verso {
+    animation: campanha-gira var(--dur-base, 280ms) var(--ease-out, ease-out) both;
+  }
+}
+@keyframes campanha-gira {
+  from { opacity: 0; transform: rotateX(-80deg); }
+  to { opacity: 1; transform: rotateX(0); }
+}
+
+/* ---------- 14. Toque e hover: :hover só com ponteiro ---------- */
+.blog-carta__frente:active,
+.blog-faixa__resumo:active,
+a.blog-sumario__link:active { transform: scale(var(--press-scale, .98)); }
+@media (hover: hover) {
+  a.blog-sumario__link:not([aria-current="true"]):hover {
+    background: var(--campanha-suave, #fce7f3);
+    color: var(--campanha-acento, #a61d56);
+  }
+  .blog-carta__frente:hover { background: var(--campanha-suave, #fce7f3); }
+  .blog-faixa__resumo:hover { background: var(--laift-surface-alt, #edebe5); }
+  .blog-page .blog-campanha-destaque a.blog-botao:hover { background: var(--campanha-forte, #8f1a4f); }
+}
+
+/* ---------- 15. Movimento reduzido: nada gira; o verso aparece direto ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .blog-grafico__barra,
+  .blog-carta__frente::after,
+  .blog-faixa__resumo::after { transition: none; }
+  .blog-carta__det[open] > .blog-carta__verso { animation: none; opacity: 1; transform: none; }
+}

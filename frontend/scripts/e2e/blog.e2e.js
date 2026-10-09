@@ -12,7 +12,9 @@ const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
 
 const ALVO_MINIMO_PX = 44;
-const TOTAL_POSTS = 18;
+const TOTAL_POSTS = 19;
+const POSTS_DA_SERIE_CAMPANHAS = 1;
+const POST_DA_CAMPANHA = '/blog/outubro-rosa-2026.html';
 const POSTS_DA_SERIE_MODULOS = 11;
 const POR_PAGINA = 6;
 const TEMPO_MAX_WELCOME_MS = 2500;
@@ -82,7 +84,7 @@ async function feed(largura, altura) {
     }
     check((await cartoes(app.page)) === TOTAL_POSTS, `${rotulo}: "Carregar mais" leva a ${TOTAL_POSTS} cards`);
     check(!(await mais.isVisible()), `${rotulo}: "Carregar mais" some quando tudo está na tela`);
-    check(/18 de 18/.test(await app.page.locator('#feed-status').textContent()), `${rotulo}: anúncio "18 de 18 posts"`);
+    check(/19 de 19/.test(await app.page.locator('#feed-status').textContent()), `${rotulo}: anúncio "19 de 19 posts"`);
 
     await app.page.locator('.blog-chip[data-filtro="modulos"]').click();
     check((await cartoes(app.page)) <= POSTS_DA_SERIE_MODULOS && Number(await app.page.locator('#feed article.blog-card').first().getAttribute('aria-setsize')) === POSTS_DA_SERIE_MODULOS,
@@ -94,6 +96,80 @@ async function feed(largura, altura) {
     check(await app.page.locator('#modal a[href="/blog/modulo-farmacologia.html"]').count() === 1, `${rotulo}: modal liga ao post do módulo`);
     await app.page.keyboard.press('Escape');
     check(await app.page.locator('#modal[open]').count() === 0, `${rotulo}: Esc fecha o modal`);
+
+    await app.page.locator('.blog-chip[data-filtro="campanhas"]').click();
+    check((await cartoes(app.page)) === POSTS_DA_SERIE_CAMPANHAS
+      && Number(await app.page.locator('#feed article.blog-card').first().getAttribute('aria-setsize')) === POSTS_DA_SERIE_CAMPANHAS,
+    `${rotulo}: chip "Publicações" mostra ${POSTS_DA_SERIE_CAMPANHAS} card e aria-setsize ${POSTS_DA_SERIE_CAMPANHAS}`);
+    check((await app.page.locator('#feed article.blog-card[data-serie="campanhas"]').count()) === POSTS_DA_SERIE_CAMPANHAS,
+      `${rotulo}: chip "Publicações" só mostra cards da série campanhas`);
+    check(/1 de 1/.test(await app.page.locator('#feed-status').textContent()), `${rotulo}: anúncio "1 de 1 post" no filtro Publicações`);
+
+    await axeGate(app.page, `${rotulo}: axe`);
+    await checarSaude(app, respostas, rotulo);
+  } finally {
+    await app.close();
+  }
+}
+
+/** Destaque da campanha do mês: hash #filtro=campanhas ativa o chip, a seção aparece e leva ao post. */
+async function destaqueDaCampanha(largura, altura) {
+  const app = await startApp({ viewport: { width: largura, height: altura } });
+  const respostas = [];
+  const rotulo = `blog.html destaque ${largura}px`;
+  try {
+    await vigiar(app, respostas);
+    await app.page.goto(app.baseUrl + 'blog.html#filtro=campanhas', { waitUntil: 'domcontentloaded' });
+    await app.page.waitForSelector('#welcome:not([hidden])', { timeout: 2000 }).catch(() => {});
+    await app.page.waitForSelector('#welcome', { state: 'detached', timeout: TEMPO_MAX_WELCOME_MS });
+    await app.page.waitForLoadState('networkidle');
+    await app.page.waitForSelector('#feed article.blog-card', { timeout: 5000 });
+
+    check((await app.page.locator('.blog-chip[data-filtro="campanhas"]').getAttribute('aria-pressed')) === 'true', `${rotulo}: #filtro=campanhas ativa o chip "Publicações"`);
+    check((await app.page.locator('#feed article.blog-card').count()) === POSTS_DA_SERIE_CAMPANHAS, `${rotulo}: #filtro=campanhas deixa ${POSTS_DA_SERIE_CAMPANHAS} card`);
+
+    const destaque = app.page.locator('#campanha');
+    await destaque.waitFor({ state: 'visible', timeout: 5000 });
+    check(await destaque.isVisible(), `${rotulo}: destaque "#campanha" visível`);
+    const titulo = ((await app.page.locator('.blog-campanha-destaque__titulo').textContent()) || '').trim();
+    check(titulo.length > 0, `${rotulo}: destaque com título`);
+    const link = app.page.locator('.blog-campanha-destaque__link');
+    check((await link.getAttribute('href')) === POST_DA_CAMPANHA, `${rotulo}: destaque aponta para ${POST_DA_CAMPANHA}`);
+
+    await link.click();
+    await app.page.waitForURL('**' + POST_DA_CAMPANHA, { timeout: 5000 });
+    check(new URL(app.page.url()).pathname === POST_DA_CAMPANHA, `${rotulo}: clicar no destaque abre o post da campanha`);
+    check((await app.page.locator('h1').count()) === 1, `${rotulo}: post da campanha tem 1 h1`);
+  } finally {
+    await app.close();
+  }
+}
+
+/** Página 404 do blog: noindex, dois atalhos (plataforma e Instagram em nova aba), texto educado, axe, sem CSP. */
+async function pagina404(largura, altura) {
+  const app = await startApp({ viewport: { width: largura, height: altura } });
+  const respostas = [];
+  const rotulo = `blog/404.html ${largura}px`;
+  try {
+    await vigiar(app, respostas);
+    await app.page.goto(app.baseUrl + 'blog/404.html');
+    await app.page.waitForLoadState('networkidle');
+    check((await app.page.locator('meta[name="robots"][content*="noindex"]').count()) === 1, `${rotulo}: meta robots noindex`);
+    check((await app.page.locator('h1').count()) === 1, `${rotulo}: exatamente 1 h1`);
+    const textoH1 = ((await app.page.locator('h1').textContent()) || '').trim();
+    const textoPagina = ((await app.page.locator('main').textContent()) || '').toLowerCase();
+    check(textoH1.length > 0 && !/erro|proibido|fatal/.test(textoPagina), `${rotulo}: texto educado (sem palavras de culpa)`);
+
+    const atalhos = app.page.locator('a.blog-404__atalho');
+    check((await atalhos.count()) === 2, `${rotulo}: exatamente 2 atalhos (plataforma e Instagram)`);
+    check((await app.page.locator('a.blog-404__atalho[href="/"]').count()) === 1, `${rotulo}: atalho para a plataforma (/)`);
+    const insta = app.page.locator('a.blog-404__atalho[href="https://www.instagram.com/laift.liga"]');
+    check((await insta.count()) === 1, `${rotulo}: atalho para o Instagram da Liga`);
+    check((await insta.getAttribute('target')) === '_blank' && /noopener/.test((await insta.getAttribute('rel')) || ''), `${rotulo}: Instagram abre em nova aba com noopener`);
+    for (const atalho of await atalhos.all()) {
+      const caixa = await atalho.boundingBox();
+      check(caixa && caixa.height >= ALVO_MINIMO_PX && caixa.width >= ALVO_MINIMO_PX, `${rotulo}: atalho com alvo >= ${ALVO_MINIMO_PX} px`);
+    }
 
     await axeGate(app.page, `${rotulo}: axe`);
     await checarSaude(app, respostas, rotulo);
@@ -165,7 +241,11 @@ async function falhaDoIndice() {
 module.exports = async function blog() {
   await feed(1280, 900);
   await feed(375, 812);
+  await destaqueDaCampanha(1280, 900);
+  await destaqueDaCampanha(375, 812);
   await post(375, 812);
+  await pagina404(375, 812);
+  await pagina404(1280, 900);
   await movimentoReduzido();
   await falhaDoIndice();
 };
