@@ -1,0 +1,484 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+
+/* Páginas públicas: barra superior, voltar, botões, seções, rodapé e diálogo de instalação.
+   Só tokens de laift-tokens.css. A única cor literal é a placa da marca (#fafaf7). */
+
+/* -------------------------------------------------------------------------
+   Página e conteúdo
+   ------------------------------------------------------------------------- */
+
+.pub-pagina {
+  margin: 0;
+  background: var(--layer-0);
+  color: var(--laift-text);
+  font-family: var(--laift-font);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.pub-pagina main {
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+@media (min-width: 760px) {
+  .pub-pagina main {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Link de pular: só aparece quando recebe o foco do teclado. */
+.pub-pular {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  padding: 0 20px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.pub-pular:focus {
+  transform: none;
+}
+
+/* -------------------------------------------------------------------------
+   Barra superior (celular: duas linhas; a partir de 760 px: uma linha fixa)
+   ------------------------------------------------------------------------- */
+
+.pub-barra {
+  box-sizing: border-box;
+  display: grid;
+  padding: 0 max(16px, calc((100% - 1120px) / 2 + 16px));
+  background: var(--layer-0);
+}
+
+.pub-barra__linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding-top: 8px;
+}
+
+.pub-barra__marca {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--laift-touch);
+  color: var(--laift-text);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+.pub-barra__marca span {
+  font-size: 1.125rem;
+}
+
+.pub-barra__marca img {
+  flex: none;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 50%;
+  background: #fafaf7;
+}
+
+.pub-barra__nav {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(max-content, 1fr);
+  gap: 4px;
+  padding-bottom: 8px;
+  overflow-x: auto;
+}
+
+.pub-barra__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--laift-touch);
+  padding: 0 12px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--layer-1);
+  color: var(--laift-text);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.pub-barra .pub-barra__link--destaque {
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+}
+
+/* Voltar: primeiro item à esquerda, em pílula. */
+.pub-voltar {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--laift-touch);
+  padding: 0 16px 0 10px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--layer-2);
+  color: var(--laift-text);
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.pub-voltar__rotulo {
+  line-height: 1;
+}
+
+.pub-icone {
+  flex: none;
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Instalar: só aparece no blog, quando o aparelho aceita instalação (blog/instalar.js). */
+.pub-instalar {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--laift-touch);
+  padding: 0 16px 0 12px;
+  border: 0;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.pub-barra__link:active,
+.pub-voltar:active,
+.pub-instalar:active,
+.pub-botao:active {
+  transform: scale(0.98);
+}
+
+/* Diálogo de instalação no iPhone e iPad (criado por blog/instalar.js). */
+.pub-instalar-dialogo {
+  box-sizing: border-box;
+  width: min(92vw, 420px);
+  margin: auto;
+  padding: 24px;
+  border: 0;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+  color: var(--laift-text);
+  box-shadow: var(--elev-3);
+  font-family: var(--laift-font);
+}
+
+.pub-instalar-dialogo[open] {
+  animation: pub-dialogo-entrada var(--dur-base) var(--ease-out);
+}
+
+.pub-instalar-dialogo::backdrop {
+  background: var(--laift-overlay);
+}
+
+.pub-instalar-dialogo h2 {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.pub-instalar-dialogo ol {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding-left: 20px;
+}
+
+.pub-instalar-dialogo .pub-botao {
+  width: 100%;
+}
+
+@keyframes pub-dialogo-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-sm));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Seções, textos e links
+   ------------------------------------------------------------------------- */
+
+.pub-sec {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 20px;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+  color: var(--laift-text);
+  box-shadow: var(--elev-1);
+}
+
+@media (min-width: 760px) {
+  .pub-sec {
+    padding: 32px;
+  }
+}
+
+/* :where() mantém estas regras de base com especificidade zero: classes de componente vencem. */
+:where(.pub-sec) h2 {
+  margin: 0 0 12px;
+  font-size: 1.375rem;
+  line-height: 1.25;
+}
+
+:where(.pub-sec) h3 {
+  margin: 16px 0 8px;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+:where(.pub-sec) p {
+  margin: 0 0 12px;
+}
+
+:where(.pub-sec) p:last-child {
+  margin-bottom: 0;
+}
+
+:where(.pub-sec) ul,
+:where(.pub-sec) ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+:where(.pub-sec) a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  color: var(--laift-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------------
+   Botões
+   ------------------------------------------------------------------------- */
+
+.pub-botao {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--laift-touch);
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--laift-radius-pill);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.pub-botao--primario {
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+}
+
+.pub-botao--secundario {
+  background: var(--layer-2);
+  color: var(--laift-text);
+}
+
+/* -------------------------------------------------------------------------
+   Estado (inscrições abertas, fechadas ou erro)
+   ------------------------------------------------------------------------- */
+
+.pub-status {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: var(--laift-radius-pill);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.pub-status[data-estado="fechado"] {
+  background: var(--layer-2);
+  color: var(--laift-muted);
+}
+
+.pub-status[data-estado="aberto"] {
+  background: var(--laift-primary-soft);
+  color: var(--laift-primary);
+}
+
+.pub-status[data-estado="erro"] {
+  background: var(--laift-danger-soft);
+  color: var(--laift-danger);
+}
+
+/* -------------------------------------------------------------------------
+   Rodapé
+   ------------------------------------------------------------------------- */
+
+.pub-rodape {
+  box-sizing: border-box;
+  display: grid;
+  gap: 8px;
+  max-width: 1120px;
+  margin: 16px auto 0;
+  padding: 24px 16px calc(32px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--laift-border);
+  color: var(--laift-muted);
+  font-size: 0.875rem;
+}
+
+@media (min-width: 760px) {
+  .pub-rodape {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+.pub-rodape p {
+  margin: 0;
+}
+
+.pub-rodape__marca {
+  color: var(--laift-text);
+  font-weight: 700;
+}
+
+.pub-rodape__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pub-rodape a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  color: var(--laift-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------------
+   Estados em hover: só com ponteiro de verdade
+   ------------------------------------------------------------------------- */
+
+@media (hover: hover) {
+  .pub-barra__link:hover {
+    background: var(--layer-2);
+  }
+
+  .pub-barra .pub-barra__link--destaque:hover {
+    background: var(--laift-primary-strong);
+    color: var(--laift-on-primary);
+  }
+
+  .pub-voltar:hover {
+    background: var(--layer-3);
+  }
+
+  .pub-instalar:hover,
+  .pub-botao--primario:hover {
+    background: var(--laift-primary-strong);
+  }
+
+  .pub-botao--secundario:hover {
+    background: var(--layer-3);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Barra fixa a partir de 760 px: uma linha de 64 px com véu
+   ------------------------------------------------------------------------- */
+
+@media (min-width: 760px) {
+  .pub-barra {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    min-height: 64px;
+    background: color-mix(in srgb, var(--layer-0) 92%, transparent);
+  }
+
+  @supports (backdrop-filter: blur(1px)) {
+    .pub-barra {
+      backdrop-filter: blur(12px);
+    }
+  }
+
+  .pub-barra__linha {
+    display: flex;
+    gap: 12px;
+    min-height: 64px;
+    padding-top: 0;
+  }
+
+  .pub-barra__nav {
+    grid-auto-columns: max-content;
+    justify-content: end;
+    padding-bottom: 0;
+  }
+}
+
+/* A regra de [hidden] vence display próprio (ex.: .pub-botao { display: inline-flex }). */
+.pub-pagina [hidden],
+.pub-barra [hidden],
+[data-instalar][hidden] {
+  display: none !important;
+}

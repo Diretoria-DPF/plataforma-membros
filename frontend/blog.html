@@ -2,10 +2,17 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#0f6f62">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/blog/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blog LAIFT">
 <title>Conheça a LAIFT · Blog</title>
 <meta name="description" content="Conheça a LAIFT, a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: o blog sobre a Liga e sobre a plataforma de membros.">
 <link rel="canonical" href="https://laift.com.br/blog">
@@ -15,6 +22,7 @@
 <meta property="og:url" content="https://laift.com.br/blog">
 <meta property="og:image" content="https://laift.com.br/blog/og-default.jpg">
 <link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
+<link rel="stylesheet" href="/publico.css">
 <link rel="stylesheet" href="/blog.css">
 <link rel="stylesheet" href="/blog-campanha.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Conheça a LAIFT","url":"https://laift.com.br/blog","description":"O blog da Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia e da plataforma de membros.","inLanguage":"pt-BR","publisher":{"@type":"Organization","name":"LAIFT","url":"https://laift.com.br"}}</script>
@@ -28,11 +36,20 @@
   <button class="blog-welcome__pular" type="button">Pular</button>
 </div>
 
-<header class="blog-topo">
-  <a class="blog-topo__marca" href="/blog.html"><img src="/modulos/cracha/laift-marca.png" alt="LAIFT" width="40" height="40"><span>Blog LAIFT</span></a>
-  <nav class="blog-topo__contatos" aria-label="Contato">
-    <a class="blog-topo__contato" href="https://www.instagram.com/laift.liga" target="_blank" rel="noopener noreferrer" aria-label="Instagram da LAIFT, abre em nova aba"><svg class="blog-icone" aria-hidden="true" focusable="false"><use href="/blog/icones.svg#ig"></use></svg><span>Instagram</span></a>
-    <a class="blog-topo__contato" href="mailto:laiftligauninassau@gmail.com" aria-label="Enviar e-mail para a LAIFT"><svg class="blog-icone" aria-hidden="true" focusable="false"><use href="/blog/icones.svg#envelope"></use></svg><span>E-mail</span></a>
+<header class="pub-barra">
+  <div class="pub-barra__linha">
+    <a class="pub-voltar" href="/" data-history-back aria-label="Voltar à tela anterior">
+      <svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
+      <span class="pub-voltar__rotulo">Voltar</span>
+    </a>
+    <a class="pub-barra__marca" href="/blog.html"><img src="/modulos/cracha/laift-marca.png" alt="" width="40" height="40"><span>Blog LAIFT</span></a>
+    <button class="pub-instalar" type="button" data-instalar hidden>
+      <svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg><span>Instalar</span></button>
+  </div>
+  <nav class="pub-barra__nav" aria-label="Plataforma">
+    <a class="pub-barra__link" href="/"><svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Início</span></a>
+    <a class="pub-barra__link" href="/#entrar"><span>Entrar</span></a>
+    <a class="pub-barra__link pub-barra__link--destaque" href="/#cadastro"><span>Cadastrar</span></a>
   </nav>
 </header>
 
@@ -41,8 +58,9 @@
     <h1>Conheça a LAIFT</h1>
     <p class="blog-hero__texto">Este é o espaço da LAIFT, a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Aqui você conhece a Liga e a plataforma de membros, e entende o que cada módulo faz.</p>
     <div class="blog-hero__acoes">
-      <a class="blog-botao" href="/blog/processo-seletivo-2026.html">Processo seletivo</a>
+      <a class="blog-botao" href="/processo-seletivo.html">Processo seletivo</a>
       <a class="blog-botao blog-botao--secundario" href="#mapa">Mapa da plataforma</a>
+      <button class="blog-botao blog-botao--secundario" type="button" data-instalar hidden>Instalar o blog</button>
     </div>
   </section>
 
@@ -104,5 +122,7 @@
 
 <script type="module" src="/blog/welcome.js"></script>
 <script type="module" src="/blog/feed.js"></script>
+<script src="/static-page.js" defer></script>
+<script src="/blog/instalar.js" defer></script>
 </body>
 </html>

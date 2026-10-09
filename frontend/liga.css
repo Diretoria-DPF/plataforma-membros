@@ -3,397 +3,865 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-/* =========================================================================
-   liga.css — página pública da Liga (liga.html), variante A · Institucional.
-   Origem: docs/liga/IDENTIDADE_VISUAL.md e docs/liga/previa/liga-previa.html.
-   Cores em --liga-* com o mesmo mecanismo de tema de laift-tokens.css: o
-   claro vale em .liga-page; o escuro vale em html[data-theme="dark"] e, sem
-   atributo, na preferência do sistema. Sem bordas de card: a separação é por
-   tom (--layer-*), raio de 24 a 32 px e sombra de luz (--elev-*).
-   Movimento: só transform e opacity, com --dur-* e --ease-*. O estado final
-   de movimento reduzido vem do bloco único de laift-tokens.css.
-   ========================================================================= */
 
-.liga-page {
-  --liga-page: #fafaf7;          /* camada 0: página */
-  --liga-surface: #f4f3ef;       /* camada 1: seções e topo */
-  --liga-surface-2: #edebe5;     /* camada 2: blocos dentro das seções */
-  --liga-text: #1c2333;
-  --liga-muted: #5b6478;
-  --liga-accent: #0f6f62;        /* marca */
-  --liga-on-accent: #ffffff;
-  --liga-accent-soft: #e1f4f0;
-  --liga-danger: #b3261e;        /* eliminatória */
-  --liga-danger-soft: #fbe6e4;
-  --liga-plate: #fafaf7;         /* placa fixa da marca, nos dois temas */
-  margin: 0;
-  background: var(--liga-page);
-  color: var(--liga-text);
-  font-family: var(--laift-font);
-  font-size: .9375rem;
-  line-height: 1.45;
-}
+/*
+ * liga.css · identidade digital da Liga, página "Conheça a LAIFT" (liga.html).
+ *
+ * Mapa de seções (marcação em CONTRATO §2 e §6):
+ *   .lp-secoes        navegação fixa da página, chips roláveis
+ *   .lp-hero          topo: sigla, nome, lema, oferta, ações e marca
+ *   .lp-cards         quem somos: carrossel no celular, grade no desktop
+ *   .lp-areas         áreas de interesse
+ *   .lp-funciona      como funciona: compromisso, benefícios, diferencial
+ *   .lp-processo      processo seletivo: passos e Lia
+ *   .lp-edital        edital
+ *   .lp-contato       canais oficiais
+ *   .lp-instituicao   prédio, endereço e mapa carregado sob pedido
+ *   .lp-blog          avisos do blog (estilo em blog-novidade.css)
+ *
+ * Pontos de quebra (mobile first): 600 px, 760 px, 900 px, 1024 px.
+ *   600   áreas e benefícios em 2 colunas; Lia do processo aparece
+ *   760   chips com mais respiro; passos em 3 colunas; contatos em 3; mapa 16:9
+ *   900   hero em 2 colunas (texto | marca); funciona e instituição em 2 colunas
+ *   1024  cartões e áreas em 4 colunas, sem rolagem
+ *
+ * Só tokens de modulos/shared/laift-tokens.css. Movimento só em transform e
+ * opacity, sempre dentro de prefers-reduced-motion: no-preference.
+ */
 
-html[data-theme="dark"] .liga-page,
-html.laift-always-dark .liga-page {
-  --liga-page: #0e1114;
-  --liga-surface: #14181c;
-  --liga-surface-2: #1a1f24;
-  --liga-text: #e7ebf3;
-  --liga-muted: #9aa5bb;
-  --liga-accent: #3fcfb6;
-  --liga-on-accent: #06231e;
-  --liga-accent-soft: #10352f;
-  --liga-danger: #ff7a70;
-  --liga-danger-soft: #3a1c1c;
-}
+/* ---------- Base ---------- */
 
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]):not([data-theme="dark"]) .liga-page {
-    --liga-page: #0e1114;
-    --liga-surface: #14181c;
-    --liga-surface-2: #1a1f24;
-    --liga-text: #e7ebf3;
-    --liga-muted: #9aa5bb;
-    --liga-accent: #3fcfb6;
-    --liga-on-accent: #06231e;
-    --liga-accent-soft: #10352f;
-    --liga-danger: #ff7a70;
-    --liga-danger-soft: #3a1c1c;
-  }
-}
-
-/* Topo: link de volta e logo da marca em placa circular. */
-.liga-topo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 8px 16px 0;
-}
-
-.liga-topo .back-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--laift-touch);
-  padding: 0 8px;
-  color: var(--liga-accent);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.liga-topo__logo {
-  box-sizing: border-box;
-  width: 72px;
-  height: 72px;
-  padding: 4px;
-  border-radius: 50%;
-  background: var(--liga-plate);
-}
-
-/* Conteúdo: margem de 16 px; espaço no fim para a barra de inscrição fixa. */
-.liga-page main {
+.lp-conteudo {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 16px 16px calc(96px + env(safe-area-inset-bottom, 0px));
 }
 
-.liga-sec {
+.lp-conteudo > * {
   min-width: 0;
-  padding: 20px;
-  border-radius: 28px;
-  background: var(--liga-surface);
-  color: var(--liga-text);
-  box-shadow: var(--elev-1);
 }
 
-.liga-sec h2 {
-  margin: 0 0 12px;
-  font-size: 1.125rem;
-  line-height: 1.25;
+.lp-conteudo > [id] {
+  scroll-margin-top: 136px;
 }
 
-.liga-sec h3 {
-  margin: 16px 0 8px;
-  font-size: 1.0625rem;
-}
-
-.liga-sec p {
-  margin: 0 0 12px;
-}
-
-.liga-sec p:last-child {
-  margin-bottom: 0;
-}
-
-.liga-sec a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--laift-touch);
-  color: var(--liga-accent);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* Hero: título e lema à esquerda, Lia à direita. */
-.liga-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "titulo lia"
-    "lema lia"
-    "status lia";
-  align-items: center;
-  gap: 12px;
-  padding: 24px 20px;
-  border-radius: 32px;
-  box-shadow: var(--elev-2);
-}
-
-.liga-hero__titulo {
-  grid-area: titulo;
-  margin: 0;
-  font-size: 1.375rem;
-  line-height: 1.2;
-}
-
-.liga-hero > .liga-hero__lema,
-.liga-hero > .liga-status {
-  margin: 0;
-}
-
-.liga-hero__lema {
-  grid-area: lema;
-  color: var(--liga-muted);
-}
-
-.liga-hero__lia {
-  grid-area: lia;
-  justify-self: center;
-  width: 96px;
-  height: auto;
-  max-width: 100%;
-}
-
-.liga-status {
-  grid-area: status;
-  justify-self: start;
+.lp-emoji {
   display: inline-block;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: var(--liga-surface-2);
-  color: var(--liga-muted);
-  font-size: .875rem;
-  font-weight: 700;
+  line-height: 1;
 }
 
-.liga-status[data-estado="aberto"] {
-  background: var(--liga-accent-soft);
-  color: var(--liga-accent);
-}
-
-.liga-status[data-estado="erro"] {
-  background: var(--liga-danger-soft);
-  color: var(--liga-danger);
-}
-
-/* Áreas: chips que quebram linha; texto sempre visível, nunca só cor. */
-.liga-areas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.lp-lead {
   margin: 0;
-  padding: 0;
-  list-style: none;
+  max-width: 64ch;
+  color: var(--laift-muted);
 }
 
-.liga-area {
-  max-width: 100%;
-  padding: 8px 16px;
-  border-radius: 24px;
-  background: var(--liga-accent-soft);
-  color: var(--liga-accent);
-  font-weight: 600;
-}
+/* ---------- Navegação da página ---------- */
 
-/* Linha do tempo: passos numerados por contador CSS, em camada 2. */
-.liga-linha {
-  counter-reset: etapa;
-  display: grid;
-  gap: 16px;
-  margin: 0;
-  padding: 20px;
-  border-radius: 28px;
-  background: var(--liga-surface-2);
-  list-style: none;
-  box-shadow: var(--elev-1);
-}
-
-.liga-etapa {
-  counter-increment: etapa;
-  position: relative;
-  min-height: 40px;
-  padding-left: 56px;
-  color: var(--liga-text);
-}
-
-.liga-etapa::before {
-  content: counter(etapa);
-  position: absolute;
+.lp-secoes {
+  position: sticky;
   top: 0;
-  left: 0;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--liga-accent);
-  color: var(--liga-on-accent);
-  font-weight: 800;
-}
-
-.liga-etapa__tag {
-  display: inline-block;
-  margin-top: 4px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: var(--liga-danger-soft);
-  color: var(--liga-danger);
-  font-size: .75rem;
-  font-weight: 700;
-}
-
-.liga-etapa [data-ciclo-data] {
-  display: block;
-  margin-top: 2px;
-  color: var(--liga-muted);
-  font-size: .875rem;
-}
-
-/* Perguntas frequentes: resumo com alvo de 44 px e indicador que gira. */
-.liga-faq {
-  display: grid;
-  gap: 8px;
-}
-
-.liga-faq details {
-  border-radius: 24px;
-  background: var(--liga-surface-2);
-}
-
-.liga-faq summary {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: var(--laift-touch);
-  padding: 12px 16px;
-  cursor: pointer;
-  font-weight: 600;
-  list-style: none;
-}
-
-.liga-faq summary::-webkit-details-marker {
-  display: none;
-}
-
-.liga-faq summary::after {
-  content: "";
-  flex: none;
-  margin-left: auto;
-  width: 8px;
-  height: 8px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform var(--dur-fast) var(--ease-out);
-}
-
-.liga-faq details[open] > summary::after {
-  transform: rotate(225deg);
-}
-
-.liga-faq details > :not(summary) {
-  margin: 0;
-  padding: 0 16px 16px;
-  color: var(--liga-muted);
-}
-
-/* Contato: cada canal ocupa uma linha, separada por filete. */
-.liga-contato {
-  display: grid;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.liga-contato li + li {
-  padding-top: 4px;
-  border-top: 1px solid var(--hairline);
-}
-
-/* Barra de inscrição fixa no fim da tela, com a área segura do aparelho. */
-.liga-cta {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
   z-index: 20;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-  border-radius: 24px 24px 0 0;
-  background: var(--liga-surface);
-  box-shadow: var(--elev-2);
+  background: color-mix(in srgb, var(--layer-0) 92%, transparent);
 }
 
-.liga-cta__btn,
-.liga-cta__saiba {
-  flex: 1 1 0;
-  max-width: 320px;
-  min-height: var(--laift-touch);
+.lp-secoes__lista {
+  display: flex;
+  gap: 8px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  list-style: none;
+}
+
+.lp-secoes__lista > li {
+  flex: 0 0 auto;
+}
+
+.lp-secoes__item {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  border-radius: 999px;
-  font-weight: 700;
-  text-align: center;
+  min-height: var(--laift-touch);
+  padding: 0 16px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--layer-2);
+  color: var(--laift-text);
+  font-size: 0.9375rem;
+  white-space: nowrap;
   text-decoration: none;
 }
 
-.liga-cta__btn {
-  background: var(--liga-accent);
-  color: var(--liga-on-accent);
+@media (min-width: 760px) {
+  .lp-secoes {
+    top: 64px;
+  }
+
+  .lp-secoes__lista {
+    padding-inline: 24px;
+  }
 }
 
-.liga-cta__saiba {
-  background: var(--liga-surface-2);
-  color: var(--liga-text);
-}
-
-.liga-cta__btn[hidden] {
-  display: none;
+/* Âncoras e foco não ficam escondidos atrás dos chips fixos. */
+html:has(.lp-pagina) {
+  scroll-padding-top: 72px;
 }
 
 @media (min-width: 760px) {
-  .liga-hero {
-    padding: 32px;
+  html:has(.lp-pagina) {
+    scroll-padding-top: 136px;
+  }
+}
+
+/* ---------- Hero ---------- */
+
+.lp-hero {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  align-items: center;
+  padding: 24px 20px;
+  border-radius: 32px;
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--laift-primary) 12%, transparent) 0%, transparent 60%),
+    radial-gradient(120% 90% at 100% 100%, color-mix(in srgb, var(--laift-primary) 12%, transparent) 0%, transparent 60%),
+    var(--layer-1);
+  box-shadow: var(--elev-1);
+}
+
+.lp-hero__texto {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lp-hero__titulo {
+  margin: 0;
+}
+
+.lp-hero__sigla {
+  display: block;
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--laift-primary);
+}
+
+.lp-hero__nome {
+  display: block;
+  max-width: 28ch;
+  margin-top: 8px;
+  font-size: clamp(1.125rem, 3.6vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--laift-text);
+}
+
+.lp-hero__lema,
+.lp-hero__oferta {
+  margin: 0;
+  color: var(--laift-muted);
+}
+
+.lp-hero__status {
+  margin: 0;
+}
+
+.lp-hero__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.lp-hero__local {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--laift-touch);
+  padding: 0 16px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--layer-2);
+  color: var(--laift-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lp-hero__marca {
+  order: -1;
+  justify-self: start;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  padding: 12px;
+  border-radius: 50%;
+  background: #fafaf7;
+  box-shadow: var(--elev-1);
+}
+
+.lp-hero__marca img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media (min-width: 900px) {
+  .lp-hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 32px;
+    padding: 40px 48px;
   }
 
-  .liga-hero__lia {
-    width: 128px;
+  .lp-hero__marca {
+    order: 0;
+    justify-self: end;
+    width: 168px;
+    height: 168px;
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lp-hero__texto > *,
+  .lp-hero__marca {
+    animation: lp-entrada var(--dur-slow) var(--ease-out) both;
   }
 
-  .liga-linha {
+  .lp-hero__marca {
+    animation-delay: 80ms;
+  }
+
+  .lp-hero__texto > :nth-child(2) {
+    animation-delay: 80ms;
+  }
+
+  .lp-hero__texto > :nth-child(3) {
+    animation-delay: 160ms;
+  }
+
+  .lp-hero__texto > :nth-child(4) {
+    animation-delay: 240ms;
+  }
+
+  .lp-hero__texto > :nth-child(5) {
+    animation-delay: 320ms;
+  }
+}
+
+@keyframes lp-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-md));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Quem somos: cartões verticais ---------- */
+
+.lp-cards {
+  display: flex;
+  gap: 16px;
+  min-width: 0;
+  padding: 8px 2px 16px;
+  border-radius: 28px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.lp-cards:focus-visible {
+  outline: none;
+  box-shadow: var(--laift-focus-ring);
+}
+
+.lp-card {
+  display: flex;
+  flex: 0 0 min(78%, 280px);
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  min-height: 232px;
+  padding: 24px 20px;
+  border-radius: 28px;
+  background: var(--layer-2);
+  box-shadow: var(--elev-1);
+  scroll-snap-align: start;
+}
+
+.lp-card__emoji {
+  font-size: 2.75rem;
+}
+
+.lp-card .lp-card__titulo {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.3;
+  color: var(--laift-text);
+}
+
+.lp-card__texto {
+  margin: 0;
+  color: var(--laift-muted);
+}
+
+.lp-card__link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: var(--laift-touch);
+  margin-top: auto;
+  color: var(--laift-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (min-width: 1024px) {
+  .lp-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lp-card {
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .lp-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* ---------- Áreas de interesse ---------- */
+
+.lp-areas__lista {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-area {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 14px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: 24px;
+  background: var(--layer-2);
+}
+
+.lp-area__emoji {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--layer-1);
+  font-size: 1.5rem;
+}
+
+.lp-area__nome {
+  font-weight: 700;
+  color: var(--laift-text);
+  overflow-wrap: anywhere;
+}
+
+.lp-area__texto {
+  font-size: 0.875rem;
+  color: var(--laift-muted);
+}
+
+@media (min-width: 600px) {
+  .lp-areas__lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lp-areas__lista {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Como funciona ---------- */
+
+.lp-funciona__grade {
+  display: grid;
+  gap: 16px;
+}
+
+.lp-funciona__grade > * {
+  min-width: 0;
+}
+
+.lp-compromissos__lista {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-compromisso {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 0 0 0 36px;
+}
+
+.lp-compromisso::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  width: 9px;
+  height: 16px;
+  border-right: 3px solid var(--laift-primary);
+  border-bottom: 3px solid var(--laift-primary);
+  transform: rotate(45deg);
+}
+
+.lp-compromisso__nome {
+  color: var(--laift-text);
+}
+
+.lp-compromisso__texto {
+  color: var(--laift-muted);
+}
+
+.lp-disponibilidade {
+  margin: 12px 0 0;
+  color: var(--laift-muted);
+}
+
+.lp-beneficios__lista {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-beneficio {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--layer-2);
+}
+
+.lp-beneficio__emoji {
+  font-size: 1.75rem;
+}
+
+.lp-beneficio__nome {
+  color: var(--laift-text);
+}
+
+.lp-beneficio__texto {
+  font-size: 0.9375rem;
+  color: var(--laift-muted);
+}
+
+.lp-diferencial {
+  margin: 16px 0 0;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--laift-primary-soft);
+  color: var(--laift-text);
+}
+
+.lp-diferencial h3 {
+  margin: 0 0 8px;
+}
+
+.lp-diferencial p {
+  margin: 0;
+}
+
+@media (min-width: 600px) {
+  .lp-beneficios__lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .lp-funciona__grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+/* ---------- Processo seletivo ---------- */
+
+.lp-processo.pub-sec {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+}
+
+.lp-processo__texto {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lp-processo__passos {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+
+.lp-processo__passos > li {
+  position: relative;
+  counter-increment: passo;
+  min-height: var(--laift-touch);
+  padding: 14px 16px 14px 60px;
+  border-radius: 20px;
+  background: var(--layer-2);
+}
+
+.lp-processo__passos > li::before {
+  content: counter(passo);
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+  font-weight: 800;
+}
+
+.lp-processo__lia {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .lp-processo__lia {
+    display: block;
+    justify-self: start;
+    width: 120px;
+    height: auto;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 760px) {
+  .lp-processo.pub-sec {
+    grid-template-columns: minmax(0, 1fr) 120px;
+    gap: 32px;
+  }
+
+  .lp-processo__lia {
+    justify-self: end;
+  }
+
+  .lp-processo__passos {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Edital ---------- */
+
+.lp-edital.pub-sec {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+/* ---------- Contato ---------- */
+
+.lp-contato__lista {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-contato__item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 12px 16px;
+  border-radius: 20px;
+  background: var(--layer-2);
+  color: var(--laift-text);
+  text-decoration: none;
+}
+
+.lp-contato__icone {
+  grid-row: span 2;
+  width: 28px;
+  height: 28px;
+  color: var(--laift-primary);
+}
+
+.lp-contato__rotulo {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--laift-muted);
+}
+
+.lp-contato__valor {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 760px) {
+  .lp-contato__lista {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Instituição, prédio e mapa ---------- */
+
+.lp-instituicao__grade {
+  display: grid;
+  gap: 20px;
+  align-items: center;
+}
+
+.lp-instituicao__grade > * {
+  min-width: 0;
+}
+
+.lp-instituicao__figura {
+  display: grid;
+  justify-items: center;
+  margin: 0;
+  min-width: 0;
+}
+
+.lp-instituicao__predio {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin-inline: auto;
+}
+
+.lp-instituicao__dados {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lp-instituicao__sigla {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--laift-primary);
+}
+
+.lp-instituicao__dados .lp-instituicao__nome {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.lp-instituicao__endereco {
+  margin: 0;
+  color: var(--laift-muted);
+}
+
+.lp-instituicao__site {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.lp-instituicao__site a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  font-weight: 600;
+  color: var(--laift-primary);
+}
+
+.lp-mapa__app {
+  justify-self: start;
+}
+
+.lp-mapa__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-mapa__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  padding: 0 16px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--layer-2);
+  color: var(--laift-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.lp-mapa {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin-top: 24px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--layer-2);
+  box-shadow: var(--elev-1);
+}
+
+.lp-mapa__capa {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.lp-mapa__pino {
+  font-size: 3rem;
+}
+
+.lp-mapa__aviso {
+  max-width: 42ch;
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--laift-muted);
+}
+
+.lp-mapa__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.lp-mapa__credito {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  margin: 0;
+  padding: 0 12px;
+  font-size: 0.75rem;
+  color: var(--laift-muted);
+  background: color-mix(in srgb, var(--layer-1) 88%, transparent);
+}
+
+.lp-mapa__credito a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  color: var(--laift-text);
+}
+
+/* Botão da capa: fundo próprio para não se confundir com a moldura do mapa. */
+.lp-mapa__carregar {
+  background: var(--layer-1);
+  color: var(--laift-text);
+}
+
+/* Só a capa tem altura mínima; o iframe criado depois usa a proporção do mapa. */
+.lp-mapa:has(> .lp-mapa__capa) {
+  aspect-ratio: auto;
+  min-height: 260px;
+}
+
+@media (min-width: 900px) {
+  .lp-instituicao__grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+@media (min-width: 760px) {
+  .lp-mapa {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* ---------- Toque, foco e hover ---------- */
+
+.lp-secoes__item:active,
+.lp-hero__local:active,
+.lp-card__link:active,
+.lp-contato__item:active,
+.lp-mapa__link:active,
+.lp-mapa__app:active,
+.lp-mapa__carregar:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) {
+  .lp-secoes__item:hover,
+  .lp-hero__local:hover,
+  .lp-mapa__link:hover,
+  .lp-contato__item:hover {
+    background: var(--laift-primary-soft);
+  }
+}
+
+/* ---------- Revelação ao rolar (só com animation-timeline) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .lp-conteudo > .pub-sec {
+      animation: lp-revela linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
+}
+
+@keyframes lp-revela {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-md));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
