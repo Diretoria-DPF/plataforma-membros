@@ -6,7 +6,7 @@
 import { jest } from '@jest/globals';
 import {
   evaluateFlag, rolloutBucket, isEnabled, getFlagsFor, getPublicFlagsFor, adminList, adminSet,
-  __resetFlagCacheForTests, FLAG_CACHE_TTL_MS,
+  __resetFlagCacheForTests, FLAG_CACHE_TTL_MS, PUBLIC_FLAGS,
 } from '../src/services/featureFlagService.js';
 import { routedSql, callsMatching } from './helpers/aiTestUtils.js';
 
@@ -99,6 +99,25 @@ describe('leitura com cache', () => {
       flag({ key: 'mfa_required' }), flag({ key: 'use_orchestrator' }), flag({ key: 'ux_v2_enabled' }),
     ]]]);
     expect(await getPublicFlagsFor(sql, MEMBER)).toEqual({ ux_v2_enabled: true });
+  });
+
+  test('selection_open é pública: a linha ligada chega ao navegador', async () => {
+    const sql = routedSql([['FROM feature_flags', [
+      flag({ key: 'mfa_required' }), flag({ key: 'selection_open' }),
+    ]]]);
+    expect(await getPublicFlagsFor(sql, MEMBER)).toEqual({ selection_open: true });
+  });
+
+  test('selection_open ausente do banco fica fechada: getPublicFlagsFor devolve {}', async () => {
+    const sql = routedSql([['FROM feature_flags', []]]);
+    expect(await getPublicFlagsFor(sql, MEMBER)).toEqual({});
+  });
+
+  test('PUBLIC_FLAGS inclui selection_open e não expõe flags de segurança nem internas', () => {
+    expect(PUBLIC_FLAGS).toContain('selection_open');
+    for (const key of ['mfa_required', 'minors_enabled', 'use_orchestrator', 'nvidia_fallback']) {
+      expect(PUBLIC_FLAGS).not.toContain(key);
+    }
   });
 
   test('tabela ausente (migração 016 ainda não aplicada) deixa tudo desligado, sem erro', async () => {

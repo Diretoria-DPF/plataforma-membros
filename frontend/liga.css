@@ -1,0 +1,399 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* =========================================================================
+   liga.css — página pública da Liga (liga.html), variante A · Institucional.
+   Origem: docs/liga/IDENTIDADE_VISUAL.md e docs/liga/previa/liga-previa.html.
+   Cores em --liga-* com o mesmo mecanismo de tema de laift-tokens.css: o
+   claro vale em .liga-page; o escuro vale em html[data-theme="dark"] e, sem
+   atributo, na preferência do sistema. Sem bordas de card: a separação é por
+   tom (--layer-*), raio de 24 a 32 px e sombra de luz (--elev-*).
+   Movimento: só transform e opacity, com --dur-* e --ease-*. O estado final
+   de movimento reduzido vem do bloco único de laift-tokens.css.
+   ========================================================================= */
+
+.liga-page {
+  --liga-page: #fafaf7;          /* camada 0: página */
+  --liga-surface: #f4f3ef;       /* camada 1: seções e topo */
+  --liga-surface-2: #edebe5;     /* camada 2: blocos dentro das seções */
+  --liga-text: #1c2333;
+  --liga-muted: #5b6478;
+  --liga-accent: #0f6f62;        /* marca */
+  --liga-on-accent: #ffffff;
+  --liga-accent-soft: #e1f4f0;
+  --liga-danger: #b3261e;        /* eliminatória */
+  --liga-danger-soft: #fbe6e4;
+  --liga-plate: #fafaf7;         /* placa fixa da marca, nos dois temas */
+  margin: 0;
+  background: var(--liga-page);
+  color: var(--liga-text);
+  font-family: var(--laift-font);
+  font-size: .9375rem;
+  line-height: 1.45;
+}
+
+html[data-theme="dark"] .liga-page,
+html.laift-always-dark .liga-page {
+  --liga-page: #0e1114;
+  --liga-surface: #14181c;
+  --liga-surface-2: #1a1f24;
+  --liga-text: #e7ebf3;
+  --liga-muted: #9aa5bb;
+  --liga-accent: #3fcfb6;
+  --liga-on-accent: #06231e;
+  --liga-accent-soft: #10352f;
+  --liga-danger: #ff7a70;
+  --liga-danger-soft: #3a1c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) .liga-page {
+    --liga-page: #0e1114;
+    --liga-surface: #14181c;
+    --liga-surface-2: #1a1f24;
+    --liga-text: #e7ebf3;
+    --liga-muted: #9aa5bb;
+    --liga-accent: #3fcfb6;
+    --liga-on-accent: #06231e;
+    --liga-accent-soft: #10352f;
+    --liga-danger: #ff7a70;
+    --liga-danger-soft: #3a1c1c;
+  }
+}
+
+/* Topo: link de volta e logo da marca em placa circular. */
+.liga-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 16px 0;
+}
+
+.liga-topo .back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  padding: 0 8px;
+  color: var(--liga-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.liga-topo__logo {
+  box-sizing: border-box;
+  width: 72px;
+  height: 72px;
+  padding: 4px;
+  border-radius: 50%;
+  background: var(--liga-plate);
+}
+
+/* Conteúdo: margem de 16 px; espaço no fim para a barra de inscrição fixa. */
+.liga-page main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px 16px calc(96px + env(safe-area-inset-bottom, 0px));
+}
+
+.liga-sec {
+  min-width: 0;
+  padding: 20px;
+  border-radius: 28px;
+  background: var(--liga-surface);
+  color: var(--liga-text);
+  box-shadow: var(--elev-1);
+}
+
+.liga-sec h2 {
+  margin: 0 0 12px;
+  font-size: 1.125rem;
+  line-height: 1.25;
+}
+
+.liga-sec h3 {
+  margin: 16px 0 8px;
+  font-size: 1.0625rem;
+}
+
+.liga-sec p {
+  margin: 0 0 12px;
+}
+
+.liga-sec p:last-child {
+  margin-bottom: 0;
+}
+
+.liga-sec a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  color: var(--liga-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Hero: título e lema à esquerda, Lia à direita. */
+.liga-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "titulo lia"
+    "lema lia"
+    "status lia";
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+  border-radius: 32px;
+  box-shadow: var(--elev-2);
+}
+
+.liga-hero__titulo {
+  grid-area: titulo;
+  margin: 0;
+  font-size: 1.375rem;
+  line-height: 1.2;
+}
+
+.liga-hero > .liga-hero__lema,
+.liga-hero > .liga-status {
+  margin: 0;
+}
+
+.liga-hero__lema {
+  grid-area: lema;
+  color: var(--liga-muted);
+}
+
+.liga-hero__lia {
+  grid-area: lia;
+  justify-self: center;
+  width: 96px;
+  height: auto;
+  max-width: 100%;
+}
+
+.liga-status {
+  grid-area: status;
+  justify-self: start;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--liga-surface-2);
+  color: var(--liga-muted);
+  font-size: .875rem;
+  font-weight: 700;
+}
+
+.liga-status[data-estado="aberto"] {
+  background: var(--liga-accent-soft);
+  color: var(--liga-accent);
+}
+
+.liga-status[data-estado="erro"] {
+  background: var(--liga-danger-soft);
+  color: var(--liga-danger);
+}
+
+/* Áreas: chips que quebram linha; texto sempre visível, nunca só cor. */
+.liga-areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liga-area {
+  max-width: 100%;
+  padding: 8px 16px;
+  border-radius: 24px;
+  background: var(--liga-accent-soft);
+  color: var(--liga-accent);
+  font-weight: 600;
+}
+
+/* Linha do tempo: passos numerados por contador CSS, em camada 2. */
+.liga-linha {
+  counter-reset: etapa;
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 20px;
+  border-radius: 28px;
+  background: var(--liga-surface-2);
+  list-style: none;
+  box-shadow: var(--elev-1);
+}
+
+.liga-etapa {
+  counter-increment: etapa;
+  position: relative;
+  min-height: 40px;
+  padding-left: 56px;
+  color: var(--liga-text);
+}
+
+.liga-etapa::before {
+  content: counter(etapa);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--liga-accent);
+  color: var(--liga-on-accent);
+  font-weight: 800;
+}
+
+.liga-etapa__tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--liga-danger-soft);
+  color: var(--liga-danger);
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.liga-etapa [data-ciclo-data] {
+  display: block;
+  margin-top: 2px;
+  color: var(--liga-muted);
+  font-size: .875rem;
+}
+
+/* Perguntas frequentes: resumo com alvo de 44 px e indicador que gira. */
+.liga-faq {
+  display: grid;
+  gap: 8px;
+}
+
+.liga-faq details {
+  border-radius: 24px;
+  background: var(--liga-surface-2);
+}
+
+.liga-faq summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--laift-touch);
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.liga-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.liga-faq summary::after {
+  content: "";
+  flex: none;
+  margin-left: auto;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.liga-faq details[open] > summary::after {
+  transform: rotate(225deg);
+}
+
+.liga-faq details > :not(summary) {
+  margin: 0;
+  padding: 0 16px 16px;
+  color: var(--liga-muted);
+}
+
+/* Contato: cada canal ocupa uma linha, separada por filete. */
+.liga-contato {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liga-contato li + li {
+  padding-top: 4px;
+  border-top: 1px solid var(--hairline);
+}
+
+/* Barra de inscrição fixa no fim da tela, com a área segura do aparelho. */
+.liga-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-radius: 24px 24px 0 0;
+  background: var(--liga-surface);
+  box-shadow: var(--elev-2);
+}
+
+.liga-cta__btn,
+.liga-cta__saiba {
+  flex: 1 1 0;
+  max-width: 320px;
+  min-height: var(--laift-touch);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.liga-cta__btn {
+  background: var(--liga-accent);
+  color: var(--liga-on-accent);
+}
+
+.liga-cta__saiba {
+  background: var(--liga-surface-2);
+  color: var(--liga-text);
+}
+
+.liga-cta__btn[hidden] {
+  display: none;
+}
+
+@media (min-width: 760px) {
+  .liga-hero {
+    padding: 32px;
+  }
+
+  .liga-hero__lia {
+    width: 128px;
+  }
+
+  .liga-linha {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

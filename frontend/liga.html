@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- Content-Security-Policy (docs/SECURITY.md). Sem 'unsafe-inline' em script-src e sem handler inline. Os hosts de connect-src espelham o mapa de API_BASE_URL de frontend/app.js. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A Liga · LAIFT</title>
+  <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: quem somos, áreas de interesse, etapas do processo seletivo e contato.">
+  <link rel="canonical" href="https://laift.com.br/liga">
+  <link rel="stylesheet" href="modulos/shared/laift-tokens.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="liga.css">
+</head>
+<body class="liga-page">
+  <header class="liga-topo">
+    <a class="back-link" href="./">← Início</a>
+    <img class="liga-topo__logo" src="modulos/cracha/laift-marca.png" alt="LAIFT">
+  </header>
+
+  <main id="conteudo">
+    <section id="topo" class="liga-sec liga-hero">
+      <h1 class="liga-hero__titulo">Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (LAIFT)</h1>
+      <p class="liga-hero__lema">Nada se cria, nada se perde, tudo se transforma</p>
+      <img class="liga-hero__lia" src="modulos/shared/lia/lia-estatica.svg" alt="">
+      <p id="liga-status" class="liga-status" data-estado="fechado" aria-live="polite">Inscrições fechadas no momento. Acompanhe @laift.liga.</p>
+    </section>
+
+    <section id="quem-somos" class="liga-sec">
+      <h2>Quem somos</h2>
+      <p>A LAIFT é a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Reunimos estudantes interessados em atividades de ensino, pesquisa e extensão voltadas ao desenvolvimento técnico-científico das ciências farmacológicas.</p>
+      <p>A Liga baseia-se em excelência acadêmica, interdisciplinaridade e proatividade. Nossas ações exigem comprometimento ético, análise baseada em evidências e cumprimento dos cronogramas.</p>
+      <p>Local: Campus UNINASSAU, Pituba, Salvador/BA.</p>
+    </section>
+
+    <section id="areas" class="liga-sec">
+      <h2>Áreas de interesse</h2>
+      <p>No formulário de inscrição, você marca as áreas com afinidade teórica ou prática:</p>
+      <ul class="liga-areas">
+        <li class="liga-area">Farmacologia Clínica e Terapêutica Aplicada</li>
+        <li class="liga-area">Toxicologia Forense e Química Analítica Operacional</li>
+        <li class="liga-area">Farmacocinética Avançada e Modelagem Computacional</li>
+        <li class="liga-area">Toxicologia Ambiental, Ocupacional e Ecotoxicologia</li>
+        <li class="liga-area">Escrita Científica, Pesquisa Clínica e Publicação de Artigos</li>
+        <li class="liga-area">Gestão Organizacional, Marketing Científico e Extensão Universitária</li>
+      </ul>
+    </section>
+
+    <section id="como-funciona" class="liga-sec">
+      <h2>Como funciona</h2>
+      <p>Quem ingressa na Liga assume o compromisso de:</p>
+      <ul>
+        <li><strong>Responsabilidade organizacional:</strong> cumprir os prazos e entregar as tarefas designadas com qualidade.</li>
+        <li><strong>Conduta ética e colaborativa:</strong> valorizar a diversidade de ideias, com postura respeitosa e profissional.</li>
+        <li><strong>Preservação institucional:</strong> zelar pela imagem pública da Liga e da instituição mantenedora, no ambiente digital e presencial.</li>
+        <li><strong>Confidencialidade:</strong> proteger informações científicas, estratégicas e dados pessoais de participantes dos projetos.</li>
+      </ul>
+      <p>Disponibilidade semanal mínima para atividades, reuniões e planejamento de projetos: a definir pela diretoria.</p>
+    </section>
+
+    <section id="processo-seletivo" class="liga-sec">
+      <h2>Processo seletivo</h2>
+      <p><strong>Quem pode participar:</strong> estar regularmente matriculado ou já ter concluído curso da área da saúde ou correlatos (regra em revisão pela diretoria).</p>
+      <p><strong>Vagas:</strong> a definir pela diretoria.</p>
+
+      <ol class="liga-linha">
+        <li class="liga-etapa">
+          <span class="liga-etapa__tag">Eliminatória</span>
+          <strong>Inscrição e ficha diagnóstica</strong>
+          <span>Datas: <span data-ciclo-data="inscricoes">a divulgar</span></span>
+        </li>
+        <li class="liga-etapa">
+          <span class="liga-etapa__tag">Eliminatória</span>
+          <strong>Análise de perfil e filtro crítico</strong>
+          <span>Datas: <span data-ciclo-data="analise">a divulgar</span></span>
+        </li>
+        <li class="liga-etapa">
+          <span class="liga-etapa__tag">Classificatória</span>
+          <strong>Divulgação dos selecionados</strong>
+          <span>Datas: <span data-ciclo-data="resultado">a divulgar</span></span>
+        </li>
+      </ol>
+
+      <h3>Como se inscrever</h3>
+      <ol>
+        <li>Leia o edital, que está em revisão pela diretoria (ver a seção Edital).</li>
+        <li>Quando o processo seletivo estiver aberto, o botão Inscrever-se leva ao formulário oficial.</li>
+        <li>Na última seção, descreva uma análise de cenário: um mecanismo, uma evidência ou uma notícia recente, com a sua escolha e o impacto.</li>
+        <li>Nos campos de texto livre, não escreva dados de saúde, seus ou de terceiros.</li>
+      </ol>
+
+      <div class="liga-faq">
+        <details>
+          <summary>Quem pode participar?</summary>
+          <p>Estudantes matriculados ou que já concluíram curso da área da saúde ou correlatos, como Farmácia, Biomedicina, Medicina, Nutrição e Enfermagem. A regra está em revisão pela diretoria.</p>
+        </details>
+        <details>
+          <summary>Quando são as inscrições?</summary>
+          <p>As datas de cada etapa estão na linha do tempo acima.</p>
+        </details>
+        <details>
+          <summary>Quantas vagas há?</summary>
+          <p>A definir pela diretoria.</p>
+        </details>
+        <details>
+          <summary>Como acompanho o resultado?</summary>
+          <p>A divulgação dos selecionados é feita pelos canais oficiais e por e-mail.</p>
+        </details>
+      </div>
+    </section>
+
+    <section id="edital" class="liga-sec">
+      <h2>Edital</h2>
+      <p>Edital 2026 em revisão pela diretoria.</p>
+    </section>
+
+    <section id="contato" class="liga-sec">
+      <h2>Contato</h2>
+      <ul class="liga-contato">
+        <li>E-mail: <a href="mailto:laiftligauninassau@gmail.com">laiftligauninassau@gmail.com</a></li>
+        <li>Instagram: <a href="https://www.instagram.com/laift.liga/" target="_blank" rel="noopener noreferrer">@laift.liga<span class="visually-hidden"> (abre em nova aba)</span></a></li>
+        <li>Local: Campus UNINASSAU, Pituba, Salvador/BA</li>
+      </ul>
+    </section>
+  </main>
+
+  <nav class="liga-cta" aria-label="Inscrição">
+    <a id="liga-cta-inscricao" class="liga-cta__btn" hidden target="_blank" rel="noopener noreferrer">Inscrever-se<span class="visually-hidden"> (abre em nova aba)</span></a>
+    <a class="liga-cta__saiba" href="#processo-seletivo">Saiba mais</a>
+  </nav>
+
+  <script src="static-page.js" defer></script>
+  <script src="liga.js" defer></script>
+</body>
+</html>
