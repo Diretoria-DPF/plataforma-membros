@@ -37,7 +37,6 @@ import { filterActions } from '../assistant/targets.js';
 import * as Rag from './ragService.js';
 import * as ResearchLog from './researchLogService.js';
 import * as ResearchService from './researchService.js';
-import { buildDocuments } from '../assistant/docs.js';
 import { isCacheable, normalizeQuestion } from '../ai/semanticCache.js';
 import { moderationGate } from '../assistant/moderationGate.js';
 import { looksLikeInjection, withoutOffensiveTurns } from '../assistant/moderationRules.js';
@@ -52,6 +51,10 @@ const FLAG_CACHE = 'rag_cache_enabled';
 const FLAG_RERANK = 'rag_rerank_enabled';
 const FLAG_RESEARCH = 'research_enabled';
 const KB_PROVIDER = 'kb';
+const NO_INDEX = 'sem-indice'; // versão quando o índice não pode ser lido: o registro não é usado nem gravado
+const INDEX_TTL_MS = 60 * 1000;
+const KB_VERSION_LEN = 16;
+const RERANK_SUFFIX = ':r';
 const ANSWER_MAX = 4000; // limite de assistant_messages.answer (sql/021)
 const HISTORY_TURNS = 5;
 const EVENTS_SHOWN = 3;
@@ -277,55 +280,75 @@ function usesResearchLog(identity, message, history) {
   return !!identity && identity.role === C.ROLES.MEMBER && history.length === 0 && isCacheable(message);
 }
 
-let kbVersionMemo = null;
-
-/** Versão da base, calculada uma vez por isolate: a base sai do código, então só muda com um deploy. */
-async function kbVersionOnce() {
-  if (kbVersionMemo === null) kbVersionMemo = await ResearchLog.kbVersion(buildDocuments());
-  return kbVersionMemo;
+/**
+ * Lê o índice que a busca usa (kb_chunks): hash do conteúdo, na ordem source/section. Tabela vazia = empty.
+ * Falha de leitura é logada e devolve hash null: a resposta segue, sem registro.
+ */
+async function readIndex(sql, correlationId) {
+  try {
+    const rows = await sql`SELECT content_hash FROM kb_chunks ORDER BY source, section`;
+    const hashes = (Array.isArray(rows) ? rows : []).map((r) => String(r.content_hash ?? ''));
+    if (!hashes.length) return { empty: true, hash: null };
+    return { empty: false, hash: (await Rag.sha256Hex(hashes.join(','))).slice(0, KB_VERSION_LEN) };
+  } catch (err) {
+    await Logging.logError(sql, correlationId, 'ASSISTANT_KB_INDEX_FAILED', String((err && err.message) || err), null);
+    return { empty: false, hash: null };
+  }
 }
 
-/** Resposta já registrada para esta pergunta e versão da base: sem IA, sem cota e sem busca. */
-async function fromResearchLog(sql, message) {
-  const hit = await ResearchLog.lookup(sql, { provider: KB_PROVIDER, question: message, kbVersion: await kbVersionOnce() });
+let indexMemo = null;
+
+/** Índice lido no máximo a cada 60 s por isolate (uma falha também fica esse prazo: não repete a consulta a cada pergunta). */
+async function kbIndex(sql, correlationId) {
+  const now = Date.now();
+  if (indexMemo === null || now - indexMemo.at >= INDEX_TTL_MS) indexMemo = Object.assign(await readIndex(sql, correlationId), { at: now });
+  return indexMemo;
+}
+
+/** Só para testes: esquece a leitura do índice. */
+export function __resetKbIndexForTests() {
+  indexMemo = null;
+}
+
+/** Versão do registro: hash do conteúdo que a busca usa; com o reranker ligado, ':r' (trocar o reranker invalida). */
+function versionOf(index, rerank) {
+  if (index.empty || !index.hash) return NO_INDEX;
+  return index.hash + (rerank ? RERANK_SUFFIX : '');
+}
+
+/** Resposta já registrada para esta pergunta e versão: sem IA, sem cota e sem busca. */
+async function fromResearchLog(sql, message, version) {
+  const hit = await ResearchLog.lookup(sql, { provider: KB_PROVIDER, question: message, kbVersion: version });
   if (!hit) return null;
   if (hit.outcome === 'empty') return staticKbFallback(MSG_KB_EMPTY);
   return answer({ reply: hit.results.reply, sources: hit.results.sources, source: 'ai', cached: true });
 }
 
 /** Grava o desfecho da pergunta: 'answered' (resposta e fontes) ou 'empty' (lacuna da base). Não derruba a resposta. */
-async function logKbOutcome(sql, message, outcome, results) {
-  await ResearchLog.record(sql, { provider: KB_PROVIDER, question: message, kbVersion: await kbVersionOnce(), outcome, results });
-}
-
-/** Há algum trecho indexado? Falha de leitura conta como "há", para a checagem não mudar o caminho sozinha. */
-async function hasIndexedChunks(sql) {
-  try {
-    const rows = await sql`SELECT 1 AS found FROM kb_chunks LIMIT 1`;
-    return Array.isArray(rows) && rows.length > 0;
-  } catch (err) {
-    return true;
-  }
+async function logKbOutcome(sql, message, version, outcome, results) {
+  await ResearchLog.record(sql, { provider: KB_PROVIDER, question: message, kbVersion: version, outcome, results });
 }
 
 /**
  * Trechos viram DADO para a IA. A cota é conferida ANTES da busca (sem cota não há embedding nem consulta).
  * Sem trechos, ou com saída vazia da IA, a base estática responde; IA fora ou cota do dia dão resposta fixa.
- * Sem NENHUM trecho indexado (tabela vazia), a IA responde sem RAG, como com rag_enabled desligada.
+ * Sem NENHUM trecho indexado (tabela vazia), a IA responde sem RAG, antes de qualquer embedding ou consulta.
  * `flags` = { cache, rerank }, lidas por answerWithKnowledge.
  */
 async function answerFromKnowledge(sql, env, identity, message, history, correlationId, flags) {
-  const logOn = !!flags.cache && usesResearchLog(identity, message, history);
+  const index = await kbIndex(sql, correlationId);
+  const version = versionOf(index, flags.rerank);
+  const logOn = !!flags.cache && version !== NO_INDEX && usesResearchLog(identity, message, history);
   if (logOn) {
-    const logged = await fromResearchLog(sql, message);
+    const logged = await fromResearchLog(sql, message, version);
     if (logged) return logged;
   }
   if (!(await hasAiQuota(sql, env, identity))) return asDegradedIfNotAi(await askAi(sql, env, identity, message, history));
+  if (index.empty) return asDegradedIfNotAi(await askAi(sql, env, identity, message, history));
   const found = await retrieveContext(sql, env, retrievalQuery(message, history), correlationId, !!flags.rerank);
   if (!found.chunks.length) {
     if (found.failed) return staticKbFallback(MSG_KB_FAILED);
-    if (!(await hasIndexedChunks(sql))) return askAi(sql, env, identity, message, history);
-    if (logOn) await logKbOutcome(sql, message, 'empty', {});
+    if (logOn) await logKbOutcome(sql, message, version, 'empty', {});
     return staticKbFallback(MSG_KB_EMPTY);
   }
   const result = await askAi(sql, env, identity, message, history, found.chunks);
@@ -333,7 +356,7 @@ async function answerFromKnowledge(sql, env, identity, message, history, correla
   const out = result.source === 'ai' ? withCitations(result, found.chunks) : asDegradedIfNotAi(result);
   const final = found.degraded ? Object.assign({}, out, { degraded: true }) : out;
   if (logOn && final.source === 'ai' && !final.degraded && final.sources.length) {
-    await logKbOutcome(sql, message, 'answered', { reply: final.reply, sources: final.sources });
+    await logKbOutcome(sql, message, version, 'answered', { reply: final.reply, sources: final.sources });
   }
   return final;
 }

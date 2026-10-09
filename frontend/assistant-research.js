@@ -28,8 +28,8 @@
     faq: 'Perguntas frequentes',
     saude: 'Avisos de saúde',
   };
-  // Lista branca de domínios de links (igual à da especificação de L07/L09).
-  var RESEARCH_HOSTS = ['europepmc.org', 'www.ebi.ac.uk', 'pubmed.ncbi.nlm.nih.gov', 'doi.org', 'www.scielo.br', 'scielo.org', 'openalex.org'];
+  // Lista branca dos links da pesquisa: só os domínios que a Lia cita hoje.
+  var RESEARCH_HOSTS = ['europepmc.org', 'pubmed.ncbi.nlm.nih.gov', 'doi.org'];
   var MAX_ITEMS = 10;
   var TITLE_MAX = 300;
   var JOURNAL_MAX = 200;

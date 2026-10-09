@@ -47,6 +47,7 @@ beforeEach(() => {
   Groq.__resetPoolStateForTests(0);
   __resetFlagCacheForTests();
   __resetMetricsForTests();
+  Assistant.__resetKbIndexForTests();
 });
 afterEach(() => {
   globalThis.fetch = realFetch;
@@ -467,23 +468,29 @@ describe('Lia — RAG (rag_enabled): acervo como dado, citações, gravação m�
     expect(res.reply).toMatch(/Não consegui consultar a base/);
     expect(globalThis.fetch).not.toHaveBeenCalled();
     const errors = callsMatching(sql, 'INSERT INTO error_logs');
-    expect(errors).toHaveLength(1);
-    expect(errors[0]).toContain('ASSISTANT_RAG_FAILED');
+    expect(errors.some((c) => c.includes('ASSISTANT_RAG_FAILED'))).toBe(true);
   });
 
-  test('tabela kb_chunks vazia (nenhum trecho indexado): responde pela IA sem RAG, como com rag_enabled desligada', async () => {
+  test('tabela kb_chunks vazia (nenhum trecho indexado): responde pela IA sem RAG, sem embedding nem busca', async () => {
     globalThis.fetch.mockResolvedValueOnce(groqReply('Agonista ativa o receptor.'));
+    const ai = workingAi();
     const sql = routedSql([RAG_ON, KB([]), SAVED]);
-    const res = await chat(sql, MEMBER, NO_INTENT);
+    const res = await chat(sql, MEMBER, NO_INTENT, envWith({ AI: ai }));
     expect(res).toMatchObject({ success: true, source: 'ai', reply: 'Agonista ativa o receptor.', sources: [], messageId: 'msg-1' });
-    expect(callsMatching(sql, 'SELECT 1 AS found FROM kb_chunks')).toHaveLength(1);
+    expect(ai.run).not.toHaveBeenCalled();
+    expect(callsMatching(sql, 'word_similarity')).toHaveLength(0);
     const body = JSON.parse(globalThis.fetch.mock.calls[0][1].body);
     expect(JSON.stringify(body.messages)).not.toMatch(/TRECHOS DO ACERVO/);
-    expect(res.reply).not.toMatch(/Não encontrei/);
+  });
+
+  test('tabela vazia e IA fora do ar: resposta marcada como degradada', async () => {
+    globalThis.fetch.mockResolvedValue(httpError(503));
+    const res = await chat(routedSql([RAG_ON, KB([]), SAVED]), MEMBER, NO_INTENT);
+    expect(res).toMatchObject({ success: true, source: 'fallback', degraded: true });
   });
 
   test('há trechos indexados, mas nenhum relevante: mensagem fixa, sem IA e sem incidente', async () => {
-    const sql = routedSql([RAG_ON, ['SELECT 1 AS found FROM kb_chunks', [{ found: 1 }]], KB([]), SAVED]);
+    const sql = routedSql([RAG_ON, ['SELECT content_hash FROM kb_chunks', [{ content_hash: 'h-1' }]], KB([]), SAVED]);
     const res = await chat(sql, MEMBER, NO_INTENT);
     expect(res).toMatchObject({ success: true, source: 'kb', degraded: true, sources: [], messageId: 'msg-1' });
     expect(res.reply).toMatch(/Não encontrei essa informação/);
@@ -685,7 +692,7 @@ describe('Lia — RAG: citação só dos usados, follow-up, cota antes da busca,
     expect(res).toMatchObject({ success: true, source: 'fallback', quotaExceeded: true, degraded: true });
     expect(res.reply).toMatch(/limite diário/i);
     expect(ai.run).not.toHaveBeenCalled();
-    expect(callsMatching(sql, 'FROM kb_chunks')).toHaveLength(0);
+    expect(callsMatching(sql, 'word_similarity')).toHaveLength(0);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
@@ -780,18 +787,19 @@ describe('Lia — registro de pesquisas (rag_cache_enabled, L04): só membro, se
   test('resposta registrada (answered): sai do registro, sem busca, sem embedding e sem cota', async () => {
     const ai = workingAi();
     const stored = { reply: 'Resposta registrada.', sources: [{ source: 'kb', section: 'Eventos' }] };
-    const sql = routedSql([CACHE_ON, LOGGED('answered', stored), SAVED]);
+    const sql = routedSql([CACHE_ON, LOGGED('answered', stored), KB([CHUNK]), SAVED]);
     const res = await chat(sql, MEMBER, NO_INTENT, envWith({ AI: ai }));
     expect(res).toMatchObject({ success: true, source: 'ai', cached: true, reply: 'Resposta registrada.', sources: stored.sources });
     expect(ai.run).not.toHaveBeenCalled();
-    expect(callsMatching(sql, 'FROM kb_chunks')).toHaveLength(0);
+    expect(callsMatching(sql, 'word_similarity')).toHaveLength(0);
+    expect(callsMatching(sql, 'FROM lia_pesquisas')[0][2]).toMatch(/^[0-9a-f]{16}$/);
     expect(callsMatching(sql, RATE_LIMIT_SQL).map((c) => c[1])).not.toContain('AI_ASSISTANT');
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
   test('resposta registrada como lacuna (empty): mensagem fixa, sem busca e sem IA', async () => {
     const ai = workingAi();
-    const res = await chat(routedSql([CACHE_ON, LOGGED('empty', {}), SAVED]), MEMBER, NO_INTENT, envWith({ AI: ai }));
+    const res = await chat(routedSql([CACHE_ON, LOGGED('empty', {}), KB([CHUNK]), SAVED]), MEMBER, NO_INTENT, envWith({ AI: ai }));
     expect(res).toMatchObject({ source: 'kb', degraded: true });
     expect(res.reply).toMatch(/Não encontrei essa informação/);
     expect(ai.run).not.toHaveBeenCalled();
@@ -818,6 +826,28 @@ describe('Lia — registro de pesquisas (rag_cache_enabled, L04): só membro, se
     [withEmail, asAdmin, withHistory].forEach((sql) => expect(callsMatching(sql, 'lia_pesquisas')).toHaveLength(0));
   });
 
+  test('falha ao ler o índice: a resposta segue, sem registro, e o incidente fica logado', async () => {
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Agonista ativa o receptor [1].'));
+    const sql = routedSql([CACHE_ON, ['SELECT content_hash FROM kb_chunks', new Error('falhou')], KB([CHUNK]), SAVED]);
+    const res = await chat(sql, MEMBER, NO_INTENT);
+    expect(res).toMatchObject({ success: true, source: 'ai' });
+    expect(callsMatching(sql, 'lia_pesquisas')).toHaveLength(0);
+    expect(callsMatching(sql, 'INSERT INTO error_logs').some((c) => c.includes('ASSISTANT_KB_INDEX_FAILED'))).toBe(true);
+  });
+
+  test('mudar um content_hash da base muda a versão do registro', async () => {
+    const versionWith = async (hash) => {
+      Assistant.__resetKbIndexForTests();
+      const sql = routedSql([CACHE_ON, ['SELECT content_hash FROM kb_chunks', [{ content_hash: hash }]], ['FROM lia_pesquisas', []], SAVED]);
+      await chat(sql, MEMBER, NO_INTENT);
+      return callsMatching(sql, 'FROM lia_pesquisas')[0][2];
+    };
+    const before = await versionWith('h-antigo');
+    const after = await versionWith('h-novo');
+    expect(before).toMatch(/^[0-9a-f]{16}$/);
+    expect(after).not.toBe(before);
+  });
+
   test('sem rag_cache_enabled: não lê nem grava o registro', async () => {
     globalThis.fetch.mockResolvedValueOnce(groqReply('Resposta.'));
     const sql = routedSql([RAG_ONLY, KB([CHUNK]), SAVED]);
@@ -835,6 +865,14 @@ describe('Lia — seleção (rag_rerank_enabled, L05): answerable false corta an
     run: jest.fn(async (model, input) => (model === RERANK.MODEL
       ? { response: input.contexts.map((_c, id) => ({ id, score })) }
       : { data: input.text.map(() => Array.from({ length: EMBEDDING_DIM }, () => 0.01)) })),
+  });
+
+  test('versão do registro com rag_rerank_enabled: sufixo ":r" (trocar o reranker invalida o registro)', async () => {
+    const CACHE_RERANK = flags(FLAG_ROW('chatbot_enabled'), FLAG_ROW('rag_enabled'), FLAG_ROW('rag_cache_enabled'), FLAG_ROW('rag_rerank_enabled'));
+    globalThis.fetch.mockResolvedValueOnce(groqReply('Resposta.'));
+    const sql = routedSql([CACHE_RERANK, ['FROM kb_chunks', [CHUNK]], ['FROM lia_pesquisas', []], ['INSERT INTO assistant_messages', [{ id: 'msg-1' }]]]);
+    await chat(sql, MEMBER, NO_INTENT, envWith({ AI: rerankingAi(8) }));
+    expect(callsMatching(sql, 'FROM lia_pesquisas')[0][2]).toMatch(/^[0-9a-f]{16}:r$/);
   });
 
   test('answerable false: a base não cobre a pergunta, então a IA não é chamada', async () => {
@@ -887,10 +925,11 @@ describe('Lia — pesquisa externa (research_enabled, L07/L09): canResearch e ro
     expect(res).not.toHaveProperty('canResearch');
   });
 
-  test('research: true com a flag desligada: resposta "disabled" do serviço, sem IA e sem gravar a mensagem', async () => {
+  test('research: true com a flag desligada: resposta researchDisabled do serviço (a Lia segue), sem IA e sem gravar', async () => {
     const sql = routedSql([ON, SAVED]);
     const res = await chat(sql, MEMBER, { message: 'pesquisa sobre agonistas', research: true });
-    expect(res).toMatchObject({ success: false, disabled: true });
+    expect(res).toMatchObject({ success: true, researchDisabled: true });
+    expect(res.disabled).toBeUndefined();
     expect(callsMatching(sql, 'INTO assistant_messages')).toHaveLength(0);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });

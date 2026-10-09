@@ -29,7 +29,7 @@ export const RESEARCH_LOG = {
   ITEMS_MAX: 10,
   REPLY_MAX: 4000,
   SOURCES_MAX: 4,
-  ALLOWED_HOSTS: ['europepmc.org', 'www.ebi.ac.uk', 'pubmed.ncbi.nlm.nih.gov', 'doi.org', 'www.scielo.br', 'scielo.org', 'openalex.org'],
+  ALLOWED_HOSTS: ['europepmc.org', 'pubmed.ncbi.nlm.nih.gov', 'doi.org'],
 };
 
 const OUTCOMES = ['answered', 'empty'];

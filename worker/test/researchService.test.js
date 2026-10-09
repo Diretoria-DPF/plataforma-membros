@@ -87,10 +87,14 @@ describe('buildQuery', () => {
 });
 
 describe('research', () => {
-  test('flag desligada: devolve disabled e não chama a rede', async () => {
+  test('flag desligada: devolve researchDisabled com texto curto, sem actions e sem rede', async () => {
     await setFlag(false);
     const out = await research(sql, {}, PERSON, TOPIC, CID);
-    expect(out).toMatchObject({ success: false, disabled: true });
+    expect(out).toMatchObject({
+      success: true, source: 'research', researchDisabled: true,
+      reply: 'A pesquisa em artigos não está disponível agora.', actions: [], suggestions: [],
+    });
+    expect(out.disabled).toBeUndefined();
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 

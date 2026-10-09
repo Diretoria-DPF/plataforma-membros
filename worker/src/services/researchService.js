@@ -27,7 +27,7 @@ const QUERY_CHARS_MAX = 120;
 const TERM_MIN_LENGTH = 3;
 const ADVISORY = 'Referências de base externa; a Lia não resume artigos nem dá orientação de saúde.';
 const MSG = {
-  DISABLED: 'A pesquisa em bases científicas não está disponível agora.',
+  DISABLED: 'A pesquisa em artigos não está disponível agora.',
   ANONYMOUS: 'Entre na plataforma para pesquisar em bases científicas.',
   NO_TERMS: 'Escreva só o tema da pesquisa, em poucas palavras, sem nomes, e-mails, telefones ou links.',
   LIMITED: 'Você já fez muitas pesquisas em bases científicas nesta hora. Tente de novo mais tarde.',
@@ -131,7 +131,9 @@ async function searchAndRecord(sql, query, correlationId) {
  * Ordem: flag (falha fechada), identidade, termos, registro (sem gastar limite), limite, rede, registro.
  */
 export async function research(sql, env, identity, rawQuestion, correlationId) {
-  if (!(await isResearchEnabled(sql, identity))) return { success: false, disabled: true, message: MSG.DISABLED };
+  if (!(await isResearchEnabled(sql, identity))) {
+    return { success: true, source: 'research', reply: MSG.DISABLED, actions: [], suggestions: [], researchDisabled: true };
+  }
   if (!identity) return { success: false, message: MSG.ANONYMOUS };
   const query = buildQuery(rawQuestion);
   if (!query) return { success: false, message: MSG.NO_TERMS };

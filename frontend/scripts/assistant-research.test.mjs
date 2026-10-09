@@ -101,9 +101,13 @@ test('sanitizeResearch: até 10 itens, título até 300 e revista até 200 carac
 
 test('sanitizeResearch: url só https, de domínio da lista, sem usuário, senha ou porta', () => {
   const urlOf = (url) => R.sanitizeResearch({ items: [{ title: 'T', url }] }).items[0].url;
+  assert.deepEqual(R.RESEARCH_HOSTS, ['europepmc.org', 'pubmed.ncbi.nlm.nih.gov', 'doi.org']);
   assert.equal(urlOf(OK_URL), OK_URL);
   assert.equal(urlOf('https://DOI.org/10.1/x'), 'https://doi.org/10.1/x');
   R.RESEARCH_HOSTS.forEach((host) => assert.equal(urlOf('https://' + host + '/a'), 'https://' + host + '/a', host));
+  ['www.ebi.ac.uk', 'www.scielo.br', 'scielo.org', 'openalex.org'].forEach((host) => {
+    assert.equal(urlOf('https://' + host + '/a'), null, 'fora da lista enxuta: ' + host);
+  });
   assert.equal(urlOf('http://europepmc.org/a'), null, 'http não');
   assert.equal(urlOf('javascript:alert(1)'), null);
   assert.equal(urlOf('data:text/html,<b>x</b>'), null);
@@ -249,6 +253,19 @@ test('assistant.js: a cola da pesquisa usa o módulo opcional, não guarda nada 
   assert.match(src, /setBusy\(true, lib\.BUSY_TEXT\)/);
   assert.doesNotMatch(src, /localStorage|sessionStorage|indexedDB/);
   assert.doesNotMatch(src, /el\(doc, 'a'/, 'fonte e referência nunca viram link na cola');
+});
+
+test('assistant.js: pesquisa desligada no servidor só mostra a frase, sem falha e sem esconder o lançador', () => {
+  const src = read('frontend/assistant.js').replace(/\r/g, '');
+  const sendBody = src.slice(src.indexOf('function sendResearch'), src.indexOf('function greet'));
+  assert.doesNotMatch(sendBody, /hideLauncher/, 'a pesquisa nunca esconde o lançador');
+  const branchAt = sendBody.indexOf('if (res.researchDisabled === true) { showOffReply(res); return; }');
+  assert.ok(branchAt > 0, 'o ramo researchDisabled existe');
+  assert.ok(branchAt < sendBody.indexOf('showResearch(lib, res);'), 'o ramo vem antes de showResearch');
+  const offBody = src.slice(src.indexOf('function showOffReply'), src.indexOf('function showResearch'));
+  assert.doesNotMatch(offBody, /failReply|hideLauncher/);
+  assert.match(offBody, /speakThenRest\(\)/);
+  assert.match(src, /if \(!lib \|\| !msg\.canResearch \|\| ui\.researchOff\) return;/, 'sem botão depois de researchDisabled');
 });
 
 test('o CSS novo da pesquisa usa só tokens, alvo de toque de 44 px e respeita movimento reduzido', () => {

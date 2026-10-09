@@ -350,7 +350,7 @@
   /** Botão "Pesquisar mais a fundo": só na resposta que o servidor oferece (a última, ver addMessage). */
   function appendResearchButton(wrap, msg) {
     var lib = researchLib();
-    if (!lib || !msg.canResearch) return;
+    if (!lib || !msg.canResearch || ui.researchOff) return;
     wrap.appendChild(lib.researchButton(ui.doc, function () { sendResearch(lib.lastQuestion(ui.messages)); }));
   }
 
@@ -489,6 +489,13 @@
     addMessage({ role: 'lia', text: lib.PRIVACY_HINT });
   }
 
+  /** Pesquisa desligada no servidor: a Lia só diz a frase, sem estado de falha, sem botão e sem mexer no lançador. */
+  function showOffReply(res) {
+    ui.researchOff = true;
+    addMessage({ role: 'lia', text: clip(res.reply, 2000) || ERROR_TEXT, typing: true });
+    speakThenRest();
+  }
+
   /** Resposta da pesquisa: mesma moderação e reações do chat, com as referências. */
   function showResearch(lib, res) {
     var mod = modLib().moderationFromChat(res);
@@ -517,11 +524,11 @@
     var mine = ++ui.sendId;
     ui.app.callApi('apiAssistantChat', sentWith, { message: message, research: true }).then(function (res) {
       if (mine !== ui.sendId) return; // a conta mudou no meio: a resposta não vale
-      if (res && res.disabled) { hideLauncher(); return; }
       if (!res || !res.success) {
         failReply((res && typeof res.message === 'string' && res.message) ? clip(res.message, 300) : ERROR_TEXT);
         return;
       }
+      if (res.researchDisabled === true) { showOffReply(res); return; }
       showResearch(lib, res);
     }).catch(function () {
       if (mine === ui.sendId) failReply(ERROR_TEXT);
@@ -667,7 +674,7 @@
 
     ui = {
       app: app, doc: doc, launcher: launcher.button, panel: panel, log: log, input: composer.input, send: composer.send,
-      messages: [], busy: false, privacyShown: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
+      messages: [], busy: false, privacyShown: false, researchOff: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
       launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null, typers: [],
       moderation: moderation, mood: moodLib().newSession(),
       hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,

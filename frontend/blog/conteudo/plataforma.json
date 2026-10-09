@@ -55,7 +55,7 @@
       "fontes": [
         "docs/LIGHTHOUSE_2026-10-08b.md:9-17 (mobile) e :39-47 (desktop)",
         "frontend/manifest.webmanifest:4, :10 e :18 (nome curto, modo app, ícone)",
-        "frontend/sw.js:23-29 (49 arquivos) e :80-90 (sem rede, usa o cache)",
+        "frontend/sw.js:23-29 (lista de arquivos pré-carregados) e :80-90 (sem rede, usa o cache)",
         "frontend/shared-states.js:28 (aviso de offline)",
         "docs/CHANGELOG.md:35 (alvos de 44 px; movimento reduzido)",
         "frontend/modulos/shared/laift-tokens.css:323-336 (movimento reduzido)"
@@ -75,7 +75,7 @@
         { "t": "h2", "texto": "Instalar e usar sem internet" },
         { "t": "lista", "itens": [
           "Instalação: o app pode ser adicionado à tela inicial do celular. Ele se chama LAIFT e abre como um app, sem a barra do navegador.",
-          "Pré-carregamento: 49 arquivos do miolo do app, como estilos, scripts, a Lia, o ícone e a tela de abertura, ficam guardados no aparelho.",
+          "Pré-carregamento: os arquivos principais do app, como estilos, scripts, a Lia, o ícone e a tela de abertura, ficam guardados no aparelho.",
           "Sem conexão, o app usa o que já está guardado, e aparece um aviso de que você está offline."
         ] },
         { "t": "p", "texto": "Envios de dados e consultas ao servidor precisam de internet. Sem conexão, esses recursos não funcionam." },
