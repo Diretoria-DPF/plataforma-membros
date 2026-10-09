@@ -5,7 +5,8 @@ controles implementados e os riscos residuais. **Nada aqui afirma
 segurança absoluta.** Ele registra o que foi decidido, por quê, e o que
 continua sendo risco conhecido.
 
-Arquitetura atual: site estático no GitHub Pages (`frontend/`), API JSON em
+Arquitetura atual: site estático servido pelo Worker `laift-web` da Cloudflare
+(`frontend/`, cabeçalhos em `frontend/_headers`), API JSON em
 Cloudflare Workers (`worker/`) e Neon PostgreSQL. O backend anterior em
 Google Apps Script foi desligado. Os módulos de aprendizagem não falam mais
 com ele, e o código arquivado em `legacy-appsscript/` não é publicado.
@@ -45,8 +46,8 @@ com ele, e o código arquivado em `legacy-appsscript/` não é publicado.
   **todas** as sessões da conta.
 
 ### Sessão no cliente — decisão revisitada em 2026-09-25
-O backend não tem como emitir um cookie `HttpOnly` para o site do GitHub
-Pages neste modelo de API JSON. Por pedido explícito, a sessão fica
+O backend não tem como emitir um cookie `HttpOnly` para o site estático
+neste modelo de API JSON. Por pedido explícito, a sessão fica
 espelhada em `localStorage` com expiração própria de 30 minutos
 (`frontend/app.js`, `SESSION_CACHE_KEY`), apagada no logout ou ao expirar.
 
@@ -86,7 +87,7 @@ continua sendo não ter XSS (seções XSS e CSP abaixo).
 ### Content-Security-Policy (Fase 4, Onda 2)
 CSP por `<meta http-equiv>` em **todas** as páginas publicadas: a
 plataforma, as 3 páginas estáticas e as 8 páginas de módulo, 12 no
-total. O GitHub Pages não permite cabeçalhos HTTP próprios.
+total. Só `frame-ancestors 'self'` vai no cabeçalho HTTP (`frontend/_headers:40`).
 
 Base comum a todas as páginas:
 
@@ -186,9 +187,8 @@ Decisões:
   clique mostrando nome+descrição) e o comentário no topo de
   `three-engine.js` para o que o `body.glb` de fato contém (só esqueleto +
   músculos + estruturas articulares — sem vísceras/vasos/nervos/pele).
-- `frame-ancestors` **não funciona em `<meta>`**. Proteção contra
-  clickjacking exigiria cabeçalho HTTP, que o GitHub Pages não oferece
-  (risco aceito abaixo).
+- `frame-ancestors` **não funciona em `<meta>`**, por isso vai no cabeçalho HTTP
+  (`frontend/_headers:40`), que cobre o clickjacking (item 4 dos riscos residuais).
 - O E2E `csp.e2e.js` percorre a plataforma, os 6 módulos, o estúdio, os
   pop-ups (dossiê e crachá), as páginas estáticas e o painel admin
   (gráficos, fiscal, IA). Ele usa as bibliotecas reais servidas por um
@@ -306,10 +306,10 @@ Não substitui WAF ou CAPTCHA.
    `visitor` multiplicam a cota individual de IA, até o disjuntor global.
    O disjuntor, por sua vez, pode ser esgotado de propósito, derrubando a
    IA de todos até o dia seguinte (negação de serviço de custo limitado).
-4. **Clickjacking.** `frame-ancestors` e `X-Frame-Options` exigem
-   cabeçalho HTTP, e o GitHub Pages não permite. Mitigação parcial: toda
-   ação sensível pede interação explícita dentro da própria página. Um
-   proxy (Cloudflare) na frente do Pages resolveria.
+4. **Clickjacking: mitigado.** `frame-ancestors 'self'` (`frontend/_headers:40`)
+   impede que outro site embuta a plataforma; `X-Frame-Options: DENY` fica de fora
+   de propósito (`frontend/_headers:10-11`), porque os módulos rodam em iframes do
+   próprio site. Toda ação sensível também pede interação explícita na página.
 5. **`style-src 'unsafe-inline'`** (justificativa na seção CSP).
 6. **Módulos de aprendizagem (`frontend/modulos/`, antigo o-bala-vip).**
    Situação após as Fases 2, 3 e 4:

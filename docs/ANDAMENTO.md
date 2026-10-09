@@ -128,6 +128,24 @@ Runbook completo: `docs/AMBIENTES.md`, seção **"Ativação da UX v2, Lia viva,
 
 **Números (rodada 2, 2026-10-08).** Worker: 48 suítes, 1506 testes verdes, 117 actions no `API_REGISTRY` e 24 migrações (`validate:sql` ok; a PR-2 não cria migração). Front: 899 testes, 897 verdes e 2 falhas só no Windows (`_headers`, CRLF). E2E `csp smoke home assistant credential visual-qa lowend admin-moderation confirm-a11y onboarding lia-estados`: 319 ✔ e 0 ✘. `visual-qa` com 1 aviso conhecido (`pref-email-notif`, 13×44 px, dentro de uma linha de 44 px). Linha de base anterior: 1424 e 650. Time da rodada: 6 agentes Haiku 5.5. Os testes foram executados pelo coordenador; esta passada conferiu contagens de arquivos e de actions, sem reexecutar a suíte.
 
+## Atualização de 2026-10-08 (rodada 3: operação e Liga)
+
+**Entregue na R1 (2026-10-08).**
+- Backup: `docs/BACKUP_RESTORE.md` corrigido. O job agendado falha sem os secrets; o documento ganhou o "Roteiro dos 6 secrets".
+- Staging: `docs/AMBIENTES.md:113` (secrets do staging). O staging respondeu HTTP 200 em 2026-10-08 (conferido pela sessão principal).
+- Segurança: `docs/SECURITY.md` atualizado. O site está no Worker `laift-web`; o clickjacking está mitigado por `frame-ancestors 'self'` em `frontend/_headers:40`, confirmado em produção.
+- Lighthouse da produção (`https://laift.com.br`, Lighthouse 13.5.0, 3 rodadas por perfil): mobile com mediana Perf 94, A11y 100, BP 100, SEO 100, FCP/LCP 1,2 s, TBT 124 ms, CLS 0,000; desktop 100/100/100/100, CLS 0,000 (`docs/LIGHTHOUSE_2026-10-08b.md`).
+- Liga: 9 referências levantadas em `docs/liga/REFERENCIAS_LIGAS.md`.
+- Script `tools/ci/registrar-segredos-backup.ps1` cadastra os 6 secrets do backup. Hoje os 6 estão em falta (conferido com `-SomenteVerificar`).
+
+**Pendências do dono (rodada 3).**
+- Cadastrar os 6 secrets no terminal (o dono digita os valores) e autorizar a 1ª execução do backup. O job falha todos os dias desde 05/10 até lá.
+- Migrações de produção: 020 a 022 e 024; depois a reindexação; depois a 023, com o "pode executar" do dono.
+- Teste com leitores de tela.
+- Escolha A/B da prévia da Liga (`docs/liga/previa/*`).
+
+**Liga.** Etapa 1 em andamento na `feat/liga-identidade`. Vagas, datas e pesos: a definir pela diretoria.
+
 ## Pull requests
 | PR | Branch | O que traz | Estado |
 |---|---|---|---|
