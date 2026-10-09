@@ -1,0 +1,19 @@
+{
+  "id": "/blog",
+  "name": "Blog LAIFT – Conheça a LAIFT",
+  "short_name": "Blog LAIFT",
+  "description": "O blog da LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: a Liga, os módulos da plataforma e as publicações.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/blog",
+  "scope": "/blog",
+  "display": "standalone",
+  "theme_color": "#0f6f62",
+  "background_color": "#fafaf7",
+  "categories": ["education", "news"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

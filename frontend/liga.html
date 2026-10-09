@@ -2,134 +2,242 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <!-- Content-Security-Policy (docs/SECURITY.md). Sem 'unsafe-inline' em script-src e sem handler inline. Os hosts de connect-src espelham o mapa de API_BASE_URL de frontend/app.js. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>A Liga · LAIFT</title>
-  <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: quem somos, áreas de interesse, etapas do processo seletivo e contato.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'none'; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0f6f62">
+  <title>Conheça a LAIFT · Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</title>
+  <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: quem somos, áreas de interesse, como funciona, processo seletivo, edital, contato e a nossa instituição, a UNINASSAU, em Salvador.">
   <link rel="canonical" href="https://laift.com.br/liga">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Conheça a LAIFT · Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia">
+  <meta property="og:description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia: quem somos, áreas de interesse, como funciona, processo seletivo, edital, contato e a nossa instituição, a UNINASSAU, em Salvador.">
+  <meta property="og:url" content="https://laift.com.br/liga">
+  <meta property="og:image" content="https://laift.com.br/blog/og-default.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="modulos/shared/laift-tokens.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="publico.css">
   <link rel="stylesheet" href="liga.css">
+  <link rel="stylesheet" href="blog-novidade.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LAIFT",
+    "alternateName": "Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia",
+    "url": "https://laift.com.br/liga",
+    "email": "laiftligauninassau@gmail.com",
+    "sameAs": ["https://www.instagram.com/laift.liga"],
+    "location": {
+      "@type": "Place",
+      "name": "UNINASSAU – Centro Universitário Maurício de Nassau",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Rua Direita da Piedade, 358",
+        "addressLocality": "Salvador",
+        "addressRegion": "BA",
+        "postalCode": "40070-190",
+        "addressCountry": "BR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -12.98658,
+        "longitude": -38.51689
+      }
+    }
+  }
+  </script>
 </head>
-<body class="liga-page">
-  <header class="liga-topo">
-    <a class="back-link" href="./">← Início</a>
-    <img class="liga-topo__logo" src="modulos/cracha/laift-marca.png" alt="LAIFT">
+<body class="pub-pagina lp-pagina">
+  <a class="pub-pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="pub-barra">
+    <div class="pub-barra__linha">
+      <a class="pub-voltar" href="./" data-history-back aria-label="Voltar à tela anterior">
+        <svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
+        <span class="pub-voltar__rotulo">Voltar</span>
+      </a>
+      <a class="pub-barra__marca" href="liga.html"><img src="modulos/cracha/laift-marca.png" alt="" width="40" height="40"><span>LAIFT</span></a>
+    </div>
+    <nav class="pub-barra__nav" aria-label="Plataforma">
+      <a class="pub-barra__link" href="./"><svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Início</span></a>
+      <a class="pub-barra__link" href="blog.html"><span>Blog</span></a>
+      <a class="pub-barra__link" href="./#entrar"><span>Entrar</span></a>
+      <a class="pub-barra__link pub-barra__link--destaque" href="./#cadastro"><span>Cadastrar</span></a>
+    </nav>
   </header>
 
-  <main id="conteudo">
-    <section id="topo" class="liga-sec liga-hero">
-      <h1 class="liga-hero__titulo">Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia (LAIFT)</h1>
-      <p class="liga-hero__lema">Nada se cria, nada se perde, tudo se transforma</p>
-      <img class="liga-hero__lia" src="modulos/shared/lia/lia-estatica.svg" alt="">
-      <p id="liga-status" class="liga-status" data-estado="fechado" aria-live="polite">Inscrições fechadas no momento. Acompanhe @laift.liga.</p>
+  <nav class="lp-secoes" aria-label="Nesta página">
+    <ul class="lp-secoes__lista">
+      <li><a class="lp-secoes__item" href="#quem-somos">Quem somos</a></li>
+      <li><a class="lp-secoes__item" href="#areas">Áreas</a></li>
+      <li><a class="lp-secoes__item" href="#como-funciona">Como funciona</a></li>
+      <li><a class="lp-secoes__item" href="#processo">Processo seletivo</a></li>
+      <li><a class="lp-secoes__item" href="#edital">Edital</a></li>
+      <li><a class="lp-secoes__item" href="#contato">Contato</a></li>
+      <li><a class="lp-secoes__item" href="#instituicao">Instituição</a></li>
+      <li><a class="lp-secoes__item" href="#blog">Blog</a></li>
+    </ul>
+  </nav>
+
+  <main id="conteudo" class="lp-conteudo">
+    <section id="topo" class="lp-hero" aria-labelledby="lp-titulo">
+      <div class="lp-hero__texto">
+        <h1 id="lp-titulo" class="lp-hero__titulo"><span class="lp-hero__sigla">LAIFT</span><span class="lp-hero__nome">Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</span></h1>
+        <p class="lp-hero__lema"><span class="lp-emoji" aria-hidden="true">✨</span> Nada se cria, nada se perde, tudo se transforma <span class="lp-emoji" aria-hidden="true">📚</span></p>
+        <p class="lp-hero__oferta"><span class="lp-emoji" aria-hidden="true">🧬</span> conteúdo científico • projetos • capacitações</p>
+        <p id="liga-status" class="pub-status lp-hero__status" data-estado="fechado" aria-live="polite">Inscrições fechadas no momento. Acompanhe @laift.liga.</p>
+        <div class="lp-hero__acoes">
+          <a id="liga-cta-processo" class="pub-botao pub-botao--primario" href="processo-seletivo.html" data-se-aberto hidden>Processo seletivo</a>
+          <a class="pub-botao pub-botao--secundario" href="processo-seletivo.html" data-se-fechado>Conheça o processo seletivo</a>
+          <a class="lp-hero__local" href="#instituicao"><span class="lp-emoji" aria-hidden="true">📍</span> UNINASSAU · Salvador, Bahia</a>
+        </div>
+      </div>
+      <div class="lp-hero__marca"><img src="modulos/cracha/laift-marca.png" alt="Marca da LAIFT" width="168" height="168"></div>
     </section>
 
-    <section id="quem-somos" class="liga-sec">
-      <h2>Quem somos</h2>
-      <p>A LAIFT é a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Reunimos estudantes interessados em atividades de ensino, pesquisa e extensão voltadas ao desenvolvimento técnico-científico das ciências farmacológicas.</p>
-      <p>A Liga baseia-se em excelência acadêmica, interdisciplinaridade e proatividade. Nossas ações exigem comprometimento ético, análise baseada em evidências e cumprimento dos cronogramas.</p>
-      <p>Local: Campus UNINASSAU, Pituba, Salvador/BA.</p>
-    </section>
-
-    <section id="areas" class="liga-sec">
-      <h2>Áreas de interesse</h2>
-      <p>No formulário de inscrição, você marca as áreas com afinidade teórica ou prática:</p>
-      <ul class="liga-areas">
-        <li class="liga-area">Farmacologia Clínica e Terapêutica Aplicada</li>
-        <li class="liga-area">Toxicologia Forense e Química Analítica Operacional</li>
-        <li class="liga-area">Farmacocinética Avançada e Modelagem Computacional</li>
-        <li class="liga-area">Toxicologia Ambiental, Ocupacional e Ecotoxicologia</li>
-        <li class="liga-area">Escrita Científica, Pesquisa Clínica e Publicação de Artigos</li>
-        <li class="liga-area">Gestão Organizacional, Marketing Científico e Extensão Universitária</li>
-      </ul>
-    </section>
-
-    <section id="como-funciona" class="liga-sec">
-      <h2>Como funciona</h2>
-      <p>Quem ingressa na Liga assume o compromisso de:</p>
-      <ul>
-        <li><strong>Responsabilidade organizacional:</strong> cumprir os prazos e entregar as tarefas designadas com qualidade.</li>
-        <li><strong>Conduta ética e colaborativa:</strong> valorizar a diversidade de ideias, com postura respeitosa e profissional.</li>
-        <li><strong>Preservação institucional:</strong> zelar pela imagem pública da Liga e da instituição mantenedora, no ambiente digital e presencial.</li>
-        <li><strong>Confidencialidade:</strong> proteger informações científicas, estratégicas e dados pessoais de participantes dos projetos.</li>
-      </ul>
-      <p>Disponibilidade semanal mínima para atividades, reuniões e planejamento de projetos: a definir pela diretoria.</p>
-    </section>
-
-    <section id="processo-seletivo" class="liga-sec">
-      <h2>Processo seletivo</h2>
-      <p><strong>Quem pode participar:</strong> estar regularmente matriculado ou já ter concluído curso da área da saúde ou correlatos (regra em revisão pela diretoria).</p>
-      <p><strong>Vagas:</strong> a definir pela diretoria.</p>
-
-      <ol class="liga-linha">
-        <li class="liga-etapa">
-          <span class="liga-etapa__tag">Eliminatória</span>
-          <strong>Inscrição e ficha diagnóstica</strong>
-          <span>Datas: <span data-ciclo-data="inscricoes">a divulgar</span></span>
-        </li>
-        <li class="liga-etapa">
-          <span class="liga-etapa__tag">Eliminatória</span>
-          <strong>Análise de perfil e filtro crítico</strong>
-          <span>Datas: <span data-ciclo-data="analise">a divulgar</span></span>
-        </li>
-        <li class="liga-etapa">
-          <span class="liga-etapa__tag">Classificatória</span>
-          <strong>Divulgação dos selecionados</strong>
-          <span>Datas: <span data-ciclo-data="resultado">a divulgar</span></span>
-        </li>
-      </ol>
-
-      <h3>Como se inscrever</h3>
-      <ol>
-        <li>Leia o edital, que está em revisão pela diretoria (ver a seção Edital).</li>
-        <li>Quando o processo seletivo estiver aberto, o botão Inscrever-se leva ao formulário oficial.</li>
-        <li>Na última seção, descreva uma análise de cenário: um mecanismo, uma evidência ou uma notícia recente, com a sua escolha e o impacto.</li>
-        <li>Nos campos de texto livre, não escreva dados de saúde, seus ou de terceiros.</li>
-      </ol>
-
-      <div class="liga-faq">
-        <details>
-          <summary>Quem pode participar?</summary>
-          <p>Estudantes matriculados ou que já concluíram curso da área da saúde ou correlatos, como Farmácia, Biomedicina, Medicina, Nutrição e Enfermagem. A regra está em revisão pela diretoria.</p>
-        </details>
-        <details>
-          <summary>Quando são as inscrições?</summary>
-          <p>As datas de cada etapa estão na linha do tempo acima.</p>
-        </details>
-        <details>
-          <summary>Quantas vagas há?</summary>
-          <p>A definir pela diretoria.</p>
-        </details>
-        <details>
-          <summary>Como acompanho o resultado?</summary>
-          <p>A divulgação dos selecionados é feita pelos canais oficiais e por e-mail.</p>
-        </details>
+    <section id="quem-somos" class="pub-sec lp-quem" aria-labelledby="quem-somos-t">
+      <h2 id="quem-somos-t">Quem somos</h2>
+      <p class="lp-lead">Uma liga acadêmica que une estudantes da saúde para aprender, pesquisar e levar a ciência adiante.</p>
+      <div class="lp-cards" role="region" aria-label="Quem somos, em cartões" tabindex="0">
+        <article class="lp-card"><span class="lp-emoji lp-card__emoji" aria-hidden="true">🎓</span><h3 class="lp-card__titulo">Liga acadêmica</h3><p class="lp-card__texto">Somos a LAIFT, a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia.</p></article>
+        <article class="lp-card"><span class="lp-emoji lp-card__emoji" aria-hidden="true">🔬</span><h3 class="lp-card__titulo">Ensino, pesquisa e extensão</h3><p class="lp-card__texto">Reunimos estudantes em atividades para o desenvolvimento técnico-científico das ciências farmacológicas.</p></article>
+        <article class="lp-card"><span class="lp-emoji lp-card__emoji" aria-hidden="true">🌟</span><h3 class="lp-card__titulo">Nossos valores</h3><p class="lp-card__texto">Excelência acadêmica, interdisciplinaridade e proatividade.</p></article>
+        <article class="lp-card"><span class="lp-emoji lp-card__emoji" aria-hidden="true">🧭</span><h3 class="lp-card__titulo">Como trabalhamos</h3><p class="lp-card__texto">Com compromisso ético, análise baseada em evidências e respeito aos cronogramas.</p></article>
+        <article class="lp-card"><span class="lp-emoji lp-card__emoji" aria-hidden="true">🤝</span><h3 class="lp-card__titulo">Interdisciplinar</h3><p class="lp-card__texto">Farmácia, Biomedicina, Medicina, Nutrição, Enfermagem e outros cursos da saúde aprendem juntos.</p></article>
+        <article class="lp-card"><span class="lp-emoji lp-card__emoji" aria-hidden="true">💻</span><h3 class="lp-card__titulo">Plataforma de membros</h3><p class="lp-card__texto">Quiz, casos clínicos, laboratório virtual e atlas 3D para estudar no seu ritmo.</p></article>
+        <article class="lp-card"><span class="lp-emoji lp-card__emoji" aria-hidden="true">🏛️</span><h3 class="lp-card__titulo">Onde estamos</h3><p class="lp-card__texto">UNINASSAU, Centro Universitário Maurício de Nassau, em Salvador, Bahia.</p><a class="lp-card__link" href="#instituicao">Ver no mapa</a></article>
       </div>
     </section>
 
-    <section id="edital" class="liga-sec">
-      <h2>Edital</h2>
-      <p>Edital 2026 em revisão pela diretoria.</p>
+    <section id="areas" class="pub-sec lp-areas" aria-labelledby="areas-t">
+      <h2 id="areas-t">Áreas de interesse</h2>
+      <p class="lp-lead">Temas em que a Liga atua e que você pode escolher ao se inscrever.</p>
+      <ul class="lp-areas__lista">
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">💊</span><span class="lp-area__nome">Farmacologia e Toxicologia</span><span class="lp-area__texto">Como os medicamentos agem no corpo e quando passam a fazer mal.</span></li>
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">🌎</span><span class="lp-area__nome">Saúde coletiva e pessoal</span><span class="lp-area__texto">Cuidado com a saúde da comunidade e de cada pessoa.</span></li>
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">🩺</span><span class="lp-area__nome">Atenção farmacêutica e automedicação</span><span class="lp-area__texto">Uso responsável de medicamentos, com orientação profissional.</span></li>
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">⚠️</span><span class="lp-area__nome">Interação medicamentosa e farmacovigilância</span><span class="lp-area__texto">Combinações de risco e acompanhamento de efeitos adversos.</span></li>
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">📝</span><span class="lp-area__nome">Pesquisa, escrita e publicação científica</span><span class="lp-area__texto">Do método ao artigo: pesquisar, escrever e publicar.</span></li>
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">🏥</span><span class="lp-area__nome">Farmacologia clínica e terapêutica</span><span class="lp-area__texto">Tratamentos baseados em evidências na prática clínica.</span></li>
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">🌿</span><span class="lp-area__nome">Toxicologia ambiental e ocupacional</span><span class="lp-area__texto">Substâncias do ambiente e do trabalho que afetam a saúde.</span></li>
+        <li class="lp-area"><span class="lp-emoji lp-area__emoji" aria-hidden="true">📣</span><span class="lp-area__nome">Comunicação científica e extensão</span><span class="lp-area__texto">A ciência fora da sala de aula.</span></li>
+      </ul>
     </section>
 
-    <section id="contato" class="liga-sec">
-      <h2>Contato</h2>
-      <ul class="liga-contato">
-        <li>E-mail: <a href="mailto:laiftligauninassau@gmail.com">laiftligauninassau@gmail.com</a></li>
-        <li>Instagram: <a href="https://www.instagram.com/laift.liga/" target="_blank" rel="noopener noreferrer">@laift.liga<span class="visually-hidden"> (abre em nova aba)</span></a></li>
-        <li>Local: Campus UNINASSAU, Pituba, Salvador/BA</li>
+    <section id="como-funciona" class="pub-sec lp-funciona" aria-labelledby="como-funciona-t">
+      <h2 id="como-funciona-t">Como funciona</h2>
+      <p class="lp-lead">Fazer parte da LAIFT é um compromisso. Em troca, você ganha experiência, conexões e novas formas de aprender.</p>
+      <div class="lp-funciona__grade">
+        <div class="lp-compromissos">
+          <h3>Seu compromisso</h3>
+          <ul class="lp-compromissos__lista">
+            <li class="lp-compromisso"><strong class="lp-compromisso__nome">Responsabilidade organizacional</strong><span class="lp-compromisso__texto">Cumprir os prazos e entregar as tarefas com qualidade.</span></li>
+            <li class="lp-compromisso"><strong class="lp-compromisso__nome">Conduta ética e colaborativa</strong><span class="lp-compromisso__texto">Respeitar a diversidade de ideias, com postura cordial e profissional.</span></li>
+            <li class="lp-compromisso"><strong class="lp-compromisso__nome">Preservação institucional</strong><span class="lp-compromisso__texto">Zelar pela imagem da Liga e da instituição, no digital e no presencial.</span></li>
+            <li class="lp-compromisso"><strong class="lp-compromisso__nome">Confidencialidade</strong><span class="lp-compromisso__texto">Proteger informações científicas, estratégicas e dados pessoais dos projetos.</span></li>
+            <li class="lp-compromisso"><strong class="lp-compromisso__nome">Participação ativa</strong><span class="lp-compromisso__texto">Estar presente nas atividades programadas. Faltas sem justificativa e o descumprimento contínuo das normas levam ao desligamento.</span></li>
+          </ul>
+          <p class="lp-disponibilidade">Carga horária semanal mínima: a divulgar.</p>
+        </div>
+        <div class="lp-beneficios">
+          <h3>O que você ganha</h3>
+          <ul class="lp-beneficios__lista">
+            <li class="lp-beneficio"><span class="lp-emoji lp-beneficio__emoji" aria-hidden="true">🧠</span><strong class="lp-beneficio__nome">Novas formas de aprender</strong><span class="lp-beneficio__texto">Casos clínicos, laboratório virtual, atlas 3D e quiz na plataforma da Liga.</span></li>
+            <li class="lp-beneficio"><span class="lp-emoji lp-beneficio__emoji" aria-hidden="true">🤝</span><strong class="lp-beneficio__nome">Networking</strong><span class="lp-beneficio__texto">Conexões com estudantes de vários cursos da saúde e com quem participa das atividades da Liga.</span></li>
+            <li class="lp-beneficio"><span class="lp-emoji lp-beneficio__emoji" aria-hidden="true">🚀</span><strong class="lp-beneficio__nome">Projetos e capacitações</strong><span class="lp-beneficio__texto">Atividades de ensino, pesquisa e extensão.</span></li>
+            <li class="lp-beneficio"><span class="lp-emoji lp-beneficio__emoji" aria-hidden="true">📝</span><strong class="lp-beneficio__nome">Escrita científica</strong><span class="lp-beneficio__texto">Prática de pesquisa, escrita e publicação científica.</span></li>
+            <li class="lp-beneficio"><span class="lp-emoji lp-beneficio__emoji" aria-hidden="true">🔓</span><strong class="lp-beneficio__nome">Mais acesso na plataforma</strong><span class="lp-beneficio__texto">Membros usam Tarefas, Equipe e Mensagens, além dos módulos de estudo.</span></li>
+            <li class="lp-beneficio"><span class="lp-emoji lp-beneficio__emoji" aria-hidden="true">⭐</span><strong class="lp-beneficio__nome">Destaque no currículo</strong><span class="lp-beneficio__texto">A experiência em liga acadêmica soma à sua trajetória.</span></li>
+          </ul>
+        </div>
+      </div>
+      <aside class="lp-diferencial" aria-labelledby="diferencial-t">
+        <h3 id="diferencial-t">O diferencial da LAIFT</h3>
+        <p>Uma liga interdisciplinar com plataforma digital própria: você estuda, fala com a equipe e acompanha a Liga em um só lugar.</p>
+      </aside>
+    </section>
+
+    <section id="processo" class="pub-sec lp-processo" aria-labelledby="processo-t">
+      <div class="lp-processo__texto">
+        <h2 id="processo-t">Processo seletivo</h2>
+        <p class="lp-lead">Três etapas, com instruções, datas e edital na página do processo.</p>
+        <ol class="lp-processo__passos">
+          <li>Inscrição e ficha diagnóstica</li>
+          <li>Análise de perfil</li>
+          <li>Divulgação dos selecionados</li>
+        </ol>
+        <a class="pub-botao pub-botao--primario" href="processo-seletivo.html">Ver as instruções</a>
+      </div>
+      <img class="lp-processo__lia" src="modulos/shared/lia/lia-estatica.svg" alt="" width="120" height="180">
+    </section>
+
+    <section id="edital" class="pub-sec lp-edital" aria-labelledby="edital-t">
+      <h2 id="edital-t">Edital 2026</h2>
+      <p class="lp-lead">Regras, etapas, avaliação, compromissos e privacidade em um só documento.</p>
+      <a class="pub-botao pub-botao--secundario" href="edital.html">Abrir o edital</a>
+    </section>
+
+    <section id="contato" class="pub-sec lp-contato" aria-labelledby="contato-t">
+      <h2 id="contato-t">Contato</h2>
+      <p class="lp-lead">Fale com a Liga pelos canais oficiais.</p>
+      <ul class="lp-contato__lista">
+        <li><a class="lp-contato__item" href="https://www.instagram.com/laift.liga" target="_blank" rel="noopener noreferrer"><svg class="pub-icone lp-contato__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#ig"></use></svg><span class="lp-contato__rotulo">Instagram</span><span class="lp-contato__valor">@laift.liga</span><span class="laift-sr-only"> (abre em nova aba)</span></a></li>
+        <li><a class="lp-contato__item" href="mailto:laiftligauninassau@gmail.com"><svg class="pub-icone lp-contato__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#envelope"></use></svg><span class="lp-contato__rotulo">E-mail</span><span class="lp-contato__valor">laiftligauninassau@gmail.com</span></a></li>
+        <li><a class="lp-contato__item" href="#instituicao"><svg class="pub-icone lp-contato__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#inicio"></use></svg><span class="lp-contato__rotulo">Onde estamos</span><span class="lp-contato__valor">UNINASSAU, Salvador</span></a></li>
       </ul>
+    </section>
+
+    <section id="instituicao" class="pub-sec lp-instituicao" aria-labelledby="instituicao-t">
+      <h2 id="instituicao-t">Nossa instituição</h2>
+      <p class="lp-lead">A LAIFT atua na UNINASSAU, em Salvador, Bahia.</p>
+      <div class="lp-instituicao__grade">
+        <figure class="lp-instituicao__figura">
+          <img class="lp-instituicao__predio" src="icons/predio-instituicao.svg" alt="Ilustração do prédio da UNINASSAU, de quatro andares, com o número 358 na entrada" width="320" height="360" decoding="async">
+        </figure>
+        <div class="lp-instituicao__dados">
+          <p class="lp-instituicao__sigla">UNINASSAU</p>
+          <h3 class="lp-instituicao__nome">Centro Universitário Maurício de Nassau</h3>
+          <p class="lp-instituicao__endereco">Rua Direita da Piedade, 358<br>Salvador, Bahia<br>CEP 40070-190</p>
+          <p class="lp-instituicao__site"><a href="https://www.uninassau.edu.br" target="_blank" rel="noopener noreferrer">www.uninassau.edu.br<span class="laift-sr-only"> (abre em nova aba)</span></a></p>
+          <a class="pub-botao pub-botao--primario lp-mapa__app" data-mapa-app href="geo:-12.98658,-38.51689?q=-12.98658,-38.51689(UNINASSAU)">Abrir no app de mapas</a>
+          <ul class="lp-mapa__links" aria-label="Abrir em outro serviço de mapas">
+            <li><a class="lp-mapa__link" href="https://www.google.com/maps/search/?api=1&amp;query=-12.98658%2C-38.51689" target="_blank" rel="noopener noreferrer">Google Maps<span class="laift-sr-only"> (abre em nova aba)</span></a></li>
+            <li><a class="lp-mapa__link" href="https://maps.apple.com/?ll=-12.98658,-38.51689&amp;q=UNINASSAU&amp;z=17" target="_blank" rel="noopener noreferrer">Apple Mapas<span class="laift-sr-only"> (abre em nova aba)</span></a></li>
+            <li><a class="lp-mapa__link" href="https://www.openstreetmap.org/?mlat=-12.98658&amp;mlon=-38.51689#map=18/-12.98658/-38.51689" target="_blank" rel="noopener noreferrer">OpenStreetMap<span class="laift-sr-only"> (abre em nova aba)</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="lp-mapa" id="mapa-instituicao" data-lat="-12.98658" data-lon="-38.51689">
+        <div class="lp-mapa__capa">
+          <span class="lp-emoji lp-mapa__pino" aria-hidden="true">📍</span>
+          <p class="lp-mapa__aviso">O mapa interativo é do OpenStreetMap e só carrega quando você pedir. Ao carregar, o OpenStreetMap recebe o endereço IP do seu aparelho.</p>
+          <button class="pub-botao pub-botao--secundario lp-mapa__carregar" type="button" hidden>Ver o mapa aqui</button>
+        </div>
+        <p class="laift-sr-only" data-mapa-status aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="blog" class="pub-sec lp-blog" aria-labelledby="blog-t">
+      <h2 id="blog-t">Do blog</h2>
+      <p class="lp-lead">Notícias da Liga, guias dos módulos e publicações.</p>
+      <div class="blog-novidade blog-novidade--cartoes" data-blog-novidade="3" hidden></div>
+      <a class="pub-botao pub-botao--secundario" href="blog.html">Ir para o blog</a>
     </section>
   </main>
 
-  <nav class="liga-cta" aria-label="Inscrição">
-    <a id="liga-cta-inscricao" class="liga-cta__btn" hidden target="_blank" rel="noopener noreferrer">Inscrever-se<span class="visually-hidden"> (abre em nova aba)</span></a>
-    <a class="liga-cta__saiba" href="#processo-seletivo">Saiba mais</a>
-  </nav>
+  <footer class="pub-rodape">
+    <p class="pub-rodape__marca">LAIFT · Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</p>
+    <p class="pub-rodape__local">UNINASSAU – Centro Universitário Maurício de Nassau · Salvador, Bahia</p>
+    <ul class="pub-rodape__links"><li><a href="liga.html">Conheça a LAIFT</a></li><li><a href="processo-seletivo.html">Processo seletivo</a></li><li><a href="edital.html">Edital</a></li><li><a href="blog.html">Blog</a></li><li><a href="termos.html">Termos de Uso</a></li><li><a href="privacidade.html">Privacidade</a></li></ul>
+    <p class="pub-rodape__copy">© 2026 LAIFT</p>
+  </footer>
 
   <script src="static-page.js" defer></script>
   <script src="liga.js" defer></script>
+  <script src="liga-mapa.js" defer></script>
+  <script src="blog-novidade.js" defer></script>
 </body>
 </html>

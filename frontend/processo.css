@@ -1,0 +1,475 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+
+/* Processo seletivo (processo-seletivo.html) e edital (edital.html).
+   Carregado depois de publico.css. Prefixos ps- e ed-. Só tokens de laift-tokens.css. */
+
+/* -------------------------------------------------------------------------
+   Processo seletivo: topo, passos, linha do tempo e FAQ
+   ------------------------------------------------------------------------- */
+
+.ps-topo__selo,
+.ed-cabecalho__selo {
+  display: inline-block;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-primary-soft);
+  color: var(--laift-primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.ps-topo h1,
+.ed-cabecalho h1 {
+  margin: 12px 0 8px;
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  line-height: 1.15;
+}
+
+.ps-topo__texto,
+.ed-cabecalho__sub {
+  margin: 0 0 12px;
+  color: var(--laift-muted);
+}
+
+/* Passos numerados por contador CSS: círculo de 40 px na cor da marca. */
+.ps-passos {
+  counter-reset: passo;
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ps-passo {
+  counter-increment: passo;
+  position: relative;
+  min-height: 40px;
+  padding: 8px 0 8px 56px;
+  color: var(--laift-text);
+}
+
+.ps-passo::before {
+  content: counter(passo);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+  font-weight: 800;
+}
+
+/* Linha do tempo: uma coluna no celular, três a partir de 760 px. */
+.ps-linha {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+  border-radius: var(--laift-radius-lg);
+  background: var(--layer-2);
+  list-style: none;
+}
+
+.ps-etapa {
+  min-width: 0;
+  padding: 16px;
+  border-radius: var(--laift-radius-lg);
+  background: var(--layer-1);
+  box-shadow: var(--elev-1);
+}
+
+.ps-etapa__titulo {
+  margin: 8px 0;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.ps-etapa__texto {
+  margin: 0 0 8px;
+  color: var(--laift-muted);
+}
+
+.ps-etapa__data {
+  margin: 0;
+  color: var(--laift-muted);
+  font-size: 0.875rem;
+}
+
+.ps-etapa__data [data-ciclo-data] {
+  color: var(--laift-text);
+  font-weight: 600;
+}
+
+.ps-etapa__tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--layer-3);
+  color: var(--laift-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ps-etapa[data-carater="eliminatoria"] .ps-etapa__tag {
+  background: var(--laift-danger-soft);
+  color: var(--laift-danger);
+}
+
+.ps-etapa[data-carater="classificatoria"] .ps-etapa__tag {
+  background: var(--laift-primary-soft);
+  color: var(--laift-primary);
+}
+
+/* Perguntas frequentes: resumo com alvo de 44 px, sem marcador nativo e seta que gira. */
+.ps-faq {
+  display: grid;
+  gap: 8px;
+}
+
+.ps-faq__item {
+  border-radius: 24px;
+  background: var(--layer-2);
+}
+
+.ps-faq__pergunta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--laift-touch);
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.ps-faq__pergunta::-webkit-details-marker {
+  display: none;
+}
+
+.ps-faq__pergunta::after {
+  content: "";
+  flex: none;
+  margin-left: auto;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.ps-faq__item[open] > .ps-faq__pergunta::after {
+  transform: rotate(225deg);
+}
+
+.ps-faq__resposta {
+  padding: 0 16px 16px;
+  color: var(--laift-muted);
+}
+
+.ps-faq__resposta p {
+  margin: 0;
+}
+
+.ps-faq__resposta p + p {
+  margin-top: 8px;
+}
+
+.ps-edital__lista {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+/* Barra de inscrição fixa embaixo, com a área segura do aparelho. */
+.ps-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-radius: 24px 24px 0 0;
+  background: var(--layer-1);
+  box-shadow: var(--elev-2);
+}
+
+.ps-cta__principal,
+.ps-cta__edital {
+  flex: 1 1 0;
+  max-width: 320px;
+}
+
+.ps-cta__fechado {
+  flex: 0 0 100%;
+  margin: 0;
+  color: var(--laift-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pub-pagina main.ps-conteudo {
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+}
+
+/* -------------------------------------------------------------------------
+   Edital: documento de leitura, cabeçalho, sumário, seções e tabela
+   ------------------------------------------------------------------------- */
+
+.pub-pagina main.ed-doc {
+  max-width: 72ch;
+}
+
+.ed-cabecalho {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 20px;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+  color: var(--laift-text);
+  box-shadow: var(--elev-1);
+}
+
+.ed-cabecalho .pub-status {
+  margin-top: 12px;
+}
+
+.ed-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ed-acoes .pub-botao {
+  flex: 1 1 auto;
+}
+
+.ed-sumario {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 20px;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+  box-shadow: var(--elev-1);
+}
+
+.ed-sumario h2 {
+  margin: 0 0 12px;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.ed-sumario__lista {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-doc .ed-sumario__lista a {
+  display: flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  padding: 0 12px;
+  border-radius: var(--laift-radius-md);
+  background: var(--layer-2);
+  color: var(--laift-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (min-width: 760px) {
+  .ed-sumario__lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ed-secao {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 20px;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+  box-shadow: var(--elev-1);
+  scroll-margin-top: 16px;
+}
+
+@media (min-width: 760px) {
+  .ed-secao {
+    padding: 32px;
+    scroll-margin-top: 88px;
+  }
+}
+
+.ed-secao h2 {
+  margin: 0 0 12px;
+  font-size: 1.375rem;
+  line-height: 1.25;
+}
+
+.ed-secao h3 {
+  margin: 16px 0 8px;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.ed-secao p {
+  margin: 0 0 12px;
+}
+
+.ed-secao ul,
+.ed-secao ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.ed-secao li + li {
+  margin-top: 6px;
+}
+
+/* Links de texto do edital: alvo de 44 px (os botões mantêm o próprio estilo). */
+.ed-doc a:not(.pub-botao) {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  color: var(--laift-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ed-tabela {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.ed-tabela caption {
+  padding: 0 0 8px;
+  text-align: left;
+  font-weight: 700;
+}
+
+.ed-tabela th,
+.ed-tabela td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--laift-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ed-tabela th {
+  color: var(--laift-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+/* Abaixo de 600 px, cada linha vira um bloco com o nome da coluna acima do valor. */
+@media (max-width: 599.98px) {
+  .ed-tabela,
+  .ed-tabela tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .ed-tabela thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .ed-tabela tr {
+    display: block;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--laift-border);
+  }
+
+  .ed-tabela td {
+    display: block;
+    padding: 4px 0;
+    border: 0;
+  }
+
+  .ed-tabela td::before {
+    content: attr(data-rotulo);
+    display: block;
+    color: var(--laift-muted);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+}
+
+.ed-rodape {
+  box-sizing: border-box;
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 20px;
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+  box-shadow: var(--elev-1);
+}
+
+.ed-rodape p {
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Impressão: texto preto sobre branco, sem barra, CTA, rodapé nem botões
+   ------------------------------------------------------------------------- */
+
+@media print {
+  .pub-pagina {
+    background: white;
+    color: black;
+  }
+
+  .pub-pagina * {
+    background: white;
+    color: black;
+    box-shadow: none;
+  }
+
+  .pub-pagina main,
+  .pub-pagina main.ed-doc,
+  .pub-pagina main.ps-conteudo {
+    max-width: none;
+    padding: 0;
+  }
+
+  .pub-pular,
+  .pub-barra,
+  .ps-cta,
+  .pub-rodape,
+  .pub-botao,
+  .ed-acoes {
+    display: none;
+  }
+
+  .pub-pagina a[href^="http"]::after {
+    content: " (" attr(href) ")";
+  }
+}

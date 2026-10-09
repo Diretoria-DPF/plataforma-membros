@@ -53,13 +53,24 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 // alteração. Adicione aqui qualquer nova página estática do site.
 // robots.txt, sitemap.xml e llms.txt precisam estar na RAIZ do domínio para
 // buscadores e crawlers de IA os encontrarem (por isso exigem domínio próprio).
-['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-hints.js', 'admin-moderation.js', 'hero.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css', 'liga.html', 'liga.css', 'liga.js', 'liga-ciclo.json', 'blog.html', 'blog.css', 'blog-campanha.css'].forEach((name) => {
+['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-hints.js', 'admin-moderation.js', 'hero.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css', 'liga.html', 'liga.css', 'liga.js', 'liga-ciclo.json', 'blog.html', 'blog.css', 'blog-campanha.css', 'processo-seletivo.html', 'edital.html', 'publico.css', 'processo.css', 'liga-mapa.js', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js', 'voltar-app.css', 'blog-sw.js'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
 // Cabeçalhos HTTP (Cloudflare Workers static assets): o runtime lê este arquivo
 // da raiz do diretório publicado. O GitHub Pages simplesmente o ignora.
 fs.copyFileSync(path.join(ROOT, '_headers'), path.join(DIST, '_headers'));
+
+// /favicon.ico para quem pede o ícone sem ler o <head>: ICO com uma imagem PNG de 32x32 (icons/favicon-32.png).
+{
+  const png = fs.readFileSync(path.join(ROOT, 'icons', 'favicon-32.png'));
+  const cabecalho = Buffer.alloc(22);
+  cabecalho.writeUInt16LE(1, 2); cabecalho.writeUInt16LE(1, 4);
+  cabecalho.writeUInt8(32, 6); cabecalho.writeUInt8(32, 7);
+  cabecalho.writeUInt16LE(1, 10); cabecalho.writeUInt16LE(32, 12);
+  cabecalho.writeUInt32LE(png.length, 14); cabecalho.writeUInt32LE(22, 18);
+  fs.writeFileSync(path.join(DIST, 'favicon.ico'), Buffer.concat([cabecalho, png]));
+}
 
 // Módulos ES da mensageria E2EE (frontend/msg-crypto.js e messaging.js):
 // copiados sem ofuscação, de propósito — ao contrário de app.js, este é

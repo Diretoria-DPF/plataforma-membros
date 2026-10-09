@@ -60,11 +60,11 @@
       "leitura_min": 2,
       "status": "ativo",
       "fontes": [
-        "frontend/liga.html:26",
-        "frontend/liga.html:62-90 (etapas, requisitos e passos)",
-        "frontend/liga.html:38 (áreas marcadas no formulário)",
-        "frontend/liga.html:53-58 (compromissos de quem entra)",
-        "frontend/liga.html:121 (Instagram)"
+        "frontend/processo-seletivo.html:64-81 (etapas e datas)",
+        "frontend/processo-seletivo.html:94-104 (quem pode participar e quando)",
+        "docs/identidade/CONTRATO.md §11 (áreas escolhidas na inscrição)",
+        "docs/identidade/CONTRATO.md §11 (compromissos do membro)",
+        "frontend/processo-seletivo.html:103 (Instagram)"
       ],
       "blocos": [
         { "t": "p", "texto": "O processo seletivo é a porta de entrada da Liga. Ele tem três etapas. As duas primeiras são eliminatórias, e a última é classificatória." },
@@ -75,8 +75,8 @@
           { "titulo": "Divulgação dos selecionados", "selo": "Classificatória", "texto": "Os selecionados são divulgados pelos canais oficiais da Liga. Datas: a divulgar." }
         ] },
         { "t": "h2", "texto": "Quem pode participar" },
-        { "t": "p", "texto": "Na página da Liga, o requisito é estar matriculado ou já ter concluído curso da área da saúde ou correlatos, como Farmácia, Biomedicina, Medicina, Nutrição e Enfermagem." },
-        { "t": "p", "texto": "Confira a página da Liga antes de se inscrever: é lá que ficam as regras e as datas atuais." },
+        { "t": "p", "texto": "Nas [instruções do processo seletivo](/processo-seletivo.html), o requisito é estar matriculado ou já ter concluído curso da área da saúde ou correlatos, como Farmácia, Biomedicina, Medicina, Nutrição e Enfermagem." },
+        { "t": "p", "texto": "Confira as [instruções do processo seletivo](/processo-seletivo.html) antes de se inscrever: é lá que ficam as regras e as datas atuais." },
         { "t": "h2", "texto": "O que a Liga faz e espera" },
         { "t": "p", "texto": "A Liga reúne atividades de ensino, pesquisa e extensão. No formulário, você marca as áreas com afinidade teórica ou prática. Quem entra assume o compromisso de:" },
         { "t": "lista", "itens": [
@@ -89,8 +89,8 @@
           { "rotulo": "Vagas", "valor": "a divulgar" },
           { "rotulo": "Datas", "valor": "a divulgar" }
         ] },
-        { "t": "p", "texto": "Inscrições e datas são divulgadas na [página da Liga](/liga.html) e no Instagram." },
-        { "t": "p", "texto": "Quando o seletivo abrir, o botão Inscrever-se da página da Liga leva ao formulário oficial." },
+        { "t": "p", "texto": "Inscrições e datas são divulgadas nas [instruções do processo seletivo](/processo-seletivo.html) e no Instagram." },
+        { "t": "p", "texto": "Quando o seletivo abrir, o botão Participar do processo seletivo, nas [instruções do processo seletivo](/processo-seletivo.html), leva ao formulário oficial." },
         { "t": "cta", "rotulo": "Acompanhe o seletivo no Instagram", "href": "https://www.instagram.com/laift.liga" },
         { "t": "contato", "titulo": "Fale com a Liga" }
       ]
@@ -98,7 +98,7 @@
     {
       "slug": "equipe-cargos-e-areas",
       "titulo": "Quem faz a LAIFT: cargos e áreas de atuação",
-      "resumo": "Os cargos da Presidência e das diretorias, as seis áreas de atuação e onde conhecer os membros da Liga.",
+      "resumo": "Os cargos da Presidência e das diretorias, as oito áreas de interesse e onde conhecer os membros da Liga.",
       "data": "2026-10-09",
       "atualizado_em": "2026-10-09",
       "tags": ["equipe", "cargos", "areas"],
@@ -110,15 +110,15 @@
       "status": "ativo",
       "fontes": [
         "sql/008_league_org_chart.sql:12-15 e :27 (cargos e diretorias)",
-        "frontend/liga.html:40-45 (seis áreas)",
-        "frontend/liga.html:38 (áreas marcadas no formulário)",
+        "docs/identidade/CONTRATO.md §11 (oito áreas de interesse)",
+        "docs/identidade/CONTRATO.md §11 (áreas escolhidas na inscrição)",
         "frontend/liga.html:121 (Instagram)",
         "docs/FATOS_VERIFICADOS_2026-10-09.md secao 9 (checado em 2026-10-09)"
       ],
       "blocos": [
-        { "t": "p", "texto": "A Liga tem uma Presidência, quatro diretorias e seis áreas de atuação. Este post mostra cargos e áreas. Não mostra nomes." },
+        { "t": "p", "texto": "A Liga tem uma Presidência, quatro diretorias e oito áreas de interesse. Este post mostra cargos e áreas. Não mostra nomes." },
         { "t": "h2", "texto": "Cargos" },
-        { "t": "p", "texto": "Nomes e fotos só aparecem com autorização escrita de cada pessoa. Sem ela, o cargo fica com o nome a definir pela diretoria." },
+        { "t": "p", "texto": "Nomes e fotos só aparecem com autorização escrita de cada pessoa. Sem ela, o cargo fica com o nome a divulgar." },
         { "t": "p", "texto": "A Presidência reúne presidente e vice-presidente. Cada uma das quatro diretorias tem um diretor. O cargo é organizacional: não define o que você pode acessar na plataforma." },
         { "t": "cartoes", "itens": [
           { "titulo": "Presidência", "icone": "equipe", "pessoa": true },
@@ -128,14 +128,16 @@
           { "titulo": "Diretoria Financeira", "icone": "equipe", "pessoa": true }
         ] },
         { "t": "h2", "texto": "Áreas de atuação" },
-        { "t": "p", "texto": "No formulário de inscrição, você marca as áreas com afinidade teórica ou prática. São seis áreas, e elas também aparecem na página da Liga:" },
+        { "t": "p", "texto": "Estas são as áreas de interesse da Liga. Elas também aparecem na página da Liga:" },
         { "t": "cartoes", "itens": [
-          { "titulo": "Farmacologia Clínica e Terapêutica Aplicada", "icone": "liga" },
-          { "titulo": "Toxicologia Forense e Química Analítica Operacional", "icone": "liga" },
-          { "titulo": "Farmacocinética Avançada e Modelagem Computacional", "icone": "liga" },
-          { "titulo": "Toxicologia Ambiental, Ocupacional e Ecotoxicologia", "icone": "liga" },
-          { "titulo": "Escrita Científica, Pesquisa Clínica e Publicação de Artigos", "icone": "liga" },
-          { "titulo": "Gestão Organizacional, Marketing Científico e Extensão Universitária", "icone": "liga" }
+          { "titulo": "Farmacologia e Toxicologia", "icone": "liga" },
+          { "titulo": "Saúde coletiva e pessoal", "icone": "liga" },
+          { "titulo": "Atenção farmacêutica e automedicação", "icone": "liga" },
+          { "titulo": "Interação medicamentosa e farmacovigilância", "icone": "liga" },
+          { "titulo": "Pesquisa, escrita e publicação científica", "icone": "liga" },
+          { "titulo": "Farmacologia clínica e terapêutica", "icone": "liga" },
+          { "titulo": "Toxicologia ambiental e ocupacional", "icone": "liga" },
+          { "titulo": "Comunicação científica e extensão", "icone": "liga" }
         ] },
         { "t": "p", "texto": "Quem quiser conhecer os membros pode acessar o Instagram da Liga, @laift.liga, onde eles aparecem." },
         { "t": "cta", "rotulo": "Ver a página da Liga", "href": "/liga.html" },

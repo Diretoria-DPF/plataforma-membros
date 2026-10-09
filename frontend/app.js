@@ -2618,6 +2618,25 @@
     openConfirm: openConfirm,
   };
 
+  // Atalhos de URL das telas públicas (barras do blog e da Liga): /#cadastro abre o cadastro e
+  // /#entrar o login com o foco no e-mail. O hash sai da URL depois de usado.
+  var PUBLIC_HASH_SCREENS = { '#cadastro': 'screen-register', '#entrar': 'screen-welcome' };
+  function openPublicScreenFromHash() {
+    var hash = window.location.hash || '';
+    var screenId = PUBLIC_HASH_SCREENS[hash] || 'screen-welcome';
+    if (PUBLIC_HASH_SCREENS[hash]) {
+      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
+    }
+    showPublicScreen(screenId);
+    if (hash === '#entrar') {
+      var email = document.getElementById('login-email');
+      if (email) email.focus();
+    }
+  }
+  window.addEventListener('hashchange', function () {
+    if (!state.sessionToken && PUBLIC_HASH_SCREENS[window.location.hash]) openPublicScreenFromHash();
+  });
+
   (function init() {
     var deepLink = readDeepLink();
     window.APP_DEEP_LINK_MODE = deepLink.mode;
@@ -2664,6 +2683,6 @@
       return;
     }
 
-    showPublicScreen('screen-welcome');
+    openPublicScreenFromHash();
   })();
 })();

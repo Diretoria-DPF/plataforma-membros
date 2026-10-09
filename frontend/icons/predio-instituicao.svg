@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 360" width="320" height="360">
+<!-- Plataforma de Membros LAIFT · © 2026 Daniel Pires Francisco -->
+<title>Prédio da UNINASSAU</title>
+<desc>Ilustração de um prédio de quatro andares com a placa UNINASSAU e o número 358 na entrada.</desc>
+<circle cx="160" cy="190" r="150" fill="#e1f4f0"/>
+<rect x="80" y="82" width="46" height="12" rx="6" fill="#ffffff"/>
+<circle cx="96" cy="82" r="10" fill="#ffffff"/>
+<circle cx="116" cy="76" r="12" fill="#ffffff"/>
+<rect x="194" y="82" width="46" height="12" rx="6" fill="#ffffff"/>
+<circle cx="224" cy="82" r="10" fill="#ffffff"/>
+<circle cx="204" cy="76" r="12" fill="#ffffff"/>
+<ellipse cx="160" cy="326" rx="118" ry="6" fill="#1c2333" opacity="0.12"/>
+<rect x="38" y="274" width="8" height="44" rx="2" fill="#8f6b09"/>
+<circle cx="42" cy="256" r="22" fill="#1e6b3c" stroke="#1c2333" stroke-width="2.5"/>
+<circle cx="36" cy="250" r="11" fill="#7be3a0"/>
+<rect x="274" y="274" width="8" height="44" rx="2" fill="#8f6b09"/>
+<circle cx="278" cy="256" r="22" fill="#1e6b3c" stroke="#1c2333" stroke-width="2.5"/>
+<circle cx="284" cy="250" r="11" fill="#7be3a0"/>
+<rect x="70" y="112" width="180" height="194" rx="8" fill="#fafaf7" stroke="#1c2333" stroke-width="3.5"/>
+<rect x="73" y="266" width="174" height="38" fill="#edebe5"/>
+<rect x="70" y="264" width="180" height="3" fill="#e4e1d8"/>
+<rect x="60" y="100" width="200" height="16" rx="6" fill="#0f6f62" stroke="#1c2333" stroke-width="3.5"/>
+<path d="M160 104L142.4 71.5A20 20 0 1 1 177.6 71.5Z" fill="#ca545d" stroke="#1c2333" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="160" cy="62" r="8" fill="#ffffff"/>
+<rect x="82" y="128" width="156" height="28" rx="5" fill="#0f6f62"/>
+<text x="160" y="150" font-family="Segoe UI, system-ui, -apple-system, Roboto, sans-serif" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle">UNINASSAU</text>
+<rect x="83" y="166" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="116" y="166" width="22" height="24" rx="2" fill="#ffc857" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="149" y="166" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="182" y="166" width="22" height="24" rx="2" fill="#ffc857" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="215" y="166" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<path d="M94 166V190M127 166V190M160 166V190M193 166V190M226 166V190M83 178H105M116 178H138M149 178H171M182 178H204M215 178H237" stroke="#1c2333" stroke-width="2"/>
+<rect x="83" y="200" width="22" height="24" rx="2" fill="#ffc857" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="116" y="200" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="149" y="200" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="182" y="200" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="215" y="200" width="22" height="24" rx="2" fill="#ffc857" stroke="#1c2333" stroke-width="2.5"/>
+<path d="M94 200V224M127 200V224M160 200V224M193 200V224M226 200V224M83 212H105M116 212H138M149 212H171M182 212H204M215 212H237" stroke="#1c2333" stroke-width="2"/>
+<rect x="83" y="234" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="116" y="234" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="149" y="234" width="22" height="24" rx="2" fill="#ffc857" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="182" y="234" width="22" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="215" y="234" width="22" height="24" rx="2" fill="#ffc857" stroke="#1c2333" stroke-width="2.5"/>
+<path d="M94 234V258M127 234V258M160 234V258M193 234V258M226 234V258M83 246H105M116 246H138M149 246H171M182 246H204M215 246H237" stroke="#1c2333" stroke-width="2"/>
+<rect x="88" y="274" width="34" height="24" rx="2" fill="#e5effc" stroke="#1c2333" stroke-width="2.5"/>
+<path d="M105 274V298M88 286H122" stroke="#1c2333" stroke-width="2"/>
+<rect x="134" y="270" width="52" height="34" rx="3" fill="#e4e1d8" stroke="#1c2333" stroke-width="2.5"/>
+<rect x="137" y="273" width="21" height="31" rx="2" fill="#0b5349"/>
+<rect x="162" y="273" width="21" height="31" rx="2" fill="#0b5349"/>
+<rect x="154" y="288" width="3" height="9" rx="1.5" fill="#e4e1d8"/>
+<rect x="163" y="288" width="3" height="9" rx="1.5" fill="#e4e1d8"/>
+<rect x="198" y="282" width="26" height="16" rx="3" fill="#ffc857" stroke="#1c2333" stroke-width="2"/>
+<text x="211" y="294" font-family="Segoe UI, system-ui, -apple-system, Roboto, sans-serif" font-size="11" font-weight="700" fill="#1c2333" text-anchor="middle">358</text>
+<rect x="126" y="306" width="68" height="5" rx="2" fill="#e4e1d8" stroke="#1c2333" stroke-width="2"/>
+<rect x="118" y="311" width="84" height="5" rx="2" fill="#e4e1d8" stroke="#1c2333" stroke-width="2"/>
+<rect x="66" y="316" width="188" height="9" rx="4" fill="#e4e1d8" stroke="#1c2333" stroke-width="2"/>
+</svg>

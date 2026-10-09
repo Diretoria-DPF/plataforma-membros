@@ -1,0 +1,107 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Aviso de nova publicação do blog (blog-novidade.js). Só prefixo .blog-novidade;
+   cores vêm dos tokens de laift-tokens.css, então o escuro segue sozinho. */
+
+.blog-novidade[hidden] { display: none !important; }
+
+/* Item comum: linha única que quebra; alvo de toque de 44 px. */
+.blog-novidade__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--move-xs) var(--move-sm);
+  min-height: var(--laift-touch);
+  padding: var(--move-sm) var(--move-md);
+  border-radius: 20px;
+  background: var(--layer-2);
+  color: var(--laift-text);
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.blog-novidade__item:active { transform: scale(0.98); }
+
+.blog-novidade__item:focus-visible {
+  outline: 3px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
+.blog-novidade__selo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--move-sm);
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-primary-soft);
+  color: var(--laift-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.blog-novidade__titulo {
+  flex: 1 1 12rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.blog-novidade__meta {
+  color: var(--laift-muted);
+  font-size: 0.875rem;
+}
+
+/* --faixa: tela inicial, dentro de .welcome-liga (flex-wrap). Ocupa a linha inteira. */
+.welcome-liga .blog-novidade--faixa { flex: 0 0 100%; }
+
+/* --cartoes: /liga. Uma coluna no celular, três a partir de 900 px. */
+.blog-novidade__lista {
+  display: grid;
+  gap: var(--move-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .blog-novidade__lista { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.blog-novidade--cartoes .blog-novidade__item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--move-xs);
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--move-md);
+  border-radius: 24px;
+  box-shadow: var(--elev-1);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.blog-novidade--cartoes .blog-novidade__titulo {
+  font-size: 1.125rem;
+}
+
+.blog-novidade--cartoes .blog-novidade__resumo {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.blog-novidade--cartoes .blog-novidade__meta { margin-top: auto; }
+
+@media (hover: hover) {
+  .blog-novidade--cartoes .blog-novidade__item:hover { transform: translateY(-2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-novidade__item { transition: none; }
+}

@@ -3,9 +3,10 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Página pública da Liga (/liga). Só mostra o CTA de inscrição quando a flag
-// pública selection_open está ligada e o link do formulário é válido.
-// Todo texto é escrito com textContent (nunca HTML bruto).
+// Estado do processo seletivo nas páginas /liga, /processo-seletivo e /edital.
+// Lê liga-ciclo.json e a flag pública selection_open e pinta os elementos
+// marcados com data-*. Elemento ausente = ignora. Todo texto é escrito com
+// textContent (nunca HTML bruto).
 (function () {
   'use strict';
 
@@ -73,39 +74,83 @@
     return ciclo && isFormUrlValida(ciclo.formularioUrl) ? 'aberto' : 'erro';
   }
 
-  function pintarEstado(estado, formUrl) {
-    var status = document.getElementById('liga-status');
-    var cta = document.getElementById('liga-cta-inscricao');
-    if (status) {
-      status.setAttribute('data-estado', estado);
-      status.textContent = MENSAGENS[estado];
-    }
-    if (cta && estado === 'aberto') {
-      cta.setAttribute('href', formUrl);
-      cta.hidden = false;
-    }
+  function textoValido(valor) {
+    return typeof valor === 'string' && valor.trim() !== '';
   }
 
-  function pintarDatas(ciclo) {
-    var datas = ciclo && ciclo.datas;
-    if (!datas) return;
-    var nos = document.querySelectorAll('[data-ciclo-data]');
-    Array.prototype.forEach.call(nos, function (no) {
-      var chave = no.getAttribute('data-ciclo-data');
-      if (Object.prototype.hasOwnProperty.call(datas, chave) && typeof datas[chave] === 'string') {
-        no.textContent = datas[chave];
-      }
+  function pintarRaiz(estado) {
+    document.documentElement.setAttribute('data-processo', estado);
+  }
+
+  function pintarStatus(estado) {
+    var status = document.getElementById('liga-status');
+    if (!status) return;
+    status.setAttribute('data-estado', estado);
+    status.textContent = MENSAGENS[estado];
+  }
+
+  function pintarBlocos(estado) {
+    var aberto = estado === 'aberto';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-se-aberto]'), function (no) {
+      no.hidden = !aberto;
     });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-se-fechado]'), function (no) {
+      no.hidden = aberto;
+    });
+  }
+
+  function pintarFormularios(estado, formUrl) {
+    if (estado !== 'aberto') return;
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-formulario]'), function (link) {
+      link.setAttribute('href', formUrl);
+    });
+  }
+
+  function pintarCiclo(ciclo) {
+    var datas = ciclo && ciclo.datas;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-ciclo-data]'), function (no) {
+      var chave = no.getAttribute('data-ciclo-data');
+      var valor = datas && Object.prototype.hasOwnProperty.call(datas, chave) ? datas[chave] : null;
+      if (textoValido(valor)) no.textContent = valor;
+    });
+    var vagas = ciclo && ciclo.vagas;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-ciclo-vagas]'), function (no) {
+      if (textoValido(vagas)) no.textContent = vagas;
+    });
+  }
+
+  // Não depende da flag: o botão de imprimir funciona mesmo com a API lenta.
+  function ligarImpressao() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-imprimir]'), function (no) {
+      no.hidden = false;
+      no.addEventListener('click', function () { window.print(); });
+    });
+  }
+
+  function pintarTudo(estado, ciclo) {
+    pintarRaiz(estado);
+    pintarStatus(estado);
+    pintarBlocos(estado);
+    pintarFormularios(estado, ciclo && ciclo.formularioUrl);
+    pintarCiclo(ciclo);
   }
 
   function iniciar() {
-    Promise.all([lerCiclo(), consultarFlag()]).then(function (res) {
-      var ciclo = res[0];
-      var estado = decidirEstado(res[1], ciclo);
-      pintarDatas(ciclo);
-      pintarEstado(estado, ciclo && ciclo.formularioUrl);
-    });
+    ligarImpressao();
+    Promise.all([lerCiclo(), consultarFlag()])
+      .then(function (res) {
+        pintarTudo(decidirEstado(res[1], res[0]), res[0]);
+      })
+      .catch(function () {
+        pintarTudo('erro', null);
+      });
   }
 
-  iniciar();
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { decidirEstado: decidirEstado, isFormUrlValida: isFormUrlValida };
+  } else if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciar);
+  } else {
+    iniciar();
+  }
 })();

@@ -70,6 +70,8 @@
   <link rel="stylesheet" href="modulos/shared/lia/lia.css">
   <link rel="stylesheet" href="assistant-hints.css">
   <link rel="stylesheet" href="splash.css">
+  <link rel="stylesheet" href="blog-novidade.css">
+  <link rel="stylesheet" href="voltar-app.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
   <script src="ux-v2.js"></script>
 </head>
@@ -114,11 +116,13 @@
         <div class="welcome-liga">
           <p class="welcome-liga__aviso">Processo seletivo aberto</p>
           <a class="link-btn welcome-liga__link" href="liga.html">Conheça a LAIFT</a>
-          <a class="link-btn welcome-liga__blog" href="blog.html">Conheça a plataforma</a>
+          <a class="link-btn welcome-liga__blog" href="blog.html">Blog: conheça a plataforma</a>
+          <div class="blog-novidade blog-novidade--faixa" data-blog-novidade="1" hidden></div>
         </div>
       </section>
 
       <section id="screen-register" class="auth-card hidden" aria-labelledby="register-title">
+        <button type="button" class="link-btn auth-voltar" data-nav="screen-welcome">← Voltar</button>
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="register-title" class="auth-heading">Criar conta</h1>
         <p class="muted">Sua conta começa como visitante; a confirmação por e-mail é obrigatória para entrar.</p>
@@ -194,6 +198,7 @@
       </section>
 
       <section id="screen-forgot" class="auth-card hidden" aria-labelledby="forgot-title">
+        <button type="button" class="link-btn auth-voltar" data-nav="screen-welcome">← Voltar</button>
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="forgot-title" class="auth-heading">Redefinir senha</h1>
         <p class="muted">Informe seu e-mail para receber o link de redefinição.</p>
@@ -387,7 +392,7 @@
           </div>
           <div id="learn-viewer" class="learn-viewer hidden">
             <div class="learn-viewer-bar">
-              <button type="button" class="secondary" id="learn-back" style="width:auto;">← Módulos</button>
+              <button type="button" class="secondary" id="learn-back" style="width:auto;" aria-label="Voltar para os módulos">← Voltar</button>
               <strong id="learn-viewer-title"></strong>
               <button type="button" class="secondary" id="learn-fullscreen" style="width:auto;" aria-label="Tela cheia">Tela cheia</button>
             </div>
@@ -1013,6 +1018,8 @@
   <!-- Moderação da Lia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
   <script src="modulos/shared/safe-dom.js" defer></script>
   <script src="admin-moderation.js" defer></script>
+  <script src="blog-novidade.js" defer></script>
+  <script src="voltar-app.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
