@@ -547,6 +547,12 @@ summary:focus-visible,
 :root[data-flag-ux-v2-enabled] .hero .lia { aspect-ratio: 1 / 1; --lia-size: 112px; }
 /* Sem este recorte o corpo (fora do viewBox da cabeça) aparece por cima do título, como no lançador. */
 :root[data-flag-ux-v2-enabled] .hero .lia-svg { overflow: hidden; }
+/* Em celular (375 px) o cartão fica a ~87 px do topo e a cabeça de 112 px (top: -92px) perdia ~5 px acima da janela:
+   cabeça de 100 px e top -80px a deixam a ~7 px do topo, ainda acima do padding de 22 px do cartão. Vem depois das regras base. */
+@media (max-width: 480px) {
+  :root[data-flag-ux-v2-enabled] #screen-welcome > .hero { top: -80px; }
+  :root[data-flag-ux-v2-enabled] .hero .lia { --lia-size: 100px; }
+}
 
 /* Módulos com canvas 3D (Atlas imersivo): nenhum desfoque sobre o canvas;
    barras voltam ao fundo opaco. */
