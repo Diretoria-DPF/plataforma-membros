@@ -599,18 +599,26 @@ describe('moderação da Lia — achado 2: ofensa em turno ANTERIOR do históric
 
   test('com o acervo ligado, o turno ofensivo também não vira consulta de busca (a anterior seria o último turno)', async () => {
     await setRagFlag(true);
+    // Um trecho indexado: com o índice vazio a Lia responde sem busca, e o teste perderia o que quer provar.
+    await db.query(`INSERT INTO kb_chunks (source, section, content, content_hash) VALUES ('kb', 'Ácidos e bases', 'Ácidos doam prótons; bases recebem prótons.', 'h-moderacao')`);
+    Assistant.__resetKbIndexForTests();
     const seen = [];
     const spy = (...args) => {
       seen.push(JSON.stringify(args.slice(1)));
       return sql(...args);
     };
-    await Assistant.chat(spy, env, MEMBER, {
-      message: 'qual a previsão do tempo para amanhã',
-      history: [{ role: 'user', text: 'me explique a diferença entre ácidos e bases' }, { role: 'user', text: OFFENSIVE }],
-    }, CID);
-    expect(seen.some((values) => /ácidos/.test(values))).toBe(true); // a busca rodou com o turno limpo
-    seen.forEach((values) => expect(values).not.toMatch(/idiota/i));
-    expect(await count('assistant_incidents')).toBe(0);
+    try {
+      await Assistant.chat(spy, env, MEMBER, {
+        message: 'qual a previsão do tempo para amanhã',
+        history: [{ role: 'user', text: 'me explique a diferença entre ácidos e bases' }, { role: 'user', text: OFFENSIVE }],
+      }, CID);
+      expect(seen.some((values) => /ácidos/.test(values))).toBe(true); // a busca rodou com o turno limpo
+      seen.forEach((values) => expect(values).not.toMatch(/idiota/i));
+      expect(await count('assistant_incidents')).toBe(0);
+    } finally {
+      await db.query('DELETE FROM kb_chunks');
+      Assistant.__resetKbIndexForTests();
+    }
   });
 
   test('a ofensa na mensagem ATUAL continua sendo o incidente (uma vez), mesmo com histórico ofensivo', async () => {

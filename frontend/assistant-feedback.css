@@ -174,3 +174,71 @@
   .lia-fb-secondary { animation: none; transition: none; }
   .lia-fb-choice:hover:not(:disabled) { transform: none; }
 }
+
+/* Lia: pesquisa externa e registro (frontend/assistant-research.js). Só tokens; sem borda de cartão. */
+.lia-cached-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.lia-research {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--layer-2, var(--surface-alt));
+  color: var(--text);
+  font-size: 14px;
+}
+
+.lia-research-state,
+.lia-research-meta,
+.lia-research-foot {
+  margin: 0;
+}
+
+.lia-research-state { font-weight: 600; color: var(--text); }
+
+.lia-research-meta { font-size: 13px; color: var(--muted); }
+
+.lia-research-foot { font-size: 12px; color: var(--muted); }
+
+.lia-research-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.lia-research-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Link com texto e sublinhado: não depende só da cor. Alvo de toque de 44 px. */
+.lia-research-link {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 4px;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.lia-research-btn { min-height: 44px; }
+
+.lia-research :focus-visible,
+.lia-research-btn:focus-visible,
+.lia-research-link:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lia-research-btn { transition: none; }
+}

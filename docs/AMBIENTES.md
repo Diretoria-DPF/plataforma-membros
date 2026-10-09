@@ -338,3 +338,89 @@ SELECT name FROM schema_migrations ORDER BY name;
 - [ ] **A 023 e a regra "não religar".** Resolvido na migração: a 023 segue a regra descrita em *Fatos que definem a ordem*. A ressalva que permanece: um `UPDATE` de SQL não é protegido (ver §5.1 e o risco O30 em `docs/riscos-residuais.md`).
 - [ ] **Migração 024.** Existe (`sql/024_indices.sql`) e entra no lote da seção 2.2. Resolvido.
 - [x] **Documentação.** `docs/FEATURE_FLAGS.md` foi atualizado nesta entrega. `docs/DEPLOYMENT.md`, seção 1, foi corrigido na passada final de 2026-10-08: migrações 001 a 024, e a 023 não religa o que um admin desligou.
+
+## Lia: registro, seleção e pesquisa externa (2026-10)
+
+Ativação das entregas de registro de pesquisas, seleção e pesquisa externa. Faça depois da seção *Ativação da UX v2, Lia viva, RAG, feedback e moderação*, com o código no ar. As flags novas nascem **desligadas**, e cada uma só liga por decisão do dono.
+
+**Antes de tudo: `rag_enabled` e o acervo**
+
+- [ ] Confira as condições de `rag_enabled`. Com `role` ou `rollout_pct` menor que 100, a faxina das 03:17 (Brasília) avalia a flag sem identidade, recebe falso e não reindexa.
+  ```sql
+  SELECT key, enabled, rollout_pct, conditions FROM feature_flags WHERE key = 'rag_enabled';
+  ```
+  Esperado: `enabled` `true`, `rollout_pct` `100` e `conditions` `{}`.
+- [ ] Reindexe pelo painel: Administração → IA → **Reindexar base da Lia**. Leia o relatório (`total`, `embedded`, `embeddingAvailable`). Com `embeddingAvailable` `false`, confira o binding `AI` (pré-requisitos da ativação). Depois, confira o acervo como em 2.3.
+
+**Migração 026 (`lia_pesquisas`)**
+
+- [ ] Pré-requisito: 020 a 024 e a 023 aplicadas (seções 2.2 e 2.4 concluídas). Na terminal, informe a URL **direta** do Neon de produção, sem gravá-la no histórico.
+  ```bash
+  read -rsp "URL direta do Neon de PRODUÇÃO: " DATABASE_URL && export DATABASE_URL
+  ```
+- [ ] Simule. A primeira linha mostra o host, que tem que ser o do projeto `plataforma-membros`. Só a 026 pode aparecer.
+  ```bash
+  node tools/db/migrate.mjs --dry-run
+  ```
+  Esperado: `[dry-run] aplicaria: 026_lia_pesquisas.sql` e nada mais. Se aparecer outro arquivo, **pare**: o ledger não bate com o banco (seção 3).
+- [ ] Aplique.
+  ```bash
+  node tools/db/migrate.mjs
+  ```
+  Esperado: `aplicada: 026_lia_pesquisas.sql`. No SQL Editor, `SELECT to_regclass('public.lia_pesquisas');` não pode voltar `NULL`.
+- [ ] Reversão, se preciso: desligue `rag_cache_enabled` antes e cole `sql/down/026_lia_pesquisas.sql` no SQL Editor. Ela apaga só o registro (a Lia volta a pesquisar do zero) e tira a 026 do ledger.
+
+**Flags, uma de cada vez**
+
+Ligue pelo painel de administração (grava em `audit_logs`) ou pela API, como abaixo. Antes de ligar a próxima, observe o painel de IA e a consulta de erros logo abaixo.
+
+```bash
+read -rsp "Token de sessão do admin: " TOKEN_ADMIN && export TOKEN_ADMIN
+```
+
+- [ ] **`rag_cache_enabled`** (primeiro): liga o registro de respostas.
+  ```bash
+  curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d "{\"action\":\"apiAdminSetFeatureFlag\",\"args\":[\"$TOKEN_ADMIN\",\"rag_cache_enabled\",{\"enabled\":true}]}"
+  ```
+- [ ] **`rag_rerank_enabled`**: só depois da calibração no staging, com o golden set (O36). Não ligue em produção antes disso.
+  ```bash
+  curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d "{\"action\":\"apiAdminSetFeatureFlag\",\"args\":[\"$TOKEN_ADMIN\",\"rag_rerank_enabled\",{\"enabled\":true}]}"
+  ```
+- [ ] **`research_enabled`**: só depois do OK jurídico (Política, seção 5) e com a Política atualizada. Primeiro ligue com rótulo de teste, que deixa a flag só para admins:
+  ```bash
+  curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d "{\"action\":\"apiAdminSetFeatureFlag\",\"args\":[\"$TOKEN_ADMIN\",\"research_enabled\",{\"enabled\":true,\"conditions\":{\"role\":\"admin\"}}]}"
+  ```
+  Depois de testar, abra para todos (condições vazias):
+  ```bash
+  curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d "{\"action\":\"apiAdminSetFeatureFlag\",\"args\":[\"$TOKEN_ADMIN\",\"research_enabled\",{\"enabled\":true,\"conditions\":{}}]}"
+  ```
+- [ ] Consulta de erros (somente leitura). Não deve haver erro novo depois de ligar uma flag:
+  ```sql
+  SELECT created_at, code, message FROM error_logs WHERE code IN ('ASSISTANT_RAG_FAILED', 'MAINTENANCE_FAILED') ORDER BY created_at DESC LIMIT 20;
+  ```
+
+**Rollback**
+
+- [ ] Desligue pela API. Grava em `audit_logs` e marca `updated_by`. Exemplo com `research_enabled`:
+  ```bash
+  curl -s https://api.laift.com.br/v1/ -H 'Content-Type: application/json' -d "{\"action\":\"apiAdminSetFeatureFlag\",\"args\":[\"$TOKEN_ADMIN\",\"research_enabled\",{\"enabled\":false}]}"
+  ```
+- [ ] Pelo SQL, só em emergência e com a decisão registrada: o `UPDATE` não grava auditoria nem `updated_by`.
+  ```sql
+  UPDATE feature_flags SET enabled = FALSE, updated_at = now() WHERE key IN ('rag_cache_enabled', 'rag_rerank_enabled', 'research_enabled');
+  ```
+
+**Lacunas da base (somente leitura)**
+
+- [ ] Perguntas que a base não respondeu, da mais pedida para a menos. O texto é a pergunta normalizada, sem dado pessoal (passa pelo mesmo filtro do cache). Use para escrever conteúdo novo:
+  ```sql
+  SELECT query_norm, hits FROM lia_pesquisas WHERE provider='kb' AND outcome='empty' ORDER BY hits DESC LIMIT 30;
+  ```
+
+**Retenção e pendências do dono**
+
+- [ ] Retenção: a faxina diária (`liaResearchPurge`, em `worker/src/maintenance.js`) apaga as linhas vencidas: 30 dias para a base e 7 para os provedores externos. Só produção tem cron.
+- [ ] Política de privacidade, seção 5: incluir a Europe PMC (EMBL-EBI, que recebe só os termos) e, se aprovados, TypeSafe e OpenRouter, além dos prazos de retenção (30 e 7 dias). Termos: cláusula de conteúdo de terceiros. Resumos de terceiros não são reproduzidos.
+- [ ] Numeração: a 026 pressupõe que a F4 use outro número (a 025 é o rascunho dela). Ver `docs/lia/PLANO.md`, §5.
+- [ ] Jev (só se adotado): confirmar o nome e o operador novo, entrar na lista de espera e cadastrar a chave como segredo do Worker (`wrangler secret put <NOME>`), sem gravá-la em arquivo.
+- [ ] Custos: confirmar que o Workers AI segue na cota grátis. OpenAlex só se for adotado.

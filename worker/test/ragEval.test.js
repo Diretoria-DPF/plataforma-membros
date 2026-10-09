@@ -35,6 +35,10 @@ const NEGATIVES = GOLD.filter((g) => g.secao === null);
 // Baseline medido DEPOIS da calibração de RAG.MIN_TRIGRAM_SCORE (constants.js) e com o golden set atual
 // (24 positivas, sendo 10 de cobertura da Lia): 13 de 24 com o negativo rejeitado. Com as 14 positivas
 // da calibração era 5 de 14; antes dela, 11 de 14, aceitando o negativo.
+// 2026-10-09 (L06): golden set ampliado para 42 positivas (18 novas, 3 em cada fonte nova: plataforma,
+// modulos, publicacoes, processo, faq, saude) e 14 negativas (12 novas, fora do domínio): 21 de 42 (0,500),
+// com 0 falsos positivos. Atualizar a constante para 21/42 baixaria o piso para 0,430; por isso ela fica em
+// 13/24 e o piso não cai. O novo baseline só entra com a calibração (O21/O36).
 const BASELINE_RECALL_AT_4 = 13 / 24;
 const RECALL_REGRESSION_TOLERANCE = 0.07;
 const RECALL_FLOOR = BASELINE_RECALL_AT_4 - RECALL_REGRESSION_TOLERANCE;

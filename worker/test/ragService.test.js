@@ -29,7 +29,7 @@ describe('docs — base de conhecimento embutida', () => {
     expect(new Set(docs.map((d) => d.source + '|' + d.section)).size).toBe(docs.length);
     expect(docs.every((d) => d.content.length > 10 && d.content.length <= 4000)).toBe(true);
     const sources = new Set(docs.map((d) => d.source));
-    expect(sources).toEqual(new Set(['kb', 'destinos', 'guia', 'privacidade', 'convivencia', 'liga']));
+    expect(sources).toEqual(new Set(['kb', 'destinos', 'guia', 'privacidade', 'convivencia', 'liga', 'plataforma', 'modulos', 'publicacoes', 'processo', 'faq', 'saude']));
     expect(docs.find((d) => d.source === 'destinos').content).not.toMatch(/administrador|Terminal fiscal/);
   });
 });

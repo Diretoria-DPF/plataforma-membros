@@ -23,7 +23,7 @@
   var PRECACHE = [
     './', 'styles.css', 'ux.css', 'ux-glass.css', 'modulos/shared/charts.css', 'modulos/shared/charts-core.js', 'modulos/shared/charts.js', 'home-editorial.css', 'dashboardAdapter.js', 'modulos/shared/lia/lia.css', 'modulos/shared/lia/lia-art.js', 'modulos/shared/lia/lia-props-art.js', 'modulos/shared/lia/lia-props.js', 'modulos/shared/lia/lia-scenes.js', 'modulos/shared/lia/lia-states.js', 'modulos/shared/lia/lia-mood.js', 'modulos/shared/lia/lia-anim.js', 'modulos/shared/lia/lia.js', 'manifest.webmanifest', 'icons/icon-192.png',
     'app.js', 'shared-states.js', 'pwa.js', 'domain-notice.js', 'learning.js', 'admin-ai.js',
-    'msg-crypto.js', 'messaging.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-hints.js', 'assistant-hints.css', 'admin-moderation.js', 'hero.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'modulos/shared/safe-dom.js',
+    'msg-crypto.js', 'messaging.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-research.js', 'assistant-hints.js', 'assistant-hints.css', 'admin-moderation.js', 'hero.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'modulos/shared/safe-dom.js',
     'ux-v2.js', 'splash.js', 'splash.css', 'modulos/shared/laift-tokens.css', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js', 'voltar-app.css',
     'modulos/cracha/laift-marca.png',
   ];

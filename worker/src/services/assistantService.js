@@ -35,7 +35,9 @@ import { cleanText, cleanReply, sanitizeHistory } from '../ai/validators.js';
 import { matchIntent, normalize, DEFAULT_SUGGESTIONS } from '../assistant/kb.js';
 import { filterActions } from '../assistant/targets.js';
 import * as Rag from './ragService.js';
-import { normalizeQuestion } from '../ai/semanticCache.js';
+import * as ResearchLog from './researchLogService.js';
+import * as ResearchService from './researchService.js';
+import { isCacheable, normalizeQuestion } from '../ai/semanticCache.js';
 import { moderationGate } from '../assistant/moderationGate.js';
 import { looksLikeInjection, withoutOffensiveTurns } from '../assistant/moderationRules.js';
 
@@ -45,6 +47,14 @@ export { looksLikeInjection };
 
 const FLAG_CHATBOT = 'chatbot_enabled';
 const FLAG_RAG = 'rag_enabled';
+const FLAG_CACHE = 'rag_cache_enabled';
+const FLAG_RERANK = 'rag_rerank_enabled';
+const FLAG_RESEARCH = 'research_enabled';
+const KB_PROVIDER = 'kb';
+const NO_INDEX = 'sem-indice'; // versão quando o índice não pode ser lido: o registro não é usado nem gravado
+const INDEX_TTL_MS = 60 * 1000;
+const KB_VERSION_LEN = 16;
+const RERANK_SUFFIX = ':r';
 const ANSWER_MAX = 4000; // limite de assistant_messages.answer (sql/021)
 const HISTORY_TURNS = 5;
 const EVENTS_SHOWN = 3;
@@ -208,11 +218,14 @@ function canUseAi(identity, env) {
   return !!identity && quotaLimit(identity.role, C.AI_FEATURE.ASSISTANT) > 0 && Groq.parseKeys(env).length > 0;
 }
 
-/** Busca os trechos do acervo. Nunca lança: falha vira { failed: true }. Trecho com cara de instrução sai. */
-async function retrieveContext(sql, env, query, correlationId) {
+/**
+ * Busca os trechos do acervo. Nunca lança: falha vira { failed: true }. Trecho com cara de instrução sai.
+ * Com rerank (rag_rerank_enabled), answerable === false quer dizer que nenhum trecho cobre a pergunta.
+ */
+async function retrieveContext(sql, env, query, correlationId, rerank = false) {
   let found;
   try {
-    found = await Rag.retrieve(sql, env, query);
+    found = await Rag.retrieve(sql, env, query, { rerank });
   } catch (err) {
     await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_FAILED', String((err && err.message) || err), null);
     return { chunks: [], failed: true, degraded: false };
@@ -220,9 +233,10 @@ async function retrieveContext(sql, env, query, correlationId) {
   // Embedding caiu: a busca seguiu só com trigramas. Registra o fato, sem a pergunta nem o trecho.
   const degraded = !!found.embeddingError;
   if (degraded) await Logging.logError(sql, correlationId, 'ASSISTANT_RAG_EMBEDDING_FAILED', 'Embedding indisponível: busca só por trigramas.', null);
-  const chunks = found.chunks.filter((c) => !looksLikeInjection(c.content));
-  if (chunks.length < found.chunks.length) {
-    await Logging.logAudit(sql, correlationId, null, 'ASSISTANT_RAG_CHUNK_SUPPRESSED', 'assistant', null, 'failure', { dropped: found.chunks.length - chunks.length });
+  const usable = found.answerable === false ? [] : found.chunks;
+  const chunks = usable.filter((c) => !looksLikeInjection(c.content));
+  if (chunks.length < usable.length) {
+    await Logging.logAudit(sql, correlationId, null, 'ASSISTANT_RAG_CHUNK_SUPPRESSED', 'assistant', null, 'failure', { dropped: usable.length - chunks.length });
   }
   const trimmed = chunks.map((c) => ({ source: c.source, section: c.section, content: String(c.content).slice(0, C.RAG.CONTEXT_CHARS) }));
   return { chunks: trimmed, failed: false, degraded };
@@ -261,18 +275,90 @@ function withCitations(result, chunks) {
   return Object.assign({}, result, { reply: (body ? body + '\n\n' : '') + note, sources });
 }
 
+/** Só membro, sem histórico e pergunta cacheável usa o registro (L04). Admin depende do papel: fica de fora. */
+function usesResearchLog(identity, message, history) {
+  return !!identity && identity.role === C.ROLES.MEMBER && history.length === 0 && isCacheable(message);
+}
+
+/**
+ * Lê o índice que a busca usa (kb_chunks): hash do conteúdo, na ordem source/section. Tabela vazia = empty.
+ * Falha de leitura é logada e devolve hash null: a resposta segue, sem registro.
+ */
+async function readIndex(sql, correlationId) {
+  try {
+    const rows = await sql`SELECT content_hash FROM kb_chunks ORDER BY source, section`;
+    const hashes = (Array.isArray(rows) ? rows : []).map((r) => String(r.content_hash ?? ''));
+    if (!hashes.length) return { empty: true, hash: null };
+    return { empty: false, hash: (await Rag.sha256Hex(hashes.join(','))).slice(0, KB_VERSION_LEN) };
+  } catch (err) {
+    await Logging.logError(sql, correlationId, 'ASSISTANT_KB_INDEX_FAILED', String((err && err.message) || err), null);
+    return { empty: false, hash: null };
+  }
+}
+
+let indexMemo = null;
+
+/** Índice lido no máximo a cada 60 s por isolate (uma falha também fica esse prazo: não repete a consulta a cada pergunta). */
+async function kbIndex(sql, correlationId) {
+  const now = Date.now();
+  if (indexMemo === null || now - indexMemo.at >= INDEX_TTL_MS) indexMemo = Object.assign(await readIndex(sql, correlationId), { at: now });
+  return indexMemo;
+}
+
+/** Só para testes: esquece a leitura do índice. */
+export function __resetKbIndexForTests() {
+  indexMemo = null;
+}
+
+/** Versão do registro: hash do conteúdo que a busca usa; com o reranker ligado, ':r' (trocar o reranker invalida). */
+function versionOf(index, rerank) {
+  if (index.empty || !index.hash) return NO_INDEX;
+  return index.hash + (rerank ? RERANK_SUFFIX : '');
+}
+
+/** Resposta já registrada para esta pergunta e versão: sem IA, sem cota e sem busca. */
+async function fromResearchLog(sql, message, version) {
+  const hit = await ResearchLog.lookup(sql, { provider: KB_PROVIDER, question: message, kbVersion: version });
+  if (!hit) return null;
+  if (hit.outcome === 'empty') return staticKbFallback(MSG_KB_EMPTY);
+  return answer({ reply: hit.results.reply, sources: hit.results.sources, source: 'ai', cached: true });
+}
+
+/** Grava o desfecho da pergunta: 'answered' (resposta e fontes) ou 'empty' (lacuna da base). Não derruba a resposta. */
+async function logKbOutcome(sql, message, version, outcome, results) {
+  await ResearchLog.record(sql, { provider: KB_PROVIDER, question: message, kbVersion: version, outcome, results });
+}
+
 /**
  * Trechos viram DADO para a IA. A cota é conferida ANTES da busca (sem cota não há embedding nem consulta).
  * Sem trechos, ou com saída vazia da IA, a base estática responde; IA fora ou cota do dia dão resposta fixa.
+ * Sem NENHUM trecho indexado (tabela vazia), a IA responde sem RAG, antes de qualquer embedding ou consulta.
+ * `flags` = { cache, rerank }, lidas por answerWithKnowledge.
  */
-async function answerFromKnowledge(sql, env, identity, message, history, correlationId) {
+async function answerFromKnowledge(sql, env, identity, message, history, correlationId, flags) {
+  const index = await kbIndex(sql, correlationId);
+  const version = versionOf(index, flags.rerank);
+  const logOn = !!flags.cache && version !== NO_INDEX && usesResearchLog(identity, message, history);
+  if (logOn) {
+    const logged = await fromResearchLog(sql, message, version);
+    if (logged) return logged;
+  }
   if (!(await hasAiQuota(sql, env, identity))) return asDegradedIfNotAi(await askAi(sql, env, identity, message, history));
-  const found = await retrieveContext(sql, env, retrievalQuery(message, history), correlationId);
-  if (!found.chunks.length) return staticKbFallback(found.failed ? MSG_KB_FAILED : MSG_KB_EMPTY);
+  if (index.empty) return asDegradedIfNotAi(await askAi(sql, env, identity, message, history));
+  const found = await retrieveContext(sql, env, retrievalQuery(message, history), correlationId, !!flags.rerank);
+  if (!found.chunks.length) {
+    if (found.failed) return staticKbFallback(MSG_KB_FAILED);
+    if (logOn) await logKbOutcome(sql, message, version, 'empty', {});
+    return staticKbFallback(MSG_KB_EMPTY);
+  }
   const result = await askAi(sql, env, identity, message, history, found.chunks);
   if (result === null) return staticKbFallback(MSG_KB_NO_REPLY);
   const out = result.source === 'ai' ? withCitations(result, found.chunks) : asDegradedIfNotAi(result);
-  return found.degraded ? Object.assign({}, out, { degraded: true }) : out;
+  const final = found.degraded ? Object.assign({}, out, { degraded: true }) : out;
+  if (logOn && final.source === 'ai' && !final.degraded && final.sources.length) {
+    await logKbOutcome(sql, message, version, 'answered', { reply: final.reply, sources: final.sources });
+  }
+  return final;
 }
 
 /**
@@ -296,12 +382,24 @@ async function recordAnswer(sql, identity, message, result, correlationId) {
 }
 
 /** Pergunta sem intenção por regra. Com rag_enabled desligada, é exatamente o comportamento anterior. */
-async function askWithKnowledge(sql, env, identity, message, history, correlationId) {
+async function answerWithKnowledge(sql, env, identity, message, history, correlationId) {
   if (!(await flagOn(sql, identity, FLAG_RAG))) return askAi(sql, env, identity, message, history);
-  const result = canUseAi(identity, env)
-    ? await answerFromKnowledge(sql, env, identity, message, history, correlationId)
-    : await askAi(sql, env, identity, message, history);
+  if (!canUseAi(identity, env)) return recordAnswer(sql, identity, message, await askAi(sql, env, identity, message, history), correlationId);
+  const flags = { cache: await flagOn(sql, identity, FLAG_CACHE), rerank: await flagOn(sql, identity, FLAG_RERANK) };
+  const result = await answerFromKnowledge(sql, env, identity, message, history, correlationId, flags);
   return recordAnswer(sql, identity, message, result, correlationId);
+}
+
+/** canResearch só com research_enabled ligada para a pessoa, identidade, pergunta cacheável e resposta da base ou da IA. */
+async function offerResearch(sql, identity, message, result) {
+  if (!identity || !isCacheable(message) || !['kb', 'ai'].includes(result.source)) return result;
+  if (!(await flagOn(sql, identity, FLAG_RESEARCH))) return result;
+  return Object.assign({}, result, { canResearch: true });
+}
+
+async function askWithKnowledge(sql, env, identity, message, history, correlationId) {
+  const result = await answerWithKnowledge(sql, env, identity, message, history, correlationId);
+  return offerResearch(sql, identity, message, result);
 }
 
 /**
@@ -330,6 +428,9 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
     await Logging.logAudit(sql, correlationId, identity ? identity.profileId : null, 'ASSISTANT_INJECTION_BLOCKED', 'assistant', null, 'failure', { length: message.length });
     return answer({ reply: MSG_REFUSAL, source: 'fallback' });
   }
+
+  // Pesquisa externa (L07): a flag research_enabled e a identidade são checadas lá. Não passa pela IA nem grava a mensagem.
+  if (input.research === true) return ResearchService.research(sql, env, identity, message, correlationId);
 
   // O papel limita as intenções: a de administração não existe para quem não é admin (cai no fluxo normal).
   const hit = matchIntent(message, history, role);

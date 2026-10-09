@@ -20,6 +20,7 @@
  */
 import * as C from '../constants.js';
 import { buildDocuments } from '../assistant/docs.js';
+import { rerank } from './rerankService.js';
 
 const EMBED_TIMEOUT_MS = 6000;
 const QUERY_MAX = 300;
@@ -97,9 +98,11 @@ async function vectorRows(sql, literal) {
 
 /**
  * Busca híbrida. Devolve { chunks, mode: 'hybrid'|'trigram', embeddingError }.
+ * Com opts.rerank === true (L09, flag rag_rerank_enabled), funde até CANDIDATES, reordena com
+ * rerankService e acrescenta reranked e answerable. Sem opts, o retorno é o de sempre.
  * Lança só se a busca por trigramas (a base de qualquer modo) falhar.
  */
-export async function retrieve(sql, env, question) {
+export async function retrieve(sql, env, question, opts = {}) {
   const query = String(question || '').toLowerCase().slice(0, QUERY_MAX);
   let vectorList = null;
   let embeddingError = null;
@@ -111,7 +114,10 @@ export async function retrieve(sql, env, question) {
   }
   const trigramList = aboveFloor(await trigramRows(sql, query), C.RAG.MIN_TRIGRAM_SCORE);
   const lists = vectorList ? [vectorList, trigramList] : [trigramList];
-  return { chunks: fuse(lists, C.RAG.TOP_K), mode: vectorList ? 'hybrid' : 'trigram', embeddingError };
+  const mode = vectorList ? 'hybrid' : 'trigram';
+  if (opts.rerank !== true) return { chunks: fuse(lists, C.RAG.TOP_K), mode, embeddingError };
+  const picked = await rerank(env, query, fuse(lists, C.RAG.CANDIDATES), opts);
+  return { chunks: picked.chunks, mode, embeddingError, reranked: picked.provider !== null, answerable: picked.answerable };
 }
 
 export async function sha256Hex(text) {
