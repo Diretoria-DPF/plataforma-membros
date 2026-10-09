@@ -26,7 +26,8 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 |---|---|
 | Blog "Conheça a LAIFT", Publicações, Outubro Rosa | **Mesclado** (PR #45); backup validado (PR #44). Site e blog no ar |
 | PR #46 `feat/lia-conhecimento` | **Aberta**, aguarda o dono. Base da Lia 35→72 trechos, registro de pesquisas (`sql/026`), reranker, Europe PMC, 3 flags novas desligadas. Worker 1620/1620; frontend 986/986 |
-| Identidade da Liga | **Em construção**: plano, contrato e fichas em `docs/identidade/`; branch `feat/identidade-liga` (de `origin/main`). Ver seção 3 |
+| Identidade da Liga | **Construída e verificada**, na branch `feat/identidade-liga` (já no GitHub, **sem PR aberta**). Falta o dono aprovar as capturas (`docs/identidade/capturas/` na branch) e responder os itens do `PLANO.md` §4. Estado completo: `docs/identidade/STATUS.md` (na branch). Ver seção 3 |
+| E2E: falhas que já existiam | 10 ✘ em `apis`, `atlas-farmaco`, `atlas-feedback`, `atlas-ficha-nav`, `atlas-fisiologia` e `atlas-moleculas` (iguais sem as mudanças da identidade; não bloqueiam PR). Investigar numa tarefa à parte |
 | Banco (Neon `plataforma-membro`, id `jolly-snow-39561777`, org "Daniel") | Migrações 020–024 e `atlas_telemetry` aplicadas; **026 não aplicada**; backup na branch `backup-pre-020-024-2026-10-09` |
 | Flags em produção | `chatbot`, `rag`, `feedback`, `moderation` **ligadas**; `ux_v2_enabled` **desligada**; `rag_cache`, `rag_rerank`, `research` ainda nem existem no banco (nascem com a #46, desligadas) |
 | Jev (TypeSafe AI) | Só registrado: `docs/lia/JEV.md` |
@@ -43,9 +44,9 @@ Documentos: `docs/identidade/PLANO.md` (diagnóstico, decisões, riscos, itens p
 - Pendências do dono (PLANO §4): texto do edital, endereço (o edital antigo diz Pituba), áreas, frase incompleta do botão, benefícios, idade/menores, dados da diretoria, mapa na Política, nome do app do blog.
 
 ## 4. Fila (fazer nesta ordem)
-1. **Identidade da Liga**: terminar as ondas de `fichas/ORDEM.md` → build/e2e → capturas em `docs/identidade/capturas/` → o dono aprova → PR.
-   - Se a branch `feat/identidade-liga` já existe no remoto, continue dela (`git fetch origin && git switch feat/identidade-liga`).
-   - Worktree novo não tem `frontend/node_modules`: `npm ci` em `frontend/` antes de rodar o build.
+1. **Identidade da Liga**: já construída. Falta: o dono aprovar as capturas e responder `PLANO.md` §4 → ajustar o que pedir → **abrir a PR** de `feat/identidade-liga` para `main` (corpo: resumo de `docs/identidade/STATUS.md`; sem linhas de atribuição). Mesclar a #46 antes e resolver o conflito esperado em `build.js` e `sw.js` (manter os itens das duas PRs).
+   - Retomar: `git fetch origin && git worktree add .claude/worktrees/identidade-liga feat/identidade-liga`; depois `cd frontend && npm ci`; o `playwright` não está no `package.json`: copie `playwright` e `playwright-core` de `frontend/node_modules` do checkout principal.
+   - Pendências técnicas pequenas estão em `docs/identidade/STATUS.md` §4.
 2. **PR #46 (Lia)**: depois da mescla, na ordem: reindexar a base pelo botão do painel admin (esperado ~72 trechos, todos com embedding) →
    manter `rag_enabled` sem condições → simular e aplicar `sql/026` (inserir em `schema_migrations` com o hash sha256 do arquivo, CRLF normalizado) →
    `rag_cache_enabled` e observar 24 h → `rag_rerank_enabled` só depois de calibrar em staging (`docs/lia/pesquisa/SELECAO.md` §4) →
