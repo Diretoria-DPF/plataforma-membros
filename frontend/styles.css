@@ -842,7 +842,8 @@ button.learn-card:focus-visible { outline-offset: 3px; }
 }
 
 /* Faixa da Liga na tela de entrada (index.html): o aviso só aparece com a flag pública selection_open. */
-.welcome-liga__aviso { display: none; }
+.welcome-liga { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.welcome-liga__aviso { display: none; flex: 0 0 100%; }
 :root[data-flag-selection-open] .welcome-liga__aviso { display: block; }
-.welcome-liga__link { display: inline-flex; align-items: center; min-height: 44px; }
+.welcome-liga__link, .welcome-liga__blog { display: inline-flex; align-items: center; min-height: 44px; }
 

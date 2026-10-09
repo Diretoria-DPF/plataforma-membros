@@ -25,7 +25,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const SERIES = ['liga', 'modulos', 'plataforma'];
+const campanha = require('./blog-blocos-campanha.js');
+
+const SERIES = ['liga', 'modulos', 'plataforma', 'campanhas'];
 const STATUS = {
   ativo: 'Disponível',
   'pronto-aguardando-ativacao': 'Pronto, aguardando ativação',
@@ -36,7 +38,7 @@ const STATUS = {
 const ICONES = [
   'inicio', 'aprender', 'eventos', 'propostas', 'tarefas', 'equipe', 'mensagens', 'perfil',
   'quiz', 'toxicologia', 'clinica', 'laboratorio', 'anatomia', 'cracha', 'lia',
-  'seguranca', 'offline', 'desempenho', 'roteiro', 'liga', 'bemvindo', 'novidades', 'ig', 'envelope',
+  'seguranca', 'offline', 'desempenho', 'roteiro', 'liga', 'bemvindo', 'novidades', 'ig', 'envelope', 'laco',
 ];
 const BLOCOS = ['p', 'h2', 'lista', 'destaque', 'fatos', 'cta', 'etapas', 'cartoes', 'contato'];
 const INSTAGRAM_URL = 'https://www.instagram.com/laift.liga';
@@ -172,7 +174,7 @@ function renderCabecalho(ctx) {
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; "
   + "connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'";
 
-const SERIE_ROTULO = { liga: 'A Liga', modulos: 'Módulos', plataforma: 'Plataforma' };
+const SERIE_ROTULO = { liga: 'A Liga', modulos: 'Módulos', plataforma: 'Plataforma', campanhas: 'Publicações' };
 
 /** Canonical, Open Graph e JSON-LD (BlogPosting + BreadcrumbList) de um post. */
 function renderMeta(post, ctx) {
@@ -258,7 +260,10 @@ function renderPostPage(post, ctxBase) {
   const ctx = {
     site: { url: 'https://laift.com.br', ...ctxBase.site }, scripts: ctxBase.scripts || [], indice: ctxBase.indice || [], avisos: [], contador: { h2: 0, contato: 0 },
   };
-  const corpo = post.blocos.map((b) => RENDER[b.t](b, ctx)).join('\n');
+  const ctxC = {
+    esc, renderInline: (t) => renderInline(t, ctx), icone, avisos: ctx.avisos, contador: ctx.contador, blocos: post.blocos,
+  };
+  const corpo = post.blocos.map((b) => (RENDER[b.t] ? RENDER[b.t](b, ctx) : campanha.render(b, ctxC))).join('\n');
   const temContato = post.blocos.some((b) => b.t === 'contato');
   const rodape = temContato ? '' : renderContato(ctx);
   const scripts = ctx.scripts.map((s) => `<script type="module" src="${esc(s)}"></script>`).join('');
@@ -274,7 +279,7 @@ function renderPostPage(post, ctxBase) {
 <meta name="description" content="${esc(post.resumo)}">
 ${renderMeta(post, ctx)}
 <link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
-<link rel="stylesheet" href="/blog.css">
+<link rel="stylesheet" href="/blog.css">${post.serie === 'campanhas' ? '\n<link rel="stylesheet" href="/blog-campanha.css">' : ''}
 </head>
 <body class="blog-page blog-post">
 <a class="blog-skip" href="#conteudo">Pular para o conteúdo</a>
@@ -345,9 +350,14 @@ function validatePost(post, site) {
   const erros = [];
   validarCampos(post, erros);
   const blocos = Array.isArray(post.blocos) ? post.blocos : [];
+  const ehCampanha = post.serie === 'campanhas';
   blocos.forEach((b, i) => {
-    if (!b || !BLOCOS.includes(b.t)) erros.push(`bloco ${i}: tipo desconhecido (${b && b.t})`);
+    const comum = !!b && BLOCOS.includes(b.t);
+    const extra = !!b && ehCampanha && campanha.BLOCOS_CAMPANHA.includes(b.t);
+    if (!comum && !extra) { erros.push(`bloco ${i}: tipo desconhecido (${b && b.t})`); return; }
+    if (extra) campanha.validar(b, { blocos, icones: ICONES }).forEach((e) => erros.push(`bloco ${i} (${b.t}): ${e}`));
   });
+  if (ehCampanha && !erros.length) erros.push(...campanha.checarPost(blocos));
   if (!erros.length) {
     validarTextos(post, erros);
     try { renderPostPage(post, { site: site || { email: null } }); } catch (e) { erros.push(e.message); }
@@ -401,10 +411,11 @@ function build(opcoes = {}) {
   const destino = path.join(outDir, 'blog');
   fs.mkdirSync(destino, { recursive: true });
   const scripts = ['post.js'].filter((s) => fs.existsSync(path.join(ROOT, 'blog', s))).map((s) => `/blog/${s}`);
+  const scriptsCampanha = fs.existsSync(path.join(ROOT, 'blog', 'campanha.js')) ? [...scripts, '/blog/campanha.js'] : scripts;
   const avisos = [];
   const indice = indiceDe(posts);
   posts.forEach((p) => {
-    const pagina = renderPostPage(p, { site, scripts, indice });
+    const pagina = renderPostPage(p, { site, scripts: p.serie === 'campanhas' ? scriptsCampanha : scripts, indice });
     avisos.push(...pagina.avisos.map((a) => `${p.slug}: ${a}`));
     fs.writeFileSync(path.join(destino, `${p.slug}.html`), pagina.html);
   });

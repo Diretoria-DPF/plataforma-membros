@@ -320,3 +320,73 @@ test('logout (reset) limpa filtros e controles da Satisfação', () => {
   Admin.loadSatList(true, false);
   assert.equal(lastCall('apiAdminListAssistantFeedback').params.status, undefined);
 });
+
+// Base da Lia: botão "Reindexar base da Lia" (cartão criado por JS, ids só no DOM montado).
+const reindexRequest = () => pending.filter((p) => p.name === 'apiAdminReindexKb').pop();
+const reindexStatus = () => textOf(field('msg-admin-ai-kb'));
+const clickReindex = () => field('btn-admin-ai-kb-reindex').listeners.click.forEach((fn) => fn());
+
+test('Base da Lia: sucesso mostra os trechos e os com busca semântica', async () => {
+  Admin.loadPanel();
+  clickReindex();
+  reindexRequest().resolve({
+    success: true,
+    message: 'Base da Lia reindexada.',
+    report: { total: 42, upserted: 3, unchanged: 39, removed: 0, embedded: 3, embeddingAvailable: true, embeddingError: null },
+  });
+  await flush();
+  assert.equal(reindexStatus(), 'Base reindexada: 42 trechos. Busca semântica ativa.');
+  assert.equal(field('msg-admin-ai-kb').getAttribute('data-kind'), 'success');
+  assert.equal(field('msg-admin-ai-kb').getAttribute('role'), 'status');
+});
+
+test('Base da Lia: sem embeddings a mensagem diz que a Lia usa busca por palavras, sem o erro técnico', async () => {
+  Admin.loadPanel();
+  clickReindex();
+  reindexRequest().resolve({
+    success: true,
+    report: { total: 42, upserted: 0, unchanged: 42, removed: 0, embedded: 0, embeddingAvailable: false, embeddingError: 'binding AI ausente' },
+  });
+  await flush();
+  assert.equal(
+    reindexStatus(),
+    'Base reindexada: 42 trechos. Busca semântica indisponível agora; a Lia usa busca por palavras.'
+  );
+  assert.doesNotMatch(reindexStatus(), /binding/);
+});
+
+test('Base da Lia: limite de uma reindexação por minuto pede para aguardar 1 minuto', async () => {
+  Admin.loadPanel();
+  clickReindex();
+  reindexRequest().resolve({ success: false, message: 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.' });
+  await flush();
+  assert.equal(reindexStatus(), 'Aguarde 1 minuto e tente de novo.');
+  assert.equal(field('msg-admin-ai-kb').getAttribute('role'), 'alert');
+  assert.equal(field('msg-admin-ai-kb').getAttribute('data-kind'), 'error');
+  assert.equal(field('btn-admin-ai-kb-reindex').disabled, false);
+});
+
+test('Base da Lia: falha genérica mostra mensagem amigável, sem detalhe técnico nem referência', async () => {
+  Admin.loadPanel();
+  clickReindex();
+  reindexRequest().resolve({ success: false, message: 'Não foi possível concluir a operação. Tente novamente em instantes. (ref: 3f2a9c)' });
+  await flush();
+  assert.equal(reindexStatus(), 'Não foi possível reindexar a base agora. Tente de novo em instantes.');
+  assert.doesNotMatch(reindexStatus(), /ref:|3f2a9c/);
+  assert.equal(field('msg-admin-ai-kb').getAttribute('role'), 'alert');
+});
+
+test('Base da Lia: botão ocupado durante a chamada, clique extra não repete, liberado ao terminar', async () => {
+  Admin.loadPanel();
+  clickReindex();
+  const btn = field('btn-admin-ai-kb-reindex');
+  assert.equal(btn.disabled, true);
+  assert.equal(btn.getAttribute('aria-busy'), 'true');
+  assert.equal(reindexStatus(), 'Reindexando a base da Lia...');
+  clickReindex();
+  assert.equal(calls.filter((c) => c.name === 'apiAdminReindexKb').length, 1);
+  reindexRequest().resolve({ success: true, report: { total: 1, embedded: 1, embeddingAvailable: true } });
+  await flush();
+  assert.equal(btn.disabled, false);
+  assert.equal(btn.getAttribute('aria-busy'), null);
+});

@@ -1387,3 +1387,102 @@ a.blog-contato__item:active,
     padding-bottom: 0;
   }
 }
+
+/* ===== 404 do blog ===== */
+.blog-page .blog-404__area {
+  display: grid;
+  gap: 20px;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 48px 16px 64px;
+  text-align: center;
+}
+
+.blog-page .blog-404__area h1 {
+  font-size: clamp(1.5rem, 1.2rem + 2vw, 2rem);
+  line-height: 1.2;
+}
+
+.blog-404__texto,
+.blog-404__voltar {
+  margin: 0;
+}
+
+.blog-404__texto {
+  color: var(--laift-muted, #5b6478);
+}
+
+.blog-404__atalhos {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blog-404__atalhos > li {
+  display: flex;
+}
+
+@media (min-width: 480px) {
+  .blog-404__atalhos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.blog-page a.blog-404__atalho {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--laift-touch, 44px);
+  padding: 20px 16px;
+  border: 1px solid var(--laift-border, #dde3ee);
+  border-radius: var(--laift-radius-lg, 20px);
+  background: var(--blog-vidro-1, var(--laift-surface, #f4f3ef));
+  box-shadow: var(--laift-shadow-sm, 0 2px 8px rgba(20, 30, 50, 0.08));
+  color: var(--laift-text, #1c2333);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-fast, 180ms) var(--ease-out, ease-out), opacity var(--dur-fast, 180ms) var(--ease-out, ease-out);
+}
+
+.blog-page .blog-404__icone {
+  width: 48px;
+  height: 48px;
+}
+
+.blog-404__rotulo {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.blog-404__sub {
+  font-size: .875rem;
+  color: var(--laift-muted, #5b6478);
+}
+
+.blog-page a.blog-404__atalho:focus-visible {
+  outline: 3px solid var(--laift-focus-color, var(--laift-primary, #0f6f62));
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .blog-page a.blog-404__atalho:hover {
+    border-color: var(--laift-primary, #0f6f62);
+    transform: translateY(-2px);
+  }
+}
+
+.blog-page a.blog-404__atalho:active {
+  transform: scale(var(--press-scale, .98));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-page a.blog-404__atalho {
+    transition: none;
+  }
+}
