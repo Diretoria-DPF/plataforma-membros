@@ -1201,9 +1201,40 @@
       if (!res.success) { clearSkeleton('events-list'); setStatus('events-status', res.message, 'error'); return; }
       setStatus('events-status', '', null);
       renderList('events-list', res.events, renderEventItem, 'Não há eventos publicados no momento.');
+      renderEventsOccupancy(ensureEventsOccupancyContainer(), res.events);
     });
     loadEventsHistory();
     return loaded;
+  }
+
+  // Ocupação dos eventos abertos (com vagas limitadas): barras do LaiftCharts, no máximo 6.
+  var EVENTS_OCCUPANCY_MAX = 6;
+  var eventsOccupancyChart = null;
+
+  function ensureEventsOccupancyContainer() {
+    var existing = document.getElementById('events-occupancy');
+    if (existing) return existing;
+    var list = document.getElementById('events-list');
+    if (!list) return null;
+    var node = h('div', { id: 'events-occupancy', className: 'home-chart' });
+    list.parentNode.insertBefore(node, list);
+    return node;
+  }
+
+  function renderEventsOccupancy(container, items) {
+    if (!container) return;
+    if (eventsOccupancyChart) { eventsOccupancyChart.destroy(); eventsOccupancyChart = null; }
+    clearEl(container);
+    var rows = (items || [])
+      .filter(function (item) { return item.capacity > 0 && typeof item.spotsLeft === 'number'; })
+      .slice(0, EVENTS_OCCUPANCY_MAX)
+      .map(function (item) {
+        return { label: item.title, value: Math.max(0, item.capacity - item.spotsLeft) };
+      });
+    if (!rows.length || !window.LaiftCharts) return;
+    eventsOccupancyChart = window.LaiftCharts.barsHorizontal(container, rows, {
+      title: 'Ocupação dos eventos abertos', fluid: true,
+    });
   }
 
   function loadEventsHistory() {
@@ -2390,7 +2421,7 @@
   // Administração — auditoria
   // ===========================================================================
   var AUDIT_ACTION_LABELS = {
-    REGISTER: 'Cadastro', CONFIRM_EMAIL: 'Confirmação de e-mail', LOGIN: 'Login', LOGOUT: 'Logout',
+    REGISTER: 'Cadastro', CONFIRM_EMAIL: 'Confirmação de e-mail', LOGIN: 'Login', LOGOUT: 'Saída',
     REQUEST_PASSWORD_RESET: 'Solicitação de redefinição de senha', CONFIRM_PASSWORD_RESET: 'Redefinição de senha confirmada',
     UPDATE_PROFILE: 'Atualização de perfil', UPDATE_AVATAR: 'Atualização de avatar', UPDATE_PREFERENCES: 'Atualização de preferências',
     SUBMIT_FEEDBACK: 'Envio de feedback', REGISTER_EVENT: 'Inscrição em evento', SUBMIT_PROPOSAL: 'Envio de proposta',
@@ -2399,6 +2430,7 @@
     UPDATE_EVENT_STATUS: 'Mudança de status de evento', UPDATE_EVENT_IMAGE: 'Imagem de evento atualizada',
     CREATE_TASK: 'Criação de tarefa', UPDATE_TASK_STATUS: 'Mudança de status de tarefa',
     CHANGE_USER_ROLE: 'Alteração de papel de usuário', BAN_USER: 'Banimento de conta', UNBAN_USER: 'Reativação de conta',
+    assistant_moderation_alert: 'Alerta de moderação da Lia (nível 2)', assistant_auto_report: 'Denúncia automática da Lia (nível 3)',
   };
 
   var adminAuditState = { action: '', result: '' };
@@ -2455,6 +2487,14 @@
   // Administração — denúncias
   // ===========================================================================
   var REPORT_STATUS_LABELS = { open: 'Aberta', under_review: 'Em análise', resolved: 'Resolvida', dismissed: 'Arquivada' };
+  // Denúncia sem denunciante: a automática da Lia traz o aviso do servidor em details; as demais são de ex-membro.
+  var AUTO_REPORT_PREFIX = 'Denúncia automática da Lia:';
+  function reporterLabel(item) {
+    if (item.reporterName) return item.reporterName;
+    var isAutomatic = String(item.details || '').indexOf(AUTO_REPORT_PREFIX) === 0;
+    return isAutomatic ? 'Lia (automático)' : 'Ex-membro';
+  }
+
   var REPORT_CATEGORY_LABELS = {
     harassment: 'Assédio', spam: 'Spam', impersonation: 'Falsidade de identidade',
     inappropriate_content: 'Conteúdo inadequado', other: 'Outro',
@@ -2504,7 +2544,7 @@
         text('span', formatDate(item.createdAt)),
       ]),
       text('p', 'Denunciado: ' + (item.reportedName || 'Ex-membro') + (item.reportedUsername ? ' (@' + item.reportedUsername + ')' : '')),
-      text('p', 'Denunciante: ' + (item.reporterName || 'Ex-membro') + (item.reporterUsername ? ' (@' + item.reporterUsername + ')' : '')),
+      text('p', 'Denunciante: ' + reporterLabel(item) + (item.reporterUsername ? ' (@' + item.reporterUsername + ')' : '')),
     ];
     if (item.details) children.push(text('p', item.details, { className: 'muted' }));
     if (item.evidenceExcerpt) {

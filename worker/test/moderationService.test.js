@@ -432,6 +432,95 @@ describe('ModerationService — decaimento e redenção da Lia (ADR 0004, banco 
 });
 
 
+describe('ModerationService — escalonamento da Lia (B-4): aviso no nível 2, denúncia automática no nível 3', () => {
+  const B4_PROFILE = '55555555-5555-4555-8555-555555555555';
+  const B4_CID = '00000000-0000-4000-8000-0000000000b4';
+  let db;
+  let sql;
+
+  const incident = (days, detection = 'terms', runner) => ModerationService.registerAssistantIncident(runner || sql, B4_CID, B4_PROFILE, detection, at(days));
+  const countAudit = async (action) => (await db.query('SELECT count(*)::int AS n FROM audit_logs WHERE action = $1', [action])).rows[0].n;
+  const autoReports = async () => (await db.query('SELECT reporter_id, reported_profile_id, category, details, evidence_excerpt, status FROM profile_reports')).rows;
+  const errorCodes = async () => (await db.query('SELECT code FROM error_logs')).rows.map((r) => r.code);
+  const failingOn = (message, extra) => (strings, ...values) => {
+    if (strings.join('').includes('INSERT INTO profile_reports')) return Promise.reject(Object.assign(new Error(message), extra || {}));
+    return sql(strings, ...values);
+  };
+
+  beforeAll(async () => {
+    db = await createMigratedDb();
+    sql = toSql(db);
+  }, 120000);
+
+  afterAll(async () => {
+    await db.close();
+  });
+
+  beforeEach(async () => {
+    ModerationService.__resetKnownSuspensionsForTests();
+    await db.exec('TRUNCATE assistant_incidents, assistant_moderation, audit_logs, error_logs, rate_limit_buckets, profile_reports');
+    await db.query(
+      `INSERT INTO profiles (id, full_name, username, email, password_hash, phone, role) VALUES ($1, 'Carlos Lima', 'carlos', 'carlos@exemplo.com', 'x', '11988880000', 'member') ON CONFLICT (id) DO NOTHING`,
+      [B4_PROFILE]
+    );
+  });
+
+  test('nível 1 (primeiro incidente): só a auditoria do incidente, sem aviso e sem denúncia', async () => {
+    await incident(0);
+    expect(await countAudit('assistant_incident')).toBe(1);
+    expect(await countAudit('assistant_moderation_alert')).toBe(0);
+    expect(await countAudit('assistant_auto_report')).toBe(0);
+    expect(await autoReports()).toEqual([]);
+  });
+
+  test('nível 2 (segundo incidente): audita assistant_moderation_alert e não abre denúncia', async () => {
+    await incident(0);
+    await incident(25);
+    expect(await countAudit('assistant_moderation_alert')).toBe(1);
+    expect(await countAudit('assistant_auto_report')).toBe(0);
+    expect(await autoReports()).toEqual([]);
+  });
+
+  test('nível 3 (terceiro incidente): abre denúncia automática sem denunciante, categoria other, sem evidência, e audita', async () => {
+    await incident(0);
+    await incident(25);
+    await incident(50, 'llm');
+    const reports = await autoReports();
+    expect(reports).toHaveLength(1);
+    expect(reports[0]).toMatchObject({ reporter_id: null, reported_profile_id: B4_PROFILE, category: 'other', evidence_excerpt: null, status: 'open' });
+    expect(reports[0].details).toBe('Denúncia automática da Lia: nível 3 de moderação (suspensão de 24 h). Detecção: llm.');
+    expect(await countAudit('assistant_auto_report')).toBe(1);
+  });
+
+  test('nível 3 com denúncia automática já aberta para a conta: nenhum INSERT novo', async () => {
+    await incident(0);
+    await incident(25);
+    await incident(50);
+    await incident(60);
+    expect(await autoReports()).toHaveLength(1);
+    expect(await countAudit('assistant_auto_report')).toBe(1);
+  });
+
+  test('falha no INSERT da denúncia: não lança erro e grava AUTO_REPORT_FAILED em error_logs', async () => {
+    const runner = failingOn('falha simulada');
+    await incident(0, 'terms', runner);
+    await incident(25, 'terms', runner);
+    const res = await incident(50, 'terms', runner);
+    expect(res.level).toBe(3);
+    expect(await errorCodes()).toEqual(['AUTO_REPORT_FAILED']);
+    expect(await autoReports()).toEqual([]);
+  });
+
+  test('tabela profile_reports ausente é tolerada: nível 3 segue sem erro e sem AUTO_REPORT_FAILED', async () => {
+    const runner = failingOn('relation "profile_reports" does not exist', { code: '42P01' });
+    await incident(0, 'terms', runner);
+    await incident(25, 'terms', runner);
+    const res = await incident(50, 'terms', runner);
+    expect(res.level).toBe(3);
+    expect(await errorCodes()).toEqual([]);
+  });
+});
+
 describe('ModerationService.submitReport', () => {
   test('não é possível denunciar a própria conta', async () => {
     const sql = makeSql();
