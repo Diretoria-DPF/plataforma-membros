@@ -49,9 +49,23 @@ sem eco e cadastra os 6 secrets com `gh secret set`.
 | `R2_SECRET_ACCESS_KEY` | Mesmo token de API do R2 | `<chave-secreta>` | Par com `R2_ACCESS_KEY_ID` |
 | `R2_BACKUP_BUCKET` | Bucket R2 privado criado para o backup | `<nome-do-bucket>` | Usado só para backup |
 
-- (a) Quem digita os valores é o dono, no terminal, nunca no chat.
+- (a) Quem digita os valores é o dono, no terminal ou na página de secrets do GitHub, nunca no chat.
 - (b) Conferir só os nomes com `gh secret list` (ou `powershell -File tools\ci\registrar-segredos-backup.ps1 -SomenteVerificar`).
 - (c) Rodar "Backup do banco" uma vez à mão, com o OK do dono.
+
+**Se o valor estiver errado.** O primeiro passo do workflow confere o formato de cada secret e
+só imprime o **tamanho** do valor, nunca o conteúdo:
+
+| Mensagem | Causa | O que fazer |
+|---|---|---|
+| `R2_ACCOUNT_ID inválido (N caracteres)` | Não é o Account ID (32 caracteres hexadecimais), ou veio com espaço/quebra de linha | Copie o ID da conta no painel do Cloudflare (ou `whoami` do conector) e cadastre de novo |
+| `R2_BACKUP_BUCKET inválido` | URL, maiúscula ou espaço no lugar do nome | Só o nome, ex.: `laift-backup` |
+| `BACKUP_DATABASE_URL usa a conexão com pooler` | Copiada com "Connection pooling" ligado | Desligue o pooling no Neon e copie de novo |
+| `Falha no upload … SSLV3_ALERT_HANDSHAKE_FAILURE` | Account ID errado: o endereço `https://<id>.r2.cloudflarestorage.com` deixa de existir e o erro parece de rede, não de credencial | Corrija `R2_ACCOUNT_ID` |
+
+Caso real (2026-10-09): o primeiro teste falhou exatamente assim por causa de `R2_ACCOUNT_ID`.
+Depois da correção o workflow passou e o dump foi aberto com a chave privada (cabeçalho `PGDMP`).
+No painel do Cloudflare o arquivo baixado ganha o prefixo `daily_` no nome; ele é o mesmo objeto.
 
 ## Restaurar (e treinar a restauração)
 

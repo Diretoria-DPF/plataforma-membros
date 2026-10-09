@@ -69,6 +69,23 @@ jobs:
             fi
             echo "::warning::Backup pulado: faltam os secrets:$faltam. Veja docs/BACKUP_RESTORE.md."
             echo "tem=false" >> "$GITHUB_OUTPUT"
+          elif [[ ! "$S3" =~ ^[0-9a-f]{32}$ ]]; then
+            # Account ID errado não dá erro de "credencial": o endereço do R2 deixa de existir e
+            # o envio falha com SSLV3_ALERT_HANDSHAKE_FAILURE. Só o tamanho é impresso, nunca o valor.
+            echo "::error::R2_ACCOUNT_ID inválido (${#S3} caracteres). Deve ter exatamente 32 caracteres hexadecimais (o Account ID do Cloudflare), sem espaço nem quebra de linha."
+            exit 1
+          elif [[ ! "$S6" =~ ^[a-z0-9][a-z0-9-]{2,62}$ ]]; then
+            echo "::error::R2_BACKUP_BUCKET inválido (${#S6} caracteres). Use só o nome do bucket (minúsculas, números e hífen), sem URL, espaço nem quebra de linha."
+            exit 1
+          elif [[ "$S1" == *-pooler* ]]; then
+            echo "::error::BACKUP_DATABASE_URL usa a conexão com pooler (\"-pooler\"). O pg_dump exige a URL direta do Neon."
+            exit 1
+          elif [[ ! "$S1" =~ ^postgres(ql)?://[^[:space:]]+$ ]]; then
+            echo "::error::BACKUP_DATABASE_URL não parece uma URL postgresql:// ou tem espaço/quebra de linha."
+            exit 1
+          elif [[ "$S4$S5" =~ [[:space:]] ]]; then
+            echo "::error::R2_ACCESS_KEY_ID ou R2_SECRET_ACCESS_KEY tem espaço ou quebra de linha."
+            exit 1
           elif ! printf '%s' "$S2" | grep -Eq '^age1[a-z0-9]{50,}$'; then
             echo "::error::BACKUP_AGE_PUBLIC_KEY não parece uma chave pública do age (age1...)."
             exit 1
