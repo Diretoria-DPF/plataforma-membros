@@ -4,15 +4,20 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Contatos da Liga (Instagram e e-mail) para componentes criados em JS.
-// Os endereços vêm do cabeçalho da própria página, que o gerador monta a partir de blog/site.json:
-// assim o e-mail existe em um único lugar e nada é duplicado aqui.
+// Os links vêm do bloco "Fale com a Liga" (blog-contato__lista) que toda página do blog traz, montado pelo gerador
+// a partir de blog/site.json: assim o e-mail existe em um único lugar e nada é duplicado aqui.
 
-/** Clona os links de contato do cabeçalho (ícone + rótulo + aria-label + target) para outro contêiner. */
+/**
+ * Clona os links do primeiro bloco "Fale com a Liga" da página (ícone + rótulo + aria-label + target)
+ * para outro contêiner. Sem o bloco, devolve [].
+ */
 export function clonarContatos(doc = document) {
-  const origem = doc.querySelectorAll('.blog-topo__contatos a');
-  return Array.from(origem).map((a) => {
+  const lista = doc.querySelector('.blog-contato__lista');
+  if (!lista) return [];
+  return Array.from(lista.querySelectorAll('a')).map((a) => {
     const copia = a.cloneNode(true);
-    copia.classList.add('blog-barra__contato'); // mantém blog-topo__contato: o estilo do botão de contato é o mesmo
+    copia.classList.remove('blog-contato__item');
+    copia.classList.add('blog-topo__contato', 'blog-barra__contato'); // o estilo do botão de contato continua o mesmo
     return copia;
   });
 }

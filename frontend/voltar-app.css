@@ -1,0 +1,59 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Botão "Voltar" no topo dos painéis do app (voltar-app.js).
+   O seletor com .app-main > section vence o estilo global de button (styles.css). */
+
+.app-main > section > .app-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  width: auto;
+  margin: 0 0 12px;
+  padding: 0 16px 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--layer-2);
+  color: var(--laift-text);
+  box-shadow: none;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform var(--dur-instant) var(--ease-out);
+}
+
+.app-main > section > .app-voltar .app-voltar__icone {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.app-main > section > .app-voltar:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) {
+  .app-main > section > .app-voltar:hover {
+    background: var(--layer-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-main > section > .app-voltar,
+  .app-main > section > .app-voltar:active {
+    transition: none;
+    transform: none;
+  }
+}
+
+.app-voltar[hidden] {
+  display: none !important;
+}

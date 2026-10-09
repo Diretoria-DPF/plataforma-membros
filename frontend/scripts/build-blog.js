@@ -159,20 +159,25 @@ const RENDER = {
   contato: (b, ctx) => renderContato(ctx, b.titulo),
 };
 
-function renderCabecalho(ctx) {
-  const insta = renderLink(INSTAGRAM_URL, `${icone('ig')}<span>Instagram</span>`, ctx, 'blog-topo__contato')
-    .replace('<a ', '<a aria-label="Instagram da LAIFT, abre em nova aba" ');
-  const email = ctx.site.email
-    ? renderLink(`mailto:${ctx.site.email}`, `${icone('envelope')}<span>E-mail</span>`, ctx, 'blog-topo__contato')
-        .replace('<a ', '<a aria-label="Enviar e-mail para a LAIFT" ')
-    : '';
-  return `<header class="blog-topo"><a class="blog-topo__marca" href="/blog.html">`
-    + `<img src="/modulos/cracha/laift-marca.png" alt="LAIFT" width="40" height="40"><span>Blog LAIFT</span></a>`
-    + `<nav class="blog-topo__contatos" aria-label="Contato">${insta}${email}</nav></header>`;
+/** Barra pública do blog (CONTRATO §1, variante do blog). Os contatos ficam no bloco "Fale com a Liga". */
+function renderCabecalho() {
+  return '<header class="pub-barra"><div class="pub-barra__linha">'
+    + '<a class="pub-voltar" href="/blog.html" data-history-back aria-label="Voltar à tela anterior">'
+    + '<svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>'
+    + '<span class="pub-voltar__rotulo">Voltar</span></a>'
+    + '<a class="pub-barra__marca" href="/blog.html"><img src="/modulos/cracha/laift-marca.png" alt="" width="40" height="40"><span>Blog LAIFT</span></a>'
+    + '<button class="pub-instalar" type="button" data-instalar hidden>'
+    + '<svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>'
+    + '<span>Instalar</span></button></div>'
+    + '<nav class="pub-barra__nav" aria-label="Plataforma">'
+    + '<a class="pub-barra__link" href="/"><svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Início</span></a>'
+    + '<a class="pub-barra__link" href="/#entrar"><span>Entrar</span></a>'
+    + '<a class="pub-barra__link pub-barra__link--destaque" href="/#cadastro"><span>Cadastrar</span></a>'
+    + '</nav></header>';
 }
 
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; "
-  + "connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'";
+  + "connect-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'";
 
 const SERIE_ROTULO = { liga: 'A Liga', modulos: 'Módulos', plataforma: 'Plataforma', campanhas: 'Publicações' };
 
@@ -275,15 +280,23 @@ function renderPostPage(post, ctxBase) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#0f6f62">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/blog/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blog LAIFT">
 <title>${esc(post.titulo)} · Blog LAIFT</title>
 <meta name="description" content="${esc(post.resumo)}">
 ${renderMeta(post, ctx)}
 <link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
+<link rel="stylesheet" href="/publico.css">
 <link rel="stylesheet" href="/blog.css">${post.serie === 'campanhas' ? '\n<link rel="stylesheet" href="/blog-campanha.css">' : ''}
 </head>
 <body class="blog-page blog-post">
 <a class="blog-skip" href="#conteudo">Pular para o conteúdo</a>
-${renderCabecalho(ctx)}
+${renderCabecalho()}
 <main id="conteudo">
 ${renderBreadcrumbs(post)}
 <article class="blog-artigo" data-serie="${esc(post.serie)}">
@@ -299,6 +312,8 @@ ${rodape}
 ${renderNavPost(post, ctx)}${renderRelacionados(post, ctx)}
 </main>
 ${scripts}
+<script src="/static-page.js" defer></script>
+<script src="/blog/instalar.js" defer></script>
 </body>
 </html>
 `;
