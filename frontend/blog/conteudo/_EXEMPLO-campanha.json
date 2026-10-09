@@ -1,0 +1,118 @@
+{
+  "posts": [
+    {
+      "slug": "exemplo-campanha",
+      "titulo": "Exemplo de publicação de campanha (fictícia)",
+      "resumo": "Post fictício com todos os blocos de campanha, só para o time de conteúdo, de visual e de QA usar como referência.",
+      "data": "2026-10-09",
+      "tags": ["exemplo", "campanhas"],
+      "serie": "campanhas",
+      "icone": "laco",
+      "fixado": false,
+      "leitura_min": 4,
+      "fontes": ["docs/blog/CAMPANHAS.md (post de exemplo, conteúdo fictício)"],
+      "blocos": [
+        { "t": "destaque", "tom": "atencao", "titulo": "Atenção", "texto": "Conteúdo educativo. Não substitui consulta com profissional de saúde. Notou alguma alteração nas mamas? Procure uma Unidade Básica de Saúde." },
+        { "t": "p", "texto": "Esta publicação é fictícia e serve de modelo para o time de conteúdo, de visual e de QA. Os números são valores de exemplo. A [fonte de exemplo](#ref-exemplo-a) mostra como uma referência aparece no texto." },
+        { "t": "sumario", "titulo": "Nesta publicação de exemplo" },
+        { "t": "h2", "texto": "Números de exemplo" },
+        {
+          "t": "painel",
+          "titulo": "Painel de exemplo",
+          "kpis": [
+            { "valor": 78610, "casas": 0, "sufixo": " casos/ano", "rotulo": "Casos estimados (valor de exemplo)", "detalhe": "Número inventado só para o exemplo.", "ref": "exemplo-a" }
+          ],
+          "graficos": [
+            {
+              "titulo": "Taxa de exemplo",
+              "unidade": "casos por 100 mil",
+              "casas": 1,
+              "series": ["2023–2025", "2026–2028"],
+              "itens": [
+                { "rotulo": "Região A", "valores": [84.5, 80.1] },
+                { "rotulo": "Região B", "valores": [62.0, 58.3] },
+                { "rotulo": "Região C", "valores": [45.2, 47.9] }
+              ],
+              "nota": "Valores de exemplo, não são dados reais.",
+              "ref": "exemplo-b"
+            }
+          ],
+          "tabelas": [
+            {
+              "titulo": "Casos de exemplo por região",
+              "colunas": ["Região", "Casos"],
+              "linhas": [["Região A", 39000], ["Região B", 21500]],
+              "casas": 0,
+              "nota": "Valores de exemplo.",
+              "ref": "exemplo-b"
+            }
+          ]
+        },
+        { "t": "h2", "texto": "Mitos e verdades de exemplo" },
+        {
+          "t": "deck",
+          "titulo": "Cartas de exemplo",
+          "instrucao": "Toque em cada carta para ver a resposta.",
+          "cartas": [
+            { "frase": "Frase de exemplo: caroço é o único sinal de alteração.", "veredito": "mito", "explicacao": "Carta fictícia. Alterações podem aparecer de outras formas, por isso vale procurar avaliação.", "ref": "exemplo-a" },
+            { "frase": "Frase de exemplo: conversar com a equipe de saúde tira dúvidas.", "veredito": "verdade", "explicacao": "Carta fictícia. Dúvidas são parte normal do cuidado com a saúde.", "ref": "exemplo-c" },
+            { "frase": "Frase de exemplo: a resposta depende de cada caso.", "veredito": "depende", "explicacao": "Carta fictícia. Cada situação pede avaliação própria.", "ref": "exemplo-b" },
+            { "frase": "Frase de exemplo: só mulheres podem ter câncer de mama.", "veredito": "mito", "explicacao": "Carta fictícia. Homens também podem ter câncer de mama, embora os casos sejam raros.", "ref": "exemplo-b" },
+            { "frase": "Frase de exemplo: a mensagem de um grupo substitui a consulta.", "veredito": "mito", "explicacao": "Carta fictícia. Conversas em grupos não substituem a avaliação de um profissional.", "ref": "exemplo-c" },
+            { "frase": "Frase de exemplo: conhecer a própria rotina ajuda a notar mudanças.", "veredito": "verdade", "explicacao": "Carta fictícia. Conhecer o próprio corpo ajuda a perceber o que mudou.", "ref": "exemplo-a" }
+          ]
+        },
+        { "t": "h2", "texto": "Antes e hoje, em exemplo" },
+        {
+          "t": "comparativo",
+          "titulo": "Comparação de exemplo",
+          "rotulos": { "tema": "Tema", "antes": "Antes", "agora": "Hoje" },
+          "itens": [
+            { "tema": "Tema de exemplo A", "antes": "Descrição fictícia de como era.", "agora": "Descrição fictícia de como é hoje.", "ref": "exemplo-a" },
+            { "tema": "Tema de exemplo B", "antes": "Outra descrição fictícia.", "agora": "[Link de exemplo](#ref-exemplo-b) para a fonte.", "ref": "exemplo-b" },
+            { "tema": "Tema de exemplo C", "antes": "Terceira descrição fictícia.", "agora": "Terceira descrição fictícia, já atualizada." }
+          ]
+        },
+        { "t": "h2", "texto": "Guia de exemplo" },
+        {
+          "t": "guia",
+          "titulo": "Itens de exemplo",
+          "itens": [
+            { "icone": "laboratorio", "nome": "Item de exemplo 1", "campos": [ { "rotulo": "O que é", "texto": "Texto fictício sobre o item." }, { "rotulo": "Para que serve", "texto": "Texto fictício sobre a finalidade." } ], "ref": "exemplo-a" },
+            { "icone": "clinica", "nome": "Item de exemplo 2", "campos": [ { "rotulo": "O que é", "texto": "Outro texto fictício." } ], "ref": "exemplo-c" }
+          ]
+        },
+        { "t": "h2", "texto": "Públicos de exemplo" },
+        {
+          "t": "faixas",
+          "titulo": "Por fase da vida",
+          "itens": [
+            { "faixa": "criancas", "rotulo": "Crianças", "idade": "até 12 anos", "texto": "Texto fictício para esta faixa.", "dicas": ["Dica fictícia um.", "Dica fictícia dois."], "ref": "exemplo-a" },
+            { "faixa": "jovens", "rotulo": "Jovens", "idade": "de 13 a 29 anos", "texto": "Outro texto fictício.", "ref": "exemplo-c" },
+            { "faixa": "idosas", "rotulo": "Pessoas idosas", "texto": "Terceiro texto fictício.", "dicas": ["Dica fictícia."], "ref": "exemplo-b" }
+          ]
+        },
+        { "t": "h2", "texto": "Hábitos de exemplo" },
+        {
+          "t": "habitos",
+          "titulo": "Hábitos fictícios",
+          "itens": [
+            { "emoji": "🏃‍♀️", "titulo": "Atividade física", "efeito": "protege", "texto": "Texto fictício sobre movimento no dia a dia.", "ref": "exemplo-a" },
+            { "emoji": "🥦", "titulo": "Alimentação variada", "efeito": "reduz-risco", "texto": "Texto fictício sobre alimentação.", "ref": "exemplo-b" },
+            { "emoji": "🚭", "titulo": "Evitar o cigarro", "efeito": "evitar", "texto": "Texto fictício sobre o cigarro.", "ref": "exemplo-c" },
+            { "emoji": "🩺", "titulo": "Consultas em dia", "efeito": "apoia-tratamento", "texto": "Texto fictício sobre consultas.", "ref": "exemplo-a" }
+          ]
+        },
+        {
+          "t": "referencias",
+          "itens": [
+            { "id": "exemplo-a", "titulo": "Fonte de exemplo sobre atividade física (fictícia)", "orgao": "Órgão de exemplo", "href": "https://www.gov.br/inca/", "acesso": "2026-10-09", "tipo": "guia" },
+            { "id": "exemplo-b", "titulo": "Fonte de exemplo sobre números (fictícia)", "orgao": "Órgão de exemplo", "href": "https://www.who.int/", "doi": "10.1000/182", "acesso": "2026-10-09", "tipo": "dados" },
+            { "id": "exemplo-c", "titulo": "Fonte de exemplo sobre dúvidas (fictícia)", "orgao": "Órgão de exemplo", "href": "https://www.gov.br/inca/pt-br", "acesso": "2026-10-09", "tipo": "noticia" }
+          ]
+        },
+        { "t": "destaque", "tom": "atencao", "texto": "Conteúdo educativo. Não substitui consulta com profissional de saúde. Notou alguma alteração nas mamas? Procure uma Unidade Básica de Saúde." }
+      ]
+    }
+  ]
+}

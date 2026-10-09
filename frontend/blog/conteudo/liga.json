@@ -1,0 +1,146 @@
+{
+  "posts": [
+    {
+      "slug": "bem-vindo-a-laift",
+      "titulo": "Bem-vindo à LAIFT",
+      "resumo": "O que é a LAIFT, para quem ela é, o que você encontra na plataforma e como conhecer a Liga.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["laift", "liga", "plataforma"],
+      "serie": "liga",
+      "ordem_na_serie": 1,
+      "icone": "bemvindo",
+      "fixado": true,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/liga.html:23-31 (o que é a Liga e para quem)",
+        "frontend/learning.js:60-86 (cinco módulos e nomes)",
+        "frontend/liga.html:26 e :121 (status e Instagram)",
+        "docs/riscos-residuais.md:25 (limite da Lia, I2)",
+        "docs/FATOS_VERIFICADOS_2026-10-09.md secoes 2 e 4 (checado em 2026-10-09)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A LAIFT é a plataforma de membros e a Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. A Liga reúne estudantes interessados em ensino, pesquisa e extensão nas ciências farmacológicas." },
+        { "t": "h2", "texto": "Para quem é" },
+        { "t": "p", "texto": "A LAIFT é pensada para estudantes de Farmácia e de outras áreas da saúde, como Biomedicina, Medicina, Nutrição e Enfermagem. Se você ainda não entrou, este blog mostra o que existe antes de decidir." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "p", "texto": "A plataforma tem cinco módulos de estudo, na área Aprender, e outras ferramentas do dia a dia da Liga:" },
+        { "t": "lista", "itens": [
+          "Início: resumo e atalhos do membro",
+          "Farmacologia Básica: simulador com 240 questões",
+          "Toxicologia Clínica & Forense: simulador com 240 questões",
+          "Clínica Médica Virtual (OSCE): plantão com pacientes virtuais",
+          "Laboratório Virtual: bancada e estúdio 3D",
+          "Anatomia & Farmacocinética 3D: corpo humano em 3D",
+          "Eventos, propostas, votação e tarefas",
+          "Equipe: o organograma da Liga",
+          "Mensagens cifradas no seu navegador",
+          "Crachá virtual e perfil com verificação em duas etapas",
+          "Lia, a guia que orienta e leva você às telas"
+        ] },
+        { "t": "p", "texto": "Use o Atlas 3D e os demais módulos como apoio aos estudos, junto com o livro-texto e a aula." },
+        { "t": "destaque", "tom": "info", "titulo": "Sobre a Lia", "texto": "A Lia pode errar, sobretudo em temas clínicos. Confira qualquer resposta antes de usá-la." },
+        { "t": "p", "texto": "A [página da Liga](/liga.html) explica quem somos, as áreas de interesse e as etapas do processo seletivo. Para acompanhar a Liga, siga o Instagram @laift.liga, que também mostra os membros." },
+        { "t": "p", "texto": "Quer saber como funciona o seletivo? Leia o [post sobre o processo seletivo 2026](/blog/processo-seletivo-2026.html)." },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    },
+    {
+      "slug": "processo-seletivo-2026",
+      "titulo": "Processo seletivo 2026: como vai funcionar",
+      "resumo": "Etapas, requisitos e o que a Liga espera de quem entra. Vagas e datas: a divulgar.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["seletivo", "liga", "inscricao"],
+      "serie": "liga",
+      "ordem_na_serie": 2,
+      "icone": "liga",
+      "fixado": true,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/liga.html:26",
+        "frontend/liga.html:62-90 (etapas, requisitos e passos)",
+        "frontend/liga.html:38 (áreas marcadas no formulário)",
+        "frontend/liga.html:53-58 (compromissos de quem entra)",
+        "frontend/liga.html:121 (Instagram)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "O processo seletivo é a porta de entrada da Liga. Ele tem três etapas. As duas primeiras são eliminatórias, e a última é classificatória." },
+        { "t": "h2", "texto": "As três etapas" },
+        { "t": "etapas", "itens": [
+          { "titulo": "Inscrição e ficha diagnóstica", "selo": "Eliminatória", "texto": "Você faz a inscrição e preenche a ficha diagnóstica. Datas: a divulgar." },
+          { "titulo": "Análise de perfil e filtro crítico", "selo": "Eliminatória", "texto": "A equipe analisa o seu perfil e aplica um filtro crítico. Datas: a divulgar." },
+          { "titulo": "Divulgação dos selecionados", "selo": "Classificatória", "texto": "Os selecionados são divulgados pelos canais oficiais da Liga. Datas: a divulgar." }
+        ] },
+        { "t": "h2", "texto": "Quem pode participar" },
+        { "t": "p", "texto": "Na página da Liga, o requisito é estar matriculado ou já ter concluído curso da área da saúde ou correlatos, como Farmácia, Biomedicina, Medicina, Nutrição e Enfermagem." },
+        { "t": "p", "texto": "Confira a página da Liga antes de se inscrever: é lá que ficam as regras e as datas atuais." },
+        { "t": "h2", "texto": "O que a Liga faz e espera" },
+        { "t": "p", "texto": "A Liga reúne atividades de ensino, pesquisa e extensão. No formulário, você marca as áreas com afinidade teórica ou prática. Quem entra assume o compromisso de:" },
+        { "t": "lista", "itens": [
+          "Cumprir os prazos e entregar as tarefas designadas com qualidade.",
+          "Ter conduta ética e colaborativa, com respeito à diversidade de ideias.",
+          "Zelar pela imagem pública da Liga e da instituição mantenedora.",
+          "Proteger informações científicas e dados pessoais de participantes dos projetos."
+        ] },
+        { "t": "fatos", "itens": [
+          { "rotulo": "Vagas", "valor": "a divulgar" },
+          { "rotulo": "Datas", "valor": "a divulgar" }
+        ] },
+        { "t": "p", "texto": "Inscrições e datas são divulgadas na [página da Liga](/liga.html) e no Instagram." },
+        { "t": "p", "texto": "Quando o seletivo abrir, o botão Inscrever-se da página da Liga leva ao formulário oficial." },
+        { "t": "cta", "rotulo": "Acompanhe o seletivo no Instagram", "href": "https://www.instagram.com/laift.liga" },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    },
+    {
+      "slug": "equipe-cargos-e-areas",
+      "titulo": "Quem faz a LAIFT: cargos e áreas de atuação",
+      "resumo": "Os cargos da Presidência e das diretorias, as seis áreas de atuação e onde conhecer os membros da Liga.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["equipe", "cargos", "areas"],
+      "serie": "liga",
+      "ordem_na_serie": 3,
+      "icone": "equipe",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "sql/008_league_org_chart.sql:12-15 e :27 (cargos e diretorias)",
+        "frontend/liga.html:40-45 (seis áreas)",
+        "frontend/liga.html:38 (áreas marcadas no formulário)",
+        "frontend/liga.html:121 (Instagram)",
+        "docs/FATOS_VERIFICADOS_2026-10-09.md secao 9 (checado em 2026-10-09)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A Liga tem uma Presidência, quatro diretorias e seis áreas de atuação. Este post mostra cargos e áreas. Não mostra nomes." },
+        { "t": "h2", "texto": "Cargos" },
+        { "t": "p", "texto": "Nomes e fotos só aparecem com autorização escrita de cada pessoa. Sem ela, o cargo fica com o nome a definir pela diretoria." },
+        { "t": "p", "texto": "A Presidência reúne presidente e vice-presidente. Cada uma das quatro diretorias tem um diretor. O cargo é organizacional: não define o que você pode acessar na plataforma." },
+        { "t": "cartoes", "itens": [
+          { "titulo": "Presidência", "icone": "equipe", "pessoa": true },
+          { "titulo": "Diretoria de Marketing", "icone": "equipe", "pessoa": true },
+          { "titulo": "Diretoria Científica", "icone": "equipe", "pessoa": true },
+          { "titulo": "Diretoria Administrativa", "icone": "equipe", "pessoa": true },
+          { "titulo": "Diretoria Financeira", "icone": "equipe", "pessoa": true }
+        ] },
+        { "t": "h2", "texto": "Áreas de atuação" },
+        { "t": "p", "texto": "No formulário de inscrição, você marca as áreas com afinidade teórica ou prática. São seis áreas, e elas também aparecem na página da Liga:" },
+        { "t": "cartoes", "itens": [
+          { "titulo": "Farmacologia Clínica e Terapêutica Aplicada", "icone": "liga" },
+          { "titulo": "Toxicologia Forense e Química Analítica Operacional", "icone": "liga" },
+          { "titulo": "Farmacocinética Avançada e Modelagem Computacional", "icone": "liga" },
+          { "titulo": "Toxicologia Ambiental, Ocupacional e Ecotoxicologia", "icone": "liga" },
+          { "titulo": "Escrita Científica, Pesquisa Clínica e Publicação de Artigos", "icone": "liga" },
+          { "titulo": "Gestão Organizacional, Marketing Científico e Extensão Universitária", "icone": "liga" }
+        ] },
+        { "t": "p", "texto": "Quem quiser conhecer os membros pode acessar o Instagram da Liga, @laift.liga, onde eles aparecem." },
+        { "t": "cta", "rotulo": "Ver a página da Liga", "href": "/liga.html" },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "posts": [
+    {
+      "slug": "exemplo-todos-os-blocos",
+      "titulo": "Exemplo: todos os tipos de bloco de um post",
+      "resumo": "Post fictício que mostra cada bloco aceito pelo gerador, para o time de conteúdo e de visual usar como referência.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["exemplo", "referencia"],
+      "serie": "plataforma",
+      "ordem_na_serie": 1,
+      "icone": "novidades",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": ["docs/blog/ESTILO.md (post de exemplo, conteúdo fictício)"],
+      "blocos": [
+        { "t": "p", "texto": "Este texto é fictício. Um parágrafo pode ter um link para outra página, como a [página da Liga](/liga.html), e nada além disso: o resto é sempre texto puro." },
+        { "t": "h2", "texto": "Listas, destaques e fatos" },
+        { "t": "lista", "itens": ["Primeiro item da lista", "Segundo item, com [um link interno](/blog.html)", "Terceiro item"] },
+        { "t": "lista", "ordenada": true, "itens": ["Passo um", "Passo dois"] },
+        { "t": "destaque", "tom": "info", "titulo": "Para saber", "texto": "Um destaque informativo, usado para uma observação curta." },
+        { "t": "destaque", "tom": "atencao", "titulo": "Atenção", "texto": "Um destaque de atenção, usado para limites e avisos." },
+        { "t": "fatos", "itens": [{ "rotulo": "Rótulo do fato", "valor": "Valor do fato" }, { "rotulo": "Outro rótulo", "valor": "a divulgar" }] },
+        { "t": "h2", "texto": "Etapas e cartões" },
+        { "t": "etapas", "itens": [{ "titulo": "Etapa 1", "selo": "Eliminatória", "texto": "Descrição curta da primeira etapa." }, { "titulo": "Etapa 2", "texto": "Descrição curta da segunda etapa." }] },
+        { "t": "cartoes", "itens": [
+          { "titulo": "Área de atuação", "icone": "liga", "texto": "Cartão de área, sem pessoa." },
+          { "titulo": "Presidência", "icone": "equipe", "pessoa": true, "nome": "Nome Fictício", "foto": "blog/fotos/exemplo.webp", "texto": "Cartão de cargo: nome e foto só aparecem com autorizacaoEscrita verdadeira." },
+          { "titulo": "Diretoria autorizada", "icone": "equipe", "pessoa": true, "nome": "Pessoa Fictícia", "autorizacaoEscrita": true, "texto": "Cartão com autorização escrita." }
+        ] },
+        { "t": "cta", "rotulo": "Ver a página da Liga", "href": "/liga.html" },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    }
+  ]
+}

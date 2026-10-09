@@ -15,7 +15,9 @@
  *  - cotas diárias por papel (lidas das constantes do servidor);
  *  - moderação do acervo da clínica (apiAdminLearnListPendingCases /
  *    apiAdminLearnReviewCase): casos gerados por IA só aparecem para os
- *    outros depois de aprovados aqui.
+ *    outros depois de aprovados aqui;
+ *  - reindexação da base da Lia (apiAdminReindexKb), com confirmação. O
+ *    cartão é criado por JS logo depois da Satisfação, sem id novo no HTML.
  *
  * Mesmo padrão de frontend/messaging.js: script clássico, carregado antes
  * de app.js, que só usa a ponte window.App (h/text/clearEl/setStatus/
@@ -468,6 +470,85 @@
   }
 
   // ===========================================================================
+  // Base de conhecimento da Lia (apiAdminReindexKb). Um botão com confirmação.
+  // O servidor aceita uma reindexação por minuto para a plataforma inteira.
+  // ===========================================================================
+  var KB_BUTTON_ID = 'btn-admin-ai-kb-reindex';
+  var KB_STATUS_ID = 'msg-admin-ai-kb';
+  var kbBusy = false;
+
+  /** O servidor responde HTTP 200 com a mensagem do limite; um 429, se chegar, também conta. */
+  function isReindexLimit(res) {
+    if (res && res.status === 429) return true;
+    return /muitas tentativas|aguarde/i.test(String((res && res.message) || ''));
+  }
+
+  /** Texto e tipo do resultado. A mensagem técnica do servidor nunca vai para a tela. */
+  function kbReindexOutcome(res) {
+    if (!res || res.success !== true) {
+      if (isReindexLimit(res)) return { kind: 'error', message: 'Aguarde 1 minuto e tente de novo.' };
+      return { kind: 'error', message: 'Não foi possível reindexar a base agora. Tente de novo em instantes.' };
+    }
+    var report = res.report || {};
+    // report.embedded conta só os trechos vetorizados nesta rodada (0 quando nada mudou), então não vira "N com busca semântica".
+    var message = 'Base reindexada: ' + countLabel(report.total, 'trecho', 'trechos') + '.';
+    message += report.embeddingAvailable === false
+      ? ' Busca semântica indisponível agora; a Lia usa busca por palavras.'
+      : ' Busca semântica ativa.';
+    return { kind: 'success', message: message };
+  }
+
+  function setKbBusy(busy) {
+    kbBusy = busy;
+    var btn = $(KB_BUTTON_ID);
+    if (btn) btn.disabled = busy;
+    setBusy([KB_BUTTON_ID], busy);
+  }
+
+  function startReindex() {
+    if (kbBusy || !token()) return;
+    var gen = generation;
+    setKbBusy(true);
+    setPanelStatus(KB_STATUS_ID, 'Reindexando a base da Lia...', 'info');
+    App().callApi('apiAdminReindexKb', token()).then(function (res) {
+      if (gen !== generation) return;
+      setKbBusy(false);
+      var outcome = kbReindexOutcome(res);
+      setPanelStatus(KB_STATUS_ID, outcome.message, outcome.kind);
+    });
+  }
+
+  function confirmReindex() {
+    if (kbBusy || !token()) return;
+    App().openConfirm('Reindexar a base de conhecimento da Lia? Pode levar alguns segundos.', startReindex);
+  }
+
+  /** Só texto no DOM. O status tem id próprio, então setPanelStatus funciona como nos outros cartões. */
+  function buildKbCard() {
+    var h = App().h;
+    var text = App().text;
+    return h('div', { className: 'card' }, [
+      h('div', { className: 'ai-admin-head' }, [
+        h('h2', {}, ['Base de conhecimento da Lia']),
+        h('button', { type: 'button', className: 'secondary', id: KB_BUTTON_ID }, ['Reindexar base da Lia']),
+      ]),
+      text('p', 'Reindexar monta o índice de busca da Lia a partir do acervo; use depois de atualizar o conteúdo.', { className: 'muted' }),
+      h('div', { id: KB_STATUS_ID, className: 'status-msg', role: 'status', 'aria-live': 'polite' }),
+    ]);
+  }
+
+  /** Põe o cartão logo depois da Satisfação da Lia; se essa seção não existir, no fim do painel. */
+  function mountKbCard() {
+    var panel = $('panel-admin-ai');
+    if (!panel) return;
+    var card = buildKbCard();
+    var satHead = $('h-admin-ai-sat');
+    var satCard = satHead && satHead.parentNode && satHead.parentNode.parentNode;
+    if (satCard && satCard.parentNode === panel) panel.insertBefore(card, satCard.nextSibling);
+    else panel.appendChild(card);
+  }
+
+  // ===========================================================================
   // Ciclo de vida
   // ===========================================================================
   // ===========================================================================
@@ -670,6 +751,9 @@
   function loadPanel() {
     if (!bound) {
       bound = true;
+      mountKbCard();
+      var kbBtn = $(KB_BUTTON_ID);
+      if (kbBtn) kbBtn.addEventListener('click', confirmReindex);
       var btn = $('btn-admin-ai-health');
       if (btn) btn.addEventListener('click', runHealth);
       var refresh = $('btn-admin-ai-cases-refresh');
@@ -719,6 +803,7 @@
   function reset() {
     generation++;
     healthBusy = false;
+    setKbBusy(false);
     var btn = $('btn-admin-ai-health');
     if (btn) btn.disabled = false;
     ['admin-ai-health-summary', 'admin-ai-keys', 'admin-ai-usage', 'admin-ai-metrics', 'admin-ai-quotas', 'admin-ai-pending', 'admin-ai-atlas',
@@ -726,7 +811,7 @@
       var el = $(id);
       if (el && window.App) App().clearEl(el);
     });
-    ['msg-admin-ai-health', 'msg-admin-ai-metrics', 'msg-admin-ai-cases', 'msg-admin-ai-atlas', 'msg-admin-ai-sat'].forEach(function (id) {
+    ['msg-admin-ai-health', 'msg-admin-ai-metrics', 'msg-admin-ai-cases', 'msg-admin-ai-atlas', 'msg-admin-ai-sat', KB_STATUS_ID].forEach(function (id) {
       if (window.App) setPanelStatus(id, '', null);
     });
     setBusy(['admin-ai-metrics', 'admin-ai-atlas', 'admin-ai-sat-list'].concat(SAT_STAT_IDS), false);

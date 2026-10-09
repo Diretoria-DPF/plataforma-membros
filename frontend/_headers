@@ -38,3 +38,16 @@ https://:version.:name.:subdomain.workers.dev/*
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(self), microphone=(), geolocation=()
   Content-Security-Policy: frame-ancestors 'self'
+
+# Blog: os posts mudam pouco (cache de 1 h). O índice muda a cada post novo,
+# por isso tem 5 min. stale-while-revalidate deixa servir a cópia antiga por
+# até 1 dia enquanto a nova é buscada.
+/blog/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/blog.css
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/blog/index.json
+  ! Cache-Control
+  Cache-Control: public, max-age=300

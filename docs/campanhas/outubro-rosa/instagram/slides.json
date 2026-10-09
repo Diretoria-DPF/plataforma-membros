@@ -1,0 +1,118 @@
+{
+  "tamanho": [1080, 1350],
+  "rodape": "@laift.liga · laift.com.br/blog",
+  "slides": [
+    {
+      "n": 1,
+      "tipo": "capa",
+      "titulo": "Outubro Rosa: conheça o câncer de mama",
+      "texto": "Dados com fonte, em linguagem simples. Deslize para ver.",
+      "fonte": "Fontes na legenda",
+      "alt": "Capa do carrossel com o título: Outubro Rosa, conheça o câncer de mama. Dados com fonte, em linguagem simples."
+    },
+    {
+      "n": 2,
+      "tipo": "texto",
+      "titulo": "Câncer de mama também atinge homens",
+      "texto": "Em homens, o câncer de mama é raro: cerca de 1% de todos os casos da doença.",
+      "fonte": "INCA; Ministério da Saúde",
+      "alt": "Texto: em homens, o câncer de mama é raro, com cerca de 1% de todos os casos da doença, segundo o INCA e o Ministério da Saúde."
+    },
+    {
+      "n": 3,
+      "tipo": "numero",
+      "titulo": "Casos novos por ano no Brasil",
+      "texto": "Estimativa do INCA para cada ano entre 2026 e 2028.",
+      "numero": "78.610",
+      "numeroRotulo": "casos novos de câncer de mama por ano, em mulheres no Brasil",
+      "fonte": "INCA, estimativa 2026–2028",
+      "alt": "Número em destaque: 78.610 casos novos de câncer de mama por ano em mulheres no Brasil, segundo estimativa do INCA para 2026 a 2028."
+    },
+    {
+      "n": 4,
+      "tipo": "lista",
+      "titulo": "Descobrir cedo faz diferença",
+      "texto": "Sobrevida relativa em 5 anos, comparada à de quem não tem a doença. Dados dos EUA (NCI SEER, 2016 a 2022).",
+      "itens": [
+        "Localizado, só na mama: 100%",
+        "Estágio regional: 87,5%",
+        "Já espalhado para outros órgãos: 33,8%"
+      ],
+      "fonte": "NCI SEER, 2016 a 2022",
+      "alt": "Lista de sobrevida relativa em 5 anos por estágio, dados dos EUA: localizado 100%, regional 87,5%, espalhado para outros órgãos 33,8%. Fonte: NCI SEER, 2016 a 2022."
+    },
+    {
+      "n": 5,
+      "tipo": "lista",
+      "titulo": "Notou alguma mudança?",
+      "texto": "Estes sinais pedem avaliação médica. Procure uma Unidade Básica de Saúde.",
+      "itens": [
+        "Nódulo endurecido e fixo, ou que vem aumentando de tamanho.",
+        "Pele com aspecto de casca de laranja ou retraída.",
+        "Mudança no formato do mamilo.",
+        "Saída de sangue por um só mamilo.",
+        "Nódulos embaixo do braço (na axila) ou no pescoço."
+      ],
+      "fonte": "Ministério da Saúde; INCA",
+      "alt": "Lista de cinco sinais de alerta de câncer de mama que pedem avaliação médica: nódulo endurecido e fixo, pele em casca de laranja ou retraída, mudança no mamilo, saída de sangue por um só mamilo e nódulos na axila ou no pescoço."
+    },
+    {
+      "n": 6,
+      "tipo": "texto",
+      "titulo": "Mamografia: o exame padrão de rastreamento",
+      "texto": "Para a maioria das mulheres, é o exame padrão. Ele usa radiação, com risco muito baixo que cresce com a dose e a frequência.",
+      "fonte": "NCI; INCA",
+      "alt": "Texto: para a maioria das mulheres, a mamografia é o exame padrão de rastreamento. Ela usa radiação, com risco muito baixo que cresce com a dose e a frequência dos exames."
+    },
+    {
+      "n": 7,
+      "tipo": "mitos",
+      "titulo": "Mitos e verdades sobre a mama",
+      "texto": "Veja dois mitos comuns e o que as fontes dizem.",
+      "itens": [
+        "Mito: sutiã causa câncer de mama.",
+        "O que dizem as fontes: não há dados científicos ou clínicos que mostrem isso.",
+        "Mito: desodorante ou antitranspirante causa câncer de mama.",
+        "O que dizem as fontes: não há evidência científica que ligue esses produtos ao câncer de mama."
+      ],
+      "fonte": "ACS; NCI",
+      "alt": "Dois mitos com verdades. Sutiã: não há dados científicos ou clínicos de que cause câncer de mama, segundo a ACS. Desodorante: não há evidência científica de que cause câncer de mama, segundo o NCI."
+    },
+    {
+      "n": 8,
+      "tipo": "habitos",
+      "titulo": "Hábitos e risco de câncer de mama",
+      "texto": "Estes hábitos têm relação com o risco. Veja o que dizem as fontes.",
+      "itens": [
+        "🏃 Movimente-se: a OMS indica pelo menos 150 minutos por semana de atividade moderada.",
+        "🥗 Vegetais: o INCA indica pelo menos 400 g por dia para a prevenção do câncer em geral.",
+        "⚖️ Peso saudável: o excesso de gordura corporal aumenta o risco depois da menopausa, segundo o INCA.",
+        "🍷 Álcool: não há nível seguro de consumo, e o álcool aumenta o risco de câncer de mama (OMS).",
+        "🚭 Cigarro: para a mama, a evidência é sugestiva, mas não conclusiva (INCA)."
+      ],
+      "fonte": "OMS; INCA",
+      "alt": "Lista de cinco hábitos: atividade física, vegetais, peso saudável, álcool e cigarro, cada um com a informação da OMS ou do INCA."
+    },
+    {
+      "n": 9,
+      "tipo": "lista",
+      "titulo": "Três direitos previstos em lei",
+      "texto": "Estes são três direitos, com a lei citada em cada item.",
+      "itens": [
+        "Mamografia pelo SUS a partir dos 40 anos, conforme diretrizes do Ministério da Saúde (Lei nº 15.284/2025).",
+        "Início do tratamento do câncer pelo SUS em no máximo 60 dias (Lei nº 12.732/2012).",
+        "Reconstrução da mama no mesmo momento da cirurgia, quando houver condição técnica (Lei nº 12.802/2013)."
+      ],
+      "fonte": "Planalto (leis federais)",
+      "alt": "Lista de três direitos previstos em lei: mamografia pelo SUS a partir dos 40 anos; início do tratamento em no máximo 60 dias; reconstrução da mama no mesmo momento da cirurgia, quando houver condição técnica."
+    },
+    {
+      "n": 10,
+      "tipo": "fecho",
+      "titulo": "Leia no blog e siga @laift.liga",
+      "texto": "Link na bio: laift.com.br/blog/outubro-rosa-2026. Conteúdo educativo. Não substitui consulta com profissional de saúde. Notou alguma alteração nas mamas? Procure uma Unidade Básica de Saúde.",
+      "fonte": "Fontes na legenda",
+      "alt": "Último slide: link do blog na bio, aviso de conteúdo educativo e orientação para procurar uma Unidade Básica de Saúde se notar alguma alteração nas mamas."
+    }
+  ]
+}

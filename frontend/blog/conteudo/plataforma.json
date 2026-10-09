@@ -1,0 +1,163 @@
+{
+  "posts": [
+    {
+      "slug": "seguranca-e-privacidade",
+      "titulo": "Segurança e privacidade na LAIFT",
+      "resumo": "O que a plataforma faz para proteger seus dados e suas conversas, o que ainda é limite e onde tirar dúvidas.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["seguranca", "privacidade", "lgpd", "mfa"],
+      "serie": "plataforma",
+      "ordem_na_serie": 1,
+      "icone": "seguranca",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/index.html:6 (política de conteúdo, CSP)",
+        "worker/src/mfa/totp.js:8 e sql/017_mfa.sql:10 (verificação em duas etapas)",
+        "sql/003_rate_limits.sql:9-11 (limite de tentativas)",
+        ".github/workflows/backup.yml:26 (backup diário)",
+        "frontend/msg-crypto.js:42 e :174 (cifra e chave não exportável)",
+        "docs/POLITICA_DE_PRIVACIDADE.md:69 (LGPD e direitos)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A LAIFT guarda dados de estudo, de presença e de conversas entre membros. Este post mostra o que existe hoje para proteger essas informações." },
+        { "t": "h2", "texto": "O que protege a sua conta" },
+        { "t": "lista", "itens": [
+          "Verificação em duas etapas: além da senha, o login pode pedir um código do app autenticador (TOTP, um código que muda com o tempo).",
+          "Códigos de recuperação de uso único, guardados de forma protegida, para entrar sem o app.",
+          "Limite de tentativas no login, por endereço de internet, contra tentativas repetidas de senha.",
+          "Política de conteúdo (CSP) nas páginas principais: o navegador só carrega scripts vindos do próprio site.",
+          "Backup diário, cifrado antes de sair do ambiente de execução e guardado em armazenamento externo."
+        ] },
+        { "t": "h2", "texto": "Mensagens e privacidade" },
+        { "t": "p", "texto": "As mensagens entre membros são cifradas no seu navegador, antes de saírem dele. A chave privada é criada como não exportável, então o código da página não consegue exportá-la." },
+        { "t": "p", "texto": "A Política de Privacidade cita a LGPD, a Lei Geral de Proteção de Dados. Ela explica a base legal do tratamento, a transferência internacional de dados e os seus direitos como titular." },
+        { "t": "destaque", "tom": "atencao", "titulo": "Nenhum sistema é totalmente seguro", "texto": "A plataforma não promete segurança absoluta. A equipe registra os limites que conhece." },
+        { "t": "p", "texto": "Ficou com alguma dúvida? Os canais de contato estão no fim da página." },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    },
+    {
+      "slug": "desempenho-acessibilidade-offline",
+      "titulo": "Rápida, acessível e instalável no celular",
+      "resumo": "Números da tela de entrada, o que funciona sem internet e como instalar a LAIFT no celular.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["desempenho", "acessibilidade", "pwa", "offline"],
+      "serie": "plataforma",
+      "ordem_na_serie": 2,
+      "icone": "desempenho",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "docs/LIGHTHOUSE_2026-10-08b.md:9-17 (mobile) e :39-47 (desktop)",
+        "frontend/manifest.webmanifest:4, :10 e :18 (nome curto, modo app, ícone)",
+        "frontend/sw.js:23-29 (49 arquivos) e :80-90 (sem rede, usa o cache)",
+        "frontend/shared-states.js:28 (aviso de offline)",
+        "docs/CHANGELOG.md:35 (alvos de 44 px; movimento reduzido)",
+        "frontend/modulos/shared/laift-tokens.css:323-336 (movimento reduzido)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A LAIFT funciona no navegador e pode ser instalada no celular. Ela também foi medida em velocidade e acessibilidade." },
+        { "t": "h2", "texto": "Os números da tela de entrada" },
+        { "t": "p", "texto": "Medimos a tela de entrada com o Lighthouse, ferramenta do Google que avalia páginas. Cada número abaixo é a mediana de três rodadas." },
+        { "t": "fatos", "itens": [
+          { "rotulo": "Desempenho no celular", "valor": "94 de 100" },
+          { "rotulo": "Acessibilidade, boas práticas e SEO no celular", "valor": "100 de 100" },
+          { "rotulo": "Tempo até o conteúdo principal, no celular", "valor": "1,2 s" },
+          { "rotulo": "Desempenho no computador", "valor": "100 de 100" },
+          { "rotulo": "Tempo até o conteúdo principal, no computador", "valor": "369 ms" }
+        ] },
+        { "t": "p", "texto": "Esses números valem só para a tela de entrada. As outras telas não foram medidas, então não há um número para a plataforma inteira." },
+        { "t": "h2", "texto": "Instalar e usar sem internet" },
+        { "t": "lista", "itens": [
+          "Instalação: o app pode ser adicionado à tela inicial do celular. Ele se chama LAIFT e abre como um app, sem a barra do navegador.",
+          "Pré-carregamento: 49 arquivos do miolo do app, como estilos, scripts, a Lia, o ícone e a tela de abertura, ficam guardados no aparelho.",
+          "Sem conexão, o app usa o que já está guardado, e aparece um aviso de que você está offline."
+        ] },
+        { "t": "p", "texto": "Envios de dados e consultas ao servidor precisam de internet. Sem conexão, esses recursos não funcionam." },
+        { "t": "p", "texto": "A acessibilidade também tem cuidados próprios:" },
+        { "t": "lista", "itens": [
+          "A meta para alvos de toque é de 44 px.",
+          "Janelas de confirmação mantêm o foco dentro delas, fecham com a tecla Esc e devolvem o foco ao ponto de partida.",
+          "Se o aparelho pedir menos movimento, as animações da plataforma são reduzidas."
+        ] },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    },
+    {
+      "slug": "o-que-mudou",
+      "titulo": "O que mudou na plataforma",
+      "resumo": "Mudanças recentes na Lia, o passo a passo para o seu papel, a página da Liga e cuidados de acessibilidade.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["novidades", "lia", "liga"],
+      "serie": "plataforma",
+      "ordem_na_serie": 3,
+      "icone": "novidades",
+      "fixado": false,
+      "leitura_min": 1,
+      "status": "ativo",
+      "fontes": [
+        "docs/CHANGELOG.md:27-30 (Lia, onboarding e assuntos da Lia)",
+        "docs/CHANGELOG.md:33-35 (rosto da Lia, foco e alvos)",
+        "docs/CHANGELOG.md:21 (proteção contra clickjacking)",
+        "frontend/liga.html:23-121 (página da Liga)",
+        "docs/blog/FATOS_VERIFICADOS_2026-10-09.md:29 (visual novo fora do ar)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A plataforma muda com frequência. Esta página reúne o que já está no ar hoje." },
+        { "t": "h2", "texto": "Na Lia e logo ao entrar" },
+        { "t": "lista", "itens": [
+          "A Lia ganhou cenas novas para o laboratório, a clínica, o Atlas e o Aprender.",
+          "A Lia passou a responder sobre propostas, equipe e mensagens.",
+          "A Lia ficou com um rosto mais leve.",
+          "Ao entrar, você vê os primeiros passos para o seu papel na Liga."
+        ] },
+        { "t": "h2", "texto": "Na página da Liga e na acessibilidade" },
+        { "t": "p", "texto": "A página da Liga reúne quem somos, as áreas de interesse, como funciona e o processo seletivo. Quem quer conhecer a Liga antes de entrar pode começar por ali." },
+        { "t": "lista", "itens": [
+          "Janelas de confirmação mantêm o foco dentro delas, fecham com a tecla Esc e devolvem o foco ao ponto de partida.",
+          "Cada tela tem um título principal, o que ajuda quem usa leitor de tela.",
+          "Outros sites não conseguem exibir a plataforma dentro de uma janela deles."
+        ] },
+        { "t": "cta", "rotulo": "Ver a página da Liga", "href": "/liga.html" },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    },
+    {
+      "slug": "para-onde-vamos",
+      "titulo": "Para onde vamos",
+      "resumo": "O que a LAIFT constrói a seguir: inscrição direta no site, acervo compartilhado, busca global e progresso nos estudos.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["roteiro", "futuro"],
+      "serie": "plataforma",
+      "ordem_na_serie": 4,
+      "icone": "roteiro",
+      "fixado": false,
+      "leitura_min": 1,
+      "status": "ativo",
+      "fontes": [
+        "docs/blog/FATOS_VERIFICADOS_2026-10-09.md:109-114 (seção 6, direções)",
+        "docs/TIME_CONTRATO.md:65 (inscrição direta no site)",
+        "frontend/modulos/shared/charts.js:41 (componente de progresso)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "Este post mostra para onde a equipe leva a plataforma. Não traz datas: são direções de trabalho, e a ordem pode mudar." },
+        { "t": "h2", "texto": "O que queremos construir" },
+        { "t": "lista", "itens": [
+          "Queremos que a inscrição para o processo seletivo possa ser feita direto no site.",
+          "Queremos um acervo compartilhado e uma busca global, para encontrar conteúdo com mais facilidade.",
+          "Queremos mostrar o seu progresso nos estudos em um gráfico."
+        ] },
+        { "t": "p", "texto": "Quando uma dessas direções chegar ao app, este post é atualizado." },
+        { "t": "p", "texto": "Acompanhe as novidades da Liga no Instagram @laift.liga, e veja o bloco abaixo com os canais de contato." },
+        { "t": "contato", "titulo": "Fale com a Liga" }
+      ]
+    }
+  ]
+}

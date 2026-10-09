@@ -1,0 +1,231 @@
+{
+  "posts": [
+    {
+      "slug": "modulo-inicio",
+      "titulo": "Início: o painel de cada membro",
+      "resumo": "Início é a tela de resumo do membro, com atalhos para as áreas da plataforma e uma visão geral para começar.",
+      "data": "2026-10-09",
+      "tags": ["modulos", "inicio", "painel"],
+      "serie": "modulos",
+      "ordem_na_serie": 1,
+      "icone": "inicio",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/index.html:348 (Início)",
+        "worker/src/handlers.js:132 (resumo e atalhos)",
+        "frontend/app.js:1044 (áreas de gestão só para admin)",
+        "frontend/assistant.js:620-623 (Lia)",
+        "frontend/manifest.webmanifest:10 (instalável)",
+        "frontend/shared-states.js:109-121 (aviso offline)",
+        "frontend/learning.js:60-86 (cinco módulos)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "Início é a tela de resumo do membro. Ela reúne atalhos para as outras áreas da plataforma e serve de ponto de partida." },
+        { "t": "p", "texto": "A plataforma também pode ser instalada no celular. Depois de instalada, ela abre em tela cheia, sem a barra do navegador." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Um resumo da sua área na plataforma.",
+          "Atalhos para as áreas do membro, como eventos, propostas, tarefas, equipe e mensagens.",
+          "Acesso ao Aprender, a área de estudo com cinco módulos.",
+          "Áreas de gestão, só para quem tem o papel de administração."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Entre com a sua conta, pela [página inicial](/index.html). Use Início para ter uma visão geral e seguir para a área que procura." },
+        { "t": "p", "texto": "Membros veem as áreas do membro. Administradores veem também a área de gestão." },
+        { "t": "p", "texto": "Ficou com dúvida sobre onde achar uma tela? Pergunte à Lia, a guia da plataforma. Ela orienta você e leva às telas. O chat dela funciona para quem está logado." },
+        { "t": "p", "texto": "Sem conexão, a plataforma não carrega dados novos. Um aviso mostra que você está offline." },
+        { "t": "p", "texto": "Quer seguir a série? Leia o próximo post, sobre [Farmacologia Básica](/blog/modulo-farmacologia.html)." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "modulo-farmacologia",
+      "titulo": "Farmacologia Básica: simulador com 240 questões",
+      "resumo": "Módulo do Aprender sobre mecanismos de ação, receptores e farmacocinética, com um simulador de 240 questões para treinar.",
+      "data": "2026-10-09",
+      "tags": ["modulos", "farmacologia", "simulador"],
+      "serie": "modulos",
+      "ordem_na_serie": 2,
+      "icone": "quiz",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/learning.js:62-65 (Farmacologia Básica)",
+        "frontend/modulos/quiz/questions.js (240 questões, recontado)",
+        "frontend/learning.js:58 (estatísticas do Aprender)",
+        "worker/src/handlers.js:242"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "Farmacologia Básica é o módulo de estudo sobre como os medicamentos agem no organismo. Ele traz um simulador com 240 questões." },
+        { "t": "p", "texto": "O módulo faz parte do Aprender, a área dos módulos de estudo. Você entra por lá e escolhe o simulador." },
+        { "t": "p", "texto": "Os temas se complementam. A farmacocinética explica o caminho do medicamento no corpo. A farmacodinâmica explica o efeito que ele produz." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Um simulador com 240 questões.",
+          "Mecanismos de ação: como cada fármaco atua no organismo.",
+          "Receptores e farmacodinâmica: como o medicamento produz o seu efeito.",
+          "Farmacocinética clínica: o caminho do remédio no corpo, da absorção à eliminação.",
+          "Um dos cinco módulos do Aprender."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Abra o Aprender e escolha Farmacologia Básica. Responda às questões no seu ritmo, e use o simulador com frequência para fixar os temas." },
+        { "t": "p", "texto": "O Aprender mostra estatísticas de acerto e de questões respondidas. Use esses números para acompanhar o seu estudo." },
+        { "t": "p", "texto": "O outro simulador com 240 questões fica no módulo de [Toxicologia Clínica e Forense](/blog/modulo-toxicologia.html)." },
+        { "t": "destaque", "tom": "atencao", "titulo": "Para estudo", "texto": "Material educacional para estudo. Não substitui orientação de profissional de saúde." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "modulo-toxicologia",
+      "titulo": "Toxicologia Clínica e Forense: simulador com 240 questões",
+      "resumo": "Módulo do Aprender sobre intoxicações agudas, defensivos agrícolas, animais peçonhentos e antídotos, com 240 questões.",
+      "data": "2026-10-09",
+      "tags": ["modulos", "toxicologia", "simulador"],
+      "serie": "modulos",
+      "ordem_na_serie": 3,
+      "icone": "toxicologia",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/learning.js:67-70 (Toxicologia Clínica e Forense)",
+        "frontend/modulos/toxicologia/questions.js (240 questões, recontado)",
+        "frontend/learning.js:58 (estatísticas do Aprender)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "Toxicologia Clínica e Forense trata de venenos e intoxicações, tanto no atendimento clínico quanto na investigação. O módulo traz um simulador com 240 questões." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Intoxicações agudas, que pedem resposta rápida.",
+          "Defensivos agrícolas.",
+          "Animais peçonhentos.",
+          "Antídotos.",
+          "Um simulador com 240 questões.",
+          "Um dos cinco módulos do Aprender."
+        ] },
+        { "t": "p", "texto": "Os dois lados do tema aparecem juntos. O atendimento clínico cuida da pessoa intoxicada. A área forense cuida da prova e da investigação." },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Abra o Aprender e escolha Toxicologia Clínica e Forense. Responda às questões do simulador no seu ritmo." },
+        { "t": "p", "texto": "No Aprender, as estatísticas de acerto e de questões respondidas acompanham o seu estudo. Leia cada tema com calma e estude em partes." },
+        { "t": "p", "texto": "Para estudar substâncias em bancada, veja o [Laboratório Virtual](/blog/modulo-laboratorio.html). Para a base de ação dos fármacos, veja a [Farmacologia Básica](/blog/modulo-farmacologia.html)." },
+        { "t": "p", "texto": "Em caso de intoxicação real, procure um serviço de emergência na hora. Estudo não substitui atendimento. Não use este material para decidir condutas clínicas." },
+        { "t": "destaque", "tom": "atencao", "titulo": "Para estudo", "texto": "Material educacional para estudo. Não substitui orientação de profissional de saúde." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "modulo-clinica-virtual",
+      "titulo": "Clínica Médica Virtual (OSCE): plantão, acervo e preceptor com IA",
+      "resumo": "Simulação de atendimento no modelo OSCE, com plantão multipaciente, acervo da Liga e um preceptor com IA para tirar dúvidas.",
+      "data": "2026-10-09",
+      "tags": ["modulos", "clinica", "osce"],
+      "serie": "modulos",
+      "ordem_na_serie": 4,
+      "icone": "clinica",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/learning.js:72-75 (Clínica Médica Virtual)",
+        "worker/src/handlers.js:255-259",
+        "docs/riscos-residuais.md:25 (IA pode errar clinicamente)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A Clínica Médica Virtual é um módulo de simulação de atendimento. Ela treina o raciocínio clínico no modelo OSCE (Exame Clínico Objetivo Estruturado)." },
+        { "t": "p", "texto": "O módulo reúne o plantão, o acervo, um roteiro e o preceptor com IA. Você usa cada parte no seu ritmo. São quatro partes, e você decide por qual começar." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Plantão multipaciente, com mais de um paciente simulado ao mesmo tempo.",
+          "Acervo da Liga, com casos reunidos pela própria Liga.",
+          "Roteiro semiológico, para organizar a anamnese e o exame físico.",
+          "Preceptor com IA, para conversar sobre o caso."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Abra o Aprender e escolha a Clínica Médica Virtual. Comece pelo plantão e consulte o acervo quando quiser revisar um tema." },
+        { "t": "p", "texto": "Os casos são de treino. Use-os para estudar, não para decidir o atendimento de alguém." },
+        { "t": "p", "texto": "O preceptor ajuda a pensar o caso. Ele não substitui o professor. A IA pode errar, por isso confira as respostas com o material do seu curso." },
+        { "t": "p", "texto": "Para estudar medicamentos, veja a [Farmacologia Básica](/blog/modulo-farmacologia.html)." },
+        { "t": "destaque", "tom": "atencao", "titulo": "Para estudo", "texto": "Material educacional para estudo. Não substitui orientação de profissional de saúde." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "modulo-laboratorio",
+      "titulo": "Laboratório Virtual: bancada, sínteses e estúdio 3D",
+      "resumo": "Módulo com ensaios de bancada, sínteses, identificação de compostos, estúdio molecular 3D e um preceptor com IA.",
+      "data": "2026-10-09",
+      "tags": ["modulos", "laboratorio", "bancada"],
+      "serie": "modulos",
+      "ordem_na_serie": 5,
+      "icone": "laboratorio",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/learning.js:77-80 (Laboratório Virtual)",
+        "worker/src/handlers.js:260",
+        "frontend/modulos/laboratorio/studio/index.html:17 (estúdio como tela própria)",
+        "docs/riscos-residuais.md:25 (IA pode errar clinicamente)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "O Laboratório Virtual é um módulo de bancada. Você faz ensaios e sínteses, identifica compostos e explora moléculas em um estúdio 3D." },
+        { "t": "p", "texto": "O estúdio 3D é uma tela própria dentro do módulo. Você pode alternar entre a bancada e o estúdio." },
+        { "t": "p", "texto": "Cada parte tem a sua função. A bancada treina o procedimento, e o estúdio mostra a estrutura da molécula." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Ensaios de bancada.",
+          "Sínteses.",
+          "Identificação de compostos.",
+          "Um estúdio molecular 3D, para ver as moléculas de perto.",
+          "Um preceptor com IA, para tirar dúvidas sobre o experimento."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Abra o Aprender e escolha o Laboratório Virtual. Comece pela bancada e depois use o estúdio 3D para estudar a forma das moléculas." },
+        { "t": "p", "texto": "Quando tiver dúvida sobre um passo, pergunte ao preceptor. A IA pode errar, então confira a resposta com o material do seu curso. Anote as dúvidas que surgirem, para levar à aula." },
+        { "t": "p", "texto": "Quer ver o caminho das substâncias no corpo? Leia sobre a [Anatomia e Farmacocinética 3D](/blog/modulo-anatomia-3d.html)." },
+        { "t": "destaque", "tom": "atencao", "titulo": "Para estudo", "texto": "Material educacional para estudo. Não substitui orientação de profissional de saúde." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "modulo-anatomia-3d",
+      "titulo": "Anatomia e Farmacocinética 3D: atlas, PK e vias",
+      "resumo": "Atlas 3D do corpo humano, simulações de farmacocinética (PK) e vias metabólicas, em um módulo do Aprender.",
+      "data": "2026-10-09",
+      "tags": ["modulos", "anatomia", "farmacocinetica"],
+      "serie": "modulos",
+      "ordem_na_serie": 6,
+      "icone": "anatomia",
+      "fixado": false,
+      "leitura_min": 2,
+      "status": "ativo",
+      "fontes": [
+        "frontend/learning.js:82-85 (Anatomia e Farmacocinética 3D)",
+        "sql/014_atlas_telemetry.sql:4 (telemetria anônima)",
+        "frontend/modulos/anatomia-3d/index.html:23 (Atlas)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "Anatomia e Farmacocinética 3D reúne o Atlas, um modelo 3D do corpo humano, e simulações de farmacocinética. Use para estudar anatomia e o caminho dos medicamentos." },
+        { "t": "p", "texto": "PK é a sigla de farmacocinética. Ela descreve o que o organismo faz com um medicamento, da absorção à eliminação." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Um atlas 3D do corpo humano, com estruturas para explorar.",
+          "Simulações de farmacocinética (PK), com o resultado mostrado na tela.",
+          "Vias metabólicas: as rotas que o organismo usa para transformar um medicamento.",
+          "Um dos cinco módulos do Aprender."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Abra o Aprender e escolha Anatomia e Farmacocinética 3D. Explore o modelo e use os controles da tela para ver cada estrutura." },
+        { "t": "p", "texto": "Nas simulações de PK, siga os controles da tela e observe como o resultado muda." },
+        { "t": "p", "texto": "Use o Atlas em momentos diferentes: primeiro para localizar estruturas e depois para ver a farmacocinética." },
+        { "t": "p", "texto": "O Atlas registra telemetria de uso anônima. Ele é material de estudo e não substitui o livro-texto nem a aula." },
+        { "t": "p", "texto": "Veja também o [Laboratório Virtual](/blog/modulo-laboratorio.html), para estudar substâncias em bancada." },
+        { "t": "destaque", "tom": "atencao", "titulo": "Para estudo", "texto": "Material educacional para estudo. Não substitui orientação de profissional de saúde." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    }
+  ]
+}
