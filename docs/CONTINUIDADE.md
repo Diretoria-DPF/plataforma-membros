@@ -29,7 +29,7 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 | Identidade da Liga | **Construída e verificada**, na branch `feat/identidade-liga` (já no GitHub, **sem PR aberta**). Falta o dono aprovar as capturas (`docs/identidade/capturas/` na branch) e responder os itens do `PLANO.md` §4. Estado completo: `docs/identidade/STATUS.md` (na branch). Ver seção 3 |
 | E2E: falhas que já existiam | 10 ✘ em `apis`, `atlas-farmaco`, `atlas-feedback`, `atlas-ficha-nav`, `atlas-fisiologia` e `atlas-moleculas` (iguais sem as mudanças da identidade; não bloqueiam PR). Investigar numa tarefa à parte |
 | Banco (Neon `plataforma-membro`, id `jolly-snow-39561777`, org "Daniel") | Migrações 020–024 e `atlas_telemetry` aplicadas; **026 não aplicada**; backup na branch `backup-pre-020-024-2026-10-09` |
-| Flags em produção | `chatbot`, `rag`, `feedback`, `moderation` **ligadas**; `ux_v2_enabled` **desligada**; `rag_cache`, `rag_rerank`, `research` ainda nem existem no banco (nascem com a #46, desligadas) |
+| Flags em produção | `chatbot`, `rag`, `feedback`, `moderation` **ligadas**; `ux_v2_enabled` **LIGADA em 2026-10-09 13:12 UTC** (100%, sem condições, a pedido do dono; para desfazer: `UPDATE feature_flags SET enabled = FALSE WHERE key = 'ux_v2_enabled';`); `rag_cache`, `rag_rerank`, `research` ainda nem existem no banco (nascem com a #46, desligadas) |
 | Jev (TypeSafe AI) | Só registrado: `docs/lia/JEV.md` |
 | Splash "Bem-vindo" do app | Não feita (`feat/splash-bem-vindo`) |
 
@@ -51,8 +51,7 @@ Documentos: `docs/identidade/PLANO.md` (diagnóstico, decisões, riscos, itens p
    manter `rag_enabled` sem condições → simular e aplicar `sql/026` (inserir em `schema_migrations` com o hash sha256 do arquivo, CRLF normalizado) →
    `rag_cache_enabled` e observar 24 h → `rag_rerank_enabled` só depois de calibrar em staging (`docs/lia/pesquisa/SELECAO.md` §4) →
    `research_enabled` só depois do OK jurídico (Política §5, retenção de 30 e 7 dias) e primeiro só para admin.
-3. **`ux_v2_enabled`** (decisão técnica minha, o dono delegou): ligar depois de a identidade estar no ar e o hero a 375 px conferido.
-   Como o assistente não escreve flag em produção, o dono roda no Neon: `UPDATE feature_flags SET enabled = TRUE WHERE key = 'ux_v2_enabled';`
+3. **`ux_v2_enabled`**: **já ligada** em 2026-10-09 13:12 UTC (conferida na API pública: `apiGetFeatureFlags` devolve `ux_v2_enabled: true`). A correção do hero a 375 px já estava na `main`. Se precisar desligar: `UPDATE feature_flags SET enabled = FALSE WHERE key = 'ux_v2_enabled';`
 4. **Jev (TypeSafe AI)**: seguir o checklist de `docs/lia/JEV.md` §5. Só pesquisa e staging; nada em produção sem OK.
 5. **Splash "Bem-vindo" do app** (`feat/splash-bem-vindo`): texto "Bem-vindo", 1,2 a 2 s, uma vez por sessão, "Pular"/Esc, zero com movimento reduzido, `inert` no contêiner principal. Reaproveita `frontend/splash.js` e `splash.css`.
 6. **Docs e limpeza:** atualizar `docs/TIME_CONTRATO.md` (numeração: Lia = 026, F4 = 025, inscrição nativa = 027); reabrir os links do planalto.gov.br nas referências do Outubro Rosa; PR opcional de `.gitattributes` (os avisos de CRLF no Windows).
