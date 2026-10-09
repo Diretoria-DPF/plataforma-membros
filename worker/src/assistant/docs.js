@@ -5,17 +5,19 @@
  */
 /**
  * assistant/docs.js
- * Documentos da base de conhecimento da Lia (RAG). Três fontes, todas SEM dado
- * de pessoa alguma:
+ * Documentos da base de conhecimento da Lia (RAG), todos SEM dado de pessoa alguma:
  *   - 'kb'        as intenções de uso geral de assistant/kb.js (uma seção por intenção; as de
  *                 administração ficam de fora: o acervo é o mesmo para todos os papéis);
  *   - 'destinos'  as telas e módulos da lista branca de assistant/targets.js;
- *   - 'guia' e 'liga'  documentos markdown embutidos abaixo, divididos por "## ".
+ *   - 'guia', 'privacidade', 'convivencia' e 'liga'  documentos markdown embutidos abaixo, divididos por "## ";
+ *   - 'plataforma', 'modulos', 'publicacoes', 'processo', 'faq' e 'saude'  conteúdo de
+ *                 assistant/docsConteudo.js, no mesmo formato markdown.
  * `buildDocuments()` devolve a lista de trechos {source, section, content} que
  * `ragService.reindex` grava em kb_chunks (idempotente: source + section).
  */
 import { PUBLIC_INTENTS } from './kb.js';
 import { TARGETS } from './targets.js';
+import { CONTENT_DOCS } from './docsConteudo.js';
 import { AI_QUOTAS } from '../constants.js';
 
 const SECTION_MAX = 200;
@@ -107,7 +109,7 @@ function targetChunks() {
 /** Todos os trechos da base, com (source, section) únicos. */
 export function buildDocuments() {
   const all = kbChunks().concat(targetChunks());
-  GUIDE_MARKDOWN.forEach((doc) => { chunkMarkdown(doc.source, doc.markdown).forEach((c) => all.push(c)); });
+  GUIDE_MARKDOWN.concat(CONTENT_DOCS).forEach((doc) => { chunkMarkdown(doc.source, doc.markdown).forEach((c) => all.push(c)); });
   const seen = new Set();
   return all.filter((c) => {
     const key = c.source + '|' + c.section;

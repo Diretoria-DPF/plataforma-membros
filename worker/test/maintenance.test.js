@@ -48,7 +48,7 @@ describe('maintenance.runMaintenance', () => {
       aiUsageLog: 3, atlasTelemetry: 2, sessions: 1, accountTokens: 0, rateLimitBuckets: 2, auditLogs: 1, errorLogs: 4, mfaChallenges: 0,
       semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
       assistantFeedbackAnonymize: 2, assistantFeedbackPurge: 1, assistantMessagesPurge: 0, assistantIncidentsPurge: 3,
-      ragReindex: 0,
+      ragReindex: 0, liaResearchPurge: 0,
     });
     expect(queryText(sql, 7)).toMatch(/DELETE FROM mfa_challenges/);
     expect(queryText(sql, 8)).toMatch(/DELETE FROM ai_semantic_cache/);
@@ -117,7 +117,7 @@ describe('maintenance.runMaintenance', () => {
       aiUsageLog: null, atlasTelemetry: 0, sessions: 1, accountTokens: 1, rateLimitBuckets: 0, auditLogs: 0, errorLogs: 1, mfaChallenges: 0,
       semanticCache: 0, aiAlerts: 0, assistantModeration: 0,
       assistantFeedbackAnonymize: 0, assistantFeedbackPurge: 0, assistantMessagesPurge: 0, assistantIncidentsPurge: 0,
-      ragReindex: 0,
+      ragReindex: 0, liaResearchPurge: 0,
     });
     expect(queryText(sql, 1)).toMatch(/error_logs/);
   });
@@ -149,6 +149,7 @@ describe('maintenance.runMaintenance', () => {
     await runMaintenance(sql, 'cid');
     const modifying = allQueryTexts(sql).filter((t) => /^\s*(DELETE|UPDATE)\b/.test(t));
     // 9 limpezas do Worker + 4 da Lia (sem contar o decaimento, que é um SELECT + UPDATE só com linhas).
+    // A purga de lia_pesquisas começa com WITH (está em researchLogService) e tem teste próprio abaixo.
     expect(modifying).toHaveLength(13);
     modifying.forEach((text) => {
       expect(text).toMatch(/\bWHERE\b[\s\S]*<\s*now\(\)/);
@@ -166,8 +167,9 @@ describe('index.js — handler scheduled (Cron Trigger)', () => {
     expect(pending).toHaveLength(1);
     await pending[0];
     // 9 limpezas + 2 consultas dos alertas da IA + 1 do decaimento da moderação da Lia + 4 da retenção da Lia
-    // + 1 da flag rag_enabled (ragReindex, que só roda com env; aqui a flag está desligada).
-    expect(sql).toHaveBeenCalledTimes(17);
+    // + 1 da flag rag_enabled (ragReindex, que só roda com env; aqui a flag está desligada)
+    // + 1 da purga do registro de pesquisas (liaResearchPurge, sql/026).
+    expect(sql).toHaveBeenCalledTimes(18);
   });
 });
 
@@ -268,5 +270,41 @@ describe('ragReindex — reindexação diária da base da Lia (cron)', () => {
     expect(res.aiUsageLog).toBe(0);
     expect(res.sessions).toBe(0);
     expect(callsMatching(sql, 'INSERT INTO error_logs')).toHaveLength(1);
+  });
+});
+
+describe('liaResearchPurge — purga do registro de pesquisas da Lia (sql/026, L10)', () => {
+  const TABLE = 'lia_pesquisas';
+
+  test('a tarefa existe, apaga só as linhas vencidas (corte por expires_at) e devolve a contagem', async () => {
+    const sql = routedSql([[TABLE, [{ n: 3 }]]]);
+    const res = await runMaintenance(sql, 'cid');
+    expect(res.liaResearchPurge).toBe(3);
+    const purges = allQueryTexts(sql).filter((t) => t.includes(TABLE));
+    expect(purges).toHaveLength(1);
+    expect(purges[0]).toMatch(/DELETE FROM lia_pesquisas/);
+    expect(purges[0]).toMatch(/expires_at\s*<=\s*now\(\)/);
+  });
+
+  test('tabela ausente (026 não aplicada): devolve 0, sem erro no log, e as outras limpezas seguem', async () => {
+    const sql = routedSql([
+      [TABLE, new Error('relation "lia_pesquisas" does not exist')],
+      ['DELETE FROM sessions', [1]],
+    ]);
+    const res = await runMaintenance(sql, 'cid');
+    expect(res.liaResearchPurge).toBe(0);
+    expect(res.sessions).toBe(1);
+    expect(callsMatching(sql, 'INSERT INTO error_logs')).toHaveLength(0);
+  });
+
+  test('falha do banco na purga não derruba as outras limpezas', async () => {
+    const sql = routedSql([
+      [TABLE, new Error('conexão recusada')],
+      ['DELETE FROM account_tokens', [1]],
+    ]);
+    const res = await runMaintenance(sql, 'cid');
+    expect(res.liaResearchPurge).toBe(0);
+    expect(res.accountTokens).toBe(1);
+    expect(res.assistantIncidentsPurge).toBe(0);
   });
 });

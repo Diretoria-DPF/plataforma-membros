@@ -246,15 +246,19 @@
     Array.prototype.forEach.call(ui.log.querySelectorAll('.lia-suggestions'), function (node) { node.remove(); });
   }
 
-  /** Lista de fontes sob a resposta (texto; nada clicável). */
+  function clearOldResearchButtons() { Array.prototype.forEach.call(ui.log.querySelectorAll('.lia-research-btn'), function (node) { node.remove(); }); }
+
+  /** Lista de fontes sob a resposta (texto; nada clicável). O rótulo legível vem do módulo de pesquisa, se houver. */
   function renderSources(sources) {
     var doc = ui.doc;
     var box = el(doc, 'div', 'lia-sources');
     box.appendChild(el(doc, 'p', 'lia-sources-title', 'Fontes'));
     var list = el(doc, 'ul', 'lia-sources-list');
     list.setAttribute('aria-label', 'Fontes desta resposta');
+    var lib = researchLib();
     sources.forEach(function (s) {
-      list.appendChild(el(doc, 'li', '', s.section ? s.source + ' · ' + s.section : s.source));
+      var label = lib ? lib.sourceLabel(s.source) : s.source;
+      list.appendChild(el(doc, 'li', '', s.section ? label + ' · ' + s.section : label));
     });
     box.appendChild(list);
     return box;
@@ -262,6 +266,9 @@
 
   // Micro-card de feedback: módulo opcional (assistant-feedback.js). Sem ele, a Lia funciona igual.
   function feedbackLib() { return root.LaiftAssistantFeedback || null; }
+
+  // Pesquisa externa e referências (assistant-research.js, opcional): sem o módulo, a Lia segue igual.
+  function researchLib() { var lib = root.LaiftAssistantResearch; return lib && typeof lib === 'object' ? lib : null; }
 
   /** Moderação (assistant-moderation.js): obrigatória, carregada antes deste arquivo. */
   function modLib() { return root.AssistantModeration; }
@@ -332,6 +339,21 @@
     ui.typers = ui.typers.filter(function (h) { return !h.isDone(); }).concat([handle]);
   }
 
+  /** Aviso "já pesquisada" e referências (só com o módulo carregado e com os campos novos na resposta). */
+  function appendResearch(wrap, msg) {
+    var lib = researchLib();
+    if (!lib) return;
+    if (msg.cached) wrap.appendChild(lib.cachedNote(ui.doc));
+    if (msg.research) wrap.appendChild(lib.renderResearch(ui.doc, msg.research));
+  }
+
+  /** Botão "Pesquisar mais a fundo": só na resposta que o servidor oferece (a última, ver addMessage). */
+  function appendResearchButton(wrap, msg) {
+    var lib = researchLib();
+    if (!lib || !msg.canResearch || ui.researchOff) return;
+    wrap.appendChild(lib.researchButton(ui.doc, function () { sendResearch(lib.lastQuestion(ui.messages)); }));
+  }
+
   function renderMessage(msg) {
     var doc = ui.doc;
     var wrap = el(doc, 'div', 'lia-msg lia-msg-' + (msg.role === 'user' ? 'user' : 'lia') + (msg.error ? ' lia-msg-error' : ''));
@@ -340,6 +362,7 @@
     wrap.appendChild(bubble);
     if (msg.degraded) wrap.appendChild(el(doc, 'p', 'lia-degraded', DEGRADED_TEXT));
     if (msg.sources && msg.sources.length) wrap.appendChild(renderSources(msg.sources));
+    appendResearch(wrap, msg);
     if (msg.actions && msg.actions.length) {
       var actions = el(doc, 'div', 'lia-actions');
       msg.actions.forEach(function (a) {
@@ -360,6 +383,7 @@
       });
       wrap.appendChild(row);
     }
+    appendResearchButton(wrap, msg);
     if (msg.role === 'lia' && msg.messageId) appendFeedback(wrap, msg.messageId);
     fillBubble(wrap, bubble, msg);
     return wrap;
@@ -367,6 +391,7 @@
 
   function addMessage(msg) {
     if (msg.role === 'lia') clearOldSuggestions();
+    clearOldResearchButtons(); // o botão de pesquisa vale só para a última resposta
     ui.messages.push(msg);
     ui.log.appendChild(renderMessage(msg));
     scrollToEnd();
@@ -380,13 +405,13 @@
     ui.send.disabled = ui.busy || suspended;
   }
 
-  function setBusy(busy) {
+  function setBusy(busy, label) {
     ui.busy = busy;
     syncInputs();
     ui.log.setAttribute('aria-busy', busy ? 'true' : 'false');
     var typing = ui.log.querySelector('.lia-typing');
     if (busy && !typing) {
-      ui.log.appendChild(el(ui.doc, 'p', 'lia-typing', 'Lia está digitando…'));
+      ui.log.appendChild(el(ui.doc, 'p', 'lia-typing', label || 'Lia está digitando…'));
       scrollToEnd();
     } else if (!busy && typing) {
       typing.remove();
@@ -423,19 +448,88 @@
         suggestions: sanitizeSuggestions(res.suggestions),
         sources: sanitizeSources(res.sources),
         degraded: res.degraded === true,
+        cached: res.cached === true,
+        canResearch: res.canResearch === true && mod.mode !== 'suspended',
+        research: researchOf(res),
         messageId: messageIdOf(res.messageId),
         warningLevel: mod.mode === 'warning' ? mod.level : 0,
         typing: true,
       });
-      if (mod.mode === 'suspended') {
-        ui.moderation.suspend(mod.until, 0);
-      } else if (mod.mode === 'warning') {
-        warnLia(mod.level);
-      } else if (res.degraded === true) {
-        reactLia('setState', 'confused');
-      } else {
-        speakThenRest();
+      reactToReply(mod, res);
+    }).catch(function () {
+      if (mine === ui.sendId) failReply(ERROR_TEXT);
+    }).then(function () { if (mine === ui.sendId) setBusy(false); });
+  }
+
+  /** Reações da Lia depois da resposta: suspensão, aviso, resposta aproximada ou fala. */
+  function reactToReply(mod, res) {
+    if (mod.mode === 'suspended') {
+      ui.moderation.suspend(mod.until, 0);
+    } else if (mod.mode === 'warning') {
+      warnLia(mod.level);
+    } else if (res.degraded === true) {
+      reactLia('setState', 'confused');
+    } else {
+      speakThenRest();
+    }
+  }
+
+  /** Resultado da pesquisa sanitizado, ou null quando a resposta não traz o campo. */
+  function researchOf(res) {
+    var lib = researchLib();
+    return lib && res && res.research ? lib.sanitizeResearch(res.research) : null;
+  }
+
+  /** Aviso de privacidade antes da primeira pesquisa: uma vez por navegador (e uma vez por página, sem armazenamento). */
+  function offerPrivacyHint(lib) {
+    var storage = lib.browserStorage(root);
+    if (ui.privacyShown || !lib.shouldShowPrivacyHint(storage)) return;
+    ui.privacyShown = true;
+    lib.markPrivacyHintSeen(storage);
+    addMessage({ role: 'lia', text: lib.PRIVACY_HINT });
+  }
+
+  /** Pesquisa desligada no servidor: a Lia só diz a frase, sem estado de falha, sem botão e sem mexer no lançador. */
+  function showOffReply(res) {
+    ui.researchOff = true;
+    addMessage({ role: 'lia', text: clip(res.reply, 2000) || ERROR_TEXT, typing: true });
+    speakThenRest();
+  }
+
+  /** Resposta da pesquisa: mesma moderação e reações do chat, com as referências. */
+  function showResearch(lib, res) {
+    var mod = modLib().moderationFromChat(res);
+    ui.mood = moodLib().onReply(ui.mood, mod.mode, Date.now());
+    var research = lib.sanitizeResearch(res.research);
+    addMessage({
+      role: 'lia', text: clip(res.reply, 2000) || lib.REPLY_TEXT, research: research, cached: research.cached,
+      messageId: messageIdOf(res.messageId), warningLevel: mod.mode === 'warning' ? mod.level : 0, typing: true,
+    });
+    reactToReply(mod, res);
+  }
+
+  /** "Pesquisar mais a fundo": a última pergunta vai à base externa, sem histórico e sem contexto da tela. */
+  function sendResearch(question) {
+    var lib = researchLib();
+    var message = clip(String(question || ''), MESSAGE_MAX).trim();
+    if (!lib || !message || ui.busy || !ui.enabled || ui.moderation.isSuspended()) return;
+    if (token() !== ui.lastToken) { refresh(); return; }
+    finishTyping();
+    ui.mood = moodLib().onQuestion(ui.mood, message, Date.now());
+    addMessage({ role: 'user', text: lib.PREFIX + message });
+    offerPrivacyHint(lib);
+    setBusy(true, lib.BUSY_TEXT);
+    reactLia('think');
+    var sentWith = token();
+    var mine = ++ui.sendId;
+    ui.app.callApi('apiAssistantChat', sentWith, { message: message, research: true }).then(function (res) {
+      if (mine !== ui.sendId) return; // a conta mudou no meio: a resposta não vale
+      if (!res || !res.success) {
+        failReply((res && typeof res.message === 'string' && res.message) ? clip(res.message, 300) : ERROR_TEXT);
+        return;
       }
+      if (res.researchDisabled === true) { showOffReply(res); return; }
+      showResearch(lib, res);
     }).catch(function () {
       if (mine === ui.sendId) failReply(ERROR_TEXT);
     }).then(function () { if (mine === ui.sendId) setBusy(false); });
@@ -580,7 +674,7 @@
 
     ui = {
       app: app, doc: doc, launcher: launcher.button, panel: panel, log: log, input: composer.input, send: composer.send,
-      messages: [], busy: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
+      messages: [], busy: false, privacyShown: false, researchOff: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
       launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null, typers: [],
       moderation: moderation, mood: moodLib().newSession(),
       hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,

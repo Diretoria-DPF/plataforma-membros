@@ -38,12 +38,16 @@
  *    de kb.js/docs.js somem, porque a base é a fonte da verdade e não um histórico.
  *    Sem embeddings (embeddingAvailable: false) a busca da Lia cai para trigramas: o cron registra o
  *    aviso ASSISTANT_RAG_REINDEX_DEGRADED em error_logs e segue (risco O20).
+ *  - Lia, registro de pesquisas (sql/026, tarefa liaResearchPurge): apaga as linhas com
+ *    validade vencida (expires_at: 30 dias a base, 7 os provedores externos). Aqui o corte é a
+ *    própria validade, não created_at; sem a tabela (026 não aplicada) a tarefa devolve 0.
  */
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
 import { AI_CACHE, ASSISTANT_RETENTION, FEEDBACK } from './constants.js';
 import * as ModerationService from './services/moderationService.js';
 import * as Rag from './services/ragService.js';
+import * as ResearchLog from './services/researchLogService.js';
 import { buildDocuments } from './assistant/docs.js';
 import { isEnabled } from './services/featureFlagService.js';
 
@@ -197,6 +201,8 @@ export async function runMaintenance(sql, correlationId, env) {
     ...coreTasks(sql, correlationId, env),
     ...assistantRetentionTasks(sql),
     ragReindex: () => ragReindexIfEnabled(sql, env, correlationId),
+    // Registro de pesquisas da Lia (L04): só linhas vencidas. purgeExpired já engole falhas e devolve 0.
+    liaResearchPurge: () => ResearchLog.purgeExpired(sql),
   };
 
   const deleted = {};
