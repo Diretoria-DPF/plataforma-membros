@@ -16,6 +16,9 @@ const require = createRequire(import.meta.url);
 const gerador = require('./build-blog.js');
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const CONTEUDO = path.join(AQUI, '..', 'blog', 'conteudo');
+// Pasta só com o post de exemplo: o teste não depende dos posts reais, que mudam com o tempo.
+const EXEMPLO_SRC = fs.mkdtempSync(path.join(os.tmpdir(), 'laift-blog-exemplo-'));
+fs.copyFileSync(path.join(CONTEUDO, '_EXEMPLO.json'), path.join(EXEMPLO_SRC, '_EXEMPLO.json'));
 const SITE_SEM_EMAIL = { email: null };
 const SITE_COM_EMAIL = { email: 'contato@exemplo.org' };
 
@@ -87,7 +90,7 @@ test('cartão de pessoa sem autorizacaoEscrita não mostra nome nem foto', () =>
   const { html, avisos } = gerador.renderPostPage(postBase({ blocos: [cartoes] }), { site: SITE_SEM_EMAIL });
   assert.ok(!html.includes('Nome Secreto'));
   assert.ok(!html.includes('blog/fotos/a.webp'));
-  assert.ok(html.includes('Nome a definir pela diretoria'));
+  assert.ok(html.includes('Veja a equipe no Instagram da Liga'));
   assert.ok(html.includes('Nome Autorizado') && html.includes('/blog/fotos/b.webp'));
   assert.ok(!html.includes('passwd'), 'caminho de foto fora de blog/fotos/ é ignorado');
   assert.ok(avisos.some((a) => a.includes('Presidência')));
@@ -105,7 +108,8 @@ test('bloco de contato: "e-mail a divulgar" sem endereço, mailto com endereço'
 test('escapa texto e não deixa atributo ou script inline na página', () => {
   const { html } = gerador.renderPostPage(postBase({ titulo: 'Fármacos & "dose"' }), { site: SITE_SEM_EMAIL });
   assert.ok(html.includes('Fármacos &amp; &quot;dose&quot;'));
-  assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html), 'nenhum <script> inline');
+  assert.ok(!/<script(?![^>]*\ssrc=)(?![^>]*ld\+json)/i.test(html), 'nenhum <script> inline (JSON-LD é só dado)');
+  assert.ok(!html.includes('blog-status'), 'nenhum selo de status na interface');
   assert.ok(!/\son\w+=/i.test(html), 'nenhum handler on*= inline');
   assert.ok(html.includes("script-src 'self'") && !html.includes("'unsafe-inline'"));
 });
@@ -121,17 +125,17 @@ test('indiceDe põe fixados primeiro e depois a data mais recente', () => {
 
 test('build gera páginas e índice do exemplo, ignora arquivos "_" sem a opção e é idempotente', () => {
   const sem = pastaTemporaria();
-  const resultadoSem = gerador.build({ srcDir: CONTEUDO, outDir: sem });
+  const resultadoSem = gerador.build({ srcDir: EXEMPLO_SRC, outDir: sem });
   assert.equal(resultadoSem.posts, 0, 'o exemplo não entra no build normal');
 
   const saida = pastaTemporaria();
-  const primeira = gerador.build({ srcDir: CONTEUDO, outDir: saida, incluirExemplo: true });
+  const primeira = gerador.build({ srcDir: EXEMPLO_SRC, outDir: saida, incluirExemplo: true });
   assert.equal(primeira.posts, 1);
   const pagina = path.join(saida, 'blog', 'exemplo-todos-os-blocos.html');
   const indice = path.join(saida, 'blog', 'index.json');
   const antesPagina = fs.readFileSync(pagina, 'utf8');
   const antesIndice = fs.readFileSync(indice, 'utf8');
-  gerador.build({ srcDir: CONTEUDO, outDir: saida, incluirExemplo: true });
+  gerador.build({ srcDir: EXEMPLO_SRC, outDir: saida, incluirExemplo: true });
   assert.equal(fs.readFileSync(pagina, 'utf8'), antesPagina);
   assert.equal(fs.readFileSync(indice, 'utf8'), antesIndice);
   assert.ok(Buffer.byteLength(antesIndice) <= 20 * 1024, 'index.json respeita o teto de 20 KB');
@@ -147,4 +151,35 @@ test('build recusa slug repetido e lista todos os problemas juntos', () => {
   const a = postBase({ blocos: [{ t: 'p', texto: 'Resultado garantido' }] });
   fs.writeFileSync(path.join(src, 'a.json'), JSON.stringify({ posts: [a, postBase()] }));
   assert.throws(() => gerador.build({ srcDir: src, outDir: pastaTemporaria() }), /slug repetido[\s\S]*frase proibida|frase proibida[\s\S]*slug repetido/);
+});
+
+test('o conteúdo real do blog compila: 18 posts, sem palavra de status na interface, índice <= 20 KB', () => {
+  const saida = pastaTemporaria();
+  const resultado = gerador.build({ srcDir: CONTEUDO, outDir: saida });
+  assert.equal(resultado.posts, 18);
+  const pasta = path.join(saida, 'blog');
+  const paginas = fs.readdirSync(pasta).filter((nome) => nome.endsWith('.html'));
+  const texto = paginas.map((nome) => fs.readFileSync(path.join(pasta, nome), 'utf8')).join('\n');
+  assert.ok(!/em revisão|planejad|em estudo|aguardando ativação|blog-status/i.test(texto));
+  assert.ok(texto.includes('mailto:laiftligauninassau@gmail.com') && texto.includes('instagram.com/laift.liga'));
+  assert.ok(Buffer.byteLength(fs.readFileSync(path.join(pasta, 'index.json'))) <= 20 * 1024);
+});
+
+test('atualizarSitemap é idempotente e usa atualizado_em ou data como lastmod', () => {
+  const pasta = pastaTemporaria();
+  const arquivo = path.join(pasta, 'sitemap.xml');
+  fs.writeFileSync(arquivo, '<?xml version="1.0"?>\n<urlset>\n  <url><loc>https://laift.com.br/</loc></url>\n</urlset>\n');
+  const posts = [postBase({ slug: 'a', data: '2026-01-01' }), postBase({ slug: 'b', data: '2026-02-01', atualizado_em: '2026-03-01' })];
+  const site = { url: 'https://laift.com.br' };
+  gerador.atualizarSitemap(arquivo, posts, site);
+  const primeira = fs.readFileSync(arquivo, 'utf8');
+  gerador.atualizarSitemap(arquivo, posts, site);
+  assert.equal(fs.readFileSync(arquivo, 'utf8'), primeira);
+  assert.ok(primeira.includes('/blog/b</loc><lastmod>2026-03-01') && primeira.includes('/blog/a</loc><lastmod>2026-01-01'));
+  assert.equal(primeira.split('<loc>https://laift.com.br/</loc>').length, 2, 'a URL original é preservada');
+});
+
+test('post sem relacionados não gera a seção "Continue lendo"', () => {
+  const { html } = gerador.renderPostPage(postBase(), { site: SITE_SEM_EMAIL, indice: [] });
+  assert.ok(!html.includes('blog-relacionados') && !html.includes('Continue lendo'));
 });

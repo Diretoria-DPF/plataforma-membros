@@ -53,7 +53,7 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 // alteração. Adicione aqui qualquer nova página estática do site.
 // robots.txt, sitemap.xml e llms.txt precisam estar na RAIZ do domínio para
 // buscadores e crawlers de IA os encontrarem (por isso exigem domínio próprio).
-['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-hints.js', 'admin-moderation.js', 'hero.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css', 'liga.html', 'liga.css', 'liga.js', 'liga-ciclo.json'].forEach((name) => {
+['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-hints.js', 'admin-moderation.js', 'hero.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css', 'liga.html', 'liga.css', 'liga.js', 'liga-ciclo.json', 'blog.html', 'blog.css'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
@@ -93,6 +93,11 @@ const LIA_REVIEW_ONLY = /[\\/]shared[\\/]lia[\\/](?:preview[^\\/]*|lab[^\\/]*|bu
 ['modulos', 'vendor', 'icons'].forEach((dir) => {
   fs.cpSync(path.join(ROOT, dir), path.join(DIST, dir), { recursive: true, filter: (src) => !LIA_REVIEW_ONLY.test(src) });
 });
+
+// Blog "Conheça a LAIFT": os módulos e o sprite de blog/ vão como estão; blog/conteudo/ (JSON dos posts)
+// fica só no repositório e vira dist/blog/<slug>.html + index.json + URLs do sitemap pelo gerador.
+fs.cpSync(path.join(ROOT, 'blog'), path.join(DIST, 'blog'), { recursive: true, filter: (src) => !/[\\/]blog[\\/]conteudo(?:[\\/]|$)/.test(src) });
+require('./build-blog.js').build({ outDir: DIST });
 
 // Modelos 3D também em .glb.gz (PR 3.1, meta de boot < 10 s em Fast 3G):
 // o GitHub Pages não comprime .glb, e o gzip tira ~43% do esqueleto. O atlas

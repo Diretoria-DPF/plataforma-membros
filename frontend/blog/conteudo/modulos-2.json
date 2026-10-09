@@ -1,0 +1,185 @@
+{
+  "posts": [
+    {
+      "slug": "eventos-e-cracha",
+      "titulo": "Eventos e Crachá virtual: inscrição e presença",
+      "resumo": "Veja os eventos da Liga, faça a sua inscrição e use o crachá virtual, com o seu papel e o QR de presença.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["eventos", "cracha", "presenca"],
+      "serie": "modulos",
+      "ordem_na_serie": 7,
+      "icone": "cracha",
+      "fixado": false,
+      "leitura_min": 1,
+      "status": "ativo",
+      "fontes": [
+        "frontend/index.html:397",
+        "worker/src/handlers.js:164",
+        "frontend/credential.js:270",
+        "worker/src/handlers.js:244",
+        "docs/blog/FATOS_VERIFICADOS_2026-10-09.md (checado em 2026-10-09)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "Eventos são os encontros da Liga. Na plataforma, você vê a lista, faz a sua inscrição e registra a sua presença. O crachá virtual é o seu cartão no app, com o seu papel na Liga. Tudo isso fica no app, depois do login." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Uma lista dos eventos da Liga.",
+          "Inscrição direta em cada evento.",
+          "Um crachá virtual com o seu papel na Liga.",
+          "Um QR de presença dentro do crachá."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Entre com a sua conta e abra a seção Eventos. Escolha um encontro e faça a inscrição. No dia, abra o seu crachá virtual e mostre o QR de presença." },
+        { "t": "p", "texto": "A equipe da Liga lê o QR no terminal de check-in do evento. Por isso, deixe o crachá aberto na tela do celular até a leitura." },
+        { "t": "p", "texto": "Para conhecer a Liga antes de se inscrever, leia a [página da Liga](/liga.html). Ela mostra quem somos, as áreas e o contato." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "propostas-votacao-tarefas",
+      "titulo": "Propostas, votação e tarefas: participe da Liga",
+      "resumo": "Envie propostas, vote nas que já estão na plataforma e inscreva-se em tarefas. Veja como cada parte funciona.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["propostas", "votacao", "tarefas"],
+      "serie": "modulos",
+      "ordem_na_serie": 8,
+      "icone": "propostas",
+      "fixado": false,
+      "leitura_min": 1,
+      "status": "ativo",
+      "fontes": [
+        "frontend/index.html:411",
+        "frontend/index.html:439",
+        "worker/src/handlers.js:171",
+        "worker/src/handlers.js:176",
+        "docs/blog/FATOS_VERIFICADOS_2026-10-09.md (checado em 2026-10-09)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A Liga também se faz com a participação dos membros. Na plataforma, você envia propostas, vota nas ideias da Liga e se inscreve em tarefas. Tudo fica no mesmo app." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Propostas: um espaço para enviar a sua ideia.",
+          "Votação: a sua escolha entre as propostas que estão no app.",
+          "Tarefas: atividades com inscrição para os membros.",
+          "Comentários: um espaço para conversar sobre as tarefas."
+        ] },
+        { "t": "p", "texto": "Cada parte tem a sua seção no app. Assim, fica fácil achar o que você procura." },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Para enviar uma proposta, abra a seção Propostas e escreva a sua ideia. Para votar, escolha a proposta que você apoia. Em Tarefas, escolha a atividade e faça a sua inscrição." },
+        { "t": "p", "texto": "Nas tarefas, você também pode deixar um comentário para tirar dúvidas ou combinar detalhes. Entre com a sua conta antes de começar." },
+        { "t": "p", "texto": "Quer entender a Liga antes de participar? Leia a [página da Liga](/liga.html). Lá você vê as áreas e o contato." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "mensagens-cifradas",
+      "titulo": "Mensagens cifradas: conversas entre membros",
+      "resumo": "Converse com outros membros em mensagens cifradas. O texto é cifrado no seu navegador antes de ser enviado.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["mensagens", "cifradas", "privacidade"],
+      "serie": "modulos",
+      "ordem_na_serie": 9,
+      "icone": "mensagens",
+      "fixado": false,
+      "leitura_min": 1,
+      "status": "ativo",
+      "fontes": [
+        "frontend/index.html:484",
+        "frontend/msg-crypto.js:42",
+        "frontend/msg-crypto.js:226",
+        "sql/010_messaging_simplify.sql:7-8",
+        "docs/blog/FATOS_VERIFICADOS_2026-10-09.md (checado em 2026-10-09)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "Mensagens cifradas são conversas privadas entre membros. Cifrar é embaralhar o texto com uma chave, para que só quem tem a chave consiga lê-lo. Na LAIFT, esse trabalho acontece no seu navegador." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Conversas diretas com outros membros, na seção Mensagens.",
+          "Cifragem feita no navegador, antes de o texto sair do seu aparelho.",
+          "Uma chave privada que nem o próprio app consegue copiar.",
+          "Nenhuma frase-secreta para criar ou lembrar."
+        ] },
+        { "t": "p", "texto": "A plataforma usa métodos de cifragem padronizados, em vez de criar um método próprio. Você não precisa entender a parte técnica para usar a seção." },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Abra a seção Mensagens e escolha um membro para conversar. Confira o membro escolhido antes de enviar. Escreva e envie a mensagem. Você não precisa criar uma frase-secreta para começar." },
+        { "t": "p", "texto": "A cifragem protege o texto da conversa, mas não substitui os seus cuidados. Mantenha a senha em segredo e ative a [verificação em duas etapas](/blog/perfil-e-conexoes.html)." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "lia-a-guia",
+      "titulo": "Lia, a guia da plataforma: o que ela faz",
+      "resumo": "A Lia orienta você no app e leva você às telas certas. Quem está logado também conversa com ela no chat.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["lia", "guia", "app"],
+      "serie": "modulos",
+      "ordem_na_serie": 10,
+      "icone": "lia",
+      "fixado": false,
+      "leitura_min": 1,
+      "status": "ativo",
+      "fontes": [
+        "frontend/assistant.js:620-623",
+        "worker/src/handlers.js:140",
+        "frontend/onboarding.js:144",
+        "docs/blog/FATOS_VERIFICADOS_2026-10-09.md (checado em 2026-10-09)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "A Lia é a guia da plataforma LAIFT. Ela explica onde estão as coisas no app e leva você até a tela que procura. É um bom ponto de partida quando você não sabe por onde começar." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Orientação sobre as áreas do app, como Aprender, Eventos e Mensagens.",
+          "Atalhos que levam você direto à tela indicada.",
+          "Um chat com a Lia, para quem está logado.",
+          "Um passo com a Lia no roteiro de boas-vindas que aparece depois do login."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Entre na plataforma e abra a Lia. Escreva a sua dúvida no chat. Você pode perguntar sobre as áreas do app, como Eventos, Propostas ou Perfil." },
+        { "t": "p", "texto": "Se a Lia indicar uma tela, toque no atalho para ir até lá. Use a Lia como um guia para achar o caminho certo dentro do app." },
+        { "t": "p", "texto": "Quem ainda não entrou não tem acesso ao chat. Para conhecer a Liga antes, leia a [página da Liga](/liga.html). Depois, entre pelo [app](/index.html)." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    },
+    {
+      "slug": "perfil-e-conexoes",
+      "titulo": "Perfil, verificação em duas etapas e conexões",
+      "resumo": "No Perfil você cuida dos seus dados. Veja a verificação em duas etapas, a Equipe da Liga e as conexões entre membros.",
+      "data": "2026-10-09",
+      "atualizado_em": "2026-10-09",
+      "tags": ["perfil", "verificacao", "conexoes"],
+      "serie": "modulos",
+      "ordem_na_serie": 11,
+      "icone": "perfil",
+      "fixado": false,
+      "leitura_min": 1,
+      "status": "ativo",
+      "fontes": [
+        "frontend/index.html:521",
+        "worker/src/handlers.js:115-117",
+        "frontend/mfa.js:277",
+        "sql/017_mfa.sql:10",
+        "worker/src/handlers.js:202",
+        "docs/blog/FATOS_VERIFICADOS_2026-10-09.md (checado em 2026-10-09)"
+      ],
+      "blocos": [
+        { "t": "p", "texto": "O Perfil reúne os seus dados e as preferências da sua conta. A plataforma também tem a verificação em duas etapas, a Equipe da Liga e as conexões entre membros. Veja o que cada parte faz." },
+        { "t": "h2", "texto": "O que você encontra" },
+        { "t": "lista", "itens": [
+          "Perfil: os seus dados e as preferências da conta.",
+          "Verificação em duas etapas: um código de app autenticador no login.",
+          "Códigos de recuperação de uso único, para entrar quando o celular não estiver à mão.",
+          "Equipe e organograma: a árvore da Liga, com cargos e áreas.",
+          "Conexões: os vínculos entre você e outros membros."
+        ] },
+        { "t": "h2", "texto": "Como usar" },
+        { "t": "p", "texto": "Abra o Perfil para conferir os seus dados e escolher as preferências. Para configurar a verificação em duas etapas, use um app autenticador no celular. Guarde os códigos de recuperação em lugar seguro, fora do aparelho." },
+        { "t": "p", "texto": "Para ver como a Liga se organiza, abra Equipe e organograma. Para entender a Liga antes de entrar, leia a [página da Liga](/liga.html)." },
+        { "t": "contato", "titulo": "Tire dúvidas com a Liga" }
+      ]
+    }
+  ]
+}

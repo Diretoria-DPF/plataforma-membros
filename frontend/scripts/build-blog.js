@@ -134,7 +134,7 @@ function renderCartao(item, ctx) {
   if (pessoa) {
     pessoaHtml = autorizado && item.nome
       ? `<p class="blog-cartao__nome">${esc(item.nome)}</p>`
-      : '<p class="blog-cartao__pendente">Nome a definir pela diretoria</p>';
+      : '<p class="blog-cartao__pendente">Veja a equipe no Instagram da Liga</p>';
   }
   const texto = item.texto ? `<p>${renderInline(item.texto, ctx)}</p>` : '';
   return `<li class="blog-cartao">${ic}${foto}<h3>${esc(item.titulo)}</h3>${pessoaHtml}${texto}</li>`;
@@ -170,11 +170,94 @@ function renderCabecalho(ctx) {
 }
 
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; "
-  + "connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'";
+  + "connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'";
 
-/** Página de um post. ctx = { site, scripts[] }. */
+const SERIE_ROTULO = { liga: 'A Liga', modulos: 'Módulos', plataforma: 'Plataforma' };
+
+/** Canonical, Open Graph e JSON-LD (BlogPosting + BreadcrumbList) de um post. */
+function renderMeta(post, ctx) {
+  const url = `${ctx.site.url}/blog/${post.slug}`;
+  const imagem = `${ctx.site.url}/blog/og-default.jpg`;
+  const ld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BlogPosting', headline: post.titulo, description: post.resumo, datePublished: post.data,
+        dateModified: post.atualizado_em || post.data, inLanguage: 'pt-BR', mainEntityOfPage: url, image: imagem,
+        author: { '@type': 'Organization', name: 'LAIFT' }, publisher: { '@type': 'Organization', name: 'LAIFT' },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Blog', item: `${ctx.site.url}/blog` },
+          { '@type': 'ListItem', position: 2, name: SERIE_ROTULO[post.serie], item: `${ctx.site.url}/blog#filtro=${post.serie}` },
+          { '@type': 'ListItem', position: 3, name: post.titulo, item: url },
+        ],
+      },
+    ],
+  };
+  const json = JSON.stringify(ld).replace(/</g, '\\u003c');
+  return `<link rel="canonical" href="${esc(url)}">\n<meta property="og:type" content="article">\n`
+    + `<meta property="og:title" content="${esc(post.titulo)}">\n<meta property="og:description" content="${esc(post.resumo)}">\n`
+    + `<meta property="og:url" content="${esc(url)}">\n<meta property="og:image" content="${esc(imagem)}">\n`
+    + `<meta name="twitter:card" content="summary_large_image">\n<script type="application/ld+json">${json}</script>`;
+}
+
+function renderBreadcrumbs(post) {
+  return '<nav class="blog-breadcrumbs" aria-label="Você está em"><ol>'
+    + '<li><a href="/blog.html">Blog</a></li>'
+    + `<li><a href="/blog.html#filtro=${esc(post.serie)}">${esc(SERIE_ROTULO[post.serie])}</a></li>`
+    + `<li aria-current="page">${esc(post.titulo)}</li></ol></nav>`;
+}
+
+function relacionadosDe(post, indice) {
+  const tags = new Set(post.tags);
+  return indice.filter((p) => p.slug !== post.slug)
+    .map((p) => ({ p, pontos: (p.serie === post.serie ? 10 : 0) + p.tags.filter((t) => tags.has(t)).length }))
+    .filter((x) => x.pontos > 0)
+    .sort((a, b) => b.pontos - a.pontos || a.p.slug.localeCompare(b.p.slug))
+    .slice(0, 3).map((x) => x.p);
+}
+
+/** "Continue lendo": se não há relacionados, a seção inteira (título incluído) não existe. */
+function renderRelacionados(post, ctx) {
+  const lista = relacionadosDe(post, ctx.indice);
+  if (!lista.length) return '';
+  const itens = lista.map((p) => `<li><a class="blog-card" href="/${esc(p.href)}" data-serie="${esc(p.serie)}">`
+    + `${icone(p.icone, 'blog-card__icone')}<span class="blog-card__titulo">${esc(p.titulo)}</span>`
+    + `<span class="blog-card__meta">${p.leitura_min} min de leitura</span></a></li>`).join('');
+  return `<section class="blog-relacionados" aria-labelledby="t-rel"><h2 id="t-rel">Continue lendo</h2><ul>${itens}</ul></section>`;
+}
+
+function renderNavPost(post, ctx) {
+  const serie = ctx.indice.filter((p) => p.serie === post.serie && p.ordem_na_serie > 0)
+    .sort((a, b) => a.ordem_na_serie - b.ordem_na_serie);
+  const i = serie.findIndex((p) => p.slug === post.slug);
+  if (i < 0 || (i === 0 && serie.length === 1)) return '';
+  const link = (p, cls, rel, rotulo) => `<a class="${cls}" href="/${esc(p.href)}" rel="${rel}"><span>${rotulo}</span> ${esc(p.titulo)}</a>`;
+  const ant = serie[i - 1] ? link(serie[i - 1], 'blog-nav-post__ant', 'prev', 'Anterior') : '';
+  const prox = serie[i + 1] ? link(serie[i + 1], 'blog-nav-post__prox', 'next', 'Próximo') : '';
+  return ant || prox ? `<nav class="blog-nav-post" aria-label="Mais posts da série">${ant}${prox}</nav>` : '';
+}
+
+/** Insere/atualiza as URLs do blog em sitemap.xml entre marcadores (idempotente). <lastmod> = atualizado_em ou data do post. */
+function atualizarSitemap(arquivo, posts, site) {
+  if (!fs.existsSync(arquivo)) return false;
+  const inicio = '<!-- blog:inicio -->';
+  const fim = '<!-- blog:fim -->';
+  const limpo = fs.readFileSync(arquivo, 'utf8').replace(new RegExp(`\\s*${inicio}[\\s\\S]*?${fim}`), '');
+  const datas = posts.map((p) => p.atualizado_em || p.data).sort();
+  const url = (loc, lastmod) => `  <url><loc>${esc(loc)}</loc><lastmod>${lastmod}</lastmod></url>`;
+  const linhas = [url(`${site.url}/blog`, datas[datas.length - 1] || ''), ...posts.map((p) => url(`${site.url}/blog/${p.slug}`, p.atualizado_em || p.data))];
+  fs.writeFileSync(arquivo, limpo.replace('</urlset>', `  ${inicio}\n${linhas.join('\n')}\n  ${fim}\n</urlset>`));
+  return true;
+}
+
+/** Página de um post. ctx = { site, scripts[], indice[] }. */
 function renderPostPage(post, ctxBase) {
-  const ctx = { site: ctxBase.site, scripts: ctxBase.scripts || [], avisos: [], contador: { h2: 0, contato: 0 } };
+  const ctx = {
+    site: { url: 'https://laift.com.br', ...ctxBase.site }, scripts: ctxBase.scripts || [], indice: ctxBase.indice || [], avisos: [], contador: { h2: 0, contato: 0 },
+  };
   const corpo = post.blocos.map((b) => RENDER[b.t](b, ctx)).join('\n');
   const temContato = post.blocos.some((b) => b.t === 'contato');
   const rodape = temContato ? '' : renderContato(ctx);
@@ -189,6 +272,7 @@ function renderPostPage(post, ctxBase) {
 <meta name="theme-color" content="#0f6f62">
 <title>${esc(post.titulo)} · Blog LAIFT</title>
 <meta name="description" content="${esc(post.resumo)}">
+${renderMeta(post, ctx)}
 <link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
 <link rel="stylesheet" href="/blog.css">
 </head>
@@ -196,17 +280,18 @@ function renderPostPage(post, ctxBase) {
 <a class="blog-skip" href="#conteudo">Pular para o conteúdo</a>
 ${renderCabecalho(ctx)}
 <main id="conteudo">
+${renderBreadcrumbs(post)}
 <article class="blog-artigo" data-serie="${esc(post.serie)}">
 <header class="blog-artigo__cabecalho">
 ${icone(post.icone, 'blog-artigo__icone')}
 <h1>${esc(post.titulo)}</h1>
 <p class="blog-artigo__resumo">${esc(post.resumo)}</p>
-<p class="blog-artigo__meta"><span class="blog-status" data-status="${esc(post.status)}">${STATUS[post.status]}</span>
-<time datetime="${esc(post.data)}">${dataPtBr(post.data)}</time> · <span>${post.leitura_min} min de leitura</span></p>
+<p class="blog-artigo__meta"><time datetime="${esc(post.data)}">${dataPtBr(post.data)}</time> · <span>${post.leitura_min} min de leitura</span></p>
 </header>
 ${corpo}
 ${rodape}
 </article>
+${renderNavPost(post, ctx)}${renderRelacionados(post, ctx)}
 </main>
 ${scripts}
 </body>
@@ -249,7 +334,7 @@ function validarCampos(post, erros) {
   if (!SERIES.includes(post.serie)) erros.push(`serie deve ser uma de ${SERIES.join(', ')}`);
   if (!ICONES.includes(post.icone)) erros.push(`icone desconhecido: ${post.icone}`);
   if (!(post.leitura_min >= 1 && post.leitura_min <= MAX.leitura)) erros.push('leitura_min fora de 1..20');
-  if (!STATUS[post.status]) erros.push(`status inválido: ${post.status}`);
+  if (post.status !== undefined && !STATUS[post.status]) erros.push(`status inválido: ${post.status}`);
   if (!Array.isArray(post.fontes) || !post.fontes.length
     || post.fontes.some((f) => typeof f !== 'string' || !f.trim() || f.length > MAX.fonte)) erros.push('fontes obrigatórias (texto curto com arquivo:linha ou doc)');
   if (!Array.isArray(post.blocos) || !post.blocos.length) erros.push('blocos ausentes');
@@ -294,7 +379,7 @@ function indiceDe(posts) {
   const meta = (p) => ({
     slug: p.slug, titulo: p.titulo, resumo: p.resumo, data: p.data, tags: p.tags, serie: p.serie,
     ordem_na_serie: p.ordem_na_serie || 0, icone: p.icone, fixado: !!p.fixado, leitura_min: p.leitura_min,
-    status: p.status, href: `blog/${p.slug}.html`,
+    href: `blog/${p.slug}.html`,
   });
   return posts.map(meta).sort((a, b) => (Number(b.fixado) - Number(a.fixado)) || b.data.localeCompare(a.data) || a.slug.localeCompare(b.slug));
 }
@@ -317,13 +402,14 @@ function build(opcoes = {}) {
   fs.mkdirSync(destino, { recursive: true });
   const scripts = ['post.js'].filter((s) => fs.existsSync(path.join(ROOT, 'blog', s))).map((s) => `/blog/${s}`);
   const avisos = [];
+  const indice = indiceDe(posts);
   posts.forEach((p) => {
-    const pagina = renderPostPage(p, { site, scripts });
+    const pagina = renderPostPage(p, { site, scripts, indice });
     avisos.push(...pagina.avisos.map((a) => `${p.slug}: ${a}`));
     fs.writeFileSync(path.join(destino, `${p.slug}.html`), pagina.html);
   });
-  const indice = indiceDe(posts);
   fs.writeFileSync(path.join(destino, 'index.json'), JSON.stringify({ total: indice.length, posts: indice }));
+  atualizarSitemap(path.join(outDir, 'sitemap.xml'), posts, site);
   return { posts: posts.length, avisos, indice };
 }
 
@@ -344,6 +430,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  build, loadPosts, loadSite, validatePost, renderPostPage, linkPermitido, indiceDe,
+  build, loadPosts, loadSite, validatePost, renderPostPage, linkPermitido, indiceDe, atualizarSitemap,
   FRASES_PROIBIDAS, ICONES, STATUS, SERIES, BLOCOS,
 };
