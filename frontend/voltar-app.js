@@ -91,7 +91,24 @@
     }
     // O painel atual sai da pilha; o destino vira o topo, sem empilhar de novo.
     pilha = pilha.slice(0, -1);
-    if (window.App && typeof window.App.showPanel === 'function') window.App.showPanel(destino.painel);
+    if (window.App && typeof window.App.showPanel === 'function') {
+      window.App.showPanel(destino.painel);
+      focarPainel(destino.painel, document);
+    }
+  }
+
+  /**
+   * Leva o foco ao Voltar do painel de destino, que acabou de aparecer (o
+   * botão de origem sumiu). Sem Voltar (Início), foca o primeiro título.
+   */
+  function focarPainel(painel, doc) {
+    var secao = doc.getElementById(painel);
+    if (!secao) return;
+    var botao = secao.querySelector('.app-voltar');
+    var alvo = botao || secao.querySelector('h1, h2');
+    if (!alvo) return;
+    if (!botao) alvo.setAttribute('tabindex', '-1');
+    alvo.focus({ preventScroll: true });
   }
 
   function criarBotao() {
@@ -142,7 +159,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { escopoDe: escopoDe, registrar: registrar, destinoDoVoltar: destinoDoVoltar };
+    module.exports = { escopoDe: escopoDe, registrar: registrar, destinoDoVoltar: destinoDoVoltar, focarPainel: focarPainel };
   } else if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', iniciar);
   } else {

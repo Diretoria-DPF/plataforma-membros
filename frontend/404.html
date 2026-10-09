@@ -5,12 +5,12 @@
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <title>Página não encontrada - Plataforma de Membros</title>
-  <link rel="stylesheet" href="modulos/shared/laift-tokens.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <div id="app-shell" class="app-shell">
@@ -18,23 +18,24 @@
 
     <main class="public-shell">
       <section class="auth-card" aria-labelledby="error-title">
-        <a class="back-link link-btn" href="./" data-history-back>&larr; Voltar</a>
+        <a class="back-link link-btn" href="/" data-history-back>&larr; Voltar</a>
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="error-title">Página não encontrada</h1>
         <p class="muted">A página que você procura não existe ou foi movida. Tente voltar à página inicial da plataforma.</p>
 
         <div class="notfound-icon" aria-hidden="true">🚫</div>
 
-        <!-- "./" (e não "/"): a plataforma é publicada num subcaminho do
-             GitHub Pages; "/" levava à raiz da organização. Link com cara de
-             botão, em vez de um <button> dentro de <a> (HTML inválido). -->
+        <!-- "/" (absoluto): o Cloudflare serve esta página em qualquer
+             profundidade de URL, e "./" resolveria a partir da URL atual.
+             Link com cara de botão, em vez de um <button> dentro de <a>
+             (HTML inválido). -->
         <div class="notfound-actions">
-          <a class="button-link" href="./">Voltar à página inicial</a>
+          <a class="button-link" href="/">Voltar à página inicial</a>
         </div>
       </section>
     </main>
   </div>
 
-  <script src="static-page.js" defer></script>
+  <script src="/static-page.js" defer></script>
 </body>
 </html>

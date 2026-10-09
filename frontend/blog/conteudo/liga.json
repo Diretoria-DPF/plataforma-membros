@@ -97,7 +97,7 @@
     },
     {
       "slug": "equipe-cargos-e-areas",
-      "titulo": "Quem faz a LAIFT: cargos e áreas de atuação",
+      "titulo": "Quem faz a LAIFT: cargos e áreas de interesse",
       "resumo": "Os cargos da Presidência e das diretorias, as oito áreas de interesse e onde conhecer os membros da Liga.",
       "data": "2026-10-09",
       "atualizado_em": "2026-10-09",
@@ -127,7 +127,7 @@
           { "titulo": "Diretoria Administrativa", "icone": "equipe", "pessoa": true },
           { "titulo": "Diretoria Financeira", "icone": "equipe", "pessoa": true }
         ] },
-        { "t": "h2", "texto": "Áreas de atuação" },
+        { "t": "h2", "texto": "Áreas de interesse" },
         { "t": "p", "texto": "Estas são as áreas de interesse da Liga. Elas também aparecem na página da Liga:" },
         { "t": "cartoes", "itens": [
           { "titulo": "Farmacologia e Toxicologia", "icone": "liga" },

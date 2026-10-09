@@ -215,6 +215,10 @@
   max-width: 320px;
 }
 
+.ps-cta__principal {
+  flex: 2 1 0;
+}
+
 .ps-cta__fechado {
   flex: 0 0 100%;
   margin: 0;
@@ -224,7 +228,8 @@
   text-align: center;
 }
 
-.pub-pagina main.ps-conteudo {
+/* O espaço da barra fixa vale para a página toda: o rodapé vem depois do main e não pode ficar coberto. */
+.ps-pagina {
   padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
 }
 
@@ -458,6 +463,10 @@
   .pub-pagina main.ps-conteudo {
     max-width: none;
     padding: 0;
+  }
+
+  .ps-pagina {
+    padding-bottom: 0;
   }
 
   .pub-pular,

@@ -12,6 +12,10 @@ const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
 
 const ALVO_MINIMO_PX = 44;
+const LARGURA_DESKTOP_PX = 760;
+const LIMITE_X_CELULAR_PX = 24;
+const LIMITE_X_DESKTOP_PX = 120;
+const CONTRASTE_MINIMO_TEXTO = 4.5;
 const TOTAL_POSTS = 19;
 const POSTS_DA_SERIE_CAMPANHAS = 1;
 const POST_DA_CAMPANHA = '/blog/outubro-rosa-2026.html';
@@ -39,14 +43,44 @@ async function checarSaude(app, respostas, rotulo) {
   check(app.errors.length === 0, `${rotulo}: sem erros de JavaScript` + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));
 }
 
-async function contatosDoTopo(page, rotulo) {
-  const insta = page.locator('.blog-topo__contatos a[href="https://www.instagram.com/laift.liga"]').first();
-  check((await insta.getAttribute('target')) === '_blank' && /noopener/.test(await insta.getAttribute('rel')), `${rotulo}: Instagram abre em nova aba com noopener`);
-  const email = page.locator('.blog-topo__contatos a[href^="mailto:"]').first();
-  check((await email.count()) === 1, `${rotulo}: e-mail em mailto: no cabeçalho`);
+/** Barra do topo (header.pub-barra): Voltar no canto superior esquerdo; Início, Entrar e Cadastrar; todos >= 44 px. Chamar sem rolar. */
+async function barraDoTopo(page, rotulo, voltarPara) {
+  const barra = page.locator('header.pub-barra');
+  check((await barra.count()) === 1, `${rotulo}: uma header.pub-barra`);
+  const voltar = barra.locator('.pub-voltar[data-history-back]');
+  check((await voltar.count()) === 1 && (await voltar.getAttribute('href')) === voltarPara, `${rotulo}: .pub-voltar[data-history-back] aponta para ${voltarPara}`);
+  const caixaVoltar = await voltar.boundingBox();
+  // Celular: encostado na borda (x ≤ 24). Desktop: alinhado à coluna de conteúdo (x ≤ 120).
+  const limiteX = ((await page.viewportSize()) || { width: 0 }).width >= LARGURA_DESKTOP_PX ? LIMITE_X_DESKTOP_PX : LIMITE_X_CELULAR_PX;
+  check(caixaVoltar && caixaVoltar.x <= limiteX && caixaVoltar.y <= 24, `${rotulo}: Voltar no canto superior (x ≤ ${limiteX}, y ≤ 24)`);
+  const primeiroFocavel = await page.evaluate(() => {
+    const focavel = [...document.querySelectorAll('header.pub-barra a[href], header.pub-barra button')].find((el) => el.offsetParent !== null);
+    return !!focavel && focavel.classList.contains('pub-voltar');
+  });
+  check(primeiroFocavel, `${rotulo}: Voltar é o primeiro elemento focável da barra`);
+  const alvos = {
+    Voltar: voltar,
+    Início: barra.locator('.pub-barra__link[href="/"]'),
+    Entrar: barra.locator('.pub-barra__link[href="/#entrar"]'),
+    Cadastrar: barra.locator('.pub-barra__link[href="/#cadastro"]'),
+  };
+  for (const [nome, link] of Object.entries(alvos)) {
+    check((await link.count()) === 1, `${rotulo}: link "${nome}" existe na barra`);
+    const caixa = await link.first().boundingBox();
+    check(caixa && caixa.height >= ALVO_MINIMO_PX, `${rotulo}: link "${nome}" com altura >= ${ALVO_MINIMO_PX} px`);
+  }
+}
+
+/** Instagram e e-mail continuam no bloco "Fale com a Liga" (.blog-contato), com alvo >= 44 px. */
+async function contatosNoBloco(page, rotulo) {
+  const insta = page.locator('.blog-contato a[href="https://www.instagram.com/laift.liga"]');
+  check((await insta.count()) === 1, `${rotulo}: Instagram no bloco .blog-contato`);
+  check((await insta.getAttribute('target')) === '_blank' && /noopener/.test((await insta.getAttribute('rel')) || ''), `${rotulo}: Instagram abre em nova aba com noopener`);
+  const email = page.locator('.blog-contato a[href^="mailto:"]');
+  check((await email.count()) === 1, `${rotulo}: e-mail em mailto: no bloco .blog-contato`);
   for (const link of [insta, email]) {
-    const caixa = await link.boundingBox();
-    check(caixa && caixa.height >= ALVO_MINIMO_PX, `${rotulo}: contato do cabeçalho com altura >= ${ALVO_MINIMO_PX} px`);
+    const caixa = await link.first().boundingBox();
+    check(caixa && caixa.height >= ALVO_MINIMO_PX, `${rotulo}: contato do bloco com altura >= ${ALVO_MINIMO_PX} px`);
   }
 }
 
@@ -74,7 +108,8 @@ async function feed(largura, altura) {
     const tamanho = await app.page.locator('#feed article.blog-card').first().getAttribute('aria-setsize');
     check(Number(tamanho) === TOTAL_POSTS, `${rotulo}: aria-setsize = ${TOTAL_POSTS}`);
     check((await app.page.locator('#feed').getAttribute('aria-busy')) === 'false', `${rotulo}: aria-busy volta a false`);
-    await contatosDoTopo(app.page, rotulo);
+    await barraDoTopo(app.page, rotulo, '/');
+    await contatosNoBloco(app.page, rotulo);
 
     const mais = app.page.locator('#mais');
     // O scroll infinito (sentinela) e o botão levam ao mesmo resultado: aciona o botão pelo DOM enquanto houver o que carregar.
@@ -190,14 +225,15 @@ async function post(largura, altura) {
     check((await app.page.locator('h1').count()) === 1, `${rotulo}: exatamente 1 h1`);
     check((await app.page.locator('link[rel="canonical"]').getAttribute('href')) === 'https://laift.com.br/blog/modulo-inicio', `${rotulo}: canonical limpo`);
     check((await app.page.locator('.blog-progresso').count()) === 1, `${rotulo}: barra de progresso criada`);
+    await barraDoTopo(app.page, rotulo, '/blog.html');
     check(!(await app.page.locator('.blog-barra').isVisible()), `${rotulo}: barra flutuante escondida no topo`);
     await app.page.evaluate(() => window.scrollTo(0, 900));
     await app.page.waitForSelector('.blog-barra--visivel', { timeout: 2000 });
     check(await app.page.locator('.blog-barra').isVisible(), `${rotulo}: barra flutuante aparece depois de rolar`);
+    check((await app.page.locator('.blog-barra a[href="https://www.instagram.com/laift.liga"]').count()) === 1, `${rotulo}: barra flutuante tem o Instagram`);
     check((await app.page.locator('.blog-barra a[href^="mailto:"]').count()) === 1, `${rotulo}: barra flutuante tem o e-mail`);
-    check((await app.page.locator('.blog-contato a[href="https://www.instagram.com/laift.liga"]').count()) >= 1, `${rotulo}: bloco de contato com Instagram`);
+    await contatosNoBloco(app.page, rotulo);
     check((await app.page.locator('.blog-status').count()) === 0, `${rotulo}: nenhum selo de status na interface`);
-    await contatosDoTopo(app.page, rotulo);
     await axeGate(app.page, `${rotulo}: axe`);
     await checarSaude(app, respostas, rotulo);
   } finally {
@@ -238,6 +274,136 @@ async function falhaDoIndice() {
   }
 }
 
+/** Luminância relativa (WCAG 2.x) de uma cor [r, g, b] em 0–255. */
+function luminancia(rgb) {
+  const [r, g, b] = rgb.map((canal) => {
+    const s = canal / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** Razão de contraste WCAG entre duas cores [r, g, b]. */
+function razaoDeContraste(corA, corB) {
+  const [claro, escuro] = [luminancia(corA), luminancia(corB)].sort((x, y) => y - x);
+  return (claro + 0.05) / (escuro + 0.05);
+}
+
+/** Lê "rgb(r, g, b)" ou "rgba(r, g, b, a)" do getComputedStyle. */
+function lerRgb(texto) {
+  const m = /rgba?\(([^)]+)\)/.exec(texto || '');
+  if (!m) return null;
+  const partes = m[1].split(',').map((v) => Number(v.trim()));
+  return { rgb: partes.slice(0, 3), alpha: partes.length > 3 ? partes[3] : 1 };
+}
+
+/** Link "Cadastrar" da barra: o texto precisa ter >= 4.5:1 sobre o fundo sólido, no tema claro e no escuro. */
+async function contrasteDoCadastrar(largura, altura, esquema) {
+  const app = await startApp({ viewport: { width: largura, height: altura } });
+  const rotulo = `blog.html Cadastrar ${esquema} ${largura}px`;
+  try {
+    await app.page.emulateMedia({ colorScheme: esquema });
+    await app.page.goto(app.baseUrl + 'blog.html', { waitUntil: 'domcontentloaded' });
+    await app.page.waitForSelector('#welcome', { state: 'detached', timeout: TEMPO_MAX_WELCOME_MS });
+    await app.page.waitForLoadState('networkidle');
+    const cores = await app.page.evaluate(() => {
+      const link = document.querySelector('header.pub-barra .pub-barra__link--destaque');
+      if (!link) return null;
+      const texto = link.querySelector('span') || link;
+      return { texto: getComputedStyle(texto).color, fundo: getComputedStyle(link).backgroundColor };
+    });
+    const corTexto = lerRgb(cores && cores.texto);
+    const corFundo = lerRgb(cores && cores.fundo);
+    const opacos = !!corTexto && !!corFundo && corTexto.alpha === 1 && corFundo.alpha === 1;
+    check(opacos, `${rotulo}: texto e fundo do link com cor sólida`);
+    if (!opacos) return;
+    const razao = razaoDeContraste(corTexto.rgb, corFundo.rgb);
+    check(razao >= CONTRASTE_MINIMO_TEXTO, `${rotulo}: contraste ${razao.toFixed(2)}:1 (mínimo ${CONTRASTE_MINIMO_TEXTO}:1)`);
+  } finally {
+    await app.close();
+  }
+}
+
+/** Instalação com aviso nativo (Android e computador): manifesto, botões escondidos, aceite e somem. */
+async function instalavelComAvisoNativo() {
+  const app = await startApp({ viewport: { width: 1280, height: 900 } });
+  const respostas = [];
+  const rotulo = 'blog.html instalável (aviso nativo)';
+  try {
+    await vigiar(app, respostas);
+    await app.page.goto(app.baseUrl + 'blog.html', { waitUntil: 'domcontentloaded' });
+    await app.page.waitForSelector('#welcome', { state: 'detached', timeout: TEMPO_MAX_WELCOME_MS });
+    await app.page.waitForLoadState('networkidle');
+
+    check((await app.page.locator('link[rel="manifest"]').getAttribute('href')) === '/blog/manifest.webmanifest', `${rotulo}: link[rel=manifest] aponta para /blog/manifest.webmanifest`);
+    const manifesto = await app.context.request.get(app.baseUrl + 'blog/manifest.webmanifest');
+    const corpo = manifesto.ok() ? await manifesto.json().catch(() => null) : null;
+    check(!!corpo && corpo.scope === '/blog', `${rotulo}: manifesto responde JSON com scope /blog`);
+
+    const botoes = app.page.locator('[data-instalar]');
+    check((await botoes.count()) === 2, `${rotulo}: dois botões [data-instalar] (topo e hero)`);
+    const visiveisAoNascer = await Promise.all((await botoes.all()).map((b) => b.isVisible()));
+    check(visiveisAoNascer.every((v) => v === false), `${rotulo}: botões [data-instalar] nascem escondidos`);
+
+    const cancelado = await app.page.evaluate(() => {
+      const evento = new Event('beforeinstallprompt', { cancelable: true });
+      window.__chamadasPrompt = 0;
+      evento.prompt = () => { window.__chamadasPrompt += 1; return Promise.resolve(); };
+      evento.userChoice = Promise.resolve({ outcome: 'accepted' });
+      window.dispatchEvent(evento);
+      return evento.defaultPrevented;
+    });
+    check(cancelado, `${rotulo}: beforeinstallprompt recebe preventDefault`);
+    await app.page.waitForFunction(() => [...document.querySelectorAll('[data-instalar]')].every((b) => !b.hidden));
+    const visiveisComAviso = await Promise.all((await botoes.all()).map((b) => b.isVisible()));
+    check(visiveisComAviso.length === 2 && visiveisComAviso.every(Boolean), `${rotulo}: com o aviso, os dois botões aparecem`);
+
+    await botoes.first().click();
+    await app.page.waitForFunction(() => [...document.querySelectorAll('[data-instalar]')].every((b) => b.hidden));
+    check((await app.page.evaluate(() => window.__chamadasPrompt)) === 1, `${rotulo}: clique chama prompt() uma vez`);
+    const visiveisDepois = await Promise.all((await botoes.all()).map((b) => b.isVisible()));
+    check(visiveisDepois.every((v) => v === false), `${rotulo}: depois do aceite, os botões somem`);
+    await checarSaude(app, respostas, rotulo);
+  } finally {
+    await app.close();
+  }
+}
+
+/** iPhone: sem aviso nativo, os botões aparecem; o clique abre o diálogo com 3 passos; "Entendi" fecha. */
+async function instalavelNoIphone() {
+  const app = await startApp({ viewport: { width: 375, height: 812 } });
+  const respostas = [];
+  const rotulo = 'blog.html iPhone';
+  try {
+    await app.context.addInitScript(() => {
+      Object.defineProperty(navigator, 'userAgent', { get: () => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1' });
+      Object.defineProperty(navigator, 'platform', { get: () => 'iPhone' });
+      Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 5 });
+    });
+    await vigiar(app, respostas);
+    await app.page.goto(app.baseUrl + 'blog.html', { waitUntil: 'domcontentloaded' });
+    await app.page.waitForSelector('#welcome', { state: 'detached', timeout: TEMPO_MAX_WELCOME_MS });
+    await app.page.waitForLoadState('networkidle');
+
+    const botoes = app.page.locator('[data-instalar]');
+    const visiveis = await Promise.all((await botoes.all()).map((b) => b.isVisible()));
+    check(visiveis.length === 2 && visiveis.every(Boolean), `${rotulo}: botões [data-instalar] visíveis`);
+
+    await botoes.first().click();
+    const dialogo = app.page.locator('dialog.pub-instalar-dialogo[open]');
+    await dialogo.waitFor({ state: 'visible', timeout: 2000 });
+    check((await dialogo.count()) === 1, `${rotulo}: clique abre dialog.pub-instalar-dialogo[open]`);
+    check((await dialogo.locator('ol > li').count()) === 3, `${rotulo}: diálogo com 3 passos`);
+    await axeGate(app.page, `${rotulo}: axe com o diálogo aberto`);
+
+    await dialogo.getByRole('button', { name: 'Entendi' }).click();
+    check((await app.page.locator('dialog.pub-instalar-dialogo[open]').count()) === 0, `${rotulo}: "Entendi" fecha o diálogo`);
+    await checarSaude(app, respostas, rotulo);
+  } finally {
+    await app.close();
+  }
+}
+
 module.exports = async function blog() {
   await feed(1280, 900);
   await feed(375, 812);
@@ -248,4 +414,10 @@ module.exports = async function blog() {
   await pagina404(1280, 900);
   await movimentoReduzido();
   await falhaDoIndice();
+  await instalavelComAvisoNativo();
+  await instalavelNoIphone();
+  for (const esquema of ['light', 'dark']) {
+    await contrasteDoCadastrar(375, 812, esquema);
+    await contrasteDoCadastrar(1280, 900, esquema);
+  }
 };

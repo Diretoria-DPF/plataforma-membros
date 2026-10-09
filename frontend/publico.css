@@ -131,7 +131,7 @@
   transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.pub-barra__link--destaque {
+.pub-barra .pub-barra__link--destaque {
   background: var(--laift-primary);
   color: var(--laift-on-primary);
 }
@@ -421,7 +421,7 @@
     background: var(--layer-2);
   }
 
-  .pub-barra__link--destaque:hover {
+  .pub-barra .pub-barra__link--destaque:hover {
     background: var(--laift-primary-strong);
     color: var(--laift-on-primary);
   }

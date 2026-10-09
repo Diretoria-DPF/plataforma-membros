@@ -72,15 +72,31 @@
     return urls.google;
   }
 
+  // Aviso oculto para leitor de tela enquanto o link abre em nova aba.
+  function marcarNovaAba(link, abreNovaAba) {
+    var marca = link.querySelector('.laift-sr-only');
+    if (!abreNovaAba) {
+      if (marca) link.removeChild(marca);
+      return;
+    }
+    if (marca) return;
+    var aviso = document.createElement('span');
+    aviso.className = 'laift-sr-only';
+    aviso.textContent = ' (abre em nova aba)';
+    link.appendChild(aviso);
+  }
+
   function pintarLinkApp(link, urls, env) {
     var destino = destinoDoApp(env);
     link.setAttribute('href', escolherUrl(urls, destino));
     if (destino === 'outro') {
       link.setAttribute('target', '_blank');
       link.setAttribute('rel', 'noopener noreferrer');
+      marcarNovaAba(link, true);
     } else {
       link.removeAttribute('target');
       link.removeAttribute('rel');
+      marcarNovaAba(link, false);
     }
   }
 

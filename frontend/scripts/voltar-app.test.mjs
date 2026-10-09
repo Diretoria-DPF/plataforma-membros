@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
-const { escopoDe, registrar, destinoDoVoltar } = require('../voltar-app.js');
+const { escopoDe, registrar, destinoDoVoltar, focarPainel } = require('../voltar-app.js');
 
 test('escopoDe: painel admin começa com panel-admin-; o resto é membro', () => {
   assert.equal(escopoDe('panel-admin-users'), 'admin');
@@ -85,4 +85,37 @@ test('destinoDoVoltar: no dashboard admin sem anterior, sai do modo admin', () =
 test('voltar-app.js: sem atribuição de HTML a partir de string', () => {
   const src = fs.readFileSync(path.join(frontend, 'voltar-app.js'), 'utf8');
   assert.doesNotMatch(src, /innerHTML|insertAdjacentHTML|document\.write/);
+});
+
+// Fakes mínimos de DOM: só o que focarPainel usa (getElementById, querySelector,
+// setAttribute, focus). Registram as chamadas para o teste conferir.
+function fakeElemento() {
+  const chamadas = { atributos: {}, focos: [] };
+  return {
+    chamadas,
+    setAttribute(nome, valor) { chamadas.atributos[nome] = valor; },
+    focus(opcoes) { chamadas.focos.push(opcoes); },
+  };
+}
+
+function fakeDoc(secoes) {
+  return { getElementById: (id) => secoes[id] || null };
+}
+
+test('focarPainel: leva o foco ao botão Voltar do painel de destino, sem mexer nele', () => {
+  const botao = fakeElemento();
+  const titulo = fakeElemento();
+  const secao = { querySelector: (seletor) => (seletor === '.app-voltar' ? botao : titulo) };
+  focarPainel('panel-events', fakeDoc({ 'panel-events': secao }));
+  assert.deepEqual(botao.chamadas.focos, [{ preventScroll: true }]);
+  assert.deepEqual(botao.chamadas.atributos, {});
+  assert.deepEqual(titulo.chamadas.focos, []);
+});
+
+test('focarPainel: sem Voltar (Início), foca o título com tabindex -1 e sem rolar a página', () => {
+  const titulo = fakeElemento();
+  const secao = { querySelector: (seletor) => (seletor === 'h1, h2' ? titulo : null) };
+  focarPainel('panel-home', fakeDoc({ 'panel-home': secao }));
+  assert.deepEqual(titulo.chamadas.atributos, { tabindex: '-1' });
+  assert.deepEqual(titulo.chamadas.focos, [{ preventScroll: true }]);
 });

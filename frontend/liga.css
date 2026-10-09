@@ -102,6 +102,17 @@
   }
 }
 
+/* Âncoras e foco não ficam escondidos atrás dos chips fixos. */
+html:has(.lp-pagina) {
+  scroll-padding-top: 72px;
+}
+
+@media (min-width: 760px) {
+  html:has(.lp-pagina) {
+    scroll-padding-top: 136px;
+  }
+}
+
 /* ---------- Hero ---------- */
 
 .lp-hero {
@@ -278,7 +289,7 @@
   flex-direction: column;
   gap: 12px;
   min-width: 0;
-  min-height: 320px;
+  min-height: 232px;
   padding: 24px 20px;
   border-radius: 28px;
   background: var(--layer-2);
@@ -783,6 +794,18 @@
   align-items: center;
   min-height: var(--laift-touch);
   color: var(--laift-text);
+}
+
+/* Botão da capa: fundo próprio para não se confundir com a moldura do mapa. */
+.lp-mapa__carregar {
+  background: var(--layer-1);
+  color: var(--laift-text);
+}
+
+/* Só a capa tem altura mínima; o iframe criado depois usa a proporção do mapa. */
+.lp-mapa:has(> .lp-mapa__capa) {
+  aspect-ratio: auto;
+  min-height: 260px;
 }
 
 @media (min-width: 900px) {

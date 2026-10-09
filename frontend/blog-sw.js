@@ -66,10 +66,17 @@
     return root.caches.open(CACHE_NAME);
   }
 
+  // Resposta que veio de um redirecionamento (ex.: /blog/404.html -> /blog/404) não pode ser entregue a
+  // uma navegação (redirect: manual vira erro de rede): guarda-se uma cópia limpa, sem o sinal de redirect.
+  function semRedirecao(response) {
+    if (!response.redirected) return response;
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers: response.headers });
+  }
+
   function guardarPrecache(cache, url) {
     return root.fetch(url).then(function (response) {
       if (!shouldStore(response)) return null;
-      return cache.put(chaveDe(url), response);
+      return cache.put(chaveDe(url), semRedirecao(response));
     }).catch(function () { return null; });
   }
 
@@ -105,7 +112,7 @@
     event.respondWith(
       root.fetch(request).then(function (response) {
         if (shouldStore(response)) {
-          var copia = response.clone();
+          var copia = semRedirecao(response.clone());
           abrirCache().then(function (cache) { return cache.put(chave, copia); }).catch(function () {});
         }
         return response;
