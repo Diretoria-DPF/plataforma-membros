@@ -209,6 +209,12 @@ async function memberTour(pkgs) {
     for (const btn of await app.page.$$('#app-nav [data-panel]')) {
       if (await btn.isVisible()) { await btn.click(); await app.page.waitForTimeout(150); }
     }
+    // Propostas, Tarefas, Mensagens e Equipe estão no menu (hambúrguer).
+    for (const painel of ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart']) {
+      await app.page.click('#app-menu-btn');
+      const item = app.page.locator(`#app-menu [data-panel="${painel}"]`);
+      if (await item.isVisible()) { await item.click(); await app.page.waitForTimeout(150); } else await app.page.keyboard.press('Escape');
+    }
     await app.showPanel('panel-learn');
     await app.page.click('#btn-learn-credential');
     await app.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 5000 }).catch(() => {});

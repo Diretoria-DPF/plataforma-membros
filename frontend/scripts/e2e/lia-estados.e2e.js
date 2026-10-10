@@ -31,7 +31,12 @@ function iniciar(chat, opts) {
 
 /** Vai ao painel (se houver) e abre a Lia de cabeçalho. A Lia reage à tela corrente ao abrir. */
 async function abrirLiaEm(page, painel) {
-  if (painel) await page.click(`#app-nav [data-panel="${painel}"]`);
+  if (painel && ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart'].includes(painel)) {
+    await page.click('#app-menu-btn');
+    await page.click(`#app-menu [data-panel="${painel}"]`);
+  } else if (painel) {
+    await page.click(`#app-nav [data-panel="${painel}"]`);
+  }
   await page.waitForSelector('#lia-launcher:not(.hidden)');
   await page.click('#lia-launcher');
   await page.waitForSelector('#lia-panel:not(.hidden)');
