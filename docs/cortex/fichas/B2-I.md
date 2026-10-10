@@ -12,7 +12,7 @@
 5. `sw.js`: os 6 arquivos do app no `PRECACHE` (linhas 23-29) e `CACHE_NAME` → `v5` (linha 20).
 6. Testes: `scripts/app-menu.test.mjs:146-147` (acrescentar `'panel-library'`), `scripts/e2e/harness.js:254` (`MENU_PANELS`), `scripts/e2e/qa-full.e2e.js:951` (`'panel-admin-library'`).
 7. `_headers`: bloco do §2.1. `.gitignore`: `frontend/biblioteca/conteudo/recente.json`.
-8. Workflow: `schedule: - cron: '17 9 * * *'` no `on:` (linha 23); no job de deploy, antes de "Gera frontend/dist/" (linha 96), o passo da B2-H4 com `BIBLIOTECA_API_URL` por branch (`main` → `https://api.laift.com.br/v1/`, `staging` → `https://staging-api.laift.com.br/v1/`). O job `testes` não busca nada (usa a reserva).
+8. Workflow: SEM `schedule` (decisão P5: sem agendamento diário; atualização por `workflow_dispatch`); no job de deploy, antes de "Gera frontend/dist/" (linha 96), o passo da B2-H4 com `BIBLIOTECA_API_URL` por branch (`main` → `https://api.laift.com.br/v1/`, `staging` → `https://staging-api.laift.com.br/v1/`). O job `testes` não busca nada (usa a reserva).
 
 ## Aceite
 ```bash
