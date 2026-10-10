@@ -33,6 +33,19 @@ Quem altera:
 
 Outras flags semeadas na 016: `use_orchestrator` (`FALSE`), `nvidia_fallback` (`FALSE`) e `mfa_required` (`FALSE`, reservada).
 
+## Flags da Biblioteca
+
+Criadas pela 029 (`sql/029_library.sql`), todas **desligadas**. A 029 insere com `ON CONFLICT (key) DO NOTHING` e `FALSE`; não copia o `TRUE` da 023.
+
+| Flag | Fase | Pública | Estado depois da 029 | Onde é lida |
+|---|---|---|---|---|
+| `library_enabled` | B1 | sim | `FALSE` | Menu "Estudo", painel do membro e catálogo público (`docs/cortex/CONTRATO-B1.md` §4) |
+| `library_member_suggest` | B1 | sim | `FALSE` | Botão "Sugerir artigo" |
+| `library_ai_summary` | B3 | não | `FALSE` | Resumo por IA (ainda sem efeito) |
+| `lia_library_enabled` | B4 | não | `FALSE` | Lia cita artigos publicados (ainda sem efeito) |
+
+Ligação por etapas, desligamento e volta: `docs/cortex/RUNBOOK-BIBLIOTECA.md`. Com condição de papel (`conditions.role`), a página pública fica fora, porque a leitura sem sessão não casa a condição.
+
 ## Regra de nascimento
 
 - Toda flag nova nasce desligada (`FALSE`). Só entra em `PUBLIC_FLAGS` se for de interface.
