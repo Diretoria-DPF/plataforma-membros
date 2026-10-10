@@ -32,3 +32,10 @@ Se o ambiente `production` do GitHub exigir aprovação (o workflow prevê isso:
 - **B. (recomendada se hoje há aprovação)** Sem agendamento diário: a curadoria avisa e você dispara à mão (Actions → workflow_dispatch) depois de publicar um lote.
 - **C.** Tirar a aprovação do ambiente `production`.
 Se hoje não há aprovação, nada a decidir: fica o diário.
+
+## Decisões do dono (2026-10-10)
+- **P1:** papel restrito da Biblioteca (`library_staff`); no B2 só admins curam; a tela do curador e a do revisor clínico entram no B3.
+- **P2:** lista simples de áreas, até 5 por artigo; nomes iniciais "Farmacologia clínica" e "Toxicologia".
+- **P3:** licenças não comerciais (BY-NC e variantes) tratadas como fechadas até haver parecer jurídico: só link oficial e resumo da LAIFT.
+- **P5:** o ambiente `production` pede aprovação: **sem agendamento diário**; o dono dispara a atualização do catálogo à mão (workflow_dispatch) depois de publicar um lote. O B2-I remove o `schedule` do workflow.
+- **P4 (não perguntada, adotada a recomendação A):** parágrafo na Política sem novo aceite, se o jurídico concordar; a Biblioteca só liga para membros depois do texto publicado (antes, só admins).
