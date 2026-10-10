@@ -93,7 +93,7 @@ test('navItemState: só a aba do painel atual fica ativa e recebe aria-current="
 
 test('app.js aplica aria-current em showPanelSection, removendo das demais abas', () => {
   const body = APP.slice(APP.indexOf('function showPanelSection('), APP.indexOf('function showPanel('));
-  assert.match(body, /querySelectorAll\('#app-nav \[data-panel\]'\)/);
+  assert.match(body, /querySelectorAll\('#app-nav \[data-panel\], #app-menu \[data-panel\]'\)/);
   assert.match(body, /navItemState\(btn\.getAttribute\('data-panel'\), panelId\)/);
   assert.match(body, /setAttribute\('aria-current', state\.ariaCurrent\)/);
   assert.match(body, /removeAttribute\('aria-current'\)/);
@@ -129,7 +129,9 @@ test('rótulos visíveis das abas continuam iguais (e2e depende deles)', () => {
     'panel-tasks': 'Tarefas', 'panel-orgchart': 'Equipe', 'panel-messages': 'Mensagens', 'panel-profile': 'Perfil',
   };
   for (const [panel, label] of Object.entries(labels)) {
-    assert.ok(navButtonHtml(panel).includes(`<span>${label}</span>`), `rótulo "${label}" mudou em ${panel}`);
+    const html = navButtonHtml(panel);
+    // Na barra o rótulo é <span>Rótulo</span>; os itens do menu (app-menu.js) usam <span class="app-menu__titulo">.
+    assert.ok(html.includes(`<span>${label}</span>`) || html.includes(`<span class="app-menu__titulo">${label}</span>`), `rótulo "${label}" mudou em ${panel}`);
   }
 });
 

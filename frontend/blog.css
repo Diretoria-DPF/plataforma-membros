@@ -483,8 +483,12 @@ a.blog-card {
 .blog-page main {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 0 16px calc(120px + env(safe-area-inset-bottom, 0px));
+  padding: 0 16px 24px;
 }
+
+/* Rodapé público (publico.css): no post, a barra flutuante cobre o fim da página; o espaço abaixo
+   dos links evita que ela esconda o último link. */
+.blog-post .pub-rodape { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); }
 
 .blog-artigo {
   max-width: 68ch;
@@ -1339,7 +1343,8 @@ a.blog-contato__item:active,
   .blog-progresso,
   .blog-modal,
   .blog-mais,
-  .blog-filtros {
+  .blog-filtros,
+  .pub-rodape {
     display: none;
   }
 

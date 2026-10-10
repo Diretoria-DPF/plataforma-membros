@@ -5,7 +5,7 @@
  */
 /**
  * campanha.e2e.js — post de campanha "Outubro Rosa 2026" (blog/outubro-rosa-2026.html), a 404
- * do blog e o link "Conheça a plataforma" do login. Roda sobre o BUILD (frontend/dist/), com
+ * do blog e o botão "Acessar blog" do login. Roda sobre o BUILD (frontend/dist/), com
  * páginas públicas (sem login). Usa o nome do arquivo (.html), não a rota limpa.
  */
 const { startApp, check } = require('./harness');
@@ -240,7 +240,7 @@ async function paginaNaoEncontrada() {
   }
 }
 
-/** Login: o link "Conheça a plataforma" (classe welcome-liga__blog) leva ao blog; o link da Liga continua único. */
+/** Login: o botão "Acessar blog" (classe welcome-liga__blog) leva ao blog; o botão da Liga continua único. */
 async function linkDoLogin() {
   const app = await startApp();
   const rotulo = 'login (/)';
@@ -249,9 +249,10 @@ async function linkDoLogin() {
     await app.page.waitForLoadState('networkidle');
     const blog = app.page.locator('.welcome-liga__blog');
     await blog.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-    check((await blog.count()) === 1 && (await blog.isVisible()), `${rotulo}: "Conheça a plataforma" visível`);
-    check((await blog.getAttribute('href')) === 'blog.html', `${rotulo}: "Conheça a plataforma" leva a blog.html`);
-    check((await app.page.locator('.welcome-liga__link').count()) === 1, `${rotulo}: link "Conheça a LAIFT" continua único`);
+    check((await blog.count()) === 1 && (await blog.isVisible()), `${rotulo}: "Acessar blog" visível`);
+    check((await blog.getAttribute('href')) === 'blog.html', `${rotulo}: "Acessar blog" leva a blog.html`);
+    check(((await blog.textContent()) || '').trim() === 'Acessar blog', `${rotulo}: o botão do blog diz "Acessar blog"`);
+    check((await app.page.locator('.welcome-liga__link').count()) === 1, `${rotulo}: botão "Conheça a LAIFT" continua único`);
   } finally {
     await app.close();
   }

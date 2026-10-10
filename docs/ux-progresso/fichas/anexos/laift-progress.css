@@ -1,0 +1,129 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Barra de progresso da LAIFT (laift-progress.js; docs/ux-progresso/CONTRATO.md §3).
+   Gradiente de meta: o preenchimento vai do verde-azulado da marca ao verde de sucesso.
+   Só aliases dos tokens de laift-tokens.css (claro e escuro mudam sozinhos).
+   Movimento só em transform/opacity; o bloco único de movimento reduzido (laift-tokens.css) zera as animações. */
+:root {
+  --laift-progresso-de: var(--laift-primary);
+  --laift-progresso-ate: var(--laift-success);
+  --laift-progresso-trilho: var(--laift-surface-deep);
+  --laift-progresso-estrela: var(--laift-warning);
+}
+
+.laift-progresso {
+  --laift-p: 0;
+  position: sticky;
+  top: var(--laift-progresso-topo, 0px);
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(96px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 10px 14px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-bg);
+  box-shadow: inset 0 0 0 1px var(--hairline), var(--elev-1);
+  color: var(--laift-text);
+}
+
+.laift-progresso[hidden] {
+  display: none;
+}
+
+.laift-progresso__trilho {
+  position: relative;
+  height: 8px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-progresso-trilho);
+  overflow: hidden;
+}
+
+.laift-progresso__preenchido {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--laift-progresso-de), var(--laift-progresso-ate));
+  transform-origin: 0 50%;
+  transform: scaleX(var(--laift-p));
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+/* Divisões das 4 etapas (25, 50 e 75%): fendas finas da cor do fundo. A barra abre vazia (0%): só conta depois de ler. */
+.laift-progresso__marca {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--laift-bg);
+}
+.laift-progresso__marca[data-marco="25"] { left: 25%; }
+.laift-progresso__marca[data-marco="50"] { left: 50%; }
+.laift-progresso__marca[data-marco="75"] { left: 75%; }
+
+.laift-progresso__aviso {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.laift-progresso__pct {
+  color: var(--laift-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.laift-progresso__icone {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--laift-primary);
+}
+
+.laift-progresso:is([data-marco="0"], [data-marco="25"]) .laift-progresso__icone {
+  display: none;
+}
+
+/* Concluída: estrela dourada e contorno da mesma cor ficam no lugar da barra. */
+.laift-progresso[data-estado="concluido"] {
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--laift-progresso-estrela) 55%, transparent), var(--elev-1);
+}
+.laift-progresso[data-estado="concluido"] .laift-progresso__icone {
+  color: var(--laift-progresso-estrela);
+}
+
+/* Resposta visual ao alcançar um marco: o ícone surge e o texto entra. */
+.laift-progresso--celebra .laift-progresso__icone {
+  animation: laift-progresso-surge var(--dur-slow) var(--ease-spring) both;
+}
+.laift-progresso--celebra .laift-progresso__frase {
+  animation: laift-progresso-entra var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes laift-progresso-surge {
+  from { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes laift-progresso-entra {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 400px) {
+  .laift-progresso { gap: 10px; padding: 8px 12px; }
+  .laift-progresso__aviso { font-size: 0.8125rem; }
+}
+
+@media print {
+  .laift-progresso { display: none; }
+}

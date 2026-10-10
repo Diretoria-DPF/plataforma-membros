@@ -159,6 +159,9 @@ const RENDER = {
   contato: (b, ctx) => renderContato(ctx, b.titulo),
 };
 
+// Rodapé público (CONTRATO §3): mesmo texto de liga.html, com caminhos absolutos porque os posts ficam em /blog/.
+const RODAPE = '<footer class="pub-rodape"><p class="pub-rodape__marca">LAIFT · Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</p><p class="pub-rodape__local">UNINASSAU – Centro Universitário Maurício de Nassau · Salvador, Bahia</p><ul class="pub-rodape__links"><li><a href="/liga.html">Conheça a LAIFT</a></li><li><a href="/processo-seletivo.html">Processo seletivo</a></li><li><a href="/edital.html">Edital</a></li><li><a href="/blog.html">Blog</a></li><li><a href="/termos.html">Termos de Uso</a></li><li><a href="/privacidade.html">Privacidade</a></li></ul><p class="pub-rodape__copy">© 2026 LAIFT</p></footer>';
+
 /** Barra pública do blog (CONTRATO §1, variante do blog). Os contatos ficam no bloco "Fale com a Liga". */
 function renderCabecalho() {
   return '<header class="pub-barra"><div class="pub-barra__linha">'
@@ -311,6 +314,7 @@ ${rodape}
 </article>
 ${renderNavPost(post, ctx)}${renderRelacionados(post, ctx)}
 </main>
+${RODAPE}
 ${scripts}
 <script src="/static-page.js" defer></script>
 <script src="/blog/instalar.js" defer></script>

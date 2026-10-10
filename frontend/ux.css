@@ -168,6 +168,88 @@ summary:focus-visible,
 /* Mesmo tamanho que o inline style="font-size:1.5em" tinha: tira o estilo inline da CSP de estilo. Sem flag. */
 .auth-heading { font-size: 1.5em; }
 
+/* ---------- Tela de entrada em cartões (index.html, #screen-welcome) ---------- */
+/* Três blocos separados: login, atalhos (Liga e blog) e a publicação do blog. Celular: uma coluna.
+   A partir de 960 px: login à esquerda; atalhos e publicação à direita. A margem de baixo deixa a
+   Lia flutuante (#lia-launcher, fixa a 16 px do canto) longe dos botões no fim da rolagem. Sem flag.
+   Movimento reduzido: o bloco único de laift-tokens.css zera as transições (ux.css não repete o @media). */
+#screen-welcome.auth-pilha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--move-md);
+  width: min(100%, 460px);
+  margin: 0 0 72px;
+}
+#screen-welcome.auth-pilha > .auth-card { width: auto; margin: 0; }
+@media (max-width: 480px) {
+  #screen-welcome.auth-pilha { box-sizing: border-box; padding: 12px 12px 0; }
+}
+@media (min-width: 960px) {
+  #screen-welcome.auth-pilha {
+    width: min(100%, 880px);
+    grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: var(--move-lg);
+    align-items: start;
+  }
+  #screen-welcome.auth-pilha > .auth-card:first-child { grid-column: 1; grid-row: 1 / span 2; }
+  #screen-welcome.auth-pilha > .welcome-liga { grid-column: 2; grid-row: 1; }
+  #screen-welcome.auth-pilha > .blog-novidade--faixa { grid-column: 2; grid-row: 2; }
+}
+.auth-card.welcome-liga { display: grid; gap: var(--move-sm); padding: 20px; }
+.welcome-liga__botao {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  box-sizing: border-box; width: 100%; min-height: 56px; padding: 12px 20px;
+  border-radius: var(--laift-radius-lg);
+  background: var(--primary-soft); color: var(--primary-strong);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--primary) 40%, transparent);
+  font-size: 1.0625rem; font-weight: 700; line-height: 1.2; text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.welcome-liga__icone { flex: none; width: 24px; height: 24px; }
+.welcome-liga__botao:active { transform: scale(var(--press-scale)); }
+.welcome-liga__botao:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+@media (hover: hover) {
+  .welcome-liga__botao:hover { background: color-mix(in srgb, var(--primary) 16%, var(--primary-soft)); }
+}
+
+/* ---------- Entrada e cadastro: hierarquia das ações (docs/ux-progresso/CONTRATO.md §6) ---------- */
+/* Entrar (cheio) > Criar conta (tonal, largura total) > Mostrar senha e Esqueci minha senha (texto, junto da senha).
+   Campos com 16 px: abaixo disso o iOS amplia a tela ao focar. Cadastro em grupos; o opcional fica recolhido. Sem flag. */
+#public-shell :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) { font-size: 1rem; }
+.auth-senha-linha {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 0 12px; margin-top: -4px;
+}
+.auth-mostrar {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+  font-size: 0.875rem; font-weight: 600; color: var(--text); cursor: pointer;
+}
+.auth-mostrar input {
+  flex: none; width: 20px; height: 20px; min-height: 0; margin: 0; padding: 0;
+  accent-color: var(--primary);
+}
+.auth-esqueci { min-height: 44px; font-size: 0.875rem; }
+.auth-criar {
+  display: grid; gap: var(--move-sm); margin-top: var(--move-md);
+  padding-top: var(--move-md); box-shadow: 0 -1px 0 var(--hairline);
+}
+.auth-criar__texto { margin: 0; color: var(--muted); font-size: 0.875rem; font-weight: 600; text-align: center; }
+.auth-criar__botao { width: 100%; }
+.cadastro-grupo { display: grid; gap: 12px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.cadastro-grupo > legend { margin: 0 0 4px; padding: 0; font-size: 1rem; font-weight: 800; color: var(--text); }
+.cadastro-dica { margin: -6px 0 0; font-size: 0.8125rem; color: var(--muted); }
+.cadastro-opcional {
+  border-radius: var(--radius-md); background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.cadastro-opcional > summary {
+  box-sizing: border-box; min-height: 48px; padding: 13px 14px;
+  font-weight: 700; color: var(--text); cursor: pointer;
+}
+.cadastro-opcional > :not(summary) { margin: 0 14px 12px; }
+
 /* ---------- Painel Início ---------- */
 /* .hidden usa !important, então o display:grid não reabre o painel escondido. */
 #panel-home { display: grid; gap: var(--density-gap); }
@@ -515,7 +597,6 @@ summary:focus-visible,
   :root[data-flag-ux-v2-enabled] .chat-bubble-actions,
   :root[data-flag-ux-v2-enabled] #agendamento-info,
   :root[data-flag-ux-v2-enabled] .agendamento-info,
-  :root[data-flag-ux-v2-enabled] .hero,
   :root[data-flag-ux-v2-enabled] .splash {
     background: var(--glass-bg);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
@@ -532,28 +613,6 @@ summary:focus-visible,
   border-radius: var(--laift-radius-xl);
   background: var(--layer-1);
 }
-/* Hero da entrada FORA do fluxo do cartão (sem altura reservada, sem CLS): a cabeça da Lia espia sobre a
-   borda superior de #screen-welcome e termina dentro do padding, acima do selo "Plataforma de Membros"
-   (padding do cartão: 22 px até 480 px, 32 px acima). Sem superfície própria e sem interação. */
-:root[data-flag-ux-v2-enabled] #screen-welcome { position: relative; }
-:root[data-flag-ux-v2-enabled] #screen-welcome > .hero {
-  position: absolute; top: -92px; left: 50%; transform: translateX(-50%); margin: 0;
-  display: flex; justify-content: center; min-height: 0;
-  border: 0; border-radius: 0; box-shadow: none; background: transparent;
-  -webkit-backdrop-filter: none; backdrop-filter: none;
-  pointer-events: none;
-}
-/* Recorte de cabeça do hero (crop head, lia.js): quadrado 84x84 -> caixa 1:1 de 112 px, não o 2:3 padrão. */
-:root[data-flag-ux-v2-enabled] .hero .lia { aspect-ratio: 1 / 1; --lia-size: 112px; }
-/* Sem este recorte o corpo (fora do viewBox da cabeça) aparece por cima do título, como no lançador. */
-:root[data-flag-ux-v2-enabled] .hero .lia-svg { overflow: hidden; }
-/* Em celular (375 px) o cartão fica a ~87 px do topo e a cabeça de 112 px (top: -92px) perdia ~5 px acima da janela:
-   cabeça de 100 px e top -80px a deixam a ~7 px do topo, ainda acima do padding de 22 px do cartão. Vem depois das regras base. */
-@media (max-width: 480px) {
-  :root[data-flag-ux-v2-enabled] #screen-welcome > .hero { top: -80px; }
-  :root[data-flag-ux-v2-enabled] .hero .lia { --lia-size: 100px; }
-}
-
 /* Módulos com canvas 3D (Atlas imersivo): nenhum desfoque sobre o canvas;
    barras voltam ao fundo opaco. */
 body:has(.learn-viewer-immersive:not(.hidden)) .app-header,

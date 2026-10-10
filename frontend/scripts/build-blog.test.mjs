@@ -183,3 +183,45 @@ test('post sem relacionados não gera a seção "Continue lendo"', () => {
   const { html } = gerador.renderPostPage(postBase(), { site: SITE_SEM_EMAIL, indice: [] });
   assert.ok(!html.includes('blog-relacionados') && !html.includes('Continue lendo'));
 });
+
+// CONTRATO §3: rodapé público logo depois de </main>, antes dos scripts.
+function trechoDoRodape(html) {
+  const ini = html.indexOf('<footer class="pub-rodape">');
+  return html.slice(ini, html.indexOf('</footer>', ini) + '</footer>'.length);
+}
+
+test('o post tem exatamente um rodapé público, logo depois de </main> e antes dos scripts', () => {
+  const scripts = ['/blog/post.js'];
+  const { html } = gerador.renderPostPage(postBase(), { site: SITE_SEM_EMAIL, scripts });
+  assert.equal(html.split('<footer class="pub-rodape">').length - 1, 1);
+  const fimMain = html.indexOf('</main>');
+  assert.equal(html.indexOf('<footer class="pub-rodape">'), html.indexOf('\n', fimMain) + 1);
+  assert.ok(html.indexOf('<footer class="pub-rodape">') < html.indexOf('<script type="module" src="/blog/post.js">'));
+});
+
+test('o rodapé público tem os links da LAIFT na ordem do contrato, com caminhos absolutos', () => {
+  const { html } = gerador.renderPostPage(postBase(), { site: SITE_SEM_EMAIL });
+  const links = [...trechoDoRodape(html).matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map((m) => [m[1], m[2]]);
+  assert.deepEqual(links, [
+    ['/liga.html', 'Conheça a LAIFT'],
+    ['/processo-seletivo.html', 'Processo seletivo'],
+    ['/edital.html', 'Edital'],
+    ['/blog.html', 'Blog'],
+    ['/termos.html', 'Termos de Uso'],
+    ['/privacidade.html', 'Privacidade'],
+  ]);
+  assert.ok(trechoDoRodape(html).includes('UNINASSAU – Centro Universitário Maurício de Nassau · Salvador, Bahia'));
+});
+
+test('todo post gerado pelo conteúdo real tem exatamente um rodapé público depois de </main>', () => {
+  const saida = pastaTemporaria();
+  gerador.build({ srcDir: CONTEUDO, outDir: saida });
+  const pasta = path.join(saida, 'blog');
+  const paginas = fs.readdirSync(pasta).filter((nome) => nome.endsWith('.html'));
+  assert.equal(paginas.length, 19);
+  for (const nome of paginas) {
+    const html = fs.readFileSync(path.join(pasta, nome), 'utf8');
+    assert.equal(html.split('<footer class="pub-rodape">').length - 1, 1, nome);
+    assert.ok(html.indexOf('</main>') < html.indexOf('<footer class="pub-rodape">'), nome);
+  }
+});

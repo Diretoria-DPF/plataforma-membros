@@ -250,8 +250,16 @@ async function startApp(opts = {}) {
     await page.waitForSelector('#app-root:not(.hidden)');
   }
 
+  // Propostas, Tarefas, Mensagens e Equipe moram no menu (hambúrguer): abre o menu e escolhe o item.
+  const MENU_PANELS = ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart'];
+
   async function showPanel(panelId) {
-    await page.click(`#app-nav [data-panel="${panelId}"]`);
+    if (MENU_PANELS.includes(panelId)) {
+      await page.click('#app-menu-btn');
+      await page.click(`#app-menu [data-panel="${panelId}"]`);
+    } else {
+      await page.click(`#app-nav [data-panel="${panelId}"]`);
+    }
     await page.waitForSelector(`#${panelId}:not(.hidden)`);
   }
 

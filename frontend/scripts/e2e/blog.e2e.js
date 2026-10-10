@@ -404,6 +404,69 @@ async function instalavelNoIphone() {
   }
 }
 
+/** Rodapé público (CONTRATO §3): footer.pub-rodape logo depois de main, 6 links absolutos na ordem, alvo vertical >= 44 px,
+ *  abaixo do último .blog-contato (feed e post) e, no post, sem cruzar a barra flutuante ao fim da rolagem. */
+const LINKS_DO_RODAPE = [
+  ['/liga.html', 'Conheça a LAIFT'],
+  ['/processo-seletivo.html', 'Processo seletivo'],
+  ['/edital.html', 'Edital'],
+  ['/blog.html', 'Blog'],
+  ['/termos.html', 'Termos de Uso'],
+  ['/privacidade.html', 'Privacidade'],
+];
+
+function cruzam(a, b) {
+  return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+}
+
+async function rodapePublico(caminho, largura, altura) {
+  const app = await startApp({ viewport: { width: largura, height: altura } });
+  const respostas = [];
+  const rotulo = `${caminho} ${largura}px rodapé`;
+  const ehPost = caminho.startsWith('blog/') && caminho !== 'blog/404.html';
+  const ehFeed = caminho === 'blog.html';
+  try {
+    await vigiar(app, respostas);
+    await app.page.goto(app.baseUrl + caminho);
+    await app.page.waitForLoadState('networkidle');
+    const rodape = app.page.locator('footer.pub-rodape');
+    check((await rodape.count()) === 1, `${rotulo}: exatamente 1 footer.pub-rodape`);
+    check((await app.page.locator('main + footer.pub-rodape').count()) === 1, `${rotulo}: rodapé logo depois de main`);
+
+    const links = app.page.locator('footer.pub-rodape .pub-rodape__links a');
+    const hrefs = await links.evaluateAll((els) => els.map((el) => el.getAttribute('href')));
+    const textos = (await links.allTextContents()).map((t) => t.trim());
+    check(JSON.stringify(hrefs) === JSON.stringify(LINKS_DO_RODAPE.map(([href]) => href)), `${rotulo}: 6 links absolutos na ordem (achou: ${hrefs.join(' ')})`);
+    check(JSON.stringify(textos) === JSON.stringify(LINKS_DO_RODAPE.map(([, texto]) => texto)), `${rotulo}: textos dos links na ordem`);
+    for (const link of await links.all()) {
+      const caixa = await link.boundingBox();
+      check(caixa && caixa.height >= ALVO_MINIMO_PX, `${rotulo}: link com altura de alvo >= ${ALVO_MINIMO_PX} px`);
+    }
+
+    if (ehFeed || ehPost) {
+      const ultimoContato = await app.page.locator('.blog-contato').last().boundingBox();
+      const topoRodape = await rodape.boundingBox();
+      check(ultimoContato && topoRodape && topoRodape.y >= ultimoContato.y + ultimoContato.height, `${rotulo}: rodapé abaixo do último .blog-contato`);
+    }
+
+    if (ehPost) {
+      await app.page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await app.page.waitForSelector('.blog-barra--visivel', { timeout: 2000 });
+      const barra = await app.page.locator('.blog-barra--visivel').boundingBox();
+      let cruzou = false;
+      for (const link of await links.all()) {
+        const caixa = await link.boundingBox();
+        if (caixa && barra && cruzam(caixa, barra)) cruzou = true;
+      }
+      check(barra && !cruzou, `${rotulo}: barra flutuante não cruza nenhum link do rodapé no fim da rolagem`);
+    }
+
+    await checarSaude(app, respostas, rotulo);
+  } finally {
+    await app.close();
+  }
+}
+
 module.exports = async function blog() {
   await feed(1280, 900);
   await feed(375, 812);
@@ -412,6 +475,9 @@ module.exports = async function blog() {
   await post(375, 812);
   await pagina404(375, 812);
   await pagina404(1280, 900);
+  await rodapePublico('blog.html', 375, 812);
+  await rodapePublico('blog/outubro-rosa-2026.html', 375, 812);
+  await rodapePublico('blog/404.html', 1280, 900);
   await movimentoReduzido();
   await falhaDoIndice();
   await instalavelComAvisoNativo();

@@ -4,14 +4,32 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Aviso de nova publicação do blog. Lê blog/index.json e mostra a publicação
-// mais recente (tela inicial) ou as três últimas (/liga). Se algo falhar, o
-// aviso continua escondido e nada aparece no console. Nós são criados com
-// createElement e textContent, porque a CSP não permite estilo inline.
+// mais recente (tela inicial) ou as três últimas (/liga). Cada item leva uma
+// miniatura com o ícone do sprite do blog (blog/icones.svg), em tom da série
+// (rosa discreto nas campanhas). Se algo falhar, o aviso continua escondido e
+// nada aparece no console. Nós são criados com createElement, createElementNS
+// e textContent, porque a CSP não permite estilo inline nem HTML montado por texto.
 (function (root) {
   'use strict';
 
   const CHAVE_VISTO = 'laift_blog_visto';
   const INDICE_PADRAO = 'blog/index.json';
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  // Sprite relativo: vale em /, /liga, /liga.html e em subpasta.
+  const SPRITE = 'blog/icones.svg';
+  // Cópia de ICONES em scripts/build-blog.js; scripts/blog-novidade.test.mjs confere a igualdade.
+  const ICONES = [
+    'inicio', 'aprender', 'eventos', 'propostas', 'tarefas', 'equipe', 'mensagens', 'perfil',
+    'quiz', 'toxicologia', 'clinica', 'laboratorio', 'anatomia', 'cracha', 'lia',
+    'seguranca', 'offline', 'desempenho', 'roteiro', 'liga', 'bemvindo', 'novidades', 'ig', 'envelope', 'laco',
+  ];
+  const ICONE_DA_SERIE = {
+    liga: 'liga',
+    modulos: 'aprender',
+    plataforma: 'novidades',
+    campanhas: 'laco',
+  };
+  const ICONE_PADRAO = 'novidades';
   const DIAS_NOVA = 14;
   const MS_DIA = 24 * 60 * 60 * 1000;
   const REGEX_DATA = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -88,9 +106,32 @@
     });
   }
 
-  function textoSelo(nova, n) {
-    if (nova) return 'Nova publicação no blog';
-    return n === 1 ? 'Do blog' : '';
+  /** Selo só para publicação nova; sem ela a miniatura já diz de onde vem. */
+  function textoSelo(nova) {
+    return nova ? 'Nova publicação no blog' : '';
+  }
+
+  /** Ícone do aviso: o do post se estiver no sprite; senão o da série; senão o padrão. */
+  function iconeDe(post) {
+    if (!post || typeof post !== 'object') return ICONE_PADRAO;
+    if (typeof post.icone === 'string' && ICONES.includes(post.icone)) return post.icone;
+    if (Object.prototype.hasOwnProperty.call(ICONE_DA_SERIE, post.serie)) return ICONE_DA_SERIE[post.serie];
+    return ICONE_PADRAO;
+  }
+
+  /** Miniatura decorativa: span aria-hidden com o símbolo do sprite do blog. */
+  function criarCapa(doc, post) {
+    const capa = doc.createElement('span');
+    capa.className = 'blog-novidade__capa';
+    capa.setAttribute('aria-hidden', 'true');
+    const svg = doc.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'blog-novidade__icone');
+    svg.setAttribute('focusable', 'false');
+    const uso = doc.createElementNS(SVG_NS, 'use');
+    uso.setAttribute('href', `${SPRITE}#${iconeDe(post)}`);
+    svg.appendChild(uso);
+    capa.appendChild(svg);
+    return capa;
   }
 
   function criarItem(doc, post, opcoes) {
@@ -98,14 +139,19 @@
     const item = doc.createElement('a');
     item.className = 'blog-novidade__item';
     item.setAttribute('href', post.href);
-    const selo = textoSelo(ehNova(post, agoraMs, vistoSlug), n);
-    if (selo) item.appendChild(criarTexto(doc, 'span', 'blog-novidade__selo', selo));
-    item.appendChild(criarTexto(doc, 'span', 'blog-novidade__titulo', post.titulo));
+    if (rotuloSerie(post.serie)) item.setAttribute('data-serie', post.serie);
+    item.appendChild(criarCapa(doc, post));
+    const texto = doc.createElement('span');
+    texto.className = 'blog-novidade__texto';
+    const selo = textoSelo(ehNova(post, agoraMs, vistoSlug));
+    if (selo) texto.appendChild(criarTexto(doc, 'span', 'blog-novidade__selo', selo));
+    texto.appendChild(criarTexto(doc, 'span', 'blog-novidade__titulo', post.titulo));
     if (n > 1 && typeof post.resumo === 'string' && post.resumo.trim() !== '') {
-      item.appendChild(criarTexto(doc, 'span', 'blog-novidade__resumo', post.resumo));
+      texto.appendChild(criarTexto(doc, 'span', 'blog-novidade__resumo', post.resumo));
     }
     const meta = [rotuloSerie(post.serie), dataPorExtenso(dataMs(post.data))].filter(Boolean).join(' · ');
-    item.appendChild(criarTexto(doc, 'span', 'blog-novidade__meta', meta));
+    texto.appendChild(criarTexto(doc, 'span', 'blog-novidade__meta', meta));
+    item.appendChild(texto);
     item.addEventListener('click', () => gravarVisto(post.slug));
     return item;
   }
@@ -179,7 +225,9 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { escolherNovidades, ehNova, hrefValido, rotuloSerie };
+    module.exports = {
+      escolherNovidades, ehNova, hrefValido, rotuloSerie, iconeDe, ICONES,
+    };
   } else if (root.document.readyState === 'loading') {
     root.document.addEventListener('DOMContentLoaded', () => iniciar(root));
   } else {

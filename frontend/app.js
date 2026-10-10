@@ -1039,14 +1039,14 @@
   watchNavBadges();
 
   function setupNavigationForRole(role) {
-    document.querySelectorAll('#app-nav [data-scope]').forEach(function (btn) {
+    document.querySelectorAll('#app-nav [data-scope], #app-menu [data-scope]').forEach(function (btn) {
       var scope = btn.getAttribute('data-scope');
       var visible = scope === 'all' || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
       btn.classList.toggle('hidden', !visible);
     });
   }
 
-  document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
+  document.querySelectorAll('#app-nav [data-panel], #app-menu [data-panel]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       showPanel(btn.getAttribute('data-panel'));
     });
@@ -1114,7 +1114,7 @@
     document.querySelectorAll('.app-main > section').forEach(function (section) {
       section.classList.toggle('hidden', section.id !== panelId);
     });
-    document.querySelectorAll('#app-nav [data-panel]').forEach(function (btn) {
+    document.querySelectorAll('#app-nav [data-panel], #app-menu [data-panel]').forEach(function (btn) {
       var state = navItemState(btn.getAttribute('data-panel'), panelId);
       btn.classList.toggle('active', state.active);
       if (state.ariaCurrent) btn.setAttribute('aria-current', state.ariaCurrent);
@@ -1153,12 +1153,18 @@
     return !!(target.closest && target.closest('input, select, textarea, .bottom-nav, .modal-overlay, canvas, .learn-viewer'));
   }
 
+  // Ordem do deslizar no modo membro: a mesma de antes do menu (os itens do menu entram no lugar certo).
+  var MEMBER_PANEL_ORDER = ['panel-home', 'panel-learn', 'panel-events', 'panel-proposals', 'panel-tasks', 'panel-orgchart', 'panel-messages', 'panel-profile'];
+
   function getVisiblePanelOrder() {
-    var activeGroupId = document.getElementById('nav-group-admin').classList.contains('hidden') ? 'nav-group-member' : 'nav-group-admin';
-    return Array.prototype.slice
-      .call(document.querySelectorAll('#' + activeGroupId + ' [data-panel]'))
+    var adminMode = !document.getElementById('nav-group-admin').classList.contains('hidden');
+    var selector = adminMode ? '#nav-group-admin [data-panel]' : '#nav-group-member [data-panel], #app-menu [data-panel]';
+    var visible = Array.prototype.slice
+      .call(document.querySelectorAll(selector))
       .filter(function (btn) { return !btn.classList.contains('hidden'); })
       .map(function (btn) { return btn.getAttribute('data-panel'); });
+    if (adminMode) return visible;
+    return MEMBER_PANEL_ORDER.filter(function (id) { return visible.indexOf(id) !== -1; });
   }
 
   function handleSwipeNavigation(deltaX) {

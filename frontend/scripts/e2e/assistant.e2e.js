@@ -291,7 +291,8 @@ async function dicas() {
     // Fechar pelo × some a dica; voltar a Eventos na mesma sessão não a repete
     await page.click('.lia-hint-close');
     await page.waitForSelector('.lia-hint', { state: 'detached' });
-    await page.click('#app-nav [data-panel="panel-proposals"]');
+    await page.click('#app-menu-btn');
+    await page.click('#app-menu [data-panel="panel-proposals"]');
     await page.waitForSelector('.lia-hint-open');
     check(await textoDaDica() === DICA.propostas, 'Propostas tem a sua dica');
     await page.click('.lia-hint-close');
