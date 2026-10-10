@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Protótipo: barra com hambúrguer</title>
+  <link rel="stylesheet" href="../../../frontend/modulos/shared/laift-tokens.css">
+  <link rel="stylesheet" href="../../../frontend/styles.css">
+  <link rel="stylesheet" href="../../../frontend/ux.css">
+  <style>
+    /* Protótipo: só o painel lateral e o escrim. Tokens, cards e barra vêm do projeto. */
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--laift-font); }
+    .proto-app {
+      position: relative; display: flex; flex-direction: column;
+      width: 100%; max-width: 430px; height: 100vh; height: 100dvh; margin: 0 auto;
+      overflow: hidden; background: var(--bg);
+    }
+    .proto-app .app-header {
+      position: relative; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; min-height: 64px; box-sizing: border-box; padding: 8px 14px;
+    }
+    .proto-brand { display: flex; flex-direction: column; line-height: 1.2; }
+    .proto-brand strong { font-size: 16px; color: var(--primary-strong); letter-spacing: 0.02em; }
+    .proto-brand span { font-size: 12px; color: var(--muted); }
+    .proto-icon-btn {
+      flex: 0 0 48px; width: 48px; height: 48px; min-height: 48px; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--laift-radius-md);
+    }
+    .proto-icon-btn svg { width: 24px; height: 24px; }
+    .proto-app .app-main { flex: 1 1 auto; overflow-y: auto; box-sizing: border-box; }
+    .proto-kicker { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .proto-h1 { margin: 4px 0 14px; font-size: 22px; font-weight: 700; }
+    .proto-app .card + .card { margin-top: 12px; }
+    .proto-card-title { margin: 0 0 4px; font-size: 16px; font-weight: 700; }
+    .proto-card-sub { margin: 0; font-size: 14px; color: var(--muted); }
+    .proto-progress { height: 8px; margin-top: 12px; border-radius: 999px; background: var(--surface-alt); overflow: hidden; }
+    .proto-progress i { display: block; width: 40%; height: 100%; background: var(--primary); border-radius: inherit; }
+
+    /* Barra inferior: rótulos a 12 px (o projeto reduz para 10 px em telas de 400 px). */
+    .proto-app .bottom-nav { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; }
+    .proto-app .bottom-nav button span:not(.nav-badge) { font-size: 12px; letter-spacing: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .proto-app .bottom-nav button { min-height: 56px; }
+    .proto-app .bottom-nav button svg, .proto-app .bottom-nav button .ico { width: 24px; height: 24px; }
+
+    .proto-scrim {
+      position: absolute; inset: 0; z-index: 30; background: var(--laift-overlay, rgba(10, 14, 22, 0.55));
+      opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out);
+    }
+    .proto-drawer {
+      position: absolute; top: 0; bottom: 0; right: 0; z-index: 40; box-sizing: border-box;
+      width: min(304px, 84%); overflow-y: auto; padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+      background: var(--surface); box-shadow: var(--shadow);
+      transform: translateX(104%); visibility: hidden;
+      transition: transform var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
+    }
+    .proto-app[data-aberto] .proto-scrim { opacity: 1; pointer-events: auto; }
+    .proto-app[data-aberto] .proto-drawer { transform: none; visibility: visible; transition: transform var(--dur-base) var(--ease-out), visibility 0s; }
+
+    .proto-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .proto-sheet-head h2 { margin: 0; font-size: 18px; font-weight: 700; }
+    .proto-close {
+      flex: 0 0 48px; width: 48px; height: 48px; min-height: 48px; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); border-radius: var(--laift-radius-md);
+    }
+    .proto-close svg { width: 22px; height: 22px; }
+    .proto-group { margin-top: 14px; }
+    .proto-group h3 { margin: 0 0 6px 4px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .proto-list { margin: 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--laift-radius-md); overflow: hidden; background: var(--surface-alt); }
+    .proto-list li + li { border-top: 1px solid var(--border); }
+    .proto-item {
+      width: 100%; min-height: 52px; display: flex; align-items: center; gap: 12px; box-sizing: border-box;
+      padding: 12px 14px; background: transparent; color: var(--text); border: 0; border-radius: 0;
+      font-size: 16px; font-weight: 600; text-align: left; cursor: pointer;
+    }
+    .proto-item .ico { width: 22px; height: 22px; flex: 0 0 22px; color: var(--primary-strong); }
+    .proto-item .proto-chev { margin-left: auto; font-size: 20px; color: var(--muted); }
+    .proto-item:focus-visible, .proto-close:focus-visible, .proto-icon-btn:focus-visible, .proto-app .bottom-nav button:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent); outline-offset: -3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .proto-scrim, .proto-drawer { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="proto-app" id="app">
+    <header class="app-header">
+      <div class="proto-brand"><strong>LAIFT</strong><span>Plataforma do membro</span></div>
+      <button type="button" class="proto-icon-btn" id="btn-menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="painel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </header>
+
+    <main class="app-main" id="conteudo">
+      <p class="proto-kicker">Início</p>
+      <h1 class="proto-h1">Bom dia, membro</h1>
+      <section class="card" aria-labelledby="c1">
+        <p class="proto-kicker">Próximo evento</p>
+        <h2 class="proto-card-title" id="c1">Encontro mensal de membros</h2>
+        <p class="proto-card-sub">Sábado, 17 de outubro · 10h</p>
+      </section>
+      <section class="card" aria-labelledby="c2">
+        <p class="proto-kicker">Trilha em andamento</p>
+        <h2 class="proto-card-title" id="c2">Fundamentos do projeto</h2>
+        <p class="proto-card-sub">4 de 10 aulas concluídas</p>
+        <div class="proto-progress" aria-hidden="true"><i></i></div>
+      </section>
+      <section class="card" aria-labelledby="c3">
+        <p class="proto-kicker">Votação aberta</p>
+        <h2 class="proto-card-title" id="c3">2 propostas aguardando voto</h2>
+        <p class="proto-card-sub">Encerra em 3 dias</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <div class="nav-group" id="nav-group-member">
+        <button type="button" class="active" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
+          <span>Início</span>
+        </button>
+        <button type="button">
+          <svg class="ico" aria-hidden="true"><use href="../../../frontend/blog/icones.svg#aprender"/></svg>
+          <span>Aprender</span>
+        </button>
+        <button type="button">
+          <svg class="ico" aria-hidden="true"><use href="../../../frontend/blog/icones.svg#eventos"/></svg>
+          <span>Eventos</span>
+        </button>
+        <button type="button">
+          <svg class="ico" aria-hidden="true"><use href="../../../frontend/blog/icones.svg#mensagens"/></svg>
+          <span>Mensagens</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="proto-scrim" id="escrim"></div>
+
+    <aside class="proto-drawer" id="painel" role="dialog" aria-labelledby="painel-titulo">
+      <div class="proto-sheet-head">
+        <h2 id="painel-titulo">Menu</h2>
+        <button type="button" class="proto-close" id="btn-fechar" aria-label="Fechar menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <div class="proto-group">
+        <h3>Participação</h3>
+        <ul class="proto-list">
+          <li><button type="button" class="proto-item"><svg class="ico" aria-hidden="true"><use href="../../../frontend/blog/icones.svg#propostas"/></svg><span>Propostas</span><span class="proto-chev" aria-hidden="true">›</span></button></li>
+          <li><button type="button" class="proto-item"><svg class="ico" aria-hidden="true"><use href="../../../frontend/blog/icones.svg#tarefas"/></svg><span>Tarefas</span><span class="proto-chev" aria-hidden="true">›</span></button></li>
+        </ul>
+      </div>
+
+      <div class="proto-group">
+        <h3>Pessoas</h3>
+        <ul class="proto-list">
+          <li><button type="button" class="proto-item"><svg class="ico" aria-hidden="true"><use href="../../../frontend/blog/icones.svg#equipe"/></svg><span>Equipe</span><span class="proto-chev" aria-hidden="true">›</span></button></li>
+          <li><button type="button" class="proto-item"><svg class="ico" aria-hidden="true"><use href="../../../frontend/blog/icones.svg#perfil"/></svg><span>Perfil</span><span class="proto-chev" aria-hidden="true">›</span></button></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    /* Protótipo: abre/fecha o painel lateral. Tema: ?tema=escuro ou ?tema=claro. */
+    (function () {
+      var tema = new URLSearchParams(location.search).get('tema');
+      if (tema === 'escuro' || tema === 'claro') {
+        document.documentElement.setAttribute('data-theme', tema === 'escuro' ? 'dark' : 'light');
+      }
+      var app = document.getElementById('app');
+      var gatilho = document.getElementById('btn-menu');
+      var fechar = document.getElementById('btn-fechar');
+      var escrim = document.getElementById('escrim');
+
+      function abrir() {
+        app.setAttribute('data-aberto', '');
+        gatilho.setAttribute('aria-expanded', 'true');
+        fechar.focus();
+      }
+      function fecharPainel() {
+        app.removeAttribute('data-aberto');
+        gatilho.setAttribute('aria-expanded', 'false');
+        gatilho.focus();
+      }
+      gatilho.addEventListener('click', function () {
+        if (app.hasAttribute('data-aberto')) { fecharPainel(); } else { abrir(); }
+      });
+      fechar.addEventListener('click', fecharPainel);
+      escrim.addEventListener('click', fecharPainel);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && app.hasAttribute('data-aberto')) { fecharPainel(); }
+      });
+    })();
+  </script>
+</body>
+</html>

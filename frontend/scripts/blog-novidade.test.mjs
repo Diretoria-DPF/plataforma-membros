@@ -6,13 +6,16 @@
 // Aviso do blog: escolha das publicações, janela de "nova" e segurança do link.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const { escolherNovidades, ehNova, hrefValido, rotuloSerie } = require(path.join(frontend, 'blog-novidade.js'));
+const {
+  escolherNovidades, ehNova, hrefValido, rotuloSerie, iconeDe, ICONES,
+} = require(path.join(frontend, 'blog-novidade.js'));
 
 const AGORA = Date.UTC(2026, 9, 9); // 9 de outubro de 2026, UTC
 
@@ -112,4 +115,39 @@ test('rotuloSerie: traduz as séries conhecidas e ignora as desconhecidas', () =
   assert.equal(rotuloSerie('modulos'), 'Módulos');
   assert.equal(rotuloSerie('plataforma'), 'Plataforma');
   assert.equal(rotuloSerie('constructor'), '');
+});
+
+test('iconeDe: mantém ícone válido do sprite', () => {
+  assert.equal(iconeDe({ serie: 'liga', icone: 'laco' }), 'laco');
+});
+
+test('iconeDe: campanhas sem ícone válido cai no laço; módulos cai em aprender', () => {
+  assert.equal(iconeDe({ serie: 'campanhas', icone: 'x' }), 'laco');
+  assert.equal(iconeDe({ serie: 'modulos', icone: 'x' }), 'aprender');
+});
+
+test('iconeDe: série e ícone desconhecidos, série herdada ou post nulo caem em novidades', () => {
+  assert.equal(iconeDe({ serie: 'outra', icone: 'x' }), 'novidades');
+  assert.equal(iconeDe({ serie: 'constructor' }), 'novidades');
+  assert.equal(iconeDe(null), 'novidades');
+});
+
+test('ICONES: cópia igual à de scripts/build-blog.js', () => {
+  assert.deepEqual(ICONES, require('./build-blog.js').ICONES);
+});
+
+// Confere só o código: os comentários do arquivo citam innerHTML de propósito.
+const fonte = fs.readFileSync(path.join(frontend, 'blog-novidade.js'), 'utf8');
+const codigo = fonte.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
+test('blog-novidade.js: nada de innerHTML, outerHTML, insertAdjacentHTML ou document.write', () => {
+  assert.doesNotMatch(codigo, /innerHTML|outerHTML|insertAdjacentHTML|document\.write/);
+});
+
+test('blog-novidade.js: ícones criados com createElementNS do SVG', () => {
+  assert.match(codigo, /createElementNS\(SVG_NS/);
+});
+
+test('blog-novidade.js: sem o selo "Do blog"', () => {
+  assert.doesNotMatch(codigo, /'Do blog'/);
 });

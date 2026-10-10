@@ -1,0 +1,12 @@
+
+// docs/ux-progresso/CONTRATO.md §4: marcador da barra de progresso, CSS e script da camada LaiftProgress.
+test('o post tem o marcador da barra de progresso logo depois do cabeçalho do artigo', () => {
+  const post = postBase();
+  const { html } = gerador.renderPostPage(post, { site: SITE_SEM_EMAIL, scripts: ['/blog/post.js'] });
+  assert.ok(html.includes(`</header>\n<div class="laift-progresso" data-laift-progresso="blog:${post.slug}" hidden></div>\n`), 'marcador logo depois de </header>');
+  assert.equal(html.split('data-laift-progresso=').length, 2, 'um só marcador por post');
+  const css = html.indexOf('<link rel="stylesheet" href="/modulos/shared/laift-progress.css">');
+  assert.ok(css > html.indexOf('<link rel="stylesheet" href="/blog.css">'), 'laift-progress.css depois de blog.css');
+  const js = html.indexOf('<script src="/modulos/shared/laift-progress.js" defer></script>');
+  assert.ok(js > 0 && js < html.indexOf('<script type="module" src="/blog/post.js">'), 'laift-progress.js (defer) antes do post.js');
+});

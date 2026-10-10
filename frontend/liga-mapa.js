@@ -11,7 +11,7 @@
   'use strict';
 
   var ROTULO = 'UNINASSAU';
-  var TITULO_FRAME = 'Mapa do OpenStreetMap: UNINASSAU, Rua Direita da Piedade, 358, Salvador';
+  var TITULO_FRAME = 'Mapa do OpenStreetMap: UNINASSAU - Salvador, Rua dos Maçons, 364, Salvador-Bahia';
   var SANDBOX = 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox';
   var REFERRER = 'strict-origin-when-cross-origin';
   var CREDITO_URL = 'https://www.openstreetmap.org/copyright';

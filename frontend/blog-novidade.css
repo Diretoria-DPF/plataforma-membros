@@ -3,13 +3,20 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-/* Aviso de nova publicação do blog (blog-novidade.js). Só prefixo .blog-novidade;
-   cores vêm dos tokens de laift-tokens.css, então o escuro segue sozinho. */
+/* Aviso de nova publicação do blog (blog-novidade.js). Só prefixo .blog-novidade.
+   Tom por série em --novidade-tom (ícone e selo), --novidade-tom-suave (fundo da capa e do selo)
+   e --novidade-contorno (fio fino no cartão). Liga, Módulos e Plataforma usam os tokens da
+   LAIFT, então o escuro segue sozinho. Campanhas (rosa) só na capa, no selo e no contorno.
+   Contraste do ícone sobre a capa (claro / escuro): liga 5,30 / 6,88; módulos 5,35 / 6,78;
+   plataforma 5,41 / 8,64; campanhas 6,09 / 7,98. */
 
 .blog-novidade[hidden] { display: none !important; }
 
-/* Item comum: linha única que quebra; alvo de toque de 44 px. */
+/* Item comum: tom padrão = Liga. Alvo de toque de 44 px. */
 .blog-novidade__item {
+  --novidade-tom: var(--laift-primary);
+  --novidade-tom-suave: var(--laift-primary-soft);
+  --novidade-contorno: inset 0 0 0 1.5px color-mix(in srgb, var(--novidade-tom) 30%, transparent);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -18,16 +25,70 @@
   padding: var(--move-sm) var(--move-md);
   border-radius: 20px;
   background: var(--layer-2);
+  box-shadow: var(--novidade-contorno);
   color: var(--laift-text);
   text-decoration: none;
   transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.blog-novidade__item:active { transform: scale(0.98); }
+/* Tons por série. Módulos e Plataforma usam os tokens de info e aviso. */
+.blog-novidade__item[data-serie="modulos"] {
+  --novidade-tom: var(--laift-info);
+  --novidade-tom-suave: var(--laift-info-soft);
+}
+
+.blog-novidade__item[data-serie="plataforma"] {
+  --novidade-tom: var(--laift-warning);
+  --novidade-tom-suave: var(--laift-warning-soft);
+}
+
+/* Campanhas: rosa discreto (valores de blog-campanha.css). */
+.blog-novidade__item[data-serie="campanhas"] {
+  --novidade-tom: #a61d56;
+  --novidade-tom-suave: #fce7f3;
+}
+
+html[data-theme="dark"] .blog-novidade__item[data-serie="campanhas"],
+html.laift-always-dark .blog-novidade__item[data-serie="campanhas"] {
+  --novidade-tom: #ff9ccb;
+  --novidade-tom-suave: #3a1a2b;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) .blog-novidade__item[data-serie="campanhas"] {
+    --novidade-tom: #ff9ccb;
+    --novidade-tom-suave: #3a1a2b;
+  }
+}
 
 .blog-novidade__item:focus-visible {
   outline: 3px solid var(--laift-primary);
   outline-offset: 2px;
+}
+
+/* Miniatura: capa 64x64 com o ícone de 36 px do sprite. Decorativa (aria-hidden). */
+.blog-novidade__capa {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background-color: var(--novidade-tom-suave);
+  /* Brilho no canto e um disco atrás do símbolo: a capa deixa de ser um quadrado liso. */
+  background-image:
+    radial-gradient(circle var(--capa-brilho, 12px) at 80% 22%, color-mix(in srgb, #fff 50%, transparent) 98%, transparent),
+    radial-gradient(circle var(--capa-disco, 27px) at 50% 54%, color-mix(in srgb, var(--novidade-tom) 13%, transparent) 98%, transparent);
+  color: var(--novidade-tom);
+}
+
+.blog-novidade__icone {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  color: var(--novidade-tom);
+  fill: none;
 }
 
 .blog-novidade__selo {
@@ -36,15 +97,24 @@
   min-height: 24px;
   padding: 0 var(--move-sm);
   border-radius: var(--laift-radius-pill);
-  background: var(--laift-primary-soft);
-  color: var(--laift-primary);
+  background: var(--novidade-tom-suave);
+  color: var(--novidade-tom);
   font-size: 0.75rem;
   font-weight: 700;
   line-height: 1;
 }
 
+/* Selo, título, resumo e data em coluna, ao lado da capa (ou abaixo dela nos cartões). */
+.blog-novidade__texto {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--move-xs);
+  min-width: 0;
+}
+
 .blog-novidade__titulo {
-  flex: 1 1 12rem;
   font-weight: 700;
   line-height: 1.3;
 }
@@ -54,8 +124,16 @@
   font-size: 0.875rem;
 }
 
-/* --faixa: tela inicial, dentro de .welcome-liga (flex-wrap). Ocupa a linha inteira. */
-.welcome-liga .blog-novidade--faixa { flex: 0 0 100%; }
+/* --faixa: tela inicial. O link inteiro é o cartão, em coluna única. */
+.blog-novidade--faixa .blog-novidade__item {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  min-height: 88px;
+  padding: var(--move-md);
+  border-radius: var(--laift-radius-xl);
+  background: var(--layer-1);
+  box-shadow: var(--novidade-contorno), var(--elev-2);
+}
 
 /* --cartoes: /liga. Uma coluna no celular, três a partir de 900 px. */
 .blog-novidade__lista {
@@ -80,8 +158,21 @@
   box-sizing: border-box;
   padding: var(--move-md);
   border-radius: 24px;
-  box-shadow: var(--elev-1);
+  box-shadow: var(--novidade-contorno), var(--elev-1);
   transition: transform var(--dur-base) var(--ease-out);
+}
+
+/* Capa larga no topo do cartão: 112 px de altura, ícone de 56 px. */
+.blog-novidade--cartoes .blog-novidade__capa {
+  --capa-brilho: 26px;
+  --capa-disco: 58px;
+  width: 100%;
+  height: 112px;
+}
+
+.blog-novidade--cartoes .blog-novidade__icone {
+  width: 64px;
+  height: 64px;
 }
 
 .blog-novidade--cartoes .blog-novidade__titulo {
@@ -98,10 +189,20 @@
 
 .blog-novidade--cartoes .blog-novidade__meta { margin-top: auto; }
 
+/* Elevação no toque e no mouse. Só movimento de transform. */
 @media (hover: hover) {
-  .blog-novidade--cartoes .blog-novidade__item:hover { transform: translateY(-2px); }
+  .blog-novidade__item:hover { transform: translateY(-2px); }
 }
 
+/* Depois do hover: o toque ganha do passar o mouse. */
+.blog-novidade__item:active { transform: scale(0.98); }
+
+/* Movimento reduzido: sem transição e sem transform (este arquivo tem o próprio bloco). */
 @media (prefers-reduced-motion: reduce) {
-  .blog-novidade__item { transition: none; }
+  .blog-novidade__item,
+  .blog-novidade__item:hover,
+  .blog-novidade__item:active {
+    transition: none;
+    transform: none;
+  }
 }

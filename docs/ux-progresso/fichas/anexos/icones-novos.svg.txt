@@ -1,0 +1,9 @@
+  <symbol id="meta" viewBox="0 0 24 24">
+    <path d="M6 4.5h11.5l-2.6 4 2.6 4H6z" fill="currentColor" fill-opacity=".18" stroke="none"/>
+    <path d="M6 21V3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6 4.5h11.5l-2.6 4 2.6 4H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="estrela" viewBox="0 0 24 24">
+    <path d="M12 3.2L14.3 9.4L20.9 9.7L15.7 13.8L17.5 20.2L12 16.5L6.5 20.2L8.3 13.8L3.1 9.7L9.7 9.4Z" fill="currentColor" fill-opacity=".18" stroke="none"/>
+    <path d="M12 3.2L14.3 9.4L20.9 9.7L15.7 13.8L17.5 20.2L12 16.5L6.5 20.2L8.3 13.8L3.1 9.7L9.7 9.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>

@@ -51,7 +51,7 @@ const CONTAGEM_ESPERADA = { cards: 7, areas: 8, compromissos: 5, beneficios: 6, 
 const ALVOS_DA_BARRA = 6;
 const LINKS_DA_BARRA = ['./', 'blog.html', './#entrar', './#cadastro'];
 const REGEX_HREF_BLOG = /^blog\/[a-z0-9-]+\.html$/;
-const SELOS_NOVIDADE = ['Nova publicação no blog', 'Do blog'];
+const SELOS_NOVIDADE = ['Nova publicação no blog', ''];
 const MAPA_EMBED = 'https://www.openstreetmap.org/export/embed.html?bbox=';
 // Imagem da Lia que outra ficha cria: se ela ainda não existir, o 404 é ignorado.
 const IMAGEM_OPCIONAL = 'lia-estatica.svg';
@@ -271,8 +271,8 @@ async function verificarEndereco(page, rotulo) {
   const carregou = await page.locator('img.lp-instituicao__predio').evaluate((img) => img.complete && img.naturalWidth > 0);
   check(carregou, `${rotulo}: prédio da instituição carregado`);
   const endereco = (await page.locator('#instituicao').textContent()) || '';
-  check(endereco.includes('Rua Direita da Piedade, 358') && endereco.includes('40070-190'),
-    `${rotulo}: endereço com "Rua Direita da Piedade, 358" e CEP 40070-190`);
+  check(endereco.includes('UNINASSAU - Salvador') && endereco.includes('Rua dos Maçons, 364') && endereco.includes('Salvador-Bahia, 41810'),
+    `${rotulo}: endereço "UNINASSAU - Salvador, Rua dos Maçons, 364, Salvador-Bahia, 41810-205, Brasil"`);
   const site = await atributoDe(page.locator('.lp-instituicao__site a'), 'href');
   check(site === 'https://www.uninassau.edu.br', `${rotulo}: link do site da UNINASSAU`);
   const mapas = await page.locator('.lp-mapa__link').allTextContents();
@@ -343,6 +343,12 @@ async function verificarBlog(page, rotulo) {
   check(hrefs.length === 3, `${rotulo}: 3 novidades do blog (há ${hrefs.length})`);
   const invalidos = hrefs.filter((href) => !REGEX_HREF_BLOG.test(href) || !BLOG.posts.some((post) => post.href === href));
   check(invalidos.length === 0, `${rotulo}: novidades com href válido e existente em blog/index.json` + (invalidos.length ? ': ' + invalidos.join(' | ') : ''));
+  const capas = await page.$$eval('[data-blog-novidade="3"] a.blog-novidade__item', (els) => els.map((a) => {
+    const use = a.querySelector('.blog-novidade__capa svg use');
+    return use ? use.getAttribute('href') || '' : '';
+  }));
+  check(capas.length === 3 && capas.every((href) => /^blog\/icones\.svg#[a-z]+$/.test(href)),
+    `${rotulo}: cada novidade com miniatura do sprite do blog (${capas.join(' | ')})`);
 }
 
 async function blogNaPagina() {
@@ -391,12 +397,13 @@ async function movimentoReduzido() {
   }
 }
 
-/** Tela inicial: um aviso de nova publicação, com 1 item válido e selo "Nova publicação no blog" ou "Do blog". */
+/** Tela inicial: um aviso de nova publicação, com 1 item válido, miniatura do sprite e selo "Nova publicação no blog" ou nenhum. */
 async function verificarNovidadeDaTela(page, rotulo) {
   check(await page.locator('[data-blog-novidade="1"]').isVisible(), `${rotulo}: aviso do blog visível`);
   const itens = await page.$$eval('[data-blog-novidade="1"] a.blog-novidade__item', (els) => els.map((a) => {
     const selo = a.querySelector('.blog-novidade__selo');
-    return { href: a.getAttribute('href') || '', selo: selo ? selo.textContent.trim() : '' };
+    const use = a.querySelector('.blog-novidade__capa svg use');
+    return { href: a.getAttribute('href') || '', selo: selo ? selo.textContent.trim() : '', icone: use ? use.getAttribute('href') || '' : '' };
   }));
   check(itens.length === 1, `${rotulo}: 1 item no aviso do blog (há ${itens.length})`);
   const item = itens[0];
@@ -404,6 +411,7 @@ async function verificarNovidadeDaTela(page, rotulo) {
   check(valido, `${rotulo}: item do aviso com href válido existente em blog/index.json`);
   const selo = item ? item.selo : '';
   check(SELOS_NOVIDADE.includes(selo), `${rotulo}: selo "${selo}" (válidos: ${SELOS_NOVIDADE.join(' ou ')})`);
+  check(Boolean(item) && /^blog\/icones\.svg#[a-z]+$/.test(item.icone), `${rotulo}: aviso com miniatura do sprite do blog`);
 }
 
 /** (e) Faixa "Conheça a LAIFT" da tela de entrada (index.html), com a flag ligada ou desligada. */
@@ -417,16 +425,14 @@ async function faixaDoLogin(ligada) {
     check(app.calls.worker.some((c) => c.action === 'apiGetFeatureFlags'), `${rotulo}: consulta apiGetFeatureFlags no Worker`);
     const flagAplicada = await app.page.evaluate(() => document.documentElement.hasAttribute('data-flag-selection-open'));
     check(flagAplicada === ligada, `${rotulo}: <html> ${ligada ? 'recebe' : 'não recebe'} data-flag-selection-open`);
-    const aviso = app.page.locator('.welcome-liga__aviso');
-    const avisoVisivel = await aviso.isVisible();
-    check(avisoVisivel === ligada, `${rotulo}: aviso "Processo seletivo aberto" ${ligada ? 'visível' : 'escondido'}`);
-    if (ligada) check((((await aviso.textContent()) || '').trim()) === AVISO_ABERTO, `${rotulo}: texto do aviso é o de processo aberto`);
+    check((await app.page.locator('.welcome-liga__aviso').count()) === 0, `${rotulo}: sem o título "Processo seletivo aberto" sobre os botões`);
     const link = app.page.locator('.welcome-liga__link');
     const linkVisivel = await link.isVisible();
     const linkDestino = await atributoDe(link, 'href');
     check(linkVisivel && linkDestino === 'liga.html', `${rotulo}: link "Conheça a LAIFT" visível e aponta para liga.html`);
     const linkBlog = await atributoDe(app.page.locator('.welcome-liga__blog'), 'href');
-    check(linkBlog === 'blog.html', `${rotulo}: link do blog aponta para blog.html`);
+    const textoBlog = (((await app.page.locator('.welcome-liga__blog').textContent()) || '').trim());
+    check(linkBlog === 'blog.html' && textoBlog === 'Acessar blog', `${rotulo}: botão "Acessar blog" aponta para blog.html`);
     await verificarNovidadeDaTela(app.page, rotulo);
     await checarSaude(app, respostas, rotulo);
   } finally {

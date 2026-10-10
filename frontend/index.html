@@ -83,97 +83,106 @@
 
     <!-- ================= PÚBLICO ================= -->
     <main id="public-shell" class="public-shell">
-      <section id="screen-welcome" class="auth-card" aria-labelledby="welcome-title">
-        <div class="hero hidden" id="hero-lia" aria-hidden="true"></div>
-        <span class="brand-pill">Plataforma de Membros</span>
-        <h1 id="welcome-title">Entrar</h1>
-        <p class="muted">LAIFT — Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Acompanhe eventos, participe de votações e organize tarefas coletivas.</p>
+      <section id="screen-welcome" class="auth-pilha" aria-labelledby="welcome-title">
+        <div class="auth-card">
+          <span class="brand-pill">Plataforma de Membros</span>
+          <h1 id="welcome-title">Entrar</h1>
+          <p class="muted">LAIFT — Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia.</p>
 
-        <form id="form-login" novalidate>
-          <label for="login-email">E-mail
-            <input type="email" id="login-email" autocomplete="email" required>
-          </label>
-          <label for="login-password">Senha
-            <input type="password" id="login-password" autocomplete="current-password" required>
-          </label>
-          <button type="submit">Entrar</button>
-        </form>
-        <!-- Segundo passo do login: aparece só para quem ativou a verificação em duas etapas (mfa.js). -->
-        <form id="form-login-mfa" class="hidden" novalidate>
-          <label for="login-mfa-code">Código de verificação
-            <input type="text" id="login-mfa-code" inputmode="text" autocomplete="one-time-code" maxlength="16" aria-describedby="login-mfa-help">
-          </label>
-          <p id="login-mfa-help" class="muted">Digite o código de 6 dígitos do aplicativo autenticador ou um código de recuperação.</p>
-          <button type="submit">Verificar</button>
-          <button type="button" class="link-btn" id="btn-login-mfa-back">Voltar</button>
-        </form>
-        <div id="msg-login" class="status-msg" role="alert" aria-live="polite"></div>
+          <form id="form-login" novalidate>
+            <label for="login-email">E-mail
+              <input type="email" id="login-email" autocomplete="email" required>
+            </label>
+            <label for="login-password">Senha
+              <input type="password" id="login-password" autocomplete="current-password" required>
+            </label>
+            <div class="auth-senha-linha">
+              <label class="auth-mostrar" for="login-mostrar"><input type="checkbox" id="login-mostrar" data-senha-visivel="login-password"><span>Mostrar senha</span></label>
+              <button type="button" class="link-btn auth-esqueci" data-nav="screen-forgot">Esqueci minha senha</button>
+            </div>
+            <button type="submit">Entrar</button>
+          </form>
+          <!-- Segundo passo do login: aparece só para quem ativou a verificação em duas etapas (mfa.js). -->
+          <form id="form-login-mfa" class="hidden" novalidate>
+            <label for="login-mfa-code">Código de verificação
+              <input type="text" id="login-mfa-code" inputmode="text" autocomplete="one-time-code" maxlength="16" aria-describedby="login-mfa-help">
+            </label>
+            <p id="login-mfa-help" class="muted">Digite o código de 6 dígitos do aplicativo autenticador ou um código de recuperação.</p>
+            <button type="submit">Verificar</button>
+            <button type="button" class="link-btn" id="btn-login-mfa-back">Voltar</button>
+          </form>
+          <div id="msg-login" class="status-msg" role="alert" aria-live="polite"></div>
 
-        <div class="auth-links">
-          <button type="button" class="link-btn" data-nav="screen-register">Criar conta</button>
-          <button type="button" class="link-btn" data-nav="screen-forgot">Esqueci minha senha</button>
+          <div class="auth-criar">
+            <p class="auth-criar__texto">Primeira vez aqui?</p>
+            <button type="button" class="secondary auth-criar__botao" data-nav="screen-register">Criar conta</button>
+          </div>
         </div>
-        <div class="welcome-liga">
-          <p class="welcome-liga__aviso">Processo seletivo aberto</p>
-          <a class="link-btn welcome-liga__link" href="liga.html">Conheça a LAIFT</a>
-          <a class="link-btn welcome-liga__blog" href="blog.html">Blog: conheça a plataforma</a>
-          <div class="blog-novidade blog-novidade--faixa" data-blog-novidade="1" hidden></div>
-        </div>
+        <nav class="auth-card welcome-liga" aria-label="Conheça a LAIFT e o blog">
+          <a class="welcome-liga__botao welcome-liga__link" href="liga.html"><svg class="welcome-liga__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#liga"></use></svg><span>Conheça a LAIFT</span></a>
+          <a class="welcome-liga__botao welcome-liga__blog" href="blog.html"><svg class="welcome-liga__icone" aria-hidden="true" focusable="false"><use href="blog/icones.svg#novidades"></use></svg><span>Acessar blog</span></a>
+        </nav>
+        <div class="blog-novidade blog-novidade--faixa" data-blog-novidade="1" hidden></div>
       </section>
 
       <section id="screen-register" class="auth-card hidden" aria-labelledby="register-title">
         <button type="button" class="link-btn auth-voltar" data-nav="screen-welcome">← Voltar</button>
         <span class="brand-pill">Plataforma de Membros</span>
         <h1 id="register-title" class="auth-heading">Criar conta</h1>
-        <p class="muted">Sua conta começa como visitante; a confirmação por e-mail é obrigatória para entrar.</p>
+        <p class="muted">Sua conta começa como visitante. Confirme o e-mail para entrar.</p>
 
         <form id="form-register" novalidate>
+          <fieldset class="cadastro-grupo">
+            <legend>Seus dados</legend>
+            <label for="reg-name">Nome completo
+              <input type="text" id="reg-name" autocomplete="name" required minlength="3" maxlength="150" aria-describedby="reg-name-dica">
+            </label>
+            <p id="reg-name-dica" class="cadastro-dica">O nome não pode ser alterado depois.</p>
+            <label for="reg-username">Nome de usuário
+              <input type="text" id="reg-username" autocomplete="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_.]+">
+            </label>
+            <label for="reg-email">E-mail
+              <input type="email" id="reg-email" autocomplete="email" required>
+            </label>
+            <label for="reg-phone">Telefone
+              <input type="tel" id="reg-phone" autocomplete="tel" required minlength="8" maxlength="30">
+            </label>
+          </fieldset>
+          <fieldset class="cadastro-grupo">
+            <legend>Senha</legend>
+            <label for="reg-password">Senha (mínimo 8 caracteres)
+              <input type="password" id="reg-password" autocomplete="new-password" required minlength="8">
+            </label>
+            <label class="auth-mostrar" for="reg-mostrar"><input type="checkbox" id="reg-mostrar" data-senha-visivel="reg-password"><span>Mostrar senha</span></label>
+          </fieldset>
+          <details class="cadastro-opcional">
+            <summary>Completar perfil (opcional)</summary>
           <label class="avatar-picker-row" for="reg-avatar-input">
             <span class="avatar-preview-wrap">
               <img id="reg-avatar-preview" class="avatar-preview hidden" alt="Pré-visualização do avatar">
               <span id="reg-avatar-placeholder" class="avatar-placeholder" aria-hidden="true">＋</span>
             </span>
             <span>
-              <strong>Foto de perfil (opcional)</strong>
+              <strong>Foto de perfil</strong>
               <span class="muted" style="display:block; font-size:12px;">JPEG, PNG, WEBP ou GIF, até 2MB.</span>
             </span>
             <input type="file" id="reg-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden">
           </label>
           <div id="msg-reg-avatar" class="status-msg" role="alert" aria-live="polite"></div>
-
-          <label for="reg-name">*Nome completo <span class="muted">(não pode ser alterado depois)</span>
-            <input type="text" id="reg-name" autocomplete="name" required minlength="3" maxlength="150">
-          </label>
-          <label for="reg-username">*Nome de usuário
-            <input type="text" id="reg-username" autocomplete="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_.]+">
-          </label>
-          <label for="reg-email">*E-mail
-            <input type="email" id="reg-email" autocomplete="email" required>
-          </label>
-          <label for="reg-phone">*Telefone
-            <input type="tel" id="reg-phone" autocomplete="tel" required minlength="8" maxlength="30">
-          </label>
-          <label for="reg-linkedin">Perfil do LinkedIn (opcional)
+          <label for="reg-linkedin">Perfil do LinkedIn
             <input type="url" id="reg-linkedin" autocomplete="url" maxlength="255" placeholder="https://linkedin.com/in/...">
           </label>
-          <label for="reg-instagram">Instagram (opcional)
+          <label for="reg-instagram">Instagram
             <input type="text" id="reg-instagram" maxlength="31" placeholder="@usuario">
           </label>
-          <label for="reg-education">Escolaridade (opcional)
+          <label for="reg-education">Escolaridade
             <input type="text" id="reg-education" maxlength="120">
           </label>
-          <label for="reg-interests">Assuntos de interesse (opcional)
+          <label for="reg-interests">Assuntos de interesse
             <textarea id="reg-interests" maxlength="500"></textarea>
           </label>
-          <label for="reg-password">Senha (mínimo 8 caracteres)
-            <input type="password" id="reg-password" autocomplete="new-password" required minlength="8">
-          </label>
-          <label for="reg-validation">Validação da conta
-            <select id="reg-validation">
-              <option value="email">E-mail</option>
-              <option value="sms" disabled>SMS (indisponível na V1)</option>
-            </select>
-          </label>
+          </details>
+          <input type="hidden" id="reg-validation" value="email">
 
           <!-- Versões dos documentos: mantidas em texto fixo aqui porque este
                é um site estático (sem template do servidor). Precisam ficar em
@@ -188,7 +197,7 @@
             <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> (versão 2026-10-08).</span>
           </label>
 
-          <button type="submit">Enviar cadastro</button>
+          <button type="submit">Criar conta</button>
         </form>
         <div id="msg-register" class="status-msg" role="alert" aria-live="polite"></div>
 
@@ -1004,7 +1013,6 @@
   <script src="modulos/shared/lia/lia-props.js" defer></script>
   <script src="modulos/shared/lia/lia-scenes.js" defer></script>
   <script src="modulos/shared/lia/lia.js" defer></script>
-  <script src="hero.js" defer></script>
   <script src="assistant-feedback.js" defer></script>
   <script src="assistant-research.js" defer></script>
   <script src="assistant-moderation.js" defer></script>
@@ -1022,5 +1030,6 @@
   <script src="blog-novidade.js" defer></script>
   <script src="voltar-app.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="entrada.js" defer></script>
 </body>
 </html>

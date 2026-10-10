@@ -8,7 +8,7 @@ Plano: `PLANO.md`. Contrato: `CONTRATO.md`. Fichas e ondas: `fichas/ORDEM.md`. C
 - `/liga` (identidade digital), `/processo-seletivo` (instruções + "Participar do processo seletivo"), `/edital` (novo, clicável, imprimível).
 - Barra pública (Voltar, Início, Blog, Entrar, Cadastrar) em Liga, processo, edital, blog e posts; atalhos `/#cadastro` e `/#entrar` no `app.js`.
 - Instituição UNINASSAU: prédio em SVG, endereço, site, mapa do OpenStreetMap **só por clique**, "abrir no app de mapas" (geo/Apple/Google).
-- Tela inicial: link "Blog: conheça a plataforma" e aviso "Nova publicação no blog" (`blog-novidade.js` lê `blog/index.json`).
+- Tela inicial: botão "Acessar blog" e aviso "Nova publicação no blog" com miniatura e laço rosa discreto (`blog-novidade.js` lê `blog/index.json`).
 - Botão Voltar no canto superior esquerdo em 17 painéis do app (`voltar-app.js`), no "← Voltar" do visualizador de módulos, no cadastro, no "Esqueci" e no 404.
 - Favicon e ícones (`/favicon.ico` gerado no build) nas páginas públicas; blog instalável (`blog/manifest.webmanifest`, `blog-sw.js`, `blog/instalar.js`, botão "Instalar o blog" e passo a passo no iPhone).
 - Posts do blog ajustados (8 áreas; processo seletivo aponta para as novas páginas); `llms.txt` e `sitemap.xml` com as páginas novas.
@@ -27,7 +27,7 @@ Plano: `PLANO.md`. Contrato: `CONTRATO.md`. Fichas e ondas: `fichas/ORDEM.md`. C
 - Depois do deploy, conferir: `curl -I https://laift.com.br/favicon.ico`, `/blog-sw.js` (cabeçalho de cache curto), `/blog/manifest.webmanifest` (tipo `application/manifest+json`), `/processo-seletivo` e `/edital` com 200.
 
 ## 4. Ainda aberto
-**Do dono (PLANO §4):** texto do novo edital (a redação veio do edital antigo e de `CONTRATO §11`); endereço (o edital antigo e o Google Forms dizem "Campus Pituba, CEP 41810-205"); as 8 áreas (5 do dono + 3 propostas) e atualizar o Forms; a frase incompleta do botão do blog; benefícios; idade/menores (parecer jurídico); vagas, datas, carga horária e pesos (hoje "a divulgar" em `liga-ciclo.json`); citar o mapa do OpenStreetMap na Política de Privacidade; nome "Blog LAIFT" do app.
+**Do dono (PLANO §4):** texto do novo edital (a redação veio do edital antigo e de `CONTRATO §11`); endereço **resolvido**: Rua dos Maçons, 364, Salvador-Bahia, CEP 41810-205 (fonte: OpenStreetMap way 814860088 e ViaCEP; o Google Forms ainda diz "Campus Pituba", ver CONTINUIDADE §4); as 8 áreas (5 do dono + 3 propostas) e atualizar o Forms; a frase incompleta do botão do blog; benefícios; idade/menores (parecer jurídico); vagas, datas, carga horária e pesos (hoje "a divulgar" em `liga-ciclo.json`); citar o mapa do OpenStreetMap na Política de Privacidade; nome "Blog LAIFT" do app.
 **Técnico (recomendações do Opus ainda não feitas):**
 - `static-page.js`: no `/liga`, cada chip de atalho cria uma entrada de histórico; o Voltar passa por todas. Contar os `hashchange` e usar `history.go(-(n+1))`.
 - `liga.css` tem 844 linhas (acima do teto suave de 800): dividir em `liga.css` + `liga-instituicao.css` na próxima mexida.

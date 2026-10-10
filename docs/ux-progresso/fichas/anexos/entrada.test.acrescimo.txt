@@ -1,0 +1,48 @@
+
+// docs/ux-progresso/CONTRATO.md §6: hierarquia do login, cadastro em grupos e entrada.js.
+function telaDeCadastro() {
+  const inicio = HTML.indexOf('<section id="screen-register"');
+  assert.ok(inicio >= 0, '<section id="screen-register" não encontrado');
+  return HTML.slice(inicio, HTML.indexOf('</section>', inicio));
+}
+
+test('login: "Mostrar senha" e "Esqueci minha senha" junto da senha; "Criar conta" é botão secundário depois do Entrar', () => {
+  const tela = telaDeEntrada();
+  const senha = tela.indexOf('id="login-password"');
+  const mostrar = tela.indexOf('<input type="checkbox" id="login-mostrar" data-senha-visivel="login-password">');
+  const esqueci = tela.indexOf('<button type="button" class="link-btn auth-esqueci" data-nav="screen-forgot">Esqueci minha senha</button>');
+  const entrar = tela.indexOf('<button type="submit">Entrar</button>');
+  const criar = tela.indexOf('<button type="button" class="secondary auth-criar__botao" data-nav="screen-register">Criar conta</button>');
+  assert.ok(senha > 0 && mostrar > senha && esqueci > mostrar && entrar > esqueci, 'ordem: senha, Mostrar senha, Esqueci, Entrar');
+  assert.ok(criar > entrar && tela.includes('<p class="auth-criar__texto">Primeira vez aqui?</p>'), '"Primeira vez aqui?" e "Criar conta" depois do Entrar');
+  assert.ok(!tela.includes('class="auth-links"'), 'sobrou a fila de links soltos no login');
+});
+
+test('cadastro: "Seus dados" e "Senha" à vista; o opcional recolhido; sem SMS, sem asterisco', () => {
+  const tela = telaDeCadastro();
+  assert.ok(tela.indexOf('<legend>Seus dados</legend>') > 0 && tela.indexOf('<legend>Senha</legend>') > tela.indexOf('<legend>Seus dados</legend>'));
+  const det = tela.slice(tela.indexOf('<details class="cadastro-opcional">'), tela.indexOf('</details>'));
+  assert.ok(det.includes('<summary>Completar perfil (opcional)</summary>'), 'faltou o resumo "Completar perfil (opcional)"');
+  for (const id of ['reg-avatar-input', 'reg-linkedin', 'reg-instagram', 'reg-education', 'reg-interests']) assert.ok(det.includes(`id="${id}"`), `${id} fora do grupo opcional`);
+  for (const id of ['reg-name', 'reg-username', 'reg-email', 'reg-phone', 'reg-password']) assert.ok(!det.includes(`id="${id}"`), `${id} não pode ficar recolhido`);
+  assert.ok(tela.includes('<input type="hidden" id="reg-validation" value="email">') && !tela.includes('<select id="reg-validation"') && !tela.includes('SMS'));
+  assert.ok(!/<label for="reg-[a-z]+">\*/.test(tela) && tela.split('(opcional)').length === 2, 'sem asterisco e sem "(opcional)" campo a campo');
+  assert.ok(tela.includes('<button type="submit">Criar conta</button>'));
+});
+
+test('entrada.js: cabeçalho, script clássico, sem HTML em texto, publicado no build e no cache offline', () => {
+  const js = read('entrada.js');
+  assert.ok(js.replace(/\r\n/g, '\n').startsWith('/*\n * Plataforma de Membros LAIFT\n'), 'falta o cabeçalho de copyright');
+  assert.ok(!/\bimport\s|\bexport\s/.test(js) && !/innerHTML|outerHTML|insertAdjacentHTML|document\.write|\.style\./.test(js));
+  assert.ok(/data-senha-visivel/.test(js) && /focus\(\{ preventScroll: true \}\)/.test(js), 'mostra a senha e leva o foco ao título');
+  assert.ok(HTML.includes('<script src="app.js" defer></script>\n  <script src="entrada.js" defer></script>'), 'entrada.js logo depois de app.js');
+  assert.ok(read('scripts/build.js').includes("'entrada.js'") && read('sw.js').includes("'entrada.js'"));
+});
+
+test('ux.css: campos públicos com 16 px e alvos de 44 px no "Mostrar senha" e no "Esqueci"', () => {
+  const ux = read('ux.css');
+  assert.ok(ux.includes('#public-shell :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) { font-size: 1rem; }'));
+  assert.ok(regraCss(ux, '.auth-mostrar').includes('min-height: 44px'));
+  assert.ok(regraCss(ux, '.auth-esqueci').includes('min-height: 44px'));
+  assert.ok(regraCss(ux, '.auth-criar__botao').includes('width: 100%'));
+});

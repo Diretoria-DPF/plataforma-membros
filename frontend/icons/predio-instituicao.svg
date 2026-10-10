@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 360" width="320" height="360">
 <!-- Plataforma de Membros LAIFT · © 2026 Daniel Pires Francisco -->
 <title>Prédio da UNINASSAU</title>
-<desc>Ilustração de um prédio de quatro andares com a placa UNINASSAU e o número 358 na entrada.</desc>
+<desc>Ilustração de um prédio com a placa UNINASSAU e o número 364 na entrada.</desc>
 <circle cx="160" cy="190" r="150" fill="#e1f4f0"/>
 <rect x="80" y="82" width="46" height="12" rx="6" fill="#ffffff"/>
 <circle cx="96" cy="82" r="10" fill="#ffffff"/>
@@ -50,7 +50,7 @@
 <rect x="154" y="288" width="3" height="9" rx="1.5" fill="#e4e1d8"/>
 <rect x="163" y="288" width="3" height="9" rx="1.5" fill="#e4e1d8"/>
 <rect x="198" y="282" width="26" height="16" rx="3" fill="#ffc857" stroke="#1c2333" stroke-width="2"/>
-<text x="211" y="294" font-family="Segoe UI, system-ui, -apple-system, Roboto, sans-serif" font-size="11" font-weight="700" fill="#1c2333" text-anchor="middle">358</text>
+<text x="211" y="294" font-family="Segoe UI, system-ui, -apple-system, Roboto, sans-serif" font-size="11" font-weight="700" fill="#1c2333" text-anchor="middle">364</text>
 <rect x="126" y="306" width="68" height="5" rx="2" fill="#e4e1d8" stroke="#1c2333" stroke-width="2"/>
 <rect x="118" y="311" width="84" height="5" rx="2" fill="#e4e1d8" stroke="#1c2333" stroke-width="2"/>
 <rect x="66" y="316" width="188" height="9" rx="4" fill="#e4e1d8" stroke="#1c2333" stroke-width="2"/>
