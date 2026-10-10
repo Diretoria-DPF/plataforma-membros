@@ -3,6 +3,7 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
+import { LIBRARY_RATE_LIMITS } from './library/limits.js';
 /**
  * constants.js
  * Espelha exatamente src/Constants.gs (Apps Script). Os valores de enum
@@ -482,3 +483,6 @@ Object.assign(MODERATION, {
 Object.assign(MODERATION, {
   DECAY_BATCH_SIZE: 500,
 });
+
+// Biblioteca LAIFT: limites de taxa definidos em library/limits.js
+Object.assign(RATE_LIMITS, LIBRARY_RATE_LIMITS);

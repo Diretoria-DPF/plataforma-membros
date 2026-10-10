@@ -53,6 +53,10 @@ import * as AssistantModeration from './assistant/moderationGate.js';
 // PR 3.2 (Onda 3) — proxy RCSB/PubChem do modo Moléculas do Atlas 3D
 import * as AtlasMoleculeService from './services/atlasMoleculeService.js';
 import * as AtlasTelemetryService from './services/atlasTelemetryService.js';
+// Biblioteca LAIFT (docs/cortex/CONTRATO-B1.md)
+import * as LibraryService from './services/libraryService.js';
+import * as LibraryCuration from './services/libraryCurationService.js';
+import * as LibraryAdmin from './services/libraryAdminService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -268,4 +272,26 @@ export const API_REGISTRY = {
   apiLearnAtlasPdb: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPdb(asInput(input))),
   apiLearnAtlasPubchem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, () => AtlasMoleculeService.getPubchem(asInput(input))),
   apiAdminLearnReviewCase: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => ClinicalService.reviewCase(sql, env, identity, input || {}, cid)),
+  // ---- Biblioteca LAIFT (docs/cortex/CONTRATO-B1.md §4). O catálogo público não tem sessão: só o build o consome. ----
+  apiLearnLibraryPublicCatalog: (sql, env) => run(sql, () => LibraryService.publicCatalog(sql, env)),
+  apiLearnLibrarySearch: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryService.search(sql, identity, asInput(input))),
+  apiLearnLibraryGetArticle: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryService.getArticle(sql, identity, asInput(input))),
+  apiLearnLibrarySetFavorite: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryService.setFavorite(sql, identity, asInput(input))),
+  apiLearnLibraryListFavorites: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryService.listFavorites(sql, identity, asInput(input))),
+  apiLearnLibraryListCollections: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LibraryService.listCollections(sql, identity)),
+  apiLearnLibraryGetCollection: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryService.getCollection(sql, identity, asInput(input))),
+  apiLearnLibrarySuggest: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryService.suggest(sql, env, identity, asInput(input), cid)),
+  apiAdminLearnLibraryImport: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.importArticle(sql, env, identity, asInput(input), cid)),
+  apiAdminLearnLibraryListQueue: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryCuration.listQueue(sql, identity, asInput(input))),
+  apiAdminLearnLibraryGetArticle: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryCuration.getAdminArticle(sql, identity, asInput(input))),
+  apiAdminLearnLibraryUpdateArticle: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.updateArticle(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibrarySetStatus: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.setStatus(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryClinicalReview: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.clinicalReview(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryListSuggestions: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listSuggestions(sql, identity, asInput(input))),
+  apiAdminLearnLibraryDecideSuggestion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.decideSuggestion(sql, env, identity, asInput(input), cid)),
+  apiAdminLearnLibraryListCollections: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listCollections(sql, identity)),
+  apiAdminLearnLibrarySaveCollection: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.saveCollection(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibrarySaveTopic: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.saveTopic(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryListStaff: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listStaff(sql, identity)),
+  apiAdminLearnLibrarySetStaff: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.setStaff(sql, identity, asInput(input), cid)),
 };
