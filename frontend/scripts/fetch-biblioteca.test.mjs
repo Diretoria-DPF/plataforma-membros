@@ -159,7 +159,7 @@ test('o pedido é só a action pública, sem credencial e sem cookie', async () 
 });
 
 test('reserva.json tem exatamente o conteúdo vazio desligado da versão 1', () => {
-  const texto = fs.readFileSync(reservaPath, 'utf8');
+  const texto = fs.readFileSync(reservaPath, 'utf8').replace(/\r\n/g, '\n');
   assert.equal(
     texto,
     '{"versao":1,"enabled":false,"generatedAt":"2026-10-10T00:00:00Z","topics":[],"items":[]}\n',

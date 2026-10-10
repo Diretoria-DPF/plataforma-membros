@@ -273,5 +273,5 @@ test('typeLabel e licenseLabel devolvem rótulo ou string vazia para chave desco
 test('arquivo sem DOM: nenhum innerHTML, outerHTML ou insertAdjacentHTML', () => {
   const src = read('library-cite.js');
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML/.test(src));
-  assert.ok(src.startsWith('/*\n * Plataforma de Membros LAIFT\n'));
+  assert.ok(src.replace(/\r\n/g, '\n').startsWith('/*\n * Plataforma de Membros LAIFT\n'));
 });
