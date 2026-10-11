@@ -34,6 +34,7 @@ function makeNode(tag) {
     removeAttribute(key) { delete node.attrs[key]; },
     addEventListener(type, fn) { (node.listeners[type] = node.listeners[type] || []).push(fn); },
     focus() { doc.activeElement = node; },
+    querySelector(selector) { return findAll(node, (n) => n.attrs.id === selector.replace(/^#/, ''))[0] || null; },
     contains(target) { return node === target || node.children.some((child) => child.contains && child.contains(target)); },
   };
   Object.defineProperty(node, 'innerHTML', { set() { throw new Error('innerHTML proibido'); }, get() { return ''; } });
@@ -153,6 +154,11 @@ const QUEUE = {
   topics: TOPICS, page: 1, total: 1,
 };
 const articleRes = (extra = {}) => Object.assign({ success: true, article: ARTICLE, allowedTransitions: ['aprovado', 'rejeitado'], favoriteCount: 0 }, extra);
+const CLINICAL_ARTICLE = Object.assign({}, ARTICLE, { isClinical: true, summaryText: 'Dose de 500 mg ao dia.' });
+const CLINICAL_ID = 'adm-lib-clinico';
+const REASON_ID = 'adm-lib-motivo-clinico';
+const REASON_LABEL = 'Motivo para desmarcar (3 a 300 caracteres)';
+const SERVER_CLINICAL_MSG = 'Este resumo fala de conduta, dose ou interação: precisa de revisor clínico. Para desmarcar, informe o motivo (3 a 300 caracteres).';
 
 beforeEach(() => {
   Lib.reset();
@@ -390,6 +396,80 @@ test('rejeitar com motivo curto não chama a API; com motivo válido confirma e 
   const sent = calls[calls.length - 1];
   assert.equal(sent.name, 'apiAdminLearnLibrarySetStatus');
   assert.deepEqual(sent.input, { id: ID, version: 4, to: 'rejeitado', reason: 'Duplicado de outro cadastro' });
+});
+
+// ---------- Desmarcar "clínico" pede motivo ----------
+
+/** Marca ou desmarca a caixa, como o navegador dispara o evento change. */
+function check(node, checked) {
+  node.checked = checked;
+  (node.listeners.change || []).forEach((fn) => fn({ target: node }));
+}
+
+async function openClinical() {
+  Lib.load(app);
+  lastPending().resolve(QUEUE);
+  await flush();
+  openFirst();
+  lastPending().resolve(articleRes({ article: CLINICAL_ARTICLE }));
+  await flush();
+}
+
+const lastSave = () => calls.filter((c) => c.name === 'apiAdminLearnLibraryUpdateArticle').pop();
+
+test('desmarcar "clínico" mostra o campo de motivo (label visível, 300 caracteres); some ao marcar de novo', async () => {
+  await openClinical();
+  assert.equal(byId(root(), REASON_ID), undefined);
+  check(byId(root(), CLINICAL_ID), false);
+  const field = byId(root(), REASON_ID);
+  assert.ok(field, 'campo de motivo aparece ao desmarcar');
+  assert.equal(field.tag, 'input');
+  assert.equal(field.attrs.maxlength, '300');
+  const label = byTag(root(), 'label').find((l) => l.attrs.for === REASON_ID);
+  assert.equal(textOf(label), REASON_LABEL);
+  check(byId(root(), CLINICAL_ID), true);
+  assert.equal(byId(root(), REASON_ID), undefined);
+});
+
+test('sem desmarcar "clínico", nenhum reason é enviado', async () => {
+  await openClinical();
+  type(byId(root(), 'adm-lib-title'), 'Efeitos da cafeína em adultos');
+  press(buttonNamed(root(), 'Salvar alterações'));
+  assert.deepEqual(lastSave().input, { id: ID, version: 4, fields: { title: 'Efeitos da cafeína em adultos' } });
+  assert.equal('reason' in lastSave().input, false);
+});
+
+test('desmarcar envia reason (aparado) junto de version e fields', async () => {
+  await openClinical();
+  check(byId(root(), CLINICAL_ID), false);
+  type(byId(root(), REASON_ID), '  Texto só descreve o estudo.  ');
+  press(buttonNamed(root(), 'Salvar alterações'));
+  assert.deepEqual(lastSave().input, {
+    id: ID, version: 4, fields: { isClinical: false }, reason: 'Texto só descreve o estudo.',
+  });
+});
+
+test('recusa por falta de motivo: a mensagem do servidor fica junto ao campo e o foco vai para ele', async () => {
+  await openClinical();
+  check(byId(root(), CLINICAL_ID), false);
+  press(buttonNamed(root(), 'Salvar alterações'));
+  assert.equal(lastSave().input.reason, undefined);
+  lastPending().resolve({ success: false, message: SERVER_CLINICAL_MSG });
+  await flush();
+  const field = byId(root(), REASON_ID);
+  assert.ok(field, 'o campo continua na tela');
+  assert.match(textOf(root()), /precisa de revisor clínico/);
+  assert.equal(doc.activeElement, field);
+});
+
+test('outra falha ao salvar (conflito de versão) segue no aviso geral com "Recarregar"', async () => {
+  await openClinical();
+  check(byId(root(), CLINICAL_ID), false);
+  press(buttonNamed(root(), 'Salvar alterações'));
+  lastPending().resolve({ success: false, message: 'Outra pessoa alterou este artigo. Recarregue para ver a versão nova.' });
+  await flush();
+  assert.ok(buttonNamed(root(), 'Recarregar'));
+  assert.match(textOf(root()), /Outra pessoa alterou/);
 });
 
 test('publicar: depois do sucesso o aviso diz que o catálogo público só muda quando o site for atualizado à mão', async () => {

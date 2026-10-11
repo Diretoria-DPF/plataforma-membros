@@ -30,6 +30,11 @@
   var SUMMARY_MAX = 1200;
   var REASON_MIN = 3;
   var REASON_MAX = 300;
+  var CLINICAL_CHECK_ID = 'adm-lib-clinico';
+  var CLINICAL_REASON_ID = 'adm-lib-motivo-clinico';
+  var CLINICAL_REASON_ERR_ID = 'adm-lib-motivo-clinico-erro';
+  var CLINICAL_REASON_LABEL = 'Motivo para desmarcar (3 a 300 caracteres)';
+  var CLINICAL_REFUSAL = /motivo/i;
   var TITLE_MAX = 500;
   var ERROR_FALLBACK = 'Não foi possível concluir. Tente de novo.';
   var IMPORT_BUSY = 'Consultando Crossref, Europe PMC e OpenAlex…';
@@ -106,6 +111,7 @@
       busy: null, notice: '', error: null, errorReload: false, focusId: '',
       importText: '', importError: null,
       reasonTo: null, reasonText: '', reasonError: '',
+      clinicalReason: '', clinicalReasonError: '',
     };
   }
 
@@ -125,6 +131,23 @@
   function reasonError(text) {
     var size = typeof text === 'string' ? text.trim().length : 0;
     return size >= REASON_MIN && size <= REASON_MAX ? '' : 'O motivo precisa ter de 3 a 300 caracteres.';
+  }
+
+  /** Desmarcar "clínico" (estava marcado ao abrir): o servidor pode exigir motivo. */
+  function unmarksClinical(base, draft) {
+    return !!base && base.isClinical === true && draft.isClinical === false;
+  }
+
+  /** O motivo só vai no envio com o campo visível (desmarcando) e preenchido; aparado. */
+  function reasonToSend(base, draft, text) {
+    if (!unmarksClinical(base, draft)) return null;
+    var value = typeof text === 'string' ? text.trim() : '';
+    return value || null;
+  }
+
+  /** Recusa do servidor por falta de motivo ao desmarcar (a mensagem cita o motivo). */
+  function isReasonRefusal(res) {
+    return !!res && res.success !== true && CLINICAL_REFUSAL.test(errorText(res));
   }
 
   /** Valores de edição no formato de UpdateArticle (year e type, não os nomes de coluna). */
@@ -259,6 +282,17 @@
     setDraft('topics', checked ? current.concat([slug]) : current);
   }
 
+  /** Marcar de novo limpa o motivo; desmarcar de novo mantém o que já foi digitado. */
+  function toggleClinical(checked) {
+    setUi({
+      draft: Object.assign({}, ui.draft, { isClinical: checked }),
+      clinicalReason: checked ? '' : ui.clinicalReason,
+      clinicalReasonError: '',
+      focusId: CLINICAL_CHECK_ID,
+    });
+    render();
+  }
+
   // ---------- Carregamentos e ações ----------
 
   function showError(res) {
@@ -283,6 +317,7 @@
     setUi({
       view: 'edit', articleId: id, busy: 'article', notice: notice || '', error: null, errorReload: false,
       article: ui.articleId === id ? ui.article : null, reasonTo: null, reasonText: '', reasonError: '',
+      clinicalReason: '', clinicalReasonError: '',
     });
     render();
     ask('apiAdminLearnLibraryGetArticle', { id: id }, function (res) {
@@ -342,12 +377,23 @@
       render();
       return;
     }
-    setUi({ busy: 'save', error: null, notice: '' });
+    var unmarking = unmarksClinical(ui.base, ui.draft);
+    var input = { id: article.id, version: article.version, fields: fields };
+    var reason = reasonToSend(ui.base, ui.draft, ui.clinicalReason);
+    if (reason) input.reason = reason;
+    setUi({ busy: 'save', error: null, notice: '', clinicalReasonError: '' });
     render();
-    ask('apiAdminLearnLibraryUpdateArticle', { id: article.id, version: article.version, fields: fields }, function (res) {
-      if (!res || res.success !== true) { showError(res); return; }
-      fetchArticle(String(article.id), SAVED_NOTICE);
+    ask('apiAdminLearnLibraryUpdateArticle', input, function (res) {
+      if (res && res.success === true) { fetchArticle(String(article.id), SAVED_NOTICE); return; }
+      if (unmarking && isReasonRefusal(res)) { reasonRefused(res); return; }
+      showError(res);
     });
+  }
+
+  /** A recusa por falta de motivo fica junto ao campo, que ganha o foco. */
+  function reasonRefused(res) {
+    setUi({ busy: null, error: null, errorReload: false, clinicalReasonError: errorText(res), focusId: CLINICAL_REASON_ID });
+    render();
   }
 
   function runTransition(to, reason) {
@@ -612,13 +658,28 @@
     return h('fieldset', null, [h('legend', null, ['Áreas (pelo menos uma para aprovar)'])].concat(body));
   }
 
+  function clinicalReasonField(draft) {
+    if (!unmarksClinical(ui.base, draft)) return null;
+    var error = ui.clinicalReasonError;
+    return h('div', null, [
+      h('label', { 'for': CLINICAL_REASON_ID }, [CLINICAL_REASON_LABEL]),
+      h('input', {
+        type: 'text', id: CLINICAL_REASON_ID, maxlength: REASON_MAX, value: ui.clinicalReason,
+        'aria-describedby': error ? CLINICAL_REASON_ERR_ID : null,
+        onInput: function (e) { setUi({ clinicalReason: e.target.value }); },
+      }),
+      error ? h('p', { role: 'alert', className: 'state-message', id: CLINICAL_REASON_ERR_ID }, [error]) : null,
+    ]);
+  }
+
   function clinicalField(draft) {
     return h('div', null, [
       h('input', {
-        type: 'checkbox', id: 'adm-lib-clinico', checked: draft.isClinical === true,
-        onChange: function (e) { setDraft('isClinical', e.target.checked); },
+        type: 'checkbox', id: CLINICAL_CHECK_ID, checked: draft.isClinical === true,
+        onChange: function (e) { toggleClinical(e.target.checked); },
       }),
-      h('label', { 'for': 'adm-lib-clinico' }, ['Contém conduta, dose ou interação (exige revisor clínico)']),
+      h('label', { 'for': CLINICAL_CHECK_ID }, ['Contém conduta, dose ou interação (exige revisor clínico)']),
+      clinicalReasonField(draft),
     ]);
   }
 
