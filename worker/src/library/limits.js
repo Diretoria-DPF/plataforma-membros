@@ -25,9 +25,17 @@ export const LIBRARY_RATE_LIMITS = Object.freeze({
   LIBRARY_FAVORITE: rate(120, SECOND_HOUR),
   LIBRARY_SUGGEST: rate(5, SECOND_HOUR),
   LIBRARY_SUGGEST_DAY: rate(15, SECONDS_DAY),
-  LIBRARY_IMPORT: rate(60, SECOND_HOUR),
-  LIBRARY_IMPORT_GLOBAL: rate(200, SECOND_HOUR),
+  // Lote de ~114 DOIs (B3): o front importa um por vez. Importação é só para
+  // curador/admin; cada cadastro faz até 6 chamadas em série às fontes, então
+  // 400/h no total ainda fica muito abaixo dos limites delas (contrato §6.7).
+  LIBRARY_IMPORT: rate(180, SECOND_HOUR),
+  LIBRARY_IMPORT_GLOBAL: rate(400, SECOND_HOUR),
   LIBRARY_CURATE: rate(300, SECOND_HOUR),
+  // Resumo por IA (B3): por curador e teto diário de chamadas ao modelo (todas
+  // as pessoas). 250 resumos/dia cabem nos 10.000 neurons gratuitos da
+  // Cloudflare com folga (custo estimado em docs/cortex/RUNBOOK-BIBLIOTECA.md).
+  LIBRARY_SUMMARY: rate(200, SECOND_HOUR),
+  LIBRARY_SUMMARY_DAY: rate(250, SECONDS_DAY),
 });
 
 const UPSTREAM_MAX_BYTES_MIB = 1;
@@ -50,6 +58,18 @@ export const LIBRARY_LIMITS = Object.freeze({
   IMPORT_BUDGET_MS: 20000,
   UPSTREAM_MAX_BYTES: UPSTREAM_MAX_BYTES_MIB * BYTES_PER_MIB,
   AUTHORS_STORED_MAX: 30,
+});
+
+// Resumo por IA (B3, summaryProvider.js). SOURCE_MIN_CHARS: abaixo disso o
+// resumo original é insuficiente e o modelo nem é chamado.
+export const LIBRARY_AI_LIMITS = Object.freeze({
+  SOURCE_MIN_CHARS: 200,
+  SUMMARY_MAX_CHARS: 900,
+  SENTENCES_MIN: 3,
+  SENTENCES_MAX: 5,
+  MAX_OUTPUT_TOKENS: 700,
+  TEMPERATURE: 0.2,
+  TIMEOUT_MS: 25000,
 });
 
 // Licenças que permitem reuso (as NC dependem da pergunta P3).

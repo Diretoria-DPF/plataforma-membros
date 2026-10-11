@@ -52,6 +52,11 @@ AI_KEY_STRATEGY = "round-robin"
 # podem mudar: conferir antes de ligar. A chave é o segredo NVIDIA_API_KEY.
 NVIDIA_MODEL_FAST = "nvidia/nemotron-3.5-lightning-30b-a3b"
 NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"
+# Biblioteca B3: modelo do resumo sugerido por IA (Workers AI, binding [ai]).
+# Conferido em developers.cloudflare.com/workers-ai/platform/pricing em
+# 2026-10-11: US$ 0,10/M tokens de entrada e 0,30/M de saída (9.091 e 27.273
+# neurons por milhão). Custo e teto diário: docs/cortex/RUNBOOK-BIBLIOTECA.md §7.
+LIBRARY_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o
@@ -130,3 +135,4 @@ GROQ_MODEL_SMART = "openai/gpt-oss-120b"
 AI_KEY_STRATEGY = "failover"
 NVIDIA_MODEL_FAST = "nvidia/nemotron-3.5-lightning-30b-a3b"
 NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"
+LIBRARY_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"

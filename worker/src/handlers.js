@@ -57,6 +57,7 @@ import * as AtlasTelemetryService from './services/atlasTelemetryService.js';
 import * as LibraryService from './services/libraryService.js';
 import * as LibraryCuration from './services/libraryCurationService.js';
 import * as LibraryAdmin from './services/libraryAdminService.js';
+import * as LibrarySummary from './services/librarySummaryService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -287,6 +288,8 @@ export const API_REGISTRY = {
   apiAdminLearnLibraryUpdateArticle: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.updateArticle(sql, identity, asInput(input), cid)),
   apiAdminLearnLibrarySetStatus: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.setStatus(sql, identity, asInput(input), cid)),
   apiAdminLearnLibraryClinicalReview: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.clinicalReview(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryGenerateSummary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibrarySummary.generateSummary(sql, env, identity, asInput(input), cid)),
+  apiAdminLearnLibraryReviewSummary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibrarySummary.reviewSummary(sql, identity, asInput(input), cid)),
   apiAdminLearnLibraryListSuggestions: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listSuggestions(sql, identity, asInput(input))),
   apiAdminLearnLibraryDecideSuggestion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.decideSuggestion(sql, env, identity, asInput(input), cid)),
   apiAdminLearnLibraryListCollections: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listCollections(sql, identity)),

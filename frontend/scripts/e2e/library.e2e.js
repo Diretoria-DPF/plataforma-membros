@@ -7,7 +7,8 @@
  * library.e2e.js — Biblioteca no painel do membro e na curadoria (CONTRATO-B2 §1, §3, §4, §6, §8),
  * sobre o BUILD (frontend/dist/). Cenários: (a) sem a flag library_enabled o grupo "Estudo" não
  * aparece no menu; (b) com a flag: busca, ficha, citação ABNT e Vancouver e favorito; (c) visitante
- * sem favoritos; (d) fila da curadoria no formato real; (e) 375 e 1280 px sem rolagem horizontal e axe.
+ * sem favoritos; (d) fila da curadoria no formato real; (e) 375 e 1280 px sem rolagem horizontal e axe;
+ * (f) lote da curadoria (B3): importar lista com pausa no limite do servidor, aprovar e publicar selecionados.
  */
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
@@ -239,6 +240,88 @@ async function filaDaCuradoria(viewport) {
   }
 }
 
+// (f) Lote: a fila traz um artigo com resumo de IA ainda não aprovado e um clínico.
+const LOTE_A = '55555555-5555-4555-8555-555555555555';
+const LOTE_CLINICO = '66666666-6666-4666-8666-666666666666';
+const FILA_LOTE = {
+  success: true,
+  counts: { em_triagem: 2, aprovado: 0, publicado: 0, rejeitado: 0, removido: 0 },
+  topics: TOPICOS,
+  page: 1,
+  total: 2,
+  items: [
+    { id: LOTE_A, title: 'Hepatotoxicidade do paracetamol', doi: '10.1000/lote1', pmid: null, pubYear: 2022, license: 'cc-by', licenseConflict: false, isClinical: false, clinicalReviewedAt: null, status: 'em_triagem', version: 2, topics: ['toxicologia'], summaryText: 'Resumo sugerido.', summaryOrigin: 'ia', summaryReviewedAt: null, sourceAbstract: 'Original.' },
+    { id: LOTE_CLINICO, title: 'Dose de acetilcisteína', doi: '10.1000/lote2', pmid: null, pubYear: 2021, license: 'cc-by', licenseConflict: false, isClinical: true, clinicalReviewedAt: null, status: 'em_triagem', version: 1, topics: ['toxicologia'], summaryText: 'Dose de 150 mg/kg.', summaryOrigin: 'ia', summaryReviewedAt: null, sourceAbstract: 'Original.' },
+  ],
+};
+const LIMITE = { success: false, message: 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.', code: 'rate_limited' };
+const DUPLICATA = { success: false, message: 'Este artigo já está na Biblioteca.', articleId: OUTRO_ID };
+
+/** Simula o Worker do lote: um identificador estoura o limite uma vez; os passos devolvem versão + 1. */
+function handlersDoLote() {
+  let limiteUsado = false;
+  const versaoSeguinte = (args) => ({ success: true, article: { id: args[1].id, version: args[1].version + 1, status: args[1].to || 'em_triagem' } });
+  return {
+    apiAdminLearnLibraryListQueue: () => FILA_LOTE,
+    apiAdminLearnLibraryImport: (args) => {
+      const id = args[1].identifier;
+      if (id === '10.1000/dup') return DUPLICATA;
+      if (id === '10.1000/limite' && !limiteUsado) { limiteUsado = true; return LIMITE; }
+      return { success: true, article: { id: ARTIGO_ID, version: 1 }, warnings: [] };
+    },
+    apiAdminLearnLibrarySetStatus: versaoSeguinte,
+    apiAdminLearnLibraryReviewSummary: versaoSeguinte,
+  };
+}
+
+async function textoDoLote(page) {
+  return page.textContent('#admin-library-root section[aria-labelledby="adm-lib-lote-titulo"]');
+}
+
+/** (f) Lote: importar lista (pausa e "Continuar") e aprovar e publicar selecionados (clínico fica de fora). */
+async function loteDaCuradoria(viewport) {
+  const rotulo = viewport.width < 600 ? '375x812' : '1280x900';
+  const app = await startApp({ role: 'admin', viewport, workerHandlers: handlersDoLote() });
+  try {
+    await app.login();
+    const page = app.page;
+    await page.click('#btn-enter-admin-mode');
+    await app.showPanel('panel-admin-library');
+    await page.waitForSelector('#adm-lib-lote-lista');
+    await page.fill('#adm-lib-lote-lista', ['10.1000/novo1', '10.1000/dup', '10.1000/limite'].join(String.fromCharCode(10)));
+    await page.click('#admin-library-root button:has-text("Importar")');
+    const continuar = page.locator('#admin-library-root button', { hasText: /^Continuar$/ });
+    check(await esperar(async () => (await continuar.count()) === 1), `${rotulo} lote: pausa no limite do servidor com "Continuar"`);
+    check((await textoDoLote(page)).includes('limite de importações por hora'), `${rotulo} lote: a pausa explica o limite`);
+    await continuar.click();
+    check(await esperar(async () => (await textoDoLote(page)).includes('Concluído')), `${rotulo} lote: a importação termina depois de "Continuar"`);
+    const resumo = await textoDoLote(page);
+    check(resumo.includes('3 de 3 processados') && resumo.includes('2 importados') && resumo.includes('1 já existia'), `${rotulo} lote: contagem com duplicata (${resumo.slice(0, 160)})`);
+    const importacoes = chamadas(app, 'apiAdminLearnLibraryImport').map((c) => c.args[1].identifier);
+    check(JSON.stringify(importacoes) === JSON.stringify(['10.1000/novo1', '10.1000/dup', '10.1000/limite', '10.1000/limite']), `${rotulo} lote: uma por vez, repetindo só a que pausou (${importacoes.join(', ')})`);
+
+    await page.waitForSelector(`#adm-lib-lote-sel-${LOTE_A}`);
+    await page.check(`#adm-lib-lote-sel-${LOTE_A}`);
+    await page.check(`#adm-lib-lote-sel-${LOTE_CLINICO}`);
+    await page.click('#admin-library-root button:has-text("Aprovar e publicar selecionados (2)")');
+    await page.click('#modal-confirm-ok');
+    check(await esperar(async () => (await textoDoLote(page)).includes('1 publicados')), `${rotulo} lote: um artigo publicado`);
+    const texto = await textoDoLote(page);
+    check(texto.includes('Dose de acetilcisteína: aguarda revisor clínico'), `${rotulo} lote: o clínico fica de fora com o motivo`);
+    const passos = app.calls.worker
+      .filter((c) => /SetStatus|ReviewSummary/.test(c.action))
+      .map((c) => `${c.action.replace('apiAdminLearnLibrary', '')}:${c.args[1].to || ''}:${c.args[1].version}`);
+    check(JSON.stringify(passos) === JSON.stringify(['SetStatus:aprovado:2', 'ReviewSummary::3', 'SetStatus:publicado:4']), `${rotulo} lote: aprovar → aprovar resumo de IA → publicar, com a versão de cada resposta (${passos.join(', ')})`);
+    check(!app.calls.worker.some((c) => c.args[1] && c.args[1].id === LOTE_CLINICO && /SetStatus|ReviewSummary/.test(c.action)), `${rotulo} lote: nada é enviado para o clínico`);
+    await checarSemRolagem(page, `${rotulo} lote`);
+    await checarAlvos(page, '#admin-library-root button', `${rotulo} lote`);
+    await axeGate(page, `admin/biblioteca ${rotulo} (lote)`);
+    check(app.errors.length === 0, `${rotulo} lote: sem erros de página (${app.errors.join('; ')})`);
+  } finally {
+    await app.close();
+  }
+}
+
 /** (e) Membro em 375 e 1280 px: lista e ficha sem rolagem horizontal, alvos e axe. */
 async function layoutDoMembro(viewport) {
   const rotulo = viewport.width < 600 ? '375x812' : '1280x900';
@@ -270,6 +353,8 @@ module.exports = async function library() {
   await visitanteSemFavoritos();
   await filaDaCuradoria(MOBILE);
   await filaDaCuradoria(DESKTOP);
+  await loteDaCuradoria(MOBILE);
+  await loteDaCuradoria(DESKTOP);
   await layoutDoMembro(MOBILE);
   await layoutDoMembro(DESKTOP);
 };

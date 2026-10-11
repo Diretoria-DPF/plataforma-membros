@@ -93,20 +93,26 @@ export function requireLibraryRole(sql, identity, role) {
   return requireAnyLibraryRole(sql, identity, [role]);
 }
 
-function enforce(sql, bucket, identifier) {
+/** Limite de taxa; o erro leva `code: 'rate_limited'` para a tela pausar um lote (B3). */
+export async function enforce(sql, bucket, identifier) {
   const limit = LIBRARY_RATE_LIMITS[bucket];
-  return S.enforceRateLimit(sql, bucket, identifier, limit.MAX_ATTEMPTS, limit.WINDOW_SECONDS);
+  try {
+    await S.enforceRateLimit(sql, bucket, identifier, limit.MAX_ATTEMPTS, limit.WINDOW_SECONDS);
+  } catch (err) {
+    if (err && err.name === 'RateLimitError') err.payload = { code: 'rate_limited' };
+    throw err;
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Entrada
 // ---------------------------------------------------------------------------
-function articleIdOf(value) {
+export function articleIdOf(value) {
   if (!isUuid(value)) throw E.ValidationError(MSG.invalidId);
   return value;
 }
 
-function versionOf(value) {
+export function versionOf(value) {
   const n = typeof value === 'string' && /^[0-9]+$/.test(value) ? Number(value) : value;
   if (!Number.isInteger(n) || n < 1 || n > 2147483647) throw E.ValidationError(MSG.invalidVersion);
   return n;
@@ -254,7 +260,7 @@ function mapColumns(row, allowed) {
 }
 
 /** O que a tela recebe (AdminArticle). */
-function toAdminArticle(row) {
+export function toAdminArticle(row) {
   return mapColumns(row, (column) => ADMIN_COLUMNS.has(column));
 }
 
@@ -271,30 +277,30 @@ function authorsOf(row) {
 // ---------------------------------------------------------------------------
 // Leitura e versão
 // ---------------------------------------------------------------------------
-async function loadArticle(sql, id) {
+export async function loadArticle(sql, id) {
   const rows = await sql`SELECT * FROM library_articles WHERE id = ${id}::uuid`;
   if (!rows.length) throw E.NotFoundError(MSG.notFound);
   return rows[0];
 }
 
 /** `payload.code` deixa a tela distinguir conflito de versão de outras falhas. */
-function versionConflict() {
+export function versionConflict() {
   const err = E.ConflictError(MSG.stale);
   err.payload = { code: 'version_conflict' };
   return err;
 }
 
-function assertVersion(row, version) {
+export function assertVersion(row, version) {
   if (row.version !== version) throw versionConflict();
 }
 
 /** Resultado de um UPDATE ... RETURNING: zero linhas = alguém mudou antes (versão ou estado). */
-function requireRow(rows) {
+export function requireRow(rows) {
   if (!rows.length) throw versionConflict();
   return rows[0];
 }
 
-const displayName = (identity) => {
+export const displayName = (identity) => {
   const name = typeof identity.fullName === 'string' ? identity.fullName.trim() : '';
   return name || FALLBACK_NAME;
 };
@@ -403,12 +409,19 @@ export async function getAdminArticle(sql, identity, input = {}) {
 const sameText = (a, b) => (a ?? '') === (b ?? '');
 const timeOf = (value) => new Date(value).getTime();
 
-/** Resumo: mudou? texto e origem finais. Quem edita é sempre o curador (origem 'curador'; IA é B3). */
+const AI_ORIGINS = ['ia', 'ia_editado'];
+
+/**
+ * Resumo: mudou? texto e origem finais. Quem edita é o curador: origem 'curador',
+ * exceto quando o texto anterior veio da IA (B3): aí vira 'ia_editado' e continua
+ * precisando da revisão registrada (decisão 11), que o UPDATE zera ao mudar o texto.
+ */
 function planSummary(cur, patch) {
   const given = Object.hasOwn(patch, 'summaryText');
   const text = given ? patch.summaryText : cur.summary_text;
   const changed = given && !sameText(patch.summaryText, cur.summary_text);
-  const origin = changed ? (text ? 'curador' : null) : cur.summary_origin;
+  const editedOrigin = AI_ORIGINS.includes(cur.summary_origin) ? 'ia_editado' : 'curador';
+  const origin = changed ? (text ? editedOrigin : null) : cur.summary_origin;
   return { text: text ?? null, origin: origin ?? null, changed };
 }
 
