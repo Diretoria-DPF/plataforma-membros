@@ -472,7 +472,7 @@ test('outra falha ao salvar (conflito de versão) segue no aviso geral com "Reca
   assert.match(textOf(root()), /Outra pessoa alterou/);
 });
 
-test('publicar: depois do sucesso o aviso diz que o catálogo público só muda quando o site for atualizado à mão', async () => {
+test('publicar: depois do sucesso o aviso diz que o artigo aparece em /biblioteca em até 1 minuto', async () => {
   Lib.load(app);
   lastPending().resolve(QUEUE);
   await flush();
@@ -487,7 +487,8 @@ test('publicar: depois do sucesso o aviso diz que o catálogo público só muda 
   await flush();
   lastPending().resolve(articleRes({ article: Object.assign({}, ARTICLE, { status: 'publicado' }), allowedTransitions: [] }));
   await flush();
-  assert.match(textOf(root()), /O catálogo público só muda quando o site for atualizado à mão/);
+  assert.match(textOf(root()), /O artigo aparece no catálogo público \(\/biblioteca\) em até 1 minuto/);
+  assert.doesNotMatch(textOf(root()), /Run workflow/);
 });
 
 // ---------- Ordem das respostas, reset e ligação ----------

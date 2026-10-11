@@ -10,8 +10,8 @@ name: Publicar front-end na Cloudflare (Workers static assets)
 # Antes de publicar, roda os testes unitários do front e os e2e "csp" e "smoke"
 # (um CSP quebrado ou um script externo não liberado BLOQUEIA a publicação).
 # Depois de publicar, tools/ci/smoke.mjs confere o site e a API do ambiente.
-# O catálogo público da Biblioteca (/biblioteca) é buscado no job de deploy; para
-# atualizá-lo depois de publicar artigos, rode este workflow à mão (sem schedule).
+# A página /biblioteca busca o catálogo AO VIVO na API (sem rebuild); o job de deploy só
+# grava o instantâneo da primeira pintura (SEO e reserva). Não há schedule.
 #
 # O ambiente do GitHub ("production" / "staging") permite exigir aprovação de uma
 # pessoa antes do deploy: Settings → Environments → production → Required reviewers.

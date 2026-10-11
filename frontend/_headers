@@ -53,7 +53,8 @@ https://:version.:name.:subdomain.workers.dev/*
   Cache-Control: public, max-age=300
 
 # Biblioteca LAIFT (/biblioteca, CONTRATO-B2 §2.1): mesmo esquema do blog. O índice
-# muda a cada atualização do catálogo (workflow_dispatch), por isso tem 5 min.
+# (instantâneo da primeira pintura) muda a cada deploy, por isso tem 5 min. O catálogo de verdade
+# chega ao vivo da API (biblioteca/catalogo.js; cache de 60 s no Worker).
 /biblioteca/*
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 

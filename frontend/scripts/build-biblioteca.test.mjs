@@ -21,6 +21,10 @@ const FRONTEND = path.join(AQUI, '..');
 const CSP_DO_BLOG = /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/.exec(
   fs.readFileSync(path.join(FRONTEND, 'blog.html'), 'utf8'),
 )[1];
+// A página fala com a API ao vivo: o connect-src é o do blog mais só as origens de produção e homologação.
+const CONNECT_DA_BIBLIOTECA = "connect-src 'self' https://api.laift.com.br https://staging-api.laift.com.br";
+const CSP_DA_BIBLIOTECA = CSP_DO_BLOG.replace("connect-src 'self'", CONNECT_DA_BIBLIOTECA);
+const NOINDEX = '<meta name="robots" content="noindex">';
 const RESERVA_DESLIGADA = { versao: 1, enabled: false, generatedAt: '2026-10-10T00:00:00Z', topics: [], items: [] };
 
 function tmp(nome) {
@@ -82,13 +86,45 @@ const lerHtml = (r) => fs.readFileSync(path.join(r.outDir, 'biblioteca.html'), '
 const lerIndex = (r) => JSON.parse(fs.readFileSync(path.join(r.outDir, 'biblioteca', 'index.json'), 'utf8'));
 const lerJsonLd = (html) => JSON.parse(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)[1]);
 
-test('reserva desligada não gera página, índice nem URL no sitemap', () => {
+test('reserva desligada ainda gera a página (vazia, noindex), mas fora do sitemap e do llms.txt', () => {
   const r = gerar({ reserva: RESERVA_DESLIGADA });
-  assert.equal(r.gerada, false);
+  assert.equal(r.gerada, true);
+  assert.equal(r.indexavel, false);
   assert.equal(r.itens, 0);
-  assert.equal(fs.existsSync(path.join(r.outDir, 'biblioteca.html')), false);
-  assert.equal(fs.existsSync(path.join(r.outDir, 'biblioteca', 'index.json')), false);
+  const html = lerHtml(r);
+  assert.ok(html.includes(NOINDEX), 'falta o noindex');
+  assert.ok(html.includes('Nenhum artigo publicado ainda.'));
+  assert.equal((html.match(/id="a-/g) || []).length, 0);
+  assert.deepEqual(lerIndex(r).items, []);
+  assert.ok(fs.existsSync(path.join(r.outDir, 'biblioteca', 'catalogo.js')));
   assert.doesNotMatch(fs.readFileSync(path.join(r.outDir, 'sitemap.xml'), 'utf8'), /\/biblioteca/);
+  assert.doesNotMatch(fs.readFileSync(path.join(r.outDir, 'llms.txt'), 'utf8'), /\/biblioteca/);
+});
+
+test('catálogo ligado e vazio gera a página com noindex; com itens, sem noindex', () => {
+  const vazio = gerar({ reserva: catalogo([]) });
+  assert.equal(vazio.gerada, true);
+  assert.equal(vazio.indexavel, false);
+  assert.ok(lerHtml(vazio).includes(NOINDEX));
+  const cheio = gerar({ reserva: catalogo([artigo()]) });
+  assert.equal(cheio.indexavel, true);
+  assert.equal(lerHtml(cheio).includes(NOINDEX), false);
+  assert.equal(lerHtml(cheio).includes('biblioteca:robots'), false);
+});
+
+test('ligado com todos os itens inválidos: página vazia com noindex e aviso', () => {
+  const r = gerar({ reserva: catalogo([artigo({ landingUrl: 'https://evil.example/x' })]) });
+  assert.equal(r.gerada, true);
+  assert.equal(r.itens, 0);
+  assert.ok(lerHtml(r).includes(NOINDEX));
+  assert.ok(r.avisos.some((a) => a.includes('nenhum item válido')));
+});
+
+test('CSP: connect-src só com a própria origem e as APIs de produção e homologação', () => {
+  const r = gerar({ reserva: catalogo([artigo()]) });
+  const csp = /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/.exec(lerHtml(r))[1];
+  const connect = csp.split(';').map((d) => d.trim()).find((d) => d.startsWith('connect-src'));
+  assert.equal(connect, CONNECT_DA_BIBLIOTECA);
 });
 
 test('página com 3 itens: um h1, canonical, description, CSP do blog, og e JSON-LD válido', () => {
@@ -106,7 +142,7 @@ test('página com 3 itens: um h1, canonical, description, CSP do blog, og e JSON
   assert.ok(html.includes('<link rel="canonical" href="https://laift.com.br/biblioteca">'));
   const description = /<meta name="description" content="([^"]*)">/.exec(html)[1];
   assert.ok(description.length >= 70 && description.length <= 160, `description com ${description.length} caracteres`);
-  assert.ok(html.includes(`<meta http-equiv="Content-Security-Policy" content="${CSP_DO_BLOG}">`));
+  assert.ok(html.includes(`<meta http-equiv="Content-Security-Policy" content="${CSP_DA_BIBLIOTECA}">`));
   assert.match(html, /<meta property="og:title" content="[^"]+">/);
   assert.match(html, /<meta property="og:image" content="https:\/\/laift\.com\.br\/blog\/og-default\.jpg">/);
   const jsonld = lerJsonLd(html);
@@ -182,14 +218,15 @@ test('sitemap e llms.txt têm uma entrada mesmo rodando duas vezes', () => {
   assert.match(llms, /## Observações/);
 });
 
-test('desligar depois de ligar tira a URL do sitemap e do llms.txt', () => {
+test('desligar depois de ligar tira a URL do sitemap e do llms.txt e põe noindex', () => {
   const r = gerar({ reserva: catalogo([artigo()]) });
   escrever(r.srcDir, 'reserva.json', RESERVA_DESLIGADA);
   const segunda = gerador.build({ outDir: r.outDir, srcDir: r.srcDir, catalogo: r.catalogoFile });
-  assert.equal(segunda.gerada, false);
+  assert.equal(segunda.gerada, true);
+  assert.equal(segunda.indexavel, false);
   assert.doesNotMatch(fs.readFileSync(path.join(r.outDir, 'sitemap.xml'), 'utf8'), /\/biblioteca/);
   assert.doesNotMatch(fs.readFileSync(path.join(r.outDir, 'llms.txt'), 'utf8'), /\/biblioteca/);
-  assert.equal(fs.existsSync(path.join(r.outDir, 'biblioteca.html')), false);
+  assert.ok(lerHtml(r).includes(NOINDEX));
 });
 
 test('index.json com 150 itens fictícios fica até 80 KB', () => {
@@ -252,11 +289,21 @@ test('copia biblioteca/catalogo.js para dist/biblioteca/', () => {
   assert.equal(fs.readFileSync(path.join(r.outDir, 'biblioteca', 'catalogo.js'), 'utf8'), '// catalogo de teste\n');
 });
 
+test('o mesmo catálogo vindo ao vivo da API dá os mesmos itens e áreas do index.json (a tela não é refeita)', () => {
+  const bruto = catalogo([artigo(), artigo({ id: 'a2', landingUrl: 'https://pubmed.ncbi.nlm.nih.gov/9/', authors: [] })]);
+  const indice = lerIndex(gerar({ reserva: bruto }));
+  const vivo = require('../biblioteca/catalogo.js').lerCatalogoAoVivo({ success: true, ...bruto });
+  assert.deepEqual(vivo.items, indice.items);
+  assert.deepEqual(vivo.topics, indice.topics);
+});
+
 test('pasta de conteúdo ausente não derruba o build', () => {
   const base = tmp('ausente');
   const outDir = path.join(base, 'dist');
   fs.mkdirSync(outDir, { recursive: true });
   const r = gerador.build({ outDir, srcDir: path.join(base, 'nao-existe') });
-  assert.equal(r.gerada, false);
+  assert.equal(r.gerada, true);
+  assert.equal(r.indexavel, false);
+  assert.equal(r.itens, 0);
   assert.ok(r.avisos.length > 0);
 });

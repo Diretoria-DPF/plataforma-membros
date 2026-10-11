@@ -111,10 +111,12 @@ fs.cpSync(path.join(ROOT, 'blog'), path.join(DIST, 'blog'), { recursive: true, f
 require('./build-blog.js').build({ outDir: DIST });
 
 // Biblioteca LAIFT (/biblioteca, CONTRATO-B2 §2.1): recente.json (CI) ou reserva.json; item inválido vira aviso,
-// nunca derruba o build. Desligada ou vazia: não gera a página e tira a URL do sitemap. biblioteca/conteudo/ não é copiada.
+// nunca derruba o build. A página sai sempre (o catálogo chega ao vivo pela API); sem artigos no instantâneo
+// ela leva noindex e fica fora do sitemap e do llms.txt. biblioteca/conteudo/ não é copiada.
 const biblioteca = require('./build-biblioteca.js').build({ outDir: DIST });
 biblioteca.avisos.forEach((aviso) => console.warn(`[biblioteca] ${aviso}`));
-console.log(`[biblioteca] página ${biblioteca.gerada ? `gerada com ${biblioteca.itens} artigo(s)` : 'não gerada (desligada ou sem itens)'}.`);
+const estadoBiblioteca = biblioteca.indexavel ? 'indexável' : 'sem artigos no instantâneo, noindex';
+console.log(`[biblioteca] página ${biblioteca.gerada ? `gerada com ${biblioteca.itens} artigo(s) (${estadoBiblioteca})` : 'não gerada (erro no gerador)'}.`);
 
 // Modelos 3D também em .glb.gz (PR 3.1, meta de boot < 10 s em Fast 3G):
 // o GitHub Pages não comprime .glb, e o gzip tira ~43% do esqueleto. O atlas
