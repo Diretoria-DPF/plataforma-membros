@@ -110,6 +110,13 @@ describe('029_library.sql — SQL real (PGlite com as migrações)', () => {
       await bad({ doi: "'10.1234/ab c'" });
     });
 
+    test('recusa DOI com segmento vazio, "." ou ".." (escape de caminho nas fontes)', async () => {
+      for (const doi of ['10.1234/../../funders', '10.1234/..', '10.1234/.', '10.1234/a/./b', '10.1234/a//b', '10.1234//a', '10.1234/a/']) {
+        await bad({ doi: `'${doi}'` });
+      }
+      await ok({ doi: "'10.1234/a.b/c..d/.e'" });
+    });
+
     test('exige DOI ou PMID', async () => {
       await bad({ doi: undefined, pmid: undefined });
       await ok({ doi: undefined, pmid: "'123456'" });
@@ -293,6 +300,8 @@ describe('029_library.sql — SQL real (PGlite com as migrações)', () => {
       await expect(ins('doi', '10.1000/sug1')).resolves.toBeDefined();
       await expect(ins('doi', '10.1000/sug1')).rejects.toThrow();
       await expect(ins('doi', '10.1000/SUG2')).rejects.toThrow();
+      await expect(ins('doi', '10.1000/../../funders')).rejects.toThrow();
+      await expect(ins('doi', '10.1000/a//b')).rejects.toThrow();
       await expect(ins('pmid', '12345')).resolves.toBeDefined();
       await expect(ins('pmid', '0123')).rejects.toThrow();
       await expect(ins('isbn', '12345')).rejects.toThrow();

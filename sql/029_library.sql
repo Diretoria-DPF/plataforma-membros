@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS library_articles (
   CONSTRAINT library_articles_doi_unique UNIQUE (doi),
   CONSTRAINT library_articles_pmid_unique UNIQUE (pmid),
   CONSTRAINT library_articles_id_chk CHECK (doi IS NOT NULL OR pmid IS NOT NULL),
-  CONSTRAINT library_articles_doi_chk CHECK (doi IS NULL OR (doi = lower(doi) AND char_length(doi) <= 200 AND doi ~ '^10\.[0-9]{4,9}/[-._;()/:a-z0-9]+$')),
+  CONSTRAINT library_articles_doi_chk CHECK (doi IS NULL OR (doi = lower(doi) AND char_length(doi) <= 200 AND doi ~ '^10\.[0-9]{4,9}/(?!\.{1,2}(?:/|$))[-._;():a-z0-9]+(?:/(?!\.{1,2}(?:/|$))[-._;():a-z0-9]+)*$')),
   CONSTRAINT library_articles_pmid_chk CHECK (pmid IS NULL OR pmid ~ '^[1-9][0-9]{0,9}$'),
   CONSTRAINT library_articles_pmcid_chk CHECK (pmcid IS NULL OR pmcid ~ '^PMC[0-9]{1,10}$'),
   CONSTRAINT library_articles_len CHECK (
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS library_suggestions (
   created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT library_suggestions_unique UNIQUE (profile_id, identifier_kind, identifier),
   CONSTRAINT library_suggestions_kind_chk CHECK (
-    (identifier_kind = 'doi' AND identifier = lower(identifier) AND char_length(identifier) <= 200 AND identifier ~ '^10\.[0-9]{4,9}/[-._;()/:a-z0-9]+$')
+    (identifier_kind = 'doi' AND identifier = lower(identifier) AND char_length(identifier) <= 200 AND identifier ~ '^10\.[0-9]{4,9}/(?!\.{1,2}(?:/|$))[-._;():a-z0-9]+(?:/(?!\.{1,2}(?:/|$))[-._;():a-z0-9]+)*$')
     OR (identifier_kind = 'pmid' AND identifier ~ '^[1-9][0-9]{0,9}$')),
   CONSTRAINT library_suggestions_status_chk CHECK (status IN ('sugerido', 'aceito', 'recusado', 'duplicado')),
   CONSTRAINT library_suggestions_decided_chk CHECK ((status = 'sugerido') = (decided_at IS NULL)),

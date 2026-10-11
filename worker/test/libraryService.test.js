@@ -517,6 +517,29 @@ describe('publicCatalog', () => {
     expect((await db.query("SELECT count(*)::int AS n FROM rate_limit_buckets WHERE bucket LIKE 'LIBRARY_PUBLIC%'")).rows[0].n).toBe(0);
   });
 
+  test('o cache guarda por 60 s no máximo (janela de remoção de artigo)', async () => {
+    await addArticle();
+    const heads = [];
+    const cache = {
+      match: async () => undefined,
+      put: async (_key, res) => { heads.push(res.headers.get('Cache-Control')); },
+    };
+    await Lib.publicCatalog(sql, env, { cache });
+    expect(heads).toEqual(['public, max-age=60']);
+  });
+
+  test('flag fechada depois do cache aquecido: não serve do cache nem grava nele', async () => {
+    await addArticle({ title: 'Já cacheado' });
+    const cache = fakeCache();
+    const open = await Lib.publicCatalog(sql, env, { cache });
+    expect(open.items).toHaveLength(1);
+    await setFlag('library_enabled', false);
+    const closed = await Lib.publicCatalog(sql, env, { cache });
+    expect(closed).toEqual({ success: true, enabled: false, topics: [], items: [] });
+    expect(cache.store.size).toBe(1);
+    expect(JSON.stringify(closed)).not.toContain('Já cacheado');
+  });
+
   test('sem cache disponível aplica os dois limites (IP e global)', async () => {
     await addArticle();
     const res = await Lib.publicCatalog(sql, env, { cache: null });

@@ -25,7 +25,11 @@ import { searchNorm } from '../library/normalize.js';
 import { isUuid, parseIdentifier, pmcUrl } from '../library/identifiers.js';
 
 const CACHE_KEY = 'https://library-cache.internal/public-catalog/v1';
-const CACHE_TTL_SECONDS = 600;
+// Janela máxima de um artigo removido ou despublicado continuar no catálogo
+// público: CACHE_TTL_SECONDS (60 s). Flag fechada: a flag é lida antes do
+// cache (publicCatalog) e fica em memória por até FLAG_CACHE_TTL_MS (60 s,
+// featureFlagService), então o catálogo fecha em até ~60 s por instância.
+const CACHE_TTL_SECONDS = 60;
 const PAGE_SIZE_DEFAULT = 20;
 const PAGE_MAX = 100;
 const PUBLIC_AUTHORS_SHOWN = 3;
@@ -308,7 +312,12 @@ async function assertPublished(sql, id) {
   if (!rows.length) throw E.NotFoundError('Artigo não encontrado.');
 }
 
-/** Uma instrução só: o teto vale mesmo com duas abas favoritando ao mesmo tempo. */
+/**
+ * Uma instrução só, mas NÃO atômica quanto ao teto: em READ COMMITTED o
+ * count(*) de duas instruções paralelas não vê a linha da outra, então o
+ * total pode passar do teto por 1 ou 2. Quem contém o abuso é o limite de
+ * taxa (LIBRARY_RATE_LIMITS), não este WHERE.
+ */
 async function addFavorite(sql, profileId, id) {
   const max = LIBRARY_LIMITS.FAVORITES_MAX;
   const inserted = await sql`
@@ -403,7 +412,12 @@ function cleanNote(raw) {
   return text;
 }
 
-/** Uma instrução só: os dois tetos de pendentes valem mesmo com envios simultâneos. */
+/**
+ * Uma instrução só, mas NÃO atômica quanto aos dois tetos de pendentes: em
+ * READ COMMITTED, envios paralelos não veem as linhas uns dos outros e podem
+ * passar do teto por 1 ou 2. O limite de taxa (LIBRARY_SUGGEST_DAY) contém o
+ * abuso; a duplicata exata é barrada pelo UNIQUE (ON CONFLICT DO NOTHING).
+ */
 function insertSuggestion(sql, profileId, ident, note) {
   return sql`
     INSERT INTO library_suggestions (profile_id, identifier_kind, identifier, note)
@@ -495,11 +509,17 @@ async function buildCatalog(sql) {
   };
 }
 
+const CLOSED_CATALOG = Object.freeze({ success: true, enabled: false, topics: [], items: [] });
+
 /**
- * O cache vem primeiro e não toca o banco (enforceRateLimit grava no Neon a cada chamada).
- * Só sem cache utilizável é que valem os dois limites (por IP e global).
+ * A flag library_enabled vem ANTES do cache: fechada, nada é servido nem
+ * gravado no cache (a flag é lida da memória por até 60 s, sem tocar o banco
+ * a cada chamada). Aberta, o cache responde sem tocar o banco
+ * (enforceRateLimit grava no Neon a cada chamada); só sem cache utilizável
+ * valem os dois limites (por IP e global).
  */
 export async function publicCatalog(sql, env, options = {}) {
+  if (!(await flagOn(sql, null))) return { ...CLOSED_CATALOG };
   const cache = options.cache !== undefined ? options.cache : defaultCache();
   const cached = await cacheGet(cache);
   if (cached.payload) return cached.payload;
@@ -507,7 +527,6 @@ export async function publicCatalog(sql, env, options = {}) {
     await enforce(sql, 'LIBRARY_PUBLIC_IP', (env && env.clientIp) || 'unknown');
     await enforce(sql, 'LIBRARY_PUBLIC_GLOBAL', 'global');
   }
-  if (!(await flagOn(sql, null))) return { success: true, enabled: false, topics: [], items: [] };
   const payload = await buildCatalog(sql);
   await cachePut(cache, payload);
   return payload;

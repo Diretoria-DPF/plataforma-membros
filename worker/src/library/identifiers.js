@@ -11,7 +11,10 @@
  */
 import { ValidationError } from '../errors.js';
 
-export const DOI_RE = /^10\.[0-9]{4,9}\/[-._;()/:a-z0-9]+$/;
+// Cada segmento depois do "/" não pode ser vazio, "." nem "..": o DOI vai para
+// o caminho de 5 hosts e "10.1234/../../funders" sairia do prefixo /works/.
+// A mesma expressão está nos CHECKs de sql/029_library.sql.
+export const DOI_RE = /^10\.[0-9]{4,9}\/(?!\.{1,2}(?:\/|$))[-._;():a-z0-9]+(?:\/(?!\.{1,2}(?:\/|$))[-._;():a-z0-9]+)*$/;
 export const PMID_RE = /^[1-9][0-9]{0,9}$/;
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const PMC_RE = /^PMC\d{1,10}$/;

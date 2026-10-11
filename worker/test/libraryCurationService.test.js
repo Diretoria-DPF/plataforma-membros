@@ -35,6 +35,7 @@ const MEMBRO = { profileId: P_MEMBRO, role: 'member', fullName: 'Membro Comum' }
 const FORBIDDEN = 'Acesso não autorizado para este recurso.';
 const STALE = 'Outra pessoa alterou este artigo. Recarregue para ver a versão nova.';
 const DUPLICATE = 'Este artigo já está na Biblioteca.';
+const CLINICAL_MSG = 'Este resumo fala de conduta, dose ou interação: precisa de revisor clínico. Para desmarcar, informe o motivo (3 a 300 caracteres).';
 
 let db;
 let sql;
@@ -121,7 +122,7 @@ async function expectError(promise, name, message) {
   return err;
 }
 
-const update = (identity, id, version, fields) => Cur.updateArticle(sql, identity, { id, version, fields }, CID);
+const update = (identity, id, version, fields, reason) => Cur.updateArticle(sql, identity, { id, version, fields, reason }, CID);
 const setStatus = (identity, id, version, to, reason) => Cur.setStatus(sql, identity, { id, version, to, reason }, CID);
 const review = (identity, id, version, decision, note) => Cur.clinicalReview(sql, identity, { id, version, decision, note }, CID);
 const doImport = (identity, identifier, fake) => Cur.importArticle(sql, env, identity, { identifier }, CID, { fetchImpl: fake.fetchImpl });
@@ -218,6 +219,10 @@ describe('importArticle', () => {
       expect(keys).toContain(key);
     }
     expect(keys).not.toContain('searchNorm');
+    // Lista de inclusão: nenhum id de pessoa (created_by etc.) sai para a tela.
+    for (const key of ['createdBy', 'statusChangedBy', 'summaryUpdatedBy', 'summaryReviewedBy', 'clinicalReviewedBy', 'approvedBy']) {
+      expect(keys).not.toContain(key);
+    }
     expect(keys.filter((k) => k.includes('_'))).toEqual([]);
     expect(typeof res.article.metadataFetchedAt).toBe('string');
     expect(Array.isArray(res.article.authors)).toBe(true);
@@ -357,15 +362,70 @@ describe('updateArticle', () => {
     expect(res.article.status).toBe('publicado');
   });
 
-  test('resumo com "dose" força isClinical e recusa desmarcar', async () => {
+  test('resumo com "dose" força isClinical e só deixa desmarcar com motivo', async () => {
     const id = await seed();
     const res = await update(CURADOR, id, 1, { summaryText: 'Ajustar a dose conforme o peso.' });
     expect(res.article.isClinical).toBe(true);
-    await expectError(update(CURADOR, id, 2, { isClinical: false }), 'ValidationError',
-      'Este resumo fala de conduta, dose ou interação: precisa de revisor clínico.');
+    await expectError(update(CURADOR, id, 2, { isClinical: false }), 'ValidationError', CLINICAL_MSG);
     const plain = await seed();
     const marked = await update(CURADOR, plain, 1, { isClinical: true });
     expect(marked.article.isClinical).toBe(true);
+  });
+
+  test.each([
+    ['sem motivo', undefined],
+    ['motivo curto', 'ok'],
+    ['motivo só de espaços', '     '],
+    ['motivo longo demais', 'x'.repeat(301)],
+    ['motivo que não é texto', 42],
+  ])('desmarcar isClinical em resumo clínico com %s é recusado', async (_nome, reason) => {
+    const id = await seed();
+    await update(CURADOR, id, 1, { summaryText: 'Aplicar 5 mg/kg em dose única.' });
+    await expectError(update(CURADOR, id, 2, { isClinical: false }, reason), 'ValidationError', CLINICAL_MSG);
+    const saved = await row(id);
+    expect(saved.is_clinical).toBe(true);
+    expect(saved.version).toBe(2);
+  });
+
+  test('desmarcar com motivo (3 a 300) vale e fica na auditoria', async () => {
+    const id = await seed();
+    await update(CURADOR, id, 1, { summaryText: 'Aplicar 5 mg/kg em dose única.' });
+    const res = await update(CURADOR, id, 2, { isClinical: false }, '  Texto apenas descreve o estudo.  ');
+    expect(res.article.isClinical).toBe(false);
+    const audit = await auditOf('LIBRARY_ARTICLE_UPDATE');
+    expect(audit).toHaveLength(2);
+    expect(audit[0].details).toEqual({ fields: ['summaryText'] });
+    expect(audit[1].details).toEqual({ fields: ['isClinical'], clinicalUnmarkReason: 'Texto apenas descreve o estudo.' });
+  });
+
+  test('desmarcado com motivo, uma edição à parte não religa o clínico; trocar o resumo religa', async () => {
+    const id = await seed();
+    await update(CURADOR, id, 1, { summaryText: 'Aplicar 5 mg/kg em dose única.' });
+    await update(CURADOR, id, 2, { isClinical: false }, 'Descrição do estudo, sem conduta.');
+    const other = await update(CURADOR, id, 3, { journal: 'Outra Revista' });
+    expect(other.article.isClinical).toBe(false);
+    const changed = await update(CURADOR, id, 4, { summaryText: 'Utilize 20 ml em jejum.' });
+    expect(changed.article.isClinical).toBe(true);
+  });
+
+  test('motivo é inútil quando o resumo não casa com a heurística, e nem entra na auditoria', async () => {
+    const id = await seed({ is_clinical: true });
+    const res = await update(CURADOR, id, 1, { isClinical: false }, 'Marcado por engano.');
+    expect(res.article.isClinical).toBe(false);
+    const audit = await auditOf('LIBRARY_ARTICLE_UPDATE');
+    expect(audit[0].details).toEqual({ fields: ['isClinical'] });
+  });
+
+  test.each([
+    'Tratamento com carvão ativado.',
+    'Iniciar o suporte ventilatório.',
+    'O paciente deve ser monitorado.',
+    'Aplicar 40 UI por semana.',
+    'Recomendamos jejum prévio.',
+  ])('a heurística ampliada força isClinical: %s', async (summaryText) => {
+    const id = await seed();
+    const res = await update(CURADOR, id, 1, { summaryText });
+    expect(res.article.isClinical).toBe(true);
   });
 
   test('limpar o resumo apaga texto e origem juntos', async () => {
