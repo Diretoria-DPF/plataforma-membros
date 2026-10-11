@@ -143,7 +143,8 @@ async function readResponse(fetchImpl, url, signal) {
     method: 'GET',
     headers: { Accept: 'application/json', 'User-Agent': USER_AGENT },
     credentials: 'omit',
-    redirect: 'error',
+    // Workers não implementa redirect:'error' (TypeError em toda chamada); 'manual' devolve o 3xx e ele conta como falha.
+    redirect: 'manual',
     signal,
   });
   if (!res || typeof res.status !== 'number') throw new Error('Resposta inválida da fonte.');

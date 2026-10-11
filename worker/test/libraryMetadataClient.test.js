@@ -249,12 +249,23 @@ describe('hosts fixos (SSRF)', () => {
     }
   });
 
+  test('resposta 3xx (redirecionamento) conta como falha da fonte, sem seguir o destino', async () => {
+    const table = fullTable(PLOS);
+    table[HOSTS.epmc] = [http(301)];
+    const t = run(pmidId('17375194'), table);
+    const { sources, warnings } = await t.promise;
+    expect(sources).not.toContain('europepmc');
+    expect(warnings.some((w) => w.includes('Europe PMC'))).toBe(true);
+    expect(hostsOf(t.calls).filter((h) => h === HOSTS.epmc)).toHaveLength(1);
+  });
+
   test('cada chamada usa as opções do contrato (sem cookies, sem redirecionamento, JSON)', async () => {
     const t = run(doiId(PLOS_DOI), fullTable(PLOS));
     await t.promise;
     for (const { options } of t.calls) {
       expect(options.credentials).toBe('omit');
-      expect(options.redirect).toBe('error');
+      // O Workers da Cloudflare não implementa redirect:'error' (lança TypeError): o contrato é 'manual' + tratar 3xx como falha.
+      expect(options.redirect).toBe('manual');
       expect(options.headers.Accept).toBe('application/json');
       expect(options.headers['User-Agent']).toBe('LAIFT-Biblioteca/1.0');
       expect(options.signal).toBeDefined();
