@@ -39,13 +39,13 @@ const ITEM_ARTIGO = {
   id: ARTIGO_ID, title: ARTIGO_TITULO, authors: AUTORES, authorCount: 4, journal: 'Revista de Farmacologia',
   year: 2021, doi: '10.1000/xyz1', pmid: null, type: 'artigo', topics: ['farmacologia'], openAccess: true,
   license: 'cc-by', landingUrl: 'https://doi.org/10.1000/xyz1', publishedAt: '2021-03-01',
-  hasSummary: true, isFavorite: false,
+  language: 'pt', hasSummary: true, isFavorite: false,
 };
 const ITEM_OUTRO = {
   id: OUTRO_ID, title: OUTRO_TITULO, authors: [{ family: 'Costa', given: 'Elisa' }], authorCount: 1,
   journal: 'Jornal de Toxicologia', year: 2019, doi: '10.1000/xyz2', pmid: null, type: 'revisao',
   topics: ['toxicologia'], openAccess: false, license: 'desconhecida', landingUrl: 'https://doi.org/10.1000/xyz2',
-  publishedAt: '2019-05-10', hasSummary: false, isFavorite: false,
+  publishedAt: '2019-05-10', language: 'en', hasSummary: false, isFavorite: false,
 };
 
 // ArticleDetail (CONTRATO-B1 §4.1): a ficha do artigo.
@@ -161,12 +161,23 @@ async function fluxoDoMembro() {
     await abrirBiblioteca(app);
     check(await page.locator('#library-resultados .library-titulo', { hasText: ARTIGO_TITULO }).count() === 1, 'busca: a lista mostra o artigo que veio do servidor');
 
+    const selos = await page.locator('#library-resultados .badge').allTextContents();
+    check(selos.includes('Português') && selos.includes('English'), `idioma: cada item traz o selo em texto (${selos.join(', ')})`);
+    await page.locator('.library-filtros > summary').click();
+    check(await page.locator('label[for="library-idioma"]').textContent() === 'Idioma', 'idioma: o filtro tem rótulo visível "Idioma"');
+    check((await page.locator('#library-idioma').inputValue()) === '', 'idioma: o padrão é "Todos"');
+    await page.selectOption('#library-idioma', 'pt');
+    check(await esperar(() => chamadas(app, 'apiLearnLibrarySearch').some((c) => c.args[1] && c.args[1].language === 'pt')), 'idioma: escolher Português envia language=pt ao servidor');
+    await page.selectOption('#library-idioma', '');
+    await esperar(() => chamadas(app, 'apiLearnLibrarySearch').length >= 3);
+
     await page.fill('#library-q', 'dipirona');
     check(await esperar(() => chamadas(app, 'apiLearnLibrarySearch').some((c) => c.args[1] && c.args[1].q === 'dipirona')), 'busca: o termo digitado vai ao servidor');
 
     await abrirFicha(page);
     check(await page.locator('#library-root h3', { hasText: 'Resumo da LAIFT' }).count() === 1, 'ficha: traz o bloco "Resumo da LAIFT"');
     check(chamadas(app, 'apiLearnLibraryGetArticle').some((c) => c.args[1] && c.args[1].id === ARTIGO_ID), 'ficha: o servidor recebe o id do artigo');
+    check((await page.locator('#library-root .library-ficha .badge').allTextContents()).includes('Português'), 'ficha: o selo de idioma "Português" aparece');
 
     const abnt = page.locator('#library-root button', { hasText: /^ABNT$/ });
     await abnt.click();
@@ -334,8 +345,9 @@ async function layoutDoMembro(viewport) {
     await app.login();
     const page = app.page;
     await abrirBiblioteca(app);
+    await page.locator('.library-filtros > summary').click();
     await checarSemRolagem(page, `${rotulo} lista`);
-    await checarAlvos(page, '#panel-library .library-abas button, #panel-library .library-titulo, #panel-library .library-favorito', `${rotulo} lista`);
+    await checarAlvos(page, '#panel-library .library-abas button, #panel-library .library-titulo, #panel-library .library-favorito, #panel-library .library-filtros select', `${rotulo} lista`);
     await axeGate(page, `membro/biblioteca ${rotulo} (lista)`);
     await abrirFicha(page);
     await checarSemRolagem(page, `${rotulo} ficha`);

@@ -266,6 +266,39 @@ test('rótulos de tipo do filtro e dos selos são iguais aos de library-cite.js'
   assert.ok(html.includes('<span class="bib-selo">Metanálise</span>'));
 });
 
+test('idioma: português primeiro no HTML e no index.json, com selo em texto e o campo language', () => {
+  const r = gerar({
+    reserva: catalogo([
+      artigo({ id: 'en1', title: 'English study', language: 'en', year: 2025 }),
+      artigo({ id: 'pt1', title: 'Estudo em português', language: 'pt', year: 2012 }),
+      artigo({ id: 'sem1', title: 'Sem idioma informado', year: 2024 }),
+    ]),
+  });
+  const html = lerHtml(r);
+  const ordem = ['id="a-pt1"', 'id="a-en1"', 'id="a-sem1"'].map((marca) => html.indexOf(marca));
+  assert.ok(ordem.every((p) => p > 0));
+  assert.deepEqual([...ordem].sort((a, b) => a - b), ordem, 'pt1, depois en1, depois sem1');
+  assert.ok(html.includes('<span class="bib-selo">Português</span>'));
+  assert.ok(html.includes('<span class="bib-selo">English</span>'));
+  const indice = lerIndex(r);
+  assert.deepEqual(indice.items.map((i) => [i.id, i.language]), [['pt1', 'pt'], ['en1', 'en'], ['sem1', null]]);
+  const jsonld = lerJsonLd(html);
+  const lista = jsonld['@graph'].find((no) => no['@type'] === 'ItemList');
+  assert.equal(lista.itemListElement[0].item.name, 'Estudo em português');
+});
+
+test('a página tem o filtro Idioma e a frase que prioriza o português do Brasil', () => {
+  const html = lerHtml(gerar({ reserva: catalogo([artigo({ language: 'pt' })]) }));
+  assert.ok(html.includes('<label for="bib-idioma">Idioma</label>'));
+  assert.ok(html.includes('<option value="outros">Inglês e outros</option>'));
+  assert.ok(html.includes('Priorizamos conteúdo em português do Brasil.'));
+});
+
+test('rótulos de idioma dos selos são iguais aos de library-cite.js', () => {
+  const rotulos = require('../biblioteca/catalogo.js').IDIOMAS;
+  assert.deepEqual({ ...rotulos }, { ...citacao.LABELS.language });
+});
+
 test('filtro de área lista os tópicos do catálogo', () => {
   const r = gerar({ reserva: catalogo([artigo()]) });
   const html = lerHtml(r);

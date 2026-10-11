@@ -104,6 +104,15 @@ function typeOrNull(value) {
   return value;
 }
 
+/** Filtro de idioma: 'pt', 'en' ou 'outros' (tudo que não é português, inclusive sem idioma informado). */
+const LANGUAGE_FILTERS = ['pt', 'en', 'outros'];
+
+function languageOrNull(value) {
+  if (value === undefined || value === null || value === '') return null;
+  if (!LANGUAGE_FILTERS.includes(value)) throw E.ValidationError('Idioma inválido.');
+  return value;
+}
+
 /** Termos da busca: normalizados como o search_norm; só [a-z0-9./-] sobrevivem (sem curinga de LIKE). */
 function searchPatterns(q) {
   const text = typeof q === 'string' ? q.slice(0, LIBRARY_LIMITS.QUERY_MAX) : '';
@@ -121,6 +130,7 @@ function parseSearchInput(input) {
     patterns: searchPatterns(input.q),
     topic: slugOrNull(input.topic, 'Área inválida.'),
     type: typeOrNull(input.type),
+    language: languageOrNull(input.language),
     yearFrom: yearOrNull(input.yearFrom),
     yearTo: yearOrNull(input.yearTo),
     openAccess: input.openAccess === true || input.openAccess === 'true' ? true : null,
@@ -158,6 +168,7 @@ function toPublicItem(r) {
     openAccess: OPEN_ACCESS_STATUSES.includes(r.oa_status),
     license: r.license,
     landingUrl: r.landing_url,
+    language: r.language ?? null,
     publishedAt: iso(r.published_at),
   };
 }
@@ -194,7 +205,6 @@ function toArticleDetail(r, { member, collections }) {
     volume: r.volume ?? null,
     issue: r.issue ?? null,
     pages: r.pages ?? null,
-    language: r.language ?? null,
     oaStatus: r.oa_status,
     pmcid: r.pmcid ?? null,
     pmcUrl: pmcUrl(r.pmcid),
@@ -223,7 +233,7 @@ const toTopic = (t) => ({ slug: t.slug, name: t.name });
 function queryList(sql, p) {
   return sql`
     SELECT a.id, a.title, a.authors, a.author_count, a.journal, a.pub_year, a.doi, a.pmid,
-           a.article_type, a.topics, a.license, a.oa_status, a.landing_url, a.published_at,
+           a.article_type, a.topics, a.license, a.oa_status, a.landing_url, a.published_at, a.language,
            (a.summary_text IS NOT NULL) AS has_summary,
            (f.article_id IS NOT NULL) AS is_favorite,
            count(*) OVER() AS total_count
@@ -236,11 +246,14 @@ function queryList(sql, p) {
       AND a.search_norm LIKE ALL (${p.patterns}::text[])
       AND (${p.topic}::text IS NULL OR ${p.topic}::text = ANY(a.topics))
       AND (${p.type}::text IS NULL OR a.article_type = ${p.type}::text)
+      AND (${p.language}::text IS NULL
+           OR (${p.language}::text = 'outros' AND a.language IS DISTINCT FROM 'pt')
+           OR a.language = ${p.language}::text)
       AND (${p.yearFrom}::int IS NULL OR a.pub_year >= ${p.yearFrom}::int)
       AND (${p.yearTo}::int IS NULL OR a.pub_year <= ${p.yearTo}::int)
       AND (${p.openAccess}::boolean IS NOT TRUE OR a.oa_status IN ('diamond', 'gold', 'green', 'hybrid', 'bronze'))
     ORDER BY (CASE WHEN ${p.favoritesOnly}::boolean THEN f.created_at END) DESC NULLS LAST,
-             ci.position ASC NULLS LAST, a.pub_year DESC NULLS LAST, a.title, a.id
+             ci.position ASC NULLS LAST, (CASE WHEN a.language = 'pt' THEN 0 ELSE 1 END), a.pub_year DESC NULLS LAST, a.title, a.id
     LIMIT ${p.pageSize} OFFSET ${p.offset}
   `;
 }
@@ -494,10 +507,10 @@ async function buildCatalog(sql) {
     loadTopics(sql),
     sql`
       SELECT id, title, authors, author_count, journal, pub_year, doi, pmid, article_type, topics,
-             license, oa_status, landing_url, published_at
+             license, oa_status, landing_url, published_at, language
       FROM library_articles
       WHERE status = 'publicado'
-      ORDER BY pub_year DESC NULLS LAST, title, id
+      ORDER BY (CASE WHEN language = 'pt' THEN 0 ELSE 1 END), pub_year DESC NULLS LAST, title, id
       LIMIT ${LIBRARY_LIMITS.PUBLIC_MAX_ITEMS}
     `,
   ]);

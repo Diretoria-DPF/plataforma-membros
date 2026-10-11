@@ -46,7 +46,7 @@
 <main id="conteudo">
   <section class="bib-cabecalho">
     <h1>Biblioteca LAIFT</h1>
-    <p class="bib-intro">Artigos científicos escolhidos e conferidos pela Diretoria Científica da LAIFT. Resumo, coleções e favoritos ficam na área de membros.</p>
+    <p class="bib-intro">Artigos científicos escolhidos e conferidos pela Diretoria Científica da LAIFT. Priorizamos conteúdo em português do Brasil. Resumo, coleções e favoritos ficam na área de membros.</p>
     <p class="bib-acoes"><a class="bib-botao" href="/">Entrar na plataforma</a></p>
     <p class="bib-atualizado">Atualizado em <!-- biblioteca:atualizado -->.</p>
   </section>
@@ -68,6 +68,14 @@
       <select id="bib-tipo" name="tipo">
         <option value="">Todos os tipos</option>
         <!-- biblioteca:tipos -->
+      </select>
+    </div>
+    <div class="bib-campo">
+      <label for="bib-idioma">Idioma</label>
+      <select id="bib-idioma" name="idioma">
+        <option value="">Todos</option>
+        <option value="pt">Português</option>
+        <option value="outros">Inglês e outros</option>
       </select>
     </div>
     <div class="bib-campo">

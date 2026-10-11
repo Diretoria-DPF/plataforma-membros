@@ -270,6 +270,14 @@ test('typeLabel e licenseLabel devolvem rótulo ou string vazia para chave desco
   assert.equal(cite.licenseLabel(undefined), '');
 });
 
+test('languageLabel: Português e English; outro idioma ou vazio devolve string vazia', () => {
+  assert.equal(cite.languageLabel('pt'), 'Português');
+  assert.equal(cite.languageLabel('en'), 'English');
+  assert.equal(cite.languageLabel('es'), '');
+  assert.equal(cite.languageLabel(null), '');
+  assert.equal(cite.languageLabel('constructor'), '');
+});
+
 test('arquivo sem DOM: nenhum innerHTML, outerHTML ou insertAdjacentHTML', () => {
   const src = read('library-cite.js');
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML/.test(src));

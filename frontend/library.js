@@ -25,6 +25,7 @@
   var CATALOG_URL = '/biblioteca';
   var DEFAULT_ERROR = 'Tente novamente em instantes.';
   var TYPE_KEYS = ['artigo', 'revisao', 'revisao_sistematica', 'meta_analise', 'ensaio_clinico', 'relato_caso', 'diretriz', 'outro'];
+  var LANGUAGE_FILTERS = ['pt', 'outros'];
   var ACTION = {
     open: 'LaiftLibrary.open',
     favorite: 'LaiftLibrary.toggleFavorite',
@@ -98,8 +99,12 @@
 
   function activeFilterCount(query) {
     var q = query || {};
-    var filled = [q.topic, q.type, q.yearFrom, q.yearTo].filter(Boolean).length;
+    var filled = [q.topic, q.type, languageOf(q.language), q.yearFrom, q.yearTo].filter(Boolean).length;
     return filled + (q.openAccess ? 1 : 0);
+  }
+
+  function languageOf(value) {
+    return LANGUAGE_FILTERS.indexOf(value) >= 0 ? value : '';
   }
 
   function filterSummaryLabel(count) {
@@ -112,6 +117,8 @@
     if (q) input.q = q;
     if (query.topic) input.topic = query.topic;
     if (query.type) input.type = query.type;
+    var language = languageOf(query.language);
+    if (language) input.language = language;
     var from = yearOf(query.yearFrom);
     if (from) input.yearFrom = Number(from);
     var to = yearOf(query.yearTo);
@@ -147,7 +154,7 @@
     var extra = [];
     if (item.openAccess) extra.push('Acesso aberto');
     if (item.hasSummary) extra.push('Com resumo');
-    return [typeLabel(item.type)].concat(areas, extra).filter(Boolean);
+    return [typeLabel(item.type), languageLabel(item.language)].concat(areas, extra).filter(Boolean);
   }
 
   function favoriteLabel(isFavorite) {
@@ -179,9 +186,14 @@
     return cite && cite.typeLabel ? cite.typeLabel(key) : '';
   }
 
+  function languageLabel(key) {
+    var cite = window.LaiftLibraryCite;
+    return cite && cite.languageLabel ? cite.languageLabel(key) : '';
+  }
+
   // ---------- Estado (trocado por inteiro a cada mudança) ----------
 
-  var EMPTY_QUERY = { q: '', topic: '', type: '', yearFrom: '', yearTo: '', openAccess: false };
+  var EMPTY_QUERY = { q: '', topic: '', type: '', language: '', yearFrom: '', yearTo: '', openAccess: false };
   var state = initialState();
   var refs = {};
   var timer = null;
@@ -357,6 +369,14 @@
     return [{ value: '', label: 'Todos os tipos' }].concat(types);
   }
 
+  function languageOptions() {
+    return [
+      { value: '', label: 'Todos' },
+      { value: 'pt', label: 'Português' },
+      { value: 'outros', label: 'Inglês e outros' },
+    ];
+  }
+
   function filtersNode() {
     var count = activeFilterCount(state.query);
     refs.summary = el('summary', { text: filterSummaryLabel(count) });
@@ -365,6 +385,7 @@
       el('div', { className: 'library-filtros-campos' }, [
         selectField('library-area', 'Área', 'topic', topicOptions(), state.query.topic),
         selectField('library-tipo', 'Tipo', 'type', typeOptions(), state.query.type),
+        selectField('library-idioma', 'Idioma', 'language', languageOptions(), languageOf(state.query.language)),
         yearField('library-ano-de', 'Ano de', 'yearFrom', state.query.yearFrom),
         yearField('library-ano-ate', 'Ano até', 'yearTo', state.query.yearTo),
         el('label', { className: 'library-check', for: 'library-aberto' }, [
@@ -639,6 +660,7 @@
     if (name === 'openAccess') patch.openAccess = value === true;
     else if (name === 'yearFrom' || name === 'yearTo') patch[name] = yearOf(value);
     else if (name === 'topic' || name === 'type') patch[name] = trimmed(value, 40);
+    else if (name === 'language') patch.language = languageOf(value);
     else return;
     setState({ query: Object.assign({}, state.query, patch) });
     if (refs.summary) refs.summary.textContent = filterSummaryLabel(activeFilterCount(state.query));

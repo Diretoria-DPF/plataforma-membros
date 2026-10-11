@@ -330,6 +330,15 @@ test('selos de tipo e assunto, com texto; licença e acesso em texto', async () 
   assert.match(textOf(root()), /Licença CC BY · Acesso aberto/);
 });
 
+test('selo de idioma na ficha: Português, English; sem idioma, sem selo', async () => {
+  await abrir({ success: true, article: article({ language: 'pt', topics: [] }) });
+  assert.deepEqual(byClass(root(), 'badge').map(textOf), ['Artigo original', 'Português']);
+  await abrir({ success: true, article: article({ language: 'en', topics: ['farmacologia'] }) }, { topics: [{ slug: 'farmacologia', name: 'Farmacologia clínica' }] });
+  assert.deepEqual(byClass(root(), 'badge').map(textOf), ['Artigo original', 'English', 'Farmacologia clínica']);
+  await abrir({ success: true, article: article({ language: null, topics: [] }) });
+  assert.deepEqual(byClass(root(), 'badge').map(textOf), ['Artigo original']);
+});
+
 test('autores, DOI e PMID aparecem como texto (DOI não vira link)', async () => {
   await abrir({ success: true, article: article() });
   assert.match(textOf(root()), /Silva, Ana Maria; Souza, Carlos/);

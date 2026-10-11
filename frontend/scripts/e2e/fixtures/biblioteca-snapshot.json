@@ -19,6 +19,7 @@
       "topics": ["farmacologia"],
       "openAccess": true,
       "license": "cc-by",
+      "language": "en",
       "landingUrl": "https://doi.org/10.1000/bib1",
       "publishedAt": "2021-03-01"
     },
@@ -56,6 +57,7 @@
       "topics": ["farmacologia", "toxicologia"],
       "openAccess": true,
       "license": "cc-by-nc",
+      "language": "pt",
       "landingUrl": "https://pubmed.ncbi.nlm.nih.gov/12345678/",
       "publishedAt": "2022-02-01"
     },
@@ -72,6 +74,7 @@
       "topics": ["toxicologia"],
       "openAccess": false,
       "license": "desconhecida",
+      "language": "pt",
       "landingUrl": "https://doi.org/10.1000/bib4",
       "publishedAt": "2020-08-15"
     },

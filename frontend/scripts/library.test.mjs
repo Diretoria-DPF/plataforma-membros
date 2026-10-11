@@ -239,6 +239,25 @@ test('favoriteLabel e badgesOf montam rótulos e selos em texto', () => {
     ['Revisão', 'Farmacologia', 'Com resumo']);
 });
 
+test('idioma: filtro entra na contagem e na busca; só pt, en e outros seguem', () => {
+  const base = { q: '', topic: '', type: '', yearFrom: '', yearTo: '', openAccess: false, language: '' };
+  assert.equal(Library.activeFilterCount(base), 0);
+  assert.equal(Library.activeFilterCount({ ...base, language: 'pt' }), 1);
+  assert.deepEqual(Library.buildSearchInput(base, 1), { page: 1, pageSize: 20 });
+  assert.deepEqual(Library.buildSearchInput({ ...base, language: 'pt' }, 1), { page: 1, pageSize: 20, language: 'pt' });
+  assert.deepEqual(Library.buildSearchInput({ ...base, language: 'outros' }, 1), { page: 1, pageSize: 20, language: 'outros' });
+  assert.deepEqual(Library.buildSearchInput({ ...base, language: 'fr' }, 1), { page: 1, pageSize: 20 });
+});
+
+test('selo de idioma em texto: Português, English; sem idioma, sem selo', () => {
+  const pt = item('a', 'T', { type: 'artigo', language: 'pt', openAccess: false, hasSummary: false });
+  const en = item('b', 'T', { type: 'artigo', language: 'en', openAccess: false, hasSummary: false });
+  const none = item('c', 'T', { type: 'artigo', language: null, openAccess: false, hasSummary: false });
+  assert.deepEqual(Library.badgesOf(pt, []), ['Artigo original', 'Português']);
+  assert.deepEqual(Library.badgesOf(en, []), ['Artigo original', 'English']);
+  assert.deepEqual(Library.badgesOf(none, []), ['Artigo original']);
+});
+
 test('hasMore compara o total com o que já foi carregado', () => {
   assert.equal(Library.hasMore(25, 20), true);
   assert.equal(Library.hasMore(20, 20), false);
@@ -307,6 +326,31 @@ test('Biblioteca desligada mostra o aviso e nenhum botão de nova tentativa', as
   await flush();
   assert.ok(textOf(root()).includes('A Biblioteca ainda não está disponível.'));
   assert.equal(byAction('LaiftLibrary.reload').length, 0);
+});
+
+test('filtro Idioma: rótulo visível, três opções, padrão Todos e busca com language', async () => {
+  await openCatalog([item('A1', 'Dose letal', { language: 'pt' })]);
+  const label = findAll(root(), (n) => n.tag === 'label' && n.attrs.for === 'library-idioma');
+  assert.equal(label.length, 1);
+  assert.equal(textOf(label[0]), 'Idioma');
+  const select = findAll(root(), (n) => n.tag === 'select' && n.attrs.id === 'library-idioma')[0];
+  assert.ok(select);
+  const options = select.children.map((o) => [o.attrs.value, textOf(o)]);
+  assert.deepEqual(options, [['', 'Todos'], ['pt', 'Português'], ['outros', 'Inglês e outros']]);
+  assert.equal(select.children[0].attrs.selected, '');
+  assert.equal(searchCalls()[0].input.language, undefined);
+  Library.filterChange('language', 'pt');
+  assert.equal(searchCalls().length, 2);
+  assert.equal(searchCalls()[1].input.language, 'pt');
+  Library.filterChange('language', 'zz');
+  assert.equal(searchCalls()[2].input.language, undefined);
+});
+
+test('o selo de idioma aparece em cada item da lista', async () => {
+  await openCatalog([item('A1', 'Em português', { language: 'pt' }), item('A2', 'In English', { language: 'en' })]);
+  const selos = findAll(root(), (n) => n.attrs.class === 'badge').map(textOf);
+  assert.equal(selos.includes('Português'), true);
+  assert.equal(selos.includes('English'), true);
 });
 
 test('lista vazia mostra a mensagem e a ação de limpar filtros', async () => {

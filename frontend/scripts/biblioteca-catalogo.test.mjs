@@ -113,6 +113,44 @@ test('filtro de ano deixa de fora item sem ano', () => {
   assert.deepEqual(ids(filtrar(ITENS, { q: 'ensaio', de: 1800 })), []);
 });
 
+test('filtrar por idioma: pt, outros (tudo que não é português) e vazio (todos)', () => {
+  const lista = [
+    { ...ITENS[0], language: 'pt' },
+    { ...ITENS[1], language: 'en' },
+    { ...ITENS[2], language: null },
+    { ...ITENS[3] },
+  ];
+  assert.deepEqual(ids(filtrar(lista, { idioma: 'pt' })), ['a1']);
+  assert.deepEqual(ids(filtrar(lista, { idioma: 'outros' })), ['a2', 'a3', 'a4']);
+  assert.deepEqual(ids(filtrar(lista, { idioma: '' })), ['a1', 'a2', 'a3', 'a4']);
+  assert.deepEqual(ids(filtrar(lista, {})), ['a1', 'a2', 'a3', 'a4']);
+  assert.deepEqual(ids(filtrar(lista, { idioma: 'pt', q: 'dipirona' })), ['a1']);
+});
+
+test('selos: o idioma vem em texto logo depois do tipo (Português, English); sem idioma, sem selo', () => {
+  const nomes = new Map([['farmacologia', 'Farmacologia']]);
+  const base = { type: 'revisao', topics: ['farmacologia'], openAccess: true };
+  assert.deepEqual(catalogo.rotulosDosSelos({ ...base, language: 'pt' }, nomes), ['Revisão', 'Português', 'Farmacologia', 'Acesso aberto']);
+  assert.deepEqual(catalogo.rotulosDosSelos({ ...base, language: 'en' }, nomes), ['Revisão', 'English', 'Farmacologia', 'Acesso aberto']);
+  assert.deepEqual(catalogo.rotulosDosSelos({ ...base, language: null }, nomes), ['Revisão', 'Farmacologia', 'Acesso aberto']);
+  assert.deepEqual(catalogo.rotulosDosSelos({ ...base }, nomes), ['Revisão', 'Farmacologia', 'Acesso aberto']);
+});
+
+test('modelo da página: filtro Idioma com rótulo visível e a introdução que prioriza o português', () => {
+  const html = lerArquivo('biblioteca.html');
+  assert.match(html, /<label for="bib-idioma">Idioma<\/label>/);
+  const select = /<select id="bib-idioma"[^>]*>([\s\S]*?)<\/select>/.exec(html)[1];
+  assert.deepEqual([...select.matchAll(/<option value="([^"]*)">([^<]*)<\/option>/g)].map((m) => [m[1], m[2]]),
+    [['', 'Todos'], ['pt', 'Português'], ['outros', 'Inglês e outros']]);
+  assert.match(html, /Priorizamos conteúdo em português do Brasil\./);
+});
+
+test('JS do catálogo liga o filtro de idioma aos eventos e à limpeza', () => {
+  const js = lerArquivo('biblioteca/catalogo.js');
+  assert.match(js, /getElementById\('bib-idioma'\)/);
+  assert.match(js, /campos\.idioma/);
+});
+
 test('contagem: vazio, singular e plural', () => {
   assert.equal(contagem(0), 'Nenhum artigo com esses filtros.');
   assert.equal(contagem(1), '1 artigo');
@@ -175,6 +213,27 @@ test('lerCatalogoAoVivo converte a resposta da API no formato de index.json', ()
   assert.equal(primeiro.authors, 'Silva AM');
   assert.equal(primeiro.n, searchNorm({ title: 'Artigo 7', authors: [{ family: 'Silva' }], journal: 'Rev Farm', doi: '10.1000/7' }));
   assert.equal('nomesAutores' in primeiro, false, 'nomesAutores fica só no build (JSON-LD)');
+});
+
+test('validarItem guarda o idioma (duas letras minúsculas) e vira null no resto', () => {
+  assert.equal(catalogo.validarItem(publicItem('1', { language: 'pt' })).item.language, 'pt');
+  assert.equal(catalogo.validarItem(publicItem('2', { language: 'EN' })).item.language, 'en');
+  assert.equal(catalogo.validarItem(publicItem('3', { language: 'portugues' })).item.language, null);
+  assert.equal(catalogo.validarItem(publicItem('4', { language: 42 })).item.language, null);
+  assert.equal(catalogo.validarItem(publicItem('5', {})).item.language, null);
+});
+
+test('ordem portuguesa: pt vem antes dos demais, sem mexer na ordem dentro de cada grupo', () => {
+  const dados = respostaAoVivo([
+    publicItem('e1', { language: 'en' }),
+    publicItem('p1', { language: 'pt' }),
+    publicItem('n1', { language: null }),
+    publicItem('p2', { language: 'pt' }),
+    publicItem('e2', { language: 'en' }),
+  ]);
+  assert.deepEqual(catalogo.lerCatalogoAoVivo(dados).items.map((i) => i.id), ['p1', 'p2', 'e1', 'n1', 'e2']);
+  assert.deepEqual(catalogo.montarCatalogo(dados, []).items.map((i) => i.id), ['p1', 'p2', 'e1', 'n1', 'e2']);
+  assert.deepEqual(catalogo.portuguesPrimeiro([{ id: 'x' }, { id: 'y', language: 'pt' }]).map((i) => i.id), ['y', 'x']);
 });
 
 test('lerCatalogoAoVivo descarta item com link fora da lista e mantém os outros', () => {
