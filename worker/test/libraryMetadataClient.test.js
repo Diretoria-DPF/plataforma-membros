@@ -299,6 +299,62 @@ describe('hosts fixos (SSRF)', () => {
     expect(record.title).toContain('E. coli & alert(1)drogas');
   });
 
+  test('Crossref que devolve outro DOI é descartada com aviso (comparação sem diferenciar maiúsculas)', async () => {
+    const other = clone(PLOS);
+    other.crossref.message.DOI = '10.9999/outro';
+    const { sources, warnings, record } = await run(doiId(PLOS_DOI), fullTable(other)).promise;
+    expect(sources).not.toContain('crossref');
+    expect(warnings.some((w) => /Crossref/.test(w) && /DOI/.test(w))).toBe(true);
+    expect(record.journal).not.toBe(PLOS.crossref.message['container-title'][0]); // nada do registro descartado
+
+    const upper = clone(PLOS);
+    upper.crossref.message.DOI = PLOS_DOI.toUpperCase();
+    expect((await run(doiId(PLOS_DOI), fullTable(upper)).promise).sources).toContain('crossref');
+  });
+
+  test('Crossref sem o campo DOI também é descartada', async () => {
+    const sample = clone(PLOS);
+    delete sample.crossref.message.DOI;
+    expect((await run(doiId(PLOS_DOI), fullTable(sample)).promise).sources).not.toContain('crossref');
+  });
+
+  test('OpenAlex que devolve outro DOI é descartada com aviso; aceita a forma de URL em maiúsculas', async () => {
+    const other = clone(PLOS);
+    other.openalex.doi = 'https://doi.org/10.9999/outro';
+    const { sources, warnings } = await run(doiId(PLOS_DOI), fullTable(other)).promise;
+    expect(sources).not.toContain('openalex');
+    expect(warnings.some((w) => /OpenAlex/.test(w) && /DOI/.test(w))).toBe(true);
+
+    const upper = clone(PLOS);
+    upper.openalex.doi = 'https://doi.org/' + PLOS_DOI.toUpperCase();
+    expect((await run(doiId(PLOS_DOI), fullTable(upper)).promise).sources).toContain('openalex');
+  });
+
+  test('Unpaywall que devolve outro DOI é descartada com aviso', async () => {
+    const other = clone(PLOS);
+    other.unpaywall.doi = '10.9999/outro';
+    const table = { ...fullTable(other), [HOSTS.openalex]: [http(500)] };
+    const { sources, warnings, record } = await run(doiId(PLOS_DOI), table).promise;
+    expect(sources).not.toContain('unpaywall');
+    expect(record.oaStatus).not.toBe('gold');
+    expect(warnings.some((w) => /Unpaywall/.test(w) && /DOI/.test(w))).toBe(true);
+  });
+
+  test('Crossref de outro DOI e Europe PMC fora do ar: erro do contrato, nada é gravado', async () => {
+    const other = clone(PLOS);
+    other.crossref.message.DOI = '10.9999/outro';
+    const table = { ...fullTable(other), [HOSTS.epmc]: [http(500)] };
+    await expect(run(doiId(PLOS_DOI), table).promise).rejects.toMatchObject({ name: 'ValidationError', message: TIMEOUT_MESSAGE });
+  });
+
+  test('DOI com "../" é recusado antes de qualquer chamada (nenhum host recebe o caminho)', async () => {
+    for (const value of ['10.1234/../../funders', '10.1234/a//b']) {
+      const t = run(doiId(value), fullTable(PLOS));
+      await expect(t.promise).rejects.toMatchObject({ name: 'ValidationError' });
+      expect(t.calls).toHaveLength(0);
+    }
+  });
+
   test('Europe PMC que devolve outro DOI é ignorada', async () => {
     const sample = clone(PLOS);
     sample.europepmc.resultList.result[0].doi = '10.9999/outro';
@@ -499,6 +555,24 @@ describe('e-mail de contato (LIBRARY_CONTACT_EMAIL)', () => {
 });
 
 // ---------- junção dos dados ----------
+describe('licença do Unpaywall', () => {
+  const onlyUnpaywall = (sample) => ({ ...fullTable(sample), [HOSTS.openalex]: [http(500)] });
+
+  test('best_oa_location só vale como licença se for a versão publicada', async () => {
+    const accepted = clone(NATURE);
+    accepted.unpaywall.best_oa_location = { license: 'cc-by', version: 'acceptedVersion' };
+    const noLicense = { ...accepted.crossref.message, license: undefined };
+    accepted.crossref.message = noLicense;
+    accepted.europepmc.resultList.result[0].license = undefined;
+    const { record } = await run(doiId(NATURE_DOI), onlyUnpaywall(accepted)).promise;
+    expect(record.license).toBe('desconhecida');
+
+    const published = clone(accepted);
+    published.unpaywall.best_oa_location.version = 'publishedVersion';
+    expect((await run(doiId(NATURE_DOI), onlyUnpaywall(published)).promise).record.license).toBe('cc-by');
+  });
+});
+
 describe('junção das fontes', () => {
   test('licenças divergentes: vale a mais restritiva e licenseConflict fica true', async () => {
     const sample = clone(PLOS);

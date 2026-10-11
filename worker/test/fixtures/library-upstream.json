@@ -122,6 +122,7 @@
     },
     "openalex": {
       "title": "Sharing Detailed Research Data Is Associated with Increased Citation Rate",
+      "doi": "https://doi.org/10.1371/journal.pone.0000308",
       "publication_year": 2007,
       "language": "en",
       "type": "article",
@@ -367,6 +368,7 @@
     },
     "openalex": {
       "title": "Nanometre-scale thermometry in a living cell",
+      "doi": "https://doi.org/10.1038/nature12373",
       "publication_year": 2013,
       "language": "en",
       "type": "article",

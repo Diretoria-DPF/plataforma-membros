@@ -49,8 +49,9 @@ export const TRANSITIONS = Object.freeze([
 const REASON_TARGETS = Object.freeze(['rejeitado', 'removido']);
 
 // Termos de conduta, dose ou interação. Regex sem acento e sem maiúsculas
-// (o texto é normalizado antes). Bordas de palavra são aplicadas em
-// hasClinicalTerms, para "amgdala" e "doseamento" não casarem.
+// (o texto é normalizado antes). Borda de palavra dos dois lados, aplicada
+// abaixo, para "amgdala" e "doseamento" não casarem. A heurística é só um
+// piso: errar para o lado clínico custa uma revisão; errar para o outro, não.
 export const CLINICAL_TERMS = Object.freeze([
   'dose(s)?',
   'mg',
@@ -59,13 +60,29 @@ export const CLINICAL_TERMS = Object.freeze([
   'contraindica[a-z]*',
   'conduta(s)?',
   'tratamento de escolha',
-  'administrar',
+  'tratamento\\s+com',
+  'administr[a-z]*',
   'deve-se',
-  'recomenda-se',
+  'deve(m)?\\s+ser',
+  'recomend[a-z]*',
+  'utilize',
+  'indicad[a-z]*',
+  'antidoto(s)?',
+  'iniciar',
+  'inicie',
+]);
+
+// Número + unidade ("500mcg", "2,5 µg", "40 UI", "5 g/dia") e razões por
+// peso ou por dia ("/kg", "/dia"). Sem borda à esquerda (o número ou a barra
+// já separam) e com borda à direita, para "10 gatos" e "2019 genes" não casarem.
+// A unidade "µ" aceita o micro (U+00B5) e o mu grego (U+03BC): NFD não os unifica.
+const CLINICAL_UNIT_TERMS = Object.freeze([
+  '[0-9](?:[.,][0-9]+)?\\s*(?:mg|mcg|[\\u00b5\\u03bc]g|ug|g|ml|ui|meq|mmol)(?![a-z])',
+  '/\\s?(?:kg|dia)(?![a-z])',
 ]);
 
 const CLINICAL_PATTERN = new RegExp(
-  `(?:^|[^a-z])(?:${CLINICAL_TERMS.join('|')})(?![a-z])`,
+  `(?:^|[^a-z])(?:${CLINICAL_TERMS.join('|')})(?![a-z])|${CLINICAL_UNIT_TERMS.join('|')}`,
 );
 
 const AI_ORIGINS = Object.freeze(['ia', 'ia_editado']);

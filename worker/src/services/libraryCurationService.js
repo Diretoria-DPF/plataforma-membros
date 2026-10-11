@@ -59,7 +59,7 @@ const MSG = Object.freeze({
   invalidVersion: 'Versão inválida.',
   invalidTopic: 'Área inválida.',
   notAllowed: 'Mudança de estado não permitida.',
-  clinical: 'Este resumo fala de conduta, dose ou interação: precisa de revisor clínico.',
+  clinical: 'Este resumo fala de conduta, dose ou interação: precisa de revisor clínico. Para desmarcar, informe o motivo (3 a 300 caracteres).',
   noTopic: 'Escolha ao menos uma área.',
   noFields: 'Nenhuma alteração informada.',
   badField: 'Campo não permitido.',
@@ -218,7 +218,24 @@ async function assertTopicsExist(sql, topics) {
 // ---------------------------------------------------------------------------
 // Saída (AdminArticle e AdminListItem: as colunas em camelCase, sem search_norm)
 // ---------------------------------------------------------------------------
-const INTERNAL_COLUMNS = new Set(['search_norm']);
+// Lista de INCLUSÃO: coluna nova na tabela não vai para a tela sem ser listada
+// aqui. Fora de propósito: search_norm (índice interno) e os ids de pessoa
+// (created_by, status_changed_by, summary_updated_by, summary_reviewed_by,
+// clinical_reviewed_by, approved_by): a aba admin só usa os nomes e as datas.
+const ADMIN_COLUMNS = new Set([
+  'id', 'doi', 'pmid', 'pmcid', 'title', 'authors', 'author_count', 'journal', 'journal_abbrev',
+  'pub_year', 'volume', 'issue', 'pages', 'language', 'article_type', 'topics',
+  'license', 'license_source', 'license_conflict', 'oa_status', 'landing_url', 'source_abstract',
+  'metadata_sources', 'metadata_fetched_at',
+  'status', 'status_reason', 'status_changed_at', 'is_clinical',
+  'summary_text', 'summary_origin', 'summary_updated_at', 'summary_reviewed_at', 'summary_reviewer_name',
+  'clinical_reviewed_at', 'clinical_reviewer_name',
+  'approved_at', 'approver_name', 'published_at',
+  'version', 'created_at', 'updated_at',
+]);
+
+// Só para as regras do servidor (assertClinicalReviewer compara quem escreveu o resumo).
+const STATE_ONLY_COLUMNS = new Set(['summary_updated_by']);
 
 const toCamel = (column) => column.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());
 
@@ -228,12 +245,22 @@ function outValue(column, value) {
   return value;
 }
 
-function toAdminArticle(row) {
+function mapColumns(row, allowed) {
   return Object.fromEntries(
     Object.entries(row)
-      .filter(([column]) => !INTERNAL_COLUMNS.has(column))
+      .filter(([column]) => allowed(column))
       .map(([column, value]) => [toCamel(column), outValue(column, value)]),
   );
+}
+
+/** O que a tela recebe (AdminArticle). */
+function toAdminArticle(row) {
+  return mapColumns(row, (column) => ADMIN_COLUMNS.has(column));
+}
+
+/** O artigo para as regras de ../library/transitions.js: AdminArticle mais summaryUpdatedBy. Nunca sai na resposta. */
+function toArticleState(row) {
+  return mapColumns(row, (column) => ADMIN_COLUMNS.has(column) || STATE_ONLY_COLUMNS.has(column));
 }
 
 function authorsOf(row) {
@@ -385,13 +412,33 @@ function planSummary(cur, patch) {
   return { text: text ?? null, origin: origin ?? null, changed };
 }
 
-/** Resumo com conduta, dose ou interação força isClinical e não deixa desmarcar. */
-function planClinical(cur, patch, summaryText) {
-  if (summaryText && hasClinicalTerms(summaryText)) {
-    if (patch.isClinical === false) throw E.ValidationError(MSG.clinical);
-    return true;
+/** Motivo de 3 a 300 caracteres sem controles (ou null). */
+function unmarkReasonOf(reason) {
+  if (typeof reason !== 'string') return null;
+  const text = reason.replace(/\s+/g, ' ').trim();
+  const valid = text.length >= LIBRARY_LIMITS.REASON_MIN && text.length <= LIBRARY_LIMITS.REASON_MAX;
+  return valid && !CONTROL_RE.test(text) ? text : null;
+}
+
+/**
+ * Resumo com conduta, dose ou interação (hasClinicalTerms) força isClinical.
+ * Só desmarca quem pede isClinical:false COM motivo (3 a 300), que vai para a
+ * auditoria. Resumo que não mudou e já estava desmarcado continua assim (a
+ * desmarcação anterior, com motivo, não some numa edição de outro campo).
+ * Devolve { isClinical, unmarkReason }.
+ */
+function planClinical(cur, patch, summary, reason) {
+  const asked = Object.hasOwn(patch, 'isClinical');
+  if (!summary.text || !hasClinicalTerms(summary.text)) {
+    return { isClinical: asked ? patch.isClinical : cur.is_clinical, unmarkReason: null };
   }
-  return Object.hasOwn(patch, 'isClinical') ? patch.isClinical : cur.is_clinical;
+  if (asked && patch.isClinical === false) {
+    const unmarkReason = unmarkReasonOf(reason);
+    if (!unmarkReason) throw E.ValidationError(MSG.clinical);
+    return { isClinical: false, unmarkReason };
+  }
+  const keepsUnmarked = !asked && !summary.changed && cur.is_clinical === false;
+  return { isClinical: !keepsUnmarked, unmarkReason: null };
 }
 
 function hasValidClinicalReview(cur) {
@@ -416,10 +463,10 @@ function planLicense(cur, patch) {
 }
 
 /** Valores finais de todas as colunas editáveis (objeto novo; a linha lida não é tocada). */
-function planUpdate(cur, patch) {
+function planUpdate(cur, patch, reason) {
   const pick = (key, column) => (Object.hasOwn(patch, key) ? patch[key] : cur[column]);
   const summary = planSummary(cur, patch);
-  const isClinical = planClinical(cur, patch, summary.text);
+  const { isClinical, unmarkReason } = planClinical(cur, patch, summary, reason);
   const topics = pick('topics', 'topics');
   if (['aprovado', 'publicado'].includes(cur.status) && topics.length === 0) throw E.ValidationError(MSG.noTopic);
   const demoted = needsDemotion(cur, summary, isClinical);
@@ -436,6 +483,7 @@ function planUpdate(cur, patch) {
     oaStatus: pick('oaStatus', 'oa_status'),
     topics,
     isClinical,
+    unmarkReason,
     ...planLicense(cur, patch),
     summaryText: summary.text,
     summaryOrigin: summary.origin,
@@ -481,9 +529,10 @@ export async function updateArticle(sql, identity, input = {}, correlationId) {
   const cur = await loadArticle(sql, id);
   assertVersion(cur, version);
   if (Object.hasOwn(patch, 'topics')) await assertTopicsExist(sql, patch.topics);
-  const next = planUpdate(cur, patch);
+  const next = planUpdate(cur, patch, input.reason);
   const row = requireRow(await runUpdate(sql, cur, next, identity.profileId));
-  await Logging.logAudit(sql, correlationId, identity.profileId, 'LIBRARY_ARTICLE_UPDATE', 'library_article', id, 'success', { fields: Object.keys(patch) });
+  const details = { fields: Object.keys(patch), ...(next.unmarkReason ? { clinicalUnmarkReason: next.unmarkReason } : {}) };
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'LIBRARY_ARTICLE_UPDATE', 'library_article', id, 'success', details);
   if (next.demoted) {
     await Logging.logAudit(sql, correlationId, identity.profileId, 'LIBRARY_ARTICLE_STATUS', 'library_article', id, 'success', { from: cur.status, to: next.status });
   }
@@ -521,7 +570,7 @@ export async function setStatus(sql, identity, input = {}, correlationId) {
   await enforce(sql, 'LIBRARY_CURATE', identity.profileId);
   const cur = await loadArticle(sql, id);
   assertVersion(cur, version);
-  assertTransition(toAdminArticle(cur), to, roles, input.reason);
+  assertTransition(toArticleState(cur), to, roles, input.reason);
   const row = requireRow(await runStatusUpdate(sql, cur, to, reasonFor(to, input.reason), identity));
   await Logging.logAudit(sql, correlationId, identity.profileId, 'LIBRARY_ARTICLE_STATUS', 'library_article', id, 'success', { from: cur.status, to });
   return { success: true, article: toAdminArticle(row) };
@@ -575,7 +624,7 @@ export async function clinicalReview(sql, identity, input = {}, correlationId) {
   const cur = await loadArticle(sql, id);
   assertVersion(cur, version);
   assertReviewable(cur);
-  if (input.decision === 'aprovar') assertClinicalReviewer(toAdminArticle(cur), identity);
+  if (input.decision === 'aprovar') assertClinicalReviewer(toArticleState(cur), identity);
   const rows = input.decision === 'aprovar'
     ? await runApproval(sql, cur, identity)
     : await runReturn(sql, cur, note, identity.profileId);

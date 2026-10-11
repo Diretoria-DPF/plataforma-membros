@@ -36,6 +36,8 @@ const MS_PER_SECOND = 1000;
 const USER_AGENT = 'LAIFT-Biblioteca/1.0';
 const PUBMED_TOOL = 'laift_biblioteca';
 const TIMED_OUT = Symbol('timed-out');
+// Devolvido por extract* quando o DOI da resposta não é o pedido.
+const DOI_MISMATCH = Symbol('doi-mismatch');
 
 const TITLE_MAX = 500;
 const JOURNAL_MAX = 300;
@@ -259,6 +261,14 @@ function cleanDoi(value) {
   return doi.length <= 200 && DOI_RE.test(doi) ? doi : null;
 }
 
+/** DOI de um corpo de resposta, que pode vir como URL ("https://doi.org/10.x/y", OpenAlex). */
+function doiFromBody(value) {
+  return typeof value === 'string' ? cleanDoi(value.trim().replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '')) : null;
+}
+
+/** O DOI devolvido tem de ser o pedido (sem diferenciar maiúsculas); senão o registro é de outro artigo. */
+const sameDoi = (returned, requested) => doiFromBody(returned) === requested;
+
 function cleanPmid(value) {
   const pmid = value == null ? '' : String(value).trim();
   return PMID_RE.test(pmid) ? pmid : null;
@@ -278,9 +288,10 @@ function limitAuthors(list) {
   return { authors: list.slice(0, LIBRARY_LIMITS.AUTHORS_STORED_MAX), authorCount: list.length };
 }
 
-function extractCrossref(body, nowMs) {
+function extractCrossref(body, nowMs, requestedDoi) {
   const m = body?.message;
   if (!isObject(m)) return null;
+  if (!sameDoi(m.DOI, requestedDoi)) return DOI_MISMATCH;
   return {
     title: cleanText(m.title, TITLE_MAX),
     ...normalizeAuthors('crossref', m.author),
@@ -346,8 +357,9 @@ function openAlexLicense(body) {
   return best?.version === 'publishedVersion' ? best.license : null;
 }
 
-function extractOpenAlex(body) {
+function extractOpenAlex(body, requestedDoi) {
   if (!isObject(body) || (!body.title && !body.open_access)) return null;
+  if (!sameDoi(body.doi ?? body.ids?.doi, requestedDoi)) return DOI_MISMATCH;
   return {
     pmid: cleanPmid(trailingMatch(body.ids?.pmid, /(\d{1,10})\/?$/)),
     pmcid: cleanPmcid(trailingMatch(body.ids?.pmcid, /(PMC\d{1,10})\/?$/)),
@@ -363,11 +375,18 @@ function extractOpenAlex(body) {
   };
 }
 
-function extractUnpaywall(body) {
+/** Como no OpenAlex: a licença da melhor cópia só vale se a cópia for a versão publicada. */
+function unpaywallLicense(body) {
+  const best = body.best_oa_location;
+  return best?.version === 'publishedVersion' ? best.license : null;
+}
+
+function extractUnpaywall(body, requestedDoi) {
   if (!isObject(body) || (body.oa_status === undefined && body.is_oa === undefined)) return null;
+  if (!sameDoi(body.doi, requestedDoi)) return DOI_MISMATCH;
   return {
     oaStatus: normalizeOaStatus(body.oa_status),
-    license: normalizeLicense('unpaywall', body.best_oa_location?.license),
+    license: normalizeLicense('unpaywall', unpaywallLicense(body)),
   };
 }
 
@@ -480,6 +499,7 @@ function failureWarning(source, reason) {
   if (reason === 'timeout') return `${label} demorou demais para responder; ${loss}.`;
   if (reason === 'json' || reason === 'size') return `${label} devolveu uma resposta inválida; ${loss}.`;
   if (reason === 'empty') return `${label} não encontrou este artigo; ${loss}.`;
+  if (reason === 'mismatch') return `${label} devolveu o registro de outro DOI e foi descartada; ${loss}.`;
   return `${label} não respondeu; ${loss}.`;
 }
 
@@ -500,6 +520,10 @@ function createSession({ get, email, nowFn }) {
     } catch {
       part = null;
     }
+    if (part === DOI_MISMATCH) {
+      warn(failureWarning(source, 'mismatch'));
+      return null;
+    }
     if (!part) {
       warn(failureWarning(source, 'empty'));
       return null;
@@ -513,17 +537,17 @@ function createSession({ get, email, nowFn }) {
 
 /** OpenAlex; se falhar e houver e-mail de contato, Unpaywall (nunca os dois somados). */
 async function consultOpenAccess(s, doi) {
-  const openalex = await s.consult('openalex', openAlexUrl(doi), extractOpenAlex);
+  const openalex = await s.consult('openalex', openAlexUrl(doi), (b) => extractOpenAlex(b, doi));
   if (openalex) return;
   if (!s.email) {
     s.warn(NO_EMAIL_WARNING);
     return;
   }
-  await s.consult('unpaywall', unpaywallUrl(doi, s.email), extractUnpaywall);
+  await s.consult('unpaywall', unpaywallUrl(doi, s.email), (b) => extractUnpaywall(b, doi));
 }
 
 async function collectByDoi(s, doi) {
-  const crossref = await s.consult('crossref', crossrefUrl(doi, s.email), (b) => extractCrossref(b, s.nowFn()));
+  const crossref = await s.consult('crossref', crossrefUrl(doi, s.email), (b) => extractCrossref(b, s.nowFn(), doi));
   const europePmc = await s.consult('europepmc', europePmcUrl(`DOI:"${doi}"`),
     (b) => extractEuropePmc(b, (r) => cleanDoi(r.doi) === doi));
   if (!crossref && !europePmc) throw ValidationError(FAILURE_MESSAGES.doi);
@@ -539,7 +563,7 @@ async function collectByPmid(s, pmid) {
   if (!europePmc && !pubmed) throw ValidationError(FAILURE_MESSAGES.pmid);
   const doi = europePmc?.doi ?? pubmed?.doi ?? null;
   if (!doi) return;
-  await s.consult('crossref', crossrefUrl(doi, s.email), (b) => extractCrossref(b, s.nowFn()));
+  await s.consult('crossref', crossrefUrl(doi, s.email), (b) => extractCrossref(b, s.nowFn(), doi));
   await consultOpenAccess(s, doi);
 }
 

@@ -127,6 +127,33 @@ describe('parseIdentifier recusa', () => {
     rejects('10.1000/' + 'a'.repeat(200));
   });
 
+  test.each([
+    '10.1234/../../funders',
+    '10.1234/..',
+    '10.1234/.',
+    '10.1234/a/../b',
+    '10.1234/a/./b',
+    '10.1234/a//b',
+    '10.1234//a',
+    '10.1234/a/',
+  ])('DOI com segmento vazio, "." ou "..": %s', (doi) => {
+    rejects(doi);
+    rejects('doi:' + doi);
+    // O parser de URL já resolve "/../" e "/./" no meio do caminho (vira outro DOI válido, sem escapar).
+    if (!/\/\.{1,2}\//.test(doi)) rejects('https://doi.org/' + doi);
+  });
+
+  test('link com "/../" no meio é resolvido pelo parser de URL e nunca devolve segmento "." ou ".."', () => {
+    const out = parseIdentifier('https://doi.org/10.1234/a/../b');
+    expect(out).toEqual({ kind: 'doi', value: '10.1234/b' });
+    rejects('https://doi.org/10.1234/../../funders');
+  });
+
+  test('DOI com ".." escondido em %2e%2e ou %2F depois de decodificar', () => {
+    rejects('https://doi.org/10.1234/%2e%2e/%2e%2e/funders');
+    rejects('https://doi.org/10.1234%2F..%2Ffunders');
+  });
+
   test('link da SciELO', () => {
     rejects('https://www.scielo.br/j/rbc/a/abc123/');
   });
@@ -136,6 +163,9 @@ describe('expressões regulares', () => {
   test('DOI_RE e PMID_RE', () => {
     expect(DOI_RE.test('10.1000/xyz')).toBe(true);
     expect(DOI_RE.test('10.12/x')).toBe(false);
+    expect(DOI_RE.test('10.1000/a.b/c..d/.e')).toBe(true);
+    expect(DOI_RE.test('10.1000/../x')).toBe(false);
+    expect(DOI_RE.test('10.1000/a//b')).toBe(false);
     expect(PMID_RE.test('12345678')).toBe(true);
     expect(PMID_RE.test('0123')).toBe(false);
     expect(PMID_RE.test('12345678901')).toBe(false);
@@ -158,6 +188,7 @@ describe('montadores de link', () => {
 
   test('doiLandingUrl retorna null para DOI inválido', () => {
     expect(doiLandingUrl('10.1000/a?b')).toBeNull();
+    expect(doiLandingUrl('10.1234/../../funders')).toBeNull();
     expect(doiLandingUrl(null)).toBeNull();
   });
 
