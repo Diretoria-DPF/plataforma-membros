@@ -9,7 +9,7 @@
  * Cadastro por DOI ou PMID, fila por estado com contagens, edição com a versão do artigo e
  * mudança de estado só pelos botões que o servidor libera (allowedTransitions). Rejeitar e
  * remover pedem motivo de 3 a 300 caracteres antes da confirmação. Publicar mostra o aviso de
- * que o catálogo público só muda quando o site é atualizado à mão.
+ * que o artigo entra no catálogo público ao vivo (/biblioteca, cache de 60 s na API).
  *
  * As outras subabas (Sugestões, Coleções, Áreas, Equipe) ficam em admin-library-extras.js:
  * esta tela chama window.LaiftAdminLibraryExtras.render(aba, corpo, app) quando existir.
@@ -43,7 +43,7 @@
   var NOTHING_CHANGED = 'Nada mudou desde o último salvamento.';
   var SAVED_NOTICE = 'Alterações salvas.';
   var STATUS_CHANGED_NOTICE = 'Estado atualizado.';
-  var PUBLISHED_NOTICE = 'Publicado. O catálogo público só muda quando o site for atualizado à mão (Actions → Deploy do site → Run workflow).';
+  var PUBLISHED_NOTICE = 'Publicado. O artigo aparece no catálogo público (/biblioteca) em até 1 minuto.';
   var TITLE_FOCUS_EDIT = 'adm-lib-titulo-edicao';
   var TITLE_FOCUS_QUEUE = 'adm-lib-titulo-fila';
 

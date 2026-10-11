@@ -15,12 +15,12 @@ Telas: `CONTRATO-B2.md`. Dados e ações: `CONTRATO-B1.md`. Dúvidas do dono: `P
 Use `apiAdminSetFeatureFlag` (formato na seção 5). Confira cada etapa antes da próxima.
 1. **Só admins:** `library_enabled` com `{"enabled":true,"conditions":{"role":["admin"]}}`. Com condição de papel, a página pública continua fora: sem sessão, a condição não casa.
 2. **Membros:** só depois que o texto sobre favoritos e sugestões estiver publicado na Política de Privacidade. Então `{"enabled":true,"conditions":{"role":["admin","member"]}}`.
-3. **Todos:** `{"enabled":true,"conditions":{}}`. Depois, atualize o catálogo público (seção 4).
+3. **Todos:** `{"enabled":true,"conditions":{}}`. O catálogo público passa a aparecer em `/biblioteca` em até ~60 s, sem deploy (seção 4).
 4. **Sugestões:** `library_member_suggest` segue a mesma ordem, depois da etapa 2.
 
 | Flag | O que liga | Vai ao navegador | Ao desligar |
 |---|---|---|---|
-| `library_enabled` | Menu "Estudo", painel do membro e catálogo público | sim | Menu e painel saem em até 60 s (quem tem a página aberta recarrega); a página pública sai no próximo build |
+| `library_enabled` | Menu "Estudo", painel do membro e catálogo público | sim | Menu e painel saem em até 60 s (quem tem a página aberta recarrega); `/biblioteca` continua no ar e mostra "Nenhum artigo publicado ainda." na próxima visita (até 60 s) |
 | `library_member_suggest` | Botão "Sugerir artigo" | sim | O botão some |
 | `library_ai_summary` | Resumo sugerido por IA na curadoria (seção 7) | não | "Gerar resumo(s)" responde "desligado"; resumos já gravados ficam e continuam exigindo aprovação |
 | `lia_library_enabled` | Lia cita artigos publicados (B4) | não | Sem efeito até o B4 |
@@ -32,12 +32,13 @@ Use `apiAdminSetFeatureFlag` (formato na seção 5). Confira cada etapa antes da
 - **Revisor clínico:** só aprova ou devolve artigos com conduta, dose ou interação. Admin não vira revisor sozinho.
 - Curador que não é admin ainda não vê a aba de curadoria (a tela própria entra no B3 completo). Para curar e rodar lotes hoje, use uma conta admin.
 
-## 4. Atualizar o catálogo público
-- Não há atualização diária. O catálogo público só muda quando você dispara o workflow.
-- Publicar no banco não atualiza o site. Depois de publicar um lote: GitHub → Actions → "Publicar front-end na Cloudflare (Workers static assets)" → Run workflow, na branch `main`.
-- Se o ambiente `production` pedir aprovação (Settings → Environments), aprove quando a execução aparecer.
-- Se a API não responder no build, o site usa a reserva e mostra aviso. O build não quebra.
-- Atualizar a reserva: a partir de `frontend/`, rode `node scripts/fetch-biblioteca.mjs --out biblioteca/conteudo/reserva.json` e faça commit do arquivo.
+## 4. Catálogo público (ao vivo)
+- Automático: publicar ou remover um artigo no painel aparece em `/biblioteca` em até ~60 s (cache da API). Não precisa rodar workflow nem aprovar deploy.
+- Como funciona: a página nasce do instantâneo gravado no último deploy (rápida, boa para o Google, funciona sem JavaScript) e, ao abrir, busca o catálogo na API (uma chamada por visita) e troca a lista se mudou.
+- Se a API falhar (rede, limite, erro), o visitante vê o instantâneo do último deploy, sem mensagem de erro.
+- Google e sitemap usam o instantâneo. Enquanto ele não tiver artigos, a página sai com `noindex` e fica fora do sitemap; isso só muda no próximo deploy (qualquer push na `main`, ou Actions → "Publicar front-end na Cloudflare" → Run workflow). Não é urgente: o visitante já vê a lista ao vivo.
+- Limites: com o cache do Worker funcionando, as visitas não tocam o banco. Sem cache, valem 30 chamadas/hora por IP e 300/hora no total; acima disso a página mostra o instantâneo.
+- Atualizar a reserva (opcional): a partir de `frontend/`, rode `node scripts/fetch-biblioteca.mjs --out biblioteca/conteudo/reserva.json` e faça commit do arquivo.
 
 ## 5. Desligar e voltar atrás
 Primeiro, desligue pela API. Ela grava quem desligou e a auditoria:
@@ -45,7 +46,7 @@ Primeiro, desligue pela API. Ela grava quem desligou e a auditoria:
 {"action":"apiAdminSetFeatureFlag","args":["<token de sessão de admin>","library_enabled",{"enabled":false}]}
 ```
 - Para só as sugestões, troque a chave por `library_member_suggest`.
-- Página pública: depois de desligar, rode o workflow da seção 4 para tirar a página.
+- Página pública: em até 60 s ela passa a mostrar "Nenhum artigo publicado ainda." (a página fica no ar, vazia). Para tirar também o instantâneo e o sitemap, faça um deploy (seção 4).
 - Emergência, sem auditoria: `UPDATE feature_flags SET enabled = FALSE, updated_at = now() WHERE key = 'library_enabled';`
 - O down (`sql/down/029_library.sql`) desfaz a migração e **apaga os dados**. Não use para desligar.
 - O down recusa se houver artigo. Para rodar com artigos: exporte (branch do Neon) e, na mesma sessão, `SET laift.allow_library_drop = 'on';` antes do script. Ele apaga as tabelas `library_*`, as 4 flags e a entrada da 029 no ledger. Não remove `pg_trgm`.

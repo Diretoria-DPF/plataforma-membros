@@ -131,6 +131,111 @@ test('validarIndice aceita o formato versao 1 e descarta item sem id ou n', () =
   assert.deepEqual(ids(valido), ['a1']);
 });
 
+// ---------- catálogo ao vivo (apiLearnLibraryPublicCatalog) ----------
+
+/** PublicItem como o Worker devolve (toPublicItem em worker/src/services/libraryService.js). */
+function publicItem(id, extra = {}) {
+  return {
+    id,
+    title: `Artigo ${id}`,
+    authors: [{ family: 'Silva', given: 'Ana Maria' }],
+    authorCount: 1,
+    journal: 'Rev Farm',
+    year: 2022,
+    doi: `10.1000/${id}`,
+    pmid: null,
+    type: 'artigo',
+    topics: ['farmacologia'],
+    openAccess: true,
+    license: 'cc-by',
+    landingUrl: `https://doi.org/10.1000/${id}`,
+    publishedAt: '2026-10-11T10:00:00Z',
+    ...extra,
+  };
+}
+
+function respostaAoVivo(itens, extra = {}) {
+  return {
+    success: true,
+    enabled: true,
+    generatedAt: '2026-10-11T10:00:00Z',
+    topics: [{ slug: 'farmacologia', name: 'Farmacologia' }],
+    items: itens,
+    ...extra,
+  };
+}
+
+test('lerCatalogoAoVivo converte a resposta da API no formato de index.json', () => {
+  const vivo = catalogo.lerCatalogoAoVivo(respostaAoVivo([publicItem('7'), publicItem('8', { authors: [], authorCount: 0 })]));
+  assert.equal(vivo.generatedAt, '2026-10-11T10:00:00Z');
+  assert.deepEqual(vivo.topics, [{ slug: 'farmacologia', name: 'Farmacologia' }]);
+  assert.deepEqual(vivo.items.map((i) => i.id), ['7', '8']);
+  const [primeiro] = vivo.items;
+  assert.equal(primeiro.url, 'https://doi.org/10.1000/7');
+  assert.equal(primeiro.authors, 'Silva AM');
+  assert.equal(primeiro.n, searchNorm({ title: 'Artigo 7', authors: [{ family: 'Silva' }], journal: 'Rev Farm', doi: '10.1000/7' }));
+  assert.equal('nomesAutores' in primeiro, false, 'nomesAutores fica só no build (JSON-LD)');
+});
+
+test('lerCatalogoAoVivo descarta item com link fora da lista e mantém os outros', () => {
+  const vivo = catalogo.lerCatalogoAoVivo(respostaAoVivo([publicItem('1'), publicItem('2', { landingUrl: 'javascript:alert(1)' })]));
+  assert.deepEqual(vivo.items.map((i) => i.id), ['1']);
+});
+
+test('lerCatalogoAoVivo: enabled:false vira catálogo vazio (estado vazio, página continua)', () => {
+  const fechado = catalogo.lerCatalogoAoVivo({ success: true, enabled: false, topics: [], items: [] });
+  assert.deepEqual(fechado, { generatedAt: '', topics: [], items: [] });
+});
+
+test('lerCatalogoAoVivo recusa resposta em que não dá para confiar (fica o instantâneo)', () => {
+  assert.equal(catalogo.lerCatalogoAoVivo(null), null);
+  assert.equal(catalogo.lerCatalogoAoVivo('texto'), null);
+  assert.equal(catalogo.lerCatalogoAoVivo({ success: false, error: 'limite' }), null);
+  assert.equal(catalogo.lerCatalogoAoVivo({ success: true, items: [] }), null, 'sem enabled');
+  assert.equal(catalogo.lerCatalogoAoVivo({ success: true, enabled: true, items: 'x' }), null);
+  assert.equal(catalogo.lerCatalogoAoVivo(respostaAoVivo([], { topics: 'x' })), null);
+  assert.equal(catalogo.lerCatalogoAoVivo(respostaAoVivo([publicItem('1', { title: '' })])), null, 'itens e nenhum válido');
+});
+
+test('lerCatalogoAoVivo aceita catálogo ligado e vazio', () => {
+  assert.deepEqual(catalogo.lerCatalogoAoVivo(respostaAoVivo([])).items, []);
+});
+
+test('apiDoCatalogo: homologação só em staging.laift.com.br; o resto vai para a produção', () => {
+  assert.equal(catalogo.apiDoCatalogo('staging.laift.com.br'), 'https://staging-api.laift.com.br/v1/');
+  assert.equal(catalogo.apiDoCatalogo('laift.com.br'), 'https://api.laift.com.br/v1/');
+  assert.equal(catalogo.apiDoCatalogo('www.laift.com.br'), 'https://api.laift.com.br/v1/');
+  assert.equal(catalogo.apiDoCatalogo('127.0.0.1'), 'https://api.laift.com.br/v1/');
+});
+
+test('as origens da API batem com o connect-src de biblioteca.html (e só elas)', () => {
+  const html = lerArquivo('biblioteca.html');
+  const csp = /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/.exec(html)[1];
+  const connect = csp.split(';').map((d) => d.trim()).find((d) => d.startsWith('connect-src')).split(/\s+/).slice(1);
+  const origens = [catalogo.API_PRODUCAO, catalogo.API_HOMOLOGACAO].map((u) => new URL(u).origin);
+  assert.deepEqual(connect, ["'self'", ...origens]);
+});
+
+test('rotuloDoTotal: catálogo vazio tem frase própria; com itens usa a contagem', () => {
+  assert.equal(catalogo.rotuloDoTotal(0), 'Nenhum artigo publicado ainda.');
+  assert.equal(catalogo.rotuloDoTotal(1), '1 artigo');
+  assert.equal(catalogo.rotuloDoTotal(6), '6 artigos');
+});
+
+test('o build usa a validação deste arquivo (regra única)', () => {
+  const gerador = require('./build-biblioteca.js');
+  assert.equal(gerador.validarItem, catalogo.validarItem);
+  assert.equal(gerador.TIPOS, catalogo.TIPOS);
+});
+
+test('JS do catálogo: uma chamada à API por visita, sem polling', () => {
+  const js = lerArquivo('biblioteca/catalogo.js');
+  assert.doesNotMatch(js, /setInterval/);
+  assert.equal((js.match(/\bfetch\(/g) || []).length, 2, 'só index.json e a API');
+  assert.equal((js.match(/action: ACAO_CATALOGO/g) || []).length, 1);
+  assert.match(js, /credentials: 'omit'/);
+});
+
 test('espera de digitação é 250 ms', () => {
   assert.equal(ATRASO_DIGITACAO, 250);
 });

@@ -460,7 +460,8 @@ export async function suggest(sql, _env, identity, input = {}, correlationId) {
 }
 
 // ---------------------------------------------------------------------------
-// apiLearnLibraryPublicCatalog (sem sessão; consumidor: o build do site)
+// apiLearnLibraryPublicCatalog (sem sessão; consumidores: a página /biblioteca ao vivo, uma chamada por
+// visita, e o build do site, que grava o instantâneo da primeira pintura)
 // ---------------------------------------------------------------------------
 function defaultCache() {
   return typeof caches !== 'undefined' && caches && caches.default ? caches.default : null;
