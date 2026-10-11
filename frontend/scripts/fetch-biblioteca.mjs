@@ -54,16 +54,24 @@ async function lerCorpo(res) {
 }
 
 async function pedirCatalogo(apiUrl, fetchImpl, timeoutMs) {
-  const res = await fetchImpl(apiUrl, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ action: ACAO, args: [] }),
-    credentials: 'omit',
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  const corpo = await lerCorpo(res);
-  if (!corpo.ok) return corpo;
-  return validarCatalogo(corpo.json);
+  // AbortSignal.timeout() usa um cronômetro que não segura o processo vivo (unref): num
+  // fetch pendurado o Node encerra o teste com a promessa pendente. setTimeout comum segura.
+  const controle = new AbortController();
+  const relogio = setTimeout(() => controle.abort(new DOMException('tempo esgotado', 'TimeoutError')), timeoutMs);
+  try {
+    const res = await fetchImpl(apiUrl, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: ACAO, args: [] }),
+      credentials: 'omit',
+      signal: controle.signal,
+    });
+    const corpo = await lerCorpo(res);
+    if (!corpo.ok) return corpo;
+    return validarCatalogo(corpo.json);
+  } finally {
+    clearTimeout(relogio);
+  }
 }
 
 /**
