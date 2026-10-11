@@ -250,8 +250,9 @@ async function startApp(opts = {}) {
     await page.waitForSelector('#app-root:not(.hidden)');
   }
 
-  // Propostas, Tarefas, Mensagens e Equipe moram no menu (hambúrguer): abre o menu e escolhe o item.
-  const MENU_PANELS = ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart'];
+  // Propostas, Tarefas, Mensagens, Equipe e Biblioteca moram no menu (hambúrguer): abre o menu e escolhe o item.
+  // A Biblioteca só aparece com a flag library_enabled (grupo "Estudo"; CONTRATO-B2 §1).
+  const MENU_PANELS = ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart', 'panel-library'];
 
   async function showPanel(panelId) {
     if (MENU_PANELS.includes(panelId)) {

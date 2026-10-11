@@ -73,6 +73,7 @@
   <link rel="stylesheet" href="blog-novidade.css">
   <link rel="stylesheet" href="voltar-app.css">
   <link rel="stylesheet" href="app-menu.css">
+  <link rel="stylesheet" href="library.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
   <script src="ux-v2.js"></script>
 </head>
@@ -335,6 +336,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><path d="M10 10h4v4h-4z"/></svg>
             <span>IA</span>
           </button>
+          <!-- Biblioteca LAIFT: curadoria (CONTRATO-B2 §6); não depende de library_enabled. -->
+          <button type="button" data-panel="panel-admin-library">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 012-2h12v16H6a2 2 0 00-2 2z"/><path d="M4 19V5"/><path d="M8 7h6"/></svg>
+            <span>Biblioteca</span>
+          </button>
           <button type="button" id="btn-exit-admin-mode">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             <span>Voltar</span>
@@ -387,6 +393,17 @@
                 <span class="app-menu__texto"><span class="app-menu__titulo">Equipe</span><span id="app-menu-info-connections" class="app-menu__info"></span></span>
                 <span id="nav-badge-connections" class="nav-badge  hidden" aria-hidden="true"></span>
                 <span id="nav-badge-connections-sr" class="visually-hidden"></span>
+              </button>
+            </li>
+          </ul>
+        </section>
+        <section class="app-menu__grupo" data-grupo="estudo" aria-labelledby="app-menu-g3">
+          <h3 id="app-menu-g3">Estudo</h3>
+          <ul>
+            <li>
+              <button type="button" class="app-menu__item" data-panel="panel-library" data-scope="all">
+                <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 012-2h12v16H6a2 2 0 00-2 2z"/><path d="M4 19V5"/><path d="M8 7h6"/></svg>
+                <span class="app-menu__texto"><span class="app-menu__titulo">Biblioteca</span><span class="app-menu__info">Artigos com curadoria</span></span>
               </button>
             </li>
           </ul>
@@ -566,6 +583,12 @@
               <p class="muted" id="messaging-char-counter" style="text-align:right; font-size:11px; margin:0 14px 8px;">0 / 2000</p>
             </div>
           </div>
+        </section>
+
+        <!-- Biblioteca LAIFT (CONTRATO-B2 §3): library.js monta tudo por LaiftDom.h. -->
+        <section id="panel-library" class="hidden">
+          <h1 class="sr-only">Biblioteca</h1>
+          <div id="library-root"></div>
         </section>
 
         <section id="panel-profile" class="hidden">
@@ -913,6 +936,12 @@
             <div id="admin-ai-pending"></div>
           </div>
         </section>
+
+        <!-- Biblioteca LAIFT: curadoria (CONTRATO-B2 §6; admin-library.js + admin-library-extras.js). -->
+        <section id="panel-admin-library" class="hidden">
+          <h1 class="sr-only">Curadoria da Biblioteca</h1>
+          <div id="admin-library-root"></div>
+        </section>
       </main>
     </div>
   </div>
@@ -1062,6 +1091,12 @@
   <!-- Moderação da Lia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
   <script src="modulos/shared/safe-dom.js" defer></script>
   <script src="admin-moderation.js" defer></script>
+  <!-- Biblioteca LAIFT (CONTRATO-B2 §7): citação → ficha → painel; extras antes do admin. -->
+  <script src="library-cite.js" defer></script>
+  <script src="library-detail.js" defer></script>
+  <script src="library.js" defer></script>
+  <script src="admin-library-extras.js" defer></script>
+  <script src="admin-library.js" defer></script>
   <script src="blog-novidade.js" defer></script>
   <script src="voltar-app.js" defer></script>
   <script src="app.js" defer></script>

@@ -84,3 +84,31 @@
   .library-titulo:hover { text-decoration: underline; }
   .library-favorito:hover { background: var(--primary-soft); }
 }
+
+/* Curadoria (admin-library.js e admin-library-extras.js): os campos são <div><label><input>, sem
+ * classe própria, e herdam o estilo global de styles.css. Aqui só o que falta: espaço entre os campos,
+ * caixa de seleção na linha do rótulo, grupos de botões fora de .list-item e o estado das subabas. */
+#admin-library-root > * + * { margin-top: var(--density-gap, 12px); }
+#admin-library-root div > label:first-child { display: block; margin: 12px 0 6px; }
+#admin-library-root fieldset {
+  min-width: 0; margin: 12px 0; padding: 8px 14px 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+}
+#admin-library-root legend { padding: 0 4px; font-weight: 600; color: var(--text); }
+#admin-library-root input[type="checkbox"] {
+  width: 22px; height: 22px; min-height: 0; margin: 0 10px 0 0; padding: 0;
+  vertical-align: middle; accent-color: var(--primary);
+}
+/* O rótulo da caixa é o alvo de toque (44 px de altura). */
+#admin-library-root input[type="checkbox"] + label {
+  display: inline-flex; align-items: center; min-height: 44px; margin: 0;
+  vertical-align: middle; color: var(--text); cursor: pointer;
+}
+#admin-library-root .actions-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+#admin-library-root .actions-row button { width: auto; }
+/* Subabas e filtros de estado: o escolhido fica cheio e sublinhado; os outros, em contorno. */
+#admin-library-root button[aria-pressed="false"] {
+  background: var(--surface-alt); color: var(--text); border: 1px solid var(--border);
+}
+#admin-library-root button[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--on-primary); }
+#admin-library-root textarea { min-height: 120px; }

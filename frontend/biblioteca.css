@@ -8,8 +8,117 @@
    rodapé; aqui ficam só as classes bib-*. Só tokens de laift-tokens.css. Sem movimento próprio. */
 
 /* -------------------------------------------------------------------------
+   Página e link de pular (o <body> é .bib-page, não .pub-pagina)
+   ------------------------------------------------------------------------- */
+
+.bib-page {
+  margin: 0;
+  background: var(--layer-0);
+  color: var(--laift-text);
+  font-family: var(--laift-font);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.bib-page main {
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px 16px 32px;
+}
+
+@media (min-width: 760px) {
+  .bib-page main {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Só aparece quando recebe o foco do teclado (mesmo desenho de .pub-pular). */
+.bib-pular {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--laift-touch);
+  padding: 0 20px;
+  border-radius: var(--laift-radius-pill);
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.bib-pular:focus {
+  transform: none;
+}
+
+/* -------------------------------------------------------------------------
    Cabeçalho da página
    ------------------------------------------------------------------------- */
+
+.bib-cabecalho {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.bib-cabecalho h1 {
+  margin: 8px 0 0;
+  color: var(--laift-text);
+  font-size: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.bib-intro {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--laift-text);
+  font-size: 1.0625rem;
+}
+
+.bib-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.bib-botao {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--laift-touch);
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--laift-radius-pill);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.bib-acoes .bib-botao {
+  background: var(--laift-primary);
+  color: var(--laift-on-primary);
+}
+
+.bib-pular:focus-visible,
+.bib-acoes .bib-botao:focus-visible {
+  outline: 3px solid var(--laift-focus-color);
+  outline-offset: 2px;
+}
 
 .bib-atualizado,
 .bib-status {
@@ -47,7 +156,9 @@
     align-items: end;
   }
 
-  .bib-filtros > .bib-campo--busca {
+  /* A busca ocupa a linha toda (o modelo não marca o campo: é o primeiro do formulário). */
+  .bib-filtros > .bib-campo--busca,
+  .bib-filtros > .bib-campo:first-child {
     grid-column: 1 / -1;
   }
 }
@@ -78,14 +189,18 @@
   font: inherit;
 }
 
-.bib-campo--check {
+/* Caixa de seleção e rótulo na mesma linha (o modelo usa bib-campo--linha). O rótulo cobre a
+   linha toda, para o alvo de toque ter 44 px de altura e não só os 24 px da caixa. */
+.bib-campo--check,
+.bib-campo--linha {
   display: flex;
   align-items: center;
   gap: 10px;
   min-height: var(--laift-touch);
 }
 
-.bib-campo--check input[type="checkbox"] {
+.bib-campo--check input[type="checkbox"],
+.bib-campo--linha input[type="checkbox"] {
   flex: none;
   width: 24px;
   height: 24px;
@@ -93,8 +208,14 @@
   accent-color: var(--laift-primary);
 }
 
-.bib-campo--check label {
+.bib-campo--check label,
+.bib-campo--linha label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-height: var(--laift-touch);
   font-weight: 600;
+  cursor: pointer;
 }
 
 .bib-limpar {
@@ -137,7 +258,9 @@
   display: none;
 }
 
-.bib-item {
+/* O gerador emite <article class="bib-artigo">; .bib-item fica como sinônimo. */
+.bib-item,
+.bib-artigo {
   display: grid;
   gap: 8px;
   min-width: 0;
@@ -194,6 +317,10 @@
   color: var(--laift-success);
 }
 
+.bib-acao {
+  margin: 0;
+}
+
 .bib-link {
   display: inline-flex;
   align-items: center;
@@ -213,6 +340,12 @@
 
   .bib-limpar:hover {
     background: var(--layer-3);
+  }
+
+  /* Sem trocar a cor do fundo: primary-strong clareia no tema escuro e tiraria o contraste. */
+  .bib-acoes .bib-botao:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 }
 
