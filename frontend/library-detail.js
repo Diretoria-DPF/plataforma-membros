@@ -248,7 +248,7 @@
     var areas = (Array.isArray(article.topics) ? article.topics : []).map(function (slug) {
       return topicName(slug, topics);
     });
-    var badges = [type].concat(areas).filter(Boolean).map(function (label) {
+    var badges = [type, cite().languageLabel(article.language)].concat(areas).filter(Boolean).map(function (label) {
       return h('span', { className: 'badge' }, [label]);
     });
     return h('div', { className: 'library-selos' }, badges);

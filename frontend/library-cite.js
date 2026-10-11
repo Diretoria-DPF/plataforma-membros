@@ -29,6 +29,10 @@
       diretriz: 'Diretriz',
       outro: 'Outro',
     }),
+    language: Object.freeze({
+      pt: 'Português',
+      en: 'English',
+    }),
     license: Object.freeze({
       'cc-by': 'CC BY',
       'cc-by-sa': 'CC BY-SA',
@@ -49,6 +53,11 @@
 
   function typeLabel(key) {
     return lookup(LABELS.type, key);
+  }
+
+  /** Selo de idioma em texto: 'Português' ou 'English'; outro idioma ou sem idioma: ''. */
+  function languageLabel(key) {
+    return lookup(LABELS.language, key);
   }
 
   function licenseLabel(key) {
@@ -220,7 +229,7 @@
     ]);
   }
 
-  const api = { abnt, vancouver, LABELS, typeLabel, licenseLabel };
+  const api = { abnt, vancouver, LABELS, typeLabel, licenseLabel, languageLabel };
 
   // Navegador: window.LaiftLibraryCite. Node: module.exports, para scripts/library-cite.test.mjs.
   if (typeof module !== 'undefined' && module.exports) {

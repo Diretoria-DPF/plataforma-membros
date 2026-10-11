@@ -164,7 +164,7 @@ describe('search', () => {
     await addArticle({ title: 'Formato', summary_text: 'Resumo do curador', summary_origin: 'curador', summary_updated_at: new Date('2026-01-15T00:00:00Z'), pmid: '123' });
     const { items, topics } = await Lib.search(sql, MEMBER, {});
     expect(Object.keys(items[0]).sort()).toEqual([
-      'authorCount', 'authors', 'doi', 'hasSummary', 'id', 'isFavorite', 'journal', 'landingUrl', 'license',
+      'authorCount', 'authors', 'doi', 'hasSummary', 'id', 'isFavorite', 'journal', 'landingUrl', 'language', 'license',
       'openAccess', 'pmid', 'publishedAt', 'topics', 'title', 'type', 'year',
     ].sort());
     expect(items[0]).toMatchObject({ title: 'Formato', year: 2020, type: 'artigo', openAccess: true, hasSummary: true, isFavorite: false, pmid: '123' });
@@ -222,6 +222,55 @@ describe('search', () => {
     expect(p2.items.map((i) => i.title)).toEqual(['Ordem 1', 'Sem ano']);
     expect((await Lib.search(sql, MEMBER, {})).pageSize).toBe(20);
     expect((await Lib.search(sql, MEMBER, { pageSize: 0, page: 1000 }))).toMatchObject({ page: 100, pageSize: 20 });
+  });
+
+  test('ordem padrão: português primeiro, depois ano decrescente e título; sem idioma vem junto dos demais', async () => {
+    await addArticle({ title: 'Inglês recente', language: 'en', pub_year: 2024 });
+    await addArticle({ title: 'Português antigo', language: 'pt', pub_year: 2010 });
+    await addArticle({ title: 'Sem idioma', language: null, pub_year: 2023 });
+    await addArticle({ title: 'Português novo', language: 'pt', pub_year: 2022 });
+    await addArticle({ title: 'Espanhol', language: 'es', pub_year: 2021 });
+    const res = await Lib.search(sql, MEMBER, {});
+    expect(res.items.map((i) => i.title)).toEqual(['Português novo', 'Português antigo', 'Inglês recente', 'Sem idioma', 'Espanhol']);
+    expect(res.items.map((i) => i.language)).toEqual(['pt', 'pt', 'en', null, 'es']);
+  });
+
+  test('a ordem portuguesa vale na paginação inteira, não só dentro da página', async () => {
+    await addArticle({ title: 'En 1', language: 'en', pub_year: 2025 });
+    await addArticle({ title: 'En 2', language: 'en', pub_year: 2024 });
+    await addArticle({ title: 'Pt 1', language: 'pt', pub_year: 2001 });
+    const p1 = await Lib.search(sql, MEMBER, { pageSize: 2, page: 1 });
+    const p2 = await Lib.search(sql, MEMBER, { pageSize: 2, page: 2 });
+    expect(p1.items.map((i) => i.title)).toEqual(['Pt 1', 'En 1']);
+    expect(p2.items.map((i) => i.title)).toEqual(['En 2']);
+  });
+
+  test('filtro de idioma: pt, en e outros (tudo que não é português); ausente = todos', async () => {
+    await addArticle({ title: 'P', language: 'pt' });
+    await addArticle({ title: 'E', language: 'en' });
+    await addArticle({ title: 'S', language: 'es' });
+    await addArticle({ title: 'N', language: null });
+    const titles = async (input) => (await Lib.search(sql, MEMBER, input)).items.map((i) => i.title).sort();
+    expect(await titles({ language: 'pt' })).toEqual(['P']);
+    expect(await titles({ language: 'en' })).toEqual(['E']);
+    expect(await titles({ language: 'outros' })).toEqual(['E', 'N', 'S']);
+    expect(await titles({})).toEqual(['E', 'N', 'P', 'S']);
+    expect(await titles({ language: '' })).toEqual(['E', 'N', 'P', 'S']);
+    expect((await Lib.search(sql, MEMBER, { language: 'pt' })).total).toBe(1);
+  });
+
+  test('idioma inválido é recusado', async () => {
+    await expectError(Lib.search(sql, MEMBER, { language: 'fr' }), 'ValidationError', 'Idioma inválido.');
+    await expectError(Lib.search(sql, MEMBER, { language: 5 }), 'ValidationError');
+  });
+
+  test('favoritos seguem do mais recente ao mais antigo, sem a ordem do idioma', async () => {
+    const en = await addArticle({ title: 'Fav en', language: 'en' });
+    const pt = await addArticle({ title: 'Fav pt', language: 'pt' });
+    await db.query("INSERT INTO library_favorites (profile_id, article_id, created_at) VALUES ($1, $2, '2026-03-01'), ($1, $3, '2026-03-02')", [P_MEMBER, pt, en]);
+    const res = await Lib.listFavorites(sql, MEMBER, {});
+    expect(res.items.map((i) => i.title)).toEqual(['Fav en', 'Fav pt']);
+    expect(res.items.map((i) => i.language)).toEqual(['en', 'pt']);
   });
 
   test('isFavorite reflete só os favoritos de quem pergunta', async () => {
@@ -501,9 +550,18 @@ describe('publicCatalog', () => {
     expect(item.authors).toHaveLength(3);
     expect(item).toMatchObject({ title: 'Público', authorCount: 9, pmid: '777', openAccess: true, license: 'cc-by' });
     expect(Object.keys(item).sort()).toEqual([
-      'authorCount', 'authors', 'doi', 'id', 'journal', 'landingUrl', 'license', 'openAccess', 'pmid', 'publishedAt', 'title', 'topics', 'type', 'year',
+      'authorCount', 'authors', 'doi', 'id', 'journal', 'landingUrl', 'language', 'license', 'openAccess', 'pmid', 'publishedAt', 'title', 'topics', 'type', 'year',
     ].sort());
     expect(JSON.stringify(res)).not.toMatch(/segredo|original/);
+  });
+
+  test('ordena o português primeiro e traz o idioma de cada item', async () => {
+    await addArticle({ title: 'Catálogo en', language: 'en', pub_year: 2025 });
+    await addArticle({ title: 'Catálogo pt', language: 'pt', pub_year: 2005 });
+    await addArticle({ title: 'Catálogo sem idioma', language: null, pub_year: 2024 });
+    const res = await Lib.publicCatalog(sql, env, { cache: fakeCache() });
+    expect(res.items.map((i) => i.title)).toEqual(['Catálogo pt', 'Catálogo en', 'Catálogo sem idioma']);
+    expect(res.items.map((i) => i.language)).toEqual(['pt', 'en', null]);
   });
 
   test('a segunda chamada sai do cache sem tocar o banco nem os limites', async () => {

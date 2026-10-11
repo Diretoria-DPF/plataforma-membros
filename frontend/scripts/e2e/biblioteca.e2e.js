@@ -189,6 +189,16 @@ async function paginaComFiltros(app) {
     check((await page.evaluate(() => window.__xss)) === undefined, 'escape: o <script> do título não é executado');
     check((await page.locator('.bib-titulo', { hasText: '<script>' }).count()) === 1, 'escape: o título com <script> aparece como texto');
 
+    check((await page.locator('.bib-lista > li').first().getAttribute('id')) === 'a-e2e-0003', 'idioma: o primeiro da lista é um artigo em português');
+    check(await page.locator('label[for="bib-idioma"]').textContent() === 'Idioma', 'idioma: o filtro tem rótulo visível "Idioma"');
+    check((await page.locator('.bib-selo', { hasText: /^Português$/ }).count()) === 2 && (await page.locator('.bib-selo', { hasText: /^English$/ }).count()) === 1, 'idioma: selos em texto "Português" e "English"');
+    await page.selectOption('#bib-idioma', 'pt');
+    check(await esperar(async () => (await textoStatus(page)).includes('2 artigos')), 'idioma "Português": ficam 2 artigos');
+    await page.selectOption('#bib-idioma', 'outros');
+    check(await esperar(async () => (await textoStatus(page)).includes('4 artigos')), 'idioma "Inglês e outros": ficam 4 artigos');
+    await page.selectOption('#bib-idioma', '');
+    check(await esperar(async () => (await textoStatus(page)).includes(`${TOTAL_ARTIGOS} artigos`)), 'idioma "Todos": volta a lista completa');
+
     await page.fill('#bib-q', 'cafeína');
     check(await esperar(async () => (await textoStatus(page)).includes('1 artigo')), 'busca "cafeína" (com acento): sobra 1 artigo');
     check((await artigosVisiveis(page)) === 1, 'busca "cafeína": 1 item visível na lista');
@@ -205,6 +215,9 @@ async function paginaComFiltros(app) {
     await page.click('#bib-limpar');
     check(await esperar(async () => (await textoStatus(page)).includes(`${TOTAL_ARTIGOS} artigos`)), '"Limpar filtros": volta a lista completa');
     check((await page.inputValue('#bib-q')) === '' && !(await page.isChecked('#bib-aberto')), '"Limpar filtros": limpa o termo e o acesso aberto');
+    await page.selectOption('#bib-idioma', 'pt');
+    await page.click('#bib-limpar');
+    check(await esperar(async () => (await textoStatus(page)).includes(`${TOTAL_ARTIGOS} artigos`)) && (await page.inputValue('#bib-idioma')) === '', '"Limpar filtros": volta o idioma para "Todos"');
 
     const linksDeArtigo = await page.$$eval('.bib-lista a[target="_blank"]', (links) => links.map((a) => ({ href: a.getAttribute('href'), rel: a.getAttribute('rel') || '' })));
     const todosSeguros = linksDeArtigo.length === TOTAL_ARTIGOS && linksDeArtigo.every((l) => /noopener/.test(l.rel) && /^https:\/\/(doi\.org|pubmed\.ncbi\.nlm\.nih\.gov)\//.test(l.href));

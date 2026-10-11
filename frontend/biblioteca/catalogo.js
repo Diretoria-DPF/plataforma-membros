@@ -47,6 +47,13 @@ const TIPOS = Object.freeze({
   outro: 'Outro',
 });
 
+// Mesma tabela de rótulos de idioma de frontend/library-cite.js (LABELS.language).
+const IDIOMAS = Object.freeze({
+  pt: 'Português',
+  en: 'English',
+});
+const IDIOMA_VALIDO = /^[a-z]{2}$/;
+
 // ---------- normalização e filtros ----------
 
 function normalizar(texto) {
@@ -94,6 +101,13 @@ function passaTexto(item, termos) {
   return termos.every((termo) => n.includes(termo));
 }
 
+/** idioma: '' (todos), 'pt' ou 'outros' (tudo que não é português, inclusive sem idioma). */
+function passaIdioma(item, idioma) {
+  if (idioma === 'pt') return item.language === 'pt';
+  if (idioma === 'outros') return item.language !== 'pt';
+  return true;
+}
+
 function passaArea(item, area) {
   return !area || (Array.isArray(item.topics) && item.topics.includes(area));
 }
@@ -101,7 +115,7 @@ function passaArea(item, area) {
 /**
  * Itens que casam com a busca e os filtros (todos em AND). Filtro vazio não restringe.
  * @param {Array<object>} itens entradas de index.json (com `n`)
- * @param {{q?: string, area?: string, tipo?: string, de?: unknown, ate?: unknown, aberto?: boolean}} [filtros]
+ * @param {{q?: string, area?: string, tipo?: string, idioma?: string, de?: unknown, ate?: unknown, aberto?: boolean}} [filtros]
  * @returns {Array<object>} novo array
  */
 function filtrar(itens, filtros) {
@@ -109,12 +123,14 @@ function filtrar(itens, filtros) {
   const termos = termosDaBusca(f.q);
   const area = textoOuVazio(f.area);
   const tipo = textoOuVazio(f.tipo);
+  const idioma = textoOuVazio(f.idioma);
   const de = anoOuNull(f.de);
   const ate = anoOuNull(f.ate);
   return itens.filter((item) => (
     passaTexto(item, termos)
     && passaArea(item, area)
     && (!tipo || item.type === tipo)
+    && passaIdioma(item, idioma)
     && passaAno(item.year, de, ate)
     && (f.aberto !== true || item.openAccess === true)
   ));
@@ -162,6 +178,17 @@ function lerLink(bruto) {
 function lerTopicos(bruto) {
   if (!Array.isArray(bruto)) return [];
   return [...new Set(bruto.filter((s) => typeof s === 'string' && SLUG_VALIDO.test(s)))];
+}
+
+/** Código de duas letras minúsculas ('pt', 'en'); qualquer outra coisa vira null. */
+function lerIdioma(bruto) {
+  const codigo = typeof bruto === 'string' ? bruto.trim().toLowerCase() : '';
+  return IDIOMA_VALIDO.test(codigo) ? codigo : null;
+}
+
+/** Português primeiro; dentro de cada grupo a ordem de entrada (a API e o build já a trazem por ano e título). */
+function portuguesPrimeiro(itens) {
+  return [...itens.filter((i) => i.language === 'pt'), ...itens.filter((i) => i.language !== 'pt')];
 }
 
 function tipoValido(bruto) {
@@ -219,6 +246,7 @@ function validarItem(bruto) {
     journal: revista,
     year: ano.valor,
     type: tipoValido(bruto.type),
+    language: lerIdioma(bruto.language),
     topics: lerTopicos(bruto.topics),
     openAccess: bruto.openAccess === true,
     license: textoLimpo(bruto.license, 40),
@@ -267,7 +295,7 @@ function montarCatalogo(dados, avisos) {
     enabled: dados.enabled === true,
     generatedAt: textoLimpo(dados.generatedAt, 40),
     topics: montarTopicos(dados.topics),
-    items,
+    items: portuguesPrimeiro(items),
   };
 }
 
@@ -282,10 +310,11 @@ function dataPt(generatedAt) {
   return `${casa[3]}/${casa[2]}/${casa[1]}`;
 }
 
-/** Rótulos dos selos: tipo, áreas conhecidas e "Acesso aberto". */
+/** Rótulos dos selos: tipo, idioma (Português/English), áreas conhecidas e "Acesso aberto". */
 function rotulosDosSelos(item, nomesTopicos) {
   const areas = item.topics.map((slug) => nomesTopicos.get(slug)).filter(Boolean);
-  return [TIPOS[item.type], ...areas, ...(item.openAccess ? ['Acesso aberto'] : [])];
+  const idioma = Object.prototype.hasOwnProperty.call(IDIOMAS, item.language) ? [IDIOMAS[item.language]] : [];
+  return [TIPOS[item.type], ...idioma, ...areas, ...(item.openAccess ? ['Acesso aberto'] : [])];
 }
 
 /** "Revista · 2021" (cada parte só se existir). */
@@ -348,6 +377,7 @@ function lerCampos(doc) {
     q: doc.getElementById('bib-q'),
     area: doc.getElementById('bib-area'),
     tipo: doc.getElementById('bib-tipo'),
+    idioma: doc.getElementById('bib-idioma'),
     de: doc.getElementById('bib-ano-de'),
     ate: doc.getElementById('bib-ano-ate'),
     aberto: doc.getElementById('bib-aberto'),
@@ -369,6 +399,7 @@ function lerFiltros(campos) {
     q: campos.q.value,
     area: campos.area.value,
     tipo: campos.tipo.value,
+    idioma: campos.idioma ? campos.idioma.value : '',
     de: campos.de.value,
     ate: campos.ate.value,
     aberto: campos.aberto.checked,
@@ -406,6 +437,7 @@ function limparCampos(campos) {
   campos.q.value = '';
   campos.area.value = '';
   campos.tipo.value = '';
+  if (campos.idioma) campos.idioma.value = '';
   campos.de.value = '';
   campos.ate.value = '';
   campos.aberto.checked = false;
@@ -427,7 +459,7 @@ function ligarEventos(tela) {
     agora();
   });
   [campos.q, campos.de, campos.ate].forEach((campo) => campo.addEventListener('input', agendar));
-  [campos.area, campos.tipo, campos.aberto].forEach((campo) => campo.addEventListener('change', agora));
+  [campos.area, campos.tipo, campos.idioma, campos.aberto].filter(Boolean).forEach((campo) => campo.addEventListener('change', agora));
   campos.limpar.addEventListener('click', () => {
     clearTimeout(temporizador);
     limparCampos(campos);
@@ -577,6 +609,7 @@ if (typeof module !== 'undefined' && module.exports) {
     validarIndice,
     validarItem,
     montarCatalogo,
+    portuguesPrimeiro,
     itemPublico,
     lerCatalogoAoVivo,
     apiDoCatalogo,
@@ -585,6 +618,7 @@ if (typeof module !== 'undefined' && module.exports) {
     dataPt,
     iniciarCatalogo,
     TIPOS,
+    IDIOMAS,
     ATRASO_DIGITACAO,
     MSG_SEM_ARTIGOS,
     API_PRODUCAO,
