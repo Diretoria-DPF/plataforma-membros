@@ -1,0 +1,81 @@
+# Continuidade da Biblioteca LAIFT (Córtex) — leia isto primeiro
+
+Escrito em 2026-10-11 para outro chat continuar de onde este parou. O dono (Daniel Pires Francisco) só revisa e mescla PRs. Idioma de trabalho: PT-BR.
+Repositório: `Diretoria-DPF/plataforma-membros` (pasta local `C:\Users\Administrador\Desktop\plataforma membro`). Antes de tudo leia também `docs/CONTINUIDADE.md`, `docs/cortex/PLANO-CORTEX.md`, `CONTRATO-B1.md`, `CONTRATO-B2.md`, `RUNBOOK-BIBLIOTECA.md`, `PERGUNTAS-ABERTAS.md`.
+
+## 1. O que é e o que já está no ar
+
+Biblioteca de artigos científicos curados (farmacologia clínica e toxicologia), com catálogo público em `/biblioteca`, painel do membro (item **Biblioteca** no menu hambúrguer, grupo Estudo), curadoria no modo administrador e resumos sugeridos por IA (Workers AI da Cloudflare). Prioridade a conteúdo em português do Brasil.
+
+PRs já MESCLADAS na `main` (todas com deploy automático do Worker e do site): #49 planos; #50 Biblioteca B1+B2; #51 correção do deploy (cronômetro do fetch na CI); #52 ferramenta de linha de comando `tools/library/` (hoje desnecessária); #53 importar lista de DOIs + gerar resumos por IA + publicar em lote (B3 enxuta); #54 catálogo público ao vivo; #55 correção `redirect:'manual'` (o Workers não implementa `redirect:'error'`, por isso a importação falhava em produção); #56 prioridade ao português (ordem, filtro Idioma, selo).
+
+### Produção (conferido em 2026-10-11)
+- Neon projeto `plataforma-membros` id `jolly-snow-39561777`, branch principal `br-damp-brook-b6t9cl03`, banco `plataforma_membros` (região sa-east-1). Branches antigas de backup existem (`backup-pre-016-019`, `backup-pre-020-024`). O branch de ensaio da 029 foi apagado.
+- Ledger `schema_migrations` vai até `024`, mais `029_library.sql` (hash sha256 com CRLF→LF = `444c861345bcee5ba0ce5d932db47d033d7e67be326947cbde3bc293b37d7930`). As migrações `025`, `026` (Lia pesquisas), `027` e `028` NÃO estão aplicadas (025/027 reservadas; 028 = telefone opcional, ficha `docs/ux-progresso/fichas/W1.md`). `sql/030_library_roles.sql` ainda não existe na `main` (ver §3).
+- Tabelas `library_*` (7) criadas pela 029. 2 áreas: `farmacologia-clinica`, `toxicologia`.
+- Flags (`feature_flags`): `library_enabled` = ligada para todos; `library_member_suggest` = ligada; `library_ai_summary` = ligada; `lia_library_enabled` = DESLIGADA.
+- Segredo do Worker `LIBRARY_CONTACT_EMAIL` = e-mail da Liga (cadastrado com `wrangler secret put`; valor nunca no repositório).
+- Dados: 155 artigos em `library_articles`: 154 `em_triagem` + 1 `aprovado` (o do paracetamol, `10.3390/jcm10153420`, marcado clínico, resumo = texto original do editor, aprovado pelo dono). 85 em português. Os 155 JÁ TÊM ÁREA (apliquei por SQL). NENHUM está `publicado`, portanto o membro vê a Biblioteca vazia. Nenhum tem resumo de IA.
+- Lote 1 (inglês, 114 DOIs): só 58 foram importados (a cota de importação foi gasta por tentativas que falharam antes da correção #55). Faltam 56: use `docs/cortex/lote-1/dois-lote-1.txt` (os já existentes são contados como "já existia"). Lote 2 (português, 97 DOIs, `dois-lote-2-portugues.txt`): importado, com área.
+- `docs/cortex/lote-1/selecao-lote1-areas.json` e `selecao-portugues-areas.json` trazem `doi`+`areas` de cada item (para reaplicar áreas por SQL se faltar).
+
+## 2. Problemas relatados pelo dono (último pedido) e causas já achadas
+
+1. **"Gerar resumos com IA dá erro"** — CAUSA CONFIRMADA no workerd real: `@cf/google/gemma-4-26b-a4b-it` é modelo de raciocínio; com `max_tokens` 300 gasta tudo "pensando" e devolve `content` vazio (`finish_reason: length`). A auditoria `LIBRARY_SUMMARY_GENERATE` mostra `reason: vazio`. Correção testada: enviar `chat_template_kwargs: { enable_thinking: false }` (responde direto, ~30 tokens, ~1,3 neurons) e `max_tokens` ~700, com uma segunda tentativa com 1500 se vier vazio; nunca usar `reasoning_content` como resumo. Arquivo: `worker/src/library/summaryProvider.js`. (Está no trabalho do agente A, §3; se não chegou, refaça.)
+2. **"Não consigo publicar"** — os artigos importados em lote nasciam SEM área e o banco (`library_articles_topics_required_chk`) exige ≥1 área para aprovar/publicar. Já corrigi os 155 por SQL; a importação em lote precisa aceitar uma ÁREA PADRÃO (agente A).
+3. **Fila de curadoria complicada**; ninguém sabe quem pode publicar/rejeitar/remover; falta o papel **mentor**; **remover só o admin** (curador e mentor pedem remoção, o admin decide); o **admin deve poder mudar o estado** do artigo livremente; interface deve ser simples e dinâmica.
+4. **A Lia precisa guiar o usuário na plataforma inteira** (guia geral) e na Biblioteca; a Biblioteca do membro ficou complexa e deve ficar simples e prática.
+
+## 3. Em andamento (dois orquestradores Opus) — retome ou refaça
+
+Ambos foram interrompidos pelo limite de uso e RETOMADOS por `SendMessage` (ids abaixo). Se o novo chat não puder falar com eles, confira os worktrees (podem ter trabalho não commitado) e, se necessário, refaça com os escopos abaixo. Nenhum dos dois deve rodar nada contra produção. Regras comuns: TDD, Worker `cd worker && npm ci && npm test` (em série) e `npm run validate:sql` e `npm run openapi`; front `cd frontend && npm ci && node --test scripts/*.test.mjs` (SÓ 3 falhas conhecidas por CRLF no Windows: `_headers` seo/staging e `entrada.test.mjs:118`); e2e `node scripts/e2e/run.js library biblioteca csp smoke menu` um por vez, com `PLAYWRIGHT_MODULE=<checkout principal>\frontend\node_modules\playwright` se o worktree não tiver Playwright; no Node 24 NÃO use `-i` com `node --test`; front sem `innerHTML`/`style=""`/`on*=`; hook GateGuard exige 2 linhas de fatos na primeira edição/comando e repetir a chamada.
+
+**Agente A — id `a47f5e4505abbbbd1`, worktree `.claude/worktrees/agent-a47f5e4505abbbbd1`, branch `feat/biblioteca-curadoria-simples`** (Worker + migração + admin UI). Escopo:
+- Corrigir a IA (§2.1).
+- Migração `sql/030_library_roles.sql` (+ `sql/down/`): `library_staff.role` aceita `curador`, `revisor_clinico`, `mentor`; tabela `library_removal_requests` (pedidos de remoção, UNIQUE parcial por artigo pendente). SEM `;` dentro de literais (a ferramenta `prepare_database_migration` do Neon divide por `;`).
+- Matriz de permissões num módulo único `worker/src/library/permissions.js`: ADMIN tudo (remover, restaurar, qualquer mudança de estado válida); CURADOR importa, edita, gera resumo, aprova+publica, rejeita, pede remoção; MENTOR importa/sugere para a fila, edita o que importou, pede remoção; REVISOR CLÍNICO lê a fila e faz a revisão clínica; MEMBRO sugere.
+- Ações novas (`handlers.js`, contagem em `handlers.test.js`, OpenAPI): `apiAdminLearnLibraryPublishMany` (aprova+registra revisão do resumo de IA+publica, 1 operação por artigo; clínico só publica como REFERÊNCIA sem resumo se `referenceOnlyIfClinical`), `...ChangeStatus` (admin), `...RequestRemoval`, `...ListRemovalRequests`, `...DecideRemoval`, `...SetAreas`; `Import` aceita `areas`; `SetStaff` aceita `mentor`.
+- UI admin nova e simples (refatorar `frontend/admin-library.js`, hoje >800 linhas): abas "Para revisar" / "No ar" / "Pedidos", menu "Mais" (Áreas, Coleções, Equipe, Importar lista com área padrão), botões grandes ("Publicar" 1 clique, "Rejeitar", "Editar", "Pedir remoção", admin "Mudar para…"), "Publicar todos os prontos", bloco "Quem pode o quê?". Linguagem comum, sem "em triagem/aprovado".
+
+**Agente B — id `a7f0ac090b305e11b`, worktree `.claude/worktrees/agent-a7f0ac090b305e11b`, branch `feat/lia-guia-biblioteca`** (Lia + painel do membro). Escopo:
+- GUIA GERAL da plataforma na base da Lia (`worker/src/assistant/kb.js`, `targets.js`, reindexação RAG; fonte em `docs/lia/GUIA-PLATAFORMA.md`): entrar/conta/senha, perfil/MFA, início, Aprender, Eventos/inscrição, Propostas, Tarefas, Mensagens, Equipe, crachá, Biblioteca, blog, instalar o app, pendências do menu, modo admin — fiel ao que existe (sem inventar), por papel.
+- A Lia e a Biblioteca: intenções de uso/curadoria; com a flag `lia_library_enabled` cita até 3 artigos PUBLICADOS (reusa `LibraryService.search`; português primeiro; chip "Ver na Biblioteca" já com a busca); nunca inventa, anti-injeção, sem escrita.
+- Biblioteca do MEMBRO e página pública simples: busca grande ao digitar, filtros rápidos de um toque (Português, Toxicologia, Farmacologia clínica, Acesso aberto), "Mais filtros" recolhido, cartão limpo com uma ação principal ("Abrir artigo") + estrela, ficha enxuta com citar em um toque, estados vazios que ensinam, "Pergunte à Lia".
+- Não toca `handlers.js` nem admin (conflito com A).
+
+Depois que cada um terminar: conferir testes, abrir PR para `main` (corpo curto, SEM linhas de atribuição), o dono mescla. Capturas (375/1280, claro/escuro) ficam em `docs/cortex/capturas/` para o dono aprovar.
+
+## 4. O que falta fazer (ordem sugerida)
+
+1. Receber e conferir as PRs de A e B; o dono mescla (testar conflito com `git merge-tree --write-tree --name-only`). O deploy do Worker e do site é automático ao mesclar na `main` (o ambiente `production` do GitHub pode pedir aprovação do dono em Actions).
+2. Aplicar a migração `030` em produção ANTES de usar as telas novas: ver §5 (como aplicar). Só depois do OK do dono.
+3. Importar os 56 DOIs que faltam do lote 1 (tela "Importar lista" do admin, com área padrão), respeitando a cota de importação: 180/h por perfil e 400/h global.
+4. Gerar resumos com IA (botão novo) para os em triagem; conferir a qualidade em português (modelo `LIBRARY_AI_MODEL` em `worker/wrangler.toml`; teto 250 chamadas/dia, 200/h por curador; nível gratuito 10.000 neurons/dia). Resumo de IA fica marcado "gerado por IA"; o banco só deixa publicar resumo de IA depois de aprovado por um curador.
+5. PUBLICAR: o dono (admin = curador) usa "Publicar"/"Publicar todos os prontos". Regra de ouro: artigo clínico (conduta, dose, interação) só publica o RESUMO com revisor clínico (papel `revisor_clinico`, um professor nomeado com nome e data); sem revisor, publica só como REFERÊNCIA (título, autores, link) sem resumo. Proposta feita ao dono e ainda sem resposta: publicar clínicos só como referência.
+6. Dono: nomear a Diretoria Científica e o professor revisor clínico; escrever o critério de inclusão; decidir o texto da Política de Privacidade (parágrafo sobre favoritos e sugestões, P4); licenças NC são tratadas como fechadas até parecer jurídico (só link e resumo próprio).
+7. Reindexar a Lia (botão "Reindexar" no painel admin) depois do guia; só então considerar ligar `lia_library_enabled` (`UPDATE feature_flags SET enabled = TRUE WHERE key = 'lia_library_enabled'`).
+8. Opcionais já planejados: B4 completo (Lia/RAG), E1 (escala do banco: Neon de logs + D1; `ESCALA-BANCO.md`), I1 (limite de login P0), I3 (Lia v2 em produção, migração 026), Lote A ux-progresso, Lote W (telefone opcional, migração 028). Ver `docs/CONTINUIDADE.md`.
+9. Dívidas: `frontend/admin-library.js` >800 linhas (A está refatorando); CRLF em testes no Windows; Playwright fora do `package.json` do front; fila de sugestões pode ser enchida por 20 contas (teto 200 pendentes); auditoria só registra sucessos.
+
+## 5. Como operar (receitas e armadilhas)
+
+- **Aplicar migração em produção** (com OK do dono): usar o MCP Neon `run_sql_transaction` com ARRAY de instruções (uma por item, sem `;` final) no `project_id jolly-snow-39561777`, `branch_id br-damp-brook-b6t9cl03`, e na mesma transação `INSERT INTO schema_migrations (name, hash) VALUES ('030_library_roles.sql','<sha256 do arquivo com CRLF→LF>') ON CONFLICT (name) DO NOTHING`. NÃO use `prepare_database_migration`: ele divide a SQL em `;` (quebra literais e regex com `;`). Ensaie antes num branch temporário (`create_branch`), confira, e apague o branch de ensaio. Para flags e UPDATEs simples use `run_sql`.
+- **NÃO use `get_connection_string`/senha do banco de produção em comandos**: o classificador de segurança bloqueia ("Credential Materialization") e a senha acaba no histórico. A senha do papel `plataforma_membros_owner` APARECEU em um resultado de ferramenta nesta sessão: RECOMENDE ao dono girá-la no console do Neon. O caminho certo é fazer pela PRÓPRIA plataforma (telas admin) ou pelo MCP.
+- **Navegador integrado (`mcp__Claude_Browser__*`)**: o dono precisa entrar como administrador em laift.com.br, digitando ele mesmo e-mail e senha (nunca digite senha). A sessão se perde se o painel do navegador for fechado. Com a sessão aberta, dá para conduzir a tela via `javascript_tool` (`window.App.showPanel('panel-admin-library')`, `#admin-library-root`). Se `navigate` for negado, use `preview_start` com `url`.
+- **Logs do Worker em tempo real**: `cd worker && npx wrangler tail plataforma-membros-api --format json > arquivo` (o Worker não loga falhas de fontes externas; use a auditoria `audit_logs` e o contador `rate_limit_buckets` — buckets `LIBRARY_IMPORT`, `LIBRARY_IMPORT_GLOBAL`, `LIBRARY_CURATE`, janela de 1 h).
+- **Testar comportamento do runtime da Cloudflare**: criar um Worker temporário fora do repo com `wrangler dev` (modo local; o binding `[ai]` usa a conta) e chamar `env.AI.run(...)`/`fetch` — foi assim que descobrimos `redirect:'error'` e o raciocínio do Gemma. `wrangler dev --remote` travou aqui.
+- **Armadilhas do Windows/CI**: CRLF quebra testes que comparam texto (normalize `\r\n`); `AbortSignal.timeout()` não segura o processo e trava testes na CI (use `AbortController`+`setTimeout`); `node --test -i` não existe no Node 24; strings com barra invertida em shell: edite com `python`+`chr(92)` ou com a ferramenta de edição.
+- **Regras do dono**: ele só revisa e mescla; sem auto-merge; sem linhas de atribuição em commits/PRs; nunca segredos no chat/repositório (`wrangler secret put`); flags e migrações em produção só com OK; portão visual (375 e 1280 px, claro/escuro) aprovado antes de PR de interface; ramificar sempre de `origin/main` em worktree; limpar worktrees/branches de agentes antigos (`worktree-agent-*`) quando as PRs forem mescladas.
+- **Time de agentes** (regra do dono): Opus 5.5 orquestra (até 2), 1 Sonnet 5.5 para tarefas de risco, até 5 Haiku 5.5 em paralelo com fichas curtas e arquivos disjuntos; arquivos "quentes" (`index.html`, `app.js`, `build.js`, `sw.js`, `handlers.js`, `constants.js`, `featureFlagService.js`) integrados por quem orquestra. Ao reabrir após limite de uso, retome agentes com `SendMessage` e confira os worktrees.
+
+## 6. Mapa de arquivos
+
+- Worker: `worker/src/services/library{Service,CurationService,AdminService,SummaryService}.js`, `worker/src/library/{identifiers,normalize,limits,transitions,metadataClient,summaryProvider}.js`, `worker/src/handlers.js` (`API_REGISTRY`, ações `apiLearnLibrary*` e `apiAdminLearnLibrary*`), `sql/029_library.sql` (+ `sql/down/`), `worker/wrangler.toml` (`LIBRARY_AI_MODEL`, binding `[ai]`).
+- Front: `frontend/library.js`, `library-detail.js`, `library-cite.js`, `library.css`, `admin-library.js`, `admin-library-extras.js`, `admin-library-lote.js`, `biblioteca.html`, `biblioteca.css`, `biblioteca/catalogo.js`, `scripts/build-biblioteca.js`, `scripts/fetch-biblioteca.mjs`; menu em `index.html` (`#app-menu`, grupo Estudo, gate `data-flag-library-enabled`).
+- Catálogo público: a página `/biblioteca` abre com o instantâneo do build e se atualiza AO VIVO chamando `apiLearnLibraryPublicCatalog` (cache de 60 s); publicar no painel aparece em até 1 min; não depende de rebuild. CSP `connect-src 'self' https://api.laift.com.br https://staging-api.laift.com.br`.
+- Testes e2e: `frontend/scripts/e2e/library.e2e.js`, `biblioteca.e2e.js`, `fixtures/biblioteca-snapshot.json`; capturas em `docs/cortex/capturas/` (`frontend/scripts/e2e/capturas-biblioteca.js`).
+- Listas de DOIs e áreas: `docs/cortex/lote-1/`. Contratos: `docs/cortex/CONTRATO-B1.md` (dados/API), `CONTRATO-B2.md` (telas).
+
+## 7. Primeira mensagem sugerida para o novo chat
+
+"Leia `docs/cortex/CONTINUIDADE-BIBLIOTECA.md` e `docs/CONTINUIDADE.md`. Confira o estado das PRs (`gh pr list`) e dos worktrees dos agentes A (`feat/biblioteca-curadoria-simples`) e B (`feat/lia-guia-biblioteca`), retome-os ou refaça pelo escopo do §3, e conduza o §4 em ordem, pedindo meu OK antes de migrações e flags em produção."
