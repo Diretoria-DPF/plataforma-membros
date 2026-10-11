@@ -47,12 +47,14 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminLearnAtlasTelemetry"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryClinicalReview"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryDecideSuggestion"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryGenerateSummary"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryGetArticle"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryImport"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListCollections"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListQueue"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListStaff"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListSuggestions"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryReviewSummary"
                 - "$ref": "#/components/schemas/apiAdminLearnLibrarySaveCollection"
                 - "$ref": "#/components/schemas/apiAdminLearnLibrarySaveTopic"
                 - "$ref": "#/components/schemas/apiAdminLearnLibrarySetStaff"
@@ -463,6 +465,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAdminLearnLibraryGenerateSummary:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryGenerateSummary"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminLearnLibraryGetArticle:
       type: "object"
       required:
@@ -550,6 +568,22 @@ components:
       properties:
         action:
           const: "apiAdminLearnLibraryListSuggestions"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryReviewSummary:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryReviewSummary"
         args:
           type: "array"
           prefixItems:

@@ -13,6 +13,8 @@
  *
  * As outras subabas (Sugestões, Coleções, Áreas, Equipe) ficam em admin-library-extras.js:
  * esta tela chama window.LaiftAdminLibraryExtras.render(aba, corpo, app) quando existir.
+ * O trabalho em lote (importar lista, gerar resumos por IA, aprovar e publicar selecionados)
+ * fica em admin-library-lote.js (window.LaiftAdminLibraryLote; ganchos em loteNode/loteCtx).
  *
  * Script clássico: load(window.App) ao abrir o painel e reset() no logout. Sem HTML montado como texto:
  * todo nó nasce de LaiftDom.h e todo texto (inclusive a mensagem de erro da API) entra como nó
@@ -501,6 +503,19 @@
     else box.removeAttribute('aria-busy');
   }
 
+  // Lote (admin-library-lote.js): painel na fila, seleção por item e resumo por IA na edição.
+  function lote() { return window.LaiftAdminLibraryLote || null; }
+
+  function loteCtx() {
+    return {
+      app: appRef, items: ui.items, topics: ui.topics, rerender: render,
+      refresh: function () { if (ui.tab === 'artigos' && ui.view === 'queue') loadQueue(ui.status); },
+      open: function (id, notice) { fetchArticle(String(id), notice || ''); },
+    };
+  }
+
+  function loteNode(part, arg) { return lote() ? lote()[part](arg, loteCtx()) : null; }
+
   function mountExtras(body) {
     var extras = window.LaiftAdminLibraryExtras;
     if (extras && typeof extras.render === 'function') {
@@ -589,6 +604,7 @@
     var flags = itemFlags(item).map(function (flag) { return h('span', { className: 'badge' }, [flag]); });
     return h('li', null, [
       h('div', { className: 'list-item' }, [
+        loteNode('itemSelector', item),
         h('h3', null, [btn(item.title || 'Sem título', 'open', item.id)]),
         h('div', { className: 'meta-row' }, meta.map(function (text) { return h('span', null, [text]); })),
         flags.length ? h('div', { className: 'meta-row' }, flags) : null,
@@ -600,6 +616,7 @@
     var rows = ui.items.map(itemNode);
     return h('div', null, [
       importNode(),
+      loteNode('queuePanel'),
       h('h2', { id: TITLE_FOCUS_QUEUE, tabindex: '-1' }, ['Fila de curadoria']),
       filtersNode(),
       ui.busy === 'list'
@@ -769,6 +786,7 @@
       ui.notice ? h('p', { role: 'status' }, [ui.notice]) : null,
       ui.warnings.length ? h('div', null, [h('h3', null, ['Avisos do cadastro']), h('ul', { className: 'muted' }, ui.warnings.map(function (w) { return h('li', null, [w]); }))]) : null,
       editForm(article, ui.draft),
+      loteNode('editPanel', article),
       transitionsNode(),
     ]);
   }
@@ -796,6 +814,7 @@
     requestId++;
     appRef = null;
     ui = freshUi();
+    if (lote()) lote().reset();
     var box = root();
     if (!box || !dom()) return;
     dom().clear(box);

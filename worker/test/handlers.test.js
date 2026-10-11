@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 138 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 140 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -75,6 +75,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiAdminLearnLibraryUpdateArticle',
       'apiAdminLearnLibrarySetStatus',
       'apiAdminLearnLibraryClinicalReview',
+      'apiAdminLearnLibraryGenerateSummary',
+      'apiAdminLearnLibraryReviewSummary',
       'apiAdminLearnLibraryListSuggestions',
       'apiAdminLearnLibraryDecideSuggestion',
       'apiAdminLearnLibraryListCollections',
