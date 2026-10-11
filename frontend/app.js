@@ -141,6 +141,7 @@
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
       if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+      resetLibraryModules();
       resetAdminDashboardChart();
       if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
       document.getElementById('app-root').classList.add('hidden');
@@ -884,6 +885,7 @@
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
     if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    resetLibraryModules();
     resetAdminDashboardChart();
     if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
     clearSessionCache();
@@ -1096,6 +1098,9 @@
       if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
       if (window.LaiftAdminModeration) window.LaiftAdminModeration.load(window.App); // moderação da Lia (ADR 0004, O28)
     },
+    // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
+    'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
+    'panel-admin-library': function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); },
   };
 
   var currentPanelId = 'panel-home';
@@ -2013,6 +2018,14 @@
     adminDashboardChart = charts.groupedBars(container, rows, {
       title: 'Indicadores administrativos', series: ['Indicadores'], width: 320, height: 220, fluid: true,
     });
+  }
+
+  /** Logout e sessão expirada: a Biblioteca (painel, ficha, curadoria) some da tela e descarta respostas pendentes. */
+  function resetLibraryModules() {
+    if (window.LaiftLibrary) window.LaiftLibrary.reset();
+    if (window.LaiftLibraryDetail) window.LaiftLibraryDetail.reset();
+    if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.reset();
+    if (window.LaiftAdminLibraryExtras) window.LaiftAdminLibraryExtras.reset();
   }
 
   /** Logout e sessão expirada: solta o gráfico (e o observer de largura) para a próxima conta começar limpa. */

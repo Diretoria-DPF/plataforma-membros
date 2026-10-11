@@ -30,3 +30,5 @@ tools/atlas-content/test/fixtures/.tmp/
 
 # capturas do QA visual (visual-qa.e2e.js) — geradas a cada execução
 frontend/scripts/e2e/.shots/
+# Biblioteca: instantâneo buscado na CI (fetch-biblioteca.mjs); a reserva versionada é reserva.json
+frontend/biblioteca/conteudo/recente.json

@@ -51,3 +51,15 @@ https://:version.:name.:subdomain.workers.dev/*
 /blog/index.json
   ! Cache-Control
   Cache-Control: public, max-age=300
+
+# Biblioteca LAIFT (/biblioteca, CONTRATO-B2 §2.1): mesmo esquema do blog. O índice
+# muda a cada atualização do catálogo (workflow_dispatch), por isso tem 5 min.
+/biblioteca/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/biblioteca.css
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/biblioteca/index.json
+  ! Cache-Control
+  Cache-Control: public, max-age=300

@@ -1,0 +1,485 @@
+{
+  "_consulta": "2026-10-10",
+  "_nota": "Respostas reduzidas aos campos que metadataClient.js usa. Crossref, Europe PMC (resultType=core) e OpenAlex: copiadas ao vivo em 2026-10-10 e cortadas (no maximo 5 autores). Unpaywall e PubMed: montadas a mao (_montado) pelos campos do mapa 05.",
+  "plos": {
+    "doi": "10.1371/journal.pone.0000308",
+    "pmid": "17375194",
+    "crossref": {
+      "status": "ok",
+      "message": {
+        "DOI": "10.1371/journal.pone.0000308",
+        "title": [
+          "Sharing Detailed Research Data Is Associated with Increased Citation Rate"
+        ],
+        "container-title": [
+          "PLoS ONE"
+        ],
+        "short-container-title": [
+          "PLoS ONE"
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              2007,
+              3,
+              21
+            ]
+          ]
+        },
+        "volume": "2",
+        "issue": "3",
+        "page": "e308",
+        "language": "en",
+        "type": "journal-article",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2007,
+                  3,
+                  21
+                ]
+              ],
+              "date-time": "2007-03-21T00:00:00Z",
+              "timestamp": 1174435200000
+            },
+            "content-version": "unspecified",
+            "delay-in-days": 0,
+            "URL": "http://creativecommons.org/licenses/by/4.0/"
+          }
+        ],
+        "author": [
+          {
+            "given": "Heather A.",
+            "family": "Piwowar"
+          },
+          {
+            "given": "Roger S.",
+            "family": "Day"
+          },
+          {
+            "given": "Douglas B.",
+            "family": "Fridsma"
+          }
+        ],
+        "_autoresNoOriginal": 3
+      }
+    },
+    "europepmc": {
+      "hitCount": 1,
+      "resultList": {
+        "result": [
+          {
+            "id": "17375194",
+            "source": "MED",
+            "pmid": "17375194",
+            "pmcid": "PMC1817752",
+            "doi": "10.1371/journal.pone.0000308",
+            "title": "Sharing detailed research data is associated with increased citation rate.",
+            "authorString": "Piwowar HA, Day RS, Fridsma DB.",
+            "pubYear": "2007",
+            "abstractText": "<h4>Background</h4>Sharing research data provides benefit to the general scientific community, but the benefit is less obvious for the investigator who makes his or her data available.<h4>Principal findings</h4>We examined the citation history of 85 cancer microarray clinical trial publications with respect to the availability of their data. The 48% of trials with publicly available microarray data received 85% of the aggregate citations. Publicly available data was significantly (p = 0.006) associated with a 69% increase in citations, independently of journal impact factor, date of publication, and author country of origin using linear regression.<h4>Significance</h4>This correlation between publicly available data and increased literature impact may further motivate investigators to share their detailed research data.",
+            "license": "cc by",
+            "isOpenAccess": "Y",
+            "pubTypeList": {
+              "pubType": [
+                "research-article",
+                "Journal Article",
+                "Research Support, N.I.H., Extramural"
+              ]
+            },
+            "language": "eng",
+            "journalInfo": {
+              "volume": "2",
+              "issue": "3",
+              "journal": {
+                "title": "PloS one",
+                "isoabbreviation": "PLoS One",
+                "medlineAbbreviation": "PLoS One"
+              }
+            },
+            "pageInfo": "e308",
+            "authorList": {
+              "author": [
+                {
+                  "firstName": "Heather A",
+                  "lastName": "Piwowar"
+                },
+                {
+                  "firstName": "Roger S",
+                  "lastName": "Day"
+                },
+                {
+                  "firstName": "Douglas B",
+                  "lastName": "Fridsma"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "openalex": {
+      "title": "Sharing Detailed Research Data Is Associated with Increased Citation Rate",
+      "doi": "https://doi.org/10.1371/journal.pone.0000308",
+      "publication_year": 2007,
+      "language": "en",
+      "type": "article",
+      "ids": {
+        "openalex": "https://openalex.org/W2046766973",
+        "doi": "https://doi.org/10.1371/journal.pone.0000308",
+        "mag": "2046766973",
+        "pmid": "https://pubmed.ncbi.nlm.nih.gov/17375194"
+      },
+      "primary_location": {
+        "license": "cc-by",
+        "source": {
+          "display_name": "PLoS ONE"
+        }
+      },
+      "open_access": {
+        "is_oa": true,
+        "oa_status": "gold"
+      },
+      "best_oa_location": {
+        "license": "cc-by",
+        "version": "publishedVersion"
+      },
+      "authorships": [
+        {
+          "author": {
+            "display_name": "Heather Piwowar"
+          }
+        },
+        {
+          "author": {
+            "display_name": "Roger Day"
+          }
+        },
+        {
+          "author": {
+            "display_name": "Douglas B. Fridsma"
+          }
+        }
+      ]
+    },
+    "unpaywall": {
+      "_montado": true,
+      "doi": "10.1371/journal.pone.0000308",
+      "is_oa": true,
+      "oa_status": "gold",
+      "journal_is_in_doaj": true,
+      "has_repository_copy": true,
+      "best_oa_location": {
+        "license": "cc-by",
+        "version": "publishedVersion",
+        "host_type": "publisher"
+      }
+    },
+    "pubmed": {
+      "_montado": true,
+      "result": {
+        "17375194": {
+          "uid": "17375194",
+          "title": "Sharing detailed research data is associated with increased citation rate.",
+          "pubdate": "2007 Mar 21",
+          "source": "PLoS One",
+          "fulljournalname": "PloS one",
+          "volume": "2",
+          "issue": "3",
+          "pages": "e308",
+          "lang": [
+            "eng"
+          ],
+          "pubtype": [
+            "Journal Article"
+          ],
+          "authors": [
+            {
+              "name": "Piwowar HA",
+              "authtype": "Author"
+            },
+            {
+              "name": "Day RS",
+              "authtype": "Author"
+            },
+            {
+              "name": "Fridsma DB",
+              "authtype": "Author"
+            }
+          ],
+          "articleids": [
+            {
+              "idtype": "pubmed",
+              "value": "17375194"
+            },
+            {
+              "idtype": "doi",
+              "value": "10.1371/journal.pone.0000308"
+            },
+            {
+              "idtype": "pmc",
+              "value": "PMC1817752"
+            }
+          ]
+        },
+        "uids": [
+          "17375194"
+        ]
+      }
+    }
+  },
+  "nature": {
+    "doi": "10.1038/nature12373",
+    "pmid": "23903748",
+    "crossref": {
+      "status": "ok",
+      "message": {
+        "DOI": "10.1038/nature12373",
+        "title": [
+          "Nanometre-scale thermometry in a living cell"
+        ],
+        "container-title": [
+          "Nature"
+        ],
+        "short-container-title": [
+          "Nature"
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              2013,
+              7,
+              31
+            ]
+          ]
+        },
+        "volume": "500",
+        "issue": "7460",
+        "page": "54-58",
+        "language": "en",
+        "type": "journal-article",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2013,
+                  7,
+                  31
+                ]
+              ],
+              "date-time": "2013-07-31T00:00:00Z",
+              "timestamp": 1375228800000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "http://www.springer.com/tdm"
+          }
+        ],
+        "author": [
+          {
+            "given": "G.",
+            "family": "Kucsko"
+          },
+          {
+            "given": "P. C.",
+            "family": "Maurer"
+          },
+          {
+            "given": "N. Y.",
+            "family": "Yao"
+          },
+          {
+            "given": "M.",
+            "family": "Kubo"
+          },
+          {
+            "given": "H. J.",
+            "family": "Noh"
+          }
+        ],
+        "_autoresNoOriginal": 8
+      }
+    },
+    "europepmc": {
+      "hitCount": 1,
+      "resultList": {
+        "result": [
+          {
+            "id": "23903748",
+            "source": "MED",
+            "pmid": "23903748",
+            "pmcid": "PMC4221854",
+            "doi": "10.1038/nature12373",
+            "title": "Nanometre-scale thermometry in a living cell.",
+            "authorString": "Kucsko G, Maurer PC, Yao NY, Kubo M, Noh HJ, Lo PK, Park H, Lukin MD.",
+            "pubYear": "2013",
+            "abstractText": "Sensitive probing of temperature variations on nanometre scales is an outstanding challenge in many areas of modern science and technology. In particular, a thermometer capable of subdegree temperature resolution over a large range of temperatures as well as integration within a living system could provide a powerful new tool in many areas of biological, physical and chemical research. Possibilities range from the temperature-induced control of gene expression and tumour metabolism to the cell-selective treatment of disease and the study of heat dissipation in integrated circuits. By combining local light-induced heat sources with sensitive nanoscale thermometry, it may also be possible to engineer biological processes at the subcellular level. Here we demonstrate a new approach to nanoscale thermometry that uses coherent manipulation of the electronic spin associated with nitrogen-vacancy colour centres in diamond. Our technique makes it possible to detect temperature variations as small as 1.8 mK (a sensitivity of 9 mK Hz(-1/2)) in an ultrapure bulk diamond sample. Using nitrogen-vacancy centres in diamond nanocrystals (nanodiamonds), we directly measure the local thermal environment on length scales as short as 200 nanometres. Finally, by introducing both nanodiamonds and gold nanoparticles into a single human embryonic fibroblast, we demonstrate temperature-gradient control and mapping at the subcellular level, enabling unique potential applications in life sciences.",
+            "isOpenAccess": "N",
+            "pubTypeList": {
+              "pubType": [
+                "Research Support, Non-U.S. Gov't",
+                "research-article",
+                "Research Support, U.S. Gov't, Non-P.H.S.",
+                "Journal Article",
+                "Research Support, N.I.H., Extramural"
+              ]
+            },
+            "language": "eng",
+            "journalInfo": {
+              "volume": "500",
+              "issue": "7460",
+              "journal": {
+                "title": "Nature",
+                "isoabbreviation": "Nature",
+                "medlineAbbreviation": "Nature"
+              }
+            },
+            "pageInfo": "54-58",
+            "authorList": {
+              "author": [
+                {
+                  "firstName": "G",
+                  "lastName": "Kucsko"
+                },
+                {
+                  "firstName": "P C",
+                  "lastName": "Maurer"
+                },
+                {
+                  "firstName": "N Y",
+                  "lastName": "Yao"
+                },
+                {
+                  "firstName": "M",
+                  "lastName": "Kubo"
+                },
+                {
+                  "firstName": "H J",
+                  "lastName": "Noh"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "openalex": {
+      "title": "Nanometre-scale thermometry in a living cell",
+      "doi": "https://doi.org/10.1038/nature12373",
+      "publication_year": 2013,
+      "language": "en",
+      "type": "article",
+      "ids": {
+        "openalex": "https://openalex.org/W2159974629",
+        "doi": "https://doi.org/10.1038/nature12373",
+        "mag": "2159974629",
+        "pmid": "https://pubmed.ncbi.nlm.nih.gov/23903748"
+      },
+      "primary_location": {
+        "license": null,
+        "source": {
+          "display_name": "Nature"
+        }
+      },
+      "open_access": {
+        "is_oa": true,
+        "oa_status": "bronze"
+      },
+      "best_oa_location": {
+        "license": null,
+        "version": "publishedVersion"
+      },
+      "authorships": [
+        {
+          "author": {
+            "display_name": "Georg Kucsko"
+          }
+        },
+        {
+          "author": {
+            "display_name": "Peter C. Maurer"
+          }
+        },
+        {
+          "author": {
+            "display_name": "Norman Y. Yao"
+          }
+        },
+        {
+          "author": {
+            "display_name": "M. Kubo"
+          }
+        },
+        {
+          "author": {
+            "display_name": "H. J. Noh"
+          }
+        }
+      ]
+    },
+    "unpaywall": {
+      "_montado": true,
+      "doi": "10.1038/nature12373",
+      "is_oa": true,
+      "oa_status": "bronze",
+      "journal_is_in_doaj": false,
+      "has_repository_copy": true,
+      "best_oa_location": {
+        "license": null,
+        "version": "publishedVersion",
+        "host_type": "publisher"
+      }
+    },
+    "pubmed": {
+      "_montado": true,
+      "result": {
+        "23903748": {
+          "uid": "23903748",
+          "title": "Nanometre-scale thermometry in a living cell.",
+          "pubdate": "2013 Aug 1",
+          "source": "Nature",
+          "fulljournalname": "Nature",
+          "volume": "500",
+          "issue": "7460",
+          "pages": "54-8",
+          "lang": [
+            "eng"
+          ],
+          "pubtype": [
+            "Journal Article"
+          ],
+          "authors": [
+            {
+              "name": "Kucsko G",
+              "authtype": "Author"
+            },
+            {
+              "name": "Maurer PC",
+              "authtype": "Author"
+            }
+          ],
+          "articleids": [
+            {
+              "idtype": "pubmed",
+              "value": "23903748"
+            },
+            {
+              "idtype": "doi",
+              "value": "10.1038/nature12373"
+            },
+            {
+              "idtype": "pmc",
+              "value": "PMC4221854"
+            }
+          ]
+        },
+        "uids": [
+          "23903748"
+        ]
+      }
+    }
+  }
+}

@@ -33,7 +33,7 @@ describe('openapi — leitura das actions', () => {
 
   test('nenhuma action ficou sem os argumentos lidos (exceto as realmente sem argumentos)', () => {
     const semArgs = describeActions(API_REGISTRY).filter((a) => !a.args.length).map((a) => a.name);
-    expect(semArgs).toEqual(['apiListRecentCompletedEvents']);
+    expect(semArgs).toEqual(['apiLearnLibraryPublicCatalog', 'apiListRecentCompletedEvents']);
   });
 });
 

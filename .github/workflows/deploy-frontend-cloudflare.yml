@@ -10,6 +10,8 @@ name: Publicar front-end na Cloudflare (Workers static assets)
 # Antes de publicar, roda os testes unitários do front e os e2e "csp" e "smoke"
 # (um CSP quebrado ou um script externo não liberado BLOQUEIA a publicação).
 # Depois de publicar, tools/ci/smoke.mjs confere o site e a API do ambiente.
+# O catálogo público da Biblioteca (/biblioteca) é buscado no job de deploy; para
+# atualizá-lo depois de publicar artigos, rode este workflow à mão (sem schedule).
 #
 # O ambiente do GitHub ("production" / "staging") permite exigir aprovação de uma
 # pessoa antes do deploy: Settings → Environments → production → Required reviewers.
@@ -92,6 +94,16 @@ jobs:
       - name: Instala dependências do build (javascript-obfuscator)
         working-directory: frontend
         run: npm ci || npm install
+
+      # Biblioteca LAIFT (CONTRATO-B2 §2.1): instantâneo do catálogo público para /biblioteca.
+      # Sem agendamento (decisão P5): depois de publicar um lote, a Diretoria roda este
+      # workflow à mão (Actions → Run workflow). Falha de rede ou formato só avisa
+      # (::warning::) e o build usa biblioteca/conteudo/reserva.json. Action pública, sem segredo.
+      - name: Busca o catálogo da Biblioteca (instantâneo; falha usa a reserva)
+        working-directory: frontend
+        env:
+          BIBLIOTECA_API_URL: ${{ github.ref_name == 'main' && 'https://api.laift.com.br/v1/' || 'https://staging-api.laift.com.br/v1/' }}
+        run: node scripts/fetch-biblioteca.mjs
 
       - name: Gera frontend/dist/ (app.js ofuscado; _headers e demais arquivos copiados)
         working-directory: frontend

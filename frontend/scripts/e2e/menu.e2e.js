@@ -7,7 +7,7 @@
  * menu.e2e.js — barra inferior de 4 itens e menu (hambúrguer) do app logado. Roda sobre o BUILD.
  * Cobre: só Início, Aprender, Eventos e Perfil na barra; aviso com o total de pendências no botão dos três
  * tracinhos; itens do menu com o que está esperando; abrir, escolher um item, Esc e foco de volta; membro sem
- * pendência; visitante só com Propostas. Fotos: .shots/menu-<estado>-<tema>-375x812.png.
+ * pendência; visitante só com Propostas; grupo "Estudo" (Biblioteca) só com a flag library_enabled. Fotos: .shots/menu-<estado>-<tema>-375x812.png.
  */
 const fs = require('fs');
 const path = require('path');
@@ -17,6 +17,11 @@ const SHOTS_DIR = path.join(__dirname, '.shots');
 const ALVO_MINIMO_PX = 44;
 const ROTULO_MINIMO_PX = 12;
 const VIEWPORT = { width: 375, height: 812 };
+const BIBLIOTECA_LIGADA = () => ({ success: true, flags: { library_enabled: true } });
+
+// Itens do menu (aberto) que a pessoa enxerga: sem a classe hidden (papel) e sem display:none (gate por flag do grupo).
+const VISIVEIS_E_ALTURA = (bs) => bs.filter((b) => b.getClientRects().length > 0)
+  .map((b) => ({ painel: b.getAttribute('data-panel'), altura: b.getBoundingClientRect().height }));
 
 const COM_PENDENCIAS = {
   apiListTasks: () => ({ success: true, tasks: [
@@ -73,7 +78,7 @@ async function comPendencias() {
     await app.page.click('#app-menu-btn');
     await app.page.waitForSelector('#app-menu[open]');
     check((await app.page.getAttribute('#app-menu-btn', 'aria-expanded')) === 'true', 'menu aberto: aria-expanded é true');
-    const itens = await app.page.$$eval('#app-menu [data-panel]:not(.hidden)', (bs) => bs.map((b) => ({
+    const itens = await app.page.$$eval('#app-menu [data-panel]:not(.hidden)', (bs) => bs.filter((b) => b.getClientRects().length > 0).map((b) => ({
       painel: b.getAttribute('data-panel'),
       titulo: b.querySelector('.app-menu__titulo').textContent.trim(),
       info: b.querySelector('.app-menu__info').textContent.trim(),
@@ -83,6 +88,7 @@ async function comPendencias() {
     const info = Object.fromEntries(itens.map((i) => [i.painel, i.info]));
     check(info['panel-proposals'] === 'Votação aberta', `menu aberto: Propostas diz "Votação aberta" (achou "${info['panel-proposals']}")`);
     check(info['panel-tasks'] === '2 tarefas em aberto', `menu aberto: Tarefas diz "2 tarefas em aberto" (achou "${info['panel-tasks']}")`);
+    check(await app.page.$eval('#app-menu [data-grupo="estudo"]', (el) => getComputedStyle(el).display === 'none'), 'sem a flag library_enabled, o grupo Estudo (Biblioteca) não aparece');
     check(info['panel-orgchart'] === '1 solicitação de conexão', `menu aberto: Equipe diz "1 solicitação de conexão" (achou "${info['panel-orgchart']}")`);
     check(itens.every((i) => i.altura >= ALVO_MINIMO_PX), `menu aberto: itens com alvo de ${ALVO_MINIMO_PX} px ou mais`);
     await app.page.waitForTimeout(450);
@@ -132,7 +138,7 @@ async function semPendencias() {
     check((await app.page.getAttribute('#app-menu-btn', 'aria-label')) === 'Menu', 'membro sem pendência: nome acessível é só "Menu"');
     await app.page.click('#app-menu-btn');
     await app.page.waitForSelector('#app-menu[open]');
-    const infos = await app.page.$$eval('#app-menu .app-menu__info', (els) => els.map((e) => e.textContent.trim()));
+    const infos = await app.page.$$eval('#app-menu .app-menu__info[id]', (els) => els.map((e) => e.textContent.trim()));
     check(infos.every((t) => t === ''), 'membro sem pendência: nenhum item mostra aviso de pendência');
   } finally {
     await app.close();
@@ -143,9 +149,25 @@ async function visitante() {
   const app = await iniciar({ role: 'visitor' });
   try {
     await app.page.waitForTimeout(400);
-    const visiveis = await app.page.$$eval('#app-menu [data-panel]:not(.hidden)', (bs) => bs.map((b) => b.getAttribute('data-panel')));
+    const visiveis = await app.page.$$eval('#app-menu [data-panel]:not(.hidden)', (bs) => bs.filter((b) => getComputedStyle(b.closest('.app-menu__grupo')).display !== 'none').map((b) => b.getAttribute('data-panel')));
     check(visiveis.join('|') === 'panel-proposals', `visitante: o menu só oferece Propostas (achou ${visiveis.join(', ')})`);
     check(await app.page.$eval('#app-menu [data-grupo="comunicacao"]', (el) => el.classList.contains('hidden')), 'visitante: o grupo Comunicação não aparece');
+  } finally {
+    await app.close();
+  }
+}
+
+async function biblioteca(role, esperado) {
+  const app = await iniciar({ role, workerHandlers: Object.assign({}, SEM_PENDENCIAS, { apiGetFeatureFlags: BIBLIOTECA_LIGADA }) });
+  try {
+    await app.page.waitForSelector('html[data-flag-library-enabled]', { state: 'attached', timeout: 5000 }).catch(() => {});
+    await app.page.click('#app-menu-btn');
+    await app.page.waitForSelector('#app-menu[open]');
+    const itens = await app.page.$$eval('#app-menu [data-panel]:not(.hidden)', VISIVEIS_E_ALTURA);
+    check(itens.map((i) => i.painel).join('|') === esperado, `${role} com library_enabled: menu com ${esperado} (achou ${itens.map((i) => i.painel).join(', ')})`);
+    const item = itens.find((i) => i.painel === 'panel-library');
+    check(!!item && item.altura >= ALVO_MINIMO_PX, `${role} com library_enabled: Biblioteca no grupo Estudo com alvo de ${ALVO_MINIMO_PX} px ou mais`);
+    check(app.errors.length === 0, `${role} com library_enabled: sem erros de JavaScript (${app.errors.join(' | ')})`);
   } finally {
     await app.close();
   }
@@ -168,5 +190,7 @@ module.exports = async function menu() {
   await escuro();
   await semPendencias();
   await visitante();
+  await biblioteca('member', 'panel-proposals|panel-tasks|panel-messages|panel-orgchart|panel-library');
+  await biblioteca('visitor', 'panel-proposals|panel-library');
   await admin();
 };

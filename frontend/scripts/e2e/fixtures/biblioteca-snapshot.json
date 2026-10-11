@@ -1,0 +1,111 @@
+{
+  "enabled": true,
+  "generatedAt": "2026-10-10T12:00:00Z",
+  "topics": [
+    { "slug": "farmacologia", "name": "Farmacologia" },
+    { "slug": "toxicologia", "name": "Toxicologia" }
+  ],
+  "items": [
+    {
+      "id": "e2e-0001",
+      "title": "Ação da cafeína sobre a memória de trabalho",
+      "authors": [{ "family": "Silva", "given": "Ana Maria" }],
+      "authorCount": 1,
+      "journal": "Revista de Farmacologia",
+      "year": 2021,
+      "doi": "10.1000/bib1",
+      "pmid": null,
+      "type": "artigo",
+      "topics": ["farmacologia"],
+      "openAccess": true,
+      "license": "cc-by",
+      "landingUrl": "https://doi.org/10.1000/bib1",
+      "publishedAt": "2021-03-01"
+    },
+    {
+      "id": "e2e-0002",
+      "title": "<script>window.__xss = 1</script>Artigo com marcação no título",
+      "authors": [{ "family": "Souza", "given": "Bruno" }],
+      "authorCount": 1,
+      "journal": "Jornal de Toxicologia",
+      "year": 2019,
+      "doi": "10.1000/bib2",
+      "pmid": null,
+      "type": "revisao",
+      "topics": ["toxicologia"],
+      "openAccess": false,
+      "license": "desconhecida",
+      "landingUrl": "https://doi.org/10.1000/bib2",
+      "publishedAt": "2019-05-10"
+    },
+    {
+      "id": "e2e-0003",
+      "title": "Metanálise sobre dose de paracetamol",
+      "authors": [
+        { "family": "Lima", "given": "Carla" },
+        { "family": "Rocha", "given": "Diego" },
+        { "family": "Costa", "given": "Elisa" },
+        { "family": "Alves", "given": "Fábio" }
+      ],
+      "authorCount": 4,
+      "journal": "Cadernos de Saúde",
+      "year": 2022,
+      "doi": null,
+      "pmid": "12345678",
+      "type": "meta_analise",
+      "topics": ["farmacologia", "toxicologia"],
+      "openAccess": true,
+      "license": "cc-by-nc",
+      "landingUrl": "https://pubmed.ncbi.nlm.nih.gov/12345678/",
+      "publishedAt": "2022-02-01"
+    },
+    {
+      "id": "e2e-0004",
+      "title": "Relato de caso de intoxicação por metanol",
+      "authors": [{ "family": "Nunes", "given": "Gabriel" }],
+      "authorCount": 1,
+      "journal": "Revista de Toxicologia Clínica",
+      "year": 2020,
+      "doi": "10.1000/bib4",
+      "pmid": null,
+      "type": "relato_caso",
+      "topics": ["toxicologia"],
+      "openAccess": false,
+      "license": "desconhecida",
+      "landingUrl": "https://doi.org/10.1000/bib4",
+      "publishedAt": "2020-08-15"
+    },
+    {
+      "id": "e2e-0005",
+      "title": "Interações de fármacos com anticoagulantes",
+      "authors": [{ "family": "Teixeira", "given": "Helena" }],
+      "authorCount": 1,
+      "journal": "Arquivos de Farmacologia",
+      "year": 2023,
+      "doi": "10.1000/bib5",
+      "pmid": null,
+      "type": "artigo",
+      "topics": ["farmacologia"],
+      "openAccess": true,
+      "license": "cc-by-sa",
+      "landingUrl": "https://doi.org/10.1000/bib5",
+      "publishedAt": "2023-01-20"
+    },
+    {
+      "id": "e2e-0006",
+      "title": "Diretriz de manejo da dor crônica",
+      "authors": [{ "family": "Pires", "given": "Igor" }],
+      "authorCount": 1,
+      "journal": "Boletim de Diretrizes",
+      "year": 2018,
+      "doi": "10.1000/bib6",
+      "pmid": null,
+      "type": "diretriz",
+      "topics": ["farmacologia"],
+      "openAccess": false,
+      "license": "outra",
+      "landingUrl": "https://doi.org/10.1000/bib6",
+      "publishedAt": "2018-11-05"
+    }
+  ]
+}

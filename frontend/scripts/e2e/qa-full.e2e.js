@@ -948,7 +948,7 @@ async function mobileOverflowScenario() {
     }
 
     await app.page.click('#btn-enter-admin-mode');
-    const adminPanels = ['panel-admin-dashboard', 'panel-admin-users', 'panel-admin-events', 'panel-admin-proposals', 'panel-admin-tasks', 'panel-admin-feedback', 'panel-admin-audit', 'panel-admin-reports', 'panel-admin-ai'];
+    const adminPanels = ['panel-admin-dashboard', 'panel-admin-users', 'panel-admin-events', 'panel-admin-proposals', 'panel-admin-tasks', 'panel-admin-feedback', 'panel-admin-audit', 'panel-admin-reports', 'panel-admin-ai', 'panel-admin-library'];
     for (const panelId of adminPanels) {
       await app.showPanel(panelId);
       await app.page.waitForTimeout(150);

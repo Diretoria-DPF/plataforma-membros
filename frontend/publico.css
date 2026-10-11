@@ -60,6 +60,20 @@
   transform: none;
 }
 
+/* Texto só para leitores de tela (ex.: "(abre em nova aba)" em /biblioteca). Mesmas regras de
+   .visually-hidden em styles.css, que as páginas públicas não carregam. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  padding: 0;
+  border: 0;
+  min-height: 0;
+}
+
 /* -------------------------------------------------------------------------
    Barra superior (celular: duas linhas; a partir de 760 px: uma linha fixa)
    ------------------------------------------------------------------------- */

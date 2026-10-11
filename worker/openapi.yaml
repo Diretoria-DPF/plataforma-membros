@@ -45,6 +45,19 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminCreateTask"
                 - "$ref": "#/components/schemas/apiAdminDashboard"
                 - "$ref": "#/components/schemas/apiAdminLearnAtlasTelemetry"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryClinicalReview"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryDecideSuggestion"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryGetArticle"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryImport"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryListCollections"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryListQueue"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryListStaff"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryListSuggestions"
+                - "$ref": "#/components/schemas/apiAdminLearnLibrarySaveCollection"
+                - "$ref": "#/components/schemas/apiAdminLearnLibrarySaveTopic"
+                - "$ref": "#/components/schemas/apiAdminLearnLibrarySetStaff"
+                - "$ref": "#/components/schemas/apiAdminLearnLibrarySetStatus"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryUpdateArticle"
                 - "$ref": "#/components/schemas/apiAdminLearnListPendingCases"
                 - "$ref": "#/components/schemas/apiAdminLearnReviewCase"
                 - "$ref": "#/components/schemas/apiAdminListAllEvents"
@@ -103,6 +116,14 @@ paths:
                 - "$ref": "#/components/schemas/apiLearnGetMyAttendanceQr"
                 - "$ref": "#/components/schemas/apiLearnGetMyStats"
                 - "$ref": "#/components/schemas/apiLearnLabPreceptor"
+                - "$ref": "#/components/schemas/apiLearnLibraryGetArticle"
+                - "$ref": "#/components/schemas/apiLearnLibraryGetCollection"
+                - "$ref": "#/components/schemas/apiLearnLibraryListCollections"
+                - "$ref": "#/components/schemas/apiLearnLibraryListFavorites"
+                - "$ref": "#/components/schemas/apiLearnLibraryPublicCatalog"
+                - "$ref": "#/components/schemas/apiLearnLibrarySearch"
+                - "$ref": "#/components/schemas/apiLearnLibrarySetFavorite"
+                - "$ref": "#/components/schemas/apiLearnLibrarySuggest"
                 - "$ref": "#/components/schemas/apiLearnRecordLabFormulation"
                 - "$ref": "#/components/schemas/apiLearnSubmitQuizAttempt"
                 - "$ref": "#/components/schemas/apiListConversations"
@@ -403,6 +424,212 @@ components:
       properties:
         action:
           const: "apiAdminLearnAtlasTelemetry"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryClinicalReview:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryClinicalReview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryDecideSuggestion:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryDecideSuggestion"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryGetArticle:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryGetArticle"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryImport:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryImport"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryListCollections:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryListCollections"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminLearnLibraryListQueue:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryListQueue"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryListStaff:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryListStaff"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminLearnLibraryListSuggestions:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryListSuggestions"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibrarySaveCollection:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibrarySaveCollection"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibrarySaveTopic:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibrarySaveTopic"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibrarySetStaff:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibrarySetStaff"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibrarySetStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibrarySetStatus"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryUpdateArticle:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryUpdateArticle"
         args:
           type: "array"
           prefixItems:
@@ -1326,6 +1553,131 @@ components:
       properties:
         action:
           const: "apiLearnLabPreceptor"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnLibraryGetArticle:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLibraryGetArticle"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnLibraryGetCollection:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLibraryGetCollection"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnLibraryListCollections:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLibraryListCollections"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiLearnLibraryListFavorites:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLibraryListFavorites"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnLibraryPublicCatalog:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiLearnLibraryPublicCatalog"
+        args:
+          type: "array"
+          prefixItems: []
+          minItems: 0
+          maxItems: 0
+    apiLearnLibrarySearch:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLibrarySearch"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnLibrarySetFavorite:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLibrarySetFavorite"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiLearnLibrarySuggest:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiLearnLibrarySuggest"
         args:
           type: "array"
           prefixItems:

@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 117 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 138 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -59,6 +59,30 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     );
     // Moderação da Lia (ADR 0004): redenção, estado da própria pessoa e resumo do admin
     expected.push('apiAssistantRedeem', 'apiAssistantModerationState', 'apiAdminAssistantModeration');
+    // Biblioteca LAIFT (CONTRATO-B1 §4)
+    expected.push(
+      'apiLearnLibraryPublicCatalog',
+      'apiLearnLibrarySearch',
+      'apiLearnLibraryGetArticle',
+      'apiLearnLibrarySetFavorite',
+      'apiLearnLibraryListFavorites',
+      'apiLearnLibraryListCollections',
+      'apiLearnLibraryGetCollection',
+      'apiLearnLibrarySuggest',
+      'apiAdminLearnLibraryImport',
+      'apiAdminLearnLibraryListQueue',
+      'apiAdminLearnLibraryGetArticle',
+      'apiAdminLearnLibraryUpdateArticle',
+      'apiAdminLearnLibrarySetStatus',
+      'apiAdminLearnLibraryClinicalReview',
+      'apiAdminLearnLibraryListSuggestions',
+      'apiAdminLearnLibraryDecideSuggestion',
+      'apiAdminLearnLibraryListCollections',
+      'apiAdminLearnLibrarySaveCollection',
+      'apiAdminLearnLibrarySaveTopic',
+      'apiAdminLearnLibraryListStaff',
+      'apiAdminLearnLibrarySetStaff'
+    );
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 

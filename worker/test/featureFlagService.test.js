@@ -115,6 +115,10 @@ describe('leitura com cache', () => {
 
   test('PUBLIC_FLAGS inclui selection_open e não expõe flags de segurança nem internas', () => {
     expect(PUBLIC_FLAGS).toContain('selection_open');
+    expect(PUBLIC_FLAGS).toContain('library_enabled');
+    expect(PUBLIC_FLAGS).toContain('library_member_suggest');
+    expect(PUBLIC_FLAGS).not.toContain('library_ai_summary');
+    expect(PUBLIC_FLAGS).not.toContain('lia_library_enabled');
     for (const key of ['mfa_required', 'minors_enabled', 'use_orchestrator', 'nvidia_fallback']) {
       expect(PUBLIC_FLAGS).not.toContain(key);
     }

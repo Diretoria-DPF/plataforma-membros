@@ -53,7 +53,7 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
 // alteração. Adicione aqui qualquer nova página estática do site.
 // robots.txt, sitemap.xml e llms.txt precisam estar na RAIZ do domínio para
 // buscadores e crawlers de IA os encontrarem (por isso exigem domínio próprio).
-['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-research.js', 'assistant-hints.js', 'admin-moderation.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css', 'liga.html', 'liga.css', 'liga.js', 'liga-ciclo.json', 'blog.html', 'blog.css', 'blog-campanha.css', 'processo-seletivo.html', 'edital.html', 'publico.css', 'processo.css', 'liga-mapa.js', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js', 'voltar-app.css', 'blog-sw.js', 'entrada.js', 'app-menu.js', 'app-menu.css'].forEach((name) => {
+['index.html', 'styles.css', 'termos.html', 'privacidade.html', '404.html', 'robots.txt', 'sitemap.xml', 'llms.txt', 'domain-notice.js', 'ux.css', 'ux-glass.css', 'home-editorial.css', 'dashboardAdapter.js', 'shared-states.js', 'manifest.webmanifest', 'sw.js', 'pwa.js', 'home.js', 'mfa.js', 'credential.js', 'assistant.js', 'assistant-moderation.js', 'assistant-mood-glue.js', 'assistant-feedback.js', 'assistant-feedback.css', 'assistant-research.js', 'assistant-hints.js', 'admin-moderation.js', 'keyboard-shortcuts.js', 'onboarding.js', 'assistant-typing.js', 'assistant-hints.css', 'ux-v2.js', 'splash.js', 'splash.css', 'liga.html', 'liga.css', 'liga.js', 'liga-ciclo.json', 'blog.html', 'blog.css', 'blog-campanha.css', 'processo-seletivo.html', 'edital.html', 'publico.css', 'processo.css', 'liga-mapa.js', 'blog-novidade.js', 'blog-novidade.css', 'voltar-app.js', 'voltar-app.css', 'blog-sw.js', 'entrada.js', 'app-menu.js', 'app-menu.css', 'library-cite.js', 'library-detail.js', 'library.js', 'library.css', 'admin-library-extras.js', 'admin-library.js', 'biblioteca.css'].forEach((name) => {
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
@@ -109,6 +109,12 @@ const LIA_REVIEW_ONLY = /[\\/]shared[\\/]lia[\\/](?:preview[^\\/]*|lab[^\\/]*|bu
 // fica só no repositório e vira dist/blog/<slug>.html + index.json + URLs do sitemap pelo gerador.
 fs.cpSync(path.join(ROOT, 'blog'), path.join(DIST, 'blog'), { recursive: true, filter: (src) => !/[\\/]blog[\\/]conteudo(?:[\\/]|$)/.test(src) });
 require('./build-blog.js').build({ outDir: DIST });
+
+// Biblioteca LAIFT (/biblioteca, CONTRATO-B2 §2.1): recente.json (CI) ou reserva.json; item inválido vira aviso,
+// nunca derruba o build. Desligada ou vazia: não gera a página e tira a URL do sitemap. biblioteca/conteudo/ não é copiada.
+const biblioteca = require('./build-biblioteca.js').build({ outDir: DIST });
+biblioteca.avisos.forEach((aviso) => console.warn(`[biblioteca] ${aviso}`));
+console.log(`[biblioteca] página ${biblioteca.gerada ? `gerada com ${biblioteca.itens} artigo(s)` : 'não gerada (desligada ou sem itens)'}.`);
 
 // Modelos 3D também em .glb.gz (PR 3.1, meta de boot < 10 s em Fast 3G):
 // o GitHub Pages não comprime .glb, e o gzip tira ~43% do esqueleto. O atlas

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0f6f62">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Biblioteca LAIFT · artigos de farmacologia e toxicologia</title>
+<meta name="description" content="Artigos científicos escolhidos e conferidos pela Diretoria Científica da LAIFT, com busca por título, autor, revista e área de estudo.">
+<link rel="canonical" href="https://laift.com.br/biblioteca">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Biblioteca LAIFT · artigos de farmacologia e toxicologia">
+<meta property="og:description" content="Artigos científicos escolhidos e conferidos pela Diretoria Científica da LAIFT, com busca por título, autor, revista e área de estudo.">
+<meta property="og:url" content="https://laift.com.br/biblioteca">
+<meta property="og:image" content="https://laift.com.br/blog/og-default.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/modulos/shared/laift-tokens.css">
+<link rel="stylesheet" href="/publico.css">
+<link rel="stylesheet" href="/biblioteca.css">
+<!-- biblioteca:jsonld -->
+<script src="/biblioteca/catalogo.js" defer></script>
+</head>
+<body class="bib-page">
+<a class="bib-pular" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="pub-barra">
+  <div class="pub-barra__linha">
+    <a class="pub-voltar" href="/" data-history-back aria-label="Voltar à tela anterior">
+      <svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
+      <span class="pub-voltar__rotulo">Voltar</span>
+    </a>
+    <a class="pub-barra__marca" href="/biblioteca"><img src="/modulos/cracha/laift-marca.png" alt="" width="40" height="40"><span>Biblioteca LAIFT</span></a>
+  </div>
+  <nav class="pub-barra__nav" aria-label="Plataforma">
+    <a class="pub-barra__link" href="/"><svg class="pub-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Início</span></a>
+    <a class="pub-barra__link" href="/#entrar"><span>Entrar</span></a>
+    <a class="pub-barra__link pub-barra__link--destaque" href="/#cadastro"><span>Cadastrar</span></a>
+  </nav>
+</header>
+
+<main id="conteudo">
+  <section class="bib-cabecalho">
+    <h1>Biblioteca LAIFT</h1>
+    <p class="bib-intro">Artigos científicos escolhidos e conferidos pela Diretoria Científica da LAIFT. Resumo, coleções e favoritos ficam na área de membros.</p>
+    <p class="bib-acoes"><a class="bib-botao" href="/">Entrar na plataforma</a></p>
+    <p class="bib-atualizado">Atualizado em <!-- biblioteca:atualizado -->.</p>
+  </section>
+
+  <form class="bib-filtros" role="search" hidden>
+    <div class="bib-campo">
+      <label for="bib-q">Buscar por título, autor ou revista</label>
+      <input type="search" id="bib-q" name="q" maxlength="120" autocomplete="off">
+    </div>
+    <div class="bib-campo">
+      <label for="bib-area">Área</label>
+      <select id="bib-area" name="area">
+        <option value="">Todas as áreas</option>
+        <!-- biblioteca:topicos -->
+      </select>
+    </div>
+    <div class="bib-campo">
+      <label for="bib-tipo">Tipo</label>
+      <select id="bib-tipo" name="tipo">
+        <option value="">Todos os tipos</option>
+        <!-- biblioteca:tipos -->
+      </select>
+    </div>
+    <div class="bib-campo">
+      <label for="bib-ano-de">Ano de</label>
+      <input type="number" id="bib-ano-de" name="anoDe" min="1800" max="2100" inputmode="numeric">
+    </div>
+    <div class="bib-campo">
+      <label for="bib-ano-ate">Ano até</label>
+      <input type="number" id="bib-ano-ate" name="anoAte" min="1800" max="2100" inputmode="numeric">
+    </div>
+    <div class="bib-campo bib-campo--linha">
+      <input type="checkbox" id="bib-aberto" name="aberto">
+      <label for="bib-aberto">Só acesso aberto</label>
+    </div>
+    <button type="button" class="bib-botao bib-limpar" id="bib-limpar">Limpar filtros</button>
+  </form>
+
+  <p id="bib-status" class="bib-status" role="status" aria-live="polite"><!-- biblioteca:total --></p>
+  <ol class="bib-lista"><!-- biblioteca:itens --></ol>
+</main>
+
+<footer class="pub-rodape"><p class="pub-rodape__marca">LAIFT · Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</p><p class="pub-rodape__local">UNINASSAU – Centro Universitário Maurício de Nassau · Salvador, Bahia</p><ul class="pub-rodape__links"><li><a href="/liga.html">Conheça a LAIFT</a></li><li><a href="/processo-seletivo.html">Processo seletivo</a></li><li><a href="/edital.html">Edital</a></li><li><a href="/blog.html">Blog</a></li><li><a href="/biblioteca">Biblioteca</a></li><li><a href="/termos.html">Termos de Uso</a></li><li><a href="/privacidade.html">Privacidade</a></li></ul><p class="pub-rodape__copy">© 2026 LAIFT</p></footer>
+</body>
+</html>

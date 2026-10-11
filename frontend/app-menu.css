@@ -239,3 +239,9 @@
   align-items: center;
   gap: var(--move-xs) var(--move-sm);
 }
+
+/* Biblioteca LAIFT (CONTRATO-B2 §1): o grupo "Estudo" só aparece com a flag library_enabled.
+   O gate fica no contêiner do grupo porque app-menu.js só olha a classe hidden dos botões. */
+:root:not([data-flag-library-enabled]) #app-menu [data-grupo="estudo"] {
+  display: none;
+}
