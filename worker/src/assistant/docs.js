@@ -11,13 +11,16 @@
  *   - 'destinos'  as telas e módulos da lista branca de assistant/targets.js;
  *   - 'guia', 'privacidade', 'convivencia' e 'liga'  documentos markdown embutidos abaixo, divididos por "## ";
  *   - 'plataforma', 'modulos', 'publicacoes', 'processo', 'faq' e 'saude'  conteúdo de
- *                 assistant/docsConteudo.js, no mesmo formato markdown.
+ *                 assistant/docsConteudo.js, no mesmo formato markdown;
+ *   - 'guia-plataforma'  o guia geral da plataforma (docs/lia/GUIA-PLATAFORMA.md, gerado em
+ *                 assistant/guiaPlataforma.js), sem as seções de administração.
  * `buildDocuments()` devolve a lista de trechos {source, section, content} que
  * `ragService.reindex` grava em kb_chunks (idempotente: source + section).
  */
 import { PUBLIC_INTENTS } from './kb.js';
 import { TARGETS } from './targets.js';
 import { CONTENT_DOCS } from './docsConteudo.js';
+import { GUIA_PLATAFORMA_MARKDOWN, GUIA_SOURCE, isAdminSection } from './guiaPlataforma.js';
 import { AI_QUOTAS } from '../constants.js';
 
 const SECTION_MAX = 200;
@@ -106,10 +109,16 @@ function targetChunks() {
   return [{ source: 'destinos', section: 'Telas e módulos que a Lia pode abrir', content: ('Telas e módulos que a Lia pode abrir:\n' + items.join('\n')).slice(0, CONTENT_MAX * 2) }];
 }
 
+/** Guia geral da plataforma: só as seções de uso geral (as de administração ficam de fora). */
+function guideChunks() {
+  return chunkMarkdown(GUIA_SOURCE, GUIA_PLATAFORMA_MARKDOWN).filter((c) => !isAdminSection(c.section));
+}
+
 /** Todos os trechos da base, com (source, section) únicos. */
 export function buildDocuments() {
   const all = kbChunks().concat(targetChunks());
   GUIDE_MARKDOWN.concat(CONTENT_DOCS).forEach((doc) => { chunkMarkdown(doc.source, doc.markdown).forEach((c) => all.push(c)); });
+  guideChunks().forEach((c) => all.push(c));
   const seen = new Set();
   return all.filter((c) => {
     const key = c.source + '|' + c.section;

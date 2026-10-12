@@ -18,10 +18,10 @@
   // Mesma lista de worker/src/assistant/targets.js (tipo:destino), em ordem alfabética.
   var ACTION_KEYS = [
     'navigate:panel-admin-ai', 'navigate:panel-admin-audit', 'navigate:panel-admin-dashboard', 'navigate:panel-admin-events',
-    'navigate:panel-admin-feedback', 'navigate:panel-admin-fiscal', 'navigate:panel-admin-proposals', 'navigate:panel-admin-reports',
+    'navigate:panel-admin-feedback', 'navigate:panel-admin-fiscal', 'navigate:panel-admin-library', 'navigate:panel-admin-proposals', 'navigate:panel-admin-reports',
     'navigate:panel-admin-tasks', 'navigate:panel-admin-users', 'navigate:panel-events', 'navigate:panel-home', 'navigate:panel-learn',
-    'navigate:panel-messages', 'navigate:panel-orgchart', 'navigate:panel-profile', 'navigate:panel-proposals', 'navigate:panel-tasks',
-    'open_credential:credential', 'open_module:anatomia', 'open_module:clinica', 'open_module:farmaco', 'open_module:lab', 'open_module:toxico',
+    'navigate:panel-library', 'navigate:panel-messages', 'navigate:panel-orgchart', 'navigate:panel-profile', 'navigate:panel-proposals',
+    'navigate:panel-tasks', 'open_credential:credential', 'open_library:search', 'open_module:anatomia', 'open_module:clinica', 'open_module:farmaco', 'open_module:lab', 'open_module:toxico',
   ];
   var MAX_ACTIONS = 4;
   var MAX_SUGGESTIONS = 3;
@@ -239,6 +239,8 @@
       if (root.LaiftLearning && typeof root.LaiftLearning.openModule === 'function') root.LaiftLearning.openModule(action.target);
     } else if (action.type === 'open_credential') {
       if (root.LaiftCredential) root.LaiftCredential.open(app);
+    } else if (action.type === 'open_library') {
+      app.showPanel('panel-library'); // a busca pronta (query) fica para uma próxima etapa
     }
   }
 

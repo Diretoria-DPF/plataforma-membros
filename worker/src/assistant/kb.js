@@ -101,8 +101,8 @@ export const INTENTS = [
   {
     id: 'seguranca',
     title: 'Senha e verificação em duas etapas',
-    keywords: ['verificacao em duas etapas', 'duas etapas', 'autenticador', 'autenticacao', 'mfa', '2fa', 'senha', 'seguranca', 'codigo de recuperacao', 'codigos de recuperacao'],
-    reply: 'Para proteger a conta, ative a verificação em duas etapas em Meu perfil: você usa um aplicativo autenticador e guarda os códigos de recuperação. Se esqueceu a senha, toque em Esqueci minha senha na tela de entrada.',
+    keywords: ['verificacao em duas etapas', 'duas etapas', 'autenticador', 'autenticacao', 'mfa', '2fa', 'seguranca', 'codigo de recuperacao', 'codigos de recuperacao'],
+    reply: 'Para proteger a conta com a verificação em duas etapas:\n1. Abra Perfil e vá ao cartão Verificação em duas etapas.\n2. Toque em Ativar verificação em duas etapas e confirme sua senha.\n3. No aplicativo autenticador, escaneie o QR Code e digite o código de 6 dígitos.\n4. Toque em Confirmar e ativar e guarde os códigos de recuperação fora do celular.\nEsqueceu a senha? Toque em Esqueci minha senha na tela de entrada.',
     actions: [nav('panel-profile')],
     suggestions: ['Quem vê meus dados?'],
   },
@@ -157,8 +157,8 @@ export const INTENTS = [
   {
     id: 'cadastro',
     title: 'Como criar a conta',
-    keywords: ['cadastro', 'cadastrar', 'me cadastro', 'criar conta', 'criar uma conta', 'registrar', 'registro', 'entrar na liga', 'participar da liga', 'virar membro', 'ser membro'],
-    reply: 'Para entrar na plataforma, crie sua conta na tela inicial (opção de cadastro), confirme o e-mail e faça o login. Depois disso você já pode explorar os módulos de estudo e os eventos.',
+    keywords: ['cadastro', 'cadastrar', 'me cadastro', 'criar conta', 'criar uma conta', 'crio uma conta', 'crio conta', 'criar minha conta', 'nova conta', 'registrar', 'registro', 'entrar na liga', 'participar da liga', 'virar membro', 'ser membro'],
+    reply: 'Para criar a conta:\n1. Na tela inicial, toque em Criar conta.\n2. Preencha nome completo (ele não muda depois), nome de usuário, e-mail, telefone e uma senha de pelo menos 8 caracteres.\n3. Marque que leu os Termos de Uso e a Política de Privacidade e toque em Criar conta.\n4. Abra o e-mail de confirmação e depois faça o login.\nA conta começa como visitante; quem muda o papel para membro é a administração.',
     actions: [],
     suggestions: ['O que posso fazer aqui?'],
   },
@@ -204,11 +204,139 @@ export const INTENTS = [
     suggestions: ['Meu perfil', 'Equipe'],
   },
   {
+    id: 'entrar',
+    titleOnlyOutline: true,
+    title: 'Entrar na plataforma (login)',
+    keywords: ['login', 'logar', 'fazer login', 'fazer o login', 'entrar na conta', 'entrar na minha conta', 'entrar na plataforma', 'nao consigo entrar', 'acessar minha conta', 'acessar a conta', 'como entro', 'tela de entrada'],
+    reply: 'Para entrar na plataforma:\n1. Na tela inicial, digite seu e-mail e sua senha (Mostrar senha ajuda a conferir).\n2. Toque em Entrar.\n3. Se ativou a verificação em duas etapas, digite o código de 6 dígitos do aplicativo autenticador, ou um código de recuperação, e toque em Verificar.\nPrimeira vez? Toque em Criar conta. Esqueceu a senha? Toque em Esqueci minha senha.',
+    actions: [],
+    suggestions: ['Esqueci minha senha', 'Criar conta'],
+  },
+  {
+    id: 'senha',
+    titleOnlyOutline: true,
+    title: 'Esqueci ou quero trocar a senha',
+    keywords: ['senha', 'esqueci a senha', 'esqueci minha senha', 'trocar senha', 'trocar a senha', 'troco a senha', 'mudar senha', 'mudar a senha', 'alterar senha', 'alterar a senha', 'redefinir senha', 'recuperar senha', 'recuperar a senha', 'nova senha', 'resetar senha'],
+    reply: 'Para recuperar ou trocar a senha:\n1. Na tela de entrada, toque em Esqueci minha senha.\n2. Digite o e-mail da conta e toque em Enviar link.\n3. Abra o link que chegou por e-mail.\n4. Digite a nova senha (mínimo 8 caracteres) duas vezes e toque em Salvar nova senha.\nNão há troca de senha dentro do perfil: use sempre este caminho.',
+    actions: [],
+    suggestions: ['Segurança da conta', 'Como faço login?'],
+  },
+  {
+    id: 'inicio',
+    titleOnlyOutline: true,
+    title: 'Tela Início: o resumo da conta',
+    keywords: ['tela de inicio', 'aba inicio', 'aba de inicio', 'pagina inicial', 'resumo da conta', 'o que aparece no inicio', 'graficos de atividade'],
+    reply: 'Início, o primeiro botão da barra de baixo, é o resumo da sua conta: próximos eventos, aprendizado e gráficos de atividade no período. Membros também veem as minhas tarefas, a votação e a caixa de entrada (mensagens e pedidos de conexão). Cada cartão tem um atalho, como Ver eventos, Ver tarefas ou Abrir mensagens. A barra de baixo tem Início, Aprender, Eventos e Perfil; o resto fica no menu.',
+    actions: [nav('panel-home')],
+    suggestions: ['Eventos abertos', 'Meu crachá'],
+  },
+  {
+    id: 'instalar_app',
+    titleOnlyOutline: true,
+    title: 'Instalar o app no celular',
+    keywords: ['instalar', 'instalo', 'instalar o app', 'instalo o app', 'app no celular', 'aplicativo no celular', 'adicionar a tela de inicio', 'baixar o app', 'baixar o aplicativo', 'pwa'],
+    reply: 'A plataforma vira um aplicativo no celular, sem loja.\nAndroid, no Chrome:\n1. Abra a plataforma.\n2. Toque no menu ⋮ do navegador.\n3. Escolha Instalar app ou Adicionar à tela inicial.\niPhone ou iPad, no Safari:\n1. Toque em Compartilhar (o quadrado com a seta).\n2. Escolha Adicionar à Tela de Início e toque em Adicionar.\nDepois, o ícone LAIFT abre a plataforma em tela cheia.',
+    actions: [],
+    suggestions: ['Guia da plataforma'],
+  },
+  {
+    id: 'blog_site',
+    titleOnlyOutline: true,
+    title: 'Onde ficam o blog e o site da Liga',
+    keywords: ['blog', 'posts', 'site da liga', 'site da laift', 'pagina da liga', 'conheca a laift', 'instalar o blog'],
+    reply: 'O blog e a página da Liga abrem sem login:\n1. Na tela de entrada, toque em Acessar blog ou em Conheça a LAIFT.\n2. No blog, filtre por série: Liga, Módulos, Plataforma e Publicações; cada post tem página própria.\n3. Na página da Liga ficam a apresentação, as áreas e os contatos; pelo rodapé chega-se ao Processo seletivo, ao Edital e à Biblioteca.\nO blog também pode ser instalado no celular pelo botão Instalar o blog.',
+    actions: [],
+    suggestions: ['Como instalar o app?', 'Processo seletivo'],
+  },
+  {
+    id: 'menu_pendencias',
+    titleOnlyOutline: true,
+    title: 'O número no botão de menu',
+    keywords: ['numero no menu', 'numerinho', 'bolinha', 'aviso de pendencia', 'avisos de pendencia', 'pendencia', 'pendencias', 'pendente', 'pendentes', 'notificacao', 'notificacoes', 'botao de menu'],
+    reply: 'O botão de menu (☰), no alto, abre Propostas, Tarefas, Mensagens, Equipe e Biblioteca, em três grupos: Participação, Comunicação e Estudo. Quando há algo esperando por você, o botão mostra um número, e cada item diz o que está pendente: votação aberta, tarefas em aberto, mensagens não lidas e pedidos de conexão. Os avisos são para membros. Por e-mail, a plataforma manda só a confirmação de inscrição em eventos.',
+    actions: [],
+    suggestions: ['Tarefas', 'Mensagens'],
+  },
+  {
+    id: 'papeis',
+    titleOnlyOutline: true,
+    title: 'O que cada papel pode fazer',
+    keywords: ['papeis', 'visitante', 'visitantes', 'o que o membro pode', 'o que um membro pode', 'o que o administrador pode', 'o que um administrador pode', 'diferenca entre visitante e membro'],
+    reply: 'Visitante: Início, Aprender, eventos abertos a contas, enviar Propostas, Perfil, crachá e o catálogo da Biblioteca. Membro: tudo isso e mais votar, Tarefas, Mensagens, Equipe, eventos só para membros e, na Biblioteca, resumo, favoritos e coleções. Administrador: tudo do membro e o botão Admin, que abre a área de gestão. A conta nasce como visitante; para virar membro há processo seletivo, e quem muda o papel é a administração.',
+    actions: [],
+    suggestions: ['Criar conta', 'Processo seletivo'],
+  },
+  {
+    id: 'guia',
+    titleOnlyOutline: true,
+    title: 'Guia da plataforma: por onde começar',
+    keywords: ['guia', 'guia da plataforma', 'tutorial', 'manual', 'por onde comeco', 'por onde comecar', 'por onde eu comeco', 'primeiros passos'],
+    reply: 'Por onde começar:\n1. Crie sua conta (ou entre) na tela inicial.\n2. Em Aprender, escolha um módulo de estudo.\n3. Em Eventos, confira os próximos encontros e inscreva-se.\n4. Em Perfil, complete seus dados e ative a verificação em duas etapas.\n5. No menu ☰ ficam Propostas, Tarefas, Mensagens, Equipe e Biblioteca.\nPergunte do seu jeito, por exemplo: "como instalo o app?".',
+    actions: [nav('panel-learn'), nav('panel-events')],
+    suggestions: ['Como instalar o app?', 'Como uso a Biblioteca?'],
+  },
+  {
+    // Só administrador ou curador: fica fora do acervo (RAG), do prompt da IA e das intenções públicas.
+    id: 'biblioteca_curadoria',
+    title: 'Curadoria da Biblioteca (administração e curadores)',
+    adminOnly: true,
+    curatorOnly: true,
+    weight: 2,
+    keywords: ['curadoria', 'curar', 'curo', 'fila de triagem', 'triagem', 'em triagem', 'aprovar referencia', 'aprovar artigo', 'aprovo um artigo', 'publicar artigo', 'publicar um artigo', 'publico artigo', 'publico um artigo', 'trabalho em lote', 'lote de artigos', 'revisor clinico', 'buscar dados'],
+    reply: 'Curadoria da Biblioteca, para administradores e curadores:\n1. No modo administrador, toque em Biblioteca.\n2. Em Artigos, digite o DOI ou o PMID e toque em Buscar dados; o artigo entra Em triagem.\n3. Abra o artigo, confira os dados, a área e o resumo e salve.\n4. Toque em Aprovar referência e depois em Publicar: o artigo aparece no catálogo em até 1 minuto.\nPara muitos de uma vez, use Trabalho em lote. Resumo com dose, conduta ou interação precisa do revisor clínico. Curador sem o botão Admin pede ajuda a um administrador.',
+    actions: [nav('panel-admin-library')],
+    suggestions: ['Como uso a Biblioteca?'],
+  },
+  {
+    id: 'biblioteca_sugerir',
+    titleOnlyOutline: true,
+    title: 'Biblioteca: sugerir um artigo',
+    library: true,
+    weight: 1.5,
+    keywords: ['sugerir artigo', 'sugerir um artigo', 'sugiro artigo', 'sugiro um artigo', 'sugestao de artigo', 'sugerir referencia', 'indicar artigo', 'indicar um artigo', 'indico um artigo', 'indicar uma referencia', 'publicar artigo', 'publicar um artigo', 'publico artigo', 'publico um artigo', 'enviar artigo', 'enviar um artigo', 'envio um artigo', 'adicionar artigo', 'adicionar um artigo'],
+    reply: 'Para sugerir um artigo à Biblioteca (membros):\n1. Abra a Biblioteca e toque em Sugerir artigo.\n2. Cole o DOI, o PMID ou o link do doi.org ou do PubMed e, se quiser, diga por que (até 300 caracteres, sem links).\n3. Toque em Enviar sugestão.\nA Diretoria Científica avalia antes de publicar: quem publica é a curadoria, não quem sugere.',
+    actions: [nav('panel-library')],
+    suggestions: ['Como uso a Biblioteca?', 'Citar em ABNT'],
+  },
+  {
+    id: 'biblioteca_salvar_citar',
+    titleOnlyOutline: true,
+    title: 'Biblioteca: favoritos e citação ABNT ou Vancouver',
+    library: true,
+    weight: 1.5,
+    keywords: ['salvar artigo', 'salvar um artigo', 'salvo artigo', 'salvo um artigo', 'favoritos', 'favorito', 'favoritar', 'citar', 'cito', 'citacao', 'citacoes', 'abnt', 'vancouver', 'copiar citacao', 'copio a citacao', 'colecoes'],
+    reply: 'Para salvar e citar um artigo:\n1. Para salvar (membros), toque em Salvar nos favoritos no artigo; ele vai para a aba Favoritos. Remover dos favoritos desfaz.\n2. Para citar, toque no título do artigo e, em Citar, escolha ABNT ou Vancouver.\n3. Toque em Copiar citação: aparece Citação copiada. e o texto fica na tela para conferir.\nA aba Coleções traz seleções de artigos feitas pela curadoria.',
+    actions: [nav('panel-library')],
+    suggestions: ['Como uso a Biblioteca?', 'Remover um artigo'],
+  },
+  {
+    id: 'biblioteca_remocao',
+    titleOnlyOutline: true,
+    title: 'Biblioteca: pedir revisão ou remoção de artigo',
+    library: true,
+    weight: 1.5,
+    keywords: ['remocao', 'remover artigo', 'remover um artigo', 'retirar artigo', 'retirar um artigo', 'retirada de artigo', 'artigo errado', 'artigo incorreto', 'artigo com erro', 'erro no artigo', 'artigo duplicado', 'revisao de artigo', 'denunciar artigo', 'despublicar'],
+    reply: 'Não há botão de remoção. Para pedir revisão ou retirada de um artigo:\n1. Abra Perfil e vá à seção Feedback.\n2. Escreva o título do artigo e o motivo e toque em Enviar feedback.\n3. Se preferir, escreva para laiftligauninassau@gmail.com.\nA curadoria analisa e registra o motivo de cada remoção.',
+    actions: [nav('panel-profile'), nav('panel-library')],
+    suggestions: ['Como uso a Biblioteca?', 'Enviar feedback'],
+  },
+  {
+    id: 'biblioteca',
+    titleOnlyOutline: true,
+    title: 'Biblioteca: como buscar artigos',
+    library: true,
+    weight: 0.8,
+    keywords: ['biblioteca', 'biblioteca laift', 'artigos cientificos', 'artigo cientifico', 'buscar artigos', 'busco artigos', 'buscar artigo', 'busco artigo', 'procurar artigos', 'procuro artigos', 'pesquisar artigos', 'pesquiso artigos', 'achar artigos', 'literatura cientifica', 'referencias bibliograficas', 'catalogo de artigos'],
+    reply: 'Para buscar artigos na Biblioteca:\n1. Abra o menu ☰ e toque em Biblioteca (grupo Estudo).\n2. Digite o tema em Buscar artigos e toque em Buscar; os artigos em português vêm primeiro.\n3. Em Filtros, escolha Área, Tipo, Idioma ou Ano, ou marque Só acesso aberto.\n4. Toque no título para ver a ficha e em Abrir no site oficial para ler o artigo.\nQuem não tem conta vê o catálogo público em laift.com.br/biblioteca.',
+    actions: [nav('panel-library')],
+    suggestions: ['Sugerir um artigo', 'Citar em ABNT'],
+  },
+  {
     id: 'admin_area',
     title: 'Área de administração (botão Admin)',
     adminOnly: true,
     keywords: ['area admin', 'area de administracao', 'area administrativa', 'painel do administrador', 'painel admin', 'botao admin', 'modo admin', 'sou administrador', 'sou admin', 'o que tem no admin'],
-    reply: 'O botão Admin, no menu, abre a área de administração, que só existe para administradores. Ela tem Painel (visão geral com gráficos), Usuários, Eventos, Propostas, Tarefas, Feedback, Auditoria, Denúncias, Fiscal e IA. O botão Voltar retorna à área do membro.',
+    reply: 'O botão Admin, no menu, abre a área de administração, que só existe para administradores. Ela tem Painel (visão geral com gráficos), Usuários, Eventos, Propostas, Tarefas, Feedback, Auditoria, Denúncias, Fiscal, IA e Biblioteca. O botão Voltar retorna à área do membro.',
     actions: [nav('panel-admin-dashboard')],
     suggestions: ['Eventos abertos', 'Meu crachá'],
   },
@@ -301,7 +429,7 @@ export const INTENTS = [
     id: 'ajuda',
     title: 'O que a Lia faz',
     weight: 0.7,
-    keywords: ['ajuda', 'ajudar', 'socorro', 'duvida', 'como usar', 'como usa', 'nao sei', 'o que voce faz', 'o que voce pode', 'como funciona a plataforma', 'tutorial', 'guia', 'o que posso fazer', 'o que da para fazer'],
+    keywords: ['ajuda', 'ajudar', 'socorro', 'duvida', 'como usar', 'como usa', 'nao sei', 'o que voce faz', 'o que voce pode', 'como funciona a plataforma', 'o que posso fazer', 'o que da para fazer'],
     reply: 'Eu te ajudo a encontrar eventos, abrir os módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), mostrar seu crachá e entender perfil e segurança. Pergunte do seu jeito, por exemplo: "como funciona o laboratório?".',
     actions: [nav('panel-learn')],
     suggestions: ['Eventos abertos', 'Módulos de estudo', 'Meu crachá'],
@@ -335,9 +463,13 @@ function scoreOf(intent, padded) {
 /**
  * Intenções que o papel pode receber. Só o admin enxerga as de administração; para quem não é admin
  * (visitante, membro ou sem papel) elas não existem: não acertam nem como seguimento de conversa.
+ * Exceção: o MEMBRO curador da Biblioteca (opts.curator === true, decidido pelo serviço) também recebe as
+ * intenções marcadas curatorOnly. Visitante e pessoa sem papel nunca.
  */
-function intentsFor(role) {
-  return role === ROLES.ADMIN ? INTENTS : PUBLIC_INTENTS;
+function intentsFor(role, opts) {
+  if (role === ROLES.ADMIN) return INTENTS;
+  if (role === ROLES.MEMBER && opts && opts.curator === true) return CURATOR_INTENTS;
+  return PUBLIC_INTENTS;
 }
 
 function bestIntent(text, intents) {
@@ -354,10 +486,11 @@ function bestIntent(text, intents) {
  * Acha a intenção da mensagem. `history` é a lista de perguntas ANTERIORES da
  * pessoa ([{role:'user', text}]); só é usada para pergunta curta sem palavra-chave.
  * `role` é o papel de quem pergunta: só 'admin' pode acertar as intenções de administração.
+ * `opts.curator` (true para o membro curador da Biblioteca) libera só as intenções curatorOnly.
  * @returns {{id: string, score: number, intent: object, followUp?: boolean} | null}
  */
-export function matchIntent(message, history, role) {
-  const intents = intentsFor(role);
+export function matchIntent(message, history, role, opts) {
+  const intents = intentsFor(role, opts);
   const direct = bestIntent(message, intents);
   if (direct) return direct;
   const text = normalize(message);
@@ -370,14 +503,19 @@ export function matchIntent(message, history, role) {
 }
 
 // Intenções de uso geral: só estas entram no prompt da IA e no acervo (RAG), que são compartilhados por
-// todos os papéis. As de administração (adminOnly) respondem só pelas regras, com botão só para admin.
-export const PUBLIC_INTENTS = INTENTS.filter((intent) => !intent.adminOnly);
+// todos os papéis. As de administração (adminOnly) respondem só pelas regras, com botão só para admin;
+// as curatorOnly (também adminOnly) respondem ainda ao membro curador da Biblioteca.
+export const PUBLIC_INTENTS = INTENTS.filter((intent) => !intent.adminOnly && !intent.curatorOnly);
+const CURATOR_INTENTS = INTENTS.filter((intent) => !intent.adminOnly || intent.curatorOnly);
 
-const OUTLINE_REPLY_MAX = 70; // 2.418 caracteres com as 23 intenções de uso geral (teto do teste: 2.500)
+// Teto da primeira frase da resposta no resumo (teto do teste: 2.500 caracteres no total). Reduzido de 70 para 40
+// quando o guia da plataforma entrou: as intenções com titleOnlyOutline (passo a passo, cobertas pelo acervo
+// 'guia-plataforma') entram só com o título, porque a primeira frase de uma resposta numerada não resume nada.
+const OUTLINE_REPLY_MAX = 40;
 
 /** Resumo curto das intenções para o prompt da IA (sem dado de ninguém). */
 export function kbOutline() {
   return PUBLIC_INTENTS
-    .map((i) => '- ' + i.id + ': ' + i.title + '. ' + i.reply.split('. ')[0].slice(0, OUTLINE_REPLY_MAX))
+    .map((i) => '- ' + i.id + ': ' + i.title + '.' + (i.titleOnlyOutline ? '' : ' ' + i.reply.split('. ')[0].slice(0, OUTLINE_REPLY_MAX)))
     .join('\n');
 }
