@@ -2,8 +2,8 @@
  * telemetry.js — uso anônimo do atlas (Onda 3.5, A.2).
  * ---------------------------------------------------------------------------
  * Liga-se ao barramento e junta eventos numa fila, enviada em lote pela ponte
- * da plataforma (`LaiftApi.call('apiLearnAtlasTelemetry', …)`) a cada 30 s e
- * quando a aba é escondida ou fechada. Sem PII, por desenho:
+ * da plataforma (`LaiftApi.call('apiLearnAtlasTelemetry', …)`) a cada 30 s (só com a aba
+ * visível) e quando a aba é escondida ou fechada. Sem PII, por desenho:
  *  - o id da sessão é aleatório e novo a cada abertura da aba;
  *  - a busca envia só o TAMANHO do texto e a contagem de resultados;
  *  - erros de JS enviam um código e a mensagem sem URLs nem e-mails, cortada;
@@ -102,7 +102,13 @@ export function createTelemetry({ bus, api, flags, win = typeof window !== 'unde
   win.addEventListener('unhandledrejection', onRejection);
   win.addEventListener('pagehide', endSegment);
   if (win.document) win.document.addEventListener('visibilitychange', onVisibility);
-  timer = win.setInterval(flush, flushMs);
+  // O lote periódico só sai com a aba visível: aba escondida já enviou tudo ao esconder
+  // (endSegment) e o que se acumular vai no primeiro ciclo depois que ela reaparecer.
+  function flushIfVisible() {
+    if (win.document && win.document.hidden) return undefined;
+    return flush();
+  }
+  timer = win.setInterval(flushIfVisible, flushMs);
 
   const ctrl = win.navigator && win.navigator.serviceWorker && win.navigator.serviceWorker.controller;
   push('app_open', null, { mode: getMode() || undefined, viewport: (win.innerWidth || 1024) < 600 ? 'm' : 'd', offline: !!ctrl && win.navigator.onLine === false });

@@ -60,6 +60,9 @@ export const CACHE_KEYS = {
   EVENTS_PUBLIC: 'cache:events:public:v2',
   EVENTS_AUTHENTICATED: 'cache:events:authenticated:v2',
   EVENTS_MEMBERS: 'cache:events:members:v2',
+  // Resultado do teste de saúde das chaves de IA (apiAdminAiHealth). Chave fixa e
+  // compartilhada: só admin lê e o conteúdo é o mesmo para qualquer admin.
+  AI_HEALTH: 'cache:aihealth:v1',
 };
 
 /**

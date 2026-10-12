@@ -227,6 +227,13 @@ export async function revokeAllSessionsForProfile(sql, profileId) {
  * mas nunca além de SESSION_ABSOLUTE_MAX_HOURS a partir da criação da
  * sessão — sem o teto absoluto, uma sessão nunca expiraria enquanto a
  * pessoa continuasse ativa.
+ *
+ * Limite no SERVIDOR (menos escritas no Neon): não há coluna de último acesso,
+ * mas expires_at = último deslize + SESSION_TTL_MINUTES (ou o teto absoluto).
+ * Então "deslizou há menos de SESSION_TOUCH_MIN_INTERVAL_MINUTES" equivale a
+ * expires_at >= now() + (TTL - intervalo): esse toque é ignorado e a sessão fica
+ * até 5 min mais curta que num deslize a cada 30 s, nunca mais longa. Sessão já
+ * no teto absoluto também não é reescrita (o novo valor seria o mesmo).
  */
 export async function touchSession(sql, pepper, rawToken) {
   const token = normalizeText(rawToken);
@@ -239,5 +246,7 @@ export async function touchSession(sql, pepper, rawToken) {
       created_at + (${LIMITS.SESSION_ABSOLUTE_MAX_HOURS} || ' hours')::interval
     )
     WHERE token_hash = ${tokenHash} AND revoked_at IS NULL AND expires_at > now()
+      AND expires_at < now() + (${LIMITS.SESSION_TTL_MINUTES - LIMITS.SESSION_TOUCH_MIN_INTERVAL_MINUTES} || ' minutes')::interval
+      AND expires_at < created_at + (${LIMITS.SESSION_ABSOLUTE_MAX_HOURS} || ' hours')::interval
   `;
 }

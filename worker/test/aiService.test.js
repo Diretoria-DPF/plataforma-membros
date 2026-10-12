@@ -257,6 +257,66 @@ describe('AiService.adminHealth', () => {
     expect(sqlText(sql.mock.calls[0])).toContain(RATE_LIMIT_SQL);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
+
+  describe('cache de 60 s no KV', () => {
+    const USAGE = ['FROM ai_usage_log', [{ feature: 'chat', calls: 2, failures: 0, prompt_tokens: 5, completion_tokens: 6 }]];
+
+    test('1ª chamada grava a chave cache:aihealth:v1 com TTL de 60 s; 2ª dentro do prazo não chama o Groq nem o banco', async () => {
+      globalThis.fetch.mockResolvedValue(httpError(200));
+      const env = envWith();
+      const sql = routedSql([USAGE]);
+      const first = await AiService.adminHealth(sql, env, ADMIN);
+      expect(first).toMatchObject({ success: true, configured: true, overallPct: 100 });
+      expect(first.cached).toBeUndefined();
+      expect(env.HOT_CACHE.put).toHaveBeenCalledWith('cache:aihealth:v1', expect.any(String), { expirationTtl: 60 });
+      expect(AiService.AI_HEALTH_CACHE_TTL_SECONDS).toBe(60);
+
+      const callsAfterFirst = sql.mock.calls.length;
+      const fetchesAfterFirst = globalThis.fetch.mock.calls.length;
+      const second = await AiService.adminHealth(sql, env, ADMIN);
+      expect(second).toMatchObject({ success: true, cached: true, overallPct: 100, usage24h: first.usage24h });
+      expect(second.keys).toEqual(first.keys);
+      expect(globalThis.fetch.mock.calls.length).toBe(fetchesAfterFirst);
+      expect(sql.mock.calls.length).toBe(callsAfterFirst); // nem rate limit, nem INSERT em ai_usage_log, nem SELECT
+      expect(callsMatching(sql, 'INSERT INTO ai_usage_log')).toHaveLength(3);
+    });
+
+    test('o hit continua exigindo admin (o cache não vaza para outro papel)', async () => {
+      globalThis.fetch.mockResolvedValue(httpError(200));
+      const env = envWith();
+      await AiService.adminHealth(routedSql([USAGE]), env, ADMIN);
+      await expect(AiService.adminHealth(routedSql([]), env, MEMBER)).rejects.toMatchObject({ name: 'ForbiddenError' });
+    });
+
+    test('depois que o cache expira (KV vazio) a chamada volta ao Groq e ao banco', async () => {
+      globalThis.fetch.mockResolvedValue(httpError(200));
+      const env = envWith();
+      const sql = routedSql([USAGE]);
+      await AiService.adminHealth(sql, env, ADMIN);
+      env.HOT_CACHE.store.clear();
+      const again = await AiService.adminHealth(sql, env, ADMIN);
+      expect(again.cached).toBeUndefined();
+      expect(globalThis.fetch).toHaveBeenCalledTimes(6);
+      expect(callsMatching(sql, 'INSERT INTO ai_usage_log')).toHaveLength(6);
+    });
+
+    test('sem KV (staging): comportamento atual, cada chamada testa as chaves de novo', async () => {
+      globalThis.fetch.mockResolvedValue(httpError(200));
+      const env = envWith();
+      delete env.HOT_CACHE;
+      const sql = routedSql([USAGE]);
+      await AiService.adminHealth(sql, env, ADMIN);
+      await AiService.adminHealth(sql, env, ADMIN);
+      expect(globalThis.fetch).toHaveBeenCalledTimes(6);
+      expect(callsMatching(sql, RATE_LIMIT_SQL)).toHaveLength(2);
+    });
+
+    test('sem chaves configuradas não vai para o cache (corrigir a configuração reflete na hora)', async () => {
+      const env = envWith({ GROQ_API_KEYS: '' });
+      await AiService.adminHealth(routedSql([]), env, ADMIN);
+      expect(env.HOT_CACHE.put).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe('AiService — orquestrador (flag use_orchestrator ligada)', () => {

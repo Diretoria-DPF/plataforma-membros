@@ -23,7 +23,7 @@ function fakeWin() {
     crypto: { getRandomValues: (a) => { a.fill(7); return a; } },
     innerWidth: 390,
     navigator: { onLine: true, serviceWorker: { controller: null } },
-    document: { visibilityState: 'visible', addEventListener: (n, f) => { docListeners[n] = f; }, removeEventListener: () => {} },
+    document: { visibilityState: 'visible', hidden: false, addEventListener: (n, f) => { docListeners[n] = f; }, removeEventListener: () => {} },
     addEventListener: (n, f) => { listeners[n] = f; },
     removeEventListener: () => {},
     setInterval: (f) => { timerFn = f; return 1; },
@@ -101,6 +101,29 @@ test('aba escondida: registra fim de sessão e envia na hora; a fila grande sai 
   const end = all.filter((e) => e.event === 'session_end');
   assert.equal(end.length, 1);
   assert.ok(end[0].props.views > 0 && end[0].props.durationS >= 0);
+  t.destroy();
+});
+
+test('o envio periódico (30 s) é pulado com a aba escondida e volta quando ela reaparece', async () => {
+  const { t, sent, w } = setup();
+  emit(EVENTS.STRUCTURE_SELECT, { sid: 'za:heart', source: 'pick' });
+  w.win.document.hidden = true;
+  await w.tick();
+  await new Promise((r) => setTimeout(r, 10));
+  assert.equal(sent.length, 0, 'aba escondida: o timer não chama a API');
+  w.win.document.hidden = false;
+  await w.tick();
+  await new Promise((r) => setTimeout(r, 10));
+  assert.equal(sent.length, 1, 'aba visível: o timer envia a fila acumulada');
+  assert.ok(sent[0].input.events.some((e) => e.event === 'structure_view'));
+  t.destroy();
+});
+
+test('o flush explícito (ao esconder/fechar a aba) continua enviando mesmo com a aba escondida', async () => {
+  const { t, sent, w } = setup();
+  w.win.document.hidden = true;
+  assert.ok((await t.flush()) >= 1);
+  assert.equal(sent.length, 1);
   t.destroy();
 });
 

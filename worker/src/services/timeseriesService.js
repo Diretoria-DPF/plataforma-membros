@@ -17,6 +17,9 @@
  * (série sem buracos, pronta para o gráfico). Cada consulta lê só a janela pedida
  * (filtro de data). Resposta em cache privado de 300 s no KV, com profileId, range
  * e metric na chave (nunca compartilhada).
+ * Rate limit (Neon): o chamador passa `enforceLimit`, que só roda em cache miss, antes
+ * de consultar a série. Hit no KV não gasta o limite nem toca o banco. Sem KV
+ * (staging) todo acesso é miss, então o limite vale em toda chamada, como antes.
  * apiGetMyDashboardSeries: as 8 séries do Início em uma chamada (getMyDashboardSeries),
  * com um único pacote em cache por pessoa (chave com profileId).
  */
@@ -118,11 +121,12 @@ async function computeSeries(sql, identity, range, metric) {
 }
 
 /** apiGetMyTimeseries: `date` é o dia (day), a segunda-feira (week) ou o dia 1 do mês (month). */
-export async function getMyTimeseries(sql, env, identity, input) {
+export async function getMyTimeseries(sql, env, identity, input, enforceLimit) {
   const { range, metric } = parseInput(input);
   const key = cacheKey(identity.profileId, range, metric);
   const cached = await getCached(env, key);
   if (cached) return cached;
+  if (enforceLimit) await enforceLimit();
 
   const result = { success: true, ...(await computeSeries(sql, identity, range, metric)) };
   await setCached(env, key, result, C.TIMESERIES.CACHE_TTL_SECONDS);
@@ -174,11 +178,12 @@ async function loadDashboardSeries(sql, identity, spec, cid) {
  * (pacote incompleto não é cacheado: a próxima chamada tenta de novo).
  * series[key] tem o formato de getMyTimeseries (sem `success`), ou null se falhou.
  */
-export async function getMyDashboardSeries(sql, env, identity, input, cid) {
+export async function getMyDashboardSeries(sql, env, identity, input, cid, enforceLimit) {
   parseDashboardInput(input);
   const key = dashboardCacheKey(identity.profileId);
   const cached = await getCached(env, key);
   if (cached) return cached;
+  if (enforceLimit) await enforceLimit();
 
   const loaded = await Promise.all(DASHBOARD_SERIES.map((spec) => loadDashboardSeries(sql, identity, spec, cid)));
   const series = Object.fromEntries(DASHBOARD_SERIES.map((spec, i) => [spec.key, loaded[i]]));

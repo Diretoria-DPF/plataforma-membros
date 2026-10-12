@@ -308,6 +308,22 @@ test('painel: abrir a aba não chama o teste de chaves; só o botão chama', () 
   assert.equal(calls.some((c) => c.name === 'apiAdminAiHealth'), true);
 });
 
+test('teste de chaves: resultado vindo do cache de 60 s avisa que não houve teste novo', async () => {
+  Admin.loadPanel();
+  field('btn-admin-ai-health').listeners.click.forEach((fn) => fn());
+  lastRequest('apiAdminAiHealth').resolve({ success: true, configured: true, cached: true, overallPct: 100, keys: [], usage24h: [], config: null });
+  await flush();
+  assert.match(textOf(field('msg-admin-ai-health')), /último minuto/);
+  assert.doesNotMatch(textOf(field('msg-admin-ai-health')), /Teste concluído/);
+
+  Admin.reset();
+  Admin.loadPanel();
+  field('btn-admin-ai-health').listeners.click.forEach((fn) => fn());
+  lastRequest('apiAdminAiHealth').resolve({ success: true, configured: true, overallPct: 100, keys: [], usage24h: [], config: null });
+  await flush();
+  assert.match(textOf(field('msg-admin-ai-health')), /Teste concluído/);
+});
+
 test('logout (reset) limpa filtros e controles da Satisfação', () => {
   Admin.loadPanel();
   const status = field('admin-ai-sat-status');
