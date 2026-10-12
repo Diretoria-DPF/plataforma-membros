@@ -33,7 +33,7 @@ import { AiInvalidOutputError, AI_MESSAGES } from '../ai/errors.js';
 import { buildAssistantMessages } from '../ai/prompts.js';
 import { cleanText, cleanReply, sanitizeHistory } from '../ai/validators.js';
 import { matchIntent, normalize, DEFAULT_SUGGESTIONS } from '../assistant/kb.js';
-import { filterActions } from '../assistant/targets.js';
+import { filterActions, LIBRARY_TARGET_KEYS } from '../assistant/targets.js';
 import * as Rag from './ragService.js';
 import * as ResearchLog from './researchLogService.js';
 import * as ResearchService from './researchService.js';
@@ -50,6 +50,7 @@ const FLAG_RAG = 'rag_enabled';
 const FLAG_CACHE = 'rag_cache_enabled';
 const FLAG_RERANK = 'rag_rerank_enabled';
 const FLAG_RESEARCH = 'research_enabled';
+const FLAG_LIBRARY = 'library_enabled';
 const KB_PROVIDER = 'kb';
 const NO_INDEX = 'sem-indice'; // versão quando o índice não pode ser lido: o registro não é usado nem gravado
 const INDEX_TTL_MS = 60 * 1000;
@@ -125,6 +126,13 @@ function fromIntent(hit, role, reply, source) {
     actions: filterActions(hit.intent.actions, role),
     suggestions: (hit.intent.suggestions || []).slice(0, 3),
   });
+}
+
+/** Tira os botões que levam à Biblioteca quando a flag dela está desligada. */
+function withLibraryActions(reply, libraryOn) {
+  if (libraryOn) return reply;
+  const blocked = new Set(LIBRARY_TARGET_KEYS);
+  return Object.assign({}, reply, { actions: reply.actions.filter((a) => !blocked.has(a.type + ':' + a.target)) });
 }
 
 async function flagOn(sql, identity, key = FLAG_CHATBOT) {
@@ -433,13 +441,17 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
   if (input.research === true) return ResearchService.research(sql, env, identity, message, correlationId);
 
   // O papel limita as intenções: a de administração não existe para quem não é admin (cai no fluxo normal).
-  const hit = matchIntent(message, history, role);
+  // Com library_enabled desligada a Lia não fala da Biblioteca: a intenção é ignorada e os botões para ela somem.
+  const libraryOn = await flagOn(sql, identity, FLAG_LIBRARY);
+  let hit = matchIntent(message, history, role);
+  if (hit && hit.intent.library && !libraryOn) hit = null;
   if (hit) {
     if (hit.id === 'eventos') {
       const live = await liveEventsReply(sql, env, identity, correlationId);
-      if (live) return fromIntent(hit, role, live, 'live');
+      if (live) return withLibraryActions(fromIntent(hit, role, live, 'live'), libraryOn);
     }
-    return recordAnswer(sql, identity, message, fromIntent(hit, role, hit.intent.reply, 'kb'), correlationId);
+    const reply = withLibraryActions(fromIntent(hit, role, hit.intent.reply, 'kb'), libraryOn);
+    return recordAnswer(sql, identity, message, reply, correlationId);
   }
   return askWithKnowledge(sql, env, identity, message, history, correlationId);
 }

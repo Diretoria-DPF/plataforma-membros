@@ -19,6 +19,8 @@
  * frontend/learning.js MODULES); frontend/scripts/assistant.test.mjs confere que
  * a lista do front é igual a ACTION_KEYS.
  */
+import { cleanLibraryQuery } from './libraryRefs.js';
+
 const LOGGED = ['visitor', 'member', 'admin'];
 const MEMBERS = ['member', 'admin'];
 const ADMINS = ['admin'];
@@ -33,6 +35,10 @@ const TARGET_LIST = [
   ['navigate', 'panel-orgchart', 'Equipe', MEMBERS],
   ['navigate', 'panel-messages', 'Mensagens', MEMBERS],
   ['navigate', 'panel-profile', 'Meu perfil', LOGGED],
+  // Biblioteca: o serviço só entrega estes dois com a flag library_enabled ligada para a pessoa.
+  ['navigate', 'panel-library', 'Biblioteca', LOGGED],
+  ['open_library', 'search', 'Ver na Biblioteca', LOGGED],
+  ['navigate', 'panel-admin-library', 'Curadoria da Biblioteca', ADMINS],
   ['navigate', 'panel-admin-dashboard', 'Painel do administrador', ADMINS],
   ['navigate', 'panel-admin-users', 'Usuários', ADMINS],
   ['navigate', 'panel-admin-events', 'Gerir eventos', ADMINS],
@@ -86,7 +92,21 @@ export function filterActions(candidates, role) {
   return out;
 }
 
+/** Ações que levam à Biblioteca: o serviço tira as duas quando library_enabled está desligada. */
+export const LIBRARY_TARGET_KEYS = ['navigate:panel-library', 'open_library:search'];
+
+/**
+ * "Ver na Biblioteca" com a busca pronta: ação da lista branca + `query` (texto limpo, até 120). O front
+ * só põe esse texto no campo de busca da Biblioteca. Sem papel ou sem termo, null.
+ */
+export function libraryAction(role, query) {
+  const action = buildAction('open_library', 'search', role);
+  const clean = cleanLibraryQuery(query);
+  if (!action || !clean) return null;
+  return Object.assign({}, action, { query: clean });
+}
+
 /** Destinos que um MEMBRO pode receber (sem as telas de administração): vira texto da base (RAG). */
 export const TARGETS = Array.from(BY_KEY.values())
-  .filter((entry) => entry.roles.includes('member'))
+  .filter((entry) => entry.roles.includes('member') && entry.type !== 'open_library')
   .map(({ type, target, label }) => ({ type, target, label }));
