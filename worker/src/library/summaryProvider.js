@@ -78,13 +78,19 @@ export class SummaryModelError extends Error {
   }
 }
 
-/** `response` (modelos de texto) ou `choices[0].message.content` (formato de chat). */
+/**
+ * `response` (modelos de texto) ou `choices[0].message.content` (formato de chat). O raciocínio
+ * (`reasoning_content`, `reasoning`) NUNCA vira resumo: é rascunho do modelo, não texto para o membro.
+ */
 function replyText(out) {
   if (typeof out === 'string') return out;
   if (out && typeof out.response === 'string') return out.response;
   const content = out?.choices?.[0]?.message?.content;
   return typeof content === 'string' ? content : '';
 }
+
+/** O modelo parou por falta de tokens (gastou o teto pensando)? */
+const cutByLength = (out) => out?.choices?.[0]?.finish_reason === 'length';
 
 function withTimeout(promise, ms) {
   let timer;
@@ -94,19 +100,39 @@ function withTimeout(promise, ms) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
-export async function runSummaryModel(env, { model, messages, timeoutMs = LIBRARY_AI_LIMITS.TIMEOUT_MS }) {
-  if (!env || !env.AI || typeof env.AI.run !== 'function') throw new SummaryModelError('binding');
-  if (typeof model !== 'string' || !model.trim()) throw new SummaryModelError('modelo');
-  const input = { messages, max_tokens: LIBRARY_AI_LIMITS.MAX_OUTPUT_TOKENS, temperature: LIBRARY_AI_LIMITS.TEMPERATURE };
-  let out;
+/**
+ * Entrada do Workers AI. O gemma-4 é de raciocínio: com o pensamento ligado ele gastava o teto
+ * inteiro pensando e devolvia content vazio (finish_reason 'length'). `enable_thinking: false`
+ * faz responder direto (~30 tokens de saída no teste real em 2026-10-11).
+ */
+const modelInput = (messages, maxTokens) => ({
+  messages,
+  max_tokens: maxTokens,
+  temperature: LIBRARY_AI_LIMITS.TEMPERATURE,
+  chat_template_kwargs: { enable_thinking: false },
+});
+
+async function callModel(env, model, input, timeoutMs) {
   try {
-    out = await withTimeout(Promise.resolve().then(() => env.AI.run(model.trim(), input)), timeoutMs);
+    return await withTimeout(Promise.resolve().then(() => env.AI.run(model, input)), timeoutMs);
   } catch (err) {
     throw err instanceof SummaryModelError ? err : new SummaryModelError('erro');
   }
-  const text = replyText(out).trim();
-  if (!text) throw new SummaryModelError('vazio');
-  return text;
+}
+
+export async function runSummaryModel(env, { model, messages, timeoutMs = LIBRARY_AI_LIMITS.TIMEOUT_MS }) {
+  if (!env || !env.AI || typeof env.AI.run !== 'function') throw new SummaryModelError('binding');
+  if (typeof model !== 'string' || !model.trim()) throw new SummaryModelError('modelo');
+  const name = model.trim();
+  const first = await callModel(env, name, modelInput(messages, LIBRARY_AI_LIMITS.MAX_OUTPUT_TOKENS), timeoutMs);
+  const text = replyText(first).trim();
+  if (text) return text;
+  if (!cutByLength(first)) throw new SummaryModelError('vazio');
+  // Cortado pelo teto: UMA nova tentativa com mais espaço, antes de desistir.
+  const second = await callModel(env, name, modelInput(messages, LIBRARY_AI_LIMITS.RETRY_OUTPUT_TOKENS), timeoutMs);
+  const retried = replyText(second).trim();
+  if (!retried) throw new SummaryModelError(cutByLength(second) ? 'tamanho' : 'vazio');
+  return retried;
 }
 
 // ---------------------------------------------------------------------------

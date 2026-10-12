@@ -90,9 +90,63 @@ describe('runSummaryModel (env.AI injetado)', () => {
     expect(await reasonOf(runSummaryModel({}, { model: MODEL, messages: [] }))).toBe('binding');
     expect(await reasonOf(runSummaryModel(fakeAi({ response: GOOD }), { model: '', messages: [] }))).toBe('modelo');
     expect(await reasonOf(runSummaryModel(fakeAi({ response: '' }), { model: MODEL, messages: [] }))).toBe('vazio');
-    expect(await reasonOf(runSummaryModel(fakeAi({ choices: [{ message: { content: null, reasoning_content: 'x' } }] }), { model: MODEL, messages: [] }))).toBe('vazio');
     const broken = { AI: { run: async () => { throw new Error('5xx'); } } };
     expect(await reasonOf(runSummaryModel(broken, { model: MODEL, messages: [] }))).toBe('erro');
+  });
+});
+
+// Causa real (workerd, 2026-10-11): o gemma-4-26b-a4b-it é de RACIOCÍNIO. Com max_tokens 300 ele gastava tudo
+// "pensando" e devolvia content vazio com finish_reason 'length' (auditoria: reason 'vazio').
+const chatReply = (content, finishReason, reasoning) => ({
+  choices: [{ finish_reason: finishReason, message: Object.assign({ role: 'assistant', content }, reasoning ? { reasoning_content: reasoning } : {}) }],
+});
+
+/** env.AI que devolve as respostas em ordem e guarda as entradas. */
+const scriptedAi = (...replies) => {
+  const calls = [];
+  return { calls, AI: { run: async (model, input) => { calls.push({ model, input }); return replies[Math.min(calls.length - 1, replies.length - 1)]; } } };
+};
+
+describe('modelo de raciocínio (gemma-4): pensamento desligado e uma nova tentativa', () => {
+  test('pede resposta direta (enable_thinking false) com teto de 700 tokens', async () => {
+    const fake = scriptedAi(chatReply(GOOD, 'stop'));
+    await expect(runSummaryModel(fake, { model: MODEL, messages: [] })).resolves.toBe(GOOD);
+    expect(fake.calls).toHaveLength(1);
+    expect(fake.calls[0].input.chat_template_kwargs).toEqual({ enable_thinking: false });
+    expect(fake.calls[0].input.max_tokens).toBe(700);
+  });
+
+  test('content vazio com finish_reason "length": UMA nova chamada com 1500 tokens', async () => {
+    const fake = scriptedAi(chatReply('', 'length', 'pensando…'), chatReply(GOOD, 'stop'));
+    await expect(runSummaryModel(fake, { model: MODEL, messages: [] })).resolves.toBe(GOOD);
+    expect(fake.calls).toHaveLength(2);
+    expect(fake.calls[1].input.max_tokens).toBe(1500);
+    expect(fake.calls[1].input.chat_template_kwargs).toEqual({ enable_thinking: false });
+  });
+
+  test('vazio de novo depois da nova tentativa: motivo "tamanho" (sem terceira chamada)', async () => {
+    const fake = scriptedAi(chatReply(null, 'length', 'x'.repeat(50)));
+    const err = await runSummaryModel(fake, { model: MODEL, messages: [] }).then(() => null, (e) => e);
+    expect(err.reason).toBe('tamanho');
+    expect(fake.calls).toHaveLength(2);
+  });
+
+  test('vazio sem finish_reason "length" não repete: motivo "vazio"', async () => {
+    const fake = scriptedAi(chatReply('', 'stop'));
+    const err = await runSummaryModel(fake, { model: MODEL, messages: [] }).then(() => null, (e) => e);
+    expect(err.reason).toBe('vazio');
+    expect(fake.calls).toHaveLength(1);
+  });
+
+  test('NUNCA usa o raciocínio (reasoning_content ou reasoning) como resumo', async () => {
+    const pensamento = 'O usuário quer um resumo. Vou listar os achados. A dose citada é 500 mg. Pronto.';
+    const both = scriptedAi(
+      { choices: [{ finish_reason: 'length', message: { content: '', reasoning_content: pensamento, reasoning: pensamento } }] },
+    );
+    const err = await runSummaryModel(both, { model: MODEL, messages: [] }).then(() => null, (e) => e);
+    expect(err.reason).toBe('tamanho');
+    const noContent = scriptedAi({ choices: [{ message: { content: null, reasoning_content: 'x' } }] });
+    expect((await runSummaryModel(noContent, { model: MODEL, messages: [] }).then(() => null, (e) => e)).reason).toBe('vazio');
   });
 
   test('estoura o tempo: motivo "tempo"', async () => {

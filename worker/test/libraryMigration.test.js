@@ -16,11 +16,17 @@ import { createMigratedDb } from './helpers/pgliteSql.js';
 
 const SQL_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'sql');
 const UP = fs.readFileSync(path.join(SQL_ROOT, '029_library.sql'), 'utf8');
-const DOWN = fs.readFileSync(path.join(SQL_ROOT, 'down', '029_library.sql'), 'utf8');
+const UP_030 = fs.readFileSync(path.join(SQL_ROOT, '030_library_roles.sql'), 'utf8');
+// Reaplica 029 e depois 030, na ordem das migrações (usado após a volta).
+const UP_ALL = `${UP}\n${UP_030}`;
+const DOWN_029 = fs.readFileSync(path.join(SQL_ROOT, 'down', '029_library.sql'), 'utf8');
+const DOWN_030 = fs.readFileSync(path.join(SQL_ROOT, 'down', '030_library_roles.sql'), 'utf8');
+// A 030 depende da 029 (FK para library_articles): a volta desfaz a 030 antes da 029.
+const DOWN = `${DOWN_030}\n${DOWN_029}`;
 
 const TABLES = [
   'library_topics', 'library_articles', 'library_favorites', 'library_collections',
-  'library_collection_items', 'library_suggestions', 'library_staff',
+  'library_collection_items', 'library_suggestions', 'library_staff', 'library_removal_requests',
 ];
 const FLAGS = ['library_enabled', 'library_member_suggest', 'library_ai_summary', 'lia_library_enabled'];
 const PROFILE = '11111111-1111-4111-8111-111111111111';
@@ -75,7 +81,7 @@ describe('029_library.sql — SQL real (PGlite com as migrações)', () => {
     await db.exec('DELETE FROM library_suggestions');
   });
 
-  test('as 7 tabelas existem', async () => {
+  test('as 8 tabelas existem (7 da 029 e library_removal_requests da 030)', async () => {
     const { rows } = await db.query(
       "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name LIKE 'library\\_%'"
     );
@@ -330,7 +336,7 @@ describe('sql/down/029_library.sql', () => {
     expect(rows[0].n).toBe(0);
     const flags = await db.query('SELECT count(*)::int AS n FROM feature_flags WHERE key = ANY($1)', [FLAGS]);
     expect(flags.rows[0].n).toBe(0);
-    await db.exec(UP);
+    await db.exec(UP_ALL);
     const topics = await db.query('SELECT count(*)::int AS n FROM library_topics');
     expect(topics.rows[0].n).toBe(2);
   });
@@ -351,7 +357,7 @@ describe('sql/down/029_library.sql', () => {
     }
     const { rows } = await db.query("SELECT to_regclass('public.library_articles')::text AS reg");
     expect(rows[0].reg).toBeNull();
-    await db.exec(UP);
+    await db.exec(UP_ALL);
     const art = await db.query('SELECT count(*)::int AS n FROM library_articles');
     expect(art.rows[0].n).toBe(0);
     const flags = await db.query('SELECT enabled FROM feature_flags WHERE key = ANY($1)', [FLAGS]);

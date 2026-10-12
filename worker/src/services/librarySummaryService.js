@@ -41,6 +41,9 @@ const MSG = Object.freeze({
   hasSummary: 'Este artigo já tem resumo da curadoria. Apague o resumo para pedir um da IA.',
   format: 'A IA devolveu um resumo fora do formato (3 a 5 frases). Tente de novo.',
   model: 'A IA não respondeu agora. Tente de novo em alguns minutos.',
+  empty: 'A IA não devolveu o texto desta vez. Clique de novo em "Gerar resumos com IA"; se continuar, avise o administrador.',
+  timeout: 'A IA demorou demais para responder. Tente de novo em alguns minutos.',
+  binding: 'O resumo por IA não está ligado no servidor (Workers AI). Avise o administrador.',
   noAiSummary: 'Este artigo não tem resumo de IA para aprovar.',
   reviewStatus: 'Só artigos em triagem ou aprovados têm o resumo de IA aprovado aqui.',
 });
@@ -66,14 +69,20 @@ function audit(sql, cid, identity, id, result, details) {
   return Logging.logAudit(sql, cid, identity.profileId, 'LIBRARY_SUMMARY_GENERATE', 'library_article', id, result, details);
 }
 
+// Motivo técnico (summaryProvider) → mensagem em linguagem comum para a tela.
+const MODEL_MESSAGES = Object.freeze({
+  vazio: MSG.empty, tamanho: MSG.empty, tempo: MSG.timeout, binding: MSG.binding, modelo: MSG.notConfigured,
+});
+
 /** Chama o modelo e devolve o texto pronto; falhas viram erro amigável com auditoria de falha. */
 async function suggestText(sql, env, identity, cur, model, cid) {
   let raw;
   try {
     raw = await runSummaryModel(env, { model, messages: buildSummaryMessages({ title: cur.title, sourceAbstract: cur.source_abstract }) });
   } catch (err) {
-    await audit(sql, cid, identity, cur.id, 'failure', { model, reason: err?.reason || 'erro' });
-    throw E.ValidationError(MSG.model);
+    const reason = err?.reason || 'erro';
+    await audit(sql, cid, identity, cur.id, 'failure', { model, reason });
+    throw E.ValidationError(MODEL_MESSAGES[reason] ?? MSG.model);
   }
   const out = postProcessSummary(raw, { title: cur.title });
   if (out.ok) return out.text;

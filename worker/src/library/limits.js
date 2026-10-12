@@ -31,6 +31,9 @@ export const LIBRARY_RATE_LIMITS = Object.freeze({
   LIBRARY_IMPORT: rate(180, SECOND_HOUR),
   LIBRARY_IMPORT_GLOBAL: rate(400, SECOND_HOUR),
   LIBRARY_CURATE: rate(300, SECOND_HOUR),
+  // Publicar em lote (apiAdminLearnLibraryPublishMany): 1 tentativa por artigo, teto próprio
+  // para os ~155 artigos da triagem caberem numa hora sem gastar o LIBRARY_CURATE.
+  LIBRARY_PUBLISH: rate(400, SECOND_HOUR),
   // Resumo por IA (B3): por curador e teto diário de chamadas ao modelo (todas
   // as pessoas). 250 resumos/dia cabem nos 10.000 neurons gratuitos da
   // Cloudflare com folga (custo estimado em docs/cortex/RUNBOOK-BIBLIOTECA.md).
@@ -67,7 +70,10 @@ export const LIBRARY_AI_LIMITS = Object.freeze({
   SUMMARY_MAX_CHARS: 900,
   SENTENCES_MIN: 3,
   SENTENCES_MAX: 5,
+  // O modelo (gemma-4) é de raciocínio: vai com enable_thinking false e 700 tokens; se ainda
+  // assim cortar (content vazio, finish_reason 'length'), UMA nova chamada com 1500.
   MAX_OUTPUT_TOKENS: 700,
+  RETRY_OUTPUT_TOKENS: 1500,
   TEMPERATURE: 0.2,
   TIMEOUT_MS: 25000,
 });
