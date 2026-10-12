@@ -57,6 +57,15 @@ NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"
 # 2026-10-11: US$ 0,10/M tokens de entrada e 0,30/M de saída (9.091 e 27.273
 # neurons por milhão). Custo e teto diário: docs/cortex/RUNBOOK-BIBLIOTECA.md §7.
 LIBRARY_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
+# Lia: prévia de IA para visitante (flag lia_visitor_ai_enabled; docs/lia/PLANO.md). Só liga com o secret
+# TURNSTILE_SECRET (`npx wrangler secret put TURNSTILE_SECRET`, feito pelo dono; nunca no código).
+# TURNSTILE_HOSTNAMES não é secreta: sites onde o widget roda, separados por vírgula (localhost nunca vale).
+TURNSTILE_HOSTNAMES = "laift.com.br,www.laift.com.br"
+# Opcionais (valem os padrões do código se ficarem de fora): LIA_VISITOR_MODEL (padrão
+# "@cf/google/gemma-4-26b-a4b-it") e LIA_VISITOR_NEURON_CAP (neurons/dia da prévia; padrão 3000).
+# Para mudar o teto: descomente/edite aqui e publique, ou ajuste a variável no painel da Cloudflare
+# (Workers > Settings > Variables and Secrets; um `wrangler deploy` sem keep_vars a sobrescreve).
+# LIA_VISITOR_NEURON_CAP = "3000"
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o
@@ -136,3 +145,4 @@ AI_KEY_STRATEGY = "failover"
 NVIDIA_MODEL_FAST = "nvidia/nemotron-3.5-lightning-30b-a3b"
 NVIDIA_MODEL_SMART = "nvidia/nemotron-3-super-120b-a12b"
 LIBRARY_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
+TURNSTILE_HOSTNAMES = "staging.laift.com.br"

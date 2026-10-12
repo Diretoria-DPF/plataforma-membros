@@ -44,6 +44,22 @@
 
 .lia-sources-list { margin: 0; padding-left: 18px; }
 
+/* Fonte com página pública (url da allowlist) e convite da prévia de IA: links sublinhados, na cor do texto. */
+.lia-source-link,
+.lia-cta-link {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.lia-cta { margin: 0; font-size: 13px; }
+
+.lia-cta-link { display: inline-block; padding: 10px 0; }
+
+/* Contêiner do Turnstile (modo interaction-only): vazio e sem espaço, a menos que a Cloudflare peça interação. */
+.lia-turnstile:empty { display: none; }
+
 .lia-feedback:focus { outline: none; }
 
 .lia-feedback :focus-visible {

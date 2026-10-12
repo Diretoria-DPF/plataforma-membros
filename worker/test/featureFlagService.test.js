@@ -117,6 +117,8 @@ describe('leitura com cache', () => {
     expect(PUBLIC_FLAGS).toContain('selection_open');
     expect(PUBLIC_FLAGS).toContain('library_enabled');
     expect(PUBLIC_FLAGS).toContain('library_member_suggest');
+    expect(PUBLIC_FLAGS).toContain('lia_visitor_ai_enabled'); // o front só carrega o Turnstile com ela ligada
+    expect(PUBLIC_FLAGS).not.toContain('lia_hibrida_enabled');
     expect(PUBLIC_FLAGS).not.toContain('library_ai_summary');
     expect(PUBLIC_FLAGS).not.toContain('lia_library_enabled');
     for (const key of ['mfa_required', 'minors_enabled', 'use_orchestrator', 'nvidia_fallback']) {

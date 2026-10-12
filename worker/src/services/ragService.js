@@ -37,7 +37,10 @@ function validateVector(vec) {
   return vec;
 }
 
-/** Embeddings via Workers AI. Lança em qualquer falha; quem chama decide a degradação. */
+/**
+ * Embeddings via Workers AI. Lança em qualquer falha; quem chama decide a degradação. NÃO registra neurons no
+ * livro-caixa: custa ~0,03 neuron por consulta e o KV gratuito só aceita 1.000 gravações por dia.
+ */
 export async function embedTexts(env, texts) {
   if (!env || !env.AI || typeof env.AI.run !== 'function') throw new Error('binding Workers AI ausente');
   let timer;
@@ -99,7 +102,8 @@ async function vectorRows(sql, literal) {
 /**
  * Busca híbrida. Devolve { chunks, mode: 'hybrid'|'trigram', embeddingError }.
  * Com opts.rerank === true (L09, flag rag_rerank_enabled), funde até CANDIDATES, reordena com
- * rerankService e acrescenta reranked e answerable. Sem opts, o retorno é o de sempre.
+ * rerankService e acrescenta reranked e answerable. Com opts.limit (Lia híbrida), devolve até `limit` trechos
+ * em vez de TOP_K (sem rerank). Sem opts, o retorno é o de sempre.
  * Lança só se a busca por trigramas (a base de qualquer modo) falhar.
  */
 export async function retrieve(sql, env, question, opts = {}) {
@@ -115,7 +119,7 @@ export async function retrieve(sql, env, question, opts = {}) {
   const trigramList = aboveFloor(await trigramRows(sql, query), C.RAG.MIN_TRIGRAM_SCORE);
   const lists = vectorList ? [vectorList, trigramList] : [trigramList];
   const mode = vectorList ? 'hybrid' : 'trigram';
-  if (opts.rerank !== true) return { chunks: fuse(lists, C.RAG.TOP_K), mode, embeddingError };
+  if (opts.rerank !== true) return { chunks: fuse(lists, opts.limit || C.RAG.TOP_K), mode, embeddingError };
   const picked = await rerank(env, query, fuse(lists, C.RAG.CANDIDATES), opts);
   return { chunks: picked.chunks, mode, embeddingError, reranked: picked.provider !== null, answerable: picked.answerable };
 }

@@ -19,7 +19,7 @@ Quem altera:
 
 ## Quais flags vão ao navegador
 
-`PUBLIC_FLAGS` em `featureFlagService.js`: `ux_v2_enabled`, `chatbot_enabled` e `feedback_enabled`. As demais só aparecem para admin (`apiAdminListFeatureFlags`).
+`PUBLIC_FLAGS` em `featureFlagService.js`: `ux_v2_enabled`, `chatbot_enabled`, `feedback_enabled`, as da Biblioteca e `lia_visitor_ai_enabled` (ver as tabelas abaixo). As demais só aparecem para admin (`apiAdminListFeatureFlags`).
 
 ## Flags da renovação (UX v2, Lia, RAG, feedback e moderação)
 
@@ -45,6 +45,15 @@ Criadas pela 029 (`sql/029_library.sql`), todas **desligadas**. A 029 insere com
 | `lia_library_enabled` | B4 | não | `FALSE` | Lia cita artigos publicados (ainda sem efeito) |
 
 Ligação por etapas, desligamento e volta: `docs/cortex/RUNBOOK-BIBLIOTECA.md`. Com condição de papel (`conditions.role`), a página pública fica fora, porque a leitura sem sessão não casa a condição.
+
+## Flags da Lia híbrida
+
+Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSERT ... ON CONFLICT (key) DO NOTHING`). Ordem de ativação em `docs/lia/PLANO.md` §7.
+
+| Flag | Pública | Estado depois da 033 | Onde é lida |
+|---|---|---|---|
+| `lia_hibrida_enabled` | não | `FALSE` | `assistantService.js` (`FLAG_HIBRIDA`; exige também `rag_enabled`): guarda de intenção, resposta clínica segura, escolha de seções e resposta extrativa |
+| `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com ela ligada) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
 
 ## Regra de nascimento
 
