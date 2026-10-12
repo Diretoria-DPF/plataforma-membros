@@ -43,7 +43,7 @@ test('index.html não monta mais a Lia do hero na tela de entrada', () => {
 test('a tela de entrada tem login, atalhos e publicação do blog, nessa ordem, com um só h1', () => {
   const tela = telaDeEntrada();
   const login = tela.indexOf('id="form-login"');
-  const atalhos = tela.indexOf('<nav class="auth-card welcome-liga" aria-label="Conheça a LAIFT e o blog">');
+  const atalhos = tela.indexOf('<nav class="auth-card welcome-liga" aria-label="Conheça a LAIFT, o blog e a Biblioteca">');
   const publicacao = tela.indexOf('data-blog-novidade="1"');
   assert.ok(login >= 0, 'faltou o formulário de login');
   assert.ok(atalhos > login, 'o cartão de atalhos deve vir depois do login');
@@ -60,6 +60,21 @@ test('os botões da tela de entrada usam os textos "Conheça a LAIFT" e "Acessar
   assert.ok(tela.slice(liga, tela.indexOf('</a>', liga)).includes('<span>Conheça a LAIFT</span>'), 'o botão da Liga deve dizer "Conheça a LAIFT"');
   assert.ok(tela.slice(blog, tela.indexOf('</a>', blog)).includes('<span>Acessar blog</span>'), 'o botão do blog deve dizer "Acessar blog"');
   assert.ok(!/conheça a plataforma/i.test(HTML), 'sobrou o texto antigo "Conheça a plataforma" no index.html');
+});
+
+test('a tela de entrada tem o botão "Biblioteca" levando à página pública /biblioteca', () => {
+  const tela = telaDeEntrada();
+  const botao = tela.indexOf('welcome-liga__biblioteca" href="/biblioteca"');
+  assert.ok(botao >= 0, 'faltou o botão da Biblioteca (href="/biblioteca")');
+  assert.ok(tela.slice(botao, tela.indexOf('</a>', botao)).includes('<span>Biblioteca</span>'), 'o botão deve dizer "Biblioteca"');
+});
+
+test('o blog, a página 404 do blog e as páginas públicas apontam para /biblioteca na barra', () => {
+  const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  for (const arquivo of ['blog.html', 'blog/404.html', 'liga.html', 'edital.html', 'processo-seletivo.html', 'scripts/build-blog.js']) {
+    const texto = fs.readFileSync(path.join(raiz, arquivo), 'utf8');
+    assert.ok(texto.includes('href="/biblioteca"><span>Biblioteca</span>'), arquivo + ' deve ter o link "Biblioteca" na barra');
+  }
 });
 
 test('hero.js saiu do build, do cache offline e do disco', () => {
