@@ -1,0 +1,1173 @@
+[
+ {
+  "doi": "10.3390/jcm10153420",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Paracetamol: A Review of Guideline Recommendations",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.14218/jcth.2015.00052",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Acetaminophen-Induced Hepatotoxicity: a Comprehensive Update",
+  "year": 2016,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/j.redox.2018.04.019",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Mechanisms of acetaminophen-induced liver injury and its implications for therapeutic interventions",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3109/15563650.2014.946994",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Extracorporeal treatment for acetaminophen poisoning: Recommendations from the EXTRIP workgroup",
+  "year": 2014,
+  "type": "diretriz",
+  "openAccess": false
+ },
+ {
+  "doi": "10.1111/add.13326",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Are take‐home naloxone programmes effective? Systematic review utilizing application of the Bradford Hill criteria",
+  "year": 2016,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1056/nejmra1202561",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Management of Opioid Analgesic Overdose",
+  "year": 2012,
+  "type": "revisao",
+  "openAccess": false
+ },
+ {
+  "doi": "10.1097/adm.0000000000000034",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "A Systematic Review of Community Opioid Overdose Prevention and Naloxone Distribution Programs",
+  "year": 2014,
+  "type": "revisao_sistematica",
+  "openAccess": false
+ },
+ {
+  "doi": "10.1007/s00213-022-06125-5",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Treatment of opioid overdose: current approaches and recent advances",
+  "year": 2022,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s00204-020-02797-0",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Organophosphorus compounds and oximes: a critical review",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/ph15010066",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "FDA-Approved Oximes and Their Significance in Medicinal Chemistry",
+  "year": 2022,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s13054-022-04227-2",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Extracorporeal treatment for ethylene glycol poisoning: systematic review and recommendations from the EXTRIP workgroup",
+  "year": 2023,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/j.amsu.2021.102445",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Methanol poisoning as a new world challenge: A review",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1097/ccm.0000000000000708",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Recommendations for the Role of Extracorporeal Treatments in the Management of Acute Methanol Poisoning",
+  "year": 2015,
+  "type": "diretriz",
+  "openAccess": false
+ },
+ {
+  "doi": "10.3390/neurolint13040059",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Benzodiazepines: Uses, Dangers, and Clinical Considerations",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1111/bcpt.12434",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Adverse Events Associated with Flumazenil Treatment for the Management of Suspected Benzodiazepine Intoxication – A Systematic Review with Meta‐Analyses of Randomised Trials",
+  "year": 2015,
+  "type": "revisao_sistematica",
+  "openAccess": false
+ },
+ {
+  "doi": "10.3109/15563650.2014.989326",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Position paper update: Whole bowel irrigation for gastrointestinal decontamination of overdose patients",
+  "year": 2014,
+  "type": "diretriz",
+  "openAccess": false
+ },
+ {
+  "doi": "10.1080/15563650.2021.1961144",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Systematic review on the use of activated charcoal for gastrointestinal decontamination following acute oral overdose",
+  "year": 2021,
+  "type": "revisao_sistematica",
+  "openAccess": false
+ },
+ {
+  "doi": "10.1097/mej.0000000000001065",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Diagnosis and practical management of digoxin toxicity: a narrative review and consensus",
+  "year": 2023,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/j.annemergmed.2015.03.031",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Extracorporeal Treatment for Salicylate Poisoning: Systematic Review and Recommendations From the EXTRIP Workgroup",
+  "year": 2015,
+  "type": "diretriz",
+  "openAccess": false
+ },
+ {
+  "doi": "10.1111/sdi.12227",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Extracorporeal Treatment for Tricyclic Antidepressant Poisoning: Recommendations from theEXTRIPWorkgroup",
+  "year": 2014,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1177/20451253241243297",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "The cardiovascular safety of tricyclic antidepressants in overdose and in clinical use",
+  "year": 2024,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1164/rccm.201606-1275ci",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Carbon Monoxide Poisoning: Pathogenesis, Management, and Future Directions of Therapy",
+  "year": 2017,
+  "type": "revisao",
+  "openAccess": false
+ },
+ {
+  "doi": "10.1016/j.toxrep.2020.01.005",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Carbon monoxide poisoning",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s13181-018-0688-y",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "A Review on Ingested Cyanide: Risks, Clinical Presentation, Diagnostics, and Treatment Challenges",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": false
+ },
+ {
+  "doi": "10.3346/jkms.2014.29.11.1441",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Diagnostic and Therapeutic Approach for Acute Paraquat Intoxication",
+  "year": 2014,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1111/bcp.12739",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Adverse reactions to snake antivenom, and their prevention and treatment",
+  "year": 2015,
+  "type": "revisao",
+  "openAccess": false
+ },
+ {
+  "doi": "10.3390/toxins11040193",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Long-term Effects of Snake Envenoming",
+  "year": 2019,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s13613-020-00762-9",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Management of pharmaceutical and recreational drug poisoning",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/toxics11090723",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Antidotes in Clinical Toxicology—Critical Review",
+  "year": 2023,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/pharmaceutics15051396",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Lipid Emulsion to Treat Acute Poisonings: Mechanisms of Action, Indications, and Controversies",
+  "year": 2023,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s40262-023-01293-9",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Therapeutic Drug Monitoring of Kinase Inhibitors in Oncology",
+  "year": 2023,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1002/cpt.690",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Worldwide Distribution of Cytochrome P450 Alleles: A Meta‐analysis of Population‐scale Sequencing Projects",
+  "year": 2017,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1002/cpt.3351",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Clinical Pharmacogenetics Implementation Consortium Guideline (CPIC) for CYP2D6, ADRB1, ADRB2, ADRA2C, GRK4, and GRK5 Genotypes and Beta‐Blocker Therapy",
+  "year": 2024,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1002/cpt.2243",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "An Integrated Approach for Assessing the Impact of Renal Impairment on Pharmacokinetics of Drugs in Development: Pivotal Role of PBPK Modelling",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/jpm8020015",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Ten Years’ Experience with the CYP2D6 Activity Score: A Perspective on Future Investigations to Improve Clinical Predictions for Precision Therapeutics",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/jpm9030040",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Pharmacogenomic Testing: Clinical Evidence and Implementation Challenges",
+  "year": 2019,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/genes11111295",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "A Review of the Important Role of CYP2D6 in Pharmacogenomics",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3389/fphar.2021.635165",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Pharmacokinetic and Pharmacodynamic Considerations in Relation to Calcineurin Usage in Elderly Kidney Transplant Recipients",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3389/fphar.2020.00177",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "The Steps to Therapeutic Drug Monitoring: A Structured Approach Illustrated With Imatinib",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3389/fphar.2018.01107",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Revisiting the Role of Thiopurines in Inflammatory Bowel Disease Through Pharmacogenomics and Use of Novel Methods for Therapeutic Drug Monitoring",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/pharmaceutics14030489",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Clinical Practice Guidelines for Therapeutic Drug Monitoring of Vancomycin in the Framework of Model-Informed Precision Dosing: A Consensus Review by the Japanese Society of Chemotherapy and the Japanese Society of Therapeutic Drug Monitoring",
+  "year": 2022,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/ijms222312808",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Cytochrome P450 Enzymes and Drug Metabolism in Humans",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s00134-020-06050-1",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Antimicrobial therapeutic drug monitoring in critically ill adult patients: a Position Paper#",
+  "year": 2020,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1093/jac/dkab499",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Clinical practice guidelines for therapeutic drug monitoring of teicoplanin: a consensus review by the Japanese Society of Chemotherapy and the Japanese Society of Therapeutic Drug Monitoring",
+  "year": 2022,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1093/cid/ciac506",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Beta-Lactam Antibiotic Therapeutic Drug Monitoring in Critically Ill Patients: A Systematic Review and Meta-Analysis",
+  "year": 2022,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1097/ftd.0000000000000561",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Individualized Medication of Voriconazole: A Practice Guideline of the Division of Therapeutic Drug Monitoring, Chinese Pharmacological Society",
+  "year": 2018,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s40268-016-0148-6",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "An Updated Overview on Therapeutic Drug Monitoring of Recent Antiepileptic Drugs",
+  "year": 2016,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1111/cts.13795",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Efficacy, safety, and pharmacokinetics of isoniazid affected by NAT2 polymorphisms in patients with tuberculosis: A systematic review",
+  "year": 2024,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.2147/dddt.s470826",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Clinical Pharmacokinetics of Semaglutide: A Systematic Review",
+  "year": 2024,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1371/journal.pmed.1002160",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Pregnancy-Associated Changes in Pharmacokinetics: A Systematic Review",
+  "year": 2016,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1002/psp4.12274",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Drug Dosing in Pregnant Women: Challenges and Opportunities in Using Physiologically Based Pharmacokinetic Modeling and Simulations",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/jcm9092890",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Phenoconversion of Cytochrome P450 Metabolism: A Systematic Review",
+  "year": 2020,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s40266-024-01117-w",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Central Nervous System Medications: Pharmacokinetic and Pharmacodynamic Considerations for Older Adults",
+  "year": 2024,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.15420/ecr.2025.99",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Obesity and Pharmacokinetic Variability: Implications for Cardiovascular Therapeutics",
+  "year": 2026,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s12877-017-0621-2",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "What is polypharmacy? A systematic review of definitions",
+  "year": 2017,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1093/ageing/afu145",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "STOPP/START criteria for potentially inappropriate prescribing in older people: version 2",
+  "year": 2014,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s41999-021-00479-3",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Polypharmacy in older adults: a narrative review of definitions, epidemiology and consequences",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1177/2042098620933741",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "An overview of prevalence, determinants and health outcomes of polypharmacy",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s12877-022-03279-x",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Prevalence and factors associated with polypharmacy: a systematic review and meta-analysis",
+  "year": 2022,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1136/bmjopen-2015-009235",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Interventions to improve the appropriate use of polypharmacy in older people: a Cochrane systematic review",
+  "year": 2015,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1001/jamanetworkopen.2023.26910",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Prevalence of Use of Potentially Inappropriate Medications Among Older Adults Worldwide",
+  "year": 2023,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s12875-016-0577-x",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Effectiveness of medication review: a systematic review and meta-analysis of randomized controlled trials",
+  "year": 2017,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s12916-016-0553-2",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Post-marketing withdrawal of 462 medicinal products because of adverse drug reactions: a systematic review of the world literature",
+  "year": 2016,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s40264-015-0281-0",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Epidemiology of Adverse Drug Reactions in Europe: A Review of Recent Observational Studies",
+  "year": 2015,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1371/journal.pone.0033236",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Percentage of Patients with Preventable Adverse Drug Reactions and Preventability of Adverse Drug Reactions – A Meta-Analysis",
+  "year": 2012,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1177/2042098620938595",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Post marketing surveillance of suspected adverse drug reactions through spontaneous reporting: current status, challenges and the future",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1002/cpt.2172",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "A New Era in Pharmacovigilance: Toward Real-World Data and Digital Monitoring",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s40264-023-01302-7",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Factors Associated with Underreporting of Adverse Drug Reactions by Health Care Professionals: A Systematic Review Update",
+  "year": 2023,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1371/journal.pone.0252161",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Prevalence of adverse drug reactions in the primary care setting: A systematic review and meta-analysis",
+  "year": 2021,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/pharmaceutics14061120",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Drug-Drug Interactions of Direct Oral Anticoagulants (DOACs): From Pharmacological to Clinical Practice",
+  "year": 2022,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/ijms22168531",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "The Clinical Significance of Drug-Food Interactions of Direct Oral Anticoagulants",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/j.jfda.2018.01.009",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Food-drug interactions precipitated by fruit juices other than grapefruit juice: An update review",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1111/bph.14936",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Clinical relevance of St. John's wort drug interactions revisited",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1002/cpt.2646",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Recommendations for the Management of Drug-Drug Interactions Between the COVID-19 Antiviral Nirmatrelvir/Ritonavir (Paxlovid) and Comedications",
+  "year": 2022,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1001/jamanetworkopen.2022.7970",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Identification of Drug Interaction Adverse Events in Patients With COVID-19",
+  "year": 2022,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/j.hrthm.2020.05.008",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "QT prolongation, torsades de pointes, and sudden death with short courses of chloroquine or hydroxychloroquine as used in COVID-19: A systematic review",
+  "year": 2020,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/j.mayocp.2020.03.024",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Urgent Guidance for Navigating and Circumventing the QTc-Prolonging and Torsadogenic Potential of Possible Pharmacotherapies for Coronavirus Disease 19 (COVID-19)",
+  "year": 2020,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s12883-016-0616-1",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Conundrums in neurology: diagnosing serotonin syndrome - a meta-analysis of cases",
+  "year": 2016,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1177/1178646919873925",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Serotonin Syndrome: Pathophysiology, Clinical Features, Management, and Potential Future Directions",
+  "year": 2019,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3389/fphar.2021.643972",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Toxic Mechanisms of Five Heavy Metals: Mercury, Lead, Chromium, Cadmium, and Arsenic",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1021/es305071v",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Mercury as a Global Pollutant: Sources, Pathways, and Effects",
+  "year": 2013,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1289/ehp.1104494",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Evidence on the Human Health Effects of Low-Level Methylmercury Exposure",
+  "year": 2012,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1289/ehp.1205875",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "The Broad Scope of Health Effects from Chronic Arsenic Exposure: Update on a Worldwide Public Health Problem",
+  "year": 2013,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s40557-015-0085-9",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Evaluation and management of lead exposure",
+  "year": 2015,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s12940-016-0117-0",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Concerns over use of glyphosate-based herbicides and risks associated with exposures: a consensus statement",
+  "year": 2016,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1289/ehp.1408989",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Bisphenol S and F: A Systematic Review and Comparison of the Hormonal Activity of Bisphenol A Substitutes",
+  "year": 2015,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1038/s41574-019-0273-8",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Consensus on the key characteristics of endocrine-disrupting chemicals as a basis for hazard identification",
+  "year": 2019,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3389/fpubh.2016.00148",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Chemical Pesticides and Human Health: The Urgent Need for a New Concept in Agriculture",
+  "year": 2016,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1371/journal.pntd.0012080",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Snakebite envenoming: A systematic review and meta-analysis of global morbidity and mortality",
+  "year": 2024,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1371/journal.pntd.0007551",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Reviewing evidence of the clinical effectiveness of commercially available antivenoms in sub-Saharan Africa identifies the need for a multi-centre, multi-antivenom clinical trial",
+  "year": 2019,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.2147/dddt.s24754",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Emerging options for the management of scorpion stings",
+  "year": 2012,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/j.tips.2020.05.006",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Causes and Consequences of Snake Venom Variation",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.4103/0972-5229.144017",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Clinical features of organophosphate poisoning: A review of different classification systems and approaches",
+  "year": 2014,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/toxics11100866",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Mechanisms of Organophosphate Toxicity and the Role of Acetylcholinesterase Inhibition",
+  "year": 2023,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3390/toxins13060417",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Toxic Effects of Amanitins: Repurposing Toxicities toward New Therapeutics",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.5941/myco.2014.42.3.215",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Toxicological Profiles of Poisonous, Edible, and Medicinal Mushrooms",
+  "year": 2014,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.4103/jrms.jrms_629_17",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Plant toxins and acute medicinal plant poisoning in children: A systematic literature review",
+  "year": 2018,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1177/2045125320967197",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "New psychoactive substances: a review and updates",
+  "year": 2020,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3389/fpubh.2018.00162",
+  "areas": [
+   "toxicologia",
+   "farmacologia-clinica"
+  ],
+  "title": "Synthetic and Non-synthetic Cannabinoid Drugs and Their Adverse Effects-A Review From Public Health Prospective",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.3389/fphar.2018.01210",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Postmortem Toxicology of New Synthetic Opioids",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1007/s11419-021-00596-5",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Alternative matrices in forensic toxicology: a critical review",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1002/cpt.1013",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Physiologically Based Pharmacokinetic Model Qualification and Reporting Procedures for Regulatory Submissions: A Consortium Perspective",
+  "year": 2018,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1038/psp.2013.29",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Physiologically‐Based Pharmacokinetic (PBPK) Modeling and Simulations Principles, Methods, and Applications in the Pharmaceutical Industry",
+  "year": 2013,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s11671-018-2457-x",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Dependence of Nanoparticle Toxicity on Their Physical and Chemical Properties",
+  "year": 2018,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1155/2021/9954443",
+  "areas": [
+   "toxicologia"
+  ],
+  "title": "Toxicity of Nanoparticles in Biomedical Application: Nanotoxicology",
+  "year": 2021,
+  "type": "revisao",
+  "openAccess": true
+ },
+ {
+  "doi": "10.15585/mmwr.rr7103a1",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "CDC Clinical Practice Guideline for Prescribing Opioids for Pain — United States, 2022",
+  "year": 2022,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/s0140-6736(13)60900-9",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Vascular and upper gastrointestinal effects of non-steroidal anti-inflammatory drugs: meta-analyses of individual participant data from randomised trials",
+  "year": 2013,
+  "type": "meta_analise",
+  "openAccess": true
+ },
+ {
+  "doi": "10.2337/dci18-0033",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Management of Hyperglycemia in Type 2 Diabetes, 2018. A Consensus Report by the American Diabetes Association (ADA) and the European Association for the Study of Diabetes (EASD)",
+  "year": 2018,
+  "type": "diretriz",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1186/s13756-019-0471-0",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Value of hospital antimicrobial stewardship programs [ASPs]: a systematic review",
+  "year": 2019,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1136/bmj.j1550",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Mortality risk during and after opioid substitution treatment: systematic review and meta-analysis of cohort studies",
+  "year": 2017,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/s0140-6736(17)32802-7",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Comparative efficacy and acceptability of 21 antidepressant drugs for the acute treatment of adults with major depressive disorder: a systematic review and network meta-analysis",
+  "year": 2018,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1136/annrheumdis-2019-216656",
+  "areas": [
+   "farmacologia-clinica",
+   "toxicologia"
+  ],
+  "title": "Efficacy of pharmacological treatment in rheumatoid arthritis: a systematic literature research informing the 2019 update of the EULAR recommendations for management of rheumatoid arthritis",
+  "year": 2020,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1016/s0140-6736(19)31135-3",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Comparative efficacy and tolerability of 32 oral antipsychotics for the acute treatment of adults with multi-episode schizophrenia: a systematic review and network meta-analysis",
+  "year": 2019,
+  "type": "revisao_sistematica",
+  "openAccess": true
+ },
+ {
+  "doi": "10.1001/jamacardio.2020.4511",
+  "areas": [
+   "farmacologia-clinica"
+  ],
+  "title": "Association of SGLT2 Inhibitors With Cardiovascular and Kidney Outcomes in Patients With Type 2 Diabetes",
+  "year": 2021,
+  "type": "meta_analise",
+  "openAccess": true
+ }
+]
