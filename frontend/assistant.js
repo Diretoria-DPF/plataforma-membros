@@ -73,14 +73,8 @@
       .slice(0, MAX_SUGGESTIONS).map(function (s) { return clip(s, LABEL_MAX); });
   }
 
-  /** Fontes citadas sob a resposta: só texto curto, no máximo 4. Nunca viram botão nem link. */
-  function sanitizeSources(list) {
-    if (!Array.isArray(list)) return [];
-    return list.filter(function (s) { return !!s && typeof s.source === 'string' && s.source.trim(); })
-      .slice(0, MAX_SOURCES)
-      .map(function (s) { return { source: clip(s.source, 80).trim(), section: clip(s.section, 120).trim() }; });
-  }
-
+  // Fontes e convite: assistant-sources.js (no navegador vem de window; no Node, dos testes, de require).
+  var Sources = root.LaiftAssistantSources || (typeof require === 'function' ? require('./assistant-sources.js') : null);
   /** As últimas 5 perguntas DA PESSOA; as respostas da Lia nunca voltam ao servidor. */
   function pickHistory(messages) {
     return (messages || [])
@@ -250,20 +244,15 @@
 
   function clearOldResearchButtons() { Array.prototype.forEach.call(ui.log.querySelectorAll('.lia-research-btn'), function (node) { node.remove(); }); }
 
-  /** Lista de fontes sob a resposta (texto; nada clicável). O rótulo legível vem do módulo de pesquisa, se houver. */
+  /** Fontes sob a resposta (links só com url da allowlist). O rótulo vem do módulo de pesquisa, se houver. */
   function renderSources(sources) {
-    var doc = ui.doc;
-    var box = el(doc, 'div', 'lia-sources');
-    box.appendChild(el(doc, 'p', 'lia-sources-title', 'Fontes'));
-    var list = el(doc, 'ul', 'lia-sources-list');
-    list.setAttribute('aria-label', 'Fontes desta resposta');
     var lib = researchLib();
-    sources.forEach(function (s) {
-      var label = lib ? lib.sourceLabel(s.source) : s.source;
-      list.appendChild(el(doc, 'li', '', s.section ? label + ' · ' + s.section : label));
-    });
-    box.appendChild(list);
-    return box;
+    return Sources.renderSources(ui.doc, sources, function (source) { return lib ? lib.sourceLabel(source) : source; });
+  }
+
+  // Desafio Turnstile da prévia de IA do visitante (assistant-turnstile.js, opcional): só visitante com a flag pública.
+  function turnstileLib() {
+    return root.LaiftAssistantTurnstile || { withToken: function (p) { return p; }, wanted: function () { return false; }, sync: function () { return null; } };
   }
 
   // Micro-card de feedback: módulo opcional (assistant-feedback.js). Sem ele, a Lia funciona igual.
@@ -364,6 +353,7 @@
     wrap.appendChild(bubble);
     if (msg.degraded) wrap.appendChild(el(doc, 'p', 'lia-degraded', DEGRADED_TEXT));
     if (msg.sources && msg.sources.length) wrap.appendChild(renderSources(msg.sources));
+    if (msg.cta) wrap.appendChild(Sources.renderCta(ui.doc, msg.cta));
     appendResearch(wrap, msg);
     if (msg.actions && msg.actions.length) {
       var actions = el(doc, 'div', 'lia-actions');
@@ -434,7 +424,8 @@
     reactLia('think');
     var sentWith = token();
     var mine = ++ui.sendId;
-    ui.app.callApi('apiAssistantChat', sentWith, { message: message, context: { panel: currentPanel() }, history: history }).then(function (res) {
+    var payload = turnstileLib().withToken({ message: message, context: { panel: currentPanel() }, history: history }, ui.challenge);
+    ui.app.callApi('apiAssistantChat', sentWith, payload).then(function (res) {
       if (mine !== ui.sendId) return; // a conta mudou no meio: a conversa foi zerada e esta resposta não vale
       if (res && res.disabled) { hideLauncher(); return; }
       if (!res || !res.success) {
@@ -448,7 +439,8 @@
         text: clip(res.reply, 2000) || ERROR_TEXT,
         actions: sanitizeActions(res.actions),
         suggestions: sanitizeSuggestions(res.suggestions),
-        sources: sanitizeSources(res.sources),
+        sources: Sources.sanitizeSources(res.sources),
+        cta: Sources.sanitizeCta(res.cta),
         degraded: res.degraded === true,
         cached: res.cached === true,
         canResearch: res.canResearch === true && mod.mode !== 'suspended',
@@ -460,7 +452,10 @@
       reactToReply(mod, res);
     }).catch(function () {
       if (mine === ui.sendId) failReply(ERROR_TEXT);
-    }).then(function () { if (mine === ui.sendId) setBusy(false); });
+    }).then(function () {
+      if (ui.challenge) ui.challenge.reset(); // o token é de uso único: a próxima pergunta usa um novo
+      if (mine === ui.sendId) setBusy(false);
+    });
   }
 
   /** Reações da Lia depois da resposta: suspensão, aviso, resposta aproximada ou fala. */
@@ -555,6 +550,7 @@
     mountPanelLia();
     ui.moderation.render();
     ui.moderation.checkOnOpen();
+    if (ui.challenge) ui.challenge.ensure(ui.panel); // carrega o Turnstile só agora, com o painel aberto
     greet();
     (ui.moderation.isSuspended() ? ui.moderation.openButton : ui.input).focus({ preventScroll: true });
   }
@@ -716,6 +712,7 @@
       var on = !!res && res.success === true && shouldShow(res.flags);
       ui.enabled = on;
       ui.feedbackOn = on && feedbackFlag(res.flags);
+      ui.challenge = turnstileLib().sync(ui.challenge, root, on && turnstileLib().wanted(res.flags, token()));
       ui.launcher.classList.toggle('hidden', !on);
       if (!on) {
         hint('hide');
@@ -739,7 +736,11 @@
     isAllowedAction: isAllowedAction,
     sanitizeActions: sanitizeActions,
     sanitizeSuggestions: sanitizeSuggestions,
-    sanitizeSources: sanitizeSources,
+    sanitizeSources: Sources.sanitizeSources,
+    sanitizeCta: Sources.sanitizeCta,
+    isPublicPath: Sources.isPublicPath,
+    PUBLIC_PATHS: Sources.PUBLIC_PATHS,
+    CTA_PATHS: Sources.CTA_PATHS,
     pickHistory: pickHistory,
     shouldShow: shouldShow,
     refresh: refresh,

@@ -36,6 +36,7 @@ const mod = (target) => ({ type: 'open_module', target });
 export const INTENTS = [
   {
     id: 'eventos',
+    defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     title: 'Eventos da liga',
     keywords: ['evento', 'eventos', 'inscrever', 'inscricao', 'inscricoes', 'inscrito', 'congresso', 'palestra', 'workshop', 'agenda de eventos', 'vagas', 'proximo encontro', 'me inscrevo', 'me inscrevi'],
     reply: 'Os eventos da liga ficam na aba Eventos: lá você vê data, local e vagas e faz a sua inscrição com Inscrever-se. O Histórico mostra os eventos já concluídos. Posso te levar até lá.',
@@ -92,6 +93,7 @@ export const INTENTS = [
   },
   {
     id: 'aprender',
+    defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     title: 'Aba Aprender (todos os módulos)',
     keywords: ['aprender', 'modulo', 'modulos', 'estudar', 'estudos', 'conteudo', 'conteudos', 'cursos', 'trilha'],
     reply: 'A aba Aprender reúne os módulos de estudo: Farmacologia (quiz), Toxicologia, Clínica Virtual, Laboratório Virtual e Atlas 3D. Escolha um para abrir. Lá também aparecem seu desempenho por módulo, suas conquistas e o seu crachá virtual.',
@@ -108,6 +110,7 @@ export const INTENTS = [
   },
   {
     id: 'privacidade',
+    defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     title: 'Privacidade dos dados',
     keywords: ['meus dados', 'dados pessoais', 'privacidade', 'lgpd', 'quem ve', 'quem pode ver', 'informacoes pessoais', 'termos de uso'],
     reply: 'Os dados privados da sua conta, como e-mail, telefone e presenças, são vistos só por você e pela administração autorizada. Mudanças no sistema são feitas apenas por administradores e ficam registradas. Os detalhes estão nos Termos e na Política de Privacidade.',
@@ -189,6 +192,7 @@ export const INTENTS = [
   },
   {
     id: 'cotas',
+    defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     title: 'Limite de perguntas da Lia',
     keywords: ['limite de perguntas', 'quantas perguntas', 'perguntas por dia', 'limite diario', 'cota da lia', 'cota de perguntas', 'limite da lia', 'limite de uso'],
     reply: 'Perguntas de rotina (eventos, crachá, módulos e perfil) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA: membros têm ' + AI_QUOTAS.assistant.member + ' por dia, e administradores, ' + AI_QUOTAS.assistant.admin + '. Quando a Lia está em modo limitado, a resposta não gasta essa cota.',
@@ -259,6 +263,7 @@ export const INTENTS = [
   },
   {
     id: 'papeis',
+    defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     titleOnlyOutline: true,
     title: 'O que cada papel pode fazer',
     keywords: ['papeis', 'visitante', 'visitantes', 'o que o membro pode', 'o que um membro pode', 'o que o administrador pode', 'o que um administrador pode', 'diferenca entre visitante e membro'],
@@ -427,6 +432,7 @@ export const INTENTS = [
   },
   {
     id: 'ajuda',
+    defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     title: 'O que a Lia faz',
     weight: 0.7,
     keywords: ['ajuda', 'ajudar', 'socorro', 'duvida', 'como usar', 'como usa', 'nao sei', 'o que voce faz', 'o que voce pode', 'como funciona a plataforma', 'o que posso fazer', 'o que da para fazer'],

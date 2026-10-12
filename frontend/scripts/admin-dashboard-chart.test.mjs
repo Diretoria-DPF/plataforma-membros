@@ -149,7 +149,8 @@ test('CSP da plataforma: script-src só com \'self\' (sem jsDelivr)', () => {
     const [name, ...values] = d.split(/\s+/);
     return [name, values];
   }));
-  assert.deepEqual(policy['script-src'], ["'self'"]);
+  // A única abertura é o Turnstile (prévia de IA da Lia para visitante): challenges.cloudflare.com, nada mais.
+  assert.deepEqual(policy['script-src'], ["'self'", 'https://challenges.cloudflare.com']);
   assert.doesNotMatch(meta[1], /jsdelivr/i);
 });
 

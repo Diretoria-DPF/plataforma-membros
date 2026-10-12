@@ -215,6 +215,9 @@ export const RATE_LIMITS = {
   ASSISTANT_CHAT_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_FEEDBACK: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_REINDEX: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
+  // Prévia de IA do visitante (Lia híbrida): 5 tentativas por dia por IP (chave = hash do IP + sal). No Neon, não no
+  // KV: o KV gratuito só aceita 1.000 gravações por dia.
+  LIA_VISITOR_AI_IP: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
   // Gestão (confirmar cadastro, novos códigos, reautenticação): bucket separado
   // do MFA_VERIFY, para o login legítimo não ser travado por quem gerencia.
   MFA_MANAGE: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
@@ -400,6 +403,43 @@ export const RAG = {
   RRF_K: 60,                // constante da fusão por posição (Reciprocal Rank Fusion)
   EMBED_BATCH: 16,          // textos por chamada ao modelo na reindexação
   CONTEXT_CHARS: 900,       // máximo de caracteres de cada trecho no prompt
+};
+
+// ---- Lia híbrida (flag lia_hibrida_enabled, docs/lia/PLANO.md §"Desenho híbrido") ----
+// RAG para recall + árvore de seções (assistant/tree.js) para decidir e ler + guarda de intenção +
+// resposta extrativa para quem não usa IA. Nada daqui vale com a flag desligada.
+export const TREE = {
+  CANDIDATES: 8,            // candidatos do RAG que a árvore recebe (em vez dos 4 de RAG.TOP_K)
+  MAX_SECTIONS: 4,          // seções que o modelo pode escolher (o mesmo teto de RAG.TOP_K)
+  TIMEOUT_MS: 6000,         // a chamada de escolha é curta; passou disso, vale o resultado do RAG
+  SUMMARY_MAX: 120,         // resumo de uma linha de cada seção
+  OUTLINE_MAX_CHARS: 7000,  // teto do resumo da árvore enviado ao modelo (candidatas primeiro, com resumo)
+  VISITOR_SNIPPET_MAX: 600, // resposta extrativa: trecho devolvido a quem não usa IA
+};
+
+// ---- Prévia de IA para visitante (flag lia_visitor_ai_enabled; docs/lia/PLANO.md) ----
+// Só Workers AI (env.AI): NUNCA passa pelo Groq nem pelo orquestrador, para não tirar cota dos membros.
+// Neurons: plano gratuito da Cloudflare dá 10.000/dia; o livro-caixa (services/neuronLedger.js) é aproximado.
+// Ajuste SEM deploy de código: LIA_VISITOR_MODEL e LIA_VISITOR_NEURON_CAP são variáveis do Worker (painel da
+// Cloudflare > Workers > Settings > Variables, ou wrangler.toml); valem a partir da próxima requisição.
+export const LIA_VISITOR = {
+  MODEL: '@cf/google/gemma-4-26b-a4b-it', // padrão; sobrescrito por env.LIA_VISITOR_MODEL
+  NEURON_CAP: 3000,         // neurons/dia que a prévia pode gastar; sobrescrito por env.LIA_VISITOR_NEURON_CAP
+  DAY_TOTAL_LIMIT: 8500,    // só há prévia com o total do dia abaixo disso (reserva para resumos e embeddings)
+  CACHE_TTL_SECONDS: 604800, // resposta de IA a pergunta cacheável, compartilhada entre visitantes: 7 dias
+  MAX_TOKENS: 300,
+  TEMPERATURE: 0.2,
+  TIMEOUT_MS: 12000,
+  CONTEXT_CHUNKS: 3,        // melhores trechos do RRF (sem a etapa de árvore, para poupar neurons)
+  CTA_TEXT: 'Membros têm histórico, 25 perguntas por dia e respostas mais completas. Crie sua conta.',
+  CTA_URL: '/#cadastro',
+};
+
+// Neurons por milhão de tokens (developers.cloudflare.com/workers-ai/platform/pricing, 2026-10-11).
+export const NEURON_RATES = {
+  GEMMA_INPUT: 9091,
+  GEMMA_OUTPUT: 27273,
+  EMBEDDING_INPUT: 1075,    // bge-m3
 };
 
 export const FEEDBACK = {

@@ -97,6 +97,8 @@ function parsePolicy(content) {
   return out;
 }
 
+const TURNSTILE_HOST = 'https://challenges.cloudflare.com';
+
 function staticChecks() {
   const pages = walk(DIST, (f) => f.endsWith('.html'));
   const problems = [];
@@ -117,9 +119,11 @@ function staticChecks() {
     if (isStudioPage && !script.includes("'unsafe-eval'")) problems.push(`${rel}: Estúdio sem 'unsafe-eval' — RDKit (embind) não inicializa`);
     if (isAtlasPage && script.includes("'unsafe-eval'")) problems.push(`${rel}: Atlas só pode ter 'wasm-unsafe-eval' (não precisa de 'unsafe-eval')`);
     if (isAtlasPage && !script.includes("'wasm-unsafe-eval'")) problems.push(`${rel}: Atlas sem 'wasm-unsafe-eval' — DRACOLoader (WebAssembly) não inicializa`);
-    if (script.some((s) => /^https?:\/\//.test(s) && s !== 'https://cdn.jsdelivr.net')) problems.push(`${rel}: script-src com host além do jsDelivr`);
+    // O Turnstile (captcha da prévia de IA da Lia para visitante) só é permitido na plataforma (index.html).
+    const allowedHosts = rel === 'index.html' ? ['https://cdn.jsdelivr.net', TURNSTILE_HOST] : ['https://cdn.jsdelivr.net'];
+    if (script.some((s) => /^https?:\/\//.test(s) && !allowedHosts.includes(s))) problems.push(`${rel}: script-src com host além do jsDelivr`);
     // A plataforma (index.html) não carrega script de terceiro: o gráfico do painel admin é SVG próprio (charts.js).
-    if (rel === 'index.html' && (script.length !== 1 || script[0] !== "'self'")) problems.push(`${rel}: script-src da plataforma deve ser só 'self' (sem CDN de terceiro)`);
+    if (rel === 'index.html' && script.join(' ') !== "'self' " + TURNSTILE_HOST) problems.push(`${rel}: script-src da plataforma deve ser só 'self' e o Turnstile (sem CDN de terceiro)`);
     if (script.includes('*') || script.includes('https:') || script.includes('data:')) problems.push(`${rel}: script-src aberto demais`);
     if ((p['object-src'] || []).join(' ') !== "'none'") problems.push(`${rel}: object-src não é 'none'`);
     if ((p['base-uri'] || []).join(' ') !== "'self'") problems.push(`${rel}: base-uri não é 'self'`);

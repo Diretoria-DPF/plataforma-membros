@@ -96,6 +96,10 @@ test('assistant.js nunca converte texto em HTML e não guarda a conversa no nave
 test('o front não abre URL nem navega por endereço vindo da resposta', () => {
   const src = read('frontend/assistant.js');
   assert.doesNotMatch(src, /window\.open|location\.href|location\.assign|\.setAttribute\('href'/);
+  // Os únicos href saem de listas fixas (PUBLIC_PATHS e CTA_PATHS de assistant-sources.js), nunca do texto da resposta.
+  const hrefs = read('frontend/assistant-sources.js').match(/\.setAttribute\('href',[^\r\n]*\)/g) || [];
+  assert.equal(hrefs.length, 2);
+  hrefs.forEach((h) => assert.match(h, /(PUBLIC_PATHS|CTA_PATHS)\[(PUBLIC_PATHS|CTA_PATHS)\.indexOf\(/));
 });
 
 test('assistant.js está no index.html, na lista do build e no precache do service worker', () => {
@@ -124,10 +128,12 @@ test('sanitizeSources: no máximo 4 fontes, só texto curto, sem vazias', () => 
   assert.deepEqual(Lia.sanitizeSources('Manual'), []);
 });
 
-test('fontes e avisos da Lia são texto: nenhum vira link, e o card de feedback é opcional', () => {
+test('fontes e avisos da Lia são texto (só fonte com url da allowlist vira link), e o card de feedback é opcional', () => {
   const src = read('frontend/assistant.js');
-  assert.doesNotMatch(src, /el\(doc, 'a'/);
-  assert.doesNotMatch(src, /\.href\s*=/);
+  assert.doesNotMatch(src, /node\(doc, 'a'|el\(doc, 'a'|\.href\s*=/);
+  const sources = read('frontend/assistant-sources.js');
+  assert.equal((sources.match(/node\(doc, 'a'/g) || []).length, 2); // a fonte com url e o convite, nada mais
+  assert.doesNotMatch(sources, /\.href\s*=|innerHTML/);
   // sem o módulo carregado, a Lia segue funcionando (sem card)
   assert.match(src, /root\.LaiftAssistantFeedback \|\| null/);
 });
@@ -382,4 +388,59 @@ test('idle da Lia: uma pose por vez, só em repouso, parada ao fechar e ao reagi
   assert.match(body('closePanel', 'hideLauncher'), /ui\.idle\.disarm\(\)/, 'fechar o painel para o idle');
   assert.match(body('speakThenRest', 'failReply'), /reactLia\('setState', 'idle'\); ui\.idle\.arm\(\)/, 'volta a mexer só depois de falar');
   assert.match(body('restLiaState', 'mountPanelLia'), /ui\.idle\.arm\(\)/);
+});
+
+test('a lista de páginas públicas das fontes é IGUAL à do Worker (assistant/publicLinks.js)', async () => {
+  const workerLinks = await import(pathToFileURL(path.join(root, 'worker', 'src', 'assistant', 'publicLinks.js')).href);
+  assert.deepEqual([...Lia.PUBLIC_PATHS], [...workerLinks.PUBLIC_PATHS]);
+});
+
+test('sanitizeSources: url só se for EXATAMENTE um caminho relativo da allowlist', () => {
+  const out = Lia.sanitizeSources([
+    { source: 'liga', section: 'Áreas', url: '/liga.html' },
+    { source: 'kb', section: 'Biblioteca', url: '/biblioteca' },
+    { source: 'a', section: 's', url: 'https://evil.example/liga.html' },
+    { source: 'b', section: 's', url: 'javascript:alert(1)' },
+    { source: 'c', section: 's', url: '//evil.example' },
+    { source: 'd', section: 's', url: '/liga.html?x=1' },
+    { source: 'e', section: 's', url: { toString: () => '/liga.html' } },
+    { source: 'f', section: 's' },
+  ].slice(0, 4).concat([{ source: 'x', section: 's', url: '/admin' }]));
+  assert.deepEqual(out[0], { source: 'liga', section: 'Áreas', url: '/liga.html' });
+  assert.deepEqual(out[1], { source: 'kb', section: 'Biblioteca', url: '/biblioteca' });
+  assert.equal('url' in out[2], false);
+  assert.equal('url' in out[3], false);
+  for (const bad of ['https://evil.example/liga.html', 'javascript:alert(1)', '//evil.example', '/liga.html?x=1', '/admin', '', null, undefined, 42, {}, []]) {
+    assert.equal(Lia.isPublicPath(bad), false, String(bad));
+    assert.equal('url' in Lia.sanitizeSources([{ source: 's', section: 't', url: bad }])[0], false, String(bad));
+  }
+  assert.equal(Lia.isPublicPath('/liga.html'), true);
+});
+
+test('sanitizeCta: convite só com url da allowlist de convite e texto curto', () => {
+  assert.deepEqual(Lia.sanitizeCta({ text: 'Crie sua conta.', url: '/#cadastro' }), { text: 'Crie sua conta.', url: '/#cadastro' });
+  assert.equal(Lia.sanitizeCta({ text: 'Crie', url: 'https://evil.example' }), null);
+  assert.equal(Lia.sanitizeCta({ text: 'Crie', url: 'javascript:alert(1)' }), null);
+  assert.equal(Lia.sanitizeCta({ text: 'Crie', url: '/liga.html' }), null);
+  assert.equal(Lia.sanitizeCta({ text: '   ', url: '/#cadastro' }), null);
+  assert.equal(Lia.sanitizeCta({ url: '/#cadastro' }), null);
+  assert.equal(Lia.sanitizeCta(null), null);
+  assert.equal(Lia.sanitizeCta('Crie sua conta'), null);
+  assert.ok(Lia.sanitizeCta({ text: 'x'.repeat(500), url: '/#cadastro' }).text.length <= 200);
+});
+
+test('assistant-sources.js: fonte vira <a> só com href da allowlist; sem url, texto (textContent); nada de innerHTML', () => {
+  const src = read('frontend/assistant-sources.js');
+  assert.match(src, /link\.setAttribute\('href', PUBLIC_PATHS\[PUBLIC_PATHS\.indexOf\(s\.url\)\]\)/);
+  assert.match(src, /item\.textContent = text/);
+  assert.match(src, /link\.setAttribute\('href', CTA_PATHS\[CTA_PATHS\.indexOf\(cta\.url\)\]\)/);
+  assert.doesNotMatch(src, /innerHTML|insertAdjacentHTML|document\.write/);
+});
+
+test('assistant-sources.js está no index.html (antes de assistant.js), no build e no precache do service worker', () => {
+  const html = read('frontend/index.html');
+  assert.ok(html.indexOf('<script src="assistant-sources.js" defer></script>') !== -1);
+  assert.ok(html.indexOf('assistant-sources.js') < html.indexOf('<script src="assistant.js"'));
+  assert.ok(read('frontend/scripts/build.js').includes("'assistant-sources.js'"));
+  assert.ok(read('frontend/sw.js').includes("'assistant-sources.js'"));
 });

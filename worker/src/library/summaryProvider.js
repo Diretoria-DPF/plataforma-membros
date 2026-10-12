@@ -17,6 +17,7 @@
  * A regra clínica (transitions.js) e a gravação ficam no serviço.
  */
 import { LIBRARY_AI_LIMITS } from './limits.js';
+import { recordNeurons, neuronsForGemma } from '../services/neuronLedger.js';
 
 export const INSUFFICIENT_SENTINEL = 'RESUMO_INSUFICIENTE';
 
@@ -114,7 +115,9 @@ const modelInput = (messages, maxTokens) => ({
 
 async function callModel(env, model, input, timeoutMs) {
   try {
-    return await withTimeout(Promise.resolve().then(() => env.AI.run(model, input)), timeoutMs);
+    const out = await withTimeout(Promise.resolve().then(() => env.AI.run(model, input)), timeoutMs);
+    await recordNeurons(env, neuronsForGemma(out && out.usage)); // livro-caixa de neurons (aproximado)
+    return out;
   } catch (err) {
     throw err instanceof SummaryModelError ? err : new SummaryModelError('erro');
   }

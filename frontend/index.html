@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy (Fase 4, Onda 2 — docs/SECURITY.md). Sem 'unsafe-inline'/'unsafe-eval' em script-src; ajuste connect-src/img-src junto com a URL da Worker/R2. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev; font-src 'self'; connect-src 'self' https://plataforma-membros-api.diretoria-dpf.workers.dev https://api.laift.com.br https://staging-api.laift.com.br https://challenges.cloudflare.com; worker-src 'self'; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>LAIFT – Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia</title>
   <meta name="description" content="LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia. Quiz, casos clínicos, laboratório virtual e atlas 3D para estudantes de Farmácia.">
@@ -1083,6 +1083,8 @@
   <script src="assistant-moderation.js" defer></script>
   <script src="assistant-hints.js" defer></script>
   <script src="assistant-typing.js" defer></script>
+  <script src="assistant-sources.js" defer></script>
+  <script src="assistant-turnstile.js" defer></script>
   <script src="assistant.js" defer></script>
   <script src="keyboard-shortcuts.js" defer></script>
   <script src="onboarding.js" defer></script>

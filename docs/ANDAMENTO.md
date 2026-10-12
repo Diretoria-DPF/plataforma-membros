@@ -7,6 +7,8 @@ A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação foram **mes
 
 **Pós-fusão (2026-10-08):** a #38 foi mesclada com dois checks vermelhos, e a `main` ficou com o workflow "Segurança" falhando. Os dois foram corrigidos na PR `fix/ci-pos-fusao`: cabeçalho de copyright em 3 testes novos (`lia-anim`, `nav-a11y`, `ux-v2`) e `sharp` 0.35.4 → 0.35.5 no lock de `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w). **Pendência do dono:** o workflow "Backup do banco" falha todo dia desde 2026-10-05 porque faltam os secrets `BACKUP_DATABASE_URL`, `BACKUP_AGE_PUBLIC_KEY`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` e `R2_BACKUP_BUCKET` (`docs/BACKUP_RESTORE.md`).
 
+**Lia híbrida (2026-10-12, branch `feat/lia-hibrida`, tudo desligado):** guarda de intenção, árvore de seções (PageIndex), resposta extrativa e prévia de IA para visitante (Workers AI + Turnstile), atrás de `lia_hibrida_enabled` e `lia_visitor_ai_enabled` (migração 033); ordem de ativação em `docs/lia/PLANO.md` §7.
+
 ## Atualização de 2026-10-05 — por que o laift.com.br não refletia a F2/F3
 - **A #27 foi mesclada** (02:32 UTC). A **API** de produção foi republicada na hora (`deploy-worker.yml` dispara em push na `main`).
 - **O site não subiu**: `deploy-frontend-cloudflare.yml` só rodava à mão. Isto está corrigido na branch `feat/v5-ativacao` (PR para a `main`): o workflow passa a publicar sozinho no push em `main` (produção) e `staging` (homologação), com testes unitários + e2e `csp smoke` antes e `tools/ci/smoke.mjs` depois. `deploy-staging.yml` também publica no push de `staging`. Fluxo completo, rollback e passos únicos: **`docs/AMBIENTES.md`**.

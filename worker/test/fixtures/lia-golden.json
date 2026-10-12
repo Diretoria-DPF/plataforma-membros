@@ -1,0 +1,921 @@
+[
+  {
+    "pergunta": "O que é a LAIFT?",
+    "tipo": "definicao",
+    "secoes": [
+      "liga/o-que-e-a-laift"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quais áreas a liga estuda?",
+    "tipo": "definicao",
+    "secoes": [
+      "liga/areas"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é a Biblioteca LAIFT?",
+    "tipo": "definicao",
+    "secoes": [
+      "guia-plataforma/biblioteca-buscar-e-abrir-artigos",
+      "kb/biblioteca-como-buscar-artigos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "biblioteca",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a diferença entre farmacologia e toxicologia?",
+    "tipo": "definicao",
+    "secoes": [
+      "modulos/farmacologia-basica-temas-e-simulador",
+      "modulos/toxicologia-temas-e-simulador"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "farmacologia",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é farmacocinética?",
+    "tipo": "definicao",
+    "secoes": [
+      "modulos/anatomia-e-farmacocinetica-3d-atlas-e-pk",
+      "modulos/farmacologia-basica-temas-e-simulador"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "atlas",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quanto custa participar da liga?",
+    "tipo": "definicao",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": "cadastro",
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Posso confiar na Lia para dúvidas clínicas?",
+    "tipo": "definicao",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é o Atlas 3D?",
+    "tipo": "definicao",
+    "secoes": [
+      "modulos/anatomia-e-farmacocinetica-3d-atlas-e-pk",
+      "saude/atlas-3d-apoio-ao-estudo"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "atlas",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é o processo seletivo?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/etapas-do-processo-seletivo-2026"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "liga_processo",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quem pode participar do processo seletivo?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/quem-pode-participar-do-seletivo",
+      "liga/como-entrar"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "liga_processo",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quais são as etapas do seletivo?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/etapas-do-processo-seletivo-2026"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "liga_processo",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quando abre o processo seletivo?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/quando-o-seletivo-esta-aberto-ou-fechado",
+      "processo/edital-2026-onde-conferir-as-regras"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "liga_processo",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é o edital?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/edital-2026-onde-conferir-as-regras"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "liga_processo",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Para que serve o Laboratório Virtual?",
+    "tipo": "definicao",
+    "secoes": [
+      "modulos/laboratorio-virtual-bancada-e-estudio-molecular"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "laboratorio",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Para que serve a Clínica Médica Virtual?",
+    "tipo": "definicao",
+    "secoes": [
+      "modulos/clinica-medica-virtual-plantao-e-roteiro"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "clinica",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é OSCE?",
+    "tipo": "definicao",
+    "secoes": [
+      "modulos/clinica-medica-virtual-plantao-e-roteiro"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "clinica",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quem é a Lia?",
+    "tipo": "definicao",
+    "secoes": [
+      "guia/o-que-a-lia-faz"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que você faz?",
+    "tipo": "definicao",
+    "secoes": [
+      "guia/o-que-a-lia-faz"
+    ],
+    "intencao": "ajuda",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quais eventos estão abertos?",
+    "tipo": "definicao",
+    "secoes": [],
+    "intencao": "eventos",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quais módulos de estudo existem?",
+    "tipo": "definicao",
+    "secoes": [
+      "faq/como-encontro-um-modulo-de-estudo"
+    ],
+    "intencao": "aprender",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quais são os papéis na plataforma?",
+    "tipo": "definicao",
+    "secoes": [
+      "kb/o-que-cada-papel-pode-fazer"
+    ],
+    "intencao": "papeis",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a diferença entre visitante e membro?",
+    "tipo": "definicao",
+    "secoes": [
+      "kb/o-que-cada-papel-pode-fazer"
+    ],
+    "intencao": "papeis",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quantas perguntas posso fazer por dia?",
+    "tipo": "definicao",
+    "secoes": [
+      "kb/limite-de-perguntas-da-lia",
+      "guia/quem-pode-usar-a-ia-da-lia"
+    ],
+    "intencao": "cotas",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quem vê meus dados?",
+    "tipo": "definicao",
+    "secoes": [
+      "kb/privacidade-dos-dados"
+    ],
+    "intencao": "privacidade",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Por que preciso confirmar o e-mail?",
+    "tipo": "definicao",
+    "secoes": [
+      "faq/preciso-confirmar-o-e-mail-para-entrar"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que são publicações informativas?",
+    "tipo": "definicao",
+    "secoes": [
+      "publicacoes/publicacoes-informativas-a-serie-de-campanhas"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é o Outubro Rosa 2026?",
+    "tipo": "definicao",
+    "secoes": [
+      "publicacoes/outubro-rosa-2026-publicacao-informativa"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quais são os compromissos de quem entra na liga?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/compromissos-de-quem-entra-na-liga"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é a ficha diagnóstica?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/ficha-diagnostica-e-analise-de-cenario"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quais são os contatos da liga?",
+    "tipo": "definicao",
+    "secoes": [
+      "liga/contato",
+      "faq/como-falo-com-a-liga"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é verificação em duas etapas?",
+    "tipo": "definicao",
+    "secoes": [
+      "kb/senha-e-verificacao-em-duas-etapas",
+      "guia-plataforma/verificacao-em-duas-etapas-passo-a-passo"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "seguranca",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Por quanto tempo a Lia guarda minhas perguntas?",
+    "tipo": "definicao",
+    "secoes": [
+      "privacidade/o-que-a-lia-guarda"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é o crachá virtual?",
+    "tipo": "definicao",
+    "secoes": [
+      "kb/cracha-virtual-e-qr-de-presenca"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "credencial",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Por que a Lia pode errar?",
+    "tipo": "definicao",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é o blog da LAIFT?",
+    "tipo": "definicao",
+    "secoes": [
+      "publicacoes/blog-da-laift-as-series"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "blog_site",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual o e-mail oficial da liga?",
+    "tipo": "definicao",
+    "secoes": [
+      "liga/contato"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a diferença entre membro e administrador?",
+    "tipo": "definicao",
+    "secoes": [
+      "kb/o-que-cada-papel-pode-fazer"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que é o Laboratório Virtual?",
+    "tipo": "definicao",
+    "secoes": [
+      "modulos/laboratorio-virtual-bancada-e-estudio-molecular"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "laboratorio",
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que acontece se eu ofender a Lia?",
+    "tipo": "definicao",
+    "secoes": [
+      "convivencia/respeito-nas-conversas"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual o Instagram da liga?",
+    "tipo": "definicao",
+    "secoes": [
+      "liga/o-que-e-a-laift",
+      "faq/como-falo-com-a-liga"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "perfil",
+    "deve_responder": true,
+    "perfil": "visitante"
+  },
+  {
+    "pergunta": "Qual a cidade da LAIFT?",
+    "tipo": "definicao",
+    "secoes": [
+      "liga/o-que-e-a-laift"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "visitante"
+  },
+  {
+    "pergunta": "Quais graduações podem participar da LAIFT?",
+    "tipo": "definicao",
+    "secoes": [
+      "processo/quem-pode-participar-do-seletivo",
+      "liga/como-entrar"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "visitante"
+  },
+  {
+    "pergunta": "Qual é o blog da LAIFT?",
+    "tipo": "definicao",
+    "secoes": [
+      "publicacoes/blog-da-laift-as-series",
+      "faq/onde-ficam-o-blog-e-as-publicacoes"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": "blog_site",
+    "deve_responder": true,
+    "perfil": "visitante"
+  },
+  {
+    "pergunta": "O que é a série Publicações?",
+    "tipo": "definicao",
+    "secoes": [
+      "publicacoes/publicacoes-informativas-a-serie-de-campanhas"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "visitante"
+  },
+  {
+    "pergunta": "Como faço para criar minha conta?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "cadastro",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Esqueci minha senha",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "senha",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como entro na plataforma?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "entrar",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Passo a passo para instalar o app",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "instalar_app",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Onde fica o meu crachá?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "credencial",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como me inscrevo em um evento?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "eventos",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como busco artigos na Biblioteca?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "biblioteca",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como cito um artigo em ABNT?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "biblioteca_salvar_citar",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como ativo a verificação em duas etapas?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "seguranca",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como funciona o laboratório?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "laboratorio",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Onde encontro os módulos de estudo?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "aprender",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quero trocar minha foto de perfil",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "perfil",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como envio um feedback?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "feedback_liga",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como sugiro um artigo para a Biblioteca?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "biblioteca_sugerir",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como faço para entrar na liga?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "liga_processo",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como instalo o aplicativo no celular?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "instalar_app",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Onde vejo as tarefas?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "tarefas",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como mando mensagem para outro membro?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "mensagens",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Preciso recuperar minha senha",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "senha",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quero me cadastrar",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "cadastro",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como altero meu nome de usuário?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "perfil",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Não consigo entrar na minha conta",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "entrar",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a dose de paracetamol para uma criança de 10 kg?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual é a posologia da amoxicilina?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a conduta para um paciente com intoxicação por organofosforado?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Posso tomar ibuprofeno junto com dipirona?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual remédio devo tomar para dor de cabeça?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como tratar um paciente com overdose de morfina?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Meu filho tomou muito remédio, o que eu faço?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/emergencias-onde-buscar-ajuda"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Estou com febre há três dias, o que eu tomo?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual o tratamento da hipertensão do meu pai?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quantos comprimidos de dipirona eu tomo por dia?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/a-lia-pode-errar-em-temas-clinicos"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "A Lia pode me dizer qual remédio tomar?",
+    "tipo": "clinico",
+    "secoes": [
+      "saude/papel-da-lia-em-temas-de-saude"
+    ],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a previsão do tempo para amanhã?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quem ganhou o jogo do Bahia ontem?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Me conte uma piada",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a cotação do dólar hoje?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como fazer um bolo de chocolate?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Quem é o presidente do Brasil?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual a capital da França?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Escreva um poema sobre o mar",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual o melhor filme de 2025?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Me indique um bom restaurante em Salvador",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Traduza esta frase para o inglês",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Qual o horóscopo de hoje?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": null,
+    "intencao_bloqueada": null,
+    "deve_responder": false,
+    "perfil": "ambos"
+  }
+]
