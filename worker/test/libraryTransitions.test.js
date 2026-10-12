@@ -45,8 +45,12 @@ const CURATOR_PAIRS = Object.freeze([
   ['aprovado', 'publicado'],
   ['aprovado', 'rejeitado'],
   ['aprovado', 'em_triagem'],
-  ['publicado', 'removido'],
   ['rejeitado', 'em_triagem'],
+]);
+
+// Remover e restaurar são só do admin (030); curador e mentor pedem a remoção.
+const ADMIN_PAIRS = Object.freeze([
+  ['publicado', 'removido'],
   ['removido', 'em_triagem'],
 ]);
 
@@ -64,10 +68,12 @@ describe('estados e tabela de transições', () => {
     expect(STATUSES).toEqual(['em_triagem', 'aprovado', 'publicado', 'rejeitado', 'removido']);
   });
 
-  test('tabela tem as 8 transições do curador e a automática do serviço', () => {
+  test('tabela tem as transições do curador, as do admin e a automática do serviço', () => {
     expect(TRANSITIONS).toHaveLength(9);
     const curator = TRANSITIONS.filter((t) => t.role === 'curador');
     expect(curator.map((t) => [t.from, t.to])).toEqual(CURATOR_PAIRS);
+    const admin = TRANSITIONS.filter((t) => t.role === 'admin');
+    expect(admin.map((t) => [t.from, t.to])).toEqual(ADMIN_PAIRS);
     expect(TRANSITIONS).toContainEqual({ from: 'publicado', to: 'aprovado', role: 'servico' });
   });
 
@@ -132,9 +138,10 @@ describe('allowedTransitions', () => {
     expect(allowedTransitions(article, ['curador'])).toEqual(['rejeitado', 'em_triagem']);
   });
 
-  test('publicado: só remover para o curador; aprovado para o serviço', () => {
+  test('publicado: só o admin remove; o curador não muda nada; aprovado para o serviço', () => {
     const article = withFields({ status: 'publicado' });
-    expect(allowedTransitions(article, ['curador'])).toEqual(['removido']);
+    expect(allowedTransitions(article, ['curador'])).toEqual([]);
+    expect(allowedTransitions(article, ['admin'])).toEqual(['removido']);
     expect(allowedTransitions(article, ['servico'])).toEqual(['aprovado']);
   });
 
@@ -251,8 +258,9 @@ describe('pré-condições de assertTransition', () => {
 
   test('remover publicado exige motivo', () => {
     const article = withFields({ status: 'publicado' });
-    expect(errorOf(() => assertTransition(article, 'removido', ['curador'], ''))?.message).toBe(REASON_MSG);
-    expect(errorOf(() => assertTransition(article, 'removido', ['curador'], REASON))).toBeNull();
+    expect(errorOf(() => assertTransition(article, 'removido', ['admin'], ''))?.message).toBe(REASON_MSG);
+    expect(errorOf(() => assertTransition(article, 'removido', ['admin'], REASON))).toBeNull();
+    expect(errorOf(() => assertTransition(article, 'removido', ['curador'], REASON))?.message).toBe(NOT_ALLOWED);
   });
 
   test('voltar para em triagem não pede motivo nem área', () => {
@@ -356,6 +364,7 @@ describe('limites (valores do contrato §4.3)', () => {
       LIBRARY_IMPORT: { MAX_ATTEMPTS: 180, WINDOW_SECONDS: 3600 },
       LIBRARY_IMPORT_GLOBAL: { MAX_ATTEMPTS: 400, WINDOW_SECONDS: 3600 },
       LIBRARY_CURATE: { MAX_ATTEMPTS: 300, WINDOW_SECONDS: 3600 },
+      LIBRARY_PUBLISH: { MAX_ATTEMPTS: 400, WINDOW_SECONDS: 3600 },
       LIBRARY_SUMMARY: { MAX_ATTEMPTS: 200, WINDOW_SECONDS: 3600 },
       LIBRARY_SUMMARY_DAY: { MAX_ATTEMPTS: 250, WINDOW_SECONDS: 86400 },
     });

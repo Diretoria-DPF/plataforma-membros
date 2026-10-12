@@ -135,7 +135,7 @@ afterAll(async () => { await db.close(); });
 
 beforeEach(async () => {
   env = makeEnv();
-  await db.exec('TRUNCATE library_staff, library_suggestions, library_favorites, library_collection_items, library_collections, library_articles, audit_logs, rate_limit_buckets');
+  await db.exec('TRUNCATE library_removal_requests, library_staff, library_suggestions, library_favorites, library_collection_items, library_collections, library_articles, audit_logs, rate_limit_buckets');
   for (const [id, role, name] of [[P_ADMIN, 'admin', 'admin'], [P_CURADOR, 'member', 'curadora'], [P_REVISOR, 'member', 'revisor'], [P_MEMBRO, 'member', 'membro']]) {
     await db.query(
       `INSERT INTO profiles (id, full_name, username, email, password_hash, phone, role) VALUES ($1, $2, $3, $4, 'x', '11999990000', $5) ON CONFLICT (id) DO NOTHING`,
@@ -147,7 +147,7 @@ beforeEach(async () => {
 
 describe('papéis', () => {
   test('admin é curador; equipe pelo library_staff; admin não vira revisor', async () => {
-    expect(await Cur.libraryRolesOf(sql, ADMIN)).toEqual(['curador']);
+    expect(await Cur.libraryRolesOf(sql, ADMIN)).toEqual(['admin', 'curador']);
     expect(await Cur.libraryRolesOf(sql, CURADOR)).toEqual(['curador']);
     expect(await Cur.libraryRolesOf(sql, REVISOR)).toEqual(['revisor_clinico']);
     expect(await Cur.libraryRolesOf(sql, MEMBRO)).toEqual([]);

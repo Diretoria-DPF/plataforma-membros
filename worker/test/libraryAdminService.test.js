@@ -127,7 +127,7 @@ afterAll(async () => { await db.close(); });
 
 beforeEach(async () => {
   env = makeEnv();
-  await db.exec('TRUNCATE library_staff, library_suggestions, library_favorites, library_collection_items, library_collections, library_articles, audit_logs, rate_limit_buckets');
+  await db.exec('TRUNCATE library_removal_requests, library_staff, library_suggestions, library_favorites, library_collection_items, library_collections, library_articles, audit_logs, rate_limit_buckets');
   await db.exec("DELETE FROM library_topics WHERE slug NOT IN ('farmacologia-clinica', 'toxicologia')");
   const people = [
     [P_ADMIN, 'admin', 'admin', 'admin', 'active'], [P_CURADOR, 'member', 'curadora', 'curadora', 'active'],

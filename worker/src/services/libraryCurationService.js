@@ -29,12 +29,16 @@ import { fetchMetadata } from '../library/metadataClient.js';
 import {
   STATUSES, allowedTransitions, assertTransition, assertClinicalReviewer, hasClinicalTerms,
 } from '../library/transitions.js';
+import { can, capabilitiesOf, rolesFor, permissionTable } from '../library/permissions.js';
 
-export const LIBRARY_ROLES = Object.freeze({ CURATOR: 'curador', CLINICAL_REVIEWER: 'revisor_clinico' });
+export const LIBRARY_ROLES = Object.freeze({ CURATOR: 'curador', CLINICAL_REVIEWER: 'revisor_clinico', MENTOR: 'mentor' });
 
-const ROLE_ORDER = [LIBRARY_ROLES.CURATOR, LIBRARY_ROLES.CLINICAL_REVIEWER];
+// Ordem em que os papéis aparecem e quem lê a fila (capacidade readQueue em library/permissions.js).
+const ROLE_ORDER = Object.freeze(['admin', LIBRARY_ROLES.CURATOR, LIBRARY_ROLES.CLINICAL_REVIEWER, LIBRARY_ROLES.MENTOR]);
 const QUEUE_ROLES = ROLE_ORDER;
+
 const QUEUE_PAGE_SIZE = 20;
+const QUEUE_PAGE_SIZE_MAX = 100;
 const PAGE_MAX = 1000;
 const FALLBACK_NAME = 'Curadoria LAIFT';
 const YEAR_MIN = 1800;
@@ -78,7 +82,10 @@ export async function libraryRolesOf(sql, identity) {
   if (!identity?.profileId) return [];
   const staff = await sql`SELECT role FROM library_staff WHERE profile_id = ${identity.profileId}::uuid`;
   const roles = new Set(staff.map((r) => r.role));
-  if (identity.role === C.ROLES.ADMIN) roles.add(LIBRARY_ROLES.CURATOR);
+  if (identity.role === C.ROLES.ADMIN) {
+    roles.add('admin');
+    roles.add(LIBRARY_ROLES.CURATOR);
+  }
   return ROLE_ORDER.filter((role) => roles.has(role));
 }
 

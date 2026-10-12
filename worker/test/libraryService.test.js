@@ -98,7 +98,7 @@ afterAll(async () => { await db.close(); });
 
 beforeEach(async () => {
   env = makeEnv();
-  await db.exec('TRUNCATE library_suggestions, library_favorites, library_collection_items, library_collections, library_articles, audit_logs, rate_limit_buckets');
+  await db.exec('TRUNCATE library_removal_requests, library_suggestions, library_favorites, library_collection_items, library_collections, library_articles, audit_logs, rate_limit_buckets');
   for (const [id, role, name] of [[P_VISITOR, 'visitor', 'visitante'], [P_MEMBER, 'member', 'membro'], [P_OTHER, 'member', 'outro']]) {
     await db.query(
       `INSERT INTO profiles (id, full_name, username, email, password_hash, phone, role) VALUES ($1, $2, $3, $4, 'x', '11999990000', $5) ON CONFLICT (id) DO NOTHING`,

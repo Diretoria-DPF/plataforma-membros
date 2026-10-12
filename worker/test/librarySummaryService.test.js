@@ -115,7 +115,7 @@ beforeAll(async () => {
 afterAll(async () => { await db.close(); });
 
 beforeEach(async () => {
-  await db.exec('TRUNCATE library_staff, library_favorites, library_collection_items, library_collections, library_suggestions, library_articles, audit_logs, rate_limit_buckets');
+  await db.exec('TRUNCATE library_removal_requests, library_staff, library_favorites, library_collection_items, library_collections, library_suggestions, library_articles, audit_logs, rate_limit_buckets');
   for (const [id, role, name] of [[P_ADMIN, 'admin', 'admin'], [P_CURADOR, 'member', 'curadora'], [P_MEMBRO, 'member', 'membro']]) {
     await db.query(
       `INSERT INTO profiles (id, full_name, username, email, password_hash, phone, role) VALUES ($1, $2, $3, $4, 'x', '11999990000', $5) ON CONFLICT (id) DO NOTHING`,
@@ -236,6 +236,30 @@ describe('generateSummary: gravação', () => {
     const audit = await auditOf('LIBRARY_SUMMARY_GENERATE');
     expect(audit[0]).toMatchObject({ result: 'failure' });
     expect(audit[0].details).toMatchObject({ reason: 'insuficiente' });
+  });
+
+  test('modelo de raciocínio sem texto (finish_reason length) duas vezes: mensagem clara e auditoria "tamanho"', async () => {
+    const id = await seed();
+    const calls = [];
+    const thinking = { AI: { run: async (model, input) => { calls.push(input); return { choices: [{ finish_reason: 'length', message: { content: '', reasoning_content: 'pensando' } }] }; } } };
+    await expectError(generate(CURADOR, id, thinking), 'ValidationError', 'A IA não devolveu o texto desta vez. Clique de novo em "Gerar resumos com IA"; se continuar, avise o administrador.');
+    expect(calls).toHaveLength(2);
+    expect(calls[0].chat_template_kwargs).toEqual({ enable_thinking: false });
+    expect((await row(id)).summary_text).toBeNull();
+    const audit = await auditOf('LIBRARY_SUMMARY_GENERATE');
+    expect(audit[0]).toMatchObject({ result: 'failure' });
+    expect(audit[0].details).toMatchObject({ reason: 'tamanho' });
+  });
+
+  test('a nova tentativa com mais tokens grava o resumo (o raciocínio nunca vira resumo)', async () => {
+    const id = await seed();
+    let n = 0;
+    const ai = { AI: { run: async () => { n += 1; return n === 1
+      ? { choices: [{ finish_reason: 'length', message: { content: null, reasoning_content: 'rascunho interno' } }] }
+      : { choices: [{ finish_reason: 'stop', message: { content: GOOD, reasoning_content: 'rascunho interno' } }] }; } } };
+    const res = await generate(CURADOR, id, ai);
+    expect(res.article.summaryText).toBe(GOOD);
+    expect(res.article.summaryText).not.toContain('rascunho');
   });
 
   test('resposta fora do formato ou erro do modelo: erro amigável, nada gravado', async () => {

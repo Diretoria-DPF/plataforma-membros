@@ -38,9 +38,10 @@ export const TRANSITIONS = Object.freeze([
   step('aprovado', 'publicado', 'curador'),
   step('aprovado', 'rejeitado', 'curador'),
   step('aprovado', 'em_triagem', 'curador'),
-  step('publicado', 'removido', 'curador'),
+  // Remover e restaurar: só o admin (030). Curador e mentor PEDEM a remoção (libraryRemovalService).
+  step('publicado', 'removido', 'admin'),
   step('rejeitado', 'em_triagem', 'curador'),
-  step('removido', 'em_triagem', 'curador'),
+  step('removido', 'em_triagem', 'admin'),
   // Automática: o curador mudou o resumo de um artigo publicado.
   step('publicado', 'aprovado', 'servico'),
 ]);
