@@ -48,9 +48,17 @@ export async function listAuditLogs(sql, identity, input) {
     params.concat([pageSize, offset])
   );
 
-  const countRows = await sql(`SELECT count(*) AS total FROM audit_logs a ${whereClause}`, params);
+  // Contagem com teto: lê no máximo cap+1 linhas em vez de varrer audit_logs inteira a cada
+  // página. Se passar do teto, o total é um LIMITE INFERIOR (totalIsLowerBound = true).
+  const cap = C.LIMITS.AUDIT_COUNT_CAP;
+  const countRows = await sql(
+    `SELECT count(*) AS total FROM (SELECT 1 FROM audit_logs a ${whereClause} LIMIT ${cap + 1}) capped`,
+    params
+  );
+  const counted = Number(countRows[0].total);
+  const totalIsLowerBound = counted > cap;
 
-  return { success: true, logs: rows, page, pageSize, total: Number(countRows[0].total) };
+  return { success: true, logs: rows, page, pageSize, total: totalIsLowerBound ? cap : counted, totalIsLowerBound };
 }
 
 export async function listErrorLogs(sql, identity, input) {

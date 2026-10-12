@@ -2164,21 +2164,38 @@
     setTimeout(function () { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 4000);
   }
 
-  function renderPagination(containerId, page, pageSize, total, loader) {
+  // >>> paginacao (puro)
+  // opts.totalIsLowerBound: o servidor contou só até o teto, então `total` é "mais de N"
+  // (auditoria). Nesse caso não há "de P" e a última página real é a que veio incompleta.
+  function paginationState(page, pageSize, total, opts) {
+    var lowerBound = !!(opts && opts.totalIsLowerBound);
+    var totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (lowerBound) {
+      return {
+        label: 'Página ' + page + ' (mais de ' + total + ' registros)',
+        hasPrev: page > 1,
+        hasNext: !(opts && opts.isLastPage),
+      };
+    }
+    return { label: 'Página ' + page + ' de ' + totalPages + ' (' + total + ' registros)', hasPrev: page > 1, hasNext: page < totalPages };
+  }
+  // <<< paginacao (puro)
+
+  function renderPagination(containerId, page, pageSize, total, loader, opts) {
     var container = document.getElementById(containerId);
     clearEl(container);
-    var totalPages = Math.max(1, Math.ceil(total / pageSize));
+    var state = paginationState(page, pageSize, total, opts);
 
     var prevBtn = h('button', { className: 'secondary' }, ['Anterior']);
-    prevBtn.disabled = page <= 1;
+    prevBtn.disabled = !state.hasPrev;
     prevBtn.addEventListener('click', function () { loader(page - 1); });
 
     var nextBtn = h('button', { className: 'secondary' }, ['Próxima']);
-    nextBtn.disabled = page >= totalPages;
+    nextBtn.disabled = !state.hasNext;
     nextBtn.addEventListener('click', function () { loader(page + 1); });
 
     container.appendChild(prevBtn);
-    container.appendChild(text('span', 'Página ' + page + ' de ' + totalPages + ' (' + total + ' registros)', { className: 'muted' }));
+    container.appendChild(text('span', state.label, { className: 'muted' }));
     container.appendChild(nextBtn);
   }
 
@@ -2481,7 +2498,10 @@
           ]),
         ]);
       }, 'Nenhum registro de auditoria.');
-      renderPagination('admin-audit-pagination', res.page, res.pageSize, res.total, loadAdminAudit);
+      renderPagination('admin-audit-pagination', res.page, res.pageSize, res.total, loadAdminAudit, {
+        totalIsLowerBound: !!res.totalIsLowerBound,
+        isLastPage: res.logs.length < res.pageSize,
+      });
     });
 
     loadAdminErrorLogs(page);

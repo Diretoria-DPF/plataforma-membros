@@ -19,7 +19,7 @@
 import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
-import { getCached, setCached } from '../cache.js';
+import { getCached, setCached, CACHE_KEYS } from '../cache.js';
 import * as Groq from '../ai/groqClient.js';
 import * as Orchestrator from '../ai/orchestrator.js';
 import * as Metrics from '../ai/metrics.js';
@@ -51,6 +51,8 @@ const QUOTA_LABELS = {
 // 30 dias: uma rota de síntese didática não muda; o cache existe para não
 // gastar tokens de novo com a mesma pergunta de outra pessoa.
 export const LAB_SYNTH_TTL_SECONDS = 30 * 86400;
+// Saúde das chaves: cliques repetidos em 60 s reaproveitam o resultado (sem Groq, sem Neon).
+export const AI_HEALTH_CACHE_TTL_SECONDS = 60;
 export function labSynthCacheKey(term) {
   return 'ai:lab-synth:' + term;
 }
@@ -277,6 +279,12 @@ export async function adminMetrics(sql, env, identity, rawInput) {
 // ---------------------------------------------------------------------------
 export async function adminHealth(sql, env, identity) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
+
+  // Hit: sem chamada ao Groq, sem rate limit, sem INSERT em ai_usage_log nem SELECT (nada vai ao Neon).
+  // Sem KV (staging) getCached devolve null e o fluxo abaixo é o de sempre.
+  const cached = await getCached(env, CACHE_KEYS.AI_HEALTH);
+  if (cached && cached.success === true) return Object.assign({}, cached, { cached: true });
+
   await S.enforceRateLimit(sql, 'AI_HEALTH', identity.profileId, C.AI_HEALTH_RATE_LIMIT.MAX_ATTEMPTS, C.AI_HEALTH_RATE_LIMIT.WINDOW_SECONDS);
 
   const keys = await Groq.checkKeys(env);
@@ -294,7 +302,7 @@ export async function adminHealth(sql, env, identity) {
     ORDER BY feature
   `;
 
-  return {
+  const result = {
     success: true,
     configured: keys.length > 0,
     overallPct: keys.length ? Math.round((okCount / keys.length) * 100) : 0,
@@ -309,4 +317,7 @@ export async function adminHealth(sql, env, identity) {
       promptTokens: Number(r.prompt_tokens) || 0, completionTokens: Number(r.completion_tokens) || 0,
     })),
   };
+  // Só resultado com chaves configuradas fica em cache: corrigir a configuração vale na hora.
+  if (keys.length > 0) await setCached(env, CACHE_KEYS.AI_HEALTH, result, AI_HEALTH_CACHE_TTL_SECONDS);
+  return result;
 }

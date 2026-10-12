@@ -124,15 +124,16 @@ export const API_REGISTRY = {
   apiUpdateMyAvatar: (sql, env, [sessionToken, avatarBase64, avatarMimeType]) => runWithSession(sql, env, sessionToken, (identity, cid) => ProfileService.updateMyAvatarFromBase64(sql, env, identity, avatarBase64, avatarMimeType, cid)),
   apiGetMyMetrics: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ProfileService.getMyMetrics(sql, identity)),
   // Série temporal da própria atividade (gráficos do Início): { range?, metric? }.
-  apiGetMyTimeseries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity) => {
-    await S.enforceRateLimit(sql, 'TIMESERIES', identity.profileId, RATE_LIMITS.TIMESERIES.MAX_ATTEMPTS, RATE_LIMITS.TIMESERIES.WINDOW_SECONDS);
-    return TimeseriesService.getMyTimeseries(sql, env, identity, input);
-  }),
+  // O rate limit (UPSERT no Neon) só roda em cache miss: o hit no KV devolve sem tocar o banco.
+  apiGetMyTimeseries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => TimeseriesService.getMyTimeseries(
+    sql, env, identity, input,
+    () => S.enforceRateLimit(sql, 'TIMESERIES', identity.profileId, RATE_LIMITS.TIMESERIES.MAX_ATTEMPTS, RATE_LIMITS.TIMESERIES.WINDOW_SECONDS)
+  )),
   // Todas as séries do Início numa chamada (falha isolada por série: null); ver timeseriesService.js.
-  apiGetMyDashboardSeries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
-    await S.enforceRateLimit(sql, 'DASHBOARD_SERIES', identity.profileId, RATE_LIMITS.DASHBOARD_SERIES.MAX_ATTEMPTS, RATE_LIMITS.DASHBOARD_SERIES.WINDOW_SECONDS);
-    return TimeseriesService.getMyDashboardSeries(sql, env, identity, input, cid);
-  }),
+  apiGetMyDashboardSeries: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => TimeseriesService.getMyDashboardSeries(
+    sql, env, identity, input, cid,
+    () => S.enforceRateLimit(sql, 'DASHBOARD_SERIES', identity.profileId, RATE_LIMITS.DASHBOARD_SERIES.MAX_ATTEMPTS, RATE_LIMITS.DASHBOARD_SERIES.WINDOW_SECONDS)
+  )),
   // Início: eventos, tarefas, votações, aprendizado e caixa de entrada em UMA requisição.
   apiGetHomeSummary: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => HomeService.getHomeSummary(sql, env, identity)),
 

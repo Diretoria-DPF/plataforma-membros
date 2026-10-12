@@ -5,11 +5,12 @@
  */
 // Rate limit por perfil nas séries do Início (apiGetMyTimeseries e
 // apiGetMyDashboardSeries). O limite conta a sessão (profileId), nunca o IP
-// nem a entrada do cliente, e conta toda chamada, inclusive cache hit.
+// nem a entrada do cliente. Cache hit no KV NÃO conta (devolve sem tocar o banco
+// além da sessão); só o cache miss, que de fato consulta o Neon, gasta o limite.
 import { jest } from '@jest/globals';
 import { API_REGISTRY } from '../src/handlers.js';
 import * as S from '../src/security.js';
-import { RATE_LIMITS } from '../src/constants.js';
+import { RATE_LIMITS, TIMESERIES as TIMESERIES_CONFIG } from '../src/constants.js';
 import { makeEnv } from './helpers/mockEnv.js';
 
 const PROFILE_A = '11111111-1111-4111-8111-111111111111';
@@ -19,6 +20,7 @@ const TOKEN_B = 'token-de-sessao-perfil-b';
 const RATE_LIMIT_MESSAGE = 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.';
 const TIMESERIES = RATE_LIMITS.TIMESERIES;
 const DASHBOARD = RATE_LIMITS.DASHBOARD_SERIES;
+const CACHE_TTL = TIMESERIES_CONFIG.CACHE_TTL_SECONDS;
 
 function memberRow(profileId) {
   return {
@@ -103,12 +105,40 @@ describe('rate limit por perfil — apiGetMyTimeseries', () => {
     expect(blocked.some((text) => text.includes('WITH bounds'))).toBe(false);
   });
 
-  test('cache hit também conta: toda chamada gasta o limite', async () => {
+  test('cache hit não gasta o limite nem toca rate_limit_buckets: só a leitura da sessão vai ao banco', async () => {
     const { env, sql } = await setup();
-    env.HOT_CACHE.get.mockResolvedValue(JSON.stringify({ success: true, range: '30d', granularity: 'day', series: [] }));
-    await repeat(TIMESERIES.MAX_ATTEMPTS, () => callTimeseries(sql, env));
+    const payload = { success: true, range: '30d', granularity: 'day', series: [] };
+    env.HOT_CACHE.get.mockResolvedValue(JSON.stringify(payload));
+    const results = await repeat(TIMESERIES.MAX_ATTEMPTS + 5, () => callTimeseries(sql, env));
+    results.forEach((res) => expect(res).toEqual(payload));
+    expect(sql.counters.size).toBe(0);
+    const texts = sql.mock.calls.map(textOf);
+    expect(texts.some((text) => text.includes('INSERT INTO rate_limit_buckets'))).toBe(false);
+    expect(texts.some((text) => text.includes('WITH bounds'))).toBe(false);
+  });
+
+  test('cache miss ainda gasta o limite antes de consultar a série, e grava no KV com a mesma chave e TTL', async () => {
+    const { env, sql } = await setup();
     const res = await callTimeseries(sql, env);
-    expect(res).toMatchObject({ success: false, message: RATE_LIMIT_MESSAGE });
+    expect(res).toMatchObject({ success: true, range: '30d' });
+    expect(sql.counters.size).toBe(1);
+    const texts = sql.mock.calls.map(textOf);
+    expect(texts.findIndex((t) => t.includes('INSERT INTO rate_limit_buckets'))).toBeLessThan(texts.findIndex((t) => t.includes('WITH bounds')));
+    expect(env.HOT_CACHE.get).toHaveBeenCalledWith('cache:timeseries:v1:' + PROFILE_A + ':30d:activity');
+    expect(env.HOT_CACHE.put).toHaveBeenCalledWith('cache:timeseries:v1:' + PROFILE_A + ':30d:activity', expect.any(String), { expirationTtl: CACHE_TTL });
+  });
+
+  test('entrada inválida continua recusada (sem consultar série); sem KV (staging) o limite vale em toda chamada', async () => {
+    const { env, sql } = await setup();
+    const bad = await API_REGISTRY.apiGetMyTimeseries(sql, env, [TOKEN_A, { range: '1d' }]);
+    expect(bad).toMatchObject({ success: false });
+    expect(sql.mock.calls.map(textOf).some((t) => t.includes('WITH bounds'))).toBe(false);
+
+    const { sql: sql2 } = await setup();
+    const envNoKv = makeEnv();
+    delete envNoKv.HOT_CACHE;
+    await repeat(TIMESERIES.MAX_ATTEMPTS, () => callTimeseries(sql2, envNoKv));
+    expect(await callTimeseries(sql2, envNoKv)).toMatchObject({ success: false, message: RATE_LIMIT_MESSAGE });
   });
 
   test('limites são por perfil: esgotar o perfil A não afeta o perfil B', async () => {
@@ -132,6 +162,23 @@ describe('rate limit por perfil — apiGetMyDashboardSeries', () => {
     await repeat(DASHBOARD.MAX_ATTEMPTS, () => callDashboard(sql, env));
     expect(await callDashboard(sql, env)).toMatchObject({ success: false, message: RATE_LIMIT_MESSAGE });
     expect(await callTimeseries(sql, env)).toMatchObject({ success: true });
+  });
+
+  test('cache hit do pacote não gasta o limite nem consulta o banco; miss grava com a chave por perfil', async () => {
+    const { env, sql } = await setup();
+    const miss = await callDashboard(sql, env);
+    expect(miss).toMatchObject({ success: true });
+    expect(env.HOT_CACHE.put).toHaveBeenCalledWith('cache:dashboard-series:v1:' + PROFILE_A, expect.any(String), { expirationTtl: CACHE_TTL });
+    expect(sql.counters.size).toBe(1);
+
+    const payload = { success: true, series: { activity30d: null } };
+    env.HOT_CACHE.get.mockResolvedValue(JSON.stringify(payload));
+    const before = sql.mock.calls.length;
+    const results = await repeat(DASHBOARD.MAX_ATTEMPTS + 5, () => callDashboard(sql, env));
+    results.forEach((res) => expect(res).toEqual(payload));
+    const texts = sql.mock.calls.slice(before).map(textOf);
+    expect(texts.some((t) => t.includes('INSERT INTO rate_limit_buckets') || t.includes('WITH bounds'))).toBe(false);
+    expect(env.HOT_CACHE.get).toHaveBeenLastCalledWith('cache:dashboard-series:v1:' + PROFILE_A);
   });
 
   test('limite do dashboard também é por perfil', async () => {

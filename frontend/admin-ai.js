@@ -132,7 +132,9 @@
         App().setStatus('msg-admin-ai-health', (res && res.message) || 'Não foi possível testar as chaves agora.', 'error');
         return;
       }
-      App().setStatus('msg-admin-ai-health', res.configured ? 'Teste concluído às ' + new Date().toLocaleTimeString('pt-BR') + '.' : '', res.configured ? 'success' : null);
+      // `cached`: o servidor reaproveitou um teste feito no último minuto (não chamou o Groq de novo).
+      var doneMsg = res.cached ? 'Resultado do teste feito no último minuto (sem novo teste agora).' : 'Teste concluído às ' + new Date().toLocaleTimeString('pt-BR') + '.';
+      App().setStatus('msg-admin-ai-health', res.configured ? doneMsg : '', res.configured ? 'success' : null);
       renderHealth(res);
       renderUsage(res.usage24h || []);
       renderConfig(res.config || null);

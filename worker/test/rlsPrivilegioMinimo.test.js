@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 /**
- * Migração 031 (RLS e papel de menor privilégio laift_app) contra um Postgres real (PGlite com todas
+ * Migração 031 (RLS e papel de menor privilégio laift_worker) contra um Postgres real (PGlite com todas
  * as migrações). Este teste é a trava de toda migração futura: criou tabela sem chamar
  * laift_enable_rls('tabela'::regclass), ele falha.
  */
@@ -14,8 +14,8 @@ import { fileURLToPath } from 'node:url';
 import { createMigratedDb } from './helpers/pgliteSql.js';
 
 const SQL_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'sql');
-const UP = fs.readFileSync(path.join(SQL_ROOT, '031_rls_least_privilege.sql'), 'utf8');
-const DOWN = fs.readFileSync(path.join(SQL_ROOT, 'down', '031_rls_least_privilege.sql'), 'utf8');
+const UP = fs.readFileSync(path.join(SQL_ROOT, '032_rls_runtime_role.sql'), 'utf8');
+const DOWN = fs.readFileSync(path.join(SQL_ROOT, 'down', '032_rls_runtime_role.sql'), 'utf8');
 const PROFILE = '11111111-1111-4111-8111-111111111111';
 const PUBLIC_TABLES = "SELECT c.oid, c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')";
 
@@ -46,25 +46,25 @@ describe('031 — RLS negando por padrão e privilégio mínimo', () => {
     expect(rows.map((r) => r.relname)).toEqual([]);
   });
 
-  test('toda tabela (menos o ledger) tem a política laift_app_all, e não existe outra política', async () => {
+  test('toda tabela (menos o ledger) tem a política laift_worker_all, e não existe outra política', async () => {
     const missing = await db.query(
       `${PUBLIC_TABLES} AND c.relname <> 'schema_migrations'
-       AND NOT EXISTS (SELECT 1 FROM pg_policy p WHERE p.polrelid = c.oid AND p.polname = 'laift_app_all') ORDER BY 2`
+       AND NOT EXISTS (SELECT 1 FROM pg_policy p WHERE p.polrelid = c.oid AND p.polname = 'laift_worker_all') ORDER BY 2`
     );
     expect(missing.rows.map((r) => r.relname)).toEqual([]);
-    const others = await db.query("SELECT polname FROM pg_policy WHERE polname <> 'laift_app_all'");
+    const others = await db.query("SELECT polname FROM pg_policy WHERE polname <> 'laift_worker_all'");
     expect(others.rows).toEqual([]);
   });
 
-  test('o laift_app não é superusuário, não ignora RLS e não cria papéis nem bancos', async () => {
+  test('o laift_worker não é superusuário, não ignora RLS e não cria papéis nem bancos', async () => {
     const { rows } = await db.query(
-      "SELECT rolsuper, rolbypassrls, rolcreaterole, rolcreatedb, rolcanlogin FROM pg_roles WHERE rolname = 'laift_app'"
+      "SELECT rolsuper, rolbypassrls, rolcreaterole, rolcreatedb, rolcanlogin FROM pg_roles WHERE rolname = 'laift_worker'"
     );
     expect(rows).toEqual([{ rolsuper: false, rolbypassrls: false, rolcreaterole: false, rolcreatedb: false, rolcanlogin: true }]);
   });
 
-  test('o laift_app lê, atualiza, insere e apaga (o que o Worker faz)', async () => {
-    await asRole(db, 'laift_app', async () => {
+  test('o laift_worker lê, atualiza, insere e apaga (o que o Worker faz)', async () => {
+    await asRole(db, 'laift_worker', async () => {
       expect((await db.query('SELECT id FROM profiles')).rows).toHaveLength(1);
       const upd = await db.query("UPDATE profiles SET full_name = 'Maria Souza' WHERE id = $1", [PROFILE]);
       expect(upd.affectedRows).toBe(1);
@@ -74,8 +74,8 @@ describe('031 — RLS negando por padrão e privilégio mínimo', () => {
     });
   });
 
-  test('o laift_app não faz DDL nem TRUNCATE', async () => {
-    await asRole(db, 'laift_app', async () => {
+  test('o laift_worker não faz DDL nem TRUNCATE', async () => {
+    await asRole(db, 'laift_worker', async () => {
       await expect(db.exec('CREATE TABLE zz_intruso (id int)')).rejects.toThrow(/permission denied/);
       await expect(db.exec('DROP TABLE profiles')).rejects.toThrow(/must be owner/);
       await expect(db.exec('ALTER TABLE profiles ADD COLUMN zz int')).rejects.toThrow(/must be owner/);
@@ -99,24 +99,35 @@ describe('031 — RLS negando por padrão e privilégio mínimo', () => {
     );
     expect(rows).toEqual([{ rls: true, forcado: true, politicas: 1 }]);
     await db.exec('INSERT INTO zz_nova VALUES (1)');
-    await asRole(db, 'laift_app', async () => {
+    await asRole(db, 'laift_worker', async () => {
       expect((await db.query('SELECT id FROM zz_nova')).rows).toHaveLength(1);
     });
     await db.exec('DROP TABLE zz_nova');
   });
 
-  test('a 031 é idempotente (reaplicar não duplica política nem falha)', async () => {
-    await db.exec(UP);
+  test('o papel legado laift_app (031) não tem mais política: nega por padrão', async () => {
     const { rows } = await db.query("SELECT count(*)::int AS n FROM pg_policy WHERE polname = 'laift_app_all'");
+    expect(rows[0].n).toBe(0);
+    const visivel = await asRole(db, 'laift_app', () => db.query('SELECT count(*)::int AS n FROM profiles'));
+    expect(visivel.rows[0].n).toBe(0);
+  });
+
+  test('a 032 é idempotente (reaplicar não duplica política nem falha)', async () => {
+    await db.exec(UP);
+    const { rows } = await db.query("SELECT count(*)::int AS n FROM pg_policy WHERE polname = 'laift_worker_all'");
     const tabelas = await db.query(`${PUBLIC_TABLES} AND c.relname <> 'schema_migrations'`);
     expect(rows[0].n).toBe(tabelas.rows.length);
   });
 
-  test('a volta (down) desliga o RLS e tira as permissões do laift_app', async () => {
+  test('a volta (down) restaura as políticas da 031 e tira as permissões do laift_worker', async () => {
     await db.exec(DOWN);
-    const rls = await db.query(`${PUBLIC_TABLES} AND (c.relrowsecurity OR c.relforcerowsecurity)`);
+    const rls = await db.query(`${PUBLIC_TABLES} AND c.relname <> 'schema_migrations' AND NOT (c.relrowsecurity AND c.relforcerowsecurity)`);
     expect(rls.rows).toEqual([]);
-    await asRole(db, 'laift_app', async () => {
+    const antigas = await db.query("SELECT count(*)::int AS n FROM pg_policy WHERE polname = 'laift_app_all'");
+    const novas = await db.query("SELECT count(*)::int AS n FROM pg_policy WHERE polname = 'laift_worker_all'");
+    expect(antigas.rows[0].n).toBeGreaterThan(0);
+    expect(novas.rows[0].n).toBe(0);
+    await asRole(db, 'laift_worker', async () => {
       await expect(db.query('SELECT id FROM profiles')).rejects.toThrow(/permission denied/);
     });
   });
