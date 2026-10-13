@@ -13,8 +13,10 @@
  * ficar diferente do que o registro produz.
  */
 const SESSION_ARG = 'sessionToken';
+const ALPHA_NOTE = 'ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente. Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION); recusa de guardrail NÃO é erro (success true, refused true, rule).';
 
 function groupOf(name) {
+  if (/^apiAgents/.test(name)) return 'Agentes de IA (alfa)';
   if (/^apiAdmin/.test(name)) return 'Administração';
   if (/^apiLearn/.test(name)) return 'Aprendizagem e IA';
   if (/Mfa/.test(name)) return 'Verificação em duas etapas';
@@ -38,6 +40,7 @@ export function describeActions(registry) {
       args,
       session: args[0] === SESSION_ARG,
       admin: /^apiAdmin/.test(name),
+      alpha: /^apiAgents/.test(name),
     };
   });
 }
@@ -52,6 +55,7 @@ export function buildOpenApi(registry) {
       description: [
         a.session ? 'Exige sessão (primeiro argumento: token).' : 'Não exige sessão.',
         a.admin ? 'Somente administrador.' : '',
+        a.alpha ? ALPHA_NOTE : '',
       ].filter(Boolean).join(' '),
       properties: {
         action: { const: a.name },

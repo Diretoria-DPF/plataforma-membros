@@ -25,3 +25,16 @@ export const ForbiddenError = makeError('ForbiddenError');
 export const RateLimitError = makeError('RateLimitError');
 export const NotFoundError = makeError('NotFoundError');
 export const ConflictError = makeError('ConflictError');
+
+/**
+ * Erro esperado da camada de agentes (ADR 0007). Além da mensagem, leva `code` no payload (o handler o devolve ao
+ * cliente): AGENT_DISABLED | RATE_LIMIT | QUOTA | AI_UNAVAILABLE | INVALID_OUTPUT | VALIDATION.
+ */
+export function AgentError(code, message, extra) {
+  const err = new Error(message);
+  err.name = 'AgentError';
+  err.expected = true;
+  err.code = code;
+  err.payload = Object.assign({ code }, extra || {});
+  return err;
+}

@@ -58,6 +58,8 @@ import * as LibraryService from './services/libraryService.js';
 import * as LibraryCuration from './services/libraryCurationService.js';
 import * as LibraryAdmin from './services/libraryAdminService.js';
 import * as LibrarySummary from './services/librarySummaryService.js';
+// Agentes de IA (ADR 0007; alfa, atrás de agents_enabled)
+import * as AgentsService from './services/agentsService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -299,4 +301,7 @@ export const API_REGISTRY = {
   apiAdminLearnLibrarySaveTopic: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.saveTopic(sql, identity, asInput(input), cid)),
   apiAdminLearnLibraryListStaff: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listStaff(sql, identity)),
   apiAdminLearnLibrarySetStaff: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.setStaff(sql, identity, asInput(input), cid)),
+  // ---- Agentes de IA (alfa, agents/v1-alpha). Rodam no shell (App.call), fora da ponte dos módulos. Sessão obrigatória; o traceId é o correlationId. ----
+  apiAgentsList: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AgentsService.list(sql, env, identity)),
+  apiAgentsInvoke: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AgentsService.invoke(sql, env, identity, asInput(input), cid)),
 };

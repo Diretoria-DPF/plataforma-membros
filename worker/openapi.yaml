@@ -14,6 +14,7 @@ servers:
     description: "Homologação"
 tags:
   - name: "Administração"
+  - name: "Agentes de IA (alfa)"
   - name: "Plataforma"
   - name: "Conta e sessão"
   - name: "Aprendizagem e IA"
@@ -83,6 +84,8 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminUpdateEventStatus"
                 - "$ref": "#/components/schemas/apiAdminUpdateTaskStatus"
                 - "$ref": "#/components/schemas/apiAdminUploadEventImage"
+                - "$ref": "#/components/schemas/apiAgentsInvoke"
+                - "$ref": "#/components/schemas/apiAgentsList"
                 - "$ref": "#/components/schemas/apiAssistantChat"
                 - "$ref": "#/components/schemas/apiAssistantFeedback"
                 - "$ref": "#/components/schemas/apiAssistantModerationState"
@@ -1044,6 +1047,37 @@ components:
             - description: "imageMimeType"
           minItems: 0
           maxItems: 4
+    apiAgentsInvoke:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente. Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiAgentsInvoke"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAgentsList:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente. Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiAgentsList"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiAssistantChat:
       type: "object"
       required:

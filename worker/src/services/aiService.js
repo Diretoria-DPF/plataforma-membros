@@ -146,6 +146,30 @@ export async function withQuota(sql, identity, feature, fn) {
   }
 }
 
+/**
+ * Uso da cota diária da pessoa para uma lista de recursos, numa consulta só (só lê; não consome nada).
+ * @returns {Promise<Object<string, {used, limit, remaining, resetsAt}>>} por recurso
+ */
+export async function quotaEntries(sql, identity, features) {
+  const hash = await identifierHash(identity.profileId);
+  const buckets = features.map((f) => QUOTA_BUCKETS[f]);
+  const rows = await sql`
+    SELECT bucket, attempts,
+           (window_started_at >= now() - (${C.AI_QUOTA_WINDOW_SECONDS} || ' seconds')::interval) AS active,
+           window_started_at + (${C.AI_QUOTA_WINDOW_SECONDS} || ' seconds')::interval AS resets_at
+    FROM rate_limit_buckets
+    WHERE identifier_hash = ${hash} AND bucket = ANY(${buckets})
+  `;
+  const byBucket = {};
+  (rows || []).forEach((r) => { byBucket[r.bucket] = r; });
+  return features.reduce((acc, feature) => {
+    const limit = quotaLimit(identity.role, feature);
+    const row = byBucket[QUOTA_BUCKETS[feature]];
+    const used = row && row.active ? Math.min(limit, Number(row.attempts) || 0) : 0;
+    return Object.assign(acc, { [feature]: { used, limit, remaining: Math.max(0, limit - used), resetsAt: row && row.active ? row.resets_at : null } });
+  }, {});
+}
+
 // ---------------------------------------------------------------------------
 // apiLearnGetMyAiQuota
 // ---------------------------------------------------------------------------
