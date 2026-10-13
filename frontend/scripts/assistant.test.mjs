@@ -58,16 +58,19 @@ test('sanitizeActions: descarta o inválido, repetidos e limita a 4; rótulo vir
   assert.deepEqual(Lia.sanitizeActions('panel-events'), []);
 });
 
-test('pickHistory: só as últimas 5 perguntas da PESSOA, nunca as respostas da Lia', () => {
+test('pickHistory: só as últimas 8 perguntas da PESSOA, nunca as respostas da Lia', () => {
   const messages = [];
   for (let i = 1; i <= 8; i += 1) {
     messages.push({ role: 'user', text: 'pergunta ' + i });
     messages.push({ role: 'lia', text: 'resposta ' + i });
   }
   const history = Lia.pickHistory(messages);
-  assert.equal(history.length, 5);
-  assert.deepEqual(history[0], { role: 'user', text: 'pergunta 4' });
-  assert.deepEqual(history[4], { role: 'user', text: 'pergunta 8' });
+  assert.equal(history.length, 8);
+  assert.deepEqual(history[0], { role: 'user', text: 'pergunta 1' });
+  assert.deepEqual(history[7], { role: 'user', text: 'pergunta 8' });
+  const longer = [];
+  for (let i = 1; i <= 12; i += 1) longer.push({ role: 'user', text: 'p' + i });
+  assert.deepEqual(Lia.pickHistory(longer).map((h) => h.text), ['p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
   assert.ok(history.every((h) => h.role === 'user'));
   assert.deepEqual(Lia.pickHistory([]), []);
 });
@@ -96,10 +99,10 @@ test('assistant.js nunca converte texto em HTML e não guarda a conversa no nave
 test('o front não abre URL nem navega por endereço vindo da resposta', () => {
   const src = read('frontend/assistant.js');
   assert.doesNotMatch(src, /window\.open|location\.href|location\.assign|\.setAttribute\('href'/);
-  // Os únicos href saem de listas fixas (PUBLIC_PATHS e CTA_PATHS de assistant-sources.js), nunca do texto da resposta.
+  // Os únicos href saem de listas fixas (PUBLIC_PATHS, CTA_PATHS e REFERENCE_HOSTS de assistant-sources.js), nunca do texto da resposta.
   const hrefs = read('frontend/assistant-sources.js').match(/\.setAttribute\('href',[^\r\n]*\)/g) || [];
-  assert.equal(hrefs.length, 2);
-  hrefs.forEach((h) => assert.match(h, /(PUBLIC_PATHS|CTA_PATHS)\[(PUBLIC_PATHS|CTA_PATHS)\.indexOf\(/));
+  assert.equal(hrefs.length, 3);
+  hrefs.forEach((h) => assert.match(h, /(PUBLIC_PATHS|CTA_PATHS)\[(PUBLIC_PATHS|CTA_PATHS)\.indexOf\(|REFERENCE_HOSTS\[REFERENCE_HOSTS\.indexOf\(/));
 });
 
 test('assistant.js está no index.html, na lista do build e no precache do service worker', () => {
@@ -132,7 +135,7 @@ test('fontes e avisos da Lia são texto (só fonte com url da allowlist vira lin
   const src = read('frontend/assistant.js');
   assert.doesNotMatch(src, /node\(doc, 'a'|el\(doc, 'a'|\.href\s*=/);
   const sources = read('frontend/assistant-sources.js');
-  assert.equal((sources.match(/node\(doc, 'a'/g) || []).length, 2); // a fonte com url e o convite, nada mais
+  assert.equal((sources.match(/node\(doc, 'a'/g) || []).length, 3); // a fonte com url, o convite e o artigo da Biblioteca, nada mais
   assert.doesNotMatch(sources, /\.href\s*=|innerHTML/);
   // sem o módulo carregado, a Lia segue funcionando (sem card)
   assert.match(src, /root\.LaiftAssistantFeedback \|\| null/);
@@ -443,4 +446,45 @@ test('assistant-sources.js está no index.html (antes de assistant.js), no build
   assert.ok(html.indexOf('assistant-sources.js') < html.indexOf('<script src="assistant.js"'));
   assert.ok(read('frontend/scripts/build.js').includes("'assistant-sources.js'"));
   assert.ok(read('frontend/sw.js').includes("'assistant-sources.js'"));
+});
+
+// ---------- Sugestões por contexto (assistant-suggestions.js) ----------
+
+const Suggestions = require('../assistant-suggestions.js');
+
+test('a lista do visitante é IGUAL à do Worker (kb.js, VISITOR_SUGGESTIONS) e a abertura usa o módulo', async () => {
+  const kb = await import(pathToFileURL(path.join(root, 'worker', 'src', 'assistant', 'kb.js')).href);
+  assert.deepEqual([...Suggestions.VISITOR], [...kb.VISITOR_SUGGESTIONS]);
+  const src = read('frontend/assistant.js');
+  assert.match(src, /Suggestions\.suggestionsFor\(!!token\(\), currentPanel\(\)\)/);
+  assert.doesNotMatch(src, /GREETING_SUGGESTIONS/);
+});
+
+test('suggestionsFor: sem sessão o visitante; logado, a lista da tela aberta; tela desconhecida, o início', () => {
+  assert.deepEqual(Suggestions.suggestionsFor(false, 'panel-events'), Suggestions.VISITOR);
+  assert.deepEqual(Suggestions.suggestionsFor(true, 'panel-events'), Suggestions.BY_PANEL['panel-events']);
+  assert.deepEqual(Suggestions.suggestionsFor(true, 'panel-library'), Suggestions.BY_PANEL['panel-library']);
+  assert.deepEqual(Suggestions.suggestionsFor(true, ''), Suggestions.HOME);
+  assert.deepEqual(Suggestions.suggestionsFor(true, '__proto__'), Suggestions.HOME);
+  assert.deepEqual(Suggestions.suggestionsFor(true, 'panel-admin-users'), Suggestions.ADMIN);
+  assert.ok(!Suggestions.VISITOR.join(' ').match(/crachá|evento/i), 'a tela de entrada não oferece "Meu crachá"');
+});
+
+test('toda lista tem de 2 a 4 sugestões curtas e sem repetição', () => {
+  const lists = [Suggestions.VISITOR, Suggestions.HOME, Suggestions.ADMIN, ...Object.values(Suggestions.BY_PANEL)];
+  lists.forEach((list) => {
+    assert.ok(list.length >= 2 && list.length <= 4, list.join('|'));
+    assert.equal(new Set(list).size, list.length);
+    list.forEach((s) => assert.ok(typeof s === 'string' && s.length > 0 && s.length <= 60));
+  });
+});
+
+test('assistant-suggestions.js: só texto (sem innerHTML), no index.html antes de assistant.js, no build e no precache; cache do SW subiu', () => {
+  const html = read('frontend/index.html');
+  assert.ok(html.indexOf('<script src="assistant-suggestions.js" defer></script>') !== -1);
+  assert.ok(html.indexOf('assistant-suggestions.js') < html.indexOf('<script src="assistant.js"'));
+  assert.ok(read('frontend/scripts/build.js').includes("'assistant-suggestions.js'"));
+  assert.ok(read('frontend/sw.js').includes("'assistant-suggestions.js'"));
+  assert.match(read('frontend/sw.js'), /CACHE_NAME = CACHE_PREFIX \+ 'v7'/);
+  assert.doesNotMatch(read('frontend/assistant-suggestions.js'), /innerHTML|document\./);
 });

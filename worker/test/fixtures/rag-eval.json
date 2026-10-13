@@ -1,4 +1,7 @@
 [
+  { "pergunta": "O que é a Biblioteca LAIFT?", "secao": "Biblioteca LAIFT: o que é" },
+  { "pergunta": "Qual a diferença entre farmacologia e toxicologia?", "secao": "Farmacologia e Toxicologia: a diferença" },
+  { "pergunta": "O que é farmacocinética?", "secao": "O que é farmacocinética?" },
   { "pergunta": "Quantas perguntas com IA posso fazer por dia?", "secao": "Quem pode usar a IA da Lia" },
   { "pergunta": "A Lia pode alterar algo na minha conta?", "secao": "O que a Lia faz" },
   { "pergunta": "Por quanto tempo o comentário do meu feedback fica guardado?", "secao": "Feedback sobre as respostas" },

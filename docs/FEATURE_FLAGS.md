@@ -42,7 +42,7 @@ Criadas pela 029 (`sql/029_library.sql`), todas **desligadas**. A 029 insere com
 | `library_enabled` | B1 | sim | `FALSE` | Menu "Estudo", painel do membro e catálogo público (`docs/cortex/CONTRATO-B1.md` §4) |
 | `library_member_suggest` | B1 | sim | `FALSE` | Botão "Sugerir artigo" |
 | `library_ai_summary` | B3 | não | `FALSE` | Resumo por IA (ainda sem efeito) |
-| `lia_library_enabled` | B4 | não | `FALSE` | Lia cita artigos publicados (ainda sem efeito) |
+| `lia_library_enabled` | B4 | não | `FALSE` | Lia cita artigos publicados da Biblioteca (campo `references` e botão que abre a busca; exige `library_enabled`; visitante só com a Lia híbrida) |
 
 Ligação por etapas, desligamento e volta: `docs/cortex/RUNBOOK-BIBLIOTECA.md`. Com condição de papel (`conditions.role`), a página pública fica fora, porque a leitura sem sessão não casa a condição.
 
@@ -54,6 +54,14 @@ Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSE
 |---|---|---|---|
 | `lia_hibrida_enabled` | não | `FALSE` | `assistantService.js` (`FLAG_HIBRIDA`; exige também `rag_enabled`): guarda de intenção, resposta clínica segura, escolha de seções e resposta extrativa |
 | `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com ela ligada) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
+
+## Flags da Lia para membros
+
+Criada pela 034 (`sql/034_lia_membros_flags.sql`), **desligada** (`INSERT ... ON CONFLICT (key) DO NOTHING`).
+
+| Flag | Pública | Estado depois da 034 | Onde é lida |
+|---|---|---|---|
+| `rag_cache_enabled` | não | `FALSE` | `assistantService.js`: pergunta repetida de membro, sem histórico e na mesma versão do acervo, é respondida pelo registro (`lia_pesquisas`), sem IA e sem gastar cota |
 
 ## Regra de nascimento
 

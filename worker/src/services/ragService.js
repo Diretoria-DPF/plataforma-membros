@@ -86,7 +86,7 @@ async function trigramRows(sql, query) {
            GREATEST(similarity(lower(content), ${query}), word_similarity(${query}, lower(content))) AS score
     FROM kb_chunks
     WHERE GREATEST(similarity(lower(content), ${query}), word_similarity(${query}, lower(content))) >= ${C.RAG.MIN_TRIGRAM_SCORE}
-    ORDER BY score DESC
+    ORDER BY score DESC, char_length(content) ASC -- empate: o trecho mais curto (mais focado) vem antes
     LIMIT ${C.RAG.CANDIDATES}`;
 }
 

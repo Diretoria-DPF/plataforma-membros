@@ -3,15 +3,12 @@
  * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
-// Lia, a guia da plataforma: botão flutuante + painel de conversa que orienta e
-// leva até a tela certa. Ela NÃO altera dados: os botões só navegam (abrir tela,
-// abrir módulo de estudo, abrir o crachá) e só existem se o destino estiver na
-// lista branca abaixo, que é IGUAL à do servidor (worker/src/assistant/targets.js;
-// o teste assistant.test.mjs confere). O texto da resposta entra por textContent.
-// A conversa fica só na memória da página (nada vai para o armazenamento do
-// navegador) e some ao sair da conta. Só aparece se a flag chatbot_enabled
-// estiver ligada (apiGetFeatureFlags). Expõe window.LaiftAssistant.
-// A moderação (aviso, suspensão e redenção) fica em assistant-moderation.js.
+// Lia, a guia da plataforma: botão flutuante + painel de conversa que orienta e leva até a tela certa. Ela NÃO
+// altera dados: os botões só navegam (abrir tela, módulo de estudo, crachá) e só existem se o destino estiver na
+// lista branca abaixo, IGUAL à do servidor (worker/src/assistant/targets.js; o teste assistant.test.mjs confere).
+// O texto da resposta entra por textContent. A conversa fica só na memória da página (nada vai para o
+// armazenamento do navegador) e some ao sair da conta. Só aparece com a flag chatbot_enabled ligada
+// (apiGetFeatureFlags). Expõe window.LaiftAssistant. A moderação fica em assistant-moderation.js.
 (function (root) {
   'use strict';
 
@@ -25,13 +22,11 @@
   ];
   var MAX_ACTIONS = 4;
   var MAX_SUGGESTIONS = 3;
-  var HISTORY_TURNS = 5;
+  var HISTORY_TURNS = 8; // igual a AI_LIMITS.HISTORY_MAX_TURNS do servidor
   var MESSAGE_MAX = 500;
   var LABEL_MAX = 40;
-  var GREETING_SUGGESTIONS = ['Eventos abertos', 'Como funciona o laboratório?', 'Meu crachá', 'Módulos de estudo'];
   var ERROR_TEXT = 'Não consegui responder agora. Tente de novo em instantes.';
   var DEGRADED_TEXT = 'Resposta aproximada: a IA está indisponível no momento.';
-  var MAX_SOURCES = 4;
   var PANEL_LIA_SIZE = 72; // px de largura do corpo inteiro no cabeçalho (altura ≈ 108 px, proporção 2:3)
   var SPEAK_MS = 2500; // depois da resposta, a Lia fica falando por este tempo e volta ao repouso
   var WARNING_HOLD_MS = 8000; // aviso de moderação (braços cruzados e balão): a pose dura isto e a Lia volta ao repouso
@@ -62,7 +57,8 @@
       seen[key] = true;
       var label = clip(item.label, LABEL_MAX).trim();
       if (!label) return; // o servidor sempre manda o rótulo; botão sem texto não é exibido
-      out.push({ type: item.type, target: item.target, label: label });
+      var query = item.type === 'open_library' ? Sources.cleanQuery(item.query) : ''; // "Ver na Biblioteca" com a busca pronta
+      out.push(query ? { type: item.type, target: item.target, label: label, query: query } : { type: item.type, target: item.target, label: label });
     });
     return out;
   }
@@ -75,7 +71,8 @@
 
   // Fontes e convite: assistant-sources.js (no navegador vem de window; no Node, dos testes, de require).
   var Sources = root.LaiftAssistantSources || (typeof require === 'function' ? require('./assistant-sources.js') : null);
-  /** As últimas 5 perguntas DA PESSOA; as respostas da Lia nunca voltam ao servidor. */
+  var Suggestions = root.LaiftAssistantSuggestions || (typeof require === 'function' ? require('./assistant-suggestions.js') : null);
+  /** As últimas 8 perguntas DA PESSOA (sugestões por tela: assistant-suggestions.js); as respostas da Lia nunca voltam. */
   function pickHistory(messages) {
     return (messages || [])
       .filter(function (m) { return m && m.role === 'user' && typeof m.text === 'string' && m.text; })
@@ -234,7 +231,8 @@
     } else if (action.type === 'open_credential') {
       if (root.LaiftCredential) root.LaiftCredential.open(app);
     } else if (action.type === 'open_library') {
-      app.showPanel('panel-library'); // a busca pronta (query) fica para uma próxima etapa
+      if (action.query && root.LaiftLibrary && root.LaiftLibrary.searchFor) root.LaiftLibrary.searchFor(action.query); // antes de abrir: o painel já carrega com a busca
+      app.showPanel('panel-library');
     }
   }
 
@@ -353,6 +351,7 @@
     wrap.appendChild(bubble);
     if (msg.degraded) wrap.appendChild(el(doc, 'p', 'lia-degraded', DEGRADED_TEXT));
     if (msg.sources && msg.sources.length) wrap.appendChild(renderSources(msg.sources));
+    if (msg.references && msg.references.length) wrap.appendChild(Sources.renderReferences(ui.doc, msg.references));
     if (msg.cta) wrap.appendChild(Sources.renderCta(ui.doc, msg.cta));
     appendResearch(wrap, msg);
     if (msg.actions && msg.actions.length) {
@@ -440,6 +439,7 @@
         actions: sanitizeActions(res.actions),
         suggestions: sanitizeSuggestions(res.suggestions),
         sources: Sources.sanitizeSources(res.sources),
+        references: Sources.sanitizeReferences(res.references),
         cta: Sources.sanitizeCta(res.cta),
         degraded: res.degraded === true,
         cached: res.cached === true,
@@ -536,7 +536,7 @@
     if (ui.messages.length) return;
     var out = moodLib().greeting(ui.mood, Math.random);
     ui.mood = out.session;
-    addMessage({ role: 'lia', text: out.text, suggestions: GREETING_SUGGESTIONS });
+    addMessage({ role: 'lia', text: out.text, suggestions: Suggestions.suggestionsFor(!!token(), currentPanel()) });
   }
 
   function openPanel() {

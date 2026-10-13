@@ -1288,6 +1288,11 @@
       actionsChildren.push(text('span', 'Faça login para se inscrever.', { className: 'muted' }));
     } else if (item.isRegistered) {
       actionsChildren.push(h('span', { className: 'badge' }, ['Inscrição confirmada']));
+      if (canCancelRegistration(item, Date.now())) {
+        actionsChildren.push(h('button', {
+          type: 'button', className: 'secondary', onclick: function () { confirmCancelRegistration(item.id); },
+        }, ['Cancelar inscrição']));
+      }
     } else if (item.spotsLeft === 0) {
       actionsChildren.push(text('span', 'Sem vagas disponíveis.', { className: 'muted' }));
     } else {
@@ -1315,6 +1320,26 @@
     callApi('apiRegisterForEvent', state.sessionToken, eventId).then(function (res) {
       loadEvents().then(function () {
         setStatus('events-status', res.message, res.success ? 'success' : 'error');
+      });
+    });
+  }
+
+  // >>> event-cancel (puro)
+  /** Cancelar vale só para a PRÓPRIA inscrição, em evento que ainda não começou (a Worker confere de novo). */
+  function canCancelRegistration(item, nowMs) {
+    if (!item || item.isRegistered !== true || item.status === 'in_progress') return false;
+    var when = new Date(item.eventDate).getTime();
+    return !isNaN(when) && when > nowMs;
+  }
+  // <<< event-cancel (puro)
+
+  /** Pede confirmação (diálogo acessível) e só então cancela; a lista é recarregada com a mensagem do servidor. */
+  function confirmCancelRegistration(eventId) {
+    openConfirm('Cancelar sua inscrição neste evento?', function () {
+      callApi('apiCancelEventRegistration', state.sessionToken, eventId).then(function (res) {
+        loadEvents().then(function () {
+          setStatus('events-status', res.message, res.success ? 'success' : 'error');
+        });
       });
     });
   }

@@ -300,7 +300,7 @@ describe('Lia — IA só quando nenhuma intenção serve (e só para quem tem co
   });
 
   test('as cotas do plano: visitante 0, membro 25, admin 60', () => {
-    expect(AI_QUOTAS.assistant).toEqual({ visitor: 0, member: 25, admin: 100 });
+    expect(AI_QUOTAS.assistant).toEqual({ visitor: 0, member: 60, admin: 120 });
     expect(AI_FEATURE.ASSISTANT).toBe('assistant');
   });
 

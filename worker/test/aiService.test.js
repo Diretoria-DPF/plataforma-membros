@@ -41,11 +41,11 @@ afterEach(() => {
 describe('AiService — cotas diárias por papel', () => {
   test('valores iniciais do plano', () => {
     expect(AI_QUOTAS).toEqual({
-      chat: { visitor: 15, member: 40, admin: 100 },
-      evaluate: { visitor: 5, member: 10, admin: 40 },
-      generate_case: { visitor: 2, member: 4, admin: 20 },
-      lab_preceptor: { visitor: 10, member: 30, admin: 100 },
-      assistant: { visitor: 0, member: 25, admin: 100 },
+      chat: { visitor: 15, member: 100, admin: 200 },
+      evaluate: { visitor: 5, member: 25, admin: 50 },
+      generate_case: { visitor: 2, member: 10, admin: 20 },
+      lab_preceptor: { visitor: 10, member: 80, admin: 160 },
+      assistant: { visitor: 0, member: 60, admin: 120 },
     });
     expect(AI_GLOBAL_DAILY_MAX).toBe(3000);
   });
@@ -61,8 +61,8 @@ describe('AiService — cotas diárias por papel', () => {
 
   test.each([
     ['visitor', 'evaluate', 5, VISITOR],
-    ['member', 'evaluate', 10, MEMBER],
-    ['admin', 'evaluate', 40, ADMIN],
+    ['member', 'evaluate', 25, MEMBER],
+    ['admin', 'evaluate', 50, ADMIN],
     ['visitor', 'chat', 15, VISITOR],
   ])('%s / %s: passa com %i usos e estoura no seguinte', async (_label, feature, limit, identity) => {
     const bucket = AiService.QUOTA_BUCKETS[feature];

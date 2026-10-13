@@ -53,6 +53,7 @@ describe('snippetOf — trecho de até 600 caracteres, em fim de frase', () => {
 describe('publicPathFor — mapa fixo e allowlist', () => {
   test('páginas públicas conhecidas por fonte e seção', () => {
     expect(publicPathFor('liga', 'O que é a LAIFT')).toBe('/liga.html');
+    expect(publicPathFor('modulos', 'Biblioteca LAIFT: o que é')).toBe('/biblioteca'); // visitante só a vê com a Biblioteca ligada
     expect(publicPathFor('liga', 'Áreas')).toBe('/liga.html');
     expect(publicPathFor('publicacoes', 'Blog da LAIFT: as séries')).toBe('/blog.html');
     expect(publicPathFor('processo', 'Edital 2026: onde conferir as regras')).toBe('/edital.html');

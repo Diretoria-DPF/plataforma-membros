@@ -196,7 +196,8 @@ export async function logUsage(sql, entry) {
  * @param {object} provider  descritor (providers/groq.js, providers/nvidia.js)
  * @param {object} env  bindings da Worker (secret do provedor, modelos, HOT_CACHE)
  * @param {Function|null} sql  para o ai_usage_log (null = não registra)
- * @param {object} req  { feature, messages, profileId }
+ * @param {object} req  { feature, messages, profileId, tier? } — `tier` ('fast' | 'smart') troca o modelo
+ *   do recurso nesta chamada (usado pelo orquestrador; qualquer outro valor é ignorado)
  * @returns {Promise<{content, model, keyIndex, usage, latencyMs, finishReason}>}
  * @throws AiUnavailableError (nenhuma chave respondeu ou provedor sem configuração) | AiInvalidOutputError
  */
@@ -206,7 +207,7 @@ export async function complete(provider, env, sql, req) {
   const keys = parseKeys(provider, env);
   if (!keys.length) throw AiUnavailableError(AI_MESSAGES.NOT_CONFIGURED);
 
-  const model = provider.resolveModel(env, cfg.tier);
+  const model = provider.resolveModel(env, req.tier === 'smart' || req.tier === 'fast' ? req.tier : cfg.tier);
   // Nunca adivinha um ID de modelo: sem configuração, o provedor está "indisponível".
   if (!model) throw AiUnavailableError(AI_MESSAGES.NOT_CONFIGURED);
   const body = Object.assign(

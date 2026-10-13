@@ -286,6 +286,21 @@ export async function search(sql, identity, input = {}) {
   return { success: true, items, total, page: params.page, pageSize: params.pageSize, topics: topics.map(toTopic) };
 }
 
+/**
+ * Busca da Lia (services/liaLibraryService.js): a MESMA consulta da busca do catálogo (só `publicado`, português
+ * primeiro, todos os termos), UMA consulta com LIMIT. Sem sessão e sem o limite de buscas da pessoa: quem chama
+ * (a Lia) já tem o próprio limite de mensagens e confere as flags. Itens no formato PÚBLICO (sem indício de resumo).
+ */
+export async function searchForLia(sql, query, limit) {
+  const patterns = searchPatterns(query);
+  if (!patterns.length) return [];
+  const rows = await queryList(sql, {
+    profileId: null, favoritesOnly: false, collectionId: null, patterns, topic: null, type: null, language: null,
+    yearFrom: null, yearTo: null, openAccess: null, pageSize: limit, offset: 0,
+  });
+  return rows.map((r) => toListItem(r, false));
+}
+
 // ---------------------------------------------------------------------------
 // apiLearnLibraryGetArticle
 // ---------------------------------------------------------------------------

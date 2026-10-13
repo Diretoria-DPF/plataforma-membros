@@ -19,9 +19,9 @@ const GOLDEN = JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(i
 const treeIds = byId(getTree());
 
 describe('golden set da Lia (lia-golden.json) — formato', () => {
-  test('entre 70 e 100 perguntas, cada tipo bem representado, sem repetição', () => {
+  test('entre 70 e 120 perguntas, cada tipo bem representado, sem repetição', () => {
     expect(GOLDEN.length).toBeGreaterThanOrEqual(70);
-    expect(GOLDEN.length).toBeLessThanOrEqual(100);
+    expect(GOLDEN.length).toBeLessThanOrEqual(120);
     expect(new Set(GOLDEN.map((g) => g.pergunta)).size).toBe(GOLDEN.length);
     KINDS.forEach((kind) => expect(GOLDEN.filter((g) => g.tipo === kind).length).toBeGreaterThanOrEqual(8));
   });
@@ -50,6 +50,7 @@ describe('golden set da Lia (lia-golden.json) — formato', () => {
       'O que é a Biblioteca LAIFT?',
       'Qual a diferença entre farmacologia e toxicologia?',
       'O que é farmacocinética?',
+      'O que posso fazer na plataforma?',
       'Quanto custa participar da liga?',
       'Posso confiar na Lia para dúvidas clínicas?',
     ].forEach((q) => expect(asked.has(q)).toBe(true));

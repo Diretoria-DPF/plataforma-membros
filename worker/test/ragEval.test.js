@@ -62,6 +62,13 @@ describe('ragEval — golden set da Lia (trigramas, banco real)', () => {
     expect(POSITIVES.filter((g) => !sections.has(g.secao)).map((g) => g.secao)).toEqual([]);
   });
 
+  test('empate de score: o trecho mais curto (mais focado) vem primeiro; "O que é a LAIFT?" não perde para a Biblioteca LAIFT', async () => {
+    const { chunks } = await Rag.retrieve(sql, makeEnv(), 'O que é a LAIFT?');
+    expect(chunks[0].section).toBe('O que é a LAIFT');
+    const lib = await Rag.retrieve(sql, makeEnv(), 'O que é a Biblioteca LAIFT?');
+    expect(lib.chunks[0].section).toBe('Biblioteca LAIFT: o que é');
+  });
+
   test('recall@4 sobe e o negativo não devolve nenhum trecho', async () => {
     let hits = 0;
     const misses = [];
