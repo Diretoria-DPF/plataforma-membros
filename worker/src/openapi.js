@@ -14,6 +14,14 @@
  */
 const SESSION_ARG = 'sessionToken';
 const ALPHA_NOTE = 'ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule).';
+// Parâmetros que o registro (assinatura `[sessionToken, input]`) não mostra. Simulação clínica: ADR 0009.
+const SIM_NOTE = 'Simulação clínica (beta; flag clinical_sim_enabled, desligada; só maiores de 18 anos): `input.simulation = { seed: inteiro 0..2147483647, version: "sim-v1", difficulty?: "basico"|"intermediario"|"avancado", elapsedSeconds?: 0..21600, events?: ["exam:<id>"] }`. Sem a flag, ou sem o parâmetro, a action se comporta como sempre. O servidor sorteia os eixos do paciente a partir da semente; o cliente nunca os informa.';
+const ACTION_NOTES = {
+  apiLearnClinicalChat: SIM_NOTE + ' Com a flag ligada a resposta traz `simulation: { simId, guardrails }` (sem os eixos).',
+  apiLearnClinicalEvaluate: SIM_NOTE + ' A nota sai de 4 componentes limitados pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20); a resposta traz `simulation` com o debrief (eixos revelados) e `result.score`.',
+  apiLearnGetMyAiQuota: 'Com a flag clinical_sim_enabled ligada para a pessoa, a resposta traz `simulation: { available: true, version }`; sem isso o campo não existe.',
+  apiAdminLearnReviewCase: 'Caso com perfil de simulação só é aprovado com `input.checklist = { semDadoReal, gabaritoConferido, estagiosPlausiveis, linguagemRevisada }` (os 4 verdadeiros) e por um administrador diferente de quem criou o caso; o banco também impõe isso (sql/037).',
+};
 const ALPHA_ACTIONS = /^api(Agents|Memory|AdminMemoryStats|AdminPurgeMemberMemory|AdminAgentsStats)/;
 
 function groupOf(name) {
@@ -57,6 +65,7 @@ export function buildOpenApi(registry) {
         a.session ? 'Exige sessão (primeiro argumento: token).' : 'Não exige sessão.',
         a.admin ? 'Somente administrador.' : '',
         a.alpha ? ALPHA_NOTE : '',
+        ACTION_NOTES[a.name] || '',
       ].filter(Boolean).join(' '),
       properties: {
         action: { const: a.name },

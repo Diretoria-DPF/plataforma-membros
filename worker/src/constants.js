@@ -602,3 +602,44 @@ export const MEMORY = {
   SIGNAL_TOPICS_MAX: 5,        // temas por sinal
   KEY_MIN_LENGTH: 32,          // MEMORY_SUBJECT_KEY
 };
+
+// ---- Simulação clínica com pacientes variados (ADR 0009; flag clinical_sim_enabled, DESLIGADA) ----
+// A simulação só liga com revisor clínico definido (docs/agentic-layer.md, seção 4). Cota e limite de taxa são os do
+// chat e da avaliação clínicos: a simulação é parâmetro novo das actions existentes, não recurso novo.
+export const SIM_VERSION = 'sim-v1';
+
+export const SIM_LIMITS = {
+  FLAG: 'clinical_sim_enabled',
+  KNOWN_VERSIONS: [SIM_VERSION],
+  SEED_MAX: 2147483647,        // semente inteira de 0 a 2^31-1 (cabe em operações de 32 bits)
+  ELAPSED_SECONDS_MAX: 21600,  // 6 h de relógio do caso
+  EVENTS_MAX: 30,              // eventos de estado enviados pelo cliente (ex.: exame solicitado)
+  EVENT_RE: /^[a-z0-9][a-z0-9_:.-]{0,59}$/,
+  PROFILE_MAX_BYTES: 4096,     // sim_profile (também CHECK da migração 037)
+  STAGES_MAX: 6,
+  STAGE_NOTE_MAX: 300,
+  STAGE_ID_RE: /^[a-z][a-z0-9_]{1,30}$/,
+  STAGE_AFTER_MIN_MAX: 240,
+  COMPONENT_TEXT_MAX: 400,
+  SIM_ID_LENGTH: 12,           // sha256(caseId|seed|version).slice(0, 12)
+  CHECKLIST_KEYS: ['semDadoReal', 'gabaritoConferido', 'estagiosPlausiveis', 'linguagemRevisada'],
+};
+
+// Pesos da nota em modo simulação (total 100). O modelo só SUGERE cada componente; o servidor limita ao teto, soma e
+// aplica os tetos por desfecho (clinicalService.js, OUTCOME_SCORE_CAP).
+export const SIM_SCORE_WEIGHTS = Object.freeze({ hipotese: 30, conduta: 30, processo: 20, comunicacao: 20 });
+
+export const SIM_MESSAGES = {
+  unavailable: 'A simulação com pacientes variados não está disponível para o seu perfil.',
+  adultsOnly: 'A simulação está disponível apenas para maiores de 18 anos.',
+  invalidSeed: 'Semente da simulação inválida.',
+  invalidVersion: 'Versão da simulação desconhecida. Atualize a página e tente de novo.',
+  invalidInput: 'Parâmetros da simulação inválidos.',
+  caseNotReady: 'Este caso ainda não foi liberado para simulação.',
+  sourceNotAllowed: 'Casos gerados na sessão não podem ser usados na simulação.',
+  reviewIncomplete: 'A revisão clínica está incompleta: confirme os 4 itens da lista de conferência.',
+  reviewSameAuthor: 'O revisor clínico precisa ser outra pessoa, diferente de quem criou o caso.',
+  reviewNoProfile: 'Este caso não tem perfil de simulação; a lista de conferência não se aplica.',
+  // Fala do paciente quando o guardrail de saída troca a resposta: continua no personagem (nunca expõe regra nem aviso).
+  patientFallback: 'Hum... não sei explicar direito. Pode me perguntar de outro jeito?',
+};

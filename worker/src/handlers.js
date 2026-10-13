@@ -45,6 +45,7 @@ import * as AttendanceService from './services/attendanceService.js';
 // Fase 3 — IA (Groq) e clínica virtual
 import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
+import * as ClinicalSimService from './services/clinicalSimService.js';
 // Lia, guia da plataforma (orienta e navega; nunca altera dados)
 import * as AssistantService from './services/assistantService.js';
 // Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
@@ -276,7 +277,7 @@ export const API_REGISTRY = {
   apiLearnClinicalLibrary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.library(sql, env, identity, input || {})),
   apiLearnClinicalEpidemiology: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => ClinicalService.epidemiology(sql, env)),
   apiLearnLabPreceptor: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.askLabPreceptor(sql, env, identity, input || {})),
-  apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.getMyQuota(sql, env, identity)),
+  apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, async (identity) => ClinicalSimService.withSimulationHint(sql, identity, await AiService.getMyQuota(sql, env, identity))),
   apiAdminAiHealth: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminHealth(sql, env, identity)),
   apiAdminAiMetrics: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminMetrics(sql, env, identity, asInput(input))),
   apiAdminLearnListPendingCases: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.listPendingCases(sql, identity)),

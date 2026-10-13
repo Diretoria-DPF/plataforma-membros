@@ -720,7 +720,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. Caso com perfil de simulação só é aprovado com `input.checklist = { semDadoReal, gabaritoConferido, estagiosPlausiveis, linguagemRevisada }` (os 4 verdadeiros) e por um administrador diferente de quem criou o caso; o banco também impõe isso (sql/037)."
       properties:
         action:
           const: "apiAdminLearnReviewCase"
@@ -1566,7 +1566,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token)."
+      description: "Exige sessão (primeiro argumento: token). Simulação clínica (beta; flag clinical_sim_enabled, desligada; só maiores de 18 anos): `input.simulation = { seed: inteiro 0..2147483647, version: \"sim-v1\", difficulty?: \"basico\"|\"intermediario\"|\"avancado\", elapsedSeconds?: 0..21600, events?: [\"exam:<id>\"] }`. Sem a flag, ou sem o parâmetro, a action se comporta como sempre. O servidor sorteia os eixos do paciente a partir da semente; o cliente nunca os informa. Com a flag ligada a resposta traz `simulation: { simId, guardrails }` (sem os eixos)."
       properties:
         action:
           const: "apiLearnClinicalChat"
@@ -1597,7 +1597,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token)."
+      description: "Exige sessão (primeiro argumento: token). Simulação clínica (beta; flag clinical_sim_enabled, desligada; só maiores de 18 anos): `input.simulation = { seed: inteiro 0..2147483647, version: \"sim-v1\", difficulty?: \"basico\"|\"intermediario\"|\"avancado\", elapsedSeconds?: 0..21600, events?: [\"exam:<id>\"] }`. Sem a flag, ou sem o parâmetro, a action se comporta como sempre. O servidor sorteia os eixos do paciente a partir da semente; o cliente nunca os informa. A nota sai de 4 componentes limitados pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20); a resposta traz `simulation` com o debrief (eixos revelados) e `result.score`."
       properties:
         action:
           const: "apiLearnClinicalEvaluate"
@@ -1645,7 +1645,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token)."
+      description: "Exige sessão (primeiro argumento: token). Com a flag clinical_sim_enabled ligada para a pessoa, a resposta traz `simulation: { available: true, version }`; sem isso o campo não existe."
       properties:
         action:
           const: "apiLearnGetMyAiQuota"
