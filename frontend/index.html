@@ -75,6 +75,7 @@
   <link rel="stylesheet" href="app-menu.css">
   <link rel="stylesheet" href="library.css">
   <link rel="stylesheet" href="agents-tutor.css">
+  <link rel="stylesheet" href="memory.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
   <script src="ux-v2.js"></script>
 </head>
@@ -595,7 +596,7 @@
 
         <section id="panel-profile" class="hidden">
           <h1 class="sr-only">Perfil</h1>
-          <div class="grid-2">
+          <div class="grid-2" id="profile-grid">
             <div class="card">
               <h2>Meu perfil</h2>
 
@@ -1093,6 +1094,9 @@
   <script src="learning.js" defer></script>
   <!-- Tutor clínico na tela Aprender (ADR 0007, etapa 5): usa assistant-sources.js e window.App só dentro de funções. -->
   <script src="agents-tutor.js" defer></script>
+  <!-- Memória de estudo no Perfil (ADR 0007, etapa 7): só usa window.App dentro de funções; o Tutor chama LaiftMemory.reveal. -->
+  <script src="memory-core.js" defer></script>
+  <script src="memory.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>
   <!-- Moderação da Lia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->

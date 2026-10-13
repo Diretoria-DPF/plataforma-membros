@@ -43,6 +43,8 @@
     sourcesTitle: 'Fontes',
     sourcesLabel: 'Fontes desta resposta',
     memory: 'Usou sua memória de estudo',
+    memoryManage: 'Gerenciar memória',
+    memoryManageLabel: 'Gerenciar memória de estudo no Perfil',
     degraded: 'Resposta aproximada: a IA está indisponível no momento.',
     refused: 'Não posso ajudar com essa pergunta. O Tutor responde dúvidas de estudo de farmacologia e toxicologia.',
     empty: 'Escreva sua dúvida antes de enviar.',
@@ -152,8 +154,13 @@
     if (!text) return { kind: 'error', message: TEXT.invalidReply };
     return {
       kind: 'answer', text: text, sources: citedSources(res.sources),
-      memoryUsed: isObject(res.memory) && res.memory.used === true, degraded: res.degraded === true,
+      memoryUsed: isObject(res.memory) && res.memory.used === true, memoryCount: memoryCountOf(res.memory), degraded: res.degraded === true,
     };
+  }
+
+  /** Quantos itens da memória a resposta usou (inteiro positivo), ou 0 quando o servidor não informa. */
+  function memoryCountOf(memory) {
+    return isObject(memory) && Number.isInteger(memory.count) && memory.count > 0 && memory.count <= 99 ? memory.count : 0;
   }
 
   /**
@@ -212,6 +219,26 @@
     return msg;
   }
 
+  /** Leva ao Perfil, onde fica o cartão "Memória de estudo" (navegação de painéis do shell; o foco vai ao cartão). */
+  function openMemory() {
+    var shell = app();
+    if (shell && typeof shell.showPanel === 'function') shell.showPanel('panel-profile');
+    if (root.LaiftMemory && typeof root.LaiftMemory.reveal === 'function') root.LaiftMemory.reveal();
+  }
+
+  /** Selo "Usou sua memória de estudo" (com a contagem, se vier) e o atalho "Gerenciar memória". */
+  function renderMemoryRow(doc, count) {
+    var row = el(doc, 'div', 'agents-tutor-memory-row');
+    var label = count ? TEXT.memory + ' (' + count + (count === 1 ? ' item)' : ' itens)') : TEXT.memory;
+    row.appendChild(el(doc, 'span', 'badge agents-tutor-memory', label));
+    var manage = el(doc, 'button', 'secondary agents-tutor-memory-link', TEXT.memoryManage);
+    manage.type = 'button';
+    manage.setAttribute('aria-label', TEXT.memoryManageLabel);
+    manage.addEventListener('click', openMemory);
+    row.appendChild(manage);
+    return row;
+  }
+
   /** Bolha do Tutor para um desfecho 'answer' ou 'refused' (classify). A regra de recusa só vai para data-rule. */
   function renderTutor(doc, outcome) {
     var refused = outcome.kind === 'refused';
@@ -221,7 +248,7 @@
     msg.appendChild(el(doc, 'p', 'agents-tutor-who', TEXT.tutor));
     msg.appendChild(el(doc, 'p', 'agents-tutor-text', outcome.text));
     if (outcome.degraded) msg.appendChild(el(doc, 'p', 'agents-tutor-note', TEXT.degraded));
-    if (outcome.memoryUsed) msg.appendChild(el(doc, 'span', 'badge agents-tutor-memory', TEXT.memory));
+    if (outcome.memoryUsed) msg.appendChild(renderMemoryRow(doc, outcome.memoryCount));
     if (outcome.sources && outcome.sources.length) msg.appendChild(renderSources(doc, outcome.sources));
     return msg;
   }

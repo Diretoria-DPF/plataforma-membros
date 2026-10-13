@@ -1,0 +1,54 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Memória de estudo no Perfil (memory.js). Só tokens do projeto (cor, raio), claro e escuro; alvos de toque >= 44 px;
+   sem rolagem horizontal. O cartão ocupa as duas colunas do grid do Perfil. A barra inferior (#app-nav) é fixa: o cartão
+   fica dentro de .app-main, que já reserva o espaço dela, e scroll-margin-bottom impede que o foco pare atrás dela. */
+.memory-card {
+  grid-column: 1 / -1;
+  display: grid; gap: 12px; align-content: start; min-width: 0;
+  scroll-margin-bottom: calc(var(--app-nav-h, 56px) + 24px + env(safe-area-inset-bottom, 0px));
+}
+.memory-title { margin: 0; }
+.memory-title:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent); outline-offset: 4px; }
+.memory-body { display: grid; gap: 14px; min-width: 0; }
+.memory-lead { margin: 0; font-size: 15px; line-height: 1.5; }
+.memory-footnote { margin: 0; font-size: 13px; line-height: 1.45; }
+.memory-card .status-msg { margin-top: 0; }
+
+/* Texto do consentimento */
+.memory-terms {
+  display: grid; gap: 4px; margin: 0; padding: 12px 14px;
+  border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: var(--radius-md);
+  background: var(--surface-alt); color: var(--text);
+}
+.memory-term { margin: 8px 0 0; font-size: 14px; font-weight: 700; }
+.memory-term:first-child { margin-top: 0; }
+.memory-term-text { margin: 0; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+
+/* Itens guardados */
+.memory-subtitle { margin: 0 0 8px; font-size: 16px; }
+.memory-subtitle:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent); outline-offset: 4px; }
+.memory-empty { margin: 0; font-size: 14px; line-height: 1.5; }
+.memory-items { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.memory-item {
+  display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; min-width: 0;
+  padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-alt);
+}
+.memory-item-main { display: grid; gap: 2px; min-width: 0; flex: 1 1 200px; overflow-wrap: anywhere; }
+.memory-item-title { color: var(--text); }
+.memory-item-detail { font-size: 14px; color: var(--text); }
+.memory-item-origin { font-size: 13px; }
+.memory-item-delete { width: auto; min-width: 44px; }
+
+/* Preferências (listas fechadas) */
+.memory-form { margin-top: 0; max-width: 420px; }
+.memory-field { max-width: 420px; }
+.memory-select { font-size: 16px; } /* 16 px: o iOS não dá zoom ao focar */
+.memory-save { width: auto; justify-self: start; }
+
+/* Ações */
+.memory-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.memory-actions button { width: auto; min-width: 44px; }

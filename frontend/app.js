@@ -142,6 +142,7 @@
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
       if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
       resetLibraryModules();
+      resetAgentCards();
       resetAdminDashboardChart();
       if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
       document.getElementById('app-root').classList.add('hidden');
@@ -886,6 +887,7 @@
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
     if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
     resetLibraryModules();
+    resetAgentCards();
     resetAdminDashboardChart();
     if (window.LaiftHome && window.LaiftHome.reset) window.LaiftHome.reset(); // solta gráficos e observers do Início
     clearSessionCache();
@@ -2051,6 +2053,12 @@
     if (window.LaiftLibraryDetail) window.LaiftLibraryDetail.reset();
     if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.reset();
     if (window.LaiftAdminLibraryExtras) window.LaiftAdminLibraryExtras.reset();
+  }
+
+  /** Logout e sessão expirada: o cartão de memória e a conversa do Tutor da conta anterior somem da tela. */
+  function resetAgentCards() {
+    if (window.LaiftMemory && window.LaiftMemory.reset) window.LaiftMemory.reset();
+    if (window.LaiftAgentsTutor && window.LaiftAgentsTutor.syncSession) window.LaiftAgentsTutor.syncSession();
   }
 
   /** Logout e sessão expirada: solta o gráfico (e o observer de largura) para a próxima conta começar limpa. */
