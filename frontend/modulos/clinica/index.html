@@ -23,6 +23,18 @@
       border: 1px solid #fed7aa; color: #7c2d12; font-size: 0.85rem;
     }
     #clinicDashboardView .btn, #clinicWorkspaceView .btn, .modal-footer .btn { min-height: 44px; }
+    /* Modo simulação (beta): só aparece se o servidor avisar que está disponível (clinic-sim.js). */
+    .sim-mode-box { margin: 8px 0 0; }
+    .sim-mode-label { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 600; cursor: pointer; }
+    .sim-mode-hint { margin: 0; font-size: 0.78rem; color: var(--gray, #64748b); }
+    .sim-banner {
+      margin: 0 0 10px; padding: 8px 12px; border-radius: 8px; background: #eff6ff;
+      border: 1px solid #93c5fd; color: #1e3a8a; font-weight: 600; font-size: 0.9rem; text-align: center;
+    }
+    .sim-debrief { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; }
+    .sim-debrief h4 { margin: 0 0 6px; }
+    .sim-debrief-list { margin: 0 0 8px; padding-left: 18px; }
+    .sim-mode-box.hidden, .sim-banner.hidden, .sim-debrief.hidden { display: none; }
   </style>
 </head>
 <body class="theme-clinic">
@@ -44,6 +56,8 @@
             <p class="subtitle clinic-hub-subtitle">Assuma um leito do plantão, explore a biblioteca de casos curados ou sintetize novos desafios com IA.</p>
             <!-- Cota diária de IA da pessoa (apiLearnGetMyAiQuota), preenchida por clinic-engine.js -->
             <p id="aiQuotaInfo" class="clinic-ai-quota" aria-live="polite"></p>
+            <!-- Modo simulação (beta): preenchido por clinic-sim.js só quando o servidor indica que está disponível -->
+            <div id="simModeBox" class="sim-mode-box hidden"></div>
           </div>
           <div class="clinic-hub-actions">
             <button id="btnGenerateAiCase" class="btn btn-primary" type="button">⚡ Gerar Caso com IA</button>
@@ -92,6 +106,8 @@
 
       <!-- Sub-tela B: Leito Ativo de Consulta -->
       <div id="clinicWorkspaceView" class="clinic-workspace hidden">
+        <!-- Faixa fixa do modo simulação (texto definido em clinic-sim.js) -->
+        <p id="simBanner" class="sim-banner hidden" role="note"></p>
         <div class="patient-monitor">
           <div class="patient-id-badge">
             <button id="btnReturnToBeds" class="btn btn-secondary btn-sm" type="button" title="Voltar ao mapa de leitos">← Leitos</button>
@@ -283,6 +299,8 @@
       <div class="evaluation-body">
         <h4>Parecer Técnico do Preceptor:</h4>
         <div id="preceptorFeedbackText" class="feedback-quote">...</div>
+        <!-- Debrief do modo simulação: os eixos do paciente só são revelados aqui -->
+        <div id="simDebrief" class="sim-debrief hidden" aria-live="polite"></div>
       </div>
       <div class="modal-footer">
         <button id="btnClosePreceptor" class="btn btn-primary" type="button">Concluir e Voltar aos Leitos</button>
@@ -293,6 +311,7 @@
   <script src="patients.js"></script>
   <!-- A IA e o acervo vêm da Worker pela ponte window.LaiftApi
        (laift-identity.js). -->
+  <script src="clinic-sim.js"></script>
   <script src="clinic-engine.js"></script>
   <script src="clinica-page.js"></script>
 </body>

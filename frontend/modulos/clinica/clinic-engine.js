@@ -128,6 +128,11 @@ const ClinicEngine = (() => {
     return c && (c.caseSource === 'acervo' || c.caseSource === 'ia') ? c.caseSource : 'builtin';
   }
 
+  // Modo simulação (clinic-sim.js, ADR 0009): `{ simulation }` só com o modo ligado; senão {} e nada muda no payload.
+  function simExtra() {
+    return window.ClinicSim ? window.ClinicSim.extraFor(elapsedSeconds) : {};
+  }
+
   function initDomReferences() {
     dom.patientName = document.getElementById('clinicPatientName');
     dom.patientMeta = document.getElementById('clinicPatientMeta');
@@ -232,6 +237,8 @@ const ClinicEngine = (() => {
       lastQuota = null;
       renderQuota(null);
     }
+    // O servidor avisa aqui se a simulação está disponível para esta pessoa (sem action nova).
+    if (window.ClinicSim) window.ClinicSim.setAvailability(res && res.success ? res.simulation : null);
     setGenerateButtonIdle();
     return lastQuota;
   }
@@ -577,6 +584,7 @@ const ClinicEngine = (() => {
     caseOutcome = 'EM_ANDAMENTO';
     isCaseActive = true;
     activeSemiologyAxis = 'cronologia';
+    if (window.ClinicSim) window.ClinicSim.onCaseStart(caseSourceOf(selected), selected);
 
     clearInterval(clockInterval);
     renderPatientProfile();
@@ -914,6 +922,7 @@ const ClinicEngine = (() => {
       history: chatTurns.slice(-HISTORY_TURNS_SENT),
       patientContext: buildPatientContext(),
     };
+    Object.assign(payload, simExtra());
 
     const response = await callLaift('apiLearnClinicalChat', payload);
 
@@ -1025,6 +1034,7 @@ const ClinicEngine = (() => {
     if (!exam || requestedExams.includes(examId)) return;
 
     requestedExams.push(examId);
+    if (window.ClinicSim) window.ClinicSim.noteExam(examId);
 
     const btn = dom.availableExamsList
       ? Array.from(dom.availableExamsList.querySelectorAll('button')).find((b) => b.dataset.examId === String(examId))
@@ -1118,8 +1128,14 @@ const ClinicEngine = (() => {
     };
     // Casos do acervo: o gabarito é SÓ do servidor (o cliente nem o recebe).
     if (source !== 'acervo') input.answerKey = answerKeyForServer();
+    Object.assign(input, simExtra());
 
     const response = await callLaift('apiLearnClinicalEvaluate', input);
+    if (window.ClinicSim) {
+      // O debrief revela o perfil sorteado só agora; a semente deixa de valer ao fim do caso.
+      if (response.success && response.simulation) window.ClinicSim.showDebrief(response.simulation);
+      window.ClinicSim.endCase();
+    }
 
     if (dom.submitResolutionBtn) dom.submitResolutionBtn.textContent = '⚖️ Submeter ao Preceptor Avaliador';
 
