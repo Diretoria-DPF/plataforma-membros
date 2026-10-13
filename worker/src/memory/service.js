@@ -27,6 +27,7 @@ import { createMemoryDb } from '../db.js';
 import * as Store from './store.js';
 import { memoryKeyConfigured, subjectIdFor } from './subject.js';
 import { ineligibleReason, consentState, toIso } from './policy.js';
+import { readMinorsEnabled } from '../agents/eligibility.js';
 import { validateMemberItem, MemoryInputError, TOPICS, vocabularyView } from './vocabulary.js';
 import { eraseSubject, settlePurge, drainSoon, errorCode } from './cleanup.js';
 import { cacheInvalidate } from './tutorCache.js';
@@ -63,7 +64,10 @@ async function flagOn(sql, identity, key) {
 /** null quando a memória está liberada para a pessoa; senão 'flag' | 'role' | 'age' (flag, papel e maioridade). */
 export async function featureReason(sql, identity) {
   if (!(await flagOn(sql, identity, C.MEMORY.FLAG))) return 'flag';
-  return ineligibleReason(identity, { minorsEnabled: await flagOn(sql, identity, FLAG_MINORS) });
+  // minors_enabled falha FECHADO (erro de leitura = "menores habilitados" = exige maioridade confirmada); a flag da
+  // memória acima falha fechada no outro sentido (sem saber, desligada).
+  const minorsEnabled = await readMinorsEnabled(() => isEnabled(sql, FLAG_MINORS, identity));
+  return ineligibleReason(identity, { minorsEnabled });
 }
 
 /** Flag, papel e maioridade: lança MEMORY_DISABLED. */

@@ -376,3 +376,22 @@ describe('L2 — MEMORY_UNAVAILABLE não revela o motivo interno', () => {
     await expect(grant()).rejects.toMatchObject({ code: 'MEMORY_UNAVAILABLE', payload: { reason: 'pending_purge' } });
   });
 });
+
+describe('M4 — minors_enabled na memória segue o mesmo caminho do agente (falha fechada)', () => {
+  test('com menores habilitados e sem maioridade confirmada, a memória fecha por idade', async () => {
+    await core.query("INSERT INTO feature_flags (key, enabled, description) VALUES ('minors_enabled', TRUE, 'teste') ON CONFLICT (key) DO UPDATE SET enabled = TRUE");
+    __resetFlagCacheForTests();
+    try {
+      expect(await MemoryService.featureReason(sql, MEMBER)).toBe('age');
+      expect(await MemoryService.featureReason(sql, Object.assign({}, MEMBER, { adultConfirmed: true }))).toBeNull();
+    } finally {
+      await core.query("DELETE FROM feature_flags WHERE key = 'minors_enabled'");
+      __resetFlagCacheForTests();
+    }
+  });
+
+  test('sem a flag minors_enabled, conta existente segue a premissa de maioridade', async () => {
+    __resetFlagCacheForTests();
+    expect(await MemoryService.featureReason(sql, MEMBER)).toBeNull();
+  });
+});
