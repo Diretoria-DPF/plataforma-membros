@@ -778,8 +778,18 @@
     }
   }
 
+  // Lia ("Ver na Biblioteca"): deixa a busca pronta ANTES de App.showPanel('panel-library'), que sempre recarrega o
+  // painel a partir deste estado (sem pedido duplicado). Volta ao catálogo e limpa os filtros, para o tema aparecer.
+  function searchFor(value) {
+    var q = typeof value === 'string' ? cleanQuery(value) : '';
+    if (q.length < SEARCH_MIN_CHARS) return;
+    clearTimer();
+    setState({ tab: 'catalogo', collection: null, query: Object.assign({}, EMPTY_QUERY, { q: q }) });
+  }
+
   var api = {
     loadPanel: loadPanel,
+    searchFor: searchFor,
     reset: reset,
     open: openArticle,
     reload: reloadResults,

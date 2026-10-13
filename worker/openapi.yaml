@@ -89,6 +89,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAssistantRedeem"
                 - "$ref": "#/components/schemas/apiAssistantSources"
                 - "$ref": "#/components/schemas/apiBlockProfile"
+                - "$ref": "#/components/schemas/apiCancelEventRegistration"
                 - "$ref": "#/components/schemas/apiCastVote"
                 - "$ref": "#/components/schemas/apiClearConversation"
                 - "$ref": "#/components/schemas/apiConfirmEmail"
@@ -1135,6 +1136,22 @@ components:
           prefixItems:
             - description: "sessionToken"
             - description: "targetProfileId"
+          minItems: 0
+          maxItems: 2
+    apiCancelEventRegistration:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiCancelEventRegistration"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "eventId"
           minItems: 0
           maxItems: 2
     apiCastVote:

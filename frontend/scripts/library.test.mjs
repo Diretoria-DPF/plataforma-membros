@@ -480,3 +480,30 @@ test('higiene: sem innerHTML, estilo inline nem handler inline; só actions apiL
   assert.ok(names.length >= 6);
   assert.ok(names.every((n) => n.startsWith('apiLearnLibrary')));
 });
+
+// ---------- Lia: "Ver na Biblioteca" com a busca pronta ----------
+
+test('searchFor deixa a busca pronta: o painel abre já filtrado, com UM pedido e filtros antigos limpos', async () => {
+  await openCatalog([item('a', 'Artigo A')]);
+  Library.filterChange('topic', 'farmacologia');
+  await flush();
+  calls.length = 0;
+  pending.length = 0;
+  Library.searchFor('  paracetamol   hepático ');
+  assert.equal(calls.length, 0, 'searchFor só prepara o estado, sem pedido');
+  Library.loadPanel(); // é o que App.showPanel('panel-library') faz
+  await flush();
+  assert.equal(searchCalls().length, 1);
+  assert.deepEqual(searchCalls()[0].input, { page: 1, pageSize: 20, q: 'paracetamol hepático' });
+  const input = findAll(root(), (n) => n.tag === 'input' && n.attrs.id === 'library-q')[0];
+  assert.equal(input.attrs.value, 'paracetamol hepático');
+});
+
+test('searchFor ignora busca curta ou que não é texto, e volta ao catálogo', async () => {
+  Library.searchFor('a');
+  Library.searchFor(null);
+  Library.searchFor({ toString: () => 'dose' });
+  Library.loadPanel();
+  await flush();
+  assert.deepEqual(searchCalls()[0].input, { page: 1, pageSize: 20 });
+});

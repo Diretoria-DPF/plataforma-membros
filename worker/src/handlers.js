@@ -168,6 +168,7 @@ export const API_REGISTRY = {
     return EventService.listEvents(sql, env, identity);
   }),
   apiRegisterForEvent: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.registerForEvent(sql, env, identity, eventId, cid)),
+  apiCancelEventRegistration: (sql, env, [sessionToken, eventId]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.cancelEventRegistration(sql, env, identity, eventId, cid)),
   apiListRecentCompletedEvents: (sql) => run(sql, () => EventService.listRecentCompletedEvents(sql)),
 
   // ---- Propostas e votação ----

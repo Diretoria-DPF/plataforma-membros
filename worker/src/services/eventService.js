@@ -201,6 +201,50 @@ export async function registerForEvent(sql, env, identity, eventId, correlationI
   return { success: true, message: 'Inscrição confirmada.' };
 }
 
+const MSG_NOT_REGISTERED = 'Você não está inscrito neste evento.';
+const MSG_CHECKED_IN = 'Sua presença já foi registrada; não é possível cancelar.';
+const MSG_STARTED = 'O evento já começou ou terminou.';
+const MSG_CANCEL_RACE = 'Não foi possível cancelar: a inscrição mudou. Atualize a lista e tente de novo.';
+const EVENT_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** A recusa de um cancelamento a partir da inscrição lida (ou null se pode cancelar). Só 'published' e antes da hora. */
+function cancelRefusal(row) {
+  if (!row) return MSG_NOT_REGISTERED;
+  if (row.checked_in_at) return MSG_CHECKED_IN;
+  if (row.status !== C.EVENT_STATUS.PUBLISHED || row.started === true) return MSG_STARTED;
+  return null;
+}
+
+/**
+ * Cancela a inscrição da PRÓPRIA pessoa num evento que ainda não começou e em que a presença ainda não foi
+ * registrada. O DELETE é atômico e protegido (evento + pessoa + checked_in_at IS NULL): mesmo que a presença seja
+ * registrada ou a inscrição mude entre a leitura e o DELETE, nada indevido é apagado (0 linhas = conflito).
+ * Libera a vaga (as listagens contam as inscrições), invalida o cache de eventos e audita; não manda e-mail.
+ */
+export async function cancelEventRegistration(sql, env, identity, eventId, correlationId) {
+  const id = typeof eventId === 'string' ? S.normalizeText(eventId) : '';
+  if (!EVENT_ID_RE.test(id)) throw E.ValidationError('Evento inválido.');
+  const limit = C.RATE_LIMITS.EVENT_CANCEL;
+  await S.enforceRateLimit(sql, 'EVENT_CANCEL', identity.profileId, limit.MAX_ATTEMPTS, limit.WINDOW_SECONDS);
+
+  const rows = await sql`
+    SELECT r.checked_in_at AS checked_in_at, e.status::text AS status, (e.event_date <= now()) AS started
+    FROM event_registrations r JOIN events e ON e.id = r.event_id
+    WHERE r.event_id = ${id}::uuid AND r.profile_id = ${identity.profileId}::uuid`;
+  const refusal = cancelRefusal(rows[0]);
+  if (refusal) throw E.ConflictError(refusal);
+
+  const deleted = await sql`
+    DELETE FROM event_registrations
+    WHERE event_id = ${id}::uuid AND profile_id = ${identity.profileId}::uuid AND checked_in_at IS NULL
+    RETURNING id`;
+  if (!deleted.length) throw E.ConflictError(MSG_CANCEL_RACE);
+
+  await invalidateEventsCache(env);
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'CANCEL_EVENT_REGISTRATION', 'event', id, 'success', null);
+  return { success: true, message: 'Inscrição cancelada.' };
+}
+
 function assertAdmin(identity) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
 }

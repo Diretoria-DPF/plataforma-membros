@@ -39,7 +39,7 @@ export const INTENTS = [
     defines: true, // lista ou define de fato: responde também a pergunta de definição (assistant/questionKind.js)
     title: 'Eventos da liga',
     keywords: ['evento', 'eventos', 'inscrever', 'inscricao', 'inscricoes', 'inscrito', 'congresso', 'palestra', 'workshop', 'agenda de eventos', 'vagas', 'proximo encontro', 'me inscrevo', 'me inscrevi'],
-    reply: 'Os eventos da liga ficam na aba Eventos: lá você vê data, local e vagas e faz a sua inscrição com Inscrever-se. O Histórico mostra os eventos já concluídos. Posso te levar até lá.',
+    reply: 'Os eventos da liga ficam na aba Eventos: lá você vê data, local e vagas e faz a sua inscrição com Inscrever-se. Se mudar de ideia, toque em Cancelar inscrição e confirme: a vaga volta para outra pessoa. Só dá para cancelar antes de o evento começar e antes de a presença ser registrada. O Histórico mostra os eventos já concluídos. Posso te levar até lá.',
     actions: [nav('panel-events'), { type: 'open_credential', target: 'credential' }],
     suggestions: ['Meu crachá', 'Módulos de estudo'],
   },
@@ -160,7 +160,7 @@ export const INTENTS = [
   {
     id: 'cadastro',
     title: 'Como criar a conta',
-    keywords: ['cadastro', 'cadastrar', 'me cadastro', 'criar conta', 'criar uma conta', 'crio uma conta', 'crio conta', 'criar minha conta', 'nova conta', 'registrar', 'registro', 'entrar na liga', 'participar da liga', 'virar membro', 'ser membro'],
+    keywords: ['cadastro', 'cadastrar', 'me cadastro', 'criar conta', 'criar uma conta', 'crio uma conta', 'crio conta', 'criar minha conta', 'crio minha conta', 'nova conta', 'registrar', 'registro', 'entrar na liga', 'participar da liga', 'virar membro', 'ser membro'],
     reply: 'Para criar a conta:\n1. Na tela inicial, toque em Criar conta.\n2. Preencha nome completo (ele não muda depois), nome de usuário, e-mail, telefone e uma senha de pelo menos 8 caracteres.\n3. Marque que leu os Termos de Uso e a Política de Privacidade e toque em Criar conta.\n4. Abra o e-mail de confirmação e depois faça o login.\nA conta começa como visitante; quem muda o papel para membro é a administração.',
     actions: [],
     suggestions: ['O que posso fazer aqui?'],
@@ -436,9 +436,9 @@ export const INTENTS = [
     title: 'O que a Lia faz',
     weight: 0.7,
     keywords: ['ajuda', 'ajudar', 'socorro', 'duvida', 'como usar', 'como usa', 'nao sei', 'o que voce faz', 'o que voce pode', 'como funciona a plataforma', 'o que posso fazer', 'o que da para fazer'],
-    reply: 'Eu te ajudo a encontrar eventos, abrir os módulos de estudo (laboratório, atlas 3D, quiz, casos clínicos), mostrar seu crachá e entender perfil e segurança. Pergunte do seu jeito, por exemplo: "como funciona o laboratório?".',
+    reply: 'O que dá para fazer depende de ter conta. Sem conta: ler o blog, conhecer a Liga e o processo seletivo, ver o catálogo público da Biblioteca, conversar comigo e criar a sua conta. Com conta de membro: ver eventos, se inscrever e cancelar a inscrição, estudar nos módulos (laboratório, atlas 3D, quiz, casos clínicos), mostrar o crachá, usar a Biblioteca completa, trocar mensagens, votar em propostas e acompanhar tarefas. Pergunte do seu jeito, por exemplo: "como funciona o laboratório?".',
     actions: [nav('panel-learn')],
-    suggestions: ['Eventos abertos', 'Módulos de estudo', 'Meu crachá'],
+    suggestions: ['Quais eventos estão abertos?', 'Módulos de estudo', 'Meu crachá'],
   },
   {
     id: 'saudacao',
@@ -452,6 +452,22 @@ export const INTENTS = [
 ];
 
 export const DEFAULT_SUGGESTIONS = ['Eventos abertos', 'Módulos de estudo', 'Meu crachá', 'Como funciona o laboratório?'];
+
+// Quem não tem login (visitante na tela de entrada) recebe dúvidas gerais sobre a plataforma, não "Meu crachá".
+// A MESMA lista abre a conversa no front (frontend/assistant-suggestions.js; um teste confere que são iguais).
+export const VISITOR_SUGGESTIONS = ['O que é a LAIFT?', 'O que é o blog da LAIFT?', 'O que posso fazer na plataforma?', 'Como crio minha conta?'];
+const MEMBER_ONLY_SUGGESTIONS = new Set(['Meu crachá', 'Equipe']);
+
+/**
+ * Sugestões de uma resposta para quem NÃO tem login: a lista padrão vira a do visitante; a lista própria de uma
+ * intenção fica, sem as que só fazem sentido para membro (crachá, equipe). Sem sobrar nenhuma, a do visitante.
+ */
+export function suggestionsForVisitor(list) {
+  const own = Array.isArray(list) ? list : [];
+  if (own.length && own.every((s) => DEFAULT_SUGGESTIONS.includes(s))) return VISITOR_SUGGESTIONS.slice(0, 3);
+  const kept = own.filter((s) => !MEMBER_ONLY_SUGGESTIONS.has(s));
+  return kept.length ? kept : VISITOR_SUGGESTIONS.slice(0, 3);
+}
 
 // Pergunta curta (até este tamanho, já normalizada) sem palavra-chave só vale como seguimento da anterior
 // se COMEÇA como uma continuação ("e a data?", "onde fica?"); "obrigado", "tchau" ou "quem é você?" não.

@@ -12,6 +12,10 @@
  *    instância e cada chamada bem-sucedida soma localmente (noteTokens), para
  *    o contador não ficar defasado entre as consultas. Se a consulta falhar,
  *    vale o último valor conhecido (a IA não cai por causa do contador).
+ *  - smartTierRoom: há folga para a Lia do membro usar o modelo inteligente? (uso do dia abaixo de
+ *    AI_MODEL_TIER.SMART_BELOW_BUDGET_PCT do orçamento E uso do próprio modelo abaixo de
+ *    AI_MODEL_TIER.SMART_MODEL_DAILY_TOKENS_MAX). Mesma memória de 30 s do orçamento; qualquer falha ao
+ *    medir = sem folga (o modelo rápido atende).
  *  - recordCall: uma linha por (dia, recurso, modelo, provedor) em
  *    ai_metrics_daily (sql/018), com UPSERT. Acerto de cache é registrado aqui
  *    porque não gera linha em ai_usage_log.
@@ -20,10 +24,12 @@
  */
 import * as C from '../constants.js';
 
-let budgetCache = { at: 0, used: 0 };
+let budgetCache = { at: 0, used: 0, failed: false };
+let modelCache = new Map(); // modelo -> { at, used }
 
 export function __resetMetricsForTests() {
-  budgetCache = { at: 0, used: 0 };
+  budgetCache = { at: 0, used: 0, failed: false };
+  modelCache = new Map();
 }
 
 export function budgetLimit(env) {
@@ -39,24 +45,60 @@ async function tokensUsed24h(sql, now) {
       FROM ai_usage_log
       WHERE created_at > now() - interval '24 hours' AND provider = 'groq'
     `;
-    budgetCache = { at: now, used: Number(rows[0].tokens) || 0 };
+    budgetCache = { at: now, used: Number(rows[0].tokens) || 0, failed: false };
   } catch (err) {
-    // Sem consulta (ex.: coluna provider ainda não migrada): segue com o último valor.
-    budgetCache = { at: now, used: budgetCache.used };
+    // Sem consulta (ex.: coluna provider ainda não migrada): segue com o último valor (e marca a falha,
+    // para quem precisa de medida confiável, como a escolha do modelo, não confiar nesse valor).
+    budgetCache = { at: now, used: budgetCache.used, failed: true };
   }
   return budgetCache.used;
 }
 
-/** Soma tokens de uma chamada recém-feita ao contador local. */
-export function noteTokens(count) {
+/** Tokens do Groq que ESTE modelo gastou nas últimas 24 h. Lança se não conseguir medir (quem chama decide). */
+async function tokensUsed24hByModel(sql, model, now) {
+  const hit = modelCache.get(model);
+  if (hit && now - hit.at < C.AI_BUDGET_REFRESH_MS) return hit.used;
+  const rows = await sql`
+    SELECT coalesce(sum(coalesce(prompt_tokens, 0) + coalesce(completion_tokens, 0)), 0)::bigint AS tokens
+    FROM ai_usage_log
+    WHERE created_at > now() - interval '24 hours' AND provider = 'groq' AND model = ${model}
+  `;
+  const used = Number(rows[0].tokens) || 0;
+  modelCache.set(model, { at: now, used });
+  return used;
+}
+
+/** Soma tokens de uma chamada recém-feita ao contador local (e ao do modelo, quando informado). */
+export function noteTokens(count, model) {
   const n = Number(count);
-  if (Number.isFinite(n) && n > 0) budgetCache.used += Math.round(n);
+  if (!Number.isFinite(n) || n <= 0) return;
+  budgetCache.used += Math.round(n);
+  const entry = model ? modelCache.get(model) : null;
+  if (entry) entry.used += Math.round(n);
 }
 
 export async function budgetStatus(sql, env, now = Date.now()) {
   const used = await tokensUsed24h(sql, now);
   const budget = budgetLimit(env);
   return { used, budget, pct: Math.min(100, Math.round((used / budget) * 100)), exceeded: used >= budget };
+}
+
+/**
+ * Há folga para o modelo inteligente (Lia do membro; AI_MODEL_TIER)? As duas condições valem juntas:
+ * uso de tokens do dia abaixo de SMART_BELOW_BUDGET_PCT % do orçamento E uso do modelo abaixo de
+ * SMART_MODEL_DAILY_TOKENS_MAX. Nunca lança: sem modelo, sem medida confiável (falha na soma do dia ou do
+ * modelo) ou com o limiar em 0 (desliga o recurso) = false, e o modelo rápido atende.
+ */
+export async function smartTierRoom(sql, env, model, now = Date.now()) {
+  if (typeof model !== 'string' || !model) return false;
+  try {
+    const day = await budgetStatus(sql, env, now);
+    if (budgetCache.failed) return false;
+    if (day.used * 100 >= C.AI_MODEL_TIER.SMART_BELOW_BUDGET_PCT * day.budget) return false;
+    return (await tokensUsed24hByModel(sql, model, now)) < C.AI_MODEL_TIER.SMART_MODEL_DAILY_TOKENS_MAX;
+  } catch (err) {
+    return false;
+  }
 }
 
 const toCount = (v) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Math.round(Number(v)) : 0);

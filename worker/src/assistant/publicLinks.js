@@ -39,6 +39,7 @@ const BY_SECTION = new Map([
   ['faq|Como falo com a Liga?', '/liga.html'],
   ['faq|Onde leio os Termos e a Política de Privacidade?', '/termos.html'],
   ['guia-plataforma|Blog e site da Liga', '/blog.html'],
+  ['modulos|Biblioteca LAIFT: o que é', '/biblioteca'],
 ]);
 
 const LIBRARY_SOURCES = new Set(['kb', 'guia-plataforma']);

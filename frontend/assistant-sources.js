@@ -9,6 +9,9 @@
 //   - PUBLIC_PATHS: páginas públicas que uma fonte pode abrir (`url` opcional de `sources`). É IGUAL à lista de
 //     worker/src/assistant/publicLinks.js (o teste assistant.test.mjs confere).
 //   - CTA_PATHS: onde o convite para criar conta pode levar (o cadastro abre por hash na tela de entrada).
+//   - Artigos da Biblioteca citados pela Lia (`references`, flag lia_library_enabled): título, autores, periódico e ano
+//     por textContent; o link só existe se a url for https://doi.org/ ou https://pubmed.ncbi.nlm.nih.gov/ (a mesma
+//     regra do banco), e o href é montado com o host da LISTA FIXA daqui.
 // Expõe window.LaiftAssistantSources.
 (function (root) {
   'use strict';
@@ -17,6 +20,10 @@
   var CTA_PATHS = ['/#cadastro'];
   var MAX_SOURCES = 4;
   var CTA_TEXT_MAX = 200;
+  var MAX_REFERENCES = 3;
+  var QUERY_MAX = 120;
+  var REFERENCE_URL = /^https:\/\/(doi\.org|pubmed\.ncbi\.nlm\.nih\.gov)(\/[^\s<>"']{1,260})$/;
+  var REFERENCE_HOSTS = ['doi.org', 'pubmed.ncbi.nlm.nih.gov'];
 
   function clip(value, max) { return typeof value === 'string' ? value.slice(0, max) : ''; }
 
@@ -42,6 +49,23 @@
     if (!cta || typeof cta !== 'object' || typeof cta.text !== 'string' || CTA_PATHS.indexOf(cta.url) === -1) return null;
     var text = clip(cta.text, CTA_TEXT_MAX).trim();
     return text ? { text: text, url: cta.url } : null;
+  }
+
+  /** Busca da Biblioteca que o botão "Ver na Biblioteca" leva pronta: texto simples, sem controle nem marcação, até 120. */
+  function cleanQuery(value) {
+    if (typeof value !== 'string') return '';
+    return value.replace(/[\u0000-\u001f\u007f<>]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, QUERY_MAX).trim();
+  }
+
+  /** Referências: no máximo 3, só com título e url de host permitido; o resto é texto curto. */
+  function sanitizeReferences(list) {
+    if (!Array.isArray(list)) return [];
+    return list.filter(function (r) { return !!r && typeof r.title === 'string' && r.title.trim() && typeof r.url === 'string' && REFERENCE_URL.test(r.url); })
+      .slice(0, MAX_REFERENCES)
+      .map(function (r) {
+        var year = typeof r.year === 'number' && r.year >= 1800 && r.year <= 2100 ? r.year : null;
+        return { title: clip(r.title, 300).trim(), authors: clip(r.authors, 200).trim(), journal: clip(r.journal, 200).trim(), year: year, url: r.url };
+      });
   }
 
   function node(doc, tag, className, text) {
@@ -76,6 +100,29 @@
     return box;
   }
 
+  /** "Artigos na Biblioteca": lista de links (abrem em outra aba) com autores, periódico e ano em texto. */
+  function renderReferences(doc, refs) {
+    var box = node(doc, 'div', 'lia-sources lia-references');
+    box.appendChild(node(doc, 'p', 'lia-sources-title', 'Artigos na Biblioteca'));
+    var list = node(doc, 'ul', 'lia-sources-list');
+    list.setAttribute('aria-label', 'Artigos da Biblioteca sobre este tema');
+    refs.forEach(function (r) {
+      var match = REFERENCE_URL.exec(r.url);
+      if (!match) return;
+      var item = node(doc, 'li', '');
+      var link = node(doc, 'a', 'lia-source-link', r.title);
+      link.setAttribute('href', 'https://' + REFERENCE_HOSTS[REFERENCE_HOSTS.indexOf(match[1])] + match[2]);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+      item.appendChild(link);
+      var meta = [r.authors, r.journal, r.year ? String(r.year) : ''].filter(Boolean).join(' · ');
+      if (meta) item.appendChild(node(doc, 'span', 'lia-reference-meta', ' ' + meta));
+      list.appendChild(item);
+    });
+    box.appendChild(list);
+    return box;
+  }
+
   /** Convite da prévia de IA: uma linha de texto com link para o cadastro (caminho da allowlist). */
   function renderCta(doc, cta) {
     var line = node(doc, 'p', 'lia-cta');
@@ -88,6 +135,7 @@
   var api = {
     PUBLIC_PATHS: PUBLIC_PATHS, CTA_PATHS: CTA_PATHS, isPublicPath: isPublicPath,
     sanitizeSources: sanitizeSources, sanitizeCta: sanitizeCta, renderSources: renderSources, renderCta: renderCta,
+    cleanQuery: cleanQuery, sanitizeReferences: sanitizeReferences, renderReferences: renderReferences,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

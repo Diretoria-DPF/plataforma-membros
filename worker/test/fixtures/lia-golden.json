@@ -25,6 +25,7 @@
     "pergunta": "O que é a Biblioteca LAIFT?",
     "tipo": "definicao",
     "secoes": [
+      "modulos/biblioteca-laift-o-que-e",
       "guia-plataforma/biblioteca-buscar-e-abrir-artigos",
       "kb/biblioteca-como-buscar-artigos"
     ],
@@ -37,6 +38,7 @@
     "pergunta": "Qual a diferença entre farmacologia e toxicologia?",
     "tipo": "definicao",
     "secoes": [
+      "modulos/farmacologia-e-toxicologia-a-diferenca",
       "modulos/farmacologia-basica-temas-e-simulador",
       "modulos/toxicologia-temas-e-simulador"
     ],
@@ -49,6 +51,7 @@
     "pergunta": "O que é farmacocinética?",
     "tipo": "definicao",
     "secoes": [
+      "modulos/o-que-e-farmacocinetica",
       "modulos/anatomia-e-farmacocinetica-3d-atlas-e-pk",
       "modulos/farmacologia-basica-temas-e-simulador"
     ],
@@ -917,5 +920,151 @@
     "intencao_bloqueada": null,
     "deve_responder": false,
     "perfil": "ambos"
+  },
+  {
+    "pergunta": "O que posso fazer na plataforma?",
+    "tipo": "definicao",
+    "secoes": [
+      "guia/o-que-a-lia-faz"
+    ],
+    "intencao": "ajuda",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Como crio minha conta?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "cadastro",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "ambos"
+  },
+  {
+    "pergunta": "Meu crachá",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": "credencial",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como cancelo minha inscrição?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "eventos",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "O que posso estudar aqui?",
+    "tipo": "definicao",
+    "secoes": [],
+    "intencao": "aprender",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como busco artigos?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "biblioteca",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como sugiro um artigo?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "biblioteca_sugerir",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como salvo um artigo nos favoritos?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "biblioteca_salvar_citar",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "As mensagens são seguras?",
+    "tipo": "fora-de-escopo",
+    "secoes": [],
+    "intencao": "mensagens",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como troco minha foto de perfil?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "perfil",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como voto em uma proposta?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "propostas",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como funcionam as propostas?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "propostas",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como funcionam as tarefas?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "tarefas",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Onde vejo a equipe da liga?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "equipe",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como envio um pedido de amizade?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "equipe",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
+  },
+  {
+    "pergunta": "Como denuncio alguém?",
+    "tipo": "como-fazer",
+    "secoes": [],
+    "intencao": "equipe",
+    "intencao_bloqueada": null,
+    "deve_responder": true,
+    "perfil": "membro"
   }
 ]

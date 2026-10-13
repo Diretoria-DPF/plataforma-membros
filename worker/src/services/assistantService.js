@@ -32,8 +32,10 @@ import { asObject, withQuota, refundQuota, quotaLimit, getMyQuota } from './aiSe
 import { AiInvalidOutputError, AI_MESSAGES } from '../ai/errors.js';
 import { buildAssistantMessages } from '../ai/prompts.js';
 import { cleanText, cleanReply, sanitizeHistory } from '../ai/validators.js';
-import { matchIntent, normalize, DEFAULT_SUGGESTIONS } from '../assistant/kb.js';
-import { filterActions, LIBRARY_TARGET_KEYS } from '../assistant/targets.js';
+import { matchIntent, normalize, DEFAULT_SUGGESTIONS, suggestionsForVisitor } from '../assistant/kb.js';
+import { filterActions, libraryAction, LIBRARY_TARGET_KEYS, MAX_ACTIONS } from '../assistant/targets.js';
+import { libraryPlan } from '../assistant/libraryRefs.js';
+import * as LiaLibrary from './liaLibraryService.js';
 import * as Rag from './ragService.js';
 import * as ResearchLog from './researchLogService.js';
 import * as ResearchService from './researchService.js';
@@ -41,7 +43,7 @@ import { isCacheable, normalizeQuestion } from '../ai/semanticCache.js';
 import { moderationGate } from '../assistant/moderationGate.js';
 import { questionKind, allowIntent, CLINICAL_REPLY } from '../assistant/questionKind.js';
 import { withCitations } from '../assistant/citations.js';
-import { extractiveAnswer, NO_MATCH_REPLY, NO_MATCH_SUGGESTIONS } from '../assistant/extractive.js';
+import { extractiveAnswer, sourceEntry, NO_MATCH_REPLY, NO_MATCH_SUGGESTIONS } from '../assistant/extractive.js';
 import { publicPathFor } from '../assistant/publicLinks.js';
 import * as TreeSelect from './treeSelectService.js';
 import * as VisitorAi from './visitorAiService.js';
@@ -66,7 +68,6 @@ const KB_VERSION_LEN = 16;
 const RERANK_SUFFIX = ':r';
 const HIBRIDA_SUFFIX = ':h';
 const ANSWER_MAX = 4000; // limite de assistant_messages.answer (sql/021)
-const HISTORY_TURNS = 5;
 const EVENTS_SHOWN = 3;
 const EVENT_TITLE_MAX = 80;
 const EVENT_PLACE_MAX = 60;
@@ -190,10 +191,11 @@ async function askAiCore(sql, env, identity, message, history, context = null, r
       }
       if (refined) used = refined.chunks;
       const messages = buildAssistantMessages({ question: message, history, role, context: used });
+      // smartWhenRoom: a Lia do membro sobe para o modelo inteligente quando há folga de tokens (ai/orchestrator.js).
       const out = await Orchestrator.complete(
         sql, env, identity,
         { feature: C.AI_FEATURE.ASSISTANT, messages, profileId: identity.profileId },
-        { cacheQuestion: generic ? message : null }
+        { cacheQuestion: generic ? message : null, smartWhenRoom: true }
       );
       const reply = cleanReply(out.content, C.AI_LIMITS.REPLY_MAX);
       if (!reply) throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
@@ -321,11 +323,13 @@ function versionOf(index, rerank, hybrid = false) {
 }
 
 /** Resposta já registrada para esta pergunta e versão: sem IA, sem cota e sem busca. */
-async function fromResearchLog(sql, message, version) {
+async function fromResearchLog(sql, message, version, hybrid = false) {
   const hit = await ResearchLog.lookup(sql, { provider: KB_PROVIDER, question: message, kbVersion: version });
   if (!hit) return null;
   if (hit.outcome === 'empty') return staticKbFallback(MSG_KB_EMPTY);
-  return answer({ reply: hit.results.reply, sources: hit.results.sources, source: 'ai', cached: true });
+  // O registro guarda só origem e seção; na Lia híbrida a fonte volta com o link da página pública (allowlist), como na resposta nova.
+  const sources = hybrid ? hit.results.sources.map((s) => sourceEntry(s.source, s.section)) : hit.results.sources;
+  return answer({ reply: hit.results.reply, sources, source: 'ai', cached: true });
 }
 
 /** Grava o desfecho da pergunta: 'answered' (resposta e fontes) ou 'empty' (lacuna da base). Não derruba a resposta. */
@@ -344,7 +348,7 @@ async function answerFromKnowledge(sql, env, identity, message, history, correla
   const version = versionOf(index, flags.rerank, flags.hybrid);
   const logOn = !!flags.cache && version !== NO_INDEX && usesResearchLog(identity, message, history);
   if (logOn) {
-    const logged = await fromResearchLog(sql, message, version);
+    const logged = await fromResearchLog(sql, message, version, !!flags.hybrid);
     if (logged) return logged;
   }
   if (!(await hasAiQuota(sql, env, identity))) return asDegradedIfNotAi(await askAi(sql, env, identity, message, history));
@@ -486,10 +490,32 @@ function clinicalAnswer() {
 }
 
 /**
+ * Artigos da Biblioteca na resposta (flag lia_library_enabled; assistant/libraryRefs.js decide QUANDO, aqui só se
+ * aplica). `plan` nulo, flags desligadas ou nada publicado sobre o tema: a resposta sai exatamente como estava.
+ * Com artigos, `references` vai junto e o botão "Ver na Biblioteca" leva a busca já preenchida (só para quem tem
+ * login). Nunca entra no registro de respostas nem no cache (eles guardam só texto e fontes; isto é recalculado).
+ */
+async function withLibraryReferences(sql, env, identity, result, plan) {
+  if (!plan || !result || result.success !== true) return result;
+  const references = await LiaLibrary.referencesFor(sql, env, identity, plan.query);
+  if (!references.length) return result;
+  const action = identity ? libraryAction(identity.role, plan.query) : null;
+  const others = (result.actions || []).filter((a) => a.type + ':' + a.target !== 'open_library:search');
+  return Object.assign({}, result, { references, actions: (action ? [action].concat(others) : others).slice(0, MAX_ACTIONS) });
+}
+
+/**
  * apiAssistantChat — a identidade (quando há) vem da sessão; o cliente nunca
- * informa quem é. `identity` é null para quem não está logado.
+ * informa quem é. `identity` é null para quem não está logado e, então, as sugestões
+ * são as de quem ainda não tem conta (kb.js, suggestionsForVisitor).
  */
 export async function chat(sql, env, identity, rawInput, correlationId) {
+  const result = await chatCore(sql, env, identity, rawInput, correlationId);
+  const hasSuggestions = !!result && Array.isArray(result.suggestions);
+  return identity || !hasSuggestions ? result : Object.assign({}, result, { suggestions: suggestionsForVisitor(result.suggestions) });
+}
+
+async function chatCore(sql, env, identity, rawInput, correlationId) {
   if (!(await flagOn(sql, identity))) return { success: false, disabled: true, message: MSG_DISABLED };
 
   const input = asObject(rawInput);
@@ -503,10 +529,9 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
   const moderated = await moderationGate(sql, env, identity, message, correlationId);
   if (moderated) return moderated;
 
-  const role = identity ? identity.role : null;
   // Só perguntas anteriores DA PESSOA; respostas antigas não voltam do cliente. Turno com termo ofensivo
   // sai do histórico (não é punido de novo, mas também não chega à busca nem ao LLM).
-  const history = withoutOffensiveTurns(sanitizeHistory(input.history, ['user'], HISTORY_TURNS, C.AI_LIMITS.HISTORY_TURN_MAX));
+  const history = withoutOffensiveTurns(sanitizeHistory(input.history, ['user'], C.AI_LIMITS.HISTORY_MAX_TURNS, C.AI_LIMITS.HISTORY_TURN_MAX));
   if (looksLikeInjection(message) || history.some((turn) => looksLikeInjection(turn.text))) {
     await Logging.logAudit(sql, correlationId, identity ? identity.profileId : null, 'ASSISTANT_INJECTION_BLOCKED', 'assistant', null, 'failure', { length: message.length });
     return answer({ reply: MSG_REFUSAL, source: 'fallback' });
@@ -515,6 +540,13 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
   // Pesquisa externa (L07): a flag research_enabled e a identidade são checadas lá. Não passa pela IA nem grava a mensagem.
   if (input.research === true) return ResearchService.research(sql, env, identity, message, correlationId);
 
+  return routeQuestion(sql, env, identity, { input, message, history, correlationId });
+}
+
+/** Depois do portão, da moderação e do filtro de injeção: intenção por regra, conhecimento + IA e artigos da Biblioteca. */
+async function routeQuestion(sql, env, identity, ctx) {
+  const { input, message, history, correlationId } = ctx;
+  const role = identity ? identity.role : null;
   // O papel limita as intenções: a de administração não existe para quem não é admin (cai no fluxo normal).
   // Com library_enabled desligada a Lia não fala da Biblioteca: a intenção é ignorada e os botões para ela somem.
   const libraryOn = await flagOn(sql, identity, FLAG_LIBRARY);
@@ -527,13 +559,17 @@ export async function chat(sql, env, identity, rawInput, correlationId) {
   if (hit && hit.intent.library && !libraryOn) hit = null;
   // Lia híbrida: pergunta de definição só é respondida por regra pelas intenções que de fato definem.
   if (hit && mode.hybrid && !allowIntent(kind, hit)) hit = null;
+  // Artigos da Biblioteca: só com library_enabled; quem não tem login só na Lia híbrida (o degrau do visitante).
+  const wantsRefs = libraryOn && (!!identity || mode.hybrid);
+  const plan = wantsRefs ? libraryPlan(message, kind || questionKind(message), !!hit) : null;
   if (hit) {
     if (hit.id === 'eventos') {
       const live = await liveEventsReply(sql, env, identity, correlationId);
       if (live) return withLibraryActions(fromIntent(hit, role, live, 'live'), libraryOn);
     }
     const reply = withLibraryActions(fromIntent(hit, role, hit.intent.reply, 'kb'), libraryOn);
-    return recordAnswer(sql, identity, message, reply, correlationId);
+    return withLibraryReferences(sql, env, identity, await recordAnswer(sql, identity, message, reply, correlationId), plan);
   }
-  return askWithKnowledge(sql, env, identity, { message, history, correlationId, mode });
+  const result = await askWithKnowledge(sql, env, identity, { message, history, correlationId, mode });
+  return withLibraryReferences(sql, env, identity, result, plan);
 }

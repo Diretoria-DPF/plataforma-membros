@@ -7,6 +7,16 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
 ### Adicionado
+- Eventos: botão **Cancelar inscrição** (com confirmação). `apiCancelEventRegistration` apaga só a própria inscrição, antes de o evento começar e antes da presença; libera a vaga, invalida o cache, audita (`CANCEL_EVENT_REGISTRATION`) e limita a 20 por hora.
+- Lia: sugestões por tela (na entrada: perguntas gerais como "O que tem no blog?" e "O que posso fazer na plataforma?"; logado: por painel), `frontend/assistant-suggestions.js`.
+- Lia cita artigos da Biblioteca (flag `lia_library_enabled`), histórico de 8 turnos e registro de respostas para membros (flag `rag_cache_enabled`, migração 034, desligada).
+- Lia: novos trechos de conteúdo (o que é a Biblioteca, Farmacologia x Toxicologia, farmacocinética, o que fazer na plataforma) e 60+ perguntas novas no conjunto de referência.
+
+### Alterado
+- Cotas diárias de IA dos membros mais generosas (chat 100, avaliar 25, caso 10, laboratório 80, Lia 60; administrador ~2x). O orçamento global de tokens continua sendo o freio.
+- A Lia do membro usa o modelo inteligente (120B) enquanto o uso de tokens das últimas 24 h estiver abaixo de 50 % do orçamento e o 120B abaixo de 150 mil tokens.
+
+### Adicionado (rodada 3)
 - `tools/ci/registrar-segredos-backup.ps1`: cadastra os 6 secrets do workflow "Backup do banco" sem passar valores pelo chat (`-SomenteVerificar` lista só os nomes). Hoje os 6 estão em falta.
 - `docs/LIGHTHOUSE_2026-10-08b.md`: medição da produção (`laift.com.br`). Mobile, mediana de 3 rodadas: Performance 94, Acessibilidade 100, Boas práticas 100, SEO 100, CLS 0,000.
 - `docs/liga/`: fontes da Liga (Edital 2026 original e estrutura do Forms atual), referências de ligas acadêmicas, proposta de Edital v2 e resumo visual (propostas; a diretoria aprova).

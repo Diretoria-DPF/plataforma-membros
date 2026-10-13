@@ -30,10 +30,11 @@ function env(over) {
 }
 
 /** Banco simulado. `flags` liga as flags; `tokens` é o uso das últimas 24 h; `cache` é o que o SELECT do cache devolve. */
-function world({ flags = [flag('use_orchestrator', true)], tokens = 0, cache = [] } = {}) {
+function world({ flags = [flag('use_orchestrator', true)], tokens = 0, smartTokens = 0, cache = [] } = {}) {
   return routedSql([
     ['FROM feature_flags', flags],
-    ['FROM ai_usage_log', [{ tokens }]],
+    // Duas somas leem ai_usage_log: a do dia (todos os modelos) e a do modelo (texto "model =").
+    ['FROM ai_usage_log', (values, text) => [{ tokens: text.includes('model =') ? smartTokens : tokens }]],
     ['FROM ai_semantic_cache', cache],
   ]);
 }
@@ -274,5 +275,89 @@ describe('provedor indisponível', () => {
     const rows = callsMatching(sql, 'INSERT INTO ai_metrics_daily');
     expect(rows).toHaveLength(1);
     expect([rows[0][4], rows[0][5]]).toEqual([1, 0]); // uma chamada, nenhuma com sucesso
+  });
+});
+
+describe('modelo da Lia do membro (AI_MODEL_TIER): inteligente só com folga', () => {
+  const ASSISTANT = { feature: 'assistant', messages: [{ role: 'user', content: 'pergunta' }], profileId: MEMBER.profileId };
+  const SMART = 'openai/gpt-oss-120b';
+  const FAST = 'openai/gpt-oss-20b';
+  const OPT = { smartWhenRoom: true };
+  const sentModel = () => JSON.parse(global.fetch.mock.calls[global.fetch.mock.calls.length - 1][1].body).model;
+
+  test('abaixo de 50% do orçamento e do teto do modelo: usa o 120B e registra o modelo nas métricas', async () => {
+    const sql = world({ tokens: 1000, smartTokens: 1000 });
+    const out = await complete(sql, env(), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe(SMART);
+    expect(out.content).toBe('Resposta do Groq');
+    expect(callsMatching(sql, 'INSERT INTO ai_metrics_daily')[0][2]).toBe(SMART);
+  });
+
+  test('o limiar é o do orçamento do dia: 50% ou mais volta ao modelo rápido', async () => {
+    await complete(world({ tokens: 224999 }), env(), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe(SMART);
+    __resetMetricsForTests();
+    await complete(world({ tokens: 225000 }), env(), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe(FAST);
+  });
+
+  test('o modelo inteligente com 150 mil tokens nas últimas 24 h volta ao rápido', async () => {
+    await complete(world({ smartTokens: 149999 }), env(), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe(SMART);
+    __resetMetricsForTests();
+    await complete(world({ smartTokens: 150000 }), env(), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe(FAST);
+  });
+
+  test('falha ao medir o uso: modelo rápido (e a resposta sai normalmente)', async () => {
+    const sql = routedSql([
+      ['FROM feature_flags', [flag('use_orchestrator', true)]],
+      ['FROM ai_usage_log', new Error('banco fora')],
+    ]);
+    const out = await complete(sql, env(), MEMBER, ASSISTANT, OPT);
+    expect(out.content).toBe('Resposta do Groq');
+    expect(sentModel()).toBe(FAST);
+  });
+
+  test('só a Lia do membro pede o inteligente: sem a opção (árvore de seções, moderação) fica no rápido', async () => {
+    await complete(world(), env(), MEMBER, ASSISTANT, {});
+    expect(sentModel()).toBe(FAST);
+    await complete(world(), env(), MEMBER, ASSISTANT);
+    expect(sentModel()).toBe(FAST);
+  });
+
+  test('outra feature não muda de modelo, mesmo com a opção', async () => {
+    await complete(world(), env(), MEMBER, Object.assign({}, ASSISTANT, { feature: 'chat' }), OPT);
+    expect(sentModel()).toBe(FAST);
+  });
+
+  test('orquestrador desligado: caminho antigo, modelo rápido e nenhuma consulta de uso', async () => {
+    const sql = world({ flags: [flag('use_orchestrator', false)] });
+    await complete(sql, env(), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe(FAST);
+    expect(callsMatching(sql, 'FROM ai_usage_log')).toHaveLength(0);
+  });
+
+  test('respeita GROQ_MODEL_SMART; e se rápido e inteligente são o mesmo modelo, nem mede', async () => {
+    await complete(world(), env({ GROQ_MODEL_SMART: 'vendor/grande' }), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe('vendor/grande');
+    const same = world();
+    await complete(same, env({ GROQ_MODEL_FAST: 'vendor/unico', GROQ_MODEL_SMART: 'vendor/unico' }), MEMBER, ASSISTANT, OPT);
+    expect(sentModel()).toBe('vendor/unico');
+    expect(callsMatching(same, 'model =')).toHaveLength(0);
+  });
+
+  test('o 120B indisponível: erro padrão, registrado com o modelo que foi tentado (cooldown é por chave, sem segunda tentativa)', async () => {
+    global.fetch = jest.fn(async () => httpError(503));
+    const sql = world();
+    await expect(complete(sql, env(), MEMBER, ASSISTANT, OPT)).rejects.toMatchObject({ aiUnavailable: true });
+    expect(callsMatching(sql, 'INSERT INTO ai_metrics_daily')[0][2]).toBe(SMART);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  test('orçamento estourado: não chama o Groq nem mede o modelo', async () => {
+    const sql = world({ tokens: 450000 });
+    await expect(complete(sql, env(), MEMBER, ASSISTANT, OPT)).rejects.toMatchObject({ message: AI_MESSAGES.BUDGET });
+    expect(callsMatching(sql, 'model =')).toHaveLength(0);
   });
 });

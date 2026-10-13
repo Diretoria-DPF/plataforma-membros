@@ -69,3 +69,45 @@ describe('docsConteudo — conteúdo factual novo da Lia', () => {
     expect(achados).toEqual([]);
   });
 });
+
+describe('docsConteudo — lacunas medidas ao vivo (Biblioteca, farmacologia x toxicologia, farmacocinética)', () => {
+  const bySection = (title) => buildDocuments().find((d) => d.section === title);
+
+  test('"Biblioteca LAIFT: o que é" define a Biblioteca: curadoria, português, Diretoria Científica, catálogo público', () => {
+    const doc = bySection('Biblioteca LAIFT: o que é');
+    expect(doc.source).toBe('modulos');
+    expect(doc.content).toMatch(/curadoria de artigos científicos de farmacologia e toxicologia/);
+    expect(doc.content).toMatch(/prioridade para o português/);
+    expect(doc.content).toMatch(/Diretoria Científica/);
+    expect(doc.content).toMatch(/laift\.com\.br\/biblioteca/);
+    expect(doc.content).toMatch(/resumo, favoritos e coleções/);
+    expect(doc.content).toMatch(/Nenhum conteúdo da Biblioteca substitui a orientação de um profissional de saúde/);
+  });
+
+  test('"Farmacologia e Toxicologia: a diferença" explica cada área, a dose-resposta e que não define conduta', () => {
+    const doc = bySection('Farmacologia e Toxicologia: a diferença');
+    expect(doc.content).toMatch(/farmacologia estuda como os fármacos agem/);
+    expect(doc.content).toMatch(/farmacodinâmica/);
+    expect(doc.content).toMatch(/absorção, distribuição, metabolismo e excreção/);
+    expect(doc.content).toMatch(/toxicologia estuda os efeitos nocivos/);
+    expect(doc.content).toMatch(/dose-resposta/);
+    expect(doc.content).toMatch(/se complementam/);
+    expect(doc.content).toMatch(/material de estudo e não define conduta clínica/);
+  });
+
+  test('"O que é farmacocinética?" define ADME em linguagem simples e não define conduta', () => {
+    const doc = bySection('O que é farmacocinética?');
+    expect(doc.content).toMatch(/absorção.*distribuição.*metabolismo.*excreção/s);
+    expect(doc.content).toMatch(/ADME/);
+    expect(doc.content).toMatch(/material de estudo e não define conduta clínica/);
+  });
+
+  test('nenhuma das três tem dose, posologia nem instrução ao modelo', () => {
+    ['Biblioteca LAIFT: o que é', 'Farmacologia e Toxicologia: a diferença', 'O que é farmacocinética?'].forEach((title) => {
+      const doc = bySection(title);
+      expect(doc.content).not.toMatch(/\d+\s*(mg|ml|mcg)\b|posologia/i);
+      expect(looksLikeInjection(doc.content)).toBe(false);
+      expect(doc.content.length).toBeLessThanOrEqual(1200);
+    });
+  });
+});

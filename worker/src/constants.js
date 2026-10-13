@@ -181,6 +181,9 @@ export const RATE_LIMITS = {
   LOGIN_GLOBAL: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 900 },
   LOGIN_IP: { MAX_ATTEMPTS: 15, WINDOW_SECONDS: 900 },
   REGISTER: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
+  // Cancelar a inscrição em um evento (por pessoa): quem se inscreve e cancela em loop não enche a tabela de
+  // auditoria nem invalida o cache de eventos sem parar. 20/h cobre um engano e a correção com folga.
+  EVENT_CANCEL: { MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 },
   CONFIRM_EMAIL: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
   RESET_REQUEST: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   RESET_CONFIRM: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 900 },
@@ -287,20 +290,25 @@ export const AI_FEATURE = {
 
 // Cota diária POR PESSOA (janela de 24 h do rate_limit_buckets), por recurso
 // e papel. Visitante tem cota menor (decisão do responsável: IA para todos os
-// logados, com cota diária). Valores iniciais do plano.
-// Recalibradas (Fase 3) pelo ORÇAMENTO DE TOKENS: o Groq gratuito dá ~200 mil
-// tokens/dia por modelo (~600 mil nos três) para a ORGANIZAÇÃO, e uma troca de
-// chat gasta ~1,2 mil. Com ~25 pessoas ativas por dia, 40 mensagens de chat
-// por membro já fecham a conta; os valores antigos (150) estourariam o teto
-// com 4 pessoas. O limite que vale para todos é AI_DAILY_TOKEN_BUDGET.
+// logados, com cota diária).
+// Calibração atual (12/10/2026, medida em produção): 4 membros, 1 administrador
+// e 3 visitantes; o MAIOR consumo de IA em um dia foi ~6,8 mil tokens, contra o
+// orçamento de AI_DAILY_TOKEN_BUDGET (450 mil): ~1,5%. As cotas anteriores
+// (chat 40, Lia 25...) foram dimensionadas para ~25 pessoas ativas e ficaram
+// apertadas demais para o uso real. Decisão do dono: ser GENEROSO com os
+// membros e deixar o orçamento global de tokens (AI_DAILY_TOKEN_BUDGET) e o
+// disjuntor AI_GLOBAL_DAILY_MAX como freio de verdade. Se a comunidade crescer
+// (uma troca de chat gasta ~1,2 mil tokens), reduza estes números ou aumente o
+// orçamento; admin ~2x o membro. Visitante NÃO mudou (a Lia dele é a prévia
+// própria, com limite por IP; aqui a cota da Lia de visitante é 0).
 export const AI_QUOTAS = {
-  chat: { visitor: 15, member: 40, admin: 100 },
-  evaluate: { visitor: 5, member: 10, admin: 40 },
-  generate_case: { visitor: 2, member: 4, admin: 20 },
-  lab_preceptor: { visitor: 10, member: 30, admin: 100 },
+  chat: { visitor: 15, member: 100, admin: 200 },
+  evaluate: { visitor: 5, member: 25, admin: 50 },
+  generate_case: { visitor: 2, member: 10, admin: 20 },
+  lab_preceptor: { visitor: 10, member: 80, admin: 160 },
   // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
   // Visitante e quem não tem login recebem só a base fixa (cota 0).
-  assistant: { visitor: 0, member: 25, admin: 100 },
+  assistant: { visitor: 0, member: 60, admin: 120 },
 };
 export const AI_QUOTA_WINDOW_SECONDS = 86400;
 
@@ -316,6 +324,20 @@ export const AI_GLOBAL_DAILY_MAX = 3000;
 // variável AI_DAILY_TOKEN_BUDGET.
 export const AI_DAILY_TOKEN_BUDGET = 450000;
 export const AI_BUDGET_REFRESH_MS = 30000; // reconsulta o uso a cada 30 s por instância
+
+// Modelo da Lia do MEMBRO (feature 'assistant'; ai/modelTier.js). Por padrão a Lia usa o modelo rápido
+// (GROQ_MODEL_FAST, gpt-oss-20b); com FOLGA ela sobe para o modelo inteligente (GROQ_MODEL_SMART, gpt-oss-120b),
+// que responde melhor. "Folga" = as DUAS condições valem ao mesmo tempo:
+//   - uso de tokens das últimas 24 h (todos os modelos) abaixo de SMART_BELOW_BUDGET_PCT % do orçamento
+//     (AI_DAILY_TOKEN_BUDGET): o disjuntor do dia está longe;
+//   - uso do próprio modelo inteligente nas últimas 24 h abaixo de SMART_MODEL_DAILY_TOKENS_MAX tokens
+//     (o Groq gratuito dá ~200 mil/dia por modelo; 150 mil deixa ~25% de margem para o avaliador, o gerador
+//     de casos e o preceptor do laboratório, que também usam o 120B).
+// Falha ao medir = modelo rápido. Para voltar ao 20B sempre: SMART_BELOW_BUDGET_PCT: 0.
+export const AI_MODEL_TIER = {
+  SMART_BELOW_BUDGET_PCT: 50,
+  SMART_MODEL_DAILY_TOKENS_MAX: 150000,
+};
 
 // Cache semântico (pg_trgm). Só pergunta genérica, sem dado pessoal.
 // Perguntas CURTAS e conceituais: texto longo pode carregar dado pessoal ou
@@ -431,7 +453,8 @@ export const LIA_VISITOR = {
   TEMPERATURE: 0.2,
   TIMEOUT_MS: 12000,
   CONTEXT_CHUNKS: 3,        // melhores trechos do RRF (sem a etapa de árvore, para poupar neurons)
-  CTA_TEXT: 'Membros têm histórico, 25 perguntas por dia e respostas mais completas. Crie sua conta.',
+  // Deriva da cota de membro (AI_QUOTAS.assistant.member): o convite nunca diverge do número real.
+  CTA_TEXT: 'Membros têm histórico, ' + AI_QUOTAS.assistant.member + ' perguntas por dia e respostas mais completas. Crie sua conta.',
   CTA_URL: '/#cadastro',
 };
 

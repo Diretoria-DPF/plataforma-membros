@@ -13,6 +13,7 @@
  *   nunca para o prompt de uma IA, e item com cara de instrução sai da lista.
  * - Só sai link oficial (doi.org ou PubMed), a mesma regra da página pública (biblioteca/catalogo.js).
  * - Resumo só para membro e admin; visitante recebe só o catálogo (o serviço já não manda o resumo).
+ * - A Lia NÃO envia resumo algum ao cliente (referenceView): só id, título, autores, periódico, ano e link.
  */
 import { normalize } from './kb.js';
 import { looksLikeInjection } from './moderationRules.js';
@@ -27,6 +28,8 @@ const AUTHORS_SHOWN = 3;
 const SUMMARY_MAX = 320;
 const LANDING_RE = /^https:\/\/(doi\.org|pubmed\.ncbi\.nlm\.nih\.gov)\/[^\s<>"']{1,260}$/;
 const CONTROL_RE = /[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁤﻿]/g;
+const STUDY_TERMS_MAX = 3; // a busca exige TODOS os termos: poucos termos, mais chance de achar
+const MIN_STUDY_TERM_CHARS = 3;
 const LANGUAGE_LABELS = { pt: 'Português', en: 'English' };
 
 // Palavras que pedem artigos; "biblioteca" só vale com "sobre" ("o que tem na biblioteca sobre X").
@@ -47,6 +50,13 @@ const STOPWORDS = new Set(['a', 'o', 'as', 'os', 'um', 'uma', 'uns', 'umas', 'de
   'tema', 'assunto', 'area', 'biblioteca', 'laift', 'portugues', 'ingles', 'recente', 'recentes', 'bom', 'bons', 'boa', 'boas',
   'cientifico', 'cientificos', 'cientifica', 'cientificas', 'acerca', 'respeito', 'relacionado', 'relacionados', 'relacionada',
   'relacionadas', 'estudar', 'ler', 'aqui', 'ai', 'la', 'qual', 'quais', 'tipo', 'mais', 'muito', 'muitos', 'novo', 'novos']);
+
+// Abertura de pergunta de definição ("o que é", "qual a diferença entre"...): não é tema, sai da busca.
+const QUESTION_WORDS = new Set(['sao', 'significa', 'quer', 'dizer', 'diferenca', 'diferencas', 'entre', 'serve', 'servem', 'funciona',
+  'funcionam', 'explique', 'explica', 'fale', 'fala', 'defina', 'conceito', 'significado', 'quem', 'porque', 'quanto', 'quanta',
+  'quantos', 'quantas', 'quando', 'como', 'onde', 'custa', 'vale', 'confiar', 'confiavel', 'seguro', 'possivel', 'pra', 'eh']);
+// Pergunta sobre a PLATAFORMA ou a Liga, não sobre ciência: nunca ganha artigos por inferência.
+const PLATFORM_RE = /\b(plataforma|laift|liga|cadastr\w*|inscri\w*|evento\w*|cracha|senha|login|perfil|modulo\w*|edital|seletivo|mensalidade|certificado\w*|lia|app|aplicativo|mensage\w*|proposta\w*|tarefa\w*|equipe|biblioteca|conta|membro\w*|diretoria|atlas|quiz|suporte|site|blog)\b/;
 
 /** Texto curto e seguro para o campo de busca: sem controle, sem marcação, espaços simples, até 120. */
 export function cleanLibraryQuery(value) {
@@ -151,4 +161,35 @@ export function toReferences(items, member) {
   const safe = all.filter((ref) => !looksUnsafe(ref));
   const ordered = safe.filter((r) => r.language === 'pt').concat(safe.filter((r) => r.language !== 'pt'));
   return { refs: ordered.slice(0, LIBRARY_REFS_MAX), suppressed: all.length - safe.length };
+}
+
+/** Termos de estudo de uma pergunta de definição (sem abertura nem palavras vazias), até 3, com a grafia da pessoa. */
+export function studyQuery(message) {
+  if (typeof message !== 'string') return '';
+  const terms = wordsOf(message)
+    .filter((w) => !STOPWORDS.has(w.norm) && !QUESTION_WORDS.has(w.norm) && w.norm.length >= MIN_STUDY_TERM_CHARS)
+    .slice(0, STUDY_TERMS_MAX);
+  return cleanLibraryQuery(terms.map((w) => w.orig).join(' '));
+}
+
+/**
+ * A Lia busca artigos da Biblioteca para esta pergunta? Devolve { query, explicit } ou null.
+ *  - Pergunta clínica (dose, conduta, tratamento): NUNCA (kind 'clinico').
+ *  - Pedido explícito de artigos ("tem artigos sobre X?"): sim, com o tema (libraryTopic).
+ *  - Pergunta de definição de conteúdo científico, que não é sobre a plataforma e que nenhuma intenção por
+ *    regra respondeu (`hadIntent`): sim, com os termos de estudo. Uso da plataforma e assunto alheio: não.
+ * Função pura: quem chama ainda confere as flags e se a busca achou algo publicado.
+ */
+export function libraryPlan(message, kind, hadIntent) {
+  if (typeof message !== 'string' || kind === 'clinico') return null;
+  const topic = libraryTopic(message);
+  if (topic) return { query: topic, explicit: true };
+  if (hadIntent || kind !== 'definicao' || PLATFORM_RE.test(normalize(message))) return null;
+  const query = studyQuery(message);
+  return query ? { query, explicit: false } : null;
+}
+
+/** O que o cliente recebe de cada referência (sem resumo, idioma nem outros campos internos). */
+export function referenceView(ref) {
+  return { id: ref.id, title: ref.title, authors: ref.authors, journal: ref.journal, year: ref.year, url: ref.url };
 }

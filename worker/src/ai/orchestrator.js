@@ -13,7 +13,8 @@
  *
  *   1. cache semântico (antes da cota, em lookupCache);
  *   2. orçamento de tokens/dia do Groq: estourado, o Groq não é chamado;
- *   3. Groq (modelo rápido/inteligente por recurso, regra em ai/config.js);
+ *   3. Groq (modelo rápido/inteligente por recurso, regra em ai/config.js; a Lia do membro sobe para o
+ *      inteligente quando há folga de tokens, ver pickTier);
  *   4. NVIDIA como reserva se o Groq está fora OU o orçamento acabou, quando
  *      a flag `nvidia_fallback` está ligada e o provedor configurado (o
  *      orçamento é do Groq: a NVIDIA não entra nele);
@@ -92,12 +93,24 @@ async function staleFallback(sql, req, opts) {
   return { content: hit.answer, model: 'cache', provider: 'cache', keyIndex: null, usage: {}, latencyMs: 0, finishReason: 'stop', cached: true, degraded: true };
 }
 
+/**
+ * Modelo da Lia do MEMBRO (feature 'assistant' com opts.smartWhenRoom): 'smart' quando há folga de tokens
+ * (Metrics.smartTierRoom, limiares em AI_MODEL_TIER); senão null e vale o modelo do recurso (rápido). É o PONTO
+ * ÚNICO dessa regra. Só entra quem pede: a árvore de seções e a moderação também são 'assistant', mas ficam no rápido.
+ */
+async function pickTier(sql, env, req, opts) {
+  if (!opts.smartWhenRoom || req.feature !== C.AI_FEATURE.ASSISTANT) return null;
+  const smart = resolveModel(env, 'smart');
+  if (smart === resolveModel(env, 'fast')) return null; // um modelo só: nada a escolher nem a medir
+  return (await Metrics.smartTierRoom(sql, env, smart)) ? 'smart' : null;
+}
+
 async function recordSuccess(sql, req, opts, result, rateLimited) {
   const provider = result.provider || 'groq';
   const usage = result.usage || {};
   const tokensIn = Number(usage.prompt_tokens) || 0;
   const tokensOut = Number(usage.completion_tokens) || 0;
-  if (provider === 'groq') Metrics.noteTokens(tokensIn + tokensOut);
+  if (provider === 'groq') Metrics.noteTokens(tokensIn + tokensOut, result.model);
   await Metrics.recordCall(sql, {
     feature: req.feature, model: result.model, provider, ok: true, rateLimited,
     tokensIn, tokensOut, latencyMs: result.latencyMs, cacheMiss: !!opts.cacheQuestion,
@@ -111,7 +124,8 @@ async function recordSuccess(sql, req, opts, result, rateLimited) {
 
 /**
  * @param {object} req  { feature, messages, profileId }
- * @param {object} [opts]  { cacheQuestion } — pergunta genérica a guardar/recuperar no cache semântico
+ * @param {object} [opts]  { cacheQuestion, smartWhenRoom } — cacheQuestion: pergunta genérica a guardar/recuperar
+ *   no cache semântico; smartWhenRoom: só a Lia do membro (usa o modelo inteligente havendo folga, ver pickTier)
  * @returns {Promise<{content, model, provider, usage, latencyMs, finishReason, cached?, degraded?}>}
  * @throws AiUnavailableError | AiInvalidOutputError (mesmos do Groq)
  */
@@ -121,10 +135,12 @@ export async function complete(sql, env, identity, req, opts) {
 
   const feature = req.feature;
   const seen = { rateLimited: 0 };
-  const tracked = Object.assign({}, req, { observer: (event) => { if (event.status === 429) seen.rateLimited += 1; } });
+  const observer = (event) => { if (event.status === 429) seen.rateLimited += 1; };
 
-  // 2/3. Orçamento do Groq e, havendo espaço, a chamada.
+  // 2/3. Orçamento do Groq e, havendo espaço, a chamada (no modelo que pickTier escolher).
   const budget = await Metrics.budgetStatus(sql, env);
+  const tier = budget.exceeded ? null : await pickTier(sql, env, req, options);
+  const tracked = Object.assign({}, req, tier ? { tier } : {}, { observer });
   let result = null;
   let failure = null;
   if (budget.exceeded) {
@@ -145,7 +161,7 @@ export async function complete(sql, env, identity, req, opts) {
   const stale = failure && failure.aiUnavailable ? await staleFallback(sql, req, options) : null;
   if (!budget.exceeded) {
     await Metrics.recordCall(sql, {
-      feature, model: resolveModel(env, FEATURE_CONFIG[feature].tier), provider: 'groq', ok: false,
+      feature, model: resolveModel(env, tier || FEATURE_CONFIG[feature].tier), provider: 'groq', ok: false,
       rateLimited: seen.rateLimited, cacheMiss: !!options.cacheQuestion && !stale,
     });
   }

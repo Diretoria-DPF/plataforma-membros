@@ -5,9 +5,9 @@
  */
 import { jest } from '@jest/globals';
 import {
-  budgetLimit, budgetStatus, noteTokens, recordCall, readDaily, totalsByDay, evaluateAlerts, __resetMetricsForTests,
+  budgetLimit, budgetStatus, smartTierRoom, noteTokens, recordCall, readDaily, totalsByDay, evaluateAlerts, __resetMetricsForTests,
 } from '../src/ai/metrics.js';
-import { AI_DAILY_TOKEN_BUDGET, AI_ALERTS } from '../src/constants.js';
+import { AI_DAILY_TOKEN_BUDGET, AI_ALERTS, AI_MODEL_TIER } from '../src/constants.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 
 describe('budgetLimit', () => {
@@ -37,8 +37,8 @@ describe('métricas e orçamento — SQL real', () => {
     const o = Object.assign({ provider: 'groq', ok: true, ageHours: 1 }, extra || {});
     await db.query(
       `INSERT INTO ai_usage_log (feature, model, prompt_tokens, completion_tokens, ok, provider, created_at)
-       VALUES ($1, 'm', $2, $3, $4, $5, now() - make_interval(hours => $6))`,
-      [feature, tokensIn, tokensOut, o.ok, o.provider, o.ageHours]
+       VALUES ($1, $7, $2, $3, $4, $5, now() - make_interval(hours => $6))`,
+      [feature, tokensIn, tokensOut, o.ok, o.provider, o.ageHours, o.model || 'm']
     );
   }
 
@@ -71,6 +71,66 @@ describe('métricas e orçamento — SQL real', () => {
     await budgetStatus(sql, {}, 1_000_000);
     const broken = () => Promise.reject(new Error('banco fora'));
     expect((await budgetStatus(broken, {}, 2_000_000)).used).toBe(100);
+  });
+
+  describe('smartTierRoom — folga para o modelo inteligente (AI_MODEL_TIER)', () => {
+    const SMART = 'openai/gpt-oss-120b';
+    const ENV = { AI_DAILY_TOKEN_BUDGET: '1000000' }; // 50% = 500 mil
+    const { SMART_MODEL_DAILY_TOKENS_MAX: SMART_MAX } = AI_MODEL_TIER;
+
+    test('os limiares padrão são 50% do orçamento e 150 mil tokens do modelo', () => {
+      expect(AI_MODEL_TIER).toEqual({ SMART_BELOW_BUDGET_PCT: 50, SMART_MODEL_DAILY_TOKENS_MAX: 150000 });
+    });
+
+    test('abaixo dos dois limiares: há folga', async () => {
+      await usage('assistant', 1000, 500, { model: SMART });
+      expect(await smartTierRoom(sql, ENV, SMART)).toBe(true);
+    });
+
+    test('uso do dia (todos os modelos) em 50% do orçamento ou mais: sem folga', async () => {
+      await usage('chat', 499999, 0, { model: 'fast' });
+      expect(await smartTierRoom(sql, ENV, SMART)).toBe(true);
+      __resetMetricsForTests();
+      await usage('chat', 1, 0, { model: 'fast' });
+      expect(await smartTierRoom(sql, ENV, SMART)).toBe(false);
+    });
+
+    test('uso do PRÓPRIO modelo inteligente em 150 mil ou mais: sem folga (outros modelos e provedores não contam)', async () => {
+      await usage('evaluate', SMART_MAX - 1, 0, { model: SMART });
+      await usage('chat', 9999, 0, { model: SMART, provider: 'nvidia' });
+      await usage('chat', 9999, 0, { model: SMART, ageHours: 30 });
+      await usage('chat', 9999, 0, { model: 'fast' });
+      expect(await smartTierRoom(sql, ENV, SMART)).toBe(true);
+      __resetMetricsForTests();
+      await usage('evaluate', 1, 0, { model: SMART });
+      expect(await smartTierRoom(sql, ENV, SMART)).toBe(false);
+    });
+
+    test('consulta cada medida no máximo a cada 30 s e soma localmente os tokens do modelo', async () => {
+      const t0 = 5_000_000;
+      await usage('assistant', SMART_MAX - 100, 0, { model: SMART });
+      expect(await smartTierRoom(sql, ENV, SMART, t0)).toBe(true);
+      noteTokens(200, SMART);
+      expect(await smartTierRoom(sql, ENV, SMART, t0 + 5_000)).toBe(false);
+    });
+
+    test('falha ao medir o modelo: sem folga (nunca arrisca o 120B)', async () => {
+      const broken = () => Promise.reject(new Error('banco fora'));
+      expect(await smartTierRoom(broken, ENV, SMART)).toBe(false);
+    });
+
+    test('falha ao medir o orçamento do dia (mesmo com valor antigo na memória): sem folga', async () => {
+      await budgetStatus(sql, ENV, 1_000_000);
+      // Só a soma do orçamento do dia falha; a do modelo responde (a distinção está no texto "model =").
+      const onlyBudgetBroken = (strings, ...values) => (strings.join('?').includes('model =')
+        ? sql(strings, ...values) : Promise.reject(new Error('banco fora')));
+      expect(await smartTierRoom(onlyBudgetBroken, ENV, SMART, 2_000_000)).toBe(false);
+    });
+
+    test('modelo vazio ou orçamento inválido: sem folga', async () => {
+      expect(await smartTierRoom(sql, ENV, '')).toBe(false);
+      expect(await smartTierRoom(sql, ENV, null)).toBe(false);
+    });
   });
 
   test('recordCall acumula por (dia, recurso, modelo, provedor) com UPSERT', async () => {
