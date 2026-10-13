@@ -14,7 +14,7 @@
  *
  * Funções PURAS sobre texto já dobrado por rules.fold (minúsculo, sem acento). Regex lineares.
  */
-import { withoutDoseConcepts } from './rules.js';
+import { withoutDoseConcepts, hasNumericAmount, hasWordAmount } from './rules.js';
 
 // ---------------------------------------------------------------------------
 // I5 — emergência, autolesão e caso pessoal ou real
@@ -70,13 +70,24 @@ const DOSE_STRONG = [
   new RegExp('\\b(?:qual|quais|quanto|quantos|quantas)\\s+(?:e |sao |seria )?(?:(?:a|as|o|os|uma|um)\\s+)?' + DOSE_ADJ + DOSE_WORD + '\\b'),
   /\bque dose\b/,
   new RegExp('\\b(?:quantos|quantas)\\b.{0,30}\\b' + UNITS + '\\b'),
-  new RegExp('\\b\\d+(?:[.,]\\d+)?\\s?' + UNITS + '\\b'),
   /\b(?:de quanto em quanto tempo|a cada quantas horas|de quantas em quantas horas|quantas vezes (?:por|ao) dia)\b/,
   /\b(?:dose|doses|dar|dou|administr\w{1,6}|prescrev\w{1,6}|receit\w{1,6})\b.{0,40}\b\d+(?:[.,]\d+)?\s?(?:kg|quilos?)\b/,
   /\b\d+(?:[.,]\d+)?\s?(?:kg|quilos?)\b.{0,40}\b(?:dose|doses|dar|dou|administr\w{1,6}|prescrev\w{1,6}|receit\w{1,6})\b/,
   /\b(?:prescreva|receite|indique|recomende|sugira)\b.{0,30}\b(?:dose|medicamento|remedio|tratamento|antibiotico|analgesico)\b/,
   new RegExp('\\b(?:me diga|me passe|informe|passe|fale|diga|mostre|quero saber|preciso saber)\\b.{0,25}\\b' + DOSE_WORD + '\\b'),
   new RegExp('\\bqual (?:a )?quantidade\\b.{0,30}\\b' + UNITS + '\\b'),
+  // Limites de segurança e quantidade máxima ("até quanto é seguro", "teto seguro", "quantidade máxima diária").
+  /\bquantidade\s+(?:maxima|minima|segura|toxica|letal|diaria|recomendada|ideal)\b/,
+  /\bate quanto\b.{0,40}\b(?:seguro|posso|pode|permitido|tomar|usar|ingerir)\b/,
+  /\b(?:limite|teto|maximo|minimo)\s+(?:seguro|diario|de seguranca)\b/,
+  /\b(?:limite|teto|maximo)\s+(?:por dia|ao dia)\b/,
+  /\bqual\s+(?:e\s+)?(?:o|a)\s+(?:teto|limite|maximo)\s+(?:de|do|da)\s+(?!detec|quantific|toxicidade|seguranca|exposicao|tolerancia|absorcao|concentracao)[a-z]{4,}/,
+  /\bquanto\b.{0,25}\b(?:e seguro|seguro tomar|se pode tomar|pode tomar|posso tomar|por dia)\b/,
+  // Inglês.
+  /\bwhat\s+(?:is|are|s)\s+the\s+(?:[a-z]+\s+){0,3}(?:dose|doses|dosage|dosing)\b/,
+  /\bhow\s+(?:much|many)\b.{0,50}\b(?:take|give|dose|safe|mg|grams?|tablets?|pills?|drops?|milligrams?|ml|units?)\b/,
+  /\b(?:tell|give|show)\s+me\b.{0,25}\b(?:dose|dosage|dosing)\b/,
+  /\b(?:safe|maximum|max|upper)\s+(?:limit|amount)\b/,
 ];
 
 // FRACAS: frase nominal ("dose letal do X", "dose de X em adulto"). Perguntas de conceito ("mecanismo", "por que",
@@ -85,13 +96,17 @@ const DOSE_WEAK = [
   new RegExp('\\b' + DOSE_WORD + '\\s+(?:maxima|minima|letal|toxica|terapeutica|segura|ideal|correta|habitual|usual|pediatrica|recomendad[ao]|adequad[ao])\\s+(?:de|do|da|dos|das|para)\\b'),
   /\b(?:dose|doses|posologia|dosagem)\s+(?:de|do|da|dos|das)\s+\w{3,30}\b.{0,40}\b(?:em|para|no|na|nos|nas)\s+(?:adultos?|criancas?|idosos?|bebes?|gestantes?|pacientes?|neonatos?|lactentes?|recem nascidos?)\b/,
   /^\s*(?:dose|posologia|dosagem)\s+(?:de|do|da)\b/,
+  /\b(?:max(?:imum)?|safe|lethal|toxic|recommended|usual|daily|pediatric|adult|therapeutic)\s+(?:dose|doses|dosage|dosing)\b/,
+  /\b(?:dose|dosage|dosing)\s+(?:of|for)\s+[a-z]{3,30}\b/,
 ];
-const CONCEPT_CUE = /\b(?:mecanismo|por que|porque|como|explique|explica|explicar|defina|conceito|o que e|o que significa|diferenca|significa)\b/;
+const CONCEPT_CUE = /\b(?:mecanismo|por que|porque|como|explique|explica|explicar|defina|conceito|o que e|o que significa|diferenca|significa|mechanism|why|how does|how do|explain|define|concept|difference|what does .{1,30} mean)\b/;
 
 export function isDoseRequest(folded) {
   const text = withoutDoseConcepts(folded);
-  if (DOSE_STRONG.some((re) => re.test(text))) return true;
-  return !CONCEPT_CUE.test(text) && DOSE_WEAK.some((re) => re.test(text));
+  if (hasNumericAmount(text) || DOSE_STRONG.some((re) => re.test(text))) return true;
+  const concept = CONCEPT_CUE.test(text);
+  if (!concept && hasWordAmount(text)) return true;
+  return !concept && DOSE_WEAK.some((re) => re.test(text));
 }
 
 // ---------------------------------------------------------------------------

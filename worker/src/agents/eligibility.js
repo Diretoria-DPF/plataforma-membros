@@ -51,6 +51,19 @@ function underAge(p, now) {
 }
 
 /**
+ * Lê a flag `minors_enabled` FALHANDO FECHADO: se a leitura der erro (banco instável), trata como "menores
+ * habilitados", o que exige `adultConfirmed` e bloqueia. Nunca devolve false por engano.
+ * @param {() => Promise<boolean>} read  ex.: () => isEnabled(sql, 'minors_enabled', identity)
+ */
+export async function readMinorsEnabled(read) {
+  try {
+    return (await read()) === true;
+  } catch (err) {
+    return true;
+  }
+}
+
+/**
  * @param {object} profile  sessão/perfil da pessoa (hoje: { profileId, role, ... } sem dado de idade)
  * @param {{ now?: Date, minorsEnabled?: boolean }} [opts]
  * @returns {boolean}

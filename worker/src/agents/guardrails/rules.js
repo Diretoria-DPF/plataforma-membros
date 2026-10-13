@@ -62,13 +62,54 @@ export function stripInvisible(text) {
   return String(text).replace(INVISIBLE_RE, '');
 }
 
-/** Minúsculas, sem acento, sem invisível e com espaços simples; a pontuação fica (e-mail, "?", "/"). */
+// Letras de outros alfabetos que se parecem com letras latinas (minúsculas, já depois do NFKC) -> a letra latina.
+const CONFUSABLES = new Map(Object.entries({
+  // cirílico
+  'а': 'a', 'с': 'c', 'е': 'e', 'ё': 'e', 'о': 'o', 'р': 'p', 'х': 'x', 'у': 'y', 'і': 'i', 'ї': 'i', 'ј': 'j', 'ѕ': 's',
+  'һ': 'h', 'ԁ': 'd', 'ԛ': 'q', 'ԝ': 'w', 'к': 'k', 'м': 'm', 'т': 't', 'н': 'h', 'п': 'n', 'ь': 'b', 'ѵ': 'v', 'ԍ': 'g',
+  // grego
+  'α': 'a', 'β': 'b', 'γ': 'y', 'δ': 'd', 'ε': 'e', 'ι': 'i', 'κ': 'k', 'μ': 'u', 'ν': 'v', 'ο': 'o', 'ρ': 'p', 'τ': 't',
+  'υ': 'u', 'χ': 'x', 'ω': 'w', 'η': 'n', 'ς': 's',
+  // latino estendido que o NFD não separa
+  'ı': 'i', 'ɡ': 'g', 'ø': 'o', 'đ': 'd', 'ł': 'l', 'ħ': 'h', 'ß': 'ss', 'æ': 'ae', 'œ': 'oe',
+}));
+
+// Primeiro dígito (zero) dos blocos Unicode de dígitos decimais; o NFKC já cuida da largura total e dos matemáticos.
+const DIGIT_ZEROS = [0x0660, 0x06f0, 0x07c0, 0x0966, 0x09e6, 0x0a66, 0x0ae6, 0x0b66, 0x0be6, 0x0c66, 0x0ce6, 0x0d66, 0x0e50, 0x0ed0, 0x0f20, 0x1040, 0x17e0, 0x1810];
+const NON_ASCII_RE = /[^\u0000-\u007f]/;
+const NON_ASCII_DIGIT_RE = /(?![0-9])\p{Nd}/gu;
+// Três ou mais letras soltas, separadas por espaço ou pontuação simples ("i g n o r e", "d-o-s-e"), viram uma palavra.
+// Com espaço, pelo menos 4 letras (3 pegariam "m g a" de "5 m g A atropina"); com ponto, hífen ou asterisco, 3.
+const SPACED_LETTERS_RE = /(^|[^\p{L}\p{N}])(\p{L}(?: \p{L}){3,})(?![\p{L}\p{N}])/gu;
+const PUNCTUATED_LETTERS_RE = /(^|[^\p{L}\p{N}])(\p{L}(?:[.\-_*·]\p{L}){2,})(?![\p{L}\p{N}])/gu;
+
+function asciiDigit(ch) {
+  const cp = ch.codePointAt(0);
+  const zero = DIGIT_ZEROS.find((z) => cp >= z && cp < z + 10);
+  return zero === undefined ? ch : String(cp - zero);
+}
+
+/** Largura total, ligaduras e sobrescritos (NFKC), confusáveis, dígitos de outros alfabetos e fração. Só se há não-ASCII. */
+function unifyScripts(text) {
+  if (!NON_ASCII_RE.test(text)) return text;
+  const lower = text.normalize('NFKC').replace(/⁄/g, '/').toLowerCase();
+  const latin = Array.from(lower, (ch) => CONFUSABLES.get(ch) || ch).join('');
+  return latin.replace(NON_ASCII_DIGIT_RE, asciiDigit).normalize('NFD').replace(COMBINING_RE, '');
+}
+
+/**
+ * Minúsculas, sem acento, sem invisível e com espaços simples; a pontuação fica (e-mail, "?", "/"). Também
+ * desfaz os truques de escrita mais comuns: letras de largura total, cirílico/grego no lugar de latino, dígitos de
+ * outros alfabetos e letras espaçadas ("i g n o r e", "d.o.s.e"). A entrada é só a 1ª camada; a saída é a trava real.
+ */
 export function fold(text) {
-  return String(text).replace(INVISIBLE_RE, '').normalize('NFD').replace(COMBINING_RE, '').toLowerCase().replace(SPACES_RE, ' ').trim();
+  const plain = unifyScripts(String(text).replace(INVISIBLE_RE, '')).toLowerCase().normalize('NFD').replace(COMBINING_RE, '');
+  const joinRun = (_m, lead, run) => lead + run.replace(/[ .\-_*·]/g, '');
+  return plain.replace(SPACES_RE, ' ').replace(SPACED_LETTERS_RE, joinRun).replace(PUNCTUATED_LETTERS_RE, joinRun).trim();
 }
 
 /** Conceitos que contêm a palavra "dose" mas não pedem nem dão dose; saem antes de testar I6/O3. */
-const DOSE_CONCEPTS_RE = /\b(?:dose[ -]resposta|dose[ -]efeito|dose[ -]dependente|dependente d[ae] dose|dependencia de dose|relacao dose|curva (?:de )?dose|dose letal (?:mediana|media|50)|dl ?50|dose efetiva (?:mediana|media|50))\b/g;
+const DOSE_CONCEPTS_RE = /\b(?:dose[ -]resposta|dose[ -]efeito|dose[ -]dependente|dependente d[ae] dose|dependencia de dose|relacao dose|curva (?:de )?dose|dose letal (?:mediana|media|50)|dl ?50|dose efetiva (?:mediana|media|50)|dose[ -]response|dose[ -]dependent|dose[ -]effect|dependent on (?:the )?dose|ld ?50|ed ?50|median lethal dose|median effective dose)\b/g;
 
 export function withoutDoseConcepts(folded) {
   return folded.replace(DOSE_CONCEPTS_RE, ' ');
@@ -96,4 +137,71 @@ export function filterSentences(text, drop) {
   }).join(' '));
   if (!dropped) return { text: String(text), dropped, total };
   return { text: lines.filter(Boolean).join('\n'), dropped, total };
+}
+
+// ---------------------------------------------------------------------------
+// Quantidade de medicamento (compartilhada por I6, na entrada, e O3, na saída)
+// ---------------------------------------------------------------------------
+// Dose estrita: vale qualquer número (dígito ou por extenso, PT e EN) ligado a uma unidade de medida ou de
+// apresentação, e qualquer posologia ("8/8h", "2x/dia", "uma vez ao dia", "q8h", "bid", "twice daily"). O texto
+// chega já dobrado por `fold` (minúsculo, sem acento, dígitos ASCII, letras latinas).
+const NUMBER_WORDS = [
+  'um', 'uma', 'dois', 'duas', 'tres', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze',
+  'quatorze', 'catorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove', 'vinte', 'trinta', 'quarenta',
+  'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa', 'cem', 'cento', 'duzentos', 'duzentas', 'trezentos',
+  'trezentas', 'quatrocentos', 'quatrocentas', 'quinhentos', 'quinhentas', 'seiscentos', 'seiscentas', 'setecentos',
+  'setecentas', 'oitocentos', 'oitocentas', 'novecentos', 'novecentas', 'mil', 'meio', 'meia', 'duzia', 'duzias',
+  'dezena', 'dezenas',
+  'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen',
+  'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy',
+  'eighty', 'ninety', 'hundred', 'thousand', 'half',
+].join('|');
+const NW = '(?:' + NUMBER_WORDS + ')';
+const DIGITS = String.raw`(?<![0-9])\d+(?:[.,]\d+)?(?:\s?\/\s?\d+)?`;
+
+// Unidades que valem com número por extenso ou em dígitos.
+const UNITS_ANY = [
+  'mgs?', 'm ?g', 'mcgs?', 'ugs?', 'ngs?', 'mls?', 'm ?l', 'cc', 'ccs', 'ui', 'uis', 'iu', 'ius', 'meqs?', 'mmols?', 'mols?',
+  'miligramas?', 'microgramas?', 'nanogramas?', 'gramas?', 'grs?', 'mililitros?', 'litros?',
+  'comprimidos?', String.raw`comps?\.?`, 'cps?', 'cprs?', 'capsulas?', 'gotas?', 'gts?', 'gtt', 'ampolas?', String.raw`amps?\.?`, 'saches?',
+  'colher(?:es)?', 'colheradas?', 'pilulas?', 'pastilhas?', 'supositorios?', 'puffs?', 'jatos?', 'borrifadas?', 'adesivos?',
+  'milligrams?', 'micrograms?', 'grams?', 'milliliters?', 'millilitres?', 'liters?', 'litres?', 'ounces?', 'oz',
+  'tablets?', 'pills?', 'capsules?', 'drops?', 'teaspoons?', 'tablespoons?', 'tsp', 'tbsp', 'spoonfuls?', 'ampoules?', 'patch(?:es)?',
+].join('|');
+// Unidades curtas ou comuns demais na fala: só depois de dígito.
+const UNITS_DIGIT_ONLY = ['g', 'l', 'u', 'unidades?', 'units?', 'doses?', 'frascos?', 'vials?', 'caps?', 'tabs?'].join('|');
+
+export const DOSE_AMOUNT_RES = Object.freeze([
+  // 500 mg, 5 a 10 ml, 1/2 comprimido, Paracetamol500mg, 10 U, 10 unidades, 2 doses
+  new RegExp(DIGITS + String.raw`(?:\s?(?:a|ate|-|e|to|and)\s?\d+(?:[.,]\d+)?)?[\s-]?(?:` + UNITS_ANY + '|' + UNITS_DIGIT_ONLY + ')(?![a-z])'),
+  // quinhentos miligramas, dez gotas, meio comprimido, uma colher de sopa, four grams, half a tablet
+  new RegExp(String.raw`\b` + NW + String.raw`(?:\s+(?:e|and)\s+` + NW + String.raw`)?\s+(?:a\s+)?(?:` + UNITS_ANY + ')(?![a-z])'),
+]);
+
+const TIMES = '(?:' + NUMBER_WORDS + String.raw`|\d+)`;
+export const POSOLOGY_RES = Object.freeze([
+  /(?<![0-9])\d+\s?x\s?(?:\/|ao|por|a|no)?\s?(?:dia|d|semana|hora|h)\b/,
+  /(?<![0-9])\d{1,2}\s?\/\s?\d{1,2}\s?(?:h|hs|hr|hrs|horas)\b/,
+  new RegExp(String.raw`\b` + TIMES + String.raw`\s+vez(?:es)?\s+(?:ao|por|na|no|a cada|em cada)\s+(?:dia|semana|mes|hora|noite|manha|tarde)\b`),
+  new RegExp(String.raw`\ba cada\s+` + TIMES + String.raw`\s+(?:horas?|hrs?|h|minutos?|min|dias?|semanas?|meses)\b`),
+  new RegExp(String.raw`\bde\s+` + TIMES + String.raw`\s+em\s+` + TIMES + String.raw`\s+(?:horas?|h|hs|hrs)\b`),
+  /\bq\s?\d{1,2}\s?h\b/,
+  /\b(?:bid|tid|qid|qd|qhs|prn)\b/,
+  new RegExp(String.raw`\b(?:once|twice|thrice)\s+(?:a|per|daily|each|every)\b|\b` + TIMES + String.raw`\s+times\s+(?:a|per|daily|each)\b|\bevery\s+` + TIMES + String.raw`\s+(?:hours?|hrs?|h|days?|weeks?)\b`),
+  new RegExp(String.raw`\b(?:tome|ingira|engula|administre|ministre|aplique|injete|take|administer|inject|swallow)\s+` + TIMES + String.raw`\b`),
+]);
+
+/** O texto traz quantidade de medicamento ou posologia? (entrada já dobrada por `fold` e sem conceitos de dose) */
+export function hasDoseAmount(folded) {
+  return hasNumericAmount(folded) || hasWordAmount(folded);
+}
+
+/** Dígitos com unidade ou posologia. */
+export function hasNumericAmount(folded) {
+  return DOSE_AMOUNT_RES[0].test(folded) || POSOLOGY_RES.some((re) => re.test(folded));
+}
+
+/** Número por extenso com unidade ("dois comprimidos"). Na entrada, uma pergunta de conceito pode citá-lo sem pedir dose. */
+export function hasWordAmount(folded) {
+  return DOSE_AMOUNT_RES[1].test(folded);
 }

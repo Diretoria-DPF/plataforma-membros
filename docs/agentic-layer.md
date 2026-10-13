@@ -235,3 +235,26 @@ Desfazer: desligar a flag (efeito imediato). `sql/down/037_clinical_sim.sql` apa
 - Quem chamar a avaliação no meio do caso vê os eixos antes do fim (custa uma avaliação da cota).
 - A premissa de maioridade é a do tutor: conta existente = maior de 18 anos (ADR 0007).
 - Testes: `clinicalSimUnits`, `clinicalSimMigration` (PGlite), `clinicalSimService` (inclui revisão com o banco de verdade) e `frontend/scripts/clinic-sim.test.mjs`.
+
+## 5. Maioridade e dose estrita: o que os guardrails garantem (revisão de segurança, 13/10/2026)
+
+### 5.1 Maioridade (decisão do dono PENDENTE)
+- Hoje a plataforma **não coleta idade, nascimento nem faixa etária**. `agents/eligibility.js` (`isEligibleAdult`, ponto único para tutor, memória e simulação) assume que **conta existente = maior de 18 anos** porque o cadastro nativo exige maioridade e nenhum dado de menor entra antes do parecer jurídico (`docs/riscos-residuais.md`, J7). **É uma premissa de cadastro, não uma verificação**: nada impede uma pessoa de se cadastrar mentindo.
+- **Pendente (decisão do dono):** declaração explícita de 18+ no cadastro e/ou no consentimento (com registro e versão do texto). Quando existir, vira `adultConfirmed` na sessão e a função passa a exigi-la sem mudar nenhum chamador.
+- `minors_enabled` (a flag que abrirá contas de menor) é lida **falhando fechado**: se a leitura der erro de banco, `readMinorsEnabled` devolve `true`, ou seja, "menores habilitados", e sem `adultConfirmed` a pessoa fica bloqueada. Vale para o tutor e para a simulação (`memory/*` usa a própria leitura, ajuste fora desta revisão).
+
+### 5.2 Dose estrita (I6 na entrada, O3 na saída)
+- **A entrada é só a 1ª camada; a saída (O3) é a trava real.** A entrada pode ser contornada por quem insiste; por isso toda resposta do modelo passa por O3, inclusive a vinda do cache e a do histórico enviado pelo cliente.
+- `fold` (rules.js) desfaz os truques de escrita antes de qualquer regra: NFKC (largura total, ligaduras), cirílico/grego parecidos com latim, dígitos de outros alfabetos (`٥٠٠`, `５００`), fração (`½`), letras espaçadas (`i g n o r e`, `d.o.s.e`; com espaço exige 4 letras para não colar `m g A atropina`).
+- O3 corta a frase que traz **número (dígito ou por extenso, PT e EN) ligado a unidade de medida ou de apresentação** (mg, mcg, g, mL, cc, gr, UI, U, unidades, litros, mol, comprimido, cp, cps, comp., cápsula, gota, gts, gtt, ampola, colher, pílula, puff, jato, tablet, drops, tablespoons...) **ou posologia** (`8/8h`, `2x/dia`, `uma vez ao dia`, `a cada oito horas`, `q8h`, `bid/tid/qid`, `twice daily`) ou verbo de dose no imperativo (`tome duas`, `take two`). Metade ou mais das frases cortadas, ou texto que sobra curto, vira resposta fixa (`replace`).
+- Mantêm-se de fora do corte: conceito (`dose-resposta`, `DL50`, `dose-response`), horas, porcentagem e "uma dose muito acima da habitual". Unidades ambíguas na fala (`g`, `l`, `u`, `unidades`, `doses`, `caps`) só valem depois de dígito.
+- I6 também cobre inglês (`What is the maximum dose...`, `How much... can an adult take`), "quantidade máxima diária", "até quanto é seguro", "limite/teto/máximo seguro". Pergunta de conceito (`mecanismo`, `por que`, `explique`, `why`, `how does`) com número por extenso passa.
+- **Limite conhecido:** número escrito de forma que ninguém humano lê como quantidade (ex.: palavras trocadas por símbolos arbitrários, ou idioma que não seja PT/EN) pode escapar. A mitigação é a persona (proíbe dose) e o golden `test/fixtures/agents-golden.json`, que cresce a cada achado.
+
+### 5.3 Citações (O2) e vazamento (O4)
+- Sem fonte permitida, ou fora dela, saem: DOI/PMID/ISBN, `et al.`, `Autor (ano)`, `Autor e Autor (ano)`, formato Vancouver (`1975;55:871-6`), nome de periódico (NEJM, Lancet, JAMA, BMJ, Pediatrics, Cochrane...), livro-texto (Goodman & Gilman, Katzung...) e edição (`13a ed.`), URL com ou sem `https`/`www`, domínio solto e atribuição "estudo/universidade/sociedade ... ano". Frase com `[n]` válido preserva só a atribuição "mole" (estudo + ano); referência dura sai sempre. O endereço de uma fonte permitida (inclusive `doi.org/10...`) nunca é confundido com DOI inventado.
+- O canário do prompt (`LAIFT-<hash>`) é comparado sem caixa, espaço, pontuação, largura total nem cirílico.
+
+### 5.4 Histórico enviado pelo cliente e cache
+- **Todos** os turnos do histórico (`user` e `assistant`) passam por injeção, dado pessoal, ofensa e dose; o `user` passa também por I2–I6, e o `assistant` por O3/O4 e por "não pede dose". Na dúvida o turno é descartado.
+- Com **memória no prompt** (`memory.used` ou itens), a resposta **não lê nem grava o cache semântico compartilhado**: ela é da pessoa e vazaria para outra.

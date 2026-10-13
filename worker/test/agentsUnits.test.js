@@ -9,7 +9,7 @@
  * a configuração de IA (FEATURE_CONFIG, AI_QUOTAS, cotas).
  */
 import { jest } from '@jest/globals';
-import { isEligibleAdult, ADULT_AGE } from '../src/agents/eligibility.js';
+import { isEligibleAdult, readMinorsEnabled, ADULT_AGE } from '../src/agents/eligibility.js';
 import { buildTrace, safeDecisions, traceLine, recordTrace } from '../src/agents/trace.js';
 import { buildAgentMessages, canaryFor } from '../src/agents/promptBuilder.js';
 import { readMemory, NO_MEMORY } from '../src/agents/memoryProvider.js';
@@ -60,6 +60,23 @@ describe('isEligibleAdult — o único ponto da regra "só maiores de 18 anos"',
 
   test.each([null, undefined, 'x', 7])('entrada inválida (%p): não é elegível', (v) => {
     expect(isEligibleAdult(v)).toBe(false);
+  });
+});
+
+describe('readMinorsEnabled — a flag minors_enabled falha FECHADO (M4)', () => {
+  test('lê o valor; só true conta como ligada', async () => {
+    expect(await readMinorsEnabled(async () => true)).toBe(true);
+    expect(await readMinorsEnabled(async () => false)).toBe(false);
+    expect(await readMinorsEnabled(() => false)).toBe(false);
+    expect(await readMinorsEnabled(async () => undefined)).toBe(false);
+  });
+
+  test('erro de banco vira "menores habilitados": exige adultConfirmed e, sem ele, bloqueia', async () => {
+    const minorsEnabled = await readMinorsEnabled(async () => { throw new Error('banco fora'); });
+    expect(minorsEnabled).toBe(true);
+    expect(isEligibleAdult(MEMBER, { now: NOW, minorsEnabled })).toBe(false);
+    expect(isEligibleAdult({ ...MEMBER, adultConfirmed: true }, { now: NOW, minorsEnabled })).toBe(true);
+    expect(await readMinorsEnabled(() => { throw new Error('síncrono'); })).toBe(true);
   });
 });
 

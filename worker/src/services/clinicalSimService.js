@@ -19,7 +19,7 @@
 import * as C from '../constants.js';
 import * as E from '../errors.js';
 import { isEnabled } from './featureFlagService.js';
-import { isEligibleAdult } from '../agents/eligibility.js';
+import { isEligibleAdult, readMinorsEnabled } from '../agents/eligibility.js';
 import { getAgent } from '../agents/registry.js';
 import { checkOutput } from '../agents/guardrails/output.js';
 import { parseSimulationInput } from '../clinicalSim/input.js';
@@ -54,7 +54,7 @@ function roleAllowed(identity) {
 /** Pessoa que PODE simular, dado que a flag está ligada para ela. */
 async function eligible(sql, identity) {
   if (!roleAllowed(identity)) return { ok: false, message: C.SIM_MESSAGES.unavailable };
-  const minorsEnabled = await flagOn(sql, identity, FLAG_MINORS);
+  const minorsEnabled = await readMinorsEnabled(() => isEnabled(sql, FLAG_MINORS, identity));
   if (!isEligibleAdult(identity, { minorsEnabled })) return { ok: false, message: C.SIM_MESSAGES.adultsOnly };
   return { ok: true };
 }

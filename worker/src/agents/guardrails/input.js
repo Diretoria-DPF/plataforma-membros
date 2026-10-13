@@ -53,8 +53,10 @@ const INJECTION_EXTRA = [
 const INJECTION_MARKUP_RE = /<\/?\s*(?:system|assistant|user|instructions?)\s*>|\[\/?(?:inst|system)\]|\{\{.{0,40}\}\}/i;
 const BASE64_RE = new RegExp('[A-Za-z0-9+/]{' + BASE64_RUN + ',}={0,2}');
 
+/** A forma dobrada (largura total, cirílico, letras espaçadas) também passa pelos filtros da Lia e pelo marcador. */
 function isInjection(message, folded) {
-  return looksLikeInjection(message) || INJECTION_MARKUP_RE.test(message) || BASE64_RE.test(message) || INJECTION_EXTRA.some((re) => re.test(folded));
+  return looksLikeInjection(message) || looksLikeInjection(folded) || INJECTION_MARKUP_RE.test(message) || INJECTION_MARKUP_RE.test(folded)
+    || BASE64_RE.test(message) || INJECTION_EXTRA.some((re) => re.test(folded));
 }
 
 // ---------------------------------------------------------------------------
@@ -91,7 +93,7 @@ function hasEmail(message) {
 }
 
 function hasPersonalData(message, folded) {
-  return hasEmail(message) || PERSONAL_DATA.some((re) => re.test(folded));
+  return hasEmail(message) || hasEmail(folded) || PERSONAL_DATA.some((re) => re.test(folded));
 }
 
 // ---------------------------------------------------------------------------

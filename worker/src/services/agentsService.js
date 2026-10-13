@@ -34,9 +34,11 @@ import * as ModerationService from './moderationService.js';
 import { cleanLibraryQuery, studyQuery, toReferences, referenceView } from '../assistant/libraryRefs.js';
 import { LIBRARY_FLAGS } from '../library/limits.js';
 import { getAgent, listAgents } from '../agents/registry.js';
-import { isEligibleAdult } from '../agents/eligibility.js';
+import { isEligibleAdult, readMinorsEnabled } from '../agents/eligibility.js';
 import { checkInput, screenHistory } from '../agents/guardrails/input.js';
 import { checkOutput } from '../agents/guardrails/output.js';
+import { isDoseRequest } from '../agents/guardrails/clinicalScope.js';
+import { fold } from '../agents/guardrails/rules.js';
 import { buildAgentMessages, canaryFor } from '../agents/promptBuilder.js';
 import { readMemory, writeMemory } from '../agents/memoryProvider.js';
 import { tutorMemoryAvailable } from '../memory/tutor.js';
@@ -75,7 +77,7 @@ async function unavailableReason(sql, identity, agent) {
   if (!(await flagOn(sql, identity, C.AGENTS.FLAG)) || !(await flagOn(sql, identity, agent.flag))) return 'flag';
   if (agent.status !== 'active') return 'status';
   if (!agent.roles.includes(identity.role)) return 'role';
-  const minorsEnabled = await flagOn(sql, identity, FLAG_MINORS);
+  const minorsEnabled = await readMinorsEnabled(() => isEnabled(sql, FLAG_MINORS, identity));
   return isEligibleAdult(identity, { minorsEnabled }) ? null : 'age';
 }
 
@@ -111,10 +113,15 @@ function safeHistory(raw, agent) {
   const max = agent.context.history;
   if (!max) return [];
   const turns = sanitizeHistory(raw, ['user', 'assistant'], max, agent.limits.historyTurnMax);
-  const userTurns = new Set(screenHistory(turns.filter((t) => t.role === 'user')));
-  // Resposta antiga do agente vem do cliente: só vale se passaria na própria saída (sem dose, sem vazamento).
-  const botOk = (t) => checkOutput(t.text, { rules: ['O3', 'O4'], promptText: agent.prompt }).action === 'allow';
-  return turns.filter((t) => (t.role === 'user' ? userTurns.has(t) : botOk(t)));
+  // TODOS os turnos vêm do cliente (o "assistant" também pode ser forjado para preparar o terreno): injeção, dado pessoal,
+  // ofensa e dose valem para os dois papéis; na dúvida, o turno sai.
+  const clean = new Set(screenHistory(turns));
+  const inputRules = agent.guardrails.input.filter((r) => r !== 'I1' && r !== 'I7');
+  const userOk = (t) => checkInput(t.text, { maxChars: agent.limits.historyTurnMax, rules: inputRules }).ok;
+  // Resposta antiga do agente só vale se passaria na própria saída (sem dose, sem vazamento) e não pede dose.
+  const botOk = (t) => checkOutput(t.text, { rules: ['O3', 'O4'], promptText: agent.prompt }).action === 'allow'
+    && !isDoseRequest(fold(t.text));
+  return turns.filter((t) => clean.has(t) && (t.role === 'user' ? userOk(t) : botOk(t)));
 }
 
 function safeContext(raw, agent) {
@@ -301,7 +308,9 @@ async function respond(ctx, turn, deps) {
   const memory = await (deps.memoryProvider || readMemory)({ sql: ctx.sql, env: ctx.env, identity: ctx.identity, agent: ctx.agent });
   const messages = buildAgentMessages({ agent: ctx.agent, message: turn.message, history: turn.history, context: turn.context, sources, memory });
   // Pergunta genérica (sem histórico, tema nem fontes) pode vir do cache semântico: não chama a IA nem gasta cota.
-  const cacheable = !turn.history.length && !turn.context.module && !turn.context.topic && !sources.length;
+  // Com memória no prompt a resposta é DA PESSOA: nunca lê nem grava o cache compartilhado (vazaria entre pessoas).
+  const personal = memory.used === true || (Array.isArray(memory.items) && memory.items.length > 0);
+  const cacheable = !personal && !turn.history.length && !turn.context.module && !turn.context.topic && !sources.length;
   const hit = cacheable ? await Orchestrator.lookupCache(ctx.sql, ctx.env, ctx.identity, ctx.agent.feature, turn.message) : null;
   if (hit) return conclude(ctx, turn, { content: hit.answer, model: 'cache', cached: true }, messages, sources, memory, deps);
   await takeQuota(ctx);
@@ -334,7 +343,7 @@ export async function invoke(sql, env, identity, rawInput, correlationId, deps =
 export async function list(sql, env, identity) {
   const head = { success: true, alpha: true, apiVersion: C.AGENTS.API_VERSION };
   if (!(await flagOn(sql, identity, C.AGENTS.FLAG))) throw disabled('flag');
-  const minorsEnabled = await flagOn(sql, identity, FLAG_MINORS);
+  const minorsEnabled = await readMinorsEnabled(() => isEnabled(sql, FLAG_MINORS, identity));
   if (!isEligibleAdult(identity, { minorsEnabled })) return { ...head, agents: [], unavailable: 'age' };
   const open = [];
   for (const agent of listAgents()) if (!(await unavailableReason(sql, identity, agent))) open.push(agent);

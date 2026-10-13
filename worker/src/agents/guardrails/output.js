@@ -14,7 +14,7 @@
  * dose sai do texto. O texto do usuário nunca entra aqui nem em log: só o texto do modelo.
  */
 import {
-  REPLACEMENTS, CHECK_NOTICE, DOSE_NOTICE, fold, stripInvisible, filterSentences, withoutDoseConcepts,
+  REPLACEMENTS, CHECK_NOTICE, DOSE_NOTICE, fold, stripInvisible, filterSentences, withoutDoseConcepts, hasDoseAmount,
 } from './rules.js';
 
 export const DEFAULT_OUTPUT_RULES = Object.freeze(['O1', 'O2', 'O3', 'O4', 'O6']);
@@ -51,9 +51,12 @@ function copiesPrompt(folded, promptText) {
   return false;
 }
 
+/** Só letras e dígitos, já dobrados: caixa, espaço, pontuação e alfabeto parecido não escondem o canário. */
+const squash = (text) => fold(text).replace(/[^a-z0-9]/g, '');
+
 function leaksPrompt(text, ctx) {
   const folded = fold(text);
-  if (ctx.canary && text.includes(ctx.canary)) return true;
+  if (ctx.canary && squash(text).includes(squash(ctx.canary))) return true;
   return LEAK_PHRASES.some((re) => re.test(folded)) || copiesPrompt(folded, ctx.promptText);
 }
 
@@ -81,54 +84,81 @@ function plainText(text) {
 // O2 — citação só da lista permitida
 // ---------------------------------------------------------------------------
 const CITE_MARK_RE = /\[(\d{1,3})\]/g;
-const URL_RE = /https?:\/\/[^\s)\]>"']{1,300}/g;
-const INVENTED_REF = [
+const URL_RE = /(?:https?:\/\/|www\.)[^\s)\]>"']{1,300}|\b[a-z0-9-]{2,60}\.(?:com|org|net|gov|edu|int|info)(?:\.br)?(?:\/[^\s)\]>"']{0,200})?/gi;
+
+// Referência inventada, DURA: vale mesmo quando a frase traz um [n] válido (DOI, PMID, "et al.", volume;páginas, revista, livro).
+const HARD_REF_RAW = [
   /\bet al\b\.?/i,
   /\(\s*\p{Lu}[\p{L}'-]{1,30}(?:\s+(?:e|&|and)\s+\p{Lu}[\p{L}'-]{1,30})?(?:\s+et al\.?)?,?\s+(?:19|20)\d{2}[a-z]?\s*\)/u,
   /\bdoi\s*:?\s*10\.\d{4,9}\/\S{1,100}/i,
   /\b10\.\d{4,9}\/[^\s]{2,100}/,
   /\bpmid\s*:?\s*\d{4,9}\b/i,
   /\bisbn\b/i,
+  /\b(?:19|20)\d{2}\s*;\s*\d{1,4}\s*(?:\(\d+\))?\s*:\s*\d/,
+  /^\p{Lu}[\p{L}'-]{2,}\s+\p{Lu}{1,3}\.?$/u,
+  /\b(?:NEJM|JAMA|BMJ|The Lancet|Lancet|New England Journal of Medicine|British Medical Journal|Pediatrics|Annals of Internal Medicine|Clinical Toxicology|Journal of [A-Z][a-z]+|Cochrane)\b/,
+];
+const HARD_REF_FOLDED = [
+  /\b(?:goodman\s*(?:&|e|and)\s*gilman|katzung|rang\s*(?:&|e|and)\s*dale|harrison|brunton|casarett|klaassen|cecil)\b/,
+  /\b\d{1,2}\s?a?\s?(?:ed|edicao|edition)\b/,
+];
+// Atribuição a autor, estudo ou instituição com ano, MOLE: some, a menos que a frase cite uma fonte permitida [n].
+const SOFT_REF_RAW = [
+  /\b\p{Lu}[\p{L}'-]{2,}(?:\s+(?:e|&|and)\s+\p{Lu}[\p{L}'-]{2,})?\s*\(\s*(?:19|20)\d{2}[a-z]?\s*\)/u,
+];
+const SOFT_REF_FOLDED = [
+  /\b(?:estudo|pesquisa|ensaio|trabalho|artigo|revisao|metanalise|meta analise|consenso|diretriz|guideline|publicacao|relatorio|study|trial|review|paper)\b.{0,60}\b(?:19|20)\d{2}\b/,
+  /\b(?:universidade|university|instituto|institute|faculdade|college|hospital|sociedade|society|associacao|association|ministerio|agencia)\b.{0,50}\b(?:19|20)\d{2}\b/,
 ];
 const AUTHORITY_RE = /\b(?:segundo|conforme|de acordo com|baseado em)\s+(?:a |o |as |os )?(?:diretriz\w{0,4}|protocolo\w{0,2}|consenso|guideline\w{0,2}|bula|oms|anvisa|fda|ministerio da saude|sociedade)\b/;
+
+const validMark = (n, ctx) => Number(n) >= 1 && Number(n) <= ctx.sources.length;
+const hasValidMark = (text, ctx) => [...text.matchAll(CITE_MARK_RE)].some((m) => validMark(m[1], ctx));
+/** Endereço sem esquema, sem "www." e sem barra final: "https://www.doi.org/x/" e "doi.org/x" são o mesmo. */
+const bareUrl = (u) => u.toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/[/.,;:]+$/, '');
+
+const isAllowedUrl = (u, ctx) => ctx.sources.some((s) => s.url && bareUrl(s.url) === bareUrl(u));
+
+function isInventedReference(raw, ctx) {
+  // O endereço de uma fonte permitida (ex.: doi.org/10.x/y) não pode ser tomado por DOI inventado.
+  const sentence = raw.replace(URL_RE, (u) => (isAllowedUrl(u, ctx) ? ' ' : u));
+  const folded = fold(sentence);
+  if (HARD_REF_RAW.some((re) => re.test(sentence)) || HARD_REF_FOLDED.some((re) => re.test(folded))) return true;
+  if (hasValidMark(sentence, ctx)) return false;
+  return SOFT_REF_RAW.some((re) => re.test(sentence)) || SOFT_REF_FOLDED.some((re) => re.test(folded));
+}
 
 function cleanCitations(text, ctx) {
   let changed = false;
   const marks = text.replace(CITE_MARK_RE, (m, n) => {
-    if (Number(n) >= 1 && Number(n) <= ctx.sources.length) return m;
+    if (validMark(n, ctx)) return m;
     changed = true;
     return '';
   });
   const urls = marks.replace(URL_RE, (u) => {
-    const url = u.replace(/[.,;:]+$/, '');
-    if (ctx.sources.some((s) => s.url && s.url === url)) return u;
+    if (isAllowedUrl(u, ctx)) return u;
     changed = true;
     return '';
   });
-  const kept = filterSentences(urls, (s) => INVENTED_REF.some((re) => re.test(s)));
+  const kept = filterSentences(urls, (s) => isInventedReference(s, ctx));
   return { text: (changed || kept.dropped ? kept.text.replace(/ {2,}/g, ' ') : kept.text).trim(), changed: changed || kept.dropped > 0 };
 }
 
 function needsCheckNotice(text, ctx) {
-  const hasValidMark = [...text.matchAll(CITE_MARK_RE)].some((m) => Number(m[1]) >= 1 && Number(m[1]) <= ctx.sources.length);
-  return !hasValidMark && AUTHORITY_RE.test(fold(text));
+  return !hasValidMark(text, ctx) && AUTHORITY_RE.test(fold(text));
 }
 
 // ---------------------------------------------------------------------------
-// O3 — dose (estrita)
+// O3 — dose (estrita): quantidade com unidade (dígito ou por extenso, PT e EN) e posologia vêm de rules.hasDoseAmount
 // ---------------------------------------------------------------------------
-const UNIT_OUT = '(?:mg|mcg|ug|\\u00b5g|\\u03bcg|g|gramas?|miligramas?|microgramas?|ml|mililitros?|ui|meq|mmol|ng|comprimidos?|capsulas?|gotas?|ampolas?|sache|saches|colheres?)(?:\\s?/\\s?(?:kg|dl|ml|l|h|dia|min))?';
-const DOSE_OUT = [
-  new RegExp('\\b\\d+(?:[.,]\\d+)?(?:\\s?(?:a|ate|-|e)\\s?\\d+(?:[.,]\\d+)?)?\\s?' + UNIT_OUT + '(?![a-z])'),
-  /\b(?:\d+|uma|duas|tres|quatro)\s+vezes\s+(?:ao|por)\s+dia\b/,
-  /\ba cada\s+\d+\s*(?:horas|h)\b/,
-  /\bde\s+\d+\s+em\s+\d+\s+horas\b/,
-  /\b(?:tome|administre|ministre|aplique|injete|ingira|prescreva|receite|use)\b.{0,40}\b(?:dose|doses|posologia|comprimidos?|gotas?|ampolas?|capsulas?|sache|colher)\b/,
+const DOSE_IMPERATIVE = [
+  /\b(?:tome|administre|ministre|aplique|injete|ingira|engula|prescreva|receite|use)\b.{0,40}\b(?:dose|doses|posologia|comprimidos?|gotas?|ampolas?|capsulas?|sache|colher(?:es)?)\b/,
+  /\b(?:take|administer|give|inject|apply|swallow|prescribe)\b.{0,40}\b(?:dose|doses|dosage|tablets?|pills?|capsules?|drops?)\b/,
 ];
 
 const hasDose = (sentence) => {
   const folded = withoutDoseConcepts(fold(sentence));
-  return DOSE_OUT.some((re) => re.test(folded));
+  return hasDoseAmount(folded) || DOSE_IMPERATIVE.some((re) => re.test(folded));
 };
 
 function dropDoses(text) {
