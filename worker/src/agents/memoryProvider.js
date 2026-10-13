@@ -5,17 +5,49 @@
  */
 /**
  * agents/memoryProvider.js
- * PONTO DE EXTENSÃO da memória de estudo (opt-in, em outro banco; etapas futuras). Nesta fase a memória não existe:
- * `readMemory` devolve sempre `{ available: false }` e nenhum banco é tocado. Quando a memória vier, só este
- * módulo muda (o agentsService já passa persona, identidade e correlationId e já mostra `memory` na resposta).
- * O contrato é "nunca lança": falha de leitura vira `available: false`.
+ * Ponto de contato entre o agentsService e a memória de estudo (ADR 0007, etapa 7; a lógica mora em memory/tutor.js).
+ *   readMemory   lê até 8 itens com limite de 1,2 s. Contrato: NUNCA lança. Sem persona que lê memória, flag
+ *                memory_enabled, consentimento vigente na versão atual, DATABASE_URL_MEMORY e MEMORY_SUBJECT_KEY, ou com
+ *                qualquer falha/estouro de tempo, devolve NO_MEMORY e o tutor segue SEM memória. Nesses casos nada é
+ *                escrito depois (a gravação só acontece quando a leitura confirmou o consentimento).
+ *   writeMemory  grava as dúvidas citadas na pergunta (sinal determinístico, texto descartado); roda em segundo plano
+ *                (waitUntil) e nunca bloqueia a resposta.
+ * Os itens chegam ao prompt como bloco de DADOS (agents/promptBuilder.js), nunca como instrução.
  */
+import { MEMORY } from '../constants.js';
+import { readForTutor, writeTutorSignals } from '../memory/tutor.js';
+
 export const NO_MEMORY = Object.freeze({ available: false, used: false, items: Object.freeze([]) });
 
+/** Rejeita com 'MEMORY_TIMEOUT' se a promessa não terminar a tempo; a original, se falhar depois, é engolida. */
+function withTimeout(promise, ms) {
+  promise.catch(() => undefined);
+  let timer;
+  const limit = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('MEMORY_TIMEOUT')), ms); });
+  return Promise.race([promise, limit]).finally(() => clearTimeout(timer));
+}
+
 /**
- * @param {object} _ctx  { sql, env, identity, agent } — sem uso nesta fase
- * @returns {Promise<{ available: boolean, used: boolean, items: Array<object> }>}
+ * @param {object} ctx  { sql, env, identity, agent }
+ * @returns {Promise<{ available: boolean, used: boolean, items: Array<object>, count?: number, canWrite?: boolean, consentVersion?: string }>}
  */
-export async function readMemory(_ctx) {
-  return NO_MEMORY;
+export async function readMemory(ctx) {
+  try {
+    const memory = await withTimeout(readForTutor(ctx.sql, ctx.env, ctx.identity, ctx.agent), MEMORY.READ_TIMEOUT_MS);
+    return memory || NO_MEMORY;
+  } catch (err) {
+    return NO_MEMORY;
+  }
+}
+
+/**
+ * @param {object} ctx  { env, identity, agent, memory (o que readMemory devolveu), message }
+ * @returns {Promise<number>} itens gravados; nunca lança
+ */
+export async function writeMemory(ctx) {
+  try {
+    return await writeTutorSignals(ctx);
+  } catch (err) {
+    return 0;
+  }
 }

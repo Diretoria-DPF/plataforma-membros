@@ -8,12 +8,14 @@
  * Agentes de IA (ADR 0007; API alfa, apiVersion 'agents/v1-alpha'): apiAgentsList e apiAgentsInvoke. A identidade
  * vem sempre da sessão. Tudo atrás de agents_enabled + a flag da persona (desligadas = AGENT_DISABLED, nenhum custo).
  *
- * Fluxo de uma chamada (sem memória nesta fase; ponto de extensão: agents/memoryProvider.js):
+ * Fluxo de uma chamada (a memória de estudo é opcional e à prova de falha: agents/memoryProvider.js, ADR 0007):
  *   persona e flags → maioridade (agents/eligibility.js) → rate limit por papel (ANTES dos guardrails) →
  *   guardrail de ENTRADA (recusa = success:true, refused:true; não gasta cota nem modelo) → fontes (até 3 artigos
  *   publicados da Biblioteca, lista permitida de citações) → cache semântico (acerto não gasta cota) → cota diária →
- *   modelo (ai/orchestrator.js: só Groq, orçamento global, cache) → guardrail de SAÍDA (allow/rewrite/replace) →
- *   rastro (agent_traces + linha JSON no log, sem texto do usuário).
+ *   memória (só persona que a permite + memory_enabled + consentimento vigente + banco e chave; até 8 itens, 1,2 s; qualquer
+ *   falha = segue SEM memória) → modelo (ai/orchestrator.js: só Groq, orçamento global, cache) → guardrail de SAÍDA
+ *   (allow/rewrite/replace) → rastro (agent_traces + linha JSON, sem texto do usuário) → gravação das dúvidas do vocabulário
+ *   em segundo plano (waitUntil; sinal determinístico, nunca por modelo; sem consentimento NADA é lido nem escrito).
  *
  * Plano gratuito da Cloudflare: nada é gravado no KV, o modelo é só o Groq (nunca Workers AI) e o caminho faz
  * poucas subrequisições (sessão, flags em cache, limite, moderação, fontes, cota, modelo, uso, rastro).
@@ -36,7 +38,9 @@ import { isEligibleAdult } from '../agents/eligibility.js';
 import { checkInput, screenHistory } from '../agents/guardrails/input.js';
 import { checkOutput } from '../agents/guardrails/output.js';
 import { buildAgentMessages, canaryFor } from '../agents/promptBuilder.js';
-import { readMemory } from '../agents/memoryProvider.js';
+import { readMemory, writeMemory } from '../agents/memoryProvider.js';
+import { tutorMemoryAvailable } from '../memory/tutor.js';
+import { runInBackground } from '../memory/background.js';
 import { buildTrace, recordTrace } from '../agents/trace.js';
 
 const { AgentError } = E;
@@ -249,7 +253,21 @@ function citedSources(reply, sources) {
 
 const OUTCOME_OF = { allow: 'answered', rewrite: 'rewritten', replace: 'replaced' };
 
-async function conclude(ctx, turn, out, messages, sources, memory) {
+/** O que o cliente vê da memória: `used` e `count` alimentam o selo "usou sua memória de estudo". */
+function memoryView(memory) {
+  return memory.used
+    ? { available: true, used: true, count: Number.isInteger(memory.count) ? memory.count : memory.items.length }
+    : { available: memory.available === true, used: false };
+}
+
+/** Grava, em segundo plano, as dúvidas do vocabulário da pergunta. Só se a leitura confirmou o consentimento. */
+async function rememberSignals(ctx, turn, memory, verdict, deps) {
+  if (!memory.available || (verdict.action !== 'allow' && verdict.action !== 'rewrite')) return;
+  const write = deps.memoryWriter || writeMemory;
+  await runInBackground(ctx.env, () => write({ env: ctx.env, identity: ctx.identity, agent: ctx.agent, memory, message: turn.message }));
+}
+
+async function conclude(ctx, turn, out, messages, sources, memory, deps) {
   const { agent } = ctx;
   const verdict = checkOutput(out.content, {
     rules: agent.guardrails.output, sources, replyMax: agent.limits.replyMax, finishReason: out.finishReason,
@@ -265,13 +283,14 @@ async function conclude(ctx, turn, out, messages, sources, memory) {
       cached: out.cached === true, degraded,
     },
   });
+  await rememberSignals(ctx, turn, memory, verdict, deps);
   return {
     ...baseResponse(ctx),
     reply: verdict.reply,
     sources: citedSources(verdict.reply, sources),
     usage,
     guardrails: { input: { ok: true }, output: { action: verdict.action, rules: verdict.rules } },
-    memory: { available: memory.available, used: memory.used },
+    memory: memoryView(memory),
     ...(out.cached ? { cached: true } : {}),
     ...(degraded ? { degraded: true } : {}),
   };
@@ -284,10 +303,10 @@ async function respond(ctx, turn, deps) {
   // Pergunta genérica (sem histórico, tema nem fontes) pode vir do cache semântico: não chama a IA nem gasta cota.
   const cacheable = !turn.history.length && !turn.context.module && !turn.context.topic && !sources.length;
   const hit = cacheable ? await Orchestrator.lookupCache(ctx.sql, ctx.env, ctx.identity, ctx.agent.feature, turn.message) : null;
-  if (hit) return conclude(ctx, turn, { content: hit.answer, model: 'cache', cached: true }, messages, sources, memory);
+  if (hit) return conclude(ctx, turn, { content: hit.answer, model: 'cache', cached: true }, messages, sources, memory, deps);
   await takeQuota(ctx);
   const out = await callModel(ctx, turn, messages, cacheable);
-  return conclude(ctx, turn, out, messages, sources, memory);
+  return conclude(ctx, turn, out, messages, sources, memory, deps);
 }
 
 // ---------------------------------------------------------------------------
@@ -320,12 +339,14 @@ export async function list(sql, env, identity) {
   const open = [];
   for (const agent of listAgents()) if (!(await unavailableReason(sql, identity, agent))) open.push(agent);
   const quotas = open.length ? await quotaEntries(sql, identity, open.map((a) => a.feature)) : {};
+  const memoryOn = {};
+  for (const agent of open) memoryOn[agent.id] = await tutorMemoryAvailable(sql, env, identity, agent);
   return {
     ...head,
     agents: open.map((a) => ({
       id: a.id, name: a.name, version: a.version, description: a.description, capabilities: a.capabilities,
       quota: quotas[a.feature] || { used: 0, limit: quotaLimit(identity.role, a.feature), remaining: quotaLimit(identity.role, a.feature), resetsAt: null },
-      memory: { available: false },
+      memory: { available: memoryOn[a.id] },
     })),
   };
 }

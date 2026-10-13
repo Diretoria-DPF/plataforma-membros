@@ -223,7 +223,7 @@ describe('caminho feliz', () => {
     const res = await invoke(sql, ask(QUESTION));
     expect(res).toMatchObject({
       success: true, alpha: true, apiVersion: 'agents/v1-alpha', traceId: CID, reply: REPLY, sources: [],
-      agent: { id: 'tutor-clinico', name: 'Tutor Clínico', version: '1.0.0', ref: expect.stringMatching(/^tutor-clinico@1\.0\.0#[0-9a-f]{12}$/) },
+      agent: { id: 'tutor-clinico', name: 'Tutor Clínico', version: '1.1.0', ref: expect.stringMatching(/^tutor-clinico@1\.1\.0#[0-9a-f]{12}$/) },
       guardrails: { input: { ok: true }, output: { action: 'allow', rules: [] } },
       memory: { available: false, used: false },
     });
@@ -244,7 +244,7 @@ describe('caminho feliz', () => {
     expect(usage).toContain(22);
     const [trace] = traces(sql);
     expect(trace.slice(1, 14)).toEqual([
-      CID, MEMBER.profileId, 'tutor-clinico', '1.0.0', expect.stringMatching(/^[0-9a-f]{12}$/), 'agent_tutor', 'openai/gpt-oss-20b',
+      CID, MEMBER.profileId, 'tutor-clinico', '1.1.0', expect.stringMatching(/^[0-9a-f]{12}$/), 'agent_tutor', 'openai/gpt-oss-20b',
       11, 22, false, expect.any(Number), 'answered', expect.any(String),
     ]);
     expect(trace[14]).toBe(false);
@@ -508,7 +508,7 @@ describe('ponto de extensão da memória', () => {
     const sql = world();
     const res = await invoke(sql, ask(QUESTION), MEMBER, { memoryProvider: provider });
     expect(provider).toHaveBeenCalledWith(expect.objectContaining({ identity: MEMBER, agent: expect.objectContaining({ id: 'tutor-clinico' }) }));
-    expect(res.memory).toEqual({ available: true, used: true });
+    expect(res.memory).toEqual({ available: true, used: true, count: 1 });
     expect(sentBody().messages[0].content).toMatch(/MEMÓRIA DE ESTUDO/);
     expect(traces(sql)[0][14]).toBe(true);
   });
@@ -526,7 +526,7 @@ describe('apiAgentsList', () => {
     const res = await AgentsService.list(sql, env(), MEMBER);
     expect(res).toMatchObject({ success: true, alpha: true, apiVersion: 'agents/v1-alpha' });
     expect(res.agents).toEqual([{
-      id: 'tutor-clinico', name: 'Tutor Clínico', version: '1.0.0', description: expect.any(String),
+      id: 'tutor-clinico', name: 'Tutor Clínico', version: '1.1.0', description: expect.any(String),
       capabilities: expect.arrayContaining(['explicar_mecanismo']),
       quota: { used: 4, limit: 30, remaining: 26, resetsAt: '2026-10-13T00:00:00Z' },
       memory: { available: false },

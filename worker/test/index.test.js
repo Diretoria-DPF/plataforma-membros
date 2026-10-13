@@ -62,6 +62,27 @@ describe('index.js — roteamento e CORS', () => {
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://diretoria-dpf.github.io');
   });
 
+  test('entrega ctx.waitUntil da requisição aos handlers (via env), sem tocar no env original', async () => {
+    const { API_REGISTRY } = await import('../src/handlers.js');
+    const seen = [];
+    const spy = jest.spyOn(API_REGISTRY, 'apiTouchSession').mockImplementation(async (sql, requestEnv) => {
+      seen.push(requestEnv);
+      return { success: true };
+    });
+    const ctx = { waitUntil: jest.fn() };
+    try {
+      await worker.fetch(req({ action: 'apiTouchSession', args: ['t'] }), env, ctx);
+      await worker.fetch(req({ action: 'apiTouchSession', args: ['t'] }), env); // sem ctx (testes/CLI): segue sem waitUntil
+    } finally {
+      spy.mockRestore();
+    }
+    expect(typeof seen[0].waitUntil).toBe('function');
+    seen[0].waitUntil(Promise.resolve());
+    expect(ctx.waitUntil).toHaveBeenCalledTimes(1);
+    expect(seen[1].waitUntil).toBeUndefined();
+    expect(env.waitUntil).toBeUndefined();
+  });
+
   test('não devolve Access-Control-Allow-Origin para uma origem fora da allowlist', async () => {
     const request = req({ action: 'apiListEvents', args: [''] }, { headers: { Origin: 'https://site-malicioso.example' } });
     const res = await worker.fetch(request, env);

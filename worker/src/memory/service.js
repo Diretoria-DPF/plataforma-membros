@@ -58,10 +58,15 @@ async function flagOn(sql, identity, key) {
   }
 }
 
+/** null quando a memória está liberada para a pessoa; senão 'flag' | 'role' | 'age' (flag, papel e maioridade). */
+export async function featureReason(sql, identity) {
+  if (!(await flagOn(sql, identity, C.MEMORY.FLAG))) return 'flag';
+  return ineligibleReason(identity, { minorsEnabled: await flagOn(sql, identity, FLAG_MINORS) });
+}
+
 /** Flag, papel e maioridade: lança MEMORY_DISABLED. */
 async function assertFeature(sql, identity) {
-  if (!(await flagOn(sql, identity, C.MEMORY.FLAG))) throw disabled('flag');
-  const reason = ineligibleReason(identity, { minorsEnabled: await flagOn(sql, identity, FLAG_MINORS) });
+  const reason = await featureReason(sql, identity);
   if (reason) throw disabled(reason);
 }
 

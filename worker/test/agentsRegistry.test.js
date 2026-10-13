@@ -78,7 +78,7 @@ describe('drift do registro gerado', () => {
     agents.sort((a, b) => a.id.localeCompare(b.id));
     expect(lf(renderRegistry(agents))).not.toBe(lf(fs.readFileSync(REGISTRY_PATH, 'utf8')));
     const problems = checkLock(agents, JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8')));
-    expect(problems).toEqual(['tutor-clinico: o conteúdo mudou sem aumentar a versão (1.0.0)']);
+    expect(problems).toEqual(['tutor-clinico: o conteúdo mudou sem aumentar a versão (1.1.0)']);
   });
 
   test('o hash só muda com aumento de versão', () => {

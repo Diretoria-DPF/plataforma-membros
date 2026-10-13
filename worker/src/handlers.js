@@ -63,6 +63,7 @@ import * as AgentsService from './services/agentsService.js';
 // Memória de estudo (ADR 0007; banco laift-memory, opt-in, apagável) e painéis dos agentes
 import * as MemoryService from './memory/service.js';
 import * as MemoryAdmin from './memory/admin.js';
+import * as MemoryTutor from './memory/tutor.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -251,7 +252,12 @@ export const API_REGISTRY = {
   // aceita os prefixos apiLearn*/apiAdminAttendance*; entrada = UM objeto.
   // input que não seja objeto vira {} (o service então recusa com mensagem clara).
   apiLearnGetMyStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LearningService.getMyStats(sql, identity)),
-  apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.submitQuizAttempt(sql, identity, asInput(input), cid)),
+  // Resultado do simulado também alimenta a memória de estudo (sinal determinístico, em segundo plano; sem banco de memória, nada).
+  apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
+    const result = await LearningService.submitQuizAttempt(sql, identity, asInput(input), cid);
+    await MemoryTutor.scheduleQuizSignal(sql, env, identity, asInput(input));
+    return result;
+  }),
   apiLearnRecordLabFormulation: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.recordLabFormulation(sql, identity, asInput(input), cid)),
   apiLearnGetMyAttendanceQr: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.getMyAttendanceQr(env, identity)),
   apiAdminAttendanceListEvents: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.listEvents(sql, identity)),

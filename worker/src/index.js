@@ -54,7 +54,7 @@ function jsonResponse(body, request, env, status = 200) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(request, env) });
     }
@@ -93,7 +93,9 @@ export default {
     // env é o objeto local desta invocação de fetch() (não é estado global
     // compartilhado entre requisições) — seguro acrescentar o IP aqui para
     // os handlers que precisam dele (limites de login, cadastro, redefinição e MFA).
-    const requestEnv = Object.assign({}, env, { clientIp: request.headers.get('CF-Connecting-IP') || '' });
+    // waitUntil (da requisição) deixa a memória de estudo gravar DEPOIS de a resposta sair (memory/background.js).
+    const requestEnv = Object.assign({}, env, { clientIp: request.headers.get('CF-Connecting-IP') || '' },
+      ctx && typeof ctx.waitUntil === 'function' ? { waitUntil: (promise) => ctx.waitUntil(promise) } : {});
 
     try {
       const result = await handler(sql, requestEnv, args);

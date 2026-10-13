@@ -83,7 +83,7 @@ describe('trace.js — rastro sem texto do usuário', () => {
       'decisions', 'estimated', 'feature', 'latencyMs', 'memoryUsed', 'model', 'outcome', 'personaHash', 'persona', 'personaVersion',
       'profileId', 'tokensIn', 'tokensOut', 'traceId',
     ].sort());
-    expect(t).toMatchObject({ persona: 'tutor-clinico', personaVersion: '1.0.0', personaHash: tutor.hash, feature: 'agent_tutor', tokensIn: 5, tokensOut: 7 });
+    expect(t).toMatchObject({ persona: 'tutor-clinico', personaVersion: '1.1.0', personaHash: tutor.hash, feature: 'agent_tutor', tokensIn: 5, tokensOut: 7 });
     expect(buildTrace({ ...base, outcome: 'qualquer coisa' }).outcome).toBe('error');
     expect(buildTrace({ ...base, usage: { tokensIn: -3, tokensOut: 1.5 } })).toMatchObject({ tokensIn: null, tokensOut: null });
     expect(buildTrace({ ...base, model: 'x'.repeat(300) }).model).toHaveLength(100);
@@ -146,8 +146,8 @@ describe('memória: ponto de extensão', () => {
     expect(sql).not.toHaveBeenCalled();
   });
 
-  test('nenhuma persona lê ou grava memória nesta fase', () => {
-    listAgents().forEach((a) => expect(a.memory).toEqual({ read: false, write: false }));
+  test('só o Tutor Clínico (1.1.0) lê e grava memória; as personas em rascunho não', () => {
+    listAgents().forEach((a) => expect(a.memory).toEqual(a.id === 'tutor-clinico' ? { read: true, write: true } : { read: false, write: false }));
   });
 });
 
