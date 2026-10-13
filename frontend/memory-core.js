@@ -33,7 +33,7 @@
     { title: 'Onde fica', text: 'Em um banco de dados separado do restante da plataforma, ligado à sua conta por um código que, sozinho, não identifica você.' },
     { title: 'Por quanto tempo', text: 'Cada item é apagado se ficar {unusedDays} dias sem uso, e em no máximo {maxMonths} meses depois de criado. Há um limite de {maxItems} itens por pessoa.' },
     { title: 'Quem pode ver', text: 'Você, no seu Perfil. A administração não lê a sua memória (vê apenas números totais). A memória só é usada para montar as respostas do Tutor para você.' },
-    { title: 'Seus controles', text: 'Aqui no Perfil você pode ver tudo o que está guardado, apagar um item, apagar tudo, baixar uma cópia (JSON) e desativar a memória a qualquer momento. Desativar apaga a memória: a exclusão é imediata ou, se houver falha técnica, concluída em até 24 horas. Desativar não prejudica o uso da plataforma nem do Tutor.' },
+    { title: 'Seus controles', text: 'Aqui no Perfil você pode ver tudo o que está guardado, apagar um item, apagar tudo, baixar uma cópia (JSON) e desativar a memória a qualquer momento. Desativar apaga a memória: a exclusão é imediata ou, se houver falha técnica, concluída em até 3 meses. Desativar não prejudica o uso da plataforma nem do Tutor.' },
     { title: 'Quem pode usar', text: 'Somente maiores de 18 anos.' },
     { title: 'Base legal', text: 'Seu consentimento (LGPD, art. 7º, I). Você pode revogá-lo quando quiser (art. 8º, § 5º), de forma tão fácil quanto foi dado.' },
   ];
@@ -78,7 +78,7 @@
     confirmRevoke: 'Desligar a memória de estudo? Tudo o que está guardado será apagado e o Tutor deixa de usar a memória. Você pode ativar de novo depois.',
     okActivated: 'Memória de estudo ativada.',
     okRevoked: 'Memória desativada e apagada.',
-    okRevokedPending: 'Memória desativada. O apagamento está em andamento e termina em até 24 horas.',
+    okRevokedPending: 'Memória desativada. O apagamento está em andamento e termina em até 3 meses.',
     okItemDeleted: 'Item apagado.',
     okAllDeleted: 'Tudo foi apagado.',
     okSaved: 'Salvo.',

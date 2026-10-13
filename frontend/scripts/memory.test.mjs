@@ -434,7 +434,7 @@ test('"Desligar memória" exige confirmação, revoga e volta ao texto de consen
       assert.deepEqual(env.calls.find((c) => c.action === 'apiMemorySetConsent').args, ['rev-' + erased, { granted: false }]);
       assert.ok(find(env.cardOf(), byKey('activate')), 'volta a oferecer a ativação');
       assert.equal(find(env.cardOf(), byClass('memory-items')), null);
-      assert.match(env.status().textContent, erased ? /desativada e apagada/ : /até 24 horas/);
+      assert.match(env.status().textContent, erased ? /desativada e apagada/ : /até 3 meses/);
     } finally {
       env.teardown();
     }

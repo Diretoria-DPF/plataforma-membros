@@ -20,7 +20,7 @@
 
 **Quem pode ver.** Você, no seu Perfil. A administração **não** lê a sua memória (vê apenas números totais). A memória só é usada para montar as respostas do Tutor para você.
 
-**Seus controles.** Em "Memória de estudo", no Perfil, você pode: ver tudo o que está guardado, apagar um item, apagar tudo, baixar uma cópia (JSON) e desativar a memória a qualquer momento. Desativar apaga a memória: a exclusão é imediata ou, se houver falha técnica, concluída em até 24 horas. Desativar não prejudica o uso da plataforma nem do Tutor.
+**Seus controles.** Em "Memória de estudo", no Perfil, você pode: ver tudo o que está guardado, apagar um item, apagar tudo, baixar uma cópia (JSON) e desativar a memória a qualquer momento. Desativar apaga a memória: a exclusão é imediata ou, se houver falha técnica, concluída em até 3 meses. Desativar não prejudica o uso da plataforma nem do Tutor.
 
 **Quem pode usar.** Somente maiores de 18 anos.
 
@@ -52,8 +52,8 @@ Acrescentar, depois do trecho sobre a Lia:
 
 - **Registros técnicos dos agentes** (sem o texto das perguntas e respostas): apagados após **90 dias**, por rotina diária.
 - **Memória de estudo:** cada item é apagado após **180 dias sem uso** e, de qualquer forma, no máximo **12 meses** depois de criado, por rotina diária.
-- **Quando você desativa a memória, apaga um item ou apaga tudo**, o apagamento é imediato. Se houver falha técnica, ele fica registrado em uma fila e é concluído em até **24 horas** (nossa meta). Enquanto isso, a memória já não é lida nem gravada.
-- **Quando sua conta é excluída**, a memória é apagada em até **24 horas** em rotina automática, independentemente do prazo geral de até 180 dias para a exclusão da conta e dos demais dados. Uma varredura diária remove qualquer item que, por falha, tenha ficado sem consentimento vigente.
+- **Quando você desativa a memória, apaga um item ou apaga tudo**, o apagamento é imediato. Se houver falha técnica, ele fica registrado em uma fila e é concluído em até **3 meses** (nossa meta). Enquanto isso, a memória já não é lida nem gravada.
+- **Quando sua conta é excluída**, a memória é apagada em até **3 meses** em rotina automática, independentemente do prazo geral de até 180 dias para a exclusão da conta e dos demais dados. Uma varredura diária remove qualquer item que, por falha, tenha ficado sem consentimento vigente.
 - **Consentimento:** guardamos a data e a versão do texto aceito (sem conteúdo da memória), apagados junto com a conta.
 - **Alteração do texto:** se a finalidade da memória mudar, pediremos um novo consentimento antes de voltar a usá-la; a memória antiga permanece sem uso até o novo aceite (você pode apagá-la ou baixá-la).
 

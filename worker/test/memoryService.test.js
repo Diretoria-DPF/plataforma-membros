@@ -334,7 +334,7 @@ describe('revogação (falha fechada)', () => {
     expect((await core.query('SELECT status FROM member_memory_consent WHERE profile_id = $1', [ME])).rows[0].status).toBe('revoked');
     expect((await core.query('SELECT profile_ref, reason FROM memory_purge_queue')).rows).toEqual([{ profile_ref: ME, reason: 'revoked' }]);
     expect(await memoryRows()).toHaveLength(1);
-    expect(res.message).toMatch(/24 horas/);
+    expect(res.message).toMatch(/3 meses/);
   });
 
   test('sem o banco de memória configurado a revogação também vale e enfileira', async () => {

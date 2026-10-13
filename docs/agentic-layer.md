@@ -100,7 +100,7 @@ Escrita do próprio membro: `apiMemorySetPreference` (só `topic_level`, `study_
 | Revogar consentimento (`apiMemorySetConsent {granted:false}`) | grava a revogação **no núcleo primeiro** (a leitura fecha), depois apaga na memória | a pessoa entra em `memory_purge_queue` (`reason: 'revoked'`); a resposta diz `queued: true` e prazo de 24 h. Se **nem apagou nem enfileirou**, devolve **erro** `MEMORY_UNAVAILABLE` com `revoked: true` (a leitura já está fechada; o cliente tenta de novo) |
 | Novo aceite | bloqueado enquanto houver apagamento pendente na fila (tenta concluí-lo antes) | `MEMORY_UNAVAILABLE`, `reason: 'pending_purge'` |
 | Exclusão de conta | o gatilho `AFTER DELETE ON profiles` (036) enfileira `account_deleted`; o consentimento sai por CASCADE | a linha só sai da fila **depois** do apagamento; falhou, fica (`attempts`, `last_error_code`) |
-| Admin (`apiAdminPurgeMemberMemory`) | exige senha (e 2º fator, se houver); apaga a memória de **uma** pessoa; vale com a flag desligada | enfileira (`reason: 'admin'`); nem apagar nem enfileirar = erro, nunca "em até 24 horas" |
+| Admin (`apiAdminPurgeMemberMemory`) | exige senha (e 2º fator, se houver); apaga a memória de **uma** pessoa; vale com a flag desligada | enfileira (`reason: 'admin'`); nem apagar nem enfileirar = erro, nunca "em até 3 meses" |
 
 Limpeza (`maintenance.js` -> `memory/cleanup.js`, **só roda se `DATABASE_URL_MEMORY` e `MEMORY_SUBJECT_KEY` existem**):
 

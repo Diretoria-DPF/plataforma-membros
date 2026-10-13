@@ -197,7 +197,7 @@ describe('M5 — revogar e apagar não mentem nem ficam presos', () => {
     msql.fail(new Error('banco de memória fora'));
     const err = await MemoryService.setConsent(noQueue(sql), env(), MEMBER, { granted: false }, CID).catch((e) => e);
     expect(err).toMatchObject({ expected: true, code: 'MEMORY_UNAVAILABLE', payload: { code: 'MEMORY_UNAVAILABLE', revoked: true } });
-    expect(err.message).not.toMatch(/24 horas/);
+    expect(err.message).not.toMatch(/3 meses/);
     expect(err.message).toMatch(/desativada/);
     expect((await core.query('SELECT status FROM member_memory_consent WHERE profile_id = $1', [ME])).rows[0].status).toBe('revoked');
     expect((await core.query("SELECT result FROM audit_logs WHERE action = 'MEMORY_CONSENT_REVOKED'")).rows).toEqual([{ result: 'failure' }]);
@@ -205,19 +205,19 @@ describe('M5 — revogar e apagar não mentem nem ficam presos', () => {
     await expect(MemoryService.setConsent(sql, env(), MEMBER, { granted: false }, CID)).resolves.toMatchObject({ erased: true });
   });
 
-  test('purga do admin sem apagar E sem enfileirar: ERRO, nunca "em até 24 horas"', async () => {
+  test('purga do admin sem apagar E sem enfileirar: ERRO, nunca "em até 3 meses"', async () => {
     msql.fail(new Error('fora'));
     const err = await MemoryAdmin.purgeMemberMemory(noQueue(sql), env(), ADMIN, { profileId: ME }, CID).catch((e) => e);
     expect(err).toMatchObject({ code: 'MEMORY_UNAVAILABLE' });
-    expect(err.message).not.toMatch(/24 horas/);
+    expect(err.message).not.toMatch(/3 meses/);
     expect((await core.query("SELECT result FROM audit_logs WHERE action = 'MEMORY_ADMIN_PURGE'")).rows).toEqual([{ result: 'failure' }]);
   });
 
-  test('a mensagem de "até 24 horas" só aparece quando de fato enfileirou', async () => {
+  test('a mensagem de "até 3 meses" só aparece quando de fato enfileirou', async () => {
     await grant();
     msql.fail(new Error('fora'));
     const res = await MemoryService.setConsent(sql, env(), MEMBER, { granted: false }, CID);
-    expect(res).toMatchObject({ erased: false, queued: true, message: expect.stringMatching(/24 horas/) });
+    expect(res).toMatchObject({ erased: false, queued: true, message: expect.stringMatching(/3 meses/) });
   });
 
   test('revogar/apagar não sofrem o limite de 10/h do consentimento nem o de 30/h da escrita: só o teto extremo', async () => {

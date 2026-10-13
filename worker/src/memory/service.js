@@ -204,7 +204,7 @@ async function revokeConsent(sql, env, identity, correlationId) {
   if (outcome.erased) await drainSoon(sql, env);
   return {
     ...head(), consent, erased: outcome.erased, queued: outcome.queued,
-    message: outcome.erased ? 'Memória desativada e apagada.' : 'Memória desativada. O apagamento está em andamento e termina em até 24 horas.',
+    message: outcome.erased ? 'Memória desativada e apagada.' : 'Memória desativada. O apagamento está em andamento e termina em até 3 meses.',
   };
 }
 

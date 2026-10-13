@@ -91,12 +91,12 @@ export async function purgeMemberMemory(sql, env, identity, rawInput, correlatio
   cacheInvalidate(target);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'MEMORY_ADMIN_PURGE', 'profile', target, outcome.erased || outcome.queued ? 'success' : 'failure', { erased: outcome.erased, queued: outcome.queued });
   if (!outcome.erased && !outcome.queued) {
-    // Nem apagou nem enfileirou: nunca dizer "em até 24 horas". O admin precisa tentar de novo.
+    // Nem apagou nem enfileirou: nunca dizer "em até 3 meses". O admin precisa tentar de novo.
     throw AgentError('MEMORY_UNAVAILABLE', 'Não foi possível apagar nem enfileirar o apagamento da memória agora. Tente novamente.');
   }
   return {
     success: true, alpha: true, apiVersion: C.AGENTS.API_VERSION, erased: outcome.erased, queued: outcome.queued,
-    message: outcome.erased ? 'Memória apagada.' : 'Apagamento enfileirado; o cron conclui em até 24 horas.',
+    message: outcome.erased ? 'Memória apagada.' : 'Apagamento enfileirado; o cron conclui em até 3 meses.',
   };
 }
 
