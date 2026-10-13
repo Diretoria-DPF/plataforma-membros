@@ -25,6 +25,11 @@
  * --baseline-through N  registra como já aplicadas (SEM executar) as migrações
  *                       com número <= N, para bancos migrados à mão; só registra
  * --dir CAMINHO         pasta das migrações (padrão: sql/ na raiz do repositório)
+ * --ledger NOME         tabela de controle (padrão: schema_migrations)
+ * --memory              atalho do BANCO DE MEMÓRIA (projeto Neon laift-memory): --dir sql/memory --ledger
+ *                       memory_schema_migrations. DATABASE_URL deve ser a URL do DONO do esquema desse projeto
+ *                       (nunca a do papel de execução laift_memory_worker, que não faz DDL). O núcleo e a memória
+ *                       têm ledgers e pastas separados; sql/memory/ nunca é lido pelo fluxo padrão.
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -33,9 +38,19 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const DIR_PADRAO = path.resolve(aqui, '..', '..', 'sql');
+const DIR_MEMORIA = path.join(DIR_PADRAO, 'memory');
+const LEDGER_PADRAO = 'schema_migrations';
+const LEDGER_MEMORIA = 'memory_schema_migrations';
 const NOME_MIGRACAO = /^(\d{3,})_.+\.sql$/;
+const NOME_LEDGER = /^[a-z_][a-z0-9_]{0,62}$/;
 
-const CRIAR_LEDGER = `CREATE TABLE IF NOT EXISTS schema_migrations (
+/** O nome do ledger entra no texto do SQL (identificador não é parâmetro): só passa o que casa com o formato. */
+function ledgerValido(nome) {
+  if (typeof nome !== 'string' || !NOME_LEDGER.test(nome)) throw new Error(`Nome de ledger inválido: "${nome ?? ''}"`);
+  return nome;
+}
+
+const criarLedger = (ledger) => `CREATE TABLE IF NOT EXISTS ${ledger} (
   name       text PRIMARY KEY,
   hash       text NOT NULL,
   applied_at timestamptz NOT NULL DEFAULT now()
@@ -70,16 +85,16 @@ export function listMigrations(dir) {
 }
 
 /** Lê o ledger; sem a tabela (primeira execução) devolve vazio, sem criá-la. */
-async function lerLedger(client) {
-  const existe = await client.query("SELECT to_regclass('public.schema_migrations') AS t");
+async function lerLedger(client, ledger) {
+  const existe = await client.query(`SELECT to_regclass('public.${ledger}') AS t`);
   if (existe.rows[0].t === null) return new Map();
-  const { rows } = await client.query('SELECT name, hash FROM schema_migrations');
+  const { rows } = await client.query(`SELECT name, hash FROM ${ledger}`);
   return new Map(rows.map((linha) => [linha.name, linha.hash]));
 }
 
-const registrar = (client, migracao) =>
+const registrar = (client, ledger, migracao) =>
   client.query(
-    'INSERT INTO schema_migrations (name, hash) VALUES ($1, $2) ON CONFLICT (name) DO NOTHING',
+    `INSERT INTO ${ledger} (name, hash) VALUES ($1, $2) ON CONFLICT (name) DO NOTHING`,
     [migracao.name, migracao.hash],
   );
 
@@ -90,12 +105,13 @@ async function desfazer(client) {
 
 /**
  * @param {{query: (text: string, params?: unknown[]) => Promise<{rows: any[]}>}} client conexão no estilo `pg`
- * @param {{dir?: string, dryRun?: boolean, baselineThrough?: number, log?: (m: string) => void}} opcoes
+ * @param {{dir?: string, ledger?: string, dryRun?: boolean, baselineThrough?: number, log?: (m: string) => void}} opcoes
  * @returns {Promise<{applied: string[], baselined: string[], pending: string[], missingFiles: string[]}>}
  */
-export async function runMigrations(client, { dir = DIR_PADRAO, dryRun = false, baselineThrough, log = escreverLinha } = {}) {
+export async function runMigrations(client, { dir = DIR_PADRAO, ledger: ledgerPedido = LEDGER_PADRAO, dryRun = false, baselineThrough, log = escreverLinha } = {}) {
+  const ledger = ledgerValido(ledgerPedido);
   const arquivos = listMigrations(dir);
-  const registradas = await lerLedger(client);
+  const registradas = await lerLedger(client, ledger);
 
   const alteradas = arquivos.filter((m) => registradas.has(m.name) && registradas.get(m.name) !== m.hash);
   if (alteradas.length) {
@@ -115,8 +131,8 @@ export async function runMigrations(client, { dir = DIR_PADRAO, dryRun = false, 
   if (baselineThrough !== undefined) {
     const paraRegistrar = pendentes.filter((m) => m.number <= baselineThrough);
     if (!dryRun && paraRegistrar.length) {
-      await client.query(CRIAR_LEDGER);
-      for (const m of paraRegistrar) await registrar(client, m);
+      await client.query(criarLedger(ledger));
+      for (const m of paraRegistrar) await registrar(client, ledger, m);
     }
     for (const m of paraRegistrar) log(`${dryRun ? '[dry-run] registraria' : 'registrada'} (baseline): ${m.name}`);
     return { ...resultado, baselined: paraRegistrar.map((m) => m.name), pending: pendentes.filter((m) => m.number > baselineThrough).map((m) => m.name) };
@@ -128,7 +144,7 @@ export async function runMigrations(client, { dir = DIR_PADRAO, dryRun = false, 
     return { ...resultado, pending: pendentes.map((m) => m.name) };
   }
 
-  await client.query(CRIAR_LEDGER);
+  await client.query(criarLedger(ledger));
   for (const m of pendentes) {
     try {
       await client.query(m.sql);
@@ -136,7 +152,7 @@ export async function runMigrations(client, { dir = DIR_PADRAO, dryRun = false, 
       await desfazer(client);
       throw new Error(`Migração ${m.name} falhou e foi desfeita: ${(err && err.message) || err}`);
     }
-    await registrar(client, m);
+    await registrar(client, ledger, m);
     resultado.applied.push(m.name);
     log(`aplicada: ${m.name}`);
   }
@@ -146,7 +162,7 @@ export async function runMigrations(client, { dir = DIR_PADRAO, dryRun = false, 
 
 /**
  * @param {string[]} argv
- * @returns {{dryRun: boolean, baselineThrough?: number, dir: string}}
+ * @returns {{dryRun: boolean, baselineThrough?: number, dir: string, ledger?: string}}
  */
 export function parseArgs(argv) {
   const opcoes = { dryRun: false, dir: DIR_PADRAO };
@@ -166,6 +182,12 @@ export function parseArgs(argv) {
       if (!argv[i + 1]) throw new Error('--dir precisa de um caminho');
       opcoes.dir = argv[i + 1];
       i += 1;
+    } else if (flag === '--ledger') {
+      opcoes.ledger = ledgerValido(argv[i + 1]);
+      i += 1;
+    } else if (flag === '--memory') {
+      opcoes.dir = DIR_MEMORIA;
+      opcoes.ledger = LEDGER_MEMORIA;
     } else {
       throw new Error(`Opção desconhecida: ${flag}`);
     }

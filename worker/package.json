@@ -11,7 +11,8 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "tail": "wrangler tail",
     "validate:sql": "node scripts/validate-migrations.mjs",
-    "openapi": "node scripts/gen-openapi.mjs"
+    "openapi": "node scripts/gen-openapi.mjs",
+    "gen:agents": "node scripts/gen-agent-registry.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4"

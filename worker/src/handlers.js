@@ -45,6 +45,7 @@ import * as AttendanceService from './services/attendanceService.js';
 // Fase 3 — IA (Groq) e clínica virtual
 import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
+import * as ClinicalSimService from './services/clinicalSimService.js';
 // Lia, guia da plataforma (orienta e navega; nunca altera dados)
 import * as AssistantService from './services/assistantService.js';
 // Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
@@ -58,6 +59,12 @@ import * as LibraryService from './services/libraryService.js';
 import * as LibraryCuration from './services/libraryCurationService.js';
 import * as LibraryAdmin from './services/libraryAdminService.js';
 import * as LibrarySummary from './services/librarySummaryService.js';
+// Agentes de IA (ADR 0007; alfa, atrás de agents_enabled)
+import * as AgentsService from './services/agentsService.js';
+// Memória de estudo (ADR 0007; banco laift-memory, opt-in, apagável) e painéis dos agentes
+import * as MemoryService from './memory/service.js';
+import * as MemoryAdmin from './memory/admin.js';
+import * as MemoryTutor from './memory/tutor.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -246,7 +253,12 @@ export const API_REGISTRY = {
   // aceita os prefixos apiLearn*/apiAdminAttendance*; entrada = UM objeto.
   // input que não seja objeto vira {} (o service então recusa com mensagem clara).
   apiLearnGetMyStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LearningService.getMyStats(sql, identity)),
-  apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.submitQuizAttempt(sql, identity, asInput(input), cid)),
+  // Resultado do simulado também alimenta a memória de estudo (sinal determinístico, em segundo plano; sem banco de memória, nada).
+  apiLearnSubmitQuizAttempt: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, async (identity, cid) => {
+    const result = await LearningService.submitQuizAttempt(sql, identity, asInput(input), cid);
+    await MemoryTutor.scheduleQuizSignal(sql, env, identity, asInput(input));
+    return result;
+  }),
   apiLearnRecordLabFormulation: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.recordLabFormulation(sql, identity, asInput(input), cid)),
   apiLearnGetMyAttendanceQr: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.getMyAttendanceQr(env, identity)),
   apiAdminAttendanceListEvents: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.listEvents(sql, identity)),
@@ -265,7 +277,7 @@ export const API_REGISTRY = {
   apiLearnClinicalLibrary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.library(sql, env, identity, input || {})),
   apiLearnClinicalEpidemiology: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, () => ClinicalService.epidemiology(sql, env)),
   apiLearnLabPreceptor: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.askLabPreceptor(sql, env, identity, input || {})),
-  apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.getMyQuota(sql, env, identity)),
+  apiLearnGetMyAiQuota: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, async (identity) => ClinicalSimService.withSimulationHint(sql, identity, await AiService.getMyQuota(sql, env, identity))),
   apiAdminAiHealth: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminHealth(sql, env, identity)),
   apiAdminAiMetrics: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AiService.adminMetrics(sql, env, identity, asInput(input))),
   apiAdminLearnListPendingCases: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => ClinicalService.listPendingCases(sql, identity)),
@@ -299,4 +311,19 @@ export const API_REGISTRY = {
   apiAdminLearnLibrarySaveTopic: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.saveTopic(sql, identity, asInput(input), cid)),
   apiAdminLearnLibraryListStaff: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => LibraryAdmin.listStaff(sql, identity)),
   apiAdminLearnLibrarySetStaff: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryAdmin.setStaff(sql, identity, asInput(input), cid)),
+  // ---- Agentes de IA (alfa, agents/v1-alpha). Rodam no shell (App.call), fora da ponte dos módulos. Sessão obrigatória; o traceId é o correlationId. ----
+  apiAgentsList: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AgentsService.list(sql, env, identity)),
+  apiAgentsInvoke: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AgentsService.invoke(sql, env, identity, asInput(input), cid)),
+
+  // ---- Memória de estudo (alfa). Rodam no shell (App.call). Sessão obrigatória; atrás de memory_enabled, só maiores de 18 anos. ----
+  apiMemoryGet: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.getState(sql, env, identity, cid)),
+  apiMemorySetConsent: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.setConsent(sql, env, identity, asInput(input), cid)),
+  apiMemoryDeleteItem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.deleteItem(sql, env, identity, asInput(input), cid)),
+  apiMemoryDeleteAll: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.deleteAll(sql, env, identity, cid)),
+  apiMemorySetPreference: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.setPreference(sql, env, identity, asInput(input), cid)),
+  apiMemoryExport: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.exportData(sql, env, identity, cid)),
+  // Admin: só agregados (o admin NÃO lê a memória de ninguém); apagar a memória de uma pessoa exige senha (e 2º fator).
+  apiAdminMemoryStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MemoryAdmin.memoryStats(sql, env, identity)),
+  apiAdminPurgeMemberMemory: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryAdmin.purgeMemberMemory(sql, env, identity, asInput(input), cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),
+  apiAdminAgentsStats: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => MemoryAdmin.agentsStats(sql, identity, asInput(input))),
 };

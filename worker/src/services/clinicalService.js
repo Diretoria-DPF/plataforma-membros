@@ -31,6 +31,9 @@ import {
   sanitizeAttendance, validateEvaluation, validateGeneratedCase, parseJsonObject, normalizeToxindrome, normalizeDifficulty,
 } from '../ai/validators.js';
 import { withQuota, asObject } from './aiService.js';
+import * as ClinicalSim from './clinicalSimService.js';
+import { buildSimEvaluationMessages } from '../clinicalSim/prompts.js';
+import { parseSimEvaluation, computeSimScore } from '../clinicalSim/scoring.js';
 
 export const CASE_SOURCES = ['builtin', 'acervo', 'ia'];
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -89,59 +92,108 @@ export async function chat(sql, env, identity, rawInput) {
   if (input.patientContext !== undefined && byteLength(input.patientContext) > C.AI_LIMITS.CONTEXT_MAX_BYTES) {
     throw E.ValidationError('O contexto do caso é grande demais.');
   }
+  // Simulação (ADR 0009): null = desligada ou não pedida; o caminho abaixo é então o de sempre, sem consulta nova.
+  const sim = await ClinicalSim.prepare(sql, identity, { rawSimulation: input.simulation, caseSource, caseId });
   let context;
   if (caseSource === 'acervo') {
-    const row = await loadApprovedCase(sql, caseId);
+    const row = sim ? sim.row : await loadApprovedCase(sql, caseId);
     context = contextFromPayload(row.payload, input.patientContext);
   } else {
     context = sanitizePatientContext(input.patientContext);
   }
 
   return withQuota(sql, identity, C.AI_FEATURE.CHAT, async () => {
+    const messages = sim
+      ? ClinicalSim.patientMessages(sim.session, { context, question, history })
+      : buildPatientMessages({ context, question, history });
     const out = await Orchestrator.complete(sql, env, identity, {
       feature: C.AI_FEATURE.CHAT,
-      messages: buildPatientMessages({ context, question, history }),
+      messages,
       profileId: identity.profileId,
     });
     const patientReply = cleanReply(out.content, C.AI_LIMITS.REPLY_MAX);
     if (!patientReply) throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
-    return { success: true, patientReply };
+    if (!sim) return { success: true, patientReply };
+    const guarded = ClinicalSim.guardPatientReply(patientReply);
+    return { success: true, patientReply: guarded.reply, simulation: { simId: sim.session.simId, guardrails: guarded.rules } };
   });
 }
 
 // ---------------------------------------------------------------------------
 // apiLearnClinicalEvaluate — preceptor (modelo forte, JSON) + learning_attempts
 // ---------------------------------------------------------------------------
+async function resolveAnswerKey(sql, input, caseSource, caseId, attendance, simRow) {
+  if (caseSource === 'acervo') {
+    const row = simRow || await loadApprovedCase(sql, caseId);
+    const answerKey = sanitizeAnswerKey(row.payload && row.payload.gabaritoPreceptor);
+    if (!answerKey) throw E.ValidationError('Este caso do acervo está sem gabarito. Avise a diretoria.');
+    return { answerKey, caseMeta: { titulo: row.title, toxindrome: row.toxindrome || 'Outra', agente: row.agent || '' } };
+  }
+  if (input.answerKey !== undefined && byteLength(input.answerKey) > C.AI_LIMITS.ANSWER_KEY_MAX_BYTES) {
+    throw E.ValidationError('O gabarito do caso é grande demais.');
+  }
+  const answerKey = sanitizeAnswerKey(input.answerKey);
+  if (!answerKey) throw E.ValidationError('Gabarito do caso ausente ou inválido.');
+  return { answerKey, caseMeta: { toxindrome: normalizeToxindrome(attendance.toxindrome), agente: attendance.agent } };
+}
+
+// Avaliação de sempre: o modelo devolve a nota total (validateEvaluation).
+async function runEvaluation(sql, env, identity, { answerKey, attendance, caseMeta }) {
+  const out = await Orchestrator.complete(sql, env, identity, {
+    feature: C.AI_FEATURE.EVALUATE,
+    messages: buildEvaluationMessages({ answerKey, attendance, caseMeta }),
+    profileId: identity.profileId,
+  });
+  const result = validateEvaluation(parseJsonObject(out.content));
+  if (!result) throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
+  return { result, components: null };
+}
+
+// Avaliação em modo simulação: o modelo só SUGERE a nota de cada componente; clamp e soma são do servidor.
+async function runSimEvaluation(sql, env, identity, { answerKey, attendance, caseMeta, session, facts }) {
+  const out = await Orchestrator.complete(sql, env, identity, {
+    feature: C.AI_FEATURE.EVALUATE,
+    messages: buildSimEvaluationMessages({ answerKey, attendance, caseMeta, axes: session.axes, version: session.version }),
+    profileId: identity.profileId,
+  });
+  const parsed = parseSimEvaluation(parseJsonObject(out.content));
+  if (!parsed) throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
+  const scored = computeSimScore(parsed.components, facts);
+  const result = { score: scored.score, verdict: parsed.verdict, feedback: parsed.feedback, strengths: parsed.strengths, improvements: parsed.improvements };
+  return { result, components: scored.components };
+}
+
+async function saveAttempt(sql, details, score, elapsedSeconds, identity, correlationId) {
+  try {
+    const rows = await sql`
+      INSERT INTO learning_attempts (profile_id, module, activity, score, max_score, duration_seconds, details)
+      VALUES (${identity.profileId}::uuid, 'clinica', 'caso_clinico', ${score}, 100, ${elapsedSeconds}, ${JSON.stringify(details)}::jsonb)
+      RETURNING id
+    `;
+    return { saved: true, attemptId: rows && rows[0] ? rows[0].id : null };
+  } catch (err) {
+    // A avaliação já custou tokens: devolvemos o parecer mesmo sem
+    // conseguir registrar a tentativa (e o erro fica no error_logs).
+    await Logging.logError(sql, correlationId, 'CLINICAL_ATTEMPT_SAVE_FAILED', 'Falha ao gravar learning_attempts da clínica.', { caseSource: details.caseSource });
+    return { saved: false, attemptId: null };
+  }
+}
+
 export async function evaluate(sql, env, identity, rawInput, correlationId) {
   const input = asObject(rawInput);
   const caseSource = parseCaseSource(input.caseSource);
   const caseId = parseCaseId(input.caseId);
   const attendance = sanitizeAttendance(input.attendance, C.AI_LIMITS, (msg) => { throw E.ValidationError(msg); });
-
-  let answerKey;
-  let caseMeta;
-  if (caseSource === 'acervo') {
-    const row = await loadApprovedCase(sql, caseId);
-    answerKey = sanitizeAnswerKey(row.payload && row.payload.gabaritoPreceptor);
-    if (!answerKey) throw E.ValidationError('Este caso do acervo está sem gabarito. Avise a diretoria.');
-    caseMeta = { titulo: row.title, toxindrome: row.toxindrome || 'Outra', agente: row.agent || '' };
-  } else {
-    if (input.answerKey !== undefined && byteLength(input.answerKey) > C.AI_LIMITS.ANSWER_KEY_MAX_BYTES) {
-      throw E.ValidationError('O gabarito do caso é grande demais.');
-    }
-    answerKey = sanitizeAnswerKey(input.answerKey);
-    if (!answerKey) throw E.ValidationError('Gabarito do caso ausente ou inválido.');
-    caseMeta = { toxindrome: normalizeToxindrome(attendance.toxindrome), agente: attendance.agent };
-  }
+  // Simulação (ADR 0009): null = desligada ou não pedida; o caminho abaixo é então o de sempre, sem consulta nova.
+  const sim = await ClinicalSim.prepare(sql, identity, { rawSimulation: input.simulation, caseSource, caseId });
+  const { answerKey, caseMeta } = await resolveAnswerKey(sql, input, caseSource, caseId, attendance, sim && sim.row);
 
   return withQuota(sql, identity, C.AI_FEATURE.EVALUATE, async () => {
-    const out = await Orchestrator.complete(sql, env, identity, {
-      feature: C.AI_FEATURE.EVALUATE,
-      messages: buildEvaluationMessages({ answerKey, attendance, caseMeta }),
-      profileId: identity.profileId,
-    });
-    const result = validateEvaluation(parseJsonObject(out.content));
-    if (!result) throw AiInvalidOutputError(AI_MESSAGES.INVALID_OUTPUT);
+    const raw = asObject(input.attendance);
+    const facts = { hasDiagnosis: !!cleanText(raw.diagnosis), hasConduct: !!cleanText(raw.conduct), questionsCount: attendance.questionsCount };
+    const { result, components } = sim
+      ? await runSimEvaluation(sql, env, identity, { answerKey, attendance, caseMeta, session: sim.session, facts })
+      : await runEvaluation(sql, env, identity, { answerKey, attendance, caseMeta });
     // O teto por desfecho também é aplicado aqui: o prompt pede, mas quem
     // garante é o servidor.
     if (OUTCOME_SCORE_CAP[attendance.outcome] !== undefined) {
@@ -155,26 +207,15 @@ export async function evaluate(sql, env, identity, rawInput, correlationId) {
       toxindrome: caseMeta.toxindrome || 'Outra',
       agent: cleanText(caseMeta.agente, 120),
     };
-    let saved = true;
-    let attemptId = null;
-    try {
-      const rows = await sql`
-        INSERT INTO learning_attempts (profile_id, module, activity, score, max_score, duration_seconds, details)
-        VALUES (${identity.profileId}::uuid, 'clinica', 'caso_clinico', ${result.score}, 100, ${attendance.elapsedSeconds}, ${JSON.stringify(details)}::jsonb)
-        RETURNING id
-      `;
-      attemptId = rows && rows[0] ? rows[0].id : null;
-    } catch (err) {
-      // A avaliação já custou tokens: devolvemos o parecer mesmo sem
-      // conseguir registrar a tentativa (e o erro fica no error_logs).
-      saved = false;
-      await Logging.logError(sql, correlationId, 'CLINICAL_ATTEMPT_SAVE_FAILED', 'Falha ao gravar learning_attempts da clínica.', { caseSource });
-    }
+    if (sim) details.sim = ClinicalSim.simDetails(sim.session, components);
+    const { saved, attemptId } = await saveAttempt(sql, details, result.score, attendance.elapsedSeconds, identity, correlationId);
     if (saved) await invalidateCached(env, EPIDEMIOLOGY_CACHE_KEY);
     await Logging.logAudit(sql, correlationId, identity.profileId, 'LEARN_CLINICAL_EVALUATE', 'learning_attempt', attemptId, saved ? 'success' : 'failure', {
       caseSource, score: result.score, outcome: details.outcome,
     });
-    return { success: true, result, saved };
+    const response = { success: true, result, saved };
+    if (sim) response.simulation = ClinicalSim.debrief(sim.session, components);
+    return response;
   });
 }
 
@@ -348,6 +389,47 @@ export async function listPendingCases(sql, identity) {
   };
 }
 
+// Aprovação de caso COM perfil de simulação (sql/037): lista de conferência completa e revisor clínico diferente do
+// autor. O gatilho do banco impõe as duas regras mesmo que este código seja contornado; aqui só damos a mensagem clara.
+async function approveSimCase(sql, identity, caseId, rawChecklist) {
+  const checklist = ClinicalSim.parseChecklist(rawChecklist);
+  try {
+    return await sql`
+      UPDATE clinical_cases
+      SET status = 'approved', reviewed_by = ${identity.profileId}::uuid, reviewed_at = now(),
+          review_checklist = ${JSON.stringify(checklist)}::jsonb,
+          clinical_reviewed_by = ${identity.profileId}::uuid, clinical_reviewed_at = now()
+      WHERE id = ${caseId}::uuid AND status = 'pending' AND sim_profile IS NOT NULL
+      RETURNING id
+    `;
+  } catch (err) {
+    throw ClinicalSim.translateReviewError(err);
+  }
+}
+
+async function decideCase(sql, identity, caseId, decision) {
+  try {
+    return await sql`
+      UPDATE clinical_cases
+      SET status = ${decision}, reviewed_by = ${identity.profileId}::uuid, reviewed_at = now()
+      WHERE id = ${caseId}::uuid AND status = 'pending'
+      RETURNING id
+    `;
+  } catch (err) {
+    // Caso com sim_profile aprovado sem a lista de conferência: o gatilho da 037 recusa.
+    throw ClinicalSim.translateReviewError(err);
+  }
+}
+
+async function explainNoUpdate(sql, caseId, simReview) {
+  const current = simReview
+    ? await sql`SELECT status, (sim_profile IS NOT NULL) AS has_sim FROM clinical_cases WHERE id = ${caseId}::uuid`
+    : await sql`SELECT status FROM clinical_cases WHERE id = ${caseId}::uuid`;
+  if (!current.length) throw E.NotFoundError('Caso não encontrado.');
+  if (simReview && current[0].status === 'pending' && !current[0].has_sim) throw E.ValidationError(C.SIM_MESSAGES.reviewNoProfile);
+  throw E.ConflictError('Este caso já foi revisado.');
+}
+
 export async function reviewCase(sql, env, identity, rawInput, correlationId) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
   const input = asObject(rawInput);
@@ -356,19 +438,13 @@ export async function reviewCase(sql, env, identity, rawInput, correlationId) {
   if (!UUID_RE.test(caseId)) throw E.ValidationError('Caso inválido.');
   if (decision !== 'approved' && decision !== 'rejected') throw E.ValidationError('Decisão inválida.');
 
-  const rows = await sql`
-    UPDATE clinical_cases
-    SET status = ${decision}, reviewed_by = ${identity.profileId}::uuid, reviewed_at = now()
-    WHERE id = ${caseId}::uuid AND status = 'pending'
-    RETURNING id
-  `;
-  if (!rows.length) {
-    const current = await sql`SELECT status FROM clinical_cases WHERE id = ${caseId}::uuid`;
-    if (!current.length) throw E.NotFoundError('Caso não encontrado.');
-    throw E.ConflictError('Este caso já foi revisado.');
-  }
+  const simReview = decision === 'approved' && input.checklist !== undefined;
+  const rows = simReview
+    ? await approveSimCase(sql, identity, caseId, input.checklist)
+    : await decideCase(sql, identity, caseId, decision);
+  if (!rows.length) await explainNoUpdate(sql, caseId, simReview);
 
   await invalidateCached(env, LIBRARY_CACHE_KEY);
-  await Logging.logAudit(sql, correlationId, identity.profileId, 'REVIEW_CLINICAL_CASE', 'clinical_case', caseId, 'success', { decision });
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'REVIEW_CLINICAL_CASE', 'clinical_case', caseId, 'success', { decision, clinicalReview: simReview });
   return { success: true, message: decision === 'approved' ? 'Caso aprovado e publicado no acervo.' : 'Caso rejeitado.' };
 }

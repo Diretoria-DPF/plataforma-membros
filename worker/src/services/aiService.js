@@ -36,6 +36,8 @@ export const QUOTA_BUCKETS = {
   generate_case: 'AI_GENERATE_CASE',
   lab_preceptor: 'AI_LAB_PRECEPTOR',
   assistant: 'AI_ASSISTANT',
+  agent_tutor: 'AI_AGENT_TUTOR',
+  agent_curator: 'AI_AGENT_CURATOR',
 };
 export const GLOBAL_BUCKET = 'AI_GLOBAL';
 const GLOBAL_IDENTIFIER = 'global';
@@ -46,6 +48,8 @@ const QUOTA_LABELS = {
   generate_case: 'casos gerados com IA',
   lab_preceptor: 'perguntas ao preceptor do laboratório',
   assistant: 'perguntas à Lia que usam IA',
+  agent_tutor: 'perguntas ao Tutor Clínico',
+  agent_curator: 'pedidos ao Curador de Conteúdo',
 };
 
 // 30 dias: uma rota de síntese didática não muda; o cache existe para não
@@ -140,6 +144,30 @@ export async function withQuota(sql, identity, feature, fn) {
     if (err && err.aiUnavailable) await refundQuota(sql, identity, feature);
     throw err;
   }
+}
+
+/**
+ * Uso da cota diária da pessoa para uma lista de recursos, numa consulta só (só lê; não consome nada).
+ * @returns {Promise<Object<string, {used, limit, remaining, resetsAt}>>} por recurso
+ */
+export async function quotaEntries(sql, identity, features) {
+  const hash = await identifierHash(identity.profileId);
+  const buckets = features.map((f) => QUOTA_BUCKETS[f]);
+  const rows = await sql`
+    SELECT bucket, attempts,
+           (window_started_at >= now() - (${C.AI_QUOTA_WINDOW_SECONDS} || ' seconds')::interval) AS active,
+           window_started_at + (${C.AI_QUOTA_WINDOW_SECONDS} || ' seconds')::interval AS resets_at
+    FROM rate_limit_buckets
+    WHERE identifier_hash = ${hash} AND bucket = ANY(${buckets})
+  `;
+  const byBucket = {};
+  (rows || []).forEach((r) => { byBucket[r.bucket] = r; });
+  return features.reduce((acc, feature) => {
+    const limit = quotaLimit(identity.role, feature);
+    const row = byBucket[QUOTA_BUCKETS[feature]];
+    const used = row && row.active ? Math.min(limit, Number(row.attempts) || 0) : 0;
+    return Object.assign(acc, { [feature]: { used, limit, remaining: Math.max(0, limit - used), resetsAt: row && row.active ? row.resets_at : null } });
+  }, {});
 }
 
 // ---------------------------------------------------------------------------

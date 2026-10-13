@@ -263,3 +263,46 @@ test('parseArgs: rejeita opção desconhecida e número inválido', () => {
   assert.throws(() => parseArgs(['--baseline-through', 'abc']), /--baseline-through/);
   assert.throws(() => parseArgs(['--baseline-through']), /--baseline-through/);
 });
+
+// ---- Banco de memória (sql/memory/): ledger e pasta próprios, nunca misturados com o núcleo ----
+const DIR_MEMORIA = path.join(SQL_ORIGINAL, 'memory');
+
+test('parseArgs: --memory aponta para sql/memory e o ledger próprio; --ledger valida o nome', () => {
+  const o = parseArgs(['--memory']);
+  assert.equal(o.ledger, 'memory_schema_migrations');
+  assert.match(o.dir.split(path.sep).join('/'), /sql\/memory$/);
+  assert.equal(parseArgs(['--ledger', 'meu_ledger']).ledger, 'meu_ledger');
+  assert.throws(() => parseArgs(['--ledger', 'x; DROP TABLE y']), /ledger/i);
+  assert.throws(() => parseArgs(['--ledger']), /ledger/i);
+});
+
+test('ledger próprio: aplica numa tabela de controle separada e não toca em schema_migrations', async () => {
+  const { client } = await novoBanco();
+  const dir = pasta(MIGRACOES);
+  const r = await runMigrations(client, { dir, ledger: 'outro_ledger', log: silencioso });
+  assert.deepEqual(r.applied, ['001_a.sql', '002_b.sql', '003_c.sql']);
+  assert.equal(await tabelaExiste(client, 'outro_ledger'), true);
+  assert.equal(await tabelaExiste(client, 'schema_migrations'), false);
+  const again = await runMigrations(client, { dir, ledger: 'outro_ledger', log: silencioso });
+  assert.deepEqual(again.applied, []);
+});
+
+test('ledger inválido é recusado antes de qualquer SQL', async () => {
+  const { client } = await novoBanco();
+  await assert.rejects(runMigrations(client, { dir: pasta(MIGRACOES), ledger: 'a b', log: silencioso }), /ledger/i);
+});
+
+test('o fluxo padrão não lê sql/memory/ (subpasta) e a memória tem o seu próprio ledger', async () => {
+  assert.ok(!listMigrations(SQL_ORIGINAL).some((m) => m.name === '001_memory.sql')); // a 036_memory_consent.sql É do núcleo
+  const { client } = await novoBanco();
+  const adaptada = fs.mkdtempSync(path.join(os.tmpdir(), 'laift-mem-'));
+  for (const nome of fs.readdirSync(DIR_MEMORIA).filter((f) => f.endsWith('.sql'))) {
+    fs.writeFileSync(path.join(adaptada, nome), adaptForNoVector(fs.readFileSync(path.join(DIR_MEMORIA, nome), 'utf8')));
+  }
+  const r = await runMigrations(client, { dir: adaptada, ledger: 'memory_schema_migrations', log: silencioso });
+  assert.deepEqual(r.applied, ['001_memory.sql']);
+  assert.equal(await tabelaExiste(client, 'memory_items'), true);
+  assert.equal(await tabelaExiste(client, 'schema_migrations'), false);
+  const again = await runMigrations(client, { dir: adaptada, ledger: 'memory_schema_migrations', log: silencioso });
+  assert.deepEqual(again.applied, []);
+});

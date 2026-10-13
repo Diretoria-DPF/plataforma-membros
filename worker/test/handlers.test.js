@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 141 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 143 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -84,6 +84,13 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiAdminLearnLibrarySaveTopic',
       'apiAdminLearnLibraryListStaff',
       'apiAdminLearnLibrarySetStaff'
+    );
+    // Agentes de IA (ADR 0007; alfa)
+    expected.push('apiAgentsList', 'apiAgentsInvoke');
+    // Memória de estudo (ADR 0007; alfa) e painéis administrativos dos agentes
+    expected.push(
+      'apiMemoryGet', 'apiMemorySetConsent', 'apiMemoryDeleteItem', 'apiMemoryDeleteAll', 'apiMemorySetPreference', 'apiMemoryExport',
+      'apiAdminMemoryStats', 'apiAdminPurgeMemberMemory', 'apiAdminAgentsStats'
     );
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });

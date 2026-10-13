@@ -286,6 +286,9 @@ export const AI_FEATURE = {
   LAB_PRECEPTOR: 'lab_preceptor',
   ASSISTANT: 'assistant',
   HEALTH: 'health',
+  // Agentes de IA (ADR 0007). O paciente virtual (agent_patient) ainda não tem cota: está em rascunho.
+  AGENT_TUTOR: 'agent_tutor',
+  AGENT_CURATOR: 'agent_curator',
 };
 
 // Cota diária POR PESSOA (janela de 24 h do rate_limit_buckets), por recurso
@@ -309,6 +312,9 @@ export const AI_QUOTAS = {
   // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
   // Visitante e quem não tem login recebem só a base fixa (cota 0).
   assistant: { visitor: 0, member: 60, admin: 120 },
+  // Agentes (ADR 0007). O visitante não tem agente (a API recusa); o número só valeria se um dia tivesse.
+  agent_tutor: { visitor: 5, member: 30, admin: 100 },
+  agent_curator: { visitor: 0, member: 0, admin: 40 },
 };
 export const AI_QUOTA_WINDOW_SECONDS = 86400;
 
@@ -551,3 +557,92 @@ Object.assign(MODERATION, {
 
 // Biblioteca LAIFT: limites de taxa definidos em library/limits.js
 Object.assign(RATE_LIMITS, LIBRARY_RATE_LIMITS);
+
+// ---- Agentes de IA (ADR 0007; alfa). Tudo atrás das flags de sql/035 (nascem desligadas). ----
+// Chamadas por hora e por pessoa, ANTES dos guardrails (recusa também gasta o teto: sondar recusas não sai de graça).
+// Visitante não tem agente; o número existe só para a tabela ficar completa.
+Object.assign(RATE_LIMITS, {
+  AGENTS_INVOKE: { MAX_ATTEMPTS: 40, WINDOW_SECONDS: 3600, BY_ROLE: { visitor: 10, member: 40, admin: 120 } },
+});
+
+export const AGENTS = {
+  API_VERSION: 'agents/v1-alpha',
+  FLAG: 'agents_enabled',
+  TRACE_RETENTION_DAYS: 90,   // agent_traces (sql/035; limpeza em maintenance.js)
+  MODULE_MAX: 40,             // módulo e tema do contexto: texto curto saneado
+  TOPIC_MAX: 120,
+  SOURCES_MAX: 3,             // artigos publicados da Biblioteca, lista permitida de citações
+  MEMORY_CONTEXT: false,      // reservado (a memória é controlada por MEMORY e por memory_enabled; ver memory/service.js)
+};
+
+// ---- Memória de estudo (ADR 0007; banco laift-memory; opt-in, apagável, só maiores de 18 anos) ----
+// Limites por pessoa e janela, via enforceRateLimit. A versão da finalidade fica AQUI: mudou o texto do consentimento,
+// aumente PURPOSE_VERSION e a leitura de todo mundo fecha até um novo aceite (e atualize o rascunho em docs/).
+Object.assign(RATE_LIMITS, {
+  MEMORY_READ: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  MEMORY_WRITE: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+  MEMORY_CONSENT: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
+  MEMORY_EXPORT: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
+  // Revogar e apagar (item/tudo) NÃO usam os limites acima: ninguém pode ficar impedido de apagar o próprio dado. Este teto
+  // existe só contra abuso extremo (martelar o banco de memória).
+  MEMORY_ERASE: { MAX_ATTEMPTS: 200, WINDOW_SECONDS: 3600 },
+});
+
+export const MEMORY = {
+  FLAG: 'memory_enabled',
+  PURPOSE_VERSION: 'memoria-2026-10-v1',
+  MAX_ITEMS: 60,               // teto por pessoa (também no gatilho do banco)
+  READ_LIMIT: 8,               // itens que o tutor recebe
+  READ_TIMEOUT_MS: 1200,       // leitura no tutor: passou disto, segue SEM memória
+  CACHE_TTL_MS: 5 * 60 * 1000, // cache dos itens por pessoa, na memória do isolate (o consentimento NUNCA é cacheado)
+  CACHE_MAX_ENTRIES: 200,
+  RETENTION_UNUSED_DAYS: 180,  // sem uso
+  RETENTION_MAX_MONTHS: 12,    // teto absoluto desde a criação
+  PURGE_DRAIN_BATCH: 10,       // pessoas por drenagem da fila no cron (1 transação em lote; pior caso ~2 por pessoa)
+  PURGE_OPPORTUNISTIC_BATCH: 3,
+  SWEEP_MAX_PROFILES: 150,     // consentimentos verificados por varredura (CPU do plano gratuito, ~40 µs por HMAC); acima disso a varredura é particionada por dia
+  SWEEP_VERIFY_CHUNK: 100,     // pessoas por transação ao marcar `verified_at`
+  SIGNAL_TOPICS_MAX: 5,        // temas por sinal
+  KEY_MIN_LENGTH: 32,          // MEMORY_SUBJECT_KEY
+};
+
+// ---- Simulação clínica com pacientes variados (ADR 0009; flag clinical_sim_enabled, DESLIGADA) ----
+// A simulação só liga com revisor clínico definido (docs/agentic-layer.md, seção 4). Cota e limite de taxa são os do
+// chat e da avaliação clínicos: a simulação é parâmetro novo das actions existentes, não recurso novo.
+export const SIM_VERSION = 'sim-v1';
+
+export const SIM_LIMITS = {
+  FLAG: 'clinical_sim_enabled',
+  KNOWN_VERSIONS: [SIM_VERSION],
+  SEED_MAX: 2147483647,        // semente inteira de 0 a 2^31-1 (cabe em operações de 32 bits)
+  ELAPSED_SECONDS_MAX: 21600,  // 6 h de relógio do caso
+  EVENTS_MAX: 30,              // eventos de estado enviados pelo cliente (ex.: exame solicitado)
+  EVENT_RE: /^[a-z0-9][a-z0-9_:.-]{0,59}$/,
+  PROFILE_MAX_BYTES: 4096,     // sim_profile (também CHECK da migração 037)
+  STAGES_MAX: 6,
+  STAGE_NOTE_MAX: 300,
+  STAGE_ID_RE: /^[a-z][a-z0-9_]{1,30}$/,
+  STAGE_AFTER_MIN_MAX: 240,
+  COMPONENT_TEXT_MAX: 400,
+  SIM_ID_LENGTH: 12,           // sha256(caseId|seed|version).slice(0, 12)
+  CHECKLIST_KEYS: ['semDadoReal', 'gabaritoConferido', 'estagiosPlausiveis', 'linguagemRevisada'],
+};
+
+// Pesos da nota em modo simulação (total 100). O modelo só SUGERE cada componente; o servidor limita ao teto, soma e
+// aplica os tetos por desfecho (clinicalService.js, OUTCOME_SCORE_CAP).
+export const SIM_SCORE_WEIGHTS = Object.freeze({ hipotese: 30, conduta: 30, processo: 20, comunicacao: 20 });
+
+export const SIM_MESSAGES = {
+  unavailable: 'A simulação com pacientes variados não está disponível para o seu perfil.',
+  adultsOnly: 'A simulação está disponível apenas para maiores de 18 anos.',
+  invalidSeed: 'Semente da simulação inválida.',
+  invalidVersion: 'Versão da simulação desconhecida. Atualize a página e tente de novo.',
+  invalidInput: 'Parâmetros da simulação inválidos.',
+  caseNotReady: 'Este caso ainda não foi liberado para simulação.',
+  sourceNotAllowed: 'Casos gerados na sessão não podem ser usados na simulação.',
+  reviewIncomplete: 'A revisão clínica está incompleta: confirme os 4 itens da lista de conferência.',
+  reviewSameAuthor: 'O revisor clínico precisa ser outra pessoa, diferente de quem criou o caso.',
+  reviewNoProfile: 'Este caso não tem perfil de simulação; a lista de conferência não se aplica.',
+  // Fala do paciente quando o guardrail de saída troca a resposta: continua no personagem (nunca expõe regra nem aviso).
+  patientFallback: 'Hum... não sei explicar direito. Pode me perguntar de outro jeito?',
+};

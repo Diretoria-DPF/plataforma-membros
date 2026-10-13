@@ -7,6 +7,7 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
 ### Adicionado
+- Simulação clínica com pacientes variados (ADR 0009, **desligada**: flag `clinical_sim_enabled`, sem revisor clínico definido). Módulos puros `worker/src/clinicalSim/` (eixos, PRNG determinístico, estado que evolui, catálogo fixo), parâmetro `simulation` em `apiLearnClinicalChat/Evaluate` (prompt atual byte a byte sem a flag), guardrail de saída do paciente, nota por componentes calculada pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20), migração `037_clinical_sim.sql` com a trava de revisão em dois passos no banco, persona `paciente-virtual` 0.2.0 e "Modo simulação (beta)" na Clínica (`clinic-sim.js`).
 - Eventos: botão **Cancelar inscrição** (com confirmação). `apiCancelEventRegistration` apaga só a própria inscrição, antes de o evento começar e antes da presença; libera a vaga, invalida o cache, audita (`CANCEL_EVENT_REGISTRATION`) e limita a 20 por hora.
 - Lia: sugestões por tela (na entrada: perguntas gerais como "O que tem no blog?" e "O que posso fazer na plataforma?"; logado: por painel), `frontend/assistant-suggestions.js`.
 - Lia cita artigos da Biblioteca (flag `lia_library_enabled`), histórico de 8 turnos e registro de respostas para membros (flag `rag_cache_enabled`, migração 034, desligada).
@@ -15,6 +16,12 @@ Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10
 ### Alterado
 - Cotas diárias de IA dos membros mais generosas (chat 100, avaliar 25, caso 10, laboratório 80, Lia 60; administrador ~2x). O orçamento global de tokens continua sendo o freio.
 - A Lia do membro usa o modelo inteligente (120B) enquanto o uso de tokens das últimas 24 h estiver abaixo de 50 % do orçamento e o 120B abaixo de 150 mil tokens.
+
+### Adicionado (Operação LAIFT Agêntica, front; API alfa `agents/v1-alpha`, atrás de flags desligadas)
+- Tutor clínico na tela Aprender (`frontend/agents-tutor.js`): cartão "Falar com o Tutor" só aparece se `apiAgentsList` devolver o agente; conversa só na memória da página (8 turnos), resposta por `textContent`, fontes só de `doi.org` e PubMed, recusa de guardrail mostrada como resposta (não como erro) e mensagens amigáveis por `code`.
+- Memória de estudo no Perfil (`frontend/memory.js`, `memory-core.js`, `memory.css`): cartão com o texto da finalidade (rascunho do dono em `docs/memoria-consentimento-RASCUNHO.md`, ainda não aprovado), ativar com confirmação enviando a `purposeVersion` do servidor, ver os itens em texto puro, apagar item, apagar tudo, desligar (revoga), baixar os dados em JSON (gerado no navegador, sem enviar a lugar nenhum) e escolher preferências só de listas fechadas. Texto que mudou (`needsReconsent`) pede novo aceite sem ler nada; `MEMORY_DISABLED` esconde o cartão. Nada vai ao armazenamento do navegador; trocar de conta ou sair limpa o cartão.
+- Selo do Tutor "Usou sua memória de estudo" mostra quantos itens foram usados e ganhou o atalho "Gerenciar memória", que leva ao Perfil.
+- Cache do service worker v8 -> v9 (arquivos novos no precache). As ações de memória e do Tutor continuam fora da ponte dos módulos.
 
 ### Adicionado (rodada 3)
 - `tools/ci/registrar-segredos-backup.ps1`: cadastra os 6 secrets do workflow "Backup do banco" sem passar valores pelo chat (`-SomenteVerificar` lista só os nomes). Hoje os 6 estão em falta.

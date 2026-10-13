@@ -111,11 +111,73 @@ if (fs.existsSync(OPS_FILE)) {
     await expectDenied(`profiles.${col}`, `SELECT ${col} FROM profiles LIMIT 1`);
   }
   await expectDenied('SELECT * em profiles', 'SELECT * FROM profiles LIMIT 1');
-  for (const table of ['sessions', 'account_tokens', 'mfa_credentials', 'mfa_recovery_codes', 'mfa_challenges', 'messages', 'messaging_keys', 'votes', 'rate_limit_buckets', 'error_logs']) {
+  for (const table of ['sessions', 'account_tokens', 'mfa_credentials', 'mfa_recovery_codes', 'mfa_challenges', 'messages', 'messaging_keys', 'votes', 'rate_limit_buckets', 'error_logs', 'member_memory_consent', 'memory_purge_queue']) {
     await expectDenied(table, `SELECT 1 FROM ${table} LIMIT 1`);
   }
   await expectDenied('escrita em events', 'UPDATE events SET title = title WHERE false');
   await db.exec('RESET ROLE');
+}
+
+// Passada 5: banco de MEMÓRIA (sql/memory/, projeto Neon separado, ledger próprio). Instância própria do PGlite:
+// aplica duas vezes (idempotência), prova a RLS por pessoa com o papel de execução (sem sujeito nada aparece; A não vê
+// B; manutenção enxerga tudo; DDL negado) e confere a volta (down) e a reaplicação.
+const MEMORY_DIR = path.join(SQL_DIR, 'memory');
+if (fs.existsSync(MEMORY_DIR)) {
+  failures += await validateMemoryDb(MEMORY_DIR);
+}
+
+async function validateMemoryDb(dir) {
+  console.log('\n== Passada 5: banco de memória (sql/memory/)');
+  let bad = 0;
+  const mem = new PGlite({ extensions: vectorExt ? { vector: vectorExt } : {} });
+  const upFiles = fs.readdirSync(dir).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort();
+  const downDir = path.join(dir, 'down');
+  const downList = fs.existsSync(downDir) ? fs.readdirSync(downDir).filter((f) => /^\d{3}_.*\.sql$/.test(f)).sort().reverse() : [];
+  const run = async (label, fn, mustFail) => {
+    try {
+      await fn();
+      if (mustFail) { bad++; console.log(`  FALHA  ${label}: deveria ser NEGADO e foi permitido`); } else console.log(`  ok     ${label}`);
+    } catch (err) {
+      if (mustFail && /permission denied|must be owner|row-level security|memory_items_cap|violates/i.test(err.message)) console.log(`  ok     ${label} (negado)`);
+      else { bad++; console.log(`  FALHA  ${label}: ${err.message}`); }
+    }
+  };
+  for (const round of [1, 2]) {
+    for (const f of upFiles) await run(`aplica ${f} (rodada ${round})`, () => mem.exec(readSql(path.join(dir, f))));
+  }
+  const A = 'a'.repeat(64);
+  const B = 'b'.repeat(64);
+  const insert = (subject, slug) => `INSERT INTO memory_items (subject_id, kind, slug, level, source, consent_version, expires_at)
+    VALUES ('${subject}', 'topic_level', '${slug}', 3, 'quiz', 'memoria-v1', now() + interval '30 days')`;
+  const count = async () => (await mem.query('SELECT count(*)::int AS n FROM memory_items')).rows[0].n;
+  const expectCount = (label, want) => run(label, async () => { const n = await count(); if (n !== want) throw new Error('viu ' + n + ', esperado ' + want); });
+  await mem.exec('SET ROLE laift_memory_worker');
+  await expectCount('sem app.subject_id nada é visível', 0);
+  await run('sem app.subject_id não insere', () => mem.exec(insert(A, 'farmacocinetica')), true);
+  await mem.exec(`SELECT set_config('app.subject_id', '${A}', false)`);
+  await run('A insere o próprio item', () => mem.exec(insert(A, 'farmacocinetica')));
+  await run('A não insere item de B', () => mem.exec(insert(B, 'farmacocinetica')), true);
+  await expectCount('A vê 1 item', 1);
+  await mem.exec(`SELECT set_config('app.subject_id', '${B}', false)`);
+  await expectCount('B não vê o item de A', 0);
+  await mem.exec(`SELECT set_config('app.subject_id', '', false)`);
+  await mem.exec(`SELECT set_config('app.maintenance', 'on', false)`);
+  await expectCount('manutenção enxerga tudo', 1);
+  await run('manutenção não grava linha de outra pessoa', () => mem.exec(insert(B, 'toxicocinetica')), true);
+  await mem.exec(`SELECT set_config('app.maintenance', '', false)`);
+  for (const [label, ddl] of [['CREATE TABLE', 'CREATE TABLE zz_intruso (id int)'], ['DROP TABLE', 'DROP TABLE memory_items'],
+    ['ALTER TABLE', 'ALTER TABLE memory_items ADD COLUMN zz text'], ['TRUNCATE', 'TRUNCATE memory_items'],
+    ['DISABLE RLS', 'ALTER TABLE memory_items DISABLE ROW LEVEL SECURITY'], ['CREATE ROLE', 'CREATE ROLE zz_outro']]) {
+    await run(`DDL negado: ${label}`, () => mem.exec(ddl), true);
+  }
+  await mem.exec('RESET ROLE');
+  if (downList.length) {
+    console.log('  -- reversão (down) e nova aplicação');
+    for (const f of downList) await run(`down ${f}`, () => mem.exec(readSql(path.join(downDir, f))));
+    for (const f of upFiles) await run(`up   ${f}`, () => mem.exec(readSql(path.join(dir, f))));
+  }
+  await mem.close();
+  return bad;
 }
 
 const { rows } = await db.query(

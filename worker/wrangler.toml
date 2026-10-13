@@ -66,6 +66,11 @@ TURNSTILE_HOSTNAMES = "laift.com.br,www.laift.com.br"
 # Para mudar o teto: descomente/edite aqui e publique, ou ajuste a variável no painel da Cloudflare
 # (Workers > Settings > Variables and Secrets; um `wrangler deploy` sem keep_vars a sobrescreve).
 # LIA_VISITOR_NEURON_CAP = "3000"
+# Memória de estudo (ADR 0007; flag memory_enabled; docs/runbook-memoria.md). DOIS secrets, ambos cadastrados pelo dono com
+# `npx wrangler secret put <NOME>` (nunca aqui, nunca no código): DATABASE_URL_MEMORY (URL do banco laift-memory, com o
+# papel laift_memory_worker; sem ele a memória fica indisponível e nada mais muda) e MEMORY_SUBJECT_KEY (chave HMAC de pelo
+# menos 32 caracteres que pseudonimiza a pessoa; diferente do SESSION_TOKEN_PEPPER; se for trocada, a memória existente
+# fica órfã). Sem os dois, o tutor segue sem memória e o cron não toca no banco de memória.
 
 # Bucket R2 para avatares de perfil e imagens de evento. O Worker escreve
 # aqui via binding nativo (sem precisar de credencial de API separada); o

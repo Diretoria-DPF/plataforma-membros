@@ -13,6 +13,7 @@ import { makeEnv } from './helpers/mockEnv.js';
 // em vez de um import estático no topo do arquivo).
 jest.unstable_mockModule('../src/db.js', () => ({
   createDb: jest.fn(() => jest.fn().mockResolvedValue([])),
+  createMemoryDb: jest.fn(() => null), // banco de memória (ADR 0007): sem DATABASE_URL_MEMORY = null
 }));
 
 const { default: worker } = await import('../src/index.js');
@@ -59,6 +60,27 @@ describe('index.js — roteamento e CORS', () => {
     const res = await worker.fetch(request, env);
     expect(res.status).toBe(204);
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://diretoria-dpf.github.io');
+  });
+
+  test('entrega ctx.waitUntil da requisição aos handlers (via env), sem tocar no env original', async () => {
+    const { API_REGISTRY } = await import('../src/handlers.js');
+    const seen = [];
+    const spy = jest.spyOn(API_REGISTRY, 'apiTouchSession').mockImplementation(async (sql, requestEnv) => {
+      seen.push(requestEnv);
+      return { success: true };
+    });
+    const ctx = { waitUntil: jest.fn() };
+    try {
+      await worker.fetch(req({ action: 'apiTouchSession', args: ['t'] }), env, ctx);
+      await worker.fetch(req({ action: 'apiTouchSession', args: ['t'] }), env); // sem ctx (testes/CLI): segue sem waitUntil
+    } finally {
+      spy.mockRestore();
+    }
+    expect(typeof seen[0].waitUntil).toBe('function');
+    seen[0].waitUntil(Promise.resolve());
+    expect(ctx.waitUntil).toHaveBeenCalledTimes(1);
+    expect(seen[1].waitUntil).toBeUndefined();
+    expect(env.waitUntil).toBeUndefined();
   });
 
   test('não devolve Access-Control-Allow-Origin para uma origem fora da allowlist', async () => {

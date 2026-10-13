@@ -31,7 +31,7 @@ export function cleanText(value, max) {
   return max && s.length > max ? s.slice(0, max).trim() : s;
 }
 
-function cleanList(value, maxItems, maxLen) {
+export function cleanList(value, maxItems, maxLen) {
   if (!Array.isArray(value)) return [];
   return value.map((v) => cleanText(v, maxLen)).filter(Boolean).slice(0, maxItems);
 }

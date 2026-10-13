@@ -13,6 +13,7 @@ servers:
   - url: "https://staging-api.laift.com.br"
     description: "Homologação"
 tags:
+  - name: "Agentes de IA (alfa)"
   - name: "Administração"
   - name: "Plataforma"
   - name: "Conta e sessão"
@@ -30,6 +31,7 @@ paths:
           application/json:
             schema:
               oneOf:
+                - "$ref": "#/components/schemas/apiAdminAgentsStats"
                 - "$ref": "#/components/schemas/apiAdminAiHealth"
                 - "$ref": "#/components/schemas/apiAdminAiMetrics"
                 - "$ref": "#/components/schemas/apiAdminAssistantModeration"
@@ -72,6 +74,8 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminListProposalsForReview"
                 - "$ref": "#/components/schemas/apiAdminListReports"
                 - "$ref": "#/components/schemas/apiAdminListUsers"
+                - "$ref": "#/components/schemas/apiAdminMemoryStats"
+                - "$ref": "#/components/schemas/apiAdminPurgeMemberMemory"
                 - "$ref": "#/components/schemas/apiAdminReindexKb"
                 - "$ref": "#/components/schemas/apiAdminResetUserMfa"
                 - "$ref": "#/components/schemas/apiAdminResolveReport"
@@ -83,6 +87,8 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminUpdateEventStatus"
                 - "$ref": "#/components/schemas/apiAdminUpdateTaskStatus"
                 - "$ref": "#/components/schemas/apiAdminUploadEventImage"
+                - "$ref": "#/components/schemas/apiAgentsInvoke"
+                - "$ref": "#/components/schemas/apiAgentsList"
                 - "$ref": "#/components/schemas/apiAssistantChat"
                 - "$ref": "#/components/schemas/apiAssistantFeedback"
                 - "$ref": "#/components/schemas/apiAssistantModerationState"
@@ -145,6 +151,12 @@ paths:
                 - "$ref": "#/components/schemas/apiLogout"
                 - "$ref": "#/components/schemas/apiMarkConversationRead"
                 - "$ref": "#/components/schemas/apiMarkTaskComplete"
+                - "$ref": "#/components/schemas/apiMemoryDeleteAll"
+                - "$ref": "#/components/schemas/apiMemoryDeleteItem"
+                - "$ref": "#/components/schemas/apiMemoryExport"
+                - "$ref": "#/components/schemas/apiMemoryGet"
+                - "$ref": "#/components/schemas/apiMemorySetConsent"
+                - "$ref": "#/components/schemas/apiMemorySetPreference"
                 - "$ref": "#/components/schemas/apiMessagingSync"
                 - "$ref": "#/components/schemas/apiMfaBeginEnrollment"
                 - "$ref": "#/components/schemas/apiMfaConfirmEnrollment"
@@ -196,6 +208,22 @@ components:
         message:
           type: "string"
       additionalProperties: true
+    apiAdminAgentsStats:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiAdminAgentsStats"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminAiHealth:
       type: "object"
       required:
@@ -692,7 +720,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. Caso com perfil de simulação só é aprovado com `input.checklist = { semDadoReal, gabaritoConferido, estagiosPlausiveis, linguagemRevisada }` (os 4 verdadeiros) e por um administrador diferente de quem criou o caso; o banco também impõe isso (sql/037)."
       properties:
         action:
           const: "apiAdminLearnReviewCase"
@@ -852,6 +880,37 @@ components:
       properties:
         action:
           const: "apiAdminListUsers"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminMemoryStats:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiAdminMemoryStats"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiAdminPurgeMemberMemory:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiAdminPurgeMemberMemory"
         args:
           type: "array"
           prefixItems:
@@ -1044,6 +1103,37 @@ components:
             - description: "imageMimeType"
           minItems: 0
           maxItems: 4
+    apiAgentsInvoke:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiAgentsInvoke"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAgentsList:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiAgentsList"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiAssistantChat:
       type: "object"
       required:
@@ -1476,7 +1566,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token)."
+      description: "Exige sessão (primeiro argumento: token). Simulação clínica (beta; flag clinical_sim_enabled, desligada; só maiores de 18 anos): `input.simulation = { seed: inteiro 0..2147483647, version: \"sim-v1\", difficulty?: \"basico\"|\"intermediario\"|\"avancado\", elapsedSeconds?: 0..21600, events?: [\"exam:<id>\"] }`. Sem a flag, ou sem o parâmetro, a action se comporta como sempre. O servidor sorteia os eixos do paciente a partir da semente; o cliente nunca os informa. Com a flag ligada a resposta traz `simulation: { simId, guardrails }` (sem os eixos)."
       properties:
         action:
           const: "apiLearnClinicalChat"
@@ -1507,7 +1597,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token)."
+      description: "Exige sessão (primeiro argumento: token). Simulação clínica (beta; flag clinical_sim_enabled, desligada; só maiores de 18 anos): `input.simulation = { seed: inteiro 0..2147483647, version: \"sim-v1\", difficulty?: \"basico\"|\"intermediario\"|\"avancado\", elapsedSeconds?: 0..21600, events?: [\"exam:<id>\"] }`. Sem a flag, ou sem o parâmetro, a action se comporta como sempre. O servidor sorteia os eixos do paciente a partir da semente; o cliente nunca os informa. A nota sai de 4 componentes limitados pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20); a resposta traz `simulation` com o debrief (eixos revelados) e `result.score`."
       properties:
         action:
           const: "apiLearnClinicalEvaluate"
@@ -1555,7 +1645,7 @@ components:
       required:
         - "action"
         - "args"
-      description: "Exige sessão (primeiro argumento: token)."
+      description: "Exige sessão (primeiro argumento: token). Com a flag clinical_sim_enabled ligada para a pessoa, a resposta traz `simulation: { available: true, version }`; sem isso o campo não existe."
       properties:
         action:
           const: "apiLearnGetMyAiQuota"
@@ -2013,6 +2103,99 @@ components:
           prefixItems:
             - description: "sessionToken"
             - description: "taskId"
+          minItems: 0
+          maxItems: 2
+    apiMemoryDeleteAll:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiMemoryDeleteAll"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMemoryDeleteItem:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiMemoryDeleteItem"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMemoryExport:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiMemoryExport"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMemoryGet:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiMemoryGet"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiMemorySetConsent:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiMemorySetConsent"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiMemorySetPreference:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). ALFA (apiVersion agents/v1-alpha): pode mudar sem aviso; atrás das flags agents_enabled e da flag do agente (memória: memory_enabled). Erros trazem code (AGENT_DISABLED, RATE_LIMIT, QUOTA, AI_UNAVAILABLE, INVALID_OUTPUT, VALIDATION; memória: MEMORY_DISABLED, MEMORY_UNAVAILABLE, CONSENT_REQUIRED, MEMORY_FULL, NOT_FOUND); recusa de guardrail NÃO é erro (success true, refused true, rule)."
+      properties:
+        action:
+          const: "apiMemorySetPreference"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
           minItems: 0
           maxItems: 2
     apiMessagingSync:
