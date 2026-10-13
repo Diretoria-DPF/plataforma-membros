@@ -43,12 +43,14 @@ const MESSAGES = Object.freeze({
   rate: 'Você fez muitas operações na memória de estudo. Tente novamente mais tarde.',
   consent: 'Ative a memória de estudo e aceite o termo para guardar preferências.',
   full: 'Você chegou ao limite de itens da memória. Apague algum item para guardar outro.',
+  eraseFailed: 'A memória foi desativada e já não é usada, mas não conseguimos concluir o apagamento agora. Tente desativar de novo em alguns instantes.',
   pending: 'Estamos concluindo o apagamento da sua memória anterior. Tente ativar novamente mais tarde.',
 });
 
 const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
 const disabled = (reason) => AgentError('MEMORY_DISABLED', MESSAGES[reason], { reason });
-const unavailable = (reason) => AgentError('MEMORY_UNAVAILABLE', MESSAGES.unavailable, { reason });
+// Sem `reason`: o motivo interno (sem banco, sem chave, falha) não vai ao cliente; fica só no log técnico, sem segredos.
+const unavailable = () => AgentError('MEMORY_UNAVAILABLE', MESSAGES.unavailable);
 
 async function flagOn(sql, identity, key) {
   try {
@@ -83,11 +85,11 @@ async function enforce(sql, identity, bucket) {
 /** { msql, subject } ou MEMORY_UNAVAILABLE (sem banco, sem chave ou id inválido). */
 async function openStore(env, identity) {
   const msql = createMemoryDb(env);
-  if (!msql || !memoryKeyConfigured(env)) throw unavailable('config');
+  if (!msql || !memoryKeyConfigured(env)) throw unavailable();
   try {
     return { msql, subject: await subjectIdFor(env, identity.profileId) };
   } catch (err) {
-    throw unavailable('subject');
+    throw unavailable();
   }
 }
 
@@ -99,7 +101,7 @@ async function guard(sql, correlationId, op) {
     if (err && err.expected) throw err;
     if (Store.isCapError(err)) throw AgentError('MEMORY_FULL', MESSAGES.full, { reason: 'cap' });
     await Logging.logError(sql, correlationId, 'MEMORY_DB_FAILED', 'Falha no banco de memória.', { code: errorCode(err) });
-    throw unavailable('db');
+    throw unavailable();
   }
 }
 
@@ -185,11 +187,16 @@ async function grantConsent(sql, env, identity, input, correlationId) {
 }
 
 async function revokeConsent(sql, env, identity, correlationId) {
-  await enforce(sql, identity, 'MEMORY_CONSENT');
+  await enforce(sql, identity, 'MEMORY_ERASE'); // revogar nunca esbarra nos limites de consentimento/escrita
   const consent = await writeConsent(sql, identity.profileId, false); // núcleo PRIMEIRO: falhou, nada foi dito ao membro
   cacheInvalidate(identity.profileId);
   const outcome = await eraseSubject(sql, env, identity.profileId, 'revoked');
-  await Logging.logAudit(sql, correlationId, identity.profileId, 'MEMORY_CONSENT_REVOKED', 'member_memory_consent', identity.profileId, 'success', { erased: outcome.erased, queued: outcome.queued });
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'MEMORY_CONSENT_REVOKED', 'member_memory_consent', identity.profileId, outcome.erased || outcome.queued ? 'success' : 'failure', { erased: outcome.erased, queued: outcome.queued });
+  if (!outcome.erased && !outcome.queued) {
+    // A revogação já vale (a leitura está fechada), mas nem apagou nem enfileirou: o cliente precisa saber e tentar de novo.
+    await Logging.logError(sql, correlationId, 'MEMORY_ERASE_NOT_QUEUED', 'Revogação gravada, mas o apagamento não foi concluído nem enfileirado.', null);
+    throw AgentError('MEMORY_UNAVAILABLE', MESSAGES.eraseFailed, { revoked: true });
+  }
   if (outcome.erased) await drainSoon(sql, env);
   return {
     ...head(), consent, erased: outcome.erased, queued: outcome.queued,
@@ -238,7 +245,7 @@ export async function setPreference(sql, env, identity, rawInput, correlationId)
 export async function deleteItem(sql, env, identity, rawInput, correlationId) {
   const id = obj(rawInput).id;
   if (typeof id !== 'string' || !UUID_RE.test(id)) throw AgentError('VALIDATION', 'Item inválido.');
-  await enforce(sql, identity, 'MEMORY_WRITE');
+  await enforce(sql, identity, 'MEMORY_ERASE');
   const { msql, subject } = await openStore(env, identity);
   const removed = await guard(sql, correlationId, () => Store.deleteItem(msql, subject, id.toLowerCase()));
   cacheInvalidate(identity.profileId);
@@ -249,7 +256,7 @@ export async function deleteItem(sql, env, identity, rawInput, correlationId) {
 
 /** Apaga tudo da pessoa SEM revogar o consentimento (para recomeçar). */
 export async function deleteAll(sql, env, identity, correlationId) {
-  await enforce(sql, identity, 'MEMORY_WRITE');
+  await enforce(sql, identity, 'MEMORY_ERASE');
   const { msql, subject } = await openStore(env, identity);
   const deleted = await guard(sql, correlationId, () => Store.deleteAll(msql, subject));
   cacheInvalidate(identity.profileId);

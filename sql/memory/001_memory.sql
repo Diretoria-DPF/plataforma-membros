@@ -8,10 +8,15 @@
 --
 --   memory_items   uma linha por (pessoa, tipo, tema). A pessoa é um PSEUDÔNIMO: subject_id = HMAC-SHA256(MEMORY_SUBJECT_KEY,
 --                  profile_id) em hexadecimal; a chave só existe no Worker, então este banco, sozinho, não diz de quem é a linha.
---                  SEM coluna de texto livre, por construção: tipo, tema (slug de vocabulário controlado), nível 1–5, valor
---                  (lista fechada), origem (lista fechada), contagem de evidências e datas. Dado de saúde, nome, e-mail,
---                  pergunta do estudante ou resposta do tutor NÃO cabem aqui.
+--                  SEM coluna de texto livre, por construção: tipo, tema, nível 1–5, valor (lista fechada), origem (lista
+--                  fechada), contagem de evidências e datas. O TEMA (slug) também é de lista fechada, POR TIPO: temas de estudo
+--                  para topic_level/difficulty (memory_items_topic_chk), e preferências/objetivos para study_pref/goal
+--                  (memory_items_shape_chk). Dado de saúde, nome, e-mail, pergunta ou resposta NÃO cabem aqui. Acrescentar um
+--                  tema ao vocabulário (worker/src/memory/vocabulary.js) exige uma NOVA migração que troque estas listas; um
+--                  teste (memoryVocabularySql.test.js) falha se o SQL e o vocabulário divergirem.
 --   teto           no máximo 60 itens ativos por pessoa (gatilho, com trava consultiva contra corrida).
+--   verified_at    última vez que a varredura confirmou que a pessoa ainda tem consentimento (ou que o item foi escrito); itens
+--                  que ficam sem confirmação por muito tempo são apagados (varredura particionada, memory/cleanup.js).
 --   retenção       expires_at = o menor entre (último uso + 180 dias) e (criação + 12 meses); a CHECK impede passar de 12 meses.
 --                  O Worker apaga o vencido no cron (maintenance.js).
 --   RLS            FORÇADA, por pessoa: o papel laift_memory_worker só enxerga/grava as linhas da pessoa informada em
@@ -51,6 +56,7 @@ CREATE TABLE IF NOT EXISTS memory_items (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   last_used_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   expires_at      TIMESTAMPTZ NOT NULL,
+  verified_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT memory_items_key UNIQUE (subject_id, kind, slug),
   CONSTRAINT memory_items_subject_chk CHECK (subject_id ~ '^[0-9a-f]{64}$'),
   CONSTRAINT memory_items_kind_chk CHECK (kind IN ('topic_level', 'difficulty', 'study_pref', 'goal')),
@@ -59,17 +65,28 @@ CREATE TABLE IF NOT EXISTS memory_items (
   CONSTRAINT memory_items_source_chk CHECK (source IN ('quiz', 'tutor', 'member')),
   CONSTRAINT memory_items_evidence_chk CHECK (evidence BETWEEN 1 AND 1000),
   CONSTRAINT memory_items_consent_chk CHECK (consent_version ~ '^[a-z0-9][a-z0-9._-]{2,39}$'),
-  -- Forma por tipo: nível onde faz sentido, valor só da lista fechada. É isto que torna texto livre impossível.
+  -- Tema de estudo (topic_level e difficulty): só o vocabulário controlado (lista gerada de memory/vocabulary.js).
+  CONSTRAINT memory_items_topic_chk CHECK (
+    kind NOT IN ('topic_level', 'difficulty') OR slug IN (
+      'farmacodinamica', 'farmacocinetica', 'sistema-nervoso-autonomo', 'psicofarmacos', 'glicocorticoides', 'farmacologia-endocrina', 'diureticos', 'dislipidemias', 'coagulacao', 'antimicrobianos', 'anti-hipertensivos', 'aines', 'toxicocinetica', 'toxicodinamica', 'antidotos', 'toxicologia-hepatica', 'toxicologia-renal', 'interacoes-medicamentosas', 'reacoes-adversas', 'farmacotecnica', 'farmacologia-geral', 'toxicologia-geral', 'anatomia-geral'
+    )
+  ),
+  -- Forma por tipo: nível onde faz sentido, tema e valor só das listas fechadas. É isto que torna texto livre impossível.
   CONSTRAINT memory_items_shape_chk CHECK (
     (kind = 'topic_level' AND level IS NOT NULL AND value IS NULL)
     OR (kind = 'difficulty' AND level IS NOT NULL AND value IS NOT NULL AND value IN ('dificil', 'confuso', 'duvida'))
-    OR (kind = 'study_pref' AND level IS NULL AND value IS NOT NULL AND value IN ('exemplos', 'resumo', 'passo_a_passo', 'analogias', 'basico', 'intermediario', 'avancado', 'curto', 'detalhado'))
-    OR (kind = 'goal' AND level IS NULL AND value IS NOT NULL AND value = 'ativo')
+    OR (kind = 'study_pref' AND level IS NULL AND value IS NOT NULL AND (
+         (slug = 'formato' AND value IN ('exemplos', 'resumo', 'passo_a_passo', 'analogias'))
+         OR (slug = 'profundidade' AND value IN ('basico', 'intermediario', 'avancado'))
+         OR (slug = 'ritmo' AND value IN ('curto', 'detalhado'))))
+    OR (kind = 'goal' AND level IS NULL AND value IS NOT NULL AND value = 'ativo'
+        AND slug IN ('prova', 'revisao', 'aprofundamento', 'monitoria'))
   ),
   CONSTRAINT memory_items_retention_chk CHECK (expires_at >= created_at AND expires_at <= created_at + interval '12 months')
 );
 
 CREATE INDEX IF NOT EXISTS idx_memory_items_expires ON memory_items (expires_at);
+CREATE INDEX IF NOT EXISTS idx_memory_items_verified ON memory_items (verified_at);
 
 -- Teto de 60 itens ativos por pessoa. A trava consultiva serializa inserções simultâneas da mesma pessoa; atualizar um
 -- item que já existe (UPSERT) nunca esbarra no teto.

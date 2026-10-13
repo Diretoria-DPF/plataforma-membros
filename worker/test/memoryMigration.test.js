@@ -9,7 +9,7 @@
  * sem BYPASSRLS/DDL, RLS FORÇADA por pessoa (sem sujeito nada aparece; A não vê B; manutenção enxerga tudo mas não
  * grava), idempotência, ledger fora do alcance do papel e a volta (down).
  */
-import { createMemoryPglite, readMemorySql } from './helpers/memoryDb.js';
+import { createMemoryPglite, readMemorySql, withoutTopicCheck } from './helpers/memoryDb.js';
 import { adaptForNoVector, loadVectorExtension } from '../scripts/pgvector-shim.mjs';
 
 const A = 'a'.repeat(64);
@@ -46,7 +46,7 @@ describe('esquema — sem lugar para texto livre', () => {
   test('colunas conhecidas e nenhuma de texto livre (só slug/valor de lista fechada)', async () => {
     const { rows } = await db.query("SELECT column_name FROM information_schema.columns WHERE table_name = 'memory_items' ORDER BY ordinal_position");
     expect(rows.map((r) => r.column_name)).toEqual([
-      'id', 'subject_id', 'kind', 'slug', 'level', 'value', 'source', 'evidence', 'consent_version', 'created_at', 'updated_at', 'last_used_at', 'expires_at',
+      'id', 'subject_id', 'kind', 'slug', 'level', 'value', 'source', 'evidence', 'consent_version', 'created_at', 'updated_at', 'last_used_at', 'expires_at', 'verified_at',
     ]);
   });
 
@@ -61,6 +61,11 @@ describe('esquema — sem lugar para texto livre', () => {
     ['slug com espaço ou texto livre', { slug: 'minha mae toma metformina' }],
     ['slug curto demais', { slug: 'a' }],
     ['slug com maiúscula', { slug: 'Farmaco' }],
+    ['topic_level com tema fora do vocabulário (texto livre no formato certo)', { slug: 'minha-mae-diabetica' }],
+    ['difficulty com tema fora do vocabulário', { kind: 'difficulty', slug: 'depressao-grave', level: 2, value: 'duvida' }],
+    ['study_pref com preferência desconhecida', { kind: 'study_pref', slug: 'humor', level: null, value: 'resumo' }],
+    ['study_pref com valor de OUTRA preferência', { kind: 'study_pref', slug: 'formato', level: null, value: 'basico' }],
+    ['goal com objetivo fora da lista', { kind: 'goal', slug: 'emagrecer', level: null, value: 'ativo' }],
     ['nível fora de 1–5', { level: 6 }],
     ['topic_level sem nível', { level: null }],
     ['topic_level com valor', { value: 'dificil' }],
@@ -95,7 +100,8 @@ describe('esquema — sem lugar para texto livre', () => {
 });
 
 describe('teto de 60 itens por pessoa', () => {
-  test('o 61º item é recusado; o UPSERT de um existente continua valendo; outra pessoa não é afetada', async () => {
+  // O vocabulário real tem menos de 60 combinações; o teto é provado com a CHECK de temas removida só durante o teste.
+  test('o 61º item é recusado; o UPSERT de um existente continua valendo; outra pessoa não é afetada', () => withoutTopicCheck(db, async () => {
     await clear();
     for (let i = 0; i < 60; i++) await put({ slug: 'tema-' + String(i).padStart(2, '0') });
     await expect(put({ slug: 'tema-novo' })).rejects.toThrow(/memory_items_cap/);
@@ -103,13 +109,13 @@ describe('teto de 60 itens por pessoa', () => {
       `${insertSql(row({ slug: 'tema-00', level: 4 }))} ON CONFLICT (subject_id, kind, slug) DO UPDATE SET level = EXCLUDED.level`
     )).resolves.toBeDefined();
     await expect(put({ subject_id: B, slug: 'tema-novo' })).resolves.toBeDefined();
-  });
+  }));
 
-  test('itens vencidos não ocupam vaga do teto', async () => {
+  test('itens vencidos não ocupam vaga do teto', () => withoutTopicCheck(db, async () => {
     await clear();
     for (let i = 0; i < 60; i++) await put({ slug: 'tema-' + String(i).padStart(2, '0'), created_at: i < 5 ? "now() - interval '200 days'" : 'now()', expires_at: i < 5 ? "now() - interval '1 day'" : "now() + interval '30 days'" });
     await expect(put({ slug: 'tema-novo' })).resolves.toBeDefined();
-  });
+  }));
 });
 
 describe('papel de execução laift_memory_worker', () => {

@@ -16,8 +16,8 @@
  *   scheduleQuizSignal  o mesmo para o resultado de um simulado concluído (apiLearnSubmitQuizAttempt).
  *
  * O limite de tempo (1,2 s) da leitura fica em agents/memoryProvider.js. Caminho do tutor no plano gratuito: a memória
- * custa 2 subrequisições na leitura (consentimento no núcleo + banco de memória, uma só requisição por transação) e 1 na
- * escrita (a escrita reaproveita o consentimento já conferido na leitura).
+ * custa 2 subrequisições na leitura (consentimento no núcleo + banco de memória, uma só requisição por transação) e 2 na
+ * escrita (reconferência do consentimento no núcleo + banco de memória).
  */
 import * as C from '../constants.js';
 import { ineligibleReason, consentState } from './policy.js';
@@ -40,7 +40,7 @@ export async function tutorMemoryAvailable(sql, env, identity, agent) {
 }
 
 /**
- * @returns {Promise<null | { available: true, used: boolean, items: Array<object>, count: number, canWrite: boolean, consentVersion: string }>}
+ * @returns {Promise<null | { available: true, used: boolean, items: Array<object>, count: number, canWrite: boolean, consentVersion: string, confirmConsent: () => Promise<boolean> }>}
  *   null = sem memória (qualquer pré-condição ausente); lança só se o banco de memória falhar (o provedor engole).
  */
 export async function readForTutor(sql, env, identity, agent, now = Date.now()) {
@@ -55,18 +55,24 @@ export async function readForTutor(sql, env, identity, agent, now = Date.now()) 
   let items = cacheGet(identity.profileId, now);
   if (!items) {
     const subject = await subjectIdFor(env, identity.profileId);
-    items = (await Store.readForTutor(ctx.msql, subject, C.MEMORY.READ_LIMIT)).map(promptItem);
+    items = (await Store.readForTutor(ctx.msql, subject, C.MEMORY.READ_LIMIT)).map(promptItem).filter(Boolean); // fora do vocabulário = descartado
     cacheSet(identity.profileId, items, now);
   }
+  const version = C.MEMORY.PURPOSE_VERSION;
   return {
     available: true, used: items.length > 0, items: items.slice(), count: items.length,
-    canWrite: agent.memory.write === true, consentVersion: C.MEMORY.PURPOSE_VERSION,
+    canWrite: agent.memory.write === true, consentVersion: version,
+    // A gravação em segundo plano reconfere o consentimento no núcleo IMEDIATAMENTE antes de gravar (corrida com a revogação).
+    confirmConsent: async () => {
+      const again = consentState(await readConsent(sql, identity.profileId));
+      return again.current && again.acceptedVersion === version;
+    },
   };
 }
 
 /**
- * Grava as dúvidas citadas na pergunta. Só com a leitura anterior bem-sucedida (consentimento já conferido).
- * Nunca lança: qualquer falha (banco fora, teto de 60) é silêncio.
+ * Grava as dúvidas citadas na pergunta. Só com a leitura anterior bem-sucedida E com o consentimento reconferido no núcleo
+ * logo antes de gravar (`memory.confirmConsent`; sem essa função, falha fechada: não grava). Nunca lança: qualquer falha (banco fora, teto de 60) é silêncio.
  * @returns {Promise<number>} quantos itens gravou
  */
 export async function writeTutorSignals({ env, identity, agent, memory, message }) {
@@ -75,6 +81,7 @@ export async function writeTutorSignals({ env, identity, agent, memory, message 
     if (!ctx || !memory || memory.available !== true || memory.canWrite !== true || !agent.memory || agent.memory.write !== true) return 0;
     const items = tutorItems(message);
     if (!items.length) return 0;
+    if (typeof memory.confirmConsent !== 'function' || !(await memory.confirmConsent())) return 0;
     const subject = await subjectIdFor(env, identity.profileId);
     // Sem invalidar o cache: a dúvida nova aparece no prompt quando o cache de 5 min expirar (economiza o banco de memória).
     return (await Store.upsertItems(ctx.msql, subject, items, memory.consentVersion)).length;

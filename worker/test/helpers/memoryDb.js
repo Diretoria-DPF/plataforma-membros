@@ -59,3 +59,18 @@ export function toMemorySql(db, opts = {}) {
   };
   return msql;
 }
+
+/**
+ * Roda `fn` com a CHECK de vocabulário de temas (memory_items_topic_chk) removida, para provar o teto de 60 itens com
+ * slugs sintéticos (o vocabulário real tem menos de 60 combinações possíveis). Ao final apaga as linhas e recoloca a CHECK.
+ */
+export async function withoutTopicCheck(db, fn) {
+  const { rows } = await db.query("SELECT pg_get_constraintdef(oid) AS def FROM pg_constraint WHERE conname = 'memory_items_topic_chk'");
+  await db.exec('ALTER TABLE memory_items DROP CONSTRAINT memory_items_topic_chk');
+  try {
+    return await fn();
+  } finally {
+    await db.exec('DELETE FROM memory_items');
+    await db.exec('ALTER TABLE memory_items ADD CONSTRAINT memory_items_topic_chk ' + rows[0].def);
+  }
+}

@@ -53,7 +53,7 @@ Acrescentar, depois do trecho sobre a Lia:
 - **Registros técnicos dos agentes** (sem o texto das perguntas e respostas): apagados após **90 dias**, por rotina diária.
 - **Memória de estudo:** cada item é apagado após **180 dias sem uso** e, de qualquer forma, no máximo **12 meses** depois de criado, por rotina diária.
 - **Quando você desativa a memória, apaga um item ou apaga tudo**, o apagamento é imediato. Se houver falha técnica, ele fica registrado em uma fila e é concluído em até **24 horas** (nossa meta). Enquanto isso, a memória já não é lida nem gravada.
-- **Quando sua conta é excluída**, a memória é apagada em até **24 horas** em rotina automática, independentemente do prazo geral de até 180 dias para a exclusão da conta e dos demais dados. Uma varredura semanal remove qualquer item que, por falha, tenha ficado sem consentimento vigente.
+- **Quando sua conta é excluída**, a memória é apagada em até **24 horas** em rotina automática, independentemente do prazo geral de até 180 dias para a exclusão da conta e dos demais dados. Uma varredura diária remove qualquer item que, por falha, tenha ficado sem consentimento vigente.
 - **Consentimento:** guardamos a data e a versão do texto aceito (sem conteúdo da memória), apagados junto com a conta.
 - **Alteração do texto:** se a finalidade da memória mudar, pediremos um novo consentimento antes de voltar a usá-la; a memória antiga permanece sem uso até o novo aceite (você pode apagá-la ou baixá-la).
 
@@ -68,7 +68,7 @@ Acrescentar, depois do trecho sobre a Lia:
 ## E. Pontos para você decidir
 
 1. A base legal de consentimento é a que você quer? (a alternativa, legítimo interesse, não é recomendada para dado de comportamento de estudo com opt-in.)
-2. O prazo de **24 h** para apagar a memória em exclusão de conta é uma meta técnica (cron diário): quer prometê-lo no texto ou escrever "até 7 dias" (cobre também a varredura semanal)?
+2. O prazo de **24 h** para apagar a memória em exclusão de conta é uma meta técnica (cron diário): quer prometê-lo no texto ou escrever "até 7 dias" (cobre também a varredura de segurança)?
 3. O banco `laift-memory` fica em qual região do Neon? Se for fora do Brasil, citar a transferência internacional (LGPD, art. 33), como já é feito para Neon, Groq e Cloudflare.
 4. Quem é o encarregado (DPO) e o canal de privacidade? Hoje a Política usa `laiftligauninassau@gmail.com`.
 5. O texto "se o servidor for comprometido, os itens podem ser expostos" na seção 5 deve ficar assim, mais genérico, ou sair? (É a limitação real; recomendo manter.)

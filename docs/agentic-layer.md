@@ -56,7 +56,7 @@ Worker  handlers.js -> memory/service.js   (consentir, ver, preferir, apagar, ex
 
 Mais: origem (`quiz`, `tutor`, `member`), contagem de evidências, versão do consentimento, datas e validade. O **pseudônimo** da pessoa é `subject_id = HMAC-SHA256(MEMORY_SUBJECT_KEY, profile_id)` em hexadecimal; sem a chave, o banco de memória não diz de quem é a linha.
 
-**Não guarda e não tem onde guardar** (não existe coluna de texto livre; as CHECKs do banco aceitam só slug no formato, valores de lista fechada e níveis 1–5):
+**Não guarda e não tem onde guardar** (não existe coluna de texto livre; as CHECKs do banco aceitam só os **temas, preferências e objetivos do vocabulário** (listas fechadas por tipo; um teste confere que o SQL e `vocabulary.js` não divergem), valores de lista fechada e níveis 1–5). Acrescentar um tema ao vocabulário exige uma nova migração em `sql/memory/` que troque a CHECK; o que o banco guardar fora do vocabulário (corrupção) é descartado ao montar o prompt:
 
 - a pergunta do estudante, a resposta do tutor, o histórico da conversa;
 - nome, e-mail, telefone, identificador da conta, data de nascimento;
@@ -88,7 +88,7 @@ Os temas do vocabulário (`memory/vocabulary.js`, ~23) vêm dos módulos de Apre
 
 ### 2.6 Escrita
 
-Depois da resposta, só se a leitura confirmou o consentimento e o desfecho foi `allow`/`rewrite`: as dúvidas do vocabulário citadas na pergunta viram `difficulty/duvida` (recorrência sobe 1 a cada pergunta, até 5). Roda em `waitUntil` (o `index.js` entrega `ctx.waitUntil` aos handlers em `env.waitUntil`), **nunca bloqueia a resposta**, e qualquer falha é silêncio (aviso `MEMORY_WRITE_SKIPPED` no log, sem conteúdo). O resultado de simulado (`apiLearnSubmitQuizAttempt`) grava nível (média ponderada de até 9 observações) e, se o nível for 1 ou 2, a dúvida; sem banco de memória o handler não faz nenhuma consulta a mais.
+Depois da resposta, só se a leitura confirmou o consentimento, o desfecho foi `allow`/`rewrite` **e o consentimento é reconferido no núcleo imediatamente antes de gravar** (revogou na corrida = não grava; sem a função de reconferência, falha fechada): as dúvidas do vocabulário citadas na pergunta viram `difficulty/duvida` (recorrência sobe 1 a cada pergunta, até 5). Roda em `waitUntil` (o `index.js` entrega `ctx.waitUntil` aos handlers em `env.waitUntil`), **nunca bloqueia a resposta**, e qualquer falha é silêncio (aviso `MEMORY_WRITE_SKIPPED` no log, sem conteúdo). O resultado de simulado (`apiLearnSubmitQuizAttempt`) grava nível (média ponderada de até 9 observações) e, se o nível for 1 ou 2, a dúvida; sem banco de memória o handler não faz nenhuma consulta a mais.
 
 Escrita do próprio membro: `apiMemorySetPreference` (só `topic_level`, `study_pref`, `goal`; precisa de consentimento vigente).
 
@@ -97,16 +97,16 @@ Escrita do próprio membro: `apiMemorySetPreference` (só `topic_level`, `study_
 | Caminho | O que acontece | Falhou? |
 |---|---|---|
 | Apagar um item / tudo (`apiMemoryDeleteItem`, `apiMemoryDeleteAll`) | apaga no banco de memória; vale **mesmo com a flag desligada** ou o aceite desatualizado | `MEMORY_UNAVAILABLE` (nunca finge que apagou) |
-| Revogar consentimento (`apiMemorySetConsent {granted:false}`) | grava a revogação **no núcleo primeiro** (a leitura fecha), depois apaga na memória | a pessoa entra em `memory_purge_queue` (`reason: 'revoked'`); a resposta diz `queued: true` e prazo de 24 h |
+| Revogar consentimento (`apiMemorySetConsent {granted:false}`) | grava a revogação **no núcleo primeiro** (a leitura fecha), depois apaga na memória | a pessoa entra em `memory_purge_queue` (`reason: 'revoked'`); a resposta diz `queued: true` e prazo de 24 h. Se **nem apagou nem enfileirou**, devolve **erro** `MEMORY_UNAVAILABLE` com `revoked: true` (a leitura já está fechada; o cliente tenta de novo) |
 | Novo aceite | bloqueado enquanto houver apagamento pendente na fila (tenta concluí-lo antes) | `MEMORY_UNAVAILABLE`, `reason: 'pending_purge'` |
 | Exclusão de conta | o gatilho `AFTER DELETE ON profiles` (036) enfileira `account_deleted`; o consentimento sai por CASCADE | a linha só sai da fila **depois** do apagamento; falhou, fica (`attempts`, `last_error_code`) |
-| Admin (`apiAdminPurgeMemberMemory`) | exige senha (e 2º fator, se houver); apaga a memória de **uma** pessoa; vale com a flag desligada | enfileira (`reason: 'admin'`) |
+| Admin (`apiAdminPurgeMemberMemory`) | exige senha (e 2º fator, se houver); apaga a memória de **uma** pessoa; vale com a flag desligada | enfileira (`reason: 'admin'`); nem apagar nem enfileirar = erro, nunca "em até 24 horas" |
 
 Limpeza (`maintenance.js` -> `memory/cleanup.js`, **só roda se `DATABASE_URL_MEMORY` e `MEMORY_SUBJECT_KEY` existem**):
 
-- **Fila** (todo dia, 20 pessoas por rodada) e de forma **oportunista** (3 pessoas em segundo plano depois de apagar tudo). **Prazo-alvo: 24 h.**
+- **Fila** (todo dia, 10 pessoas por rodada, em UMA transação no banco de memória: 3 subrequisições no caminho normal, no pior caso 3 + 2 por pessoa) e de forma **oportunista** (3 pessoas em segundo plano depois de apagar tudo). **Prazo-alvo: 24 h.**
 - **Vencidos** (todo dia): `expires_at <= now()`. Pula o banco se ninguém consentiu e a fila está vazia (não acorda o Neon à toa).
-- **Varredura semanal** (domingo, UTC): apaga o que não pertence a ninguém com consentimento `granted` (conta excluída cuja fila falhou, revogação cuja limpeza falhou). Nunca apaga com lista truncada: acima de 300 consentimentos a varredura é **pulada** com aviso (limite de CPU do plano gratuito); itens escritos há menos de 1 hora ficam.
+- **Varredura diária** de quem não tem consentimento `granted` (conta excluída cuja fila falhou, revogação cuja limpeza falhou, gravação que chegou depois da revogação), **sem teto de pessoas**. Cada HMAC custa ~40 µs de CPU e o plano gratuito dá ~10 ms: até `SWEEP_MAX_PROFILES` (150) consentimentos, a lista completa dos vivos é montada e quem não está nela é apagado na hora (3 subrequisições). Acima disso os consentimentos são divididos em fatias estáveis (`hashtext` do `profile_id`), **uma fatia por dia** é confirmada (`verified_at`, marcado como a própria pessoa, em lotes de 100) e o que ficou sem confirmação por mais de `2 × nº de fatias + 14` dias é apagado: um órfão some em semanas, não em 24 h, e quem tem consentimento é reconfirmado a cada ciclo. Uma fatia maior que o teto (hash torto) é **pulada** com aviso, nunca truncada. Itens escritos há menos de 1 hora ficam.
 - Falha de limpeza **nunca derruba o cron**: cada tarefa é isolada e registrada em `error_logs` (`MAINTENANCE_FAILED`).
 
 ### 2.8 Retenção
@@ -123,18 +123,19 @@ Limpeza (`maintenance.js` -> `memory/cleanup.js`, **só roda se `DATABASE_URL_ME
 ### 2.10 Limitações (leia antes de ligar)
 
 1. **A RLS por pessoa protege contra um `WHERE` esquecido, NÃO contra um Worker comprometido.** O Worker escolhe o `app.subject_id` (e pode ligar o modo de manutenção); quem controla o código do Worker lê a memória de todos. A defesa é: pseudônimo (o banco sozinho não identifica ninguém), ausência de texto livre e de dado de saúde por construção, papel sem DDL e a chave `MEMORY_SUBJECT_KEY` separada.
-2. **Girar `MEMORY_SUBJECT_KEY` orfana toda a memória** (os pseudônimos mudam). É um reset; a varredura semanal apagaria os itens antigos.
+2. **Girar `MEMORY_SUBJECT_KEY` orfana toda a memória** (os pseudônimos mudam). É um reset; a varredura diária apagaria os itens antigos.
 3. **Cache de 5 minutos por isolate**: apagar um item invalida o cache do isolate que atendeu o pedido; em outro isolate o tutor pode usar o item por até 5 minutos. O **consentimento** não tem esse atraso. Dúvidas aprendidas pelo tutor aparecem no prompt só quando o cache expira.
-4. **Corrida rara na escrita**: se a pessoa revoga no instante em que uma gravação em segundo plano termina, pode sobrar um item sem consentimento; a varredura semanal o apaga (em até 7 dias, não 24 h, só neste caso raro).
+4. **Corrida rara na escrita**: a gravação reconfere o consentimento no núcleo logo antes de gravar, o que estreita a janela a milissegundos, mas não a elimina (revogação entre a conferência e o COMMIT). Se sobrar um item, a varredura diária o apaga (mesmo prazo do item 8).
 5. **Exclusão de conta** hoje é por SQL do responsável (não existe botão); o gatilho cobre esse caminho. Excluir o perfil sem o Worker configurado deixa a fila esperando até o banco de memória existir.
 6. **Sem backup do banco de memória no fluxo atual** (`tools/backup` cobre o núcleo). Perdê-lo significa recomeçar a memória; ver o runbook.
-7. A varredura semanal compara com consentimentos `granted`; aceite de versão antiga continua "vivo" (a pessoa pode reaceitar ou apagar).
+7. A varredura compara com consentimentos `granted`; aceite de versão antiga continua "vivo" (a pessoa pode reaceitar ou apagar).
+8. Acima de 150 consentimentos o órfão deixa de sair no mesmo dia: sai em até `2 × fatias + 14` dias (a fila, a revogação e a exclusão de conta continuam em 24 h; a varredura é a rede de segurança).
 
 ### 2.11 Custo e orçamento (plano gratuito)
 
 - **Neon Free**: o banco `laift-memory` só acorda com membro consentido usando o tutor/simulado ou na limpeza diária (que pula o banco quando não há ninguém consentido nem fila). Cache de 5 minutos por pessoa. Alerta manual em **70 CU-h** no mês.
-- **Subrequisições** no caminho do tutor: leitura = 1 (consentimento, núcleo) + 1 (memória) e escrita = 1 (memória, em segundo plano) = **3** (2 com o cache quente), dentro do orçamento de ~20 por chamada (limite do plano: 50).
-- **CPU**: as consultas são I/O; o HMAC (WebCrypto) e o mapeamento de palavras-chave são microssegundos. A varredura semanal calcula um HMAC por consentimento (teto de 300).
+- **Subrequisições** no caminho do tutor: leitura = 1 (consentimento, núcleo) + 1 (memória) e escrita = 1 (reconferência do consentimento, núcleo) + 1 (memória), em segundo plano = **4** (3 com o cache quente), dentro do orçamento de ~20 por chamada (limite do plano: 50).
+- **CPU**: as consultas são I/O; o HMAC (WebCrypto) e o mapeamento de palavras-chave são microssegundos. A varredura diária calcula um HMAC por consentimento da fatia (teto de 150 por execução).
 - Sem KV (plano gratuito: 1.000 gravações/dia).
 
 ### 2.12 API (alfa)
@@ -142,9 +143,9 @@ Limpeza (`maintenance.js` -> `memory/cleanup.js`, **só roda se `DATABASE_URL_ME
 | Action | Quem | Rate limit | Observação |
 |---|---|---|---|
 | `apiMemoryGet` | membro/admin | `MEMORY_READ` 60/h | estado, consentimento, itens (só com consentimento vigente), vocabulário e limites |
-| `apiMemorySetConsent` | qualquer sessão (ativar: membro/admin adulto) | `MEMORY_CONSENT` 10/h | `{ granted, purposeVersion }` |
+| `apiMemorySetConsent` | qualquer sessão (ativar: membro/admin adulto) | ativar: `MEMORY_CONSENT` 10/h; **revogar: `MEMORY_ERASE` 200/h** | `{ granted, purposeVersion }` |
 | `apiMemorySetPreference` | membro/admin | `MEMORY_WRITE` 30/h | `{ kind, slug, level?, value? }`, só vocabulário |
-| `apiMemoryDeleteItem` / `apiMemoryDeleteAll` | qualquer sessão | `MEMORY_WRITE` 30/h | apagar vale com a flag desligada |
+| `apiMemoryDeleteItem` / `apiMemoryDeleteAll` | qualquer sessão | **`MEMORY_ERASE` 200/h** (bucket próprio, só contra abuso extremo; revogar e apagar nunca esbarram nos 10/h do aceite nem nos 30/h das preferências) | apagar vale com a flag desligada |
 | `apiMemoryExport` | membro/admin | `MEMORY_EXPORT` 5/dia | JSON legível (`laift-memory/v1`), sem ids internos |
 | `apiAdminMemoryStats` | admin | – | consentimentos por situação, fila, totais; só números |
 | `apiAdminPurgeMemberMemory` | admin + senha | `MFA_MANAGE` | `{ profileId, password, code? }` |

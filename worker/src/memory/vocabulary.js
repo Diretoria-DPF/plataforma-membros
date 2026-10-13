@@ -5,8 +5,10 @@
  */
 /**
  * memory/vocabulary.js
- * Vocabulário CONTROLADO da memória de estudo (ADR 0007). É o que torna impossível guardar texto livre: tudo o que
- * entra na memória é (tipo, tema do vocabulário, nível 1–5, valor de lista fechada). Os temas vêm dos módulos de
+ * Vocabulário CONTROLADO da memória de estudo (ADR 0007). Tudo o que entra na memória é (tipo, tema do vocabulário,
+ * nível 1–5, valor de lista fechada). A garantia de "sem texto livre" tem DUAS camadas: este módulo valida na aplicação e o
+ * banco repete a regra com listas fechadas por tipo (sql/memory/001, memory_items_topic_chk e memory_items_shape_chk; o
+ * teste memoryVocabularySql.test.js falha se as duas listas divergirem). Os temas vêm dos módulos de
  * Aprender (simulados de Farmacologia e Toxicologia, Anatomia) e ficam no nível de CONCEITO ou CLASSE, nunca de
  * paciente, doença de uma pessoa ou medicamento de alguém. Puro: sem I/O.
  *
@@ -175,11 +177,24 @@ export function vocabularyView() {
 
 const KIND_LABEL = Object.freeze({ topic_level: 'nivel_no_tema', difficulty: 'duvida_recorrente', study_pref: 'preferencia', goal: 'objetivo' });
 
-/** Forma enxuta que o tutor recebe como DADO (sem datas, ids ou origem). */
+/** O (tipo, tema, valor) pertence ao vocabulário? Define o que pode chegar ao prompt. */
+function isKnownItem(item) {
+  if (!item || typeof item !== 'object') return false;
+  if (item.kind === 'topic_level' || item.kind === 'difficulty') return isTopic(item.slug);
+  if (item.kind === 'study_pref') return !!PREFERENCES[item.slug] && PREFERENCES[item.slug].includes(item.value);
+  if (item.kind === 'goal') return GOALS.includes(item.slug) && item.value === 'ativo';
+  return false;
+}
+
+/**
+ * Forma enxuta que o tutor recebe como DADO (sem datas, ids ou origem). Item fora do vocabulário (tipo, tema ou valor
+ * desconhecido) é DESCARTADO: devolve null. Nunca repete no prompt um texto que não esteja na lista.
+ */
 export function promptItem(item) {
+  if (!isKnownItem(item)) return null;
   const topic = TOPICS[item.slug];
   return {
-    tipo: KIND_LABEL[item.kind] || item.kind,
+    tipo: KIND_LABEL[item.kind],
     tema: topic ? topic.label : item.slug,
     ...(item.level ? { nivel: item.level } : {}),
     ...(item.value && item.kind !== 'difficulty' ? { valor: item.value } : {}),

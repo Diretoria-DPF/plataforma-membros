@@ -583,6 +583,9 @@ Object.assign(RATE_LIMITS, {
   MEMORY_WRITE: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   MEMORY_CONSENT: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
   MEMORY_EXPORT: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
+  // Revogar e apagar (item/tudo) NÃO usam os limites acima: ninguém pode ficar impedido de apagar o próprio dado. Este teto
+  // existe só contra abuso extremo (martelar o banco de memória).
+  MEMORY_ERASE: { MAX_ATTEMPTS: 200, WINDOW_SECONDS: 3600 },
 });
 
 export const MEMORY = {
@@ -595,10 +598,10 @@ export const MEMORY = {
   CACHE_MAX_ENTRIES: 200,
   RETENTION_UNUSED_DAYS: 180,  // sem uso
   RETENTION_MAX_MONTHS: 12,    // teto absoluto desde a criação
-  PURGE_DRAIN_BATCH: 20,       // pessoas por drenagem da fila no cron
+  PURGE_DRAIN_BATCH: 10,       // pessoas por drenagem da fila no cron (1 transação em lote; pior caso ~2 por pessoa)
   PURGE_OPPORTUNISTIC_BATCH: 3,
-  SWEEP_MAX_PROFILES: 300,     // varredura semanal: com mais consentimentos que isto, pula (nunca apaga com lista truncada)
-  SWEEP_WEEKDAY_UTC: 0,        // domingo
+  SWEEP_MAX_PROFILES: 150,     // consentimentos verificados por varredura (CPU do plano gratuito, ~40 µs por HMAC); acima disso a varredura é particionada por dia
+  SWEEP_VERIFY_CHUNK: 100,     // pessoas por transação ao marcar `verified_at`
   SIGNAL_TOPICS_MAX: 5,        // temas por sinal
   KEY_MIN_LENGTH: 32,          // MEMORY_SUBJECT_KEY
 };

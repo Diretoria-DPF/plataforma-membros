@@ -17,7 +17,7 @@ import { subjectIdFor } from '../src/memory/subject.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 import { __resetTutorCacheForTests } from '../src/memory/tutorCache.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
-import { createMemoryPglite, toMemorySql } from './helpers/memoryDb.js';
+import { createMemoryPglite, toMemorySql, withoutTopicCheck } from './helpers/memoryDb.js';
 import { makeEnv } from './helpers/mockEnv.js';
 
 const CID = '99999999-9999-4999-8999-999999999999';
@@ -115,7 +115,7 @@ describe('infraestrutura ausente (falha fechada)', () => {
   test('sem DATABASE_URL_MEMORY: a tela mostra available:false e não há como consentir', async () => {
     const bare = { memorySql: undefined, MEMORY_SUBJECT_KEY: KEY };
     await expect(get(MEMBER, bare)).resolves.toMatchObject({ success: true, available: false, items: [], consent: { status: 'none', current: false } });
-    await expect(grant(MEMBER, bare)).rejects.toMatchObject({ code: 'MEMORY_UNAVAILABLE', payload: { reason: 'config' } });
+    await expect(grant(MEMBER, bare)).rejects.toMatchObject({ code: 'MEMORY_UNAVAILABLE', payload: { code: 'MEMORY_UNAVAILABLE' } });
     expect((await core.query('SELECT 1 FROM member_memory_consent')).rows).toHaveLength(0);
   });
 
@@ -231,7 +231,7 @@ describe('preferências: só vocabulário, nunca texto livre', () => {
     expect(touchedMemory()).toBe(false);
   });
 
-  test('teto de 60 itens: o 61º recebe MEMORY_FULL; atualizar um existente continua possível; outra pessoa não é afetada', async () => {
+  test('teto de 60 itens: o 61º recebe MEMORY_FULL; atualizar um existente continua possível; outra pessoa não é afetada', () => withoutTopicCheck(mdb, async () => {
     const subject = await subjectIdFor(env(), ME);
     const fill = Array.from({ length: 60 }, (_, i) => ({ kind: 'topic_level', slug: 'tema-' + String(i).padStart(2, '0'), level: 3, value: null, source: 'member' }));
     await Store.upsertItems(msql, subject, fill, VERSION);
@@ -243,7 +243,7 @@ describe('preferências: só vocabulário, nunca texto livre', () => {
     await expect(pref(FORMATO, ADMIN)).resolves.toMatchObject({ success: true });
     await MemoryService.deleteItem(sql, env(), MEMBER, { id: (await memoryRows()).find((r) => r.slug === 'tema-00').id }, CID);
     await expect(pref(FORMATO)).resolves.toMatchObject({ success: true });
-  });
+  }));
 });
 
 describe('ver, apagar item e apagar tudo', () => {
@@ -441,12 +441,26 @@ describe('rate limits (60/h leitura, 30/h escrita, 10/h consentimento, 5/dia exp
   }
 
   test('leitura: 60 por hora', async () => { await exhaust(60, () => get()); });
-  test('consentimento: 10 por hora', async () => { await exhaust(10, () => MemoryService.setConsent(sql, env(), MEMBER, { granted: false }, CID)); });
+  test('consentimento (ativar): 10 por hora', async () => { await exhaust(10, () => grant()); });
   test('exportação: 5 por dia', async () => { await exhaust(5, () => MemoryService.exportData(sql, env(), MEMBER, CID)); });
-  test('escrita: 30 por hora (preferência, apagar item e apagar tudo dividem o mesmo teto)', async () => {
+  test('escrita de preferências: 30 por hora; esgotar NÃO impede revogar nem apagar (direito de eliminação)', async () => {
     await grant();
     await exhaust(30, () => pref(FORMATO));
-    await expect(MemoryService.deleteAll(sql, env(), MEMBER, CID)).rejects.toMatchObject({ code: 'RATE_LIMIT' });
+    const [item] = (await get()).items;
+    await expect(MemoryService.deleteItem(sql, env(), MEMBER, { id: item.id }, CID)).resolves.toMatchObject({ deleted: 1 });
+    await expect(MemoryService.deleteAll(sql, env(), MEMBER, CID)).resolves.toMatchObject({ success: true });
+    await expect(MemoryService.setConsent(sql, env(), MEMBER, { granted: false }, CID)).resolves.toMatchObject({ erased: true });
+  });
+
+  test('ativar 10x/h esgotado NÃO impede revogar', async () => {
+    for (let i = 0; i < 10; i++) await grant();
+    await expect(grant()).rejects.toMatchObject({ code: 'RATE_LIMIT' });
+    await expect(MemoryService.setConsent(sql, env(), MEMBER, { granted: false }, CID)).resolves.toMatchObject({ consent: { status: 'revoked' } });
+  });
+
+  test('revogar e apagar têm bucket próprio e folgado (só contra abuso extremo)', () => {
+    expect(C.RATE_LIMITS.MEMORY_ERASE.MAX_ATTEMPTS).toBeGreaterThanOrEqual(100);
+    expect(C.RATE_LIMITS.MEMORY_ERASE.MAX_ATTEMPTS).toBeGreaterThan(C.RATE_LIMITS.MEMORY_WRITE.MAX_ATTEMPTS);
   });
 
   test('o limite é por pessoa', async () => {

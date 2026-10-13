@@ -22,8 +22,16 @@
  */
 import { neon } from '@neondatabase/serverless';
 
+/**
+ * O driver do Neon, ao recusar uma URL malformada, escreve a URL INTEIRA (com a senha) na mensagem do erro. Por isso o erro
+ * original nunca sai daqui: quem chama recebe uma mensagem genérica (o comportamento normal, URL válida, não muda).
+ */
 export function createDb(databaseUrl) {
-  return neon(databaseUrl);
+  try {
+    return neon(databaseUrl);
+  } catch (err) {
+    throw new Error('DATABASE_URL ausente ou malformada.');
+  }
 }
 
 /**
@@ -36,10 +44,29 @@ export function createDb(databaseUrl) {
  */
 const memoryClients = new Map();
 
+/** A URL tem cara de URL? (não a ecoa: o formato inválido vira só um `false`). */
+function isParsableUrl(url) {
+  try {
+    return !!new URL(url).hostname;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * NUNCA lança. URL malformada vira `null` (memória indisponível), sem repetir a URL em lugar nenhum: o driver do Neon coloca
+ * a string de conexão, com a senha, na mensagem do erro, e essa mensagem iria para o log e derrubaria o cron.
+ */
 export function createMemoryDb(env) {
   if (env && env.memorySql) return env.memorySql;
   const url = env && typeof env.DATABASE_URL_MEMORY === 'string' ? env.DATABASE_URL_MEMORY.trim() : '';
-  if (!url) return null;
-  if (!memoryClients.has(url)) memoryClients.set(url, neon(url));
+  if (!url || !isParsableUrl(url)) return null;
+  if (!memoryClients.has(url)) {
+    try {
+      memoryClients.set(url, neon(url));
+    } catch (err) {
+      return null;
+    }
+  }
   return memoryClients.get(url);
 }

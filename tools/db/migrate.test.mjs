@@ -293,7 +293,7 @@ test('ledger inválido é recusado antes de qualquer SQL', async () => {
 });
 
 test('o fluxo padrão não lê sql/memory/ (subpasta) e a memória tem o seu próprio ledger', async () => {
-  assert.ok(!listMigrations(SQL_ORIGINAL).some((m) => m.name.includes('memory')));
+  assert.ok(!listMigrations(SQL_ORIGINAL).some((m) => m.name === '001_memory.sql')); // a 036_memory_consent.sql É do núcleo
   const { client } = await novoBanco();
   const adaptada = fs.mkdtempSync(path.join(os.tmpdir(), 'laift-mem-'));
   for (const nome of fs.readdirSync(DIR_MEMORIA).filter((f) => f.endsWith('.sql'))) {

@@ -93,6 +93,7 @@ function upsertQuery(tx, subject, item, consentVersion) {
       created_at = CASE WHEN m.expires_at <= now() THEN now() ELSE m.created_at END,
       updated_at = now(),
       last_used_at = now(),
+      verified_at = now(),
       expires_at = LEAST(now() + make_interval(days => ${MEMORY.RETENTION_UNUSED_DAYS}::int),
                          (CASE WHEN m.expires_at <= now() THEN now() ELSE m.created_at END) + make_interval(months => ${MEMORY.RETENTION_MAX_MONTHS}::int))
     RETURNING m.id, m.kind, m.slug, m.level, m.value, m.source, m.evidence, m.created_at, m.updated_at, m.last_used_at, m.expires_at`;
@@ -117,6 +118,19 @@ export async function deleteAll(msql, subject) {
   return rows.length;
 }
 
+/**
+ * Apaga tudo de VÁRIAS pessoas numa transação só (uma requisição HTTP): para cada uma, o set_config do sujeito e a remoção.
+ * Se qualquer uma falhar, a transação inteira é desfeita e o chamador tenta pessoa por pessoa. Devolve o total removido.
+ */
+export async function deleteMany(msql, subjects) {
+  if (!subjects.length) return 0;
+  const results = await msql.transaction((tx) => subjects.flatMap((subject) => [
+    tx`SELECT set_config('app.subject_id', ${subject}, true)`,
+    tx`DELETE FROM memory_items WHERE subject_id = ${subject} RETURNING id`,
+  ]));
+  return results.reduce((n, rows, i) => n + (i % 2 === 1 ? rows.length : 0), 0);
+}
+
 /** O erro é o teto de 60 itens do gatilho? */
 export function isCapError(err) {
   return !!err && /memory_items_cap/.test(String(err.message || ''));
@@ -128,6 +142,27 @@ export function isCapError(err) {
 async function inMaintenance(msql, build) {
   const results = await msql.transaction((tx) => [tx`SELECT set_config('app.maintenance', 'on', true)`].concat(build(tx)));
   return results.slice(1);
+}
+
+/**
+ * Marca `verified_at = now()` nos itens das pessoas informadas (têm consentimento concedido). Uma transação por lote, com
+ * set_config + UPDATE por pessoa: o modo de manutenção não grava, então a marca é feita como a própria pessoa (RLS).
+ */
+export async function verifySubjects(msql, subjects) {
+  if (!subjects.length) return;
+  await msql.transaction((tx) => subjects.flatMap((subject) => [
+    tx`SELECT set_config('app.subject_id', ${subject}, true)`,
+    tx`UPDATE memory_items SET verified_at = now() WHERE subject_id = ${subject}`,
+  ]));
+}
+
+/** Remove o que está sem confirmação há mais de `days` dias (varredura particionada); poupa o escrito há menos de 1 hora. */
+export async function purgeUnverified(msql, days) {
+  const [rows] = await inMaintenance(msql, (tx) => [tx`
+    DELETE FROM memory_items
+    WHERE verified_at < now() - make_interval(days => ${days}::int) AND updated_at < now() - interval '1 hour'
+    RETURNING id`]);
+  return rows.length;
 }
 
 /** Apaga os itens vencidos (expires_at). Devolve quantos. */

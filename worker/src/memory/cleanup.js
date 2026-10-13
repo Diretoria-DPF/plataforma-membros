@@ -23,8 +23,12 @@ import { runInBackground } from './background.js';
 
 /** { msql } quando há banco de memória e chave; senão null. */
 export function memoryContext(env) {
-  const msql = createMemoryDb(env);
-  return msql && memoryKeyConfigured(env) ? { msql } : null;
+  try {
+    const msql = createMemoryDb(env);
+    return msql && memoryKeyConfigured(env) ? { msql } : null;
+  } catch (err) {
+    return null; // nunca lança (e nunca repete a URL): sem contexto = memória indisponível
+  }
 }
 
 /** Código curto e sem conteúdo para registrar a causa (nunca a mensagem do erro). */
@@ -52,9 +56,9 @@ export async function enqueuePurge(sql, profileId, reason, code) {
  * @returns {Promise<{ erased: boolean, queued: boolean, deleted: number }>}
  */
 export async function eraseSubject(sql, env, profileId, reason) {
-  const ctx = memoryContext(env);
-  if (!ctx) return { erased: false, queued: await enqueuePurge(sql, profileId, reason, 'MEMORY_OFF'), deleted: 0 };
   try {
+    const ctx = memoryContext(env);
+    if (!ctx) return { erased: false, queued: await enqueuePurge(sql, profileId, reason, 'MEMORY_OFF'), deleted: 0 };
     const deleted = await Store.deleteAll(ctx.msql, await subjectIdFor(env, profileId));
     return { erased: true, queued: false, deleted };
   } catch (err) {
@@ -76,14 +80,32 @@ async function drainEntry(sql, env, ctx, row) {
   }
 }
 
-/** Drena a fila: apaga a memória de cada pessoa e só então tira a linha. Devolve quantas saíram. */
+/** Tenta o lote inteiro numa transação (3 subrequisições no total); só se falhar cai para pessoa por pessoa. */
+async function drainBatch(sql, env, ctx, rows) {
+  try {
+    const subjects = await Promise.all(rows.map((r) => subjectIdFor(env, r.profile_ref)));
+    await Store.deleteMany(ctx.msql, subjects);
+    const refs = JSON.stringify(rows.map((r) => r.profile_ref));
+    await sql`DELETE FROM memory_purge_queue WHERE profile_ref IN (SELECT jsonb_array_elements_text(${refs}::jsonb)::uuid)`;
+    return rows.length;
+  } catch (err) {
+    let purged = 0;
+    for (const row of rows) purged += (await drainEntry(sql, env, ctx, row)) ? 1 : 0;
+    return purged;
+  }
+}
+
+/**
+ * Drena a fila: apaga a memória das pessoas e só então tira as linhas. Devolve quantas saíram.
+ * Orçamento de subrequisições (plano gratuito, ~50 por execução do cron, dividido com as demais limpezas): caminho normal
+ * = 3 (leitura da fila, uma transação de apagamento em lote, uma remoção em lote); pior caso (lote falhou) = 3 + 2 por pessoa.
+ * Por isso o lote padrão é pequeno (MEMORY.PURGE_DRAIN_BATCH); o resto fica para o dia seguinte.
+ */
 export async function drainQueue(sql, env, limit = MEMORY.PURGE_DRAIN_BATCH) {
   const ctx = memoryContext(env);
   if (!ctx) return 0;
   const rows = await sql`SELECT profile_ref FROM memory_purge_queue ORDER BY enqueued_at LIMIT ${limit}::int`;
-  let purged = 0;
-  for (const row of rows) purged += (await drainEntry(sql, env, ctx, row)) ? 1 : 0;
-  return purged;
+  return rows.length ? drainBatch(sql, env, ctx, rows) : 0;
 }
 
 /**
@@ -117,29 +139,62 @@ export async function purgeExpiredItems(sql, env) {
   return Store.purgeExpired(ctx.msql);
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /**
- * Cron semanal (domingo, UTC): apaga os itens que não pertencem a ninguém com consentimento concedido (conta excluída
- * cuja fila falhou, consentimento revogado cuja limpeza falhou). NUNCA apaga com lista truncada: se houver mais
- * consentimentos que o teto de segurança (CPU do plano gratuito), a varredura é pulada e o aviso vai ao log.
+ * Varredura diária de quem não tem consentimento vigente (conta excluída cuja fila falhou, revogação cuja limpeza falhou,
+ * gravação que chegou depois da revogação). Funciona SEM teto de pessoas, respeitando a CPU do plano gratuito (~40 µs por
+ * HMAC: no máximo SWEEP_MAX_PROFILES por execução) e o orçamento de subrequisições:
+ *   - até SWEEP_MAX_PROFILES consentimentos: lista completa dos vivos e apagamento imediato de quem não está nela
+ *     (3 subrequisições);
+ *   - acima disso: os consentimentos são divididos em fatias estáveis (hashtext do profile_id) e UMA fatia por dia é
+ *     confirmada (`verified_at`); o que ficou sem confirmação por mais de 2 ciclos + 14 dias é apagado. Um órfão some em
+ *     até (2 * ciclo + 14) dias; quem tem consentimento é reconfirmado a cada ciclo (ciclo = nº de fatias, em dias).
+ * Uma fatia maior que o teto (hash muito torto) é pulada com aviso, nunca truncada: apagar com lista parcial perderia dado.
  */
 export async function sweepOrphans(sql, env, now = new Date()) {
   const ctx = memoryContext(env);
-  if (!ctx || now.getUTCDay() !== MEMORY.SWEEP_WEEKDAY_UTC) return 0;
-  const rows = await sql`SELECT profile_id FROM member_memory_consent WHERE status = 'granted' LIMIT ${MEMORY.SWEEP_MAX_PROFILES + 1}::int`;
-  if (rows.length > MEMORY.SWEEP_MAX_PROFILES) {
-    console.warn('[MEMORY_SWEEP_SKIPPED] consentimentos acima do teto da varredura; ver docs/agentic-layer.md');
+  if (!ctx) return 0;
+  const cap = Math.max(1, MEMORY.SWEEP_MAX_PROFILES);
+  const total = Number((await sql`SELECT count(*)::int AS n FROM member_memory_consent WHERE status = 'granted'`)[0].n);
+  const parts = total <= cap ? 1 : Math.ceil(total / (cap / 2));
+  const slot = Math.floor(now.getTime() / DAY_MS) % parts;
+  const rows = await sql`
+    SELECT profile_id FROM member_memory_consent
+    WHERE status = 'granted' AND (hashtext(profile_id::text)::bigint & 2147483647) % ${parts}::int = ${slot}::int
+    ORDER BY profile_id LIMIT ${cap + 1}::int`;
+  if (rows.length > cap) {
+    console.warn('[MEMORY_SWEEP_SKIPPED] fatia da varredura acima do teto; ver docs/agentic-layer.md');
     return 0;
   }
   const live = await Promise.all(rows.map((r) => subjectIdFor(env, r.profile_id)));
-  return Store.purgeNotIn(ctx.msql, live);
+  if (parts === 1) return Store.purgeNotIn(ctx.msql, live);
+  for (let i = 0; i < live.length; i += MEMORY.SWEEP_VERIFY_CHUNK) {
+    await Store.verifySubjects(ctx.msql, live.slice(i, i + MEMORY.SWEEP_VERIFY_CHUNK));
+  }
+  return Store.purgeUnverified(ctx.msql, 2 * parts + 14);
 }
 
-/** Tarefas da memória para maintenance.js. Sem banco/chave de memória: nenhuma (e nenhuma consulta a mais). */
+/** Há URL (qualquer texto, sem validar nem ecoar) e chave? A validação de verdade acontece DENTRO da tarefa, isolada. */
+function memoryConfigured(env) {
+  const hasUrl = !!env && (!!env.memorySql || (typeof env.DATABASE_URL_MEMORY === 'string' && env.DATABASE_URL_MEMORY.trim() !== ''));
+  return hasUrl && memoryKeyConfigured(env);
+}
+
+/** Resolve o contexto só quando a tarefa roda: URL malformada vira UM erro genérico desta tarefa, sem derrubar as outras. */
+function guarded(env, work) {
+  return async () => {
+    if (!memoryContext(env)) throw new Error('Memória de estudo: DATABASE_URL_MEMORY inválida ou MEMORY_SUBJECT_KEY ausente.');
+    return work();
+  };
+}
+
+/** Tarefas da memória para maintenance.js. Sem URL e chave: nenhuma (e nenhuma consulta a mais). Nunca lança. */
 export function memoryTasks(sql, env, now = new Date()) {
-  if (!memoryContext(env)) return {};
+  if (!memoryConfigured(env)) return {};
   return {
-    memoryPurgeQueue: () => drainQueue(sql, env),
-    memoryExpiredPurge: () => purgeExpiredItems(sql, env),
-    memoryOrphanSweep: () => sweepOrphans(sql, env, now),
+    memoryPurgeQueue: guarded(env, () => drainQueue(sql, env)),
+    memoryExpiredPurge: guarded(env, () => purgeExpiredItems(sql, env)),
+    memoryOrphanSweep: guarded(env, () => sweepOrphans(sql, env, now)),
   };
 }

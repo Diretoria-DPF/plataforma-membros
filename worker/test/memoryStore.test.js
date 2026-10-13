@@ -12,7 +12,7 @@
 import { MEMORY } from '../src/constants.js';
 import * as Store from '../src/memory/store.js';
 import { computeExpiry } from '../src/memory/policy.js';
-import { createMemoryPglite, toMemorySql } from './helpers/memoryDb.js';
+import { createMemoryPglite, toMemorySql, withoutTopicCheck } from './helpers/memoryDb.js';
 
 const A = 'a'.repeat(64);
 const B = 'b'.repeat(64);
@@ -107,13 +107,13 @@ describe('UPSERT: regras por tipo e origem', () => {
     await expect(Store.upsertItems(msql, 'nao-e-um-hmac', [level('aines', 3)], V)).rejects.toThrow(/row-level security|violates check constraint/);
   });
 
-  test('o 61º item levanta o erro do teto, reconhecido por isCapError', async () => {
+  test('o 61º item levanta o erro do teto, reconhecido por isCapError', () => withoutTopicCheck(mdb, async () => {
     await Store.upsertItems(msql, A, Array.from({ length: 60 }, (_, i) => level('tema-' + String(i).padStart(2, '0'), 3)), V);
     const err = await Store.upsertItems(msql, A, [level('tema-novo', 3)], V).catch((e) => e);
     expect(Store.isCapError(err)).toBe(true);
     expect(Store.isCapError(new Error('outra coisa'))).toBe(false);
     expect(Store.isCapError(null)).toBe(false);
-  });
+  }));
 });
 
 describe('retenção: 180 dias sem uso, no máximo 12 meses', () => {

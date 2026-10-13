@@ -76,7 +76,7 @@ npx wrangler secret put MEMORY_SUBJECT_KEY           # cole a chave gerada (mín
 # staging: acrescente --env staging nos dois, com valores DIFERENTES dos de produção
 ```
 
-- Guarde a `MEMORY_SUBJECT_KEY` no seu cofre. **Não a troque depois de ligar a memória**: trocar a chave muda todos os pseudônimos e deixa a memória existente órfã (a varredura semanal a apaga; na prática é um reset).
+- Guarde a `MEMORY_SUBJECT_KEY` no seu cofre. **Não a troque depois de ligar a memória**: trocar a chave muda todos os pseudônimos e deixa a memória existente órfã (a varredura diária a apaga; na prática é um reset).
 - Sem os dois secrets o tutor funciona normal, a tela mostra "memória indisponível" e o cron não toca no banco de memória.
 
 ## 5. Flags (Admin > flags, ou `apiAdminSetFeatureFlag`)

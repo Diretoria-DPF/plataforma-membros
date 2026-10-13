@@ -87,7 +87,7 @@ describe('cascata por exclusão de perfil: gatilho -> fila -> limpeza', () => {
   test('falha ao apagar: a pessoa FICA na fila (tentativas e código, sem mensagem) e o cron não cai; a próxima drenagem conclui', async () => {
     await give(P.alfa, 'aines');
     await core.query('DELETE FROM profiles WHERE id = $1', [P.alfa]);
-    msql.fail(Object.assign(new Error('connection refused postgres://u:senha@h/db'), { code: 'ECONNREFUSED' }));
+    msql.fail(Object.assign(new Error('connection refused postgres://u:senha@h/db'), { code: 'ECONNREFUSED' }), 3); // o lote e a nova tentativa individual falham
     const res = await runMaintenance(sql, CID, env());
     expect(res.memoryPurgeQueue).toBe(0);
     expect(await queue()).toEqual([{ profile_ref: P.alfa, reason: 'account_deleted', attempts: 1, last_error_code: 'ECONNREFUSED' }]);
@@ -114,7 +114,8 @@ describe('cascata por exclusão de perfil: gatilho -> fila -> limpeza', () => {
     expect(res.memoryExpiredPurge).toBeNull();
     expect(res.memoryPurgeQueue).toBe(1);
     expect(res.sessions).toBe(0);
-    expect((await core.query("SELECT code FROM error_logs WHERE code = 'MAINTENANCE_FAILED'")).rows).toHaveLength(1);
+    // a consulta quebrada atinge as duas tarefas que contam consentimentos (vencidos e varredura); cada uma falha isolada
+    expect((await core.query("SELECT code FROM error_logs WHERE code = 'MAINTENANCE_FAILED'")).rows).toHaveLength(2);
   });
 
   test('sem DATABASE_URL_MEMORY ou sem chave: nada da memória roda e a fila fica esperando (nenhuma consulta a mais)', async () => {
@@ -147,7 +148,7 @@ describe('drainQueue, drainSoon e settlePurge', () => {
     await give(P.alfa, 'aines');
     await give(P.beta, 'aines');
     await core.query("INSERT INTO memory_purge_queue (profile_ref, reason, enqueued_at) VALUES ($1, 'admin', now() - interval '2 hours'), ($2, 'admin', now())", [P.alfa, P.beta]);
-    msql.fail(new Error('primeira falha'));
+    msql.fail(new Error('falha'), 2); // o lote falha e a primeira pessoa também; a segunda passa
     expect(await Cleanup.drainQueue(sql, env())).toBe(1);
     expect((await queue()).map((r) => [r.profile_ref, r.attempts])).toEqual([[P.alfa, 1]]);
   });
@@ -231,7 +232,7 @@ describe('itens vencidos (cron diário)', () => {
   });
 });
 
-describe('varredura semanal de quem não tem consentimento vigente', () => {
+describe('varredura diária de quem não tem consentimento vigente', () => {
   async function seed() {
     await grantRow(P.alfa); // vivo
     await give(P.alfa, 'aines');
@@ -242,34 +243,12 @@ describe('varredura semanal de quem não tem consentimento vigente', () => {
     await age(3);
   }
 
-  test('domingo: apaga o órfão, mantém quem tem consentimento concedido', async () => {
+  test('até o teto de consentimentos: apaga o órfão na hora e mantém quem tem consentimento concedido (qualquer dia da semana)', async () => {
     await seed();
-    expect(await Cleanup.sweepOrphans(sql, env(), SUNDAY)).toBe(2);
+    expect(await Cleanup.sweepOrphans(sql, env(), MONDAY)).toBe(2);
     expect(await itemsOf(P.alfa)).toHaveLength(1);
     expect(await itemsOf(P.beta)).toEqual([]);
     expect(await itemsOf(P.gama)).toEqual([]);
-  });
-
-  test('fora de domingo não faz nada nem toca nos bancos', async () => {
-    await seed();
-    msql.history.length = 0;
-    expect(await Cleanup.sweepOrphans(sql, env(), MONDAY)).toBe(0);
-    expect(msql.history).toEqual([]);
-    expect(await itemsOf(P.beta)).toHaveLength(1);
-  });
-
-  test('NUNCA apaga com lista truncada: acima do teto de CPU a varredura é pulada com aviso', async () => {
-    await seed();
-    await grantRow(P.beta);
-    const original = C.MEMORY.SWEEP_MAX_PROFILES;
-    C.MEMORY.SWEEP_MAX_PROFILES = 1;
-    try {
-      expect(await Cleanup.sweepOrphans(sql, env(), SUNDAY)).toBe(0);
-      expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('MEMORY_SWEEP_SKIPPED'));
-    } finally {
-      C.MEMORY.SWEEP_MAX_PROFILES = original;
-    }
-    expect(await itemsOf(P.gama)).toHaveLength(1);
   });
 
   test('poupa o que foi escrito há menos de 1 hora (aceite recém-concedido)', async () => {
@@ -278,11 +257,71 @@ describe('varredura semanal de quem não tem consentimento vigente', () => {
     expect(await itemsOf(P.beta)).toHaveLength(1);
   });
 
-  test('o cron roda a varredura no domingo (memoryOrphanSweep) via memoryTasks', async () => {
+  test('o cron roda a varredura (memoryOrphanSweep) via memoryTasks', async () => {
     await seed();
     const tasks = Cleanup.memoryTasks(sql, env(), SUNDAY);
     expect(Object.keys(tasks)).toEqual(['memoryPurgeQueue', 'memoryExpiredPurge', 'memoryOrphanSweep']);
     expect(await tasks.memoryOrphanSweep()).toBe(2);
     expect(Cleanup.memoryTasks(sql, makeEnv(), SUNDAY)).toEqual({});
+  });
+
+  describe('SEM teto: acima do limite de CPU a varredura é particionada por dia (verified_at)', () => {
+    const NAMES = ['pessoa_um', 'pessoa_dois', 'pessoa_tres', 'pessoa_quatro', 'pessoa_cinco', 'pessoa_seis'];
+    const ids = NAMES.map((n, i) => '5555555' + i + '-5555-4555-8555-555555555555');
+    const day = (n) => new Date(Date.UTC(2026, 9, 1 + n, 12));
+    let original;
+
+    beforeEach(async () => {
+      original = C.MEMORY.SWEEP_MAX_PROFILES;
+      C.MEMORY.SWEEP_MAX_PROFILES = 2; // 6 consentimentos > 2: 6 fatias
+      for (let i = 0; i < ids.length; i++) {
+        await addProfile(ids[i], NAMES[i]);
+        await grantRow(ids[i]);
+        await give(ids[i], 'aines');
+      }
+      await give(P.beta, 'aines'); // órfã: sem consentimento
+      await age(3);
+    });
+    afterEach(() => { C.MEMORY.SWEEP_MAX_PROFILES = original; });
+
+    const verifiedOf = async (id) => (await mdb.query('SELECT verified_at FROM memory_items WHERE subject_id = $1', [await subjectIdFor(env(), id)])).rows[0].verified_at;
+
+    test('cada dia confirma UMA fatia; a órfã sem confirmação é apagada; ninguém vivo é apagado', async () => {
+      // estado normal: quem tem consentimento foi confirmado há poucos dias; a órfã, há muito
+      await mdb.exec("UPDATE memory_items SET verified_at = now() - interval '3 days'");
+      await mdb.exec("UPDATE memory_items SET verified_at = now() - interval '40 days' WHERE subject_id = '" + (await subjectIdFor(env(), P.beta)) + "'");
+      for (let d = 0; d < 6; d++) await Cleanup.sweepOrphans(sql, env(), day(d));
+      for (const id of ids) expect(new Date(await verifiedOf(id)) > new Date(Date.now() - 60000)).toBe(true);
+      expect(await itemsOf(P.beta)).toEqual([]);
+      for (const id of ids) expect(await itemsOf(id)).toHaveLength(1);
+    });
+
+    test('a órfã só sai depois do prazo sem confirmação (2 ciclos + 14 dias); antes disso fica', async () => {
+      await mdb.exec("UPDATE memory_items SET verified_at = now() - interval '10 days'");
+      await Cleanup.sweepOrphans(sql, env(), day(0));
+      expect(await itemsOf(P.beta)).toHaveLength(1);
+      await mdb.exec("UPDATE memory_items SET verified_at = now() - interval '27 days' WHERE subject_id = '" + (await subjectIdFor(env(), P.beta)) + "'");
+      await Cleanup.sweepOrphans(sql, env(), day(1));
+      expect(await itemsOf(P.beta)).toEqual([]);
+      for (const id of ids) expect(await itemsOf(id)).toHaveLength(1);
+    });
+
+    test('poucas subrequisições por execução (2 no núcleo; a verificação e a remoção são transações no banco de memória)', async () => {
+      let calls = 0;
+      const counting = Object.assign((strings, ...values) => { calls += 1; return sql(strings, ...values); }, {});
+      msql.history.length = 0;
+      await Cleanup.sweepOrphans(counting, env(), day(0));
+      expect(calls).toBe(2);
+    });
+
+    test('fatia acima do teto (hash torto): pula com aviso e NUNCA apaga', async () => {
+      C.MEMORY.SWEEP_MAX_PROFILES = 1;
+      const crowded = Object.assign((strings, ...values) => (
+        strings.join('?').includes('ORDER BY profile_id LIMIT') ? Promise.resolve([{ profile_id: ids[0] }, { profile_id: ids[1] }]) : sql(strings, ...values)
+      ), {});
+      expect(await Cleanup.sweepOrphans(crowded, env(), day(0))).toBe(0);
+      expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('MEMORY_SWEEP_SKIPPED'));
+      expect(await itemsOf(P.beta)).toHaveLength(1);
+    });
   });
 });

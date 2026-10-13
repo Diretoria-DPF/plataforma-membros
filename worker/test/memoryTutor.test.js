@@ -28,7 +28,7 @@ import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js'
 import { __resetKnownSuspensionsForTests } from '../src/services/moderationService.js';
 import { groqReply } from './helpers/aiTestUtils.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
-import { createMemoryPglite, toMemorySql } from './helpers/memoryDb.js';
+import { createMemoryPglite, toMemorySql, withoutTopicCheck } from './helpers/memoryDb.js';
 import { makeEnv } from './helpers/mockEnv.js';
 
 const CID = '99999999-9999-4999-8999-999999999999';
@@ -372,14 +372,14 @@ describe('escrita por sinais determinísticos, em segundo plano', () => {
     expect(JSON.stringify(console.warn.mock.calls)).not.toMatch(/senha|postgres|meia-vida/);
   });
 
-  test('o teto de 60 itens não derruba a resposta: a dúvida nova é descartada em silêncio', async () => {
+  test('o teto de 60 itens não derruba a resposta: a dúvida nova é descartada em silêncio', () => withoutTopicCheck(mdb, async () => {
     const fill = Array.from({ length: 60 }, (_, i) => level('tema-' + String(i).padStart(2, '0'), 3));
     await remember(MEMBER, ...fill);
     const res = await invoke(ask(PK_QUESTION));
     expect(res.success).toBe(true);
     await settle();
     expect((await rows()).length).toBe(60);
-  });
+  }));
 
   test('resposta substituída pelo guardrail de saída não grava', async () => {
     global.fetch = jest.fn(async () => groqReply('Tome 2 comprimidos de 500 mg a cada 8 horas.'));
