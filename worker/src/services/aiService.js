@@ -36,6 +36,8 @@ export const QUOTA_BUCKETS = {
   generate_case: 'AI_GENERATE_CASE',
   lab_preceptor: 'AI_LAB_PRECEPTOR',
   assistant: 'AI_ASSISTANT',
+  agent_tutor: 'AI_AGENT_TUTOR',
+  agent_curator: 'AI_AGENT_CURATOR',
 };
 export const GLOBAL_BUCKET = 'AI_GLOBAL';
 const GLOBAL_IDENTIFIER = 'global';
@@ -46,6 +48,8 @@ const QUOTA_LABELS = {
   generate_case: 'casos gerados com IA',
   lab_preceptor: 'perguntas ao preceptor do laboratório',
   assistant: 'perguntas à Lia que usam IA',
+  agent_tutor: 'perguntas ao Tutor Clínico',
+  agent_curator: 'pedidos ao Curador de Conteúdo',
 };
 
 // 30 dias: uma rota de síntese didática não muda; o cache existe para não

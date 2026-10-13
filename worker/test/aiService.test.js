@@ -46,6 +46,8 @@ describe('AiService — cotas diárias por papel', () => {
       generate_case: { visitor: 2, member: 10, admin: 20 },
       lab_preceptor: { visitor: 10, member: 80, admin: 160 },
       assistant: { visitor: 0, member: 60, admin: 120 },
+      agent_tutor: { visitor: 5, member: 30, admin: 100 },
+      agent_curator: { visitor: 0, member: 0, admin: 40 },
     });
     expect(AI_GLOBAL_DAILY_MAX).toBe(3000);
   });

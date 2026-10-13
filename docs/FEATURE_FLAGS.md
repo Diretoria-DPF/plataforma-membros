@@ -63,6 +63,18 @@ Criada pela 034 (`sql/034_lia_membros_flags.sql`), **desligada** (`INSERT ... ON
 |---|---|---|---|
 | `rag_cache_enabled` | não | `FALSE` | `assistantService.js`: pergunta repetida de membro, sem histórico e na mesma versão do acervo, é respondida pelo registro (`lia_pesquisas`), sem IA e sem gastar cota |
 
+## Flags dos agentes de IA (alfa)
+
+Criadas pela 035 (`sql/035_agents_core.sql`), todas **desligadas** (`INSERT ... ON CONFLICT (key) DO NOTHING`). ADR 0007. Ativação sugerida: `agents_enabled` e `agents_tutor_enabled` só para admin (`conditions.role`), depois `rollout_pct`.
+
+| Flag | Pública | Estado depois da 035 | Onde é lida |
+|---|---|---|---|
+| `agents_enabled` | não | `FALSE` | `agentsService.js`: chave geral; desligada, `apiAgentsList` e `apiAgentsInvoke` respondem `AGENT_DISABLED` sem custo |
+| `agents_tutor_enabled` | não | `FALSE` | `agentsService.js`: Tutor Clínico (exige `agents_enabled`; só maiores de 18 anos) |
+| `agents_curator_enabled` | não | `FALSE` | `agentsService.js`: Curador de Conteúdo (persona em rascunho; exige `agents_enabled`) |
+| `memory_enabled` | não | `FALSE` | Reservada: a memória de estudo ainda não tem código |
+| `clinical_sim_enabled` | não | `FALSE` | Reservada: a simulação clínica fica desligada até existir revisor clínico |
+
 ## Regra de nascimento
 
 - Toda flag nova nasce desligada (`FALSE`). Só entra em `PUBLIC_FLAGS` se for de interface.

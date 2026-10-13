@@ -45,6 +45,9 @@ export const FEATURE_CONFIG = {
   lab_preceptor: { tier: 'smart', maxTokens: 1500, temperature: 0.4, reasoningEffort: 'low', attemptTimeoutMs: 25000, totalBudgetMs: 40000, json: false },
   // Lia, guia da plataforma: resposta curta, modelo rápido.
   assistant: { tier: 'fast', maxTokens: 600, temperature: 0.4, reasoningEffort: 'low', attemptTimeoutMs: 15000, totalBudgetMs: 20000, json: false },
+  // Agentes (ADR 0007): tier, temperatura e teto acompanham a persona (worker/agents/personas); um teste confere.
+  agent_tutor: { tier: 'fast', maxTokens: 700, temperature: 0.3, reasoningEffort: 'low', attemptTimeoutMs: 20000, totalBudgetMs: 25000, json: false },
+  agent_curator: { tier: 'smart', maxTokens: 1200, temperature: 0.4, reasoningEffort: 'low', attemptTimeoutMs: 25000, totalBudgetMs: 40000, json: false },
 };
 
 export function resolveModel(env, tier) {

@@ -286,6 +286,9 @@ export const AI_FEATURE = {
   LAB_PRECEPTOR: 'lab_preceptor',
   ASSISTANT: 'assistant',
   HEALTH: 'health',
+  // Agentes de IA (ADR 0007). O paciente virtual (agent_patient) ainda não tem cota: está em rascunho.
+  AGENT_TUTOR: 'agent_tutor',
+  AGENT_CURATOR: 'agent_curator',
 };
 
 // Cota diária POR PESSOA (janela de 24 h do rate_limit_buckets), por recurso
@@ -309,6 +312,9 @@ export const AI_QUOTAS = {
   // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
   // Visitante e quem não tem login recebem só a base fixa (cota 0).
   assistant: { visitor: 0, member: 60, admin: 120 },
+  // Agentes (ADR 0007). O visitante não tem agente (a API recusa); o número só valeria se um dia tivesse.
+  agent_tutor: { visitor: 5, member: 30, admin: 100 },
+  agent_curator: { visitor: 0, member: 0, admin: 40 },
 };
 export const AI_QUOTA_WINDOW_SECONDS = 86400;
 
@@ -551,3 +557,20 @@ Object.assign(MODERATION, {
 
 // Biblioteca LAIFT: limites de taxa definidos em library/limits.js
 Object.assign(RATE_LIMITS, LIBRARY_RATE_LIMITS);
+
+// ---- Agentes de IA (ADR 0007; alfa). Tudo atrás das flags de sql/035 (nascem desligadas). ----
+// Chamadas por hora e por pessoa, ANTES dos guardrails (recusa também gasta o teto: sondar recusas não sai de graça).
+// Visitante não tem agente; o número existe só para a tabela ficar completa.
+Object.assign(RATE_LIMITS, {
+  AGENTS_INVOKE: { MAX_ATTEMPTS: 40, WINDOW_SECONDS: 3600, BY_ROLE: { visitor: 10, member: 40, admin: 120 } },
+});
+
+export const AGENTS = {
+  API_VERSION: 'agents/v1-alpha',
+  FLAG: 'agents_enabled',
+  TRACE_RETENTION_DAYS: 90,   // agent_traces (sql/035; limpeza em maintenance.js)
+  MODULE_MAX: 40,             // módulo e tema do contexto: texto curto saneado
+  TOPIC_MAX: 120,
+  SOURCES_MAX: 3,             // artigos publicados da Biblioteca, lista permitida de citações
+  MEMORY_CONTEXT: false,      // ponto de extensão: sem memória nesta fase (memoryProvider devolve available:false)
+};
