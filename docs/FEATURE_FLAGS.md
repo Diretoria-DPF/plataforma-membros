@@ -73,7 +73,7 @@ Criadas pela 035 (`sql/035_agents_core.sql`), todas **desligadas** (`INSERT ... 
 | `agents_tutor_enabled` | não | `FALSE` | `agentsService.js`: Tutor Clínico (exige `agents_enabled`; só maiores de 18 anos) |
 | `agents_curator_enabled` | não | `FALSE` | `agentsService.js`: Curador de Conteúdo (persona em rascunho; exige `agents_enabled`) |
 | `memory_enabled` | não | `FALSE` | `memory/service.js` (`apiMemory*`) e, com a etapa 7, o tutor (`memoryProvider.js`): memória de estudo opt-in, em outro banco; exige `DATABASE_URL_MEMORY`, `MEMORY_SUBJECT_KEY`, consentimento na versão vigente e maioridade. Desligada, nada é lido nem gravado; **apagar** (revogar, item, tudo) e a limpeza do cron seguem funcionando. Ver `docs/agentic-layer.md` e `docs/runbook-memoria.md` |
-| `clinical_sim_enabled` | não | `FALSE` | Reservada: a simulação clínica fica desligada até existir revisor clínico |
+| `clinical_sim_enabled` | não | `FALSE` | `clinicalSimService.js` (parâmetro `simulation` de `apiLearnClinicalChat/Evaluate` e aviso `simulation.available` em `apiLearnGetMyAiQuota`): simulação clínica com pacientes variados, só maiores de 18 anos. **Fica desligada até existir revisor clínico**; casos com `sim_profile` só publicam com lista de conferência completa e revisor diferente do autor (sql/037). Como ligar: `docs/agentic-layer.md`, seção 4.7 |
 
 ## Regra de nascimento
 

@@ -166,3 +166,71 @@ Erros (`success:false` + `code`): `MEMORY_DISABLED` (flag, papel, idade), `MEMOR
 ## 3. Testes
 
 Banco de memória e núcleo em Postgres de verdade (PGlite), com o papel `laift_memory_worker` e a RLS valendo: `memoryMigration`, `memoryConsentMigration`, `memoryStore`, `memoryService`, `memoryCleanup`, `memoryHandlers`, `memoryTutor`, `memoryUnits`. O validador `npm run validate:sql` tem a passada 5 (banco de memória: RLS, DDL negado, down/up). O runner `tools/db/migrate.mjs --memory` aplica `sql/memory/` com o ledger `memory_schema_migrations`.
+
+## 4. Simulação clínica com pacientes variados (ADR 0009)
+
+Estado: **construída e DESLIGADA**. A flag `clinical_sim_enabled` fica `FALSE` e nenhum caso com `sim_profile` pode ser publicado até existir um **revisor clínico** (ainda indefinido, decisão do dono em 12/10/2026). Código em `worker/src/clinicalSim/` (módulos puros), `worker/src/services/clinicalSimService.js` (cola) e `worker/src/services/clinicalService.js`; migração `sql/037_clinical_sim.sql`; front `frontend/modulos/clinica/clinic-sim.js`.
+
+### 4.1 O que é
+A Clínica Virtual passa a poder sortear **como o paciente fala**, sem mexer em **quais são os fatos** do caso. É parâmetro novo de `apiLearnClinicalChat` e `apiLearnClinicalEvaluate` (`input.simulation`), **não** uma action nova (a ponte dos módulos só deixa passar `api(Learn|AdminAttendance|AdminAi|AdminLearn)*`). Não passa pelo `agentsService`: a persona `paciente-virtual` (rascunho, `0.2.0`) só empresta o texto-base e as regras de saída.
+
+### 4.2 Eixos (`clinicalSim/axes.js`)
+| Eixo | Valores |
+|---|---|
+| Personalidade (6) | direto, verboso, agradável, impaciente, desconfiado, ansioso |
+| Letramento em saúde (3) | baixo, médio, alto |
+| Recall do histórico (2) | alto, baixo |
+| Confusão cognitiva (2) | lúcido, confuso |
+
+Cada valor mapeia para um **trecho de prompt fixo e revisável** (`clinicalSim/catalog.js`, em português, sem dose nem diagnóstico). **O modelo nunca decide nem inventa o perfil**: ele só recebe os trechos, num bloco de DADOS. Combinação incoerente é removida do sorteio (confuso exige recall baixo). Os pesos mudam com a dificuldade do caso (básico, intermediário, avançado).
+
+### 4.3 Determinismo
+- `mulberry32(seed)` (`prng.js`); ordem de sorteio **fixa** (personalidade, letramento, recall, confusão), **um número do gerador por eixo, sempre**: mudar um peso não desloca os sorteios seguintes.
+- `simId = sha256(caseId|seed|simVersion).slice(0, 12)` (`simId.js`, Web Crypto).
+- O cliente envia só `{ seed, version, difficulty?, elapsedSeconds?, events? }`. **O servidor reconstrói os eixos a cada turno** a partir da semente; o cliente nunca informa os eixos. A fala do paciente (chat) **não devolve os eixos**; eles só aparecem no **debrief** (resposta da avaliação).
+- Mudou peso, ordem ou trecho do catálogo = muda o paciente de cada semente: **suba `SIM_VERSION`** (`constants.js`). O teste dourado (`clinicalSimUnits.test.js`) falha se isso acontecer sem querer.
+- Estado que evolui (`clinicalSim/state.js`): `evolve(state, eventos, dt)` é puro e imutável; estágios (`sim_profile.stages`) avançam por tempo e/ou evento e nunca voltam. O servidor refaz o estado a cada turno com o tempo e os eventos informados.
+
+### 4.4 Quem pode simular, e com quais casos
+Portões, nesta ordem: `input.simulation` presente, flag ligada para a pessoa, papel da persona (membro e admin), **maioridade** (`agents/eligibility.js`, a mesma regra do tutor), caso permitido. Sem a flag, ou sem o parâmetro, o caminho antigo roda **sem nenhuma consulta nova** e o prompt sai **byte a byte** igual (`clinicalSimService.test.js`, contra `test/fixtures/clinical-prompts-baseline.json`, gerado do código anterior).
+- Casos **embutidos** (`patients.js`, conteúdo do repositório): permitidos.
+- Casos do **acervo**: só com `sim_profile` (que só chega a `approved` com a revisão clínica, seção 4.6).
+- Casos **gerados na sessão** (`ia`): nunca.
+
+### 4.5 Segurança do que o paciente diz e da nota
+- **Saída do paciente** passa por `checkOutput` com as regras da persona (O1, O3, O4, O5, O6): sem diagnóstico, antídoto ou nome de síndrome (O5), sem dose (O3), sem vazar o prompt (O4). Quando o guardrail troca a fala, entra uma frase **no personagem** ("Hum... não sei explicar direito...") e os avisos do tutor ("consulte a bula") nunca saem da boca do paciente. Consequência assumida (dose estrita): o paciente não diz número de comprimidos; o catálogo manda falar como leigo ("uma cartela", "um copo").
+- **Entrada**: o chat clínico já não tinha guardrail de entrada (o estudante descreve exame físico, o que o I7 recusaria); a injeção é contida pelo prompt e pela saída.
+- **Nota** (`clinicalSim/scoring.js`): pesos **hipótese 30, conduta 30, processo 20, comunicação adaptada 20**. O modelo só **sugere** a nota de cada componente; o servidor limita ao teto, aplica os tetos por fatos (sem hipótese escrita = 0 em hipótese; sem conduta = 0; nenhuma pergunta = 0 em processo e comunicação), soma e aplica o teto por desfecho (óbito 25, abandono 40). A "nota 100" do modelo é ignorada.
+- **Gravação**: `learning_attempts.details.sim = { simId, seed, version, difficulty, axes, stage, persona, components }` (a coluna `details` jsonb já existia; não há tabela nova).
+- Cota e limite de taxa são os do chat e da avaliação clínicos.
+
+### 4.6 Revisão humana em dois passos (imposta no banco)
+Caso com `sim_profile` só fica `approved` se **(1)** a lista de conferência tem os 4 itens verdadeiros (`semDadoReal`, `gabaritoConferido`, `estagiosPlausiveis`, `linguagemRevisada`) e **(2)** o revisor clínico é **outra pessoa** que o autor. Valem para a API e para qualquer SQL: CHECKs e o gatilho `clinical_sim_review_guard` (037). Editar `sim_profile` ou `payload` de caso publicado exige nova revisão e `content_version` maior. Caso gerado por IA continua `pending` e **nunca** leva `sim_profile` (CHECK `source = 'admin'`). A exclusão de conta do autor ou do revisor não trava nem invalida o acervo (FK `SET NULL`).
+
+Aprovar pela API: `apiAdminLearnReviewCase` com `{ caseId, decision: 'approved', checklist: { semDadoReal: true, gabaritoConferido: true, estagiosPlausiveis: true, linguagemRevisada: true } }`, chamada por um admin diferente do autor. Sem `checklist` num caso com `sim_profile`, o banco recusa e a API devolve a mensagem clara.
+
+`sim_profile` é inserido por SQL de um administrador (`source = 'admin'`); ainda não há tela para criar casos de simulação nem para o checklist (fica para quando houver revisor).
+
+### 4.7 Por que está desligada e como ligar
+Desligada porque o conteúdo clínico da simulação (estágios do quadro, gabarito, falas) exige conferência de um profissional antes de chegar ao estudante, e o dono ainda não definiu quem. Para ligar, **nesta ordem**:
+1. Definir o revisor clínico (uma conta de administrador, diferente de quem cria os casos).
+2. Aplicar a `sql/037_clinical_sim.sql` (staging, depois produção, com backup do Neon antes) e fazer o deploy do Worker e do front.
+3. Cadastrar o primeiro caso com `sim_profile` (SQL) e aprová-lo pela revisão da seção 4.6. Casos embutidos já funcionam sem isso.
+4. Ligar `clinical_sim_enabled` **só para admin** (`conditions: {"role": "admin"}`), testar em staging (aviso "Modo simulação (beta)" na Clínica, debrief no fim), depois ampliar por `rollout_pct`.
+5. Aprovar a persona `paciente-virtual` (`status: active`, versão nova) quando o revisor aprovar o texto.
+
+Desfazer: desligar a flag (efeito imediato). `sql/down/037_clinical_sim.sql` apaga as colunas novas.
+
+### 4.8 API (alfa, beta no front)
+| Action | Mudança |
+|---|---|
+| `apiLearnClinicalChat` | `input.simulation`. Com a flag, a resposta ganha `simulation: { simId, guardrails }`. |
+| `apiLearnClinicalEvaluate` | `input.simulation`. Com a flag, a resposta ganha `simulation: { simId, version, difficulty, axes[], components, weights }` (debrief). |
+| `apiLearnGetMyAiQuota` | Com a flag ligada para a pessoa, traz `simulation: { available: true, version }`; é assim que o módulo sabe se mostra o botão. Sem a flag o campo não existe. |
+| `apiAdminLearnReviewCase` | `input.checklist` para casos com `sim_profile`. |
+
+### 4.9 Limitações
+- O "Modo simulação" só vale a partir do próximo caso e a semente é sorteada no navegador; quem chamar a API à mão pode escolher a semente e, nos casos embutidos, a dificuldade. Isso só altera o próprio treino e a própria nota.
+- Quem chamar a avaliação no meio do caso vê os eixos antes do fim (custa uma avaliação da cota).
+- A premissa de maioridade é a do tutor: conta existente = maior de 18 anos (ADR 0007).
+- Testes: `clinicalSimUnits`, `clinicalSimMigration` (PGlite), `clinicalSimService` (inclui revisão com o banco de verdade) e `frontend/scripts/clinic-sim.test.mjs`.

@@ -7,6 +7,7 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
 ### Adicionado
+- Simulação clínica com pacientes variados (ADR 0009, **desligada**: flag `clinical_sim_enabled`, sem revisor clínico definido). Módulos puros `worker/src/clinicalSim/` (eixos, PRNG determinístico, estado que evolui, catálogo fixo), parâmetro `simulation` em `apiLearnClinicalChat/Evaluate` (prompt atual byte a byte sem a flag), guardrail de saída do paciente, nota por componentes calculada pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20), migração `037_clinical_sim.sql` com a trava de revisão em dois passos no banco, persona `paciente-virtual` 0.2.0 e "Modo simulação (beta)" na Clínica (`clinic-sim.js`).
 - Eventos: botão **Cancelar inscrição** (com confirmação). `apiCancelEventRegistration` apaga só a própria inscrição, antes de o evento começar e antes da presença; libera a vaga, invalida o cache, audita (`CANCEL_EVENT_REGISTRATION`) e limita a 20 por hora.
 - Lia: sugestões por tela (na entrada: perguntas gerais como "O que tem no blog?" e "O que posso fazer na plataforma?"; logado: por painel), `frontend/assistant-suggestions.js`.
 - Lia cita artigos da Biblioteca (flag `lia_library_enabled`), histórico de 8 turnos e registro de respostas para membros (flag `rag_cache_enabled`, migração 034, desligada).
