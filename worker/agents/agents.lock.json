@@ -1,0 +1,14 @@
+{
+  "content-curator": {
+    "version": "0.1.0",
+    "hash": "a5e7d7df7561"
+  },
+  "paciente-virtual": {
+    "version": "0.1.0",
+    "hash": "c96f6b0c918e"
+  },
+  "tutor-clinico": {
+    "version": "1.0.0",
+    "hash": "64248386636e"
+  }
+}
