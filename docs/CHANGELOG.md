@@ -16,6 +16,7 @@ Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10
 ### Alterado
 - Cotas diárias de IA dos membros mais generosas (chat 100, avaliar 25, caso 10, laboratório 80, Lia 60; administrador ~2x). O orçamento global de tokens continua sendo o freio.
 - A Lia do membro usa o modelo inteligente (120B) enquanto o uso de tokens das últimas 24 h estiver abaixo de 50 % do orçamento e o 120B abaixo de 150 mil tokens.
+- CI e ambiente (auditoria do Atlas, 13/10/2026): `.gitattributes` com `* text=auto eol=lf` e binários explícitos (corrige as falhas de CRLF dos testes de front no Windows); o workflow `atlas-e2e` pula só os passos pesados em PRs que não tocam `frontend/`, `tools/atlas-`, `.github/workflows/atlas-` nem `docs/atlas-conteudo/` (o job continua sempre existindo e concluindo, e roda tudo em `workflow_dispatch` ou se a detecção falhar); `STATUS.md` e `CONTINUIDADE.md` do Atlas atualizados (T00 e T09 feitos; e2e verdes no CI).
 
 ### Adicionado (Operação LAIFT Agêntica, front; API alfa `agents/v1-alpha`, atrás de flags desligadas)
 - Tutor clínico na tela Aprender (`frontend/agents-tutor.js`): cartão "Falar com o Tutor" só aparece se `apiAgentsList` devolver o agente; conversa só na memória da página (8 turnos), resposta por `textContent`, fontes só de `doi.org` e PubMed, recusa de guardrail mostrada como resposta (não como erro) e mensagens amigáveis por `code`.

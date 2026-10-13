@@ -1,7 +1,10 @@
 name: Testes do Atlas
 on:
-  # Sem filtro de paths: se o check for obrigatório na main, PRs só de docs
-  # (ex.: lotes de tradução) ficariam presos esperando um check que não roda.
+  # Sem filtro de paths no gatilho: o job "atlas-e2e" é check obrigatório na main.
+  # Com `paths:` o workflow nem seria criado em PRs só de docs e o check ficaria
+  # preso, esperando para sempre. Por isso o job SEMPRE existe e conclui com
+  # sucesso; a economia vem de pular só os passos pesados (Node, Playwright,
+  # build e e2e, ~8 min) quando a PR não toca o Atlas nem o front.
   pull_request:
   workflow_dispatch: {}
 jobs:
@@ -10,15 +13,49 @@ jobs:
     timeout-minutes: 25
     defaults: { run: { working-directory: frontend } }
     steps:
+      # fetch-depth 2: em PR o checkout é o commit de merge (refs/pull/N/merge);
+      # HEAD^1 é a ponta da base e HEAD o merge, então
+      # `git diff --name-only HEAD^1 HEAD` lista exatamente os arquivos da PR.
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+        with: { fetch-depth: 2 }
+      # Segurança: roda tudo (run=true) em workflow_dispatch e sempre que a
+      # detecção falhar ou vier vazia. Só vira run=false quando o diff foi lido
+      # com sucesso e nenhum arquivo cai nos caminhos do Atlas/front. Sem
+      # dependência externa (nada de actions de terceiros).
+      - name: Detectar escopo da PR
+        id: escopo
+        working-directory: .
+        run: |
+          run=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if files=$(git diff --name-only HEAD^1 HEAD 2>/dev/null) && [ -n "$files" ]; then
+              if printf '%s\n' "$files" | grep -Eq '^(frontend/|tools/atlas-|\.github/workflows/atlas-|docs/atlas-conteudo/)'; then
+                run=true
+              else
+                run=false
+              fi
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "Atlas e2e: run=$run"
+      - name: Sem mudanças no Atlas/front (passos pesados pulados)
+        if: steps.escopo.outputs.run != 'true'
+        run: echo "PR não toca frontend/**, tools/atlas-*, workflows atlas-* nem docs/atlas-conteudo/**"
+      - if: steps.escopo.outputs.run == 'true'
+        uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm ci || npm install
-      - run: npm install --no-save playwright
-      - run: npx playwright install --with-deps chromium
+      - if: steps.escopo.outputs.run == 'true'
+        run: npm ci || npm install
+      - if: steps.escopo.outputs.run == 'true'
+        run: npm install --no-save playwright
+      - if: steps.escopo.outputs.run == 'true'
+        run: npx playwright install --with-deps chromium
       # Unitários do atlas (validador, pk-model, isolamento de pendente/ etc.).
-      - run: node --test scripts/atlas/*.test.mjs
-      - run: node scripts/build.js
+      - if: steps.escopo.outputs.run == 'true'
+        run: node --test scripts/atlas/*.test.mjs
+      - if: steps.escopo.outputs.run == 'true'
+        run: node scripts/build.js
       # "atlas" casa por prefixo: roda atlas, atlas-a11y (axe), atlas-assets,
       # atlas-perf (inclui 3G rápido) e atlas-responsive.
-      - run: node scripts/e2e/run.js atlas smoke csp
+      - if: steps.escopo.outputs.run == 'true'
+        run: node scripts/e2e/run.js atlas smoke csp
