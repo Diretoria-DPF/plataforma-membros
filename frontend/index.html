@@ -74,6 +74,7 @@
   <link rel="stylesheet" href="voltar-app.css">
   <link rel="stylesheet" href="app-menu.css">
   <link rel="stylesheet" href="library.css">
+  <link rel="stylesheet" href="agents-tutor.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
   <script src="ux-v2.js"></script>
 </head>
@@ -1090,6 +1091,8 @@
   <script src="keyboard-shortcuts.js" defer></script>
   <script src="onboarding.js" defer></script>
   <script src="learning.js" defer></script>
+  <!-- Tutor clínico na tela Aprender (ADR 0007, etapa 5): usa assistant-sources.js e window.App só dentro de funções. -->
+  <script src="agents-tutor.js" defer></script>
   <!-- Fase 3 — painel admin de IA: só usa window.App dentro de funções. -->
   <script src="admin-ai.js" defer></script>
   <!-- Moderação da Lia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->

@@ -1,0 +1,79 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Tutor clínico na tela Aprender (agents-tutor.js). Só tokens do projeto (cor, raio, movimento), claro e escuro;
+   alvos de toque >= 44 px; sem rolagem horizontal. A barra inferior (#app-nav) é fixa: o cartão fica dentro de
+   .app-main, que já reserva o espaço dela, e scroll-margin-bottom impede que o foco do campo pare atrás dela. */
+.agents-tutor {
+  display: grid; gap: 12px;
+  scroll-margin-bottom: calc(var(--app-nav-h, 56px) + 24px + env(safe-area-inset-bottom, 0px));
+}
+.agents-tutor-title { margin: 0; }
+.agents-tutor-intro { margin: 0; }
+
+/* Faixa fixa: o Tutor não substitui orientação profissional nem analisa casos reais. */
+.agents-tutor-notice {
+  margin: 0; padding: 10px 14px;
+  border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: var(--radius-md);
+  background: var(--surface-alt); color: var(--text); font-size: 14px; line-height: 1.45;
+}
+
+.agents-tutor-log {
+  display: grid; gap: 10px; align-content: start;
+  max-height: min(60vh, 440px); overflow-y: auto; overscroll-behavior: contain;
+}
+.agents-tutor-log:empty { display: none; }
+
+.agents-tutor-msg {
+  min-width: 0; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--surface-alt); color: var(--text); overflow-wrap: anywhere;
+}
+.agents-tutor-msg-user { background: var(--primary-soft); border-color: transparent; }
+.agents-tutor-msg-refused { border-style: dashed; }
+.agents-tutor-who { margin: 0 0 4px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.agents-tutor-text { margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-wrap; }
+.agents-tutor-note { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+.agents-tutor-memory { margin-top: 8px; }
+
+.agents-tutor-sources { margin-top: 10px; display: grid; gap: 4px; font-size: 13px; }
+.agents-tutor-sources-title { margin: 0; font-weight: 700; color: var(--muted); }
+.agents-tutor-sources-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.agents-tutor-source { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: baseline; min-width: 0; }
+.agents-tutor-ref { font-weight: 700; color: var(--primary-strong); }
+.agents-tutor-source-link { color: var(--text); font-weight: 600; overflow-wrap: anywhere; }
+a.agents-tutor-source-link { text-decoration: underline; text-underline-offset: 2px; padding: 10px 0; }
+.agents-tutor-source-meta { color: var(--muted); }
+
+.agents-tutor-form { margin-top: 0; }
+.agents-tutor-input { min-height: 96px; font-size: 16px; } /* 16 px: o iOS não dá zoom ao focar */
+.agents-tutor-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.agents-tutor-count { margin-right: auto; font-size: 13px; }
+.agents-tutor-send, .agents-tutor-clear { min-height: 44px; min-width: 44px; width: auto; }
+
+.agents-tutor-wait { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: var(--muted); }
+.agents-tutor-wait[hidden] { display: none; }
+.agents-tutor-dots { display: inline-flex; gap: 4px; }
+.agents-tutor-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.agents-tutor .status-msg { margin-top: 0; }
+
+@media (hover: hover) {
+  a.agents-tutor-source-link:hover { color: var(--primary-strong); }
+}
+
+/* Pontinhos animados só para quem não pediu movimento reduzido; para os demais ficam parados. */
+@media (prefers-reduced-motion: no-preference) {
+  .agents-tutor-dots i { animation: agents-tutor-blink var(--dur-lazy) var(--ease-in-out) infinite alternate; }
+  .agents-tutor-dots i:nth-child(2) { animation-delay: var(--dur-fast); }
+  .agents-tutor-dots i:nth-child(3) { animation-delay: var(--dur-base); }
+  .agents-tutor-msg { animation: agents-tutor-in var(--dur-base) var(--ease-out) both; }
+}
+@keyframes agents-tutor-blink {
+  from { opacity: 0.25; }
+  to { opacity: 1; }
+}
+@keyframes agents-tutor-in {
+  from { opacity: 0; transform: translateY(var(--move-sm)); }
+  to { opacity: 1; transform: none; }
+}
