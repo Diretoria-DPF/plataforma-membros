@@ -12,7 +12,7 @@ import { reindexHash } from '../src/services/ragService.js';
 import { EMBEDDING_DIM, MODERATION } from '../src/constants.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 
-jest.unstable_mockModule('../src/db.js', () => ({ createDb: jest.fn() }));
+jest.unstable_mockModule('../src/db.js', () => ({ createDb: jest.fn(), createMemoryDb: jest.fn(() => null) }));
 const { createDb } = await import('../src/db.js');
 const { default: worker } = await import('../src/index.js');
 

@@ -13,6 +13,7 @@ import { makeEnv } from './helpers/mockEnv.js';
 // em vez de um import estático no topo do arquivo).
 jest.unstable_mockModule('../src/db.js', () => ({
   createDb: jest.fn(() => jest.fn().mockResolvedValue([])),
+  createMemoryDb: jest.fn(() => null), // banco de memória (ADR 0007): sem DATABASE_URL_MEMORY = null
 }));
 
 const { default: worker } = await import('../src/index.js');

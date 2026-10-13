@@ -43,6 +43,10 @@
  *    própria validade, não created_at; sem a tabela (026 não aplicada) a tarefa devolve 0.
  *  - Agentes (ADR 0007, sql/035, tarefa agentTracesPurge): rastros (agent_traces) com mais de 90
  *    dias saem. O rastro não guarda texto do usuário; o corte é sempre por created_at.
+ *  - Memória de estudo (ADR 0007, sql/036 + banco laift-memory; memory/cleanup.js; SÓ quando DATABASE_URL_MEMORY e
+ *    MEMORY_SUBJECT_KEY existem, senão nada daqui roda): memoryPurgeQueue drena a fila de apagamento (exclusão de
+ *    conta e revogação cuja limpeza falhou; alvo 24 h), memoryExpiredPurge apaga itens vencidos (180 dias sem uso /
+ *    12 meses) e memoryOrphanSweep, aos domingos (UTC), apaga o que não pertence a ninguém com consentimento vigente.
  */
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
@@ -52,6 +56,7 @@ import * as Rag from './services/ragService.js';
 import * as ResearchLog from './services/researchLogService.js';
 import { buildDocuments } from './assistant/docs.js';
 import { isEnabled } from './services/featureFlagService.js';
+import { memoryTasks } from './memory/cleanup.js';
 
 const RAG_FLAG = 'rag_enabled';
 
@@ -211,6 +216,8 @@ export async function runMaintenance(sql, correlationId, env) {
       DELETE FROM agent_traces
       WHERE created_at < now() - make_interval(days => ${RETENTION.AGENT_TRACES_DAYS})
       RETURNING 1`,
+    // Memória de estudo (banco separado): vazio sem DATABASE_URL_MEMORY/MEMORY_SUBJECT_KEY. Cada tarefa é isolada abaixo.
+    ...memoryTasks(sql, env),
   };
 
   const deleted = {};

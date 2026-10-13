@@ -572,5 +572,33 @@ export const AGENTS = {
   MODULE_MAX: 40,             // módulo e tema do contexto: texto curto saneado
   TOPIC_MAX: 120,
   SOURCES_MAX: 3,             // artigos publicados da Biblioteca, lista permitida de citações
-  MEMORY_CONTEXT: false,      // ponto de extensão: sem memória nesta fase (memoryProvider devolve available:false)
+  MEMORY_CONTEXT: false,      // reservado (a memória é controlada por MEMORY e por memory_enabled; ver memory/service.js)
+};
+
+// ---- Memória de estudo (ADR 0007; banco laift-memory; opt-in, apagável, só maiores de 18 anos) ----
+// Limites por pessoa e janela, via enforceRateLimit. A versão da finalidade fica AQUI: mudou o texto do consentimento,
+// aumente PURPOSE_VERSION e a leitura de todo mundo fecha até um novo aceite (e atualize o rascunho em docs/).
+Object.assign(RATE_LIMITS, {
+  MEMORY_READ: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  MEMORY_WRITE: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
+  MEMORY_CONSENT: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
+  MEMORY_EXPORT: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 86400 },
+});
+
+export const MEMORY = {
+  FLAG: 'memory_enabled',
+  PURPOSE_VERSION: 'memoria-2026-10-v1',
+  MAX_ITEMS: 60,               // teto por pessoa (também no gatilho do banco)
+  READ_LIMIT: 8,               // itens que o tutor recebe
+  READ_TIMEOUT_MS: 1200,       // leitura no tutor: passou disto, segue SEM memória
+  CACHE_TTL_MS: 5 * 60 * 1000, // cache dos itens por pessoa, na memória do isolate (o consentimento NUNCA é cacheado)
+  CACHE_MAX_ENTRIES: 200,
+  RETENTION_UNUSED_DAYS: 180,  // sem uso
+  RETENTION_MAX_MONTHS: 12,    // teto absoluto desde a criação
+  PURGE_DRAIN_BATCH: 20,       // pessoas por drenagem da fila no cron
+  PURGE_OPPORTUNISTIC_BATCH: 3,
+  SWEEP_MAX_PROFILES: 300,     // varredura semanal: com mais consentimentos que isto, pula (nunca apaga com lista truncada)
+  SWEEP_WEEKDAY_UTC: 0,        // domingo
+  SIGNAL_TOPICS_MAX: 5,        // temas por sinal
+  KEY_MIN_LENGTH: 32,          // MEMORY_SUBJECT_KEY
 };

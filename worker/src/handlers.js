@@ -60,6 +60,9 @@ import * as LibraryAdmin from './services/libraryAdminService.js';
 import * as LibrarySummary from './services/librarySummaryService.js';
 // Agentes de IA (ADR 0007; alfa, atrás de agents_enabled)
 import * as AgentsService from './services/agentsService.js';
+// Memória de estudo (ADR 0007; banco laift-memory, opt-in, apagável) e painéis dos agentes
+import * as MemoryService from './memory/service.js';
+import * as MemoryAdmin from './memory/admin.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -304,4 +307,16 @@ export const API_REGISTRY = {
   // ---- Agentes de IA (alfa, agents/v1-alpha). Rodam no shell (App.call), fora da ponte dos módulos. Sessão obrigatória; o traceId é o correlationId. ----
   apiAgentsList: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AgentsService.list(sql, env, identity)),
   apiAgentsInvoke: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AgentsService.invoke(sql, env, identity, asInput(input), cid)),
+
+  // ---- Memória de estudo (alfa). Rodam no shell (App.call). Sessão obrigatória; atrás de memory_enabled, só maiores de 18 anos. ----
+  apiMemoryGet: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.getState(sql, env, identity, cid)),
+  apiMemorySetConsent: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.setConsent(sql, env, identity, asInput(input), cid)),
+  apiMemoryDeleteItem: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.deleteItem(sql, env, identity, asInput(input), cid)),
+  apiMemoryDeleteAll: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.deleteAll(sql, env, identity, cid)),
+  apiMemorySetPreference: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.setPreference(sql, env, identity, asInput(input), cid)),
+  apiMemoryExport: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryService.exportData(sql, env, identity, cid)),
+  // Admin: só agregados (o admin NÃO lê a memória de ninguém); apagar a memória de uma pessoa exige senha (e 2º fator).
+  apiAdminMemoryStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => MemoryAdmin.memoryStats(sql, env, identity)),
+  apiAdminPurgeMemberMemory: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => MemoryAdmin.purgeMemberMemory(sql, env, identity, asInput(input), cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),
+  apiAdminAgentsStats: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => MemoryAdmin.agentsStats(sql, identity, asInput(input))),
 };

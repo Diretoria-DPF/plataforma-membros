@@ -87,6 +87,11 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     );
     // Agentes de IA (ADR 0007; alfa)
     expected.push('apiAgentsList', 'apiAgentsInvoke');
+    // Memória de estudo (ADR 0007; alfa) e painéis administrativos dos agentes
+    expected.push(
+      'apiMemoryGet', 'apiMemorySetConsent', 'apiMemoryDeleteItem', 'apiMemoryDeleteAll', 'apiMemorySetPreference', 'apiMemoryExport',
+      'apiAdminMemoryStats', 'apiAdminPurgeMemberMemory', 'apiAdminAgentsStats'
+    );
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 

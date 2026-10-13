@@ -72,7 +72,7 @@ Criadas pela 035 (`sql/035_agents_core.sql`), todas **desligadas** (`INSERT ... 
 | `agents_enabled` | não | `FALSE` | `agentsService.js`: chave geral; desligada, `apiAgentsList` e `apiAgentsInvoke` respondem `AGENT_DISABLED` sem custo |
 | `agents_tutor_enabled` | não | `FALSE` | `agentsService.js`: Tutor Clínico (exige `agents_enabled`; só maiores de 18 anos) |
 | `agents_curator_enabled` | não | `FALSE` | `agentsService.js`: Curador de Conteúdo (persona em rascunho; exige `agents_enabled`) |
-| `memory_enabled` | não | `FALSE` | Reservada: a memória de estudo ainda não tem código |
+| `memory_enabled` | não | `FALSE` | `memory/service.js` (`apiMemory*`) e, com a etapa 7, o tutor (`memoryProvider.js`): memória de estudo opt-in, em outro banco; exige `DATABASE_URL_MEMORY`, `MEMORY_SUBJECT_KEY`, consentimento na versão vigente e maioridade. Desligada, nada é lido nem gravado; **apagar** (revogar, item, tudo) e a limpeza do cron seguem funcionando. Ver `docs/agentic-layer.md` e `docs/runbook-memoria.md` |
 | `clinical_sim_enabled` | não | `FALSE` | Reservada: a simulação clínica fica desligada até existir revisor clínico |
 
 ## Regra de nascimento
