@@ -16,6 +16,12 @@ Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10
 - Cotas diárias de IA dos membros mais generosas (chat 100, avaliar 25, caso 10, laboratório 80, Lia 60; administrador ~2x). O orçamento global de tokens continua sendo o freio.
 - A Lia do membro usa o modelo inteligente (120B) enquanto o uso de tokens das últimas 24 h estiver abaixo de 50 % do orçamento e o 120B abaixo de 150 mil tokens.
 
+### Adicionado (Operação LAIFT Agêntica, front; API alfa `agents/v1-alpha`, atrás de flags desligadas)
+- Tutor clínico na tela Aprender (`frontend/agents-tutor.js`): cartão "Falar com o Tutor" só aparece se `apiAgentsList` devolver o agente; conversa só na memória da página (8 turnos), resposta por `textContent`, fontes só de `doi.org` e PubMed, recusa de guardrail mostrada como resposta (não como erro) e mensagens amigáveis por `code`.
+- Memória de estudo no Perfil (`frontend/memory.js`, `memory-core.js`, `memory.css`): cartão com o texto da finalidade (rascunho do dono em `docs/memoria-consentimento-RASCUNHO.md`, ainda não aprovado), ativar com confirmação enviando a `purposeVersion` do servidor, ver os itens em texto puro, apagar item, apagar tudo, desligar (revoga), baixar os dados em JSON (gerado no navegador, sem enviar a lugar nenhum) e escolher preferências só de listas fechadas. Texto que mudou (`needsReconsent`) pede novo aceite sem ler nada; `MEMORY_DISABLED` esconde o cartão. Nada vai ao armazenamento do navegador; trocar de conta ou sair limpa o cartão.
+- Selo do Tutor "Usou sua memória de estudo" mostra quantos itens foram usados e ganhou o atalho "Gerenciar memória", que leva ao Perfil.
+- Cache do service worker v8 -> v9 (arquivos novos no precache). As ações de memória e do Tutor continuam fora da ponte dos módulos.
+
 ### Adicionado (rodada 3)
 - `tools/ci/registrar-segredos-backup.ps1`: cadastra os 6 secrets do workflow "Backup do banco" sem passar valores pelo chat (`-SomenteVerificar` lista só os nomes). Hoje os 6 estão em falta.
 - `docs/LIGHTHOUSE_2026-10-08b.md`: medição da produção (`laift.com.br`). Mobile, mediana de 3 rodadas: Performance 94, Acessibilidade 100, Boas práticas 100, SEO 100, CLS 0,000.

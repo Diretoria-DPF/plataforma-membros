@@ -35,7 +35,8 @@
 .agents-tutor-who { margin: 0 0 4px; font-size: 12px; font-weight: 700; color: var(--muted); }
 .agents-tutor-text { margin: 0; font-size: 15px; line-height: 1.5; white-space: pre-wrap; }
 .agents-tutor-note { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
-.agents-tutor-memory { margin-top: 8px; }
+.agents-tutor-memory-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.agents-tutor-memory-link { width: auto; min-width: 44px; padding: 6px 14px; font-size: 13px; }
 
 .agents-tutor-sources { margin-top: 10px; display: grid; gap: 4px; font-size: 13px; }
 .agents-tutor-sources-title { margin: 0; font-weight: 700; color: var(--muted); }

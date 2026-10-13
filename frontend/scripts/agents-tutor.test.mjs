@@ -610,7 +610,7 @@ test('agents-tutor.js/.css estão no index.html (script depois de assistant-sour
   assert.ok(build.includes("'agents-tutor.js'") && build.includes("'agents-tutor.css'"));
   const sw = read('frontend/sw.js');
   assert.ok(sw.includes("'agents-tutor.js'") && sw.includes("'agents-tutor.css'"));
-  assert.match(sw, /CACHE_NAME = CACHE_PREFIX \+ 'v8'/);
+  assert.match(sw, /CACHE_NAME = CACHE_PREFIX \+ 'v9'/);
 });
 
 test('o index.html não ganhou domínio novo na CSP por causa do Tutor', () => {

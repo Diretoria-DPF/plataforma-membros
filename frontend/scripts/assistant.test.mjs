@@ -485,6 +485,6 @@ test('assistant-suggestions.js: só texto (sem innerHTML), no index.html antes d
   assert.ok(html.indexOf('assistant-suggestions.js') < html.indexOf('<script src="assistant.js"'));
   assert.ok(read('frontend/scripts/build.js').includes("'assistant-suggestions.js'"));
   assert.ok(read('frontend/sw.js').includes("'assistant-suggestions.js'"));
-  assert.match(read('frontend/sw.js'), /CACHE_NAME = CACHE_PREFIX \+ 'v8'/); // v8: agents-tutor (ADR 0007, etapa 5)
+  assert.match(read('frontend/sw.js'), /CACHE_NAME = CACHE_PREFIX \+ 'v9'/); // v9: memory (ADR 0007, etapa 7); v8: agents-tutor (etapa 5)
   assert.doesNotMatch(read('frontend/assistant-suggestions.js'), /innerHTML|document\./);
 });
