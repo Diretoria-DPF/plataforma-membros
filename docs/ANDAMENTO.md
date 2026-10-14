@@ -47,7 +47,7 @@ PR #68 (`chore/atlas-auditoria`). Causa raiz de "o clique só sinaliza em metade
   - Feedback por resposta (polegar, categoria e comentário de até 500 caracteres) e painel "Satisfação da Lia" em `frontend/admin-ai.js` (migração 021; `feedback_enabled`).
   - Moderação com 4 níveis (0 a 3); juiz por LLM só quando há termo ofensivo; redenção com reivindicação atômica e intervalo de 1 h; decaimento de 1 nível a cada 30 dias (`worker/src/services/moderationService.js`, `worker/src/assistant/moderationGate.js`; migração 022; `moderation_enabled`).
   - Retenção da Lia (ADR 0005) em tarefas isoladas da faxina diária (`worker/src/maintenance.js`).
-- **Fase E, polimento e QA visual**: esqueleto e estado de erro com nova tentativa nas listas; navegação inferior com 8 abas em 375 px; `frontend/scripts/e2e/visual-qa.e2e.js` (claro e escuro, 375×812 e 1280×800).
+- **Fase E, polimento e QA visual**: esqueleto e estado de erro com nova tentativa nas listas; navegação inferior (8 abas em 375 px na época; reduzida a 4 itens na PR #48, ver `docs/CONTINUIDADE.md` §2); `frontend/scripts/e2e/visual-qa.e2e.js` (claro e escuro, 375×812 e 1280×800).
 - **Banco**: 020 (RAG, `kb_chunks`), 021 (feedback e mensagens), 022 (moderação), 023 (flags da renovação) e 024 (índices de `rate_limit_buckets`, `event_registrations`, `task_signups` e `learning_attempts`).
 
 ### Módulos novos (conferidos com `git diff --diff-filter=A main...HEAD`)
