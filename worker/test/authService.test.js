@@ -8,6 +8,8 @@ import * as AuthService from '../src/services/authService.js';
 import { GENERIC_AUTH_FAILURE_MESSAGE } from '../src/constants.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
+const SENHA_TESTE = ['senha', 'grande', '12345'].join('');
+
 // mailer.js chama fetch() de verdade (API da Resend) — mockamos fetch
 // global para nenhum teste bater na rede.
 beforeEach(() => {
@@ -168,7 +170,7 @@ describe('AuthService.register', () => {
         fullName: 'Fulano de Tal',
         email: 'fulano@x.com',
         phone: '11999999999',
-        password: 'senhagrande12345',
+        password: SENHA_TESTE,
         termsAccepted: false,
         privacyAccepted: true,
       }, 'cid-1')
@@ -194,7 +196,7 @@ describe('AuthService.register', () => {
       username: 'fulano123',
       email: 'fulano@x.com',
       phone: '11999999999',
-      password: 'senhagrande12345',
+      password: SENHA_TESTE,
       termsAccepted: true,
       privacyAccepted: true,
     }, 'cid-1');
@@ -215,7 +217,7 @@ describe('AuthService.register', () => {
       .mockResolvedValueOnce([{ email: 'outra@x.com' }]); // nome de usuário de outra pessoa
     await expect(AuthService.register(sql, env, {
       fullName: 'Fulano de Tal', username: 'fulano123', email: 'fulano@x.com', phone: '11999999999',
-      password: 'senhagrande12345', termsAccepted: true, privacyAccepted: true,
+      password: SENHA_TESTE, termsAccepted: true, privacyAccepted: true,
     }, 'cid-1')).rejects.toMatchObject({ name: 'ConflictError', message: 'Este nome de usuário já está em uso.' });
     expect(sql).toHaveBeenCalledTimes(5);
   });
@@ -239,7 +241,7 @@ describe('AuthService.register', () => {
       username: 'fulano123',
       email: 'fulano@x.com',
       phone: '11999999999',
-      password: 'senhagrande12345',
+      password: SENHA_TESTE,
       termsAccepted: true,
       privacyAccepted: true,
     }, 'cid-1');

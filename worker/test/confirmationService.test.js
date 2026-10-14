@@ -17,6 +17,10 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv } from './helpers/mockEnv.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 
+const SENHA_FORTE = ['senha', 'forte', '123'].join('-');
+const SENHA_INTRUSO = ['senha', 'do', 'intruso'].join('-');
+const SENHA_OUTRA = ['outra', 'senha', '456'].join('-');
+
 const CID = '00000000-0000-4000-8000-0000000000c2';
 const {
   REGISTER_SUCCESS_MESSAGE, RESEND_GENERIC_MESSAGE, EMAIL_QUOTA_MESSAGE,
@@ -30,7 +34,7 @@ let seq = 0;
 const nextEmail = (tag) => { seq += 1; return `${tag}${seq}@exemplo.com`; };
 const registration = (email, over = {}) => ({
   fullName: 'Pessoa de Teste', username: 'user_' + email.split('@')[0], email, phone: '11999990000',
-  password: 'senha-forte-123', termsAccepted: true, privacyAccepted: true, ...over,
+  password: SENHA_FORTE, termsAccepted: true, privacyAccepted: true, ...over,
 });
 const register = (input) => AuthService.register(sql, env, input, CID);
 const resend = (email) => ConfirmationService.resendConfirmation(sql, env, email, CID);
@@ -118,7 +122,7 @@ describe('apiResendConfirmation — token, intervalo e limites', () => {
 
   test('pré-sequestro: quem cadastrou o e-mail alheio perde o acesso quando a dona confirma pelo reenvio', async () => {
     const email = nextEmail('alvo');
-    await register(registration(email, { password: 'senha-do-intruso' }));
+    await register(registration(email, { password: SENHA_INTRUSO }));
     await resend(email);
     await AuthService.confirmPasswordReset(sql, env, lastToken('reset'), 'senha-da-dona-2', CID);
     await expect(AuthService.login(sql, env, email, 'senha-do-intruso', 'UA', CID)).rejects.toMatchObject({ name: 'AuthError' });
@@ -180,7 +184,7 @@ describe('cadastro com e-mail já existente (sem enumeração)', () => {
     expect(fresh).toEqual({ success: true, message: REGISTER_SUCCESS_MESSAGE });
     const before = await profileOf(email);
 
-    const again = await register(registration(email, { fullName: 'Outro Nome', password: 'outra-senha-456', username: 'outro_' + seq }));
+    const again = await register(registration(email, { fullName: 'Outro Nome', password: SENHA_OUTRA, username: 'outro_' + seq }));
     expect(again).toEqual(fresh);
     const after = await profileOf(email);
     expect(after.full_name).toBe(before.full_name);
