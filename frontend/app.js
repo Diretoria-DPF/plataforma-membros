@@ -783,6 +783,7 @@
 
     function cleanup() {
       overlay.classList.add('hidden');
+      submitBtn.disabled = false;
       password.value = '';
       code.value = '';
       form.removeEventListener('submit', onFormSubmit);
@@ -791,7 +792,9 @@
     function onFormSubmit(evt) {
       evt.preventDefault();
       submitBtn.disabled = true;
-      run({ password: password.value, code: code.value.replace(/\s+/g, '') }).then(function (res) {
+      run({ password: password.value, code: code.value.replace(/\s+/g, '') }).catch(function () {
+        return { success: false };
+      }).then(function (res) {
         submitBtn.disabled = false;
         if (res && res.success) { cleanup(); return; }
         setStatus('msg-stepup', (res && res.message) || 'Não foi possível confirmar.', 'error');
