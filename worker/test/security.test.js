@@ -159,3 +159,31 @@ describe('security.js — requireRole', () => {
     expect(() => S.requireRole(null, ['admin'])).toThrow(expect.objectContaining({ name: 'ForbiddenError' }));
   });
 });
+
+describe('security.js — cargos funcionais na sessão (sql/038)', () => {
+  const ROW = { profile_id: '1', role: 'member', status: 'active', full_name: 'X', email: 'x@y.com', email_confirmed_at: '2024-01-01' };
+
+  test('a linha da sessão com cargos vira functionalRoles e capabilities (cargo desconhecido é descartado)', async () => {
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([Object.assign({ functional_roles: ['curador', 'inventado'] }, ROW)]);
+    const identity = await S.requireSession(sql, PEPPER, 'token');
+    expect(identity).toMatchObject({ functionalRoles: ['curador'], capabilities: ['library.curate'] });
+    expect(sql).toHaveBeenCalledTimes(1);
+  });
+
+  test('banco sem a 038: cai na consulta sem cargos e a sessão continua valendo', async () => {
+    const sql = makeSql();
+    sql.mockRejectedValueOnce(Object.assign(new Error('relation "member_roles" does not exist'), { code: '42P01' }));
+    sql.mockResolvedValueOnce([ROW]);
+    const identity = await S.requireSession(sql, PEPPER, 'token');
+    expect(identity).toMatchObject({ profileId: '1', functionalRoles: [], capabilities: [] });
+    expect(sql).toHaveBeenCalledTimes(2);
+  });
+
+  test('outro erro do banco não é engolido', async () => {
+    const sql = makeSql();
+    sql.mockRejectedValueOnce(Object.assign(new Error('relation "sessions" does not exist'), { code: '42P01' }));
+    await expect(S.requireSession(sql, PEPPER, 'token')).rejects.toThrow(/sessions/);
+    expect(sql).toHaveBeenCalledTimes(1);
+  });
+});

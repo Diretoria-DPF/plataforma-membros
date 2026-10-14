@@ -65,6 +65,8 @@ import * as AgentsService from './services/agentsService.js';
 import * as MemoryService from './memory/service.js';
 import * as MemoryAdmin from './memory/admin.js';
 import * as MemoryTutor from './memory/tutor.js';
+// Cargos funcionais acumuláveis (ADR 0010; sql/038)
+import * as RolesService from './services/rolesService.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -198,6 +200,10 @@ export const API_REGISTRY = {
   apiAdminChangeUserRole: (sql, env, [sessionToken, targetProfileId, newRole]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.changeUserRole(sql, identity, targetProfileId, newRole, cid)),
   apiAdminBanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.banUser(sql, identity, targetProfileId, cid)),
   apiAdminUnbanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.unbanUser(sql, identity, targetProfileId, cid)),
+  // Cargos funcionais: { profileId, role, password, code? }. Conceder e retirar exigem reautenticação.
+  apiAdminListRoles: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => RolesService.listRoles(sql, identity, asInput(input))),
+  apiAdminGrantRole: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => RolesService.grantRole(sql, identity, asInput(input), cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),
+  apiAdminRevokeRole: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => RolesService.revokeRole(sql, identity, asInput(input), cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),
   apiAdminListFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.listFeedback(sql, identity, input || {})),
   apiAdminCreateEvent: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.createEvent(sql, env, identity, input || {}, cid)),
   apiAdminUpdateEventStatus: (sql, env, [sessionToken, eventId, newStatus]) => runWithSession(sql, env, sessionToken, (identity, cid) => EventService.updateEventStatus(sql, env, identity, eventId, newStatus, cid)),

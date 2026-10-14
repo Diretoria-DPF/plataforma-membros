@@ -651,3 +651,9 @@ export const SIM_MESSAGES = {
   // Fala do paciente quando o guardrail de saída troca a resposta: continua no personagem (nunca expõe regra nem aviso).
   patientFallback: 'Hum... não sei explicar direito. Pode me perguntar de outro jeito?',
 };
+
+// Cargos funcionais (rolesService.js, ADR 0010): conceder e retirar cargo, por admin. Cada escrita já exige
+// reautenticação; o teto só barra um script (ou uma sessão de admin roubada) mudando cargos em massa.
+export const ROLE_RATE_LIMITS = Object.freeze({
+  ROLE_ADMIN_WRITE: Object.freeze({ MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 }),
+});
