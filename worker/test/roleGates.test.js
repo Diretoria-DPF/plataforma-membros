@@ -175,3 +175,23 @@ describe('Biblioteca: compat com library_staff', () => {
     }
   });
 });
+
+describe('presença pelo cargo: e-mail mascarado', () => {
+  test('maskEmail guarda só o começo e o domínio', async () => {
+    const { maskEmail } = await import('../src/services/attendanceService.js');
+    expect(maskEmail('ana.souza@exemplo.com')).toBe('an***@exemplo.com');
+    expect(maskEmail('a@x.com')).toBe('a***@x.com');
+    expect(maskEmail('')).toBe('');
+    expect(maskEmail(null)).toBe('');
+  });
+
+  test('gestor vê o e-mail mascarado na busca; admin vê completo', async () => {
+    const ev = await db.query("INSERT INTO events (title, description, event_date, visibility, status, created_by) VALUES ('Aula', 'Aula aberta', now() + interval '1 day', 'members', 'published', $1) RETURNING id", [PEOPLE.admin.id]);
+    const input = { eventId: ev.rows[0].id, term: 'membro' };
+    const asGestor = await API_REGISTRY.apiAdminAttendanceSearch(sql, env, [tokens.gestor, input]);
+    const asAdmin = await API_REGISTRY.apiAdminAttendanceSearch(sql, env, [tokens.admin, input]);
+    expect(asGestor.success).toBe(true);
+    expect(asGestor.participants.map((p) => p.email)).toContain('me***@example.com');
+    expect(asAdmin.participants.map((p) => p.email)).toContain('membro@example.com');
+  });
+});

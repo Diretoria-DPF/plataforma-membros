@@ -144,7 +144,9 @@ test('index.html: Propostas, Tarefas, Mensagens, Equipe e Biblioteca moram no me
   assert.ok(inicio > 0, 'dialog #app-menu ausente');
   const bloco = HTML.slice(inicio, HTML.indexOf('</dialog>', inicio));
   // O grupo Gestão (data-cap, roles-ui.js) fica à parte: só aparece para quem tem cargo.
-  const membro = bloco.slice(0, bloco.indexOf('data-grupo="gestao"'));
+  const fimMembro = bloco.indexOf('data-grupo="gestao"');
+  assert.ok(fimMembro > 0, 'grupo Gestão ausente do menu');
+  const membro = bloco.slice(0, fimMembro);
   const paineis = [...membro.matchAll(/data-panel="([^"]+)"/g)].map((m) => m[1]);
   assert.deepEqual(paineis, ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart', 'panel-library']);
   for (const id of Object.values(menu.BADGE_IDS)) {

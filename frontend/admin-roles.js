@@ -77,12 +77,14 @@
       return;
     }
     var input = Object.assign({ profileId: person.profileId, role: role }, auth.input);
+    var gen = generation;
     status(action === 'apiAdminGrantRole' ? 'Concedendo...' : 'Retirando...', 'info');
     A().callApi(action, token(), input).then(function (res) {
+      if (gen !== generation) return; // a sessão acabou com a chamada em voo
       var ok = !!(res && res.success);
       status((res && res.message) || (ok ? 'Feito.' : 'Não foi possível concluir.'), ok ? 'success' : 'error');
+      clearStepUp(); // a senha não fica no campo depois da tentativa, deu certo ou não
       if (!ok) return;
-      clearStepUp();
       byId[person.profileId] = Object.assign({}, person, { roles: res.roles || person.roles });
       loadList();
       var results = $('admin-roles-search-results');
@@ -153,6 +155,10 @@
     if (bound) return;
     bound = true;
     var form = $('form-roles-search');
+    // Saiu do painel Cargos: a senha e o código digitados somem.
+    root.document.addEventListener('laift:panelchange', function (ev) {
+      if (!ev.detail || ev.detail.panel !== 'panel-admin-roles') clearStepUp();
+    });
     if (form) {
       form.addEventListener('submit', function (ev) {
         ev.preventDefault();

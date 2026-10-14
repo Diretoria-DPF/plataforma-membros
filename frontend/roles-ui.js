@@ -64,7 +64,7 @@
       el.classList.toggle('hidden', !visible);
     });
     var badge = doc.getElementById('header-role-badge');
-    if (badge && profile) badge.textContent = badgeText(profile);
+    if (badge) badge.textContent = badgeText(profile);
     var aviso = doc.getElementById('gestao-mfa-aviso');
     if (aviso) aviso.classList.toggle('hidden', !(profile && profile.roleMfaPending === true));
   }
