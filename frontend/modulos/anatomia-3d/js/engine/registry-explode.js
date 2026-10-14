@@ -51,9 +51,11 @@ export function createInstanceOffsets({ getStructures, requestRender }) {
   }
 
   /**
-   * Peças que podem se separar (estruturas em lote), com centro e partes.
+   * Peças que podem se separar (estruturas em lote), com centro e caixa. As
+   * partes (sub-malhas) ficam em `parts(sid)`: só a estrutura isolada precisa
+   * delas, então não se calculam para o corpo todo a cada movimento do slider.
    * @param {(sid: string) => ({min: number[], max: number[]}|null)} getRestBox caixa em repouso
-   * @returns {Array<{sid: string, system: string, layer: string, visible: boolean, center: number[], box: {min: number[], max: number[]}, parts: number[][]}>}
+   * @returns {Array<{sid: string, system: string, layer: string, visible: boolean, center: number[], box: {min: number[], max: number[]}}>}
    */
   function items(getRestBox) {
     const out = [];
@@ -62,9 +64,15 @@ export function createInstanceOffsets({ getStructures, requestRender }) {
       const b = getRestBox(rec.sid);
       if (!b) continue;
       const center = [(b.min[0] + b.max[0]) / 2, (b.min[1] + b.max[1]) / 2, (b.min[2] + b.max[2]) / 2];
-      out.push({ sid: rec.sid, system: rec.system, layer: rec.layer, visible: rec.visible, center, box: b, parts: partCenters(rec) });
+      out.push({ sid: rec.sid, system: rec.system, layer: rec.layer, visible: rec.visible, center, box: b });
     }
     return out;
+  }
+
+  /** Centros (mundo, em repouso) das sub-malhas de `sid`. */
+  function parts(sid) {
+    const rec = getStructures().get(sid);
+    return rec && rec.instances ? partCenters(rec) : [];
   }
 
   function writeRec(rec, offset) {
@@ -99,5 +107,5 @@ export function createInstanceOffsets({ getStructures, requestRender }) {
   /** Caixa de `sid` considerando o deslocamento atual. */
   const shiftedBox = (sid, restBox) => shiftBox(restBox, offsetOf(sid));
 
-  return { items, apply, offsetOf, shiftedBox, isActive: () => applied.size > 0 };
+  return { items, parts, apply, offsetOf, shiftedBox, isActive: () => applied.size > 0 };
 }

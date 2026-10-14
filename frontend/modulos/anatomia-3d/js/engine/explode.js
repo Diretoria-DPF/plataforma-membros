@@ -41,17 +41,21 @@ export function createExplode({ registry, store, bus, addTicker, requestRender, 
   let target = 0;
   let current = 0;
   let scope = null; // { mode, items, center, separable }
+  let itemsCache = null; // peças em repouso: só muda com sistema novo carregado
   let stopTicker = null;
   const listeners = new Set();
   const unsubs = [];
 
   /** Recalcula o escopo (corpo todo × estrutura isolada) a partir do estado atual. */
   function resolveScope() {
-    const items = registry.getExplodeItems();
+    if (!itemsCache) itemsCache = registry.getExplodeItems();
+    const items = itemsCache;
     const iso = store.get().isolation;
     const isolated = iso && iso.active === 'isolate' && iso.sid ? items.find((i) => i.sid === iso.sid) : null;
     if (isolated) {
-      return { mode: 'orgao', items: [isolated], center: isolated.center, separable: isolated.parts.length > 1 };
+      // As partes só são calculadas para a estrutura isolada (e só uma vez por escopo).
+      const parts = isolated.parts || registry.getExplodeParts(isolated.sid);
+      return { mode: 'orgao', items: [{ ...isolated, parts }], center: isolated.center, separable: parts.length > 1 };
     }
     const box = unionBoxes(items.map((i) => i.box));
     return { mode: 'corpo', items, center: box ? boxCenter(box) : null, separable: items.length > 0 && !!box };
@@ -107,7 +111,8 @@ export function createExplode({ registry, store, bus, addTicker, requestRender, 
   }
 
   /** Reavalia o escopo (isolamento mudou, sistema novo carregado) mantendo o valor. */
-  function refresh() {
+  function refresh(invalidate = false) {
+    if (invalidate === true) itemsCache = null;
     if (target <= 0 && current <= 0) return;
     scope = resolveScope();
     write();
@@ -135,7 +140,7 @@ export function createExplode({ registry, store, bus, addTicker, requestRender, 
   const E = bus.EVENTS;
   unsubs.push(bus.on(E.VISIBILITY_ISOLATE, refresh));
   unsubs.push(bus.on(E.VISIBILITY_RESET, refresh));
-  unsubs.push(bus.on(E.SYSTEM_LOAD_DONE, refresh));
+  unsubs.push(bus.on(E.SYSTEM_LOAD_DONE, () => refresh(true)));
   unsubs.push(bus.on(E.VIEW_RESET, reset));
   unsubs.push(bus.on(E.MODE_CHANGE, ({ mode }) => { if (mode !== 'explorar') reset(); }));
 

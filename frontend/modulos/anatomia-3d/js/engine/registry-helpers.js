@@ -82,6 +82,8 @@ export const LAYER_ORDER = Object.freeze(
 // ---- Peças espelhadas ------------------------------------------------------
 export const MIRROR_SUFFIX = '#m';
 export const MIRROR_X = new THREE.Matrix4().makeScale(-1, 1, 1);
+const SCRATCH_OUT = new THREE.Matrix4();
+const SCRATCH_T = new THREE.Matrix4();
 export const isMirroredMatrix = (m) => m.determinant() < 0;
 export const isMirrorKey = (key) => String(key).endsWith(MIRROR_SUFFIX);
 export const baseKeyOf = (key) => (isMirrorKey(key) ? key.slice(0, -MIRROR_SUFFIX.length) : key);
@@ -94,13 +96,14 @@ export const baseKeyOf = (key) => (isMirrorKey(key) ? key.slice(0, -MIRROR_SUFFI
  * @param {THREE.Matrix4} world matriz-mundo original da malha
  * @param {boolean} mirrored a instância mora no batch espelhado?
  * @param {ReadonlyArray<number>} [offset]
- * @param {THREE.Matrix4} [out]
+ * @param {THREE.Matrix4} [out] padrão: matriz de uso temporário COMPARTILHADA (sem
+ *   alocar por instância/quadro) — copie o resultado se for guardá-lo
  * @returns {THREE.Matrix4}
  */
-export function instanceMatrixFor(world, mirrored, offset, out = new THREE.Matrix4()) {
+export function instanceMatrixFor(world, mirrored, offset, out = SCRATCH_OUT) {
   out.copy(world);
   if (offset && (offset[0] || offset[1] || offset[2])) {
-    out.premultiply(new THREE.Matrix4().makeTranslation(offset[0], offset[1], offset[2]));
+    out.premultiply(SCRATCH_T.makeTranslation(offset[0], offset[1], offset[2]));
   }
   if (mirrored) out.premultiply(MIRROR_X);
   return out;

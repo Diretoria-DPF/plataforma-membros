@@ -132,7 +132,8 @@ test('getExplodeItems lista as duas peças com centro e partes', () => {
   assert.equal(items.length, 2);
   const left = items.find((i) => i.sid === 'za:peca-l');
   assert.ok(near(left.center[0], -0.5, 1e-3) && near(left.center[1], 1, 1e-3));
-  assert.equal(left.parts.length, 1);
+  assert.equal(left.parts, undefined, 'o corpo todo não calcula partes (custo por input do slider)');
+  assert.equal(registry.getExplodeParts('za:peca-l').length, 1);
 });
 test('deslocamento em mundo vale igual nos dois lotes (o espelhado multiplica por MIRROR_X)', () => {
   const { registry, scene } = buildScene();
@@ -264,6 +265,28 @@ test('avisa os rótulos (onChange) a cada gravação e ao juntar', () => {
   ctl.setAmount(0.8);
   ctl.reset();
   assert.equal(n, 4);
+  ctl.dispose();
+});
+test('só a estrutura isolada pede as partes ao Registry; os itens do corpo são reaproveitados', () => {
+  const counts = { items: 0, parts: 0 };
+  const registry = {
+    getExplodeItems: () => { counts.items += 1; return [
+      { sid: 'a', layer: 'pele', center: [1, 1, 0], box: { min: [0, 0, 0], max: [2, 2, 1] } },
+      { sid: 'b', layer: 'esqueleto', center: [-1, 1, 0], box: { min: [-2, 0, 0], max: [0, 2, 1] } },
+    ]; },
+    getExplodeParts: () => { counts.parts += 1; return [[1, 1, 0], [1.2, 1, 0]]; },
+    setExplodeOffsets() {},
+  };
+  const state = { isolation: { active: 'none', sid: null } };
+  const ctl = createExplode({ registry, store: { get: () => state }, bus: { on, EVENTS }, addTicker: () => () => {}, requestRender() {}, reducedMotion: () => true });
+  for (const v of [0.1, 0.2, 0.3, 0.4]) ctl.setAmount(v);
+  assert.equal(counts.items, 1);
+  assert.equal(counts.parts, 0);
+  state.isolation = { active: 'isolate', sid: 'a' };
+  ctl.setAmount(0.5);
+  assert.equal(counts.parts, 1);
+  assert.equal(counts.items, 1);
+  assert.equal(ctl.getInfo().separable, true);
   ctl.dispose();
 });
 test('isolar com a vista ativa reavalia o escopo sem perder o valor', () => {

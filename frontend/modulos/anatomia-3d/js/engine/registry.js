@@ -775,6 +775,7 @@ export function createRegistry({ engine, bus } = {}) {
     // Vista "Separar peças" (explode.js, carregada sob demanda): peças em repouso
     // + gravação dos deslocamentos nas matrizes das instâncias.
     getExplodeItems: () => offsets.items(restBBox),
+    getExplodeParts: offsets.parts,
     setExplodeOffsets: offsets.apply,
     pick: picker.pick,
     pickCycle: picker.pickCycle,

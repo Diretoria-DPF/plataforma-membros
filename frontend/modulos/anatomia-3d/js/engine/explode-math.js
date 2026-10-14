@@ -26,8 +26,6 @@
 export const EXPLODE_BASE_M = 0.14;
 /** Fração extra da distância ao centro (a explosão é proporcional ao corpo). */
 export const EXPLODE_SPREAD = 0.5;
-/** Duração da animação (ms); com "reduzir movimento" a vista salta direto. */
-export const EXPLODE_DURATION_MS = 450;
 /** Constante de tempo do suavizador (ms): 99% do caminho em ~5 × tau. */
 export const EXPLODE_TAU_MS = 90;
 /** Distância (em amount) abaixo da qual a animação encosta no alvo. */
@@ -50,15 +48,6 @@ export const layerWeight = (layer) => (Object.prototype.hasOwnProperty.call(LAYE
 
 /** Limita `value` a [0, 1]; NaN vira 0. */
 export const clamp01 = (value) => (Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0);
-
-/** Suaviza a animação (desacelera no fim). */
-export const easeOutCubic = (t) => 1 - (1 - clamp01(t)) ** 3;
-
-/** Passo de um tween linear no tempo, em [from, to]. */
-export function tweenStep(from, to, elapsedMs, durationMs = EXPLODE_DURATION_MS) {
-  if (durationMs <= 0) return to;
-  return from + (to - from) * easeOutCubic(elapsedMs / durationMs);
-}
 
 /**
  * Aproxima `current` de `target` (suavização exponencial, independente da
