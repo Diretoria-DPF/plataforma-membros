@@ -46,6 +46,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminCreateEvent"
                 - "$ref": "#/components/schemas/apiAdminCreateTask"
                 - "$ref": "#/components/schemas/apiAdminDashboard"
+                - "$ref": "#/components/schemas/apiAdminGrantRole"
                 - "$ref": "#/components/schemas/apiAdminLearnAtlasTelemetry"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryClinicalReview"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryDecideSuggestion"
@@ -73,12 +74,14 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminListFeedback"
                 - "$ref": "#/components/schemas/apiAdminListProposalsForReview"
                 - "$ref": "#/components/schemas/apiAdminListReports"
+                - "$ref": "#/components/schemas/apiAdminListRoles"
                 - "$ref": "#/components/schemas/apiAdminListUsers"
                 - "$ref": "#/components/schemas/apiAdminMemoryStats"
                 - "$ref": "#/components/schemas/apiAdminPurgeMemberMemory"
                 - "$ref": "#/components/schemas/apiAdminReindexKb"
                 - "$ref": "#/components/schemas/apiAdminResetUserMfa"
                 - "$ref": "#/components/schemas/apiAdminResolveReport"
+                - "$ref": "#/components/schemas/apiAdminRevokeRole"
                 - "$ref": "#/components/schemas/apiAdminSetFeatureFlag"
                 - "$ref": "#/components/schemas/apiAdminSetLeaguePosition"
                 - "$ref": "#/components/schemas/apiAdminTransitionProposal"
@@ -446,6 +449,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiAdminGrantRole:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. Cargo funcional (ADR 0010): `input = { profileId, role, password, code? }`. Só admin, com reautenticação; cargo privilegiado (gestor, revisor_conteudo, moderador, curador) exige MFA ativo da pessoa. Idempotente (`changed`)."
+      properties:
+        action:
+          const: "apiAdminGrantRole"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminLearnAtlasTelemetry:
       type: "object"
       required:
@@ -871,6 +890,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAdminListRoles:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. Cargos funcionais de uma pessoa (`input.profileId`) ou de todas que têm algum (nome e cargos, sem e-mail)."
+      properties:
+        action:
+          const: "apiAdminListRoles"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminListUsers:
       type: "object"
       required:
@@ -967,6 +1002,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 3
+    apiAdminRevokeRole:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador. Retira um cargo funcional: `input = { profileId, role, password, code? }`. Só admin, com reautenticação. Idempotente (`changed`)."
+      properties:
+        action:
+          const: "apiAdminRevokeRole"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminSetFeatureFlag:
       type: "object"
       required:

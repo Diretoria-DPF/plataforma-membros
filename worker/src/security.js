@@ -19,7 +19,8 @@
  * frontend/app.js e docs/SECURITY.md.
  */
 import { RateLimitError, AuthError, ForbiddenError } from './errors.js';
-import { ACCOUNT_STATUS, LIMITS } from './constants.js';
+import { ACCOUNT_STATUS, LIMITS, ROLES } from './constants.js';
+import { capabilitiesFor, normalizeFunctionalRoles } from './roles/capabilities.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -130,12 +131,28 @@ export async function createSession(sql, pepper, profileId, userAgent, ttlMinute
   return rawToken;
 }
 
-async function findSessionRow(sql, pepper, rawToken) {
-  const token = normalizeText(rawToken);
-  if (!token) return null;
+// Banco sem a 038 (Worker publicado antes da migração): a sessão segue valendo, sem cargos.
+// Depois de a 038 estar aplicada em todos os bancos, o caminho sem cargos pode sair.
+function isMissingMemberRoles(err) {
+  return !!err && /member_roles/.test(String(err.message || '')) && (err.code === '42P01' || /does not exist/i.test(String(err.message || '')));
+}
 
-  const tokenHash = await hashToken(token, pepper);
-  const rows = await sql`
+function selectSessionRow(sql, tokenHash) {
+  return sql`
+    SELECT s.profile_id AS profile_id, p.role AS role, p.status AS status,
+           p.full_name AS full_name, p.email AS email, p.email_confirmed_at AS email_confirmed_at,
+           ARRAY(SELECT mr.role FROM member_roles mr WHERE mr.profile_id = p.id ORDER BY mr.role) AS functional_roles
+    FROM sessions s
+    JOIN profiles p ON p.id = s.profile_id
+    WHERE s.token_hash = ${tokenHash}
+      AND s.revoked_at IS NULL
+      AND s.expires_at > now()
+    LIMIT 1
+  `;
+}
+
+function selectSessionRowWithoutRoles(sql, tokenHash) {
+  return sql`
     SELECT s.profile_id AS profile_id, p.role AS role, p.status AS status,
            p.full_name AS full_name, p.email AS email, p.email_confirmed_at AS email_confirmed_at
     FROM sessions s
@@ -145,8 +162,37 @@ async function findSessionRow(sql, pepper, rawToken) {
       AND s.expires_at > now()
     LIMIT 1
   `;
+}
 
-  return rows.length ? rows[0] : null;
+async function findSessionRow(sql, pepper, rawToken) {
+  const token = normalizeText(rawToken);
+  if (!token) return null;
+
+  const tokenHash = await hashToken(token, pepper);
+  let rows;
+  try {
+    rows = await selectSessionRow(sql, tokenHash);
+  } catch (err) {
+    if (!isMissingMemberRoles(err)) throw err;
+    rows = await selectSessionRowWithoutRoles(sql, tokenHash);
+  }
+
+  return rows && rows.length ? rows[0] : null;
+}
+
+/** Identidade a partir da linha da sessão: papel base + cargos funcionais e as capacidades efetivas (ADR 0010). */
+function identityFromRow(row, rawToken) {
+  const functionalRoles = normalizeFunctionalRoles(row.functional_roles);
+  return {
+    profileId: row.profile_id,
+    role: row.role,
+    status: row.status,
+    fullName: row.full_name,
+    email: row.email,
+    functionalRoles,
+    capabilities: capabilitiesFor({ baseRole: row.role, functionalRoles }),
+    sessionToken: normalizeText(rawToken),
+  };
 }
 
 /**
@@ -164,14 +210,7 @@ export async function resolveSession(sql, pepper, rawToken) {
   if (row.status === ACCOUNT_STATUS.BANNED) return null;
   if (!row.email_confirmed_at) return null;
 
-  return {
-    profileId: row.profile_id,
-    role: row.role,
-    status: row.status,
-    fullName: row.full_name,
-    email: row.email,
-    sessionToken: normalizeText(rawToken),
-  };
+  return identityFromRow(row, rawToken);
 }
 
 /**
@@ -195,18 +234,20 @@ export async function requireSession(sql, pepper, rawToken) {
     throw AuthError('Sessão inválida ou expirada. Faça login novamente.');
   }
 
-  return {
-    profileId: row.profile_id,
-    role: row.role,
-    status: row.status,
-    fullName: row.full_name,
-    email: row.email,
-    sessionToken: normalizeText(rawToken),
-  };
+  return identityFromRow(row, rawToken);
 }
 
 export function requireRole(identity, allowedRoles) {
   if (!identity || allowedRoles.indexOf(identity.role) === -1) {
+    throw ForbiddenError('Acesso não autorizado para este recurso.');
+  }
+}
+
+/** Exige uma capacidade (cargos funcionais, ADR 0010). O admin passa em qualquer uma. */
+export function requireCapability(identity, capability) {
+  if (identity && identity.role === ROLES.ADMIN) return;
+  const caps = identity && Array.isArray(identity.capabilities) ? identity.capabilities : [];
+  if (caps.indexOf(capability) === -1) {
     throw ForbiddenError('Acesso não autorizado para este recurso.');
   }
 }

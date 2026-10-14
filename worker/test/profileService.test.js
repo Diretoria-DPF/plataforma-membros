@@ -25,7 +25,7 @@ describe('ProfileService.getMyProfile', () => {
     expect(res.success).toBe(true);
     expect(res.profile.id).toBe(MEMBER.profileId);
     expect(Object.keys(res.profile).sort()).toEqual([
-      'avatarUrl', 'education', 'email', 'fullName', 'id', 'instagramHandle', 'interests',
+      'avatarUrl', 'capabilities', 'education', 'email', 'fullName', 'functionalRoles', 'id', 'instagramHandle', 'interests',
       'linkedinUrl', 'memberSince', 'phone', 'role', 'username',
     ]);
     // O corpo da consulta é sempre o profileId da sessão, nunca algo vindo do cliente.

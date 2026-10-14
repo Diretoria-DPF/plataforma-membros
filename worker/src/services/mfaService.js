@@ -15,7 +15,9 @@
  * Obrigatoriedade para administradores: flag `mfa_required`. Com ela ligada,
  * um admin sem MFA continua conseguindo entrar, mas toda ação de admin é
  * recusada com `mfaSetupRequired` até ele cadastrar o autenticador
- * (assertAdminMfaSatisfied, chamada por runWithSession). Quem perde o
+ * (assertAdminMfaSatisfied, chamada por runWithSession). A mesma regra vale
+ * para quem tem cargo funcional privilegiado (gestor, revisor de conteúdo,
+ * moderador, curador; ADR 0010), sem mudar nada para o admin. Quem perde o
  * aparelho e os códigos é resetado por OUTRO admin (adminResetUserMfa) —
  * o procedimento de dois administradores de docs/DEPLOYMENT.md.
  *
@@ -33,6 +35,7 @@ import * as Logging from '../logging.js';
 import * as Totp from '../mfa/totp.js';
 import { encryptSecret, decryptSecret } from '../mfa/secretBox.js';
 import { isEnabled, isMissingTable } from './featureFlagService.js';
+import { requiresMfa } from '../roles/capabilities.js';
 
 export const MFA_CHALLENGE_TTL_SECONDS = 300;
 export const MFA_CHALLENGE_MAX_ATTEMPTS = 5;
@@ -189,11 +192,29 @@ export async function completeLogin(sql, env, rawToken, code, userAgent, correla
 }
 
 // ---------------------------------------------------------------------------
-// Obrigatoriedade para administradores
+// Obrigatoriedade para administradores e cargos privilegiados
 // ---------------------------------------------------------------------------
+/** O papel (admin) ou um cargo privilegiado tornam o MFA obrigatório quando a flag está ligada. */
+function mfaMandatoryFor(identity) {
+  return !!identity && requiresMfa({ baseRole: identity.role, functionalRoles: identity.functionalRoles });
+}
+
+async function mfaRequiredNow(sql, identity) {
+  return mfaMandatoryFor(identity) && await isEnabled(sql, MFA_REQUIRED_FLAG, identity);
+}
+
+/** A pessoa já tem o autenticador confirmado? Sem a migração 017: não. */
+export async function hasConfirmedMfa(sql, profileId) {
+  try {
+    return !!(await getConfirmed(sql, profileId));
+  } catch (err) {
+    if (isMissingTable(err)) return false;
+    throw err;
+  }
+}
+
 export async function adminNeedsSetup(sql, identity) {
-  if (!identity || identity.role !== C.ROLES.ADMIN) return false;
-  if (!(await isEnabled(sql, MFA_REQUIRED_FLAG, identity))) return false;
+  if (!(await mfaRequiredNow(sql, identity))) return false;
   try {
     return !(await getConfirmed(sql, identity.profileId));
   } catch (err) {
@@ -204,7 +225,9 @@ export async function adminNeedsSetup(sql, identity) {
 
 export async function assertAdminMfaSatisfied(sql, identity) {
   if (!(await adminNeedsSetup(sql, identity))) return;
-  const err = E.AuthError('Configure a verificação em duas etapas para continuar usando a área de administração.');
+  const err = E.AuthError(identity.role === C.ROLES.ADMIN
+    ? 'Configure a verificação em duas etapas para continuar usando a área de administração.'
+    : 'Configure a verificação em duas etapas para continuar usando a plataforma com o seu cargo.');
   err.payload = { mfaSetupRequired: true };
   throw err;
 }
@@ -227,8 +250,8 @@ export async function status(sql, identity) {
     const rows = await sql`SELECT count(*)::int AS n FROM mfa_recovery_codes WHERE profile_id = ${identity.profileId}::uuid AND used_at IS NULL`;
     recoveryCodesLeft = Number(rows[0].n) || 0;
   }
-  const adminRequired = identity.role === C.ROLES.ADMIN && await isEnabled(sql, MFA_REQUIRED_FLAG, identity);
-  return { success: true, enabled, pendingEnrollment: !!cred && !enabled, recoveryCodesLeft, required: adminRequired, available: true };
+  const required = await mfaRequiredNow(sql, identity);
+  return { success: true, enabled, pendingEnrollment: !!cred && !enabled, recoveryCodesLeft, required, available: true };
 }
 
 /** Senha (e, se houver MFA, o segundo fator) de quem executa uma ação sensível. */
@@ -350,8 +373,10 @@ export async function disable(sql, env, identity, rawInput, correlationId) {
   const input = rawInput && typeof rawInput === 'object' ? rawInput : {};
   await S.enforceRateLimit(sql, 'MFA_DISABLE', identity.profileId, C.RATE_LIMITS.MFA_DISABLE.MAX_ATTEMPTS, C.RATE_LIMITS.MFA_DISABLE.WINDOW_SECONDS);
   if (!(await getConfirmed(sql, identity.profileId))) throw E.ValidationError('A verificação em duas etapas não está ativa.');
-  if (identity.role === C.ROLES.ADMIN && await isEnabled(sql, MFA_REQUIRED_FLAG, identity)) {
-    throw E.ForbiddenError('A verificação em duas etapas é obrigatória para administradores.');
+  if (await mfaRequiredNow(sql, identity)) {
+    throw E.ForbiddenError(identity.role === C.ROLES.ADMIN
+      ? 'A verificação em duas etapas é obrigatória para administradores.'
+      : 'A verificação em duas etapas é obrigatória para quem tem cargo de gestão, revisão, moderação ou curadoria.');
   }
   await assertPassword(sql, identity.profileId, input.password);
   const method = await checkSecondFactor(sql, env, identity.profileId, input.code);

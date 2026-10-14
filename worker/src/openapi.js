@@ -20,6 +20,9 @@ const ACTION_NOTES = {
   apiLearnClinicalChat: SIM_NOTE + ' Com a flag ligada a resposta traz `simulation: { simId, guardrails }` (sem os eixos).',
   apiLearnClinicalEvaluate: SIM_NOTE + ' A nota sai de 4 componentes limitados pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20); a resposta traz `simulation` com o debrief (eixos revelados) e `result.score`.',
   apiLearnGetMyAiQuota: 'Com a flag clinical_sim_enabled ligada para a pessoa, a resposta traz `simulation: { available: true, version }`; sem isso o campo não existe.',
+  apiAdminGrantRole: 'Cargo funcional (ADR 0010): `input = { profileId, role, password, code? }`. Só admin, com reautenticação; cargo privilegiado (gestor, revisor_conteudo, moderador, curador) exige MFA ativo da pessoa. Idempotente (`changed`).',
+  apiAdminRevokeRole: 'Retira um cargo funcional: `input = { profileId, role, password, code? }`. Só admin, com reautenticação. Idempotente (`changed`).',
+  apiAdminListRoles: 'Cargos funcionais de uma pessoa (`input.profileId`) ou de todas que têm algum (nome e cargos, sem e-mail).',
   apiAdminLearnReviewCase: 'Caso com perfil de simulação só é aprovado com `input.checklist = { semDadoReal, gabaritoConferido, estagiosPlausiveis, linguagemRevisada }` (os 4 verdadeiros) e por um administrador diferente de quem criou o caso; o banco também impõe isso (sql/037).',
 };
 const ALPHA_ACTIONS = /^api(Agents|Memory|AdminMemoryStats|AdminPurgeMemberMemory|AdminAgentsStats)/;

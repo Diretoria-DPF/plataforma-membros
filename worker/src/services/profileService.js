@@ -43,6 +43,9 @@ export async function getMyProfile(sql, identity) {
       instagramHandle: row.instagram_handle,
       interests: row.interests,
       role: row.role,
+      // Cargos e capacidades da sessão (ADR 0010): só para a interface; o servidor confere de novo a cada chamada.
+      functionalRoles: identity.functionalRoles || [],
+      capabilities: identity.capabilities || [],
       memberSince: row.created_at,
     },
     preferences: {

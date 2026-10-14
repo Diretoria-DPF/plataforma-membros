@@ -95,6 +95,24 @@
   }
   // <<< profile-id (puro)
 
+  // >>> role-info (puro)
+  // Cargos funcionais e capacidades (ADR 0010) chegam em apiGetMyProfile. Ficam no estado só para telas futuras
+  // (ROL-03) decidirem o que mostrar: nada é liberado por eles aqui, e o servidor confere de novo a cada chamada.
+  var ROLE_INFO_ITEM = /^[a-z][a-z0-9_.]{0,63}$/;
+
+  function roleInfoList(value) {
+    return Array.isArray(value) ? value.filter(function (v) { return typeof v === 'string' && ROLE_INFO_ITEM.test(v); }) : [];
+  }
+
+  /** Perfil + cargos e capacidades da resposta (cópia nova; resposta sem os campos deixa listas vazias). */
+  function withRoleInfo(profile, raw) {
+    return Object.assign({}, profile, {
+      functionalRoles: roleInfoList(raw && raw.functionalRoles),
+      capabilities: roleInfoList(raw && raw.capabilities),
+    });
+  }
+  // <<< role-info (puro)
+
   function saveSessionCache(token) {
     try {
       localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify({ token: token, expiresAt: Date.now() + SESSION_TTL_MS }));
@@ -1842,6 +1860,7 @@
         state.profile.email = res.profile.email;
         state.profile.username = res.profile.username;
         state.profile = mergeProfileId(state.profile, res.profile);
+        state.profile = withRoleInfo(state.profile, res.profile);
         if (window.LaiftLearning) window.LaiftLearning.onProfileReady();
       }
 
@@ -2749,6 +2768,7 @@
           return;
         }
         state.profile = { id: profileIdOf(res.profile.id), fullName: res.profile.fullName, role: res.profile.role };
+        state.profile = withRoleInfo(state.profile, res.profile);
         scheduleSessionExpiry(cached.expiresAt);
         enterApp();
       });
