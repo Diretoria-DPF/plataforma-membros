@@ -7,6 +7,8 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 > Leia `docs/CONTINUIDADE.md` e continue pela fila da seção 4, na ordem. Opus 5.5 orquestra (escreve contrato e fichas, revisa) e
 > Haiku 5.5 executam; você dispara, integra, roda as suítes e comita. Não abra PR visual sem eu aprovar as capturas.
 
+**Auditoria geral em curso (desde 2026-10-14):** estado, fila e achados em `docs/AUDITORIA_GERAL_2026-10-14.md`. Leia a seção "Estado" e a "Fila" dele antes de começar qualquer trabalho de segurança, mobile, engajamento ou SEO.
+
 ## 1. Como o dono quer que se trabalhe (regras fixas)
 - **Equipe:** 1 orquestrador **Opus 5.5** (lê o repositório, escreve `CONTRATO.md` e `fichas/`, revisa) + vários **Haiku 5.5** (uma ficha
   cada, ≤ 3 arquivos, aceite = comando, relatório ≤ 12 linhas), em ondas por segmento (pico ≤ 8 ao mesmo tempo). A sessão principal
@@ -25,7 +27,7 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 | Item | Estado |
 |---|---|
 | Blog "Conheça a LAIFT", Publicações, Outubro Rosa | **Mesclado** (PR #45); backup validado (PR #44). Site e blog no ar |
-| PR #46 `feat/lia-conhecimento` | **Mesclada** na main. Base da Lia 35→72 trechos, registro de pesquisas (`sql/026`, **não aplicada**), reranker, Europe PMC, 3 flags novas desligadas |
+| PR #46 `feat/lia-conhecimento` | **Mesclada** na main. Base da Lia 35→72 trechos (contagem de 2026-10-14: 107 trechos + 46 intenções fixas), registro de pesquisas (`sql/026`, **não aplicada**), reranker, Europe PMC, 3 flags novas desligadas |
 | PR #47 Identidade da Liga (`feat/identidade-liga`) | **Mesclada** na main. Pendências do dono em `docs/identidade/PLANO.md` §4 seguem abertas. Estado: `docs/identidade/STATUS.md`. Ver seção 3 |
 | Ajustes de entrada, blog, endereço e barra do app (PR #48) | **Mesclada** em 2026-10-10 e no ar em laift.com.br: entrada em cartões sem a cabeça da Lia, "Acessar blog", capas e laço novo no blog, rodapé da Liga no blog, endereço Rua dos Maçons 364 (CEP 41810-205), cadastro em grupos, barra com 4 itens e menu lateral com aviso de pendências. Worktrees dessa frente removidos |
 | ux-progresso (`docs/ux-progresso/`) | Lotes B (entrada e cadastro) e C (barra B e menu) **mesclados**. **Faltam:** Lote A (barra de progresso de leitura nos posts; decisão do dono: o 25% só conta depois de ler, a barra começa em 0%; o Opus precisa re-ensaiar o contrato com `verificadores/a-progresso.js` até 63/0) e Lote W (telefone opcional, `fichas/W1.md`, 1 Sonnet: migração, Worker e tela; o dono ainda não decidiu quem usa o telefone). Nota de privacidade do progresso entra sem mudar a versão 2026-10-08; estrela no feed fica para depois |
@@ -49,7 +51,7 @@ Documentos: `docs/identidade/PLANO.md` (diagnóstico, decisões, riscos, itens p
 ## 4. Fila (fazer nesta ordem)
 1. ~~Fechar a PR do ajustes-2~~ **feito** (#48 mesclada). Próximo da fila: I1 e I3 abaixo; Lote A e Lote W do ux-progresso; B0 do Córtex.
 2. **I1** (limite de login, P0): `docs/avaliacao/AVALIACAO_2026-10-09.md` §8.
-3. **I3** (Lia v2 em produção, ordem segura): reindexar pelo botão do painel admin (esperado ~72 trechos, todos com embedding) →
+3. **I3** (Lia v2 em produção, ordem segura): reindexar pelo botão do painel admin (esperado ~107 trechos em 2026-10-14, todos com embedding) →
    manter `rag_enabled` sem condições → simular e aplicar `sql/026` (inserir em `schema_migrations` com o hash sha256 do arquivo, CRLF normalizado) →
    `rag_cache_enabled` e observar 24 h → `rag_rerank_enabled` só depois de calibrar em staging (`docs/lia/pesquisa/SELECAO.md` §4) →
    `research_enabled` só depois do OK jurídico (Política §5, retenção de 30 e 7 dias) e primeiro só para admin.
