@@ -11,12 +11,18 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 
+const PROPOSAL_ROLES = [C.ROLES.MEMBER, C.ROLES.ADMIN];
+
 export async function submitProposal(sql, identity, input, correlationId) {
+  S.requireRole(identity, PROPOSAL_ROLES);
   const title = S.normalizeText(input.title);
   const description = S.normalizeText(input.description);
 
   if (!S.isLengthValid(title, C.LIMITS.TITLE_MIN, C.LIMITS.TITLE_MAX)) throw E.ValidationError('Título inválido.');
   if (!S.isLengthValid(description, C.LIMITS.DESCRIPTION_MIN, C.LIMITS.DESCRIPTION_MAX)) throw E.ValidationError('Descrição inválida.');
+
+  const limit = C.RATE_LIMITS.PROPOSAL_SUBMIT;
+  await S.enforceRateLimit(sql, 'PROPOSAL_SUBMIT', identity.profileId, limit.MAX_ATTEMPTS, limit.WINDOW_SECONDS);
 
   const rows = await sql`
     INSERT INTO proposals (title, description, author_id, status) VALUES (${title}, ${description}, ${identity.profileId}::uuid, 'submitted'::proposal_status) RETURNING id
@@ -28,6 +34,7 @@ export async function submitProposal(sql, identity, input, correlationId) {
 }
 
 export async function listMyProposals(sql, identity) {
+  S.requireRole(identity, PROPOSAL_ROLES);
   const rows = await sql`SELECT id, title, description, status, created_at FROM proposals WHERE author_id = ${identity.profileId}::uuid ORDER BY created_at DESC`;
   return { success: true, proposals: rows };
 }
@@ -94,6 +101,7 @@ export async function castVote(sql, identity, proposalId, choice, complementText
 }
 
 export async function getProposalResults(sql, identity, proposalId) {
+  S.requireRole(identity, PROPOSAL_ROLES);
   const id = S.normalizeText(proposalId);
   const rows = await sql`SELECT id, title, description, status, voting_opens_at, voting_closes_at FROM proposals WHERE id = ${id}::uuid`;
   if (!rows.length) throw E.NotFoundError('Proposta não encontrada.');
