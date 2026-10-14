@@ -756,7 +756,9 @@ test('memory.js/.css estão no index.html, no build e no precache; o grid do Per
   assert.ok(build.includes("'memory-core.js'") && build.includes("'memory.js'") && build.includes("'memory.css'"));
   const sw = read('frontend/sw.js');
   assert.ok(sw.includes("'memory-core.js'") && sw.includes("'memory.js'") && sw.includes("'memory.css'"));
-  assert.match(sw, /CACHE_NAME = CACHE_PREFIX \+ 'v9'/);
+  // O cache subiu com a memória (v9) e pode subir de novo depois: exige o mínimo, não o número exato.
+  const cacheVersion = Number((sw.match(/CACHE_NAME = CACHE_PREFIX \+ 'v(\d+)'/) || [])[1]);
+  assert.ok(cacheVersion >= 9, 'cache do SW em v9 ou mais (achado: ' + cacheVersion + ')');
   const csp = html.match(/Content-Security-Policy" content="([^"]+)"/)[1];
   assert.doesNotMatch(csp, /memory|neon|groq/i);
   assert.match(csp, /script-src 'self' https:\/\/challenges\.cloudflare\.com;/);
