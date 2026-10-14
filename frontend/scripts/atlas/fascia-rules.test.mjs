@@ -56,6 +56,20 @@ test('a regra, aplicada ao índice real, só pega o sistema muscular (e ~34 estr
   assert.ok(!matched.some((e) => /tensor-fasciae-latae/.test(e.sid)));
 });
 
+test('slugs reais do manifest: nenhum músculo (nem cabeça/parte de músculo) vai para a camada Fáscias', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(mod, 'models/manifest.json'), 'utf8'));
+  const sids = new Set();
+  for (const a of manifest.assets) if (a.system === 'muscular') for (const sid of Object.values(a.nodeToSid || {})) sids.add(sid);
+  assert.ok(sids.size > 600);
+  const flagged = [...sids].filter(isFasciaSid);
+  assert.ok(flagged.length >= 60 && flagged.length <= 70, `fáscias: ${flagged.length}`);
+  const suspect = flagged.filter((sid) => /muscle|(?:^|[:-])tensor-|-head-of-/.test(sid));
+  assert.deepEqual(suspect, []);
+  // todo slug com "fasci" que NÃO é fáscia é só o tensor da fáscia lata
+  const notFascia = [...sids].filter((sid) => /fasci/.test(sid) && !isFasciaSid(sid)).map((sid) => sid.replace(/-[lr]$/, ''));
+  assert.deepEqual([...new Set(notFascia)], ['za:tensor-fasciae-latae']);
+});
+
 console.log('preferUnderFascia');
 test('prefere o músculo logo atrás da fáscia; a fáscia fica em segundo', () => {
   const out = preferUnderFascia([hit('za:fascia-lata-r', 1.0), hit('za:rectus-femoris-r', 1.02), hit('za:femur-r', 1.1)]);
