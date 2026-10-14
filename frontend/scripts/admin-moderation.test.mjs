@@ -418,7 +418,8 @@ test('index.html: cartão "Moderação da Lia" dentro do painel de IA, com botã
   const html = read('index.html');
   const panel = /<section id="panel-admin-ai"[\s\S]*?<\/section>/.exec(html);
   assert.ok(panel, 'painel de IA do admin existe');
-  assert.match(panel[0], /<div class="card" id="admin-moderation-card">/);
+  // data-cap (ROL-03): o cartão aparece para o admin e para o cargo moderador.
+  assert.match(panel[0], /<div class="card" id="admin-moderation-card" data-cap="reports\.moderate">/);
   assert.match(panel[0], /<h2 id="h-admin-moderation">Moderação da Lia<\/h2>/);
   assert.match(panel[0], /<button type="button" class="secondary" data-action="LaiftAdminModeration\.reload">Atualizar<\/button>/);
   assert.match(panel[0], /<div id="admin-moderation"><\/div>/);

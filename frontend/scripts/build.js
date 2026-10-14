@@ -57,6 +57,11 @@ fs.writeFileSync(path.join(DIST, 'app.js'), result.getObfuscatedCode());
   fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
 });
 
+// Cargos funcionais (ADR 0010, ROL-03): menu Gestão, data-cap e o painel Cargos.
+['roles-ui.js', 'admin-roles.js', 'roles.css'].forEach((name) => {
+  fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
+});
+
 // Cabeçalhos HTTP (Cloudflare Workers static assets): o runtime lê este arquivo
 // da raiz do diretório publicado. O GitHub Pages simplesmente o ignora.
 fs.copyFileSync(path.join(ROOT, '_headers'), path.join(DIST, '_headers'));

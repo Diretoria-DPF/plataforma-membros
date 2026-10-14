@@ -62,6 +62,8 @@
       email: p.email || '',
       name: p.fullName || '',
       role: p.role,
+      // Capacidades dos cargos funcionais (ADR 0010): só para a interface; a Worker confere a cada chamada.
+      capabilities: Array.isArray(p.capabilities) ? p.capabilities.slice() : [],
       type: ROLE_TO_TYPE[p.role] || 'Visitante',
     };
   }

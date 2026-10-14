@@ -1,0 +1,76 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Cargos funcionais (ADR 0010, ROL-03): aviso do menu Gestão e o painel Cargos do modo admin. Mobile-first. */
+
+.gestao-aviso {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.role-person {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.role-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+/* Alvo de toque de pelo menos 44px. */
+.role-chip__btn,
+.role-person select,
+.role-person .admin-btn,
+.roles-stepup input {
+  min-height: 44px;
+}
+
+.role-chip__btn {
+  width: auto;
+  margin: 0;
+  border-radius: 999px;
+}
+
+.roles-stepup {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+@media (min-width: 640px) {
+  .roles-stepup {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role-chip,
+  .role-chip__btn {
+    transition: none;
+  }
+}

@@ -96,8 +96,8 @@
   // <<< profile-id (puro)
 
   // >>> role-info (puro)
-  // Cargos funcionais e capacidades (ADR 0010) chegam em apiGetMyProfile. Ficam no estado só para telas futuras
-  // (ROL-03) decidirem o que mostrar: nada é liberado por eles aqui, e o servidor confere de novo a cada chamada.
+  // Cargos funcionais e capacidades (ADR 0010) chegam em apiGetMyProfile. A interface (roles-ui.js, data-cap) só
+  // decide o que mostrar: nada é liberado por eles aqui, e o servidor confere de novo a cada chamada.
   var ROLE_INFO_ITEM = /^[a-z][a-z0-9_.]{0,63}$/;
 
   function roleInfoList(value) {
@@ -109,6 +109,7 @@
     return Object.assign({}, profile, {
       functionalRoles: roleInfoList(raw && raw.functionalRoles),
       capabilities: roleInfoList(raw && raw.capabilities),
+      roleMfaPending: !!(raw && raw.roleMfaPending === true),
     });
   }
   // <<< role-info (puro)
@@ -159,6 +160,8 @@
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
       if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+      if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
+      if (window.LaiftRoles) window.LaiftRoles.apply(document, null); // menu Gestão e telas por cargo somem com a sessão
       resetLibraryModules();
       resetAgentCards();
       resetAdminDashboardChart();
@@ -904,6 +907,8 @@
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
     if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
+    if (window.LaiftRoles) window.LaiftRoles.apply(document, null); // menu Gestão e telas por cargo somem com a sessão
     resetLibraryModules();
     resetAgentCards();
     resetAdminDashboardChart();
@@ -1066,6 +1071,12 @@
       var visible = scope === 'all' || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
       btn.classList.toggle('hidden', !visible);
     });
+    applyRoleUi();
+  }
+
+  /** Menu Gestão, painéis por capacidade (data-cap) e o crachá com os cargos (frontend/roles-ui.js). */
+  function applyRoleUi() {
+    if (window.LaiftRoles) window.LaiftRoles.apply(document, state.profile);
   }
 
   document.querySelectorAll('#app-nav [data-panel], #app-menu [data-panel]').forEach(function (btn) {
@@ -1116,11 +1127,14 @@
     // Fase 3 — painel admin de IA (frontend/admin-ai.js)
     'panel-admin-ai': function () {
       if (window.LaiftAdminAi) window.LaiftAdminAi.loadPanel();
-      if (window.LaiftAdminModeration) window.LaiftAdminModeration.load(window.App); // moderação da Lia (ADR 0004, O28)
+      // moderação da Lia (ADR 0004, O28): só para quem modera (admin ou cargo moderador).
+      if (window.LaiftAdminModeration && window.LaiftRoles && window.LaiftRoles.has('reports.moderate')) window.LaiftAdminModeration.load(window.App);
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
     'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
     'panel-admin-library': function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); },
+    // Cargos funcionais (ADR 0010): só o admin concede e retira (frontend/admin-roles.js).
+    'panel-admin-roles': function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); },
   };
 
   var currentPanelId = 'panel-home';
@@ -1869,6 +1883,7 @@
         state.profile.username = res.profile.username;
         state.profile = mergeProfileId(state.profile, res.profile);
         state.profile = withRoleInfo(state.profile, res.profile);
+        applyRoleUi();
         if (window.LaiftLearning) window.LaiftLearning.onProfileReady();
       }
 
@@ -2694,6 +2709,7 @@
         email: state.profile.email || '',
         username: state.profile.username || '',
         role: state.profile.role,
+        capabilities: (state.profile.capabilities || []).slice(),
       };
     },
     // Atividade dentro dos iframes dos módulos não chega aos listeners deste

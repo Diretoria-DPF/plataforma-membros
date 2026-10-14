@@ -143,7 +143,9 @@ test('index.html: Propostas, Tarefas, Mensagens, Equipe e Biblioteca moram no me
   const inicio = HTML.indexOf('<dialog id="app-menu"');
   assert.ok(inicio > 0, 'dialog #app-menu ausente');
   const bloco = HTML.slice(inicio, HTML.indexOf('</dialog>', inicio));
-  const paineis = [...bloco.matchAll(/data-panel="([^"]+)"/g)].map((m) => m[1]);
+  // O grupo Gestão (data-cap, roles-ui.js) fica à parte: só aparece para quem tem cargo.
+  const membro = bloco.slice(0, bloco.indexOf('data-grupo="gestao"'));
+  const paineis = [...membro.matchAll(/data-panel="([^"]+)"/g)].map((m) => m[1]);
   assert.deepEqual(paineis, ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart', 'panel-library']);
   for (const id of Object.values(menu.BADGE_IDS)) {
     assert.ok(bloco.includes(`id="${id}"`), `contador ${id} fora do menu`);
