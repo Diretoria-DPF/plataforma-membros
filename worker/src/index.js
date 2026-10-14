@@ -23,6 +23,16 @@ import { runMaintenance } from './maintenance.js';
 import { newCorrelationId } from './security.js';
 
 const API_PATHS = new Set(['/', '/v1', '/v1/']);
+const HEALTH_PATH = '/health';
+
+// Sonda rasa para monitor externo de disponibilidade: sem banco, KV, R2,
+// segredos nem sessão (não acorda o Neon). Corpo fixo, sem versão nem flags.
+function healthResponse(request) {
+  return new Response(request.method === 'HEAD' ? null : '{"ok":true}', {
+    status: 200,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+  });
+}
 
 function parseAllowedOrigins(env) {
   return (env.ALLOWED_ORIGINS || '')
@@ -57,6 +67,10 @@ export default {
   async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(request, env) });
+    }
+
+    if ((request.method === 'GET' || request.method === 'HEAD') && new URL(request.url).pathname === HEALTH_PATH) {
+      return healthResponse(request);
     }
 
     if (request.method !== 'POST') {
