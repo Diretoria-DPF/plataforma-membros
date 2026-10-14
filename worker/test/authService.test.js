@@ -26,27 +26,29 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_GLOBAL
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_IP
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN (por e-mail)
+      .mockResolvedValueOnce([{ attempts: 1 }]) // limite LOGIN (por e-mail)
+      .mockResolvedValueOnce([{ attempts: 1 }]) // limite LOGIN_IP
+      .mockResolvedValueOnce([]) // leitura do contador global de falhas (sem escrita)
       .mockResolvedValueOnce([]) // SELECT profiles — não encontrado
       .mockResolvedValueOnce([{ ignored: 'x' }]) // SELECT crypt(dummy)
-      .mockResolvedValueOnce(undefined); // logAudit
+      .mockResolvedValueOnce(undefined) // logAudit
+      .mockResolvedValueOnce([{ attempts: 1 }]) // falha soma no contador do IP
+      .mockResolvedValueOnce([{ attempts: 1 }]); // falha soma no contador global
 
     await expect(AuthService.login(sql, env, 'naoexiste@x.com', 'qualquercoisa', '', 'cid-1')).rejects.toMatchObject({
       name: 'AuthError',
       message: expect.stringContaining('inválidos'),
     });
-    expect(sql).toHaveBeenCalledTimes(6);
+    expect(sql).toHaveBeenCalledTimes(8);
   });
 
   test('login bem-sucedido cria sessão e devolve profile', async () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_GLOBAL
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN_IP
-      .mockResolvedValueOnce([{ attempts: 1 }]) // enforceRateLimit LOGIN (por e-mail)
+      .mockResolvedValueOnce([{ attempts: 1 }]) // limite LOGIN (por e-mail)
+      .mockResolvedValueOnce([{ attempts: 1 }]) // limite LOGIN_IP
+      .mockResolvedValueOnce([]) // leitura do contador global de falhas (sem escrita)
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'active', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: true }])
       .mockResolvedValueOnce([]) // mfa_credentials: sem MFA
       .mockResolvedValueOnce(undefined) // INSERT sessions (createSession)
@@ -67,9 +69,9 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN_GLOBAL
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN (por e-mail)
       .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN_IP
-      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN
+      .mockResolvedValueOnce([]) // leitura do contador global de falhas
       .mockResolvedValueOnce([{ id: 'p1', role: 'admin', status: 'active', full_name: 'Ana', email_confirmed_at: '2024-01-01', password_ok: true }])
       .mockResolvedValueOnce([{ profile_id: 'p1', secret_enc: 'v1.a.b', confirmed_at: '2026-10-01', last_used_step: 0 }]) // mfa_credentials
       .mockResolvedValueOnce(undefined) // INSERT mfa_challenges
@@ -87,11 +89,13 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }])
-      .mockResolvedValueOnce([{ attempts: 1 }])
-      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN (por e-mail)
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN_IP
+      .mockResolvedValueOnce([]) // leitura do contador global de falhas
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'active', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: false }])
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValueOnce(undefined) // logAudit
+      .mockResolvedValueOnce([{ attempts: 1 }]) // falha soma no contador do IP
+      .mockResolvedValueOnce([{ attempts: 1 }]); // falha soma no contador global
 
     await expect(AuthService.login(sql, env, 'fulano@x.com', 'senha-errada', '', 'cid-1')).rejects.toMatchObject({ name: 'AuthError' });
   });
@@ -100,9 +104,9 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }])
-      .mockResolvedValueOnce([{ attempts: 1 }])
-      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN (por e-mail)
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN_IP
+      .mockResolvedValueOnce([]) // leitura do contador global de falhas
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'banned', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: true }])
       .mockResolvedValueOnce(undefined);
 
@@ -116,11 +120,13 @@ describe('AuthService.login', () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
-      .mockResolvedValueOnce([{ attempts: 1 }])
-      .mockResolvedValueOnce([{ attempts: 1 }])
-      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN (por e-mail)
+      .mockResolvedValueOnce([{ attempts: 1 }]) // LOGIN_IP
+      .mockResolvedValueOnce([]) // leitura do contador global de falhas
       .mockResolvedValueOnce([{ id: 'p1', role: 'member', status: 'banned', full_name: 'Fulano', email_confirmed_at: '2024-01-01', password_ok: false }])
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValueOnce(undefined) // logAudit
+      .mockResolvedValueOnce([{ attempts: 1 }]) // falha soma no contador do IP
+      .mockResolvedValueOnce([{ attempts: 1 }]); // falha soma no contador global
 
     await expect(AuthService.login(sql, env, 'fulano@x.com', 'senha-errada', '', 'cid-1')).rejects.toMatchObject({
       name: 'AuthError',

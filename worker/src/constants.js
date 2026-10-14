@@ -173,13 +173,16 @@ export const RATE_LIMITS = {
   LOGIN: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 900 },
   // Achado M2 da auditoria de 2026-09-25: LOGIN acima só limita por e-mail,
   // sem teto agregado nem por IP — alguém pode rotacionar e-mails contra
-  // uma única origem sem nunca bater o limite por-conta. LOGIN_GLOBAL cobre
-  // toda a plataforma (generoso o bastante pro uso legítimo de uma liga
-  // pequena); LOGIN_IP é por IP de origem (CF-Connecting-IP), mais folgado
-  // que o por-e-mail porque um IP pode ser compartilhado (NAT/wifi de
-  // campus) por vários membros reais.
+  // uma única origem sem nunca bater o limite por-conta. LOGIN_IP é por IP de
+  // origem (CF-Connecting-IP), mais folgado que o por-e-mail porque um IP pode
+  // ser compartilhado (NAT/wifi de campus) por vários membros reais.
+  // LOGIN_GLOBAL é um LIMIAR de falhas de credencial na plataforma inteira, não
+  // um teto que barra sozinho: acima dele valem os limites de LOGIN_HARDENED
+  // (por e-mail e por IP) até a janela virar — assim um ataque distribuído não
+  // tranca o login de quem está dentro dos próprios limites.
   LOGIN_GLOBAL: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 900 },
   LOGIN_IP: { MAX_ATTEMPTS: 15, WINDOW_SECONDS: 900 },
+  LOGIN_HARDENED: { EMAIL_MAX_ATTEMPTS: 4, IP_MAX_ATTEMPTS: 6 },
   REGISTER: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
   // Cancelar a inscrição em um evento (por pessoa): quem se inscreve e cancela em loop não enche a tabela de
   // auditoria nem invalida o cache de eventos sem parar. 20/h cobre um engano e a correção com folga.
