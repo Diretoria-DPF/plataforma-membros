@@ -90,6 +90,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminUpdateEventStatus"
                 - "$ref": "#/components/schemas/apiAdminUpdateTaskStatus"
                 - "$ref": "#/components/schemas/apiAdminUploadEventImage"
+                - "$ref": "#/components/schemas/apiAdminUsageStats"
                 - "$ref": "#/components/schemas/apiAgentsInvoke"
                 - "$ref": "#/components/schemas/apiAgentsList"
                 - "$ref": "#/components/schemas/apiAssistantChat"
@@ -1154,6 +1155,21 @@ components:
             - description: "imageMimeType"
           minItems: 0
           maxItems: 4
+    apiAdminUsageStats:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminUsageStats"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiAgentsInvoke:
       type: "object"
       required:
