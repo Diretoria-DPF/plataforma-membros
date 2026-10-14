@@ -8,8 +8,8 @@ Fonte única da verdade da auditoria iniciada em 2026-10-14. Atualize **Estado**
 | Fase atual | **0 — Enxergar e estancar** (em início) |
 | Última atualização | 2026-10-14 |
 | Progresso por trilha | SEC 0/10 · OPS 0/9 · DAT 0/2 · MOB 0/10 · ENG 0/7 · CON 0/2 · LGPD 0/3 · SEO 0/3 · TEC 0/2 (verificados ÷ total não descartados; DOC-01 e OPS-07 em curso) |
-| PR em curso | docs/auditoria-geral (esta: arquivo vivo + correção de docs defasados) |
-| Próximo passo | Fila item 2 (SEC-01), depois item 3 (SEC-09) |
+| PR em curso | #69 (este arquivo + docs), #70 (OPS-01 `/health`), #71 (SEC-09 propostas); SEC-01 com implementação pronta, falta PR |
+| Próximo passo | Fechar SEC-01; depois ROL-01 + ROL-02 (migração 038: cargos acumuláveis, capacidades, concessão com reautenticação) |
 | Bloqueios do dono | Itens marcados **[DONO]** na Fila (painéis, teste de cadastro, revisor clínico, Android real) |
 | Repositório | **Público por ora** (decisão do dono, 2026-10-14) — ver regra de divulgação (§3) |
 
@@ -25,13 +25,13 @@ O repositório é público. Achados **abertos** de severidade CRÍTICA/ALTA fica
 
 ## 4. Fila (ordem de execução; máx. 10)
 1. **DOC-01** + criar este arquivo + link em `CONTINUIDADE.md` (esta PR).
-2. **SEC-01** limite de login (Fase 0).
-3. **SEC-09** papéis nas ações de proposta (1 h).
-4. **[DONO]** teste real de cadastro em 3 provedores (Gmail, Outlook, e-mail institucional) e registro do % de confirmação.
-5. **OPS-01** `/health` raso + monitor externo.
+2. **SEC-01** limite de login (Fase 0) — implementação pronta, falta PR.
+3. **SEC-09** papéis nas ações de proposta — PR #71.
+4. ~~Teste de cadastro~~ feito pelo dono (funcionando); falta registrar o % de confirmação quando houver usuários.
+5. **OPS-01** `/health` raso — PR #70; **[DONO]** cadastrar o monitor externo depois do deploy.
 6. **OPS-02 / OPS-09** anotar consumo atual nos painéis e medir horas do Neon acordado **[DONO + agente]**.
-7. **[DONO]** OPS-05 confirmar que produção usa o papel `laift_worker`; OPS-07 aplicar a política de divulgação.
-8. **[DONO]** CON-02 nomear o revisor clínico e a meta semanal.
+7. ~~OPS-05~~ confirmado pelo dono; **OPS-07** aplicar a política de divulgação nos docs já públicos.
+8. **CON-02**: revisor clínico resolvido pelo dono; falta o cargo `revisor_conteudo` (ROL-01) e a meta semanal.
 9. **SEC-08 ADR** (escopo do cookie HttpOnly e impacto no GitHub Pages).
 10. **DAT-01** parte 1 (`usage_daily` + `activity_days`).
 Logo depois (Fase 1): SEC-04, SEC-06 (HSTS escalonado + headers na API), SEO-01.
@@ -42,25 +42,25 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 ### Segurança (SEC)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| SEC-01 | Limite de login: revisar ordem e comportamento do teto global | CRÍTICO | `worker/src/services/authService.js`, `worker/src/security.js` (detalhe: complemento privado) | aberto | A | M | — | I1 |
+| SEC-01 | Limite de login: revisar ordem e comportamento do teto global | CRÍTICO | `worker/src/services/authService.js`, `worker/src/security.js` (detalhe: complemento privado) | em curso (implementação feita, falta commit, revisão e PR) | A | M | — | I1 |
 | SEC-02 | Cadastro sem saída: reenvio de confirmação, limpeza de contas não confirmadas, mensagens uniformes | ALTO | `authService.js`, `maintenance.js` (detalhe: complemento privado) | aberto | A | M | — | C-cadastro |
-| SEC-03 | Rate limit de escrita por conta (proposta, feedback, comentário, avatar) e limpeza de avatares | MÉDIO | `proposalService.js`, `profileService.js`, `mediaService.js` | aberto | A | M | — | — |
+| SEC-03 | Rate limit de escrita por conta (feedback, comentário, avatar; proposta já em #71) e limpeza de avatares. Achados da revisão da #71: resultado de proposta visível a quem tiver o UUID, em qualquer status; UUID inválido vira erro 500; mensagem de limite diz "minutos" para janela de 1 h | MÉDIO | `proposalService.js`, `profileService.js`, `mediaService.js` | aberto | A | M | — | — |
 | SEC-04 | Reautenticação (step-up) nas ações de admin que mudam papel/banem | MÉDIO | `adminService.js` | aberto | A | M | — | — |
 | SEC-05 | Cota de IA: fatia reservada a membros, IA só com e-mail confirmado, alerta a 70% do Groq | ALTO | `aiService.js`, `constants.js` | aberto | A | M | — | — |
 | SEC-06 | Headers/CSP/HSTS: HSTS escalonado, CSP também como header, COOP/CORP, headers na API | MÉDIO | `frontend/_headers`, `worker/src/index.js` | aberto | A | M | — | — |
 | SEC-07 | Teto de tamanho do corpo da requisição | MÉDIO | `worker/src/index.js`, `mediaService.js` | aberto | A | P | — | — |
 | SEC-08 | Token de sessão: sair do localStorage para cookie HttpOnly (ADR na Fase 0; implementação sob flag nas Fases 1–2) | ALTO | `frontend/app.js` (`pm_session`), `LaiftApi.call` | aberto | A | G | — | O37 |
-| SEC-09 | Autorização por papel e rate limit nas ações de proposta (M1 da auditoria de 2026-09-25) | ALTO | `worker/src/services/proposalService.js`, `handlers.js` (detalhe: complemento privado) | aberto | A | P | — | M1 (2026-09-25) |
+| SEC-09 | Autorização por papel e rate limit nas ações de proposta (M1 da auditoria de 2026-09-25) | ALTO | `worker/src/services/proposalService.js`, `handlers.js` (detalhe: complemento privado) | em curso (CI verde menos 1 teste instável do Atlas) | A | P | #71 | M1 (2026-09-25) |
 | SEC-10 | `window.App.getState()` expõe o token a qualquer script same-origin; migrar módulos para `getIdentity()` | MÉDIO | `frontend/app.js` (~L2659 / `getIdentity` ~L2663) | aberto | A | M | — | O37 |
 
 ### Operação e custos (OPS)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| OPS-01 | Monitor de disponibilidade: `/health` raso e público + detalhes só por ação admin autenticada | ALTO | sem monitor externo hoje | aberto | A | P | — | — |
+| OPS-01 | Monitor de disponibilidade: `/health` raso e público + detalhes só por ação admin autenticada | ALTO | PR #70 com CI verde; falta o dono cadastrar o monitor externo (UptimeRobot/BetterStack) após o deploy | em curso | A+D | P | #70 | — |
 | OPS-02 | Planilha semanal de consumo vs limites (CU-h Neon, requisições, KV, tokens Groq, Brevo) | ALTO | gatilhos em `docs/backlog-futuro.md` dependem de "usuários ativos" não medidos | aberto | D+A | P | — | — |
 | OPS-03 | Treino de restauração completo (`tools/backup/restore-drill.sh` em branch Neon, cronometrado) e incluir `laift-memory` no backup | ALTO | `docs/BACKUP_RESTORE.md`: backup passou em 2026-10-09 e o dump abriu; **restauração completa não registrada** | aberto | D | M | — | B3, O1 |
 | OPS-04 | Remetente de e-mail no domínio (SPF/DKIM/DMARC) e confirmação do plano/limite do Brevo | ALTO | `worker/wrangler.toml` (remetente Gmail); limites do Brevo não documentados | aberto | D | M | — | — |
-| OPS-05 | Confirmar que produção usa o papel `laift_worker` (RLS efetivo) | ALTO | `sql/031`/`032`; nenhum doc confirma o papel da `DATABASE_URL` | aberto | D | P | — | — |
+| OPS-05 | Confirmar que produção usa o papel `laift_worker` (RLS efetivo) | ALTO | `sql/031`/`032`; confirmado pelo dono em 2026-10-14 | verificado por revisão (declaração do dono) | D | P | — | — |
 | OPS-06 | Status HTTP real nas respostas de erro + retry só em leitura idempotente + mensagem útil (auditar chamadores antes) | ALTO | `worker/src/index.js`, `handlers.js`, `frontend/app.js` | aberto | A | G | — | — |
 | OPS-07 | Política de divulgação (repo público) e revisão dos docs de auditoria já públicos; checklist de privatização futura | MÉDIO | §3 deste arquivo | em curso | D+A | P | esta | — |
 | OPS-08 | Coleta agregada de erros do frontend (sem PII); Sentry/GlitchTip só se insuficiente | ALTO | `apiLogClientError` só planejado em `docs/ATLAS_PLANO_V2.md:120`; Atlas tem `telemetry.js` próprio (flag desligada) | aberto | A | M | — | — |
@@ -106,6 +106,15 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | LGPD-02 | Controle de idade e bloqueio de IA/memória a menores — **adiado por decisão do dono**; obrigatório antes de abrir amplamente/monetizar | ALTO | cadastro não coleta idade; Forms aceita 12–17 | aberto (adiado) | D+J | M | — | J7 |
 | LGPD-03 | Política v2 + re-aceite (Forms, Europe PMC, localStorage, memória, `activity_days`); consentimento da memória sai de RASCUNHO | ALTO | `docs/POLITICA_DE_PRIVACIDADE.md`, `docs/memoria-consentimento-RASCUNHO.md` | aberto | D+J | M | — | — |
 
+### Cargos funcionais, mentoria e RLS (ROL)
+| ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
+|---|---|---|---|---|---|---|---|---|
+| ROL-01 | Base dos cargos: tabela `member_roles` (vários cargos por membro), matriz de capacidades, `identity.capabilities` no SELECT da sessão, MFA estendido (migração 038) | ALTO | `profiles.role` é ENUM com `IN ('member','admin')` fixo em SQL e ~15 serviços; por isso cargos entram em tabela própria, no modelo de `library_staff` | aberto | A | G | — | — |
+| ROL-02 | Concessão/retirada de cargos só pelo admin, com reautenticação e registro em auditoria; painel "Cargos" | ALTO | reaproveita `requireStepUp` e `audit_logs` | aberto | A | M | — | — |
+| ROL-03 | Ligar ações operacionais a capacidades (gestor, moderador, revisor, curador) e menu "Gestão" fora do modo admin | MÉDIO | `app.js` (`data-scope`), `index.html`, serviços de evento/tarefa/denúncia/revisão | aberto | A | G | — | — |
+| ROL-04 | Mentoria: vínculo com aceite, mentor nomeado pelo admin e membro que se oferece, compartilhamento de progresso com consentimento (migração 039, flag desligada) | MÉDIO | sem tabela de mentoria hoje; base em `connections`/`conversations` | aberto | A | G | — | — |
+| ROL-05 | RLS: tabelas novas com `FORCE RLS`; políticas por usuário em `mentorships`/`member_roles` como passo opcional | ALTO | teste `rlsPrivilegioMinimo` exige a política única `laift_worker_all` | aberto | A | M | — | — |
+
 ### SEO e marca (SEO) e dívida técnica (TEC)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
@@ -134,6 +143,9 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | 2026-10-14 | **Repositório continua público**; GitHub Pages segue ativo como ambiente de gerenciamento (cópia com `noindex` + canonical) | Privatizar o repo / desligar o Pages | dono |
 | 2026-10-14 | Detalhes de vulnerabilidades abertas ficam fora do git até serem corrigidas (§3) | Tudo em um arquivo público | acordado no plano |
 | 2026-10-14 | O arquivo vivo mora no repositório (sem ponteiro em `Desktop\cortex`, que quebraria se o dono trocar de máquina); o complemento privado é exceção só para detalhes de itens abertos | Ponteiro local | acordado no plano |
+| 2026-10-14 | Cargos funcionais **acumuláveis** (vários por membro): Gestor, Revisor de conteúdo, Moderador, Curador; Mentor nomeado pelo admin **e** por oferta do membro; só o admin concede/retira, com reautenticação e registro. Admin segue como nível máximo e o RLS continua ativo em tudo | Novos valores no ENUM `user_role`; gestor concedendo cargos | dono |
+| 2026-10-14 | Ordem: correções rápidas de segurança primeiro (SEC-09, SEC-01), cargos em paralelo | Cargos primeiro | dono |
+| 2026-10-14 | Cadastro testado e funcionando; consumo dos painéis muito baixo (sem usuários ainda); `laift_worker` em uso em produção | — | dono (declaração) |
 | Pendente | Remetente de e-mail no domínio e plano Brevo (padrão: sim, Fase 0) | — | dono |
 | Pendente | Segundo admin "de emergência" com runbook (padrão: sim) | — | dono |
 
@@ -157,6 +169,7 @@ Diferencial defensável: Tutor com guardrails, simulação clínica, Atlas 3D em
 
 ## 9. Log (uma linha por sessão)
 - 2026-10-14 — Auditoria iniciada: 3 agentes de leitura validaram o rascunho contra o código; plano elaborado em Opus e aprovado pelo dono (decisões em §7). Worktree `docs/auditoria-geral` criado de `origin/main` (501244f, PR #68 incluída). Criado este arquivo; corrigidos O1, "8 abas" e Lia 35/72; link em `CONTINUIDADE.md`. Complemento privado criado fora do git. Próximo: SEC-01.
+- 2026-10-14 (tarde) — Dono respondeu: cadastro ok, consumo baixo, `laift_worker` em uso, cargos acumuláveis (decisões em §7). Mapa dos papéis feito (ver ROL-01..05). Abertas as PRs #70 (OPS-01, CI verde) e #71 (SEC-09; CI verde exceto 1 teste instável do Atlas, reexecutado). SEC-01 com implementação pronta no worktree, falta commit, revisão e PR. Próximo: ROL-01 + ROL-02 (migração 038).
 
 ## 10. Fases e critérios de saída
 | Fase | Itens | Critério de saída |
