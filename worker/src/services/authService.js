@@ -218,6 +218,49 @@ export async function confirmEmail(sql, env, rawToken, correlationId) {
   return { success: true, message: 'E-mail confirmado com sucesso. Você já pode entrar.' };
 }
 
+// Bucket só de FALHAS de credencial na plataforma toda (nome próprio: não se mistura com o antigo
+// LOGIN_GLOBAL, que contava toda tentativa).
+const LOGIN_FAILURES_BUCKET = 'LOGIN_GLOBAL_FAILURES';
+const LOGIN_FAILURES_ID = 'global';
+// Falhas por IP: só é LIDO quando o limiar global foi cruzado (endurecimento sobre falhas, não sobre sucessos).
+const LOGIN_IP_FAILURES_BUCKET = 'LOGIN_IP_FAILURES';
+
+/**
+ * Limites do login, nesta ordem: por e-mail → por IP → global. Os dois primeiros contam toda tentativa
+ * (UPSERT atômico, antes de checar a senha — tentativas concorrentes não furam o limite). O global é só
+ * LEITURA e nunca barra sozinho: acima do limiar de falhas, vale LOGIN_HARDENED para e-mail e IP.
+ * env.clientIp vem de index.js (CF-Connecting-IP); 'unknown' quando ausente (nunca undefined no hash).
+ */
+async function enforceLoginLimits(sql, normalizedEmail, clientIp) {
+  const L = C.RATE_LIMITS;
+  const byEmail = await S.countRateLimitAttempt(sql, 'LOGIN', normalizedEmail, L.LOGIN.WINDOW_SECONDS);
+  if (byEmail > L.LOGIN.MAX_ATTEMPTS) throw S.rateLimitExceeded();
+  const byIp = await S.countRateLimitAttempt(sql, 'LOGIN_IP', clientIp || 'unknown', L.LOGIN_IP.WINDOW_SECONDS);
+  if (byIp > L.LOGIN_IP.MAX_ATTEMPTS) throw S.rateLimitExceeded();
+
+  const failures = await S.peekRateLimit(sql, LOGIN_FAILURES_BUCKET, LOGIN_FAILURES_ID, L.LOGIN_GLOBAL.WINDOW_SECONDS);
+  if (failures <= L.LOGIN_GLOBAL.MAX_ATTEMPTS) return;
+  if (byEmail > L.LOGIN_HARDENED.EMAIL_MAX_ATTEMPTS) throw S.rateLimitExceeded();
+  // Por IP, endurece só sobre FALHAS: logins certos de um IP compartilhado (NAT de campus) não esgotam o limite.
+  const ipFailures = await S.peekRateLimit(sql, LOGIN_IP_FAILURES_BUCKET, clientIp || 'unknown', L.LOGIN_IP.WINDOW_SECONDS);
+  if (ipFailures >= L.LOGIN_HARDENED.IP_MAX_ATTEMPTS) throw S.rateLimitExceeded();
+}
+
+/**
+ * Falha de credencial: audita, soma nos contadores de falhas global e do IP (sucesso nunca soma) e lança
+ * o erro GENÉRICO de sempre. Ao cruzar o limiar, grava UMA auditoria por janela (sem e-mail nem IP).
+ */
+async function failLogin(sql, correlationId, clientIp, actorId, details) {
+  await Logging.logAudit(sql, correlationId, actorId, 'LOGIN', 'profile', actorId, 'failure', details);
+  const { MAX_ATTEMPTS, WINDOW_SECONDS } = C.RATE_LIMITS.LOGIN_GLOBAL;
+  await S.countRateLimitAttempt(sql, LOGIN_IP_FAILURES_BUCKET, clientIp || 'unknown', C.RATE_LIMITS.LOGIN_IP.WINDOW_SECONDS);
+  const failures = await S.countRateLimitAttempt(sql, LOGIN_FAILURES_BUCKET, LOGIN_FAILURES_ID, WINDOW_SECONDS);
+  if (failures === MAX_ATTEMPTS + 1) {
+    await Logging.logAudit(sql, correlationId, null, 'LOGIN_THROTTLE', 'rate_limit', null, 'success', { windowSeconds: WINDOW_SECONDS });
+  }
+  throw E.AuthError(C.GENERIC_AUTH_FAILURE_MESSAGE);
+}
+
 export async function login(sql, env, email, password, userAgent, correlationId) {
   const normalizedEmail = S.normalizeText(email).toLowerCase();
   const pwd = S.normalizeText(password);
@@ -226,13 +269,8 @@ export async function login(sql, env, email, password, userAgent, correlationId)
     throw E.AuthError(C.GENERIC_AUTH_FAILURE_MESSAGE);
   }
 
-  // Achado M2: teto agregado (LOGIN_GLOBAL) e por IP (LOGIN_IP) além do
-  // já existente por e-mail — env.clientIp vem de index.js (CF-Connecting-IP),
-  // '' quando ausente (mesma chave de bucket pra todo tráfego sem IP visível,
-  // nunca undefined indo pro hash).
-  await S.enforceRateLimit(sql, 'LOGIN_GLOBAL', 'global', C.RATE_LIMITS.LOGIN_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.LOGIN_GLOBAL.WINDOW_SECONDS);
-  await S.enforceRateLimit(sql, 'LOGIN_IP', env.clientIp || 'unknown', C.RATE_LIMITS.LOGIN_IP.MAX_ATTEMPTS, C.RATE_LIMITS.LOGIN_IP.WINDOW_SECONDS);
-  await S.enforceRateLimit(sql, 'LOGIN', normalizedEmail, C.RATE_LIMITS.LOGIN.MAX_ATTEMPTS, C.RATE_LIMITS.LOGIN.WINDOW_SECONDS);
+  await enforceLoginLimits(sql, normalizedEmail, env.clientIp);
+  const fail = (actorId, details) => failLogin(sql, correlationId, env.clientIp, actorId, details);
 
   const rows = await sql`
     SELECT id, role, status, full_name, email_confirmed_at, (password_hash = crypt(${pwd}, password_hash)) AS password_ok
@@ -243,8 +281,7 @@ export async function login(sql, env, email, password, userAgent, correlationId)
     // Mitiga enumeração por tempo de resposta: computa um crypt() equivalente
     // mesmo quando não há conta com esse e-mail.
     await sql`SELECT crypt(${pwd}, ${DUMMY_BCRYPT_HASH}) AS ignored`;
-    await Logging.logAudit(sql, correlationId, null, 'LOGIN', 'profile', null, 'failure', null);
-    throw E.AuthError(C.GENERIC_AUTH_FAILURE_MESSAGE);
+    return fail(null, null);
   }
 
   const row = rows[0];
@@ -262,10 +299,7 @@ export async function login(sql, env, email, password, userAgent, correlationId)
 
   const authorized = row.password_ok === true && row.status === C.ACCOUNT_STATUS.ACTIVE && !!row.email_confirmed_at;
 
-  if (!authorized) {
-    await Logging.logAudit(sql, correlationId, row.id, 'LOGIN', 'profile', row.id, 'failure', null);
-    throw E.AuthError(C.GENERIC_AUTH_FAILURE_MESSAGE);
-  }
+  if (!authorized) return fail(row.id, null);
 
   // Segundo fator: quem tem MFA ativa só recebe sessão em apiLoginMfa.
   const mfaToken = await MfaService.startLoginChallenge(sql, env, row.id);

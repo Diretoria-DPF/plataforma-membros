@@ -94,7 +94,34 @@ export function newCorrelationId() {
  * estava documentada como risco residual conhecido).
  */
 export async function enforceRateLimit(sql, bucket, identifier, maxAttempts, windowSeconds) {
-  const idHash = await sha256Hex(normalizeText(identifier).toLowerCase());
+  const attempts = await countRateLimitAttempt(sql, bucket, identifier, windowSeconds);
+  if (attempts > maxAttempts) throw rateLimitExceeded();
+}
+
+/** Erro padrão de limite estourado — mesma mensagem genérica em todo lugar. */
+export function rateLimitExceeded() {
+  return RateLimitError('Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.');
+}
+
+const rateLimitIdHash = (identifier) => sha256Hex(normalizeText(identifier).toLowerCase());
+
+/**
+ * Leitura SEM escrita: tentativas na janela ativa de (bucket, identificador), 0 se não houver
+ * linha ou se a janela já venceu. Serve a contadores que só endurecem outros limites.
+ */
+export async function peekRateLimit(sql, bucket, identifier, windowSeconds) {
+  const idHash = await rateLimitIdHash(identifier);
+  const rows = await sql`
+    SELECT attempts FROM rate_limit_buckets
+    WHERE bucket = ${bucket} AND identifier_hash = ${idHash}
+      AND window_started_at >= now() - (${windowSeconds} || ' seconds')::interval
+  `;
+  return rows.length ? Number(rows[0].attempts) || 0 : 0;
+}
+
+/** Conta uma tentativa (UPSERT atômico, ver acima) e devolve o total na janela, sem decidir nada. */
+export async function countRateLimitAttempt(sql, bucket, identifier, windowSeconds) {
+  const idHash = await rateLimitIdHash(identifier);
 
   const rows = await sql`
     INSERT INTO rate_limit_buckets (bucket, identifier_hash, window_started_at, attempts)
@@ -111,10 +138,7 @@ export async function enforceRateLimit(sql, bucket, identifier, maxAttempts, win
     RETURNING attempts
   `;
 
-  const attempts = rows[0].attempts;
-  if (attempts > maxAttempts) {
-    throw RateLimitError('Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.');
-  }
+  return rows[0].attempts;
 }
 
 /** Cria uma sessão persistida e devolve o token BRUTO (só existe neste retorno). */
