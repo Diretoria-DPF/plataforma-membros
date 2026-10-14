@@ -36,6 +36,17 @@ branch de trabalho ──PR──▶ staging ──(publica sozinho)──▶ te
 
 O que **bloqueia** a publicação do site: teste unitário ou e2e (`csp`, `smoke`) vermelho. Por exemplo, um `<script>` externo no `index.html` que a CSP não liberou.
 
+## Monitor de disponibilidade (`/health`)
+
+`GET https://api.laift.com.br/health` (e `HEAD`) responde `200` com `{"ok":true}` e `Cache-Control: no-store`. É uma sonda rasa: não consulta banco, KV, R2 nem segredos e não exige sessão, então não acorda o Neon nem gasta CU-h. Não expõe versão, commit nem flags. Staging: `https://staging-api.laift.com.br/health`.
+
+Monitor externo (UptimeRobot ou BetterStack, plano gratuito):
+
+- Método `GET`, intervalo de 5 minutos, URL acima.
+- Alerta se o status não for `200` ou se o corpo não contiver o texto `ok`.
+
+Regras: **nunca** coloque token, chave ou senha na query string do monitor. Detalhes de saúde (banco, cota) só por ação admin autenticada, fora do escopo desta sonda.
+
 ## Migrações do banco
 
 `tools/db/migrate.mjs` aplica `sql/NNN_*.sql` em ordem numérica e guarda o que foi feito na tabela `schema_migrations`. Rodar de novo não faz nada; se um arquivo já aplicado for editado, ele **aborta** (crie uma migração nova). O runner não lê `sql/down/` nem `sql/ops/`, e **não tem opção para pular um arquivo**: aplica tudo o que estiver pendente. Para segurar uma migração, o caminho é `--dir` com uma pasta que não a contenha (ver a seção de ativação).
