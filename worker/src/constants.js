@@ -194,6 +194,8 @@ export const RATE_LIMITS = {
   // Fase 3, achado #4), não para uma rede social genérica.
   CONNECTION_REQUEST: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 604800 },
   REPORT: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 86400 },
+  // Envio de proposta (por pessoa): uso normal é uma ou poucas propostas; 10/h cobre correções de rascunho.
+  PROPOSAL_SUBMIT: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
   // Publicação/rotação de chave de mensageria — não é o rate limit de
   // ENVIO de mensagem (esse é o silenciamento progressivo, ver LIMITS
   // acima e apply_message_penalty).

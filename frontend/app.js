@@ -1351,6 +1351,10 @@
   // ===========================================================================
   document.getElementById('form-proposal').addEventListener('submit', function (evt) {
     evt.preventDefault();
+    if (state.profile.role === 'visitor') {
+      setStatus('msg-proposal', 'Somente membros e administradores podem enviar propostas.', 'info');
+      return;
+    }
     var payload = {
       title: document.getElementById('proposal-title').value,
       description: document.getElementById('proposal-description').value,
@@ -1370,6 +1374,10 @@
   }
 
   function loadMyProposals() {
+    if (state.profile.role === 'visitor') {
+      renderList('my-proposals-list', [], function () {}, 'Suas propostas aparecem aqui para membros e administradores.');
+      return;
+    }
     resetListForLoading('my-proposals-list');
     showSkeleton('my-proposals-list', 2);
     callApi('apiListMyProposals', state.sessionToken).then(function (res) {
