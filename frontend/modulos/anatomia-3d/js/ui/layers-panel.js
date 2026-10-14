@@ -2,7 +2,8 @@
  * layers-panel.js — painel flutuante de camadas anatômicas (WP09)
  * -----------------------------------------------------------------------
  * Um painel ancorado ao botão "Camadas" da toolbar que permite ao usuário:
- * - Ligar/desligar cada camada (7 no total)
+ * - Ligar/desligar cada camada (8 no total, com Fáscias)
+ * - "Somente fáscias": liga só as fáscias (clique de novo para voltar)
  * - Ajustar a opacidade de cada uma (0–100%)
  * - Usar um preset "Superficial ↔ Profundo" para combos coerentes
  * - Restaurar o estado padrão
@@ -11,7 +12,11 @@
  * (ex.: raio-X) sem re-emitir.
  */
 
-import { LAYERS } from '../core/contracts.js';
+import { LAYERS, LAYER_DEFAULT_OPACITY } from '../core/contracts.js';
+import { fasciaOnlyLayers, isFasciaOnly, snapshotLayers } from '../engine/fascia-rules.js';
+
+/** Fáscias: desligadas, na opacidade inicial translúcida (contracts.js). */
+const FASCIAS_OFF = Object.freeze({ visible: false, opacity: LAYER_DEFAULT_OPACITY.fascias });
 
 /**
  * Combinações de camadas para o preset "Superficial ↔ Profundo".
@@ -22,6 +27,7 @@ export const DEPTH_PRESETS = Object.freeze([
   // Posição 1: Pele (superficial)
   Object.freeze({
     pele: { visible: true, opacity: 1 },
+    fascias: { ...FASCIAS_OFF },
     musculos: { visible: false, opacity: 1 },
     esqueleto: { visible: false, opacity: 1 },
     visceras: { visible: false, opacity: 1 },
@@ -32,6 +38,7 @@ export const DEPTH_PRESETS = Object.freeze([
   // Posição 2: Pele + Músculos
   Object.freeze({
     pele: { visible: true, opacity: 1 },
+    fascias: { ...FASCIAS_OFF },
     musculos: { visible: true, opacity: 1 },
     esqueleto: { visible: false, opacity: 1 },
     visceras: { visible: false, opacity: 1 },
@@ -42,6 +49,7 @@ export const DEPTH_PRESETS = Object.freeze([
   // Posição 3: Músculos + Esqueleto
   Object.freeze({
     pele: { visible: false, opacity: 1 },
+    fascias: { ...FASCIAS_OFF },
     musculos: { visible: true, opacity: 1 },
     esqueleto: { visible: true, opacity: 1 },
     visceras: { visible: false, opacity: 1 },
@@ -52,6 +60,7 @@ export const DEPTH_PRESETS = Object.freeze([
   // Posição 4: Músculos(0.3) + Esqueleto + Vísceras
   Object.freeze({
     pele: { visible: false, opacity: 1 },
+    fascias: { ...FASCIAS_OFF },
     musculos: { visible: true, opacity: 0.3 },
     esqueleto: { visible: true, opacity: 1 },
     visceras: { visible: true, opacity: 1 },
@@ -63,6 +72,7 @@ export const DEPTH_PRESETS = Object.freeze([
   // Pele desligada, Músculos em 0.2, resto em opacidade total
   Object.freeze({
     pele: { visible: false, opacity: 1 },
+    fascias: { ...FASCIAS_OFF },
     musculos: { visible: true, opacity: 0.2 },
     esqueleto: { visible: true, opacity: 1 },
     visceras: { visible: true, opacity: 1 },
@@ -77,6 +87,7 @@ export const DEPTH_PRESETS = Object.freeze([
  */
 const DEFAULT_STATE = Object.freeze({
   pele: { visible: false, opacity: 1 },
+  fascias: { ...FASCIAS_OFF },
   musculos: { visible: true, opacity: 1 },
   esqueleto: { visible: true, opacity: 1 },
   visceras: { visible: false, opacity: 1 },
@@ -98,6 +109,7 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
   // Referências aos elementos da UI
   const el = {
     presetSlider: null,
+    fasciaOnlyBtn: null,
     toggles: new Map(), // layerId -> input[type=switch]
     opacitySliders: new Map(), // layerId -> input[type=range]
     expandBtns: new Map(), // layerId -> button (chevron)
@@ -133,8 +145,18 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
     // Divisória
     window.LaiftDom.h('hr', { className: 'atlas-layers-divider' }),
 
-    // Container para os 7 rows de camadas
+    // Container para os rows de camadas
     (el.layersContainer = window.LaiftDom.h('div', { className: 'atlas-layers-list' })),
+
+    // Modo "somente fáscias" (aria-pressed): desliga todas as outras camadas
+    (el.fasciaOnlyBtn = window.LaiftDom.h('button', {
+      className: 'atlas-layers-fascia-only',
+      type: 'button',
+      'aria-pressed': 'false',
+      'aria-label': 'Somente fáscias', // contém o texto visível
+      title: 'Mostrar somente as fáscias (desliga as outras camadas)',
+      text: 'Somente fáscias',
+    })),
 
     // Divisória
     window.LaiftDom.h('hr', { className: 'atlas-layers-divider' }),
@@ -147,7 +169,7 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
     }),
   ]);
 
-  // Criar os 7 rows (um por camada)
+  // Criar os rows (um por camada)
   const unavailableIds = new Set(unavailable());
   const layersRows = LAYERS.map((layer) => {
     const isUnavailable = unavailableIds.has(layer.id);
@@ -299,6 +321,20 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
     });
   });
 
+  // Somente fáscias: liga/desliga o modo; ao sair, volta ao estado de antes.
+  let beforeFasciaOnly = null;
+  el.fasciaOnlyBtn.addEventListener('click', () => {
+    const current = store.get().layers;
+    if (isFasciaOnly(current)) {
+      applyState(beforeFasciaOnly || DEFAULT_STATE);
+      beforeFasciaOnly = null;
+    } else {
+      beforeFasciaOnly = snapshotLayers(current);
+      applyState(fasciaOnlyLayers(current));
+    }
+    selectedPreset = null;
+  });
+
   // Botão "Restaurar"
   const restoreBtn = panel.querySelector('.atlas-layers-restore-btn');
   restoreBtn.addEventListener('click', () => {
@@ -374,6 +410,7 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
    * Não emite eventos — só reflete a mudança visualmente.
    */
   function syncUIToState(layersState) {
+    el.fasciaOnlyBtn.setAttribute('aria-pressed', String(isFasciaOnly(layersState)));
     el.toggles.forEach((toggle, layerId) => {
       const isVisible = layersState[layerId].visible;
       toggle.setAttribute('aria-checked', String(isVisible));

@@ -18,3 +18,6 @@
 # texto de documentação: nome do rótulo HMAC do QR de presença (não é segredo)
 b2848842a1949bd6a70cc1d2b5a4fa809c6e6b4c:docs/SECURITY.md:generic-api-key:199
 d4553a91679ea092c0cf9e5f98a26ddd821605e5:docs/FASE_2_DADOS_PRESENCA.md:generic-api-key:122
+# Senha FICTICIA de teste (memoryHandlers.test.js:27), nao e segredo; triado em 13/10/2026 com autorizacao do dono
+fe2a1b0a0ccd97677d596b79628fb7583ce5aff1:worker/test/memoryHandlers.test.js:generic-api-key:27
+0ae6ddd1e8c8bb1ce641d43f619cd126c56c4c5c:worker/test/memoryHandlers.test.js:generic-api-key:27

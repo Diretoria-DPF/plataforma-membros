@@ -30,6 +30,10 @@ A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação foram **mes
 - **Depois de mesclar #35 e #36** (nessa ordem, a #36 reapontada para a `main`): conferir o site em `laift.com.br` e ligar a Lia com `UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'` (ver `docs/AMBIENTES.md`).
 - **Pendências**: o Environment `staging` do GitHub só aceita as branches `feat/*`, `fix/*` e `main` (a branch `staging` foi recusada: adicionar `staging` à regra para o deploy por push funcionar); o Trivy acusava `sharp` HIGH em `tools/atlas-pipeline` (GHSA-wq5f-xc86-pv6w), corrigido para a 0.35.5 na PR `fix/ci-pos-fusao` (2026-10-08); apagar a branch de backup do Neon depois de alguns dias.
 
+## Atualização de 2026-10-13 — Atlas 3D: cliques, fáscias, Separar peças
+
+PR #68 (`chore/atlas-auditoria`). Causa raiz de "o clique só sinaliza em metade do corpo" corrigida (peças espelhadas em batch próprio), camada Fáscias com clique que prefere a estrutura sob a fáscia, vista Separar peças e relatório de varredura (`docs/atlas-qa/varredura-2026-10-13.md`). **Licenças dos modelos (NC e desconhecidas): só registradas, nada aplicado** — ver [`docs/ATLAS_LICENCAS_PENDENTES.md`](ATLAS_LICENCAS_PENDENTES.md) e o checklist "antes de cobrar". Detalhes no `CHANGELOG.md`.
+
 ## Atualização de 2026-10-08 — UX v2, Lia viva, RAG, feedback e moderação (branch `feat/v5-ux-fundacao`)
 
 **Entrega única.** Um PR só, a partir de `feat/v5-ux-fundacao` (100 commits acima da `main`), aberto como **#38** e mesclado na `main` em 2026-10-08. Tudo está atrás de feature flags. A ativação é do dono, pelo runbook de `docs/AMBIENTES.md`, seção "Ativação da UX v2, Lia viva, RAG, feedback e moderação".
@@ -56,6 +60,7 @@ A UX v2 (fases A a E), a Lia viva, o RAG, o feedback e a moderação foram **mes
 - **Worker:** 48 suítes (48 arquivos `*.test.js` em `worker/test`); 117 actions no `API_REGISTRY` (`worker/src/handlers.js`, linhas 88 a 271); **1424 testes verdes** (execução final de 2026-10-08, `cd worker && npm test`, serial; contagem estática: 827+ blocos `test(`/`it(` e chamadas `.each(`).
 - **Migrações:** 001 a 024 (24 arquivos em `sql/`; reversões em `sql/down/` de 015 a 024). `npm run validate:sql` não foi rodado nesta revisão.
 - **Front:** **650 testes unitários, 648 verdes** (execução final de 2026-10-08), e2e `csp smoke home assistant credential visual-qa` verdes (visual-qa: 222 verificações). Duas falhas, só no Windows, nos testes de `_headers` em `seo.test.mjs` (15 blocos) e `staging.test.mjs` (6 blocos): o checkout traz `frontend/_headers` com CRLF, e no índice do git o arquivo está com LF (`git ls-files --eol`). Contagem estática: 489 blocos `test()`/`it()` em 22 arquivos `frontend/scripts/*.test.mjs`.
+  - Atualização de 13/10/2026 (auditoria do Atlas): essas falhas de CRLF no Windows (`_headers`, `entrada.test.mjs`, `review-status`) são só de ambiente e passam no CI (Linux). O `.gitattributes` com `* text=auto eol=lf` as elimina em checkouts novos. Os e2e do Atlas também passam no CI ([run 38439462457](https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/38439462457)); as falhas locais no Windows são lentidão de WebGL em software.
 - **E2E** (número do dono): `csp`, `smoke`, `home`, `assistant`, `credential` e `visual-qa` verdes. Os cenários existem em `frontend/scripts/e2e/`.
 
 ### Decisões do dono

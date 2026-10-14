@@ -17,6 +17,7 @@ export const FLAG_DEFAULTS = Object.freeze({
   confetti: true,     // confetes no acerto do quiz (js/modes/quiz.js)
   peek: true,         // peek com selos e "Ver mais" (js/ui/infocard.js)
   tts: true,          // "Ouvir" a ficha com speechSynthesis pt-BR (js/ui/infocard.js)
+  explode: true,      // "Separar peças" (vista explodida), no menu Mais opções (js/ui/explode-entry.js; carregada sob demanda)
   systemic: false,    // "Visão sistêmica" da Fisiologia — desligada até o teste de papel (guia-revisao.md §5)
   quizSetup: true,    // Quiz: escolha de sistema e dificuldade e sorteio de 10 casos (js/modes/quiz-select.js)
   telemetry: false,   // uso anônimo em lote pela ponte (js/core/telemetry.js); ligar depois da migração 014 e do deploy da Worker

@@ -86,19 +86,27 @@ test('X-ray reduz opacidade de pele e musculos e emite LAYER_SET', () => {
   assert.equal(state.xray, true);
   assert.equal(state.layers.pele.opacity, 0.08);
   assert.equal(state.layers.musculos.opacity, 0.12);
+  assert.equal(state.layers.fascias.opacity, 0.08); // fáscias também ficam translúcidas
 
-  // Confere que emitiu LAYER_SET para ambas as camadas
-  assert.equal(emittedEvents.length, 2);
+  // Confere que emitiu LAYER_SET para pele, fáscias e músculos
+  assert.equal(emittedEvents.length, 3);
   assert.deepEqual(emittedEvents[0], {
     layer: 'pele',
     visible: state.layers.pele.visible,
     opacity: 0.08,
   });
   assert.deepEqual(emittedEvents[1], {
+    layer: 'fascias',
+    visible: state.layers.fascias.visible,
+    opacity: 0.08,
+  });
+  assert.deepEqual(emittedEvents[2], {
     layer: 'musculos',
     visible: state.layers.musculos.visible,
     opacity: 0.12,
   });
+  xrayClip.setXray(false);
+  assert.equal(get().layers.fascias.opacity, 0.45); // restaura a opacidade de antes
 
   offListener();
   xrayClip.dispose();

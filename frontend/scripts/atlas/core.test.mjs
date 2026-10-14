@@ -125,6 +125,8 @@ test('get() traz o estado inicial documentado', () => {
   assert.equal(s.layers.pele.visible, false);
   assert.equal(s.layers.musculos.visible, true);
   assert.equal(s.layers.esqueleto.visible, true);
+  assert.equal(s.layers.fascias.visible, false); // fáscias: camada própria, desligada na abertura
+  assert.equal(s.layers.fascias.opacity, 0.45); // translúcida: o músculo sob ela aparece
   for (const id of LAYER_IDS) {
     assert.ok(id in s.layers, `faltou a camada "${id}" em store.layers`);
     assert.equal(typeof s.layers[id].opacity, 'number');
@@ -164,7 +166,7 @@ test('LAYERS/SYSTEMS/MODES/SHEET_STATES estão congelados e com o tamanho espera
   assert.equal(Object.isFrozen(SYSTEMS), true);
   assert.equal(Object.isFrozen(MODES), true);
   assert.equal(Object.isFrozen(SHEET_STATES), true);
-  assert.equal(LAYERS.length, 7);
+  assert.equal(LAYERS.length, 8); // 7 + Fáscias (camada própria)
   assert.equal(SYSTEMS.length, 12);
   assert.equal(MODES.length, 6);
   assert.equal(SHEET_STATES.length, 3);

@@ -52,13 +52,13 @@ export function markDismissedThisTab(session) {
 const SCREENS = [
   {
     title: 'Toque numa estrutura',
-    text: 'Toque em qualquer parte do corpo para ver o nome, o que faz e onde fica.',
+    text: 'Toque em qualquer parte do corpo para ver o nome, o que faz e onde fica. Com as fáscias ligadas, toque de novo no mesmo ponto para alternar entre a estrutura e a fáscia que a cobre.',
     art: 'tap',
   },
   {
     title: 'Ferramentas essenciais',
     cards: [
-      { glyph: '▤', name: 'Camadas', text: 'Ligue e desligue pele, músculos, ossos e órgãos.' },
+      { glyph: '▤', name: 'Camadas', text: 'Ligue e desligue pele, fáscias, músculos, ossos e órgãos.' },
       { glyph: '◎', name: 'Isolar', text: 'Veja só uma estrutura, sem o resto atrapalhar.' },
       { glyph: '☠', name: 'Raio-X', text: 'Deixe pele e músculos transparentes.' },
     ],

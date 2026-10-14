@@ -1,0 +1,129 @@
+/* =========================================================================
+   explode.css — painel "Separar peças" (vista explodida)
+   -----------------------------------------------------------------------
+   Carregado sob demanda (js/ui/explode-entry.js): não pesa no boot.
+   Mesma janela flutuante do painel de camadas; alvos de toque de 44px.
+   ========================================================================= */
+
+.atlas-explode-host {
+  position: fixed;
+  z-index: var(--atlas-z-context-menu);
+  top: calc(var(--atlas-topbar-h) + env(safe-area-inset-top) + 12px);
+  right: calc(max(12px, env(safe-area-inset-right)) + var(--atlas-toolbar-btn) + 12px);
+}
+
+.atlas-explode-host[hidden] {
+  display: none;
+}
+
+.atlas-explode-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(12px, 2.5vw, 20px);
+  min-width: clamp(240px, 40vw, 320px);
+  max-width: clamp(280px, 45vw, 400px);
+  background: var(--laift-surface);
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-md);
+  box-shadow: var(--laift-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(12px, 2.5vw, 15px);
+  color: var(--laift-text);
+}
+
+.atlas-explode-title {
+  margin: 0;
+  padding-right: 40px; /* o botão fechar não cobre o título */
+  font-size: 1.05em;
+  font-weight: 600;
+}
+
+.atlas-explode-label {
+  font-weight: 500;
+  color: var(--laift-muted);
+}
+
+.atlas-explode-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.atlas-explode-range {
+  flex: 1;
+  min-width: 120px;
+  min-height: 44px;
+  accent-color: var(--laift-primary);
+  touch-action: none;
+}
+
+.atlas-explode-range:focus-visible,
+.atlas-explode-join:focus-visible,
+.atlas-explode-close:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
+.atlas-explode-value {
+  min-width: 3.2em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.atlas-explode-hint {
+  margin: 0;
+  color: var(--laift-muted);
+  line-height: 1.4;
+}
+
+.atlas-explode-join {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--laift-primary);
+  color: white;
+  border: 0;
+  border-radius: var(--laift-radius-sm);
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.atlas-explode-join:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.atlas-explode-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
+  width: var(--atlas-touch-min, 44px);
+  height: var(--atlas-touch-min, 44px);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--laift-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Celular: largura total, junto à base (mesmo corte do painel de camadas). */
+@media not all and (min-width: 600px) and (min-height: 600px) {
+  .atlas-explode-host {
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    top: auto;
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .atlas-explode-panel {
+    min-width: 0;
+    max-width: none;
+  }
+}

@@ -49,7 +49,7 @@ async function runAt(viewport) {
     check(info.inside, `${label}: painel inteiro dentro da tela`);
     check(info.labelOnTop, `${label}: nome da camada visível por cima do canvas ("${info.labelText}")`);
     check(info.bg && !/rgba\(0, 0, 0, 0\)|transparent/.test(info.bg), `${label}: painel com fundo (${info.bg})`);
-    check(info.rows >= 7, `${label}: as 7 camadas listadas (${info.rows})`);
+    check(info.rows >= 8, `${label}: as 8 camadas listadas, com Fáscias (${info.rows})`);
     check(['Pele', 'Músculos', 'Esqueleto'].every((n) => info.names.includes(n)) && info.cut.length === 0,
       `${label}: nomes das camadas inteiros${info.cut.length ? ' — cortados: ' + info.cut.join(', ') : ''}`);
     // Interruptor funciona: liga a Pele e o estado da camada muda.

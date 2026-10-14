@@ -31,6 +31,13 @@
  * e o realce de seleção baratos: não há mais "clonar material sob
  * demanda", só reescrever a cor/alfa da instância.
  *
+ * Peças ESPELHADAS (lado esquerdo do Z-Anatomy = malha do direito com escala
+ * -1 em X) vão para um segundo batch por camada (chave `<camada>#m`) com
+ * `scale.x = -1`; sem isso o three descartava as faces voltadas para a câmera
+ * e o destaque do clique sumia (ver `registry-helpers.js` e o diagnóstico de
+ * cliques de 2026-10-13). Helpers puros ficam em `registry-helpers.js`; o
+ * raycast, em `registry-pick.js`.
+ *
  * `registerOrganDetail` (detalhe de órgão do HRA) continua com **malha por
  * estrutura** — não participa do orçamento de draw calls do carregamento
  * padrão (seu `root` nunca é anexado à cena principal por este módulo; ver
@@ -50,184 +57,17 @@
 
 import * as THREE from '../../vendor/three/three.module.js';
 import { EVENTS } from '../core/bus.js';
-import { LAYER_IDS } from '../core/contracts.js';
-
-// ============================================================================
-// Heurística sistema → camada (aproximação documentada — ver GAP acima: o
-// Registry não lê data/atlas/index.json, então não conhece a camada "oficial"
-// de cada sid; deriva uma camada plausível a partir do sistema e, para o
-// cardiovascular, do nome do nó). Confirmado contra data/atlas/fixtures/
-// index.json (WP02): bate 100% para os 12 sistemas das fixtures.
-// ============================================================================
-const SYSTEM_LAYER_DEFAULT = Object.freeze({
-  esqueletico: 'esqueleto',
-  articular: 'esqueleto',
-  muscular: 'musculos',
-  tegumentar: 'pele',
-  cardiovascular: 'vasos', // sobrescrito por nó para coração → visceras (ver classifyStructure)
-  respiratorio: 'visceras',
-  digestorio: 'visceras',
-  urinario: 'visceras',
-  reprodutor: 'visceras',
-  endocrino: 'visceras',
-  linfatico: 'linfatico',
-  nervoso: 'nervos',
-});
-
-// Nomes de nó (Z-Anatomy/fixtures, em pt-BR) que são o próprio coração/
-// câmaras/valvas — ficam na camada "visceras", não "vasos", mesmo dentro do
-// sistema cardiovascular (bate com data/atlas/fixtures/index.json).
-const HEART_NODE_PATTERN = /^coracao$|^atrio-|^ventriculo-|^valva-/;
-// Nomes de nó que são veias (cor azul) dentro da camada "vasos" — o resto
-// (aorta, artérias) usa a cor de artéria (vermelho). Convenção de atlas
-// impresso citada em docs/ATLAS_UX_SPEC.md §9.
-const VEIN_NODE_PATTERN = /veia|jugular|cava/;
-
-const LAYER_COLOR_VAR = Object.freeze({
-  pele: '--atlas-color-pele',
-  musculos: '--atlas-color-musculos',
-  esqueleto: '--atlas-color-esqueleto',
-  visceras: '--atlas-color-visceras',
-  'vasos-arteria': '--atlas-color-vasos-arteria',
-  'vasos-veia': '--atlas-color-vasos-veia',
-  nervos: '--atlas-color-nervos',
-  linfatico: '--atlas-color-linfatico',
-});
-
-const HIGHLIGHT_COLOR_VAR = '--atlas-color-highlight';
-const FALLBACK_COLOR = '#9aa5bb';
-const FALLBACK_HIGHLIGHT = '#4c8bf5';
-
-/** Índice (0..6) de cada camada em LAYER_IDS — usado só para `renderOrder`
- * (estruturas mais profundas ordenam depois, para a transparência do raio-X
- * empilhar visualmente na ordem certa). */
-const LAYER_ORDER = Object.freeze(
-  LAYER_IDS.reduce((acc, id, i) => {
-    acc[id] = i;
-    return acc;
-  }, {})
-);
-
-// Margem de crescimento aplicada ao redimensionar um BatchedMesh de camada
-// (instâncias/vértices/índices) além do exigido pelo lote atual — evita
-// redimensionar a cada sistema carregado quando o próximo é parecido em
-// tamanho (ver `ensureLayerBatch`).
-// Desempate do pick: camada mais profunda primeiro (A.10, Onda 3).
-const PICK_TIE_EPS = 0.01;
-const PICK_LAYER_PRIORITY = Object.freeze({ visceras: 0, vasos: 1, nervos: 2, linfatico: 3, esqueleto: 4, musculos: 5, pele: 6 });
+import {
+  LAYER_ORDER, HIGHLIGHT_COLOR_VAR, FALLBACK_COLOR, FALLBACK_HIGHLIGHT, MIRROR_SUFFIX, isMirroredMatrix, isMirrorKey,
+  instanceMatrixFor, sideOfNodeName, readCssColor, classifyStructure, layerOrderOfKey, HRA_SID_RE, alignHraNode,
+  collectMeshes, sanitizeGeometryForBatch,
+} from './registry-helpers.js';
+import { createPicker } from './registry-pick.js';
+import { createInstanceOffsets } from './registry-explode.js';
 
 const BATCH_GROWTH_FACTOR = 1.25;
 const BATCH_MIN_INSTANCES = 16;
 const BATCH_MIN_VERTICES = 256;
-
-/**
- * Lê uma variável CSS `--atlas-color-*` do documento (tema ativo já
- * resolvido pelo navegador — ver `html[data-theme]`/`prefers-color-scheme`
- * em `css/tokens-atlas.css`). Sem `document` (ex.: teste em Node) devolve o
- * fallback.
- * @param {string} cssVar
- * @param {string} fallback
- * @returns {string}
- */
-function readCssColor(cssVar, fallback) {
-  if (typeof document === 'undefined' || !document.documentElement) return fallback;
-  const value = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
-  return value || fallback;
-}
-
-/**
- * Decide a camada + a chave de material (algumas camadas têm mais de uma
- * variante de cor, ex. vasos) para um nó de um sistema.
- * @param {string} system
- * @param {string} nodeName
- * @returns {{ layer: string, materialKey: string, colorVar: string }}
- */
-function classifyStructure(system, nodeName) {
-  if (system === 'cardiovascular') {
-    if (HEART_NODE_PATTERN.test(nodeName)) {
-      return { layer: 'visceras', materialKey: 'visceras', colorVar: LAYER_COLOR_VAR.visceras };
-    }
-    const isVein = VEIN_NODE_PATTERN.test(nodeName);
-    const materialKey = isVein ? 'vasos-veia' : 'vasos-arteria';
-    return { layer: 'vasos', materialKey, colorVar: LAYER_COLOR_VAR[materialKey] };
-  }
-  const layer = SYSTEM_LAYER_DEFAULT[system] || 'visceras';
-  return { layer, materialKey: layer, colorVar: LAYER_COLOR_VAR[layer] || null };
-}
-
-/**
- * Junta todas as malhas descendentes de `node` (inclusive ele mesmo, se já
- * for uma malha) — nas fixtures/pipeline atual cada nó já É a malha (um nó
- * por estrutura), mas um GLB futuro pode agrupar sub-malhas sob um nó
- * (ex.: "costelas" com 12 ossos) sem que isso quebre o Registry — cada
- * sub-malha se torna sua própria geometria+instância no batch da camada,
- * todas marcadas com o mesmo `sid`.
- * @param {THREE.Object3D} node
- * @returns {THREE.Mesh[]}
- */
-/**
- * Órgãos do HRA (sids "za:vh-*", nós "VH_M_*"/"VH_F_*") chegam no
- * referencial do corpo de referência do HRA, deslocado 0,81 m para baixo em
- * relação ao Z-Anatomy — o coração aparecia na altura do joelho e o fígado
- * na canela. Medido com as próprias malhas (mesma escala, mesmo eixo):
- *   - topo da face diafragmática do fígado (HRA): y = 0,43 → cúpula direita
- *     do diafragma (Z-Anatomy): y ≈ 1,24;
- *   - coração (HRA) y 0,42–0,52 → 1,23–1,33: apoiado no diafragma, abaixo
- *     do manúbrio (1,35), face anterior logo atrás do corpo do esterno.
- * TODO(pipeline): aplicar esta translação em tools/atlas-pipeline ao gerar
- * os GLBs e remover daqui.
- */
-const HRA_SID_RE = /^za:vh-/;
-const HRA_TO_ZANATOMY_OFFSET = Object.freeze([0, 0.81, 0]);
-
-function alignHraNode(node) {
-  if (node.userData.hraAligned) return;
-  const delta = new THREE.Vector3(...HRA_TO_ZANATOMY_OFFSET);
-  if (node.parent) {
-    // Deslocamento em coordenadas de mundo → espaço local do pai.
-    const parentInv = new THREE.Matrix4().copy(node.parent.matrixWorld).invert();
-    delta.applyMatrix3(new THREE.Matrix3().setFromMatrix4(parentInv));
-  }
-  node.position.add(delta);
-  node.updateMatrixWorld(true);
-  node.userData.hraAligned = true;
-}
-
-function collectMeshes(node) {
-  const meshes = [];
-  node.traverse((child) => {
-    if (child.isMesh) meshes.push(child);
-  });
-  return meshes;
-}
-
-/**
- * Extrai uma geometria "limpa" (apenas `position`/`normal`/índice) de uma
- * malha de origem, para inserir num `THREE.BatchedMesh` de camada. Só esses
- * atributos importam para os materiais de camada (`MeshStandardMaterial`
- * sem textura) — normalizar assim evita que `BatchedMesh._validateGeometry`
- * rejeite uma geometria por ter (ou não ter) atributos extras (UV, tangente,
- * skinning, cor de vértice) que variam entre a origem real (glTF) e a de
- * contingência (`js/engine/fallback.js`, formas primitivas do three.js),
- * quando ambas acabam compartilhando a mesma camada/materialKey.
- * @param {THREE.BufferGeometry} geometry
- * @returns {THREE.BufferGeometry|null}
- */
-function sanitizeGeometryForBatch(geometry) {
-  const position = geometry.getAttribute('position');
-  if (!position) return null;
-  const clean = new THREE.BufferGeometry();
-  clean.setAttribute('position', position);
-  let normal = geometry.getAttribute('normal');
-  if (!normal) {
-    geometry.computeVertexNormals();
-    normal = geometry.getAttribute('normal');
-  }
-  if (normal) clean.setAttribute('normal', normal);
-  const index = geometry.getIndex();
-  if (index) clean.setIndex(index);
-  return clean;
-}
 
 /**
  * @param {{ engine: import('../core/contracts.js').Engine, bus: Object }} deps
@@ -262,7 +102,8 @@ export function createRegistry({ engine, bus } = {}) {
   /** @type {(THREE.BatchedMesh|THREE.Mesh)[]} lista achatada para picking —
    * refeita a cada registro/remoção. */
   let pickables = [];
-  const raycaster = new THREE.Raycaster();
+  const offsets = createInstanceOffsets({ getStructures: () => structures, requestRender: () => engine.requestRender && engine.requestRender() });
+  const picker = createPicker({ engine, getPickables: () => pickables, getRec: (sid) => structures.get(sid) });
 
   function rebuildPickables() {
     const set = new Set();
@@ -330,7 +171,13 @@ export function createRegistry({ engine, bus } = {}) {
       const maxIndexCount = Math.max(addIndexCount, maxVertexCount * 2);
       batch = new THREE.BatchedMesh(maxInstanceCount, maxVertexCount, maxIndexCount, getBatchMaterial(materialKey));
       batch.name = `layer:${materialKey}`;
-      batch.renderOrder = LAYER_ORDER[materialKeyToLayerGuess(materialKey)] || 0;
+      batch.renderOrder = layerOrderOfKey(materialKey);
+      if (isMirrorKey(materialKey)) {
+        // Lote das peças espelhadas (ver registry-helpers.js): o espelho no
+        // próprio batch faz o three inverter o sentido das faces.
+        batch.scale.x = -1;
+        batch.updateMatrixWorld(true); // o pick() pode vir antes do 1º quadro
+      }
       // Sem custo de cull do objeto como um todo (boundingSphere só é
       // calculado se alguém chamar computeBoundingSphere()) — o cull por
       // instância (`perObjectFrustumCulled`, default true) já cobre o caso
@@ -367,15 +214,6 @@ export function createRegistry({ engine, bus } = {}) {
     }
 
     return batch;
-  }
-
-  // `renderOrder` por camada é só uma dica estética (raio-X/transparência
-  // empilhando na ordem certa) — como o batch é por `materialKey` (que pode
-  // ter um sufixo de variante, ex. "vasos-arteria"), extrai a camada-base
-  // conhecida em `LAYER_ORDER` (que é indexado por `layer`, não por
-  // `materialKey`); os materialKey "vasos-*" caem na camada "vasos".
-  function materialKeyToLayerGuess(materialKey) {
-    return materialKey.startsWith('vasos') ? 'vasos' : materialKey;
   }
 
   /**
@@ -473,6 +311,60 @@ export function createRegistry({ engine, bus } = {}) {
   }
 
   /**
+   * Limpa as geometrias do grupo e dimensiona/cria os batches: peças com
+   * matriz-mundo de determinante negativo (lado espelhado) vão para o batch
+   * "<chave>#m" da mesma camada; as demais, para o batch normal.
+   * @returns {{ cleanGeoms: Map<THREE.Mesh, {clean: THREE.BufferGeometry, key: string}>, batches: Map<string, THREE.BatchedMesh> }}
+   */
+  function prepareBatches(materialKey, items) {
+    const need = new Map(); // chave do batch → { inst, vertices, indices }
+    const cleanGeoms = new Map(); // mesh → { clean, key } (evita computar 2x)
+    for (const item of items) {
+      for (const mesh of item.meshes) {
+        const clean = sanitizeGeometryForBatch(mesh.geometry);
+        if (!clean) continue;
+        const key = isMirroredMatrix(mesh.matrixWorld) ? materialKey + MIRROR_SUFFIX : materialKey;
+        cleanGeoms.set(mesh, { clean, key });
+        const n = need.get(key) || { inst: 0, vertices: 0, indices: 0 };
+        n.inst += 1;
+        n.vertices += clean.getAttribute('position').count;
+        n.indices += clean.getIndex() ? clean.getIndex().count : 0;
+        need.set(key, n);
+      }
+    }
+    const batches = new Map();
+    for (const [key, n] of need) batches.set(key, ensureLayerBatch(key, n.inst, n.vertices, n.indices));
+    return { cleanGeoms, batches };
+  }
+
+  /** Insere as malhas de uma estrutura nos batches; devolve as instâncias. */
+  function addItemInstances(item, cleanGeoms, batches) {
+    const instances = [];
+    for (const mesh of item.meshes) {
+      const entry = cleanGeoms.get(mesh);
+      if (!entry) continue;
+      const batch = batches.get(entry.key);
+      let geometryId;
+      let instanceId;
+      try {
+        geometryId = batch.addGeometry(entry.clean);
+        instanceId = batch.addInstance(geometryId);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn(`[atlas/registry] falha ao inserir "${item.sid}" no batch "${entry.key}": ${err && err.message}`);
+        continue;
+      }
+      const mirrored = isMirrorKey(entry.key);
+      const world = mesh.matrixWorld.clone();
+      batch.setMatrixAt(instanceId, instanceMatrixFor(world, mirrored));
+      batch.userData.sidByInstance.set(instanceId, item.sid);
+      batch.userData.geometryIdByInstance.set(instanceId, geometryId);
+      instances.push({ batch, instanceId, world, mirrored });
+    }
+    return instances;
+  }
+
+  /**
    * Registra as estruturas de um sistema recém-carregado (chamado por
    * `js/engine/assets.js` ao terminar `loadSystem`, ou por
    * `js/engine/fallback.js` com um grupo procedural). Cada malha das
@@ -541,8 +433,8 @@ export function createRegistry({ engine, bus } = {}) {
         console.warn(`[atlas/registry] nó "${nodeName}" (sid ${sid}) não tem nenhuma malha — ignorado.`);
         continue;
       }
-      const { layer, materialKey, colorVar } = classifyStructure(system, nodeName);
-      const side = /-direit[ao]$/.test(nodeName) ? 'R' : /-esquerd[ao]$/.test(nodeName) ? 'L' : undefined;
+      const { layer, materialKey, colorVar } = classifyStructure(system, nodeName, sid);
+      const side = sideOfNodeName(nodeName);
       pending.push({ sid, node, meshes, layer, materialKey, colorVar, side });
     }
 
@@ -557,45 +449,10 @@ export function createRegistry({ engine, bus } = {}) {
 
     const sids = new Set();
     for (const [materialKey, items] of byMaterialKey) {
-      let addInstances = 0;
-      let addVertexCount = 0;
-      let addIndexCount = 0;
-      const cleanGeoms = new Map(); // mesh → geometria limpa (evita computar 2x)
+      const { cleanGeoms, batches } = prepareBatches(materialKey, items);
       for (const item of items) {
-        for (const mesh of item.meshes) {
-          const clean = sanitizeGeometryForBatch(mesh.geometry);
-          if (!clean) continue;
-          cleanGeoms.set(mesh, clean);
-          addInstances += 1;
-          addVertexCount += clean.getAttribute('position').count;
-          addIndexCount += clean.getIndex() ? clean.getIndex().count : 0;
-        }
-      }
-      if (addInstances === 0) continue;
-      const batch = ensureLayerBatch(materialKey, addInstances, addVertexCount, addIndexCount);
-
-      for (const item of items) {
-        const instances = [];
-        for (const mesh of item.meshes) {
-          const clean = cleanGeoms.get(mesh);
-          if (!clean) continue;
-          let geometryId;
-          let instanceId;
-          try {
-            geometryId = batch.addGeometry(clean);
-            instanceId = batch.addInstance(geometryId);
-          } catch (err) {
-            // eslint-disable-next-line no-console
-            console.warn(`[atlas/registry] falha ao inserir "${item.sid}" no batch "${materialKey}": ${err && err.message}`);
-            continue;
-          }
-          batch.setMatrixAt(instanceId, mesh.matrixWorld);
-          batch.userData.sidByInstance.set(instanceId, item.sid);
-          batch.userData.geometryIdByInstance.set(instanceId, geometryId);
-          instances.push({ batch, instanceId });
-        }
+        const instances = addItemInstances(item, cleanGeoms, batches);
         if (!instances.length) continue;
-
         const baseColorHex = item.colorVar ? readCssColor(item.colorVar, FALLBACK_COLOR) : FALLBACK_COLOR;
         const rec = {
           sid: item.sid, system, layer: item.layer, materialKey, colorVar: item.colorVar,
@@ -741,11 +598,18 @@ export function createRegistry({ engine, bus } = {}) {
   }
 
   /** @type {import('../core/contracts.js').Registry['getBBox']} */
-  function getBBox(sid) {
+  function restBBox(sid) {
     const rec = structures.get(sid);
     if (!rec) return null;
     if (!rec.bboxCache) rec.bboxCache = computeWorldBBox(rec.node);
     return rec.bboxCache;
+  }
+
+  /** Caixa atual: com a vista "Separar peças" ligada, já deslocada (a câmera,
+   * os rótulos e o foco seguem a peça onde ela está). */
+  function getBBox(sid) {
+    const rest = restBBox(sid);
+    return rest ? offsets.shiftedBox(sid, rest) : null;
   }
 
   /** @type {import('../core/contracts.js').Registry['setVisible']} */
@@ -771,7 +635,7 @@ export function createRegistry({ engine, bus } = {}) {
       let set = translucentByBatch.get(batch);
       if (!set) { set = new Set(); translucentByBatch.set(batch, set); }
       if (translucent) set.add(rec.sid); else set.delete(rec.sid);
-      const baseOrder = LAYER_ORDER[materialKeyToLayerGuess(batch.material.userData.materialKey)] || 0;
+      const baseOrder = layerOrderOfKey(batch.material.userData.materialKey);
       batch.material.depthWrite = set.size === 0;
       batch.renderOrder = set.size === 0 ? baseOrder : 100 + baseOrder;
     }
@@ -873,64 +737,6 @@ export function createRegistry({ engine, bus } = {}) {
   }
 
   /**
-   * Raycast a partir de um ponto de tela normalizado ([-1,1], ver
-   * `contracts.js` `ScreenPoint`). `pickables` mistura `THREE.BatchedMesh`
-   * (estruturas de `registerSystem`, várias por objeto — resolvidas via
-   * `intersect.batchId` → sid, guardado em `batch.userData.sidByInstance`)
-   * e `THREE.Mesh` individuais (`registerOrganDetail`, uma por objeto,
-   * resolvida via `mesh.userData.sid` como antes). A visibilidade por
-   * instância dentro de um batch já é respeitada pelo `BatchedMesh.raycast`
-   * nativo; para malhas individuais, `Raycaster.intersectObjects` já
-   * ignora objetos com `.visible === false`. Quando o material tem
-   * `clippingPlanes` (plano de corte, WP06 `xray-clip.js`), descarta
-   * acertos do lado "cortado" do plano.
-   * @type {import('../core/contracts.js').Registry['pick']}
-   */
-  // `camera` padrão = a câmera do motor: os chamadores (main.js, selection.js)
-  // passam só o ponto — sem este padrão o pick devolvia null para TODO toque
-  // e nenhuma estrutura abria pelo corpo 3D (bug do WP13 até o hotfix C2).
-  function sidOfHit(hit) {
-    if (hit.object.isBatchedMesh) {
-      const map = hit.object.userData.sidByInstance;
-      return map ? map.get(hit.batchId) : null;
-    }
-    return hit.object.userData && hit.object.userData.sid;
-  }
-
-  function layerOfHit(hit) {
-    const sid = sidOfHit(hit);
-    const rec = sid && structures.get(sid);
-    return rec ? rec.layer : null;
-  }
-
-  function pick(point, camera = engine && engine.camera) {
-    if (!camera || !pickables.length) return null;
-    raycaster.setFromCamera(point, camera);
-    const hits = raycaster.intersectObjects(pickables, false);
-    // Empate de distância (superfícies coincidentes, < PICK_TIE_EPS): ganha
-    // a camada mais profunda (A.10) — o mais próximo continua vencendo
-    // quando a diferença é real.
-    hits.sort((a, b) => {
-      if (Math.abs(a.distance - b.distance) < PICK_TIE_EPS) {
-        const pa = PICK_LAYER_PRIORITY[layerOfHit(a)] ?? 10;
-        const pb = PICK_LAYER_PRIORITY[layerOfHit(b)] ?? 10;
-        if (pa !== pb) return pa - pb;
-      }
-      return a.distance - b.distance;
-    });
-    for (const hit of hits) {
-      const planes = hit.object.material && hit.object.material.clippingPlanes;
-      if (planes && planes.length) {
-        const clipped = planes.some((plane) => plane.distanceToPoint(hit.point) < 0);
-        if (clipped) continue;
-      }
-      const sid = sidOfHit(hit);
-      if (sid) return sid;
-    }
-    return null;
-  }
-
-  /**
    * Estatísticas para o orçamento de desempenho (docs/ATLAS_UX_SPEC.md §17
    * — até 150 draw calls no celular). Usa `renderer.info` (contagem real do
    * último frame, já refletindo o número de batches desenhados) quando
@@ -966,7 +772,14 @@ export function createRegistry({ engine, bus } = {}) {
     setColor,
     setHighlight,
     iterate,
-    pick,
+    // Vista "Separar peças" (explode.js, carregada sob demanda): peças em repouso
+    // + gravação dos deslocamentos nas matrizes das instâncias.
+    getExplodeItems: () => offsets.items(restBBox),
+    getExplodeParts: offsets.parts,
+    setExplodeOffsets: offsets.apply,
+    pick: picker.pick,
+    pickCycle: picker.pickCycle,
+    setPreferUnderFascia: picker.setPreferUnderFascia,
     stats,
     // Extensões usadas por js/engine/assets.js e js/engine/fallback.js —
     // não fazem parte da forma mínima checada por `isRegistry()`, mas

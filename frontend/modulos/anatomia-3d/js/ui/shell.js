@@ -579,6 +579,8 @@ function installActions() {
         { label: 'Afastar (−)', onSelect: () => window.AtlasShell.zoomOut() },
         { label: labelsEnabled ? 'Rótulos: ligados' : 'Rótulos: desligados', checked: labelsEnabled, onSelect: () => window.AtlasShell.toggleLabels() },
         { label: 'Vistas…', onSelect: () => window.AtlasShell.openViewPresetMenu(anchor) },
+        // Vista explodida (flag `explode`): só aparece se o ponto de entrada foi montado.
+        ...(window.AtlasShell.toggleExplode ? [{ label: 'Separar peças…', checked: !!(window.AtlasShell.isExploded && window.AtlasShell.isExploded()), onSelect: () => window.AtlasShell.toggleExplode() }] : []),
         { label: 'Tela cheia', onSelect: () => window.AtlasShell.toggleFullscreen() },
         { label: `Trocar sexo (atual: ${storeGet().sex})`, onSelect: () => window.AtlasShell.toggleSex() },
         { label: 'Qualidade gráfica…', onSelect: () => window.AtlasShell.openQualityMenu(anchor) },

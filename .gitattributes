@@ -1,0 +1,21 @@
+# Normaliza fim de linha: o repositório guarda LF e o checkout também usa LF,
+# mesmo no Windows com core.autocrlf=true. Vários testes (entrada, seo, staging,
+# atlas/review-status) comparam texto exato com "\n".
+* text=auto eol=lf
+
+# Binários: nunca converter fim de linha nem gerar diff de texto.
+*.glb binary
+*.gz binary
+*.wasm binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.zip binary

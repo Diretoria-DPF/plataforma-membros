@@ -356,6 +356,35 @@ html[data-theme='dark'] .atlas-layers-toggle::before {
   transition: opacity 120ms var(--atlas-easing), box-shadow 120ms var(--atlas-easing);
 }
 
+/* "Somente fáscias": botão de alternância (aria-pressed), alvo de toque de 44px. */
+.atlas-layers-fascia-only {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--laift-text);
+  border: 1px solid var(--laift-border);
+  border-radius: var(--laift-radius-sm);
+  font-size: clamp(12px, 2.5vw, 15px);
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.atlas-layers-fascia-only[aria-pressed='true'] {
+  background: var(--laift-primary);
+  border-color: var(--laift-primary);
+  color: white;
+}
+
+.atlas-layers-fascia-only:focus-visible {
+  outline: 2px solid var(--laift-primary);
+  outline-offset: 2px;
+}
+
 .atlas-layers-restore-btn:hover {
   opacity: 0.9;
 }

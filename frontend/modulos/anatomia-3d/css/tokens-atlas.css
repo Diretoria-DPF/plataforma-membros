@@ -85,6 +85,7 @@
      contra --atlas-canvas-bg (#e4e9f2) e --laift-surface (#ffffff).
      ----------------------------------------------------------------------- */
   --atlas-color-pele: #d9b99a;
+  --atlas-color-fascias: #8f8266;
   --atlas-color-musculos: #8a3b32;
   --atlas-color-esqueleto: #ded6bf;
   --atlas-color-visceras: #b5563f;
@@ -129,6 +130,7 @@ html[data-theme='dark'] {
   --atlas-canvas-bg-radial: #131a24;
 
   --atlas-color-pele: #caa17d;
+  --atlas-color-fascias: #c9bd9d;
   --atlas-color-musculos: #c1594c;
   --atlas-color-esqueleto: #e7e0cb;
   --atlas-color-visceras: #d97a5e;
@@ -144,6 +146,7 @@ html[data-theme='dark'] {
     --atlas-canvas-bg-radial: #131a24;
 
     --atlas-color-pele: #caa17d;
+    --atlas-color-fascias: #c9bd9d;
     --atlas-color-musculos: #c1594c;
     --atlas-color-esqueleto: #e7e0cb;
     --atlas-color-visceras: #d97a5e;
