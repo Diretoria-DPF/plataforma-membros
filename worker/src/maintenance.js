@@ -223,12 +223,14 @@ export async function runMaintenance(sql, correlationId, env) {
       DELETE FROM agent_traces
       WHERE created_at < now() - make_interval(days => ${RETENTION.AGENT_TRACES_DAYS})
       RETURNING 1`,
-    // SEC-02: cadastros nunca confirmados (ver o cabeçalho). Uma só instrução; o WHERE externo reconfirma
-    // email_confirmed_at IS NULL na linha travada (quem confirmou no meio da faxina não é apagado).
+    // SEC-02: cadastros nunca confirmados (ver o cabeçalho). Uma só instrução; o WHERE externo repete as condições
+    // de estado na linha travada (quem confirmou, foi banido ou entrou no meio da faxina não é apagado).
     unconfirmedProfilesPurge: () => sql`
       DELETE FROM profiles
       WHERE email_confirmed_at IS NULL
         AND role = 'visitor'::user_role
+        AND status = 'active'::account_status
+        AND NOT EXISTS (SELECT 1 FROM sessions s2 WHERE s2.profile_id = profiles.id)
         AND id IN (
           SELECT p.id FROM profiles p
           WHERE p.email_confirmed_at IS NULL

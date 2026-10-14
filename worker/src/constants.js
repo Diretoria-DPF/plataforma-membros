@@ -663,7 +663,8 @@ export const ROLE_RATE_LIMITS = Object.freeze({
 // eventos e alertas aos admins). Pode ser ajustado sem deploy de código pela variável EMAIL_DAILY_MAX do Worker.
 // Cadastro, reenvio, aviso de tentativa de cadastro e redefinição de senha somam neste mesmo balde.
 export const EMAIL_DAILY_MAX = 240;
-export const EMAIL_QUOTA = Object.freeze({ BUCKET: 'EMAIL_DAILY', ID: 'global', WINDOW_SECONDS: 86400 });
+// RESET_RESERVE_RATIO: fração do teto que só a redefinição de senha usa (cadastro e reenvio param antes).
+export const EMAIL_QUOTA = Object.freeze({ BUCKET: 'EMAIL_DAILY', ID: 'global', WINDOW_SECONDS: 86400, RESET_RESERVE_RATIO: 0.2 });
 export const RESEND_RATE_LIMITS = Object.freeze({
   // Intervalo mínimo entre dois reenvios para o mesmo e-mail (o front mostra a contagem).
   RESEND_COOLDOWN: Object.freeze({ MAX_ATTEMPTS: 1, WINDOW_SECONDS: 120 }),

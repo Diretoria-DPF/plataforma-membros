@@ -10,11 +10,15 @@
  *  - resposta UNIFORME: e-mail inexistente, já confirmado ou aguardando confirmação recebem a mesma mensagem
  *    e passam pelas mesmas consultas; o e-mail sai pelo env.waitUntil (depois da resposta), então o tempo de
  *    resposta não revela se houve envio;
- *  - o reenvio só vale para conta existente, ativa e NÃO confirmada; o token anterior é apagado e o novo
+ *  - o reenvio só vale para conta existente, ativa e NÃO confirmada; os links pendentes são apagados e o novo
  *    (48 h) é guardado só como hash, igual ao do cadastro;
+ *  - o link reenviado é de "criar senha" (password_reset): ao concluir, a redefinição confirma o e-mail. Assim quem
+ *    cadastrou o e-mail de outra pessoa (com uma senha que só ele sabe) perde a conta quando a dona do e-mail a
+ *    assume; confirmar pelo reenvio nunca ativa uma senha escolhida por terceiro (pré-sequestro de conta);
  *  - recadastro de conta não confirmada vira reenvio e NÃO altera a conta existente;
  *  - teto diário (EMAIL_DAILY_MAX, ~80% do plano da Brevo): acima dele, "tente mais tarde" para todo mundo
- *    e uma auditoria por janela; falha de envio vai a error_logs só com o status HTTP (sem e-mail, sem corpo).
+ *    e uma auditoria por janela; os últimos 20% ficam reservados à redefinição de senha (cadastro e reenvio
+ *    em massa não trancam a recuperação de conta); falha de envio vai a error_logs só com o status HTTP (sem e-mail, sem corpo).
  */
 import * as C from '../constants.js';
 import * as S from '../security.js';
@@ -27,7 +31,6 @@ export const REGISTER_SUCCESS_MESSAGE =
 export const RESEND_GENERIC_MESSAGE =
   'Se houver um cadastro aguardando confirmação para este e-mail, enviamos um novo link. Confira a caixa de entrada e o spam.';
 export const EMAIL_QUOTA_MESSAGE = 'O envio de e-mails atingiu o limite de hoje. Tente novamente mais tarde.';
-export const RESEND_COOLDOWN_MESSAGE = 'Aguarde 2 minutos antes de pedir um novo e-mail de confirmação.';
 
 const BCRYPT_COST = 10;
 const L = C.RESEND_RATE_LIMITS;
@@ -39,10 +42,20 @@ export function emailDailyMax(env) {
   return Number.isInteger(configured) && configured > 0 ? configured : C.EMAIL_DAILY_MAX;
 }
 
-/** Barra ANTES de qualquer consulta por e-mail (assim o aviso é igual para qualquer endereço). Só lê o contador. */
-export async function assertEmailQuotaAvailable(sql, env) {
+/** Parte do teto que cadastro e reenvio podem usar; o resto fica para a redefinição de senha. */
+export function signupEmailMax(env) {
+  const max = emailDailyMax(env);
+  return Math.max(1, max - Math.ceil(max * Q.RESET_RESERVE_RATIO));
+}
+
+/**
+ * Barra ANTES de qualquer consulta por e-mail (assim o aviso é igual para qualquer endereço). Só lê o contador.
+ * `purpose` 'reset' usa o teto inteiro; o resto ('signup') para antes, na reserva da redefinição.
+ */
+export async function assertEmailQuotaAvailable(sql, env, purpose = 'signup') {
   const used = await S.peekRateLimit(sql, Q.BUCKET, Q.ID, Q.WINDOW_SECONDS);
-  if (used >= emailDailyMax(env)) throw E.RateLimitError(EMAIL_QUOTA_MESSAGE);
+  const limit = purpose === 'reset' ? emailDailyMax(env) : signupEmailMax(env);
+  if (used >= limit) throw E.RateLimitError(EMAIL_QUOTA_MESSAGE);
 }
 
 /** Conta um e-mail no balde diário; ao atingir o teto, grava UMA auditoria por janela. Devolve se ainda cabe. */
@@ -76,7 +89,8 @@ export function deliverEmail(sql, env, correlationId, kind, message, profileId) 
     }
   })();
   if (env && typeof env.waitUntil === 'function') {
-    env.waitUntil(job.catch(() => undefined));
+    // logError já engole as próprias falhas; aqui sobra só o imprevisto, registrado sem dados da pessoa.
+    env.waitUntil(job.catch((err) => console.error('[MAIL_JOB_FAILED] ' + ((err && err.name) || 'Error'))));
     return Promise.resolve();
   }
   return job;
@@ -91,14 +105,21 @@ function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
+/** Nome e usuário vêm do cadastro (texto de terceiros): uma linha só, sem caracteres de controle, curto. */
+function plainField(text, max) {
+  return String(text || '').replace(/[\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
+}
+
 const HTML_OPEN = '<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222">';
 const NOT_YOU = 'Se você não reconhece este cadastro, não clique no link: ele expira sozinho e o cadastro não confirmado é apagado em '
   + 'poucos dias. Se o e-mail é seu e alguém o usou, use "Esqueci minha senha" na tela de entrada para assumir a conta.';
 
 /** E-mail com o link de confirmação. Mostra o nome de usuário, para a pessoa reconhecer (ou não) o cadastro. */
-export function confirmationMessage(env, to, fullName, username, rawToken) {
+export function confirmationMessage(env, to, rawFullName, rawUsername, rawToken) {
   const link = env.APP_BASE_URL + '?mode=confirm&token=' + encodeURIComponent(rawToken);
   const hours = C.LIMITS.EMAIL_TOKEN_TTL_HOURS;
+  const fullName = plainField(rawFullName, 80);
+  const username = plainField(rawUsername, 30);
   const who = username ? ' (usuário @' + username + ')' : '';
   return {
     to,
@@ -107,6 +128,26 @@ export function confirmationMessage(env, to, fullName, username, rawToken) {
     html: HTML_OPEN + '<h2>Confirme sua conta</h2>'
       + '<p>Olá, ' + escapeHtml(fullName) + escapeHtml(who) + '.</p>'
       + '<p><a href="' + link + '" target="_blank">Clique aqui para confirmar seu e-mail</a></p>'
+      + '<p>Este link expira em ' + hours + ' horas.</p><p>' + escapeHtml(NOT_YOU) + '</p></div>',
+  };
+}
+
+/**
+ * Reenvio: link de "criar senha" (modo reset). Concluir a redefinição confirma o e-mail e troca a senha, então
+ * uma senha posta por quem cadastrou o e-mail alheio nunca é ativada por este link.
+ */
+export function resendMessage(env, to, rawUsername, rawToken) {
+  const link = env.APP_BASE_URL + '?mode=reset&token=' + encodeURIComponent(rawToken);
+  const hours = C.LIMITS.EMAIL_TOKEN_TTL_HOURS;
+  const username = plainField(rawUsername, 30);
+  const who = username ? ' (usuário @' + username + ')' : '';
+  const intro = 'Recebemos um pedido para confirmar o cadastro deste e-mail' + who + '. Para confirmar, crie a senha da conta pelo link';
+  return {
+    to,
+    subject: 'Confirme seu e-mail e crie sua senha — ' + env.MAIL_FROM_NAME,
+    text: intro + ': ' + link + ' (expira em ' + hours + ' horas). ' + NOT_YOU,
+    html: HTML_OPEN + '<h2>Confirme seu e-mail</h2><p>' + escapeHtml(intro) + '.</p>'
+      + '<p><a href="' + link + '" target="_blank">Clique aqui para criar sua senha e confirmar o e-mail</a></p>'
       + '<p>Este link expira em ' + hours + ' horas.</p><p>' + escapeHtml(NOT_YOU) + '</p></div>',
   };
 }
@@ -124,8 +165,9 @@ function registerNoticeMessage(env, to) {
 }
 
 /**
- * UM statement: acha a conta ativa e não confirmada do e-mail, apaga os links de confirmação pendentes e grava
- * o novo. Sem conta elegível, não mexe em nada e devolve null (mesmo número de consultas nos dois casos).
+ * UM statement: acha a conta ativa e não confirmada do e-mail, apaga os links pendentes (confirmação e criação de
+ * senha) e grava o novo, do tipo password_reset (ver o cabeçalho). Sem conta elegível, não mexe em nada e devolve
+ * null (mesmo número de consultas nos dois casos).
  */
 async function reissueToken(sql, env, email) {
   const rawToken = S.generateRawToken();
@@ -139,44 +181,49 @@ async function reissueToken(sql, env, email) {
     dropped AS (
       DELETE FROM account_tokens
       WHERE profile_id IN (SELECT id FROM target)
-        AND token_type = 'email_confirmation'::account_token_type AND used_at IS NULL
+        AND token_type IN ('email_confirmation'::account_token_type, 'password_reset'::account_token_type)
+        AND used_at IS NULL
     ),
     issued AS (
       INSERT INTO account_tokens (profile_id, token_type, token_hash, expires_at)
-      SELECT id, 'email_confirmation'::account_token_type, ${tokenHash}, now() + (${C.LIMITS.EMAIL_TOKEN_TTL_HOURS} || ' hours')::interval
+      SELECT id, 'password_reset'::account_token_type, ${tokenHash}, now() + (${C.LIMITS.EMAIL_TOKEN_TTL_HOURS} || ' hours')::interval
       FROM target
       RETURNING profile_id
     )
     SELECT t.id, t.full_name, t.username FROM target t JOIN issued i ON i.profile_id = t.id
   `;
-  return rows.length ? { id: rows[0].id, fullName: rows[0].full_name, username: rows[0].username, rawToken } : null;
+  return rows.length ? { id: rows[0].id, username: rows[0].username, rawToken } : null;
 }
 
 async function sendNewConfirmation(sql, env, email, correlationId) {
   const target = await reissueToken(sql, env, email);
   if (target) {
     await deliverEmail(sql, env, correlationId, 'MAIL_CONFIRMATION_FAILED',
-      confirmationMessage(env, email, target.fullName, target.username, target.rawToken), target.id);
+      resendMessage(env, email, target.username, target.rawToken), target.id);
   }
   return target;
 }
 
-/** Limites do reenvio: por IP, por e-mail (hora) e o intervalo mínimo por e-mail. Todos por UPSERT atômico. */
+/**
+ * Limites do reenvio: por IP e por e-mail (hora), por UPSERT atômico. Devolve se o intervalo mínimo permite enviar.
+ * Dentro do intervalo NÃO há erro (o recadastro conta no mesmo balde e um erro aqui revelaria a conta): a resposta
+ * é a de sempre, sem envio.
+ */
 async function enforceResendLimits(sql, email, clientIp) {
   await S.enforceRateLimit(sql, 'RESEND_IP', clientIp || 'unknown', L.RESEND_IP.MAX_ATTEMPTS, L.RESEND_IP.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'RESEND_EMAIL', email, L.RESEND_EMAIL.MAX_ATTEMPTS, L.RESEND_EMAIL.WINDOW_SECONDS);
   const recent = await S.countRateLimitAttempt(sql, 'RESEND_COOLDOWN', email, L.RESEND_COOLDOWN.WINDOW_SECONDS);
-  if (recent > L.RESEND_COOLDOWN.MAX_ATTEMPTS) throw E.RateLimitError(RESEND_COOLDOWN_MESSAGE);
+  return recent <= L.RESEND_COOLDOWN.MAX_ATTEMPTS;
 }
 
 /** apiResendConfirmation: sempre a mesma resposta (ver cabeçalho). Erros só de formato, limite ou teto. */
 export async function resendConfirmation(sql, env, email, correlationId) {
   const normalized = S.normalizeText(email).toLowerCase();
   if (!S.isValidEmail(normalized)) throw E.ValidationError('Informe um e-mail válido.');
-  await enforceResendLimits(sql, normalized, env.clientIp);
+  const canSend = await enforceResendLimits(sql, normalized, env.clientIp);
   await assertEmailQuotaAvailable(sql, env);
 
-  const target = await sendNewConfirmation(sql, env, normalized, correlationId);
+  const target = canSend ? await sendNewConfirmation(sql, env, normalized, correlationId) : null;
   const actorId = target ? target.id : null;
   await Logging.logAudit(sql, correlationId, actorId, 'RESEND_CONFIRMATION', 'profile', actorId, 'success', null);
   return { success: true, message: RESEND_GENERIC_MESSAGE, cooldownSeconds: L.RESEND_COOLDOWN.WINDOW_SECONDS };

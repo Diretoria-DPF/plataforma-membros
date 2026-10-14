@@ -317,7 +317,7 @@ export async function requestPasswordReset(sql, env, email, correlationId) {
   await S.enforceRateLimit(sql, 'RESET_REQUEST_GLOBAL', 'global', C.RATE_LIMITS.RESET_REQUEST_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST_GLOBAL.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'RESET_REQUEST_IP', env.clientIp || 'unknown', C.RATE_LIMITS.RESET_REQUEST_IP.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST_IP.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'RESET_REQUEST', normalizedEmail, C.RATE_LIMITS.RESET_REQUEST.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST.WINDOW_SECONDS);
-  await ConfirmationService.assertEmailQuotaAvailable(sql, env);
+  await ConfirmationService.assertEmailQuotaAvailable(sql, env, 'reset');
 
   const rows = await sql`SELECT id, full_name FROM profiles WHERE email = ${normalizedEmail} AND status = 'active'::account_status LIMIT 1`;
 

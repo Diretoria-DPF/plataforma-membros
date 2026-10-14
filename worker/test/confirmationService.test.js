@@ -19,7 +19,7 @@ import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 
 const CID = '00000000-0000-4000-8000-0000000000c2';
 const {
-  REGISTER_SUCCESS_MESSAGE, RESEND_GENERIC_MESSAGE, RESEND_COOLDOWN_MESSAGE, EMAIL_QUOTA_MESSAGE,
+  REGISTER_SUCCESS_MESSAGE, RESEND_GENERIC_MESSAGE, EMAIL_QUOTA_MESSAGE,
 } = ConfirmationService;
 
 let db;
@@ -41,8 +41,8 @@ const lastToken = (mode = 'confirm') => {
   return decodeURIComponent(match[1]);
 };
 const profileOf = async (email) => (await db.query('SELECT * FROM profiles WHERE email = $1', [email])).rows[0];
-const pendingTokens = async (profileId) => (await db.query(
-  "SELECT id FROM account_tokens WHERE profile_id = $1 AND token_type = 'email_confirmation' AND used_at IS NULL", [profileId])).rows;
+const pendingTokens = async (profileId, type = 'email_confirmation') => (await db.query(
+  'SELECT id FROM account_tokens WHERE profile_id = $1 AND token_type = $2 AND used_at IS NULL', [profileId, type])).rows;
 const clearCooldown = () => db.query("DELETE FROM rate_limit_buckets WHERE bucket = 'RESEND_COOLDOWN'");
 
 async function errorOf(promise) {
@@ -97,33 +97,49 @@ describe('apiResendConfirmation — resposta uniforme', () => {
 });
 
 describe('apiResendConfirmation — token, intervalo e limites', () => {
-  test('o token anterior é invalidado e o novo confirma a conta (guardado só como hash)', async () => {
+  test('o link anterior é invalidado; o novo é de "criar senha" e só ele confirma (guardado só como hash)', async () => {
     const email = nextEmail('token');
     await register(registration(email));
     const first = lastToken();
     await resend(email);
-    const second = lastToken();
-    expect(second).not.toBe(first);
+    const second = lastToken('reset');
+    expect(sentBodies().pop().subject).toMatch(/crie sua senha/);
 
     const profile = await profileOf(email);
-    expect(await pendingTokens(profile.id)).toHaveLength(1);
+    expect(await pendingTokens(profile.id)).toHaveLength(0);
+    expect(await pendingTokens(profile.id, 'password_reset')).toHaveLength(1);
     const stored = (await db.query('SELECT token_hash FROM account_tokens WHERE profile_id = $1', [profile.id])).rows;
     stored.forEach((r) => expect(r.token_hash).not.toBe(second));
 
     await expect(AuthService.confirmEmail(sql, env, first, CID)).rejects.toMatchObject({ name: 'ConflictError' });
-    await expect(AuthService.confirmEmail(sql, env, second, CID)).resolves.toMatchObject({ success: true });
+    await expect(AuthService.confirmPasswordReset(sql, env, second, 'senha-da-dona-1', CID)).resolves.toMatchObject({ success: true });
+    expect((await profileOf(email)).email_confirmed_at).not.toBeNull();
   });
 
-  test('intervalo mínimo: o 2º pedido em menos de 2 minutos é recusado, igual para qualquer e-mail', async () => {
+  test('pré-sequestro: quem cadastrou o e-mail alheio perde o acesso quando a dona confirma pelo reenvio', async () => {
+    const email = nextEmail('alvo');
+    await register(registration(email, { password: 'senha-do-intruso' }));
+    await resend(email);
+    await AuthService.confirmPasswordReset(sql, env, lastToken('reset'), 'senha-da-dona-2', CID);
+    await expect(AuthService.login(sql, env, email, 'senha-do-intruso', 'UA', CID)).rejects.toMatchObject({ name: 'AuthError' });
+    await expect(AuthService.login(sql, env, email, 'senha-da-dona-2', 'UA', CID)).resolves.toMatchObject({ success: true });
+  });
+
+  test('intervalo mínimo: dentro de 2 minutos a resposta é a mesma, sem novo e-mail (nada vaza)', async () => {
     const email = nextEmail('cooldown');
     await register(registration(email));
     await resend(email);
-    const err = await errorOf(resend(email));
-    expect(err).toMatchObject({ name: 'RateLimitError', message: RESEND_COOLDOWN_MESSAGE });
+    global.fetch.mockClear();
+    expect(await resend(email)).toMatchObject({ success: true, message: RESEND_GENERIC_MESSAGE });
+    expect(global.fetch).not.toHaveBeenCalled();
 
+    // Recadastro conta no mesmo balde: o reenvio logo depois responde igual a um e-mail novo.
+    const other = nextEmail('cooldown2');
+    await register(registration(other));
+    await register(registration(other));
     const ghost = nextEmail('fantasma');
-    await resend(ghost);
-    expect(await errorOf(resend(ghost))).toMatchObject({ name: 'RateLimitError', message: RESEND_COOLDOWN_MESSAGE });
+    await register(registration(ghost));
+    expect(await resend(other)).toEqual(await resend(ghost));
   });
 
   test('limite por e-mail na hora (além do intervalo mínimo)', async () => {
@@ -163,7 +179,6 @@ describe('cadastro com e-mail já existente (sem enumeração)', () => {
     const fresh = await register(registration(email));
     expect(fresh).toEqual({ success: true, message: REGISTER_SUCCESS_MESSAGE });
     const before = await profileOf(email);
-    const firstToken = lastToken();
 
     const again = await register(registration(email, { fullName: 'Outro Nome', password: 'outra-senha-456', username: 'outro_' + seq }));
     expect(again).toEqual(fresh);
@@ -171,8 +186,9 @@ describe('cadastro com e-mail já existente (sem enumeração)', () => {
     expect(after.full_name).toBe(before.full_name);
     expect(after.username).toBe(before.username);
     expect(after.password_hash).toBe(before.password_hash);
-    expect(lastToken()).not.toBe(firstToken);
-    expect(await pendingTokens(before.id)).toHaveLength(1);
+    expect(lastToken('reset')).toBeTruthy();
+    expect(await pendingTokens(before.id)).toHaveLength(0);
+    expect(await pendingTokens(before.id, 'password_reset')).toHaveLength(1);
     expect((await db.query('SELECT count(*)::int AS n FROM profiles WHERE email = $1', [email])).rows[0].n).toBe(1);
   });
 
@@ -288,24 +304,32 @@ describe('teto diário de e-mails', () => {
     expect(ConfirmationService.emailDailyMax({ EMAIL_DAILY_MAX: '50' })).toBe(50);
     expect(ConfirmationService.emailDailyMax({ EMAIL_DAILY_MAX: 'abc' })).toBe(240);
     expect(ConfirmationService.emailDailyMax({ EMAIL_DAILY_MAX: '-1' })).toBe(240);
+    // 20% reservados à redefinição de senha.
+    expect(ConfirmationService.signupEmailMax({})).toBe(192);
+    expect(ConfirmationService.signupEmailMax({ EMAIL_DAILY_MAX: '5' })).toBe(4);
   });
 
-  test('acima do teto: "tente mais tarde" para qualquer e-mail (cadastro, reenvio e reset) e uma auditoria', async () => {
-    env = makeEnv({ EMAIL_DAILY_MAX: '2' });
-    await register(registration(nextEmail('cota')));
-    await register(registration(nextEmail('cota')));
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+  test('teto: cadastro e reenvio param na reserva; a redefinição usa o resto; depois, "tente mais tarde" e uma auditoria', async () => {
+    env = makeEnv({ EMAIL_DAILY_MAX: '5' });
+    const first = nextEmail('cota');
+    await register(registration(first));
+    for (let i = 0; i < 3; i += 1) await register(registration(nextEmail('cota')));
+    expect(global.fetch).toHaveBeenCalledTimes(4);
 
-    const blocked = [
-      await errorOf(register(registration(nextEmail('cota')))),
-      await errorOf(resend(nextEmail('cota'))),
-      await errorOf(AuthService.requestPasswordReset(sql, env, nextEmail('cota'), CID)),
-    ];
-    blocked.forEach((err) => expect(err).toMatchObject({ name: 'RateLimitError', message: EMAIL_QUOTA_MESSAGE }));
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+    const blockedSignup = [await errorOf(register(registration(nextEmail('cota')))), await errorOf(resend(nextEmail('cota')))];
+    blockedSignup.forEach((err) => expect(err).toMatchObject({ name: 'RateLimitError', message: EMAIL_QUOTA_MESSAGE }));
+    await expect(AuthService.requestPasswordReset(sql, env, first, CID)).resolves.toMatchObject({ success: true });
+    expect(global.fetch).toHaveBeenCalledTimes(5);
+    expect(await errorOf(AuthService.requestPasswordReset(sql, env, nextEmail('cota'), CID)))
+      .toMatchObject({ name: 'RateLimitError', message: EMAIL_QUOTA_MESSAGE });
     const alerts = (await db.query("SELECT details FROM audit_logs WHERE action = 'EMAIL_QUOTA_REACHED'")).rows;
     expect(alerts).toHaveLength(1);
-    expect(alerts[0].details).toEqual({ max: 2, windowSeconds: 86400 });
+    expect(alerts[0].details).toEqual({ max: 5, windowSeconds: 86400 });
+  });
+
+  test('nome com quebras de linha não vira texto livre no e-mail', () => {
+    const msg = ConfirmationService.confirmationMessage(makeEnv(), 'a@b.com', 'Ana\r\nClique em http://golpe', 'ana', 't');
+    expect(msg.text).not.toMatch(/[\r\n]/);
   });
 
   test('falha da Brevo vai a error_logs só com o status, sem o endereço nem o corpo da resposta', async () => {
