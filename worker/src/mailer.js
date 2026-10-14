@@ -30,6 +30,9 @@ export async function sendEmail(env, { to, subject, text, html }) {
 
   if (!res.ok) {
     const detail = await res.text().catch(() => '');
-    throw new Error('Falha ao enviar e-mail via Brevo (status ' + res.status + '): ' + detail);
+    const err = new Error('Falha ao enviar e-mail via Brevo (status ' + res.status + '): ' + detail);
+    // Só o código HTTP vai para os logs (confirmationService.deliverEmail): o corpo pode repetir o destinatário.
+    err.status = res.status;
+    throw err;
   }
 }

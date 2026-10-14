@@ -32,7 +32,7 @@ function groupOf(name) {
   if (/^apiAdmin/.test(name)) return 'Administração';
   if (/^apiLearn/.test(name)) return 'Aprendizagem e IA';
   if (/Mfa/.test(name)) return 'Verificação em duas etapas';
-  if (/^api(Register|ConfirmEmail|Login|RequestPasswordReset|ValidateResetToken|ConfirmPasswordReset|Logout|TouchSession)$/.test(name)) return 'Conta e sessão';
+  if (/^api(Register|ConfirmEmail|Login|RequestPasswordReset|ValidateResetToken|ConfirmPasswordReset|ResendConfirmation|Logout|TouchSession)$/.test(name)) return 'Conta e sessão';
   return 'Plataforma';
 }
 

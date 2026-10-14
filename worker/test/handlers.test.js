@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 146 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 147 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -93,6 +93,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiMemoryGet', 'apiMemorySetConsent', 'apiMemoryDeleteItem', 'apiMemoryDeleteAll', 'apiMemorySetPreference', 'apiMemoryExport',
       'apiAdminMemoryStats', 'apiAdminPurgeMemberMemory', 'apiAdminAgentsStats'
     );
+    // SEC-02 — reenvio do e-mail de confirmação (público, resposta uniforme)
+    expected.push('apiResendConfirmation');
     expect(Object.keys(API_REGISTRY).sort()).toEqual(expected.sort());
   });
 

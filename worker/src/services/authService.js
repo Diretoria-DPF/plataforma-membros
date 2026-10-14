@@ -17,8 +17,11 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
-import { sendEmail } from '../mailer.js';
 import * as MfaService from './mfaService.js';
+import * as ConfirmationService from './confirmationService.js';
+
+// apiResendConfirmation (SEC-02) mora em confirmationService.js; reexportado para o registro de ações.
+export { resendConfirmation } from './confirmationService.js';
 
 const BCRYPT_COST = 10;
 // Hash bcrypt fixo (não corresponde a nenhuma senha real) usado só para
@@ -92,51 +95,23 @@ function assertValidRegistration(input) {
   };
 }
 
-function escapeHtmlForEmail(text) {
-  return String(text || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-async function sendConfirmationEmail(env, email, fullName, rawToken, correlationId, profileId, sql) {
-  const link = env.APP_BASE_URL + '?mode=confirm&token=' + encodeURIComponent(rawToken);
-  try {
-    await sendEmail(env, {
-      to: email,
-      subject: 'Confirme sua conta — ' + env.MAIL_FROM_NAME,
-      text: 'Olá, ' + fullName + '. Confirme sua conta acessando: ' + link + ' (o link expira em ' + C.LIMITS.EMAIL_TOKEN_TTL_HOURS + ' horas).',
-      html:
-        '<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222">' +
-        '<h2>Confirme sua conta</h2>' +
-        '<p>Olá, ' + escapeHtmlForEmail(fullName) + '.</p>' +
-        '<p><a href="' + link + '" target="_blank">Clique aqui para confirmar seu e-mail</a></p>' +
-        '<p>Este link expira em ' + C.LIMITS.EMAIL_TOKEN_TTL_HOURS + ' horas.</p>' +
-        '</div>',
-    });
-  } catch (mailErr) {
-    await Logging.logError(sql, correlationId, 'MAIL_CONFIRMATION_FAILED', 'Falha ao enviar e-mail de confirmação.', {
-      profileId,
-      detail: String((mailErr && mailErr.message) || mailErr),
-    });
-  }
-}
-
 export async function register(sql, env, input, correlationId) {
   const data = assertValidRegistration(input);
   await S.enforceRateLimit(sql, 'REGISTER_GLOBAL', 'global', C.RATE_LIMITS.REGISTER_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER_GLOBAL.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'REGISTER_IP', env.clientIp || 'unknown', C.RATE_LIMITS.REGISTER_IP.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER_IP.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'REGISTER', data.email, C.RATE_LIMITS.REGISTER.MAX_ATTEMPTS, C.RATE_LIMITS.REGISTER.WINDOW_SECONDS);
 
-  const existing = await sql`SELECT id FROM profiles WHERE email = ${data.email} LIMIT 1`;
-  if (existing.length) {
-    throw E.ConflictError('Já existe uma conta cadastrada com este e-mail.');
-  }
-  const usernameTaken = await sql`SELECT id FROM profiles WHERE username = ${data.username} LIMIT 1`;
-  if (usernameTaken.length) {
+  // SEC-02: o teto de e-mails barra antes de qualquer consulta por e-mail (aviso igual para qualquer endereço).
+  await ConfirmationService.assertEmailQuotaAvailable(sql, env);
+  // Nome de usuário primeiro: o erro de campo sai igual exista ou não o e-mail. Se o nome é da conta do PRÓPRIO
+  // e-mail (recadastro), segue para o tratamento de e-mail existente — sem "já existe" (anti-enumeração).
+  const usernameOwner = await sql`SELECT email FROM profiles WHERE username = ${data.username} LIMIT 1`;
+  if (usernameOwner.length && usernameOwner[0].email !== data.email) {
     throw E.ConflictError('Este nome de usuário já está em uso.');
+  }
+  const existing = await sql`SELECT id, email_confirmed_at FROM profiles WHERE email = ${data.email} LIMIT 1`;
+  if (existing.length) {
+    return ConfirmationService.registerExistingEmail(sql, env, data, existing[0], correlationId);
   }
 
   const rawToken = S.generateRawToken();
@@ -182,10 +157,11 @@ export async function register(sql, env, input, correlationId) {
     }
   }
 
-  await sendConfirmationEmail(env, data.email, data.fullName, rawToken, correlationId, profileId, sql);
+  await ConfirmationService.deliverEmail(sql, env, correlationId, 'MAIL_CONFIRMATION_FAILED',
+    ConfirmationService.confirmationMessage(env, data.email, data.fullName, data.username, rawToken), profileId);
   await Logging.logAudit(sql, correlationId, profileId, 'REGISTER', 'profile', profileId, 'success', null);
 
-  return { success: true, message: 'Cadastro realizado. Verifique seu e-mail para confirmar a conta.' };
+  return { success: true, message: ConfirmationService.REGISTER_SUCCESS_MESSAGE };
 }
 
 export async function confirmEmail(sql, env, rawToken, correlationId) {
@@ -341,6 +317,7 @@ export async function requestPasswordReset(sql, env, email, correlationId) {
   await S.enforceRateLimit(sql, 'RESET_REQUEST_GLOBAL', 'global', C.RATE_LIMITS.RESET_REQUEST_GLOBAL.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST_GLOBAL.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'RESET_REQUEST_IP', env.clientIp || 'unknown', C.RATE_LIMITS.RESET_REQUEST_IP.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST_IP.WINDOW_SECONDS);
   await S.enforceRateLimit(sql, 'RESET_REQUEST', normalizedEmail, C.RATE_LIMITS.RESET_REQUEST.MAX_ATTEMPTS, C.RATE_LIMITS.RESET_REQUEST.WINDOW_SECONDS);
+  await ConfirmationService.assertEmailQuotaAvailable(sql, env);
 
   const rows = await sql`SELECT id, full_name FROM profiles WHERE email = ${normalizedEmail} AND status = 'active'::account_status LIMIT 1`;
 
@@ -360,24 +337,17 @@ export async function requestPasswordReset(sql, env, email, correlationId) {
 
   const link = env.APP_BASE_URL + '?mode=reset&token=' + encodeURIComponent(rawToken);
 
-  try {
-    await sendEmail(env, {
-      to: normalizedEmail,
-      subject: 'Redefinição de senha — ' + env.MAIL_FROM_NAME,
-      text: 'Acesse o link para redefinir sua senha: ' + link + ' (expira em ' + C.LIMITS.RESET_TOKEN_TTL_MINUTES + ' minutos).',
-      html:
-        '<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222">' +
-        '<h2>Redefinição de senha</h2>' +
-        '<p><a href="' + link + '" target="_blank">Clique aqui para criar uma nova senha</a></p>' +
-        '<p>Este link expira em ' + C.LIMITS.RESET_TOKEN_TTL_MINUTES + ' minutos.</p>' +
-        '</div>',
-    });
-  } catch (mailErr) {
-    await Logging.logError(sql, correlationId, 'MAIL_RESET_FAILED', 'Falha ao enviar e-mail de redefinição.', {
-      profileId: profile.id,
-      detail: String((mailErr && mailErr.message) || mailErr),
-    });
-  }
+  await ConfirmationService.deliverEmail(sql, env, correlationId, 'MAIL_RESET_FAILED', {
+    to: normalizedEmail,
+    subject: 'Redefinição de senha — ' + env.MAIL_FROM_NAME,
+    text: 'Acesse o link para redefinir sua senha: ' + link + ' (expira em ' + C.LIMITS.RESET_TOKEN_TTL_MINUTES + ' minutos).',
+    html:
+      '<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222">' +
+      '<h2>Redefinição de senha</h2>' +
+      '<p><a href="' + link + '" target="_blank">Clique aqui para criar uma nova senha</a></p>' +
+      '<p>Este link expira em ' + C.LIMITS.RESET_TOKEN_TTL_MINUTES + ' minutos.</p>' +
+      '</div>',
+  }, profile.id);
 
   await Logging.logAudit(sql, correlationId, profile.id, 'REQUEST_PASSWORD_RESET', 'profile', profile.id, 'success', null);
   return generic;
@@ -415,8 +385,15 @@ export async function confirmPasswordReset(sql, env, rawToken, newPassword, corr
       WHERE token_hash = ${tokenHash} AND token_type = 'password_reset'::account_token_type
         AND used_at IS NULL AND expires_at > now()
       RETURNING profile_id
+    ),
+    -- SEC-02: quem abriu o link de redefinição provou controle do e-mail. Os links de confirmação pendentes saem.
+    dropped_confirmations AS (
+      DELETE FROM account_tokens
+      WHERE profile_id = (SELECT profile_id FROM consumed)
+        AND token_type = 'email_confirmation'::account_token_type AND used_at IS NULL
     )
-    UPDATE profiles SET password_hash = crypt(${pwd}, gen_salt('bf', ${BCRYPT_COST}))
+    UPDATE profiles SET password_hash = crypt(${pwd}, gen_salt('bf', ${BCRYPT_COST})),
+      email_confirmed_at = COALESCE(email_confirmed_at, now())
     WHERE id = (SELECT profile_id FROM consumed)
     RETURNING id
   `;

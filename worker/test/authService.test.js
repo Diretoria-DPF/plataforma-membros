@@ -175,26 +175,49 @@ describe('AuthService.register', () => {
     ).rejects.toMatchObject({ name: 'ValidationError' });
   });
 
-  test('cadastro válido: bloqueia e-mail duplicado antes de inserir', async () => {
+  test('cadastro com e-mail já existente: mesma resposta de sucesso, sem "já existe" e sem inserir (SEC-02)', async () => {
     const sql = makeSql();
     const env = makeEnv();
     sql
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit global
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por IP
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por e-mail
-      .mockResolvedValueOnce([{ id: 'existing' }]); // SELECT id FROM profiles — já existe
+      .mockResolvedValueOnce([]) // teto diário de e-mails (só leitura)
+      .mockResolvedValueOnce([]) // nome de usuário livre
+      .mockResolvedValueOnce([{ id: 'existing', email_confirmed_at: '2026-01-01' }]) // e-mail já confirmado
+      .mockResolvedValueOnce([{ ignored: 'x' }]) // crypt() que iguala o custo do bcrypt
+      .mockResolvedValueOnce([{ attempts: 2 }]) // aviso ao dono já enviado hoje: não reenvia
+      .mockResolvedValueOnce(undefined); // logAudit
 
-    await expect(
-      AuthService.register(sql, env, {
-        fullName: 'Fulano de Tal',
-        username: 'fulano123',
-        email: 'fulano@x.com',
-        phone: '11999999999',
-        password: 'senhagrande12345',
-        termsAccepted: true,
-        privacyAccepted: true,
-      }, 'cid-1')
-    ).rejects.toMatchObject({ name: 'ConflictError' });
+    const res = await AuthService.register(sql, env, {
+      fullName: 'Fulano de Tal',
+      username: 'fulano123',
+      email: 'fulano@x.com',
+      phone: '11999999999',
+      password: 'senhagrande12345',
+      termsAccepted: true,
+      privacyAccepted: true,
+    }, 'cid-1');
+    expect(res).toEqual({ success: true, message: expect.stringContaining('Enviamos um e-mail de confirmação se o endereço puder ser cadastrado') });
+    const texts = sql.mock.calls.map((c) => (Array.isArray(c[0]) ? c[0].join('?') : String(c[0])));
+    expect(texts.some((t) => /INSERT INTO profiles/.test(t))).toBe(false);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  test('nome de usuário de OUTRA conta: erro de campo, sem consultar o e-mail', async () => {
+    const sql = makeSql();
+    const env = makeEnv();
+    sql
+      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([{ attempts: 1 }])
+      .mockResolvedValueOnce([]) // teto diário
+      .mockResolvedValueOnce([{ email: 'outra@x.com' }]); // nome de usuário de outra pessoa
+    await expect(AuthService.register(sql, env, {
+      fullName: 'Fulano de Tal', username: 'fulano123', email: 'fulano@x.com', phone: '11999999999',
+      password: 'senhagrande12345', termsAccepted: true, privacyAccepted: true,
+    }, 'cid-1')).rejects.toMatchObject({ name: 'ConflictError', message: 'Este nome de usuário já está em uso.' });
+    expect(sql).toHaveBeenCalledTimes(5);
   });
 
   test('cadastro válido: cria perfil, envia e-mail e audita sucesso', async () => {
@@ -204,9 +227,11 @@ describe('AuthService.register', () => {
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit global
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por IP
       .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit por e-mail
-      .mockResolvedValueOnce([]) // e-mail não existe ainda
+      .mockResolvedValueOnce([]) // teto diário de e-mails (só leitura)
       .mockResolvedValueOnce([]) // username não existe ainda
+      .mockResolvedValueOnce([]) // e-mail não existe ainda
       .mockResolvedValueOnce([{ profile_id: 'novo-id' }]) // CTE de INSERT
+      .mockResolvedValueOnce([{ attempts: 1 }]) // conta 1 no teto diário de e-mails
       .mockResolvedValueOnce(undefined); // logAudit
 
     const res = await AuthService.register(sql, env, {
@@ -220,6 +245,7 @@ describe('AuthService.register', () => {
     }, 'cid-1');
 
     expect(res.success).toBe(true);
+    expect(res.message).toMatch(/^Enviamos um e-mail de confirmação se o endereço puder ser cadastrado/);
     expect(global.fetch).toHaveBeenCalledWith('https://api.brevo.com/v3/smtp/email', expect.any(Object));
   });
 });

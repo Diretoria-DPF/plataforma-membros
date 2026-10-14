@@ -657,3 +657,19 @@ export const SIM_MESSAGES = {
 export const ROLE_RATE_LIMITS = Object.freeze({
   ROLE_ADMIN_WRITE: Object.freeze({ MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 }),
 });
+
+// SEC-02 — reenvio da confirmação de e-mail e teto diário de e-mails transacionais (confirmationService.js).
+// O plano gratuito da Brevo envia ~300 e-mails/dia; EMAIL_DAILY_MAX fica em ~80% disso (folga para avisos de
+// eventos e alertas aos admins). Pode ser ajustado sem deploy de código pela variável EMAIL_DAILY_MAX do Worker.
+// Cadastro, reenvio, aviso de tentativa de cadastro e redefinição de senha somam neste mesmo balde.
+export const EMAIL_DAILY_MAX = 240;
+export const EMAIL_QUOTA = Object.freeze({ BUCKET: 'EMAIL_DAILY', ID: 'global', WINDOW_SECONDS: 86400 });
+export const RESEND_RATE_LIMITS = Object.freeze({
+  // Intervalo mínimo entre dois reenvios para o mesmo e-mail (o front mostra a contagem).
+  RESEND_COOLDOWN: Object.freeze({ MAX_ATTEMPTS: 1, WINDOW_SECONDS: 120 }),
+  RESEND_EMAIL: Object.freeze({ MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 }),
+  // IP compartilhado (NAT de campus): folgado para uma turma, curto para um script.
+  RESEND_IP: Object.freeze({ MAX_ATTEMPTS: 20, WINDOW_SECONDS: 3600 }),
+  // Aviso "alguém tentou cadastrar seu e-mail" para conta já confirmada: no máximo 1 por dia por e-mail.
+  REGISTER_NOTICE: Object.freeze({ MAX_ATTEMPTS: 1, WINDOW_SECONDS: 86400 }),
+});

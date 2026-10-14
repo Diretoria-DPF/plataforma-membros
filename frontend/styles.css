@@ -193,6 +193,10 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 .checkbox-row input { width: auto; margin-top: 3px; }
 
 .auth-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+/* Reenvio do e-mail de confirmação (resend-confirmation.js, SEC-02); o botão herda o alvo de 44px dos botões. */
+.reenvio-confirmacao { margin-top: 8px; }
+.reenvio-confirmacao__abrir { min-height: 44px; }
+.reenvio-confirmacao form { display: grid; gap: 8px; margin-top: 8px; }
 
 .status-msg { min-height: 20px; margin-top: 10px; font-size: 14px; }
 .status-msg[data-kind="error"] { color: var(--danger); }
