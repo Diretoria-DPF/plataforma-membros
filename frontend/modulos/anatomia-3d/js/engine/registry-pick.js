@@ -20,6 +20,10 @@
  * logo atrás há outra estrutura, o clique prefere a de baixo; a fáscia continua
  * selecionável — `pickCycle` alterna ao clicar de novo no mesmo ponto (regras
  * em fascia-rules.js).
+ *
+ * Estruturas quase transparentes (Raio-X, fantasma, camada em baixa opacidade)
+ * deixam o clique passar: o que se vê através delas é o que se seleciona. Se
+ * só houver transparentes sob o ponto, a mais próxima ainda é escolhida.
  */
 
 import * as THREE from '../../vendor/three/three.module.js';
@@ -28,6 +32,8 @@ import { preferUnderFascia, createPickCycle } from './fascia-rules.js';
 /** Empate de distância (superfícies coincidentes, < PICK_TIE_EPS): ganha a
  * camada mais profunda (A.10, Onda 3). */
 export const PICK_TIE_EPS = 0.01;
+/** Abaixo desta opacidade a estrutura é "de vidro" para o clique. */
+export const SEE_THROUGH_OPACITY = 0.35;
 export const PICK_LAYER_PRIORITY = Object.freeze({ visceras: 0, vasos: 1, nervos: 2, linfatico: 3, esqueleto: 4, musculos: 5, pele: 6, fascias: 7 });
 
 /**
@@ -68,20 +74,29 @@ export function createPicker({ engine, getPickables, getRec }) {
   let preferFascia = true;
   const cycle = createPickCycle();
 
-  /** Acertos visíveis, do mais próximo ao mais longe, um por estrutura. */
+  const opacityOfHit = (hit) => {
+    const sid = sidOfHit(hit);
+    const rec = sid && getRec(sid);
+    return rec && typeof rec.opacity === 'number' ? rec.opacity : 1;
+  };
+
+  /** Acertos visíveis, do mais próximo ao mais longe, um por estrutura — as
+   * opacas primeiro e, depois delas, as quase transparentes. */
   function orderedHits(point, camera) {
     const pickables = getPickables();
     if (!camera || !pickables.length) return [];
     raycaster.setFromCamera(point, camera);
     const seen = new Set();
-    const out = [];
+    const solid = [];
+    const faint = [];
     for (const hit of raycaster.intersectObjects(pickables, false).sort(compareHits)) {
       const sid = isClipped(hit) ? null : sidOfHit(hit);
       if (!sid || seen.has(sid)) continue;
       seen.add(sid);
-      out.push({ sid, distance: hit.distance, fascia: layerOfHit(hit) === 'fascias', point: [hit.point.x, hit.point.y, hit.point.z] });
+      const entry = { sid, distance: hit.distance, fascia: layerOfHit(hit) === 'fascias', point: [hit.point.x, hit.point.y, hit.point.z] };
+      (opacityOfHit(hit) < SEE_THROUGH_OPACITY ? faint : solid).push(entry);
     }
-    return out;
+    return solid.concat(faint);
   }
 
   // `camera` padrão = a câmera do motor: os chamadores (main.js, selection.js)
