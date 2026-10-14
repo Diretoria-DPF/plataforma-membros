@@ -29,7 +29,7 @@ Rodada de verificação feita depois da correção do espelhamento, da camada F�
 ## 4. Falhas reais encontradas e correções
 
 1. **Destaque do clique só em metade do corpo** (peças espelhadas desenhadas por dentro) — corrigido no commit 1. Antes: 3% e 9% de acerto "clique == peça visível" numa metade da tela; depois: 94–98%.
-2. **O clique não atravessava estruturas transparentes (Raio-X, Fantasma).** Com o Raio-X ligado (pele 8%, músculos 12%) o raycast ignorava a opacidade: na referência, **0 pontos de órgão** acertados contra 298 de pele/músculo numa grade sobre o tronco; com a correção, **39 pontos de órgão** (pleura, pulmões, vísceras) e as mesmas regras de fallback quando só há transparentes. Correção segura e pequena em `registry-pick.js` (estruturas com opacidade < 35% passam para o fim da fila; a mais próxima ainda é escolhida se for a única). Teste: `registry-pick.test.mjs`.
+2. **O clique não atravessava estruturas transparentes (Raio-X, Fantasma).** Com o Raio-X ligado (pele 8%, músculos 12%) o raycast ignorava a opacidade: na referência, **0 pontos de órgão** acertados contra 298 de pele/músculo numa grade sobre o tronco; com a correção, **39 pontos de órgão** (pleura, pulmões, vísceras) e as mesmas regras de fallback quando só há transparentes. Correção segura e pequena em `registry-pick.js` (estruturas com opacidade < 25% passam para o fim da fila; a mais próxima ainda é escolhida se for a única). Teste: `registry-pick.test.mjs`.
 3. Achado secundário do diagnóstico, corrigido: o campo `side` do registro nunca era preenchido (regex não casava `.l/.r`).
 
 ## 5. Verificação manual em navegador (clique real, desktop 1280×800)
@@ -66,8 +66,8 @@ Para cada sistema só a camada dele foi ligada, e foram clicados pontos reais de
 
 ## 7. Pendências e riscos
 
-- **Fáscias ligadas escondem o destaque do músculo de baixo** se o usuário aumentar a opacidade da camada para 100%: o padrão (45%) deixa ver o músculo, mas o ajuste manual é livre. O Raio-X não mexe nas fáscias.
-- O limiar de "transparente" para o clique (35%) é uma escolha de produto; está em `SEE_THROUGH_OPACITY` (`registry-pick.js`).
+- **Fáscias ligadas escondem o destaque do músculo de baixo** se o usuário aumentar a opacidade da camada para 100%: o padrão (45%) deixa ver o músculo, mas o ajuste manual é livre. O Raio-X deixa as fáscias translúcidas (8%, junto com a pele) e restaura depois.
+- O limiar de "transparente" para o clique (25%) é uma escolha de produto; está em `SEE_THROUGH_OPACITY` (`registry-pick.js`).
 - Peso de boot: **+11 KB gzip** nos arquivos carregados no boot (a divisão de `registry.js`, `fascia-rules.js` e a entrada da vista explodida); o gate de 2 MB do `atlas-perf` segue verde (1,96 MB).
 - Em telas muito pequenas (nervos, nódulos linfáticos), o clique no corpo inteiro acerta alvos de poucos pixels com facilidade menor; a busca e o navegador continuam sendo o caminho para essas estruturas.
 - A vista "Separar peças" desloca as **estruturas em lote** (corpo); os detalhes de órgão do HRA (malhas soltas, fora da cena principal) não são deslocados.

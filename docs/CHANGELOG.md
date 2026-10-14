@@ -15,7 +15,8 @@ Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10
 
 ### Corrigido (Atlas 3D: cliques, fáscias, separar peças — auditoria de 13/10/2026)
 - **Destaque do clique só aparecia em metade do corpo.** As peças do lado espelhado (matriz de determinante negativo: o Z-Anatomy modela o esquerdo como cópia do direito com escala -1 em X) eram desenhadas "por dentro" no BatchedMesh e o raycast acertava a face de fora. Agora cada camada tem um segundo batch para as espelhadas (`scale.x = -1` no batch, matriz da instância pré-multiplicada pelo espelho; posição final inalterada). Clique == peça que aparece: de 3% a 9% numa metade da tela para 94% a 98% (e2e `atlas-espelho`, limiar de 75% por metade). Orçamento de draw calls: 2 -> 4 com os sistemas padrão (limite 150). `registry.js` dividido em `registry-helpers.js` e `registry-pick.js`; o campo `side` do registro agora casa `.l`/`.r`.
-- O clique atravessa estruturas quase transparentes (Raio-X, Fantasma, camada abaixo de 35%): o que se vê através delas é o que se seleciona.
+- Revisão independente (M1-M5): a preferência pela estrutura sob a fáscia ignora pele translúcida na frente; limiar de "vidro" do clique 25%; o Corte (planos globais do renderer) vale no clique; o Raio-X também deixa as fáscias translúcidas; a vista Separar peças calcula as partes só da estrutura isolada (sem custo por movimento do slider). "Centralizar" desfaz a explosão.
+- O clique atravessa estruturas quase transparentes (Raio-X, Fantasma, camada abaixo de 25%): o que se vê através delas é o que se seleciona.
 
 ### Adicionado (Atlas 3D: fáscias e Separar peças)
 - Camada **Fáscias** no painel de camadas (desligada na abertura, translúcida a 45%) e botão **Somente fáscias** (`aria-pressed`). O clique **prefere a estrutura sob a fáscia** (decisão do dono, opção 2); clicar de novo no mesmo ponto alterna para a fáscia. Regra por nome, orientada a dados, em `fascia-rules.js`.

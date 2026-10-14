@@ -15,7 +15,7 @@
 import { percentToAmount } from '../engine/explode-math.js';
 
 const HINTS = Object.freeze({
-  corpo: 'Afasta as camadas a partir do centro do corpo: pele e músculos saem primeiro, o esqueleto e as vísceras ficam mais perto.',
+  corpo: 'Afasta as camadas a partir do centro do corpo: pele e músculos saem primeiro, o esqueleto e as vísceras ficam mais perto. O botão Centralizar também junta as peças.',
   orgao: 'Afasta as partes da estrutura isolada a partir do centro dela.',
   semPartes: 'A estrutura isolada tem uma peça só. Para separar o corpo, limpe o isolamento (botão Centralizar).',
 });

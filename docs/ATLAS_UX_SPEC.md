@@ -519,7 +519,7 @@ os músculos e são a primeira superfície que o raio encontra).
 - **Camada "Fáscias"** (`id: 'fascias'`, batch e material próprios): desligada na
   abertura; ao ligar entra **translúcida a 45%**, para o músculo sob ela
   continuar visível (e o destaque dele também). Ligar a camada baixa o sistema
-  muscular se ele ainda não estiver carregado. O Raio-X não mexe nas fáscias.
+  muscular se ele ainda não estiver carregado. O Raio-X deixa as fáscias translúcidas (8%, junto com a pele) e restaura depois.
 - **Pick**: se o primeiro acerto é uma fáscia e há outra estrutura logo atrás
   (até 8 cm), a de baixo vence. **Clicar de novo no mesmo ponto** (comparado em
   3D, não em pixels, porque a ficha muda o tamanho do canvas) alterna:
@@ -532,7 +532,7 @@ os músculos e são a primeira superfície que o raio encontra).
 
 ### 9.2 O clique atravessa o que é transparente
 
-Estruturas com opacidade abaixo de 35% (Raio-X, Fantasma, camada quase
+Estruturas com opacidade abaixo de 25% (Raio-X, Fantasma, camada quase
 apagada) deixam o clique passar para o que está atrás; se só houver
 transparentes sob o ponto, a mais próxima ainda é selecionada.
 
@@ -561,7 +561,7 @@ folha junto à base) com:
   (rótulos, foco da câmera) e a visibilidade seguem a peça na posição separada.
 - **Animação** por suavização (≈ 0,45 s); com `prefers-reduced-motion` o
   deslocamento é aplicado direto. Volta ao normal ao zerar, no botão
-  **Juntar peças**, em **Centralizar** e ao sair do modo Explorar.
+  **Juntar peças**, em **Centralizar** (o botão da barra de ferramentas também desfaz a explosão) e ao sair do modo Explorar.
 - **Sem custo quando desligada**: no boot ficam só o ponto de entrada
   (`ui/explode-entry.js`) e a cola do Registry; o controlador, a matemática, o
   painel e o CSS chegam por `import()` na primeira abertura.
