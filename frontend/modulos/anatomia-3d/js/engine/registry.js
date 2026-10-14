@@ -431,7 +431,7 @@ export function createRegistry({ engine, bus } = {}) {
         console.warn(`[atlas/registry] nó "${nodeName}" (sid ${sid}) não tem nenhuma malha — ignorado.`);
         continue;
       }
-      const { layer, materialKey, colorVar } = classifyStructure(system, nodeName);
+      const { layer, materialKey, colorVar } = classifyStructure(system, nodeName, sid);
       const side = sideOfNodeName(nodeName);
       pending.push({ sid, node, meshes, layer, materialKey, colorVar, side });
     }
@@ -764,6 +764,8 @@ export function createRegistry({ engine, bus } = {}) {
     setHighlight,
     iterate,
     pick: picker.pick,
+    pickCycle: picker.pickCycle,
+    setPreferUnderFascia: picker.setPreferUnderFascia,
     stats,
     // Extensões usadas por js/engine/assets.js e js/engine/fallback.js —
     // não fazem parte da forma mínima checada por `isRegistry()`, mas

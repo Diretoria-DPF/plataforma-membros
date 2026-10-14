@@ -24,7 +24,7 @@
  *   off();
  */
 
-import { LAYER_IDS, DEFAULT_MODE } from './contracts.js';
+import { LAYER_IDS, DEFAULT_MODE, LAYER_DEFAULT_OPACITY } from './contracts.js';
 
 /**
  * @typedef {Object} LayerState
@@ -61,7 +61,7 @@ import { LAYER_IDS, DEFAULT_MODE } from './contracts.js';
  * @property {string} mode Um dos ids de `MODES` (contracts.js).
  * @property {(string|null)} selectedSid Estrutura selecionada, ou `null`.
  * @property {Record<string, LayerState>} layers Uma entrada por id de
- *   `LAYERS` (contracts.js): `pele`, `musculos`, `esqueleto`, `visceras`,
+ *   `LAYERS` (contracts.js): `pele`, `fascias`, `musculos`, `esqueleto`, `visceras`,
  *   `vasos`, `nervos`, `linfatico`.
  * @property {VisibilityState} isolation Estado de isolar/ocultar/fantasma
  *   (no máximo uma estrutura por vez — ações da mini barra/menu de contexto).
@@ -95,7 +95,7 @@ const initialState = Object.freeze({
     LAYER_IDS.reduce((acc, id) => {
       // Abertura: músculos + esqueleto (o que o primeiro download já traz e o que
       // o estudante espera ver); pele e camadas profundas entram sob demanda.
-      acc[id] = Object.freeze({ visible: DEFAULT_VISIBLE_LAYERS.includes(id), opacity: 1 });
+      acc[id] = Object.freeze({ visible: DEFAULT_VISIBLE_LAYERS.includes(id), opacity: LAYER_DEFAULT_OPACITY[id] ?? 1 });
       return acc;
     }, {})
   ),

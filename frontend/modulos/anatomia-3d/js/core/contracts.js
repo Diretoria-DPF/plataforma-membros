@@ -32,6 +32,7 @@
 /** @type {ReadonlyArray<Readonly<LayerDef>>} */
 export const LAYERS = Object.freeze([
   Object.freeze({ id: 'pele', label: 'Pele' }),
+  Object.freeze({ id: 'fascias', label: 'Fáscias' }),
   Object.freeze({ id: 'musculos', label: 'Músculos' }),
   Object.freeze({ id: 'esqueleto', label: 'Esqueleto' }),
   Object.freeze({ id: 'visceras', label: 'Vísceras' }),
@@ -39,6 +40,13 @@ export const LAYERS = Object.freeze([
   Object.freeze({ id: 'nervos', label: 'Nervos' }),
   Object.freeze({ id: 'linfatico', label: 'Linfático' }),
 ]);
+
+/**
+ * Opacidade inicial por camada (as ausentes começam em 1). As fáscias entram
+ * translúcidas: cobrem os músculos, e translúcidas deixam ver o músculo sob
+ * elas (e o destaque dele ao ser clicado).
+ */
+export const LAYER_DEFAULT_OPACITY = Object.freeze({ fascias: 0.45 });
 
 /** ids de LAYERS, na mesma ordem — útil para `Object.keys`-like iteração. */
 export const LAYER_IDS = Object.freeze(LAYERS.map((l) => l.id));

@@ -442,7 +442,9 @@ async function boot() {
 
   // ---- Picking (clique/tap) ----
   controlsApi.setPickHandler(({ ndc, kind }) => {
-    const sid = registry.pick(ndc);
+    // Toque: clicar de novo no mesmo ponto alterna entre a estrutura sob a
+    // fáscia e a fáscia (registry-pick.js); duplo toque/foco usa o pick direto.
+    const sid = kind === 'tap' && registry.pickCycle ? registry.pickCycle(ndc) : registry.pick(ndc);
     if (sid) {
       // Confirmação tátil curta (Android; o iOS não tem vibração — aceito).
       if (kind === 'tap' && typeof navigator.vibrate === 'function') {
@@ -949,6 +951,8 @@ async function boot() {
     if (!systemsByLayer.has(s.layer)) systemsByLayer.set(s.layer, new Set());
     systemsByLayer.get(s.layer).add(s.system);
   }
+  // Fáscias: camada do registro 3D (o índice as lista em "músculos") → sistema muscular.
+  systemsByLayer.set('fascias', new Set(['muscular']));
   on(EVENTS.LAYER_SET, ({ layer, visible }) => {
     if (!visible) return;
     const systems = systemsByLayer.get(layer);

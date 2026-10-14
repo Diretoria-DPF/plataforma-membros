@@ -24,6 +24,7 @@
 
 import * as THREE from '../../vendor/three/three.module.js';
 import { LAYER_IDS } from '../core/contracts.js';
+import { isFasciaSid } from './fascia-rules.js';
 
 // ============================================================================
 // Heurística sistema → camada (aproximação documentada: o Registry não lê
@@ -55,6 +56,7 @@ const VEIN_NODE_PATTERN = /veia|jugular|cava/;
 
 export const LAYER_COLOR_VAR = Object.freeze({
   pele: '--atlas-color-pele',
+  fascias: '--atlas-color-fascias',
   musculos: '--atlas-color-musculos',
   esqueleto: '--atlas-color-esqueleto',
   visceras: '--atlas-color-visceras',
@@ -128,12 +130,16 @@ export function readCssColor(cssVar, fallback) {
 
 /**
  * Decide a camada + a chave de material (algumas camadas têm mais de uma
- * variante de cor, ex. vasos) para um nó de um sistema.
+ * variante de cor, ex. vasos) para um nó de um sistema. As fáscias (fáscia,
+ * retináculo, aponeurose, trato iliotibial) do sistema muscular saem da camada
+ * "músculos" para a camada própria "fáscias" (regra em fascia-rules.js) — com
+ * batch e material próprios, para a translucidez delas não afetar os músculos.
  * @param {string} system
  * @param {string} nodeName
+ * @param {string} [sid]
  * @returns {{ layer: string, materialKey: string, colorVar: string|null }}
  */
-export function classifyStructure(system, nodeName) {
+export function classifyStructure(system, nodeName, sid) {
   if (system === 'cardiovascular') {
     if (HEART_NODE_PATTERN.test(nodeName)) {
       return { layer: 'visceras', materialKey: 'visceras', colorVar: LAYER_COLOR_VAR.visceras };
@@ -141,6 +147,9 @@ export function classifyStructure(system, nodeName) {
     const isVein = VEIN_NODE_PATTERN.test(nodeName);
     const materialKey = isVein ? 'vasos-veia' : 'vasos-arteria';
     return { layer: 'vasos', materialKey, colorVar: LAYER_COLOR_VAR[materialKey] };
+  }
+  if (system === 'muscular' && sid && isFasciaSid(sid)) {
+    return { layer: 'fascias', materialKey: 'fascias', colorVar: LAYER_COLOR_VAR.fascias };
   }
   const layer = SYSTEM_LAYER_DEFAULT[system] || 'visceras';
   return { layer, materialKey: layer, colorVar: LAYER_COLOR_VAR[layer] || null };
