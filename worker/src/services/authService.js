@@ -319,7 +319,7 @@ export async function login(sql, env, email, password, userAgent, correlationId)
     profile: { id: row.id, fullName: row.full_name, role: row.role },
   };
   // Admin sem MFA com a obrigatoriedade ligada: a interface leva direto ao cadastro.
-  if (await MfaService.adminNeedsSetup(sql, { profileId: row.id, role: row.role })) result.mfaSetupRequired = true;
+  if (await MfaService.loginNeedsMfaSetup(sql, { profileId: row.id, role: row.role })) result.mfaSetupRequired = true;
   return result;
 }
 

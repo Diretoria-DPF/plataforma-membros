@@ -213,6 +213,28 @@ export async function hasConfirmedMfa(sql, profileId) {
   }
 }
 
+/**
+ * O login (authService) chama adminNeedsSetup só com { profileId, role }: sem a lista de cargos, um membro com
+ * cargo privilegiado não seria avisado. Aqui os cargos são lidos do banco (só para membro, só com a flag ligada).
+ */
+async function withStoredRoles(sql, identity) {
+  if (!identity || identity.role !== C.ROLES.MEMBER || Array.isArray(identity.functionalRoles)) return identity;
+  if (!(await isEnabled(sql, MFA_REQUIRED_FLAG, identity))) return identity;
+  let rows;
+  try {
+    rows = await sql`SELECT role FROM member_roles WHERE profile_id = ${identity.profileId}::uuid`;
+  } catch (err) {
+    if (isMissingTable(err)) return identity;
+    throw err;
+  }
+  return Object.assign({}, identity, { functionalRoles: rows.map((r) => r.role) });
+}
+
+/** Aviso mfaSetupRequired no próprio login: como adminNeedsSetup, mas também para quem tem cargo privilegiado. */
+export async function loginNeedsMfaSetup(sql, identity) {
+  return adminNeedsSetup(sql, await withStoredRoles(sql, identity));
+}
+
 export async function adminNeedsSetup(sql, identity) {
   if (!(await mfaRequiredNow(sql, identity))) return false;
   try {

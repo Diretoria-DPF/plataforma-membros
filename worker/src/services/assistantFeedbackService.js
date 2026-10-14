@@ -38,6 +38,11 @@ function assertAdmin(identity) {
   S.requireRole(identity, [C.ROLES.ADMIN]);
 }
 
+/** Avaliações da Lia (lista, painel de satisfação e triagem): admin ou cargo moderador (ADR 0010). */
+function assertFeedbackModerator(identity) {
+  S.requireCapability(identity, 'assistant.feedback.moderate');
+}
+
 function requireUuid(value, message) {
   const id = S.normalizeText(value);
   if (!UUID_RE.test(id)) throw E.ValidationError(message);
@@ -150,7 +155,7 @@ function toFeedbackItem(r) {
 
 /** Lista paginada para o admin. Input: {status?, rating?, limit?, cursor?}. */
 export async function listFeedback(sql, identity, input) {
-  assertAdmin(identity);
+  assertFeedbackModerator(identity);
   const status = optionalOneOf(input.status, C.FEEDBACK.STATUSES, 'Status inválido.');
   const rating = optionalOneOf(input.rating, C.FEEDBACK.RATINGS, 'Avaliação inválida.');
   const limit = clampLimit(input.limit);
@@ -235,7 +240,7 @@ function formatStats(days, raw) {
 
 /** Painel de satisfação do admin. Input: {days?} (padrão e teto em FEEDBACK_STATS). */
 export async function feedbackStats(sql, identity, input) {
-  assertAdmin(identity);
+  assertFeedbackModerator(identity);
   const days = clampDays(input.days);
   try {
     return formatStats(days, await statsRows(sql, days));
@@ -247,7 +252,7 @@ export async function feedbackStats(sql, identity, input) {
 
 /** Atualiza a triagem de um feedback. Input: {id, status: 'reviewed'|'dismissed'}. */
 export async function updateFeedback(sql, identity, input, correlationId) {
-  assertAdmin(identity);
+  assertFeedbackModerator(identity);
   const id = requireUuid(input.id, 'Feedback inválido.');
   const status = requireOneOf(input.status, REVIEW_STATUSES, 'Status inválido.');
   const rows = await sql`

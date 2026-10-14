@@ -14,7 +14,10 @@
  * Papéis: admin (profiles.role), curador, mentor e revisor_clinico (library_staff)
  * e membro (profiles.role member ou admin). O admin é também curador, mas NÃO
  * vira revisor clínico sozinho (decisão 12 do PLANO-CORTEX: professor orientador).
+ * O cargo funcional curador (member_roles, ADR 0010) vale como 'curador' quando a capacidade library.curate
+ * está liberada (com MFA ativo); a library_staff segue valendo por compatibilidade.
  */
+import { capabilityCheck } from '../roles/capabilities.js';
 
 export const ROLE_KEYS = Object.freeze(['admin', 'curador', 'mentor', 'revisor_clinico', 'membro']);
 
@@ -76,8 +79,8 @@ export function capabilitiesOf(roles) {
 export function rolesFor(identity, staffRoles) {
   const staff = new Set((Array.isArray(staffRoles) ? staffRoles : []).filter((r) => STAFF_ROLES.includes(r)));
   const isAdmin = identity?.role === 'admin';
-  if (isAdmin) staff.add('curador');
   const isMember = isAdmin || identity?.role === 'member';
+  if (isAdmin || (isMember && capabilityCheck(identity, 'library.curate') === 'ok')) staff.add('curador');
   return ROLE_KEYS.filter((role) => (role === 'admin' ? isAdmin : role === 'membro' ? isMember : staff.has(role)));
 }
 

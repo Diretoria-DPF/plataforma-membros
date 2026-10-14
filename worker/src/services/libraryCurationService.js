@@ -77,15 +77,16 @@ const MSG = Object.freeze({
 // ---------------------------------------------------------------------------
 // Papéis e limite
 // ---------------------------------------------------------------------------
-/** Papéis da Biblioteca de quem chama: library_staff mais curador para o admin (nunca revisor). */
+/**
+ * Papéis da Biblioteca de quem chama: library_staff (compat), curador para o admin e para quem tem a capacidade
+ * library.curate (cargo curador com MFA ativo, ADR 0010). Nunca revisor clínico por cargo.
+ */
 export async function libraryRolesOf(sql, identity) {
   if (!identity?.profileId) return [];
   const staff = await sql`SELECT role FROM library_staff WHERE profile_id = ${identity.profileId}::uuid`;
   const roles = new Set(staff.map((r) => r.role));
-  if (identity.role === C.ROLES.ADMIN) {
-    roles.add('admin');
-    roles.add(LIBRARY_ROLES.CURATOR);
-  }
+  if (identity.role === C.ROLES.ADMIN) roles.add('admin');
+  if (S.hasCapability(identity, 'library.curate')) roles.add(LIBRARY_ROLES.CURATOR);
   return ROLE_ORDER.filter((role) => roles.has(role));
 }
 

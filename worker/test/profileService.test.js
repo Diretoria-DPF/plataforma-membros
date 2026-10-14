@@ -26,7 +26,7 @@ describe('ProfileService.getMyProfile', () => {
     expect(res.profile.id).toBe(MEMBER.profileId);
     expect(Object.keys(res.profile).sort()).toEqual([
       'avatarUrl', 'capabilities', 'education', 'email', 'fullName', 'functionalRoles', 'id', 'instagramHandle', 'interests',
-      'linkedinUrl', 'memberSince', 'phone', 'role', 'username',
+      'linkedinUrl', 'memberSince', 'phone', 'role', 'roleMfaPending', 'username',
     ]);
     // O corpo da consulta é sempre o profileId da sessão, nunca algo vindo do cliente.
     expect(sql.mock.calls[0].slice(1)).toContain(MEMBER.profileId);

@@ -20,7 +20,7 @@ import { buildModerationJudgeMessages, buildRedeemJudgeMessages } from '../ai/pr
 import { isEnabled, isMissingTable } from './featureFlagService.js';
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'reports.moderate'); // admin ou cargo moderador (ADR 0010)
 }
 function assertMemberOrAdmin(identity) {
   S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);

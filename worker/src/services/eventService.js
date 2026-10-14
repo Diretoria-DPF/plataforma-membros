@@ -246,7 +246,7 @@ export async function cancelEventRegistration(sql, env, identity, eventId, corre
 }
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'events.manage'); // admin ou cargo gestor (ADR 0010)
 }
 
 export async function createEvent(sql, env, identity, input, correlationId) {

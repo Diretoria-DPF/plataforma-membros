@@ -78,7 +78,7 @@ export async function submitTaskComment(sql, identity, taskId, message, correlat
   if (!S.isLengthValid(text, 1, 1000)) throw E.ValidationError('Comentário deve ter entre 1 e 1000 caracteres.');
 
   const signedUp = await sql`SELECT id FROM task_signups WHERE task_id = ${id}::uuid AND profile_id = ${identity.profileId}::uuid LIMIT 1`;
-  if (!signedUp.length && identity.role !== C.ROLES.ADMIN) {
+  if (!signedUp.length && !S.hasCapability(identity, 'tasks.manage')) {
     throw E.ForbiddenError('Só é possível comentar em tarefas às quais você aderiu.');
   }
 
@@ -108,7 +108,7 @@ export async function signupForTask(sql, identity, taskId, correlationId) {
 }
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'tasks.manage'); // admin ou cargo gestor (ADR 0010)
 }
 
 export async function createTask(sql, identity, input, correlationId) {

@@ -116,7 +116,7 @@ export async function getMyAttendanceQr(env, identity) {
 // =============================================================================
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'attendance.manage'); // admin ou cargo gestor (ADR 0010)
 }
 
 function requireUuid(value, message) {
