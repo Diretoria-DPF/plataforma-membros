@@ -38,6 +38,7 @@ import { groupEntries, sideLabel, contentCandidates } from './ui/structure-group
 import { mergeLayers } from './ui/content-merge.js';
 import { createInfoCard } from './ui/infocard.js';
 import { createLayersPanel } from './ui/layers-panel.js';
+import { mountExplode } from './ui/explode-entry.js';
 import { linkLegacy } from './ui/legacy-link.js';
 import { ATLAS_FLAGS } from './core/flags.js';
 import { createProgressBar } from './ui/progress-bar.js';
@@ -724,6 +725,10 @@ async function boot() {
     unavailable: () => storeGet().unavailableSystems,
   });
   registerPanel('layers', layersPanelEl);
+  // "Separar peças": só o ponto de entrada fica no boot; o resto carrega ao abrir.
+  if (ATLAS_FLAGS.explode) {
+    mountExplode({ registry, store: storeApi, bus, addTicker, requestRender, registerPanel, reducedMotion: prefersReducedMotion, onChange: () => { if (labels && labels.update) labels.update(); } });
+  }
 
   // ---- Créditos ----
   let manifest = null;

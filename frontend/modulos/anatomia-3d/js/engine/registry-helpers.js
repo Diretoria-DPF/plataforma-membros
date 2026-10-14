@@ -106,6 +106,26 @@ export function instanceMatrixFor(world, mirrored, offset, out = new THREE.Matri
   return out;
 }
 
+/** Média de um deslocamento (por estrutura ou por instância) — vista "Separar peças". */
+export function meanOffset(offset) {
+  if (!offset) return null;
+  if (typeof offset[0] === 'number') return offset;
+  const n = offset.length;
+  if (!n) return null;
+  const sum = [0, 0, 0];
+  for (const o of offset) { sum[0] += o[0]; sum[1] += o[1]; sum[2] += o[2]; }
+  return [sum[0] / n, sum[1] / n, sum[2] / n];
+}
+
+/** Caixa deslocada. */
+export function shiftBox(box, offset) {
+  if (!box || !offset) return box;
+  return {
+    min: [box.min[0] + offset[0], box.min[1] + offset[1], box.min[2] + offset[2]],
+    max: [box.max[0] + offset[0], box.max[1] + offset[1], box.max[2] + offset[2]],
+  };
+}
+
 /** Lado anatômico a partir do nome do nó (".r"/".l" do Z-Anatomy ou
  * "-direito/-esquerdo" das fixtures). `undefined` se não houver. */
 export function sideOfNodeName(nodeName) {

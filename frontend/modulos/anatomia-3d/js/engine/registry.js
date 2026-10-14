@@ -63,6 +63,7 @@ import {
   collectMeshes, sanitizeGeometryForBatch,
 } from './registry-helpers.js';
 import { createPicker } from './registry-pick.js';
+import { createInstanceOffsets } from './registry-explode.js';
 
 const BATCH_GROWTH_FACTOR = 1.25;
 const BATCH_MIN_INSTANCES = 16;
@@ -101,6 +102,7 @@ export function createRegistry({ engine, bus } = {}) {
   /** @type {(THREE.BatchedMesh|THREE.Mesh)[]} lista achatada para picking —
    * refeita a cada registro/remoção. */
   let pickables = [];
+  const offsets = createInstanceOffsets({ getStructures: () => structures, requestRender: () => engine.requestRender && engine.requestRender() });
   const picker = createPicker({ engine, getPickables: () => pickables, getRec: (sid) => structures.get(sid) });
 
   function rebuildPickables() {
@@ -596,11 +598,18 @@ export function createRegistry({ engine, bus } = {}) {
   }
 
   /** @type {import('../core/contracts.js').Registry['getBBox']} */
-  function getBBox(sid) {
+  function restBBox(sid) {
     const rec = structures.get(sid);
     if (!rec) return null;
     if (!rec.bboxCache) rec.bboxCache = computeWorldBBox(rec.node);
     return rec.bboxCache;
+  }
+
+  /** Caixa atual: com a vista "Separar peças" ligada, já deslocada (a câmera,
+   * os rótulos e o foco seguem a peça onde ela está). */
+  function getBBox(sid) {
+    const rest = restBBox(sid);
+    return rest ? offsets.shiftedBox(sid, rest) : null;
   }
 
   /** @type {import('../core/contracts.js').Registry['setVisible']} */
@@ -763,6 +772,10 @@ export function createRegistry({ engine, bus } = {}) {
     setColor,
     setHighlight,
     iterate,
+    // Vista "Separar peças" (explode.js, carregada sob demanda): peças em repouso
+    // + gravação dos deslocamentos nas matrizes das instâncias.
+    getExplodeItems: () => offsets.items(restBBox),
+    setExplodeOffsets: offsets.apply,
     pick: picker.pick,
     pickCycle: picker.pickCycle,
     setPreferUnderFascia: picker.setPreferUnderFascia,
