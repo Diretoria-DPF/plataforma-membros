@@ -76,7 +76,7 @@ function writeActivity(sql, profileId, day) {
       RETURNING 1
     )
     INSERT INTO usage_daily (day, metric, n)
-    SELECT ${day}::date, ${METRICS.DAU}, 1 FROM inserted
+    SELECT ${day}::date, ${METRICS.DAU}::text, 1 FROM inserted
     ON CONFLICT (day, metric) DO UPDATE SET n = usage_daily.n + 1`;
 }
 

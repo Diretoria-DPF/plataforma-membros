@@ -55,14 +55,14 @@ function weeklyRetention(sql, today) {
       WHERE created_at >= (date_trunc('week', (${today}::date - ${COHORT_LOOKBACK_DAYS}::int)::timestamp) AT TIME ZONE 'America/Sao_Paulo')
     )
     SELECT to_char(date_trunc('week', c.d0::timestamp), 'YYYY-MM-DD') AS week, count(*) AS size,
-      count(*) FILTER (WHERE c.d0 + 1 <= ${today}::date) AS d1_eligible,
-      count(*) FILTER (WHERE c.d0 + 1 <= ${today}::date
+      count(*) FILTER (WHERE c.d0 + 1 < ${today}::date) AS d1_eligible,
+      count(*) FILTER (WHERE c.d0 + 1 < ${today}::date
         AND EXISTS (SELECT 1 FROM activity_days a WHERE a.profile_id = c.id AND a.day = c.d0 + 1)) AS d1_retained,
-      count(*) FILTER (WHERE c.d0 + 7 <= ${today}::date) AS d7_eligible,
-      count(*) FILTER (WHERE c.d0 + 7 <= ${today}::date
+      count(*) FILTER (WHERE c.d0 + 7 < ${today}::date) AS d7_eligible,
+      count(*) FILTER (WHERE c.d0 + 7 < ${today}::date
         AND EXISTS (SELECT 1 FROM activity_days a WHERE a.profile_id = c.id AND a.day = c.d0 + 7)) AS d7_retained,
-      count(*) FILTER (WHERE c.d0 + 30 <= ${today}::date) AS d30_eligible,
-      count(*) FILTER (WHERE c.d0 + 30 <= ${today}::date
+      count(*) FILTER (WHERE c.d0 + 30 < ${today}::date) AS d30_eligible,
+      count(*) FILTER (WHERE c.d0 + 30 < ${today}::date
         AND EXISTS (SELECT 1 FROM activity_days a WHERE a.profile_id = c.id AND a.day = c.d0 + 30)) AS d30_retained
     FROM cohort c
     GROUP BY 1 ORDER BY 1`;
@@ -80,11 +80,11 @@ function activationFunnel(sql, today) {
       count(*) FILTER (WHERE email_confirmed_at IS NOT NULL) AS confirmed,
       count(*) FILTER (WHERE EXISTS (
         SELECT 1 FROM learning_attempts l WHERE l.profile_id = c.id AND l.activity IN ('quiz_estudo', 'quiz_prova'))) AS first_quiz,
-      count(*) FILTER (WHERE c.d0 + 1 <= ${today}::date) AS d1_eligible,
-      count(*) FILTER (WHERE c.d0 + 1 <= ${today}::date
+      count(*) FILTER (WHERE c.d0 + 1 < ${today}::date) AS d1_eligible,
+      count(*) FILTER (WHERE c.d0 + 1 < ${today}::date
         AND EXISTS (SELECT 1 FROM activity_days a WHERE a.profile_id = c.id AND a.day = c.d0 + 1)) AS d1_retained,
-      count(*) FILTER (WHERE c.d0 + 7 <= ${today}::date) AS d7_eligible,
-      count(*) FILTER (WHERE c.d0 + 7 <= ${today}::date
+      count(*) FILTER (WHERE c.d0 + 7 < ${today}::date) AS d7_eligible,
+      count(*) FILTER (WHERE c.d0 + 7 < ${today}::date
         AND EXISTS (SELECT 1 FROM activity_days a WHERE a.profile_id = c.id AND a.day = c.d0 + 7)) AS d7_retained
     FROM cohort c`;
 }

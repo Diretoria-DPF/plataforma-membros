@@ -17,7 +17,7 @@ SET lock_timeout = '5s';
 CREATE TABLE IF NOT EXISTS usage_daily (
   day     DATE   NOT NULL,
   metric  TEXT   NOT NULL,
-  n       BIGINT NOT NULL DEFAULT 0,
+  n       BIGINT NOT NULL DEFAULT 0 CHECK (n >= 0),
   CONSTRAINT usage_daily_pk PRIMARY KEY (day, metric),
   CONSTRAINT usage_daily_metric_chk CHECK (metric ~ '^[a-z0-9_.]{1,40}$')
 );
