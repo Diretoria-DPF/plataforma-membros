@@ -13,6 +13,16 @@ Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10
 - Lia cita artigos da Biblioteca (flag `lia_library_enabled`), histórico de 8 turnos e registro de respostas para membros (flag `rag_cache_enabled`, migração 034, desligada).
 - Lia: novos trechos de conteúdo (o que é a Biblioteca, Farmacologia x Toxicologia, farmacocinética, o que fazer na plataforma) e 60+ perguntas novas no conjunto de referência.
 
+### Corrigido (Atlas 3D: cliques, fáscias, separar peças — auditoria de 13/10/2026)
+- **Destaque do clique só aparecia em metade do corpo.** As peças do lado espelhado (matriz de determinante negativo: o Z-Anatomy modela o esquerdo como cópia do direito com escala -1 em X) eram desenhadas "por dentro" no BatchedMesh e o raycast acertava a face de fora. Agora cada camada tem um segundo batch para as espelhadas (`scale.x = -1` no batch, matriz da instância pré-multiplicada pelo espelho; posição final inalterada). Clique == peça que aparece: de 3% a 9% numa metade da tela para 94% a 98% (e2e `atlas-espelho`, limiar de 75% por metade). Orçamento de draw calls: 2 -> 4 com os sistemas padrão (limite 150). `registry.js` dividido em `registry-helpers.js` e `registry-pick.js`; o campo `side` do registro agora casa `.l`/`.r`.
+- O clique atravessa estruturas quase transparentes (Raio-X, Fantasma, camada abaixo de 35%): o que se vê através delas é o que se seleciona.
+
+### Adicionado (Atlas 3D: fáscias e Separar peças)
+- Camada **Fáscias** no painel de camadas (desligada na abertura, translúcida a 45%) e botão **Somente fáscias** (`aria-pressed`). O clique **prefere a estrutura sob a fáscia** (decisão do dono, opção 2); clicar de novo no mesmo ponto alterna para a fáscia. Regra por nome, orientada a dados, em `fascia-rules.js`.
+- Vista **Separar peças** (explodida) no menu Mais opções, atrás da flag `explode`: slider acessível, deslocamento radial por camada a partir do centro do corpo (ou da estrutura isolada), respeita as peças espelhadas, animação que respeita `prefers-reduced-motion`, sem custo no boot (carregamento sob demanda).
+- `docs/ATLAS_LICENCAS_PENDENTES.md`: registro das 8 estruturas suspeitas de licença NC, dos 174 nós de cérebro de licença desconhecida, do `body.glb` sem origem, das lacunas de atribuição e do checklist "antes de cobrar". **Somente documentação: nenhum modelo nem a tela de Créditos foi alterado.**
+- Testes: `registry-mirror`, `registry-fascia`, `registry-pick`, `fascia-rules`, `explode` (unitários) e e2e `atlas-espelho`, `atlas-fascias`, `atlas-explode`.
+
 ### Alterado
 - Cotas diárias de IA dos membros mais generosas (chat 100, avaliar 25, caso 10, laboratório 80, Lia 60; administrador ~2x). O orçamento global de tokens continua sendo o freio.
 - A Lia do membro usa o modelo inteligente (120B) enquanto o uso de tokens das últimas 24 h estiver abaixo de 50 % do orçamento e o 120B abaixo de 150 mil tokens.
