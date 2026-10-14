@@ -37,69 +37,47 @@ export function createXrayClip({ bus, store, renderer, THREE, requestRender }) {
   // Plano de corte atual
   let currentClipPlane = null;
 
+  /** Camadas que o Raio-X deixa translúcidas (pele e fáscias envolvem os músculos). */
+  const XRAY_OPACITY = Object.freeze({ pele: 0.08, fascias: 0.08, musculos: 0.12 });
+
+  function emitLayers(layers) {
+    isEmittingXray = true;
+    for (const id of Object.keys(XRAY_OPACITY)) {
+      if (!layers[id]) continue;
+      bus.emit(bus.EVENTS.LAYER_SET, { layer: id, visible: layers[id].visible, opacity: layers[id].opacity });
+    }
+    isEmittingXray = false;
+  }
+
   /**
-   * Ativa/desativa raio-X reduzindo opacidade de pele e músculos.
+   * Ativa/desativa raio-X reduzindo opacidade de pele, fáscias e músculos.
+   * Várias camadas de músculo se sobrepõem: 0,25 ainda escondia os órgãos
+   * atrás do tórax; 0,12 deixa ver o coração/fígado.
    * @param {boolean} enabled
    */
   function setXray(enabled) {
     const currentState = store.get();
-
     // Idempotente: se já está no estado desejado, não faz nada
     if (currentState.xray === enabled) return;
+    const newLayers = { ...currentState.layers };
 
-    // Salva antes de ativar
     if (enabled && !savedLayerOpacities) {
-      savedLayerOpacities = {
-        pele: currentState.layers.pele,
-        musculos: currentState.layers.musculos,
-      };
-
-      // Reduz opacidade para efeito de raio-X
-      const newLayers = { ...currentState.layers };
-      // Várias camadas de músculo se sobrepõem: 0,25 ainda escondia os
-      // órgãos atrás do tórax; 0,12 deixa ver o coração/fígado.
-      newLayers.pele = { ...newLayers.pele, opacity: 0.08 };
-      newLayers.musculos = { ...newLayers.musculos, opacity: 0.12 };
-
-      store.set({ layers: newLayers, xray: enabled });
-
-      // Emite eventos para cada camada modificada
-      isEmittingXray = true;
-      bus.emit(bus.EVENTS.LAYER_SET, {
-        layer: 'pele',
-        visible: newLayers.pele.visible,
-        opacity: newLayers.pele.opacity,
-      });
-      bus.emit(bus.EVENTS.LAYER_SET, {
-        layer: 'musculos',
-        visible: newLayers.musculos.visible,
-        opacity: newLayers.musculos.opacity,
-      });
-      isEmittingXray = false;
+      savedLayerOpacities = {};
+      for (const [id, opacity] of Object.entries(XRAY_OPACITY)) {
+        if (!newLayers[id]) continue;
+        savedLayerOpacities[id] = newLayers[id];
+        newLayers[id] = { ...newLayers[id], opacity };
+      }
     } else if (!enabled && savedLayerOpacities) {
-      // Restaura opacidades salvas
-      const newLayers = { ...currentState.layers };
-      newLayers.pele = { ...newLayers.pele, opacity: savedLayerOpacities.pele.opacity };
-      newLayers.musculos = { ...newLayers.musculos, opacity: savedLayerOpacities.musculos.opacity };
-
-      store.set({ layers: newLayers, xray: enabled });
-
-      // Emite eventos para cada camada restaurada
-      isEmittingXray = true;
-      bus.emit(bus.EVENTS.LAYER_SET, {
-        layer: 'pele',
-        visible: newLayers.pele.visible,
-        opacity: newLayers.pele.opacity,
-      });
-      bus.emit(bus.EVENTS.LAYER_SET, {
-        layer: 'musculos',
-        visible: newLayers.musculos.visible,
-        opacity: newLayers.musculos.opacity,
-      });
-      isEmittingXray = false;
-
+      for (const [id, saved] of Object.entries(savedLayerOpacities)) {
+        newLayers[id] = { ...newLayers[id], opacity: saved.opacity };
+      }
       savedLayerOpacities = null;
+    } else {
+      return;
     }
+    store.set({ layers: newLayers, xray: enabled });
+    emitLayers(newLayers);
   }
 
   /**
