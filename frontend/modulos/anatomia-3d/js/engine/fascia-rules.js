@@ -63,7 +63,7 @@ export const FASCIA_DEPTH_WINDOW = 0.08;
 
 /**
  * Reordena acertos do raio para preferir a estrutura sob a fáscia.
- * @param {Array<{sid: string, distance: number, fascia: boolean, point?: number[]}>} hits ordenados por distância
+ * @param {Array<{sid: string, distance: number, fascia: boolean, faint?: boolean, point?: number[]}>} hits
  * @param {{ window?: number, enabled?: boolean }} [opts]
  * @returns {Array<{sid: string, distance: number, fascia: boolean}>} nova lista
  *   (a fáscia deslocada fica logo depois da estrutura que a substituiu)
@@ -71,7 +71,11 @@ export const FASCIA_DEPTH_WINDOW = 0.08;
 export function preferUnderFascia(hits, { window: depth = FASCIA_DEPTH_WINDOW, enabled = true } = {}) {
   if (!enabled || hits.length < 2 || !hits[0].fascia) return hits.slice();
   const first = hits[0];
-  const under = hits.find((h, i) => i > 0 && !h.fascia && h.distance - first.distance <= depth);
+  // Só vale o que está ATRÁS da fáscia e é sólido: a lista chega com as
+  // transparentes depois das sólidas (não é monotônica em distância), e uma pele
+  // translúcida na frente da fáscia não pode virar "a estrutura de baixo".
+  const under = hits.find((h, i) => i > 0 && !h.fascia && !h.faint
+    && h.distance >= first.distance && h.distance - first.distance <= depth);
   if (!under) return hits.slice();
   return [under, ...hits.filter((h) => h !== under)];
 }

@@ -35,7 +35,7 @@ function test(name, fn) {
 }
 
 /** Músculo (esfera grande) na frente de um órgão (esfera menor); câmera em +Z. */
-function build({ withOrgan = true } = {}) {
+function build({ withOrgan = true, renderer } = {}) {
   const geo = (r) => new THREE.SphereGeometry(r, 24, 16);
   const root = new THREE.Group();
   const muscle = new THREE.Mesh(geo(0.3), new THREE.MeshBasicMaterial());
@@ -46,7 +46,7 @@ function build({ withOrgan = true } = {}) {
   camera.position.set(0, 0, 3);
   camera.lookAt(0, 0, 0);
   camera.updateMatrixWorld();
-  const registry = createRegistry({ engine: { scene, camera, requestRender() {} } });
+  const registry = createRegistry({ engine: { scene, camera, renderer, requestRender() {} } });
   registry.registerSystem('muscular', { root, nodeToSid: { 'Biceps.r': 'za:biceps-r' }, sex: 'U', lod: 'lod1' });
   if (withOrgan) {
     const organRoot = new THREE.Group();
@@ -83,6 +83,32 @@ test('só há transparentes sob o ponto: a mais próxima ainda é selecionável'
 test('um órgão também transparente não rouba o clique do músculo opaco na frente', () => {
   const r = build();
   r.setOpacity('za:liver', 0.1);
+  assert.equal(r.pick(CENTER), 'za:biceps-r');
+});
+
+test('presets de profundidade: músculos a 30% (preset 4) são sólidos; a 20% (preset 5) deixam o órgão aparecer mas continuam clicáveis sem nada atrás', () => {
+  const r4 = build();
+  r4.setOpacity('za:biceps-r', 0.3);
+  assert.equal(r4.pick(CENTER), 'za:biceps-r');
+  const r5 = build();
+  r5.setOpacity('za:biceps-r', 0.2);
+  assert.equal(r5.pick(CENTER), 'za:liver');
+  const solo = build({ withOrgan: false });
+  solo.setOpacity('za:biceps-r', 0.2);
+  assert.equal(solo.pick(CENTER), 'za:biceps-r');
+});
+
+test('Corte: planos globais do renderer descartam acertos do lado cortado', () => {
+  const renderer = { clippingPlanes: [] };
+  const r = build({ renderer });
+  assert.equal(r.pick(CENTER), 'za:biceps-r');
+  // Plano z = 0.2 (mantém z >= 0.2): a face frontal do músculo (z≈0.3) fica; o órgão (z<=0.12) é cortado
+  renderer.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, 0, 1), -0.2)];
+  assert.equal(r.pick(CENTER), 'za:biceps-r');
+  // Plano que mantém só z <= -0.5: tudo na frente é cortado, nada é acertado
+  renderer.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, 0, -1), -0.5)];
+  assert.equal(r.pick(CENTER), null);
+  renderer.clippingPlanes = [];
   assert.equal(r.pick(CENTER), 'za:biceps-r');
 });
 

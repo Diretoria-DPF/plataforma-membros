@@ -70,6 +70,15 @@ test('se o primeiro acerto não é fáscia, nada muda', () => {
   const list = [hit('za:femur-r', 1), hit('za:fascia-lata-r', 1.01)];
   assert.deepEqual(preferUnderFascia(list).map((h) => h.sid), ['za:femur-r', 'za:fascia-lata-r']);
 });
+test('pele translúcida NA FRENTE da fáscia nunca vira "a estrutura de baixo" (lista sólidas-depois-fracas)', () => {
+  // ordem do Registry: sólidas por distância e, depois, as quase transparentes
+  const list = [hit('za:fascia-lata-r', 1.0), hit('za:rectus-femoris-r', 1.03), { ...hit('za:skin', 0.9, false), faint: true }];
+  assert.equal(preferUnderFascia(list)[0].sid, 'za:rectus-femoris-r');
+  const onlySkin = [hit('za:fascia-lata-r', 1.0), { ...hit('za:skin', 0.9, false), faint: true }];
+  assert.equal(preferUnderFascia(onlySkin)[0].sid, 'za:fascia-lata-r');
+  const behindFaint = [hit('za:fascia-lata-r', 1.0), { ...hit('za:rectus-femoris-r', 1.02), faint: true }];
+  assert.equal(preferUnderFascia(behindFaint)[0].sid, 'za:fascia-lata-r');
+});
 test('desligada (enabled:false) mantém a ordem do raio', () => {
   const out = preferUnderFascia([hit('za:fascia-lata-r', 1), hit('za:rectus-femoris-r', 1.02)], { enabled: false });
   assert.equal(out[0].sid, 'za:fascia-lata-r');

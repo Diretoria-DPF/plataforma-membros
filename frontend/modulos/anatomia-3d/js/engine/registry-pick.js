@@ -21,7 +21,7 @@
  * selecionável — `pickCycle` alterna ao clicar de novo no mesmo ponto (regras
  * em fascia-rules.js).
  *
- * Estruturas quase transparentes (Raio-X, fantasma, camada em baixa opacidade)
+ * Estruturas quase transparentes (< 25%) (Raio-X, fantasma, camada em baixa opacidade)
  * deixam o clique passar: o que se vê através delas é o que se seleciona. Se
  * só houver transparentes sob o ponto, a mais próxima ainda é escolhida.
  */
@@ -33,7 +33,7 @@ import { preferUnderFascia, createPickCycle } from './fascia-rules.js';
  * camada mais profunda (A.10, Onda 3). */
 export const PICK_TIE_EPS = 0.01;
 /** Abaixo desta opacidade a estrutura é "de vidro" para o clique. */
-export const SEE_THROUGH_OPACITY = 0.35;
+export const SEE_THROUGH_OPACITY = 0.25;
 export const PICK_LAYER_PRIORITY = Object.freeze({ visceras: 0, vasos: 1, nervos: 2, linfatico: 3, esqueleto: 4, musculos: 5, pele: 6, fascias: 7 });
 
 /**
@@ -66,9 +66,11 @@ export function createPicker({ engine, getPickables, getRec }) {
     return a.distance - b.distance;
   }
 
+  // Planos do material E os globais do renderer (o Corte usa renderer.clippingPlanes).
   const isClipped = (hit) => {
-    const planes = hit.object.material && hit.object.material.clippingPlanes;
-    return !!(planes && planes.length && planes.some((plane) => plane.distanceToPoint(hit.point) < 0));
+    const local = hit.object.material && hit.object.material.clippingPlanes;
+    const global = engine && engine.renderer && engine.renderer.clippingPlanes;
+    return [local, global].some((planes) => !!(planes && planes.length && planes.some((plane) => plane.distanceToPoint(hit.point) < 0)));
   };
 
   let preferFascia = true;
@@ -93,8 +95,9 @@ export function createPicker({ engine, getPickables, getRec }) {
       const sid = isClipped(hit) ? null : sidOfHit(hit);
       if (!sid || seen.has(sid)) continue;
       seen.add(sid);
-      const entry = { sid, distance: hit.distance, fascia: layerOfHit(hit) === 'fascias', point: [hit.point.x, hit.point.y, hit.point.z] };
-      (opacityOfHit(hit) < SEE_THROUGH_OPACITY ? faint : solid).push(entry);
+      const isFaint = opacityOfHit(hit) < SEE_THROUGH_OPACITY;
+      const entry = { sid, distance: hit.distance, fascia: layerOfHit(hit) === 'fascias', faint: isFaint, point: [hit.point.x, hit.point.y, hit.point.z] };
+      (isFaint ? faint : solid).push(entry);
     }
     return solid.concat(faint);
   }
