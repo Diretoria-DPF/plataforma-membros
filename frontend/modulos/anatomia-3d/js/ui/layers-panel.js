@@ -153,8 +153,8 @@ export function createLayersPanel(container, { bus, store, unavailable = () => [
       className: 'atlas-layers-fascia-only',
       type: 'button',
       'aria-pressed': 'false',
-      'aria-label': 'Mostrar somente as fáscias (desliga as outras camadas)',
-      title: 'Mostrar somente as fáscias',
+      'aria-label': 'Somente fáscias', // contém o texto visível
+      title: 'Mostrar somente as fáscias (desliga as outras camadas)',
       text: 'Somente fáscias',
     })),
 

@@ -41,7 +41,7 @@
 
 .atlas-explode-label {
   font-weight: 500;
-  color: var(--laift-text-secondary);
+  color: var(--laift-muted);
 }
 
 .atlas-explode-row {
@@ -74,7 +74,7 @@
 
 .atlas-explode-hint {
   margin: 0;
-  color: var(--laift-text-secondary);
+  color: var(--laift-muted);
   line-height: 1.4;
 }
 
@@ -107,7 +107,7 @@
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: var(--laift-text-secondary);
+  color: var(--laift-muted);
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
