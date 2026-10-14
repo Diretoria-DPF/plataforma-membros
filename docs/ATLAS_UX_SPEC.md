@@ -471,7 +471,7 @@ inteiro) e `#organ-name` (o nó de texto do nome) — ver `LEGACY_COMPAT`.
 ## 9. Painel de camadas
 
 Flutuante ancorado ao botão "Camadas" da toolbar (não o painel inferior).
-Uma linha por camada (`LAYERS` em `contracts.js`, 7 itens) — interruptor
+Uma linha por camada (`LAYERS` em `contracts.js`, 8 itens, com **Fáscias**) — interruptor
 liga/desliga + controle deslizante de opacidade (0–100%) + a cor da
 camada (um quadradinho de 12px com `--atlas-color-*`, útil quando duas
 camadas próximas se confundem):
@@ -481,12 +481,15 @@ camadas próximas se confundem):
 │ Superficial ●───○───○ Profundo│  preset (5 posições)
 ├─────────────────────────────┤
 │ ■ Pele        [○off] ▬▬▬▬▬░  │
+│ ■ Fáscias     [○off] ▬▬▬░░░  │
 │ ■ Músculos    [●on ] ▬▬▬░░░  │
 │ ■ Esqueleto   [●on ] ▬▬▬▬▬░  │
 │ ■ Vísceras    [○off] ▬▬▬▬▬░  │
 │ ■ Vasos       [○off] ▬▬▬▬▬░  │
 │ ■ Nervos      [○off] ▬▬▬▬▬░  │
 │ ■ Linfático   [○off] ▬▬▬▬▬░  │
+├─────────────────────────────┤
+│ [ Somente fáscias ]          │  aria-pressed
 └─────────────────────────────┘
 ```
 
@@ -502,6 +505,66 @@ mudou (nenhum evento novo — o preset é açúcar sintático sobre `layer:set`)
 Ajustar uma camada individualmente depois do preset não "desliga" o
 preset — ele só reflete a última combinação conhecida, sem tentar
 adivinhar em qual posição o conjunto atual se encaixa melhor.
+
+### 9.1 Fáscias (camada própria) e o clique
+
+Decisão do dono (13/10/2026, "opção 2"): o clique **prefere o músculo ou a
+estrutura que está sob a fáscia superficial**, mas a fáscia continua
+selecionável. Antes, 80% dos cliques no corpo caíam em fáscias (elas envolvem
+os músculos e são a primeira superfície que o raio encontra).
+
+- **O que é fáscia**: regra por nome, em `js/engine/fascia-rules.js` (dados +
+  testes): fáscia, retináculo, aponeurose e trato iliotibial do sistema
+  muscular (64 estruturas). O *tensor da fáscia lata* é músculo e fica em Músculos.
+- **Camada "Fáscias"** (`id: 'fascias'`, batch e material próprios): desligada na
+  abertura; ao ligar entra **translúcida a 45%**, para o músculo sob ela
+  continuar visível (e o destaque dele também). Ligar a camada baixa o sistema
+  muscular se ele ainda não estiver carregado. O Raio-X não mexe nas fáscias.
+- **Pick**: se o primeiro acerto é uma fáscia e há outra estrutura logo atrás
+  (até 8 cm), a de baixo vence. **Clicar de novo no mesmo ponto** (comparado em
+  3D, não em pixels, porque a ficha muda o tamanho do canvas) alterna:
+  estrutura → fáscia → estrutura.
+- **"Somente fáscias"** (botão com `aria-pressed` no painel de camadas): desliga
+  todas as outras camadas e deixa as fáscias opacas; clicar de novo restaura o
+  estado anterior. Nesse modo só existem fáscias para clicar, então não há o que
+  preferir.
+- Textos em PT-BR; o botão tem rótulo acessível e alvo de toque de 44px.
+
+### 9.2 O clique atravessa o que é transparente
+
+Estruturas com opacidade abaixo de 35% (Raio-X, Fantasma, camada quase
+apagada) deixam o clique passar para o que está atrás; se só houver
+transparentes sob o ponto, a mais próxima ainda é selecionada.
+
+### 9.3 Separar peças (vista explodida)
+
+Controle **discreto**, atrás da flag `explode` (ligada por padrão): item
+"Separar peças…" no menu **Mais opções** (⚙) abre uma janela flutuante (no celular,
+folha junto à base) com:
+
+```
+┌─────────────────────────────┐
+│ Separar peças             × │
+│ Distância entre as peças     │
+│ ●────────○ 40%               │  slider 0–100%, aria-valuetext
+│ Afasta as camadas a partir…  │  aria-live
+│ [ Juntar peças ]             │
+└─────────────────────────────┘
+```
+
+- **Deslocamento radial** a partir do centro do corpo; as camadas superficiais
+  (pele, fáscias, músculos) andam mais que as profundas (esqueleto, vísceras),
+  abrindo-se em cascas. Com uma **estrutura isolada**, as partes (sub-malhas)
+  dela se afastam do centro da própria estrutura; com uma peça só, o painel avisa.
+- Respeita as peças espelhadas (lote `#m`): o deslocamento em mundo é multiplicado
+  por `MIRROR_X`, então os dois lados se afastam para fora. O clique, as caixas
+  (rótulos, foco da câmera) e a visibilidade seguem a peça na posição separada.
+- **Animação** por suavização (≈ 0,45 s); com `prefers-reduced-motion` o
+  deslocamento é aplicado direto. Volta ao normal ao zerar, no botão
+  **Juntar peças**, em **Centralizar** e ao sair do modo Explorar.
+- **Sem custo quando desligada**: no boot ficam só o ponto de entrada
+  (`ui/explode-entry.js`) e a cola do Registry; o controlador, a matemática, o
+  painel e o CSS chegam por `import()` na primeira abertura.
 
 ---
 

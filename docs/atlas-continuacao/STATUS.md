@@ -22,6 +22,15 @@ Marque `[x]` quando a tarefa estiver **feita e validada** (`bash docs/atlas-cont
 | [ ] | T13 | Teste de papel da visão sistêmica | você | — | 1 h | [T13](tarefas/T13-teste-papel-visao-sistemica.md) |
 | [ ] | T14 | Aparelho real, NVDA, 3 alunos e post-mortem | você | T00 (T05–T08) | 1 dia | [T14](tarefas/T14-aparelho-real-e-fechamento.md) |
 
+## Atualização de 13/10/2026 (2): cliques, fáscias e Separar peças (PR #68)
+- **Bug "o clique só sinaliza em metade do corpo": corrigido.** Causa: peças do lado espelhado (matriz de determinante negativo) desenhadas "por dentro" no BatchedMesh. Correção: batch próprio para as espelhadas (`registry-helpers.js`, `registry.js`). Teste de regressão `registry-mirror.test.mjs` e e2e `atlas-espelho` (clique == peça visível ≥ 75% por metade da tela; medido 94–98%).
+- **Fáscias**: camada própria (desligada, 45%), botão "Somente fáscias" e clique que prefere a estrutura sob a fáscia, com alternância ao clicar de novo (`fascia-rules.js`, e2e `atlas-fascias`).
+- **Separar peças** (vista explodida, flag `explode`, no menu ⚙): sob demanda, respeita peças espelhadas, `prefers-reduced-motion` e o pick (e2e `atlas-explode`).
+- **Clique atravessa o transparente** (Raio-X, fantasma, camada < 35%): `registry-pick.js`.
+- **Varredura de funcionalidades** (nervoso, vasos, linfático, vísceras, HRA, fantasma, isolar, Raio-X, corte, rótulos, busca, ficha, quiz): relatório em [`docs/atlas-qa/varredura-2026-10-13.md`](../atlas-qa/varredura-2026-10-13.md), com o que é falha real e o que é ambiente.
+- **Licenças dos modelos: só registradas** em [`docs/ATLAS_LICENCAS_PENDENTES.md`](../ATLAS_LICENCAS_PENDENTES.md) (nada aplicado; checklist "antes de cobrar").
+- Pendências novas: nenhuma tarefa nova em `tarefas/`; ver "Pendências e riscos" no relatório da varredura.
+
 ## Itens que só o conselho ou você resolvem (não são código)
 - [ ] Enviar os 4 pacotes (lotes 1, 2, 3 e quiz 4a) ao conselho e acompanhar o prazo de 3 dias por lote.
 - [ ] Nomear os 3 revisores titulares e registrar a assinatura da coordenação (`docs/atlas-conteudo/guia-revisao.md`, "Conselho plural").
