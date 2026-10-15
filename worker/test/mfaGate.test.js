@@ -83,7 +83,9 @@ describe('portão de MFA — quando NÃO deve barrar', () => {
   test('membro comum nunca é barrado, nem consulta credenciais de MFA', async () => {
     const sql = world({ role: 'member' });
     await API_REGISTRY.apiListTasks(sql, makeEnv(), [TOKEN]);
-    expect(callsMatching(sql, 'FROM mfa_credentials')).toHaveLength(0);
+    // O SELECT da sessão já traz "tem autenticador?" (ROL-03); fora dele, nenhuma consulta de credencial.
+    const outsideSession = callsMatching(sql, 'FROM mfa_credentials').filter((c) => !c[0].join('?').includes('FROM sessions s'));
+    expect(outsideSession).toHaveLength(0);
     const res = await API_REGISTRY.apiListTasks(world({ role: 'member' }), makeEnv(), [TOKEN]);
     expect(res.mfaSetupRequired).toBeUndefined();
   });

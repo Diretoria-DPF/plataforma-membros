@@ -13,7 +13,10 @@
 
   function init() {
     const identity = window.LaiftIdentity && window.LaiftIdentity.get();
-    if (!identity || identity.role !== 'admin') {
+    // Admin ou cargo com a capacidade de presença (gestor, ADR 0010).
+    var allowed = !!identity && (identity.role === 'admin' ||
+      (Array.isArray(identity.capabilities) && identity.capabilities.indexOf('attendance.manage') !== -1));
+    if (!allowed) {
       document.getElementById('fiscalDenied').classList.remove('hidden');
       return;
     }

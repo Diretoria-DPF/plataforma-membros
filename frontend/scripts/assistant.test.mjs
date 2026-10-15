@@ -485,6 +485,8 @@ test('assistant-suggestions.js: só texto (sem innerHTML), no index.html antes d
   assert.ok(html.indexOf('assistant-suggestions.js') < html.indexOf('<script src="assistant.js"'));
   assert.ok(read('frontend/scripts/build.js').includes("'assistant-suggestions.js'"));
   assert.ok(read('frontend/sw.js').includes("'assistant-suggestions.js'"));
-  assert.match(read('frontend/sw.js'), /CACHE_NAME = CACHE_PREFIX \+ 'v9'/); // v9: memory (ADR 0007, etapa 7); v8: agents-tutor (etapa 5)
+  // v9: memory (ADR 0007, etapa 7); v8: agents-tutor (etapa 5). Exige o mínimo: novas subidas não quebram o teste.
+  const cacheVersion = Number((read('frontend/sw.js').match(/CACHE_NAME = CACHE_PREFIX \+ 'v(\d+)'/) || [])[1]);
+  assert.ok(cacheVersion >= 9, 'cache do SW em v9 ou mais (achado: ' + cacheVersion + ')');
   assert.doesNotMatch(read('frontend/assistant-suggestions.js'), /innerHTML|document\./);
 });

@@ -352,7 +352,7 @@ export async function epidemiology(sql, env) {
 // Moderação do acervo (admin)
 // ---------------------------------------------------------------------------
 export async function listPendingCases(sql, identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'content.review'); // admin ou cargo revisor de conteúdo (ADR 0010)
   const rows = await sql`
     SELECT c.id, c.title, c.toxindrome, c.agent, c.payload, c.created_at, p.full_name AS created_by_name
     FROM clinical_cases c
@@ -433,7 +433,7 @@ async function explainNoUpdate(sql, caseId, simReview) {
 }
 
 export async function reviewCase(sql, env, identity, rawInput, correlationId) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'content.review'); // admin ou cargo revisor de conteúdo (ADR 0010)
   const input = asObject(rawInput);
   const caseId = cleanText(input.caseId, 40);
   const decision = cleanText(input.decision, 20);
@@ -441,6 +441,8 @@ export async function reviewCase(sql, env, identity, rawInput, correlationId) {
   if (decision !== 'approved' && decision !== 'rejected') throw E.ValidationError('Decisão inválida.');
 
   const simReview = decision === 'approved' && input.checklist !== undefined;
+  // Revisão da simulação: sim.review. O gatilho da 037 segue exigindo revisor diferente do autor.
+  if (simReview) S.requireCapability(identity, 'sim.review');
   const rows = simReview
     ? await approveSimCase(sql, identity, caseId, input.checklist)
     : await decideCase(sql, identity, caseId, decision);

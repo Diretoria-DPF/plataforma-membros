@@ -116,7 +116,7 @@ export async function getMyAttendanceQr(env, identity) {
 // =============================================================================
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'attendance.manage'); // admin ou cargo gestor (ADR 0010)
 }
 
 function requireUuid(value, message) {
@@ -325,11 +325,19 @@ export async function checkIn(sql, env, identity, input, correlationId) {
   };
 }
 
-function mapParticipant(r) {
+/** E-mail mascarado (an***@dominio) para quem opera a presença pelo cargo: o completo fica só com o admin. */
+export function maskEmail(email) {
+  const text = typeof email === 'string' ? email : '';
+  const at = text.indexOf('@');
+  if (at < 1) return '';
+  return text.slice(0, Math.min(2, at)) + '***' + text.slice(at);
+}
+
+function mapParticipant(r, identity) {
   return {
     profileId: r.id,
     fullName: r.full_name,
-    email: r.email,
+    email: identity && identity.role === C.ROLES.ADMIN ? r.email : maskEmail(r.email),
     role: r.role,
     registered: !!r.registration_id,
     checkedInAt: r.checked_in_at || null,
@@ -356,7 +364,7 @@ export async function search(sql, identity, input) {
       ORDER BY p.full_name ASC
       LIMIT ${C.LIMITS.ATTENDANCE_LIST_LIMIT}
     `;
-    return { success: true, participants: rows.map(mapParticipant) };
+    return { success: true, participants: rows.map((r) => mapParticipant(r, identity)) };
   }
 
   if (term.length < C.LIMITS.ATTENDANCE_SEARCH_MIN) throw E.ValidationError('Digite ao menos ' + C.LIMITS.ATTENDANCE_SEARCH_MIN + ' caracteres.');
@@ -375,7 +383,7 @@ export async function search(sql, identity, input) {
     ORDER BY (r.id IS NOT NULL) DESC, p.full_name ASC
     LIMIT ${C.LIMITS.ATTENDANCE_SEARCH_LIMIT}
   `;
-  return { success: true, participants: rows.map(mapParticipant) };
+  return { success: true, participants: rows.map((r) => mapParticipant(r, identity)) };
 }
 
 // =============================================================================

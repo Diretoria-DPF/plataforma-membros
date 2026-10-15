@@ -20,7 +20,7 @@ const LEAGUE_POSITIONS = Object.values(C.LEAGUE_POSITION);
 const DIRECTORATES = Object.values(C.DIRECTORATE);
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'orgchart.edit'); // admin ou cargo gestor (ADR 0010)
 }
 
 export async function setMemberPosition(sql, env, identity, targetProfileId, input, correlationId) {

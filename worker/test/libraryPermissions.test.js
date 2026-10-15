@@ -103,3 +103,12 @@ describe('tabela "Quem pode o quê"', () => {
     expect(permissionTable().rows[0].roles.membro).toBe(false);
   });
 });
+
+describe('rolesFor — cargo funcional curador (ADR 0010, ROL-03)', () => {
+  test('capacidade library.curate com MFA ativo vale como curador; sem MFA, não', () => {
+    const curador = { role: 'member', capabilities: ['library.curate'], mfaConfirmed: true };
+    expect(rolesFor(curador, [])).toEqual(['curador', 'membro']);
+    expect(rolesFor({ ...curador, mfaConfirmed: false }, [])).toEqual(['membro']);
+    expect(rolesFor({ role: 'visitor', capabilities: ['library.curate'], mfaConfirmed: true }, [])).toEqual([]);
+  });
+});

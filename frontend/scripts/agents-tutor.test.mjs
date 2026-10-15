@@ -610,7 +610,9 @@ test('agents-tutor.js/.css estão no index.html (script depois de assistant-sour
   assert.ok(build.includes("'agents-tutor.js'") && build.includes("'agents-tutor.css'"));
   const sw = read('frontend/sw.js');
   assert.ok(sw.includes("'agents-tutor.js'") && sw.includes("'agents-tutor.css'"));
-  assert.match(sw, /CACHE_NAME = CACHE_PREFIX \+ 'v9'/);
+  // O cache subiu com o Tutor (v8) e com etapas seguintes: exige o mínimo atual (v9), não o número exato.
+  const cacheVersion = Number((sw.match(/CACHE_NAME = CACHE_PREFIX \+ 'v(\d+)'/) || [])[1]);
+  assert.ok(cacheVersion >= 9, 'cache do SW em v9 ou mais (achado: ' + cacheVersion + ')');
 });
 
 test('o index.html não ganhou domínio novo na CSP por causa do Tutor', () => {

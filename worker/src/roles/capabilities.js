@@ -12,7 +12,8 @@
  *   member     a união das capacidades dos seus cargos (vários cargos acumulam).
  *   visitor    nada (um cargo gravado para um visitante é ignorado).
  *
- * Os gates dos serviços ainda usam o papel base; a troca para capacidades é a próxima etapa (ROL-03).
+ * Os serviços decidem por capacidade (ROL-03): S.requireCapability usa capabilityCheck abaixo. As capacidades dos
+ * cargos privilegiados só valem com a verificação em duas etapas ativa (identity.mfaConfirmed), com ou sem a flag.
  */
 
 const freezeList = (list) => Object.freeze(list.slice());
@@ -55,6 +56,22 @@ export function capabilitiesFor({ baseRole, functionalRoles } = {}) {
   if (baseRole !== BASE_MEMBER) return freezeList([]);
   const granted = new Set(normalizeFunctionalRoles(functionalRoles).flatMap((role) => ROLE_CAPS[role]));
   return freezeList(CAPABILITIES.filter((cap) => granted.has(cap)));
+}
+
+/** Capacidades que vêm de um cargo privilegiado: só valem com o MFA ativo. */
+export const PRIVILEGED_CAPABILITIES = freezeList([...new Set(PRIVILEGED_ROLES.flatMap((role) => ROLE_CAPS[role]))]);
+
+/**
+ * Decide uma capacidade (pura): 'ok', 'missing' (não tem) ou 'mfa' (tem pelo cargo, mas sem MFA ativo).
+ * O admin passa em qualquer uma (o MFA dele segue a flag mfa_required, no portão de runWithSession).
+ */
+export function capabilityCheck(identity, capability) {
+  if (identity && identity.role === BASE_ADMIN) return 'ok';
+  if (!identity || identity.role !== BASE_MEMBER) return 'missing';
+  const caps = identity && Array.isArray(identity.capabilities) ? identity.capabilities : [];
+  if (!caps.includes(capability)) return 'missing';
+  if (PRIVILEGED_CAPABILITIES.includes(capability) && identity.mfaConfirmed !== true) return 'mfa';
+  return 'ok';
 }
 
 /** A pessoa precisa de verificação em duas etapas? Admin sempre; membro com ao menos um cargo privilegiado. */

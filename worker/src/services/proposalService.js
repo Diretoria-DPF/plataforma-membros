@@ -140,7 +140,7 @@ export async function getProposalResults(sql, identity, proposalId) {
 }
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'proposals.review'); // admin ou cargo gestor (ADR 0010)
 }
 
 export async function listForReview(sql, identity) {

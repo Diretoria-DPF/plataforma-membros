@@ -123,7 +123,7 @@ export async function updateMyAvatar(sql, env, identity, base64Data, mimeType, c
 }
 
 export async function uploadEventImage(sql, env, identity, eventId, base64Data, mimeType, correlationId) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'events.manage'); // imagem de evento: admin ou cargo gestor (ADR 0010)
   const id = S.normalizeText(eventId);
 
   const existing = await sql`SELECT id FROM events WHERE id = ${id}::uuid`;

@@ -20,7 +20,7 @@
  */
 import { RateLimitError, AuthError, ForbiddenError } from './errors.js';
 import { ACCOUNT_STATUS, LIMITS, ROLES } from './constants.js';
-import { capabilitiesFor, normalizeFunctionalRoles } from './roles/capabilities.js';
+import { capabilitiesFor, capabilityCheck, normalizeFunctionalRoles } from './roles/capabilities.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -158,14 +158,15 @@ export async function createSession(sql, pepper, profileId, userAgent, ttlMinute
 // Banco sem a 038 (Worker publicado antes da migração): a sessão segue valendo, sem cargos.
 // Depois de a 038 estar aplicada em todos os bancos, o caminho sem cargos pode sair.
 function isMissingMemberRoles(err) {
-  return !!err && /member_roles/.test(String(err.message || '')) && (err.code === '42P01' || /does not exist/i.test(String(err.message || '')));
+  return !!err && /member_roles|mfa_credentials/.test(String(err.message || '')) && (err.code === '42P01' || /does not exist/i.test(String(err.message || '')));
 }
 
 function selectSessionRow(sql, tokenHash) {
   return sql`
     SELECT s.profile_id AS profile_id, p.role AS role, p.status AS status,
            p.full_name AS full_name, p.email AS email, p.email_confirmed_at AS email_confirmed_at,
-           ARRAY(SELECT mr.role FROM member_roles mr WHERE mr.profile_id = p.id ORDER BY mr.role) AS functional_roles
+           ARRAY(SELECT mr.role FROM member_roles mr WHERE mr.profile_id = p.id ORDER BY mr.role) AS functional_roles,
+           EXISTS (SELECT 1 FROM mfa_credentials mc WHERE mc.profile_id = p.id AND mc.confirmed_at IS NOT NULL) AS mfa_confirmed
     FROM sessions s
     JOIN profiles p ON p.id = s.profile_id
     WHERE s.token_hash = ${tokenHash}
@@ -215,6 +216,8 @@ function identityFromRow(row, rawToken) {
     email: row.email,
     functionalRoles,
     capabilities: capabilitiesFor({ baseRole: row.role, functionalRoles }),
+    // Autenticador confirmado: as capacidades dos cargos privilegiados só valem com ele (capabilityCheck).
+    mfaConfirmed: row.mfa_confirmed === true,
     sessionToken: normalizeText(rawToken),
   };
 }
@@ -267,13 +270,26 @@ export function requireRole(identity, allowedRoles) {
   }
 }
 
-/** Exige uma capacidade (cargos funcionais, ADR 0010). O admin passa em qualquer uma. */
+export const CAPABILITY_MFA_MESSAGE = 'Para usar as funções do seu cargo, ative a verificação em duas etapas em Perfil.';
+
+/** A pessoa pode usar a capacidade agora? (mesma regra de requireCapability, sem lançar erro). */
+export function hasCapability(identity, capability) {
+  return capabilityCheck(identity, capability) === 'ok';
+}
+
+/**
+ * Exige uma capacidade (cargos funcionais, ADR 0010). O admin passa em qualquer uma. Capacidade de cargo
+ * privilegiado sem autenticador confirmado é negada com mensagem própria (com ou sem a flag mfa_required).
+ */
 export function requireCapability(identity, capability) {
-  if (identity && identity.role === ROLES.ADMIN) return;
-  const caps = identity && Array.isArray(identity.capabilities) ? identity.capabilities : [];
-  if (caps.indexOf(capability) === -1) {
-    throw ForbiddenError('Acesso não autorizado para este recurso.');
+  const verdict = capabilityCheck(identity, capability);
+  if (verdict === 'ok') return;
+  if (verdict === 'mfa') {
+    const err = ForbiddenError(CAPABILITY_MFA_MESSAGE);
+    err.payload = { code: 'role_mfa_required' };
+    throw err;
   }
+  throw ForbiddenError('Acesso não autorizado para este recurso.');
 }
 
 export async function revokeSession(sql, pepper, rawToken) {

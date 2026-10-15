@@ -544,6 +544,8 @@
     var panel = $('panel-admin-ai');
     if (!panel) return;
     var card = buildKbCard();
+    card.setAttribute('data-cap', 'kb.reindex'); // só o admin reindexa
+    if (!allowed('kb.reindex')) card.classList.add('hidden');
     var satHead = $('h-admin-ai-sat');
     var satCard = satHead && satHead.parentNode && satHead.parentNode.parentNode;
     if (satCard && satCard.parentNode === panel) panel.insertBefore(card, satCard.nextSibling);
@@ -772,10 +774,19 @@
     }
     // Sem runHealth() aqui: cada visita não gera chamada real à IA por chave.
     // O teste de chaves roda só pelo botão "Testar chaves agora".
-    loadMetrics(7);
-    loadPending(false);
-    loadAtlasUsage(7);
-    loadSatAll(7);
+    // Cada bloco só carrega para quem pode (admin tudo; cargos, ADR 0010): os cartões já somem por data-cap.
+    if (allowed('metrics.read')) {
+      loadMetrics(7);
+      loadAtlasUsage(7);
+    }
+    if (allowed('content.review')) loadPending(false);
+    if (allowed('assistant.feedback.moderate')) loadSatAll(7);
+  }
+
+  /** Capacidade da pessoa logada (roles-ui.js). Sem o módulo (testes antigos): como antes, tudo. */
+  function allowed(cap) {
+    var roles = typeof window !== 'undefined' ? window.LaiftRoles : null;
+    return !roles || roles.has(cap);
   }
 
   function bindSatisfaction() {

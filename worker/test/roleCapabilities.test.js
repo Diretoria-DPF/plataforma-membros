@@ -9,7 +9,7 @@
  */
 import {
   CAPABILITIES, ROLE_CAPS, ADMIN_ONLY_CAPABILITIES, FUNCTIONAL_ROLES, PRIVILEGED_ROLES,
-  capabilitiesFor, requiresMfa, normalizeFunctionalRoles,
+  capabilitiesFor, requiresMfa, normalizeFunctionalRoles, capabilityCheck, PRIVILEGED_CAPABILITIES,
 } from '../src/roles/capabilities.js';
 
 const EXPECTED = {
@@ -98,5 +98,26 @@ describe('requiresMfa', () => {
     expect(requiresMfa({ baseRole: 'member', functionalRoles: [] })).toBe(false);
     expect(requiresMfa({ baseRole: 'visitor', functionalRoles: ['gestor'] })).toBe(false);
     expect(requiresMfa()).toBe(false);
+  });
+});
+
+describe('capabilityCheck (ROL-03)', () => {
+  test('admin passa em tudo; sem a capacidade: missing', () => {
+    expect(capabilityCheck({ role: 'admin', capabilities: [] }, 'roles.grant')).toBe('ok');
+    expect(capabilityCheck({ role: 'member', capabilities: [] }, 'events.manage')).toBe('missing');
+    expect(capabilityCheck(null, 'events.manage')).toBe('missing');
+  });
+
+  test('capacidade de cargo privilegiado exige MFA confirmado; a do mentor não', () => {
+    const gestor = { role: 'member', capabilities: ['events.manage'] };
+    expect(capabilityCheck(gestor, 'events.manage')).toBe('mfa');
+    expect(capabilityCheck({ ...gestor, mfaConfirmed: true }, 'events.manage')).toBe('ok');
+    expect(capabilityCheck({ role: 'member', capabilities: ['mentoring.offer'] }, 'mentoring.offer')).toBe('ok');
+  });
+
+  test('PRIVILEGED_CAPABILITIES = capacidades dos cargos privilegiados', () => {
+    const expected = PRIVILEGED_ROLES.flatMap((r) => EXPECTED[r]);
+    expect([...PRIVILEGED_CAPABILITIES].sort()).toEqual([...new Set(expected)].sort());
+    expect(PRIVILEGED_CAPABILITIES).not.toContain('mentoring.offer');
   });
 });

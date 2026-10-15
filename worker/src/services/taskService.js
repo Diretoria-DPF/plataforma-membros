@@ -80,7 +80,7 @@ export async function submitTaskComment(sql, identity, taskId, message, correlat
 
   await enforceWriteLimit(sql, 'TASK_COMMENT', identity.profileId, C.HARDENING_RATE_LIMITS.TASK_COMMENT, 'de comentários');
   const signedUp = await sql`SELECT id FROM task_signups WHERE task_id = ${id}::uuid AND profile_id = ${identity.profileId}::uuid LIMIT 1`;
-  if (!signedUp.length && identity.role !== C.ROLES.ADMIN) {
+  if (!signedUp.length && !S.hasCapability(identity, 'tasks.manage')) {
     throw E.ForbiddenError('Só é possível comentar em tarefas às quais você aderiu.');
   }
 
@@ -110,7 +110,7 @@ export async function signupForTask(sql, identity, taskId, correlationId) {
 }
 
 function assertAdmin(identity) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'tasks.manage'); // admin ou cargo gestor (ADR 0010)
 }
 
 export async function createTask(sql, identity, input, correlationId) {

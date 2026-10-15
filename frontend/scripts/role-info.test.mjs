@@ -25,16 +25,18 @@ test('withRoleInfo: copia cargos e capacidades válidos sem mexer no perfil orig
   const { withRoleInfo } = helpers();
   const profile = Object.freeze({ id: 'x', role: 'member' });
   const out = withRoleInfo(profile, { functionalRoles: ['gestor'], capabilities: ['events.manage', 'tasks.manage'] });
-  assert.deepEqual(out, { id: 'x', role: 'member', functionalRoles: ['gestor'], capabilities: ['events.manage', 'tasks.manage'] });
+  assert.deepEqual(out, { id: 'x', role: 'member', functionalRoles: ['gestor'], capabilities: ['events.manage', 'tasks.manage'], roleMfaPending: false });
   assert.notEqual(out, profile);
 });
 
 test('withRoleInfo: resposta sem os campos (servidor antigo) ou com lixo vira listas vazias ou filtradas', () => {
   const { withRoleInfo } = helpers();
-  assert.deepEqual(withRoleInfo({}, {}), { functionalRoles: [], capabilities: [] });
-  assert.deepEqual(withRoleInfo({}, null), { functionalRoles: [], capabilities: [] });
+  assert.deepEqual(withRoleInfo({}, {}), { functionalRoles: [], capabilities: [], roleMfaPending: false });
+  assert.deepEqual(withRoleInfo({}, null), { functionalRoles: [], capabilities: [], roleMfaPending: false });
   const dirty = withRoleInfo({}, { functionalRoles: 'gestor', capabilities: ['ok.cap', 7, '<script>', 'Upper', null] });
-  assert.deepEqual(dirty, { functionalRoles: [], capabilities: ['ok.cap'] });
+  assert.deepEqual(dirty, { functionalRoles: [], capabilities: ['ok.cap'], roleMfaPending: false });
+  assert.equal(withRoleInfo({}, { roleMfaPending: 'sim' }).roleMfaPending, false);
+  assert.equal(withRoleInfo({}, { roleMfaPending: true }).roleMfaPending, true);
 });
 
 test('os dois caminhos de apiGetMyProfile guardam cargos e capacidades', () => {
@@ -42,8 +44,9 @@ test('os dois caminhos de apiGetMyProfile guardam cargos e capacidades', () => {
   assert.equal(hits.length, 2);
 });
 
-test('nada na interface é liberado por capacidade ainda (fica para a próxima etapa)', () => {
+test('app.js não decide por capacidade sozinho: delega a roles-ui.js (data-cap)', () => {
   assert.doesNotMatch(APP, /\.capabilities\.(indexOf|includes)\(|\.functionalRoles\.(indexOf|includes)\(/);
+  assert.match(APP, /window\.LaiftRoles\.apply\(document, state\.profile\)/);
 });
 
 test('getIdentity continua sem o token de sessão', () => {

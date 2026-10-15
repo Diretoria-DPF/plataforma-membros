@@ -278,7 +278,7 @@ async function currentLevels(sql) {
  * NUNCA traz texto de mensagem: o histórico só guarda tipo, detecção e nível. `now` é só para os testes.
  */
 export async function adminAssistantModeration(sql, identity, input, now) {
-  S.requireRole(identity, [C.ROLES.ADMIN]);
+  S.requireCapability(identity, 'reports.moderate'); // admin ou cargo moderador (ADR 0010)
   const limit = clampPageSize(input && input.limit);
   return {
     success: true,

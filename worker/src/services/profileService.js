@@ -12,6 +12,7 @@ import * as E from '../errors.js';
 import * as Logging from '../logging.js';
 import { enforceWriteLimit } from '../writeLimits.js';
 import { getRelationship } from './connectionService.js';
+import { requiresMfa } from '../roles/capabilities.js';
 
 const USERNAME_RE = /^[a-zA-Z0-9_.]{3,30}$/;
 const INSTAGRAM_RE = /^@?[a-zA-Z0-9_.]{1,30}$/;
@@ -47,6 +48,8 @@ export async function getMyProfile(sql, identity) {
       // Cargos e capacidades da sessão (ADR 0010): só para a interface; o servidor confere de novo a cada chamada.
       functionalRoles: identity.functionalRoles || [],
       capabilities: identity.capabilities || [],
+      // Cargo privilegiado sem autenticador: as funções do cargo ficam travadas até ativar o MFA (ROL-03).
+      roleMfaPending: identity.role === C.ROLES.MEMBER && requiresMfa({ baseRole: identity.role, functionalRoles: identity.functionalRoles }) && identity.mfaConfirmed !== true,
       memberSince: row.created_at,
     },
     preferences: {
