@@ -50,7 +50,7 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
       'apiMfaRegenerateRecoveryCodes', 'apiMfaDisable', 'apiAdminResetUserMfa'
     );
     // Fase 3 — painel de métricas da IA
-    expected.push('apiAdminAiMetrics');
+    expected.push('apiAdminAiMetrics', 'apiAdminUsageStats');
     // Lia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
     expected.push('apiAssistantChat');
     // Lia — feedback, painel de satisfação, fontes e reindexação (assistantFeedbackService.js)

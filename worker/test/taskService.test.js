@@ -57,7 +57,9 @@ describe('TaskService.submitTaskComment', () => {
 
   test('membro sem adesão à tarefa é barrado (ForbiddenError)', async () => {
     const sql = makeSql();
-    sql.mockResolvedValueOnce([]); // SELECT task_signups — não aderiu
+    sql
+      .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit
+      .mockResolvedValueOnce([]); // SELECT task_signups — não aderiu
 
     await expect(TaskService.submitTaskComment(sql, MEMBER, 'task-1', 'mensagem válida', 'cid-1')).rejects.toMatchObject({
       name: 'ForbiddenError',
@@ -67,6 +69,7 @@ describe('TaskService.submitTaskComment', () => {
   test('admin pode comentar mesmo sem ter aderido à tarefa', async () => {
     const sql = makeSql();
     sql
+      .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit
       .mockResolvedValueOnce([]) // SELECT task_signups — não aderiu
       .mockResolvedValueOnce(undefined) // INSERT
       .mockResolvedValueOnce(undefined); // logAudit
@@ -78,6 +81,7 @@ describe('TaskService.submitTaskComment', () => {
   test('membro com adesão consegue comentar', async () => {
     const sql = makeSql();
     sql
+      .mockResolvedValueOnce([{ attempts: 1 }]) // rate limit
       .mockResolvedValueOnce([{ id: 'signup-1' }]) // SELECT task_signups — aderiu
       .mockResolvedValueOnce(undefined) // INSERT
       .mockResolvedValueOnce(undefined); // logAudit

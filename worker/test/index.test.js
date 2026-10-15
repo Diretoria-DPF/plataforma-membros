@@ -30,6 +30,27 @@ function req(body, options) {
 describe('index.js — roteamento e CORS', () => {
   const env = makeEnv();
 
+  test('corpo acima do teto padrão: 413 com o envelope de erro, sem chegar ao handler', async () => {
+    const res = await worker.fetch(req({ action: 'apiLogin', args: ['x'.repeat(70 * 1024)] }), env);
+    expect(res.status).toBe(413);
+    expect(await res.json()).toEqual({ success: false, message: 'Requisição grande demais.' });
+  });
+
+  test('Content-Length gigante: 413 sem ler o corpo', async () => {
+    const res = await worker.fetch(req({ action: 'apiLogin', args: [] }, { headers: { 'Content-Length': String(50 * 1024 * 1024) } }), env);
+    expect(res.status).toBe(413);
+  });
+
+  test('ação de imagem passa do teto padrão (não é barrada por tamanho)', async () => {
+    const res = await worker.fetch(req({ action: 'apiUpdateMyAvatar', args: ['tok', 'A'.repeat(200 * 1024), 'image/png'] }), env);
+    expect(res.status).toBe(200);
+  });
+
+  test('ação que não é de imagem não escapa do teto anunciando a ação de imagem em outro campo', async () => {
+    const res = await worker.fetch(req({ note: '"action":"apiUpdateMyAvatar"', action: 'apiLogin', args: ['x'.repeat(70 * 1024)] }), env);
+    expect(res.status).toBe(413);
+  });
+
   test.each(['/', '/v1', '/v1/'])('POST em %s chega à API (alias versionado e raiz legada)', async (pathname) => {
     const request = new Request('https://api.example.com' + pathname, {
       method: 'POST',

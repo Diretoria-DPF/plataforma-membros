@@ -159,6 +159,7 @@
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
       if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    if (window.LaiftAdminUsage) window.LaiftAdminUsage.reset(); // uso da plataforma (DAT-01): idem
       resetLibraryModules();
       resetAgentCards();
       resetAdminDashboardChart();
@@ -764,6 +765,47 @@
     cancelBtn.addEventListener('click', onCancel);
   }
 
+  // Reautenticação (senha e, com a verificação em duas etapas ativa, o código) para ações administrativas sensíveis.
+  // run({ password, code }) devolve a resposta da API: com erro, a janela fica aberta mostrando a mensagem para tentar de novo.
+  function openStepUp(message, run) {
+    var overlay = document.getElementById('modal-stepup');
+    var form = document.getElementById('form-stepup');
+    var password = document.getElementById('stepup-password');
+    var code = document.getElementById('stepup-code');
+    var cancelBtn = document.getElementById('modal-stepup-cancel');
+    var submitBtn = document.getElementById('modal-stepup-ok');
+
+    document.getElementById('modal-stepup-message').textContent = message;
+    setStatus('msg-stepup', '');
+    password.value = '';
+    code.value = '';
+    overlay.classList.remove('hidden');
+    password.focus();
+
+    function cleanup() {
+      overlay.classList.add('hidden');
+      submitBtn.disabled = false;
+      password.value = '';
+      code.value = '';
+      form.removeEventListener('submit', onFormSubmit);
+      cancelBtn.removeEventListener('click', cleanup);
+    }
+    function onFormSubmit(evt) {
+      evt.preventDefault();
+      submitBtn.disabled = true;
+      run({ password: password.value, code: code.value.replace(/\s+/g, '') }).catch(function () {
+        return { success: false };
+      }).then(function (res) {
+        submitBtn.disabled = false;
+        if (res && res.success) { cleanup(); return; }
+        setStatus('msg-stepup', (res && res.message) || 'Não foi possível confirmar.', 'error');
+      });
+    }
+
+    form.addEventListener('submit', onFormSubmit);
+    cancelBtn.addEventListener('click', cleanup);
+  }
+
   // ===========================================================================
   // Autenticação
   // ===========================================================================
@@ -904,6 +946,7 @@
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
     if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    if (window.LaiftAdminUsage) window.LaiftAdminUsage.reset(); // uso da plataforma (DAT-01): idem
     resetLibraryModules();
     resetAgentCards();
     resetAdminDashboardChart();
@@ -1102,7 +1145,10 @@
       loadProfileAndPreferences();
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);
     },
-    'panel-admin-dashboard': loadAdminDashboard,
+    'panel-admin-dashboard': function () {
+      loadAdminDashboard();
+      if (window.LaiftAdminUsage) window.LaiftAdminUsage.load(window.App); // uso da plataforma (DAT-01)
+    },
     'panel-admin-users': function () { loadAdminUsers(1); },
     'panel-admin-events': loadAdminEvents,
     'panel-admin-proposals': loadAdminProposals,
@@ -2128,9 +2174,11 @@
         onclick: function () {
           var newRole = roleSelect.value;
           openConfirm('Confirmar alteração de papel de "' + user.fullName + '" para "' + roleLabelPt(newRole) + '"?', function () {
-            callApi('apiAdminChangeUserRole', state.sessionToken, user.id, newRole).then(function (res) {
-              alertInline(res);
-              loadAdminUsers(adminUsersState.page);
+            openStepUp('Para alterar o papel, confirme a sua senha.', function (stepUp) {
+              return callApi('apiAdminChangeUserRole', state.sessionToken, user.id, newRole, stepUp).then(function (res) {
+                if (res.success) { alertInline(res); loadAdminUsers(adminUsersState.page); }
+                return res;
+              });
             });
           });
         },
@@ -2141,9 +2189,11 @@
       actions.push(h('button', {
         onclick: function () {
           openConfirm('Reativar a conta de "' + user.fullName + '"?', function () {
-            callApi('apiAdminUnbanUser', state.sessionToken, user.id).then(function (res) {
-              alertInline(res);
-              loadAdminUsers(adminUsersState.page);
+            openStepUp('Para reativar a conta, confirme a sua senha.', function (stepUp) {
+              return callApi('apiAdminUnbanUser', state.sessionToken, user.id, stepUp).then(function (res) {
+                if (res.success) { alertInline(res); loadAdminUsers(adminUsersState.page); }
+                return res;
+              });
             });
           });
         },
@@ -2153,9 +2203,11 @@
         className: 'danger',
         onclick: function () {
           openConfirm('Banir a conta de "' + user.fullName + '"? Todas as sessões ativas serão revogadas.', function () {
-            callApi('apiAdminBanUser', state.sessionToken, user.id).then(function (res) {
-              alertInline(res);
-              loadAdminUsers(adminUsersState.page);
+            openStepUp('Para banir a conta, confirme a sua senha.', function (stepUp) {
+              return callApi('apiAdminBanUser', state.sessionToken, user.id, stepUp).then(function (res) {
+                if (res.success) { alertInline(res); loadAdminUsers(adminUsersState.page); }
+                return res;
+              });
             });
           });
         },

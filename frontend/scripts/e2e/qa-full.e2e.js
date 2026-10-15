@@ -805,16 +805,22 @@ async function adminScenario() {
     await carlosItem.locator('select').nth(0).selectOption('admin');
     await carlosItem.locator('button:has-text("Alterar papel")').click();
     await app.page.click('#modal-confirm-ok');
+    await app.page.fill('#stepup-password', 'senha-de-teste');
+    await app.page.click('#modal-stepup-ok');
     await app.page.waitForFunction(() => document.querySelector('#admin-users-list .list-item select').value === 'admin', null, { timeout: 5000 });
     check(true, 'alterar papel de usuário atualiza a lista');
 
     await carlosItem.locator('button:has-text("Banir conta")').click();
     await app.page.click('#modal-confirm-ok');
+    await app.page.fill('#stepup-password', 'senha-de-teste');
+    await app.page.click('#modal-stepup-ok');
     await app.page.waitForFunction(() => !!document.querySelector('#admin-users-list .badge.banned'), null, { timeout: 5000 });
     check(true, 'banir conta atualiza o status na lista');
 
     await carlosItem.locator('button:has-text("Reativar conta")').click();
     await app.page.click('#modal-confirm-ok');
+    await app.page.fill('#stepup-password', 'senha-de-teste');
+    await app.page.click('#modal-stepup-ok');
     await app.page.waitForFunction(() => !document.querySelector('#admin-users-list .badge.banned'), null, { timeout: 5000 });
     check(true, 'reativar conta atualiza o status na lista');
 

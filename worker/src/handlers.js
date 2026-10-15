@@ -67,6 +67,9 @@ import * as MemoryAdmin from './memory/admin.js';
 import * as MemoryTutor from './memory/tutor.js';
 // Cargos funcionais acumuláveis (ADR 0010; sql/038)
 import * as RolesService from './services/rolesService.js';
+// Analytics de produto mínimo (DAT-01; sql/040)
+import * as UsageStatsService from './services/usageStatsService.js';
+import { recordActivity } from './analytics/usage.js';
 
 async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
@@ -88,7 +91,10 @@ async function runWithSession(sql, env, sessionToken, callback, options) {
     // Com `mfa_required` ligada, admin sem autenticador só chega às ações de
     // cadastro do MFA (allowMfaSetup); o resto é recusado com mfaSetupRequired.
     if (!(options && options.allowMfaSetup)) await MfaService.assertAdminMfaSatisfied(sql, identity);
-    return callback(identity, correlationId);
+    const result = await callback(identity, correlationId);
+    // Atividade do dia (DAT-01): só de requisição que deu certo, em segundo plano e com cache no isolate; nunca falha nem atrasa.
+    recordActivity(sql, identity, new Date(), env);
+    return result;
   });
 }
 
@@ -198,10 +204,11 @@ export const API_REGISTRY = {
 
   // ---- Administração ----
   apiAdminDashboard: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.dashboard(sql, identity)),
+  apiAdminUsageStats: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => UsageStatsService.usageStats(sql, identity)),
   apiAdminListUsers: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.listUsers(sql, identity, input || {})),
-  apiAdminChangeUserRole: (sql, env, [sessionToken, targetProfileId, newRole]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.changeUserRole(sql, identity, targetProfileId, newRole, cid)),
-  apiAdminBanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.banUser(sql, identity, targetProfileId, cid)),
-  apiAdminUnbanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.unbanUser(sql, identity, targetProfileId, cid)),
+  apiAdminChangeUserRole: (sql, env, [sessionToken, targetProfileId, newRole, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.changeUserRole(sql, identity, targetProfileId, newRole, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
+  apiAdminBanUser: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.banUser(sql, identity, targetProfileId, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
+  apiAdminUnbanUser: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.unbanUser(sql, identity, targetProfileId, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
   // Cargos funcionais: { profileId, role, password, code? }. Conceder e retirar exigem reautenticação.
   apiAdminListRoles: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => RolesService.listRoles(sql, identity, asInput(input))),
   apiAdminGrantRole: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => RolesService.grantRole(sql, identity, asInput(input), cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),

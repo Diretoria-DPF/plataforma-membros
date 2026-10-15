@@ -17,6 +17,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { bump, METRICS } from '../analytics/usage.js';
 import * as MfaService from './mfaService.js';
 import * as ConfirmationService from './confirmationService.js';
 
@@ -160,6 +161,7 @@ export async function register(sql, env, input, correlationId) {
   await ConfirmationService.deliverEmail(sql, env, correlationId, 'MAIL_CONFIRMATION_FAILED',
     ConfirmationService.confirmationMessage(env, data.email, data.fullName, data.username, rawToken), profileId);
   await Logging.logAudit(sql, correlationId, profileId, 'REGISTER', 'profile', profileId, 'success', null);
+  await bump(sql, METRICS.SIGNUP, env);
 
   return { success: true, message: ConfirmationService.REGISTER_SUCCESS_MESSAGE };
 }
@@ -191,6 +193,7 @@ export async function confirmEmail(sql, env, rawToken, correlationId) {
   }
 
   await Logging.logAudit(sql, correlationId, profileId, 'CONFIRM_EMAIL', 'profile', profileId, 'success', null);
+  await bump(sql, METRICS.EMAIL_CONFIRMED, env);
   return { success: true, message: 'E-mail confirmado com sucesso. Você já pode entrar.' };
 }
 

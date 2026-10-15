@@ -80,6 +80,7 @@ export const RETENTION = {
   AGENT_TRACES_DAYS: AGENTS.TRACE_RETENTION_DAYS,
   UNCONFIRMED_PROFILE_DAYS: 7,
   UNCONFIRMED_PROFILE_BATCH: 50,
+  USAGE_ANALYTICS_DAYS: 400,
 };
 
 /** Quantas linhas a limpeza mexeu: a lista de linhas apagadas ou o `lowered` do decaimento da moderação. */
@@ -242,6 +243,15 @@ export async function runMaintenance(sql, correlationId, env) {
           ORDER BY p.created_at
           LIMIT ${RETENTION.UNCONFIRMED_PROFILE_BATCH}
         )
+      RETURNING 1`,
+    // Analytics de produto (sql/040, DAT-01): contadores e dias de atividade com mais de 400 dias; corte por day.
+    usageDailyPurge: () => sql`
+      DELETE FROM usage_daily
+      WHERE day < now() - make_interval(days => ${RETENTION.USAGE_ANALYTICS_DAYS})
+      RETURNING 1`,
+    activityDaysPurge: () => sql`
+      DELETE FROM activity_days
+      WHERE day < now() - make_interval(days => ${RETENTION.USAGE_ANALYTICS_DAYS})
       RETURNING 1`,
     // Memória de estudo (banco separado): vazio sem DATABASE_URL_MEMORY/MEMORY_SUBJECT_KEY. Cada tarefa é isolada abaixo.
     ...memoryTasks(sql, env),
