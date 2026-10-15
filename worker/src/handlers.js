@@ -113,6 +113,8 @@ export const API_REGISTRY = {
   apiRequestPasswordReset: (sql, env, [email]) => run(sql, (cid) => AuthService.requestPasswordReset(sql, env, email, cid)),
   apiValidateResetToken: (sql, env, [token]) => run(sql, () => AuthService.validateResetToken(sql, env, token)),
   apiConfirmPasswordReset: (sql, env, [token, newPassword]) => run(sql, (cid) => AuthService.confirmPasswordReset(sql, env, token, newPassword, cid)),
+  // SEC-02: reenvio do link de confirmação (resposta uniforme; ver confirmationService.js).
+  apiResendConfirmation: (sql, env, [input]) => run(sql, (cid) => AuthService.resendConfirmation(sql, env, asInput(input).email, cid)),
 
   // ---- Verificação em duas etapas ----
   apiLoginMfa: (sql, env, [mfaToken, code]) => run(sql, (cid) => MfaService.completeLogin(sql, env, mfaToken, code, '', cid)),
