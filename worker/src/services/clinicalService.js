@@ -22,6 +22,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { bump, METRICS } from '../analytics/usage.js';
 import { getCached, setCached, invalidateCached } from '../cache.js';
 import * as Orchestrator from '../ai/orchestrator.js';
 import { AiInvalidOutputError, AI_MESSAGES } from '../ai/errors.js';
@@ -210,6 +211,7 @@ export async function evaluate(sql, env, identity, rawInput, correlationId) {
     if (sim) details.sim = ClinicalSim.simDetails(sim.session, components);
     const { saved, attemptId } = await saveAttempt(sql, details, result.score, attendance.elapsedSeconds, identity, correlationId);
     if (saved) await invalidateCached(env, EPIDEMIOLOGY_CACHE_KEY);
+    if (saved) await bump(sql, METRICS.CASE_COMPLETED, env);
     await Logging.logAudit(sql, correlationId, identity.profileId, 'LEARN_CLINICAL_EVALUATE', 'learning_attempt', attemptId, saved ? 'success' : 'failure', {
       caseSource, score: result.score, outcome: details.outcome,
     });

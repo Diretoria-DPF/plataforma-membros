@@ -24,6 +24,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { bump, METRICS } from '../analytics/usage.js';
 import * as Groq from '../ai/groqClient.js';
 import * as Orchestrator from '../ai/orchestrator.js';
 import * as EventService from './eventService.js';
@@ -511,6 +512,7 @@ async function withLibraryReferences(sql, env, identity, result, plan) {
  */
 export async function chat(sql, env, identity, rawInput, correlationId) {
   const result = await chatCore(sql, env, identity, rawInput, correlationId);
+  if (result && result.success && !result.disabled) await bump(sql, METRICS.LIA_MESSAGE, env);
   const hasSuggestions = !!result && Array.isArray(result.suggestions);
   return identity || !hasSuggestions ? result : Object.assign({}, result, { suggestions: suggestionsForVisitor(result.suggestions) });
 }

@@ -276,7 +276,10 @@ describe('COM consentimento: leitura (até 8 itens, bloco de DADOS, selo)', () =
 });
 
 describe('cache de 5 minutos por pessoa (o consentimento nunca é cacheado)', () => {
-  beforeEach(async () => { await grant(); await remember(MEMBER, level('aines', 3)); msql.history.length = 0; });
+  // Estes testes medem o CACHE, não o prazo de leitura: com o teto real (1,2 s) um PGlite lento (CI) estoura o prazo, a leitura
+  // segue sem memória e o cache só é preenchido DEPOIS (ou nunca) — o teste passava ou falhava conforme a carga da máquina.
+  // O teste de estouro de prazo (abaixo) continua usando o teto real; o beforeEach global o restaura.
+  beforeEach(async () => { C.MEMORY.READ_TIMEOUT_MS = 60000; await grant(); await remember(MEMBER, level('aines', 3)); msql.history.length = 0; });
 
   test('a segunda pergunta não volta ao banco de memória', async () => {
     await invoke(ask(QUESTION));

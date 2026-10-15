@@ -10,8 +10,19 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { enforceWriteLimit } from '../writeLimits.js';
 
 const PROPOSAL_ROLES = [C.ROLES.MEMBER, C.ROLES.ADMIN];
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const PUBLIC_STATUSES = [C.PROPOSAL_STATUS.VOTING_OPEN, C.PROPOSAL_STATUS.VOTING_CLOSED];
+
+/** Votável/encerrada (pública), do próprio autor, ou de quem revisa propostas (admin ou capacidade proposals.review). */
+function canSeeProposal(identity, proposal) {
+  if (PUBLIC_STATUSES.indexOf(proposal.status) !== -1) return true;
+  if (proposal.author_id && proposal.author_id === identity.profileId) return true;
+  if (identity.role === C.ROLES.ADMIN) return true;
+  return Array.isArray(identity.capabilities) && identity.capabilities.indexOf('proposals.review') !== -1;
+}
 
 export async function submitProposal(sql, identity, input, correlationId) {
   S.requireRole(identity, PROPOSAL_ROLES);
@@ -22,7 +33,7 @@ export async function submitProposal(sql, identity, input, correlationId) {
   if (!S.isLengthValid(description, C.LIMITS.DESCRIPTION_MIN, C.LIMITS.DESCRIPTION_MAX)) throw E.ValidationError('Descrição inválida.');
 
   const limit = C.RATE_LIMITS.PROPOSAL_SUBMIT;
-  await S.enforceRateLimit(sql, 'PROPOSAL_SUBMIT', identity.profileId, limit.MAX_ATTEMPTS, limit.WINDOW_SECONDS);
+  await enforceWriteLimit(sql, 'PROPOSAL_SUBMIT', identity.profileId, limit, 'de envio de propostas');
 
   const rows = await sql`
     INSERT INTO proposals (title, description, author_id, status) VALUES (${title}, ${description}, ${identity.profileId}::uuid, 'submitted'::proposal_status) RETURNING id
@@ -103,8 +114,12 @@ export async function castVote(sql, identity, proposalId, choice, complementText
 export async function getProposalResults(sql, identity, proposalId) {
   S.requireRole(identity, PROPOSAL_ROLES);
   const id = S.normalizeText(proposalId);
-  const rows = await sql`SELECT id, title, description, status, voting_opens_at, voting_closes_at FROM proposals WHERE id = ${id}::uuid`;
-  if (!rows.length) throw E.NotFoundError('Proposta não encontrada.');
+  if (!UUID_RE.test(id)) throw E.ValidationError('Proposta inválida.');
+  await enforceWriteLimit(sql, 'PROPOSAL_RESULTS', identity.profileId, C.HARDENING_RATE_LIMITS.PROPOSAL_RESULTS, 'de consultas de propostas');
+  const rows = await sql`SELECT id, title, description, status, author_id, voting_opens_at, voting_closes_at FROM proposals WHERE id = ${id}::uuid`;
+  // Proposta que ainda não é pública (em análise, aprovada ou rejeitada) só aparece para o autor e para quem a revisa;
+  // para os demais a resposta é a mesma de uma proposta inexistente.
+  if (!rows.length || !canSeeProposal(identity, rows[0])) throw E.NotFoundError('Proposta não encontrada.');
   const proposal = rows[0];
 
   const canSeeAggregate = identity && (identity.role === C.ROLES.ADMIN || (identity.role === C.ROLES.MEMBER && proposal.status === C.PROPOSAL_STATUS.VOTING_CLOSED));

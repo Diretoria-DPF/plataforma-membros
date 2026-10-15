@@ -24,6 +24,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { bump, METRICS } from '../analytics/usage.js';
 
 const QUIZ_ACTIVITIES = ['quiz_estudo', 'quiz_prova'];
 
@@ -140,6 +141,7 @@ export async function submitQuizAttempt(sql, identity, input, correlationId) {
 
   // Auditoria sem conteúdo (tópicos/placar ficam só na própria tabela).
   await Logging.logAudit(sql, correlationId, identity.profileId, 'LEARN_SUBMIT_QUIZ', 'learning_attempt', attemptId, 'success', { module, activity });
+  await bump(sql, METRICS.QUIZ_COMPLETED);
   return { success: true, attemptId };
 }
 

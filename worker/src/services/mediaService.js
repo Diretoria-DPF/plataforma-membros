@@ -17,6 +17,7 @@ import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as C from '../constants.js';
 import * as Logging from '../logging.js';
+import { enforceWriteLimit } from '../writeLimits.js';
 
 const ALLOWED_MIME_TYPES = {
   'image/jpeg': 'jpg',
@@ -25,6 +26,7 @@ const ALLOWED_MIME_TYPES = {
   'image/gif': 'gif',
 };
 
+const AVATAR_SUFFIX_RE = /^[0-9]+\.(?:jpg|png|webp|gif)$/;
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024; // 2MB
 const MAX_EVENT_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
 
@@ -42,12 +44,18 @@ export function sniffImageType(bytes) {
   return null;
 }
 
+const tooLarge = (maxBytes) => E.ValidationError('Imagem muito grande (máximo ' + Math.round(maxBytes / (1024 * 1024)) + 'MB).');
+
 function decodeImage(base64Data, mimeType, maxBytes) {
   if (!ALLOWED_MIME_TYPES[mimeType]) {
     throw E.ValidationError('Formato de imagem não suportado. Use JPEG, PNG, WEBP ou GIF.');
   }
   const raw = S.normalizeText(base64Data).replace(/^data:[^;]+;base64,/, '');
   if (!raw) throw E.ValidationError('Nenhuma imagem enviada.');
+
+  // Tamanho pelo comprimento do base64, ANTES de decodificar: um arquivo enorme não chega a ocupar memória em atob.
+  const padding = raw.endsWith('==') ? 2 : raw.endsWith('=') ? 1 : 0;
+  if (Math.floor((raw.length * 3) / 4) - padding > maxBytes) throw tooLarge(maxBytes);
 
   let bytes;
   try {
@@ -59,9 +67,7 @@ function decodeImage(base64Data, mimeType, maxBytes) {
   }
 
   if (bytes.length === 0) throw E.ValidationError('Nenhuma imagem enviada.');
-  if (bytes.length > maxBytes) {
-    throw E.ValidationError('Imagem muito grande (máximo ' + Math.round(maxBytes / (1024 * 1024)) + 'MB).');
-  }
+  if (bytes.length > maxBytes) throw tooLarge(maxBytes);
   if (sniffImageType(bytes) !== mimeType) {
     throw E.ValidationError('O arquivo não é uma imagem válida do tipo informado.');
   }
@@ -82,9 +88,36 @@ export async function uploadAvatarBytes(env, profileId, base64Data, mimeType) {
   return putObject(env, key, bytes, mimeType);
 }
 
+/**
+ * Chave do avatar anterior, SÓ se for um arquivo desta mesma pessoa neste bucket (avatars/<id>-<ms>.<ext> sob
+ * MEDIA_PUBLIC_URL). Qualquer outra coisa (URL de fora, outra pessoa, outro prefixo, caminho relativo) vira null: nunca apaga.
+ */
+export function ownAvatarKey(env, profileId, url) {
+  const base = String(env.MEDIA_PUBLIC_URL || '').replace(/\/$/, '') + '/';
+  if (typeof url !== 'string' || !url.startsWith(base)) return null;
+  const key = url.slice(base.length);
+  const prefix = 'avatars/' + profileId + '-';
+  return key.startsWith(prefix) && AVATAR_SUFFIX_RE.test(key.slice(prefix.length)) ? key : null;
+}
+
+// Melhor esforço: o arquivo antigo órfão só custa espaço; falhar aqui nunca pode desfazer a troca já feita.
+async function deletePreviousAvatar(env, profileId, previousUrl, newUrl) {
+  const key = previousUrl === newUrl ? null : ownAvatarKey(env, profileId, previousUrl);
+  if (!key) return;
+  try {
+    await env.MEDIA_BUCKET.delete(key);
+  } catch (err) {
+    console.warn('[AVATAR_CLEANUP_SKIPPED] não foi possível apagar o avatar anterior.');
+  }
+}
+
 export async function updateMyAvatar(sql, env, identity, base64Data, mimeType, correlationId) {
+  await enforceWriteLimit(sql, 'AVATAR_UPDATE', identity.profileId, C.HARDENING_RATE_LIMITS.AVATAR_UPDATE, 'de trocas de foto');
   const url = await uploadAvatarBytes(env, identity.profileId, base64Data, mimeType);
+  const current = await sql`SELECT avatar_url FROM profiles WHERE id = ${identity.profileId}::uuid`;
+  const previousUrl = current && current[0] ? current[0].avatar_url : null;
   await sql`UPDATE profiles SET avatar_url = ${url} WHERE id = ${identity.profileId}::uuid`;
+  await deletePreviousAvatar(env, identity.profileId, previousUrl, url);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'UPDATE_AVATAR', 'profile', identity.profileId, 'success', null);
   return { success: true, message: 'Avatar atualizado.', avatarUrl: url };
 }

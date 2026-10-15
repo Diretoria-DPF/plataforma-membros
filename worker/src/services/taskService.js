@@ -10,6 +10,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { enforceWriteLimit } from '../writeLimits.js';
 
 export async function listTasks(sql, identity) {
   S.requireRole(identity, [C.ROLES.MEMBER, C.ROLES.ADMIN]);
@@ -77,6 +78,7 @@ export async function submitTaskComment(sql, identity, taskId, message, correlat
 
   if (!S.isLengthValid(text, 1, 1000)) throw E.ValidationError('Comentário deve ter entre 1 e 1000 caracteres.');
 
+  await enforceWriteLimit(sql, 'TASK_COMMENT', identity.profileId, C.HARDENING_RATE_LIMITS.TASK_COMMENT, 'de comentários');
   const signedUp = await sql`SELECT id FROM task_signups WHERE task_id = ${id}::uuid AND profile_id = ${identity.profileId}::uuid LIMIT 1`;
   if (!signedUp.length && !S.hasCapability(identity, 'tasks.manage')) {
     throw E.ForbiddenError('Só é possível comentar em tarefas às quais você aderiu.');

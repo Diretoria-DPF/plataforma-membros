@@ -10,6 +10,7 @@ import * as C from '../constants.js';
 import * as S from '../security.js';
 import * as E from '../errors.js';
 import * as Logging from '../logging.js';
+import { enforceWriteLimit } from '../writeLimits.js';
 import { getRelationship } from './connectionService.js';
 import { requiresMfa } from '../roles/capabilities.js';
 
@@ -214,6 +215,7 @@ export async function submitFeedback(sql, identity, message, correlationId) {
     throw E.ValidationError('A mensagem deve ter entre ' + C.LIMITS.FEEDBACK_MIN + ' e ' + C.LIMITS.FEEDBACK_MAX + ' caracteres.');
   }
 
+  await enforceWriteLimit(sql, 'FEEDBACK_SUBMIT', identity.profileId, C.HARDENING_RATE_LIMITS.FEEDBACK_SUBMIT, 'de envio de feedback');
   await sql`INSERT INTO feedback (profile_id, message) VALUES (${identity.profileId}::uuid, ${text})`;
   await Logging.logAudit(sql, correlationId, identity.profileId, 'SUBMIT_FEEDBACK', 'feedback', null, 'success', null);
   return { success: true, message: 'Obrigado! Seu feedback foi enviado.' };
