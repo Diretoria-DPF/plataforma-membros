@@ -94,7 +94,21 @@ async function translateLastAdminError(err) {
   throw err;
 }
 
-export async function changeUserRole(sql, identity, targetProfileId, newRole, correlationId) {
+/**
+ * Reautenticação recente (senha e, se houver, segundo fator) fornecida pelo handler em options.stepUp. Sem ela a ação
+ * sensível é recusada; reautenticação que falha é auditada (sem a senha) e a ação não chega ao banco.
+ */
+async function requireStepUp(sql, options, correlationId, identity, action, targetId) {
+  if (!options || typeof options.stepUp !== 'function') throw E.ForbiddenError('Esta ação exige reautenticação.');
+  try {
+    await options.stepUp();
+  } catch (err) {
+    await Logging.logAudit(sql, correlationId, identity.profileId, action, 'profile', targetId, 'failure', { reason: 'step_up' });
+    throw err;
+  }
+}
+
+export async function changeUserRole(sql, identity, targetProfileId, newRole, correlationId, options) {
   assertAdmin(identity);
   const id = S.normalizeText(targetProfileId);
   const role = S.normalizeText(newRole);
@@ -102,6 +116,7 @@ export async function changeUserRole(sql, identity, targetProfileId, newRole, co
   if ([C.ROLES.VISITOR, C.ROLES.MEMBER, C.ROLES.ADMIN].indexOf(role) === -1) {
     throw E.ValidationError('Papel inválido.');
   }
+  await requireStepUp(sql, options, correlationId, identity, 'CHANGE_USER_ROLE', id);
 
   let rows;
   try {
@@ -115,9 +130,10 @@ export async function changeUserRole(sql, identity, targetProfileId, newRole, co
   return { success: true, message: 'Papel atualizado com sucesso.' };
 }
 
-export async function banUser(sql, identity, targetProfileId, correlationId) {
+export async function banUser(sql, identity, targetProfileId, correlationId, options) {
   assertAdmin(identity);
   const id = S.normalizeText(targetProfileId);
+  await requireStepUp(sql, options, correlationId, identity, 'BAN_USER', id);
 
   let rows;
   try {
@@ -132,9 +148,10 @@ export async function banUser(sql, identity, targetProfileId, correlationId) {
   return { success: true, message: 'Conta banida. Todas as sessões ativas foram revogadas.' };
 }
 
-export async function unbanUser(sql, identity, targetProfileId, correlationId) {
+export async function unbanUser(sql, identity, targetProfileId, correlationId, options) {
   assertAdmin(identity);
   const id = S.normalizeText(targetProfileId);
+  await requireStepUp(sql, options, correlationId, identity, 'UNBAN_USER', id);
 
   const rows = await sql`UPDATE profiles SET status = 'active'::account_status WHERE id = ${id}::uuid RETURNING id`;
   if (!rows.length) throw E.NotFoundError('Usuário não encontrado.');

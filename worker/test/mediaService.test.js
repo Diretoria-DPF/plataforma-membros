@@ -6,6 +6,7 @@
 import { jest } from '@jest/globals';
 import * as MediaService from '../src/services/mediaService.js';
 import { makeSql, makeEnv } from './helpers/mockEnv.js';
+import { HARDENING_RATE_LIMITS } from '../src/constants.js';
 
 const ADMIN = { profileId: 'a1', role: 'admin' };
 const MEMBER = { profileId: 'm1', role: 'member' };
@@ -30,8 +31,19 @@ function pngBase64(sizeBytes) {
 function makeMediaEnv() {
   return makeEnv({
     MEDIA_PUBLIC_URL: 'https://pub-test.r2.dev',
-    MEDIA_BUCKET: { put: jest.fn().mockResolvedValue(undefined) },
+    MEDIA_BUCKET: { put: jest.fn().mockResolvedValue(undefined), delete: jest.fn().mockResolvedValue(undefined) },
   });
+}
+
+// sql simulado do updateMyAvatar: contador do limite, SELECT do avatar atual, UPDATE e auditoria.
+function avatarSql(currentAvatarUrl) {
+  const sql = makeSql();
+  sql
+    .mockResolvedValueOnce([{ attempts: 1 }])
+    .mockResolvedValueOnce([{ avatar_url: currentAvatarUrl }])
+    .mockResolvedValueOnce(undefined)
+    .mockResolvedValueOnce(undefined);
+  return sql;
 }
 
 describe('MediaService.uploadAvatarBytes', () => {
@@ -100,13 +112,62 @@ describe('MediaService.uploadAvatarBytes', () => {
 describe('MediaService.updateMyAvatar', () => {
   test('faz upload, grava avatar_url do próprio perfil e audita', async () => {
     const env = makeMediaEnv();
-    const sql = makeSql();
-    sql.mockResolvedValueOnce(undefined); // UPDATE profiles
-    sql.mockResolvedValueOnce(undefined); // logAudit
+    const sql = avatarSql(null);
 
     const res = await MediaService.updateMyAvatar(sql, env, MEMBER, pngBase64(100), 'image/png', 'cid-1');
     expect(res.success).toBe(true);
     expect(res.avatarUrl).toMatch(/^https:\/\/pub-test\.r2\.dev\/avatars\/m1-/);
+    expect(env.MEDIA_BUCKET.delete).not.toHaveBeenCalled();
+  });
+
+  test('apaga do bucket o arquivo anterior da mesma pessoa, só depois de gravar o novo', async () => {
+    const env = makeMediaEnv();
+    const sql = avatarSql('https://pub-test.r2.dev/avatars/m1-1700000000000.png');
+    const res = await MediaService.updateMyAvatar(sql, env, MEMBER, pngBase64(100), 'image/png', 'cid-1');
+    expect(res.success).toBe(true);
+    expect(env.MEDIA_BUCKET.delete).toHaveBeenCalledTimes(1);
+    expect(env.MEDIA_BUCKET.delete).toHaveBeenCalledWith('avatars/m1-1700000000000.png');
+  });
+
+  test.each([
+    ['de outra pessoa', 'https://pub-test.r2.dev/avatars/outro-1700000000000.png'],
+    ['de outro endereço', 'https://evil.example/avatars/m1-1700000000000.png'],
+    ['fora de avatars/', 'https://pub-test.r2.dev/events/m1-1700000000000.png'],
+    ['com caminho relativo', 'https://pub-test.r2.dev/avatars/m1-1/../../x.png'],
+    ['sem formato conhecido', 'https://pub-test.r2.dev/avatars/m1-1700000000000.exe'],
+  ])('nunca apaga um avatar anterior %s', async (_label, oldUrl) => {
+    const env = makeMediaEnv();
+    await MediaService.updateMyAvatar(avatarSql(oldUrl), env, MEMBER, pngBase64(100), 'image/png', 'cid-1');
+    expect(env.MEDIA_BUCKET.delete).not.toHaveBeenCalled();
+  });
+
+  test('falha ao apagar o anterior não derruba a troca', async () => {
+    const env = makeMediaEnv();
+    env.MEDIA_BUCKET.delete.mockRejectedValue(new Error('R2 fora'));
+    const res = await MediaService.updateMyAvatar(avatarSql('https://pub-test.r2.dev/avatars/m1-1700000000000.png'), env, MEMBER, pngBase64(100), 'image/png', 'cid-1');
+    expect(res.success).toBe(true);
+  });
+
+  test('acima do teto por pessoa: RateLimitError antes de decodificar ou gravar qualquer coisa', async () => {
+    const env = makeMediaEnv();
+    const sql = makeSql();
+    sql.mockResolvedValueOnce([{ attempts: HARDENING_RATE_LIMITS.AVATAR_UPDATE.MAX_ATTEMPTS + 1 }]);
+    await expect(MediaService.updateMyAvatar(sql, env, MEMBER, pngBase64(100), 'image/png', 'cid-1')).rejects.toMatchObject({ name: 'RateLimitError' });
+    expect(env.MEDIA_BUCKET.put).not.toHaveBeenCalled();
+  });
+
+  test('tamanho é checado ANTES de decodificar o base64', async () => {
+    const env = makeMediaEnv();
+    const atobSpy = jest.spyOn(globalThis, 'atob');
+    try {
+      const tooBig = pngBase64(2 * 1024 * 1024 + 1024);
+      await expect(MediaService.uploadAvatarBytes(env, 'p1', tooBig, 'image/png')).rejects.toMatchObject({ name: 'ValidationError' });
+      expect(atobSpy).not.toHaveBeenCalled();
+      await MediaService.uploadAvatarBytes(env, 'p1', pngBase64(2 * 1024 * 1024), 'image/png'); // no limite exato: decodifica
+      expect(atobSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      atobSpy.mockRestore();
+    }
   });
 });
 

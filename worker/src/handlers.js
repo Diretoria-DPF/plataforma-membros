@@ -197,9 +197,9 @@ export const API_REGISTRY = {
   // ---- Administração ----
   apiAdminDashboard: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.dashboard(sql, identity)),
   apiAdminListUsers: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AdminService.listUsers(sql, identity, input || {})),
-  apiAdminChangeUserRole: (sql, env, [sessionToken, targetProfileId, newRole]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.changeUserRole(sql, identity, targetProfileId, newRole, cid)),
-  apiAdminBanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.banUser(sql, identity, targetProfileId, cid)),
-  apiAdminUnbanUser: (sql, env, [sessionToken, targetProfileId]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.unbanUser(sql, identity, targetProfileId, cid)),
+  apiAdminChangeUserRole: (sql, env, [sessionToken, targetProfileId, newRole, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.changeUserRole(sql, identity, targetProfileId, newRole, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
+  apiAdminBanUser: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.banUser(sql, identity, targetProfileId, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
+  apiAdminUnbanUser: (sql, env, [sessionToken, targetProfileId, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AdminService.unbanUser(sql, identity, targetProfileId, cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, input || {}) })),
   // Cargos funcionais: { profileId, role, password, code? }. Conceder e retirar exigem reautenticação.
   apiAdminListRoles: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => RolesService.listRoles(sql, identity, asInput(input))),
   apiAdminGrantRole: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => RolesService.grantRole(sql, identity, asInput(input), cid, { stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),

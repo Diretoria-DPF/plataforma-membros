@@ -21,9 +21,12 @@ import { createDb } from './db.js';
 import { API_REGISTRY } from './handlers.js';
 import { runMaintenance } from './maintenance.js';
 import { newCorrelationId } from './security.js';
+import { readLimitedBody, bodyFitsAction } from './requestBody.js';
+import { HARDENING_BODY_LIMITS } from './constants.js';
 
 const API_PATHS = new Set(['/', '/v1', '/v1/']);
 const HEALTH_PATH = '/health';
+const TOO_LARGE = { success: false, message: 'Requisição grande demais.' };
 
 // Sonda rasa para monitor externo de disponibilidade: sem banco, KV, R2,
 // segredos nem sessão (não acorda o Neon). Corpo fixo, sem versão nem flags.
@@ -84,14 +87,19 @@ export default {
       return jsonResponse({ success: false, message: 'Caminho não encontrado.' }, request, env, 404);
     }
 
+    // Teto do corpo (requestBody.js): barra corpo gigante antes de parsear, com ou sem Content-Length.
+    const raw = await readLimitedBody(request, HARDENING_BODY_LIMITS);
+    if (raw.tooLarge) return jsonResponse(TOO_LARGE, request, env, 413);
+
     let body;
     try {
-      body = JSON.parse(await request.text());
+      body = JSON.parse(raw.text);
     } catch (err) {
       return jsonResponse({ success: false, message: 'Requisição inválida.' }, request, env, 400);
     }
 
-    const action = typeof body.action === 'string' ? body.action : '';
+    const action = body && typeof body.action === 'string' ? body.action : '';
+    if (!bodyFitsAction(raw.bytes, action, HARDENING_BODY_LIMITS)) return jsonResponse(TOO_LARGE, request, env, 413);
     // Allowlist fechada — mesma lógica do API_REGISTRY do Apps Script:
     // hasOwnProperty explícito impede que "toString"/"constructor" resolvam
     // para um método herdado de Object.prototype.

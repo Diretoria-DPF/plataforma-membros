@@ -657,3 +657,22 @@ export const SIM_MESSAGES = {
 export const ROLE_RATE_LIMITS = Object.freeze({
   ROLE_ADMIN_WRITE: Object.freeze({ MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 }),
 });
+
+// Endurecimento (SEC-03/04/07). Teto do corpo da requisição (requestBody.js): o padrão cobre qualquer ação comum; só as ações
+// que carregam imagem em base64 (limites reais em mediaService.js: avatar 2 MB, capa de evento 5 MB; base64 ~ +33%) têm teto maior.
+export const HARDENING_BODY_LIMITS = Object.freeze({
+  DEFAULT_BYTES: 64 * 1024,
+  UPLOAD_BYTES: Object.freeze({
+    apiRegister: 3 * 1024 * 1024,
+    apiUpdateMyAvatar: 3 * 1024 * 1024,
+    apiAdminUploadEventImage: 7 * 1024 * 1024,
+  }),
+});
+
+// Limites de escrita por pessoa (enforceRateLimit, janela de 1 h): conservadores para uso humano normal.
+export const HARDENING_RATE_LIMITS = Object.freeze({
+  FEEDBACK_SUBMIT: Object.freeze({ MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 }),
+  TASK_COMMENT: Object.freeze({ MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 }),
+  AVATAR_UPDATE: Object.freeze({ MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 }),
+  PROPOSAL_RESULTS: Object.freeze({ MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 }),
+});

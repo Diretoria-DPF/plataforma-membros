@@ -1031,6 +1031,26 @@
     </div>
   </div>
 
+  <div id="modal-stepup" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-stepup-title" aria-describedby="modal-stepup-message">
+    <div class="modal-box">
+      <h3 id="modal-stepup-title">Confirme sua identidade</h3>
+      <p id="modal-stepup-message"></p>
+      <form id="form-stepup" novalidate>
+        <label for="stepup-password">Senha
+          <input type="password" id="stepup-password" autocomplete="current-password" required>
+        </label>
+        <label for="stepup-code">Código do aplicativo (se a verificação em duas etapas estiver ativa)
+          <input type="text" id="stepup-code" inputmode="text" autocomplete="one-time-code" maxlength="16">
+        </label>
+        <p id="msg-stepup" class="status" role="status" aria-live="polite"></p>
+        <div class="modal-actions">
+          <button type="button" class="secondary" id="modal-stepup-cancel">Cancelar</button>
+          <button type="submit" id="modal-stepup-ok">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="modal-vote-complement" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-vote-title">
     <div class="modal-box">
       <h3 id="modal-vote-title">Comentário do voto</h3>
