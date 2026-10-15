@@ -47,6 +47,11 @@
  *    MEMORY_SUBJECT_KEY existem, senão nada daqui roda): memoryPurgeQueue drena a fila de apagamento (exclusão de
  *    conta e revogação cuja limpeza falhou; alvo 24 h), memoryExpiredPurge apaga itens vencidos (180 dias sem uso /
  *    12 meses) e memoryOrphanSweep, aos domingos (UTC), apaga o que não pertence a ninguém com consentimento vigente.
+ *  - Cadastros nunca confirmados (SEC-02, tarefa unconfirmedProfilesPurge): perfil visitante, ativo, sem e-mail
+ *    confirmado há mais de 7 dias, sem sessão e sem cargo sai, em lotes (LIMIT) para caber no limite de
+ *    subrequests. Admin, membro, conta banida (o banimento fica registrado) e quem tem atividade nunca entram.
+ *    Tudo o que aponta para profiles é ON DELETE CASCADE (tokens, sessões, consentimentos, preferências) ou
+ *    SET NULL (autoria em registros), então nada fica órfão; o gatilho de sql/036 só enfileira a memória.
  */
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
@@ -73,6 +78,8 @@ export const RETENTION = {
   ASSISTANT_MESSAGES_DAYS: ASSISTANT_RETENTION.MESSAGES_PURGE_AFTER_DAYS,
   ASSISTANT_INCIDENTS_DAYS: ASSISTANT_RETENTION.INCIDENTS_PURGE_AFTER_DAYS,
   AGENT_TRACES_DAYS: AGENTS.TRACE_RETENTION_DAYS,
+  UNCONFIRMED_PROFILE_DAYS: 7,
+  UNCONFIRMED_PROFILE_BATCH: 50,
   USAGE_ANALYTICS_DAYS: 400,
 };
 
@@ -216,6 +223,26 @@ export async function runMaintenance(sql, correlationId, env) {
     agentTracesPurge: () => sql`
       DELETE FROM agent_traces
       WHERE created_at < now() - make_interval(days => ${RETENTION.AGENT_TRACES_DAYS})
+      RETURNING 1`,
+    // SEC-02: cadastros nunca confirmados (ver o cabeçalho). Uma só instrução; o WHERE externo repete as condições
+    // de estado na linha travada (quem confirmou, foi banido ou entrou no meio da faxina não é apagado).
+    unconfirmedProfilesPurge: () => sql`
+      DELETE FROM profiles
+      WHERE email_confirmed_at IS NULL
+        AND role = 'visitor'::user_role
+        AND status = 'active'::account_status
+        AND NOT EXISTS (SELECT 1 FROM sessions s2 WHERE s2.profile_id = profiles.id)
+        AND id IN (
+          SELECT p.id FROM profiles p
+          WHERE p.email_confirmed_at IS NULL
+            AND p.role = 'visitor'::user_role
+            AND p.status = 'active'::account_status
+            AND p.created_at < now() - make_interval(days => ${RETENTION.UNCONFIRMED_PROFILE_DAYS})
+            AND NOT EXISTS (SELECT 1 FROM sessions s WHERE s.profile_id = p.id)
+            AND NOT EXISTS (SELECT 1 FROM member_roles r WHERE r.profile_id = p.id)
+          ORDER BY p.created_at
+          LIMIT ${RETENTION.UNCONFIRMED_PROFILE_BATCH}
+        )
       RETURNING 1`,
     // Analytics de produto (sql/040, DAT-01): contadores e dias de atividade com mais de 400 dias; corte por day.
     usageDailyPurge: () => sql`

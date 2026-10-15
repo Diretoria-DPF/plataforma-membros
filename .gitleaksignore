@@ -21,3 +21,8 @@ d4553a91679ea092c0cf9e5f98a26ddd821605e5:docs/FASE_2_DADOS_PRESENCA.md:generic-a
 # Senha FICTICIA de teste (memoryHandlers.test.js:27), nao e segredo; triado em 13/10/2026 com autorizacao do dono
 fe2a1b0a0ccd97677d596b79628fb7583ce5aff1:worker/test/memoryHandlers.test.js:generic-api-key:27
 0ae6ddd1e8c8bb1ce641d43f619cd126c56c4c5c:worker/test/memoryHandlers.test.js:generic-api-key:27
+# Senhas FICTICIAS de teste (authService.test.js, confirmationService.test.js) no commit 9435b01 da PR #76; ja trocadas por constantes. Triado em 15/10/2026 com autorizacao do dono
+9435b0149db11e787aac187fd22baf229ee02e2b:worker/test/authService.test.js:generic-api-key:197
+9435b0149db11e787aac187fd22baf229ee02e2b:worker/test/authService.test.js:generic-api-key:218
+9435b0149db11e787aac187fd22baf229ee02e2b:worker/test/confirmationService.test.js:generic-api-key:33
+9435b0149db11e787aac187fd22baf229ee02e2b:worker/test/confirmationService.test.js:generic-api-key:168

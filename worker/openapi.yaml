@@ -174,6 +174,7 @@ paths:
                 - "$ref": "#/components/schemas/apiRemoveConnection"
                 - "$ref": "#/components/schemas/apiReportProfile"
                 - "$ref": "#/components/schemas/apiRequestPasswordReset"
+                - "$ref": "#/components/schemas/apiResendConfirmation"
                 - "$ref": "#/components/schemas/apiRespondConnectionRequest"
                 - "$ref": "#/components/schemas/apiSendConnectionRequest"
                 - "$ref": "#/components/schemas/apiSendMessage"
@@ -2470,6 +2471,21 @@ components:
           type: "array"
           prefixItems:
             - description: "email"
+          minItems: 0
+          maxItems: 1
+    apiResendConfirmation:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Não exige sessão."
+      properties:
+        action:
+          const: "apiResendConfirmation"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "input"
           minItems: 0
           maxItems: 1
     apiRespondConnectionRequest:
