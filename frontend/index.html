@@ -688,6 +688,14 @@
             <h3>Indicadores em gráfico</h3>
             <div id="admin-dashboard-chart"></div>
           </div>
+          <div class="card" id="admin-usage-card">
+            <div class="ai-admin-head">
+              <h2 id="h-admin-usage">Uso da plataforma</h2>
+              <button type="button" class="secondary" data-action="LaiftAdminUsage.reload">Atualizar</button>
+            </div>
+            <p class="muted">Só números agregados, sem cookies e sem terceiros: ninguém é identificado aqui. Os dias de atividade são guardados por 400 dias.</p>
+            <div id="admin-usage"></div>
+          </div>
         </section>
 
         <section id="panel-admin-users" class="hidden">
@@ -1122,6 +1130,8 @@
   <!-- Moderação da Lia no painel admin (ADR 0004, O28): safe-dom.js dá o LaiftDom.h e o data-action. -->
   <script src="modulos/shared/safe-dom.js" defer></script>
   <script src="admin-moderation.js" defer></script>
+  <!-- Uso da plataforma no painel admin (DAT-01): mesmo LaiftDom. -->
+  <script src="admin-usage.js" defer></script>
   <!-- Biblioteca LAIFT (CONTRATO-B2 §7): citação → ficha → painel; extras antes do admin. -->
   <script src="library-cite.js" defer></script>
   <script src="library-detail.js" defer></script>

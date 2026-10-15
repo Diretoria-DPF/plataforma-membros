@@ -159,6 +159,7 @@
       // Fase 3 — painel admin de IA: descarta respostas pendentes e dados exibidos.
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
       if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    if (window.LaiftAdminUsage) window.LaiftAdminUsage.reset(); // uso da plataforma (DAT-01): idem
       resetLibraryModules();
       resetAgentCards();
       resetAdminDashboardChart();
@@ -945,6 +946,7 @@
     // Fase 3 — painel admin de IA
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
     if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
+    if (window.LaiftAdminUsage) window.LaiftAdminUsage.reset(); // uso da plataforma (DAT-01): idem
     resetLibraryModules();
     resetAgentCards();
     resetAdminDashboardChart();
@@ -1143,7 +1145,10 @@
       loadProfileAndPreferences();
       if (window.LaiftMfa) window.LaiftMfa.load(window.App);
     },
-    'panel-admin-dashboard': loadAdminDashboard,
+    'panel-admin-dashboard': function () {
+      loadAdminDashboard();
+      if (window.LaiftAdminUsage) window.LaiftAdminUsage.load(window.App); // uso da plataforma (DAT-01)
+    },
     'panel-admin-users': function () { loadAdminUsers(1); },
     'panel-admin-events': loadAdminEvents,
     'panel-admin-proposals': loadAdminProposals,
