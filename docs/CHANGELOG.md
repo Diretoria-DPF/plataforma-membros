@@ -7,6 +7,8 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
 ### Adicionado
+- **Atualizar o aplicativo** (Perfil): botão que apaga as cópias guardadas do app e do Atlas, desregistra os service workers e recarrega, sem desconectar nem apagar dados. O Atlas também avisa sozinho ("Há uma versão nova do Atlas", com **Atualizar**) quando sai versão nova, em vez de esperar todas as abas fecharem.
+- Cookie de sessão HttpOnly (SEC-08, ADR 0011) **ligado em produção** em 2026-10-17 (`session_cookie_enabled`).
 - Biblioteca do membro: chips de filtro rápido (áreas e **Só em português**) sempre à vista, e itens da lista separados por divisória. O guia da Lia ganhou a apresentação da Biblioteca, os chips, o fluxo de pedido de remoção e as quatro abas da curadoria; a Política de Privacidade ganhou o parágrafo da Biblioteca (favoritos, sugestões, buscas não guardadas, fontes de metadados e resumos revisados). Depois do deploy, o admin precisa tocar em **Reindexar base da Lia** para a Lia ler o guia novo.
 - Biblioteca: abas simples da curadoria (**Para revisar**, **No ar**, **Pedidos de remoção**), publicação em lote, áreas em lote, mudança de estado só para o admin e pedidos de remoção (curador e mentor pedem, o admin decide). Seis ações novas em `apiAdminLearnLibrary*`, sem migração.
 - Simulação clínica com pacientes variados (ADR 0009, **desligada**: flag `clinical_sim_enabled`, sem revisor clínico definido). Módulos puros `worker/src/clinicalSim/` (eixos, PRNG determinístico, estado que evolui, catálogo fixo), parâmetro `simulation` em `apiLearnClinicalChat/Evaluate` (prompt atual byte a byte sem a flag), guardrail de saída do paciente, nota por componentes calculada pelo servidor (hipótese 30, conduta 30, processo 20, comunicação 20), migração `037_clinical_sim.sql` com a trava de revisão em dois passos no banco, persona `paciente-virtual` 0.2.0 e "Modo simulação (beta)" na Clínica (`clinic-sim.js`).
@@ -47,6 +49,8 @@ Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10
 - A Lia passa a responder sobre o processo seletivo, as áreas e o contato da Liga (intenção `liga_processo` e fonte `liga` na base de conhecimento). Nenhum dado de candidato é lido.
 
 ### Corrigido
+- Atlas, aba **Estruturas**: tocar num sistema cujo modelo 3D ainda não tinha carregado (todos além do esqueleto e do muscular) era descartado em silêncio; agora a lista abre na hora e o modelo carrega em seguida.
+- Mensagens: a rotação da chave (entrar em navegador novo) violava o índice de chave ativa e dava erro em toda tentativa; agora funciona, com teste em Postgres real. Gráfico de barras com rótulo longo e visual da curadoria da Biblioteca.
 - `docs/BACKUP_RESTORE.md`: o job agendado falha (fica vermelho) sem os secrets; só a execução manual termina com aviso.
 - `docs/AMBIENTES.md`: lista de secrets do staging inclui `MFA_ENCRYPTION_KEY` e `NVIDIA_API_KEY`.
 - `docs/SECURITY.md`: o site roda no Worker `laift-web` da Cloudflare, e o clickjacking está mitigado por `frame-ancestors 'self'` (`frontend/_headers`).

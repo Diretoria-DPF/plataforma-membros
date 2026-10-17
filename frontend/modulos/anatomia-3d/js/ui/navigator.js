@@ -286,8 +286,11 @@ export function createNavigator(container, opts) {
    */
   function openSystem(systemId) {
     const sys = SYSTEMS.find((s) => s.id === systemId);
-    if (!sys || !isSystemAvailable(systemId)) return;
+    if (!sys) return;
 
+    // A lista de estruturas vem do índice de conteúdo, não do modelo 3D: abre na hora e pede o carregamento do
+    // modelo em seguida (antes, o toque era descartado em silêncio enquanto o modelo não estivesse carregado, e só
+    // o esqueleto e o muscular chegavam a ser carregados sozinhos).
     onSystemOpen(systemId);
 
     state.breadcrumb = [{ id: 'systems', label: 'Sistemas' }, { id: systemId, label: sys.label }];
