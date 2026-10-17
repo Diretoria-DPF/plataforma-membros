@@ -376,6 +376,7 @@
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: fnName, args: args }),
+      credentials: 'include', // cookie de sessão HttpOnly (SEC-08); sem a flag, o navegador não envia nada
     }).then(function (res) {
       if (!res.ok) throw new Error('Falha de comunicação com o servidor.');
       return res.json();
@@ -473,6 +474,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: body,
       signal: controller ? controller.signal : undefined,
+      credentials: 'include', // cookie de sessão HttpOnly (SEC-08)
       // Telemetria do atlas enviada ao esconder/fechar a aba precisa sobreviver à navegação.
       keepalive: action === 'apiLearnAtlasTelemetry',
     }).then(function (res) {

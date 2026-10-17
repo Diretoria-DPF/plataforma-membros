@@ -11,7 +11,7 @@ import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js'
 import { __resetMetricsForTests } from '../src/ai/metrics.js';
 import { normalizeQuestion } from '../src/ai/semanticCache.js';
 import { AI_MESSAGES } from '../src/ai/errors.js';
-import { AI_QUOTAS, AI_GLOBAL_DAILY_MAX } from '../src/constants.js';
+import { AI_QUOTAS, AI_GLOBAL_DAILY_MAX, AI_VISITOR_DAILY_MAX } from '../src/constants.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 import { routedSql, callsMatching, sqlText, groqReply, httpError, memoryKv, KEYS, RATE_LIMIT_SQL } from './helpers/aiTestUtils.js';
 
@@ -50,14 +50,16 @@ describe('AiService — cotas diárias por papel', () => {
       agent_curator: { visitor: 0, member: 0, admin: 40 },
     });
     expect(AI_GLOBAL_DAILY_MAX).toBe(3000);
+    expect(AI_VISITOR_DAILY_MAX).toBe(900); // 30% do teto global ficam para visitantes (SEC-05)
   });
 
   test('enforceRateLimit recebe o limite do PAPEL da sessão e janela de 24 h', async () => {
     const sql = quotaSql({});
     await AiService.consumeQuota(sql, VISITOR, 'generate_case');
-    const [userCall, globalCall] = callsMatching(sql, RATE_LIMIT_SQL);
+    const [userCall, visitorCall, globalCall] = callsMatching(sql, RATE_LIMIT_SQL);
     expect(userCall[1]).toBe('AI_GENERATE_CASE');
     expect(userCall[3]).toBe(86400);
+    expect(visitorCall[1]).toBe('AI_GLOBAL_VISITOR');
     expect(globalCall[1]).toBe('AI_GLOBAL');
   });
 
@@ -89,6 +91,38 @@ describe('AiService — cotas diárias por papel', () => {
     const refunds = callsMatching(sql, 'UPDATE rate_limit_buckets SET attempts = GREATEST');
     expect(refunds).toHaveLength(1);
     expect(refunds[0][1]).toBe('AI_CHAT');
+  });
+
+  test('fatia dos visitantes: esgotada, visitante recebe mensagem própria, a unidade volta e o teto global nem é tocado', async () => {
+    const sql = quotaSql({ AI_GLOBAL_VISITOR: AI_VISITOR_DAILY_MAX + 1 });
+    await expect(AiService.consumeQuota(sql, VISITOR, 'chat')).rejects.toMatchObject({
+      quotaExceeded: true, message: expect.stringContaining('visitantes'),
+    });
+    expect(callsMatching(sql, 'UPDATE rate_limit_buckets SET attempts = GREATEST').map((c) => c[1])).toEqual(['AI_CHAT']);
+    expect(callsMatching(sql, RATE_LIMIT_SQL).map((c) => c[1])).toEqual(['AI_CHAT', 'AI_GLOBAL_VISITOR']);
+  });
+
+  test('membro e administrador não consomem a fatia dos visitantes', async () => {
+    for (const identity of [MEMBER, ADMIN]) {
+      const sql = quotaSql({});
+      await AiService.consumeQuota(sql, identity, 'chat');
+      expect(callsMatching(sql, RATE_LIMIT_SQL).map((c) => c[1])).toEqual(['AI_CHAT', 'AI_GLOBAL']);
+    }
+  });
+
+  test('teto global esgotado: o visitante recebe de volta a unidade da pessoa e a da fatia dos visitantes', async () => {
+    const sql = quotaSql({ AI_GLOBAL: AI_GLOBAL_DAILY_MAX + 1 });
+    await expect(AiService.consumeQuota(sql, VISITOR, 'chat')).rejects.toMatchObject({ quotaExceeded: true });
+    expect(callsMatching(sql, 'UPDATE rate_limit_buckets SET attempts = GREATEST').map((c) => c[1])).toEqual(['AI_CHAT', 'AI_GLOBAL_VISITOR']);
+  });
+
+  test('refundQuota devolve também a fatia dos visitantes, só para visitante', async () => {
+    const sqlVisitor = quotaSql({});
+    await AiService.refundQuota(sqlVisitor, VISITOR, 'chat');
+    expect(callsMatching(sqlVisitor, 'UPDATE rate_limit_buckets SET attempts = GREATEST').map((c) => c[1])).toEqual(['AI_CHAT', 'AI_GLOBAL', 'AI_GLOBAL_VISITOR']);
+    const sqlMember = quotaSql({});
+    await AiService.refundQuota(sqlMember, MEMBER, 'chat');
+    expect(callsMatching(sqlMember, 'UPDATE rate_limit_buckets SET attempts = GREATEST').map((c) => c[1])).toEqual(['AI_CHAT', 'AI_GLOBAL']);
   });
 
   test('withQuota: cota estourada vira {success:false, quotaExceeded:true} e a IA nem é chamada', async () => {

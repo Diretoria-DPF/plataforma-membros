@@ -189,10 +189,10 @@ describe('totalsByDay e evaluateAlerts', () => {
     expect(evaluateAlerts({ daily: [], tokensUsed: 1000, budget: 450000, today })).toEqual([]);
   });
 
-  test('orçamento: dispara a partir de 80%', () => {
+  test('orçamento: dispara a partir de 70% (SEC-05)', () => {
     const at = (used) => evaluateAlerts({ daily: [], tokensUsed: used, budget: 1000, today }).map((a) => a.kind);
-    expect(at(799)).toEqual([]);
-    expect(at(800)).toEqual(['budget']);
+    expect(at(699)).toEqual([]);
+    expect(at(700)).toEqual(['budget']);
     expect(at(1500)).toEqual(['budget']);
   });
 
