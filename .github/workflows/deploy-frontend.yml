@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'frontend/**'
+      - 'tools/ci/pages-noindex.mjs'
       - '.github/workflows/deploy-frontend.yml'
   workflow_dispatch: {}
 
@@ -34,6 +35,8 @@ jobs:
       - name: Gera frontend/dist/ (app.js ofuscado; index.html/styles.css copiados)
         working-directory: frontend
         run: npm run build
+      - name: Cópia do Pages fora dos buscadores (noindex + canonical para laift.com.br)
+        run: node tools/ci/pages-noindex.mjs frontend/dist
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist

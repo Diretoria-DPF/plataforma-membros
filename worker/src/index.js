@@ -22,6 +22,7 @@ import { API_REGISTRY } from './handlers.js';
 import { runMaintenance } from './maintenance.js';
 import { newCorrelationId } from './security.js';
 import { readLimitedBody, bodyFitsAction } from './requestBody.js';
+import { securityHeaders } from './securityHeaders.js';
 import { HARDENING_BODY_LIMITS } from './constants.js';
 
 const API_PATHS = new Set(['/', '/v1', '/v1/']);
@@ -33,7 +34,7 @@ const TOO_LARGE = { success: false, message: 'Requisição grande demais.' };
 function healthResponse(request) {
   return new Response(request.method === 'HEAD' ? null : '{"ok":true}', {
     status: 200,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...securityHeaders({ noStore: true }) },
   });
 }
 
@@ -62,14 +63,14 @@ function corsHeaders(request, env) {
 function jsonResponse(body, request, env, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', ...corsHeaders(request, env) },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...securityHeaders({ noStore: true }), ...corsHeaders(request, env) },
   });
 }
 
 export default {
   async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders(request, env) });
+      return new Response(null, { status: 204, headers: { ...securityHeaders(), ...corsHeaders(request, env) } });
     }
 
     if ((request.method === 'GET' || request.method === 'HEAD') && new URL(request.url).pathname === HEALTH_PATH) {

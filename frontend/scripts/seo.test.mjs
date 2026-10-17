@@ -5,7 +5,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
@@ -145,4 +145,47 @@ test('build.js copia robots.txt, sitemap.xml e llms.txt para o dist', () => {
   for (const name of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
     assert.ok(build.includes(name), `build.js não copia ${name}`);
   }
+});
+
+// Páginas de primeiro nível geradas/tratadas fora do sitemap-fonte: index (é "/"), 404 (nunca indexável),
+// blog e biblioteca (o build escreve /blog, os posts e /biblioteca entre marcadores no sitemap do dist).
+const FORA_DO_SITEMAP_FONTE = new Set(['index.html', '404.html', 'blog.html', 'biblioteca.html']);
+
+test('sitemap.xml (fonte): toda página pública de primeiro nível está listada', () => {
+  const sitemap = read('sitemap.xml');
+  const paginas = readdirSync(ROOT).filter((n) => n.endsWith('.html') && !FORA_DO_SITEMAP_FONTE.has(n));
+  assert.ok(paginas.length >= 5, 'esperava ao menos 5 páginas públicas');
+  for (const nome of paginas) {
+    const url = `${SITE}/${nome.replace(/\.html$/, '')}`;
+    assert.ok(sitemap.includes(`<loc>${url}</loc>`), `sitemap.xml não lista ${url}`);
+  }
+});
+
+test('sitemap.xml (fonte): não duplica o que o build gera (blog e biblioteca) e documenta a fonte de verdade', () => {
+  const sitemap = read('sitemap.xml');
+  assert.ok(!sitemap.includes(`<loc>${SITE}/blog`), 'blog é gerado pelo build-blog.js');
+  assert.ok(!sitemap.includes(`<loc>${SITE}/biblioteca`), 'biblioteca é gerada pelo build-biblioteca.js');
+  assert.match(sitemap, /fonte de verdade/i);
+});
+
+test('termos e privacidade: Open Graph e Twitter Card completos', () => {
+  for (const pagina of ['termos', 'privacidade']) {
+    const html = read(`${pagina}.html`);
+    const url = `${SITE}/${pagina}`;
+    assert.equal(metaContent(html, 'property', 'og:url'), url, `${pagina}: og:url`);
+    assert.equal(metaContent(html, 'property', 'og:type'), 'website', `${pagina}: og:type`);
+    assert.equal(metaContent(html, 'property', 'og:locale'), 'pt_BR', `${pagina}: og:locale`);
+    assert.equal(metaContent(html, 'property', 'og:image'), `${SITE}/blog/og-default.jpg`, `${pagina}: og:image`);
+    assert.equal(metaContent(html, 'name', 'twitter:card'), 'summary', `${pagina}: twitter:card`);
+    for (const key of ['og:title', 'og:description']) assert.ok(metaContent(html, 'property', key), `${pagina}: falta ${key}`);
+    for (const key of ['twitter:title', 'twitter:description']) assert.ok(metaContent(html, 'name', key), `${pagina}: falta ${key}`);
+  }
+});
+
+test('_headers: HSTS de 7 dias sem includeSubDomains/preload, COOP e sem CORP', () => {
+  const geral = /^\/\*\r?\n((?:[ \t]+.*\r?\n?)+)/m.exec(read('_headers'))?.[1] ?? '';
+  assert.match(geral, /Strict-Transport-Security: max-age=604800\s*$/m);
+  assert.ok(!/includeSubDomains|preload/i.test(geral), 'HSTS sem includeSubDomains/preload nesta etapa');
+  assert.match(geral, /Cross-Origin-Opener-Policy: same-origin-allow-popups/);
+  assert.ok(!/Cross-Origin-Resource-Policy/i.test(geral), 'sem CORP no site');
 });
