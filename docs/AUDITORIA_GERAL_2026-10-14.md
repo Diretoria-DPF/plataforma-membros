@@ -7,9 +7,9 @@ Fonte única da verdade da auditoria iniciada em 2026-10-14. Atualize **Estado**
 |---|---|
 | Fase atual | **0 — Enxergar e estancar** (quase fechada) e **1 — Não cair, vazar nem barrar** (em andamento) |
 | Última atualização | 2026-10-17 |
-| Progresso por trilha | corrigidos (mergeados): SEC 6/10 (01, 02, 03, 04, 07, 09) · OPS 1/9 (01; falta o monitor do dono) · DAT 1/2 · ROL 3/5 · demais abertos |
-| PR em curso | SEC-06 + SEO-01 (cabeçalhos e higiene de SEO); em seguida MOB-01 e SEC-08 |
-| Próximo passo | Fechar SEC-06/SEO-01, MOB-01 e SEC-08 (cookie HttpOnly sob flag, ADR 0011); depois SEC-05, OPS-06, OPS-08 e a verificação dos módulos |
+| Progresso por trilha | corrigidos (mergeados): SEC 8/10 (01, 02, 03, 04, 06, 07, 09 e 05/08 nesta PR) · OPS 1/9 (01; falta o monitor do dono) · DAT 1/2 · ROL 3/5 · MOB 1/10 (01) · SEO 1/3 (01) · demais abertos |
+| PR em curso | SEC-05 + SEC-08 (cota de IA para membros e cookie de sessão sob flag) |
+| Próximo passo | Ligar o cookie em staging e depois em produção (roteiro no ADR 0011); depois OPS-06, OPS-08 e a verificação dos módulos |
 | Bloqueios do dono | Itens marcados **[DONO]** na Fila (painéis, teste de cadastro, revisor clínico, Android real) |
 | Repositório | **Público por ora** (decisão do dono, 2026-10-14) — ver regra de divulgação (§3) |
 
@@ -46,10 +46,10 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 | SEC-02 | Cadastro sem saída: reenvio de confirmação, limpeza de contas não confirmadas, mensagens uniformes | ALTO | `authService.js`, `maintenance.js` (detalhe: complemento privado) | corrigido (mergeado em 2026-10-14) | A | M | #76 | C-cadastro |
 | SEC-03 | Rate limit de escrita por conta (feedback, comentário, avatar; proposta já em #71) e limpeza de avatares. Achados da revisão da #71: resultado de proposta visível a quem tiver o UUID, em qualquer status; UUID inválido vira erro 500; mensagem de limite diz "minutos" para janela de 1 h | MÉDIO | `proposalService.js`, `profileService.js`, `mediaService.js` | corrigido (mergeado em 2026-10-14) | A | M | #74 | — |
 | SEC-04 | Reautenticação (step-up) nas ações de admin que mudam papel/banem | MÉDIO | `adminService.js` | corrigido (mergeado em 2026-10-14) | A | M | #74 | — |
-| SEC-05 | Cota de IA: fatia reservada a membros, IA só com e-mail confirmado, alerta a 70% do Groq | ALTO | `aiService.js`, `constants.js` | aberto | A | M | — | — |
-| SEC-06 | Headers/CSP/HSTS: HSTS escalonado, CSP também como header, COOP/CORP, headers na API | MÉDIO | `frontend/_headers`, `worker/src/index.js` | aberto | A | M | — | — |
+| SEC-05 | Cota de IA: fatia reservada a membros, IA só com e-mail confirmado, alerta a 70% do Groq | ALTO | `aiService.js`, `constants.js` | corrigido (fatia de 30% do teto global para visitantes e alerta a 70% do orçamento; IA só com e-mail confirmado já valia, pois a sessão exige confirmação) | A | M | esta | — |
+| SEC-06 | Headers/CSP/HSTS: HSTS escalonado, CSP também como header, COOP/CORP, headers na API | MÉDIO | `frontend/_headers`, `worker/src/index.js` | corrigido (mergeado; HSTS de 7 dias em escalonamento; conferir com curl -I) | A | M | #82 | — |
 | SEC-07 | Teto de tamanho do corpo da requisição | MÉDIO | `worker/src/index.js`, `mediaService.js` | corrigido (mergeado em 2026-10-14) | A | P | #74 | — |
-| SEC-08 | Token de sessão: sair do localStorage para cookie HttpOnly (ADR na Fase 0; implementação sob flag nas Fases 1–2) | ALTO | `frontend/app.js` (`pm_session`), `LaiftApi.call` | aberto | A | G | — | O37 |
+| SEC-08 | Token de sessão: sair do localStorage para cookie HttpOnly (ADR na Fase 0; implementação sob flag nas Fases 1–2) | ALTO | `frontend/app.js` (`pm_session`), `LaiftApi.call` | implementado com a flag desligada (ADR 0011); falta ligar em staging e depois em produção | A | G | esta | O37 |
 | SEC-09 | Autorização por papel e rate limit nas ações de proposta (M1 da auditoria de 2026-09-25) | ALTO | `worker/src/services/proposalService.js`, `handlers.js` (detalhe: complemento privado) | corrigido (mergeado em 2026-10-14) | A | P | #71 | M1 (2026-09-25) |
 | SEC-10 | `window.App.getState()` expõe o token a qualquer script same-origin; migrar módulos para `getIdentity()` | MÉDIO | `frontend/app.js` (~L2659 / `getIdentity` ~L2663) | aberto | A | M | — | O37 |
 
@@ -75,7 +75,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 ### Mobile e desempenho (MOB) — MOB-10 não utilizado
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| MOB-01 | Botão voltar do Android: `router.js` + `pushState`/`popstate` (3 passos) | ALTO | sem `pushState`/`popstate` (só `replaceState`: `app.js` ~L930, ~L2700) | aberto | A | G | — | — |
+| MOB-01 | Botão voltar do Android: `router.js` + `pushState`/`popstate` (3 passos) | ALTO | sem `pushState`/`popstate` (só `replaceState`: `app.js` ~L930, ~L2700) | corrigido (mergeado; falta conferir em Android real) | A | G | #81 | — |
 | MOB-02 | Fila offline do quiz (IndexedDB + `idempotencyKey`) | MÉDIO | `modulos/quiz/quiz-engine.js:434` ("Não foi possível registrar") | aberto | A | M | — | — |
 | MOB-03 | Trocar `alert()`/`confirm()` nativos por modais | MÉDIO | `modulos/clinica/clinic-engine.js:1073,1243`; `modulos/quiz/quiz-engine.js:299,495` | aberto | A | M | — | — |
 | MOB-04 | Admin/Lia carregados sob demanda por papel (hoje ~140 KB admin + ~124 KB Lia para todos) | MÉDIO | `frontend/index.html` | aberto | A | M | — | — |
@@ -118,7 +118,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 ### SEO e marca (SEO) e dívida técnica (TEC)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| SEO-01 | Higiene: og/twitter em `termos`/`privacidade`; sitemap-fonte = dist (6 vs 26 URLs); cópia do GitHub Pages com `noindex` + canonical; noscript com texto dos módulos | MÉDIO | `frontend/sitemap.xml`, `termos.html`, `privacidade.html` | aberto | A | M | — | — |
+| SEO-01 | Higiene: og/twitter em `termos`/`privacidade`; sitemap-fonte = dist (6 vs 26 URLs); cópia do GitHub Pages com `noindex` + canonical; noscript com texto dos módulos | MÉDIO | `frontend/sitemap.xml`, `termos.html`, `privacidade.html` | corrigido (mergeado: og/twitter, sitemap documentado e Pages com noindex; noscript dos módulos fica fora) | A | M | #82 | — |
 | SEO-02 | Conteúdo e indexação: páginas públicas de prévia estáticas, Search Console/Bing, pauta por buscas reais | MÉDIO | home entrega ao robô só o `<h1>Entrar</h1>` | aberto | A+D | G | — | — |
 | SEO-03 | Sinais de marca: Google Business, Wikidata, parcerias — só com dados confirmados pelo dono | BAIXO | `sameAs`: Instagram real é `laift.liga`; `github.com/Diretoria-DPF` não é rede da Liga | aberto | D | M | — | — |
 | TEC-01 | Vendorizar libs do jsDelivr (3Dmol, smiles-drawer, OpenChemLib, RDKit/WASM, leitor de QR) e remover o CDN do `script-src` | MÉDIO | `modulos/quiz`, `laboratorio`, `laboratorio/studio`, `fiscal` (todos com SRI) | aberto | A | M | — | O31b |

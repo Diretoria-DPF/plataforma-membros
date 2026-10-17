@@ -53,6 +53,7 @@ Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSE
 | Flag | Pública | Estado depois da 033 | Onde é lida |
 |---|---|---|---|
 | `lia_hibrida_enabled` | não | `FALSE` | `assistantService.js` (`FLAG_HIBRIDA`; exige também `rag_enabled`): guarda de intenção, resposta clínica segura, escolha de seções e resposta extrativa |
+| `session_cookie_enabled` | não (o front reage à resposta do login: `sessionCookie: true`) | `FALSE` | `index.js` e `sessionCookie.js` (SEC-08, ADR 0011): o token de sessão vai num cookie HttpOnly para origens do mesmo site (`SESSION_COOKIE_SITE`); a cópia do GitHub Pages continua com o token no corpo. Ligar primeiro em staging |
 | `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com ela ligada) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
 
 ## Flags da Lia para membros

@@ -24,10 +24,17 @@ import { newCorrelationId } from './security.js';
 import { readLimitedBody, bodyFitsAction } from './requestBody.js';
 import { securityHeaders } from './securityHeaders.js';
 import { HARDENING_BODY_LIMITS } from './constants.js';
+import { isEnabled } from './services/featureFlagService.js';
+import {
+  SESSION_CREATING_ACTIONS, SESSION_ENDING_ACTIONS, cookieAllowedForOrigin, isMarker, readSessionCookie, resolveArgs,
+  splitLoginResult, buildSetCookie, buildClearCookie,
+} from './sessionCookie.js';
 
 const API_PATHS = new Set(['/', '/v1', '/v1/']);
 const HEALTH_PATH = '/health';
 const TOO_LARGE = { success: false, message: 'Requisição grande demais.' };
+const COOKIE_FLAG = 'session_cookie_enabled';
+const SESSION_INVALID = { success: false, message: 'Sessão inválida ou expirada. Faça login novamente.' };
 
 // Sonda rasa para monitor externo de disponibilidade: sem banco, KV, R2,
 // segredos nem sessão (não acorda o Neon). Corpo fixo, sem versão nem flags.
@@ -56,15 +63,34 @@ function corsHeaders(request, env) {
   };
   if (allowed.indexOf(origin) !== -1) {
     headers['Access-Control-Allow-Origin'] = origin;
+    // Necessário para o cookie de sessão (SEC-08): sem isto o navegador recusa a resposta de quem usa credentials: 'include'.
+    headers['Access-Control-Allow-Credentials'] = 'true';
   }
   return headers;
 }
 
-function jsonResponse(body, request, env, status = 200) {
+function jsonResponse(body, request, env, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', ...securityHeaders({ noStore: true }), ...corsHeaders(request, env) },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...securityHeaders({ noStore: true }), ...corsHeaders(request, env), ...extraHeaders },
   });
+}
+
+/** O cookie de sessão só vale para origens permitidas do MESMO site da API (env.SESSION_COOKIE_SITE). */
+function isCookieOrigin(request, env) {
+  return cookieAllowedForOrigin(request.headers.get('Origin') || '', parseAllowedOrigins(env), env.SESSION_COOKIE_SITE);
+}
+
+/** Login e MFA entregam o token no cookie quando a flag está ligada; a flag nunca derruba a resposta de login. */
+async function cookieForLogin(sql, request, env, action, result) {
+  if (!SESSION_CREATING_ACTIONS.includes(action) || !isCookieOrigin(request, env)) return { body: result, headers: {} };
+  try {
+    if (!(await isEnabled(sql, COOKIE_FLAG, null))) return { body: result, headers: {} };
+  } catch (err) {
+    return { body: result, headers: {} };
+  }
+  const split = splitLoginResult(result);
+  return split.token ? { body: split.body, headers: { 'Set-Cookie': buildSetCookie(split.token) } } : { body: result, headers: {} };
 }
 
 export default {
@@ -111,7 +137,14 @@ export default {
       return jsonResponse({ success: false, message: 'Ação desconhecida.' }, request, env, 200);
     }
 
-    const args = Array.isArray(body.args) ? body.args : [];
+    let args = Array.isArray(body.args) ? body.args : [];
+    // Cookie de sessão (SEC-08): o marcador "cookie" no lugar do token só vale vindo de origem do mesmo site;
+    // o Worker troca o marcador pelo token do cookie HttpOnly antes de chamar o handler.
+    const usesCookie = isMarker(args[0]) && !SESSION_CREATING_ACTIONS.includes(action);
+    if (usesCookie) {
+      if (!isCookieOrigin(request, env)) return jsonResponse(SESSION_INVALID, request, env, 200);
+      args = resolveArgs(args, readSessionCookie(request));
+    }
     const sql = createDb(env.DATABASE_URL);
     // env é o objeto local desta invocação de fetch() (não é estado global
     // compartilhado entre requisições) — seguro acrescentar o IP aqui para
@@ -122,7 +155,9 @@ export default {
 
     try {
       const result = await handler(sql, requestEnv, args);
-      return jsonResponse(result, request, env, 200);
+      const login = await cookieForLogin(sql, request, env, action, result);
+      const headers = usesCookie && SESSION_ENDING_ACTIONS.includes(action) ? { 'Set-Cookie': buildClearCookie() } : login.headers;
+      return jsonResponse(login.body, request, env, 200, headers);
     } catch (err) {
       // Cada handler já captura tudo internamente (run/runWithSession); isto
       // é a última rede de segurança para um erro realmente inesperado.

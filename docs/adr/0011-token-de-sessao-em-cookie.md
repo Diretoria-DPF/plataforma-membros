@@ -1,6 +1,6 @@
 # ADR 0011: Token de sessão em cookie HttpOnly (SEC-08)
 
-Status: proposta em 2026-10-17. Código do Worker e do front sob a flag `session_cookie_enabled` (migração 041, nasce desligada). A flag só liga em staging primeiro; produção depois do roteiro de verificação abaixo.
+Status: aceita em 2026-10-17 e **implementada, com a flag desligada** (Worker: `sessionCookie.js` e `index.js`; front: `credentials: 'include'` nas duas chamadas de `app.js`; migração 041, que só semeia a flag). Nada muda para ninguém até a flag ser ligada: primeiro em staging, produção depois do roteiro de verificação abaixo.
 
 ## Contexto
 O token de sessão (64 caracteres hexadecimais, o hash fica no banco) chega ao navegador no corpo da resposta de `apiLogin` e fica em `localStorage` (`pm_session`) e em `window.App.getState().sessionToken`. Qualquer script da mesma origem, inclusive os módulos em iframe e uma eventual falha de XSS, consegue lê-lo e usá-lo de outro lugar. Vale para todos, e para o admin é o pior caso (auditoria SEC-08 e SEC-10, riscos R7 e O37).
