@@ -944,6 +944,7 @@
     var token = state.sessionToken;
     state.sessionToken = null;
     state.profile = null;
+    if (window.LaiftPanelHistory) window.LaiftPanelHistory.reset();
     if (window.LaiftMessaging) window.LaiftMessaging.resetMessagingState();
     if (window.LaiftLearning) window.LaiftLearning.reset();
     // Fase 3 — painel admin de IA
@@ -1210,8 +1211,10 @@
     if (previousPanelId !== panelId) document.dispatchEvent(new CustomEvent('laift:panelchange', { detail: { panel: panelId } }));
   }
 
-  function showPanel(panelId) {
+  function showPanel(panelId, opts) {
     showPanelSection(panelId);
+    // Botão Voltar do Android (MOB-01): cada troca entra no histórico; o popstate reabre sem empilhar de novo.
+    if (!(opts && opts.fromHistory === true) && window.LaiftPanelHistory) window.LaiftPanelHistory.push(panelId);
     if (PANEL_LOADERS[panelId]) PANEL_LOADERS[panelId]();
     // Reavalia os indicadores ("!" de votação aberta, contagem de tarefas)
     // a cada navegação — não só no login — porque um admin pode ter
@@ -1220,6 +1223,15 @@
     // existia no momento do login.
     refreshNavBadges();
   }
+
+  window.addEventListener('popstate', function (event) {
+    if (!window.LaiftPanelHistory) return;
+    window.LaiftPanelHistory.onPopState(event, {
+      loggedIn: !!state.sessionToken,
+      current: currentPanelId,
+      canOpen: function (id) { return getVisiblePanelOrder().indexOf(id) !== -1; },
+    }, function (id) { showPanel(id, { fromHistory: true }); });
+  });
 
   // ===========================================================================
   // Navegação por deslizar (swipe) entre painéis — padrão de app mobile.
