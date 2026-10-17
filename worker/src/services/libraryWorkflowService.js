@@ -99,6 +99,8 @@ async function advanceToPublished(sql, identity, roles, cur, options, progress) 
     row = requireRow(await runStatusUpdate(sql, row, 'aprovado', null, identity));
     progress.status = row.status;
   }
+  // Antes de apagar o resumo (irreversível), garante que nada além do resumo ainda barra a publicação.
+  if (!row.topics?.length) throw E.ValidationError(MSG.noTopic);
   row = await prepareSummary(sql, identity, row, options);
   assertTransition(toArticleState(row), 'publicado', roles);
   return requireRow(await runStatusUpdate(sql, row, 'publicado', null, identity));
@@ -190,8 +192,14 @@ function nextTopics(current, wanted, mode) {
   return mode === 'replace' ? wanted : [...new Set([...(current ?? []), ...wanted])];
 }
 
-async function areasItem(sql, id, cur, wanted, mode) {
+async function areasItem(sql, identity, id, cur, wanted, mode) {
   if (!cur) return { id, ok: false, message: MSG.notFound };
+  try {
+    await enforce(sql, 'LIBRARY_CURATE', identity.profileId);
+  } catch (err) {
+    if (err?.payload?.code === 'rate_limited') return { id, ok: false, code: 'rate_limited', message: err.message };
+    throw err;
+  }
   const topics = nextTopics(cur.topics, wanted, mode);
   if (topics.length > TOPICS_MAX) return { id, ok: false, message: MSG.tooManyTopics };
   const rows = await sql`
@@ -213,7 +221,7 @@ export async function setAreas(sql, identity, input = {}, correlationId) {
   const found = await sql`SELECT id, version, topics FROM library_articles WHERE id = ANY(${ids}::uuid[])`;
   const byId = new Map(found.map((r) => [r.id, r]));
   const results = [];
-  for (const id of ids) results.push(await areasItem(sql, id, byId.get(id), wanted, mode));
+  for (const id of ids) results.push(await areasItem(sql, identity, id, byId.get(id), wanted, mode));
   const changed = results.filter((r) => r.ok).length;
   await Logging.logAudit(sql, correlationId, identity.profileId, 'LIBRARY_SET_AREAS', 'library_article', null, 'success', { requested: ids.length, changed, mode, topics: wanted });
   return { success: true, results, changed };
