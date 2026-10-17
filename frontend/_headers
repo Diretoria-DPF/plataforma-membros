@@ -12,9 +12,16 @@
 # para impedir que OUTROS sites embutam a plataforma) e o check-in por QR
 # (learning.js / modulos/fiscal) usa a câmera dentro de um desses iframes.
 #
-# HSTS começa com 5 minutos de propósito: se algo estiver errado no HTTPS do
-# domínio novo, o navegador esquece rápido. Depois de validar tudo, subir para
-# max-age=31536000 (1 ano) e só então considerar includeSubDomains/preload.
+# HSTS sobe por degraus de propósito: se algo estiver errado no HTTPS do domínio,
+# o navegador esquece rápido. Escalonamento (cada passo só depois de uma semana
+# sem incidente): 7 dias (604800, atual) -> 30 dias (2592000) -> 1 ano (31536000)
+# -> só então includeSubDomains e, por último, preload. Hoje: sem includeSubDomains
+# e sem preload.
+#
+# Cross-Origin-Opener-Policy same-origin-allow-popups isola a janela do site de
+# páginas que a abram, sem quebrar popups que o próprio site abre.
+# NÃO há Cross-Origin-Resource-Policy aqui: fotos e og:image precisam ser lidas
+# por outros sites (prévias de link, redes sociais).
 # Guia para bots e agentes de IA (RFC 8288): da página inicial para o sitemap e
 # para a descrição em texto da LAIFT. Só aponta para arquivos públicos.
 /
@@ -33,7 +40,8 @@ https://:version.:name.:subdomain.workers.dev/*
   X-Robots-Tag: noindex, nofollow
 
 /*
-  Strict-Transport-Security: max-age=300
+  Strict-Transport-Security: max-age=604800
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(self), microphone=(), geolocation=()

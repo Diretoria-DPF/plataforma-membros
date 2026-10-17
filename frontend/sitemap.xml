@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
+    Este arquivo é a fonte de verdade das páginas ESTÁTICAS públicas (primeiro nível).
+    O sitemap do dist/ = este arquivo + blocos que o build acrescenta entre marcadores:
+    /blog e os posts (scripts/build-blog.js) e /biblioteca (scripts/build-biblioteca.js,
+    só quando indexável). Por isso /blog e /biblioteca NÃO entram aqui (duplicariam).
+    Página pública nova de primeiro nível: listar aqui (scripts/seo.test.mjs cobra).
+  -->
   <url>
     <loc>https://laift.com.br/</loc>
     <lastmod>2026-10-03</lastmod>
