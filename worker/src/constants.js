@@ -328,6 +328,11 @@ export const AI_QUOTA_WINDOW_SECONDS = 86400;
 // distribuído entre muitas contas que ficaria abaixo de cada cota individual.
 export const AI_GLOBAL_DAILY_MAX = 3000;
 
+// Fatia dos visitantes no disjuntor global (SEC-05): o resto fica reservado a membros e administradores,
+// para que contas novas e abertas não esgotem a IA da liga antes de quem é membro.
+export const AI_VISITOR_SHARE_PCT = 30;
+export const AI_VISITOR_DAILY_MAX = Math.floor((AI_GLOBAL_DAILY_MAX * AI_VISITOR_SHARE_PCT) / 100);
+
 // Orçamento de TOKENS por dia (janela móvel de 24 h, só o Groq): ~75% do teto
 // gratuito (~600 mil nos três modelos), deixando folga para picos e para a
 // janela móvel do provedor. Passou disso, o orquestrador não chama o provedor
@@ -366,7 +371,7 @@ export const AI_CACHE = {
 
 // Alertas por e-mail aos administradores (cron diário, maintenance.js).
 export const AI_ALERTS = {
-  BUDGET_PCT: 80,           // tokens do dia acima de 80% do orçamento
+  BUDGET_PCT: 70,           // tokens do dia acima de 70% do orçamento (SEC-05: avisa com folga antes do teto do Groq)
   HIT_RATE_MIN_PCT: 30,     // taxa de acerto do cache abaixo disto por 3 dias
   HIT_RATE_DAYS: 3,
   RATE_LIMITED_MAX_PCT: 5,  // mais de 5% das chamadas com 429

@@ -40,7 +40,11 @@ export const QUOTA_BUCKETS = {
   agent_curator: 'AI_AGENT_CURATOR',
 };
 export const GLOBAL_BUCKET = 'AI_GLOBAL';
+// Fatia dos visitantes dentro do teto global (SEC-05): visitante nunca consome o que é reservado a membros.
+export const VISITOR_BUCKET = 'AI_GLOBAL_VISITOR';
 const GLOBAL_IDENTIFIER = 'global';
+
+const isVisitorRole = (role) => role !== C.ROLES.MEMBER && role !== C.ROLES.ADMIN;
 
 const QUOTA_LABELS = {
   chat: 'perguntas ao paciente virtual',
@@ -98,12 +102,25 @@ export async function consumeQuota(sql, identity, feature) {
     }
     throw err;
   }
+  const visitor = isVisitorRole(identity.role);
+  if (visitor) {
+    try {
+      await S.enforceRateLimit(sql, VISITOR_BUCKET, GLOBAL_IDENTIFIER, C.AI_VISITOR_DAILY_MAX, C.AI_QUOTA_WINDOW_SECONDS);
+    } catch (err) {
+      if (err && err.name === 'RateLimitError') {
+        await refundBucket(sql, QUOTA_BUCKETS[feature], identity.profileId);
+        throw QuotaExceededError('A IA para visitantes atingiu o limite de hoje; volta amanhã. Quem é membro da liga tem a cota reservada.');
+      }
+      throw err;
+    }
+  }
   try {
     await S.enforceRateLimit(sql, GLOBAL_BUCKET, GLOBAL_IDENTIFIER, C.AI_GLOBAL_DAILY_MAX, C.AI_QUOTA_WINDOW_SECONDS);
   } catch (err) {
     if (err && err.name === 'RateLimitError') {
-      // A chamada não vai acontecer: não faz sentido cobrar da pessoa.
+      // A chamada não vai acontecer: não faz sentido cobrar da pessoa (nem da fatia dos visitantes).
       await refundBucket(sql, QUOTA_BUCKETS[feature], identity.profileId);
+      if (visitor) await refundBucket(sql, VISITOR_BUCKET, GLOBAL_IDENTIFIER);
       throw QuotaExceededError('A IA da plataforma atingiu o limite diário de uso de toda a liga; volta amanhã.');
     }
     throw err;
@@ -123,6 +140,7 @@ async function refundBucket(sql, bucket, identifier) {
 export async function refundQuota(sql, identity, feature) {
   await refundBucket(sql, QUOTA_BUCKETS[feature], identity.profileId);
   await refundBucket(sql, GLOBAL_BUCKET, GLOBAL_IDENTIFIER);
+  if (isVisitorRole(identity.role)) await refundBucket(sql, VISITOR_BUCKET, GLOBAL_IDENTIFIER);
 }
 
 /**
