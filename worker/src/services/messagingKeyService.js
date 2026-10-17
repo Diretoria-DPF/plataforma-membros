@@ -125,23 +125,23 @@ function validatePublishInput(input) {
   return { algorithm, publicKey, kdfAlgorithm, kdfIterations, kdfSalt, expectedCurrentVersion };
 }
 
+function conflictError() {
+  return E.ConflictError('A chave de mensageria já foi alterada em outro lugar. Recarregue e tente novamente.');
+}
+
 /**
- * Primeira publicação (expectedCurrentVersion = 0) ou rotação
- * (expectedCurrentVersion = N, versão ativa atual). Concorrência
- * otimista: o UPDATE de "supersede" só acontece se a versão ativa
- * encontrada bater com a esperada, e o INSERT da nova versão usa
- * exatamente N+1 — tudo num único statement com CTE, atômico no driver
- * HTTP do Neon.
+ * Primeira publicação (expectedCurrentVersion = 0) ou rotação (expectedCurrentVersion = N, a versão ativa).
  *
- * Achado de produção (ref dcf9614d, 2026-09-25): `SELECT ... FOR UPDATE`
- * não trava NADA quando ainda não existe nenhuma linha para o profileId
- * (primeira publicação) — não há linha para travar. Duas requisições
- * concorrentes de primeira publicação (ex.: duas abas, ou o painel
- * carregando duas vezes) viam as duas `current_version = 0`, e as duas
- * tentavam inserir a versão 1, colidindo com `uq_messaging_keys_active`.
- * `pg_advisory_xact_lock` serializa por profileId mesmo sem linha
- * nenhuma existir ainda — é a correção real, o FOR UPDATE continua útil
- * só para o caso de rotação (linha já existe).
+ * Duas instruções, na ordem: (1) a rotação tira a chave ativa de cena SÓ se ela ainda for a versão esperada
+ * (concorrência otimista: quem chega depois encontra zero linhas e recebe conflito); (2) o INSERT grava a
+ * versão seguinte e só entra se não houver chave ativa (o índice parcial uq_messaging_keys_active decide a
+ * corrida; ON CONFLICT DO NOTHING vira conflito amigável, nunca erro de banco).
+ *
+ * Por que não uma instrução só: a versão anterior (CTE com UPDATE + INSERT) violava uq_messaging_keys_active
+ * em TODA rotação, porque o INSERT não enxerga o UPDATE feito no mesmo comando; só a primeira publicação
+ * funcionava (achado de 2026-10-17, test/messagingKeyRotation.test.js). O driver HTTP do Neon não tem
+ * transação; se a 2ª instrução falhar depois da 1ª, a conta fica sem chave ativa e o próximo carregamento
+ * do painel publica de novo com expectedCurrentVersion = 0 (o front já trata hasKey = false).
  */
 export async function publishMessagingKey(sql, identity, input, correlationId) {
   assertMemberOrAdmin(identity);
@@ -149,34 +149,26 @@ export async function publishMessagingKey(sql, identity, input, correlationId) {
 
   const v = validatePublishInput(input);
 
-  const rows = await sql`
-    WITH lock AS (
-      SELECT pg_advisory_xact_lock(hashtext(${identity.profileId}::text)) AS _locked
-    ),
-    current AS (
-      SELECT mk.key_version FROM messaging_keys mk, lock
-      WHERE mk.profile_id = ${identity.profileId}::uuid AND mk.superseded_at IS NULL
-      FOR UPDATE
-    ),
-    checked AS (
-      SELECT COALESCE((SELECT key_version FROM current), 0) AS current_version
-    ),
-    superseded AS (
+  if (v.expectedCurrentVersion > 0) {
+    const retired = await sql`
       UPDATE messaging_keys SET superseded_at = now()
-      WHERE profile_id = ${identity.profileId}::uuid AND superseded_at IS NULL
-        AND (SELECT current_version FROM checked) = ${v.expectedCurrentVersion}
+      WHERE profile_id = ${identity.profileId}::uuid AND superseded_at IS NULL AND key_version = ${v.expectedCurrentVersion}::int
       RETURNING key_version
-    )
+    `;
+    if (!retired.length) throw conflictError();
+  }
+
+  const rows = await sql`
     INSERT INTO messaging_keys (profile_id, key_version, algorithm, public_key, kdf_algorithm, kdf_iterations, kdf_salt)
-    SELECT ${identity.profileId}::uuid, (SELECT current_version FROM checked) + 1, ${v.algorithm}, ${v.publicKey},
-           ${v.kdfAlgorithm}, ${v.kdfIterations}, ${v.kdfSalt}
-    WHERE (SELECT current_version FROM checked) = ${v.expectedCurrentVersion}
+    SELECT ${identity.profileId}::uuid,
+           COALESCE((SELECT max(key_version) FROM messaging_keys WHERE profile_id = ${identity.profileId}::uuid), 0) + 1,
+           ${v.algorithm}, ${v.publicKey}, ${v.kdfAlgorithm}, ${v.kdfIterations}, ${v.kdfSalt}
+    WHERE NOT EXISTS (SELECT 1 FROM messaging_keys WHERE profile_id = ${identity.profileId}::uuid AND superseded_at IS NULL)
+    ON CONFLICT DO NOTHING
     RETURNING key_version
   `;
 
-  if (!rows.length) {
-    throw E.ConflictError('A chave de mensageria já foi alterada em outro lugar. Recarregue e tente novamente.');
-  }
+  if (!rows.length) throw conflictError();
 
   await Logging.logAudit(sql, correlationId, identity.profileId, 'PUBLISH_MESSAGING_KEY', 'profile', identity.profileId, 'success', { keyVersion: rows[0].key_version });
   return { success: true, message: 'Chave de mensageria publicada.', keyVersion: rows[0].key_version };

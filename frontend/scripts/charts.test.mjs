@@ -562,3 +562,19 @@ test('charts.css: fundo do gráfico é camada 0 ou 1, nunca superfície 2 ou 3',
 test('charts.css: rótulo de valor de 11 px, acima da regra geral de texto de 12 px', () => {
   assert.match(read('modulos/shared/charts.css'), /\.laift-chart__svg \.laift-chart__value \{[^}]*font-size:\s*11px/);
 });
+
+// Rótulo que não cabe no espaço das barras horizontais vira "texto…" (antes vazava pela borda esquerda).
+test('fitLabel mantém o rótulo que cabe e corta com reticências o que não cabe', () => {
+  assert.equal(Core.fitLabel('Eventos', 120, 12), 'Eventos');
+  const longo = 'Produção de Álcool em gel 70% e outros sanitizantes';
+  const cortado = Core.fitLabel(longo, 104, 12);
+  assert.ok(cortado.endsWith('\u2026'), cortado);
+  assert.ok(Core.estimateTextWidth(cortado, 12) <= 104 + 12 * 0.62, 'o rótulo cortado cabe no espaço');
+  assert.ok(longo.startsWith(cortado.slice(0, -1)));
+  assert.equal(Core.fitLabel('', 50, 12), '');
+  assert.equal(Core.fitLabel('abc', 0, 12), '\u2026'.length === 1 ? 'a\u2026' : '');
+});
+
+test('o gráfico de barras usa o rótulo ajustado ao espaço (charts.js)', () => {
+  assert.match(read('modulos/shared/charts.js'), /core\.fitLabel\(bar\.label, o\.labelWidth - LABEL_GAP, BAR_LABEL_SIZE\)/);
+});

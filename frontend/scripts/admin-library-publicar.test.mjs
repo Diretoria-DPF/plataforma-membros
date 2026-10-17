@@ -76,3 +76,11 @@ test('está no index.html, no build e no cache do service worker', () => {
   assert.match(read('scripts/build.js'), /admin-library-publicar\.js/);
   assert.match(read('sw.js'), /admin-library-publicar\.js/);
 });
+
+test('as caixas de seleção da curadoria ficam ao lado do texto (classe pub-check) e a lista não tem marcadores', () => {
+  const code = read('admin-library-publicar.js');
+  assert.equal((code.match(/className: 'pub-check'/g) || []).length, 4);
+  const css = read('library.css');
+  assert.match(css, /label\.pub-check \{ display: flex;/);
+  assert.match(css, /#admin-library-root \.card-list \{ list-style: none;/);
+});

@@ -248,7 +248,7 @@
   function reviewRow(item) {
     var flags = flagsOf(item);
     return h('li', { className: 'card' }, [
-      h('label', { htmlFor: 'adm-pub-sel-' + item.id }, [
+      h('label', { className: 'pub-check', htmlFor: 'adm-pub-sel-' + item.id }, [
         h('input', { type: 'checkbox', id: 'adm-pub-sel-' + item.id, checked: !!view.selected[item.id], onChange: function (e) { toggleItem(item.id, e.target.checked); } }),
         ' ',
         h('strong', null, [item.title || 'Sem título']),
@@ -265,17 +265,17 @@
     var count = selectedIds(view.selected).length;
     return h('div', { className: 'card' }, [
       h('div', { className: 'actions-row' }, [
-        h('label', { htmlFor: 'adm-pub-todos' }, [
+        h('label', { className: 'pub-check', htmlFor: 'adm-pub-todos' }, [
           h('input', { type: 'checkbox', id: 'adm-pub-todos', checked: count > 0 && count === view.items.length, onChange: function (e) { selectAll(e.target.checked); } }),
           ' Marcar todos desta lista',
         ]),
         h('span', { className: 'muted' }, [count + ' marcado(s)']),
       ]),
-      h('label', { htmlFor: 'adm-pub-ia' }, [
+      h('label', { className: 'pub-check', htmlFor: 'adm-pub-ia' }, [
         h('input', { type: 'checkbox', id: 'adm-pub-ia', checked: view.approveAi, onChange: function (e) { patch({ approveAi: e.target.checked, focusId: 'adm-pub-ia' }); drawReview(); } }),
         ' Li e aprovo os resumos feitos por IA dos marcados',
       ]),
-      h('label', { htmlFor: 'adm-pub-ref' }, [
+      h('label', { className: 'pub-check', htmlFor: 'adm-pub-ref' }, [
         h('input', { type: 'checkbox', id: 'adm-pub-ref', checked: view.asRef, onChange: function (e) { patch({ asRef: e.target.checked, focusId: 'adm-pub-ref' }); drawReview(); } }),
         ' Artigo clínico sem revisor: publicar só como referência (sem resumo)',
       ]),

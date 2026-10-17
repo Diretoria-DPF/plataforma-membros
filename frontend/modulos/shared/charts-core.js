@@ -363,6 +363,15 @@
     return String(text).length * toNumber(size) * LABEL_EM;
   }
 
+  /** Rótulo que cabe em `maxWidth` px: o texto inteiro ou o início com reticências (sem medir o DOM). */
+  function fitLabel(text, maxWidth, size) {
+    var value = String(text);
+    var perChar = toNumber(size) * LABEL_EM;
+    if (perChar <= 0 || value.length * perChar <= toNumber(maxWidth)) return value;
+    var keep = Math.max(1, Math.floor(toNumber(maxWidth) / perChar) - 1);
+    return value.slice(0, keep).replace(/s+$/, '') + '…';
+  }
+
   function anchoredX(x, width, anchor) {
     if (anchor === 'end') return x - width;
     if (anchor === 'middle') return x - width / 2;
@@ -463,6 +472,7 @@
     describeRows: describeRows,
     tableRows: tableRows,
     estimateTextWidth: estimateTextWidth,
+    fitLabel: fitLabel,
     placeValueLabels: placeValueLabels,
     seriesTotals: seriesTotals
   };

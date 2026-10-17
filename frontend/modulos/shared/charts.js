@@ -19,6 +19,7 @@
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var EMPTY_HEIGHT = 56;
   var LABEL_GAP = 8;
+  var BAR_LABEL_SIZE = 12; // igual ao font-size de .laift-chart__label em charts.css
   var LABEL_BASELINE = 18;
   var RADIUS = 4;
   var PAD = 36;
@@ -358,7 +359,7 @@
     // Barra horizontal sempre cabe o valor: uma linha por categoria, sem colisão vertical.
     return item(doc, [
       svgNode(doc, 'rect', { class: 'laift-chart__hit', x: 0, y: bar.y - o.gap / 2, width: o.width, height: o.rowHeight + o.gap }),
-      svgNode(doc, 'text', { class: 'laift-chart__label', x: o.labelWidth - LABEL_GAP, y: mid, 'text-anchor': 'end', 'dominant-baseline': 'middle' }, bar.label),
+      svgNode(doc, 'text', { class: 'laift-chart__label', x: o.labelWidth - LABEL_GAP, y: mid, 'text-anchor': 'end', 'dominant-baseline': 'middle' }, core.fitLabel(bar.label, o.labelWidth - LABEL_GAP, BAR_LABEL_SIZE)),
       path,
       valueText(doc, { x: o.labelWidth + bar.length + LABEL_GAP, y: mid, baseline: 'middle' }, bar.value, true)
     ]);

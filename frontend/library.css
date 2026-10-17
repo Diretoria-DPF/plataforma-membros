@@ -112,6 +112,10 @@
   display: inline-flex; align-items: center; min-height: 44px; margin: 0;
   vertical-align: middle; color: var(--text); cursor: pointer;
 }
+/* Abas simples da curadoria (admin-library-publicar.js): a caixa fica ao lado do texto e a lista sem marcadores. */
+#admin-library-root .card-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+#admin-library-root label.pub-check { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; margin: 0; cursor: pointer; }
+#admin-library-root label.pub-check input[type="checkbox"] { flex: none; margin: 2px 0 0; }
 #admin-library-root .actions-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 #admin-library-root .actions-row button { width: auto; }
 /* Subabas e filtros de estado: o escolhido fica cheio e sublinhado; os outros, em contorno. */
