@@ -9,7 +9,8 @@
  * aparece no menu; (b) com a flag: busca, ficha, citação ABNT e Vancouver e favorito; (c) visitante
  * sem favoritos; (d) fila da curadoria no formato real; (e) 375 e 1280 px sem rolagem horizontal e axe;
  * (f) lote da curadoria (B3): importar lista com pausa no limite do servidor, aprovar e publicar selecionados;
- * (g) abas simples (Para revisar, No ar, Pedidos): publicar vários de uma vez e decidir um pedido de remoção.
+ * (g) abas simples (Para revisar, No ar, Pedidos): publicar vários de uma vez e decidir um pedido de remoção;
+ * (h) filtros rápidos do membro (chips de área e de idioma).
  */
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
@@ -394,6 +395,38 @@ async function abasSimples(viewport) {
   }
 }
 
+/** (h) Filtros rápidos: chips de área e "Só em português" filtram na hora e mostram o estado marcado. */
+async function chipsRapidos() {
+  const app = await startApp({
+    role: 'member',
+    viewport: MOBILE,
+    workerHandlers: { apiGetFeatureFlags: FLAGS_ON, apiLearnLibrarySearch: BUSCA, apiLearnLibraryGetArticle: FICHA },
+  });
+  try {
+    await app.login();
+    const page = app.page;
+    await abrirBiblioteca(app);
+    const chip = (nome) => page.locator('#panel-library .library-chip', { hasText: nome });
+    const ultimaBusca = () => chamadas(app, 'apiLearnLibrarySearch').slice(-1)[0].args[1];
+    check(await chip('Todas as áreas').getAttribute('aria-pressed') === 'true', 'chips: "Todas as áreas" começa marcado');
+    check(await chip('Toxicologia').count() === 1 && await chip('Só em português').count() === 1, 'chips: áreas do servidor e "Só em português" à vista');
+    await chip('Só em português').click();
+    check(await esperar(async () => ultimaBusca().language === 'pt'), 'chips: "Só em português" busca com language pt');
+    check(await chip('Só em português').getAttribute('aria-pressed') === 'true', 'chips: o chip de idioma fica marcado');
+    check(await page.inputValue('#library-idioma') === 'pt', 'chips: o campo Idioma de Filtros acompanha o chip');
+    await chip('Toxicologia').click();
+    check(await esperar(async () => ultimaBusca().topic === 'toxicologia'), 'chips: a área escolhida vai na busca');
+    check(await chip('Toxicologia').getAttribute('aria-pressed') === 'true' && await chip('Todas as áreas').getAttribute('aria-pressed') === 'false', 'chips: só a área escolhida fica marcada');
+    await chip('Todas as áreas').click();
+    check(await esperar(async () => ultimaBusca().topic === undefined), 'chips: "Todas as áreas" tira o filtro de área');
+    await checarAlvos(page, '#panel-library .library-chip', 'chips');
+    await checarSemRolagem(page, 'chips');
+    check(app.errors.length === 0, `chips: sem erros de página (${app.errors.join('; ')})`);
+  } finally {
+    await app.close();
+  }
+}
+
 /** (e) Membro em 375 e 1280 px: lista e ficha sem rolagem horizontal, alvos e axe. */
 async function layoutDoMembro(viewport) {
   const rotulo = viewport.width < 600 ? '375x812' : '1280x900';
@@ -430,6 +463,7 @@ module.exports = async function library() {
   await loteDaCuradoria(DESKTOP);
   await abasSimples(MOBILE);
   await abasSimples(DESKTOP);
+  await chipsRapidos();
   await layoutDoMembro(MOBILE);
   await layoutDoMembro(DESKTOP);
 };

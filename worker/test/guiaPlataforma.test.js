@@ -28,7 +28,7 @@ const sectionsOf = (markdown) => (markdown.match(/^## .+$/gm) || []).map((l) => 
 const FRONT_FILES = [
   'frontend/index.html', 'frontend/app.js', 'frontend/mfa.js', 'frontend/credential.js', 'frontend/messaging.js',
   'frontend/library.js', 'frontend/library-detail.js', 'frontend/blog.html', 'frontend/blog/instalar.js',
-  'frontend/admin-ai.js', 'frontend/admin-library.js', 'frontend/admin-library-lote.js', 'frontend/home.js', 'frontend/app-menu.js',
+  'frontend/admin-ai.js', 'frontend/admin-library.js', 'frontend/admin-library-lote.js', 'frontend/admin-library-publicar.js', 'frontend/home.js', 'frontend/app-menu.js',
 ];
 const UI_LABELS = [
   'Esqueci minha senha', 'Enviar link', 'Salvar nova senha', 'Criar conta', 'Completar perfil (opcional)', 'Verificar', 'Mostrar senha',
@@ -43,6 +43,8 @@ const UI_LABELS = [
   'Sugerir artigo', 'Enviar sugestão', 'Sugestão enviada.', 'Buscar artigos', 'Limpar filtros', 'Carregar mais', 'Só acesso aberto',
   'Abrir no site oficial', 'Salvar nos favoritos', 'Remover dos favoritos', 'Copiar citação', 'Citação copiada.', 'Voltar às coleções',
   'Reindexar base da Lia', 'Buscar dados', 'Aprovar referência', 'Publicar', 'Trabalho em lote',
+  'Todas as áreas', 'Só em português', 'Para revisar', 'Marcar todos desta lista', 'Pôr a área nos marcados', 'Publicar os marcados',
+  'Li e aprovo os resumos feitos por IA', 'Mudar estado ou tirar do ar', 'Pedir remoção', 'Pedidos de remoção', 'Aceitar e tirar do ar', 'Editar artigos',
 ];
 
 describe('guia da plataforma: fonte única', () => {
