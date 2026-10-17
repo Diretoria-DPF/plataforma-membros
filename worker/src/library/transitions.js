@@ -175,3 +175,25 @@ export function assertClinicalReviewer(article, identity) {
     throw ForbiddenError(FORBIDDEN_REVIEWER_MSG);
   }
 }
+
+// Pré-condições por destino, para quem muda o estado sem seguir a tabela de passos (admin, publicação em lote).
+const TARGET_CHECKS = Object.freeze({
+  aprovado: Object.freeze([areaCheck, titleTypeCheck]),
+  publicado: Object.freeze([areaCheck, clinicalCheck, aiSummaryCheck]),
+});
+
+/** Mensagem da primeira pré-condição que o artigo não cumpre para ir a `to` (ou null). */
+export function preconditionFailure(article, to) {
+  return firstFailure(TARGET_CHECKS[to] ?? [], article);
+}
+
+/** Motivo exigido pelo destino (rejeitado e removido): mensagem de erro ou null. */
+export function reasonFailureFor(to, reason) {
+  return REASON_TARGETS.includes(to) ? reasonFailure(reason) : null;
+}
+
+/** O resumo é clínico e ainda não tem revisão clínica válida. */
+export const needsClinicalReview = (article) => clinicalCheck(article) !== null;
+
+/** O resumo veio da IA e o curador ainda não o aprovou depois da última mudança. */
+export const needsSummaryApproval = (article) => aiSummaryCheck(article) !== null;

@@ -188,7 +188,7 @@ function booleanRule(value) {
   return value;
 }
 
-function topicsRule(value) {
+export function topicsRule(value) {
   if (!Array.isArray(value) || value.some((slug) => typeof slug !== 'string' || !SLUG_RE.test(slug))) {
     throw E.ValidationError(MSG.invalidTopic);
   }
@@ -223,7 +223,7 @@ function parseFields(fields) {
   return Object.fromEntries(names.map((name) => [name, FIELD_RULES[name](fields[name])]));
 }
 
-async function assertTopicsExist(sql, topics) {
+export async function assertTopicsExist(sql, topics) {
   if (topics.length === 0) return;
   const rows = await sql`SELECT slug FROM library_topics WHERE slug = ANY(${topics}::text[])`;
   if (rows.length !== topics.length) throw E.ValidationError(MSG.invalidTopic);
@@ -273,7 +273,7 @@ export function toAdminArticle(row) {
 }
 
 /** O artigo para as regras de ../library/transitions.js: AdminArticle mais summaryUpdatedBy. Nunca sai na resposta. */
-function toArticleState(row) {
+export function toArticleState(row) {
   return mapColumns(row, (column) => ADMIN_COLUMNS.has(column) || STATE_ONLY_COLUMNS.has(column));
 }
 
@@ -337,34 +337,43 @@ async function assertNotDuplicate(sql, doi, pmid) {
 }
 
 /** Uma instrução: duas pessoas cadastrando o mesmo DOI/PMID ao mesmo tempo, só uma grava. */
-function insertImported(sql, r, profileId) {
+function insertImported(sql, r, profileId, topics) {
   return sql`
     INSERT INTO library_articles (
       doi, pmid, pmcid, title, authors, author_count, journal, journal_abbrev, pub_year, volume, issue, pages,
       language, article_type, license, license_source, license_conflict, oa_status, landing_url, source_abstract,
-      metadata_sources, metadata_fetched_at, search_norm, status, status_changed_by, created_by
+      metadata_sources, metadata_fetched_at, search_norm, status, status_changed_by, created_by, topics
     ) VALUES (
       ${nullable(r.doi)}, ${nullable(r.pmid)}, ${nullable(r.pmcid)}, ${r.title}, ${JSON.stringify(r.authors ?? [])}::jsonb,
       ${r.authorCount ?? 0}, ${nullable(r.journal)}, ${nullable(r.journalAbbrev)}, ${nullable(r.year)},
       ${nullable(r.volume)}, ${nullable(r.issue)}, ${nullable(r.pages)}, ${nullable(r.language)},
       ${r.type ?? 'artigo'}, ${r.license ?? 'desconhecida'}, ${nullable(r.licenseSource)}, ${r.licenseConflict === true},
       ${r.oaStatus ?? 'desconhecido'}, ${r.landingUrl}, ${nullable(r.sourceAbstract)},
-      ${r.metadataSources ?? []}::text[], now(), ${r.searchNorm}, 'em_triagem', ${profileId}::uuid, ${profileId}::uuid
+      ${r.metadataSources ?? []}::text[], now(), ${r.searchNorm}, 'em_triagem', ${profileId}::uuid, ${profileId}::uuid, ${topics}::text[]
     )
     ON CONFLICT DO NOTHING
     RETURNING *
   `;
 }
 
+/** Áreas opcionais já na importação (lote com área escolhida): validadas antes de gastar cota e fontes. */
+async function areasOf(sql, areas) {
+  if (areas === undefined || areas === null) return [];
+  const topics = topicsRule(areas);
+  await assertTopicsExist(sql, topics);
+  return topics;
+}
+
 export async function importArticle(sql, env, identity, input = {}, correlationId, { fetchImpl } = {}) {
   await requireLibraryRole(sql, identity, LIBRARY_ROLES.CURATOR);
   const ident = parseIdentifier(input.identifier);
+  const topics = await areasOf(sql, input.areas);
   await enforce(sql, 'LIBRARY_IMPORT', identity.profileId);
   await enforce(sql, 'LIBRARY_IMPORT_GLOBAL', 'global');
   const isDoi = ident.kind === 'doi';
   await assertNotDuplicate(sql, isDoi ? ident.value : null, isDoi ? null : ident.value);
   const { record, warnings } = await fetchMetadata(ident, { env, fetchImpl });
-  const rows = await insertImported(sql, record, identity.profileId);
+  const rows = await insertImported(sql, record, identity.profileId, topics);
   if (!rows.length) throw makeDuplicate((await findDuplicate(sql, nullable(record.doi), nullable(record.pmid)))[0]?.id);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'LIBRARY_ARTICLE_IMPORT', 'library_article', rows[0].id, 'success', { kind: ident.kind });
   return { success: true, article: toAdminArticle(rows[0]), warnings };
@@ -564,7 +573,7 @@ export async function updateArticle(sql, identity, input = {}, correlationId) {
 // setStatus
 // ---------------------------------------------------------------------------
 /** Uma instrução; o que cada destino grava ou limpa está na tabela do contrato §2. */
-function runStatusUpdate(sql, cur, to, reason, identity) {
+export function runStatusUpdate(sql, cur, to, reason, identity) {
   const name = displayName(identity);
   return sql`
     UPDATE library_articles SET
@@ -580,7 +589,7 @@ function runStatusUpdate(sql, cur, to, reason, identity) {
   `;
 }
 
-const reasonFor = (to, reason) => (['rejeitado', 'removido'].includes(to) ? String(reason).trim() : null);
+export const reasonFor = (to, reason) => (['rejeitado', 'removido'].includes(to) ? String(reason).trim() : null);
 
 export async function setStatus(sql, identity, input = {}, correlationId) {
   const roles = await requireLibraryRole(sql, identity, LIBRARY_ROLES.CURATOR);
