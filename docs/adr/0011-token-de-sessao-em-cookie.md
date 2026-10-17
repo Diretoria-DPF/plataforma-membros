@@ -25,6 +25,7 @@ A API fica em `api.laift.com.br` e o site em `laift.com.br`: são origens difere
 - **Risco de quebra:** qualquer cliente que chame a API sem `credentials: 'include'` perde a sessão. Por isso a flag existe e o roteiro abaixo é obrigatório.
 - **iPhone/Safari:** cookies de terceiros bloqueados não afetam, porque site e API são do mesmo site (primeira parte). Testar em Safari real.
 - **Cópia do GitHub Pages:** continua com o token em `localStorage` (risco aceito até desligá-la); o administrador não deve usar o Pages.
+- **Subdomínios:** `SESSION_COOKIE_SITE=laift.com.br` vale para qualquer subdomínio que também esteja em `ALLOWED_ORIGINS`. Hoje são só a raiz e o staging; acrescentar uma origem nova à lista passa a lhe dar o cookie, então vigie a lista e o DNS (subdomínio sem destino é risco de takeover).
 - **Rollback:** desligar `session_cookie_enabled` (as sessões em cookie já abertas continuam válidas até expirar; quem entrar depois recebe o token no corpo). Reversão do arquivo: `sql/down/041_session_cookie_flag.sql`.
 
 ## Roteiro de ativação

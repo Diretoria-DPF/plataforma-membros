@@ -90,7 +90,18 @@ async function cookieForLogin(sql, request, env, action, result) {
     return { body: result, headers: {} };
   }
   const split = splitLoginResult(result);
-  return split.token ? { body: split.body, headers: { 'Set-Cookie': buildSetCookie(split.token) } } : { body: result, headers: {} };
+  if (!split.token) return { body: result, headers: {} };
+  try {
+    return { body: split.body, headers: { 'Set-Cookie': buildSetCookie(split.token) } };
+  } catch (err) {
+    // A sessão já existe no banco: se o cookie não puder ser montado, o login segue como antes (token no corpo).
+    return { body: result, headers: {} };
+  }
+}
+
+/** Todo logout vindo de origem do mesmo site apaga o cookie, mesmo com token explícito ou se a chamada falhar. */
+function clearCookieHeaders(request, env, action) {
+  return SESSION_ENDING_ACTIONS.includes(action) && isCookieOrigin(request, env) ? { 'Set-Cookie': buildClearCookie() } : {};
 }
 
 export default {
@@ -156,8 +167,7 @@ export default {
     try {
       const result = await handler(sql, requestEnv, args);
       const login = await cookieForLogin(sql, request, env, action, result);
-      const headers = usesCookie && SESSION_ENDING_ACTIONS.includes(action) ? { 'Set-Cookie': buildClearCookie() } : login.headers;
-      return jsonResponse(login.body, request, env, 200, headers);
+      return jsonResponse(login.body, request, env, 200, { ...login.headers, ...clearCookieHeaders(request, env, action) });
     } catch (err) {
       // Cada handler já captura tudo internamente (run/runWithSession); isto
       // é a última rede de segurança para um erro realmente inesperado.
@@ -166,7 +176,8 @@ export default {
         { success: false, message: 'Não foi possível concluir a operação. Tente novamente em instantes.' },
         request,
         env,
-        200
+        200,
+        clearCookieHeaders(request, env, action)
       );
     }
   },

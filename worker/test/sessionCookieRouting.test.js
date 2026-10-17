@@ -150,9 +150,14 @@ describe('logout', () => {
     expect(seen[0][1][0]).toBe(TOKEN);
   });
 
-  test('logout com token explícito não mexe em cookie', async () => {
+  test('logout com token explícito vindo de outro site (Pages) não mexe em cookie', async () => {
     const res = await call('apiLogout', [TOKEN], { origin: PAGES_ORIGIN });
     expect(res.headers.get('Set-Cookie')).toBeNull();
+  });
+
+  test('logout de origem do site apaga o cookie mesmo com token explícito', async () => {
+    const res = await call('apiLogout', [TOKEN]);
+    expect(res.headers.get('Set-Cookie')).toContain('Max-Age=0');
   });
 });
 
