@@ -8,7 +8,8 @@
  * sobre o BUILD (frontend/dist/). Cenários: (a) sem a flag library_enabled o grupo "Estudo" não
  * aparece no menu; (b) com a flag: busca, ficha, citação ABNT e Vancouver e favorito; (c) visitante
  * sem favoritos; (d) fila da curadoria no formato real; (e) 375 e 1280 px sem rolagem horizontal e axe;
- * (f) lote da curadoria (B3): importar lista com pausa no limite do servidor, aprovar e publicar selecionados.
+ * (f) lote da curadoria (B3): importar lista com pausa no limite do servidor, aprovar e publicar selecionados;
+ * (g) abas simples (Para revisar, No ar, Pedidos): publicar vários de uma vez e decidir um pedido de remoção.
  */
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
@@ -236,6 +237,7 @@ async function filaDaCuradoria(viewport) {
     const page = app.page;
     await page.click('#btn-enter-admin-mode');
     await app.showPanel('panel-admin-library');
+    await page.click('#admin-library-root button:has-text("Editar artigos")');
     await page.waitForSelector('#admin-library-root h3 button');
     const texto = await page.textContent('#admin-library-root');
     check(texto.includes('Em triagem (2)') && texto.includes('Publicados (1)'), `${rotulo} curadoria: contagens por estado (Em triagem 2, Publicados 1)`);
@@ -298,6 +300,7 @@ async function loteDaCuradoria(viewport) {
     const page = app.page;
     await page.click('#btn-enter-admin-mode');
     await app.showPanel('panel-admin-library');
+    await page.click('#admin-library-root button:has-text("Editar artigos")');
     await page.waitForSelector('#adm-lib-lote-lista');
     await page.fill('#adm-lib-lote-lista', ['10.1000/novo1', '10.1000/dup', '10.1000/limite'].join(String.fromCharCode(10)));
     await page.click('#admin-library-root button:has-text("Importar")');
@@ -328,6 +331,64 @@ async function loteDaCuradoria(viewport) {
     await checarAlvos(page, '#admin-library-root button', `${rotulo} lote`);
     await axeGate(page, `admin/biblioteca ${rotulo} (lote)`);
     check(app.errors.length === 0, `${rotulo} lote: sem erros de página (${app.errors.join('; ')})`);
+  } finally {
+    await app.close();
+  }
+}
+
+// (g) Abas simples: a curadoria abre em "Para revisar"; publicar vários de uma vez; pedido de remoção decidido pelo admin.
+const PEDIDO_ID = '77777777-7777-4777-8777-777777777777';
+const PEDIDOS = {
+  success: true,
+  pendingCount: 1,
+  items: [{ id: PEDIDO_ID, articleId: OUTRO_ID, articleTitle: OUTRO_TITULO, articleDoi: null, articleStatus: 'publicado', status: 'pendente', reason: 'Artigo retratado pela revista', requestedByName: 'Mentor Teste', createdAt: '2026-10-17T12:00:00.000Z', decidedAt: null }],
+};
+
+function handlersDasAbasSimples() {
+  return {
+    apiAdminLearnLibraryListQueue: () => FILA_LOTE,
+    apiAdminLearnLibraryPublishMany: (args) => ({
+      success: true,
+      published: args[1].ids.length,
+      failed: 0,
+      results: args[1].ids.map((id) => ({ id, title: 'Artigo', ok: true, status: 'publicado', referenceOnly: false })),
+    }),
+    apiAdminLearnLibraryListRemovalRequests: () => PEDIDOS,
+    apiAdminLearnLibraryDecideRemoval: () => ({ success: true, request: { id: PEDIDO_ID, status: 'aceito', articleRemoved: true } }),
+  };
+}
+
+/** (g) Abas simples: abre em "Para revisar", publica dois de uma vez e o admin aceita um pedido de remoção. */
+async function abasSimples(viewport) {
+  const rotulo = viewport.width < 600 ? '375x812' : '1280x900';
+  const app = await startApp({ role: 'admin', viewport, workerHandlers: handlersDasAbasSimples() });
+  try {
+    await app.login();
+    const page = app.page;
+    await page.click('#btn-enter-admin-mode');
+    await app.showPanel('panel-admin-library');
+    await page.waitForSelector(`#adm-pub-sel-${LOTE_A}`);
+    const texto = await page.textContent('#admin-library-root');
+    check(texto.includes('Para revisar (2)') && texto.includes('Hepatotoxicidade do paracetamol'), `${rotulo} abas simples: abre em "Para revisar" com a fila`);
+    check(texto.includes('Resumo de IA'), `${rotulo} abas simples: o selo avisa do resumo de IA`);
+    await page.check('#adm-pub-todos');
+    await page.check('#adm-pub-ia');
+    await page.click('#adm-pub-publicar');
+    check(await esperar(async () => (await page.textContent('#admin-library-root')).includes('2 publicado(s)')), `${rotulo} abas simples: aviso de dois publicados`);
+    const envio = chamadas(app, 'apiAdminLearnLibraryPublishMany')[0];
+    check(envio && envio.args[1].ids.length === 2 && envio.args[1].approveAiSummaries === true && envio.args[1].clinicalAsReference === false, `${rotulo} abas simples: PublishMany leva os dois ids e a aprovação do resumo de IA`);
+    await checarSemRolagem(page, `${rotulo} abas simples (revisar)`);
+    await checarAlvos(page, '#admin-library-root button', `${rotulo} abas simples`);
+    await axeGate(page, `admin/biblioteca ${rotulo} (para revisar)`);
+    await page.click('#admin-library-root button:has-text("Pedidos de remoção")');
+    await page.waitForSelector('#admin-library-root button:has-text("Aceitar e tirar do ar")');
+    check((await page.textContent('#admin-library-root')).includes('Artigo retratado pela revista'), `${rotulo} abas simples: o pedido mostra o motivo`);
+    await page.click('#admin-library-root button:has-text("Aceitar e tirar do ar")');
+    check(await esperar(async () => chamadas(app, 'apiAdminLearnLibraryDecideRemoval').length === 1), `${rotulo} abas simples: aceitar chama DecideRemoval`);
+    const decisao = chamadas(app, 'apiAdminLearnLibraryDecideRemoval')[0];
+    check(decisao.args[1].id === PEDIDO_ID && decisao.args[1].decision === 'aceitar', `${rotulo} abas simples: a decisão leva o id do pedido`);
+    await axeGate(page, `admin/biblioteca ${rotulo} (pedidos)`);
+    check(app.errors.length === 0, `${rotulo} abas simples: sem erros de página (${app.errors.join('; ')})`);
   } finally {
     await app.close();
   }
@@ -367,6 +428,8 @@ module.exports = async function library() {
   await filaDaCuradoria(DESKTOP);
   await loteDaCuradoria(MOBILE);
   await loteDaCuradoria(DESKTOP);
+  await abasSimples(MOBILE);
+  await abasSimples(DESKTOP);
   await layoutDoMembro(MOBILE);
   await layoutDoMembro(DESKTOP);
 };

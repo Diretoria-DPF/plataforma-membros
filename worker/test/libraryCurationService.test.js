@@ -211,6 +211,15 @@ describe('importArticle', () => {
     expect(JSON.stringify(audit[0].details)).not.toContain('@');
   });
 
+  test('areas na importação já entram no artigo; área inexistente recusa antes de chamar as fontes', async () => {
+    const fake = upstream(PLOS);
+    const res = await Cur.importArticle(sql, env, ADMIN, { identifier: PLOS.doi, areas: ['toxicologia'] }, CID, { fetchImpl: fake.fetchImpl });
+    expect(res.article.topics).toEqual(['toxicologia']);
+    const none = upstream(PLOS);
+    await expectError(Cur.importArticle(sql, env, ADMIN, { identifier: '10.1000/zzz', areas: ['nao-existe'] }, CID, { fetchImpl: none.fetchImpl }), 'ValidationError', 'Área inválida.');
+    expect(none.calls).toHaveLength(0);
+  });
+
   test('AdminArticle traz os campos combinados com a tela, em camelCase', async () => {
     const res = await doImport(CURADOR, PLOS.doi, upstream(PLOS));
     const keys = Object.keys(res.article);

@@ -48,18 +48,24 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminDashboard"
                 - "$ref": "#/components/schemas/apiAdminGrantRole"
                 - "$ref": "#/components/schemas/apiAdminLearnAtlasTelemetry"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryChangeStatus"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryClinicalReview"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryDecideRemoval"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryDecideSuggestion"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryGenerateSummary"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryGetArticle"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryImport"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListCollections"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListQueue"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryListRemovalRequests"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListStaff"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryListSuggestions"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryPublishMany"
+                - "$ref": "#/components/schemas/apiAdminLearnLibraryRequestRemoval"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryReviewSummary"
                 - "$ref": "#/components/schemas/apiAdminLearnLibrarySaveCollection"
                 - "$ref": "#/components/schemas/apiAdminLearnLibrarySaveTopic"
+                - "$ref": "#/components/schemas/apiAdminLearnLibrarySetAreas"
                 - "$ref": "#/components/schemas/apiAdminLearnLibrarySetStaff"
                 - "$ref": "#/components/schemas/apiAdminLearnLibrarySetStatus"
                 - "$ref": "#/components/schemas/apiAdminLearnLibraryUpdateArticle"
@@ -485,6 +491,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAdminLearnLibraryChangeStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryChangeStatus"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminLearnLibraryClinicalReview:
       type: "object"
       required:
@@ -494,6 +516,22 @@ components:
       properties:
         action:
           const: "apiAdminLearnLibraryClinicalReview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryDecideRemoval:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryDecideRemoval"
         args:
           type: "array"
           prefixItems:
@@ -596,6 +634,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 2
+    apiAdminLearnLibraryListRemovalRequests:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryListRemovalRequests"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminLearnLibraryListStaff:
       type: "object"
       required:
@@ -620,6 +674,38 @@ components:
       properties:
         action:
           const: "apiAdminLearnLibraryListSuggestions"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryPublishMany:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryPublishMany"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibraryRequestRemoval:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibraryRequestRemoval"
         args:
           type: "array"
           prefixItems:
@@ -668,6 +754,22 @@ components:
       properties:
         action:
           const: "apiAdminLearnLibrarySaveTopic"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminLearnLibrarySetAreas:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminLearnLibrarySetAreas"
         args:
           type: "array"
           prefixItems:

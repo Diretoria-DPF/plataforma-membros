@@ -230,17 +230,23 @@ test('rótulo de cada transição; "Equipe" só para admin', () => {
   assert.equal(Lib.isAdminIdentity(null), false);
 });
 
+/** A curadoria abre em 'Para revisar' (admin-library-publicar.js); estes testes cobrem a aba 'Editar artigos'. */
+function loadArticles() {
+  Lib.load(app);
+  Lib.act('tab', 'artigos');
+}
+
 // ---------- Estados e subabas ----------
 
 test('load: monta subabas e a fila "Em triagem" com contagens; aria-busy enquanto carrega', async () => {
-  Lib.load(app);
+  loadArticles();
   assert.equal(root().getAttribute('aria-busy'), 'true');
   assert.deepEqual(calls[0], { name: 'apiAdminLearnLibraryListQueue', token: 'tok-admin', input: { status: 'em_triagem' } });
   lastPending().resolve(QUEUE);
   await flush();
   assert.equal(root().getAttribute('aria-busy'), null);
   const all = textOf(root());
-  ['Artigos', 'Sugestões', 'Coleções', 'Áreas', 'Equipe'].forEach((tab) => assert.match(all, new RegExp(tab)));
+  ['Editar artigos', 'Sugestões', 'Coleções', 'Áreas', 'Equipe'].forEach((tab) => assert.match(all, new RegExp(tab)));
   assert.ok(buttonNamed(root(), 'Em triagem (3)'));
   assert.ok(buttonNamed(root(), 'Publicados (5)'));
   assert.match(textOf(root()), /Efeitos da cafeína/);
@@ -249,24 +255,25 @@ test('load: monta subabas e a fila "Em triagem" com contagens; aria-busy enquant
 
 test('sem sessão, load não chama a API', () => {
   token = null;
-  Lib.load(app);
+  loadArticles();
   assert.equal(calls.length, 0);
 });
 
 test('"Equipe" some para quem não é admin', async () => {
   role = 'curador';
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   assert.equal(buttonNamed(root(), 'Equipe'), undefined);
-  assert.ok(buttonNamed(root(), 'Artigos'));
+  assert.ok(buttonNamed(root(), 'Editar artigos'));
 });
 
 test('subaba Sugestões entrega o corpo ao módulo de extras (sem chamar a fila)', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   calls.length = 0;
+  extrasCalls.length = 0;
   press(buttonNamed(root(), 'Sugestões'));
   assert.equal(calls.length, 0);
   assert.equal(extrasCalls.length, 1);
@@ -276,7 +283,7 @@ test('subaba Sugestões entrega o corpo ao módulo de extras (sem chamar a fila)
 // ---------- Cadastro ----------
 
 test('cadastro: envia o identificador e abre a edição do artigo criado', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   const field = byId(root(), 'adm-lib-id');
@@ -291,7 +298,7 @@ test('cadastro: envia o identificador e abre a edição do artigo criado', async
 });
 
 test('duplicata: mostra a mensagem e "Abrir o já cadastrado" leva ao artigo existente', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   type(byId(root(), 'adm-lib-id'), '10.1000/xyz');
@@ -305,7 +312,7 @@ test('duplicata: mostra a mensagem e "Abrir o já cadastrado" leva ao artigo exi
 });
 
 test('avisos do cadastro (warnings) aparecem em lista', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   type(byId(root(), 'adm-lib-id'), '10.1000/xyz');
@@ -319,7 +326,7 @@ test('avisos do cadastro (warnings) aparecem em lista', async () => {
 // ---------- Edição ----------
 
 test('salvar envia version e só os campos alterados; depois recarrega o artigo', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   openFirst();
@@ -333,7 +340,7 @@ test('salvar envia version e só os campos alterados; depois recarrega o artigo'
 });
 
 test('edição: o resumo tem contador de caracteres e limite de 1200', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   openFirst();
@@ -346,7 +353,7 @@ test('edição: o resumo tem contador de caracteres e limite de 1200', async () 
 });
 
 test('conflito de versão: mostra a mensagem do servidor e "Recarregar"; o texto digitado fica', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   openFirst();
@@ -364,7 +371,7 @@ test('conflito de versão: mostra a mensagem do servidor e "Recarregar"; o texto
 });
 
 test('só aparecem os botões de allowedTransitions', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   openFirst();
@@ -377,7 +384,7 @@ test('só aparecem os botões de allowedTransitions', async () => {
 });
 
 test('rejeitar com motivo curto não chama a API; com motivo válido confirma e envia version e reason', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   openFirst();
@@ -407,7 +414,7 @@ function check(node, checked) {
 }
 
 async function openClinical() {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   openFirst();
@@ -473,7 +480,7 @@ test('outra falha ao salvar (conflito de versão) segue no aviso geral com "Reca
 });
 
 test('publicar: depois do sucesso o aviso diz que o artigo aparece em /biblioteca em até 1 minuto', async () => {
-  Lib.load(app);
+  loadArticles();
   lastPending().resolve(QUEUE);
   await flush();
   openFirst();
@@ -494,7 +501,7 @@ test('publicar: depois do sucesso o aviso diz que o artigo aparece em /bibliotec
 // ---------- Ordem das respostas, reset e ligação ----------
 
 test('resposta de um pedido antigo é ignorada quando outro mais novo já chegou', async () => {
-  Lib.load(app);
+  loadArticles();
   Lib.act('status', 'aprovado');
   assert.equal(pending.length, 2);
   pending[1].resolve({ success: true, items: [{ id: 'n', title: 'NOVO' }], counts: {}, topics: [] });
@@ -506,7 +513,7 @@ test('resposta de um pedido antigo é ignorada quando outro mais novo já chegou
 });
 
 test('reset: esvazia a seção, tira aria-busy e a resposta que chega depois não reaparece', async () => {
-  Lib.load(app);
+  loadArticles();
   assert.equal(root().getAttribute('aria-busy'), 'true');
   Lib.reset();
   assert.equal(root().children.length, 0);
@@ -517,7 +524,7 @@ test('reset: esvazia a seção, tira aria-busy e a resposta que chega depois nã
 });
 
 test('depois do reset, uma ação não chama a API sem sessão', () => {
-  Lib.load(app);
+  loadArticles();
   Lib.reset();
   token = null;
   calls.length = 0;
@@ -526,8 +533,8 @@ test('depois do reset, uma ação não chama a API sem sessão', () => {
 });
 
 test('a delegação de ações é ligada uma vez, com a lista fechada da curadoria', () => {
-  Lib.load(app);
-  Lib.load(app);
+  loadArticles();
+  loadArticles();
   assert.equal(wiring.length, 1);
   assert.deepEqual(wiring[0].allowList, ['LaiftAdminLibrary.act']);
   assert.equal(wiring[0].root, root());

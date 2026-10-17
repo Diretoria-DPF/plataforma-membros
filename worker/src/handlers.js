@@ -59,6 +59,8 @@ import * as LibraryService from './services/libraryService.js';
 import * as LibraryCuration from './services/libraryCurationService.js';
 import * as LibraryAdmin from './services/libraryAdminService.js';
 import * as LibrarySummary from './services/librarySummaryService.js';
+import * as LibraryWorkflow from './services/libraryWorkflowService.js';
+import * as LibraryRemoval from './services/libraryRemovalService.js';
 // Agentes de IA (ADR 0007; alfa, atrás de agents_enabled)
 import * as AgentsService from './services/agentsService.js';
 // Memória de estudo (ADR 0007; banco laift-memory, opt-in, apagável) e painéis dos agentes
@@ -316,6 +318,12 @@ export const API_REGISTRY = {
   apiAdminLearnLibraryGetArticle: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryCuration.getAdminArticle(sql, identity, asInput(input))),
   apiAdminLearnLibraryUpdateArticle: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.updateArticle(sql, identity, asInput(input), cid)),
   apiAdminLearnLibrarySetStatus: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.setStatus(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryPublishMany: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryWorkflow.publishMany(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryChangeStatus: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryWorkflow.changeStatus(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibrarySetAreas: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryWorkflow.setAreas(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryRequestRemoval: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryRemoval.requestRemoval(sql, identity, asInput(input), cid)),
+  apiAdminLearnLibraryListRemovalRequests: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => LibraryRemoval.listRemovalRequests(sql, identity, asInput(input))),
+  apiAdminLearnLibraryDecideRemoval: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryRemoval.decideRemoval(sql, identity, asInput(input), cid)),
   apiAdminLearnLibraryClinicalReview: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibraryCuration.clinicalReview(sql, identity, asInput(input), cid)),
   apiAdminLearnLibraryGenerateSummary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibrarySummary.generateSummary(sql, env, identity, asInput(input), cid)),
   apiAdminLearnLibraryReviewSummary: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LibrarySummary.reviewSummary(sql, identity, asInput(input), cid)),

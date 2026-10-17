@@ -48,13 +48,17 @@
   var TITLE_FOCUS_QUEUE = 'adm-lib-titulo-fila';
 
   var TABS = [
-    ['artigos', 'Artigos'],
+    ['revisar', 'Para revisar'],
+    ['ar', 'No ar'],
+    ['pedidos', 'Pedidos de remoção'],
+    ['artigos', 'Editar artigos'],
     ['sugestoes', 'Sugestões'],
     ['colecoes', 'Coleções'],
     ['areas', 'Áreas'],
     ['equipe', 'Equipe'],
   ];
   var ADMIN_ONLY_TABS = ['equipe'];
+  var SIMPLE_TABS = ['revisar', 'ar', 'pedidos'];
   var STATUS_FILTERS = [
     ['em_triagem', 'Em triagem'],
     ['aprovado', 'Aprovados'],
@@ -108,7 +112,7 @@
 
   function freshUi() {
     return {
-      tab: 'artigos', view: 'queue', status: DEFAULT_STATUS, counts: {}, topics: [], items: [],
+      tab: 'revisar', view: 'queue', status: DEFAULT_STATUS, counts: {}, topics: [], items: [],
       article: null, articleId: null, base: null, draft: null, allowed: [], warnings: [],
       busy: null, notice: '', error: null, errorReload: false, focusId: '',
       importText: '', importError: null,
@@ -517,6 +521,11 @@
   function loteNode(part, arg) { return lote() ? lote()[part](arg, loteCtx()) : null; }
 
   function mountExtras(body) {
+    var simple = window.LaiftAdminLibraryPublicar;
+    if (SIMPLE_TABS.indexOf(ui.tab) !== -1 && simple && typeof simple.render === 'function') {
+      simple.render(ui.tab, body, appRef);
+      return;
+    }
     var extras = window.LaiftAdminLibraryExtras;
     if (extras && typeof extras.render === 'function') {
       extras.render(ui.tab, body, appRef);
@@ -806,7 +815,7 @@
     if (app) appRef = app;
     if (!sessionToken(appRef) || !dom()) return;
     wire();
-    loadQueue(ui.status);
+    selectTab('revisar');
   }
 
   /** Logout/expiração: descarta respostas pendentes e tira a curadoria da tela. */
@@ -815,6 +824,7 @@
     appRef = null;
     ui = freshUi();
     if (lote()) lote().reset();
+    if (window.LaiftAdminLibraryPublicar) window.LaiftAdminLibraryPublicar.reset();
     var box = root();
     if (!box || !dom()) return;
     dom().clear(box);
