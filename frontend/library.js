@@ -35,6 +35,7 @@
     tab: 'LaiftLibrary.setTab',
     search: 'LaiftLibrary.searchInput',
     filter: 'LaiftLibrary.filterChange',
+    quick: 'LaiftLibrary.quick',
     collection: 'LaiftLibrary.openCollection',
     collections: 'LaiftLibrary.showCollections',
     suggestToggle: 'LaiftLibrary.toggleSuggest',
@@ -403,6 +404,61 @@
     ]);
   }
 
+  // ---------- Filtros rápidos (área e idioma, sempre à vista) ----------
+
+  function quickKey(kind, value) { return kind + ':' + value; }
+
+  function chipNode(kind, value, label, pressed) {
+    return el('button', {
+      type: 'button',
+      className: 'secondary library-chip',
+      'aria-pressed': String(pressed),
+      'data-action': ACTION.quick,
+      'data-arg': quickKey(kind, value),
+      text: label,
+    });
+  }
+
+  function chipsNode() {
+    refs.chips = el('div', { className: 'library-chips', role: 'group', 'aria-label': 'Filtros rápidos' });
+    return refs.chips;
+  }
+
+  function renderChips(focusKey) {
+    if (!refs.chips) return;
+    window.LaiftDom.clear(refs.chips);
+    var query = state.query;
+    var chips = [chipNode('topic', '', 'Todas as áreas', !query.topic)];
+    state.topics.forEach(function (topic) {
+      chips.push(chipNode('topic', topic.slug, topic.name, query.topic === topic.slug));
+    });
+    chips.push(chipNode('language', 'pt', 'Só em português', query.language === 'pt'));
+    chips.forEach(function (chip) {
+      refs.chips.appendChild(chip);
+      if (focusKey && chip.getAttribute('data-arg') === focusKey) chip.focus();
+    });
+  }
+
+  /** Os campos da área de Filtros acompanham o que os chips escolheram. */
+  function syncSelects() {
+    var area = document.getElementById('library-area');
+    if (area) area.value = state.query.topic;
+    var language = document.getElementById('library-idioma');
+    if (language) language.value = languageOf(state.query.language);
+  }
+
+  function quickFilter(arg) {
+    var text = typeof arg === 'string' ? arg : '';
+    var cut = text.indexOf(':');
+    if (cut < 0) return;
+    var kind = text.slice(0, cut);
+    var value = text.slice(cut + 1);
+    if (kind === 'topic') filterChange('topic', value);
+    else if (kind === 'language' && value === 'pt') filterChange('language', state.query.language === 'pt' ? '' : 'pt');
+    else return;
+    renderChips(text);
+  }
+
   function mountShell() {
     var root = box();
     if (!root) return;
@@ -411,7 +467,7 @@
     refs = {};
     refs.fav = {};
     var nodes = [el('div', { className: 'card library-cabecalho' }, headerNodes()), tabsNode()];
-    if (state.tab === 'catalogo') nodes.push(searchNode(), filtersNode());
+    if (state.tab === 'catalogo') nodes.push(searchNode(), chipsNode(), filtersNode());
     refs.status = el('p', { id: 'library-status', className: 'library-status', role: 'status', 'aria-live': 'polite' });
     refs.notice = el('p', { className: 'library-erro', role: 'alert' });
     refs.results = el('div', { id: 'library-resultados', className: 'library-resultados' });
@@ -529,6 +585,7 @@
     refs.fav = {};
     setBusy(node, state.status === 'loading');
     refs.status.textContent = statusText();
+    if (state.tab === 'catalogo') renderChips();
     if (state.status === 'loading') node.appendChild(skeleton());
     else if (state.status === 'error') node.appendChild(errorNode(state.failure));
     else if (state.status === 'disabled') node.appendChild(stateBlock('empty', 'status', MESSAGE.unavailable));
@@ -664,6 +721,8 @@
     else return;
     setState({ query: Object.assign({}, state.query, patch) });
     if (refs.summary) refs.summary.textContent = filterSummaryLabel(activeFilterCount(state.query));
+    syncSelects();
+    renderChips();
     loadList(false);
   }
 
@@ -797,6 +856,7 @@
     setTab: setTab,
     searchInput: searchInput,
     filterChange: filterChange,
+    quick: quickFilter,
     clearFilters: clearFilters,
     toggleFavorite: toggleFavorite,
     openCollection: openCollection,
