@@ -56,8 +56,9 @@
     var op = pushOp(history.state, panelId, !started);
     started = true;
     try {
+      // A primeira tela só marca o estado e MANTÉM o hash (#atlas=... e #cadastro são lidos pelo app logo depois).
       if (op === 'push') history.pushState(stateFor(panelId), '', window.location.pathname + window.location.search);
-      else if (op === 'replace') history.replaceState(stateFor(panelId), '', window.location.pathname + window.location.search);
+      else if (op === 'replace') history.replaceState(stateFor(panelId), '', window.location.pathname + window.location.search + window.location.hash);
     } catch (e) { /* o navegador pode recusar (ex.: iframe); a navegação segue sem histórico */ }
   }
 

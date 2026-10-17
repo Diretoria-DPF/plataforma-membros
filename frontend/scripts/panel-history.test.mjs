@@ -58,6 +58,12 @@ test('onPopState chama show só quando há o que mostrar', () => {
   assert.deepEqual(shown, ['panel-learn']);
 });
 
+test('a primeira tela mantém o hash da URL (link do Atlas e telas públicas dependem dele)', () => {
+  const code = read('panel-history.js');
+  assert.ok(code.includes("replaceState(stateFor(panelId), '', window.location.pathname + window.location.search + window.location.hash)"));
+  assert.equal(code.split('pushState(')[1].split(')')[0].includes('hash'), false);
+});
+
 test('app.js empilha ao trocar de painel, trata popstate sem empilhar de novo e reinicia no logout', () => {
   const app = read('app.js');
   assert.match(app, /LaiftPanelHistory\.push\(panelId\)/);
