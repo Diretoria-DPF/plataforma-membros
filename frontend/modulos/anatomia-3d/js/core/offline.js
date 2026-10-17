@@ -32,7 +32,41 @@ export function unregisterOffline(nav, win) {
     .catch(() => false);
 }
 
-export function registerOffline(flags, nav = typeof navigator !== 'undefined' ? navigator : null, win = typeof window !== 'undefined' ? window : null) {
+/** Há um service worker novo esperando E a página já era controlada por um antigo (não é a 1ª visita)? (pura) */
+export function updateReady(reg, controller) {
+  return !!(reg && reg.waiting && controller);
+}
+
+/**
+ * Avisa quando sai uma versão nova do atlas: o service worker novo fica esperando as abas fecharem, o que num
+ * app instalado pode levar dias. `onReady(apply)` recebe a função que ativa o novo e recarrega UMA vez (nunca
+ * recarrega sozinho: quem decide é a pessoa). Falhas nunca afetam o atlas.
+ */
+export function watchUpdates(reg, nav, win, onReady) {
+  if (!reg || typeof onReady !== 'function' || !nav || !nav.serviceWorker) return;
+  let offered = false;
+  const offer = () => {
+    if (offered || !updateReady(reg, nav.serviceWorker.controller)) return;
+    offered = true;
+    onReady(() => {
+      let reloaded = false;
+      if (nav.serviceWorker.addEventListener) {
+        nav.serviceWorker.addEventListener('controllerchange', () => { if (!reloaded) { reloaded = true; win.location.reload(); } });
+      }
+      try { reg.waiting.postMessage({ type: 'skip-waiting' }); } catch (e) { win.location.reload(); }
+    });
+  };
+  offer();
+  if (typeof reg.addEventListener === 'function') {
+    reg.addEventListener('updatefound', () => {
+      const worker = reg.installing;
+      if (worker && typeof worker.addEventListener === 'function') worker.addEventListener('statechange', () => { if (worker.state === 'installed') offer(); });
+    });
+  }
+  try { Promise.resolve(reg.update && reg.update()).catch(() => {}); } catch (e) { /* ignora */ }
+}
+
+export function registerOffline(flags, nav = typeof navigator !== 'undefined' ? navigator : null, win = typeof window !== 'undefined' ? window : null, onUpdate = null) {
   if (!nav || !nav.serviceWorker || !win) return Promise.resolve(false);
   if (!flags || !flags.offline) return unregisterOffline(nav, win).then(() => false);
   const scopeUrl = new URL('./', win.location.href);
@@ -43,6 +77,7 @@ export function registerOffline(flags, nav = typeof navigator !== 'undefined' ? 
       const urls = loadedResources(entries, win.location.origin, [scopeUrl.pathname, new URL('../shared/', scopeUrl).pathname]);
       urls.push(scopeUrl.pathname);
       if (reg.active) reg.active.postMessage({ type: 'cache-loaded', urls });
+      watchUpdates(reg, nav, win, onUpdate);
       return true;
     })
     .catch(() => false);

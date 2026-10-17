@@ -56,6 +56,8 @@ self.addEventListener('activate', (event) => {
 // A página manda os recursos que já baixou no 1º acesso (antes de o SW existir).
 self.addEventListener('message', (event) => {
   const d = event.data;
+  // A página pede a troca quando a pessoa toca em "Atualizar" (js/ui/update-bar.js); o SW novo assume e a página recarrega.
+  if (!DEV && d && d.type === 'skip-waiting') { self.skipWaiting(); return; }
   if (DEV || !d || d.type !== 'cache-loaded' || !Array.isArray(d.urls)) return;
   event.waitUntil((async () => {
     try {
