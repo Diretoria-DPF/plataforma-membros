@@ -1,4 +1,4 @@
-# Continuidade: estado, intenção e próximos passos (2026-10-09)
+# Continuidade: estado, intenção e próximos passos (2026-10-17)
 
 Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender de memória de conversa. Atualize a seção 2 e a fila
 (seção 4) ao fim de cada sessão.
@@ -7,7 +7,7 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 > Leia `docs/CONTINUIDADE.md` e continue pela fila da seção 4, na ordem. Opus 5.5 orquestra (escreve contrato e fichas, revisa) e
 > Haiku 5.5 executam; você dispara, integra, roda as suítes e comita. Não abra PR visual sem eu aprovar as capturas.
 
-**Auditoria geral em curso (desde 2026-10-14):** estado, fila e achados em `docs/AUDITORIA_GERAL_2026-10-14.md`. Leia a seção "Estado" e a "Fila" dele antes de começar qualquer trabalho de segurança, mobile, engajamento ou SEO.
+**Auditoria geral em curso (desde 2026-10-14; estado real em 2026-10-17 na seção 2 abaixo):** estado, fila e achados em `docs/AUDITORIA_GERAL_2026-10-14.md`. Leia a seção "Estado" e a "Fila" dele antes de começar qualquer trabalho de segurança, mobile, engajamento ou SEO.
 
 ## 1. Como o dono quer que se trabalhe (regras fixas)
 - **Equipe:** 1 orquestrador **Opus 5.5** (lê o repositório, escreve `CONTRATO.md` e `fichas/`, revisa) + vários **Haiku 5.5** (uma ficha
@@ -23,18 +23,18 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 - **Segredos nunca no chat nem em arquivo.** Chaves entram como segredo do Worker (`wrangler secret put`).
 - **Economia de tokens:** não ler arquivo grande inteiro; fichas curtas; relatórios curtos.
 
-## 2. Estado em 2026-10-10
+## 2. Estado em 2026-10-17
 | Item | Estado |
 |---|---|
-| Blog "Conheça a LAIFT", Publicações, Outubro Rosa | **Mesclado** (PR #45); backup validado (PR #44). Site e blog no ar |
-| PR #46 `feat/lia-conhecimento` | **Mesclada** na main. Base da Lia 35→72 trechos (contagem de 2026-10-14: 107 trechos + 46 intenções fixas), registro de pesquisas (`sql/026`, **não aplicada**), reranker, Europe PMC, 3 flags novas desligadas |
-| PR #47 Identidade da Liga (`feat/identidade-liga`) | **Mesclada** na main. Pendências do dono em `docs/identidade/PLANO.md` §4 seguem abertas. Estado: `docs/identidade/STATUS.md`. Ver seção 3 |
-| Ajustes de entrada, blog, endereço e barra do app (PR #48) | **Mesclada** em 2026-10-10 e no ar em laift.com.br: entrada em cartões sem a cabeça da Lia, "Acessar blog", capas e laço novo no blog, rodapé da Liga no blog, endereço Rua dos Maçons 364 (CEP 41810-205), cadastro em grupos, barra com 4 itens e menu lateral com aviso de pendências. Worktrees dessa frente removidos |
-| ux-progresso (`docs/ux-progresso/`) | Lotes B (entrada e cadastro) e C (barra B e menu) **mesclados**. **Faltam:** Lote A (barra de progresso de leitura nos posts; decisão do dono: o 25% só conta depois de ler, a barra começa em 0%; o Opus precisa re-ensaiar o contrato com `verificadores/a-progresso.js` até 63/0) e Lote W (telefone opcional, `fichas/W1.md`, 1 Sonnet: migração, Worker e tela; o dono ainda não decidiu quem usa o telefone). Nota de privacidade do progresso entra sem mudar a versão 2026-10-08; estrela no feed fica para depois |
-| **Córtex / Biblioteca (B1 e B2 construídos, 2026-10-11)** | **Construída, atrás de flags desligadas; ainda sem migração aplicada em nenhum banco.** Branch `feat/cortex-biblioteca` (PR aberta): migração `sql/029_library.sql` (+ down), 21 actions novas (138 no total), serviços `libraryService`, `libraryCurationService`, `libraryAdminService` e `worker/src/library/*`; front: painel `panel-library` (item **Biblioteca** no menu, grupo Estudo, gate `library_enabled`), ficha, citação ABNT/Vancouver, aba admin (artigos, sugestões, coleções, áreas, equipe) e página pública `/biblioteca` gerada no build a partir de um instantâneo (sem agendamento: o dono atualiza à mão). Contratos e fichas em `docs/cortex/` (`CONTRATO-B1.md`, `CONTRATO-B2.md`, `fichas/`, `RUNBOOK-BIBLIOTECA.md`, `PERGUNTAS-ABERTAS.md` com as decisões P1–P5). Revisão de segurança feita e corrigida. Planejamento: `PLANO-CORTEX.md`, `ESCALA-BANCO.md`. Para ligar: backup (branch) do Neon, aplicar a 029, segredo `LIBRARY_CONTACT_EMAIL`, texto na Política (P4), depois as flags uma a uma |
-| E2E do Atlas (auditoria 13/10/2026) | Passam no CI: `atlas-e2e` com 0 ✘ em 27 suítes `atlas-*`, smoke e csp ([run 38439462457](https://github.com/Diretoria-DPF/plataforma-membros/actions/runs/38439462457)). Os "10 ✘ que já existiam" (`apis`, `atlas-farmaco`, `atlas-feedback`, `atlas-ficha-nav`, `atlas-fisiologia`, `atlas-moleculas`) são **só locais no Windows**: tempo esgotado em clique com WebGL em software (causa provável, não provada). Não são bugs do código. `apis` não está no CI |
-| Banco (Neon `plataforma-membro`, id `jolly-snow-39561777`, org "Daniel") | Migrações 020–024 e `atlas_telemetry` aplicadas; **026 não aplicada**; backup na branch `backup-pre-020-024-2026-10-09` |
-| Flags em produção | `chatbot`, `rag`, `feedback`, `moderation` **ligadas**; `ux_v2_enabled` **LIGADA em 2026-10-09 13:12 UTC** (100%, sem condições, a pedido do dono; para desfazer: `UPDATE feature_flags SET enabled = FALSE WHERE key = 'ux_v2_enabled';`); `rag_cache`, `rag_rerank`, `research` ainda nem existem no banco (nascem com a #46, desligadas) |
+| `main` | `6ee7c74` (PR #79). Deploys do Worker e do site passam; `/health` responde `{"ok":true}`; `laift.com.br`, `/biblioteca` e a API em ~0,3 s. Só as PRs de dependências #58 e #59 estão abertas |
+| Biblioteca LAIFT (Córtex) | **No ar e completa no código** (PRs #50–#57, #60–#61, #78, #79). 155 artigos: 137 publicados, 3 aprovados, 15 em triagem. Curadoria em abas (Para revisar, No ar, Pedidos de remoção, Editar artigos); só o admin remove ou muda o estado; curador e mentor pedem remoção. Os 56 DOIs de inglês do lote 1 **não serão importados** (decisão do dono). Detalhe: `docs/cortex/CONTINUIDADE-BIBLIOTECA.md` |
+| Lia | v2 com busca no acervo (RAG), guia da plataforma e guia da Biblioteca. Flags ligadas: `chatbot`, `rag`, `rag_cache`, `lia_hibrida`, `lia_library`, `lia_visitor_ai`. Depois de cada mudança no guia o admin toca em **Reindexar base da Lia** |
+| Cargos funcionais | **Feitos** (#73, #77; ADR 0010): gestor, revisor de conteúdo, moderador, curador e mentor, acumuláveis, com MFA nos privilegiados |
+| Auditoria geral (`docs/AUDITORIA_GERAL_2026-10-14.md`) | Fase 0 quase fechada; Fase 1 em andamento. Corrigidos: SEC-01 (#72), SEC-09 (#71), SEC-02 (#76), SEC-03/04/07 (#74), OPS-01 (#70), DAT-01 (#75), ROL-01/02/03 (#73, #77) |
+| Banco (Neon `jolly-snow-39561777`, banco `plataforma_membros`) | Migrações até `040` aplicadas (`039` não existe). A senha do papel dono foi rotacionada em 2026-10-17 |
+| Flags em produção | Ligadas: `ux_v2_enabled`, `chatbot`, `rag`, `rag_cache`, `feedback`, `moderation`, `library_enabled`, `library_ai_summary`, `library_member_suggest`, `lia_*` acima. **Desligadas:** `research_enabled`, `rag_rerank`, `mfa_required`, `nvidia_fallback`, `clinical_sim_enabled` |
+| Backup | Diário, verde (09:35 de 17/10). **Restauração completa ainda não treinada** (OPS-03) |
+| E-mail | Remetente ainda é Gmail (OPS-04 pendente) |
 | Jev (TypeSafe AI) | Só registrado: `docs/lia/JEV.md` |
 | Splash "Bem-vindo" do app | Não feita (`feat/splash-bem-vindo`) |
 
@@ -49,19 +49,15 @@ Documentos: `docs/identidade/PLANO.md` (diagnóstico, decisões, riscos, itens p
 - Pendências do dono (PLANO §4): texto do edital, áreas, frase incompleta do botão, benefícios, idade/menores, dados da diretoria, mapa na Política, nome do app do blog.
 
 ## 4. Fila (fazer nesta ordem)
-1. ~~Fechar a PR do ajustes-2~~ **feito** (#48 mesclada). Próximo da fila: I1 e I3 abaixo; Lote A e Lote W do ux-progresso; B0 do Córtex.
-2. **I1** (limite de login, P0): `docs/avaliacao/AVALIACAO_2026-10-09.md` §8.
-3. **I3** (Lia v2 em produção, ordem segura): reindexar pelo botão do painel admin (esperado ~107 trechos em 2026-10-14, todos com embedding) →
-   manter `rag_enabled` sem condições → simular e aplicar `sql/026` (inserir em `schema_migrations` com o hash sha256 do arquivo, CRLF normalizado) →
-   `rag_cache_enabled` e observar 24 h → `rag_rerank_enabled` só depois de calibrar em staging (`docs/lia/pesquisa/SELECAO.md` §4) →
-   `research_enabled` só depois do OK jurídico (Política §5, retenção de 30 e 7 dias) e primeiro só para admin.
-4. **Visual do app**: `ux_v2_enabled` já ligada (ver §2); reverter só com `UPDATE feature_flags SET enabled = FALSE WHERE key = 'ux_v2_enabled';`.
-5. **Córtex / Biblioteca**: B1 e B2 construídos (PR aberta). Falta: o dono mesclar, nomear a Diretoria Científica e o revisor clínico, escrever o critério de inclusão e as 2 áreas do 1º lote; staging (029 em branch de teste, segredo, flags); B3 (resumo por IA, tela do revisor e do curador não-admin), B4 (Lia) e E1 (escala do banco). Dívidas: `admin-library.js` com 824 linhas; Playwright fora do `package.json` do front.
-6. **Jev (TypeSafe AI)**: seguir o checklist de `docs/lia/JEV.md` §5. Só pesquisa e staging; nada em produção sem OK.
-7. **Splash "Bem-vindo" do app** (`feat/splash-bem-vindo`): texto "Bem-vindo", 1,2 a 2 s, uma vez por sessão, "Pular"/Esc, zero com movimento reduzido, `inert` no contêiner principal. Reaproveita `frontend/splash.js` e `splash.css`.
-8. **Docs e limpeza:** atualizar `docs/TIME_CONTRATO.md` (numeração: Lia = 026, F4 = 025, inscrição nativa = 027); reabrir os links do planalto.gov.br nas referências do Outubro Rosa; `.gitattributes` com `eol=lf` feito na auditoria de 13/10/2026 (resolve as falhas de CRLF dos testes de front no Windows).
-9. **Dono:** editar o Google Forms (6 áreas antigas e "Campus Pituba" continuam lá); ligar a flag `selection_open` só quando houver vagas e datas.
-10. Backlog maior: `docs/backlog-futuro.md`, `docs/riscos-residuais.md`, inscrição nativa (migração 027), contas de menores (parecer jurídico).
+1. **Auditoria, Fase 1** (ver Fila e Log em `docs/AUDITORIA_GERAL_2026-10-14.md`): SEC-06 (HSTS escalonado e cabeçalhos da API) e SEO-01 em PR própria; MOB-01 (botão Voltar do Android); SEC-08 (token de sessão em cookie HttpOnly, sob flag; ADR 0011); depois SEC-05 (cota de IA para membros), OPS-06, OPS-08.
+2. **Verificação dos módulos** (pedido do dono, depois do item 1): percorrer Aprender (farmaco, toxico, clínica, lab, anatomia/Atlas), Eventos, Propostas, Tarefas, Mensagens, Equipe, Perfil, crachá, Biblioteca e Lia, em celular e desktop, corrigindo o que falhar.
+3. **Dono** (roteiro passo a passo enviado no chat de 2026-10-17): monitor externo no `/health` (OPS-01); planilha de consumo e horas do Neon (OPS-02/09); treino de restauração (OPS-03); remetente de e-mail no domínio e plano do Brevo (OPS-04); segundo admin de emergência; **Reindexar base da Lia**; revisar os 18 artigos que faltam publicar; Android real; Google Forms (6 áreas antigas e "Campus Pituba").
+4. **Biblioteca**: nomear a Diretoria Científica no texto público; critério de inclusão; importar mais artigos em português quando o dono pedir.
+5. **ux-progresso**: Lote A (barra de progresso de leitura nos posts) e Lote W; splash "Bem-vindo".
+6. **Jev (TypeSafe AI)**: checklist de `docs/lia/JEV.md` §5, só pesquisa e staging.
+7. **Docs e limpeza**: `docs/TIME_CONTRATO.md` (numeração das migrações); worktrees e branches antigas (`git worktree remove`); fechar as PRs #58 e #59.
+8. **Jurídico** (go/no-go de abertura ampla e monetização): LGPD-01/02/03, menores, parecer sobre licenças NC, revisão da Política.
+9. Backlog maior: `docs/backlog-futuro.md`, `docs/riscos-residuais.md`, inscrição nativa, `selection_open` só com vagas e datas.
 
 ## 5. Mapa de documentos
 | Assunto | Onde |

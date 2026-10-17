@@ -5,11 +5,11 @@ Fonte única da verdade da auditoria iniciada em 2026-10-14. Atualize **Estado**
 ## 1. Estado
 | Campo | Valor |
 |---|---|
-| Fase atual | **0 — Enxergar e estancar** (em início) |
-| Última atualização | 2026-10-14 |
-| Progresso por trilha | SEC 0/10 · OPS 0/9 · DAT 0/2 · MOB 0/10 · ENG 0/7 · CON 0/2 · LGPD 0/3 · SEO 0/3 · TEC 0/2 (verificados ÷ total não descartados; DOC-01 e OPS-07 em curso) |
-| PR em curso | #69 (este arquivo + docs), #70 (OPS-01 `/health`), #71 (SEC-09 propostas); SEC-01 com implementação pronta, falta PR |
-| Próximo passo | Fechar SEC-01; depois ROL-01 + ROL-02 (migração 038: cargos acumuláveis, capacidades, concessão com reautenticação) |
+| Fase atual | **0 — Enxergar e estancar** (quase fechada) e **1 — Não cair, vazar nem barrar** (em andamento) |
+| Última atualização | 2026-10-17 |
+| Progresso por trilha | corrigidos (mergeados): SEC 6/10 (01, 02, 03, 04, 07, 09) · OPS 1/9 (01; falta o monitor do dono) · DAT 1/2 · ROL 3/5 · demais abertos |
+| PR em curso | SEC-06 + SEO-01 (cabeçalhos e higiene de SEO); em seguida MOB-01 e SEC-08 |
+| Próximo passo | Fechar SEC-06/SEO-01, MOB-01 e SEC-08 (cookie HttpOnly sob flag, ADR 0011); depois SEC-05, OPS-06, OPS-08 e a verificação dos módulos |
 | Bloqueios do dono | Itens marcados **[DONO]** na Fila (painéis, teste de cadastro, revisor clínico, Android real) |
 | Repositório | **Público por ora** (decisão do dono, 2026-10-14) — ver regra de divulgação (§3) |
 
@@ -25,15 +25,15 @@ O repositório é público. Achados **abertos** de severidade CRÍTICA/ALTA fica
 
 ## 4. Fila (ordem de execução; máx. 10)
 1. **DOC-01** + criar este arquivo + link em `CONTINUIDADE.md` (esta PR).
-2. **SEC-01** limite de login (Fase 0) — implementação pronta, falta PR.
-3. **SEC-09** papéis nas ações de proposta — PR #71.
+2. ~~**SEC-01** limite de login~~ **feito** (#72).
+3. ~~**SEC-09** papéis nas ações de proposta~~ **feito** (#71).
 4. ~~Teste de cadastro~~ feito pelo dono (funcionando); falta registrar o % de confirmação quando houver usuários.
-5. **OPS-01** `/health` raso — PR #70; **[DONO]** cadastrar o monitor externo depois do deploy.
+5. **OPS-01** `/health` raso — **mesclado** (#70; responde 200 em produção); **[DONO]** cadastrar o monitor externo.
 6. **OPS-02 / OPS-09** anotar consumo atual nos painéis e medir horas do Neon acordado **[DONO + agente]**.
 7. ~~OPS-05~~ confirmado pelo dono; **OPS-07** aplicar a política de divulgação nos docs já públicos.
 8. **CON-02**: revisor clínico resolvido pelo dono; falta o cargo `revisor_conteudo` (ROL-01) e a meta semanal.
 9. **SEC-08 ADR** (escopo do cookie HttpOnly e impacto no GitHub Pages).
-10. **DAT-01** parte 1 (`usage_daily` + `activity_days`).
+10. ~~**DAT-01** parte 1~~ **feito** (#75; migração 040 aplicada).
 Logo depois (Fase 1): SEC-04, SEC-06 (HSTS escalonado + headers na API), SEO-01.
 
 ## 5. Achados
@@ -42,21 +42,21 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 ### Segurança (SEC)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| SEC-01 | Limite de login: revisar ordem e comportamento do teto global | CRÍTICO | `worker/src/services/authService.js`, `worker/src/security.js` (detalhe: complemento privado) | em curso (implementação feita, falta commit, revisão e PR) | A | M | — | I1 |
-| SEC-02 | Cadastro sem saída: reenvio de confirmação, limpeza de contas não confirmadas, mensagens uniformes | ALTO | `authService.js`, `maintenance.js` (detalhe: complemento privado) | aberto | A | M | — | C-cadastro |
-| SEC-03 | Rate limit de escrita por conta (feedback, comentário, avatar; proposta já em #71) e limpeza de avatares. Achados da revisão da #71: resultado de proposta visível a quem tiver o UUID, em qualquer status; UUID inválido vira erro 500; mensagem de limite diz "minutos" para janela de 1 h | MÉDIO | `proposalService.js`, `profileService.js`, `mediaService.js` | aberto | A | M | — | — |
-| SEC-04 | Reautenticação (step-up) nas ações de admin que mudam papel/banem | MÉDIO | `adminService.js` | aberto | A | M | — | — |
+| SEC-01 | Limite de login: revisar ordem e comportamento do teto global | CRÍTICO | `worker/src/services/authService.js`, `worker/src/security.js` (detalhe: complemento privado) | corrigido (mergeado em 2026-10-14) | A | M | #72 | I1 |
+| SEC-02 | Cadastro sem saída: reenvio de confirmação, limpeza de contas não confirmadas, mensagens uniformes | ALTO | `authService.js`, `maintenance.js` (detalhe: complemento privado) | corrigido (mergeado em 2026-10-14) | A | M | #76 | C-cadastro |
+| SEC-03 | Rate limit de escrita por conta (feedback, comentário, avatar; proposta já em #71) e limpeza de avatares. Achados da revisão da #71: resultado de proposta visível a quem tiver o UUID, em qualquer status; UUID inválido vira erro 500; mensagem de limite diz "minutos" para janela de 1 h | MÉDIO | `proposalService.js`, `profileService.js`, `mediaService.js` | corrigido (mergeado em 2026-10-14) | A | M | #74 | — |
+| SEC-04 | Reautenticação (step-up) nas ações de admin que mudam papel/banem | MÉDIO | `adminService.js` | corrigido (mergeado em 2026-10-14) | A | M | #74 | — |
 | SEC-05 | Cota de IA: fatia reservada a membros, IA só com e-mail confirmado, alerta a 70% do Groq | ALTO | `aiService.js`, `constants.js` | aberto | A | M | — | — |
 | SEC-06 | Headers/CSP/HSTS: HSTS escalonado, CSP também como header, COOP/CORP, headers na API | MÉDIO | `frontend/_headers`, `worker/src/index.js` | aberto | A | M | — | — |
-| SEC-07 | Teto de tamanho do corpo da requisição | MÉDIO | `worker/src/index.js`, `mediaService.js` | aberto | A | P | — | — |
+| SEC-07 | Teto de tamanho do corpo da requisição | MÉDIO | `worker/src/index.js`, `mediaService.js` | corrigido (mergeado em 2026-10-14) | A | P | #74 | — |
 | SEC-08 | Token de sessão: sair do localStorage para cookie HttpOnly (ADR na Fase 0; implementação sob flag nas Fases 1–2) | ALTO | `frontend/app.js` (`pm_session`), `LaiftApi.call` | aberto | A | G | — | O37 |
-| SEC-09 | Autorização por papel e rate limit nas ações de proposta (M1 da auditoria de 2026-09-25) | ALTO | `worker/src/services/proposalService.js`, `handlers.js` (detalhe: complemento privado) | em curso (CI verde menos 1 teste instável do Atlas) | A | P | #71 | M1 (2026-09-25) |
+| SEC-09 | Autorização por papel e rate limit nas ações de proposta (M1 da auditoria de 2026-09-25) | ALTO | `worker/src/services/proposalService.js`, `handlers.js` (detalhe: complemento privado) | corrigido (mergeado em 2026-10-14) | A | P | #71 | M1 (2026-09-25) |
 | SEC-10 | `window.App.getState()` expõe o token a qualquer script same-origin; migrar módulos para `getIdentity()` | MÉDIO | `frontend/app.js` (~L2659 / `getIdentity` ~L2663) | aberto | A | M | — | O37 |
 
 ### Operação e custos (OPS)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| OPS-01 | Monitor de disponibilidade: `/health` raso e público + detalhes só por ação admin autenticada | ALTO | PR #70 com CI verde; falta o dono cadastrar o monitor externo (UptimeRobot/BetterStack) após o deploy | em curso | A+D | P | #70 | — |
+| OPS-01 | Monitor de disponibilidade: `/health` raso e público + detalhes só por ação admin autenticada | ALTO | PR #70 com CI verde; falta o dono cadastrar o monitor externo (UptimeRobot/BetterStack) após o deploy | corrigido (mergeado; `/health` responde 200 em produção); falta o dono cadastrar o monitor externo | A+D | P | #70 | — |
 | OPS-02 | Planilha semanal de consumo vs limites (CU-h Neon, requisições, KV, tokens Groq, Brevo) | ALTO | gatilhos em `docs/backlog-futuro.md` dependem de "usuários ativos" não medidos | aberto | D+A | P | — | — |
 | OPS-03 | Treino de restauração completo (`tools/backup/restore-drill.sh` em branch Neon, cronometrado) e incluir `laift-memory` no backup | ALTO | `docs/BACKUP_RESTORE.md`: backup passou em 2026-10-09 e o dump abriu; **restauração completa não registrada** | aberto | D | M | — | B3, O1 |
 | OPS-04 | Remetente de e-mail no domínio (SPF/DKIM/DMARC) e confirmação do plano/limite do Brevo | ALTO | `worker/wrangler.toml` (remetente Gmail); limites do Brevo não documentados | aberto | D | M | — | — |
@@ -69,7 +69,7 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 ### Dados e métricas (DAT)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| DAT-01 | Analytics mínimo: `usage_daily(day, metric, n)` agregado + `activity_days(profile_id, day)` único/usuário/dia; funil de 5 eventos; sem cookies | ALTO | `worker/src/services/adminService.js` (dashboard só conta membros, eventos, propostas, tarefas) | aberto | A | M | — | — |
+| DAT-01 | Analytics mínimo: `usage_daily(day, metric, n)` agregado + `activity_days(profile_id, day)` único/usuário/dia; funil de 5 eventos; sem cookies | ALTO | `worker/src/services/adminService.js` (dashboard só conta membros, eventos, propostas, tarefas) | corrigido (mergeado; migração 040 aplicada); medir ≥ 4 semanas antes do DAT-02 | A | M | #75 | — |
 | DAT-02 | Analytics v2: uso por módulo, duração de sessão, erro por módulo, coortes D1/D7/D30, Web Vitals agregados (após ≥4 semanas de DAT-01) | MÉDIO | — | aberto | A | M | — | — |
 
 ### Mobile e desempenho (MOB) — MOB-10 não utilizado
@@ -109,9 +109,9 @@ Legenda — **Sev:** CRÍTICO (impede o uso ou vaza dados) · ALTO · MÉDIO · 
 ### Cargos funcionais, mentoria e RLS (ROL)
 | ID | Título | Sev | Evidência | Status | Dono | Esf | PR | Origem |
 |---|---|---|---|---|---|---|---|---|
-| ROL-01 | Base dos cargos: tabela `member_roles` (vários cargos por membro), matriz de capacidades, `identity.capabilities` no SELECT da sessão, MFA estendido (migração 038) | ALTO | `profiles.role` é ENUM com `IN ('member','admin')` fixo em SQL e ~15 serviços; por isso cargos entram em tabela própria, no modelo de `library_staff` | aberto | A | G | — | — |
-| ROL-02 | Concessão/retirada de cargos só pelo admin, com reautenticação e registro em auditoria; painel "Cargos" | ALTO | reaproveita `requireStepUp` e `audit_logs` | aberto | A | M | — | — |
-| ROL-03 | Ligar ações operacionais a capacidades (gestor, moderador, revisor, curador) e menu "Gestão" fora do modo admin | MÉDIO | `app.js` (`data-scope`), `index.html`, serviços de evento/tarefa/denúncia/revisão | aberto | A | G | — | — |
+| ROL-01 | Base dos cargos: tabela `member_roles` (vários cargos por membro), matriz de capacidades, `identity.capabilities` no SELECT da sessão, MFA estendido (migração 038) | ALTO | `profiles.role` é ENUM com `IN ('member','admin')` fixo em SQL e ~15 serviços; por isso cargos entram em tabela própria, no modelo de `library_staff` | corrigido (mergeado; migração 038 aplicada) | A | G | #73 | — |
+| ROL-02 | Concessão/retirada de cargos só pelo admin, com reautenticação e registro em auditoria; painel "Cargos" | ALTO | reaproveita `requireStepUp` e `audit_logs` | corrigido (mergeado) | A | M | #73 | — |
+| ROL-03 | Ligar ações operacionais a capacidades (gestor, moderador, revisor, curador) e menu "Gestão" fora do modo admin | MÉDIO | `app.js` (`data-scope`), `index.html`, serviços de evento/tarefa/denúncia/revisão | corrigido (mergeado; falta tela do gestor para o cargo na liga) | A | G | #77 | — |
 | ROL-04 | Mentoria: vínculo com aceite, mentor nomeado pelo admin e membro que se oferece, compartilhamento de progresso com consentimento (migração 039, flag desligada) | MÉDIO | sem tabela de mentoria hoje; base em `connections`/`conversations` | aberto | A | G | — | — |
 | ROL-05 | RLS: tabelas novas com `FORCE RLS`; políticas por usuário em `mentorships`/`member_roles` como passo opcional | ALTO | teste `rlsPrivilegioMinimo` exige a política única `laift_worker_all` | aberto | A | M | — | — |
 
@@ -170,6 +170,8 @@ Diferencial defensável: Tutor com guardrails, simulação clínica, Atlas 3D em
 ## 9. Log (uma linha por sessão)
 - 2026-10-14 — Auditoria iniciada: 3 agentes de leitura validaram o rascunho contra o código; plano elaborado em Opus e aprovado pelo dono (decisões em §7). Worktree `docs/auditoria-geral` criado de `origin/main` (501244f, PR #68 incluída). Criado este arquivo; corrigidos O1, "8 abas" e Lia 35/72; link em `CONTINUIDADE.md`. Complemento privado criado fora do git. Próximo: SEC-01.
 - 2026-10-14 (tarde) — Dono respondeu: cadastro ok, consumo baixo, `laift_worker` em uso, cargos acumuláveis (decisões em §7). Mapa dos papéis feito (ver ROL-01..05). Abertas as PRs #70 (OPS-01, CI verde) e #71 (SEC-09; CI verde exceto 1 teste instável do Atlas, reexecutado). SEC-01 com implementação pronta no worktree, falta commit, revisão e PR. Próximo: ROL-01 + ROL-02 (migração 038).
+
+- 2026-10-17 — Verificado contra a `main` (`6ee7c74`): mesclados #69–#79. Corrigidos SEC-01/02/03/04/07/09, OPS-01 (falta o monitor do dono), DAT-01, ROL-01/02/03 e a Biblioteca simples (#78, #79). `/health`, site, `/biblioteca` e API respondem 200 em produção. Em curso: SEC-06 + SEO-01 (agente), MOB-01 e SEC-08 (ADR 0011).
 
 ## 10. Fases e critérios de saída
 | Fase | Itens | Critério de saída |
