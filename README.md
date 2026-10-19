@@ -1,197 +1,108 @@
-# Plataforma de Membros
+<div align="center">
 
-**No ar:** https://laift.com.br/ — esta é a URL que as pessoas usam. O
-endereço antigo (`diretoria-dpf.github.io/plataforma-membros/`) continua
-ativo só durante a transição, com um aviso apontando para o novo.
+<img src="docs/assets/banner.svg" alt="Plataforma LAIFT: aprender farmacologia e toxicologia, juntos." width="100%">
 
-Plataforma unificada da LAIFT (Liga Acadêmica Interdisciplinar de
-Farmacologia e Toxicologia): governança comunitária (eventos, propostas com
-votação, tarefas colaborativas, equipe, mensagens e administração de contas)
-**e o ecossistema de aprendizagem** (área "Aprender": simuladores de
-farmacologia e toxicologia, clínica virtual, laboratório e anatomia 3D —
-antigo repositório o-bala-vip, incorporado aqui; ver
-`docs/PLANO_UNIFICACAO_LAIFT.md`). Dividida em duas partes publicadas
-separadamente:
+**A plataforma da LAIFT, Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia**
 
-- **Front-end**: site estático (HTML/CSS/JS puro, sem framework), pasta
-  `frontend/`, publicado como Worker `laift-web` (Cloudflare) em produção; o
-  GitHub Pages é legado.
-- **Back-end**: **API JSON em Cloudflare Workers** (pasta `worker/`), com
-  **Neon PostgreSQL** como banco relacional via o driver serverless do
-  próprio Neon.
+[![No ar](https://img.shields.io/badge/🚀_No_ar-laift.com.br-14b8a6?style=for-the-badge)](https://laift.com.br)
+[![Autor](https://img.shields.io/badge/👤_Autor-Daniel_Pires_Francisco-6366f1?style=for-the-badge)](https://dpflabs.com)
 
-O backend anterior (Google Apps Script + Planilhas) foi **desligado**: nenhum
-arquivo publicado fala mais com ele, e o código fica só como arquivo em
-`legacy-appsscript/`. Modelo de dados, autenticação, sessão e renderização
-foram refeitos sobre PostgreSQL, sem herdar os padrões inseguros do
-protótipo (SHA-256 simples de senha, identidade aceita do navegador,
-`innerHTML` com dado do banco). A área "Aprender" usa a mesma sessão:
-estatísticas, presença por QR assinado e IA (paciente virtual, preceptor,
-geração de casos e preceptor do laboratório, via Groq) rodam na Worker.
-Ver `docs/SECURITY.md`.
+</div>
 
-## Arquitetura
+---
 
-```
-┌──────────────────────────────┐        POST JSON          ┌────────────────────────────────┐
-│  frontend/ (laift-web)       │  ────────────────────────▶ │  worker/ (Cloudflare Workers)   │
-│  index.html + app.js + css   │  ◀────────────────────────  │  API_REGISTRY (allowlist)       │
-│  site 100% estático          │       {success, ...}        │  services/* → Neon (HTTP)       │
-└──────────────────────────────┘                             └────────────────────────────────┘
-```
+## ✨ O que é
 
-- O front-end chama `fetch()` contra o Worker, com `action`+`args` no corpo
-  em JSON. O Worker só invoca os nomes de função explicitamente listados em
-  `API_REGISTRY` (`worker/src/handlers.js`) — nunca resolve um nome
-  dinamicamente.
-- Nenhuma credencial de banco, pepper de sessão, chave de e-mail ou chave
-  do Groq chega ao front-end — só o token de sessão opaco que o backend
-  emite após o login (espelhado em `localStorage` por até 30 min; ver
-  `docs/SECURITY.md`).
-- Os módulos da área "Aprender" rodam em iframe da mesma origem e chamam
-  a Worker pela **ponte** `LaiftApi.call` → `App.callLearningApi`, que só
-  aceita ações `apiLearn*`, `apiAdminAttendance*`, `apiAdminAi*` e
-  `apiAdminLearn*` e injeta o token da sessão (`modulos/shared/laift-identity.js`).
-- Toda página publicada tem **Content-Security-Policy** estrita (sem
-  `'unsafe-inline'`/`'unsafe-eval'` em `script-src`); bibliotecas de CDN
-  só do jsDelivr, com versão fixa e SRI.
-- O backend usa o driver HTTP serverless do próprio Neon
-  (`@neondatabase/serverless`) em vez de uma conexão com estado — cada
-  consulta é uma requisição HTTP isolada, sem handshake de conexão a abrir
-  a cada chamada.
-- Ver `docs/SECURITY.md` para o detalhamento de cada decisão de segurança,
-  incluindo o modelo de CORS/CSRF.
+Um só lugar para a vida da liga e para o estudo: **governança comunitária** (eventos, propostas com votação, tarefas, equipe e mensagens) e um **ambiente de aprendizagem** com simuladores, clínica virtual, laboratório e anatomia 3D.
 
-## Stack
+## 🧭 Escolha a sua trilha
 
-- **Front-end:** HTML5 + CSS3 responsivo mobile-first + JavaScript vanilla
-  (sem framework), publicado como site estático no Worker `laift-web`
-  (Cloudflare); o GitHub Pages é legado.
-- **Back-end/API:** Cloudflare Workers (JavaScript, runtime V8 na borda),
-  roteamento por allowlist fechada.
-- **Persistência:** Neon PostgreSQL, acessado via `@neondatabase/serverless`
-  (HTTP, sem conexão com estado), com tagged template do driver
-  parametrizado em toda consulta.
-- **Rate limit:** tabela própria no Postgres (`rate_limit_buckets`), via
-  UPSERT atômico — sem depender de um serviço de cache externo.
-- **Senhas:** `pgcrypto` (`crypt()` + `gen_salt('bf')`) — hash sempre
-  calculado no Postgres, nunca em JavaScript.
-- **E-mail:** API HTTP da Brevo (confirmação de conta, redefinição de
-  senha).
-- **IA:** Groq (API compatível com OpenAI), com pool de chaves, failover,
-  cota diária por pessoa e disjuntor global (`worker/src/ai/`).
-- **Ferramentas:** Git, GitHub, GitHub Actions (deploy do front-end),
-  Wrangler (deploy do back-end), Jest (Worker), PGlite (validação das
-  migrações), Playwright (E2E do front-end, incluindo a CSP).
+| Você é… | Comece por aqui |
+|---|---|
+| 🎒 **Estudante** | [🧪 Módulos de aprendizagem](#-mapa-de-módulos) |
+| 🏛️ **Membro da liga** | [🤝 Vida da liga](#-vida-da-liga) |
+| 🧑‍💻 **Curioso por como foi pensado** | [🧩 Como as peças se encaixam](#-como-as-peças-se-encaixam) |
+| 🌐 **Quer conhecer ao vivo** | [laift.com.br](https://laift.com.br) |
 
-## Estrutura
+## 🗺️ Mapa de módulos
 
-```
-plataforma-membros/
-├── README.md
-├── .github/workflows/
-│   ├── deploy-worker.yml, deploy-frontend-cloudflare.yml, deploy-staging.yml  # API e site (Cloudflare)
-│   ├── deploy-frontend.yml   # legado: build (ofusca app.js) e publica frontend/dist no GitHub Pages
-│   └── security.yml, backup.yml, worker-test.yml, atlas-*.yml  # testes, segurança e backup
-│
-├── frontend/                 # site estático — publicado no GitHub Pages
-│   ├── index.html, styles.css, app.js   # plataforma (app.js é ofuscado no build)
-│   ├── learning.js           # área "Aprender": hub, credencial QR, estatísticas
-│   ├── admin-ai.js           # painel admin "IA": saúde das chaves, uso, moderação do acervo
-│   ├── messaging.js, msg-crypto.js      # mensageria E2EE
-│   ├── 404.html, termos.html, privacidade.html, static-page.js
-│   ├── modulos/              # módulos LAIFT (antigo o-bala-vip), em iframe da mesma origem
-│   │   ├── shared/           # laift-identity.js (ponte), safe-dom.js, laift-tokens.css,
-│   │   │                     # quiz-engine.js/.css (motor único de quiz), style.css
-│   │   ├── quiz/, toxicologia/        # simuladores
-│   │   ├── clinica/          # clínica virtual (paciente e preceptor com IA)
-│   │   ├── laboratorio/      # laboratório + studio/ (estúdio molecular)
-│   │   ├── anatomia-3d/      # atlas 3D e farmacocinética
-│   │   ├── fiscal/           # terminal fiscal (check-in por QR, CSV, crachás) — admin
-│   │   └── cracha/           # estúdio de crachá (id, nome, cargo, qr)
-│   ├── vendor/               # bibliotecas versionadas localmente (QR Code)
-│   ├── scripts/
-│   │   ├── build.js          # gera dist/
-│   │   └── e2e/              # Playwright: todos os *.e2e.js (csp, smoke, home, assistant, credential, visual-qa, fase2–4, mfa, atlas-*) (+ cdn-mirror/)
-│   └── dev-server.js         # pré-visualização local, não é publicado
-│
-├── worker/                   # backend — Cloudflare Workers
-│   ├── wrangler.toml         # vars públicas, R2, KV (segredos via `wrangler secret put`)
-│   ├── src/
-│   │   ├── index.js          # roteador HTTP: CORS, parse, dispatch
-│   │   ├── handlers.js       # API_REGISTRY (allowlist) + run/runWithSession
-│   │   ├── security.js       # tokens, sessão, papéis, rate limit
-│   │   ├── db.js, cache.js, constants.js, errors.js, logging.js, mailer.js
-│   │   ├── ai/               # groqClient (pool de chaves), prompts, validators, config
-│   │   └── services/         # Auth, Profile, Event, …, Learning, Attendance, Ai, Clinical
-│   ├── scripts/validate-migrations.mjs  # aplica sql/ num Postgres em memória (PGlite)
-│   └── test/                 # Jest (ESM nativo do Node)
-│
-├── sql/                      # migrações numeradas e idempotentes (001 … 024)
-│
-├── docs/
-│   ├── DEPLOYMENT.md                 # Neon, segredos, Worker, Pages, primeiro admin
-│   ├── AMBIENTES.md                  # staging e produção, deploy e runbook de ativação (Lia, RAG, moderação)
-│   ├── SECURITY.md                   # controles, CSP por página, riscos, rotação
-│   ├── PLANO_UNIFICACAO_LAIFT.md     # fusão com o o-bala-vip
-│   ├── PLANO_FASES_2_3_4.md          # contratos e status das fases 2, 3 e 4
-│   ├── FASE_2_DADOS_PRESENCA.md, FASE_3_IA_CLINICA.md, FASE_4_QUALIDADE.md
-│   ├── TERMOS_DE_USO.md              # minuta — revisão jurídica pendente
-│   └── POLITICA_DE_PRIVACIDADE.md    # minuta — revisão jurídica pendente
-│
-└── legacy-appsscript/        # backend ANTERIOR (Apps Script), só arquivo — desligado
+Clique para abrir cada módulo.
+
+<details>
+<summary>🧬 <strong>Atlas 3D e Farmacocinética</strong>: explore o corpo em três dimensões</summary>
+
+Navegue por estruturas anatômicas com conteúdo revisado e acompanhe, de forma visual, o caminho de um medicamento no organismo.
+
+</details>
+
+<details>
+<summary>🏥 <strong>Clínica Virtual</strong>: plantão, prontuário e casos fictícios</summary>
+
+Treine o raciocínio clínico com **pacientes virtuais** e um **preceptor com IA**, em casos **fictícios**, passando por plantão, avaliação prática e prontuário.
+
+</details>
+
+<details>
+<summary>🔬 <strong>Laboratório Virtual e Estúdio Molecular</strong>: experimente sem riscos</summary>
+
+Simule experimentos e visualize moléculas e espécies químicas, com um preceptor de laboratório para explicar o que está acontecendo.
+
+</details>
+
+<details>
+<summary>💊 <strong>Quizzes de Farmacologia e de Toxicologia</strong>: aprenda jogando</summary>
+
+Perguntas organizadas por tópico, com feedback imediato e um motor de quiz único para toda a plataforma.
+
+</details>
+
+<details>
+<summary>📲 <strong>Presença por QR Code</strong>: check-in rápido em eventos</summary>
+
+Credencial pessoal em QR Code para registrar presença, com terminal de leitura e emissão de crachás para a organização.
+
+</details>
+
+## 🤝 Vida da liga
+
+- 📅 **Eventos** com inscrição
+- 🗳️ **Propostas** com votação entre membros
+- ✅ **Tarefas** colaborativas
+- 👥 **Equipe** e perfis
+- 💬 **Mensagens** protegidas
+
+## 🧩 Como as peças se encaixam
+
+```mermaid
+flowchart LR
+    A[📱 Interface leve<br/>web e celular] --> B[🔐 API<br/>permissões e sessão]
+    B --> C[(🗄️ Dados<br/>consentimentos e histórico)]
+    B --> D[🤖 IA com cuidado<br/>cotas, moderação e revisão humana]
 ```
 
-## Modelo de acesso
+<details>
+<summary>🎛️ <strong>Decisões de projeto</strong> (o que foi pensado desde o começo)</summary>
 
-Papéis: `visitor`, `member`, `admin`. `banned` é um **status** da conta,
-não um papel — uma conta banida perde acesso a qualquer recurso
-autenticado independentemente do papel que tinha antes.
+- **Perfis e permissões:** visitante, membro e administrador, com cargos por capacidade; a conferência de quem pode o quê acontece no servidor, a cada ação.
+- **Segurança e privacidade:** conteúdo externo tratado como texto, proteção contra abuso, sessões que podem ser revogadas, termos e privacidade versionados com aceite registrado.
+- **IA responsável:** limites de uso, moderação, fila de revisão humana e conteúdo de usuários isolado das instruções do sistema.
+- **Qualidade:** revisão editorial do conteúdo, testes automatizados e atenção à acessibilidade.
 
-| Recurso/ação | Visitor | Member | Admin | Banned |
-|---|---|---|---|---|
-| Ver eventos publicados permitidos | Sim | Sim | Sim | Não em recursos autenticados |
-| Inscrever-se em eventos permitidos | Sim | Sim | Sim | Não |
-| Enviar propostas | Sim | Sim | Sim | Não |
-| Votar em propostas abertas | Não | Sim | Sim | Não |
-| Ver e aderir a tarefas | Não | Sim | Sim | Não |
-| Editar próprio perfil e preferências | Sim | Sim | Sim | Não |
-| Usar a área "Aprender" (módulos LAIFT, estatísticas, credencial QR) | Sim | Sim | Sim | Não |
-| Usar a IA (clínica e laboratório), com cota diária¹ | Sim | Sim | Sim | Não |
-| Gerar caso com IA (vai para moderação) | Sim | Sim | Sim | Não |
-| Terminal fiscal (check-in, CSV, crachás) | Não | Não | Sim | Não |
-| Painel IA: saúde das chaves, uso, aprovar/rejeitar casos | Não | Não | Sim | Não |
-| Gerir pessoas e conteúdo | Não | Não | Sim | Não |
-| Consultar auditoria e logs técnicos | Não | Não | Sim | Não |
+*Descrição do que foi projetado; não é certificação.*
 
-¹ Cotas por dia (`worker/src/constants.js`, `AI_QUOTAS`), por exemplo
-perguntas ao paciente virtual: 15 (visitor), 40 (member), 100 (admin);
-mais um teto global de 3.000 chamadas/dia para toda a plataforma.
+</details>
 
-Toda checagem de papel/status é feita **no servidor**, a cada chamada, a
-partir da sessão resolvida no banco — nunca a partir de dado enviado pelo
-cliente. Ver `docs/SECURITY.md`.
+## 🎮 Como experimentar
 
-## Começando
+1. Acesse **[laift.com.br](https://laift.com.br)**.
+2. Navegue pela área **Aprender** e escolha um módulo.
+3. Quer uma **demonstração guiada**? Escreva para **dpires292@gmail.com**.
 
-Siga `docs/DEPLOYMENT.md` do início ao fim — cobre o banco Neon e as
-migrações 001–024 (a ativação da renovação, com Lia, RAG, feedback e moderação, está em `docs/AMBIENTES.md`), os segredos do Worker (`DATABASE_URL`,
-`SESSION_TOKEN_PEPPER`, `BREVO_API_KEY`, `GROQ_API_KEYS`), o deploy via
-Wrangler, a publicação do front-end e a promoção manual do primeiro
-administrador.
+## 🌱 Para onde pode evoluir
 
-```bash
-cd worker && npm ci && npm test && npm run validate:sql
-cd ../frontend && npm install && npm run e2e
-```
+Possibilidades em avaliação, sem prazo definido: novas formas de login, assistente com base de conhecimento ampliada, recomendações de estudo personalizadas e parcerias com outras ligas.
 
-## Primeiro administrador
-
-**Daniel Pires Francisco** (`dpires292@gmail.com`) é o primeiro
-administrador previsto. O cadastro dele nasce como `visitor` como qualquer
-outro; a promoção a `admin` é manual, via SQL, após confirmação de e-mail e
-verificação humana da identidade — nunca automática por nome ou e-mail
-cadastrado no formulário. Ver passo a passo em `docs/DEPLOYMENT.md`.
+---
 
 ## Autoria e projeto
 
@@ -200,3 +111,5 @@ Criado por **Daniel Pires Francisco** (Daniel P Francisco), Presidente da LAIFT 
 - Portfólio, currículo e serviços: https://dpflabs.com
 - Plataforma LAIFT: https://laift.com.br
 - Lattes: http://lattes.cnpq.br/5041510175000740
+
+<sub>Conteúdo educativo. Os casos clínicos são fictícios e nada aqui substitui o acompanhamento de profissionais de saúde habilitados.</sub>
