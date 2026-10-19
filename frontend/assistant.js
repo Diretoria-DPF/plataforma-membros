@@ -17,7 +17,7 @@
     'navigate:panel-admin-ai', 'navigate:panel-admin-audit', 'navigate:panel-admin-dashboard', 'navigate:panel-admin-events',
     'navigate:panel-admin-feedback', 'navigate:panel-admin-fiscal', 'navigate:panel-admin-library', 'navigate:panel-admin-proposals', 'navigate:panel-admin-reports',
     'navigate:panel-admin-tasks', 'navigate:panel-admin-users', 'navigate:panel-events', 'navigate:panel-home', 'navigate:panel-learn',
-    'navigate:panel-library', 'navigate:panel-messages', 'navigate:panel-orgchart', 'navigate:panel-profile', 'navigate:panel-proposals',
+    'navigate:panel-library', 'navigate:panel-messages', 'navigate:panel-orgchart', 'navigate:panel-profile', 'navigate:panel-proposals', 'navigate:panel-selection',
     'navigate:panel-tasks', 'open_credential:credential', 'open_library:search', 'open_module:anatomia', 'open_module:clinica', 'open_module:farmaco', 'open_module:lab', 'open_module:toxico',
   ];
   var MAX_ACTIONS = 4;

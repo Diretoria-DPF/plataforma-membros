@@ -16,6 +16,7 @@
   var MENSAGENS = {
     aberto: 'Processo seletivo aberto',
     fechado: 'Inscrições fechadas no momento. Acompanhe @laift.liga.',
+    continuo: 'Inscrições abertas',
     erro: 'Não foi possível verificar agora.'
   };
 
@@ -44,7 +45,7 @@
       .catch(function () { return null; });
   }
 
-  // Resolve true/false para a flag, ou null se a consulta falhou ou expirou.
+  // Resolve { formulario, plataforma } (selection_open e selection_enabled), ou null se a consulta falhou ou expirou.
   function consultarFlag() {
     var controller = new AbortController();
     var timer = setTimeout(function () { controller.abort(); }, TIMEOUT_MS);
@@ -61,10 +62,58 @@
       })
       .then(function (corpo) {
         if (!corpo || corpo.success !== true) return null;
-        return !!corpo.flags && corpo.flags.selection_open === true;
+        var flags = corpo.flags || {};
+        return { formulario: flags.selection_open === true, plataforma: flags.selection_enabled === true };
       })
       .catch(function () { return null; })
       .finally(function () { clearTimeout(timer); });
+  }
+
+  // Processo seletivo dentro da plataforma (flag selection_enabled): visão pública, sem login.
+  function consultarVisao() {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, TIMEOUT_MS);
+    return fetch(apiBase(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'apiSelectionOverview', args: [''] }),
+      credentials: 'omit',
+      signal: controller.signal
+    })
+      .then(function (res) { if (!res.ok) throw new Error('api'); return res.json(); })
+      .then(function (corpo) { return corpo && corpo.success === true && corpo.enabled === true ? corpo : null; })
+      .catch(function () { return null; })
+      .finally(function () { clearTimeout(timer); });
+  }
+
+  // "2026-11-05" -> "05/11"
+  function diaMes(iso) {
+    var m = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.exec(String(iso || ''));
+    return m ? m[3] + '/' + m[2] : '';
+  }
+
+  // Datas do fluxo contínuo: no lugar de "a divulgar".
+  function datasContinuas(visao) {
+    var proxima = diaMes(visao.nextReviewOn);
+    return {
+      inscricoes: 'Inscrições abertas',
+      analise: proxima ? 'Em lotes · próxima análise: ' + proxima : 'Em lotes, a cada ' + visao.batchEveryDays + ' dias',
+      resultado: 'Individual, por e-mail e na plataforma'
+    };
+  }
+
+  function pintarPlataforma(visao, ciclo) {
+    if (!visao || visao.open !== true) { pintarTudo('fechado', ciclo); return; }
+    pintarRaiz('aberto');
+    var status = document.getElementById('liga-status');
+    if (status) { status.setAttribute('data-estado', 'aberto'); status.textContent = MENSAGENS.continuo; }
+    pintarBlocos('aberto');
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-formulario]'), function (link) {
+      link.setAttribute('href', './#inscricao');
+      link.removeAttribute('target');
+      link.removeAttribute('rel');
+    });
+    pintarCiclo({ datas: datasContinuas(visao), vagas: visao.vacanciesNote || (ciclo && ciclo.vagas) });
   }
 
   // Flag ausente ou desligada = fechado. Flag ligada sem link válido = erro.
@@ -139,7 +188,9 @@
     ligarImpressao();
     Promise.all([lerCiclo(), consultarFlag()])
       .then(function (res) {
-        pintarTudo(decidirEstado(res[1], res[0]), res[0]);
+        var flags = res[1];
+        if (flags && flags.plataforma) return consultarVisao().then(function (visao) { pintarPlataforma(visao, res[0]); });
+        pintarTudo(decidirEstado(flags ? flags.formulario : null, res[0]), res[0]);
       })
       .catch(function () {
         pintarTudo('erro', null);

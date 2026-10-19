@@ -24,6 +24,7 @@
     'panel-library': ['Como busco artigos?', 'Como sugiro um artigo?', 'Como salvo um artigo nos favoritos?', 'O que é a Biblioteca LAIFT?'],
     'panel-messages': ['Como mando mensagem para outro membro?', 'As mensagens são seguras?'],
     'panel-profile': ['Como ativo a verificação em duas etapas?', 'Como troco minha foto de perfil?', 'Quem vê meus dados?'],
+    'panel-selection': ['Como funciona o processo seletivo?', 'A IA elimina alguém?', 'Qual é o prazo?', 'O que a comissão espera?'],
     'panel-proposals': ['Como voto em uma proposta?', 'Como funcionam as propostas?'],
     'panel-tasks': ['Onde vejo as tarefas?', 'Como funcionam as tarefas?'],
     'panel-orgchart': ['Onde vejo a equipe da liga?', 'Como envio um pedido de amizade?', 'Como denuncio alguém?'],

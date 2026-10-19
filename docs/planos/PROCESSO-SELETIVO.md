@@ -15,7 +15,7 @@ Decidido com o dono em 2026-10-19. Substitui o formulário externo (Google Forms
 ## 2. O que as referências ensinam (e o que adotamos)
 
 - **Ligas acadêmicas** (editais da UNIMONTES, UFES, UNIFOR e outras): o padrão é prova escrita (objetivas + discursivas) seguida de entrevista; o histórico muitas vezes entra como documento, sem peso; há prazo curto para recurso (a UFES dá 24 horas). **Adotamos:** objetivas curtas como sinal de nível, discursiva (análise de cenário), entrevista da comissão só para quem passa à etapa final, e **recurso** com prazo claro.
-- **Testes de julgamento situacional** (síntese do HumRRO, *Personnel Assessment and Decisions*, 2020): cenários **curtos e específicos**, baseados em incidentes reais, validam melhor e cansam menos; o método de pontuação muda muito a ordem dos candidatos. **Adotamos:** 3 cenários curtos, pontuação simples e transparente, usada **só como sinal de apoio** para a comissão, nunca como corte.
+- **Testes de julgamento situacional** (síntese do HumRRO, *Personnel Assessment and Decisions*, 2020): cenários **curtos e específicos**, baseados em incidentes reais, validam melhor e cansam menos; o método de pontuação muda muito a ordem dos candidatos. **Adotamos:** 5 cenários curtos, pontuação simples e transparente, usada **só como sinal de apoio** para a comissão, nunca como corte.
 - **LGPD, art. 20** (revisão de decisões automatizadas): o direito de revisão pesa quando a decisão é **unicamente** automatizada. **Adotamos:** nenhuma decisão é automática; toda inscrição é lida por uma pessoa da comissão; o candidato é informado de que a IA organiza as informações e pode **pedir revisão**. Texto final do aviso passa pelo advogado.
 
 Fontes: [edital de liga (UNIMONTES)](https://unimontes.br/wp-content/uploads/2025/03/edital-2025_250310_184024.pdf), [edital de liga (UFES)](https://ccens.ufes.br/sites/alegre.ufes.br/files/field/anexo/edital_de_selecao_2020.pdf), [HumRRO: boas práticas de SJT](https://www.humrro.org/blog/evidence-and-experience-based-best-practices-situational-judgment-tests/), [Confidata: art. 20 da LGPD](https://confidata.com.br/blog/decisoes-automatizadas-lgpd-direitos-obrigacoes).
@@ -26,8 +26,8 @@ Fontes: [edital de liga (UNIMONTES)](https://unimontes.br/wp-content/uploads/202
 2. **Antes de começar**: resumo do edital, tempo estimado, o que a comissão espera, aviso de privacidade e da triagem por IA, aceite do edital.
 3. **Perfil**: curso, instituição, semestre, áreas de interesse, disponibilidade (dias e turnos).
 4. **Análise de cenário**: um mecanismo, uma evidência ou uma notícia recente; a escolha e o impacto (limite de caracteres, contador, aviso para não escrever dado de saúde).
-5. **Questões objetivas** (8): base de farmacologia, toxicologia e raciocínio científico. Corrigidas na hora, só como sinal.
-6. **Situações de conduta** (3 cenários): escolher a melhor e a pior atitude e justificar em uma frase. Alinhadas aos compromissos do edital.
+5. **Questões objetivas** (8): base de farmacologia, toxicologia e raciocínio científico. Só podem ser respondidas **uma vez**; o resumo de acertos aparece depois do envio, só como sinal.
+6. **Situações de conduta** (5 cenários): escolher a melhor e a pior atitude e justificar em uma frase. Alinhadas aos compromissos do edital.
 7. **Revisão e envio**: resumo do que foi preenchido; confirma e envia. Recebe um **comprovante** e o status passa a "Em análise".
 8. **Acompanhar**: linha do tempo do status (Em andamento, Enviada, Em análise, Entrevista, Resultado) e a data da próxima análise.
 
@@ -40,9 +40,9 @@ O conteúdo vive num arquivo versionado (`worker/src/selection/banco.js`, versã
 - **Perfil e disponibilidade**: campos do formulário atual (já conhecidos pela comissão).
 - **Análise de cenário** (rubrica 0 a 3 em quatro critérios, usada pela comissão e pela IA como roteiro de leitura): (1) precisão científica, (2) uso de evidência, (3) relevância e impacto, (4) clareza e organização.
 - **Objetivas**: sorteio de 8 entre um banco maior (reduz repasse de respostas). Mostra acerto na hora, sem gabarito comentado antes do envio.
-- **Conduta e ética**: 3 cenários curtos (prazo e entrega, confidencialidade de dados, convivência na equipe), escolha de melhor/pior atitude + justificativa curta.
+- **Conduta e ética**: 5 cenários curtos (prazo e entrega, confidencialidade de dados, convivência na equipe), escolha de melhor/pior atitude + justificativa curta.
 
-Pendência da comissão: revisar o banco inicial (propomos um rascunho com 16 objetivas e 6 cenários de conduta) e fixar pesos. **Até lá, nenhum número vira corte.**
+Pendência da comissão: revisar o banco inicial (propomos um rascunho com 10 objetivas e 5 cenários de conduta, revisado pela diretoria administrativa) e fixar pesos. **Até lá, nenhum número vira corte.**
 
 ## 5. Triagem por IA (apoio, nunca decisão)
 
@@ -67,7 +67,7 @@ Reaproveita: sessão (cookie HttpOnly), limite por hora por pessoa e IP, Turnsti
 
 - Uma inscrição **ativa** por pessoa (restrição única no banco); envio idempotente (reenviar não duplica).
 - Conta com **e-mail confirmado** e política de criação já existente; limites próprios (rascunho, envio, reinício).
-- **Turnstile** no envio; campo isca (honeypot); tempo mínimo de preenchimento e teto de tamanho por campo, validados **no servidor**.
+- Campo isca (honeypot); tempo mínimo de preenchimento (5 minutos) e teto de tamanho por campo, validados **no servidor**. O Turnstile no envio fica de fora por ora: conta com e-mail confirmado e os limites já seguram; entra se aparecer abuso.
 - Texto livre sanitizado e exibido sempre por `textContent`; varredura de **dado de saúde** e de contato nos campos livres (aviso ao candidato antes de enviar; marca para a comissão).
 - Prazos e estados validados no servidor (não dá para pular etapa, nem editar depois de enviar).
 - Acesso da comissão **por cargo**, com tudo registrado em `audit_logs` (quem abriu, quem decidiu). Candidato só enxerga a **própria** inscrição.
@@ -87,7 +87,7 @@ Reaproveita: sessão (cookie HttpOnly), limite por hora por pessoa e IP, Turnsti
 
 | Fatia | Entrega | Flag |
 |---|---|---|
-| **1. Base e jornada** | Migração (`selection_applications`, `selection_events`, `selection_settings`), serviço do Worker, jornada do candidato (etapas 1 a 8), banco v1, segurança da seção 7, página pública com fluxo contínuo e "Próxima análise" | `selection_enabled` |
+| **1. Base e jornada** (feita; PR da fatia 1) | Migração (`selection_applications`, `selection_events`, `selection_settings`), serviço do Worker, jornada do candidato (etapas 1 a 8), banco v1, segurança da seção 7, página pública com fluxo contínuo e "Próxima análise" | `selection_enabled` |
 | **2. Triagem por IA e painel** | Pipeline de triagem, painel da comissão, decisões, e-mails de status | `selection_ai_enabled` |
 | **3. Lia guia** | Documento e intenções do processo, contexto por etapa, botões | (usa `chatbot_enabled`) |
 | **4. Fechamento** | Edital e avisos atualizados (sem "a divulgar"), recurso, retenção/exclusão, testes de carga e de segurança, treinamento da comissão (`docs/`) | desliga o formulário externo |

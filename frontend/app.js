@@ -991,6 +991,13 @@
     document.getElementById('nav-group-admin').classList.add('hidden');
     document.getElementById('header-scope-label').textContent = 'Área do membro';
     showPanel('panel-home');
+    // Processo seletivo: #inscricao (já logado) ou a intenção guardada antes do login abre a jornada.
+    var wantsSelection = window.location.hash === '#inscricao';
+    try { if (window.sessionStorage.getItem(GOTO_KEY) === 'panel-selection') { wantsSelection = true; window.sessionStorage.removeItem(GOTO_KEY); } } catch (e) { /* ignora */ }
+    if (wantsSelection && state.profile.role !== 'member') {
+      showPanel('panel-selection');
+      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
+    }
     // Link compartilhado do Atlas (#atlas=<sid>): abre o módulo na estrutura e limpa o hash.
     var atlasLink = /^#atlas=([A-Za-z0-9:_.-]{1,120})$/.exec(window.location.hash || '');
     if (atlasLink && window.LaiftLearning && typeof window.LaiftLearning.openAtlasLink === 'function') {
@@ -1114,7 +1121,7 @@
   function setupNavigationForRole(role) {
     document.querySelectorAll('#app-nav [data-scope], #app-menu [data-scope]').forEach(function (btn) {
       var scope = btn.getAttribute('data-scope');
-      var visible = scope === 'all' || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
+      var visible = scope === 'all' || (scope === 'visitor' && (role === 'visitor' || role === 'admin')) || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
       btn.classList.toggle('hidden', !visible);
     });
     applyRoleUi();
@@ -1181,6 +1188,8 @@
     },
     // Biblioteca LAIFT (CONTRATO-B2 §7). Fora de MEMBER_PANEL_ORDER de propósito (§1: gate por flag só no CSS).
     'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
+    // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
+    'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
     'panel-admin-library': function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); },
     // Cargos funcionais (ADR 0010): só o admin concede e retira (frontend/admin-roles.js).
     'panel-admin-roles': function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); },
@@ -2801,15 +2810,18 @@
 
   // Atalhos de URL das telas públicas (barras do blog e da Liga): /#cadastro abre o cadastro e
   // /#entrar o login com o foco no e-mail. O hash sai da URL depois de usado.
-  var PUBLIC_HASH_SCREENS = { '#cadastro': 'screen-register', '#entrar': 'screen-welcome' };
+  // '#inscricao' (botão do processo seletivo nas páginas públicas): pede o login e, depois dele, abre a jornada.
+  var PUBLIC_HASH_SCREENS = { '#cadastro': 'screen-register', '#entrar': 'screen-welcome', '#inscricao': 'screen-welcome' };
+  var GOTO_KEY = 'laift_goto';
   function openPublicScreenFromHash() {
     var hash = window.location.hash || '';
     var screenId = PUBLIC_HASH_SCREENS[hash] || 'screen-welcome';
+    if (hash === '#inscricao') { try { window.sessionStorage.setItem(GOTO_KEY, 'panel-selection'); } catch (e) { /* sem storage: a pessoa abre pelo menu */ } }
     if (PUBLIC_HASH_SCREENS[hash]) {
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
     }
     showPublicScreen(screenId);
-    if (hash === '#entrar') {
+    if (hash === '#entrar' || hash === '#inscricao') {
       var email = document.getElementById('login-email');
       if (email) email.focus();
     }

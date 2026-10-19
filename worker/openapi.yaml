@@ -182,6 +182,12 @@ paths:
                 - "$ref": "#/components/schemas/apiRequestPasswordReset"
                 - "$ref": "#/components/schemas/apiResendConfirmation"
                 - "$ref": "#/components/schemas/apiRespondConnectionRequest"
+                - "$ref": "#/components/schemas/apiSelectionGetMine"
+                - "$ref": "#/components/schemas/apiSelectionOverview"
+                - "$ref": "#/components/schemas/apiSelectionSaveStep"
+                - "$ref": "#/components/schemas/apiSelectionStart"
+                - "$ref": "#/components/schemas/apiSelectionSubmit"
+                - "$ref": "#/components/schemas/apiSelectionWithdraw"
                 - "$ref": "#/components/schemas/apiSendConnectionRequest"
                 - "$ref": "#/components/schemas/apiSendMessage"
                 - "$ref": "#/components/schemas/apiSignupForTask"
@@ -2607,6 +2613,98 @@ components:
             - description: "decision"
           minItems: 0
           maxItems: 3
+    apiSelectionGetMine:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionGetMine"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiSelectionOverview:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionOverview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiSelectionSaveStep:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionSaveStep"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSelectionStart:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionStart"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiSelectionSubmit:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionSubmit"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSelectionWithdraw:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionWithdraw"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
     apiSendConnectionRequest:
       type: "object"
       required:

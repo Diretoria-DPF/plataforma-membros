@@ -54,6 +54,8 @@ Criadas pela 033 (`sql/033_lia_hibrida_flag.sql`), as duas **desligadas** (`INSE
 |---|---|---|---|
 | `lia_hibrida_enabled` | não | `FALSE` | `assistantService.js` (`FLAG_HIBRIDA`; exige também `rag_enabled`): guarda de intenção, resposta clínica segura, escolha de seções e resposta extrativa |
 | `session_cookie_enabled` | não (o front reage à resposta do login: `sessionCookie: true`) | `FALSE` | `index.js` e `sessionCookie.js` (SEC-08, ADR 0011): o token de sessão vai num cookie HttpOnly para origens do mesmo site (`SESSION_COOKIE_SITE`); a cópia do GitHub Pages continua com o token no corpo. Ligar primeiro em staging |
+| `selection_enabled` | sim (o menu "Processo seletivo" e as páginas públicas reagem a ela) | `FALSE` | `selectionService.js` (sql/042): jornada do candidato dentro da plataforma, com inscrição sempre aberta. Com ela desligada, as páginas públicas seguem pelo formulário externo (`selection_open`). Só visitante (e admin, para testar) se inscreve. Também liga as respostas da Lia sobre o processo. Plano: `docs/planos/PROCESSO-SELETIVO.md` |
+| `selection_ai_enabled` | não | `FALSE` | Triagem por IA das inscrições (fatia 2; ainda sem efeito). Nunca decide nem elimina |
 | `lia_visitor_ai_enabled` | sim (o front só carrega o Turnstile com ela ligada) | `FALSE` | `assistantService.js` (`FLAG_VISITOR_AI`): prévia de IA do visitante; exige `lia_hibrida_enabled`, o secret `TURNSTILE_SECRET` e o KV |
 
 ## Flags da Lia para membros

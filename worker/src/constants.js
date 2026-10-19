@@ -170,6 +170,10 @@ export const LEGAL_VERSIONS = {
 };
 
 export const RATE_LIMITS = {
+  // Processo seletivo (selectionService.js): por perfil. Começar é raro; salvar etapa acontece várias vezes; enviar, poucas.
+  SELECTION_START: { MAX_ATTEMPTS: 6, WINDOW_SECONDS: 3600 },
+  SELECTION_SAVE: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
+  SELECTION_SUBMIT: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 3600 },
   LOGIN: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 900 },
   // Achado M2 da auditoria de 2026-09-25: LOGIN acima só limita por e-mail,
   // sem teto agregado nem por IP — alguém pode rotacionar e-mails contra

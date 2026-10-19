@@ -170,6 +170,12 @@ export const INTENTS = [
     title: 'Processo seletivo da LAIFT',
     weight: 1.5,
     keywords: ['processo seletivo', 'seletivo', 'entrar na liga', 'entro na liga', 'fazer parte da liga', 'ser membro', 'virar membro', 'edital', 'areas da liga', 'contato da liga'],
+    // Com a flag selection_enabled ligada (assistantService.js) vale esta versão: a inscrição acontece na plataforma.
+    whenSelection: {
+      reply: 'Para entrar na LAIFT há processo seletivo, e a inscrição agora é feita aqui na plataforma, com inscrições abertas o ano todo. Você cria sua conta, faz o teste (perfil, análise de cenário, questões e situações de conduta) e a comissão analisa em lotes. Uma IA ajuda a organizar a leitura, mas quem decide é a comissão. O edital tem as regras completas.',
+      actions: [nav('panel-selection')],
+      suggestions: ['Como funciona o processo seletivo?', 'A IA elimina alguém?', 'Qual é o prazo?'],
+    },
     reply: 'Para entrar na LAIFT há processo seletivo. Pelo edital de 2026, é preciso estar matriculado ou ter concluído curso da área da saúde, ter carga horária semanal e preencher a ficha de inscrição. Áreas: seis temas, de farmacologia a gestão. Contato: laiftligauninassau@gmail.com. Datas e vagas: a definir pela diretoria. Com processo aberto, o aviso aparece na tela de entrada e na página da Liga.',
     actions: [],
     suggestions: ['Equipe', 'Eventos abertos'],
@@ -440,6 +446,57 @@ export const INTENTS = [
     actions: [nav('panel-learn')],
     suggestions: ['Quais eventos estão abertos?', 'Módulos de estudo', 'Meu crachá'],
   },
+  // Processo seletivo dentro da plataforma (docs/planos/PROCESSO-SELETIVO.md). Só respondem com a flag selection_enabled
+  // ligada (assistantService.js); com ela desligada a pergunta segue o fluxo normal (acervo/IA). O peso é maior que o de
+  // liga_processo (1,5) porque a frase quase sempre também diz "processo seletivo": a mais específica tem de ganhar.
+  {
+    id: 'processo_etapas',
+    selection: true,
+    titleOnlyOutline: true,
+    defines: true,
+    title: 'Como funciona a inscrição no processo seletivo',
+    weight: 2.5,
+    keywords: ['como funciona o processo', 'etapas do processo', 'etapas da inscricao no processo', 'inscricao no processo seletivo', 'me inscrever no processo seletivo', 'teste do processo seletivo', 'quantas questoes tem o processo', 'comecar a inscricao no processo'],
+    reply: 'A inscrição é feita aqui na plataforma, no seu ritmo: 1) aceite do edital e da privacidade; 2) seu perfil e disponibilidade; 3) uma análise de cenário, escrita por você; 4) oito questões objetivas; 5) três situações de conduta; 6) revisão e envio. Leva cerca de 25 minutos e o rascunho fica salvo. Para começar, entre na sua conta e abra Processo seletivo.',
+    actions: [nav('panel-selection')],
+    suggestions: ['A IA elimina alguém?', 'Qual é o prazo?', 'O que a comissão espera?'],
+  },
+  {
+    id: 'processo_ia',
+    selection: true,
+    titleOnlyOutline: true,
+    defines: true,
+    title: 'Triagem por IA e quem decide no processo seletivo',
+    weight: 2.5,
+    keywords: ['ia elimina', 'a ia elimina', 'ia avalia', 'triagem por ia', 'inteligencia artificial na inscricao', 'pedir revisao da inscricao', 'revisao da inscricao', 'nota da ia'],
+    reply: 'Uma IA ajuda a organizar as respostas (resume e aponta o que a comissão deve ler com mais atenção), mas ela não decide e não elimina ninguém. Toda inscrição é lida por pessoas da comissão, que são quem decide. Se quiser, você pode pedir a revisão da sua inscrição.',
+    actions: [nav('panel-selection')],
+    suggestions: ['Como funciona o processo seletivo?', 'Qual é o prazo?'],
+  },
+  {
+    id: 'processo_prazo',
+    selection: true,
+    titleOnlyOutline: true,
+    defines: true,
+    title: 'Prazo e análise no processo seletivo',
+    weight: 2.5,
+    keywords: ['prazo da inscricao', 'quantos dias', 'quanto tempo tenho', 'quando acaba', 'prazo para concluir', 'proxima analise', 'quando sai o resultado', 'resultado do processo', 'quando e a analise', 'prazo'],
+    reply: 'Depois que você começa, tem um prazo individual para concluir: ele aparece no topo da sua inscrição. A comissão analisa as inscrições enviadas em lotes, e a data da próxima análise aparece na tela do processo seletivo. O resultado chega pela plataforma e por e-mail.',
+    actions: [nav('panel-selection')],
+    suggestions: ['Como funciona o processo seletivo?', 'A IA elimina alguém?'],
+  },
+  {
+    id: 'processo_resposta',
+    selection: true,
+    titleOnlyOutline: true,
+    defines: true,
+    title: 'A Lia não responde o teste do processo seletivo',
+    weight: 4,
+    keywords: ['gabarito', 'resposta da questao', 'qual a resposta', 'qual alternativa e a certa', 'responda a questao', 'me da a resposta', 'escreve minha analise', 'escreva minha analise', 'faz minha analise', 'escreva o texto para mim', 'o que a comissao espera'],
+    reply: 'Eu não posso responder as questões nem escrever a sua análise: a resposta tem de ser sua, e é isso que a comissão quer conhecer. Posso explicar o que se espera. Na análise de cenário, escolha um ponto de partida, cite de onde vem a informação e explique o impacto com as suas palavras. Nas questões, leia com calma e escolha a melhor alternativa. Nas situações de conduta, pense no que protege as pessoas, os prazos e a confidencialidade.',
+    actions: [nav('panel-selection')],
+    suggestions: ['Como funciona o processo seletivo?', 'A IA elimina alguém?'],
+  },
   {
     id: 'saudacao',
     title: 'Saudação',
@@ -537,7 +594,9 @@ const OUTLINE_REPLY_MAX = 40;
 
 /** Resumo curto das intenções para o prompt da IA (sem dado de ninguém). */
 export function kbOutline() {
+  // As intenções do processo seletivo (selection) dependem de flag e respondem por regra: ficam fora do prompt da IA.
   return PUBLIC_INTENTS
+    .filter((i) => !i.selection)
     .map((i) => '- ' + i.id + ': ' + i.title + '.' + (i.titleOnlyOutline ? '' : ' ' + i.reply.split('. ')[0].slice(0, OUTLINE_REPLY_MAX)))
     .join('\n');
 }
