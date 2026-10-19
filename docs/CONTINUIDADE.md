@@ -36,6 +36,7 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 | Backup | Diário, verde (09:35 de 17/10). **Restauração completa ainda não treinada** (OPS-03) |
 | E-mail | Remetente ainda é Gmail (OPS-04 pendente) |
 | Repositório | **Privado desde 2026-10-17.** Site e API seguem normais (a produção roda no Cloudflare). O GitHub Pages saiu do ar e `deploy-frontend.yml` é só manual. Atenção ao limite de minutos do GitHub Actions no plano gratuito (2.000 min/mês em repositório privado) |
+| Processo seletivo contínuo | **Plano aprovado em 2026-10-19:** `docs/planos/PROCESSO-SELETIVO.md` (inscrição sempre aberta, teste interativo, triagem por IA sem eliminar, Lia guia, painel da comissão). Entrega em 4 fatias atrás de flags `selection_*`. Hoje a inscrição ainda é pelo Google Forms |
 | Jev (TypeSafe AI) | Só registrado: `docs/lia/JEV.md` |
 | Splash "Bem-vindo" do app | Não feita (`feat/splash-bem-vindo`) |
 
