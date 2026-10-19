@@ -192,3 +192,11 @@ administrador previsto. O cadastro dele nasce como `visitor` como qualquer
 outro; a promoção a `admin` é manual, via SQL, após confirmação de e-mail e
 verificação humana da identidade — nunca automática por nome ou e-mail
 cadastrado no formulário. Ver passo a passo em `docs/DEPLOYMENT.md`.
+
+## Autoria e projeto
+
+Criado por **Daniel Pires Francisco** (Daniel P Francisco), Presidente da LAIFT e graduando em Farmácia na UNINASSAU Salvador.
+
+- Portfólio, currículo e serviços: https://dpflabs.com
+- Plataforma LAIFT: https://laift.com.br
+- Lattes: http://lattes.cnpq.br/5041510175000740

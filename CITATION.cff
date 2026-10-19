@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Se você usar este projeto, cite-o com os dados abaixo."
+type: software
+title: "Plataforma de Membros LAIFT"
+abstract: "Plataforma unificada da LAIFT (Liga Acadêmica Interdisciplinar de Farmacologia e Toxicologia): governança comunitária e ambiente de aprendizagem com simuladores de farmacologia e toxicologia, clínica virtual, laboratório virtual e atlas 3D."
+authors:
+  - family-names: "Francisco"
+    given-names: "Daniel Pires"
+    affiliation: "UNINASSAU Salvador; LAIFT"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"  # descomente e preencha quando o ORCID existir
+repository-code: "https://github.com/Diretoria-DPF/plataforma-membros"
+url: "https://laift.com.br"
+keywords:
+  - farmacologia
+  - toxicologia
+  - educacao-em-saude
+  - inteligencia-artificial
