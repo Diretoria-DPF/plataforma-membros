@@ -66,10 +66,27 @@ export function watchUpdates(reg, nav, win, onReady) {
   try { Promise.resolve(reg.update && reg.update()).catch(() => {}); } catch (e) { /* ignora */ }
 }
 
+/**
+ * O service worker novo assume sozinho (skipWaiting no sw.js). Quem já estava com a página aberta sob um worker
+ * antigo (`hadController`) recebe o aviso para recarregar; na 1ª visita (sem worker antigo) não há o que avisar.
+ * `onReady(apply)` recebe a função que recarrega; nunca recarrega sozinho.
+ */
+export function watchTakeover(nav, win, onReady, hadController) {
+  if (!hadController || typeof onReady !== 'function' || !nav || !nav.serviceWorker || typeof nav.serviceWorker.addEventListener !== 'function') return;
+  let offered = false;
+  nav.serviceWorker.addEventListener('controllerchange', () => {
+    if (offered) return;
+    offered = true;
+    onReady(() => win.location.reload());
+  });
+}
+
 export function registerOffline(flags, nav = typeof navigator !== 'undefined' ? navigator : null, win = typeof window !== 'undefined' ? window : null, onUpdate = null) {
   if (!nav || !nav.serviceWorker || !win) return Promise.resolve(false);
   if (!flags || !flags.offline) return unregisterOffline(nav, win).then(() => false);
   const scopeUrl = new URL('./', win.location.href);
+  const hadController = !!nav.serviceWorker.controller;
+  watchTakeover(nav, win, onUpdate, hadController);
   return nav.serviceWorker.register('./sw.js', { scope: './' })
     .then(() => nav.serviceWorker.ready)
     .then((reg) => {

@@ -49,7 +49,7 @@ const AREAS = [
 const CONTAGEM_ESPERADA = { cards: 7, areas: 8, compromissos: 5, beneficios: 6, secoes: 8 };
 // Barra das páginas da Liga: marca, "Voltar" e os 4 links de navegação (CONTRATO §1).
 const ALVOS_DA_BARRA = 6;
-const LINKS_DA_BARRA = ['./', 'blog.html', './#entrar', './#cadastro'];
+const LINKS_DA_BARRA = ['./', 'blog.html', '/biblioteca', './#entrar', './#cadastro'];
 const REGEX_HREF_BLOG = /^blog\/[a-z0-9-]+\.html$/;
 const SELOS_NOVIDADE = ['Nova publicação no blog', ''];
 const MAPA_EMBED = 'https://www.openstreetmap.org/export/embed.html?bbox=';

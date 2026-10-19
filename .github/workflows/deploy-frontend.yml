@@ -1,12 +1,9 @@
 name: Publicar front-end no GitHub Pages
 
+# Só manual: com o repositório privado o GitHub Pages do plano gratuito não publica (o endereço
+# diretoria-dpf.github.io saiu do ar). O site de verdade é o Worker `laift-web`
+# (deploy-frontend-cloudflare.yml). Se o repositório voltar a ser público, devolva o gatilho de push na main.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'frontend/**'
-      - 'tools/ci/pages-noindex.mjs'
-      - '.github/workflows/deploy-frontend.yml'
   workflow_dispatch: {}
 
 permissions:

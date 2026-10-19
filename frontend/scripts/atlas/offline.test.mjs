@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { loadedResources, registerOffline, updateReady, watchUpdates } from '../../modulos/anatomia-3d/js/core/offline.js';
+import { loadedResources, registerOffline, updateReady, watchTakeover, watchUpdates } from '../../modulos/anatomia-3d/js/core/offline.js';
 import { showUpdateBar, UPDATE_TEXT } from '../../modulos/anatomia-3d/js/ui/update-bar.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -173,6 +173,99 @@ test('sw.js: a mensagem skip-waiting ativa o worker novo (com build; no desenvol
   dev.sandbox.self.skipWaiting = () => { devSkipped += 1; };
   dev.listeners.message({ data: { type: 'skip-waiting' }, waitUntil: () => {} });
   assert.equal(devSkipped, 0);
+});
+
+// ---------- Atlas abrindo sempre: shell sem redirecionamento e troca de versão sem esperar ----------
+
+test('sw.js: instala guardando o shell pelo diretório (nunca index.html), recusa resposta redirecionada e assume sozinho', async () => {
+  const run = async (shellRedirected) => {
+    const { listeners, sandbox } = loadSw('abc123');
+    const puts = [];
+    const fetched = [];
+    let skipped = 0;
+    sandbox.self.skipWaiting = () => { skipped += 1; };
+    sandbox.caches = { open: async () => ({ add: async () => {}, put: async (k) => { puts.push(String(k.url || k)); } }) };
+    sandbox.fetch = async (r) => {
+      const url = String(r.url || r);
+      fetched.push(url);
+      return { ok: true, status: 200, type: 'basic', redirected: (url.endsWith('/m/anatomia-3d/') || url.endsWith('index.html')) ? shellRedirected : false, json: async () => ({ urls: [] }) };
+    };
+    let done = null;
+    listeners.install({ waitUntil: (p) => { done = p; } });
+    await done;
+    return { puts, fetched, skipped };
+  };
+  const ok = await run(false);
+  assert.deepEqual(ok.puts, ['https://x.test/m/anatomia-3d/']);
+  assert.ok(!ok.fetched.some((u) => /index\.html$/.test(u)), 'nunca busca index.html (o servidor redireciona)');
+  assert.equal(ok.skipped, 1, 'a versão nova assume sem esperar as abas fecharem');
+  const redirected = await run(true);
+  assert.deepEqual(redirected.puts, [], 'resposta redirecionada não entra no cache do shell');
+  assert.equal(redirected.skipped, 1);
+});
+
+test('sw.js: servidor sem índice de diretório (404) — guarda index.html sob a chave do diretório; precache.json fora do ar ainda assume', async () => {
+  const { listeners, sandbox } = loadSw('abc123');
+  const puts = [];
+  let skipped = 0;
+  sandbox.self.skipWaiting = () => { skipped += 1; };
+  sandbox.caches = { open: async () => ({ add: async () => {}, put: async (k) => { puts.push(String(k.url || k)); } }) };
+  sandbox.fetch = async (r) => {
+    const url = String(r.url || r);
+    if (url.endsWith('precache.json')) return { ok: true, status: 200, type: 'basic', redirected: false, json: async () => ({ urls: [] }) };
+    return url.endsWith('/m/anatomia-3d/') ? { ok: false, status: 404, type: 'basic', redirected: false } : { ok: true, status: 200, type: 'basic', redirected: false };
+  };
+  let done = null;
+  listeners.install({ waitUntil: (p) => { done = p; } });
+  await done;
+  assert.deepEqual(puts, ['https://x.test/m/anatomia-3d/'], 'index.html entra sob a chave do diretório');
+  assert.equal(skipped, 1);
+  const off = loadSw('abc123');
+  let skippedOff = 0;
+  off.sandbox.self.skipWaiting = () => { skippedOff += 1; };
+  off.sandbox.caches = { open: async () => ({ add: async () => {}, put: async () => {} }) };
+  off.sandbox.fetch = async () => ({ ok: false, status: 503 });
+  let doneOff = null;
+  off.listeners.install({ waitUntil: (p) => { doneOff = p; } });
+  await doneOff;
+  assert.equal(skippedOff, 1, 'precache.json fora do ar: a versão nova assume do mesmo jeito');
+});
+
+test('sw.js: entrada de shell redirecionada deixada por versão antiga é entregue limpa à navegação', async () => {
+  const { listeners, sandbox } = loadSw('abc123');
+  const stale = { redirected: true, status: 200, statusText: 'OK', headers: { h: 1 }, body: 'x' };
+  sandbox.caches = { open: async () => ({ match: async () => stale }) };
+  const f = fetchEvent('https://x.test/m/anatomia-3d/', { mode: 'navigate' });
+  listeners.fetch(f.ev);
+  const res = await f.responded();
+  assert.ok(!res.redirected, 'o navegador recusa entregar resposta redirecionada a uma navegação (ERR_FAILED)');
+  assert.equal(res.status, 200);
+});
+
+test('watchTakeover: avisa quem já tinha worker antigo quando o novo assume; recarrega só ao aplicar, uma vez', () => {
+  const listeners = {};
+  const nav = { serviceWorker: { addEventListener: (n, f) => { listeners[n] = f; } } };
+  const reloaded = [];
+  const win = { location: { reload: () => reloaded.push(1) } };
+  let offers = 0;
+  let apply = null;
+  watchTakeover(nav, win, (fn) => { offers += 1; apply = fn; }, true);
+  listeners.controllerchange();
+  listeners.controllerchange();
+  assert.equal(offers, 1);
+  assert.equal(reloaded.length, 0, 'não recarrega sozinho');
+  apply();
+  assert.equal(reloaded.length, 1);
+});
+
+test('watchTakeover: na 1ª visita (sem worker antigo), sem callback ou sem suporte não faz nada', () => {
+  const listeners = {};
+  const nav = { serviceWorker: { addEventListener: (n, f) => { listeners[n] = f; } } };
+  watchTakeover(nav, {}, () => {}, false);
+  watchTakeover(nav, {}, null, true);
+  assert.equal(listeners.controllerchange, undefined);
+  assert.doesNotThrow(() => watchTakeover({}, {}, () => {}, true));
+  assert.doesNotThrow(() => watchTakeover(null, {}, () => {}, true));
 });
 
 test('showUpdateBar: uma barra só, "Atualizar" aplica, "Depois" fecha, sem innerHTML', () => {
