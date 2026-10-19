@@ -13,10 +13,10 @@
  *   - só quem tem conta (visitante, ou admin para testar); membro não se inscreve;
  *   - limite por perfil para começar, salvar e enviar (security.enforceRateLimit);
  *   - UMA inscrição ativa por pessoa (índice único parcial) e envio idempotente;
- *   - etapas em ordem, dentro do prazo individual; questões objetivas só podem ser respondidas uma vez;
+ *   - etapas em ordem, dentro do prazo individual;
  *   - isca (campo `website` deve vir vazio) e tempo mínimo de preenchimento no envio;
  *   - texto livre sem contato nem documento; dado de saúde e tentativa de manipular a IA viram SINAL (nunca punição);
- *   - o gabarito nunca sai daqui; o candidato só enxerga a PRÓPRIA inscrição;
+ *   - sem gabarito nem nota; o candidato só enxerga a PRÓPRIA inscrição;
  *   - eventos guardam só metadados, nunca o texto escrito pela pessoa.
  */
 import * as C from '../constants.js';
@@ -40,7 +40,6 @@ const MSG = Object.freeze({
   none: 'Você ainda não começou a inscrição.',
   expired: 'O prazo desta inscrição terminou. Você poderá começar de novo em alguns dias.',
   gone: 'Esta inscrição não está mais aberta para edição.',
-  quizOnce: 'As questões objetivas só podem ser respondidas uma vez.',
   order: 'Conclua as etapas anteriores antes desta.',
   incomplete: 'Faltam etapas para enviar. Confira o resumo e complete o que estiver pendente.',
   tooFast: 'Você terminou muito rápido. Releia com calma e tente enviar de novo em alguns minutos.',
@@ -110,23 +109,14 @@ export function content() {
   return {
     version: B.BANK_VERSION,
     courses: B.COURSES, areas: B.AREAS, days: B.DAYS, shifts: B.SHIFTS, semesters: B.SEMESTERS,
-    scenario: B.SCENARIO,
+    scenario: B.SCENARIO, thinking: B.THINKING, conduct: B.CONDUCT,
     limits: { ...R.LIMITS, minFillMinutes: Math.round(R.MIN_FILL_MS / 60000) },
   };
-}
-
-function resultOf(row) {
-  const data = row.data || {};
-  if (!data.quiz || !data.conduct) return null;
-  const objectives = B.gradeObjectives(row.seed, data.quiz.answers);
-  const conduct = B.gradeConduct(row.seed, data.conduct.answers);
-  return { objectives: { correct: objectives.correct, total: objectives.total }, conduct };
 }
 
 /** Inscrição como o candidato pode ver: as próprias respostas, a prova SEM gabarito e, depois do envio, o resumo. */
 function toDto(row) {
   const { _signals, ...visible } = row.data || {};
-  const submitted = row.status !== 'draft' && row.status !== 'expired' && row.status !== 'withdrawn';
   return {
     id: row.id,
     status: row.status,
@@ -135,10 +125,8 @@ function toDto(row) {
     deadlineAt: iso(row.deadline_at),
     submittedAt: iso(row.submitted_at),
     receiptCode: row.receipt_code || null,
+    appealRequested: !!row.appeal_at,
     data: visible,
-    quiz: B.publicQuiz(row.seed),
-    quizLocked: !!visible.quiz,
-    result: submitted ? resultOf(row) : null,
   };
 }
 
@@ -148,7 +136,8 @@ export async function overview(sql, identity) {
   const settings = await readSettings(sql);
   const out = { success: true, enabled, open: enabled && settings.isOpen, windowDays: settings.windowDays, batchEveryDays: settings.batchEveryDays, nextReviewOn: settings.nextReviewOn, vacanciesNote: settings.vacanciesNote, mine: null };
   if (enabled && identity && (identity.role === C.ROLES.VISITOR || identity.role === C.ROLES.ADMIN)) {
-    const row = await expireIfNeeded(sql, await activeRow(sql, identity.profileId));
+    let row = await expireIfNeeded(sql, await activeRow(sql, identity.profileId));
+    if (!row) [row] = await sql`SELECT * FROM selection_applications WHERE profile_id = ${identity.profileId} AND status IN ('approved', 'not_selected') ORDER BY started_at DESC LIMIT 1`;
     if (row) out.mine = { status: row.status, step: row.step, deadlineAt: iso(row.deadline_at), submittedAt: iso(row.submitted_at), receiptCode: row.receipt_code || null };
   }
   return out;
@@ -226,9 +215,8 @@ export async function saveStep(sql, identity, rawInput, correlationId) {
   const row = await draftFor(sql, identity);
   const data = row.data || {};
   if (!R.canSaveStep(step, data)) throw E.ValidationError(R.DATA_STEPS.includes(step) ? MSG.order : 'Etapa inválida.');
-  if (step === 'quiz' && data.quiz) throw E.ConflictError(MSG.quizOnce);
 
-  const { value, signals } = R.validateStep(step, input.data, row.seed);
+  const { value, signals } = R.validateStep(step, input.data);
   const patch = { [step]: value, _signals: { ...(data._signals || {}), [step]: signals } };
   const reached = Math.max(R.STEPS.indexOf(row.step), R.STEPS.indexOf(R.nextStep(step)));
   const [saved] = await sql`
@@ -299,4 +287,21 @@ export async function withdraw(sql, identity, correlationId) {
   await recordEvent(sql, done.id, identity.profileId, 'withdrawn', null);
   await Logging.logAudit(sql, correlationId, identity.profileId, 'SELECTION_WITHDRAWN', 'selection_application', done.id, 'success', null);
   return { success: true, message: MSG.withdrawn };
+}
+
+/** A pessoa pede revisão humana da decisão (LGPD, art. 20). Um pedido por inscrição; a comissão vê no painel. */
+export async function requestReview(sql, identity, rawInput, correlationId) {
+  assertCandidate(identity);
+  if (!(await flagOn(sql, identity))) throw E.ForbiddenError(MSG.disabled);
+  await limit(sql, 'SELECTION_APPEAL', identity);
+  const input = asInput(rawInput);
+  const note = input.note ? R.freeField(input.note, 600).text : null;
+  const [row] = await sql`SELECT id, status, appeal_at FROM selection_applications WHERE profile_id = ${identity.profileId} ORDER BY started_at DESC LIMIT 1`;
+  if (!row) throw E.NotFoundError(MSG.none);
+  if (row.status !== 'not_selected' && row.status !== 'waitlist') throw E.ConflictError('A revisão só pode ser pedida depois do resultado.');
+  if (row.appeal_at) throw E.ConflictError('Você já pediu a revisão desta decisão. A comissão responderá pela plataforma.');
+  await sql`UPDATE selection_applications SET appeal_at = now(), appeal_note = ${note}, updated_at = now() WHERE id = ${row.id} AND appeal_at IS NULL`;
+  await recordEvent(sql, row.id, identity.profileId, 'appeal', null);
+  await Logging.logAudit(sql, correlationId, identity.profileId, 'SELECTION_APPEAL', 'selection_application', row.id, 'success', null);
+  return { success: true, message: 'Pedido de revisão enviado. Uma pessoa da comissão vai reler sua inscrição.' };
 }

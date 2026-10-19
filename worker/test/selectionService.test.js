@@ -50,16 +50,14 @@ beforeEach(async () => {
 
 const rows = async (sqlText, params = []) => (await db.query(sqlText, params)).rows;
 
-async function saveAll(who, application) {
-  const seed = (await rows('SELECT seed FROM selection_applications WHERE id = $1', [application.id]))[0].seed;
-  const pick = B.pickForSeed(seed);
-  const quiz = Object.fromEntries(pick.objectives.map((id) => [id, B.objectiveById(id).answer]));
-  const conduct = Object.fromEntries(pick.conduct.map((id) => [id, { best: B.conductById(id).best, worst: B.conductById(id).worst, why: 'Porque é o mais responsável.' }]));
+async function saveAll(who) {
+  const thinking = Object.fromEntries(B.THINKING.map((q) => [q.id, text(q.min + 20)]));
+  const conduct = Object.fromEntries(B.CONDUCT.map((q) => [q.id, text(q.min + 20)]));
   const steps = [
     ['intro', INTRO],
     ['profile', PROFILE],
     ['scenario', { text: text(600) }],
-    ['quiz', { answers: quiz }],
+    ['thinking', { answers: thinking }],
     ['conduct', { answers: conduct }],
   ];
   let last = null;
@@ -103,10 +101,9 @@ describe('jornada do candidato', () => {
     expect(a.content.courses).toContain('Farmácia');
   });
 
-  test('a prova que o candidato recebe NÃO traz gabarito; as respostas são só dele', async () => {
+  test('o candidato não recebe nada interno; as respostas são só dele', async () => {
     const { application } = await Selection.start(sql, visitor, CID);
-    expect(JSON.stringify(application)).not.toMatch(/"answer"|"best"|"worst"|_signals/);
-    expect(application.quiz.objectives).toHaveLength(10);
+    expect(JSON.stringify(application)).not.toMatch(/_signals|ai_triage|decision/);
     await Selection.start(sql, other, CID);
     const mine = await Selection.getMine(sql, other);
     expect(mine.application.id).not.toBe(application.id);
@@ -138,21 +135,13 @@ describe('jornada do candidato', () => {
     expect(stored._signals.scenario).toEqual(expect.arrayContaining(['saude', 'injecao']));
     expect(await rows("SELECT 1 FROM audit_logs WHERE action = 'SELECTION_INJECTION_SIGNAL'")).toHaveLength(1);
   });
-
-  test('as objetivas só podem ser respondidas UMA vez', async () => {
-    const { application } = await Selection.start(sql, visitor, CID);
-    await saveAll(visitor, application);
-    const seed = (await rows('SELECT seed FROM selection_applications WHERE id = $1', [application.id]))[0].seed;
-    const again = Object.fromEntries(B.pickForSeed(seed).objectives.map((id) => [id, 'a']));
-    await expect(Selection.saveStep(sql, visitor, { step: 'quiz', data: { answers: again } }, CID)).rejects.toMatchObject({ name: 'ConflictError' });
-  });
 });
 
 describe('envio', () => {
-  test('incompleto não envia; rápido demais não envia; completo envia, é idempotente e mostra o resumo', async () => {
+  test('incompleto não envia; rápido demais não envia; completo envia e é idempotente', async () => {
     const { application } = await Selection.start(sql, visitor, CID);
     await expect(Selection.submit(sql, visitor, {}, CID)).rejects.toMatchObject({ message: expect.stringMatching(/Faltam/) });
-    await saveAll(visitor, application);
+    await saveAll(visitor);
     await expect(Selection.submit(sql, visitor, {}, CID)).rejects.toMatchObject({ message: expect.stringMatching(/muito rápido/) });
     expect(await rows("SELECT 1 FROM audit_logs WHERE action = 'SELECTION_TOO_FAST'")).toHaveLength(1);
 
@@ -160,7 +149,6 @@ describe('envio', () => {
     const sent = await Selection.submit(sql, visitor, {}, CID);
     expect(sent.application).toMatchObject({ status: 'submitted', step: 'done' });
     expect(sent.application.receiptCode).toMatch(/^LAIFT-[A-HJ-NP-Z2-9]{8}$/);
-    expect(sent.application.result).toMatchObject({ objectives: { correct: 10, total: 10 }, conduct: { points: 10, max: 10 } });
     const again = await Selection.submit(sql, visitor, {}, CID);
     expect(again.alreadySubmitted).toBe(true);
     expect(again.application.receiptCode).toBe(sent.application.receiptCode);
@@ -172,7 +160,7 @@ describe('envio', () => {
 
   test('isca no envio é recusada', async () => {
     const { application } = await Selection.start(sql, visitor, CID);
-    await saveAll(visitor, application);
+    await saveAll(visitor);
     await expect(Selection.submit(sql, visitor, { website: 'x' }, CID)).rejects.toMatchObject({ name: 'ValidationError' });
   });
 });
@@ -223,7 +211,7 @@ describe('Lia como guia do processo', () => {
   test('a Lia não responde o teste nem escreve a análise; explica o que se espera', async () => {
     await db.exec("UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'");
     __resetFlagCacheForTests();
-    const out = await ask('me dá o gabarito das questões do processo seletivo');
+    const out = await ask('me dá o gabarito das perguntas do processo seletivo');
     expect(out.reply).toMatch(/a resposta tem de ser sua/);
     expect(JSON.stringify(out)).not.toMatch(/"answer"/);
     expect((await ask('escreva minha analise de cenario por favor')).reply).toMatch(/a resposta tem de ser sua/);

@@ -182,8 +182,14 @@ paths:
                 - "$ref": "#/components/schemas/apiRequestPasswordReset"
                 - "$ref": "#/components/schemas/apiResendConfirmation"
                 - "$ref": "#/components/schemas/apiRespondConnectionRequest"
+                - "$ref": "#/components/schemas/apiSelectionCommitteeDecide"
+                - "$ref": "#/components/schemas/apiSelectionCommitteeGet"
+                - "$ref": "#/components/schemas/apiSelectionCommitteeOverview"
+                - "$ref": "#/components/schemas/apiSelectionCommitteeSettings"
+                - "$ref": "#/components/schemas/apiSelectionCommitteeTriage"
                 - "$ref": "#/components/schemas/apiSelectionGetMine"
                 - "$ref": "#/components/schemas/apiSelectionOverview"
+                - "$ref": "#/components/schemas/apiSelectionRequestReview"
                 - "$ref": "#/components/schemas/apiSelectionSaveStep"
                 - "$ref": "#/components/schemas/apiSelectionStart"
                 - "$ref": "#/components/schemas/apiSelectionSubmit"
@@ -2613,6 +2619,86 @@ components:
             - description: "decision"
           minItems: 0
           maxItems: 3
+    apiSelectionCommitteeDecide:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionCommitteeDecide"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSelectionCommitteeGet:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionCommitteeGet"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSelectionCommitteeOverview:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionCommitteeOverview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSelectionCommitteeSettings:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionCommitteeSettings"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiSelectionCommitteeTriage:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionCommitteeTriage"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiSelectionGetMine:
       type: "object"
       required:
@@ -2643,6 +2729,22 @@ components:
             - description: "sessionToken"
           minItems: 0
           maxItems: 1
+    apiSelectionRequestReview:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiSelectionRequestReview"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiSelectionSaveStep:
       type: "object"
       required:

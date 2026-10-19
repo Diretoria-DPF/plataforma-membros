@@ -174,6 +174,9 @@ export const RATE_LIMITS = {
   SELECTION_START: { MAX_ATTEMPTS: 6, WINDOW_SECONDS: 3600 },
   SELECTION_SAVE: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
   SELECTION_SUBMIT: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 3600 },
+  SELECTION_APPEAL: { MAX_ATTEMPTS: 3, WINDOW_SECONDS: 86400 },
+  SELECTION_TRIAGE: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  SELECTION_DECIDE: { MAX_ATTEMPTS: 200, WINDOW_SECONDS: 3600 },
   LOGIN: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 900 },
   // Achado M2 da auditoria de 2026-09-25: LOGIN acima só limita por e-mail,
   // sem teto agregado nem por IP — alguém pode rotacionar e-mails contra
@@ -298,6 +301,8 @@ export const AI_FEATURE = {
   // Agentes de IA (ADR 0007). O paciente virtual (agent_patient) ainda não tem cota: está em rascunho.
   AGENT_TUTOR: 'agent_tutor',
   AGENT_CURATOR: 'agent_curator',
+  // Triagem do processo seletivo (resumo para a comissão; não passa por cota de pessoa: quem aciona é a comissão).
+  SELECTION_TRIAGE: 'selection_triage',
 };
 
 // Cota diária POR PESSOA (janela de 24 h do rate_limit_buckets), por recurso

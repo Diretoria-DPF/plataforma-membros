@@ -78,7 +78,6 @@
 
 .sel-receipt { margin: 0; padding: 12px 14px; border-radius: var(--radius-md); background: var(--primary-soft); color: var(--primary-strong); }
 .sel-receipt strong { letter-spacing: 0.04em; }
-.sel-result { margin: 0; color: var(--muted); font-size: 0.875rem; }
 
 .sel-timeline { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; }
 .sel-timeline li { flex: 1 1 110px; padding: 8px 10px; border-radius: var(--radius-md); background: var(--surface-alt); color: var(--muted); font-size: 0.8125rem; font-weight: 600; text-align: center; border: 1px solid var(--border); }

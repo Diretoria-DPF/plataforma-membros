@@ -172,7 +172,7 @@ export const INTENTS = [
     keywords: ['processo seletivo', 'seletivo', 'entrar na liga', 'entro na liga', 'fazer parte da liga', 'ser membro', 'virar membro', 'edital', 'areas da liga', 'contato da liga'],
     // Com a flag selection_enabled ligada (assistantService.js) vale esta versão: a inscrição acontece na plataforma.
     whenSelection: {
-      reply: 'Para entrar na LAIFT há processo seletivo, e a inscrição agora é feita aqui na plataforma, com inscrições abertas o ano todo. Você cria sua conta, faz o teste (perfil, análise de cenário, questões e situações de conduta) e a comissão analisa em lotes. Uma IA ajuda a organizar a leitura, mas quem decide é a comissão. O edital tem as regras completas.',
+      reply: 'Para entrar na LAIFT há processo seletivo, e a inscrição agora é feita aqui na plataforma, com inscrições abertas. Você cria sua conta e responde (perfil, análise de cenário, perguntas sobre como você pensa e situações de conduta) e a comissão analisa em lotes. Uma IA ajuda a organizar a leitura, mas quem decide é a comissão. O edital tem as regras completas.',
       actions: [nav('panel-selection')],
       suggestions: ['Como funciona o processo seletivo?', 'A IA elimina alguém?', 'Qual é o prazo?'],
     },
@@ -457,7 +457,7 @@ export const INTENTS = [
     title: 'Como funciona a inscrição no processo seletivo',
     weight: 2.5,
     keywords: ['como funciona o processo', 'etapas do processo', 'etapas da inscricao no processo', 'inscricao no processo seletivo', 'me inscrever no processo seletivo', 'teste do processo seletivo', 'quantas questoes tem o processo', 'comecar a inscricao no processo'],
-    reply: 'A inscrição é feita aqui na plataforma, no seu ritmo: 1) aceite do edital e da privacidade; 2) seu perfil e disponibilidade; 3) uma análise de cenário, escrita por você; 4) oito questões objetivas; 5) três situações de conduta; 6) revisão e envio. Leva cerca de 25 minutos e o rascunho fica salvo. Para começar, entre na sua conta e abra Processo seletivo.',
+    reply: 'A inscrição é feita aqui na plataforma, no seu ritmo: 1) aceite do edital e da privacidade; 2) seu perfil e disponibilidade; 3) uma análise de cenário, escrita por você; 4) quatro perguntas abertas sobre como você pensa (sem certo ou errado); 5) três situações de conduta, em poucas linhas; 6) revisão e envio. Leva cerca de 30 minutos e o rascunho fica salvo. Para começar, entre na sua conta e abra Processo seletivo.',
     actions: [nav('panel-selection')],
     suggestions: ['A IA elimina alguém?', 'Qual é o prazo?', 'O que a comissão espera?'],
   },
@@ -493,7 +493,7 @@ export const INTENTS = [
     title: 'A Lia não responde o teste do processo seletivo',
     weight: 4,
     keywords: ['gabarito', 'resposta da questao', 'qual a resposta', 'qual alternativa e a certa', 'responda a questao', 'me da a resposta', 'escreve minha analise', 'escreva minha analise', 'faz minha analise', 'escreva o texto para mim', 'o que a comissao espera'],
-    reply: 'Eu não posso responder as questões nem escrever a sua análise: a resposta tem de ser sua, e é isso que a comissão quer conhecer. Posso explicar o que se espera. Na análise de cenário, escolha um ponto de partida, cite de onde vem a informação e explique o impacto com as suas palavras. Nas questões, leia com calma e escolha a melhor alternativa. Nas situações de conduta, pense no que protege as pessoas, os prazos e a confidencialidade.',
+    reply: 'Eu não posso responder as perguntas nem escrever a sua análise: a resposta tem de ser sua, e é isso que a comissão quer conhecer. Posso explicar o que se espera. Na análise de cenário, escolha um ponto de partida, cite de onde vem a informação e explique o impacto com as suas palavras. Nas perguntas sobre o seu raciocínio, conte seus passos e o porquê, com exemplos reais. Nas situações de conduta, pense no que protege as pessoas, os prazos e a confidencialidade.',
     actions: [nav('panel-selection')],
     suggestions: ['Como funciona o processo seletivo?', 'A IA elimina alguém?'],
   },

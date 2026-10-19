@@ -8,7 +8,7 @@ import { API_REGISTRY } from '../src/handlers.js';
 import { makeEnv, makeSql } from './helpers/mockEnv.js';
 
 describe('handlers.js — API_REGISTRY (allowlist)', () => {
-  test('contém exatamente as 153 ações públicas esperadas, nem mais nem menos', () => {
+  test('contém exatamente as 159 ações públicas esperadas, nem mais nem menos', () => {
     const expected = [
       'apiRegister', 'apiConfirmEmail', 'apiLogin', 'apiRequestPasswordReset', 'apiValidateResetToken',
       'apiConfirmPasswordReset', 'apiLogout', 'apiTouchSession', 'apiGetMyProfile', 'apiUpdateMyProfile', 'apiUpdateMyPreferences',
@@ -52,7 +52,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     // Fase 3 — painel de métricas da IA
     expected.push('apiAdminAiMetrics', 'apiAdminUsageStats');
     // Processo seletivo contínuo (selectionService.js): visão pública com sessão opcional; o resto exige sessão
-    expected.push('apiSelectionOverview', 'apiSelectionStart', 'apiSelectionGetMine', 'apiSelectionSaveStep', 'apiSelectionSubmit', 'apiSelectionWithdraw');
+    expected.push('apiSelectionOverview', 'apiSelectionStart', 'apiSelectionGetMine', 'apiSelectionSaveStep', 'apiSelectionSubmit', 'apiSelectionWithdraw',
+      'apiSelectionRequestReview', 'apiSelectionCommitteeOverview', 'apiSelectionCommitteeGet', 'apiSelectionCommitteeTriage', 'apiSelectionCommitteeDecide', 'apiSelectionCommitteeSettings');
     // Lia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
     expected.push('apiAssistantChat');
     // Lia — feedback, painel de satisfação, fontes e reindexação (assistantFeedbackService.js)

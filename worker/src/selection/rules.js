@@ -17,11 +17,11 @@ import * as E from '../errors.js';
 import * as B from './banco.js';
 import { looksLikeInjection } from '../assistant/moderationRules.js';
 
-export const STEPS = Object.freeze(['intro', 'profile', 'scenario', 'quiz', 'conduct', 'review']);
-export const DATA_STEPS = Object.freeze(['intro', 'profile', 'scenario', 'quiz', 'conduct']);
+export const STEPS = Object.freeze(['intro', 'profile', 'scenario', 'thinking', 'conduct', 'review']);
+export const DATA_STEPS = Object.freeze(['intro', 'profile', 'scenario', 'thinking', 'conduct']);
 export const MIN_FILL_MS = 5 * 60 * 1000;
 export const RESTART_COOLDOWN_DAYS = 14;
-export const LIMITS = Object.freeze({ institution: 120, motivation: 400, why: 200, whyMin: 10, hoursMax: 40, areasMax: 4 });
+export const LIMITS = Object.freeze({ institution: 120, motivation: 400, hoursMax: 40, areasMax: 4 });
 
 const MSG = Object.freeze({
   step: 'Etapa inválida.',
@@ -30,8 +30,9 @@ const MSG = Object.freeze({
   contact: 'Retire e-mail, telefone ou documento do texto: não precisamos dessas informações aqui.',
   scenarioShort: 'A análise está curta. Escreva pelo menos {min} caracteres.',
   scenarioLong: 'A análise passou do limite de {max} caracteres.',
-  quizAll: 'Responda todas as questões antes de continuar.',
-  conduct: 'Em cada situação escolha uma atitude como a melhor e outra, diferente, como a pior, e justifique em uma frase.',
+  thinkingAll: 'Responda todas as perguntas, com pelo menos {min} caracteres em cada uma.',
+  conductAll: 'Conte em poucas linhas o que você faria em cada situação (pelo menos {min} caracteres).',
+  tooLong: 'Uma das respostas passou do limite de caracteres.',
 });
 
 /** Texto limpo: sem caracteres de controle, quebras de linha normalizadas, no máximo 2 linhas vazias seguidas. */
@@ -97,47 +98,32 @@ function validateScenario(input) {
   return { value: { text }, signals };
 }
 
-function validateQuiz(input, seed) {
-  const pick = B.pickForSeed(seed);
-  const given = input.answers && typeof input.answers === 'object' && !Array.isArray(input.answers) ? input.answers : {};
-  const answers = {};
-  for (const id of pick.objectives) {
-    const q = B.objectiveById(id);
-    const chosen = given[id];
-    if (typeof chosen !== 'string') throw E.ValidationError(MSG.quizAll);
-    if (!q.options.some((o) => o.id === chosen)) throw E.ValidationError(MSG.data);
-    answers[id] = chosen;
-  }
-  return { value: { answers }, signals: [] };
-}
-
-function validateConduct(input, seed) {
-  const pick = B.pickForSeed(seed);
+function validateOpen(list, input, shortMsg) {
   const given = input.answers && typeof input.answers === 'object' && !Array.isArray(input.answers) ? input.answers : {};
   const answers = {};
   const signals = new Set();
-  for (const id of pick.conduct) {
-    const q = B.conductById(id);
-    const a = given[id] && typeof given[id] === 'object' ? given[id] : {};
-    const ids = q.options.map((o) => o.id);
-    if (!ids.includes(a.best) || !ids.includes(a.worst) || a.best === a.worst) throw E.ValidationError(MSG.conduct);
-    const why = freeField(a.why, LIMITS.why);
-    if (why.text.length < LIMITS.whyMin) throw E.ValidationError(MSG.conduct);
-    why.signals.forEach((s) => signals.add(s));
-    answers[id] = { best: a.best, worst: a.worst, why: why.text };
+  for (const q of list) {
+    const field = freeField(given[q.id], q.max + 1);
+    if (field.text.length < q.min) throw E.ValidationError(shortMsg.replace('{min}', String(q.min)));
+    if (field.text.length > q.max) throw E.ValidationError(MSG.tooLong);
+    field.signals.forEach((x) => signals.add(x));
+    answers[q.id] = field.text;
   }
   return { value: { answers }, signals: Array.from(signals) };
 }
 
+const validateThinking = (input) => validateOpen(B.THINKING, input, MSG.thinkingAll);
+const validateConduct = (input) => validateOpen(B.CONDUCT, input, MSG.conductAll);
+
 /** Valida e limpa os dados de UMA etapa. Devolve { value, signals }; lança ValidationError com mensagem para a pessoa. */
-export function validateStep(step, input, seed) {
+export function validateStep(step, input) {
   const data = input && typeof input === 'object' && !Array.isArray(input) ? input : {};
   switch (step) {
     case 'intro': return validateIntro(data);
     case 'profile': return validateProfile(data);
     case 'scenario': return validateScenario(data);
-    case 'quiz': return validateQuiz(data, seed);
-    case 'conduct': return validateConduct(data, seed);
+    case 'thinking': return validateThinking(data);
+    case 'conduct': return validateConduct(data);
     default: throw E.ValidationError(MSG.step);
   }
 }
