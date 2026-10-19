@@ -257,6 +257,22 @@
       writeStore(win, state);
     });
 
+    // Voltar ao canto: botão na nota do painel.
+    if (opts.note) {
+      var back = doc.createElement('button');
+      back.type = 'button';
+      back.className = 'link-btn lia-reset-pos';
+      back.textContent = 'Voltar ao canto';
+      back.addEventListener('click', reset);
+      opts.note.appendChild(doc.createTextNode(' '));
+      opts.note.appendChild(back);
+    }
+
+    // O app mostra/esconde a bolha e o painel pela classe 'hidden': o módulo observa e se ajusta sozinho.
+    if (typeof win.MutationObserver === 'function') {
+      new win.MutationObserver(function () { if (!opts.panel.classList.contains('hidden')) placePanel(); }).observe(opts.panel, { attributes: true, attributeFilter: ['class'] });
+      new win.MutationObserver(refresh).observe(opts.launcher, { attributes: true, attributeFilter: ['class'] });
+    }
     win.addEventListener('resize', function () { refresh(); if (!opts.panel.classList.contains('hidden')) placePanel(); });
     refresh();
     return { refresh: refresh, placePanel: placePanel, reset: reset };

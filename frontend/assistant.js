@@ -544,7 +544,6 @@
     if (token() !== ui.lastToken) { refresh(); return; } // conta diferente da última conversa: zera antes de abrir
     hint('hide'); // a dica some quando a Lia abre
     ui.panel.classList.remove('hidden');
-    if (ui.drag) ui.drag.placePanel(); // painel junto da bolha (ou onde a pessoa o deixou)
     ui.launcher.setAttribute('aria-expanded', 'true');
     ui.open = true;
     ui.moderation.lapse();
@@ -666,10 +665,6 @@
     log.setAttribute('role', 'log');
     log.setAttribute('aria-live', 'polite');
     var note = el(doc, 'p', 'lia-note', 'A Lia orienta e leva às telas; ela não altera seus dados. Arraste a Lia (ou use Alt + setas) para mudar de lugar.');
-    var resetPos = el(doc, 'button', 'link-btn lia-reset-pos', 'Voltar ao canto');
-    resetPos.type = 'button';
-    note.appendChild(doc.createTextNode(' '));
-    note.appendChild(resetPos);
     var moderation = modLib().createModeration(moderationContext(app, doc, composer.input, panel));
     [head.node, log, moderation.root, composer.form, note].forEach(function (node) { panel.appendChild(node); });
     doc.body.appendChild(launcher.button);
@@ -678,13 +673,10 @@
     ui = {
       app: app, doc: doc, launcher: launcher.button, panel: panel, log: log, input: composer.input, send: composer.send,
       messages: [], busy: false, privacyShown: false, researchOff: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
-      launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null, typers: [],
+      launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null, typers: [], drag: root.AssistantDrag ? root.AssistantDrag.attach({ win: root, doc: doc, launcher: launcher.button, panel: panel, handle: head.node, note: note }) : null, // posição livre (assistant-drag.js, opcional)
       moderation: moderation, mood: moodLib().newSession(),
       hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,
     };
-    // Posição livre (assistant-drag.js, opcional): arrastar a bolha e o painel; sem o módulo, a Lia fica no canto.
-    ui.drag = root.AssistantDrag ? root.AssistantDrag.attach({ win: root, doc: doc, launcher: launcher.button, panel: panel, handle: head.node }) : null;
-    resetPos.addEventListener('click', function () { if (ui.drag) ui.drag.reset(); });
     ui.idle = moodLib().createIdle({
       allowed: function () { return ui.open && !!root.Lia && !root.Lia.reducedMotion(); },
       canPose: function () { return !!ui.panelLia && !ui.busy && ui.restTimer === null && !ui.moderation.isSuspended() && ui.panelLia.element.getAttribute('data-state') === 'idle'; },
@@ -722,7 +714,6 @@
       ui.feedbackOn = on && feedbackFlag(res.flags);
       ui.challenge = turnstileLib().sync(ui.challenge, root, on && turnstileLib().wanted(res.flags, token()));
       ui.launcher.classList.toggle('hidden', !on);
-      if (on && ui.drag) ui.drag.refresh(); // a bolha acabou de aparecer: aplica a posição guardada
       if (!on) {
         hint('hide');
         closePanel(false);

@@ -88,5 +88,5 @@ test('fiação: index.html, build.js e sw.js carregam o módulo; assistant.js o 
   }
   const assistant = fs.readFileSync(path.join(frontend, 'assistant.js'), 'utf8');
   assert.match(assistant, /root\.AssistantDrag \? root\.AssistantDrag\.attach/);
-  assert.match(assistant, /ui\.drag\.placePanel\(\)/);
+  assert.match(assistant, /note: note/); // o módulo cria o "Voltar ao canto" na nota do painel
 });
