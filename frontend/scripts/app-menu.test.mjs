@@ -139,7 +139,7 @@ test('index.html: a barra do membro tem só Início, Aprender, Eventos e Perfil 
   assert.ok(bloco.includes('id="btn-enter-admin-mode"'), 'o botão do admin continua na barra');
 });
 
-test('index.html: Propostas, Tarefas, Mensagens, Equipe e Biblioteca moram no menu, com os mesmos contadores', () => {
+test('index.html: Propostas, Tarefas, Mensagens, Equipe, Biblioteca e Processo seletivo moram no menu, com os mesmos contadores', () => {
   const inicio = HTML.indexOf('<dialog id="app-menu"');
   assert.ok(inicio > 0, 'dialog #app-menu ausente');
   const bloco = HTML.slice(inicio, HTML.indexOf('</dialog>', inicio));
@@ -148,7 +148,7 @@ test('index.html: Propostas, Tarefas, Mensagens, Equipe e Biblioteca moram no me
   assert.ok(fimMembro > 0, 'grupo Gestão ausente do menu');
   const membro = bloco.slice(0, fimMembro);
   const paineis = [...membro.matchAll(/data-panel="([^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(paineis, ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart', 'panel-library']);
+  assert.deepEqual(paineis, ['panel-proposals', 'panel-tasks', 'panel-messages', 'panel-orgchart', 'panel-library', 'panel-selection']);
   for (const id of Object.values(menu.BADGE_IDS)) {
     assert.ok(bloco.includes(`id="${id}"`), `contador ${id} fora do menu`);
     assert.ok(bloco.includes(`id="${id}-sr"`), `texto oculto ${id}-sr fora do menu`);

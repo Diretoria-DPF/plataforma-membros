@@ -75,6 +75,7 @@
   <link rel="stylesheet" href="app-menu.css">
   <link rel="stylesheet" href="roles.css">
   <link rel="stylesheet" href="library.css">
+  <link rel="stylesheet" href="selection.css">
   <link rel="stylesheet" href="agents-tutor.css">
   <link rel="stylesheet" href="memory.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
@@ -418,6 +419,18 @@
             </li>
           </ul>
         </section>
+        <!-- Processo seletivo (docs/planos/PROCESSO-SELETIVO.md): só para quem ainda não é membro e só com a flag selection_enabled. -->
+        <section class="app-menu__grupo" data-grupo="liga" aria-labelledby="app-menu-g5">
+          <h3 id="app-menu-g5">Liga</h3>
+          <ul>
+            <li>
+              <button type="button" class="app-menu__item" data-panel="panel-selection" data-scope="visitor">
+                <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z"/></svg>
+                <span class="app-menu__texto"><span class="app-menu__titulo">Processo seletivo</span><span class="app-menu__info">Entre para a LAIFT</span></span>
+              </button>
+            </li>
+          </ul>
+        </section>
         <!-- Gestão (ADR 0010): telas que o cargo libera, fora do modo admin. data-cap (roles-ui.js) mostra só o que a
              pessoa pode; a Worker confere a capacidade em toda chamada. O admin usa o modo admin. -->
         <section class="app-menu__grupo hidden" data-grupo="gestao" aria-labelledby="app-menu-g4">
@@ -649,6 +662,12 @@
         <section id="panel-library" class="hidden">
           <h1 class="sr-only">Biblioteca</h1>
           <div id="library-root"></div>
+        </section>
+
+        <!-- Processo seletivo: selection.js monta a jornada por LaiftDom.h. -->
+        <section id="panel-selection" class="hidden">
+          <h1 class="sr-only">Processo seletivo</h1>
+          <div id="selection-root"></div>
         </section>
 
         <section id="panel-profile" class="hidden">
@@ -1234,6 +1253,7 @@
   <script src="library-cite.js" defer></script>
   <script src="library-detail.js" defer></script>
   <script src="library.js" defer></script>
+  <script src="selection.js" defer></script>
   <script src="admin-library-extras.js" defer></script>
   <script src="admin-library-publicar.js" defer></script>
   <script src="admin-library-lote.js" defer></script>

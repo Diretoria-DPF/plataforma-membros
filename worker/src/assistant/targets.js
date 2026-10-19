@@ -35,6 +35,8 @@ const TARGET_LIST = [
   ['navigate', 'panel-orgchart', 'Equipe', MEMBERS],
   ['navigate', 'panel-messages', 'Mensagens', MEMBERS],
   ['navigate', 'panel-profile', 'Meu perfil', LOGGED],
+  // Processo seletivo: a jornada do candidato (frontend/selection.js); só visitante (e admin, para testar). A intenção que o oferece só existe com a flag selection_enabled.
+  ['navigate', 'panel-selection', 'Processo seletivo', ['visitor', 'admin']],
   // Biblioteca: o serviço só entrega estes dois com a flag library_enabled ligada para a pessoa.
   ['navigate', 'panel-library', 'Biblioteca', LOGGED],
   ['open_library', 'search', 'Ver na Biblioteca', LOGGED],

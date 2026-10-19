@@ -1,0 +1,94 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Processo seletivo (frontend/selection.js). Só tokens do tema (claro e escuro), alvos de toque de 44 px, foco visível
+   e nenhuma animação além de transições curtas (zeradas com prefers-reduced-motion pelo laift-tokens.css). */
+
+.sel-card {
+  display: grid; gap: 14px; max-width: 720px; margin: 0 auto; padding: 20px 16px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow);
+}
+.sel-title { margin: 0; font-size: 1.35rem; line-height: 1.25; outline: none; }
+.sel-intro, .sel-prompt { margin: 0; color: var(--muted); }
+.sel-prompt { color: var(--text); font-weight: 600; }
+.sel-deadline { margin: 0; font-size: 0.875rem; color: var(--primary-strong); font-weight: 600; }
+.sel-hint, .sel-sub { margin: 0; font-size: 0.8125rem; color: var(--muted); }
+.sel-sub { font-weight: 700; color: var(--text); margin-top: 6px; }
+.sel-notice { margin: 0; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-alt); border: 1px solid var(--border); }
+.sel-live { min-height: 1.2em; margin: 0; }
+
+/* Passo a passo: horizontal e rolável no celular, sem quebrar a tela. */
+.sel-steps { overflow-x: auto; margin: 0 -4px; padding: 2px 4px; }
+.sel-steps ol { display: flex; gap: 8px; margin: 0; padding: 0; list-style: none; min-width: max-content; }
+.sel-step {
+  display: inline-flex; align-items: center; gap: 8px; width: auto; min-height: 44px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--surface-alt); color: var(--muted); font-weight: 600; font-size: 0.8125rem;
+}
+.sel-step__n {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--border); color: var(--text); font-size: 0.75rem; font-weight: 700;
+}
+.sel-step.is-current { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.sel-step.is-current .sel-step__n { background: var(--on-primary); color: var(--primary); }
+.sel-step.is-done { color: var(--text); }
+.sel-step.is-done .sel-step__n { background: var(--primary-soft); color: var(--primary-strong); }
+.sel-step:disabled { opacity: 0.55; cursor: not-allowed; }
+.sel-step:focus-visible, .sel-primary:focus-visible, .sel-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.sel-points { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.sel-points li { display: grid; gap: 2px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-alt); border: 1px solid var(--border); }
+.sel-points span { color: var(--muted); font-size: 0.875rem; }
+
+.sel-form, .sel-field, .sel-questions { display: grid; gap: 14px; }
+.sel-field { gap: 6px; }
+.sel-label, .sel-fieldset legend { font-weight: 700; font-size: 0.9rem; }
+.sel-fieldset { margin: 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); display: grid; gap: 10px; min-width: 0; }
+.sel-fieldset legend { padding: 0 6px; }
+.sel-question legend { line-height: 1.4; }
+.sel-situation { margin: 0; color: var(--muted); }
+
+.sel-choices, .sel-checks { display: grid; gap: 8px; }
+.sel-choice {
+  display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); cursor: pointer;
+}
+.sel-choice input { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--primary); }
+.sel-choice:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
+.sel-choice:focus-within { outline: 2px solid var(--primary); outline-offset: 2px; }
+.sel-choice__text { line-height: 1.4; }
+
+.sel-tips { margin: 0; padding-left: 18px; color: var(--muted); font-size: 0.875rem; display: grid; gap: 4px; }
+.sel-counter { margin: 0; font-size: 0.8125rem; color: var(--muted); }
+.sel-counter.is-ok { color: var(--primary-strong); }
+.sel-counter.is-short, .sel-counter.is-long { color: var(--danger); }
+
+.sel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sel-actions button, .sel-actions .sel-link { width: auto; min-height: 44px; }
+.sel-primary { padding: 0 18px; font-weight: 700; }
+.sel-link { display: inline-flex; align-items: center; padding: 0 10px; color: var(--primary-strong); font-weight: 600; text-decoration: underline; }
+
+.sel-summary { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.sel-sum { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.sel-sum__l { font-weight: 700; }
+.sel-sum__v { grid-column: 1; color: var(--muted); font-size: 0.875rem; overflow-wrap: anywhere; }
+.sel-sum .link-btn { grid-row: 1 / span 2; grid-column: 2; width: auto; min-height: 44px; }
+
+.sel-receipt { margin: 0; padding: 12px 14px; border-radius: var(--radius-md); background: var(--primary-soft); color: var(--primary-strong); }
+.sel-receipt strong { letter-spacing: 0.04em; }
+.sel-result { margin: 0; color: var(--muted); font-size: 0.875rem; }
+
+.sel-timeline { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; }
+.sel-timeline li { flex: 1 1 110px; padding: 8px 10px; border-radius: var(--radius-md); background: var(--surface-alt); color: var(--muted); font-size: 0.8125rem; font-weight: 600; text-align: center; border: 1px solid var(--border); }
+.sel-timeline li.is-done { color: var(--text); }
+.sel-timeline li.is-current { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+
+/* Isca contra robôs: fora da tela e fora do alcance de leitores de tela (a etiqueta fica oculta junto). */
+.sel-ot { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+@media (min-width: 720px) {
+  .sel-card { padding: 28px 28px; }
+  .sel-points { grid-template-columns: 1fr 1fr; }
+}

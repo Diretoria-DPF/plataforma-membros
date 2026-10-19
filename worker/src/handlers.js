@@ -47,6 +47,7 @@ import * as AiService from './services/aiService.js';
 import * as ClinicalService from './services/clinicalService.js';
 import * as ClinicalSimService from './services/clinicalSimService.js';
 // Lia, guia da plataforma (orienta e navega; nunca altera dados)
+import * as SelectionService from './services/selectionService.js';
 import * as AssistantService from './services/assistantService.js';
 // Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
 import * as AssistantFeedbackService from './services/assistantFeedbackService.js';
@@ -166,6 +167,13 @@ export const API_REGISTRY = {
     const identity = sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null;
     return AssistantService.chat(sql, env, identity, input || {}, cid);
   }),
+  // Processo seletivo contínuo (docs/planos/PROCESSO-SELETIVO.md): a visão pública aceita sessão opcional; o resto exige sessão.
+  apiSelectionOverview: (sql, env, [sessionToken]) => run(sql, async () => SelectionService.overview(sql, sessionToken ? await S.resolveSession(sql, env.SESSION_TOKEN_PEPPER, sessionToken) : null)),
+  apiSelectionStart: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.start(sql, identity, cid)),
+  apiSelectionGetMine: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => SelectionService.getMine(sql, identity)),
+  apiSelectionSaveStep: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.saveStep(sql, identity, asInput(input), cid)),
+  apiSelectionSubmit: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.submit(sql, identity, asInput(input), cid)),
+  apiSelectionWithdraw: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.withdraw(sql, identity, cid)),
   // Lia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
   apiAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.submitFeedback(sql, identity, asInput(input), cid)),
   apiAdminListAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.listFeedback(sql, identity, asInput(input))),

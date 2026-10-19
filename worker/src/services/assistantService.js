@@ -60,6 +60,7 @@ const FLAG_CACHE = 'rag_cache_enabled';
 const FLAG_RERANK = 'rag_rerank_enabled';
 const FLAG_RESEARCH = 'research_enabled';
 const FLAG_LIBRARY = 'library_enabled';
+const FLAG_SELECTION = 'selection_enabled';
 const FLAG_HIBRIDA = 'lia_hibrida_enabled';
 const FLAG_VISITOR_AI = 'lia_visitor_ai_enabled';
 const KB_PROVIDER = 'kb';
@@ -559,6 +560,11 @@ async function routeQuestion(sql, env, identity, ctx) {
 
   let hit = matchIntent(message, history, role);
   if (hit && hit.intent.library && !libraryOn) hit = null;
+  // Processo seletivo na plataforma: as intenções dele só existem com selection_enabled; com ela ligada, a do processo
+  // geral troca para a versão "a inscrição é aqui".
+  const selectionOn = await flagOn(sql, identity, FLAG_SELECTION);
+  if (hit && hit.intent.selection && !selectionOn) hit = null;
+  if (hit && selectionOn && hit.intent.whenSelection) hit = Object.assign({}, hit, { intent: Object.assign({}, hit.intent, hit.intent.whenSelection) });
   // Lia híbrida: pergunta de definição só é respondida por regra pelas intenções que de fato definem.
   if (hit && mode.hybrid && !allowIntent(kind, hit)) hit = null;
   // Artigos da Biblioteca: só com library_enabled; quem não tem login só na Lia híbrida (o degrau do visitante).
