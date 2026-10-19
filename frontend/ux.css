@@ -382,6 +382,16 @@ summary:focus-visible,
   border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
 }
 .lia-launcher.lia-in-app ~ .lia-panel { bottom: 88px; height: min(560px, calc(100dvh - 104px)); }
+/* Posição livre (assistant-drag.js): a bolha e o painel vão para onde a pessoa os arrastou (variáveis CSS postas pelo script). */
+.lia-launcher { touch-action: none; cursor: grab; }
+:root[data-lia-dragging] { user-select: none; }
+:root[data-lia-dragging] .lia-launcher, :root[data-lia-dragging] .lia-head { cursor: grabbing; }
+:root[data-lia-moved] .lia-launcher, :root[data-lia-moved] .lia-launcher.lia-in-app { left: var(--lia-x); top: var(--lia-y); right: auto; bottom: auto; }
+@media (min-width: 481px) {
+  .lia-head { cursor: grab; touch-action: none; }
+  :root[data-lia-panel] .lia-panel, :root[data-lia-panel] .lia-launcher.lia-in-app ~ .lia-panel { left: var(--lia-px); top: var(--lia-py); right: auto; bottom: auto; }
+}
+.lia-reset-pos { display: inline; width: auto; min-height: 0; padding: 0; font-size: inherit; text-decoration: underline; }
 .lia-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface-alt); }
 .lia-title { display: grid; flex: 1; min-width: 0; }
 .lia-sub { font-size: 12px; color: var(--muted); }

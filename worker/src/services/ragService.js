@@ -80,6 +80,21 @@ export function fuse(lists, limit) {
     .map(({ row, score }) => ({ id: row.id, source: row.source, section: row.section, content: row.content, score }));
 }
 
+/**
+ * Palavras que não dizem o assunto e atrapalham a busca por trigramas: quantificadores de pergunta ("e quanto custa?"
+ * casava com o trecho de limites clínicos por causa de "quanto") e fala de conversa ("valeu", "entendi"), mais artigos e preposições. A lista é
+ * curta DE PROPÓSITO: "que", "é", "como" ficam, porque são parte do sentido da pergunta.
+ * O vetor (semântico) fica com a pergunta inteira. Sem sobrar palavra de assunto, usa a pergunta original.
+ * (retrieve usa isto como FILTRO, não como consulta: ver lá.)
+ */
+const FILLER = new Set(['a', 'o', 'as', 'os', 'um', 'uma', 'de', 'da', 'do', 'das', 'dos', 'e', 'quanto', 'quanta', 'quantos', 'quantas', 'valeu', 'obrigado', 'obrigada', 'entendi', 'ok', 'oi', 'ola', 'olá', 'mas']);
+
+export function stripFiller(query) {
+  const original = String(query || '');
+  const kept = original.toLowerCase().split(/[^a-zà-ú0-9]+/).filter((w) => w && !FILLER.has(w));
+  return kept.length ? kept.join(' ') : original;
+}
+
 async function trigramRows(sql, query) {
   return sql`
     SELECT id, source, section, content,
@@ -116,7 +131,14 @@ export async function retrieve(sql, env, question, opts = {}) {
   } catch (err) {
     embeddingError = String((err && err.message) || err).slice(0, 200);
   }
-  const trigramList = aboveFloor(await trigramRows(sql, query), C.RAG.MIN_TRIGRAM_SCORE);
+  // O trecho precisa passar pelo piso com a pergunta inteira (o ranking é este) E sem as palavras de enchimento:
+  // um trecho que só casa por causa de "quanto" ou "valeu" não responde nada.
+  let trigramList = aboveFloor(await trigramRows(sql, query), C.RAG.MIN_TRIGRAM_SCORE);
+  const subject = stripFiller(query);
+  if (subject !== query) {
+    const onSubject = new Set(aboveFloor(await trigramRows(sql, subject), C.RAG.MIN_TRIGRAM_SCORE).map((row) => row.id));
+    trigramList = trigramList.filter((row) => onSubject.has(row.id));
+  }
   const lists = vectorList ? [vectorList, trigramList] : [trigramList];
   const mode = vectorList ? 'hybrid' : 'trigram';
   if (opts.rerank !== true) return { chunks: fuse(lists, opts.limit || C.RAG.TOP_K), mode, embeddingError };

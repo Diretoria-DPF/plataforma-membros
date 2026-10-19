@@ -226,3 +226,21 @@ describe('reindex com embedding (SQL simulado)', () => {
     expect(literal.split(',')).toHaveLength(EMBEDDING_DIM);
   });
 });
+
+describe('stripFiller — busca por trigramas sem palavras que não dizem o assunto', () => {
+  test('tira quantificadores de pergunta e fala de conversa', () => {
+    expect(Rag.stripFiller('e quanto custa?')).toBe('custa');
+    expect(Rag.stripFiller('valeu, mas não entendi onde fica a biblioteca')).toBe('não onde fica biblioteca');
+  });
+
+  test('não mexe nas perguntas que já funcionam (que, é, como ficam)', () => {
+    expect(Rag.stripFiller('O que é o blog da LAIFT?')).toBe('que é blog laift');
+    expect(Rag.stripFiller('Como eu faço pra entrar no Atlas?')).toBe('como eu faço pra entrar no atlas');
+  });
+
+  test('sem palavra de assunto sobrando, usa a pergunta original; entrada estranha não quebra', () => {
+    expect(Rag.stripFiller('valeu!')).toBe('valeu!');
+    expect(Rag.stripFiller('')).toBe('');
+    expect(Rag.stripFiller(null)).toBe('');
+  });
+});

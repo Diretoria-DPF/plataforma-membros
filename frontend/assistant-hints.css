@@ -16,6 +16,9 @@
 }
 /* Com a bolha em modo app (acima da barra inferior), a dica sobe junto. */
 .lia-launcher.lia-in-app ~ .lia-hint { bottom: 144px; }
+/* Bolha arrastada (assistant-drag.js): a dica acompanha, acima dela ou, perto do topo, abaixo. */
+:root[data-lia-moved] .lia-launcher ~ .lia-hint { right: max(8px, calc(100vw - var(--lia-x) - var(--lia-w))); bottom: calc(100dvh - var(--lia-y) + 8px); top: auto; }
+:root[data-lia-moved][data-lia-hint="below"] .lia-launcher ~ .lia-hint { bottom: auto; top: calc(var(--lia-y) + var(--lia-h) + 8px); }
 .lia-hint-open {
   flex: 1; min-width: 0; min-height: 44px; padding: 10px 14px;
   border: 0; border-radius: 24px; background: transparent; color: inherit;

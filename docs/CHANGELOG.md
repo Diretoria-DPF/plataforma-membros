@@ -6,6 +6,10 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
+### Adicionado (Lia móvel e respostas mais úteis)
+- **A Lia pode ser movida para qualquer ponto da tela.** Arraste a bolha (a Lia não abre ao arrastar); no computador o cabeçalho do painel também arrasta o painel. Teclado: Alt + setas (Shift = passo maior). A posição fica só no aparelho (localStorage) e acompanha o tamanho da janela; "Voltar ao canto" no rodapé do painel desfaz. A dica da Lia acompanha a bolha. `frontend/assistant-drag.js`, e2e `assistant-drag`.
+- Respostas da Lia: os módulos (Laboratório, Atlas, Farmacologia, Toxicologia, Clínica) agora dizem **como abrir** ("entre na plataforma, toque em Aprender e escolha…"), e a busca por trigramas ignora palavras de pergunta ("e quanto custa?" puxava o trecho de limites clínicos por causa de "quanto"; agora responde que não encontrou, de forma honesta).
+
 ### Corrigido (Atlas abrindo sempre, repositório privado e crédito)
 - **Atlas: "a página pode estar com problemas" depois de cada atualização.** O service worker do Atlas guardava o shell pela URL `index.html`, que o servidor responde com 307 para o diretório; o navegador recusa entregar uma resposta que passou por redirecionamento a uma navegação (`ERR_FAILED`). Reproduzido em Chromium com um servidor que imita o 307. Agora o shell é guardado pela URL do diretório, qualquer entrada redirecionada é entregue limpa, e o worker novo **assume sozinho** (`skipWaiting`) em vez de esperar todas as abas fecharem. A aba aberta recebe o aviso "Há uma versão nova do Atlas" (`watchTakeover`). Não é mais preciso tocar em "Atualizar o aplicativo" a cada versão. Testes em `scripts/atlas/offline.test.mjs`.
 - Repositório privado: o GitHub Pages saiu do ar (esperado) e `deploy-frontend.yml` virou **só manual**, para não falhar a cada push. O site de verdade (`laift.com.br`, Worker `laift-web`) e a API não dependem dele.

@@ -664,7 +664,7 @@
     log.id = 'lia-log';
     log.setAttribute('role', 'log');
     log.setAttribute('aria-live', 'polite');
-    var note = el(doc, 'p', 'lia-note', 'A Lia orienta e leva às telas; ela não altera seus dados.');
+    var note = el(doc, 'p', 'lia-note', 'A Lia orienta e leva às telas; ela não altera seus dados. Arraste a Lia (ou use Alt + setas) para mudar de lugar.');
     var moderation = modLib().createModeration(moderationContext(app, doc, composer.input, panel));
     [head.node, log, moderation.root, composer.form, note].forEach(function (node) { panel.appendChild(node); });
     doc.body.appendChild(launcher.button);
@@ -673,7 +673,7 @@
     ui = {
       app: app, doc: doc, launcher: launcher.button, panel: panel, log: log, input: composer.input, send: composer.send,
       messages: [], busy: false, privacyShown: false, researchOff: false, enabled: false, feedbackOn: false, open: false, lastToken: null, refreshId: 0, sendId: 0,
-      launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null, typers: [],
+      launcherFigure: launcher.figure, headFigure: head.figure, launcherLia: null, panelLia: null, waved: false, restTimer: null, typers: [], drag: root.AssistantDrag ? root.AssistantDrag.attach({ win: root, doc: doc, launcher: launcher.button, panel: panel, handle: head.node, note: note }) : null, // posição livre (assistant-drag.js, opcional)
       moderation: moderation, mood: moodLib().newSession(),
       hints: root.AssistantHints ? root.AssistantHints.createHints({ doc: doc, onOpen: openWithQuestion, flags: hintFlags }) : null,
     };
