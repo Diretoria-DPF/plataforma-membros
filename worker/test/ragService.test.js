@@ -227,15 +227,19 @@ describe('reindex com embedding (SQL simulado)', () => {
   });
 });
 
-describe('stripFiller — busca por trigramas sem palavras de pergunta', () => {
-  test('tira palavras de pergunta e de ligação e fica com o assunto', () => {
+describe('stripFiller — busca por trigramas sem palavras que não dizem o assunto', () => {
+  test('tira quantificadores de pergunta e fala de conversa', () => {
     expect(Rag.stripFiller('e quanto custa?')).toBe('custa');
-    expect(Rag.stripFiller('Como eu faço pra entrar no Atlas?')).toBe('entrar atlas');
-    expect(Rag.stripFiller('valeu, mas não entendi onde fica a biblioteca')).toBe('fica biblioteca');
+    expect(Rag.stripFiller('valeu, mas não entendi onde fica a biblioteca')).toBe('não onde fica biblioteca');
+  });
+
+  test('não mexe nas perguntas que já funcionam (que, é, como ficam)', () => {
+    expect(Rag.stripFiller('O que é o blog da LAIFT?')).toBe('que é blog laift');
+    expect(Rag.stripFiller('Como eu faço pra entrar no Atlas?')).toBe('como eu faço pra entrar no atlas');
   });
 
   test('sem palavra de assunto sobrando, usa a pergunta original; entrada estranha não quebra', () => {
-    expect(Rag.stripFiller('e como?')).toBe('e como?');
+    expect(Rag.stripFiller('valeu!')).toBe('valeu!');
     expect(Rag.stripFiller('')).toBe('');
     expect(Rag.stripFiller(null)).toBe('');
   });
