@@ -76,6 +76,7 @@
   <link rel="stylesheet" href="roles.css">
   <link rel="stylesheet" href="library.css">
   <link rel="stylesheet" href="selection.css">
+  <link rel="stylesheet" href="selection-admin.css">
   <link rel="stylesheet" href="agents-tutor.css">
   <link rel="stylesheet" href="memory.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
@@ -346,6 +347,11 @@
           <button type="button" data-panel="panel-admin-library">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 012-2h12v16H6a2 2 0 00-2 2z"/><path d="M4 19V5"/><path d="M8 7h6"/></svg>
             <span>Biblioteca</span>
+          </button>
+          <!-- Processo seletivo: painel da comissão (frontend/selection-admin.js). -->
+          <button type="button" data-panel="panel-admin-selection" data-scope="admin">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9"/></svg>
+            <span>Seleção</span>
           </button>
           <!-- Cargos funcionais (ADR 0010): conceder e retirar, com reautenticação. -->
           <button type="button" data-panel="panel-admin-roles">
@@ -1066,6 +1072,11 @@
           <h1 class="sr-only">Curadoria da Biblioteca</h1>
           <div id="admin-library-root"></div>
         </section>
+        <!-- Processo seletivo: painel da comissão; selection-admin.js monta por LaiftDom.h. -->
+        <section id="panel-admin-selection" class="hidden">
+          <h1 class="sr-only">Comissão do processo seletivo</h1>
+          <div id="selection-admin-root"></div>
+        </section>
         <footer class="site-credito">© 2026 LAIFT · desenvolvido por: <a href="https://dpflabs.com" target="_blank" rel="noopener noreferrer">dpflabs.com</a></footer>
       </main>
     </div>
@@ -1254,6 +1265,8 @@
   <script src="library-detail.js" defer></script>
   <script src="library.js" defer></script>
   <script src="selection.js" defer></script>
+  <!-- Painel da comissão do processo seletivo (só admin): mesmo LaiftDom. -->
+  <script src="selection-admin.js" defer></script>
   <script src="admin-library-extras.js" defer></script>
   <script src="admin-library-publicar.js" defer></script>
   <script src="admin-library-lote.js" defer></script>
