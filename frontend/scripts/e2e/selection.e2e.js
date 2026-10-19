@@ -6,33 +6,28 @@
 /**
  * selection.e2e.js — jornada do candidato no processo seletivo (frontend/selection.js), com a API simulada em memória.
  *  - o item "Processo seletivo" aparece no menu só para visitante e só com a flag selection_enabled;
- *  - aceite, perfil, cenário, questões, conduta, revisão e envio, no celular e no computador;
- *  - o passo a passo só abre etapas alcançadas; as questões já respondidas não voltam a ser editáveis;
+ *  - aceite, perfil, cenário, raciocínio, conduta, revisão e envio, no celular e no computador;
+ *  - o passo a passo só abre etapas alcançadas; as respostas salvas voltam preenchidas;
  *  - erros do servidor aparecem para a pessoa; a isca fica fora da tela; sem erros de JavaScript e sem falha de acessibilidade.
  */
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
 
-const OBJ = ['o01', 'o02', 'o03', 'o04', 'o05', 'o06', 'o07', 'o08'].map((id, i) => ({
-  id, area: 'Farmacocinética', stem: 'Questão ' + (i + 1) + ': qual alternativa está correta?',
-  options: [{ id: 'a', text: 'Alternativa A' }, { id: 'b', text: 'Alternativa B' }, { id: 'c', text: 'Alternativa C' }, { id: 'd', text: 'Alternativa D' }],
-}));
-const CND = ['c01', 'c02', 'c03'].map((id, i) => ({
-  id, title: 'Situação ' + (i + 1), situation: 'Descrição da situação de conduta ' + (i + 1) + '.',
-  options: [{ id: 'a', text: 'Atitude A' }, { id: 'b', text: 'Atitude B' }, { id: 'c', text: 'Atitude C' }, { id: 'd', text: 'Atitude D' }],
-}));
+const THK = ['t01', 't02', 't03', 't04'].map((id, i) => ({ id, title: 'Pergunta ' + (i + 1), prompt: 'Explique seu raciocínio na pergunta ' + (i + 1) + '.', min: 40, max: 600 }));
+const CND = ['c01', 'c02', 'c03'].map((id, i) => ({ id, title: 'Situação ' + (i + 1), situation: 'Descrição da situação de conduta ' + (i + 1) + '.', min: 40, max: 600 }));
 const CONTENT = {
   version: 'v1', courses: ['Farmácia', 'Biomedicina'], areas: ['Toxicologia', 'Farmacologia clínica'], days: ['seg', 'ter', 'qua'], shifts: ['manha', 'noite'],
   semesters: ['1', '2', '3', '4', '5', 'concluido'],
   scenario: { prompt: 'Escolha um ponto de partida e escreva sua análise.', hints: ['Cite a fonte.'], minChars: 400, maxChars: 2000 },
+  thinking: THK, conduct: CND,
   limits: { institution: 120, motivation: 400, why: 200, whyMin: 10, hoursMax: 40, areasMax: 4, minFillMinutes: 5 },
 };
-const ORDER = ['intro', 'profile', 'scenario', 'quiz', 'conduct', 'review'];
+const ORDER = ['intro', 'profile', 'scenario', 'thinking', 'conduct', 'review'];
 
 function fakeServer(options) {
   const opts = options || {};
   const state = { app: null, saves: [], honeypots: [] };
-  const dto = () => (state.app ? Object.assign({ quiz: { version: 'v1', objectives: OBJ, conduct: CND }, quizLocked: !!state.app.data.quiz }, state.app) : null);
+  const dto = () => (state.app ? Object.assign({}, state.app) : null);
   const overview = () => ({ success: true, enabled: true, open: opts.open !== false, windowDays: 7, batchEveryDays: 15, nextReviewOn: '2026-11-05', vacanciesNote: null, mine: state.app ? { status: state.app.status, step: state.app.step } : null });
   return {
     state,
@@ -41,7 +36,7 @@ function fakeServer(options) {
       apiSelectionOverview: () => overview(),
       apiSelectionGetMine: () => ({ success: true, application: dto(), content: CONTENT }),
       apiSelectionStart: () => {
-        if (!state.app) state.app = { id: 'app-1', status: 'draft', step: 'intro', startedAt: new Date().toISOString(), deadlineAt: new Date(Date.now() + 6.5 * 86400000).toISOString(), submittedAt: null, receiptCode: null, data: {}, result: null };
+        if (!state.app) state.app = { id: 'app-1', status: 'draft', step: 'intro', startedAt: new Date().toISOString(), deadlineAt: new Date(Date.now() + 6.5 * 86400000).toISOString(), submittedAt: null, receiptCode: null, data: {} };
         return { success: true, application: dto(), content: CONTENT };
       },
       apiSelectionSaveStep: (args) => {
@@ -56,7 +51,6 @@ function fakeServer(options) {
       },
       apiSelectionSubmit: () => {
         state.app.status = 'submitted'; state.app.step = 'done'; state.app.receiptCode = 'LAIFT-ABCD2345';
-        state.app.result = { objectives: { correct: 6, total: 8 }, conduct: { points: 5, max: 6 } };
         state.app.submittedAt = new Date().toISOString();
         return { success: true, message: 'Inscrição enviada. Guarde o comprovante.', application: dto() };
       },
@@ -89,7 +83,7 @@ async function jornada(rotulo, viewport) {
     await page.click('#sel-start');
     await page.waitForSelector('[data-sel-step="intro"]');
     check((await page.locator('.sel-step[aria-current="step"]').innerText()).includes('Aceite'), `${rotulo}: o passo a passo marca a etapa atual`);
-    check(await page.locator('.sel-step:has-text("Questões")').isDisabled(), `${rotulo}: etapas futuras ficam desabilitadas`);
+    check(await page.locator('.sel-step:has-text("Seu raciocínio")').isDisabled(), `${rotulo}: etapas futuras ficam desabilitadas`);
     const isca = await page.locator('.sel-ot').boundingBox();
     check(!isca || isca.x < 0 || isca.width <= 1, `${rotulo}: a isca fica fora da tela`);
 
@@ -117,28 +111,28 @@ async function jornada(rotulo, viewport) {
     await page.fill('#sel-scenario', text(500));
     check(/de 2000 caracteres/.test(await page.locator('#sel-counter').innerText()), `${rotulo}: contador ok dentro do limite`);
     await page.click('#selection-root button[type="submit"]');
-    await page.waitForSelector('[data-sel-step="quiz"]');
+    await page.waitForSelector('[data-sel-step="thinking"]');
 
-    check((await page.locator('.sel-question').count()) === 8, `${rotulo}: oito questões objetivas`);
+    check((await page.locator('.sel-question').count()) === 4, `${rotulo}: quatro perguntas de raciocínio`);
+    await page.fill('#thinking-t01', 'curto');
+    check(/no mínimo/.test(await page.locator('#thinking-t01-counter').innerText()), `${rotulo}: o contador de cada pergunta avisa que falta texto`);
     await page.click('#selection-root button[type="submit"]');
-    check(/Responda todas/.test(await page.locator('.sel-live').innerText()), `${rotulo}: pede para responder todas antes de salvar`);
-    for (const q of OBJ) await page.check(`input[name="q-${q.id}"][value="b"]`);
-    await axeGate(page, `${rotulo}: questões`);
+    check(/Revise a resposta/.test(await page.locator('.sel-live').innerText()), `${rotulo}: pede respostas completas antes de salvar`);
+    for (const q of THK) await page.fill(`#thinking-${q.id}`, text(120));
+    await axeGate(page, `${rotulo}: raciocínio`);
     await page.click('#selection-root button[type="submit"]');
     await page.waitForSelector('[data-sel-step="conduct"]');
 
-    for (const q of CND) {
-      await page.check(`input[name="best-${q.id}"][value="a"]`);
-      await page.check(`input[name="worst-${q.id}"][value="d"]`);
-      await page.fill(`#why-${q.id}`, 'Porque é o mais responsável e transparente.');
-    }
+    check((await page.locator('.sel-question').count()) === 3, `${rotulo}: três situações de conduta`);
+    for (const q of CND) await page.fill(`#conduct-${q.id}`, text(120));
+    await axeGate(page, `${rotulo}: conduta`);
     await page.click('#selection-root button[type="submit"]');
     await page.waitForSelector('[data-sel-step="review"]');
     check((await page.locator('.sel-sum').count()) === 5, `${rotulo}: a revisão lista as cinco partes`);
 
-    await page.click('.sel-step:has-text("Questões")');
-    await page.waitForSelector('[data-sel-step="quiz"]');
-    check(/só podem ser respondidas uma vez|já foram registradas/.test(await page.locator('.sel-intro').innerText()), `${rotulo}: questões respondidas não voltam a ser editáveis`);
+    await page.click('.sel-step:has-text("Seu raciocínio")');
+    await page.waitForSelector('[data-sel-step="thinking"]');
+    check((await page.inputValue('#thinking-t01')).length === 120, `${rotulo}: as respostas salvas voltam preenchidas`);
     await page.click('.sel-step:has-text("Revisão")');
     await page.waitForSelector('[data-sel-step="review"]');
 
@@ -146,10 +140,10 @@ async function jornada(rotulo, viewport) {
     await page.waitForSelector('[data-sel-step="status"]');
     const status = await page.locator('#selection-root').innerText();
     check(/LAIFT-ABCD2345/.test(status), `${rotulo}: mostra o comprovante`);
-    check(/6 de 8/.test(status) && /5 de 6/.test(status), `${rotulo}: mostra o resumo de apoio (sem eliminar ninguém)`);
+    check(!/Resumo de apoio|objetivas/.test(status), `${rotulo}: sem resultado automático nem objetivas`);
     check((await page.locator('.sel-timeline li').count()) === 4, `${rotulo}: linha do tempo do andamento`);
     await axeGate(page, `${rotulo}: status`);
-    check(JSON.stringify(server.state.saves) === JSON.stringify(['intro', 'profile', 'scenario', 'scenario', 'quiz', 'conduct']), `${rotulo}: etapas salvas em ordem (${server.state.saves.join(',')})`);
+    check(JSON.stringify(server.state.saves) === JSON.stringify(['intro', 'profile', 'scenario', 'scenario', 'thinking', 'conduct']), `${rotulo}: etapas salvas em ordem (${server.state.saves.join(',')})`);
     check(server.state.honeypots.every((v) => v === ''), `${rotulo}: a isca nunca é preenchida`);
     check(app.errors.length === 0, `${rotulo}: sem erros de JavaScript` + (app.errors.length ? ': ' + app.errors.join(' | ') : ''));
   } finally {

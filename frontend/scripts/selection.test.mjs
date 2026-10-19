@@ -20,7 +20,7 @@ const DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse('2026-10-20T12:00:00Z');
 
 test('etapas: ordem e índices', () => {
-  assert.deepEqual(Sel.STEPS.map((s) => s.id), ['intro', 'profile', 'scenario', 'quiz', 'conduct', 'review']);
+  assert.deepEqual(Sel.STEPS.map((s) => s.id), ['intro', 'profile', 'scenario', 'thinking', 'conduct', 'review']);
   assert.equal(Sel.stepIndex('scenario'), 2);
   assert.equal(Sel.stepIndex('nada'), -1);
 });
@@ -63,9 +63,9 @@ test('passo a passo: só abre o que já foi alcançado; revisão só com tudo pr
   const draft = { status: 'draft', step: 'scenario', data: { intro: {}, profile: {} } };
   assert.equal(Sel.canVisit('intro', draft), true);
   assert.equal(Sel.canVisit('scenario', draft), true);
-  assert.equal(Sel.canVisit('quiz', draft), false);
+  assert.equal(Sel.canVisit('thinking', draft), false);
   assert.equal(Sel.canVisit('review', draft), false);
-  const full = { status: 'draft', step: 'review', data: { intro: 1, profile: 1, scenario: 1, quiz: 1, conduct: 1 } };
+  const full = { status: 'draft', step: 'review', data: { intro: 1, profile: 1, scenario: 1, thinking: 1, conduct: 1 } };
   assert.equal(Sel.canVisit('review', full), true);
   assert.equal(Sel.canVisit('intro', { ...full, status: 'submitted' }), false);
   assert.equal(Sel.canVisit('intro', null), false);

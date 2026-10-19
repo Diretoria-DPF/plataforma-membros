@@ -1,0 +1,77 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Painel da comissão (frontend/selection-admin.js). Só tokens do tema, alvos de toque de 44 px e foco visível. */
+
+.sa-card {
+  display: grid; gap: 14px; max-width: 820px; margin: 0 auto; padding: 20px 16px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow);
+}
+.sa-title { margin: 0; font-size: 1.3rem; line-height: 1.25; outline: none; overflow-wrap: anywhere; }
+.sa-hint, .sa-count { margin: 0; font-size: 0.875rem; color: var(--muted); }
+.sa-empty { margin: 0; padding: 18px 14px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius-md); }
+.sa-error { margin: 0; padding: 12px 14px; border-radius: var(--radius-md); background: var(--danger-soft); color: var(--danger); font-weight: 600; }
+.sa-live { min-height: 1.2em; margin: 0; }
+
+.sa-counters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sa-counter {
+  display: grid; gap: 2px; justify-items: start; width: auto; min-height: 64px; padding: 10px 12px; text-align: left;
+  background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md);
+}
+.sa-counter__n { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+.sa-counter__l { font-size: 0.8125rem; color: var(--muted); font-weight: 600; }
+.sa-counter.is-active { background: var(--primary-soft); border-color: var(--primary); }
+.sa-counter.is-active .sa-counter__l { color: var(--primary-strong); }
+
+.sa-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.sa-bar button, .sa-actions button, .sa-back, .sa-toggle { width: auto; min-height: 44px; padding: 0 16px; }
+
+.sa-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.sa-item {
+  display: grid; gap: 6px; width: 100%; min-height: 44px; padding: 12px 14px; text-align: left;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md);
+}
+.sa-item:hover { border-color: var(--primary); }
+.sa-item__name { font-weight: 700; overflow-wrap: anywhere; }
+.sa-item__meta { margin: 0; font-size: 0.8125rem; color: var(--muted); font-weight: 500; overflow-wrap: anywhere; }
+
+.sa-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.sa-tag { padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+.sa-tag--status { background: var(--primary-soft); color: var(--primary-strong); border-color: transparent; }
+.sa-tag--ai { color: var(--primary-strong); }
+.sa-tag--warn, .sa-tag--appeal { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+
+.sa-section { display: grid; gap: 8px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.sa-section h3, .sa-section h4 { margin: 0; font-size: 1rem; }
+.sa-section h4 { font-size: 0.875rem; color: var(--muted); }
+.sa-section ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.sa-ai { background: var(--surface-alt); }
+.sa-ai-note { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--primary-strong); }
+.sa-summary { margin: 0; }
+.sa-answers { display: grid; gap: 10px; margin: 0; }
+.sa-answer { display: grid; gap: 2px; }
+.sa-answer dt { font-weight: 700; font-size: 0.875rem; }
+.sa-answer dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.sa-label { font-weight: 700; font-size: 0.9rem; }
+.sa-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sa-primary { font-weight: 700; }
+
+.sa-settings { display: grid; gap: 10px; }
+.sa-form { display: grid; gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.sa-form[hidden] { display: none; }
+.sa-field { display: grid; gap: 6px; }
+.sa-field label { font-weight: 700; font-size: 0.9rem; }
+.sa-check { display: flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 700; }
+.sa-check input { flex: none; width: 22px; height: 22px; accent-color: var(--primary); }
+
+.sa-counter:focus-visible, .sa-item:focus-visible, .sa-bar button:focus-visible, .sa-actions button:focus-visible,
+.sa-back:focus-visible, .sa-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+@media (min-width: 720px) {
+  .sa-card { padding: 28px; }
+  .sa-counters { grid-template-columns: repeat(4, 1fr); }
+}

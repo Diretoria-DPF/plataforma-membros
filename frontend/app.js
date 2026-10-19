@@ -161,6 +161,7 @@
       if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
       if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
       if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
+      if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
       if (window.LaiftRoles) window.LaiftRoles.apply(document, null); // menu Gestão e telas por cargo somem com a sessão
     if (window.LaiftAdminUsage) window.LaiftAdminUsage.reset(); // uso da plataforma (DAT-01): idem
       resetLibraryModules();
@@ -953,6 +954,7 @@
     if (window.LaiftAdminAi) window.LaiftAdminAi.reset();
     if (window.LaiftAdminModeration) window.LaiftAdminModeration.reset(); // moderação da Lia: some da tela com a sessão
     if (window.LaiftAdminRoles) window.LaiftAdminRoles.reset();
+    if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.reset();
     if (window.LaiftRoles) window.LaiftRoles.apply(document, null); // menu Gestão e telas por cargo somem com a sessão
     if (window.LaiftAdminUsage) window.LaiftAdminUsage.reset(); // uso da plataforma (DAT-01): idem
     resetLibraryModules();
@@ -1190,6 +1192,7 @@
     'panel-library': function () { if (window.LaiftLibrary) window.LaiftLibrary.loadPanel(); },
     // Processo seletivo (selection.js): jornada do candidato; só aparece no menu de quem ainda não é membro.
     'panel-selection': function () { if (window.LaiftSelection) window.LaiftSelection.load(window.App, document); },
+    'panel-admin-selection': function () { if (window.LaiftSelectionAdmin) window.LaiftSelectionAdmin.load(window.App, document); },
     'panel-admin-library': function () { if (window.LaiftAdminLibrary) window.LaiftAdminLibrary.load(window.App); },
     // Cargos funcionais (ADR 0010): só o admin concede e retira (frontend/admin-roles.js).
     'panel-admin-roles': function () { if (window.LaiftAdminRoles) window.LaiftAdminRoles.load(window.App); },

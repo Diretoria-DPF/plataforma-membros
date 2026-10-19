@@ -4,7 +4,7 @@
  * Licença proprietária: ver LICENSE na raiz do repositório.
  */
 // Processo seletivo dentro da plataforma (painel "Processo seletivo"; docs/planos/PROCESSO-SELETIVO.md).
-// A pessoa percorre: aceite, perfil, análise de cenário, questões objetivas, situações de conduta, revisão e envio.
+// A pessoa percorre: aceite, perfil, análise de cenário, perguntas de raciocínio, situações de conduta, revisão e envio.
 // Tudo é validado de novo no servidor (Worker); aqui só se guia e se mostra. Sem innerHTML (LaiftDom.h) e sem
 // estilo inline (selection.css). Nada é guardado no navegador: o rascunho vive no servidor, por perfil.
 // As funções puras são testadas em Node (scripts/selection.test.mjs). Expõe window.LaiftSelection.
@@ -15,7 +15,7 @@
     { id: 'intro', label: 'Aceite' },
     { id: 'profile', label: 'Perfil' },
     { id: 'scenario', label: 'Cenário' },
-    { id: 'quiz', label: 'Questões' },
+    { id: 'thinking', label: 'Seu raciocínio' },
     { id: 'conduct', label: 'Conduta' },
     { id: 'review', label: 'Revisão' },
   ];
@@ -89,7 +89,7 @@
   function canVisit(id, application) {
     if (!application || application.status !== 'draft') return false;
     var data = application.data || {};
-    if (id === 'review') return !!(data.intro && data.profile && data.scenario && data.quiz && data.conduct);
+    if (id === 'review') return !!(data.intro && data.profile && data.scenario && data.thinking && data.conduct);
     return stepIndex(id) <= stepIndex(application.step);
   }
 
@@ -185,7 +185,7 @@
     var review = formatReviewDate(ov.nextReviewOn);
     var points = [
       ['Leva cerca de 25 minutos', 'Você pode parar e voltar: o rascunho fica salvo.'],
-      ['Cinco partes', 'Aceite, perfil, análise de cenário, questões e situações de conduta.'],
+      ['Cinco partes', 'Aceite, perfil, análise de cenário, seu raciocínio e situações de conduta.'],
       ['Sem eliminação automática', 'A IA ajuda a organizar a leitura; quem decide é a comissão.'],
       ['Prazo para concluir', 'Depois de começar, você tem ' + (ov.windowDays || 7) + ' dias. ' + (review ? 'Próxima análise da comissão: ' + review + '.' : 'A comissão analisa as inscrições em lotes.')],
     ];
@@ -300,52 +300,52 @@
     return frame('Análise de cenário', 'Mostre como você pensa. A resposta tem de ser sua.', f, 'scenario');
   }
 
-  function renderQuiz() {
-    var app = ui.state.application;
-    var quiz = app.quiz;
-    if (app.quizLocked) {
-      return frame('Questões objetivas', 'Suas respostas já foram registradas. Elas só podem ser respondidas uma vez.', [
-        h('div', { className: 'sel-actions' }, [backButton('scenario'), button('Continuar', 'sel-primary', function () { go('conduct'); })]),
-      ], 'quiz');
-    }
-    var f = form([
-      h('p', { className: 'sel-hint' }, 'São ' + quiz.objectives.length + ' questões. O resultado serve de apoio à comissão e não elimina ninguém.'),
-      h('div', { className: 'sel-questions' }, quiz.objectives.map(function (q, i) {
-        return h('fieldset', { className: 'sel-fieldset sel-question' }, [h('legend', null, (i + 1) + '. ' + q.stem), choices('q-' + q.id, 'radio', q.options, [])]);
-      })),
-      h('p', { className: 'sel-hint' }, 'Atenção: depois de salvar, não dá para alterar as respostas desta etapa.'),
-      h('div', { className: 'sel-actions' }, [backButton('scenario'), submitButton('Salvar respostas')]),
+  /** Perguntas abertas (raciocínio e conduta): um campo por pergunta, com contador e mínimo/máximo. */
+  function openQuestions(step, list, bodyOf, saved, prev, submitLabel) {
+    var areas = {};
+    var blocks = list.map(function (q, i) {
+      var id = step + '-' + q.id;
+      var area = h('textarea', { id: id, name: q.id, rows: 6, maxlength: q.max + 200, 'aria-describedby': id + '-counter' }, saved[q.id] || '');
+      var counter = h('p', { className: 'sel-counter', id: id + '-counter' }, '');
+      var update = function () { var info = charInfo(area.value.length, q.min, q.max); counter.textContent = info.text; counter.className = 'sel-counter is-' + info.state; };
+      area.addEventListener('input', update);
+      update();
+      areas[q.id] = area;
+      return h('div', { className: 'sel-question' }, [
+        h('p', { className: 'sel-prompt' }, (i + 1) + '. ' + q.title),
+        h('p', { className: 'sel-situation' }, bodyOf(q)),
+        field('Sua resposta', area, 'Entre ' + q.min + ' e ' + q.max + ' caracteres. Sem dados de saúde nem contatos.', id),
+        counter,
+      ]);
+    });
+    return form([
+      h('div', { className: 'sel-questions' }, blocks),
+      h('div', { className: 'sel-actions' }, [backButton(prev), submitButton(submitLabel)]),
     ], function (f2) {
       var answers = {};
-      var missing = false;
-      quiz.objectives.forEach(function (q) { var v = picked(f2, 'q-' + q.id)[0]; if (v) answers[q.id] = v; else missing = true; });
-      if (missing) { say('Responda todas as questões antes de continuar.', 'error'); return; }
-      saveAndNext('quiz', { answers: answers }, f2);
+      var bad = null;
+      list.forEach(function (q) {
+        var v = areas[q.id].value;
+        answers[q.id] = v;
+        if (!bad && charInfo(v.length, q.min, q.max).state !== 'ok') bad = q;
+      });
+      if (bad) { say('Revise a resposta "' + bad.title + '": ela precisa ter entre ' + bad.min + ' e ' + bad.max + ' caracteres.', 'error'); areas[bad.id].focus(); return; }
+      saveAndNext(step, { answers: answers }, f2);
     });
-    return frame('Questões objetivas', 'Escolha uma alternativa em cada questão.', f, 'quiz');
+  }
+
+  function renderThinking() {
+    var list = ui.state.content.thinking || [];
+    var saved = (((ui.state.application.data || {}).thinking) || {}).answers || {};
+    var f = openQuestions('thinking', list, function (q) { return q.prompt; }, saved, 'scenario', 'Salvar e continuar');
+    return frame('Seu raciocínio', 'Sem certo ou errado: queremos entender como você pensa. Responda com suas palavras, em poucas linhas.', [f], 'thinking');
   }
 
   function renderConduct() {
-    var app = ui.state.application;
-    var saved = ((app.data || {}).conduct || {}).answers || {};
-    var f = form([
-      h('div', { className: 'sel-questions' }, app.quiz.conduct.map(function (q, i) {
-        var a = saved[q.id] || {};
-        return h('fieldset', { className: 'sel-fieldset sel-question' }, [
-          h('legend', null, (i + 1) + '. ' + q.title),
-          h('p', { className: 'sel-situation' }, q.situation),
-          h('p', { className: 'sel-sub' }, 'A MELHOR atitude:'), choices('best-' + q.id, 'radio', q.options, [a.best]),
-          h('p', { className: 'sel-sub' }, 'A PIOR atitude:'), choices('worst-' + q.id, 'radio', q.options, [a.worst]),
-          field('Por que a melhor? (uma frase)', h('textarea', { id: 'why-' + q.id, name: 'why-' + q.id, rows: 2, maxlength: ui.state.content.limits.why }, a.why || ''), null, 'why-' + q.id),
-        ]);
-      })),
-      h('div', { className: 'sel-actions' }, [backButton('quiz'), submitButton('Salvar e revisar')]),
-    ], function (f2) {
-      var answers = {};
-      app.quiz.conduct.forEach(function (q) { answers[q.id] = { best: picked(f2, 'best-' + q.id)[0], worst: picked(f2, 'worst-' + q.id)[0], why: f2.querySelector('#why-' + q.id).value }; });
-      saveAndNext('conduct', { answers: answers }, f2);
-    });
-    return frame('Situações de conduta', 'Em cada situação, escolha a melhor e a pior atitude e explique em uma frase.', f, 'conduct');
+    var list = ui.state.content.conduct || [];
+    var saved = (((ui.state.application.data || {}).conduct) || {}).answers || {};
+    var f = openQuestions('conduct', list, function (q) { return q.situation; }, saved, 'thinking', 'Salvar e revisar');
+    return frame('Situações de conduta', 'Em cada situação, conte o que você faria e por quê. Não há resposta perfeita: vale a sua honestidade.', [f], 'conduct');
   }
 
   function summaryRow(label, value, step) {
@@ -360,7 +360,7 @@
         summaryRow('Aceite', 'Edital, privacidade e triagem por IA aceitos', 'intro'),
         summaryRow('Perfil', [p.course, p.institution, p.semester === 'concluido' ? 'concluído' : p.semester + 'º sem.', (p.hoursPerWeek || 0) + ' h/semana'].filter(Boolean).join(' · '), 'profile'),
         summaryRow('Análise de cenário', ((d.scenario || {}).text || '').length + ' caracteres', 'scenario'),
-        summaryRow('Questões objetivas', d.quiz ? 'Respondidas' : 'Pendentes', 'quiz'),
+        summaryRow('Seu raciocínio', d.thinking ? 'Respondido' : 'Pendente', 'thinking'),
         summaryRow('Conduta', d.conduct ? 'Respondidas' : 'Pendentes', 'conduct'),
       ]),
       h('p', { className: 'sel-hint' }, 'Depois de enviar, não dá para editar. Você recebe um comprovante e acompanha o andamento aqui.'),
@@ -384,8 +384,6 @@
     }
     var body = [];
     if (app.receiptCode) body.push(h('p', { className: 'sel-receipt' }, ['Comprovante: ', h('strong', null, app.receiptCode)]));
-    var r = app.result;
-    if (r) body.push(h('p', { className: 'sel-result' }, 'Resumo de apoio: ' + r.objectives.correct + ' de ' + r.objectives.total + ' nas questões objetivas e ' + r.conduct.points + ' de ' + r.conduct.max + ' nas situações de conduta. Isso não elimina ninguém: a comissão lê tudo.'));
     var review = formatReviewDate((ui.state.overview || {}).nextReviewOn);
     if (app.status === 'submitted' || app.status === 'in_review' || app.status === 'interview') {
       body.push(h('ol', { className: 'sel-timeline' }, timeline(app.status).map(function (t) { return h('li', { className: 'is-' + t.state }, t.label); })));
@@ -407,7 +405,7 @@
     });
   }
 
-  var VIEWS = { welcome: renderWelcome, intro: renderIntro, profile: renderProfile, scenario: renderScenario, quiz: renderQuiz, conduct: renderConduct, review: renderReview, status: renderStatus };
+  var VIEWS = { welcome: renderWelcome, intro: renderIntro, profile: renderProfile, scenario: renderScenario, thinking: renderThinking, conduct: renderConduct, review: renderReview, status: renderStatus };
 
   function go(view, notice) {
     var app = ui.state.application;

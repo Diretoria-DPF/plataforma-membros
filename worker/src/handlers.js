@@ -48,6 +48,7 @@ import * as ClinicalService from './services/clinicalService.js';
 import * as ClinicalSimService from './services/clinicalSimService.js';
 // Lia, guia da plataforma (orienta e navega; nunca altera dados)
 import * as SelectionService from './services/selectionService.js';
+import * as SelectionCommittee from './services/selectionCommitteeService.js';
 import * as AssistantService from './services/assistantService.js';
 // Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
 import * as AssistantFeedbackService from './services/assistantFeedbackService.js';
@@ -174,6 +175,12 @@ export const API_REGISTRY = {
   apiSelectionSaveStep: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.saveStep(sql, identity, asInput(input), cid)),
   apiSelectionSubmit: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.submit(sql, identity, asInput(input), cid)),
   apiSelectionWithdraw: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.withdraw(sql, identity, cid)),
+  apiSelectionRequestReview: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionService.requestReview(sql, identity, asInput(input), cid)),
+  apiSelectionCommitteeOverview: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => SelectionCommittee.overview(sql, identity, asInput(input))),
+  apiSelectionCommitteeGet: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => SelectionCommittee.getApplication(sql, identity, asInput(input))),
+  apiSelectionCommitteeTriage: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.triage(sql, env, identity, asInput(input), cid)),
+  apiSelectionCommitteeDecide: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.decide(sql, env, identity, asInput(input), cid)),
+  apiSelectionCommitteeSettings: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.saveSettings(sql, identity, asInput(input), cid)),
   // Lia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
   apiAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.submitFeedback(sql, identity, asInput(input), cid)),
   apiAdminListAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.listFeedback(sql, identity, asInput(input))),

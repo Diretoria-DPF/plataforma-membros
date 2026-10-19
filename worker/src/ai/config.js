@@ -47,6 +47,8 @@ export const FEATURE_CONFIG = {
   assistant: { tier: 'fast', maxTokens: 600, temperature: 0.4, reasoningEffort: 'low', attemptTimeoutMs: 15000, totalBudgetMs: 20000, json: false },
   // Agentes (ADR 0007): tier, temperatura e teto acompanham a persona (worker/agents/personas); um teste confere.
   agent_tutor: { tier: 'fast', maxTokens: 700, temperature: 0.3, reasoningEffort: 'low', attemptTimeoutMs: 20000, totalBudgetMs: 25000, json: false },
+  // Triagem do processo seletivo: resumo em JSON, modelo rápido (só organiza a leitura da comissão).
+  selection_triage: { tier: 'fast', maxTokens: 900, temperature: 0.2, reasoningEffort: 'low', attemptTimeoutMs: 25000, totalBudgetMs: 40000, json: true },
   agent_curator: { tier: 'smart', maxTokens: 1200, temperature: 0.4, reasoningEffort: 'low', attemptTimeoutMs: 25000, totalBudgetMs: 40000, json: false },
 };
 
