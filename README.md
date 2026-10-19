@@ -106,7 +106,7 @@ Possibilidades em avaliação, sem prazo definido: novas formas de login, assist
 
 ## Autoria e projeto
 
-Criado por **Daniel Pires Francisco** (Daniel P Francisco), Presidente da LAIFT e graduando em Farmácia na UNINASSAU Salvador.
+Criado por **Daniel Pires Francisco**, Presidente da LAIFT e graduando em Farmácia na UNINASSAU Salvador.
 
 - Portfólio, currículo e serviços: https://dpflabs.com
 - Plataforma LAIFT: https://laift.com.br
