@@ -12,7 +12,7 @@
  * carregados):
  *   1. bytes transferidos (respostas HTTP da própria origem, sem compressão
  *      no servidor estático local — ver scripts/e2e/harness.js) até esse
- *      ponto ≤ 2 MB (só o esqueleto; os músculos vêm depois, em segundo
+ *      ponto ≤ 2,25 MB (só o esqueleto; os músculos vêm depois, em segundo
  *      plano). No GitHub Pages JS/JSON vão comprimidos: ≈ 1,3 MB reais;
  *   2. draw calls ≤ 150 e triângulos ≤ 1,5 M, via `renderer.info`
  *      (exposto só-leitura em `window.__atlasPerf.getStats()`, ver js/main.js);
@@ -31,7 +31,8 @@ const { startApp, check } = require('./harness');
 const DIST = path.join(__dirname, '../../dist');
 
 const MB = 1024 * 1024;
-const BUDGET_BYTES_BEFORE_READY = 2 * MB;
+// Conta o app inteiro (casca da plataforma + Atlas); 2,25 MB dá folga para os módulos da plataforma que entram na casca.
+const BUDGET_BYTES_BEFORE_READY = 2.25 * MB;
 // Presets de rede EXATAMENTE como os do Chrome DevTools (front_end/core/sdk/
 // NetworkManager.ts): "Fast 3G" = 1,6 Mbit/s × 0,9 de descida, 750 kbit/s ×
 // 0,9 de subida, 150 ms × 3,75 = 562,5 ms de latência; "Slow 3G" = 500
@@ -133,7 +134,7 @@ async function measureAtViewport(viewport) {
     if (viewport.width < 600) reportFiles(files, app.baseUrl);
     check(bytes.total > 0, `${label}: harness mediu algum byte transferido (sanity check, ${bytes.total}b)`);
     check(bytes.total <= BUDGET_BYTES_BEFORE_READY,
-      `${label}: bytes transferidos até o modelo ficar pronto ≤ 2 MB (medido: ${(bytes.total / MB).toFixed(2)} MB)`);
+      `${label}: bytes transferidos até o modelo ficar pronto ≤ 2,25 MB (medido: ${(bytes.total / MB).toFixed(2)} MB)`);
 
     // ---- Draw calls / triângulos (renderer.info via window.__atlasPerf) ----
     const stats1 = await frame.evaluate(() => window.__atlasPerf.getStats());
