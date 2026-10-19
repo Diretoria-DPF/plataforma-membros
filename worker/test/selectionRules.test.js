@@ -35,12 +35,12 @@ describe('banco v1', () => {
   test('correção das objetivas e da conduta', () => {
     const pick = B.pickForSeed(SEED);
     const all = Object.fromEntries(pick.objectives.map((id) => [id, B.objectiveById(id).answer]));
-    expect(B.gradeObjectives(SEED, all)).toMatchObject({ correct: 8, total: 8 });
-    expect(B.gradeObjectives(SEED, {})).toMatchObject({ correct: 0, total: 8 });
-    expect(B.gradeObjectives(SEED, { zzz: 'a', ...all }).correct).toBe(8);
+    expect(B.gradeObjectives(SEED, all)).toMatchObject({ correct: 10, total: 10 });
+    expect(B.gradeObjectives(SEED, {})).toMatchObject({ correct: 0, total: 10 });
+    expect(B.gradeObjectives(SEED, { zzz: 'a', ...all }).correct).toBe(10);
     const good = Object.fromEntries(pick.conduct.map((id) => [id, { best: B.conductById(id).best, worst: B.conductById(id).worst }]));
-    expect(B.gradeConduct(SEED, good)).toEqual({ points: 6, max: 6 });
-    expect(B.gradeConduct(SEED, null)).toEqual({ points: 0, max: 6 });
+    expect(B.gradeConduct(SEED, good)).toEqual({ points: 10, max: 10 });
+    expect(B.gradeConduct(SEED, null)).toEqual({ points: 0, max: 10 });
   });
 });
 

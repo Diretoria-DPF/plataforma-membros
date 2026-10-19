@@ -16,7 +16,7 @@
   var MENSAGENS = {
     aberto: 'Processo seletivo aberto',
     fechado: 'Inscrições fechadas no momento. Acompanhe @laift.liga.',
-    continuo: 'Inscrições abertas o ano todo. A comissão analisa em lotes.',
+    continuo: 'Inscrições abertas',
     erro: 'Não foi possível verificar agora.'
   };
 
@@ -96,7 +96,7 @@
   function datasContinuas(visao) {
     var proxima = diaMes(visao.nextReviewOn);
     return {
-      inscricoes: 'Inscrições abertas o ano todo',
+      inscricoes: 'Inscrições abertas',
       analise: proxima ? 'Em lotes · próxima análise: ' + proxima : 'Em lotes, a cada ' + visao.batchEveryDays + ' dias',
       resultado: 'Individual, por e-mail e na plataforma'
     };

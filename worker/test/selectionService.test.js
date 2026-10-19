@@ -106,7 +106,7 @@ describe('jornada do candidato', () => {
   test('a prova que o candidato recebe NÃO traz gabarito; as respostas são só dele', async () => {
     const { application } = await Selection.start(sql, visitor, CID);
     expect(JSON.stringify(application)).not.toMatch(/"answer"|"best"|"worst"|_signals/);
-    expect(application.quiz.objectives).toHaveLength(8);
+    expect(application.quiz.objectives).toHaveLength(10);
     await Selection.start(sql, other, CID);
     const mine = await Selection.getMine(sql, other);
     expect(mine.application.id).not.toBe(application.id);
@@ -160,7 +160,7 @@ describe('envio', () => {
     const sent = await Selection.submit(sql, visitor, {}, CID);
     expect(sent.application).toMatchObject({ status: 'submitted', step: 'done' });
     expect(sent.application.receiptCode).toMatch(/^LAIFT-[A-HJ-NP-Z2-9]{8}$/);
-    expect(sent.application.result).toMatchObject({ objectives: { correct: 8, total: 8 }, conduct: { points: 6, max: 6 } });
+    expect(sent.application.result).toMatchObject({ objectives: { correct: 10, total: 10 }, conduct: { points: 10, max: 10 } });
     const again = await Selection.submit(sql, visitor, {}, CID);
     expect(again.alreadySubmitted).toBe(true);
     expect(again.application.receiptCode).toBe(sent.application.receiptCode);

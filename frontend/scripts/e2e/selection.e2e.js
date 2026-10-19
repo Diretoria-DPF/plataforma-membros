@@ -196,7 +196,7 @@ async function paginaPublica() {
     await app.page.goto(app.baseUrl + 'processo-seletivo.html');
     await app.page.waitForFunction(() => document.documentElement.getAttribute('data-processo') === 'aberto', null, { timeout: 10000 });
     const texto = await app.page.locator('main').innerText();
-    check(/Inscrições abertas o ano todo/.test(texto), 'página pública: mostra "inscrições abertas o ano todo"');
+    check(/Inscrições abertas/.test(texto), 'página pública: mostra "Inscrições abertas"');
     check(/próxima análise: 05[/]11/i.test(texto), 'página pública: mostra a próxima análise (05/11)');
     check(!/Datas: a divulgar/.test(texto), 'página pública: sem "a divulgar" nas datas');
     const cta = app.page.locator('#liga-cta-inscricao');
