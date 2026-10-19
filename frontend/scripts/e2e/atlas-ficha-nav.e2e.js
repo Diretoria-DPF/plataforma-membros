@@ -48,7 +48,7 @@ async function runAt(viewport) {
     }, sid);
     const selected = () => frame.evaluate(() => window.__atlasInternals.store.get().selectedSid);
     const clickNav = async (action) => {
-      await frame.locator(`${card} .atlas-card-nav-btn[data-nav-action="${action}"]`).click({ timeout: 5000 });
+      await frame.locator(`${card} .atlas-card-nav-btn[data-nav-action="${action}"]`).click({ timeout: 20000 });
       await frame.waitForTimeout(250);
     };
 

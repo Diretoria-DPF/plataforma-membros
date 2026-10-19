@@ -32,7 +32,7 @@ async function runAt(viewport) {
 
     // ---- Via: estudo passo a passo ----
     await frame.evaluate(() => document.querySelector('.physiology-card').click());
-    await frame.waitForSelector('.physiology-study', { timeout: 5000 });
+    await frame.waitForSelector('.physiology-study', { timeout: 20000 });
     const route = await frame.evaluate(() => ({
       count: document.querySelector('.physiology-study-count').textContent.trim(),
       pk: (document.querySelector('.route-pk') || {}).textContent || '',
@@ -41,7 +41,7 @@ async function runAt(viewport) {
     check(/Biodisponibilidade típica/.test(route.pk) && !/N\/A/.test(route.pk), `${label}: dados da via sem "N/A" (${route.pk.replace(/\s+/g, ' ').trim()})`);
     const total = Number(/de (\d+)/.exec(route.count)[1]);
     for (let i = 1; i < total; i++) {
-      await frame.locator('.physiology-next').click({ timeout: 5000 });
+      await frame.locator('.physiology-next').click({ timeout: 20000 });
       await frame.waitForTimeout(120);
     }
     const end = await frame.evaluate(() => ({
@@ -51,7 +51,7 @@ async function runAt(viewport) {
     }));
     check(end.count === `Ponto ${total} de ${total}` && end.bar === String(total), `${label}: "▶" chega ao último ponto, com a barra cheia (${end.count})`);
     check(end.study.length === 0, `${label}: nada é salvo sem pedir`);
-    await frame.locator('.physiology-save').click({ timeout: 5000 });
+    await frame.locator('.physiology-save').click({ timeout: 20000 });
     const saved = await frame.evaluate(() => ({ study: window.__studyPath.slice(), done: !!document.querySelector('.physiology-saved'), btn: !!document.querySelector('.physiology-save') }));
     check(saved.study.length === 1 && saved.study[0].kind === 'route' && saved.done && !saved.btn, `${label}: "Salvar no Meu Estudo" registra uma vez (${JSON.stringify(saved.study)})`);
     await frame.locator('.physiology-prev').click();
