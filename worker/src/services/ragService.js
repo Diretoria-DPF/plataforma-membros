@@ -80,6 +80,19 @@ export function fuse(lists, limit) {
     .map(({ row, score }) => ({ id: row.id, source: row.source, section: row.section, content: row.content, score }));
 }
 
+/**
+ * Palavras de pergunta e de ligação que não dizem o assunto ("e quanto custa?", "como eu faço pra..."). Na busca por
+ * trigramas elas casam com qualquer trecho que as contenha e puxam a resposta errada; o vetor (semântico) fica com a
+ * pergunta inteira. Sem sobrar nenhuma palavra de assunto, usa a pergunta original.
+ */
+const FILLER = new Set(['a', 'o', 'as', 'os', 'um', 'uma', 'de', 'da', 'do', 'das', 'dos', 'em', 'no', 'na', 'nos', 'nas', 'e', 'ou', 'que', 'qual', 'quais', 'quanto', 'quanta', 'quantos', 'quantas', 'como', 'onde', 'quando', 'porque', 'por', 'pra', 'para', 'com', 'eu', 'voce', 'você', 'me', 'te', 'se', 'faco', 'faço', 'fazer', 'posso', 'pode', 'tem', 'tenho', 'quero', 'preciso', 'sobre', 'isso', 'essa', 'esse', 'aqui', 'la', 'lá', 'mas', 'ja', 'já', 'nao', 'não', 'sim', 'ok', 'valeu', 'obrigado', 'obrigada', 'oi', 'ola', 'olá', 'entendi']);
+
+export function stripFiller(query) {
+  const original = String(query || '');
+  const kept = original.toLowerCase().split(/[^a-zà-ú0-9]+/).filter((w) => w && !FILLER.has(w));
+  return kept.length ? kept.join(' ') : original;
+}
+
 async function trigramRows(sql, query) {
   return sql`
     SELECT id, source, section, content,
@@ -116,7 +129,7 @@ export async function retrieve(sql, env, question, opts = {}) {
   } catch (err) {
     embeddingError = String((err && err.message) || err).slice(0, 200);
   }
-  const trigramList = aboveFloor(await trigramRows(sql, query), C.RAG.MIN_TRIGRAM_SCORE);
+  const trigramList = aboveFloor(await trigramRows(sql, stripFiller(query)), C.RAG.MIN_TRIGRAM_SCORE);
   const lists = vectorList ? [vectorList, trigramList] : [trigramList];
   const mode = vectorList ? 'hybrid' : 'trigram';
   if (opts.rerank !== true) return { chunks: fuse(lists, opts.limit || C.RAG.TOP_K), mode, embeddingError };

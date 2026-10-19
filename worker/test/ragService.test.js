@@ -226,3 +226,17 @@ describe('reindex com embedding (SQL simulado)', () => {
     expect(literal.split(',')).toHaveLength(EMBEDDING_DIM);
   });
 });
+
+describe('stripFiller — busca por trigramas sem palavras de pergunta', () => {
+  test('tira palavras de pergunta e de ligação e fica com o assunto', () => {
+    expect(Rag.stripFiller('e quanto custa?')).toBe('custa');
+    expect(Rag.stripFiller('Como eu faço pra entrar no Atlas?')).toBe('entrar atlas');
+    expect(Rag.stripFiller('valeu, mas não entendi onde fica a biblioteca')).toBe('fica biblioteca');
+  });
+
+  test('sem palavra de assunto sobrando, usa a pergunta original; entrada estranha não quebra', () => {
+    expect(Rag.stripFiller('e como?')).toBe('e como?');
+    expect(Rag.stripFiller('')).toBe('');
+    expect(Rag.stripFiller(null)).toBe('');
+  });
+});

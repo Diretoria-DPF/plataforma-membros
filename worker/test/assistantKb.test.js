@@ -345,3 +345,16 @@ describe('Lia sobre a Liga: processo seletivo (fatos do edital de 2026, sem vaga
     });
   });
 });
+
+describe('módulos de estudo: dizem COMO abrir, não só o que são', () => {
+  test.each(['laboratorio', 'atlas', 'farmacologia', 'toxicologia', 'clinica'])('%s traz o caminho Aprender', (id) => {
+    const intent = INTENTS.find((i) => i.id === id);
+    expect(intent.reply).toMatch(/Para abrir: entre na plataforma, toque em Aprender/);
+  });
+
+  test('"como entro no atlas?" acha a intenção do Atlas e a resposta explica o caminho', () => {
+    const hit = matchIntent('como eu faço pra entrar no atlas?', [], null);
+    expect(hit.id).toBe('atlas');
+    expect(hit.intent.reply).toMatch(/Aprender/);
+  });
+});
