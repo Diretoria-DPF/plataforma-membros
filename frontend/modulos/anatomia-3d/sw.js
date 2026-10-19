@@ -10,7 +10,13 @@
  *  - Navegação, JS, CSS, modelos 3D, vendor e fichas: cache primeiro.
  *  - JSON de data/atlas (fora de curated/content/legacy) e models/manifest.json:
  *    cache primeiro, atualizando em segundo plano (stale-while-revalidate).
- *  - O SW novo espera as abas do atlas fecharem para assumir (sem skipWaiting).
+ *  - O SW novo assume sozinho assim que termina de instalar (skipWaiting + clients.claim): num app instalado
+ *    as abas quase nunca fecham todas, e esperar por isso deixava o aparelho preso numa versão antiga. A aba
+ *    aberta recebe o aviso "Há uma versão nova" (js/ui/update-bar.js) e a próxima abertura já vem atualizada.
+ *  - O shell é guardado pela URL do diretório (`${SCOPE}`), nunca por `index.html`: o servidor responde 307 de
+ *    index.html para o diretório, e uma resposta que passou por redirecionamento NÃO pode ser entregue a uma
+ *    navegação (o navegador mostra "a página pode estar com problemas", ERR_FAILED). `plain()` ainda limpa
+ *    qualquer entrada redirecionada que tenha sobrado de versões anteriores.
  *  - Qualquer falha de cache cai na rede; nada aqui pode quebrar o atlas.
  *  - Só toca em GET do mesmo domínio dentro do escopo; a Worker (outro
  *    domínio) e a ferramenta de revisão (revisao/) passam direto.
@@ -26,9 +32,24 @@ const SCOPE_PATH = new URL(SCOPE).pathname;
 // de registro, mas as páginas controladas pedem esses arquivos pelo SW do mesmo jeito.
 const SHARED_PATH = new URL('../shared/', SCOPE).pathname;
 const inside = (p) => p.startsWith(SCOPE_PATH) || p.startsWith(SHARED_PATH);
-const SHELL_KEY = `${SCOPE}index.html`;
+const SHELL_KEY = SCOPE;
 const REVALIDATE = /^(data\/atlas\/(?!curated\/|content\/|legacy\/)|models\/manifest\.json$)/;
-const OK = (res) => res && res.status === 200 && res.type === 'basic';
+const OK = (res) => res && res.status === 200 && res.type === 'basic' && !res.redirected;
+
+/** Resposta sem a marca de redirecionamento (o navegador recusa entregar uma redirecionada a uma navegação). */
+function plain(res) {
+  if (!res || !res.redirected) return res;
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers: res.headers });
+}
+
+/** O shell: primeiro a URL do diretório (produção); se ela não servir (servidor sem índice de diretório), index.html. Nunca uma resposta redirecionada. */
+async function fetchShell() {
+  for (const url of [SHELL_KEY, `${SCOPE}index.html`]) {
+    const res = await fetch(new Request(url)).catch(() => null);
+    if (OK(res)) return res;
+  }
+  return null;
+}
 
 self.addEventListener('install', (event) => {
   if (DEV) return;
@@ -39,8 +60,11 @@ self.addEventListener('install', (event) => {
       if (!res.ok) return;
       const { urls } = await res.json();
       await Promise.all((urls || []).map((u) => cache.add(new URL(u, SCOPE)).catch(() => {})));
-      await cache.add(new Request(SHELL_KEY)).catch(() => {});
-    } catch (e) { /* sem lista: o cache se forma durante o uso */ }
+      const shell = await fetchShell();
+      if (shell) await cache.put(SHELL_KEY, shell).catch(() => {});
+    } catch (e) { /* sem lista: o cache se forma durante o uso */ } finally {
+      self.skipWaiting(); // versão nova assume sem esperar todas as abas fecharem (mesmo se o precache falhar)
+    }
   })());
 });
 
@@ -79,7 +103,7 @@ async function cacheFirst(req, key) {
   const cache = await openCache();
   if (!cache) return fetch(req);
   const hit = await cache.match(key || req).catch(() => null);
-  if (hit) return hit;
+  if (hit) return plain(hit);
   const res = await fetch(req);
   if (OK(res)) cache.put(key || req, res.clone()).catch(() => {});
   return res;

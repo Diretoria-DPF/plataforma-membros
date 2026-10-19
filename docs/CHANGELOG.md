@@ -6,6 +6,11 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
+### Corrigido (Atlas abrindo sempre, repositório privado e crédito)
+- **Atlas: "a página pode estar com problemas" depois de cada atualização.** O service worker do Atlas guardava o shell pela URL `index.html`, que o servidor responde com 307 para o diretório; o navegador recusa entregar uma resposta que passou por redirecionamento a uma navegação (`ERR_FAILED`). Reproduzido em Chromium com um servidor que imita o 307. Agora o shell é guardado pela URL do diretório, qualquer entrada redirecionada é entregue limpa, e o worker novo **assume sozinho** (`skipWaiting`) em vez de esperar todas as abas fecharem. A aba aberta recebe o aviso "Há uma versão nova do Atlas" (`watchTakeover`). Não é mais preciso tocar em "Atualizar o aplicativo" a cada versão. Testes em `scripts/atlas/offline.test.mjs`.
+- Repositório privado: o GitHub Pages saiu do ar (esperado) e `deploy-frontend.yml` virou **só manual**, para não falhar a cada push. O site de verdade (`laift.com.br`, Worker `laift-web`) e a API não dependem dele.
+- Rodapé: © 2026 LAIFT · desenvolvido por dpflabs.com (link discreto) na tela de entrada, na área logada e nas páginas públicas (liga, blog, edital, processo seletivo, biblioteca).
+
 ### Adicionado
 - **Atualizar o aplicativo** (Perfil): botão que apaga as cópias guardadas do app e do Atlas, desregistra os service workers e recarrega, sem desconectar nem apagar dados. O Atlas também avisa sozinho ("Há uma versão nova do Atlas", com **Atualizar**) quando sai versão nova, em vez de esperar todas as abas fecharem.
 - Cookie de sessão HttpOnly (SEC-08, ADR 0011) **ligado em produção** em 2026-10-17 (`session_cookie_enabled`).

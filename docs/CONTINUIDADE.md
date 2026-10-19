@@ -35,6 +35,7 @@ Arquivo-mestre para retomar o trabalho em **qualquer chat novo**, sem depender d
 | Flags em produção | Ligadas: `ux_v2_enabled`, `chatbot`, `rag`, `rag_cache`, `feedback`, `moderation`, `library_enabled`, `library_ai_summary`, `library_member_suggest`, `lia_*` acima. **Desligadas:** `research_enabled`, `rag_rerank`, `mfa_required`, `nvidia_fallback`, `clinical_sim_enabled` |
 | Backup | Diário, verde (09:35 de 17/10). **Restauração completa ainda não treinada** (OPS-03) |
 | E-mail | Remetente ainda é Gmail (OPS-04 pendente) |
+| Repositório | **Privado desde 2026-10-17.** Site e API seguem normais (a produção roda no Cloudflare). O GitHub Pages saiu do ar e `deploy-frontend.yml` é só manual. Atenção ao limite de minutos do GitHub Actions no plano gratuito (2.000 min/mês em repositório privado) |
 | Jev (TypeSafe AI) | Só registrado: `docs/lia/JEV.md` |
 | Splash "Bem-vindo" do app | Não feita (`feat/splash-bem-vindo`) |
 

@@ -7,6 +7,11 @@ on:
   # build e e2e, ~8 min) quando a PR não toca o Atlas nem o front.
   pull_request:
   workflow_dispatch: {}
+# Um push novo na mesma PR cancela a execução anterior (poupa minutos do GitHub Actions no repositório privado).
+concurrency:
+  group: atlas-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   atlas-e2e:
     runs-on: ubuntu-latest

@@ -134,9 +134,11 @@ async function verificarTela(page, s, rotulo, flags, largura) {
     `${rotulo}: dois cartões, login (div) e atalhos (nav.welcome-liga) (achou ${JSON.stringify(s.blocos)})`);
   const liga = s.botoes.find((b) => b.classe.includes('welcome-liga__link'));
   const blog = s.botoes.find((b) => b.classe.includes('welcome-liga__blog'));
-  check(s.botoes.length === 2 && !!liga && liga.texto === 'Conheça a LAIFT' && liga.href === 'liga.html',
+  const biblioteca = s.botoes.find((b) => b.classe.includes('welcome-liga__biblioteca'));
+  check(s.botoes.length === 3 && !!liga && liga.texto === 'Conheça a LAIFT' && liga.href === 'liga.html',
     `${rotulo}: botão "Conheça a LAIFT" leva a liga.html`);
   check(!!blog && blog.texto === 'Acessar blog' && blog.href === 'blog.html', `${rotulo}: botão "Acessar blog" leva a blog.html`);
+  check(!!biblioteca && biblioteca.texto === 'Biblioteca' && biblioteca.href === '/biblioteca', `${rotulo}: botão "Biblioteca" leva a /biblioteca`);
   for (const b of s.botoes) {
     const medida = `${Math.round(b.w)}x${Math.round(b.h)} px (largura útil ${Math.round(s.larguraUtil)} px)`;
     check(b.h >= ALTURA_MINIMA_BOTAO_PX && b.w >= s.larguraUtil - 2, `${rotulo}: "${b.texto}" com ${medida}`);

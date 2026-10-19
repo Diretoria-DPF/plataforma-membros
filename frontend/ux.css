@@ -178,7 +178,7 @@ summary:focus-visible,
   grid-template-columns: minmax(0, 1fr);
   gap: var(--move-md);
   width: min(100%, 460px);
-  margin: 0 0 72px;
+  margin: 0 0 96px;
 }
 #screen-welcome.auth-pilha > .auth-card { width: auto; margin: 0; }
 @media (max-width: 480px) {
@@ -240,6 +240,13 @@ summary:focus-visible,
 .cadastro-grupo { display: grid; gap: 12px; min-width: 0; margin: 0; padding: 0; border: 0; }
 .cadastro-grupo > legend { margin: 0 0 4px; padding: 0; font-size: 1rem; font-weight: 800; color: var(--text); }
 .cadastro-dica { margin: -6px 0 0; font-size: 0.8125rem; color: var(--muted); }
+
+/* ---------- Crédito de desenvolvimento (rodapé discreto, tela de entrada e área logada) ---------- */
+.site-credito { margin: 8px 0 0; text-align: center; color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
+.site-credito a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.site-credito a:hover, .site-credito a:focus-visible { color: var(--primary); }
+/* Na entrada o crédito fica na faixa livre sob os cartões (a margem de 96 px também afasta a Lia flutuante dos botões). */
+.site-credito--entrada { position: absolute; left: 0; right: 0; bottom: 84px; margin: 0; padding: 0 16px; }
 .cadastro-opcional {
   border-radius: var(--radius-md); background: var(--surface-alt);
   box-shadow: inset 0 0 0 1px var(--border);
