@@ -6,6 +6,9 @@ Mudanças relevantes da plataforma, da mais recente para a mais antiga. As datas
 
 Rodada 3 (operação e Liga), em andamento nas branches `docs/ops-rotina-2026-10` e `feat/liga-identidade`.
 
+### Adicionado (direitos do titular, LGPD art. 18, backend)
+- **Exportar meus dados e pedir exclusão da conta**: seis ações (`apiPrivacyExportMyData`, `apiPrivacyRequestDeletion`, `apiPrivacyGetDeletionStatus`, `apiPrivacyCancelDeletion`, `apiAdminListDeletionRequests`, `apiAdminCompleteDeletion`), migração 044 (`account_deletion_requests`, prazo de 180 dias, sem dado pessoal além do primeiro nome, zerado ao concluir). A exportação omite segredos e anotações internas da comissão. Front ainda por fazer.
+
 ### Adicionado (Lia móvel e respostas mais úteis)
 - **A Lia pode ser movida para qualquer ponto da tela.** Arraste a bolha (a Lia não abre ao arrastar); no computador o cabeçalho do painel também arrasta o painel. Teclado: Alt + setas (Shift = passo maior). A posição fica só no aparelho (localStorage) e acompanha o tamanho da janela; "Voltar ao canto" no rodapé do painel desfaz. A dica da Lia acompanha a bolha. `frontend/assistant-drag.js`, e2e `assistant-drag`.
 - Respostas da Lia: os módulos (Laboratório, Atlas, Farmacologia, Toxicologia, Clínica) agora dizem **como abrir** ("entre na plataforma, toque em Aprender e escolha…"), e a busca por trigramas ignora palavras de pergunta ("e quanto custa?" puxava o trecho de limites clínicos por causa de "quanto"; agora responde que não encontrou, de forma honesta).

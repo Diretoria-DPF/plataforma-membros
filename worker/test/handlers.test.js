@@ -54,6 +54,8 @@ describe('handlers.js — API_REGISTRY (allowlist)', () => {
     // Processo seletivo contínuo (selectionService.js): visão pública com sessão opcional; o resto exige sessão
     expected.push('apiSelectionOverview', 'apiSelectionStart', 'apiSelectionGetMine', 'apiSelectionSaveStep', 'apiSelectionSubmit', 'apiSelectionWithdraw',
       'apiSelectionRequestReview', 'apiSelectionCommitteeOverview', 'apiSelectionCommitteeGet', 'apiSelectionCommitteeTriage', 'apiSelectionCommitteeDecide', 'apiSelectionCommitteeSettings');
+    // Direitos do titular (privacyService.js)
+    expected.push('apiPrivacyExportMyData', 'apiPrivacyRequestDeletion', 'apiPrivacyGetDeletionStatus', 'apiPrivacyCancelDeletion', 'apiAdminListDeletionRequests', 'apiAdminCompleteDeletion');
     // Lia, guia da plataforma (sessão opcional; orienta e navega, nunca altera dados)
     expected.push('apiAssistantChat');
     // Lia — feedback, painel de satisfação, fontes e reindexação (assistantFeedbackService.js)

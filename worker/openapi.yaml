@@ -43,6 +43,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminAttendanceSearch"
                 - "$ref": "#/components/schemas/apiAdminBanUser"
                 - "$ref": "#/components/schemas/apiAdminChangeUserRole"
+                - "$ref": "#/components/schemas/apiAdminCompleteDeletion"
                 - "$ref": "#/components/schemas/apiAdminCreateEvent"
                 - "$ref": "#/components/schemas/apiAdminCreateTask"
                 - "$ref": "#/components/schemas/apiAdminDashboard"
@@ -75,6 +76,7 @@ paths:
                 - "$ref": "#/components/schemas/apiAdminListAllTasks"
                 - "$ref": "#/components/schemas/apiAdminListAssistantFeedback"
                 - "$ref": "#/components/schemas/apiAdminListAuditLogs"
+                - "$ref": "#/components/schemas/apiAdminListDeletionRequests"
                 - "$ref": "#/components/schemas/apiAdminListErrorLogs"
                 - "$ref": "#/components/schemas/apiAdminListFeatureFlags"
                 - "$ref": "#/components/schemas/apiAdminListFeedback"
@@ -174,6 +176,10 @@ paths:
                 - "$ref": "#/components/schemas/apiMfaRegenerateRecoveryCodes"
                 - "$ref": "#/components/schemas/apiMfaStatus"
                 - "$ref": "#/components/schemas/apiOpenConversation"
+                - "$ref": "#/components/schemas/apiPrivacyCancelDeletion"
+                - "$ref": "#/components/schemas/apiPrivacyExportMyData"
+                - "$ref": "#/components/schemas/apiPrivacyGetDeletionStatus"
+                - "$ref": "#/components/schemas/apiPrivacyRequestDeletion"
                 - "$ref": "#/components/schemas/apiPublishMessagingKey"
                 - "$ref": "#/components/schemas/apiRegister"
                 - "$ref": "#/components/schemas/apiRegisterForEvent"
@@ -424,6 +430,22 @@ components:
             - description: "input"
           minItems: 0
           maxItems: 4
+    apiAdminCompleteDeletion:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminCompleteDeletion"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
     apiAdminCreateEvent:
       type: "object"
       required:
@@ -923,6 +945,22 @@ components:
       properties:
         action:
           const: "apiAdminListAuditLogs"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
+          minItems: 0
+          maxItems: 2
+    apiAdminListDeletionRequests:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token). Somente administrador."
+      properties:
+        action:
+          const: "apiAdminListDeletionRequests"
         args:
           type: "array"
           prefixItems:
@@ -2491,6 +2529,67 @@ components:
           prefixItems:
             - description: "sessionToken"
             - description: "peerProfileId"
+          minItems: 0
+          maxItems: 2
+    apiPrivacyCancelDeletion:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiPrivacyCancelDeletion"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiPrivacyExportMyData:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiPrivacyExportMyData"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiPrivacyGetDeletionStatus:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiPrivacyGetDeletionStatus"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+          minItems: 0
+          maxItems: 1
+    apiPrivacyRequestDeletion:
+      type: "object"
+      required:
+        - "action"
+        - "args"
+      description: "Exige sessão (primeiro argumento: token)."
+      properties:
+        action:
+          const: "apiPrivacyRequestDeletion"
+        args:
+          type: "array"
+          prefixItems:
+            - description: "sessionToken"
+            - description: "input"
           minItems: 0
           maxItems: 2
     apiPublishMessagingKey:
