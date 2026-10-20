@@ -464,10 +464,9 @@ export const INTENTS = [
   {
     id: 'processo_conta',
     selection: true,
-    defines: true,
     title: 'Preciso de conta e login para o processo seletivo',
-    weight: 2.8,
-    keywords: ['preciso de login', 'preciso fazer login', 'preciso criar conta', 'preciso de conta', 'tenho que entrar', 'tenho que criar conta', 'precisa de conta', 'precisa de login', 'login para me inscrever', 'conta para me inscrever', 'como inicio o processo', 'como iniciar o processo', 'como comeco o processo', 'onde clico para iniciar', 'onde me inscrevo', 'nao consigo iniciar a inscricao', 'nao acho o processo seletivo', 'nao aparece o processo seletivo', 'cadê o processo seletivo'],
+    weight: 3.4,
+    keywords: ['nao consigo iniciar', 'nao consigo comecar', 'nao consigo me inscrever', 'como inicio', 'como iniciar a inscricao', 'como comecar a inscricao', 'preciso de login', 'preciso fazer login', 'preciso criar conta', 'preciso de conta', 'tenho que entrar', 'tenho que criar conta', 'precisa de conta', 'precisa de login', 'login para me inscrever', 'conta para me inscrever', 'como inicio o processo', 'como iniciar o processo', 'como comeco o processo', 'onde clico para iniciar', 'onde me inscrevo', 'nao consigo iniciar a inscricao', 'nao acho o processo seletivo', 'nao aparece o processo seletivo', 'cadê o processo seletivo'],
     reply: 'Para participar é preciso ter uma conta na plataforma, e a inscrição abre depois que você entra. Passo a passo: 1) toque em Participar do processo seletivo (ou em Entrar, no alto); 2) entre com seu e-mail e senha, ou crie uma conta, que é rápido, e confirme o e-mail; 3) depois de entrar, abra Processo seletivo no menu (em Liga) e toque em Começar. Se você já tinha conta e não vê o menu, saia e entre de novo. Eu acompanho cada etapa e explico o que está sendo pedido.',
     actions: [nav('panel-selection')],
     suggestions: ['Como funciona a inscrição?', 'Qual é o prazo?', 'A IA elimina alguém?'],

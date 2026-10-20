@@ -118,7 +118,7 @@ describe('guarda de intenção sobre o golden set', () => {
 
   test('`defines` só nas intenções que de fato definem ou listam (eventos ao vivo incluído)', () => {
     expect(INTENTS.filter((i) => i.defines === true).map((i) => i.id).sort()).toEqual(
-      ['ajuda', 'aprender', 'cotas', 'eventos', 'papeis', 'privacidade', 'processo_conta', 'processo_etapas', 'processo_ia', 'processo_prazo', 'processo_resposta']
+      ['ajuda', 'aprender', 'cotas', 'eventos', 'papeis', 'privacidade', 'processo_etapas', 'processo_ia', 'processo_prazo', 'processo_resposta']
     );
   });
 });
