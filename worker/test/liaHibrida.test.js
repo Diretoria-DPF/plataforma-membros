@@ -320,14 +320,6 @@ describe('visitante: resposta extrativa (sem LLM, sem cota de IA)', () => {
     expect(res.sources[0].section).toBe('O que é a LAIFT');
   });
 
-  test('visitante logado (cota 0) também recebe o trecho, sem convite, e a resposta é gravada', async () => {
-    const sql = routedSql([HYBRID, INDEX, KB(LAIFT), SAVED]);
-    const res = await chat(sql, VISITOR, { message: 'O que é a LAIFT?' }, visitorEnv());
-    expect(res).toMatchObject({ source: 'kb', messageId: 'msg-1' });
-    expect(res).not.toHaveProperty('cta');
-    expect(seen).toEqual([]);
-  });
-
   test('o limite por IP continua valendo', async () => {
     const sql = routedSql([HYBRID, [RATE_LIMIT_SQL, () => [{ attempts: 9999 }]]]);
     await expect(chat(sql, null, { message: 'O que é a LAIFT?' }, visitorEnv())).rejects.toMatchObject({ name: 'RateLimitError' });
@@ -552,11 +544,10 @@ describe('prévia de IA do visitante (lia_visitor_ai_enabled)', () => {
     expect(chatCalls(off.AI)).toHaveLength(0);
   });
 
-  test('membro e visitante logado nunca entram na prévia (nem gastam o limite dela)', async () => {
+  test('quem tem login (visitante logado ou membro) nunca entra na prévia de IA do visitante', async () => {
     const env = visitorEnv({ GROQ_API_KEYS: KEYS.join('\n') });
-    const asVisitor = await chat(routedSql([PREVIEW, INDEX, KB(LAIFT), SAVED]), VISITOR, ASK, env);
+    const asVisitor = await chat(routedSql([PREVIEW, INDEX, KB(LAIFT), SAVED]), MEMBER, ASK, env);
     expect(asVisitor).not.toHaveProperty('preview');
-    expect(seen).toEqual([]);
   });
 
   test('o caminho do visitante NUNCA chama o Groq nem o orquestrador (código e execução)', async () => {

@@ -9,6 +9,7 @@ import * as ModerationService from '../src/services/moderationService.js';
 import * as Assistant from '../src/services/assistantService.js';
 import * as Groq from '../src/ai/groqClient.js';
 import * as Security from '../src/security.js';
+import { RATE_LIMITS } from '../src/constants.js';
 import { __resetFlagCacheForTests } from '../src/services/featureFlagService.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 import { makeEnv } from './helpers/mockEnv.js';
@@ -562,12 +563,12 @@ describe('moderação da Lia — achado 3: o teto de mensagens por hora vem ANTE
 
   test('suspenso com o teto estourado recebe o erro de limite (RateLimitError), não o texto fixo da suspensão', async () => {
     await suspendNow();
-    for (let i = 0; i < 60; i += 1) await Security.enforceRateLimit(sql, 'ASSISTANT_CHAT', ME, 60, 3600);
+    for (let i = 0; i < RATE_LIMITS.ASSISTANT_CHAT.MAX_ATTEMPTS; i += 1) await Security.enforceRateLimit(sql, 'ASSISTANT_CHAT', ME, RATE_LIMITS.ASSISTANT_CHAT.MAX_ATTEMPTS, 3600);
     await expect(Assistant.chat(sql, env, MEMBER, { message: LEGIT }, CID)).rejects.toMatchObject({ name: 'RateLimitError' });
   });
 
   test('o código e a mensagem de erro do limite não mudaram', async () => {
-    for (let i = 0; i < 60; i += 1) await Security.enforceRateLimit(sql, 'ASSISTANT_CHAT', ME, 60, 3600);
+    for (let i = 0; i < RATE_LIMITS.ASSISTANT_CHAT.MAX_ATTEMPTS; i += 1) await Security.enforceRateLimit(sql, 'ASSISTANT_CHAT', ME, RATE_LIMITS.ASSISTANT_CHAT.MAX_ATTEMPTS, 3600);
     const err = await Assistant.chat(sql, env, MEMBER, { message: LEGIT }, CID).catch((e) => e);
     expect(err.name).toBe('RateLimitError');
     expect(err.message).toBe('Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.');
