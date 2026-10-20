@@ -53,7 +53,7 @@ Além do acima, administradores **veem**: nome, e-mail e todas as respostas dos 
 
 ## 3. Processo seletivo contínuo (candidatos)
 
-**Estado do código.** Fatias 1 e 2 prontas na branch principal (migrações 042 e 043; `worker/src/services/selectionService.js`, `selectionCommitteeService.js`, `frontend/selection.js`). Duas flags, **nascem desligadas**: `selection_enabled` (jornada) e `selection_ai_enabled` (triagem por IA). Se estão ligadas em produção: **A CONFIRMAR**. Enquanto a flag está desligada, o site usa o Google Forms (plano B, `frontend/liga.js`).
+**Estado do código.** Fatias 1 e 2 prontas na branch principal (migrações 042 e 043; `worker/src/services/selectionService.js`, `selectionCommitteeService.js`, `frontend/selection.js`). Duas flags: `selection_enabled` (jornada) e `selection_ai_enabled` (triagem por IA). **Estão LIGADAS em produção desde 20/10/2026** (migrações 042 e 043 aplicadas no mesmo dia, com cópia de segurança do banco antes). As inscrições estão, portanto, abertas; o parecer pode exigir ajustes de aviso, retenção e idade. Se a flag for desligada, o site volta ao Google Forms (plano B, `frontend/liga.js`).
 
 **Fluxo.** (1) Criar conta e confirmar e-mail. Quem já é membro não se inscreve. (2) "Antes de começar": três aceites obrigatórios (edital; tratamento de dados pela comissão; aviso de que uma IA organiza e resume as respostas, não decide nem elimina, e que a pessoa pode pedir revisão). (3) Perfil e disponibilidade. (4) Análise de cenário (400 a 2.000 caracteres). (5) Quatro perguntas abertas sobre a forma de pensar. (6) Três situações de conduta. (7) Revisão e envio, com comprovante. (8) Acompanhamento do status. Versão v2 do banco de perguntas: sem questões objetivas.
 
@@ -65,7 +65,7 @@ Além do acima, administradores **veem**: nome, e-mail e todas as respostas dos 
 
 **Recurso (art. 20).** Após "não selecionado" ou "lista de espera", a pessoa pode pedir revisão (até 600 caracteres), uma vez por inscrição; aparece numa fila do painel. O código **não impede** que quem revisa seja a mesma pessoa que decidiu: A CONFIRMAR se isso importa ao advogado.
 
-**Retenção.** Proposta: apagar dados da inscrição em **12 meses** (`docs/planos/PROCESSO-SELETIVO.md`, seção 7). **Hoje NÃO existe rotina automática**: `worker/src/maintenance.js` nesta versão não trata `selection_applications`. Os dados saem hoje só se a conta for apagada (cascata). Há trabalho paralelo de implementação: A CONFIRMAR se já foi publicado.
+**Retenção.** Proposta: apagar dados da inscrição em **12 meses** (`docs/planos/PROCESSO-SELETIVO.md`, seção 7). **Rotina automática implementada em 20/10/2026** (`selectionRetentionService.js`, chamada pelo cron diário em `maintenance.js`; em publicação): inscrições finalizadas (aprovada, não selecionada, retirada, expirada) com mais de 12 meses têm as respostas, o resumo de IA e as observações apagados, mantendo só uma linha mínima (datas e situação); rascunhos parados há mais de 60 dias expiram; eventos antigos são apagados. Além disso, os dados saem se a conta for apagada (cascata).
 
 **Divergência importante.** O **Edital publicado** (`frontend/edital.html`) ainda descreve o Google Forms ("só a comissão trata os dados… fora o Google") e **não menciona IA**, triagem, recurso nem prazo de retenção. O aviso de IA existe apenas dentro da jornada (caixa de aceite).
 
@@ -267,7 +267,7 @@ Decisões jurídicas pendentes da próxima fase (`docs/F4_DECISOES_JURIDICAS.md`
 
 | Decisão | Depende de |
 |---|---|
-| Ligar `selection_enabled` e `selection_ai_enabled` em produção | Texto do aviso, retenção, regra de menores (perguntas 1, 2, 4, 5) |
+| Ajustes após o parecer (as flags já estão ligadas desde 20/10/2026) | Texto do aviso, retenção, regra de menores (perguntas 1, 2, 4, 5) |
 | Atualizar o Edital (tirar Google Forms, incluir IA, revisão, retenção) | Advogado + comissão |
 | Controle de idade no cadastro | Pergunta 1 |
 | Nomear encarregado | Pergunta 6 |
@@ -289,7 +289,7 @@ Decisões jurídicas pendentes da próxima fase (`docs/F4_DECISOES_JURIDICAS.md`
 
 ## Apêndice A. O que ficou "A CONFIRMAR"
 
-- Estado atual (produção) das flags `selection_enabled`, `selection_ai_enabled`, `mfa_required`, `nvidia_fallback`, `memory_enabled`, `agents_*`.
+- Estado atual (produção) das flags `mfa_required`, `nvidia_fallback`, `memory_enabled`, `agents_*` (`selection_enabled` e `selection_ai_enabled` estão LIGADAS desde 20/10/2026).
 - Número atual de usuários e candidatos.
 - Região do banco `laift-memory` e dos servidores do Brevo.
 - CNPJ e representante legal da LAIFT.
