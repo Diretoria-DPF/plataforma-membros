@@ -63,8 +63,7 @@
   }
 
   /** Estado do contador de caracteres do texto livre. */
-  function charInfo(length, min, max) {
-    if (length < min) return { state: 'short', text: length + ' de ' + min + ' caracteres no mínimo' };
+  function charInfo(length, max) {
     if (length > max) return { state: 'long', text: length + ' caracteres: passou do limite de ' + max };
     return { state: 'ok', text: length + ' de ' + max + ' caracteres' };
   }
@@ -189,7 +188,15 @@
       ['Sem eliminação automática', 'A IA ajuda a organizar a leitura; quem decide é a comissão.'],
       ['Prazo para concluir', 'Depois de começar, você tem ' + (ov.windowDays || 7) + ' dias. ' + (review ? 'Próxima análise da comissão: ' + review + '.' : 'A comissão analisa as inscrições em lotes.')],
     ];
+    var days = ov.windowDays || 7;
+    var how = [
+      'Você já está com a conta criada: é só começar.',
+      'São seis passos, no seu ritmo, no celular ou no computador.',
+      'Seu rascunho fica salvo: você pode parar e voltar. O prazo é individual: ' + days + ' dias a partir do início.',
+      'A comissão analisa as inscrições em lotes' + (review ? ' (próxima análise: ' + review + ')' : '') + '. A Lia ajuda em qualquer dúvida.',
+    ];
     return frame('Entre para a LAIFT', 'Inscrição sempre aberta. Faça no seu ritmo, no celular ou no computador.', [
+      h('div', { className: 'sel-how' }, [h('h3', { className: 'sel-how__t' }, 'Como funciona'), h('ol', { className: 'sel-how__l' }, how.map(function (t) { return h('li', null, t); }))]),
       h('ul', { className: 'sel-points' }, points.map(function (p) { return h('li', null, [h('strong', null, p[0]), h('span', null, p[1])]); })),
       ov.open === false ? h('p', { className: 'sel-notice' }, 'As inscrições estão fechadas no momento. Acompanhe @laift.liga.') : h('div', { className: 'sel-actions' }, [
         button('Começar inscrição', 'sel-primary', startJourney, { id: 'sel-start' }),
@@ -287,7 +294,7 @@
     var saved = ((ui.state.application.data || {}).scenario || {}).text || '';
     var area = h('textarea', { id: 'sel-scenario', name: 'text', rows: 12, maxlength: sc.maxChars + 200, 'aria-describedby': 'sel-counter' }, saved);
     var counter = h('p', { className: 'sel-counter', id: 'sel-counter' }, '');
-    function update() { var info = charInfo(area.value.length, sc.minChars, sc.maxChars); counter.textContent = info.text; counter.className = 'sel-counter is-' + info.state; }
+    function update() { var info = charInfo(area.value.length, sc.maxChars); counter.textContent = info.text; counter.className = 'sel-counter is-' + info.state; }
     area.addEventListener('input', update);
     update();
     var f = form([
@@ -296,25 +303,28 @@
       field('Sua análise', area, null, 'sel-scenario'),
       counter,
       h('div', { className: 'sel-actions' }, [backButton('profile'), submitButton('Salvar e continuar')]),
-    ], function (f2) { saveAndNext('scenario', { text: area.value }, f2); });
+    ], function (f2) {
+      if (!area.value.trim()) { say('Escreva sua resposta para continuar.', 'error'); area.focus(); return; }
+      saveAndNext('scenario', { text: area.value }, f2);
+    });
     return frame('Análise de cenário', 'Mostre como você pensa. A resposta tem de ser sua.', f, 'scenario');
   }
 
-  /** Perguntas abertas (raciocínio e conduta): um campo por pergunta, com contador e mínimo/máximo. */
+  /** Perguntas abertas (raciocínio e conduta): um campo por pergunta, com contador e máximo. */
   function openQuestions(step, list, bodyOf, saved, prev, submitLabel) {
     var areas = {};
     var blocks = list.map(function (q, i) {
       var id = step + '-' + q.id;
       var area = h('textarea', { id: id, name: q.id, rows: 6, maxlength: q.max + 200, 'aria-describedby': id + '-counter' }, saved[q.id] || '');
       var counter = h('p', { className: 'sel-counter', id: id + '-counter' }, '');
-      var update = function () { var info = charInfo(area.value.length, q.min, q.max); counter.textContent = info.text; counter.className = 'sel-counter is-' + info.state; };
+      var update = function () { var info = charInfo(area.value.length, q.max); counter.textContent = info.text; counter.className = 'sel-counter is-' + info.state; };
       area.addEventListener('input', update);
       update();
       areas[q.id] = area;
       return h('div', { className: 'sel-question' }, [
         h('p', { className: 'sel-prompt' }, (i + 1) + '. ' + q.title),
         h('p', { className: 'sel-situation' }, bodyOf(q)),
-        field('Sua resposta', area, 'Entre ' + q.min + ' e ' + q.max + ' caracteres. Sem dados de saúde nem contatos.', id),
+        field('Sua resposta', area, 'Até ' + q.max + ' caracteres. Sem dados de saúde nem contatos.', id),
         counter,
       ]);
     });
@@ -327,9 +337,9 @@
       list.forEach(function (q) {
         var v = areas[q.id].value;
         answers[q.id] = v;
-        if (!bad && charInfo(v.length, q.min, q.max).state !== 'ok') bad = q;
+        if (!bad && !v.trim()) bad = q;
       });
-      if (bad) { say('Revise a resposta "' + bad.title + '": ela precisa ter entre ' + bad.min + ' e ' + bad.max + ' caracteres.', 'error'); areas[bad.id].focus(); return; }
+      if (bad) { say('Escreva sua resposta para continuar.', 'error'); areas[bad.id].focus(); return; }
       saveAndNext(step, { answers: answers }, f2);
     });
   }
@@ -366,11 +376,13 @@
       h('p', { className: 'sel-hint' }, 'Depois de enviar, não dá para editar. Você recebe um comprovante e acompanha o andamento aqui.'),
       h('div', { className: 'sel-actions' }, [backButton('conduct'), submitButton('Enviar inscrição', 'sel-send')]),
     ], function (f2) {
-      say('Enviando…', 'info');
-      call('apiSelectionSubmit', { website: honeyValue(f2) }).then(function (res) {
-        if (!res.success) { say(res.message, 'error'); return; }
-        adopt(res);
-        go('status');
+      ui.app.openConfirm('Enviar sua inscrição agora? Depois do envio você não poderá editar as respostas.', function () {
+        say('Enviando…', 'info');
+        call('apiSelectionSubmit', { website: honeyValue(f2) }).then(function (res) {
+          if (!res.success) { say(res.message, 'error'); return; }
+          adopt(res);
+          go('status');
+        });
       });
     });
     return frame('Revise e envie', 'Confira o resumo antes de enviar.', f, 'review');

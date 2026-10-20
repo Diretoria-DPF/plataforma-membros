@@ -226,7 +226,7 @@ export const RATE_LIMITS = {
   // Lia (guia da plataforma). Resposta por regra não gasta IA, então o teto é
   // por hora e não por cota: 60 mensagens/h por pessoa logada; sem login, por
   // IP (NAT de campus é comum, então 30/h dá para uma turma conversar).
-  ASSISTANT_CHAT: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  ASSISTANT_CHAT: { MAX_ATTEMPTS: 120, WINDOW_SECONDS: 3600 },
   ASSISTANT_CHAT_IP: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_FEEDBACK: { MAX_ATTEMPTS: 30, WINDOW_SECONDS: 3600 },
   ASSISTANT_REINDEX: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
@@ -324,8 +324,9 @@ export const AI_QUOTAS = {
   generate_case: { visitor: 2, member: 10, admin: 20 },
   lab_preceptor: { visitor: 10, member: 80, admin: 160 },
   // Lia: só a pergunta SEM intenção conhecida chega à IA (o resto é regra, sem custo).
-  // Visitante e quem não tem login recebem só a base fixa (cota 0).
-  assistant: { visitor: 0, member: 60, admin: 120 },
+  // Cotas generosas (2026-10-20): quem tem login (inclusive candidato do processo seletivo, que é visitante) conversa à vontade;
+  // quem NÃO tem login recebe só a base fixa. O disjuntor global de tokens continua sendo o freio de verdade.
+  assistant: { visitor: 40, member: 200, admin: 400 },
   // Agentes (ADR 0007). O visitante não tem agente (a API recusa); o número só valeria se um dia tivesse.
   agent_tutor: { visitor: 5, member: 30, admin: 100 },
   agent_curator: { visitor: 0, member: 0, admin: 40 },

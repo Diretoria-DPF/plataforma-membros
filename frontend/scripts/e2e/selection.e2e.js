@@ -13,14 +13,14 @@
 const { startApp, check } = require('./harness');
 const { axeGate } = require('./axe-gate');
 
-const THK = ['t01', 't02', 't03', 't04'].map((id, i) => ({ id, title: 'Pergunta ' + (i + 1), prompt: 'Explique seu raciocínio na pergunta ' + (i + 1) + '.', min: 40, max: 600 }));
-const CND = ['c01', 'c02', 'c03'].map((id, i) => ({ id, title: 'Situação ' + (i + 1), situation: 'Descrição da situação de conduta ' + (i + 1) + '.', min: 40, max: 600 }));
+const THK = ['t01', 't02', 't03', 't04'].map((id, i) => ({ id, title: 'Pergunta ' + (i + 1), prompt: 'Explique seu raciocínio na pergunta ' + (i + 1) + '.', min: 1, max: 600 }));
+const CND = ['c01', 'c02', 'c03'].map((id, i) => ({ id, title: 'Situação ' + (i + 1), situation: 'Descrição da situação de conduta ' + (i + 1) + '.', min: 1, max: 600 }));
 const CONTENT = {
   version: 'v1', courses: ['Farmácia', 'Biomedicina'], areas: ['Toxicologia', 'Farmacologia clínica'], days: ['seg', 'ter', 'qua'], shifts: ['manha', 'noite'],
   semesters: ['1', '2', '3', '4', '5', 'concluido'],
-  scenario: { prompt: 'Escolha um ponto de partida e escreva sua análise.', hints: ['Cite a fonte.'], minChars: 400, maxChars: 2000 },
+  scenario: { prompt: 'Escolha um ponto de partida e escreva sua análise.', hints: ['Cite a fonte.'], minChars: 1, maxChars: 2000 },
   thinking: THK, conduct: CND,
-  limits: { institution: 120, motivation: 400, why: 200, whyMin: 10, hoursMax: 40, areasMax: 4, minFillMinutes: 5 },
+  limits: { institution: 120, motivation: 400, why: 200, whyMin: 10, hoursMax: 40, areasMax: 4 },
 };
 const ORDER = ['intro', 'profile', 'scenario', 'thinking', 'conduct', 'review'];
 
@@ -77,6 +77,7 @@ async function jornada(rotulo, viewport) {
     await openPanel(app);
     check(await page.locator('#sel-start').isVisible(), `${rotulo}: a apresentação mostra "Começar inscrição"`);
     check((await page.locator('.sel-points li').count()) === 4, `${rotulo}: quatro pontos explicam o processo`);
+    check(/Como funciona/.test(await page.locator('.sel-how').innerText()) && (await page.locator('.sel-how li').count()) === 4, `${rotulo}: bloco "Como funciona" com quatro passos`);
     check(/05\/11/.test(await page.locator('#selection-root').innerText()), `${rotulo}: mostra a data da próxima análise`);
     await axeGate(page, `${rotulo}: apresentação`);
 
@@ -103,7 +104,8 @@ async function jornada(rotulo, viewport) {
     await page.waitForSelector('[data-sel-step="scenario"]');
 
     await page.fill('#sel-scenario', text(120));
-    check(/no mínimo/.test(await page.locator('#sel-counter').innerText()), `${rotulo}: o contador avisa que falta texto`);
+    const contador = await page.locator('#sel-counter').innerText();
+    check(/120 de 2000 caracteres/.test(contador) && !/mínimo/.test(contador), `${rotulo}: o contador não fala em mínimo`);
     await page.fill('#sel-scenario', text(500) + ' contato: a@b.com');
     await page.click('#selection-root button[type="submit"]');
     await page.waitForSelector('.sel-live.error', { timeout: 5000 });
@@ -115,10 +117,11 @@ async function jornada(rotulo, viewport) {
 
     check((await page.locator('.sel-question').count()) === 4, `${rotulo}: quatro perguntas de raciocínio`);
     await page.fill('#thinking-t01', 'curto');
-    check(/no mínimo/.test(await page.locator('#thinking-t01-counter').innerText()), `${rotulo}: o contador de cada pergunta avisa que falta texto`);
+    check(!/mínimo/.test(await page.locator('#thinking-t01-counter').innerText()), `${rotulo}: o contador de cada pergunta não fala em mínimo`);
     await page.click('#selection-root button[type="submit"]');
-    check(/Revise a resposta/.test(await page.locator('.sel-live').innerText()), `${rotulo}: pede respostas completas antes de salvar`);
-    for (const q of THK) await page.fill(`#thinking-${q.id}`, text(120));
+    check(/Escreva sua resposta para continuar/.test(await page.locator('.sel-live').innerText()), `${rotulo}: campo vazio pede resposta antes de salvar`);
+    check((await page.evaluate(() => document.activeElement.id)) === 'thinking-t02', `${rotulo}: o foco vai ao campo vazio`);
+    for (const q of THK) await page.fill(`#thinking-${q.id}`, q.id === 't01' ? 'curto' : text(120));
     await axeGate(page, `${rotulo}: raciocínio`);
     await page.click('#selection-root button[type="submit"]');
     await page.waitForSelector('[data-sel-step="conduct"]');
@@ -132,11 +135,19 @@ async function jornada(rotulo, viewport) {
 
     await page.click('.sel-step:has-text("Seu raciocínio")');
     await page.waitForSelector('[data-sel-step="thinking"]');
-    check((await page.inputValue('#thinking-t01')).length === 120, `${rotulo}: as respostas salvas voltam preenchidas`);
+    check((await page.inputValue('#thinking-t01')) === 'curto', `${rotulo}: as respostas salvas voltam preenchidas`);
     await page.click('.sel-step:has-text("Revisão")');
     await page.waitForSelector('[data-sel-step="review"]');
 
     await page.click('#sel-send');
+    await page.waitForSelector('#modal-confirm:not(.hidden)');
+    check(/Enviar sua inscrição agora/.test(await page.locator('#modal-confirm').innerText()), `${rotulo}: pede confirmação do envio`);
+    await page.click('#modal-confirm-cancel');
+    check(server.state.app.status === 'draft' && (await page.locator('#sel-send').isVisible()), `${rotulo}: cancelar não envia`);
+    check(!/rápido/i.test(await page.locator('#selection-root').innerText()), `${rotulo}: sem aviso de "terminou muito rápido"`);
+    await page.click('#sel-send');
+    await page.waitForSelector('#modal-confirm:not(.hidden)');
+    await page.click('#modal-confirm-ok');
     await page.waitForSelector('[data-sel-step="status"]');
     const status = await page.locator('#selection-root').innerText();
     check(/LAIFT-ABCD2345/.test(status), `${rotulo}: mostra o comprovante`);
@@ -182,6 +193,27 @@ async function portoes() {
   } finally { await c.close(); }
 }
 
+// Visitante deslogado que chega por #inscricao vê o aviso de login com o caminho "Criar conta".
+async function avisoDeLogin() {
+  const server = fakeServer({});
+  const app = await startApp({ viewport: { width: 390, height: 844 }, workerHandlers: server.handlers });
+  try {
+    await app.page.goto(app.baseUrl + '#inscricao');
+    await app.page.waitForSelector('#login-inscricao-aviso:not([hidden])', { timeout: 10000 });
+    const aviso = app.page.locator('#login-inscricao-aviso');
+    check(/entre na sua conta ou crie uma/.test(await aviso.innerText()) && (await aviso.getAttribute('role')) === 'status', 'aviso de login: texto e role=status');
+    const criar = aviso.locator('button');
+    const box = await criar.boundingBox();
+    check(box && box.height >= 44, 'aviso de login: "Criar conta" com alvo de 44px');
+    await criar.click();
+    check(await app.page.locator('#screen-register').isVisible(), 'aviso de login: "Criar conta" abre o cadastro');
+    const guardado = await app.page.evaluate(() => window.sessionStorage.getItem('laift_goto'));
+    check(guardado === 'panel-selection', 'aviso de login: a intenção de ir ao processo continua guardada');
+    await axeGate(app.page, 'aviso de login');
+    check(app.errors.length === 0, 'aviso de login: sem erros de JavaScript');
+  } finally { await app.close(); }
+}
+
 // Página pública do processo seletivo no modo contínuo: datas do fluxo contínuo no lugar de "a divulgar" e botão para a jornada.
 async function paginaPublica() {
   const server = fakeServer({});
@@ -205,4 +237,5 @@ module.exports = async function selection() {
   await jornada('desktop 1280', { width: 1280, height: 800 });
   await portoes();
   await paginaPublica();
+  await avisoDeLogin();
 };

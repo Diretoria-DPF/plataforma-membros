@@ -34,7 +34,7 @@ const GUIDE_MARKDOWN = [
       '## O que a Lia faz',
       'A Lia é a guia da plataforma de membros da LAIFT. Ela explica onde fica cada tela e cada módulo de estudo e leva você até lá com um botão. A Lia nunca altera dados: não inscreve em eventos, não vota e não envia mensagens por você.',
       '## Quem pode usar a IA da Lia',
-      'Perguntas de rotina (eventos, crachá, módulos) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA e exigem estar logado como membro ou administrador. Membros têm ' + AI_QUOTAS.assistant.member + ' perguntas com IA por dia e administradores ' + AI_QUOTAS.assistant.admin + '. Quando a Lia está em modo limitado, a resposta não gasta essa cota.',
+      'Perguntas de rotina (eventos, crachá, módulos) são respondidas sem IA e sem limite diário. Perguntas abertas usam IA e exigem estar logado. Visitantes logados têm ' + AI_QUOTAS.assistant.visitor + ' perguntas com IA por dia, membros ' + AI_QUOTAS.assistant.member + ' e administradores ' + AI_QUOTAS.assistant.admin + '. Quando a Lia está em modo limitado, a resposta não gasta essa cota.',
       '## Modo limitado e avisos',
       'Se a busca na base ou a IA estiverem indisponíveis, a Lia avisa que está com acesso limitado e responde só com o que já sabe. Ela nunca finge operar normalmente.',
     ].join('\n'),

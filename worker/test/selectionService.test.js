@@ -138,14 +138,10 @@ describe('jornada do candidato', () => {
 });
 
 describe('envio', () => {
-  test('incompleto não envia; rápido demais não envia; completo envia e é idempotente', async () => {
+  test('incompleto não envia; completo envia na hora (sem tempo mínimo) e é idempotente', async () => {
     const { application } = await Selection.start(sql, visitor, CID);
     await expect(Selection.submit(sql, visitor, {}, CID)).rejects.toMatchObject({ message: expect.stringMatching(/Faltam/) });
     await saveAll(visitor);
-    await expect(Selection.submit(sql, visitor, {}, CID)).rejects.toMatchObject({ message: expect.stringMatching(/muito rápido/) });
-    expect(await rows("SELECT 1 FROM audit_logs WHERE action = 'SELECTION_TOO_FAST'")).toHaveLength(1);
-
-    await db.exec("UPDATE selection_applications SET started_at = now() - interval '10 minutes'");
     const sent = await Selection.submit(sql, visitor, {}, CID);
     expect(sent.application).toMatchObject({ status: 'submitted', step: 'done' });
     expect(sent.application.receiptCode).toMatch(/^LAIFT-[A-HJ-NP-Z2-9]{8}$/);

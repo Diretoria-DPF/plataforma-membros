@@ -259,9 +259,7 @@ describe('Lia — IA só quando nenhuma intenção serve (e só para quem tem co
     expect(body.messages[body.messages.length - 1]).toEqual({ role: 'user', content: NO_INTENT.message });
   });
 
-  test('visitante logado e quem não tem login: sem IA, resposta fixa de ajuda', async () => {
-    const asVisitor = await chat(routedSql([ON]), VISITOR, NO_INTENT);
-    expect(asVisitor).toMatchObject({ success: true, source: 'fallback' });
+  test('quem não tem login: sem IA, resposta fixa de ajuda', async () => {
     const anonymous = await chat(routedSql([ON]), null, NO_INTENT);
     expect(anonymous).toMatchObject({ success: true, source: 'fallback' });
     expect(globalThis.fetch).not.toHaveBeenCalled();
@@ -300,7 +298,7 @@ describe('Lia — IA só quando nenhuma intenção serve (e só para quem tem co
   });
 
   test('as cotas do plano: visitante 0, membro 25, admin 60', () => {
-    expect(AI_QUOTAS.assistant).toEqual({ visitor: 0, member: 60, admin: 120 });
+    expect(AI_QUOTAS.assistant).toEqual({ visitor: 40, member: 200, admin: 400 });
     expect(AI_FEATURE.ASSISTANT).toBe('assistant');
   });
 
@@ -965,9 +963,10 @@ describe('Lia — intenções de administração só para admin', () => {
     expect(body).not.toMatch(ADMIN_SCREEN);
   });
 
-  test('visitante: sem IA e sem resposta de admin (resposta fixa de ajuda, sem botão)', async () => {
+  test('visitante: sem resposta de admin nem botão (a IA, se houver, nunca devolve a tela de admin)', async () => {
+    globalThis.fetch.mockResolvedValue(groqReply('Essa área é só para administradores.'));
     const res = await chat(routedSql([ON]), VISITOR, ADMIN_QUESTION);
-    expect(res.source).toBe('fallback');
+    expect(res.source).not.toBe('kb');
     expect(res.actions).toEqual([]);
     expect(JSON.stringify(res)).not.toMatch(ADMIN_SCREEN);
   });

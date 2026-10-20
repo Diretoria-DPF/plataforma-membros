@@ -38,23 +38,23 @@ export const SCENARIO = Object.freeze({
     'Explique o impacto com suas palavras, sem copiar trechos.',
     'Não escreva dados de saúde, seus ou de terceiros.',
   ]),
-  minChars: 400,
+  minChars: 1,
   maxChars: 2000,
 });
 
 /** Perguntas abertas sobre a forma de pensar (a primeira é o "projeto de foco científico" do formulário antigo). */
 export const THINKING = Object.freeze([
-  { id: 't01', title: 'Seu projeto na liga', prompt: 'Se você pudesse coordenar uma atividade na LAIFT hoje (palestra, simpósio, linha de pesquisa ou ação social), qual seria o tema central e o principal objetivo?', min: 150, max: 800 },
-  { id: 't02', title: 'Informação duvidosa', prompt: 'Está circulando a afirmação de que "esta planta substitui o remédio X". O que você faz antes de repassar ou contestar? Descreva seus passos.', min: 100, max: 800 },
-  { id: 't03', title: 'Aprender sozinho(a)', prompt: 'Conte uma vez em que você precisou aprender um assunto difícil por conta própria. Como organizou o estudo e o que fez quando travou?', min: 100, max: 800 },
-  { id: 't04', title: 'Limite do que você sabe', prompt: 'Em um projeto da liga, você percebe que não sabe o suficiente para executar a sua parte. Como você age e a quem recorre?', min: 100, max: 800 },
+  { id: 't01', title: 'Seu projeto na liga', prompt: 'Se você pudesse coordenar uma atividade na LAIFT hoje (palestra, simpósio, linha de pesquisa ou ação social), qual seria o tema central e o principal objetivo?', min: 1, max: 800 },
+  { id: 't02', title: 'Informação duvidosa', prompt: 'Está circulando a afirmação de que "esta planta substitui o remédio X". O que você faz antes de repassar ou contestar? Descreva seus passos.', min: 1, max: 800 },
+  { id: 't03', title: 'Aprender sozinho(a)', prompt: 'Conte uma vez em que você precisou aprender um assunto difícil por conta própria. Como organizou o estudo e o que fez quando travou?', min: 1, max: 800 },
+  { id: 't04', title: 'Limite do que você sabe', prompt: 'Em um projeto da liga, você percebe que não sabe o suficiente para executar a sua parte. Como você age e a quem recorre?', min: 1, max: 800 },
 ]);
 
 /** Situações de conduta: resposta curta em texto, "o que eu faria e por quê". */
 export const CONDUCT = Object.freeze([
-  { id: 'c01', title: 'Prazo em risco', situation: 'Você assumiu uma tarefa que vence na sexta. Na quarta, percebe que não vai conseguir terminar com qualidade.', min: 60, max: 500 },
-  { id: 'c02', title: 'Dados de participantes', situation: 'Um colega publica no grupo da turma o nome e a condição de saúde de uma pessoa atendida em um projeto da liga.', min: 60, max: 500 },
-  { id: 'c03', title: 'Ferramentas de IA', situation: 'Você precisa resumir um artigo científico e pensa em usar uma ferramenta de inteligência artificial.', min: 60, max: 500 },
+  { id: 'c01', title: 'Prazo em risco', situation: 'Você assumiu uma tarefa que vence na sexta. Na quarta, percebe que não vai conseguir terminar com qualidade.', min: 1, max: 500 },
+  { id: 'c02', title: 'Dados de participantes', situation: 'Um colega publica no grupo da turma o nome e a condição de saúde de uma pessoa atendida em um projeto da liga.', min: 1, max: 500 },
+  { id: 'c03', title: 'Ferramentas de IA', situation: 'Você precisa resumir um artigo científico e pensa em usar uma ferramenta de inteligência artificial.', min: 1, max: 500 },
 ]);
 
 const byId = (list) => new Map(list.map((q) => [q.id, q]));
