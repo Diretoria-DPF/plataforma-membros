@@ -995,7 +995,7 @@
     showPanel('panel-home');
     // Processo seletivo: #inscricao (já logado) ou a intenção guardada antes do login abre a jornada.
     var wantsSelection = window.location.hash === '#inscricao';
-    try { if (window.sessionStorage.getItem(GOTO_KEY) === 'panel-selection') { wantsSelection = true; window.sessionStorage.removeItem(GOTO_KEY); } } catch (e) { /* ignora */ }
+    if (takeGotoIntent() === 'panel-selection') wantsSelection = true;
     if (wantsSelection && state.profile.role !== 'member') {
       showPanel('panel-selection');
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
@@ -2816,6 +2816,22 @@
   // '#inscricao' (botão do processo seletivo nas páginas públicas): pede o login e, depois dele, abre a jornada.
   var PUBLIC_HASH_SCREENS = { '#cadastro': 'screen-register', '#entrar': 'screen-welcome', '#inscricao': 'screen-welcome' };
   var GOTO_KEY = 'laift_goto';
+  var GOTO_TTL_MS = 2 * 60 * 60 * 1000;
+  // Intenção de ir direto a um painel depois do login (ex.: inscrição no processo seletivo). Fica no localStorage com
+  // validade de 2 h, para sobreviver ao link de confirmação de e-mail aberto em outra aba. É só conveniência: sem storage,
+  // a pessoa abre o painel pelo menu. Guarda apenas o nome do painel e a hora, nada pessoal.
+  function saveGotoIntent(panelId) {
+    try { window.localStorage.setItem(GOTO_KEY, JSON.stringify({ to: panelId, at: Date.now() })); } catch (e) { /* sem storage */ }
+  }
+  function takeGotoIntent() {
+    try {
+      var raw = window.localStorage.getItem(GOTO_KEY);
+      if (!raw) return null;
+      window.localStorage.removeItem(GOTO_KEY);
+      var data = JSON.parse(raw);
+      return data && data.at && Date.now() - data.at < GOTO_TTL_MS ? data.to : null;
+    } catch (e) { return null; }
+  }
   // Quem vem de "Participar do processo seletivo" sem estar logado precisa saber por que caiu no login.
   function showSelectionLoginNotice() {
     var box = document.getElementById('login-inscricao-aviso');
@@ -2834,7 +2850,7 @@
   function openPublicScreenFromHash() {
     var hash = window.location.hash || '';
     var screenId = PUBLIC_HASH_SCREENS[hash] || 'screen-welcome';
-    if (hash === '#inscricao') { try { window.sessionStorage.setItem(GOTO_KEY, 'panel-selection'); } catch (e) { /* sem storage: a pessoa abre pelo menu */ } }
+    if (hash === '#inscricao') saveGotoIntent('panel-selection');
     if (PUBLIC_HASH_SCREENS[hash]) {
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
     }
