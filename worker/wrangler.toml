@@ -34,7 +34,11 @@ MAIL_FROM_NAME = "Plataforma de Membros"
 # Precisa ser um remetente CADASTRADO E VERIFICADO no painel da Brevo
 # (Campanhas > Remetentes, ou Configurações > Remetentes) antes de
 # funcionar — a Brevo rejeita envio de um endereço não verificado.
-MAIL_FROM_ADDRESS = "laiftligauninassau@gmail.com"
+# Domínio autenticado na Brevo (SPF/DKIM/DMARC) em 2026-10-20: remetente "não responda". Se a Brevo recusar o
+# remetente, o envio tenta de novo com MAIL_FROM_FALLBACK; as respostas dos usuários vão para MAIL_REPLY_TO.
+MAIL_FROM_ADDRESS = "nao-responda@laift.com.br"
+MAIL_FROM_FALLBACK = "laiftligauninassau@gmail.com"
+MAIL_REPLY_TO = "laiftligauninassau@gmail.com"
 # URL pública do bucket R2 (avatares e imagens de evento) — não é segredo,
 # é só onde os arquivos ficam publicamente acessíveis depois do upload.
 MEDIA_PUBLIC_URL = "https://pub-f449f2cc117b4cc3a34c374218ac2e99.r2.dev"
