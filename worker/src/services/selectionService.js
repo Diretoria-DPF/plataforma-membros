@@ -14,7 +14,7 @@
  *   - limite por perfil para começar, salvar e enviar (security.enforceRateLimit);
  *   - UMA inscrição ativa por pessoa (índice único parcial) e envio idempotente;
  *   - etapas em ordem, dentro do prazo individual;
- *   - isca (campo `website` deve vir vazio) e tempo mínimo de preenchimento no envio;
+ *   - isca (campo `website` deve vir vazio);
  *   - texto livre sem contato nem documento; dado de saúde e tentativa de manipular a IA viram SINAL (nunca punição);
  *   - sem gabarito nem nota; o candidato só enxerga a PRÓPRIA inscrição;
  *   - eventos guardam só metadados, nunca o texto escrito pela pessoa.
@@ -42,7 +42,6 @@ const MSG = Object.freeze({
   gone: 'Esta inscrição não está mais aberta para edição.',
   order: 'Conclua as etapas anteriores antes desta.',
   incomplete: 'Faltam etapas para enviar. Confira o resumo e complete o que estiver pendente.',
-  tooFast: 'Você terminou muito rápido. Releia com calma e tente enviar de novo em alguns minutos.',
   bot: 'Não foi possível concluir. Recarregue a página e tente de novo.',
   cooldown: 'Você poderá começar uma nova inscrição a partir de {date}.',
   saved: 'Etapa salva.',
@@ -110,7 +109,7 @@ export function content() {
     version: B.BANK_VERSION,
     courses: B.COURSES, areas: B.AREAS, days: B.DAYS, shifts: B.SHIFTS, semesters: B.SEMESTERS,
     scenario: B.SCENARIO, thinking: B.THINKING, conduct: B.CONDUCT,
-    limits: { ...R.LIMITS, minFillMinutes: Math.round(R.MIN_FILL_MS / 60000) },
+    limits: { ...R.LIMITS },
   };
 }
 
@@ -260,10 +259,6 @@ export async function submit(sql, identity, rawInput, correlationId) {
   if (current.status !== 'draft') return { success: true, application: toDto(current), alreadySubmitted: true };
 
   if (!R.isComplete(current.data)) throw E.ValidationError(MSG.incomplete);
-  if (Date.now() - new Date(current.started_at).getTime() < R.MIN_FILL_MS) {
-    await Logging.logAudit(sql, correlationId, identity.profileId, 'SELECTION_TOO_FAST', 'selection_application', current.id, 'failure', null);
-    throw E.ValidationError(MSG.tooFast);
-  }
   const done = await uniqueReceipt(sql, current, identity);
   if (!done) return { success: true, application: toDto((await activeRow(sql, identity.profileId)) || current), alreadySubmitted: true };
 

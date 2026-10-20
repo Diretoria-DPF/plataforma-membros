@@ -19,7 +19,6 @@ import { looksLikeInjection } from '../assistant/moderationRules.js';
 
 export const STEPS = Object.freeze(['intro', 'profile', 'scenario', 'thinking', 'conduct', 'review']);
 export const DATA_STEPS = Object.freeze(['intro', 'profile', 'scenario', 'thinking', 'conduct']);
-export const MIN_FILL_MS = 5 * 60 * 1000;
 export const RESTART_COOLDOWN_DAYS = 14;
 export const LIMITS = Object.freeze({ institution: 120, motivation: 400, hoursMax: 40, areasMax: 4 });
 
@@ -28,10 +27,10 @@ const MSG = Object.freeze({
   data: 'Os dados desta etapa estão incompletos ou inválidos. Confira e tente de novo.',
   intro: 'Para continuar, leia e aceite o edital e o aviso de privacidade e da triagem por IA.',
   contact: 'Retire e-mail, telefone ou documento do texto: não precisamos dessas informações aqui.',
-  scenarioShort: 'A análise está curta. Escreva pelo menos {min} caracteres.',
+  scenarioShort: 'Escreva sua análise para continuar.',
   scenarioLong: 'A análise passou do limite de {max} caracteres.',
-  thinkingAll: 'Responda todas as perguntas, com pelo menos {min} caracteres em cada uma.',
-  conductAll: 'Conte em poucas linhas o que você faria em cada situação (pelo menos {min} caracteres).',
+  thinkingAll: 'Responda todas as perguntas para continuar.',
+  conductAll: 'Conte em poucas linhas o que você faria em cada situação para continuar.',
   tooLong: 'Uma das respostas passou do limite de caracteres.',
 });
 

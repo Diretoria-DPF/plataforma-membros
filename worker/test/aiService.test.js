@@ -45,7 +45,7 @@ describe('AiService — cotas diárias por papel', () => {
       evaluate: { visitor: 5, member: 25, admin: 50 },
       generate_case: { visitor: 2, member: 10, admin: 20 },
       lab_preceptor: { visitor: 10, member: 80, admin: 160 },
-      assistant: { visitor: 0, member: 60, admin: 120 },
+      assistant: { visitor: 40, member: 200, admin: 400 },
       agent_tutor: { visitor: 5, member: 30, admin: 100 },
       agent_curator: { visitor: 0, member: 0, admin: 40 },
     });
