@@ -55,9 +55,10 @@
  */
 import * as Logging from './logging.js';
 import { runAiAlerts } from './ai/alerts.js';
-import { AGENTS, AI_CACHE, ASSISTANT_RETENTION, FEEDBACK } from './constants.js';
+import { AGENTS, AI_CACHE, ASSISTANT_RETENTION, FEEDBACK, SELECTION_RETENTION } from './constants.js';
 import * as ModerationService from './services/moderationService.js';
 import * as Rag from './services/ragService.js';
+import * as SelectionRetention from './services/selectionRetentionService.js';
 import * as ResearchLog from './services/researchLogService.js';
 import { buildDocuments } from './assistant/docs.js';
 import { isEnabled } from './services/featureFlagService.js';
@@ -81,6 +82,9 @@ export const RETENTION = {
   UNCONFIRMED_PROFILE_DAYS: 7,
   UNCONFIRMED_PROFILE_BATCH: 50,
   USAGE_ANALYTICS_DAYS: 400,
+  SELECTION_MONTHS: SELECTION_RETENTION.RETAIN_MONTHS,
+  SELECTION_DRAFT_IDLE_DAYS: SELECTION_RETENTION.DRAFT_IDLE_DAYS,
+  SELECTION_BATCH: SELECTION_RETENTION.BATCH_SIZE,
 };
 
 /** Quantas linhas a limpeza mexeu: a lista de linhas apagadas ou o `lowered` do decaimento da moderação. */
@@ -253,6 +257,11 @@ export async function runMaintenance(sql, correlationId, env) {
       DELETE FROM activity_days
       WHERE day < now() - make_interval(days => ${RETENTION.USAGE_ANALYTICS_DAYS})
       RETURNING 1`,
+    // Processo seletivo (sql/042-043, LGPD): rascunho parado expira, inscrição final com 12 meses é anonimizada, eventos
+    // velhos saem. Em lotes, idempotente; o resumo guarda só contagens (ver selectionRetentionService.js).
+    selectionDraftsExpire: () => SelectionRetention.expireIdleDrafts(sql),
+    selectionAnonymize: () => SelectionRetention.anonymizeOldApplications(sql),
+    selectionEventsPurge: () => SelectionRetention.purgeOldEvents(sql),
     // Memória de estudo (banco separado): vazio sem DATABASE_URL_MEMORY/MEMORY_SUBJECT_KEY. Cada tarefa é isolada abaixo.
     ...memoryTasks(sql, env),
   };
