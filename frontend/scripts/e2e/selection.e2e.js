@@ -207,8 +207,8 @@ async function avisoDeLogin() {
     check(box && box.height >= 44, 'aviso de login: "Criar conta" com alvo de 44px');
     await criar.click();
     check(await app.page.locator('#screen-register').isVisible(), 'aviso de login: "Criar conta" abre o cadastro');
-    const guardado = await app.page.evaluate(() => window.sessionStorage.getItem('laift_goto'));
-    check(guardado === 'panel-selection', 'aviso de login: a intenção de ir ao processo continua guardada');
+    const guardado = await app.page.evaluate(() => { try { return JSON.parse(window.localStorage.getItem('laift_goto')).to; } catch (e) { return null; } });
+    check(guardado === 'panel-selection', 'aviso de login: a intenção de ir ao processo continua guardada (vale entre abas por 2 h)');
     await axeGate(app.page, 'aviso de login');
     check(app.errors.length === 0, 'aviso de login: sem erros de JavaScript');
   } finally { await app.close(); }
