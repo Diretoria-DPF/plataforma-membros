@@ -584,6 +584,13 @@ Object.assign(RATE_LIMITS, {
   AGENTS_INVOKE: { MAX_ATTEMPTS: 40, WINDOW_SECONDS: 3600, BY_ROLE: { visitor: 10, member: 40, admin: 120 } },
 });
 
+// Retenção do processo seletivo (LGPD: não guardar além da necessidade; limpeza em services/selectionRetentionService.js).
+export const SELECTION_RETENTION = {
+  RETAIN_MONTHS: 12,    // inscrição em estado final: depois disso, anonimiza (e apaga os eventos)
+  DRAFT_IDLE_DAYS: 60,  // rascunho sem atividade vira 'expired'
+  BATCH_SIZE: 200,      // linhas por tarefa e por execução do cron (cabe no limite de subrequests do Worker)
+};
+
 export const AGENTS = {
   API_VERSION: 'agents/v1-alpha',
   FLAG: 'agents_enabled',
