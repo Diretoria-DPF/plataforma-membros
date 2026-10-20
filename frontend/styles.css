@@ -198,6 +198,10 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
 .reenvio-confirmacao__abrir { min-height: 44px; }
 .reenvio-confirmacao form { display: grid; gap: 8px; margin-top: 8px; }
 
+.login-aviso { margin: 12px 0; padding: 12px 14px; border-radius: var(--radius-md); background: var(--primary-soft); border: 1px solid var(--primary); color: var(--text); font-size: 0.9375rem; line-height: 1.45; }
+.login-aviso[hidden] { display: none; }
+.login-aviso__botao { margin-top: 10px; min-height: 44px; }
+
 .status-msg { min-height: 20px; margin-top: 10px; font-size: 14px; }
 .status-msg[data-kind="error"] { color: var(--danger); }
 .status-msg[data-kind="success"] { color: var(--success); }

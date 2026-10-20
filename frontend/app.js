@@ -2816,6 +2816,21 @@
   // '#inscricao' (botão do processo seletivo nas páginas públicas): pede o login e, depois dele, abre a jornada.
   var PUBLIC_HASH_SCREENS = { '#cadastro': 'screen-register', '#entrar': 'screen-welcome', '#inscricao': 'screen-welcome' };
   var GOTO_KEY = 'laift_goto';
+  // Quem vem de "Participar do processo seletivo" sem estar logado precisa saber por que caiu no login.
+  function showSelectionLoginNotice() {
+    var box = document.getElementById('login-inscricao-aviso');
+    if (!box) return;
+    while (box.firstChild) box.removeChild(box.firstChild);
+    box.appendChild(document.createTextNode('Para participar do processo seletivo, entre na sua conta ou crie uma (é rápido). Depois você segue direto para a inscrição.'));
+    var create = document.createElement('button');
+    create.type = 'button';
+    create.className = 'secondary login-aviso__botao';
+    create.addEventListener('click', function () { showPublicScreen('screen-register'); });
+    create.textContent = 'Criar conta';
+    box.appendChild(document.createElement('br'));
+    box.appendChild(create);
+    box.hidden = false;
+  }
   function openPublicScreenFromHash() {
     var hash = window.location.hash || '';
     var screenId = PUBLIC_HASH_SCREENS[hash] || 'screen-welcome';
@@ -2824,6 +2839,7 @@
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
     }
     showPublicScreen(screenId);
+    if (hash === '#inscricao') showSelectionLoginNotice();
     if (hash === '#entrar' || hash === '#inscricao') {
       var email = document.getElementById('login-email');
       if (email) email.focus();

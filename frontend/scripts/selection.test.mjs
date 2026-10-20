@@ -35,9 +35,9 @@ test('prazo: dias que faltam e o texto para a pessoa', () => {
 });
 
 test('contador de caracteres do cenário', () => {
-  assert.deepEqual(Sel.charInfo(100, 400, 2000), { state: 'short', text: '100 de 400 caracteres no mínimo' });
-  assert.equal(Sel.charInfo(800, 400, 2000).state, 'ok');
-  assert.equal(Sel.charInfo(2100, 400, 2000).state, 'long');
+  assert.deepEqual(Sel.charInfo(100, 2000), { state: 'ok', text: '100 de 2000 caracteres' });
+  assert.equal(Sel.charInfo(0, 2000).state, 'ok');
+  assert.equal(Sel.charInfo(2100, 2000).state, 'long');
 });
 
 test('data da próxima análise vira dd/mm; formato estranho vira vazio', () => {
