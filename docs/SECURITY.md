@@ -393,8 +393,8 @@ nunca vai para log, commit, mensagem de erro ou `docs/`.
    - **todos os QRs de presença e crachás impressos deixam de valer**,
      porque a chave do QR v2 é derivada do pepper.
 
-   Avise as pessoas antes. Depois da troca, cada uma abre a credencial na
-   área "Aprender" para ver o QR novo, e os crachás precisam ser
+   Avise as pessoas antes. Depois da troca, cada uma abre o crachá virtual no
+   Perfil ou no Início para ver o QR novo, e os crachás precisam ser
    reimpressos pelo terminal fiscal.
 3. **Brevo (`BREVO_API_KEY`).** Gere uma chave nova no painel da Brevo,
    rode `npx wrangler secret put BREVO_API_KEY` e revogue a antiga.
