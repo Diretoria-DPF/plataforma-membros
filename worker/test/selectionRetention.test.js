@@ -12,7 +12,7 @@ import { SELECTION_RETENTION } from '../src/constants.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 
 const PEOPLE = Array.from({ length: 6 }, (_, i) => `77777777-7777-4777-8777-77777777777${i}`);
-const ACTIVE = ['submitted', 'in_review', 'interview', 'waitlist'];
+const ACTIVE = ['submitted', 'in_review', 'interview'];
 const FINAL = ['approved', 'not_selected', 'withdrawn', 'expired'];
 
 let db;
@@ -94,8 +94,20 @@ describe('retenção do processo seletivo', () => {
     }
   });
 
-  test('é idempotente: a segunda execução não muda nada', async () => {
-    const id = await app({ status: 'withdrawn', updatedDaysAgo: OLD });
+  test('lista de espera parada há 12 meses vence: vira expired e é anonimizada; a recente fica (B-04)', async () => {
+    const old = await app({ status: 'waitlist', updatedDaysAgo: OLD, decidedDaysAgo: OLD });
+    const recent = await app({ status: 'waitlist', profile: PEOPLE[1], updatedDaysAgo: OLD, decidedDaysAgo: RECENT });
+    const before = await get(old);
+    const out = await runMaintenance(sql, 'cid');
+    expect(out.selectionAnonymize).toBe(1);
+    const after = await get(old);
+    expect(after).toMatchObject({ status: 'expired', data: {}, ai_triage: null, decision_note: null, appeal_note: null });
+    expect(after.updated_at).toEqual(before.updated_at);
+    expect(await get(recent)).toMatchObject({ status: 'waitlist', decision_note: 'obs interna' });
+    expect((await runMaintenance(sql, 'cid')).selectionAnonymize).toBe(0);
+  });
+
+  test('é idempotente: a segunda execução não muda nada', async () => {    const id = await app({ status: 'withdrawn', updatedDaysAgo: OLD });
     await app({ status: 'draft', profile: PEOPLE[1], updatedDaysAgo: 90 });
     await runMaintenance(sql, 'cid');
     const snap = JSON.stringify(await rows('SELECT * FROM selection_applications ORDER BY id'));

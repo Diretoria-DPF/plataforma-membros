@@ -204,6 +204,19 @@ describe('Lia como guia do processo', () => {
     expect(geral.reply).toMatch(/inscrição agora é feita aqui na plataforma/);
   });
 
+  test('só diz "inscrições abertas" quando o processo está aberto de fato (B-07)', async () => {
+    await db.exec("UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'");
+    __resetFlagCacheForTests();
+    const pergunta = 'Como entro na liga? Quero saber do processo seletivo';
+    const aberto = await ask(pergunta);
+    expect(aberto.reply).toMatch(/inscrições estão abertas/);
+    expect(aberto.reply).toMatch(/quem decide é a comissão/);
+    await db.exec('UPDATE selection_settings SET is_open = FALSE');
+    const fechado = await ask(pergunta);
+    expect(fechado.reply).not.toMatch(/inscrições (estão )?abertas/);
+    expect(fechado.reply).toMatch(/inscrições estão fechadas/);
+  });
+
   test('a Lia não responde o teste nem escreve a análise; explica o que se espera', async () => {
     await db.exec("UPDATE feature_flags SET enabled = TRUE WHERE key = 'chatbot_enabled'");
     __resetFlagCacheForTests();

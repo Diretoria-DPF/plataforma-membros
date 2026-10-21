@@ -125,6 +125,22 @@ describe('decisão', () => {
     await expect(Committee.decide(sql, env(), admin, { id, decision: 'not_selected' }, CID)).rejects.toMatchObject({ name: 'ConflictError' });
   });
 
+  test('aprovação é atômica: se a promoção a membro falhar, a inscrição não fica aprovada e pode ser decidida de novo', async () => {
+    const id = await submitted(cand);
+    await db.exec(`CREATE OR REPLACE FUNCTION test_fail_promotion() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN IF NEW.role = 'member' AND OLD.role = 'visitor' THEN RAISE EXCEPTION 'falha simulada na promoção'; END IF; RETURN NEW; END $$;
+      CREATE TRIGGER trg_test_fail_promotion BEFORE UPDATE OF role ON profiles FOR EACH ROW EXECUTE FUNCTION test_fail_promotion();`);
+    try {
+      await expect(Committee.decide(sql, env(), admin, { id, decision: 'approved' }, CID)).rejects.toThrow();
+      expect((await rows('SELECT status, decided_by FROM selection_applications WHERE id = $1', [id]))[0]).toMatchObject({ status: 'submitted', decided_by: null });
+      expect((await rows('SELECT role FROM profiles WHERE id = $1', [CAND]))[0].role).toBe('visitor');
+    } finally {
+      await db.exec('DROP TRIGGER IF EXISTS trg_test_fail_promotion ON profiles; DROP FUNCTION IF EXISTS test_fail_promotion();');
+    }
+    await Committee.decide(sql, env(), admin, { id, decision: 'approved' }, CID);
+    expect((await rows('SELECT role FROM profiles WHERE id = $1', [CAND]))[0].role).toBe('member');
+  });
+
   test('lista de espera e não selecionar não mudam o papel; decisão inválida e rascunho são recusados', async () => {
     const id = await submitted(cand);
     await Committee.decide(sql, env(), admin, { id, decision: 'waitlist' }, CID);
