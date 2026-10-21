@@ -102,7 +102,8 @@ async function memberScenario() {
     check(app.calls.external.every((c) => c.method === 'GET'), 'o hub não envia nada a outro backend além da Worker');
 
     // ---- Credencial com QR v2 ----
-    await app.page.click('#btn-learn-credential');
+    await app.showPanel('panel-profile');
+    await app.page.click('#btn-profile-credential');
     await app.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 5000 }).catch(() => {});
     const kind = await app.page.getAttribute('#learn-credential-qr', 'data-qr-kind');
     const qrCall = app.calls.worker.find((c) => c.action === 'apiLearnGetMyAttendanceQr');
