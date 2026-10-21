@@ -336,6 +336,16 @@ describe('Lia sobre a Liga: processo seletivo (fatos do edital de 2026, sem vaga
     expect(intent.reply).not.toMatch(/[<>]/);
   });
 
+  test('o acervo do processo descreve o fluxo atual: sem fases eliminatórias e a IA não elimina ninguém (B-07)', () => {
+    const processo = buildDocuments().filter((d) => d.source === 'processo' || d.source === 'liga' || d.source === 'publicacoes');
+    const all = processo.map((d) => d.content).join('\n');
+    expect(all).not.toMatch(/eliminatóri|filtro crítico|formulário oficial|inscrição direta no site ainda é um plano/i);
+    expect(all).toMatch(/não elimina ninguém/);
+    expect(all).toMatch(/comissão/);
+    const kbTexts = INTENTS.flatMap((i) => [i.reply, i.whenSelection && i.whenSelection.reply]).filter(Boolean).join('\n');
+    expect(kbTexts).not.toMatch(/com inscrições abertas|eliminatóri/i);
+  });
+
   test('o acervo traz a seção da Liga, com trechos de até 1.200 caracteres e sem vagas, datas ou Edital v2', () => {
     const liga = buildDocuments().filter((d) => d.source === 'liga');
     expect(liga.map((d) => d.section)).toEqual(expect.arrayContaining(['Como entrar', 'Áreas', 'Contato']));
