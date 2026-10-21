@@ -49,6 +49,7 @@ import * as ClinicalSimService from './services/clinicalSimService.js';
 // Lia, guia da plataforma (orienta e navega; nunca altera dados)
 import * as SelectionService from './services/selectionService.js';
 import * as SelectionCommittee from './services/selectionCommitteeService.js';
+import * as PrivacyService from './services/privacyService.js';
 import * as AssistantService from './services/assistantService.js';
 // Lia — feedback das respostas, painel de satisfação, fontes e reindexação (sql/021, sql/020)
 import * as AssistantFeedbackService from './services/assistantFeedbackService.js';
@@ -181,6 +182,13 @@ export const API_REGISTRY = {
   apiSelectionCommitteeTriage: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.triage(sql, env, identity, asInput(input), cid)),
   apiSelectionCommitteeDecide: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.decide(sql, env, identity, asInput(input), cid)),
   apiSelectionCommitteeSettings: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.saveSettings(sql, identity, asInput(input), cid)),
+  // Direitos do titular (LGPD): exportar os próprios dados e pedir a exclusão da conta; a diretoria conclui.
+  apiPrivacyExportMyData: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => PrivacyService.exportMyData(sql, identity)),
+  apiPrivacyRequestDeletion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.requestDeletion(sql, identity, asInput(input), cid)),
+  apiPrivacyGetDeletionStatus: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => PrivacyService.getDeletionStatus(sql, identity)),
+  apiPrivacyCancelDeletion: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.cancelDeletion(sql, identity, cid)),
+  apiAdminListDeletionRequests: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => PrivacyService.listDeletionRequests(sql, identity, asInput(input))),
+  apiAdminCompleteDeletion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.completeDeletion(sql, identity, asInput(input), cid)),
   // Lia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
   apiAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.submitFeedback(sql, identity, asInput(input), cid)),
   apiAdminListAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.listFeedback(sql, identity, asInput(input))),

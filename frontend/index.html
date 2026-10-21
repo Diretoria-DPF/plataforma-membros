@@ -77,6 +77,7 @@
   <link rel="stylesheet" href="library.css">
   <link rel="stylesheet" href="selection.css">
   <link rel="stylesheet" href="selection-admin.css">
+  <link rel="stylesheet" href="privacy.css">
   <link rel="stylesheet" href="agents-tutor.css">
   <link rel="stylesheet" href="memory.css">
   <!-- Flags de UI aplicadas antes da primeira pintura (sem piscar); script minúsculo e externo, compatível com a CSP. -->
@@ -354,6 +355,11 @@
           <button type="button" data-panel="panel-admin-selection" data-scope="admin">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9"/></svg>
             <span>Seleção</span>
+          </button>
+          <!-- Fila de pedidos de exclusão de conta (LGPD; frontend/privacy-admin.js). -->
+          <button type="button" data-panel="panel-admin-privacy" data-scope="admin">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            <span>Exclusões</span>
           </button>
           <!-- Cargos funcionais (ADR 0010): conceder e retirar, com reautenticação. -->
           <button type="button" data-panel="panel-admin-roles">
@@ -758,6 +764,10 @@
               </form>
               <div id="msg-feedback" class="status-msg" role="alert" aria-live="polite"></div>
             </div>
+            <!-- Direitos do titular (LGPD): baixar os dados e pedir exclusão; privacy.js monta por LaiftDom.h. -->
+            <div class="card" id="privacy-card">
+              <div id="privacy-root"></div>
+            </div>
             <div class="card">
               <h3>Atualizar o aplicativo</h3>
               <p class="muted">Se alguma tela não mudou depois de uma novidade, toque aqui: o aplicativo busca a versão mais nova e limpa a cópia guardada no aparelho. Você continua conectado.</p>
@@ -1079,6 +1089,11 @@
           <h1 class="sr-only">Comissão do processo seletivo</h1>
           <div id="selection-admin-root"></div>
         </section>
+        <!-- Fila de exclusões de conta (LGPD); privacy-admin.js monta por LaiftDom.h. -->
+        <section id="panel-admin-privacy" class="hidden">
+          <h1 class="sr-only">Pedidos de exclusão de conta</h1>
+          <div id="privacy-admin-root"></div>
+        </section>
         <footer class="site-credito">© 2026 LAIFT · desenvolvido por: <a href="https://dpflabs.com" target="_blank" rel="noopener noreferrer">dpflabs.com</a></footer>
       </main>
     </div>
@@ -1269,6 +1284,9 @@
   <script src="selection.js" defer></script>
   <!-- Painel da comissão do processo seletivo (só admin): mesmo LaiftDom. -->
   <script src="selection-admin.js" defer></script>
+  <!-- Direitos do titular (LGPD): Perfil e fila de exclusões do admin; privacy.js antes de privacy-admin.js. -->
+  <script src="privacy.js" defer></script>
+  <script src="privacy-admin.js" defer></script>
   <script src="admin-library-extras.js" defer></script>
   <script src="admin-library-publicar.js" defer></script>
   <script src="admin-library-lote.js" defer></script>

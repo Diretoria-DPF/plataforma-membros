@@ -176,6 +176,10 @@ export const RATE_LIMITS = {
   SELECTION_SUBMIT: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 3600 },
   SELECTION_APPEAL: { MAX_ATTEMPTS: 3, WINDOW_SECONDS: 86400 },
   SELECTION_TRIAGE: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
+  // Direitos do titular (privacyService.js): exportar é raro; o pedido de exclusão é idempotente; a diretoria conclui em lote.
+  PRIVACY_EXPORT: { MAX_ATTEMPTS: 5, WINDOW_SECONDS: 3600 },
+  PRIVACY_REQUEST: { MAX_ATTEMPTS: 10, WINDOW_SECONDS: 3600 },
+  PRIVACY_ADMIN: { MAX_ATTEMPTS: 60, WINDOW_SECONDS: 3600 },
   SELECTION_DECIDE: { MAX_ATTEMPTS: 200, WINDOW_SECONDS: 3600 },
   LOGIN: { MAX_ATTEMPTS: 8, WINDOW_SECONDS: 900 },
   // Achado M2 da auditoria de 2026-09-25: LOGIN acima só limita por e-mail,

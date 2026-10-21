@@ -1,0 +1,61 @@
+/*
+ * Plataforma de Membros LAIFT
+ * © 2026 Daniel Pires Francisco. Todos os direitos reservados.
+ * Licença proprietária: ver LICENSE na raiz do repositório.
+ */
+/* Direitos do titular (privacy.js) e fila de exclusões (privacy-admin.js). Só tokens do tema, alvos de 44 px e foco visível. */
+
+.pv-card { display: grid; gap: 14px; }
+.pv-admin {
+  max-width: 820px; margin: 0 auto; padding: 20px 16px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow);
+}
+.pv-heading { margin: 0; font-size: 1.3rem; line-height: 1.25; outline: none; }
+.pv-hint, .pv-count { margin: 0; font-size: 0.875rem; color: var(--muted); }
+.pv-live { min-height: 1.2em; margin: 0; }
+.pv-empty { margin: 0; padding: 18px 14px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius-md); }
+.pv-error { margin: 0; padding: 12px 14px; border-radius: var(--radius-md); background: var(--danger-soft); color: var(--danger); font-weight: 600; }
+
+.pv-section { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.pv-section h4, .pv-notes h5 { margin: 0; font-size: 1rem; }
+.pv-notes ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 4px; font-size: 0.875rem; }
+.pv-notes[hidden] { display: none; }
+.pv-form { display: grid; gap: 8px; }
+.pv-label { font-weight: 700; font-size: 0.9rem; }
+
+.pv-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pv-actions button, .pv-tab, .pv-row button, #pv-retry { width: auto; min-height: 44px; padding: 0 16px; }
+
+.pv-status { display: grid; gap: 8px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-alt); border: 1px solid var(--border); }
+.pv-status p { margin: 0; }
+.pv-status__title { font-weight: 700; }
+.pv-status--soon { background: var(--laift-warning-soft); border-color: var(--laift-warning); }
+.pv-status--overdue { background: var(--danger-soft); border-color: var(--danger); }
+
+.pv-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.pv-tab { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); font-weight: 600; }
+.pv-tab.is-active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary-strong); }
+
+.pv-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.pv-row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface);
+}
+.pv-row--soon { border-color: var(--laift-warning); background: var(--laift-warning-soft); }
+.pv-row--overdue { border-color: var(--danger); background: var(--danger-soft); }
+.pv-row__info { display: grid; gap: 4px; min-width: 0; }
+.pv-row__name { font-weight: 700; overflow-wrap: anywhere; }
+.pv-row__meta { font-size: 0.8125rem; color: var(--muted); }
+.pv-row--soon .pv-row__meta, .pv-row--overdue .pv-row__meta { color: var(--text); }
+.pv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.pv-tag { padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+.pv-tag--warn { background: var(--laift-warning-soft); color: var(--laift-warning); border-color: var(--laift-warning); }
+.pv-tag--danger { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+
+.pv-tab:focus-visible, .pv-actions button:focus-visible, .pv-row button:focus-visible, #pv-retry:focus-visible,
+#pv-reason:focus-visible, .pv-notes a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+@media (min-width: 720px) {
+  .pv-admin { padding: 28px; }
+}
