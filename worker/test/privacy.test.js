@@ -7,6 +7,7 @@
  * Direitos do titular (LGPD): exportação dos próprios dados e pedido de exclusão de conta (privacyService),
  * contra um Postgres real em memória (PGlite). Quem usa: `npm test -- -i privacy`.
  */
+import { jest } from '@jest/globals';
 import * as Privacy from '../src/services/privacyService.js';
 import { createMigratedDb, toSql } from './helpers/pgliteSql.js';
 
@@ -18,6 +19,8 @@ const CID = '00000000-0000-4000-8000-0000000000d1';
 const admin = { profileId: ADMIN, role: 'admin', fullName: 'Diretoria Um' };
 const ana = { profileId: ANA, role: 'member', fullName: 'Ana Souza Lima' };
 const bia = { profileId: BIA, role: 'member', fullName: 'Bia Costa' };
+const okStepUp = async () => {};
+const withStepUp = { stepUp: okStepUp };
 
 let db;
 let sql;
@@ -57,6 +60,27 @@ describe('exportMyData', () => {
     expect(out.data.consents).toHaveLength(1);
     expect(out.notes.join(' ')).toMatch(/mensagens/i);
     for (const banned of ['HASH-SECRETO', 'password', 'TRIAGEM-IA', 'NOTA-INTERNA', '_signals', 'saude', 'OUTRO-CURSO-BIA', 'Bia Costa']) expect(text).not.toContain(banned);
+  });
+
+  test('inclui conexões, bloqueios, feedback, Lia, aprendizagem, presença e favoritos (B-08)', async () => {
+    await db.query("INSERT INTO feedback (profile_id, message) VALUES ($1, 'Meu feedback livre')", [ANA]);
+    await db.query("UPDATE profiles SET status = 'active', email_confirmed_at = now() WHERE id = ANY($1::uuid[])", [[ANA, BIA]]);
+    await db.query("INSERT INTO connections (requester_id, addressee_id, status, requested_via) VALUES ($1, $2, 'accepted', 'username')", [ANA, BIA]);
+    await db.query('INSERT INTO profile_blocks (blocker_id, blocked_id) VALUES ($1, $2)', [ANA, ADMIN2]);
+    await db.query("INSERT INTO learning_attempts (profile_id, module, activity, score, max_score) VALUES ($1, 'farmacologia', 'quiz_estudo', 3, 5)", [ANA]);
+    const [msg] = await rows("INSERT INTO assistant_messages (profile_id, question_hash, topic, source, answer) VALUES ($1, 'h', 'agenda', 'kb', 'Resposta da Lia') RETURNING id", [ANA]);
+    await db.query("INSERT INTO assistant_feedback (message_id, profile_id, rating, comment) VALUES ($1, $2, 'down', 'Meu comentário')", [msg.id, ANA]);
+    const out = await Privacy.exportMyData(sql, ana);
+    const d = out.data;
+    expect(d.feedback).toEqual([expect.objectContaining({ message: 'Meu feedback livre' })]);
+    expect(d.connections).toEqual([expect.objectContaining({ with: 'priv4', status: 'accepted' })]);
+    expect(d.blocks).toEqual([expect.objectContaining({ blocked: 'priv2' })]);
+    expect(d.learning).toEqual([expect.objectContaining({ module: 'farmacologia', activity: 'quiz_estudo', score: 3, maxScore: 5 })]);
+    expect(d.assistantMessages).toEqual([expect.objectContaining({ topic: 'agenda', answer: 'Resposta da Lia' })]);
+    expect(d.assistantFeedback).toEqual([expect.objectContaining({ rating: 'down', comment: 'Meu comentário' })]);
+    for (const key of ['libraryFavorites', 'librarySuggestions', 'activityDays', 'preferences']) expect(d).toHaveProperty(key);
+    expect(out.notes.join(' ')).toMatch(/memória de estudo/i);
+    expect(JSON.stringify(out)).not.toContain('priv4@exemplo.com');
   });
 
   test('exige sessão', async () => {
@@ -108,7 +132,7 @@ describe('administração', () => {
   test('concluir apaga o perfil e os dados dela, preserva os de outros e zera o rótulo', async () => {
     await Privacy.requestDeletion(sql, ana, {}, CID);
     const [{ id }] = await rows('SELECT id FROM account_deletion_requests');
-    const done = await Privacy.completeDeletion(sql, admin, { id }, CID);
+    const done = await Privacy.completeDeletion(sql, admin, { id }, CID, withStepUp);
     expect(done.success).toBe(true);
     expect(await rows('SELECT 1 FROM profiles WHERE id = $1', [ANA])).toHaveLength(0);
     expect(await rows('SELECT 1 FROM selection_applications WHERE profile_id = $1', [ANA])).toHaveLength(0);
@@ -119,18 +143,52 @@ describe('administração', () => {
     const audit = JSON.stringify(await rows("SELECT details, target_id, target_type FROM audit_logs WHERE action = 'ACCOUNT_DELETION_COMPLETED'"));
     expect(audit).not.toContain(ANA);
     expect(audit).not.toContain('Ana');
-    await expect(Privacy.completeDeletion(sql, admin, { id }, CID)).rejects.toMatchObject({ name: 'ConflictError' });
-    await expect(Privacy.completeDeletion(sql, admin, { id: 'xx' }, CID)).rejects.toMatchObject({ name: 'ValidationError' });
+    await expect(Privacy.completeDeletion(sql, admin, { id }, CID, withStepUp)).rejects.toMatchObject({ name: 'ConflictError' });
+    await expect(Privacy.completeDeletion(sql, admin, { id: 'xx' }, CID, withStepUp)).rejects.toMatchObject({ name: 'ValidationError' });
+  });
+
+  test('concluir exige reautenticação: sem stepUp ou com stepUp falhando nada é apagado e a falha é auditada', async () => {
+    await Privacy.requestDeletion(sql, ana, {}, CID);
+    const [{ id }] = await rows('SELECT id FROM account_deletion_requests');
+    await expect(Privacy.completeDeletion(sql, admin, { id }, CID, {})).rejects.toMatchObject({ name: 'ForbiddenError' });
+    const denied = Object.assign(new Error('Senha incorreta.'), { name: 'ForbiddenError' });
+    await expect(Privacy.completeDeletion(sql, admin, { id }, CID, { stepUp: async () => { throw denied; } })).rejects.toBe(denied);
+    expect(await rows('SELECT 1 FROM profiles WHERE id = $1', [ANA])).toHaveLength(1);
+    expect((await rows('SELECT status FROM account_deletion_requests'))[0].status).toBe('requested');
+    expect(await rows("SELECT 1 FROM audit_logs WHERE action = 'ACCOUNT_DELETION_COMPLETED' AND result = 'failure'")).toHaveLength(1);
+  });
+
+  test('concluir apaga do R2 os avatares da pessoa (atual e antigos) e uma falha do R2 não bloqueia a exclusão', async () => {
+    const base = 'https://media.exemplo.com';
+    await db.query('UPDATE profiles SET avatar_url = $2 WHERE id = $1', [ANA, base + '/avatars/' + ANA + '-1700000000000.png']);
+    await Privacy.requestDeletion(sql, ana, {}, CID);
+    const [{ id }] = await rows('SELECT id FROM account_deletion_requests');
+    const bucket = {
+      list: jest.fn().mockResolvedValue({ objects: [{ key: 'avatars/' + ANA + '-1600000000000.jpg' }], truncated: false }),
+      delete: jest.fn().mockResolvedValue(undefined),
+    };
+    await Privacy.completeDeletion(sql, admin, { id }, CID, { stepUp: okStepUp, env: { MEDIA_PUBLIC_URL: base, MEDIA_BUCKET: bucket } });
+    expect(bucket.list).toHaveBeenCalledWith(expect.objectContaining({ prefix: 'avatars/' + ANA + '-' }));
+    const deleted = bucket.delete.mock.calls.flatMap((c) => [].concat(c[0]));
+    expect(deleted.sort()).toEqual(['avatars/' + ANA + '-1600000000000.jpg', 'avatars/' + ANA + '-1700000000000.png'].sort());
+    expect(await rows('SELECT 1 FROM profiles WHERE id = $1', [ANA])).toHaveLength(0);
+
+    await Privacy.requestDeletion(sql, bia, {}, CID);
+    const [{ id: id2 }] = await rows("SELECT id FROM account_deletion_requests WHERE status = 'requested'");
+    const broken = { list: jest.fn().mockRejectedValue(new Error('R2 fora')), delete: jest.fn().mockRejectedValue(new Error('R2 fora')) };
+    const out = await Privacy.completeDeletion(sql, admin, { id: id2 }, CID, { stepUp: okStepUp, env: { MEDIA_PUBLIC_URL: base, MEDIA_BUCKET: broken } });
+    expect(out.success).toBe(true);
+    expect(await rows('SELECT 1 FROM profiles WHERE id = $1', [BIA])).toHaveLength(0);
   });
 
   test('recusa apagar a própria conta de administrador e o último administrador', async () => {
     await db.exec("UPDATE profiles SET role = 'member' WHERE role = 'admin' AND id <> '" + ADMIN + "'");
     await Privacy.requestDeletion(sql, admin, {}, CID);
     const [{ id }] = await rows('SELECT id FROM account_deletion_requests');
-    await expect(Privacy.completeDeletion(sql, admin, { id }, CID)).rejects.toMatchObject({ name: 'ConflictError' });
+    await expect(Privacy.completeDeletion(sql, admin, { id }, CID, withStepUp)).rejects.toMatchObject({ name: 'ConflictError' });
     // outra sessão de administrador tenta apagar o único administrador ativo do banco
     const other = { profileId: ADMIN2, role: 'admin', fullName: 'Outro' };
-    await expect(Privacy.completeDeletion(sql, other, { id }, CID)).rejects.toMatchObject({ name: 'ConflictError' });
+    await expect(Privacy.completeDeletion(sql, other, { id }, CID, withStepUp)).rejects.toMatchObject({ name: 'ConflictError' });
     expect(await rows('SELECT 1 FROM profiles WHERE id = $1', [ADMIN])).toHaveLength(1);
     expect((await rows('SELECT status FROM account_deletion_requests'))[0].status).toBe('requested');
   });

@@ -183,12 +183,12 @@ export const API_REGISTRY = {
   apiSelectionCommitteeDecide: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.decide(sql, env, identity, asInput(input), cid)),
   apiSelectionCommitteeSettings: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => SelectionCommittee.saveSettings(sql, identity, asInput(input), cid)),
   // Direitos do titular (LGPD): exportar os próprios dados e pedir a exclusão da conta; a diretoria conclui.
-  apiPrivacyExportMyData: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => PrivacyService.exportMyData(sql, identity)),
+  apiPrivacyExportMyData: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.exportMyData(sql, identity, cid)),
   apiPrivacyRequestDeletion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.requestDeletion(sql, identity, asInput(input), cid)),
   apiPrivacyGetDeletionStatus: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => PrivacyService.getDeletionStatus(sql, identity)),
   apiPrivacyCancelDeletion: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.cancelDeletion(sql, identity, cid)),
   apiAdminListDeletionRequests: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => PrivacyService.listDeletionRequests(sql, identity, asInput(input))),
-  apiAdminCompleteDeletion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.completeDeletion(sql, identity, asInput(input), cid)),
+  apiAdminCompleteDeletion: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => PrivacyService.completeDeletion(sql, identity, asInput(input), cid, { env, stepUp: () => MfaService.requireStepUp(sql, env, identity, asInput(input)) })),
   // Lia — feedback do membro: polegar e comentário só na PRÓPRIA resposta (flag feedback_enabled).
   apiAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => AssistantFeedbackService.submitFeedback(sql, identity, asInput(input), cid)),
   apiAdminListAssistantFeedback: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => AssistantFeedbackService.listFeedback(sql, identity, asInput(input))),

@@ -8,7 +8,7 @@
  * Retenção do processo seletivo (LGPD), chamada pelo cron diário (maintenance.js). Três passos, todos em lote
  * (SELECTION_RETENTION.BATCH_SIZE por execução), idempotentes e sem nunca ler nem devolver texto de candidato:
  *  1. rascunho sem atividade há DRAFT_IDLE_DAYS vira 'expired' (o updated_at passa a ser a data da expiração);
- *  2. inscrição em estado FINAL cuja última data (updated_at ou decided_at) passou de RETAIN_MONTHS é anonimizada:
+ *  2. inscrição em estado FINAL (ou na lista de espera, que vence e vira 'expired') cuja última data (updated_at ou decided_at) passou de RETAIN_MONTHS é anonimizada:
  *     respostas, resumo da IA e observações viram vazio/NULL; a linha mínima (id, pessoa, status, datas, comprovante)
  *     fica para o histórico. Não mexe em updated_at;
  *  3. eventos com mais de RETAIN_MONTHS de inscrições já anonimizadas são apagados.
@@ -17,6 +17,7 @@
 import { SELECTION_RETENTION as R } from '../constants.js';
 
 const FINAL_STATUSES = ['approved', 'not_selected', 'withdrawn', 'expired'];
+const RETAINED_STATUSES = [...FINAL_STATUSES, 'waitlist'];
 
 /** Passo 1: rascunhos parados viram 'expired'. */
 export async function expireIdleDrafts(sql) {
@@ -35,14 +36,19 @@ export async function expireIdleDrafts(sql) {
   return rows;
 }
 
-/** Passo 2: anonimiza inscrições finais antigas que ainda guardam algum conteúdo (é o que a torna idempotente). */
+/**
+ * Passo 2: anonimiza inscrições finais antigas que ainda guardam algum conteúdo (é o que a torna idempotente). A lista de
+ * espera parada há RETAIN_MONTHS também vence (B-04): vira 'expired' e é anonimizada no mesmo comando, sem guardar
+ * respostas sem prazo. Inscrições ainda em análise (submitted, in_review, interview) não são tocadas.
+ */
 export async function anonymizeOldApplications(sql) {
   const rows = await sql`
     UPDATE selection_applications
-    SET data = '{}'::jsonb, ai_triage = NULL, ai_triage_at = NULL, decision_note = NULL, appeal_note = NULL
+    SET data = '{}'::jsonb, ai_triage = NULL, ai_triage_at = NULL, decision_note = NULL, appeal_note = NULL,
+        status = CASE WHEN status = 'waitlist' THEN 'expired' ELSE status END
     WHERE id IN (
       SELECT id FROM selection_applications
-      WHERE status = ANY(${FINAL_STATUSES})
+      WHERE status = ANY(${RETAINED_STATUSES})
         AND GREATEST(updated_at, decided_at) < now() - make_interval(months => ${R.RETAIN_MONTHS})
         AND (data <> '{}'::jsonb OR ai_triage IS NOT NULL OR ai_triage_at IS NOT NULL
              OR decision_note IS NOT NULL OR appeal_note IS NOT NULL)

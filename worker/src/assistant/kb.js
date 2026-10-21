@@ -171,8 +171,12 @@ export const INTENTS = [
     weight: 1.5,
     keywords: ['processo seletivo', 'seletivo', 'entrar na liga', 'entro na liga', 'fazer parte da liga', 'ser membro', 'virar membro', 'edital', 'areas da liga', 'contato da liga'],
     // Com a flag selection_enabled ligada (assistantService.js) vale esta versão: a inscrição acontece na plataforma.
+    // A situação (aberto ou fechado) vem de selection_settings.is_open e é acrescentada pelo assistantService
+    // (selectionOpenNote/selectionClosedNote); o texto fixo nunca afirma que as inscrições estão abertas (B-07).
     whenSelection: {
-      reply: 'Para entrar na LAIFT há processo seletivo, e a inscrição agora é feita aqui na plataforma, com inscrições abertas. Você cria sua conta e responde (perfil, análise de cenário, perguntas sobre como você pensa e situações de conduta) e a comissão analisa em lotes. Uma IA ajuda a organizar a leitura, mas quem decide é a comissão. O edital tem as regras completas.',
+      reply: 'Para entrar na LAIFT há processo seletivo, e a inscrição agora é feita aqui na plataforma. Você cria sua conta e responde (perfil, análise de cenário, perguntas sobre como você pensa e situações de conduta) e a comissão analisa em lotes. Uma IA ajuda a organizar a leitura, mas não elimina ninguém: quem decide é a comissão. O edital tem as regras completas.',
+      selectionOpenNote: 'Neste momento as inscrições estão abertas.',
+      selectionClosedNote: 'Neste momento as inscrições estão fechadas; quando abrirem, o aviso aparece na tela do processo seletivo e no Instagram @laift.liga.',
       actions: [nav('panel-selection')],
       suggestions: ['Como funciona o processo seletivo?', 'A IA elimina alguém?', 'Qual é o prazo?'],
     },

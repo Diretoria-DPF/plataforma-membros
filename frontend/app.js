@@ -2815,6 +2815,7 @@
     showPanel: showPanel,
     showPanelSection: showPanelSection,
     openConfirm: openConfirm,
+    openStepUp: openStepUp,
   };
 
   // Atalhos de URL das telas públicas (barras do blog e da Liga): /#cadastro abre o cadastro e

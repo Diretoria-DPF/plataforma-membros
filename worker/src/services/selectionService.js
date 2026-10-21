@@ -67,6 +67,11 @@ async function readSettings(sql) {
   }
 }
 
+/** As inscrições estão abertas agora (selection_settings.is_open)? Usado pela Lia para não afirmar o que não é. */
+export async function isSelectionOpen(sql) {
+  return (await readSettings(sql)).isOpen;
+}
+
 function assertCandidate(identity) {
   if (!identity) throw E.AuthError(MSG.login);
   if (identity.role !== C.ROLES.VISITOR && identity.role !== C.ROLES.ADMIN) throw E.ForbiddenError(MSG.member);

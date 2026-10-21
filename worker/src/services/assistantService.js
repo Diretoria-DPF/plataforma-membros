@@ -48,6 +48,7 @@ import { extractiveAnswer, sourceEntry, NO_MATCH_REPLY, NO_MATCH_SUGGESTIONS } f
 import { publicPathFor } from '../assistant/publicLinks.js';
 import * as TreeSelect from './treeSelectService.js';
 import * as VisitorAi from './visitorAiService.js';
+import { isSelectionOpen } from './selectionService.js';
 import { looksLikeInjection, withoutOffensiveTurns } from '../assistant/moderationRules.js';
 
 // O filtro de injeção mora em assistant/moderationRules.js (compartilhado com a redenção, sem import
@@ -546,6 +547,18 @@ async function chatCore(sql, env, identity, rawInput, correlationId) {
   return routeQuestion(sql, env, identity, { input, message, history, correlationId });
 }
 
+/**
+ * Acrescenta à resposta do processo seletivo a situação real das inscrições (selection_settings.is_open). Se não der para
+ * ler, a resposta segue sem afirmar nada sobre aberto ou fechado (B-07).
+ */
+async function withSelectionStatus(sql, intent) {
+  if (!intent.selectionOpenNote && !intent.selectionClosedNote) return intent;
+  let open = null;
+  try { open = await isSelectionOpen(sql); } catch (err) { open = null; }
+  const note = open === true ? intent.selectionOpenNote : open === false ? intent.selectionClosedNote : null;
+  return note ? Object.assign({}, intent, { reply: intent.reply + ' ' + note }) : intent;
+}
+
 /** Depois do portão, da moderação e do filtro de injeção: intenção por regra, conhecimento + IA e artigos da Biblioteca. */
 async function routeQuestion(sql, env, identity, ctx) {
   const { input, message, history, correlationId } = ctx;
@@ -564,7 +577,7 @@ async function routeQuestion(sql, env, identity, ctx) {
   // geral troca para a versão "a inscrição é aqui".
   const selectionOn = await flagOn(sql, identity, FLAG_SELECTION);
   if (hit && hit.intent.selection && !selectionOn) hit = null;
-  if (hit && selectionOn && hit.intent.whenSelection) hit = Object.assign({}, hit, { intent: Object.assign({}, hit.intent, hit.intent.whenSelection) });
+  if (hit && selectionOn && hit.intent.whenSelection) hit = Object.assign({}, hit, { intent: await withSelectionStatus(sql, Object.assign({}, hit.intent, hit.intent.whenSelection)) });
   // Lia híbrida: pergunta de definição só é respondida por regra pelas intenções que de fato definem.
   if (hit && mode.hybrid && !allowIntent(kind, hit)) hit = null;
   // Artigos da Biblioteca: só com library_enabled; quem não tem login só na Lia híbrida (o degrau do visitante).

@@ -204,13 +204,22 @@ export async function decide(sql, env, identity, rawInput, correlationId) {
   if (row.status === 'approved') throw E.ConflictError(MSG.locked);
   if (!DECIDABLE.includes(row.status)) throw E.ConflictError(MSG.notReady);
 
+  // Status da inscrição e promoção a membro num ÚNICO comando (CTE): o Postgres aplica os dois ou nenhum. O driver HTTP
+  // do Neon não tem transação entre chamadas; se a promoção falhar, a inscrição continua decidível (B-06).
+  const promote = decision === 'approved';
   const [saved] = await sql`
-    UPDATE selection_applications
-    SET status = ${decision}, decided_by = ${identity.profileId}::uuid, decided_at = now(), decision_note = ${note}, updated_at = now()
-    WHERE id = ${id}::uuid AND status = ANY(${DECIDABLE}) RETURNING id`;
+    WITH upd AS (
+      UPDATE selection_applications
+      SET status = ${decision}, decided_by = ${identity.profileId}::uuid, decided_at = now(), decision_note = ${note}, updated_at = now()
+      WHERE id = ${id}::uuid AND status = ANY(${DECIDABLE}) RETURNING id, profile_id
+    ), promo AS (
+      UPDATE profiles SET role = ${C.ROLES.MEMBER}::user_role
+      WHERE ${promote}::boolean AND id IN (SELECT profile_id FROM upd) AND role = ${C.ROLES.VISITOR}::user_role
+      RETURNING id
+    )
+    SELECT upd.id, (SELECT count(*) FROM promo)::int AS promoted FROM upd`;
   if (!saved) throw E.ConflictError(MSG.locked);
-  if (decision === 'approved' && row.role === C.ROLES.VISITOR) {
-    await sql`UPDATE profiles SET role = ${C.ROLES.MEMBER}::user_role WHERE id = ${row.profile_id}::uuid AND role = ${C.ROLES.VISITOR}::user_role`;
+  if (saved.promoted > 0) {
     await Logging.logAudit(sql, correlationId, identity.profileId, 'CHANGE_USER_ROLE', 'profile', row.profile_id, 'success', { newRole: C.ROLES.MEMBER, via: 'selection' });
   }
   try {

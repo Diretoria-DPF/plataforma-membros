@@ -151,12 +151,17 @@
     });
   }
 
+  // Excluir é definitivo: depois da confirmação, pede a senha (e o código da verificação em duas etapas, se ativa) na
+  // mesma janela de reautenticação de banir e mudar papel. Com erro, a janela fica aberta para tentar de novo.
   function complete(item) {
     ui.app.openConfirm(confirmText(item), function () {
-      say('Concluindo a exclusão…', 'info');
-      call('apiAdminCompleteDeletion', { id: item.id }).then(function (res) {
-        if (!res.success) { say(res.message || 'Não foi possível concluir a exclusão.', 'error'); return; }
-        reload({ text: res.message || 'Exclusão concluída.', kind: 'success' });
+      ui.app.openStepUp('Para concluir a exclusão, confirme a sua senha.', function (stepUp) {
+        say('Concluindo a exclusão…', 'info');
+        return call('apiAdminCompleteDeletion', { id: item.id, password: stepUp.password, code: stepUp.code }).then(function (res) {
+          if (!res.success) { say(res.message || 'Não foi possível concluir a exclusão.', 'error'); return res; }
+          reload({ text: res.message || 'Exclusão concluída.', kind: 'success' });
+          return res;
+        });
       });
     });
   }

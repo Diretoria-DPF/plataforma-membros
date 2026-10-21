@@ -105,6 +105,14 @@ test('fiação: index.html, app.js, build e service worker', () => {
   }
 });
 
+test('concluir exclusão pede reautenticação (senha e 2º fator) pela janela padrão do app (B-05)', () => {
+  const app = read('app.js');
+  assert.match(app, /openStepUp: openStepUp,/);
+  const js = read('privacy-admin.js');
+  assert.match(js, /ui\.app\.openStepUp\(/);
+  assert.match(js, /call\('apiAdminCompleteDeletion', \{ id: item\.id, password: stepUp\.password, code: stepUp\.code \}\)/);
+});
+
 test('higiene: sem innerHTML, sem estilo inline, sem armazenamento no navegador', () => {
   for (const f of ['privacy.js', 'privacy-admin.js']) {
     const js = read(f);
