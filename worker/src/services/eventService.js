@@ -329,7 +329,7 @@ export async function listAllEventsAdmin(sql, identity) {
 export async function listRecentCompletedEvents(sql) {
   const rows = await sql`
     SELECT id, title, description, event_date, image_url, location
-    FROM events WHERE status = 'completed'::event_status
+    FROM events WHERE status = 'completed'::event_status AND visibility = 'public'::event_visibility
     ORDER BY event_date DESC LIMIT 3
   `;
   return {

@@ -184,7 +184,7 @@
     var review = formatReviewDate(ov.nextReviewOn);
     var points = [
       ['Leva cerca de 25 minutos', 'Você pode parar e voltar: o rascunho fica salvo.'],
-      ['Cinco partes', 'Aceite, perfil, análise de cenário, seu raciocínio e situações de conduta.'],
+      ['Seis etapas', 'Aceite, perfil, análise de cenário, seu raciocínio, situações de conduta e revisão.'],
       ['Sem eliminação automática', 'A IA ajuda a organizar a leitura; quem decide é a comissão.'],
       ['Prazo para concluir', 'Depois de começar, você tem ' + (ov.windowDays || 7) + ' dias. ' + (review ? 'Próxima análise da comissão: ' + review + '.' : 'A comissão analisa as inscrições em lotes.')],
     ];

@@ -28,7 +28,7 @@
       credential: ['Seu crachá', 'O crachá virtual tem o QR de presença. Apresente-o na portaria para registrar presença em eventos.'],
     },
     member: {
-      intro: ['Bem-vindo(a) de volta', 'Você entrou como membro. A barra inferior leva a Início, Aprender, Eventos, Propostas, Tarefas, Equipe e Mensagens.'],
+      intro: ['Bem-vindo(a) de volta', 'Você entrou como membro. Propostas, Tarefas, Equipe e Mensagens ficam no menu ☰.'],
       content: ['Tarefas, equipe e votações', 'Tarefas mostra o que a liga pediu a você. Em Equipe você envia e responde pedidos de conexão. Propostas tem as votações abertas.'],
       credential: ['Seu QR de presença', 'O QR fica no seu crachá virtual. Apresente-o na portaria para registrar presença nos eventos da liga.'],
     },

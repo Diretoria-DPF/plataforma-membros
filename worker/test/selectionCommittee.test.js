@@ -110,6 +110,11 @@ describe('fila e ficha', () => {
 });
 
 describe('decisão', () => {
+  test('a comissão não decide a própria inscrição', async () => {
+    const id = await submitted(admin);
+    await expect(Committee.decide(sql, env(), admin, { id, decision: 'approved' }, CID)).rejects.toMatchObject({ name: 'ForbiddenError' });
+  });
+
   test('aprovar torna a pessoa membro, registra quem decidiu e audita; decidir de novo é recusado', async () => {
     const id = await submitted(cand);
     const out = await Committee.decide(sql, env(), admin, { id, decision: 'approved', note: 'Ótima proposta.' }, CID);

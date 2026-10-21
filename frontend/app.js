@@ -1000,7 +1000,7 @@
     // Processo seletivo: #inscricao (já logado) ou a intenção guardada antes do login abre a jornada.
     var wantsSelection = window.location.hash === '#inscricao';
     if (takeGotoIntent() === 'panel-selection') wantsSelection = true;
-    if (wantsSelection && state.profile.role !== 'member') {
+    if (wantsSelection && state.profile.role === 'visitor') {
       showPanel('panel-selection');
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
     }
