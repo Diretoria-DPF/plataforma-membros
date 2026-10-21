@@ -373,17 +373,67 @@
   // e o Worker responde com os cabeçalhos corretos restritos à origem
   // permitida (ver ALLOWED_ORIGINS em worker/wrangler.toml).
   // ===========================================================================
+  // >>> api-fetch (puro)
+  // Toda chamada tem tempo limite: sem ele, uma requisição presa deixava
+  // "Carregando…" para sempre. A Lia e a reindexação da base podem demorar
+  // mais (IA), por isso têm um limite maior. Os erros saem em português.
+  var API_TIMEOUT_MS = 20000;
+  var API_LONG_TIMEOUT_MS = 90000;
+  var API_LONG_ACTIONS = /^(apiAssistantChat|apiAdminReindexKb)$/;
+  var API_MESSAGES = {
+    timeout: 'O servidor demorou demais para responder. Confira sua conexão e tente de novo.',
+    network: 'Sem conexão com o servidor. Confira sua internet e tente de novo.',
+    http: 'O servidor não conseguiu responder agora. Tente de novo em instantes.',
+  };
+
+  function apiTimeoutFor(fnName) {
+    return API_LONG_ACTIONS.test(String(fnName || '')) ? API_LONG_TIMEOUT_MS : API_TIMEOUT_MS;
+  }
+
+  /** fetch + JSON com tempo limite. Rejeita com Error (mensagem em português) e err.kind = timeout | network | http. */
+  function fetchJsonWithTimeout(fetchFn, url, init, timeoutMs, AbortCtor) {
+    var controller = typeof AbortCtor === 'function' ? new AbortCtor() : null;
+    var timer = null;
+    function fail(kind) { var e = new Error(API_MESSAGES[kind]); e.kind = kind; return e; }
+    var timeout = new Promise(function (resolve, reject) {
+      timer = setTimeout(function () {
+        if (controller) controller.abort();
+        reject(fail('timeout'));
+      }, timeoutMs);
+    });
+    var request = Promise.resolve()
+      .then(function () { return fetchFn(url, Object.assign({}, init, controller ? { signal: controller.signal } : {})); })
+      .then(function (res) {
+        if (!res.ok) throw fail('http');
+        return res.json().catch(function () { throw fail('http'); });
+      }, function () { throw fail('network'); });
+    return Promise.race([request, timeout]).then(function (data) {
+      clearTimeout(timer);
+      return data;
+    }, function (err) {
+      clearTimeout(timer);
+      throw err && err.kind ? err : fail('network');
+    });
+  }
+
+  var RESTORE_RETRY_MS = 8000;
+
+  /** Recarga com sessão salva: entra (ok), tenta de novo sem apagar a sessão (rede) ou volta ao login (sessão recusada). */
+  function restoreOutcome(res) {
+    if (res && res.success) return 'ok';
+    if (res && res.networkUnavailable) return 'retry';
+    return 'logout';
+  }
+  // <<< api-fetch (puro)
+
   function api(fnName) {
     var args = Array.prototype.slice.call(arguments, 1);
-    return fetch(API_BASE_URL, {
+    return fetchJsonWithTimeout(fetch.bind(window), API_BASE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: fnName, args: args }),
       credentials: 'include', // cookie de sessão HttpOnly (SEC-08); sem a flag, o navegador não envia nada
-    }).then(function (res) {
-      if (!res.ok) throw new Error('Falha de comunicação com o servidor.');
-      return res.json();
-    });
+    }, apiTimeoutFor(fnName), typeof AbortController === 'function' ? AbortController : null);
   }
 
   var systemUnavailableState = false;
@@ -729,17 +779,41 @@
     confirmDialog(message, onConfirm);
   }
 
+  // Visualizador de imagem: abre com o foco no "Fechar", fecha com Esc e
+  // devolve o foco ao botão da foto que o abriu (como o diálogo de confirmação).
+  var lightboxOpener = null;
+
+  function onLightboxKeydown(evt) {
+    if (evt.key === 'Escape') { evt.preventDefault(); evt.stopPropagation(); closeImageLightbox(); }
+    else if (evt.key === 'Tab') { evt.preventDefault(); document.getElementById('lightbox-close').focus(); }
+  }
+
   function openImageLightbox(src, alt) {
     var overlay = document.getElementById('modal-image-lightbox');
     var img = document.getElementById('lightbox-image');
+    lightboxOpener = document.activeElement;
     img.src = src;
     img.alt = alt || '';
     overlay.classList.remove('hidden');
+    document.addEventListener('keydown', onLightboxKeydown, true);
+    document.getElementById('lightbox-close').focus();
   }
 
   function closeImageLightbox() {
+    document.removeEventListener('keydown', onLightboxKeydown, true);
     document.getElementById('modal-image-lightbox').classList.add('hidden');
     document.getElementById('lightbox-image').removeAttribute('src');
+    var opener = lightboxOpener;
+    lightboxOpener = null;
+    if (opener && opener.isConnected && typeof opener.focus === 'function') opener.focus();
+  }
+
+  /** Foto de evento: um botão (teclado e leitor de tela) que abre o visualizador. */
+  function eventImageButton(src, title) {
+    return h('button', {
+      type: 'button', className: 'event-image-btn', 'aria-label': 'Ampliar a foto: ' + (title || 'evento'),
+      onclick: function () { openImageLightbox(src, title); },
+    }, [h('img', { className: 'event-image', src: src, alt: '' })]);
   }
 
   document.getElementById('lightbox-close').addEventListener('click', closeImageLightbox);
@@ -1372,10 +1446,7 @@
   function renderEventHistoryItem(item) {
     var children = [];
     if (item.imageUrl) {
-      children.push(h('img', {
-        className: 'event-image', src: item.imageUrl, alt: item.title,
-        onclick: function () { openImageLightbox(item.imageUrl, item.title); },
-      }));
+      children.push(eventImageButton(item.imageUrl, item.title));
     }
     children.push(text('h4', item.title));
     children.push(text('p', item.description));
@@ -1415,10 +1486,7 @@
 
     var children = [];
     if (item.imageUrl) {
-      children.push(h('img', {
-        className: 'event-image', src: item.imageUrl, alt: item.title,
-        onclick: function () { openImageLightbox(item.imageUrl, item.title); },
-      }));
+      children.push(eventImageButton(item.imageUrl, item.title));
     }
     children.push(text('h4', item.title));
     children.push(text('p', item.description));
@@ -2420,10 +2488,7 @@
 
     var children = [];
     if (item.image_url) {
-      children.push(h('img', {
-        className: 'event-image', src: item.image_url, alt: item.title,
-        onclick: function () { openImageLightbox(item.image_url, item.title); },
-      }));
+      children.push(eventImageButton(item.image_url, item.title));
     }
     children.push(text('h4', item.title));
     var adminMeta = [
@@ -2903,22 +2968,51 @@
     // confiar em qualquer coisa salva no navegador.
     var cached = readSessionCache();
     if (cached) {
-      state.sessionToken = cached.token;
-      callApi('apiGetMyProfile', cached.token).then(function (res) {
-        if (!res.success) {
-          clearSessionCache();
-          state.sessionToken = null;
-          showPublicScreen('screen-welcome');
-          return;
-        }
-        state.profile = { id: profileIdOf(res.profile.id), fullName: res.profile.fullName, role: res.profile.role };
-        state.profile = withRoleInfo(state.profile, res.profile);
-        scheduleSessionExpiry(cached.expiresAt);
-        enterApp();
-      });
+      restoreCachedSession(cached);
       return;
     }
 
     openPublicScreenFromHash();
   })();
+
+  // Recarga com sessão salva. Só uma recusa do servidor apaga a sessão; uma
+  // falha de rede (Wi-Fi instável, servidor fora do ar) mantém a sessão salva
+  // e tenta de novo sozinha, sem mandar a pessoa para o login.
+  function restoreCachedSession(cached) {
+    state.sessionToken = cached.token;
+    callApi('apiGetMyProfile', cached.token).then(function (res) {
+      var outcome = restoreOutcome(res);
+      if (outcome === 'retry') { waitToRetryRestore(); return; }
+      if (outcome === 'logout') {
+        clearSessionCache();
+        state.sessionToken = null;
+        showPublicScreen('screen-welcome');
+        return;
+      }
+      setStatus('msg-login', '', null);
+      state.profile = { id: profileIdOf(res.profile.id), fullName: res.profile.fullName, role: res.profile.role };
+      state.profile = withRoleInfo(state.profile, res.profile);
+      scheduleSessionExpiry(cached.expiresAt);
+      enterApp();
+    });
+  }
+
+  function waitToRetryRestore() {
+    showSystemUnavailable(false); // tira o banner que callApi pôs na área logada, ainda escondida
+    state.sessionToken = null;
+    showPublicScreen('screen-welcome');
+    setStatus('msg-login', 'Sem conexão com o servidor. Sua sessão continua salva: tentamos de novo assim que a internet voltar.', 'info');
+    var timer = null;
+    function retry() {
+      clearTimeout(timer);
+      window.removeEventListener('online', retry);
+      if (state.sessionToken) return; // a pessoa entrou com a senha nesse meio-tempo
+      var again = readSessionCache();
+      if (!again) { setStatus('msg-login', 'Sua sessão expirou. Entre de novo.', 'info'); return; }
+      setStatus('msg-login', 'Reconectando…', 'info');
+      restoreCachedSession(again);
+    }
+    timer = setTimeout(retry, RESTORE_RETRY_MS);
+    window.addEventListener('online', retry);
+  }
 })();

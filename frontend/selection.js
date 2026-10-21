@@ -206,8 +206,12 @@
   }
 
   function startJourney() {
+    var startBtn = ui.root.querySelector('#sel-start');
+    if (startBtn && startBtn.disabled) return; // clique duplo: uma chamada só
+    if (startBtn) startBtn.disabled = true;
     say('Preparando sua inscrição…', 'info');
     call('apiSelectionStart').then(function (res) {
+      if (startBtn) startBtn.disabled = false;
       if (!res.success) { say(res.message, 'error'); return; }
       adopt(res);
       go(initialView(res.application));
@@ -431,19 +435,44 @@
     if (notice) say(notice, 'info');
   }
 
+  var LOAD_NETWORK_MESSAGE = 'Não conseguimos falar com o servidor agora. Confira sua conexão e tente de novo.';
+  var LOAD_DISABLED_MESSAGE = 'As inscrições não estão abertas na plataforma agora. Acompanhe @laift.liga.';
+
+  /**
+   * O que mostrar ao abrir o painel. Falha de rede ou do servidor NÃO é
+   * "inscrições fechadas": vira erro com "Tentar de novo". Só enabled:false
+   * (resposta real do servidor) diz que as inscrições não estão na plataforma.
+   */
+  function loadOutcome(overviewRes, mineRes) {
+    var ov = overviewRes || {};
+    if (!ov.success) return { kind: 'error', message: ov.networkUnavailable || !ov.message ? LOAD_NETWORK_MESSAGE : ov.message };
+    if (mineRes && !mineRes.success && mineRes.networkUnavailable) return { kind: 'error', message: LOAD_NETWORK_MESSAGE };
+    if (ov.enabled === false) return { kind: 'disabled', message: LOAD_DISABLED_MESSAGE };
+    return { kind: 'ready', message: '' };
+  }
+
+  function renderLoadProblem(outcome) {
+    clear(ui.root);
+    var body = [h('h2', { className: 'sel-title', tabIndex: -1, id: 'sel-title' }, 'Processo seletivo')];
+    if (outcome.kind === 'error') {
+      body.push(h('p', { className: 'sel-notice status-msg error', role: 'alert' }, outcome.message));
+      body.push(h('div', { className: 'sel-actions' }, [button('Tentar de novo', 'sel-primary', function () { reload(); }, { id: 'sel-retry' })]));
+    } else {
+      body.push(h('p', { className: 'sel-notice' }, outcome.message));
+    }
+    ui.root.appendChild(h('section', { className: 'sel-card', 'data-sel-load': outcome.kind }, body));
+  }
+
   function reload() {
     clear(ui.root);
     ui.root.appendChild(h('p', { className: 'muted', role: 'status' }, 'Carregando…'));
     var ask = [call('apiSelectionOverview')];
     if (token()) ask.push(call('apiSelectionGetMine'));
     return Promise.all(ask).then(function (out) {
-      ui.state.overview = out[0].success ? out[0] : null;
+      var outcome = loadOutcome(out[0], out[1]);
+      if (outcome.kind !== 'ready') { renderLoadProblem(outcome); return; }
+      ui.state.overview = out[0];
       if (out[1] && out[1].success) adopt(out[1]); else ui.state.application = null;
-      if (!ui.state.overview || ui.state.overview.enabled === false) {
-        clear(ui.root);
-        ui.root.appendChild(h('section', { className: 'sel-card' }, [h('h2', { className: 'sel-title' }, 'Processo seletivo'), h('p', { className: 'sel-notice' }, 'As inscrições não estão abertas na plataforma agora. Acompanhe @laift.liga.')]));
-        return;
-      }
       go(initialView(ui.state.application));
     });
   }
@@ -458,7 +487,7 @@
 
   var api = {
     STEPS: STEPS, STATUS_TEXT: STATUS_TEXT, stepIndex: stepIndex, daysLeft: daysLeft, deadlineText: deadlineText, charInfo: charInfo,
-    timeline: timeline, initialView: initialView, canVisit: canVisit, formatReviewDate: formatReviewDate, load: loadPanel,
+    timeline: timeline, initialView: initialView, canVisit: canVisit, formatReviewDate: formatReviewDate, loadOutcome: loadOutcome, load: loadPanel,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LaiftSelection = api;

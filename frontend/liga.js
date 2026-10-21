@@ -113,6 +113,7 @@
       link.removeAttribute('target');
       link.removeAttribute('rel');
     });
+    pintarApoio('plataforma');
     pintarCiclo({ datas: datasContinuas(visao), vagas: visao.vacanciesNote || (ciclo && ciclo.vagas) });
   }
 
@@ -148,11 +149,31 @@
     });
   }
 
+  // O texto ao lado do botão acompanha o destino: o formulário externo não cria
+  // conta nem leva à jornada na plataforma, então não pode prometer isso.
+  var APOIO = {
+    plataforma: 'Você vai entrar ou criar sua conta e seguir direto para a inscrição.',
+    formulario: 'A inscrição deste ciclo é feita por um formulário externo (Google Forms), que abre em outra aba.'
+  };
+
+  function textoApoio(destino) {
+    return APOIO[destino] || APOIO.plataforma;
+  }
+
+  function pintarApoio(destino) {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-apoio-inscricao]'), function (no) {
+      no.textContent = textoApoio(destino);
+    });
+  }
+
   function pintarFormularios(estado, formUrl) {
     if (estado !== 'aberto') return;
     Array.prototype.forEach.call(document.querySelectorAll('a[data-formulario]'), function (link) {
       link.setAttribute('href', formUrl);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
     });
+    pintarApoio('formulario');
   }
 
   function pintarCiclo(ciclo) {
@@ -198,7 +219,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { decidirEstado: decidirEstado, isFormUrlValida: isFormUrlValida };
+    module.exports = { decidirEstado: decidirEstado, isFormUrlValida: isFormUrlValida, textoApoio: textoApoio };
   } else if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', iniciar);
   } else {

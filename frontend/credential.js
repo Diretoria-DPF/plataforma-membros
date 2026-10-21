@@ -21,6 +21,7 @@
   var NOTE_OK = 'Apresente na portaria para registrar presença em eventos.';
   var NOTE_LEGACY = 'Credencial provisória: não foi possível obter a credencial assinada agora. Na portaria, a presença será confirmada pelo seu e-mail. Tente abrir de novo mais tarde.';
   var NOTE_LOADING = 'Gerando sua credencial...';
+  var NOTE_ERROR = 'Não foi possível gerar o QR Code agora. Confira sua conexão, feche e abra o crachá de novo.';
   var ROLE_LABELS = { admin: 'Administrador', member: 'Membro', visitor: 'Visitante' };
   var FILE_NAME_MAX = 40;
 
@@ -267,6 +268,15 @@
     });
   }
 
+  function showQrError(doc) {
+    var note = byId(doc, 'learn-credential-note');
+    note.textContent = NOTE_ERROR;
+    note.classList.add('credential-note--error');
+    byId(doc, 'learn-credential-qr').classList.add('hidden');
+    byId(doc, 'learn-credential-zoom').disabled = true;
+    byId(doc, 'learn-credential-save').disabled = true;
+  }
+
   function open(app, doc) {
     var identity = app && app.getIdentity ? app.getIdentity() : null;
     if (!identity) return;
@@ -281,6 +291,9 @@
     var qr = byId(doc, 'learn-credential-qr');
     qr.removeAttribute('src');
     qr.removeAttribute('data-qr-kind');
+    qr.classList.remove('hidden');
+    byId(doc, 'learn-credential-note').classList.remove('credential-note--error');
+    byId(doc, 'learn-credential-zoom').disabled = false;
     byId(doc, 'learn-credential-name').textContent = name;
     byId(doc, 'learn-credential-email').textContent = identity.email || '';
     byId(doc, 'learn-credential-role').textContent = role;
@@ -320,8 +333,9 @@
       byId(doc, 'learn-credential-save').disabled = chosen.kind !== 'v2';
     }).catch(function () {
       if (id !== requestId) return;
-      app.setStatus('learn-status', 'Não foi possível gerar o QR Code agora.', 'error');
-      close(doc);
+      // O erro fica no próprio modal: ele abre do Perfil, do Início, da Lia e do
+      // onboarding, e um status no painel Aprender ficaria invisível.
+      showQrError(doc);
     });
   }
 
