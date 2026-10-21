@@ -68,7 +68,8 @@ module.exports = async function smoke() {
       await app.page.click('#learn-back');
     }
 
-    await app.page.click('#btn-learn-credential');
+    await app.showPanel('panel-profile');
+    await app.page.click('#btn-profile-credential');
     await app.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 5000 }).catch(() => {});
     check((await app.page.getAttribute('#learn-credential-qr', 'src') || '').startsWith('data:image/'), 'QR da credencial é gerado localmente');
     await app.page.click('#learn-credential-close');

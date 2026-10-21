@@ -26,8 +26,8 @@ module.exports = async function credential() {
   try {
     const page = app.page;
     await app.login();
-    await app.showPanel('panel-learn');
-    await page.click('#btn-learn-credential');
+    await app.showPanel('panel-profile');
+    await page.click('#btn-profile-credential');
     await page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 10000 });
 
     check(await page.getAttribute('#learn-credential-qr', 'data-qr-kind') === 'v2', 'o QR é a credencial assinada (v2)');
@@ -55,7 +55,7 @@ module.exports = async function credential() {
     // Esc fecha e o foco volta ao botão que abriu
     await page.keyboard.press('Escape');
     check(await page.locator('#modal-learn-credential.hidden').count() === 1, 'Esc fecha o crachá');
-    check(await page.evaluate(() => document.activeElement && document.activeElement.id) === 'btn-learn-credential', 'o foco volta ao botão que abriu o crachá');
+    check(await page.evaluate(() => document.activeElement && document.activeElement.id) === 'btn-profile-credential', 'o foco volta ao botão que abriu o crachá');
 
     check(app.calls.external.every((c) => c.method === 'GET' && !/LAIFT:v2|cracha-laift/i.test(c.url + c.body)), 'o QR e a imagem são locais: nada do crachá vai para fora (' + app.calls.external.length + ' GET de bibliotecas)');
     check(app.errors.length === 0, 'sem erros de página (' + app.errors.join('; ') + ')');
@@ -70,8 +70,8 @@ module.exports = async function credential() {
   });
   try {
     await legacy.login();
-    await legacy.showPanel('panel-learn');
-    await legacy.page.click('#btn-learn-credential');
+    await legacy.showPanel('panel-profile');
+    await legacy.page.click('#btn-profile-credential');
     await legacy.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 10000 });
     check(await legacy.page.getAttribute('#learn-credential-qr', 'data-qr-kind') === 'legacy', 'sem assinatura o QR é o provisório');
     check(/provisória/.test(await legacy.page.textContent('#learn-credential-note')), 'o aviso de credencial provisória aparece');
@@ -88,9 +88,9 @@ module.exports = async function credential() {
   });
   try {
     await noProfile.login();
-    await noProfile.showPanel('panel-learn');
+    await noProfile.showPanel('panel-profile');
     profileDown = true; // só a chamada feita pelo crachá falha
-    await noProfile.page.click('#btn-learn-credential');
+    await noProfile.page.click('#btn-profile-credential');
     await noProfile.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 10000 });
     check(await noProfile.page.textContent('#learn-credential-since') === '', 'sem o perfil, não aparece "membro desde"');
     check(await noProfile.page.getAttribute('#learn-credential-qr', 'data-qr-kind') === 'v2', 'mesmo assim o QR assinado aparece');

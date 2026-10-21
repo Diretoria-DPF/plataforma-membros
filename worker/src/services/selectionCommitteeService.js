@@ -39,6 +39,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const MSG = Object.freeze({
   forbidden: 'Apenas a diretoria administrativa acessa o painel do processo seletivo.',
+  own: 'Você não pode decidir a sua própria inscrição.',
   notFound: 'Inscrição não encontrada.',
   badId: 'Inscrição inválida.',
   badDecision: 'Decisão inválida.',
@@ -199,6 +200,7 @@ export async function decide(sql, env, identity, rawInput, correlationId) {
     SELECT a.id, a.status, a.profile_id, p.email, p.role FROM selection_applications a JOIN profiles p ON p.id = a.profile_id
     WHERE a.id = ${id}::uuid`;
   if (!row) throw E.NotFoundError(MSG.notFound);
+  if (row.profile_id === identity.profileId) throw E.ForbiddenError(MSG.own);
   if (row.status === 'approved') throw E.ConflictError(MSG.locked);
   if (!DECIDABLE.includes(row.status)) throw E.ConflictError(MSG.notReady);
 

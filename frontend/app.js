@@ -1000,7 +1000,7 @@
     // Processo seletivo: #inscricao (já logado) ou a intenção guardada antes do login abre a jornada.
     var wantsSelection = window.location.hash === '#inscricao';
     if (takeGotoIntent() === 'panel-selection') wantsSelection = true;
-    if (wantsSelection && state.profile.role !== 'member') {
+    if (wantsSelection && state.profile.role === 'visitor') {
       showPanel('panel-selection');
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) { /* ignora */ }
     }
@@ -1125,9 +1125,9 @@
   watchNavBadges();
 
   function setupNavigationForRole(role) {
-    document.querySelectorAll('#app-nav [data-scope], #app-menu [data-scope]').forEach(function (btn) {
+    document.querySelectorAll('#app-nav [data-scope], #app-menu [data-scope], #panel-home [data-scope]').forEach(function (btn) {
       var scope = btn.getAttribute('data-scope');
-      var visible = scope === 'all' || (scope === 'visitor' && (role === 'visitor' || role === 'admin')) || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
+      var visible = scope === 'all' || (scope === 'visitor' && (role === 'visitor' || role === 'admin')) || (scope === 'candidate' && role === 'visitor') || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
       btn.classList.toggle('hidden', !visible);
     });
     applyRoleUi();

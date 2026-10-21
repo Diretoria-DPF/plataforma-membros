@@ -219,8 +219,8 @@ async function memberTour(pkgs) {
       const item = app.page.locator(`#app-menu [data-panel="${painel}"]`);
       if (await item.isVisible()) { await item.click(); await app.page.waitForTimeout(150); } else await app.page.keyboard.press('Escape');
     }
-    await app.showPanel('panel-learn');
-    await app.page.click('#btn-learn-credential');
+    await app.showPanel('panel-profile');
+    await app.page.click('#btn-profile-credential');
     await app.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 5000 }).catch(() => {});
     await app.page.click('#learn-credential-close');
 

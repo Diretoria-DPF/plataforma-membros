@@ -82,7 +82,7 @@ test('fiação: index.html, build.js, sw.js, menu e carregador do painel', () =>
   assert.match(html, /<link rel="stylesheet" href="selection\.css">/);
   assert.match(html, /<script src="selection\.js" defer><\/script>/);
   assert.match(html, /<section id="panel-selection" class="hidden">[\s\S]*?id="selection-root"/);
-  assert.match(html, /data-panel="panel-selection" data-scope="visitor"/);
+  assert.match(html, /data-panel="panel-selection" data-scope="candidate"/);
   for (const file of ['scripts/build.js', 'sw.js']) {
     const src = read(file);
     assert.ok(src.includes("'selection.js'") && src.includes("'selection.css'"), file);

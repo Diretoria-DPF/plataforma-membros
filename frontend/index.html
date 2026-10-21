@@ -438,7 +438,7 @@
           <h3 id="app-menu-g5">Liga</h3>
           <ul>
             <li>
-              <button type="button" class="app-menu__item" data-panel="panel-selection" data-scope="visitor">
+              <button type="button" class="app-menu__item" data-panel="panel-selection" data-scope="candidate">
                 <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z"/></svg>
                 <span class="app-menu__texto"><span class="app-menu__titulo">Processo seletivo</span><span class="app-menu__info">Entre para a LAIFT</span></span>
               </button>
@@ -505,6 +505,11 @@
             <h2>Início</h2>
             <p id="home-greeting" class="muted">Bem-vindo(a). Use a navegação para acessar eventos, propostas, tarefas e a área de aprendizagem.</p>
           </div>
+          <div class="card home-credential" data-scope="all">
+            <h2>Meu crachá virtual</h2>
+            <p class="muted">QR de presença para registrar a sua entrada nos eventos.</p>
+            <button type="button" class="secondary" id="btn-home-credential" data-open-credential>Abrir crachá virtual</button>
+          </div>
           <div id="home-dashboard" class="home-grid"></div>
         </section>
 
@@ -527,7 +532,6 @@
                 <div class="learn-stat"><strong id="learn-stat-lab">—</strong><span>Formulações</span></div>
               </div>
               <div id="learn-status" class="status-msg" role="status" aria-live="polite"></div>
-              <button type="button" class="secondary" id="btn-learn-credential" data-open-credential style="width:auto;">Meu crachá virtual (QR de presença)</button>
             </div>
             <!-- Fase 2 — desempenho por módulo e conquistas (calculados na Worker; montados por learning.js). -->
             <div class="card learn-progress hidden" id="learn-progress">
@@ -701,6 +705,7 @@
                 <input type="file" id="profile-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden" aria-label="Escolher foto de perfil" tabindex="-1">
               </div>
               <div id="msg-profile-avatar" class="status-msg" role="alert" aria-live="polite"></div>
+              <button type="button" class="secondary" id="btn-profile-credential" data-open-credential>Meu crachá virtual (QR de presença)</button>
 
               <form id="form-profile" novalidate>
                 <label for="profile-name">Nome completo <span class="muted">(não pode ser alterado)</span>

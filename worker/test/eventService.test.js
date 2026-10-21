@@ -164,6 +164,7 @@ describe('EventService.listRecentCompletedEvents — histórico público', () =>
     ]);
 
     const res = await EventService.listRecentCompletedEvents(sql);
+    expect(sql.mock.calls[0][0].join(' ')).toMatch(/visibility = 'public'/);
     expect(res.success).toBe(true);
     expect(res.events).toEqual([
       { id: 'e1', title: 'Semana X', description: 'desc', eventDate: '2026-01-01', imageUrl: 'https://x/img.png', location: 'Auditório' },
