@@ -245,7 +245,12 @@ button.admin-btn { background: var(--admin); color: var(--on-admin); }
   -webkit-overflow-scrolling: touch;
 }
 .nav-group-admin button { flex: 0 0 auto; min-width: 78px; }
-.nav-group-admin #btn-exit-admin-mode { color: var(--admin); }
+.nav-group-admin #btn-exit-admin-mode {
+  color: var(--admin);
+  /* Primeiro da faixa e preso à esquerda: no celular não some ao rolar. */
+  position: sticky; left: 0; z-index: 1;
+  background: var(--surface); border-right: 1px solid var(--border);
+}
 
 .bottom-nav button {
   flex: 1 1 0;
@@ -381,6 +386,12 @@ button, input, select, textarea, .list-item .actions-row button {
   border-radius: var(--radius-md); margin-bottom: 10px; display: block;
   cursor: zoom-in; background: var(--surface-alt);
 }
+/* A foto fica dentro de um botão para abrir o visualizador pelo teclado. */
+.event-image-btn {
+  display: block; width: 100%; padding: 0; margin: 0 0 10px; min-height: 0;
+  background: transparent; border: 0; border-radius: var(--radius-md); cursor: zoom-in;
+}
+.event-image-btn .event-image { margin-bottom: 0; }
 .badge.in-progress { background: var(--admin-soft); color: var(--admin); }
 
 /* Lightbox: caixa sem padding/fundo opaco fixo, só o suficiente pra

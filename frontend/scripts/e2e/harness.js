@@ -36,6 +36,8 @@ const DIST = path.join(__dirname, '..', '..', 'dist');
 // (frontend/onboarding.js: laift_onboarding_seen_<profileId>).
 const E2E_PROFILE_ID = 'e2e00000-0000-4000-8000-000000000001';
 const ONBOARDING_SEEN_PREFIX = 'laift_onboarding_seen_';
+/** Resposta especial de workerHandlers: a requisição cai como sem rede (fetch rejeita). */
+const NETWORK_DOWN = Symbol('network-down');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -229,6 +231,8 @@ async function startApp(opts = {}) {
       calls.worker.push({ action: body.action, args });
       const handler = (opts.workerHandlers || {})[body.action];
       const reply = handler ? await handler(args, ctx) : defaultWorkerReply(body.action, args, ctx);
+      // Handler devolve NETWORK_DOWN para simular queda de rede (o fetch rejeita, como sem Wi-Fi).
+      if (reply === NETWORK_DOWN) return route.abort('internetdisconnected');
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(reply) });
     }
     // Qualquer outro host (CDNs, APIs públicas, backends antigos): registra
@@ -292,4 +296,4 @@ function check(condition, description) {
   }
 }
 
-module.exports = { startApp, check, loadPlaywright, startStaticServer, moderationSummary, E2E_PROFILE_ID, ONBOARDING_SEEN_PREFIX };
+module.exports = { startApp, check, loadPlaywright, startStaticServer, moderationSummary, E2E_PROFILE_ID, ONBOARDING_SEEN_PREFIX, NETWORK_DOWN };

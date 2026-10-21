@@ -305,6 +305,11 @@
           </button>
         </div>
         <div class="nav-group nav-group-admin hidden" id="nav-group-admin">
+          <!-- "Voltar" primeiro e fixo à esquerda: no celular a faixa rola e ele não pode sumir no fim. -->
+          <button type="button" id="btn-exit-admin-mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            <span>Voltar</span>
+          </button>
           <button type="button" data-panel="panel-admin-dashboard">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
             <span>Painel</span>
@@ -365,10 +370,6 @@
           <button type="button" data-panel="panel-admin-roles">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1.2-3.3 3.7-5 6.5-5s5.3 1.7 6.5 5"/><path d="M17 8l1.5 1.5L22 6"/></svg>
             <span>Cargos</span>
-          </button>
-          <button type="button" id="btn-exit-admin-mode">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-            <span>Voltar</span>
           </button>
         </div>
       </nav>
@@ -615,7 +616,7 @@
           <div class="card">
             <h3>Adicionar</h3>
             <form id="form-connection-request" novalidate style="display:flex; gap:10px; flex-wrap:wrap; margin-top:0;">
-              <input type="text" id="connection-request-value" placeholder="Nome de usuário ou telefone" style="flex:1 1 220px;">
+              <input type="text" id="connection-request-value" aria-label="Nome de usuário ou telefone da pessoa" placeholder="Nome de usuário ou telefone" style="flex:1 1 220px;">
               <button type="submit" style="width:auto;">Enviar pedido</button>
             </form>
             <div id="msg-connection-request" class="status-msg" role="alert" aria-live="polite"></div>
@@ -668,7 +669,7 @@
               <div id="messaging-thread-list" class="chat-thread-list"></div>
               <div id="messaging-thread-status" class="status-msg" role="alert" aria-live="polite" style="margin:0 14px;"></div>
               <form id="form-messaging-send" novalidate class="chat-composer">
-                <textarea id="messaging-send-text" maxlength="2000" placeholder="Escreva uma mensagem..." rows="1"></textarea>
+                <textarea id="messaging-send-text" aria-label="Mensagem" maxlength="2000" placeholder="Escreva uma mensagem..." rows="1"></textarea>
                 <button type="submit" id="btn-messaging-send" class="chat-send-btn" aria-label="Enviar">➤</button>
               </form>
               <p class="muted" id="messaging-char-counter" style="text-align:right; font-size:11px; margin:0 14px 8px;">0 / 2000</p>
@@ -808,7 +809,7 @@
           <div class="card">
             <h2>Usuários</h2>
             <form id="form-user-search" novalidate style="display:flex; gap:10px; margin-top:0;">
-              <input type="search" id="user-search-input" placeholder="Buscar por nome ou e-mail">
+              <input type="search" id="user-search-input" aria-label="Buscar usuário por nome ou e-mail" placeholder="Buscar por nome ou e-mail">
               <button type="submit" style="width:auto;">Buscar</button>
             </form>
             <div id="admin-users-list" style="margin-top:14px;"></div>
@@ -1177,7 +1178,7 @@
           <img id="learn-credential-qr" class="learn-credential-qr" alt="QR Code de presença">
         </div>
       </div>
-      <p class="muted credential-note" id="learn-credential-note">Apresente na portaria para registrar presença em eventos.</p>
+      <p class="muted credential-note" id="learn-credential-note" role="status" aria-live="polite">Apresente na portaria para registrar presença em eventos.</p>
       <div class="modal-actions credential-actions">
         <button type="button" class="secondary" id="learn-credential-zoom" aria-pressed="false">Ampliar QR</button>
         <button type="button" class="secondary" id="learn-credential-save" disabled>Salvar imagem</button>

@@ -349,6 +349,7 @@ summary:focus-visible,
 .credential-qr-wrap { display: grid; place-items: center; padding: 10px; border-radius: var(--radius-md); background: var(--credential-surface); }
 .credential-qr-wrap .learn-credential-qr { width: 200px; height: 200px; margin: 0; }
 .credential-note { margin: 12px 0 0; font-size: 13px; }
+.credential-note--error { color: var(--danger); font-weight: 600; }
 .credential-actions { flex-wrap: wrap; justify-content: center; }
 .credential-actions button { width: auto; }
 .credential-zoom { max-width: min(96vw, 560px); }
