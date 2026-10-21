@@ -1125,9 +1125,9 @@
   watchNavBadges();
 
   function setupNavigationForRole(role) {
-    document.querySelectorAll('#app-nav [data-scope], #app-menu [data-scope]').forEach(function (btn) {
+    document.querySelectorAll('#app-nav [data-scope], #app-menu [data-scope], #panel-home [data-scope]').forEach(function (btn) {
       var scope = btn.getAttribute('data-scope');
-      var visible = scope === 'all' || (scope === 'visitor' && (role === 'visitor' || role === 'admin')) || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
+      var visible = scope === 'all' || (scope === 'visitor' && (role === 'visitor' || role === 'admin')) || (scope === 'candidate' && role === 'visitor') || (scope === 'member' && (role === 'member' || role === 'admin')) || (scope === 'admin' && role === 'admin');
       btn.classList.toggle('hidden', !visible);
     });
     applyRoleUi();

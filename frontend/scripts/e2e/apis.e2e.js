@@ -482,8 +482,8 @@ module.exports = async function apis() {
     //    nenhum serviço externo (o antigo api.qrserver.com) é chamado.
     // =========================================================================
     await app.page.waitForTimeout(200); // acomoda o fechamento do módulo anterior antes de trocar de painel
-    await app.showPanel('panel-learn');
-    await app.page.click('#btn-learn-credential');
+    await app.showPanel('panel-profile');
+    await app.page.click('#btn-profile-credential');
     await app.page.waitForFunction(() => (document.getElementById('learn-credential-qr').src || '').startsWith('data:image/'), null, { timeout: 10000 });
     const qrKind = await app.page.evaluate(() => document.getElementById('learn-credential-qr').getAttribute('data-qr-kind'));
     check(qrKind === 'v2' || qrKind === 'legacy', 'plataforma: QR da credencial é gerado (imagem data: local)');

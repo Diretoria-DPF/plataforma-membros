@@ -84,7 +84,9 @@ test('o modal do crachá mantém os ids que os testes e o hub usam e ganhou os b
   for (const id of ['modal-learn-credential', 'learn-credential-qr', 'learn-credential-name', 'learn-credential-email', 'learn-credential-note', 'learn-credential-close', 'learn-credential-zoom', 'learn-credential-save', 'learn-credential-role', 'learn-credential-since', 'learn-credential-avatar']) {
     assert.match(html, new RegExp('id="' + id + '"'), 'falta #' + id);
   }
-  assert.match(html, /id="btn-learn-credential"[^>]*data-open-credential/);
+  assert.match(html, /id="btn-home-credential"[^>]*data-open-credential/);
+  assert.match(html, /id="btn-profile-credential"[^>]*data-open-credential/);
+  assert.doesNotMatch(html, /id="btn-learn-credential"/, 'o crachá não fica mais na tela Aprender');
 });
 
 test('learning.js não monta mais o QR sozinho: delega ao crachá', () => {
