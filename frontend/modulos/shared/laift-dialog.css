@@ -1,0 +1,27 @@
+/* laift-dialog.css — visual do LaiftDialog (modal acessível dos módulos). Usa os tokens de
+   laift-tokens.css quando existem; os fallbacks cobrem páginas sem a folha de tokens. */
+.laift-dialog-overlay {
+  position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center;
+  padding: 16px; background: var(--laift-overlay, rgba(10, 14, 22, 0.55));
+}
+.laift-dialog {
+  box-sizing: border-box; width: 100%; max-width: 440px; max-height: calc(100vh - 32px); overflow-y: auto;
+  padding: 20px; border-radius: 14px; border: 1px solid var(--laift-border, #dde3ee);
+  background: var(--laift-surface, #fff); color: var(--laift-text, #1c2333);
+  box-shadow: 0 18px 44px rgba(20, 30, 50, 0.3); font-size: 16px; line-height: 1.5;
+}
+.laift-dialog-title { margin: 0 0 8px; font-size: 1.125rem; line-height: 1.3; }
+.laift-dialog-message { margin: 0 0 18px; font-size: 1rem; white-space: pre-line; overflow-wrap: anywhere; }
+.laift-dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.laift-dialog-btn {
+  min-width: 44px; min-height: 44px; padding: 10px 18px; border-radius: 10px; font: inherit; font-size: 1rem;
+  font-weight: 600; cursor: pointer; border: 1px solid var(--laift-border-strong, #b8c2d6);
+  background: transparent; color: inherit;
+}
+.laift-dialog-btn-primary { background: var(--laift-primary, #0f6f62); border-color: var(--laift-primary, #0f6f62); color: var(--laift-on-primary, #fff); }
+.laift-dialog-btn:focus-visible { outline: 3px solid var(--laift-info, #1d5fb8); outline-offset: 2px; }
+@media (max-width: 480px) { .laift-dialog-actions .laift-dialog-btn { flex: 1 1 100%; } }
+@media (prefers-reduced-motion: no-preference) {
+  .laift-dialog { animation: laift-dialog-in 160ms ease-out; }
+}
+@keyframes laift-dialog-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
