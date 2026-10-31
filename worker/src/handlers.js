@@ -41,6 +41,7 @@ import * as MessagingKeyService from './services/messagingKeyService.js';
 import * as MessageService from './services/messageService.js';
 // Fase 2 — Dados & Presença (docs/PLANO_FASES_2_3_4.md, Contrato 2)
 import * as LearningService from './services/learningService.js';
+import * as EngagementService from './services/engagementService.js';
 import * as AttendanceService from './services/attendanceService.js';
 // Fase 3 — IA (Groq) e clínica virtual
 import * as AiService from './services/aiService.js';
@@ -299,6 +300,9 @@ export const API_REGISTRY = {
     await MemoryTutor.scheduleQuizSignal(sql, env, identity, asInput(input));
     return result;
   }),
+  // Retorno pessoal (ENG-01/02/03, docs/engajamento.md): sequência, meta diária e última atividade; nada é público.
+  apiLearnGetEngagement: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => EngagementService.getEngagement(sql, identity)),
+  apiLearnSetDailyGoal: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity) => EngagementService.setDailyGoal(sql, identity, asInput(input))),
   apiLearnRecordLabFormulation: (sql, env, [sessionToken, input]) => runWithSession(sql, env, sessionToken, (identity, cid) => LearningService.recordLabFormulation(sql, identity, asInput(input), cid)),
   apiLearnGetMyAttendanceQr: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.getMyAttendanceQr(env, identity)),
   apiAdminAttendanceListEvents: (sql, env, [sessionToken]) => runWithSession(sql, env, sessionToken, (identity) => AttendanceService.listEvents(sql, identity)),
