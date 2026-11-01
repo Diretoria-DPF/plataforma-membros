@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -229,9 +230,7 @@ test('assistant.js: só respostas novas digitam e o que vem depois do balão fic
   assert.match(src, /finishTyping\(\); \/\/ a resposta anterior termina/);
 });
 
-test('index.html carrega assistant-typing.js antes de assistant.js', () => {
-  const html = fs.readFileSync(path.join(frontend, 'index.html'), 'utf8');
-  const typing = html.indexOf('<script src="assistant-typing.js" defer></script>');
-  const assistant = html.indexOf('<script src="assistant.js" defer></script>');
-  assert.ok(typing > 0 && assistant > typing);
+test('o pacote da Lia carrega assistant-typing.js antes de assistant.js (sob demanda)', () => {
+  assertSobDemanda('lia', 'assistant-typing.js');
+  assertAntes('lia', 'assistant-typing.js', 'assistant.js');
 });

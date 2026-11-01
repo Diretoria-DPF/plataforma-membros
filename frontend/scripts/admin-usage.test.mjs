@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8');
@@ -217,9 +218,7 @@ test('HTML vindo do servidor entra só como texto', async () => {
 
 test('registro: index.html (card + script), sw.js, build.js e app.js (carga e reset)', () => {
   assert.match(read('index.html'), /id="admin-usage-card"/);
-  assert.match(read('index.html'), /<script src="admin-usage\.js" defer><\/script>/);
-  assert.match(read('sw.js'), /'admin-usage\.js'/);
-  assert.match(read('scripts/build.js'), /'admin-usage\.js'/);
+  assertSobDemanda('admin', 'admin-usage.js');
   const appJs = read('app.js');
   assert.match(appJs, /LaiftAdminUsage\.load\(window\.App\)/);
   assert.match(appJs, /LaiftAdminUsage\.reset\(\)/);

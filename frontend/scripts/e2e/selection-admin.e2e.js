@@ -148,7 +148,7 @@ async function erroEVazio() {
     check((await app.page.getAttribute('.sa-error', 'role')) === 'alert' && /Servidor ocupado/.test(await app.page.locator('.sa-error').innerText()), 'erro: mensagem anunciada');
     await axeGate(app.page, 'erro');
     await app.page.click('#sa-retry');
-    await app.page.waitForSelector('.sa-empty');
+    await app.page.waitForSelector('.sa-empty:has-text("Nada para analisar")'); // não o "Carregando…", que também é .sa-empty
     check(/Nada para analisar/.test(await app.page.locator('.sa-empty').innerText()), 'vazio: mensagem de lista vazia');
     check((await app.page.locator('#sa-triage-all').count()) === 0, 'vazio: sem botão de resumos com a IA desligada');
     await axeGate(app.page, 'vazio');

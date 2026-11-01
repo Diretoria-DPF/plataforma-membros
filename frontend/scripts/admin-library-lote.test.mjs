@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { assertSobDemanda, assertAntes } from './lazy-wiring.mjs';
 
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8').replace(/\r\n/g, '\n');
@@ -350,13 +351,9 @@ test('higiene: sem innerHTML, sem style, sem on*= no HTML; só ações apiAdminL
   names.forEach((name) => assert.match(name, /^apiAdminLearnLibrary/));
 });
 
-test('registrado no index (antes de admin-library.js), no build e no service worker', () => {
-  const html = read('index.html');
-  const lote = html.indexOf('<script src="admin-library-lote.js" defer></script>');
-  assert.ok(lote > 0);
-  assert.ok(lote < html.indexOf('<script src="admin-library.js" defer></script>'));
-  assert.match(read('scripts/build.js'), /'admin-library-lote\.js'/);
-  assert.match(read('sw.js'), /'admin-library-lote\.js'/);
+test('pacote admin (antes de admin-library.js) e build; fora do index e do precache (sob demanda)', () => {
+  assertSobDemanda('admin', 'admin-library-lote.js');
+  assertAntes('admin', 'admin-library-lote.js', 'admin-library.js');
 });
 
 test('admin-library.js monta o lote: painel na fila, caixa por item, painel na edição e reset', () => {
