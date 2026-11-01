@@ -75,18 +75,19 @@ import * as RolesService from './services/rolesService.js';
 // Analytics de produto mínimo (DAT-01; sql/040)
 import * as UsageStatsService from './services/usageStatsService.js';
 import { recordActivity } from './analytics/usage.js';
+import { statusForError, tagStatus } from './httpStatus.js';
 
-async function run(sql, callback) {
+export async function run(sql, callback) {
   const correlationId = S.newCorrelationId();
   try {
     return await callback(correlationId);
   } catch (err) {
     if (err && err.expected) {
       // `payload` carrega sinais para a interface (ex.: mfaSetupRequired), nunca dados sensíveis.
-      return Object.assign({ success: false, message: err.message }, err.payload || {});
+      return tagStatus(Object.assign({ success: false, message: err.message }, err.payload || {}), statusForError(err));
     }
     await Logging.logError(sql, correlationId, (err && err.name) || 'UNEXPECTED_ERROR', String((err && err.message) || err), null);
-    return { success: false, message: GENERIC_ERROR_MESSAGE + ' (ref: ' + correlationId + ')' };
+    return tagStatus({ success: false, message: GENERIC_ERROR_MESSAGE + ' (ref: ' + correlationId + ')' }, 500);
   }
 }
 

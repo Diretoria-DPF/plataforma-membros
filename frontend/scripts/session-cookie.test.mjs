@@ -17,7 +17,7 @@ const read = (rel) => fs.readFileSync(path.join(frontend, rel), 'utf8').replace(
 test('toda chamada do app à API envia credenciais (cookie de sessão)', () => {
   const app = read('app.js');
   // api() passa pelo fetchJsonWithTimeout (tempo limite); callLearningApi chama fetch direto.
-  const calls = app.split(/fetch\(API_BASE_URL|fetchJsonWithTimeout\(fetch\.bind\(window\), API_BASE_URL/).slice(1);
+  const calls = app.split(/fetch\(API_BASE_URL|fetchJsonWith(?:Timeout|Retry)\((?:fnName, )?fetch\.bind\(window\), API_BASE_URL/).slice(1);
   assert.equal(calls.length, 2, 'esperava as duas chamadas à API em app.js (api e callLearningApi)');
   calls.forEach((chunk, i) => {
     const ends = [chunk.indexOf('.then('), chunk.indexOf('apiTimeoutFor(')].filter((n) => n >= 0);

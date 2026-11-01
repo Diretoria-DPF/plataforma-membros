@@ -90,6 +90,7 @@ export function buildOpenApi(registry) {
       description: [
         'Uma única rota POST com {action, args}. Documentação gerada de worker/src/handlers.js (npm run openapi).',
         'Erros de negócio voltam com HTTP 200 e {success:false, message}; só falhas de protocolo usam 4xx/5xx.',
+        'Com o cabeçalho opt-in X-Laift-Status: 1 o erro de negócio traz o status HTTP real (400, 401, 403, 404, 409, 429, 502, 503 ou 500 para falha inesperada), com o mesmo corpo.',
         'O token de sessão é opaco, vai como primeiro argumento e nunca em cookie.',
       ].join(' '),
       license: { name: 'Proprietária — ver LICENSE', identifier: 'LicenseRef-Proprietary' },
