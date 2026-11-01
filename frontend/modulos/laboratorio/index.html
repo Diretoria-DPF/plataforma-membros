@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- Content-Security-Policy do módulo (Fase 4, Onda 2 — tabela em docs/SECURITY.md): connect-src lista só as APIs públicas que este módulo usa. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov; font-src 'self'; connect-src 'self' https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov https://query.wikidata.org https://www.ebi.ac.uk; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov; font-src 'self'; connect-src 'self' https://pubchem.ncbi.nlm.nih.gov https://cactus.nci.nih.gov https://query.wikidata.org https://www.ebi.ac.uk; worker-src 'none'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <!-- Identidade da Plataforma de Membros (redireciona ao login se aberto fora dela) -->
   <script src="../shared/laift-identity.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +11,8 @@
   
   <!-- Visualizadores Moleculares: 2D (SmilesDrawer) & 3D WebGL (3Dmol.js).
        Versões fixas no jsDelivr (bytes do npm) com SRI — ver docs/FASE_4_QUALIDADE.md. -->
-  <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.1.7/dist/smiles-drawer.min.js" integrity="sha384-7qaH3wakC2tfDmCIw89VkGQ+G9iEvHeVV+GFGveOo/NLBcwW3TtGNHrL7HLDCbCm" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/3dmol@2.5.5/build/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
+  <script src="vendor/smiles-drawer-2.1.7/smiles-drawer.min.js" integrity="sha384-7qaH3wakC2tfDmCIw89VkGQ+G9iEvHeVV+GFGveOo/NLBcwW3TtGNHrL7HLDCbCm" crossorigin="anonymous"></script>
+  <script src="vendor/3dmol/3Dmol-min.js" integrity="sha384-OsczYbldvrHgslr9fFp/i4GiLSeuw9l+QIlv99ITw8soOwXcoGeflFMLg+CU/X1d" crossorigin="anonymous"></script>
 
   <!-- Tokens do design system (a bancada é sempre escura: ver .laift-always-dark) -->
   <link rel="stylesheet" href="../shared/laift-tokens.css">

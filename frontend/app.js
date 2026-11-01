@@ -70,6 +70,12 @@
     profile: null, // { id, fullName, role } (+ email e username depois de apiGetMyProfile)
   };
 
+  // SEC-10: o que sai por window.App.getState() não tem o token (frontend/session-view.js).
+  var publicSession = window.LaiftSessionView.create(
+    function () { return state.sessionToken; },
+    function () { return state.profile; }
+  );
+
   // >>> profile-id (puro)
   // O id do PRÓPRIO perfil (UUID) chega em apiLogin, apiLoginMfa e apiGetMyProfile e serve ao onboarding.
   // O cache de sessão (localStorage) continua guardando só o token e a validade: ao restaurar, o perfil
@@ -384,17 +390,46 @@
     timeout: 'O servidor demorou demais para responder. Confira sua conexão e tente de novo.',
     network: 'Sem conexão com o servidor. Confira sua internet e tente de novo.',
     http: 'O servidor não conseguiu responder agora. Tente de novo em instantes.',
+    rate: 'Muitas tentativas em pouco tempo. Aguarde um instante e tente de novo.',
+    offline: 'Você está sem internet. Reconecte-se e tente de novo.',
   };
+  // OPS-06: o Worker só devolve status HTTP real (400/401/403/404/409/429/5xx) a quem pedir com este cabeçalho.
+  // O corpo {success:false,message} é o mesmo de antes; sem o cabeçalho tudo segue HTTP 200.
+  var API_STATUS_HEADER = 'X-Laift-Status';
+  var API_RETRY_DELAY_MS = 700;
+  // Só leituras idempotentes (sem efeito colateral) podem ser repetidas, 1 vez, em falha de rede ou 5xx.
+  // Escrita nunca: repetir um voto, envio ou cadastro poderia duplicar o efeito.
+  var API_RETRYABLE_READS = [
+    'apiGetMyProfile', 'apiGetMyMetrics', 'apiGetMyTimeseries', 'apiGetMyDashboardSeries', 'apiGetHomeSummary',
+    'apiGetFeatureFlags', 'apiListEvents', 'apiListRecentCompletedEvents', 'apiListMyProposals',
+    'apiListOpenProposalsForVoting', 'apiGetProposalResults', 'apiListTasks', 'apiListTaskComments',
+    'apiGetMemberProfile', 'apiGetOrgChart', 'apiListIncomingConnectionRequests', 'apiListMyConnections',
+    'apiListMyBlocks', 'apiListConversations', 'apiLearnGetMyStats', 'apiLearnLibraryListFavorites',
+    'apiLearnLibraryListCollections', 'apiLearnLibraryGetCollection', 'apiLearnLibraryPublicCatalog', 'apiLearnLibrarySearch',
+  ];
+
+  function isRetryableRead(fnName) {
+    return API_RETRYABLE_READS.indexOf(String(fnName || '')) !== -1;
+  }
 
   function apiTimeoutFor(fnName) {
     return API_LONG_ACTIONS.test(String(fnName || '')) ? API_LONG_TIMEOUT_MS : API_TIMEOUT_MS;
   }
 
-  /** fetch + JSON com tempo limite. Rejeita com Error (mensagem em português) e err.kind = timeout | network | http. */
-  function fetchJsonWithTimeout(fetchFn, url, init, timeoutMs, AbortCtor) {
+  /**
+   * fetch + JSON com tempo limite. Resolve { status, data }: com a resposta da API (inclusive {success:false} em HTTP 4xx/5xx,
+   * tratada igual à de HTTP 200). Rejeita com Error (mensagem em português), err.kind = timeout | network | rate | http e err.status.
+   */
+  function fetchEnvelope(fetchFn, url, init, timeoutMs, AbortCtor) {
     var controller = typeof AbortCtor === 'function' ? new AbortCtor() : null;
     var timer = null;
-    function fail(kind) { var e = new Error(API_MESSAGES[kind]); e.kind = kind; return e; }
+    function fail(kind, status) {
+      var offline = kind === 'network' && typeof navigator !== 'undefined' && navigator && navigator.onLine === false;
+      var e = new Error(API_MESSAGES[offline ? 'offline' : kind]);
+      e.kind = kind;
+      if (status) e.status = status;
+      return e;
+    }
     var timeout = new Promise(function (resolve, reject) {
       timer = setTimeout(function () {
         if (controller) controller.abort();
@@ -404,15 +439,48 @@
     var request = Promise.resolve()
       .then(function () { return fetchFn(url, Object.assign({}, init, controller ? { signal: controller.signal } : {})); })
       .then(function (res) {
-        if (!res.ok) throw fail('http');
-        return res.json().catch(function () { throw fail('http'); });
-      }, function () { throw fail('network'); });
-    return Promise.race([request, timeout]).then(function (data) {
+        var status = typeof res.status === 'number' ? res.status : (res.ok ? 200 : 500);
+        return res.json().then(function (data) { return { status: status, data: data }; }, function () { return { status: status, data: undefined }; });
+      }, function () { throw fail('network'); })
+      .then(function (out) {
+        var isEnvelope = out.data && typeof out.data === 'object' && !Array.isArray(out.data);
+        if (out.status >= 200 && out.status < 300) {
+          if (!isEnvelope && out.data === undefined) throw fail('http', out.status);
+          return out;
+        }
+        if (isEnvelope && out.data.success === false) return out;
+        throw fail(out.status === 429 ? 'rate' : 'http', out.status);
+      });
+    return Promise.race([request, timeout]).then(function (out) {
       clearTimeout(timer);
-      return data;
+      return out;
     }, function (err) {
       clearTimeout(timer);
       throw err && err.kind ? err : fail('network');
+    });
+  }
+
+  function fetchJsonWithTimeout(fetchFn, url, init, timeoutMs, AbortCtor) {
+    return fetchEnvelope(fetchFn, url, init, timeoutMs, AbortCtor).then(function (out) { return out.data; });
+  }
+
+  /** Como fetchJsonWithTimeout, mas leitura idempotente (isRetryableRead) é repetida UMA vez em falha de rede ou 5xx. */
+  function fetchJsonWithRetry(fnName, fetchFn, url, init, timeoutMs, AbortCtor, sleepFn) {
+    var canRetry = isRetryableRead(fnName);
+    var AGAIN = {};
+    var sleep = sleepFn || function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); };
+    function attempt(isLast) {
+      return fetchEnvelope(fetchFn, url, init, timeoutMs, AbortCtor).then(function (out) {
+        if (out.status >= 500 && !isLast) return AGAIN;
+        return out.data;
+      }, function (err) {
+        if (!isLast && (err.kind === 'network' || (err.kind === 'http' && err.status >= 500))) return AGAIN;
+        throw err;
+      });
+    }
+    return attempt(!canRetry).then(function (data) {
+      if (data !== AGAIN) return data;
+      return sleep(API_RETRY_DELAY_MS).then(function () { return attempt(true); });
     });
   }
 
@@ -428,9 +496,11 @@
 
   function api(fnName) {
     var args = Array.prototype.slice.call(arguments, 1);
-    return fetchJsonWithTimeout(fetch.bind(window), API_BASE_URL, {
+    var headers = { 'Content-Type': 'application/json' };
+    headers[API_STATUS_HEADER] = '1';
+    return fetchJsonWithRetry(fnName, fetch.bind(window), API_BASE_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify({ action: fnName, args: args }),
       credentials: 'include', // cookie de sessão HttpOnly (SEC-08); sem a flag, o navegador não envia nada
     }, apiTimeoutFor(fnName), typeof AbortController === 'function' ? AbortController : null);
@@ -522,17 +592,19 @@
     }
     var controller = typeof AbortController === 'function' ? new AbortController() : null;
     var timer = setTimeout(function () { if (controller) controller.abort(); }, LEARNING_API_TIMEOUT_MS);
+    var learningHeaders = { 'Content-Type': 'application/json' };
+    learningHeaders[API_STATUS_HEADER] = '1';
     return fetch(API_BASE_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: learningHeaders,
       body: body,
       signal: controller ? controller.signal : undefined,
       credentials: 'include', // cookie de sessão HttpOnly (SEC-08)
       // Telemetria do atlas enviada ao esconder/fechar a aba precisa sobreviver à navegação.
       keepalive: action === 'apiLearnAtlasTelemetry',
     }).then(function (res) {
-      if (!res.ok) throw new Error('http');
-      return res.json();
+      // Com status HTTP real (OPS-06), o erro da API vem em 4xx/5xx com o mesmo corpo {success:false,message}.
+      return res.json().catch(function () { throw new Error(res.status === 429 ? 'rate' : 'http'); });
     }).then(function (data) {
       clearTimeout(timer);
       if (!data || typeof data !== 'object' || Array.isArray(data)) return { success: false, message: 'Resposta inválida do servidor.' };
@@ -540,10 +612,11 @@
     }, function (err) {
       clearTimeout(timer);
       var timedOut = err && err.name === 'AbortError';
-      return {
-        success: false,
-        message: timedOut ? 'O servidor demorou demais para responder. Tente novamente.' : 'Falha de comunicação com o servidor.',
-      };
+      var message = 'Falha de comunicação com o servidor.';
+      if (timedOut) message = 'O servidor demorou demais para responder. Tente novamente.';
+      else if (err && err.message === 'rate') message = API_MESSAGES.rate;
+      else if (typeof navigator !== 'undefined' && navigator && navigator.onLine === false) message = API_MESSAGES.offline;
+      return { success: false, message: message };
     });
   }
 
@@ -2864,7 +2937,8 @@
   // nunca precise de innerHTML nem duplique essas funções.
   // ===========================================================================
   window.App = {
-    getState: function () { return state; },
+    // SEC-10: visão sem o token (só a alça opaca de session-view.js); o token fica em `state`, interno ao app.js.
+    getState: function () { return publicSession.view; },
     // Identidade para os módulos de aprendizagem (frontend/modulos/, via
     // modulos/shared/laift-identity.js): só dados de exibição, nunca o
     // token de sessão.
@@ -2886,7 +2960,11 @@
     callLearningApi: callLearningApi,
     getTheme: getEffectiveTheme,
     getThemePreference: function () { return themePreference; },
-    callApi: callApi,
+    callApi: function (fnName) {
+      var args = Array.prototype.slice.call(arguments, 1);
+      if (args.length) args[0] = publicSession.resolve(args[0]);
+      return callApi.apply(null, [fnName].concat(args));
+    },
     finishLogin: finishLogin,
     h: h,
     text: text,

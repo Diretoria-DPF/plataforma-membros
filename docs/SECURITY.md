@@ -111,20 +111,19 @@ Por página:
 | `modulos/quiz` | `'self'` jsDelivr | `'self'` rxnav.nlm.nih.gov pubchem.ncbi.nlm.nih.gov www.ebi.ac.uk | `'self'` data: | frame `'self'`; worker `'none'` |
 | `modulos/toxicologia` | `'self'` | `'self'` api.fda.gov | `'self'` data: | frame `'self'`; worker `'none'` |
 | `modulos/clinica` | `'self'` | `'self'` | `'self'` data: | frame `'self'`; worker `'none'` |
-| `modulos/fiscal` | `'self'` jsDelivr | `'self'` | `'self'` data: blob: | frame `'self'`; worker `'none'`; media `'self'` blob: (câmera) |
+| `modulos/fiscal` | `'self'` | `'self'` | `'self'` data: blob: | frame `'self'`; worker `'none'`; media `'self'` blob: (câmera) |
 | `modulos/cracha` | `'self'` | `'self'` | `'self'` data: blob: https: (foto por URL) | frame `'self'`; worker `'none'` |
-| `modulos/laboratorio` | `'self'` jsDelivr | `'self'` pubchem cactus.nci.nih.gov query.wikidata.org www.ebi.ac.uk | `'self'` pubchem cactus data: blob: | frame `'self'`; worker `'none'` |
+| `modulos/laboratorio` | `'self'` | `'self'` pubchem cactus.nci.nih.gov query.wikidata.org www.ebi.ac.uk | `'self'` pubchem cactus data: blob: | frame `'self'`; worker `'none'` |
 | `modulos/laboratorio/studio` | `'self'` jsDelivr `'unsafe-eval'` (só aqui — RDKit, ver "Decisões") | como o laboratório + jsDelivr (fetch do .wasm do RDKit) | `'self'` data: blob: | frame `'self'`; worker `'self'` blob: (3Dmol) |
 | `modulos/anatomia-3d` | `'self'` `'wasm-unsafe-eval'` (só aqui, além do Estúdio — ver "Decisões") | `'self'` blob: files.rcsb.org pubchem apps.humanatlas.io purl.humanatlas.io 3d.nih.gov | `'self'` data: blob: | frame `'self'`; worker `'self'` blob: (DRACOLoader, 3Dmol) |
 
-"jsDelivr" é `https://cdn.jsdelivr.net`. Aparece só nas páginas que
-carregam biblioteca de lá (quiz, laboratório, studio e fiscal), e toda
-biblioteca tem `integrity` (SRI) e versão fixa:
-- html5-qrcode 2.3.8 (fiscal);
-- SmilesDrawer 2.1.7 (quiz e laboratório) e 2.3.0 (studio);
-- 3Dmol 2.5.5 (laboratório e studio);
-- OpenChemLib 8.6.0 e RDKit 2026.3.6 (studio; injetadas com SRI por
-  `studio-loader.js`).
+TEC-01: "jsDelivr" é `https://cdn.jsdelivr.net`. Quiz, laboratório e fiscal
+não o usam mais: SmilesDrawer, 3Dmol, OpenChemLib e html5-qrcode foram
+vendorizados em `modulos/<módulo>/vendor/` (com `LICENSE` e `VERSION`; os
+`<script>` mantêm o `integrity` original, que bate com o arquivo local —
+`frontend/scripts/vendor-sri.test.mjs`). O jsDelivr resta **só no Estúdio**
+(`laboratorio/studio`), para o RDKit 2026.3.6, cujo `.wasm` (7,3 MB) passa
+do limite de 5 MB para o repositório; segue com SRI e carga sob demanda.
 
 Fora dessa lista: o painel de administração não carrega mais Chart.js
 (gráfico em `charts.js`, sem CDN; registro O31 em `docs/riscos-residuais.md`),
