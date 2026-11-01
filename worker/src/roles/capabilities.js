@@ -19,7 +19,7 @@
 const freezeList = (list) => Object.freeze(list.slice());
 
 export const ROLE_CAPS = Object.freeze({
-  gestor: freezeList(['events.manage', 'tasks.manage', 'attendance.manage', 'proposals.review', 'orgchart.edit']),
+  gestor: freezeList(['events.manage', 'tasks.manage', 'attendance.manage', 'proposals.review', 'orgchart.edit', 'home.curate']),
   revisor_conteudo: freezeList(['content.review', 'sim.review']),
   moderador: freezeList(['reports.moderate', 'assistant.feedback.moderate']),
   curador: freezeList(['library.curate']),
