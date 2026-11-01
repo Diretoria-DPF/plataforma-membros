@@ -134,7 +134,7 @@
 /* Valor de série: sempre visível, sem hover. Halo na cor do fundo para ler sobre linha e área. */
 .laift-chart__svg .laift-chart__value {
   fill: var(--laift-text);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   paint-order: stroke;
   stroke: var(--layer-0);
@@ -172,7 +172,7 @@
 
 .laift-chart__axis-label {
   fill: var(--laift-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
