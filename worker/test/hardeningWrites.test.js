@@ -75,6 +75,15 @@ describe('apiGetProposalResults — visibilidade', () => {
     expect((await ProposalService.getProposalResults(sql, GESTOR_C, id)).success).toBe(true);
   });
 
+  test('placar de votação aberta: admin e proposals.review veem; membro comum não (ROL-03)', async () => {
+    const id = await proposal('voting_open');
+    await db.query("INSERT INTO votes (proposal_id, profile_id, choice) VALUES ($1, $2, 'yes'::vote_choice)", [id, P_B]);
+    expect((await ProposalService.getProposalResults(sql, GESTOR_C, id)).results).toEqual({ yes: 1, no: 0, complement: 0 });
+    expect((await ProposalService.getProposalResults(sql, ADMIN, id)).results).toEqual({ yes: 1, no: 0, complement: 0 });
+    expect((await ProposalService.getProposalResults(sql, MEMBER_C, id)).results).toBeUndefined();
+    expect((await ProposalService.getProposalResults(sql, MEMBER_A, id)).results).toBeUndefined();
+  });
+
   test('UUID inválido é erro de validação, não 500', async () => {
     for (const bad of ['', 'abc', 'x'.repeat(40), "' OR 1=1 --", null, undefined]) {
       expect(await errOf(ProposalService.getProposalResults(sql, MEMBER_A, bad))).toMatchObject({ name: 'ValidationError' });

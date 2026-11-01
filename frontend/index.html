@@ -479,6 +479,12 @@
               </button>
             </li>
             <li>
+              <button type="button" class="app-menu__item hidden" data-panel="panel-gestao-orgchart" data-cap="orgchart.edit" data-cap-cargo>
+                <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg>
+                <span class="app-menu__texto"><span class="app-menu__titulo">Cargos na liga</span><span class="app-menu__info">Presidência, diretorias</span></span>
+              </button>
+            </li>
+            <li>
               <button type="button" class="app-menu__item hidden" data-panel="panel-admin-reports" data-cap="reports.moderate" data-cap-cargo>
                 <svg class="app-menu__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a1.5 1.5 0 001.3 2.25h17.76a1.5 1.5 0 001.3-2.25L13.7 3.86a1.5 1.5 0 00-2.6 0z"/></svg>
                 <span class="app-menu__texto"><span class="app-menu__titulo">Denúncias</span><span class="app-menu__info">Analisar e resolver</span></span>
@@ -953,6 +959,17 @@
           </div>
         </section>
 
+        <!-- Cargo na liga para o gestor (orgchart-edit.js; capacidade orgchart.edit). -->
+        <section id="panel-gestao-orgchart" class="hidden">
+          <h1 class="sr-only">Gestão: cargos na liga</h1>
+          <div class="card">
+            <h2>Cargos na liga</h2>
+            <p class="muted">Define o cargo de liderança e a diretoria de cada membro. Aparece no organograma da Equipe.</p>
+            <div id="msg-gestao-orgchart" class="status-msg" role="status" aria-live="polite"></div>
+            <div id="gestao-orgchart-list"></div>
+          </div>
+        </section>
+
         <section id="panel-admin-roles" class="hidden">
           <h1 class="sr-only">Admin: cargos</h1>
           <div class="card">
@@ -1309,6 +1326,7 @@
   <script src="session-view.js" defer></script>
   <script src="roles-ui.js" defer></script>
   <script src="admin-roles.js" defer></script>
+  <script src="orgchart-edit.js" defer></script>
   <script src="app.js" defer></script>
   <script src="entrada.js" defer></script>
   <script src="resend-confirmation.js" defer></script>

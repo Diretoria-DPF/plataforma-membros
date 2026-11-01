@@ -99,9 +99,10 @@ test('restauração da sessão: o perfil refeito de apiGetMyProfile leva o id (v
 });
 
 test('loadProfileAndPreferences: depois de gravar e-mail e usuário, junta o id sem apagar o que havia', () => {
-  const body = /function loadProfileAndPreferences\(\) \{[\s\S]*?\n  \}\n/.exec(APP);
+  const body = /function mergeServerProfile\(raw\) \{[\s\S]*?\n  \}\n/.exec(APP);
   assert.ok(body, 'função encontrada');
-  const order = ['state.profile.email = res.profile.email;', 'state.profile.username = res.profile.username;', 'state.profile = mergeProfileId(state.profile, res.profile);']
+  assert.match(/function loadProfileAndPreferences\(\) \{[\s\S]*?\n  \}\n/.exec(APP)[0], /mergeServerProfile\(res\.profile\)/);
+  const order = ['state.profile.email = raw.email;', 'state.profile.username = raw.username;', 'state.profile = mergeProfileId(state.profile, raw);']
     .map((piece) => body[0].indexOf(piece));
   assert.ok(order.every((i) => i >= 0), 'os três passos existem');
   assert.ok(order[0] < order[2] && order[1] < order[2], 'o id entra por último, sobre o perfil já com e-mail e usuário');
