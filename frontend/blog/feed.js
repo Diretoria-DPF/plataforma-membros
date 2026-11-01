@@ -269,6 +269,7 @@ function mostrarCarregando() {
 
 function mostrarErro(erro) {
   console.error('blog: feed', erro);
+  if (els.destaque) els.destaque.removeAttribute('data-aguarda');
   els.feed.textContent = '';
   els.feed.appendChild(criarNo('p', '', MSG_ERRO));
   const tentar = criarNo('button', 'blog-botao', 'Tentar novamente');
@@ -284,6 +285,7 @@ function mostrarDestaque(posts) {
   if (!els.destaque) return;
   const campanha = posts.find(function (post) { return post.serie === 'campanhas' && post.fixado === true; });
   els.destaque.hidden = !campanha;
+  els.destaque.removeAttribute('data-aguarda');
   if (!campanha) return;
   els.destaqueTitulo.textContent = campanha.titulo;
   els.destaqueResumo.textContent = campanha.resumo;

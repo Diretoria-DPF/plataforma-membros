@@ -341,6 +341,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  /* Reserva a altura da linha de botões: o "Instalar o blog" aparece depois
+     (instalar.js) e não pode empurrar o mapa para baixo. */
+  min-height: var(--laift-touch, 44px);
 }
 
 .blog-mapa,
