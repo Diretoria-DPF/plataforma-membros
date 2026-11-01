@@ -186,10 +186,16 @@
         app.callApi('apiMfaConfirmEnrollment', app.getState().sessionToken || '', code).then(function (r) {
           if (!r.success) { app.setStatus('msg-mfa', r.message, 'error'); return; }
           app.setStatus('msg-mfa', r.message, 'success');
+          refreshIdentity(app);
           showRecoveryCodes(app, doc, host, r.recoveryCodes);
         });
       }));
     });
+  }
+
+  /** Cargo privilegiado só vale com MFA: relê perfil e capacidades sem recarregar a página (ROL-03). */
+  function refreshIdentity(app) {
+    if (app && typeof app.refreshIdentity === 'function') app.refreshIdentity();
   }
 
   function showRecoveryCodes(app, doc, host, codes) {
@@ -258,12 +264,13 @@
     host.appendChild(button(doc, 'Desativar verificação em duas etapas', 'secondary', function () {
       app.callApi('apiMfaDisable', app.getState().sessionToken || '', { password: pwd.input.value, code: normalizeLoginCode(code.input.value) }).then(function (r) {
         app.setStatus('msg-mfa', r.message, r.success ? 'success' : 'error');
-        if (r.success) load(app, doc);
+        if (r.success) { refreshIdentity(app); load(app, doc); }
       });
     }));
   }
 
   var api = {
+    refreshIdentity: refreshIdentity,
     groupSecret: groupSecret,
     normalizeLoginCode: normalizeLoginCode,
     recoveryCodesText: recoveryCodesText,

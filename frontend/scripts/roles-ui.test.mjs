@@ -112,6 +112,7 @@ test('index.html: menu Gestão com os painéis por capacidade, todos começando 
     ['panel-admin-tasks', 'tasks.manage'],
     ['panel-admin-fiscal', 'attendance.manage'],
     ['panel-admin-proposals', 'proposals.review'],
+    ['panel-gestao-orgchart', 'orgchart.edit'],
     ['panel-admin-reports', 'reports.moderate'],
     ['panel-admin-ai', 'content.review assistant.feedback.moderate reports.moderate'],
     ['panel-admin-library', 'library.curate'],

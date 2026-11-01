@@ -40,8 +40,10 @@ test('withRoleInfo: resposta sem os campos (servidor antigo) ou com lixo vira li
 });
 
 test('os dois caminhos de apiGetMyProfile guardam cargos e capacidades', () => {
-  const hits = APP.match(/state\.profile = withRoleInfo\(state\.profile, res\.profile\);/g) || [];
+  // Carga do perfil e releitura pós-MFA passam por mergeServerProfile; a restauração da sessão tem o seu próprio.
+  const hits = APP.match(/state\.profile = withRoleInfo\(state\.profile, (raw|res\.profile)\);/g) || [];
   assert.equal(hits.length, 2);
+  assert.equal((APP.match(/mergeServerProfile\(res\.profile\)/g) || []).length, 2);
 });
 
 test('app.js não decide por capacidade sozinho: delega a roles-ui.js (data-cap)', () => {

@@ -568,6 +568,25 @@ describe('ModerationService.listReports / resolveReport — só admin', () => {
     await expect(ModerationService.listReports(sql, MEMBER, {})).rejects.toMatchObject({ name: 'ForbiddenError' });
   });
 
+  test('moderador vê a denúncia sem os dados do denunciante; admin vê tudo (ROL-03)', async () => {
+    const MOD = { profileId: 'mod1', role: 'member', capabilities: ['reports.moderate'], functionalRoles: ['moderador'], mfaConfirmed: true };
+    const row = {
+      id: 'r1', category: 'harassment', details: 'texto', evidence_excerpt: 'trecho', status: 'open', created_at: 'x',
+      resolved_at: null, resolution_note: null, reporter_name: 'Ana Denunciante', reporter_username: 'ana_d',
+      reported_name: 'Beto', reported_username: 'beto',
+    };
+    const run = async (who) => {
+      const sql = makeSql();
+      sql.mockResolvedValueOnce([row]).mockResolvedValueOnce([{ total: 1 }]);
+      return ModerationService.listReports(sql, who, {});
+    };
+    const asMod = await run(MOD);
+    expect(asMod.reports[0]).toMatchObject({ reporterName: null, reporterUsername: null, reporterHidden: true, reportedName: 'Beto', details: 'texto' });
+    expect(JSON.stringify(asMod)).not.toContain('Ana Denunciante');
+    const asAdmin = await run(ADMIN);
+    expect(asAdmin.reports[0]).toMatchObject({ reporterName: 'Ana Denunciante', reporterUsername: 'ana_d', reporterHidden: false });
+  });
+
   test('member não pode resolver denúncias', async () => {
     const sql = makeSql();
     await expect(ModerationService.resolveReport(sql, MEMBER, 'r1', { status: 'dismissed' }, 'cid')).rejects.toMatchObject({

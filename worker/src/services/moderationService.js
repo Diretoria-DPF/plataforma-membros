@@ -102,12 +102,15 @@ export async function listReports(sql, identity, input) {
   );
   const countRows = await sql(`SELECT count(*) AS total FROM profile_reports r ${whereClause}`, params);
 
+  // Quem denunciou só aparece para o admin; o moderador decide pelo conteúdo da denúncia (ADR 0010).
+  const showReporter = identity.role === C.ROLES.ADMIN;
   return {
     success: true,
     reports: rows.map((r) => ({
       id: r.id, category: r.category, details: r.details, evidenceExcerpt: r.evidence_excerpt,
       status: r.status, createdAt: r.created_at, resolvedAt: r.resolved_at, resolutionNote: r.resolution_note,
-      reporterName: r.reporter_name, reporterUsername: r.reporter_username,
+      reporterName: showReporter ? r.reporter_name : null, reporterUsername: showReporter ? r.reporter_username : null,
+      reporterHidden: !showReporter,
       reportedName: r.reported_name, reportedUsername: r.reported_username,
     })),
     page, pageSize, total: Number(countRows[0].total),
